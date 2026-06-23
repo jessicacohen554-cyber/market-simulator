@@ -184,3 +184,49 @@ winter (price is convex in gas → it would not lower the mean), so it is not a
 clean substitute for the paywalled series. **Dec-2024 −27** and the short **2025
 summer tail** (model 29 vs 118 h >$200) are the co-opt **winter/10-min
 eligibility** follow-on (handoff #2), not gas or topology.
+
+## Per-family reserve eligibility (10-min → quick-start) — `nyiso 21`, the eligibility lever is MINOR
+
+Fix #1 of the handoff: each NYISO reserve *family* now carries its own
+eligibility mask (commit `7be0a70`, on main). The 10-minute NYC/SENY families
+draw only on the **quick-start** fleet (`QUICK_START_FUEL_TYPES` = gas-CT/oil,
+plus fast storage) — class 1 — instead of the full all-thermal
+`RESERVE_FUEL_TYPES` mask; 30-minute/total products keep the full dispatchable
+class 0. Slow combined-cycle headroom can no longer satisfy a 10-minute
+requirement (a unit-physics capability constraint, not a fitted requirement).
+The keeper config re-solved on this code is **`nyiso 21 family-elig-coopt`**
+(`results/calibration/nyiso_21_family_elig`, id `2026-06-23-nyiso-21-family-elig`,
+all three years), identical flags to `nyiso 20`:
+`--commitment --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily
+--priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply
+--nyiso-firm-imports`. The solve logs `7 locational reserve families (3
+10-min/quick-start), 721 full-fleet / 333 quick-start reserve-eligible units` —
+the eligibility split is live.
+
+**Result: the eligibility fix barely moves the backcast.** The verdict is
+within noise of `nyiso 20` on every scored criterion (`price_mean` 2023 +20.0 %
+vs +19.9 %, 2024 +2.1 %, 2025 +1.3 % vs +1.2 %; `price_shape` 2023 0.212 / 2024
+0.250 / 2025 0.126; `sysvol`, `co2`, `fuelmix` identical). The load-weighted
+NYCA scarcity tail thickens only marginally (2025 ~29 → ~32 h >$200 against
+actual ~119; max ~$427 → ~$451) and the body holds — the **right direction per
+rule #1, but a small lever**. So the eligibility mask was a real structural
+gap worth closing, **but it is not the dominant cause of the short tail**.
+
+**`nyiso 21` is the keeper** anyway (rule #1: same config re-solved on the
+now-merged eligibility code is strictly *more structurally faithful* than
+`nyiso 20`'s pre-fix bundle, and the fit is held — promotion is on faithfulness,
+not on a fit improvement). Registered + promoted (`keepers.json`); `nyiso 6`
+pruned for the 15-run NYISO retention.
+
+**Where the tail actually lives (re-confirmed, the real next levers):**
+* **Dec-2024 is an ENERGY/gas cold-event, not a reserve shortage.** It is
+  *unchanged* by the eligibility fix (model $39 vs actual RT $68.3, monthly
+  load-weighted). The lever is the December delivered-gas level (the daily
+  Transco/Iroquois cold-day spike), not 10-minute reserve eligibility.
+* **2025 summer/winter tail** is still short across the board (Feb $76 vs $94,
+  Jun $54 vs $66, Dec $85 vs $96) — a body-wide under-level, not just a
+  missing-shortfall-hours problem, so reserve eligibility alone cannot close it.
+* **The dashboard cannot score `price_tail` for NYISO** — the committed run
+  payload omits `ordc.hoursGt200`, so `score_price_tail` SKIPs (both `nyiso 20`
+  and `nyiso 21`). The tail must be read off the dispatch parquet / system
+  parquet by hand until the NYISO benchmark emits the `>$200` hours block.
