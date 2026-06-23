@@ -4669,9 +4669,10 @@ _DEFAULT_TRANCHE_PCT_BY_GROUP: dict[str, tuple[float, float, float]] = {
 }
 
 
-@lru_cache(maxsize=8)
+@lru_cache(maxsize=16)
 def thermal_tranche_overrides(
     iso: str,
+    coal_online_pmin: bool = False,
 ) -> dict[tuple[int, str], tuple[float, float]]:
     """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
 
@@ -4681,18 +4682,32 @@ def thermal_tranche_overrides(
     artifact, so the caller falls back to the group default. This is the
     general, ISO-agnostic replacement for the hardcoded ERCOT
     ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` / ``COAL_MUSTRUN_BY_PLANT`` maps.
+
+    When ``coal_online_pmin`` is set (``ScenarioConfig.coal_mustrun_online_pmin``,
+    rebuild step 2) a **coal** row's must-run is taken from the artifact's
+    ``mustrun_online_pct`` column — the measured online-net-MW synchronization
+    Pmin (~20-30% of nameplate) — instead of the all-hours available-CF
+    ``mustrun_pct`` (which reads ~2x high for an always-online unit). Coal rows
+    in an artifact that predates the column (or with a blank/NaN value) keep
+    ``mustrun_pct``; non-coal rows are unaffected.
     """
     path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     if not path.exists():
         return {}
     df = pd.read_csv(path)
+    has_online = "mustrun_online_pct" in df.columns
     out: dict[tuple[int, str], tuple[float, float]] = {}
     for r in df.itertuples(index=False):
         if str(getattr(r, "status", "ok")) != "ok":
             continue
+        mustrun = float(r.mustrun_pct)
+        if coal_online_pmin and has_online and str(r.plant_group) == "COAL":
+            online_v = getattr(r, "mustrun_online_pct", float("nan"))
+            if online_v == online_v:  # not NaN
+                mustrun = float(online_v)
         out[(int(r.plant_code), str(r.plant_group))] = (
             float(r.committed_pct),
-            float(r.mustrun_pct),
+            mustrun,
         )
     return out
 
@@ -4788,8 +4803,10 @@ def fleet_to_bins(
     :func:`bins_to_fleet` consumes, so a per-plant ISO (PJM, MISO, ...) gets
     the *same* smoothed rising offer curve and per-plant committed / must-run
     tranches ERCOT gets from its bins. Committed % and (coal) must-run % come
-    from the CAMPD-derived artifact (:func:`thermal_tranche_overrides`); plants
-    absent from it fall back to :data:`_DEFAULT_TRANCHE_PCT_BY_GROUP`. Per-band
+    from the CAMPD-derived artifact (:func:`thermal_tranche_overrides`; under
+    ``config.coal_mustrun_online_pmin`` the coal must-run uses the artifact's
+    online-Pmin floor, rebuild step 2); plants absent from it fall back to
+    :data:`_DEFAULT_TRANCHE_PCT_BY_GROUP`. Per-band
     heat rates are the plant's capacity-weighted heat rate times the group
     default multipliers (the offer curve overrides these in ``bins_to_fleet``).
     Non-thermal generators (nuclear, oil, biomass, ...) are not binned — the
@@ -4798,7 +4815,9 @@ def fleet_to_bins(
     Returns one row per thermal ``(plant_code, plant_group)``; empty frame when
     the fleet has no thermal plants.
     """
-    overrides = thermal_tranche_overrides(iso)
+    overrides = thermal_tranche_overrides(
+        iso, getattr(config, "coal_mustrun_online_pmin", False)
+    )
     peaking = thermal_tranche_peaking(iso)
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
     # sums, heat rate is capacity-weighted.
