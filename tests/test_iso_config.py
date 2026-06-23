@@ -8,18 +8,13 @@ from market_sim.config.iso_configs import get_iso_config
 class TestISOConfig(unittest.TestCase):
     """Tests for ISO topology configurations."""
 
-    def test_ercot_has_eight_zones(self):
-        """ERCOT defines eight congestion-interface load zones.
-
-        Far_West (the Permian) is carved out of the old West zone behind the
-        intra-Permian tie, mirroring the NE_LOB Northeast carve-out.
-        """
+    def test_ercot_has_seven_zones(self):
+        """ERCOT defines seven congestion-interface load zones."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_zones, 8)
+        self.assertEqual(ercot.n_zones, 7)
         self.assertEqual(
             set(ercot.zone_names),
             {
-                "Far_West",
                 "West",
                 "Panhandle",
                 "North",
@@ -30,25 +25,10 @@ class TestISOConfig(unittest.TestCase):
             },
         )
 
-    def test_ercot_has_eleven_links(self):
-        """ERCOT defines eleven inter-zone congestion interfaces.
-
-        Nine base interfaces plus the two one-way Far_West<->West Permian legs
-        (asymmetric import/export rating).
-        """
+    def test_ercot_has_nine_links(self):
+        """ERCOT defines nine inter-zone congestion interfaces."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_links, 11)
-
-    def test_ercot_far_west_permian_tie_present(self):
-        """The Far_West (Permian) tie is a pair of one-way import/export legs."""
-        ercot = get_iso_config("ERCOT")
-        legs = [
-            link
-            for link in ercot.links
-            if {link.from_zone, link.to_zone} == {"Far_West", "West"}
-        ]
-        self.assertEqual(len(legs), 2)
-        self.assertTrue(all(not leg.is_bidirectional for leg in legs))
+        self.assertEqual(ercot.n_links, 9)
 
     def test_ercot_ne_lob_link_present(self):
         """The NE_LOB Northeast<->North export link is present at ~1,300 MW."""
