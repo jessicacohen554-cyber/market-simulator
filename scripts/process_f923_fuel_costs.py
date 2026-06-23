@@ -80,6 +80,12 @@ _RENAME: dict[str, str] = {
     "FUEL_GROUP": "fuel_group",
     "QUANTITY": "quantity",
     "FUEL_COST": "fuel_cost_cents_per_mmbtu",
+    # Schedule-5 contracted-vs-spot flag (codes C / NC / S / T). The header is
+    # "Purchase Type" in recent releases, "Contract Type" in older ones; both
+    # map to one canonical column. Kept for the coal take-or-pay deriver
+    # (scripts/derive_coal_takeorpay.py); cost/rank consumers ignore it.
+    "Purchase Type": "purchase_type",
+    "Contract Type": "purchase_type",
     "Balancing\nAuthority Code": "ba_code",
     "BA_CODE": "ba_code",
 }

@@ -477,6 +477,40 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
             0.0,
         )
 
+    def test_takeorpay_share_sets_mustrun_sunk_fraction(self):
+        # With a measured take-or-pay map, a coal must-run tranche passes
+        # 1 - contract_share of its fuel (only the contracted tonnage is sunk)
+        # instead of the hardcoded 0.0; above-must-run tranches are unaffected,
+        # a plant absent from the map keeps the default 0.0, and share == 1.0
+        # reproduces the default.
+        from market_sim.data.fleet import campd_tranche_fuel_frac
+
+        def mustrun(plant_code):
+            return Generator(
+                unit_id="COAL_z_p1_mustrun",
+                name="x",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=100.0,
+                heat_rate=10.0,
+                coal_supply="bituminous",
+                plant_group="COAL",
+                plant_code=plant_code,
+            )
+
+        tp = {111: 0.6, 222: 1.0}
+        # default (no map) → fully sunk
+        self.assertEqual(campd_tranche_fuel_frac(mustrun(111), None, None), 0.0)
+        # measured 60% contract → 40% of fuel passed through
+        self.assertAlmostEqual(campd_tranche_fuel_frac(mustrun(111), None, tp), 0.4)
+        # fully contracted → reproduces the default 0.0
+        self.assertEqual(campd_tranche_fuel_frac(mustrun(222), None, tp), 0.0)
+        # plant absent from the map → default 0.0
+        self.assertEqual(campd_tranche_fuel_frac(mustrun(999), None, tp), 0.0)
+        # the map never touches above-must-run tranches
+        econ = mustrun(111).model_copy(update={"unit_id": "COAL_z_p1_econ"})
+        self.assertEqual(campd_tranche_fuel_frac(econ, {"bituminous": 0.8}, tp), 0.8)
+
     def test_lignite_routing(self):
         # campd_tranche_fuel_frac returns the lignite passthrough for lignite
         # above-must-run tranches when given; must-run lignite stays 0.0 and

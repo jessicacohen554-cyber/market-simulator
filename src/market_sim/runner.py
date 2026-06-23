@@ -39,6 +39,7 @@ from market_sim.data.fleet import (
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
+    coal_takeorpay_share,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
@@ -462,6 +463,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Flat prb passthrough only (forward scenarios don't gas-key);
             # subbituminous mirrors prb here, matching the backcast routing
             # convention pre-refactor.
+            takeorpay = None
+            if getattr(config, "coal_takeorpay_from_data", False):
+                takeorpay = {
+                    int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
+                    for g in dispatch_fleet
+                    if g.fuel_type == "coal"
+                    and coal_takeorpay_share(int(g.plant_code)) is not None
+                }
             fuel_fracs = [
                 campd_tranche_fuel_frac(
                     g,
@@ -469,6 +478,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         "prb": config.coal_prb_passthrough,
                         "subbituminous": config.coal_prb_passthrough,
                     },
+                    takeorpay,
                 )
                 for g in dispatch_fleet
             ]
