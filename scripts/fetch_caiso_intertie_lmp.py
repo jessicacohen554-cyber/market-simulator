@@ -72,10 +72,13 @@ CAISO_TZ = "America/Los_Angeles"
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 _MONTH_START_HOUR = (np.cumsum([0, *_DAYS[:-1]]) * 24).tolist()
 _HOURS_PER_YEAR = 8760
-# OASIS PRC_LMP DAM retention boundary (probed 2026-06-22): data is aged out
-# before ~2023-03-10 (ERR 1000) and available from then on. 2024/2025 start at
-# Jan 1 as usual; only 2023 is clamped.
-_OASIS_RETENTION_START = dt.date(2023, 3, 10)
+# OASIS PRC_LMP DAM retention boundary (re-probed 2026-06-23): the window is
+# rolling — it advanced from ~2023-03-10 to 2023-03-12 in a day. Data before the
+# boundary returns ERR 1000 (aged out) and is unrecoverable; it only ages out
+# further over time, so 2023 Jan 1–Mar 11 can no longer be completed from OASIS.
+# 2024/2025 start at Jan 1 as usual; only 2023 is clamped. The adaptive crawl in
+# _fetch_node_year self-heals if the boundary advances past this date again.
+_OASIS_RETENTION_START = dt.date(2023, 3, 12)
 
 
 def _hour_index(ts: pd.Series) -> np.ndarray:
@@ -139,12 +142,23 @@ def _fetch_node_year(
 
 
 def _to_hourly_energy(df: pd.DataFrame, year: int) -> np.ndarray | None:
-    """Raw OASIS rows -> (8760,) MCE energy component on the local calendar."""
-    if "MCE" not in df.columns or "interval_start_gmt" not in df.columns:
+    """Raw OASIS rows -> (8760,) MCE energy component on the local calendar.
+
+    OASIS PRC_LMP DAM CSV is long-format: one row per ``LMP_TYPE``
+    (LMP / MCC / MCE / MCL / MGHG) with the $/MWh value in the (misnamed) ``MW``
+    column and the interval start in ``INTERVALSTARTTIME_GMT``. We keep the MCE
+    energy component (verified: LMP = MCE + MCC + MCL + MGHG); the per-tranche
+    CARB border carbon is re-added by the injector.
+    """
+    needed = {"LMP_TYPE", "MW", "INTERVALSTARTTIME_GMT"}
+    if not needed.issubset(df.columns):
         return None
-    ts = pd.to_datetime(df["interval_start_gmt"], utc=True).dt.tz_convert(CAISO_TZ)
+    rows = df[df["LMP_TYPE"] == "MCE"]
+    if rows.empty:
+        return None
+    ts = pd.to_datetime(rows["INTERVALSTARTTIME_GMT"], utc=True).dt.tz_convert(CAISO_TZ)
     hi = _hour_index(ts)
-    mce = pd.to_numeric(df["MCE"], errors="coerce").to_numpy()
+    mce = pd.to_numeric(rows["MW"], errors="coerce").to_numpy()
     keep = (hi >= 0) & (hi < _HOURS_PER_YEAR) & np.isfinite(mce)
     out = np.full(_HOURS_PER_YEAR, np.nan)
     # Average duplicate (DST fall-back) hours; spring-forward stays NaN.
@@ -226,16 +240,22 @@ def main() -> None:
                 )
                 continue
             price = np.nanmean(np.vstack(series), axis=0)
+            # Write the full 8760-hour grid, NaN hours included. The consumer
+            # (eia_loader._caiso_import_hub_prices) requires a complete 8760-row
+            # series per (year, hub): it interpolates the lone interior DST
+            # spring-forward NaN but rejects any series shorter than 8760. If we
+            # drop NaN hours, a complete year loses its DST row (8759 rows) and
+            # the whole year falls back onto the static ladder.
             for h in range(_HOURS_PER_YEAR):
-                if np.isfinite(price[h]):
-                    records.append(
-                        {
-                            "year": year,
-                            "hour": h,
-                            "hub": hub,
-                            "price": round(float(price[h]), 4),
-                        }
-                    )
+                v = float(price[h])
+                records.append(
+                    {
+                        "year": year,
+                        "hour": h,
+                        "hub": hub,
+                        "price": round(v, 4) if np.isfinite(v) else np.nan,
+                    }
+                )
 
     if not records:
         print("no intertie data fetched — nothing written.", file=sys.stderr)
