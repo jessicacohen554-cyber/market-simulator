@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-caiso-24-bidir-wheel",
+  "label": "caiso 24 bidir+wheel-only (PROBE)",
+  "date": "2026-06-23",
+  "shorthand": "caiso-24-bidir-wheel",
+  "definition": "PROBE (failed keeper gate). Bidir WECC intertie + RA gas floor 0.80 + ADDITIVE wheel-only delivery basis on the import legs (the per-tranche OATT PTP wheeling charge of CAISO_IMPORT_DELIVERY_BASIS, WITHOUT its multiplicative loss·max(hub,0) markup). Decompose follow-up to caiso-22 floor-only / caiso-23 basis-only: tests whether the minimal additive wheel restores the rising delivered-import merit order without over-suppressing imports. It does not — wheel-only lands essentially on basis-only (2024 net -18.66 vs -19.09, neg 194=194, mean 48.34 vs 48.79) and worse than floor-only on both level (net -22.36, neg 221, mean 46.81) and shape (2024 corr +0.14 < floor-only +0.22; 2025 corr -0.07, not positive every year). Confirms the bidir diurnal-shape fix and any merit-order-restoring delivery basis are mutually exclusive by design on the capped 8.3 GW single-flow node; keeper stays until measured WECC hub diurnal prices land (roadmap option B).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-23-caiso-24-bidir-wheel.js",
+  "bundle": "results/calibration/caiso_bidir_wheelOnly_3yr"
+}
