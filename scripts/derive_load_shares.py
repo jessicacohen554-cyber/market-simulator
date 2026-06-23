@@ -58,7 +58,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     _NYISO_LOAD_ZONE_GROUPS,
 )
 
-REF = REPO / "data" / "reference"
+REF = REPO / "data" / "raw" / "reference"
 CAISO_TAC_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
 NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
 NEISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NEISO"
@@ -67,17 +67,29 @@ WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "W
 
 # ERCOT weather zone -> model transmission zone. ERCOT has no Panhandle
 # weather zone, so the Panhandle transmission zone receives no load here.
+# Mirrors eia_loader._ERCOT_LOAD_ZONE_GROUPS: EAST -> Northeast (the NE_LOB
+# carve-out) and FAR_WEST -> Far_West (the Permian carve-out behind the
+# intra-Permian export limit), with WEST (Abilene/CREZ) staying in West.
 WZ_TO_ZONE = {
     "COAST": "Houston",
     "NORTH_C": "North",
-    "EAST": "North",
+    "EAST": "Northeast",
     "NORTH": "North",
     "SOUTH_C": "South_Central",
     "SOUTHERN": "South",
-    "FAR_WEST": "West",
+    "FAR_WEST": "Far_West",
     "WEST": "West",
 }
-ZONES = ["West", "Panhandle", "North", "Houston", "South_Central", "South"]
+ZONES = [
+    "Far_West",
+    "West",
+    "Panhandle",
+    "North",
+    "Northeast",
+    "Houston",
+    "South_Central",
+    "South",
+]
 
 CAISO_ZONES = ["NP15", "ZP26", "SP15"]
 
