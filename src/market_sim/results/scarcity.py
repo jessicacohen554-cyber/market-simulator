@@ -1350,7 +1350,9 @@ def nyiso_reserve_coopt_inputs(
     hours: int,
     zone_names: list[str],
     n_ramp: int = 8,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[
+    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray
+]:
     """Assemble NYISO's *locational* energy+reserve co-optimization inputs.
 
     The NYISO analogue of :func:`ercot_reserve_coopt_inputs` /
@@ -1367,53 +1369,85 @@ def nyiso_reserve_coopt_inputs(
     downstate zonal LMP — the locational tail the NYCA-aggregate energy LP and
     the post-solve RCPF adder cannot dispatch.
 
+    **Per-product eligibility (reserve classes).** NYISO's reserve products
+    differ in *response speed*, and that bounds which units can supply them.
+    The 10-minute products (10-minute spinning / non-synchronized: a unit must
+    reach output within 10 minutes) can only be met by the **quick-start**
+    fleet — gas combustion turbines and oil peakers that synchronize within ~10
+    minutes (:data:`QUICK_START_FUEL_TYPES`), plus fast storage. The 30-minute
+    products draw on the full dispatchable thermal fleet
+    (:data:`RESERVE_FUEL_TYPES`), which can ramp/start within 30 minutes. This
+    is a *capability* constraint grounded in unit physics, not a fitted
+    requirement: feeding a 10-minute family the same all-thermal mask would let
+    slow combined-cycle headroom satisfy it, understating downstate scarcity.
+    Each family is therefore tagged with a reserve *class* (0 = full
+    dispatchable / 30-minute, 1 = quick-start / 10-minute), and the LP carries a
+    separate per-zone reserve pool per class. The classes are nested (quick-start
+    units are also dispatchable), so a quick-start MW counts toward both its
+    10-minute family and the larger 30-minute requirement — the correct reserve
+    cascade.
+
     The demand curves are constant across hours; the hourly scarcity *incidence*
     comes from the hourly fleet availability in the shared-headroom RHS (a tight
     downstate fleet clears reserve lower on the curve, at a higher price), the
     same design as the ERCOT/PJM co-opt.
 
     Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
-    ordc_step_widths, balance_zone_mask, balance_ordc_counts)``:
+    ordc_step_widths, balance_zone_mask, balance_ordc_counts,
+    balance_reserve_class)``:
 
     * ``reserve_requirement`` — ``(n_families, T)`` per-family hourly RHS (MW).
-    * ``reserve_eligible`` — the generic :data:`RESERVE_FUEL_TYPES` thermal mask.
+    * ``reserve_eligible`` — ``(n_classes, n_gen)`` boolean: row 0 the full
+      :data:`RESERVE_FUEL_TYPES` thermal mask (30-minute products), row 1 the
+      :data:`QUICK_START_FUEL_TYPES` subset (10-minute products).
     * ``ordc_penalties`` / ``ordc_step_widths`` — the family-major concatenated
       shortfall-step penalties ($/MWh) and widths (MW).
     * ``balance_zone_mask`` — ``(n_families, n_zones)`` boolean of each family's
       member zones (which zones' reserve feeds the family's balance row).
     * ``balance_ordc_counts`` — ``(n_families,)`` ORDC steps per family.
+    * ``balance_reserve_class`` — ``(n_families,)`` int: each family's reserve
+      class (0 full dispatchable, 1 quick-start), keyed off whether the product
+      name marks a 10-minute product.
     """
     T = int(hours)
     zone_index = {name: i for i, name in enumerate(zone_names)}
     n_zones = len(zone_names)
 
-    # Build the (region zones, products) family list: the system NYCA tier over
-    # every zone, then each locational region over its member zones. A region
-    # with several nested products (e.g. NYC 30-min and 10-min) contributes one
-    # family per product (different requirement -> different balance row).
-    families: list[tuple[tuple[int, ...], tuple[float, float, float]]] = []
+    # Build the (region zones, product name, product params) family list: the
+    # system NYCA tier over every zone, then each locational region over its
+    # member zones. A region with several nested products (e.g. NYC 30-min and
+    # 10-min) contributes one family per product (different requirement ->
+    # different balance row). The product *name* is retained to assign each
+    # family its reserve class (10-minute -> quick-start).
+    families: list[tuple[tuple[int, ...], str, tuple[float, float, float]]] = []
     nyca_products = tuple(
         getattr(config, "nyiso_rcpf_products", None) or NYISO_RCPF_PRODUCTS
     )
     all_zones = tuple(range(n_zones))
-    for _name, req, crit, pen in nyca_products:
-        families.append((all_zones, (float(req), float(crit), float(pen))))
+    for name, req, crit, pen in nyca_products:
+        families.append((all_zones, str(name), (float(req), float(crit), float(pen))))
     locational = getattr(config, "nyiso_rcpf_locational", None) or NYISO_RCPF_LOCATIONAL
     for region in locational.values():
         member_idx = tuple(zone_index[z] for z in region["zones"] if z in zone_index)
         if not member_idx:
             continue
-        for _name, req, crit, pen in region["products"]:
-            families.append((member_idx, (float(req), float(crit), float(pen))))
+        for name, req, crit, pen in region["products"]:
+            families.append(
+                (member_idx, str(name), (float(req), float(crit), float(pen)))
+            )
 
     n_fam = len(families)
     balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
+    balance_reserve_class = np.zeros(n_fam, dtype=int)
     requirement = np.zeros((n_fam, T), dtype=float)
     pen_list: list[np.ndarray] = []
     wid_list: list[np.ndarray] = []
     counts = np.zeros(n_fam, dtype=int)
-    for f, (member_idx, (req, crit, pen)) in enumerate(families):
+    for f, (member_idx, name, (req, crit, pen)) in enumerate(families):
         balance_zone_mask[f, list(member_idx)] = True
+        # 10-minute products (name carries "10min") draw on the quick-start
+        # class (1); 30-minute and total products on the full class (0).
+        balance_reserve_class[f] = 1 if "10min" in name else 0
         requirement[f, :] = req
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
         pen_list.append(p)
@@ -1422,7 +1456,12 @@ def nyiso_reserve_coopt_inputs(
 
     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
     ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
-    eligible = ercot_reserve_eligible(fleet_arrays)
+    # Two nested eligibility classes: full dispatchable (30-minute) and the
+    # quick-start subset (10-minute). Stack so row index == reserve class.
+    full_elig = ercot_reserve_eligible(fleet_arrays)
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+    eligible = np.vstack([full_elig, quick_elig])
     return (
         requirement,
         eligible,
@@ -1430,4 +1469,5 @@ def nyiso_reserve_coopt_inputs(
         ordc_step_widths.astype(float),
         balance_zone_mask,
         counts,
+        balance_reserve_class,
     )

@@ -421,7 +421,7 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
 
         T = 24
-        req, elig, pens, widths, mask, counts = nyiso_reserve_coopt_inputs(
+        req, elig, pens, widths, mask, counts, fam_class = nyiso_reserve_coopt_inputs(
             self._config(), self._fleet(), T, self._ZONES
         )
         # NYCA(3 products) + East(1) + SENY(1) + NYC(2) = 7 families.
@@ -431,12 +431,21 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         self.assertEqual(counts.shape, (n_fam,))
         self.assertEqual(int(counts.sum()), len(pens))
         self.assertEqual(len(pens), len(widths))
-        np.testing.assert_array_equal(elig, [True, False])  # only the gas unit
+        # Two nested eligibility classes (full dispatchable, quick-start). The
+        # gas-CT is in both; the wind unit in neither.
+        self.assertEqual(elig.shape, (2, 2))
+        np.testing.assert_array_equal(elig[0], [True, False])  # full: gas only
+        np.testing.assert_array_equal(elig[1], [True, False])  # quick-start: gas only
+        # Family reserve class: NYCA 30-min + East/SENY/NYC 30-min on class 0;
+        # the three 10-minute products (NYCA 10-min total/spin, NYC 10-min) on
+        # the quick-start class 1.
+        self.assertEqual(fam_class.shape, (n_fam,))
+        np.testing.assert_array_equal(fam_class, [0, 1, 1, 0, 0, 0, 1])
 
     def test_locational_masks_nest(self):
         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
 
-        _, _, _, _, mask, _ = nyiso_reserve_coopt_inputs(
+        _, _, _, _, mask, _, _ = nyiso_reserve_coopt_inputs(
             self._config(), self._fleet(), 24, self._ZONES
         )
         # The three NYCA families span every zone.
@@ -575,6 +584,79 @@ class TestNyisoLocationalCooptLP(unittest.TestCase):
         self.assertEqual(loc.status, "Optimal")
         # A binding reserve shortfall in the pocket => positive reserve price.
         self.assertGreater(float(np.asarray(loc.reserve_price).mean()), 0.0)
+
+
+class TestReserveClassEligibility(unittest.TestCase):
+    """Per-class reserve eligibility: a 10-minute family restricted to the
+    quick-start fleet cannot be met by slow combined-cycle headroom, so it
+    prices a shortfall the same requirement on the full fleet clears at $0."""
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")  # slow: 30-min only
+        ct_idx = FUEL_TYPE_NAMES.index("gas_ct")  # quick-start: 10-min capable
+        n, T = 2, 4
+        return (
+            FleetArrays(
+                pmax=np.array([1000.0, 300.0]),
+                pmin=np.zeros(n),
+                heat_rate=np.array([5.0, 12.0]),  # CC cheap, CT dear
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=np.array([0, 0]),
+                fuel_type_idx=np.array([cc_idx, ct_idx]),
+                availability=np.ones((n, T)),
+                unit_ids=["cc", "ct"],
+                efficiency_bin=np.zeros(n),
+                plant_code=np.array([1, 2]),
+            ),
+            T,
+        )
+
+    def _solve(self, reserve_class):
+        from market_sim.model.dispatch import solve_dispatch
+        from market_sim.results.scarcity import nyiso_rcpf_product_shortfall_steps
+
+        fleet, T = self._fleet()
+        # Demand 700: the cheap CC carries it (700 of 1000), the CT idles. Full
+        # headroom = (1000-700) + 300 = 600; quick-start headroom = 300 (idle CT).
+        # A 500 MW reserve requirement clears on the full fleet (600 >= 500) but
+        # is 200 MW short on the quick-start fleet alone.
+        demand = np.array([[700.0] * T])
+        pens, widths = nyiso_rcpf_product_shortfall_steps(500.0, 0.0, 500.0, n_ramp=5)
+        # Two eligibility classes: class 0 = both units, class 1 = quick-start CT.
+        eligible = np.array([[True, True], [False, True]])
+        return solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            reserve_requirement=np.full((1, T), 500.0),
+            reserve_eligible=eligible,
+            ordc_penalties=pens,
+            ordc_step_widths=widths,
+            reserve_balance_zone_mask=np.array([[True]]),
+            reserve_balance_ordc_counts=np.array([len(pens)]),
+            reserve_balance_class=np.array([reserve_class]),
+        )
+
+    def test_quick_start_restriction_prices_shortfall(self):
+        full = self._solve(reserve_class=0)  # 30-min: full dispatchable fleet
+        quick = self._solve(reserve_class=1)  # 10-min: quick-start fleet only
+        self.assertEqual(full.status, "Optimal")
+        self.assertEqual(quick.status, "Optimal")
+        # On the full fleet the 500 MW requirement clears on idle CC+CT headroom
+        # at $0; restricted to the 300 MW quick-start fleet it is 200 MW short
+        # and prices on the demand curve.
+        self.assertAlmostEqual(float(np.asarray(full.reserve_price).mean()), 0.0)
+        self.assertGreater(float(np.asarray(quick.reserve_price).mean()), 0.0)
 
 
 if __name__ == "__main__":
