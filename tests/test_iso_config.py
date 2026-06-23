@@ -94,11 +94,12 @@ class TestISOConfig(unittest.TestCase):
         self.assertAlmostEqual(total, 1.0)
 
     def test_miso_rdt_contract_path_present(self):
-        """The defining MISO-Central <-> MISO-South RDT link is present.
+        """The MISO-Central <-> MISO-South RDT path is an asymmetric link pair.
 
         MISO's Midwest and South footprints connect only through the
-        Regional Directional Transfer contract path; the topology must carry
-        it as a link, seeded at the ~3,000 MW north->south RDT limit.
+        Regional Directional Transfer contract path, whose JOA limits are
+        directional: 3,000 MW Central->South and 2,500 MW South->Central. The
+        topology must carry both as opposing one-way links.
         """
         miso = get_iso_config("MISO")
         rdt = [
@@ -106,8 +107,15 @@ class TestISOConfig(unittest.TestCase):
             for link in miso.links
             if {link.from_zone, link.to_zone} == {"MISO-Central", "MISO-South"}
         ]
-        self.assertEqual(len(rdt), 1)
-        self.assertEqual(rdt[0].ttc_mw, 3000.0)
+        self.assertEqual(len(rdt), 2)
+        by_dir = {(link.from_zone, link.to_zone): link for link in rdt}
+        n_to_s = by_dir[("MISO-Central", "MISO-South")]
+        s_to_n = by_dir[("MISO-South", "MISO-Central")]
+        self.assertEqual(n_to_s.ttc_mw, 3000.0)
+        self.assertEqual(s_to_n.ttc_mw, 2500.0)
+        # Both one-way so the net interface flow is the asymmetric RDT limit.
+        self.assertFalse(n_to_s.is_bidirectional)
+        self.assertFalse(s_to_n.is_bidirectional)
 
     def test_miso_wind_export_corridor_present(self):
         """The MISO-North <-> MISO-Central wind-export corridor is present."""
