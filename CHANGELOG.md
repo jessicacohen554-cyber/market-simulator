@@ -51,6 +51,32 @@ separate bidirectional-zone task. Tests: `test_dispatch`
 groups), `test_transmission` (`TestInterfaceGroups` — CAISO config + group
 resolution), `test_caiso_import_hub_prices` (delivered-cost basis).
 
+## 2026-06-23 (scripts/derive_load_shares.py — fix stale ERCOT paths + EAST mis-mapping)
+
+`scripts/derive_load_shares.py ercot` was un-runnable and inconsistent with the
+live model after the W1 data collapse. Two fixes:
+
+- **Paths.** `REF` now points at `data/raw/reference/` (was the pre-collapse
+  `data/reference/`), where the NP6-345-CD `*ACTUALSYSLOADWZNP6345_csv.zip`
+  archives live. `CAISO_TAC_DIR` / `NYISO_DIR` / `NEISO_DIR` likewise repointed
+  from the dead `inputs/raw-data/...` root to `data/raw/zone-specific-demand/`.
+- **EAST → Northeast.** `WZ_TO_ZONE` mapped `EAST -> North` and `ZONES` listed
+  only 6 zones, but the live model (`eia_loader._ERCOT_LOAD_ZONE_GROUPS`) carved
+  the EAST weather zone into its own **Northeast** transmission zone (behind the
+  NE_LOB export limit). Fixed `EAST -> "Northeast"` and added "Northeast" to
+  `ZONES`. `FAR_WEST` stays folded into West (the Far_West/Permian split was
+  rejected — see `docs/ercot-far-west-zone-split-2026-06.md`).
+
+The script now prints 7 transmission zones summing to 1.0. Its clean one-pass
+derivation gives **North 0.3064 / Northeast 0.0351**, vs the committed
+**0.3081 / 0.0335**; every other ERCOT zone matched the script exactly. The
+committed North/Northeast split predated the consistent EAST-carve-out, so the
+**iso_configs ERCOT `load_share` fallbacks were updated to the measured values**
+(North 0.3081→0.3064, Northeast 0.0335→0.0351; South 0.0799→0.0800 absorbs the
+4-dp rounding residual so the literals sum to exactly 1.0). These are
+fallback-only — the native-load hourly shapes drive actual demand — so the
+change is low-risk.
+
 ## 2026-06-22 (calibration page — fleet-wide fossil CO2 metric, activating the C5a gate)
 
 The dashboard's CO2 verdict (`calibration_verdict.score_co2`, criterion **C5a**)
