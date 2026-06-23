@@ -506,6 +506,16 @@ def _calibration_config(
             iso.upper() == "ERCOT"
             and os.environ.get("ERCOT_GAS_HAIRCUT", "").lower() in ("1", "true", "on")
         ),
+        # MEASURED per-unit fuel correction: EIA-860 Petroleum-Liquids (DFO)
+        # combustion-turbine peakers (e.g. Morgan Creek 3492) sit in the gas
+        # CT_PEAKER class on the bin sheet and otherwise burn cheap Waha gas at
+        # baseload. ERCOT_OIL_PRIMARY=1 reprices their gas_ct tranches on
+        # distillate (OIL_PRICE_PER_MMBTU), keeping their CT_PEAKER group — a
+        # structural data-correctness fix from the EIA-860 energy source, not a
+        # residual adder. See market_sim.data.fleet.oil_primary_bin_plants.
+        oil_primary_bin_fuel=(
+            os.environ.get("ERCOT_OIL_PRIMARY", "").lower() in ("1", "true", "on")
+        ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is
