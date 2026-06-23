@@ -878,12 +878,14 @@ def test_cc_7000_hr_at_18_per_ton_uplift_5_to_7_per_mwh():
 
 
 def test_winter_gas_basis_absent_falls_back_to_923(tmp_path):
-    """NYISO U4 not landed: no basis rows resolves to None (fall back)."""
+    """Forward years (no measured basis row) resolve to None (fall back)."""
     config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
-    # The in-repo CSV carries no NYISO rows (only the NEISO/Algonquin leg
-    # is filled), so the default path returns None for NYISO.
-    assert load_winter_gas_basis(config, 2023) is None
-    # An absent path is likewise None (forward years / other ISOs).
+    # The in-repo CSV now carries every ISO's measured EIA citygate basis for
+    # the backcast years (2015-2026), so a forward year is the genuine "absent"
+    # case: no basis row -> None -> the gas path falls back to the measured
+    # ISO-month 923 series.
+    assert load_winter_gas_basis(config, 2035) is None
+    # An absent path is likewise None (a tree with no basis CSV at all).
     missing = tmp_path / "nope.csv"
     assert load_winter_gas_basis(config, 2023, path=missing) is None
 
@@ -916,8 +918,8 @@ def test_hub_basis_overlay_replaces_covered_months(tmp_path):
     """Covered months are repriced at HH-month + basis; others untouched.
 
     A synthetic basis CSV with a single January 2024 row (+$10 over the
-    measured Jan-2024 Henry Hub of $3.18) must reprice every gas unit's
-    January hours to $13.18 while February (no row) and the coal row keep
+    measured Jan-2024 Henry Hub of $3.1762) must reprice every gas unit's
+    January hours to $13.1762 while February (no row) and the coal row keep
     their prior prices. With the flag off the overlay is a strict no-op.
     """
     basis_csv = tmp_path / "basis.csv"
@@ -947,7 +949,7 @@ def test_hub_basis_overlay_replaces_covered_months(tmp_path):
     )
     jan = slice(0, 31 * 24)
     feb = slice(31 * 24, hours)
-    np.testing.assert_allclose(fuel_prices[gas_rows, jan], 3.18 + 10.0)
+    np.testing.assert_allclose(fuel_prices[gas_rows, jan], 3.1762 + 10.0)
     np.testing.assert_allclose(fuel_prices[gas_rows, feb], 4.0)
     # Non-gas generators never see the hub price.
     np.testing.assert_allclose(fuel_prices[~gas_rows], before[~gas_rows])
@@ -989,7 +991,10 @@ def test_neiso_hub_basis_overlay_winter_blowout_real_data():
     assert monthly[0] > 15.0  # Jan-25: 4.13 HH + 12.79 basis = 16.92
     assert monthly[1] > 13.0  # Feb-25: 14.62
     assert monthly[11] > 13.0  # Dec-25: 14.90
-    assert np.isnan(monthly[7])  # Aug-25 missing upstream: falls back
+    # The 2025 ISO-NE index is now complete (the Jul/Sep gap was interpolated
+    # from the bracketing months), so every month carries a measured hub level.
+    assert not np.isnan(monthly).any()
+    assert monthly[7] < 3.5  # Aug-25 is a cheap shoulder month (no scarcity)
     assert np.nanmin(monthly) < 3.0  # shoulder months stay cheap
 
     fleet = _cc_fleet(hours=_HOURS)
@@ -1094,8 +1099,8 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     """The daily overlay keeps the monthly mean but injects a cold-day spike.
 
     With ``gas_hub_basis_daily`` on, January's gas price is no longer the flat
-    monthly hub ($3.18 HH + $10 basis = $13.18) but a daily series whose mean
-    over the month still equals $13.18 (so the annual gas burn is unchanged)
+    monthly hub ($3.1762 HH + $10 basis = $13.1762) but a daily series whose mean
+    over the month still equals $13.1762 (so the annual gas burn is unchanged)
     while the synthetic cold day (the demand peak) is repriced well above it —
     the blowout a flat plateau can never produce. The basis redistribution is
     convex in demand, so the peak day carries the spike.
@@ -1134,13 +1139,13 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     )
     gas_jan = fuel_prices[gas_rows]  # (n_gas, 744)
     # Mean over the month is exactly the flat monthly hub (mean-preserving).
-    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.18 + 10.0, rtol=1e-6)
+    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.1762 + 10.0, rtol=1e-6)
     # Daily resolution: the series is not flat, and the cold day (day 15)
     # is repriced above the monthly mean.
     daily = gas_jan[0].reshape(31, 24).mean(axis=1)
     assert daily.std() > 0.5
     assert daily[14] == daily.max()
-    assert daily[14] > 13.18
+    assert daily[14] > 13.1762
 
     # Demand unavailable -> falls back to the flat monthly overlay.
     monkeypatch.setattr(
@@ -1148,7 +1153,7 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     )
     flat = np.full((fleet.n_gen, hours), 4.0)
     apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
-    np.testing.assert_allclose(flat[gas_rows], 13.18)
+    np.testing.assert_allclose(flat[gas_rows], 3.1762 + 10.0)
 
 
 def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
@@ -1211,14 +1216,23 @@ def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
     np.testing.assert_allclose(flat[gas_rows], 13.0)
 
 
-def test_hub_basis_overlay_noop_for_other_isos():
-    """ERCOT/PJM/CAISO fuel prices are unchanged by the overlay machinery.
+def test_hub_basis_overlay_off_by_default_for_other_isos():
+    """The hub-basis overlay never touches a default ERCOT/PJM/CAISO run.
 
-    The committed basis CSV carries only NEISO rows, and the flag defaults
-    off — both layers independently leave the other ISOs' resolver output
-    identical.
+    The committed basis CSV now carries every ISO's measured EIA citygate basis
+    (the NYISO/citygate rebuild backfilled all seven ISOs, not just NEISO), so
+    the overlay is no longer NEISO-only. The keeper-safety invariant is that it
+    stays *off by default*: a default resolve is byte-identical to one with the
+    flag explicitly off, and only gas rows ever move when it is turned on. With
+    the flag on, gas is repriced to that ISO's measured citygate (HH + basis),
+    so it is no longer a no-op — that is the intended measured-data behaviour,
+    not a leak from the NEISO leg.
     """
     fleet = _sample_fleet(hours=24)
+    gas_rows = np.isin(
+        fleet.fuel_type_idx,
+        (FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]),
+    )
     for iso in ("ERCOT", "PJM", "CAISO"):
         base = ScenarioConfig(
             iso=iso,
@@ -1228,10 +1242,19 @@ def test_hub_basis_overlay_noop_for_other_isos():
             hours=24,
         )
         default = resolve_fuel_prices(base, fleet, 2024)
+        explicit_off = resolve_fuel_prices(
+            base.with_overrides(gas_hub_basis_overlay=False), fleet, 2024
+        )
+        # Off by default: the flag changes nothing for a keeper run.
+        np.testing.assert_array_equal(default, explicit_off)
+
         forced = resolve_fuel_prices(
             base.with_overrides(gas_hub_basis_overlay=True), fleet, 2024
         )
-        np.testing.assert_array_equal(default, forced)
+        # Flag on reprices the gas units to the measured citygate (not a no-op)
+        # but never touches non-gas rows.
+        assert not np.array_equal(default[gas_rows], forced[gas_rows])
+        np.testing.assert_array_equal(default[~gas_rows], forced[~gas_rows])
 
 
 def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
