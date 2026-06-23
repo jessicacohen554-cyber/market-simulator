@@ -932,6 +932,15 @@ def inject_interchange_shape(
     from market_sim.data.eia_loader import measured_interchange_envelope
     from market_sim.data.fleet import FUEL_TYPE_MAP
 
+    # The envelope percentile sets how tightly the measured diurnal interchange
+    # caps the priced node. Under the bidirectional intertie (gross == net), the
+    # net-import envelope IS the deliverable import, so the import cap can ride a
+    # higher percentile (fatter overnight tail) without re-admitting the midday
+    # imports the (near-zero) midday envelope already excludes. Overridable per
+    # direction for the bidir sweep; defaults to the passed ``percentile`` so the
+    # legacy export-only path is byte-identical.
+    import_pct = float(_os.environ.get("INTERCHANGE_SHAPE_IMPORT_PCT", percentile))
+    export_pct = float(_os.environ.get("INTERCHANGE_SHAPE_EXPORT_PCT", percentile))
     import_code = FUEL_TYPE_MAP["import"]
     is_node = fleet_arrays.fuel_type_idx == import_code
     imp_rows = np.flatnonzero(is_node & (fleet_arrays.pmax > 0.0))
@@ -942,10 +951,17 @@ def inject_interchange_shape(
         return False
 
     hours = int(fleet_arrays.availability.shape[1])
-    env = measured_interchange_envelope(iso, year, hours, percentile)
+    env = measured_interchange_envelope(iso, year, hours, import_pct)
     if env is None:
         return False
-    import_cap, export_cap = env
+    import_cap, _ = env
+    if export_pct == import_pct:
+        _, export_cap = env
+    else:
+        env_exp = measured_interchange_envelope(iso, year, hours, export_pct)
+        if env_exp is None:
+            return False
+        _, export_cap = env_exp
 
     if imp_rows.size and not export_only:
         import_total = float(fleet_arrays.pmax[imp_rows].sum())

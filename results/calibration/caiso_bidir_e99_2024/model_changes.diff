@@ -1,0 +1,61 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 8ac5235..0d7a2fa 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -1042,6 +1042,7 @@ def run_year(
+     caiso_import_hub_prices: bool | None = None,
+     caiso_import_gas_coupling: bool | None = None,
+     caiso_import_solar_shape: bool | None = None,
++    caiso_bidir_intertie: bool | None = None,
+     nyiso_local_selfsupply: bool | None = None,
+     nyiso_firm_imports: bool | None = None,
+     gas_hub_basis_overlay: bool | None = None,
+@@ -1146,6 +1147,8 @@ def run_year(
+         config = config.with_overrides(
+             caiso_import_solar_shape=caiso_import_solar_shape
+         )
++    if caiso_bidir_intertie is not None:
++        config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
+     if nyiso_local_selfsupply is not None:
+         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
+     if nyiso_firm_imports is not None:
+diff --git a/src/market_sim/model/transmission.py b/src/market_sim/model/transmission.py
+index fd1a124..529a704 100644
+--- a/src/market_sim/model/transmission.py
++++ b/src/market_sim/model/transmission.py
+@@ -932,6 +932,15 @@ def inject_interchange_shape(
+     from market_sim.data.eia_loader import measured_interchange_envelope
+     from market_sim.data.fleet import FUEL_TYPE_MAP
+ 
++    # The envelope percentile sets how tightly the measured diurnal interchange
++    # caps the priced node. Under the bidirectional intertie (gross == net), the
++    # net-import envelope IS the deliverable import, so the import cap can ride a
++    # higher percentile (fatter overnight tail) without re-admitting the midday
++    # imports the (near-zero) midday envelope already excludes. Overridable per
++    # direction for the bidir sweep; defaults to the passed ``percentile`` so the
++    # legacy export-only path is byte-identical.
++    import_pct = float(_os.environ.get("INTERCHANGE_SHAPE_IMPORT_PCT", percentile))
++    export_pct = float(_os.environ.get("INTERCHANGE_SHAPE_EXPORT_PCT", percentile))
+     import_code = FUEL_TYPE_MAP["import"]
+     is_node = fleet_arrays.fuel_type_idx == import_code
+     imp_rows = np.flatnonzero(is_node & (fleet_arrays.pmax > 0.0))
+@@ -942,10 +951,17 @@ def inject_interchange_shape(
+         return False
+ 
+     hours = int(fleet_arrays.availability.shape[1])
+-    env = measured_interchange_envelope(iso, year, hours, percentile)
++    env = measured_interchange_envelope(iso, year, hours, import_pct)
+     if env is None:
+         return False
+-    import_cap, export_cap = env
++    import_cap, _ = env
++    if export_pct == import_pct:
++        _, export_cap = env
++    else:
++        env_exp = measured_interchange_envelope(iso, year, hours, export_pct)
++        if env_exp is None:
++            return False
++        _, export_cap = env_exp
+ 
+     if imp_rows.size and not export_only:
+         import_total = float(fleet_arrays.pmax[imp_rows].sum())
