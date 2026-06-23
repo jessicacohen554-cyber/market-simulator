@@ -1333,7 +1333,18 @@ def apply_ercot_zonal_gas_basis(
     zone_spread``. When the electric-power series is unavailable (forward years)
     the level term is 0 and this degrades to the prior scalar-anchored mean-zero
     behaviour. The shift is floored at a small positive so a deep negative Waha
-    basis cannot drive the delivered price below zero. Runs after the F923
+    basis cannot drive the delivered price below zero.
+
+    When ``config.ercot_gas_delivered_floor_basis`` is set, the per-zone spread is
+    additionally floored at that value (the cited measured Waha *delivered* basis,
+    ``-0.50``) before the level correction: the raw West/Panhandle basis is a Waha
+    *hub* basis (the takeaway-constrained wellhead price, negative ~42% of days),
+    but a power plant pays *delivered* gas at the burner tip — intrastate transport
+    + fuel retention + minimum commodity on top — so its delivered discount has a
+    transport-grounded floor. Without it the West/Permian gas units offer ~$0/MWh
+    and run baseload (the CT_PEAKER over-run); the measured TX
+    delivered-to-electric-power level confirms no TX plant paid near $0 delivered.
+    Runs after the F923
     plant-monthly overwrite and before :func:`apply_dual_fuel_pricing`, so oil
     parity still caps any winter spike.
 
@@ -1366,6 +1377,23 @@ def apply_ercot_zonal_gas_basis(
     total_w = float(weights.sum())
     weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
     zone_spread = gen_basis - weighted_mean
+    # DELIVERED-GAS FLOOR: the raw West/Panhandle basis is a Waha *hub*
+    # (pooling-point) basis — the takeaway-constrained price producers offload
+    # associated gas at, negative ~42% of days in 2024. A power plant buys
+    # *delivered* gas at the burner tip (intrastate transport + fuel retention +
+    # minimum commodity on top), so its delivered discount cannot exceed the cited
+    # measured Waha *delivered* basis. Flooring the per-zone spread at that value
+    # (GAS_BASIS_DIFFERENTIAL["ERCOT"] = -0.50) keeps the West/Permian gas units
+    # (Morgan Creek, Laredo, Permian Basin, Ector County) from offering ~$0/MWh and
+    # running baseload (the CT_PEAKER over-run); the measured TX
+    # delivered-to-electric-power level ($2.11/MMBtu in 2024) confirms no TX plant
+    # paid near $0 delivered. Forward-defensible (regenerates per year, tracks HH);
+    # zones already above the floor (North, Houston, ...) are untouched, so only
+    # the unphysical deep-negative West tail is truncated. Off unless the basis is
+    # explicitly set on the config.
+    floor_basis = getattr(config, "ercot_gas_delivered_floor_basis", None)
+    if floor_basis is not None:
+        zone_spread = np.maximum(zone_spread, float(floor_basis))
     # LEVEL correction: replace the flat -0.50 scalar already in the price with the
     # measured TX electric-power delivered basis. 0.0 if the series is unavailable
     # (forward years) -> pure mean-zero spread, the prior behaviour.
@@ -1379,7 +1407,7 @@ def apply_ercot_zonal_gas_basis(
     fuel_prices[gas_rows, :] = floored
     logger.info(
         "ERCOT zonal gas basis (%d): %d gas units; level %+.2f -> measured EP "
-        "%+.2f (corr %+.2f), zonal spread %.2f..%.2f $/MMBtu",
+        "%+.2f (corr %+.2f), zonal spread %.2f..%.2f $/MMBtu%s",
         year,
         gas_rows.size,
         scalar,
@@ -1387,6 +1415,11 @@ def apply_ercot_zonal_gas_basis(
         level_corr,
         float(zone_spread.min()),
         float(zone_spread.max()),
+        (
+            f" (delivered floor {float(floor_basis):+.2f})"
+            if floor_basis is not None
+            else ""
+        ),
     )
 
 

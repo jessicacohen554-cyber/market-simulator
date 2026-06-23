@@ -1345,6 +1345,81 @@ def test_nyiso_zonal_gas_basis_skips_other_isos():
     np.testing.assert_array_equal(prices, base)
 
 
+_ERCOT_ZONES = ["West", "Panhandle", "North", "Northeast", "Houston"]
+
+
+def _ercot_gas_fleet(hours: int = 48):
+    """Two identical gas CTs, one in the West (Waha) zone and one in North."""
+    generators = [
+        Generator(
+            unit_id="GAS_WEST",
+            name="Permian CT",
+            zone="West",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_NORTH",
+            name="DFW CT",
+            zone="North",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _ERCOT_ZONES, hours=hours)
+
+
+def test_ercot_gas_delivered_floor_lifts_west_only():
+    """The delivered floor truncates the deep-negative West Waha tail only.
+
+    The raw West basis is a Waha *hub* basis (deeply negative); a power plant pays
+    *delivered* gas, so its discount cannot exceed the cited measured Waha
+    delivered basis. With the floor on, the West unit's delivered price rises (the
+    -2.19 hub spread is truncated at -0.50) while the North unit — already above
+    the floor — is byte-identical to the unfloored zonal result.
+    """
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 2.19)  # ~2024 Henry Hub
+    west = fleet.unit_ids.index("GAS_WEST")
+    north = fleet.unit_ids.index("GAS_NORTH")
+
+    cfg_on = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    unfloored = base.copy()
+    apply_ercot_zonal_gas_basis(unfloored, fleet, cfg_on, 2024)
+
+    floored = base.copy()
+    apply_ercot_zonal_gas_basis(
+        floored,
+        fleet,
+        cfg_on.with_overrides(ercot_gas_delivered_floor_basis=-0.50),
+        2024,
+    )
+
+    # West delivered price is lifted by the floor; North is untouched.
+    assert floored[west, 0] > unfloored[west, 0]
+    np.testing.assert_allclose(floored[north, 0], unfloored[north, 0])
+    # West is no longer near zero — it offers above a transport-grounded floor.
+    assert floored[west, 0] > 1.0
+
+
+def test_ercot_gas_delivered_floor_noop_without_zonal_gas():
+    """The floor is inert unless the zonal-gas overlay itself is enabled."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 2.19)
+    cfg = ScenarioConfig(
+        iso="ERCOT", hours=hours, ercot_gas_delivered_floor_basis=-0.50
+    )
+    prices = base.copy()
+    apply_ercot_zonal_gas_basis(prices, fleet, cfg, 2024)
+    np.testing.assert_array_equal(prices, base)  # zonal-gas flag off -> no-op
+
+
 def test_nyiso_monthly_ttc_expands_to_seasonal_envelope():
     """The Central-East TTC follows the measured monthly envelope per hour.
 
