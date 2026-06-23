@@ -6,27 +6,10 @@ ISO using Pydantic models, plus a factory for retrieving them by name.
 
 from __future__ import annotations
 
-import os
-
 from pydantic import BaseModel, Field
 
 # Tolerance for the load-share sum check; absorbs floating-point rounding.
 _LOAD_SHARE_TOL = 1e-6
-
-
-def _ttc_env(name: str, default: float) -> float:
-    """Return a TTC override from the environment, or ``default``.
-
-    Diagnostic hook for sweeping a single interface limit without editing the
-    config (e.g. ``FW_EXPORT_TTC`` / ``FW_IMPORT_TTC`` for the Far_West Permian
-    tie). Off by default so the committed topology is unchanged. The swept value
-    is a *probe* only -- a keeper limit must be a measured transmission value,
-    never one dialed to a dispatch residual (claude.md #1/#11/#12).
-    """
-    raw = os.environ.get(name)
-    if raw is None:
-        return default
-    return float(raw)
 
 
 class Zone(BaseModel):
@@ -116,7 +99,7 @@ def _ercot_config() -> ISOConfig:
     annual-average of those hourly shares reproduces the static shares below to
     within ~1 pt, so the levels are unchanged.
     """
-    # Weather zone -> transmission zone: Far_West <- FAR_WEST; West <- WEST;
+    # Weather zone -> transmission zone: West <- FAR_WEST + WEST;
     # North <- NORTH_C + NORTH; Northeast <- EAST; Houston <- COAST;
     # South_Central <- SOUTH_C; South <- SOUTHERN.
     #
@@ -128,30 +111,11 @@ def _ercot_config() -> ISOConfig:
     # six-zone model let all of that pour into North as if unconstrained, over-
     # running Martin Lake (PRB) and mis-dispatching the NE CCs; the explicit
     # zone + NE_LOB link makes the trapped-generation congestion physical.
-    #
-    # Far_West (the Permian Basin / FAR_WEST weather zone) is split out of the
-    # old West zone for the mirror-image reason: it is a huge *load* pocket that
-    # is generation-poor and import-dependent, not a generation backwater. ERCOT
-    # NP6-345 native load puts FAR_WEST at 57.8 TWh (12.1% of ERCOT -- the ~3rd-
-    # largest zone, the oil-&-gas electrification boom) while ERCOT's Permian
-    # Basin Reliability Plan Study (HB 5066; filed PUCT Proj. 55718, Jul 2024)
-    # measures only ~2,800 MW of local conventional generation in the basin
-    # ("Permian Basin lacks local conventional generation compared to the North
-    # Central and Coast Weather Zones"). The old single West zone pooled this
-    # 57.8 TWh load+gen pocket with the 11.8 TWh WEST zone (Abilene/San
-    # Angelo/CREZ) and let the cheap Waha-gas Permian CTs reach the WESTEX export
-    # interface freely, so they ran baseload and exported -- backwards from the
-    # real basin, which *imports* the bulk of its load. The explicit Far_West
-    # node, carrying its own measured 57.8 TWh load behind the Permian export tie
-    # (the directional links below), makes the trapped-load / import-dependence
-    # physical. Load shares re-derived together from NP6-345 (all eight zones in
-    # one pass) by scripts/derive_load_shares.py so they sum to 1.0.
     zones = [
-        Zone(name="Far_West", iso="ERCOT", load_share=0.1211),
-        Zone(name="West", iso="ERCOT", load_share=0.0283),
+        Zone(name="West", iso="ERCOT", load_share=0.1494),
         Zone(name="Panhandle", iso="ERCOT", load_share=0.0),
-        Zone(name="North", iso="ERCOT", load_share=0.3065),
-        Zone(name="Northeast", iso="ERCOT", load_share=0.0351),
+        Zone(name="North", iso="ERCOT", load_share=0.3081),
+        Zone(name="Northeast", iso="ERCOT", load_share=0.0335),
         Zone(name="Houston", iso="ERCOT", load_share=0.2649),
         Zone(name="South_Central", iso="ERCOT", load_share=0.1642),
         Zone(name="South", iso="ERCOT", load_share=0.0799),
@@ -184,34 +148,7 @@ def _ercot_config() -> ISOConfig:
     # 17.4%), is now modeled explicitly as the Northeast->North link below.
     # Sources: ERCOT NP6-86-CD SCED Shadow Prices and Binding Transmission
     # Constraints (2023-2024); ERCOT 2022 Constraints and Needs Report.
-    #
-    # Far_West (Permian) sits in series *behind* West: Permian generation reaches
-    # the load centers via Far_West -> West -> {North, South_Central} (WESTEX),
-    # and Permian load is served by imports over the same tie. The basin is
-    # import-dependent (~2,800 MW local conventional gen vs a ~10 GW backcast
-    # peak; ERCOT Permian Basin Reliability Plan), so the interface is modeled as
-    # a *pair of one-way links* (is_bidirectional=False) to give it an asymmetric
-    # rating: a generous West->Far_West import leg (the basin must pull in the
-    # bulk of its 57.8 TWh) and a separate Far_West->West export leg. Both legs
-    # start at the WESTEX-class ~10 GW stability limit -- deliberately loose, so
-    # this build isolates the *load-reassignment* effect of the split (the 57.8
-    # TWh now served locally) before any transmission cap is added. NOTE: a
-    # measured intra-Permian export cap (the NP6-86 SCED GTC analogue of NE_LOB)
-    # is the open data task; the export leg is the lever to tighten to a measured
-    # value -- it must NOT be dialed to the CT residual (claude.md #1/#11/#12).
     links = [
-        TransferLink(
-            from_zone="West",
-            to_zone="Far_West",
-            ttc_mw=_ttc_env("FW_IMPORT_TTC", 10000.0),
-            is_bidirectional=False,
-        ),
-        TransferLink(
-            from_zone="Far_West",
-            to_zone="West",
-            ttc_mw=_ttc_env("FW_EXPORT_TTC", 10000.0),
-            is_bidirectional=False,
-        ),
         TransferLink(from_zone="West", to_zone="North", ttc_mw=7300.0),
         TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2700.0),
         TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2680.0),
