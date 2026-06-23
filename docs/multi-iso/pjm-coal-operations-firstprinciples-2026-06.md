@@ -208,14 +208,18 @@ $75-200 LMP level needs the **energy+reserve co-optimization** lever
 Sequence: build layers 1-3 (structure), then co-opt (price), then retune levels.
 
 **Data dependency for implementation:** the take-or-pay deriver + scenario wiring
-are now built (`derive_coal_takeorpay.py`, `coal_takeorpay_share`,
+are built (`derive_coal_takeorpay.py`, `coal_takeorpay_share`,
 `coal_takeorpay_from_data`, default off; `_RENAME` extended to keep `Purchase
-Type`). The only remaining step is running the deriver where the raw `f923_*.zip`
-archives live (they are **not present in this container**), then re-solving PJM
-2023-25 with the flag on. Until then the share is data-blocked; do NOT substitute
-a residual-tuned discount (that is the current sigmoid). The floor *re-sizing* to
-the CEMS online-Pmin + the SRMC-bid synchronization layer (rebuild steps 2-3)
-remain unbuilt — this session implemented step 1 (take-or-pay) only.
+Type`) **and the per-ISO `coal_takeorpay_<ISO>.csv` artifacts are now derived**
+(EIA-923 2023-25, all 7 ISOs). PJM has the **lowest** contracted share of any ISO
+— tons-weighted **86%** (mean 73%) vs MISO 97% / CAISO 96% — with real per-plant
+spread the flat sigmoid cannot capture: Gavin/Harrison/Clifty 100% contracted,
+Spurlock 62%, Mt Storm 78%, Miami Fort (2832) **0% (all spot)**. This empirically
+confirms Thread B: PJM bituminous carries more avoidable spot coal, consistent
+with it being the swing fuel. The remaining step is to **re-solve PJM 2023-25**
+with `coal_takeorpay_from_data=True` (paired with the floor re-sizing + price
+formation, rebuild steps 2-3, still unbuilt). Do NOT substitute a residual-tuned
+discount (the current sigmoid) now that the measured share exists.
 
 ---
 
