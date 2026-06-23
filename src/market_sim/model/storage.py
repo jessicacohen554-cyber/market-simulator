@@ -353,9 +353,12 @@ def resolve_pumped_storage_dispatch_adder(
 
     An explicit ``config.pumped_storage_dispatch_adder`` wins. ``None`` (the
     field default, or no config at all) falls back to the per-ISO calibrated
-    default in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO` — PJM $10; ISOs
-    without a calibrated entry (e.g. CAISO) resolve to 0.0 until their own
-    calibration says otherwise.
+    default in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`. That map is
+    currently empty — PJM's former $10 adder was retired (it had been fitted to
+    a mis-measured PS *net*-generation figure, not a real reserve cost; see the
+    constant's comment and docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md) —
+    so every ISO without an explicit override resolves to 0.0, i.e. pumped
+    storage arbitrages on its physical RTE like batteries.
     """
     explicit = (
         getattr(config, "pumped_storage_dispatch_adder", None)
