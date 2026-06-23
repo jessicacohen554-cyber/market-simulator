@@ -2625,6 +2625,13 @@ NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
 #     measured G–K reserve prices (process_nyiso_as.py), not fitted to them.
 #     TODO(SENY-MW): replace 1,100 with the published Rate Schedule 4 SENY
 #     30-minute requirement once sourced (pull NYISO MST RS4 / Potomac SOM).
+#     SOURCING NOTE (2026-06): the primary docs carrying the exact SENY MW
+#     (NYISO "Locational Reserve Requirements" PDF, Potomac NYISO SOM, the S&P
+#     2019 SENY-launch article, NYISO MST RS4) are all PDF/binary or 403-gated
+#     and would not render in the calibration container, so the exact figure
+#     could not be pulled here. The nested bracket 1,000 (NYC J 30-min,
+#     reconfirmed via NYISO MST) < SENY (G–K) < 1,200 (East F–K) still holds;
+#     1,100 stays as the documented midpoint until a renderable source lands.
 # critical_mw is 0 for every locational product (the demand curve ramps
 # linearly from $0 at the requirement to the maximum penalty at zero
 # reserves) — the documented stand-in for the published stepped curve, the
