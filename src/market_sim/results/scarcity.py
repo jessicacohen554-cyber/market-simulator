@@ -63,6 +63,9 @@ import numpy as np
 from scipy.special import ndtr
 
 from market_sim.config.constants import (
+    MISO_REGULATING_RESERVE_MW,
+    MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
+    MISO_RESERVE_DEMAND_CURVE_MAX,
     NYISO_RCPF_LOCATIONAL,
     NYISO_RCPF_PRODUCTS,
     ORDC_FLOOR_START_HOUR_2023,
@@ -1289,6 +1292,59 @@ def pjm_reserve_coopt_inputs(
 
     requirement = req + outer_offset
     eligible = ercot_reserve_eligible(fleet_arrays)
+    return requirement, eligible, penalties.astype(float), widths.astype(float)
+
+
+def miso_reserve_coopt_inputs(
+    config, fleet_arrays: FleetArrays, hours: int, n_ramp: int = 8
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Assemble MISO's market-wide energy+reserve co-optimization inputs.
+
+    The MISO analogue of :func:`pjm_reserve_coopt_inputs`. MISO co-optimizes
+    energy with its market-wide operating reserves (Regulating + Contingency)
+    against a VOLL-anchored Reliability-Based Demand Curve; when cleared
+    market-wide reserves fall below the requirement the demand curve sets the
+    reserve clearing price, and through co-optimization that dual lifts the
+    energy LMP (the scarcity tail the perfect-foresight energy-only LP cannot
+    produce). A **single market-wide reserve family** — footprint-wide clearing
+    like PJM's RTO-wide reserve, not locational.
+
+    Requirement = MSSC (most severe single contingency, fleet-derived via
+    :func:`largest_single_contingency_mw`, so it is forecast-responsive and not a
+    measured replay) + :data:`MISO_REGULATING_RESERVE_MW`. The demand curve ramps
+    linearly from $0 at the requirement to :data:`MISO_RESERVE_DEMAND_CURVE_MAX`
+    at the critical reserve level (:data:`MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW`),
+    discretized into ascending shortfall steps (the same demand-curve
+    discretizer the NYISO/NEISO families use). Nothing is fitted to the LMP
+    residual — the requirement basis and curve anchors trace to MISO BPM-002 /
+    Schedule 28.
+
+    Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
+    ordc_step_widths)`` — the PJM signature (single system-wide family):
+
+    * ``reserve_requirement`` — ``(T,)`` hourly reserve-balance RHS (MW),
+      ``MSSC + regulation`` (flat: a near-constant reliability quantity).
+    * ``reserve_eligible`` — the generic :data:`RESERVE_FUEL_TYPES` thermal mask
+      (:func:`ercot_reserve_eligible`, ISO-agnostic).
+    * ``ordc_penalties`` / ``ordc_step_widths`` — the demand curve as ascending
+      shortfall steps (cheapest band first), summing in width to the requirement
+      so the balance row stays feasible even at zero cleared reserve.
+    """
+    eligible = ercot_reserve_eligible(fleet_arrays)
+    mssc = largest_single_contingency_mw(
+        fleet_arrays.pmax,
+        availability=fleet_arrays.availability,
+        reserve_mask=eligible,
+        plant_code=fleet_arrays.plant_code,
+    )
+    req = float(mssc) + MISO_REGULATING_RESERVE_MW
+    penalties, widths = nyiso_rcpf_product_shortfall_steps(
+        req,
+        MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
+        MISO_RESERVE_DEMAND_CURVE_MAX,
+        n_ramp=n_ramp,
+    )
+    requirement = np.full(int(hours), req, dtype=float)
     return requirement, eligible, penalties.astype(float), widths.astype(float)
 
 

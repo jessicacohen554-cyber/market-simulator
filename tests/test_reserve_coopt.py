@@ -659,5 +659,143 @@ class TestReserveClassEligibility(unittest.TestCase):
         self.assertGreater(float(np.asarray(quick.reserve_price).mean()), 0.0)
 
 
+class TestMisoReserveCooptInputs(unittest.TestCase):
+    """The MISO market-wide (system-wide) co-optimization input assembler."""
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        nuc_idx = FUEL_TYPE_NAMES.index("nuclear")
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        wind_idx = FUEL_TYPE_NAMES.index("wind")
+        n, T = 3, 24
+        return FleetArrays(
+            pmax=np.array([1300.0, 800.0, 500.0]),  # nuclear is the MSSC
+            pmin=np.zeros(n),
+            heat_rate=np.array([0.0, 7.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 0]),
+            fuel_type_idx=np.array([nuc_idx, cc_idx, wind_idx]),
+            availability=np.ones((n, T)),
+            unit_ids=["nuc", "cc", "w"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 200, 300]),
+        )
+
+    def _config(self):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(iso="MISO", weather_year=2024)
+
+    def test_requirement_is_mssc_plus_regulation(self):
+        from market_sim.config.constants import MISO_REGULATING_RESERVE_MW
+        from market_sim.results.scarcity import miso_reserve_coopt_inputs
+
+        T = 24
+        req, elig, pens, widths = miso_reserve_coopt_inputs(
+            self._config(), self._fleet(), T
+        )
+        # MSSC = the largest reserve-eligible plant (1300 MW nuclear); the wind
+        # unit is excluded. Requirement = MSSC + regulation, flat across hours.
+        self.assertEqual(req.shape, (T,))
+        self.assertTrue(np.allclose(req, 1300.0 + MISO_REGULATING_RESERVE_MW))
+        # Single eligibility class (the generic thermal mask): nuclear + gas, not
+        # wind.
+        self.assertEqual(elig.shape, (3,))
+        np.testing.assert_array_equal(elig, [True, True, False])
+
+    def test_demand_curve_steps_are_well_formed(self):
+        from market_sim.config.constants import (
+            MISO_REGULATING_RESERVE_MW,
+            MISO_RESERVE_DEMAND_CURVE_MAX,
+        )
+        from market_sim.results.scarcity import miso_reserve_coopt_inputs
+
+        _, _, pens, widths = miso_reserve_coopt_inputs(
+            self._config(), self._fleet(), 24
+        )
+        self.assertEqual(len(pens), len(widths))
+        # Widths span the full requirement so the balance row stays feasible at
+        # zero cleared reserve.
+        self.assertAlmostEqual(
+            float(widths.sum()), 1300.0 + MISO_REGULATING_RESERVE_MW, places=4
+        )
+        # Penalties ascend cheapest-first and are capped at the VOLL-anchored max.
+        self.assertTrue(np.all(np.diff(pens) >= -1e-9))
+        self.assertLessEqual(float(pens.max()), MISO_RESERVE_DEMAND_CURVE_MAX + 1e-9)
+
+
+class TestMisoReserveCooptLP(unittest.TestCase):
+    """MISO system-wide co-opt in the LP: slack reserve clears at $0, a tight
+    reserve prices the shortfall and lifts the energy LMP (the runner MISO
+    branch passes a single (T,) requirement and (n_gen,) eligibility)."""
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        n, T = 2, 4
+        return (
+            FleetArrays(
+                pmax=np.array([1000.0, 1000.0]),  # MSSC = 1000 -> req = 1400
+                pmin=np.zeros(n),
+                heat_rate=np.array([7.0, 7.0]),
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=np.array([0, 0]),
+                fuel_type_idx=np.array([cc_idx, cc_idx]),
+                availability=np.ones((n, T)),
+                unit_ids=["cc0", "cc1"],
+                efficiency_bin=np.zeros(n),
+                plant_code=np.array([1, 2]),
+            ),
+            T,
+        )
+
+    def _solve(self, demand_mw):
+        from market_sim.model.dispatch import solve_dispatch
+        from market_sim.results.scarcity import miso_reserve_coopt_inputs
+
+        fleet, T = self._fleet()
+        req, elig, pens, widths = miso_reserve_coopt_inputs(
+            type("C", (), {})(), fleet, T
+        )
+        return solve_dispatch(
+            fleet,
+            np.array([[demand_mw] * T]),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            reserve_requirement=req,
+            reserve_eligible=elig,
+            ordc_penalties=pens,
+            ordc_step_widths=widths,
+        )
+
+    def test_slack_clears_zero_tight_lifts_lmp(self):
+        # req = MSSC(1000) + 400 = 1400. Slack: demand 200 -> headroom 1800 >=
+        # 1400, reserve clears at $0. Tight: demand 1400 -> headroom 600 < 1400,
+        # the shortfall prices on the demand curve and lifts the energy LMP.
+        slack = self._solve(200.0)
+        tight = self._solve(1400.0)
+        self.assertEqual(slack.status, "Optimal")
+        self.assertEqual(tight.status, "Optimal")
+        self.assertAlmostEqual(float(np.asarray(slack.reserve_price).mean()), 0.0)
+        self.assertGreater(float(np.asarray(tight.reserve_price).mean()), 0.0)
+        # The reserve clearing price folds into the energy LMP.
+        self.assertGreater(
+            float(np.asarray(tight.prices).mean()),
+            float(np.asarray(slack.prices).mean()),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
