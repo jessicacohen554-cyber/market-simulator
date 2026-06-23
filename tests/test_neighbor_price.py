@@ -305,6 +305,49 @@ class TestReferencePriceNode(unittest.TestCase):
         self.assertFalse(inject_reference_price_mc(fa, mc, "PJM", 2023))
         np.testing.assert_array_equal(mc, 50.0)  # byte-identical
 
+    def test_miso_node_prices_its_three_seams(self):
+        """MISO's import node prices PJM, SPP and SERC/South individually.
+
+        Each neighbor resolves an EIA-930 load shape (PJM/SWPP/SOCO extracts),
+        and the constructed reference prices land near each neighbor's anchored
+        gas x heat-rate level (forecast-native, not tuned to MISO's flow).
+        """
+        from market_sim.data.neighbor_price import (
+            SEAM_FLOW_TRANCHES,
+            interface_reference_prices,
+        )
+        from market_sim.model.transmission import build_reference_price_node
+
+        gens = build_reference_price_node("MISO")
+        n_neighbors = len(INTERFACE_NEIGHBORS["MISO"])
+        self.assertEqual(len(gens), 2 * SEAM_FLOW_TRANCHES * n_neighbors)
+        self.assertEqual({g.zone for g in gens}, {"MISO_external"})
+
+        prices = interface_reference_prices("MISO", 2023, 8760)
+        if not prices.per_neighbor:
+            self.skipTest("EIA-930 neighbor extracts not present")
+        # All three seams price individually (no fold into the aggregate).
+        self.assertEqual(set(prices.per_neighbor), {"PJM", "SPP", "South"})
+        self.assertEqual(prices.missing, [])
+        # 2023 Henry Hub $2.54/MMBtu x each neighbor's anchored heat rate gives
+        # the annual-mean level (mean-preserving exponent 1.0).
+        hh_2023 = 2.54
+        for spec in INTERFACE_NEIGHBORS["MISO"]:
+            expect = hh_2023 * spec.marginal_heat_rate
+            got = float(prices.per_neighbor[spec.name].mean())
+            self.assertAlmostEqual(got, expect, delta=0.5 * expect * 0.05 + 0.5)
+        # SPP (wind-rich, HR 10.0) is the cheapest seam; SERC/South (HR 12.0)
+        # and PJM (HR 12.3) sit close above it — the merit order MISO clears
+        # the seam against.
+        self.assertLess(
+            prices.per_neighbor["SPP"].mean(),
+            prices.per_neighbor["South"].mean(),
+        )
+        self.assertLess(
+            prices.per_neighbor["South"].mean(),
+            prices.per_neighbor["PJM"].mean(),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -446,7 +446,11 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     "low": {
         2023: 2.54,
         2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88,
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
         2026: 2.70,
         2027: 2.55,
         2028: 2.50,
@@ -477,7 +481,11 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     "mid": {
         2023: 2.54,
         2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88,
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
         2026: 3.40,
         2027: 3.20,
         2028: 3.30,
@@ -509,7 +517,11 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     "high": {
         2023: 2.54,
         2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88,
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
         2026: 3.60,
         2027: 3.80,
         2028: 4.10,
@@ -1939,6 +1951,30 @@ def resolve_priced_interchange(flag: bool | None, iso: str) -> bool:
     return iso in PRICED_INTERCHANGE_DEFAULT_ISOS
 
 
+# ISOs whose backcasts serve the seam through the forecast-grade reference-price
+# interface (build_reference_price_node + inject_reference_price_mc) BY DEFAULT,
+# with no --reference-price-interface flag required. MISO is the first: it is a
+# large structural net importer with no fitted IMPORT_TRANCHES ladder, so the
+# reference-price node (each neighbor priced from its own gas × heat-rate × load
+# shape, the LP clearing the volume on the spread) is the only correct default —
+# and it is forecast-native (claude.md rule #12). PJM stays ABSENT: its
+# calibrated backcast serves the measured tie schedule by default, and the flag
+# is the opt-in that validates its reference node. ERCOT (no INTERFACE_NEIGHBORS
+# entry) is byte-identical regardless.
+REFERENCE_PRICE_DEFAULT_ISOS: frozenset[str] = frozenset({"MISO"})
+
+
+def resolve_reference_price_interface(flag: bool, iso: str) -> bool:
+    """Resolve whether ``iso`` runs the reference-price interface.
+
+    ``True`` when the CLI ``--reference-price-interface`` flag is set OR the ISO
+    is in :data:`REFERENCE_PRICE_DEFAULT_ISOS` (the per-ISO default-on set). The
+    node itself is still gated on the ISO having an ``INTERFACE_NEIGHBORS`` entry
+    downstream, so an ISO without neighbors stays byte-identical either way.
+    """
+    return bool(flag) or iso in REFERENCE_PRICE_DEFAULT_ISOS
+
+
 # Name of each ISO's external import/export zone. CAISO's is baked into its
 # topology (_caiso_config); PJM's is appended on demand by
 # transmission.extend_with_import_node, so the calibrated 8-zone backcast
@@ -1954,6 +1990,12 @@ IMPORT_ZONE: dict[str, str] = {
     # HQ_import zone already carries the HQ Phase II tie, so the import
     # tranches/sinks land there and extend_with_import_node is a no-op.
     "NEISO": "HQ_import",
+    # MISO's external node is appended on demand (like PJM/NYISO); the
+    # calibrated 3-zone (North/Central/South) topology is untouched. MISO is a
+    # large structural net IMPORTER (EIA-930 net interchange −38/−23/−19 TWh,
+    # 2023-25), so the seam is served by the forecast-grade reference-price
+    # interface (INTERFACE_NEIGHBORS["MISO"]), not the fitted tranche ladder.
+    "MISO": "MISO_external",
 }
 
 # Links joining an appended external zone to its border zones:
@@ -2008,6 +2050,33 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     # NEISO needs no entry: its HQ_import links (HQ Phase II → Boston,
     # Highgate/NB → North, NYISO ties → Connecticut) are baked into
     # _neiso_config, so extend_with_import_node is a no-op there.
+    #
+    # MISO external node → border-zone links, one per seam, landed on the model
+    # zone the seam PHYSICALLY enters so each neighbor's energy routes through
+    # the right border (and the SERC seam stays south of the binding RDT
+    # Central↔South contract path rather than wheeling around it):
+    #   - PJM → MISO-Central (the IL/IN/MI eastern border): 7,300 MW, the
+    #     simultaneous p99.5 of PJM's OWN measured tie flow across the PJM-MISO
+    #     seam (PJM Data Miner import_export_act_sch_interchange, pooled
+    #     2023-25) — the identical physical seam the PJM build rates at 7,300 MW
+    #     for its MISO neighbor (constants INTERFACE_NEIGHBORS["PJM"]). Same
+    #     reproducible flow-envelope rating, read for the mirror direction.
+    #   - SPP → MISO-North (the Dakotas/IA/NE western border, the wind-export
+    #     corridor): 4,000 MW. MISO/SPP coordinated AC interface (Joint
+    #     Operating Agreement market-to-market flowgates). Tier 3 — verify
+    #     against MISO/SPP OASIS firm transfer capability.
+    #   - SERC/South → MISO-South (the Entergy↔SERC border, TVA/Southern/AECI):
+    #     3,000 MW. MISO-South external interties to the SERC bilateral
+    #     footprint. Tier 3 — verify against SERC/MISO-South interface ratings.
+    # Link TTCs sum (14,300 MW) to the seam interface limits, so the border
+    # links never bind tighter than the cited per-neighbor ratings. These are
+    # physical transfer ratings (reproducible for a forward year, responsive to
+    # the flow), NOT values fitted to the −38/−23/−19 TWh net-import target.
+    "MISO": [
+        ("MISO-Central", 7300.0),
+        ("MISO-North", 4000.0),
+        ("MISO-South", 3000.0),
+    ],
 }
 
 # Year-varying NYISO interface transfer limits that change with the AC
@@ -2297,6 +2366,79 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             load_shape_exponent=1.60,
         ),
     ],
+    # MISO seams (MISO is a structural net IMPORTER): PJM to the east, SPP to
+    # the west, and the SERC/Southeast bilateral footprint to the south. MISO
+    # imports because its own LMP sits ABOVE its cheaper neighbors' — the
+    # measured Indiana-Hub RT LMP averaged $31.8/$30.8/$42.9 (2023-25, the
+    # committed actual_lmp_hourly_MISO product) vs PJM's $28.4/$29.5/$42.9 and
+    # SPP's wind-set ~$25/$23 — and the measured net import is large
+    # (−37.9/−23.1/−19.0 TWh, EIA-930). Each neighbor is priced from its OWN
+    # forward drivers (gas × heat-rate × its load shape); nothing here is tuned
+    # to the net-MWh target (claude.md rules #1/#12), so the backcast net
+    # import is genuine validation, not a fit.
+    #
+    # Effective marginal heat rate per neighbor is anchored to the neighbor's
+    # OWN realized annual LMP / Henry Hub (rule #12: the neighbor's measured
+    # price formation, never MISO's flow); the level then rides the Henry Hub
+    # trajectory ($2.54/$2.19/$3.52 MMBtu actual, 2023-25), so it is
+    # forecast-native:
+    #   - PJM (basis ~0, Chicago/M3 ~flat to HH): HR 12.3, the 3-year mean of
+    #     PJM's MEASURED RT-LMP/HH ratio (11.2/13.5/12.2, from
+    #     actual_lmp_hourly_PJM divided by the actual Henry Hub). CAVEAT: the
+    #     ratio is not stable across years (PJM 2023 ran cheap at 11.2), so the
+    #     single mean over-prices PJM in 2023 and under-prices it in 2024 — a
+    #     mid-year anchor, not a fit.
+    #   - SPP (basis ~0, wind-set): HR 10.0, an ESTIMATE anchored to SPP's
+    #     published all-hours RT LMP (~$25.6/$22.8, Potomac Economics SPP IMM
+    #     State-of-the-Market) / actual Henry Hub (ratios 10.1/10.4/~9.7) — SPP
+    #     has no committed hourly-LMP product yet, so this is an estimate pending
+    #     an SPP North/South hub extract (rule #12: estimate is admissible where
+    #     measured is absent, documented). SPP is wind-rich and reliably cheaper
+    #     than MISO.
+    #   - SERC/South (basis ~0): HR 12.0, an ESTIMATE — the Southeast is not an
+    #     organized market, so this is anchored to a ~$30/MWh SERC bilateral
+    #     level / actual Henry Hub (ratios 11.8/12.3/11.9), priced on the
+    #     Southern Company (SOCO) load shape.
+    # Hurdle $2/MWh is the inter-RTO wheeling/transaction adder (OMS-RSC seams
+    # interface-pricing study), as in the PJM build. load_shape_exponent 1.0 is
+    # the parameter-free, mean-preserving linear shape — so each neighbor's
+    # annual-mean price equals its anchored gas × HR exactly (no convexity
+    # inflation of the mean); the seam still self-limits below the cap through
+    # MISO's OWN falling LMP dual as it imports (the LP equilibrium). A peak-
+    # premium convexity (exp > 1, as PJM uses) is a documented future refinement
+    # once the base seam is validated. Interface limits: see IMPORT_NODE_LINKS.
+    "MISO": [
+        NeighborInterface(
+            name="PJM",
+            ba_code="PJM",
+            gas_basis=0.0,
+            marginal_heat_rate=12.3,
+            hurdle=2.0,
+            interface_limit_mw=7300.0,
+            border_zones=("MISO-Central",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            name="SPP",
+            ba_code="SWPP",
+            gas_basis=0.0,
+            marginal_heat_rate=10.0,
+            hurdle=2.0,
+            interface_limit_mw=4000.0,
+            border_zones=("MISO-North",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            name="South",
+            ba_code="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=12.0,
+            hurdle=2.0,
+            interface_limit_mw=3000.0,
+            border_zones=("MISO-South",),
+            load_shape_exponent=1.0,
+        ),
+    ],
 }
 
 # Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
@@ -2311,6 +2453,9 @@ IMPORT_EFORD: dict[str, float] = {
     # capacities — no extra derate, as for PJM.
     "NYISO": 0.0,
     "NEISO": 0.0,
+    # MISO uses the reference-price node (flow-bounded by the cited interface
+    # limit), like PJM/NYISO — no extra availability derate.
+    "MISO": 0.0,
 }
 
 # Per-tranche CO2 emission factor (tCO2/MWh) for the CARB border-carbon
