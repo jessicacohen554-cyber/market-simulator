@@ -24,6 +24,7 @@ from market_sim.config.paths import (
     EIA_930_DIR,
     EIA_HOURLY_DIR,
     ISO_TRANSMISSION_DIR,
+    RAW_DIR,
     ZONE_DEMAND_DIR,
 )
 
@@ -730,6 +731,100 @@ def measured_import_hub_prices(
         for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
             if mapped_hub == hub:
                 out[tranche] = price[:hours]
+    return out or None
+
+
+def measured_corridor_flow_envelope(
+    iso: str, year: int, hours: int, percentile: float | None = None
+) -> dict[str, np.ndarray] | None:
+    """Return each CAISO import corridor's measured net-import deliverability cap.
+
+    For each WECC import corridor (``WECC_PNW`` = COI/Path-66 into NP15,
+    ``WECC_DSW`` = Path-46/WOR into SP15), returns the per-hour ceiling on net
+    import (MW), built as the per-(month × hour-of-day) ``percentile`` of the
+    MEASURED net import on that corridor from EIA-930 BA-to-BA interchange
+    (``data/raw/eia-930-interchange/CISO interchange hourly.parquet``; columns
+    ``diba``, ``mw`` [EIA sign: + = CISO exports to the DIBA], ``local_time``).
+    Each CISO↔DIBA pair is summed into its corridor via
+    :data:`~market_sim.config.constants.CAISO_CORRIDOR_DIBA`, then
+    ``net_import = -sum(interchange over the corridor's DIBAs)``.
+
+    This is an ATC proxy: the corridor's *deliverable* transfer ceiling (the
+    physical line rating net of parallel commitments and the neighbor's own
+    diurnal length), which collapses midday when the desert-SW / Pacific-NW are
+    themselves long on solar. The caller applies it as a one-sided hourly upper
+    bound on the corridor link's import-direction flow, so the LP still clears
+    its merit order *below* the ceiling — a capability limit, not a flow pinned
+    to the residual (rule #12). ``percentile`` defaults to
+    :data:`~market_sim.config.constants.CAISO_CORRIDOR_FLOW_PERCENTILE` (95).
+
+    Hours are mapped onto the model's fixed non-leap calendar
+    (:func:`~market_sim.data.fleet._hour_to_month_index` for the month, ``hour %
+    24`` for the hour-of-day), the same calendar the LP and the hydro budgets
+    use, so the cap aligns hour-for-hour with the dispatch.
+
+    Returns ``{corridor_zone: (hours,) MW}`` for both corridors, or ``None`` when
+    the ISO is not CAISO, the parquet is absent, or the year is uncovered (a
+    forecast year) — in which case the caller leaves the corridors uncapped
+    (byte-identical).
+    """
+    if iso.upper() != "CAISO":
+        return None
+    from market_sim.config.constants import (
+        CAISO_CORRIDOR_DIBA,
+        CAISO_CORRIDOR_FLOW_PERCENTILE,
+    )
+    from market_sim.data.fleet import _hour_to_month_index
+
+    pct = CAISO_CORRIDOR_FLOW_PERCENTILE if percentile is None else float(percentile)
+    path = RAW_DIR / "eia-930-interchange" / "CISO interchange hourly.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    local = pd.DatetimeIndex(frame["local_time"])
+    frame = frame[local.year == year]
+    if frame.empty:
+        return None
+    local = pd.DatetimeIndex(frame["local_time"])
+    corridor = frame["diba"].astype(str).map(CAISO_CORRIDOR_DIBA)
+    work = pd.DataFrame(
+        {
+            "corridor": corridor.to_numpy(),
+            "month": local.month.to_numpy(),
+            "hod": local.hour.to_numpy(),
+            "ts": local.to_numpy(),
+            "mw": pd.to_numeric(frame["mw"], errors="coerce").to_numpy(),
+        }
+    ).dropna(subset=["corridor", "mw"])
+    # Net import per corridor per timestamp = -sum(interchange over its DIBAs).
+    per_ts = work.groupby(["corridor", "ts", "month", "hod"], observed=True)["mw"].sum()
+    per_ts = (-per_ts).reset_index(name="net_import")
+
+    rm = _hour_to_month_index(hours) + 1  # 1-based month per model hour
+    rh = np.arange(hours) % 24
+    out: dict[str, np.ndarray] = {}
+    for zone in ("WECC_PNW", "WECC_DSW"):
+        sub = per_ts[per_ts["corridor"] == zone]
+        if sub.empty:
+            continue
+        tab = np.full((12, 24), np.nan)
+        for (m, h), g in sub.groupby(["month", "hod"], observed=True):
+            tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
+        # Fill any empty (month, hod) bucket with that month's max over hours
+        # (a conservative ceiling), then the global max, so the cap is always
+        # finite and never tighter than a populated neighbour.
+        for m in range(12):
+            row = tab[m]
+            if np.all(np.isnan(row)):
+                continue
+            tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
+        if np.any(np.isnan(tab)):
+            tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
+        # Clip at 0: the cap bounds net *import*; a (month, hod) bucket whose
+        # p95 net import is negative (the corridor reliably net-exports then,
+        # e.g. the PNW corridor at midday) caps import at zero, never forces an
+        # export — the export direction is left to the link's physical TTC.
+        out[zone] = np.clip(tab[rm - 1, rh], 0.0, None)
     return out or None
 
 
