@@ -16,6 +16,8 @@ from market_sim.data.renewables import (
     _eia860_zone_shares,
     _redistribute_preserving_total,
     _solar_zone_clearsky_shapes,
+    _wind_zone_reanalysis_shapes,
+    _zone_renewable_shapes,
     derive_cf_profile,
     load_hsl_hourly,
     load_renewable_profiles,
@@ -308,6 +310,97 @@ def test_redistribute_preserving_total_trivial_24h():
     # Night hours are zero everywhere (no sun to redistribute).
     night = bell == 0.0
     assert np.all(cf[:, night] == 0.0)
+
+
+def test_miso_wind_zones_have_distinct_shapes():
+    """MISO's three zones get distinct reanalysis wind shapes from the parquet.
+
+    The North (upper-plains nocturnal jet) must have a measurably different
+    diurnal wind signature than the Central zone — the spatial diversity the
+    single ISO-wide wind profile erased. Built by
+    scripts/build_miso_wind_shape.py.
+    """
+    zones = get_iso_config("MISO").zone_names
+    shapes = _wind_zone_reanalysis_shapes("MISO", "wind", zones, _CAL_YEAR)
+    assert shapes is not None
+    assert shapes.shape == (len(zones), HOURS_PER_YEAR)
+
+    north = zones.index("MISO-North")
+    central = zones.index("MISO-Central")
+    assert not np.allclose(shapes[north], shapes[central])
+
+    def night_to_afternoon(shape: np.ndarray) -> float:
+        diurnal = shape.reshape(365, 24).mean(axis=0)
+        return diurnal[0:6].mean() / diurnal[12:18].mean()
+
+    # The plains North is relatively more nocturnal than the lower-Midwest
+    # Central (a higher night-to-afternoon wind ratio).
+    assert night_to_afternoon(shapes[north]) > night_to_afternoon(shapes[central])
+
+
+def test_zone_renewable_shapes_dispatch():
+    """The shape dispatcher routes wind→reanalysis (MISO) and solar→clear-sky."""
+    miso_zones = get_iso_config("MISO").zone_names
+    caiso_zones = get_iso_config("CAISO").zone_names
+    ercot_zones = get_iso_config("ERCOT").zone_names
+
+    # MISO wind is reshaped; MISO solar (not a gated solar ISO) is not.
+    assert _zone_renewable_shapes("MISO", "wind", miso_zones, _CAL_YEAR) is not None
+    assert _zone_renewable_shapes("MISO", "solar", miso_zones, _CAL_YEAR) is None
+    # CAISO solar is reshaped; CAISO wind (not a gated wind ISO) is not.
+    assert _zone_renewable_shapes("CAISO", "solar", caiso_zones, _TEST_YEAR) is not None
+    assert _zone_renewable_shapes("CAISO", "wind", caiso_zones, _TEST_YEAR) is None
+    # A non-gated ISO is untouched for both fuels.
+    assert _zone_renewable_shapes("ERCOT", "wind", ercot_zones, _CAL_YEAR) is None
+    assert _zone_renewable_shapes("ERCOT", "solar", ercot_zones, _CAL_YEAR) is None
+
+
+def test_wind_zone_redistribution_preserves_aggregate():
+    """Per-zone MISO wind shaping is a pure spatial redistribution.
+
+    The capacity-weighted sum of the shaped per-zone wind CFs must equal the
+    input ISO-wide ``cf_profile`` every hour, so annual energy and the system
+    wind series are unchanged — only the North-vs-Central split moves.
+    """
+    zones = get_iso_config("MISO").zone_names
+    monthly = _eia860_monthly_capacity("MISO", "wind", zones, _CAL_YEAR)
+    assert monthly is not None
+    shapes = _wind_zone_reanalysis_shapes("MISO", "wind", zones, _CAL_YEAR)
+    assert shapes is not None
+
+    # A flat-ish 35% system wind CF profile is enough to test preservation.
+    cf_profile = np.full(HOURS_PER_YEAR, 0.35)
+    installed = float(monthly[:, -1].sum())
+
+    shaped, cap = _distribute_by_eia860(
+        cf_profile, installed, monthly, vintage_capacity_ramp=False, zone_shapes=shapes
+    )
+    flat, _ = _distribute_by_eia860(
+        cf_profile, installed, monthly, vintage_capacity_ramp=False
+    )
+    share = cap / cap.sum()
+    agg_shaped = (share[:, None] * shaped).sum(axis=0)
+    np.testing.assert_allclose(agg_shaped, cf_profile, atol=1e-9)
+    np.testing.assert_allclose(
+        (cap[:, None] * shaped).sum(axis=0),
+        (cap[:, None] * flat).sum(axis=0),
+        atol=1e-9,
+    )
+    # The shaped split differs from flat in a capacity-bearing wind zone.
+    north = zones.index("MISO-North")
+    assert not np.allclose(shaped[north], flat[north])
+
+
+def test_wind_zone_shapes_noop_for_solar_and_ungated():
+    """The reanalysis wind shaper is a no-op outside gated MISO wind."""
+    miso_zones = get_iso_config("MISO").zone_names
+    ercot_zones = get_iso_config("ERCOT").zone_names
+    # Solar is never reshaped by the wind shaper, even for MISO.
+    assert _wind_zone_reanalysis_shapes("MISO", "solar", miso_zones, _CAL_YEAR) is None
+    # A non-gated ISO's wind is untouched.
+    assert _wind_zone_reanalysis_shapes("ERCOT", "wind", ercot_zones, _CAL_YEAR) is None
+    # No calibration year -> no per-year parquet selection.
+    assert _wind_zone_reanalysis_shapes("MISO", "wind", miso_zones, None) is None
 
 
 def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
