@@ -8,7 +8,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR
-from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.iso_configs import TransferLink, get_iso_config
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import (
     VariableLayout,
@@ -1271,3 +1271,110 @@ class TestReserveCoOptimization(unittest.TestCase):
         np.testing.assert_allclose(base.dispatch, coopt_off.dispatch)
         np.testing.assert_allclose(base.prices, coopt_off.prices)
         self.assertIsNone(coopt_off.reserve_price)
+
+
+class TestInterfaceGroupLimit(unittest.TestCase):
+    """Tests for the aggregate interface-limit rows (CAISO simultaneous import)."""
+
+    def setUp(self):
+        # 3 zones: an import node Z0 with cheap supply, two load zones Z1/Z2,
+        # each fed by a generous link from the import node. The aggregate cap
+        # over the two links is tighter than their TTC sum, so it must bind.
+        self.T = 4
+        self.zone_names = ["Z0", "Z1", "Z2"]
+        # One cheap generator at the import node, one expensive local unit in
+        # each load zone (so the LP imports up to the cap, then runs local gas).
+        self.fleet = _make_fleet(
+            ["Z0", "Z1", "Z2"],
+            self.zone_names,
+            hours=self.T,
+            pmax=10000.0,
+            pmin=0.0,
+            eford=0.0,
+        )
+        self.mc = np.vstack(
+            [
+                np.full(self.T, 10.0),  # import node: cheap
+                np.full(self.T, 90.0),  # Z1 local: expensive
+                np.full(self.T, 90.0),  # Z2 local: expensive
+            ]
+        )
+        # Demand only in the two load zones; import node carries none.
+        self.demand = np.array(
+            [
+                np.zeros(self.T),
+                np.full(self.T, 3000.0),
+                np.full(self.T, 3000.0),
+            ]
+        )
+        # Links Z0->Z1 and Z0->Z2 built with the production incidence
+        # convention (positive flow = power from the import node into a load
+        # zone = an import).
+        links = [
+            TransferLink(from_zone="Z0", to_zone="Z1", ttc_mw=6000.0),
+            TransferLink(from_zone="Z0", to_zone="Z2", ttc_mw=6000.0),
+        ]
+        self.incidence = build_incidence_matrix(links, self.zone_names)
+        self.ttc = get_ttc_array(links)  # each link loose at 6000
+
+    def _kwargs(self):
+        return dict(
+            wind_cf=np.zeros((3, self.T)),
+            wind_cap=np.zeros(3),
+            solar_cf=np.zeros((3, self.T)),
+            solar_cap=np.zeros(3),
+        )
+
+    def test_aggregate_cap_binds_below_ttc_sum(self):
+        # Without the cap the LP imports the full 6000 MW (3000 each link).
+        uncapped = solve_dispatch(
+            self.fleet,
+            self.demand,
+            mc=self.mc,
+            T=self.T,
+            incidence=self.incidence,
+            ttc=self.ttc,
+            **self._kwargs(),
+        )
+        total_import = uncapped.flows.sum(axis=0)  # link 0 + link 1, per hour
+        np.testing.assert_allclose(total_import, np.full(self.T, 6000.0), atol=1e-6)
+
+        # With an aggregate cap of 4000 MW the simultaneous import is bound,
+        # even though each link's own TTC (6000) is slack.
+        groups = [(np.array([0, 1]), 4000.0, True)]
+        capped = solve_dispatch(
+            self.fleet,
+            self.demand,
+            mc=self.mc,
+            T=self.T,
+            incidence=self.incidence,
+            ttc=self.ttc,
+            interface_groups=groups,
+            **self._kwargs(),
+        )
+        total_import = capped.flows.sum(axis=0)
+        self.assertTrue(np.all(total_import <= 4000.0 + 1e-6))
+        np.testing.assert_allclose(total_import, np.full(self.T, 4000.0), atol=1e-6)
+
+    def test_no_groups_is_identical(self):
+        base = solve_dispatch(
+            self.fleet,
+            self.demand,
+            mc=self.mc,
+            T=self.T,
+            incidence=self.incidence,
+            ttc=self.ttc,
+            **self._kwargs(),
+        )
+        none_groups = solve_dispatch(
+            self.fleet,
+            self.demand,
+            mc=self.mc,
+            T=self.T,
+            incidence=self.incidence,
+            ttc=self.ttc,
+            interface_groups=None,
+            **self._kwargs(),
+        )
+        np.testing.assert_allclose(base.flows, none_groups.flows)
+        np.testing.assert_allclose(base.prices, none_groups.prices)

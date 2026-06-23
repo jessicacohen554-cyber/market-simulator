@@ -472,6 +472,61 @@ def _build_storage_daily_cycle_rows(
     ).tocsr()
 
 
+def _build_interface_rows(
+    layout: VariableLayout,
+    interface_groups: list[tuple[np.ndarray, float, bool]],
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Aggregate interface-limit rows: one per group per hour.
+
+    A real interface's *simultaneous* transfer limit is smaller than the sum
+    of its component paths' individual ratings (CAISO's WECC Maximum Import
+    Capability ~8.3 GW vs Path 66 + Path 46 ≈ 15.4 GW). Each group caps the
+    signed sum of its member links' ``Flow`` at ``cap_mw`` -- with a symmetric
+    ``-cap_mw`` floor when bidirectional, so the reverse (export) direction is
+    capped too. The component links keep their own per-link TTC bounds; this
+    row binds only when several would otherwise load simultaneously past the
+    aggregate rating.
+
+    Rows are hour-major (group-minor within an hour) and replicated across all
+    ``T`` hours with a single Kronecker product -- no Python loop over hours.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` where
+            ``link_idx`` is the array of member link indices (into the flow
+            block), ``cap_mw`` the aggregate limit in MW, and ``bidirectional``
+            whether to also floor the signed sum at ``-cap_mw``.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
+        shape ``(n_groups * T, total_columns)``.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    n_groups = len(interface_groups)
+
+    rows: list[int] = []
+    cols: list[int] = []
+    data: list[float] = []
+    caps = np.empty(n_groups, dtype=float)
+    bidir = np.empty(n_groups, dtype=bool)
+    for gi, (link_idx, cap, two_way) in enumerate(interface_groups):
+        idx = np.asarray(link_idx, dtype=int)
+        rows.extend([gi] * idx.size)
+        cols.extend((layout._flow_off + idx).tolist())
+        data.extend([1.0] * idx.size)
+        caps[gi] = cap
+        bidir[gi] = two_way
+
+    per_hour = sp.coo_matrix((data, (rows, cols)), shape=(n_groups, vph)).tocsr()
+    # kron(eye(T), per_hour) tiles the per-hour coefficient block across all
+    # hours; column hour-stride vph lands each link's flow in its own hour.
+    block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    upper = np.tile(caps, T)
+    lower = np.tile(np.where(bidir, -caps, -np.inf), T)
+    return block, lower, upper
+
+
 def _build_reserve_rows(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -667,6 +722,7 @@ def build_constraints(
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage_power_cap: np.ndarray | float | None = None,
@@ -887,6 +943,21 @@ def build_constraints(
             zeros = np.zeros(cycle_block.shape[0])
             row_lower = np.concatenate([row_lower, zeros])
             row_upper = np.concatenate([row_upper, zeros])
+
+    # Optional aggregate interface limits: one row per group per hour capping
+    # the signed sum of a set of links' flows at the interface's *simultaneous*
+    # transfer rating (smaller than the per-path TTC sum). Appended after the
+    # energy/storage rows but before hydro/RPS/reserve, so the front-anchored
+    # energy-balance duals and the end-anchored RPS/reserve duals keep their
+    # positions. No rows (identical LP) when no groups are supplied.
+    if interface_groups:
+        iface_block, iface_lower, iface_upper = _build_interface_rows(
+            layout, interface_groups
+        )
+        if iface_block.shape[0]:
+            A = sp.vstack([A, iface_block], format="csr")
+            row_lower = np.concatenate([row_lower, iface_lower])
+            row_upper = np.concatenate([row_upper, iface_upper])
 
     # Optional hydro monthly energy budgets: one two-sided row per hydro
     # generator and month. Appended before the RPS row so the RPS dual stays
@@ -1237,6 +1308,7 @@ class DispatchModel:
         hydro_gen_idx: np.ndarray | None = None,
         hydro_monthly_min: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
+        interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
         reserve_requirement: np.ndarray | None = None,
         reserve_eligible: np.ndarray | None = None,
         reserve_storage: bool = False,
@@ -1298,6 +1370,7 @@ class DispatchModel:
             hydro_gen_idx=hydro_gen_idx,
             hydro_monthly_min=hydro_monthly_min,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
+            interface_groups=interface_groups,
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
             reserve_storage_power_cap=(storage_power_cap if reserve_storage else None),
@@ -1753,6 +1826,7 @@ def solve_dispatch(
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage: bool = False,
@@ -1852,6 +1926,7 @@ def solve_dispatch(
         hydro_gen_idx=hydro_gen_idx,
         hydro_monthly_min=hydro_monthly_min,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
+        interface_groups=interface_groups,
         reserve_requirement=reserve_requirement,
         reserve_eligible=reserve_eligible,
         reserve_storage=reserve_storage,
