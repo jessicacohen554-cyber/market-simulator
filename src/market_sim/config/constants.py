@@ -189,13 +189,30 @@ PUMPED_STORAGE_DURATION_HOURS: float = 10.0
 PUMPED_STORAGE_RTE: float = 0.80
 # Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form
 # opportunity cost of the regulation/reserve duty the energy-only LP does not
-# see (PSH pure O&M is < $1/MWh; with no adder the LP arbitrages PS every day
-# the spread clears RTE losses and overshoots observed PS energy ~2-3x).
-# PJM: $10 calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr of
-# EIA-923 gross generation (calibration-log 2026-06-10, "pjm 3 ps-adder").
+# see (PSH pure O&M is < $1/MWh).
+#
+# PJM: RETIRED (was $10). The $10 was calibrated 2026-06-10 ("pjm 3 ps-adder")
+# to pull model PS discharge from ~9-10 TWh down to a target read as "~3.5-4
+# TWh/yr of EIA-923 gross generation". That target was a MEASUREMENT ERROR: the
+# EIA-923 PS series for PJM is NET generation (~-2.6 TWh/yr — generation minus
+# pumping load, i.e. the round-trip LOSS), NOT gross discharge. The actual
+# discharge throughput implied by that measured net and the model's own RTE 0.80
+# is |net|*RTE/(1-RTE) ≈ 10 TWh; triangulated against PJM's own gen-by-fuel
+# (Hydro series minus EIA-923 conventional HY) it is ~6.5-7 TWh. So the model's
+# original ~9-10 TWh was approximately CORRECT and the $10 adder suppressed
+# legitimate arbitrage to land on the round-trip-loss figure. Per CLAUDE.md #12
+# (a lever may not be tuned to a mis-measured residual with no forward analogue)
+# the fitted knob is retired; PJM PS now arbitrages on its physical RTE like
+# every other storage resource. EIA-930 carries no PJM PS/BAT breakout at all,
+# so C5b has no clean scoreable actual — see
+# docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md. A measured PJM
+# synchronized-reserve power reservation (the ERCOT reserve_storage_as_power
+# analogue) is the forward-valid replacement if PS later over-cycles; that is a
+# real reserve quantity, handed to the reserve workstream, not a throughput tune.
+#
 # ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays
 # off until a CAISO calibration pass measures Helms' reserve duty.
-PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
+PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {}
 
 # NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
 # EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
