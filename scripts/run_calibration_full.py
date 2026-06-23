@@ -1491,6 +1491,7 @@ def solve_and_persist(
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
+    caiso_corridor_flow_limit: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     miso_firm_imports: bool | None = None,
@@ -1644,6 +1645,7 @@ def solve_and_persist(
             caiso_import_solar_shape=caiso_import_solar_shape,
             caiso_bidir_intertie=caiso_bidir_intertie,
             caiso_per_hub_intertie=caiso_per_hub_intertie,
+            caiso_corridor_flow_limit=caiso_corridor_flow_limit,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             miso_firm_imports=miso_firm_imports,
@@ -1836,6 +1838,7 @@ def solve_and_persist(
         "caiso_import_solar_shape": caiso_import_solar_shape,
         "caiso_bidir_intertie": caiso_bidir_intertie,
         "caiso_per_hub_intertie": caiso_per_hub_intertie,
+        "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "miso_firm_imports": miso_firm_imports,
@@ -1980,6 +1983,10 @@ def solve_and_persist(
     if caiso_per_hub_intertie is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_per_hub_intertie=caiso_per_hub_intertie
+        )
+    if caiso_corridor_flow_limit is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_corridor_flow_limit=caiso_corridor_flow_limit
         )
     if nyiso_local_selfsupply is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4511,6 +4518,24 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--caiso-corridor-flow-limit",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Cap each CAISO per-hub corridor's import-direction flow at the "
+        "MEASURED diurnal deliverability envelope (an ATC proxy): the per-(month "
+        "× hour-of-day) p95 net import on COI/Path-66 and Path-46/WOR from EIA-930 "
+        "BA-to-BA interchange. The WECC neighbors are themselves long on solar "
+        "midday, so deliverable transfer into a long CAISO collapses ~6→~3.6 GW "
+        "(DSW) and ~2.3→~0.8 GW (PNW) midday; without this ceiling the per-hub "
+        "injector's cheap midday hub price lets the LP pull the neighbors' idle "
+        "thermal tranches up to the 8.3 GW simultaneous cap (the spurious ~5 GW "
+        "midday over-import behind the inverted-diurnal residual). One-sided "
+        "hourly upper bound on the corridor link (export keeps the physical TTC); "
+        "the LP still clears its merit order below the ceiling. Requires "
+        "--caiso-per-hub-intertie. CAISO-only. Default (unset) keeps the base "
+        "config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4795,6 +4820,7 @@ def main() -> None:
         caiso_import_solar_shape=args.caiso_import_solar_shape,
         caiso_bidir_intertie=args.caiso_bidir_intertie,
         caiso_per_hub_intertie=args.caiso_per_hub_intertie,
+        caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         miso_firm_imports=miso_firm_imports,

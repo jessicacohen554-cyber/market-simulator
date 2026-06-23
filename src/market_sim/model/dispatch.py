@@ -484,7 +484,7 @@ def _build_storage_daily_cycle_rows(
 
 def _build_interface_rows(
     layout: VariableLayout,
-    interface_groups: list[tuple[np.ndarray, float, bool]],
+    interface_groups: list[tuple[np.ndarray, float | np.ndarray, bool]],
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Aggregate interface-limit rows: one per group per hour.
 
@@ -497,6 +497,13 @@ def _build_interface_rows(
     row binds only when several would otherwise load simultaneously past the
     aggregate rating.
 
+    A group's ``cap_mw`` may be a scalar (a static rating) **or** an ``(T,)``
+    array (a per-hour limit, e.g. the CAISO measured corridor deliverability
+    envelope, which tightens midday). A one-sided group (``bidirectional`` False)
+    caps only the upper/positive-flow direction and leaves the lower bound at
+    ``-inf`` — so an import-direction corridor cap never forces the reverse
+    (export) flow, which keeps the link's own physical TTC.
+
     Rows are hour-major (group-minor within an hour) and replicated across all
     ``T`` hours with a single Kronecker product -- no Python loop over hours.
 
@@ -504,8 +511,9 @@ def _build_interface_rows(
         layout: Variable layout describing the column structure.
         interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` where
             ``link_idx`` is the array of member link indices (into the flow
-            block), ``cap_mw`` the aggregate limit in MW, and ``bidirectional``
-            whether to also floor the signed sum at ``-cap_mw``.
+            block), ``cap_mw`` the aggregate limit in MW (scalar or ``(T,)``),
+            and ``bidirectional`` whether to also floor the signed sum at
+            ``-cap_mw``.
 
     Returns:
         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
@@ -518,23 +526,24 @@ def _build_interface_rows(
     rows: list[int] = []
     cols: list[int] = []
     data: list[float] = []
-    caps = np.empty(n_groups, dtype=float)
-    bidir = np.empty(n_groups, dtype=bool)
+    # (T, n_groups) so the row-major ravel matches the kron's hour-major,
+    # group-minor row order; a scalar cap broadcasts across all hours.
+    upper_2d = np.empty((T, n_groups), dtype=float)
+    lower_2d = np.empty((T, n_groups), dtype=float)
     for gi, (link_idx, cap, two_way) in enumerate(interface_groups):
         idx = np.asarray(link_idx, dtype=int)
         rows.extend([gi] * idx.size)
         cols.extend((layout._flow_off + idx).tolist())
         data.extend([1.0] * idx.size)
-        caps[gi] = cap
-        bidir[gi] = two_way
+        cap_arr = np.broadcast_to(np.asarray(cap, dtype=float), (T,))
+        upper_2d[:, gi] = cap_arr
+        lower_2d[:, gi] = -cap_arr if two_way else -np.inf
 
     per_hour = sp.coo_matrix((data, (rows, cols)), shape=(n_groups, vph)).tocsr()
     # kron(eye(T), per_hour) tiles the per-hour coefficient block across all
     # hours; column hour-stride vph lands each link's flow in its own hour.
     block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
-    upper = np.tile(caps, T)
-    lower = np.tile(np.where(bidir, -caps, -np.inf), T)
-    return block, lower, upper
+    return block, lower_2d.ravel(), upper_2d.ravel()
 
 
 def _build_reserve_rows(
