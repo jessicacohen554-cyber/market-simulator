@@ -929,6 +929,25 @@ class ScenarioConfig:
     # coal_takeorpay_<ISO>.csv artifact is derived and the run re-solved.
     coal_takeorpay_from_data: bool = False
 
+    # Online-Pmin coal must-run floor (rebuild step 2): size the coal must-run
+    # (cheap, fuel-sunk) tranche from the measured *online* minimum stable load
+    # — the net MW the unit holds 95% of its online time, as a fraction of
+    # nameplate (thermal_tranches_<ISO>.csv ``mustrun_online_pct``) — instead of
+    # the all-hours available-CF P5 (``mustrun_pct``), which reads ~2x high for
+    # an always-online unit (its all-hours P5 sits in its normal operating band
+    # and the outage-derate denominator inflates the available-CF). In the
+    # energy-only LP the coal ``_mustrun`` tranche has Pmin=0, so it is not a
+    # forced floor but the SIZE of the cheap (sunk-fuel) bid band; shrinking it
+    # to the true online Pmin moves coal capacity into the full-delivered-cost
+    # rising tranches, so coal price-follows (backs down in cheap hours) instead
+    # of baseloading the whole fleet under gas. Pairs with
+    # coal_takeorpay_from_data (step 1: the cheap band's sunk fuel share). A
+    # forward-reproducible CEMS quantity (CLAUDE.md #11). Default off (keeper
+    # unchanged) until the artifact carries the column and the run is re-solved;
+    # plants whose artifact predates the column keep ``mustrun_pct``. See
+    # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md (Thread D).
+    coal_mustrun_online_pmin: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
