@@ -65,6 +65,7 @@ from market_sim.data.fleet import (  # noqa: E402
     Generator,
     aggregate_fleet,
     apply_coal_tranches,
+    apply_gas_st_netload_drag_floor,
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
@@ -1043,6 +1044,8 @@ def run_year(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
+    gas_st_netload_drag: bool = False,
+    gas_st_drag_overrides: dict[str, float] | None = None,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -1106,6 +1109,10 @@ def run_year(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
+    if gas_st_netload_drag:
+        config = config.with_overrides(
+            gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
+        )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -1530,6 +1537,33 @@ def run_year(
         year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
+    # Net-load-indexed ST_GAS reliability-drag floor: hold legacy gas-steam at
+    # a minimum-generation floor that rises with system net-load (load - wind -
+    # solar) — the operational proxy for the reserve tightness ERCOT RUC keys
+    # off — over which the LP dispatches economically. Replaces the blunt
+    # seasonal gas_st_summer_mustrun calendar fraction with an endogenous,
+    # weather-driven floor (see fleet.apply_gas_st_netload_drag_floor). Net-load
+    # uses the same LP-served (net-of-must-run) convention as the runner's other
+    # net-load consumers below.
+    if getattr(config, "gas_st_netload_drag", False):
+        net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        if apply_gas_st_netload_drag_floor(fleet_arrays, fleet, net_load, config):
+            logger.info(
+                "%s %d: ST_GAS net-load reliability-drag floor applied "
+                "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load mean %.0f / "
+                "max %.0f MW)",
+                iso,
+                year,
+                config.gas_st_drag_slope_per_gw,
+                config.gas_st_drag_intercept,
+                config.gas_st_drag_cap,
+                float(net_load.mean()),
+                float(net_load.max()),
+            )
     # Shape the priced import/export node by the measured EIA-930 diurnal
     # interchange envelope (import overnight, export the midday solar glut) so
     # the node stops clearing a flat all-hours import that floors the midday
