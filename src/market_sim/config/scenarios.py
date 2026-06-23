@@ -655,6 +655,22 @@ class ScenarioConfig:
     # transmission.build_caiso_per_hub_intertie +
     # transmission.inject_caiso_per_hub_intertie_prices. Default off
     # (byte-identical); CAISO-only; 2023 falls back to the static ladder.
+    caiso_corridor_flow_limit: bool = False  # Cap each CAISO per-hub corridor's
+    # import-direction flow at the MEASURED diurnal deliverability envelope (an
+    # ATC proxy): the per-(month × hour-of-day) p95 net import on COI/Path-66 and
+    # Path-46/WOR from EIA-930 BA-to-BA interchange. The neighbors are themselves
+    # long on solar midday, so the transfer they can schedule into a long CAISO
+    # collapses ~6→~3.6 GW (DSW) and ~2.3→~0.8 GW (PNW) midday — but the per-hub
+    # injector prices the whole neighbor stack at the cheap midday hub LMP, so
+    # without this ceiling the LP pulls the neighbors' idle thermal tranches up to
+    # the 8.3 GW simultaneous cap (the spurious ~5 GW midday over-import behind
+    # the inverted-diurnal residual). Applied as a one-sided hourly upper bound on
+    # the corridor link's import flow (export keeps the physical TTC), so the LP
+    # still clears its merit order below the ceiling — a capability limit, not a
+    # flow pinned to the residual (rule #12). Requires caiso_per_hub_intertie (the
+    # split that creates the corridor links). Carried by eia_loader
+    # .measured_corridor_flow_envelope + transmission.build_caiso_corridor_flow_
+    # groups. Default off (byte-identical); CAISO-only.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from

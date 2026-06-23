@@ -2630,6 +2630,58 @@ CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
     "WECC_scarcity": "PALOVRDE",
 }
 
+# Measured WECC corridor deliverability envelope (``caiso_corridor_flow_limit``).
+# ------------------------------------------------------------------------------
+# Each CAISO import corridor (COI/Path-66 into NP15, Path-46/WOR into SP15) has a
+# diurnal *deliverable* ceiling that is far below its physical line rating: the
+# desert-SW and Pacific-NW neighbors are themselves long on solar midday, so the
+# transfer they can actually schedule into a simultaneously-long CAISO collapses
+# from ~6 GW overnight to ~3-4 GW midday (DSW) and ~2.3 GW → ~0.8 GW (PNW). The
+# per-hub injector prices the whole neighbor stack at the cheap midday hub LMP,
+# so without a deliverability ceiling the LP pulls the neighbors' (idle) thermal
+# tranches over the line up to the 8.3 GW simultaneous cap — the spurious ~5 GW
+# midday over-import behind the inverted diurnal residual.
+#
+# The ceiling is the per-(month × hour-of-day) high percentile of the MEASURED
+# net import on each corridor, from EIA-930 BA-to-BA interchange
+# (data/raw/eia-930-interchange/CISO interchange hourly.parquet), aggregated by
+# the CISO↔DIBA → corridor map below. It is an ATC proxy (the operational
+# transfer ceiling, TTC net of parallel commitments and reliability margins),
+# applied as a one-sided hourly upper bound on the corridor link's import-
+# direction flow — the model still clears its own merit order *below* the
+# ceiling, so this is a capability limit, not an outcome pinned to the residual
+# (rule #12). The export direction keeps the physical link TTC (midday CA export
+# is real). Forward analogue: a forecast year uses the path's forecast ATC; the
+# percentile-of-history envelope is the backcast-mode reconstruction of it.
+#
+# CISO DIBA → corridor, split geographically at Path-15 (north of Path-15 lands
+# on NP15 via COI; south lands on SP15 via Path-46/49 and the Mexico tie). The
+# two corridors together carry CISO's whole external net interchange, so every
+# DIBA is assigned to exactly one. Source: EIA-930 BA reference table; CAISO
+# transmission topology (COI/Path-66, Path-46 West-of-River, Path-49 East-of-
+# River, Path-15 north/south split).
+CAISO_CORRIDOR_DIBA: dict[str, str] = {
+    # North / COI / Path-66 → NP15 (Pacific NW + northern-CA BAs)
+    "BPAT": "WECC_PNW",  # Bonneville (Pacific NW, COI)
+    "PACW": "WECC_PNW",  # PacifiCorp West (Oregon, COI)
+    "BANC": "WECC_PNW",  # Balancing Authority of Northern California (Sacramento)
+    "TIDC": "WECC_PNW",  # Turlock ID (Central Valley)
+    # South / Path-46 (West-of-River) + Path-49 + Mexico tie → SP15 (desert-SW)
+    "AZPS": "WECC_DSW",  # Arizona Public Service (Palo Verde)
+    "SRP": "WECC_DSW",  # Salt River Project (Arizona)
+    "WALC": "WECC_DSW",  # WAPA Lower Colorado (Arizona)
+    "NEVP": "WECC_DSW",  # NV Energy (southern Nevada)
+    "IID": "WECC_DSW",  # Imperial Irrigation District (SE California desert)
+    "LDWP": "WECC_DSW",  # LA Dept of Water & Power (LA basin, Path-46 adjacent)
+    "CEN": "WECC_DSW",  # CFE Baja California (Mexico tie into SP15)
+}
+# Percentile of the measured per-(month × hour-of-day) corridor net import used
+# as the deliverability ceiling. p95 = the operational transfer ceiling (an ATC
+# proxy): high enough that the LP clears below it in the typical hour (not a pin
+# to the mean), low enough that it removes the unphysical midday flood. Not tuned
+# to the price/volume residual — it is the standard high-percentile ATC envelope.
+CAISO_CORRIDOR_FLOW_PERCENTILE: float = 95.0
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
