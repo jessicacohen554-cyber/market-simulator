@@ -509,6 +509,46 @@ _CAISO_CORRIDOR_LINK_TO: dict[str, tuple[str, ...]] = {
 }
 
 
+def build_caiso_corridor_flow_groups(
+    links: list[TransferLink],
+    envelope: dict[str, np.ndarray],
+) -> list[tuple[np.ndarray, np.ndarray, bool]]:
+    """Return one-sided per-hour interface groups capping each corridor's import.
+
+    For each per-hub corridor zone in ``envelope`` (``WECC_PNW`` / ``WECC_DSW``),
+    finds the corridor's import link (``from_zone`` = corridor, ``to_zone`` =
+    NP15/SP15 via :data:`_CAISO_CORRIDOR_LINK_TO`) and returns an interface group
+    ``(link_idx, cap_hourly, bidirectional=False)`` so
+    :func:`~market_sim.model.dispatch._build_interface_rows` caps that link's
+    import-direction flow at the measured deliverability envelope hour by hour.
+    ``bidirectional`` is ``False`` so only the import (positive, neighbor→CAISO)
+    direction is bounded — the export direction keeps the link's own physical
+    TTC (midday CA export is real). Pairs with
+    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`; used by
+    the calibration runner only when ``config.caiso_corridor_flow_limit`` is on.
+
+    Returns an empty list when no corridor link is found (e.g. the per-hub split
+    was not applied), so the LP is byte-identical off the flag.
+    """
+    pair_to_idx = {(ln.from_zone, ln.to_zone): i for i, ln in enumerate(links)}
+    groups: list[tuple[np.ndarray, np.ndarray, bool]] = []
+    for zone, cap in envelope.items():
+        link_idx = next(
+            (
+                pair_to_idx[(zone, to_z)]
+                for to_z in _CAISO_CORRIDOR_LINK_TO.get(zone, ())
+                if (zone, to_z) in pair_to_idx
+            ),
+            None,
+        )
+        if link_idx is None:
+            continue
+        groups.append(
+            (np.array([link_idx], dtype=int), np.asarray(cap, dtype=float), False)
+        )
+    return groups
+
+
 def split_caiso_import_node_per_hub(iso_config: ISOConfig) -> ISOConfig:
     """Split CAISO's single ``WECC_import`` node into the two per-hub corridors.
 
