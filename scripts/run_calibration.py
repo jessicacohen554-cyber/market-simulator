@@ -1063,6 +1063,7 @@ def run_year(
     prb_overrides: dict | None = None,
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
+    coal_takeorpay_from_data: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
@@ -1177,6 +1178,10 @@ def run_year(
         )
     if reference_price_interface:
         config = config.with_overrides(reference_price_interface=True)
+    if coal_takeorpay_from_data:
+        # Coal must-run sunk fraction = measured EIA-923 Schedule-5 take-or-pay
+        # share per plant (campd_tranche_fuel_frac), not the hardcoded 100%.
+        config = config.with_overrides(coal_takeorpay_from_data=True)
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
     # validated keeper); an explicit True/False from the CLI overrides it (so a
