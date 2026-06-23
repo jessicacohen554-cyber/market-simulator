@@ -1,0 +1,261 @@
+INFO: CAISO backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Rebuilt binned fleet cache for CAISO — 782 plants → caiso_fleet_binned.parquet
+WARNING: CAISO TAC-area load for 2023 covers 744/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: solving CAISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+WARNING: CAISO TAC-area load for 2023 covers 744/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: unit-outage derate (CAISO 2023): 237 plant-tranches derated
+INFO: COD ramp (CAISO 2023): 87 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: CAISO 2023 hydro budget pinned to measured monthly total 24401.6 GWh (was 23901.9 GWh)
+INFO: Loaded CAISO 2023 hydro budget: 166 plants, 24401.6 GWh annual, 6433 MW nameplate
+INFO: CAISO 2023: 166 hydro plants in LP (6433 MW, 24.40 TWh monthly budget)
+INFO: CAISO 2023: priced import/export node — 6 import tranches (8300 MW), 1 export sinks (3500 MW)
+INFO: unit-outage derate (CAISO 2023): 237 plant-tranches derated
+INFO: COD ramp (CAISO 2023): 144 unit-months masked offline (mid-year COD / retirement), 10 unit(s) fully not-yet-built/retired
+INFO: CAISO 2023: priced node shaped by measured EIA-930 interchange envelope (import overnight / export midday)
+INFO: CAISO 2023: RA must-offer floor — gas fleet held online midday at 0.80 x measured EIA-930 NG: NG (long-midday floor)
+INFO: F923 fuel costs for 2023: 64 generators priced from their own plant, 917 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2023, monthly): 1136 gas generators repriced at the measured hub spot in 12/12 months (winter max 27.62 $/MMBtu)
+INFO: Matrix build: 13.876s, Solve: 187.981s (cold)
+INFO: Matrix build: 13.876s, Solve: 42.252s (warm)
+INFO: EIA-923 2023: CAMPD-backfilled 1 under-reported plants (1 replaced, 0 added)
+INFO: EIA-923 2023 wind 13.94 TWh under-counts EIA-930 16.40 TWh; using EIA-930 grid total
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+WARNING: CAISO TAC-area load for 2024 covers 8758/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: solving CAISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+WARNING: CAISO TAC-area load for 2024 covers 8758/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: unit-outage derate (CAISO 2024): 229 plant-tranches derated
+INFO: COD ramp (CAISO 2024): 326 unit-months masked offline (mid-year COD / retirement), 11 unit(s) fully not-yet-built/retired
+INFO: CAISO 2024 hydro budget pinned to measured monthly total 22678.0 GWh (was 21484.8 GWh)
+INFO: Loaded CAISO 2024 hydro budget: 160 plants, 22678.0 GWh annual, 6568 MW nameplate
+INFO: CAISO 2024: 160 hydro plants in LP (6568 MW, 22.68 TWh monthly budget)
+INFO: CAISO 2024: priced import/export node — 6 import tranches (8300 MW), 1 export sinks (3500 MW)
+INFO: unit-outage derate (CAISO 2024): 229 plant-tranches derated
+INFO: COD ramp (CAISO 2024): 390 unit-months masked offline (mid-year COD / retirement), 15 unit(s) fully not-yet-built/retired
+INFO: CAISO 2024: priced node shaped by measured EIA-930 interchange envelope (import overnight / export midday)
+INFO: CAISO 2024: RA must-offer floor — gas fleet held online midday at 0.80 x measured EIA-930 NG: NG (long-midday floor)
+INFO: F923 fuel costs for 2024: 64 generators priced from their own plant, 920 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2024, monthly): 1139 gas generators repriced at the measured hub spot in 12/12 months (winter max 5.40 $/MMBtu)
+INFO: CAISO 2024: bidirectional WECC intertie — single signed flow on a shared cap, both legs priced at the measured hub (import + border carbon / export, arbitrage-free, one direction per hour)
+INFO: Matrix build: 3.522s, Solve: 200.938s (cold)
+INFO: Matrix build: 3.522s, Solve: 33.611s (warm)
+INFO: EIA-923 2024: CAMPD-backfilled 1 under-reported plants (1 replaced, 0 added)
+INFO: EIA-923 2024 wind 15.42 TWh under-counts EIA-930 20.06 TWh; using EIA-930 grid total
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+WARNING: CAISO TAC-area load for 2025 covers 8759/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: solving CAISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+WARNING: CAISO TAC-area load for 2025 covers 8759/8760 hours; uncovered hours use the sample-average zone shares (refresh: complete the U4 monthly OASIS pulls)
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: unit-outage derate (CAISO 2025): 261 plant-tranches derated
+INFO: COD ramp (CAISO 2025): 408 unit-months masked offline (mid-year COD / retirement), 34 unit(s) fully not-yet-built/retired
+INFO: CAISO 2025 hydro budget pinned to measured monthly total 21319.1 GWh (was 12319.2 GWh)
+INFO: Loaded CAISO 2025 hydro budget: 26 plants, 21319.1 GWh annual, 3916 MW nameplate
+INFO: CAISO 2025: 26 hydro plants in LP (3916 MW, 21.32 TWh monthly budget)
+INFO: CAISO 2025: priced import/export node — 6 import tranches (8300 MW), 1 export sinks (3500 MW)
+INFO: unit-outage derate (CAISO 2025): 261 plant-tranches derated
+INFO: COD ramp (CAISO 2025): 495 unit-months masked offline (mid-year COD / retirement), 39 unit(s) fully not-yet-built/retired
+INFO: CAISO 2025: priced node shaped by measured EIA-930 interchange envelope (import overnight / export midday)
+INFO: CAISO 2025: RA must-offer floor — gas fleet held online midday at 0.80 x measured EIA-930 NG: NG (long-midday floor)
+INFO: F923 fuel costs for 2025: 48 generators priced from their own plant, 923 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2025, monthly): 1142 gas generators repriced at the measured hub spot in 9/12 months (winter max 5.92 $/MMBtu)
+INFO: CAISO 2025: bidirectional WECC intertie — single signed flow on a shared cap, both legs priced at the measured hub (import + border carbon / export, arbitrage-free, one direction per hour)
+INFO: Matrix build: 2.951s, Solve: 154.145s (cold)
+INFO: Matrix build: 2.951s, Solve: 26.207s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 3 under-reported plants (1 replaced, 2 added)
+INFO: EIA-923 2025 wind 4.24 TWh under-counts EIA-930 19.82 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 39.76 TWh under-counts EIA-930 49.85 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 12.42 TWh under-counts EIA-930 21.35 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 biomass 1.23 TWh incomplete (vintage 73%); carrying 2024 biomass 4.41 TWh x completeness -> 3.23 TWh
+INFO: wrote calibration bundle to results/calibration/caiso_bidir_floorOnly_3yr
+
+================================================================================
+  CALIBRATION REPORT  (CAISO; run 2026-06-23T15:47:48; git f8438f3)
+  bundle: results/calibration/caiso_bidir_floorOnly_3yr
+================================================================================
+
+================================================================================
+  CAISO 2023 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.39   0.2    0.01   0.0    0.21   0.1
+    gas         86.31  43.1   88.01  47.8   76.04  50.8
+    nuclear     17.63   8.8   17.75   9.6   17.72  11.8
+    wind        16.55   8.3   16.40   8.9       —     —
+    solar       39.73  19.8   37.17  20.2       —     —
+    hydro       24.14  12.1   24.42  13.2       —     —
+    oil          0.01   0.0    0.54   0.3       —     —
+    biomass      6.15   3.1       —     —       —     —
+    TOTAL      200.17 100.0  184.31 100.0  149.75 100.0
+    import      19.41   8.8   28.87  13.5       —     —   (net; serves load, not in generation total)
+
+  [1b] Renewable curtailment — 2023 (model re-curtailment vs ISO-reported; potential = uncurtailed HSL)
+     fuel  potential TWh  model TWh  model curt  model %  reported curt  reported %
+     wind          16.55      16.55       0.000     0.00          0.151        0.91
+    solar          39.79      39.73       0.058     0.15          2.509        6.31
+
+    Monthly curtailment (GWh):
+    month  wind mdl  wind rep  solar mdl  solar rep
+      Jan       0.0       3.6        0.0       49.6
+      Feb       0.0      10.6        0.0      193.4
+      Mar       0.0      34.6       28.7      571.6
+      Apr       0.0      30.9        6.5      672.0
+      May       0.0      31.7        5.9      348.1
+      Jun       0.0      22.0        0.0      192.0
+      Jul       0.0       2.2       17.0       55.7
+      Aug       0.0       0.9        0.0       48.4
+      Sep       0.0       2.6        0.0       73.4
+      Oct       0.0       6.8        0.0      204.6
+      Nov       0.0       1.9        0.0       68.9
+      Dec       0.0       2.9        0.0       31.3
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -28.87 TWh (-3295 MW avg)
+    priced-node fit  : duration RMSE 568 MW (offline tranche fit, optimal placement; P9)
+    model            : -19.41 TWh (-2215 MW avg; priced import/export node)
+    duration curve   : RMSE 1836 MW; p01/p10/p50/p90/p99 model -7228/-3745/-2182/-389/+682 vs actual -8437/-6500/-3774/+661/+3574
+    import hours     : model 96.0% vs actual 85.9%
+    diurnal shape    : corr +0.95; model peak->trough 2161 MW vs actual 5236 MW
+
+  [2b] Battery cycling — 2023 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   4.97        —
+                            charge TWh   5.85        —
+    evening (h17-22) discharge share %   92.9        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 2.05 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              77.71       48
+    SP15              77.71       48
+    WECC_import       77.71       48
+    ZP26              77.71       48
+
+  [3] System price duration ($/MWh)
+    avg    77.71   max   249.74   p90  113.61   p50   61.41   p10   47.17   min   -20.00
+    negative-price hours: 48
+
+================================================================================
+  CAISO 2024 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.34   0.2   -0.00  -0.0    0.25   0.2
+    gas         81.73  40.2   85.37  44.5   67.68  43.4
+    nuclear     18.20   8.9   18.35   9.6   18.38  11.8
+    wind        20.29  10.0   20.06  10.5       —     —
+    solar       47.72  23.5   44.64  23.3       —     —
+    hydro       22.24  10.9   22.73  11.9       —     —
+    oil          0.00     —    0.52   0.3       —     —
+    biomass      4.85   2.4       —     —       —     —
+    TOTAL      203.44 100.0  191.66 100.0  155.83 100.0
+    import      22.36   9.9   32.38  14.5       —     —   (net; serves load, not in generation total)
+
+  [1b] Renewable curtailment — 2024 (model re-curtailment vs ISO-reported; potential = uncurtailed HSL)
+     fuel  potential TWh  model TWh  model curt  model %  reported curt  reported %
+     wind          20.29      20.29       0.000     0.00          0.229        1.13
+    solar          47.91      47.72       0.191     0.40          3.170        6.62
+
+    Monthly curtailment (GWh):
+    month  wind mdl  wind rep  solar mdl  solar rep
+      Jan       0.0       5.5        0.0       95.5
+      Feb       0.0      13.6        0.0      191.0
+      Mar       0.0      54.7        0.7      675.6
+      Apr       0.0      41.8       79.4      797.8
+      May       0.0      57.2       74.7      638.1
+      Jun       0.0      27.4       34.5      219.2
+      Jul       0.0       5.1        0.0       62.5
+      Aug       0.0       0.8        1.5       70.8
+      Sep       0.0       2.3        0.0      118.4
+      Oct       0.0       9.5        0.0      142.4
+      Nov       0.0       5.3        0.0      141.7
+      Dec       0.0       5.8        0.0       16.6
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -32.38 TWh (-3696 MW avg)
+    priced-node fit  : duration RMSE 560 MW (offline tranche fit, optimal placement; P9)
+    model            : -22.36 TWh (-2553 MW avg; priced import/export node)
+    duration curve   : RMSE 1542 MW; p01/p10/p50/p90/p99 model -7228/-5407/-2530/+0/+1161 vs actual -8302/-6750/-4183/+152/+3538
+    import hours     : model 83.9% vs actual 89.0%
+    diurnal shape    : corr +0.22; model peak->trough 3368 MW vs actual 4596 MW
+
+  [2b] Battery cycling — 2024 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   9.87        —
+                            charge TWh  11.61        —
+    evening (h17-22) discharge share %   81.7        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 2.37 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              46.81      221
+    SP15              46.81      221
+    WECC_import       46.81      221
+    ZP26              46.81      221
+
+  [3] System price duration ($/MWh)
+    avg    46.81   max    90.26   p90   63.39   p50   49.49   p10   32.24   min   -20.00
+    negative-price hours: 221
+
+================================================================================
+  CAISO 2025 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.38   0.2   -0.00  -0.0    0.23   0.2
+    gas         78.15  39.9   79.03  42.1   55.18  41.6
+    nuclear     17.49   8.9   17.61   9.4   17.56  13.2
+    wind        19.81  10.1   19.82  10.6       —     —
+    solar       49.76  25.4   49.70  26.5       —     —
+    hydro       19.72  10.1   21.34  11.4       —     —
+    oil          0.00     —    0.35   0.2       —     —
+    biomass      4.99   2.5       —     —       —     —
+    TOTAL      195.81 100.0  187.85 100.0  132.55 100.0
+    import      30.63  13.5   36.16  16.1       —     —   (net; serves load, not in generation total)
+
+  [1b] Renewable curtailment — 2025: no CAISO HSL parquet; build with scripts/build_caiso_hsl.py (ERCOT 2024+ needs the NP6 report uploads under data/raw/ercot-hsl/np6/)
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -36.16 TWh (-4127 MW avg)
+    priced-node fit  : duration RMSE 556 MW (offline tranche fit, optimal placement; P9)
+    model            : -30.63 TWh (-3497 MW avg; priced import/export node)
+    duration curve   : RMSE 1015 MW; p01/p10/p50/p90/p99 model -8134/-6648/-3139/-457/+1102 vs actual -9335/-7194/-4670/-128/+2736
+    import hours     : model 91.0% vs actual 90.9%
+    diurnal shape    : corr +0.11; model peak->trough 4034 MW vs actual 4973 MW
+
+  [2b] Battery cycling — 2025 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh  11.80        —
+                            charge TWh  13.88        —
+    evening (h17-22) discharge share %   70.8        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 1.31 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              52.01        9
+    SP15              52.01        9
+    WECC_import       52.01        9
+    ZP26              52.01        9
+
+  [3] System price duration ($/MWh)
+    avg    52.01   max    88.43   p90   65.14   p50   52.96   p10   37.34   min   -20.00
+    negative-price hours: 9
