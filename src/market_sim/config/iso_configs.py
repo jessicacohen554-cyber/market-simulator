@@ -32,6 +32,30 @@ class TransferLink(BaseModel):
     is_bidirectional: bool = True
 
 
+class InterfaceLimit(BaseModel):
+    """An aggregate transfer cap shared across a *group* of links.
+
+    A real interface's *simultaneous* transfer limit is smaller than the sum
+    of its component paths' individual ratings: CAISO's published WECC Maximum
+    Import Capability is ~8.3 GW, well below Path 66 (COI, 4,800 MW) + Path 46
+    (West-of-River, 10,623 MW) ≈ 15.4 GW. ``cap_mw`` bounds the *signed* sum of
+    the named links' flows -- the total simultaneous transfer across the
+    interface -- while each component link keeps its own per-link TTC. With
+    ``bidirectional`` the reverse direction is floored at ``-cap_mw`` too.
+
+    ``links`` lists ``(from_zone, to_zone)`` pairs that must each match an
+    existing :class:`TransferLink` (validated in
+    :meth:`ISOConfig.validate_topology`); the flows are summed with the links'
+    own from→to sign, so links must share an orientation for the sum to read as
+    a net interface flow.
+    """
+
+    name: str
+    links: list[tuple[str, str]]
+    cap_mw: float = Field(gt=0.0)
+    bidirectional: bool = True
+
+
 class ISOConfig(BaseModel):
     """Physical topology and economic parameters for one ISO."""
 
@@ -39,6 +63,7 @@ class ISOConfig(BaseModel):
     zones: list[Zone]
     links: list[TransferLink]
     voll: float = Field(gt=0.0)
+    interface_limits: list[InterfaceLimit] = Field(default_factory=list)
 
     @property
     def n_zones(self) -> int:
@@ -70,6 +95,16 @@ class ISOConfig(BaseModel):
                 )
             if link.to_zone not in valid_zones:
                 raise ValueError(f"Link references unknown to_zone '{link.to_zone}'")
+
+        # Aggregate interface limits must reference existing links.
+        link_pairs = {(link.from_zone, link.to_zone) for link in self.links}
+        for limit in self.interface_limits:
+            for pair in limit.links:
+                if tuple(pair) not in link_pairs:
+                    raise ValueError(
+                        f"Interface limit '{limit.name}' references unknown link "
+                        f"{tuple(pair)}"
+                    )
 
         total_share = sum(zone.load_share for zone in self.zones)
         if abs(total_share - 1.0) > _LOAD_SHARE_TOL:
@@ -223,6 +258,27 @@ def _caiso_config() -> ISOConfig:
         # Path 46 / West of the River: WECC import into SP15 (south).
         TransferLink(from_zone="WECC_import", to_zone="SP15", ttc_mw=10623.0),
     ]
+    # Aggregate WECC→CAISO import cap. The two import paths' individual ratings
+    # are correct, but their SUM (4,800 + 10,623 = 15,423 MW) is NOT the
+    # *simultaneous* import capability: COI and the West-of-River corridor draw
+    # on overlapping WECC generation and contract paths, so CAISO's deliverable
+    # max import is far lower. Without this cap the priced-import supply curve
+    # (IMPORT_TRANCHES["CAISO"], 11.4 GW total) clears its full depth in CAISO's
+    # tightest hours, putting the modeled deepest-import tail at ~-11.2 GW versus
+    # the EIA-930 CISO measured p01 of ~-8.3 GW. The aggregate cap binds the
+    # signed sum of the two import-link flows at the measured simultaneous
+    # rating, leaving the per-path TTCs intact; the WECC_scarcity import block
+    # stays in the merit order but only clears within the cap.
+    # Source: CAISO published Maximum Import Capability; EIA-930 CISO
+    # net-interchange p01, 2023-25. Tier 3 (calibration) — verify against CAISO
+    # OASIS simultaneous import transfer capability.
+    interface_limits = [
+        InterfaceLimit(
+            name="WECC_import_simultaneous",
+            links=[("WECC_import", "NP15"), ("WECC_import", "SP15")],
+            cap_mw=8300.0,
+        ),
+    ]
     # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
     # for real-time energy. CAISO's bid cap is lower than ERCOT's because
     # CAISO has capacity-market-like mechanisms (RA program) that provide
@@ -230,7 +286,13 @@ def _caiso_config() -> ISOConfig:
     # of the reliability investment signal.
     # ERCOT's $5,000 DA SWCAP is higher because ERCOT is energy-only.
     # Source: CAISO Tariff §39.6.1; ERCOT Protocols §4.4.11.
-    return ISOConfig(name="CAISO", zones=zones, links=links, voll=2000.0)
+    return ISOConfig(
+        name="CAISO",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+        interface_limits=interface_limits,
+    )
 
 
 def _miso_config() -> ISOConfig:
