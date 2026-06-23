@@ -38,7 +38,6 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import (
-    AGT_DAILY_BASIS_CONVEXITY,
     BIOMASS_PRICE_PER_MMBTU,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
@@ -578,10 +577,24 @@ HENRY_HUB_DAILY_PATH: Path = GAS_PRICES_DIR / "henry_hub_daily.csv"
 # inherit this Transco daily shape (a real daily Iroquois series is the open ask).
 TRANSCO_Z6_NY_DAILY_PATH: Path = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
 
+# Measured Algonquin Citygate (AGT) *daily* spot, harvested free from the prose of
+# every EIA Natural Gas Weekly Update ("...the price went up $9.31 from $4.04/MMBtu
+# last Wednesday to $13.35/MMBtu yesterday...") by scripts/fetch_algonquin_daily_spot.py.
+# These are real, EIA-published AGT spot prints — two hard-dated Wednesdays per
+# weekly page plus winter high/low days, ~123 prints 2023-2025, densest in the cold
+# weeks that set the ISO-NE price tail. The NEISO leg of the daily hub-basis overlay
+# (:func:`iso_hub_daily_gas_prices`) anchors its within-month AGT basis to these real
+# prints and mean-preserves to the measured monthly basis, replacing the retired
+# demand-convexity proxy. AGT basis ~= Transco Z6 NY basis (measured slope ~0.95,
+# corr ~0.79), so TRANSCO_Z6_NY_DAILY_PATH supplies the within-month shape in the
+# sparse (<2 print) covered months; both are EIA Weekly archive series.
+ALGONQUIN_DAILY_PATH: Path = GAS_PRICES_DIR / "algonquin_citygate_daily.csv"
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
+_ALGONQUIN_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 
 # Clean-data ("data/clean/fuel-prices") consumption. The curated dataset carries
 # the delivered fuel-price benchmarks as ``price_usd_per_mmbtu`` keyed by
@@ -763,6 +776,32 @@ def _transco_z6_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     return out
 
 
+def _algonquin_daily(path: Path | None) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/MMBtu}}}`` measured AGT spot prints.
+
+    The ISO-NE analogue of :func:`_transco_z6_daily`, reading the real Algonquin
+    Citygate daily prints harvested from the EIA NG Weekly Update narrative
+    (:data:`ALGONQUIN_DAILY_PATH`, by ``scripts/fetch_algonquin_daily_spot.py``).
+    Unlike the Transco series these prints are *sparse and irregular* (two dated
+    Wednesdays per weekly page plus winter high/low days), so they are keyed by
+    day-of-month — the daily overlay places each real print on its true calendar
+    day and interpolates between them, rather than treating the list as a dense
+    trading-day sequence. Cached per path.
+    """
+    resolved = Path(path) if path else ALGONQUIN_DAILY_PATH
+    if resolved in _ALGONQUIN_DAILY_CACHE:
+        return _ALGONQUIN_DAILY_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.algonquin_citygate_usd_mmbtu)
+            )
+    _ALGONQUIN_DAILY_CACHE[resolved] = out
+    return out
+
+
 def gas_daily_shape_factors(
     year: int, hours: int, path: Path | None = None
 ) -> np.ndarray:
@@ -834,41 +873,6 @@ def iso_hub_monthly_gas_prices(
     if np.isnan(monthly).all():
         return None
     return monthly
-
-
-_NEISO_DAILY_DEMAND_CACHE: dict[int, np.ndarray | None] = {}
-
-
-def _neiso_daily_demand(year: int, hours: int) -> np.ndarray | None:
-    """Return mean NEISO demand per *model-calendar* day, or ``None``.
-
-    Reads the measured EIA-930 ISNE hourly demand
-    (:func:`market_sim.data.eia_loader._load_neiso_hourly_demand`) and folds it
-    to one mean value per calendar day on the model's ``_DAYS_IN_MONTH``
-    (non-leap, 8760-hour) clock — the same clock the gas-price hours run on, so
-    a 2024 leap day inherits the existing truncate-to-``hours`` convention. The
-    daily demand is the cold-stress proxy that shapes the within-month AGT
-    basis blowout (:func:`iso_hub_daily_gas_prices`). Cached per year. Returns
-    ``None`` when the ISNE extract is unavailable, so the caller falls back to
-    the flat monthly hub overlay.
-    """
-    if year in _NEISO_DAILY_DEMAND_CACHE:
-        return _NEISO_DAILY_DEMAND_CACHE[year]
-    # Local import avoids a module-load cycle (eia_loader imports neither fuel
-    # nor fleet); the daily-basis overlay is NEISO-only, so this is cold path.
-    from market_sim.data.eia_loader import _load_neiso_hourly_demand
-
-    hourly = _load_neiso_hourly_demand(year)
-    result: np.ndarray | None = None
-    if hourly is not None and hourly.size:
-        n_days = hours // 24
-        need = n_days * 24
-        h = np.asarray(hourly, dtype=float)
-        if h.size < need:
-            h = np.concatenate([h, np.full(need - h.size, float(h.mean()))])
-        result = h[:need].reshape(n_days, 24).mean(axis=1)
-    _NEISO_DAILY_DEMAND_CACHE[year] = result
-    return result
 
 
 def _nyiso_hub_daily_gas_prices(
@@ -967,43 +971,60 @@ def iso_hub_daily_gas_prices(
       ``daily_hub[d] = hh_daily_norm[d] + basis_daily[d]``
 
     where ``hh_daily_norm`` is the measured Henry Hub daily within-month series
-    re-centred to the measured monthly mean, and ``basis_daily`` redistributes
-    the measured monthly AGT basis across the month's days proportional to mean
-    NEISO daily demand raised to :data:`AGT_DAILY_BASIS_CONVEXITY` — the
-    coldest (highest-demand) days carry the convex citygate scarcity blowout
-    that a flat monthly plateau never reaches. The redistribution runs only in
-    winter-blowout months (positive monthly basis); shoulder/summer months
-    (zero or negative basis, no pipeline scarcity) keep the flat basis. Months
-    without a measured basis row or Henry Hub quote stay ``NaN`` for the caller
-    to leave on its existing series, exactly like the monthly variant.
+    re-centred to the measured monthly mean, and ``basis_daily`` is the
+    **measured Algonquin Citygate daily basis** — anchored to the real AGT spot
+    prints EIA publishes in its Weekly Update narrative
+    (:func:`_algonquin_daily`, ``scripts/fetch_algonquin_daily_spot.py``):
+
+      * In a positive-basis (winter-blowout) month with ≥2 real AGT prints, the
+        prints are converted to a same-day basis (``agt_print − hh_daily``) and
+        interpolated across the month's days — the real cold-day spike (e.g. the
+        $28/MMBtu 2023-02-02 arctic print) lands on its true calendar day.
+      * In a positive-basis month with <2 prints, the within-month *shape* is
+        taken from the measured **Transco Z6 NY daily basis**, which tracks AGT
+        basis ~1:1 (measured slope ≈0.95, corr ≈0.79) since both citygates blow
+        out on the same Northeast pipeline-scarcity days.
+      * Shoulder/summer months (zero or negative basis, no pipeline scarcity)
+        and months with neither prints nor Transco quotes keep the flat basis.
+
+    The daily basis is **mean-preserved** to the measured monthly AGT basis
+    (additive shift), so the monthly hub level, annual gas burn and fuel mix are
+    unchanged — only the within-month shape is added. Every driver is real,
+    free, EIA-sourced gas-market data; there is no demand/oil/LMP-tuned proxy
+    (the retired ``AGT_DAILY_BASIS_CONVEXITY`` exponent was fitted to the oil
+    burn, violating the measured-input rule). Months without a measured basis row
+    or Henry Hub quote stay ``NaN`` for the caller to leave on its existing series.
 
     This is the daily AGT spot the marginal gas unit would actually bid at on a
     cold day; it is what trips the dual-fuel gas->oil switch and the oil-steam
     fleet (:func:`apply_dual_fuel_pricing`, applied after this overlay) and so
-    builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis
-    is unavailable (so the caller no-ops) or when the NEISO demand series is
+    builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis is
     unavailable (so the caller falls back to the flat monthly overlay).
 
     **NYISO** uses a different daily leg (:func:`_nyiso_hub_daily_gas_prices`):
     its marginal hub *is* a measured daily-spot series (Transco Z6 NY, EIA NG
     Weekly), so the within-month shape is taken straight from the real daily
-    quotes rather than reconstructed from a demand-convexity proxy.
+    quotes.
     """
     if config.iso == "NYISO":
         return _nyiso_hub_daily_gas_prices(config, year, basis_path, henry_hub_path)
     basis = load_winter_gas_basis(config, year, path=basis_path)
     if basis is None:
         return None
-    demand_daily = _neiso_daily_demand(year, config.hours)
-    if demand_daily is None:
-        return None
     henry_hub = _henry_hub_monthly(henry_hub_path)
     hh_daily = _henry_hub_daily(henry_hub_path).get(year, {})
-    p = AGT_DAILY_BASIS_CONVEXITY
+    all_agt = _algonquin_daily(None)
+    agt_prints = all_agt.get(year, {})
+    transco_daily = _transco_z6_daily(None).get(year, {})
+    # AGT's own measured daily-price ceiling across the full print record — the
+    # physical bound the Transco-shape fallback is capped at (see below).
+    agt_price_ceiling = max(
+        (p for yr in all_agt.values() for mo in yr.values() for p in mo.values()),
+        default=float("inf"),
+    )
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
-    day0 = 0
     for m in range(12):
         n_days = _DAYS_IN_MONTH[m]
         month_hours = n_days * 24
@@ -1021,27 +1042,45 @@ def iso_hub_daily_gas_prices(
                     arr,
                 )
                 dm = float(day_hh.mean())
-                if dm > 0:
-                    day_hh = day_hh * (hh_m / dm)
-                else:
-                    day_hh = np.full(n_days, hh_m)
+                day_hh = day_hh * (hh_m / dm) if dm > 0 else np.full(n_days, hh_m)
             else:
                 day_hh = np.full(n_days, hh_m)
-            # Daily AGT basis leg: convex demand redistribution of the measured
-            # monthly mean (mean over the month's days stays exactly b_m), only
-            # in positive-basis winter months; shoulder months stay flat.
-            seg = demand_daily[day0 : day0 + n_days]
-            if b_m > 0 and seg.size == n_days:
-                w = np.power(seg, p)
-                wbar = float(w.mean())
-                day_basis = b_m * (w / wbar) if wbar > 0 else np.full(n_days, b_m)
-            else:
-                day_basis = np.full(n_days, b_m)
+            # Daily AGT basis leg, built from real measured gas data and
+            # mean-preserved to the measured monthly basis b_m (additive shift),
+            # only in positive-basis winter-blowout months; shoulder months stay
+            # flat. Priority: real AGT prints (interpolated on their true calendar
+            # days) -> measured Transco Z6 NY daily-basis shape -> flat.
+            month_prints = agt_prints.get(m + 1, {})
+            day_basis = np.full(n_days, b_m)
+            if b_m > 0 and len(month_prints) >= 2:
+                # Real AGT spot -> same-day basis, interpolated across the month.
+                days = np.array(sorted(month_prints), dtype=float)
+                pb = np.array([month_prints[int(d)] - day_hh[int(d) - 1] for d in days])
+                shape = np.interp(np.arange(n_days), days - 1.0, pb)
+                day_basis = shape + (b_m - float(shape.mean()))
+            elif b_m > 0 and transco_daily.get(m + 1):
+                # Sparse-print month: borrow the measured Transco daily-basis
+                # within-month shape (AGT basis ~= Transco basis, slope ~0.95).
+                # Cap the borrowed basis at AGT's own measured price ceiling: on
+                # the most extreme days NY (Transco) is more pipeline-constrained
+                # than Boston (AGT) — e.g. Transco hit $97.9 in the Jan-2025 polar
+                # vortex while AGT spot never exceeds ~$30 — so an uncapped shape
+                # borrow would over-amplify the AGT peak. Cap before the mean
+                # shift so the monthly mean stays exactly b_m. Never below b_m.
+                tq = np.asarray(transco_daily[m + 1], dtype=float)
+                tx_day = np.interp(
+                    np.linspace(0.0, 1.0, n_days),
+                    np.linspace(0.0, 1.0, len(tq)),
+                    tq,
+                )
+                tx_basis = tx_day - day_hh
+                cap = np.maximum(agt_price_ceiling - day_hh, b_m)
+                tx_basis = np.minimum(tx_basis, cap)
+                day_basis = tx_basis + (b_m - float(tx_basis.mean()))
             day_hub = day_hh + day_basis  # monthly mean == hh_m + b_m
             shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
             out[hour : hour + len(shaped)] = shaped
         hour += month_hours
-        day0 += n_days
     if np.isnan(out).all():
         return None
     return out
