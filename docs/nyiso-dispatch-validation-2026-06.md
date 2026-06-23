@@ -128,11 +128,59 @@ eases markedly (Jun −30.7 → −14.6, Jul −22.1 → −15.8 vs the LI-floor
 dispatch r 0.81–0.87 all years; 2023 body unchanged (BASE 12.31 → COOPT 12.27,
 A/B-verified). It is **not** an energy must-run (NYC over-generates already).
 
-**Why it is not yet a keeper — the residual moved to a NEW root cause.** The
-aggregate is now gated by a **pre-existing winter/January downstate
-over-pricing** (2023 `price_mean` +13 %, NRMSE 0.40; downstate zones ~$98 in
-January vs upstate ~$40, actual NYCA RT $37.8). A BASE-vs-COOPT A/B with the
-co-opt OFF reproduced the *identical* January price, so this is **not** caused
-by fix #3 — it is a gas / dual-fuel marginal-unit residual (likely the winter
-NYC delivered-gas basis or the dual-fuel oil-cap level). That is the next
-investigation; the locational-reserve mechanism stays in (rule #1).
+**Why it was not yet a keeper — the residual moved to a NEW root cause.** With
+the co-opt run still on the EIA-923 **receipt** monthly gas (`--gas-monthly-actuals`),
+the aggregate was gated by a **winter/January downstate over-pricing** (2023
+`price_mean` +13 %, NRMSE 0.40; downstate zones ~$98 in January vs upstate ~$40,
+actual NYCA RT $37.8). A BASE-vs-COOPT A/B with the co-opt OFF reproduced the
+*identical* January price, so it is **not** caused by fix #3.
+
+## Root cause of the winter downstate over-price — IT IS THE GAS LEVEL, not topology (2026-06, run `nyiso 20`)
+
+The January downstate over-price is the **gas-level artifact** the residual-
+attribution doc (mechanism D) already diagnosed and the daily-Transco overlay
+(`nyiso 16/17`) already fixed — **not** an import-topology bug. The keeper-
+lineage `nyiso 17` was a daily-Transco run but *without* the fix-#3 mechanisms;
+the co-opt probe `nyiso 19` had the mechanisms but burned the winter-inflated
+receipt gas. Neither had run the obvious combination. **`nyiso 20
+daily-coopt-floors` is that combination** —
+`--commitment --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily
+--priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply
+--nyiso-firm-imports`, 2023+24+25 — and it is the **new keeper**.
+
+The measured daily Transco Z6 NY spot de-smears the January within-month cold
+spike (the EIA-923 receipt's $10.02/MMBtu January is Winter-Storm-Elliott gas
+billed into the receipt average). Effect, 2023:
+
+| metric | receipt+coopt (`nyiso 19`) | daily+coopt (`nyiso 20`) |
+|---|---|---|
+| Jan downstate LMP | ~$98 | **$49** (upstate $34; actual NYCA $38) |
+| Jan load-wtd residual | +44 | **+5.8** |
+| NYC in-zone gen (real 29.07) | 38.4 | **33.6 TWh** |
+
+`nyiso 20` **beats the keeper `nyiso 17` on price every year** (verdict
+`price_mean`: 2023 +19.9 % vs +24.0 %, 2024 +2.1 % vs +7.2 % PASS, 2025 +1.2 %
+vs +5.4 % PASS; `price_shape` 2023 0.212 vs 0.251). 2023 `co2` now PASSES and
+the keeper's ST_GAS +5.05 TWh fuelmix overshoot is gone; volume bands held
+within ~1 pp of the documented EIA-930/923 import basis floor. Registered +
+promoted (`keepers.json`).
+
+**Why import topology is NOT the lever for the remaining residual.** The import
+node attaches to Upstate (3,000), NYC (1,000 = HTP 660 + Linden 315) and LI
+(1,200 MW); Central-East carries the measured monthly TTC (1,750 MW mean 2023,
+posted DAM `CENT EAST` TTC — keep per rule #11). With the gas fixed, the
+remaining 2023 over-price is a roughly-**uniform +$5–7/MWh downstate body**
+(Mar +12, Apr/May +7, Jul +6) — the import/**congestion** residual: the deep
+import tranches do not clear because **PJM $34 > the downstate body $29–38**, and
+serving the wedge anyway pushes in-state gas out of the EIA-923 band (the
+documented EIA-930/923 floor, §2.A of the residual-attribution doc). So the
+downstate clears on local gas; this cannot be closed without a fitted adder.
+The other half is the **flat-annual Iroquois-Transco summer over-level** (fix
+#1(b)) — the hub overlay reconstructs a single Iroquois-Z2 monthly level (HH +
+basis) that every zone inherits via fixed annual offsets, so a real *monthly*
+Iroquois would lower the summer body; a multiplicative/winter-concentrated
+reconstruction is **mean-preserving on annual gas** and only trades summer for
+winter (price is convex in gas → it would not lower the mean), so it is not a
+clean substitute for the paywalled series. **Dec-2024 −27** and the short **2025
+summer tail** (model 29 vs 118 h >$200) are the co-opt **winter/10-min
+eligibility** follow-on (handoff #2), not gas or topology.
