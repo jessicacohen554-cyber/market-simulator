@@ -14,7 +14,7 @@ fabricated or tuned to any backcast target.
 |---|------|--------|--------|-----------|-------|
 | 1a | CEMS LA 2023 (hourly unit-level) | EPA CAMPD bulk-files API (`emissions/hourly/state/emissions-hourly-2023-la.csv`) | **got** | `data/raw/campd-unit-level/LA_2023.parquet` | 692,040 rows, 30 facilities / 79 units, schema-identical to `LA_2024.parquet`. Downloaded with `x-api-key: DEMO_KEY` (project has no EPA key); bulk-file metadata gave the exact S3 path. |
 | 1b | MISO unit-outage rebuild incl. LA 2023 | `scripts/derive_campd_unit_outages.py --iso MISO --years 2023 2024 2025` | **got** | `data/raw/campd-unit-outages-MISO.csv` | Re-derived. LA-2023 unit-outage windows went **0 → 136** across **42 units** (R S Nelson coal, Coughlin CC, Louisiana 1 CT, etc.); all from real CEMS windows (no full-year fallback). Total rows 2788 → 2924 (+136 = the LA-2023 additions). All 14 MISO states × 3 years now present. |
-| 2 | MISO zonal/regional metered load 2023-2025 | EIA-930 Hourly Grid Monitor, sub-BA demand (`region-sub-ba-data`, parent=MISO) | **got** | `data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv` | 157,471 hourly rows, 6 MISO sub-BAs. Recommended `load_share` below. |
+| 2 | MISO zonal/regional metered load 2023-2025 | EIA-930 Hourly Grid Monitor, sub-BA demand (`region-sub-ba-data`, parent=MISO) | **integrated** | `data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv` | 157,471 hourly rows, 6 MISO sub-BAs. Wired as per-zone hourly shapes; see Item 2 integration outcome below. |
 | 3 | MISO PRA clearing prices PY 2023/24–2025/26 | MISO auction-summary PDFs (cdn.misoenergy.org) | **blocked** (primary) / **got** (secondary) | `data/raw/miso-pra/miso_pra_clearing_prices_2023-2026.csv` (+ `SOURCES.md`) | Primary PDFs return HTTP 403 (allowlist). Values transcribed from public secondary reporting (Utility Dive, Enel); see manual manifest for the primary PDF URLs to replace them. |
 | 4 | Chicago Citygate + MichCon monthly gas 2023-2025 | EIA citygate state series (proxy) | **got** (proxy) / **blocked** (ICE hub) | `data/raw/gas-prices/eia_citygate_IL_MI_monthly_2023-2025.csv` (+ `SOURCES_miso_citygate.md`) | EIA IL citygate = Chicago proxy; MI citygate = MichCon proxy. The ICE daily hub indices are paywalled/off-allowlist (manual manifest). |
 
@@ -126,6 +126,37 @@ resolutions for the integration track:
 
 Per CLAUDE.md rule #12 this misalignment is documented rather than buried in a
 guessed number; do not silently keep `0.28` to compensate.
+
+### Integration outcome (resolved 2026-06-23)
+
+Wired into the model. The zone-definition caveat was resolved by drawing the
+three model bubbles as **whole EIA-930 sub-BA (LRZ) unions** so the load and
+transmission partitions coincide (pipe-and-bubble) and the load file drops in
+cleanly. The broad wind-rich North is kept (Iowa stays with the wind belt):
+
+| Model zone | Sub-BA group (LRZs) | States | Energy share (2023–25) |
+|------------|---------------------|--------|------------------------|
+| MISO-North | `0001` + `0035` (1, 3+5) | MN/ND/SD/MT + IA/MO | **0.285** |
+| MISO-Central | `0027` + `0004` + `0006` (2+7, 4, 6) | WI/MI + IL + IN/KY | **0.444** |
+| MISO-South | `8910` (8+9+10) | AR/LA/MS/E.TX | **0.271** |
+
+The recommended `0.147` North share was for MISO's *official* LRZ-1-only North,
+which strips Iowa's load out while the fleet keeps Iowa's wind there — the very
+inconsistency rule #12 warns against. Under the sub-BA-aligned definition the
+measured shares (`0.285/0.444/0.271`) nearly reproduce the old placeholder, so
+the placeholder was closer to right than `0.147`; the real gain is the per-zone
+**hourly** shape, not the annual level.
+
+Implementation:
+- `eia_loader.miso_zonal_load_shares` reads the sub-BA file, aggregates to the
+  three zones per hour (zones now peak at different times), repairs the
+  2024-08-26 06:00–08-27 05:00 EIA-930 reporting gap by per-sub-BA ffill/bfill,
+  and is wired into `load_demand`.
+- `iso_configs._miso_config` static `load_share` fallback set to
+  `0.285/0.444/0.271` (used only when the file is absent).
+- `zone_assignment._MISO_STATE_ZONES` aligned to the sub-BA boundaries: **WI →
+  Central** (bundled with MI in `0027`), **MO → North** (bundled with IA in
+  `0035`); the MN/IA/ND/SD wind belt stays in North.
 
 ---
 

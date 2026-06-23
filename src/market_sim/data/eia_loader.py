@@ -1555,6 +1555,96 @@ def neiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | No
     return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
 
 
+# EIA-930 MISO sub-BA -> model zone. The six sub-BAs are LRZ groupings, and the
+# three model bubbles are drawn as whole-sub-BA unions so the metered load data
+# drops in cleanly AND every pipe sits on a real LRZ/transmission interface
+# (pipe-and-bubble). North/West carries the wind belt (LRZ 1 = MN/Dakotas,
+# LRZ 3+5 = IA/MO); Central/East the lower-Midwest load centers (LRZ 2+7 =
+# WI/MI, LRZ 4 = IL, LRZ 6 = IN/KY); South the RDT-separated Entergy footprint
+# (LRZ 8+9+10). Iowa (LRZ 3) is kept in North to match the fleet's wind-rich-
+# North definition (zone_assignment._MISO_STATE_ZONES), so the load and fleet
+# partitions share identical boundaries. Source: EIA-930 region-sub-ba-data,
+# parent=MISO; crosswalk per docs/multi-iso/miso-data-audit.md Item 2.
+_MISO_SUBBA_ZONE_GROUPS: dict[str, str] = {
+    "0001": "MISO-North",  # LRZ 1: MN, ND, SD, MT
+    "0035": "MISO-North",  # LRZ 3+5: IA, MO (Iowa wind belt)
+    "0027": "MISO-Central",  # LRZ 2+7: WI, MI
+    "0004": "MISO-Central",  # LRZ 4: IL
+    "0006": "MISO-Central",  # LRZ 6: IN, KY
+    "8910": "MISO-South",  # LRZ 8+9+10: AR, LA, MS, E. TX (RDT-separated)
+}
+
+
+def miso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly MISO load shares, or ``None``.
+
+    Reads EIA-930 MISO sub-BA hourly demand (one combined multi-year file,
+    ``data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv``),
+    filters to ``year``, aggregates the six sub-BAs onto the three model zones
+    via :data:`_MISO_SUBBA_ZONE_GROUPS`, and returns each zone's hour-by-hour
+    fraction of system load. The caller multiplies these time-varying shares by
+    the EIA-930 MISO system demand total, so each zone gets its own measured
+    shape — the wind-rich North, the lower-Midwest Central load centers and the
+    Entergy South peak at different hours — while the system level stays tied to
+    the existing demand series.
+
+    The sub-BAs are LRZ groupings and the model bubbles are whole-sub-BA unions,
+    so the load partition and the transmission partition coincide (pipe-and-
+    bubble). Returns ``None`` when the file is absent so the caller falls back to
+    the static per-zone ``load_share``. The series is placed on the model's fixed
+    non-leap 8760-hour clock (Feb 29 dropped); any all-zero hour (a DST
+    spring-forward gap) is back-filled from the previous hour.
+    """
+    path = _ZONAL_LOAD_DIR / "MISO" / "miso_subba_demand_2023-2025.csv"
+    if not path.exists():
+        logger.warning(
+            "MISO sub-BA load file not found (%s); using static load_share split",
+            path,
+        )
+        return None
+    df = pd.read_csv(path, usecols=["period", "subba", "value"], dtype={"subba": str})
+    df = df[df["subba"].isin(_MISO_SUBBA_ZONE_GROUPS)].copy()
+    ts = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
+    in_year = ts.dt.year == year
+    df, ts = df[in_year], ts[in_year]
+    if df.empty:
+        logger.warning(
+            "MISO sub-BA load file has no rows for %d; using static load_share split",
+            year,
+        )
+        return None
+    # De-duplicate the paginated year-boundary hour (audit Item 2): keep one
+    # row per (period, subba) before aggregating so no hour is double-counted.
+    keep = ~df.duplicated(subset=["period", "subba"], keep="first")
+    keep &= ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    df = df.assign(
+        hoy=_hours_of_year(ts), mw=pd.to_numeric(df["value"], errors="coerce")
+    )
+    # Repair EIA-930 reporting gaps where some sub-BAs drop out for a stretch of
+    # hours but others keep reporting (e.g. the 2024-08-26 06:00–08-27 05:00
+    # window where 0027/8910 go missing). Pivot to (hour x sub-BA) and forward/
+    # back-fill each sub-BA so a zone never loses its load for an hour its peers
+    # report; without this the normalization would hand that zone a spuriously
+    # near-zero share. Hours with *every* sub-BA absent stay out and are
+    # back-filled by the shared all-zero-total step in _hourly_shares_from_groups.
+    wide = (
+        df.pivot_table(index="hoy", columns="subba", values="mw", aggfunc="first")
+        .sort_index()
+        .ffill()
+        .bfill()
+    )
+    long = (
+        wide.reset_index()
+        .melt(id_vars="hoy", var_name="subba", value_name="mw")
+        .dropna(subset=["mw"])
+    )
+    mzone = long["subba"].map(_MISO_SUBBA_ZONE_GROUPS)
+    return _hourly_shares_from_groups(
+        mzone, long["hoy"].to_numpy(), long["mw"], zone_names
+    )
+
+
 def pjm_net_interchange(year: int) -> np.ndarray | None:
     """Return PJM's hourly net export (MW, export-positive), or ``None``.
 
@@ -1891,11 +1981,12 @@ def load_demand(
                 float(measured_ix.mean()),
             )
 
-    # PJM, ERCOT, CAISO, NYISO and NEISO allocate demand by each zone's own
-    # measured hourly shape (from the PJM metered-load / ERCOT native-load /
-    # CAISO TAC-area / NYISO pal / ISO-NE SMD actual-load files) when available,
-    # so zones peak at different times; every other ISO (and these five without
-    # their file) uses the static per-zone share broadcast across hours. Both
+    # PJM, ERCOT, CAISO, NYISO, NEISO and MISO allocate demand by each zone's
+    # own measured hourly shape (from the PJM metered-load / ERCOT native-load /
+    # CAISO TAC-area / NYISO pal / ISO-NE SMD / MISO sub-BA demand files) when
+    # available, so zones peak at different times; every other ISO (and these
+    # six without their file) uses the static per-zone share broadcast across
+    # hours. Both
     # are (n_zones, T) weight matrices summing to 1.0 down each hour, so the
     # rest of the math is identical.
     if iso == "PJM":
@@ -1908,6 +1999,8 @@ def load_demand(
         zonal_shares = nyiso_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "NEISO":
         zonal_shares = neiso_zonal_load_shares(year, iso_config.zone_names)
+    elif iso == "MISO":
+        zonal_shares = miso_zonal_load_shares(year, iso_config.zone_names)
     else:
         zonal_shares = None
     if zonal_shares is not None:
