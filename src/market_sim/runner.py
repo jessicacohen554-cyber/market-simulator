@@ -89,6 +89,8 @@ from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
     ercot_reserve_coopt_inputs,
+    miso_reserve_coopt_inputs,
+    nyiso_reserve_coopt_inputs,
     pjm_reserve_coopt_inputs,
     reserve_headroom,
     scarcity_prices,
@@ -673,6 +675,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     reserve_balance_zone_mask=coopt_mask,
                     reserve_balance_ordc_counts=coopt_counts,
                     reserve_balance_class=coopt_class,
+                )
+            # MISO analogue: the footprint-wide market-wide operating-reserve
+            # requirement (MSSC + regulation) clears against MISO's VOLL-anchored
+            # Reliability-Based Demand Curve inside the LP, so the reserve
+            # clearing price emerges as the balance-row dual and lifts the energy
+            # LMP (MISO RT = LMP + market-wide reserve price). System-wide (one
+            # reserve family over the whole footprint), not locational. See
+            # docs/multi-iso/miso-reserve-coopt.md.
+            elif getattr(config, "energy_reserve_coopt", False) and iso == "MISO":
+                (
+                    coopt_req,
+                    coopt_elig,
+                    coopt_pens,
+                    coopt_widths,
+                ) = miso_reserve_coopt_inputs(config, fleet_arrays, config.hours)
+                dispatch_kwargs.update(
+                    reserve_requirement=coopt_req,
+                    reserve_eligible=coopt_elig,
+                    ordc_penalties=coopt_pens,
+                    ordc_step_widths=coopt_widths,
                 )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
