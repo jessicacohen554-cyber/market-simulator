@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.constants import CAISO_IMPORT_TRANCHE_HUB, HOURS_PER_YEAR
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
     CALIBRATION_DIR,
@@ -666,14 +666,9 @@ def measured_gas_floor_profile(
 # shoulder) clear against the Malin / COI-PDCI ties; the desert-SW blocks (solar +
 # Palo Verde nuclear, then SW gas) clear against the Palo Verde / Path-46 ties.
 # WECC_scarcity (west-wide peak economy energy) also tracks Palo Verde at its peak.
-_CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
-    "PNW_hydro_base": "MALIN",
-    "PNW_midC": "MALIN",
-    "DSW_solar_PV": "PALOVRDE",
-    "DSW_CCGT": "PALOVRDE",
-    "DSW_CT": "PALOVRDE",
-    "WECC_scarcity": "PALOVRDE",
-}
+# Single source of truth lives in constants (CAISO_IMPORT_TRANCHE_HUB) so this
+# loader and the per-hub builder/injector (transmission.py) cannot drift apart.
+_CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = CAISO_IMPORT_TRANCHE_HUB
 
 
 def measured_import_hub_prices(
