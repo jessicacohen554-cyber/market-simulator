@@ -26,6 +26,8 @@ import scipy.sparse as sp
 
 from market_sim.config.constants import (
     CAISO_IMPORT_DELIVERY_BASIS,
+    CAISO_IMPORT_TRANCHE_HUB,
+    CAISO_PER_HUB_IMPORT_ZONES,
     CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_EFORD,
@@ -360,6 +362,285 @@ def build_caiso_bidir_intertie(border_carbon_per_mwh: float = 0.0) -> list[Gener
         )
     )
     return gens
+
+
+# Per-hub signed WECC intertie (``caiso_per_hub_intertie``). The unification of
+# the single-flow bidir node (which fixed the inverted diurnal sign but had to
+# AVERAGE the two neighbor hubs into one price) and the per-hub-basis hub-price
+# node (which kept Malin != Palo Verde but pooled both import legs + one averaged
+# export sink onto a single bubble, so the cheap midday Palo Verde block filled
+# the whole 8.3 GW budget over either link and never netted → over-import +
+# inverted diurnal). Here CAISO's tie is its TWO REAL corridors, each a single
+# signed flow priced at its OWN measured hub:
+#   * WECC_PNW  — COI / Path 66, the Malin / Mid-C hub, into NP15 (north); holds
+#     the PNW_* import tranches + one PNW export leg.
+#   * WECC_DSW  — Path 46 / West-of-River, the Palo Verde / desert-SW hub, into
+#     SP15 (south); holds the DSW_*/WECC_scarcity import tranches + one DSW
+#     export leg.
+# Per corridor every import leg (hub + wheel + border carbon, all ≥ 0) is priced
+# at/above its export leg (hub − ε), so the two are arbitrage-free by
+# construction → one net direction per hour per corridor (no MIP). The 8.3 GW
+# simultaneous-import cap stays as the WECC_import_simultaneous interface limit,
+# re-homed to the two corridor links by :func:`split_caiso_import_node_per_hub`.
+# Export legs carry no separate fitted cap: the export volume is endogenous (how
+# long CAISO is) and is bounded by the same physical corridor link TTCs + the
+# bidirectional interface limit the imports use — the real WECC tie carries power
+# both ways up to the same ratings (rule #12: a physical limit, not the measured
+# export peak fitted as a constant).
+_CAISO_PER_HUB_EXPORT_PREFIX = "export"
+
+
+def _caiso_import_tranche_of(uid: str, default_zone: str | None) -> str | None:
+    """Return the import-tranche name carried by ``uid``, in any CAISO import zone.
+
+    Handles both the single pooled ``WECC_import`` node and the per-hub
+    ``WECC_PNW`` / ``WECC_DSW`` corridors, so the gas-coupling / solar-shape
+    injectors find the desert-SW blocks under whichever topology is active. The
+    per-hub zone names are tried first (none is a prefix of ``default_zone``), and
+    ``default_zone`` (``IMPORT_ZONE[iso]``) keeps the single-node path
+    byte-identical. Returns ``None`` when ``uid`` is not in a CAISO import zone.
+    """
+    for zone in (*CAISO_PER_HUB_IMPORT_ZONES.values(), default_zone):
+        if zone and uid.startswith(f"{zone}_"):
+            return uid[len(zone) + 1 :]
+    return None
+
+
+def build_caiso_per_hub_intertie(border_carbon_per_mwh: float = 0.0) -> list[Generator]:
+    """Return CAISO's WECC tie as TWO per-hub signed flows (Malin + Palo Verde).
+
+    The structurally-faithful successor to :func:`build_caiso_bidir_intertie`
+    (single averaged node) and the :func:`build_import_generators` +
+    :func:`build_export_sinks` pair (pooled node). Each import tranche of
+    :data:`~market_sim.config.constants.IMPORT_TRANCHES` is placed in the
+    external zone of the WECC neighbor hub it proxies
+    (:data:`~market_sim.config.constants.CAISO_IMPORT_TRANCHE_HUB` →
+    :data:`~market_sim.config.constants.CAISO_PER_HUB_IMPORT_ZONES`), and each hub
+    zone gets ONE export leg (a negative-generation sink, see
+    :func:`build_export_sinks`). Tranche capacities are the natural
+    :data:`IMPORT_TRANCHES` values (the simultaneous cap is the interface limit,
+    not a per-tranche rescale, matching the keeper); the rising border-carbon
+    ladder of :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF` is preserved.
+
+    Prices are placeholders, overwritten hour-by-hour by
+    :func:`inject_caiso_per_hub_intertie_prices` to each leg's own measured hub.
+
+    Args:
+        border_carbon_per_mwh: Unspecified-import border carbon adjustment
+            ($/MWh); scaled per import tranche by its emission factor. 0 disables.
+
+    Returns:
+        The per-hub import tranches (cheapest first within each hub) followed by
+        one export leg per hub zone.
+    """
+    iso = "CAISO"
+    base = IMPORT_TRANCHES.get(iso, [])
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    eford = IMPORT_EFORD.get(iso, 0.0)
+    gens: list[Generator] = []
+    for name, capacity, marginal_cost in base:
+        hub = CAISO_IMPORT_TRANCHE_HUB.get(name)
+        zone = CAISO_PER_HUB_IMPORT_ZONES.get(hub) if hub else None
+        if zone is None:
+            continue  # tranche with no hub mapping is dropped from the per-hub node
+        ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+        tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_{name}",
+                name=name,
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=capacity,
+                pmin_mw=0.0,
+                heat_rate=0.0,
+                vom=marginal_cost + tranche_carbon,
+                eford=eford,
+            )
+        )
+    # One export leg per hub zone (negative-generation sink). The export-direction
+    # bound is the corridor's own physical link TTC; the bidirectional interface
+    # limit caps the simultaneous export across both corridors at the same 8.3 GW
+    # the imports share. Priced at the hub (no CA carbon) by the injector.
+    for hub, zone in CAISO_PER_HUB_IMPORT_ZONES.items():
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_{_CAISO_PER_HUB_EXPORT_PREFIX}_{hub}",
+                name=f"{_CAISO_PER_HUB_EXPORT_PREFIX}_{hub}",
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-_caiso_corridor_export_cap_mw(zone),
+                heat_rate=0.0,
+                vom=0.0,
+                eford=0.0,
+            )
+        )
+    return gens
+
+
+def _caiso_corridor_export_cap_mw(zone: str) -> float:
+    """Return the export-direction MW bound for a CAISO per-hub corridor zone.
+
+    The physical corridor link TTC (COI ≈ 4,800 MW into NP15; Path-46/WOR ≈
+    10,623 MW into SP15 — the same ratings the import direction uses). The
+    bidirectional ``WECC_import_simultaneous`` interface limit (8.3 GW) caps the
+    SUM of the two corridors' export flows, so this per-leg bound only stops a
+    single corridor exceeding its own line rating — not a fitted export cap.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+
+    cfg = get_iso_config("CAISO")
+    for link in cfg.links:
+        if (
+            link.from_zone == "WECC_import"
+            and link.to_zone in _CAISO_CORRIDOR_LINK_TO.get(zone, ())
+        ):
+            return float(link.ttc_mw)
+    return float("inf")
+
+
+# Per-hub corridor zone → the CAISO trading zone its WECC import link terminates
+# on (COI/Path-66 north → NP15; Path-46/WOR south → SP15). Used both to re-home
+# the WECC_import links onto the per-hub zones and to read each corridor's TTC.
+_CAISO_CORRIDOR_LINK_TO: dict[str, tuple[str, ...]] = {
+    "WECC_PNW": ("NP15",),
+    "WECC_DSW": ("SP15",),
+}
+
+
+def split_caiso_import_node_per_hub(iso_config: ISOConfig) -> ISOConfig:
+    """Split CAISO's single ``WECC_import`` node into the two per-hub corridors.
+
+    Returns a copy of ``iso_config`` in which the single ``WECC_import`` external
+    zone is replaced by ``WECC_PNW`` (COI/Path-66 → NP15) and ``WECC_DSW``
+    (Path-46/WOR → SP15), the two ``WECC_import`` import links are re-homed onto
+    those zones, and the ``WECC_import_simultaneous`` interface limit is rewritten
+    to span the two corridor links (so the 8.3 GW simultaneous-import cap is
+    preserved). Internal CAISO links (Path 15/26) and every other field are
+    unchanged. A no-op (the same config) for a non-CAISO ISO or one without a
+    ``WECC_import`` node, so the build path stays byte-identical off the flag.
+
+    Paired with :func:`build_caiso_per_hub_intertie` /
+    :func:`inject_caiso_per_hub_intertie_prices`; used by the calibration runner
+    only when ``config.caiso_per_hub_intertie`` is on.
+    """
+    if not any(z.name == "WECC_import" for z in iso_config.zones):
+        return iso_config
+    # Map WECC_import → corridor zone by the trading zone each link terminates on.
+    to_zone_corridor = {
+        to_z: corridor
+        for corridor, tos in _CAISO_CORRIDOR_LINK_TO.items()
+        for to_z in tos
+    }
+    zones = [z for z in iso_config.zones if z.name != "WECC_import"]
+    for corridor in CAISO_PER_HUB_IMPORT_ZONES.values():
+        zones.append(Zone(name=corridor, iso=iso_config.name, load_share=0.0))
+    links = []
+    for link in iso_config.links:
+        if link.from_zone == "WECC_import":
+            corridor = to_zone_corridor.get(link.to_zone)
+            if corridor is None:
+                raise ValueError(
+                    f"WECC_import link to {link.to_zone!r} has no per-hub corridor"
+                )
+            links.append(link.model_copy(update={"from_zone": corridor}))
+        else:
+            links.append(link)
+    interface_limits = []
+    for lim in iso_config.interface_limits:
+        new_links = [
+            (to_zone_corridor.get(to_z, frm), to_z)
+            if frm == "WECC_import"
+            else (frm, to_z)
+            for frm, to_z in lim.links
+        ]
+        interface_limits.append(lim.model_copy(update={"links": new_links}))
+    return iso_config.model_copy(
+        update={"zones": zones, "links": links, "interface_limits": interface_limits}
+    )
+
+
+def inject_caiso_per_hub_intertie_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+    carbon_price: float,
+) -> bool:
+    """Price each CAISO per-hub corridor at its OWN measured intertie hub.
+
+    The per-hub analogue of :func:`inject_caiso_bidir_intertie_prices`: each
+    corridor (WECC_PNW / WECC_DSW) is a single signed flow priced from the
+    measured hub of the neighbor it proxies
+    (:func:`market_sim.data.eia_loader.measured_import_hub_prices`, which returns
+    one series per import tranche keyed to its hub). For every row::
+
+        import leg → hub + wheel + border_carbon × (EF / EF_unspecified) + ε
+        export leg → hub − ε
+
+    where ``hub`` is the tranche/corridor's own measured nodal LMP (energy +
+    congestion + loss, GHG excluded), ``wheel`` the additive OATT point-to-point
+    charge of :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS`
+    (the multiplicative line-loss markup is dropped — the measured MCL already
+    carries the real loss; rules #11/#12), and ``border`` the CARB adder (clean
+    hydro/solar pay none). Because wheel ≥ 0 and carbon ≥ 0, every import leg is
+    priced at/above its corridor's export leg every hour, so each corridor nets
+    to one direction per hour (no MIP). The Palo Verde corridor crashes negative
+    in the desert-SW solar glut, so it reverses to export midday — the diurnal
+    interchange sign tracks the measured tie per hub.
+
+    The export leg's hub is the AVERAGE of the corridor's import-tranche hub
+    series (both PNW tranches map to Malin, so the PNW export = Malin; the DSW
+    tranches all map to Palo Verde, so the DSW export = Palo Verde) — i.e. each
+    corridor exports into its own neighbor, not a blended hub.
+
+    Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
+    CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
+    per-hub legs keep their static-ladder placeholder prices.
+    """
+    from market_sim.data.eia_loader import measured_import_hub_prices
+
+    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
+    if not prices:
+        return False
+    border = wecc_border_carbon_adder(carbon_price)
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
+    eps = CAISO_INTERTIE_TIEBREAK_EPS
+    # Per-corridor export hub = mean of that corridor's import-tranche hub series.
+    corridor_export_hub: dict[str, np.ndarray] = {}
+    for tranche, series in prices.items():
+        hub = CAISO_IMPORT_TRANCHE_HUB.get(tranche)
+        zone = CAISO_PER_HUB_IMPORT_ZONES.get(hub) if hub else None
+        if zone is not None:
+            corridor_export_hub.setdefault(zone, []).append(series)
+    corridor_export_hub = {
+        z: np.mean(np.vstack(v), axis=0) for z, v in corridor_export_hub.items()
+    }
+    per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
+        if zone is None:
+            continue
+        name = uid[len(zone) + 1 :]
+        if name.startswith(f"{_CAISO_PER_HUB_EXPORT_PREFIX}_"):
+            hub_series = corridor_export_hub.get(zone)
+            if hub_series is not None:
+                mc[row, :] = hub_series - eps  # export earns the hub, no CA carbon
+                applied = True
+        elif name in import_names:
+            hub_series = prices.get(name)
+            if hub_series is None:
+                continue  # tranche with no measured hub stays on the ladder
+            _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(name, (0.0, 0.0))
+            ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+            mc[row, :] = (
+                hub_series + wheel + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
+            )
+            applied = True
+    return applied
 
 
 # Unit-id markers tagging a reference-price seam pseudo-generator so the
@@ -812,9 +1093,15 @@ def inject_caiso_import_gas_coupling(
     couple_hr = _CAISO_IMPORT_COUPLE_HR if iso.upper() == "CAISO" else {}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
-        if not uid.startswith(f"{zone}_"):
+        # Find the tranche under either the pooled WECC_import node or the
+        # per-hub WECC_PNW / WECC_DSW corridors (CAISO); other ISOs keep the
+        # single-zone match. Byte-identical to the prior code off the per-hub flag.
+        if iso.upper() == "CAISO":
+            tranche = _caiso_import_tranche_of(uid, zone)
+        else:
+            tranche = uid[len(zone) + 1 :] if uid.startswith(f"{zone}_") else None
+        if tranche is None:
             continue
-        tranche = uid[len(zone) + 1 :]
         heat_rate = couple_hr.get(tranche)
         if not heat_rate:
             continue
@@ -906,16 +1193,18 @@ def inject_caiso_import_solar_shape(
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
     floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
-    targets = {
-        f"{zone}_{t}"
-        for t in (*_CAISO_SOLAR_SHAPE_TRANCHES, *_CAISO_SOLAR_SHAPE_EXPORT_TRANCHES)
-    }
+    # Import tranches matched by name under either the pooled WECC_import node or
+    # the per-hub WECC_PNW/WECC_DSW corridors; export sinks (single-node only)
+    # matched by full uid (the per-hub node replaces them with hub-priced export
+    # legs that already carry the negative belly signal).
+    import_targets = set(_CAISO_SOLAR_SHAPE_TRANCHES)
+    export_targets = {f"{zone}_{t}" for t in _CAISO_SOLAR_SHAPE_EXPORT_TRANCHES}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
-        if uid not in targets:
-            continue
-        mc[row, :] = mc[row, :] * (1.0 - s) + floor * s
-        applied = True
+        tranche = _caiso_import_tranche_of(uid, zone)
+        if (tranche in import_targets) or (uid in export_targets):
+            mc[row, :] = mc[row, :] * (1.0 - s) + floor * s
+            applied = True
     return applied
 
 

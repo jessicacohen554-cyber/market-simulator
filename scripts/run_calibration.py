@@ -1247,6 +1247,7 @@ def run_year(
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
+    caiso_per_hub_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     miso_firm_imports: bool | None = None,
@@ -1370,6 +1371,8 @@ def run_year(
         )
     if caiso_bidir_intertie is not None:
         config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
+    if caiso_per_hub_intertie is not None:
+        config = config.with_overrides(caiso_per_hub_intertie=caiso_per_hub_intertie)
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
     if nyiso_firm_imports is not None:
@@ -1522,7 +1525,20 @@ def run_year(
         # inject_reference_price_mc after assembly). Gated to ISOs in
         # INTERFACE_NEIGHBORS; byte-identical (falls through to the fitted node)
         # otherwise. See docs/reference-price-interface.md.
-        if getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO":
+        caiso_per_hub = (
+            getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
+        )
+        if caiso_per_hub:
+            # Two per-hub signed WECC corridors: COI/Path-66 at the Malin hub
+            # (WECC_PNW → NP15) and Path-46/WOR at the Palo Verde hub (WECC_DSW →
+            # SP15), each a single net direction over its own real link.
+            # Recovers BOTH the per-hub basis and per-hub netting (arbitrage-free
+            # hub pricing applied post-assembly); the simultaneous-import cap is
+            # the interface limit re-homed onto the two corridor links.
+            from market_sim.model.transmission import build_caiso_per_hub_intertie
+
+            import_generators = build_caiso_per_hub_intertie(border_carbon)
+        elif getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO":
             # Single signed WECC intertie: import leg + export leg share one
             # net direction over a shared directional cap (arbitrage-free hub
             # pricing applied post-assembly). Replaces the separate import
@@ -1550,6 +1566,14 @@ def run_year(
 
             import_generators = import_generators + build_miso_firm_imports(iso)
         iso_config = extend_with_import_node(iso_config)
+        if caiso_per_hub:
+            # Split the single WECC_import node into the two per-hub corridors
+            # (WECC_PNW → NP15, WECC_DSW → SP15) and re-home the import links +
+            # the 8.3 GW simultaneous-import interface limit onto them, matching
+            # the zones build_caiso_per_hub_intertie placed its tranches in.
+            from market_sim.model.transmission import split_caiso_import_node_per_hub
+
+            iso_config = split_caiso_import_node_per_hub(iso_config)
     zone_names = iso_config.zone_names
 
     demand = load_demand(
@@ -2004,8 +2028,27 @@ def run_year(
     # legs (import = hub + per-tranche carbon, export = hub) off the measured
     # hub, superseding the separate import-hub / export-hub / gas-coupling /
     # solar-shape injectors below (those target the legacy two-mechanism node).
+    per_hub_intertie = (
+        getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
+    )
+    if per_hub_intertie:
+        from market_sim.model.transmission import (
+            inject_caiso_per_hub_intertie_prices,
+        )
+
+        if inject_caiso_per_hub_intertie_prices(
+            fleet_arrays, mc_base, iso, year, carbon_price
+        ):
+            logger.info(
+                "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "
+                "→ NP15, Palo Verde/Path-46 → SP15), each priced at its OWN "
+                "measured hub (per-hub basis + per-hub netting, arbitrage-free, "
+                "one direction per hour per corridor)",
+                iso,
+                year,
+            )
     bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
-    if bidir_intertie:
+    if not per_hub_intertie and bidir_intertie:
         from market_sim.model.transmission import inject_caiso_bidir_intertie_prices
 
         if inject_caiso_bidir_intertie_prices(
@@ -2018,7 +2061,12 @@ def run_year(
                 iso,
                 year,
             )
-    if not bidir_intertie and getattr(config, "caiso_import_hub_prices", False):
+    # The legacy two-mechanism injectors (separate import-hub / export-hub /
+    # solar-shape) target the pooled WECC_import node; the per-hub and bidir nodes
+    # supersede them. Gas-coupling still applies (it shifts the desert-SW gas
+    # tranches, which the per-hub node keeps in WECC_DSW).
+    legacy_intertie = not per_hub_intertie and not bidir_intertie
+    if legacy_intertie and getattr(config, "caiso_import_hub_prices", False):
         from market_sim.model.transmission import inject_caiso_import_hub_prices
 
         if inject_caiso_import_hub_prices(
