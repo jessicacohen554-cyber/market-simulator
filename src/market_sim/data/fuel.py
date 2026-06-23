@@ -1553,6 +1553,134 @@ def apply_ercot_zonal_gas_basis(
     )
 
 
+# Net-load percentile at which the West gas basis reaches its firm (high-demand)
+# asymptote (config.ercot_west_gas_firm_basis). Sustained peak-demand conditions
+# — the regime in which a West peaker actually runs — rather than the single
+# annual peak hour (which would over-fit the amplitude to one outlier). Used by
+# :func:`apply_ercot_west_netload_gas_shape`.
+_WEST_GAS_FIRM_NETLOAD_PCTILE: float = 95.0
+# Model zones priced off the Waha hub (the anti-correlated, takeaway-constrained
+# Permian basin). Panhandle carries ~0 modeled load but is included for parity.
+_ERCOT_WAHA_ZONES: tuple[str, ...] = ("West", "Panhandle")
+
+
+def apply_ercot_west_netload_gas_shape(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    net_load_mw: np.ndarray,
+    henry_hub_path: Path | None = None,
+) -> None:
+    """Make the West/Panhandle Waha gas basis a per-hour function of net-load.
+
+    The structural replacement for the flat
+    :attr:`~market_sim.config.scenarios.ScenarioConfig.ercot_gas_delivered_floor_basis`
+    scalar. The Waha hub is not a constant annual discount: it collapses deeply
+    negative precisely when regional gas+power demand is **low** (shoulder /
+    overnight oversupply against constrained Permian takeaway) and firms up toward
+    its normal delivered level when demand is **high** — i.e. the basis is
+    anti-correlated with system net-load (``load - wind - solar``), the same
+    weather/demand driver the ST_GAS reliability drag keys off
+    (:func:`market_sim.data.fleet.apply_gas_st_netload_drag_floor`).
+
+    A single annual scalar prices a West **peaker** — which burns only in the
+    high-net-load scarcity hours, when Waha is firm — on the same ~$0 annual-mean
+    gas as a West baseload **CC**, which burns across all hours including the
+    cheap collapse. That collapses the heat-rate spread and floats the inefficient
+    peakers at baseload (the CT_PEAKER over-run). Indexing the basis to net-load
+    instead lets the peaker/CC split fall out of *when each unit runs* rather than
+    a chosen per-unit number.
+
+    This adds a **mean-zero** (over the year) net-load shape to each West/Panhandle
+    gas unit's price, so the measured annual Waha basis already set by
+    :func:`apply_ercot_zonal_gas_basis` is preserved in expectation — only
+    redistributed across hours. The amplitude is pinned so the highest-demand
+    hours (the :data:`_WEST_GAS_FIRM_NETLOAD_PCTILE` th net-load percentile) reach
+    ``Henry Hub + ercot_west_gas_firm_basis`` (the firm Waha *delivered* level a
+    West plant pays in the scarcity hours its peakers run); the rest of the curve
+    follows linearly in net-load, floored at the physical delivered minimum
+    (:data:`_GAS_PRICE_FLOOR` — delivered gas is never negative, so the realised
+    annual mean rises slightly above the deep-negative hub mean, which is correct:
+    the hub goes negative, the burner tip does not).
+
+    Structural, not a residual fit: it is a function of net-load (a load forecast
+    plus a VRE build, so it regenerates for any forward year and responds to
+    changed conditions — more VRE lowers net-load and shifts the curve,
+    admissibility tests #10/#12), anchored on the measured annual Waha basis and
+    the cited firm Waha delivered level, never on the CT_PEAKER volume residual.
+
+    Gated on ``config.ercot_west_netload_gas_shape``, ``config.ercot_zonal_gas_basis``
+    (it shapes the basis that function applies) and ``config.iso == "ERCOT"``.
+    Mutates ``fuel_prices`` in place; idempotent given the same inputs.
+    """
+    if not getattr(config, "ercot_west_netload_gas_shape", False):
+        return
+    if not getattr(config, "ercot_zonal_gas_basis", False):
+        return
+    if config.iso != "ERCOT":
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    waha_zone_idx = [
+        i for i, name in enumerate(zone_names) if name in _ERCOT_WAHA_ZONES
+    ]
+    if not waha_zone_idx:
+        return
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    west_rows = gas_rows[np.isin(fleet.zone_idx[gas_rows], waha_zone_idx)]
+    if west_rows.size == 0:
+        return
+
+    hours = fuel_prices.shape[1]
+    nl = np.asarray(net_load_mw, dtype=float)[:hours]
+    if nl.size != hours:
+        return
+    nl_mean = float(nl.mean())
+    nl_firm = float(np.percentile(nl, _WEST_GAS_FIRM_NETLOAD_PCTILE))
+    if nl_firm <= nl_mean:
+        return  # degenerate net-load distribution; leave the flat basis in place
+
+    # Firm (high-demand) Waha delivered level the top-demand hours should reach.
+    firm_basis = getattr(config, "ercot_west_gas_firm_basis", None)
+    if firm_basis is None:
+        firm_basis = GAS_BASIS_DIFFERENTIAL.get("ERCOT", -0.50)
+    firm_basis = float(firm_basis)
+    hh = _henry_hub_monthly(henry_hub_path)
+    hh_year = [hh[(year, m)] for m in range(1, 13) if (year, m) in hh]
+    if not hh_year:
+        return
+    hh_mean = float(np.mean(hh_year))
+    target_firm_price = hh_mean + firm_basis
+
+    # Per-unit mean-zero net-load deviation: dev(t) = nl(t) - nl_mean (mean 0 by
+    # construction). Amplitude A pins the firm-percentile hour at the firm price;
+    # the realised annual mean is preserved except where the deep-collapse hours
+    # clip at the physical floor (delivered gas is never negative).
+    dev = nl - nl_mean  # (T,)
+    span = nl_firm - nl_mean
+    p_mean = fuel_prices[west_rows, :].mean(axis=1)  # (n_west,)
+    amp = (target_firm_price - p_mean) / span  # (n_west,)
+    shaped = fuel_prices[west_rows, :] + amp[:, np.newaxis] * dev[np.newaxis, :]
+    fuel_prices[west_rows, :] = np.maximum(shaped, _GAS_PRICE_FLOOR)
+    realised_mean = fuel_prices[west_rows, :].mean()
+    logger.info(
+        "ERCOT West net-load gas shape (%d): %d West/Panhandle gas units; firm "
+        "basis %+.2f -> firm price $%.2f at p%.0f net-load (%.0f MW vs mean %.0f); "
+        "annual gas $%.2f -> $%.2f (floor-lifted from the negative hub tail)",
+        year,
+        west_rows.size,
+        firm_basis,
+        target_firm_price,
+        _WEST_GAS_FIRM_NETLOAD_PCTILE,
+        nl_firm,
+        nl_mean,
+        float(p_mean.mean()),
+        float(realised_mean),
+    )
+
+
 def _hub_overlay_series(
     series: np.ndarray, config: ScenarioConfig, year: int, hours: int
 ) -> np.ndarray:
