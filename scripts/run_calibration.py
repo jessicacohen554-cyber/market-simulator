@@ -376,6 +376,87 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
+# NYISO gas offer curves, grounded in the Potomac Economics NYISO State-of-the-
+# Market (SOM) reports and the measured per-plant CAMPD heat rates, NOT fitted to
+# the backcast residual. Until now NYISO fell through to the generic non-PJM/non-
+# ERCOT branch in offer_curve_by_group{} below, which carried ERCOT-fitted band
+# multipliers that were never validated for NYISO — the root cause of the gas-
+# class merit-order substitution error (CC_REGULAR under-runs while legacy gas
+# steam over-runs). These are merged on top of that branch (_deep_merge_offer_
+# curve), so only the named gas classes change; coal/CT_CHP/ST_CHP keep the
+# generic defaults. Per-plant committed % and duct-firing peaking % still come
+# from CAMPD (cc_committed_per_plant / cc_peaking_per_plant via
+# thermal_tranches_NYISO.csv) and supersede the class-wide values here.
+#
+# Grounding (all band multipliers scale each plant's own measured base heat rate,
+# bin_assignments_NYISO.csv Plant_Avg_HR; cap-weighted class HRs: CC_CHP 6.99,
+# CC_REGULAR 7.76, CT_CHP 7.58, ST_GAS 10.61, CT_PEAKER 11.95 MMBtu/MWh):
+#  - NYISO is a competitive energy market: suppliers offer close to short-run
+#    marginal cost (2023 SOM §VI.A "output gap" 0.05% at the mitigation
+#    threshold, 1.9% at ref+25%). So the multipliers encode a near-marginal-cost
+#    SHAPE around each unit's real heat rate, not a strategic markup. The
+#    physically-correct merit order is CC (efficient) < ST_GAS (legacy steam,
+#    high HR) < CT_PEAKER.
+#  - ST_GAS: 2023 & 2024 SOM Figure 2 / §I.B — "Steam turbine units appear to be
+#    the most economically challenged... their high operating costs and physical
+#    constraints... usually prevent steam units from earning much energy or
+#    reserve revenue, except in Long Island [reliability contracts]." The generic
+#    committed 0.81x put the legacy-steam min-load slice (0.81*10.61 = 8.6 eff
+#    HR) BELOW the top of CC_REGULAR's econ ramp (1.27*7.76 = 9.9 eff HR), so an
+#    inefficient steam unit undercut an efficient CC — physically backwards.
+#    Raising committed to 0.97 (min-load eff HR ~= avg, steam part-load HR is no
+#    better than full-load) puts steam back above CC across its whole econ range,
+#    so it only runs in genuinely high-load hours / on the LI floor, matching the
+#    SOM.
+#  - CC_REGULAR / CC_CHP: the efficient gas workhorses. CC marginal HR is ~flat
+#    and ~0.95x average across the operating range (CAMPD CC fit, also cited on
+#    the ERCOT curve), so econ_low 0.95 / econ_high 1.12 replaces the generic
+#    1.06 / 1.27 that priced the upper econ slices too high and let steam in.
+#    CC_CHP (most efficient, 6.99) is nudged a touch higher than CC_REGULAR to
+#    trim its small over-run. The duct-firing peak stays a separate inflexible
+#    flat tranche (2023 SOM §VI.A: "Some combined cycles offer inflexibly... to
+#    manage physical operating constraints on the duct-fired portion"; duct
+#    burners are not flexible enough for AGC/10-min reserves).
+#  - CT_PEAKER: offers near marginal cost in NYISO's competitive market; the
+#    generic committed 1.55 was an ERCOT P1 startup-cost hurdle never validated
+#    here that parked the peakers idle. Lowered to 1.35 so peakers pick up the
+#    high-load tail (SOM: NYC GTs run for peak/reliability), econ/peak unchanged.
+_NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        "committed": 0.90,
+        "econ_low": 0.95,
+        "econ_high": 1.12,
+        "peak": 2.25,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CC_CHP": {
+        "committed": 0.90,
+        "econ_low": 0.98,
+        "econ_high": 1.15,
+        "peak": 2.25,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_PEAKER": {
+        "committed": 1.35,
+        "econ_low": 1.27,
+        "econ_high": 1.98,
+        "peak": 13.15,
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+    },
+    "ST_GAS": {
+        "committed": 0.97,
+        "econ_low": 1.10,
+        "econ_high": 1.45,
+        "peak": 4.20,
+        "econ_low_share": 0.50,
+        "pct_peaking": 15.0,
+    },
+}
+
+
 def _calibration_config(
     year: int,
     iso: str,
@@ -868,6 +949,16 @@ def _calibration_config(
     if iso.upper() == "PJM":
         config = config.with_overrides(
             offer_curve_by_group={k: dict(v) for k, v in _PJM_OFFER_CURVE.items()}
+        )
+    # NYISO gas offer curves (SOM-grounded; see _NYISO_OFFER_CURVE). Merged on
+    # top of the generic non-PJM/non-ERCOT branch so only the gas classes change
+    # and coal/CT_CHP/ST_CHP keep their defaults. Operator --offer-curve
+    # overrides/deltas below still merge on top.
+    if iso.upper() == "NYISO":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _NYISO_OFFER_CURVE
+            )
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
     # (run_calibration_full --offer-curve-json) deep-merged onto the calibrated
