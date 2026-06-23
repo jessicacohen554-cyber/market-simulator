@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-caiso-per-hub-legs",
+  "label": "caiso per-hub legs + solar-shape (PROBE)",
+  "date": "2026-06-23",
+  "shorthand": "caiso-per-hub-legs",
+  "definition": "PROBE — per-hub signed legs (--caiso-per-hub-intertie) WITH --caiso-import-solar-shape still ON, to test whether the solar-shape proxy still adds anything once the measured per-hub Palo Verde hub is doing the work. Verdict: REDUNDANT. Nearly byte-identical to the per-hub-signed keeper on every axis (2024 mean 43.49 vs 43.82, neg 535 vs 459, net −32.65 vs −32.39, corr −0.17 vs −0.15; 2025 mean 44.55 vs 44.86, net −41.48 vs −41.11, corr −0.38 vs −0.36). solar-shape was a no-OASIS proxy that collapsed the desert-SW import offer toward −$20 to manufacture the negative midday tail; the measured per-hub hub now prints that tail directly, and on a signed node the −$20 import offer mildly re-inflates the very midday over-import the per-hub legs fix (slightly worse corr, +76 neg-hrs). Confirms dropping solar-shape from the keeper (rule #11: prefer the measured input over the proxy). Not a keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-23-caiso-per-hub-legs.js",
+  "bundle": "results/calibration/caiso_perhub_legs_ss_3yr"
+}
