@@ -838,6 +838,12 @@ class ScenarioConfig:
     # excludes — so that ratio was mostly mislabeled BTM CHP, not T&D losses,
     # and inflated grid generation by the BTM amount. Applied as:
     # demand = raw_demand × (1 + factor).
+    # NYISO stays 0.0 too, now Gold-Book-confirmed (2026-06): NYISO Gold Book
+    # Table I-2 actual NYCA Annual Energy (Note 1: "include transmission &
+    # distribution losses") = 147,050 GWh (2023) = the EIA-930 NYIS demand the
+    # model serves, so that demand is ALREADY the loss-inclusive net-energy-for-
+    # load — a gross-up would double-count. See
+    # docs/nyiso-td-loss-resolution-2026-06.md.
     vintage_capacity_ramp: bool = True  # When True, renewable capacity for a
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
