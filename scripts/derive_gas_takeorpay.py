@@ -34,7 +34,16 @@ Usage:
     python scripts/derive_gas_takeorpay.py --iso ERCOT
     python scripts/derive_gas_takeorpay.py --iso ERCOT --year 2023 2024 2025
 
-Requires the raw ``f923_*.zip`` releases under ``inputs/raw-data/`` (gitignored).
+Requires the raw ``f923_*.zip`` releases under ``inputs/raw-data/`` (gitignored;
+only the derived per-plant CSV is committed). Re-download from the EIA-923
+**archive** path (the live ``/xls/`` path 301-redirects to the homepage):
+
+    curl -o inputs/raw-data/f923_2024.zip \\
+      https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2024.zip
+
+(The current in-progress year's annual file is not published until ~Sept of the
+following year; the contract/spot mix is structural, so pooling the available
+full-year releases is sufficient.)
 """
 
 from __future__ import annotations
