@@ -660,6 +660,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     coopt_widths,
                     coopt_mask,
                     coopt_counts,
+                    coopt_class,
                 ) = nyiso_reserve_coopt_inputs(
                     config, fleet_arrays, config.hours, zone_names
                 )
@@ -671,6 +672,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ordc_step_widths=coopt_widths,
                     reserve_balance_zone_mask=coopt_mask,
                     reserve_balance_ordc_counts=coopt_counts,
+                    reserve_balance_class=coopt_class,
                 )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
