@@ -1628,6 +1628,91 @@ _AGGREGATABLE_FUELS: frozenset[str] = frozenset(
 )
 
 
+def apply_gas_st_netload_drag_floor(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> bool:
+    """Impose the net-load-indexed ST_GAS reliability-drag min-gen floor.
+
+    The endogenous, weather-driven replacement for the fixed seasonal
+    ``gas_st_summer_mustrun`` calendar fraction. ERCOT holds legacy gas-steam
+    units committed at minimum load for local/system reliability (RUC); the
+    held fraction is not a fixed season but rises with system **net-load**
+    (``load - wind - solar``), the operational proxy for reserve tightness RUC
+    keys off. Each non-peaker ST_GAS tranche (peaker-class units in
+    :data:`ST_GAS_PEAKER_PLANTS` and the economic ``_peak`` tranche are
+    excluded — they run purely on price) gets a per-hour minimum-generation
+    floor of ``clip(slope*netload_GW + intercept, 0, cap) x pmax``, capped at
+    available capacity and composed with any existing floor via ``maximum``.
+    The LP dispatches economically *above* the floor, so the floor only binds
+    in the low-price (overnight / shoulder) hours where an energy-only merit
+    order would leave these out-of-merit boilers off — exactly the
+    reliability-drag energy the dispatch was missing.
+
+    The default curve coefficients (``config.gas_st_drag_slope_per_gw`` /
+    ``_intercept`` / ``_cap``) are the CAMPD overnight (low-price) ST_GAS
+    capacity factor regressed on contemporaneous system net-load, 2023-2025
+    (``docs/ercot-st-gas-netload-drag-2026-06.md``); the relationship is
+    year-stable, so the same curve regenerates for a forward year (which has a
+    load forecast and a wind/solar build, hence a net-load) and responds to
+    changed conditions (more VRE lowers net-load and so the drag). That
+    forward-derivability and condition-response is what makes it admissible in
+    both backcast and forecast (CLAUDE.md #10), unlike a fixed seasonal fraction
+    or an offer markdown tuned to the ST_GAS residual.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when the flag is off or the fleet has no
+    reliability ST_GAS units.
+
+    Args:
+        fleet_arrays: The vectorized fleet (``min_gen`` is set in place).
+        generators: The dispatch fleet, aligned row-for-row with ``fleet_arrays``.
+        net_load_mw: System net-load per hour (``load - wind - solar``), the same
+            LP-served (net-of-must-run) net-load convention the runner uses
+            elsewhere, shape ``(T,)``.
+        config: Scenario config supplying the enable flag and curve coefficients.
+    """
+    if not getattr(config, "gas_st_netload_drag", False):
+        return False
+
+    rows = [
+        g
+        for g, gen in enumerate(generators)
+        if gen.plant_group == "ST_GAS"
+        and not gen.unit_id.endswith("_peak")
+        and gen.plant_code not in ST_GAS_PEAKER_PLANTS
+    ]
+    if not rows:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    net_load_gw = np.asarray(net_load_mw, dtype=float)[:hours] / 1000.0
+    floor_frac = np.clip(
+        config.gas_st_drag_slope_per_gw * net_load_gw + config.gas_st_drag_intercept,
+        0.0,
+        config.gas_st_drag_cap,
+    )  # (T,)
+
+    if fleet_arrays.min_gen is None:
+        # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
+        # fresh floor must preserve export-sink rows (pmin < 0) by seeding from
+        # pmin rather than zeroing them (mirrors generators_to_fleet_arrays).
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
+
+    pmax = fleet_arrays.pmax
+    avail = fleet_arrays.availability
+    for g in rows:
+        # Never floor above the hour's available capacity, so the LP stays
+        # feasible (the drag can never manufacture unmet demand).
+        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
+        fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
+    return True
+
+
 def _capacity_weighted(units: list[Generator], attr: str) -> float:
     """Return the capacity-weighted average of ``attr`` over ``units``.
 
