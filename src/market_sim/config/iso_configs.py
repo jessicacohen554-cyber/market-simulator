@@ -306,26 +306,30 @@ def _caiso_config() -> ISOConfig:
 def _miso_config() -> ISOConfig:
     """Build the MISO topology configuration.
 
-    Three regions along MISO's real sub-regional structure — **MISO-North**
-    (the wind-rich upper Midwest: MN/IA/WI/ND/SD), **MISO-Central** (the
-    lower-Midwest load centers IL/IN/MI plus MO), and **MISO-South** (the
-    Entergy footprint AR/LA/MS and East Texas). MISO Midwest (North+Central)
-    and MISO South are two electrically separate footprints that connect only
-    through a contract path across SPP, so the Central↔South link is the
-    defining MISO constraint.
+    Three regions along MISO's real sub-regional structure, drawn as whole
+    EIA-930 sub-BA (LRZ) unions so the load and transmission partitions
+    coincide (pipe-and-bubble) — **MISO-North** (the wind-rich upper Midwest:
+    LRZ 1 = MN/ND/SD/MT plus LRZ 3+5 = IA/MO), **MISO-Central** (the
+    lower-Midwest load centers: LRZ 2+7 = WI/MI, LRZ 4 = IL, LRZ 6 = IN/KY),
+    and **MISO-South** (the Entergy footprint AR/LA/MS and East Texas, LRZ
+    8+9+10). MISO Midwest (North+Central) and MISO South are two electrically
+    separate footprints that connect only through a contract path across SPP,
+    so the Central↔South link is the defining MISO constraint.
 
-    Load shares apportion MISO coincident peak demand across the three
-    regions: MISO South is roughly a quarter of the footprint (Entergy
-    operating-company peak ≈ 30 GW of MISO's ≈ 127 GW system peak), and the
-    Midwest splits with the populous lower-Midwest Central region carrying
-    more load than the rural North. Source: MISO Planning Year resource-
-    adequacy filings / OMS-MISO Survey Local Resource Zone coincident peak
-    demand. Tier 3 (calibration) — verify against metered LRZ peak load.
+    Load shares are the static fallback used only when the per-zone hourly
+    sub-BA demand file is absent; when present, ``miso_zonal_load_shares``
+    gives each zone its own measured 8760 shape. The fallback values are the
+    measured 2023–2025 energy shares of the sub-BA groups above
+    (0.285/0.444/0.271), which fall out of that same file. The Central region
+    carries the populous lower-Midwest load, North the wind belt, and South
+    roughly a quarter of the footprint. Source: EIA-930 region-sub-ba-data
+    (parent=MISO); see docs/multi-iso/miso-data-audit.md Item 2.
     """
     zones = [
-        Zone(name="MISO-North", iso="MISO", load_share=0.28),
-        Zone(name="MISO-Central", iso="MISO", load_share=0.46),
-        Zone(name="MISO-South", iso="MISO", load_share=0.26),
+        # Static fallback = measured 2023–2025 sub-BA energy shares (audit Item 2).
+        Zone(name="MISO-North", iso="MISO", load_share=0.285),
+        Zone(name="MISO-Central", iso="MISO", load_share=0.444),
+        Zone(name="MISO-South", iso="MISO", load_share=0.271),
     ]
     # MISO transfer links seeded from the MISO/SPP seams agreement and MTEP.
     #
