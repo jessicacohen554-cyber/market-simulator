@@ -437,6 +437,25 @@ class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
         self.assertNotIn("pumped_storage", bench)
         self.assertIn("solar", bench)  # the rest of the benchmark is intact
 
+    def test_partial_storage_vintage_dropped(self):
+        """A storage series reporting <50% of hours is not a full-year actual.
+
+        Mirrors EIA-930 NEISO PS 2024 (reporting begins in November, ~15% of
+        hours): the coverage gate drops the under-reported storage series so a
+        2-month partial is not interpolated across the year and scored as an
+        annual throughput, while a fully-reported storage series in the same
+        frame is kept.
+        """
+        frame = self._synthetic_frame(True)
+        # Blank all but the last 8 of 48 hours of PS (≈17% coverage, below the
+        # 0.5 gate); leave battery fully reported.
+        ps = frame["NG: PS"].to_numpy(dtype=float).copy()
+        ps[:-8] = np.nan
+        frame["NG: PS"] = ps
+        bench = self._benchmark_from_frame(frame)
+        self.assertNotIn("pumped_storage", bench)  # partial vintage gated out
+        self.assertIn("battery", bench)  # full-coverage series kept
+
 
 if __name__ == "__main__":
     unittest.main()
