@@ -138,6 +138,50 @@ def _vol_err(model_twh: float, actual_twh: float) -> float | None:
     return round(e, 4) if np.isfinite(e) else None
 
 
+def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | None:
+    """Return the model's annual storage discharge throughput (TWh) for a year.
+
+    Sums ``discharge_mw`` over every storage unit (li-ion + pumped storage) and
+    hour from the bundle's ``storage.parquet`` P1 frame — the same dispatch pass
+    the price/mix metrics score. Returns ``None`` when the bundle has no storage
+    frame (no storage fleet), so the C5b throughput criterion stays SKIPPED
+    rather than scoring an absent series as zero.
+    """
+    if storage_all is None:
+        return None
+    sy = storage_all[storage_all["year"] == year]
+    if "pass" in sy.columns and (sy["pass"] == "P1").any():
+        sy = sy[sy["pass"] == "P1"]
+    if sy.empty:
+        return None
+    return round(float(sy["discharge_mw"].to_numpy(float).sum()) / 1e6, 4)
+
+
+# EIA-930 net-generation-by-energy-source series that are storage discharge when
+# positive (charging is the negative half). ``battery_discharge`` is the ERCOT
+# loader's already-split positive series; ``battery`` / ``pumped_storage`` are the
+# generic per-BA series, signed (positive = to grid). The model dispatches both
+# li-ion and pumped storage as LP storage, so the actual must include both techs.
+_STORAGE_E930_SERIES = ("battery", "pumped_storage", "battery_discharge")
+
+
+def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
+    """Return observed storage discharge throughput (TWh) from EIA-930, or None.
+
+    Sums the positive (discharge-to-grid) half of the EIA-930 battery and
+    pumped-storage net-generation series for the year. Returns ``None`` when no
+    storage series is present or the discharge total is ~0 (the BA had not begun
+    reporting a storage breakout, e.g. NEISO 2023) — an absent/zeroed actual is
+    not a real observation, so the criterion stays SKIPPED rather than being
+    scored against a spurious zero (which ``_pct`` cannot divide by).
+    """
+    present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
+    if present.empty:
+        return None
+    disch = np.clip(present["mw"].to_numpy(float), 0.0, None).sum() / 1e6
+    return round(float(disch), 4) if disch > 1e-6 else None
+
+
 @lru_cache(maxsize=1)
 def _actual_lmp_table() -> dict:
     """Load the derived actual-LMP reference (``scripts/derive_actual_lmp.py``).
@@ -376,6 +420,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
         e930_all = pd.read_parquet(bundle_input_path(bdir, "eia930"))
         campd_all = pd.read_parquet(bundle_input_path(bdir, "campd"))
         sys_all = pd.read_parquet(bdir / "system.parquet")
+        # Per-storage-unit hourly charge/discharge (run_calibration_full
+        # _storage_frame), present only when the bundle has a storage fleet.
+        # Drives the C5b throughput criterion; gitignored like dispatch/ +
+        # system.parquet, so it is read at render time and its annual scalar
+        # baked into the committed payload.
+        storage_all = (
+            pd.read_parquet(bdir / "storage.parquet")
+            if (bdir / "storage.parquet").exists()
+            else None
+        )
         # Behind-the-meter must-run per (year, pass, class) — the same off-grid
         # CHP host self-supply the LP held out, as the calibration report uses
         # it (run_calibration_full). Drives the system-wide generation mix.
@@ -532,6 +586,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             actual_lmp = _actual_avg_lmp(meta.get("iso", "ERCOT"), year)
             if actual_lmp:
                 bench[int(year)]["avgLMP"] = actual_lmp
+
+            # Observed storage discharge throughput (TWh), the C5b cycling-realism
+            # actual: the positive half of the EIA-930 battery + pumped-storage
+            # net-gen series. Only set when the BA reports a storage breakout
+            # (absent for NEISO 2023) so the criterion stays SKIPPED, not FAILed
+            # against a spurious zero. Keyed "throughput_twh" — the name
+            # calibration_verdict's score_storage reads.
+            actual_storage = _actual_storage_twh(e930)
+            if actual_storage is not None:
+                bench[int(year)]["storage"] = {"throughput_twh": actual_storage}
 
             # Actual fossil CO2 (Mt), the calibration-page emissions metric.
             # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
@@ -838,6 +902,12 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # Scalar keyed "model" for calibration_verdict's C5a gate.
                 "co2": {"model": model_co2_mt, "byClass": model_co2_by},
             }
+            # Model storage discharge throughput (TWh) for the C5b criterion —
+            # li-ion + pumped storage from this run's storage.parquet P1 frame.
+            # Only set when the bundle has a storage fleet; absent ⇒ SKIPPED.
+            model_storage = _model_storage_twh(storage_all, year)
+            if model_storage is not None:
+                run_years[int(year)]["storage"] = {"throughput_twh": model_storage}
             # Year-level scarcity-overlay summary (display-only): demand-weighted
             # monthly LMP MAE vs actual RT for the energy-only and overlaid
             # series, and tail-hour counts. Reuses the deriver's _monthly_mae /
