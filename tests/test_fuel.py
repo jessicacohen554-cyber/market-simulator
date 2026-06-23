@@ -1443,6 +1443,68 @@ def test_ercot_gas_delivered_floor_noop_without_zonal_gas():
     np.testing.assert_array_equal(prices, base)  # zonal-gas flag off -> no-op
 
 
+def test_ercot_gas_spot_share_aggregates_to_zones(tmp_path):
+    """Per-plant gas spot share rolls up MMBtu-weighted to model zones."""
+    import pandas as pd
+
+    from market_sim.data.fuel import ercot_gas_spot_share_by_zone
+
+    top = tmp_path / "gas_takeorpay_ERCOT.csv"
+    binp = tmp_path / "bins.csv"
+    pd.DataFrame(
+        {
+            "plant_code": [3492, 3494, 55091],
+            "spot_share": [0.8, 0.6, 0.3],
+            "total_mmbtu": [100.0, 100.0, 200.0],
+        }
+    ).to_csv(top, index=False)
+    pd.DataFrame(
+        {"Plant_Code": [3492, 3494, 55091], "ERCOT_Zone": ["West", "West", "North"]}
+    ).to_csv(binp, index=False)
+    shares = ercot_gas_spot_share_by_zone(top, binp)
+    assert shares == {"West": 0.7, "North": 0.3}  # MMBtu-weighted
+    # Missing file -> None (caller falls back to the scalar floor, no haircut).
+    assert ercot_gas_spot_share_by_zone(tmp_path / "absent.csv", binp) is None
+
+
+def test_ercot_gas_contract_haircut_shrinks_west_discount():
+    """The measured spot-share haircut makes the West discount shallower.
+
+    With the haircut on and a 50% West spot share, only half the Waha hub
+    discount reaches the merit order, so the West delivered price sits above the
+    unhaircut zonal price (but still below the floored-only price would imply a
+    deeper cut). The haircut reads fixed paths, so we monkeypatch the loader.
+    """
+    import market_sim.data.fuel as fuelmod
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 2.19)
+    west = fleet.unit_ids.index("GAS_WEST")
+
+    cfg_on = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    unhaircut = base.copy()
+    apply_ercot_zonal_gas_basis(unhaircut, fleet, cfg_on, 2024)
+
+    orig = fuelmod.ercot_gas_spot_share_by_zone
+    fuelmod.ercot_gas_spot_share_by_zone = lambda *a, **k: {"West": 0.5}
+    try:
+        haircut = base.copy()
+        apply_ercot_zonal_gas_basis(
+            haircut,
+            fleet,
+            cfg_on.with_overrides(ercot_gas_contract_haircut=True),
+            2024,
+        )
+    finally:
+        fuelmod.ercot_gas_spot_share_by_zone = orig
+
+    # Halving the West hub discount lifts West delivered gas above the raw zonal
+    # price (less discount reaches the burner tip).
+    assert haircut[west, 0] > unhaircut[west, 0]
+
+
 def test_nyiso_monthly_ttc_expands_to_seasonal_envelope():
     """The Central-East TTC follows the measured monthly envelope per hour.
 

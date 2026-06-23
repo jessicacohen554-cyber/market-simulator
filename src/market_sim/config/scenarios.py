@@ -1490,6 +1490,23 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
     ercot_gas_delivered_floor_basis: float | None = None
 
+    # Tier 3 (calibration) — MEASURED re-grounding of the West/Waha floor depth
+    # above. The flat ercot_gas_delivered_floor_basis (-0.50) is a single cited
+    # scalar; this replaces it with a *measured* haircut. Only the SPOT-purchased
+    # fraction of a zone's gas sees the Waha hub collapse — the firm-contracted
+    # fraction is priced off a term index and is insulated. When set, each zone's
+    # hub basis is scaled by its EIA-923 Schedule-5 measured gas spot share
+    # (scripts/derive_gas_takeorpay.py -> data/raw/_processed-legacy/
+    # gas_takeorpay_ERCOT.csv, aggregated to zones by
+    # market_sim.data.fuel.ercot_gas_spot_share_by_zone), so the West delivered
+    # discount becomes spot_share x hub_basis — a measured fraction, not a chosen
+    # constant (CLAUDE.md #11/#12). Composes with the scalar floor (haircut shrinks
+    # the discount, floor caps any residual deep tail). No-op unless
+    # ercot_zonal_gas_basis is also on, iso == ERCOT, and the receipt-derived share
+    # is on disk (else the scalar floor alone applies). See
+    # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+    ercot_gas_contract_haircut: bool = False
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -1938,6 +1955,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_zonal_gas_basis": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
+    "ercot_gas_contract_haircut": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,

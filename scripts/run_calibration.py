@@ -495,6 +495,17 @@ def _calibration_config(
             )
             else None
         ),
+        # Measured re-grounding of the floor depth: scale each zone's Waha hub
+        # basis by its EIA-923-measured gas SPOT share (only the spot fraction
+        # sees the hub collapse; firm-contracted gas is insulated), so the West
+        # delivered discount is a measured haircut, not the cited -0.50 scalar.
+        # ERCOT_GAS_HAIRCUT=1 enables it; no-op unless the receipt-derived share
+        # (scripts/derive_gas_takeorpay.py) is on disk. ERCOT only. See
+        # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+        ercot_gas_contract_haircut=(
+            iso.upper() == "ERCOT"
+            and os.environ.get("ERCOT_GAS_HAIRCUT", "").lower() in ("1", "true", "on")
+        ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is
