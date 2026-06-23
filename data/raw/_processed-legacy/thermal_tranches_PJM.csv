@@ -1,255 +1,255 @@
-plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,p25_cf,median_cf,chp_pmin_cf,chp_sector
-10030,CC_CHP,Energy Center Dover,ok,59.0,6173,31.4,0.0,59.7,78.6,0.0,merchant
-10061,CC_CHP,"Mars Wrigley Confectionery US, LLC",eia923_cf,9.5,0,,,,,30.7,industrial
-10633,CC_CHP,Hopewell Cogeneration,ok,378.3,11502,46.4,0.0,65.4,68.7,40.5,merchant
-10805,CC_CHP,Kenilworth Energy Facility,ok,24.5,23531,55.4,0.0,63.3,71.3,0.0,merchant
-50326,CC_CHP,Nalco,eia923_cf,3.0,0,,,,,39.9,commercial
-50410,CC_CHP,Chester Operations,eia923_cf,56.4,0,,,,,19.6,industrial
-54333,CC_CHP,Bucknell University,eia923_cf,5.3,0,,,,,75.0,commercial
-54832,CC_CHP,Brandywine Power Facility,ok,427.4,11095,14.6,0.0,35.5,43.1,0.0,merchant
-55216,CC_CHP,Morris Cogeneration LLC,ok,194.0,25334,30.5,0.0,37.8,42.2,0.0,merchant
-55801,CC_CHP,Marcus Hook Energy LP,ok,877.0,23446,63.2,0.0,89.9,94.4,57.5,merchant
-55990,CC_CHP,Ashtabula,eia923_cf,23.4,0,,,,,69.6,merchant
-57908,CC_CHP,Central Utility Plant Cincinnati,eia923_cf,46.5,0,,,,,46.9,commercial
-58207,CC_CHP,Central Utility Plant at White Oak,eia923_cf,24.5,0,,,,,14.3,commercial
-58933,CC_CHP,Shell Chemical Appalachia LLC,ok,256.7,26247,40.9,0.0,45.3,54.4,38.7,industrial
-2393,CC_REGULAR,Gilbert,ok,302.5,1096,9.9,0.0,26.6,51.3,,
-2398,CC_REGULAR,Bergen Generating Station,ok,1255.0,17044,11.1,0.0,26.1,41.3,,
-2406,CC_REGULAR,Linden Generating Station,ok,1300.0,22645,15.8,0.0,29.8,44.7,,
-2411,CC_REGULAR,Sewaren,ok,541.0,20030,42.6,0.0,57.5,76.4,,
-3096,CC_REGULAR,Brunot Island,ok,243.5,1523,16.9,0.0,41.0,48.9,,
-3176,CC_REGULAR,Hunlock Power Station,ok,125.2,14163,31.8,0.0,91.4,93.7,,
-3797,CC_REGULAR,Chesterfield,ok,386.0,10307,65.2,0.0,73.2,90.2,,
-3804,CC_REGULAR,Possum Point,ok,570.7,14152,59.3,0.0,67.4,83.4,,
-7153,CC_REGULAR,Hay Road,ok,1128.0,12968,10.7,0.0,24.6,37.7,,
-10308,CC_REGULAR,Sayreville Cogeneration Facility,ok,292.0,9854,27.6,0.0,84.7,89.0,,
-10751,CC_REGULAR,Camden Plant Holding LLC,ok,222.7,2796,12.2,0.0,44.4,49.7,,
-50561,CC_REGULAR,Eagle Point Power Generation,ok,244.0,3255,24.6,0.0,45.3,93.8,,
-52019,CC_REGULAR,Doswell Energy Center,ok,701.5,3381,70.0,0.0,138.7,145.2,,
-54844,CC_REGULAR,Gordonsville Energy LP,ok,218.0,15728,70.0,0.0,92.6,96.3,,
-55131,CC_REGULAR,Kendall County Generation Facility,ok,1140.0,20676,20.0,0.0,63.5,83.4,,
-55183,CC_REGULAR,Nelson Energy Center,ok,586.0,20280,38.2,0.0,72.0,88.2,,
-55188,CC_REGULAR,Cordova Energy,ok,521.2,7499,25.3,0.0,70.2,82.3,,
-55193,CC_REGULAR,Ontelaunee Energy Center,ok,545.9,23955,60.8,0.0,86.7,97.3,,
-55231,CC_REGULAR,Liberty Electric Power Plant,ok,562.0,24578,57.3,0.0,86.0,93.9,,
-55239,CC_REGULAR,Red Oak Power LLC,ok,775.9,15309,32.8,0.0,63.0,84.5,,
-55297,CC_REGULAR,New Covert Generating Facility,ok,1586.3,4914,52.8,0.0,63.1,66.9,,
-55298,CC_REGULAR,Fairless Energy Center,ok,1280.0,25387,54.8,0.0,79.1,84.0,,
-55337,CC_REGULAR,Ironwood LLC,ok,760.0,22084,31.9,0.0,50.6,57.7,,
-55350,CC_REGULAR,Dresden Energy Facility,ok,540.0,22487,70.0,0.0,96.4,102.6,,
-55397,CC_REGULAR,Washington Energy Facility,ok,661.0,22654,70.0,0.0,87.9,96.0,,
-55439,CC_REGULAR,Tenaska Virginia Generating Station,ok,937.4,17808,47.2,0.0,76.1,82.9,,
-55460,CC_REGULAR,Indeck Niles Energy Center,ok,1081.5,5800,70.0,0.0,98.5,99.7,,
-55502,CC_REGULAR,"Lawrenceburg Power, LLC",ok,1206.7,22823,61.1,0.0,83.4,88.3,,
-55503,CC_REGULAR,"Waterford Power, LLC",ok,874.6,19017,70.0,0.0,91.2,94.3,,
-55516,CC_REGULAR,Fayette Energy Facility,ok,667.6,24478,70.0,0.0,95.7,97.0,,
-55524,CC_REGULAR,York Energy Center,ok,1404.0,25162,48.5,0.0,74.2,79.2,,
-55667,CC_REGULAR,Lower Mount Bethel Energy,ok,601.6,23403,64.7,0.0,87.6,95.4,,
-55690,CC_REGULAR,Bethlehem Power Plant,ok,1136.0,24900,35.0,0.0,57.5,70.9,,
-55701,CC_REGULAR,Fremont Energy Center,ok,685.1,19595,33.7,0.0,49.4,64.6,,
-55710,CC_REGULAR,Allegheny Energy Units 3 4 & 5,ok,562.6,24346,47.1,0.0,62.2,64.5,,
-55736,CC_REGULAR,Hanging Rock Energy Facility,ok,1365.0,22156,70.0,0.0,85.1,90.4,,
-55939,CC_REGULAR,Warren County,ok,1369.9,20627,67.4,0.0,79.9,97.8,,
-55976,CC_REGULAR,Hunterstown Power Plant,ok,810.0,21456,42.5,0.0,59.2,61.6,,
-56807,CC_REGULAR,Bear Garden,ok,628.2,19084,56.5,0.0,71.6,80.6,,
-56846,CC_REGULAR,CPV St Charles Energy Center,ok,733.3,23150,24.7,0.0,49.5,73.7,,
-56963,CC_REGULAR,West Deptford Energy Station,ok,735.8,8308,14.0,0.0,47.2,67.4,,
-57349,CC_REGULAR,Garrison Energy Center LLC,ok,309.0,11277,11.2,0.0,55.1,79.7,,
-57794,CC_REGULAR,St Joseph Energy Center,ok,715.0,21906,70.0,0.0,95.6,98.5,,
-57839,CC_REGULAR,Woodbridge Energy Center,ok,726.3,21500,24.9,0.0,55.2,83.3,,
-58079,CC_REGULAR,Newark Energy Center,ok,705.0,19256,42.8,0.0,54.7,68.3,,
-58260,CC_REGULAR,Brunswick County Power Station,ok,1376.0,18932,66.1,0.0,92.3,101.6,,
-58420,CC_REGULAR,Hamilton Liberty,ok,830.0,25945,55.2,0.0,74.1,91.6,,
-58426,CC_REGULAR,Hamilton Patriot Generation Plant,ok,795.0,25719,66.0,0.0,97.0,100.9,,
-59004,CC_REGULAR,"Potomac Energy Center, LLC",ok,766.0,21154,47.7,0.0,86.7,90.8,,
-59220,CC_REGULAR,Wildcat Point Generation Facility,ok,991.3,15485,22.5,0.0,59.8,76.0,,
-59326,CC_REGULAR,Middletown Energy Center,ok,462.5,22760,70.0,0.0,90.5,99.8,,
-59764,CC_REGULAR,Oregon Clean Energy Center,ok,816.9,23111,70.0,0.0,94.9,98.0,,
-59773,CC_REGULAR,Carroll County Energy,ok,714.6,23663,70.0,0.0,94.8,97.1,,
-59906,CC_REGULAR,Moxie Freedom Generation Plant,ok,1045.0,24754,70.0,0.0,97.0,98.9,,
-59913,CC_REGULAR,Greensville County Power Station,ok,1605.1,21019,70.0,0.0,93.3,100.3,,
-60302,CC_REGULAR,Key,ok,1237.1,23737,23.5,0.0,36.3,48.4,,
-60356,CC_REGULAR,South Field Energy,ok,1210.4,20552,70.0,0.0,81.7,92.2,,
-60357,CC_REGULAR,Lackawanna Energy Center,ok,1362.0,25814,68.4,0.0,99.6,103.8,,
-60368,CC_REGULAR,Hummel Station LLC,ok,1085.7,24281,60.9,0.0,90.2,94.3,,
-60376,CC_REGULAR,Middletown- Ohio,ok,856.5,22981,59.7,0.0,97.1,99.9,,
-60464,CC_REGULAR,Tenaska Westmoreland Generating Station,ok,947.0,22912,70.0,0.0,91.9,95.2,,
-60589,CC_REGULAR,CPV Fairview Energy Center,ok,725.1,24010,70.0,0.0,129.5,138.8,,
-61028,CC_REGULAR,Hickory Run Energy Station,ok,962.3,21904,58.0,0.0,85.4,93.0,,
-61035,CC_REGULAR,Birdsboro Power,ok,485.0,23030,60.3,0.0,96.1,98.1,,
-61322,CC_REGULAR,Long Ridge Energy Generation,ok,485.0,23647,70.0,0.0,100.3,100.3,,
-62565,CC_REGULAR,"Hill Top Energy Center, LLC",ok,623.5,21825,70.0,0.0,98.7,99.5,,
-62926,CC_REGULAR,"Jackson Generation, LLC",ok,1185.5,22601,42.1,0.0,81.4,95.5,,
-62949,CC_REGULAR,Guernsey Power Station,ok,1788.5,14336,70.0,0.0,87.2,92.7,,
-63931,CC_REGULAR,CPV Three Rivers Energy Center,ok,1220.9,19134,33.5,0.0,58.7,83.6,,
-602,COAL,Brandon Shores,ok,1273.0,12316,17.8,0.0,18.1,35.4,,
-876,COAL,Kincaid Generation LLC,ok,1112.0,13253,34.1,0.0,49.8,64.4,,
-879,COAL,Powerton,ok,1538.0,10550,44.1,38.3,48.9,58.9,,
-983,COAL,Clifty Creek,ok,1173.0,6591,46.1,46.1,54.9,75.4,,
-1040,COAL,Whitewater Valley,ok,99.7,2024,45.7,45.7,48.6,72.0,,
-1384,COAL,Cooper,ok,341.0,3960,45.5,45.2,56.9,65.7,,
-2828,COAL,Cardinal,ok,1790.0,6053,64.3,60.0,71.4,83.8,,
-2876,COAL,Kyger Creek,ok,962.8,12131,48.1,48.1,57.3,74.3,,
-3118,COAL,Conemaugh,ok,1700.0,13306,58.1,58.1,61.7,68.2,,
-3136,COAL,Keystone,ok,1700.0,10620,70.0,60.0,82.1,82.8,,
-3935,COAL,John E Amos,ok,2900.0,3423,37.3,37.3,40.5,51.9,,
-3943,COAL,FirstEnergy Fort Martin Power Station,ok,1098.0,12986,41.2,41.2,57.8,78.0,,
-3944,COAL,FirstEnergy Harrison Power Station,ok,1954.0,11084,69.6,60.0,77.8,82.3,,
-3948,COAL,Mitchell (WV),ok,1560.0,5181,37.2,37.2,37.8,42.2,,
-3954,COAL,Mt Storm,ok,1613.5,3414,44.0,44.0,57.4,78.9,,
-6004,COAL,Pleasants Power Station,ok,1278.0,4975,49.0,49.0,63.3,80.7,,
-6018,COAL,East Bend,ok,600.0,17429,55.5,51.6,57.1,58.5,,
-6041,COAL,H L Spurlock,ok,1346.0,12286,56.0,56.0,78.2,91.9,,
-6166,COAL,Rockport,ok,2600.0,3282,38.9,38.9,39.9,65.6,,
-6264,COAL,Mountaineer,ok,1299.0,9054,40.1,40.0,54.6,58.2,,
-7213,COAL,Clover,ok,877.1,4381,31.5,31.4,32.5,48.1,,
-8102,COAL,"Gavin Power, LLC",ok,2722.0,4947,47.6,47.6,67.7,85.5,,
-10143,COAL,Colver Green Energy,ok,110.0,23996,70.0,30.9,92.6,94.4,,
-10343,COAL,Foster Wheeler Mt Carmel Cogen,ok,43.0,5705,45.1,0.0,56.4,60.9,,
-10603,COAL,Ebensburg Power,ok,50.0,20896,70.0,60.0,100.9,102.8,,
-50611,COAL,Westwood Generation LLC,ok,30.0,19567,70.0,0.0,80.8,84.1,,
-50888,COAL,Northampton Generating Company LP,ok,112.0,17603,65.6,60.0,71.8,78.1,,
-56671,COAL,Longview Power Plant,ok,710.0,20568,60.3,59.7,85.2,98.2,,
-10122,CT_CHP,CIP II/AR Bridgewater Holdings - NJCOE,eia923_cf,4.1,0,,,,,63.6,commercial
-10123,CT_CHP,Hoffmann LaRoche,eia923_cf,8.2,0,,,,,59.1,industrial
-10129,CT_CHP,Indiana University of Pennsylvania,eia923_cf,24.0,0,,,,,7.0,commercial
-50094,CT_CHP,"Vicinity Energy Trenton, L.P.",eia923_cf,2.0,0,,,,,0.8,commercial
-50411,CT_CHP,Rutgers Biomedical and Health Cogen,eia923_cf,10.2,0,,,,,33.6,commercial
-50463,CT_CHP,Procter & Gamble Mehoopany Mill,ok,104.0,10701,40.1,0.0,43.8,86.7,0.0,industrial
-50628,CT_CHP,Paulsboro Refinery,eia923_cf,27.0,0,,,,,73.5,industrial
-52148,CT_CHP,Elkton,eia923_cf,4.0,0,,,,,0.0,industrial
-52149,CT_CHP,West Point (PA),ok,63.0,26167,38.5,0.0,43.1,49.3,33.9,industrial
-52193,CT_CHP,Delaware City Plant,eia923_cf,130.0,0,,,,,67.6,industrial
-54044,CT_CHP,University of Illinois Cogen Facility,eia923_cf,48.3,0,,,,,21.8,commercial
-54785,CT_CHP,Grays Ferry Cogeneration,ok,114.0,24193,70.0,0.0,82.6,85.8,19.7,merchant
-54790,CT_CHP,CSL Behring LLC,eia923_cf,3.8,0,,,,,27.2,industrial
-54829,CT_CHP,Bristol Myers Squibb New Brunswick,eia923_cf,8.8,0,,,,,62.4,industrial
-57788,CT_CHP,US GSA Heating and Transmission,eia923_cf,9.0,0,,,,,39.5,commercial
-58136,CT_CHP,Adkins Energy LLC,eia923_cf,4.0,0,,,,,48.8,industrial
-58140,CT_CHP,Summit Street Power Plant,eia923_cf,11.8,0,,,,,26.2,commercial
-58165,CT_CHP,College of New Jersey,eia923_cf,4.2,0,,,,,55.1,commercial
-58181,CT_CHP,Loyola University Health Plant,eia923_cf,7.8,0,,,,,7.5,commercial
-58195,CT_CHP,East Campus Steam Plant,eia923_cf,7.4,0,,,,,61.8,commercial
-58328,CT_CHP,North Chicago Energy Center,eia923_cf,12.3,0,,,,,19.5,commercial
-58375,CT_CHP,Triton East and West Cogen,eia923_cf,3.6,0,,,,,0.5,commercial
-58584,CT_CHP,Princeton University Cogeneration,eia923_cf,15.5,0,,,,,25.4,commercial
-58635,CT_CHP,Museum of Science and Industry,eia923_cf,1.7,0,,,,,0.1,commercial
-58947,CT_CHP,Bristol Myers Squibb Lawrenceville,eia923_cf,9.4,0,,,,,30.2,merchant
-59373,CT_CHP,Broshco Fabricated Products,eia923_cf,4.7,0,,,,,3.8,industrial
-59794,CT_CHP,Chicago West Side Energy Center,eia923_cf,3.5,0,,,,,30.0,merchant
-59847,CT_CHP,Northwest Community Hospital,eia923_cf,3.6,0,,,,,0.9,commercial
-59860,CT_CHP,HP Hood CT,eia923_cf,15.0,0,,,,,65.7,industrial
-60742,CT_CHP,Argonne National Laboratory CHP,eia923_cf,4.7,0,,,,,65.7,merchant
-60933,CT_CHP,Hopewell Cogeneration NJ,eia923_cf,4.0,0,,,,,0.6,commercial
-61282,CT_CHP,APG Combined Heat and Power Plant,eia923_cf,6.2,0,,,,,53.6,commercial
-61822,CT_CHP,"Princeton Energy Center, LLC",eia923_cf,4.4,0,,,,,35.5,commercial
-62741,CT_CHP,Mount Joy Wire,eia923_cf,1.1,0,,,,,1.9,industrial
-62901,CT_CHP,Phoenix Contact - CCHP Plant,eia923_cf,1.0,0,,,,,28.9,industrial
-63347,CT_CHP,"AOC, Capitol Power Plant",eia923_cf,7.5,0,,,,,44.8,commercial
-63478,CT_CHP,Ross Hall Central Utility Plant,eia923_cf,4.1,0,,,,,7.1,commercial
-63483,CT_CHP,ACM - Midtown Thermal,eia923_cf,5.2,0,,,,,58.1,commercial
-63485,CT_CHP,ECP Uptown Campus,eia923_cf,4.3,0,,,,,39.8,merchant
-63492,CT_CHP,DCO Burlington,eia923_cf,2.7,0,,,,,41.1,industrial
-63501,CT_CHP,Montclair State University Cogen,eia923_cf,10.8,0,,,,,28.0,commercial
-63540,CT_CHP,Essex County Correctional Facility Cogen,eia923_cf,6.0,0,,,,,24.8,merchant
-64241,CT_CHP,Maryland Bioenergy Center (Jessup),eia923_cf,1.1,0,,,,,14.1,industrial
-54,CT_PEAKER,J K Smith,ok,755.6,737,60.8,0.0,81.6,92.8,,
-1556,CT_PEAKER,Perryman,ok,248.8,5750,12.7,0.0,21.0,42.0,,
-1572,CT_PEAKER,Dickerson Power,ok,299.0,3765,13.4,0.0,39.2,61.6,,
-2390,CT_PEAKER,Sayreville,ok,202.8,86,6.3,0.0,12.6,21.5,,
-2399,CT_PEAKER,Burlington Generating Station,ok,171.6,1385,11.3,0.0,42.4,69.5,,
-2404,CT_PEAKER,Kearny Generating Station,ok,457.9,5799,6.8,0.0,10.6,21.2,,
-2434,CT_PEAKER,Howard Down,ok,55.0,4373,59.7,0.0,87.1,93.5,,
-2831,CT_PEAKER,Dick's Creek,ok,136.2,449,6.4,0.0,13.5,23.5,,
-2847,CT_PEAKER,Tait Electric Generating Station,ok,597.1,2279,14.9,0.0,27.0,32.8,,
-2848,CT_PEAKER,O H Hutchings,ok,25.2,110,70.0,0.0,96.2,96.2,,
-2869,CT_PEAKER,West Lorain,ok,399.6,63,70.0,0.0,96.9,100.7,,
-2880,CT_PEAKER,Richland (OH),ok,358.0,2256,31.5,0.0,62.8,66.3,,
-3132,CT_PEAKER,Warren,ok,62.0,984,15.9,0.0,72.0,86.0,,
-5083,CT_PEAKER,Cumberland (NJ),ok,186.9,2899,24.9,0.0,40.5,48.3,,
-7032,CT_PEAKER,Gravel Neck,ok,340.0,282,32.2,0.0,53.0,57.7,,
-7138,CT_PEAKER,Forked River,ok,65.0,644,23.9,0.0,47.8,59.7,,
-7158,CT_PEAKER,Woodsdale,ok,476.0,1919,5.9,0.0,14.7,36.8,,
-7212,CT_PEAKER,Darbytown,ok,340.0,746,27.2,0.0,55.4,64.3,,
-7288,CT_PEAKER,Sherman Avenue,ok,86.9,1585,35.9,0.0,74.8,79.3,,
-7318,CT_PEAKER,Van Sant Station,ok,42.0,217,15.7,0.0,53.1,73.9,,
-7335,CT_PEAKER,Richmond,ok,68.0,1853,54.2,0.0,91.3,97.0,,
-7336,CT_PEAKER,Anderson,ok,140.0,2250,53.3,0.0,91.5,96.3,,
-7782,CT_PEAKER,Hamilton Peaking,ok,29.0,276,10.3,0.0,37.6,78.7,,
-7783,CT_PEAKER,Bowling Green Peaking,ok,29.0,341,13.4,0.0,50.3,67.1,,
-7835,CT_PEAKER,Essential Power Rock Springs LLC,ok,666.7,2251,16.1,0.0,25.5,49.0,,
-7836,CT_PEAKER,Marsh Run Generation Facility,ok,484.0,2794,31.2,0.0,64.7,72.1,,
-7837,CT_PEAKER,Louisa Generation Facility,ok,466.0,2576,43.2,0.0,66.2,75.2,,
-7838,CT_PEAKER,Remington,ok,613.7,1931,54.3,0.0,79.4,93.1,,
-7839,CT_PEAKER,Ladysmith,ok,788.9,232,55.4,0.0,75.4,88.3,,
-7872,CT_PEAKER,Robert P Mone Plant,ok,441.0,2091,36.5,0.0,61.7,68.4,,
-7962,CT_PEAKER,Warren F Sam Beasley Generation Station,ok,98.0,2563,22.8,0.0,42.9,78.8,,
-50279,CT_PEAKER,Archbald Power Station,ok,43.7,6212,44.4,0.0,79.9,97.7,,
-55109,CT_PEAKER,MRP Rocky Road LLC,ok,312.1,505,10.3,0.0,21.4,39.8,,
-55110,CT_PEAKER,Madison,ok,566.0,2241,31.7,0.0,74.2,80.2,,
-55164,CT_PEAKER,Bluegrass Generating Station,ok,495.0,315,32.0,0.0,62.5,65.3,,
-55196,CT_PEAKER,Springdale 1 & 2,ok,96.8,5818,38.1,0.0,69.1,89.2,,
-55198,CT_PEAKER,Riverside Generating LLC,ok,825.0,1309,51.0,0.0,75.7,87.5,,
-55199,CT_PEAKER,Elwood Energy LLC,ok,450.0,2383,20.8,0.0,63.2,128.0,,
-55222,CT_PEAKER,Lincoln Generating Facility,ok,622.9,229,7.3,0.0,13.1,17.3,,
-55228,CT_PEAKER,Greenville Electric Generating Station,ok,196.0,2063,27.0,0.0,49.2,52.2,,
-55233,CT_PEAKER,Handsome Lake Energy LLC,ok,267.5,4174,8.0,0.0,20.3,38.8,,
-55236,CT_PEAKER,Lee Energy Facility,ok,676.8,1111,8.2,0.0,20.6,36.4,,
-55238,CT_PEAKER,NRG Rockford I,ok,362.2,1389,16.7,0.0,42.3,49.8,,
-55247,CT_PEAKER,"Darby Power, LLC",ok,480.0,2503,36.5,0.0,79.0,86.8,,
-55250,CT_PEAKER,University Park South,ok,300.0,2114,9.4,0.0,23.6,45.9,,
-55253,CT_PEAKER,Crete Energy Venture LLC,ok,300.0,1181,14.5,0.0,27.2,47.9,,
-55262,CT_PEAKER,Bowling Green Generating Station,ok,38.0,266,12.8,0.0,33.2,58.7,,
-55263,CT_PEAKER,Galion Generating Station,ok,38.0,251,12.8,0.0,34.5,53.6,,
-55264,CT_PEAKER,Napoleon Peaking Station,ok,38.0,267,12.8,0.0,33.2,58.7,,
-55276,CT_PEAKER,Ceredo Generating Station,ok,450.0,2735,30.3,0.0,82.0,97.0,,
-55279,CT_PEAKER,Aurora,ok,990.2,3424,8.7,0.0,17.0,26.1,,
-55284,CT_PEAKER,Big Sandy Peaker Plant,ok,300.0,937,43.3,0.0,73.9,88.6,,
-55285,CT_PEAKER,Wolf Hills Energy,ok,250.0,350,51.1,0.0,77.6,81.5,,
-55296,CT_PEAKER,Calumet Energy Team LLC,ok,326.1,106,20.9,0.0,34.9,65.0,,
-55347,CT_PEAKER,Armstrong,ok,670.7,7968,20.5,0.0,44.9,69.0,,
-55348,CT_PEAKER,Troy Energy LLC,ok,704.4,3679,38.0,0.0,74.7,83.6,,
-55349,CT_PEAKER,Pleasants Energy LLC,ok,341.1,15478,70.0,0.0,94.4,97.3,,
-55377,CT_PEAKER,Gans,ok,97.4,5954,37.8,0.0,74.7,90.6,,
-55392,CT_PEAKER,Zion Energy Center,ok,478.0,4842,19.1,0.0,30.4,49.2,,
-55438,CT_PEAKER,MRP Elgin LLC,ok,487.9,1849,14.3,0.0,27.8,56.1,,
-55640,CT_PEAKER,University Park North,ok,540.0,3150,7.4,0.0,17.4,31.6,,
-55654,CT_PEAKER,Chambersburg,ok,100.4,9126,39.6,0.0,73.4,88.9,,
-55738,CT_PEAKER,Buchanan Generation LLC,ok,84.0,1812,53.8,0.0,94.7,95.8,,
-55936,CT_PEAKER,NRG Rockford II Energy Center,ok,180.7,1206,27.9,0.0,81.6,84.8,,
-55938,CT_PEAKER,NAEA Ocean Peaking Power LLC,ok,332.8,2922,27.4,0.0,50.1,92.4,,
-56397,CT_PEAKER,Hunlock Unit 4,ok,44.8,2906,70.0,0.0,97.4,99.6,,
-56668,CT_PEAKER,NIH Cogeneration Facility,ok,27.6,22064,70.0,0.0,75.5,78.9,,
-58235,CT_PEAKER,Clayville,ok,55.0,4381,67.0,0.0,97.0,102.3,,
-60387,CT_PEAKER,Invenergy Nelson Expansion LLC,ok,314.0,7444,33.7,0.0,57.6,93.4,,
-10224,ST_CHP,Merck Rahway Power Plant,eia923_cf,15.9,0,,,,,23.6,industrial
-10244,ST_CHP,Pixelle Specialty Solutions LLC - Chilli,eia923_cf,12.4,0,,,,,69.6,industrial
-10693,ST_CHP,Eastern Correctional Institute,eia923_cf,2.6,0,,,,,16.3,commercial
-50275,ST_CHP,Park 500 Philip Morris USA,eia923_cf,10.5,0,,,,,8.0,industrial
-50366,ST_CHP,University of Notre Dame,eia923_cf,21.1,0,,,,,23.2,commercial
-50479,ST_CHP,Georgia-Pacific Big Island,eia923_cf,7.0,0,,,,,41.0,industrial
-50491,ST_CHP,Axiall Natrium Plant,eia923_cf,115.5,0,,,,,53.4,industrial
-52072,ST_CHP,Radford Army Ammunition Plant,eia923_cf,16.8,0,,,,,12.6,industrial
-52089,ST_CHP,Celanese Acetate LLC,eia923_cf,27.2,0,,,,,57.8,industrial
-54081,ST_CHP,Spruance Operating Services LLC,eia923_cf,55.0,0,,,,,10.6,merchant
-54250,ST_CHP,Newman (PA),eia923_cf,1.8,0,,,,,30.1,industrial
-54335,ST_CHP,Morton Salt Rittman,eia923_cf,2.5,0,,,,,35.3,industrial
-54556,ST_CHP,Ingredion Incorporated,eia923_cf,42.2,0,,,,,33.4,industrial
-54795,ST_CHP,Domino Sugar Baltimore,eia923_cf,17.5,0,,,,,29.1,industrial
-58194,ST_CHP,West Campus Steam Plant,eia923_cf,4.8,0,,,,,19.2,commercial
-61838,ST_CHP,Cleveland Thermal,eia923_cf,1.0,0,,,,,13.0,commercial
-63829,ST_CHP,"POET Biorefining - Marion, LLC",eia923_cf,7.8,0,,,,,23.5,industrial
-63920,ST_CHP,POET Biorefining - Fostoria,eia923_cf,3.5,0,,,,,38.1,industrial
-63922,ST_CHP,POET Biorefining - Portland,eia923_cf,3.5,0,,,,,37.9,industrial
-63924,ST_CHP,"POET Biorefining- Alexandria, LLC",eia923_cf,3.6,0,,,,,31.7,industrial
-63927,ST_CHP,"POET Biorefining - Leipsic, LLC",eia923_cf,3.5,0,,,,,17.6,industrial
-593,ST_GAS,Edge Moor,ok,695.0,5882,7.8,0.0,11.6,21.2,,
-1353,ST_GAS,Big Sandy,ok,260.0,20108,24.6,0.0,29.1,66.2,,
-1571,ST_GAS,Chalk Point Power,ok,1180.3,5894,12.1,0.0,32.1,46.8,,
-3131,ST_GAS,Shawville,ok,596.0,15052,22.0,0.0,45.7,63.8,,
-3138,ST_GAS,New Castle Plant,ok,326.3,14610,16.9,0.0,33.6,56.9,,
-3140,ST_GAS,Brunner Island,ok,1411.0,19352,28.2,0.0,56.1,80.5,,
-3148,ST_GAS,TalenEnergy Martins Creek,ok,1700.0,9312,12.2,0.0,23.7,38.6,,
-3149,ST_GAS,TalenEnergy Montour,ok,1504.0,11496,54.9,0.0,63.1,76.9,,
-3161,ST_GAS,Eddystone Generating Station,ok,760.0,433,10.2,0.0,14.5,24.2,,
-3775,ST_GAS,Clinch River,ok,460.0,2292,28.6,0.0,30.8,31.6,,
+plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,mustrun_online_pct,p25_cf,median_cf,chp_pmin_cf,chp_sector
+10030,CC_CHP,Energy Center Dover,ok,59.0,6173,31.4,0.0,0.0,59.7,78.6,0.0,merchant
+10061,CC_CHP,"Mars Wrigley Confectionery US, LLC",eia923_cf,9.5,0,,,0.0,,,30.7,industrial
+10633,CC_CHP,Hopewell Cogeneration,ok,378.3,11502,46.4,0.0,0.0,65.4,68.7,40.5,merchant
+10805,CC_CHP,Kenilworth Energy Facility,ok,24.5,23531,55.4,0.0,0.0,63.3,71.3,0.0,merchant
+50326,CC_CHP,Nalco,eia923_cf,3.0,0,,,0.0,,,39.9,commercial
+50410,CC_CHP,Chester Operations,eia923_cf,56.4,0,,,0.0,,,19.6,industrial
+54333,CC_CHP,Bucknell University,eia923_cf,5.3,0,,,0.0,,,75.0,commercial
+54832,CC_CHP,Brandywine Power Facility,ok,427.4,11095,14.6,0.0,0.0,35.5,43.1,0.0,merchant
+55216,CC_CHP,Morris Cogeneration LLC,ok,194.0,25334,30.5,0.0,0.0,37.8,42.2,0.0,merchant
+55801,CC_CHP,Marcus Hook Energy LP,ok,877.0,23446,63.2,0.0,0.0,89.9,94.4,57.5,merchant
+55990,CC_CHP,Ashtabula,eia923_cf,23.4,0,,,0.0,,,69.6,merchant
+57908,CC_CHP,Central Utility Plant Cincinnati,eia923_cf,46.5,0,,,0.0,,,46.9,commercial
+58207,CC_CHP,Central Utility Plant at White Oak,eia923_cf,24.5,0,,,0.0,,,14.3,commercial
+58933,CC_CHP,Shell Chemical Appalachia LLC,ok,256.7,26247,40.9,0.0,0.0,45.3,54.4,38.7,industrial
+2393,CC_REGULAR,Gilbert,ok,302.5,1096,9.9,0.0,0.0,26.6,51.3,,
+2398,CC_REGULAR,Bergen Generating Station,ok,1255.0,17044,11.1,0.0,0.0,26.1,41.3,,
+2406,CC_REGULAR,Linden Generating Station,ok,1300.0,22645,15.8,0.0,0.0,29.8,44.7,,
+2411,CC_REGULAR,Sewaren,ok,541.0,20030,42.6,0.0,0.0,57.5,76.4,,
+3096,CC_REGULAR,Brunot Island,ok,243.5,1523,16.9,0.0,0.0,41.0,48.9,,
+3176,CC_REGULAR,Hunlock Power Station,ok,125.2,14163,31.8,0.0,0.0,91.4,93.7,,
+3797,CC_REGULAR,Chesterfield,ok,386.0,10307,65.2,0.0,0.0,73.2,90.2,,
+3804,CC_REGULAR,Possum Point,ok,570.7,14152,59.3,0.0,0.0,67.4,83.4,,
+7153,CC_REGULAR,Hay Road,ok,1128.0,12968,10.7,0.0,0.0,24.6,37.7,,
+10308,CC_REGULAR,Sayreville Cogeneration Facility,ok,292.0,9854,27.6,0.0,0.0,84.7,89.0,,
+10751,CC_REGULAR,Camden Plant Holding LLC,ok,222.7,2796,12.2,0.0,0.0,44.4,49.7,,
+50561,CC_REGULAR,Eagle Point Power Generation,ok,244.0,3255,24.6,0.0,0.0,45.3,93.8,,
+52019,CC_REGULAR,Doswell Energy Center,ok,701.5,3381,70.0,0.0,0.0,138.7,145.2,,
+54844,CC_REGULAR,Gordonsville Energy LP,ok,218.0,15728,70.0,0.0,0.0,92.6,96.3,,
+55131,CC_REGULAR,Kendall County Generation Facility,ok,1140.0,20676,20.0,0.0,0.0,63.5,83.4,,
+55183,CC_REGULAR,Nelson Energy Center,ok,586.0,20280,38.2,0.0,0.0,72.0,88.2,,
+55188,CC_REGULAR,Cordova Energy,ok,521.2,7499,25.3,0.0,0.0,70.2,82.3,,
+55193,CC_REGULAR,Ontelaunee Energy Center,ok,545.9,23955,60.8,0.0,0.0,86.7,97.3,,
+55231,CC_REGULAR,Liberty Electric Power Plant,ok,562.0,24578,57.3,0.0,0.0,86.0,93.9,,
+55239,CC_REGULAR,Red Oak Power LLC,ok,775.9,15309,32.8,0.0,0.0,63.0,84.5,,
+55297,CC_REGULAR,New Covert Generating Facility,ok,1586.3,4914,52.8,0.0,0.0,63.1,66.9,,
+55298,CC_REGULAR,Fairless Energy Center,ok,1280.0,25387,54.8,0.0,0.0,79.1,84.0,,
+55337,CC_REGULAR,Ironwood LLC,ok,760.0,22084,31.9,0.0,0.0,50.6,57.7,,
+55350,CC_REGULAR,Dresden Energy Facility,ok,540.0,22487,70.0,0.0,0.0,96.4,102.6,,
+55397,CC_REGULAR,Washington Energy Facility,ok,661.0,22654,70.0,0.0,0.0,87.9,96.0,,
+55439,CC_REGULAR,Tenaska Virginia Generating Station,ok,937.4,17808,47.2,0.0,0.0,76.1,82.9,,
+55460,CC_REGULAR,Indeck Niles Energy Center,ok,1081.5,5800,70.0,0.0,0.0,98.5,99.7,,
+55502,CC_REGULAR,"Lawrenceburg Power, LLC",ok,1206.7,22823,61.1,0.0,0.0,83.4,88.3,,
+55503,CC_REGULAR,"Waterford Power, LLC",ok,874.6,19017,70.0,0.0,0.0,91.2,94.3,,
+55516,CC_REGULAR,Fayette Energy Facility,ok,667.6,24478,70.0,0.0,0.0,95.7,97.0,,
+55524,CC_REGULAR,York Energy Center,ok,1404.0,25162,48.5,0.0,0.0,74.2,79.2,,
+55667,CC_REGULAR,Lower Mount Bethel Energy,ok,601.6,23403,64.7,0.0,0.0,87.6,95.4,,
+55690,CC_REGULAR,Bethlehem Power Plant,ok,1136.0,24900,35.0,0.0,0.0,57.5,70.9,,
+55701,CC_REGULAR,Fremont Energy Center,ok,685.1,19595,33.7,0.0,0.0,49.4,64.6,,
+55710,CC_REGULAR,Allegheny Energy Units 3 4 & 5,ok,562.6,24346,47.1,0.0,0.0,62.2,64.5,,
+55736,CC_REGULAR,Hanging Rock Energy Facility,ok,1365.0,22156,70.0,0.0,0.0,85.1,90.4,,
+55939,CC_REGULAR,Warren County,ok,1369.9,20627,67.4,0.0,0.0,79.9,97.8,,
+55976,CC_REGULAR,Hunterstown Power Plant,ok,810.0,21456,42.5,0.0,0.0,59.2,61.6,,
+56807,CC_REGULAR,Bear Garden,ok,628.2,19084,56.5,0.0,0.0,71.6,80.6,,
+56846,CC_REGULAR,CPV St Charles Energy Center,ok,733.3,23150,24.7,0.0,0.0,49.5,73.7,,
+56963,CC_REGULAR,West Deptford Energy Station,ok,735.8,8308,14.0,0.0,0.0,47.2,67.4,,
+57349,CC_REGULAR,Garrison Energy Center LLC,ok,309.0,11277,11.2,0.0,0.0,55.1,79.7,,
+57794,CC_REGULAR,St Joseph Energy Center,ok,715.0,21906,70.0,0.0,0.0,95.6,98.5,,
+57839,CC_REGULAR,Woodbridge Energy Center,ok,726.3,21500,24.9,0.0,0.0,55.2,83.3,,
+58079,CC_REGULAR,Newark Energy Center,ok,705.0,19256,42.8,0.0,0.0,54.7,68.3,,
+58260,CC_REGULAR,Brunswick County Power Station,ok,1376.0,18932,66.1,0.0,0.0,92.3,101.6,,
+58420,CC_REGULAR,Hamilton Liberty,ok,830.0,25945,55.2,0.0,0.0,74.1,91.6,,
+58426,CC_REGULAR,Hamilton Patriot Generation Plant,ok,795.0,25719,66.0,0.0,0.0,97.0,100.9,,
+59004,CC_REGULAR,"Potomac Energy Center, LLC",ok,766.0,21154,47.7,0.0,0.0,86.7,90.8,,
+59220,CC_REGULAR,Wildcat Point Generation Facility,ok,991.3,15485,22.5,0.0,0.0,59.8,76.0,,
+59326,CC_REGULAR,Middletown Energy Center,ok,462.5,22760,70.0,0.0,0.0,90.5,99.8,,
+59764,CC_REGULAR,Oregon Clean Energy Center,ok,816.9,23111,70.0,0.0,0.0,94.9,98.0,,
+59773,CC_REGULAR,Carroll County Energy,ok,714.6,23663,70.0,0.0,0.0,94.8,97.1,,
+59906,CC_REGULAR,Moxie Freedom Generation Plant,ok,1045.0,24754,70.0,0.0,0.0,97.0,98.9,,
+59913,CC_REGULAR,Greensville County Power Station,ok,1605.1,21019,70.0,0.0,0.0,93.3,100.3,,
+60302,CC_REGULAR,Key,ok,1237.1,23737,23.5,0.0,0.0,36.3,48.4,,
+60356,CC_REGULAR,South Field Energy,ok,1210.4,20552,70.0,0.0,0.0,81.7,92.2,,
+60357,CC_REGULAR,Lackawanna Energy Center,ok,1362.0,25814,68.4,0.0,0.0,99.6,103.8,,
+60368,CC_REGULAR,Hummel Station LLC,ok,1085.7,24281,60.9,0.0,0.0,90.2,94.3,,
+60376,CC_REGULAR,Middletown- Ohio,ok,856.5,22981,59.7,0.0,0.0,97.1,99.9,,
+60464,CC_REGULAR,Tenaska Westmoreland Generating Station,ok,947.0,22912,70.0,0.0,0.0,91.9,95.2,,
+60589,CC_REGULAR,CPV Fairview Energy Center,ok,725.1,24010,70.0,0.0,0.0,129.5,138.8,,
+61028,CC_REGULAR,Hickory Run Energy Station,ok,962.3,21904,58.0,0.0,0.0,85.4,93.0,,
+61035,CC_REGULAR,Birdsboro Power,ok,485.0,23030,60.3,0.0,0.0,96.1,98.1,,
+61322,CC_REGULAR,Long Ridge Energy Generation,ok,485.0,23647,70.0,0.0,0.0,100.3,100.3,,
+62565,CC_REGULAR,"Hill Top Energy Center, LLC",ok,623.5,21825,70.0,0.0,0.0,98.7,99.5,,
+62926,CC_REGULAR,"Jackson Generation, LLC",ok,1185.5,22601,42.1,0.0,0.0,81.4,95.5,,
+62949,CC_REGULAR,Guernsey Power Station,ok,1788.5,14336,70.0,0.0,0.0,87.2,92.7,,
+63931,CC_REGULAR,CPV Three Rivers Energy Center,ok,1220.9,19134,33.5,0.0,0.0,58.7,83.6,,
+602,COAL,Brandon Shores,ok,1273.0,12316,17.8,0.0,20.4,18.1,35.4,,
+876,COAL,Kincaid Generation LLC,ok,1112.0,13253,34.1,0.0,22.4,49.8,64.4,,
+879,COAL,Powerton,ok,1538.0,10550,44.1,38.3,20.7,48.9,58.9,,
+983,COAL,Clifty Creek,ok,1173.0,6591,46.1,46.1,25.8,54.9,75.4,,
+1040,COAL,Whitewater Valley,ok,99.7,2024,45.7,45.7,17.1,48.6,72.0,,
+1384,COAL,Cooper,ok,341.0,3960,45.5,45.2,31.1,56.9,65.7,,
+2828,COAL,Cardinal,ok,1790.0,6053,64.3,60.0,29.1,71.4,83.8,,
+2876,COAL,Kyger Creek,ok,962.8,12131,48.1,48.1,30.6,57.3,74.3,,
+3118,COAL,Conemaugh,ok,1700.0,13306,58.1,58.1,28.5,61.7,68.2,,
+3136,COAL,Keystone,ok,1700.0,10620,70.0,60.0,41.1,82.1,82.8,,
+3935,COAL,John E Amos,ok,2900.0,3423,37.3,37.3,11.5,40.5,51.9,,
+3943,COAL,FirstEnergy Fort Martin Power Station,ok,1098.0,12986,41.2,41.2,23.0,57.8,78.0,,
+3944,COAL,FirstEnergy Harrison Power Station,ok,1954.0,11084,69.6,60.0,28.2,77.8,82.3,,
+3948,COAL,Mitchell (WV),ok,1560.0,5181,37.2,37.2,19.9,37.8,42.2,,
+3954,COAL,Mt Storm,ok,1613.5,3414,44.0,44.0,17.3,57.4,78.9,,
+6004,COAL,Pleasants Power Station,ok,1278.0,4975,49.0,49.0,27.4,63.3,80.7,,
+6018,COAL,East Bend,ok,600.0,17429,55.5,51.6,59.0,57.1,58.5,,
+6041,COAL,H L Spurlock,ok,1346.0,12286,56.0,56.0,37.4,78.2,91.9,,
+6166,COAL,Rockport,ok,2600.0,3282,38.9,38.9,20.9,39.9,65.6,,
+6264,COAL,Mountaineer,ok,1299.0,9054,40.1,40.0,43.8,54.6,58.2,,
+7213,COAL,Clover,ok,877.1,4381,31.5,31.4,17.0,32.5,48.1,,
+8102,COAL,"Gavin Power, LLC",ok,2722.0,4947,47.6,47.6,25.5,67.7,85.5,,
+10143,COAL,Colver Green Energy,ok,110.0,23996,70.0,30.9,60.0,92.6,94.4,,
+10343,COAL,Foster Wheeler Mt Carmel Cogen,ok,43.0,5705,45.1,0.0,44.2,56.4,60.9,,
+10603,COAL,Ebensburg Power,ok,50.0,20896,70.0,60.0,60.0,100.9,102.8,,
+50611,COAL,Westwood Generation LLC,ok,30.0,19567,70.0,0.0,60.0,80.8,84.1,,
+50888,COAL,Northampton Generating Company LP,ok,112.0,17603,65.6,60.0,60.0,71.8,78.1,,
+56671,COAL,Longview Power Plant,ok,710.0,20568,60.3,59.7,60.0,85.2,98.2,,
+10122,CT_CHP,CIP II/AR Bridgewater Holdings - NJCOE,eia923_cf,4.1,0,,,0.0,,,63.6,commercial
+10123,CT_CHP,Hoffmann LaRoche,eia923_cf,8.2,0,,,0.0,,,59.1,industrial
+10129,CT_CHP,Indiana University of Pennsylvania,eia923_cf,24.0,0,,,0.0,,,7.0,commercial
+50094,CT_CHP,"Vicinity Energy Trenton, L.P.",eia923_cf,2.0,0,,,0.0,,,0.8,commercial
+50411,CT_CHP,Rutgers Biomedical and Health Cogen,eia923_cf,10.2,0,,,0.0,,,33.6,commercial
+50463,CT_CHP,Procter & Gamble Mehoopany Mill,ok,104.0,10701,40.1,0.0,0.0,43.8,86.7,0.0,industrial
+50628,CT_CHP,Paulsboro Refinery,eia923_cf,27.0,0,,,0.0,,,73.5,industrial
+52148,CT_CHP,Elkton,eia923_cf,4.0,0,,,0.0,,,0.0,industrial
+52149,CT_CHP,West Point (PA),ok,63.0,26167,38.5,0.0,0.0,43.1,49.3,33.9,industrial
+52193,CT_CHP,Delaware City Plant,eia923_cf,130.0,0,,,0.0,,,67.6,industrial
+54044,CT_CHP,University of Illinois Cogen Facility,eia923_cf,48.3,0,,,0.0,,,21.8,commercial
+54785,CT_CHP,Grays Ferry Cogeneration,ok,114.0,24193,70.0,0.0,0.0,82.6,85.8,19.7,merchant
+54790,CT_CHP,CSL Behring LLC,eia923_cf,3.8,0,,,0.0,,,27.2,industrial
+54829,CT_CHP,Bristol Myers Squibb New Brunswick,eia923_cf,8.8,0,,,0.0,,,62.4,industrial
+57788,CT_CHP,US GSA Heating and Transmission,eia923_cf,9.0,0,,,0.0,,,39.5,commercial
+58136,CT_CHP,Adkins Energy LLC,eia923_cf,4.0,0,,,0.0,,,48.8,industrial
+58140,CT_CHP,Summit Street Power Plant,eia923_cf,11.8,0,,,0.0,,,26.2,commercial
+58165,CT_CHP,College of New Jersey,eia923_cf,4.2,0,,,0.0,,,55.1,commercial
+58181,CT_CHP,Loyola University Health Plant,eia923_cf,7.8,0,,,0.0,,,7.5,commercial
+58195,CT_CHP,East Campus Steam Plant,eia923_cf,7.4,0,,,0.0,,,61.8,commercial
+58328,CT_CHP,North Chicago Energy Center,eia923_cf,12.3,0,,,0.0,,,19.5,commercial
+58375,CT_CHP,Triton East and West Cogen,eia923_cf,3.6,0,,,0.0,,,0.5,commercial
+58584,CT_CHP,Princeton University Cogeneration,eia923_cf,15.5,0,,,0.0,,,25.4,commercial
+58635,CT_CHP,Museum of Science and Industry,eia923_cf,1.7,0,,,0.0,,,0.1,commercial
+58947,CT_CHP,Bristol Myers Squibb Lawrenceville,eia923_cf,9.4,0,,,0.0,,,30.2,merchant
+59373,CT_CHP,Broshco Fabricated Products,eia923_cf,4.7,0,,,0.0,,,3.8,industrial
+59794,CT_CHP,Chicago West Side Energy Center,eia923_cf,3.5,0,,,0.0,,,30.0,merchant
+59847,CT_CHP,Northwest Community Hospital,eia923_cf,3.6,0,,,0.0,,,0.9,commercial
+59860,CT_CHP,HP Hood CT,eia923_cf,15.0,0,,,0.0,,,65.7,industrial
+60742,CT_CHP,Argonne National Laboratory CHP,eia923_cf,4.7,0,,,0.0,,,65.7,merchant
+60933,CT_CHP,Hopewell Cogeneration NJ,eia923_cf,4.0,0,,,0.0,,,0.6,commercial
+61282,CT_CHP,APG Combined Heat and Power Plant,eia923_cf,6.2,0,,,0.0,,,53.6,commercial
+61822,CT_CHP,"Princeton Energy Center, LLC",eia923_cf,4.4,0,,,0.0,,,35.5,commercial
+62741,CT_CHP,Mount Joy Wire,eia923_cf,1.1,0,,,0.0,,,1.9,industrial
+62901,CT_CHP,Phoenix Contact - CCHP Plant,eia923_cf,1.0,0,,,0.0,,,28.9,industrial
+63347,CT_CHP,"AOC, Capitol Power Plant",eia923_cf,7.5,0,,,0.0,,,44.8,commercial
+63478,CT_CHP,Ross Hall Central Utility Plant,eia923_cf,4.1,0,,,0.0,,,7.1,commercial
+63483,CT_CHP,ACM - Midtown Thermal,eia923_cf,5.2,0,,,0.0,,,58.1,commercial
+63485,CT_CHP,ECP Uptown Campus,eia923_cf,4.3,0,,,0.0,,,39.8,merchant
+63492,CT_CHP,DCO Burlington,eia923_cf,2.7,0,,,0.0,,,41.1,industrial
+63501,CT_CHP,Montclair State University Cogen,eia923_cf,10.8,0,,,0.0,,,28.0,commercial
+63540,CT_CHP,Essex County Correctional Facility Cogen,eia923_cf,6.0,0,,,0.0,,,24.8,merchant
+64241,CT_CHP,Maryland Bioenergy Center (Jessup),eia923_cf,1.1,0,,,0.0,,,14.1,industrial
+54,CT_PEAKER,J K Smith,ok,755.6,737,60.8,0.0,0.0,81.6,92.8,,
+1556,CT_PEAKER,Perryman,ok,248.8,5750,12.7,0.0,0.0,21.0,42.0,,
+1572,CT_PEAKER,Dickerson Power,ok,299.0,3765,13.4,0.0,0.0,39.2,61.6,,
+2390,CT_PEAKER,Sayreville,ok,202.8,86,6.3,0.0,0.0,12.6,21.5,,
+2399,CT_PEAKER,Burlington Generating Station,ok,171.6,1385,11.3,0.0,0.0,42.4,69.5,,
+2404,CT_PEAKER,Kearny Generating Station,ok,457.9,5799,6.8,0.0,0.0,10.6,21.2,,
+2434,CT_PEAKER,Howard Down,ok,55.0,4373,59.7,0.0,0.0,87.1,93.5,,
+2831,CT_PEAKER,Dick's Creek,ok,136.2,449,6.4,0.0,0.0,13.5,23.5,,
+2847,CT_PEAKER,Tait Electric Generating Station,ok,597.1,2279,14.9,0.0,0.0,27.0,32.8,,
+2848,CT_PEAKER,O H Hutchings,ok,25.2,110,70.0,0.0,0.0,96.2,96.2,,
+2869,CT_PEAKER,West Lorain,ok,399.6,63,70.0,0.0,0.0,96.9,100.7,,
+2880,CT_PEAKER,Richland (OH),ok,358.0,2256,31.5,0.0,0.0,62.8,66.3,,
+3132,CT_PEAKER,Warren,ok,62.0,984,15.9,0.0,0.0,72.0,86.0,,
+5083,CT_PEAKER,Cumberland (NJ),ok,186.9,2899,24.9,0.0,0.0,40.5,48.3,,
+7032,CT_PEAKER,Gravel Neck,ok,340.0,282,32.2,0.0,0.0,53.0,57.7,,
+7138,CT_PEAKER,Forked River,ok,65.0,644,23.9,0.0,0.0,47.8,59.7,,
+7158,CT_PEAKER,Woodsdale,ok,476.0,1919,5.9,0.0,0.0,14.7,36.8,,
+7212,CT_PEAKER,Darbytown,ok,340.0,746,27.2,0.0,0.0,55.4,64.3,,
+7288,CT_PEAKER,Sherman Avenue,ok,86.9,1585,35.9,0.0,0.0,74.8,79.3,,
+7318,CT_PEAKER,Van Sant Station,ok,42.0,217,15.7,0.0,0.0,53.1,73.9,,
+7335,CT_PEAKER,Richmond,ok,68.0,1853,54.2,0.0,0.0,91.3,97.0,,
+7336,CT_PEAKER,Anderson,ok,140.0,2250,53.3,0.0,0.0,91.5,96.3,,
+7782,CT_PEAKER,Hamilton Peaking,ok,29.0,276,10.3,0.0,0.0,37.6,78.7,,
+7783,CT_PEAKER,Bowling Green Peaking,ok,29.0,341,13.4,0.0,0.0,50.3,67.1,,
+7835,CT_PEAKER,Essential Power Rock Springs LLC,ok,666.7,2251,16.1,0.0,0.0,25.5,49.0,,
+7836,CT_PEAKER,Marsh Run Generation Facility,ok,484.0,2794,31.2,0.0,0.0,64.7,72.1,,
+7837,CT_PEAKER,Louisa Generation Facility,ok,466.0,2576,43.2,0.0,0.0,66.2,75.2,,
+7838,CT_PEAKER,Remington,ok,613.7,1931,54.3,0.0,0.0,79.4,93.1,,
+7839,CT_PEAKER,Ladysmith,ok,788.9,232,55.4,0.0,0.0,75.4,88.3,,
+7872,CT_PEAKER,Robert P Mone Plant,ok,441.0,2091,36.5,0.0,0.0,61.7,68.4,,
+7962,CT_PEAKER,Warren F Sam Beasley Generation Station,ok,98.0,2563,22.8,0.0,0.0,42.9,78.8,,
+50279,CT_PEAKER,Archbald Power Station,ok,43.7,6212,44.4,0.0,0.0,79.9,97.7,,
+55109,CT_PEAKER,MRP Rocky Road LLC,ok,312.1,505,10.3,0.0,0.0,21.4,39.8,,
+55110,CT_PEAKER,Madison,ok,566.0,2241,31.7,0.0,0.0,74.2,80.2,,
+55164,CT_PEAKER,Bluegrass Generating Station,ok,495.0,315,32.0,0.0,0.0,62.5,65.3,,
+55196,CT_PEAKER,Springdale 1 & 2,ok,96.8,5818,38.1,0.0,0.0,69.1,89.2,,
+55198,CT_PEAKER,Riverside Generating LLC,ok,825.0,1309,51.0,0.0,0.0,75.7,87.5,,
+55199,CT_PEAKER,Elwood Energy LLC,ok,450.0,2383,20.8,0.0,0.0,63.2,128.0,,
+55222,CT_PEAKER,Lincoln Generating Facility,ok,622.9,229,7.3,0.0,0.0,13.1,17.3,,
+55228,CT_PEAKER,Greenville Electric Generating Station,ok,196.0,2063,27.0,0.0,0.0,49.2,52.2,,
+55233,CT_PEAKER,Handsome Lake Energy LLC,ok,267.5,4174,8.0,0.0,0.0,20.3,38.8,,
+55236,CT_PEAKER,Lee Energy Facility,ok,676.8,1111,8.2,0.0,0.0,20.6,36.4,,
+55238,CT_PEAKER,NRG Rockford I,ok,362.2,1389,16.7,0.0,0.0,42.3,49.8,,
+55247,CT_PEAKER,"Darby Power, LLC",ok,480.0,2503,36.5,0.0,0.0,79.0,86.8,,
+55250,CT_PEAKER,University Park South,ok,300.0,2114,9.4,0.0,0.0,23.6,45.9,,
+55253,CT_PEAKER,Crete Energy Venture LLC,ok,300.0,1181,14.5,0.0,0.0,27.2,47.9,,
+55262,CT_PEAKER,Bowling Green Generating Station,ok,38.0,266,12.8,0.0,0.0,33.2,58.7,,
+55263,CT_PEAKER,Galion Generating Station,ok,38.0,251,12.8,0.0,0.0,34.5,53.6,,
+55264,CT_PEAKER,Napoleon Peaking Station,ok,38.0,267,12.8,0.0,0.0,33.2,58.7,,
+55276,CT_PEAKER,Ceredo Generating Station,ok,450.0,2735,30.3,0.0,0.0,82.0,97.0,,
+55279,CT_PEAKER,Aurora,ok,990.2,3424,8.7,0.0,0.0,17.0,26.1,,
+55284,CT_PEAKER,Big Sandy Peaker Plant,ok,300.0,937,43.3,0.0,0.0,73.9,88.6,,
+55285,CT_PEAKER,Wolf Hills Energy,ok,250.0,350,51.1,0.0,0.0,77.6,81.5,,
+55296,CT_PEAKER,Calumet Energy Team LLC,ok,326.1,106,20.9,0.0,0.0,34.9,65.0,,
+55347,CT_PEAKER,Armstrong,ok,670.7,7968,20.5,0.0,0.0,44.9,69.0,,
+55348,CT_PEAKER,Troy Energy LLC,ok,704.4,3679,38.0,0.0,0.0,74.7,83.6,,
+55349,CT_PEAKER,Pleasants Energy LLC,ok,341.1,15478,70.0,0.0,0.0,94.4,97.3,,
+55377,CT_PEAKER,Gans,ok,97.4,5954,37.8,0.0,0.0,74.7,90.6,,
+55392,CT_PEAKER,Zion Energy Center,ok,478.0,4842,19.1,0.0,0.0,30.4,49.2,,
+55438,CT_PEAKER,MRP Elgin LLC,ok,487.9,1849,14.3,0.0,0.0,27.8,56.1,,
+55640,CT_PEAKER,University Park North,ok,540.0,3150,7.4,0.0,0.0,17.4,31.6,,
+55654,CT_PEAKER,Chambersburg,ok,100.4,9126,39.6,0.0,0.0,73.4,88.9,,
+55738,CT_PEAKER,Buchanan Generation LLC,ok,84.0,1812,53.8,0.0,0.0,94.7,95.8,,
+55936,CT_PEAKER,NRG Rockford II Energy Center,ok,180.7,1206,27.9,0.0,0.0,81.6,84.8,,
+55938,CT_PEAKER,NAEA Ocean Peaking Power LLC,ok,332.8,2922,27.4,0.0,0.0,50.1,92.4,,
+56397,CT_PEAKER,Hunlock Unit 4,ok,44.8,2906,70.0,0.0,0.0,97.4,99.6,,
+56668,CT_PEAKER,NIH Cogeneration Facility,ok,27.6,22064,70.0,0.0,0.0,75.5,78.9,,
+58235,CT_PEAKER,Clayville,ok,55.0,4381,67.0,0.0,0.0,97.0,102.3,,
+60387,CT_PEAKER,Invenergy Nelson Expansion LLC,ok,314.0,7444,33.7,0.0,0.0,57.6,93.4,,
+10224,ST_CHP,Merck Rahway Power Plant,eia923_cf,15.9,0,,,0.0,,,23.6,industrial
+10244,ST_CHP,Pixelle Specialty Solutions LLC - Chilli,eia923_cf,12.4,0,,,0.0,,,69.6,industrial
+10693,ST_CHP,Eastern Correctional Institute,eia923_cf,2.6,0,,,0.0,,,16.3,commercial
+50275,ST_CHP,Park 500 Philip Morris USA,eia923_cf,10.5,0,,,0.0,,,8.0,industrial
+50366,ST_CHP,University of Notre Dame,eia923_cf,21.1,0,,,0.0,,,23.2,commercial
+50479,ST_CHP,Georgia-Pacific Big Island,eia923_cf,7.0,0,,,0.0,,,41.0,industrial
+50491,ST_CHP,Axiall Natrium Plant,eia923_cf,115.5,0,,,0.0,,,53.4,industrial
+52072,ST_CHP,Radford Army Ammunition Plant,eia923_cf,16.8,0,,,0.0,,,12.6,industrial
+52089,ST_CHP,Celanese Acetate LLC,eia923_cf,27.2,0,,,0.0,,,57.8,industrial
+54081,ST_CHP,Spruance Operating Services LLC,eia923_cf,55.0,0,,,0.0,,,10.6,merchant
+54250,ST_CHP,Newman (PA),eia923_cf,1.8,0,,,0.0,,,30.1,industrial
+54335,ST_CHP,Morton Salt Rittman,eia923_cf,2.5,0,,,0.0,,,35.3,industrial
+54556,ST_CHP,Ingredion Incorporated,eia923_cf,42.2,0,,,0.0,,,33.4,industrial
+54795,ST_CHP,Domino Sugar Baltimore,eia923_cf,17.5,0,,,0.0,,,29.1,industrial
+58194,ST_CHP,West Campus Steam Plant,eia923_cf,4.8,0,,,0.0,,,19.2,commercial
+61838,ST_CHP,Cleveland Thermal,eia923_cf,1.0,0,,,0.0,,,13.0,commercial
+63829,ST_CHP,"POET Biorefining - Marion, LLC",eia923_cf,7.8,0,,,0.0,,,23.5,industrial
+63920,ST_CHP,POET Biorefining - Fostoria,eia923_cf,3.5,0,,,0.0,,,38.1,industrial
+63922,ST_CHP,POET Biorefining - Portland,eia923_cf,3.5,0,,,0.0,,,37.9,industrial
+63924,ST_CHP,"POET Biorefining- Alexandria, LLC",eia923_cf,3.6,0,,,0.0,,,31.7,industrial
+63927,ST_CHP,"POET Biorefining - Leipsic, LLC",eia923_cf,3.5,0,,,0.0,,,17.6,industrial
+593,ST_GAS,Edge Moor,ok,695.0,5882,7.8,0.0,0.0,11.6,21.2,,
+1353,ST_GAS,Big Sandy,ok,260.0,20108,24.6,0.0,0.0,29.1,66.2,,
+1571,ST_GAS,Chalk Point Power,ok,1180.3,5894,12.1,0.0,0.0,32.1,46.8,,
+3131,ST_GAS,Shawville,ok,596.0,15052,22.0,0.0,0.0,45.7,63.8,,
+3138,ST_GAS,New Castle Plant,ok,326.3,14610,16.9,0.0,0.0,33.6,56.9,,
+3140,ST_GAS,Brunner Island,ok,1411.0,19352,28.2,0.0,0.0,56.1,80.5,,
+3148,ST_GAS,TalenEnergy Martins Creek,ok,1700.0,9312,12.2,0.0,0.0,23.7,38.6,,
+3149,ST_GAS,TalenEnergy Montour,ok,1504.0,11496,54.9,0.0,0.0,63.1,76.9,,
+3161,ST_GAS,Eddystone Generating Station,ok,760.0,433,10.2,0.0,0.0,14.5,24.2,,
+3775,ST_GAS,Clinch River,ok,460.0,2292,28.6,0.0,0.0,30.8,31.6,,
