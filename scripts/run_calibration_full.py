@@ -57,6 +57,7 @@ sys.path.insert(0, str(REPO))
 from market_sim.config.constants import (  # noqa: E402
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     resolve_priced_interchange,
+    resolve_reference_price_interface,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
@@ -4532,6 +4533,13 @@ def main() -> None:
         return
 
     iso = args.iso.upper()
+    # Resolve the reference-price interface: explicit CLI flag OR the per-ISO
+    # default-on set (MISO). Drives both the node selection and priced
+    # interchange below, so MISO's plain run command activates the import node
+    # without a flag while PJM/ERCOT stay byte-identical.
+    reference_price_interface = resolve_reference_price_interface(
+        args.reference_price_interface, iso
+    )
     if iso != "ERCOT":
         has_campd = bool(campd.states_for_iso(iso))
         logger.info(
@@ -4677,14 +4685,14 @@ def main() -> None:
         cc_derate_from_top=args.cc_derate_from_top,
         priced_interchange=(
             True
-            if args.reference_price_interface and args.priced_interchange is not False
+            if reference_price_interface and args.priced_interchange is not False
             else resolve_priced_interchange(args.priced_interchange, iso)
         ),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
         interchange_shaping_export_only=args.interchange_shaping_export_only,
-        reference_price_interface=args.reference_price_interface,
+        reference_price_interface=reference_price_interface,
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,

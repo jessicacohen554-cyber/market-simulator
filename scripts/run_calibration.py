@@ -49,6 +49,7 @@ from market_sim.config.constants import (  # noqa: E402
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     VOM,
     resolve_priced_interchange,
+    resolve_reference_price_interface,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
@@ -2502,10 +2503,15 @@ def main(argv: list[str] | None = None) -> None:
     """
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
+    # The reference-price interface is on when the CLI flag is set OR the ISO is
+    # in the per-ISO default-on set (MISO); see resolve_reference_price_interface.
+    reference_price_interface = resolve_reference_price_interface(
+        args.reference_price_interface, iso
+    )
     priced_interchange = resolve_priced_interchange(args.priced_interchange, iso)
     # The reference-price interface serves the seam through the priced node, so
     # it implies priced interchange (unless explicitly turned off on the CLI).
-    if args.reference_price_interface and args.priced_interchange is not False:
+    if reference_price_interface and args.priced_interchange is not False:
         priced_interchange = True
     reference = _load_reference()
     ttc_overrides = {
@@ -2538,7 +2544,7 @@ def main(argv: list[str] | None = None) -> None:
             commitment_enabled=args.commitment,
             commitment_screen_coal=not args.no_coal_p2,
             priced_interchange=priced_interchange,
-            reference_price_interface=args.reference_price_interface,
+            reference_price_interface=reference_price_interface,
             negative_renewable_offers=args.negative_renewable_offers,
             xyear_cache=xyear_cache,
         )
