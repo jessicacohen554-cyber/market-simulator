@@ -210,10 +210,19 @@ def test_caiso_every_plant_resolves():
 
 
 def test_miso_state_mapping():
-    """MISO regions follow state boundaries (FIPS state is authoritative)."""
+    """MISO regions follow the sub-BA (LRZ) boundaries; FIPS state is authoritative.
+
+    Zones are whole EIA-930 sub-BA unions so the fleet and load partitions match
+    (eia_loader._MISO_SUBBA_ZONE_GROUPS): MO sits with IA in the North group
+    (sub-BA 0035) and WI sits with MI in the Central group (sub-BA 0027).
+    """
     assert assign_zone_by_fips("27", None, "MISO") == "MISO-North"  # MN
     assert assign_zone_by_fips("19", None, "MISO") == "MISO-North"  # IA
     assert assign_zone_by_fips("46", None, "MISO") == "MISO-North"  # SD
+    assert assign_zone_by_fips("29", None, "MISO") == "MISO-North"  # MO (LRZ 5, w/ IA)
+    assert (
+        assign_zone_by_fips("55", None, "MISO") == "MISO-Central"
+    )  # WI (LRZ 2, w/ MI)
     assert assign_zone_by_fips("26", None, "MISO") == "MISO-Central"  # MI
     assert assign_zone_by_fips("18", None, "MISO") == "MISO-Central"  # IN
     assert assign_zone_by_fips("17", None, "MISO") == "MISO-Central"  # IL

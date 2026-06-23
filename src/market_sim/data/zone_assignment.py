@@ -203,23 +203,28 @@ _PJM_PA_WEST_LON: float = -79.0
 # DC, plus the eastern-shore DPL) is SWMAAC.
 _PJM_MD_WEST_LON: float = -78.5
 
-# MISO model region by FIPS state code. MISO's defining split is the three
-# sub-regions, which follow state lines: the wind-rich upper-Midwest North,
-# the lower-Midwest Central load centers, and the Entergy South. eGRID
-# carries a FIPS state for every MISO plant, so the state map is authoritative;
-# the latitude fallback below only handles the rare coords-only caller.
+# MISO model region by FIPS state code. The three model zones are drawn as
+# whole EIA-930 sub-BA (LRZ) unions so the fleet and load partitions share
+# identical boundaries (see eia_loader._MISO_SUBBA_ZONE_GROUPS): North = LRZ 1
+# (MN/ND/SD/MT) + LRZ 3+5 (IA/MO) — the wind-rich upper Midwest; Central = LRZ
+# 2+7 (WI/MI) + LRZ 4 (IL) + LRZ 6 (IN/KY) — the lower-Midwest load centers;
+# South = LRZ 8+9+10 (the Entergy footprint). WI sits with MI in the Central
+# sub-BA group and MO sits with IA in the North group, so they are assigned
+# accordingly (the wind belt MN/IA/ND/SD stays in North). eGRID carries a FIPS
+# state for every MISO plant, so the state map is authoritative; the latitude
+# fallback below only handles the rare coords-only caller.
 _MISO_STATE_ZONES: dict[int, str] = {
-    27: "MISO-North",  # MN
-    19: "MISO-North",  # IA
-    55: "MISO-North",  # WI
-    38: "MISO-North",  # ND
-    46: "MISO-North",  # SD
-    30: "MISO-North",  # MT
-    17: "MISO-Central",  # IL
-    18: "MISO-Central",  # IN
-    26: "MISO-Central",  # MI
-    29: "MISO-Central",  # MO
-    21: "MISO-Central",  # KY
+    27: "MISO-North",  # MN (LRZ 1)
+    19: "MISO-North",  # IA (LRZ 3)
+    38: "MISO-North",  # ND (LRZ 1)
+    46: "MISO-North",  # SD (LRZ 1)
+    30: "MISO-North",  # MT (LRZ 1)
+    29: "MISO-North",  # MO (LRZ 5, bundled with IA in sub-BA 0035)
+    55: "MISO-Central",  # WI (LRZ 2, bundled with MI in sub-BA 0027)
+    17: "MISO-Central",  # IL (LRZ 4)
+    18: "MISO-Central",  # IN (LRZ 6)
+    26: "MISO-Central",  # MI (LRZ 7)
+    21: "MISO-Central",  # KY (LRZ 6)
     5: "MISO-South",  # AR
     22: "MISO-South",  # LA
     28: "MISO-South",  # MS
@@ -228,9 +233,11 @@ _MISO_STATE_ZONES: dict[int, str] = {
 
 # Latitude bands for the coords-only MISO fallback (no FIPS state). The
 # Entergy South footprint sits below ~lat 36 (AR/LA/MS/East TX); the upper-
-# Midwest North sits above ~lat 43 (MN/ND/SD/WI); the lower-Midwest Central
-# load centers fall between. This is coarse — FIPS state is preferred — and
-# only triggers when a caller supplies coordinates without a state code.
+# Midwest North sits above ~lat 43 (MN/ND/SD); the lower-Midwest Central load
+# centers fall between. This is coarse — it cannot resolve the sub-BA-aligned
+# WI↔MO boundary (WI is Central, MO is North), so FIPS state is strongly
+# preferred and this only triggers when a caller supplies coordinates without
+# a state code.
 _MISO_SOUTH_LAT: float = 36.0
 _MISO_NORTH_LAT: float = 43.0
 

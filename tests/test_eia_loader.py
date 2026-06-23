@@ -1,6 +1,7 @@
 """Tests for the EIA-930 demand and generation loaders."""
 
 import unittest
+from unittest import mock
 
 import numpy as np
 
@@ -17,10 +18,14 @@ from market_sim.data.eia_loader import (
     load_generation_profiles,
     measured_gas_floor_profile,
     measured_interchange_envelope,
+    miso_zonal_load_shares,
     nyiso_zonal_load_shares,
 )
 
 _TEST_YEAR = 2024
+
+# MISO sub-BA demand file covers 2023–2025.
+_MISO_TEST_YEAR = 2024
 
 # The only year with a TAC-area load file so far (upload U4 is partial:
 # 2023-01 landed; the remaining monthly pulls are pending).
@@ -124,6 +129,58 @@ class TestEIALoader(unittest.TestCase):
             system = _load_caiso_hourly_demand(year)
             self.assertIsNotNone(system)
             np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
+
+    def test_miso_zonal_shares_sum_to_one(self):
+        """MISO per-zone hourly shares are fractions summing to 1.0 each hour."""
+        zone_names = get_iso_config("MISO").zone_names
+        shares = miso_zonal_load_shares(_MISO_TEST_YEAR, zone_names)
+        self.assertIsNotNone(shares)
+        self.assertEqual(shares.shape, (len(zone_names), HOURS_PER_YEAR))
+        np.testing.assert_allclose(shares.sum(axis=0), 1.0, rtol=1e-9)
+
+    def test_miso_zonal_shares_vary_and_repair_gaps(self):
+        """Each zone gets a real hourly shape and reporting gaps are repaired.
+
+        The shares must vary hour to hour (zones peak at different times), and
+        the 2024-08-26 EIA-930 sub-BA reporting gap must be filled — no hour may
+        leave a populous zone with a near-zero or runaway share.
+        """
+        zone_names = get_iso_config("MISO").zone_names
+        shares = miso_zonal_load_shares(_MISO_TEST_YEAR, zone_names)
+        north = shares[zone_names.index("MISO-North")]
+        self.assertGreater(north.std(), 1e-3)
+        # Every zone stays in a physical band all 8760 hours (gap-repaired).
+        self.assertTrue(np.all(shares > 0.05))
+        self.assertTrue(np.all(shares < 0.60))
+
+    def test_miso_zonal_shares_match_measured_energy_split(self):
+        """The annual mean shares match the measured sub-BA energy split."""
+        zone_names = get_iso_config("MISO").zone_names
+        shares = miso_zonal_load_shares(_MISO_TEST_YEAR, zone_names)
+        mean = shares.mean(axis=1)
+        np.testing.assert_allclose(mean, [0.283, 0.446, 0.271], atol=0.01)
+
+    def test_miso_zonal_shares_fall_back_without_file(self):
+        """A year with no sub-BA file falls back to the static split."""
+        zone_names = get_iso_config("MISO").zone_names
+        self.assertIsNone(miso_zonal_load_shares(2099, zone_names))
+
+    def test_miso_zonal_demand_preserves_system_total(self):
+        """Swapping the static split for hourly shares preserves the system total.
+
+        The weight matrix sums to 1.0 across zones each hour, so the column sum
+        of the zonal demand equals the EIA-930 MISO system series regardless of
+        the split. Comparing the hourly-share path against the static-share path
+        (sub-BA file forced absent) isolates that invariant.
+        """
+        miso = get_iso_config("MISO")
+        hourly = load_demand("MISO", _MISO_TEST_YEAR, miso)
+        with mock.patch(
+            "market_sim.data.eia_loader.miso_zonal_load_shares", return_value=None
+        ):
+            static = load_demand("MISO", _MISO_TEST_YEAR, miso)
+        self.assertEqual(hourly.shape, (miso.n_zones, HOURS_PER_YEAR))
+        np.testing.assert_allclose(hourly.sum(axis=0), static.sum(axis=0), rtol=1e-9)
 
     def test_ercot_zonal_shares_sum_to_one(self):
         """ERCOT per-zone hourly shares are fractions summing to 1.0 each hour."""
