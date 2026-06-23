@@ -1783,17 +1783,22 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # model 6.41 vs EIA-923 4.41 TWh). The over-run is large at low gas, so the
     # curve needs a real markup at the FLOOR (not just a dear-gas ceiling): a
     # cycler's effective offer sits well above bare fuel SRMC (start/min-run +
-    # the fact they are not true baseload). Tuned so the bid is pushed toward /
-    # above the gas-CC crossover across the year (markup ~1.35 cheap-gas months
-    # to ~1.9 in $5+ gas), making subbit cycle to its observed CF instead of
-    # baseloading. Still gas-keyed (more markup when gas is dear) so it does not
-    # over-suppress in cheap hours. PJM-specific (NOT the ERCOT prb/subbit
-    # curve, whose floor/ceil suppressed these plants below actuals — run 14).
+    # the fact they are not true baseload). Still gas-keyed (more markup when gas
+    # is dear) so it does not over-suppress in cheap hours. PJM-specific (NOT the
+    # ERCOT prb/subbit curve, whose floor/ceil suppressed these plants below
+    # actuals — run 14).
+    # Calibrated on the 2024 solve: at a ~1.06 mean markup (old loose curve) the
+    # dispatchable bands cleared 4.24 TWh (+45% over); at ~1.54 they crushed to
+    # 1.07 TWh (-26% under). The response is ~linear (~-6.6 TWh per unit mean
+    # markup over the 8760 dispatch), so a 2024 mean markup ~1.35 lands the
+    # dispatchable bands at ~2.2 TWh on top of the step-3a forced floor (~2.17
+    # TWh) ~ the 4.41 TWh actual. floor 1.22 / ceil 1.65 / gas_mid 3.5 / slope
+    # 1.4 gives mean markups ~1.35 (2024) / 1.40 (2023) / 1.47 (2025).
     ("PJM", "subbituminous"): {
-        "floor": 1.35,
-        "ceil": 1.90,
-        "gas_mid": 3.20,
-        "gas_slope": 1.8,
+        "floor": 1.22,
+        "ceil": 1.65,
+        "gas_mid": 3.50,
+        "gas_slope": 1.4,
     },
     # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
     # fuel, so no cheap-gas discount (floor 1.0) — only a dear-gas markup.
