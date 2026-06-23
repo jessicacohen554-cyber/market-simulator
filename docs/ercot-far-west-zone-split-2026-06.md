@@ -1,13 +1,19 @@
-# ERCOT Far_West (Permian) zone split — built; CT over-run is NOT transmission-closable (2026-06)
+# ERCOT Far_West (Permian) zone split — REJECTED PROBE: CT over-run is not transmission-closable (2026-06)
 
-**Status: BUILT and validated as structure; the motivating CT_PEAKER fix did NOT
-materialize.** The Far_West (Permian) node is structurally correct and stays
-(claude.md #1), but three diagnostic probes prove the CT_PEAKER over-run is a
-cheap-Waha-gas CT-economics artifact, **not** a transmission-topology artifact.
-The Permian export limit — the "whole ballgame" of the scope doc — turns out to
-be **irrelevant** to the over-run.
+**Status: built, validated, and REVERTED.** The Far_West (Permian) node was
+built end-to-end and validated as structure, but three diagnostic probes proved
+the CT_PEAKER over-run is a cheap-Waha-gas CT-economics artifact, **not** a
+transmission-topology artifact — the Permian export limit (the scope doc's
+"whole ballgame") is **irrelevant** to it. With only the honest *loose* limit
+(no measured intra-Permian GTC is available), the node is a pure dispatch no-op
+that moves no metric. It was therefore reverted as a rejected probe rather than
+carried as inert topology; the finding below is the deliverable, and a future
+session can rebuild it (the recipe is fully recorded here) the moment a measured
+intra-Permian limit lands **and** the upstream Waha-gas CT root cause is fixed.
+The build lives in git history at commit `aad79c1` (reverted by the commit that
+restored this doc).
 
-## What was built (all committed)
+## What was built (commit aad79c1, since reverted)
 
 The mirror-image of the NE_LOB carve-out, splitting `Far_West` (the Permian /
 FAR_WEST weather zone) out of the old `West` zone:
@@ -88,13 +94,17 @@ cannot bottle these CTs with transmission because they are not export-bound.
 
 ## Disposition
 
-- **The Far_West node STAYS** (claude.md #1): it is the most structurally
-  faithful representation of the import-dependent Permian (the load + the
-  ~2,800 MW generation poverty are now physical), and it is the correct
-  foundation for a future *measured* intra-Permian limit. Committed limit is the
-  loose WESTEX-class ~10 GW — **no unmeasured constraint is imposed**, so the
-  node is a dispatch no-op on the backcast and does not regress any metric
-  (CT_PEAKER, CC, ST_GAS, COAL_PRB, LMP all unchanged vs run151).
+- **The Far_West node was REVERTED.** It is the most structurally faithful
+  representation of the import-dependent Permian (the load + the ~2,800 MW
+  generation poverty are physical), and rebuilding it is the correct foundation
+  for a future *measured* intra-Permian limit. But with only the honest loose
+  limit it is a pure dispatch no-op (the Far_West/West interface is copper-plate;
+  CT_PEAKER, CC, ST_GAS, COAL_PRB, LMP all byte-for-byte unchanged vs run151),
+  and it cannot be made *active* without a measured limit that does not exist in
+  this environment. Rather than carry an inert 8th zone (a Tier-0 change that
+  invalidates cross-scenario comparison for no benefit), the build was reverted;
+  the recipe above is fully recorded so it can be rebuilt in one pass when both
+  preconditions are met.
 - **The measured intra-Permian export GTC was NOT sourced.** The NP6-86 SCED
   binding-constraint archive (the data-first source for WESTEX/PNHNDL/NE_LOB) is
   not present in this environment, and the public ERCOT Permian Basin Reliability
@@ -102,8 +112,19 @@ cannot bottle these CTs with transmission because they are not export-bound.
   West Texas stability limit by 13%") rather than a clean present-day
   intra-Permian limit. This is moot, though: probe C proves a tight export cap
   would not move the CT over-run regardless of its value.
-- **Next investigation:** the Waha-gas CT offer / Permian BTM-cogen treatment
-  (a C2-family, not a C3/transmission, lever).
+- **Two orthogonal bugs were found in `scripts/derive_load_shares.py` (also
+  reverted with the node, so still open):** its `REF` path predates the W1 data
+  collapse (`data/reference` → `data/raw/reference`), and its ERCOT weather-zone
+  map still sends `EAST → North` although the live model carved EAST into the
+  Northeast zone (`eia_loader._ERCOT_LOAD_ZONE_GROUPS` has `EAST → Northeast`).
+  The script therefore cannot reproduce the committed Northeast load share. Worth
+  a standalone fix.
+- **Next investigation (the actual root cause):** the Waha-gas CT offer / Permian
+  BTM-cogen treatment — a C2-family, not a C3/transmission, lever. The West +
+  Permian CTs (Morgan Creek, Permian Basin, Odessa-Ector, Ector County) run
+  baseload on ~$0 Waha gas; in reality they are peakers / behind-meter oil-field
+  cogen. Candidate fixes: a Waha-gas intraday-volatility or take-or-pay floor on
+  the CT offer, or BTM/must-run treatment of the Permian cogen CTs.
 
 ## Reproduce
 

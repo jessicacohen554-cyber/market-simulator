@@ -13,29 +13,10 @@ from market_sim.data.zone_assignment import (
 
 
 def test_ercot_west_zone():
-    """A CREZ-belt plant (east of the Permian) should be assigned to West.
-
-    The CREZ wind belt around Sweetwater/Abilene/San Angelo (lon -101.0 .. -99.5)
-    stays in West and feeds the WESTEX export interface.
-    """
-    # Sweetwater / Nolan County CREZ: lat ~32.5, lon ~-100.4
-    assert assign_zone_by_coords(32.5, -100.4, "ERCOT") == "West"
-    # Morgan Creek (Mitchell County, lon -100.9) is in the WEST weather zone.
-    assert assign_zone_by_coords(32.34, -100.92, "ERCOT") == "West"
-
-
-def test_ercot_far_west_zone():
-    """A deep-Permian plant (lon < -101.0) should be assigned to Far_West.
-
-    The Permian / FAR_WEST weather zone (Midland/Odessa/Ward/Andrews) is the
-    import-dependent load pocket carved out of West behind the Permian tie.
-    """
+    """A plant in the Permian / CREZ belt should be assigned to West zone."""
     # Midland, TX area: lat ~32.0, lon ~-102.1
-    assert assign_zone_by_coords(32.0, -102.1, "ERCOT") == "Far_West"
-    # Odessa / Ector County (Odessa-Ector, Quail Run): lat ~31.84, lon ~-102.33
-    assert assign_zone_by_coords(31.84, -102.33, "ERCOT") == "Far_West"
-    # Big Spring (Howard County, lon -101.4) is FAR_WEST weather zone.
-    assert assign_zone_by_coords(32.25, -101.42, "ERCOT") == "Far_West"
+    zone = assign_zone_by_coords(32.0, -102.1, "ERCOT")
+    assert zone == "West"
 
 
 def test_ercot_panhandle_zone():
@@ -526,11 +507,9 @@ def test_ercot_zone_capacity_balance():
     The Panhandle zone is a pure wind exporter: its in-ERCOT fleet is
     entirely wind and solar (the Amarillo thermal stations sit in SPP, not
     ERCOT), so geographic assignment correctly leaves it with no thermal
-    capacity. After the Far_West (Permian) carve-out, the residual West zone
-    is the CREZ wind belt (Sweetwater/Abilene) and is likewise thermal-light
-    (~1% of capacity) -- the Permian thermal it used to hold now sits in
-    Far_West -- so West joins Panhandle as an exempt wind-export zone. Every
-    other zone, including Far_West, holds a non-trivial (>3%) share.
+    capacity. Every other zone holds a non-trivial share; the 3% (not 5%)
+    threshold accommodates the West zone, which is genuinely thermal-light
+    behind the West Texas Export interface.
     """
     config = get_iso_config("ERCOT")
     fleet = load_fleet_from_csv("ERCOT", config)
@@ -539,11 +518,8 @@ def test_ercot_zone_capacity_balance():
         cap_by_zone[g.zone] += g.pmax_mw
     total = sum(cap_by_zone.values())
     assert cap_by_zone["Panhandle"] == 0.0
-    # West (CREZ wind belt) is thermal-light post-split; the Permian thermal
-    # is now in Far_West, which must carry a non-trivial share.
-    assert cap_by_zone["Far_West"] / total > 0.03
     for zone in config.zone_names:
-        if zone in ("Panhandle", "West"):
+        if zone == "Panhandle":
             continue
         share = cap_by_zone[zone] / total
         assert share > 0.03, f"{zone} has only {share:.1%} of capacity"

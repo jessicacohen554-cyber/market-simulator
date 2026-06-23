@@ -79,16 +79,10 @@ def test_zone_distribution_from_eia860():
     assert (wind_cap > 0.0).sum() >= 3
     assert (solar_cap > 0.0).sum() >= 3
 
-    # After the Far_West (Permian) carve-out, the Permian solar boom makes
-    # Far_West the largest single solar zone, and the West-Texas belt (West +
-    # Far_West) holds the majority of ERCOT solar. (Wind is genuinely spread:
-    # the South-Texas coast and Panhandle each rival the belt, so no single
-    # zone or pair dominates wind.)
+    # West holds the largest share of both wind and solar in ERCOT.
     west = iso_config.zone_names.index("West")
-    far_west = iso_config.zone_names.index("Far_West")
-    assert solar_cap[far_west] == solar_cap.max()
-    belt_solar = solar_cap[west] + solar_cap[far_west]
-    assert belt_solar > 0.5 * solar_cap.sum()
+    assert wind_cap[west] == wind_cap.max()
+    assert solar_cap[west] == solar_cap.max()
 
     # Per-zone capacity tracks the EIA-860 zone shares.
     wind_shares = _eia860_zone_shares("ERCOT", "wind", _CAL_YEAR)
