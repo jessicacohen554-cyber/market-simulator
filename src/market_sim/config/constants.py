@@ -710,37 +710,22 @@ COAL_PRICE_ESCALATION: float = 0.01
 # years.
 OIL_PRICE_PER_MMBTU: float = 18.0
 
-# Convexity exponent of the Algonquin Citygate (AGT) *daily* gas-basis scarcity
-# premium in within-month NEISO demand (doc-08 NEISO design decision 1, the
-# daily-basis refinement of upload U4). ISO-NE is pipeline-constrained: the AGT
-# citygate basis is a flat, near-zero shoulder most days, then blows out
-# convexly on the coldest days when gas-for-heating crowds the marginal
-# gas-for-power off the pipe. The measured *monthly* basis
-# (data/raw/gas_basis_by_iso_month.csv) is the right level but a flat
-# monthly plateau never reaches distillate parity (~$18/MMBtu), so the
-# dual-fuel gas->oil switch and the oil-steam fleet never trip and the modeled
-# winter price tail stays flat. The true daily AGT spot series (ICE/Platts) is
-# paywalled and network-blocked in this environment (upload U4 unfilled), so
-# the daily basis is reconstructed mean-preservingly: each winter month's
-# measured mean basis is redistributed across its days proportional to that
-# day's mean NEISO demand raised to this exponent (the highest-demand =
-# coldest days carry the blowout), leaving the monthly mean — and hence the
-# annual gas burn and fuel mix — unchanged. Set to 7.0 (a moderate convexity)
-# so the resulting gas->oil switching exposure tracks the cross-year ordering of
-# the measured EIA-930 ``NG: OIL`` winter burn (0.32/0.37/1.24 TWh, 2023/24/25 —
-# 2025 >> 2023 ~ 2024) and lifts the winter LMP >$200/MWh hour counts toward the
-# measured ~44/11/160 with one constant value held across all three years;
-# within each winter month the coldest-day demand peaks line up with the days
-# oil actually ran (Feb 3-4 2023 Arctic outbreak, Jan 20-22 2025 polar vortex;
-# demand-oil daily corr 0.5-0.72). The residual oil-TWh shortfall is not a
-# convexity issue but the objective-only dual-fuel switch counting switched MWh
-# as gas (see docs/multi-iso/neiso-data-audit.md §2c).
-# Used by market_sim.data.fuel.iso_hub_daily_gas_prices,
-# gated on ScenarioConfig.gas_hub_basis_daily (NEISO calibration only). It is a
-# flagged proxy for the unavailable daily AGT series — see
-# docs/multi-iso/neiso-data-audit.md - and falls back to the flat monthly
-# overlay when the demand series is unavailable.
-AGT_DAILY_BASIS_CONVEXITY: float = 7.0
+# NOTE: AGT_DAILY_BASIS_CONVEXITY (the within-month NEISO daily-AGT-basis
+# demand-convexity exponent, formerly 7.0) was RETIRED 2026-06. It redistributed
+# the measured monthly AGT basis across a month's days proportional to NEISO
+# demand raised to the exponent, with the exponent *chosen so the resulting
+# gas->oil switching tracked the measured EIA-930 oil burn* — i.e. a within-month
+# shape fitted to the electricity/oil outcome, which violates the measured-input
+# rule (CLAUDE.md #12: never tune an input to the residual it is validated
+# against). It is replaced by a real-data construction in
+# market_sim.data.fuel.iso_hub_daily_gas_prices: the within-month AGT basis is
+# anchored to the real Algonquin Citygate daily spot prints EIA publishes in its
+# Weekly Update narrative (data/raw/gas-prices/algonquin_citygate_daily.csv,
+# scripts/fetch_algonquin_daily_spot.py), interpolated on their true calendar
+# days and mean-preserved to the measured monthly basis; sparse-print months
+# borrow the measured Transco Z6 NY daily-basis shape (AGT~=Transco basis, slope
+# ~0.95). Every driver is now free, EIA-sourced, forward-applicable gas-market
+# data with no electricity/oil tuning. See docs/multi-iso/neiso-data-audit.md §2c.
 
 # Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas units.
 # Biomass fuel is largely a low-cost waste/byproduct stream (mill residue,
