@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-pjm-46-online-pmin",
+  "label": "pjm 46 online pmin",
+  "date": "2026-06-23",
+  "shorthand": "pjm-46-online-pmin",
+  "definition": "Coal-operations rebuild steps 1-2 on the PJM keeper: coal_takeorpay_from_data (step 1, measured EIA-923 Sch-5 sunk-fuel share) + coal_mustrun_online_pmin (step 2, coal must-run band sized to the measured online-net-MW synchronization Pmin / mustrun_online_pct ~27% cap-wtd, vs the all-hours available-CF mustrun_pct ~44%). Shrinking the cheap sub-cost band moves coal into full-cost tranches so it price-follows: vs the keeper, mean-LMP C3a now PASSes all 3 years (2025 -14.5%->-6.0%, fixing the suppression) and 2023 coal +9.2%->+0.1%; it overshoots to 2024 coal -7.9% / 2025 gas +11.4%, the next root cause (step-3 SRMC tranche + reserve co-opt). Still NOT-YET. Solved 2023-25 (serial per-year solves, merged).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-23-pjm-46-online-pmin.js",
+  "bundle": "results/calibration/pjm_46"
+}
