@@ -1380,6 +1380,7 @@ def _ercot_gas_fleet(hours: int = 48):
             zone="West",
             fuel_type="gas_ct",
             pmax_mw=400.0,
+            plant_code=3494,  # Permian Basin (real EIA code, for per-plant haircut)
         ),
         Generator(
             unit_id="GAS_NORTH",
@@ -1387,6 +1388,7 @@ def _ercot_gas_fleet(hours: int = 48):
             zone="North",
             fuel_type="gas_ct",
             pmax_mw=400.0,
+            plant_code=3456,
         ),
     ]
     return generators_to_fleet_arrays(generators, _ERCOT_ZONES, hours=hours)
@@ -1467,13 +1469,86 @@ def test_ercot_gas_spot_share_aggregates_to_zones(tmp_path):
     assert ercot_gas_spot_share_by_zone(tmp_path / "absent.csv", binp) is None
 
 
-def test_ercot_gas_contract_haircut_shrinks_west_discount():
-    """The measured spot-share haircut makes the West discount shallower.
+def test_ercot_gas_spot_share_by_plant_keys_on_plant_code(tmp_path):
+    """The per-plant loader returns each plant's own share, untouched by zone."""
+    import pandas as pd
 
-    With the haircut on and a 50% West spot share, only half the Waha hub
-    discount reaches the merit order, so the West delivered price sits above the
-    unhaircut zonal price (but still below the floored-only price would imply a
-    deeper cut). The haircut reads fixed paths, so we monkeypatch the loader.
+    from market_sim.data.fuel import ercot_gas_spot_share_by_plant
+
+    top = tmp_path / "gas_takeorpay_ERCOT.csv"
+    pd.DataFrame(
+        {
+            "plant_code": [3494, 58471],
+            "spot_share": [1.0, 0.0],  # Permian Basin 100% spot; Ector 100% contract
+            "total_mmbtu": [100.0, 100.0],
+        }
+    ).to_csv(top, index=False)
+    assert ercot_gas_spot_share_by_plant(top) == {3494: 1.0, 58471: 0.0}
+    assert ercot_gas_spot_share_by_plant(tmp_path / "absent.csv") is None
+
+
+def test_ercot_gas_haircut_differentiates_same_zone_plants():
+    """Two West units: a 100%-spot plant keeps the full Waha discount; a
+    100%-contract plant in the same zone loses it. The zone average could not
+    express this — it is exactly what per-plant buys us.
+    """
+    import market_sim.data.fuel as fuelmod
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import (  # noqa: F401  (re-export guard)
+        generators_to_fleet_arrays,
+    )
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    gens = [
+        Generator(
+            unit_id="WEST_SPOT",
+            name="Permian Basin",
+            zone="West",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+            plant_code=3494,
+        ),
+        Generator(
+            unit_id="WEST_CONTRACT",
+            name="Ector County",
+            zone="West",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+            plant_code=58471,
+        ),
+    ]
+    fleet = generators_to_fleet_arrays(gens, _ERCOT_ZONES, hours=hours)
+    base = np.full((fleet.n_gen, hours), 2.19)
+    spot = fleet.unit_ids.index("WEST_SPOT")
+    contract = fleet.unit_ids.index("WEST_CONTRACT")
+
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        hours=hours,
+        ercot_zonal_gas_basis=True,
+        ercot_gas_contract_haircut=True,
+    )
+    orig = fuelmod.ercot_gas_spot_share_by_plant
+    fuelmod.ercot_gas_spot_share_by_plant = lambda *a, **k: {3494: 1.0, 58471: 0.0}
+    try:
+        prices = base.copy()
+        apply_ercot_zonal_gas_basis(prices, fleet, cfg, 2024)
+    finally:
+        fuelmod.ercot_gas_spot_share_by_plant = orig
+
+    # The contracted unit (no Waha discount) is more expensive than the 100%-spot
+    # unit (full discount), despite sharing the West zone.
+    assert prices[contract, 0] > prices[spot, 0]
+
+
+def test_ercot_gas_contract_haircut_shrinks_west_discount():
+    """The measured per-PLANT spot-share haircut makes the West discount shallower.
+
+    With the haircut on and a 50% spot share on the West plant, only half the Waha
+    hub discount reaches the merit order, so the West delivered price sits above the
+    unhaircut zonal price. The haircut keys on the unit's own EIA plant code, so we
+    monkeypatch the per-plant loader to return that share for plant 3494.
     """
     import market_sim.data.fuel as fuelmod
     from market_sim.data.fuel import apply_ercot_zonal_gas_basis
@@ -1487,8 +1562,8 @@ def test_ercot_gas_contract_haircut_shrinks_west_discount():
     unhaircut = base.copy()
     apply_ercot_zonal_gas_basis(unhaircut, fleet, cfg_on, 2024)
 
-    orig = fuelmod.ercot_gas_spot_share_by_zone
-    fuelmod.ercot_gas_spot_share_by_zone = lambda *a, **k: {"West": 0.5}
+    orig = fuelmod.ercot_gas_spot_share_by_plant
+    fuelmod.ercot_gas_spot_share_by_plant = lambda *a, **k: {3494: 0.5}
     try:
         haircut = base.copy()
         apply_ercot_zonal_gas_basis(
@@ -1498,10 +1573,10 @@ def test_ercot_gas_contract_haircut_shrinks_west_discount():
             2024,
         )
     finally:
-        fuelmod.ercot_gas_spot_share_by_zone = orig
+        fuelmod.ercot_gas_spot_share_by_plant = orig
 
-    # Halving the West hub discount lifts West delivered gas above the raw zonal
-    # price (less discount reaches the burner tip).
+    # Halving the West plant's hub discount lifts its delivered gas above the raw
+    # zonal price (less discount reaches the burner tip).
     assert haircut[west, 0] > unhaircut[west, 0]
 
 
