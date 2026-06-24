@@ -59,6 +59,22 @@ from market_sim.config.constants import (
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 
 
+def neighbor_heat_rate(neighbor: NeighborInterface, year: int) -> float:
+    """Return the neighbor's effective marginal heat rate for ``year`` (MMBtu/MWh).
+
+    Prefers the per-year measured anchor in ``neighbor.hr_by_year`` (re-anchored
+    to the neighbor's OWN realized annual-mean LMP for that backcast year — see
+    :class:`~market_sim.config.constants.NeighborInterface`) and falls back to
+    the structural ``marginal_heat_rate`` for any year not tabulated (every
+    forecast year, and neighbors with no measured LMP). Keeps forecast runs
+    byte-identical while removing the multi-year-mean level error that opened a
+    fake seam export spread in the dear-gas year.
+    """
+    if neighbor.hr_by_year and year in neighbor.hr_by_year:
+        return neighbor.hr_by_year[year]
+    return neighbor.marginal_heat_rate
+
+
 def neighbor_gas_price(
     neighbor: NeighborInterface, year: int, gas_scenario: str = "mid"
 ) -> float:
@@ -175,7 +191,7 @@ def neighbor_reference_price(
         return None
     shape, ba_used = shaped
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor.marginal_heat_rate
+    baseload *= neighbor_heat_rate(neighbor, year)
     return baseload * shape, ba_used
 
 
@@ -234,7 +250,7 @@ def seam_tranche_prices(
         return None
     load, mean_load, ba_used = loaded
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor.marginal_heat_rate
+    baseload *= neighbor_heat_rate(neighbor, year)
     exp = neighbor.load_shape_exponent
     step = neighbor.interface_limit_mw / n_tranches
     # Midpoint flow of each band: (k-0.5) x step, k = 1..n.
