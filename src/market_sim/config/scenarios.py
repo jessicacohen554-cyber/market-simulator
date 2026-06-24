@@ -106,6 +106,16 @@ class ScenarioConfig:
     # annual-cyclic behaviour. See model-methodology-spec.md (storage).
     nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
+    forecast_fossil_retirement_economic: bool = True  # In a forecast, fossil
+    # (coal/gas/oil) units are NOT retired on their announced EIA-860 planned-
+    # retirement date — their phaseout is governed entirely by the economic-
+    # retirement screen (capacity.apply_economic_retirements), so the forecast
+    # responds to conditions (a fossil unit may close early on losses or run past
+    # its announced date if it stays in-merit) rather than to a hardcoded
+    # announcement. Non-fossil units (nuclear/hydro/wind/solar/storage) still
+    # retire on their announced EIA-860 date (policy/contract/end-of-life exits
+    # with no economic-screen analogue). Set False for the legacy behaviour
+    # (every scheduled retirement honored regardless of fuel).
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
@@ -1995,6 +2005,7 @@ TIER_TAGS: dict[str, int] = {
     "storage_degradation": 2,
     "nominal_discount_rate": 2,
     "retirement_consecutive_years": 2,
+    "forecast_fossil_retirement_economic": 1,
     "retirement_years_coal": 2,
     "retirement_years_gas_ct": 2,
     "retirement_years_gas_cc": 2,
