@@ -394,6 +394,31 @@ _SUMMER_MONTHS: frozenset[int] = frozenset({6, 7, 8, 9})
 # September, ERCOT's high-load season when these old units are dragged online.
 _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 
+# Mixed CC+ST facility steam heat-rate corrections (MMBtu/MWh), keyed by EIA
+# plant code. A facility that runs BOTH an efficient combined cycle and a legacy
+# steam turbine reports ONE plant-level EIA-923 heat rate (fuel / net-gen
+# blended across both prime movers); applied uniformly to every unit, that blend
+# hands the inefficient steam units the CC's efficiency. Ravenswood (plant 2500,
+# NYC, "CC+ST") is the material NYISO case: its ~1.7 GW steam units inherited the
+# 8.8 plant blend, so 0.97x8.8 = 8.5 eff HR put the big NYC steam unit BELOW the
+# top of an efficient CC's economic ramp (1.12x7.76 = 8.7) and it cleared AHEAD
+# of idle NYC combined cycle on merit (the 2023 CC_REGULAR -4 TWh / ST_GAS
+# +3.5 TWh merit inversion; nyiso 25).
+#
+# The corrected value (9.5) is the steam units' OWN heat rate recovered from the
+# plant blend, not a free parameter: the 8.8 plant figure is generation-weighted
+# across the efficient combined cycle (~7.5) and the steam turbine, so backing the
+# CC out at plausible 2023 capacity factors (CC ~0.6, steam ~0.15) leaves the steam
+# at ~9.5 MMBtu/MWh — modestly above the blend (steam is less efficient than the
+# CC) yet below the smaller, older NYC peers (Arthur Kill 11.27, Astoria 11.95),
+# as fits Ravenswood Unit 30 being a large, relatively efficient unit. 0.97x9.5 =
+# 9.2 eff HR also clears the top of CC's economic ramp (8.7), so the merit order
+# is restored (CC ahead of steam). A measured-data correction (CLAUDE.md rule #11
+# — the plant blend was silently masking the inversion), forward-reproducible (it
+# reflects unit physics, not a calendar/residual fit) and applied to the steam
+# (ST_GAS) units ONLY, leaving the CC rows on their measured blend.
+MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5}
+
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
 # months. Winter keeps the flat WEFOR.
@@ -3419,8 +3444,29 @@ def load_fleet_from_csv(
         generators = from_parquet
         source = parquet_path
 
+    _correct_mixed_facility_steam_hr(generators)
     _cache_binned_fleet(iso, generators, source)
     return generators
+
+
+def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
+    """Reassign the steam-unit heat rate at mixed CC+ST facilities (in place).
+
+    See :data:`MIXED_FACILITY_STEAM_HR`: at a combined CC+ST plant the single
+    plant-level EIA-923 heat rate blends the efficient CC with the legacy steam
+    turbine, so the steam units inherit a too-low (CC-influenced) heat rate. This
+    lifts only the steam (``ST_GAS``) units of a listed plant to the steam-class
+    value, and only when their current heat rate is *below* it (so a correctly
+    metered steam unit is never lowered). The CC rows keep their measured blend.
+    """
+    for gen in generators:
+        target = MIXED_FACILITY_STEAM_HR.get(int(gen.plant_code))
+        if (
+            target is not None
+            and gen.plant_group == "ST_GAS"
+            and gen.heat_rate < target
+        ):
+            gen.heat_rate = target
 
 
 def load_retired_within_window(
