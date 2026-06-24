@@ -89,6 +89,7 @@ from market_sim.config.paths import (
     NYISO_HSL_DIR,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.cod_ramp import COD_FALLBACK_MONTH, monthly_online_mask
 from market_sim.data.eia_loader import (
     DATA_DIR,
     load_eia_hourly_renewable_gen,
@@ -452,6 +453,18 @@ def _as_int(value: object) -> int | None:
     return None if result is None else int(result)
 
 
+def _optional_numeric(df: pd.DataFrame, column: str) -> np.ndarray:
+    """Return ``df[column]`` as a float array, or all-NaN if the column is absent.
+
+    Column-safe access for optional EIA-860 fields (e.g. ``Planned Retirement
+    Year`` / ``Month``): a vintage that does not carry the column yields an
+    all-NaN array, which the per-plant reduction reads as "no retirement".
+    """
+    if column in df.columns:
+        return pd.to_numeric(df[column], errors="coerce").to_numpy()
+    return np.full(len(df), np.nan)
+
+
 def _eia860_monthly_capacity(
     iso: str,
     fuel: str,
@@ -463,17 +476,27 @@ def _eia860_monthly_capacity(
 
     Each EIA-860 operable wind/solar plant is placed in a model zone via the
     eGRID ORIS->zone lookup (see :mod:`market_sim.data.zone_assignment`) and
-    contributes its nameplate capacity to the months it was online:
+    contributes its nameplate capacity to the months it was online — the
+    month-precise COD ON-ramp **and** planned-retirement OFF-ramp, evaluated by
+    the shared :func:`market_sim.data.cod_ramp.monthly_online_mask`:
 
-    * ``operating_year < cal_year`` -- online all twelve months;
+    * ``operating_year < cal_year`` -- online from January (subject to any
+      retirement below);
     * ``operating_year == cal_year`` -- online from ``operating_month`` on;
-    * ``operating_year > cal_year`` -- not yet online (zero).
+    * ``operating_year > cal_year`` -- not yet online (zero);
+    * ``retirement_year < cal_year`` -- already retired (zero all months);
+    * ``retirement_year == cal_year`` -- online through ``retirement_month``.
+
+    A missing ``operating_month`` falls back to
+    :data:`market_sim.data.cod_ramp.COD_FALLBACK_MONTH` and a missing
+    ``retirement_month`` to December, the one month-precise convention shared
+    with the thermal/storage loaders.
 
     When ``cal_year`` is ``None`` every operable plant is treated as online
     in all twelve months (no vintage ramp).
 
     Source: EIA-860 2024, Generator_Operable sheet, ``Operating Month`` /
-    ``Operating Year`` columns.
+    ``Operating Year`` and ``Planned Retirement Month`` / ``Year`` columns.
 
     Returns ``None`` when the EIA-860 parquet is missing or the ISO has no
     eGRID geographic zone rules, signaling the caller to fall back to the
@@ -510,8 +533,14 @@ def _eia860_monthly_capacity(
     capacity = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce").to_numpy()
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce").to_numpy()
     op_month = pd.to_numeric(df["Operating Month"], errors="coerce").to_numpy()
+    # Planned-retirement OFF-ramp inputs, mirroring the COD ON-ramp. Absent on
+    # a vintage that does not carry them -> all-NaN -> "no retirement".
+    ret_year = _optional_numeric(df, "Planned Retirement Year")
+    ret_month = _optional_numeric(df, "Planned Retirement Month")
 
-    for code, cap, oy, om in zip(plant_code, capacity, op_year, op_month):
+    for code, cap, oy, om, ry, rm in zip(
+        plant_code, capacity, op_year, op_month, ret_year, ret_month
+    ):
         oris = _as_int(code)
         zone = zone_lookup.get(oris) if oris is not None else None
         z_idx = zone_to_idx.get(zone) if zone is not None else None
@@ -519,19 +548,20 @@ def _eia860_monthly_capacity(
             continue
         if cap is None or cap != cap or cap <= 0.0:  # None / NaN / non-positive
             continue
-        operating_year = _as_int(oy)
-        if (
-            cal_year is not None
-            and operating_year is not None
-            and operating_year > cal_year
-        ):
+        if cal_year is None:
+            monthly[z_idx, :] += cap  # no vintage ramp -> online all year
             continue
-        if cal_year is not None and operating_year == cal_year:
-            month = _as_int(om) or 1
-            start = min(max(month, 1), _MONTHS_PER_YEAR)
-            monthly[z_idx, start - 1 :] += cap
-        else:
-            monthly[z_idx, :] += cap
+        # Month-precise online window: COD ON-ramp + planned-retirement
+        # OFF-ramp, the one convention shared with the thermal/storage loaders.
+        mask = monthly_online_mask(
+            _as_int(oy),
+            (_as_int(om) or COD_FALLBACK_MONTH),
+            _as_int(ry),
+            _as_int(rm),
+            cal_year,
+        )
+        if mask.any():
+            monthly[z_idx] += cap * mask
 
     # Augment with high-confidence EIA-860 proposed plants when the
     # calibration year is past the operable snapshot vintage (Sep 2024).
