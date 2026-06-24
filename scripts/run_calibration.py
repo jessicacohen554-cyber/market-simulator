@@ -714,14 +714,17 @@ def _calibration_config(
         #   frac reaches $0, not yet negative; bites with export shaping / a
         #   higher floor). See policy.eac.apply_negative_renewable_offer_floor
         #   and results/calibration/NEGRENEW-caiso-findings.md.
-        storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT")),  # CAISO and
-        #   ERCOT both commissioned GWs of batteries mid-backcast (CAISO 3.0 GW
+        storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT", "NEISO")),  # CAISO,
+        #   ERCOT and NEISO commissioned batteries mid-backcast (CAISO 3.0 GW
         #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
-        #   2023-25), so a flat year-end fleet overstates spring/summer battery
-        #   capability — measured ERCOT model power 3.9/8.1/13.7 GW vs reality
-        #   ~3.5/6.5/10. The dispatch caps now ramp month-by-month from each
-        #   unit's COD (EIA-860 Operating Month/Year) for both. PJM stays flat
-        #   until its own recalibration pass.
+        #   2023-25; NEISO's grid-battery fleet stepped up across 2023-25 as its
+        #   EIA-860 COD months landed), so a flat year-end fleet overstates
+        #   spring/summer battery capability — measured ERCOT model power
+        #   3.9/8.1/13.7 GW vs reality ~3.5/6.5/10. The dispatch caps now ramp
+        #   month-by-month from each unit's COD (EIA-860 Operating Month/Year),
+        #   and out again on its Planned Retirement Month, for all three. PJM
+        #   stays flat until its own recalibration pass. The --storage-vintage-
+        #   ramp CLI flag can force it on for any other ISO.
         nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
         #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
         #   fill those months from state/zone neighbours before the Henry Hub
@@ -1231,6 +1234,7 @@ def run_year(
     coal_sync_srmc_tranche: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    storage_vintage_ramp: bool = False,
     battery_dispatch_adder: float = 0.0,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
@@ -1434,6 +1438,8 @@ def run_year(
     # bounds storage perfect foresight to within-day arbitrage.
     if storage_daily_cycling:
         config = config.with_overrides(storage_daily_cycling=True)
+    if storage_vintage_ramp:
+        config = config.with_overrides(storage_vintage_ramp=True)
     # AS reserve withholding (run_calibration_full --as-reserve-withholding):
     # remove the measured cleared reserve MW from the gas/flexible-thermal
     # headroom before the energy supply curve clears (ERCOT up-AS / PJM Primary
@@ -1529,6 +1535,10 @@ def run_year(
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
+    # Default the CAISO per-hub intertie flag so the later corridor-limit check
+    # is bound on every path; it is only set True inside the priced-interchange
+    # block below (CAISO-only), so a non-priced or non-CAISO run keeps it False.
+    caiso_per_hub = False
     if priced_interchange:
         # CARB levies its cap-and-trade allowance on unspecified WECC imports
         # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every
