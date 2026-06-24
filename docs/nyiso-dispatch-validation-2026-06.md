@@ -311,3 +311,55 @@ citation) and holds price/co2/sysvol — but it does **not** meet the handoff's
 literal keeper bar ("all gas classes INTO the C1 band across all 3 years")
 because 2024/25 are gas-TOTAL-blocked (out of scope). The SOM-grounded curve is
 the real deliverable; the residual C1 failures are not offer-curve-addressable.
+
+## Import boundary flow reconciled to the measured schedule — `nyiso 24`, the KEEPER
+
+The `nyiso 9/10/12` priced node and the `nyiso 22` SOM offer curve left one
+boundary error the LI oil-merit fix (`nyiso 23`) exposed: the priced node
+**under-clears** vs the metered schedule. Its near-static economic tranche
+ladder clears a near-flat ~18.5–21.6 TWh that does **not** track the measured
+EIA-930 net interchange's year-over-year **decline** (23.45 → 20.35 → 19.09 TWh
+2023/24/25 — HQ/Ontario firm-schedule availability, the narrowing NY-vs-PJM /
+NY-vs-ISO-NE spread, post-Indian-Point in-state gas demand). So the node is
+simultaneously too **low** in 2023 (18.53) and too **high** in 2024/25 (21.65,
+21.63) vs the metered flow — gas reads +2.6 % (2023, masked by under-import) and
+−9.0/−7.2 % (2024/25, the gas-total deficit) in `nyiso 23`.
+
+**Fix (`--nyiso-import-reconciliation`):** a per-month **net-interchange band**
+constraint pins the priced node's monthly net throughput to
+`eia_loader.nyiso_net_interchange` (±2 % `NYISO_IMPORT_RECON_BAND_FRAC`). The
+constraint (`transmission.build_import_node_reconciliation` →
+`dispatch._build_import_node_rows`) sums the import-tranche + export-sink P
+columns over each month into one band row (vectorized hour→month map, no hour
+loop), leaving the priced tranches free to set the marginal LMP **within** the
+envelope. This is **method #5** of the energy-modeling grounding (boundary-flow
+calibration constraint) — the standard production-cost practice
+(Aurora/PLEXOS/GridView/PROMOD historical validation; ReEDS fixed net trade with
+non-modeled regions): the unmodeled neighbor's flow cannot be economically
+derived, so a backcast pins it to the metered schedule. It **replaces an
+economic estimate with the authoritative measurement** (rule #11), the opposite
+of the prior "import scaling" rejection (which degraded an already-exact
+served-wedge match); the target is the measured INPUT, never the scored OUTPUT,
+so there is no fitted adder / over-pin / td_loss gross-up (rules #1/#11/#12), and
+it is forward-reproducible (a forecast sources the band from the neighbor's
+forecast net position or relaxes to the bare priced node).
+
+**Result (`nyiso 24 import-recon`, all 3 years, keeper flags + the new flag):**
+
+| metric | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| modeled net imports (TWh) | 23.09 | 20.32 | 19.28 |
+| measured (EIA-930) | 23.45 | 20.35 | 19.09 |
+| C2 gas vs `nyiso 23` | +2.6 → **−2.9 %** | −9.0 → **−7.0 %** | −7.2 → **−3.9 %** |
+| C3a mean LMP (model / actual RT) | 30.9 / 30.3 | 36.0 / – | 62.1 / 60.7 |
+
+Imports now track the metered schedule every year; C2 gas improves across the
+board (2024 lands at its documented EIA-923/EIA-930 **basis floor**, ledgered
+ACCEPTED and **not** chased — `docs/nyiso-td-loss-resolution-2026-06.md`); C3a
+mean LMP **PASS** and C4 dispatch correlation **PASS** (price/dispatch held).
+Determination stays **NOT-YET** (the 2023 within-gas CC/ST merit split and the
+NYC-peaker reserve-scarcity **tail** remain — both pre-existing, neither
+addressable by the boundary flow), but `nyiso 24` is the **keeper** on rule-#1
+structural faithfulness: the correct boundary flow on top of the SOM offer curve
++ LI oil-merit. Registered + promoted (`keepers.json`); `nyiso 7/8/9` pruned for
+the 15-run NYISO retention.
