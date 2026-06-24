@@ -4,7 +4,12 @@ Part 1: fleet retirements. Two mechanisms remove generators between
 simulation years:
 
 * **Known retirements** -- units with a scheduled ``retirement_year`` are
-  dropped once the simulation reaches that year.
+  dropped once the simulation reaches that year. By default
+  (``forecast_fossil_retirement_economic``) **fossil** units (coal/gas/oil)
+  are exempt: their announced retirement is treated as an announcement, not a
+  certainty, so their phaseout is left to the economic screen below and the
+  forecast stays condition-responsive. Non-fossil units (nuclear, hydro,
+  renewables, storage) always honor their announced EIA-860 date.
 * **Economic retirements** -- thermal units whose energy revenue fails to
   cover their going-forward fixed cost for a fuel-type-specific number of
   consecutive years are retired, least efficient first within each fuel
@@ -160,21 +165,55 @@ def compute_attribute_revenue(
     return effective_attribute_price * generation_mwh
 
 
-def apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator]:
-    """Return the fleet with scheduled retirements removed.
+# Fossil fuel types whose forecast phaseout is governed by the economic-
+# retirement screen, not by a hardcoded announced date. An EIA-860 "planned
+# retirement" for a coal/gas/oil unit is an *announcement*; in a forecast the
+# actual exit should respond to economics (the unit may close earlier if it
+# loses money, or run longer if it stays in-merit), so honoring the announced
+# date would override the very mechanism that makes the forecast condition-
+# responsive. Non-fossil units (nuclear, hydro, wind, solar, storage) keep
+# retiring on their announced EIA-860 date — those exits are policy/contract/
+# end-of-life events with no economic-screen analogue.
+_FOSSIL_FUELS: frozenset[str] = frozenset(
+    {"coal", "gas_ct", "gas_cc", "gas_st", "gas_cc_ccs", "oil"}
+)
+
+
+def apply_known_retirements(
+    fleet: list[Generator], year: int, fossil_economic: bool = True
+) -> list[Generator]:
+    """Return the fleet with scheduled (date-based) retirements removed.
 
     A generator retires once the simulation year reaches its
     ``retirement_year``; units with no scheduled year are always kept.
 
+    When ``fossil_economic`` is ``True`` (the forecast default), units of a
+    :data:`_FOSSIL_FUELS` type are **exempt** from this date-based retirement —
+    their phaseout is left to the economic-retirement screen
+    (:func:`apply_economic_retirements`) so the forecast retires fossil capacity
+    on economics rather than on an announced date. Non-fossil units (nuclear,
+    hydro, renewables, storage) always honor their announced EIA-860 retirement
+    date. Set ``fossil_economic=False`` to honor every scheduled retirement
+    regardless of fuel (the legacy behaviour).
+
     Args:
         fleet: The current generator fleet.
         year: The simulation year being evaluated.
+        fossil_economic: When ``True``, fossil units ignore their scheduled
+            ``retirement_year`` (economic screen governs them).
 
     Returns:
         A new list excluding generators whose ``retirement_year`` is set
-        and not later than ``year``.
+        and not later than ``year`` (fossil units kept when
+        ``fossil_economic``).
     """
-    return [g for g in fleet if g.retirement_year is None or g.retirement_year > year]
+    keep: list[Generator] = []
+    for g in fleet:
+        if g.retirement_year is None or g.retirement_year > year:
+            keep.append(g)
+        elif fossil_economic and g.fuel_type in _FOSSIL_FUELS:
+            keep.append(g)  # economic screen governs fossil phaseout
+    return keep
 
 
 def compute_clean_share(
@@ -1454,8 +1493,14 @@ def evolve_fleet(
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
     storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
 
-    # 1. Known retirements.
-    fleet = apply_known_retirements(fleet, year)
+    # 1. Known retirements. Fossil units are exempt by default (their phaseout is
+    #    economic, step 2); non-fossil units retire on their announced EIA-860
+    #    date. config.forecast_fossil_retirement_economic toggles this.
+    fleet = apply_known_retirements(
+        fleet,
+        year,
+        fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
+    )
 
     # 2. Economic retirements (needs the prior-year dispatch).
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
