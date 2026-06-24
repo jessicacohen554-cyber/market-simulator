@@ -321,6 +321,71 @@ def monthly_online_mask(
     return on
 
 
+def class_cod_coverage(
+    class_labels: "list[str]",
+    online_years: "list[int | None]",
+) -> dict[str, tuple[int, int]]:
+    """Tabulate per-class COD-date coverage for a fleet.
+
+    ``class_labels[i]`` is generator ``i``'s resource class (its ``plant_group``,
+    or fuel type when the group is blank) and ``online_years[i]`` is the
+    ``online_year`` :func:`effective_cod` resolved for it (``None`` = vintage
+    unknown → the unit is held fully online with no ramp). Returns
+    ``{class_label: (n_units, n_with_cod)}``.
+
+    The audit guardrail: a resource class whose units all resolve to a known
+    EIA-860 COD is month-precision ramped; a class with ``n_with_cod == 0`` is
+    silently skipping the vintage ramp (a future fleet vintage that drops a
+    class's build dates, or a new fuel that never reaches the COD map, shows up
+    here as 0-of-N covered). See :func:`log_class_cod_coverage`.
+    """
+    cov: dict[str, list[int]] = {}
+    for label, oy in zip(class_labels, online_years):
+        rec = cov.setdefault(str(label or "unknown"), [0, 0])
+        rec[0] += 1
+        if oy is not None:
+            rec[1] += 1
+    return {k: (v[0], v[1]) for k, v in cov.items()}
+
+
+def log_class_cod_coverage(
+    coverage: dict[str, tuple[int, int]], iso: str, run_year: int
+) -> list[str]:
+    """Log per-class COD coverage and WARN on any class with no COD dates.
+
+    Emits one DEBUG line per class and a single WARNING naming every class that
+    resolved **zero** EIA-860 COD dates across all its units — the signal that a
+    resource class is silently bypassing the month-precise vintage ramp. Returns
+    the list of fully-uncovered class labels (empty when every class is covered),
+    so callers/tests can assert on it.
+    """
+    uncovered: list[str] = []
+    for label in sorted(coverage):
+        n, n_cod = coverage[label]
+        logger.debug(
+            "COD coverage (%s %s): %s %d/%d units have an EIA-860 COD",
+            iso,
+            run_year,
+            label,
+            n_cod,
+            n,
+        )
+        if n > 0 and n_cod == 0:
+            uncovered.append(label)
+    if uncovered:
+        logger.warning(
+            "COD ramp (%s %s): %d resource class(es) have NO EIA-860 COD date "
+            "and skip the vintage ramp entirely: %s — a fleet vintage may have "
+            "dropped this class's build dates (check load_cod_map / "
+            "_map_fuel_type coverage)",
+            iso,
+            run_year,
+            len(uncovered),
+            ", ".join(uncovered),
+        )
+    return uncovered
+
+
 def effective_cod(
     plant_code: int,
     online_year: int,
