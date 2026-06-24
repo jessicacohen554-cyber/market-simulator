@@ -49,8 +49,10 @@ from market_sim.config.plant_taxonomy import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
+    class_cod_coverage,
     effective_cod,
     load_cod_map,
+    log_class_cod_coverage,
     monthly_online_mask,
 )
 from market_sim.data.outages import (
@@ -1688,6 +1690,8 @@ def generators_to_fleet_arrays(
     ):
         cod_map = load_cod_map()
         online_mask = np.ones((n_gen, 12), dtype=float)
+        cod_class_labels: list[str] = []
+        cod_online_years: list[int | None] = []
         for g_idx, gen in enumerate(generators):
             oy, om, ry, rm = effective_cod(
                 int(gen.plant_code),
@@ -1698,6 +1702,19 @@ def generators_to_fleet_arrays(
                 cod_map,
             )
             online_mask[g_idx] = monthly_online_mask(oy, om, ry, rm, _cod_year)
+            # Per-class COD coverage guardrail: a class whose units all resolve
+            # to a known EIA-860 COD is month-precision ramped; a class with no
+            # COD dates silently bypasses the vintage ramp (data.cod_ramp
+            # .log_class_cod_coverage WARNs so a future vintage cannot drop a
+            # class unnoticed). Synthetic, non-physical units (plant_code <= 0 —
+            # the WECC import-node tranches) carry no EIA-860 COD by design and
+            # are excluded; the audit covers only real EIA-860 plants.
+            if int(gen.plant_code) > 0:
+                cod_class_labels.append(gen.plant_group or gen.fuel_type)
+                cod_online_years.append(oy)
+        log_class_cod_coverage(
+            class_cod_coverage(cod_class_labels, cod_online_years), _iso, _cod_year
+        )
         if (online_mask < 1.0).any():
             month_idx = _hour_to_month_index(hours)
             ramp = online_mask[:, month_idx]  # (n_gen, hours) 0/1
