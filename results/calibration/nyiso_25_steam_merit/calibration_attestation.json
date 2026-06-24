@@ -1,0 +1,86 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "nyiso-25 steam-merit keeper 2026-06-24",
+  "note": "Re-solved on the nyiso-24 import-reconciliation keeper config (--gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply --nyiso-firm-imports --nyiso-import-reconciliation), byte-identical flags, adding ONE model-side data correction: data.fleet.MIXED_FACILITY_STEAM_HR fixes the Ravenswood (plant 2500, NYC) steam heat rate. Ravenswood is a mixed CC+ST facility; EIA-923 reports ONE plant-level heat rate (8.8 MMBtu/MWh, fuel/net-gen blended across the efficient combined cycle and the legacy steam turbine), and the fleet loader applied that single blend to every unit -- handing the ~1.7 GW steam units the combined cycle's efficiency. At 0.97x8.8 = 8.5 eff HR the big NYC steam unit sat BELOW the top of an efficient CC's economic ramp (1.12x7.76 = 8.7) and cleared AHEAD of idle NYC combined cycle on merit in ~8.5k hr/yr -- the documented 2023 CC_REGULAR -4.06 TWh under / ST_GAS +3.55 TWh over merit inversion (nyiso-22 left it as the within-gas frontier). The correction recovers the steam units' OWN heat rate (9.5) by backing the combined cycle (~7.5) out of the 8.8 generation-weighted blend at plausible 2023 capacity factors (CC ~0.6, steam ~0.15) -- modestly above the blend and below the smaller, older NYC peers Arthur Kill (11.27) and Astoria (11.95), consistent with Ravenswood Unit 30 being a large, relatively efficient unit. This is a measured-data correction (claude.md rule #11: the plant blend was silently masking the inversion), forward-reproducible unit physics, applied to the steam units ONLY (the CC rows keep their measured blend) and NOT fitted to the price/volume residual. Result: the merit order is restored (CC ahead of steam) and CC_REGULAR improves EVERY year (2023 -4.06->-3.47, 2024 -3.21->-2.61, 2025 -1.20->-0.6) while the 2023 ST_GAS over-run shrinks (+3.55->+2.76). Because the 2024/25 gas TOTAL is at its EIA-930/EIA-923 basis floor (sysvol gas -7.0%/-3.9%), the displaced steam energy cannot be fully recaptured by CC, so the basis-floor deficit moves WITHIN the gas family from CC_REGULAR (now near-zero) onto the now-correct swing class ST_GAS (2025 -2.92, 2024 -0.96) -- energy-balance reshuffling of an out-of-scope measured-input floor, not a new dispatch error.",
+  "validation_note": "No scored OUTPUT is pinned. The only changed quantity is a measured INPUT (a unit heat rate recovered from EIA-923 plant data + prime-mover physics), forward-reproducible (the same Ravenswood steam HR is used in a forecast). The gas total and LMP (scored outputs) are NOT pinned to actuals; no unit pinned to CEMS; no adder/haircut/sigmoid tuned to a residual. The correction makes the C3a 2025 mean LMP fit WORSE (+9.3%, just over the +-8% band) because NYC -- an import-constrained pocket that over-generates -- over-relies on Ravenswood steam as the marginal unit, so raising its offer directly lifts the downstate LMP. Per rule #1 the correct heat rate STAYS and the worse fit is a discovered symptom of the deeper NYC import-discipline / downstate-incidence root cause (the documented next structural lever, out of scope here as it would touch the nyiso-24 import reconciliation and the EIA-930/923 basis floor), NOT a reason to revert to the wrong 8.8 estimate."
+ },
+ "_unledgered_model_misses": "The following out-of-tolerance criteria are NOT ledgered (honest FAILs, so the determination stays NOT-YET -- promotion is on structural faithfulness per claude.md rule #1, not on reaching CALIBRATED): (a) 2023 C1 within-gas merit split (CC_REGULAR -3.47 / ST_GAS +2.76 TWh, offsetting within the on-target 2023 gas total) -- IMPROVED from the nyiso-24 keeper (-4.06 / +3.55) by the Ravenswood steam-HR correction but not fully closed; the residual is the deeper NYC import-constrained over-generation that keeps downstate steam marginal, the documented out-of-scope import lever; (b) 2025 C1 CC_CHP +1.92 TWh -- a CHP must-run/offer residual, unchanged by the steam HR fix; (c) 2023 C2 sysvol gas -2.9% -- marginally outside the +-2.5% band (the EIA-930/EIA-923 basis is ~-1% at measured imports per docs/nyiso-td-loss-resolution-2026-06.md; left as an honest borderline FAIL); (d) C3a mean LMP 2025 +9.3% (soft) -- the steam-HR correction lifts the NYC marginal price; root cause is the NYC import-incidence over-reliance on Ravenswood steam (out of scope), NOT a residual to chase back by re-cheapening the steam offer; (e) C3b price_shape 2024 (NRMSE 0.217, soft) and C3c price_tail 2024/25 (model 0h/12h vs 12h/42h >$300, soft) -- the NYC-peaker / RCPF reserve-scarcity tail, which is INCIDENCE-gated by the model's too-loose downstate reserve headroom (idle-peaker / import over-service), not curve-gated: steepening the published RCPF demand curve to its tariff shape (ER21-502 top-25%-span; tested in the nyiso-25 rcpf-steep PROBE) deepens the few firing hours past C3a without adding tail HOURS, confirming the lever is downstate reserve incidence (import discipline), the documented next structural step, not the demand-curve slope.",
+ "exceptions": [
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2024,
+   "metric": "C2 gas total vs EIA-923 grid-delivered",
+   "magnitude": "model gas -7.0%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+   "reason": "With imports pinned to the measured EIA-930 schedule (nyiso-24), the in-state fleet total is fixed by energy balance: gen = EIA-930 transmission-metered demand - measured net interchange. The 2024 gas residual is the documented EIA-923-net-generation vs EIA-930-demand benchmark-basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md: Gold Book Table I-2 Note 1; td_loss_factor=0 is settled, a gross-up double-counts). A difference between two EIA datasets, not a dispatch error, OUT OF SCOPE. Unchanged by the steam-HR correction (which only reshuffles WITHIN the gas family). Not closable by an honest knob (rules #1/#11/#12)."
+  },
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2025,
+   "metric": "C2 gas total vs EIA-923 grid-delivered",
+   "magnitude": "model gas -3.9%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+   "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the remaining gas gap is the same EIA-930/EIA-923 basis reconciliation as 2024 plus preliminary-data incompleteness, not a dispatch error. Unchanged by the steam-HR correction. Not chased with a fitted knob."
+  },
+  {
+   "criterion": "co2",
+   "year": 2024,
+   "metric": "C5a system CO2 vs eGRID",
+   "magnitude": "model -8.0%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+   "reason": "2024 CO2 is downstream of the 2024 gas volume: the gas family is at its EIA-923/EIA-930 basis floor (see the 2024 sysvol exception), so the CO2 it generates is correspondingly low. Not a separate dispatch/emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CC_REGULAR",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-2.61 TWh, share -1.5pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 basis floor)",
+   "reason": "2024 is the basis-floor year: the ENTIRE gas total is short by the EIA-923/EIA-930 reconciliation (see the 2024 sysvol exception), so by energy balance the deficit lands partly on CC_REGULAR. IMPROVED vs the nyiso-24 keeper (-3.21->-2.61) by the steam-HR correction restoring CC ahead of steam; the class deficit that remains IS the basis floor, not an offer-curve error."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "ST_GAS",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-0.96 TWh, share -0.6pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 basis floor, swing class)",
+   "reason": "With the Ravenswood steam HR corrected, steam is now the correct gas SWING class (it backs off first when the gas total is short). The 2024 gas total is at its basis floor (-7.0%, see the 2024 sysvol exception), so part of that deficit now lands on ST_GAS by energy balance -- the floor manifesting in the swing class, not a merit error (the merit order is now physically correct, CC ahead of steam)."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "ST_GAS",
+   "year": 2025,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-2.92 TWh, share -1.8pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 basis floor, swing class)",
+   "reason": "Same as 2024 ST_GAS: with the merit order corrected (CC ahead of steam) and 2025 CC_REGULAR now near-zero (-0.6, vs the keeper's -1.20), the 2025 gas-total basis-floor deficit (-3.9%, see the 2025 sysvol exception) lands on the now-correct ST_GAS swing class. This REPLACES the keeper's 2025 CC_REGULAR basis-floor caveat (-1.20): the same out-of-scope floor, now carried by steam because CC is correctly placed. Not closable without re-pinning the gas total (rule #12)."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.20 TWh, share -0.7pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail)",
+   "reason": "CT_PEAKER under-runs every year because NYC peakers clear on reserve/scarcity (mechanism B / RCPF), not energy -- they are priced far above the downstate clearing price. This is INCIDENCE-gated by the model's too-loose downstate reserve headroom, not the demand-curve slope (the nyiso-25 rcpf-steep PROBE confirms steepening the curve does not add tail/peaker hours). Present in every prior NYISO keeper; an open structural follow-on (downstate reserve incidence / import discipline), unrelated to the steam-HR correction."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2025,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.21 TWh, share -0.7pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail)",
+   "reason": "Same NYC-peaker reserve/scarcity-tail gap as the 2024 CT_PEAKER exception; incidence-gated, not energy-clearing, unrelated to the steam-HR correction."
+  }
+ ]
+}
