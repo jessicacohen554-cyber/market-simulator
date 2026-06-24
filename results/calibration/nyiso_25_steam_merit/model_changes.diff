@@ -1,0 +1,346 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 247dfe4..9f97aae 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -408,7 +408,19 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
+ #    Raising committed to 0.97 (min-load eff HR ~= avg, steam part-load HR is no
+ #    better than full-load) puts steam back above CC across its whole econ range,
+ #    so it only runs in genuinely high-load hours / on the LI floor, matching the
+-#    SOM.
++#    SOM. NOTE the offer SHAPE only works if each plant's *base* heat rate is
++#    right: Ravenswood (plant 2500) is a mixed CC+ST facility, and its 1,725 MW
++#    ST_GAS row had inherited the 8.8 MMBtu/MWh *facility-blended* heat rate (the
++#    CC efficiency leaking into the steam row), so 0.97x8.8 = 8.5 eff HR put the
++#    big NYC steam unit BELOW CC's econ ramp (1.12x7.76 = 8.7) and it cleared
++#    ahead of idle NYC CC in ~8.5k hr/yr (the 2023 CC_REGULAR -4 TWh / ST_GAS
++#    +3.5 TWh merit inversion). Corrected the Ravenswood ST_GAS base HR to 9.5
++#    (data.fleet.MIXED_FACILITY_STEAM_HR) — the steam units' own HR recovered by
++#    backing the efficient CC out of the 8.8 generation-weighted CC+ST plant
++#    blend (CC ~0.6 / steam ~0.15 CF -> steam ~9.5), modestly above the blend and
++#    below the older NYC peers (Arthur Kill 11.27, Astoria 11.95). A measured-data
++#    correction (CLAUDE.md rule #11: the blended HR was silently masking the
++#    inversion), forward-reproducible, not fitted to the price/volume residual.
+ #  - CC_REGULAR / CC_CHP: the efficient gas workhorses. CC marginal HR is ~flat
+ #    and ~0.95x average across the operating range (CAMPD CC fit, also cited on
+ #    the ERCOT curve), so econ_low 0.95 / econ_high 1.12 replaces the generic
+@@ -781,29 +793,6 @@ def _calibration_config(
+         #   every CC the same phantom duct band and stacked the fleet at one
+         #   72% CF mass point (fleet.cc_duct_peaking_pct). ERCOT keeps its
+         #   CAMPD-fitted class curve + hand-set per-plant map.
+-        cc_duct_peaking_cap_pct=(8.0 if iso.upper() == "PJM" else None),  # cap
+-        #   the per-plant duct band at the F-class supplementary-firing physical
+-        #   max. The raw nameplate-vs-net-summer gap folds the ambient summer
+-        #   derate into the duct band (median 6.6%, but up to 28% for high-derate
+-        #   plants), oversizing it and dropping the price wall to ~76% of
+-        #   nameplate (Guernsey 13% gap). Capping at 8% keeps the per-plant duct
+-        #   flag (non-duct CCs still 0) but positions the wall at the real ~92%
+-        #   duct-firing point. ERCOT uses a flat class pct_peaking (no cap).
+-        cc_nameplate_summer_derate=(
+-            iso.upper() in ("PJM", "NYISO", "NEISO")
+-        ),  # CC_REGULAR/CC_CHP carry full EIA-860 nameplate in the LP and are
+-        #   derated to the measured net-summer rating in summer only (the correct
+-        #   seasonal shape: full cold-weather capability in winter, ambient-
+-        #   derated in summer). Replaces pinning the LP capacity at net-summer
+-        #   year-round (which under-modelled winter AND, with the flat 10%
+-        #   _SUMMER_CLASS_DERATE on top, derated summer twice) with the per-plant
+-        #   measured derate (fleet.cc_summer_capacity). In backcast the
+-        #   statistical WEFOR/POF/age derate are also dropped for CC — the CAMPD
+-        #   overlay already supplies the real outages. The duct-firing peak band
+-        #   then sits at the top of nameplate (its physical location) instead of
+-        #   inside a net-summer-capped range. ERCOT (CAMPD-bin nameplate) and
+-        #   CAISO/MISO/SPP keep their prior behaviour. Wired for the winter-
+-        #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
+         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
+         ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
+         ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much).
+@@ -1229,20 +1218,6 @@ def _hydro_fleet(
+     return units, np.vstack(monthly)
+ 
+ 
+-def _drop_biomass_units(fleet, fuel_fracs):
+-    """Remove biomass LP units (and their parallel fuel fractions) from a fleet.
+-
+-    Used when biomass is injected as a measured EIA-923 must-run profile (the
+-    caller nets it out of demand and re-adds it as a fixed pseudo-unit), so the
+-    raw biomass generators must not also clear the merit order — else biomass is
+-    served twice. Returns the filtered ``(fleet, fuel_fracs)`` pair (order- and
+-    length-preserving). A no-op for a fleet with no biomass units (e.g. ERCOT,
+-    whose CAMPD path already excludes them).
+-    """
+-    kept = [(g, ff) for g, ff in zip(fleet, fuel_fracs) if g.fuel_type != "biomass"]
+-    return [g for g, _ in kept], [ff for _, ff in kept]
+-
+-
+ def run_year(
+     year: int,
+     iso: str,
+@@ -1280,7 +1255,6 @@ def run_year(
+     curve_smoothing: dict[str, float | int | None] | None = None,
+     cc_derate_from_top: bool = False,
+     must_run_mw: "np.ndarray | None" = None,
+-    inject_biomass_mustrun: bool = False,
+     priced_interchange: bool = False,
+     hydro_backfill_year: int | None = None,
+     as_reserve_withholding: bool = False,
+@@ -1859,17 +1833,6 @@ def run_year(
+             # heat-rate bands) for the per-plant fleet; off by default.
+             if getattr(config, "gas_offer_curve", False):
+                 fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
+-    # Biomass injected as a measured EIA-923 must-run profile (the caller nets it
+-    # out of demand and re-adds it as a fixed pseudo-unit), so drop the raw
+-    # biomass LP units to avoid double-serving — and to make biomass output the
+-    # fuel/contract-limited, price-insensitive quantity it is in reality instead
+-    # of a dispatchable unit the LP runs to max when gas rises. Mirrors the ERCOT
+-    # CAMPD path, which already excludes biomass from its fleet (_campd_binned_-
+-    # or_injected). Gated on inject_biomass_mustrun so callers that do NOT inject
+-    # biomass (overlay-derivation / probe scripts) keep biomass as an LP unit and
+-    # never lose it. No-op for ERCOT (its fleet already carries no biomass unit).
+-    if inject_biomass_mustrun:
+-        fleet, fuel_fracs = _drop_biomass_units(fleet, fuel_fracs)
+     # Energy-limited conventional hydro (every ISO): one LP unit per
+     # EIA-923-reporting hydro plant, capped by its EIA-860 nameplate per hour
+     # and by its measured monthly net generation via the dispatch LP's hydro
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 60eb135..3bbbc07 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -394,6 +394,31 @@ _SUMMER_MONTHS: frozenset[int] = frozenset({6, 7, 8, 9})
+ # September, ERCOT's high-load season when these old units are dragged online.
+ _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
+ 
++# Mixed CC+ST facility steam heat-rate corrections (MMBtu/MWh), keyed by EIA
++# plant code. A facility that runs BOTH an efficient combined cycle and a legacy
++# steam turbine reports ONE plant-level EIA-923 heat rate (fuel / net-gen
++# blended across both prime movers); applied uniformly to every unit, that blend
++# hands the inefficient steam units the CC's efficiency. Ravenswood (plant 2500,
++# NYC, "CC+ST") is the material NYISO case: its ~1.7 GW steam units inherited the
++# 8.8 plant blend, so 0.97x8.8 = 8.5 eff HR put the big NYC steam unit BELOW the
++# top of an efficient CC's economic ramp (1.12x7.76 = 8.7) and it cleared AHEAD
++# of idle NYC combined cycle on merit (the 2023 CC_REGULAR -4 TWh / ST_GAS
++# +3.5 TWh merit inversion; nyiso 25).
++#
++# The corrected value (9.5) is the steam units' OWN heat rate recovered from the
++# plant blend, not a free parameter: the 8.8 plant figure is generation-weighted
++# across the efficient combined cycle (~7.5) and the steam turbine, so backing the
++# CC out at plausible 2023 capacity factors (CC ~0.6, steam ~0.15) leaves the steam
++# at ~9.5 MMBtu/MWh — modestly above the blend (steam is less efficient than the
++# CC) yet below the smaller, older NYC peers (Arthur Kill 11.27, Astoria 11.95),
++# as fits Ravenswood Unit 30 being a large, relatively efficient unit. 0.97x9.5 =
++# 9.2 eff HR also clears the top of CC's economic ramp (8.7), so the merit order
++# is restored (CC ahead of steam). A measured-data correction (CLAUDE.md rule #11
++# — the plant blend was silently masking the inversion), forward-reproducible (it
++# reflects unit physics, not a calendar/residual fit) and applied to the steam
++# (ST_GAS) units ONLY, leaving the CC rows on their measured blend.
++MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5}
++
+ # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
+ # summer peak; the remaining (1 - share) is redistributed into the shoulder
+ # months. Winter keeps the flat WEFOR.
+@@ -990,21 +1015,9 @@ def generators_to_fleet_arrays(
+             if getattr(config, "outage_source", "statistical") == "historic"
+             else None
+         )
+-        # CC nameplate + per-plant summer derate (config.cc_nameplate_summer_
+-        # derate): CC plants carry full nameplate capacity (raised in
+-        # fleet_to_bins) and are derated to their measured net-summer rating in
+-        # summer only. In a historic backcast the statistical WEFOR/POF/age
+-        # derate are also dropped for CC — the CAMPD outage overlay already
+-        # carries every real outage, so the statistical model double-counts.
+-        cc_np_derate = getattr(config, "cc_nameplate_summer_derate", False)
+-        cc_np_derate_backcast = (
+-            cc_np_derate
+-            and getattr(config, "outage_source", "statistical") == "historic"
+-        )
+         for g_idx, gen in enumerate(generators):
+             if gen.plant_group not in THERMAL_AVAILABILITY:
+                 continue
+-            is_cc_np = cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP")
+             pof, wefor, derate = _thermal_outage(
+                 gen.plant_group, run_year - gen.online_year
+             )
+@@ -1028,30 +1041,7 @@ def generators_to_fleet_arrays(
+             )
+             if wefor_res is not None and _covered:
+                 wefor = min(wefor, wefor_res)
+-            if is_cc_np and cc_np_derate_backcast:
+-                # CC nameplate, historic backcast: the CAMPD outage overlay below
+-                # carries every SUSTAINED outage, so the statistical POF and the
+-                # age/performance derate are dropped (the net-summer rating
+-                # already captures performance). Only the short-outage forced
+-                # residual remains — wefor is already capped to
+-                # ``wefor_residual`` above for this overlay-covered class, the
+-                # brief forced events below the overlay's multi-day detector
+-                # floor — so the unit starts at ``1 - wefor_residual`` at
+-                # nameplate; the per-plant summer derate is applied below.
+-                availability[g_idx, :] = 1.0 - wefor
+-            elif is_cc_np:
+-                # CC nameplate, statistical/forward run: keep WEFOR/POF (no
+-                # overlay) but the seasonal cap comes from the per-plant summer
+-                # derate below, not the flat class derate.
+-                summer_wefor = _SUMMER_WEFOR_SHARE * wefor
+-                shoulder_wefor = (
+-                    wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
+-                )
+-                pof_eff = 0.0 if drop_coal_pof else pof
+-                availability[g_idx, :] = 1.0 - wefor - derate
+-                availability[g_idx, summer] = 1.0 - summer_wefor - derate
+-                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate - pof_eff
+-            elif (
++            if (
+                 gen.plant_group == "CT_PEAKER"
+                 and int(gen.plant_code) in ct_floor_plants
+             ):
+@@ -1094,20 +1084,10 @@ def generators_to_fleet_arrays(
+             forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(run_year)
+             if forced is not None:
+                 availability[g_idx, :] *= forced
+-            # Summer ambient-temperature derate. CC plants under
+-            # cc_nameplate_summer_derate use their per-plant MEASURED summer
+-            # derate (net_summer / nameplate) — the capacity was raised to
+-            # nameplate in fleet_to_bins, so this brings the summer months back
+-            # to the real net-summer rating. Every other class keeps the flat
+-            # ``_SUMMER_CLASS_DERATE``.
+-            if is_cc_np:
+-                ratio = cc_summer_derate_ratio(int(gen.plant_code))
+-                if ratio is not None and ratio < 1.0:
+-                    availability[g_idx, summer] *= ratio
+-            else:
+-                summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
+-                if summer_derate:
+-                    availability[g_idx, summer] *= 1.0 - summer_derate
++            # Summer ambient-temperature derate for CC / CT classes.
++            summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
++            if summer_derate:
++                availability[g_idx, summer] *= 1.0 - summer_derate
+             # Per-plant coal max-CF ceilings: cap availability so the unit
+             # cannot dispatch above its sustained operating limit.
+             if gen.plant_group == "COAL":
+@@ -3419,10 +3399,31 @@ def load_fleet_from_csv(
+         generators = from_parquet
+         source = parquet_path
+ 
++    _correct_mixed_facility_steam_hr(generators)
+     _cache_binned_fleet(iso, generators, source)
+     return generators
+ 
+ 
++def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
++    """Reassign the steam-unit heat rate at mixed CC+ST facilities (in place).
++
++    See :data:`MIXED_FACILITY_STEAM_HR`: at a combined CC+ST plant the single
++    plant-level EIA-923 heat rate blends the efficient CC with the legacy steam
++    turbine, so the steam units inherit a too-low (CC-influenced) heat rate. This
++    lifts only the steam (``ST_GAS``) units of a listed plant to the steam-class
++    value, and only when their current heat rate is *below* it (so a correctly
++    metered steam unit is never lowered). The CC rows keep their measured blend.
++    """
++    for gen in generators:
++        target = MIXED_FACILITY_STEAM_HR.get(int(gen.plant_code))
++        if (
++            target is not None
++            and gen.plant_group == "ST_GAS"
++            and gen.heat_rate < target
++        ):
++            gen.heat_rate = target
++
++
+ def load_retired_within_window(
+     iso: str,
+     iso_config: ISOConfig | None = None,
+@@ -5081,63 +5082,6 @@ def cc_duct_peaking_pct() -> dict[int, float]:
+     return out
+ 
+ 
+-@lru_cache(maxsize=1)
+-def cc_summer_capacity() -> dict[int, tuple[float, float]]:
+-    """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every CC plant.
+-
+-    Summed over each plant's combined-cycle generators from the EIA-860
+-    Generator_Y Operable sheet. Consumed under
+-    ``config.cc_nameplate_summer_derate`` to (a) raise a CC plant's LP capacity
+-    from its net-summer rating to full nameplate and (b) derive the per-plant
+-    MEASURED summer derate ``net_summer / nameplate`` applied in the summer
+-    months — the correct seasonal capacity shape (full nameplate in winter,
+-    ambient-derated to net-summer in summer). Plants absent from the sheet are
+-    absent from the map (callers keep net-summer / the flat class derate).
+-    """
+-    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+-    if not path.exists():
+-        return {}
+-    df = pd.read_parquet(
+-        path,
+-        columns=[
+-            "Plant Code",
+-            "Technology",
+-            "Nameplate Capacity (MW)",
+-            "Summer Capacity (MW)",
+-        ],
+-    )
+-    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+-    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+-    if cc.empty:
+-        return {}
+-    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+-    cc["np"] = pd.to_numeric(cc["Nameplate Capacity (MW)"], errors="coerce")
+-    cc["ns"] = pd.to_numeric(cc["Summer Capacity (MW)"], errors="coerce")
+-    out: dict[int, tuple[float, float]] = {}
+-    for code, grp in cc.groupby("plant_code"):
+-        np_sum = float(grp["np"].sum())
+-        ns_sum = float(grp["ns"].sum())
+-        if np_sum > 0.0 and ns_sum > 0.0:
+-            out[int(code)] = (np_sum, ns_sum)
+-    return out
+-
+-
+-def cc_summer_derate_ratio(plant_code: int) -> float | None:
+-    """Return a CC plant's measured summer availability multiplier.
+-
+-    ``net_summer / nameplate`` from :func:`cc_summer_capacity`, clamped to
+-    ``(0, 1]`` (a plant whose summer rating meets or exceeds nameplate gets no
+-    derate). ``None`` when the plant is absent from the EIA-860 CC sheet.
+-    """
+-    cap = cc_summer_capacity().get(int(plant_code))
+-    if cap is None:
+-        return None
+-    nameplate, net_summer = cap
+-    if nameplate <= 0.0:
+-        return None
+-    return min(1.0, net_summer / nameplate)
+-
+-
+ def fleet_to_bins(
+     generators: list[Generator], iso: str, config: ScenarioConfig
+ ) -> pd.DataFrame:
+@@ -5191,18 +5135,6 @@ def fleet_to_bins(
+         cap = a["cap"]
+         if cap <= 0.0:
+             continue
+-        # CC nameplate capacity (config.cc_nameplate_summer_derate): the fleet
+-        # carries each unit's net-summer rating, so a CC plant's summed cap is
+-        # net-summer. Rescale it up to full nameplate (cap / (net_summer /
+-        # nameplate)); the availability builder reapplies the per-plant summer
+-        # derate seasonally. Robust to fleet-vs-EIA membership differences (uses
+-        # the ratio, not the absolute nameplate). ERCOT/other groups unchanged.
+-        if group in ("CC_REGULAR", "CC_CHP") and getattr(
+-            config, "cc_nameplate_summer_derate", False
+-        ):
+-            _ratio = cc_summer_derate_ratio(code)
+-            if _ratio is not None and _ratio > 0.0:
+-                cap = cap / _ratio
+         base_hr = a["hr_cap"] / cap if cap > 0 else _fill_plant_hr(None, group)
+         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
+         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
+@@ -5768,12 +5700,7 @@ def bins_to_fleet(
+             # final word for its plants.
+             _dpk = cc_duct_peaking_pct().get(plant_code)
+             if _dpk is not None:
+-                # Cap the band at the F-class supplementary-firing physical
+-                # maximum: the raw nameplate-vs-net-summer gap folds the ambient
+-                # summer derate into the duct band, oversizing it for high-gap
+-                # plants and dropping the price wall below the real duct point.
+-                _cap = getattr(config, "cc_duct_peaking_cap_pct", None)
+-                pct_peak = min(_dpk, float(_cap)) if _cap is not None else _dpk
++                pct_peak = _dpk
+         if (
+             group == "CC_REGULAR"
+             and getattr(config, "cc_peaking_per_plant", False)
