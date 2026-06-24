@@ -1458,6 +1458,7 @@ def solve_and_persist(
     coal_sync_srmc_tranche: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    storage_vintage_ramp: bool = False,
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
@@ -1613,6 +1614,7 @@ def solve_and_persist(
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
+            storage_vintage_ramp=storage_vintage_ramp,
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
@@ -1807,6 +1809,7 @@ def solve_and_persist(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
+        "storage_vintage_ramp": storage_vintage_ramp,
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
@@ -1905,6 +1908,8 @@ def solve_and_persist(
         )
     if storage_daily_cycling:
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
+    if storage_vintage_ramp:
+        recorded_cfg = recorded_cfg.with_overrides(storage_vintage_ramp=True)
     if as_reserve_withholding:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if energy_reserve_coopt:
@@ -4092,6 +4097,15 @@ def main() -> None:
         "perfect-foresight advantage). Off = annual-cyclic (default).",
     )
     parser.add_argument(
+        "--storage-vintage-ramp",
+        action="store_true",
+        help="Force the EIA-860 storage COD/retirement vintage ramp on: "
+        "battery and pumped-storage dispatch caps step up at each unit's "
+        "Operating Month and out again at its Planned Retirement Month, "
+        "instead of a flat year-end fleet. On by default for CAISO/ERCOT/"
+        "NEISO backcasts; this flag forces it for any ISO.",
+    )
+    parser.add_argument(
         "--as-reserve-withholding",
         action="store_true",
         help="ERCOT upper-bound probe: remove the hourly cleared DAM up-AS MW "
@@ -4800,6 +4814,7 @@ def main() -> None:
         },
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
+        storage_vintage_ramp=args.storage_vintage_ramp,
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,

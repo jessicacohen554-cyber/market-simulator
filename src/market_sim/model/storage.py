@@ -211,6 +211,54 @@ def build_default_storage(
 _EIA860_STORAGE_FALLBACK_DURATION_HR: float = 2.0
 
 
+def _optional_numeric(df: pd.DataFrame, column: str) -> np.ndarray:
+    """Return ``df[column]`` as a float array, or all-NaN if the column is absent.
+
+    Column-safe access for optional EIA-860 fields (e.g. ``Planned Retirement
+    Year`` / ``Month``): a storage/generator vintage that does not carry the
+    column yields an all-NaN array, which the per-unit reduction reads as
+    "no planned retirement".
+    """
+    if column in df.columns:
+        return pd.to_numeric(df[column], errors="coerce").to_numpy()
+    return np.full(len(df), np.nan)
+
+
+def _unit_monthly_mask(
+    operating_year: object,
+    operating_month: object,
+    retirement_year: object,
+    retirement_month: object,
+    year: int,
+) -> np.ndarray:
+    """Return a storage unit's ``(12,)`` float online mask (COD + retirement).
+
+    Wraps :func:`market_sim.data.cod_ramp.monthly_online_mask` with the
+    loaders' shared month conventions — a missing online month falls back to
+    :data:`market_sim.data.cod_ramp.COD_FALLBACK_MONTH` and a missing
+    retirement month to December — so the storage off-ramp matches the
+    thermal/renewable COD ramp exactly. Inputs may be NaN floats (EIA-860
+    numeric columns); element ``m`` is ``1.0`` when the unit is online in
+    calendar month ``m + 1`` of ``year`` and ``0.0`` otherwise.
+    """
+    from market_sim.data.cod_ramp import COD_FALLBACK_MONTH, monthly_online_mask
+
+    def _i(value: object) -> int | None:
+        try:
+            f = float(value)  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            return None
+        return None if f != f else int(f)
+
+    return monthly_online_mask(
+        _i(operating_year),
+        (_i(operating_month) or COD_FALLBACK_MONTH),
+        _i(retirement_year),
+        _i(retirement_month),
+        year,
+    ).astype(float)
+
+
 def load_eia860_storage(
     iso: str, year: int, config: ScenarioConfig
 ) -> list[StorageUnit]:
@@ -232,14 +280,18 @@ def load_eia860_storage(
     loader), so a Moss Landing-style hybrid contributes its full battery
     power/energy here without double-counting its PV.
 
-    When ``config.storage_vintage_ramp`` is on, capacity commissioned
-    *during* ``year`` contributes only from its EIA-860 Operating Month
-    onward: each zone aggregate carries a Jan-Dec ``monthly_power_mw`` /
-    ``monthly_energy_mwh`` profile (December = the year-end scalar caps)
-    that :func:`storage_cap_profiles` expands into hour-varying dispatch
-    bounds. This is the storage analogue of the renewables
-    ``vintage_capacity_ramp`` and is first-order for CAISO, which added
-    3.0 GW mid-2023 and 3.6 GW mid-2024.
+    When ``config.storage_vintage_ramp`` is on, each unit contributes only to
+    the months it actually operated — capacity commissioned *during* ``year``
+    enters from its EIA-860 Operating Month, and a unit with a planned
+    retirement in ``year`` drops out from its Planned Retirement Month (the
+    OFF-ramp mirroring the COD ON-ramp; the energy-storage operable vintage does
+    not yet carry the retirement columns, so the off-ramp is a column-safe
+    no-op there today). A zone aggregate whose capacity varies intra-year
+    carries a Jan-Dec ``monthly_power_mw`` / ``monthly_energy_mwh`` profile
+    (December = the year-end scalar caps) that :func:`storage_cap_profiles`
+    expands into hour-varying dispatch bounds. This is the storage analogue of
+    the renewables ``vintage_capacity_ramp`` and is first-order for CAISO, which
+    added 3.0 GW mid-2023 and 3.6 GW mid-2024.
 
     EIA-860 does not report round-trip efficiency, so the 4-hour lithium-ion
     RTE is applied uniformly. It is read through :func:`_storage_rte`, so a
@@ -282,15 +334,23 @@ def load_eia860_storage(
     energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
     op_month = pd.to_numeric(df["Operating Month"], errors="coerce")
+    # Planned-retirement OFF-ramp inputs, mirroring the COD ON-ramp. The
+    # EIA-860 energy-storage operable sheet does not currently carry these
+    # columns (batteries rarely retire mid-backcast), so the column-safe .get
+    # makes the off-ramp a no-op there while keeping ONE convention the day a
+    # vintage gains them.
+    ret_year = _optional_numeric(df, "Planned Retirement Year")
+    ret_month = _optional_numeric(df, "Planned Retirement Month")
 
-    # Cumulative capacity online per zone per month (12,); December is the
-    # year-end total. Vintages before the backcast year fill all twelve
-    # months; a unit commissioned during it fills from its COD month on
-    # (the renewables vintage-ramp convention, month missing -> January).
+    # Capacity online per zone per month (12,); December is the year-end total.
+    # Each unit contributes its nameplate only to the months it actually
+    # operated — the COD ON-ramp plus the planned-retirement OFF-ramp, via the
+    # shared month-precise mask (month missing -> COD_FALLBACK_MONTH for online,
+    # December for retirement).
     per_zone_power: dict[str, np.ndarray] = {}
     per_zone_energy: dict[str, np.ndarray] = {}
-    for code, p_mw, e_mwh, oy, om in zip(
-        df["Plant Code"], power, energy, op_year, op_month
+    for code, p_mw, e_mwh, oy, om, ry, rm in zip(
+        df["Plant Code"], power, energy, op_year, op_month, ret_year, ret_month
     ):
         if p_mw != p_mw or p_mw <= 0.0:  # NaN or non-positive
             continue
@@ -304,13 +364,13 @@ def load_eia860_storage(
             continue
         if e_mwh != e_mwh or e_mwh <= 0.0:  # blank energy capacity
             e_mwh = p_mw * _EIA860_STORAGE_FALLBACK_DURATION_HR
-        start = 0
-        if oy == oy and int(oy) == year and om == om:
-            start = min(max(int(om), 1), 12) - 1
+        mask = _unit_monthly_mask(oy, om, ry, rm, year)
+        if not mask.any():  # retired before / built after the backcast year
+            continue
         zone_p = per_zone_power.setdefault(zone, np.zeros(12))
         zone_e = per_zone_energy.setdefault(zone, np.zeros(12))
-        zone_p[start:] += float(p_mw)
-        zone_e[start:] += float(e_mwh)
+        zone_p += float(p_mw) * mask
+        zone_e += float(e_mwh) * mask
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
     # Throughput/cycling cost per MWh discharged (degradation + ancillary-
@@ -323,10 +383,13 @@ def load_eia860_storage(
         if monthly_p is None or monthly_p[-1] <= 0.0:
             continue
         monthly_e = per_zone_energy[zone]
-        # A monthly profile is attached only when the ramp is enabled and
-        # the zone actually gained capacity mid-year; otherwise the unit
-        # stays static and the dispatch bounds remain 1-D.
-        ramped = config.storage_vintage_ramp and monthly_p[0] < monthly_p[-1]
+        # A monthly profile is attached only when the ramp is enabled and the
+        # zone's capacity actually varies intra-year — a COD step up OR a
+        # retirement step down; otherwise the unit stays static and the
+        # dispatch bounds remain 1-D.
+        ramped = config.storage_vintage_ramp and not np.allclose(
+            monthly_p, monthly_p[-1]
+        )
         units.append(
             StorageUnit(
                 unit_id=f"{zone}_eia860_storage",
@@ -467,6 +530,13 @@ def load_eia860_pumped_storage(
     The discharge ``vom`` is the per-ISO dispatch adder
     (:func:`resolve_pumped_storage_dispatch_adder`).
 
+    Each PS unit respects the same month-precise COD ON-ramp and planned-
+    retirement OFF-ramp as the battery and renewable loaders, year-precise here
+    because the lowercase generator parquet carries no operating/retirement
+    month. When ``config.storage_vintage_ramp`` is on and a zone's PS capacity
+    varies intra-year, its aggregate carries a Jan-Dec monthly profile; old PS
+    fleets are flat and stay static.
+
     Returns one ``StorageUnit`` per zone with nonzero PS capacity; empty when
     the generator parquet is missing or the ISO has no pumped storage.
     """
@@ -489,11 +559,18 @@ def load_eia860_pumped_storage(
         (df["prime_mover"].astype(str).str.strip().str.upper() == "PS")
         & (df["status"].astype(str).str.strip().str.upper() == "OP")
     ]
-    per_zone_power: dict[str, float] = {}
-    for code, p_mw, oy in zip(
+    # Planned-retirement OFF-ramp, mirroring the battery/renewable COD ramp. The
+    # lowercase generator parquet carries ``planned_retirement_year`` but no
+    # month (and no operating month), so the PS ramp is year-precise: a missing
+    # online month resolves to COD_FALLBACK_MONTH and a missing retirement month
+    # to December via the shared mask.
+    ret_year = _optional_numeric(df, "planned_retirement_year")
+    per_zone_power: dict[str, np.ndarray] = {}
+    for code, p_mw, oy, ry in zip(
         df["plant_id"],
         pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce"),
         pd.to_numeric(df["operating_year"], errors="coerce"),
+        ret_year,
     ):
         if p_mw != p_mw or p_mw <= 0.0:  # NaN or non-positive
             continue
@@ -505,25 +582,41 @@ def load_eia860_pumped_storage(
             zone = None
         if zone is None:
             continue
-        per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
+        mask = _unit_monthly_mask(oy, None, ry, None, year)
+        if not mask.any():  # retired before / built after the backcast year
+            continue
+        per_zone_power.setdefault(zone, np.zeros(12))
+        per_zone_power[zone] += float(p_mw) * mask
 
     eta = PUMPED_STORAGE_RTE**0.5
     adder = resolve_pumped_storage_dispatch_adder(iso, config)
-    return [
-        StorageUnit(
-            unit_id=f"{zone}_eia860_pumped_storage",
-            zone=zone,
-            tech_name="pumped_storage",
-            power_cap_mw=per_zone_power[zone],
-            energy_cap_mwh=(per_zone_power[zone] * PUMPED_STORAGE_DURATION_HOURS),
-            eta_charge=eta,
-            eta_discharge=eta,
-            zone_idx=z_idx,
-            vom=adder,
+    ramp_on = bool(getattr(config, "storage_vintage_ramp", False))
+    units: list[StorageUnit] = []
+    for z_idx, zone in enumerate(get_iso_config(iso).zone_names):
+        monthly_p = per_zone_power.get(zone)
+        if monthly_p is None or monthly_p[-1] <= 0.0:
+            continue
+        monthly_e = monthly_p * PUMPED_STORAGE_DURATION_HOURS
+        # Attach a monthly profile only when the ramp is on and the zone's PS
+        # capacity actually varies intra-year (a COD step up or a retirement
+        # step down); old PS fleets are flat and stay 1-D.
+        ramped = ramp_on and not np.allclose(monthly_p, monthly_p[-1])
+        units.append(
+            StorageUnit(
+                unit_id=f"{zone}_eia860_pumped_storage",
+                zone=zone,
+                tech_name="pumped_storage",
+                power_cap_mw=float(monthly_p[-1]),
+                energy_cap_mwh=float(monthly_e[-1]),
+                eta_charge=eta,
+                eta_discharge=eta,
+                zone_idx=z_idx,
+                vom=adder,
+                monthly_power_mw=([float(x) for x in monthly_p] if ramped else None),
+                monthly_energy_mwh=([float(x) for x in monthly_e] if ramped else None),
+            )
         )
-        for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
-        if per_zone_power.get(zone, 0.0) > 0.0
-    ]
+    return units
 
 
 # Economic life (years) over which storage capital cost is annualized.
