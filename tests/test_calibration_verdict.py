@@ -157,16 +157,57 @@ class FuelMixTests(unittest.TestCase):
 
 
 class SysVolTests(unittest.TestCase):
-    def test_complete_vintage_uses_923_minus_btm(self):
+    def test_complete_vintage_defers_to_c1_no_family_band(self):
+        # Complete vintage: C2 no longer applies a percent-of-family band. The
+        # per-class universal gate (C1) governs, so C2 PASSES (defers) but still
+        # surfaces any per-class breach in its magnitude for visibility. Here
+        # CC_REGULAR is -12.6 TWh, far outside the 0.5%-ISO-gen volume band, so C1
+        # flags it — and the determination fails via C1.fuelmix, not C2.sysvol.
         rows = cv.score_sysvol(
             2024,
             {"gmModel": {"CC_REGULAR": 384.9}},
             {"classFull": {"CC_REGULAR": 397.5}, "e930": {"gas": 368.4}},
         )
         gas = [r for r in rows if r["key"] == "gas"][0]
-        self.assertEqual(gas["status"], cv.FAIL)  # -3.2% > 2.5%
-        self.assertIn("923", gas["source"])
+        self.assertEqual(gas["status"], cv.PASS)  # defers to C1, no family band
+        self.assertIn("via C1", gas["source"])
+        self.assertIn("CC_REGULAR", gas["magnitude"])  # breach surfaced, not netted
         self.assertFalse(gas["vintage_reconciled"])
+
+    def test_complete_vintage_no_invented_fail_no_masking(self):
+        # The two failure modes the fold-in retires, on one ISO-year:
+        #   (a) NO INVENTED FAIL — coal family is +1.75 TWh (=+3.0% of a 58 TWh
+        #       family, which the old ±2.5% band failed) but each coal class is
+        #       inside the 0.5%-ISO-gen volume + 1.5pp share band -> C2 PASS.
+        #   (b) NO MASKING — gas family nets to ~0 (CT_PEAKER +6.8 offset by
+        #       CC_REGULAR -6.9) yet CT_PEAKER is far out of band; C2 surfaces it
+        #       (and C1 fails it) instead of hiding it behind the netted family.
+        gm = {
+            "CC_REGULAR": 143.0 - 6.9,
+            "CT_PEAKER": 7.4 + 6.8,
+            "COAL_PRB": 44.0,
+            "COAL_LIGNITE": 15.4,
+        }
+        cf = {
+            "classFull": {
+                "CC_REGULAR": 143.0,
+                "CT_PEAKER": 7.4,
+                "COAL_PRB": 43.7,
+                "COAL_LIGNITE": 13.9,
+            },
+            "e930": {
+                "gas": 198.5,
+                "coal": 58.8,
+                "nuclear": 45.0,
+                "wind": 110.0,
+                "solar": 47.0,
+            },
+        }
+        rows = cv.score_sysvol(2024, {"gmModel": gm}, cf)
+        coal = [r for r in rows if r["key"] == "coal"][0]
+        gas = [r for r in rows if r["key"] == "gas"][0]
+        self.assertEqual(coal["status"], cv.PASS)  # (a) not invented
+        self.assertIn("CT_PEAKER", gas["magnitude"])  # (b) not masked
 
     def test_preliminary_vintage_uses_930_and_flags_reconcile(self):
         # 2025: 923-BTM (360) well below 0.97 x 930 (372) -> reconcile fired,
