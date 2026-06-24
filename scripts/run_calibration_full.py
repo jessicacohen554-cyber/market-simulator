@@ -1494,6 +1494,7 @@ def solve_and_persist(
     caiso_corridor_flow_limit: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
+    nyiso_import_reconciliation: bool | None = None,
     miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
@@ -1648,6 +1649,7 @@ def solve_and_persist(
             caiso_corridor_flow_limit=caiso_corridor_flow_limit,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
+            nyiso_import_reconciliation=nyiso_import_reconciliation,
             miso_firm_imports=miso_firm_imports,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
@@ -1841,6 +1843,7 @@ def solve_and_persist(
         "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
+        "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "miso_firm_imports": miso_firm_imports,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
@@ -1995,6 +1998,10 @@ def solve_and_persist(
     if nyiso_firm_imports is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_firm_imports=nyiso_firm_imports
+        )
+    if nyiso_import_reconciliation is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_import_reconciliation=nyiso_import_reconciliation
         )
     if miso_firm_imports is not None:
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
@@ -4561,6 +4568,22 @@ def main() -> None:
         "path. NYISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nyiso-import-reconciliation",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO priced import-node boundary-flow reconciliation: pin the "
+        "priced node's MONTHLY net interchange to the measured EIA-930 schedule "
+        "(nyiso_net_interchange) via a per-month band constraint in the LP. The "
+        "near-static economic tranche ladder clears a near-flat ~18.5-21.6 TWh "
+        "that does not track the metered schedule's 23.45 -> 20.35 -> 19.09 TWh "
+        "decline (under-imports 2023, over-imports 2024/25); the band replaces "
+        "that economic estimate with the authoritative measurement (rule #11), "
+        "priced tranches still setting the marginal price within each month's "
+        "envelope. Standard production-cost boundary-flow calibration. Requires "
+        "--priced-interchange; NYISO-only. Default (unset) keeps the base config "
+        "value (off).",
+    )
+    parser.add_argument(
         "--miso-firm-imports",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4823,6 +4846,7 @@ def main() -> None:
         caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
+        nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         miso_firm_imports=miso_firm_imports,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,

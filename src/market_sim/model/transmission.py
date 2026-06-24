@@ -42,6 +42,7 @@ from market_sim.config.constants import (
     MISO_MANITOBA_FIRM_IMPORT_OFFER,
     MISO_MANITOBA_FIRM_IMPORT_ZONE,
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
+    NYISO_IMPORT_RECON_BAND_FRAC,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
 from market_sim.config.iso_configs import (
@@ -1682,6 +1683,99 @@ def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
             )
             applied = True
     return applied
+
+
+def build_import_node_reconciliation(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    band_frac: float = NYISO_IMPORT_RECON_BAND_FRAC,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+    """Build the priced-node monthly net-interchange band against the measurement.
+
+    Reconciles the NYISO priced import node's net throughput to the measured
+    EIA-930 net-interchange schedule (:func:`market_sim.data.eia_loader
+    .nyiso_net_interchange`). The economic priced node clears a near-flat
+    ~18.5-21.6 TWh because its tranche offers are near-static and do not track
+    the metered schedule's year-over-year decline (23.45 -> 20.35 -> 19.09 TWh),
+    so it under-imports in 2023 and over-imports in 2024/25. This returns the
+    inputs for a per-month band constraint
+    (:func:`market_sim.model.dispatch._build_import_node_rows`) that pins the
+    node's monthly NET interchange to the metered level while leaving the priced
+    tranches free to set the marginal price *within* each month's envelope.
+
+    This is the standard production-cost boundary-flow calibration practice
+    (Aurora/PLEXOS/GridView/PROMOD historical-validation runs pin the tie-line
+    net flow against an unmodeled neighbor; ReEDS fixes net trade with
+    non-modeled regions): the neighbor is not co-optimized, so its flow cannot be
+    economically derived and is calibrated to actuals in a backcast. Unlike the
+    prior team's rejected "import scaling" — which *degraded* an already-exact
+    served-wedge match — the current priced node deviates +-1-5 TWh/yr from the
+    metered schedule, so moving it toward the measurement REPLACES an economic
+    estimate with the authoritative measurement (CLAUDE.md rule #11), the
+    opposite of overfitting. The target is the measured schedule itself, NOT a
+    residual-minimizing volume (rule #12); ``band_frac`` only sets the price /
+    feasibility headroom around it.
+
+    Net sign: the node columns are import tranches (``P >= 0``, inject) plus
+    export sinks (``P <= 0``, withdraw), so ``sum P`` is the node's *net import*
+    in MW — the negative of the measured export-positive
+    :func:`~market_sim.data.eia_loader.nyiso_net_interchange`. The monthly target
+    is therefore ``-sum_{t in month} export[t]`` (MWh).
+
+    Args:
+        fleet_arrays: Vectorized fleet (read-only here; the constraint lives in
+            the LP, not in ``min_gen``).
+        iso: ISO identifier; only ``"NYISO"`` builds a band.
+        year: Backcast year keying the measured schedule.
+        band_frac: Monthly band half-width as a fraction of the measured monthly
+            net import. ``0.0`` makes it a hard monthly equality.
+
+    Returns:
+        Tuple ``(node_gen_idx, monthly_lo, monthly_hi)`` — the import-node
+        thermal-block row indices and the per-month MWh net-import bounds — or
+        ``None`` (no constraint) when ``iso`` is not NYISO, no measured schedule
+        is available (forecast year / unmapped ISO), or no priced import node is
+        present in the fleet (the served-wedge path).
+    """
+    if iso != "NYISO":
+        return None
+
+    from market_sim.data.eia_loader import nyiso_net_interchange
+    from market_sim.data.fleet import FUEL_TYPE_MAP, _hour_to_month_index
+
+    hours = int(fleet_arrays.availability.shape[1])
+    import_code = FUEL_TYPE_MAP["import"]
+    # Import tranches (pmax > 0, inject) AND export sinks (pmin < 0, withdraw):
+    # their signed P-sum is the node's net import, matching the measured net
+    # interchange's basis. A node with neither is the served-wedge path (no
+    # priced node) — nothing to reconcile.
+    is_node = fleet_arrays.fuel_type_idx == import_code
+    node_idx = np.flatnonzero(
+        is_node & ((fleet_arrays.pmax > 0.0) | (fleet_arrays.pmin < 0.0))
+    )
+    if node_idx.size == 0:
+        return None
+
+    export_pos = nyiso_net_interchange(year)  # export-positive MW, (8760,)
+    if export_pos is None:
+        return None
+    export_pos = np.asarray(export_pos, dtype=float).reshape(-1)[:hours]
+    if export_pos.size < hours:
+        return None
+
+    # Net import (MW) = -export-positive interchange; aggregate to monthly MWh on
+    # the same hour->month map the LP constraint uses (no per-hour Python loop).
+    net_import = -export_pos
+    month_index = _hour_to_month_index(hours)
+    n_months = int(month_index.max()) + 1
+    monthly_target = np.zeros(n_months, dtype=float)
+    np.add.at(monthly_target, month_index, net_import)
+
+    half = abs(band_frac) * np.abs(monthly_target)
+    monthly_lo = monthly_target - half
+    monthly_hi = monthly_target + half
+    return node_idx, monthly_lo, monthly_hi
 
 
 def _miso_firm_import_uid() -> str:
