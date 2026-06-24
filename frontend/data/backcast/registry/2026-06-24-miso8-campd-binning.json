@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-miso8-campd-binning",
+  "label": "miso8 campd-binning (pre-tz ablation)",
+  "date": "2026-06-24",
+  "shorthand": "miso8-campd-binning",
+  "definition": "ABLATION (binning-only, pre-timezone) — SUPERSEDED as keeper by `miso8 tz-localclock` (PR #853), which adds the MISO UTC-vs-local clock fix on top of this same binning. Keep as the isolation point for the per-plant binning effect alone. CLOCK CAVEAT: this bundle was solved on the old UTC demand clock, so its diurnal/shape comparison against main's now-local-clock benchmark shows a ~5-6h phantom phase error — that is the clock artifact the tz fix removed, NOT a model result; only the year-mean LMP level (clock-independent) is a valid read here. STRUCTURAL change isolated: MISO moved off the legacy equal-width aggregate_fleet path onto per-plant CAMPD tranche binning (now in CAMPD_BINNING_ISOS) — one LP unit per plant with must-run/committed/peaking tranches from the new thermal_tranches_MISO.csv (44 coal plants, measured online Pmin ~20-30% nameplate; CC per-plant committed bands), plus the all-ISO biomass measured must-run change (#844). Coal now holds its overnight/morning take-or-pay floor instead of cycling to zero. System LMP level: model 31.49/27.99/39.34 vs actual ~31.79/30.80/42.85 ($/MWh; -0.9%/-9.1%/-8.2% vs legacy miso7's -8.8%/-15.9%/-13.4%) — C3a mean-LMP PASS. NOT-YET: governance unattested + open MODEL MISSes that are NOT the binning — absent scarcity tail (0h >$200 vs 30/37/88) and the import/export-node seam (2025 sign-flips to net export, driving 2025 coal +23%); zones still don't separate (N=C, 12 GW N<->C placeholder). PRB passthrough still flat (no MISO COAL_SIGMOID_DEFAULTS entry) — a separate offer-curve lever; a cheap-gas PRB discount would push the already-low LMP further from actual, so not the next fix.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-24-miso8-campd-binning.js",
+  "bundle": "results/calibration/MISO/campd_binning"
+}
