@@ -395,19 +395,41 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
 
 
 def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
-    """C2 — gas/coal family system volume (±2.5%), with the 2025 vintage path."""
+    """C2 — gas/coal family system volume, folded into the per-class universal gate.
+
+    For COMPLETE-VINTAGE years a family passes iff EVERY constituent fossil class
+    is within the universal per-class gate (|model−actual| ≤ 0.5% of ISO annual
+    generation AND share within ±1.5 pp) — the same scale-relative band C1 applies,
+    evaluated per class rather than on the netted family aggregate. This retires
+    the old ±2.5%-of-family percent band, which had two failure modes: it (a)
+    INVENTED a family fail when a mid-size family's small absolute miss exceeded
+    2.5% of itself (e.g. ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only
+    +0.34 pp of generation and well inside the 0.5%-ISO-gen volume band), and (b)
+    MASKED a real per-class miss when offsetting class errors netted out across the
+    family (e.g. a CT_PEAKER over-build cancelled by a CC under-build summing to
+    ~0% at the family level). The per-class roll-up does neither: it nets nothing.
+
+    For PRELIMINARY-EIA-923 years there is no per-class actual (preliminary 923
+    under-reports thermal; EIA-930 carries no per-class split), so the family
+    aggregate vs the authoritative EIA-930 grid total is the only available volume
+    check — retained here as the ±2.5% family fallback, explicitly scoped to the
+    no-per-class-data case.
+    """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
     e930 = ybench.get("e930", {})
-    out = []
+    m_gen, a_gen = _gen_totals(ypay, ybench)
+    vol_band = FUELMIX_VOL_GEN_FRAC * a_gen
     prelim = year >= PRELIM_923_FROM_YEAR
+    out = []
     for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
-        m = sum(float(gm.get(c, 0.0)) for c in classes)
-        a923 = sum(float(cf.get(c, 0.0)) for c in classes)
+        scored = [c for c in classes if c not in FUELMIX_EXCLUDED]
+        m = sum(float(gm.get(c, 0.0)) for c in scored)
+        a923 = sum(float(cf.get(c, 0.0)) for c in scored)
         a930 = float(e930.get(fam, 0.0)) or None
         # Immaterial family: the C1 per-class absolute band governs it, so the
-        # percent system-volume gate is not applicable (avoids a meaningless
-        # ±2.5% on a near-zero family like NEISO coal).
+        # family system-volume gate is not applicable (avoids a meaningless band
+        # on a near-zero family like NEISO coal).
         if max(a923, a930 or 0.0) < SYSVOL_MIN_TWH:
             out.append(
                 _skip(
@@ -420,29 +442,81 @@ def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
             )
             continue
         if prelim:
-            # Preliminary EIA-923 vintage: the EIA-930 grid total is the
-            # authoritative actual; record whether the 0.97 reconcile fired.
-            actual, src = a930, "EIA-930 grid (preliminary-923 vintage)"
+            # Preliminary EIA-923 vintage: no per-class actual; the EIA-930 grid
+            # total is the authoritative family actual, gated on the ±2.5% family
+            # fallback (record whether the 0.97 reconcile fired).
+            actual = a930
             reconciled = bool(a930 and a923 < VINTAGE_RECONCILE_FRAC * a930)
-        else:
-            actual, src = a923, "EIA-923 − BTM (grid-delivered)"
-            reconciled = False
-        err = _pct(m, actual) if actual else None
-        ok = err is not None and abs(err) <= SYSVOL_TOL
+            err = _pct(m, actual) if actual else None
+            ok = err is not None and abs(err) <= SYSVOL_TOL
+            out.append(
+                {
+                    "criterion": "sysvol",
+                    "key": fam,
+                    "year": year,
+                    "status": PASS if ok else (FAIL if err is not None else SKIPPED),
+                    "classification": None if ok else MODEL_MISS,
+                    "metric": f"{fam} family grid-delivered TWh (preliminary vintage)",
+                    "model": round(m, 2),
+                    "actual": round(actual, 2) if actual else None,
+                    "tol": f"±{SYSVOL_TOL * 100:.1f}% family (no per-class actual)",
+                    "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+                    "source": "EIA-930 grid (preliminary-923 vintage)",
+                    "vintage_reconciled": reconciled,
+                }
+            )
+            continue
+        # Complete vintage: the per-class universal gate (C1) already scores every
+        # constituent fossil class of this family as a HARD criterion, on the same
+        # 0.5%-ISO-gen volume + 1.5pp share band. Re-scoring the family here would
+        # duplicate C1 exactly (same classes, same band, same ledger), so C2
+        # DEFERS to C1 for complete vintages: it neither nets the family aggregate
+        # (which used to MASK an offsetting per-class miss like CT_PEAKER) nor
+        # applies a percent-of-family band (which used to INVENT a fail on a
+        # mid-size family like coal). Any family breach surfaces as a C1 per-class
+        # FAIL. C2's independent role is now the preliminary-year family fallback
+        # above, where C1 has no per-class actual to gate against.
+        breaches = [
+            c
+            for c in scored
+            if cf.get(c) is not None
+            and (
+                abs(float(gm.get(c, 0.0)) - float(cf[c])) > vol_band
+                or (
+                    m_gen > 0
+                    and a_gen > 0
+                    and abs(
+                        100.0 * float(gm.get(c, 0.0)) / m_gen
+                        - 100.0 * float(cf[c]) / a_gen
+                    )
+                    > FUELMIX_SHARE_PP
+                )
+            )
+        ]
         out.append(
             {
                 "criterion": "sysvol",
                 "key": fam,
                 "year": year,
-                "status": PASS if ok else (FAIL if err is not None else SKIPPED),
-                "classification": None if ok else MODEL_MISS,
-                "metric": f"{fam} family grid-delivered TWh",
+                "status": PASS,  # complete vintage: governed by the C1 per-class gate
+                "classification": None,
+                "metric": (
+                    f"{fam} family — complete vintage; per-class volume/share "
+                    "governed by the C1 universal gate (no family netting/percent band)"
+                ),
                 "model": round(m, 2),
-                "actual": round(actual, 2) if actual else None,
-                "tol": f"±{SYSVOL_TOL * 100:.1f}%",
-                "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
-                "source": src,
-                "vintage_reconciled": reconciled,
+                "actual": round(a923, 2),
+                "tol": (
+                    f"per-class ±{FUELMIX_VOL_GEN_FRAC * 100:.1f}% ISO-gen "
+                    f"(±{vol_band:.2f} TWh) & ±{FUELMIX_SHARE_PP:g}pp share (via C1)"
+                ),
+                "magnitude": (
+                    "all classes in band (C1)"
+                    if not breaches
+                    else f"C1 flags: {', '.join(breaches)}"
+                ),
+                "source": "EIA-923 − BTM (grid-delivered), per-class via C1",
+                "vintage_reconciled": False,
             }
         )
     return out

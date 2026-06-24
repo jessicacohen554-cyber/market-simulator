@@ -1,7 +1,7 @@
 {
   "PJM": "2026-06-23-pjm-48-sync-srmc",
   "keepers": [
-    "2026-06-23-run151-coal-prb-sigmoid",
+    "2026-06-23-run154-netload-gas-laredo",
     "2026-06-23-caiso-25-corridor-deliverability",
     "2026-06-23-pjm-48-sync-srmc",
     "2026-06-24-nyiso-24-import-recon",
