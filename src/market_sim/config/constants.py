@@ -1849,6 +1849,28 @@ NYISO_FIRM_IMPORT_FLOOR_FRAC: dict[str, float] = {
     "IESO_Ontario": 0.0,
 }
 
+# NYISO priced import-node monthly net-throughput band half-width (fraction of
+# the measured monthly net import), used by the boundary-flow calibration
+# constraint (transmission.build_import_node_reconciliation /
+# dispatch._build_import_node_rows, gated on
+# ScenarioConfig.nyiso_import_reconciliation). The constraint pins the priced
+# node's monthly NET interchange to the measured EIA-930 schedule
+# (eia_loader.nyiso_net_interchange) — replacing the static economic tranche
+# ladder's near-flat clearing (which deviates +-1-5 TWh/yr from the metered
+# schedule and does NOT track its 23.45->20.35->19.09 TWh year-over-year decline)
+# with the authoritative measurement (CLAUDE.md rule #11). The band is NOT a fit
+# to a residual-minimizing volume: the TARGET is the measured schedule itself;
+# the half-width only leaves the priced tranches room to set the marginal price
+# *within* each month's envelope (the LP still chooses which hours/tranches clear
+# to set the hourly LMP) and gives feasibility headroom against the firm-import
+# floor / hourly link TTCs. 0.02 (+-2%) keeps the annual total within a basis-
+# width of measured while preserving hourly price formation; tighten toward 0
+# (a hard monthly pin) only if a year drifts. FORWARD-REPRODUCIBLE: in a forecast
+# the same constraint is sourced from the neighbor's forecast net position (or
+# relaxed to the bare priced node), so the dispatch validated here is the
+# dispatch forecast. Tier 3 (measured schedule, EIA-930).
+NYISO_IMPORT_RECON_BAND_FRAC: float = 0.02
+
 # Manitoba Hydro firm-hydro import into MISO-North (transmission.
 # build_miso_firm_imports / inject_miso_firm_imports, gated on
 # ScenarioConfig.miso_firm_imports). Manitoba Hydro is MISO's single largest
