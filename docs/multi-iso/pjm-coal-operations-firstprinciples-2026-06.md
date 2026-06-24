@@ -1,6 +1,10 @@
 # PJM coal operations — first-principles characterization & model audit (2026-06)
 
 **Date:** 2026-06-23. **Type:** characterization + audit (NO LP solve, no keeper).
+**Update 2026-06-24:** Thread D layers 1-3 are now BUILT and solved — keeper
+*pjm 47 sync-srmc* (online%-scaled SRMC synchronization forcing on the fully
+re-derived thermal tranches). See the updated Thread D below; the only remaining
+structural step is 3b (reserve co-opt), still memory-blocked.
 **Probe:** `scripts/probes/_pjm_coal_opfingerprint.py` (CAMPD/CEMS hourly + PJM
 hourly hub LMP, reproducible). **Status:** the empirical groundwork the prior
 coal sessions skipped — it refines (does not overturn) the standing conclusion
@@ -180,22 +184,48 @@ behaviour emerges instead of being forced:
    of the 0.76 discount. **Remaining:** run the deriver where the raw `f923_*.zip`
    archives live, then re-solve PJM 2023-25 with the flag on.
 2. **Synchronization min-load — floor re-sizing BUILT (default off).** The first
-   half (the floor *level*) is implemented this session: the deriver
-   (`derive_thermal_tranches.py`) now also writes per coal plant a
+   half (the floor *level*) is implemented: the deriver
+   (`derive_thermal_tranches.py`) writes per coal plant a
    `mustrun_online_pct` = P5 of online *net MW* / nameplate — the genuine online
    Pmin (~20-30%) — alongside the all-hours `mustrun_pct` (~40-60%, which reads
    high for an always-online unit). `ScenarioConfig.coal_mustrun_online_pmin`
    (threaded through `thermal_tranche_overrides` → `fleet_to_bins` and the
-   calibration solve path) selects it for coal. In the energy-only LP the coal
-   `_mustrun` band has Pmin=0, so this is not a forced floor but the *size* of
-   the cheap (sunk-fuel) bid band: shrinking it to the online Pmin moves coal
-   capacity into the full-delivered-cost rising tranches, so coal price-follows
-   (backs down in cheap hours) reproducing the observed low/hi 0.63 instead of
-   baseloading flat. **Remaining for layer 2:** the explicit SRMC-priced
-   synchronization tranche (bidding delivered fuel + VOM rather than relying on
-   the shrunken cheap band) is step 3 below, co-designed with reserve co-opt.
-3. **Full-delivered-cost dispatchable tranches** above the min-load. These follow
-   price (back down in cheap hours), reproducing the observed low/hi 0.63.
+   calibration solve path) selects it for coal.
+3. **SRMC-priced synchronization tranche + forced synchronization — BUILT (step
+   3a, default off).** `ScenarioConfig.coal_sync_srmc_tranche` splits the
+   online-Pmin coal min-load band by the measured EIA-923 contract share into a
+   fuel-free `_mustrun` floor (contracted) + a full-SRMC `_sync` band (spot), and
+   **forces both ON** via `FleetArrays.min_gen` (`Generator.coal_sync_pmin_mw`),
+   so the unit holds synchronized at min-load bidding real SRMC instead of
+   price-following to zero, while the **full-delivered-cost dispatchable
+   tranches above still back down in cheap hours** (the observed low/hi 0.63).
+   The forcing is **online%-scaled** (`Generator.coal_sync_online_frac`, sized by
+   a new `online_frac` column in `thermal_tranches_PJM.csv` = hours any unit is
+   synchronized / 8760): a supercritical synchronized ~all year (online_frac
+   ≥0.99, e.g. Amos 0.94, Harrison 1.0, Spurlock 1.0) is held every hour, while a
+   two-shifting cycler (Rockport 0.57, Keystone 0.41) is forced only in its
+   top-online_frac hours by system load — mirroring the CT must-run load-shaping
+   and the CEMS fingerprint (Thread A: big units stay online 99-100%, cyclers
+   two-shift). The thermal-tranche artifact was fully re-derived 2023-25 in the
+   process, which also corrected the pre-NaN-fix `online_hours`/`committed_pct`/
+   `mustrun_online_pct` for the multi-unit coal+gas plants (the campd.py NaN-
+   poisoning fix; CLAUDE.md #12).
+
+   **Keeper result (pjm 47 sync-srmc, 2023-25).** Online%-scaling FIXES the
+   moderate-gas over-hold (the keeper-vs-pjm_43 failure mode): 2023 coal C2 from
+   the round-2 over-hold to in-tolerance. The accurate re-derive (lower committed
+   band) deepens the **cheapest-gas 2024 coal under-run** (C2 ~-14% grid-basis),
+   and that under-run is **structural, not an offer-curve lever**: the bituminous
+   sigmoid floor was swept 0.68 → 0.76 → 0.90 with 2024 bit pinned at -9.4%
+   (saturated). The residual is the **missing energy+reserve co-optimization
+   (step 3b)** — corroborated by C3c (model 0 scarcity hours >$200 vs 6/18/59
+   actual): coal is sole price-setter only ~9% of hours, so the afternoon/dear-gas
+   scarcity volume and price the under-run reflects need the reserve co-opt, not
+   a cheaper coal bid. C3a mean-LMP / C3b / C4 / C5a all PASS; determination
+   NOT-YET pending 3b. 2025 PRB cyclers (876/879) remain the largest per-class
+   miss; their dear-gas over-run is the same reserve-co-opt lever (a steeper
+   subbit sigmoid trades it for a 2024 under-run via dispatch-weighting coupling,
+   so it is not pursued).
 
 Why this avoids both failure modes already on the dashboard:
 - vs **keeper** (floor 0.60 sub-cost): smaller floor → less forced over-volume /
@@ -227,12 +257,15 @@ Type`) **and the per-ISO `coal_takeorpay_<ISO>.csv` artifacts are now derived**
 spread the flat sigmoid cannot capture: Gavin/Harrison/Clifty 100% contracted,
 Spurlock 62%, Mt Storm 78%, Miami Fort (2832) **0% (all spot)**. This empirically
 confirms Thread B: PJM bituminous carries more avoidable spot coal, consistent
-with it being the swing fuel. The remaining step is to **re-solve PJM 2023-25**
-with `coal_takeorpay_from_data=True` **and** `coal_mustrun_online_pmin=True`
-(step 1 + the step-2 floor re-sizing, both now built; the step-3 SRMC tranche +
-price formation still unbuilt). Probe recipe: `scripts/probes/_pjm_online_pmin_run.py`
-(one year per invocation). Do NOT substitute a residual-tuned discount (the
-current sigmoid) now that the measured share exists.
+with it being the swing fuel. Steps 1+2+3a are now **built and solved** (keeper
+pjm 47 sync-srmc, 2023-25; recipe `scripts/probes/_pjm_sync_srmc_run.py`,
+`coal_takeorpay_from_data` + `coal_mustrun_online_pmin` + `coal_sync_srmc_tranche`
+all on). The measured contract share now SIZES the fuel-free vs SRMC split (not a
+residual-tuned discount). **The one remaining structural step is 3b (energy+
+reserve co-optimization)**, still blocked on memory at PJM plant scale — the
+keeper's NOT-YET (2024 cheap-gas coal under-run, 0 scarcity hours) is its
+fingerprint, confirmed by the bit-floor saturation sweep (the under-run is not an
+offer-curve lever). Do NOT substitute a residual-tuned discount to close it.
 
 ---
 
