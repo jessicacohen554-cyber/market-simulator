@@ -2818,8 +2818,15 @@ _ENERGY_BALANCE_TOL_TWH: float = 3.0
 
 
 def _canon_fuel(fuel: str) -> str:
-    """Collapse a model fuel label to its benchmark fuel (gas_* -> gas)."""
-    return "gas" if fuel in _MODEL_GAS_FUELS else fuel
+    """Collapse a model fuel label to its benchmark fuel (gas_* -> gas).
+
+    Non-gas labels are lower-cased so the dispatch frame's upper-case
+    must-run class ``OTHER`` (geothermal + misc) matches the lower-case
+    ``"other"`` entry in :data:`_GENERIC_FUEL_ORDER` — otherwise it summed
+    into the model TOTAL but never printed as a row, making the [1] table
+    look ~9 TWh short of its own total.
+    """
+    return "gas" if fuel in _MODEL_GAS_FUELS else fuel.lower()
 
 
 def _aggregate_twh(by_fuel: dict[str, float]) -> dict[str, float]:
@@ -3276,6 +3283,21 @@ def _report_generic(
                     bal,
                     _ENERGY_BALANCE_TOL_TWH,
                 )
+
+        # Apples-to-apples caveat for the EIA-930 "gas" column: for some BAs
+        # (CAISO is the live case) EIA-930 folds geothermal and biomass into
+        # its Natural Gas aggregate, so the EIA-930 gas cell above is inflated
+        # by roughly the model's geothermal (the "other" row) + biomass. Model
+        # gas should be judged against the EIA-923 gas cell, which is clean.
+        other_m = model.get("other")
+        bio_m = model.get("biomass")
+        if e930_twh.get("gas") and (other_m or bio_m):
+            folded = (other_m or 0.0) + (bio_m or 0.0)
+            print(
+                f"    note: EIA-930 'gas' ({e930_twh['gas']:.1f}) folds in "
+                f"geothermal+biomass (~{folded:.1f} TWh here); compare model "
+                "gas to the EIA-923 cell, not EIA-930."
+            )
 
         # --- [1b] Curtailment: model re-curtailment vs ISO-reported ---
         _print_curtailment_vs_reported(year, iso, dispatch)
