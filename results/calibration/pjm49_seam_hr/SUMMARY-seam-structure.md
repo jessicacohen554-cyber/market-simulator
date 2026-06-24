@@ -1,65 +1,71 @@
-# pjm 49 seam-hr-measured — per-seam interchange diagnosis
+# pjm 49 seam-pricing correction — per-seam interchange diagnosis
 
-**Change:** `NeighborInterface.hr_by_year` re-anchors the PJM reference-price
-seam to each neighbor's *measured* realized annual-mean LMP per backcast year
-(MISO, NYISO), replacing the single 3-year-mean `marginal_heat_rate`. Derived by
-`scripts/derive_neighbor_hr_by_year.py`. Forecast years (no entry) fall back to
-the structural HR → byte-identical. Rule #12 (measured > estimate).
+Two grounded, forecast-native corrections to the PJM reference-price seam:
 
-| neighbor | structural HR | hr_by_year 2023/24/25 |
-|----------|---------------|------------------------|
-| MISO     | 12.9          | 12.38 / 13.92 / 12.03  |
-| NYISO    | 13.1          |  9.66 / 12.92 / 14.67  |
-| Carolinas| 13.5 (est.)   | — (no measured LMP)    |
+1. **Per-year measured neighbor heat rate** (`NeighborInterface.hr_by_year`):
+   MISO and NYISO each priced from their OWN realized annual-mean LMP per
+   backcast year, replacing the single 3-year-mean `marginal_heat_rate` that
+   over-priced the dear-gas year and under-priced the cheap-gas year.
+   MISO 12.38/13.92/12.03, NYISO 9.66/12.92/14.67. Forecast years fall back to
+   the structural HR → byte-identical. (`derive_neighbor_hr_by_year.py`.)
+2. **Carolinas heat-rate reconciliation** 13.5 → 11.6: the prior value produced
+   $34/MWh at 2023 Henry Hub, +14% above its OWN documented "~$30/MWh SERC
+   bilateral" basis, and was the highest HR of any PJM neighbor for a cheaper,
+   nuclear/CC-heavy region PJM net-IMPORTS from. 11.6 reconciles to the stated
+   $30 basis ($30 / $2.54 / 1.02). NOT tuned to the flow (rule #11): the value
+   comes from the documented anchor; PJM's own per-tie data only VALIDATES the
+   resulting net-import direction.
 
-After the fix each seam's constructed reference reproduces the measured neighbor
-LMP within rounding (e.g. MISO 2025 $46.0 → $42.9; NYISO 2023 $41.1 → $30.3).
+Both are rule #12 (measured / reconciled-documented data over an estimate that
+fit the backcast by compensating for a different bug).
 
-## Result: structurally correct, headline NOT improved
+## Result: structure corrected, headline net unchanged
 
 Net interchange (TWh, + = net export), model vs EIA-930 target:
 
-| year | baseline (pjm 48) | hr-fix | target | gas % |
-|------|-------------------|--------|--------|-------|
-| 2023 | +42.8             | +27.7  | +40.0  | +2.7 (was +5.6) |
-| 2024 | +27.8             | +36.6  | +32.7  | +9.0 (was +7.4) |
-| 2025 | +57.4             | +53.5  | +18.0  | +11.4 (was +12.1) |
+| year | baseline (pjm 48) | combined | target | gas % (was) |
+|------|-------------------|----------|--------|-------------|
+| 2023 | +42.8 | +22.5 | +40.0 | +1.9 (5.6) |
+| 2024 | +27.8 | **+31.2** | +32.7 | +8.0 (7.4) |
+| 2025 | +57.4 | +48.5 | +18.0 | +10.4 (12.1) |
 
-Net-interchange MAE **17.3 vs 15.7 TWh baseline** — slightly worse. Per rule #12
-the measured anchor stays in; the worse fit exposes the real cause.
+Net-interchange MAE 16.5 vs 15.7 TWh baseline. The Carolinas fix makes **2024
+near-perfect** (off 1.5) and improves 2025; gas improves in 2023/2025. The MAE
+is marginally worse only because the corrections remove the compensating errors
+(Carolinas over-export, NYISO-2023 over-price) that were masking the real bug.
 
-## Root cause: per-seam STRUCTURE (PJM Data Miner per-tie, blind to the LP)
+## What the corrections EXPOSE: MISO/NYISO under-export
 
-Net export by seam, measured (PJM `import_export_act_sch_interchange`) vs model:
+PJM's own per-tie Data Miner (blind to the LP), net export by seam:
 
-| seam | 2023 meas | 2023 model | 2025 meas | 2025 model | error |
-|------|-----------|------------|-----------|------------|-------|
-| MISO       | +35.3 | +16.1 | +24.6 | +16.8 | model **under-exports** the biggest real export seam |
-| NYISO      | +18.5 | +3.8  | +21.9 | +26.3 | under 2023, over 2025 (NYC-congestion-inflated system avg) |
-| Carolinas  | −5.4  | +7.7  | −5.9  | +10.4 | model **wrong direction** (+13..+16), every year |
-| TVA/LGEE   | −8.4  | 0     | −7.7  | 0     | **seam not modeled** (~−8 import missing) |
+| seam | 2023 meas / model | 2024 meas / model | 2025 meas / model |
+|------|-------------------|-------------------|-------------------|
+| MISO      | +35.3 / +17.6 | +27.2 / +20.2 | +24.6 / +19.3 |
+| NYISO     | +18.5 / +4.3  | +20.4 / +15.8 | +21.9 / +26.8 |
+| Carolinas | −5.4 / +0.6   | −6.4 / **−4.8** | −5.9 / +2.3   |
+| TVA/LGEE  | −8.4 / 0      | −8.2 / 0      | −7.7 / 0      |
 
-The old over-priced NYISO-2023 seam (ref $41 vs measured $30, +36%) was silently
-inflating 2023 export and masking the model's structural under-export there; the
-measured anchor removes the mask.
+Carolinas is now ~correct (2024 −4.8 vs −6.4). The dominant remaining error is
+the model **under-clearing export to MISO and NYISO** — most acute in 2023
+(MISO +17.6 vs +35.3; NYISO +4.3 vs +18.5), where it sinks the 2023 total to
++22.5 vs +40. Likely cause: the $2/MWh hurdle EXCEEDS the documented ~$1.5/MWh
+mean PJM-MISO spread, so the energy-spread seam can clear MISO export only in
+the minority of hours where the spread beats the hurdle — it cannot reproduce
+PJM's large firm/scheduled exports into its structurally-cheaper neighbors.
 
-## Measured-source basis gap (2025 only)
+## Next thread (priority order)
 
-EIA-930 PJM net interchange = **+18.0** TWh in 2025, but PJM's OWN per-tie
-scheduled sum (all ties, Data Miner) = **+32.9** TWh — a ~15 TWh gap between two
-measured sources. In 2023/2024 the two agree (+40.0/+32.9 ≈ EIA-930). No seam
-model can reconcile both bases in 2025; document as a measured-input limitation.
-
-## Next thread (in priority order)
-
-1. **Carolinas direction** — biggest, most consistent error (+13..+16 TWh wrong
-   sign, all years). Needs a measured Duke/SERC price (FERC-714 hourly system
-   lambda) to anchor below PJM without flow-tuning (rule #11 forbids tuning the
-   HR to the net-MWh target). HR 13.5 is currently the *highest* of all PJM
-   neighbors despite the Carolinas being a cheaper region PJM net-imports from.
-2. **Add the TVA/LGEE import seam** — ~8 TWh/yr of unmodeled import.
+1. **MISO/NYISO under-export** — the now-isolated dominant bug. Investigate the
+   hurdle-vs-mean-spread mismatch ($2 hurdle > ~$1.5 PJM-MISO spread) and
+   whether the convex flow slide self-limits export too aggressively; PJM's
+   firm-export behaviour into MISO/NYISO is under-captured by a pure
+   energy-spread seam.
+2. **Add the TVA/LGEE import seam** — ~8 TWh/yr of unmodeled import (would lift
+   net interchange toward target in every year).
 3. **NYISO border price** — anchor to the PJM-NY (west-NY) border LMP, not the
-   NYC-inflated system average, so 2025 NY export stops over-clearing.
-4. **MISO under-export** — even at the measured MISO price the model under-clears
-   the +25..+35 TWh real export; the annual-mean anchor is too blunt vs the real
-   hourly border spreads. Likely needs hourly border anchoring.
+   NYC-congestion-inflated system average, so 2025 NY export (+26.8 vs +21.9)
+   stops over-clearing.
+4. **2025 measured-source basis gap** — EIA-930 PJM net interchange (+18.0)
+   sits ~15 TWh below PJM's own per-tie scheduled sum (+32.9); 2023/2024 agree.
+   A measured-input limitation no seam model can close — record in the
+   attestation ledger.
