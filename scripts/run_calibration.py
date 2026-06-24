@@ -1206,6 +1206,20 @@ def _hydro_fleet(
     return units, np.vstack(monthly)
 
 
+def _drop_biomass_units(fleet, fuel_fracs):
+    """Remove biomass LP units (and their parallel fuel fractions) from a fleet.
+
+    Used when biomass is injected as a measured EIA-923 must-run profile (the
+    caller nets it out of demand and re-adds it as a fixed pseudo-unit), so the
+    raw biomass generators must not also clear the merit order — else biomass is
+    served twice. Returns the filtered ``(fleet, fuel_fracs)`` pair (order- and
+    length-preserving). A no-op for a fleet with no biomass units (e.g. ERCOT,
+    whose CAMPD path already excludes them).
+    """
+    kept = [(g, ff) for g, ff in zip(fleet, fuel_fracs) if g.fuel_type != "biomass"]
+    return [g for g, _ in kept], [ff for _, ff in kept]
+
+
 def run_year(
     year: int,
     iso: str,
@@ -1243,6 +1257,7 @@ def run_year(
     curve_smoothing: dict[str, float | int | None] | None = None,
     cc_derate_from_top: bool = False,
     must_run_mw: "np.ndarray | None" = None,
+    inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
@@ -1821,6 +1836,17 @@ def run_year(
             # heat-rate bands) for the per-plant fleet; off by default.
             if getattr(config, "gas_offer_curve", False):
                 fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
+    # Biomass injected as a measured EIA-923 must-run profile (the caller nets it
+    # out of demand and re-adds it as a fixed pseudo-unit), so drop the raw
+    # biomass LP units to avoid double-serving — and to make biomass output the
+    # fuel/contract-limited, price-insensitive quantity it is in reality instead
+    # of a dispatchable unit the LP runs to max when gas rises. Mirrors the ERCOT
+    # CAMPD path, which already excludes biomass from its fleet (_campd_binned_-
+    # or_injected). Gated on inject_biomass_mustrun so callers that do NOT inject
+    # biomass (overlay-derivation / probe scripts) keep biomass as an LP unit and
+    # never lose it. No-op for ERCOT (its fleet already carries no biomass unit).
+    if inject_biomass_mustrun:
+        fleet, fuel_fracs = _drop_biomass_units(fleet, fuel_fracs)
     # Energy-limited conventional hydro (every ISO): one LP unit per
     # EIA-923-reporting hydro plant, capped by its EIA-860 nameplate per hour
     # and by its measured monthly net generation via the dispatch LP's hydro
