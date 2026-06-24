@@ -8,6 +8,7 @@ import numpy as np
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
+    _eia_hourly_frame_filled,
     _load_caiso_hourly_demand,
     _load_nyiso_hourly_demand,
     caiso_zonal_load_shares,
@@ -181,6 +182,52 @@ class TestEIALoader(unittest.TestCase):
             static = load_demand("MISO", _MISO_TEST_YEAR, miso)
         self.assertEqual(hourly.shape, (miso.n_zones, HOURS_PER_YEAR))
         np.testing.assert_allclose(hourly.sum(axis=0), static.sum(axis=0), rtol=1e-9)
+
+    def test_miso_demand_and_renewables_share_local_clock(self):
+        """MISO system demand and renewable CF sit on one local wall-clock.
+
+        Regression for the UTC-vs-local bug: MISO demand used to come from the
+        UTC-stamped demand-profiles parquet while the renewable CF came off the
+        local ``MISO hourly`` frame, a ~5-6h offset that paired midday solar
+        against trough demand. Both demand sources now derive from that same
+        local frame, so in summer the system demand peaks late afternoon
+        (local ~17) while solar peaks midday (local ~13), and the model system
+        demand reproduces the frame's own ``Demand`` column at lag 0 (a UTC
+        source would shift it ~5-6h and move the best lag off zero).
+        """
+        import pandas as pd
+
+        miso = get_iso_config("MISO")
+        frame = _eia_hourly_frame_filled("MISO", _MISO_TEST_YEAR)
+        self.assertIsNotNone(frame)
+        local = pd.to_datetime(frame["Local time"])
+        hod, month = local.dt.hour.to_numpy(), local.dt.month.to_numpy()
+        summer = (month >= 6) & (month <= 8)
+        demand = load_demand("MISO", _MISO_TEST_YEAR, miso).sum(axis=0)
+        solar = pd.to_numeric(frame["NG: SUN"], errors="coerce").to_numpy()
+
+        def _peak_local_hour(series: np.ndarray) -> int:
+            grouped = pd.Series(series[summer]).groupby(hod[summer]).mean()
+            return int(grouped.idxmax())
+
+        # Demand peaks in the late-afternoon block, solar at midday.
+        self.assertIn(_peak_local_hour(demand), (16, 17, 18))
+        self.assertIn(_peak_local_hour(np.nan_to_num(solar)), (12, 13, 14))
+
+        # The model system demand is the frame's own (local-clock) Demand: the
+        # cross-correlation against it peaks at lag 0.
+        frame_demand = (
+            pd.to_numeric(frame["Demand"], errors="coerce")
+            .interpolate()
+            .bfill()
+            .ffill()
+            .to_numpy()
+        )
+        anchor = frame_demand - frame_demand.mean()
+        shifted = demand - demand.mean()
+        lags = list(range(-6, 7))
+        corr = [np.corrcoef(np.roll(shifted, lag), anchor)[0, 1] for lag in lags]
+        self.assertEqual(lags[int(np.argmax(corr))], 0)
 
     def test_ercot_zonal_shares_sum_to_one(self):
         """ERCOT per-zone hourly shares are fractions summing to 1.0 each hour."""
