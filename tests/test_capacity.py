@@ -56,19 +56,34 @@ class TestKnownRetirements(unittest.TestCase):
     """Scheduled-retirement removal by simulation year."""
 
     def test_unit_present_before_retirement_year(self):
-        fleet = [_gen("C0", "coal", retirement_year=2028)]
+        # Year < retirement_year keeps the unit regardless of fuel.
+        fleet = [_gen("N0", "nuclear", retirement_year=2028)]
         survivors = apply_known_retirements(fleet, 2027)
-        self.assertEqual([g.unit_id for g in survivors], ["C0"])
+        self.assertEqual([g.unit_id for g in survivors], ["N0"])
 
-    def test_unit_removed_at_retirement_year(self):
-        fleet = [_gen("C0", "coal", retirement_year=2028)]
+    def test_nonfossil_unit_removed_at_retirement_year(self):
+        # Non-fossil (nuclear/hydro/renewables) honor the announced EIA-860 date.
+        fleet = [_gen("N0", "nuclear", retirement_year=2028)]
         survivors = apply_known_retirements(fleet, 2028)
         self.assertEqual(survivors, [])
 
-    def test_unit_removed_after_retirement_year(self):
-        fleet = [_gen("C0", "coal", retirement_year=2028)]
+    def test_nonfossil_unit_removed_after_retirement_year(self):
+        fleet = [_gen("N0", "nuclear", retirement_year=2028)]
         survivors = apply_known_retirements(fleet, 2030)
         self.assertEqual(survivors, [])
+
+    def test_fossil_unit_exempt_from_date_retirement_by_default(self):
+        # Fossil phaseout is economic (forecast_fossil_retirement_economic=True
+        # default): an announced coal/gas/oil retirement date does NOT remove it;
+        # the economic-retirement screen governs the exit instead.
+        fleet = [_gen("C0", "coal", retirement_year=2028)]
+        self.assertEqual(
+            [g.unit_id for g in apply_known_retirements(fleet, 2030)], ["C0"]
+        )
+        # Legacy behaviour (fossil_economic=False) honors the date.
+        self.assertEqual(
+            apply_known_retirements(fleet, 2030, fossil_economic=False), []
+        )
 
     def test_unit_without_schedule_is_kept(self):
         fleet = [_gen("G0", "gas_cc", retirement_year=None)]
@@ -1191,7 +1206,9 @@ class TestEvolveFleet(unittest.TestCase):
 
     def test_known_retirement_precedes_known_addition(self):
         config = ScenarioConfig(iso="ERCOT")
-        old = _gen("OLD", "coal", retirement_year=2030)
+        # Nuclear (non-fossil) honors its announced retirement date; a fossil
+        # unit would instead be governed by the economic screen.
+        old = _gen("OLD", "nuclear", retirement_year=2030)
         new = Generator(
             unit_id="NEW",
             name="NEW",
@@ -1383,7 +1400,10 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         # Year 2026, prior_results=None: only known retirements and known
         # additions run -- the price-driven steps are skipped, and the RPS
         # is no longer a force-build step.
-        config = ScenarioConfig(iso="CAISO")
+        # Pin the legacy date-retirement path so the coal C_RET exercises the
+        # known-retirement orchestration (the new default exempts fossil — that
+        # is covered by TestKnownRetirements).
+        config = ScenarioConfig(iso="CAISO", forecast_fossil_retirement_economic=False)
         coal = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.2 * i)
             for i in range(5)
@@ -1408,7 +1428,8 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
 
     def test_empty_fleet_after_retirements_is_refilled(self):
         # The whole fleet retires on schedule; new entry fills the gap.
-        config = ScenarioConfig(iso="ERCOT")
+        # Legacy date-retirement path so the coal unit retires on its date.
+        config = ScenarioConfig(iso="ERCOT", forecast_fossil_retirement_economic=False)
         coal = _gen("C0", "coal", pmax=100.0, zone="North", retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
         fleet, tracker, _, _ = evolve_fleet([coal], prior, 2027, config, {})
@@ -1426,7 +1447,8 @@ class TestCapacityIntegration(unittest.TestCase):
         # A small fleet evolved 2026-2028: composition shifts every year as
         # retirements and new entry reshape it. C_RET retires on schedule in
         # the first year, guaranteeing the year-one fleet differs.
-        config = ScenarioConfig(iso="ERCOT")
+        # Legacy date-retirement path so the coal C_RET retires on its date.
+        config = ScenarioConfig(iso="ERCOT", forecast_fossil_retirement_economic=False)
         fleet = [
             _gen("C0", "coal", pmax=100.0, zone="North", heat_rate=10.0),
             _gen("C1", "coal", pmax=100.0, zone="North", heat_rate=10.5),
@@ -1511,7 +1533,9 @@ class TestCapacityIntegration(unittest.TestCase):
 
     def test_scheduled_coal_retirement_across_trajectory(self):
         # A coal unit with retirement_year=2027 is present in 2026, gone after.
-        config = ScenarioConfig(iso="ERCOT")
+        # Legacy date-retirement path (the new default exempts fossil so its
+        # phaseout is economic — covered in TestKnownRetirements).
+        config = ScenarioConfig(iso="ERCOT", forecast_fossil_retirement_economic=False)
         fleet = [
             _gen(
                 "C_RET",
