@@ -242,7 +242,7 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         patch.object(
             runner,
             "split_coal_tranches",
-            side_effect=lambda f, c: (list(f), [1.0] * len(f)),
+            side_effect=lambda f, c, *_a, **_k: (list(f), [1.0] * len(f)),
         ),
         patch.object(runner, "apply_plant_emission_rates"),
         patch.object(
@@ -267,18 +267,18 @@ class TestCampdBinningGate(unittest.TestCase):
         self.assertEqual(rec["builder"], "campd")
 
     def test_artifact_isos_take_campd_path(self):
-        # CAISO/NEISO/NYISO/PJM now follow ERCOT onto the per-plant path, with
-        # their bins synthesized from the CAMPD thermal-tranche artifact.
-        for iso in ("CAISO", "NEISO", "NYISO", "PJM"):
+        # CAISO/NEISO/NYISO/PJM/MISO now follow ERCOT onto the per-plant path,
+        # with their bins synthesized from the CAMPD thermal-tranche artifact.
+        for iso in ("CAISO", "NEISO", "NYISO", "PJM", "MISO"):
             with self.subTest(iso=iso):
                 rec = _trace_fleet_build(iso)
                 self.assertEqual(rec["bins_source"], "synth")
                 self.assertEqual(rec["builder"], "campd")
 
     def test_isos_without_artifact_fall_back_to_legacy(self):
-        # MISO/SPP have no bin artifact: no per-plant bins are built and the
-        # legacy aggregate_fleet path runs cleanly, exactly as before.
-        for iso in ("MISO", "SPP"):
+        # SPP has no bin artifact: no per-plant bins are built and the legacy
+        # aggregate_fleet path runs cleanly, exactly as before.
+        for iso in ("SPP",):
             with self.subTest(iso=iso):
                 rec = _trace_fleet_build(iso)
                 self.assertIsNone(rec["bins_source"])
@@ -287,10 +287,9 @@ class TestCampdBinningGate(unittest.TestCase):
     def test_gate_membership(self):
         from market_sim.config.constants import CAMPD_BINNING_ISOS
 
-        for iso in ("ERCOT", "CAISO", "NEISO", "NYISO", "PJM"):
+        for iso in ("ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"):
             self.assertIn(iso, CAMPD_BINNING_ISOS)
-        for iso in ("MISO", "SPP"):
-            self.assertNotIn(iso, CAMPD_BINNING_ISOS)
+        self.assertNotIn("SPP", CAMPD_BINNING_ISOS)
 
 
 class TestHistoricOutageOverlayDefault(unittest.TestCase):
