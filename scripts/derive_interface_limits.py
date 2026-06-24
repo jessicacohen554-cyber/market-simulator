@@ -47,9 +47,9 @@ YEARS = (2023, 2024, 2025)
 PCTL = 0.995  # firm-continuous upper envelope (trims top ~0.5% transient hours)
 
 # PJM external tie -> registry seam. Carolinas is the Duke/Progress group the
-# registry's DUK-anchored seam represents (border PJM_Dominion). TVA, LGEE and
-# LAGN are the south-west ties PJM net-*imports* over; the three-seam PJM build
-# has no neighbor for them yet, so they stay unmapped (see module docstring).
+# registry's DUK-anchored seam represents (border PJM_Dominion). TVA and LGEE are
+# the south-west ties PJM net-*imports* over, now their own registry seams; only
+# LAGN (measured flow ~0) remains unmapped.
 SEAM_TIES: dict[str, list[str]] = {
     "MISO": [
         "ALTE",
@@ -67,8 +67,11 @@ SEAM_TIES: dict[str, list[str]] = {
     ],
     "NYISO": ["NYIS", "HUDS", "NEPT", "LIND"],
     "Carolinas": ["CPLE", "CPLW", "DUK"],
+    "TVA": ["TVA"],
+    "LGEE": ["LGEE"],
 }
-UNMAPPED = ["TVA", "LGEE", "LAGN"]
+# LAGN's measured flow is ~0; it remains unmapped.
+UNMAPPED = ["LAGN"]
 
 # The committed INTERFACE_NEIGHBORS["PJM"] limits this script derives, rounded
 # to the nearest 100 MW. Kept here so --check can assert the constants table
@@ -77,6 +80,8 @@ COMMITTED_MW: dict[str, float] = {
     "MISO": 7300.0,
     "NYISO": 3900.0,
     "Carolinas": 2400.0,
+    "TVA": 1600.0,
+    "LGEE": 1100.0,
 }
 
 
