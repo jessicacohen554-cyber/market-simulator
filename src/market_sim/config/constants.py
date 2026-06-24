@@ -1,6 +1,6 @@
 """Physical and economic constants with citation comments."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from market_sim.config.paths import CALIBRATION_DIR
 
@@ -2303,6 +2303,22 @@ class NeighborInterface:
         load_shape_exponent: convexity of the price response to neighbor
             load; 1.0 is a parameter-free, mean-preserving linear shape
             (>1 adds a peak premium from climbing the neighbor's offer stack).
+        hr_by_year: optional ``{year: heat_rate}`` overriding
+            ``marginal_heat_rate`` for a specific backcast year. The single
+            ``marginal_heat_rate`` is a multi-year MEAN of the neighbor's
+            realized LMP / Henry-Hub ratio; that ratio drifts year to year
+            (MISO 12.5 / 14.1 / 12.2 for 2023-25), so the mean over-prices the
+            neighbor in the dear-gas year and under-prices it in the cheap-gas
+            year — opening / closing a fake seam export spread (the PJM 2025
+            over-export / 2024 under-export). Each entry re-anchors the heat
+            rate to the neighbor's OWN measured annual-mean realized LMP for
+            that year (claude.md rule #12: measured neighbor price formation
+            over a multi-year estimate; never tuned to the ISO's flow — rule
+            #11). A year absent here (every forecast year, and neighbors with
+            no organized-market LMP such as the Carolinas) falls back to the
+            structural ``marginal_heat_rate``, so forecast runs are
+            byte-identical. Derive with
+            ``scripts/derive_neighbor_hr_by_year.py``.
     """
 
     name: str
@@ -2314,6 +2330,7 @@ class NeighborInterface:
     border_zones: tuple[str, ...]
     proxy_ba: str | None = None
     load_shape_exponent: float = 1.0
+    hr_by_year: dict[int, float] | None = field(default=None, compare=False)
 
 
 # Per-ISO neighbor registry for the reference-price interface. ISO-agnostic
@@ -2424,6 +2441,12 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=7300.0,
             border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
             load_shape_exponent=1.60,
+            # Per-year measured anchor (derive_neighbor_hr_by_year.py): the 12.9
+            # mean over-priced the MISO border hub +7% in dear-gas 2025 (measured
+            # ratio 12.0) and under-priced it -7% in 2024 (13.9), flipping the
+            # largest PJM seam to a fake export in 2025. Anchored to the measured
+            # Indiana-Hub RT LMP each year.
+            hr_by_year={2023: 12.38, 2024: 13.92, 2025: 12.03},
         ),
         NeighborInterface(
             name="NYISO",
@@ -2434,6 +2457,12 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=3900.0,
             border_zones=("PJM_EMAAC",),
             load_shape_exponent=1.63,
+            # Per-year measured anchor (derive_neighbor_hr_by_year.py): NYISO's
+            # LMP/HH ratio is the least stable seam (downstate congestion/
+            # scarcity), so the 13.1 mean badly over-prices cheap-2023 (measured
+            # 9.7) and under-prices tight-2025 (14.7). Anchored to the measured
+            # NYISO RT LMP each year. Smallest PJM seam (EMAAC only).
+            hr_by_year={2023: 9.66, 2024: 12.92, 2025: 14.67},
         ),
         NeighborInterface(
             name="Carolinas",
