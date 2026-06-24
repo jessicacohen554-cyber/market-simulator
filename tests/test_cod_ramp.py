@@ -15,8 +15,10 @@ import numpy as np
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
     COD_FALLBACK_MONTH,
+    class_cod_coverage,
     effective_cod,
     load_cod_map,
+    log_class_cod_coverage,
     monthly_online_mask,
 )
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
@@ -417,6 +419,35 @@ class TestNeisoWithinWindowRetireeFleetPath(unittest.TestCase):
         self.assertIn(1588, c23)
         self.assertNotIn(1588, c25)
         self.assertNotEqual(c23, c25)
+
+
+class TestClassCodCoverage(unittest.TestCase):
+    """Per-class COD-coverage guardrail (so a vintage can't drop a class)."""
+
+    def test_trivial_single_class_fully_covered(self):
+        cov = class_cod_coverage(["gas_cc"], [2012])
+        self.assertEqual(cov, {"gas_cc": (1, 1)})
+        self.assertEqual(log_class_cod_coverage(cov, "CAISO", 2024), [])
+
+    def test_class_with_no_cod_is_flagged_uncovered(self):
+        # Two gas_cc units have a COD, every coal unit is vintage-unknown.
+        cov = class_cod_coverage(
+            ["gas_cc", "gas_cc", "coal", "coal"], [2012, 2018, None, None]
+        )
+        self.assertEqual(cov["gas_cc"], (2, 2))
+        self.assertEqual(cov["coal"], (2, 0))
+        uncovered = log_class_cod_coverage(cov, "CAISO", 2024)
+        self.assertEqual(uncovered, ["coal"])
+
+    def test_partial_coverage_within_a_class_is_not_flagged(self):
+        # A class is only flagged when it has ZERO COD dates; one is enough.
+        cov = class_cod_coverage(["oil", "oil"], [None, 1998])
+        self.assertEqual(cov["oil"], (2, 1))
+        self.assertEqual(log_class_cod_coverage(cov, "CAISO", 2024), [])
+
+    def test_blank_label_falls_back_to_unknown(self):
+        cov = class_cod_coverage([""], [2005])
+        self.assertEqual(cov, {"unknown": (1, 1)})
 
 
 if __name__ == "__main__":
