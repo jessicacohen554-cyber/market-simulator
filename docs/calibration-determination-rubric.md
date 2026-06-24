@@ -94,13 +94,34 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     genuinely-mixed gas-thermal plants (`apply_other_fossil_scoring`); it is a
     reconciliation device, not a real merit-order class, so a per-class band on
     it scores a labelling artefact rather than a dispatch decision.
+- **Preliminary-EIA-923 vintage credit (year ≥ `PRELIM_923_FROM_YEAR` = 2025).**
+  The per-class actual (`classFull`) is preliminary EIA-923 while the gas/coal
+  *family* total is authoritative EIA-930 (the same vintage gap C2 reconciles). A
+  preliminary 923 release under-counts thermal generation that is *already on the
+  grid* (per 930) but **not yet attributed to any class** — so it surfaces as the
+  model "over-absorbing" into whichever class actually produced it. EIA-930 has no
+  per-class split, so the family-level `930 − 923` gap is the only *measured*
+  per-class correction. The scorer (`_vintage_credit`) credits that gap against
+  the scored classes' **positive** volume misses (model > 923-actual), **capped at
+  the measured family gap** and allocated in proportion to each class's positive
+  miss. The effective miss for the volume band becomes `(model − actual) − credit`.
+  This is the inverse of fitting-to-actuals: it recognises the *actual* is
+  incomplete and credits the model for matching the authoritative grid total,
+  using only measured quantities, and it regenerates for any future
+  preliminary-vintage year. The **share** gate (±1.5pp) still binds — vintage
+  relief cannot pass a class that also misrepresents the mix. Note this is finer
+  than C2's binary `_VINTAGE_RECONCILE_FRAC = 0.97` reconcile: it applies the true
+  family gap even when 923 sits just above the 0.97× threshold (ERCOT 2025 gas is
+  0.971×, so C2's reconcile does not fire, yet a real 5.8 TWh shortfall remains).
 - **Failure classification:** `MODEL MISS` by default — an out-of-tolerance class
   is a merit-order / offer-curve / must-run defect (e.g. CT_PEAKER under-dispatch
   ⇒ peaker offer band too high). Reclassify to `ACCEPTED MEASURED-INPUT
-  LIMITATION` only where the *actual* is the limitation: e.g. **NEISO's
-  model-zeroed `CT_PEAKER`** (the ISO's oil/gas peakers run a handful of scarcity
-  hours the energy-only LP cannot see; the grid-delivered actual is itself near
-  the measurement floor) — ledgered, never silent.
+  LIMITATION` (a `CAVEAT`, never silent) where the *actual* is the limitation:
+  (a) a class that only re-enters the volume band via the preliminary-923 vintage
+  credit above (the residual beyond the measured family gap sits inside the band);
+  (b) e.g. **NEISO's model-zeroed `CT_PEAKER`** (the ISO's oil/gas peakers run a
+  handful of scarcity hours the energy-only LP cannot see; the grid-delivered
+  actual is itself near the measurement floor).
 
 ### C2 — System volume error, gas & coal families  *(HARD)*
 

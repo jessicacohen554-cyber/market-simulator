@@ -120,6 +120,50 @@ class FuelMixTests(unittest.TestCase):
         )
         self.assertFalse([r for r in rows if r["key"] == "CT_CHP"])
 
+    def test_preliminary_vintage_credit_caveats_over_absorption(self):
+        # 2025 preliminary EIA-923: the gas family 923 sum (354 TWh) is 6 TWh below
+        # the authoritative EIA-930 grid total (360), so a +8 TWh CC_REGULAR
+        # over-absorption is mostly the unattributed vintage shortfall. The credit
+        # caps at the 6 TWh family gap -> residual ~2 TWh (inside the ~3.6 TWh band)
+        # -> CAVEAT (ACCEPTED MEASURED-INPUT LIMITATION), not a model-miss FAIL.
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        ybench["e930"]["gas"] = 360.0  # 930 grid total > Σ923 gas (354) by 6 TWh
+        rows = cv.score_fuelmix(2025, ypay, ybench)
+        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+        self.assertEqual(cc["status"], cv.CAVEAT)
+        self.assertEqual(cc["classification"], cv.MEASURED_LIMIT)
+        self.assertGreater(cc["vintage_credit_twh"], 0.0)
+        self.assertLessEqual(cc["vintage_credit_twh"], 6.0)  # capped at family gap
+
+    def test_preliminary_vintage_credit_not_applied_pre_2025(self):
+        # Same family shortfall in a COMPLETE-923 year (2024) earns no credit: the
+        # +8 TWh CC_REGULAR miss stays a FAIL / MODEL MISS.
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        ybench["e930"]["gas"] = 360.0
+        rows = cv.score_fuelmix(2024, ypay, ybench)
+        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+        self.assertEqual(cc["status"], cv.FAIL)
+        self.assertEqual(cc["classification"], cv.MODEL_MISS)
+        self.assertNotIn("vintage_credit_twh", cc)
+
+    def test_preliminary_vintage_credit_capped_leaves_residual_fail(self):
+        # The credit can never exceed the measured family gap: a +12 TWh miss with
+        # only a 6 TWh gap leaves a ~6 TWh residual -> still FAIL (no free pass).
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 337.0})
+        ybench["e930"]["gas"] = 360.0  # 6 TWh gap, miss is 12 TWh
+        rows = cv.score_fuelmix(2025, ypay, ybench)
+        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+        self.assertEqual(cc["status"], cv.FAIL)
+
+    def test_preliminary_vintage_no_credit_when_923_complete(self):
+        # If the family 923 sum already meets/exceeds the 930 grid total there is no
+        # shortfall to credit, so an over-absorption stays a FAIL even in 2025.
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        ybench["e930"]["gas"] = 350.0  # below Σ923 gas (354): gap <= 0
+        rows = cv.score_fuelmix(2025, ypay, ybench)
+        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+        self.assertEqual(cc["status"], cv.FAIL)
+
 
 class SysVolTests(unittest.TestCase):
     def test_complete_vintage_uses_923_minus_btm(self):
