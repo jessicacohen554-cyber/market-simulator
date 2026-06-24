@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-pjm-49-seam-hr",
+  "label": "pjm 49 seam hr",
+  "date": "2026-06-24",
+  "shorthand": "pjm-49-seam-hr",
+  "definition": "(DIAGNOSTIC) pjm 48 coal-structure keeper + reference-price seam re-anchored per backcast year to the measured neighbor LMP: NeighborInterface.hr_by_year replaces the single 3-year-mean marginal_heat_rate for MISO (12.38/13.92/12.03) and NYISO (9.66/12.92/14.67), so each seam reproduces its neighbor's realized annual-mean LMP instead of a mean that over-priced the dear-gas year and under-priced the cheap-gas year (rule #12: measured > estimate; forecast falls back to the structural HR, byte-identical). NOT a headline keeper — the level fix barely moves net interchange (MAE 17.3 vs 15.7 TWh baseline) and the worse fit honestly exposes the real cause: per-seam STRUCTURE. PJM's own per-tie Data Miner (blind to the LP) shows the model UNDER-exports the big real export seams (MISO 2023 +16 vs measured +35; NYISO 2023 +4 vs +18), exports the WRONG DIRECTION over the Carolinas (+8..+10 model vs -5..-6 measured net import, every year), and omits the TVA/LGEE import seam (~-8 TWh/yr). The old over-priced NYISO-2023 seam (+36%) was silently compensating for that 2023 under-export. Next thread: (1) Carolinas direction needs a measured Duke/SERC price (FERC-714 lambda), (2) add the TVA/LGEE import seam, (3) anchor NYISO to the PJM-NY border (west-NY) price not the NYC-inflated system average, (4) in 2025 EIA-930 net interchange sits ~15 TWh below PJM's own per-tie scheduled sum — a measured-source basis gap no seam model can close. pjm 48 stays the PJM keeper. Merged 2023-25 from parallel per-year solves.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-24-pjm-49-seam-hr.js",
+  "bundle": "results/calibration/pjm49_seam_hr"
+}
