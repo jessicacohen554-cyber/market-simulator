@@ -4,6 +4,16 @@
 identified and reproduced from the committed bundles; the offer-curve retune
 that would close the gap is *proposed*, not yet applied.
 
+> **See also — the PJM mirror image (2026-06-24):**
+> [§ PJM and the net-summer ISOs](#pjm-and-the-net-summer-isos-the-mirror-image-bug-2026-06-24).
+> ERCOT (this doc) *under*-runs its top CF bands behind a duct wall at ~92% of
+> nameplate. PJM/NYISO/NEISO had the *opposite-looking* symptom — a wall at
+> **~75%** — from a different root cause (a triple-counted summer derate on a
+> net-summer-capped fleet). Fixing the structure there flips the symptom to ERCOT's
+> over-running side and exposes a CC offer level that is too cheap. The two are
+> the same underlying lesson: the CF distribution is set by capacity definition +
+> reserve/commitment structure + offer level, never by a fitted wall.
+
 ## The observation
 
 In runs **115b** and **118**, efficient grid-serving combined cycles
@@ -239,3 +249,95 @@ Any change must be swept across the full ERCOT panel: Colorado Bend EC already
 *over*-runs the top bins, so a blanket loosening would push it further off.
 Validate with the 5 %-band `[7b]` / `plant_cf_bands` and the `cf_emd` metric
 before adopting.
+
+---
+
+## PJM and the net-summer ISOs: the mirror-image bug (2026-06-24)
+
+PJM, NYISO and NEISO showed the *opposite-looking* symptom of the ERCOT bug
+above — the combined-cycle fleet parked at a **~75 % of nameplate** wall (the
+70–75 % CF band ~3× over-stuffed, 75–85 % starved) — but the root cause was
+**not** the offer curve. It was a **triple-counted summer derate** on a fleet
+whose LP capacity was pinned at the net-summer rating. Diagnosed and structurally
+fixed this session; the fix is correct and **exposes a separate, larger CC
+offer-level miss** that is the real open item (see the handoff
+`docs/handoffs/pjm-cc-level-tuning-2026-06.md`).
+
+### Root cause: three stacked summer derates on a net-summer-capped fleet
+
+The non-ERCOT ISOs run the per-plant EIA-860 fleet (`plant_level_fleet`), where
+`_rows_to_generators` sets each unit's `pmax_mw` to its **net-summer** capacity
+(`fleet.py` ~2855). On top of that already-summer-derated capacity the model then
+applied, for combined cycles:
+
+1. **`_SUMMER_CLASS_DERATE` (a flat 10 %)** again in the summer months
+   (`fleet.py` ~1097) — a second summer derate on a number that was *already*
+   the summer rating;
+2. **`cc_duct_peaking`** sized the duct-firing peak band from the EIA-860
+   `(nameplate − net_summer)/nameplate` gap (`fleet.cc_duct_peaking_pct`) — i.e.
+   it re-priced *the very same summer-derate gap* as an expensive year-round duct
+   wall. For Guernsey (62949) that gap is 13 %, so the steep band started at
+   ~87 % of net-summer ≈ **75.7 % of nameplate** — in every hour, winter
+   included;
+3. the statistical **WEFOR** forced-outage rate, on top of the historic CAMPD
+   outage overlay that already carries every sustained outage.
+
+Net effect (PJM CC_REGULAR, measured): the dispatchable ceiling sat at ~86.7 %
+of nameplate in winter and ~78 % in summer, against a real CAMPD fleet that runs
+into the 85–95 % band. The "75 % wall" verdict-C1 symptom was this, not an
+offer-curve discontinuity.
+
+### The fix: nameplate capacity + one measured summer derate
+
+`ScenarioConfig.cc_nameplate_summer_derate` (on for PJM/NYISO/NEISO; ERCOT and
+CAISO/MISO/SPP unchanged) restructures CC_REGULAR / CC_CHP to the **physically
+correct seasonal shape**, the same nameplate-anchored capacity ERCOT's CAMPD
+bins already use:
+
+- CC LP capacity is raised from net-summer to **full EIA-860 nameplate**
+  (`fleet_to_bins`, scaled by the per-plant `net_summer/nameplate` ratio so it is
+  robust to fleet-vs-EIA membership differences);
+- the **one** allowed derate is the per-plant **measured** summer derate
+  (`net_summer / nameplate`, `fleet.cc_summer_capacity`), applied in summer only
+  — winter restores full cold-weather capability, which is real for an F-class
+  CC. This supersedes the flat 10 % class derate (an improvement *over* ERCOT,
+  which still uses the flat value);
+- in a historic backcast the statistical **POF and age/performance derate are
+  dropped** for CC (the CAMPD overlay supplies the sustained outages, net-summer
+  captures performance); only the short-outage **`wefor_residual`** (~1.5 %, the
+  brief forced events below the overlay's multi-day detector floor) remains;
+- `cc_duct_peaking` is **capped at the F-class supplementary-firing physical
+  maximum** (`cc_duct_peaking_cap_pct = 8`), so the duct band stops re-pricing
+  the ambient summer gap and now sits at the **top of nameplate (~92 %)** where
+  duct firing physically is.
+
+Predicted/measured wall move: Guernsey **75.7 % → 92 %** of nameplate; PJM
+CC_REGULAR winter wall median **86.7 % → 93.5 %**; the summer double-derate gone.
+The 70–75 % over-stuffing empties. **ERCOT is byte-identical** (every flag gated
+off for it).
+
+### What the fix exposes: CC is too cheap (the real open item)
+
+With the false wall removed, PJM 2024 (diagnostic, single-year) CC_REGULAR runs
+at **73 % annual CF vs CAMPD's 61 %** and is **+64.7 TWh** over CAMPD net (model
+394.9 vs 330.2); model gas ≈ 437 TWh vs ~370 actual, coal ≈ 92 vs ~120 actual.
+The model now *over*-runs the top — 95–100 % CF holds **135 600 h vs CAMPD's
+34 500** — and is offline only **12.5 %** of hours vs the real **22 %**. Model
+peak ≈ CAMPD peak (ratio 1.00), so this is genuine over-generation, not a
+normalization artifact.
+
+This is the `CLAUDE.md` rule-11 signal in textbook form: **the 75 % wall had been
+silently compensating for a CC offer level that is too cheap.** Capping the plant
+low hid the over-running; restoring real capacity surfaces it. The fix must *not*
+be a new wall — it must re-level the offer / add the real cycling structure. The
+tuning direction (offer level vs commitment vs in-LP reserve co-optimization,
+grounded in ERCOT's richer curve and PJM's published market design) is worked
+through in `docs/handoffs/pjm-cc-level-tuning-2026-06.md`.
+
+### Code touchpoints (this session)
+
+- `config/scenarios.py`: `cc_nameplate_summer_derate`, `cc_duct_peaking_cap_pct`.
+- `data/fleet.py`: `cc_summer_capacity()` / `cc_summer_derate_ratio()`; CC cap
+  raise in `fleet_to_bins`; the CC availability branch + per-plant summer derate
+  in the availability builder; the duct-band cap in `bins_to_fleet`.
+- `scripts/run_calibration.py`: flags wired on for PJM/NYISO/NEISO.
