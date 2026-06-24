@@ -781,6 +781,29 @@ def _calibration_config(
         #   every CC the same phantom duct band and stacked the fleet at one
         #   72% CF mass point (fleet.cc_duct_peaking_pct). ERCOT keeps its
         #   CAMPD-fitted class curve + hand-set per-plant map.
+        cc_duct_peaking_cap_pct=(8.0 if iso.upper() == "PJM" else None),  # cap
+        #   the per-plant duct band at the F-class supplementary-firing physical
+        #   max. The raw nameplate-vs-net-summer gap folds the ambient summer
+        #   derate into the duct band (median 6.6%, but up to 28% for high-derate
+        #   plants), oversizing it and dropping the price wall to ~76% of
+        #   nameplate (Guernsey 13% gap). Capping at 8% keeps the per-plant duct
+        #   flag (non-duct CCs still 0) but positions the wall at the real ~92%
+        #   duct-firing point. ERCOT uses a flat class pct_peaking (no cap).
+        cc_nameplate_summer_derate=(
+            iso.upper() in ("PJM", "NYISO", "NEISO")
+        ),  # CC_REGULAR/CC_CHP carry full EIA-860 nameplate in the LP and are
+        #   derated to the measured net-summer rating in summer only (the correct
+        #   seasonal shape: full cold-weather capability in winter, ambient-
+        #   derated in summer). Replaces pinning the LP capacity at net-summer
+        #   year-round (which under-modelled winter AND, with the flat 10%
+        #   _SUMMER_CLASS_DERATE on top, derated summer twice) with the per-plant
+        #   measured derate (fleet.cc_summer_capacity). In backcast the
+        #   statistical WEFOR/POF/age derate are also dropped for CC — the CAMPD
+        #   overlay already supplies the real outages. The duct-firing peak band
+        #   then sits at the top of nameplate (its physical location) instead of
+        #   inside a net-summer-capped range. ERCOT (CAMPD-bin nameplate) and
+        #   CAISO/MISO/SPP keep their prior behaviour. Wired for the winter-
+        #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
         ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much).
