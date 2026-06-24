@@ -1307,6 +1307,32 @@ def ercot_zonal_gas_basis_by_zone(
     return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
 
 
+def ercot_waha_collapse_freq(year: int, path: Path | None = None) -> float | None:
+    """Return the measured Waha negative-price-day frequency for ``year``, or None.
+
+    The fraction of the year the Waha *hub* spot price was negative (the deep
+    take-away-constrained collapse), read from the ``neg_day_freq`` column of
+    :data:`ERCOT_ZONAL_GAS_HUB_PATH` (West row). This is the measured collapse
+    frequency that splits the net-load distribution into a *collapsed* (lowest
+    net-load) regime and a *firm* (highest net-load) regime in
+    :func:`apply_ercot_west_netload_gas_shape`. 2024 is EIA-authoritative (42% of
+    trading days, Today-in-Energy id=64445); 2023/2025 are NGI/Reuters annual
+    negative-day counts (see ``neg_day_freq_source``). Returns ``None`` when the
+    table, the West row, or the column is missing (e.g. a forward year), so the
+    caller can fall back to its default.
+    """
+    frame = _load_ercot_zonal_gas_hub(path)
+    if frame is None or "neg_day_freq" not in frame.columns:
+        return None
+    sub = frame[(frame["year"] == year) & (frame["zone"] == "West")]
+    if sub.empty:
+        return None
+    val = sub["neg_day_freq"].iloc[0]
+    if pd.isna(val):
+        return None
+    return float(val)
+
+
 _ERCOT_EP_GAS_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 
@@ -1592,12 +1618,12 @@ def apply_ercot_zonal_gas_basis(
     )
 
 
-# Net-load percentile at which the West gas basis reaches its firm (high-demand)
-# asymptote (config.ercot_west_gas_firm_basis). Sustained peak-demand conditions
-# — the regime in which a West peaker actually runs — rather than the single
-# annual peak hour (which would over-fit the amplitude to one outlier). Used by
-# :func:`apply_ercot_west_netload_gas_shape`.
-_WEST_GAS_FIRM_NETLOAD_PCTILE: float = 95.0
+# Fallback Waha negative-price-day frequency when the measured per-year value
+# (data/raw/ercot_zonal_gas_hub.csv neg_day_freq, e.g. a forward year) is absent.
+# The fraction of hours assigned to the COLLAPSED (deep-negative) regime in the
+# two-regime net-load step; the complement is the FIRM regime. 0.42 is the 2024
+# record (EIA: Waha < $0 on 42% of trading days) — a conservative central value.
+_WEST_GAS_COLLAPSE_FREQ_DEFAULT: float = 0.42
 # Model zones priced off the Waha hub (the anti-correlated, takeaway-constrained
 # Permian basin). Panhandle carries ~0 modeled load but is included for parity.
 _ERCOT_WAHA_ZONES: tuple[str, ...] = ("West", "Panhandle")
@@ -1611,7 +1637,7 @@ def apply_ercot_west_netload_gas_shape(
     net_load_mw: np.ndarray,
     henry_hub_path: Path | None = None,
 ) -> None:
-    """Make the West/Panhandle Waha gas basis a per-hour function of net-load.
+    """Make the West/Panhandle Waha gas basis a two-regime function of net-load.
 
     The structural replacement for the flat
     :attr:`~market_sim.config.scenarios.ScenarioConfig.ercot_gas_delivered_floor_basis`
@@ -1631,23 +1657,36 @@ def apply_ercot_west_netload_gas_shape(
     instead lets the peaker/CC split fall out of *when each unit runs* rather than
     a chosen per-unit number.
 
-    This adds a **mean-zero** (over the year) net-load shape to each West/Panhandle
-    gas unit's price, so the measured annual Waha basis already set by
-    :func:`apply_ercot_zonal_gas_basis` is preserved in expectation — only
-    redistributed across hours. The amplitude is pinned so the highest-demand
-    hours (the :data:`_WEST_GAS_FIRM_NETLOAD_PCTILE` th net-load percentile) reach
-    ``Henry Hub + ercot_west_gas_firm_basis`` (the firm Waha *delivered* level a
-    West plant pays in the scarcity hours its peakers run); the rest of the curve
-    follows linearly in net-load, floored at the physical delivered minimum
-    (:data:`_GAS_PRICE_FLOOR` — delivered gas is never negative, so the realised
-    annual mean rises slightly above the deep-negative hub mean, which is correct:
-    the hub goes negative, the burner tip does not).
+    **Two-regime step keyed on the measured collapse frequency.** The Waha basis
+    is bimodal — deeply negative on the days the hub is over-supplied, firm on the
+    rest — so a single number for the whole distribution is wrong in both tails.
+    The split point is the **measured** Waha negative-price-day frequency
+    ``collapse_freq`` (``data/raw/ercot_zonal_gas_hub.csv`` ``neg_day_freq``; 2024
+    is EIA-authoritative at 42% of trading days, id=64445). The lowest
+    ``collapse_freq`` fraction of net-load hours are assigned a deep collapsed
+    basis; the top ``1 - collapse_freq`` are assigned the firm Waha **delivered**
+    level ``Henry Hub + ercot_west_gas_firm_basis`` — the level a West plant pays
+    in the high-demand hours its peakers actually run. The deep value is **not**
+    chosen: it is solved from the annual-mean constraint
 
-    Structural, not a residual fit: it is a function of net-load (a load forecast
+        ``collapse_freq · deep + (1 - collapse_freq) · firm = annual_measured``
+
+    so the measured annual Waha basis already set by
+    :func:`apply_ercot_zonal_gas_basis` is preserved — only redistributed across
+    hours — then floored at the physical delivered minimum (:data:`_GAS_PRICE_FLOOR`;
+    delivered gas is never negative, so the realised annual mean rises slightly
+    above the deep-negative hub mean, which is correct: the hub goes negative, the
+    burner tip does not). Because peakers run only in the top-demand hours they sit
+    firmly in the firm regime and pay firm Waha; a baseload CC running across all
+    hours pays the blend.
+
+    Structural, not a residual fit: every input is measured or cited — the split is
+    the measured negative-day frequency, the firm level is the cited firm Waha
+    delivered basis, and the deep level is forced by mean-preservation, none tuned
+    to the CT_PEAKER volume residual. It is a function of net-load (a load forecast
     plus a VRE build, so it regenerates for any forward year and responds to
-    changed conditions — more VRE lowers net-load and shifts the curve,
-    admissibility tests #10/#12), anchored on the measured annual Waha basis and
-    the cited firm Waha delivered level, never on the CT_PEAKER volume residual.
+    changed conditions — more VRE lowers net-load and shifts which hours collapse,
+    admissibility tests #10/#12).
 
     Gated on ``config.ercot_west_netload_gas_shape``, ``config.ercot_zonal_gas_basis``
     (it shapes the basis that function applies) and ``config.iso == "ERCOT"``.
@@ -1676,10 +1715,17 @@ def apply_ercot_west_netload_gas_shape(
     nl = np.asarray(net_load_mw, dtype=float)[:hours]
     if nl.size != hours:
         return
-    nl_mean = float(nl.mean())
-    nl_firm = float(np.percentile(nl, _WEST_GAS_FIRM_NETLOAD_PCTILE))
-    if nl_firm <= nl_mean:
-        return  # degenerate net-load distribution; leave the flat basis in place
+
+    # Collapse frequency: the measured fraction of hours in the deep (low-net-load)
+    # regime. Config override (env ERCOT_WEST_GAS_COLLAPSE_FREQ) > measured per-year
+    # neg_day_freq > the 2024 record default. Clamped into (0, 1) exclusive so both
+    # regimes are non-empty.
+    collapse_freq = getattr(config, "ercot_west_gas_collapse_freq", None)
+    if collapse_freq is None:
+        collapse_freq = ercot_waha_collapse_freq(year)
+    if collapse_freq is None:
+        collapse_freq = _WEST_GAS_COLLAPSE_FREQ_DEFAULT
+    collapse_freq = float(min(max(float(collapse_freq), 0.01), 0.99))
 
     # Firm (high-demand) Waha delivered level the top-demand hours should reach.
     firm_basis = getattr(config, "ercot_west_gas_firm_basis", None)
@@ -1691,30 +1737,56 @@ def apply_ercot_west_netload_gas_shape(
     if not hh_year:
         return
     hh_mean = float(np.mean(hh_year))
-    target_firm_price = hh_mean + firm_basis
 
-    # Per-unit mean-zero net-load deviation: dev(t) = nl(t) - nl_mean (mean 0 by
-    # construction). Amplitude A pins the firm-percentile hour at the firm price;
-    # the realised annual mean is preserved except where the deep-collapse hours
-    # clip at the physical floor (delivered gas is never negative).
-    dev = nl - nl_mean  # (T,)
-    span = nl_firm - nl_mean
+    # Burner-tip delivered floor for the COLLAPSE regime. The hub goes to ~$0 (and
+    # negative) on over-supply days, but a power plant's *delivered* gas never does:
+    # intrastate transport + as-burned handling set a positive floor well above the
+    # hub. Flooring the deep regime at the generic _GAS_PRICE_FLOOR (~$0.10, a
+    # hub-like number) creates a perverse "cheap-hour magnet" that pulls low-HR West
+    # CTs into the lowest-demand hours (dispatch anti-correlated with load) — the
+    # delivered burner tip must floor at the transport-bound minimum instead. Config
+    # ercot_west_gas_delivered_floor (env ERCOT_WEST_GAS_DELIVERED_FLOOR); None keeps
+    # the generic floor (legacy behaviour).
+    deliv_floor = getattr(config, "ercot_west_gas_delivered_floor", None)
+    deliv_floor = float(deliv_floor) if deliv_floor is not None else _GAS_PRICE_FLOOR
+    firm_price = max(hh_mean + firm_basis, deliv_floor)
+
+    # Split the net-load distribution: the lowest collapse_freq fraction of hours
+    # COLLAPSE, the top (1 - collapse_freq) are FIRM. nl_split is the collapse_freq
+    # quantile of net-load.
+    nl_split = float(np.quantile(nl, collapse_freq))
+    collapse_mask = nl <= nl_split  # (T,)
+    cfrac = float(collapse_mask.mean())  # realised collapse fraction (ties)
+    ffrac = 1.0 - cfrac
+    if cfrac <= 0.0 or ffrac <= 0.0:
+        return  # degenerate net-load distribution; leave the flat basis in place
+
+    # Deep collapsed price per unit, forced by the annual-mean constraint
+    # cfrac*deep + ffrac*firm = p_mean, then floored at the delivered burner-tip
+    # minimum (the burner tip never reaches the hub's negative collapse — the floor
+    # lift is the realised premium of delivered over hub).
     p_mean = fuel_prices[west_rows, :].mean(axis=1)  # (n_west,)
-    amp = (target_firm_price - p_mean) / span  # (n_west,)
-    shaped = fuel_prices[west_rows, :] + amp[:, np.newaxis] * dev[np.newaxis, :]
-    fuel_prices[west_rows, :] = np.maximum(shaped, _GAS_PRICE_FLOOR)
+    deep_price = (p_mean - ffrac * firm_price) / cfrac  # (n_west,)
+    deep_price = np.maximum(deep_price, deliv_floor)
+    shaped = np.where(
+        collapse_mask[np.newaxis, :], deep_price[:, np.newaxis], firm_price
+    )
+    fuel_prices[west_rows, :] = shaped
     realised_mean = fuel_prices[west_rows, :].mean()
     logger.info(
-        "ERCOT West net-load gas shape (%d): %d West/Panhandle gas units; firm "
-        "basis %+.2f -> firm price $%.2f at p%.0f net-load (%.0f MW vs mean %.0f); "
-        "annual gas $%.2f -> $%.2f (floor-lifted from the negative hub tail)",
+        "ERCOT West net-load gas step (%d): %d West/Panhandle gas units; "
+        "collapse_freq %.2f (split nl %.0f MW); firm basis %+.2f -> firm $%.2f, "
+        "deep $%.2f..$%.2f (deliv floor $%.2f); annual gas $%.2f -> $%.2f "
+        "(floor-lifted from the negative hub tail)",
         year,
         west_rows.size,
+        cfrac,
+        nl_split,
         firm_basis,
-        target_firm_price,
-        _WEST_GAS_FIRM_NETLOAD_PCTILE,
-        nl_firm,
-        nl_mean,
+        firm_price,
+        float(deep_price.min()),
+        float(deep_price.max()),
+        deliv_floor,
         float(p_mean.mean()),
         float(realised_mean),
     )
