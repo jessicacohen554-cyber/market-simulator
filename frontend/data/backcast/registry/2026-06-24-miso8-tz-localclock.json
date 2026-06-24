@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-miso8-tz-localclock",
+  "label": "miso8 tz localclock",
+  "date": "2026-06-24",
+  "shorthand": "miso8-tz-localclock",
+  "definition": "miso8 tz-localclock: fixes a confirmed UTC-vs-local clock misalignment AND picks up per-plant CAMPD tranche binning (MISO added to CAMPD_BINNING_ISOS, PR #843). MISO renewable CF was on local time but both demand sources were UTC (~5h CDT / ~6h CST ahead), pairing midday solar / nocturnal wind against trough demand and cycling coal PRB + CC down across 03:00-13:00 where CAMPD shows them hot. Fix: system demand re-sourced from the EIA-930 MISO hourly frame Demand column (was the UTC demand-profiles parquet; identical 641 TWh / peak, only the clock moves), and the sub-BA zonal shares mapped UTC->local via that same frame, so demand and renewable CF share one local wall clock (offset derived from the clock, not the fit; rule #12). RESULT: summer coal diurnal now bottoms ~local 05:00 and ramps to an 18:00 peak, tracking the CAMPD ramp (bottom 04:00 / peak 19:00) at 0.995 shape correlation vs the prior phantom-surplus midday cliff; C3a mean-LMP and C3b shape PASS. Same miso7/miso3 reference-coopt config (reference-price interface + priced interchange + firm hydro imports, all default-on). NOT-YET overall: C1/C2 still under on gas/coal volume (CT_PEAKER ~-26 TWh prices out) and the scarcity tail (C3c) is absent — both pre-existing MISO misses, not tz-related.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-24-miso8-tz-localclock.js",
+  "bundle": "results/calibration/MISO/tz_localclock"
+}
