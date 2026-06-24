@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-pjm-50-seam-firm",
+  "label": "pjm 50 seam firm",
+  "date": "2026-06-24",
+  "shorthand": "pjm-50-seam-firm",
+  "definition": "(DIAGNOSTIC) pjm 48 coal keeper + pjm 49 seam-price corrections + THREE grounded reference-price seam additions targeting the MISO/NYISO under-export pjm 49 unmasked. (1) FIRM SCHEDULED-EXPORT FLOOR (firm_export_floor_by_year + inject_reference_price_firm_export): force the cheapest export tranches on at the p10 of PJM's OWN per-tie SCHEDULED export (MISO 1250/100/0, NYISO 900/1400/1650 MW), the export mirror of the Manitoba/HQ firm-import floors -- the firm contractual base that flows regardless of the hourly spread (rule #11: scheduled-transaction data, not the realized actual_flow that is scored). (2) HURDLE 2.0->1.0: physical decomposition -- the firm transmission-service half of the old OMS-RSC $2 is now carried by the firm floor, leaving marginal losses (~3% x ~$35 ~= $1) as the only friction on the economic increment (PJM-MISO/NYISO JOAs pay no pancaked wheeling). (3) TVA + LGEE import seams (~8 TWh/yr, previously unmodeled): documented Southeast SERC $30/MWh basis (HR 11.6, like reconciled Carolinas), limits 1600/1100 MW from p99.5 of PJM's measured ties. RESULT: per-seam net export (model/per-tie) -- 2024 every seam exact (MISO +25.5/+27.2, NYISO +20.4/+20.4, Carolinas -6.2/-6.4, TVA -4.7/-5.8, LGEE -3.4/-2.4; NET +31.6 vs +32.7); 2023 improved (NET +29.6 vs +22.5 at pjm 49; firm floor lifts NYISO +4.3->+8.4, MISO +17.6->+22.6) but still under (cheap-gas: NYISO low system-avg HR leaves the economic seam idle, export ~= the p10 firm floor vs real +18.5). Net-interchange MAE vs EIA-930 15.2 (pjm 49 16.5); vs per-tie sum 10.4. ISOLATES THE NEXT ROOT CAUSE: Southeast neighbors (Carolinas/TVA/LGEE) priced gas-marginal flip to wrong-direction EXPORT in dear-gas 2025 (+2.0/+1.3/+0.9 vs measured -5.9/-5.4/-2.3) -- they are coal/nuclear and need gas-INELASTIC pricing (HR 11.6 sits a thin ~$1.5-2 parallel below PJM every year, so the diurnal swing flips them); next fix is a per-year Southeast effective HR from its fuel mix / a Duke-SOCO lambda. NYISO 2025 over-exports (+28.1 vs +21.9) off the NYC-inflated system-avg HR -- scope-B border-price re-anchor gated on a west-NY LMP extract. 2025 also carries the documented EIA-930 (+18.0) vs per-tie (+32.9) measured-source gap (2023/24 the two agree); scored against both, flagged in calibration_attestation.json. pjm 48 stays the PJM keeper. The firm floor + losses hurdle + TVA/LGEE are structurally correct and stay in (rule #1) -- they make 2024 per-seam-exact and improve 2023. Merged 2023-25 from parallel per-year solves. See bundle SUMMARY-seam-structure.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-24-pjm-50-seam-firm.js",
+  "bundle": "results/calibration/pjm50_seam_firm"
+}
