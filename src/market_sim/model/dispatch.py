@@ -442,6 +442,73 @@ def _build_hydro_rows(
     return block, row_lower, row_upper
 
 
+def _build_import_node_rows(
+    layout: VariableLayout,
+    node_gen_idx: np.ndarray,
+    month_index: np.ndarray,
+    monthly_lo: np.ndarray,
+    monthly_hi: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Return the priced import-node monthly net-throughput band rows.
+
+    Builds **one row per month** pinning the priced node's net interchange to
+    the measured EIA-930 schedule (boundary-flow calibration constraint —
+    Aurora/PLEXOS/GridView historical-validation practice; CLAUDE.md rule #11)::
+
+        monthly_lo[m] <= sum_{t in month m} sum_{g in node} P[g, t] <= monthly_hi[m]
+
+    The ``node`` columns are every import tranche (``P >= 0``, injects into the
+    external zone) **and** every export sink (``P <= 0``, withdraws), so the
+    signed sum is the node's *net* import (positive) / export (negative) energy
+    — exactly the negative of the measured export-positive net interchange. The
+    band keeps the priced tranches free to set the marginal price *within* the
+    monthly envelope (the LP still chooses which hours/tranches clear), while the
+    monthly *level* tracks the metered schedule instead of the static economic
+    ladder's near-flat clearing. ``monthly_lo == monthly_hi`` makes it an
+    equality (a hard monthly pin); a non-zero band half-width leaves price /
+    feasibility room.
+
+    The whole block is assembled in one ``coo_matrix`` from the hour-to-month
+    map — each ``(g, t)`` pair drops a ``+1`` into row ``month[t]`` — so there
+    is no Python loop over hours (CLAUDE.md rule #2).
+
+    Args:
+        layout: Variable layout describing the column structure.
+        node_gen_idx: Thermal-block indices of the import-node pseudo-generators
+            (import tranches + export sinks), shape ``(n_node,)``.
+        month_index: Month index (``0 <= m < n_months``) of each hour, shape
+            ``(T,)``.
+        monthly_lo: Monthly net-import lower bound in MWh, shape ``(n_months,)``.
+        monthly_hi: Monthly net-import upper bound in MWh, shape ``(n_months,)``.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
+        shape ``(n_months, layout.total_columns)``.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    gen_idx = np.asarray(node_gen_idx, dtype=int)  # (n_node,)
+    month_index = np.asarray(month_index, dtype=int)  # (T,)
+    n_node = gen_idx.size
+    n_months = np.asarray(monthly_lo).shape[0]
+
+    hours = np.arange(T)  # t: hour index
+    # Row r = month[t] (same for every node gen); column = node gen g's P slot
+    # in hour t. Every (g, t) pair contributes +1 to its month's net total.
+    rows = np.broadcast_to(month_index[None, :], (n_node, T)).ravel()
+    cols = (hours[None, :] * vph + layout._p_off + gen_idx[:, None]).ravel()
+    data = np.ones(n_node * T, dtype=float)
+    block = sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_months, layout.total_columns),
+    ).tocsr()
+    return (
+        block,
+        np.asarray(monthly_lo, dtype=float),
+        np.asarray(monthly_hi, dtype=float),
+    )
+
+
 def _build_storage_daily_cycle_rows(
     layout: VariableLayout, cycle_hours: int
 ) -> sp.csr_matrix:
@@ -776,6 +843,10 @@ def build_constraints(
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+    import_node_gen_idx: np.ndarray | None = None,
+    import_node_monthly_lo: np.ndarray | None = None,
+    import_node_monthly_hi: np.ndarray | None = None,
+    import_node_month_index: np.ndarray | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage_power_cap: np.ndarray | float | None = None,
@@ -1036,6 +1107,29 @@ def build_constraints(
             A = sp.vstack([A, hydro_block], format="csr")
             row_lower = np.concatenate([row_lower, hydro_lower])
             row_upper = np.concatenate([row_upper, hydro_upper])
+
+    # Optional priced import-node monthly net-throughput band: one row per month
+    # pinning the node's net interchange (import tranches minus export sinks) to
+    # the measured EIA-930 schedule (boundary-flow calibration constraint). The
+    # priced tranches still set the marginal price within each month's envelope.
+    # Appended after hydro and before the RPS/reserve rows so the front-anchored
+    # energy-balance duals and the end-anchored RPS/reserve duals keep their
+    # positions. No rows (identical LP) when no node indices are supplied.
+    if import_node_gen_idx is not None and import_node_monthly_lo is not None:
+        node_idx = np.asarray(import_node_gen_idx, dtype=int)
+        if node_idx.size:
+            if import_node_month_index is None:
+                import_node_month_index = _hour_to_month_index(T)
+            node_block, node_lower, node_upper = _build_import_node_rows(
+                layout,
+                node_idx,
+                import_node_month_index,
+                import_node_monthly_lo,
+                import_node_monthly_hi,
+            )
+            A = sp.vstack([A, node_block], format="csr")
+            row_lower = np.concatenate([row_lower, node_lower])
+            row_upper = np.concatenate([row_upper, node_upper])
 
     # Optional RPS inequality: one annual row, clean generation must reach
     # rps_target * total demand, with an infinite upper bound.
@@ -1364,6 +1458,10 @@ class DispatchModel:
         hydro_monthly_min: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
         interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+        import_node_gen_idx: np.ndarray | None = None,
+        import_node_monthly_lo: np.ndarray | None = None,
+        import_node_monthly_hi: np.ndarray | None = None,
+        import_node_month_index: np.ndarray | None = None,
         reserve_requirement: np.ndarray | None = None,
         reserve_eligible: np.ndarray | None = None,
         reserve_storage: bool = False,
@@ -1436,6 +1534,10 @@ class DispatchModel:
             hydro_monthly_min=hydro_monthly_min,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             interface_groups=interface_groups,
+            import_node_gen_idx=import_node_gen_idx,
+            import_node_monthly_lo=import_node_monthly_lo,
+            import_node_monthly_hi=import_node_monthly_hi,
+            import_node_month_index=import_node_month_index,
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
             reserve_storage_power_cap=(storage_power_cap if reserve_storage else None),
@@ -1896,6 +1998,10 @@ def solve_dispatch(
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+    import_node_gen_idx: np.ndarray | None = None,
+    import_node_monthly_lo: np.ndarray | None = None,
+    import_node_monthly_hi: np.ndarray | None = None,
+    import_node_month_index: np.ndarray | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage: bool = False,
@@ -1997,6 +2103,10 @@ def solve_dispatch(
         hydro_monthly_min=hydro_monthly_min,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
         interface_groups=interface_groups,
+        import_node_gen_idx=import_node_gen_idx,
+        import_node_monthly_lo=import_node_monthly_lo,
+        import_node_monthly_hi=import_node_monthly_hi,
+        import_node_month_index=import_node_month_index,
         reserve_requirement=reserve_requirement,
         reserve_eligible=reserve_eligible,
         reserve_storage=reserve_storage,

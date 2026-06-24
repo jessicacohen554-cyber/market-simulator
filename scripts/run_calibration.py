@@ -1267,6 +1267,7 @@ def run_year(
     caiso_corridor_flow_limit: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
+    nyiso_import_reconciliation: bool | None = None,
     miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
@@ -1398,6 +1399,10 @@ def run_year(
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
     if nyiso_firm_imports is not None:
         config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
+    if nyiso_import_reconciliation is not None:
+        config = config.with_overrides(
+            nyiso_import_reconciliation=nyiso_import_reconciliation
+        )
     if miso_firm_imports is not None:
         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
     if gas_hub_basis_overlay is not None:
@@ -1949,6 +1954,32 @@ def run_year(
                 year,
             )
 
+    # NYISO priced-node boundary-flow reconciliation: pin the priced node's
+    # MONTHLY net interchange to the measured EIA-930 schedule via a per-month
+    # band constraint in the LP (transmission.build_import_node_reconciliation ->
+    # dispatch._build_import_node_rows). The near-static economic tranche ladder
+    # clears a near-flat ~18.5-21.6 TWh that does not track the metered
+    # schedule's 23.45 -> 20.35 -> 19.09 TWh decline; the band replaces that
+    # economic estimate with the authoritative measurement (CLAUDE.md rule #11),
+    # priced tranches still setting the marginal price within each month's
+    # envelope. Only fires with priced interchange + the flag + a priced node.
+    import_node_recon = None
+    if priced_interchange and getattr(config, "nyiso_import_reconciliation", False):
+        from market_sim.model.transmission import build_import_node_reconciliation
+
+        import_node_recon = build_import_node_reconciliation(fleet_arrays, iso, year)
+        if import_node_recon is not None:
+            node_idx, recon_lo, recon_hi = import_node_recon
+            logger.info(
+                "%s %d: priced import node reconciled to measured EIA-930 net "
+                "interchange — %d node rows, annual band [%.2f, %.2f] TWh",
+                iso,
+                year,
+                int(node_idx.size),
+                recon_lo.sum() / 1e6,
+                recon_hi.sum() / 1e6,
+            )
+
     # Manitoba firm-hydro import floor (MISO only): the contracted firm baseload
     # flows into MISO-North every hour regardless of MISO's hourly price (the
     # firm-schedule pattern; transmission.inject_miso_firm_imports). Only fires
@@ -2257,6 +2288,17 @@ def run_year(
         hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
     )
+    # Priced import-node monthly net-interchange band (NYISO boundary-flow
+    # reconciliation): pins the node's net throughput to the measured EIA-930
+    # schedule. Part of the LP feasible region (same for P0/P1), so it warm-starts
+    # cleanly. No keys (identical LP) unless the reconciliation was built above.
+    if import_node_recon is not None:
+        node_idx, recon_lo, recon_hi = import_node_recon
+        dispatch_kwargs.update(
+            import_node_gen_idx=node_idx,
+            import_node_monthly_lo=recon_lo,
+            import_node_monthly_hi=recon_hi,
+        )
 
     # Energy+reserve co-optimization (config.energy_reserve_coopt; PJM-gated
     # until other ISOs are validated). Reserve-eligible units are dispatchable

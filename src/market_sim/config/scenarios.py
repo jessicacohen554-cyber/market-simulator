@@ -544,6 +544,29 @@ class ScenarioConfig:
     # measured lightest-import hour (NY imported >=922 MW in 98% of 2023 hours)
     # so it never forces a phantom over-import. FORWARD-REPRODUCIBLE (a firm
     # schedule reproduces for any year); Tier 3. Default off; NYISO-only.
+    nyiso_import_reconciliation: bool = False  # NYISO priced import-node
+    # boundary-flow calibration: pin the priced node's MONTHLY net interchange to
+    # the measured EIA-930 schedule (eia_loader.nyiso_net_interchange) via a
+    # per-month band constraint in the LP (transmission.
+    # build_import_node_reconciliation -> dispatch._build_import_node_rows). The
+    # economic priced node clears a near-flat ~18.5-21.6 TWh because its tranche
+    # offers are near-static and do NOT track the metered schedule's year-over-
+    # year decline (23.45 -> 20.35 -> 19.09 TWh), so it under-imports in 2023 and
+    # over-imports in 2024/25 vs the metered schedule. This is the standard
+    # production-cost boundary-flow calibration (Aurora/PLEXOS/GridView/PROMOD
+    # historical validation pin the tie-line net flow against an unmodeled
+    # neighbor; ReEDS fixes net trade with non-modeled regions). Unlike the prior
+    # rejected "import scaling" (which degraded an already-exact served-wedge
+    # match), the current priced node DEVIATES +-1-5 TWh/yr, so moving it toward
+    # the measurement REPLACES an economic estimate with the authoritative
+    # measurement (CLAUDE.md rule #11) — the opposite of overfitting. The target
+    # is the measured schedule itself, NOT a residual-minimizing volume (rule
+    # #12); the band (NYISO_IMPORT_RECON_BAND_FRAC) only leaves the priced
+    # tranches room to set the marginal price WITHIN each month's envelope. Keeps
+    # imports price-responsive within the band; the priced node stays the forward
+    # mechanism (in a forecast the constraint is sourced from the neighbor's
+    # forecast net position or relaxed). Requires --priced-interchange. Default
+    # off (byte-identical); NYISO-only.
     miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
     # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
     # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
@@ -2044,6 +2067,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
+    "nyiso_import_reconciliation": 1,
     "miso_firm_imports": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
