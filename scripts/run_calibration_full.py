@@ -813,16 +813,12 @@ def _must_run_profiles(
     for klass in _INJECTED_MUSTRUN_CLASSES:
         if klass in skip_classes:
             continue
-        rows = e923[e923["klass"] == klass]
-        if klass == "biomass":
-            # Vintage-carry-reconciled energy so injected == benchmark biomass.
-            annual, monthly = _reconciled_biomass_class(year, generation, iso, e930)
-            monthly = np.clip(monthly, 0.0, None)
-        else:
-            if klass == "OTHER":
-                rows = rows[~rows["plant_id"].isin(_pumped_storage_plant_ids())]
-            annual = float(rows["annual_mwh"].sum())
-            monthly = np.clip(rows[mcols].sum().to_numpy(dtype=float), 0.0, None)
+        # Vintage-carry-reconciled energy (PS held out of OTHER inside the helper)
+        # so the injected class energy == the benchmark it is scored against, even
+        # in a partial current-year EIA-923 vintage where biomass AND OTHER are
+        # truncated (both absent from CAMPD/EIA-930).
+        annual, monthly = _reconciled_mustrun_class(klass, year, generation, iso, e930)
+        monthly = np.clip(monthly, 0.0, None)
         if annual <= 0:
             continue
         if monthly.sum() <= 0:
@@ -995,6 +991,54 @@ def _vintage_completeness(
     return e923_total / ann930_net
 
 
+def _reconciled_mustrun_class(
+    klass: str,
+    year: int,
+    generation: pd.DataFrame,
+    iso: str,
+    e930: pd.DataFrame | None,
+) -> tuple[float, np.ndarray]:
+    """Measured injected-class energy ``(annual_mwh, monthly[12])`` with the carry.
+
+    The single source of truth for "how much" of an injected residual class
+    (``biomass`` / ``OTHER``) both the benchmark and the must-run injection
+    consume, so the model's injected energy is pinned to the exact value it is
+    scored against. These classes are absent from CAMPD and EIA-930, so for a
+    partial current-year EIA-923 release (vintage completeness below
+    :data:`_EIA923_VINTAGE_COMPLETENESS_FRACTION`) the prior complete year's class
+    total is carried forward scaled by completeness (its monthly shape reused),
+    matching :func:`_backfill_renewables_eia930`. Pumped-storage plants are held
+    out of ``OTHER`` (current and prior year) — they dispatch as LP storage. A
+    complete vintage returns the raw EIA-923 value unchanged. ``e930 is None``
+    disables the carry (the completeness probe needs the EIA-930 grid total). This
+    is a legitimate measured physical input: it regenerates per forward year from
+    EIA-923 and is a fuel/contract supply limit, not a residual tune.
+    """
+    mcols = [f"m{i:02d}" for i in range(1, 13)]
+
+    def _rows(yr: int) -> pd.DataFrame:
+        df = _eia923_frame(yr, generation, iso)
+        df = df[df["klass"] == klass]
+        if klass == "OTHER":
+            df = df[~df["plant_id"].isin(_pumped_storage_plant_ids())]
+        return df
+
+    cur = _rows(year)
+    annual = float(cur["annual_mwh"].sum())
+    monthly = cur[mcols].sum().to_numpy(dtype=float)
+    completeness = _vintage_completeness(year, generation, iso, e930)
+    if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
+        prior = _rows(year - 1)
+        prior_ann = float(prior["annual_mwh"].sum())
+        est = prior_ann * completeness
+        if prior_ann > 0.0 and est > annual:
+            prior_mon = prior[mcols].sum().to_numpy(dtype=float)
+            psum = float(prior_mon.sum())
+            monthly = prior_mon * (est / psum) if psum > 0 else np.full(12, est / 12.0)
+            annual = est
+    return annual, monthly
+
+
 def _reconciled_biomass_class(
     year: int,
     generation: pd.DataFrame,
@@ -1003,35 +1047,11 @@ def _reconciled_biomass_class(
 ) -> tuple[float, np.ndarray]:
     """Measured biomass class energy ``(annual_mwh, monthly[12])`` with the carry.
 
-    The single source of truth for "how much biomass" both the benchmark and the
-    must-run injection consume, so the model's injected biomass is pinned to the
-    exact energy it is scored against. Biomass is absent from CAMPD and EIA-930,
-    so for a partial current-year EIA-923 release (vintage completeness below
-    :data:`_EIA923_VINTAGE_COMPLETENESS_FRACTION`) the prior complete year's
-    biomass is carried forward scaled by completeness (its monthly shape reused),
-    matching :func:`_backfill_renewables_eia930`. A complete vintage returns the
-    raw EIA-923 biomass unchanged. ``e930 is None`` disables the carry (the
-    completeness probe needs the EIA-930 grid total). This is a legitimate
-    measured physical input: it regenerates per forward year from EIA-923 and is a
-    fuel/contract supply limit, not a residual tune.
+    Thin wrapper over :func:`_reconciled_mustrun_class` for the biomass class (the
+    benchmark's biomass repair and the report's like-for-like total still call it
+    by name).
     """
-    mcols = [f"m{i:02d}" for i in range(1, 13)]
-    bio = _eia923_frame(year, generation, iso)
-    bio = bio[bio["klass"] == "biomass"]
-    annual = float(bio["annual_mwh"].sum())
-    monthly = bio[mcols].sum().to_numpy(dtype=float)
-    completeness = _vintage_completeness(year, generation, iso, e930)
-    if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
-        prior = _eia923_frame(year - 1, generation, iso)
-        prior_bio = prior[prior["klass"] == "biomass"]
-        prior_ann = float(prior_bio["annual_mwh"].sum())
-        est = prior_ann * completeness
-        if prior_ann > 0.0 and est > annual:
-            prior_mon = prior_bio[mcols].sum().to_numpy(dtype=float)
-            psum = float(prior_mon.sum())
-            monthly = prior_mon * (est / psum) if psum > 0 else np.full(12, est / 12.0)
-            annual = est
-    return annual, monthly
+    return _reconciled_mustrun_class("biomass", year, generation, iso, e930)
 
 
 def _backfill_renewables_eia930(
