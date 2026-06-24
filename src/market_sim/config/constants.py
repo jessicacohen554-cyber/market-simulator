@@ -2447,7 +2447,21 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             ba_code="DUK",
             proxy_ba="SOCO",
             gas_basis=0.0,
-            marginal_heat_rate=13.5,
+            # 11.6 reconciles the HR to its OWN documented basis — the ~$30/MWh
+            # SERC bilateral level / Henry Hub: $30 / $2.54 (2023 HH) / 1.02
+            # (load-shape mean) = 11.6. The prior 13.5 produced $34 at 2023 HH
+            # (+14% above the stated $30 anchor) and was the HIGHEST HR of any
+            # PJM neighbor — implausible for the nuclear/CC-heavy Southeast, a
+            # structurally cheaper region PJM net-IMPORTS from. The reconciled
+            # value prices the Carolinas at/below PJM, flipping the seam to the
+            # net-import direction PJM's OWN published per-tie interchange shows
+            # (Data Miner: PJM net-imports -5..-6 TWh/yr over the Duke/Progress
+            # ties, ~17% export hours). NOT tuned to that flow (rule #11): the
+            # value comes from the documented $30 SERC anchor and the per-tie
+            # data only VALIDATES the resulting direction. Estimate, pending a
+            # measured Duke FERC-714 hourly system-lambda extract (rule #12); no
+            # organized-market LMP exists for the Southeast, so no hr_by_year.
+            marginal_heat_rate=11.6,
             hurdle=2.0,
             interface_limit_mw=2400.0,
             border_zones=("PJM_Dominion",),
