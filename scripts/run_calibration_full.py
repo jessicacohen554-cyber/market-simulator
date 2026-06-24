@@ -3163,6 +3163,12 @@ def _report_generic(
         # category below the total (net interchange-served energy), as well as
         # in the [2] net-interchange reconciliation.
         import_net_twh = model.pop("import", None)
+        # The model's injected residual class is keyed "OTHER" (process gas /
+        # landfill / purchased steam from EIA-923); fold it into the lowercase
+        # "other" benchmark bucket so it shows as its own row instead of vanishing
+        # into the TOTAL only.
+        if "OTHER" in model:
+            model["other"] = model.get("other", 0.0) + model.pop("OTHER")
         e930_twh = (
             {
                 f: float(e930[f].sum()) / _MWH_PER_TWH
@@ -3172,14 +3178,26 @@ def _report_generic(
             if e930 is not None
             else {}
         )
-        # Like-for-like "actual total" basis (ITEM B): EIA-930's itemized BA mix
-        # has no biomass series, so a raw EIA-930 TOTAL undercounts in-region
-        # generation while the model TOTAL includes biomass — making model−actual
-        # swing on which side carries biomass, not on a real fuel-mix difference.
-        # Fold the vintage-carry-reconciled biomass (the same measured energy the
-        # model now injects) into the EIA-930 column so its TOTAL is the single
-        # consistent basis every year: EIA-930 grid measured fuels + EIA-930-
-        # repaired renewables + carried biomass. Imports stay a separate line.
+        # Like-for-like "actual total" basis (ITEM B). The headline gap used to
+        # flip sign year-to-year because the "actual total" was assembled from
+        # inconsistent pieces: EIA-930's itemized BA series omit biomass AND an
+        # unspecified residual (so a raw itemized TOTAL undercounts true in-region
+        # generation), while the model TOTAL carries both. Anchor the EIA-930
+        # column to its measured grid total — net generation = demand + net
+        # interchange, the physically meaningful invariant — every year:
+        #   (1) fold in the vintage-carry-reconciled biomass (the exact measured
+        #       energy the model injects), and
+        #   (2) surface net_gen − Σ(itemized + biomass) as an explicit "other"
+        #       (unspecified) residual so the column sums to the true grid total.
+        # model TOTAL − EIA-930 TOTAL is then model gen − measured net gen — the
+        # same small, consistent number the energy-balance guard prints — and
+        # reflects only real fuel-mix differences, never which vintage was
+        # complete. Imports stay a separate "serves load, not generation" line.
+        net_gen_930 = (
+            _e930_series_annual_monthly(ey_long, "net_gen", year)[0] / _MWH_PER_TWH
+            if ey_long is not None
+            else None
+        )
         bio_actual = (
             _reconciled_biomass_class(year, generation, iso, ey_long)[0] / _MWH_PER_TWH
             if e930_twh
@@ -3187,8 +3205,16 @@ def _report_generic(
         )
         if bio_actual > 0.0:
             e930_twh["biomass"] = bio_actual
+        if net_gen_930 and e930_twh:
+            resid = net_gen_930 - sum(e930_twh.values())
+            if resid > 0.05:
+                e930_twh["other"] = e930_twh.get("other", 0.0) + resid
         model_total = sum(model.values())
-        e930_total = sum(e930_twh.values()) if e930_twh else None
+        e930_total = (
+            net_gen_930
+            if net_gen_930
+            else (sum(e930_twh.values()) if e930_twh else None)
+        )
         ref_total = sum(ref_gen.values()) if ref_gen else None
 
         def _twh(v: float | None) -> str:
@@ -3199,13 +3225,14 @@ def _report_generic(
 
         print("\n  [1] Generation by fuel (TWh; share of own total)")
         print(
-            "    (EIA-930 column = grid measured fuels + EIA-930-repaired "
-            "renewables + carried biomass — the like-for-like actual total;"
+            "    (EIA-930 column = measured grid total (net gen = demand + "
+            "interchange): itemized fuels + repaired renewables + carried biomass"
         )
         print(
-            "     EIA-923 column = raw reference vintage, biomass incomplete in a "
-            "partial current-year release.)"
+            "     + unspecified 'other' residual — the like-for-like actual total. "
+            "EIA-923 column = raw reference vintage, biomass/other incomplete in a"
         )
+        print("     partial current-year release.)")
         print(
             f"    {'fuel':<9} {'model':>7} {'mdl%':>5} "
             f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}"
@@ -3257,13 +3284,9 @@ def _report_generic(
         # pinned to the measured EIA-930 schedule and demand is measured, so the
         # only slack is unserved energy — this asserts the LP actually served
         # load and flags any reconciliation drift so the headline TOTAL is never
-        # silently apples-to-oranges. EIA-930 net_gen = demand + interchange, so
-        # model_total should land on it within a small tolerance.
-        net_gen_930 = (
-            _e930_series_annual_monthly(ey_long, "net_gen", year)[0] / _MWH_PER_TWH
-            if ey_long is not None
-            else None
-        )
+        # silently apples-to-oranges. EIA-930 net_gen = demand + interchange (the
+        # same grid total the EIA-930 column above is anchored to), so model_total
+        # should land on it within a small tolerance.
         if net_gen_930:
             bal = model_total - net_gen_930
             flag = "" if abs(bal) <= _ENERGY_BALANCE_TOL_TWH else "  ⚠ exceeds tol"
