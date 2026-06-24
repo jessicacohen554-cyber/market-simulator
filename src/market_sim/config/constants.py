@@ -1140,14 +1140,14 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # ISOs that have a per-plant CAMPD bin artifact and therefore take the
 # offer-curve (per-plant tranche) binning path in the runner instead of the
 # legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
-# the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM are
-# covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+# the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM/MISO
+# are covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
 # (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
-# artifacts). ISOs WITHOUT a bin artifact (MISO, SPP) are intentionally absent
-# and fall back to ``aggregate_fleet`` exactly as before. The runner gate keys
+# artifacts). The ISO WITHOUT a bin artifact (SPP) is intentionally absent
+# and falls back to ``aggregate_fleet`` exactly as before. The runner gate keys
 # off this set so the per-plant path unlocks per ISO as its artifact lands.
 CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM"}
+    {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
 )
 
 # Effective default for the historic (facility-summed) CAMPD outage overlay,
