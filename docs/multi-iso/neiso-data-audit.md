@@ -220,24 +220,38 @@ across years: gas within −1.3% of EIA-930, hydro 8.70/7.33/5.11 vs 930
 8.77/7.39/5.12, load-weighted hub $34.4/$39.8/$68.5 vs actual DA
 $36.8/$41.5/$67.9.
 
-**B. Daily AGT basis (off-by-default diagnostic, NOT in the keeper).** The real
-daily AGT spot series (ICE/Platts) is paywalled and network-blocked here (U4
-unfilled). The `gas_hub_basis_daily` path (`fuel.iso_hub_daily_gas_prices`, opt
-in with `--gas-hub-basis-daily`) reconstructs it mean-preservingly: each winter
-month's measured mean basis is redistributed across days proportional to NEISO
-daily demand raised to `AGT_DAILY_BASIS_CONVEXITY` (=7.0), with the measured
-daily Henry Hub leg on top, so the coldest days carry the convex citygate
-blowout while the monthly mean is unchanged; the reconstructed peaks land on the
-historical cold events (Feb 3–4 2023 Arctic outbreak, Jan 20–22 2025 polar
-vortex; demand–oil daily corr 0.5–0.72). A/B on 2025 (identical monthly mean):
-hours >$200 **13 → 128** (actual ~160), max **$259 → $283**, average unchanged.
-**But the convexity is a value fitted to the backcast** (chosen to reproduce the
-measured oil/>$200 counts — i.e. tuned to the answer it predicts), not a
-measured or forecast-grade input. So this is an opt-in diagnostic, **off in the
-keeper**: a backcast without the daily AGT series should not manufacture the
-within-month tail from a fitted shape. When real daily AGT (U4) lands, the
-convexity can be *derived* from the observed daily-basis-vs-demand relationship
-and promoted into the keeper.
+**B. Daily AGT basis — now real measured data, promoted into the keeper
+(2026-06-24, neiso-27).** The ICE/Platts daily AGT spot is paywalled, but EIA
+quotes the real Algonquin Citygate spot in the *prose* of every Natural Gas
+Weekly Update ("…the price went up $9.31 from $4.04/MMBtu last Wednesday to
+$13.35/MMBtu yesterday…"). `scripts/fetch_algonquin_daily_spot.py` harvests these
+into `data/raw/gas-prices/algonquin_citygate_daily.csv` — **123 hard-dated real
+AGT prints 2023–2025**, two Wednesdays per weekly page plus winter high/low days,
+densest in the cold weeks that set the tail (max $28.36 on 2023-02-02). The
+`gas_hub_basis_daily` path (`fuel.iso_hub_daily_gas_prices`) now anchors the
+within-month AGT basis to these real prints (interpolated on their true calendar
+days) and mean-preserves to the measured monthly basis; sparse-print months
+borrow the measured Transco Z6 NY daily-basis within-month shape (AGT≈Transco
+basis, measured slope ~0.95, corr ~0.79), capped at AGT's own measured price
+ceiling so NY's more extreme vortex spikes (Transco $97.9 in Jan-2025) don't
+over-amplify Boston. Gas-vs-gas validation (no electricity): MAE
+$0.71/$0.74/$2.08, corr 0.98/0.96/0.65.
+
+This **retires `AGT_DAILY_BASIS_CONVEXITY` (=7.0) and the `_neiso_daily_demand`
+driver**, which redistributed the monthly basis by NEISO demand raised to an
+exponent *chosen to reproduce the measured oil/>$200 counts* — a within-month
+shape fitted to the answer it predicts (CLAUDE.md #12 violation), which is why it
+could never be a keeper. The replacement is real, free, EIA-sourced,
+forward-applicable gas-market data with no electricity/oil tuning, so the daily
+overlay is now **on in the keeper** (`--gas-hub-basis-daily`). A/B vs the
+monthly-basis control on current code (identical monthly mean): winter hours
+>$200 **0/0/80 → 55/20/191** (measured ~44/11/160), oil burn **0.00/0.00/0.16 →
+0.28/0.20/1.66 TWh** (EIA-930 0.32/0.37/1.24), pumped-storage discharge
+**0.24/0.31/1.08 → 0.36/0.49/1.14 TWh**, system mean LMP preserved. The residual
+>$300 scarcity tail (model 0h vs actual 15/8/20h) stays open — it is capped by
+dual-fuel switching at oil parity, an offer-side structural item (single-fuel gas
+at AGT spot; ORDC reserve scarcity), explicitly **not** to be closed by
+re-tuning the now-measured gas input (run neiso-27 attestation exceptions ledger).
 
 **3. Monthly-granularity limitation (documented, accepted in the keeper).** The
 committed `gas_basis_by_iso_month.csv` is *monthly*, and monthly AGT averages
