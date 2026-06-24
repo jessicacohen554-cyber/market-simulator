@@ -1303,6 +1303,36 @@ class ScenarioConfig:
     # word for its plants. Off by default.
     cc_duct_peaking: bool = False
 
+    # Physical cap (percentage points of capacity) on the per-plant
+    # ``cc_duct_peaking`` band. The raw EIA-860 nameplate-vs-net-summer gap
+    # conflates the ambient SUMMER CAPACITY DERATE with the genuine duct-firing
+    # increment, so for plants with a large gap it sizes an oversized expensive
+    # peak band that drops the price wall far below the real duct-firing point
+    # (e.g. Guernsey 13% gap -> wall at ~76% of nameplate). Capping the band at
+    # the F-class supplementary-firing engineering maximum (~8% of capacity)
+    # keeps the per-plant duct FLAG structure (non-duct CCs still get 0) while
+    # positioning the wall at the physical ~92% duct-firing point. None leaves
+    # the raw gap uncapped (prior behaviour). A physical bound, not a fit.
+    cc_duct_peaking_cap_pct: float | None = None
+
+    # When True, combined-cycle (CC_REGULAR / CC_CHP) plants in the per-plant
+    # fleet carry their full EIA-860 NAMEPLATE capacity in the LP and are derated
+    # to the measured NET SUMMER rating in the summer months only — the correct
+    # seasonal shape (full cold-weather capability in winter, ambient-derated in
+    # summer). This replaces the prior behaviour of pinning the LP capacity at
+    # net-summer year-round (which under-modelled winter output AND, with the
+    # flat 10% ``_SUMMER_CLASS_DERATE`` applied on top, derated summer twice) and
+    # the flat class derate with the per-plant MEASURED summer derate
+    # (net_summer / nameplate, fleet.cc_summer_capacity). In a historic backcast
+    # the statistical forced-outage rate (WEFOR), planned-outage factor (POF) and
+    # age-based performance derate are also dropped for CC — the CAMPD outage
+    # overlay already supplies every real outage window, so the statistical model
+    # double-counts. The duct-firing peak band then sits at the top of nameplate
+    # (its physical location) instead of inside a net-summer-capped range.
+    # Coal/CT/ST and ERCOT (CAMPD-bin nameplate capacity) are unaffected. Off by
+    # default.
+    cc_nameplate_summer_derate: bool = False
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
