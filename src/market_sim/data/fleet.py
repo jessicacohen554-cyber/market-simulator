@@ -990,9 +990,21 @@ def generators_to_fleet_arrays(
             if getattr(config, "outage_source", "statistical") == "historic"
             else None
         )
+        # CC nameplate + per-plant summer derate (config.cc_nameplate_summer_
+        # derate): CC plants carry full nameplate capacity (raised in
+        # fleet_to_bins) and are derated to their measured net-summer rating in
+        # summer only. In a historic backcast the statistical WEFOR/POF/age
+        # derate are also dropped for CC — the CAMPD outage overlay already
+        # carries every real outage, so the statistical model double-counts.
+        cc_np_derate = getattr(config, "cc_nameplate_summer_derate", False)
+        cc_np_derate_backcast = (
+            cc_np_derate
+            and getattr(config, "outage_source", "statistical") == "historic"
+        )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
+            is_cc_np = cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP")
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, run_year - gen.online_year
             )
@@ -1016,7 +1028,30 @@ def generators_to_fleet_arrays(
             )
             if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
-            if (
+            if is_cc_np and cc_np_derate_backcast:
+                # CC nameplate, historic backcast: the CAMPD outage overlay below
+                # carries every SUSTAINED outage, so the statistical POF and the
+                # age/performance derate are dropped (the net-summer rating
+                # already captures performance). Only the short-outage forced
+                # residual remains — wefor is already capped to
+                # ``wefor_residual`` above for this overlay-covered class, the
+                # brief forced events below the overlay's multi-day detector
+                # floor — so the unit starts at ``1 - wefor_residual`` at
+                # nameplate; the per-plant summer derate is applied below.
+                availability[g_idx, :] = 1.0 - wefor
+            elif is_cc_np:
+                # CC nameplate, statistical/forward run: keep WEFOR/POF (no
+                # overlay) but the seasonal cap comes from the per-plant summer
+                # derate below, not the flat class derate.
+                summer_wefor = _SUMMER_WEFOR_SHARE * wefor
+                shoulder_wefor = (
+                    wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
+                )
+                pof_eff = 0.0 if drop_coal_pof else pof
+                availability[g_idx, :] = 1.0 - wefor - derate
+                availability[g_idx, summer] = 1.0 - summer_wefor - derate
+                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate - pof_eff
+            elif (
                 gen.plant_group == "CT_PEAKER"
                 and int(gen.plant_code) in ct_floor_plants
             ):
@@ -1059,10 +1094,20 @@ def generators_to_fleet_arrays(
             forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(run_year)
             if forced is not None:
                 availability[g_idx, :] *= forced
-            # Summer ambient-temperature derate for CC / CT classes.
-            summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
-            if summer_derate:
-                availability[g_idx, summer] *= 1.0 - summer_derate
+            # Summer ambient-temperature derate. CC plants under
+            # cc_nameplate_summer_derate use their per-plant MEASURED summer
+            # derate (net_summer / nameplate) — the capacity was raised to
+            # nameplate in fleet_to_bins, so this brings the summer months back
+            # to the real net-summer rating. Every other class keeps the flat
+            # ``_SUMMER_CLASS_DERATE``.
+            if is_cc_np:
+                ratio = cc_summer_derate_ratio(int(gen.plant_code))
+                if ratio is not None and ratio < 1.0:
+                    availability[g_idx, summer] *= ratio
+            else:
+                summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
+                if summer_derate:
+                    availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
             if gen.plant_group == "COAL":
@@ -5036,6 +5081,63 @@ def cc_duct_peaking_pct() -> dict[int, float]:
     return out
 
 
+@lru_cache(maxsize=1)
+def cc_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every CC plant.
+
+    Summed over each plant's combined-cycle generators from the EIA-860
+    Generator_Y Operable sheet. Consumed under
+    ``config.cc_nameplate_summer_derate`` to (a) raise a CC plant's LP capacity
+    from its net-summer rating to full nameplate and (b) derive the per-plant
+    MEASURED summer derate ``net_summer / nameplate`` applied in the summer
+    months — the correct seasonal capacity shape (full nameplate in winter,
+    ambient-derated to net-summer in summer). Plants absent from the sheet are
+    absent from the map (callers keep net-summer / the flat class derate).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+    if cc.empty:
+        return {}
+    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+    cc["np"] = pd.to_numeric(cc["Nameplate Capacity (MW)"], errors="coerce")
+    cc["ns"] = pd.to_numeric(cc["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, tuple[float, float]] = {}
+    for code, grp in cc.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        ns_sum = float(grp["ns"].sum())
+        if np_sum > 0.0 and ns_sum > 0.0:
+            out[int(code)] = (np_sum, ns_sum)
+    return out
+
+
+def cc_summer_derate_ratio(plant_code: int) -> float | None:
+    """Return a CC plant's measured summer availability multiplier.
+
+    ``net_summer / nameplate`` from :func:`cc_summer_capacity`, clamped to
+    ``(0, 1]`` (a plant whose summer rating meets or exceeds nameplate gets no
+    derate). ``None`` when the plant is absent from the EIA-860 CC sheet.
+    """
+    cap = cc_summer_capacity().get(int(plant_code))
+    if cap is None:
+        return None
+    nameplate, net_summer = cap
+    if nameplate <= 0.0:
+        return None
+    return min(1.0, net_summer / nameplate)
+
+
 def fleet_to_bins(
     generators: list[Generator], iso: str, config: ScenarioConfig
 ) -> pd.DataFrame:
@@ -5089,6 +5191,18 @@ def fleet_to_bins(
         cap = a["cap"]
         if cap <= 0.0:
             continue
+        # CC nameplate capacity (config.cc_nameplate_summer_derate): the fleet
+        # carries each unit's net-summer rating, so a CC plant's summed cap is
+        # net-summer. Rescale it up to full nameplate (cap / (net_summer /
+        # nameplate)); the availability builder reapplies the per-plant summer
+        # derate seasonally. Robust to fleet-vs-EIA membership differences (uses
+        # the ratio, not the absolute nameplate). ERCOT/other groups unchanged.
+        if group in ("CC_REGULAR", "CC_CHP") and getattr(
+            config, "cc_nameplate_summer_derate", False
+        ):
+            _ratio = cc_summer_derate_ratio(code)
+            if _ratio is not None and _ratio > 0.0:
+                cap = cap / _ratio
         base_hr = a["hr_cap"] / cap if cap > 0 else _fill_plant_hr(None, group)
         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
@@ -5654,7 +5768,12 @@ def bins_to_fleet(
             # final word for its plants.
             _dpk = cc_duct_peaking_pct().get(plant_code)
             if _dpk is not None:
-                pct_peak = _dpk
+                # Cap the band at the F-class supplementary-firing physical
+                # maximum: the raw nameplate-vs-net-summer gap folds the ambient
+                # summer derate into the duct band, oversizing it for high-gap
+                # plants and dropping the price wall below the real duct point.
+                _cap = getattr(config, "cc_duct_peaking_cap_pct", None)
+                pct_peak = min(_dpk, float(_cap)) if _cap is not None else _dpk
         if (
             group == "CC_REGULAR"
             and getattr(config, "cc_peaking_per_plant", False)
