@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-nyiso-23-li-oil",
+  "label": "nyiso 23 li oil",
+  "date": "2026-06-24",
+  "shorthand": "nyiso-23-li-oil",
+  "definition": "Calibration run from bundle nyiso_23_li_oil_fix.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-24-nyiso-23-li-oil.js",
+  "bundle": "results/calibration/nyiso_23_li_oil_fix"
+}
