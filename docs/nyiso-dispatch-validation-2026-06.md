@@ -363,3 +363,81 @@ addressable by the boundary flow), but `nyiso 24` is the **keeper** on rule-#1
 structural faithfulness: the correct boundary flow on top of the SOM offer curve
 + LI oil-merit. Registered + promoted (`keepers.json`); `nyiso 7/8/9` pruned for
 the 15-run NYISO retention.
+
+## The 2023 CC/ST merit split was a per-plant HEAT-RATE bug, and the scarcity tail is INCIDENCE-gated not curve-gated — `nyiso 25`, the KEEPER
+
+Two of the open `nyiso 24` FAILs were chased: the within-gas CC/ST_GAS merit
+inversion (bucket A #2) and the price scarcity tail / shape (bucket A #1). The
+first is a real, root-caused model bug; the second is gated by a structure that
+is out of scope.
+
+### Merit order: Ravenswood's steam units inherited the combined-cycle heat rate
+
+The 2023 `CC_REGULAR -4.06 / ST_GAS +3.55 TWh` inversion is **not** an
+offer-curve residual — the `nyiso 22` SOM curve already prices steam committed
+(0.97×10.61 = 10.3 eff HR) well above CC's econ ramp (1.12×7.76 = 8.7). The
+dispatch showed **NYC steam running in ~8.5k hr/yr while NYC combined cycle sat
+~20 % idle** — a true merit inversion. Root cause: **Ravenswood (plant 2500) is
+a mixed CC+ST facility**, and EIA-923 reports ONE plant-level heat rate (8.8
+MMBtu/MWh, fuel/net-gen blended across the efficient CC and the legacy steam
+turbine). The fleet loader applied that single blend to *every* unit, so the
+~1.7 GW steam units inherited the CC's efficiency: 0.97×8.8 = 8.5 eff HR put the
+big NYC steam unit **below** the top of CC's econ ramp, and it cleared ahead of
+idle CC. (The other NYISO steam plants carry realistic 10.2–12.0 HRs; only the
+two CC+ST/CT+ST mixed facilities were anomalously low.)
+
+Fix (`data.fleet.MIXED_FACILITY_STEAM_HR`, applied in `load_fleet_from_csv` to
+the steam units only): recover the steam units' **own** heat rate (9.5) by
+backing the CC (~7.5) out of the 8.8 generation-weighted blend at plausible 2023
+capacity factors (CC ~0.6, steam ~0.15) — modestly above the blend, below the
+older NYC peers Arthur Kill (11.27) / Astoria (11.95), as fits Ravenswood Unit
+30 being a large, relatively efficient unit. A **measured-data correction**
+(rule #11: the blend was silently masking the inversion), forward-reproducible,
+not residual-fitted. Result: the merit order is restored (CC ahead of steam) and
+**`CC_REGULAR` improves every year** (2023 −4.06→−3.47, 2024 −3.21→−2.61, 2025
+−1.20→−0.6); the 2023 `ST_GAS` over-run shrinks (+3.55→+2.76). In the
+gas-TOTAL-bound years the displaced steam energy cannot be recaptured by CC (the
+gas total is at the EIA-930/923 basis floor), so the floor's deficit moves
+**within** the gas family onto the now-correct `ST_GAS` swing class (2025 −2.92,
+2024 −0.96) — energy-balance reshuffling of an out-of-scope measured floor, not a
+new dispatch error (ledgered ACCEPTED). **Tradeoff kept per rule #1:** correcting
+the HR raises `C3a` 2025 mean LMP to +9.3 % (just over the ±8 % band), because
+import-constrained NYC over-relies on Ravenswood steam as the *marginal* unit, so
+lifting its offer lifts the downstate LMP. That worse fit is a discovered symptom
+of the **NYC import-incidence** root cause (out of scope — it would touch the
+`nyiso 24` import reconciliation), not a reason to revert to the wrong 8.8.
+
+### Scarcity tail: the RCPF demand-curve SHAPE is not the C3c lever
+
+Bucket A #1 asked for a NYISO reserve-demand / RCPF scarcity mechanism so NYC
+peakers clear on reserve and the >$300 tail appears. The mechanism was **already
+wired** (`energy_reserve_coopt` + the locational `NYISO_RCPF_LOCATIONAL`
+families, `nyiso 19`). The remaining gap was the demand-curve **shape**: the
+locational products used a linear ramp to *zero* reserve (`critical_mw = 0`), an
+explicit stand-in for the published stepped curve. The `nyiso 25 rcpf-steep`
+**PROBE** replaced it with the published top-25 %-span shape (`critical_mw =
+0.75 × requirement`; FERC ER21-502 sets the NYCA-30min $750 max at 1,965 = 0.75
+× 2,620).
+
+**Finding:** the steeper, tariff-faithful curve **deepens** the downstate tail
+(NYC max $138→$890, 2023 14 h >$300) but does **not add tail HOURS** — `C3c`
+stays 0 h (2024) / 12 h (2025) vs actual 12 h / 42 h, *unchanged*. The tail
+**count** is **incidence-gated**: the model's downstate reserve only goes short
+in ~125 hr/yr because NYC's ~1.7 GW of idle CT peakers provide ample reserve
+headroom and the perfect-foresight import node over-serves downstate energy. A
+steeper curve amplifies the *few* deep hours (pushing `C3a` to +12 %, over the
+band) without lifting the *many* moderate-shortfall hours past $300. So the lever
+is **downstate reserve incidence** — locational headroom / import discipline (the
+documented next structural step, out of scope as it touches the `nyiso 24`
+reconciliation) — **not the demand-curve slope.** The steepening was therefore
+**not** carried into the keeper; it is registered as a rejected PROBE.
+
+### Keeper
+
+`nyiso 25 steam-merit` (`results/calibration/nyiso_25_steam_merit`,
+`2026-06-24-nyiso-25-steam-merit`, all three years) = the `nyiso 24` config
+(byte-identical flags) + the Ravenswood steam-HR correction only. It is **more
+structurally faithful** than `nyiso 24` (the physically-correct merit order, the
+dominant `CC_REGULAR` miss improved every year) and holds `C4`; determination
+stays **NOT-YET** (the hard EIA-930/923 gas basis floor, ledgered). Registered +
+promoted (`keepers.json`); `nyiso 10/11` pruned for the 15-run NYISO retention.
