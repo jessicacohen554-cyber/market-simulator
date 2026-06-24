@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-06-24 (Calibration verdict — C1 preliminary-EIA-923 vintage-gap credit)
+
+Added a **per-class preliminary-EIA-923 vintage credit** to the C1 fuel-mix gate
+in `scripts/calibration_verdict.py` (`_vintage_credit`), the per-class analogue of
+the C2 `PRELIM_923_FROM_YEAR` reconcile. In preliminary-vintage years (2025+) the
+per-class actual (`classFull`) is preliminary EIA-923 while the gas/coal **family**
+total is authoritative EIA-930; where the family's Σ923 falls below its 930 grid
+total, that shortfall is real generation already on the grid but not yet attributed
+to any class, and it surfaces as the model "over-absorbing" into whichever class
+produced it. The credit applies the **measured** `930 − 923` family gap against the
+scored classes' positive volume misses (capped at the gap, allocated by share of
+positive miss); a class that only re-enters band via the credit is an `ACCEPTED
+MEASURED-INPUT LIMITATION` (CAVEAT), not a MODEL MISS. The ±1.5pp **share** gate
+still binds. Finer than C2's binary 0.97× reconcile — it applies the true gap even
+when 923 sits just above 0.97× (ERCOT 2025 gas = 0.971×, so C2's reconcile does not
+fire yet a real 5.8 TWh shortfall remains).
+
+**Effect.** ERCOT run154's only C1 breach — 2025 `CC_REGULAR` +6.15 TWh — is
+resolved as a vintage artifact (model gas matches EIA-930 to 1.0%; EIA-923
+under-reports 5.8 TWh of 2025 gas), credited −4.89 TWh → +1.26 residual → CAVEAT.
+This **corrects** the run154-as-registered diagnosis (which mis-attributed the
++6.15 to freed-CT over-absorption into Hidalgo/Colorado Bend CCs, root-cause
+pending). run154 stays **NOT-YET** — C2 2024 coal (+3.0%) and C3a/C3b price (2024)
+still block it. Three NEISO 2025-inclusive runs (`neiso-23-outage-btm`,
+`neiso-24-local-band`, `neiso-25-fullstop-override`) flip NOT-YET →
+CALIBRATED-WITH-CAVEATS for the same reason; ERCOT keeper run151 is unaffected.
+Rubric documented in `docs/calibration-determination-rubric.md` §C1; tests in
+`tests/test_calibration_verdict.py`.
+
 ## 2026-06-24 (ERCOT run154 — net-load Waha delivered-gas step + Laredo zone fix)
 
 Replaced the run152/153 per-plant Waha **contract haircut** (which was backwards
