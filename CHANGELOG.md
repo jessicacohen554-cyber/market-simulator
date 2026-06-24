@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-06-24 (ERCOT run154 — net-load Waha delivered-gas step + Laredo zone fix)
+
+Replaced the run152/153 per-plant Waha **contract haircut** (which was backwards
+— it kept 100%-spot Permian/Laredo at the full hub collapse and over-priced
+100%-contract Ector) with a **structural net-load-indexed West delivered-gas
+step**, and fixed a fleet zone misassignment.
+
+**1. Two-regime net-load Waha step** (`fuel.apply_ercot_west_netload_gas_shape`,
+rewritten from the earlier linear shape). The West/Panhandle Waha basis is split
+by the **measured** Waha negative-price-day frequency (new `neg_day_freq` column
+in `data/raw/ercot_zonal_gas_hub.csv`; 2024 EIA-authoritative 0.42, id=64445)
+into a collapsed (lowest net-load) and a firm (highest net-load) regime; the firm
+level is the cited firm Waha delivered basis and the deep value is forced by the
+measured annual-mean constraint. New `ScenarioConfig.ercot_west_gas_collapse_freq`
+(override) and **`ercot_west_gas_delivered_floor`** — a burner-tip delivered floor
+(the hub goes to ~$0 but a plant's delivered gas never does; flooring the collapse
+regime at the generic ~$0.10 gas floor created a cheap-hour magnet that pulled
+low-HR West CTs into low-demand hours). Net-load = load − wind − solar, so the
+shape regenerates forward (admissibility #10/#12); no fit to the CT residual.
+
+**2. Laredo (3439) zone fix.** Corrected West→South in
+`custom-bin-assignments.csv` — Laredo is Webb County / Rio Grande border (ERCOT
+South), not West/Permian, so it now pays measured South TX delivered gas, not the
+Waha hub, and idles correctly (2024 model 56 vs real 52 GWh).
+
+Result (run154, registered `2026-06-23-run154-netload-gas-laredo`, NOT-YET):
+CT_PEAKER in band all three years (−2.27/−1.01/−1.48 TWh), fixing the run151
+keeper's accepted +6.8/+7.05 TWh CT over-run (which was wrongly attributed to
+intra-Permian transmission — West export uses only ~2 of 10 GW TTC). LMP MAE
+27.8/15.3/11.7 (flat). Documented residual: CC_REGULAR 2025 +6.15 TWh absorbs the
+freed CT energy (masked in run153; next root-cause). Docs realigned:
+`docs/ercot-west-netload-gas-shape-2026-06.md` (rewritten),
+`docs/ercot-ct-waha-offer-floor-2026-06.md` (superseded-banner).
+
 ## 2026-06-23 (CAISO imports — aggregate simultaneous-import cap + delivered-cost basis)
 
 CAISO's bidirectional priced intertie reversed to export correctly but

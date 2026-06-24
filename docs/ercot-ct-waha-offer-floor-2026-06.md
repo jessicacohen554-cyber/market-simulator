@@ -1,5 +1,21 @@
 # ERCOT CT_PEAKER over-run: the Waha delivered-gas floor & contract haircut (2026-06)
 
+> **SUPERSEDED (run154, 2026-06-24).** This doc's conclusion — "the gas-side
+> lever is largely exhausted; the residual must close at the unit level
+> (direction 3)" — was **wrong**. The gas side was *not* exhausted: the run153
+> per-plant contract haircut was **backwards** (it kept 100%-spot Permian/Laredo
+> at the full Waha hub collapse and over-priced 100%-contract Ector), and pricing
+> on the **hub** rather than the **delivered** burner tip was the root cause.
+> run154 replaces the haircut with a structural **net-load-indexed West delivered
+> gas step** (firm at high net-load, collapsed at low, floored at a physical
+> burner-tip minimum) and corrects **Laredo's zone misassignment** (it is South
+> TX / Rio Grande, not West/Permian — the bin sheet put it on Waha). CT_PEAKER is
+> now in band all three years without a per-unit fit. See
+> `docs/ercot-west-netload-gas-shape-2026-06.md`. Two claims below are now known
+> false: (a) "Layer 2 haircut is the honest correction — keep it" (dropped); (b)
+> "Laredo 3439 is a West GT peaker" (it is a South-zone unit, idles correctly once
+> rezoned). Kept for history.
+
 **Problem.** With `ERCOT_ZONAL_GAS=1` (the run151 coal keeper recipe) the
 West/Permian gas units see the raw Waha **hub** basis (2024 −2.19 vs Henry Hub),
 which floors near $0/MMBtu. At HR ~10–13 they offer ~$0–5/MWh and run **baseload**,
