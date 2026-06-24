@@ -251,9 +251,11 @@ _ISO_LOCAL_TZ: dict[str, str] = {
 # model uses today (the EIA-930 ``<BA> hourly`` Demand, summed over the clean
 # zones). Restricted to the ISOs whose model demand already comes from that same
 # ``<BA> hourly`` extract: CAISO/NYISO read native zonal feeds into clean (a
-# different series from the CISO/NYIS BA demand the model serves), and
-# MISO/PJM/SPP serve the demand-profiles parquet, so their clean override is
-# left off to avoid silently swapping the source under the flag.
+# different series from the CISO/NYIS BA demand the model serves), MISO serves
+# the ``MISO hourly`` extract directly (its clean feed is not rebuilt onto the
+# local clock; see :data:`_ISO_LOCAL_TZ`), and PJM/SPP serve the demand-profiles
+# parquet, so their clean override is left off to avoid silently swapping the
+# source under the flag.
 _CLEAN_DEMAND_ISOS: frozenset[str] = frozenset({"ERCOT", "NEISO"})
 
 # Clean ``generation`` fuel bucket -> model benchmark series name, restricted to
@@ -943,6 +945,36 @@ def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     the caller to fall back to the per-ISO demand-profiles parquet.
     """
     frame = _eia_hourly_frame_filled("ISNE", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
+
+
+def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
+    """Return MISO hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``MISO hourly`` extract's ``Demand`` column off the same
+    :func:`_eia_hourly_frame_filled` frame the MISO renewable CF series are
+    drawn from, so demand shares the renewables' chronological clock (row k =
+    local hour k of the year). The per-ISO demand-profiles parquet, by contrast,
+    stamps MISO on UTC (its row 0 is the first *UTC* hour), which lags the local
+    renewable/Demand clock by ~5h (CDT) to ~6h (CST). Sourcing both demand and
+    renewables off this one frame removes that offset by construction — no tz
+    assumption, the frame's own ``Local time`` column fixes the clock and DST.
+    MISO is therefore handled here rather than via the clean-demand override
+    (its clean feed is not reconstructed onto the local clock; see
+    :data:`_ISO_LOCAL_TZ`). Isolated missing meter hours are interpolated.
+
+    The level is unchanged from the demand-profiles series (same EIA-930 MISO
+    BA Demand: identical annual energy and peak); only the hour alignment moves.
+
+    Returns ``None`` when no usable full-year frame is available, signaling the
+    caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("MISO", year)
     if frame is None:
         return None
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
@@ -1693,6 +1725,31 @@ _MISO_SUBBA_ZONE_GROUPS: dict[str, str] = {
 }
 
 
+def _miso_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None:
+    """Map UTC timestamps to MISO local hour-of-year on the renewable clock.
+
+    The MISO sub-BA demand CSV stamps its ``period`` in UTC, but the renewable
+    CF and system demand the zonal shares are multiplied into live on MISO local
+    wall-clock time (the EIA-930 ``MISO hourly`` extract's ``Local time``). To
+    keep all three on one clock, each UTC period is mapped through the hourly
+    frame's *own* ``UTC time`` -> row-index correspondence: frame row k is local
+    hour-of-year k (Feb 29 already dropped, DST handled by the extract), so the
+    returned index lands the share at the same wall-clock hour the renewables
+    use. This derives the offset from the clock itself — no IANA-zone or
+    fixed-offset assumption — and stays valid for any forward year that ships a
+    frame. Periods outside the local-year UTC window map to NaN (the caller
+    drops them). Returns ``None`` when the MISO frame is unavailable.
+    """
+    frame = _eia_hourly_frame_filled("MISO", year)
+    if frame is None:
+        return None
+    # frame row k == model local hour-of-year k; invert UTC time -> k.
+    utc_index = pd.DatetimeIndex(frame["UTC time"])
+    hoy_of_utc = pd.Series(np.arange(len(frame), dtype=float), index=utc_index)
+    hoy_of_utc = hoy_of_utc[~hoy_of_utc.index.duplicated(keep="first")]
+    return period_utc.map(hoy_of_utc)
+
+
 def miso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly MISO load shares, or ``None``.
 
@@ -1708,10 +1765,13 @@ def miso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | Non
 
     The sub-BAs are LRZ groupings and the model bubbles are whole-sub-BA unions,
     so the load partition and the transmission partition coincide (pipe-and-
-    bubble). Returns ``None`` when the file is absent so the caller falls back to
-    the static per-zone ``load_share``. The series is placed on the model's fixed
-    non-leap 8760-hour clock (Feb 29 dropped); any all-zero hour (a DST
-    spring-forward gap) is back-filled from the previous hour.
+    bubble). Returns ``None`` when the file (or the MISO hourly frame used to
+    place it on the local clock) is absent so the caller falls back to the
+    static per-zone ``load_share``. The CSV ``period`` is UTC and is converted
+    to the model's fixed non-leap 8760-hour *local* clock (Feb 29 dropped) via
+    the same hourly frame the renewables and system demand use, so the zonal
+    shapes index the same wall-clock hour as renewable CF; any all-zero hour (a
+    DST spring-forward gap) is back-filled from the previous hour.
     """
     path = _ZONAL_LOAD_DIR / "MISO" / "miso_subba_demand_2023-2025.csv"
     if not path.exists():
@@ -1722,22 +1782,36 @@ def miso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | Non
         return None
     df = pd.read_csv(path, usecols=["period", "subba", "value"], dtype={"subba": str})
     df = df[df["subba"].isin(_MISO_SUBBA_ZONE_GROUPS)].copy()
-    ts = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
-    in_year = ts.dt.year == year
-    df, ts = df[in_year], ts[in_year]
+    # The CSV ``period`` is UTC; convert to the model's local hour-of-year on the
+    # same clock the MISO renewables and system demand use (frame row k = local
+    # hour k). Doing the year window / Feb-29 drop on the local clock — rather
+    # than on the raw UTC ``period`` as before — is what keeps the zonal shares
+    # aligned to renewable CF (the old code indexed shares by UTC hour, ~5-6h
+    # ahead of the local renewable/demand clock). Feb 29 is already excluded by
+    # the frame, so out-of-window periods simply map to NaN below.
+    period_utc = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
+    hoy_local = _miso_utc_to_local_hoy(period_utc, year)
+    if hoy_local is None:
+        logger.warning(
+            "MISO hourly frame unavailable for %d; using static load_share split",
+            year,
+        )
+        return None
+    # De-duplicate the paginated year-boundary hour (audit Item 2): keep one row
+    # per (period, subba) before aggregating so no hour is double-counted; drop
+    # periods that fall outside this local year's window (NaN local hour).
+    keep = ~df.duplicated(subset=["period", "subba"], keep="first")
+    keep &= hoy_local.notna().to_numpy()
+    df, hoy_local = df[keep], hoy_local[keep]
     if df.empty:
         logger.warning(
             "MISO sub-BA load file has no rows for %d; using static load_share split",
             year,
         )
         return None
-    # De-duplicate the paginated year-boundary hour (audit Item 2): keep one
-    # row per (period, subba) before aggregating so no hour is double-counted.
-    keep = ~df.duplicated(subset=["period", "subba"], keep="first")
-    keep &= ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
     df = df.assign(
-        hoy=_hours_of_year(ts), mw=pd.to_numeric(df["value"], errors="coerce")
+        hoy=hoy_local.to_numpy(dtype=int),
+        mw=pd.to_numeric(df["value"], errors="coerce"),
     )
     # Repair EIA-930 reporting gaps where some sub-BAs drop out for a stretch of
     # hours but others keep reporting (e.g. the 2024-08-26 06:00–08-27 05:00
@@ -2032,6 +2106,12 @@ def load_demand(
         raw_mw = _load_nyiso_hourly_demand(year)
     elif iso == "NEISO":
         raw_mw = _load_neiso_hourly_demand(year)
+    elif iso == "MISO":
+        # Source MISO system demand off the same hourly frame as its renewables
+        # so demand[t] and renewable_cf[t] refer to the same wall-clock hour;
+        # the demand-profiles fallback below is on UTC and lags the local
+        # renewable clock by ~5-6h (see :func:`_load_miso_hourly_demand`).
+        raw_mw = _load_miso_hourly_demand(year)
     # Clean-data seam (gated, default OFF): source the system demand from the
     # curated clean ``load`` dataset for the ISOs whose clean feed reconstructs
     # the raw EIA-930 series exactly (parity-checked in tests). Only the demand
