@@ -296,74 +296,30 @@ def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
     return m_gen, a_gen
 
 
-def _vintage_credit(year: int, gm: dict, cf: dict, e930: dict, classes: list) -> dict:
-    """Preliminary-EIA-923 vintage credit per fossil class (rubric C1, 2025+).
-
-    The per-class C1 actual derives from preliminary EIA-923 while the gas/coal
-    *family* grid total is authoritative EIA-930 (the C2 ``PRELIM_923_FROM_YEAR``
-    basis). Where a family's Σ EIA-923 falls below its EIA-930 grid total, that
-    shortfall is real generation already on the grid but not yet attributed to any
-    class in the preliminary 923 vintage — so it surfaces as the model
-    "over-absorbing" into whichever class actually produced it. EIA-930 has no
-    per-class split, so this family-level ``930 − 923`` gap is the only *measured*
-    per-class vintage correction available.
-
-    The gap is credited against the scored classes' POSITIVE volume misses (model >
-    923-actual), capped at the measured family gap and allocated in proportion to
-    each class's positive miss. This is the inverse of fitting-to-actuals: it
-    recognises the actual is incomplete and credits the model for matching the
-    authoritative grid total, using only measured quantities, and it regenerates
-    for any future preliminary-vintage year. Returns ``{class: creditable TWh}``.
-    """
-    if year < PRELIM_923_FROM_YEAR:
-        return {}
-    credit: dict[str, float] = {}
-    for fam, fam_classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
-        # The family gap is the EIA-930 grid total minus Σ EIA-923 over the WHOLE
-        # family — 930's "gas"/"coal" total spans every class, so excluded classes
-        # (e.g. CT_CHP) must stay in the 923 sum or the gap is overstated.
-        gap = float(e930.get(fam, 0.0)) - sum(
-            float(cf.get(c, 0.0)) for c in fam_classes if c in cf
-        )
-        if gap <= 0:
-            continue  # family 923 fully reported (or above 930): no vintage relief
-        # Credit is allocated only across the SCORED positive-miss classes.
-        scored = [c for c in fam_classes if c in classes and c in cf]
-        pos = {
-            c: float(gm.get(c, 0.0)) - float(cf.get(c, 0.0))
-            for c in scored
-            if float(gm.get(c, 0.0)) - float(cf.get(c, 0.0)) > 0
-        }
-        tot = sum(pos.values())
-        if tot <= 0:
-            continue
-        scale = min(gap, tot) / tot  # cap total credit at the measured family gap
-        for c, d in pos.items():
-            credit[c] = d * scale
-    return credit
-
-
 def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
     """C1 — per-class grid-delivered fuel-mix, the 2026-06-15 universal gate.
 
     A class passes iff BOTH its grid-delivered volume miss is within 0.5% of ISO
     annual generation AND its share of total generation is within 1.5 pp of
-    actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis). In
-    preliminary-EIA-923 years (``PRELIM_923_FROM_YEAR``+), a positive volume miss
-    explained by the measured family ``930 − 923`` vintage shortfall is credited
-    (:func:`_vintage_credit`); a class that only re-enters band via that credit is
-    an ACCEPTED MEASURED-INPUT LIMITATION (CAVEAT), not a model miss. The share
-    gate always applies — it stops a class passing on vintage credit alone while
-    still misrepresenting the mix.
+    actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis).
+
+    The per-class tolerance applies to COMPLETE-VINTAGE YEARS ONLY (years <
+    ``PRELIM_923_FROM_YEAR``). For preliminary-EIA-923 years
+    (``PRELIM_923_FROM_YEAR``+) the per-class actual is incomplete — preliminary
+    923 under-reports thermal generation and EIA-930 grid telemetry carries no
+    per-class split — so there is no per-class actual to gate against and every
+    fossil class is emitted SKIPPED (recorded, never a silent pass). The C2 family
+    system-volume gate still covers those years via its authoritative EIA-930 grid
+    reconcile. The boundary is read from the constant, so it auto-extends as a
+    year's 923 finalises and becomes scorable.
     """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
-    e930 = ybench.get("e930", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
     vol_band = FUELMIX_VOL_GEN_FRAC * a_gen
     out = []
     classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
-    credit = _vintage_credit(year, gm, cf, e930, classes)
+    prelim = year >= PRELIM_923_FROM_YEAR
     for c in classes:
         a = cf.get(c)
         if a is None:
@@ -371,35 +327,50 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
         a = float(a)
         m = float(gm.get(c, 0.0))
         d = m - a
-        cr = credit.get(c, 0.0)  # vintage credit only relieves positive misses
-        d_eff = d - cr if d > 0 else d
-        raw_vol_ok = a_gen > 0 and abs(d) <= vol_band
-        eff_vol_ok = a_gen > 0 and abs(d_eff) <= vol_band
         if m_gen > 0 and a_gen > 0:
             share_pp = 100.0 * m / m_gen - 100.0 * a / a_gen
-            share_ok = abs(share_pp) <= FUELMIX_SHARE_PP
         else:
-            share_pp, share_ok = None, True
-        # Clean PASS on raw volume; CAVEAT if only the measured vintage credit
-        # brings it into band; FAIL otherwise. The share gate always binds.
-        if raw_vol_ok and share_ok:
+            share_pp = None
+        if prelim:
+            # Preliminary EIA-923 vintage: per-class actual incomplete; the
+            # asset-class tolerance applies to complete-vintage years only and
+            # EIA-930 carries no per-class substitute. SKIPPED — not gated, not a
+            # silent pass; C2's family gate still covers this year. The raw
+            # model/actual gap is kept as a report-only annotation, with no status
+            # effect.
+            rec = {
+                "criterion": "fuelmix",
+                "key": c,
+                "year": year,
+                "status": SKIPPED,
+                "classification": None,
+                "metric": f"{c} grid-delivered TWh + share of generation",
+                "model": round(m, 3),
+                "actual": round(a, 3),
+                "share_pp": round(share_pp, 2) if share_pp is not None else None,
+                "tol": None,
+                "magnitude": (
+                    "preliminary EIA-923 vintage: per-class actual incomplete; "
+                    "asset-class tolerance applies to complete-vintage years only "
+                    "— no per-class EIA-930 substitute"
+                ),
+                "vintage_gap_twh": round(d, 3),  # report-only; does not gate
+            }
+            out.append(rec)
+            continue
+        vol_ok = a_gen > 0 and abs(d) <= vol_band
+        share_ok = abs(share_pp) <= FUELMIX_SHARE_PP if share_pp is not None else True
+        if vol_ok and share_ok:
             status, classification = PASS, None
-        elif eff_vol_ok and share_ok and cr > 0:
-            status, classification = CAVEAT, MEASURED_LIMIT
         else:
             status, classification = FAIL, MODEL_MISS
         mag = f"{d:+.2f} TWh"
         if share_pp is not None:
             mag += f", share {share_pp:+.1f}pp"
-        if status == CAVEAT:
-            mag += (
-                f" (−{cr:.2f} TWh preliminary-923 vintage credit "
-                f"→ {d_eff:+.2f} residual)"
-            )
-        elif status == FAIL:
+        if status == FAIL:
             breach = "/".join(
                 lab
-                for lab, good in (("volume", eff_vol_ok), ("share", share_ok))
+                for lab, good in (("volume", vol_ok), ("share", share_ok))
                 if not good
             )
             mag += f" ({breach} out of band)"
@@ -419,13 +390,6 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
             ),
             "magnitude": mag,
         }
-        if cr > 0:
-            rec["vintage_credit_twh"] = round(cr, 3)
-            if status == CAVEAT:
-                rec["ledger_reason"] = (
-                    "preliminary EIA-923 vintage: family 930−923 grid shortfall "
-                    "credited (no per-class EIA-930 substitute exists)"
-                )
         out.append(rec)
     return out
 
