@@ -1,6 +1,30 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-24): `nyiso 24 import-recon`**
+> **KEEPER (2026-06-24): `nyiso 25 steam-merit`**
+> (`2026-06-24-nyiso-25-steam-merit`, bundle
+> `results/calibration/nyiso_25_steam_merit`, all 3 years). The `nyiso 24`
+> config (byte-identical flags) + ONE model-side data correction
+> (`data.fleet.MIXED_FACILITY_STEAM_HR`): **Ravenswood** (plant 2500, a mixed
+> CC+ST facility) had its ~1.7 GW steam units inheriting the 8.8 MMBtu/MWh
+> plant-blended heat rate (the combined cycle's efficiency leaking into the steam
+> row), so the big NYC steam unit cleared **ahead of idle NYC combined cycle** on
+> merit (the 2023 `CC_REGULAR −4.06 / ST_GAS +3.55 TWh` inversion). Recovering the
+> steam units' own HR (9.5) from the blend **restores the physically-correct
+> merit order** and `CC_REGULAR` improves **every year** (2023 −4.06→−3.47, 2024
+> −3.21→−2.61, 2025 −1.20→−0.6); 2023 `ST_GAS` over-run shrinks (+3.55→+2.76). A
+> rule-#11 measured-data correction, not residual-fitted. Tradeoff kept per
+> rule #1: `C3a` 2025 mean LMP +9.3 % (just over ±8 %) because import-constrained
+> NYC over-relies on Ravenswood steam as the marginal unit — a discovered symptom
+> of the out-of-scope NYC import-incidence root cause, not a reason to revert the
+> correct HR. The RCPF scarcity tail (`C3c`) is unchanged: it is **incidence-gated
+> (downstate reserve headroom / import discipline), not curve-gated** — steepening
+> the published RCPF demand curve (the `nyiso 25 rcpf-steep` PROBE) deepens the
+> tail but adds no tail hours. C6 governance PASS; determination **NOT-YET** (the
+> hard EIA-930/923 gas basis floor, ledgered). See
+> `docs/nyiso-dispatch-validation-2026-06.md`. Reproduce: the `nyiso 24` config
+> (no new flags). Superseded keeper below.
+
+> **PRIOR KEEPER (2026-06-24): `nyiso 24 import-recon`**
 > (`2026-06-24-nyiso-24-import-recon`, bundle
 > `results/calibration/nyiso_24_import_recon`, all 3 years). Adds the priced
 > import-node **boundary-flow reconciliation** (`--nyiso-import-reconciliation`)

@@ -408,7 +408,19 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    Raising committed to 0.97 (min-load eff HR ~= avg, steam part-load HR is no
 #    better than full-load) puts steam back above CC across its whole econ range,
 #    so it only runs in genuinely high-load hours / on the LI floor, matching the
-#    SOM.
+#    SOM. NOTE the offer SHAPE only works if each plant's *base* heat rate is
+#    right: Ravenswood (plant 2500) is a mixed CC+ST facility, and its 1,725 MW
+#    ST_GAS row had inherited the 8.8 MMBtu/MWh *facility-blended* heat rate (the
+#    CC efficiency leaking into the steam row), so 0.97x8.8 = 8.5 eff HR put the
+#    big NYC steam unit BELOW CC's econ ramp (1.12x7.76 = 8.7) and it cleared
+#    ahead of idle NYC CC in ~8.5k hr/yr (the 2023 CC_REGULAR -4 TWh / ST_GAS
+#    +3.5 TWh merit inversion). Corrected the Ravenswood ST_GAS base HR to 9.5
+#    (data.fleet.MIXED_FACILITY_STEAM_HR) — the steam units' own HR recovered by
+#    backing the efficient CC out of the 8.8 generation-weighted CC+ST plant
+#    blend (CC ~0.6 / steam ~0.15 CF -> steam ~9.5), modestly above the blend and
+#    below the older NYC peers (Arthur Kill 11.27, Astoria 11.95). A measured-data
+#    correction (CLAUDE.md rule #11: the blended HR was silently masking the
+#    inversion), forward-reproducible, not fitted to the price/volume residual.
 #  - CC_REGULAR / CC_CHP: the efficient gas workhorses. CC marginal HR is ~flat
 #    and ~0.95x average across the operating range (CAMPD CC fit, also cited on
 #    the ERCOT curve), so econ_low 0.95 / econ_high 1.12 replaces the generic
