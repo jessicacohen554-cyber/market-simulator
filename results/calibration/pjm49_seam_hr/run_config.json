@@ -1,15 +1,13 @@
 {
-  "timestamp": "2026-06-24T06:25:37",
+  "timestamp": "2026-06-24T16:54:32",
   "git": {
-    "sha": "16166a8",
+    "sha": "dde914b",
     "branch": "claude/pjm-gas-imports-u9czvq",
     "dirty": true,
     "changed_files": [
-      "rc/market_sim/config/constants.py",
-      "src/market_sim/data/neighbor_price.py",
-      "scripts/derive_neighbor_hr_by_year.py"
+      "rc/market_sim/config/constants.py"
     ],
-    "diffstat": "src/market_sim/config/constants.py    | 31 ++++++++++++++++++++++++++++++-\n src/market_sim/data/neighbor_price.py | 20 ++++++++++++++++++--\n 2 files changed, 48 insertions(+), 3 deletions(-)"
+    "diffstat": "src/market_sim/config/constants.py | 16 +++++++++++++++-\n 1 file changed, 15 insertions(+), 1 deletion(-)"
   },
   "model_changes_note": "pjm_47_sync_srmc: pjm_42_campdfix keeper + coal_takeorpay_from_data (step 1) + coal_mustrun_online_pmin (step 2) + coal_sync_srmc_tranche (step 3a: split the online-Pmin coal min-load band by the measured contract share into a fuel-free _mustrun floor + a full-SRMC _sync band, both forced on/synchronized via min_gen, so coal holds volume at min-load while dispatchable tranches above price-follow). Everything else unchanged. Rebuild steps 1-3a, 2023 only [merged 2023-25 from parallel per-year solves]",
   "calibration_flags": {
@@ -130,7 +128,7 @@
     "offer_curve_deltas": {},
     "priced_interchange": true,
     "ercot_rtordpa_overlay": false,
-    "git_sha": "16166a8"
+    "git_sha": "dde914b"
   },
   "scenario_config": {
     "weather_year": 2023,
