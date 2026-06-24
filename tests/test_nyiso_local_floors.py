@@ -69,6 +69,36 @@ class TestLocalSelfSupply(unittest.TestCase):
         # Cheapest-first: the gas_st (HR 10) fills before the gas_ct (HR 12).
         self.assertAlmostEqual(fa.min_gen[1, 0], min(target, 300.0))
 
+    def test_floor_prefers_gas_over_cheaper_heatrate_oil(self):
+        """A low-heat-rate OIL peaker is floored only after gas is exhausted.
+
+        Distillate costs ~5x gas/MMBtu, so the self-supply floor must fill the
+        in-zone GAS fleet first even when an oil unit has a lower heat rate —
+        otherwise the LP force-commits oil for a summer reliability minimum
+        (the flat year-round LI oil bug). Here LI has a gas_ct (HR 11) and an
+        oil unit (HR 9); the gas unit must take the whole floor.
+        """
+        fa = _fa()
+        # Swap LI rows to gas_ct (HR 11, 300 MW) and oil (HR 9, 300 MW).
+        fa.heat_rate = np.array([7.0, 11.0, 9.0, 0.0])
+        fa.fuel_type_idx = np.array(
+            [
+                FUEL_TYPE_MAP["gas_cc"],
+                FUEL_TYPE_MAP["gas_ct"],
+                FUEL_TYPE_MAP["oil"],
+                FUEL_TYPE_MAP["import"],
+            ]
+        )
+        fa.pmax = np.array([500.0, 300.0, 300.0, 900.0])
+        demand = np.zeros((3, T))
+        demand[1, :] = 400.0
+        inject_nyiso_local_selfsupply(fa, "NYISO", demand, _ZONES)
+        target = NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"] * 400.0
+        # Gas (row 1) carries the entire floor (target < its 300 MW); oil (row 2)
+        # stays at zero despite its lower heat rate.
+        self.assertAlmostEqual(fa.min_gen[1, 0], min(target, 300.0))
+        self.assertAlmostEqual(fa.min_gen[2, 0], max(0.0, target - 300.0))
+
     def test_nyc_untouched(self):
         fa = _fa()
         demand = np.zeros((3, T))
