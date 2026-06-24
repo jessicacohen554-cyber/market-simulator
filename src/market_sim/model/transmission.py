@@ -1544,7 +1544,8 @@ def inject_nyiso_local_selfsupply(
     For each pocket zone in
     :data:`~market_sim.config.constants.NYISO_LOCAL_SELFSUPPLY_FRAC`, the hourly
     in-zone target is ``frac × demand[zone, t]``, distributed over the zone's
-    dispatchable thermal generators **cheapest-first** (by heat rate) and each
+    dispatchable thermal generators in **marginal-cost merit order** (gas-capable
+    tranches first by heat rate, the dear oil-fired peakers last) and each
     capped at its available capacity — the same hour-varying
     ``FleetArrays.min_gen`` lower bound the CHP / CT reliability floors use, and
     composed with any floor already present via ``maximum``. The target is
@@ -1570,6 +1571,8 @@ def inject_nyiso_local_selfsupply(
     """
     if iso != "NYISO" or not NYISO_LOCAL_SELFSUPPLY_FRAC:
         return False
+
+    from market_sim.data.fleet import FUEL_TYPE_MAP
 
     thermal_codes = _dispatchable_thermal_codes()
     is_thermal = np.isin(fleet_arrays.fuel_type_idx, thermal_codes)
@@ -1600,7 +1603,21 @@ def inject_nyiso_local_selfsupply(
                 (fleet_arrays.pmin.size, hours),
             ).copy()
 
-        order = rows[np.argsort(fleet_arrays.heat_rate[rows], kind="stable")]
+        # Fill the floor in marginal-cost merit order, not by raw heat rate: the
+        # LI reliability minimum is met by the in-zone fleet that would actually
+        # run — efficient gas first, the dear oil-fired peakers LAST. Distillate
+        # costs ~5x gas per MMBtu, so a raw heat-rate sort put oil CTs (heat rate
+        # ~9.8) AHEAD of gas CTs (~10-11) and forced ~1.5 TWh/yr of non-physical
+        # flat, year-round LI oil into the floor. Tiering oil last means it enters
+        # the floor only when in-zone gas capacity is exhausted (deep-winter peak);
+        # genuine winter dual-fuel oil still runs economically on top of the floor
+        # via the delivered-oil-priced switch (it is not suppressed, only no longer
+        # force-committed for a summer reliability minimum). Fuel-cost ordering is
+        # forward-reproducible (gas stays cheaper than oil in every forward year),
+        # not a fit to measured oil volume (CLAUDE.md rule #12).
+        oil_code = FUEL_TYPE_MAP.get("oil")
+        is_oil = (fleet_arrays.fuel_type_idx[rows] == oil_code).astype(int)
+        order = rows[np.lexsort((fleet_arrays.heat_rate[rows], is_oil))]
         remaining = target.copy()
         for r in order:
             cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
