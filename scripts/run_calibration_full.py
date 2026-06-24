@@ -786,17 +786,20 @@ def _must_run_profiles(
     iso: str,
     demand: np.ndarray,
     skip_classes: frozenset[str] = frozenset(),
+    e930: pd.DataFrame | None = None,
 ) -> dict[str, np.ndarray]:
     """Per-zone hourly must-run MW for each injected residual class.
 
     Each class's EIA-923 annual generation is shaped by its monthly profile
     (flat within a month, negatives clamped then rescaled to preserve the net
     annual energy) and split across zones by their share of annual demand.
-    ``skip_classes`` drops classes the LP fleet already represents as units
-    (e.g. biomass for the per-plant non-ERCOT fleets), so nothing is served
-    twice. Pumped-storage plants are held out of OTHER — they dispatch as LP
-    storage. Returns ``{klass: (n_zones, hours) MW}`` for the classes with
-    positive net generation in ``iso`` and ``year``.
+    Biomass uses the vintage-carry-reconciled energy
+    (:func:`_reconciled_biomass_class`, needing ``e930`` for the completeness
+    probe), so the injected biomass equals the benchmark it is scored against
+    even in a partial current-year vintage. ``skip_classes`` drops classes the
+    caller does not want injected. Pumped-storage plants are held out of OTHER —
+    they dispatch as LP storage. Returns ``{klass: (n_zones, hours) MW}`` for the
+    classes with positive net generation in ``iso`` and ``year``.
     """
     n_zones, hours = demand.shape
     e923 = _eia923_frame(year, generation, iso=iso)
@@ -811,12 +814,17 @@ def _must_run_profiles(
         if klass in skip_classes:
             continue
         rows = e923[e923["klass"] == klass]
-        if klass == "OTHER":
-            rows = rows[~rows["plant_id"].isin(_pumped_storage_plant_ids())]
-        annual = float(rows["annual_mwh"].sum())
+        if klass == "biomass":
+            # Vintage-carry-reconciled energy so injected == benchmark biomass.
+            annual, monthly = _reconciled_biomass_class(year, generation, iso, e930)
+            monthly = np.clip(monthly, 0.0, None)
+        else:
+            if klass == "OTHER":
+                rows = rows[~rows["plant_id"].isin(_pumped_storage_plant_ids())]
+            annual = float(rows["annual_mwh"].sum())
+            monthly = np.clip(rows[mcols].sum().to_numpy(dtype=float), 0.0, None)
         if annual <= 0:
             continue
-        monthly = np.clip(rows[mcols].sum().to_numpy(dtype=float), 0.0, None)
         if monthly.sum() <= 0:
             monthly = hours_per_month.copy()  # no monthly detail -> flat
         with np.errstate(divide="ignore", invalid="ignore"):
@@ -985,6 +993,45 @@ def _vintage_completeness(
         g = g[g["plant_id"].isin(iso_plants)]
     e923_total = float(g["netgen_annual_mwh"].sum())
     return e923_total / ann930_net
+
+
+def _reconciled_biomass_class(
+    year: int,
+    generation: pd.DataFrame,
+    iso: str,
+    e930: pd.DataFrame | None,
+) -> tuple[float, np.ndarray]:
+    """Measured biomass class energy ``(annual_mwh, monthly[12])`` with the carry.
+
+    The single source of truth for "how much biomass" both the benchmark and the
+    must-run injection consume, so the model's injected biomass is pinned to the
+    exact energy it is scored against. Biomass is absent from CAMPD and EIA-930,
+    so for a partial current-year EIA-923 release (vintage completeness below
+    :data:`_EIA923_VINTAGE_COMPLETENESS_FRACTION`) the prior complete year's
+    biomass is carried forward scaled by completeness (its monthly shape reused),
+    matching :func:`_backfill_renewables_eia930`. A complete vintage returns the
+    raw EIA-923 biomass unchanged. ``e930 is None`` disables the carry (the
+    completeness probe needs the EIA-930 grid total). This is a legitimate
+    measured physical input: it regenerates per forward year from EIA-923 and is a
+    fuel/contract supply limit, not a residual tune.
+    """
+    mcols = [f"m{i:02d}" for i in range(1, 13)]
+    bio = _eia923_frame(year, generation, iso)
+    bio = bio[bio["klass"] == "biomass"]
+    annual = float(bio["annual_mwh"].sum())
+    monthly = bio[mcols].sum().to_numpy(dtype=float)
+    completeness = _vintage_completeness(year, generation, iso, e930)
+    if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
+        prior = _eia923_frame(year - 1, generation, iso)
+        prior_bio = prior[prior["klass"] == "biomass"]
+        prior_ann = float(prior_bio["annual_mwh"].sum())
+        est = prior_ann * completeness
+        if prior_ann > 0.0 and est > annual:
+            prior_mon = prior_bio[mcols].sum().to_numpy(dtype=float)
+            psum = float(prior_mon.sum())
+            monthly = prior_mon * (est / psum) if psum > 0 else np.full(12, est / 12.0)
+            annual = est
+    return annual, monthly
 
 
 def _backfill_renewables_eia930(
@@ -1565,20 +1612,25 @@ def solve_and_persist(
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
         # frame, so they displace marginal gas and appear as their own classes
-        # instead of an invisible OTHER gap. Applies to every ISO; classes the
-        # LP fleet already carries as units are skipped — the ERCOT CAMPD-bin
-        # fleet deliberately drops biomass units in favor of this injection
-        # (run_calibration.run_year), while the per-plant fleet of every other
-        # ISO keeps biomass as raw LP units. Hydro is an LP resource for all
-        # ISOs (budget hydro + pumped storage), never injected.
+        # instead of an invisible OTHER gap. Applies to EVERY ISO now: biomass is
+        # fuel-supply / contract limited and price-insensitive in reality, so it
+        # is injected from its measured EIA-923 annual+monthly energy (vintage-
+        # carry reconciled) exactly like ERCOT, rather than left as a dispatchable
+        # LP unit the merit order runs to max when gas rises (which over-dispatched
+        # NEISO biomass ~2x in the high-gas 2025). run_year drops the raw biomass
+        # LP units (inject_biomass_mustrun) so it is not served twice. Hydro is an
+        # LP resource for all ISOs (budget hydro + pumped storage), never injected.
+        e930_year = _eia930_frame(year, iso, iso_config)
         must_run = _must_run_profiles(
             year,
             generation,
             iso,
             demand,
-            skip_classes=frozenset() if is_ercot else frozenset({"biomass"}),
+            skip_classes=frozenset(),
+            e930=e930_year,
         )
         must_run_total = np.sum(list(must_run.values()), axis=0) if must_run else None
+        inject_biomass = "biomass" in must_run
         logger.info(
             "solving %s %d (hours=%d, Henry Hub=$%.2f/MMBtu, commitment=%s)",
             iso,
@@ -1634,6 +1686,7 @@ def solve_and_persist(
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
             must_run_mw=must_run_total,
+            inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
@@ -1721,7 +1774,7 @@ def solve_and_persist(
                 )
             )
 
-        e930 = _eia930_frame(year, iso, iso_config)
+        e930 = e930_year
         if e930 is not None:
             eia930_frames.append(e930)
         if has_campd:
@@ -2700,9 +2753,8 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             generation,
             meta["iso"],
             state["demand"],
-            skip_classes=(
-                frozenset() if meta["iso"] == "ERCOT" else frozenset({"biomass"})
-            ),
+            skip_classes=frozenset(),
+            e930=_eia930_frame(year, meta["iso"], iso_config),
         )
         _dispatch_frame(
             year,
@@ -2755,6 +2807,14 @@ _GENERIC_FUEL_ORDER: tuple[str, ...] = (
     "biomass",
     "other",
 )
+
+# Energy-balance guard tolerance (ITEM B): model total generation should land on
+# the EIA-930 net generation (demand + interchange, both measured) within this
+# band. The legitimate residual is behind-the-meter CHP held off-grid plus a
+# little dump/curtailment; anything larger (a biomass double-count ~2.4 TWh, a
+# benchmark-assembly slip) is flagged so the headline TOTAL is never silently
+# apples-to-oranges. Diagnostic only — it prints/warns, never aborts the run.
+_ENERGY_BALANCE_TOL_TWH: float = 3.0
 
 
 def _canon_fuel(fuel: str) -> str:
@@ -3052,11 +3112,13 @@ def _report_generic(
     CHP and CAMPD diagnostics are skipped.
     """
     reference = _load_reference()
+    generation = load_monthly_generation()
     storage_path = run_dir / "storage.parquet"
     storage_all = pd.read_parquet(storage_path) if storage_path.exists() else None
     for year in meta["years"]:
         ref_year = reference.get("isos", {}).get(iso, {}).get(str(year), {})
         ref_gen = _aggregate_twh(ref_year.get("generation_twh", {}))
+        ey_long = e930_all[e930_all["year"] == year] if e930_all is not None else None
         # Renewables are judged against EIA-930 grid-delivered generation (the
         # 930 column), not EIA-923 — the same basis the ERCOT report uses
         # (_print_nonchp_grid compares solar/wind to e930). EIA-923's solar/wind
@@ -3103,6 +3165,21 @@ def _report_generic(
             if e930 is not None
             else {}
         )
+        # Like-for-like "actual total" basis (ITEM B): EIA-930's itemized BA mix
+        # has no biomass series, so a raw EIA-930 TOTAL undercounts in-region
+        # generation while the model TOTAL includes biomass — making model−actual
+        # swing on which side carries biomass, not on a real fuel-mix difference.
+        # Fold the vintage-carry-reconciled biomass (the same measured energy the
+        # model now injects) into the EIA-930 column so its TOTAL is the single
+        # consistent basis every year: EIA-930 grid measured fuels + EIA-930-
+        # repaired renewables + carried biomass. Imports stay a separate line.
+        bio_actual = (
+            _reconciled_biomass_class(year, generation, iso, ey_long)[0] / _MWH_PER_TWH
+            if e930_twh
+            else 0.0
+        )
+        if bio_actual > 0.0:
+            e930_twh["biomass"] = bio_actual
         model_total = sum(model.values())
         e930_total = sum(e930_twh.values()) if e930_twh else None
         ref_total = sum(ref_gen.values()) if ref_gen else None
@@ -3114,6 +3191,14 @@ def _report_generic(
             return "    —" if not v or not total else f"{100 * v / total:5.1f}"
 
         print("\n  [1] Generation by fuel (TWh; share of own total)")
+        print(
+            "    (EIA-930 column = grid measured fuels + EIA-930-repaired "
+            "renewables + carried biomass — the like-for-like actual total;"
+        )
+        print(
+            "     EIA-923 column = raw reference vintage, biomass incomplete in a "
+            "partial current-year release.)"
+        )
         print(
             f"    {'fuel':<9} {'model':>7} {'mdl%':>5} "
             f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}"
@@ -3159,6 +3244,38 @@ def _report_generic(
                 f"{_twh(None)} {_pct(None, None)}"
                 "   (net; serves load, not in generation total)"
             )
+
+        # Energy-balance guard (ITEM B): the physically meaningful invariant is
+        # model generation + net imports ≈ measured load. Net interchange is
+        # pinned to the measured EIA-930 schedule and demand is measured, so the
+        # only slack is unserved energy — this asserts the LP actually served
+        # load and flags any reconciliation drift so the headline TOTAL is never
+        # silently apples-to-oranges. EIA-930 net_gen = demand + interchange, so
+        # model_total should land on it within a small tolerance.
+        net_gen_930 = (
+            _e930_series_annual_monthly(ey_long, "net_gen", year)[0] / _MWH_PER_TWH
+            if ey_long is not None
+            else None
+        )
+        if net_gen_930:
+            bal = model_total - net_gen_930
+            flag = "" if abs(bal) <= _ENERGY_BALANCE_TOL_TWH else "  ⚠ exceeds tol"
+            print(
+                f"    energy balance: model gen {model_total:7.2f} − EIA-930 net "
+                f"gen {net_gen_930:7.2f} = {bal:+6.2f} TWh"
+                f" (tol ±{_ENERGY_BALANCE_TOL_TWH:.1f}){flag}"
+            )
+            if abs(bal) > _ENERGY_BALANCE_TOL_TWH:
+                logger.warning(
+                    "%s %d energy-balance drift: model gen %.2f vs EIA-930 net gen "
+                    "%.2f (%+.2f TWh) exceeds ±%.1f tol",
+                    iso,
+                    year,
+                    model_total,
+                    net_gen_930,
+                    bal,
+                    _ENERGY_BALANCE_TOL_TWH,
+                )
 
         # --- [1b] Curtailment: model re-curtailment vs ISO-reported ---
         _print_curtailment_vs_reported(year, iso, dispatch)
