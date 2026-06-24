@@ -560,7 +560,10 @@ Fleet evolves year-over-year within a scenario. Year N+1’s fleet depends on Ye
 ```
 For year in 2026..2050:
     1. Start with fleet from prior year (or base fleet for 2026)
-    2. Apply known retirements (EIA-860 announced)
+    2. Apply known retirements (EIA-860 announced) — NON-FOSSIL only by default
+       (nuclear/hydro/renewables/storage); fossil (coal/gas/oil) announced dates
+       are deferred to the economic screen in step 3
+       (`forecast_fossil_retirement_economic`)
     3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results)
     4. Apply CCS retrofit screen to existing gas-CC units (§5.6)
     5. Apply known additions (EIA-860 under construction, signed PPAs)
@@ -569,7 +572,7 @@ For year in 2026..2050:
     7. Assemble updated fleet → run dispatch LP (with RPS constraint) → cache results
 ```
 
-The capacity-evolution mechanisms are steps 2–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year. Known retirements and known additions (the EIA-860 near-term pipeline) remain deterministic — these are committed projects, not modeled decisions. After the data horizon (~2030), the model is fully economics-driven.
+The capacity-evolution mechanisms are steps 2–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year. Known retirements and known additions (the EIA-860 near-term pipeline) remain deterministic — these are committed projects, not modeled decisions — **except fossil retirements**: a coal/gas/oil unit's announced EIA-860 retirement date is treated as an announcement, not a certainty, so its phaseout is governed entirely by the economic screen (step 3), keeping the forecast condition-responsive (a fossil unit may exit early on losses or run past its announced date if it stays in-merit). Non-fossil retirements (nuclear/hydro/renewables/storage — policy/contract/end-of-life exits with no economic analogue) stay deterministic on their announced dates. The split is the `forecast_fossil_retirement_economic` flag (default on). After the data horizon (~2030), the model is fully economics-driven.
 
 ### 5.2 Economic Retirement
 
