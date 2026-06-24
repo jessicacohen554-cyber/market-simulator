@@ -1,6 +1,26 @@
 # NYISO calibration — best config so far
 
-> **DETERMINATION (2026-06-22, scorer): NOT-YET** for the registered keeper
+> **KEEPER (2026-06-24): `nyiso 24 import-recon`**
+> (`2026-06-24-nyiso-24-import-recon`, bundle
+> `results/calibration/nyiso_24_import_recon`, all 3 years). Adds the priced
+> import-node **boundary-flow reconciliation** (`--nyiso-import-reconciliation`)
+> on top of the `nyiso 23` li-oil-merit keeper config: a per-month band pins the
+> priced node's net interchange to the measured EIA-930 schedule, so modeled net
+> imports now track **23.09 / 20.32 / 19.28 TWh** vs measured 23.45 / 20.35 /
+> 19.09 (was 18.53 / 21.65 / 21.63 — under-import in 2023, over-import in
+> 2024/25, both corrected). **C2 gas improves every year** (2023 +2.6 → −2.9 %,
+> 2024 −9.0 → −7.0 %, 2025 −7.2 → −3.9 %); **C3a mean LMP PASS** (model
+> $30.9/$36.0/$62.1 vs actual RT $30.3/–/$60.7); **C4 dispatch corr PASS**; C6
+> governance PASS (attestation added). Determination remains **NOT-YET** (same as
+> every prior NYISO keeper): the residual 2024 gas/CO2 is the documented
+> EIA-923/EIA-930 **basis floor** (ledgered ACCEPTED, out of scope), and the
+> remaining unledgered fails are the 2023 within-gas CC/ST merit split and the
+> NYC-peaker reserve-scarcity **tail** — both pre-existing, neither addressable
+> by the import boundary flow. Promotion is on **structural faithfulness**
+> (rule #1: correct boundary flow replacing an economic estimate), not on a band
+> pass. Reproduce: the keeper config plus `--nyiso-import-reconciliation`.
+>
+> **Superseded determination (2026-06-22, scorer): NOT-YET** for the prior keeper
 > `nyiso-15-transco-z6` (`python scripts/calibration_verdict.py --run-id
 > 2026-06-21-nyiso-15-transco-z6`). BTM regen done — byte-faithful re-solve
 > (gmModel reproduces the keeper to <0.1%) + `btm.parquet`, scoring CHP classes
@@ -82,12 +102,28 @@ This gap is **not** closable by any honest dispatch knob:
   `td_loss_factor > 0` gross-up adds the losses a second time (double-count;
   rules #11/#12). The reopened gas-total task confirmed this with a 3-year
   baseline and was closed without a code change.
-- **import scaling** would lift gas (serving e.g. −20 TWh, inside the ±15%
-  interchange tolerance, lifts the total to ~127 and gas to ~−4%), but the
-  measured EIA-930 interchange is matched **exactly** (duration RMSE 0 MW,
-  import-hours 100%, diurnal corr +1.00). Degrading a perfect, measured match to
-  paper over an EIA-930-vs-EIA-923 *benchmark-basis* difference is overfitting,
-  not calibration. **Rejected.**
+- **import reconciliation** is now the keeper mechanism (`nyiso 24`,
+  `--nyiso-import-reconciliation`), and the prior "import scaling — rejected"
+  verdict is **retired**. That rejection applied to the *served-wedge* keeper,
+  whose interchange already matched the measurement exactly (RMSE 0 MW) — there,
+  scaling it would have *degraded* a perfect measured match, which is
+  overfitting. **The current PRICED node does not match the measurement**: its
+  near-static economic tranche ladder clears a near-flat ~18.5–21.6 TWh that
+  deviates ±1–5 TWh/yr and does **not** track the metered schedule's
+  year-over-year decline (23.45 → 20.35 → 19.09 TWh). Moving the priced node
+  *toward* the metered schedule therefore **replaces an economic estimate with
+  the authoritative measurement** (rule #11) — the *opposite* of overfitting.
+  The monthly net-interchange band (transmission.`build_import_node_reconciliation`
+  → dispatch.`_build_import_node_rows`, ±2% `NYISO_IMPORT_RECON_BAND_FRAC`) pins
+  the node's **monthly net throughput** to `nyiso_net_interchange` while the
+  priced tranches still set the marginal LMP *within* each month's envelope. The
+  target is the measured schedule itself (a forward-reproducible boundary INPUT,
+  not the scored OUTPUT), **not** a residual-minimizing volume — no fitted adder,
+  no td_loss gross-up, no over-pin past the measurement (rules #1/#11/#12). This
+  is standard production-cost boundary-flow calibration (Aurora/PLEXOS/GridView/
+  PROMOD pin the metered tie-line net flow against an unmodeled neighbor; ReEDS
+  fixes net trade with non-modeled regions). See the `nyiso 24` keeper section
+  below and `docs/nyiso-dispatch-validation-2026-06.md`.
 - **offer-curve / CHP / storage** reshuffle *within* the fixed total: the
   under-running CHP/peaker classes cannot be lifted into tolerance without
   pulling the on-target CC_REGULAR/ST_GAS down by the same TWh, and the obvious
