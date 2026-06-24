@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-24-caiso-cc-econ-10",
+  "label": "caiso 26 cc-econ-cut (PROBE)",
+  "date": "2026-06-24",
+  "shorthand": "caiso-cc-econ-10",
+  "definition": "PROBE (rejected) — Task A: CC_REGULAR+CC_CHP econ_low/econ_high -0.10 to lower the in-state midday body off the caiso-25 corridor keeper. REJECTED: breaks the won diurnal structure (net-import corr flips negative both scored years, 2024 +0.08->-0.03, 2025 +0.03->-0.08) and under-imports (2024 net -28.34->-24.70, below the -28 floor) — cheaper CC displaces imports in the midday/shoulder hours the corridor cap fixed. Also non-specific (lowers midday/evening/overnight ~uniformly, pulls the matched 2023 evening under actual) and never recovers the negative tail (neg-hrs unchanged 271/24). Confirms residual #2 is structural (model short midday after phantom imports correctly removed), not an offer-curve level. Keeper unchanged. See DIAGNOSIS-caiso-cc-offer-midday-2026-06-24.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-24-caiso-cc-econ-10.js",
+  "bundle": "results/calibration/caiso_cc_econ_minus10_3yr"
+}
