@@ -1,0 +1,54 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "neiso-30 other-carry DIAGNOSTIC 2026-06-24",
+    "note": "DIAGNOSTIC run (NOT the keeper; keeper stays neiso-29). Inherits every measured lever of neiso-29 (biomass measured must-run injection + like-for-like EIA-930 total) UNCHANGED and adds ONE measured-input refinement: the OTHER residual class (process gas / landfill / purchased steam, absent from CAMPD and EIA-930, like biomass) now gets the SAME prior-complete-year x vintage-completeness carry as biomass in a partial current-year EIA-923 release (_reconciled_mustrun_class). NEISO 2025 OTHER 2.61 -> 2.78 TWh (measured EIA-923, forward-reproducible; not a residual tune). This is the structurally-consistent fix the OTHER-gap investigation pointed to. PURPOSE of registering: (a) confirm the OTHER carry is a small correct improvement -- 2025 gas 61.87 -> 61.59 TWh, C1 CC_REGULAR +3.64 -> +3.56 TWh, C2 +3.0% -> +2.5% -- and (b) surface that this run was solved on CURRENT main, which now carries a8b0e55 'PJM/NYISO/NEISO CC: nameplate capacity + one measured summer derate' (cc_nameplate_summer_derate, default-on for NEISO), a separate commit that landed AFTER the neiso-29 biomass merge. a8b0e55 raises NEISO CC LP capacity from ~75% to ~92% of nameplate, which drops the NEISO price level 13-18% across ALL years into UNDER-prediction (2023 mean LMP 33.96 -> 29.47; 2024 39.35 -> 33.77; 2025 71.31 -> 58.81 vs actual 65.89). That price regression and the consequent storage drop (C5b -52% -> -76%, price-spread compression) are caused by a8b0e55, NOT by the biomass/OTHER work -- the OTHER carry only touches the 2025 incomplete vintage and cannot move 2023/2024 prices. Recommendation: keep neiso-29 (clean biomass keeper, prices well-calibrated) as the NEISO keeper; treat a8b0e55's NEISO CC-availability / price-level interaction as a SEPARATE follow-up before a current-main NEISO solve becomes the keeper. No adder/haircut/pin/rescale to any residual.",
+    "validation_note": "OTHER carry confirmed: 2025 EIA-923 OTHER injection 2.613 -> 2.775 TWh (prior 2024 OTHER 3.352 x 0.828 vintage completeness), so ~0.16 TWh less truncated OTHER is left for gas-CC to absorb. Energy balance stays clean (model gen - EIA-930 net gen = +0.06/+0.07/+0.11 across 2023/24/25). The CC_REGULAR overshoot vs CAMPD CEMS (the C1 benchmark 55.74 is CAMPD-repaired, real measured, not truncated EIA-923 49.38) is REAL and only marginally reduced by the OTHER carry (+3.64 -> +3.56), because the bulk of the gap is an irreducible EIA-923-vs-EIA-930 OTHER categorization difference (EIA-930 attributes 4.40 TWh to 'other unspecified' in 2025 vs measured EIA-923 ~3.35 complete / 2.78 carried) that cannot be closed by injecting the EIA-930 residual without fitting to the benchmark. The price-level under-prediction (C3a -15.9/-14.0/-8.1%) and storage under-cycling (C5b -76%) in THIS run are a8b0e55's NEISO CC-nameplate effect, a separate item -- they do NOT appear in neiso-29 (pre-a8b0e55), which keeps NEISO prices well-calibrated."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "metric": "C1 CC_REGULAR (gas CC) grid-delivered volume + share",
+      "years": [2025],
+      "magnitude": "model +3.56 TWh, share +1.4pp vs CAMPD-repaired actual (out of band; was +3.64 in neiso-29)",
+      "classification": "MODEL MISS (not a measured-input limitation)",
+      "reason": "Marginally reduced by the OTHER vintage-carry (+3.64 -> +3.56). The residual is an irreducible EIA-923-vs-EIA-930 OTHER categorization gap in the partial 2025 vintage: EIA-930 attributes 4.40 TWh to 'other unspecified' while the measured, forward-reproducible EIA-923 OTHER is ~3.35 complete / 2.78 carried, so ~1 TWh real NEISO served as 'other'/landfill is served by gas-CC in the model. Closable only by reconciling the EIA-923/EIA-930 OTHER categorization, NOT by injecting the EIA-930 residual (fitting) or tuning a gas offer."
+    },
+    {
+      "criterion": "sysvol",
+      "metric": "C2 gas-family grid-delivered volume",
+      "years": [2025],
+      "magnitude": "model +2.5% vs actual (61.59 vs 60.09 TWh; was +3.0% in neiso-29)",
+      "classification": "MODEL MISS (not a measured-input limitation)",
+      "reason": "Same root cause as C1, improved by the OTHER carry. Total model generation matches the measured grid total (energy balance +0.11 TWh), so this is the gas-vs-other allocation gap of the EIA-923/EIA-930 OTHER categorization difference, not over-generation."
+    },
+    {
+      "criterion": "price_mean",
+      "metric": "C3a system load-weighted mean LMP",
+      "years": [2023, 2024, 2025],
+      "magnitude": "model -15.9% / -14.0% / -8.1% vs actual (under-prediction)",
+      "classification": "MODEL MISS (a8b0e55 CC-nameplate interaction, separate item)",
+      "reason": "NOT caused by the biomass/OTHER work. This run is solved on current main, which carries a8b0e55 (cc_nameplate_summer_derate, default-on for NEISO) raising CC LP capacity ~75% -> ~92% of nameplate. The extra cheap CC availability compresses the NEISO price level 13-18% across all years into under-prediction. The OTHER carry only touches the 2025 incomplete vintage and cannot move 2023/2024 prices. neiso-29 (pre-a8b0e55) keeps NEISO prices well-calibrated (+3.2% 2025). Flagged as a SEPARATE NEISO CC-availability / price-level follow-up; keeper stays neiso-29."
+    },
+    {
+      "criterion": "price_tail",
+      "metric": "hours LMP > $300/MWh",
+      "years": [2023, 2024, 2025],
+      "magnitude": "model 0h vs actual 15/8/20h",
+      "classification": "MODEL MISS (not a measured-input limitation)",
+      "reason": "Unchanged structural item (dual-fuel gas capped at delivered oil price; single-fuel AGT-spot bidding and reserve scarcity not fully represented). Out of scope for the biomass/OTHER work."
+    },
+    {
+      "criterion": "storage",
+      "metric": "C5b storage throughput (battery + pumped-storage discharge)",
+      "years": [2025],
+      "magnitude": "model -76.3% (was -52% in neiso-29)",
+      "classification": "MODEL MISS (a8b0e55 price-compression interaction, separate item)",
+      "reason": "Worsened vs neiso-29 because a8b0e55's CC-nameplate price compression flattens the price spread that drives pumped-storage arbitrage. A downstream consequence of the separate a8b0e55 CC-availability item, not the biomass/OTHER work; keeper stays neiso-29."
+    }
+  ]
+}
