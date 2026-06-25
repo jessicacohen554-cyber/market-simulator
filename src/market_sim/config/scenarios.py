@@ -602,6 +602,22 @@ class ScenarioConfig:
     # NOT fitted to the residual. LP-linear online-headroom PROXY for true
     # commitment-gated spin (the exact gate is path B / model.commitment). Default
     # off (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_forward_net_import_twh: dict[int, float] | None = None  # FORECAST band
+    # source for the NYISO import reconciliation. In a forecast (mode="forecast")
+    # there is no measured EIA-930 net interchange to band to, so the band target
+    # is the NEIGHBOR'S FORECAST NET POSITION supplied here: an annual NYISO net
+    # IMPORT (TWh, positive = net import) per forecast year, e.g. derived from the
+    # PJM / Hydro-Québec / Ontario / ISO-NE forward export outlooks (NYISO Gold
+    # Book imports, neighbor capacity-expansion / interface schedules). The annual
+    # forecast is shaped to monthly targets by the forecast load distribution
+    # (imports track load, so the band RESPONDS to changed conditions — the
+    # forward-reproducibility test, CLAUDE.md rule #12), and the priced tranches
+    # still set the marginal price WITHIN each month's envelope (band half-width
+    # NYISO_IMPORT_RECON_BAND_FRAC). When this is None (the default) the forecast
+    # band RELAXES to the bare priced-seam economics (no constraint) — the seam
+    # clears endogenously rather than being pinned to any measured monthly total.
+    # In a backcast (mode="backcast") this is ignored and the band targets the
+    # measured EIA-930 schedule (the realization). NYISO-only.
     miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
     # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
     # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
@@ -2173,6 +2189,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
     "nyiso_synchronised_reserve": 1,
+    "nyiso_forward_net_import_twh": 2,
     "miso_firm_imports": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,

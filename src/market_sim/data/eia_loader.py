@@ -2038,6 +2038,76 @@ def nyiso_net_interchange(year: int) -> np.ndarray | None:
     return _eia930_net_interchange("NYIS", year)
 
 
+def nyiso_forward_net_import_monthly(
+    year: int,
+    forward_net_import_twh: dict[int, float] | float | None,
+    system_demand: np.ndarray | None = None,
+) -> np.ndarray | None:
+    """Return NYISO's FORECAST monthly net import (MWh, import-positive), or ``None``.
+
+    The forward analogue of the measured backcast band target
+    (:func:`nyiso_net_interchange`). In a forecast there is no measured EIA-930
+    schedule to reconcile against, so the band target is the **neighbor's
+    forecast net position** supplied by the caller as an annual NYISO net
+    *import* in TWh (positive = net import) — derived externally from the
+    PJM / Hydro-Québec / Ontario / ISO-NE forward export outlooks
+    (NYISO Gold Book imports, neighbor capacity-expansion / interface
+    schedules), NOT from any NYISO output. The annual total is shaped to the
+    twelve monthly targets by the forecast **load distribution** when
+    ``system_demand`` is supplied (imports track load, so the band responds to
+    changed conditions — the forward-reproducibility test, CLAUDE.md rule #12),
+    else split evenly by each month's hour count.
+
+    Returns ``None`` (band relaxes to the bare priced-seam economics) when no
+    forecast is supplied for ``year`` — either ``forward_net_import_twh`` is
+    ``None`` or, when it is a per-year mapping, ``year`` is absent from it.
+
+    Args:
+        year: Forecast calendar year keying the supplied trajectory.
+        forward_net_import_twh: Forecast NYISO annual net import (TWh,
+            import-positive). A ``dict[year -> TWh]`` is looked up by ``year``;
+            a bare ``float`` is used for every year; ``None`` relaxes the band.
+        system_demand: Optional hourly system demand, shape ``(T,)`` or
+            ``(n_zones, T)`` (summed over zones), used to weight the monthly
+            split. ``None`` falls back to an hour-count (near-flat) split.
+
+    Returns:
+        Monthly net-import targets in MWh, shape ``(n_months,)``, or ``None``.
+    """
+    if forward_net_import_twh is None:
+        return None
+    if isinstance(forward_net_import_twh, dict):
+        annual_twh = forward_net_import_twh.get(year)
+        if annual_twh is None:
+            annual_twh = forward_net_import_twh.get(str(year))
+    else:
+        annual_twh = float(forward_net_import_twh)
+    if annual_twh is None:
+        return None
+
+    from market_sim.data.fleet import _hour_to_month_index
+
+    annual_mwh = float(annual_twh) * 1.0e6  # TWh -> MWh
+    month_index = _hour_to_month_index(HOURS_PER_YEAR)
+    n_months = int(month_index.max()) + 1
+
+    if system_demand is not None:
+        demand = np.asarray(system_demand, dtype=float)
+        if demand.ndim == 2:
+            demand = demand.sum(axis=0)
+        demand = demand.reshape(-1)[:HOURS_PER_YEAR]
+        weight = np.zeros(n_months, dtype=float)
+        np.add.at(weight, month_index[: demand.size], demand)
+    else:
+        weight = np.zeros(n_months, dtype=float)
+        np.add.at(weight, month_index, np.ones(HOURS_PER_YEAR))
+
+    total = weight.sum()
+    if total <= 0.0:
+        return None
+    return annual_mwh * (weight / total)
+
+
 def neiso_net_interchange(year: int) -> np.ndarray | None:
     """Return NEISO's hourly net export (MW, export-positive), or ``None``.
 
