@@ -20,6 +20,34 @@ under its own `weather_year`-hashed `cache_key`; the report reuses the canonical
 per-fuel generation distributions and the raw per-member summaries. Tests:
 `tests/test_ensemble.py`.
 
+## 2026-06-25 (Forecast hydro monthly-energy budget — forward analogue + wet/dry scenario knob, G9)
+
+**Implements the forecast analogue of the measured EIA-930 hydro budget level
+(forecast-methodology-gaps-2026-06.md G9); no keeper re-solve, default-off,
+byte-identical baseline.** The hydro monthly-energy-budget LP constraint
+(dispatch picks *when* within a month each plant generates) is already the
+forward mechanism; only its monthly *level* was a measured input
+(`--hydro-eia930-monthly` pins it to EIA-930 NG:WAT). This adds the forward level
+source:
+
+- **Normal-water-year climatology** — `data.eia_loader.climatological_monthly_hydro`
+  returns the per-month mean of measured EIA-930 NG:WAT across
+  `constants.HYDRO_CLIMATOLOGY_YEARS` (2021–2025; uncovered years skipped), so a
+  forecast year inherits a normal water year rather than a single year's draw.
+- **Wet/dry hydro-year lever** — `ScenarioConfig.hydro_year` (`"dry"`/`"normal"`/
+  `"wet"`) scales the climatology by `constants.HYDRO_YEAR_MULTIPLIER`
+  (0.85/1.0/1.15, bracketing the ±15% central reservoir-system inter-annual
+  range). `data.hydro.forecast_monthly_hydro` combines the two and feeds the
+  existing `load_hydro_budget(monthly_target_mwh=…)` seam (per-plant within-month
+  shares preserved — level only).
+- **CLI** — `--hydro-forecast-budget` + `--hydro-year {dry,normal,wet}` on
+  `run_calibration_full.py`, the forward mirror of `--hydro-eia930-monthly`
+  (mutually exclusive; threaded through `run_year` → `_hydro_fleet`).
+
+Pure level input, never pinned to a realized outcome (CLAUDE.md #1/#12); the
+within-month dispatch mechanism is untouched. Tests in `tests/test_hydro.py`
+(`TestForecastHydroBudget`).
+
 ## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
 
 **Rejected probe; keeper stays `nyiso 27 cc-offer`; live source reverted to the
