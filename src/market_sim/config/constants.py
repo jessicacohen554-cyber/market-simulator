@@ -2540,13 +2540,13 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     #     ratio is not stable across years (PJM 2023 ran cheap at 11.2), so the
     #     single mean over-prices PJM in 2023 and under-prices it in 2024 — a
     #     mid-year anchor, not a fit.
-    #   - SPP (basis ~0, wind-set): HR 10.0, an ESTIMATE anchored to SPP's
-    #     published all-hours RT LMP (~$25.6/$22.8, Potomac Economics SPP IMM
-    #     State-of-the-Market) / actual Henry Hub (ratios 10.1/10.4/~9.7) — SPP
-    #     has no committed hourly-LMP product yet, so this is an estimate pending
-    #     an SPP North/South hub extract (rule #12: estimate is admissible where
-    #     measured is absent, documented). SPP is wind-rich and reliably cheaper
-    #     than MISO.
+    #   - SPP (basis ~0, wind-set): HR 10.0 structural, now anchored per year to
+    #     SPP's MEASURED realized RT-LMP/HH (9.24/10.65/7.70, from the committed
+    #     actual_lmp_hourly_SPP product — system mean of SPPNORTH_HUB +
+    #     SPPSOUTH_HUB from the SPP Integrated Marketplace — divided by actual
+    #     Henry Hub). The flat 10.0 over-prices wind-set SPP in dear-gas 2025
+    #     (ratio 7.70): high HH does not lift SPP's wind-marginal LMP. SPP is
+    #     wind-rich and reliably cheaper than MISO (RT ~$23.5/$23.3/$27.1).
     #   - SERC/South (basis ~0): HR 12.0, an ESTIMATE — the Southeast is not an
     #     organized market, so this is anchored to a ~$30/MWh SERC bilateral
     #     level / actual Henry Hub (ratios 11.8/12.3/11.9), priced on the
@@ -2587,6 +2587,20 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=4000.0,
             border_zones=("MISO-North",),
             load_shape_exponent=1.0,
+            # Per-year measured anchor (derive_neighbor_hr_by_year.py --iso MISO):
+            # SPP's realized RT hub LMP / Henry Hub from the committed
+            # actual_lmp_hourly_SPP product (RT $23.5/$23.3/$27.1, system mean of
+            # SPPNORTH_HUB + SPPSOUTH_HUB, SPP Integrated Marketplace; DA mean
+            # $25.6 in 2023 matches the Potomac Economics SPP IMM print) / actual
+            # Henry Hub ($2.54/$2.19/$3.52). The flat 10.0 mean badly OVER-prices
+            # wind-set SPP in dear-gas 2025 (measured ratio 7.70 << 10.0 — the
+            # high HH does NOT lift SPP's wind-marginal LMP), so the SPP seam
+            # under-imports and MISO over-runs its own coal: a suspect for the
+            # 2025 MISO net-interchange sign-flip. 2023 (9.24) / 2024 (10.65)
+            # re-anchor each year to SPP's OWN realized price. Measured neighbor
+            # price-formation input (rule #12), blind to MISO's interchange
+            # (rule #11 — the derivation never sees MISO flow).
+            hr_by_year={2023: 9.24, 2024: 10.65, 2025: 7.7},
         ),
         NeighborInterface(
             name="South",
