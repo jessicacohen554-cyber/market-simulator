@@ -146,18 +146,35 @@ scarcity year RTORDPA carries).
 the shared-headroom RHS, so most May hours are not reserve-thin and the co-opt
 only binds on the genuinely tight acute days — exactly the gap G1 named. The
 multi-product additivity (~7.5 GW vs the old ~3 GW) closes part of it (acute days
-fire) but not the broad month. The **P1-compatible fix is online-gating** the fast
-tier (`R - ρ·Σ_g P[g] ≤ 0`, reserve only from online generation), which is wired
-in `_build_reserve_rows` but currently applies only to the legacy per-class path;
-extending it into the additive fast tier (and calibrating ρ) is the next iteration
-(`159b`). P2 commitment was tried and rejected — its energy-only screen
-over-corrects (2024 annual $123.7).
+fire) but not the broad month. May 2024's sustained AS scarcity was driven by
+high midday solar decommitting thermal, leaving the **committed online** fleet
+thin into the evening ramp — a *commitment* signal the perfect-foresight P1
+dispatch erases (it keeps thermal "available").
+
+**Why the obvious P1 fixes don't work.**
+* **Online-gating (`R - ρ·Σ_g P[g] ≤ 0`)** is *counterproductive* here, not just
+  weak. It ties reserve to online *output*, so on a tight evening (fast thermal
+  running hard, large ΣP) it grants *more* reserve and *suppresses* scarcity —
+  the opposite of what's needed. This is upstream's documented "generation
+  subsidy, not a scarcity charge" finding, sharper in ERCOT's additive form.
+* **P2 commitment** (the energy-only screen) decommits units on energy economics
+  alone, ignoring that ERCOT keeps thermal online *for AS*, so it starves the
+  reserve pool and over-fires every month (2024 annual $123.7).
+* **Curve/level tuning** (higher per-product VOLL, steeper demand curves) fires
+  on *every* hour with thin headroom — no May-specific selectivity — so it
+  over-fires the held months rather than lifting May alone.
+
+**The real fix is AS-aware commitment** — a commitment screen that values a
+unit's *AS* revenue (not energy margin alone), so the units ERCOT keeps online
+for Reg/RRS/ECRS stay committed, the midday-solar decommitment thins the *online*
+fast fleet, and the evening reserve binds endogenously. That is a larger modeling
+build (co-optimized commitment ↔ AS), scoped as the next step beyond this bundle.
 
 | Configuration | 2024 May month | verdict |
 |---|---|---|
 | run155a (no overlay/co-opt) | $23.6 | baseline under-price |
 | run157 (measured DAM-AS overlay) | $46.7 (≈actual $44.8) | pre-RTC+B bridge, stays for backcast |
-| **159 (endogenous multi-product co-opt, P1)** | $21.3 (acute days $40.0) | **partial** — acute days lift, broad month under-fires; awaits online-gating |
+| **159 (endogenous multi-product co-opt, P1)** | $21.3 (acute days $40.0) | **partial** — acute days lift, broad month under-fires; broad May awaits AS-aware commitment |
 | endogenous co-opt **+ P2 commitment** | (annual $123.7) | rejected — P2 starves the reserve pool, over-fires |
 
 _Run command (all years, per-plant, P1-only, dashboard bundle `159`) — reproduce
