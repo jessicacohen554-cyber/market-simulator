@@ -2541,6 +2541,14 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=7300.0,
             border_zones=("MISO-Central",),
             load_shape_exponent=1.0,
+            # Per-year measured anchor (derive_neighbor_hr_by_year.py --iso MISO):
+            # the flat 12.3 mean UNDER-prices the PJM hub in dear-gas 2024
+            # (measured ratio 13.49), so the largest MISO seam over-imports from
+            # PJM (-59 vs actual -23 TWh net interchange); 2025 (12.18) and 2023
+            # (11.2) re-anchor each year to PJM's own realized RT LMP / Henry Hub.
+            # Measured neighbor price-formation input (rule #12), blind to MISO's
+            # own interchange (rule #11 — the derivation never sees MISO flow).
+            hr_by_year={2023: 11.2, 2024: 13.49, 2025: 12.18},
         ),
         NeighborInterface(
             name="SPP",
