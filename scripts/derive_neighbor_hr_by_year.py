@@ -47,7 +47,7 @@ from market_sim.data.neighbor_price import neighbor_gas_price, neighbor_load_sha
 # Neighbor name -> the ISO code whose realized-LMP product anchors it. A neighbor
 # absent here (no organized-market LMP, e.g. the Carolinas) keeps the structural
 # marginal_heat_rate and gets no year table.
-_NEIGHBOR_LMP_ISO: dict[str, str] = {"MISO": "MISO", "NYISO": "NYISO"}
+_NEIGHBOR_LMP_ISO: dict[str, str] = {"MISO": "MISO", "NYISO": "NYISO", "PJM": "PJM"}
 
 _HOURS = 8760
 
