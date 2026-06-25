@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-25-miso10-nuclear-refuel-derate",
+  "label": "miso10 nuclear refuel derate",
+  "date": "2026-06-25",
+  "shorthand": "miso10-nuclear-refuel-derate",
+  "definition": "miso10 nuclear-refuel-derate: miso9 (pjm-seam-hranchor) PLUS one new structural lever — a MEASURED per-year nuclear refueling/maintenance availability overlay for MISO. MISO was the ONLY multi-year ISO with no nuclear availability overlay (CAMPD/CEMS is fossil-only), so nuclear ran flat ~97.9 TWh / ~97% CF EVERY year vs measured 87.2/90.4/90.7 — a systematic +10.7/+7.5/+7.2 TWh over-injection that filled the bottom of the stack. The lever adds NUCLEAR_MONTHLY_CF_BY_YEAR['MISO'] derived by scripts/derive_nuclear_monthly_cf.py (monthly CF = fleet EIA-923 net gen / fleet pmax x hours, capped at 1.0), the SAME accepted mechanism already in ERCOT/CAISO/PJM/NYISO/NEISO — an exogenous physical-availability event (the staggered ~18-24mo refueling cadence; rule #12 'unit outage windows'), applied as an availability cap not a generation pin. RESULT: nuclear now lands at measured 87.15/90.20/90.59 TWh (was flat ~97.9) — nuclear volume error 2024 +7.5 -> -0.2 TWh, with the real refueling seasonality. PASS C3a mean-LMP (31.1/29.2/39.8), C3b shape, C4 dispatch-r, C6 governance. OPEN MISSES (documented, not masked; the lever is kept on rule-#1 faithfulness grounds even though it worsens the import residual): (1) the freed ~7-11 TWh/yr is backfilled by MORE imports in 2023/24 (net import 2024 48.3->52.3, 2023 63.6->69.3 vs actual 23.1/37.9), because the priced seam undercuts the next domestic unit — this UNMASKS the over-import as the dominant injection error (next lever: SPP/South seam anchor, task Part 4), it does not cause it; (2) 2025 net-interchange sign-flips to net export (+3.4 vs actual -19.0; import-hrs 45.8% vs 79.2%) driven by the persistent 2025 coal over-run (236.8 vs 192-201) — a coal-offer root cause nuclear doesn't touch; (3) CT_PEAKER stays a real ~16 TWh merit-order under-gen (classifier verified correct, see miso9 CT-note correction); recovers only once over-import is fixed. Solved per-year (2023/2024/2025 separate processes, merged into one bundle) because a 3-year per-plant MISO LP OOMs at 16 GB; MISO backcast has no cross-year dependency, so per-year == combined.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-25-miso10-nuclear-refuel-derate.js",
+  "bundle": "results/calibration/MISO/nuclear_derate"
+}

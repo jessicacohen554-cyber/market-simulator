@@ -261,6 +261,12 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     "PJM": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
     "NYISO": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
     "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
+    # MISO = 10-plant / 13-unit nuclear fleet (Clinton, Fermi, Monticello,
+    # Prairie Island, Point Beach, Waterford 3, Grand Gulf, Callaway, River
+    # Bend, Arkansas Nuclear One), 11,519 MW. Forecast-fallback seasonal
+    # pattern = the 3-year mean of the EIA-923-derived per-year CF below;
+    # spring/fall dips are the staggered refueling cadence across the fleet.
+    "MISO": [0.93, 0.92, 0.85, 0.82, 0.78, 0.91, 0.98, 0.98, 0.93, 0.79, 0.84, 0.89],
 }
 
 # Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
@@ -363,6 +369,28 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2023: [0.98, 0.98, 0.99, 0.41, 0.60, 0.38, 0.93, 0.93, 0.91, 0.84, 0.63, 0.87],
         2024: [0.88, 1.00, 1.00, 1.00, 0.99, 1.00, 0.99, 0.98, 0.81, 0.44, 0.76, 0.97],
         2025: [1.00, 1.00, 1.00, 0.75, 0.77, 1.00, 0.99, 0.93, 0.99, 0.86, 1.00, 1.00],
+    },
+    # MISO = the 10-plant / 13-unit EIA-860 operable nuclear fleet (Clinton,
+    # Fermi, Monticello, Prairie Island 1+2, Point Beach 1+2, Waterford 3,
+    # Grand Gulf, Callaway, River Bend, Arkansas Nuclear One 1+2) — fleet
+    # nameplate 11,519 MW. Monthly EIA-923 net generation / (fleet pmax x hours
+    # in month), clipped at 1.0 (ERCOT convention; the cap costs <1 TWh/yr vs
+    # measured energy). Before this entry MISO had NO nuclear availability
+    # overlay (the CAMPD/CEMS outage source is fossil-only — no nuclear), so
+    # nuclear ran flat at the static-pattern x (1 - EFORD) ceiling, ~97.9 TWh
+    # (~97% CF) EVERY year vs measured 87.2/90.4/90.7 — a systematic
+    # +10.7/+7.5/+7.2 TWh nuclear over-injection that filled the bottom of the
+    # stack and pushed coal and gas peakers out of merit (calibration runs
+    # miso1-9). The dips are the actual staggered ~18-24 month refueling
+    # cadence (spring/fall outage season; deep troughs verified to individual
+    # reactors going to ~0 in the per-plant EIA-923 series, e.g. Prairie Island
+    # / Callaway / River Bend Oct dips).
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos MISO.
+    "MISO": {
+        2023: [1.00, 0.94, 0.87, 0.83, 0.76, 0.93, 1.00, 0.96, 0.90, 0.68, 0.75, 0.75],
+        2024: [0.78, 0.91, 0.80, 0.81, 0.83, 0.96, 1.00, 0.99, 0.97, 0.85, 0.90, 0.93],
+        2025: [1.00, 0.92, 0.89, 0.82, 0.75, 0.84, 0.95, 0.98, 0.91, 0.85, 0.86, 1.00],
     },
 }
 
