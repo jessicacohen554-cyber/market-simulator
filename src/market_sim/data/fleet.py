@@ -417,7 +417,22 @@ _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 # — the plant blend was silently masking the inversion), forward-reproducible (it
 # reflects unit physics, not a calendar/residual fit) and applied to the steam
 # (ST_GAS) units ONLY, leaving the CC rows on their measured blend.
-MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5}
+# CAISO AES Southland coastal once-through-cooling (OTC) steamers carry the SAME
+# pathology via a different path: a colocated CCGT reports under the steam plant's
+# ORIS code, so the EIA-923 plant-level heat rate blends the efficient CC into the
+# legacy boiler even though CAMPD remaps the CCGT to its own EIA code (315 -> 62115,
+# 335 -> 62116; see ST_GAS_PEAKER_PLANTS / campd.CAMPD_UNIT_PLANT_REMAP). The blend
+# hands the steam units CC-like heat rates (Alamitos 315 -> 8.49, Huntington Beach
+# 335 -> 7.33, both BELOW the CT_PEAKER fleet median ~10.07), so the model clears
+# ~1.3 GW of OTC steam ahead of CA's simple-cycle peakers (the model ST_GAS over /
+# CT_PEAKER under merit inversion). The recovered value is the measured heat rate of
+# the IDENTICAL pure-steam sister plant Ormond Beach (350: 11.85 MMBtu/MWh, same AES
+# Southland 1958-73 OTC boiler fleet, no colocated CC so its 923 blend is clean) —
+# a measured physical analog (CLAUDE.md rule #11), not a residual fit. _correct_
+# mixed_facility_steam_hr lifts ST_GAS units only and never lowers a clean unit, so
+# Ormond itself is untouched. With HR ~11.85 these boilers sit above the peakers and
+# clear only at scarcity, matching their ~0.2-0.6 TWh measured 2023 dispatch.
+MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5, 315: 11.85, 335: 11.85}
 
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
