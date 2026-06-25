@@ -95,6 +95,26 @@ RESERVE_FUEL_TYPES: frozenset[str] = frozenset(
 # (docs/ercot-backcast-audit-2026-06 B3/B5a).
 QUICK_START_FUEL_TYPES: frozenset[str] = frozenset({"gas_ct", "oil"})
 
+# NYISO synchronised (spinning) reserve fraction: the 10-minute SPINNING
+# requirement is one half of the 10-minute total (the published NYISO rule —
+# 10-min spinning = 1/2 largest contingency; the same 1/2 that fixes
+# ``nyca_10min_spin = 655 = 1/2 nyca_10min_total 1310`` in NYISO_RCPF_PRODUCTS).
+# A measured market-design constant, NOT fitted to any price residual
+# (CLAUDE.md rule #12). Applied to the NYC 10-min total (500 MW) -> 250 MW NYC
+# spin. Used by the path-B commitment-gated synchronised-reserve route
+# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md).
+NYISO_SPIN_FRACTION: float = 0.5
+
+# Zones whose quick-start fleet may supply the NYC locational synchronised-reserve
+# requirement. The NYC spinning family is a balance row over the NYC zone only
+# (NYISO_RCPF_LOCATIONAL["NYC"]["zones"] == ("NYC",)), and reserve is per-zone
+# deliverable (dispatch._build_reserve_rows; handoff Finding 5: out-of-pocket
+# headroom cannot satisfy a downstate family). So only NYC-zone quick-start units
+# can back R[quick-start, NYC] — the reserve-adequacy commit force-commits this
+# subset. The "downstate / NYC-SENY pocket" language in the handoff refers to the
+# import-constrained region; its binding locational spinning family is NYC.
+NYISO_DOWNSTATE_SPIN_ZONES: frozenset[str] = frozenset({"NYC"})
+
 # ERCOT ORDC seasons (calendar quarters of the LOLP statistics): winter =
 # Dec-Feb, spring = Mar-May, summer = Jun-Aug, fall = Sep-Nov.
 _SEASON_OF_MONTH: tuple[str, ...] = (
@@ -1684,6 +1704,66 @@ def nyiso_rcpf_product_shortfall_steps(
     return np.asarray(pens, dtype=float), np.asarray(wids, dtype=float)
 
 
+def nyiso_spin_requirement_mw(config) -> float:
+    """Return the NYC synchronised (spinning) reserve requirement in MW.
+
+    :data:`NYISO_SPIN_FRACTION` (1/2, a published market-design constant) times
+    the NYC locational 10-minute total requirement (``nyc_10min_total`` in
+    :data:`NYISO_RCPF_LOCATIONAL`, 500 MW) -> 250 MW. The single source of truth
+    shared by the LP spinning family (:func:`nyiso_reserve_coopt_inputs`) and the
+    runner's reserve-adequacy commit, so both target the same MEASURED quantity.
+
+    Args:
+        config: The scenario config, read for any ``nyiso_rcpf_locational``
+            override; otherwise the default :data:`NYISO_RCPF_LOCATIONAL`.
+
+    Returns:
+        The NYC spinning-reserve requirement in MW.
+    """
+    from market_sim.config.constants import NYISO_RCPF_LOCATIONAL
+
+    locational = getattr(config, "nyiso_rcpf_locational", None) or NYISO_RCPF_LOCATIONAL
+    nyc10 = next(
+        (
+            req
+            for region in locational.values()
+            for name, req, _c, _p in region["products"]
+            if "nyc_10min_total" in name
+        ),
+        500.0,
+    )
+    return NYISO_SPIN_FRACTION * float(nyc10)
+
+
+def nyiso_spin_eligible(fleet_arrays: FleetArrays, zone_names: list[str]) -> np.ndarray:
+    """Return the ``(n_gen,)`` boolean mask of NYC quick-start spin-eligible units.
+
+    A unit may back the NYC synchronised-reserve requirement only if it is a
+    quick-start type (:data:`QUICK_START_FUEL_TYPES`) *and* sits in a
+    :data:`NYISO_DOWNSTATE_SPIN_ZONES` zone (NYC) — reserve is per-zone
+    deliverable, so out-of-pocket headroom cannot satisfy the NYC family. The
+    runner's :func:`market_sim.model.commitment.reserve_adequacy_commit`
+    force-commits this subset until its committed capacity covers the spinning
+    requirement.
+
+    Args:
+        fleet_arrays: The vectorized fleet, for ``fuel_type_idx`` and ``zone_idx``.
+        zone_names: The ISO's zone names, ordered to match ``zone_idx``.
+
+    Returns:
+        A ``(n_gen,)`` boolean mask: ``True`` = NYC-zone quick-start unit.
+    """
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    quick = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+    spin_zone_idx = {
+        i for i, name in enumerate(zone_names) if name in NYISO_DOWNSTATE_SPIN_ZONES
+    }
+    in_zone = np.array(
+        [int(z) in spin_zone_idx for z in fleet_arrays.zone_idx], dtype=bool
+    )
+    return quick & in_zone
+
+
 def nyiso_reserve_coopt_inputs(
     config,
     fleet_arrays: FleetArrays,
@@ -1784,37 +1864,45 @@ def nyiso_reserve_coopt_inputs(
                 (member_idx, str(name), (float(req), float(crit), float(pen)))
             )
 
-    # Online-gated synchronised (spinning) reserve (path A, default-off behind
+    # Synchronised (spinning) reserve (default-off behind
     # config.nyiso_synchronised_reserve). NYISO 10-minute SPINNING reserve must
     # come from ONLINE (synchronised) units, but the idle-allowed headroom rows
     # let an OFFLINE downstate peaker count its full pmax as deliverable reserve
     # -- so the locational families never bind, the RCPF never prices, and the
     # NYC peakers stay economically idle (docs/handoffs/
     # nyiso-downstate-reserve-incidence-2026-06.md, root cause). This adds a NYC
-    # locational spinning family on a new ONLINE-GATED reserve class (2): its
-    # headroom is bounded by online quick-start GENERATION, not idle capacity, so
-    # holding it forces NYC peakers to commit (CT_PEAKER energy) and binds the
-    # family (RCPF fires -> C3c/C3a lift endogenously). Requirement = 1/2 of the
+    # locational spinning family. Requirement = NYISO_SPIN_FRACTION (1/2) of the
     # NYC 10-minute total (the published NYISO spinning = 1/2-of-total ratio,
     # NYISO_RCPF_PRODUCTS: nyca_10min_spin 655 = 1/2 nyca_10min_total 1310),
-    # applied to the NYC locational 10-min total (500 MW) -> 250 MW; penalty the
-    # same $500 NYC ceiling. NOT fitted to the residual.
+    # applied to the NYC 10-min total (500 MW) -> 250 MW; penalty the same $500
+    # NYC ceiling. NOT fitted to the residual.
+    #
+    # Two routes, selected by whether the P2 commitment screen is enabled:
+    #   * PATH B (commit_gated, the real tail lever): commitment is ON. The
+    #     spinning family rides the ORDINARY idle-allowed quick-start class (1).
+    #     In the P2 re-solve apply_commitment_with_coal_pin zeroes the
+    #     availability of decommitted units, so the class-1 NYC headroom row
+    #     (Sum P + R <= Sum cap) — restricted to the committed set — equals
+    #     Sum_online(pmax - P), the physically-correct synchronised headroom, with
+    #     no online binary and no rho*Sum-P subsidy. Commitment does the gating;
+    #     the runner's reserve_adequacy_commit force-commits enough NYC quick-start
+    #     to back the requirement. (The 250 MW spin family is nested under the
+    #     existing 500 MW nyc_10min_total on the same class-1 pool — both prices
+    #     against the now-online-only headroom; kept per the path-B design.)
+    #   * PATH A (online-gated scaffold): commitment is OFF. The spinning family
+    #     rides a separate ONLINE-GATED class (2) whose headroom is bounded by
+    #     online quick-start GENERATION (R <= rho*Sum P), an LP-linear proxy for
+    #     the missing online indicator. Confirmed-but-insufficient for the tail
+    #     (it subsidises output rather than charging scarcity); kept as a default-
+    #     off scaffold. See the handoff "Path A — IMPLEMENTED & TESTED".
     synch = bool(getattr(config, "nyiso_synchronised_reserve", False))
+    commit_gated = synch and bool(getattr(config, "commitment_enabled", False))
     if synch:
         nyc_idx = tuple(i for z, i in zone_index.items() if z == "NYC")
-        nyc10 = next(
-            (
-                req
-                for region in locational.values()
-                for name, req, _c, _p in region["products"]
-                if "nyc_10min_total" in name
-            ),
-            500.0,
-        )
+        spin_req = nyiso_spin_requirement_mw(config)
         if nyc_idx:
-            families.append(
-                (nyc_idx, "nyc_spin_online", (0.5 * float(nyc10), 0.0, 500.0))
-            )
+            spin_name = "nyc_spin_commit" if commit_gated else "nyc_spin_online"
+            families.append((nyc_idx, spin_name, (spin_req, 0.0, 500.0)))
 
     n_fam = len(families)
     balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
@@ -1825,14 +1913,17 @@ def nyiso_reserve_coopt_inputs(
     counts = np.zeros(n_fam, dtype=int)
     for f, (member_idx, name, (req, crit, pen)) in enumerate(families):
         balance_zone_mask[f, list(member_idx)] = True
-        # The online-gated synchronised family (name "nyc_spin_online", added
-        # only when nyiso_synchronised_reserve is on) draws on the ONLINE-GATED
-        # quick-start class (2); other 10-minute products on the idle-allowed
-        # quick-start class (1); 30-minute / total products on the full class (0).
-        # NOTE: the published NYCA "nyca_10min_spin" product stays class 1
-        # (idle-allowed) — it carries "spin" but not "spin_online".
+        # Reserve class per family: the path-A online-gated spinning family
+        # (name "nyc_spin_online") draws on the ONLINE-GATED quick-start class
+        # (2); the path-B commit-gated spinning family ("nyc_spin_commit") and
+        # all 10-minute products on the idle-allowed quick-start class (1);
+        # 30-minute / total products on the full dispatchable class (0). NOTE:
+        # the published NYCA "nyca_10min_spin" product stays class 1 — it carries
+        # "spin" but not "spin_online".
         balance_reserve_class[f] = (
-            2 if "spin_online" in name else (1 if "10min" in name else 0)
+            2
+            if "spin_online" in name
+            else (1 if "10min" in name or "spin" in name else 0)
         )
         requirement[f, :] = req
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
@@ -1850,7 +1941,8 @@ def nyiso_reserve_coopt_inputs(
     full_elig = ercot_reserve_eligible(fleet_arrays)
     fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
-    if synch:
+    if synch and not commit_gated:
+        # PATH A only: append the third ONLINE-GATED quick-start class (2).
         eligible = np.vstack([full_elig, quick_elig, quick_elig])
         online_gated = np.array([False, False, True], dtype=bool)
         # rho = the online-headroom ratio (pmax-pmin)/pmin of the quick-start
