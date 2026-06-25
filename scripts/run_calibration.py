@@ -421,55 +421,74 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    below the older NYC peers (Arthur Kill 11.27, Astoria 11.95). A measured-data
 #    correction (CLAUDE.md rule #11: the blended HR was silently masking the
 #    inversion), forward-reproducible, not fitted to the price/volume residual.
-#  - CC_REGULAR / CC_CHP: the efficient gas workhorses. CC marginal HR is ~flat
-#    and ~0.95x average across the bulk of the operating range (CAMPD CC fit,
-#    also cited on the ERCOT curve), with the incremental HR rising toward full
-#    load as the unit pushes against its rating (the approach to duct firing).
-#    The CAMPD CC marginal-HR SRMC *reach* at the top of the econ ramp is
-#    ~1.21x base_hr -- the SAME fit ERCOT's keeper uses (committed 0.87 /
-#    econ_low 0.92 / econ_high 1.21). So the rising econ ramp now spans
-#    econ_low 0.95 -> econ_high 1.21 (run 27 re-level; econ_high was 1.12).
-#    WHY 1.12 was wrong: it compressed the upper econ slices BELOW the CAMPD CC
-#    marginal HR, pricing the top of each CC's body too cheap. While the old
-#    75% CC capacity wall was in place that compression was masked; once run 26
-#    removed the wall (cc_nameplate_summer_derate -> full EIA-860 nameplate) the
-#    un-walled CC fleet cleared its now-exposed top slices too cheap and mildly
-#    over-ran on energy (CC_REGULAR ~+2 TWh/yr) while DEPRESSING the marginal
-#    LMP (C3a 2023 -8.9% / 2024 -11.0%). Raising econ_high to the ERCOT/CAMPD
-#    1.21 reach prices those marginal slices out, so CC stops over-running and
-#    stops setting too-low a clearing price -- a grounded offer-LEVEL
-#    calibration (CLAUDE.md rule #1 second step: right structure in run 26,
-#    offer level here), grounded in the CAMPD CC marginal heat rate, NOT a
-#    re-walled capacity nor a residual-fitted adder (rules #11/#12). econ_low
-#    stays 0.95 (already above ERCOT's 0.92; the cheap baseload body is correct
-#    -- the miss was only the compressed top). CC_CHP (most efficient, 6.99)
-#    stays nudged a touch higher (econ_high 1.24, +0.03 over CC_REGULAR) to trim
-#    its small over-run. The duct-firing peak stays a separate inflexible flat
-#    tranche (2023 SOM §VI.A: "Some combined cycles offer inflexibly... to
-#    manage physical operating constraints on the duct-fired portion"; duct
-#    burners are not flexible enough for AGC/10-min reserves).
-#  - CT_PEAKER: offers near marginal cost in NYISO's competitive market; the
-#    generic committed 1.55 was an ERCOT P1 startup-cost hurdle never validated
-#    here that parked the peakers idle. Lowered to 1.35 so peakers pick up the
-#    high-load tail (SOM: NYC GTs run for peak/reliability), econ/peak unchanged.
+#  - CC_REGULAR / CC_CHP / ST_GAS bands are now grounded in NYISO's OWN measured
+#    marginal heat rate, derived from the NY+NJ unit-level CAMPD CEMS extracts by
+#    scripts/derive_campd_marginal_hr.py (the CEMS analogue of the ERCOT
+#    derive_dam_offer_hrmults.py; output data/raw/reference/
+#    nyiso_campd_marginal_hr_summary.csv). Run 28 removes the cross-ISO BORROW
+#    that runs 26/27 carried: econ_high had been set to 1.21 because that was
+#    ERCOT's CAMPD-CC marginal-HR reach -- a number that was never NYISO's own.
+#    The directive (CLAUDE.md rule #1): each ISO's per-class offer curve is
+#    grounded in THAT ISO's measured data, never a scalar carried over from
+#    another ISO. The method per unit: incremental HR = d(heatInput)/d(grossLoad)
+#    from a quadratic fit of heatInput on normalized load, evaluated at the
+#    min-gen floor (committed), mid-ramp (econ_low) and top-of-ramp (econ_high),
+#    expressed as a multiple of the class cap-weighted base_HR, cap-weighted
+#    median across units, pooled 2023-2025.
+#  - CC_REGULAR (base_HR 7.76): committed 0.632 / econ_low 0.784 / econ_high
+#    0.925 (NY+NJ CAMPD, 35 units). NYISO's OWN CC marginal-HR reach is 0.925x,
+#    FAR below the borrowed 1.21 -- the 1.21 was an ERCOT offer-MARKUP, not a
+#    NYISO heat rate (NYISO is competitive, near-marginal-cost; 2023 SOM §VI.A
+#    output gap 0.05-1.9%). Because the native reach is < 1.21 the CC-over
+#    residual is structural (import-constrained downstate leans on its efficient
+#    CC), NOT closed by re-inflating CC: rule #1 keeps the grounded number even
+#    though dropping the borrowed reach re-exposes the depressed marginal LMP
+#    (C3a), whose true root cause is the missing NYC-peaker/RCPF scarcity tail
+#    (incidence-gated, out of scope -- never papered over with a borrowed markup).
+#  - CC_CHP (base_HR 6.99): committed 0.809 / econ_low 0.989 / econ_high 1.103
+#    (31 units). The most efficient gas workhorse; its native reach 1.103x sits
+#    just above CC_REGULAR's per its lower base_HR, eff-HR top 7.7 vs 7.2.
+#  - ST_GAS (base_HR 10.61): committed 0.818 / econ_low ~0.825 / econ_high ~0.830
+#    (25 units; the measured marginal is essentially FLAT at ~0.82-0.83x, the
+#    derived econ_low/econ_high 0.830/0.828 are statistically identical, rendered
+#    as a minimal rising ramp to satisfy the model's monotone econ ramp). This
+#    REPLACES the inherited 1.10/1.45 (ERCOT-shaped, never NYISO-grounded) that
+#    priced legacy steam's economic ramp at 11.7-15.4 eff HR -- far above its
+#    true ~8.7-8.8 incremental HR -- the reason NYC steam under-ran. Lowering
+#    ST_GAS to its native marginal HR lets steam clear more (closing the ST_GAS
+#    under-run, the complement of the CC over-run) while staying ABOVE CC on
+#    merit: steam committed eff HR 8.68 > CC_REGULAR / CC_CHP econ_high 7.2 / 7.7,
+#    so no inversion (the boundary the Ravenswood fix and runs 26/27 protect).
+#    The duct-firing peak stays a separate inflexible flat tranche (2023 SOM
+#    §VI.A: combined cycles offer the duct-fired portion inflexibly).
+#  - CT_PEAKER: UNCHANGED (committed 1.35 etc.). Out of scope here -- the CT
+#    under-run is incidence-gated (downstate reserve/scarcity tail, the nyiso-25
+#    rcpf-steep probe), not offer-curve-gated; its CAMPD marginal HR is noisy
+#    (peakers run at one point) and is not a clean energy-curve target.
 _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
-        "committed": 0.90,
-        "econ_low": 0.95,
-        "econ_high": 1.21,  # run 27: 1.12 -> 1.21, CAMPD CC marginal-HR SRMC reach (ERCOT-grounded)
+        # run 28: NYISO-native CAMPD marginal-HR fit (was ERCOT-borrowed
+        # 0.90/0.95/1.21). derive_campd_marginal_hr.py --iso NYISO, cap-weighted
+        # median pooled 2023-25, 35 NY+NJ CC units; base_HR 7.76.
+        "committed": 0.632,
+        "econ_low": 0.784,
+        "econ_high": 0.925,  # NYISO's OWN CC reach; FAR below the borrowed 1.21
         "peak": 2.25,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
     "CC_CHP": {
-        "committed": 0.90,
-        "econ_low": 0.98,
-        "econ_high": 1.24,  # run 27: 1.15 -> 1.24, +0.03 over CC_REGULAR (trim CHP over-run)
+        # run 28: NYISO-native CAMPD marginal-HR fit (was 0.90/0.98/1.24).
+        # 31 NY+NJ CC_CHP units; base_HR 6.99.
+        "committed": 0.809,
+        "econ_low": 0.989,
+        "econ_high": 1.103,
         "peak": 2.25,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
     "CT_PEAKER": {
+        # UNCHANGED (out of scope: incidence-gated, not offer-curve-gated).
         "committed": 1.35,
         "econ_low": 1.27,
         "econ_high": 1.98,
@@ -478,9 +497,14 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 7.0,
     },
     "ST_GAS": {
-        "committed": 0.97,
-        "econ_low": 1.10,
-        "econ_high": 1.45,
+        # run 28: NYISO-native CAMPD marginal-HR fit (was ERCOT-shaped
+        # 0.97/1.10/1.45). 25 NY+NJ steam units; base_HR 10.61; measured marginal
+        # is flat ~0.82-0.83x (derived econ_low/high 0.830/0.828, identical),
+        # rendered as a minimal rising ramp. Stays ABOVE CC on merit (eff HR 8.7
+        # > CC econ_high 7.2/7.7).
+        "committed": 0.818,
+        "econ_low": 0.825,
+        "econ_high": 0.830,
         "peak": 4.20,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
