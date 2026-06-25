@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-25-caiso-29-hsl-curtailment",
+  "label": "caiso 29 hsl curtailment",
+  "date": "2026-06-25",
+  "shorthand": "caiso-29-hsl-curtailment",
+  "definition": "caiso stgas-hrfix keeper config + uncurtailed-VRE wiring for the no-HSL years (renewables.py _UNCURTAILED_FALLBACK_ISOS). CAISO 2023/24 already used a built HSL parquet (delivered + reported curtailment); 2025's curtailment workbook is partial (only reaches May), so 2025 now gets the gross-up uncurtailed potential (delivered grossed up by the 2024 HSL reference rate: wind 1.13%, solar 6.63%) instead of net-of-curtailment delivered. FINDING: CAISO models ~0% endogenous curtailment in EVERY year, including the unchanged HSL years 2023/24 (model solar curt 0.0 vs reported 2.5-3.2 TWh) — the LP absorbs surplus solar via negative renewable offers and exports it through the priced WECC intertie rather than curtailing. This is a pre-existing CAISO characteristic, unchanged by this wiring; making CAISO curtailment endogenous (tightening export/ATC so surplus binds) is a separate investigation. NOT-YET: confounded by the freshly-merged caiso-intertie code in main (transmission/pricing), not this change.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-25-caiso-29-hsl-curtailment.js",
+  "bundle": "results/calibration/caiso_hsl_curt_3yr"
+}
