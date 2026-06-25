@@ -177,7 +177,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 2px">
    <h1 style="font-size:var(--fs-xl);margin:0">Backcast Results</h1>
    <span id=isoBadge class=isobadge></span></div>
-  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-25 13:12</p>
+  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-25 13:22</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top id=bcTop>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -592,16 +592,18 @@ function nonFosErr(id,yr,fuel){const av=((BENCH[yr]||{}).e930||{})[fuel],mv=((MO
 function anyErr(id,yr,g){return isNonFos(g)?nonFosErr(id,yr,g):classErr(id,yr,g);}
 function classErrs(id,yr){const out=[];for(const g of allClasses()){const e=anyErr(id,yr,g);if(e)out.push(e);}return out;}
 // A fossil class passes only when BOTH hold:
-//  (1) volume: the absolute miss |model − actual| is within SUM_TOL_GEN_FRAC of
-//      ISO ANNUAL generation (the 2026-06-15 universal gate: 0.5% ≈ the
-//      structural-noise floor, ~2.3 TWh on ERCOT; scales with system size and
-//      is applied uniformly across classes and ISOs — supersedes the old
-//      ±5% OR ±1 TWh size-tiered bar); and
+//  (1) volume: the absolute miss |model − actual| is within
+//      min(SUM_TOL_GEN_FRAC of ISO ANNUAL generation, SUM_TOL_GEN_CAP TWh) — the
+//      universal gate: 1.0% ≈ 1 pp of share, capped at an absolute 5 TWh so the
+//      band can't balloon on large ISOs (1% of an 800 TWh system would be 8 TWh,
+//      letting a small class drift far on the margin). Scales with system size,
+//      applied uniformly across classes and ISOs — supersedes the old
+//      ±5% OR ±1 TWh size-tiered bar, and the prior uncapped 0.5% band; and
 //  (2) share: its share of TOTAL generation is within SUM_TOL_SHARE_PP
 //      percentage points of the actual share — so a class can't pass on volume
 //      alone while still misrepresenting the generation mix.
-const SUM_TOL_PCT=5,SUM_TOL_GEN_FRAC=0.005,SUM_TOL_SHARE_PP=1.5;
-function volInTol(e,k){return e.annGen>0&&Math.abs(e.mFull-e.bench923)<=k*SUM_TOL_GEN_FRAC*e.annGen;}
+const SUM_TOL_PCT=5,SUM_TOL_GEN_FRAC=0.01,SUM_TOL_GEN_CAP=5,SUM_TOL_SHARE_PP=1.5;
+function volInTol(e,k){return e.annGen>0&&Math.abs(e.mFull-e.bench923)<=k*Math.min(SUM_TOL_GEN_FRAC*e.annGen,SUM_TOL_GEN_CAP);}
 function shareInTol(e,k){return e.sharePP==null||Math.abs(e.sharePP)<=k*SUM_TOL_SHARE_PP;}
 function classInTol(e){return volInTol(e,1)&&shareInTol(e,1);}
 // Per-class status: good = in tolerance (both bands); ok = within twice both
@@ -938,7 +940,7 @@ function diagnosticsHTML(id,years){const fs=diagFindings(id,years);
 function renderReport(){const id=st.run,years=runYears(id);
  if(!years.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>No year data in this run.</p></div>';return;}
  let h='<div class=panel><h2>Run scorecard — '+MODEL[id].label+'</h2>'
-  +'<p class=psub>All testing years at once. A class passes when its volume miss |model − actual| is within '+(100*SUM_TOL_GEN_FRAC)+'% of ISO annual generation (the universal gate, ~2.3 TWh on ERCOT) <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
+  +'<p class=psub>All testing years at once. A class passes when its volume miss |model − actual| is within min('+(100*SUM_TOL_GEN_FRAC)+'% of ISO annual generation, '+SUM_TOL_GEN_CAP+' TWh) (the universal gate) <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
   +'<div class=yeargrid>'+years.map(yr=>yearScoreCard(id,yr)).join("")+'</div></div>';
  h+='<div class=panel><h2>Class tolerance by year <span class=psub>(signed volume error, model vs actual)</span></h2>'
   +'<p class=psub>Red = model over-generates, blue = under, gray = inside the ±'+SUM_TOL_PCT+'% band. Hover a cell for TWh and the pass/fail reason. Fossil classes are zone-aware vs full EIA-923; nuclear/wind/solar are system-wide vs EIA-930.</p>'
