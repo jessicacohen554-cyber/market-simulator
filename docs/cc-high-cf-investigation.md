@@ -334,6 +334,23 @@ tuning direction (offer level vs commitment vs in-LP reserve co-optimization,
 grounded in ERCOT's richer curve and PJM's published market design) is worked
 through in `docs/handoffs/pjm-cc-level-tuning-2026-06.md`.
 
+### NYISO confirmation (2026-06-25, `nyiso 26 cc-nameplate` keeper)
+
+Re-solving the NYISO keeper config on the merged nameplate code reproduces the
+same rule-11 signal — but **mildly**, as expected for NYISO's small, import-
+constrained CC fleet. The 2023 within-gas merit split that the prior keeper left
+open **over-closes** once CC carries full nameplate and the Ravenswood steam HR
+sits correctly above CC: `CC_REGULAR −3.47 → +2.09 TWh`, `ST_GAS +2.76 → −1.48`
+(2024 `CC_REGULAR −2.61 → +2.39`, `ST_GAS −0.96 → −4.31`). CC now over-runs on
+energy by only **~+2 TWh/yr** (vs PJM's +64.7 TWh) and **depresses LMP**
+(`C3a` 2023 −8.9 %, 2024 −11.0 %; 2025 +9.3 % → in-band). Same root cause and
+same fix as PJM: the CC offer level is too cheap, re-levelled via
+`_NYISO_OFFER_CURVE` `econ_low/econ_high` per the tuning handoff — **not** a
+re-walled capacity. Kept as the NYISO keeper per rule #1 (most faithful
+structure; the miss is now localized to the single CC-offer lever). See
+`results/calibration/nyiso_26_cc-nameplate/calibration_attestation.json` and
+`docs/calibration-best-so-far-nyiso.md`.
+
 ### Code touchpoints (this session)
 
 - `config/scenarios.py`: `cc_nameplate_summer_derate`, `cc_duct_peaking_cap_pct`.
