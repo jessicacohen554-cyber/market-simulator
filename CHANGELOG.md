@@ -48,6 +48,34 @@ Pure level input, never pinned to a realized outcome (CLAUDE.md #1/#12); the
 within-month dispatch mechanism is untouched. Tests in `tests/test_hydro.py`
 (`TestForecastHydroBudget`).
 
+## 2026-06-25 (Forecast monthly maintenance shape — spec §1.7 / gap G12 BUILT)
+
+**Replaced the flat shoulder-POF heuristic with a historically-derived monthly
+maintenance shape, applied in forecast mode.** The forecast availability model
+previously smeared each plant group's planned-outage factor (POF) evenly across
+the five `_CC_SHOULDER_MONTHS = {3,4,5,10,11}`. It now distributes POF across the
+year by `MAINTENANCE_MONTHLY_SHAPE` (`config/constants.py`) — a per-plant-group
+12-month weight learned from the measured timing of spring/autumn maintenance in
+the committed CAMPD unit-outage extracts (all six ISOs pooled — a forecast shape,
+not pinned to any backcast year; `scripts/derive_maintenance_shape.py`). Each
+group's weights are the planned-maintenance excess over its annual-minimum
+(forced-outage-floor) month, normalized to a month-length-weighted mean of 1, so
+the per-hour planned-maintenance derate is `POF·(shoulder_hours/8760)·w[month]`.
+Because the shape has a month-weighted mean of 1, the group's **annual POF budget
+(`POF·shoulder_hours`) is conserved exactly** — only the seasonal distribution is
+sharpened (peaks Apr and Oct–Nov, ≈0 at the Jul/Aug summer peak, modest in
+winter; forecast ERCOT thermal availability dips to ~0.754 in April vs ~0.854 at
+the July peak). Gated by `ScenarioConfig.maintenance_monthly_shape` (default on,
+**forecast mode only**); `False` restores the legacy flat block. **Backcast runs
+are byte-identical** — their POF comes from the historic overlay
+(`data/outages.py`), which is untouched, so every calibration keeper is
+unaffected. New `TestMaintenanceMonthlyShape` covers budget conservation, summer-
+peak protection, spring/autumn reshape, and the backcast no-op; the legacy
+`TestThermalAvailability` mechanics tests are pinned to the flat block. Forecast
+sanity run (real ERCOT fleet, 2024, full 8760): dispatch solves Optimal, budget
+conserved to ~7e-4 capacity-weighted. Spec §1.7 and `docs/forecast-methodology-
+gaps-2026-06.md` G12 updated (DESIGN-ONLY → BUILT).
+
 ## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
 
 **Rejected probe; keeper stays `nyiso 27 cc-offer`; live source reverted to the
