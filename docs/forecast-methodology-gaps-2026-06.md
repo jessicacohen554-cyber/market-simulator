@@ -336,11 +336,19 @@ re-pinned.
 measured Waha negative-day frequency in the VRE-driven years and under-predicts the
 gas-infrastructure-driven 2024 record — exactly as expected, since 2024's 42% was a
 Permian gas-pipeline-takeaway event (a measured *outcome* with no forward analogue,
-#12), not a power-oversupply event the proxy models: endogenous **0.017 / TBD /
-TBD** vs measured **0.030 / 0.420 / 0.110** for 2023/2024/2025. The divergence is a
-documented residual, not a reason to revert the structural mechanism (#1/#11) — the
-forward model must respond to VRE build, which a frozen measured 0.42 cannot.
-**Done (was: Effort M, Risk Low).**
+#12), not a power-oversupply event the proxy models: endogenous **0.017 / 0.001 /
+0.002** vs measured **0.030 / 0.420 / 0.110** for 2023/2024/2025 (in-run, on the
+dispatched demand+VRE). The proxy is near-zero in 2024/25 because West local load
+plus the 12.68 GW WESTEX+PNHNDL takeaway absorbs essentially all West VRE, so West
+*power* oversupply almost never occurs. Removing the measured frequency drops the
+West CTs out of the cheap collapse hours (CT_PEAKER 2024 4.95 vs run154's measured-
+frequency 7.20 TWh — within the C1 band but a clear degradation), exposing that
+run154's in-band 2024 West-CT dispatch was partly carried by the non-forward
+measured collapse. The divergence and the West-CT under-run are documented residuals,
+not a reason to revert the structural mechanism (#1/#11) — the forward model must
+respond to VRE build, which a frozen measured 0.42 cannot. Demonstrated end-to-end
+in the run158 probe (`ercot_run158_netload_gas_endog_collapse`, all 3 years on the
+backcast dashboard). **Done (was: Effort M, Risk Low).**
 
 ### G7 HSL uncurtailed VRE potential + endogenous curtailment
 
