@@ -180,6 +180,75 @@ def hours_per_month(hours: int = 8760) -> np.ndarray:
     )
 
 
+def resolve_hydro_year_multiplier(hydro_year: str) -> float:
+    """Return the budget multiplier for a ``hydro_year`` scenario lever.
+
+    Maps the forecast wet/dry water-year lever (``"dry"`` / ``"normal"`` /
+    ``"wet"``) to its level multiplier via
+    :data:`market_sim.config.constants.HYDRO_YEAR_MULTIPLIER`. ``"normal"``
+    (the default) returns ``1.0``.
+
+    Args:
+        hydro_year: The scenario lever, one of the keys of
+            ``HYDRO_YEAR_MULTIPLIER``.
+
+    Returns:
+        The multiplier to apply to the normal-water-year hydro budget.
+
+    Raises:
+        ValueError: When ``hydro_year`` is not a recognised lever.
+    """
+    from market_sim.config.constants import HYDRO_YEAR_MULTIPLIER
+
+    try:
+        return float(HYDRO_YEAR_MULTIPLIER[hydro_year])
+    except KeyError as exc:
+        raise ValueError(
+            f"hydro_year must be one of {sorted(HYDRO_YEAR_MULTIPLIER)}, "
+            f"got {hydro_year!r}"
+        ) from exc
+
+
+def forecast_monthly_hydro(
+    iso: str,
+    hydro_year: str = "normal",
+    climatology_years: "tuple[int, ...] | list[int] | None" = None,
+) -> np.ndarray | None:
+    """Return a forecast hydro monthly-energy budget level (MWh).
+
+    The forward analogue of the measured EIA-930 ``NG: WAT`` backcast level:
+    the normal-water-year climatology
+    (:func:`market_sim.data.eia_loader.climatological_monthly_hydro`) scaled
+    by the wet/dry ``hydro_year`` lever
+    (:func:`resolve_hydro_year_multiplier`). This is a *level* input — it is
+    passed as ``monthly_target_mwh`` to :func:`load_hydro_budget`, which
+    rescales each month's per-plant budget to it while preserving the
+    within-month per-plant shares; the inter-temporal dispatch mechanism is
+    unchanged. Returns ``None`` when the ISO has no measured hydro to build a
+    climatology from, in which case the caller leaves the budget at its
+    EIA-923 level.
+
+    Args:
+        iso: ISO identifier, e.g. ``"CAISO"``.
+        hydro_year: Wet/dry water-year scenario lever (``"dry"`` /
+            ``"normal"`` / ``"wet"``). ``"normal"`` leaves the climatology
+            unscaled.
+        climatology_years: Historical years to average for the normal
+            water year. ``None`` (default) uses
+            :data:`market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`.
+
+    Returns:
+        The ``(12,)`` forecast monthly hydro budget in MWh, or ``None`` when
+        no climatology is available for ``iso``.
+    """
+    from market_sim.data.eia_loader import climatological_monthly_hydro
+
+    base = climatological_monthly_hydro(iso, climatology_years)
+    if base is None:
+        return None
+    return base * resolve_hydro_year_multiplier(hydro_year)
+
+
 def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
     """Return one row per hydro plant with its twelve monthly netgen columns.
 
@@ -334,18 +403,18 @@ def load_hydro_budget(
             to ``min_flow_fraction``. Intended for treaty-mandated minimum
             flows such as NYISO's Niagara/St-Lawrence obligations (see
             :data:`market_sim.config.constants.NYISO_HYDRO_TREATY_MIN_FLOW`).
-        monthly_target_mwh: Optional twelve-entry vector of measured monthly
-            hydro net generation (e.g. EIA-930 ``NG: WAT``). When set, each
-            month's per-plant energy budget is scaled so its total matches the
-            target, preserving the within-month per-plant shares. This pins the
-            assembled budget's level *and* monthly shape to a measured series
-            when the EIA-923 vintage is an incomplete early release whose
-            backfilled budget misstates a lower- or higher-inflow year (NEISO
-            2025: the 2024 backfill yields 6.65 TWh, mostly flat, vs the
-            measured EIA-930 5.12 TWh concentrated away from the dry
-            late-summer). The MW envelope is left at its physical (unscaled)
-            capability; only the energy budget is repinned. ``None`` (default)
-            changes no existing run.
+        monthly_target_mwh: Optional twelve-entry vector of monthly hydro net
+            generation to pin the budget level to. When set, each month's
+            per-plant energy budget is scaled so its total matches the target,
+            preserving the within-month per-plant shares. The target is either
+            a *measured* realization for a backcast (EIA-930 ``NG: WAT``, e.g.
+            to repin an incomplete EIA-923 early release: NEISO 2025's 2024
+            backfill yields 6.65 TWh, mostly flat, vs the measured 5.12 TWh
+            concentrated away from the dry late-summer) or a *forecast*
+            normal-water-year climatology scaled by a wet/dry lever
+            (:func:`forecast_monthly_hydro`). The MW envelope is left at its
+            physical (unscaled) capability; only the energy budget is repinned.
+            ``None`` (default) changes no existing run.
 
     Returns:
         A :class:`HydroBudget` keyed to the hydro generator subset, ordered
@@ -412,10 +481,11 @@ def load_hydro_budget(
         min_mw = float(min_flow_fraction) * max_mw
     plant_zones = [zones.get(int(pid), "") for pid in plant_ids]
 
-    # Pin the monthly energy budget to a measured monthly hydro total
-    # (EIA-930 NG: WAT), preserving each month's per-plant shares. Done after
-    # the MW envelope above so the power caps stay at physical capability and
-    # only the inter-temporal energy limit is repinned.
+    # Pin the monthly energy budget to a monthly hydro target total (a measured
+    # EIA-930 NG: WAT realization for a backcast, or a forecast normal-water-year
+    # climatology), preserving each month's per-plant shares. Done after the MW
+    # envelope above so the power caps stay at physical capability and only the
+    # inter-temporal energy limit is repinned.
     if monthly_target_mwh is not None:
         target = np.asarray(monthly_target_mwh, dtype=float)
         if target.shape != (_MONTHS_PER_YEAR,):
@@ -429,8 +499,7 @@ def load_hydro_budget(
         )
         monthly_energy = monthly_energy * scale[np.newaxis, :]
         logger.info(
-            "%s %d hydro budget pinned to measured monthly total %.1f GWh "
-            "(was %.1f GWh)",
+            "%s %d hydro budget pinned to monthly target total %.1f GWh (was %.1f GWh)",
             iso,
             year,
             target.sum() / 1000.0,
