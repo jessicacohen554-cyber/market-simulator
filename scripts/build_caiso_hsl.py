@@ -51,12 +51,18 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from market_sim.config.constants import HOURS_PER_YEAR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    CAISO_CURTAILMENT_DIR,
+    CAISO_HSL_DIR,
+)
 from market_sim.data.eia_loader import (  # noqa: E402
     load_eia_hourly_renewable_gen,
 )
 
-RAW_DIR = REPO_ROOT / "inputs" / "raw-data" / "caiso-curtailment"
-OUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "caiso-hsl"
+# Source workbooks and output HSL parquets resolve through config/paths.py
+# (the single raw root under data/raw/ after the W1 relocation).
+RAW_DIR = CAISO_CURTAILMENT_DIR
+OUT_DIR = CAISO_HSL_DIR
 
 INTERVALS_PER_HOUR = 12  # 5-minute report intervals
 
