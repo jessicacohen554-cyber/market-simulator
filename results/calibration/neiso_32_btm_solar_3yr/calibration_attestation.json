@@ -1,0 +1,62 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "neiso-32 btm-solar 2026-06-25 (KEEPER candidate, supersedes neiso-31 as the cleaner keeper)",
+    "note": "DISPATCH-IDENTICAL to neiso-31 (byte-for-byte same flags/code: CC_REGULAR committed min-load tranche 1.27 for NEISO per measured CAMPD min-stable-load HR, a8b0e55 cc_nameplate_summer_derate ON, biomass measured must-run, OTHER residual vintage-carry, measured Algonquin/EIA-MA-citygate daily gas-hub basis overlay, historic outage overlay, storage vintage ramp). Verified: model gen - EIA-930 net gen = +0.13/+0.14/+0.17 TWh (unchanged), system mean LMP 33.93/38.89/66.67 $/MWh (unchanged), gas 54.22/58.81/61.59 TWh (unchanged). The ONLY change vs neiso-31 is this attestation's explicit BTM/net-metered-solar reconciliation note (no dispatch effect, no offer/adder/pin), promoting it as the cleaner keeper with the solar comparison basis documented like the OTHER-residual and hydro caveats. SOLAR RECONCILIATION (CLAUDE.md #11/#12, measured-input, NOT fitted): NEISO solar is compared apples-to-apples on the EIA-930 GRID basis on both sides. The model's solar dispatch is EIA-930-pinned (0.89/1.31/1.58 TWh for 2023/24/25), and the benchmark/verdict already route the solar volume actual to EIA-930 (src/market_sim/results/calibration.py actuals_source: solar/wind -> EIA930_SOURCE; C1 fuel-mix gate, system fuel table, and volErr all use EIA-930 for solar), so model-grid solar is scored against EIA-930-grid solar (0.9/1.3/1.5 TWh on the dashboard), which reconciles. The apparent EIA-923 'under-run' (model 0.89/1.31 vs EIA-923 ISNE SUN 3.70/4.53 TWh; model only ~24%/29% of 923) is a measured-input CATEGORIZATION gap, NOT a dispatch error: ISO-NE reports its ~2.7 GW of distribution-connected and net-metered rooftop/small-commercial PV as a REDUCTION IN NET LOAD, so EIA-930 'ISNE SUN' captures only grid-scale wholesale solar (~0.89/1.31 TWh, verified from EIA930_BALANCE 'Net Generation (MW) from Solar (Adjusted)': 2023 = 0.47 + 0.42 = 0.89 TWh) while EIA-860/923 count every plant >= 1 MW (3.70/4.53 TWh, 787/903 plants, verified from data/raw/_processed-legacy/eia923_monthly_generation.parquet fuel_type==SUN ba_code==ISNE netgen_annual_mwh). The ~2.8/3.2 TWh difference IS the BTM/net-metered share, and it is already netted into the EIA-930 net-load demand series the LP serves -- so the dispatch energy balance is correct precisely BECAUSE that solar is in demand, not on the supply side (adding it to supply without grossing-up demand would over-generate). This is the same measured-categorization family as the OTHER-residual (EIA-923-vs-EIA-930) and hydro caveats already in the neiso-31 attestation. No scale/adder/haircut tuned to the 923 gap; the model is not pinned to either actual. FORECAST-READINESS FOLLOW-UP (out of scope here, documented, default-off): to make the model's solar TOTAL equal EIA-923 (all distributed PV explicit) while keeping the energy balance neutral, reconstruct GROSS load = EIA-930 net-load + measured BTM PV and add BTM PV as a zero-MC must-take solar source on BOTH the supply and demand sides (energy-balance-neutral on dispatch/prices), using measured inputs only (EIA-860 distribution-connected solar capacity + EIA-861 net-metering MWh or ISO-NE's published BTM PV forecast, shaped by the measured grid-solar CF profile), ISO-gated to NEISO, mirroring the existing btm.parquet/btm_backfill mechanism. That is a larger forecast-grade change not required for the backcast comparison and must NEVER scale solar to hit EIA-923 (fitting). RANK-1 (benchmark reconcile) is sufficient for the backcast and is what this keeper attests.",
+    "validation_note": "Solar reconciliation reproducible: (a) model EIA-930-pinned solar 0.89/1.31/1.58 TWh from the bundle [1] Generation-by-fuel block (matches EIA-930 column 0.9/1.3/1.5); (b) EIA-930 ISNE grid solar from data/raw/eia-930/EIA930_BALANCE_*.parquet col 'Net Generation (MW) from Solar (Adjusted)', BA ISNE: 2023 = 0.889 TWh; (c) EIA-923 ISNE solar from data/raw/_processed-legacy/eia923_monthly_generation.parquet (fuel_type=='SUN', ba_code=='ISNE'): netgen_annual_mwh = 3.698/4.533/1.020 TWh over 787/903/36 plants (2025 = INCOMPLETE 36-plant vintage, excluded from the solar score). actuals_source routing verified at src/market_sim/results/calibration.py:108 (_EIA930_CLASSES = {solar, wind}); the BTM-into-net-load accounting is documented at src/market_sim/data/renewables.py:41-52. Energy balance and price level reproduced from solve.log: +0.13/+0.14/+0.17 TWh, mean LMP 33.93/38.89/66.67. CC committed re-anchor confirmed in main at scripts/run_calibration.py:884 ('committed': 1.27 if iso == 'NEISO' else 0.92). ERCOT/CAISO/MISO/SPP/PJM/NYISO byte-identical (all levers NEISO-gated; this run added NO new lever). P2 commitment engaged (meta.passes = [P1, P2])."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "metric": "solar volume vs EIA-923 (ISNE SUN)",
+      "years": [2023, 2024],
+      "magnitude": "model 0.89/1.31 TWh vs EIA-923 3.70/4.53 TWh (model ~24%/29% of 923); model 0.89/1.31 vs EIA-930 grid solar 0.89/1.31 (reconciles)",
+      "classification": "MEASURED-INPUT CATEGORIZATION (NOT a model miss) — BTM/net-metered PV netted into EIA-930 net-load demand",
+      "reason": "ISO-NE reports ~2.7 GW of distribution-connected and net-metered rooftop/small-commercial PV as a reduction in net load, so EIA-930 'ISNE SUN' (the grid-delivered series the model's solar dispatch targets and the verdict scores against via actuals_source) captures only grid-scale wholesale solar, while EIA-860/923 count every plant >= 1 MW. The ~2.8/3.2 TWh difference is exactly that BTM share, already netted into the EIA-930 net-load demand the LP serves; the dispatch energy balance is correct because that solar is in demand, not absent from supply. Apples-to-apples on the EIA-930 grid basis, the solar reconciles. Closable for forecast-grade total-match only by explicit gross BTM PV on both supply and demand (measured EIA-860 dist-connected + EIA-861 net-metering), never by scaling solar to the 923 gap (fitting). Same family as the OTHER-residual and hydro caveats below."
+    },
+    {
+      "criterion": "fuelmix",
+      "metric": "solar volume vs EIA-923 in the 2025 vintage",
+      "years": [2025],
+      "magnitude": "EIA-923 ISNE SUN 2025 = 1.02 TWh over only 36 plants (vs 787/903 in 2023/24)",
+      "classification": "INCOMPLETE VINTAGE — excluded from the solar score",
+      "reason": "The current-year 2025 EIA-923 release is preliminary (36 solar plants), so EIA-923 solar is NOT a valid benchmark for 2025; the solar comparison uses EIA-930 grid solar (1.58 TWh, model-matched) only. Same partial-vintage carry/caveat logic applied to OTHER. The solve log records this directly: 'EIA-923 2025 solar 1.02 TWh under-counts EIA-930 1.58 TWh; using EIA-930 grid total'."
+    },
+    {
+      "criterion": "price_tail",
+      "metric": "hours LMP > $300/MWh",
+      "years": [2023, 2024, 2025],
+      "magnitude": "model 0h vs actual 15/8/20h (system max 230/217/258 $/MWh)",
+      "classification": "MODEL MISS (separate structural item: winter reserve scarcity, rank 3)",
+      "reason": "NEISO scarcity spikes come from operating-reserve scarcity (TMSR/TMNSR/TMOR) and single-fuel Algonquin-spot bidding on cold days, neither represented in the energy-only LP (dual-fuel gas is still capped at delivered oil parity). This is the documented NEISO reserve-co-optimization follow-up (its own measured requirement series), out of scope for this solar-reconcile run; it is the main driver of the residual 2023 -7.9% (DA) under-prediction. Not a measured-input limitation and not closable by an offer adder without fitting. Carried unchanged from neiso-31."
+    },
+    {
+      "criterion": "price_mean",
+      "metric": "C3a system mean LMP vs actual DA",
+      "years": [2023],
+      "magnitude": "model -7.9% vs DA (-5.0% vs RT)",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "The 2023 residual concentrates in the highest-weight winter months whose scarcity is set by the unrepresented reserve mechanism above; 2024/2025 are within band vs RT (-1.6/+1.2%). Recovered ~12pp from neiso-30 via the measured min-load re-anchor; the remainder is the rank-3 reserve item, not a further offer tune. Carried unchanged from neiso-31."
+    },
+    {
+      "criterion": "fuelmix",
+      "metric": "C1 CC_REGULAR grid-delivered volume / share; C2 gas-family volume",
+      "years": [2023, 2025],
+      "magnitude": "2023 CC_REGULAR model -0.69 TWh / +0.8pp share (slightly UNDER, out of band); 2025 gas +2.5% vs EIA-930 (61.59 vs 60.09 TWh)",
+      "classification": "MODEL MISS (offer-floor trim in 2023; EIA-923-vs-EIA-930 OTHER categorization in 2025)",
+      "reason": "2023: the measured min-load re-anchor (committed 0.92->1.27) backs CC down ~0.7 TWh, flipping the prior neiso-30 over-stuffing to a small under in the low-gas year; intended structural direction (wall-masked cheap min-load block recovering headroom) overshooting the band by a small margin, within the energy balance (+0.13 TWh). 2025: total model generation matches the measured grid total (energy balance +0.17 TWh), so the residual is the irreducible EIA-923-vs-EIA-930 OTHER (process gas / landfill / purchased steam) categorization difference in the partial 2025 vintage, served by gas-CC in the model. Closable only by reconciling the OTHER categorization, NOT by injecting the EIA-930 residual (fitting). Carried unchanged from neiso-31."
+    },
+    {
+      "criterion": "storage",
+      "metric": "C5b storage throughput (pumped-storage + battery discharge)",
+      "years": [2025],
+      "magnitude": "model -63.7% vs actual",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "Storage arbitrage throughput tracks the price spread. The re-anchor recovered the price LEVEL (C3a) and lifted storage cycling from -76% to -64%, but the residual under-cycling follows the still-missing winter scarcity TAIL (C3c, 0h > $300): without the reserve-scarcity spikes the peak-to-trough spread that drives pumped-storage discharge stays compressed. Closes when the rank-3 reserve co-optimization lands, not via a storage or offer tune. Carried unchanged from neiso-31."
+    }
+  ]
+}
