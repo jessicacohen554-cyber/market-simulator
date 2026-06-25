@@ -240,11 +240,68 @@ that improves the C1 peaker/CC volume mix, but the >$300 tail (C3c) and the C3a
 lift remain path B's job. This **empirically confirms** the ranking above: the
 LP-linear proxy alone is insufficient for the tail; commitment is the real lever.
 
-## Path B — design (the real tail lever, MILP-free; next session)
+## Path B — IMPLEMENTED & TESTED (2026-06-25): REJECTED — the measured reserve does not bind
 
-The fix for the >$300 tail + C3a is commitment-gated spinning, and it lands
-**without a MILP binary** by reusing the existing P2 commitment screen as the
-online indicator. Two pieces:
+Path B is now built and tested end-to-end (NYISO-only, default-off behind
+`--nyiso-synchronised-reserve` **+ `--commitment`**; ERCOT/PJM/CAISO/MISO/SPP/
+NEISO and NYISO-without-the-flags byte-identical; 103 reserve/dispatch/
+commitment tests green). It is the `nyiso 30 synch-commit [probe]` bundle
+(`results/calibration/nyiso_30_synch-commit`, all 3 years), registered on the
+dashboard as a **rejected probe**. Keeper stays `nyiso 27 cc-offer`.
+
+**Determination: REJECTED — path B is a TRUE no-op.** Every scored metric
+reproduces the nyiso-27 keeper essentially exactly (C1 CT_PEAKER 2023 −1.30 /
+2024 −1.51 TWh; C1 CC_REGULAR +1.70 / +2.09; C3c >$300 1 / 0 / 8 vs actual
+10 / 12 / 42; C3a 2024 −9.7%; C3b 2024 NRMSE 0.243; C2 gas 2025 −3.8%; C5a 2024
+−9.1%). P1 and P2 clear at **identical** prices and the NYC quick-start fleet
+generates the identical 2.231 TWh in both passes — the commitment screen +
+reserve-adequacy commit changed nothing the reserve clearing sees. C6 governance
+gate **PASS** (attested).
+
+**Root cause of the rejection (the decisive empirical finding).** The
+physically-correct synchronised headroom `Σ_online(pmax − P)` over the
+*committed* NYC quick-start fleet is **abundant** relative to the measured
+requirement, even in the tightest hours. In the top-50 NYC-price hours of 2025
+the NYC quick-start fleet runs ~1,823 MW out of ~3,500 MW committed/available —
+**~1,700 MW of genuine online headroom against a 500 MW NYC 10-min requirement
+(250 MW spin sub-requirement)**. So with the measured requirement and the
+modelled fleet the model says NYC is **not synchronised-reserve-short**: the
+family cannot bind, no RCPF step fires, the NYC LMP does not separate upward.
+Commitment-gating only removes *offline* (decommitted) pmax from the pool; it
+does nothing to the **committed-but-backed-off** headroom that dominates the NYC
+pocket, and `reserve_adequacy_commit` can only *add* committed headroom (it never
+tightens the pool). The path-B premise — that commitment would shrink the online
+pool below the requirement in tight hours — is **empirically false** for NYISO at
+the measured requirement.
+
+**What this means (rules #1/#11/#12).** Both path A (online proxy, `nyiso 29`)
+and path B (commitment-gated, `nyiso 30`) are confirmed insufficient with the
+grounded inputs. The gap between the model (NYC reserve-rich) and reality (NYC
+measured reserve adder >$0 in ~4,000 h/yr) is **not** a missing online-gate — it
+is that NYISO's real downstate scarcity is driven by something *outside* the
+static published reserve MW the LP holds: effective real-time requirements that
+rise with conditions, deliverability/ramp limits inside the pocket, or unit
+energy commitments that consume the headroom the perfect-foresight LP keeps free.
+Manufacturing the tail by raising the requirement above the published value,
+steepening the RCPF, or adding a price adder is **forbidden** (rule #12). The
+>$300 downstate tail therefore stays an **accepted, ledgered open frontier** on
+the nyiso-27 keeper, not closed with an ungrounded knob. The path-B wiring is
+kept as a default-off scaffold; its implementation is preserved in the bundle's
+`model_changes.diff`.
+
+**Next frontier (if revisited):** test whether a *grounded, condition-varying*
+downstate requirement — e.g. a measured real-time NYC operating-reserve series
+from the NYISO AS postings (`process_nyiso_as.py`), which rises in tight hours
+and is forward-reproducible — binds where the static 500 MW does not. That is a
+new measured INPUT (admissible under rule #12), distinct from inflating the
+static requirement to the residual (forbidden). Absent that, the downstate tail
+is a documented limitation, not a fixable mechanism gap.
+
+### Path B — original design (as built)
+
+The design below is what was implemented. It is mechanically correct (MILP-free,
+commitment as the online indicator); it simply does not bind because the NYC
+online headroom exceeds the measured requirement (above). Two pieces:
 
 1. **Reserve-aware commitment (the new bit).** `compute_commitment`
    (`model/commitment.py`) currently decommits CC/CT on *energy* economics only,
