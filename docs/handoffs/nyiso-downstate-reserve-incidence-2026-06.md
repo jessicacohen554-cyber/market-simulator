@@ -240,6 +240,48 @@ that improves the C1 peaker/CC volume mix, but the >$300 tail (C3c) and the C3a
 lift remain path B's job. This **empirically confirms** the ranking above: the
 LP-linear proxy alone is insufficient for the tail; commitment is the real lever.
 
+## Path B — design (the real tail lever, MILP-free; next session)
+
+The fix for the >$300 tail + C3a is commitment-gated spinning, and it lands
+**without a MILP binary** by reusing the existing P2 commitment screen as the
+online indicator. Two pieces:
+
+1. **Reserve-aware commitment (the new bit).** `compute_commitment`
+   (`model/commitment.py`) currently decommits CC/CT on *energy* economics only,
+   so a peaker not needed for energy is decommitted and can no longer back
+   reserve. Add a NYISO-only **reserve-adequacy commit** (behind
+   `nyiso_synchronised_reserve`): in each hour, force-commit the cheapest-startup
+   downstate (NYC/SENY) quick-start units until their committed headroom
+   (Σ pmax over the committed subset) covers the spinning requirement. This is
+   the analogue of the `preserve_min_gen` reliability carve-out already in
+   `apply_commitment_with_coal_pin` — those units run for reliability, not
+   energy, so the economic screen must not shut them off. Forcing them online
+   generates their pmin (**CT_PEAKER ↑**) and gives them genuine `pmax − P`
+   headroom.
+
+2. **Spinning reserve gated by the committed set (free, via availability).** In
+   the P2 re-solve, `apply_commitment_with_coal_pin` already zeroes the
+   availability of decommitted units → their `cap = pmax × availability = 0` →
+   they contribute **zero** to every reserve-headroom row. So the spinning
+   family can use the **ordinary** idle-allowed headroom row
+   (`Σ P + R ≤ Σ cap`) — restricted to committed units it equals
+   `Σ_online (pmax − P)`, the physically-correct synchronised headroom, with no
+   online binary and no `rho·ΣP` subsidy. i.e. **path B drops path A's
+   `online_gated` row form** and instead relies on commitment to remove the
+   offline `pmax`. Keep the spinning *family* (the NYC requirement + ORDC steps)
+   from path A; the ORDC now prices a genuine shortfall only when committed
+   downstate headroom is short → the >$300 tail fires in real tight hours, C3a
+   lifts via the reserve dual (watch the +8 % overshoot guardrail).
+
+Integration notes: the spinning family must be in **both** P1 and P2 (it is an
+LP family, not a post-solve overlay); `commitment_enabled` must be on for the
+NYISO synch path (or a lightweight NYISO-only reserve-commit that does not
+require the full CC/CT economic screen). Memory: per-gen commitment is heavy —
+keep the reserve-adequacy commit **zonal/quick-start-subset** only (a few dozen
+downstate peakers), not the whole fleet; cap concurrency at ~2 heavy LPs
+(CLAUDE.md rule #14). Calibrate the committed-headroom target to the **measured**
+NYISO spinning requirement (process_nyiso_as.py), never the price residual.
+
 ## Blockers for the implementation pass
 
 - **Commitment is the real lever and it is a large change.** It is *outside* the
