@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-25-caiso-29-forward-seam",
+  "label": "caiso 29 forward-seam",
+  "date": "2026-06-25",
+  "shorthand": "caiso-29-forward-seam",
+  "definition": "FORWARD WECC-tie seam (G8): swaps the caiso-25 keeper's two MEASURED levers for forecast-native analogues. (1) --caiso-intertie-reference-price prices each per-hub corridor from (HH[year]+gas_basis)×marginal_HR×load_shape -- the same reference-price interface PJM/MISO use, desert-SW@Palo-Verde on NET load (midday solar trough), PNW@Malin on gross load -- instead of the measured OASIS hub LMP. (2) --caiso-corridor-atc-forward caps corridor import at TTC×posted-ATC-frac×forward CISO-solar derate instead of the measured p95 envelope. Measured hub LMP + p95 kept ONLY as backcast validation (compare_caiso_intertie_formula_vs_measured.py); nothing pinned to the realization (honesty gate #10/#12). Validation: 2024 NAILS net import (model -32.2 vs actual -32.4 TWh) at desert-SW diurnal corr 0.96 with NO measured-LMP input, mean LMP 42.7 (vs measured keeper 44.9, closer to actual 33-36). 2023 over-imports (-39.6 vs -28.9; the data-blocked year). 2025 under-imports/over-prices (-22.0 vs -36.2 TWh, mean 62.2 vs ~34) -- the documented WECC gas-insensitivity (Malin/Palo-Verde are hydro/solar-set, do NOT rise with Henry Hub; the SPP effect), the honest forward residual kept per #1, NOT closed with a measured pin. P0→P1, commitment off. Compare to measured keeper caiso-25-corridor-deliverability.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-25-caiso-29-forward-seam.js",
+  "bundle": "results/calibration/caiso_intertie_forward_3yr"
+}

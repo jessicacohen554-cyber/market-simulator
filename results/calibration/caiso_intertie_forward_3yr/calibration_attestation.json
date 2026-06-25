@@ -1,0 +1,18 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "caiso-29 forward WECC-tie seam session 2026-06-25",
+    "note": "Forward-seam re-solve of the caiso-25-corridor-deliverability keeper, swapping ONLY the two MEASURED WECC-tie levers for their forecast-native analogues (G8): (1) caiso_intertie_reference_price prices each per-hub corridor from (henry_hub[year] + gas_basis) x marginal_heat_rate x load_shape -- the same reference-price interface PJM/MISO use, desert-SW on net load -- instead of the measured OASIS hub LMP; (2) caiso_corridor_atc_forward caps corridor import flow at TTC x posted-ATC fraction x forward CISO-solar derate instead of the measured p95 envelope. The measured hub LMP + p95 envelope are NOT inputs here -- they are retained only as the backcast realization the formula is validated against (scripts/compare_caiso_intertie_formula_vs_measured.py). HR anchors are 3-year-mean STRUCTURAL values, never per-year measured anchors. No adder/haircut/sigmoid tuned to the price or volume residual; no unit pinned to CEMS; no import price or flow pinned to the measured realization (CLAUDE.md #10/#11/#12). The remaining levers (gas-hub-basis overlay, import gas-coupling) trace to measured forward-reproducible gas inputs."
+  },
+  "exceptions": [
+    {
+      "lever": "marginal_heat_rate (CAISO_PER_HUB_NEIGHBORS, structural)",
+      "kind": "documented forward limitation, NOT a #10 violation",
+      "note": "The WECC neighbor hubs (Malin/Palo Verde) are hydro/solar-set much of the year, so their LMP does NOT rise with Henry Hub the way a pure gas margin does (the SPP gas-insensitivity effect). The structural gas x HR seam therefore OVER-prices the dear-gas year (2025: model net import -22.0 vs actual -36.2 TWh, mean LMP 62.2 vs actual ~34) and reproduces the mid-gas year well (2024: net import -32.2 vs -32.4, mean 42.7; desert-SW diurnal corr 0.96). This is the honest forward residual of a structurally-faithful seam, kept per CLAUDE.md #1 (a real mechanism stays even where the fit worsens), not closed with a measured-hub pin. The Pacific-NW gross-load shape is the weaker proxy for the hydro-following Mid-C price (corr ~0.46)."
+    }
+  ]
+}
