@@ -51,8 +51,30 @@ The whole point of this sweep is the distinction between:
 
 ## Headline findings (lead with these)
 
-**Finding 0 — RISK, live #10 violation in a keeper.** The **NEISO keeper
-(`neiso-32-btm-solar`) has `ct_deployment_overlay = True` active.** This floors
+**Finding 0 — RESOLVED 2026-06-25 (keeper now overlay-off).** The NEISO keeper
+is now **`neiso-33-no-ctfloor`** (`results/calibration/neiso_33_no_ctfloor_3yr`),
+a byte-identical re-solve of `neiso-32-btm-solar` with **`ct_deployment_overlay`
+OFF** and the `ct_deployment_overlay`/`ct_deployment_floor_frac` keys pruned from
+its `prb_overrides` bag so they cannot silently return via a replay. Removal is
+**dispatch- AND determination-neutral**: the floor only ever injected
+0.076/0.041/0.054 TWh/yr (the ~171 GWh below), so gas-family
+(54.23/58.81/61.60 TWh), system mean LMP (33.95/38.91/66.70 $/MWh), CO2 and the
+verdict all hold — NEISO stays NOT-YET with the identical basis (undocumented
+fuelmix / price_tail / storage). CT_PEAKER falls to ~0 (the energy-only LP cannot
+dispatch out-of-merit peakers), which is the honest reserve/local-reliability
+under-production (~0.5–0.9 TWh/yr) the overlay was masking — a MODEL MISS recorded
+in the new keeper's `calibration_attestation.json`, not something to re-floor (#11).
+**Cross-keeper bag audit (all six keepers' `scenario_config` +
+`prb_overrides`/`coal_bit_sigmoid_overrides`): clean.** Only NEISO carried the
+stowaway. `reliability_deployment_overlay`, `ordc_reliability_deployment_mw`,
+`rtcb_reliability_deployment_mw`, `ordc_as_plan_mw` are all False/0 everywhere.
+PJM's `retiree_cems_cap=True` is an *upper availability cap* on winding-down
+retirees (the LP still dispatches economically below it — the admissible
+outage/derate family, opposite in sign to a floor/pin), **not** a generation pin.
+Original finding, for the record:
+
+The **NEISO keeper
+(`neiso-32-btm-solar`) had `ct_deployment_overlay = True` active.** This floored
 each NEISO CT-peaker to its **measured out-of-merit CEMS net output**
 (`data/raw/_validation-source/ct_deployment_floor_NEISO.parquet`, 3,048 nonzero
 floor-hours, ~171 GWh over 2023–25). This is the exact mechanism methodology
@@ -63,9 +85,10 @@ contradicts neiso-32's own attestation (`"no_pinning_to_actuals": true`, "No
 unit pinned to its observed CEMS generation"). The flag rides in through the
 generic `prb_overrides` bag (`run_config.json:scenario_config.ct_deployment_overlay = true`,
 `mode = "backcast"`), so it is *not* surfaced as a headline lever — which is how
-it survived. **Action: re-solve the NEISO keeper with the overlay off, confirm
-the metrics hold, and prune the flag from the lineage** (see Build Order P0).
-This is a governance/keeper-hygiene fix, not a new forward build.
+it survived. **Action (DONE 2026-06-25): re-solved the NEISO keeper with the
+overlay off (`neiso-33-no-ctfloor`), confirmed the metrics hold, and pruned the
+flag from the lineage** (see Build Order P0). This was a governance/keeper-hygiene
+fix, not a new forward build.
 
 **Finding 1 — the flagship.** The ERCOT DAM AS-scarcity overlay
 (`ercot_dam_as_overlay_series`) is the canonical "measured realization ingested
@@ -430,7 +453,7 @@ first.
 
 | # | Item | Why now | Effort | Forecast materiality |
 |---|---|---|---|---|
-| **P0** | **Retire `ct_deployment_overlay` from the NEISO keeper** (Finding 0): re-solve `neiso-32` with it off, confirm metrics hold, prune the flag from the NEISO lineage `prb_overrides` bag; audit the other keepers' bags for stowaway FAIL-pattern flags. | Live #10 violation in a keeper; pure hygiene, no new methodology. | S | n/a (correctness/governance) |
+| **P0 ✅ DONE 2026-06-25** | **Retire `ct_deployment_overlay` from the NEISO keeper** (Finding 0): re-solved as `neiso-33-no-ctfloor` with it off (dispatch- & determination-neutral), pruned the flag from the lineage `prb_overrides` bag; cross-keeper bag audit clean (only NEISO carried it; PJM `retiree_cems_cap` is an admissible availability cap, not a pin). | Live #10 violation in a keeper; pure hygiene, no new methodology. | S | n/a (correctness/governance) |
 | **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
 | **P2** | **CAISO intertie reference-pricing + corridor ATC (G8)** | CAISO is import-dominated; both levers go fully inert in forecast today. | M×2 | Med-High (CAISO price formation) |
 | **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
