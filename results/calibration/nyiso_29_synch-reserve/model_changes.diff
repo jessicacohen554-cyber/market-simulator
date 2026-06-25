@@ -1,0 +1,603 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 5daeb77..c168dc8 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -1371,6 +1371,7 @@ def run_year(
+     nyiso_local_selfsupply: bool | None = None,
+     nyiso_firm_imports: bool | None = None,
+     nyiso_import_reconciliation: bool | None = None,
++    nyiso_synchronised_reserve: bool | None = None,
+     miso_firm_imports: bool | None = None,
+     gas_hub_basis_overlay: bool | None = None,
+     gas_st_netload_drag: bool = False,
+@@ -1506,6 +1507,10 @@ def run_year(
+         config = config.with_overrides(
+             nyiso_import_reconciliation=nyiso_import_reconciliation
+         )
++    if nyiso_synchronised_reserve is not None:
++        config = config.with_overrides(
++            nyiso_synchronised_reserve=nyiso_synchronised_reserve
++        )
+     if miso_firm_imports is not None:
+         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
+     if gas_hub_basis_overlay is not None:
+@@ -2541,6 +2546,7 @@ def run_year(
+             coopt_mask,
+             coopt_counts,
+             coopt_class,
++            coopt_online,
+         ) = nyiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
+         dispatch_kwargs.update(
+             reserve_requirement=coopt_req,
+@@ -2551,6 +2557,7 @@ def run_year(
+             reserve_balance_zone_mask=coopt_mask,
+             reserve_balance_ordc_counts=coopt_counts,
+             reserve_balance_class=coopt_class,
++            reserve_online_class_mask=coopt_online,
+         )
+         import numpy as _np
+ 
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 1518e07..968c248 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -1598,6 +1598,7 @@ def solve_and_persist(
+     nyiso_local_selfsupply: bool | None = None,
+     nyiso_firm_imports: bool | None = None,
+     nyiso_import_reconciliation: bool | None = None,
++    nyiso_synchronised_reserve: bool | None = None,
+     miso_firm_imports: bool | None = None,
+     gas_hub_basis_overlay: bool | None = None,
+     gas_st_netload_drag: bool = False,
+@@ -1760,6 +1761,7 @@ def solve_and_persist(
+             nyiso_local_selfsupply=nyiso_local_selfsupply,
+             nyiso_firm_imports=nyiso_firm_imports,
+             nyiso_import_reconciliation=nyiso_import_reconciliation,
++            nyiso_synchronised_reserve=nyiso_synchronised_reserve,
+             miso_firm_imports=miso_firm_imports,
+             gas_hub_basis_overlay=gas_hub_basis_overlay,
+             gas_st_netload_drag=gas_st_netload_drag,
+@@ -1961,6 +1963,7 @@ def solve_and_persist(
+         "nyiso_local_selfsupply": nyiso_local_selfsupply,
+         "nyiso_firm_imports": nyiso_firm_imports,
+         "nyiso_import_reconciliation": nyiso_import_reconciliation,
++        "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
+         "miso_firm_imports": miso_firm_imports,
+         "gas_hub_basis_overlay": gas_hub_basis_overlay,
+         "btm_backfill_year": btm_backfill_year,
+@@ -2122,6 +2125,10 @@ def solve_and_persist(
+         recorded_cfg = recorded_cfg.with_overrides(
+             nyiso_import_reconciliation=nyiso_import_reconciliation
+         )
++    if nyiso_synchronised_reserve is not None:
++        recorded_cfg = recorded_cfg.with_overrides(
++            nyiso_synchronised_reserve=nyiso_synchronised_reserve
++        )
+     if miso_firm_imports is not None:
+         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
+     if gas_hub_basis_overlay is not None:
+@@ -4860,6 +4867,22 @@ def main() -> None:
+         "--priced-interchange; NYISO-only. Default (unset) keeps the base config "
+         "value (off).",
+     )
++    parser.add_argument(
++        "--nyiso-synchronised-reserve",
++        action=argparse.BooleanOptionalAction,
++        default=None,
++        help="NYISO downstate synchronised (spinning) reserve: add a NYC "
++        "10-minute spinning sub-requirement (1/2 of the NYC 10-min total = 250 "
++        "MW, the published 1/2-largest-contingency rule) that only ONLINE "
++        "(synchronised) quick-start units can supply. The pure-ED co-opt credits "
++        "an idle peaker's full pmax as deliverable reserve, so the downstate "
++        "families never bind; bounding the spinning class by online generation "
++        "forces the NYC peaker fleet to commit, lifting CT_PEAKER energy and "
++        "letting the reserve bind endogenously so its RCPF dual prices the NYC "
++        "scarcity tail. The spin fraction is the measured market-design rule, not "
++        "a residual fit. Requires --energy-reserve-coopt; NYISO-only. Default "
++        "(unset) keeps the base config value (off).",
++    )
+     parser.add_argument(
+         "--miso-firm-imports",
+         action=argparse.BooleanOptionalAction,
+@@ -5128,6 +5151,7 @@ def main() -> None:
+         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
+         nyiso_firm_imports=args.nyiso_firm_imports,
+         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
++        nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
+         miso_firm_imports=miso_firm_imports,
+         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
+         btm_backfill_year=args.btm_backfill_year,
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 372ceb8..732564d 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -2972,6 +2972,22 @@ NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
+ # same convention as the NYCA 10-minute products. Nothing here is fitted to
+ # LMP residuals; the model adder is validated against the measured per-zone
+ # RT reserve price (actual_as_reserve_NYISO.parquet).
++# --- NYISO synchronised (spinning) downstate reserve sub-requirement ---------
++# NYISO sets 10-minute SPINNING reserve = 1/2 of the largest contingency, i.e.
++# half of the 10-minute TOTAL requirement (10-min total = largest contingency;
++# NYISO Ancillary Services manual / Transmission & Dispatch Operations Manual,
++# the same 1/2-contingency rule that fixes nyca_10min_spin = 655 MW from the
++# 1,310 MW nyca_10min_total above). The fraction is a published market-design
++# constant, NOT fitted to any LMP/volume residual. When the
++# `nyiso_synchronised_reserve` lever is on, the downstate (NYC) 10-minute pocket
++# carries a spinning sub-requirement = NYISO_SPIN_FRACTION × its 10-minute total
++# (500 MW → 250 MW) that only ONLINE (synchronised) quick-start units can supply
++# — the mechanism that forces idle NYC peakers to commit (see
++# results.scarcity.nyiso_reserve_coopt_inputs and dispatch._build_reserve_rows
++# online block).
++NYISO_SPIN_FRACTION: float = 0.5  # 10-min spinning = 1/2 largest contingency
++# (= 1/2 of the 10-min total requirement); NYISO AS manual, published rule.
++
+ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
+     "East": {
+         "zones": ("Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"),
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 9a6beb1..9d4a924 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -577,6 +577,22 @@ class ScenarioConfig:
+     # mechanism (in a forecast the constraint is sourced from the neighbor's
+     # forecast net position or relaxed). Requires --priced-interchange. Default
+     # off (byte-identical); NYISO-only.
++    nyiso_synchronised_reserve: bool = False  # NYISO downstate SYNCHRONISED
++    # (spinning) reserve: adds a NYC 10-minute spinning sub-requirement
++    # (NYISO_SPIN_FRACTION = 1/2 of the NYC 10-min total = 250 MW, the published
++    # 1/2-largest-contingency rule) that only ONLINE (synchronised) quick-start
++    # units can supply. In the pure-ED co-opt the shared-headroom row credits an
++    # IDLE peaker's full pmax as deliverable reserve (R <= cap - P, P=0 => R=cap),
++    # so the downstate families never bind and the NYC peakers stay economically
++    # idle. The spinning class's headroom is online-bounded (R <= sum online P;
++    # dispatch._build_reserve_rows online block), so holding the 250 MW forces the
++    # NYC quick-start fleet to commit (generate ≥ the spin) — lifting CT_PEAKER
++    # energy and letting the downstate reserve bind endogenously so its RCPF dual
++    # stacks into the NYC LMP (the >$300 scarcity tail). The spinning fraction is
++    # the MEASURED NYISO market-design rule, not a residual fit; the tail and the
++    # peaker energy emerge from the binding requirement, never an adder
++    # (CLAUDE.md rules #1/#11/#12). Requires --energy-reserve-coopt. Default off
++    # (byte-identical: no third reserve class, no online rows); NYISO-only.
+     miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
+     # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
+     # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
+@@ -2109,6 +2125,7 @@ TIER_TAGS: dict[str, int] = {
+     "nyiso_local_selfsupply": 1,
+     "nyiso_firm_imports": 1,
+     "nyiso_import_reconciliation": 1,
++    "nyiso_synchronised_reserve": 1,
+     "miso_firm_imports": 1,
+     "as_reserve_withholding": 1,
+     "as_reserve_formula": 1,
+diff --git a/src/market_sim/model/dispatch.py b/src/market_sim/model/dispatch.py
+index b459811..6bd6336 100644
+--- a/src/market_sim/model/dispatch.py
++++ b/src/market_sim/model/dispatch.py
+@@ -623,6 +623,7 @@ def _build_reserve_rows(
+     balance_zone_mask: np.ndarray | None = None,
+     balance_ordc_counts: np.ndarray | None = None,
+     balance_reserve_class: np.ndarray | None = None,
++    online_class_mask: np.ndarray | None = None,
+ ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
+ 
+@@ -691,13 +692,29 @@ def _build_reserve_rows(
+         balance_reserve_class: ``(n_families,)`` int — the reserve class index
+             each family draws on. ``None`` (or all-zero) puts every family on
+             class 0 (the single-class default).
++        online_class_mask: ``(n_classes,)`` boolean or ``None``. Marks reserve
++            classes that model a **synchronised (spinning)** product — reserve
++            that only ALREADY-ONLINE units can supply. For each marked class an
++            extra per-zone row ``R[c,z] <= sum_{class-c elig g in z} P[g,t]`` is
++            added, so the zone's spinning reserve is bounded by its *online*
++            generation (a unit must be generating to provide spin), not its full
++            availability ``cap``. Combined with that class's standard headroom row
++            (``P + R <= cap``), the effective bound is ``R <= min(P, cap - P)``,
++            which forces idle quick-start peakers to commit (generate) to hold the
++            requirement — the NYISO downstate synchronised-reserve mechanism. The
++            online proxy is dispatch-linked (no commitment binary) and stays
++            LP-linear. ``None`` (the ERCOT/PJM/MISO/CAISO/NEISO default) adds no
++            online rows and is byte-identical to the legacy block.
+ 
+     Returns:
+-        ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
+-        and their bounds. Headroom rows are ``<=`` (lower ``-inf``); balance
+-        rows are ``>=`` (upper ``+inf``). Headroom rows are class-major then
+-        zone within each hour (row ``t*(n_classes*n_zones) + c*n_zones + z``);
+-        balance rows are family-major within each hour (row ``t*n_families+f``).
++        ``(block, row_lower, row_upper)``: the stacked headroom + (optional
++        online) + balance rows and their bounds. Headroom and online rows are
++        ``<=`` (lower ``-inf``); balance rows are ``>=`` (upper ``+inf``).
++        Headroom rows are class-major then zone within each hour (row
++        ``t*(n_classes*n_zones) + c*n_zones + z``); the online block (when
++        present) follows, online-class-major then zone; balance rows are
++        family-major within each hour and are always **last** (so the
++        balance-row dual slice ``row_dual[-(n_fam*T):]`` is unaffected).
+     """
+     T = layout.T
+     n_zones = layout.n_zones
+@@ -773,6 +790,43 @@ def _build_reserve_rows(
+     hr_upper = zone_cap.T.ravel()
+     hr_lower = np.full(n_classes * n_zones * T, -np.inf)
+ 
++    # --- Online (synchronised / spinning) per-hour block, (n_online*n_zones,
++    # vph). For each class c flagged online and zone z (row oc*n_zones + z):
++    # +1 on this (class, zone)'s reserve column and -1 on each class-c eligible
++    # gen's energy column (zone-summed), so the row reads
++    # R[c,z] - sum_g P[g] <= 0, i.e. R[c,z] <= sum_g P[g]. Only ONLINE (P>0)
++    # capacity backs the spinning product; no storage and no cap term — the
++    # spinning reserve must come from synchronised thermal generation. None ->
++    # no online block (legacy ERCOT/PJM/MISO byte-identical).
++    online_classes = (
++        np.flatnonzero(np.asarray(online_class_mask, dtype=bool))
++        if online_class_mask is not None
++        else np.zeros(0, dtype=int)
++    )
++    n_online = int(online_classes.size)
++    if n_online:
++        orows: list[np.ndarray] = []
++        ocols: list[np.ndarray] = []
++        ovals: list[np.ndarray] = []
++        for oc, c in enumerate(online_classes):
++            base = oc * n_zones
++            e_idx = np.flatnonzero(elig2d[c])
++            # -P[g] (zone-summed) for this class's eligible online generation
++            orows.append(base + zone_idx[e_idx])
++            ocols.append(e_idx)
++            ovals.append(-np.ones(e_idx.size))
++            # +R[c, z] (one per zone, this class)
++            orows.append(base + z_all)
++            ocols.append(layout._reserve_off + c * n_zones + z_all)
++            ovals.append(np.ones(n_zones))
++        online_per_hour = sp.coo_matrix(
++            (np.concatenate(ovals), (np.concatenate(orows), np.concatenate(ocols))),
++            shape=(n_online * n_zones, layout.vars_per_hour),
++        ).tocsr()
++        online = sp.kron(sp.eye(T, format="csr"), online_per_hour, format="csr")
++        on_upper = np.zeros(n_online * n_zones * T)
++        on_lower = np.full(n_online * n_zones * T, -np.inf)
++
+     # --- Reserve-balance per-hour block, (n_families, vph): for family f a +1
+     # on its member zones' reserve columns (in family f's reserve class c_f) and
+     # a +1 on its slice of the ORDC block. Row f reads
+@@ -822,9 +876,14 @@ def _build_reserve_rows(
+     bal_lower = req2d.T.ravel()
+     bal_upper = np.full(n_fam * T, np.inf)
+ 
+-    block = sp.vstack([headroom, balance], format="csr")
+-    row_lower = np.concatenate([hr_lower, bal_lower])
+-    row_upper = np.concatenate([hr_upper, bal_upper])
++    if n_online:
++        block = sp.vstack([headroom, online, balance], format="csr")
++        row_lower = np.concatenate([hr_lower, on_lower, bal_lower])
++        row_upper = np.concatenate([hr_upper, on_upper, bal_upper])
++    else:
++        block = sp.vstack([headroom, balance], format="csr")
++        row_lower = np.concatenate([hr_lower, bal_lower])
++        row_upper = np.concatenate([hr_upper, bal_upper])
+     return block, row_lower, row_upper
+ 
+ 
+@@ -853,6 +912,7 @@ def build_constraints(
+     reserve_balance_zone_mask: np.ndarray | None = None,
+     reserve_balance_ordc_counts: np.ndarray | None = None,
+     reserve_balance_class: np.ndarray | None = None,
++    reserve_online_class_mask: np.ndarray | None = None,
+ ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+     """Assemble the LP constraint matrix and its row bound vectors.
+ 
+@@ -1158,6 +1218,7 @@ def build_constraints(
+             balance_zone_mask=reserve_balance_zone_mask,
+             balance_ordc_counts=reserve_balance_ordc_counts,
+             balance_reserve_class=reserve_balance_class,
++            online_class_mask=reserve_online_class_mask,
+         )
+         A = sp.vstack([A, res_block], format="csr")
+         row_lower = np.concatenate([row_lower, res_lower])
+@@ -1470,6 +1531,7 @@ class DispatchModel:
+         reserve_balance_zone_mask: np.ndarray | None = None,
+         reserve_balance_ordc_counts: np.ndarray | None = None,
+         reserve_balance_class: np.ndarray | None = None,
++        reserve_online_class_mask: np.ndarray | None = None,
+         link_bidirectional: np.ndarray | None = None,
+         T: int | None = None,
+     ) -> None:
+@@ -1507,6 +1569,14 @@ class DispatchModel:
+             if not coopt or reserve_balance_zone_mask is None
+             else int(np.asarray(reserve_balance_zone_mask).shape[0])
+         )
++        # Synchronised (spinning) online classes add one extra per-zone row each
++        # (R <= online generation); they sit between the headroom and balance
++        # blocks so the balance rows stay last. 0 for every non-NYISO ISO.
++        n_online_classes = (
++            int(np.asarray(reserve_online_class_mask, dtype=bool).sum())
++            if coopt and reserve_online_class_mask is not None
++            else 0
++        )
+ 
+         layout = VariableLayout(
+             n_gen=n_gen,
+@@ -1544,6 +1614,7 @@ class DispatchModel:
+             reserve_balance_zone_mask=reserve_balance_zone_mask,
+             reserve_balance_ordc_counts=reserve_balance_ordc_counts,
+             reserve_balance_class=reserve_balance_class,
++            reserve_online_class_mask=reserve_online_class_mask,
+         )
+         col_lower, col_upper = build_variable_bounds(
+             layout,
+@@ -1632,7 +1703,13 @@ class DispatchModel:
+         # (family-major within each hour).
+         self._n_families = n_families
+         self._n_reserve_rows = (
+-            (n_reserve_classes * n_zones * T + n_families * T) if coopt else 0
++            (
++                n_reserve_classes * n_zones * T
++                + n_online_classes * n_zones * T
++                + n_families * T
++            )
++            if coopt
++            else 0
+         )
+         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
+         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
+@@ -2010,6 +2087,7 @@ def solve_dispatch(
+     reserve_balance_zone_mask: np.ndarray | None = None,
+     reserve_balance_ordc_counts: np.ndarray | None = None,
+     reserve_balance_class: np.ndarray | None = None,
++    reserve_online_class_mask: np.ndarray | None = None,
+     link_bidirectional: np.ndarray | None = None,
+     T: int | None = None,
+ ) -> DispatchResult:
+@@ -2115,6 +2193,7 @@ def solve_dispatch(
+         reserve_balance_zone_mask=reserve_balance_zone_mask,
+         reserve_balance_ordc_counts=reserve_balance_ordc_counts,
+         reserve_balance_class=reserve_balance_class,
++        reserve_online_class_mask=reserve_online_class_mask,
+         link_bidirectional=link_bidirectional,
+         T=T,
+     )
+diff --git a/src/market_sim/results/scarcity.py b/src/market_sim/results/scarcity.py
+index 83ee5ee..a383ed6 100644
+--- a/src/market_sim/results/scarcity.py
++++ b/src/market_sim/results/scarcity.py
+@@ -68,6 +68,7 @@ from market_sim.config.constants import (
+     MISO_RESERVE_DEMAND_CURVE_MAX,
+     NYISO_RCPF_LOCATIONAL,
+     NYISO_RCPF_PRODUCTS,
++    NYISO_SPIN_FRACTION,
+     ORDC_FLOOR_START_HOUR_2023,
+     ORDC_FLOOR_STEPS,
+     PJM_ORDC_CURVE_PATH,
+@@ -1506,7 +1507,14 @@ def nyiso_reserve_coopt_inputs(
+     zone_names: list[str],
+     n_ramp: int = 8,
+ ) -> tuple[
+-    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray
++    np.ndarray,
++    np.ndarray,
++    np.ndarray,
++    np.ndarray,
++    np.ndarray,
++    np.ndarray,
++    np.ndarray,
++    np.ndarray | None,
+ ]:
+     """Assemble NYISO's *locational* energy+reserve co-optimization inputs.
+ 
+@@ -1547,9 +1555,23 @@ def nyiso_reserve_coopt_inputs(
+     downstate fleet clears reserve lower on the curve, at a higher price), the
+     same design as the ERCOT/PJM co-opt.
+ 
++    **Synchronised (spinning) downstate reserve** (``config.
++    nyiso_synchronised_reserve``, default off). NYISO requires 10-minute
++    *spinning* reserve = 1/2 the largest contingency (:data:`NYISO_SPIN_FRACTION`
++    of the 10-minute total), and spinning reserve can only come from *online*
++    (synchronised) units. When the lever is on, the NYC pocket gains a third
++    reserve class (the quick-start subset again, but **online-bounded**) and a
++    ``nyc_10min_spin`` family requiring ``NYISO_SPIN_FRACTION × NYC 10-min total``
++    (500 → 250 MW). The online class's reserve is capped at the zone's online
++    generation (``dispatch._build_reserve_rows`` online block), so idle peakers no
++    longer count — they must commit (generate ≥ the spin) to hold it, which lifts
++    CT_PEAKER energy and lets the downstate reserve bind endogenously. The
++    returned ``online_class_mask`` flags that class; it is ``None`` when the lever
++    is off (byte-identical two-class block).
++
+     Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
+     ordc_step_widths, balance_zone_mask, balance_ordc_counts,
+-    balance_reserve_class)``:
++    balance_reserve_class, online_class_mask)``:
+ 
+     * ``reserve_requirement`` — ``(n_families, T)`` per-family hourly RHS (MW).
+     * ``reserve_eligible`` — ``(n_classes, n_gen)`` boolean: row 0 the full
+@@ -1591,6 +1613,48 @@ def nyiso_reserve_coopt_inputs(
+                 (member_idx, str(name), (float(req), float(crit), float(pen)))
+             )
+ 
++    # Two nested eligibility classes by default: full dispatchable (30-minute,
++    # class 0) and the quick-start subset (10-minute, class 1). The synchronised-
++    # reserve lever adds a third class (2): the same quick-start subset but
++    # ONLINE-bounded (see dispatch._build_reserve_rows online block), supplying a
++    # NYC spinning family that idle peakers cannot satisfy.
++    full_elig = ercot_reserve_eligible(fleet_arrays)
++    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
++    quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
++
++    # Per-family reserve-class override (None -> infer from the product name:
++    # 10-minute -> quick-start class 1, else full class 0). The spinning family
++    # gets an explicit override to the online class so the name-substring rule
++    # ("10min"/"spin") never mis-routes it.
++    class_override: list[int | None] = [None] * len(families)
++    synch = bool(getattr(config, "nyiso_synchronised_reserve", False))
++    spin_class_idx: int | None = None
++    if synch:
++        # NYC 10-minute SPINNING sub-requirement = NYISO_SPIN_FRACTION × the NYC
++        # 10-minute total requirement (published 1/2-largest-contingency rule;
++        # not fitted). Online-only, so the NYC peaker fleet must commit to hold
++        # it. Member zone(s): NYC's locational region.
++        nyc_region = locational.get("NYC", {})
++        nyc_idx = tuple(
++            zone_index[z] for z in nyc_region.get("zones", ()) if z in zone_index
++        )
++        nyc_10min = next(
++            (
++                (req, crit, pen)
++                for nm, req, crit, pen in nyc_region.get("products", ())
++                if "10min" in nm
++            ),
++            None,
++        )
++        if nyc_idx and nyc_10min is not None:
++            _, _crit, _pen = nyc_10min
++            spin_req = NYISO_SPIN_FRACTION * float(nyc_10min[0])
++            spin_class_idx = 2  # third class, online-bounded quick-start
++            families.append(
++                (nyc_idx, "nyc_10min_spin", (spin_req, float(_crit), float(_pen)))
++            )
++            class_override.append(spin_class_idx)
++
+     n_fam = len(families)
+     balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
+     balance_reserve_class = np.zeros(n_fam, dtype=int)
+@@ -1601,8 +1665,12 @@ def nyiso_reserve_coopt_inputs(
+     for f, (member_idx, name, (req, crit, pen)) in enumerate(families):
+         balance_zone_mask[f, list(member_idx)] = True
+         # 10-minute products (name carries "10min") draw on the quick-start
+-        # class (1); 30-minute and total products on the full class (0).
+-        balance_reserve_class[f] = 1 if "10min" in name else 0
++        # class (1); 30-minute and total products on the full class (0); the
++        # synchronised spinning family carries an explicit override to class 2.
++        if class_override[f] is not None:
++            balance_reserve_class[f] = int(class_override[f])
++        else:
++            balance_reserve_class[f] = 1 if "10min" in name else 0
+         requirement[f, :] = req
+         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
+         pen_list.append(p)
+@@ -1611,12 +1679,16 @@ def nyiso_reserve_coopt_inputs(
+ 
+     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
+     ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
+-    # Two nested eligibility classes: full dispatchable (30-minute) and the
+-    # quick-start subset (10-minute). Stack so row index == reserve class.
+-    full_elig = ercot_reserve_eligible(fleet_arrays)
+-    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+-    quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+-    eligible = np.vstack([full_elig, quick_elig])
++    # Stack eligibility so row index == reserve class. Class 2 (when present) is
++    # the quick-start subset again — same fleet, but its headroom is online-
++    # bounded by the dispatch builder, so idle peakers do not count.
++    if synch and spin_class_idx is not None:
++        eligible = np.vstack([full_elig, quick_elig, quick_elig])
++        online_class_mask = np.zeros(eligible.shape[0], dtype=bool)
++        online_class_mask[spin_class_idx] = True
++    else:
++        eligible = np.vstack([full_elig, quick_elig])
++        online_class_mask = None
+     return (
+         requirement,
+         eligible,
+@@ -1625,4 +1697,5 @@ def nyiso_reserve_coopt_inputs(
+         balance_zone_mask,
+         counts,
+         balance_reserve_class,
++        online_class_mask,
+     )
+diff --git a/src/market_sim/runner.py b/src/market_sim/runner.py
+index 1e0efd7..7eb9028 100644
+--- a/src/market_sim/runner.py
++++ b/src/market_sim/runner.py
+@@ -682,6 +682,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                     coopt_mask,
+                     coopt_counts,
+                     coopt_class,
++                    coopt_online,
+                 ) = nyiso_reserve_coopt_inputs(
+                     config, fleet_arrays, config.hours, zone_names
+                 )
+@@ -694,6 +695,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+                     reserve_balance_zone_mask=coopt_mask,
+                     reserve_balance_ordc_counts=coopt_counts,
+                     reserve_balance_class=coopt_class,
++                    reserve_online_class_mask=coopt_online,
+                 )
+             # MISO analogue: the footprint-wide market-wide operating-reserve
+             # requirement (MSSC + regulation) clears against MISO's VOLL-anchored
+diff --git a/tests/test_reserve_coopt.py b/tests/test_reserve_coopt.py
+index aa4dd21..c5f510a 100644
+--- a/tests/test_reserve_coopt.py
++++ b/tests/test_reserve_coopt.py
+@@ -421,9 +421,18 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
+         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+ 
+         T = 24
+-        req, elig, pens, widths, mask, counts, fam_class = nyiso_reserve_coopt_inputs(
+-            self._config(), self._fleet(), T, self._ZONES
+-        )
++        (
++            req,
++            elig,
++            pens,
++            widths,
++            mask,
++            counts,
++            fam_class,
++            online,
++        ) = nyiso_reserve_coopt_inputs(self._config(), self._fleet(), T, self._ZONES)
++        # Default (lever off) adds no online/spinning class.
++        self.assertIsNone(online)
+         # NYCA(3 products) + East(1) + SENY(1) + NYC(2) = 7 families.
+         n_fam = 7
+         self.assertEqual(mask.shape, (n_fam, len(self._ZONES)))
+@@ -445,7 +454,7 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
+     def test_locational_masks_nest(self):
+         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+ 
+-        _, _, _, _, mask, _, _ = nyiso_reserve_coopt_inputs(
++        _, _, _, _, mask, _, _, _ = nyiso_reserve_coopt_inputs(
+             self._config(), self._fleet(), 24, self._ZONES
+         )
+         # The three NYCA families span every zone.
+@@ -458,6 +467,43 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
+         only_nyc[nyc] = True
+         np.testing.assert_array_equal(mask[-1], only_nyc)
+ 
++    def test_synchronised_reserve_adds_online_nyc_spin_family(self):
++        from types import SimpleNamespace
++
++        from market_sim.config.constants import NYISO_SPIN_FRACTION
++        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
++
++        cfg = SimpleNamespace(
++            iso="NYISO", weather_year=2023, nyiso_synchronised_reserve=True
++        )
++        T = 24
++        (
++            req,
++            elig,
++            pens,
++            widths,
++            mask,
++            counts,
++            fam_class,
++            online,
++        ) = nyiso_reserve_coopt_inputs(cfg, self._fleet(), T, self._ZONES)
++        # One extra family (NYC spin) on a new third class (2), online-bounded.
++        n_fam = 8
++        self.assertEqual(mask.shape, (n_fam, len(self._ZONES)))
++        self.assertEqual(elig.shape, (3, 2))
++        # The spinning class (2) reuses the quick-start eligibility.
++        np.testing.assert_array_equal(elig[2], elig[1])
++        # Only class 2 is online-bounded.
++        self.assertIsNotNone(online)
++        np.testing.assert_array_equal(online, [False, False, True])
++        # The spin family is last, on class 2, zone J only, req = fraction x 500.
++        self.assertEqual(int(fam_class[-1]), 2)
++        nyc = self._ZONES.index("NYC")
++        only_nyc = np.zeros(len(self._ZONES), dtype=bool)
++        only_nyc[nyc] = True
++        np.testing.assert_array_equal(mask[-1], only_nyc)
++        self.assertAlmostEqual(float(req[-1, 0]), NYISO_SPIN_FRACTION * 500.0)
++
+ 
+ class TestNyisoLocationalCooptLP(unittest.TestCase):
+     """End-to-end: a locational reserve family lifts an import-constrained
