@@ -280,19 +280,22 @@ def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
 def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
     """System model/actual TOTAL generation (TWh), grid-delivered.
 
-    Mirrors ``_backcast_shell.totalGen``/``genMixData`` exactly so the verdict's
-    C1 bands match the dashboard scorecard: actual = Σ ``classFull`` (EIA-923 −
-    BTM, every benchmarked class) + EIA-930 nuclear/wind/solar; model = Σ
-    ``gmModel`` over those same class keys + model non-fossil nuclear/wind/solar.
+    Mirrors ``_backcast_shell.totalGen`` exactly so the verdict's C1 bands match
+    the dashboard scorecard. Each benchmarked class is counted ONCE: ``classFull``
+    now carries the grid-delivered actual for every class — fossil (EIA-923 − BTM
+    CHP), nuclear (EIA-923) and the variable renewables wind/solar on the EIA-930
+    grid basis (distribution-connected / net-metered BTM PV removed in
+    ``render_calibration_html``, the same source-authority as
+    :func:`results.calibration.actuals_source`). actual = Σ ``classFull``; model =
+    Σ ``gmModel`` over those same class keys. The earlier ``+ EIA-930
+    nuclear/wind/solar`` term double-counted the renewables and re-introduced the
+    BTM-inflated EIA-923 solar through ``classFull``, inflating the share
+    denominator (NEISO 2023 read a_gen ≈ 128 vs the true grid ≈ 97 TWh).
     """
     gm = ypay.get("gmModel", {})
-    nf = ypay.get("nonfossil", {})
     cf = ybench.get("classFull", {})
-    e930 = ybench.get("e930", {})
-    a_fos = sum(float(v) for v in cf.values())
-    a_gen = a_fos + sum(float(e930.get(k, 0.0)) for k in NONFOSSIL_FUELS)
-    m_fos = sum(float(gm.get(g, 0.0)) for g in cf)  # over the classFull keys
-    m_gen = m_fos + sum(float(nf.get(k, 0.0)) for k in NONFOSSIL_FUELS)
+    a_gen = sum(float(v) for v in cf.values())
+    m_gen = sum(float(gm.get(g, 0.0)) for g in cf)  # over the classFull keys
     return m_gen, a_gen
 
 
