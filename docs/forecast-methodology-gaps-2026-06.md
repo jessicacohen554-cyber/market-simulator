@@ -124,7 +124,7 @@ retires forward · **FORBID** = no forward analogue. Effort: S/M/L.
 
 | Lever | Code anchor | Backcast input | Forward driver | #10 | Status | Eff | Risk |
 |---|---|---|---|---|---|---|---|
-| Historic outage overlay (`outage_source="historic"`, `coal_drop_pof`) | `data/outages.py:201,243` | CAMPD ≥48 h CF<5% windows + unit derate | statistical WEFOR/POF (`THERMAL_AVAILABILITY`) **+ roadmap monthly maintenance profile (§1.7)** | PASS | **PART** | M | Low |
+| Historic outage overlay (`outage_source="historic"`, `coal_drop_pof`) | `data/outages.py:201,243` | CAMPD ≥48 h CF<5% windows + unit derate | statistical WEFOR/POF (`THERMAL_AVAILABILITY`) **+ historically-derived monthly maintenance shape (`MAINTENANCE_MONTHLY_SHAPE`, §1.7 — now BUILT, G12)** | PASS | **IMPL** | — | Low |
 | F923 per-plant monthly delivered fuel (`coal_plant_monthly_pricing`) | `data/fuel.py:2075` | EIA-923 Sch-5 plant-month $/MMBtu | AEO supply-class trajectory (`HENRY_HUB_TRAJECTORIES`, PRB/lignite supply path) | PASS | **IMPL** | — | Low |
 | ISO-month gas actuals (`gas_monthly_actuals`) | `data/fuel.py:445` | EIA-923 Sch-5 ISO-month gas | AEO HH + ISO basis differential | PASS | **IMPL** | — | Low |
 | Per-plant CEMS emission **rates** (`use_plant_emission_rates`) | `data/fleet.py:4625` | `plant_emission_rates.parquet` (lb/MMBtu) | fuel-class default rates (applies in **both** modes) | PASS | **IMPL** | — | None |
@@ -430,13 +430,22 @@ neighbor's market heat rate as a function of its gas price / load), so the seam
 reprices forward as gas moves — instead of reading the measured PJM LMP-implied
 HR per year. **Effort S, Risk Med** on the seam direction.
 
-### G12 Outage statistical monthly maintenance profile (§1.7 roadmap)
+### G12 Outage statistical monthly maintenance profile (§1.7 roadmap) — **BUILT**
 
-**Forward analogue.** Replace the flat shoulder-POF heuristic with a
-historically-derived **monthly maintenance shape** (magnitude/timing of
-spring/autumn maintenance learned from CAMPD/GADS) applied in forecast — distinct
-from the backcast overlay. **Effort M, Risk Low** (the statistical forecast
-default already works; this sharpens its seasonal shape).
+**Forward analogue (IMPLEMENTED).** The flat shoulder-POF heuristic is replaced
+by a historically-derived **monthly maintenance shape** (`MAINTENANCE_MONTHLY_SHAPE`,
+`config/constants.py`; derived by `scripts/derive_maintenance_shape.py` from the
+committed CAMPD unit-outage extracts, all six ISOs pooled). Per plant group, the
+shape is the planned-maintenance excess over the annual-minimum month, normalized
+to a month-length-weighted mean of 1, so each group's **annual POF budget is
+conserved exactly** (`Σ maint[m]·hours[m] = POF·shoulder_hours`) while the
+seasonal distribution is sharpened (peaks Apr/Oct–Nov, ≈0 at the Jul/Aug summer
+peak, modest in winter). Applied in **forecast** mode only
+(`ScenarioConfig.maintenance_monthly_shape`, default on), in
+`data.fleet.generators_to_fleet_arrays`; backcast runs keep the measured overlay
+unchanged. Distinct from the backcast overlay — it never reads a specific year's
+windows, only the pooled shape. **Effort M, Risk Low** (the statistical forecast
+default already works; this sharpened its seasonal shape).
 
 ### G13 Weather-year ensemble — **BUILT**
 
@@ -474,7 +483,7 @@ first.
 | **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
 | **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11), NYISO import-recon forward (G10)** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
-| **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12), weather-year ensemble (G13)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
+| **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), ~~outage monthly maintenance shape (G12)~~ — ✅ done 2026-06-25, weather-year ensemble (G13)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
 
 **Do-nothing-needed (already forward):** F923 → AEO supply path, gas monthly
 actuals → AEO, CEMS emission rates, ST_GAS net-load drag, offer-curve overrides,
