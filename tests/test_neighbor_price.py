@@ -23,6 +23,7 @@ from market_sim.data.neighbor_price import (
     InterfacePrices,
     interface_reference_prices,
     neighbor_gas_price,
+    neighbor_heat_rate,
     neighbor_load_shape,
     neighbor_reference_price,
     seam_flow_direction,
@@ -83,6 +84,55 @@ class TestNeighborGasPrice(unittest.TestCase):
             neighbor_gas_price(spec, 2023, "low"),
             neighbor_gas_price(spec, 2023, "high"),
         )
+
+
+class TestNeighborHeatRate(unittest.TestCase):
+    """Resolution order: measured backcast -> elastic forward -> flat fallback."""
+
+    def test_backcast_year_uses_measured_anchor(self):
+        # A tabulated backcast year resolves to its measured hr_by_year, never
+        # the elastic forward path (which must leave the backcast untouched).
+        # name="PJM" gives this spec the MISO PJM elastic fit (11.06, 3.21).
+        spec = _spec(
+            name="PJM",
+            marginal_heat_rate=12.3,
+            hr_by_year={2024: 13.49},
+        )
+        self.assertEqual(neighbor_heat_rate(spec, 2024), 13.49)
+
+    def test_forecast_year_is_gas_elastic(self):
+        # An untabulated (forecast) year uses hr_phys + hr_adder/gas from the
+        # _HR_GAS_ELASTIC map (keyed by name), NOT the flat marginal_heat_rate.
+        spec = _spec(name="PJM", marginal_heat_rate=12.3, hr_by_year={2024: 13.49})
+        hr_phys, hr_adder = np_mod._HR_GAS_ELASTIC["PJM"]
+        gas = neighbor_gas_price(spec, 2030, "mid")
+        self.assertAlmostEqual(
+            neighbor_heat_rate(spec, 2030, "mid"), hr_phys + hr_adder / gas
+        )
+
+    def test_elastic_hr_falls_as_gas_rises(self):
+        # The defining forward behaviour: a dearer gas year carries a LOWER
+        # implied HR (the fixed non-gas adder is diluted) — so a wind-set
+        # neighbor (SPP) does not get spuriously lifted when gas spikes.
+        spec = _spec(name="SPP", hr_by_year=None)
+        cheap = neighbor_heat_rate(_at_gas(spec, 2.0), 2030, "mid")
+        dear = neighbor_heat_rate(_at_gas(spec, 4.0), 2030, "mid")
+        self.assertLess(dear, cheap)
+
+    def test_flat_fallback_without_elasticity(self):
+        # A neighbor with no elasticity fit (name not in _HR_GAS_ELASTIC, e.g. a
+        # non-organized-market neighbor) keeps the flat marginal_heat_rate for
+        # forecast years — byte-identical.
+        spec = _spec(name="South", marginal_heat_rate=12.0, hr_by_year=None)
+        self.assertEqual(neighbor_heat_rate(spec, 2030, "mid"), 12.0)
+
+
+def _at_gas(spec: NeighborInterface, gas: float) -> NeighborInterface:
+    """Return a copy of ``spec`` whose delivered gas equals ``gas`` via the basis."""
+    import dataclasses
+
+    basis = gas - HENRY_HUB_TRAJECTORIES["mid"][2030]
+    return dataclasses.replace(spec, gas_basis=basis)
 
 
 class TestLoadShape(unittest.TestCase):
@@ -329,23 +379,26 @@ class TestReferencePriceNode(unittest.TestCase):
         # All three seams price individually (no fold into the aggregate).
         self.assertEqual(set(prices.per_neighbor), {"PJM", "SPP", "South"})
         self.assertEqual(prices.missing, [])
-        # 2023 Henry Hub $2.54/MMBtu x each neighbor's anchored heat rate gives
-        # the annual-mean level (mean-preserving exponent 1.0).
+        # 2023 Henry Hub $2.54/MMBtu x each neighbor's RESOLVED heat rate gives
+        # the annual-mean level (mean-preserving exponent 1.0). 2023 is a
+        # backcast year, so PJM/SPP resolve to their measured hr_by_year anchor
+        # (11.2 / 9.24), not the flat marginal_heat_rate; South keeps the flat
+        # estimate (no organized-market LMP).
         hh_2023 = 2.54
         for spec in INTERFACE_NEIGHBORS["MISO"]:
-            expect = hh_2023 * spec.marginal_heat_rate
+            expect = hh_2023 * neighbor_heat_rate(spec, 2023)
             got = float(prices.per_neighbor[spec.name].mean())
             self.assertAlmostEqual(got, expect, delta=0.5 * expect * 0.05 + 0.5)
-        # SPP (wind-rich, HR 10.0) is the cheapest seam; SERC/South (HR 12.0)
-        # and PJM (HR 12.3) sit close above it — the merit order MISO clears
-        # the seam against.
+        # Merit order on the measured 2023 anchors: SPP (wind-rich, HR 9.24) is
+        # the cheapest seam, PJM (HR 11.2) above it, and SERC/South (flat HR
+        # 12.0) the dearest — the order MISO clears the seam against.
         self.assertLess(
             prices.per_neighbor["SPP"].mean(),
-            prices.per_neighbor["South"].mean(),
+            prices.per_neighbor["PJM"].mean(),
         )
         self.assertLess(
-            prices.per_neighbor["South"].mean(),
             prices.per_neighbor["PJM"].mean(),
+            prices.per_neighbor["South"].mean(),
         )
 
 
