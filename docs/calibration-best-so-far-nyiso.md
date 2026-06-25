@@ -1,5 +1,40 @@
 # NYISO calibration — best config so far
 
+> **LATEST PROBE (rejected, 2026-06-25): `nyiso 28 native-hr`**
+> (`2026-06-25-nyiso-28-native-hr`, bundle
+> `results/calibration/nyiso_28_native-hr`, all 3 years). Re-grounded ALL of
+> `_NYISO_OFFER_CURVE` `CC_REGULAR` / `CC_CHP` / `ST_GAS`
+> `committed`/`econ_low`/`econ_high` to NYISO's **OWN** CAMPD incremental-HR
+> medians — removing the cross-ISO borrow (the `econ_high` 1.21/1.24 was ERCOT's
+> CAMPD-CC reach; `ST_GAS` 1.10/1.45 was ERCOT-shaped). The NYISO-native table
+> (new tool `scripts/derive_campd_marginal_hr.py`, NY+NJ CEMS pooled 2023-25,
+> output `data/raw/reference/nyiso_campd_marginal_hr_summary.csv`):
+> `CC_REGULAR 0.632/0.784/0.925`, `CC_CHP 0.809/0.989/1.103`,
+> `ST_GAS 0.818/0.825/0.830`. Merit order preserved (CC `econ_high` eff HR
+> 7.2/7.7 < ST `committed` 8.7 — no inversion). **REJECTED:** the bare CEMS
+> marginal heat rate is the marginal **COST**, not the **OFFER** — it omits the
+> competitive offer **markup** (no-load/start/AS cost recovery + inframarginal
+> rent) that NYISO has no offer disclosure to measure, so stripping the borrowed
+> reach (which *proxied* that markup) under-prices the gas stack ~$10/MWh and
+> **craters `C3a`** to −24.0 % / −26.5 % / −23.5 % across 2023-25 (`C3b`
+> regresses too). Rule #1: a run **missing real structure** (the markup) is not a
+> keeper. **Two sub-findings survive:** (a) the **steam-side** re-level is
+> directionally right — lowering `ST_GAS` toward its NYISO-native ~0.82-0.83
+> marginal HR nearly **halved the 2024 `ST_GAS` under-run** (−4.14 → −2.22 TWh),
+> confirming legacy steam's `1.10/1.45` economic ramp was over-priced (eff HR
+> 11.7-15.4 vs measured ~8.7-8.8); (b) the **CC over-run is structural** at
+> NYISO's own sub-1.21 reach — it barely moved despite the large offer drop
+> (import-constrained downstate leans on its efficient CC regardless). **Live
+> source reverted to the run-27 keeper curve**; the probe lives only in its
+> bundle + dashboard. **Carry-forward (run 29):** ground a NYISO competitive-offer
+> **markup ON TOP of** the native marginal HR (so curve = measured marginal HR ×
+> a markup recovering no-load/start/AS cost + rent), lowering steam toward native
+> marginal while a stack-wide markup holds the clearing price — **not** a restored
+> cross-ISO borrow. The **per-ISO-per-class native-grounding principle stands**;
+> what run 28 surfaces is that an ISO without offer disclosure still needs its
+> *markup* component grounded, which CEMS alone cannot supply. C6 governance
+> **PASS** (attested as a rejected probe); determination **NOT-YET**.
+
 > **KEEPER (2026-06-25): `nyiso 27 cc-offer`**
 > (`2026-06-25-nyiso-27-cc-offer`, bundle
 > `results/calibration/nyiso_27_cc-offer`, all 3 years). A **re-solve** of the
@@ -314,6 +349,16 @@ and gas from +25.6% to −9.9%. P12 confirmed the structural config is the keepe
 P12 probes, all rejected (logged in `docs/calibration-log.md`, "NYISO P12"):
 `nyiso 1 gas-actuals` (no-op, already default), `nyiso 2 chp-covered`
 (negligible — CHP deficit is structural, not a startup-cost artifact).
+
+`nyiso 28 native-hr` (2026-06-25, **rejected probe**): re-grounded the CC/ST
+offer curve to NYISO's own CAMPD incremental-HR medians (new tool
+`scripts/derive_campd_marginal_hr.py`), removing the ERCOT-borrowed reach. It
+craters `C3a` to −24/−26.5/−23.5 % because the bare CEMS marginal HR omits the
+competitive offer markup CEMS cannot measure (the borrowed 1.21 reach was
+proxying that markup). The steam-side re-level was directionally right (halved
+the 2024 `ST_GAS` under-run); keeper stays `nyiso 27`. Run-29 path: a
+NYISO-grounded markup on top of the native marginal HR. See the run-28
+attestation.
 
 ## Citations (P12 benchmarks & conventions)
 

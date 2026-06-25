@@ -14,6 +14,24 @@
 > still wants the structural levers ranked below — the NYISO close confirms the
 > offer-level trim is a real, grounded second step, but it is the smaller lever
 > for PJM.**
+>
+> **Update (2026-06-25): the `1.21×` NYISO reach above is BORROWED from ERCOT,
+> and the `nyiso 28 native-hr` probe tested removing that borrow.** It re-grounded
+> the NYISO CC/ST curve in NYISO's OWN CAMPD incremental HR (new tool
+> `scripts/derive_campd_marginal_hr.py`, the CEMS analogue of
+> `derive_dam_offer_hrmults.py`) and found NYISO's native CC reach is **0.925×**
+> (not 1.21) — re-grounding to it **craters `C3a`** to −24/−26.5/−23.5 %. The
+> lesson, which **applies directly to PJM**: CEMS gives the marginal **cost**, not
+> the **offer**; the borrowed reach was proxying the competitive offer **markup**
+> that an ISO without 60-Day-style offer disclosure (NYISO, PJM) cannot measure
+> from CEMS alone. **Standing pattern: each ISO's per-class offer curve is grounded
+> in that ISO's OWN measured data — never a scalar carried from another ISO — but
+> for a no-offer-disclosure ISO the *markup* component must be grounded separately
+> (the next step is a measured markup ON TOP of the native marginal HR, not a
+> restored ERCOT borrow).** So for PJM, derive PJM's own CAMPD marginal HR with
+> the new tool (`--iso PJM`) as the cost floor, then ground a PJM markup on top —
+> do not import ERCOT's reach. The steam-side re-level was directionally right for
+> NYISO (halved its 2024 `ST_GAS` under-run); keeper stays `nyiso 27`.
 
 **This is an ANALYSIS task, not a compute task. Do NOT launch calibration solves.**
 Your job is to read the repo + publicly available data + how other dispatch models
