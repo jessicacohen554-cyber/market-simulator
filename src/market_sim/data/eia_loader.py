@@ -539,6 +539,41 @@ def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
     return out if out.sum() > 0.0 else None
 
 
+def climatological_monthly_hydro(
+    iso: str, years: "tuple[int, ...] | list[int] | None" = None
+) -> np.ndarray | None:
+    """Return the normal-water-year monthly hydro climatology (MWh).
+
+    Twelve-entry vector (index 0 = January) of the per-month mean of the
+    measured EIA-930 ``NG: WAT`` (conventional hydro) net generation across
+    ``years`` — the forecast analogue of :func:`measured_monthly_hydro`. A
+    single historical year is a particular wet/dry draw; averaging several
+    years gives a *normal water year* the forecast hydro budget level can be
+    built from, then scaled by a wet/dry scenario lever
+    (:func:`market_sim.data.hydro.forecast_monthly_hydro`). Years the ISO does
+    not cover (no per-BA extract, not a usable hydro year) are skipped, so a
+    short extract still yields a climatology from whatever years are present.
+
+    Args:
+        iso: ISO identifier, e.g. ``"CAISO"``.
+        years: Historical years to average. ``None`` (default) uses
+            :data:`market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`.
+
+    Returns:
+        The ``(12,)`` mean monthly hydro net generation in MWh, or ``None``
+        when no year in the window has usable measured hydro for ``iso``.
+    """
+    if years is None:
+        from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+
+        years = HYDRO_CLIMATOLOGY_YEARS
+    monthly = [measured_monthly_hydro(iso, int(y)) for y in years]
+    monthly = [m for m in monthly if m is not None]
+    if not monthly:
+        return None
+    return np.vstack(monthly).mean(axis=0)
+
+
 def measured_interchange_envelope(
     iso: str, year: int, hours: int, percentile: float = 90.0
 ) -> tuple[np.ndarray, np.ndarray] | None:
