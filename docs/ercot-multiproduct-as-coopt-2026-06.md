@@ -123,36 +123,45 @@ Target: the endogenous per-product reserve dual reproduces the ERCOT acute days
 (May 2024 8/24/26 → load-weighted LMP ~$45) **without** the measured overlay,
 while holding the other months/years (no over-fire of Aug 2024 / 2023-H2 / 2025).
 
-**2024 config-validation run (P1-only, overlay OFF, endogenous multi-product
-co-opt):** _preliminary — this run used the base ERCOT calibration config, NOT
-run157's full recipe. The keeper `159` (= run157 config + co-opt, below) replaces
-these once its all-years solve completes; the directional finding (endogenous
-acute-day scarcity, no over-fire) is what this validates._
+**`159` = run157's exact recipe with the DAM-AS overlay swapped for the
+endogenous multi-product co-opt** (P1-only; `solve_and_persist` with run157's
+recorded `calibration_flags`, only `ercot_dam_as_overlay→False` +
+`energy_reserve_coopt`/`ercot_multiproduct_as_coopt→True`):
 
-| metric | model | actual DA | actual RT |
-|---|---|---|---|
-| annual load-wtd LMP | **$26.00** | $28.09 | $26.83 |
-| monthly load-wtd LMP MAE | — | $5.62 | **$3.93** |
-| May (month) | $28.33 | $44.83 | $37.71 |
-| **May 8/24/26 (acute days)** | **$90.78** | — | — |
+| year | model annual | actual RT | monthly MAE vs RT | May 8/24/26 acute | May month |
+|---|---|---|---|---|---|
+| 2023 | $42.88 | $48.36 | $11.47 | $24.61 | $23.06 |
+| 2024 | $22.37 | $26.83 | **$5.17** | **$39.97** | $21.26 |
+| 2025 | $33.41 | $32.49 | **$2.13** | $30.16 | $32.89 |
 
-The endogenous co-opt **forms the acute-day scarcity** (May 8/24/26 lifts to
-$90.8 vs the $28 month average) with no over-fire elsewhere (annual MAE $3.93 vs
-RT) — the gate's "reproduce the acute days without the overlay, hold the other
-months" intent. Scarcity concentrates on the genuinely tight days rather than
-smearing across May (so the May *month* sits under the overlay-lifted $44.8,
-while the acute *days* clear high). The keeper `159` all-years numbers
-(2023/2024/2025, run157 recipe) land with the bundle below.
+**Gate status: PARTIAL.** The endogenous co-opt **lifts the May-2024 acute days
+to ~$40** (vs the $21 month average) — directionally the right behavior, close to
+the ~$45 figure, with **no over-firing** (2025 MAE $2.13, 2024 MAE $5.17). But it
+does **not** reproduce the *broad* May-2024 elevation the overlay provides
+(run157 lifts the May *month* $23.6 → $46.7 ≈ actual DA $44.8; `159`'s May month
+is $21.3). 2023 stays under-priced ($42.9 vs $48.4 — the documented out-of-market
+scarcity year RTORDPA carries).
 
-Configurations compared:
+**Root cause = phantom headroom.** In P1, idle slow-start units still count toward
+the shared-headroom RHS, so most May hours are not reserve-thin and the co-opt
+only binds on the genuinely tight acute days — exactly the gap G1 named. The
+multi-product additivity (~7.5 GW vs the old ~3 GW) closes part of it (acute days
+fire) but not the broad month. The **P1-compatible fix is online-gating** the fast
+tier (`R - ρ·Σ_g P[g] ≤ 0`, reserve only from online generation), which is wired
+in `_build_reserve_rows` but currently applies only to the legacy per-class path;
+extending it into the additive fast tier (and calibrating ρ) is the next iteration
+(`159b`). P2 commitment was tried and rejected — its energy-only screen
+over-corrects (2024 annual $123.7).
 
-| Configuration | 2024 annual load-wtd LMP | verdict |
+| Configuration | 2024 May month | verdict |
 |---|---|---|
-| overlay-on (measured DAM-AS bridge) | ~actual ($26.8) by construction | pre-RTC+B bridge, stays for backcast |
-| endogenous multi-product, **P1-only** | **$26.0** (MAE $3.93) | **keeper** — acute days endogenous, no over-fire |
-| endogenous multi-product, **+P2 commitment** | $123.7 | rejected — P2 energy-only screen starves the reserve pool, over-fires every month |
+| run155a (no overlay/co-opt) | $23.6 | baseline under-price |
+| run157 (measured DAM-AS overlay) | $46.7 (≈actual $44.8) | pre-RTC+B bridge, stays for backcast |
+| **159 (endogenous multi-product co-opt, P1)** | $21.3 (acute days $40.0) | **partial** — acute days lift, broad month under-fires; awaits online-gating |
+| endogenous co-opt **+ P2 commitment** | (annual $123.7) | rejected — P2 starves the reserve pool, over-fires |
 
-_Run command (all years, per-plant, P1-only, dashboard bundle `159`):_
+_Run command (all years, per-plant, P1-only, dashboard bundle `159`) — reproduce
+via the run157 recipe (`scripts/run_159.py` driver) or:_
 
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \

@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-25-159-multiproduct-as-coopt",
+  "label": "159 multiproduct as coopt",
+  "date": "2026-06-25",
+  "shorthand": "159-multiproduct-as-coopt",
+  "definition": "Calibration run from bundle 159.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-25-159-multiproduct-as-coopt.js",
+  "bundle": "results/calibration/159"
+}
