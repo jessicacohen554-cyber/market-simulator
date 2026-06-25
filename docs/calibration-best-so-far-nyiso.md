@@ -38,6 +38,19 @@
 > and out of scope. Reproduce: the `nyiso 26` config (no new flags) with
 > `_NYISO_OFFER_CURVE` CC `econ_high` at `1.21`/`1.24`. Superseded keeper below.
 
+> **ROOT-CAUSE CORRECTION (2026-06-25, analysis):** the `C3c` tail / CT_PEAKER
+> incidence gap is **NOT** import-discipline- or interface-gated. A diagnostic
+> 2024 solve (`docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md`)
+> shows the in-LP locational reserve families never bind (`reserve_price` >$0 in
+> 9 h vs measured NYC reserve >$0 in 3,082 h), and the downstate interfaces bind
+> ≤7 h/yr (NYC inflow 2,600 mean vs 4,900 ceiling) — so tightening imports /
+> interfaces cannot bite. The real cause is that the pure-ED LP **credits idle,
+> un-committed peaker capacity as deliverable reserve**, so reserve never goes
+> short and NYC LMP never separates upward. The faithful lever is a
+> **commitment-aware synchronised reserve** (out of the reserve-incidence /
+> import-discipline scope), not import discipline. The "import discipline"
+> phrasing in the incidence ledgers below is superseded by this finding.
+
 > **PRIOR KEEPER (2026-06-25): `nyiso 26 cc-nameplate`**
 > (`2026-06-25-nyiso-26-cc-nameplate`, bundle
 > `results/calibration/nyiso_26_cc-nameplate`, all 3 years). A **re-solve** of the
