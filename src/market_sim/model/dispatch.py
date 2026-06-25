@@ -625,6 +625,9 @@ def _build_reserve_rows(
     balance_reserve_class: np.ndarray | None = None,
     online_gated: np.ndarray | None = None,
     online_rho: float = 1.0,
+    headroom_eligible: np.ndarray | None = None,
+    headroom_products: np.ndarray | None = None,
+    headroom_extra_cap: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -698,10 +701,34 @@ def _build_reserve_rows(
             shared-headroom row is ``R[c,z] - online_rho * sum_g P[g] <= 0``
             instead of ``sum_g P[g] + R[c,z] <= sum_g cap[g]``, so idle (P=0)
             capacity contributes no reserve and only online generation backs it.
-            ``None`` (default) leaves every class idle-allowed (legacy).
+            ``None`` (default) leaves every class idle-allowed (legacy). Applies
+            to the legacy per-class headroom; ignored under an additive
+            ``headroom_products`` spec.
         online_rho: the online-headroom multiplier for gated classes — how much
             spinning reserve an online unit backs per MW of output (~ the fleet
             ``(pmax-pmin)/pmin`` at min load). Default 1.0.
+        headroom_eligible: ``(n_headroom_rows, n_gen)`` boolean — the eligible
+            generators of each *additive* headroom row. When supplied (with
+            ``headroom_products``) it REPLACES the per-class headroom rows with
+            caller-specified rows, so several reserve products can share one
+            headroom pool ADDITIVELY (ERCOT's RegUp/RRS/ECRS/NonSpin each hold
+            *separate* capacity, ~7-8 GW total, unlike NYISO's nested products
+            where one MW counts for both tiers). ``None`` keeps the legacy
+            per-class headroom (one row per class, byte-identical).
+        headroom_products: ``(n_headroom_rows, n_reserve_classes)`` boolean —
+            which products' (classes') per-zone reserve ``R[p,z]`` enter each
+            headroom row's sum. Row ``h`` reads
+            ``sum_{g in headroom_eligible[h] ∩ z} P[g] + sum_{p in
+            headroom_products[h]} R[p,z] <= cap(headroom_eligible[h], z) +
+            headroom_extra_cap[h,z]``. Nesting a "fast" row (RegUp+RRS+ECRS on
+            the online-responsive set) inside an "all" row (every product on the
+            online + offline-quick set) gives the additive quality cascade: a
+            slow Non-Spin MW can come from offline quick-start, while the fast
+            products are bounded by the smaller online-responsive headroom.
+        headroom_extra_cap: ``(n_headroom_rows, n_zones, T)`` or
+            ``(n_headroom_rows, n_zones)`` MW — extra non-generator headroom
+            added to each additive row's RHS (e.g. offline quick-start capacity
+            that backs Non-Spin without an energy term). ``None`` adds nothing.
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
@@ -733,37 +760,61 @@ def _build_reserve_rows(
         spc = np.asarray(storage_power_cap, dtype=float)
         zone_storage = _build_zone_storage_map(s_zone, n_zones, n_storage)
 
-    # --- Shared-headroom per-hour block, (n_classes*n_zones, vph). For class c,
-    # zone z (row c*n_zones + z): +1 on each class-c-eligible gen's energy column
-    # (zone-summed) and +1 on this (class, zone)'s reserve column, so the row
-    # reads sum_g P[g] + R[c,z] <= sum_g cap[g]. Storage (when supplied) backs
-    # every class: a unit's upward room is cap - Dis + Chg, so its discharge
-    # column enters with +1 and its charge column with -1, and the power cap is
-    # added to the RHS — R[c,z] <= class-c thermal headroom + storage room.
+    # --- Shared-headroom per-hour block, (n_hr*n_zones, vph). Each headroom row
+    # h, zone z (row h*n_zones + z) reads
+    #   sum_{g in E_h ∩ z} P[g] + sum_{p in Prod_h} R[p,z] <= cap(E_h, z) + extra
+    # where E_h is the row's eligible generator set, Prod_h the set of products
+    # (reserve classes) whose per-zone reserve it bounds, and the RHS the
+    # eligible thermal + storage + extra capacity. The DEFAULT (legacy) spec is
+    # one row per reserve class c bounding only its own R[c,z] against its
+    # class-c eligible capacity — byte-identical to the previous per-class loop.
+    # The ADDITIVE spec (``headroom_products`` supplied) lets several products
+    # share one headroom row, so ERCOT's RegUp/RRS/ECRS/NonSpin compete for the
+    # same capacity instead of each independently reusing it. Storage (when
+    # supplied) backs every headroom row — batteries respond in seconds, so a
+    # unit's upward room (cap - Dis + Chg) enters every row's R sum, its discharge
+    # column with +1 and charge with -1 and its power cap added to the RHS.
+    if headroom_products is None:
+        # Legacy per-class spec: row c eligible = class-c gens, bounds R[c].
+        hr_elig = elig2d  # (n_classes, n_gen)
+        hr_prod = np.eye(n_classes, dtype=bool)  # (n_classes, n_classes)
+        extra = None
+    else:
+        hr_elig = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool))
+        hr_prod = np.atleast_2d(np.asarray(headroom_products, dtype=bool))
+        extra = (
+            None
+            if headroom_extra_cap is None
+            else np.asarray(headroom_extra_cap, float)
+        )
+    n_hr = hr_prod.shape[0]
     rows: list[np.ndarray] = []
     cols: list[np.ndarray] = []
     vals: list[np.ndarray] = []
     z_all = np.arange(n_zones)
-    zone_cap = np.zeros((n_classes * n_zones, T))  # RHS, class-major
+    zone_cap = np.zeros((n_hr * n_zones, T))  # RHS, headroom-row-major
     gated = (
         np.zeros(n_classes, dtype=bool)
         if online_gated is None
         else np.asarray(online_gated, dtype=bool).reshape(n_classes)
     )
-    for c in range(n_classes):
-        base = c * n_zones
-        e_idx = np.flatnonzero(elig2d[c])
-        if gated[c]:
-            # ONLINE-GATED (synchronised/spinning) class: reserve can come only
-            # from ONLINE capacity, not idle headroom. Row reads
-            # ``R[c,z] - rho * sum_{elig g in z} P[g] <= 0`` -> a unit at P=0
-            # contributes nothing (an offline peaker is NOT spinning reserve),
-            # and an online unit backs ``rho``x its output (rho = the fleet
-            # online-headroom ratio, ~ (pmax-pmin)/pmin near min load). The RHS
-            # is 0 (no idle-capacity credit) and storage is excluded (its room
-            # is not synchronised thermal spin). This is the LP-linear proxy for
-            # commitment-gated spinning reserve (path A); the exact gate needs
-            # an online binary (path B / model.commitment).
+    for h in range(n_hr):
+        base = h * n_zones
+        e_idx = np.flatnonzero(hr_elig[h])
+        if headroom_products is None and gated[h]:
+            # ONLINE-GATED (synchronised/spinning) class, legacy per-class path:
+            # reserve can come only from ONLINE capacity, not idle headroom. Row
+            # reads ``R[c,z] - rho * sum_{elig g in z} P[g] <= 0`` -> a unit at
+            # P=0 contributes nothing (an offline peaker is NOT spinning
+            # reserve), and an online unit backs ``rho``x its output (rho = the
+            # fleet online-headroom ratio, ~ (pmax-pmin)/pmin near min load). The
+            # RHS is 0 (no idle-capacity credit) and storage is excluded (its
+            # room is not synchronised thermal spin). LP-linear proxy for
+            # commitment-gated spinning reserve (path A); the exact gate needs an
+            # online binary (path B / model.commitment). The ERCOT multi-product
+            # additive spec uses the P2 commitment screen instead (its fa_p2
+            # availability zeroes idle slow-start capacity out of the RHS), so
+            # gating does not apply there.
             rows.append(base + zone_idx[e_idx])
             cols.append(e_idx)
             vals.append(np.full(e_idx.size, -float(online_rho)))  # -rho * P[g]
@@ -772,15 +823,16 @@ def _build_reserve_rows(
             vals.append(np.ones(n_zones))  # +R[c,z]
             # zone_cap stays 0 for this class (no idle/storage credit).
             continue
-        # eligible thermal P columns -> this class's headroom rows
+        # eligible thermal P columns -> this headroom row (zone-summed)
         rows.append(base + zone_idx[e_idx])
         cols.append(e_idx)
         vals.append(np.ones(e_idx.size))
-        # reserve columns R[c, z] (one per zone, this class)
-        rows.append(base + z_all)
-        cols.append(layout._reserve_off + base + z_all)
-        vals.append(np.ones(n_zones))
-        # eligible-generator -> zone incidence for this class's RHS capacity
+        # reserve columns R[p, z] for every product p bounded by this row
+        for p in np.flatnonzero(hr_prod[h]):
+            rows.append(base + z_all)
+            cols.append(layout._reserve_off + int(p) * n_zones + z_all)
+            vals.append(np.ones(n_zones))
+        # eligible-generator -> zone incidence for this row's RHS capacity
         zone_gen_elig = sp.csr_matrix(
             (np.ones(e_idx.size), (zone_idx[e_idx], e_idx)),
             shape=(n_zones, layout.n_gen),
@@ -797,16 +849,18 @@ def _build_reserve_rows(
                 zc = zc + (zone_storage @ spc)  # (n_zones, T)
             else:
                 zc = zc + (zone_storage @ spc)[:, None]
+        if extra is not None:
+            zc = zc + (extra[h] if extra[h].ndim == 2 else extra[h][:, None])
         zone_cap[base : base + n_zones, :] = zc
     headroom_per_hour = sp.coo_matrix(
         (np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
-        shape=(n_classes * n_zones, layout.vars_per_hour),
+        shape=(n_hr * n_zones, layout.vars_per_hour),
     ).tocsr()
     headroom = sp.kron(sp.eye(T, format="csr"), headroom_per_hour, format="csr")
-    # RHS: class-zone-summed eligible capacity per hour, hour-major
-    # (row t*(n_classes*n_zones) + c*n_zones + z).
+    # RHS: headroom-row-zone-summed eligible capacity per hour, hour-major
+    # (row t*(n_hr*n_zones) + h*n_zones + z).
     hr_upper = zone_cap.T.ravel()
-    hr_lower = np.full(n_classes * n_zones * T, -np.inf)
+    hr_lower = np.full(n_hr * n_zones * T, -np.inf)
 
     # --- Reserve-balance per-hour block, (n_families, vph): for family f a +1
     # on its member zones' reserve columns (in family f's reserve class c_f) and
@@ -890,6 +944,9 @@ def build_constraints(
     reserve_balance_class: np.ndarray | None = None,
     reserve_online_gated: np.ndarray | None = None,
     reserve_online_rho: float = 1.0,
+    reserve_headroom_eligible: np.ndarray | None = None,
+    reserve_headroom_products: np.ndarray | None = None,
+    reserve_headroom_extra_cap: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1197,6 +1254,9 @@ def build_constraints(
             balance_reserve_class=reserve_balance_class,
             online_gated=reserve_online_gated,
             online_rho=reserve_online_rho,
+            headroom_eligible=reserve_headroom_eligible,
+            headroom_products=reserve_headroom_products,
+            headroom_extra_cap=reserve_headroom_extra_cap,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -1401,6 +1461,9 @@ class DispatchResult:
     # Energy+reserve co-optimization outputs (None unless co-opt is on).
     reserve_dispatch: np.ndarray | None = None  # (n_zones, T) upward reserve MW
     reserve_price: np.ndarray | None = None  # (T,) reserve clearing $/MWh
+    # (T, n_families) per-family balance-row dual — the per-product AS clearing
+    # price for ERCOT's multi-product co-opt; the per-hour max is the binding MCPC.
+    reserve_price_by_family: np.ndarray | None = None
 
 
 # HiGHS basis-status integer codes (HighsBasisStatus enum), captured once so the
@@ -1511,6 +1574,9 @@ class DispatchModel:
         reserve_balance_class: np.ndarray | None = None,
         reserve_online_gated: np.ndarray | None = None,
         reserve_online_rho: float = 1.0,
+        reserve_headroom_eligible: np.ndarray | None = None,
+        reserve_headroom_products: np.ndarray | None = None,
+        reserve_headroom_extra_cap: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -1547,6 +1613,15 @@ class DispatchModel:
             1
             if not coopt or reserve_balance_zone_mask is None
             else int(np.asarray(reserve_balance_zone_mask).shape[0])
+        )
+        # Shared-headroom rows: one per reserve class (legacy/NYISO) unless an
+        # additive headroom spec is supplied (ERCOT multi-product), where the
+        # row count is decoupled from the class count (e.g. a "fast" row nested
+        # in an "all" row). Drives the reserve-block row count for dual indexing.
+        n_headroom_rows = (
+            n_reserve_classes
+            if not coopt or reserve_headroom_products is None
+            else int(np.atleast_2d(np.asarray(reserve_headroom_products)).shape[0])
         )
 
         layout = VariableLayout(
@@ -1587,6 +1662,9 @@ class DispatchModel:
             reserve_balance_class=reserve_balance_class,
             reserve_online_gated=reserve_online_gated,
             reserve_online_rho=reserve_online_rho,
+            reserve_headroom_eligible=reserve_headroom_eligible,
+            reserve_headroom_products=reserve_headroom_products,
+            reserve_headroom_extra_cap=reserve_headroom_extra_cap,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1669,13 +1747,15 @@ class DispatchModel:
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
-        # Reserve block = per-class-zone shared-headroom rows
-        # (n_reserve_classes*n_zones*T) + reserve-balance rows (n_families*T),
-        # appended last; the balance rows are the final n_families*T
-        # (family-major within each hour).
+        # Reserve block = shared-headroom rows (n_headroom_rows*n_zones*T) +
+        # reserve-balance rows (n_families*T), appended last; the balance rows
+        # are the final n_families*T (family-major within each hour). The
+        # headroom-row count equals the reserve-class count for the legacy /
+        # NYISO per-class layout and the additive-spec row count for ERCOT
+        # multi-product.
         self._n_families = n_families
         self._n_reserve_rows = (
-            (n_reserve_classes * n_zones * T + n_families * T) if coopt else 0
+            (n_headroom_rows * n_zones * T + n_families * T) if coopt else 0
         )
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
@@ -1805,7 +1885,7 @@ class DispatchModel:
         # per-zone R_z block (n_zones, T); the reserve clearing price is the dual
         # of the reserve-balance rows (the final T rows), which the per-zone
         # shared-headroom constraint transfers into each zone's energy LMP above.
-        reserve_dispatch = reserve_price = None
+        reserve_dispatch = reserve_price = reserve_price_by_family = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
             # Balance rows are the final n_families*T, family-major per hour.
@@ -1817,6 +1897,12 @@ class DispatchModel:
             n_fam = self._n_families
             balance_duals = row_dual[-(n_fam * T) :].reshape(T, n_fam)
             reserve_price = balance_duals.sum(axis=1)
+            # Per-product (per-family) reserve clearing price, (T, n_fam). For
+            # ERCOT's multi-product co-opt each family is one AS product, so the
+            # per-hour MAX across columns is the binding-product MCPC the measured
+            # DAM-AS overlay reads — recovered here from the LP balance-row duals,
+            # never an exogenous adder.
+            reserve_price_by_family = balance_duals
 
         return DispatchResult(
             dispatch=dispatch,
@@ -1833,6 +1919,7 @@ class DispatchModel:
             status=h.modelStatusToString(h.getModelStatus()),
             reserve_dispatch=reserve_dispatch,
             reserve_price=reserve_price,
+            reserve_price_by_family=reserve_price_by_family,
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
@@ -2055,6 +2142,9 @@ def solve_dispatch(
     reserve_balance_class: np.ndarray | None = None,
     reserve_online_gated: np.ndarray | None = None,
     reserve_online_rho: float = 1.0,
+    reserve_headroom_eligible: np.ndarray | None = None,
+    reserve_headroom_products: np.ndarray | None = None,
+    reserve_headroom_extra_cap: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -2162,6 +2252,9 @@ def solve_dispatch(
         reserve_balance_class=reserve_balance_class,
         reserve_online_gated=reserve_online_gated,
         reserve_online_rho=reserve_online_rho,
+        reserve_headroom_eligible=reserve_headroom_eligible,
+        reserve_headroom_products=reserve_headroom_products,
+        reserve_headroom_extra_cap=reserve_headroom_extra_cap,
         link_bidirectional=link_bidirectional,
         T=T,
     )

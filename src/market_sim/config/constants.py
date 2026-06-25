@@ -3119,6 +3119,31 @@ EAC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
     # Source: limited precedent, modeling assumption
 }
 
+# --- ERCOT multi-product AS co-optimization (RTC+B) ------------------------
+# ERCOT co-optimizes energy with FOUR upward ancillary-service products, each
+# with its own procurement requirement and VOLL-anchored AS Demand Curve. Under
+# RTC+B (live 2025-12-05) these clear inside SCED, so the binding product's
+# reserve dual lifts the energy price endogenously — the forward analogue of the
+# measured DAM-AS MCPC overlay (results.scarcity.ercot_dam_as_overlay_series).
+# Each entry is (product name, ASPLANNP433 AncillaryType code, headroom tier),
+# ordered highest response-quality first. The headroom TIER encodes the quality
+# cascade (higher-quality substitutes down): "fast" products (Regulation-Up,
+# Responsive Reserve, ERCOT Contingency Reserve) need synchronized/spinning
+# headroom; "all" (Non-Spin) can additionally be met by a 30-minute offline
+# quick-start unit, so it draws on the larger online+quick-start pool. The
+# requirement is the ERCOT-published procurement quantity (ASPLANNP433),
+# never fitted to a price; the demand-curve price is VOLL-anchored market design
+# (the AS offer cap), so the scarcity INCIDENCE comes from the hourly responsive
+# headroom in the shared-headroom RHS, not from any tuned per-product level.
+# Source: ERCOT Nodal Protocols §6.4 (AS products & substitution cascade),
+# NPRR1108/RTC+B AS Demand Curves, ASPLANNP433 (AS Plan) requirement reports.
+ERCOT_AS_PRODUCTS: tuple[tuple[str, str, str], ...] = (
+    ("RegUp", "REGUP", "fast"),
+    ("RRS", "RRS", "fast"),
+    ("ECRS", "ECRS", "fast"),
+    ("NonSpin", "NSPIN", "all"),
+)
+
 # --- ERCOT ORDC scarcity overlay ------------------------------------------
 # Multi-step RTORPA price floor: (reserve threshold MW, floor $/MWh) steps.
 # The adder is floored at $20/MWh when reserves <= 6,500 MW and at $10/MWh
