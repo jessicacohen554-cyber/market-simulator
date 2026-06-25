@@ -767,6 +767,19 @@ def _calibration_config(
         #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
         #   NG: NG silently absorbs (CISO reports neither) — targets the true
         #   must-offer gas without padding the mix.
+        caiso_ct_reliability_floor=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: the local-RA CT_PEAKER reliability floor holds simple-
+        #   cycle gas peakers online through the hot-day afternoon-evening ramp
+        #   for local capacity-area reliability (LA Basin / Big-Creek-Ventura /
+        #   Bay-Area). An energy-only LP leaves these top-of-merit peakers off and
+        #   spills their energy onto the cheaper CC fleet (CT_PEAKER under-runs,
+        #   CC_REGULAR over-runs); the floor restores the measured merit split. It
+        #   is keyed to the load-weighted CAISO daily max temperature (NOAA GHCN),
+        #   coefficients regressed from measured CAMPD CT_PEAKER evening CF vs
+        #   TMAX, 2023-2025 — a physical heat->commitment rule, not a TWh-residual
+        #   fit. See transmission.inject_caiso_ct_reliability_floor and
+        #   docs/caiso-ct-reliability-floor-2026-06.md. Other ISOs stay off
+        #   (byte-identical); coefficients from ScenarioConfig defaults.
         negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
         #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
@@ -867,7 +880,9 @@ def _calibration_config(
         #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
-        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much).
+        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much). NOTE:
+        #   these are INERT for CT_CHP now — its offer is the offer_curve_by_group
+        #   ["CT_CHP"] curve below (the CAISO EOR power-only-HR multipliers).
         # Unified thermal offer curve (operator-supplied band multipliers on
         # AHR x fuel_price; VOM constant across bands). The economic block is a
         # rising ramp from econ_low to econ_high (its slope set by those two
@@ -939,6 +954,22 @@ def _calibration_config(
             # pull them apart to create a slope. Peaking % stays the CSV value
             # (no pct_peaking key). The ct_*_hr_override fields above are now
             # inert for CT_CHP.
+            # NOTE (CAISO CT_CHP — EOR cogen over-dispatch, deferred to next
+            # session): the CAISO CT_CHP fleet is dominated by Kern-County
+            # enhanced-oil-recovery STEAM cogens (Sycamore, Kern River, Midway
+            # Sunset, Fresno, Badger Creek, Bear Mountain) that burn gas primarily
+            # to make oil-field injection steam, with electricity a byproduct. The
+            # compact-cogen 1.10/1.20/1.40 multipliers price them as efficient
+            # baseload, so the energy-only LP runs them flat at ~88% CF (7.0 TWh)
+            # vs ~3.5 measured (EIA-923; e.g. Kern River 1.35 model vs 0.20) — a
+            # real over-dispatch. A power-only-HR re-price (committed ~1.75) was
+            # trialled but REVERTED: with the total CAISO gas envelope already
+            # over-sized by the import / energy-balance over-generation drift,
+            # cutting cheap CT_CHP does not lower total gas — it reshuffles
+            # straight onto CC_REGULAR (CC +5 TWh worse), since CC is the next-
+            # cheapest dispatchable. The EOR re-price must land AFTER the total-
+            # gas / import-drift fix (so the freed energy leaves as imports, not
+            # CC), not before.
             "CT_CHP": {
                 "committed": 1.20 if iso == "PJM" else 1.10,
                 "econ_low": 1.20,
@@ -1405,6 +1436,7 @@ def run_year(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_ct_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1528,6 +1560,10 @@ def run_year(
         )
     if caiso_gas_floor_frac is not None:
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
+    if caiso_ct_reliability_floor is not None:
+        config = config.with_overrides(
+            caiso_ct_reliability_floor=caiso_ct_reliability_floor
+        )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
     if caiso_import_gas_coupling is not None:
@@ -2166,6 +2202,34 @@ def run_year(
                 iso,
                 year,
                 frac,
+            )
+
+    # CAISO local-RA CT_PEAKER reliability floor: hold simple-cycle gas peakers
+    # online through the hot-day afternoon-evening ramp at a temperature-driven
+    # commitment fraction (clip(slope*(TMAX-T0),0,cap) x available capacity),
+    # keyed to the load-weighted CAISO daily max temperature. Recovers the local
+    # capacity-area reliability energy an energy-only LP leaves on the (cheaper)
+    # CC fleet (transmission.inject_caiso_ct_reliability_floor).
+    if getattr(config, "caiso_ct_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_caiso_ct_reliability_floor,
+        )
+
+        _ct_slope = float(getattr(config, "caiso_ct_floor_slope_per_c", 0.047))
+        _ct_t0 = float(getattr(config, "caiso_ct_floor_t0_c", 25.0))
+        _ct_cap = float(getattr(config, "caiso_ct_floor_cap", 0.46))
+        if inject_caiso_ct_reliability_floor(
+            fleet_arrays, iso, year, _ct_slope, _ct_t0, _ct_cap
+        ):
+            logger.info(
+                "%s %d: local-RA CT_PEAKER reliability floor — peakers held "
+                "online on hot afternoons/evenings at clip(%.3f*(TMAX-%.0f), 0, "
+                "%.2f) x available capacity (temperature-driven)",
+                iso,
+                year,
+                _ct_slope,
+                _ct_t0,
+                _ct_cap,
             )
 
     # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly
