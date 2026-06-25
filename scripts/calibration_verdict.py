@@ -446,7 +446,21 @@ def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
             # total is the authoritative family actual, gated on the ±2.5% family
             # fallback (record whether the 0.97 reconcile fired).
             actual = a930
-            reconciled = bool(a930 and a923 < VINTAGE_RECONCILE_FRAC * a930)
+            if fam == "gas" and actual is not None and "other" in e930:
+                # Same geo/biomass fold-in deflation reconcile_vintage_classes
+                # applies to classFull (render_calibration_html._gas_foldin_
+                # deflation): subtract the GENUINELY-folded geo/biomass so the
+                # preliminary family gate compares the model to TRUE natural gas,
+                # not the inflated EIA-930 NG cell. Self-zeroes for clean BAs.
+                # (Legacy bundles without the 930 "other" series keep raw a930 and
+                # should be re-extracted.)
+                actual -= max(
+                    0.0,
+                    float(cf.get("OTHER", 0.0))
+                    + float(cf.get("biomass", 0.0))
+                    - float(e930.get("other", 0.0)),
+                )
+            reconciled = bool(actual and a923 < VINTAGE_RECONCILE_FRAC * actual)
             err = _pct(m, actual) if actual else None
             ok = err is not None and abs(err) <= SYSVOL_TOL
             out.append(

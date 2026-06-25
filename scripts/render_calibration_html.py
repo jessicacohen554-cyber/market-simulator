@@ -110,26 +110,17 @@ _COAL_GROUPS = classes_for_fuel930("coal")
 # classes are scaled up to the EIA-930 total (inter-class split preserved). A
 # complete vintage sits at ~1.0-1.02x and is left untouched -> byte-identical.
 _VINTAGE_RECONCILE_FRAC = 0.97
-# Balancing authorities whose EIA-930 "Natural Gas" (NG: NG) aggregate silently
-# folds in geothermal + biomass net generation, so the raw 930 gas cell over-
-# states true natural-gas output by ~that amount. CISO is the documented live
-# case (run_calibration_full.py [1] note, ~L3331: "compare model gas to the
-# EIA-923 cell, not EIA-930"): its 930 BALANCE extract reports ~0 TWh in "Other
-# Fuel Sources" while ~12.5 TWh of CA geothermal+biomass lands inside Natural
-# Gas. For these BAs the preliminary-vintage gas reconcile target is the
-# DEFLATED cell  e930.gas - OTHER(geothermal) - biomass, not the inflated raw
-# e930.gas; OTHER and biomass are already their own clean classFull rows, so
-# scaling gas to the raw cell would double-count them.
-#
-# Clean BAs (ERCOT / PJM / NYISO / NEISO / SPP) report geo+biomass in 930's
-# separate "Other Fuel Sources" series, so their NG: NG is already clean and
-# must NOT be deflated — subtracting their real OTHER+biomass would wrongly
-# under-scale gas. NOTE: the raw 930 BALANCE extract shows MISO ALSO exhibits
-# the fold-in signature (~12.8 TWh: 930 Other=2.7 TWh vs model other+biomass=
-# 15.5 TWh), but MISO both reports a partial Other series — so a flat
-# OTHER+biomass subtraction would over-state its folded amount — and is a live
-# keeper, so it is deliberately excluded here pending a 930-"Other"-threaded
-# correction that subtracts only the genuinely-folded portion.
+# LEGACY FALLBACK ONLY. Balancing authorities whose EIA-930 "Natural Gas"
+# (NG: NG) aggregate silently folds in geothermal + biomass net generation, so
+# the raw 930 gas cell over-states true natural-gas output. The general fix
+# (_gas_foldin_deflation) now threads the EIA-930 "Other Fuel Sources" (NG: OTH)
+# series through the bundle and subtracts only the GENUINELY-folded portion
+# (max(0, model OTHER+biomass - 930 other)) for EVERY BA — self-zeroing for clean
+# BAs, full for total-fold CAISO (930 other≈0), partial for MISO (~12.8 of 15.5,
+# since MISO reports ~2.7 TWh in its own Other series). This allowlist is used
+# ONLY when a bundle predates the NG: OTH series (not re-extracted), to keep
+# already-committed bundles byte-identical. Re-extracting a bundle's eia930
+# parquet retires its dependence on this set.
 EIA930_GAS_FOLDS_GEO_BIOMASS: frozenset[str] = frozenset({"CAISO"})
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
@@ -148,32 +139,57 @@ def reconcile_vintage_classes(
     split and monthly shape are preserved; complete vintages (>= frac) are left
     byte-identical.
 
-    For ISOs in :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` the EIA-930 "gas" cell
-    silently folds in geothermal + biomass, so the GAS target is first deflated by
-    the model's clean OTHER (geothermal) + biomass class actuals — otherwise the
-    gas classes scale to gas+geo+biomass and double-count those non-gas rows
-    (run_calibration_full.py [1] note). Coal never folds and is unaffected.
+    Some BAs silently fold geothermal + biomass into the EIA-930 "Natural Gas"
+    cell, so the GAS target must be deflated by that fold-in before scaling — else
+    the gas classes absorb non-gas energy the model already books as its own
+    OTHER/biomass rows (run_calibration_full.py [1] note). The deflation is the
+    GENUINELY-folded portion only (:func:`_gas_foldin_deflation`): when the bundle
+    carries the EIA-930 "other" series it is ``max(0, model OTHER+biomass - 930
+    other)``, which self-zeroes for clean BAs (930 reports geo/biomass in its own
+    Other series), gives the full subtraction for a total-fold BA (CAISO, 930
+    other≈0), and the right partial subtraction for a partial-fold BA (MISO ~12.8
+    of 15.5). Bundles predating the "other" series fall back to the per-ISO
+    :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` allowlist. Coal never folds.
 
     Mutates and returns ``classfull``.
     """
-    folds_in = iso in EIA930_GAS_FOLDS_GEO_BIOMASS
     for _fuel, _klasses in (("gas", _GAS_GROUPS), ("coal", _COAL_GROUPS)):
         _present = [g for g in _klasses if g in classfull]
         _cur = sum(classfull[g] for g in _present)
         _tgt = float(e930.get(_fuel, 0.0))
-        if _fuel == "gas" and folds_in:
-            # CISO-style fold-in: deflate to true natural gas before scaling, so
-            # the gas classes don't absorb geothermal+biomass that EIA-930 buried
-            # in its NG aggregate (and which the model already books as its own
-            # OTHER/biomass rows). [1] note ~L3331.
-            _tgt -= float(classfull.get("OTHER", 0.0)) + float(
-                classfull.get("biomass", 0.0)
-            )
+        if _fuel == "gas":
+            _tgt -= _gas_foldin_deflation(classfull, e930, iso)
         if _tgt > 0.0 and 0.0 < _cur < _VINTAGE_RECONCILE_FRAC * _tgt:
             _scale = _tgt / _cur
             for g in _present:
                 classfull[g] = round(classfull[g] * _scale, 4)
     return classfull
+
+
+def _gas_foldin_deflation(
+    classfull: dict[str, float], e930: dict[str, float], iso: str
+) -> float:
+    """TWh of geothermal+biomass the BA folded into its EIA-930 "Natural Gas" cell.
+
+    Subtract this from the EIA-930 gas reconcile target so the gas classes don't
+    scale to gas+geo+biomass. Two regimes:
+
+    * **Re-extracted bundle** (carries the EIA-930 ``other`` = "Other Fuel
+      Sources" series): the folded amount is the model's clean OTHER (geothermal)
+      + biomass actuals MINUS what the BA correctly reported in its own Other
+      series — i.e. only the part that *leaked* into NG. ``max(0, …)`` self-zeroes
+      a clean BA (930 other ≈ model other+biomass) and yields the full model
+      other+biomass for a total-fold BA (930 other ≈ 0).
+    * **Legacy bundle** (no ``other`` series): fall back to the per-ISO
+      :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` allowlist (full subtraction for the
+      known total-fold BAs, none elsewhere) so committed bundles don't regress.
+    """
+    model_other_bio = float(classfull.get("OTHER", 0.0)) + float(
+        classfull.get("biomass", 0.0)
+    )
+    if "other" in e930:
+        return max(0.0, model_other_bio - float(e930.get("other", 0.0)))
+    return model_other_bio if iso in EIA930_GAS_FOLDS_GEO_BIOMASS else 0.0
 
 
 def _b64(cf: np.ndarray) -> str:
@@ -663,12 +679,21 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # coal ranks COAL_BIT / COAL_PRB / COAL_WC — carries its actual
             # into the table for every ISO. groups_set picks them up below.
             groups_set.update(str(g) for g in e923_cls.index)
+            _e930d = {
+                f: round(float(e.get(f, np.zeros(1)).sum()) / 1e6, 3)
+                for f in ("gas", "coal", "nuclear", "wind", "solar")
+            }
+            # Carry the EIA-930 "Other Fuel Sources" total when the bundle was
+            # re-extracted with it (eia_loader._EIA930_BENCHMARK_COLUMNS adds the
+            # NG: OTH series), so reconcile_vintage_classes can subtract only the
+            # GENUINELY-folded geothermal+biomass. A bundle predating the series
+            # has no "other" key, and reconcile falls back to the per-ISO
+            # EIA930_GAS_FOLDS_GEO_BIOMASS allowlist — no silent regression.
+            if "other" in e:
+                _e930d["other"] = round(float(e["other"].sum()) / 1e6, 3)
             bench[int(year)] = {
                 "plants": bplants,
-                "e930": {
-                    f: round(float(e.get(f, np.zeros(1)).sum()) / 1e6, 3)
-                    for f in ("gas", "coal", "nuclear", "wind", "solar")
-                },
+                "e930": _e930d,
                 "classFull": {
                     str(g): round(float(v) / 1e6 - float(btm_cls.get(str(g), 0.0)), 4)
                     for g, v in e923_cls.items()
