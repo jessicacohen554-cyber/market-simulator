@@ -86,6 +86,23 @@ def main(argv: list[str]) -> int:
         "true",
         "on",
     )
+    #   KEEPER_DAM_AS=1     -> add the measured DAM AS-scarcity overlay (day-ahead
+    #                          analogue of RTORDPA): the binding DAM AS MCPC scarcity
+    #                          rent on hours ERCOT co-optimized energy+AS into
+    #                          scarcity (read per-year from data/raw/ercot/
+    #                          ercot_<year>_dam_as_mcpc_hourly.parquet). The lever
+    #                          for the May-2024 DAM-AS-co-opt under-price. Scoped to
+    #                          2024+ (KEEPER_DAM_AS_FROM_YEAR, RTORDPA carries 2023);
+    #                          scarcity gate KEEPER_DAM_AS_THR (default 150 $/MWh).
+    ercot_dam_as_overlay = os.environ.get("KEEPER_DAM_AS", "").lower() in (
+        "1",
+        "true",
+        "on",
+    )
+    ercot_dam_as_overlay_from_year = int(
+        os.environ.get("KEEPER_DAM_AS_FROM_YEAR", 2024)
+    )
+    ercot_dam_as_scarcity_threshold = float(os.environ.get("KEEPER_DAM_AS_THR", 150.0))
     #   KEEPER_STGAS_DRAG=1 -> enable the net-load-indexed ST_GAS reliability-
     #                          drag min-gen floor (the endogenous, weather-driven
     #                          replacement for the seasonal gas_st_summer_mustrun;
@@ -162,6 +179,9 @@ def main(argv: list[str]) -> int:
         ercot_ecrs_requirement=ercot_ecrs,
         ercot_ecrs_requirement_from_year=2023,
         ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+        ercot_dam_as_overlay=ercot_dam_as_overlay,
+        ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
+        ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
         gas_st_netload_drag=gas_st_netload_drag,
         gas_st_drag_overrides=gas_st_drag_overrides,
         ordc_lolp_params_path=ordc_lolp_params_path,
