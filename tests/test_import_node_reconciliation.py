@@ -228,5 +228,107 @@ class TestReconciliationHelper(unittest.TestCase):
             eia.nyiso_net_interchange = orig
 
 
+class TestForwardBandSource(unittest.TestCase):
+    """The forecast band target = the neighbor's forecast net position.
+
+    Covers :func:`market_sim.data.eia_loader.nyiso_forward_net_import_monthly`
+    and the ``mode="forecast"`` path of
+    :func:`market_sim.model.transmission.build_import_node_reconciliation`:
+    backcast is byte-identical to the default; forecast targets the supplied
+    forecast (never the measured schedule); and the band relaxes to ``None``
+    when no forecast is supplied.
+    """
+
+    def test_forward_monthly_conserves_annual_and_is_load_weighted(self):
+        from market_sim.data.eia_loader import nyiso_forward_net_import_monthly
+
+        # Flat split conserves the annual total across 12 months.
+        flat = nyiso_forward_net_import_monthly(2030, {2030: 18.0})
+        self.assertEqual(flat.shape, (12,))
+        self.assertAlmostEqual(flat.sum() / 1e6, 18.0, places=6)
+
+        # A bare float applies to any year.
+        self.assertAlmostEqual(
+            nyiso_forward_net_import_monthly(2031, 18.0).sum() / 1e6, 18.0, places=6
+        )
+
+        # Load weighting puts more imports in the heavier-load half of the year
+        # (imports track load) while still conserving the annual total.
+        demand = np.r_[np.full(4380, 20000.0), np.full(4380, 30000.0)]
+        weighted = nyiso_forward_net_import_monthly(2030, 18.0, system_demand=demand)
+        self.assertAlmostEqual(weighted.sum() / 1e6, 18.0, places=6)
+        self.assertGreater(weighted[6:].sum(), weighted[:6].sum())
+
+    def test_forward_relaxes_when_no_forecast(self):
+        from market_sim.data.eia_loader import nyiso_forward_net_import_monthly
+
+        self.assertIsNone(nyiso_forward_net_import_monthly(2030, None))
+        # Year absent from the per-year mapping also relaxes.
+        self.assertIsNone(nyiso_forward_net_import_monthly(2031, {2030: 18.0}))
+
+    def test_build_forecast_targets_forecast_not_measured(self):
+        # In forecast mode the band must come from the supplied neighbor forecast,
+        # NOT the measured schedule — patch the measured loader to a value that
+        # would be obviously wrong if it leaked into the forecast target.
+        import market_sim.data.eia_loader as eia
+
+        orig = eia.nyiso_net_interchange
+        try:
+            eia.nyiso_net_interchange = lambda year: np.full(8760, -9999.0)
+            fa = _import_node_fleet()
+            fa.availability = np.ones((3, 8760))
+            out = transmission.build_import_node_reconciliation(
+                fa,
+                "NYISO",
+                2030,
+                mode="forecast",
+                forward_net_import_twh={2030: 18.0},
+            )
+            self.assertIsNotNone(out)
+            _node_idx, lo, hi = out
+            target = (lo + hi) / 2.0
+            # Annual band total = the FORECAST 18 TWh, not the measured leak.
+            self.assertAlmostEqual(target.sum() / 1e6, 18.0, places=3)
+        finally:
+            eia.nyiso_net_interchange = orig
+
+    def test_build_forecast_relaxes_without_forecast(self):
+        # Forecast mode with no supplied trajectory -> no band (relax to the
+        # priced-seam economics), even though a measured schedule "exists".
+        import market_sim.data.eia_loader as eia
+
+        orig = eia.nyiso_net_interchange
+        try:
+            eia.nyiso_net_interchange = lambda year: np.full(8760, -250.0)
+            fa = _import_node_fleet()
+            fa.availability = np.ones((3, 8760))
+            self.assertIsNone(
+                transmission.build_import_node_reconciliation(
+                    fa, "NYISO", 2030, mode="forecast", forward_net_import_twh=None
+                )
+            )
+        finally:
+            eia.nyiso_net_interchange = orig
+
+    def test_build_backcast_mode_matches_default(self):
+        # Passing mode="backcast" explicitly is byte-identical to the default
+        # (the calibration path is unchanged).
+        import market_sim.data.eia_loader as eia
+
+        orig = eia.nyiso_net_interchange
+        try:
+            eia.nyiso_net_interchange = lambda year: np.full(8760, -250.0)
+            fa = _import_node_fleet()
+            fa.availability = np.ones((3, 8760))
+            default = transmission.build_import_node_reconciliation(fa, "NYISO", 2023)
+            explicit = transmission.build_import_node_reconciliation(
+                fa, "NYISO", 2023, mode="backcast"
+            )
+            self.assertTrue(np.allclose(default[1], explicit[1]))
+            self.assertTrue(np.allclose(default[2], explicit[2]))
+        finally:
+            eia.nyiso_net_interchange = orig
+
+
 if __name__ == "__main__":
     unittest.main()
