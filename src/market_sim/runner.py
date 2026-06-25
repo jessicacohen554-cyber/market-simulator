@@ -88,6 +88,7 @@ from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
+    ercot_multiproduct_reserve_coopt_inputs,
     ercot_reserve_coopt_inputs,
     miso_reserve_coopt_inputs,
     nyiso_reserve_coopt_inputs,
@@ -635,19 +636,49 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # post-solve adder below when on — alters dispatch volumes, so it is a
             # gated, recalibration-requiring change. See docs/ordc-overlay.md.
             if getattr(config, "energy_reserve_coopt", False) and iso == "ERCOT":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                ) = ercot_reserve_coopt_inputs(config, fleet_arrays, config.hours)
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    reserve_storage=True,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                )
+                if getattr(config, "ercot_multiproduct_as_coopt", False):
+                    # Multi-product AS stack (RegUp/RRS/ECRS/NonSpin): one
+                    # additive, cascading co-opt demand curve per product; the
+                    # binding product's reserve dual is the MCPC, endogenous.
+                    (
+                        coopt_req,
+                        coopt_elig,
+                        coopt_pens,
+                        coopt_widths,
+                        coopt_mask,
+                        coopt_counts,
+                        coopt_class,
+                        coopt_hr_elig,
+                        coopt_hr_prod,
+                    ) = ercot_multiproduct_reserve_coopt_inputs(
+                        config, fleet_arrays, config.hours
+                    )
+                    dispatch_kwargs.update(
+                        reserve_requirement=coopt_req,
+                        reserve_eligible=coopt_elig,
+                        reserve_storage=True,
+                        ordc_penalties=coopt_pens,
+                        ordc_step_widths=coopt_widths,
+                        reserve_balance_zone_mask=coopt_mask,
+                        reserve_balance_ordc_counts=coopt_counts,
+                        reserve_balance_class=coopt_class,
+                        reserve_headroom_eligible=coopt_hr_elig,
+                        reserve_headroom_products=coopt_hr_prod,
+                    )
+                else:
+                    (
+                        coopt_req,
+                        coopt_elig,
+                        coopt_pens,
+                        coopt_widths,
+                    ) = ercot_reserve_coopt_inputs(config, fleet_arrays, config.hours)
+                    dispatch_kwargs.update(
+                        reserve_requirement=coopt_req,
+                        reserve_eligible=coopt_elig,
+                        reserve_storage=True,
+                        ordc_penalties=coopt_pens,
+                        ordc_step_widths=coopt_widths,
+                    )
             # PJM analogue: the measured PJM_RTO Primary Reserve requirement
             # (~3.4 GW) clears against the published vertical two-step ORDC
             # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
