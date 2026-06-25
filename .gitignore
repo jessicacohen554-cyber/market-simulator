@@ -240,3 +240,8 @@ results/calibration/neiso_oldoutage_2025/
 results/outage_gate_audit/
 /results/calibration/*_y20[0-9][0-9]/
 /results/outage_gate_audit/
+
+# run154 LMP-shape session (claude/ercot-154-lmp-shape): scratch + throwaway
+# single-year baseline reproduction (rule #14 — never a registered keeper).
+/scratchpad_logs/
+/results/calibration/_smoke_baseline_2024/
