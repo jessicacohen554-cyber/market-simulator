@@ -63,19 +63,61 @@ if TYPE_CHECKING:
     from market_sim.config.constants import CaisoHubNeighbor
 
 
-def neighbor_heat_rate(neighbor: NeighborInterface, year: int) -> float:
+# Diagnostic env flag for a FORWARD-SKILL validation: force the seam off the
+# measured per-year ``hr_by_year`` anchor so a backcast year is priced by the
+# SAME forward formula a forecast year would use, then scored against the
+# held-out actuals. Default OFF, so keepers (which legitimately price backcast
+# years off the measured anchor, rule #12) are byte-identical. Values:
+#   "elastic" -> skip hr_by_year, use hr_gas_elastic (the forward fallback)
+#   "flat"    -> skip hr_by_year AND hr_gas_elastic, use marginal_heat_rate
+# This NEVER reads the ISO's own interchange — it only changes which neighbor
+# price-formation formula prices the seam (rule #11 stays satisfied).
+FORWARD_SKILL_ENV: str = "MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"
+
+
+def _forward_skill_mode() -> str | None:
+    """Return the forward-skill mode (``"elastic"``/``"flat"``) or ``None`` (off)."""
+    mode = os.environ.get(FORWARD_SKILL_ENV, "").strip().lower()
+    return mode if mode in {"elastic", "flat"} else None
+
+
+def neighbor_heat_rate(
+    neighbor: NeighborInterface, year: int, gas_scenario: str = "mid"
+) -> float:
     """Return the neighbor's effective marginal heat rate for ``year`` (MMBtu/MWh).
 
-    Prefers the per-year measured anchor in ``neighbor.hr_by_year`` (re-anchored
-    to the neighbor's OWN realized annual-mean LMP for that backcast year — see
-    :class:`~market_sim.config.constants.NeighborInterface`) and falls back to
-    the structural ``marginal_heat_rate`` for any year not tabulated (every
-    forecast year, and neighbors with no measured LMP). Keeps forecast runs
-    byte-identical while removing the multi-year-mean level error that opened a
-    fake seam export spread in the dear-gas year.
+    Resolution order:
+
+    1. **Backcast realization** — the per-year measured anchor in
+       ``neighbor.hr_by_year`` (re-anchored to the neighbor's OWN realized
+       annual-mean LMP for that year), used whenever the year is tabulated. This
+       is the measured price-formation input the elasticity is fit and validated
+       against (claude.md rule #12: measured for the backcast).
+    2. **Forward gas-elastic implied HR** — for any year NOT tabulated (every
+       forecast year), ``hr_phys + hr_adder / gas`` from ``neighbor.hr_gas_elastic``
+       when set. The neighbor's realized LMP is affine in delivered gas
+       (``LMP = hr_phys x gas + hr_adder``), so the implied HR eases toward the
+       gas-proportional ``hr_phys`` as gas rises — the seam reprices forward as
+       the Henry Hub trajectory moves WITHOUT reading the neighbor's realized LMP
+       for a future year. The coefficients are blind to the ISO's interchange
+       (rule #11).
+    3. **Flat structural fallback** — ``marginal_heat_rate`` when no elasticity
+       is fit (neighbors with no organized-market LMP, e.g. the Carolinas), so
+       those forecast runs stay byte-identical.
+
+    Args:
+        neighbor: The seam specification.
+        year: Calendar year.
+        gas_scenario: Henry Hub trajectory key (only consulted on the elastic
+            forward path).
     """
-    if neighbor.hr_by_year and year in neighbor.hr_by_year:
+    skill = _forward_skill_mode()
+    if skill is None and neighbor.hr_by_year and year in neighbor.hr_by_year:
         return neighbor.hr_by_year[year]
+    if skill != "flat" and neighbor.hr_gas_elastic is not None:
+        hr_phys, hr_adder = neighbor.hr_gas_elastic
+        gas = neighbor_gas_price(neighbor, year, gas_scenario)
+        return hr_phys + hr_adder / gas
     return neighbor.marginal_heat_rate
 
 
@@ -195,7 +237,7 @@ def neighbor_reference_price(
         return None
     shape, ba_used = shaped
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor_heat_rate(neighbor, year)
+    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario)
     return baseload * shape, ba_used
 
 
@@ -254,7 +296,7 @@ def seam_tranche_prices(
         return None
     load, mean_load, ba_used = loaded
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor_heat_rate(neighbor, year)
+    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario)
     exp = neighbor.load_shape_exponent
     step = neighbor.interface_limit_mw / n_tranches
     # Midpoint flow of each band: (k-0.5) x step, k = 1..n.
