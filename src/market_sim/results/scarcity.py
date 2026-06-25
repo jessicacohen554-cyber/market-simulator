@@ -1506,7 +1506,15 @@ def nyiso_reserve_coopt_inputs(
     zone_names: list[str],
     n_ramp: int = 8,
 ) -> tuple[
-    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray | None,
+    float,
 ]:
     """Assemble NYISO's *locational* energy+reserve co-optimization inputs.
 
@@ -1591,6 +1599,38 @@ def nyiso_reserve_coopt_inputs(
                 (member_idx, str(name), (float(req), float(crit), float(pen)))
             )
 
+    # Online-gated synchronised (spinning) reserve (path A, default-off behind
+    # config.nyiso_synchronised_reserve). NYISO 10-minute SPINNING reserve must
+    # come from ONLINE (synchronised) units, but the idle-allowed headroom rows
+    # let an OFFLINE downstate peaker count its full pmax as deliverable reserve
+    # -- so the locational families never bind, the RCPF never prices, and the
+    # NYC peakers stay economically idle (docs/handoffs/
+    # nyiso-downstate-reserve-incidence-2026-06.md, root cause). This adds a NYC
+    # locational spinning family on a new ONLINE-GATED reserve class (2): its
+    # headroom is bounded by online quick-start GENERATION, not idle capacity, so
+    # holding it forces NYC peakers to commit (CT_PEAKER energy) and binds the
+    # family (RCPF fires -> C3c/C3a lift endogenously). Requirement = 1/2 of the
+    # NYC 10-minute total (the published NYISO spinning = 1/2-of-total ratio,
+    # NYISO_RCPF_PRODUCTS: nyca_10min_spin 655 = 1/2 nyca_10min_total 1310),
+    # applied to the NYC locational 10-min total (500 MW) -> 250 MW; penalty the
+    # same $500 NYC ceiling. NOT fitted to the residual.
+    synch = bool(getattr(config, "nyiso_synchronised_reserve", False))
+    if synch:
+        nyc_idx = tuple(i for z, i in zone_index.items() if z == "NYC")
+        nyc10 = next(
+            (
+                req
+                for region in locational.values()
+                for name, req, _c, _p in region["products"]
+                if "nyc_10min_total" in name
+            ),
+            500.0,
+        )
+        if nyc_idx:
+            families.append(
+                (nyc_idx, "nyc_spin_online", (0.5 * float(nyc10), 0.0, 500.0))
+            )
+
     n_fam = len(families)
     balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
     balance_reserve_class = np.zeros(n_fam, dtype=int)
@@ -1600,9 +1640,15 @@ def nyiso_reserve_coopt_inputs(
     counts = np.zeros(n_fam, dtype=int)
     for f, (member_idx, name, (req, crit, pen)) in enumerate(families):
         balance_zone_mask[f, list(member_idx)] = True
-        # 10-minute products (name carries "10min") draw on the quick-start
-        # class (1); 30-minute and total products on the full class (0).
-        balance_reserve_class[f] = 1 if "10min" in name else 0
+        # The online-gated synchronised family (name "nyc_spin_online", added
+        # only when nyiso_synchronised_reserve is on) draws on the ONLINE-GATED
+        # quick-start class (2); other 10-minute products on the idle-allowed
+        # quick-start class (1); 30-minute / total products on the full class (0).
+        # NOTE: the published NYCA "nyca_10min_spin" product stays class 1
+        # (idle-allowed) — it carries "spin" but not "spin_online".
+        balance_reserve_class[f] = (
+            2 if "spin_online" in name else (1 if "10min" in name else 0)
+        )
         requirement[f, :] = req
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
         pen_list.append(p)
@@ -1611,12 +1657,37 @@ def nyiso_reserve_coopt_inputs(
 
     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
     ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
-    # Two nested eligibility classes: full dispatchable (30-minute) and the
-    # quick-start subset (10-minute). Stack so row index == reserve class.
+    # Nested eligibility classes: full dispatchable (30-minute, class 0) and the
+    # quick-start subset (10-minute, class 1). With the synchronised flag a third
+    # ONLINE-GATED quick-start class (2) is appended (same eligibility as class 1,
+    # but its headroom row counts only online generation — see dispatch.
+    # _build_reserve_rows online_gated). Stack so row index == reserve class.
     full_elig = ercot_reserve_eligible(fleet_arrays)
     fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
-    eligible = np.vstack([full_elig, quick_elig])
+    if synch:
+        eligible = np.vstack([full_elig, quick_elig, quick_elig])
+        online_gated = np.array([False, False, True], dtype=bool)
+        # rho = the online-headroom ratio (pmax-pmin)/pmin of the quick-start
+        # fleet at min load: how much synchronised spinning reserve an online
+        # peaker backs per MW of its output. Capacity-weighted over quick-start
+        # units with a positive min-load, clipped to a physical [0.5, 4] band
+        # (a peaker that minimal-loads at ~25-50% of pmax has rho ~ 1-3).
+        q_idx = np.flatnonzero(quick_elig)
+        pmin_q = np.asarray(fleet_arrays.pmin, dtype=float)[q_idx]
+        pmax_q = np.asarray(fleet_arrays.pmax, dtype=float)[q_idx]
+        valid = (pmin_q > 0) & (pmax_q > pmin_q)
+        if valid.any():
+            ratio = (pmax_q[valid] - pmin_q[valid]) / pmin_q[valid]
+            online_rho = float(
+                np.clip(np.average(ratio, weights=pmax_q[valid]), 0.5, 4.0)
+            )
+        else:
+            online_rho = 1.0
+    else:
+        eligible = np.vstack([full_elig, quick_elig])
+        online_gated = None
+        online_rho = 1.0
     return (
         requirement,
         eligible,
@@ -1625,4 +1696,6 @@ def nyiso_reserve_coopt_inputs(
         balance_zone_mask,
         counts,
         balance_reserve_class,
+        online_gated,
+        online_rho,
     )
