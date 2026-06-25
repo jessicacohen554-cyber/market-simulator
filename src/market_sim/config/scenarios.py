@@ -577,6 +577,21 @@ class ScenarioConfig:
     # mechanism (in a forecast the constraint is sourced from the neighbor's
     # forecast net position or relaxed). Requires --priced-interchange. Default
     # off (byte-identical); NYISO-only.
+    nyiso_synchronised_reserve: bool = False  # NYISO online-gated SPINNING
+    # reserve (path A of the downstate-reserve frontier, docs/handoffs/
+    # nyiso-downstate-reserve-incidence-2026-06.md). Adds a NYC locational
+    # 10-minute SPINNING reserve family on an ONLINE-GATED reserve class whose
+    # headroom counts only online generation (R[spin,z] <= rho * sum online
+    # quick-start P), not idle capacity — so an offline peaker no longer counts
+    # its full pmax as deliverable spin. This is the root-cause fix for the NYC
+    # peaker under-run + missing >$300 tail: the idle-allowed headroom let phantom
+    # (offline) reserve satisfy every family, so the RCPF never priced. Holding
+    # online spin forces NYC peakers to commit (CT_PEAKER energy up) and binds the
+    # family so the RCPF tail fires endogenously (C3c/C3a up). Requirement = 1/2
+    # of the NYC 10-min total (the published NYISO spinning = 1/2-of-total ratio),
+    # NOT fitted to the residual. LP-linear online-headroom PROXY for true
+    # commitment-gated spin (the exact gate is path B / model.commitment). Default
+    # off (byte-identical); NYISO-only; requires --energy-reserve-coopt.
     miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
     # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
     # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
@@ -2109,6 +2124,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
+    "nyiso_synchronised_reserve": 1,
     "miso_firm_imports": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,

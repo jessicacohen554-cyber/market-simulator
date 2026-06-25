@@ -421,9 +421,17 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
 
         T = 24
-        req, elig, pens, widths, mask, counts, fam_class = nyiso_reserve_coopt_inputs(
-            self._config(), self._fleet(), T, self._ZONES
-        )
+        (
+            req,
+            elig,
+            pens,
+            widths,
+            mask,
+            counts,
+            fam_class,
+            online_gated,
+            online_rho,
+        ) = nyiso_reserve_coopt_inputs(self._config(), self._fleet(), T, self._ZONES)
         # NYCA(3 products) + East(1) + SENY(1) + NYC(2) = 7 families.
         n_fam = 7
         self.assertEqual(mask.shape, (n_fam, len(self._ZONES)))
@@ -441,11 +449,49 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         # the quick-start class 1.
         self.assertEqual(fam_class.shape, (n_fam,))
         np.testing.assert_array_equal(fam_class, [0, 1, 1, 0, 0, 0, 1])
+        # Synchronised flag OFF (default): no online-gated class, legacy layout.
+        self.assertIsNone(online_gated)
+        self.assertEqual(online_rho, 1.0)
+
+    def test_synchronised_reserve_adds_online_gated_class(self):
+        from types import SimpleNamespace
+
+        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+
+        cfg = SimpleNamespace(
+            iso="NYISO", weather_year=2023, nyiso_synchronised_reserve=True
+        )
+        (
+            req,
+            elig,
+            _pens,
+            _widths,
+            mask,
+            _counts,
+            fam_class,
+            online_gated,
+            online_rho,
+        ) = nyiso_reserve_coopt_inputs(cfg, self._fleet(), 24, self._ZONES)
+        # One extra family (NYC spinning) on a new online-gated class (2).
+        self.assertEqual(mask.shape[0], 8)
+        self.assertEqual(req.shape[0], 8)
+        self.assertEqual(int(fam_class[-1]), 2)  # spinning family -> class 2
+        # Three eligibility classes now; class 2 == quick-start mask.
+        self.assertEqual(elig.shape, (3, 2))
+        np.testing.assert_array_equal(elig[2], elig[1])
+        # online_gated marks only class 2; rho is a positive finite multiplier.
+        np.testing.assert_array_equal(online_gated, [False, False, True])
+        self.assertGreater(online_rho, 0.0)
+        # The spinning family is NYC-only.
+        nyc = self._ZONES.index("NYC")
+        only_nyc = np.zeros(len(self._ZONES), dtype=bool)
+        only_nyc[nyc] = True
+        np.testing.assert_array_equal(mask[-1], only_nyc)
 
     def test_locational_masks_nest(self):
         from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
 
-        _, _, _, _, mask, _, _ = nyiso_reserve_coopt_inputs(
+        _, _, _, _, mask, _, _, _, _ = nyiso_reserve_coopt_inputs(
             self._config(), self._fleet(), 24, self._ZONES
         )
         # The three NYCA families span every zone.
