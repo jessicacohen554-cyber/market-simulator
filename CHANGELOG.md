@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-25 (Weather-year forecast ensemble — G13 built)
+
+**New forecast-robustness tool, no keeper/calibration change.** Implements the
+weather-year sample/ensemble from `docs/forecast-methodology-gaps-2026-06.md`
+G13 (was DESIGN-ONLY). A forecast pins one representative weather year for its
+load + VRE capacity-factor shapes (`ScenarioConfig.weather_year`); the ensemble
+runs the *same* forecast once per weather draw over the new
+`constants.WEATHER_YEAR_POOL` (2023-2025, bounded by EIA-930 hourly coverage)
+and reports the cross-draw distribution of each annual metric. A weather draw is
+an admissible forecast *input*, not a measured outcome (CLAUDE.md #10), so this
+is methodological robustness, not a backcast pin. New module
+`src/market_sim/ensemble.py` (`weather_ensemble_configs` / `run_weather_ensemble`
+/ `summarize_ensemble` / `export_ensemble_json`) + `market-sim ensemble` CLI
+subcommand (`--config`, `--iso`, `--weather-years`, `--workers`, `--out`).
+Members are independent solves and run in parallel (CLAUDE.md #16), each caching
+under its own `weather_year`-hashed `cache_key`; the report reuses the canonical
+`export._summarize_year` aggregation and adds mean/std/min/p10/p50/p90/max plus
+per-fuel generation distributions and the raw per-member summaries. Tests:
+`tests/test_ensemble.py`.
+
 ## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
 
 **Rejected probe; keeper stays `nyiso 27 cc-offer`; live source reverted to the
