@@ -25,6 +25,7 @@ from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.transmission import (
     CAISO_BIDIR_EXPORT_CAP_MW,
     CAISO_BIDIR_IMPORT_CAP_MW,
+    CAISO_CT_FLOOR_HOURS,
     CAISO_GAS_FLOOR_HOURS,
     build_caiso_bidir_intertie,
     build_export_sinks,
@@ -36,6 +37,7 @@ from market_sim.model.transmission import (
     extend_with_import_node,
     get_ttc_array,
     inject_caiso_bidir_intertie_prices,
+    inject_caiso_ct_reliability_floor,
     inject_caiso_export_hub_prices,
     inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
@@ -702,6 +704,106 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         self.assertTrue(midday.any())
         ratio = half[midday] / full[midday]
         self.assertTrue(np.allclose(ratio, 0.3, atol=1e-6))
+
+
+class TestCaisoCtReliabilityFloor(unittest.TestCase):
+    """The temperature-driven CAISO CT_PEAKER local-RA reliability floor."""
+
+    def _ct_fleet(self, hours, ct_mw=8000.0, cc_mw=20000.0):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=cc_mw,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="SP15",
+                fuel_type="gas_ct",
+                pmax_mw=ct_mw,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_PEAKER",
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["NP15", "SP15"], hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, clock.hour.to_numpy()
+
+    def test_floors_ct_in_window_and_leaves_cc_unfloored(self):
+        H = 8760
+        fa, gens, hod = self._ct_fleet(H)
+        self.assertIsNone(fa.min_gen)
+        applied = inject_caiso_ct_reliability_floor(
+            fa, "CAISO", 2024, 0.047, 25.0, 0.46
+        )
+        self.assertTrue(applied)
+        ct_row = [g.plant_group for g in gens].index("CT_PEAKER")
+        cc_row = [g.plant_group for g in gens].index("CC_REGULAR")
+        # The CT carries a positive floor on the hottest afternoons/evenings.
+        self.assertGreater(float(fa.min_gen[ct_row].max()), 0.0)
+        # The CC fleet is never floored by the CT mechanism.
+        np.testing.assert_array_equal(fa.min_gen[cc_row], 0.0)
+        # Any floored hour is inside the afternoon-evening window.
+        lo, hi = CAISO_CT_FLOOR_HOURS
+        floored = fa.min_gen[ct_row] > 0.0
+        self.assertTrue(floored.any())
+        self.assertTrue(bool(np.all((hod[floored] >= lo) & (hod[floored] <= hi))))
+
+    def test_floor_never_exceeds_available_capacity(self):
+        H = 8760
+        fa, gens, _ = self._ct_fleet(H, ct_mw=500.0)  # tiny CT fleet
+        inject_caiso_ct_reliability_floor(fa, "CAISO", 2024, 0.047, 25.0, 0.46)
+        ct_row = [g.plant_group for g in gens].index("CT_PEAKER")
+        cap = fa.pmax[ct_row] * fa.availability[ct_row]
+        self.assertTrue(bool((fa.min_gen[ct_row] <= cap + 1e-6).all()))
+
+    def test_non_caiso_is_no_op(self):
+        fa, _, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_caiso_ct_reliability_floor(fa, "PJM", 2024, 0.047, 25.0, 0.46)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_nonpositive_slope_is_no_op(self):
+        fa, _, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_caiso_ct_reliability_floor(fa, "CAISO", 2024, 0.0, 25.0, 0.46)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_forecast_year_is_no_op(self):
+        # No archived TMAX series for a forecast year -> no floor.
+        fa, _, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_caiso_ct_reliability_floor(fa, "CAISO", 2040, 0.047, 25.0, 0.46)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_no_ct_peaker_units_is_no_op(self):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=20000.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["NP15"], hours=48)
+        self.assertFalse(
+            inject_caiso_ct_reliability_floor(fa, "CAISO", 2024, 0.047, 25.0, 0.46)
+        )
+        self.assertIsNone(fa.min_gen)
 
 
 class TestGenericImportNode(unittest.TestCase):

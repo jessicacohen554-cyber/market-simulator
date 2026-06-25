@@ -1715,6 +1715,116 @@ def inject_caiso_gas_commitment_floor(
     return True
 
 
+# Afternoon-evening window (local hour-of-day, ``[start, end]`` inclusive) over
+# which the CAISO CT_PEAKER local-RA reliability floor binds — the net-load ramp
+# / duck-curve neck. On hot days (TMAX >= 30 deg C) this window carries ~80% of
+# measured CT_PEAKER energy; outside it the peakers dispatch purely on price. A
+# documented operating window, mirroring CAISO_GAS_FLOOR_HOURS.
+CAISO_CT_FLOOR_HOURS: tuple[int, int] = (15, 22)
+
+
+def inject_caiso_ct_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    slope_per_c: float,
+    t0_c: float,
+    cap: float,
+    hod_window: tuple[int, int] = CAISO_CT_FLOOR_HOURS,
+) -> bool:
+    """Floor CAISO CT_PEAKER at a temperature-driven local-RA commitment.
+
+    Models CAISO's **local Resource-Adequacy** commitment of simple-cycle gas
+    peakers (``CT_PEAKER``): on hot afternoons the load-pocket cooling load climbs
+    and solar collapses at sunset, so fast-start CTs in the LA Basin /
+    Big-Creek-Ventura / Bay-Area local capacity areas are held online for local
+    reliability regardless of system-energy economics. An energy-only LP never
+    dispatches these top-of-merit peakers, so the backcast under-runs CT_PEAKER
+    and the freed energy spills onto the cheaper combined-cycle fleet
+    (CC_REGULAR over-generates).
+
+    After :func:`~market_sim.data.fleet.generators_to_fleet_arrays` builds the
+    fleet, this imposes a hard minimum-generation floor on the CT_PEAKER units
+    over the afternoon-evening ``hod_window``, sized to ``frac`` x available
+    capacity where ``frac = clip(slope_per_c*(TMAX - t0_c), 0, cap)`` is keyed to
+    the load-weighted CAISO daily max temperature (:func:`~market_sim.data
+    .eia_loader.caiso_load_weighted_tmax`). The hourly fleet target is
+    distributed over the CT_PEAKER units **cheapest-first** (by heat rate), each
+    capped at its available capacity — the same hour-varying
+    ``FleetArrays.min_gen`` lower bound the CHP steam floor and the gas
+    commitment floor use, composed with any floor already present via
+    ``maximum``. The LP dispatches economically *above* the floor, so it only
+    binds on the hot-day evening hours an energy-only merit order would leave the
+    peakers off — exactly the missing local-RA energy.
+
+    The curve coefficients are the measured CAMPD CT_PEAKER evening capacity
+    factor regressed on TMAX (2023-2025; ``scripts/derive_caiso_ct_reliability_
+    floor.py``, ``docs/caiso-ct-reliability-floor-2026-06.md``) — a physical
+    temperature->commitment rule, not a fit to a TWh residual. It is forward-
+    derivable (a forecast year pins a weather year, hence a TMAX series, exactly
+    as it pins load/wind/solar) and condition-responsive (hotter years -> more
+    CT), which is what makes it admissible in both backcast and forecast
+    (CLAUDE.md #10/#11).
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was applied,
+    ``False`` (byte-identical) when ``iso`` is not CAISO, ``slope_per_c``/``cap``
+    are non-positive, the fleet has no CT_PEAKER units, or no archived TMAX
+    series is available (forecast year / unmapped ISO).
+    """
+    if iso != "CAISO" or slope_per_c <= 0.0 or cap <= 0.0:
+        return False
+    from market_sim.data.eia_loader import caiso_load_weighted_tmax
+
+    if fleet_arrays.plant_group is None:
+        return False
+    is_ct = np.asarray(fleet_arrays.plant_group) == "CT_PEAKER"
+    ct_rows = np.flatnonzero(is_ct & (fleet_arrays.pmax > 0.0))
+    if ct_rows.size == 0:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    tmax = caiso_load_weighted_tmax(year, hours)
+    if tmax is None:
+        return False
+
+    # Temperature->commitment fraction (zero below t0_c, capped on the hottest
+    # days), restricted to the afternoon-evening window (zero elsewhere). Row 0
+    # of the dispatch is the first local hour of the year, so a plain local clock
+    # reproduces the hour-of-day index.
+    frac = np.clip(slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), 0.0, cap)
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    start, end = hod_window
+    window = (hod >= start) & (hod <= end)
+    frac = np.where(window, frac, 0.0)
+    if not np.any(frac > 0.0):
+        return False
+
+    # Per-hour CT fleet target = frac x available CT_PEAKER capacity that hour.
+    avail_cap = (
+        fleet_arrays.pmax[ct_rows, np.newaxis] * fleet_arrays.availability[ct_rows, :]
+    )
+    target = frac * avail_cap.sum(axis=0)
+
+    if fleet_arrays.min_gen is None:
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis],
+            (fleet_arrays.pmin.size, hours),
+        ).copy()
+
+    # Distribute the hourly fleet target cheapest-first (by heat rate) over the
+    # CT_PEAKER units, each capped at its available capacity; ``maximum`` composes
+    # with any existing floor rather than clobbering it.
+    order = ct_rows[np.argsort(fleet_arrays.heat_rate[ct_rows], kind="stable")]
+    remaining = target.copy()
+    for r in order:
+        cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        take = np.minimum(remaining, cap_r)
+        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+        remaining = remaining - take
+    return True
+
+
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the
 # in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
 # must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the

@@ -699,6 +699,50 @@ def measured_gas_floor_profile(
     return out if np.any(out > 0.0) else None
 
 
+def caiso_load_weighted_tmax(year: int, hours: int) -> np.ndarray | None:
+    """Return the load-weighted CAISO daily max temperature (deg C) per run hour.
+
+    For each hour of the run horizon, the load-weighted CAISO load-center daily
+    max temperature (NOAA GHCN-Daily TMAX, ``data/raw/caiso-weather/``) for that
+    hour's calendar day. Drives the CAISO CT_PEAKER local-RA reliability floor
+    (:func:`market_sim.model.transmission.inject_caiso_ct_reliability_floor`):
+    fast-start peakers are held online through the afternoon-evening ramp on hot
+    days for local capacity-area reliability. The daily TMAX is broadcast to all
+    hours of its day; the injector applies the afternoon-evening window and the
+    temperature->commitment curve.
+
+    The series is archived (not solved) so it regenerates for a forward year from
+    a pinned weather year exactly as the load / wind / solar shapes do (see
+    ``scripts/derive_caiso_ct_reliability_floor.py``). Row 0 of the dispatch is
+    the first local hour of the year, so a plain local clock reproduces the index
+    (the interchange-envelope convention).
+
+    Returns ``(hours,)`` deg C, or ``None`` when the archived TMAX file is absent
+    or the year is uncovered (a forecast year with no pinned weather data), in
+    which case the caller leaves the CT fleet unfloored (byte-identical).
+    """
+    path = RAW_DIR / "caiso-weather" / "caiso_load_weighted_tmax_daily.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, parse_dates=["date"])
+    df = df[df["date"].dt.year == year]
+    if df.empty:
+        return None
+    # Day-of-year -> TMAX lookup (1..366); broadcast each run hour to its day.
+    doy_tmax = dict(
+        zip(df["date"].dt.dayofyear.to_numpy(), df["tmax_c"].to_numpy(dtype=float))
+    )
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    doy = clock.dayofyear.to_numpy()
+    out = np.array([doy_tmax.get(int(d), np.nan) for d in doy], dtype=float)
+    if not np.any(np.isfinite(out)):
+        return None
+    # A handful of missing station-days carry NaN; hold the last valid reading
+    # so the floor never reads NaN (forward-fill then back-fill the short gaps).
+    out = pd.Series(out).ffill().bfill().to_numpy()
+    return out
+
+
 # CAISO priced-import tranche -> WECC neighbor hub whose measured intertie LMP is
 # the tranche's real delivered energy cost. The PNW blocks (firm hydro + Mid-C
 # shoulder) clear against the Malin / COI-PDCI ties; the desert-SW blocks (solar +
