@@ -623,6 +623,8 @@ def _build_reserve_rows(
     balance_zone_mask: np.ndarray | None = None,
     balance_ordc_counts: np.ndarray | None = None,
     balance_reserve_class: np.ndarray | None = None,
+    online_gated: np.ndarray | None = None,
+    online_rho: float = 1.0,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -691,6 +693,15 @@ def _build_reserve_rows(
         balance_reserve_class: ``(n_families,)`` int — the reserve class index
             each family draws on. ``None`` (or all-zero) puts every family on
             class 0 (the single-class default).
+        online_gated: ``(n_classes,)`` boolean — classes whose headroom is
+            online-gated (synchronised/spinning reserve). For a gated class the
+            shared-headroom row is ``R[c,z] - online_rho * sum_g P[g] <= 0``
+            instead of ``sum_g P[g] + R[c,z] <= sum_g cap[g]``, so idle (P=0)
+            capacity contributes no reserve and only online generation backs it.
+            ``None`` (default) leaves every class idle-allowed (legacy).
+        online_rho: the online-headroom multiplier for gated classes — how much
+            spinning reserve an online unit backs per MW of output (~ the fleet
+            ``(pmax-pmin)/pmin`` at min load). Default 1.0.
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
@@ -734,9 +745,33 @@ def _build_reserve_rows(
     vals: list[np.ndarray] = []
     z_all = np.arange(n_zones)
     zone_cap = np.zeros((n_classes * n_zones, T))  # RHS, class-major
+    gated = (
+        np.zeros(n_classes, dtype=bool)
+        if online_gated is None
+        else np.asarray(online_gated, dtype=bool).reshape(n_classes)
+    )
     for c in range(n_classes):
         base = c * n_zones
         e_idx = np.flatnonzero(elig2d[c])
+        if gated[c]:
+            # ONLINE-GATED (synchronised/spinning) class: reserve can come only
+            # from ONLINE capacity, not idle headroom. Row reads
+            # ``R[c,z] - rho * sum_{elig g in z} P[g] <= 0`` -> a unit at P=0
+            # contributes nothing (an offline peaker is NOT spinning reserve),
+            # and an online unit backs ``rho``x its output (rho = the fleet
+            # online-headroom ratio, ~ (pmax-pmin)/pmin near min load). The RHS
+            # is 0 (no idle-capacity credit) and storage is excluded (its room
+            # is not synchronised thermal spin). This is the LP-linear proxy for
+            # commitment-gated spinning reserve (path A); the exact gate needs
+            # an online binary (path B / model.commitment).
+            rows.append(base + zone_idx[e_idx])
+            cols.append(e_idx)
+            vals.append(np.full(e_idx.size, -float(online_rho)))  # -rho * P[g]
+            rows.append(base + z_all)
+            cols.append(layout._reserve_off + base + z_all)
+            vals.append(np.ones(n_zones))  # +R[c,z]
+            # zone_cap stays 0 for this class (no idle/storage credit).
+            continue
         # eligible thermal P columns -> this class's headroom rows
         rows.append(base + zone_idx[e_idx])
         cols.append(e_idx)
@@ -853,6 +888,8 @@ def build_constraints(
     reserve_balance_zone_mask: np.ndarray | None = None,
     reserve_balance_ordc_counts: np.ndarray | None = None,
     reserve_balance_class: np.ndarray | None = None,
+    reserve_online_gated: np.ndarray | None = None,
+    reserve_online_rho: float = 1.0,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1158,6 +1195,8 @@ def build_constraints(
             balance_zone_mask=reserve_balance_zone_mask,
             balance_ordc_counts=reserve_balance_ordc_counts,
             balance_reserve_class=reserve_balance_class,
+            online_gated=reserve_online_gated,
+            online_rho=reserve_online_rho,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -1470,6 +1509,8 @@ class DispatchModel:
         reserve_balance_zone_mask: np.ndarray | None = None,
         reserve_balance_ordc_counts: np.ndarray | None = None,
         reserve_balance_class: np.ndarray | None = None,
+        reserve_online_gated: np.ndarray | None = None,
+        reserve_online_rho: float = 1.0,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -1544,6 +1585,8 @@ class DispatchModel:
             reserve_balance_zone_mask=reserve_balance_zone_mask,
             reserve_balance_ordc_counts=reserve_balance_ordc_counts,
             reserve_balance_class=reserve_balance_class,
+            reserve_online_gated=reserve_online_gated,
+            reserve_online_rho=reserve_online_rho,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -2010,6 +2053,8 @@ def solve_dispatch(
     reserve_balance_zone_mask: np.ndarray | None = None,
     reserve_balance_ordc_counts: np.ndarray | None = None,
     reserve_balance_class: np.ndarray | None = None,
+    reserve_online_gated: np.ndarray | None = None,
+    reserve_online_rho: float = 1.0,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -2115,6 +2160,8 @@ def solve_dispatch(
         reserve_balance_zone_mask=reserve_balance_zone_mask,
         reserve_balance_ordc_counts=reserve_balance_ordc_counts,
         reserve_balance_class=reserve_balance_class,
+        reserve_online_gated=reserve_online_gated,
+        reserve_online_rho=reserve_online_rho,
         link_bidirectional=link_bidirectional,
         T=T,
     )
