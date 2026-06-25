@@ -7,6 +7,23 @@
 > `nyiso 27 cc-offer` (`keepers.json[NYISO]` unchanged). The path-A lever
 > (`--nyiso-synchronised-reserve`) is REVERTED on the branch; this doc scopes
 > path B.**
+>
+> **UPDATE (2026-06-25): PATH B NOW TESTED — ALSO REJECTED (a true no-op).**
+> Path B (commitment-gated spinning, `--nyiso-synchronised-reserve --commitment`)
+> is built and tested across all 3 years as `nyiso 31 synch-commit [probe]`
+> (bundle `results/calibration/nyiso_31_synch-commit`). It reproduces the
+> nyiso-27 keeper **exactly** on every metric (C3c >$300 1/0/8; CT_PEAKER
+> −1.30/−1.51; C3a 2024 −9.7%; P1==P2 prices). **Root cause:** the committed NYC
+> quick-start fleet holds **~1,700 MW of online headroom in the tightest hours**
+> vs the measured 500 MW 10-min / 250 MW spin requirement, so the reserve family
+> cannot bind and no RCPF tail forms — commitment removes only *offline* pmax,
+> not the dominant committed-but-backed-off headroom. **Both path A and path B
+> are confirmed insufficient with the grounded inputs.** The full write-up is in
+> `docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md` ("Path B —
+> IMPLEMENTED & TESTED: REJECTED"); the >$300 downstate tail is an accepted,
+> ledgered open frontier on the nyiso-27 keeper. The next grounded lever (if
+> revisited) is a *measured, condition-varying* downstate requirement from the
+> NYISO AS postings (`process_nyiso_as.py`), not the static published MW.
 
 Run: `nyiso 29 synch-reserve [probe]` (id `2026-06-25-nyiso-29-synch-reserve`,
 bundle `results/calibration/nyiso_29_synch-reserve`). Registered on the

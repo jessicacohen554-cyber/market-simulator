@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-25 (NYISO path-B commitment-gated synchronised reserve — REJECTED probe)
+
+**No keeper/methodology change; NYISO keeper stays `nyiso 27 cc-offer`.** Wired
+the path-B route of the default-off `--nyiso-synchronised-reserve` lever: with
+the P2 commitment screen on (`--commitment`), the NYC spinning family rides the
+ordinary class-1 quick-start headroom and commitment is the online gate
+(`apply_commitment_with_coal_pin` zeroes decommitted availability, so the row
+equals `Σ_online(pmax − P)` — the physically-correct synchronised headroom,
+MILP-free), and a new `commitment.reserve_adequacy_commit` force-commits NYC
+quick-start to the measured 250 MW spin requirement (`NYISO_SPIN_FRACTION` × NYC
+10-min total). New helpers `scarcity.nyiso_spin_requirement_mw` /
+`nyiso_spin_eligible`, constant `NYISO_SPIN_FRACTION`, config field
+`ScenarioConfig.nyiso_spin_headroom_frac` (+ `--nyiso-spin-headroom-frac` CLI).
+Tested all 3 years as `nyiso 31 synch-commit [probe]`: **a true no-op** — every
+scored metric reproduces the keeper exactly (C3c >$300 1/0/8; CT_PEAKER
+−1.30/−1.51; C3a 2024 −9.7%; P1==P2). Root cause: the committed NYC quick-start
+fleet holds ~1,700 MW of online headroom in the tightest hours vs a 500 MW
+requirement, so the measured reserve never binds and no RCPF tail forms;
+commitment removes only offline pmax, not the dominant committed-but-backed-off
+headroom. Both path A (`nyiso 29`) and path B are thus insufficient with grounded
+inputs — the >$300 downstate tail is an accepted, ledgered open frontier on
+nyiso-27 (closing it would need an ungrounded requirement/adder, forbidden by
+rule #12). Wiring kept as a NYISO-only default-off scaffold; other ISOs and
+NYISO-without-the-flags byte-identical (103 reserve/dispatch/commitment tests
+green). Docs realigned: `docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md`
+(Path B implemented & rejected) + `docs/handoffs/nyiso-synchronised-reserve-probe-2026-06.md`
+(status update).
+
 ## 2026-06-25 (Weather-year forecast ensemble — G13 built)
 
 **New forecast-robustness tool, no keeper/calibration change.** Implements the
