@@ -1,0 +1,74 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "nyiso-26 cc-nameplate keeper 2026-06-25",
+  "note": "Re-solve of the nyiso-25 steam-merit keeper config (byte-identical flags: --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply --nyiso-firm-imports --nyiso-import-reconciliation; P1, no commitment) on the MERGED code. Two structural changes vs the nyiso-25 keeper, both more physically faithful, both kept under CLAUDE.md rule #1 even though they REGRESS the backcast level: (1) my Ravenswood (plant 2500, mixed CC+ST) steam-HR correction (data.fleet.MIXED_FACILITY_STEAM_HR={2500:9.5}), carried forward from nyiso-25 -- recovers the steam units' own ~9.5 MMBtu/MWh heat rate from the 8.8 plant blend so NYC steam sits correctly ABOVE NYC CC on merit; (2) cc_nameplate_summer_derate (merged to main, commit a8b0e55, AUTO-ON for PJM/NYISO/NEISO) -- removes the CC '75% wall': CC_REGULAR/CC_CHP now carry full EIA-860 NAMEPLATE capacity, derated to the measured net-summer rating in summer ONLY (winter restores cold-weather capability), dropping the double summer-derate + statistical POF. The combined effect is exactly the predicted structural direction: nameplate CC capacity + steam correctly above CC => CC strongly displaces steam, and the 2023 within-gas merit split that the nyiso-25 keeper left open (CC_REGULAR -3.47 / ST_GAS +2.76) closes and OVER-closes to CC_REGULAR +2.09 / ST_GAS -1.48. 2024 moves the same way (CC_REGULAR -2.61 -> +2.39, ST_GAS -0.96 -> -4.31). The merit ORDER is now physically correct (CC ahead of steam) and the CC capacity is physically correct (nameplate, no fitted wall); what the un-walled fleet now EXPOSES is a separate, cleaner miss -- the CC OFFER LEVEL is too cheap, so with full nameplate capacity CC mildly over-runs on energy (CC_REGULAR ~+2 TWh/yr; CF ~55-57% on a peak-based denominator) and depresses the marginal price (C3a 2023 -8.9%, 2024 -11.0%; 2025 +9.3% -> in-band). This is the documented CC offer-level frontier (docs/cc-high-cf-investigation.md, docs/handoffs/pjm-cc-level-tuning-2026-06.md); NYISO's over-run is MILD (~+2 TWh vs PJM's +65 TWh) because the NYISO CC fleet is small and import-constrained. Per rules #1 and #11 the nameplate capacity + corrected steam HR STAY IN: the wall was masking a too-cheap CC offer; removing it surfaces the real bug, which is fixed via the real lever (CC econ_low/econ_high in _NYISO_OFFER_CURVE, grounded in the CAMPD CC marginal-HR fit), NOT by restoring a capacity haircut. Run-26 is the new keeper because it is the most structurally faithful NYISO config to date (physically correct CC capacity + correct intra-gas merit order), with the remaining miss now cleanly localized to ONE diagnostic lever (the CC offer level) instead of being entangled with a capacity wall.",
+  "validation_note": "No scored OUTPUT is pinned. The two changed quantities are both measured INPUTS, forward-reproducible: (a) a recovered unit heat rate (EIA-923 plant data + prime-mover physics), and (b) EIA-860 nameplate capacity with a single measured per-plant net-summer/nameplate summer derate -- both regenerate for a forward year and respond to changed conditions. The gas total and LMP (scored outputs) are NOT pinned to actuals; no unit pinned to CEMS; no adder/haircut/sigmoid tuned to a residual. The changes make C3a (2023 -8.9%, 2024 -11.0%) and the 2023/24 within-gas split (CC_REGULAR over / ST_GAS-CT_PEAKER under) WORSE in level. Per rule #1 this is accepted: the price depression and CC over-run are the SAME root cause -- the CC offer level is too cheap once the artificial 75% wall is removed -- a discovered model miss (rule #11), the documented next structural lever (CC offer curve), NOT a reason to revert nameplate capacity, re-wall CC, or re-cheapen any other offer to chase the price back."
+ },
+ "_unledgered_model_misses": "The following out-of-tolerance criteria are HONEST MODEL MISSES, NOT ledgered as accepted limitations -- the determination is NOT-YET and promotion is on structural faithfulness (rule #1), not on reaching CALIBRATED. They share ONE root cause: the CC offer level is too cheap now that nameplate capacity is unwalled. (a) 2023/2024 C1 CC_REGULAR over-run (+2.09 / +2.39 TWh) -- CC clears too much energy because its offer is below the true CAMPD CC marginal cost; the fix is the CC offer-level lever (econ_low/econ_high in _NYISO_OFFER_CURVE per docs/handoffs/pjm-cc-level-tuning-2026-06.md), not a capacity wall. (b) The complementary 2023/2024 C1 ST_GAS under-run (-1.48 / -4.31) and CT_PEAKER under-run (-1.33 / -1.52) -- steam and peakers are over-displaced by the too-cheap CC (the 2024 ST_GAS deficit is deeper than the keeper's -0.96 by the CC over-displacement on top of the gas-total basis floor; the CT_PEAKER component remains partly the long-standing NYC reserve/scarcity tail, ledgered separately below). (c) C3a mean LMP 2023 -8.9% / 2024 -11.0% (soft) -- the cheap, over-running CC depresses the marginal price; same CC offer-level root cause, NOT a residual to chase by re-cheapening or re-pricing any other class. (d) C3b price_shape 2024 (NRMSE 0.250, soft) -- the flatter, depressed price duration follows from the same CC over-run. All four resolve together when the CC offer level is raised toward the CAMPD CC marginal-HR fit; that is the single documented next lever and is out of scope for this re-solve (which only carries the merged nameplate fix + my steam-HR correction).",
+ "exceptions": [
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2025,
+   "metric": "C2 gas total vs EIA-923 grid-delivered",
+   "magnitude": "model gas -3.7%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+   "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the remaining gas gap is the EIA-930/EIA-923 basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md; td_loss_factor=0 settled) plus preliminary-data incompleteness, not a dispatch error. IMPROVED vs the nyiso-25 keeper (-6.7% -> -3.7%) because nameplate CC capacity lifts the in-state gas total toward the measured grid total -- a faithful capacity correction narrowing the basis floor, not a fitted knob. Not closable by an honest knob (rules #1/#11/#12)."
+  },
+  {
+   "criterion": "co2",
+   "year": 2024,
+   "metric": "C5a system CO2 vs eGRID",
+   "magnitude": "model -9.1%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+   "reason": "2024 CO2 is downstream of the 2024 gas volume: the gas family is at its EIA-923/EIA-930 basis floor, so the CO2 it generates is correspondingly low. The slight worsening vs the nyiso-25 keeper (-8.0% -> -9.1%) follows the within-gas reshuffle toward CC (the displaced steam is dirtier per MWh than the CC that replaces it, so the same energy carries less CO2). Not a separate dispatch/emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2023,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.33 TWh, share -0.9pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail) + CC over-displacement",
+   "reason": "CT_PEAKER under-runs every year because NYC peakers clear on reserve/scarcity (mechanism B / RCPF), not energy -- they are priced far above the downstate clearing price. This is INCIDENCE-gated by the model's too-loose downstate reserve headroom, not the demand-curve slope (the nyiso-25 rcpf-steep PROBE confirms steepening the curve does not add tail/peaker hours); an open structural follow-on (downstate reserve incidence / import discipline). Part of the deepening vs nyiso-25 is the too-cheap nameplate CC over-displacing peakers on energy -- that component is the CC offer-level model miss (see the unledgered ledger), the rest is the long-standing incidence tail."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.52 TWh, share -0.9pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail) + CC over-displacement",
+   "reason": "Same NYC-peaker reserve/scarcity-tail gap as the 2023 CT_PEAKER exception; incidence-gated, not energy-clearing. The extra depth vs the nyiso-25 keeper (-1.20 -> -1.52) is the too-cheap nameplate CC over-displacing peakers, the CC offer-level model miss documented in the unledgered ledger."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 1h vs actual 10h (0.10x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "The >$300 tail is the NYC-peaker / RCPF reserve-scarcity tail, INCIDENCE-gated by the model's too-loose downstate reserve headroom (idle-peaker / import over-service), not curve-gated: the nyiso-25 rcpf-steep PROBE showed steepening the published RCPF demand curve to its tariff shape (ER21-502 top-25%-span) deepens firing hours past C3a without adding tail HOURS. The lever is downstate reserve incidence / import discipline (the documented next structural step touching the nyiso-24 import reconciliation), out of scope here; not chased with a price adder (forbidden)."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2024,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 0h vs actual 12h (0.00x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker / RCPF reserve-scarcity tail as the 2023 C3c exception; incidence-gated (downstate reserve headroom), not curve-gated. The depressed 2024 price level (the CC offer-level miss) further suppresses the tail, but the structural cause is reserve incidence; out of scope, not chased with an adder."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2025,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 8h vs actual 42h (0.19x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker / RCPF reserve-scarcity tail as the 2023/24 C3c exceptions; incidence-gated downstate reserve headroom, not the demand-curve slope. Out of scope (import discipline / downstate incidence), not chased with a price adder."
+  }
+ ]
+}

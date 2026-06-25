@@ -1,0 +1,24 @@
+# nyiso 26 cc-nameplate — model_changes vs origin/main
+
+NO new source edits. This run is a pure RE-SOLVE of the nyiso-25 steam-merit
+keeper config on the merged code. Both structural levers are already on
+origin/main:
+
+  * Ravenswood mixed CC+ST steam-HR fix
+    (src/market_sim/data/fleet.py: MIXED_FACILITY_STEAM_HR = {2500: 9.5})
+    merged via PR #850 (nyiso-25 steam-merit).
+
+  * cc_nameplate_summer_derate (CC carries full EIA-860 nameplate, one measured
+    per-plant net-summer summer-only derate; AUTO-ON for PJM/NYISO/NEISO)
+    merged via commit a8b0e55.
+
+`git diff origin/main -- src/ config/ scripts/` is EMPTY for this bundle.
+
+Solve flags (byte-identical to the nyiso-25 keeper; P1, no commitment):
+  --iso NYISO --year 2023 2024 2025
+  --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily
+  --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply
+  --nyiso-firm-imports --nyiso-import-reconciliation
+
+The deliverable of this run is the re-solved bundle on the merged code, not a
+code change — see calibration_attestation.json for the structural assessment.
