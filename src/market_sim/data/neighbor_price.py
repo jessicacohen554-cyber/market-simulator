@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -57,6 +58,9 @@ from market_sim.config.constants import (
     NeighborInterface,
 )
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
+
+if TYPE_CHECKING:
+    from market_sim.config.constants import CaisoHubNeighbor
 
 
 def neighbor_heat_rate(neighbor: NeighborInterface, year: int) -> float:
@@ -264,6 +268,99 @@ def seam_tranche_prices(
     export_prices = baseload * (export_eff / mean_load) ** exp
     import_prices = baseload * (import_eff / mean_load) ** exp
     return export_prices, import_prices, ba_used
+
+
+# ---------------------------------------------------------------------------
+# CAISO per-hub WECC corridor forward reference price (Malin / Palo Verde)
+# ---------------------------------------------------------------------------
+# The forward-native price for each CAISO WECC import corridor, the analogue of
+# the PJM/MISO neighbor reference price specialized to the two physical ties.
+# Same construction — (henry_hub + gas_basis) × marginal_heat_rate × load_shape
+# — but the load shape is built from the EIA-930 CISO extract (the only WECC
+# hourly series in-repo; the desert-SW shares CAISO's solar resource), and the
+# solar-driven desert-SW corridor shapes on NET load (load − solar − wind) so
+# its midday trough rides the solar glut rather than a gross-load peak. Nothing
+# here reads the measured Malin/Palo-Verde LMP (the honesty line, CLAUDE.md
+# #10/#12); that series is only the backcast realization the formula validates
+# against.
+
+
+def caiso_hub_load_shape(
+    spec: "CaisoHubNeighbor", year: int, hours: int
+) -> np.ndarray | None:
+    """Return the CAISO corridor's normalized hourly price-shape multiplier.
+
+    Reads the EIA-930 CISO extract on the model's local 8760 clock and builds a
+    dimensionless multiplier whose mean is ~1.0 at the default exponent, so
+    multiplying the corridor's ``gas × heat_rate`` baseload by it preserves the
+    annual-average price. The driver is the region's GROSS load (the hydro-
+    following Pacific-NW, ``load_shape_kind="gross"``) or NET load — load minus
+    utility solar and wind (the solar-driven desert-SW, ``"net"``), so the
+    desert-SW price dips midday with the solar glut. The CISO series proxies the
+    neighbor (same solar resource / time zone); it is a forward driver that
+    responds to a changed solar build, never the measured hub LMP.
+
+    Args:
+        spec: The corridor specification (supplies ``load_shape_kind`` and
+            ``load_shape_exponent``).
+        year: Calendar year.
+        hours: Expected length of the series (the model's 8760 clock).
+
+    Returns:
+        The ``(hours,)`` multiplier, or ``None`` when the CISO extract is absent
+        or too short (forecast years with no extract fall back to a flat shape).
+    """
+    frame = _eia_hourly_frame_filled("CISO", year)
+    if frame is None or "Demand" not in frame.columns:
+        return None
+    demand = pd.to_numeric(frame["Demand"], errors="coerce")
+    driver = demand
+    if spec.load_shape_kind == "net":
+        solar = pd.to_numeric(frame.get("NG: SUN"), errors="coerce").fillna(0.0)
+        wind = pd.to_numeric(frame.get("NG: WND"), errors="coerce").fillna(0.0)
+        driver = demand - solar - wind
+    driver = driver.interpolate().bfill().ffill().to_numpy(dtype=float)
+    if driver.shape[0] < hours or np.isnan(driver).any():
+        return None
+    driver = driver[:hours]
+    mean = float(driver.mean())
+    if mean <= 0.0:
+        return None
+    # Floor the normalized driver at a small positive value before the exponent
+    # so a deep net-load trough cannot drive the price negative or undefined
+    # (a fractional exponent of a negative ratio is non-real); the corridor
+    # asymptotes to a cheap floor midday instead.
+    norm = np.clip(driver / mean, 0.05, None)
+    return norm**spec.load_shape_exponent
+
+
+def caiso_hub_reference_price(
+    spec: "CaisoHubNeighbor",
+    year: int,
+    hours: int,
+    gas_scenario: str = "mid",
+) -> np.ndarray | None:
+    """Return a CAISO corridor's hourly forward reference price ($/MWh).
+
+    ``(henry_hub[year] + gas_basis) × marginal_heat_rate × load_shape`` — the
+    forecast-native price the corridor's imports clear against, mirroring
+    :func:`neighbor_reference_price` for the two CAISO WECC ties. The level
+    rides the forward Henry Hub trajectory; the shape rides the neighbor's own
+    hourly tightness (gross load for the Pacific-NW, net load for the solar-
+    driven desert-SW). Nothing is read from the measured hub LMP.
+
+    Returns ``None`` when the CISO shape cannot be resolved (the caller then
+    leaves the corridor on its static-ladder placeholder price, byte-identical).
+    """
+    from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
+
+    shape = caiso_hub_load_shape(spec, year, hours)
+    if shape is None:
+        return None
+    baseload = (HENRY_HUB_TRAJECTORIES[gas_scenario][year] + spec.gas_basis) * (
+        spec.marginal_heat_rate
+    )
+    return baseload * shape
 
 
 @dataclass

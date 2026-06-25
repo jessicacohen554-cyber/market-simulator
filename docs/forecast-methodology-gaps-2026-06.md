@@ -109,8 +109,9 @@ IMPLEMENTED (forward-native fuel paths, emission rates, firm-import contracts,
 reference-price seams, local self-supply, net-load-indexed drags) or are
 legitimate BACKCAST-BRIDGEs (RTORDPA). The genuine forward gaps cluster in three
 places: **ERCOT AS co-optimization** (flagship + ECRS/load-resource/storage AS),
-**CAISO intertie pricing & deliverability** (still measured WECC hub LMP + p95
-ATC), and **HSL/curtailment** (2024/25 have no HSL → curtailment unmodeled).
+~~CAISO intertie pricing & deliverability~~ (**BUILT 2026-06-25**, G8 — forward
+reference-price seam + ATC corridor cap), and **HSL/curtailment** (2024/25 have no
+HSL → curtailment unmodeled).
 
 ---
 
@@ -160,8 +161,8 @@ The landing point is the grounded CAMPD/SRMC reach, not a residual-zeroing value
 | Lever | Code anchor | Backcast input | Forward driver | #10 | Status | Eff | Risk |
 |---|---|---|---|---|---|---|---|
 | Priced interchange (`priced_interchange`, IMPORT/EXPORT_TRANCHES) | `model/transmission.py:154,229`; `constants.py:1645` | fitted per-ISO tranche ladder | reference-price interface (gas×HR×load) — **CAISO keeper uses the static ladder, not the forward seam** | borderline⁴ | **PART** | M | Med |
-| Per-hub intertie pricing (`caiso_per_hub_intertie`) | `model/transmission.py:410,840` | measured WECC hub LMP (Malin/Palo-Verde OASIS) | neighbor **reference-price** (gas×HR×load-shape) per hub | PASS⁴ | **DSGN** | M | Med |
-| Corridor flow limit (`caiso_corridor_flow_limit`) | `model/transmission.py:513`; `eia_loader.py:739` | EIA-930 BA-BA interchange p95 by month×hod | forecast **transfer capability / posted ATC** (or physical TTC) | PASS⁴ | **PART** | M | Med |
+| Per-hub intertie pricing (`caiso_per_hub_intertie`) | `model/transmission.py:410,840` | measured WECC hub LMP (Malin/Palo-Verde OASIS) | neighbor **reference-price** (gas×HR×load-shape) per hub — **BUILT** (`caiso_intertie_reference_price`, `inject_caiso_per_hub_reference_prices`, `neighbor_price.caiso_hub_reference_price`) | PASS⁴ | **IMPL** | — | Med |
+| Corridor flow limit (`caiso_corridor_flow_limit`) | `model/transmission.py:513`; `eia_loader.py:739` | EIA-930 BA-BA interchange p95 by month×hod | forecast **transfer capability / posted ATC** — **BUILT** (`caiso_corridor_atc_forward`, `forward_corridor_atc_envelope` = TTC × posted-ATC frac × forward solar derate) | PASS⁴ | **IMPL** | — | Med |
 | Import gas coupling (`caiso_import_gas_coupling`) | `model/transmission.py:1081` | measured commodity-vs-F923 gas delta | forecast commodity-vs-delivered gas spread | PASS | **PART** | S-M | Low |
 | Hydro monthly repin (`hydro_eia930_monthly`) | `scripts/run_calibration.py:1259`; `data/hydro.py:299` | EIA-930 NG:WAT monthly hydro total | forecast hydro **energy budget** (streamflow / normal-year) | PASS | **PART** | M | Low |
 | Monthly gas-hub basis overlay (`gas_hub_basis_overlay`) | `data/fuel.py:1089` | measured monthly hub basis | forecast basis path | PASS | **PART** | S | Low |
@@ -378,18 +379,42 @@ potential and let dispatch curtail. **Effort M-L, Risk Med** — without it the
 forecast can't represent rising curtailment as VRE penetration grows, a
 first-order forecast quantity.
 
-### G8 CAISO intertie reference-pricing + corridor deliverability (largest CAISO gap)
+### G8 CAISO intertie reference-pricing + corridor deliverability — **BUILT (2026-06-25)**
 
-**Forward analogue.** CAISO currently prices its WECC ties at **measured** hub
-LMP (Malin/Palo-Verde OASIS) and caps corridor flow at a **measured** p95 ATC
-envelope; both go inert in forecast (static ladder / physical TTC). The forward
-path is the same **reference-price interface** PJM and MISO already use: price
-each per-hub corridor at `(neighbor HH + basis) × neighbor marginal HR × load-shape`,
-and set the corridor flow limit from **posted/forecast ATC** (or a deliverability
-derate indexed to the corridor's congestion frequency) rather than measured p95.
-The measured series stay as the backcast realization. **Effort M each, Risk Med** —
-CAISO is import-heavy, so import price-formation and deliverability are
-first-order for its forecast.
+**Forward analogue (now implemented).** CAISO used to price its WECC ties at
+**measured** hub LMP (Malin/Palo-Verde OASIS) and cap corridor flow at a
+**measured** p95 ATC envelope; both went inert in forecast. The forward path is
+now built as the same **reference-price interface** PJM and MISO use, specialized
+to the two physical corridors:
+
+- **Price (`caiso_intertie_reference_price`).** Each per-hub corridor is priced at
+  `(henry_hub[year] + gas_basis) × marginal_heat_rate × load_shape`
+  (`neighbor_price.caiso_hub_reference_price`, injected by
+  `transmission.inject_caiso_per_hub_reference_prices`). COI/Path-66 proxies the
+  Pacific-NW at Malin (gross-load shape); Path-46/WOR the desert-SW at Palo Verde
+  (**net-load** shape — load − solar − wind — so its midday price dips with the
+  solar glut, the duck the measured Palo Verde hub carries). The shape is built
+  from the EIA-930 CISO extract (the only in-repo WECC hourly series; the
+  desert-SW shares CAISO's solar resource), a forward driver. The HR anchors are
+  3-year-mean structural values (NOT per-year measured anchors), so forecast years
+  are byte-stable and the backcast carries the documented gas-insensitivity
+  residual (the WECC hubs are hydro/solar-set, so they do not rise with Henry Hub
+  the way a pure gas margin does — the SPP effect).
+- **Deliverability (`caiso_corridor_atc_forward`).** The corridor import cap is now
+  `TTC × posted-ATC base fraction × clip(1 − k × solar_frac(t), floor, 1)`
+  (`transmission.forward_corridor_atc_envelope`, `eia_loader.caiso_solar_fraction`)
+  — a capability limit shaped by the region's **forward** solar penetration, not
+  the measured p95 flow. Export keeps the physical TTC.
+
+The measured hub LMP + p95 envelope are kept **only** as the backcast realization
+the formula is validated against (`scripts/compare_caiso_intertie_formula_vs_measured.py`).
+**Honesty gate met:** import price from forward gas/HR/shape, deliverability from a
+capability — neither a flow nor a price pinned to the measured realization
+(CLAUDE.md #10/#12). **Validation (2024):** the formula reproduces the measured
+desert-SW diurnal shape at corr **0.96** with no measured LMP input; the forward
+3-year re-solve keeper is `caiso_intertie_forward_3yr`. The Pacific-NW corridor is
+the weaker proxy (gross-load shape ≠ the hydro-following Mid-C price; corr ~0.46) —
+the documented residual.
 
 ### G9 CAISO/NEISO hydro monthly budget forward — IMPLEMENTED (2026-06)
 
@@ -479,7 +504,7 @@ first.
 |---|---|---|---|---|
 | **P0 ✅ DONE 2026-06-25** | **Retire `ct_deployment_overlay` from the NEISO keeper** (Finding 0): re-solved as `neiso-33-no-ctfloor` with it off (dispatch- & determination-neutral), pruned the flag from the lineage `prb_overrides` bag; cross-keeper bag audit clean (only NEISO carried it; PJM `retiree_cems_cap` is an admissible availability cap, not a pin). | Live #10 violation in a keeper; pure hygiene, no new methodology. | S | n/a (correctness/governance) |
 | **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
-| **P2** | **CAISO intertie reference-pricing + corridor ATC (G8)** | CAISO is import-dominated; both levers go fully inert in forecast today. | M×2 | Med-High (CAISO price formation) |
+| ~~**P2**~~ | ~~**CAISO intertie reference-pricing + corridor ATC (G8)**~~ **DONE 2026-06-25** | CAISO is import-dominated; both levers went fully inert in forecast. **Built**: `caiso_intertie_reference_price` + `caiso_corridor_atc_forward`; keeper `caiso_intertie_forward_3yr`. | M×2 | Med-High (CAISO price formation) |
 | **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
 | **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11), NYISO import-recon forward (G10)** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
@@ -499,7 +524,7 @@ Manitoba), NYISO local self-supply, storage vintage ramp, RTORDPA (BRIDGE).
 | `ct_deployment_overlay` | NEISO (active!) | **FORBIDDEN — no forward analogue** | Measured-CEMS peaker floor; must go inert in forecast → NEISO peaker dispatch loses the propped energy and the keeper's validation isn't the forecast dispatch. **Fix = P0 (retire now).** |
 | DAM-AS overlay (G1) | ERCOT | PART → needs flagship build | Without the endogenous co-opt, forecast under-prices acute AS-scarcity days (already inert under RTC+B, so impact is the pre-RTC+B bridge + proving the co-opt). |
 | Measured AS requirements / credits (G3–G5) | ERCOT | DSGN | Forecast holds too little reserve / mis-credits load+storage AS → under-prices the tight mid-range; grows with VRE. |
-| CAISO intertie LMP + corridor ATC (G8) | CAISO | DSGN/PART | Imports lose price-formation and deliverability shaping forward → CAISO price level/shape drift. |
+| ~~CAISO intertie LMP + corridor ATC (G8)~~ | CAISO | **RESOLVED 2026-06-25** | Forward reference-price seam + ATC corridor cap built (`caiso_intertie_reference_price` / `caiso_corridor_atc_forward`); forward years now carry import price-formation + deliverability shaping. Backcast validation corr 0.96 (desert-SW). |
 | HSL 2024/25 + curtailment (G7) | ERCOT/CAISO | PART | Forecast cannot represent rising curtailment with penetration. |
 
 Everything else either passes #10 with an implemented forward path or is a
