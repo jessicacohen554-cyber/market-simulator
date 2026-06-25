@@ -646,6 +646,115 @@ class TestNEISOHydroBudget(unittest.TestCase):
         self.assertIsNone(measured_monthly_hydro("NOT_AN_ISO", 2024))
 
 
+class TestForecastHydroBudget(unittest.TestCase):
+    """Forecast hydro budget: normal-water-year climatology + wet/dry lever.
+
+    The forward analogue of the measured EIA-930 backcast level (G9). The
+    climatology is the per-month mean of measured EIA-930 NG:WAT across the
+    constants window; the wet/dry lever scales the level only.
+    """
+
+    def test_climatology_is_mean_of_measured_years(self):
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+
+        years = (2023, 2024, 2025)
+        clim = climatological_monthly_hydro("CAISO", years)
+        self.assertEqual(clim.shape, (12,))
+        manual = np.vstack([measured_monthly_hydro("CAISO", y) for y in years]).mean(
+            axis=0
+        )
+        np.testing.assert_allclose(clim, manual)
+        # CAISO 2023/24/25 ~24.40/22.68/21.32 TWh -> mean ~22.8 TWh.
+        self.assertAlmostEqual(clim.sum() / 1e6, 22.8, delta=0.1)
+
+    def test_climatology_skips_uncovered_years(self):
+        # PJM has no 2021/2022 hourly extract, so a window spanning them still
+        # returns a climatology from the years present (no crash, no NaN).
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+
+        clim = climatological_monthly_hydro("PJM", (2021, 2022, 2023, 2024, 2025))
+        self.assertIsNotNone(clim)
+        self.assertTrue(np.all(np.isfinite(clim)))
+        self.assertAlmostEqual(clim.sum() / 1e6, 15.59, delta=0.2)
+
+    def test_climatology_unknown_iso_is_none(self):
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+
+        self.assertIsNone(climatological_monthly_hydro("NOT_AN_ISO"))
+
+    def test_hydro_year_multiplier_scales_level_only(self):
+        from market_sim.data.eia_loader import climatological_monthly_hydro
+        from market_sim.data.hydro import forecast_monthly_hydro
+
+        clim = climatological_monthly_hydro("CAISO")
+        normal = forecast_monthly_hydro("CAISO", "normal")
+        wet = forecast_monthly_hydro("CAISO", "wet")
+        dry = forecast_monthly_hydro("CAISO", "dry")
+        np.testing.assert_allclose(normal, clim)
+        np.testing.assert_allclose(wet, clim * 1.15)
+        np.testing.assert_allclose(dry, clim * 0.85)
+        # The lever is a pure level scale — the monthly shape is unchanged.
+        np.testing.assert_allclose(wet / wet.sum(), normal / normal.sum())
+
+    def test_resolve_hydro_year_multiplier(self):
+        from market_sim.data.hydro import resolve_hydro_year_multiplier
+
+        self.assertEqual(resolve_hydro_year_multiplier("normal"), 1.0)
+        self.assertEqual(resolve_hydro_year_multiplier("wet"), 1.15)
+        self.assertEqual(resolve_hydro_year_multiplier("dry"), 0.85)
+        with self.assertRaises(ValueError):
+            resolve_hydro_year_multiplier("soggy")
+
+    def test_forecast_monthly_hydro_unknown_iso_is_none(self):
+        from market_sim.data.hydro import forecast_monthly_hydro
+
+        self.assertIsNone(forecast_monthly_hydro("NOT_AN_ISO"))
+
+    def test_forecast_budget_repins_load_hydro_budget(self):
+        # End-to-end: forecast climatology pins the assembled budget level while
+        # leaving the MW envelope and per-plant within-month shares intact —
+        # the same seam the measured backcast pin uses.
+        from market_sim.data.hydro import forecast_monthly_hydro
+
+        target = forecast_monthly_hydro("CAISO", "wet")
+        bare = load_hydro_budget("CAISO", 2024)
+        pinned = load_hydro_budget("CAISO", 2024, monthly_target_mwh=target)
+        np.testing.assert_allclose(pinned.monthly_energy.sum(axis=0), target)
+        np.testing.assert_allclose(pinned.max_mw, bare.max_mw)
+        self.assertEqual(pinned.n_hydro, bare.n_hydro)
+        jan_b = bare.monthly_energy[:, 0]
+        jan_p = pinned.monthly_energy[:, 0]
+        np.testing.assert_allclose(jan_p / jan_p.sum(), jan_b / jan_b.sum())
+
+    def test_scenario_config_hydro_year_validation(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        self.assertEqual(ScenarioConfig().hydro_year, "normal")
+        self.assertEqual(ScenarioConfig(hydro_year="dry").hydro_year, "dry")
+        with self.assertRaises(ValueError):
+            ScenarioConfig(hydro_year="soggy")
+
+    def test_run_calibration_hydro_fleet_forecast_wiring(self):
+        # The calibration harness's _hydro_fleet forecast path scales the
+        # assembled budget by the wet/dry lever and is mutually exclusive with
+        # the measured backcast pin.
+        import scripts.run_calibration as rc
+        from market_sim.config.iso_configs import get_iso_config
+
+        zones = get_iso_config("CAISO").zone_names
+        _, normal = rc._hydro_fleet(
+            "CAISO", 2024, zones, forecast_budget=True, hydro_year="normal"
+        )
+        _, wet = rc._hydro_fleet(
+            "CAISO", 2024, zones, forecast_budget=True, hydro_year="wet"
+        )
+        self.assertAlmostEqual(wet.sum() / normal.sum(), 1.15, places=3)
+        with self.assertRaises(ValueError):
+            rc._hydro_fleet(
+                "CAISO", 2024, zones, eia930_monthly=True, forecast_budget=True
+            )
+
+
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
     """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
 

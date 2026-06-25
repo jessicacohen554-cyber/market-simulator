@@ -60,7 +60,10 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_fossil_gen,
     measured_monthly_hydro,
 )
-from market_sim.data.hydro import load_hydro_budget  # noqa: E402
+from market_sim.data.hydro import (  # noqa: E402
+    forecast_monthly_hydro,
+    load_hydro_budget,
+)
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
@@ -1223,6 +1226,8 @@ def _hydro_fleet(
     zone_names: list[str],
     backfill_year: int | None = None,
     eia930_monthly: bool = False,
+    forecast_budget: bool = False,
+    hydro_year: str = "normal",
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -1255,8 +1260,30 @@ def _hydro_fleet(
     (NEISO 2025: 2024 backfill 6.65 TWh, flat, vs measured 5.12 TWh). No-op
     when EIA-930 hydro for the ISO/year is unavailable. ``False`` (default)
     changes no existing run.
+
+    ``forecast_budget`` is the forward analogue of ``eia930_monthly``: instead
+    of pinning the budget to a measured year, it sets the monthly *level* to a
+    normal-water-year climatology (the multi-year mean of measured EIA-930
+    ``NG: WAT``) scaled by the wet/dry ``hydro_year`` lever — see
+    :func:`market_sim.data.hydro.forecast_monthly_hydro`. The per-plant
+    within-month shares still come from ``year``'s EIA-923 (the budget shape);
+    only the level is the forecast climatology, so the same when-to-generate
+    dispatch mechanism runs against a forward-reproducible level rather than a
+    realized one. Mutually exclusive with ``eia930_monthly`` (a run is either a
+    backcast realization or a forecast). No-op when no climatology exists for
+    the ISO. ``False`` (default) changes no existing run.
     """
-    target = measured_monthly_hydro(iso, year) if eia930_monthly else None
+    if eia930_monthly and forecast_budget:
+        raise ValueError(
+            "eia930_monthly (measured backcast level) and forecast_budget "
+            "(normal-water-year forecast level) are mutually exclusive"
+        )
+    if eia930_monthly:
+        target = measured_monthly_hydro(iso, year)
+    elif forecast_budget:
+        target = forecast_monthly_hydro(iso, hydro_year)
+    else:
+        target = None
     try:
         budget = load_hydro_budget(
             iso, year, backfill_year=backfill_year, monthly_target_mwh=target
@@ -1356,6 +1383,8 @@ def run_year(
     ordc_lolp_params_path: str | None = None,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
+    hydro_forecast_budget: bool = False,
+    hydro_year: str = "normal",
     interchange_shaping: bool = False,
     interchange_shaping_export_only: bool = False,
     reference_price_interface: bool = False,
@@ -1947,6 +1976,8 @@ def run_year(
         zone_names,
         backfill_year=hydro_backfill_year,
         eia930_monthly=hydro_eia930_monthly,
+        forecast_budget=hydro_forecast_budget,
+        hydro_year=hydro_year,
     )
     hydro_gen_idx = None
     if hydro_units:
