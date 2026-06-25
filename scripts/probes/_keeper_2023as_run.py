@@ -103,6 +103,15 @@ def main(argv: list[str]) -> int:
         if os.environ.get("KEEPER_STGAS_DRAG_PARAMS")
         else None
     )
+    #   KEEPER_BATTERY_ADDER=<float> -> override the grid-battery throughput
+    #   /cycling adder ($/MWh discharged, ScenarioConfig.battery_dispatch_adder).
+    #   The keeper uses 10.0; set 0 to restore arbitrage peak-shaving (the run154
+    #   LMP-shape probe: batteries shaved the Aug evening net-load ramp in 2024).
+    battery_dispatch_adder = (
+        float(os.environ["KEEPER_BATTERY_ADDER"])
+        if os.environ.get("KEEPER_BATTERY_ADDER")
+        else 10.0
+    )
     sm = dict(cfg.get("coal_prb_sigmoid_overrides", {}))
     #   KEEPER_PRB_PARAMS='{"coal_prb_passthrough_floor": 0.78, ...}' -> overlay
     #   the coal PRB passthrough-sigmoid ScenarioConfig params (floor/ceil/gas_mid
@@ -143,7 +152,7 @@ def main(argv: list[str]) -> int:
         coal_bit_sigmoid=cfg["coal_bit_passthrough_sigmoid"],
         bit_overrides=cfg.get("coal_bit_sigmoid_overrides") or None,
         storage_daily_cycling=True,
-        battery_dispatch_adder=10.0,
+        battery_dispatch_adder=battery_dispatch_adder,
         as_reserve_withholding=False,
         energy_reserve_coopt=True,
         ercot_load_resource_reserve=True,
@@ -172,7 +181,7 @@ def main(argv: list[str]) -> int:
         btm_backfill_year=cfg.get("btm_backfill_year"),
         note=f"run134 recipe re-solved with measured 2023 AS; "
         f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}; "
-        f"ecrs-requirement={ercot_ecrs}",
+        f"ecrs-requirement={ercot_ecrs}; battery-adder={battery_dispatch_adder}",
     )
     report_run(run_dir)
     print(f"\nBundle: {run_dir}")
