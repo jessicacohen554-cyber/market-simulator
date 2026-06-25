@@ -62,6 +62,7 @@ from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
     compute_commitment,
     compute_monthly_markup,
+    reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
 from market_sim.model.storage import (
@@ -92,6 +93,8 @@ from market_sim.results.scarcity import (
     ercot_reserve_coopt_inputs,
     miso_reserve_coopt_inputs,
     nyiso_reserve_coopt_inputs,
+    nyiso_spin_eligible,
+    nyiso_spin_requirement_mw,
     pjm_reserve_coopt_inputs,
     reserve_headroom,
     scarcity_prices,
@@ -819,6 +822,30 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     storage_zone_idx=storage.zone_idx,
                     demand=year_demand,
                 )
+                # NYISO path B (commitment-gated synchronised reserve): the
+                # energy-economic screen decommits NYC quick-start peakers that
+                # aren't needed for energy, so they can no longer back the
+                # locational spinning family and the >$300 tail never fires.
+                # Force-commit the cheapest-startup NYC quick-start units until
+                # their committed capacity covers the MEASURED NYC spinning
+                # requirement (NYISO_SPIN_FRACTION x NYC 10-min total = 250 MW),
+                # so the P2 class-1 NYC headroom row equals Sum_online(pmax - P)
+                # and the family binds endogenously in genuinely tight hours
+                # (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md,
+                # "Path B"). NYISO-only behind the default-off flag.
+                if (
+                    getattr(config, "nyiso_synchronised_reserve", False)
+                    and iso == "NYISO"
+                ):
+                    spin_eligible = nyiso_spin_eligible(fleet_arrays, zone_names)
+                    committed = reserve_adequacy_commit(
+                        committed,
+                        fleet_arrays,
+                        dispatch_fleet,
+                        spin_eligible,
+                        requirement_mw=nyiso_spin_requirement_mw(config),
+                        headroom_frac=config.nyiso_spin_headroom_frac,
+                    )
                 fleet_arrays_p2 = apply_commitment_with_coal_pin(
                     fleet_arrays,
                     committed,
