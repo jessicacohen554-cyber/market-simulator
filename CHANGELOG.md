@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-25 (NYISO keeper `nyiso 27 cc-offer` — CC offer-level re-level to CAMPD marginal-HR reach)
+
+**New NYISO keeper, one source edit.** Re-solved the `nyiso 26 cc-nameplate`
+config (byte-identical flags, P1, no commitment) with the NYISO CC offer **level**
+raised toward the CAMPD CC marginal-heat-rate SRMC reach: `_NYISO_OFFER_CURVE`
+`CC_REGULAR` `econ_high` **1.12 → 1.21** and `CC_CHP` **1.15 → 1.24** (the same
+`1.21×` base_hr fit ERCOT's keeper uses; `econ_low`/`committed`/`peak` unchanged).
+The rule-#1 second step: `nyiso 26` fixed the structure (full-nameplate CC + the
+Ravenswood steam HR, no wall), `nyiso 27` calibrates the offer level on it,
+grounded in the CAMPD CC marginal HR, not the residual (rules #11/#12). Effect vs
+`nyiso 26`, all predicted-direction, no re-walling / no merit inversion / no 2025
+overshoot: `2023 CC_REGULAR +2.09 → +1.70 TWh`, `ST_GAS −1.48 → −1.26`; `2024
+CC_REGULAR +2.39 → +2.09`, `ST_GAS −4.31 → −4.14`; `C3a` 2023 `−8.9 %` → in-band,
+2024 `−11.0 %` → `−9.7 %`, 2025 in-band; `C3b` 2024 `0.250 → 0.243`. C6 PASS;
+determination NOT-YET (residual CC/ST + `C3a` 2024 honest misses at the grounded
+offer ceiling + the ledgered gas basis floor). The CC offer-level frontier
+(`docs/handoffs/pjm-cc-level-tuning-2026-06.md`) is **DONE for NYISO**. Docs
+realigned: `docs/calibration-best-so-far-nyiso.md` (new keeper banner),
+`docs/cc-high-cf-investigation.md` (NYISO resolution), the PJM handoff (NYISO
+status). Top-15 retention dropped `nyiso-13-citygate-gas`.
+
 ## 2026-06-25 (NYISO keeper `nyiso 26 cc-nameplate` — re-solve on merged nameplate-CC code)
 
 **New NYISO keeper, no source change.** Re-solved the `nyiso 25 steam-merit`
