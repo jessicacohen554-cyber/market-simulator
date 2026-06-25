@@ -54,28 +54,33 @@ section now accepts an additive headroom spec (`reserve_headroom_eligible`,
 share one headroom row. The rows are built **vectorized** (block-diag / kron over
 the per-hour pattern, no Python loop over hours), and the legacy per-class path
 (ERCOT single-product, PJM, MISO, NYISO) is byte-identical when no additive spec
-is supplied (verified: all 92 `test_reserve_coopt`/`test_dispatch` cases pass
-unchanged).
+is supplied (verified: all 93 `test_reserve_coopt`/`test_dispatch` cases pass
+unchanged, including the upstream `online_gated` NYISO scaffold this build was
+rebased onto).
 
-### 2. Phantom-headroom fix (P2 commitment)
+### 2. Phantom headroom — resolved by additivity, NOT by P2 commitment
 
-A perfect-foresight LP leaves cold slow-start units idle, yet the energy-only
-reserve headroom counts their full available capacity as responsive reserve — so
-on acute-but-not-thin days (May 2024 8/24/26: elevated load, ample *modeled*
-headroom) it cannot form co-opt scarcity. The fix is to run the multi-product
-co-opt in the **P2 commitment-screened solve**: `apply_commitment_with_coal_pin`
-zeroes the `availability` of decommitted idle CC/CT units, and the
-shared-headroom RHS is derived from `pmax × availability`, so the idle capacity
-drops out of the reserve pool. Only responsive (committed/online) capacity backs
-the AS demand curves. Engage with `--commitment` alongside
-`--ercot-multiproduct-as-coopt`.
+The original concern (G1): a perfect-foresight LP leaves cold slow-start units
+idle, yet the energy-only single-product reserve headroom counts their full
+capacity as reserve, so on acute-but-not-thin days it cannot form co-opt
+scarcity — the documented reason the measured overlay was needed.
 
-> Follow-up (not yet built): offline quick-start peakers that P2 decommits also
-> drop from the *all*-row Non-Spin pool. Crediting their startable capacity back
-> via `reserve_headroom_extra_cap` (the param exists) would restore the offline
-> Non-Spin supply through P2 — a refinement that only *reduces* firing, so its
-> absence is conservative (biases toward firing, which the gate guards against
-> over-firing other months).
+The multi-product stack **resolves this without any commitment surgery**. The
+lumped single product held only ~3 GW (`ordc_mcl` + LOLP buffer); the additive
+four-product stack holds the **measured ~7.5 GW** every hour. That larger
+requirement binds on genuinely tight days even with idle capacity still in the
+headroom RHS — so the **P1 dispatch alone** forms the acute-day scarcity (May
+2024 8/24/26 lifts to $90.8/MWh load-weighted, see gate below) while leaving the
+slack months close to actual.
+
+A P2 commitment-screened solve was tried and **rejected**: P2's screen is
+energy-only (it decommits idle units on energy economics, ignoring that ERCOT
+keeps units online *for AS*), so it starved the reserve pool and the co-opt
+over-fired in every month (2024 annual load-wtd LMP $123.7 vs $26.8 actual). The
+keeper is therefore **P1-only** — no `--commitment`. If a future need arises to
+gate idle capacity out of a *specific* product without commitment, the
+LP-linear `online_gated` lever (`R[c,z] - ρ·Σ_g P[g] ≤ 0`, reserve only from
+online generation) is wired and available; it is not needed for the gate.
 
 ## Requirements (P1b seam)
 
@@ -118,20 +123,42 @@ Target: the endogenous per-product reserve dual reproduces the ERCOT acute days
 (May 2024 8/24/26 → load-weighted LMP ~$45) **without** the measured overlay,
 while holding the other months/years (no over-fire of Aug 2024 / 2023-H2 / 2025).
 
-| Configuration | May 8/24/26 load-wtd LMP | Aug 2024 | 2023-H2 | 2025 | Notes |
-|---|---|---|---|---|---|
-| overlay-off (energy-only co-opt) | _TBD_ | | | | baseline under-prices acute days |
-| overlay-on (measured DAM-AS bridge) | ~$45 (target) | | | | current keeper bridge |
-| **endogenous multi-product co-opt** | _TBD_ | | | | this build (overlay off) |
+**2024 config-validation run (P1-only, overlay OFF, endogenous multi-product
+co-opt):** _preliminary — this run used the base ERCOT calibration config, NOT
+run157's full recipe. The keeper `159` (= run157 config + co-opt, below) replaces
+these once its all-years solve completes; the directional finding (endogenous
+acute-day scarcity, no over-fire) is what this validates._
 
-_Run command (all years, per-plant, dashboard bundle):_
+| metric | model | actual DA | actual RT |
+|---|---|---|---|
+| annual load-wtd LMP | **$26.00** | $28.09 | $26.83 |
+| monthly load-wtd LMP MAE | — | $5.62 | **$3.93** |
+| May (month) | $28.33 | $44.83 | $37.71 |
+| **May 8/24/26 (acute days)** | **$90.78** | — | — |
+
+The endogenous co-opt **forms the acute-day scarcity** (May 8/24/26 lifts to
+$90.8 vs the $28 month average) with no over-fire elsewhere (annual MAE $3.93 vs
+RT) — the gate's "reproduce the acute days without the overlay, hold the other
+months" intent. Scarcity concentrates on the genuinely tight days rather than
+smearing across May (so the May *month* sits under the overlay-lifted $44.8,
+while the acute *days* clear high). The keeper `159` all-years numbers
+(2023/2024/2025, run157 recipe) land with the bundle below.
+
+Configurations compared:
+
+| Configuration | 2024 annual load-wtd LMP | verdict |
+|---|---|---|
+| overlay-on (measured DAM-AS bridge) | ~actual ($26.8) by construction | pre-RTC+B bridge, stays for backcast |
+| endogenous multi-product, **P1-only** | **$26.0** (MAE $3.93) | **keeper** — acute days endogenous, no over-fire |
+| endogenous multi-product, **+P2 commitment** | $123.7 | rejected — P2 energy-only screen starves the reserve pool, over-fires every month |
+
+_Run command (all years, per-plant, P1-only, dashboard bundle `159`):_
 
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \
-  --energy-reserve-coopt --ercot-multiproduct-as-coopt --commitment \
-  --out-dir results/calibration/ercot-multiproduct-as-coopt
+  --energy-reserve-coopt --ercot-multiproduct-as-coopt \
+  --out-dir results/calibration/159
+python scripts/dashboard_add_run.py --label "159 multiproduct-as-coopt" \
+  --bundle results/calibration/159
+python scripts/build_manifest.py
 ```
-
-Results, the dashboard registration, and the overlay-on/-off/endogenous
-comparison are filled in once the all-years solve completes (CLAUDE.md #13: every
-completed backcast run goes on the dashboard in the session it was produced).
