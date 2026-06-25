@@ -70,15 +70,20 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   **minus** that class's behind-the-meter CHP host supply (`btm.parquet`), i.e.
   grid-delivered generation by class. (Solar/wind are *not* in this gate — see
   C-VRE note; they route to EIA-930 per `calibration.actuals_source`.)
-- **Per-year tolerance (the 2026-06-15 universal class gate).** A class passes iff
+- **Per-year tolerance (the universal class gate).** A class passes iff
   **both** bands hold (mirrors `scripts/probes/_backcast_shell.py:classInTol`, so
   the determination and the dashboard scorecard agree):
-  - **Volume:** the grid-delivered miss `|model − actual|` is within **0.5% of ISO
-    annual generation** (`SUM_TOL_GEN_FRAC = 0.005` of the system total — model
-    grid-LP + non-fossil vs (EIA-923 − BTM) + EIA-930 nuclear/wind/solar). The
-    band scales with system size (~2.3 TWh on ERCOT, the structural-noise floor)
-    and is applied uniformly across classes and ISOs — it **supersedes the old
-    ±5% OR ±1 TWh size-tiered bar**, which let large classes drift several TWh.
+  - **Volume:** the grid-delivered miss `|model − actual|` is within
+    **`min(1.0% of ISO annual generation, 5 TWh)`** (`SUM_TOL_GEN_FRAC = 0.01`,
+    `SUM_TOL_GEN_CAP = 5` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
+    EIA-930 nuclear/wind/solar). The percent term scales with system size (≈1 pp
+    of share) but is **capped at an absolute 5 TWh** so the band can't balloon on
+    large ISOs (1% of an ~800 TWh system would be 8 TWh, letting a small steam-gas
+    class drift far on the margin and still pass). Applied uniformly across classes
+    and ISOs — it **supersedes the old ±5% OR ±1 TWh size-tiered bar** (which let
+    large classes drift several TWh) and the prior uncapped **0.5% band** (which
+    gated most classes at ~0.5 pp of share, tighter than the share band itself).
+    Loosened 0.5%→1.0% and capped at 5 TWh on 2026-06-25.
   - **Share:** the class's **share of total generation** is within **1.5
     percentage points** of the actual share (`SUM_TOL_SHARE_PP = 1.5`) — so a
     class cannot pass on volume alone while still misrepresenting the mix.
@@ -137,14 +142,14 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   family-aggregate percent band had two failure modes: it **invented** a fail
   when a mid-size family's small absolute miss exceeded the band as a percent of
   *itself* (ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only +0.3 pp of
-  generation and well inside the 0.5%-ISO-gen volume band), and it **masked** a
+  generation and well inside the 1.0%-ISO-gen volume band), and it **masked** a
   real per-class miss when offsetting class errors **netted** across the family (a
   CT_PEAKER over-build cancelled by a CC under-build summing to ≈0% at the family
   level). The fix scores at the class scale, sized to the *system* not to the
   class, so neither tiny nor mid-size classes blow up and nothing nets:
   - **Complete vintage (year < 2025):** the family **defers to C1** — it passes
     iff every constituent class is within the universal per-class gate
-    (|model−actual| ≤ 0.5% of ISO annual generation **and** share within ±1.5 pp;
+    (|model−actual| ≤ 1.0% of ISO annual generation **and** share within ±1.5 pp;
     actual = `classFull` = EIA-923 − BTM). C1 already scores these classes as a
     HARD criterion, so any breach surfaces there; C2 records `PASS` and echoes any
     C1-flagged class in its magnitude (no independent family pass/fail).
