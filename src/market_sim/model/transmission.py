@@ -1545,6 +1545,70 @@ def inject_interchange_shape(
     return True
 
 
+def inject_miso_seam_flow_limit(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    percentile: float | None = None,
+) -> bool:
+    """Cap each MISO reference-price seam's import bands at the measured envelope.
+
+    The reference-price seam (:func:`build_reference_price_node`) makes every
+    import band of every neighbor available in every hour, so the LP imports up
+    to the full interface limit on each seam whenever its priced spread is
+    positive — and because MISO's LMP sits above all three neighbors' nearly
+    every hour, it over-imports on ALL three seams (the −72/−50/−7 TWh net
+    interchange vs the measured −38/−23/−19). In reality only the eastern PJM
+    seam is a large net-import path; MISO nets ≈0 over SPP and net-*exports* over
+    the southern (TVA-dominated) seam.
+
+    This scales, per hour, each neighbor's import-band ``availability`` by its
+    measured per-seam net-import deliverability envelope
+    (:func:`market_sim.data.eia_loader.measured_seam_import_envelope`) relative
+    to that seam's static interface limit, so the seam can import at most its
+    historical *deliverable* transfer in that (month × hour-of-day) period. The
+    envelope is a one-sided (import-direction) ceiling: a seam that reliably
+    net-exports caps to ~zero import, while its export bands keep their priced
+    economics. A high percentile keeps headroom above the median, so the modeled
+    seam price — not the cap — sets the typical hour. Mirrors
+    :func:`inject_interchange_shape` (post-assembly availability scaling) but
+    per-seam and on the measured *directed* BA-to-BA flow rather than the
+    aggregate net interchange. Modifies ``fleet_arrays`` in place.
+
+    Returns ``True`` when at least one seam was capped, ``False`` when no
+    reference-price import bands are present or no measured envelope is available
+    (forecast year / unmapped ISO), leaving the seam unchanged (byte-identical).
+    """
+    from market_sim.data.eia_loader import measured_seam_import_envelope
+
+    hours = int(fleet_arrays.availability.shape[1])
+    env = measured_seam_import_envelope(iso, year, hours, percentile)
+    if not env:
+        return False
+    applied = False
+    for name, cap in env.items():
+        # Import bands of this neighbor: uid is "<zone>_refimp_<name>#k".
+        rows = [
+            r
+            for r, uid in enumerate(fleet_arrays.unit_ids)
+            if _REF_IMPORT_MARK in uid
+            and uid.rsplit(_REF_IMPORT_MARK, 1)[1].partition("#")[0] == name
+        ]
+        if not rows:
+            continue
+        total = float(fleet_arrays.pmax[rows].sum())  # = interface_limit_mw
+        if total <= 0.0:
+            continue
+        # Uniform per-band derate so the seam's summed import availability ≤ cap
+        # each hour; the bands keep their rising (flow-responsive) prices, so the
+        # LP still fills the cheapest first below the ceiling.
+        frac = np.clip(np.asarray(cap, dtype=float) / total, 0.0, 1.0)
+        for r in rows:
+            fleet_arrays.availability[r, :] *= frac
+        applied = True
+    return applied
+
+
 # Midday solar-glut window (local hour-of-day, ``[start, end)``) over which the
 # CAISO RA must-offer gas floor binds — the duck-curve belly when CAISO is long
 # and exports/curtails its surplus. Outside it the gas fleet dispatches purely

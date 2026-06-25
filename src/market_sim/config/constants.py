@@ -2783,6 +2783,57 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     ],
 }
 
+# --- MISO per-seam measured BA-to-BA deliverability envelope ----------------
+# Maps each MISO reference-price seam (the INTERFACE_NEIGHBORS["MISO"] names) to
+# the EIA-930 Directly-Interconnected-BA codes whose measured hourly directed
+# interchange physically crosses that seam's border zone. The seam's per-hour
+# import-deliverability ceiling is the (month × hour-of-day) high-percentile of
+# the summed measured NET IMPORT over its DIBAs (data/raw/eia-930-interchange/
+# MISO interchange hourly.parquet; EIA sign + = MISO exports to the DIBA, so net
+# import = −sum). This is an ATC/transfer-capability proxy — the seam's
+# *deliverable* import in that period, congestion/firm-rights-limited below the
+# nameplate interface rating — applied as a one-sided (import-direction) hourly
+# upper bound (transmission.inject_miso_seam_flow_limit). It is a reproducible
+# physical transfer characteristic (regenerable for a forward year from the
+# directed-flow series, responsive to changed flows), NOT a value fitted to
+# MISO's net-interchange residual (claude.md rules #1/#12): the envelope is
+# computed from the per-seam directed flow before any LP runs, the export
+# direction stays economic, and a high percentile keeps headroom above the
+# median so price — not the cap — sets the typical hour.
+#
+# Border mapping (geographic, eastern/western/southern):
+#   - PJM seam (MISO-Central, eastern IL/IN/MI border): PJM (the dominant
+#     net-import tie) + IESO/Ontario (the Michigan international tie, a real
+#     ~3-7 TWh/yr import that physically enters the same eastern border).
+#   - SPP seam (MISO-North, western Dakotas/IA/NE border): SWPP (the MISO/SPP
+#     coordinated AC interface) + SPA (Southwestern Power Administration federal
+#     hydro in the SPP footprint). MISO nets ~0/slight EXPORT here — the measured
+#     net import is near zero, so the seam's import cap is small and the spurious
+#     cheap-wind over-import is removed; the wind-import hours the p90 still
+#     captures stay available.
+#   - South seam (MISO-South, Entergy↔SERC border): SOCO + TVA + AECI + LGEE +
+#     SIKE. MISO net-EXPORTS to the south (TVA dominant, ~+13-18 TWh/yr), so the
+#     summed net import is negative in most buckets and the import cap clips to
+#     ~0 — the export direction (priced seam economics) carries MISO's real
+#     southern export.
+# Manitoba Hydro (MHEB) is deliberately EXCLUDED: it is modeled as the separate
+# firm-hydro block (MISO_MANITOBA_FIRM_IMPORT_*), not the gas-margin seam. The
+# three seam caps + the firm block thus reconstruct the full measured MISO net
+# interchange.
+MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {
+    "PJM": ("PJM", "IESO"),
+    "SPP": ("SWPP", "SPA"),
+    "South": ("SOCO", "TVA", "AECI", "LGEE", "SIKE"),
+}
+
+# Percentile of the per-(month × hour-of-day) measured net-import distribution
+# used as each seam's deliverability ceiling. 90 = the upper envelope minus the
+# top ~10% transient/loop-flow hours (matching measured_interchange_envelope's
+# default and the interface-limit duration-curve convention), keeping headroom
+# above the median so the modeled seam price still sets the typical hour. A
+# deliverability-headroom choice, NOT tuned to the net-MWh target.
+MISO_SEAM_FLOW_PERCENTILE: float = 90.0
+
 # Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
 # carry a generation-like availability (NERC GADS — representative for
 # out-of-state generation); PJM's blocks are scheduled interties whose

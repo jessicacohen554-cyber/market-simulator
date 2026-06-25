@@ -898,6 +898,107 @@ def caiso_solar_fraction(year: int, hours: int) -> np.ndarray | None:
     return np.clip(np.nan_to_num(frac, nan=0.0), 0.0, 1.0)
 
 
+def measured_seam_import_envelope(
+    iso: str, year: int, hours: int, percentile: float | None = None
+) -> dict[str, np.ndarray] | None:
+    """Return each priced seam's measured net-import deliverability cap (MW).
+
+    The MISO analogue of :func:`measured_corridor_flow_envelope`. For each
+    reference-price seam in :data:`~market_sim.config.constants.MISO_SEAM_DIBA`
+    (``PJM`` / ``SPP`` / ``South``), returns the per-hour ceiling on net import
+    (MW), built as the per-(month × hour-of-day) ``percentile`` of the MEASURED
+    net import summed over that seam's EIA-930 Directly-Interconnected BAs
+    (``data/raw/eia-930-interchange/<BA> interchange hourly.parquet``; columns
+    ``diba``, ``mw`` [EIA sign: + = ISO exports to the DIBA], ``local_time``).
+    Each seam's net import is ``−sum(mw over its DIBAs)`` per timestamp.
+
+    This is a transfer-capability / ATC proxy: the seam's *deliverable* net
+    import in that period — congestion- and firm-rights-limited below the
+    nameplate interface rating, and naturally near zero (or capped to zero) on a
+    seam the ISO actually net-exports over (SPP, South). The caller applies it as
+    a one-sided hourly upper bound on that seam's import bands, so the LP still
+    clears its merit order *below* the ceiling and the export direction stays
+    economic — a capability limit, not a flow pinned to the residual (claude.md
+    rules #1/#12). ``percentile`` defaults to
+    :data:`~market_sim.config.constants.MISO_SEAM_FLOW_PERCENTILE` (90).
+
+    Hours map onto the model's fixed non-leap calendar
+    (:func:`~market_sim.data.fleet._hour_to_month_index` for the month, ``hour %
+    24`` for the hour-of-day), the same calendar the LP uses, so the cap aligns
+    hour-for-hour with the dispatch. Leap-day samples fold into their (month,
+    hour-of-day) buckets and never reach the dispatch clock.
+
+    Returns ``{seam_name: (hours,) MW}`` for every seam with measured data, or
+    ``None`` when the ISO has no seam-DIBA map, the parquet is absent, or the
+    year is uncovered (a forecast year) — in which case the caller leaves the
+    seams uncapped (byte-identical).
+    """
+    from market_sim.config.constants import (
+        MISO_SEAM_DIBA,
+        MISO_SEAM_FLOW_PERCENTILE,
+    )
+    from market_sim.data.fleet import _hour_to_month_index
+
+    seam_diba = {"MISO": MISO_SEAM_DIBA}.get(iso.upper())
+    if not seam_diba:
+        return None
+    pct = MISO_SEAM_FLOW_PERCENTILE if percentile is None else float(percentile)
+    ba = _ISO_TO_HOURLY_BA.get(iso.upper())
+    if ba is None:
+        return None
+    path = RAW_DIR / "eia-930-interchange" / f"{ba} interchange hourly.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    local = pd.DatetimeIndex(frame["local_time"])
+    frame = frame[local.year == year]
+    if frame.empty:
+        return None
+    local = pd.DatetimeIndex(frame["local_time"])
+    # Map each DIBA to its seam; rows whose DIBA is in no seam (e.g. MHEB, the
+    # firm-hydro block) drop out.
+    diba_to_seam = {d: s for s, dibas in seam_diba.items() for d in dibas}
+    seam = frame["diba"].astype(str).map(diba_to_seam)
+    work = pd.DataFrame(
+        {
+            "seam": seam.to_numpy(),
+            "month": local.month.to_numpy(),
+            "hod": local.hour.to_numpy(),
+            "ts": local.to_numpy(),
+            "mw": pd.to_numeric(frame["mw"], errors="coerce").to_numpy(),
+        }
+    ).dropna(subset=["seam", "mw"])
+    # Net import per seam per timestamp = −sum(interchange over its DIBAs).
+    per_ts = work.groupby(["seam", "ts", "month", "hod"], observed=True)["mw"].sum()
+    per_ts = (-per_ts).reset_index(name="net_import")
+
+    rm = _hour_to_month_index(hours) + 1  # 1-based month per model hour
+    rh = np.arange(hours) % 24
+    out: dict[str, np.ndarray] = {}
+    for name in seam_diba:
+        sub = per_ts[per_ts["seam"] == name]
+        if sub.empty:
+            continue
+        tab = np.full((12, 24), np.nan)
+        for (m, h), g in sub.groupby(["month", "hod"], observed=True):
+            tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
+        # Fill any empty (month, hod) bucket with that month's max over hours,
+        # then the global max, so the cap is always finite.
+        for m in range(12):
+            row = tab[m]
+            if np.all(np.isnan(row)):
+                continue
+            tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
+        if np.any(np.isnan(tab)):
+            tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
+        # Clip at 0: the cap bounds net *import*; a bucket whose pXX net import
+        # is negative (the seam reliably net-exports then — SPP/South) caps
+        # import at zero, never forces an export. The export direction is left
+        # to the priced seam's own economics.
+        out[name] = np.clip(tab[rm - 1, rh], 0.0, None)
+    return out or None
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.

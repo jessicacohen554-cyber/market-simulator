@@ -1605,6 +1605,7 @@ def solve_and_persist(
     nyiso_import_reconciliation: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     miso_firm_imports: bool | None = None,
+    miso_seam_flow_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -1773,6 +1774,7 @@ def solve_and_persist(
             nyiso_import_reconciliation=nyiso_import_reconciliation,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             miso_firm_imports=miso_firm_imports,
+            miso_seam_flow_limit=miso_seam_flow_limit,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -1980,6 +1982,7 @@ def solve_and_persist(
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "miso_firm_imports": miso_firm_imports,
+        "miso_seam_flow_limit": miso_seam_flow_limit,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -2156,6 +2159,8 @@ def solve_and_persist(
         )
     if miso_firm_imports is not None:
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
+    if miso_seam_flow_limit:
+        recorded_cfg = recorded_cfg.with_overrides(miso_seam_flow_limit=True)
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             gas_hub_basis_overlay=gas_hub_basis_overlay
@@ -4985,6 +4990,21 @@ def main() -> None:
         "constants.resolve_miso_firm_imports).",
     )
     parser.add_argument(
+        "--miso-seam-flow-limit",
+        action="store_true",
+        help="MISO reference-price seam deliverability cap: bound each seam's "
+        "(PJM/SPP/South) import-band availability at the MEASURED EIA-930 "
+        "BA-to-BA net-import envelope (per (month x hour-of-day) p90 of the "
+        "directed flow over the seam's DIBAs). Fixes the structural over-import: "
+        "the priced seam imports at the interface limit on all three borders, but "
+        "MISO only net-imports over the eastern PJM seam — it nets ~0 over SPP and "
+        "net-EXPORTS over the southern TVA-dominated seam. The one-sided import "
+        "cap clips SPP/South toward ~0 import while export bands keep their priced "
+        "economics. A transfer-capability proxy from the directed-flow series, "
+        "reproducible for a forward year and flow-responsive, NOT fitted to the "
+        "net-MWh residual. Requires --reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5244,6 +5264,7 @@ def main() -> None:
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         miso_firm_imports=miso_firm_imports,
+        miso_seam_flow_limit=args.miso_seam_flow_limit,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,

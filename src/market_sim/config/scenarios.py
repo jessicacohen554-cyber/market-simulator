@@ -638,6 +638,23 @@ class ScenarioConfig:
     # only; default off here but default-ON for the MISO backcast via
     # constants.resolve_miso_firm_imports (the firm Manitoba import is the correct
     # structure for MISO, not a probe). ERCOT byte-identical.
+    miso_seam_flow_limit: bool = False  # MISO reference-price seam: cap each
+    # seam's (PJM/SPP/South) import-band availability at the MEASURED EIA-930
+    # BA-to-BA net-import deliverability envelope (per (month × hour-of-day) p90
+    # of the directed flow over the seam's DIBAs; constants.MISO_SEAM_DIBA,
+    # data.eia_loader.measured_seam_import_envelope, transmission.inject_miso_
+    # seam_flow_limit). Fixes the structural over-import: the priced seam imports
+    # at the interface limit on ALL THREE borders whenever MISO's LMP exceeds the
+    # neighbor's (-72/-50/-7 TWh net vs measured -38/-23/-19), but in reality only
+    # the eastern PJM seam is a large net-import path — MISO nets ~0 over SPP and
+    # net-EXPORTS over the southern TVA-dominated seam. The one-sided import cap
+    # bounds each seam to its deliverable transfer (SPP/South clip toward ~0
+    # import) while the export bands keep their priced economics; a high
+    # percentile keeps headroom so the modeled price still sets the typical hour.
+    # An ATC/transfer-capability proxy from the directed-flow series — reproducible
+    # for a forward year and flow-responsive — NOT fitted to the net-MWh residual
+    # (rules #1/#12). Requires --reference-price-interface; MISO-only (no seam-DIBA
+    # map → no-op, byte-identical for other ISOs). Default off; opt-in per run.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -2242,6 +2259,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_synchronised_reserve": 1,
     "nyiso_forward_net_import_twh": 2,
     "miso_firm_imports": 1,
+    "miso_seam_flow_limit": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
