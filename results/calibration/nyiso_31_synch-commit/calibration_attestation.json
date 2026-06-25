@@ -1,0 +1,127 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "nyiso-30 synch-commit PROBE 2026-06-25",
+  "determination": "REJECTED PROBE (path B is a no-op for the downstate tail; the measured synchronised-reserve requirement does not bind). Keeper stays nyiso-27 cc-offer (keepers.json[NYISO] unchanged).",
+  "note": "Re-solve of the nyiso-27 cc-offer keeper config (byte-identical keeper flags: --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply --nyiso-firm-imports --nyiso-import-reconciliation) plus the path-B route of the NYISO-only, default-OFF --nyiso-synchronised-reserve lever WITH the P2 commitment screen ON (--commitment). Path B (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md, 'Path B') replaces path A's online-gated proxy row with COMMITMENT as the online indicator: (1) the NYC spinning family rides the ORDINARY class-1 (quick-start) headroom row (Sum P + R <= Sum cap), and apply_commitment_with_coal_pin zeroes the availability of decommitted units so that, restricted to the committed set, the row equals Sum_online(pmax - P) -- the physically-correct synchronised headroom, MILP-free; (2) a new reserve-adequacy commit (model.commitment.reserve_adequacy_commit, wired in runner P2) force-commits the cheapest-startup NYC quick-start units until committed capacity covers the MEASURED NYC spinning requirement = NYISO_SPIN_FRACTION x NYC 10-min total = 0.5 x 500 = 250 MW (the published 1/2-largest-contingency rule; a market-design constant, NOT fitted). PURPOSE: test whether commitment-gated synchronised headroom binds the NYC reserve family endogenously and fires the >$300 RCPF tail.",
+  "validation_note": "No scored OUTPUT is pinned and NO price adder is added -- the >$300 tail in this run is whatever the binding reserve family endogenously produces (here: it does NOT fire, see below). The single new quantity is a measured INPUT: the spinning fraction 0.5 (NYISO Ancillary Services / T&D Operations Manual: 10-min spinning = 1/2 largest contingency) applied to the already-grounded NYC 10-min total, and the committed-headroom target was set TO that measured 250 MW requirement (nyiso_spin_headroom_frac=1.0), NOT raised to whatever value would manufacture the missing tail hours (forbidden, rule #12). The gas total and LMP remain unpinned; no unit pinned to CEMS; no haircut/adder/sigmoid tuned to a residual; the td_loss / gas-basis floor is untouched."
+ },
+ "_probe_outcome": "REJECTED PROBE -- path B is a TRUE NO-OP for the downstate scarcity tail AND the CT_PEAKER energy: every scored metric reproduces the nyiso-27 keeper essentially exactly (C1 CT_PEAKER 2023 -1.30, 2024 -1.51 TWh; C1 CC_REGULAR 2023 +1.70, 2024 +2.09; C3c >$300 1/0/8 vs actual 10/12/42; C3a 2024 -9.7%; C3b 2024 NRMSE 0.243; C2 gas 2025 -3.8%; C5a 2024 -9.1%). P1 and P2 clear at IDENTICAL prices and the NYC quick-start fleet generates the identical 2.231 TWh in P1 and P2, so the commitment screen + reserve-adequacy commit changed nothing the reserve clearing sees. ROOT CAUSE (the decisive empirical finding, distinct from path A's): the physically-correct synchronised headroom Sum_online(pmax - P) over the COMMITTED NYC quick-start fleet is ABUNDANT relative to the measured requirement, even in the tightest hours. In the top-50 NYC-price hours of 2025 the NYC quick-start fleet runs ~1,823 MW out of ~3,500 MW committed/available -- ~1,700 MW of genuine online headroom against a 500 MW NYC 10-min requirement (and a 250 MW spin sub-requirement). The reserve family therefore CANNOT bind: with the measured requirement and the modelled fleet the model says NYC is NOT synchronised-reserve-short, so no RCPF step fires and the NYC LMP does not separate upward. Commitment-gating only REMOVES offline (decommitted) pmax from the pool; it does nothing to the committed-but-backed-off headroom that actually dominates the NYC pocket, and reserve_adequacy_commit can only ADD committed headroom (it never tightens the pool). So the path-B premise -- that commitment would shrink the online pool below the requirement in tight hours -- is empirically false for NYISO at the measured requirement. INTERPRETATION (rules #1/#11/#12): the gap between the model (NYC reserve-rich) and reality (NYC measured reserve adder > $0 in ~4,000 h/yr) is NOT a missing online-gate; it is that NYISO's real downstate scarcity is driven by binding outside the static published reserve MW the model holds (effective real-time requirements that rise with conditions, deliverability/ramp limits inside the pocket, or unit energy commitments that consume the headroom the perfect-foresight LP keeps free). Manufacturing the tail by raising the requirement above the published value, steepening the RCPF, or adding a price adder is forbidden (rule #12). Both path A (online proxy, nyiso-29) and path B (commitment-gated, this run) are therefore confirmed insufficient with the grounded inputs; the downstate >$300 tail is left as an ACCEPTED, ledgered open frontier on the nyiso-27 keeper, NOT closed with an ungrounded knob. The path-B wiring stays a NYISO-only, default-OFF scaffold (byte-identical when off; 103 reserve/dispatch/commitment tests green); the full implementation is preserved in this bundle's model_changes.diff.",
+ "exceptions": [
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2023,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.30 TWh, share -1.0pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail, incidence-gated; path B does not move it)",
+   "reason": "CT_PEAKER under-runs because NYC peakers clear on reserve/scarcity, not energy. Path B (commitment-gated synchronised reserve) does NOT move it: the NYC online headroom (~1,700 MW in tight hours) far exceeds the 250 MW spin / 500 MW 10-min requirement, so the reserve family never binds, no scarcity price forms, and the peakers stay economically idle exactly as in the keeper. Closing this needs a GROUNDED driver of real downstate scarcity that the static published reserve MW does not capture -- not an inflated requirement or a price adder (rule #12). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.51 TWh, share -1.1pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail, incidence-gated; path B does not move it)",
+   "reason": "Same NYC-peaker reserve/scarcity tail as 2023; path B leaves it unchanged for the same reason (online headroom >> measured requirement, reserve never binds). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CC_REGULAR",
+   "year": 2023,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "+1.70 TWh, share +1.4pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (CC offer-level frontier at its grounded ceiling)",
+   "reason": "CC over-runs because it sits at the CAMPD CC marginal-HR offer ceiling (nyiso-27 keeper attestation). Path B commits no extra peaker energy (the reserve never binds), so no marginal CC is displaced and the over-run is unchanged. The residual is the converged CC offer level (separate offer frontier -- do not touch _NYISO_OFFER_CURVE; rule #12). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CC_REGULAR",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "+2.09 TWh, share +1.9pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (CC offer-level frontier at its grounded ceiling)",
+   "reason": "Same CC offer-ceiling frontier as 2023; unchanged under path B. Converged CC offer level, out of scope. Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "ST_GAS",
+   "year": 2023,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-1.26 TWh, share -1.0pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (within-gas merit residual at the grounded CC offer ceiling)",
+   "reason": "ST_GAS under-runs as the complement of the CC over-run at the grounded CC offer ceiling. Path B shifts no energy (reserve never binds), so ST_GAS is unchanged. The within-gas merit ORDER stays physically correct. Out of scope; not chased with an un-grounded knob. Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "ST_GAS",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-4.14 TWh, share -3.1pp (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (within-gas merit residual + 2024 gas basis floor)",
+   "reason": "Same within-gas merit residual as 2023, amplified in 2024 by the EIA-930/EIA-923 gas-total basis floor (docs/nyiso-td-loss-resolution-2026-06.md). Unchanged under path B. Not closable without re-pinning the gas total (forbidden, rule #12). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "price_mean",
+   "year": 2024,
+   "metric": "C3a mean LMP",
+   "magnitude": "-9.7% (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the missing downstate scarcity tail)",
+   "reason": "The depressed mean is largely the missing >$300 downstate scarcity hours (C3c). Path B does NOT fire that tail (the measured reserve requirement is non-binding against the abundant NYC online headroom), so the mean is unchanged from the keeper. The mean recovers only when the downstate reserve actually binds -- which the grounded synchronised-reserve requirement does not. Not chased with a price adder (rule #12). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "price_shape",
+   "year": 2024,
+   "metric": "C3b price duration/shape NRMSE",
+   "magnitude": "0.243 (UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (shape follows the missing scarcity tail)",
+   "reason": "The duration-curve shape misfit is dominated by the missing upper tail. Path B adds no tail hours, so the shape is unchanged. Closes only when the tail fires endogenously, which the grounded reserve requirement does not produce. Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 1h vs actual 10h (0.10x; UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "The measured NYC 10-min (500 MW) / spinning (250 MW) requirement is non-binding: the committed NYC quick-start fleet holds ~1,700 MW of online headroom in the tightest hours, so the RCPF scarcity step never fires. Commitment-gating removes only offline pmax, not the dominant committed-but-backed-off headroom. Unchanged vs the keeper. Not chased by inflating the requirement above the published value or steepening the RCPF (forbidden, rule #12). Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2024,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 0h vs actual 12h (0.00x; UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same as 2023: the measured reserve requirement is non-binding against the abundant committed online headroom, so the >$300 RCPF never fires. Unchanged vs the keeper under path B."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2025,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 8h vs actual 42h (0.19x; UNCHANGED from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker / RCPF reserve-scarcity tail as 2023/24; path B adds no tail hours (reserve non-binding). Out of scope; not chased with a price adder. Keeper stays nyiso-27."
+  },
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2025,
+   "metric": "C2 gas total vs EIA-923 grid-delivered",
+   "magnitude": "model gas -3.8% (UNCHANGED in character from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+   "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the gas gap is the EIA-930/EIA-923 basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md; td_loss_factor=0 settled) plus preliminary-data incompleteness, not a dispatch error. Path B is a within-fleet no-op and does not move the gas TOTAL, which sits at its basis floor. Not closable by an honest knob (rules #1/#11/#12)."
+  },
+  {
+   "criterion": "co2",
+   "year": 2024,
+   "metric": "C5a system CO2 vs eGRID",
+   "magnitude": "model -9.1% (UNCHANGED in character from the keeper)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+   "reason": "2024 CO2 is downstream of the 2024 gas volume, which is at its EIA-923/EIA-930 basis floor. Path B is a within-fleet no-op, so the level stays governed by the gas-total basis floor. Not a separate emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+  }
+ ]
+}
