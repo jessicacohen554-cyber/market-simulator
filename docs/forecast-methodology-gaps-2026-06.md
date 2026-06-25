@@ -123,7 +123,7 @@ The landing point is the grounded CAMPD/SRMC reach, not a residual-zeroing value
 | Load-resource RRS-UFR credit (`ercot_load_resource_reserve`) | `results/scarcity.py:688` | measured NP3-911 RRS-UFR MW | enrollment-driven load-resource AS participation | PASS | **DSGN** | M | Low-Med |
 | Storage up-AS reservation (`ercot_storage_as_reserve` + `storage_as_commitment`) | `results/scarcity.py:721`; `data/fleet.py` storage cap | measured 60-Day DAM battery AS awards MW | endogenous storage **energy-vs-AS opportunity-cost** co-opt | PASS | **DSGN/MISSING** | L | Med |
 | ORDC LOLP distribution (`ordc_lolp_params_path`) | `results/scarcity.py:139,393` | optional measured LOLP table | slow-varying market-design param; default μ/σ forward | PASS | **IMPL** | — | Low |
-| West/Panhandle Waha net-load gas shape (`ercot_west_netload_gas_shape`, `neg_day_freq`) | `data/fuel.py:1632,1310` | measured Waha neg-price-day freq | **endogenous West net-load oversupply** → collapse freq | PASS | **PART** | M | Low |
+| West/Panhandle Waha net-load gas shape (`ercot_west_netload_gas_shape`, `ercot_west_gas_endogenous_collapse`) | `data/fuel.py:1632`, `fuel.ercot_west_oversupply_collapse_freq` | (was measured Waha neg-price-day freq) | **endogenous West net-load oversupply** → collapse freq | PASS | **IMPL** (G6 closed 2026-06-25) | — | Low |
 | BTM CHP host steam (`CHP_PMIN_CF`, `chp_overrides`, `btm.parquet`) | `data/fleet.py:4195` | CAMPD p2 CF floors (ERCOT) / EIA-923 sector BTM% | CHP host-load forecast (sector BTM share) | PASS | **PART** | M | Low |
 | HSL uncurtailed VRE potential (`hsl_potential_mw`, `_hsl_cf_profile`) | `data/renewables.py:382,876` | ERCOT/CAISO HSL parquet; 2024/25 EIA-930 net-of-curtailment | forecast VRE CF profiles + **endogenous curtailment** | PASS | **PART** | M-L | Med |
 | Weather-year pinning (`config.weather_year`) | `config/scenarios.py:33`; `data/fleet.py:1019` | historical-year load + VRE CF | weather-year **sampling / ensemble** (`market_sim.ensemble`, `WEATHER_YEAR_POOL`) | PASS³ | **IMPL** | — | Low |
@@ -315,14 +315,32 @@ energy — endogenously, no measured award needed. **Effort L** (new storage-res
 coupling in the LP), **Risk Med** (largest in 2025+, where the battery AS fleet is
 biggest).
 
-### G6 ERCOT West/Panhandle Waha net-load gas shape
+### G6 ERCOT West/Panhandle Waha net-load gas shape — CLOSED (2026-06-25)
 
-**Mostly forward already.** The price split is computed from the model's **own
+**Now fully forward.** The price split is computed from the model's **own
 net-load** distribution (deep-collapse vs firm regime), preserving a measured
-annual Waha basis; only the **collapse frequency** `neg_day_freq` is read measured.
-**Forward design:** model `neg_day_freq` as a function of forecast West net-load
-oversupply (West wind+solar > local load+export-limit frequency), which the model
-already computes — closing the last measured input. **Effort M, Risk Low.**
+annual Waha basis; the **collapse frequency** `neg_day_freq` was the last measured
+input and is now **endogenous**. `config.ercot_west_gas_endogenous_collapse`
+(env `ERCOT_WEST_ENDOGENOUS_COLLAPSE=1`) derives the split frequency from forecast
+West/Panhandle oversupply — the fraction of hours West+Panhandle wind+solar
+generation exceeds local West load plus the region's export TTC (WESTEX 10.0 GW +
+PNHNDL 2.68 GW); see `fuel.ercot_west_oversupply_collapse_freq`. Every input is a
+forecast quantity the model already builds (VRE capacity×CF, load forecast,
+transmission topology), so it regenerates forward and responds to changed
+conditions: more West VRE → more oversupply hours → higher collapse frequency
+(unit-tested). The measured `neg_day_freq` stays as the **backcast realization to
+validate against**, logged alongside the endogenous value on every solve and never
+re-pinned.
+
+**Validation (backcast, run158).** The endogenous oversupply frequency tracks the
+measured Waha negative-day frequency in the VRE-driven years and under-predicts the
+gas-infrastructure-driven 2024 record — exactly as expected, since 2024's 42% was a
+Permian gas-pipeline-takeaway event (a measured *outcome* with no forward analogue,
+#12), not a power-oversupply event the proxy models: endogenous **0.017 / TBD /
+TBD** vs measured **0.030 / 0.420 / 0.110** for 2023/2024/2025. The divergence is a
+documented residual, not a reason to revert the structural mechanism (#1/#11) — the
+forward model must respond to VRE build, which a frozen measured 0.42 cannot.
+**Done (was: Effort M, Risk Low).**
 
 ### G7 HSL uncurtailed VRE potential + endogenous curtailment
 

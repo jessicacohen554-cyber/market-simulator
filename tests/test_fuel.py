@@ -1,6 +1,7 @@
 """Tests for fuel price resolution against AEO Henry Hub trajectories."""
 
 import numpy as np
+import pytest
 
 from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
@@ -25,6 +26,7 @@ from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
     apply_nyiso_zonal_gas_basis,
+    ercot_west_oversupply_collapse_freq,
     iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
@@ -1707,3 +1709,108 @@ def test_monthly_ttc_noop_for_other_isos_and_untabulated_years():
     out_old = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2099, 8760)
     assert np.asarray(out_old).ndim == 1
     np.testing.assert_array_equal(out_old, ttc)
+
+
+def test_west_oversupply_collapse_freq_counts_oversupply_hours():
+    """Endogenous collapse freq = fraction of hours West VRE > local load + export."""
+    # 10 hours; export limit 5 MW. Oversupply when vre > load + 5.
+    vre = np.array([0, 10, 20, 4, 6, 16, 15, 30, 1, 11], dtype=float)
+    load = np.array([10, 10, 10, 0, 0, 10, 10, 10, 5, 5], dtype=float)
+    # headroom = load + 5 -> [15,15,15,5,5,15,15,15,10,10]
+    # vre > headroom -> idx 2,4,5,7,9 True (strict >) = 5/10
+    freq = ercot_west_oversupply_collapse_freq(vre, load, 5.0)
+    assert freq == pytest.approx(0.5)
+
+
+def test_west_oversupply_collapse_freq_rises_with_more_vre():
+    """More West VRE -> more oversupply hours -> higher collapse frequency."""
+    load = np.full(100, 50.0)
+    base_vre = np.linspace(0.0, 100.0, 100)
+    export = 10.0
+    low = ercot_west_oversupply_collapse_freq(base_vre, load, export)
+    high = ercot_west_oversupply_collapse_freq(base_vre * 1.5, load, export)
+    assert high > low
+
+
+def test_west_oversupply_collapse_freq_falls_with_more_export():
+    """More takeaway (export TTC) -> fewer oversupply hours -> lower frequency."""
+    load = np.full(100, 50.0)
+    vre = np.linspace(0.0, 200.0, 100)
+    tight = ercot_west_oversupply_collapse_freq(vre, load, 10.0)
+    loose = ercot_west_oversupply_collapse_freq(vre, load, 80.0)
+    assert loose < tight
+
+
+def test_west_oversupply_collapse_freq_degenerate_returns_none():
+    """Empty or mismatched-length series -> None (caller falls back)."""
+    assert ercot_west_oversupply_collapse_freq(np.array([]), np.array([]), 5.0) is None
+    assert (
+        ercot_west_oversupply_collapse_freq(np.array([1.0, 2.0]), np.array([1.0]), 5.0)
+        is None
+    )
+
+
+def test_west_netload_shape_uses_endogenous_freq_when_flag_on():
+    """With the endogenous flag on, the split uses west_oversupply_freq, not measured.
+
+    A 0.10 oversupply freq sends the lowest 10% of net-load hours to the deep
+    collapse regime; the firm regime (one distinct price) is the rest. The 2024
+    measured neg_day_freq is 0.42, so a 0.10 collapse fraction proves the
+    endogenous value was used, not the measured one.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
+    from market_sim.data.fuel import apply_ercot_west_netload_gas_shape
+
+    cfg = get_iso_config("ERCOT")
+    zone_names = cfg.zone_names
+    west_idx = zone_names.index("West")
+    hours = 100
+
+    # One West gas unit. apply_ercot_west_netload_gas_shape only reads
+    # fuel_type_idx and zone_idx, but FleetArrays requires the full field set.
+    fa = FleetArrays(
+        pmax=np.array([100.0]),
+        pmin=np.array([0.0]),
+        heat_rate=np.array([7.0]),
+        vom=np.array([2.0]),
+        emission_rate=np.array([0.05]),
+        nox_rate=np.array([0.0]),
+        so2_rate=np.array([0.0]),
+        zone_idx=np.array([west_idx]),
+        fuel_type_idx=np.array([FUEL_TYPE_MAP["gas_cc"]]),
+        availability=np.ones((1, hours)),
+        unit_ids=["W1"],
+        efficiency_bin=np.array([0]),
+        plant_code=np.array([0]),
+    )
+
+    config = ScenarioConfig(
+        iso="ERCOT",
+        ercot_zonal_gas_basis=True,
+        ercot_west_netload_gas_shape=True,
+        ercot_west_gas_endogenous_collapse=True,
+    )
+
+    fuel_prices = np.full((1, hours), 2.0)
+    # Net-load: a clean ramp so quantiles are well-defined.
+    net_load = np.linspace(1000.0, 5000.0, hours)
+
+    apply_ercot_west_netload_gas_shape(
+        fuel_prices,
+        fa,
+        config,
+        2024,
+        net_load,
+        west_oversupply_freq=0.10,
+    )
+    # Net-load is a monotonic ramp, so the lowest 10% of hours (the collapse
+    # regime) are the first 10 — all sharing the single deep price; the rest share
+    # the single firm price. Count the collapse-priced hours; it must match the
+    # endogenous 0.10, not the measured 0.42.
+    row = fuel_prices[0]
+    deep = row[0]  # lowest net-load hour -> deep collapse price
+    firm = row[-1]  # highest net-load hour -> firm price
+    assert not np.isclose(deep, firm)  # two distinct regimes
+    collapse_frac = float(np.isclose(row, deep).mean())
+    assert collapse_frac == pytest.approx(0.10, abs=0.02)

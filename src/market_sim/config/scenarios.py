@@ -1755,12 +1755,32 @@ class ScenarioConfig:
     # Optional override of the measured Waha negative-price-day frequency that
     # splits the net-load distribution into the COLLAPSED (lowest-net-load) and
     # FIRM (highest-net-load) regimes of the two-regime step above. When None (the
-    # default), the per-year measured value is read from the neg_day_freq column of
-    # data/raw/ercot_zonal_gas_hub.csv (2024 EIA-authoritative at 0.42; 2023/2025
-    # NGI counts), falling back to the 2024 record (0.42) for years with no row.
-    # This is the measured *collapse frequency*, not a tuning knob — set it only
-    # for diagnostic probes, never to chase the CT_PEAKER residual. ERCOT only.
+    # default), the collapse frequency comes from the endogenous oversupply model
+    # (ercot_west_gas_endogenous_collapse) when that is on, else the per-year
+    # measured value from the neg_day_freq column of data/raw/ercot_zonal_gas_hub.csv
+    # (2024 EIA-authoritative at 0.42; 2023/2025 NGI counts), falling back to the
+    # 2024 record (0.42) for years with no row. This is the measured *collapse
+    # frequency*, not a tuning knob — set it only for diagnostic probes, never to
+    # chase the CT_PEAKER residual. ERCOT only.
     ercot_west_gas_collapse_freq: float | None = None
+
+    # Make the two-regime split frequency ENDOGENOUS (the forward analogue of the
+    # measured neg_day_freq above — closing the last measured input of the West
+    # net-load gas shape, gap G6). When on, collapse_freq is computed from forecast
+    # West/Panhandle oversupply: the fraction of hours West+Panhandle wind+solar
+    # generation exceeds local West load plus the region's export TTC
+    # (WESTEX+PNHNDL) — i.e. how often the Permian basin is over-supplied and the
+    # Waha hub crashes. Every input is a forecast quantity the model already builds
+    # (the VRE capacity×CF, the load forecast, the transmission topology), so it
+    # regenerates for any forward year and RESPONDS to changed conditions: more
+    # West VRE -> more oversupply hours -> higher collapse frequency
+    # (admissibility #10/#12). The measured neg_day_freq stays as the backcast
+    # realization to validate against (logged alongside, never re-pinned). When
+    # off, the legacy measured-read behaviour. The ercot_west_gas_collapse_freq
+    # override still wins for diagnostic probes. ERCOT only; no-op unless
+    # ercot_west_netload_gas_shape is also on.
+    # See market_sim.data.fuel.ercot_west_oversupply_collapse_freq.
+    ercot_west_gas_endogenous_collapse: bool = False
 
     # Burner-tip delivered floor ($/MMBtu) for the COLLAPSE regime of the
     # two-regime step. The Waha *hub* goes to ~$0 (and negative) on over-supply
@@ -2253,6 +2273,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_west_netload_gas_shape": 3,
     "ercot_west_gas_firm_basis": 3,
     "ercot_west_gas_collapse_freq": 3,
+    "ercot_west_gas_endogenous_collapse": 3,
     "ercot_west_gas_delivered_floor": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
