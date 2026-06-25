@@ -835,6 +835,144 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
 }
 
+# Forecast-mode monthly planned-maintenance shape (12 weights, Jan..Dec) per
+# plant group. Replaces the flat shoulder-POF heuristic (POF smeared uniformly
+# across _CC_SHOULDER_MONTHS = {3,4,5,10,11}) with the historically-derived
+# *timing* of spring/autumn maintenance learned from the CAMPD unit-outage
+# extracts (all six ISOs, 2023-2025 pooled — a forecast shape, NOT pinned to any
+# one backcast year). Each weight is the planned-maintenance excess over the
+# annual-minimum (forced-outage-floor) month, normalized to a month-length-
+# weighted mean of 1 (Sum w[m]*hours[m] = 8760). At apply time
+# (data.fleet.generators_to_fleet_arrays, FORECAST mode only) the per-hour
+# planned-maintenance derate is B_group * w[group][month], where the group's
+# annual POF budget B_group = POF * shoulder_hours / 8760 comes from
+# THERMAL_AVAILABILITY. Because w has a month-weighted mean of 1, the annual
+# planned-outage budget is conserved EXACTLY (Sum maint[m]*hours[m] =
+# POF*shoulder_hours) — only its seasonal distribution is sharpened from the
+# rigid 5-month block to the measured curve (peaks Apr/Oct-Nov, ~0 in the
+# Jul/Aug summer peak, modest in winter). This is methodology spec section 1.7's
+# documented forecast roadmap item and is distinct from the backcast historic
+# outage overlay (data/outages.py), which is untouched.
+# Derivation/verify: scripts/derive_maintenance_shape.py (reads the committed
+# data/raw/campd-unit-outages*.csv). Groups with too few observations (e.g.
+# CT_PEAKER — combustion turbines are excluded from the unit-outage detector)
+# fall back to the pooled all-thermal shape "_POOLED".
+MAINTENANCE_MONTHLY_SHAPE: dict[str, tuple[float, ...]] = {
+    "COAL": (
+        0.239,
+        1.125,
+        1.757,
+        1.923,
+        1.559,
+        0.568,
+        0.000,
+        0.174,
+        1.003,
+        1.442,
+        1.481,
+        0.772,
+    ),
+    "CC_REGULAR": (
+        0.608,
+        0.961,
+        1.765,
+        2.175,
+        1.591,
+        0.473,
+        0.000,
+        0.007,
+        0.449,
+        1.524,
+        1.554,
+        0.910,
+    ),
+    "CC_CHP": (
+        0.574,
+        0.851,
+        1.658,
+        2.217,
+        1.775,
+        0.516,
+        0.000,
+        0.072,
+        0.505,
+        1.736,
+        1.481,
+        0.623,
+    ),
+    "CT_PEAKER": (
+        0.581,
+        1.131,
+        1.719,
+        1.926,
+        1.499,
+        0.514,
+        0.000,
+        0.132,
+        0.731,
+        1.394,
+        1.478,
+        0.929,
+    ),
+    "CT_CHP": (
+        1.261,
+        1.336,
+        1.692,
+        2.107,
+        1.582,
+        0.874,
+        0.010,
+        0.000,
+        0.223,
+        0.787,
+        1.270,
+        0.907,
+    ),
+    "ST_GAS": (
+        1.136,
+        1.553,
+        1.567,
+        1.346,
+        1.140,
+        0.488,
+        0.000,
+        0.328,
+        0.882,
+        0.971,
+        1.314,
+        1.330,
+    ),
+    "ST_CHP": (
+        0.867,
+        0.949,
+        1.495,
+        1.576,
+        1.174,
+        0.337,
+        0.000,
+        0.427,
+        0.753,
+        1.831,
+        1.620,
+        0.975,
+    ),
+    # Pooled all-thermal fallback for sparse/excluded groups (e.g. CT_PEAKER).
+    "_POOLED": (
+        0.581,
+        1.131,
+        1.719,
+        1.926,
+        1.499,
+        0.514,
+        0.000,
+        0.132,
+        0.731,
+        1.394,
+        1.478,
+        0.929,
+    ),
+}
+
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
