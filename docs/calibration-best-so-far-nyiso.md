@@ -1,6 +1,44 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-25): `nyiso 26 cc-nameplate`**
+> **KEEPER (2026-06-25): `nyiso 27 cc-offer`**
+> (`2026-06-25-nyiso-27-cc-offer`, bundle
+> `results/calibration/nyiso_27_cc-offer`, all 3 years). A **re-solve** of the
+> `nyiso 26 cc-nameplate` config (byte-identical flags, P1, no commitment) with
+> **one source edit**: the NYISO CC offer **level** is re-levelled toward the
+> CAMPD CC marginal-heat-rate SRMC reach. `_NYISO_OFFER_CURVE` `CC_REGULAR`
+> `econ_high` **1.12 → 1.21** and `CC_CHP` `econ_high` **1.15 → 1.24**
+> (`econ_low`/`committed`/`peak` unchanged) — `1.21×` base_hr is the CAMPD CC
+> marginal-HR reach at the top of the econ ramp, the **same fit ERCOT's keeper
+> uses** (`committed 0.87 / econ_low 0.92 / econ_high 1.21`). This is the
+> **rule-#1 second step**: `nyiso 26` fixed the *structure* (full-nameplate CC
+> capacity + the Ravenswood steam-HR correction, CC correctly ahead of steam, no
+> wall); `nyiso 27` calibrates the offer **level** on that correct structure,
+> grounded in the CAMPD CC marginal HR — **not** tuned to the price/volume
+> residual (rules #11/#12). The earlier `econ_high 1.12` compressed the upper
+> econ slices *below* the CAMPD CC marginal HR; masked while the old 75 % CC wall
+> was in place, exposed in `nyiso 26` once the wall came off (the rule-#11
+> signal). Effect vs the `nyiso 26` keeper — **all in the predicted direction**,
+> no re-walling, no merit inversion, no 2025 overshoot:
+> `2023 CC_REGULAR +2.09 → +1.70 TWh`, `ST_GAS −1.48 → −1.26`, `CT_PEAKER −1.33 →
+> −1.30`; `2024 CC_REGULAR +2.39 → +2.09`, `ST_GAS −4.31 → −4.14`, `CT_PEAKER
+> −1.52 → −1.51`; `C3a` **2023 −8.9 % → in-band**, **2024 −11.0 % → −9.7 %**,
+> 2025 stays in-band; `C3b` 2024 `0.250 → 0.243`. The within-gas merit **order**
+> stays physically correct throughout (CC ahead of steam). `econ_high` is now at
+> the CAMPD/ERCOT-grounded `1.21×` reach, so the CC offer lever is **spent at its
+> grounded landing** — the small residual CC over-run / `C3a` 2024 depression
+> sits *at* that grounded ceiling and is **not** chased further (rule #12). New
+> keeper because it is the **most structurally faithful** NYISO config to date:
+> physically-correct CC capacity (`nyiso 26`) **and** a CC offer level grounded in
+> the CAMPD CC marginal HR (`nyiso 27`) — the documented CC offer-level frontier
+> (`docs/handoffs/pjm-cc-level-tuning-2026-06.md`) now **DONE**. C6 governance
+> **PASS** (attested); determination **NOT-YET** (the residual CC/ST C1 + `C3a`
+> 2024 honest misses at the grounded offer ceiling + the ledgered EIA-930/923 gas
+> basis floor). The RCPF scarcity tail (`C3c`) and NYC-peaker under-run remain
+> **incidence-gated** (downstate reserve headroom / import discipline), unchanged
+> and out of scope. Reproduce: the `nyiso 26` config (no new flags) with
+> `_NYISO_OFFER_CURVE` CC `econ_high` at `1.21`/`1.24`. Superseded keeper below.
+
+> **PRIOR KEEPER (2026-06-25): `nyiso 26 cc-nameplate`**
 > (`2026-06-25-nyiso-26-cc-nameplate`, bundle
 > `results/calibration/nyiso_26_cc-nameplate`, all 3 years). A **re-solve** of the
 > `nyiso 25 steam-merit` config (byte-identical flags, P1, no commitment) on the
