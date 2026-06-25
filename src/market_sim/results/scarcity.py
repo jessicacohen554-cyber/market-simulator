@@ -63,6 +63,7 @@ import numpy as np
 from scipy.special import ndtr
 
 from market_sim.config.constants import (
+    ERCOT_AS_PRODUCTS,
     MISO_REGULATING_RESERVE_MW,
     MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
     MISO_RESERVE_DEMAND_CURVE_MAX,
@@ -776,13 +777,33 @@ def ercot_ecrs_requirement_mw(year: int, hours: int) -> np.ndarray:
     clock (Feb-29 dropped); DST fall-back duplicate hours are averaged. Returns
     ``(hours,)`` MW, **all-zero when the file is absent** (no-op).
     """
+    return ercot_as_plan_requirement_mw(year, hours, "ECRS")
+
+
+def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndarray:
+    """ERCOT's measured hourly AS-plan procurement MW for one ``as_type``.
+
+    Generalizes :func:`ercot_ecrs_requirement_mw` to any AncillaryType in the
+    published AS Plan ``data/raw/ercot/ASPLANNP433_<year>.parquet`` — the upward
+    products ``REGUP`` / ``RRS`` / ``ECRS`` / ``NSPIN`` (and ``REGDN``, the
+    downward product the upward co-opt ignores). This is the **measured
+    realization** of each product's requirement, used to validate the forward
+    requirement-setting formula (P1b) against; it is an ERCOT-published
+    procurement quantity, never fitted to a price. A product not yet launched in
+    ``year`` (e.g. ECRS before 2023-06-10) simply has no rows → all-zero, so the
+    onset is carried by the data with no hard-coded start date.
+
+    Mapped onto the fleet's non-leap 8760-hour calendar clock (Feb-29 dropped);
+    DST fall-back duplicate hours are averaged. Returns ``(hours,)`` MW,
+    **all-zero when the file or the product is absent** (no-op).
+    """
     path = _ERCOT_ASPLAN_DIR / f"ASPLANNP433_{year}.parquet"
     if not path.exists():
         return np.zeros(int(hours), dtype=float)
     import pandas as pd
 
     df = pd.read_parquet(path)
-    df = df[df["AncillaryType"] == "ECRS"].copy()
+    df = df[df["AncillaryType"] == str(as_type)].copy()
     if df.empty:
         return np.zeros(int(hours), dtype=float)
     dt = pd.to_datetime(df["DeliveryDate"])
@@ -905,6 +926,170 @@ def ercot_reserve_coopt_inputs(
         requirement = np.maximum(requirement - storage_as_mw, float(config.ordc_mcl_mw))
     eligible = ercot_reserve_eligible(fleet_arrays)
     return requirement, eligible, penalties, widths
+
+
+def ercot_as_forward_requirement_mw(
+    config, product_code: str, hours: int
+) -> np.ndarray | None:
+    """Forward AS requirement for one product, or ``None`` to use the measured one.
+
+    The forward analogue of reading ``ASPLANNP433`` — ERCOT sizes each AS product
+    from forward drivers it publishes (net-load ramp risk, forecast-error
+    quantiles, largest-contingency / load-ratio shares). That requirement-setting
+    methodology is **P1b**; until it lands this returns ``None`` so the caller
+    falls back to the measured ASPLANNP433 realization (the validation target).
+    Wiring it here keeps the forward seam explicit: when P1b lands it returns
+    ``req_product(t) = f(net_load(t), ramp(t), VRE_share(t))`` and the co-opt is
+    forward-native with no code change at the call site.
+    """
+    # P1b not yet implemented — fall back to the measured requirement.
+    return None
+
+
+def ercot_multiproduct_reserve_coopt_inputs(
+    config, fleet_arrays: FleetArrays, hours: int
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
+    """Assemble ERCOT's MULTI-PRODUCT energy+AS co-optimization inputs.
+
+    The forward analogue of the measured DAM-AS MCPC overlay
+    (:func:`ercot_dam_as_overlay_series`). Replaces the one lumped
+    contingency-reserve product of :func:`ercot_reserve_coopt_inputs` with a
+    co-optimization demand curve **per AS product** (RegUp / RRS / ECRS /
+    NonSpin, :data:`~market_sim.config.constants.ERCOT_AS_PRODUCTS`). Each
+    product is one reserve *family* — its own per-zone reserve variable, its own
+    requirement, and its own VOLL-anchored demand curve — so the binding
+    product's balance-row dual is that product's clearing price (MCPC), and the
+    per-hour MAX across products reproduces the ``binding_mcpc`` the overlay
+    reads from disk, formed **endogenously** from the LP rather than added.
+
+    **Additive, not nested.** Unlike NYISO's nested products (one MW counts for
+    both the 10- and 30-minute requirement), ERCOT holds the four products as
+    *separate* capacity — ~7-8 GW total out of the energy stack every hour. The
+    products therefore SHARE one headroom pool ADDITIVELY: the sum of all four
+    products' reserve plus the eligible units' energy must fit under the
+    responsive headroom. That additivity (vs the single ~3 GW lumped product) is
+    most of the extra scarcity the overlay carried.
+
+    **Quality cascade (higher-quality substitutes down).** Two nested
+    shared-headroom rows encode the substitution cascade:
+
+    * a "fast" row over the synchronized/spinning responsive set
+      (:data:`RESERVE_FUEL_TYPES` minus the offline-capable
+      :data:`QUICK_START_FUEL_TYPES` peakers) bounding the three fast products
+      (RegUp/RRS/ECRS), and
+    * an "all" row over the full responsive set (adding the gas-CT/oil
+      quick-start peakers a 30-minute Non-Spin award can come from) bounding all
+      four products.
+
+    Because the fast products appear in BOTH rows while Non-Spin appears only in
+    the "all" row, a Non-Spin MW can be supplied by a quick-start peaker the fast
+    products cannot reach — the correct cascade — while the fast products price
+    up first when spinning headroom is scarce (the binding-MCPC days). Storage
+    backs both rows (batteries respond in seconds → every product).
+
+    **Requirements** are the ERCOT-published per-product procurement quantities
+    (``ASPLANNP433``) for the weather year — the measured realization the forward
+    requirement-setting formula (:func:`ercot_as_forward_requirement_mw`, P1b)
+    validates against, never fitted to a price. **Demand-curve prices** are
+    VOLL-anchored (``config.ordc_voll``, the AS offer cap) market-design
+    schedules, so the hourly scarcity *incidence* comes from the responsive
+    headroom in the shared-headroom RHS — a tighter fleet clears AS lower on the
+    curve at a higher price — not from any tuned per-product level. The
+    phantom-headroom fix (a perfect-foresight LP leaving cold slow-start units
+    idle yet counted as reserve) is delivered by running this co-opt in the P2
+    commitment-screened solve, whose ``availability`` zeroes the decommitted
+    idle capacity out of the shared-headroom RHS.
+
+    Returns the nine-tuple ``model.dispatch`` consumes for the additive
+    multi-product co-opt: ``(reserve_requirement (n_prod, T), reserve_eligible
+    (n_prod, n_gen), ordc_penalties, ordc_step_widths, balance_zone_mask
+    (n_prod, n_zones), balance_ordc_counts (n_prod,), balance_reserve_class
+    (n_prod,), headroom_eligible (2, n_gen), headroom_products (2, n_prod))``.
+    """
+    T = int(hours)
+    n_zones = int(np.max(fleet_arrays.zone_idx)) + 1
+    products = list(ERCOT_AS_PRODUCTS)
+    n_prod = len(products)
+    voll = float(config.ordc_voll)
+    crit_frac = float(getattr(config, "ercot_as_critical_frac", 0.0))
+    n_ramp = int(getattr(config, "ercot_as_n_ramp", 12))
+    year = int(config.weather_year)
+
+    requirement = np.zeros((n_prod, T), dtype=float)
+    pen_list: list[np.ndarray] = []
+    wid_list: list[np.ndarray] = []
+    counts = np.zeros(n_prod, dtype=int)
+    for p, (_name, code, _tier) in enumerate(products):
+        # Forward requirement formula (P1b) when available, else the measured
+        # ASPLANNP433 realization for the weather year (the validation target).
+        req_t = ercot_as_forward_requirement_mw(config, code, T)
+        if req_t is None:
+            req_t = ercot_as_plan_requirement_mw(year, T, code)
+        requirement[p, :] = req_t
+        # VOLL-anchored AS demand curve, sized to the product's PEAK requirement
+        # so the shortfall steps span the full requirement and the balance stays
+        # feasible at zero reserve in every hour (the PJM ORDC-step convention).
+        req_peak = float(req_t.max())
+        if req_peak <= 0.0:  # product not active this year (e.g. pre-2023 ECRS)
+            pen_list.append(np.zeros(0))
+            wid_list.append(np.zeros(0))
+            counts[p] = 0
+            continue
+        crit = crit_frac * req_peak
+        pen, wid = nyiso_rcpf_product_shortfall_steps(
+            req_peak, crit, voll, n_ramp=n_ramp
+        )
+        pen_list.append(pen)
+        wid_list.append(wid)
+        counts[p] = pen.size
+
+    ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
+    ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
+
+    # Each product is its own reserve class (own per-zone R, own balance dual),
+    # so n_reserve_classes == n_prod. Per-class eligibility is the responsive
+    # thermal set (the actual product-vs-unit restriction is enforced by the
+    # headroom-row membership below); a system-wide family per product.
+    full_elig = ercot_reserve_eligible(fleet_arrays)  # (n_gen,)
+    reserve_eligible = np.tile(full_elig, (n_prod, 1))  # (n_prod, n_gen)
+    balance_zone_mask = np.ones((n_prod, n_zones), dtype=bool)
+    balance_reserve_class = np.arange(n_prod, dtype=int)
+
+    # Nested shared-headroom rows for the quality cascade. Row 0 "fast" = the
+    # synchronized responsive set (excludes offline-capable quick-start peakers)
+    # bounding the fast products; row 1 "all" = the full responsive set bounding
+    # every product. Fast products sit in both rows; Non-Spin only in "all".
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    responsive = np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
+    quick = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+    fast_elig = responsive & ~quick  # spinning set (CC/ST/coal/nuclear)
+    headroom_eligible = np.vstack([fast_elig, responsive])  # (2, n_gen)
+    headroom_products = np.zeros((2, n_prod), dtype=bool)
+    for p, (_name, _code, tier) in enumerate(products):
+        headroom_products[1, p] = True  # every product draws on the "all" row
+        if tier == "fast":
+            headroom_products[0, p] = True  # fast products also on the "fast" row
+    return (
+        requirement,
+        reserve_eligible,
+        ordc_penalties.astype(float),
+        ordc_step_widths.astype(float),
+        balance_zone_mask,
+        counts,
+        balance_reserve_class,
+        headroom_eligible,
+        headroom_products,
+    )
 
 
 def scarcity_prices(

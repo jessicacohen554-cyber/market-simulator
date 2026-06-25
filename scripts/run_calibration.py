@@ -1387,6 +1387,7 @@ def run_year(
     as_reserve_withholding: bool = False,
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
+    ercot_multiproduct_as_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1615,6 +1616,8 @@ def run_year(
     # PJM-gated in _run_dispatch. Replaces the post-solve ORDC overlay.
     if energy_reserve_coopt:
         config = config.with_overrides(energy_reserve_coopt=True)
+    if ercot_multiproduct_as_coopt:
+        config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # ERCOT load-resource reserve credit (run_calibration_full
     # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
     # responsive reserve) into the co-opt reserve balance. GATED — alters
@@ -2587,28 +2590,77 @@ def run_year(
         # for co-opt runs. The curve is constant across hours; the scarcity
         # *incidence* comes from the hourly fleet availability in the headroom
         # RHS, so the requirement is flat at the demand curve's top.
-        from market_sim.results.scarcity import ercot_reserve_coopt_inputs
+        if getattr(config, "ercot_multiproduct_as_coopt", False):
+            # MULTI-PRODUCT AS stack: one co-opt demand curve per AS product
+            # (RegUp/RRS/ECRS/NonSpin), additive and cascading. The binding
+            # product's balance-row dual is the MCPC, formed endogenously — the
+            # forward analogue of the measured DAM-AS overlay. Pair with
+            # commitment_enabled for the phantom-headroom fix (the P2 solve's
+            # availability zeroes idle slow-start units out of the reserve pool).
+            from market_sim.results.scarcity import (
+                ercot_multiproduct_reserve_coopt_inputs,
+            )
 
-        coopt_req, coopt_elig, coopt_pen, coopt_w = ercot_reserve_coopt_inputs(
-            config, fleet_arrays, config.hours
-        )
-        dispatch_kwargs.update(
-            reserve_requirement=coopt_req,
-            reserve_eligible=coopt_elig,
-            reserve_storage=True,  # ERCOT batteries are the dominant RRS/ECRS
-            # provider — count their headroom as reserve, else scarcity overshoots.
-            ordc_penalties=coopt_pen,
-            ordc_step_widths=coopt_w,
-        )
-        logger.info(
-            "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
-            "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
-            float(coopt_req[0]),
-            len(coopt_pen),
-            float(coopt_pen.min()),
-            float(coopt_pen.max()),
-            int(coopt_elig.sum()),
-        )
+            (
+                coopt_req,
+                coopt_elig,
+                coopt_pen,
+                coopt_w,
+                coopt_mask,
+                coopt_counts,
+                coopt_class,
+                coopt_hr_elig,
+                coopt_hr_prod,
+            ) = ercot_multiproduct_reserve_coopt_inputs(
+                config, fleet_arrays, config.hours
+            )
+            dispatch_kwargs.update(
+                reserve_requirement=coopt_req,
+                reserve_eligible=coopt_elig,
+                reserve_storage=True,
+                ordc_penalties=coopt_pen,
+                ordc_step_widths=coopt_w,
+                reserve_balance_zone_mask=coopt_mask,
+                reserve_balance_ordc_counts=coopt_counts,
+                reserve_balance_class=coopt_class,
+                reserve_headroom_eligible=coopt_hr_elig,
+                reserve_headroom_products=coopt_hr_prod,
+            )
+            from market_sim.config.constants import ERCOT_AS_PRODUCTS
+
+            logger.info(
+                "energy+reserve co-opt (ERCOT MULTI-PRODUCT): %d AS products %s, "
+                "per-product req means %s MW, %d steps total, %d headroom tiers",
+                len(ERCOT_AS_PRODUCTS),
+                [p[0] for p in ERCOT_AS_PRODUCTS],
+                [int(coopt_req[p].mean()) for p in range(coopt_req.shape[0])],
+                len(coopt_pen),
+                int(coopt_hr_prod.shape[0]),
+            )
+        else:
+            from market_sim.results.scarcity import ercot_reserve_coopt_inputs
+
+            coopt_req, coopt_elig, coopt_pen, coopt_w = ercot_reserve_coopt_inputs(
+                config, fleet_arrays, config.hours
+            )
+            dispatch_kwargs.update(
+                reserve_requirement=coopt_req,
+                reserve_eligible=coopt_elig,
+                reserve_storage=True,  # ERCOT batteries are the dominant RRS/ECRS
+                # provider — count their headroom as reserve, else scarcity
+                # overshoots.
+                ordc_penalties=coopt_pen,
+                ordc_step_widths=coopt_w,
+            )
+            logger.info(
+                "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
+                "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
+                float(coopt_req[0]),
+                len(coopt_pen),
+                float(coopt_pen.min()),
+                float(coopt_pen.max()),
+                int(coopt_elig.sum()),
+            )
     elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
         from market_sim.config.constants import PJM_ORDC_CURVE_PATH
         from market_sim.data.fleet import FUEL_TYPE_NAMES
