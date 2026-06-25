@@ -78,6 +78,76 @@ floors only the **heat-driven** commitment; the small all-temperature evening
 baseline (~5% CF, the year-round local-RA minimum that is *not* weather-driven)
 is left to the economic dispatch, not forced.
 
+## Grounding in the literature (how other models / ISOs handle this)
+
+A review of production-cost and capacity-expansion practice (PLEXOS/SERVM RMR,
+CAISO LCR, ReEDS, GenX) frames this floor:
+
+* **Local reliability commitment is real and recurring, not a fitted artifact.**
+  CAISO sets Local Capacity Requirements by N-1/N-1-1 contingency criteria
+  *evaluated at a 1-in-10 summer-peak load condition* (CAISO 2023 Local Capacity
+  Technical Report). The rule is contingency/topology-based, but it **binds at
+  extreme-heat peak load**, so local gas runs disproportionately on hot days —
+  exactly the temperature hot-limb measured above. RA resources additionally
+  carry a **must-offer obligation** and fill **flexible-RA** 3-hour net-load
+  ramps, both of which commit peakers out of the energy merit order.
+* **Temperature-keyed reliability/availability has direct model precedent.**
+  NREL **ReEDS 2025** makes the hourly thermal forced-outage rate a function of
+  zone surface air temperature (calibrated to PJM's 40% gas-CT ELCC derate);
+  ReEDS 2018 derated thermal capacity 0.5%/°C on hot slices. So keying a
+  reliability/availability quantity to temperature is established national-lab
+  practice, not an ad-hoc tweak.
+* **This floor is the peak-conditioned form.** The afternoon-evening window plus
+  the TMAX hot-limb trigger together make the floor bind only at the hot,
+  high-load peak (the 1-in-10 summer-peak condition), keyed to a weather driver
+  — consistent with the literature's "transmission constraint binding at summer
+  peak" representation, in the tractable form a zonal LP without nodal load
+  pockets can carry.
+
+### Scope: why CT_PEAKER (and not, as first considered, the whole CT+ST+CC fleet)
+
+Local RA is fleet-fillable in principle (RMR skews to steam/CC, and CC/ST also
+show temperature hot-limbs in the CAMPD data). But the floor is applied only
+where it is both **faithful** and **needed**:
+
+* **CC_REGULAR** is already *over*-dispatched in the model (the expected
+  no-commitment-LP signature: real CCs carry start-up / min-load / min-run costs
+  that keep them committed, which an energy-only single-pass LP over-uses). A
+  floor would worsen it — so CC is left unfloored.
+* **ST_GAS** is a near-retired CAISO fleet: measured generation collapses to
+  ~0.14 / 0.11 TWh in 2024 / 2025 (vs 1.38 in 2023), and the model already
+  *over*-runs it those years. A reliability floor would force phantom steam — its
+  residual is a fleet-availability/retirement problem, not a missing floor — so
+  ST_GAS is left unfloored.
+* **CT_PEAKER** is the class that is genuinely *under*-run by the missing
+  local-RA commitment, so it is the class the floor restores.
+
+## Companion finding — CT_CHP EOR-cogen over-dispatch (diagnosed, deferred)
+
+The other half of the CAISO gas-mix error is **CT_CHP over-dispatch** (model
+~7.0 TWh vs ~3.5 measured). The CAISO CT_CHP fleet is dominated by **Kern-County
+enhanced-oil-recovery steam cogens** (Sycamore, Kern River, Midway Sunset,
+Fresno, Badger Creek, Bear Mountain): they burn gas primarily to make oil-field
+injection **steam**, with electricity a byproduct. The shared CT_CHP offer-curve
+multipliers (1.1 / 1.2 / 1.4 × base HR, set for compact chemical-host cogens)
+price these EOR units as efficient baseload, so the LP runs them flat at ~88% CF
+— against a measured ~13% CF (e.g. Kern River 1.35 model vs 0.20 TWh actual). On
+a power-only basis (fuel charged to electricity after the steam credit) their
+heat rate is ~1.8-2.0× the reported topping-cycle simple HR, so a power-only-HR
+re-price is the physically correct treatment.
+
+**This fix is deferred** because it cannot be applied in isolation. A power-only
+re-price (committed ~1.75) was trialled and **reverted**: with the total CAISO
+gas envelope already over-sized by the import / energy-balance over-generation
+drift, cutting the cheap CT_CHP baseload does **not** lower total gas — it
+reshuffles straight onto **CC_REGULAR** (CC jumped +5 TWh worse, from +2.9 to
++8.3 over), because CC is the next-cheapest dispatchable. The EOR re-price must
+therefore land **after** the total-gas / import-drift fix (so the freed energy
+leaves the system as imports rather than inflating CC), not before. This is the
+key remaining root cause for the next CAISO session, and it is the same
+mechanism that limits the CT_PEAKER floor's net effect (forcing peakers on in an
+over-sized envelope partly exports the surplus rather than backing down CC).
+
 ## Why temperature, not net-load (CLAUDE.md #10/#11)
 
 * **Forward-derivable.** A forecast year already pins a weather year (it has a

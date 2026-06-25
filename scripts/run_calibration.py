@@ -880,7 +880,9 @@ def _calibration_config(
         #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
-        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much).
+        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much). NOTE:
+        #   these are INERT for CT_CHP now — its offer is the offer_curve_by_group
+        #   ["CT_CHP"] curve below (the CAISO EOR power-only-HR multipliers).
         # Unified thermal offer curve (operator-supplied band multipliers on
         # AHR x fuel_price; VOM constant across bands). The economic block is a
         # rising ramp from econ_low to econ_high (its slope set by those two
@@ -952,6 +954,22 @@ def _calibration_config(
             # pull them apart to create a slope. Peaking % stays the CSV value
             # (no pct_peaking key). The ct_*_hr_override fields above are now
             # inert for CT_CHP.
+            # NOTE (CAISO CT_CHP — EOR cogen over-dispatch, deferred to next
+            # session): the CAISO CT_CHP fleet is dominated by Kern-County
+            # enhanced-oil-recovery STEAM cogens (Sycamore, Kern River, Midway
+            # Sunset, Fresno, Badger Creek, Bear Mountain) that burn gas primarily
+            # to make oil-field injection steam, with electricity a byproduct. The
+            # compact-cogen 1.10/1.20/1.40 multipliers price them as efficient
+            # baseload, so the energy-only LP runs them flat at ~88% CF (7.0 TWh)
+            # vs ~3.5 measured (EIA-923; e.g. Kern River 1.35 model vs 0.20) — a
+            # real over-dispatch. A power-only-HR re-price (committed ~1.75) was
+            # trialled but REVERTED: with the total CAISO gas envelope already
+            # over-sized by the import / energy-balance over-generation drift,
+            # cutting cheap CT_CHP does not lower total gas — it reshuffles
+            # straight onto CC_REGULAR (CC +5 TWh worse), since CC is the next-
+            # cheapest dispatchable. The EOR re-price must land AFTER the total-
+            # gas / import-drift fix (so the freed energy leaves as imports, not
+            # CC), not before.
             "CT_CHP": {
                 "committed": 1.20 if iso == "PJM" else 1.10,
                 "econ_low": 1.20,
