@@ -1,0 +1,62 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "neiso-33 no-ctfloor 2026-06-25 (CT deployment-floor overlay REMOVED; cleaner-than-keeper candidate, supersedes neiso-32)",
+    "note": "vs neiso-32 (the prior keeper): the ONLY change is removing the CT AS/RUC out-of-merit deployment-floor overlay (ScenarioConfig.ct_deployment_overlay OFF; ct_deployment_floor_frac dropped). Every other flag/code path is byte-identical (CC_REGULAR committed min-load tranche 1.27 for NEISO, cc_nameplate_summer_derate ON, biomass measured must-run, OTHER residual vintage-carry, measured Algonquin/EIA-MA-citygate daily gas-hub basis overlay, historic outage overlay, storage vintage ramp). MOTIVATION (CLAUDE.md #12): the CT deployment-floor overlay forced 9 NEISO peaker plants up to their measured CEMS net output in out-of-merit hours, which the calibration log itself flags as 'the most answer-injecting' overlay; removing it eliminates a borderline measured-OUTCOME injection and leaves a strictly cleaner, more forecast-faithful config. IMPACT (verified dispatch-neutral): the overlay only ever injected 0.076/0.041/0.054 TWh/yr (data/raw/_validation-source/ct_deployment_floor_NEISO.parquet) — < 0.1% of ~97/104/107 TWh annual generation. With it removed, CT_PEAKER dispatch falls to ~0.003/0.001/0.017 TWh (the energy-only LP cannot dispatch those out-of-merit peakers) and the freed demand is met by the marginal CC, so: total generation 97.00/103.95/107.33 TWh (energy balance vs EIA-930 unchanged: +0.13/+0.14/+0.17 TWh), gas-family 54.23/58.81/61.60 TWh (was 54.22/58.81/61.59), system simple-mean LMP 33.95/38.91/66.70 $/MWh (was 33.93/38.89/66.67 — moves +0.02/+0.02/+0.03). No offer/adder/pin/haircut was added or moved; the model is not pinned to either actual. Load-weighted mean LMP fit stays in C3a band and is marginally better in all three years (2023 -2.8%, 2024 -0.7%, 2025 +4.1% vs RT actuals 35.70/39.5/65.89). The solar / reserve-scarcity-tail / OTHER-categorization / storage caveats below are carried unchanged from neiso-32 because the dispatch is unchanged.",
+    "validation_note": "Reproducible: (a) CT floor magnitude from data/raw/_validation-source/ct_deployment_floor_NEISO.parquet (groupby year sum floor_mw = 0.076/0.041/0.054 TWh over 9 plants); (b) post-removal dispatch from the bundle dispatch/<year>_P2.parquet — CT_PEAKER mw sum = 0.003/0.001/0.017 TWh, gas-family (CC_REGULAR/CC_CHP/CT_CHP/CT_PEAKER/ST_GAS/ST_CHP) = 54.23/58.81/61.60 TWh, total = 97.00/103.95/107.33 TWh; (c) system simple-mean LMP from system.parquet (pass==P2) = 33.95/38.91/66.70. The overlay was removed via the prb_overrides channel (meta.coal_prb_sigmoid_overrides no longer contains ct_deployment_overlay / ct_deployment_floor_frac; confirmed = {gas_hub_basis_daily, dual_fuel_oil_reattribution}). ERCOT/CAISO/MISO/SPP/PJM/NYISO byte-identical (the removed lever was NEISO-gated and backcast-only). P2 commitment engaged (meta.passes = [P1, P2]). Solar reconciliation unchanged from neiso-32: model EIA-930-pinned solar 0.89/1.31/1.58 TWh scored against EIA-930 grid solar via actuals_source (src/market_sim/results/calibration.py)."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "metric": "solar volume vs EIA-923 (ISNE SUN)",
+      "years": [2023, 2024],
+      "magnitude": "model 0.89/1.31 TWh vs EIA-923 3.70/4.53 TWh (model ~24%/29% of 923); model 0.89/1.31 vs EIA-930 grid solar 0.89/1.31 (reconciles)",
+      "classification": "MEASURED-INPUT CATEGORIZATION (NOT a model miss) — BTM/net-metered PV netted into EIA-930 net-load demand",
+      "reason": "ISO-NE reports ~2.7 GW of distribution-connected and net-metered rooftop/small-commercial PV as a reduction in net load, so EIA-930 'ISNE SUN' (the grid-delivered series the model's solar dispatch targets and the verdict scores against via actuals_source) captures only grid-scale wholesale solar, while EIA-860/923 count every plant >= 1 MW. The ~2.8/3.2 TWh difference is exactly that BTM share, already netted into the EIA-930 net-load demand the LP serves; the dispatch energy balance is correct because that solar is in demand, not absent from supply. Apples-to-apples on the EIA-930 grid basis, the solar reconciles. Closable for forecast-grade total-match only by explicit gross BTM PV on both supply and demand (measured EIA-860 dist-connected + EIA-861 net-metering), never by scaling solar to the 923 gap (fitting). Carried unchanged from neiso-32 (dispatch unchanged)."
+    },
+    {
+      "criterion": "fuelmix",
+      "metric": "solar volume vs EIA-923 in the 2025 vintage",
+      "years": [2025],
+      "magnitude": "EIA-923 ISNE SUN 2025 = 1.02 TWh over only 36 plants (vs 787/903 in 2023/24)",
+      "classification": "INCOMPLETE VINTAGE — excluded from the solar score",
+      "reason": "The current-year 2025 EIA-923 release is preliminary (36 solar plants), so EIA-923 solar is NOT a valid benchmark for 2025; the solar comparison uses EIA-930 grid solar (1.58 TWh, model-matched) only. The solve log records: 'EIA-923 2025 solar 1.02 TWh under-counts EIA-930 1.58 TWh; using EIA-930 grid total'. Carried unchanged from neiso-32."
+    },
+    {
+      "criterion": "price_tail",
+      "metric": "hours LMP > $300/MWh",
+      "years": [2023, 2024, 2025],
+      "magnitude": "model 0h vs actual 15/8/20h (system max ~230/217/258 $/MWh)",
+      "classification": "MODEL MISS (separate structural item: winter reserve scarcity, rank 3)",
+      "reason": "NEISO scarcity spikes come from operating-reserve scarcity (TMSR/TMNSR/TMOR) and single-fuel Algonquin-spot bidding on cold days, neither represented in the energy-only LP (dual-fuel gas is still capped at delivered oil parity). This is the documented NEISO reserve-co-optimization follow-up (its own measured requirement series). Note: the removed CT deployment-floor overlay never represented this tail either (it floored mid-merit peaker energy, not the >$300 scarcity hours), so its removal does not affect this item. Carried unchanged from neiso-32."
+    },
+    {
+      "criterion": "price_mean",
+      "metric": "C3a system mean LMP vs actual DA",
+      "years": [2023],
+      "magnitude": "model -7.9% vs DA (-5.0% vs RT; load-weighted -2.8% vs RT after this run)",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "The 2023 residual concentrates in the highest-weight winter months whose scarcity is set by the unrepresented reserve mechanism above; 2024/2025 are within band vs RT. Removing the CT floor overlay nudged the mean LMP +0.02 $/MWh (dispatch-neutral), so this item is unchanged; the remainder is the rank-3 reserve item, not an offer tune. Carried unchanged from neiso-32."
+    },
+    {
+      "criterion": "fuelmix",
+      "metric": "C1 CC_REGULAR grid-delivered volume / share; C2 gas-family volume",
+      "years": [2023, 2025],
+      "magnitude": "2023 CC_REGULAR model slightly UNDER band; 2025 gas +2.5% vs EIA-930 (61.60 vs 60.09 TWh)",
+      "classification": "MODEL MISS (offer-floor trim in 2023; EIA-923-vs-EIA-930 OTHER categorization in 2025)",
+      "reason": "2023: the measured min-load re-anchor (committed 0.92->1.27) backs CC down ~0.7 TWh, a small under in the low-gas year within the energy balance. 2025: total model generation matches the measured grid total (energy balance +0.17 TWh), so the residual is the irreducible EIA-923-vs-EIA-930 OTHER (process gas / landfill / purchased steam) categorization difference in the partial 2025 vintage, served by gas-CC. Removing the CT floor overlay left gas-family essentially unchanged (54.23/58.81/61.60 vs 54.22/58.81/61.59), so this item is unchanged. Closable only by reconciling the OTHER categorization, NOT by injecting the EIA-930 residual (fitting). Carried unchanged from neiso-32."
+    },
+    {
+      "criterion": "storage",
+      "metric": "C5b storage throughput (pumped-storage + battery discharge)",
+      "years": [2025],
+      "magnitude": "model ~-64% vs actual",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "Storage arbitrage throughput tracks the price spread, which is set by the still-missing winter scarcity TAIL (C3c, 0h > $300). The CT floor overlay removal does not touch the peak-to-trough spread (dispatch-neutral, mean LMP +0.02-0.03), so this item is unchanged. Closes when the rank-3 reserve co-optimization lands, not via a storage or offer tune. Carried unchanged from neiso-32."
+    }
+  ]
+}
