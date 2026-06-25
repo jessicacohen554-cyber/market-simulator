@@ -69,19 +69,24 @@ def _pjm_mix(model=None):
 
     The 2026-06-15 universal class gate scales its volume band with the ISO's
     TOTAL annual generation (``_gen_totals``), so the fixture must carry the
-    whole mix — fossil classes (``classFull``/``gmModel``) plus the EIA-930
-    non-fossil families (nuclear/wind/solar) — not a single class that would
-    collapse ``a_gen`` onto itself. Here a_gen ≈ 721 TWh, so the 0.5%-of-total
-    volume band is ≈ 3.6 TWh. Pass ``model`` to override one or more model
-    classes; everything else is modelled exactly on the actual.
+    whole mix — fossil classes plus the non-fossil families (nuclear/wind/solar)
+    — not a single class that would collapse ``a_gen`` onto itself. Matching the
+    real render, ``classFull`` and ``gmModel`` each span fossil AND non-fossil
+    classes (wind/solar on the EIA-930 grid basis, nuclear on EIA-923), and
+    ``_gen_totals`` counts each class once over ``classFull``. Here a_gen ≈ 721
+    TWh, so the 0.5%-of-total volume band is ≈ 3.6 TWh. Pass ``model`` to override
+    one or more model classes; everything else is modelled exactly on the actual.
     """
     actual = {"CC_REGULAR": 325.0, "CT_PEAKER": 20.0, "ST_GAS": 9.0, "COAL_BIT": 55.0}
     nonfossil = {"nuclear": 270.0, "wind": 28.0, "solar": 14.0}
-    gm = dict(actual)
+    # classFull/gmModel span every class (the count-once basis); wind/solar are
+    # already grid-delivered (= EIA-930) here, so they enter the total once.
+    classfull = {**actual, **nonfossil}
+    gm = {**actual, **nonfossil}
     if model:
         gm.update(model)
     ypay = {"gmModel": gm, "nonfossil": dict(nonfossil)}
-    ybench = {"classFull": dict(actual), "e930": dict(nonfossil)}
+    ybench = {"classFull": dict(classfull), "e930": dict(nonfossil)}
     return ypay, ybench
 
 

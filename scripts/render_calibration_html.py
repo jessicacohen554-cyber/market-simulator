@@ -699,6 +699,26 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     for g, v in e923_cls.items()
                 },
             }
+            # Grid-delivered actual for the variable renewables (2026-06-25 user
+            # directive). EIA-923 'classFull' counts every plant >= 1 MW including
+            # the distribution-connected / net-metered behind-the-meter PV that
+            # ISO-NE / CAISO / PJM / NYISO / MISO net into LOAD and that never
+            # reaches the wholesale grid (e.g. NEISO solar 3.70 EIA-923 vs 0.89
+            # EIA-930-grid; CAISO +4.7, PJM +5.3, MISO +2.8, NYISO +2.1 TWh of
+            # BTM PV). The model dispatches only grid solar/wind, so for an
+            # apples-to-apples per-class actual AND total the variable renewables
+            # use the authoritative EIA-930 grid series instead of full EIA-923 --
+            # the SAME source-authority `results.calibration.actuals_source`
+            # already applies to the solar/wind fuel-mix gate. Nuclear is left on
+            # EIA-923 (no BTM nuclear; EIA-930 under-reports it for some BAs, e.g.
+            # NYIS), matching actuals_source (nuclear -> eia923). This is the single
+            # BTM-removal point; downstream system totals then count each class
+            # exactly once (no separate EIA-930 add-on -- see calibration_verdict
+            # ._gen_totals and _backcast_shell.totalGen).
+            _cf = bench[int(year)]["classFull"]
+            for _vre in ("wind", "solar"):  # actuals_source EIA-930 classes
+                if _vre in _cf and _vre in _e930d:
+                    _cf[_vre] = round(float(_e930d[_vre]), 4)
             # Repair a preliminary EIA-923 vintage: when a fossil fuel's class
             # total is materially below the complete EIA-930 grid series (the
             # same authority the model's gas/coal are calibrated to), scale that
