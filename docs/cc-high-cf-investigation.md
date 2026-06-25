@@ -345,10 +345,27 @@ sits correctly above CC: `CC_REGULAR −3.47 → +2.09 TWh`, `ST_GAS +2.76 → �
 energy by only **~+2 TWh/yr** (vs PJM's +64.7 TWh) and **depresses LMP**
 (`C3a` 2023 −8.9 %, 2024 −11.0 %; 2025 +9.3 % → in-band). Same root cause and
 same fix as PJM: the CC offer level is too cheap, re-levelled via
-`_NYISO_OFFER_CURVE` `econ_low/econ_high` per the tuning handoff — **not** a
-re-walled capacity. Kept as the NYISO keeper per rule #1 (most faithful
+`_NYISO_OFFER_CURVE` `econ_high` per the tuning handoff — **not** a
+re-walled capacity. Kept as the `nyiso 26` keeper per rule #1 (most faithful
 structure; the miss is now localized to the single CC-offer lever). See
 `results/calibration/nyiso_26_cc-nameplate/calibration_attestation.json` and
+`docs/calibration-best-so-far-nyiso.md`.
+
+**Resolved (2026-06-25, `nyiso 27 cc-offer` keeper).** The CC offer level was
+re-levelled to the CAMPD CC marginal-HR reach: `_NYISO_OFFER_CURVE` `CC_REGULAR`
+`econ_high` **1.12 → 1.21** and `CC_CHP` **1.15 → 1.24** — `1.21×` base_hr, the
+**same fit ERCOT's keeper uses** (`econ_high 1.21`). The compressed `econ_high
+1.12` had priced the top of each CC's econ body *below* the CAMPD CC marginal
+HR; raising it to the grounded reach prices those marginal slices out so CC
+stops over-running and stops setting too-low a clearing price. All movements in
+the predicted direction, no re-walling, no merit inversion, no 2025 overshoot:
+`2023 CC_REGULAR +2.09 → +1.70 TWh` / `ST_GAS −1.48 → −1.26`; `2024 CC_REGULAR
++2.39 → +2.09` / `ST_GAS −4.31 → −4.14`; `C3a` **2023 −8.9 % → in-band**, **2024
+−11.0 % → −9.7 %**, 2025 in-band; `C3b` 2024 `0.250 → 0.243`. `econ_high` now
+sits at the CAMPD/ERCOT-grounded `1.21×` reach — the lever is **spent at its
+grounded landing**; the small residual is *at* that ceiling and is not chased
+further (rule #12). The NYISO CC offer-level lever is **DONE**. See
+`results/calibration/nyiso_27_cc-offer/calibration_attestation.json` and
 `docs/calibration-best-so-far-nyiso.md`.
 
 ### Code touchpoints (this session)
