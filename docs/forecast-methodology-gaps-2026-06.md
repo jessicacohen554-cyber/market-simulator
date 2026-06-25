@@ -149,7 +149,7 @@ The landing point is the grounded CAMPD/SRMC reach, not a residual-zeroing value
 | ORDC LOLP distribution (`ordc_lolp_params_path`) | `results/scarcity.py:139,393` | optional measured LOLP table | slow-varying market-design param; default μ/σ forward | PASS | **IMPL** | — | Low |
 | West/Panhandle Waha net-load gas shape (`ercot_west_netload_gas_shape`, `ercot_west_gas_endogenous_collapse`) | `data/fuel.py:1632`, `fuel.ercot_west_oversupply_collapse_freq` | (was measured Waha neg-price-day freq) | **endogenous West net-load oversupply** → collapse freq | PASS | **IMPL** (G6 closed 2026-06-25) | — | Low |
 | BTM CHP host steam (`CHP_PMIN_CF`, `chp_overrides`, `btm.parquet`) | `data/fleet.py:4195` | CAMPD p2 CF floors (ERCOT) / EIA-923 sector BTM% | CHP host-load forecast (sector BTM share) | PASS | **PART** | M | Low |
-| HSL uncurtailed VRE potential (`hsl_potential_mw`, `_hsl_cf_profile`) | `data/renewables.py:382,876` | ERCOT/CAISO HSL parquet; 2024/25 EIA-930 net-of-curtailment | forecast VRE CF profiles + **endogenous curtailment** | PASS | **PART** | M-L | Med |
+| HSL uncurtailed VRE potential (`hsl_potential_mw`, `_forecast_uncurtailed_cf`) | `data/renewables.py:382,876` | ERCOT/CAISO HSL parquet; no-HSL years → delivered grossed up by ref curtailment rate | forecast VRE CF profiles + **endogenous curtailment** | PASS | **IMPL** (2026-06-25, G7) | — | Med |
 | Weather-year pinning (`config.weather_year`) | `config/scenarios.py:33`; `data/fleet.py:1019` | historical-year load + VRE CF | weather-year **sampling / ensemble** (`market_sim.ensemble`, `WEATHER_YEAR_POOL`) | PASS³ | **IMPL** | — | Low |
 | Storage cycling / battery adder (`storage_daily_cycling`, `battery_dispatch_adder=10`) | `config/scenarios.py` | none (calibration param) | forward adder param (PS per-ISO; battery config) | PASS | **IMPL** | — | Low |
 
@@ -382,18 +382,34 @@ respond to VRE build, which a frozen measured 0.42 cannot. Demonstrated end-to-e
 in the run158 probe (`ercot_run158_netload_gas_endog_collapse`, all 3 years on the
 backcast dashboard). **Done (was: Effort M, Risk Low).**
 
-### G7 HSL uncurtailed VRE potential + endogenous curtailment
+### G7 HSL uncurtailed VRE potential + endogenous curtailment — **BUILT (2026-06-25)**
 
 **Forward analogue.** Forecast VRE CF profiles (per-tech, weather-year-shaped)
 give the uncurtailed potential as the renewable upper bound; the LP then curtails
-endogenously when transmission/oversupply binds (the intended design). The gap:
-2024/25 have **no HSL parquet**, so they fall back to EIA-930 **net-of-curtailment**
-delivered generation as CF — curtailment is then *exogenous/already-baked-in*, not
-modeled, and the model can't re-curtail or respond to changed build. **Forward
-design:** supply published NP6-732/737 HSL (or a forecast CF profile) as the
-potential and let dispatch curtail. **Effort M-L, Risk Med** — without it the
-forecast can't represent rising curtailment as VRE penetration grows, a
-first-order forecast quantity.
+endogenously when transmission/oversupply binds (the intended design). The gap
+*was*: 2024/25 had **no HSL parquet**, so they fell back to EIA-930
+**net-of-curtailment** delivered generation as CF — curtailment baked in, the
+model could not re-curtail or respond to changed build.
+
+**Built.** `renewables.py` now gates the high-curtailment ISOs
+(`_UNCURTAILED_FALLBACK_ISOS = {ERCOT, CAISO}`): when no HSL parquet covers a
+backcast year, the dispatch is handed a **forecast uncurtailed CF** — the
+weather-year delivered profile grossed up by the per-tech **reference
+curtailment rate** from the ISO's most recent HSL year
+(`_reference_curtailment_rate` / `_forecast_uncurtailed_cf`), so the potential is
+always ≥ delivered with headroom equal to that rate and the LP curtails
+endogenously. The reference rate is a forward-reproducible parameter from a
+*different* year, so the potential is never scaled to land delivered output on
+the target year's actuals (rule #11). ERCOT 2024/25 (no NP6 upload) and CAISO
+2025 (partial-year curtailment workbook) now run on this; CAISO build remains
+data-needed for a full-year 2025 workbook. Validated on the dashboard
+(`run158-hsl-endogenous-curtailment`, `caiso-29-hsl-curtailment`): ERCOT models
+wind ~2.2–2.4% / solar ~0.4–1.7% endogenous curtailment vs measured/reference
+4.67%/6.29% (the reduced 6-zone network curtails less than ERCOT's local
+transmission constraints — a **diagnostic**, not a fit target). **Open finding:**
+CAISO models ~0% curtailment in every year (incl. the unchanged HSL years),
+absorbing surplus via negative offers + priced WECC export rather than curtailing
+— a separate investigation (G8 territory), not blocked by this wiring.
 
 ### G8 CAISO intertie reference-pricing + corridor deliverability — **BUILT (2026-06-25)**
 
