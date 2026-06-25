@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
+
+**Rejected probe; keeper stays `nyiso 27 cc-offer`; live source reverted to the
+keeper (no code landed).** Path A of the downstate synchronised-reserve fix (PR
+#877 / `docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md`
+recommendation #2): a NYISO-only, default-off lever
+(`--nyiso-synchronised-reserve` / `ScenarioConfig.nyiso_synchronised_reserve`)
+adding a NYC 10-minute **spinning** sub-requirement = `NYISO_SPIN_FRACTION` (0.5,
+the published ½-largest-contingency rule) × the NYC 10-min total = **250 MW**,
+supplied by a third, **online-bounded** reserve class. `dispatch._build_reserve_rows`
+gains an online block (`R[c,z] ≤ Σ online P`) so only already-generating capacity
+backs spin; with the standard headroom row the effective bound `R ≤ min(P, cap−P)`
+forces idle NYC peakers to commit — attacking PR #877's confirmed root cause
+(the pure-ED LP credits an idle peaker's full pmax as deliverable reserve).
+**Mechanism confirmed** (CT_PEAKER 2023 −1.30→−0.92, 2024 −1.51→−1.05 TWh; CC
+over-run shrinks) but **insufficient for the tail**: C3c >$300 hours unchanged
+(1/0/8) and C3a 2024 regresses −9.7%→−11.0% — the grounded 250 MW spin clears
+cheaply (online quick-start covers it) so the RCPF never fires, and the
+committed-for-spin peakers add low-cost pmin energy in non-scarce hours, dipping
+the mean. Exactly PR #877's prediction → scopes **path B** (zonal/family
+commitment-aware reserve where the FULL downstate 10-/30-min stack binds on
+committed-only headroom). The path-A implementation is preserved in the bundle's
+`model_changes.diff`; live source is the run-27 keeper (all ISOs byte-identical).
+C6 PASS, determination NOT-YET (caveat budget). Docs: new handoff
+`docs/handoffs/nyiso-synchronised-reserve-probe-2026-06.md`; dashboard top-15-per-ISO
+retention pruned the oldest NYISO (`nyiso-15-transco-z6`). No methodology-spec
+change (no code landed).
+
 ## 2026-06-25 (NYISO probe `nyiso 28 native-hr` — REJECTED: native CAMPD marginal-HR re-level craters LMP)
 
 **New derivation tool + rejected probe; keeper stays `nyiso 27 cc-offer`.** Added
