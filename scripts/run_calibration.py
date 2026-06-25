@@ -1417,6 +1417,7 @@ def run_year(
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
+    nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
@@ -1564,6 +1565,10 @@ def run_year(
     if nyiso_synchronised_reserve is not None:
         config = config.with_overrides(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve
+        )
+    if nyiso_spin_headroom_frac is not None:
+        config = config.with_overrides(
+            nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
         )
     if miso_firm_imports is not None:
         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
