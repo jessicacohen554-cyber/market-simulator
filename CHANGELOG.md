@@ -75,6 +75,37 @@ peak protection, spring/autumn reshape, and the backcast no-op; the legacy
 sanity run (real ERCOT fleet, 2024, full 8760): dispatch solves Optimal, budget
 conserved to ~7e-4 capacity-weighted. Spec §1.7 and `docs/forecast-methodology-
 gaps-2026-06.md` G12 updated (DESIGN-ONLY → BUILT).
+## 2026-06-25 (CAISO forward WECC-tie seam — reference-price import + ATC corridor cap, G8)
+
+**Built the forecast-native replacement for CAISO's two MEASURED WECC-tie levers**
+(`forecast-methodology-gaps-2026-06.md` G8). The keeper priced each per-hub
+corridor at the measured OASIS hub LMP (`caiso_per_hub_intertie`) and capped it at
+the measured p95 net-import envelope (`caiso_corridor_flow_limit`); both go inert
+in a forecast year. Two new default-off flags carry the forward path:
+
+- `caiso_intertie_reference_price` — prices each corridor from
+  `(henry_hub[year] + gas_basis) × marginal_heat_rate × load_shape` (the same
+  reference-price interface PJM/MISO use), specialised to the two ties: COI/Path-66
+  proxies the Pacific-NW at Malin (gross-load shape), Path-46/WOR the desert-SW at
+  Palo Verde (**net-load** shape, so its midday price dips with the solar glut).
+  HR anchors are 3-year-mean structural values; the shape is the EIA-930 CISO
+  series (a forward driver). New: `NeighborInterface`-style `CaisoHubNeighbor` +
+  `CAISO_PER_HUB_NEIGHBORS` (constants), `neighbor_price.caiso_hub_reference_price`
+  / `caiso_hub_load_shape`, `transmission.inject_caiso_per_hub_reference_prices`.
+- `caiso_corridor_atc_forward` — caps corridor import flow at a forward ATC =
+  `TTC × posted-ATC fraction × clip(1 − k × solar_frac(t), floor, 1)` (a capability
+  limit shaped by forward CISO solar penetration, not the measured flow). New:
+  `transmission.forward_corridor_atc_envelope`, `eia_loader.caiso_solar_fraction`,
+  `CAISO_CORRIDOR_ATC_SOLAR_K` (constants). Export keeps the physical TTC.
+
+The measured hub LMP + p95 envelope are kept **only** as the backcast realization
+the formula is validated against (`scripts/compare_caiso_intertie_formula_vs_measured.py`).
+**Honesty gate met** (CLAUDE.md #10/#12): import price from forward gas/HR/shape,
+deliverability from a capability — neither pinned to the measured realization.
+Validation: the formula reproduces the measured desert-SW diurnal shape at corr
+**0.96** (2024) with no measured-LMP input; forward 3-year re-solve keeper
+`caiso_intertie_forward_3yr`. Tests: `tests/test_caiso_intertie_forward.py`. Off
+the flags every ISO/run is byte-identical.
 
 ## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
 
