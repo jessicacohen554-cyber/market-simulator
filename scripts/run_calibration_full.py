@@ -1561,6 +1561,7 @@ def solve_and_persist(
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
+    ercot_multiproduct_as_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1730,6 +1731,7 @@ def solve_and_persist(
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
+            ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
@@ -1934,6 +1936,7 @@ def solve_and_persist(
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
+        "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
@@ -2043,6 +2046,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
+    if ercot_multiproduct_as_coopt:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_load_resource_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_load_resource_reserve=True,
@@ -4376,6 +4381,16 @@ def main() -> None:
         "overlay. PJM-only. Off = energy-only LP (default).",
     )
     parser.add_argument(
+        "--ercot-multiproduct-as-coopt",
+        action="store_true",
+        help="ERCOT MULTI-PRODUCT AS co-optimization: replace the single lumped "
+        "contingency-reserve co-opt product with one additive, cascading demand "
+        "curve per AS product (RegUp/RRS/ECRS/NonSpin), so the binding product's "
+        "reserve dual is the MCPC the measured DAM-AS overlay reads, formed "
+        "endogenously. Requires --energy-reserve-coopt; pair with --commitment "
+        "for the phantom-headroom fix. ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
         "--ercot-load-resource-reserve",
         action="store_true",
         help="ERCOT energy+reserve co-opt only: credit the measured "
@@ -5175,6 +5190,7 @@ def main() -> None:
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
+        ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_load_resource_reserve_from_year=(
             args.ercot_load_resource_reserve_from_year

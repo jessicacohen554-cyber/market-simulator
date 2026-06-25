@@ -885,6 +885,23 @@ class ScenarioConfig:
     ercot_ecrs_requirement_from_year: int = 2023  # First weather year the ECRS
     # requirement applies to (default 2023 = the launch year; the data zeroes the
     # pre-June-2023 hours itself).
+    ercot_multiproduct_as_coopt: bool = False  # ERCOT: replace the single lumped
+    # contingency-reserve co-opt product with the MULTI-PRODUCT AS stack — a
+    # co-optimization demand curve per AS product (RegUp/RRS/ECRS/NonSpin,
+    # ERCOT_AS_PRODUCTS), each additive and cascading (higher-quality substitutes
+    # down). The binding product's reserve dual is the MCPC the measured DAM-AS
+    # overlay reads, formed endogenously from the LP. Requires energy_reserve_coopt
+    # (the multi-product builder is the ERCOT co-opt's multi-product mode) and is
+    # paired with commitment_enabled for the phantom-headroom fix. Default off;
+    # the forward analogue of ercot_dam_as_overlay (Finding 1 / G1). GATED.
+    ercot_as_critical_frac: float = 0.0  # Reserve level (as a fraction of each AS
+    # product's peak requirement) at/below which its VOLL-anchored demand curve
+    # hits the full AS offer cap. 0 (default) ramps the curve linearly from $0 at
+    # the requirement to ordc_voll at zero reserve — the documented stand-in for
+    # the published stepped ASDC. The allowed "tune the level on the right
+    # structure" knob (CLAUDE.md #1), not a per-product price fit.
+    ercot_as_n_ramp: int = 12  # Number of equal-width steps discretizing each AS
+    # product's VOLL-anchored demand curve (more steps = smoother price-vs-reserve).
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -2234,6 +2251,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_reserve_from_year": 1,
     "ercot_ecrs_requirement": 1,
     "ercot_ecrs_requirement_from_year": 1,
+    "ercot_multiproduct_as_coopt": 1,
+    "ercot_as_critical_frac": 1,
+    "ercot_as_n_ramp": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
