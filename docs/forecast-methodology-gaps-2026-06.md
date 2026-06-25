@@ -364,23 +364,26 @@ conditions: more West VRE → more oversupply hours → higher collapse frequenc
 validate against**, logged alongside the endogenous value on every solve and never
 re-pinned.
 
-**Validation (backcast, run158).** The endogenous oversupply frequency tracks the
-measured Waha negative-day frequency in the VRE-driven years and under-predicts the
+**Validation (backcast, run158 = the run157 keeper recipe + endogenous collapse,
+the only change).** The endogenous oversupply frequency tracks the measured Waha
+negative-day frequency in the VRE-driven years and under-predicts the
 gas-infrastructure-driven 2024 record — exactly as expected, since 2024's 42% was a
 Permian gas-pipeline-takeaway event (a measured *outcome* with no forward analogue,
-#12), not a power-oversupply event the proxy models: endogenous **0.017 / 0.001 /
-0.002** vs measured **0.030 / 0.420 / 0.110** for 2023/2024/2025 (in-run, on the
-dispatched demand+VRE). The proxy is near-zero in 2024/25 because West local load
-plus the 12.68 GW WESTEX+PNHNDL takeaway absorbs essentially all West VRE, so West
-*power* oversupply almost never occurs. Removing the measured frequency drops the
-West CTs out of the cheap collapse hours (CT_PEAKER 2024 4.95 vs run154's measured-
-frequency 7.20 TWh — within the C1 band but a clear degradation), exposing that
-run154's in-band 2024 West-CT dispatch was partly carried by the non-forward
-measured collapse. The divergence and the West-CT under-run are documented residuals,
-not a reason to revert the structural mechanism (#1/#11) — the forward model must
-respond to VRE build, which a frozen measured 0.42 cannot. Demonstrated end-to-end
-in the run158 probe (`ercot_run158_netload_gas_endog_collapse`, all 3 years on the
-backcast dashboard). **Done (was: Effort M, Risk Low).**
+#12), not a power-oversupply event the proxy models: endogenous **0.017 / 0.003 /
+0.006** vs measured **0.030 / 0.420 / 0.110** for 2023/2024/2025 (in-run, on the
+dispatched demand+VRE; 2024/25 clamped to the 0.01 floor). The proxy is near-zero in
+2024/25 because West local load plus the 12.68 GW WESTEX+PNHNDL takeaway absorbs
+essentially all West VRE, so West *power* oversupply almost never occurs. Removing
+the measured frequency makes West gas firm ~99% of hours, dropping the West CTs out
+of the cheap collapse hours: CT_PEAKER **5.90 / 5.22 / 5.00** vs EIA-923 **7.56 /
+8.21 / 7.11** TWh (−22 / −36 / −30%) — the under-run deepens vs the measured-collapse
+keeper, exposing that the keeper's West-CT dispatch was partly carried by the
+non-forward measured collapse. That under-run is a documented residual, not a reason
+to revert the structural mechanism (#1/#11) — the forward model must respond to VRE
+build, which a frozen measured 0.42 cannot. Registered as a NOT-YET probe
+(`ercot_run158_netload_gas_endog_collapse`, all 3 years on the backcast dashboard;
+the run157-recipe ST_GAS/gas-family and energy-only-dual price residuals are
+inherited, documented in the bundle attestation). **Done (was: Effort M, Risk Low).**
 
 ### G7 HSL uncurtailed VRE potential + endogenous curtailment — **BUILT (2026-06-25)**
 
