@@ -1023,6 +1023,13 @@ _EIA930_BENCHMARK_COLUMNS: tuple[tuple[str, str], ...] = (
     ("solar", "NG: SUN"),
     ("oil", "NG: OIL"),
     ("hydro", "NG: WAT"),
+    # "Other Fuel Sources" (geothermal / biomass / process gas reported outside
+    # the NG: NG aggregate). Threaded through so the per-class benchmark can tell
+    # how much geothermal+biomass a BA correctly reports here vs silently folds
+    # into its "Natural Gas" cell — the partial-fold-in deflation in
+    # render_calibration_html.reconcile_vintage_classes (generalizes the CAISO
+    # allowlist to MISO and any other partial-fold BA).
+    ("other", "NG: OTH"),
     ("battery", "NG: BAT"),
     ("pumped_storage", "NG: PS"),
 )
