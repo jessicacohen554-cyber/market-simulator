@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
+    MAINTENANCE_MONTHLY_SHAPE,
     NOX_RATES,
     NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF,
@@ -1041,6 +1042,42 @@ def generators_to_fleet_arrays(
             cc_np_derate
             and getattr(config, "outage_source", "statistical") == "historic"
         )
+        # FORECAST-mode monthly planned-maintenance shape (spec 1.7). When
+        # enabled, the flat shoulder-POF block (POF subtracted uniformly across
+        # _CC_SHOULDER_MONTHS) is replaced by the historically-derived
+        # MAINTENANCE_MONTHLY_SHAPE — a per-group 12-month curve whose
+        # month-length-weighted mean is 1, so the group's annual POF budget
+        # (POF * shoulder_hours) is conserved exactly while its seasonal
+        # distribution is sharpened (peaks Apr/Oct-Nov, ~0 at the Jul/Aug
+        # summer peak). Backcast runs keep the legacy flat block. _maint_derate
+        # returns the per-hour planned-maintenance derate for a unit's group.
+        _mode = getattr(config, "mode", "forecast")
+        use_maint_shape = _mode == "forecast" and getattr(
+            config, "maintenance_monthly_shape", True
+        )
+        month0 = month - 1  # 0-based calendar month per hour, for shape lookup
+        shoulder_frac = shoulder_hours / hours
+        _maint_pooled = MAINTENANCE_MONTHLY_SHAPE.get("_POOLED")
+
+        def _maint_derate(
+            group: str, pof_value: float, pof_eff_legacy: float
+        ) -> np.ndarray:
+            """Per-hour planned-maintenance derate for ``group``.
+
+            Forecast (shape on): ``POF * shoulder_frac * w[group][month]`` — the
+            monthly curve, annual budget conserved. Otherwise (backcast, or shape
+            off): the legacy flat block, ``pof_eff_legacy`` in the shoulder
+            months and zero elsewhere (byte-identical to the prior model).
+            """
+            if use_maint_shape:
+                w = np.asarray(
+                    MAINTENANCE_MONTHLY_SHAPE.get(group, _maint_pooled), dtype=float
+                )
+                return pof_value * shoulder_frac * w[month0]
+            out = np.zeros(hours, dtype=float)
+            out[shoulder] = pof_eff_legacy
+            return out
+
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -1088,9 +1125,11 @@ def generators_to_fleet_arrays(
                     wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
                 )
                 pof_eff = 0.0 if drop_coal_pof else pof
+                maint_h = _maint_derate(gen.plant_group, pof, pof_eff)
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - summer_wefor - derate
-                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate - pof_eff
+                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate
+                availability[g_idx, :] -= maint_h
             elif (
                 gen.plant_group == "CT_PEAKER"
                 and int(gen.plant_code) in ct_floor_plants
@@ -1123,11 +1162,15 @@ def generators_to_fleet_arrays(
                     if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
                     else pof
                 )
-                # Default (winter): flat WEFOR, no POF. Then override summer
-                # and shoulder.
+                maint_h = _maint_derate(gen.plant_group, pof, pof_eff)
+                # Default (winter): flat WEFOR. Then override summer and
+                # shoulder for the WEFOR seasonal split, and subtract the
+                # planned-maintenance derate across all months (forecast: the
+                # monthly shape; backcast/legacy: pof_eff in the shoulder only).
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - summer_wefor - derate
-                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate - pof_eff
+                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate
+                availability[g_idx, :] -= maint_h
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
             # flat multiplier on top of the age-based availability.
