@@ -25,9 +25,20 @@ against the reported ``HSL - GEN``:
 * CAISO 2023/2024 — EIA-930 delivered generation plus CAISO's reported
   5-minute wind/solar curtailment (scripts/build_caiso_hsl.py). CAISO solar
   curtailment is multi-TWh, so without this the model cannot re-curtail.
-  CAISO years without a full-year curtailment workbook (2025 today) keep
-  the delivered EIA-930 profile fallback — see the data-needed marker in
-  scripts/build_caiso_hsl.py.
+
+For a **high-curtailment ISO whose year has no HSL parquet** (ERCOT 2024/25
+with no NP6 upload, CAISO 2025 with only a partial-year curtailment
+workbook — see :data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead
+handed a **forecast uncurtailed CF**: the EIA-930 weather-year delivered
+profile (its real level and shape) grossed up by the per-tech *reference
+curtailment rate* from the ISO's most recent HSL year, so the potential is
+always >= delivered with headroom equal to that rate (see
+:func:`_forecast_uncurtailed_cf`) — *not* the delivered net-of-curtailment
+series consumed as the upper bound. The LP then curtails endogenously and the
+modeled-vs-reported curtailment gap is a diagnostic, never a fit target
+(CLAUDE.md #11). The reference rate comes from a *different* year, so the
+potential is never scaled so the target year's delivered output lands on
+actuals.
 
 All other ISOs use the delivered ``<BA> hourly`` net-generation series from
 the EIA-930 hourly extract (see :func:`_eia_hourly_cf_profile`).  For NEISO
@@ -113,6 +124,28 @@ _REDISTRIBUTE_MW_EPS: float = 1.0e-6
 # Renewable fuels for which CF profiles are derived, matching the ``fuel``
 # values in the EIA-930 generation-profiles parquet.
 _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
+
+# ISOs whose reported wind/solar curtailment is material (multi-TWh/yr) so the
+# dispatch must re-curtail an *uncurtailed* potential rather than inherit the
+# curtailment baked into EIA-930 delivered output. For a backcast year these
+# prefer a built HSL parquet (ERCOT NP6, CAISO delivered+reported-curtailment);
+# when none covers the year (e.g. ERCOT 2024/25 with no NP6 upload, CAISO 2025
+# with only a partial-year curtailment workbook) they fall back to the FORECAST
+# per-tech uncurtailed CF (EIA-930 weather-year shape x physical normal-year
+# RENEWABLE_AVG_CF, floored at delivered) — NOT the delivered net-of-curtailment
+# series — so the LP still curtails endogenously and responds to changed build.
+# Every ISO NOT listed keeps the delivered EIA-930 profile as its documented
+# fallback (curtailment there is sub-1%/yr, below where explicit re-curtailment
+# moves dispatch). The modeled-vs-reported curtailment gap is a diagnostic,
+# never a fit target (CLAUDE.md #11).
+_UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO"})
+
+# Years probed (newest first) for an HSL-covered reference year when grossing a
+# no-HSL year's delivered profile up to an uncurtailed potential (see
+# :func:`_reference_curtailment_rate`). The most recent year with a built HSL
+# parquet supplies the per-tech reference curtailment rate; the list extends
+# automatically as new HSL years are added.
+_REFERENCE_HSL_YEARS: tuple[int, ...] = (2025, 2024, 2023, 2022, 2021)
 
 # Fallback single-zone allocation, by ISO and fuel. Used only when EIA-860
 # plant-location data is unavailable for the ISO; otherwise capacity is
@@ -436,6 +469,77 @@ def _eia930_delivered_mwh(iso: str, year: int, fuel: str) -> float | None:
         return None
     total = float(gen[fuel].sum())
     return total if total > 0.0 else None
+
+
+def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None:
+    """Return ``(rate, year)`` — the per-tech curtailment rate of a recent HSL year.
+
+    Scans :data:`_REFERENCE_HSL_YEARS` newest-first for a year with a built HSL
+    parquet covering ``(iso, fuel)`` and returns its reported curtailment rate
+    ``1 - GEN/HSL`` (the same ``HSL - GEN`` the calibration report benchmarks
+    against) and the year it came from. This is a real, forward-reproducible
+    market parameter — a measured curtailment rate from a *different* year —
+    used to gross a no-HSL year's delivered profile up to an uncurtailed
+    potential; it never references the target year's own actuals, so it cannot
+    pin the backcast (CLAUDE.md #11).
+
+    Returns ``None`` when the ISO has no HSL-covered reference year (the caller
+    then keeps the delivered profile, leaving curtailment unmodeled).
+    """
+    for ref_year in _REFERENCE_HSL_YEARS:
+        df = load_hsl_hourly(iso, ref_year)
+        if df is None:
+            continue
+        gen = float(df[f"{fuel}_gen_mw"].sum())
+        hsl = float(df[f"{fuel}_hsl_mw"].sum())
+        if hsl > 0.0 and 0.0 < gen <= hsl:
+            return 1.0 - gen / hsl, ref_year
+    return None
+
+
+def _forecast_uncurtailed_cf(
+    iso: str,
+    year: int,
+    fuel: str,
+    monthly_capacity: np.ndarray,
+) -> np.ndarray | None:
+    """Return an uncurtailed CF profile for a no-HSL backcast year, or ``None``.
+
+    For a high-curtailment ISO whose year has no HSL parquet (ERCOT 2024/25 with
+    no NP6 upload, CAISO 2025 with only a partial-year curtailment workbook),
+    the dispatch still needs an *uncurtailed* renewable upper bound so it can
+    re-curtail endogenously rather than inherit the curtailment baked into
+    delivered output. This builds one the same way the CAISO HSL parquet does —
+    delivered + curtailment — except the year's own hourly curtailment series is
+    unavailable, so the EIA-930 weather-year delivered profile (its real level
+    and shape) is grossed up by the per-tech **reference curtailment rate** from
+    the ISO's most recent HSL year (:func:`_reference_curtailment_rate`)::
+
+        uncurtailed_cf(t) = delivered_cf(t) / (1 - reference_rate)
+
+    The result is therefore always >= delivered (a valid potential) with
+    headroom equal to the reference rate, which the LP curtails endogenously.
+    The reference rate is a measured parameter from a *different* year, the same
+    quantity a forward run would assume, so the potential is never scaled to
+    land delivered output on the target year's actuals — the modeled-vs-reported
+    curtailment gap is a diagnostic, not a fit target (CLAUDE.md #11). In
+    forecast mode (no measured delivered series) the loader keeps using the
+    forecast :data:`RENEWABLE_AVG_CF` profile instead.
+
+    Returns ``None`` when the year has no delivered EIA-930 series or the ISO
+    has no HSL-covered reference year, signaling the caller to keep the
+    delivered profile (curtailment then unmodeled for the year).
+    """
+    delivered_cf = _eia_hourly_cf_profile(iso, year, fuel, monthly_capacity)
+    if delivered_cf is None:
+        return None
+    rate_info = _reference_curtailment_rate(iso, fuel)
+    if rate_info is None:
+        return None
+    rate, _ = rate_info
+    if not 0.0 <= rate < 1.0:
+        return None
+    return np.clip(delivered_cf / (1.0 - rate), _CF_MIN, _CF_MAX)
 
 
 def _as_float(value: object) -> float | None:
@@ -1524,9 +1628,15 @@ def load_renewable_profiles(
     on the calibration's chronological clock: an uncurtailed HSL-style series
     where one covers the ISO-year — ERCOT years with a built NP6 HSL
     parquet, CAISO's delivered-plus-reported-curtailment analogue — so the
-    dispatch re-curtails (see :func:`_hsl_cf_profile`), and otherwise the
-    delivered ``<BA> hourly`` net generation for the ISO's balancing
-    authority (see :func:`_eia_hourly_cf_profile`).
+    dispatch re-curtails (see :func:`_hsl_cf_profile`). When no HSL parquet
+    covers the year, a high-curtailment ISO
+    (:data:`_UNCURTAILED_FALLBACK_ISOS`) instead gets a forecast uncurtailed CF
+    (the weather-year delivered profile grossed up by the per-tech reference
+    curtailment rate from the ISO's most recent HSL year, so the potential is
+    always >= delivered; see :func:`_forecast_uncurtailed_cf`) so the dispatch
+    still re-curtails, while every other ISO uses the delivered ``<BA> hourly``
+    net generation for its balancing authority (see
+    :func:`_eia_hourly_cf_profile`).
 
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
@@ -1599,14 +1709,31 @@ def load_renewable_profiles(
             # A backcast prefers a measured hourly profile on the
             # calibration's chronological clock: an uncurtailed HSL-style
             # series where one exists (ERCOT years with a built HSL parquet,
-            # CAISO covered years); otherwise the ISO's delivered
-            # ``<BA> hourly`` net generation is used. Both are normalized per
-            # MW of online capacity, so the vintage ramp distributes them
-            # across zones, and neither takes the CF knob tuned to EIA-930 data.
+            # CAISO covered years). Both are normalized per MW of online
+            # capacity, so the vintage ramp distributes them across zones, and
+            # neither takes the CF knob tuned to EIA-930 data. When no HSL
+            # parquet covers the year the fallback splits by ISO: a
+            # high-curtailment ISO (:data:`_UNCURTAILED_FALLBACK_ISOS`) is
+            # handed the *forecast* per-tech uncurtailed CF below so the
+            # dispatch re-curtails endogenously, while every other ISO keeps
+            # the delivered ``<BA> hourly`` net generation (its documented
+            # default — sub-1%/yr curtailment that re-curtailment would not
+            # move).
             measured_cf = None
             if is_backcast:
                 measured_cf = _hsl_cf_profile(iso, year, fuel, monthly)
+                if measured_cf is None and iso in _UNCURTAILED_FALLBACK_ISOS:
+                    # No HSL parquet for a high-curtailment ISO-year: hand the
+                    # dispatch the forecast uncurtailed CF — the weather-year
+                    # delivered profile grossed up by the per-tech reference
+                    # curtailment rate from the ISO's most recent HSL year — so
+                    # the LP re-curtails endogenously instead of inheriting the
+                    # curtailment baked into delivered output (see
+                    # :func:`_forecast_uncurtailed_cf`).
+                    measured_cf = _forecast_uncurtailed_cf(iso, year, fuel, monthly)
                 if measured_cf is None:
+                    # Every other ISO (and the high-curtailment ISOs when no
+                    # reference rate exists) keeps the delivered EIA-930 profile.
                     measured_cf = _eia_hourly_cf_profile(iso, year, fuel, monthly)
             if measured_cf is not None:
                 cf_profile = measured_cf
