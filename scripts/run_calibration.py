@@ -1410,6 +1410,8 @@ def run_year(
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
+    caiso_intertie_reference_price: bool | None = None,
+    caiso_corridor_atc_forward: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1540,6 +1542,14 @@ def run_year(
     if caiso_corridor_flow_limit is not None:
         config = config.with_overrides(
             caiso_corridor_flow_limit=caiso_corridor_flow_limit
+        )
+    if caiso_intertie_reference_price is not None:
+        config = config.with_overrides(
+            caiso_intertie_reference_price=caiso_intertie_reference_price
+        )
+    if caiso_corridor_atc_forward is not None:
+        config = config.with_overrides(
+            caiso_corridor_atc_forward=caiso_corridor_atc_forward
         )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
@@ -1804,25 +1814,41 @@ def run_year(
     # hub up to the 8.3 GW simultaneous cap. One-sided hourly upper bounds, added
     # to the interface groups; export keeps the physical TTC. No-op off the flag
     # or when the year has no measured interchange (byte-identical).
-    if caiso_per_hub and getattr(config, "caiso_corridor_flow_limit", False):
-        from market_sim.data.eia_loader import measured_corridor_flow_envelope
+    forward_atc = caiso_per_hub and getattr(config, "caiso_corridor_atc_forward", False)
+    if forward_atc or (
+        caiso_per_hub and getattr(config, "caiso_corridor_flow_limit", False)
+    ):
         from market_sim.model.transmission import build_caiso_corridor_flow_groups
 
-        corridor_env = measured_corridor_flow_envelope(iso, year, demand.shape[1])
-        if corridor_env:
+        if forward_atc:
+            # FORWARD ATC: corridor TTC × posted-ATC base fraction × forward solar
+            # derate (CISO solar / demand), a capability limit — not the measured
+            # p95 flow (CLAUDE.md #12). Supersedes the measured envelope when on.
+            from market_sim.model.transmission import forward_corridor_atc_envelope
+
+            corridor_env = forward_corridor_atc_envelope(
+                iso_config, iso, year, demand.shape[1]
+            )
+            cap_label = "FORWARD ATC (TTC × ATC-frac × solar derate)"
+        else:
+            from market_sim.data.eia_loader import measured_corridor_flow_envelope
+
+            corridor_env = measured_corridor_flow_envelope(iso, year, demand.shape[1])
             from market_sim.config.constants import CAISO_CORRIDOR_FLOW_PERCENTILE
 
+            cap_label = f"measured p{CAISO_CORRIDOR_FLOW_PERCENTILE:g} ATC proxy"
+        if corridor_env:
             corridor_groups = build_caiso_corridor_flow_groups(
                 iso_config.links, corridor_env
             )
             interface_groups = interface_groups + corridor_groups
             logger.info(
-                "%s %d: measured WECC corridor deliverability cap on %d link(s) "
-                "(p%g ATC proxy; median DSW %.1f GW / PNW %.1f GW; midday tighter)",
+                "%s %d: WECC corridor deliverability cap on %d link(s) — %s; "
+                "median DSW %.1f GW / PNW %.1f GW; midday tighter",
                 iso,
                 year,
                 len(corridor_groups),
-                CAISO_CORRIDOR_FLOW_PERCENTILE,
+                cap_label,
                 float(np.median(corridor_env.get("WECC_DSW", [np.nan]))) / 1000.0,
                 float(np.median(corridor_env.get("WECC_PNW", [np.nan]))) / 1000.0,
             )
@@ -2316,7 +2342,27 @@ def run_year(
     per_hub_intertie = (
         getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
     )
-    if per_hub_intertie:
+    if per_hub_intertie and getattr(config, "caiso_intertie_reference_price", False):
+        # FORWARD seam: price each corridor from the reference-price formula
+        # ((HH + basis) × HR × load-shape) instead of the measured hub LMP, so
+        # the seam stays live in a forecast year and is validated — not pinned —
+        # against the measured realization (CLAUDE.md #10/#12).
+        from market_sim.model.transmission import (
+            inject_caiso_per_hub_reference_prices,
+        )
+
+        if inject_caiso_per_hub_reference_prices(
+            fleet_arrays, mc_base, iso, year, carbon_price, config.gas_price_path
+        ):
+            logger.info(
+                "%s %d: per-hub WECC intertie — FORWARD reference price per "
+                "corridor ((HH+basis)×HR×load-shape; PNW@Malin gross-load, "
+                "DSW@Palo-Verde net-load), arbitrage-free, one direction per hour "
+                "per corridor (measured hub kept only as backcast validation)",
+                iso,
+                year,
+            )
+    elif per_hub_intertie:
         from market_sim.model.transmission import (
             inject_caiso_per_hub_intertie_prices,
         )

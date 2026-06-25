@@ -729,6 +729,38 @@ class ScenarioConfig:
     # split that creates the corridor links). Carried by eia_loader
     # .measured_corridor_flow_envelope + transmission.build_caiso_corridor_flow_
     # groups. Default off (byte-identical); CAISO-only.
+    caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
+    # corridor from the FORWARD reference-price formula instead of the measured
+    # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor
+    # marginal heat rate × load-shape, the SAME forecast-native construction
+    # PJM/MISO use (reference_price_interface), specialized to the two ties — COI/
+    # Path-66 proxies the Pacific-NW at Malin (gross-load shape), Path-46/WOR the
+    # desert-SW at Palo Verde (net-load shape, so its midday price dips with the
+    # solar glut). The level rides the forward Henry Hub trajectory and the shape
+    # rides the neighbor's hourly tightness, so the seam reprices forward as
+    # gas/solar move and stays live in a forecast year — where the measured hub
+    # series is absent and caiso_per_hub_intertie goes inert. The measured hub LMP
+    # stays the BACKCAST realization the formula is validated against (scripts/
+    # compare_caiso_intertie_formula_vs_measured.py); nothing is pinned to it
+    # (CLAUDE.md #10/#12). Supersedes the measured per-hub injector when on.
+    # Requires caiso_per_hub_intertie (the per-hub legs it reprices). Carried by
+    # transmission.inject_caiso_per_hub_reference_prices +
+    # data.neighbor_price.caiso_hub_reference_price. Default off (byte-identical);
+    # CAISO-only.
+    caiso_corridor_atc_forward: bool = False  # Cap each CAISO per-hub corridor's
+    # import-direction flow at a FORWARD ATC deliverability ceiling instead of the
+    # measured p95 envelope: ATC(t) = corridor TTC × posted-ATC base fraction ×
+    # clip(1 − k × solar_frac(t), floor, 1), where solar_frac is CISO solar /
+    # demand (a forward driver that responds to a changed solar build). The solar
+    # derate reproduces the structural midday deliverability collapse (the WECC
+    # neighbors are themselves long on solar midday) off a capability limit, never
+    # the measured corridor flow (CLAUDE.md #12). One-sided on the import
+    # direction (export keeps the physical TTC); the LP still clears its merit
+    # order below the ceiling. Supersedes the measured corridor cap
+    # (caiso_corridor_flow_limit) when on. Requires caiso_per_hub_intertie. Carried
+    # by transmission.forward_corridor_atc_envelope +
+    # transmission.build_caiso_corridor_flow_groups +
+    # eia_loader.caiso_solar_fraction. Default off (byte-identical); CAISO-only.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
@@ -2167,6 +2199,8 @@ TIER_TAGS: dict[str, int] = {
     "interchange_shaping": 1,
     "interchange_shaping_export_only": 1,
     "reference_price_interface": 1,
+    "caiso_intertie_reference_price": 1,
+    "caiso_corridor_atc_forward": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
     "nyiso_local_selfsupply": 1,

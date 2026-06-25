@@ -132,6 +132,8 @@ CAISO's WECC import/export node is modeled as **pseudo-generators on a stepped s
 - Export: allow CAISO to push power to the import node at a cost of zero or small negative (represents dumping surplus solar).
 - Aggregate limit: ~12–15 GW import, ~5 GW export. Derive from EIA-930 interchange data.
 
+**Forward per-hub seam (forecast-native, 2026-06).** The static stepped ladder is a backcast fit. For a forecast the WECC node is split into the two real corridors (COI/Path-66 → Malin/WECC_PNW → NP15; Path-46/WOR → Palo Verde/WECC_DSW → SP15), each priced by the **reference-price interface** (the same construction PJM/MISO use): `per-hub price = (henry_hub[year] + gas_basis) × marginal_heat_rate × load_shape`, with the solar-driven desert-SW on a **net-load** shape so its midday price dips with the solar glut. The corridor import cap is a forward ATC = `TTC × posted-ATC fraction × forward solar derate` (not the measured p95 flow). Flags `caiso_intertie_reference_price` / `caiso_corridor_atc_forward` (require `caiso_per_hub_intertie`); the measured WECC hub LMP + p95 envelope are retained only as the backcast realization the formula is validated against. See `docs/forecast-methodology-gaps-2026-06.md` G8 and `data/neighbor_price.caiso_hub_reference_price` / `model/transmission.forward_corridor_atc_envelope`.
+
 **Non-negativity:** All dispatch, charge, discharge, slack, dump, SOC ≥ 0. Flows can be negative (bidirectional) or modeled as two non-negative variables per link.
 
 ### 1.4 Policy Constraint Extension Point
