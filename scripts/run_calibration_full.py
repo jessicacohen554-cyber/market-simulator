@@ -1583,6 +1583,8 @@ def solve_and_persist(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
+    hydro_forecast_budget: bool = False,
+    hydro_year: str = "normal",
     interchange_shaping: bool = False,
     interchange_shaping_export_only: bool = False,
     reference_price_interface: bool = False,
@@ -1746,6 +1748,8 @@ def solve_and_persist(
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
+            hydro_forecast_budget=hydro_forecast_budget,
+            hydro_year=hydro_year,
             interchange_shaping=interchange_shaping,
             interchange_shaping_export_only=interchange_shaping_export_only,
             reference_price_interface=reference_price_interface,
@@ -1948,6 +1952,8 @@ def solve_and_persist(
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
+        "hydro_forecast_budget": hydro_forecast_budget,
+        "hydro_year": hydro_year,
         "interchange_shaping": interchange_shaping,
         "interchange_shaping_export_only": interchange_shaping_export_only,
         "reference_price_interface": reference_price_interface,
@@ -4655,6 +4661,27 @@ def main() -> None:
         "--hydro-backfill-year, which supplies the per-plant coverage.",
     )
     parser.add_argument(
+        "--hydro-forecast-budget",
+        action="store_true",
+        help="Forward analogue of --hydro-eia930-monthly: set the "
+        "conventional-hydro monthly budget LEVEL to the normal-water-year "
+        "climatology (the multi-year mean of measured EIA-930 NG: WAT) "
+        "scaled by --hydro-year, instead of a single measured year. The "
+        "per-plant within-month shares still come from the run year's "
+        "EIA-923, so only the level is forecast (the within-month dispatch "
+        "mechanism is unchanged). Mutually exclusive with "
+        "--hydro-eia930-monthly. No-op when no climatology exists for the "
+        "ISO. Off (default) changes no existing run.",
+    )
+    parser.add_argument(
+        "--hydro-year",
+        choices=("dry", "normal", "wet"),
+        default="normal",
+        help="Forecast wet/dry water-year lever on the hydro monthly budget "
+        "level (constants.HYDRO_YEAR_MULTIPLIER: dry 0.85, normal 1.0, wet "
+        "1.15). Only bites with --hydro-forecast-budget. Default 'normal'.",
+    )
+    parser.add_argument(
         "--interchange-shaping",
         action="store_true",
         help="Shape the priced import/export node by the measured EIA-930 "
@@ -5133,6 +5160,8 @@ def main() -> None:
         ),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
+        hydro_forecast_budget=args.hydro_forecast_budget,
+        hydro_year=args.hydro_year,
         interchange_shaping=args.interchange_shaping,
         interchange_shaping_export_only=args.interchange_shaping_export_only,
         reference_price_interface=reference_price_interface,

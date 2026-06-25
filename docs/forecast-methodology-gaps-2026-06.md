@@ -350,7 +350,7 @@ The measured series stay as the backcast realization. **Effort M each, Risk Med*
 CAISO is import-heavy, so import price-formation and deliverability are
 first-order for its forecast.
 
-### G9 CAISO/NEISO hydro monthly budget forward
+### G9 CAISO/NEISO hydro monthly budget forward — IMPLEMENTED (2026-06)
 
 **Forward analogue.** The hydro **monthly-energy-budget** LP constraint (dispatch
 chooses *when* within the month) is itself the forward mechanism; only the
@@ -358,6 +358,21 @@ chooses *when* within the month) is itself the forward mechanism; only the
 budget from streamflow/snowpack forecast or a normal-water-year climatology,
 responding to wet/dry scenarios. **Effort M, Risk Low** (a hydro-year scenario
 lever, mostly a level input).
+
+**Status — done (level input + scenario knob).** The forecast budget level is a
+**normal-water-year climatology** — the per-month mean of measured EIA-930
+NG:WAT across `constants.HYDRO_CLIMATOLOGY_YEARS` (2021–2025), built by
+`data.eia_loader.climatological_monthly_hydro` — scaled by a **wet/dry
+hydro-year lever** (`constants.HYDRO_YEAR_MULTIPLIER`: dry 0.85, normal 1.0, wet
+1.15, bracketing the ±15% central reservoir-system inter-annual range).
+`data.hydro.forecast_monthly_hydro(iso, hydro_year)` returns the scaled
+climatology, fed to the *same* `load_hydro_budget(monthly_target_mwh=…)` seam the
+measured backcast pin uses (per-plant within-month shares preserved; only the
+level moves). Surfaced as the `ScenarioConfig.hydro_year` scenario knob and the
+`--hydro-forecast-budget` / `--hydro-year {dry,normal,wet}` CLI flags (the
+forward mirror of `--hydro-eia930-monthly`, mutually exclusive with it). The
+within-month dispatch mechanism is unchanged — this is a pure level input, never
+pinned to a realized outcome (CLAUDE.md #12).
 
 ### G10 NYISO import reconciliation forward
 
@@ -418,7 +433,7 @@ first.
 | **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
 | **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11), NYISO import-recon forward (G10)** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
-| **P6** | **Hydro budget forward (G9), outage monthly maintenance shape (G12), weather-year ensemble (G13)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
+| **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12), weather-year ensemble (G13)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
 
 **Do-nothing-needed (already forward):** F923 → AEO supply path, gas monthly
 actuals → AEO, CEMS emission rates, ST_GAS net-load drag, offer-curve overrides,
