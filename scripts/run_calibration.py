@@ -2162,14 +2162,34 @@ def run_year(
     if priced_interchange and getattr(config, "nyiso_import_reconciliation", False):
         from market_sim.model.transmission import build_import_node_reconciliation
 
-        import_node_recon = build_import_node_reconciliation(fleet_arrays, iso, year)
+        # Mode-aware band target: backcast -> measured EIA-930 schedule
+        # (calibration always sets mode="backcast", so this is byte-identical to
+        # the prior behaviour); forecast -> the neighbor's forecast net position
+        # (config.nyiso_forward_net_import_twh), shaped to monthly by the
+        # forecast load, else relaxed to the bare priced-seam economics.
+        import_node_recon = build_import_node_reconciliation(
+            fleet_arrays,
+            iso,
+            year,
+            mode=getattr(config, "mode", "backcast"),
+            forward_net_import_twh=getattr(
+                config, "nyiso_forward_net_import_twh", None
+            ),
+            system_demand=demand,
+        )
         if import_node_recon is not None:
             node_idx, recon_lo, recon_hi = import_node_recon
+            _recon_target = (
+                "the neighbor's forecast net position"
+                if getattr(config, "mode", "backcast") == "forecast"
+                else "measured EIA-930 net interchange"
+            )
             logger.info(
-                "%s %d: priced import node reconciled to measured EIA-930 net "
-                "interchange — %d node rows, annual band [%.2f, %.2f] TWh",
+                "%s %d: priced import node reconciled to %s — %d node rows, "
+                "annual band [%.2f, %.2f] TWh",
                 iso,
                 year,
+                _recon_target,
                 int(node_idx.size),
                 recon_lo.sum() / 1e6,
                 recon_hi.sum() / 1e6,
