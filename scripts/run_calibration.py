@@ -91,6 +91,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_plant_monthly_fuel_prices,
     coal_passthrough_by_supply,
     dual_fuel_switch_mask,
+    ercot_west_oversupply_collapse_freq,
     prb_follower_passthrough_series,
     resolve_fuel_prices,
 )
@@ -672,6 +673,18 @@ def _calibration_config(
             float(os.environ["ERCOT_WEST_GAS_COLLAPSE_FREQ"])
             if os.environ.get("ERCOT_WEST_GAS_COLLAPSE_FREQ")
             else None
+        ),
+        # ENDOGENOUS collapse frequency (gap G6): derive the two-regime split from
+        # forecast West/Panhandle oversupply (VRE > local load + export TTC)
+        # instead of the measured neg_day_freq, closing the last measured input of
+        # the West net-load gas shape. ERCOT_WEST_ENDOGENOUS_COLLAPSE=1 enables it
+        # (no-op unless ERCOT_WEST_NETLOAD_GAS is also on, ERCOT only); the
+        # measured neg_day_freq stays logged as the backcast realization to
+        # validate against. See fuel.ercot_west_oversupply_collapse_freq.
+        ercot_west_gas_endogenous_collapse=(
+            iso.upper() == "ERCOT"
+            and os.environ.get("ERCOT_WEST_ENDOGENOUS_COLLAPSE", "").lower()
+            in ("1", "true", "on")
         ),
         # Burner-tip delivered floor for the collapse regime (kills the cheap-hour
         # magnet that pulls low-HR West CTs into low-demand hours). Physical
@@ -2179,8 +2192,43 @@ def run_year(
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
+        # Endogenous Waha collapse frequency (gap G6): how often forecast West/
+        # Panhandle VRE over-supplies the local basin (local load + export TTC).
+        # Built from the per-zone VRE capacity×CF, the West load, and the
+        # WESTEX+PNHNDL export limit the model already carries — the forward
+        # driver that replaces the measured neg_day_freq when
+        # ercot_west_gas_endogenous_collapse is on. Always computed so it can be
+        # logged against the measured value; the function uses it only when the
+        # flag is set.
+        waha_zone_idx = [
+            i for i, name in enumerate(zone_names) if name in ("West", "Panhandle")
+        ]
+        west_oversupply_freq = None
+        if waha_zone_idx:
+            widx = np.array(waha_zone_idx)
+            west_vre = (solar_cap[widx, None] * solar_cf[widx]).sum(axis=0) + (
+                wind_cap[widx, None] * wind_cf[widx]
+            ).sum(axis=0)
+            west_local_load = demand[widx].sum(axis=0)
+            # Export takeaway: total TTC on links leaving the Waha zones (WESTEX
+            # West->North/South_Central + PNHNDL Panhandle->North); the constrained
+            # path the surplus must squeeze through before it crashes the hub.
+            export_limit = sum(
+                link.ttc_mw
+                for link in iso_config.links
+                if link.from_zone in ("West", "Panhandle")
+                and link.to_zone not in ("West", "Panhandle")
+            )
+            west_oversupply_freq = ercot_west_oversupply_collapse_freq(
+                west_vre, west_local_load, export_limit
+            )
         apply_ercot_west_netload_gas_shape(
-            fuel_prices, fleet_arrays, config, year, west_net_load
+            fuel_prices,
+            fleet_arrays,
+            config,
+            year,
+            west_net_load,
+            west_oversupply_freq=west_oversupply_freq,
         )
     # Capture which dual-fuel generator-hours will switch to oil (gas price >
     # oil parity) BEFORE the min-cap below overwrites the gas price, so the
