@@ -192,14 +192,22 @@ scheduled retirement. Contrast with `ct_deployment_overlay` (a *floor*, Finding 
 | Energy+reserve co-opt (RCPF) (`energy_reserve_coopt`) | `results/scarcity.py`; `model/dispatch.py` | published RCPF demand curve | forward-native reserve dual | PASS | **IMPL** | — | Low |
 | Long-Island local self-supply (`nyiso_local_selfsupply`) | `model/transmission.py:1529` | `NYISO_LOCAL_SELFSUPPLY_FRAC{LI:0.45}` × zonal load | forward-reproducible (LMIC market rule), load-responsive | PASS | **IMPL** | — | Low |
 | Firm imports HQ/Ontario (`nyiso_firm_imports`) | `model/transmission.py:1632` | firm-contract floor frac const | firm contract schedule | PASS | **IMPL** | — | Low |
-| Import reconciliation band (`nyiso_import_reconciliation`) | `model/transmission.py:1688`; `eia_loader.py:1992` | EIA-930 NYIS Total-interchange monthly (±2% band) | forecast **neighbor net position** | borderline⁶ | **PART** | M | Med |
+| Import reconciliation band (`nyiso_import_reconciliation`) | `model/transmission.py:1688`; `eia_loader.py:1992` | EIA-930 NYIS Total-interchange monthly (±2% band) | forecast **neighbor net position** (`nyiso_forward_net_import_twh`), else relax | PASS⁶ | **IMPL** | — | Med |
 | Gas monthly actuals + hub basis daily (`gas_hub_basis_daily`, `dual_fuel_oil_reattribution`) | `data/fuel.py:957,2184` | measured Transco Z6 daily basis; dual-fuel oil parity | forecast basis path; structural oil-parity cap | PASS | **PART/IMPL** | S | Low |
 
 ⁶ A *band* around the measured monthly net interchange is softer than a pin (it
 leaves the priced tranches free to set the marginal price within the envelope),
-but the band *target* is the measured realization. Forward analogue is a band
-from the **neighbor's forecast net position**; absent that it should relax to the
-priced-seam economics. Flagged Med because NYISO net imports are price-material.
+but the band *target* is the measured realization. **Resolved (2026-06-25, G10):**
+`build_import_node_reconciliation` is now **mode-aware** — backcast targets the
+measured EIA-930 schedule (the realization, unchanged), while forecast targets
+the **neighbor's forecast net position** (`ScenarioConfig.nyiso_forward_net_import_twh`
+→ `eia_loader.nyiso_forward_net_import_monthly`, an annual NYISO net import shaped
+to monthly by the forecast load) and **relaxes to the bare priced-seam economics**
+when no forecast is supplied. The dispatch validated in backcast is therefore the
+dispatch forecast (rule #10). Still Med-materiality because NYISO net imports are
+price-material — the keeper re-solve (`nyiso-30-fwd-band`) confirms the seam
+clears *within* the ±2% band (model −23.03/−20.23/−19.18 vs measured
+−23.45/−20.35/−19.09 TWh), not pinned to the measured monthly total.
 
 ### F. NEISO cluster (32-btm-solar)
 
@@ -415,12 +423,24 @@ forward mirror of `--hydro-eia930-monthly`, mutually exclusive with it). The
 within-month dispatch mechanism is unchanged — this is a pure level input, never
 pinned to a realized outcome (CLAUDE.md #12).
 
-### G10 NYISO import reconciliation forward
+### G10 NYISO import reconciliation forward — **IMPLEMENTED (2026-06-25)**
 
-**Forward analogue.** Replace the ±2% band around **measured** EIA-930 NYIS net
-interchange with a band around the **neighbor's forecast net position** (PJM/HQ/
-Ontario forecast), or relax to the priced-seam economics when no forecast exists.
-**Effort M, Risk Med.**
+**Forward analogue (built).** `build_import_node_reconciliation` is now
+mode-aware. In **backcast** the ±2% band still targets the **measured** EIA-930
+NYIS net interchange (the realization — byte-identical to the prior keeper). In
+**forecast** the target is the **neighbor's forecast net position** supplied via
+`ScenarioConfig.nyiso_forward_net_import_twh` (an annual NYISO net import in TWh
+derived from the PJM / Hydro-Québec / Ontario / ISO-NE forward export outlook),
+shaped to the twelve monthly targets by the forecast load distribution
+(`eia_loader.nyiso_forward_net_import_monthly` — imports track load, so the band
+responds to changed conditions, the rule-#12 forward-reproducibility test). When
+no forecast is supplied the band **relaxes** to the bare priced-seam economics
+(returns `None`), so the seam clears endogenously and is never pinned to a
+measured monthly total. Validated by the `nyiso-30-fwd-band` all-years keeper
+(backcast metrics identical to `nyiso-27-cc-offer`; the priced seam clears
+*within* the band — model net interchange −23.03 / −20.23 / −19.18 TWh vs
+measured −23.45 / −20.35 / −19.09) and by `tests/test_import_node_reconciliation.py`
+`::TestForwardBandSource`. **Effort M, Risk Med — done.**
 
 ### G11 MISO neighbor-HR forward
 
@@ -482,8 +502,8 @@ first.
 | **P2** | **CAISO intertie reference-pricing + corridor ATC (G8)** | CAISO is import-dominated; both levers go fully inert in forecast today. | M×2 | Med-High (CAISO price formation) |
 | **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
-| **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11), NYISO import-recon forward (G10)** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
-| **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), ~~outage monthly maintenance shape (G12)~~ — ✅ done 2026-06-25, weather-year ensemble (G13)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
+| **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11)** ~~NYISO import-recon forward (G10)~~ ✅ **G10 done 2026-06-25** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
+| **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12 — ✅ done 2026-06-25), weather-year ensemble (G13 — ✅ done 2026-06)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
 
 **Do-nothing-needed (already forward):** F923 → AEO supply path, gas monthly
 actuals → AEO, CEMS emission rates, ST_GAS net-load drag, offer-curve overrides,
