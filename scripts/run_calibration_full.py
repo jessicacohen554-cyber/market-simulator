@@ -463,6 +463,9 @@ def _system_frame(
     zone_names: list[str],
     iso: str | None = None,
     ercot_rtordpa_overlay: bool = False,
+    ercot_dam_as_overlay: bool = False,
+    ercot_dam_as_overlay_from_year: int = 2024,
+    ercot_dam_as_scarcity_threshold: float = 150.0,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -478,6 +481,13 @@ def _system_frame(
     — a post-solve, additive price overlay (no dispatch / volume change), with
     the raw added series persisted in a ``rtordpa_overlay`` column for audit.
     See ``market_sim.results.scarcity.ercot_rtordpa_overlay_series``.
+
+    ``ercot_dam_as_overlay`` likewise adds the measured DAM AS-scarcity overlay
+    (the day-ahead co-optimization scarcity rent, gated to scarce hours and scoped
+    to ``ercot_dam_as_overlay_from_year``+, default 2024), persisted in a
+    ``dam_as_overlay`` column. The two overlays sum into ``price``; they do not
+    overlap by year (RTORDPA carries 2023, DAM-AS carries 2024+). See
+    ``market_sim.results.scarcity.ercot_dam_as_overlay_series``.
     """
     prices = np.asarray(result.prices, dtype=float)
     slack = np.asarray(result.slack, dtype=float)
@@ -489,10 +499,27 @@ def _system_frame(
         else np.asarray(reserve_price, dtype=float).ravel()[:T]
     )
     overlay = None
-    if ercot_rtordpa_overlay and iso == "ERCOT":
-        from market_sim.results.scarcity import ercot_rtordpa_overlay_series
+    dam_as = None
+    if iso == "ERCOT":
+        from market_sim.results.scarcity import (
+            ercot_dam_as_overlay_series,
+            ercot_rtordpa_overlay_series,
+        )
 
-        overlay = ercot_rtordpa_overlay_series(year, T)
+        if ercot_rtordpa_overlay:
+            overlay = ercot_rtordpa_overlay_series(year, T)
+        if ercot_dam_as_overlay:
+            dam_as = ercot_dam_as_overlay_series(
+                year,
+                T,
+                scarcity_threshold=ercot_dam_as_scarcity_threshold,
+                from_year=ercot_dam_as_overlay_from_year,
+            )
+    total_overlay = np.zeros(T, dtype=float)
+    if overlay is not None:
+        total_overlay = total_overlay + overlay
+    if dam_as is not None:
+        total_overlay = total_overlay + dam_as
     rows = []
     for z in range(n_zones):
         cols = {
@@ -500,13 +527,15 @@ def _system_frame(
             "pass": pass_label,
             "zone": zone_names[z],
             "hour": np.arange(T, dtype=np.int32),
-            "price": prices[z] + (overlay if overlay is not None else 0.0),
+            "price": prices[z] + total_overlay,
             "slack": slack[z],
             "demand": demand[z, :T],
             "reserve_price": rp,
         }
         if overlay is not None:
             cols["rtordpa_overlay"] = overlay
+        if dam_as is not None:
+            cols["dam_as_overlay"] = dam_as
         rows.append(pd.DataFrame(cols))
     return pd.concat(rows, ignore_index=True)
 
@@ -1483,6 +1512,9 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "offer_curve_deltas",
                 "priced_interchange",
                 "ercot_rtordpa_overlay",
+                "ercot_dam_as_overlay",
+                "ercot_dam_as_overlay_from_year",
+                "ercot_dam_as_scarcity_threshold",
                 "git_sha",
             )
         },
@@ -1536,6 +1568,9 @@ def solve_and_persist(
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
     ercot_rtordpa_overlay: bool = False,
+    ercot_dam_as_overlay: bool = False,
+    ercot_dam_as_overlay_from_year: int = 2024,
+    ercot_dam_as_scarcity_threshold: float = 150.0,
     ordc_lolp_params_path: str | None = None,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
@@ -1770,6 +1805,9 @@ def solve_and_persist(
                     zone_names,
                     iso=iso,
                     ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+                    ercot_dam_as_overlay=ercot_dam_as_overlay,
+                    ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
+                    ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
                 )
             )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
@@ -1893,6 +1931,9 @@ def solve_and_persist(
         "ercot_ecrs_requirement": ercot_ecrs_requirement,
         "ercot_ecrs_requirement_from_year": ercot_ecrs_requirement_from_year,
         "ercot_rtordpa_overlay": ercot_rtordpa_overlay,
+        "ercot_dam_as_overlay": ercot_dam_as_overlay,
+        "ercot_dam_as_overlay_from_year": ercot_dam_as_overlay_from_year,
+        "ercot_dam_as_scarcity_threshold": ercot_dam_as_scarcity_threshold,
         "ordc_lolp_params_path": ordc_lolp_params_path,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
@@ -4393,6 +4434,46 @@ def main() -> None:
         "Off (default) = byte-identical baseline.",
     )
     parser.add_argument(
+        "--ercot-dam-as-overlay",
+        action="store_true",
+        help="ERCOT only: add the measured DAM AS-scarcity overlay (day-ahead "
+        "analogue of --ercot-rtordpa-overlay) to the model system price as a "
+        "post-solve, additive overlay (no dispatch/volume change). Read PER YEAR "
+        "from data/raw/ercot/ercot_<year>_dam_as_mcpc_hourly.parquet (binding_mcpc "
+        "= per-hour max of the cleared RegUp/RRS/ECRS/NonSpin MCPCs, from the "
+        "60-Day DAM Disclosure). On hours where ERCOT's DAM co-optimized energy "
+        "and AS INTO SCARCITY (binding MCPC above the scarcity threshold), the AS "
+        "scarcity rent lifts the day-ahead energy price (DAM SPP = LMP + reserve "
+        "price) — the acute May-2024 days (May 8/24/26) the energy+reserve LP, "
+        "not reserve-thin there, cannot form. Exogenous ERCOT quantity, NOT a "
+        "price fit; gated to the pre-RTC+B regime and scoped to "
+        "--ercot-dam-as-overlay-from-year+ (2023 is carried by RTORDPA, not "
+        "double-counted). Off (default) = byte-identical baseline.",
+    )
+    parser.add_argument(
+        "--ercot-dam-as-overlay-from-year",
+        type=int,
+        default=2024,
+        help="First weather year the --ercot-dam-as-overlay applies to (default "
+        "2024). 2023's day-ahead AS scarcity is the same event the RTORDPA "
+        "overlay already carries, so applying both in 2023 double-counts it and "
+        "over-fires 2023-H2 (Aug binding-MCPC scarce-hour mean ~$222 >> actual DA "
+        "~$147); RTORDPA is near-inert in 2024/25, where DAM-AS co-opt is the "
+        "unrepresented channel. Same scoping logic as "
+        "--ercot-storage-as-reserve-from-year.",
+    )
+    parser.add_argument(
+        "--ercot-dam-as-scarcity-threshold",
+        type=float,
+        default=150.0,
+        help="AS clearing price ($/MWh) above which --ercot-dam-as-overlay treats "
+        "the DAM as having cleared into scarcity (default 150). Competitive DAM AS "
+        "clears single-to-low-double digits (2024 product means $6-13); >$150 is "
+        "the AS scarcity demand curve, not competitive offers. Not a price fit — "
+        "the May-2024 lift is robust ($18-23) across $75-200; the gate only keeps "
+        "the overlay inert in non-scarce hours.",
+    )
+    parser.add_argument(
         "--ordc-lolp-params-path",
         default=None,
         help="Path to ERCOT's published NP6-576-ER LOLP table (season/tod_block/"
@@ -5009,6 +5090,9 @@ def main() -> None:
         ercot_ecrs_requirement=args.ercot_ecrs_requirement,
         ercot_ecrs_requirement_from_year=(args.ercot_ecrs_requirement_from_year),
         ercot_rtordpa_overlay=args.ercot_rtordpa_overlay,
+        ercot_dam_as_overlay=args.ercot_dam_as_overlay,
+        ercot_dam_as_overlay_from_year=args.ercot_dam_as_overlay_from_year,
+        ercot_dam_as_scarcity_threshold=args.ercot_dam_as_scarcity_threshold,
         ordc_lolp_params_path=args.ordc_lolp_params_path,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
