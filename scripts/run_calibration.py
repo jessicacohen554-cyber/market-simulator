@@ -1371,6 +1371,7 @@ def run_year(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
+    nyiso_synchronised_reserve: bool | None = None,
     miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
@@ -1505,6 +1506,10 @@ def run_year(
     if nyiso_import_reconciliation is not None:
         config = config.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation
+        )
+    if nyiso_synchronised_reserve is not None:
+        config = config.with_overrides(
+            nyiso_synchronised_reserve=nyiso_synchronised_reserve
         )
     if miso_firm_imports is not None:
         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
@@ -2541,6 +2546,8 @@ def run_year(
             coopt_mask,
             coopt_counts,
             coopt_class,
+            coopt_online_gated,
+            coopt_online_rho,
         ) = nyiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
         dispatch_kwargs.update(
             reserve_requirement=coopt_req,
@@ -2551,6 +2558,8 @@ def run_year(
             reserve_balance_zone_mask=coopt_mask,
             reserve_balance_ordc_counts=coopt_counts,
             reserve_balance_class=coopt_class,
+            reserve_online_gated=coopt_online_gated,
+            reserve_online_rho=coopt_online_rho,
         )
         import numpy as _np
 
@@ -2567,6 +2576,13 @@ def run_year(
             int(_elig2d[0].sum()),
             int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
         )
+        if coopt_online_gated is not None:
+            logger.info(
+                "  NYISO synchronised reserve ON: online-gated spinning class "
+                "(rho=%.2f), %d gated reserve family/ies",
+                float(coopt_online_rho),
+                int((_np.asarray(coopt_class) == 2).sum()),
+            )
 
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
     # -- and differ only in the objective (P1 = base MC + startup markup). So

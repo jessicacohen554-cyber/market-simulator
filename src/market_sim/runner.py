@@ -682,6 +682,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     coopt_mask,
                     coopt_counts,
                     coopt_class,
+                    coopt_online_gated,
+                    coopt_online_rho,
                 ) = nyiso_reserve_coopt_inputs(
                     config, fleet_arrays, config.hours, zone_names
                 )
@@ -694,6 +696,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     reserve_balance_zone_mask=coopt_mask,
                     reserve_balance_ordc_counts=coopt_counts,
                     reserve_balance_class=coopt_class,
+                    reserve_online_gated=coopt_online_gated,
+                    reserve_online_rho=coopt_online_rho,
                 )
             # MISO analogue: the footprint-wide market-wide operating-reserve
             # requirement (MSSC + regulation) clears against MISO's VOLL-anchored

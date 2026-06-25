@@ -1598,6 +1598,7 @@ def solve_and_persist(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
+    nyiso_synchronised_reserve: bool | None = None,
     miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
@@ -1760,6 +1761,7 @@ def solve_and_persist(
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
+            nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             miso_firm_imports=miso_firm_imports,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
@@ -1961,6 +1963,7 @@ def solve_and_persist(
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
+        "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "miso_firm_imports": miso_firm_imports,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
@@ -2121,6 +2124,10 @@ def solve_and_persist(
     if nyiso_import_reconciliation is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation
+        )
+    if nyiso_synchronised_reserve is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_synchronised_reserve=nyiso_synchronised_reserve
         )
     if miso_firm_imports is not None:
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
@@ -4861,6 +4868,19 @@ def main() -> None:
         "value (off).",
     )
     parser.add_argument(
+        "--nyiso-synchronised-reserve",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO online-gated SPINNING reserve (downstate-reserve frontier "
+        "path A): a NYC locational 10-minute spinning family on a reserve class "
+        "whose headroom counts only ONLINE quick-start generation, not idle "
+        "capacity — so offline peakers no longer count as phantom deliverable "
+        "reserve. Forces NYC peakers to commit (CT_PEAKER up) and binds the "
+        "family so the RCPF >$300 tail fires endogenously (C3c/C3a up). Requires "
+        "--energy-reserve-coopt; NYISO-only. Default (unset) keeps the base "
+        "config value (off).",
+    )
+    parser.add_argument(
         "--miso-firm-imports",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5128,6 +5148,7 @@ def main() -> None:
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
+        nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         miso_firm_imports=miso_firm_imports,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
