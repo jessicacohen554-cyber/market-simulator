@@ -4421,10 +4421,17 @@ def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
     it by the coal bin nameplate to get a steam-following grid floor. The sector
     class sizes the behind-the-meter pull-out via :data:`CHP_BTM_PCT_BY_SECTOR`.
 
-    PJM-scope: empty for any other ISO (the coal-cogen routing was identified
-    and validated on PJM's CFB / culm / chemical-host coal units).
+    PJM and CAISO scope: empty for any other ISO. The coal-cogen routing was
+    identified and validated on PJM's CFB / culm / chemical-host coal units;
+    CAISO carries one such plant -- Argus Cogen (code 10684, Searles Valley
+    Minerals' Trona soda-ash host), EIA-860 Sector 7 (Industrial CHP), ~0.21-
+    0.25 TWh/yr predominantly bituminous in EIA-923. CAISO grid coal is retired;
+    this lone behind-the-meter industrial cogen burns coal to follow its host
+    steam load, not the LMP, so it routes through the same BTM steam-following
+    holdout rather than dispatching as an economic grid COAL tranche (CLAUDE.md
+    #11: the accurate EIA-860 representation).
     """
-    if iso.upper() != "PJM":
+    if iso.upper() not in ("PJM", "CAISO"):
         return {}
     from market_sim.config.plant_taxonomy import classify_plant
     from market_sim.data.campd import _COAL_EIA_FUELS, _NON_COMBUSTION_FUELS
