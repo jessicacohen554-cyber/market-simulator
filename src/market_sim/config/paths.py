@@ -118,6 +118,10 @@ ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
+# CAISO Production-and-Curtailments workbooks (5-minute), the source for the
+# CAISO HSL build (delivered + reported curtailment). Built by
+# scripts/build_caiso_hsl.py.
+CAISO_CURTAILMENT_DIR: Path = RAW_DATA_DIR / "caiso-curtailment"
 NYISO_HSL_DIR: Path = RAW_DATA_DIR / "nyiso-hsl"
 MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
