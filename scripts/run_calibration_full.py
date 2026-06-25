@@ -1597,6 +1597,8 @@ def solve_and_persist(
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
+    caiso_intertie_reference_price: bool | None = None,
+    caiso_corridor_atc_forward: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1762,6 +1764,8 @@ def solve_and_persist(
             caiso_bidir_intertie=caiso_bidir_intertie,
             caiso_per_hub_intertie=caiso_per_hub_intertie,
             caiso_corridor_flow_limit=caiso_corridor_flow_limit,
+            caiso_intertie_reference_price=caiso_intertie_reference_price,
+            caiso_corridor_atc_forward=caiso_corridor_atc_forward,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
@@ -1966,6 +1970,8 @@ def solve_and_persist(
         "caiso_bidir_intertie": caiso_bidir_intertie,
         "caiso_per_hub_intertie": caiso_per_hub_intertie,
         "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
+        "caiso_intertie_reference_price": caiso_intertie_reference_price,
+        "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
@@ -2118,6 +2124,14 @@ def solve_and_persist(
     if caiso_corridor_flow_limit is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_corridor_flow_limit=caiso_corridor_flow_limit
+        )
+    if caiso_intertie_reference_price is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_intertie_reference_price=caiso_intertie_reference_price
+        )
+    if caiso_corridor_atc_forward is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_corridor_atc_forward=caiso_corridor_atc_forward
         )
     if nyiso_local_selfsupply is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4854,6 +4868,39 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--caiso-intertie-reference-price",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Price each CAISO per-hub WECC corridor from the FORWARD reference-"
+        "price formula — (henry_hub[year] + gas_basis) × neighbor marginal heat "
+        "rate × load-shape — instead of the measured OASIS hub LMP. The SAME "
+        "forecast-native construction PJM/MISO use, specialized to the two ties: "
+        "COI/Path-66 proxies the Pacific-NW at Malin (gross-load shape), Path-46/"
+        "WOR the desert-SW at Palo Verde (net-load shape, so its midday price dips "
+        "with the solar glut). The level rides the forward Henry Hub trajectory "
+        "and the shape rides the neighbor's tightness, so the seam stays live in a "
+        "forecast year where the measured hub series is absent. The measured hub "
+        "LMP is kept only as the backcast realization the formula is validated "
+        "against (scripts/compare_caiso_intertie_formula_vs_measured.py); nothing "
+        "is pinned to it (CLAUDE.md #10/#12). Requires --caiso-per-hub-intertie; "
+        "supersedes the measured per-hub injector. CAISO-only. Default (unset) "
+        "keeps the base config value (off).",
+    )
+    parser.add_argument(
+        "--caiso-corridor-atc-forward",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Cap each CAISO per-hub corridor's import flow at a FORWARD ATC "
+        "deliverability ceiling instead of the measured p95 envelope: ATC(t) = "
+        "corridor TTC × posted-ATC base fraction × clip(1 − k × solar_frac(t), "
+        "floor, 1), where solar_frac is CISO solar / demand (a forward driver). "
+        "The solar derate reproduces the structural midday deliverability collapse "
+        "off a capability limit, never the measured corridor flow (CLAUDE.md #12). "
+        "One-sided on the import direction (export keeps the physical TTC). "
+        "Requires --caiso-per-hub-intertie; supersedes --caiso-corridor-flow-"
+        "limit. CAISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5174,6 +5221,8 @@ def main() -> None:
         caiso_bidir_intertie=args.caiso_bidir_intertie,
         caiso_per_hub_intertie=args.caiso_per_hub_intertie,
         caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,
+        caiso_intertie_reference_price=args.caiso_intertie_reference_price,
+        caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,

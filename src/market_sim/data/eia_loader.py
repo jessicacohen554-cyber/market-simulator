@@ -865,6 +865,39 @@ def measured_corridor_flow_envelope(
     return out or None
 
 
+def caiso_solar_fraction(year: int, hours: int) -> np.ndarray | None:
+    """Return CISO's hourly solar penetration (solar / demand) on the LP clock.
+
+    A forward driver for the CAISO corridor ATC derate
+    (:func:`market_sim.model.transmission.forward_corridor_atc_envelope`): the
+    region's midday solar share, which collapses the deliverable WECC import
+    transfer (the desert-SW / Pacific-NW are themselves long on solar midday).
+    Built from the EIA-930 CISO extract (``NG: SUN`` / ``Demand``) on the model's
+    local 8760 clock, so it aligns hour-for-hour with the dispatch. The desert-SW
+    shares CAISO's solar resource and time zone, so the CISO share proxies the
+    corridor's midday saturation; it responds to a changed forecast solar build,
+    unlike the measured corridor flow.
+
+    Returns a ``(hours,)`` fraction clipped to ``[0, 1]``, or ``None`` when the
+    CISO extract is absent / too short (a forecast year with no extract — the
+    caller then leaves the corridor uncapped).
+    """
+    frame = _eia_hourly_frame_filled("CISO", year)
+    if frame is None or "Demand" not in frame.columns:
+        return None
+    demand = pd.to_numeric(frame["Demand"], errors="coerce")
+    solar = pd.to_numeric(frame.get("NG: SUN"), errors="coerce").fillna(0.0)
+    demand = demand.interpolate().bfill().ffill().to_numpy(dtype=float)
+    solar = solar.to_numpy(dtype=float)
+    if demand.shape[0] < hours or np.isnan(demand).any():
+        return None
+    demand = demand[:hours]
+    solar = solar[:hours]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        frac = np.where(demand > 0.0, solar / demand, 0.0)
+    return np.clip(np.nan_to_num(frac, nan=0.0), 0.0, 1.0)
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
