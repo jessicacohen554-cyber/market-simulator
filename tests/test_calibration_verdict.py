@@ -67,15 +67,16 @@ def _artifacts(
 def _pjm_mix(model=None):
     """Realistic full-PJM fuel mix (TWh) -> ``(ypay, ybench)`` for score_fuelmix.
 
-    The 2026-06-15 universal class gate scales its volume band with the ISO's
-    TOTAL annual generation (``_gen_totals``), so the fixture must carry the
-    whole mix — fossil classes plus the non-fossil families (nuclear/wind/solar)
-    — not a single class that would collapse ``a_gen`` onto itself. Matching the
-    real render, ``classFull`` and ``gmModel`` each span fossil AND non-fossil
-    classes (wind/solar on the EIA-930 grid basis, nuclear on EIA-923), and
+    The universal class gate scales its volume band with the ISO's TOTAL annual
+    generation (``_gen_totals``), so the fixture must carry the whole mix —
+    fossil classes plus the non-fossil families (nuclear/wind/solar) — not a
+    single class that would collapse ``a_gen`` onto itself. Matching the real
+    render, ``classFull`` and ``gmModel`` each span fossil AND non-fossil classes
+    (wind/solar on the EIA-930 grid basis, nuclear on EIA-923), and
     ``_gen_totals`` counts each class once over ``classFull``. Here a_gen ≈ 721
-    TWh, so the 0.5%-of-total volume band is ≈ 3.6 TWh. Pass ``model`` to override
-    one or more model classes; everything else is modelled exactly on the actual.
+    TWh, so 1.0% would be ≈ 7.2 TWh but the band is capped at 5 TWh ->
+    ``min(7.2, 5) = 5 TWh``. Pass ``model`` to override one or more model classes;
+    everything else is modelled exactly on the actual.
     """
     actual = {"CC_REGULAR": 325.0, "CT_PEAKER": 20.0, "ST_GAS": 9.0, "COAL_BIT": 55.0}
     nonfossil = {"nuclear": 270.0, "wind": 28.0, "solar": 14.0}
@@ -93,8 +94,9 @@ def _pjm_mix(model=None):
 class FuelMixTests(unittest.TestCase):
     def test_big_class_percent_band(self):
         # CC_REGULAR 325 TWh actual in a ~721 TWh ISO: the universal volume band
-        # is 0.5% of ISO generation (~3.6 TWh). +8 TWh exceeds it -> FAIL on
-        # volume; +3 TWh is inside both the volume and 1.5pp share bands -> PASS.
+        # is min(1.0% of ISO gen, 5 TWh) = 5 TWh (the 5 TWh cap binds). +8 TWh
+        # exceeds it -> FAIL on volume; +3 TWh is inside both the volume and
+        # 1.5pp share bands -> PASS.
         ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
@@ -106,11 +108,12 @@ class FuelMixTests(unittest.TestCase):
         self.assertEqual(cc["status"], cv.PASS)
 
     def test_small_class_absolute_band(self):
-        # Small classes get the SAME universal volume band (0.5% of ISO gen,
-        # ~3.6 TWh), not the obsolete ±1 TWh size-tiered bar: ST_GAS 9 TWh actual
-        # with a +1.26 TWh miss now PASSES (the old absolute bar failed it), while
-        # a +5 TWh miss still exceeds the band -> FAIL.
-        ypay, ybench = _pjm_mix({"ST_GAS": 14.0})
+        # Small classes get the SAME universal volume band — min(1.0% of ISO gen,
+        # 5 TWh), here capped at 5 TWh — not the obsolete ±1 TWh size-tiered bar:
+        # ST_GAS 9 TWh actual with a +1.26 TWh miss now PASSES (the old absolute
+        # bar failed it), while a +6 TWh miss exceeds the 5 TWh cap -> FAIL (the
+        # cap stops a small class drifting far on the margin and still passing).
+        ypay, ybench = _pjm_mix({"ST_GAS": 15.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         sg = [r for r in rows if r["key"] == "ST_GAS"][0]
         self.assertEqual(sg["status"], cv.FAIL)
@@ -166,7 +169,7 @@ class SysVolTests(unittest.TestCase):
         # Complete vintage: C2 no longer applies a percent-of-family band. The
         # per-class universal gate (C1) governs, so C2 PASSES (defers) but still
         # surfaces any per-class breach in its magnitude for visibility. Here
-        # CC_REGULAR is -12.6 TWh, far outside the 0.5%-ISO-gen volume band, so C1
+        # CC_REGULAR is -12.6 TWh, far outside the 1.0%-ISO-gen volume band, so C1
         # flags it — and the determination fails via C1.fuelmix, not C2.sysvol.
         rows = cv.score_sysvol(
             2024,
@@ -183,7 +186,7 @@ class SysVolTests(unittest.TestCase):
         # The two failure modes the fold-in retires, on one ISO-year:
         #   (a) NO INVENTED FAIL — coal family is +1.75 TWh (=+3.0% of a 58 TWh
         #       family, which the old ±2.5% band failed) but each coal class is
-        #       inside the 0.5%-ISO-gen volume + 1.5pp share band -> C2 PASS.
+        #       inside the 1.0%-ISO-gen volume + 1.5pp share band -> C2 PASS.
         #   (b) NO MASKING — gas family nets to ~0 (CT_PEAKER +6.8 offset by
         #       CC_REGULAR -6.9) yet CT_PEAKER is far out of band; C2 surfaces it
         #       (and C1 fails it) instead of hiding it behind the netted family.
@@ -468,10 +471,12 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["determination"], cv.NOT_YET)
 
     def test_documented_fail_within_budget_is_caveats(self):
-        # ST_GAS (9 TWh actual) overshoots by +5 TWh: that exceeds the universal
-        # volume band (0.5% of the ~721 TWh ISO ≈ 3.6 TWh) so the class FAILs C1,
-        # but the gas family stays within ±2.5% (359 vs 354 = +1.4%) so C2 still
-        # PASSes -> a single isolated hard-gate fail, ledgered -> CAVEAT in budget.
+        # ST_GAS (9 TWh actual) overshoots by +5 TWh: this fixture's classfull is
+        # fossil-only (a_gen ≈ 409 TWh), so the 1.0% volume band ≈ 4.1 TWh and the
+        # +5 TWh miss still exceeds it -> the class FAILs C1 on volume (share stays
+        # within 1.5pp), but the gas family stays within ±2.5% (359 vs 354 = +1.4%)
+        # so C2 still PASSes -> a single isolated hard-gate fail, ledgered ->
+        # CAVEAT in budget.
         ypay = {
             "gmModel": {
                 "CC_REGULAR": 325.0,
