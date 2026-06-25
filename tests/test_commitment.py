@@ -11,6 +11,7 @@ from market_sim.model.commitment import (
     compute_commitment,
     compute_monthly_markup,
     find_runs,
+    reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import solve_dispatch
 
@@ -63,6 +64,68 @@ def _single_coal(heat_rate: float = 10.0, hours: int = 24):
         eford=0.0,
     )
     return [gen], generators_to_fleet_arrays([gen], ["z"], hours=hours)
+
+
+class TestReserveAdequacyCommit(unittest.TestCase):
+    """Path B: the downstate spinning-reserve adequacy commit."""
+
+    def _two_ct(self, hours=4):
+        gens = [
+            Generator(
+                unit_id=f"CT{i}",
+                name=f"CT{i}",
+                zone="NYC",
+                fuel_type="gas_ct",
+                pmax_mw=200.0,
+                pmin_mw=20.0,
+                heat_rate=10.5,
+                eford=0.0,
+            )
+            for i in range(2)
+        ]
+        return gens, generators_to_fleet_arrays(gens, ["NYC"], hours=hours)
+
+    def test_commits_until_requirement_covered(self):
+        gens, fa = self._two_ct()
+        committed = np.zeros((2, 4), dtype=bool)  # both decommitted
+        spin = np.array([True, True])
+        # Requirement 150 MW < one CT's 200 MW pmax -> exactly one CT committed.
+        out = reserve_adequacy_commit(committed, fa, gens, spin, 150.0)
+        per_hour_committed = out.sum(axis=0)
+        np.testing.assert_array_equal(per_hour_committed, [1, 1, 1, 1])
+        # Committed headroom (200) covers the 150 requirement every hour.
+        headroom = (fa.pmax[:, None] * fa.availability * out).sum(axis=0)
+        self.assertTrue((headroom >= 150.0).all())
+
+    def test_commits_both_when_one_insufficient(self):
+        gens, fa = self._two_ct()
+        committed = np.zeros((2, 4), dtype=bool)
+        out = reserve_adequacy_commit(
+            committed, fa, gens, np.array([True, True]), 350.0
+        )
+        np.testing.assert_array_equal(out.sum(axis=0), [2, 2, 2, 2])
+
+    def test_noop_when_requirement_zero_or_no_eligible(self):
+        gens, fa = self._two_ct()
+        committed = np.zeros((2, 4), dtype=bool)
+        np.testing.assert_array_equal(
+            reserve_adequacy_commit(committed, fa, gens, np.array([True, True]), 0.0),
+            committed,
+        )
+        np.testing.assert_array_equal(
+            reserve_adequacy_commit(
+                committed, fa, gens, np.array([False, False]), 150.0
+            ),
+            committed,
+        )
+
+    def test_preserves_already_committed(self):
+        gens, fa = self._two_ct()
+        committed = np.ones((2, 4), dtype=bool)  # both already on
+        out = reserve_adequacy_commit(
+            committed, fa, gens, np.array([True, True]), 150.0
+        )
+        np.testing.assert_array_equal(out, committed)  # nothing to add
 
 
 class TestFindRuns(unittest.TestCase):

@@ -397,6 +397,78 @@ def compute_commitment(
     return committed
 
 
+def reserve_adequacy_commit(
+    committed: np.ndarray,  # (n_gen, T) bool — the energy-economic mask
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],
+    spin_eligible: np.ndarray,  # (n_gen,) bool — downstate quick-start units
+    requirement_mw: float,
+    headroom_frac: float = 1.0,
+) -> np.ndarray:
+    """Augment a commitment mask with a downstate spinning-reserve adequacy commit.
+
+    Path B of the NYISO downstate-reserve frontier (docs/handoffs/
+    nyiso-downstate-reserve-incidence-2026-06.md). :func:`compute_commitment`
+    decommits CC/CT on *energy* economics only, so a peaker not needed for energy
+    is decommitted and can no longer back synchronised reserve — the reason the
+    spinning family never binds and the >$300 tail never fires. This step
+    force-commits the cheapest-startup downstate quick-start units, hour by hour,
+    until the committed quick-start capacity (``Σ pmax × availability`` over the
+    committed, spin-eligible subset) covers ``requirement_mw × headroom_frac``,
+    so the LP *can* hold the spinning requirement from genuinely online units.
+    Those units then generate at least their pmin (the CT_PEAKER energy the model
+    under-runs) and their ``pmax − P`` headroom backs the spinning family, which
+    binds — and the RCPF prices a real shortfall — only when even the committed
+    downstate fleet is tight. It is the reserve analogue of the ``preserve_min_gen``
+    reliability carve-out in :func:`apply_commitment_with_coal_pin`: these units
+    run for reserve adequacy, not energy, so the economic screen must not shut
+    them off. The committed-headroom target is the MEASURED NYISO spinning
+    requirement, never a price-residual fit (CLAUDE.md rule #12).
+
+    Args:
+        committed: The energy-economic commitment mask, ``(n_gen, T)``.
+        fleet_arrays: The vectorized fleet, for ``pmax`` and ``availability``.
+        generators: The dispatch fleet, aligned with ``committed`` rows (for the
+            per-unit startup cost that orders the greedy commit).
+        spin_eligible: ``(n_gen,)`` boolean — the downstate quick-start units that
+            may supply the locational spinning requirement.
+        requirement_mw: The spinning reserve requirement (MW).
+        headroom_frac: Multiplier on the requirement for the committed-capacity
+            target (1.0 = commit until committed pmax covers the requirement).
+
+    Returns:
+        A new commitment mask (a copy) with the adequacy commits applied.
+    """
+    out = committed.copy()
+    spin_idx = np.flatnonzero(np.asarray(spin_eligible, dtype=bool))
+    if spin_idx.size == 0 or requirement_mw <= 0.0:
+        return out
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
+    headroom = pmax[:, np.newaxis] * avail  # (n_gen, T) committed-capacity proxy
+    target = float(requirement_mw) * float(headroom_frac)
+
+    # Already-committed spin-eligible headroom per hour.
+    cum = (headroom[spin_idx, :] * out[spin_idx, :]).sum(axis=0)  # (T,)
+    # Greedy: commit cheapest-startup units first into the still-short hours.
+    startup = np.array(
+        [
+            _startup_cost(generators[g], float(fleet_arrays.heat_rate[g]))
+            for g in spin_idx
+        ]
+    )
+    for g in spin_idx[np.argsort(startup, kind="stable")]:
+        short = cum < target
+        if not short.any():
+            break
+        add = short & (~out[g, :]) & (headroom[g, :] > 0.0)
+        if not add.any():
+            continue
+        out[g, add] = True
+        cum[add] += headroom[g, add]
+    return out
+
+
 def apply_commitment_with_coal_pin(
     fleet_arrays: FleetArrays,
     committed: np.ndarray,  # (n_gen, T) boolean

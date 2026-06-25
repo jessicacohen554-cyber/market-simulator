@@ -27,6 +27,24 @@ C6 PASS, determination NOT-YET (caveat budget). Docs: new handoff
 `docs/handoffs/nyiso-synchronised-reserve-probe-2026-06.md`; dashboard top-15-per-ISO
 retention pruned the oldest NYISO (`nyiso-15-transco-z6`). No methodology-spec
 change (no code landed).
+## 2026-06-25 (NYISO synchronised-reserve — path-A scaffold KEPT default-off + path-B core helper)
+
+**Follow-on to the rejected `nyiso 29` probe above.** Rather than leaving the
+path-A lever only in the probe's `model_changes.diff`, this branch keeps it as a
+**default-off scaffold in live source** (`--nyiso-synchronised-reserve` /
+`ScenarioConfig.nyiso_synchronised_reserve`; NYISO-only; byte-identical when off,
+all other ISOs and NYISO-without-flag unchanged): `dispatch._build_reserve_rows`
+carries an `online_gated` per-class mask + `online_rho`, and
+`scarcity.nyiso_reserve_coopt_inputs` builds the NYC spinning family (req = ½ the
+NYC 10-min total). It reproduces the probe's confirmed-but-insufficient result
+(CT_PEAKER/CC volume mix improves; >$300 tail unchanged), kept as the base for
+path B rather than as a keeper. **Adds the path-B core**
+`commitment.reserve_adequacy_commit` (+ unit tests; additive/unwired):
+force-commits the cheapest-startup downstate quick-start until committed headroom
+covers the spinning requirement, so the spinning family can bind on
+`Σ_online(pmax−P)` — the real tail lever, MILP-free via the existing P2
+commitment mask. Path-B design recorded in
+`docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md`.
 
 ## 2026-06-25 (NYISO probe `nyiso 28 native-hr` — REJECTED: native CAMPD marginal-HR re-level craters LMP)
 
