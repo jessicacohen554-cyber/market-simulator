@@ -256,4 +256,11 @@ results/outage_gate_audit/
 /results/calibration/ercot_run155*/plant_cf_bands.parquet
 /results/calibration/ercot_run155*/plant_hourly_fit.parquet
 /results/calibration/ercot_run155*/model_changes.diff
+
+# run158 endogenous-collapse probe bundle: commit only the slim
+# run_config.json/meta.json/calibration_attestation.json (ERCOT keeper
+# convention); the heavy dispatch artifacts stay local + regenerable.
+/results/calibration/ercot_run158*/p2_state/
+/results/calibration/ercot_run158*/plant_cf_bands.parquet
+/results/calibration/ercot_run158*/plant_hourly_fit.parquet
 /scratchpad/
