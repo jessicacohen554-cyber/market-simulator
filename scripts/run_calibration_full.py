@@ -1604,6 +1604,7 @@ def solve_and_persist(
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
+    nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
@@ -1773,6 +1774,7 @@ def solve_and_persist(
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
+            nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
@@ -1981,6 +1983,7 @@ def solve_and_persist(
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
+        "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
@@ -2156,6 +2159,10 @@ def solve_and_persist(
     if nyiso_synchronised_reserve is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve
+        )
+    if nyiso_spin_headroom_frac is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
         )
     if miso_firm_imports is not None:
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
@@ -4972,7 +4979,21 @@ def main() -> None:
         "reserve. Forces NYC peakers to commit (CT_PEAKER up) and binds the "
         "family so the RCPF >$300 tail fires endogenously (C3c/C3a up). Requires "
         "--energy-reserve-coopt; NYISO-only. Default (unset) keeps the base "
-        "config value (off).",
+        "config value (off). With --commitment this becomes PATH B: the spinning "
+        "family rides the ordinary class-1 headroom and the P2 commitment screen "
+        "(+ reserve_adequacy_commit) is the online gate, so the class-1 NYC "
+        "headroom equals the physically-correct Sum_online(pmax - P).",
+    )
+    parser.add_argument(
+        "--nyiso-spin-headroom-frac",
+        type=float,
+        default=None,
+        help="Path-B committed-capacity target multiplier for the NYISO "
+        "reserve-adequacy commit: force-commit NYC quick-start until committed "
+        "capacity covers the measured NYC spinning requirement (250 MW) times "
+        "this factor. Default (unset) keeps the config value (1.0 = commit to the "
+        "measured requirement). A coverage multiple on the measured requirement, "
+        "NOT a price-residual fit.",
     )
     parser.add_argument(
         "--miso-firm-imports",
@@ -5263,6 +5284,7 @@ def main() -> None:
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
+        nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
