@@ -75,7 +75,17 @@ HOURS_PER_YEAR = 8760
 INTERVALS_PER_HOUR = 4  # 15-minute SCED telemetry (UMass dataset)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-hsl"
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from market_sim.config.paths import (  # noqa: E402
+    CALIBRATION_DIR,
+    ERCOT_HSL_DIR,
+)
+
+# Output HSL parquets and the NP6 upload drop zone resolve through
+# config/paths.py (the single raw root under data/raw/ after the W1
+# relocation).
+OUT_DIR = ERCOT_HSL_DIR
 # NP6 HSL upload drop zone for 2024+ (ERCOT MIS power-production reports).
 NP6_DIR = OUT_DIR / "np6"
 
@@ -103,7 +113,7 @@ EIA_REFERENCE_TWH: dict[int, dict[str, float]] = {
     2023: {"wind": 105.0, "solar": 32.0},
 }
 
-REFERENCE_PATH = REPO_ROOT / "inputs" / "calibration" / "calibration_reference.json"
+REFERENCE_PATH = CALIBRATION_DIR / "calibration_reference.json"
 
 
 def out_file(year: int) -> Path:
