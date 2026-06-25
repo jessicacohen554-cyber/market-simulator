@@ -1,5 +1,20 @@
 # Handoff — PJM CC offer-level / cycling tuning direction (research, no reruns)
 
+> **Status (2026-06-25): the NYISO instance of this offer-level lever is DONE.**
+> The `nyiso 27 cc-offer` keeper re-levelled `_NYISO_OFFER_CURVE` CC `econ_high`
+> to the CAMPD CC marginal-HR reach (`CC_REGULAR 1.12 → 1.21`, `CC_CHP 1.15 →
+> 1.24` — the same `1.21×` fit ERCOT's keeper uses), closing most of NYISO's
+> mild CC over-run (`2023 CC_REGULAR +2.09 → +1.70`, `2024 +2.39 → +2.09 TWh`)
+> and recovering `C3a` (2023 `−8.9 %` → in-band, 2024 `−11.0 %` → `−9.7 %`)
+> without re-walling capacity or a residual-fitted adder. `econ_high` is now at
+> the grounded reach, so the offer lever is spent at its landing; the residual is
+> at that ceiling and not chased (rule #12). See
+> `docs/cc-high-cf-investigation.md` (NYISO confirmation/resolution) and
+> `docs/calibration-best-so-far-nyiso.md`. **PJM's larger (+65 TWh) over-run
+> still wants the structural levers ranked below — the NYISO close confirms the
+> offer-level trim is a real, grounded second step, but it is the smaller lever
+> for PJM.**
+
 **This is an ANALYSIS task, not a compute task. Do NOT launch calibration solves.**
 Your job is to read the repo + publicly available data + how other dispatch models
 handle combined-cycle dispatch, and recommend the **best tuning direction** (with
