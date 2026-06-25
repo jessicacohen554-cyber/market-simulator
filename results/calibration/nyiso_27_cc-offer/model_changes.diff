@@ -1,0 +1,59 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 35fbd35..2d588ee 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -422,12 +422,30 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
+ #    correction (CLAUDE.md rule #11: the blended HR was silently masking the
+ #    inversion), forward-reproducible, not fitted to the price/volume residual.
+ #  - CC_REGULAR / CC_CHP: the efficient gas workhorses. CC marginal HR is ~flat
+-#    and ~0.95x average across the operating range (CAMPD CC fit, also cited on
+-#    the ERCOT curve), so econ_low 0.95 / econ_high 1.12 replaces the generic
+-#    1.06 / 1.27 that priced the upper econ slices too high and let steam in.
+-#    CC_CHP (most efficient, 6.99) is nudged a touch higher than CC_REGULAR to
+-#    trim its small over-run. The duct-firing peak stays a separate inflexible
+-#    flat tranche (2023 SOM §VI.A: "Some combined cycles offer inflexibly... to
++#    and ~0.95x average across the bulk of the operating range (CAMPD CC fit,
++#    also cited on the ERCOT curve), with the incremental HR rising toward full
++#    load as the unit pushes against its rating (the approach to duct firing).
++#    The CAMPD CC marginal-HR SRMC *reach* at the top of the econ ramp is
++#    ~1.21x base_hr -- the SAME fit ERCOT's keeper uses (committed 0.87 /
++#    econ_low 0.92 / econ_high 1.21). So the rising econ ramp now spans
++#    econ_low 0.95 -> econ_high 1.21 (run 27 re-level; econ_high was 1.12).
++#    WHY 1.12 was wrong: it compressed the upper econ slices BELOW the CAMPD CC
++#    marginal HR, pricing the top of each CC's body too cheap. While the old
++#    75% CC capacity wall was in place that compression was masked; once run 26
++#    removed the wall (cc_nameplate_summer_derate -> full EIA-860 nameplate) the
++#    un-walled CC fleet cleared its now-exposed top slices too cheap and mildly
++#    over-ran on energy (CC_REGULAR ~+2 TWh/yr) while DEPRESSING the marginal
++#    LMP (C3a 2023 -8.9% / 2024 -11.0%). Raising econ_high to the ERCOT/CAMPD
++#    1.21 reach prices those marginal slices out, so CC stops over-running and
++#    stops setting too-low a clearing price -- a grounded offer-LEVEL
++#    calibration (CLAUDE.md rule #1 second step: right structure in run 26,
++#    offer level here), grounded in the CAMPD CC marginal heat rate, NOT a
++#    re-walled capacity nor a residual-fitted adder (rules #11/#12). econ_low
++#    stays 0.95 (already above ERCOT's 0.92; the cheap baseload body is correct
++#    -- the miss was only the compressed top). CC_CHP (most efficient, 6.99)
++#    stays nudged a touch higher (econ_high 1.24, +0.03 over CC_REGULAR) to trim
++#    its small over-run. The duct-firing peak stays a separate inflexible flat
++#    tranche (2023 SOM §VI.A: "Some combined cycles offer inflexibly... to
+ #    manage physical operating constraints on the duct-fired portion"; duct
+ #    burners are not flexible enough for AGC/10-min reserves).
+ #  - CT_PEAKER: offers near marginal cost in NYISO's competitive market; the
+@@ -438,7 +456,7 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+     "CC_REGULAR": {
+         "committed": 0.90,
+         "econ_low": 0.95,
+-        "econ_high": 1.12,
++        "econ_high": 1.21,  # run 27: 1.12 -> 1.21, CAMPD CC marginal-HR SRMC reach (ERCOT-grounded)
+         "peak": 2.25,
+         "econ_low_share": 0.50,
+         "pct_peaking": 8.0,
+@@ -446,7 +464,7 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+     "CC_CHP": {
+         "committed": 0.90,
+         "econ_low": 0.98,
+-        "econ_high": 1.15,
++        "econ_high": 1.24,  # run 27: 1.15 -> 1.24, +0.03 over CC_REGULAR (trim CHP over-run)
+         "peak": 2.25,
+         "econ_low_share": 0.50,
+         "pct_peaking": 8.0,
