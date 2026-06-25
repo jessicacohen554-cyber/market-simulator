@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-25T13:51:23",
+  "timestamp": "2026-06-25T14:50:53",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -51,14 +51,15 @@
   "battery_dispatch_adder": 10.0,
   "as_reserve_withholding": false,
   "energy_reserve_coopt": true,
+  "ercot_multiproduct_as_coopt": false,
   "ercot_load_resource_reserve": true,
   "ercot_load_resource_reserve_from_year": 2023,
   "ercot_storage_as_reserve": true,
-  "ercot_storage_as_reserve_from_year": 2025,
+  "ercot_storage_as_reserve_from_year": 2024,
   "ercot_ecrs_requirement": false,
   "ercot_ecrs_requirement_from_year": 2023,
   "ercot_rtordpa_overlay": true,
-  "ercot_dam_as_overlay": false,
+  "ercot_dam_as_overlay": true,
   "ercot_dam_as_overlay_from_year": 2024,
   "ercot_dam_as_scarcity_threshold": 150.0,
   "ordc_lolp_params_path": null,
@@ -129,6 +130,8 @@
   "priced_interchange": false,
   "hydro_backfill_year": null,
   "hydro_eia930_monthly": false,
+  "hydro_forecast_budget": false,
+  "hydro_year": "normal",
   "interchange_shaping": false,
   "interchange_shaping_export_only": false,
   "reference_price_interface": false,
@@ -141,10 +144,14 @@
   "caiso_bidir_intertie": null,
   "caiso_per_hub_intertie": null,
   "caiso_corridor_flow_limit": null,
+  "caiso_intertie_reference_price": null,
+  "caiso_corridor_atc_forward": null,
   "nyiso_local_selfsupply": null,
   "nyiso_firm_imports": null,
   "nyiso_import_reconciliation": null,
+  "nyiso_synchronised_reserve": null,
   "miso_firm_imports": null,
+  "miso_seam_flow_limit": false,
   "gas_hub_basis_overlay": null,
   "btm_backfill_year": null,
   "shared_inputs": {
@@ -152,6 +159,6 @@
     "eia923": "../_shared/ERCOT/eia923-1baf3fae644b.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "b5511d9",
+  "git_sha": "dc8c315",
   "highspy_version": "1.14.0"
 }
