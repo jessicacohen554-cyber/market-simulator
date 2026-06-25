@@ -891,6 +891,16 @@ class ScenarioConfig:
     # in the shoulder months, where WEFOR is heaviest after the summer-peak
     # redistribution. Does not touch the planned-outage (POF) or
     # weather/performance derate terms.
+    maintenance_monthly_shape: bool = True  # FORECAST-mode planned-maintenance
+    # shaping. When True (default) and mode == "forecast", the flat shoulder-POF
+    # heuristic (POF smeared evenly across _CC_SHOULDER_MONTHS) is replaced by
+    # the historically-derived MAINTENANCE_MONTHLY_SHAPE (per-group 12-month
+    # weights learned from CAMPD/GADS outage timing). The group's annual POF
+    # budget is conserved exactly (the shape has a month-weighted mean of 1) —
+    # only its seasonal distribution is sharpened (peaks Apr/Oct-Nov, ~0 at the
+    # Jul/Aug summer peak). False restores the legacy flat shoulder block.
+    # Backcast runs are unaffected either way (POF there comes from the historic
+    # overlay / coal_drop_pof path). Spec section 1.7 roadmap item.
     wefor_residual: float | None = None  # Historic-backcast WEFOR floor for
     # the overlay-covered thermal classes (coal + CC_REGULAR/CC_CHP/ST_GAS/
     # ST_CHP). The CAMPD historic overlay + unit-level derate already carry
@@ -2202,6 +2212,7 @@ TIER_TAGS: dict[str, int] = {
     "basis_differential_factor": 3,
     "wefor_multiplier": 3,
     "wefor_residual": 3,
+    "maintenance_monthly_shape": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,

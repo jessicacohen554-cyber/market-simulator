@@ -253,8 +253,16 @@ class TestThermalAvailability(unittest.TestCase):
             online_year=online_year,
             plant_group=plant_group,
         )
+        # These tests validate the legacy WEFOR/POF age mechanics and the
+        # summer->shoulder redistribution, so they pin the flat-block model
+        # (maintenance_monthly_shape=False). The forecast monthly-maintenance
+        # shape is covered separately in TestMaintenanceMonthlyShape.
         return generators_to_fleet_arrays(
-            [gen], ["North"], config=ScenarioConfig(weather_year=weather_year)
+            [gen],
+            ["North"],
+            config=ScenarioConfig(
+                weather_year=weather_year, maintenance_monthly_shape=False
+            ),
         )
 
     @staticmethod
@@ -330,6 +338,85 @@ class TestThermalAvailability(unittest.TestCase):
             [nuc], ["North"], config=ScenarioConfig(weather_year=2024)
         )
         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.03)
+
+
+class TestMaintenanceMonthlyShape(unittest.TestCase):
+    """Forecast-mode historically-derived monthly maintenance shape (spec 1.7)."""
+
+    _APRIL_H = 31 * 24 + 28 * 24 + 31 * 24 + 100  # mid-April (shoulder peak)
+    _JULY_H = sum([31, 28, 31, 30, 31, 30]) * 24 + 100  # mid-July (summer peak)
+    _JAN_H = 100  # mid-January (winter)
+
+    @staticmethod
+    def _gen(plant_group, online_year, fuel_type):
+        return Generator(
+            unit_id="g1",
+            name="G",
+            zone="North",
+            fuel_type=fuel_type,
+            pmax_mw=400.0,
+            heat_rate=8.0,
+            online_year=online_year,
+            plant_group=plant_group,
+        )
+
+    def _fa(self, plant_group, online_year, fuel_type, shape=True, mode="forecast"):
+        cfg = ScenarioConfig(
+            mode=mode, weather_year=2024, maintenance_monthly_shape=shape
+        )
+        return generators_to_fleet_arrays(
+            [self._gen(plant_group, online_year, fuel_type)], ["North"], config=cfg
+        )
+
+    def test_annual_budget_conserved_vs_flat_block(self):
+        # The shape has a month-length-weighted mean of 1, so the annual-average
+        # availability of a coal unit is identical to the legacy flat-block model
+        # (only the seasonal distribution moves). Coal has no summer ambient
+        # derate, so the conservation is exact.
+        on = self._fa("COAL", 1977, "coal", shape=True)
+        off = self._fa("COAL", 1977, "coal", shape=False)
+        # places=5: the baked shape weights are rounded to 3 decimals, so the
+        # mean-1 normalization (and thus budget conservation) holds to ~1e-6.
+        self.assertAlmostEqual(
+            on.availability[0].mean(), off.availability[0].mean(), places=5
+        )
+
+    def test_summer_peak_protected(self):
+        # July weight is ~0 for the thermal groups, so the firm summer-peak
+        # capacity is unchanged from the flat-block model (which also has no
+        # summer POF).
+        on = self._fa("COAL", 1977, "coal", shape=True)
+        off = self._fa("COAL", 1977, "coal", shape=False)
+        self.assertAlmostEqual(
+            on.availability[0, self._JULY_H], off.availability[0, self._JULY_H]
+        )
+
+    def test_seasonal_reshape_spring_and_autumn(self):
+        # The shape concentrates maintenance in spring/autumn: April availability
+        # is below July (deeper maintenance), and below the flat-block April
+        # (the curve peaks higher than the smeared block in its peak month).
+        on = self._fa("CC_REGULAR", 2010, "gas_cc", shape=True)
+        self.assertLess(
+            on.availability[0, self._APRIL_H], on.availability[0, self._JULY_H]
+        )
+
+    def test_winter_carries_some_maintenance(self):
+        # Unlike the flat block (zero POF in winter), the historical shape places
+        # a modest amount of maintenance in winter — so January availability is
+        # slightly below the flat-block January for a group with a nonzero winter
+        # weight (coal Jan weight 0.239 > 0).
+        on = self._fa("COAL", 1977, "coal", shape=True)
+        off = self._fa("COAL", 1977, "coal", shape=False)
+        self.assertLess(
+            on.availability[0, self._JAN_H], off.availability[0, self._JAN_H]
+        )
+
+    def test_backcast_unaffected_by_flag(self):
+        # In backcast mode the maintenance shape never engages (POF there comes
+        # from the historic overlay path), so the flag is a no-op.
+        on = self._fa("COAL", 1977, "coal", shape=True, mode="backcast")
+        off = self._fa("COAL", 1977, "coal", shape=False, mode="backcast")
+        np.testing.assert_allclose(on.availability[0], off.availability[0])
 
 
 class TestCcDerateFromTop(unittest.TestCase):
