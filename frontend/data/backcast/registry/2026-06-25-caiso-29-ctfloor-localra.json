@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-25-caiso-29-ctfloor-localra",
+  "label": "caiso 29 ctfloor localra",
+  "date": "2026-06-25",
+  "shorthand": "caiso-29-ctfloor-localra",
+  "definition": "CAISO 29: coal-cogen BTM fix (Argus 10684 Industrial-CHP routed through steam-following holdout, ends 0.38 TWh phantom grid coal) + temperature-driven CT_PEAKER local-RA reliability floor (NOAA-TMAX-keyed evening commitment, regressed from measured CAMPD CT CF). CT_CHP EOR over-dispatch + import/total-gas drift diagnosed, deferred.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-25-caiso-29-ctfloor-localra.js",
+  "bundle": "results/calibration/caiso29_ctfloor_localra"
+}
