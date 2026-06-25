@@ -983,6 +983,37 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Worker processes; defaults to cpu_count - 1.",
     )
 
+    ensemble_parser = subparsers.add_parser(
+        "ensemble",
+        help="Run a forecast over multiple weather years and report the distribution.",
+    )
+    ensemble_parser.add_argument(
+        "--config", required=True, help="Path to a forecast scenario YAML file."
+    )
+    ensemble_parser.add_argument(
+        "--iso",
+        default=None,
+        help="ISO to run; defaults to the config's own ISO.",
+    )
+    ensemble_parser.add_argument(
+        "--weather-years",
+        type=int,
+        nargs="+",
+        default=None,
+        help="Weather years to draw over; defaults to WEATHER_YEAR_POOL.",
+    )
+    ensemble_parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="Worker processes; defaults to cpu_count - 1.",
+    )
+    ensemble_parser.add_argument(
+        "--out",
+        default=None,
+        help="Path to write the ensemble distribution JSON; skipped if omitted.",
+    )
+
     return parser
 
 
@@ -1004,6 +1035,14 @@ def main(argv: list[str] | None = None) -> None:
         run_scenario_iso(config, iso)
     elif args.command == "sweep":
         run_sweep(SweepDefinition.from_yaml(args.sweep), args.workers)
+    elif args.command == "ensemble":
+        from market_sim.ensemble import export_ensemble_json, run_weather_ensemble
+
+        config = ScenarioConfig.from_yaml(args.config)
+        iso = args.iso or config.iso
+        members = run_weather_ensemble(config, iso, args.weather_years, args.workers)
+        if args.out:
+            export_ensemble_json(members, iso, args.out)
 
 
 if __name__ == "__main__":
