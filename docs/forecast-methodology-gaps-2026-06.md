@@ -126,7 +126,7 @@ The landing point is the grounded CAMPD/SRMC reach, not a residual-zeroing value
 | West/Panhandle Waha net-load gas shape (`ercot_west_netload_gas_shape`, `neg_day_freq`) | `data/fuel.py:1632,1310` | measured Waha neg-price-day freq | **endogenous West net-load oversupply** → collapse freq | PASS | **PART** | M | Low |
 | BTM CHP host steam (`CHP_PMIN_CF`, `chp_overrides`, `btm.parquet`) | `data/fleet.py:4195` | CAMPD p2 CF floors (ERCOT) / EIA-923 sector BTM% | CHP host-load forecast (sector BTM share) | PASS | **PART** | M | Low |
 | HSL uncurtailed VRE potential (`hsl_potential_mw`, `_hsl_cf_profile`) | `data/renewables.py:382,876` | ERCOT/CAISO HSL parquet; 2024/25 EIA-930 net-of-curtailment | forecast VRE CF profiles + **endogenous curtailment** | PASS | **PART** | M-L | Med |
-| Weather-year pinning (`config.weather_year`) | `config/scenarios.py:33`; `data/fleet.py:1019` | historical-year load + VRE CF | weather-year **sampling / ensemble** | PASS³ | **DSGN** | M | Low |
+| Weather-year pinning (`config.weather_year`) | `config/scenarios.py:33`; `data/fleet.py:1019` | historical-year load + VRE CF | weather-year **sampling / ensemble** (`market_sim.ensemble`, `WEATHER_YEAR_POOL`) | PASS³ | **IMPL** | — | Low |
 | Storage cycling / battery adder (`storage_daily_cycling`, `battery_dispatch_adder=10`) | `config/scenarios.py` | none (calibration param) | forward adder param (PS per-ISO; battery config) | PASS | **IMPL** | — | Low |
 
 ² Single-product only — the multi-product stack is the flagship gap, see Finding 1.
@@ -382,13 +382,26 @@ spring/autumn maintenance learned from CAMPD/GADS) applied in forecast — disti
 from the backcast overlay. **Effort M, Risk Low** (the statistical forecast
 default already works; this sharpens its seasonal shape).
 
-### G13 Weather-year ensemble
+### G13 Weather-year ensemble — **BUILT**
 
 **Forward analogue.** Forecast currently pins one representative historical
 weather year for load + VRE CF shapes. The forward-grade version is a
 **weather-year sample/ensemble** (run multiple weather draws, report the
 distribution) — admissible because a weather draw is an input, not an outcome.
 **Effort M, Risk Low** (methodological robustness, not a #10 issue).
+
+**Status: implemented** (`src/market_sim/ensemble.py`,
+`tests/test_ensemble.py`). The same forecast scenario is run once per weather
+draw over `constants.WEATHER_YEAR_POOL` (2023-2025, bounded by EIA-930 hourly
+coverage; extend as later years land) — only `weather_year` varies, so each
+member caches under its own config hash and the members run in parallel
+(CLAUDE.md #16). `summarize_ensemble` reuses the canonical `export._summarize_year`
+aggregation and reports, per forecast year and metric, the cross-draw
+distribution (mean/std/min/p10/p50/p90/max), per-fuel generation distributions,
+and the raw per-member summaries. CLI: `market-sim ensemble --config <forecast.yaml>
+[--iso ISO] [--weather-years 2023 2024 2025] [--workers N] [--out dist.json]`.
+The runner rejects a `backcast`-mode base config — a backcast pins a single
+historical year by design.
 
 ---
 
