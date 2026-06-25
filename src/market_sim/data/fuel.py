@@ -1629,6 +1629,49 @@ _WEST_GAS_COLLAPSE_FREQ_DEFAULT: float = 0.42
 _ERCOT_WAHA_ZONES: tuple[str, ...] = ("West", "Panhandle")
 
 
+def ercot_west_oversupply_collapse_freq(
+    west_vre_mw: np.ndarray,
+    west_local_load_mw: np.ndarray,
+    export_limit_mw: float,
+) -> float | None:
+    """Endogenous Waha collapse frequency from forecast West/Panhandle oversupply.
+
+    The forward analogue of the measured Waha negative-price-day frequency
+    (:func:`ercot_waha_collapse_freq`) — the *forecast* driver that closes the
+    last measured input of the West net-load gas shape (gap G6). The Waha hub
+    collapses deeply negative when the Permian/West basin is **over-supplied**:
+    when local West+Panhandle wind+solar generation exceeds what the region can
+    burn/serve locally **plus** what it can ship out across its constrained
+    takeaway (the WESTEX + PNHNDL export TTC), the surplus has nowhere to go and
+    crashes the local (Waha-correlated) price. This returns the fraction of hours
+    that happens:
+
+        ``freq = mean( west_vre > west_local_load + export_limit )``
+
+    Every input is a forecast quantity the model already builds — the West/
+    Panhandle VRE **capacity × CF** (a build plus a weather-year CF shape), the
+    West local **load** (a load forecast), and the **export TTC** (the
+    transmission topology) — so the frequency regenerates for any forward year and
+    **responds to changed conditions**: more West VRE raises ``west_vre``, pushing
+    more hours over the headroom line -> higher collapse frequency; more local
+    load or more takeaway lowers it (admissibility tests #10/#12). It is therefore
+    a structural mechanism, not a fitted number — and the measured ``neg_day_freq``
+    stays as the backcast realization this is validated against, never re-pinned.
+
+    Returns ``None`` for a degenerate (empty / mismatched-length) series so the
+    caller falls back to the measured value or the default.
+    """
+    vre = np.asarray(west_vre_mw, dtype=float)
+    load = np.asarray(west_local_load_mw, dtype=float)
+    if vre.size == 0 or load.size != vre.size:
+        return None
+    # Headroom = what the basin can absorb locally + export across its takeaway.
+    # Oversupply hours are those whose local VRE exceeds it (the surplus that
+    # crashes Waha). No Python loop over hours — pure vectorised comparison.
+    headroom = load + float(export_limit_mw)
+    return float((vre > headroom).mean())
+
+
 def apply_ercot_west_netload_gas_shape(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -1636,6 +1679,7 @@ def apply_ercot_west_netload_gas_shape(
     year: int,
     net_load_mw: np.ndarray,
     henry_hub_path: Path | None = None,
+    west_oversupply_freq: float | None = None,
 ) -> None:
     """Make the West/Panhandle Waha gas basis a two-regime function of net-load.
 
@@ -1657,13 +1701,20 @@ def apply_ercot_west_netload_gas_shape(
     instead lets the peaker/CC split fall out of *when each unit runs* rather than
     a chosen per-unit number.
 
-    **Two-regime step keyed on the measured collapse frequency.** The Waha basis
-    is bimodal — deeply negative on the days the hub is over-supplied, firm on the
+    **Two-regime step keyed on the collapse frequency.** The Waha basis is
+    bimodal — deeply negative on the days the hub is over-supplied, firm on the
     rest — so a single number for the whole distribution is wrong in both tails.
-    The split point is the **measured** Waha negative-price-day frequency
-    ``collapse_freq`` (``data/raw/ercot_zonal_gas_hub.csv`` ``neg_day_freq``; 2024
-    is EIA-authoritative at 42% of trading days, id=64445). The lowest
-    ``collapse_freq`` fraction of net-load hours are assigned a deep collapsed
+    The split point is the Waha negative-price-day frequency ``collapse_freq``.
+    When ``config.ercot_west_gas_endogenous_collapse`` is on it is the
+    **endogenous** forecast oversupply frequency passed in as
+    ``west_oversupply_freq`` (:func:`ercot_west_oversupply_collapse_freq`: how
+    often forecast West/Panhandle VRE exceeds local load + export TTC) — the
+    forward driver that closes the last measured input (gap G6). Otherwise it is
+    the **measured** value (``data/raw/ercot_zonal_gas_hub.csv`` ``neg_day_freq``;
+    2024 is EIA-authoritative at 42% of trading days, id=64445), which also stays
+    logged as the backcast realization to validate the endogenous value against.
+    The ``config.ercot_west_gas_collapse_freq`` override still wins for diagnostic
+    probes. The lowest ``collapse_freq`` fraction of net-load hours are assigned a deep collapsed
     basis; the top ``1 - collapse_freq`` are assigned the firm Waha **delivered**
     level ``Henry Hub + ercot_west_gas_firm_basis`` — the level a West plant pays
     in the high-demand hours its peakers actually run. The deep value is **not**
@@ -1716,15 +1767,27 @@ def apply_ercot_west_netload_gas_shape(
     if nl.size != hours:
         return
 
-    # Collapse frequency: the measured fraction of hours in the deep (low-net-load)
-    # regime. Config override (env ERCOT_WEST_GAS_COLLAPSE_FREQ) > measured per-year
-    # neg_day_freq > the 2024 record default. Clamped into (0, 1) exclusive so both
+    # Collapse frequency: the fraction of hours in the deep (low-net-load) regime.
+    # Precedence: config override (env ERCOT_WEST_GAS_COLLAPSE_FREQ, diagnostic) >
+    # the ENDOGENOUS forecast oversupply frequency (when
+    # ercot_west_gas_endogenous_collapse is on; the forward driver, gap G6) >
+    # measured per-year neg_day_freq > the 2024 record default. The measured value
+    # is always read so it can be logged as the backcast realization to validate
+    # the endogenous frequency against. Clamped into (0, 1) exclusive so both
     # regimes are non-empty.
+    measured_freq = ercot_waha_collapse_freq(year)
     collapse_freq = getattr(config, "ercot_west_gas_collapse_freq", None)
+    freq_source = "config-override"
+    endogenous = getattr(config, "ercot_west_gas_endogenous_collapse", False)
+    if collapse_freq is None and endogenous and west_oversupply_freq is not None:
+        collapse_freq = west_oversupply_freq
+        freq_source = "endogenous-oversupply"
     if collapse_freq is None:
-        collapse_freq = ercot_waha_collapse_freq(year)
+        collapse_freq = measured_freq
+        freq_source = "measured-neg-day"
     if collapse_freq is None:
         collapse_freq = _WEST_GAS_COLLAPSE_FREQ_DEFAULT
+        freq_source = "default"
     collapse_freq = float(min(max(float(collapse_freq), 0.01), 0.99))
 
     # Firm (high-demand) Waha delivered level the top-demand hours should reach.
@@ -1775,12 +1838,16 @@ def apply_ercot_west_netload_gas_shape(
     realised_mean = fuel_prices[west_rows, :].mean()
     logger.info(
         "ERCOT West net-load gas step (%d): %d West/Panhandle gas units; "
-        "collapse_freq %.2f (split nl %.0f MW); firm basis %+.2f -> firm $%.2f, "
+        "collapse_freq %.3f (%s; endogenous-oversupply %s vs measured neg-day %s); "
+        "split nl %.0f MW; firm basis %+.2f -> firm $%.2f, "
         "deep $%.2f..$%.2f (deliv floor $%.2f); annual gas $%.2f -> $%.2f "
         "(floor-lifted from the negative hub tail)",
         year,
         west_rows.size,
         cfrac,
+        freq_source,
+        (f"{west_oversupply_freq:.3f}" if west_oversupply_freq is not None else "n/a"),
+        (f"{measured_freq:.3f}" if measured_freq is not None else "n/a"),
         nl_split,
         firm_basis,
         firm_price,
