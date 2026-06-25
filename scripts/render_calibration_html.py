@@ -743,6 +743,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 (fuel, classes_for_fuel930(fuel), e.get(fuel), fuel == "gas")
                 for fuel in ("gas", "coal", "nuclear", "wind", "solar")
             ]
+            cfull = bench[int(year)]["classFull"]
             for fuel, classes, ob, is_gas in specs:
                 ms = sum((mh.get(c, np.zeros(_T)) for c in classes), np.zeros(_T))
                 # gas: compare the non-CHP model grid to (930 gas - model CHP).
@@ -754,7 +755,24 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                         ),
                         np.zeros(_T),
                     )
-                    ob = ob - chp_flat if ob is not None else None
+                    if ob is not None:
+                        ob = ob - chp_flat
+                        # Re-level the gas benchmark to the grid-delivered EIA-923
+                        # basis the gate (classFull) scores on. EIA-930 carries no
+                        # separate biomass/'other' series — for some ISOs (MISO) it
+                        # folds them into the NG series (~13 TWh in 2024), which the
+                        # model books in its own biomass/OTHER rows, so the raw 930
+                        # gas over-states the benchmark and the headline gas row
+                        # reads ~6 pts more under than the verdict. Subtract that
+                        # excess as a flat baseload (biomass/process gas run ~flat)
+                        # so the displayed total + nrmse match classFull; the hourly
+                        # shape (pearson r, shift-invariant) is preserved.
+                        clean = sum(
+                            cfull.get(c, 0.0)
+                            for c in ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+                        )
+                        if clean > 0.0:
+                            ob = ob - max(0.0, ob.sum() / 1e6 - clean) * 1e6 / _T
                 m_twh = float(ms.sum()) / 1e6
                 b_twh = float(ob.sum()) / 1e6 if ob is not None else None
                 r2 = (
