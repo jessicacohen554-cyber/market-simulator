@@ -599,9 +599,22 @@ class ScenarioConfig:
     # online spin forces NYC peakers to commit (CT_PEAKER energy up) and binds the
     # family so the RCPF tail fires endogenously (C3c/C3a up). Requirement = 1/2
     # of the NYC 10-min total (the published NYISO spinning = 1/2-of-total ratio),
-    # NOT fitted to the residual. LP-linear online-headroom PROXY for true
-    # commitment-gated spin (the exact gate is path B / model.commitment). Default
-    # off (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    # NOT fitted to the residual. With the P2 commitment screen ON (--commitment)
+    # this becomes PATH B: the spinning family rides the ordinary class-1
+    # headroom and commitment (apply_commitment_with_coal_pin zeroing decommitted
+    # availability + reserve_adequacy_commit) is the online gate, so the class-1
+    # NYC headroom equals Sum_online(pmax - P) — the physically-correct
+    # synchronised headroom the online-gated proxy could not express. With
+    # commitment OFF it stays PATH A (the online-gated proxy above). Default off
+    # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_spin_headroom_frac: float = 1.0  # Path-B committed-capacity target
+    # multiplier for the reserve-adequacy commit: force-commit NYC quick-start
+    # until committed capacity (Sum pmax x availability) covers
+    # nyiso_spin_requirement_mw x this factor. 1.0 = commit exactly to the
+    # MEASURED spinning requirement (the grounded default — the family then binds
+    # whenever the committed downstate fleet is dispatched up); a value > 1 commits
+    # more headroom so the tail fires only deeper into scarcity. A coverage
+    # multiple on the measured requirement, NOT a price-residual fit (rule #12).
     nyiso_forward_net_import_twh: dict[int, float] | None = None  # FORECAST band
     # source for the NYISO import reconciliation. In a forecast (mode="forecast")
     # there is no measured EIA-930 net interchange to band to, so the band target
@@ -2258,6 +2271,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_import_reconciliation": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_forward_net_import_twh": 2,
+    "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
     "miso_seam_flow_limit": 1,
     "as_reserve_withholding": 1,
