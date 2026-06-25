@@ -245,3 +245,14 @@ results/outage_gate_audit/
 # single-year baseline reproduction (rule #14 — never a registered keeper).
 /scratchpad_logs/
 /results/calibration/_smoke_baseline_2024/
+
+# run155 LMP-shape probe bundles: commit only the slim run_config.json/meta.json
+# (matching the ERCOT keeper convention); the heavy dispatch artifacts stay local.
+/results/calibration/ercot_run155*/system.parquet
+/results/calibration/ercot_run155*/storage.parquet
+/results/calibration/ercot_run155*/dispatch/
+/results/calibration/ercot_run155*/p2_state/
+/results/calibration/ercot_run155*/btm.parquet
+/results/calibration/ercot_run155*/plant_cf_bands.parquet
+/results/calibration/ercot_run155*/plant_hourly_fit.parquet
+/results/calibration/ercot_run155*/model_changes.diff
