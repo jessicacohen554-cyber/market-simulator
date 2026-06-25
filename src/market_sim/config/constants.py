@@ -2967,6 +2967,137 @@ CAISO_CORRIDOR_DIBA: dict[str, str] = {
 # to the price/volume residual — it is the standard high-percentile ATC envelope.
 CAISO_CORRIDOR_FLOW_PERCENTILE: float = 95.0
 
+
+# --- CAISO per-hub FORWARD intertie seam (reference price + ATC) ---------------
+# The forward-grade replacement for the two MEASURED CAISO levers above (the
+# measured WECC hub LMP that `caiso_per_hub_intertie` prices each corridor at,
+# and the measured p95 net-import envelope that `caiso_corridor_flow_limit`
+# caps it at). Both measured series go inert in a forecast year (no OASIS LMP,
+# no future EIA-930 interchange), so the forecast CAISO loses all import price-
+# formation and deliverability shaping. This block carries the SAME forecast-
+# native construction PJM/MISO use for their seams (constants
+# INTERFACE_NEIGHBORS, src/market_sim/data/neighbor_price.py), specialized to
+# CAISO's two physical WECC corridors:
+#
+#   per-hub price[h] = (henry_hub[year] + gas_basis) × marginal_heat_rate
+#                      × load_shape(neighbor)[h]
+#
+# Each corridor proxies one WECC neighbor hub — COI/Path-66 → the Pacific-NW at
+# Malin (WECC_PNW), Path-46/WOR → the desert-SW at Palo Verde (WECC_DSW). The
+# level rides the forward Henry Hub trajectory (so a dear-gas year reprices
+# imports up); the SHAPE rides the neighbor's own hourly tightness. Because the
+# desert-SW LMP is *solar*-driven (its midday trough is the solar glut, not a
+# gross-load peak), WECC_DSW shapes on the region's NET load (load − solar −
+# wind), while the hydro-following Pacific-NW shapes on gross load. The shape is
+# proxied from the EIA-930 CISO extract (the only WECC hourly series in-repo —
+# the desert-SW shares CAISO's solar resource and time zone), a forward driver
+# that responds to a changed solar build, NOT the measured Palo Verde/Malin LMP
+# (the honesty line: price formation from forward gas/HR/shape, never pinned to
+# the measured realization — CLAUDE.md #10/#12). The measured hub LMP stays the
+# BACKCAST realization the formula is validated against (scripts/
+# compare_caiso_intertie_formula_vs_measured.py).
+#
+# marginal_heat_rate is the neighbor's EFFECTIVE price-setting heat rate
+# (gas × HR ≈ the hub's realized annual LMP), the NeighborInterface convention.
+# It is a 3-year-mean structural value (NOT a per-year measured anchor — that
+# would pin the level to the realization), so forecast years stay byte-stable
+# and the backcast carries the documented gas-insensitivity residual: the
+# Pacific-NW/desert-SW marginal price is often hydro/solar-set, so it does NOT
+# rise with Henry Hub the way a pure gas margin would (the same effect SPP's
+# wind-set LMP shows in INTERFACE_NEIGHBORS["MISO"]). gas_basis values are the
+# neighbor's gas hub vs Henry Hub (PNW Sumas/Stanfield discounts; desert-SW
+# Permian/El-Paso ~ flat-to-premium). Tier 3 — verify against measured hub LMP
+# means (MALIN 50.4/40.1/38.0, PALOVRDE 48.3/33.3/32.5 $/MWh 2023-25) and the
+# posted WECC gas-hub bases.
+@dataclass(frozen=True)
+class CaisoHubNeighbor:
+    """One CAISO WECC import corridor priced as a forward reference-price seam.
+
+    The per-corridor analogue of :class:`NeighborInterface`, specialized to the
+    two CAISO WECC ties. Every field is a forward driver or a physically-pinned
+    structural constant — none is tuned to CAISO's net-interchange flow or to
+    the measured hub LMP (CLAUDE.md #10/#11).
+
+    Attributes:
+        zone: The per-hub corridor zone (``WECC_PNW`` / ``WECC_DSW``).
+        hub: The measured WECC scheduling-point hub the corridor proxies
+            (``MALIN`` / ``PALOVRDE``) — used only to label the corridor and to
+            line up the backcast validation, never read into the forward price.
+        gas_basis: $/MMBtu basis of the neighbor's gas hub vs Henry Hub.
+        marginal_heat_rate: MMBtu/MWh effective price-setting heat rate
+            (gas × HR ≈ the hub's realized annual LMP); a 3-year-mean structural
+            value, never a per-year measured anchor.
+        load_shape_kind: ``"net"`` (load − solar − wind, the solar-driven
+            desert-SW) or ``"gross"`` (load, the hydro-following Pacific-NW).
+        load_shape_exponent: convexity of the price-vs-tightness response
+            (1.0 = parameter-free mean-preserving linear shape).
+        atc_base_fraction: forward ATC ceiling as a fraction of the corridor's
+            physical TTC — the share of the path available for CAISO economy
+            imports after firm reservations / parallel commitments (a posted-ATC
+            capability ratio, NOT the measured p95 flow).
+        atc_solar_floor: floor on the midday solar deliverability derate, so a
+            fully-saturated midday corridor still delivers this fraction of its
+            ATC ceiling.
+    """
+
+    zone: str
+    hub: str
+    gas_basis: float
+    marginal_heat_rate: float
+    load_shape_kind: str
+    load_shape_exponent: float
+    atc_base_fraction: float
+    atc_solar_floor: float
+
+
+# The two CAISO WECC corridors, keyed by per-hub zone. HR anchors: MALIN
+# (Pacific-NW) ~16.0 reproduces the 3-year mean Malin LMP ($42.8) at the 3-year
+# mean delivered gas ($2.75 − 0.30 PNW discount = $2.45 → 42.8/2.45 ≈ 17.5,
+# trimmed to 16 for the dear-2025 gas-insensitivity); PALOVRDE (desert-SW) ~13.0
+# reproduces the 3-year mean Palo Verde LMP ($38.0) at ($2.75 + 0.30 → $3.05 →
+# 38/3.05 ≈ 12.5). The desert-SW shapes on NET load (signed: its midday trough
+# rides the solar glut and the price approaches its cheap floor midday); the
+# Pacific-NW shapes on gross load. ATC base fractions are posted-ATC capability
+# ratios over the physical corridor TTC (COI 4,800 MW, Path-46/WOR 10,623 MW),
+# NOT the measured p95: COI/Path-66 carries large firm Pacific-NW hydro contracts
+# and the parallel PDCI, so only a small slice (~0.30) of its TTC is open to CAISO
+# economy imports; Path-46/WOR has more economy headroom (~0.50). The solar derate
+# (and its floor) shape the midday collapse off the region's forward solar, not
+# the measured flow. These are capability judgments grounded in the corridors'
+# firm-commitment structure (regenerable for a forward year, responsive to a TTC
+# upgrade), never tuned to CAISO's net-import volume (CLAUDE.md #11/#12).
+CAISO_PER_HUB_NEIGHBORS: dict[str, CaisoHubNeighbor] = {
+    "WECC_PNW": CaisoHubNeighbor(
+        zone="WECC_PNW",
+        hub="MALIN",
+        gas_basis=-0.30,  # PNW Sumas/Stanfield discount to Henry Hub
+        marginal_heat_rate=16.0,
+        load_shape_kind="gross",  # hydro-following; no solar midday trough
+        load_shape_exponent=1.0,
+        atc_base_fraction=0.30,  # COI economy-ATC slice (firm hydro + PDCI parallel)
+        atc_solar_floor=0.30,
+    ),
+    "WECC_DSW": CaisoHubNeighbor(
+        zone="WECC_DSW",
+        hub="PALOVRDE",
+        gas_basis=0.30,  # desert-SW Permian/El-Paso ~ flat-to-premium
+        marginal_heat_rate=13.0,
+        load_shape_kind="net",  # solar-driven; midday net-load trough
+        load_shape_exponent=1.0,
+        atc_base_fraction=0.50,
+        atc_solar_floor=0.30,
+    ),
+}
+
+# Strength of the midday solar deliverability derate: ATC(t) = TTC ×
+# atc_base_fraction × clip(1 − k × solar_frac(t), atc_solar_floor, 1), where
+# solar_frac(t) = CISO solar generation / CISO demand (a forward driver). k = 1.5
+# collapses the corridor to its floor at ~47% midday solar penetration (the
+# observed CISO midday share), reproducing the structural midday import collapse
+# the measured p95 envelope carries — but indexed to forward solar, not the
+# measured flow. Tier 3.
+CAISO_CORRIDOR_ATC_SOLAR_K: float = 1.5
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible

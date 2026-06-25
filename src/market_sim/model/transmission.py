@@ -25,9 +25,11 @@ import pandas as pd
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
+    CAISO_CORRIDOR_ATC_SOLAR_K,
     CAISO_IMPORT_DELIVERY_BASIS,
     CAISO_IMPORT_TRANCHE_HUB,
     CAISO_PER_HUB_IMPORT_ZONES,
+    CAISO_PER_HUB_NEIGHBORS,
     CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_EFORD,
@@ -682,6 +684,149 @@ def inject_caiso_per_hub_intertie_prices(
             )
             applied = True
     return applied
+
+
+def inject_caiso_per_hub_reference_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+    carbon_price: float,
+    gas_scenario: str = "mid",
+) -> bool:
+    """Price each CAISO per-hub corridor at its FORWARD reference price.
+
+    The forecast-native analogue of :func:`inject_caiso_per_hub_intertie_prices`:
+    structurally identical (same per-hub signed legs, per-tranche wheel + CARB
+    carbon, arbitrage-free import ≥ export), but each corridor's hub price is the
+    forward reference price
+    :func:`market_sim.data.neighbor_price.caiso_hub_reference_price` —
+    ``(henry_hub[year] + gas_basis) × marginal_heat_rate × load_shape`` — instead
+    of the measured WECC OASIS hub LMP. The level rides the forward Henry Hub
+    trajectory and the shape rides the neighbor's hourly tightness (the desert-SW
+    on net load, so it dips midday with the solar glut), so the seam reprices
+    forward as gas/solar move and stays live in a forecast year — where the
+    measured series is absent. For every row::
+
+        import leg → hub_ref + wheel + border_carbon × (EF / EF_unspecified) + ε
+        export leg → hub_ref − ε
+
+    Because ``wheel ≥ 0`` and ``border_carbon ≥ 0``, every import leg is priced
+    at/above its corridor's export leg every hour, so each corridor nets to one
+    direction per hour (no MIP), exactly as the measured injector.
+
+    The honesty line (CLAUDE.md #10/#12): the price is formed from forward
+    gas/HR/shape, never from the measured Malin/Palo-Verde LMP — that series is
+    only the backcast realization the formula is validated against
+    (``scripts/compare_caiso_intertie_formula_vs_measured.py``). Supersedes the
+    measured per-hub injector when on; pairs with the forward ATC corridor cap
+    (:func:`forward_corridor_atc_envelope`).
+
+    Returns ``True`` when at least one corridor was repriced, ``False``
+    (byte-identical) when no corridor resolved a forward shape (e.g. the CISO
+    extract is absent), so the legs keep their static-ladder placeholders.
+    """
+    from market_sim.data.neighbor_price import caiso_hub_reference_price
+
+    hours = int(mc.shape[1])
+    # Forward reference price per corridor zone (None where the shape can't load).
+    corridor_price: dict[str, np.ndarray] = {}
+    for zone, spec in CAISO_PER_HUB_NEIGHBORS.items():
+        price = caiso_hub_reference_price(spec, year, hours, gas_scenario)
+        if price is not None:
+            corridor_price[zone] = price
+    if not corridor_price:
+        return False
+    border = wecc_border_carbon_adder(carbon_price)
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
+    eps = CAISO_INTERTIE_TIEBREAK_EPS
+    per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
+        if zone is None:
+            continue
+        ref = corridor_price.get(zone)
+        if ref is None:
+            continue  # corridor with no forward shape stays on the ladder
+        name = uid[len(zone) + 1 :]
+        if name.startswith(f"{_CAISO_PER_HUB_EXPORT_PREFIX}_"):
+            mc[row, :] = ref - eps  # export earns the corridor's price, no CA carbon
+            applied = True
+        elif name in import_names:
+            _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(name, (0.0, 0.0))
+            ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+            mc[row, :] = ref + wheel + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
+            applied = True
+    return applied
+
+
+def _caiso_corridor_import_ttc_mw(iso_config: ISOConfig) -> dict[str, float]:
+    """Return each CAISO per-hub corridor's physical import-link TTC (MW).
+
+    Reads the import link (``from_zone`` = corridor zone, ``to_zone`` = the
+    NP15/SP15 trading zone via :data:`_CAISO_CORRIDOR_LINK_TO`) for each per-hub
+    corridor in the (already-split) config. Used to scale the forward ATC ceiling
+    off the corridor's real line rating (COI ≈ 4,800 MW, Path-46/WOR ≈ 10,623 MW)
+    rather than a measured flow.
+    """
+    out: dict[str, float] = {}
+    for zone, tos in _CAISO_CORRIDOR_LINK_TO.items():
+        for link in iso_config.links:
+            if link.from_zone == zone and link.to_zone in tos:
+                out[zone] = float(link.ttc_mw)
+                break
+    return out
+
+
+def forward_corridor_atc_envelope(
+    iso_config: ISOConfig, iso: str, year: int, hours: int
+) -> dict[str, np.ndarray] | None:
+    """Return each CAISO corridor's FORWARD ATC import-deliverability ceiling.
+
+    The forecast-native replacement for the measured p95 envelope
+    (:func:`market_sim.data.eia_loader.measured_corridor_flow_envelope`). For
+    each per-hub corridor, the ceiling is built from a *capability* limit, never
+    the measured net-import flow::
+
+        ATC(t) = TTC × atc_base_fraction × clip(1 − k × solar_frac(t), floor, 1)
+
+    where ``TTC`` is the corridor's physical import-link rating
+    (:func:`_caiso_corridor_import_ttc_mw`), ``atc_base_fraction`` the posted-ATC
+    share of that rating available for CAISO economy imports
+    (:data:`~market_sim.config.constants.CAISO_PER_HUB_NEIGHBORS`), and
+    ``solar_frac(t)`` the region's hourly solar penetration
+    (:func:`market_sim.data.eia_loader.caiso_solar_fraction`, CISO solar /
+    demand) — a FORWARD driver that responds to a changed solar build. The solar
+    derate reproduces the structural midday deliverability collapse (the WECC
+    neighbors are themselves long on solar midday) without reading the measured
+    corridor flow (CLAUDE.md #12). Applied one-sided on the import direction via
+    :func:`build_caiso_corridor_flow_groups`; the export direction keeps the
+    physical TTC.
+
+    Returns ``{corridor_zone: (hours,) MW}`` for the corridors whose TTC and
+    solar fraction resolve, or ``None`` when no corridor resolves (so the caller
+    leaves the corridors uncapped, byte-identical).
+    """
+    from market_sim.data.eia_loader import caiso_solar_fraction
+
+    if iso.upper() != "CAISO":
+        return None
+    solar_frac = caiso_solar_fraction(year, hours)
+    if solar_frac is None:
+        return None
+    ttc = _caiso_corridor_import_ttc_mw(iso_config)
+    out: dict[str, np.ndarray] = {}
+    for zone, spec in CAISO_PER_HUB_NEIGHBORS.items():
+        corridor_ttc = ttc.get(zone)
+        if corridor_ttc is None:
+            continue
+        derate = np.clip(
+            1.0 - CAISO_CORRIDOR_ATC_SOLAR_K * solar_frac, spec.atc_solar_floor, 1.0
+        )
+        out[zone] = corridor_ttc * spec.atc_base_fraction * derate
+    return out or None
 
 
 # Unit-id markers tagging a reference-price seam pseudo-generator so the
