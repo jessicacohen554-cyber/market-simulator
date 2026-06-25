@@ -767,6 +767,19 @@ def _calibration_config(
         #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
         #   NG: NG silently absorbs (CISO reports neither) — targets the true
         #   must-offer gas without padding the mix.
+        caiso_ct_reliability_floor=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: the local-RA CT_PEAKER reliability floor holds simple-
+        #   cycle gas peakers online through the hot-day afternoon-evening ramp
+        #   for local capacity-area reliability (LA Basin / Big-Creek-Ventura /
+        #   Bay-Area). An energy-only LP leaves these top-of-merit peakers off and
+        #   spills their energy onto the cheaper CC fleet (CT_PEAKER under-runs,
+        #   CC_REGULAR over-runs); the floor restores the measured merit split. It
+        #   is keyed to the load-weighted CAISO daily max temperature (NOAA GHCN),
+        #   coefficients regressed from measured CAMPD CT_PEAKER evening CF vs
+        #   TMAX, 2023-2025 — a physical heat->commitment rule, not a TWh-residual
+        #   fit. See transmission.inject_caiso_ct_reliability_floor and
+        #   docs/caiso-ct-reliability-floor-2026-06.md. Other ISOs stay off
+        #   (byte-identical); coefficients from ScenarioConfig defaults.
         negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
         #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
@@ -1405,6 +1418,7 @@ def run_year(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_ct_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1528,6 +1542,10 @@ def run_year(
         )
     if caiso_gas_floor_frac is not None:
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
+    if caiso_ct_reliability_floor is not None:
+        config = config.with_overrides(
+            caiso_ct_reliability_floor=caiso_ct_reliability_floor
+        )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
     if caiso_import_gas_coupling is not None:
@@ -2166,6 +2184,34 @@ def run_year(
                 iso,
                 year,
                 frac,
+            )
+
+    # CAISO local-RA CT_PEAKER reliability floor: hold simple-cycle gas peakers
+    # online through the hot-day afternoon-evening ramp at a temperature-driven
+    # commitment fraction (clip(slope*(TMAX-T0),0,cap) x available capacity),
+    # keyed to the load-weighted CAISO daily max temperature. Recovers the local
+    # capacity-area reliability energy an energy-only LP leaves on the (cheaper)
+    # CC fleet (transmission.inject_caiso_ct_reliability_floor).
+    if getattr(config, "caiso_ct_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_caiso_ct_reliability_floor,
+        )
+
+        _ct_slope = float(getattr(config, "caiso_ct_floor_slope_per_c", 0.047))
+        _ct_t0 = float(getattr(config, "caiso_ct_floor_t0_c", 25.0))
+        _ct_cap = float(getattr(config, "caiso_ct_floor_cap", 0.46))
+        if inject_caiso_ct_reliability_floor(
+            fleet_arrays, iso, year, _ct_slope, _ct_t0, _ct_cap
+        ):
+            logger.info(
+                "%s %d: local-RA CT_PEAKER reliability floor — peakers held "
+                "online on hot afternoons/evenings at clip(%.3f*(TMAX-%.0f), 0, "
+                "%.2f) x available capacity (temperature-driven)",
+                iso,
+                year,
+                _ct_slope,
+                _ct_t0,
+                _ct_cap,
             )
 
     # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly

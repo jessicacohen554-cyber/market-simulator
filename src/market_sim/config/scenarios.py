@@ -536,6 +536,37 @@ class ScenarioConfig:
     # measured profile; lower keeps modeled gas TWh nearer EIA-923 (forcing
     # commitment can inflate gas — the surplus must export/curtail, not pad the
     # mix). Only used when caiso_gas_commitment_floor is on.
+    caiso_ct_reliability_floor: bool = False  # CAISO local-RA CT_PEAKER
+    # temperature-driven reliability-commitment floor. CAISO commits its
+    # simple-cycle gas peakers (CT_PEAKER) for LOCAL Resource Adequacy through
+    # the summer afternoon-evening net-load ramp: as load-pocket cooling load
+    # climbs with temperature and solar collapses at sunset, fast-start CTs in
+    # the LA Basin / Big-Creek-Ventura / Bay-Area local capacity areas are held
+    # online for local reliability regardless of system-energy economics. An
+    # energy-only LP never dispatches these top-of-merit peakers, so the backcast
+    # under-runs CT_PEAKER and the freed energy spills onto the cheaper CC fleet
+    # (CC_REGULAR over-runs). This floors each CT_PEAKER unit at frac x available
+    # capacity over the afternoon-evening window (CT_FLOOR_HOURS), where frac =
+    # clip(slope*(TMAX-T0), 0, cap) is keyed to the load-weighted CAISO daily max
+    # temperature (NOAA GHCN, data/raw/caiso-weather/), via the hour-varying
+    # FleetArrays.min_gen lower bound (transmission.
+    # inject_caiso_ct_reliability_floor). The curve is the measured CAMPD
+    # CT_PEAKER evening capacity factor regressed on TMAX, 2023-2025 (a physical
+    # temperature->commitment rule, NOT a fit to a TWh residual — see
+    # docs/caiso-ct-reliability-floor-2026-06.md). Forward-reproducible: a
+    # forecast year pins a weather year (hence a TMAX series) exactly as it pins
+    # load/wind/solar, and the floor responds to changed conditions (hotter
+    # years -> more CT). Default off (byte-identical); CAISO-only, no-op without
+    # an archived TMAX series.
+    caiso_ct_floor_slope_per_c: float = 0.047  # CT commitment fraction gained per
+    # deg C of CAISO daily max temperature above the zero-crossing T0. From the
+    # CAMPD evening-CF-vs-TMAX hot-limb regression (>= 26 deg C, 2023-2025).
+    caiso_ct_floor_t0_c: float = 25.0  # Zero-crossing: below this load-weighted
+    # daily max temperature the heat-driven floor is zero (mild days run the
+    # baseline local-RA minimum on price, which this floor does NOT force).
+    caiso_ct_floor_cap: float = 0.46  # Max CT commitment fraction (p97 of the
+    # measured evening CF) — the hottest-day local-RA ceiling; prevents the line
+    # extrapolating past the observed envelope.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -2266,6 +2297,10 @@ TIER_TAGS: dict[str, int] = {
     "caiso_corridor_atc_forward": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
+    "caiso_ct_reliability_floor": 1,
+    "caiso_ct_floor_slope_per_c": 3,
+    "caiso_ct_floor_t0_c": 1,
+    "caiso_ct_floor_cap": 2,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

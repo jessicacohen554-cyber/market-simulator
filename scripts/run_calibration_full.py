@@ -1592,6 +1592,7 @@ def solve_and_persist(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_ct_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1762,6 +1763,7 @@ def solve_and_persist(
             negative_renewable_offers=negative_renewable_offers,
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
+            caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -1971,6 +1973,7 @@ def solve_and_persist(
         "negative_renewable_offers": negative_renewable_offers,
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
+        "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2111,6 +2114,10 @@ def solve_and_persist(
     if caiso_gas_floor_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_gas_floor_frac=caiso_gas_floor_frac
+        )
+    if caiso_ct_reliability_floor is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_ct_reliability_floor=caiso_ct_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4788,6 +4795,23 @@ def main() -> None:
         "forces it off (the no-floor baseline probe).",
     )
     parser.add_argument(
+        "--caiso-ct-reliability-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO local-RA CT_PEAKER reliability floor: hold simple-cycle gas "
+        "peakers online through the hot-day afternoon-evening ramp at a "
+        "temperature-driven commitment fraction (clip(slope*(TMAX-T0), 0, "
+        "cap) x available capacity), keyed to the load-weighted CAISO daily "
+        "max temperature (NOAA GHCN). Recovers the local capacity-area "
+        "reliability energy an energy-only LP leaves on the cheaper CC fleet "
+        "(CT_PEAKER under-runs / CC_REGULAR over-runs). Coefficients regressed "
+        "from measured CAMPD CT_PEAKER evening CF vs TMAX, 2023-2025 (see "
+        "docs/caiso-ct-reliability-floor-2026-06.md). CAISO-only. Default "
+        "(unset) keeps the per-ISO base config value — ON for CAISO (the "
+        "keeper), off elsewhere; --no-caiso-ct-reliability-floor forces it "
+        "off (the no-floor baseline probe).",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5272,6 +5296,7 @@ def main() -> None:
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
+        caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
