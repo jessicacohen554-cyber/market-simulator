@@ -1418,6 +1418,7 @@ def run_year(
     nyiso_import_reconciliation: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     miso_firm_imports: bool | None = None,
+    miso_seam_flow_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -1566,6 +1567,8 @@ def run_year(
         )
     if miso_firm_imports is not None:
         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
+    if miso_seam_flow_limit:
+        config = config.with_overrides(miso_seam_flow_limit=True)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -2119,6 +2122,28 @@ def run_year(
                 "export midday only — imports uncapped"
                 if export_only
                 else "import overnight / export midday",
+            )
+    # MISO reference-price seam deliverability cap: bound each seam's
+    # (PJM/SPP/South) import-band availability at the measured EIA-930 BA-to-BA
+    # net-import envelope, so the model stops over-importing on the SPP/southern
+    # borders MISO actually nets ~0 / net-EXPORTS over. One-sided import ceiling;
+    # export bands keep their priced economics. No-op off the flag, for non-MISO,
+    # or when the year has no measured interchange (byte-identical).
+    if getattr(config, "reference_price_interface", False) and getattr(
+        config, "miso_seam_flow_limit", False
+    ):
+        from market_sim.model.transmission import inject_miso_seam_flow_limit
+
+        if inject_miso_seam_flow_limit(fleet_arrays, iso, year):
+            from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
+
+            logger.info(
+                "%s %d: reference-price seam import capped at measured EIA-930 "
+                "BA-to-BA deliverability envelope (p%g; SPP/South clip toward "
+                "~0 import, PJM keeps its measured eastern transfer)",
+                iso,
+                year,
+                MISO_SEAM_FLOW_PERCENTILE,
             )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
