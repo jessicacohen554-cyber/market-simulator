@@ -1,0 +1,11 @@
+{
+  "id": "2026-06-25-miso-pjm-seam-hr",
+  "label": "miso pjm seam hr",
+  "date": "2026-06-25",
+  "shorthand": "miso-pjm-seam-hr",
+  "definition": "miso pjm-seam-hr-elastic (FORWARD-SKILL validation of G11): the seam's FORWARD neighbor heat rate is now gas-price-elastic - HR(gas)=hr_phys+hr_adder/gas, fit (scripts/derive_neighbor_hr_elasticity.py) to each neighbor's OWN measured (gas,LMP) points, blind to MISO interchange (rule #11) - replacing the flat multi-year mean; coefficients live in the _HR_GAS_ELASTIC map in market_sim.data.neighbor_price. Fitted: PJM LMP=11.06*gas+3.21 (gas-set); SPP LMP=3.04*gas+16.27 (wind-set: tiny slope+large fixed term, so a gas spike barely lifts it). Backcast keepers still price off the measured hr_by_year anchor (rule #12); this run forces the seam onto the FORWARD path (MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL) to validate the elasticity against held-out actuals vs the old flat mean. Net interchange TWh (actual | flat-fwd | elastic-fwd): 2023 -37.9 | -56.0 | -57.2; 2024 -23.1 | -64.2 | -59.9; 2025 -19.0 | +4.8 (flat EXPORT-FLIP, wrong sign) | -9.5. Headline: in dear-gas 2025 the flat 10.0 SPP HR over-prices wind-set SPP so MISO spuriously net-EXPORTS (+4.8); the elastic HR collapses SPP to 7.66 (=measured 7.7), restoring net IMPORT (-9.5) and halving interchange RMSE 3440->1866. 2024 over-import eases 64.2->59.9 (RMSE 5006->4573, the dear-PJM direction improves). 2023 ~neutral. Mean interchange RMSE 3681->3028 (-18%). NOT a keeper replacing miso-9 (whose measured-anchor backcast is unchanged/byte-identical) - a forward-skill proof that the gas-elastic forward HR reprices the seam correctly as gas moves without reading the neighbor LMP per year.",
+  "years": [2023, 2024, 2025],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-25-miso-pjm-seam-hr.js",
+  "bundle": "results/calibration/MISO/seam_pjm_hr_elastic_fwdskill"
+}
