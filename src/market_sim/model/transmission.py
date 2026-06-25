@@ -1835,66 +1835,94 @@ def build_import_node_reconciliation(
     iso: str,
     year: int,
     band_frac: float = NYISO_IMPORT_RECON_BAND_FRAC,
+    *,
+    mode: str = "backcast",
+    forward_net_import_twh: dict[int, float] | float | None = None,
+    system_demand: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
-    """Build the priced-node monthly net-interchange band against the measurement.
+    """Build the priced-node monthly net-interchange band, mode-aware.
 
-    Reconciles the NYISO priced import node's net throughput to the measured
-    EIA-930 net-interchange schedule (:func:`market_sim.data.eia_loader
-    .nyiso_net_interchange`). The economic priced node clears a near-flat
-    ~18.5-21.6 TWh because its tranche offers are near-static and do not track
-    the metered schedule's year-over-year decline (23.45 -> 20.35 -> 19.09 TWh),
-    so it under-imports in 2023 and over-imports in 2024/25. This returns the
-    inputs for a per-month band constraint
-    (:func:`market_sim.model.dispatch._build_import_node_rows`) that pins the
-    node's monthly NET interchange to the metered level while leaving the priced
-    tranches free to set the marginal price *within* each month's envelope.
+    Returns the inputs for a per-month band constraint
+    (:func:`market_sim.model.dispatch._build_import_node_rows`) that holds the
+    NYISO priced import node's monthly NET interchange within an envelope while
+    leaving the priced tranches free to set the marginal price *within* each
+    month. The band **target** depends on the run mode — and that is the whole
+    forecast-vs-backcast distinction (CLAUDE.md rule #10, methodology spec §1.7):
 
-    This is the standard production-cost boundary-flow calibration practice
-    (Aurora/PLEXOS/GridView/PROMOD historical-validation runs pin the tie-line
-    net flow against an unmodeled neighbor; ReEDS fixes net trade with
-    non-modeled regions): the neighbor is not co-optimized, so its flow cannot be
-    economically derived and is calibrated to actuals in a backcast. Unlike the
-    prior team's rejected "import scaling" — which *degraded* an already-exact
-    served-wedge match — the current priced node deviates +-1-5 TWh/yr from the
-    metered schedule, so moving it toward the measurement REPLACES an economic
-    estimate with the authoritative measurement (CLAUDE.md rule #11), the
-    opposite of overfitting. The target is the measured schedule itself, NOT a
-    residual-minimizing volume (rule #12); ``band_frac`` only sets the price /
-    feasibility headroom around it.
+    * ``mode == "backcast"`` — target the **measured** EIA-930 net-interchange
+      schedule (:func:`market_sim.data.eia_loader.nyiso_net_interchange`), the
+      *realization*. The economic priced node clears a near-flat ~18.5-21.6 TWh
+      because its tranche offers are near-static and do not track the metered
+      schedule's year-over-year decline (23.45 -> 20.35 -> 19.09 TWh), so it
+      under-imports in 2023 and over-imports in 2024/25; banding it to the
+      metered level REPLACES that economic estimate with the authoritative
+      measurement (rule #11). This is standard production-cost boundary-flow
+      calibration (Aurora/PLEXOS/GridView/PROMOD pin the tie-line net flow
+      against an unmodeled neighbor; ReEDS fixes net trade with non-modeled
+      regions): the neighbor is not co-optimized, so its flow cannot be
+      economically derived and is calibrated to actuals in a backcast. The
+      target is the measured schedule itself, NOT a residual-minimizing volume
+      (rule #12); ``band_frac`` only sets the price / feasibility headroom.
+
+    * ``mode == "forecast"`` — there is no measured schedule, so the target is
+      the **neighbor's forecast net position** supplied via
+      ``forward_net_import_twh`` (the PJM / Hydro-Québec / Ontario / ISO-NE
+      forward export outlook as an annual NYISO net import, shaped to monthly by
+      the forecast load via
+      :func:`market_sim.data.eia_loader.nyiso_forward_net_import_monthly`). This
+      keeps the dispatch being validated the same as the dispatch being forecast
+      (rule #10). When no forecast is supplied the band **relaxes** (returns
+      ``None``): the priced seam clears endogenously, never pinned to a measured
+      monthly total. The forward band is forward-reproducible — it regenerates
+      for any year from forward drivers and responds to changed conditions.
 
     Net sign: the node columns are import tranches (``P >= 0``, inject) plus
     export sinks (``P <= 0``, withdraw), so ``sum P`` is the node's *net import*
     in MW — the negative of the measured export-positive
-    :func:`~market_sim.data.eia_loader.nyiso_net_interchange`. The monthly target
-    is therefore ``-sum_{t in month} export[t]`` (MWh).
+    :func:`~market_sim.data.eia_loader.nyiso_net_interchange`. Both the backcast
+    target (``-sum export``) and the forecast target (the supplied net import)
+    are therefore in net-import (positive) MWh, on the same monthly basis.
 
     Args:
         fleet_arrays: Vectorized fleet (read-only here; the constraint lives in
             the LP, not in ``min_gen``).
         iso: ISO identifier; only ``"NYISO"`` builds a band.
-        year: Backcast year keying the measured schedule.
-        band_frac: Monthly band half-width as a fraction of the measured monthly
-            net import. ``0.0`` makes it a hard monthly equality.
+        year: Year keying the measured (backcast) or forecast trajectory.
+        band_frac: Monthly band half-width as a fraction of the monthly net
+            import. ``0.0`` makes it a hard monthly equality.
+        mode: ``"backcast"`` (target the measured schedule, default — preserves
+            the existing calibration behaviour byte-for-byte) or ``"forecast"``
+            (target the supplied neighbor forecast, else relax).
+        forward_net_import_twh: Forecast-only. NYISO annual net import (TWh,
+            import-positive) as a ``dict[year -> TWh]`` or bare ``float``; the
+            forward band source. Ignored in backcast.
+        system_demand: Forecast-only. Hourly system demand used to shape the
+            annual forecast to monthly targets (imports track load). Ignored in
+            backcast.
 
     Returns:
         Tuple ``(node_gen_idx, monthly_lo, monthly_hi)`` — the import-node
         thermal-block row indices and the per-month MWh net-import bounds — or
-        ``None`` (no constraint) when ``iso`` is not NYISO, no measured schedule
-        is available (forecast year / unmapped ISO), or no priced import node is
-        present in the fleet (the served-wedge path).
+        ``None`` (no constraint) when ``iso`` is not NYISO, no priced import node
+        is present (the served-wedge path), or no target is available for the
+        mode (backcast year with no measured schedule / forecast with no
+        supplied neighbor position).
     """
     if iso != "NYISO":
         return None
 
-    from market_sim.data.eia_loader import nyiso_net_interchange
+    from market_sim.data.eia_loader import (
+        nyiso_forward_net_import_monthly,
+        nyiso_net_interchange,
+    )
     from market_sim.data.fleet import FUEL_TYPE_MAP, _hour_to_month_index
 
     hours = int(fleet_arrays.availability.shape[1])
     import_code = FUEL_TYPE_MAP["import"]
     # Import tranches (pmax > 0, inject) AND export sinks (pmin < 0, withdraw):
-    # their signed P-sum is the node's net import, matching the measured net
-    # interchange's basis. A node with neither is the served-wedge path (no
-    # priced node) — nothing to reconcile.
+    # their signed P-sum is the node's net import, matching the net-interchange
+    # basis. A node with neither is the served-wedge path (no priced node) —
+    # nothing to reconcile.
     is_node = fleet_arrays.fuel_type_idx == import_code
     node_idx = np.flatnonzero(
         is_node & ((fleet_arrays.pmax > 0.0) | (fleet_arrays.pmin < 0.0))
@@ -1902,20 +1930,30 @@ def build_import_node_reconciliation(
     if node_idx.size == 0:
         return None
 
-    export_pos = nyiso_net_interchange(year)  # export-positive MW, (8760,)
-    if export_pos is None:
-        return None
-    export_pos = np.asarray(export_pos, dtype=float).reshape(-1)[:hours]
-    if export_pos.size < hours:
-        return None
-
-    # Net import (MW) = -export-positive interchange; aggregate to monthly MWh on
-    # the same hour->month map the LP constraint uses (no per-hour Python loop).
-    net_import = -export_pos
-    month_index = _hour_to_month_index(hours)
-    n_months = int(month_index.max()) + 1
-    monthly_target = np.zeros(n_months, dtype=float)
-    np.add.at(monthly_target, month_index, net_import)
+    if mode == "forecast":
+        # Forward band source: the neighbor's forecast net position. None when no
+        # forecast is supplied -> band relaxes to the bare priced-seam economics.
+        monthly_target = nyiso_forward_net_import_monthly(
+            year, forward_net_import_twh, system_demand
+        )
+        if monthly_target is None:
+            return None
+    else:
+        # Backcast: the measured EIA-930 realization (unchanged behaviour).
+        export_pos = nyiso_net_interchange(year)  # export-positive MW, (8760,)
+        if export_pos is None:
+            return None
+        export_pos = np.asarray(export_pos, dtype=float).reshape(-1)[:hours]
+        if export_pos.size < hours:
+            return None
+        # Net import (MW) = -export-positive interchange; aggregate to monthly
+        # MWh on the same hour->month map the LP constraint uses (no per-hour
+        # Python loop).
+        net_import = -export_pos
+        month_index = _hour_to_month_index(hours)
+        n_months = int(month_index.max()) + 1
+        monthly_target = np.zeros(n_months, dtype=float)
+        np.add.at(monthly_target, month_index, net_import)
 
     half = abs(band_frac) * np.abs(monthly_target)
     monthly_lo = monthly_target - half

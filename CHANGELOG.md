@@ -107,6 +107,38 @@ Validation: the formula reproduces the measured desert-SW diurnal shape at corr
 `caiso_intertie_forward_3yr`. Tests: `tests/test_caiso_intertie_forward.py`. Off
 the flags every ISO/run is byte-identical.
 
+## 2026-06-25 (NYISO `nyiso 30 fwd-band` — forecast-aware import reconciliation band; new NYISO keeper; forecast gap G10 closed)
+
+**Forward band source for the NYISO import reconciliation (G10).**
+`transmission.build_import_node_reconciliation` is now **mode-aware**, giving the
+priced import-node net-interchange band a forward analogue (forecast gap G10,
+`docs/forecast-methodology-gaps-2026-06.md`):
+
+- **Backcast** (`mode="backcast"`, the calibration path) targets the **measured**
+  EIA-930 NYIS net-interchange schedule (`eia_loader.nyiso_net_interchange`) — the
+  realization, **byte-identical** to the prior `nyiso 27 cc-offer` keeper.
+- **Forecast** (`mode="forecast"`) targets the **neighbor's forecast net
+  position**: a new `ScenarioConfig.nyiso_forward_net_import_twh` (annual NYISO
+  net import in TWh, from the PJM / Hydro-Québec / Ontario / ISO-NE forward export
+  outlook) shaped to twelve monthly targets by the forecast load
+  (`eia_loader.nyiso_forward_net_import_monthly`, so imports track load and the
+  band responds to changed conditions — the rule-#12 forward-reproducibility
+  test). When no forecast is supplied the band **relaxes to the bare priced-seam
+  economics** (returns `None`); the seam clears endogenously, never pinned to a
+  measured monthly total.
+
+**New NYISO keeper `nyiso 30 fwd-band`** (all years 2023/2024/2025). The backcast
+LP is unchanged vs `nyiso 27 cc-offer` (same flags, same `_NYISO_OFFER_CURVE`,
+P1, no commitment; verdict + exceptions ledger carried over), so the re-solve
+**confirms metrics hold** while proving the mechanism is forward-ready: the
+priced seam clears **within** the ±2% band rather than on the measured total —
+model net interchange −23.03 / −20.23 / −19.18 TWh vs measured
+−23.45 / −20.35 / −19.09. Determination NOT-YET (unchanged: the CC-offer /
+NYC-peaker / RCPF reserve-scarcity frontier remains the open MODEL MISS, out of
+scope here). Tests: `tests/test_import_node_reconciliation.py::TestForwardBandSource`.
+Dashboard top-15-per-ISO retention pruned the oldest NYISO
+(`nyiso-16-transco-daily`); keeper pointer 27 → 30.
+
 ## 2026-06-25 (NYISO probe `nyiso 29 synch-reserve` — REJECTED: online-only spinning reserve confirms mechanism, insufficient for the tail)
 
 **Rejected probe; keeper stays `nyiso 27 cc-offer`; live source reverted to the
