@@ -1,6 +1,6 @@
-# ERCOT run158 — HSL endogenous curtailment (2023–2025)
+# ERCOT run160 — HSL endogenous curtailment (2023–2025)
 
-run157 keeper config + uncurtailed-VRE wiring for the no-HSL years. See
+run157 keeper config (faithful reproduction) + uncurtailed-VRE wiring for the no-HSL years. See
 `docs/forecast-methodology-gaps-2026-06.md` G7.
 
 ## What changed (vs run157)
