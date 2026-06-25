@@ -238,6 +238,36 @@ NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
     2694: 0.50,  # Robert Moses Power Dam (St-Lawrence) — IJC Order / Plan 2014
 }
 
+# --- Forecast hydro monthly-energy budget (G9 forward analogue) -------------
+# The hydro monthly-energy-budget LP constraint (dispatch chooses *when* within
+# the month) is the forward mechanism; only its monthly *level* is a measured
+# input in a backcast. The forecast level is a normal-water-year climatology:
+# the mean of the measured EIA-930 NG:WAT (conventional hydro) monthly series
+# across the years below, so a forecast year inherits a normal water year rather
+# than any single year's wet/dry draw. The window is the full EIA-930 hydro
+# history available across the modeled ISOs (years a given ISO does not cover
+# are simply skipped, so a short extract still yields a climatology). Built by
+# data.eia_loader.climatological_monthly_hydro. Source: EIA-930 hourly NG:WAT,
+# 2021-2025.
+HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
+
+# Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
+# selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
+# A wet or dry water year shifts annual conventional-hydro energy by roughly
+# ±15% about the normal-year mean: the EIA-930 NG:WAT 2021-2025 annual totals
+# span ~0.73-1.30 of their mean across the modeled ISOs — widest in the small
+# run-of-river systems (NEISO, ERCOT) and ~±5-10% in the large reservoir
+# systems (CAISO, NYISO) — so ±15% brackets the central reservoir-system range.
+# A round, documented scenario assumption (not a value fitted to any residual);
+# "normal" = 1.0 leaves the climatology unscaled. Applied as a pure level scale
+# by data.hydro.forecast_monthly_hydro — the within-month dispatch mechanism is
+# untouched.
+HYDRO_YEAR_MULTIPLIER: dict[str, float] = {
+    "dry": 0.85,
+    "normal": 1.0,
+    "wet": 1.15,
+}
+
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {

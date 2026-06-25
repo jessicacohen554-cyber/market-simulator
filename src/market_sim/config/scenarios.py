@@ -65,6 +65,16 @@ class ScenarioConfig:
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
+    hydro_year: str = "normal"  # "dry" | "normal" | "wet" — forecast wet/dry
+    # water-year lever on the conventional-hydro monthly-energy budget. The
+    # budget MECHANISM (the dispatch LP picks *when* within a month each hydro
+    # plant generates) is itself the forward path; this knob sets only the
+    # monthly *level*, scaling the normal-water-year climatology
+    # (data.hydro.forecast_monthly_hydro) by constants.HYDRO_YEAR_MULTIPLIER so
+    # a forecast can run a dry or wet hydrology scenario. "normal" (default) =
+    # 1.0, the unscaled climatology. Backcast runs instead pin the budget to the
+    # measured EIA-930 NG:WAT realization (--hydro-eia930-monthly) and ignore
+    # this lever. Level input only; see docs G9 / methodology-gaps-2026-06.
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh
@@ -1847,6 +1857,13 @@ class ScenarioConfig:
                 f"ScenarioConfig.mode must be 'forecast' or 'backcast', "
                 f"got {self.mode!r}"
             )
+        from market_sim.config.constants import HYDRO_YEAR_MULTIPLIER
+
+        if self.hydro_year not in HYDRO_YEAR_MULTIPLIER:
+            raise ValueError(
+                f"ScenarioConfig.hydro_year must be one of "
+                f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -2029,6 +2046,7 @@ TIER_TAGS: dict[str, int] = {
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "retirement_aggressiveness": 1,
+    "hydro_year": 1,
     "eac_price_nuclear": 1,
     "eac_price_wind": 1,
     "eac_price_solar": 1,
