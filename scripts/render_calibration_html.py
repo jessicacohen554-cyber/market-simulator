@@ -110,8 +110,70 @@ _COAL_GROUPS = classes_for_fuel930("coal")
 # classes are scaled up to the EIA-930 total (inter-class split preserved). A
 # complete vintage sits at ~1.0-1.02x and is left untouched -> byte-identical.
 _VINTAGE_RECONCILE_FRAC = 0.97
+# Balancing authorities whose EIA-930 "Natural Gas" (NG: NG) aggregate silently
+# folds in geothermal + biomass net generation, so the raw 930 gas cell over-
+# states true natural-gas output by ~that amount. CISO is the documented live
+# case (run_calibration_full.py [1] note, ~L3331: "compare model gas to the
+# EIA-923 cell, not EIA-930"): its 930 BALANCE extract reports ~0 TWh in "Other
+# Fuel Sources" while ~12.5 TWh of CA geothermal+biomass lands inside Natural
+# Gas. For these BAs the preliminary-vintage gas reconcile target is the
+# DEFLATED cell  e930.gas - OTHER(geothermal) - biomass, not the inflated raw
+# e930.gas; OTHER and biomass are already their own clean classFull rows, so
+# scaling gas to the raw cell would double-count them.
+#
+# Clean BAs (ERCOT / PJM / NYISO / NEISO / SPP) report geo+biomass in 930's
+# separate "Other Fuel Sources" series, so their NG: NG is already clean and
+# must NOT be deflated — subtracting their real OTHER+biomass would wrongly
+# under-scale gas. NOTE: the raw 930 BALANCE extract shows MISO ALSO exhibits
+# the fold-in signature (~12.8 TWh: 930 Other=2.7 TWh vs model other+biomass=
+# 15.5 TWh), but MISO both reports a partial Other series — so a flat
+# OTHER+biomass subtraction would over-state its folded amount — and is a live
+# keeper, so it is deliberately excluded here pending a 930-"Other"-threaded
+# correction that subtracts only the genuinely-folded portion.
+EIA930_GAS_FOLDS_GEO_BIOMASS: frozenset[str] = frozenset({"CAISO"})
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
+
+
+def reconcile_vintage_classes(
+    classfull: dict[str, float], e930: dict[str, float], iso: str
+) -> dict[str, float]:
+    """Scale a preliminary EIA-923 vintage's fossil classes up to EIA-930, in place.
+
+    Repairs an incomplete current-year EIA-923 release: when a fossil fuel's
+    grid-delivered EIA-923 class total falls below :data:`_VINTAGE_RECONCILE_FRAC`
+    of the complete EIA-930 grid series the model is calibrated to, that fuel's
+    classes are scaled up to the EIA-930 total so the fossil volume error compares
+    the model against a COMPLETE benchmark, not a partial survey. The inter-class
+    split and monthly shape are preserved; complete vintages (>= frac) are left
+    byte-identical.
+
+    For ISOs in :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` the EIA-930 "gas" cell
+    silently folds in geothermal + biomass, so the GAS target is first deflated by
+    the model's clean OTHER (geothermal) + biomass class actuals — otherwise the
+    gas classes scale to gas+geo+biomass and double-count those non-gas rows
+    (run_calibration_full.py [1] note). Coal never folds and is unaffected.
+
+    Mutates and returns ``classfull``.
+    """
+    folds_in = iso in EIA930_GAS_FOLDS_GEO_BIOMASS
+    for _fuel, _klasses in (("gas", _GAS_GROUPS), ("coal", _COAL_GROUPS)):
+        _present = [g for g in _klasses if g in classfull]
+        _cur = sum(classfull[g] for g in _present)
+        _tgt = float(e930.get(_fuel, 0.0))
+        if _fuel == "gas" and folds_in:
+            # CISO-style fold-in: deflate to true natural gas before scaling, so
+            # the gas classes don't absorb geothermal+biomass that EIA-930 buried
+            # in its NG aggregate (and which the model already books as its own
+            # OTHER/biomass rows). [1] note ~L3331.
+            _tgt -= float(classfull.get("OTHER", 0.0)) + float(
+                classfull.get("biomass", 0.0)
+            )
+        if _tgt > 0.0 and 0.0 < _cur < _VINTAGE_RECONCILE_FRAC * _tgt:
+            _scale = _tgt / _cur
+            for g in _present:
+                classfull[g] = round(classfull[g] * _scale, 4)
+    return classfull
 
 
 def _b64(cf: np.ndarray) -> str:
@@ -621,16 +683,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # ~4 TWh, inflating the system volume error to +7% though the model
             # matches EIA-930 within 1%. Complete vintages (>= frac) are
             # untouched; the inter-class split and monthly shape are preserved.
-            _cfull = bench[int(year)]["classFull"]
-            _e930d = bench[int(year)]["e930"]
-            for _fuel, _klasses in (("gas", _GAS_GROUPS), ("coal", _COAL_GROUPS)):
-                _present = [g for g in _klasses if g in _cfull]
-                _cur = sum(_cfull[g] for g in _present)
-                _tgt = float(_e930d.get(_fuel, 0.0))
-                if _tgt > 0.0 and 0.0 < _cur < _VINTAGE_RECONCILE_FRAC * _tgt:
-                    _scale = _tgt / _cur
-                    for g in _present:
-                        _cfull[g] = round(_cfull[g] * _scale, 4)
+            # For fold-in BAs (CAISO) the gas target is deflated by the EIA-930
+            # geothermal+biomass fold-in first, so gas doesn't scale to the
+            # inflated NG cell (see reconcile_vintage_classes / [1] note).
+            reconcile_vintage_classes(
+                bench[int(year)]["classFull"],
+                bench[int(year)]["e930"],
+                str(meta.get("iso", "ERCOT")),
+            )
             # Actual historical avg LMP ($/MWh), system hub-average, for the
             # summary page's model-vs-actual price comparison. Absent for an
             # ISO-year with no price file -> the card shows model only.
