@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-25 (NYISO keeper `nyiso 26 cc-nameplate` — re-solve on merged nameplate-CC code)
+
+**New NYISO keeper, no source change.** Re-solved the `nyiso 25 steam-merit`
+config (byte-identical flags, P1, no commitment) on the merged code: the
+Ravenswood mixed CC+ST steam-HR fix (PR #850) + `cc_nameplate_summer_derate`
+(commit `a8b0e55`, AUTO-ON for PJM/NYISO/NEISO). Combined effect is the predicted
+structural direction — nameplate CC capacity + steam correctly above CC
+**over-closes** the 2023 within-gas merit split (`CC_REGULAR −3.47 → +2.09`,
+`ST_GAS +2.76 → −1.48`; 2024 likewise). CC now mildly over-runs on energy
+(~+2 TWh/yr) and depresses LMP (`C3a` 2023 −8.9 %, 2024 −11.0 %; 2025 +9.3 % →
+in-band) — the documented CC offer-level frontier (fix via `_NYISO_OFFER_CURVE`
+`econ_low/econ_high`, not a re-walled capacity). Kept per rule #1 as the most
+structurally faithful NYISO config; C6 governance PASS, determination NOT-YET.
+Docs realigned: `docs/calibration-best-so-far-nyiso.md` (new keeper banner),
+`docs/cc-high-cf-investigation.md` (NYISO confirmation of the mild over-run).
+
 ## 2026-06-24 (Calibration verdict — C1 complete-vintage-only; dashboard volume basis; ERCOT keeper)
 
 **C1 asset-class tolerance applies to complete-vintage years only.**
