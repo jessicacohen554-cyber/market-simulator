@@ -375,15 +375,26 @@ dispatched demand+VRE; 2024/25 clamped to the 0.01 floor). The proxy is near-zer
 2024/25 because West local load plus the 12.68 GW WESTEX+PNHNDL takeaway absorbs
 essentially all West VRE, so West *power* oversupply almost never occurs. Removing
 the measured frequency makes West gas firm ~99% of hours, dropping the West CTs out
-of the cheap collapse hours: CT_PEAKER **5.90 / 5.22 / 5.00** vs EIA-923 **7.56 /
-8.21 / 7.11** TWh (−22 / −36 / −30%) — the under-run deepens vs the measured-collapse
-keeper, exposing that the keeper's West-CT dispatch was partly carried by the
-non-forward measured collapse. That under-run is a documented residual, not a reason
-to revert the structural mechanism (#1/#11) — the forward model must respond to VRE
-build, which a frozen measured 0.42 cannot. Registered as a NOT-YET probe
-(`ercot_run158_netload_gas_endog_collapse`, all 3 years on the backcast dashboard;
-the run157-recipe ST_GAS/gas-family and energy-only-dual price residuals are
-inherited, documented in the bundle attestation). **Done (was: Effort M, Risk Low).**
+of the cheap collapse hours. The **isolated** effect (same run157 recipe + same main,
+measured vs endogenous collapse — a one-variable A/B): CT_PEAKER (TWh)
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| measured collapse | 5.95 | **7.48** | 5.54 |
+| endogenous collapse | 5.90 | **5.22** | 5.00 |
+| EIA-923 | 7.56 | 8.21 | 7.11 |
+
+— almost the entire effect is **2024 (−2.26 TWh)**, the measured-0.42 year, with the
+freed energy absorbed by CC_REGULAR (+1.4 TWh); 2023/25 barely move (measured
+collapse already small). The measured-collapse keeper's in-band 2024 West-CT fit
+(−8.9%) was thus partly carried by the non-forward measured collapse; the endogenous
+under-run (−36%) is a documented residual kept per #1/#11 — the forward model must
+respond to VRE build, which a frozen measured 0.42 cannot. (The ST_GAS/gas-family
+fuelmix-C1 and sysvol-C2 misses are **identical in the measured baseline** — a
+run157-recipe-on-current-main artifact with STGAS-drag off, *not* from this lever;
+the price residuals are the inherited energy-only-dual limitation.) Registered as a
+NOT-YET probe (`ercot_run158_netload_gas_endog_collapse`, all 3 years on the backcast
+dashboard, attestation documents the residuals). **Done (was: Effort M, Risk Low).**
 
 ### G7 HSL uncurtailed VRE potential + endogenous curtailment — **BUILT (2026-06-25)**
 
