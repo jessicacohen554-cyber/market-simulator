@@ -1,6 +1,41 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-24): `nyiso 25 steam-merit`**
+> **KEEPER (2026-06-25): `nyiso 26 cc-nameplate`**
+> (`2026-06-25-nyiso-26-cc-nameplate`, bundle
+> `results/calibration/nyiso_26_cc-nameplate`, all 3 years). A **re-solve** of the
+> `nyiso 25 steam-merit` config (byte-identical flags, P1, no commitment) on the
+> **merged code** — **no new source edits**. Two structural levers, both more
+> physically faithful, both already on `main`: (1) my Ravenswood mixed CC+ST
+> steam-HR fix (`data.fleet.MIXED_FACILITY_STEAM_HR={2500:9.5}`, PR #850); (2)
+> `cc_nameplate_summer_derate` (commit `a8b0e55`, AUTO-ON for PJM/NYISO/NEISO):
+> CC carries **full EIA-860 nameplate**, derated to the measured net-summer rating
+> in **summer only** (winter restores cold-weather capability), dropping the old
+> CC "75 % wall" (double summer-derate + statistical POF). Combined effect is the
+> **predicted structural direction**: nameplate CC capacity + steam correctly
+> above CC ⇒ CC strongly displaces steam and the 2023 within-gas merit split that
+> `nyiso 25` left open **over-closes**: `CC_REGULAR −3.47 → +2.09`, `ST_GAS +2.76 →
+> −1.48` (2024 likewise `CC_REGULAR −2.61 → +2.39`, `ST_GAS −0.96 → −4.31`). The
+> merit **order** is now physically correct (CC ahead of steam) *and* CC capacity
+> is physically correct (nameplate, no fitted wall). What the un-walled fleet now
+> **exposes** is a cleaner, single-lever miss — the **CC offer level is too cheap**,
+> so with full nameplate capacity CC **mildly over-runs** on energy (`CC_REGULAR`
+> ~+2 TWh/yr; NYISO's over-run is mild vs PJM's +65 TWh) and **depresses LMP**
+> (`C3a` 2023 −8.9 %, 2024 −11.0 %; 2025 +9.3 % → **in-band**). Per rules #1/#11
+> the nameplate capacity + corrected steam HR **stay in**: the wall was masking a
+> too-cheap CC offer; removing it surfaces the real bug, fixed via the real lever
+> (CC `econ_low/econ_high` in `_NYISO_OFFER_CURVE`, grounded in the CAMPD CC
+> marginal-HR fit — the `docs/handoffs/pjm-cc-level-tuning-2026-06.md` direction),
+> **not** by restoring a capacity haircut. New keeper because it is the **most
+> structurally faithful** NYISO config to date, with the remaining miss now cleanly
+> localized to ONE diagnostic lever (the CC offer level) instead of entangled with
+> a capacity wall. C6 governance **PASS** (attested); determination **NOT-YET**
+> (honest CC offer-level misses + the ledgered EIA-930/923 gas basis floor). The
+> RCPF scarcity tail (`C3c`) and NYC-peaker under-run remain **incidence-gated**
+> (downstate reserve headroom / import discipline), unchanged and out of scope.
+> See `docs/nyiso-dispatch-validation-2026-06.md`. Reproduce: the `nyiso 25`
+> config (no new flags) on merged `main`. Superseded keeper below.
+
+> **PRIOR KEEPER (2026-06-24): `nyiso 25 steam-merit`**
 > (`2026-06-24-nyiso-25-steam-merit`, bundle
 > `results/calibration/nyiso_25_steam_merit`, all 3 years). The `nyiso 24`
 > config (byte-identical flags) + ONE model-side data correction
