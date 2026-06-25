@@ -100,6 +100,37 @@ Carolinas 13.5 MMBtu/MWh, hurdle $2/MWh (the OMS-RSC inter-RTO wheeling adder;
 PJM exports at thin spreads, so the hurdle must stay small). The validation
 table above is the result.
 
+### Forward heat rate — gas-price-elastic, not a flat mean
+
+A single `marginal_heat_rate` per neighbor is a multi-year *mean* of the
+realized LMP/Henry-Hub ratio, and that ratio drifts with gas: it RISES when gas
+is cheap (a roughly fixed non-gas adder — congestion, scarcity, non-gas marginal
+units — is diluted by a smaller gas number) and FALLS when gas is dear,
+especially for a wind-set neighbor whose LMP barely tracks gas at all. So the
+flat mean under-prices the seam in dear-gas years and over-prices wind-set
+neighbors in those same years.
+
+For backcast years the registry pins each neighbor's measured per-year ratio
+(`hr_by_year`). The **forward** fallback is now gas-elastic instead of flat:
+each neighbor's realized annual-mean LMP is affine in delivered gas,
+
+    LMP = hr_phys × gas + hr_adder      (neighbor_price._HR_GAS_ELASTIC[name] = (hr_phys, hr_adder))
+
+so the effective implied heat rate is `hr_phys + hr_adder/gas`, easing toward
+the gas-proportional `hr_phys` as gas rises. The two coefficients are an OLS fit
+of the neighbor's OWN measured `(gas, LMP)` points
+(`scripts/derive_neighbor_hr_elasticity.py`) — **blind to the ISO's
+interchange** (rule #11) — so the seam reprices forward as the Henry Hub
+trajectory moves WITHOUT reading the neighbor's realized LMP for a future year.
+`neighbor_price.neighbor_heat_rate` resolves measured backcast → gas-elastic
+forward → flat structural (neighbors with no organized-market LMP, e.g. the
+Carolinas). MISO's fitted forward HRs: **PJM** `11.06·gas + 3.21` (gas-set),
+**SPP** `3.04·gas + 16.27` (wind-set — small slope, large fixed component, so a
+gas spike does not spuriously lift it; it reproduces the measured 2025 SPP ratio
+7.7 that the flat 10.0 over-priced). A `MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL`
+env flag forces the seam onto the `flat`/`elastic` forward path for a held-out
+backcast year, so the forward formula can be validated against actuals.
+
 ### Open items for step (2) — the LP wiring
 
 1. **Structural export floor.** The economic spread predicts 62–81% export
@@ -236,9 +267,13 @@ price formation.
 
 ## Files
 
-- `src/market_sim/data/neighbor_price.py` — the module (pure, no LP).
-- `src/market_sim/config/constants.py` — `NeighborInterface`, `INTERFACE_NEIGHBORS`.
+- `src/market_sim/data/neighbor_price.py` — the module (pure, no LP); the
+  `_HR_GAS_ELASTIC` map carries the forward gas-elastic HR coefficients.
+- `src/market_sim/config/constants.py` — `NeighborInterface`, `INTERFACE_NEIGHBORS`
+  (incl. the per-year measured `hr_by_year` backcast anchors).
 - `scripts/validate_neighbor_price.py` — the validation report.
+- `scripts/derive_neighbor_hr_elasticity.py` — fits the forward gas-elastic HR
+  coefficients (OLS, blind to ISO interchange) + a flat/elastic/measured table.
 - `scripts/derive_interface_limits.py` — derives the seam limits from PJM's
   published per-tie flows (`--check` asserts the constants still match).
 - `tests/test_neighbor_price.py` — unit + integration tests.
