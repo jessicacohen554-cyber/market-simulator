@@ -368,6 +368,19 @@ further (rule #12). The NYISO CC offer-level lever is **DONE**. See
 `results/calibration/nyiso_27_cc-offer/calibration_attestation.json` and
 `docs/calibration-best-so-far-nyiso.md`.
 
+> **Update (2026-06-25, `nyiso 28 native-hr` — rejected probe):** the `1.21×`
+> reach above is **borrowed from ERCOT's** CAMPD-CC fit, not NYISO's own. Run 28
+> derived NYISO's native CC/ST incremental-HR curve from NY+NJ CEMS (new tool
+> `scripts/derive_campd_marginal_hr.py`) and found NYISO's own CC reach is
+> **0.925×** (CC_CHP 1.103×), well *below* 1.21 — so re-grounding to it craters
+> `C3a` to −24/−26.5/−23.5 %. The lesson sharpens rule #1: CEMS gives the marginal
+> **cost**, not the **offer**; the `1.21` reach was proxying the competitive
+> offer **markup** that NYISO has no disclosure to measure. The per-ISO-per-class
+> native-grounding principle stands, but for an ISO without offer disclosure the
+> *markup* component still needs grounding (run 29: a NYISO markup on top of the
+> native marginal HR). The steam-side re-level *was* directionally right (halved
+> the 2024 `ST_GAS` under-run). Keeper stays `nyiso 27`.
+
 ### Code touchpoints (this session)
 
 - `config/scenarios.py`: `cc_nameplate_summer_derate`, `cc_duct_peaking_cap_pct`.
