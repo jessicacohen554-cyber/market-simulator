@@ -68,11 +68,36 @@ if TYPE_CHECKING:
 # SAME forward formula a forecast year would use, then scored against the
 # held-out actuals. Default OFF, so keepers (which legitimately price backcast
 # years off the measured anchor, rule #12) are byte-identical. Values:
-#   "elastic" -> skip hr_by_year, use hr_gas_elastic (the forward fallback)
-#   "flat"    -> skip hr_by_year AND hr_gas_elastic, use marginal_heat_rate
+#   "elastic" -> skip hr_by_year, use the gas-elastic coeffs (the forward fallback)
+#   "flat"    -> skip hr_by_year AND the elastic coeffs, use marginal_heat_rate
 # This NEVER reads the ISO's own interchange — it only changes which neighbor
 # price-formation formula prices the seam (rule #11 stays satisfied).
 FORWARD_SKILL_ENV: str = "MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"
+
+# Forward gas-elastic implied heat-rate coefficients per neighbor, keyed by the
+# neighbor's name. Each ``(hr_phys, hr_adder)`` makes the neighbor's FORWARD
+# implied HR ``= hr_phys + hr_adder / gas`` — the neighbor's realized annual-mean
+# LMP is affine in delivered gas (``LMP = hr_phys x gas + hr_adder``), so the
+# implied HR eases toward the gas-proportional ``hr_phys`` as gas rises and the
+# seam reprices forward as the Henry Hub trajectory moves, instead of riding a
+# flat multi-year mean (the gap in docs/forecast-methodology-gaps-2026-06.md
+# G11). Fit to each neighbor's OWN measured ``(gas, LMP)`` points — blind to the
+# ISO's interchange (rule #11) — by scripts/derive_neighbor_hr_elasticity.py.
+# Backcast years keep the measured per-year ``hr_by_year`` anchor (rule #12:
+# measured for the backcast); these coefficients price only forecast years (and
+# the forward-skill validation). The keys are neighbor names, which are unique to
+# the MISO registry today (only MISO has a ``PJM``/``SPP`` seam), so this never
+# touches another ISO's seam; the map lives here rather than as a
+# NeighborInterface field to keep the change localized to the seam-pricing layer.
+_HR_GAS_ELASTIC: dict[str, tuple[float, float]] = {
+    "PJM": (11.06, 3.21),  # MISO's PJM seam: gas-set (large slope, small adder)
+    "SPP": (3.04, 16.27),  # MISO's SPP seam: wind-set (small slope, large adder)
+}
+
+
+def _hr_gas_elastic(neighbor: NeighborInterface) -> tuple[float, float] | None:
+    """Return the neighbor's forward gas-elastic ``(hr_phys, hr_adder)`` or ``None``."""
+    return _HR_GAS_ELASTIC.get(neighbor.name)
 
 
 def _forward_skill_mode() -> str | None:
@@ -94,13 +119,13 @@ def neighbor_heat_rate(
        is the measured price-formation input the elasticity is fit and validated
        against (claude.md rule #12: measured for the backcast).
     2. **Forward gas-elastic implied HR** — for any year NOT tabulated (every
-       forecast year), ``hr_phys + hr_adder / gas`` from ``neighbor.hr_gas_elastic``
-       when set. The neighbor's realized LMP is affine in delivered gas
-       (``LMP = hr_phys x gas + hr_adder``), so the implied HR eases toward the
-       gas-proportional ``hr_phys`` as gas rises — the seam reprices forward as
-       the Henry Hub trajectory moves WITHOUT reading the neighbor's realized LMP
-       for a future year. The coefficients are blind to the ISO's interchange
-       (rule #11).
+       forecast year), ``hr_phys + hr_adder / gas`` from :data:`_HR_GAS_ELASTIC`
+       when the neighbor has a fit. The neighbor's realized LMP is affine in
+       delivered gas (``LMP = hr_phys x gas + hr_adder``), so the implied HR eases
+       toward the gas-proportional ``hr_phys`` as gas rises — the seam reprices
+       forward as the Henry Hub trajectory moves WITHOUT reading the neighbor's
+       realized LMP for a future year. The coefficients are blind to the ISO's
+       interchange (rule #11).
     3. **Flat structural fallback** — ``marginal_heat_rate`` when no elasticity
        is fit (neighbors with no organized-market LMP, e.g. the Carolinas), so
        those forecast runs stay byte-identical.
@@ -114,8 +139,9 @@ def neighbor_heat_rate(
     skill = _forward_skill_mode()
     if skill is None and neighbor.hr_by_year and year in neighbor.hr_by_year:
         return neighbor.hr_by_year[year]
-    if skill != "flat" and neighbor.hr_gas_elastic is not None:
-        hr_phys, hr_adder = neighbor.hr_gas_elastic
+    coeffs = None if skill == "flat" else _hr_gas_elastic(neighbor)
+    if coeffs is not None:
+        hr_phys, hr_adder = coeffs
         gas = neighbor_gas_price(neighbor, year, gas_scenario)
         return hr_phys + hr_adder / gas
     return neighbor.marginal_heat_rate
