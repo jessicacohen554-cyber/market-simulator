@@ -1,0 +1,76 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "nyiso-28 native-hr REJECTED PROBE 2026-06-25",
+  "classification": "REJECTED PROBE — not promoted to keeper; the NYISO keeper stays nyiso-27 cc-offer (2026-06-25-nyiso-27-cc-offer).",
+  "note": "Re-solve of the nyiso-27 keeper config (byte-identical flags: --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply --nyiso-firm-imports --nyiso-import-reconciliation; P1, no commitment) with ONE source change: _NYISO_OFFER_CURVE CC_REGULAR / CC_CHP / ST_GAS committed/econ_low/econ_high were re-grounded from their previous (partly ERCOT-borrowed) values to NYISO's OWN measured marginal heat rate, derived by scripts/derive_campd_marginal_hr.py from the NY+NJ unit-level CAMPD CEMS extracts (per-unit incremental HR = d(heatInput)/d(grossLoad) from a normalized-load quadratic fit, evaluated at the min-gen floor / mid-ramp / top-of-ramp, expressed vs the class cap-weighted base_HR, cap-weighted median pooled 2023-2025; summary data/raw/reference/nyiso_campd_marginal_hr_summary.csv). The borrow removed: CC econ_high had been 1.21/1.24 (ERCOT's CAMPD-CC reach) and ST_GAS econ ramp 1.10/1.45 (ERCOT-shaped). The NYISO-native medians: CC_REGULAR 0.632/0.784/0.925, CC_CHP 0.809/0.989/1.103, ST_GAS 0.818/0.825/0.830. CT_PEAKER unchanged (out of scope). The within-class merit order is physically correct and preserved (CC_REGULAR / CC_CHP econ_high eff HR 7.2 / 7.7 < ST_GAS committed eff HR 8.68 < CT_PEAKER): no inversion. WHY REJECTED: re-grounding the whole gas stack to its pure CEMS marginal heat rate CRATERS the clearing price — C3a mean LMP 2023 in-band -> -24.0%, 2024 -9.7% -> -26.5%, 2025 in-band -> -23.5% (all three years now ~a quarter under actual); C3b price-shape NRMSE regresses 2024 0.243 -> 0.361 (and 2023/2025 to 0.271/0.304). The cause is structural, not a fit knob: NYISO publishes no offer disclosure, so CEMS is the only NYISO-native heat-rate source — but CEMS measures the marginal COST (incremental heat rate), NOT the competitive offer the unit actually submits. Real offers = marginal cost + a markup that recovers no-load / start-up / ancillary opportunity cost and competitive inframarginal rent — a REAL market behaviour (CLAUDE.md rule #1). The previous econ_high 1.21 reach, although borrowed from ERCOT's measured offer curve, was serving as the only available empirical PROXY for that markup; stripping it to the bare CEMS marginal HR sets the markup to ~zero and under-prices the gas stack ~$10/MWh, which is most NYISO hours' marginal unit, so LMP falls ~25%. Per rule #1 a run that is MISSING real structure (here the competitive offer markup) is NOT a keeper even though its heat-rate basis is more literally NYISO-native: the cratered price is the symptom of the missing markup, not an out-of-scope tail. Run-27 (NYISO body + ERCOT-measured reach as the markup proxy) remains the most structurally faithful NYISO config and stays the keeper.",
+  "partial_findings_carry_forward": "Two sub-findings survive the rejection and inform the next run (a future run 29): (1) the STEAM-side re-level is directionally correct — lowering ST_GAS from the inherited 1.10/1.45 toward its NYISO-native ~0.82-0.83 marginal HR nearly halved the 2024 ST_GAS under-run (run-27 -4.14 -> run-28 -2.22 TWh) and confirms NYISO legacy steam's economic ramp had been over-priced (eff HR 11.7-15.4 vs its measured ~8.7-8.8 incremental), an ERCOT-shaped inheritance never NYISO-grounded; 2023 ST_GAS over-shot (-1.26 -> +1.58) only because the simultaneous CC drop freed too much room. (2) the CC over-run is genuinely structural at NYISO's own (sub-1.21) CC reach — it barely moved (2023 +1.70 -> +1.26, 2024 +2.09 -> +2.34) despite the large offer drop, confirming import-constrained downstate leans on its efficient CC regardless. The path forward is NOT to restore the cross-ISO borrow but to add a NYISO-grounded competitive-offer MARKUP on top of the native marginal HR (so the curve = measured marginal HR x a markup that recovers no-load/start/AS cost and competitive rent), lowering steam toward native marginal while retaining a stack-wide markup that holds the clearing price — leaving CT_PEAKER and the >$300 scarcity tail to the separate, out-of-scope downstate-reserve-incidence work.",
+  "validation_note": "No scored OUTPUT is pinned. The single changed quantity is a measured INPUT: the per-class committed/econ_low/econ_high multipliers set to NYISO's own CAMPD incremental-heat-rate medians (forward-reproducible — they regenerate from CEMS for any year and respond to changed fleet/gas conditions — and NOT tuned to the NYISO price or volume residual; the bands landed ON the derived medians, rule #12). The probe is rejected on STRUCTURAL grounds (the curve omits the real competitive offer markup), not because the residual failed to zero. The gas total and LMP (scored outputs) remain unpinned; no unit pinned to CEMS generation; no haircut/adder/sigmoid tuned to a residual. The rejection itself adds no fitted compensation — the keeper simply stays run 27."
+ },
+ "_offer_curve_grounding_status": "Run 28 establishes the NYISO-native CAMPD marginal-HR table (derive_campd_marginal_hr.py, the CEMS analogue of the ERCOT derive_dam_offer_hrmults.py) and proves that the bare marginal HR is the COST floor, not the OFFER: it under-prices the gas stack ~25% because CEMS cannot reveal the competitive offer markup. The per-ISO-per-class native-grounding principle stands; the open item it surfaces is how to ground the markup component for an ISO without offer disclosure (run 29: a NYISO-grounded markup on top of the native marginal HR). Until then the keeper (nyiso-27) carries the ERCOT-measured reach as the documented markup proxy.",
+ "exceptions": [
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2023,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-2.07 TWh, share -1.3pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail, incidence-gated)",
+   "reason": "CT_PEAKER under-runs every year because NYC peakers clear on reserve/scarcity (mechanism B / RCPF), not energy. INCIDENCE-gated by the model's too-loose downstate reserve headroom, not the offer curve (the nyiso-25 rcpf-steep probe proved steepening the curve adds no tail hours). The probe's CC/ST re-level deepened this slightly (run-27 -1.30 -> -2.07) because the cheaper steam stack displaced more peaker energy, but the bulk is the long-standing incidence tail, out of scope here."
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "CT_PEAKER",
+   "year": 2024,
+   "metric": "C1 grid-delivered class volume/share",
+   "magnitude": "-2.04 TWh, share -1.2pp",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker reserve/scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker reserve/scarcity-tail gap as 2023; incidence-gated, not energy-clearing. Deepened by the cheaper steam stack (run-27 -1.51 -> -2.04); the remainder is the incidence tail (downstate reserve headroom / import discipline), out of scope here."
+  },
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2025,
+   "metric": "C2 gas total vs EIA-923 grid-delivered",
+   "magnitude": "model gas -2.7%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+   "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the remaining gas gap is the EIA-930/EIA-923 basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md; td_loss_factor=0 settled) plus preliminary-data incompleteness, not a dispatch error. The offer re-level is a within-gas reshuffle that does not move the gas TOTAL, which is at its basis floor. Not closable by an honest knob (rules #1/#11/#12)."
+  },
+  {
+   "criterion": "co2",
+   "year": 2024,
+   "metric": "C5a system CO2 vs eGRID",
+   "magnitude": "model -7.8%",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+   "reason": "2024 CO2 is downstream of the 2024 gas volume, which sits at its EIA-923/EIA-930 basis floor. The probe shifted some energy from CC to the dirtier-per-MWh steam class, so CO2 is marginally less negative than run-27 (-9.1% -> -7.8%), but the level stays governed by the gas-total basis floor. Not a separate dispatch/emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 1h vs actual 10h (0.10x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "The >$300 tail is the NYC-peaker / RCPF reserve-scarcity tail, incidence-gated by the model's too-loose downstate reserve headroom, not curve-gated (the nyiso-25 rcpf-steep probe). Out of scope here; not chased with a price adder. NOTE: the C3a/C3b crater THIS run is a SEPARATE, in-scope offer-curve effect (the missing markup, see governance note) and is the reason the probe is rejected — it is not one of these accepted out-of-scope tails."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2024,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 0h vs actual 12h (0.00x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker / RCPF reserve-scarcity tail as 2023; incidence-gated (downstate reserve headroom), not curve-gated. Out of scope; not chased with an adder."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2025,
+   "metric": "C3c >$300 scarcity hours",
+   "magnitude": "model 8h vs actual 42h (0.19x)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (NYC-peaker / RCPF reserve-scarcity tail, incidence-gated)",
+   "reason": "Same NYC-peaker / RCPF reserve-scarcity tail as 2023/24; incidence-gated downstate reserve headroom, not the demand-curve slope. Out of scope; not chased with a price adder."
+  }
+ ]
+}

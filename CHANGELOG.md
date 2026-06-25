@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-25 (NYISO probe `nyiso 28 native-hr` — REJECTED: native CAMPD marginal-HR re-level craters LMP)
+
+**New derivation tool + rejected probe; keeper stays `nyiso 27 cc-offer`.** Added
+`scripts/derive_campd_marginal_hr.py` (the CEMS analogue of
+`derive_dam_offer_hrmults.py`): per-class `committed`/`econ_low`/`econ_high`
+incremental-HR multipliers from an ISO's own unit-level CAMPD CEMS, expressed vs
+the class cap-weighted base_HR (output `data/raw/reference/<iso>_campd_marginal_hr_summary.csv`).
+The `nyiso 28 native-hr` probe re-grounded `_NYISO_OFFER_CURVE` CC_REGULAR /
+CC_CHP / ST_GAS to NYISO's OWN derived medians (`CC_REGULAR 0.632/0.784/0.925`,
+`CC_CHP 0.809/0.989/1.103`, `ST_GAS 0.818/0.825/0.830`), removing the
+ERCOT-borrowed CC reach (1.21/1.24) and ST_GAS shape (1.10/1.45). It **craters
+`C3a`** to −24.0/−26.5/−23.5 % across 2023-25: the bare CEMS marginal HR is the
+marginal **cost**, not the **offer** — it omits the competitive offer **markup**
+that NYISO has no disclosure to measure, which the borrowed reach was proxying.
+Per rule #1 a run missing real structure (the markup) is not a keeper. The
+steam-side re-level *was* directionally right (2024 `ST_GAS` under-run −4.14 →
+−2.22 TWh). Live source reverted to the run-27 keeper curve (probe preserved in
+its bundle + dashboard); C6 PASS, determination NOT-YET. Docs realigned:
+`docs/calibration-best-so-far-nyiso.md`, `docs/cc-high-cf-investigation.md`,
+`docs/handoffs/pjm-cc-level-tuning-2026-06.md` (per-ISO-per-class native grounding
+is the standing pattern; a no-offer-disclosure ISO still needs its markup
+component grounded — run-29 path: a NYISO markup on top of the native marginal HR).
+
 ## 2026-06-25 (NYISO keeper `nyiso 27 cc-offer` — CC offer-level re-level to CAMPD marginal-HR reach)
 
 **New NYISO keeper, one source edit.** Re-solved the `nyiso 26 cc-nameplate`
