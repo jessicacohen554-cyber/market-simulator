@@ -467,6 +467,105 @@ def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarr
     return out
 
 
+# Per-year measured DAM AS clearing-price series (scripts/build_ercot_dam_as_mcpc.py).
+_ERCOT_DAM_AS_MCPC_TMPL = "ercot_{year}_dam_as_mcpc_hourly.parquet"
+
+# Default first year the DAM-AS overlay applies. The 2023 stress year's day-ahead
+# AS scarcity is the SAME scarcity the RTORDPA reliability-deployment overlay
+# already represents (RTORDPA is material in 2023, near-inert in 2024/25), so
+# applying both in 2023 double-counts one event through two measured channels and
+# over-fires 2023-H2 (Aug binding-MCPC scarce-hour mean ~$222 >> actual DA ~$147).
+# The DAM-AS overlay is therefore scoped to 2024+, where RTORDPA is inert and the
+# day-ahead AS co-optimization is the *unrepresented* binding price-formation
+# channel — the same year-scoping logic as ercot_storage_as_reserve_from_year.
+_ERCOT_DAM_AS_OVERLAY_FROM_YEAR: int = 2024
+
+# AS clearing price ($/MWh) above which the DAM cleared into scarcity rather than
+# competitive AS. ERCOT's competitive DAM AS clears in the single-to-low-double
+# digits (measured 2024 product means: RegUp $6.5, RRS $5.6, ECRS $12.6, NonSpin
+# $10.0); a binding MCPC above this level is the AS scarcity demand curve
+# (ASDC/ORDC) pricing, not competitive offers. Not fitted to a price residual —
+# the May-2024 monthly lift is robust to the exact level (binding-MCPC overlay
+# mean ~$18-23 across thresholds $75-200), and the gate's job is only to keep the
+# overlay inert in non-scarce hours (so it does not lift the broad mid-range and
+# re-break Aug 2024 / 2025, the failure mode of the rejected flat-ECRS probe).
+_ERCOT_DAM_AS_SCARCITY_THRESHOLD: float = 150.0
+
+
+def ercot_dam_as_overlay_series(
+    year: int,
+    hours: int,
+    *,
+    scarcity_threshold: float = _ERCOT_DAM_AS_SCARCITY_THRESHOLD,
+    from_year: int = _ERCOT_DAM_AS_OVERLAY_FROM_YEAR,
+    config=None,
+) -> np.ndarray:
+    """Measured DAM AS-scarcity overlay as a post-solve $/MWh system-price adder.
+
+    The day-ahead analogue of :func:`ercot_rtordpa_overlay_series`. ERCOT's DAM
+    co-optimizes energy and ancillary services; on hours where AS cleared into
+    scarcity the AS clearing price (MCPC) jumps from competitive single-digits to
+    hundreds/thousands, and that scarcity rent lifts the day-ahead *energy* price
+    through the shared co-optimization (settled DAM SPP = energy LMP + the binding
+    reserve/AS price). The energy+reserve LP forms only the energy dual (plus an
+    endogenous ORDC reserve adder); in hours that are not physically reserve-thin
+    in the model — the grounded May-2024 case (May 8/24/26), where load is elevated
+    but headroom is ample — it cannot form this DAM co-optimization scarcity, so it
+    under-prices those acute days. Adding the measured **binding AS MCPC** (the
+    per-hour max across RegUp/RRS/ECRS/NonSpin, the product whose scarcity a
+    marginal energy unit's opportunity cost tracks) on the scarce hours is the
+    published additive co-optimization identity — additive to, not a re-pricing of,
+    the energy dual.
+
+    Read **per year** from
+    ``data/raw/ercot/ercot_<year>_dam_as_mcpc_hourly.parquet`` (the ``binding_mcpc``
+    column), built by ``scripts/build_ercot_dam_as_mcpc.py`` from the 60-Day DAM
+    Disclosure — an exogenous ERCOT-published quantity, backcast-able on any year
+    from the same forward driver (next year's published DAM AS MCPCs), responsive
+    to changed conditions (a tighter/looser AS market reprices), never fit to LMP.
+
+    Gating, all of which keep the overlay inert outside genuine DAM AS scarcity:
+      * **scarcity threshold** — hours with ``binding_mcpc <= scarcity_threshold``
+        (competitive AS clearing) add 0; the overlay equals ``binding_mcpc`` only
+        where the AS demand curve priced into scarcity, so incidence lands on the
+        acute days and the broad mid-range is untouched;
+      * **regime gate** — pre-RTC+B only (RTC+B retired the adders 2025-12-05),
+        identical to the RTORDPA overlay (2025 hours >= ``RTCB_GOLIVE_HOUR``
+        zeroed; year >= 2026 / ``ercot_market_design='rtcb'`` inert);
+      * **from-year scope** — inert before ``from_year`` (default 2024) so the
+        2023 day-ahead AS scarcity, already carried by the RTORDPA overlay, is not
+        double-counted (see :data:`_ERCOT_DAM_AS_OVERLAY_FROM_YEAR`).
+    Missing files / uncovered hours (the 60-day-lag Nov-Dec tail) and NaN map to 0.
+    """
+    out = np.zeros(int(hours), dtype=float)
+    if int(year) < int(from_year):
+        return out
+    regime_ordc = (
+        ercot_market_regime(year, config) == "ordc"
+        if config is not None
+        else year < _RTCB_FIRST_FULL_YEAR
+    )
+    if not regime_ordc:
+        return out
+    path = RAW_DATA_DIR / "ercot" / _ERCOT_DAM_AS_MCPC_TMPL.format(year=year)
+    if not path.exists():
+        return out
+    import pandas as pd
+
+    df = pd.read_parquet(path, columns=["hour", "binding_mcpc"])
+    s = df.set_index("hour")["binding_mcpc"].reindex(range(int(hours)))
+    vals = np.nan_to_num(s.to_numpy(dtype=float), nan=0.0)
+    # Apply only the scarcity-priced rent; competitive AS clearing adds nothing.
+    vals = np.where(vals > float(scarcity_threshold), vals, 0.0)
+    n = min(len(vals), len(out))
+    out[:n] = vals[:n]
+    # Within-2025 calendar cut at the RTC+B go-live (the measured series is already
+    # NaN past it, but mirror the RTORDPA belt-and-suspenders gate).
+    if year == _RTCB_FIRST_FULL_YEAR - 1:
+        out[RTCB_GOLIVE_HOUR:] = 0.0
+    return out
+
+
 def ercot_market_regime(year: int, config) -> str:
     """Return the ERCOT scarcity-pricing regime for a year: 'ordc' or 'rtcb'.
 
