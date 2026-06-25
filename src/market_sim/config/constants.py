@@ -3058,3 +3058,12 @@ STORAGE_TIEBREAKER_EPSILON: float = (
 HOURS_PER_YEAR: int = 8760
 START_YEAR: int = 2026
 END_YEAR: int = 2050
+
+# Historical weather years available as forecast load + VRE capacity-factor
+# shapes. A forecast pins one representative year (ScenarioConfig.weather_year);
+# the weather-year ensemble (market_sim.ensemble) draws over this whole pool and
+# reports the distribution. Bounded by the hourly EIA-930 coverage on disk
+# (data/raw/eia-930/, 2023-2025); extend as later years land. A weather draw is
+# an admissible forecast *input*, not an outcome (CLAUDE.md #10), so sampling
+# over it is methodological robustness, not a backcast pin.
+WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
