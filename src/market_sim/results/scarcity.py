@@ -1112,6 +1112,81 @@ def ercot_multiproduct_reserve_coopt_inputs(
     )
 
 
+_ERCOT_ORDC_RESERVES_DIR = RAW_DATA_DIR / "ercot"
+
+# Sentinel "no cap" MW for the reserve-supply-cap rows: larger than any ERCOT
+# reserve-eligible fleet (~70-90 GW), so an uncapped hour's row never binds.
+_RESERVE_SUPPLY_CAP_UNCAPPED_MW = 1.0e9
+
+
+def ercot_rtolcap_supply_cap_mw(config, hours: int) -> np.ndarray | None:
+    """ERCOT's measured online-responsive reserve-supply cap, ``(n_rows, hours)`` MW.
+
+    The reserve-supply re-scope (Finding 1 / G1, the broad-month phantom-headroom
+    fix). The ERCOT co-opt's shared-headroom rows count every reserve-eligible
+    thermal unit's *full installed* headroom as reserve supply — including cold
+    slow-start units a perfect-foresight LP leaves idle but still scores as
+    "available" — so modeled reserve never tightens into the ~8-12 GW band where
+    ERCOT's ORDC adder actually fires. This caps each headroom row's cleared
+    reserve at the **measured** ERCOT on-line responsive reserve capability so
+    modeled reserve tracks the real series rather than the over-counted fleet
+    headroom. Pre-RTC+B (ORDC regime) the capped reserve dual is then the ORDC
+    price adder (RTORPA) added to the energy SPP — the energy-only-SCED-plus-adder
+    design of 2023-2025; the measured series is the exogenous supply, the published
+    ORDC curve the demand, neither the LMP, RTSPP nor MCPC, so this is a
+    supply-definition re-scope, not a price fit (CLAUDE.md #11/#12).
+
+    Shape matches the co-opt's headroom rows:
+
+    * **Single lumped product** (``ercot_multiproduct_as_coopt`` off): one row,
+      capped at ``RTOLCAP`` (drives the published on-line ORDC adder, RTORPA).
+    * **Multi-product stack** (on): two rows — fast/spinning at ``RTOLCAP`` and the
+      all tier (adding quick-start offline peakers) at ``RTOLCAP + RTOFFCAP``.
+
+    Columns come from
+    ``data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet``. Returns ``None``
+    when the cap is gated off, the weather year predates
+    ``ercot_reserve_supply_cap_from_year``, or the file is absent (the co-opt then
+    runs uncapped, unchanged). Hours with no measured RTOLCAP (the 2025 RTC+B
+    go-live tail after 2025-12-05, preserved as NaN) are left **uncapped** (a
+    sentinel large MW), so the cap applies only where the ORDC regime — and the
+    measured series — were in force.
+    """
+    if not getattr(config, "ercot_reserve_supply_cap", False):
+        return None
+    year = int(config.weather_year)
+    if year < int(getattr(config, "ercot_reserve_supply_cap_from_year", 2023)):
+        return None
+    path = _ERCOT_ORDC_RESERVES_DIR / f"ercot_{year}_ordc_reserves_hourly.parquet"
+    if not path.exists():
+        return None
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    T = int(hours)
+
+    def _series(col: str) -> np.ndarray:
+        arr = df[col].to_numpy(dtype=float) if col in df.columns else np.array([])
+        if len(arr) < T:
+            arr = np.concatenate([arr, np.full(T - len(arr), np.nan)])
+        return arr[:T]
+
+    rtolcap = _series("rtolcap")  # on-line responsive (spinning) capability
+    rtoffcap = _series("rtoffcap")  # off-line quick-start responsive capability
+    if getattr(config, "ercot_multiproduct_as_coopt", False):
+        # Two headroom tiers: fast/spinning at RTOLCAP, all (+ offline quick-start
+        # the Non-Spin product can reach) at RTOLCAP + RTOFFCAP.
+        cap = np.vstack([rtolcap, rtolcap + rtoffcap])  # (2, T)
+    else:
+        # Single lumped product: the on-line responsive capability (RTOLCAP) that
+        # drives the published on-line ORDC adder (RTORPA).
+        cap = rtolcap.reshape(1, T)  # (1, T)
+    # Uncapped where the measured series is NaN (the 2025 RTC+B tail) — the ORDC
+    # regime ended, so no reserve-supply cap applies there.
+    cap = np.where(np.isnan(cap), _RESERVE_SUPPLY_CAP_UNCAPPED_MW, cap)
+    return cap.astype(float)
+
+
 def ercot_as_aware_unit_value(
     fleet_arrays: FleetArrays,
     p1_dispatch: np.ndarray,

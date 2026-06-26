@@ -1463,6 +1463,8 @@ def run_year(
     energy_reserve_coopt: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_as_aware_commitment: bool = False,
+    ercot_reserve_supply_cap: bool = False,
+    ercot_reserve_supply_cap_from_year: int = 2023,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1708,6 +1710,11 @@ def run_year(
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_as_aware_commitment:
         config = config.with_overrides(ercot_as_aware_commitment=True)
+    if ercot_reserve_supply_cap:
+        config = config.with_overrides(
+            ercot_reserve_supply_cap=True,
+            ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+        )
     # ERCOT load-resource reserve credit (run_calibration_full
     # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
     # responsive reserve) into the co-opt reserve balance. GATED — alters
@@ -2819,6 +2826,26 @@ def run_year(
                 float(coopt_pen.min()),
                 float(coopt_pen.max()),
                 int(coopt_elig.sum()),
+            )
+        # OPTIONAL reserve-supply re-scope (both co-opt modes): cap each headroom
+        # row's cleared reserve at the MEASURED ERCOT on-line responsive capability
+        # (RTOLCAP / +RTOFFCAP) instead of the over-counted full-fleet headroom, so
+        # modeled reserve tightens into the band the published ORDC curve prices.
+        # Pre-RTC+B the capped reserve dual is added to the LMP as the ORDC adder
+        # (see _system_frame). Exogenous measured series, not a price fit (G1).
+        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
+
+        coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
+        if coopt_supply_cap is not None:
+            dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
+            logger.info(
+                "ERCOT reserve-supply cap ON: %d headroom row(s), mean cap MW %s "
+                "(measured RTOLCAP[/+RTOFFCAP])",
+                coopt_supply_cap.shape[0],
+                [
+                    int(coopt_supply_cap[r].mean())
+                    for r in range(coopt_supply_cap.shape[0])
+                ],
             )
     elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
         from market_sim.config.constants import PJM_ORDC_CURVE_PATH
