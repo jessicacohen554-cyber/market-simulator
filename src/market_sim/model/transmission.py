@@ -982,6 +982,82 @@ def inject_reference_price_mc(
     return applied
 
 
+def inject_reference_price_firm_export(fleet_arrays, iso: str, year: int) -> bool:
+    """Floor PJM's firm (must-flow) scheduled export on the reference-price seam.
+
+    The mirror of :func:`inject_nyiso_firm_imports` / :func:`inject_miso_firm_imports`
+    for the EXPORT direction. PJM exports to MISO / NYISO in ~87-100% of hours at
+    a mean spread too thin for the economic seam to clear every hour, because a
+    large share is firm, long-term SCHEDULED capacity/energy that flows
+    regardless of the hourly price. The economic tranches alone back this firm
+    base off in cheap-spread hours (the PJM 2023 NYISO +4.3 vs +18.5 TWh miss).
+
+    For each neighbor carrying a
+    :attr:`~market_sim.config.constants.NeighborInterface.firm_export_floor_by_year`
+    entry for ``year``, this forces the neighbor's CHEAPEST export tranches on at
+    ``floor_mw`` by lowering their upper bound (``pmax``) to a negative value —
+    the seam's export rows are negative-output sinks (output ``<= 0``), so an
+    upper bound of ``-x`` forces at least ``x`` MW of export through that band.
+    The floor is laid into the cheapest bands first (lowest tranche index = the
+    neighbor's highest willingness-to-pay), exactly the bands the economic seam
+    fills first, so the firm base and the economic increment above it are priced
+    consistently along the same convex supply curve with no double counting. The
+    economic tranches above the floor still clear on the hourly spread.
+
+    The floor never exceeds the lightest measured scheduled-export hour (it is the
+    p10 of PJM's OWN scheduled flow), so it cannot force a phantom over-export;
+    in a year/seam where the model already exports more than the floor it is
+    simply non-binding. Modifies ``fleet_arrays.pmax`` in place.
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place).
+        iso: ISO identifier; only ISOs in ``INTERFACE_NEIGHBORS`` apply a floor.
+        year: Backcast year keying ``firm_export_floor_by_year``.
+
+    Returns:
+        ``True`` if any firm-export floor was applied, else ``False``
+        (byte-identical) when no neighbor has a floor for ``year``.
+    """
+    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+
+    specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    if not specs:
+        return False
+    unit_ids = list(fleet_arrays.unit_ids)
+    applied = False
+    for name, spec in specs.items():
+        table = spec.firm_export_floor_by_year
+        floor = table.get(year, 0.0) if table else 0.0
+        if floor <= 0.0:
+            continue
+        # Export tranche rows for this neighbor, indexed by tranche k (1-based).
+        rows: dict[int, int] = {}
+        suffix = f"{_REF_EXPORT_MARK}{name}#"
+        for r, uid in enumerate(unit_ids):
+            if suffix in uid:
+                rows[int(uid.rsplit("#", 1)[1])] = r
+        if not rows:
+            continue
+        step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
+        remaining = floor
+        # Lay the firm floor into the cheapest bands first (lowest k = highest
+        # neighbor willingness-to-pay), forcing each fully until the floor is met,
+        # then the partial remainder on the last band.
+        for k in sorted(rows):
+            if remaining <= 0.0:
+                break
+            r = rows[k]
+            forced = min(step, remaining)
+            # pmax < 0 -> col_upper = pmax x availability < 0 -> output <= -forced
+            # (the export sink must flow at least `forced` MW). availability is
+            # 1.0 for the eford=0 seam rows, so pmax = -forced is exact.
+            fleet_arrays.pmax[r] = -forced
+            remaining -= forced
+            applied = True
+    return applied
+
+
 def inject_caiso_import_hub_prices(
     fleet_arrays,
     mc: np.ndarray,
