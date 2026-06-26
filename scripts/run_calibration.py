@@ -3017,6 +3017,26 @@ def _commitment_pass(state: dict, config=None):
         demand=state["demand"],
         as_value=as_value,
     )
+    # AS-adequacy floor (ERCOT AS-aware): re-commit cheapest eligible units until
+    # committed online headroom covers the MEASURED total AS requirement, so the
+    # screen cannot strip the reserve pool below what ERCOT procured (which would
+    # price a false VOLL-scale shortage). The broad-month elevation then forms from
+    # the binding shared-headroom dual (opportunity cost), while genuinely-short
+    # acute hours still price the VOLL curve. Requirement = sum of the per-product
+    # ASPLANNP433 quantities already in dispatch_kwargs.
+    if as_value is not None:
+        from market_sim.results.scarcity import ercot_reserve_eligible
+
+        req_total = np.asarray(dk["reserve_requirement"], dtype=float).sum(axis=0)
+        committed = as_adequacy_commit(
+            committed,
+            fa,
+            fleet,
+            ercot_reserve_eligible(fa),
+            req_total,
+            p1.dispatch,
+            headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
+        )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
     # reliability, not economics. Preserve min_gen through P2 only when such an

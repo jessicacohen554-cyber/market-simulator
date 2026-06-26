@@ -977,6 +977,14 @@ class ScenarioConfig:
     # balance-row dual (reserve_price_by_family), never the measured MCPC — no fit.
     # Requires energy_reserve_coopt + ercot_multiproduct_as_coopt; triggers a P2
     # pass even when commitment_enabled is off. Default off; ERCOT-only; GATED.
+    ercot_as_adequacy_frac: float = 1.0  # AS-aware commitment: the coverage
+    # multiple for the AS-adequacy floor (model.commitment.as_adequacy_commit).
+    # After the AS-aware screen decommits the cold idle slow-start capacity, this
+    # re-commits cheapest eligible units until committed online headroom covers
+    # ercot_as_adequacy_frac x the MEASURED total AS requirement (ASPLANNP433), so
+    # the co-opt cannot price a false VOLL-scale shortage the real market procured
+    # around. 1.0 = cover the procured AS exactly (the grounded default); a coverage
+    # multiple on the measured requirement, NOT a price-residual fit (CLAUDE.md #12).
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -2336,6 +2344,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_critical_frac": 1,
     "ercot_as_n_ramp": 1,
     "ercot_as_aware_commitment": 1,
+    "ercot_as_adequacy_frac": 2,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
