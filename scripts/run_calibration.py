@@ -106,6 +106,7 @@ from market_sim.data.renewables import (  # noqa: E402
 )
 from market_sim.model.commitment import (  # noqa: E402
     apply_commitment_with_coal_pin,
+    as_adequacy_commit,
     compute_commitment,
     compute_monthly_markup,
 )
