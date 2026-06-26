@@ -3026,6 +3026,7 @@ def _commitment_pass(state: dict, config=None):
     # acute hours still price the VOLL curve. Requirement = sum of the per-product
     # ASPLANNP433 quantities already in dispatch_kwargs.
     if as_value is not None:
+        screened_pre = committed.copy()
         committed = as_adequacy_commit(
             committed,
             fa,
@@ -3036,6 +3037,37 @@ def _commitment_pass(state: dict, config=None):
             p1.dispatch,
             headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
         )
+        if os.environ.get("AS_AWARE_DIAG"):
+            import calendar as _cal
+
+            he = np.atleast_2d(np.asarray(dk["reserve_headroom_eligible"], bool))
+            hp = np.atleast_2d(np.asarray(dk["reserve_headroom_products"], bool))
+            reqp = np.asarray(dk["reserve_requirement"], float)
+            net_hr = np.maximum(fa.pmax[:, None] * fa.availability - p1.dispatch, 0.0)
+            may = slice(2880, 2880 + _cal.monthrange(2024, 5)[1] * 24)
+            n_scr = int((~screened_pre).sum())
+            n_post = int((~committed).sum())
+            logger.info(
+                "AS-aware DIAG: screen decommitted %d gen-h; floor left %d "
+                "decommitted (re-committed %d)",
+                n_scr,
+                n_post,
+                n_scr - n_post,
+            )
+            for h in range(he.shape[0]):
+                tgt = reqp[hp[h]].sum(axis=0)
+                cov = (net_hr * (committed & he[h][:, None])).sum(axis=0)
+                shortf = cov < tgt - 1e-6
+                logger.info(
+                    "  row%d: May hrs short=%d/%d  May min cov=%.0f tgt~%.0f  "
+                    "annual hrs short=%d",
+                    h,
+                    int(shortf[may].sum()),
+                    (may.stop - may.start),
+                    float(cov[may].min()),
+                    float(tgt[may].mean()),
+                    int(shortf.sum()),
+                )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
     # reliability, not economics. Preserve min_gen through P2 only when such an
