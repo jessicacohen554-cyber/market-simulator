@@ -466,6 +466,7 @@ def _system_frame(
     ercot_dam_as_overlay: bool = False,
     ercot_dam_as_overlay_from_year: int = 2024,
     ercot_dam_as_scarcity_threshold: float = 150.0,
+    ercot_reserve_supply_cap: bool = False,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -500,9 +501,11 @@ def _system_frame(
     )
     overlay = None
     dam_as = None
+    ordc_adder = None
     if iso == "ERCOT":
         from market_sim.results.scarcity import (
             ercot_dam_as_overlay_series,
+            ercot_market_regime,
             ercot_rtordpa_overlay_series,
         )
 
@@ -515,11 +518,26 @@ def _system_frame(
                 scarcity_threshold=ercot_dam_as_scarcity_threshold,
                 from_year=ercot_dam_as_overlay_from_year,
             )
+        if ercot_reserve_supply_cap and ercot_market_regime(year, None) == "ordc":
+            # PRE-RTC+B (ORDC-regime) ADDITIVE construction: with the reserve
+            # supply capped at measured RTOLCAP, the co-opt reserve dual is the
+            # ORDC price adder (RTORPA) ERCOT added to the energy SPP — RTSPP =
+            # SPP + ORDC(online reserves). A pure reserve cap prices reserve
+            # WITHOUT lifting the energy LMP (energy cancels out of a ΣR cap), so
+            # the dual is NOT folded into ``prices`` and is added here, matching
+            # the energy-only-SCED-plus-adder design of 2023-2025. The forward
+            # RTC+B regime instead co-optimizes (the dual lifts the LMP through
+            # the shared-headroom constraint), so this additive step is gated OFF
+            # for year >= the RTC+B go-live. Measured supply + published-rule
+            # curve, no price fit.
+            ordc_adder = rp.copy()
     total_overlay = np.zeros(T, dtype=float)
     if overlay is not None:
         total_overlay = total_overlay + overlay
     if dam_as is not None:
         total_overlay = total_overlay + dam_as
+    if ordc_adder is not None:
+        total_overlay = total_overlay + ordc_adder
     rows = []
     for z in range(n_zones):
         cols = {
@@ -536,6 +554,8 @@ def _system_frame(
             cols["rtordpa_overlay"] = overlay
         if dam_as is not None:
             cols["dam_as_overlay"] = dam_as
+        if ordc_adder is not None:
+            cols["ordc_adder"] = ordc_adder
         rows.append(pd.DataFrame(cols))
     return pd.concat(rows, ignore_index=True)
 
@@ -1563,6 +1583,8 @@ def solve_and_persist(
     energy_reserve_coopt: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_as_aware_commitment: bool = False,
+    ercot_reserve_supply_cap: bool = False,
+    ercot_reserve_supply_cap_from_year: int = 2023,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1737,6 +1759,8 @@ def solve_and_persist(
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
+            ercot_reserve_supply_cap=ercot_reserve_supply_cap,
+            ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
@@ -1828,6 +1852,7 @@ def solve_and_persist(
                     ercot_dam_as_overlay=ercot_dam_as_overlay,
                     ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
                     ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
+                    ercot_reserve_supply_cap=ercot_reserve_supply_cap,
                 )
             )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
@@ -1946,6 +1971,8 @@ def solve_and_persist(
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
+        "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
+        "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
@@ -2062,6 +2089,11 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_as_aware_commitment:
         recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
+    if ercot_reserve_supply_cap:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_reserve_supply_cap=True,
+            ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+        )
     if ercot_load_resource_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_load_resource_reserve=True,
@@ -4427,6 +4459,26 @@ def main() -> None:
         "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--ercot-reserve-supply-cap",
+        action="store_true",
+        help="ERCOT reserve-supply re-scope: cap each multi-product co-opt "
+        "headroom tier's cleared reserve at the MEASURED online-responsive "
+        "capability (RTOLCAP for the fast/spinning tier, RTOLCAP+RTOFFCAP for the "
+        "all tier) instead of the over-counted full-fleet headroom, so modeled "
+        "reserve tightens into the ~8-12 GW band where ERCOT's ORDC adder fires "
+        "(broad-month phantom-headroom fix, Finding 1/G1). Exogenous measured "
+        "series, not a price fit. Requires --energy-reserve-coopt + "
+        "--ercot-multiproduct-as-coopt; pair with --ordc-lolp-params-path (the "
+        "published-ORDC curve). ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
+        "--ercot-reserve-supply-cap-from-year",
+        type=int,
+        default=2023,
+        help="First weather year the ERCOT reserve-supply cap applies "
+        "(default 2023; the measured RTOLCAP series exists 2023+).",
+    )
+    parser.add_argument(
         "--ercot-load-resource-reserve",
         action="store_true",
         help="ERCOT energy+reserve co-opt only: credit the measured "
@@ -5274,6 +5326,8 @@ def main() -> None:
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
+        ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
+        ercot_reserve_supply_cap_from_year=args.ercot_reserve_supply_cap_from_year,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_load_resource_reserve_from_year=(
             args.ercot_load_resource_reserve_from_year

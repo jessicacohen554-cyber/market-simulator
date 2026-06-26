@@ -628,6 +628,7 @@ def _build_reserve_rows(
     headroom_eligible: np.ndarray | None = None,
     headroom_products: np.ndarray | None = None,
     headroom_extra_cap: np.ndarray | None = None,
+    reserve_supply_cap: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -729,6 +730,15 @@ def _build_reserve_rows(
             ``(n_headroom_rows, n_zones)`` MW — extra non-generator headroom
             added to each additive row's RHS (e.g. offline quick-start capacity
             that backs Non-Spin without an energy term). ``None`` adds nothing.
+        reserve_supply_cap: ``(n_headroom_rows, T)`` MW — a **system-wide** upper
+            bound on the cleared reserve of each additive headroom row's products,
+            ``sum_z sum_{p in headroom_products[h]} R[p,z] <= reserve_supply_cap[h,t]``.
+            One row per headroom tier per hour, inserted **before** the balance
+            rows so the balance dual indexing is unchanged. Re-scopes the reserve
+            *supply* to a measured online-responsive capability (ERCOT RTOLCAP/
+            RTOFFCAP) instead of the full-fleet headroom in the headroom RHS, so
+            modeled reserve tightens into the band the ORDC demand curve prices.
+            ``None`` (and the legacy per-class spec) adds no cap rows.
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
@@ -911,9 +921,46 @@ def _build_reserve_rows(
     bal_lower = req2d.T.ravel()
     bal_upper = np.full(n_fam * T, np.inf)
 
-    block = sp.vstack([headroom, balance], format="csr")
-    row_lower = np.concatenate([hr_lower, bal_lower])
-    row_upper = np.concatenate([hr_upper, bal_upper])
+    # --- Optional reserve-supply cap block, (n_hr, vph). One system-wide row per
+    # headroom row h capping that row's cleared reserve:
+    #   sum_z sum_{p in Prod_h} R[p,z] <= reserve_supply_cap[h,t].
+    # Inserted BETWEEN the headroom and balance blocks so the reserve-balance
+    # rows stay the final n_fam*T (the dual indexing in DispatchModel relies on
+    # this). Re-scopes reserve SUPPLY to a measured online-responsive capability
+    # (ERCOT RTOLCAP) vs the over-counted full-fleet headroom in zone_cap. Works
+    # for BOTH the additive multi-product spec (one cap row per headroom tier) and
+    # the legacy per-class spec (``hr_prod`` is then the class identity, so one
+    # cap row per reserve class). Absent (``reserve_supply_cap is None``) the LP
+    # is byte-identical (no cap block).
+    blocks = [headroom]
+    lowers = [hr_lower]
+    uppers = [hr_upper]
+    if reserve_supply_cap is not None:
+        cap = np.asarray(reserve_supply_cap, dtype=float).reshape(n_hr, T)
+        crows: list[np.ndarray] = []
+        ccols: list[np.ndarray] = []
+        cvals: list[np.ndarray] = []
+        for h in range(n_hr):
+            for p in np.flatnonzero(hr_prod[h]):
+                crows.append(np.full(n_zones, h))
+                ccols.append(layout._reserve_off + int(p) * n_zones + z_all)
+                cvals.append(np.ones(n_zones))
+        cap_per_hour = sp.coo_matrix(
+            (np.concatenate(cvals), (np.concatenate(crows), np.concatenate(ccols))),
+            shape=(n_hr, layout.vars_per_hour),
+        ).tocsr()
+        cap_block = sp.kron(sp.eye(T, format="csr"), cap_per_hour, format="csr")
+        # Hour-major RHS (row t*n_hr + h): cap is (n_hr, T) -> transpose -> ravel.
+        blocks.append(cap_block)
+        lowers.append(np.full(n_hr * T, -np.inf))
+        uppers.append(cap.T.ravel())
+
+    blocks.append(balance)
+    lowers.append(bal_lower)
+    uppers.append(bal_upper)
+    block = sp.vstack(blocks, format="csr")
+    row_lower = np.concatenate(lowers)
+    row_upper = np.concatenate(uppers)
     return block, row_lower, row_upper
 
 
@@ -947,6 +994,7 @@ def build_constraints(
     reserve_headroom_eligible: np.ndarray | None = None,
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
+    reserve_supply_cap: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1257,6 +1305,7 @@ def build_constraints(
             headroom_eligible=reserve_headroom_eligible,
             headroom_products=reserve_headroom_products,
             headroom_extra_cap=reserve_headroom_extra_cap,
+            reserve_supply_cap=reserve_supply_cap,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -1577,6 +1626,7 @@ class DispatchModel:
         reserve_headroom_eligible: np.ndarray | None = None,
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
+        reserve_supply_cap: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -1665,6 +1715,7 @@ class DispatchModel:
             reserve_headroom_eligible=reserve_headroom_eligible,
             reserve_headroom_products=reserve_headroom_products,
             reserve_headroom_extra_cap=reserve_headroom_extra_cap,
+            reserve_supply_cap=reserve_supply_cap,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1754,8 +1805,16 @@ class DispatchModel:
         # NYISO per-class layout and the additive-spec row count for ERCOT
         # multi-product.
         self._n_families = n_families
+        # Reserve-supply cap (ERCOT RTOLCAP re-scope) inserts one system-wide row
+        # per headroom tier per hour, between the headroom and balance blocks
+        # (so the balance dual stays the final n_families*T rows).
+        n_supply_cap_rows = (
+            n_headroom_rows * T if (coopt and reserve_supply_cap is not None) else 0
+        )
         self._n_reserve_rows = (
-            (n_headroom_rows * n_zones * T + n_families * T) if coopt else 0
+            (n_headroom_rows * n_zones * T + n_supply_cap_rows + n_families * T)
+            if coopt
+            else 0
         )
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
@@ -2145,6 +2204,7 @@ def solve_dispatch(
     reserve_headroom_eligible: np.ndarray | None = None,
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
+    reserve_supply_cap: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -2255,6 +2315,7 @@ def solve_dispatch(
         reserve_headroom_eligible=reserve_headroom_eligible,
         reserve_headroom_products=reserve_headroom_products,
         reserve_headroom_extra_cap=reserve_headroom_extra_cap,
+        reserve_supply_cap=reserve_supply_cap,
         link_bidirectional=link_bidirectional,
         T=T,
     )
