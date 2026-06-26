@@ -1924,6 +1924,9 @@ def run_year(
     ):
         from market_sim.model.transmission import build_caiso_corridor_flow_groups
 
+        corridor_export_env = (
+            None  # measured branch fills it; forward ATC leaves it off
+        )
         if forward_atc:
             # FORWARD ATC: corridor TTC × posted-ATC base fraction × forward solar
             # derate (CISO solar / demand), a capability limit — not the measured
@@ -1938,23 +1941,43 @@ def run_year(
             from market_sim.data.eia_loader import measured_corridor_flow_envelope
 
             corridor_env = measured_corridor_flow_envelope(iso, year, demand.shape[1])
+            # Symmetric measured export-deliverability ceiling: caps each
+            # corridor's export (negative) flow at its p95 net export, which
+            # collapses to ~0 in the evening ramp where the corridor reliably
+            # net-imports — forbidding the LP's unphysical evening wheel-out of
+            # cheap CA gas that over-dispatched CC_REGULAR and inflated the
+            # evening LMP. A capability envelope the LP clears below, not the
+            # hourly residual (rule #12).
+            corridor_export_env = measured_corridor_flow_envelope(
+                iso, year, demand.shape[1], direction="export"
+            )
             from market_sim.config.constants import CAISO_CORRIDOR_FLOW_PERCENTILE
 
             cap_label = f"measured p{CAISO_CORRIDOR_FLOW_PERCENTILE:g} ATC proxy"
         if corridor_env:
             corridor_groups = build_caiso_corridor_flow_groups(
-                iso_config.links, corridor_env
+                iso_config.links,
+                corridor_env,
+                export_envelope=None if forward_atc else corridor_export_env,
             )
             interface_groups = interface_groups + corridor_groups
+            exp_note = ""
+            if corridor_export_env:
+                exp_note = (
+                    "; export-direction cap on (evening net-export ~0 → no wheel-out): "
+                    f"median export DSW {float(np.median(corridor_export_env.get('WECC_DSW', [np.nan]))) / 1000.0:.1f} GW "
+                    f"/ PNW {float(np.median(corridor_export_env.get('WECC_PNW', [np.nan]))) / 1000.0:.1f} GW"
+                )
             logger.info(
                 "%s %d: WECC corridor deliverability cap on %d link(s) — %s; "
-                "median DSW %.1f GW / PNW %.1f GW; midday tighter",
+                "median import DSW %.1f GW / PNW %.1f GW; midday tighter%s",
                 iso,
                 year,
                 len(corridor_groups),
                 cap_label,
                 float(np.median(corridor_env.get("WECC_DSW", [np.nan]))) / 1000.0,
                 float(np.median(corridor_env.get("WECC_PNW", [np.nan]))) / 1000.0,
+                exp_note,
             )
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
