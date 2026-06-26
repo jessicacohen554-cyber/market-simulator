@@ -77,9 +77,26 @@ adder (`scripts/run_161.py`, `KEEPER_YEARS=2024`; `_eval_may_gate.py`):
 | May acute (8/24/26) | 58.2 | 40.0 | ~45 |
 | Aug month | 33.2 (held) | ~29 | 38.6 |
 
+**Full 3-year (run `161`, `_eval_may_gate.py`, demand-wtd model vs actual RTSPP):**
+
+| yr | model | actual | MAE | May μ | May act | acute | Aug μ | Aug act |
+|----|-------|--------|-----|-------|---------|-------|-------|---------|
+| 2023 | 62.3 | 61.3 | 15.4 | **72.1** | 30.9 | 78.9 | 180.9 | 216.6 |
+| 2024 | 23.7 | 28.6 | 4.8 | 24.3 | 40.6 | 58.2 | 33.2 | 38.6 |
+| 2025 | 33.5 | 33.4 | 2.7 | 30.2 | 37.4 | 30.4 | 41.3 | 37.1 |
+
+2025 is clean (MAE 2.7); 2024 broad-May under-fires (energy-base, below); **2023
+May over-fires hard ($72 vs $31)** — in the low-RTOLCAP 2023 year (mean 13.5 GW vs
+16.7 in 2024) the cap binds across far more hours so the adder fires too broadly,
+and it double-counts with the RTORDPA overlay (kept from the run157 recipe, which
+itself carried 2023). 2023's annual ($62 vs $61) is coincidental cancellation
+(May over, Aug under), not a fit. Clear **rejected probe**.
+
 **What works:** the lever forms the acute/tail scarcity **endogenously** from the
 measured on-line reserve + published curve, with no overlay — the structurally
-faithful ORDC-regime mechanism. It lifts every metric modestly and holds Aug.
+faithful ORDC-regime mechanism, clean in 2025. But it is not deployable as-is: the
+broad-month behaviour is wrong in both directions (2024 under, 2023 over), and
+neither failure is a reserve problem.
 
 **Why the broad month does not lift — and why that is correct, not a tuning
 failure.** Decomposing May 2024: the ORDC adder fires in only **70 of 744 May
