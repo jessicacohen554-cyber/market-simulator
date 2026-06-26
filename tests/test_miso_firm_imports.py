@@ -19,9 +19,11 @@ import numpy as np
 from market_sim.config.constants import (
     MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC,
     MISO_MANITOBA_FIRM_IMPORT_MW,
+    MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR,
     MISO_MANITOBA_FIRM_IMPORT_OFFER,
     MISO_MANITOBA_FIRM_IMPORT_ZONE,
     resolve_miso_firm_imports,
+    resolve_miso_manitoba_firm_import_mw,
 )
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.model.transmission import (
@@ -72,10 +74,45 @@ class TestBuildBlock(unittest.TestCase):
 
     def test_volume_in_contract_band(self):
         # The firm block at constant flow delivers within Manitoba Hydro's
-        # ~10-15 TWh/yr US export band.
+        # ~10-15 TWh/yr US export band (the forecast-native contract midpoint).
         twh = MISO_MANITOBA_FIRM_IMPORT_MW * 8760 / 1e6
         self.assertGreaterEqual(twh, 10.0)
         self.assertLessEqual(twh, 15.0)
+
+    def test_forecast_uses_flat_contract_mw(self):
+        # Forecast (default) keeps the flat contract midpoint regardless of year.
+        for g in (
+            build_miso_firm_imports("MISO")[0],
+            build_miso_firm_imports("MISO", year=2024, mode="forecast")[0],
+            build_miso_firm_imports("MISO", year=2099, mode="backcast")[0],
+        ):
+            self.assertEqual(g.pmax_mw, MISO_MANITOBA_FIRM_IMPORT_MW)
+
+    def test_backcast_uses_measured_per_year_delivery(self):
+        # Backcast overlays the measured per-year firm delivery (drought-
+        # responsive: 2025 << 2023, well below the flat contract midpoint).
+        for year, mw in MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR.items():
+            g = build_miso_firm_imports("MISO", year=year, mode="backcast")[0]
+            self.assertEqual(g.pmax_mw, mw)
+            self.assertLess(g.pmax_mw, MISO_MANITOBA_FIRM_IMPORT_MW)
+        self.assertLess(
+            MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR[2025],
+            MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR[2023],
+        )
+
+    def test_resolver_matches_build(self):
+        self.assertEqual(
+            resolve_miso_manitoba_firm_import_mw(2023, "backcast"),
+            MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR[2023],
+        )
+        self.assertEqual(
+            resolve_miso_manitoba_firm_import_mw(2023, "forecast"),
+            MISO_MANITOBA_FIRM_IMPORT_MW,
+        )
+        self.assertEqual(
+            resolve_miso_manitoba_firm_import_mw(None, "backcast"),
+            MISO_MANITOBA_FIRM_IMPORT_MW,
+        )
 
 
 class TestFirmFloor(unittest.TestCase):

@@ -1817,7 +1817,11 @@ def run_year(
         if getattr(config, "miso_firm_imports", False):
             from market_sim.model.transmission import build_miso_firm_imports
 
-            import_generators = import_generators + build_miso_firm_imports(iso)
+            # Backcast: overlay the measured per-year Manitoba firm-hydro delivery
+            # (drought-responsive); forecast keeps the flat contract midpoint.
+            import_generators = import_generators + build_miso_firm_imports(
+                iso, year=year, mode=getattr(config, "mode", "forecast")
+            )
         iso_config = extend_with_import_node(iso_config)
         if caiso_per_hub:
             # Split the single WECC_import node into the two per-hub corridors
