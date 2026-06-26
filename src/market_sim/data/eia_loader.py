@@ -816,7 +816,11 @@ def measured_import_hub_prices(
 
 
 def measured_corridor_flow_envelope(
-    iso: str, year: int, hours: int, percentile: float | None = None
+    iso: str,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+    direction: str = "import",
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import corridor's measured net-import deliverability cap.
 
@@ -848,7 +852,23 @@ def measured_corridor_flow_envelope(
     the ISO is not CAISO, the parquet is absent, or the year is uncovered (a
     forecast year) — in which case the caller leaves the corridors uncapped
     (byte-identical).
+
+    With ``direction="export"`` the same machinery instead returns each
+    corridor's measured net-*export* deliverability ceiling (the per-(month ×
+    hour-of-day) ``percentile`` of measured net export = −net import, clipped at
+    0). It is the symmetric counterpart of the import ceiling: just as the import
+    ATC collapses midday when the WECC neighbors are long on solar, the export
+    ATC collapses in the evening ramp when the neighbors are themselves short
+    (their own peak), so a corridor that reliably net-imports in an evening
+    (month, hod) bucket caps export there at ~0 — forbidding the LP's unphysical
+    evening wheel-out of cheap CA gas. Like the import ceiling it is a smoothed
+    capability envelope the LP clears *below*, not the hourly residual flow
+    (rule #12). Applied as the reverse-direction floor of the corridor's
+    asymmetric interface group (see
+    :func:`~market_sim.model.transmission.build_caiso_corridor_flow_groups`).
     """
+    if direction not in ("import", "export"):
+        raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
     if iso.upper() != "CAISO":
         return None
     from market_sim.config.constants import (
@@ -890,7 +910,10 @@ def measured_corridor_flow_envelope(
             continue
         tab = np.full((12, 24), np.nan)
         for (m, h), g in sub.groupby(["month", "hod"], observed=True):
-            tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
+            vals = g["net_import"].to_numpy()
+            if direction == "export":
+                vals = -vals  # net export = -net import; p95 export deliverability
+            tab[m - 1, h] = np.percentile(vals, pct)
         # Fill any empty (month, hod) bucket with that month's max over hours
         # (a conservative ceiling), then the global max, so the cap is always
         # finite and never tighter than a populated neighbour.
@@ -901,10 +924,11 @@ def measured_corridor_flow_envelope(
             tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
         if np.any(np.isnan(tab)):
             tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
-        # Clip at 0: the cap bounds net *import*; a (month, hod) bucket whose
-        # p95 net import is negative (the corridor reliably net-exports then,
-        # e.g. the PNW corridor at midday) caps import at zero, never forces an
-        # export — the export direction is left to the link's physical TTC.
+        # Clip at 0: the cap bounds net flow in ``direction``; a (month, hod)
+        # bucket whose p95 is negative (the corridor reliably runs the OTHER way
+        # then — e.g. import p95 < 0 where the PNW corridor net-exports midday, or
+        # export p95 < 0 where a corridor net-imports the evening ramp) caps that
+        # direction at zero, never forcing the reverse flow.
         out[zone] = np.clip(tab[rm - 1, rh], 0.0, None)
     return out or None
 
