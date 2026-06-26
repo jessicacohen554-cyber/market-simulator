@@ -245,6 +245,57 @@ class TestComputeCommitment(unittest.TestCase):
         self.assertFalse(committed_bid.any())
 
 
+class TestASAwareCommitment(unittest.TestCase):
+    """AS revenue keeps energy-marginal units committed (AS-aware commitment)."""
+
+    def test_none_as_value_is_byte_identical(self):
+        # Passing as_value=None reproduces the energy-only screen exactly.
+        gens, arrays = _single_cc(hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 35.0  # 10-h run, margin 5x10=50 < 52 hurdle -> reject
+        baseline = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        explicit_none = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=None
+        )
+        self.assertFalse(baseline.any())
+        np.testing.assert_array_equal(baseline, explicit_none)
+
+    def test_as_value_lifts_run_over_hurdle(self):
+        # Energy margin alone (5x10=50) is below the 52.0 IRR hurdle, so the run
+        # is rejected. Adding AS revenue to those hours clears the hurdle.
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 35.0  # margin 5 x 10h = 50
+        rejected = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertFalse(rejected.any())
+
+        as_value = np.zeros((1, 24))
+        as_value[0, 5:15] = 1.0  # +10 AS -> 60 > 52 hurdle
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_as_value_makes_energy_out_of_merit_hour_in_merit(self):
+        # With no positive energy margin anywhere, the energy-only screen commits
+        # nothing. AS revenue across a long window makes those hours in-merit and
+        # clears the CT's hurdle, keeping the unit online for AS.
+        gens, arrays = _single_ct(heat_rate=10.5, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)  # margin always negative
+        none_committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertFalse(none_committed.any())
+
+        as_value = np.zeros((1, 24))
+        as_value[0, 8:20] = 50.0  # ample AS revenue over a 12-h window
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        self.assertTrue(committed[0, 8:20].any())
+
+
 class TestStorageWeightedCommitment(unittest.TestCase):
     """The commitment hurdle discounts margin in storage net-charging hours."""
 
