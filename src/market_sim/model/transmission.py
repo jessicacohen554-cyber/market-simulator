@@ -515,26 +515,39 @@ _CAISO_CORRIDOR_LINK_TO: dict[str, tuple[str, ...]] = {
 def build_caiso_corridor_flow_groups(
     links: list[TransferLink],
     envelope: dict[str, np.ndarray],
-) -> list[tuple[np.ndarray, np.ndarray, bool]]:
-    """Return one-sided per-hour interface groups capping each corridor's import.
+    export_envelope: dict[str, np.ndarray] | None = None,
+) -> list[tuple]:
+    """Return per-hour interface groups capping each corridor's signed flow.
 
     For each per-hub corridor zone in ``envelope`` (``WECC_PNW`` / ``WECC_DSW``),
     finds the corridor's import link (``from_zone`` = corridor, ``to_zone`` =
     NP15/SP15 via :data:`_CAISO_CORRIDOR_LINK_TO`) and returns an interface group
-    ``(link_idx, cap_hourly, bidirectional=False)`` so
-    :func:`~market_sim.model.dispatch._build_interface_rows` caps that link's
-    import-direction flow at the measured deliverability envelope hour by hour.
-    ``bidirectional`` is ``False`` so only the import (positive, neighbor→CAISO)
-    direction is bounded — the export direction keeps the link's own physical
-    TTC (midday CA export is real). Pairs with
-    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`; used by
-    the calibration runner only when ``config.caiso_corridor_flow_limit`` is on.
+    that caps that link's flow hour by hour at the measured deliverability
+    envelope (via :func:`~market_sim.model.dispatch._build_interface_rows`).
+
+    When ``export_envelope`` is ``None`` the group is one-sided
+    ``(link_idx, import_cap, bidirectional=False)`` — only the import (positive,
+    neighbor→CAISO) direction is bounded and the export direction keeps the
+    link's own physical TTC (the original behaviour).
+
+    When ``export_envelope`` is supplied the group is asymmetric
+    ``(link_idx, import_cap, False, export_cap)`` — the import direction is capped
+    at the corridor's p95 net-import ceiling and the export (negative) direction
+    at its p95 net-*export* ceiling. The export ceiling collapses to ~0 in
+    evening-ramp (month, hod) buckets where the corridor reliably net-imports, so
+    the LP can no longer wheel cheap CA gas out across the seam in the evening
+    peak (the structural CC over-dispatch + evening price inflation). Both are
+    smoothed measured capability envelopes the LP clears *below*, not the hourly
+    residual (rule #12). Pairs with
+    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`
+    (``direction="import"`` / ``"export"``); used by the calibration runner only
+    when ``config.caiso_corridor_flow_limit`` is on.
 
     Returns an empty list when no corridor link is found (e.g. the per-hub split
     was not applied), so the LP is byte-identical off the flag.
     """
     pair_to_idx = {(ln.from_zone, ln.to_zone): i for i, ln in enumerate(links)}
-    groups: list[tuple[np.ndarray, np.ndarray, bool]] = []
+    groups: list[tuple] = []
     for zone, cap in envelope.items():
         link_idx = next(
             (
@@ -546,9 +559,13 @@ def build_caiso_corridor_flow_groups(
         )
         if link_idx is None:
             continue
-        groups.append(
-            (np.array([link_idx], dtype=int), np.asarray(cap, dtype=float), False)
-        )
+        idx = np.array([link_idx], dtype=int)
+        import_cap = np.asarray(cap, dtype=float)
+        exp = export_envelope.get(zone) if export_envelope else None
+        if exp is not None:
+            groups.append((idx, import_cap, False, np.asarray(exp, dtype=float)))
+        else:
+            groups.append((idx, import_cap, False))
     return groups
 
 

@@ -576,11 +576,14 @@ def _build_interface_rows(
 
     Args:
         layout: Variable layout describing the column structure.
-        interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` where
+        interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` — or
+            ``(link_idx, cap_mw, bidirectional, lower_cap_mw)`` — where
             ``link_idx`` is the array of member link indices (into the flow
-            block), ``cap_mw`` the aggregate limit in MW (scalar or ``(T,)``),
-            and ``bidirectional`` whether to also floor the signed sum at
-            ``-cap_mw``.
+            block), ``cap_mw`` the aggregate upper limit in MW (scalar or
+            ``(T,)``), ``bidirectional`` whether to also floor the signed sum at
+            ``-cap_mw``, and the optional ``lower_cap_mw`` (scalar or ``(T,)``)
+            an explicit reverse-direction floor ``-lower_cap_mw`` that overrides
+            ``bidirectional`` (for an asymmetric import/export corridor cap).
 
     Returns:
         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
@@ -597,14 +600,26 @@ def _build_interface_rows(
     # group-minor row order; a scalar cap broadcasts across all hours.
     upper_2d = np.empty((T, n_groups), dtype=float)
     lower_2d = np.empty((T, n_groups), dtype=float)
-    for gi, (link_idx, cap, two_way) in enumerate(interface_groups):
+    for gi, group in enumerate(interface_groups):
+        # A group is a 3-tuple ``(link_idx, cap, two_way)`` or a 4-tuple
+        # ``(link_idx, cap, two_way, lower_cap)`` where ``lower_cap`` (scalar or
+        # ``(T,)``) sets an explicit reverse-direction bound (``flow >=
+        # -lower_cap``) — used for an asymmetric corridor whose import ceiling and
+        # export ceiling differ (CAISO per-hub: p95 net import up, p95 net export
+        # down). Absent, the reverse bound follows ``two_way`` (symmetric ``-cap``
+        # or ``-inf``), so existing 3-tuple groups are byte-identical.
+        link_idx, cap, two_way = group[0], group[1], group[2]
+        lower_cap = group[3] if len(group) > 3 else None
         idx = np.asarray(link_idx, dtype=int)
         rows.extend([gi] * idx.size)
         cols.extend((layout._flow_off + idx).tolist())
         data.extend([1.0] * idx.size)
         cap_arr = np.broadcast_to(np.asarray(cap, dtype=float), (T,))
         upper_2d[:, gi] = cap_arr
-        lower_2d[:, gi] = -cap_arr if two_way else -np.inf
+        if lower_cap is not None:
+            lower_2d[:, gi] = -np.broadcast_to(np.asarray(lower_cap, dtype=float), (T,))
+        else:
+            lower_2d[:, gi] = -cap_arr if two_way else -np.inf
 
     per_hour = sp.coo_matrix((data, (rows, cols)), shape=(n_groups, vph)).tocsr()
     # kron(eye(T), per_hour) tiles the per-hour coefficient block across all
