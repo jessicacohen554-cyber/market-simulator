@@ -397,18 +397,32 @@ def compute_commitment(
         if av is not None:
             weighted_margin = weighted_margin + av
 
-        # An hour is in merit when its energy margin is positive (or, AS-aware,
-        # when it earns positive AS revenue); with the floor active, a deep
-        # storage-charging trough (weight below the floor) also drops out,
-        # breaking the run there.
-        in_merit = margin > 0.0
-        if av is not None:
-            in_merit = in_merit | (av > 0.0)
+        # An hour is in merit when its energy margin is positive; with the floor
+        # active, a deep storage-charging trough (weight below the floor) also
+        # drops out, breaking the run there.
+        energy_in_merit = margin > 0.0
         if in_merit_floor > 0.0:
-            in_merit = in_merit & (storage_weight[zone, :] >= in_merit_floor)
+            energy_in_merit = energy_in_merit & (
+                storage_weight[zone, :] >= in_merit_floor
+            )
+        # AS-aware: AS-priced hours join the in-merit mask so a unit's commitment
+        # EXTENDS into the reserve-earning hours adjacent to an energy run. The
+        # locality filter below then drops any run that is AS-only (no energy
+        # hour): a unit running for energy in one window (e.g. the summer peak) is
+        # not held online for AS in a DIFFERENT window (e.g. an idle May midday)
+        # where the perfect-foresight LP leaves it cold — those cold slow-start
+        # hours are exactly the phantom headroom this screen must drop out of the
+        # reserve pool, so the co-opt can form the broad-month scarcity.
+        in_merit = energy_in_merit
+        if av is not None:
+            in_merit = energy_in_merit | (av > 0.0)
 
         accepted: list[tuple[int, int]] = []
         for start, end in find_runs(in_merit):
+            # Drop AS-only runs (no energy-in-merit hour) — phantom headroom from
+            # a unit not online for energy in this window.
+            if av is not None and not energy_in_merit[start:end].any():
+                continue
             if (end - start) < params["min_run_hours"]:
                 continue
             if float(weighted_margin[start:end].sum()) < hurdle:
