@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-26-caiso-32-evening-export",
+  "label": "caiso 32 evening export",
+  "date": "2026-06-26",
+  "shorthand": "caiso-32-evening-export",
+  "definition": "Calibration run from bundle caiso32_eor_exportcap.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-26-caiso-32-evening-export.js",
+  "bundle": "results/calibration/caiso32_eor_exportcap"
+}
