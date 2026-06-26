@@ -435,6 +435,27 @@ _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 # clear only at scarcity, matching their ~0.2-0.6 TWh measured 2023 dispatch.
 MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5, 315: 11.85, 335: 11.85}
 
+
+# CAISO Kern-County enhanced-oil-recovery (EOR) topping cogens: a gas turbine
+# whose exhaust raises injection steam for thermal EOR, electricity a byproduct.
+# EIA-923 reports an artificially EFFICIENT plant heat rate (Kern River 5.80,
+# Sycamore 5.99, Midway Sunset 5.09 MMBtu/MWh — BELOW an efficient combined
+# cycle ~7) because the steam fuel is credited out of the electrical heat rate.
+# The model then prices these as cheap baseload and runs the three at ~88% CF
+# (3.7 TWh combined in 2024) versus their measured ~0.8 TWh (EIA-923 CF 0.05-
+# 0.14, and DECLINING as CA EOR winds down) — a real CT_CHP over-dispatch. The
+# physically-correct dispatch basis is the POWER-ONLY heat rate: charge ALL the
+# fuel to electricity (no steam credit), which for a topping cycle is the
+# simple-cycle gas-turbine heat rate ~1.8x the steam-credited blend — landing
+# these units at ~9-11 MMBtu/MWh, the CT_PEAKER simple-cycle band where their
+# power island physically sits. CAISO_EOR_TOPPING_FACTOR is the steam-credit
+# ratio (forward-derivable turbine physics, responds to changed gas/steam
+# conditions — admissible under CLAUDE.md #11/#12, the same measured-physics HR
+# correction as MIXED_FACILITY_STEAM_HR, NOT a residual fit). Applied to the
+# CT_CHP rows of these plants only, and only when it RAISES the heat rate.
+CAISO_EOR_TOPPING_PLANTS: frozenset[int] = frozenset({10496, 50134, 52169})
+CAISO_EOR_TOPPING_FACTOR: float = 1.8
+
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
 # months. Winter keeps the flat WEFOR.
@@ -3503,6 +3524,7 @@ def load_fleet_from_csv(
         source = parquet_path
 
     _correct_mixed_facility_steam_hr(generators)
+    _correct_caiso_eor_power_hr(generators, iso)
     _cache_binned_fleet(iso, generators, source)
     return generators
 
@@ -3525,6 +3547,28 @@ def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
             and gen.heat_rate < target
         ):
             gen.heat_rate = target
+
+
+def _correct_caiso_eor_power_hr(generators: list[Generator], iso: str) -> None:
+    """Reprice the CAISO Kern-County EOR topping cogens to their power-only HR.
+
+    See :data:`CAISO_EOR_TOPPING_PLANTS` / :data:`CAISO_EOR_TOPPING_FACTOR`:
+    the three big EOR cogens report a steam-credited (artificially efficient)
+    EIA-923 heat rate, so the model dispatches them as cheap baseload and
+    over-runs them. This lifts their CT_CHP heat rate to the power-only
+    (topping-cycle) basis — ``heat_rate × CAISO_EOR_TOPPING_FACTOR`` — landing
+    them in the simple-cycle peaker band where their power island physically
+    sits, so they clear on price like a peaker rather than as baseload. CAISO
+    only; CT_CHP rows only (the steam-credited regime these three report).
+    """
+    if iso.upper() != "CAISO":
+        return
+    for gen in generators:
+        if (
+            int(gen.plant_code) in CAISO_EOR_TOPPING_PLANTS
+            and gen.plant_group == "CT_CHP"
+        ):
+            gen.heat_rate *= CAISO_EOR_TOPPING_FACTOR
 
 
 def load_retired_within_window(
