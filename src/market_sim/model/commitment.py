@@ -509,6 +509,89 @@ def reserve_adequacy_commit(
     return out
 
 
+def as_adequacy_commit(
+    committed: np.ndarray,  # (n_gen, T) bool — the AS-aware energy/AS mask
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],
+    eligible: np.ndarray,  # (n_gen,) bool — reserve-eligible (responsive) units
+    requirement_mw: np.ndarray,  # (T,) total AS requirement (MEASURED ASPLANNP433)
+    p1_dispatch: np.ndarray,  # (n_gen, T) P1 energy output
+    headroom_frac: float = 1.0,
+) -> np.ndarray:
+    """Re-commit eligible units so committed online HEADROOM covers the AS requirement.
+
+    The ERCOT analogue of :func:`reserve_adequacy_commit`, the anti-over-fire half
+    of AS-aware commitment. :func:`compute_commitment` (AS-aware) decommits the
+    cold idle slow-start capacity out of the reserve pool — necessary to make the
+    co-opt's shared-headroom constraint bind and form the broad-month scarcity —
+    but on its own it strips committed headroom *far below* the procured AS, so the
+    co-opt prices a false VOLL-scale shortage. This step force-commits the
+    cheapest-startup decommitted eligible units, hour by hour, until the committed
+    online headroom (``Σ committed (pmax × availability − P1_dispatch)``) covers
+    ``requirement_mw × headroom_frac``.
+
+    With the floor in place the co-opt can no longer manufacture a shortfall the
+    real market would have procured around: the reserve-balance shortfall steps
+    (the VOLL-anchored curve) stay unbid in the broad month, and the broad-month
+    elevation instead forms from the **shared-headroom dual** — the opportunity
+    cost of holding the procured AS on a fleet that is genuinely tight (cap ≈
+    energy + reserve), an endogenous LP price, not a curve-level fit. Genuinely
+    short hours (the acute days, where even committing every available eligible
+    unit cannot reach the requirement) keep their VOLL-curve shortfall price. The
+    target is the **MEASURED** AS requirement (``ASPLANNP433``), never a
+    price-residual fit (CLAUDE.md #12); ``headroom_frac`` is a coverage multiple on
+    that measured quantity, not a tuned price level.
+
+    Args:
+        committed: The AS-aware commitment mask, ``(n_gen, T)``.
+        fleet_arrays: The vectorized fleet, for ``pmax`` and ``availability``.
+        generators: The dispatch fleet, aligned with ``committed`` rows (for the
+            per-unit startup cost that orders the greedy commit).
+        eligible: ``(n_gen,)`` boolean — the reserve-eligible (responsive) units
+            that may back the AS requirement.
+        requirement_mw: ``(T,)`` total AS requirement (MW), summed across products.
+        p1_dispatch: The P1 energy dispatch, ``(n_gen, T)`` — the net-headroom base.
+        headroom_frac: Coverage multiple on the measured requirement (1.0 = commit
+            until committed net headroom covers the procured AS exactly).
+
+    Returns:
+        A new commitment mask (a copy) with the adequacy commits applied.
+    """
+    out = committed.copy()
+    elig_idx = np.flatnonzero(np.asarray(eligible, dtype=bool))
+    req = np.asarray(requirement_mw, dtype=float)
+    if elig_idx.size == 0 or req.max() <= 0.0:
+        return out
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
+    # Net online headroom: capacity a committed unit could offer up as reserve
+    # after serving its P1 energy. Clipped at 0 (a unit at its cap holds none).
+    net_hr = np.maximum(
+        pmax[:, np.newaxis] * avail - np.asarray(p1_dispatch, float), 0.0
+    )
+    target = req * float(headroom_frac)  # (T,)
+
+    # Already-committed eligible net headroom per hour.
+    cum = (net_hr[elig_idx, :] * out[elig_idx, :]).sum(axis=0)  # (T,)
+    # Greedy: commit cheapest-startup eligible units first into the short hours.
+    startup = np.array(
+        [
+            _startup_cost(generators[g], float(fleet_arrays.heat_rate[g]))
+            for g in elig_idx
+        ]
+    )
+    for g in elig_idx[np.argsort(startup, kind="stable")]:
+        short = cum < target
+        if not short.any():
+            break
+        add = short & (~out[g, :]) & (net_hr[g, :] > 0.0)
+        if not add.any():
+            continue
+        out[g, add] = True
+        cum[add] += net_hr[g, add]
+    return out
+
+
 def apply_commitment_with_coal_pin(
     fleet_arrays: FleetArrays,
     committed: np.ndarray,  # (n_gen, T) boolean

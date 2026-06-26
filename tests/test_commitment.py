@@ -8,6 +8,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
+    as_adequacy_commit,
     compute_commitment,
     compute_monthly_markup,
     find_runs,
@@ -126,6 +127,33 @@ class TestReserveAdequacyCommit(unittest.TestCase):
             committed, fa, gens, np.array([True, True]), 150.0
         )
         np.testing.assert_array_equal(out, committed)  # nothing to add
+
+    def test_as_adequacy_floor_covers_net_headroom(self):
+        # Two 200-MW CTs; one committed running 180 MW (net headroom 20), the other
+        # decommitted. A 150-MW AS requirement is not met by the running unit's 20
+        # MW headroom, so the floor commits the idle unit (200 MW net headroom).
+        gens, fa = self._two_ct()
+        committed = np.array([[True] * 4, [False] * 4])
+        p1 = np.zeros((2, 4))
+        p1[0, :] = 180.0  # unit 0 runs hot -> only 20 MW headroom
+        out = as_adequacy_commit(
+            committed, fa, gens, np.array([True, True]), np.full(4, 150.0), p1
+        )
+        self.assertTrue(out[1].all())  # idle unit committed to cover the AS req
+        net_hr = np.maximum(fa.pmax[:, None] * fa.availability - p1, 0.0)
+        cov = (net_hr * out).sum(axis=0)
+        self.assertTrue((cov >= 150.0).all())
+
+    def test_as_adequacy_floor_noop_when_already_covered(self):
+        # When committed net headroom already covers the requirement, nothing is
+        # added — the floor never strips a genuinely-short hour's scarcity.
+        gens, fa = self._two_ct()
+        committed = np.array([[True] * 4, [False] * 4])
+        p1 = np.zeros((2, 4))  # unit 0 idle -> 200 MW net headroom >= 150
+        out = as_adequacy_commit(
+            committed, fa, gens, np.array([True, True]), np.full(4, 150.0), p1
+        )
+        np.testing.assert_array_equal(out, committed)
 
 
 class TestFindRuns(unittest.TestCase):
