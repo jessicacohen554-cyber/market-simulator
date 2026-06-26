@@ -299,6 +299,130 @@ class TestMultiProductInputs(unittest.TestCase):
         self.assertGreater(means[3], 2000.0)  # NonSpin
 
 
+class TestReserveSupplyCap(unittest.TestCase):
+    """The RTOLCAP reserve-supply re-scope: cap cleared reserve to a measured MW."""
+
+    def _solve(self, req_mw, cap_mw, demand_mw=60.0, mc=20.0, max_penalty=1000.0):
+        # 1 gas_cc, 1 zone, 24 h. Headroom = 100 - demand. The supply cap is a
+        # SYSTEM-WIDE upper bound on the single tier's cleared reserve.
+        fleet = _fleet(["gas_cc"], ["Z0"], hours=24)
+        demand = np.full((1, 24), demand_mw)
+        mc_arr = np.full((1, 24), mc)
+        kwargs = _one_product(req_mw, max_penalty)
+        if cap_mw is not None:
+            kwargs["reserve_supply_cap"] = np.full((1, 24), float(cap_mw))
+        return solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=np.zeros((1, 24)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, 24)),
+            solar_cap=np.zeros(1),
+            mc=mc_arr,
+            voll=5000.0,
+            **kwargs,
+        )
+
+    def test_loose_cap_is_noop(self):
+        # Headroom 40 >= req 30 -> normally free; a cap of 100 MW (>= headroom)
+        # binds nothing, so the price is identical to the uncapped solve.
+        base = float(self._solve(req_mw=30.0, cap_mw=None).reserve_price.max())
+        loose = float(self._solve(req_mw=30.0, cap_mw=100.0).reserve_price.max())
+        self.assertLess(base, 1e-6)
+        self.assertAlmostEqual(base, loose, places=6)
+
+    def test_tight_cap_prices_reserve_without_lifting_lmp(self):
+        # Headroom 40 >= req 30 -> uncapped it does NOT price. Capping cleared
+        # reserve to 20 MW (< the 30 MW requirement) re-scopes the SUPPLY below the
+        # requirement, so reserve falls short and the reserve dual prices — exactly
+        # the RTOLCAP-tightens-the-band mechanism. Crucially the energy LMP does
+        # NOT move: energy cancels out of a pure reserve cap, so the cap forms an
+        # ADDITIVE ORDC adder (RTORPA), which the ORDC-regime price assembly adds
+        # to the LMP — the energy-only-SCED-plus-adder design of pre-RTC+B ERCOT.
+        uncapped = self._solve(req_mw=30.0, cap_mw=None)
+        capped = self._solve(req_mw=30.0, cap_mw=20.0)
+        self.assertLess(float(uncapped.reserve_price.max()), 1e-6)
+        self.assertGreater(float(capped.reserve_price.max()), 0.0)
+        # LMP unchanged by the cap (the additive-adder property, not a bug).
+        np.testing.assert_allclose(capped.prices[0], 20.0, atol=1e-5)
+        np.testing.assert_allclose(uncapped.prices[0], 20.0, atol=1e-5)
+
+    def test_tighter_cap_prices_higher(self):
+        # A tighter supply cap clears reserve lower on the demand curve -> a
+        # higher reserve price (monotone in the supply re-scope, not a fit).
+        loose = float(self._solve(req_mw=30.0, cap_mw=25.0).reserve_price.max())
+        tight = float(self._solve(req_mw=30.0, cap_mw=10.0).reserve_price.max())
+        self.assertGreater(tight, loose)
+
+    def test_energy_dispatch_unaffected_by_reserve_cap(self):
+        # The cap limits RESERVE only — energy can still use the full fleet, so
+        # the energy served is unchanged (the cap is a supply-definition re-scope,
+        # not a generation limit).
+        capped = self._solve(req_mw=30.0, cap_mw=10.0)
+        self.assertAlmostEqual(float(capped.dispatch[0, 0]), 60.0, places=4)
+
+
+class TestReserveSupplyCapLoader(unittest.TestCase):
+    """ercot_rtolcap_supply_cap_mw: measured RTOLCAP/RTOFFCAP, gated, no-fit."""
+
+    def test_off_returns_none(self):
+        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
+
+        cfg = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2024, hours=48)
+        self.assertIsNone(ercot_rtolcap_supply_cap_mw(cfg, 48))
+
+    def test_gated_off_before_from_year(self):
+        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
+
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2022,
+            hours=48,
+            ercot_reserve_supply_cap=True,
+            ercot_reserve_supply_cap_from_year=2023,
+        )
+        # 2022 < from_year 2023 -> gated off even with the flag on.
+        self.assertIsNone(ercot_rtolcap_supply_cap_mw(cfg, 48))
+
+    def test_multiproduct_returns_two_tier_cap(self):
+        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
+
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=8760,
+            ercot_reserve_supply_cap=True,
+            ercot_multiproduct_as_coopt=True,
+        )
+        cap = ercot_rtolcap_supply_cap_mw(cfg, 8760)
+        self.assertIsNotNone(cap)
+        self.assertEqual(cap.shape, (2, 8760))
+        # The "all" tier (row 1 = RTOLCAP + RTOFFCAP) is >= the "fast" tier
+        # (row 0 = RTOLCAP) everywhere RTOFFCAP >= 0.
+        self.assertTrue((cap[1] >= cap[0] - 1e-6).all())
+        # 2024 measured RTOLCAP mean ~16.7 GW (validation, not a fit).
+        self.assertGreater(cap[0].mean(), 12_000.0)
+        self.assertLess(cap[0].mean(), 22_000.0)
+
+    def test_single_product_returns_one_row_cap(self):
+        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
+
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=8760,
+            ercot_reserve_supply_cap=True,  # multiproduct OFF -> single lumped
+        )
+        cap = ercot_rtolcap_supply_cap_mw(cfg, 8760)
+        self.assertIsNotNone(cap)
+        self.assertEqual(cap.shape, (1, 8760))
+        self.assertGreater(cap[0].mean(), 12_000.0)  # RTOLCAP, ~16.7 GW 2024
+        self.assertLess(cap[0].mean(), 22_000.0)
+
+
 class TestASAwareUnitValue(unittest.TestCase):
     """The AS-aware commitment value: reserve price x headroom, cascade-aware."""
 
