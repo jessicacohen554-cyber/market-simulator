@@ -317,13 +317,28 @@ function rcls(r){return r==null?"":r>=R_GOOD?"good":r>=R_OK?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 function fmtpp(d){return (d>=0?"+":"")+d.toFixed(1);}
 // ---- generation mix (system-wide; matches the calibration [3b] analysis) ----
-// Model total per class = grid LP + behind-the-meter must-run (gmModel);
-// actual = full EIA-923 (classFull, which spans fossil AND non-fossil
-// classes). One row per class: TWh and proportional share of TOTAL
-// generation, plus the model's pp share deviation. Zone-independent:
-// 923/930 totals are system-wide. (genMixData's fossil/total split is kept
-// for the KPI share criterion, not shown here.)
+// GRID-DELIVERED basis for every ISO. Model column = grid LP only (gmModel,
+// NO behind-the-meter add-back); actual = grid-delivered EIA-923 (923 − per-
+// class BTM CHP) with wind/solar on the EIA-930 grid series (distribution-
+// connected / net-metered BTM PV removed). BTM is excluded by default — these
+// system/class totals are what reached the grid, never the behind-the-meter
+// self-supply (that add-back lives ONLY in the per-plant CEMS heatmaps). One
+// row per class: TWh and share of TOTAL GENERATION, plus the model's pp share
+// deviation. Zone-independent: 923/930 totals are system-wide. (genMixData's
+// fossil/total split is kept for the KPI share criterion, not shown here.)
+//
+// Generation alone does NOT balance load for a net importer (MISO serves ~6%
+// of load from neighbours; CAISO/NYISO/NEISO similar), so the table also
+// reconciles generation + net imports = load. The apparent "model total is
+// N TWh under actual" is the net-import volume the generation-only rows omit,
+// not missing generation. Net imports come from the priced-interchange
+// fuelRows row (absent for a measured-schedule bundle, which nets interchange
+// into demand — then generation balances load directly and no import row shows).
 function mixLabel(g){return META.groupLabel[g]||({ST_CHP:"Steam Gas CHP"}[g])||g;}
+// System-wide load (TWh): sum of every zone's annual demand in the payload.
+// The model is balanced to EIA-930 demand, so model generation + net imports
+// == this load. Used to reconcile supply against load in the mix table.
+function sysDemand(id,yr){const L=(MODEL[id].years[yr]||{}).lmp||{};let d=0;for(const z in L)d+=(L[z].d||0);return d;}
 function genMixData(id,yr){const B=BENCH[yr];const gm=(MODEL[id].years[yr]||{}).gmModel||{};
  const nf=(MODEL[id].years[yr]||{}).nonfossil||{};
  const mFos=Object.keys(B.classFull).reduce((s,g)=>s+(gm[g]||0),0);
@@ -333,8 +348,15 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  const cf=B.classFull,FG=Object.keys(cf),gm=(MODEL[id].years[yr]||{}).gmModel||{};
  const aGen=FG.reduce((s,g)=>s+(cf[g]||0),0);
  const mGen=FG.reduce((s,g)=>s+(gm[g]||0),0);
- let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM))</span></h2>';
- h+=`<p class=psub>${MODEL[id].label} total ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh</p>`;
+ // Net imports (import-positive): the fuelRows "interchange" row is net-EXPORT
+ // positive (EIA-930 sign), so flip it. Present only for a priced-interchange
+ // bundle; a measured-schedule bundle nets interchange into demand (no row).
+ const ix=((MODEL[id].years[yr]||{}).fuelRows||[]).find(x=>x.fuel==="interchange");
+ const mImp=ix?-ix.m:null,aImp=(ix&&ix.b!=null)?-ix.b:null;
+ const load=sysDemand(id,yr);
+ let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM); BTM excluded — grid-delivered only)</span></h2>';
+ h+=`<p class=psub>${MODEL[id].label} generation ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh`
+   +(mImp!=null?` · + net imports ${mImp.toFixed(1)} (actual ${aImp==null?"—":aImp.toFixed(1)}) → supply ${(mGen+mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh`:'')+`</p>`;
  h+='<div class=tablewrap><table><thead><tr><th>class</th>'
   +'<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
   +'<th>Δpp</th></tr></thead><tbody>';
@@ -343,8 +365,22 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
   h+=`<tr><td>${mixLabel(g)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${a.toFixed(2)}</td>`
     +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td>`
     +`<td class="num ${ppcls(dpp)}">${fmtpp(dpp)}</td></tr>`;}
- h+=`<tr class=sub><td>Total</td><td class=num>${mGen.toFixed(2)}</td><td class=num>${aGen.toFixed(2)}</td>`
+ h+=`<tr class=sub><td>Total generation</td><td class=num>${mGen.toFixed(2)}</td><td class=num>${aGen.toFixed(2)}</td>`
    +`<td class=num>100.0</td><td class=num>100.0</td><td class=num></td></tr>`;
+ // Reconcile generation + net imports = supply = load, so the net-import
+ // volume that the generation-only rows omit is visible instead of reading as
+ // a phantom "model is N TWh short of actual". Only when the run carries a
+ // priced-interchange row; otherwise interchange is already in demand.
+ if(mImp!=null){
+  const mSup=mGen+mImp,aSup=aGen+(aImp||0);
+  h+=`<tr><td>net imports</td><td class=num>${mImp.toFixed(2)}</td><td class=num>${aImp==null?"—":aImp.toFixed(2)}</td><td class=num></td><td class=num></td><td class=num></td></tr>`;
+  h+=`<tr class=sub><td>Total supply (gen + net imports)</td><td class=num>${mSup.toFixed(2)}</td><td class=num>${aSup.toFixed(2)}</td><td class=num></td><td class=num></td><td class=num></td></tr>`;
+  if(load>0){
+   const dM=mSup-load,dA=aSup-load;
+   h+=`<tr><td>Load (EIA-930 demand)</td><td class=num>${load.toFixed(2)}</td><td class=num>${load.toFixed(2)}</td><td class=num></td><td class=num></td><td class="num ${ppcls(100*dM/load)}">${fmtTWh(dM)}</td></tr>`;
+   if(Math.abs(dA)>2)
+    h+=`<tr><td colspan=6 class=psub style="text-align:left;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation (grid-delivered, BTM removed), which for this ISO runs ${fmtTWh(dA)} above EIA-930 load — biomass/geothermal EIA-930 folds into its gas series, plus 923↔930 plant-to-BA assignment. The model is balanced to EIA-930 load: compare per-class shares and the net-imports row across the two sources, not the absolute actual-supply total.</td></tr>`;}
+ }
  return h+'</tbody></table></div></div>';}
 // ---- tooltip + run-id ----
 const tip=document.getElementById("bctip");
@@ -506,7 +542,7 @@ function cfBarChart(model,campd,bands,w,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw
  svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));svg.addEventListener("mouseleave",hideTip);bindTouchTip(svg,at);return svg;}
 // ---- reference tables (Tables page) ----
 function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
- let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
+ let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal; calibrated fuels only — hydro/oil/other/biomass and the full load reconciliation are in the Generation mix table above)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
  for(const f of ["gas","coal","nuclear","wind","solar"]){const r=fr.find(x=>x.fuel===f);if(!r)continue;
   const d=r.b!=null?100*(r.m-r.b)/r.b:null;
   h+=`<tr><td>${f}</td><td class=num>${r.m.toFixed(1)}</td><td class=num>${r.b==null?"—":r.b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${r.r==null?"—":r.r.toFixed(3)}</td><td class=num>${r.nrmse==null?"—":r.nrmse.toFixed(3)}</td></tr>`;}
