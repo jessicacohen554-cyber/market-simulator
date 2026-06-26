@@ -39,13 +39,13 @@ from market_sim.config.constants import (
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_ZONE,
     MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC,
-    MISO_MANITOBA_FIRM_IMPORT_MW,
     MISO_MANITOBA_FIRM_IMPORT_NAME,
     MISO_MANITOBA_FIRM_IMPORT_OFFER,
     MISO_MANITOBA_FIRM_IMPORT_ZONE,
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_IMPORT_RECON_BAND_FRAC,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
+    resolve_miso_manitoba_firm_import_mw,
 )
 from market_sim.config.iso_configs import (
     InterfaceLimit,
@@ -2150,7 +2150,9 @@ def _miso_firm_import_uid() -> str:
     return f"{MISO_MANITOBA_FIRM_IMPORT_ZONE}_{MISO_MANITOBA_FIRM_IMPORT_NAME}"
 
 
-def build_miso_firm_imports(iso: str) -> list[Generator]:
+def build_miso_firm_imports(
+    iso: str, year: int | None = None, mode: str = "forecast"
+) -> list[Generator]:
     """Return Manitoba Hydro's firm-hydro import block for MISO-North.
 
     Manitoba Hydro is MISO's single largest import source and the structural
@@ -2164,16 +2166,30 @@ def build_miso_firm_imports(iso: str) -> list[Generator]:
     The block is a single ``fuel_type="import"`` pseudo-generator landed directly
     in :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_ZONE`
     (``MISO-North``, the model zone the ties physically enter), bounded
-    ``[0, MISO_MANITOBA_FIRM_IMPORT_MW]`` and offered at
+    ``[0, pmax]`` and offered at
     :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_OFFER`. Because
     its ``fuel_type`` is ``"import"`` it is counted as net interchange (not
     in-state generation), and its must-flow firm floor is applied post-assembly
-    by :func:`inject_miso_firm_imports`. The contract volume is forecast-native
-    (it reproduces for any forward year and responds to a changed contract), NOT
-    fitted to the net-interchange residual (claude.md rule #12).
+    by :func:`inject_miso_firm_imports`.
+
+    The block capacity ``pmax`` is forecast-native — the flat contract midpoint
+    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_MW` — for any
+    forecast year, and in BACKCAST mode is overlaid with the measured per-year
+    firm-hydro delivery
+    (:data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR`,
+    drought-responsive) via
+    :func:`~market_sim.config.constants.resolve_miso_manitoba_firm_import_mw`.
+    Neither is fitted to the net-interchange residual (claude.md rules #11/#12):
+    the per-year delivery is the measured DIRECTED firm import computed before any
+    LP runs, regenerable for a forward year from Manitoba's hydro outlook + the
+    contract.
 
     Args:
         iso: ISO identifier; only ``"MISO"`` returns a block.
+        year: Run year; selects the per-year measured firm delivery in backcast
+            mode (``None`` / forecast year falls back to the flat contract MW).
+        mode: ``"forecast"`` (flat contract midpoint) or ``"backcast"`` (measured
+            per-year firm delivery where available).
 
     Returns:
         The Manitoba firm-hydro import pseudo-generator (one element), or an
@@ -2181,13 +2197,14 @@ def build_miso_firm_imports(iso: str) -> list[Generator]:
     """
     if iso != "MISO":
         return []
+    pmax = resolve_miso_manitoba_firm_import_mw(year, mode)
     return [
         Generator(
             unit_id=_miso_firm_import_uid(),
             name=MISO_MANITOBA_FIRM_IMPORT_NAME,
             zone=MISO_MANITOBA_FIRM_IMPORT_ZONE,
             fuel_type="import",
-            pmax_mw=MISO_MANITOBA_FIRM_IMPORT_MW,
+            pmax_mw=pmax,
             pmin_mw=0.0,
             heat_rate=0.0,
             vom=MISO_MANITOBA_FIRM_IMPORT_OFFER,
