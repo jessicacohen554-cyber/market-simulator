@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-26-caiso-31-eor-power",
+  "label": "caiso 31 eor power",
+  "date": "2026-06-26",
+  "shorthand": "caiso-31-eor-power",
+  "definition": "Calibration run from bundle caiso31_eor.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-26-caiso-31-eor-power.js",
+  "bundle": "results/calibration/caiso31_eor"
+}

@@ -964,22 +964,23 @@ def _calibration_config(
             # pull them apart to create a slope. Peaking % stays the CSV value
             # (no pct_peaking key). The ct_*_hr_override fields above are now
             # inert for CT_CHP.
-            # NOTE (CAISO CT_CHP — EOR cogen over-dispatch, deferred to next
-            # session): the CAISO CT_CHP fleet is dominated by Kern-County
-            # enhanced-oil-recovery STEAM cogens (Sycamore, Kern River, Midway
-            # Sunset, Fresno, Badger Creek, Bear Mountain) that burn gas primarily
-            # to make oil-field injection steam, with electricity a byproduct. The
-            # compact-cogen 1.10/1.20/1.40 multipliers price them as efficient
-            # baseload, so the energy-only LP runs them flat at ~88% CF (7.0 TWh)
-            # vs ~3.5 measured (EIA-923; e.g. Kern River 1.35 model vs 0.20) — a
-            # real over-dispatch. A power-only-HR re-price (committed ~1.75) was
-            # trialled but REVERTED: with the total CAISO gas envelope already
-            # over-sized by the import / energy-balance over-generation drift,
-            # cutting cheap CT_CHP does not lower total gas — it reshuffles
-            # straight onto CC_REGULAR (CC +5 TWh worse), since CC is the next-
-            # cheapest dispatchable. The EOR re-price must land AFTER the total-
-            # gas / import-drift fix (so the freed energy leaves as imports, not
-            # CC), not before.
+            # NOTE (CAISO CT_CHP — EOR cogen over-dispatch, FIXED at the fleet
+            # heat-rate layer, not here): the CAISO CT_CHP fleet's three big
+            # Kern-County enhanced-oil-recovery cogens (Kern River 10496,
+            # Sycamore 50134, Midway Sunset 52169) report a steam-credited
+            # (artificially efficient ~5-6 MMBtu/MWh) EIA-923 heat rate, so this
+            # offer curve's 1.10 committed multiplier priced them as cheap
+            # baseload and the LP ran the three flat at ~88% CF (3.7 TWh in 2024)
+            # vs ~0.8 measured. The fix is the POWER-ONLY heat-rate correction in
+            # fleet._correct_caiso_eor_power_hr (CAISO_EOR_TOPPING_FACTOR), which
+            # lifts those three units to the simple-cycle band (~9-11) so they
+            # clear on price like peakers — CT_CHP 6.95 -> 3.54 TWh (2024),
+            # FAIL -> PASS. It is grounded in topping-cycle physics (steam-credit
+            # ratio), NOT this residual-tunable offer curve, so the offer curve
+            # stays the validated compact-cogen 1.10/1.20/1.40 for the rest of
+            # CT_CHP. (The freed energy backfills onto CC_REGULAR via the
+            # evening-ramp import-under / domestic-gas-over root cause, which is
+            # the open C1/C3 item — see docs/caiso-eor-power-hr-2026-06.md.)
             "CT_CHP": {
                 "committed": 1.20 if iso == "PJM" else 1.10,
                 "econ_low": 1.20,
