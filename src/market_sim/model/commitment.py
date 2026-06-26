@@ -302,6 +302,7 @@ def compute_commitment(
     storage_discharge: np.ndarray | None = None,  # (n_storage, T), P1 solve
     storage_zone_idx: np.ndarray | None = None,  # (n_storage,)
     demand: np.ndarray | None = None,  # (n_zones, T)
+    as_value: np.ndarray | None = None,  # (n_gen, T) AS revenue estimate
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
@@ -316,7 +317,10 @@ def compute_commitment(
        above zero, its storage-charge weight clears that floor. A deep
        battery-charging trough therefore breaks a run in two, so the pieces
        face step 3's min-run filter on their own — a cycling unit is not
-       carried through the night purely to charge batteries.
+       carried through the night purely to charge batteries. When ``as_value``
+       is supplied (AS-aware commitment), an hour is ALSO in merit when the unit
+       earns positive AS revenue there — a unit ERCOT keeps online *for AS* stays
+       committed through hours where its energy margin alone is non-positive.
     3. Drop runs shorter than ``min_run_hours``.
     4. Drop runs whose total *storage-weighted* margin is below
        ``startup_per_mw × (1 + IRR)``. The weight discounts margin earned in
@@ -324,7 +328,11 @@ def compute_commitment(
        committed purely to serve speculative battery-charging load (see
        :func:`_storage_commitment_weight`). When the storage inputs are
        omitted, or ``config.commitment_storage_weight`` is zero, the weight
-       is ``1.0`` everywhere and step 4 reduces to a plain margin sum.
+       is ``1.0`` everywhere and step 4 reduces to a plain margin sum. When
+       ``as_value`` is supplied, each hour's AS revenue is ADDED to the
+       run's margin total, so a run that is energy-marginal but earns AS revenue
+       (the units a tight month keeps online for Reg/RRS/ECRS/NonSpin) clears the
+       startup hurdle and stays committed.
     5. Merge surviving runs separated by less than ``min_down_hours``.
 
     Coal, nuclear and non-thermal generators are never screened — they stay
@@ -342,6 +350,14 @@ def compute_commitment(
         storage_discharge: P1 storage discharging power, ``(n_storage, T)``.
         storage_zone_idx: Zone index of each storage unit, ``(n_storage,)``.
         demand: Zonal demand, ``(n_zones, T)``, the storage-weight denominator.
+        as_value: Optional ``(n_gen, T)`` per-unit-hour AS revenue estimate
+            (reserve clearing price × reserve-eligible headroom, from the model's
+            own P1 balance-row dual — see
+            :func:`market_sim.results.scarcity.ercot_as_aware_unit_value`). When
+            supplied (AS-aware commitment), AS revenue both keeps a unit in merit
+            in its AS-earning hours and counts toward the run's startup-hurdle
+            margin. ``None`` (the default) reproduces the energy-only screen
+            byte-identically.
 
     Returns:
         The commitment mask, shape ``(n_gen, T)``.
@@ -374,15 +390,39 @@ def compute_commitment(
         weighted_margin = margin * storage_weight[zone, :]
         hurdle = params["startup_per_mw"] * (1.0 + irr)
 
-        # An hour is in merit when its margin is positive; with the floor
-        # active, a deep storage-charging trough (weight below the floor)
-        # also drops out, breaking the run there.
-        in_merit = margin > 0.0
+        # AS-aware: a unit's AS revenue (reserve price × headroom) counts toward
+        # both keeping it in merit and clearing the startup hurdle, so the units a
+        # tight month keeps online for AS are not decommitted on energy alone.
+        av = None if as_value is None else as_value[g, :]
+        if av is not None:
+            weighted_margin = weighted_margin + av
+
+        # An hour is in merit when its energy margin is positive; with the floor
+        # active, a deep storage-charging trough (weight below the floor) also
+        # drops out, breaking the run there.
+        energy_in_merit = margin > 0.0
         if in_merit_floor > 0.0:
-            in_merit = in_merit & (storage_weight[zone, :] >= in_merit_floor)
+            energy_in_merit = energy_in_merit & (
+                storage_weight[zone, :] >= in_merit_floor
+            )
+        # AS-aware: AS-priced hours join the in-merit mask so a unit's commitment
+        # EXTENDS into the reserve-earning hours adjacent to an energy run. The
+        # locality filter below then drops any run that is AS-only (no energy
+        # hour): a unit running for energy in one window (e.g. the summer peak) is
+        # not held online for AS in a DIFFERENT window (e.g. an idle May midday)
+        # where the perfect-foresight LP leaves it cold — those cold slow-start
+        # hours are exactly the phantom headroom this screen must drop out of the
+        # reserve pool, so the co-opt can form the broad-month scarcity.
+        in_merit = energy_in_merit
+        if av is not None:
+            in_merit = energy_in_merit | (av > 0.0)
 
         accepted: list[tuple[int, int]] = []
         for start, end in find_runs(in_merit):
+            # Drop AS-only runs (no energy-in-merit hour) — phantom headroom from
+            # a unit not online for energy in this window.
+            if av is not None and not energy_in_merit[start:end].any():
+                continue
             if (end - start) < params["min_run_hours"]:
                 continue
             if float(weighted_margin[start:end].sum()) < hurdle:
@@ -466,6 +506,109 @@ def reserve_adequacy_commit(
             continue
         out[g, add] = True
         cum[add] += headroom[g, add]
+    return out
+
+
+def as_adequacy_commit(
+    committed: np.ndarray,  # (n_gen, T) bool — the AS-aware energy/AS mask
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],
+    headroom_eligible: np.ndarray,  # (n_rows, n_gen) bool — each row's eligible set
+    headroom_products: np.ndarray,  # (n_rows, n_prod) bool — products each row bounds
+    requirement_mw: np.ndarray,  # (n_prod, T) per-product AS req (MEASURED ASPLANNP433)
+    p1_dispatch: np.ndarray,  # (n_gen, T) P1 energy output
+    headroom_frac: float = 1.0,
+) -> np.ndarray:
+    """Re-commit eligible units so each headroom row's online HEADROOM covers its AS.
+
+    The ERCOT analogue of :func:`reserve_adequacy_commit`, the anti-over-fire half
+    of AS-aware commitment. :func:`compute_commitment` (AS-aware) decommits the
+    cold idle slow-start capacity out of the reserve pool — necessary to make the
+    co-opt's shared-headroom constraint bind and form the broad-month scarcity —
+    but on its own it strips committed headroom *far below* the procured AS, so the
+    co-opt prices a false VOLL-scale shortage.
+
+    The floor is **tier-aware**, mirroring the co-opt's nested shared-headroom rows
+    (:func:`~market_sim.results.scarcity.ercot_multiproduct_reserve_coopt_inputs`):
+    the *fast* row (RegUp/RRS/ECRS, restricted to the synchronized CC/ST/coal/
+    nuclear set) and the *all* row (every product, adding the offline-capable
+    quick-start peakers). For each row this commits the cheapest-startup decommitted
+    units **from that row's own eligible set**, hour by hour, until the row's
+    committed online headroom (``Σ committed (pmax × availability − P1_dispatch)``)
+    covers the sum of its products' requirements × ``headroom_frac``. Covering the
+    fast row with peakers (which only back Non-Spin) would leave the fast products
+    short and pricing at VOLL — the tier restriction prevents exactly that.
+
+    With the floor in place the co-opt can no longer manufacture a shortfall the
+    real market would have procured around: the reserve-balance shortfall steps
+    (the VOLL-anchored curve) stay unbid in the broad month, and the broad-month
+    elevation instead forms from the **shared-headroom dual** — the opportunity
+    cost of holding the procured AS on a fleet that is genuinely tight (cap ≈
+    energy + reserve), an endogenous LP price, not a curve-level fit. Genuinely
+    short hours (the acute days, where even committing every available eligible
+    unit cannot reach the requirement) keep their VOLL-curve shortfall price. The
+    target is the **MEASURED** AS requirement (``ASPLANNP433``), never a
+    price-residual fit (CLAUDE.md #12); ``headroom_frac`` is a coverage multiple on
+    that measured quantity, not a tuned price level.
+
+    Args:
+        committed: The AS-aware commitment mask, ``(n_gen, T)``.
+        fleet_arrays: The vectorized fleet, for ``pmax`` and ``availability``.
+        generators: The dispatch fleet, aligned with ``committed`` rows (for the
+            per-unit startup cost that orders the greedy commit).
+        headroom_eligible: ``(n_rows, n_gen)`` boolean — the eligible generator set
+            of each nested headroom row (fast, all).
+        headroom_products: ``(n_rows, n_prod)`` boolean — which products each
+            headroom row bounds; the row's target is the sum of those products' req.
+        requirement_mw: ``(n_prod, T)`` per-product AS requirement (MW).
+        p1_dispatch: The P1 energy dispatch, ``(n_gen, T)`` — the net-headroom base.
+        headroom_frac: Coverage multiple on the measured requirement (1.0 = commit
+            until committed net headroom covers the procured AS exactly).
+
+    Returns:
+        A new commitment mask (a copy) with the adequacy commits applied.
+    """
+    out = committed.copy()
+    he = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool))  # (n_rows, n_gen)
+    hp = np.atleast_2d(np.asarray(headroom_products, dtype=bool))  # (n_rows, n_prod)
+    req = np.asarray(requirement_mw, dtype=float)  # (n_prod, T)
+    if req.size == 0 or req.max() <= 0.0:
+        return out
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
+    # Net online headroom: capacity a committed unit could offer up as reserve
+    # after serving its P1 energy. Clipped at 0 (a unit at its cap holds none).
+    net_hr = np.maximum(
+        pmax[:, np.newaxis] * avail - np.asarray(p1_dispatch, float), 0.0
+    )
+    # Global cheapest-startup order; each row commits the cheapest units IN ITS set.
+    startup = np.array(
+        [
+            _startup_cost(generators[g], float(fleet_arrays.heat_rate[g]))
+            for g in range(len(generators))
+        ]
+    )
+    order = np.argsort(startup, kind="stable")
+    # Process the most-restrictive row first (fewest eligible units = the fast
+    # row), so its restricted set is satisfied before the looser all row tops up
+    # with peakers; a unit committed for one row counts toward every row it is in.
+    rows = sorted(range(he.shape[0]), key=lambda h: int(he[h].sum()))
+    for h in rows:
+        target = req[hp[h]].sum(axis=0) * float(headroom_frac)  # (T,)
+        if target.max() <= 0.0:
+            continue
+        cum = (net_hr * (out & he[h][:, None])).sum(axis=0)  # (T,)
+        for g in order:
+            if not he[h, g]:
+                continue
+            short = cum < target
+            if not short.any():
+                break
+            add = short & (~out[g, :]) & (net_hr[g, :] > 0.0)
+            if not add.any():
+                continue
+            out[g, add] = True
+            cum[add] += net_hr[g, add]
     return out
 
 

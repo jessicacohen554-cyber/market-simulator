@@ -1562,6 +1562,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
+    ercot_as_aware_commitment: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1735,6 +1736,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
+            ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
@@ -1943,6 +1945,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
+        "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
@@ -2057,6 +2060,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if ercot_multiproduct_as_coopt:
         recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
+    if ercot_as_aware_commitment:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
     if ercot_load_resource_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_load_resource_reserve=True,
@@ -4410,6 +4415,18 @@ def main() -> None:
         "for the phantom-headroom fix. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--ercot-as-aware-commitment",
+        action="store_true",
+        help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
+        "AS revenue (P1 reserve dual x reserve-eligible headroom), not energy "
+        "margin alone, so units a tight month keeps online FOR AS stay committed "
+        "and the P2 co-opt headroom reflects realistic online capacity — letting "
+        "the multi-product co-opt form the broad-month elevation endogenously "
+        "(phantom-headroom fix, Finding 1/G1). Triggers a P2 pass even without "
+        "--commitment. Requires --energy-reserve-coopt + "
+        "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
         "--ercot-load-resource-reserve",
         action="store_true",
         help="ERCOT energy+reserve co-opt only: credit the measured "
@@ -5256,6 +5273,7 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
+        ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_load_resource_reserve_from_year=(
             args.ercot_load_resource_reserve_from_year

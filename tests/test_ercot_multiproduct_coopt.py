@@ -299,5 +299,59 @@ class TestMultiProductInputs(unittest.TestCase):
         self.assertGreater(means[3], 2000.0)  # NonSpin
 
 
+class TestASAwareUnitValue(unittest.TestCase):
+    """The AS-aware commitment value: reserve price x headroom, cascade-aware."""
+
+    def _fleet(self):
+        gens = [
+            Generator(
+                unit_id=f"G{i}",
+                name=f"G{i}",
+                zone="Z0",
+                fuel_type=f,
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,  # no derate -> availability 1.0
+            )
+            # fast: gas_cc/coal/nuclear; quick-start: gas_ct/oil; none: wind
+            for i, f in enumerate(
+                ["gas_cc", "gas_ct", "coal", "nuclear", "oil", "wind"]
+            )
+        ]
+        return generators_to_fleet_arrays(gens, ["Z0"], hours=4)
+
+    def test_none_reserve_price_is_zero(self):
+        from market_sim.results.scarcity import ercot_as_aware_unit_value
+
+        fleet = self._fleet()
+        av = ercot_as_aware_unit_value(fleet, np.zeros((fleet.n_gen, 4)), None, 4)
+        self.assertEqual(av.shape, (fleet.n_gen, 4))
+        self.assertFalse(av.any())
+
+    def test_value_is_price_times_headroom_with_cascade(self):
+        from market_sim.results.scarcity import ercot_as_aware_unit_value
+
+        fleet = self._fleet()
+        # Products RegUp/RRS/ECRS (fast) / NonSpin (slow). One hour priced.
+        rp = np.zeros((4, 4))  # (T, n_prod)
+        rp[1, 0] = 10.0  # a FAST product (RegUp) prices at $10 in hour 1
+        rp[1, 3] = 4.0  # NonSpin (slow) prices at $4 in hour 1
+        p1 = np.zeros((fleet.n_gen, 4))
+        p1[0, 1] = 40.0  # gas_cc runs 40 MW in hour 1 -> headroom 60
+        av = ercot_as_aware_unit_value(fleet, p1, rp, 4)
+        # gas_cc (fast): proxy = max over all products = $10, headroom 60 -> 600.
+        self.assertAlmostEqual(av[0, 1], 600.0)
+        # coal/nuclear (fast, full 100 headroom): 10 x 100 = 1000.
+        self.assertAlmostEqual(av[2, 1], 1000.0)
+        self.assertAlmostEqual(av[3, 1], 1000.0)
+        # gas_ct/oil (quick-start): only the NonSpin (slow) price applies -> 4x100.
+        self.assertAlmostEqual(av[1, 1], 400.0)
+        self.assertAlmostEqual(av[4, 1], 400.0)
+        # wind holds no responsive reserve -> zero everywhere.
+        self.assertFalse(av[5].any())
+        # No AS value in the unpriced hours.
+        self.assertFalse(av[:, [0, 2, 3]].any())
+
+
 if __name__ == "__main__":
     unittest.main()
