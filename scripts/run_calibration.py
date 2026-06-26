@@ -1419,6 +1419,7 @@ def run_year(
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
+    ercot_as_aware_commitment: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1662,6 +1663,8 @@ def run_year(
         config = config.with_overrides(energy_reserve_coopt=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
+    if ercot_as_aware_commitment:
+        config = config.with_overrides(ercot_as_aware_commitment=True)
     # ERCOT load-resource reserve credit (run_calibration_full
     # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
     # responsive reserve) into the co-opt reserve balance. GATED — alters
