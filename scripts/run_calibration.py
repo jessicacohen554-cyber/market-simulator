@@ -780,6 +780,15 @@ def _calibration_config(
         #   fit. See transmission.inject_caiso_ct_reliability_floor and
         #   docs/caiso-ct-reliability-floor-2026-06.md. Other ISOs stay off
         #   (byte-identical); coefficients from ScenarioConfig defaults.
+        caiso_ct_floor_base=(0.049 if iso.upper() == "CAISO" else 0.0),  # CAISO
+        #   keeper default-ON: the YEAR-ROUND local-RA baseline the temperature
+        #   hot-limb clips to zero. CAISO's Local Capacity Requirement is a
+        #   year-round load-pocket floor (binding hardest at summer peak but
+        #   holding a must-offer minimum on mild days too), so peakers run a steady
+        #   baseline even off the hot limb. 0.049 = the measured median CAMPD
+        #   CT_PEAKER evening (15-22) capacity factor on cool days (TMAX<25 degC),
+        #   2023-2025 — the regression intercept the hot-limb fit discards, not a
+        #   TWh-residual tune (scripts/derive_caiso_ct_reliability_floor.py).
         negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
         #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
@@ -2218,17 +2227,21 @@ def run_year(
         _ct_slope = float(getattr(config, "caiso_ct_floor_slope_per_c", 0.047))
         _ct_t0 = float(getattr(config, "caiso_ct_floor_t0_c", 25.0))
         _ct_cap = float(getattr(config, "caiso_ct_floor_cap", 0.46))
+        _ct_base = float(getattr(config, "caiso_ct_floor_base", 0.0))
         if inject_caiso_ct_reliability_floor(
-            fleet_arrays, iso, year, _ct_slope, _ct_t0, _ct_cap
+            fleet_arrays, iso, year, _ct_slope, _ct_t0, _ct_cap, _ct_base
         ):
             logger.info(
                 "%s %d: local-RA CT_PEAKER reliability floor — peakers held "
-                "online on hot afternoons/evenings at clip(%.3f*(TMAX-%.0f), 0, "
-                "%.2f) x available capacity (temperature-driven)",
+                "online on afternoons/evenings at clip(%.3f + %.3f*(TMAX-%.0f), "
+                "%.3f, %.2f) x available capacity (temperature hot-limb + "
+                "year-round baseline)",
                 iso,
                 year,
+                _ct_base,
                 _ct_slope,
                 _ct_t0,
+                _ct_base,
                 _ct_cap,
             )
 
