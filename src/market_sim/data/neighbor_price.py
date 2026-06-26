@@ -74,29 +74,59 @@ if TYPE_CHECKING:
 # price-formation formula prices the seam (rule #11 stays satisfied).
 FORWARD_SKILL_ENV: str = "MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"
 
-# Forward gas-elastic implied heat-rate coefficients per neighbor, keyed by the
-# neighbor's name. Each ``(hr_phys, hr_adder)`` makes the neighbor's FORWARD
-# implied HR ``= hr_phys + hr_adder / gas`` — the neighbor's realized annual-mean
-# LMP is affine in delivered gas (``LMP = hr_phys x gas + hr_adder``), so the
-# implied HR eases toward the gas-proportional ``hr_phys`` as gas rises and the
-# seam reprices forward as the Henry Hub trajectory moves, instead of riding a
-# flat multi-year mean (the gap in docs/forecast-methodology-gaps-2026-06.md
-# G11). Fit to each neighbor's OWN measured ``(gas, LMP)`` points — blind to the
-# ISO's interchange (rule #11) — by scripts/derive_neighbor_hr_elasticity.py.
-# Backcast years keep the measured per-year ``hr_by_year`` anchor (rule #12:
-# measured for the backcast); these coefficients price only forecast years (and
-# the forward-skill validation). The keys are neighbor names, which are unique to
-# the MISO registry today (only MISO has a ``PJM``/``SPP`` seam), so this never
-# touches another ISO's seam; the map lives here rather than as a
-# NeighborInterface field to keep the change localized to the seam-pricing layer.
+# Affine-in-gas implied heat-rate coefficients per neighbor, keyed by the
+# neighbor's name. Each ``(hr_phys, hr_adder)`` makes the neighbor's implied HR
+# ``= hr_phys + hr_adder / gas`` — the neighbor's realized annual-mean LMP is
+# affine in delivered gas (``LMP = hr_phys x gas + hr_adder``), so the implied HR
+# eases toward the gas-proportional ``hr_phys`` as gas rises and the seam reprices
+# as the Henry Hub trajectory moves, instead of riding a flat multi-year mean (the
+# gap in docs/forecast-methodology-gaps-2026-06.md G11). Fit to each neighbor's OWN
+# measured ``(gas, LMP)`` points — blind to the ISO's interchange (rule #11).
+#
+# Two families of neighbor live here, distinguished by whether the neighbor has a
+# per-year ``hr_by_year`` anchor:
+#
+#   * **Organized-market neighbors with ``hr_by_year`` (MISO's PJM/SPP seams).**
+#     Backcast years use the measured per-year realized LMP anchor (rule #12); the
+#     affine coefficients price only FORECAST years (and the forward-skill
+#     validation). Fit by scripts/derive_neighbor_hr_elasticity.py.
+#   * **Coal/nuclear-set neighbors with NO organized-market LMP (PJM's Southeast
+#     seams: Carolinas/TVA/LGEE).** SERC has no nodal LMP to anchor a per-year HR
+#     to, so the affine fuel-stack form is the neighbor's price-formation anchor in
+#     EVERY year (backcast and forward alike — there is no ``hr_by_year`` to take
+#     precedence). The coefficients are the OLS of the Southeast's documented
+#     Into-Southern/SERC hub price level on Henry Hub (a measured neighbor
+#     price-formation series, rule #12), NOT PJM's net-MWh flow (rule #11). They
+#     give a GAS-INELASTIC slope (hr_phys ~5.6, far below the flat 11.6) so the
+#     coal/nuclear Southeast does not ride Henry Hub up in a dear-gas year: at the
+#     flat 11.6 the seam priced to $40.8 in 2025 — only ~$2 below PJM — and the
+#     diurnal swing flipped it to a wrong-direction export (+2.0 TWh vs the
+#     measured −5.9); the affine form holds it at ~$33.9 (~$9 below PJM), so the
+#     structural net-import direction holds across the gas cycle. Derived/checked
+#     by scripts/derive_southeast_inelastic_hr.py.
+#
+# The keys are neighbor names, unique across the registries today (only MISO has a
+# ``PJM``/``SPP`` seam; only PJM has ``Carolinas``/``TVA``/``LGEE``), so this never
+# touches another ISO's seam; the map lives here rather than as a NeighborInterface
+# field to keep the change localized to the seam-pricing layer.
 _HR_GAS_ELASTIC: dict[str, tuple[float, float]] = {
     "PJM": (11.06, 3.21),  # MISO's PJM seam: gas-set (large slope, small adder)
     "SPP": (3.04, 16.27),  # MISO's SPP seam: wind-set (small slope, large adder)
+    # PJM's Southeast seams — coal/nuclear-set, gas-INELASTIC (no organized LMP;
+    # affine fit to Into-Southern/SERC hub level on Henry Hub, all years).
+    "Carolinas": (5.6, 14.2),
+    "TVA": (5.6, 14.2),
+    "LGEE": (5.6, 14.2),
 }
 
 
 def _hr_gas_elastic(neighbor: NeighborInterface) -> tuple[float, float] | None:
-    """Return the neighbor's forward gas-elastic ``(hr_phys, hr_adder)`` or ``None``."""
+    """Return the neighbor's affine-in-gas ``(hr_phys, hr_adder)`` or ``None``.
+
+    For organized-market neighbors (``hr_by_year`` present) these price forecast
+    years only; for coal/nuclear-set neighbors with no organized LMP (the
+    Southeast) they price every year. See :data:`_HR_GAS_ELASTIC`.
+    """
     return _HR_GAS_ELASTIC.get(neighbor.name)
 
 
