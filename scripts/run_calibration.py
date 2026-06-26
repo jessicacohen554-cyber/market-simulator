@@ -106,6 +106,7 @@ from market_sim.data.renewables import (  # noqa: E402
 )
 from market_sim.model.commitment import (  # noqa: E402
     apply_commitment_with_coal_pin,
+    as_adequacy_commit,
     compute_commitment,
     compute_monthly_markup,
 )
@@ -1419,6 +1420,7 @@ def run_year(
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
+    ercot_as_aware_commitment: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1662,6 +1664,8 @@ def run_year(
         config = config.with_overrides(energy_reserve_coopt=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
+    if ercot_as_aware_commitment:
+        config = config.with_overrides(ercot_as_aware_commitment=True)
     # ERCOT load-resource reserve credit (run_calibration_full
     # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
     # responsive reserve) into the co-opt reserve balance. GATED — alters
@@ -2956,9 +2960,17 @@ def run_year(
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
-    # coal to its P1 dispatch, and re-solve (a single LP solve).
+    # coal to its P1 dispatch, and re-solve (a single LP solve). ERCOT AS-aware
+    # commitment triggers the same P2 pass (valuing AS revenue in the screen)
+    # even when the energy-only commitment screen is off — it requires the
+    # multi-product co-opt to supply the per-product reserve duals.
+    as_aware = (
+        getattr(config, "ercot_as_aware_commitment", False)
+        and iso == "ERCOT"
+        and getattr(config, "energy_reserve_coopt", False)
+    )
     result_p1 = None
-    if config.commitment_enabled:
+    if config.commitment_enabled or as_aware:
         result_p1 = result
         result = _commitment_pass(p2_state)
 
@@ -2978,6 +2990,22 @@ def _commitment_pass(state: dict, config=None):
     fa = state["fleet_arrays"]
     p1 = state["p1_result"]
     dk = state["dispatch_kwargs"]
+    # AS-aware (ERCOT multi-product co-opt): value a unit's AS revenue (the P1
+    # per-product reserve dual x its reserve-eligible headroom) in the screen, so
+    # the units a tight month keeps online FOR AS stay committed and the P2 co-opt
+    # headroom reflects realistic online capacity. The AS value comes from the
+    # model's OWN P1 balance-row dual, never the measured MCPC (no fit).
+    as_value = None
+    if (
+        getattr(cfg, "ercot_as_aware_commitment", False)
+        and state["iso"] == "ERCOT"
+        and getattr(cfg, "energy_reserve_coopt", False)
+    ):
+        from market_sim.results.scarcity import ercot_as_aware_unit_value
+
+        as_value = ercot_as_aware_unit_value(
+            fa, p1.dispatch, p1.reserve_price_by_family, cfg.hours
+        )
     committed = compute_commitment(
         p1.prices,
         state["mc_base"],
@@ -2988,7 +3016,26 @@ def _commitment_pass(state: dict, config=None):
         storage_discharge=p1.storage_discharge,
         storage_zone_idx=dk["storage_zone_idx"],
         demand=state["demand"],
+        as_value=as_value,
     )
+    # AS-adequacy floor (ERCOT AS-aware): re-commit cheapest eligible units until
+    # committed online headroom covers the MEASURED total AS requirement, so the
+    # screen cannot strip the reserve pool below what ERCOT procured (which would
+    # price a false VOLL-scale shortage). The broad-month elevation then forms from
+    # the binding shared-headroom dual (opportunity cost), while genuinely-short
+    # acute hours still price the VOLL curve. Requirement = sum of the per-product
+    # ASPLANNP433 quantities already in dispatch_kwargs.
+    if as_value is not None:
+        committed = as_adequacy_commit(
+            committed,
+            fa,
+            fleet,
+            dk["reserve_headroom_eligible"],
+            dk["reserve_headroom_products"],
+            np.asarray(dk["reserve_requirement"], dtype=float),
+            p1.dispatch,
+            headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
+        )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
     # reliability, not economics. Preserve min_gen through P2 only when such an
