@@ -264,3 +264,5 @@ results/outage_gate_audit/
 /results/calibration/ercot_run158*/plant_cf_bands.parquet
 /results/calibration/ercot_run158*/plant_hourly_fit.parquet
 /scratchpad/
+results/calibration/_probe_160_2024/
+results/calibration/_probe*/
