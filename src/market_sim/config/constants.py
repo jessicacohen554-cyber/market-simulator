@@ -2101,6 +2101,57 @@ MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC: float = 1.0
 MISO_MANITOBA_FIRM_IMPORT_ZONE: str = "MISO-North"
 MISO_MANITOBA_FIRM_IMPORT_NAME: str = "Manitoba_firmhydro"
 
+# Per-year MEASURED Manitoba firm-hydro delivery into MISO (BACKCAST ONLY).
+# The flat MISO_MANITOBA_FIRM_IMPORT_MW above is the forecast-native contract
+# MIDPOINT (~12.3 TWh/yr, the middle of Manitoba Hydro's 10-15 TWh/yr US export
+# band) and is the correct forward default — but for a backcast year the firm
+# delivery is a known PHYSICAL quantity that swings with Manitoba's hydro
+# conditions, so it is overlaid here from the measured directed-flow series,
+# exactly as the nuclear refuel derate (NUCLEAR_MONTHLY_CF_BY_YEAR) and the seam
+# deliverability envelope (MISO_SEAM_DIBA) overlay their measured-availability
+# inputs. Manitoba ran a multi-year DROUGHT through 2024-2025 (low Nelson/Winnipeg
+# River runoff), collapsing its firm southbound exports — Manitoba Hydro reported
+# sharply reduced US exports and even net imports in FY2024/25. The flat 1400 MW
+# block therefore over-injects ~6-10 TWh/yr of phantom cheap must-flow energy into
+# MISO-North, depressing MISO's own LMP so it under-imports from PJM, under-exports
+# South, and backfills domestic coal/gas/CT under-gen (miso12 import composition).
+#
+# Values are the GROSS directed firm import (hours MISO imports from the MHEB BA),
+# annualized to a flat MW at 8760 h, from data/raw/eia-930-interchange/
+# "MISO interchange hourly.parquet" (the same EIA-930 BA-to-BA INTERCHANGE product
+# the seam envelope uses; EIA sign + = MISO exports to MHEB, so import = -mw, the
+# negative-flow hours summed). The gross firm DELIVERY (not the net MHEB
+# interchange) is the right physical analogue: the contract still delivers ~2 TWh
+# even in drought-2025, while MISO's occasional surplus sell-back to Manitoba is a
+# separate (un-modeled, seam-excluded) transaction, not a reason to net the firm
+# block negative. This is NOT a fit to MISO's net-interchange residual (rules
+# #11/#12): it is the directed firm-delivery quantity computed BEFORE any LP runs,
+# regenerable for a forward year from Manitoba's hydro outlook + contract, and
+# flow-responsive (the 2025 drought collapse is the input changing, not a tune).
+# Reproduce / re-check with scripts/derive_manitoba_firm_import.py.
+#   2023: 6.36 TWh -> 726 MW | 2024: 4.65 TWh -> 531 MW | 2025: 1.96 TWh -> 224 MW
+MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR: dict[int, float] = {
+    2023: 726.0,
+    2024: 531.0,
+    2025: 224.0,
+}
+
+
+def resolve_miso_manitoba_firm_import_mw(year: int | None, mode: str) -> float:
+    """Return the Manitoba firm-import block capacity (MW) for ``year``/``mode``.
+
+    In ``mode == "backcast"`` with ``year`` in
+    :data:`MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR`, return the measured per-year
+    firm-hydro delivery (drought-responsive); otherwise return the flat
+    forecast-native contract midpoint :data:`MISO_MANITOBA_FIRM_IMPORT_MW`. A
+    forecast year (or a backcast year with no measured overlay) is therefore
+    byte-identical to the prior flat-block behaviour.
+    """
+    if mode == "backcast" and year in MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR:
+        return MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR[year]
+    return MISO_MANITOBA_FIRM_IMPORT_MW
+
+
 # ISOs whose backcasts enable the Manitoba firm-hydro import block BY DEFAULT
 # (resolve_miso_firm_imports), no --miso-firm-imports flag required. The firm
 # Manitoba contract is the structural reason MISO is a net IMPORTER and sits
