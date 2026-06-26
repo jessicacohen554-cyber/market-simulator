@@ -2566,6 +2566,25 @@ class NeighborInterface:
             structural ``marginal_heat_rate``, so forecast runs are
             byte-identical. Derive with
             ``scripts/derive_neighbor_hr_by_year.py``.
+        firm_export_floor_by_year: optional ``{year: floor_mw}`` of PJM's FIRM
+            (must-flow) scheduled export over this seam. PJM exports to MISO /
+            NYISO in ~87-100% of hours at a mean spread (~$1.5) too thin for a
+            pure hourly energy-spread seam to clear every hour, because a large
+            share of the flow is firm, long-term SCHEDULED capacity/energy that
+            flows regardless of the hourly price (the mirror of the Hydro-Quebec/
+            Manitoba firm imports that floor NYISO/MISO). The economic seam alone
+            backs this firm base off in cheap hours, so the seam under-exports in
+            the cheap-price years (the PJM 2023 NYISO +4.3 vs +18.5 TWh miss).
+            Each entry forces the cheapest export tranches on at ``floor_mw`` so
+            the firm base flows every hour, the economic tranches clearing on top
+            (:func:`market_sim.model.transmission.inject_reference_price_firm_export`).
+            The floor is the p10 of PJM's OWN measured per-tie SCHEDULED export
+            (the firm base scheduled in >=90% of hours), NOT the realized
+            ``actual_flow`` that is the validation target (rule #11) — a measured
+            market-operations input whose forward analogue is the contracted firm
+            schedule (rule #12). A year absent here (forecast years, the net-
+            IMPORT seams) carries no floor, so the run is byte-identical. Derive
+            with ``scripts/derive_firm_export_floor.py``.
     """
 
     name: str
@@ -2578,6 +2597,9 @@ class NeighborInterface:
     proxy_ba: str | None = None
     load_shape_exponent: float = 1.0
     hr_by_year: dict[int, float] | None = field(default=None, compare=False)
+    firm_export_floor_by_year: dict[int, float] | None = field(
+        default=None, compare=False
+    )
 
 
 # Per-ISO neighbor registry for the reference-price interface. ISO-agnostic
@@ -2587,7 +2609,9 @@ class NeighborInterface:
 # and gas bases carry "verify against published ratings / EIA-923" caveats.
 #
 # PJM seams (PJM is a structural net exporter): MISO to the west, NYISO to the
-# north/east, and the Carolinas/Southeast to the south. PJM exports because its
+# north/east, the Carolinas/Southeast to the south, and the TVA + LGEE (Kentucky/
+# Tennessee) footprints to the south-west that PJM net-IMPORTS from (~8 TWh/yr,
+# previously unmodeled). PJM exports because its
 # resource mix (coal retirements + efficient new CCs, generation near load) sets
 # an LMP *below* its neighbors' — confirmed in the field (PJM 2024 State of the
 # Market §9; ACORE/PJM-MISO joint studies) and in the price levels: MISO RT LMP
@@ -2617,9 +2641,23 @@ class NeighborInterface:
 #   - Carolinas (basis ~0): HR 13.5, an ESTIMATE pending a Duke (DUK) LMP/extract
 #     — the Southeast is not an organized market, so this is anchored to a
 #     ~$30/MWh SERC bilateral level / Henry Hub, priced on the SOCO load shape.
-# Hurdle $2/MWh is the inter-RTO wheeling/transaction adder production-cost
-# models use (OMS-RSC seams interface-pricing study); PJM exports at thin spreads
-# (the 2024 PJM-MISO mean spread is only ~$1.5), so the hurdle must stay small.
+# Hurdle $1/MWh is the MARGINAL delivery-loss component of an incremental seam
+# transaction (~3% x the ~$35/MWh seam energy). This REPLACES the prior $2 (the
+# OMS-RSC inter-RTO "wheeling/transaction adder") because $2 conflated TWO costs
+# into one marginal threshold: (a) firm point-to-point transmission service /
+# capacity reservation, which is paid by FIRM scheduled transactions — now
+# modeled explicitly as the firm-export floor (firm_export_floor_by_year), which
+# flows regardless of the hourly spread and so implicitly bears that charge; and
+# (b) marginal losses on the incremental economic flow. Under the PJM-MISO and
+# PJM-NYISO Joint Operating Agreements / market-to-market coordination the
+# coordinated economic flow pays NO pancaked through-and-out transmission rate, so
+# the only marginal friction left for the economic increment is losses (~$1). The
+# old single $2 hurdle simultaneously over-charged the economic margin (PJM
+# exports at a ~$1.5 mean PJM-MISO spread, which $2 mostly blocks -> the MISO/
+# NYISO under-export) AND omitted the firm base (-> the 2023 NYISO collapse).
+# Splitting them — firm floor + $1 losses hurdle — is a physical decomposition,
+# not a flow fit (rule #11): the $1 is losses x price, the floor is measured
+# scheduled volume; neither sees the realized net-MWh target.
 #
 # Interface limits are the firm continuous transfer capability of each seam,
 # derived from PJM's OWN published per-tie interchange (the Data Miner
@@ -2641,8 +2679,11 @@ class NeighborInterface:
 #   Carolinas 2,400 MW (was  3,500; |flow| p99.5 2,418 on the Duke/Progress ties
 #             — note PJM net-*imports* over this seam, exporting only ~17% of
 #             hours, so the limit binds mostly on the import side)
-# TVA/LGEE (the south-west ties PJM net-imports over, ~8 TWh/yr) have no neighbor
-# in this three-seam PJM build yet — a future seam (the generalize open item).
+#   TVA       1,600 MW (the single TVA tie's |flow| p99.5, pooled 2023-25; PJM
+#             net-imports ~6 TWh/yr, exporting only 3-9% of hours)
+#   LGEE      1,100 MW (the single LGEE tie's |flow| p99.5; PJM net-imports
+#             ~2.3 TWh/yr, exporting ~16-19% of hours)
+# (LAGN remains unmapped — its measured flow is ~0.)
 #
 # load_shape_exponent (price-vs-load convexity): the flow-responsive seam
 # (neighbor_price.seam_tranche_prices) prices each export band at the neighbor's
@@ -2684,7 +2725,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             ba_code="MISO",
             gas_basis=0.0,
             marginal_heat_rate=12.9,
-            hurdle=2.0,
+            hurdle=1.0,
             interface_limit_mw=7300.0,
             border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
             load_shape_exponent=1.60,
@@ -2694,13 +2735,19 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # largest PJM seam to a fake export in 2025. Anchored to the measured
             # Indiana-Hub RT LMP each year.
             hr_by_year={2023: 12.38, 2024: 13.92, 2025: 12.03},
+            # Firm scheduled-export floor (derive_firm_export_floor.py, p10 of
+            # PJM's measured per-tie SCHEDULED export). MISO's firm base is large
+            # in 2023 and collapses to ~0 by 2025 as MISO tightened — so MISO is
+            # mostly ECONOMIC and the under-export is fixed by the losses-only
+            # hurdle above, the floor only binding the cheap-spread hours of 2023.
+            firm_export_floor_by_year={2023: 1250.0, 2024: 100.0, 2025: 0.0},
         ),
         NeighborInterface(
             name="NYISO",
             ba_code="NYIS",
             gas_basis=GAS_BASIS_DIFFERENTIAL["NYISO"],
             marginal_heat_rate=13.1,
-            hurdle=2.0,
+            hurdle=1.0,
             interface_limit_mw=3900.0,
             border_zones=("PJM_EMAAC",),
             load_shape_exponent=1.63,
@@ -2708,8 +2755,20 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # LMP/HH ratio is the least stable seam (downstate congestion/
             # scarcity), so the 13.1 mean badly over-prices cheap-2023 (measured
             # 9.7) and under-prices tight-2025 (14.7). Anchored to the measured
-            # NYISO RT LMP each year. Smallest PJM seam (EMAAC only).
+            # NYISO RT LMP each year. Smallest PJM seam (EMAAC only). CAVEAT: this
+            # is NYISO's NYC-weighted SYSTEM-average LMP, not the PJM-NY (west-NY)
+            # BORDER the seam physically clears against; the system average is
+            # congestion-inflated in tight hours, so the economic seam still
+            # over-exports NY in dear-2025 (the scope-B border-price re-anchor is
+            # a follow-up, gated on a committed west-NY hourly LMP extract).
             hr_by_year={2023: 9.66, 2024: 12.92, 2025: 14.67},
+            # Firm scheduled-export floor (derive_firm_export_floor.py, p10 of
+            # PJM's measured per-tie SCHEDULED export). NYISO export is firm-
+            # dominated (100% of hours, a stable ~900-1650 MW scheduled base), so
+            # the volatile system-avg HR drove the 2023 collapse (model +4.3 vs
+            # measured +18.5): the firm base flows regardless of the cheap-2023
+            # spread. The economic tranches clear on top.
+            firm_export_floor_by_year={2023: 900.0, 2024: 1400.0, 2025: 1650.0},
         ),
         NeighborInterface(
             name="Carolinas",
@@ -2731,9 +2790,49 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # measured Duke FERC-714 hourly system-lambda extract (rule #12); no
             # organized-market LMP exists for the Southeast, so no hr_by_year.
             marginal_heat_rate=11.6,
-            hurdle=2.0,
+            hurdle=1.0,
             interface_limit_mw=2400.0,
             border_zones=("PJM_Dominion",),
+            load_shape_exponent=1.60,
+        ),
+        NeighborInterface(
+            name="TVA",
+            ba_code="TVA",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            # Southeast SERC structural HR, identical basis to the reconciled
+            # Carolinas seam: ~$30/MWh SERC bilateral level / Henry Hub. TVA is a
+            # nuclear/coal/hydro-heavy footprint structurally CHEAPER than PJM, so
+            # PJM net-IMPORTS from it (PJM Data Miner per-tie: PJM net-imports
+            # ~6 TWh/yr over the TVA tie, exporting only 3-9% of hours). No
+            # organized-market LMP exists for the Southeast, so this is the same
+            # documented $30 SERC anchor the Carolinas use (rule #12: documented
+            # estimate where measured is absent); the per-tie data only VALIDATES
+            # the resulting net-import direction, it is NOT tuned to it (rule #11).
+            marginal_heat_rate=11.6,
+            hurdle=1.0,
+            # p99.5 |flow| of PJM's measured TVA tie, pooled 2023-25
+            # (derive_interface_limits.py): 1565/1539/1678 -> 1600 MW.
+            interface_limit_mw=1600.0,
+            border_zones=("PJM_AEP_Ohio", "PJM_Dominion"),
+            load_shape_exponent=1.60,
+        ),
+        NeighborInterface(
+            name="LGEE",
+            ba_code="LGEE",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            # Louisville Gas & Electric / KU (Kentucky): a coal-heavy, low-cost
+            # footprint PJM net-IMPORTS from (~2.3 TWh/yr, exporting ~16-19% of
+            # hours). Priced on the same documented Southeast SERC $30/HH basis as
+            # TVA / the Carolinas (rule #12); per-tie data validates the direction
+            # (rule #11), not tuned to it.
+            marginal_heat_rate=11.6,
+            hurdle=1.0,
+            # p99.5 |flow| of PJM's measured LGEE tie, pooled 2023-25
+            # (derive_interface_limits.py): 1143/1096/995 -> 1100 MW.
+            interface_limit_mw=1100.0,
+            border_zones=("PJM_West_APS", "PJM_AEP_Ohio"),
             load_shape_exponent=1.60,
         ),
     ],
