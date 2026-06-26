@@ -91,6 +91,7 @@ from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
     ercot_multiproduct_reserve_coopt_inputs,
     ercot_reserve_coopt_inputs,
+    ercot_rtolcap_supply_cap_mw,
     miso_reserve_coopt_inputs,
     nyiso_reserve_coopt_inputs,
     nyiso_spin_eligible,
@@ -668,6 +669,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         reserve_headroom_eligible=coopt_hr_elig,
                         reserve_headroom_products=coopt_hr_prod,
                     )
+                    # Optional reserve-supply re-scope (RTOLCAP cap): cap each
+                    # headroom tier's cleared reserve at the measured ERCOT
+                    # online-responsive capability instead of full-fleet headroom
+                    # (Finding 1 / G1 broad-month fix). Measured series, not a fit.
+                    coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
+                    if coopt_supply_cap is not None:
+                        dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
                 else:
                     (
                         coopt_req,
