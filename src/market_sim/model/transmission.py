@@ -1730,6 +1730,7 @@ def inject_caiso_ct_reliability_floor(
     slope_per_c: float,
     t0_c: float,
     cap: float,
+    base: float = 0.0,
     hod_window: tuple[int, int] = CAISO_CT_FLOOR_HOURS,
 ) -> bool:
     """Floor CAISO CT_PEAKER at a temperature-driven local-RA commitment.
@@ -1746,9 +1747,13 @@ def inject_caiso_ct_reliability_floor(
     After :func:`~market_sim.data.fleet.generators_to_fleet_arrays` builds the
     fleet, this imposes a hard minimum-generation floor on the CT_PEAKER units
     over the afternoon-evening ``hod_window``, sized to ``frac`` x available
-    capacity where ``frac = clip(slope_per_c*(TMAX - t0_c), 0, cap)`` is keyed to
-    the load-weighted CAISO daily max temperature (:func:`~market_sim.data
-    .eia_loader.caiso_load_weighted_tmax`). The hourly fleet target is
+    capacity where ``frac = clip(base + slope_per_c*(TMAX - t0_c), base, cap)`` is
+    keyed to the load-weighted CAISO daily max temperature (:func:`~market_sim
+    .data.eia_loader.caiso_load_weighted_tmax`). ``base`` is the YEAR-ROUND
+    local-RA baseline (the measured cool-day evening CF the hot-limb fit clips to
+    zero — CAISO's Local Capacity Requirement holds a must-offer minimum on mild
+    days, not only hot ones); ``base = 0`` is byte-identical to the hot-limb-only
+    floor. The hourly fleet target is
     distributed over the CT_PEAKER units **cheapest-first** (by heat rate), each
     capped at its available capacity — the same hour-varying
     ``FleetArrays.min_gen`` lower bound the CHP steam floor and the gas
@@ -1787,11 +1792,16 @@ def inject_caiso_ct_reliability_floor(
     if tmax is None:
         return False
 
-    # Temperature->commitment fraction (zero below t0_c, capped on the hottest
-    # days), restricted to the afternoon-evening window (zero elsewhere). Row 0
-    # of the dispatch is the first local hour of the year, so a plain local clock
+    # Temperature->commitment fraction: the hot-limb line clipped between the
+    # year-round local-RA BASELINE (``base``, the measured cool-day evening
+    # minimum the hot-limb fit clips to zero) and the hottest-day ceiling
+    # (``cap``), restricted to the afternoon-evening window (zero elsewhere). With
+    # base = 0 this is byte-identical to the hot-limb-only floor. Row 0 of the
+    # dispatch is the first local hour of the year, so a plain local clock
     # reproduces the hour-of-day index.
-    frac = np.clip(slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), 0.0, cap)
+    frac = np.clip(
+        base + slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), base, cap
+    )
     clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
     hod = clock.hour.to_numpy()
     start, end = hod_window

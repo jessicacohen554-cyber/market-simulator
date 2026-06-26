@@ -764,6 +764,34 @@ class TestCaisoCtReliabilityFloor(unittest.TestCase):
         cap = fa.pmax[ct_row] * fa.availability[ct_row]
         self.assertTrue(bool((fa.min_gen[ct_row] <= cap + 1e-6).all()))
 
+    def test_baseline_floors_cool_days_too(self):
+        # With a year-round baseline, the CT carries a floor on EVERY day in the
+        # evening window (not just the hot ones), and a non-zero base raises the
+        # minimum floored level above the hot-limb-only case.
+        H = 8760
+        fa_base, gens, hod = self._ct_fleet(H)
+        inject_caiso_ct_reliability_floor(fa_base, "CAISO", 2024, 0.047, 25.0, 0.46)
+        fa_b, _, _ = self._ct_fleet(H)
+        inject_caiso_ct_reliability_floor(
+            fa_b, "CAISO", 2024, 0.047, 25.0, 0.46, base=0.05
+        )
+        ct_row = [g.plant_group for g in gens].index("CT_PEAKER")
+        cc_row = [g.plant_group for g in gens].index("CC_REGULAR")
+        lo, hi = CAISO_CT_FLOOR_HOURS
+        in_window = (hod >= lo) & (hod <= hi)
+        # The baseline floors strictly more evening hours than the hot-limb alone.
+        hot_only = int((fa_base.min_gen[ct_row] > 0.0).sum())
+        with_base = int((fa_b.min_gen[ct_row] > 0.0).sum())
+        self.assertGreater(with_base, hot_only)
+        # Every floored hour is still inside the afternoon-evening window.
+        floored = fa_b.min_gen[ct_row] > 0.0
+        self.assertTrue(bool(np.all(in_window[floored])))
+        # The baseline never overshoots the hottest-day total or touches CC.
+        self.assertGreaterEqual(
+            float(fa_b.min_gen[ct_row].sum()), float(fa_base.min_gen[ct_row].sum())
+        )
+        np.testing.assert_array_equal(fa_b.min_gen[cc_row], 0.0)
+
     def test_non_caiso_is_no_op(self):
         fa, _, _ = self._ct_fleet(48)
         self.assertFalse(
