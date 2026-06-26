@@ -3089,7 +3089,31 @@ def _commitment_pass(state: dict, config=None):
         screen_coal=cfg.commitment_screen_coal,
         preserve_min_gen=preserve_min_gen,
     )
-    return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
+    result_p2 = solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
+    if as_value is not None and os.environ.get("AS_AWARE_DIAG"):
+        import calendar as _cal
+
+        he = np.atleast_2d(np.asarray(dk["reserve_headroom_eligible"], bool))
+        hp = np.atleast_2d(np.asarray(dk["reserve_headroom_products"], bool))
+        reqp = np.asarray(dk["reserve_requirement"], float)
+        cap2 = fa_p2.pmax[:, None] * fa_p2.availability  # P2 available cap
+        nethr2 = np.maximum(cap2 - result_p2.dispatch, 0.0)  # actual P2 headroom
+        may = slice(2880, 2880 + _cal.monthrange(2024, 5)[1] * 24)
+        for h in range(he.shape[0]):
+            tgt = reqp[hp[h]].sum(axis=0)
+            cov = (nethr2 * he[h][:, None]).sum(axis=0)
+            short = cov < tgt - 1e-6
+            logger.info(
+                "P2-ACTUAL row%d: May hrs short=%d/%d  May min cov=%.0f "
+                "tgt~%.0f  May mean cov=%.0f",
+                h,
+                int(short[may].sum()),
+                (may.stop - may.start),
+                float(cov[may].min()),
+                float(tgt[may].mean()),
+                float(cov[may].mean()),
+            )
+    return result_p2
 
 
 def _generation_twh(result, context: FleetContext) -> dict[str, float]:
