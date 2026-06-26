@@ -561,9 +561,12 @@ def as_adequacy_commit(
         headroom_products: ``(n_rows, n_prod)`` boolean — which products each
             headroom row bounds; the row's target is the sum of those products' req.
         requirement_mw: ``(n_prod, T)`` per-product AS requirement (MW).
-        p1_dispatch: The P1 energy dispatch, ``(n_gen, T)`` — the net-headroom base.
+        p1_dispatch: The P1 energy dispatch, ``(n_gen, T)``. The floor targets
+            committed capacity against each row's TOTAL eligible P1 energy plus its
+            requirement, so it is robust to the P1->P2 redispatch (a decommitted
+            unit's energy shifts onto the committed fleet).
         headroom_frac: Coverage multiple on the measured requirement (1.0 = commit
-            until committed net headroom covers the procured AS exactly).
+            until committed capacity covers all eligible energy + the procured AS).
 
     Returns:
         A new commitment mask (a copy) with the adequacy commits applied.
@@ -576,11 +579,8 @@ def as_adequacy_commit(
         return out
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
-    # Net online headroom: capacity a committed unit could offer up as reserve
-    # after serving its P1 energy. Clipped at 0 (a unit at its cap holds none).
-    net_hr = np.maximum(
-        pmax[:, np.newaxis] * avail - np.asarray(p1_dispatch, float), 0.0
-    )
+    cap = pmax[:, np.newaxis] * avail  # (n_gen, T) available capacity
+    disp = np.asarray(p1_dispatch, dtype=float)  # (n_gen, T)
     # Global cheapest-startup order; each row commits the cheapest units IN ITS set.
     startup = np.array(
         [
@@ -589,26 +589,37 @@ def as_adequacy_commit(
         ]
     )
     order = np.argsort(startup, kind="stable")
+    # The total responsive thermal energy (across every headroom row's eligible
+    # set). When the screen decommits a quick-start peaker that ran for energy in
+    # P1, the P2 re-dispatch can shift that energy onto the COMMITTED fast fleet
+    # (the fast units back-fill the decommitted peakers). So the worst case for any
+    # row is that it must serve the whole responsive energy, not just its own — a
+    # per-row energy estimate under-commits the fast row and the co-opt then prices
+    # a false VOLL shortfall on the fast products. Target each row's committed
+    # capacity against this total responsive energy plus the row's requirement.
+    responsive = he.any(axis=0)[:, None]  # (n_gen,1) any-row eligible
+    energy_total = (disp * responsive).sum(axis=0)  # (T,)
     # Process the most-restrictive row first (fewest eligible units = the fast
     # row), so its restricted set is satisfied before the looser all row tops up
     # with peakers; a unit committed for one row counts toward every row it is in.
     rows = sorted(range(he.shape[0]), key=lambda h: int(he[h].sum()))
     for h in rows:
-        target = req[hp[h]].sum(axis=0) * float(headroom_frac)  # (T,)
+        elig_row = he[h][:, None]
+        target = energy_total + req[hp[h]].sum(axis=0) * float(headroom_frac)  # (T,)
         if target.max() <= 0.0:
             continue
-        cum = (net_hr * (out & he[h][:, None])).sum(axis=0)  # (T,)
+        cum = (cap * (out & elig_row)).sum(axis=0)  # (T,) committed eligible cap
         for g in order:
             if not he[h, g]:
                 continue
             short = cum < target
             if not short.any():
                 break
-            add = short & (~out[g, :]) & (net_hr[g, :] > 0.0)
+            add = short & (~out[g, :]) & (cap[g, :] > 0.0)
             if not add.any():
                 continue
             out[g, add] = True
-            cum[add] += net_hr[g, add]
+            cum[add] += cap[g, add]
     return out
 
 
