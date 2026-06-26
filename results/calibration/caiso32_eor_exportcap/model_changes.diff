@@ -1,0 +1,301 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 25adfc3..b451b8f 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -1881,6 +1881,9 @@ def run_year(
+     ):
+         from market_sim.model.transmission import build_caiso_corridor_flow_groups
+ 
++        corridor_export_env = (
++            None  # measured branch fills it; forward ATC leaves it off
++        )
+         if forward_atc:
+             # FORWARD ATC: corridor TTC × posted-ATC base fraction × forward solar
+             # derate (CISO solar / demand), a capability limit — not the measured
+@@ -1895,23 +1898,43 @@ def run_year(
+             from market_sim.data.eia_loader import measured_corridor_flow_envelope
+ 
+             corridor_env = measured_corridor_flow_envelope(iso, year, demand.shape[1])
++            # Symmetric measured export-deliverability ceiling: caps each
++            # corridor's export (negative) flow at its p95 net export, which
++            # collapses to ~0 in the evening ramp where the corridor reliably
++            # net-imports — forbidding the LP's unphysical evening wheel-out of
++            # cheap CA gas that over-dispatched CC_REGULAR and inflated the
++            # evening LMP. A capability envelope the LP clears below, not the
++            # hourly residual (rule #12).
++            corridor_export_env = measured_corridor_flow_envelope(
++                iso, year, demand.shape[1], direction="export"
++            )
+             from market_sim.config.constants import CAISO_CORRIDOR_FLOW_PERCENTILE
+ 
+             cap_label = f"measured p{CAISO_CORRIDOR_FLOW_PERCENTILE:g} ATC proxy"
+         if corridor_env:
+             corridor_groups = build_caiso_corridor_flow_groups(
+-                iso_config.links, corridor_env
++                iso_config.links,
++                corridor_env,
++                export_envelope=None if forward_atc else corridor_export_env,
+             )
+             interface_groups = interface_groups + corridor_groups
++            exp_note = ""
++            if corridor_export_env:
++                exp_note = (
++                    "; export-direction cap on (evening net-export ~0 → no wheel-out): "
++                    f"median export DSW {float(np.median(corridor_export_env.get('WECC_DSW', [np.nan]))) / 1000.0:.1f} GW "
++                    f"/ PNW {float(np.median(corridor_export_env.get('WECC_PNW', [np.nan]))) / 1000.0:.1f} GW"
++                )
+             logger.info(
+                 "%s %d: WECC corridor deliverability cap on %d link(s) — %s; "
+-                "median DSW %.1f GW / PNW %.1f GW; midday tighter",
++                "median import DSW %.1f GW / PNW %.1f GW; midday tighter%s",
+                 iso,
+                 year,
+                 len(corridor_groups),
+                 cap_label,
+                 float(np.median(corridor_env.get("WECC_DSW", [np.nan]))) / 1000.0,
+                 float(np.median(corridor_env.get("WECC_PNW", [np.nan]))) / 1000.0,
++                exp_note,
+             )
+ 
+     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
+diff --git a/src/market_sim/data/eia_loader.py b/src/market_sim/data/eia_loader.py
+index e83f64a..7986c18 100644
+--- a/src/market_sim/data/eia_loader.py
++++ b/src/market_sim/data/eia_loader.py
+@@ -816,7 +816,11 @@ def measured_import_hub_prices(
+ 
+ 
+ def measured_corridor_flow_envelope(
+-    iso: str, year: int, hours: int, percentile: float | None = None
++    iso: str,
++    year: int,
++    hours: int,
++    percentile: float | None = None,
++    direction: str = "import",
+ ) -> dict[str, np.ndarray] | None:
+     """Return each CAISO import corridor's measured net-import deliverability cap.
+ 
+@@ -848,7 +852,23 @@ def measured_corridor_flow_envelope(
+     the ISO is not CAISO, the parquet is absent, or the year is uncovered (a
+     forecast year) — in which case the caller leaves the corridors uncapped
+     (byte-identical).
++
++    With ``direction="export"`` the same machinery instead returns each
++    corridor's measured net-*export* deliverability ceiling (the per-(month ×
++    hour-of-day) ``percentile`` of measured net export = −net import, clipped at
++    0). It is the symmetric counterpart of the import ceiling: just as the import
++    ATC collapses midday when the WECC neighbors are long on solar, the export
++    ATC collapses in the evening ramp when the neighbors are themselves short
++    (their own peak), so a corridor that reliably net-imports in an evening
++    (month, hod) bucket caps export there at ~0 — forbidding the LP's unphysical
++    evening wheel-out of cheap CA gas. Like the import ceiling it is a smoothed
++    capability envelope the LP clears *below*, not the hourly residual flow
++    (rule #12). Applied as the reverse-direction floor of the corridor's
++    asymmetric interface group (see
++    :func:`~market_sim.model.transmission.build_caiso_corridor_flow_groups`).
+     """
++    if direction not in ("import", "export"):
++        raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
+     if iso.upper() != "CAISO":
+         return None
+     from market_sim.config.constants import (
+@@ -890,7 +910,10 @@ def measured_corridor_flow_envelope(
+             continue
+         tab = np.full((12, 24), np.nan)
+         for (m, h), g in sub.groupby(["month", "hod"], observed=True):
+-            tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
++            vals = g["net_import"].to_numpy()
++            if direction == "export":
++                vals = -vals  # net export = -net import; p95 export deliverability
++            tab[m - 1, h] = np.percentile(vals, pct)
+         # Fill any empty (month, hod) bucket with that month's max over hours
+         # (a conservative ceiling), then the global max, so the cap is always
+         # finite and never tighter than a populated neighbour.
+@@ -901,10 +924,11 @@ def measured_corridor_flow_envelope(
+             tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
+         if np.any(np.isnan(tab)):
+             tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
+-        # Clip at 0: the cap bounds net *import*; a (month, hod) bucket whose
+-        # p95 net import is negative (the corridor reliably net-exports then,
+-        # e.g. the PNW corridor at midday) caps import at zero, never forces an
+-        # export — the export direction is left to the link's physical TTC.
++        # Clip at 0: the cap bounds net flow in ``direction``; a (month, hod)
++        # bucket whose p95 is negative (the corridor reliably runs the OTHER way
++        # then — e.g. import p95 < 0 where the PNW corridor net-exports midday, or
++        # export p95 < 0 where a corridor net-imports the evening ramp) caps that
++        # direction at zero, never forcing the reverse flow.
+         out[zone] = np.clip(tab[rm - 1, rh], 0.0, None)
+     return out or None
+ 
+diff --git a/src/market_sim/model/dispatch.py b/src/market_sim/model/dispatch.py
+index 6e2b21e..c27ccb0 100644
+--- a/src/market_sim/model/dispatch.py
++++ b/src/market_sim/model/dispatch.py
+@@ -576,11 +576,14 @@ def _build_interface_rows(
+ 
+     Args:
+         layout: Variable layout describing the column structure.
+-        interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` where
++        interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` — or
++            ``(link_idx, cap_mw, bidirectional, lower_cap_mw)`` — where
+             ``link_idx`` is the array of member link indices (into the flow
+-            block), ``cap_mw`` the aggregate limit in MW (scalar or ``(T,)``),
+-            and ``bidirectional`` whether to also floor the signed sum at
+-            ``-cap_mw``.
++            block), ``cap_mw`` the aggregate upper limit in MW (scalar or
++            ``(T,)``), ``bidirectional`` whether to also floor the signed sum at
++            ``-cap_mw``, and the optional ``lower_cap_mw`` (scalar or ``(T,)``)
++            an explicit reverse-direction floor ``-lower_cap_mw`` that overrides
++            ``bidirectional`` (for an asymmetric import/export corridor cap).
+ 
+     Returns:
+         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
+@@ -597,14 +600,26 @@ def _build_interface_rows(
+     # group-minor row order; a scalar cap broadcasts across all hours.
+     upper_2d = np.empty((T, n_groups), dtype=float)
+     lower_2d = np.empty((T, n_groups), dtype=float)
+-    for gi, (link_idx, cap, two_way) in enumerate(interface_groups):
++    for gi, group in enumerate(interface_groups):
++        # A group is a 3-tuple ``(link_idx, cap, two_way)`` or a 4-tuple
++        # ``(link_idx, cap, two_way, lower_cap)`` where ``lower_cap`` (scalar or
++        # ``(T,)``) sets an explicit reverse-direction bound (``flow >=
++        # -lower_cap``) — used for an asymmetric corridor whose import ceiling and
++        # export ceiling differ (CAISO per-hub: p95 net import up, p95 net export
++        # down). Absent, the reverse bound follows ``two_way`` (symmetric ``-cap``
++        # or ``-inf``), so existing 3-tuple groups are byte-identical.
++        link_idx, cap, two_way = group[0], group[1], group[2]
++        lower_cap = group[3] if len(group) > 3 else None
+         idx = np.asarray(link_idx, dtype=int)
+         rows.extend([gi] * idx.size)
+         cols.extend((layout._flow_off + idx).tolist())
+         data.extend([1.0] * idx.size)
+         cap_arr = np.broadcast_to(np.asarray(cap, dtype=float), (T,))
+         upper_2d[:, gi] = cap_arr
+-        lower_2d[:, gi] = -cap_arr if two_way else -np.inf
++        if lower_cap is not None:
++            lower_2d[:, gi] = -np.broadcast_to(np.asarray(lower_cap, dtype=float), (T,))
++        else:
++            lower_2d[:, gi] = -cap_arr if two_way else -np.inf
+ 
+     per_hour = sp.coo_matrix((data, (rows, cols)), shape=(n_groups, vph)).tocsr()
+     # kron(eye(T), per_hour) tiles the per-hour coefficient block across all
+diff --git a/src/market_sim/model/transmission.py b/src/market_sim/model/transmission.py
+index 5f26632..aff6e0b 100644
+--- a/src/market_sim/model/transmission.py
++++ b/src/market_sim/model/transmission.py
+@@ -515,26 +515,39 @@ _CAISO_CORRIDOR_LINK_TO: dict[str, tuple[str, ...]] = {
+ def build_caiso_corridor_flow_groups(
+     links: list[TransferLink],
+     envelope: dict[str, np.ndarray],
+-) -> list[tuple[np.ndarray, np.ndarray, bool]]:
+-    """Return one-sided per-hour interface groups capping each corridor's import.
++    export_envelope: dict[str, np.ndarray] | None = None,
++) -> list[tuple]:
++    """Return per-hour interface groups capping each corridor's signed flow.
+ 
+     For each per-hub corridor zone in ``envelope`` (``WECC_PNW`` / ``WECC_DSW``),
+     finds the corridor's import link (``from_zone`` = corridor, ``to_zone`` =
+     NP15/SP15 via :data:`_CAISO_CORRIDOR_LINK_TO`) and returns an interface group
+-    ``(link_idx, cap_hourly, bidirectional=False)`` so
+-    :func:`~market_sim.model.dispatch._build_interface_rows` caps that link's
+-    import-direction flow at the measured deliverability envelope hour by hour.
+-    ``bidirectional`` is ``False`` so only the import (positive, neighbor→CAISO)
+-    direction is bounded — the export direction keeps the link's own physical
+-    TTC (midday CA export is real). Pairs with
+-    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`; used by
+-    the calibration runner only when ``config.caiso_corridor_flow_limit`` is on.
++    that caps that link's flow hour by hour at the measured deliverability
++    envelope (via :func:`~market_sim.model.dispatch._build_interface_rows`).
++
++    When ``export_envelope`` is ``None`` the group is one-sided
++    ``(link_idx, import_cap, bidirectional=False)`` — only the import (positive,
++    neighbor→CAISO) direction is bounded and the export direction keeps the
++    link's own physical TTC (the original behaviour).
++
++    When ``export_envelope`` is supplied the group is asymmetric
++    ``(link_idx, import_cap, False, export_cap)`` — the import direction is capped
++    at the corridor's p95 net-import ceiling and the export (negative) direction
++    at its p95 net-*export* ceiling. The export ceiling collapses to ~0 in
++    evening-ramp (month, hod) buckets where the corridor reliably net-imports, so
++    the LP can no longer wheel cheap CA gas out across the seam in the evening
++    peak (the structural CC over-dispatch + evening price inflation). Both are
++    smoothed measured capability envelopes the LP clears *below*, not the hourly
++    residual (rule #12). Pairs with
++    :func:`~market_sim.data.eia_loader.measured_corridor_flow_envelope`
++    (``direction="import"`` / ``"export"``); used by the calibration runner only
++    when ``config.caiso_corridor_flow_limit`` is on.
+ 
+     Returns an empty list when no corridor link is found (e.g. the per-hub split
+     was not applied), so the LP is byte-identical off the flag.
+     """
+     pair_to_idx = {(ln.from_zone, ln.to_zone): i for i, ln in enumerate(links)}
+-    groups: list[tuple[np.ndarray, np.ndarray, bool]] = []
++    groups: list[tuple] = []
+     for zone, cap in envelope.items():
+         link_idx = next(
+             (
+@@ -546,9 +559,13 @@ def build_caiso_corridor_flow_groups(
+         )
+         if link_idx is None:
+             continue
+-        groups.append(
+-            (np.array([link_idx], dtype=int), np.asarray(cap, dtype=float), False)
+-        )
++        idx = np.array([link_idx], dtype=int)
++        import_cap = np.asarray(cap, dtype=float)
++        exp = export_envelope.get(zone) if export_envelope else None
++        if exp is not None:
++            groups.append((idx, import_cap, False, np.asarray(exp, dtype=float)))
++        else:
++            groups.append((idx, import_cap, False))
+     return groups
+ 
+ 
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+index 26a63a9..1ef2708 100644
+--- a/tests/test_dispatch.py
++++ b/tests/test_dispatch.py
+@@ -1356,6 +1356,43 @@ class TestInterfaceGroupLimit(unittest.TestCase):
+         self.assertTrue(np.all(total_import <= 4000.0 + 1e-6))
+         np.testing.assert_allclose(total_import, np.full(self.T, 4000.0), atol=1e-6)
+ 
++    def test_asymmetric_group_caps_export_direction(self):
++        # 4-tuple group (link_idx, import_cap, two_way=False, export_cap): the
++        # reverse (export, negative-flow) direction is floored at -export_cap
++        # while the import direction keeps import_cap. Make the import node
++        # expensive and a load zone's local gen cheap, so the LP wants to export
++        # cheap local power up the link (negative flow) — and verify the export
++        # floor binds while the import cap stays slack.
++        mc = np.vstack(
++            [
++                np.full(self.T, 90.0),  # import node: expensive
++                np.full(self.T, 10.0),  # Z1 local: cheap (wants to export)
++                np.full(self.T, 90.0),  # Z2 local: expensive
++            ]
++        )
++        demand = np.array(
++            [
++                np.full(self.T, 2000.0),  # import node now has load to serve
++                np.zeros(self.T),
++                np.full(self.T, 1000.0),
++            ]
++        )
++        # Export floor of 500 MW on link 0 (Z0->Z1); import cap loose at 6000.
++        groups = [(np.array([0]), 6000.0, False, 500.0)]
++        res = solve_dispatch(
++            self.fleet,
++            demand,
++            mc=mc,
++            T=self.T,
++            incidence=self.incidence,
++            ttc=self.ttc,
++            interface_groups=groups,
++            **self._kwargs(),
++        )
++        # Flow on link 0 is bounded below by -500 (export from Z1 to Z0 capped).
++        self.assertTrue(np.all(res.flows[0] >= -500.0 - 1e-6))
++        np.testing.assert_allclose(res.flows[0], np.full(self.T, -500.0), atol=1e-6)
++
+     def test_no_groups_is_identical(self):
+         base = solve_dispatch(
+             self.fleet,
