@@ -1356,6 +1356,43 @@ class TestInterfaceGroupLimit(unittest.TestCase):
         self.assertTrue(np.all(total_import <= 4000.0 + 1e-6))
         np.testing.assert_allclose(total_import, np.full(self.T, 4000.0), atol=1e-6)
 
+    def test_asymmetric_group_caps_export_direction(self):
+        # 4-tuple group (link_idx, import_cap, two_way=False, export_cap): the
+        # reverse (export, negative-flow) direction is floored at -export_cap
+        # while the import direction keeps import_cap. Make the import node
+        # expensive and a load zone's local gen cheap, so the LP wants to export
+        # cheap local power up the link (negative flow) — and verify the export
+        # floor binds while the import cap stays slack.
+        mc = np.vstack(
+            [
+                np.full(self.T, 90.0),  # import node: expensive
+                np.full(self.T, 10.0),  # Z1 local: cheap (wants to export)
+                np.full(self.T, 90.0),  # Z2 local: expensive
+            ]
+        )
+        demand = np.array(
+            [
+                np.full(self.T, 2000.0),  # import node now has load to serve
+                np.zeros(self.T),
+                np.full(self.T, 1000.0),
+            ]
+        )
+        # Export floor of 500 MW on link 0 (Z0->Z1); import cap loose at 6000.
+        groups = [(np.array([0]), 6000.0, False, 500.0)]
+        res = solve_dispatch(
+            self.fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            incidence=self.incidence,
+            ttc=self.ttc,
+            interface_groups=groups,
+            **self._kwargs(),
+        )
+        # Flow on link 0 is bounded below by -500 (export from Z1 to Z0 capped).
+        self.assertTrue(np.all(res.flows[0] >= -500.0 - 1e-6))
+        np.testing.assert_allclose(res.flows[0], np.full(self.T, -500.0), atol=1e-6)
+
     def test_no_groups_is_identical(self):
         base = solve_dispatch(
             self.fleet,
