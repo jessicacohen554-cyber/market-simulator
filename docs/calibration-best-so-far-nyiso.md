@@ -1,6 +1,52 @@
 # NYISO calibration — best config so far
 
-> **LATEST PROBE (rejected, 2026-06-25): `nyiso 28 native-hr`**
+> **KEEPER (2026-06-26): `nyiso 32 steam-markup`**
+> (`2026-06-26-nyiso-32-steam-markup`, bundle
+> `results/calibration/nyiso_32_steam_markup`, all 3 years). The documented
+> **run-29 carry-forward** executed on ST_GAS only: re-level the legacy gas-steam
+> offer from the ERCOT-shaped rising ramp (`committed 0.97 / econ_low 1.10 /
+> econ_high 1.45`) to NYISO's **own measured CAMPD steam marginal HR × a grounded
+> competitive markup** (`committed 1.05 / econ_low 1.08 / econ_high 1.13`). The
+> markup is the CC class's own defensible reach ratio (keeper CC `econ_high` 1.21
+> ÷ native CC marginal 0.925 = **1.31×**) applied to the *flat* steam native
+> marginal HR (~0.82-0.83, `nyiso_campd_marginal_hr_summary.csv`), with a thin
+> monotone spread to keep a valid rising offer below the unchanged inflexible peak
+> tranche. **CC reach is UNCHANGED at run-27** (`econ_high` 1.21/1.24 — the markup
+> that holds the clearing price; *not* stripped, unlike the rejected run-28).
+> Merit order preserved (steam eff HR 11.1-12.0 > CC 9.4 < CT 16.1, no inversion).
+>
+> **Effect — the HARD C1 fuel-mix improves across the board** (rule-#1 first
+> axis): `2023 ST_GAS −1.26 → −0.01 TWh` (now **PASS** — the flat measured band
+> reproduces measured steam volume almost *exactly*, validating the offer LEVEL a
+> priori, not residual-fitted), `CC_REGULAR +1.70 → +0.99` (**PASS**); `2024
+> ST_GAS −4.14 → −3.28`, `CC_REGULAR +2.09 → +1.74`. `dispatch_corr` stays PASS
+> (gas r=0.91/0.84/0.80). **The SOFT C3a mean LMP regresses to a documented
+> CAVEAT** (`2023 in-band → −10.5%`, `2024 −9.7% → −11.2%`): the keeper-27 steep
+> steam ramp was a **compensating over-pricing** propping up the mid-merit
+> clearing price; removing it (the measured-grounded move) **exposes the real root
+> cause** — the missing reserve-scarcity / RCPF tail (the *same* cause as the
+> CT_PEAKER C1 under-run), confirmed **non-closable with grounded inputs** by
+> `nyiso 29` (online-proxy spin) and `nyiso 31` (commitment-gated spin). Kept per
+> **rule #1**: the measured steam offer is the real mechanism; reverting to the
+> over-priced ramp to recover C3a would reach the right number through a mechanism
+> that isn't real *and* re-open the volume miss, and raising steam to chase C3a
+> would distort the now-validated steam volume (rule #12) — the **same promotion
+> principle as `nyiso 25`** (a measured-data correction kept despite a C3a
+> tradeoff attributed to the out-of-scope incidence root cause). New keeper because
+> it is the **most structurally faithful** NYISO config: measured-grounded steam
+> offer **and** the grounded CC reach. **Import/export:** the net-interchange
+> import reconciliation + priced node are unchanged (the keeper mechanism since
+> `nyiso 24`); the downstate **interface-TTC congestion separation (U7)** remains
+> **data-blocked** (no interface-flow file in `data/raw`) and the downstate
+> reserve-scarcity tail is the ledgered, grounded-input-bounded frontier. C6
+> governance **PASS** (attested); determination **NOT-YET** (`price_shape`/
+> `price_tail` = the genuine reserve-scarcity model gap, unledgered MODEL MISS —
+> the same open frontier on every NYISO keeper). Reproduce: the `nyiso 27` keeper
+> flags + `--offer-curve-json '{"ST_GAS": {"committed": 1.05, "econ_low": 1.08,
+> "econ_high": 1.13}}'` (now the live `_NYISO_OFFER_CURVE` default). Superseded
+> keeper below.
+
+> **PRIOR PROBE (rejected, 2026-06-25): `nyiso 28 native-hr`**
 > (`2026-06-25-nyiso-28-native-hr`, bundle
 > `results/calibration/nyiso_28_native-hr`, all 3 years). Re-grounded ALL of
 > `_NYISO_OFFER_CURVE` `CC_REGULAR` / `CC_CHP` / `ST_GAS`
