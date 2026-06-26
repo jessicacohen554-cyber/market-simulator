@@ -1950,6 +1950,8 @@ def solve_and_persist(
         "ct_mustrun_per_plant": ct_mustrun_per_plant,
         "ct_mustrun_floor_frac": ct_mustrun_floor_frac,
         "coal_drop_pof": coal_drop_pof,
+        "coal_mustrun_online_pmin": coal_mustrun_online_pmin,
+        "coal_sync_srmc_tranche": coal_sync_srmc_tranche,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
         "coal_prb_sigmoid_overrides": {
             k: v for k, v in (prb_overrides or {}).items() if v is not None
@@ -4112,6 +4114,26 @@ def main() -> None:
         "keep WEFOR in non-summer months and the derate all year.",
     )
     parser.add_argument(
+        "--coal-mustrun-online-pmin",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Size the coal must-run band to the measured online-net-MW "
+        "synchronization Pmin (thermal_tranches mustrun_online_pct) instead "
+        "of the take-or-pay contract floor. Pairs with "
+        "--coal-sync-srmc-tranche to hold units synchronized at their "
+        "measured online minimum.",
+    )
+    parser.add_argument(
+        "--coal-sync-srmc-tranche",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Split the coal online-Pmin band into a fuel-free contracted "
+        "_mustrun tranche and a full-SRMC _sync tranche, and force both on "
+        "(scaled by the measured online fraction) so coal holds at its "
+        "measured synchronization floor instead of price-following to zero. "
+        "Requires --coal-mustrun-online-pmin.",
+    )
+    parser.add_argument(
         "--wefor-residual",
         type=float,
         default=None,
@@ -5311,6 +5333,8 @@ def main() -> None:
             "coal_waste_passthrough_gas_mid": args.waste_gas_mid,
             "coal_waste_passthrough_gas_slope": args.waste_gas_slope,
         },
+        coal_mustrun_online_pmin=args.coal_mustrun_online_pmin,
+        coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
