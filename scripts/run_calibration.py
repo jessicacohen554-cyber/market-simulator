@@ -472,6 +472,20 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
 # ST_GAS under-run), so the run-29 path is a NYISO-grounded markup ON TOP of the
 # native marginal HR, not a restored cross-ISO borrow. See the run-28 attestation
 # and docs/calibration-best-so-far-nyiso.md.
+#
+# RUN-32 KEEPER (2026-06-26): the run-29 path executed on ST_GAS only. The legacy
+# gas-steam offer is re-levelled to the native steam marginal HR x the CC-grounded
+# competitive markup (1.31x): committed 0.97/econ_low 1.10/econ_high 1.45 ->
+# 1.05/1.08/1.13 (see the ST_GAS inline comment). CC stays at the run-27 reach
+# (the markup that holds the clearing price -- NOT stripped, unlike run-28). HARD
+# C1 improves across the board (2023 ST_GAS -1.26 -> -0.01 TWh PASS, CC_REGULAR
+# +1.70 -> +0.99 PASS; 2024 ST_GAS -4.14 -> -3.28, CC_REGULAR +2.09 -> +1.74); the
+# flat measured band reproduces measured steam VOLUME almost exactly, validating
+# the offer level a priori. SOFT C3a regresses to a documented CAVEAT (the keeper-27
+# steep ramp was a compensating over-pricing propping up the mid-merit price;
+# removing it exposes the ledgered reserve-scarcity tail) -- kept per rule #1.
+# Keeper since it is the most structurally faithful NYISO config: measured-grounded
+# steam offer + grounded CC reach. See the run-32 attestation.
 _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 0.90,
@@ -498,9 +512,26 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 7.0,
     },
     "ST_GAS": {
-        "committed": 0.97,
-        "econ_low": 1.10,
-        "econ_high": 1.45,
+        # run 32: re-levelled from the ERCOT-shaped rising ramp (0.97/1.10/1.45)
+        # to NYISO's OWN measured CAMPD steam marginal HR x a grounded competitive
+        # markup. Native steam marginal HR (NY+NJ CAMPD pooled,
+        # nyiso_campd_marginal_hr_summary.csv) is committed 0.818 / econ_low 0.830
+        # / econ_high 0.828 -- essentially FLAT (legacy steam part-load HR is no
+        # better than full-load, matching the 2023/24 SOM). The bare marginal HR is
+        # the marginal COST not the OFFER (run-28 finding: it craters C3a), so a
+        # competitive markup is applied ON TOP: the CC class's own defensible reach
+        # ratio (CC econ_high 1.21 / native CC marginal 0.925 = 1.31x) x the steam
+        # native marginal (~0.82-0.83 x 1.31 ~= 1.08), with a thin monotone spread
+        # 1.05 -> 1.13 to keep a valid rising offer and a modest scarcity reach
+        # below the inflexible peak tranche. Effective HR 11.1-12.0 stays ABOVE CC
+        # econ_high 9.4 and BELOW CT_PEAKER 16.1 (merit preserved, no inversion).
+        # Recovers the legacy-steam under-run (2023 ST_GAS -1.26 -> -0.01 TWh,
+        # near-EXACT -> the flat measured band reproduces measured steam volume,
+        # validating the level a priori, not residual-fitted). The C3a depression
+        # this exposes is the missing reserve-scarcity tail (ledgered, rule #1).
+        "committed": 1.05,
+        "econ_low": 1.08,
+        "econ_high": 1.13,
         "peak": 4.20,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
