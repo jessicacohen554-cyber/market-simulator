@@ -998,6 +998,31 @@ class ScenarioConfig:
     # the co-opt cannot price a false VOLL-scale shortage the real market procured
     # around. 1.0 = cover the procured AS exactly (the grounded default); a coverage
     # multiple on the measured requirement, NOT a price-residual fit (CLAUDE.md #12).
+    ercot_reserve_supply_cap: bool = False  # ERCOT: cap the multi-product co-opt's
+    # cleared reserve to the MEASURED online responsive capability (RTOLCAP /
+    # RTOFFCAP) instead of letting it draw on full-fleet headroom. The co-opt's
+    # shared-headroom RHS counts every reserve-eligible thermal unit's full
+    # capacity as reserve supply — including cold slow-start units a
+    # perfect-foresight LP leaves idle but still counts as "available" — so
+    # modeled reserve never tightens into the ~8-12 GW band where ERCOT's ORDC
+    # adder actually fires (the phantom-headroom gap, Finding 1 / G1). This lever
+    # re-scopes the reserve SUPPLY DEFINITION: it adds, per shared-headroom tier,
+    # a system-wide row capping cleared reserve at the measured RTOLCAP (fast/
+    # spinning tier) and RTOLCAP+RTOFFCAP (all tier incl. quick-start offline), so
+    # modeled online reserve TRACKS the measured series. An exogenous physical/
+    # market-rule distinction (online responsive vs full installed headroom), NOT
+    # a price fit — the cap is the ERCOT-published reserve capability, never the
+    # LMP or MCPC. Shapes the supply, not the commitment, so it sidesteps the
+    # energy-vs-headroom redispatch problem of the AS-aware commitment screen.
+    # Requires energy_reserve_coopt + ercot_multiproduct_as_coopt. Pair with the
+    # published-ORDC curve (ordc_lolp_params_path / KEEPER_ORDC_TABLE), which
+    # prices the P90-P99 band the supply re-scope finally reaches. Default off;
+    # ERCOT-only; GATED.
+    ercot_reserve_supply_cap_from_year: int = 2023  # First weather year the
+    # RTOLCAP reserve-supply cap applies. A modeling default (the measured series
+    # exists 2023+); the cap is physically correct in every ORDC-regime year. The
+    # 2025 RTC+B go-live tail (post 2025-12-05) has no measured RTOLCAP and is
+    # left uncapped (the cap series fills those hours with no constraint).
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -2359,6 +2384,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_n_ramp": 1,
     "ercot_as_aware_commitment": 1,
     "ercot_as_adequacy_frac": 2,
+    "ercot_reserve_supply_cap": 1,
+    "ercot_reserve_supply_cap_from_year": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
