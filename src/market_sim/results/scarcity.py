@@ -1112,6 +1112,89 @@ def ercot_multiproduct_reserve_coopt_inputs(
     )
 
 
+def ercot_as_aware_unit_value(
+    fleet_arrays: FleetArrays,
+    p1_dispatch: np.ndarray,
+    reserve_price_by_family: np.ndarray,
+    hours: int,
+) -> np.ndarray:
+    """Return the ``(n_gen, T)`` per-unit-hour AS revenue estimate for commitment.
+
+    The AS-aware commitment screen (``config.ercot_as_aware_commitment``,
+    :func:`market_sim.model.commitment.compute_commitment`) values a unit's
+    *ancillary-service* revenue, not its energy margin alone, when deciding which
+    units stay online. This estimates that revenue from the P1 co-optimization:
+
+        ``as_value[g, t] = reserve_price_proxy[g, t] x headroom[g, t]``
+
+    where ``headroom = pmax x availability - P1_dispatch`` (the MW the unit could
+    offer up as reserve, clipped at 0) and ``reserve_price_proxy`` is the binding
+    AS clearing price for the products the unit can supply, taken from the model's
+    OWN P1 balance-row dual ``reserve_price_by_family`` (shape ``(T, n_prod)``,
+    products ordered as :data:`~market_sim.config.constants.ERCOT_AS_PRODUCTS`) —
+    never the measured MCPC, so nothing here is fitted to a price.
+
+    The product-eligibility cascade mirrors the co-opt's two shared-headroom rows
+    (:func:`ercot_multiproduct_reserve_coopt_inputs`): a synchronized/spinning unit
+    (:data:`RESERVE_FUEL_TYPES` minus :data:`QUICK_START_FUEL_TYPES`) can clear
+    every product, so its proxy is the per-hour max across ALL products; an
+    offline-capable quick-start peaker (gas-CT/oil) can only back a 30-minute
+    Non-Spin award, so its proxy is the max across the non-fast (Non-Spin) products
+    alone. Units that hold no responsive reserve (wind/solar/hydro/imports) earn
+    zero AS value.
+
+    Args:
+        fleet_arrays: The P1 vectorized fleet, for ``pmax``, ``availability`` and
+            ``fuel_type_idx``.
+        p1_dispatch: The P1 dispatch result, ``(n_gen, T)``.
+        reserve_price_by_family: The P1 per-product reserve clearing price,
+            ``(T, n_prod)`` (``DispatchResult.reserve_price_by_family``).
+        hours: Number of hours ``T`` (for shape validation / a no-op fallback).
+
+    Returns:
+        The AS-value array, shape ``(n_gen, T)``, in ``$`` per MW-hour committed.
+        All-zero when ``reserve_price_by_family`` is missing (co-opt off).
+    """
+    T = int(hours)
+    n_gen = int(fleet_arrays.pmax.shape[0])
+    if reserve_price_by_family is None:
+        return np.zeros((n_gen, T), dtype=float)
+    rp = np.asarray(reserve_price_by_family, dtype=float)  # (T, n_prod)
+    if rp.ndim != 2 or rp.shape[0] != T:
+        return np.zeros((n_gen, T), dtype=float)
+    products = list(ERCOT_AS_PRODUCTS)
+    n_prod = rp.shape[1]
+    # Per-hour binding price over all products, and over the non-fast (Non-Spin)
+    # subset only — the two tiers of the eligibility cascade.
+    fast_cols = [
+        p for p in range(min(n_prod, len(products))) if products[p][2] == "fast"
+    ]
+    slow_cols = [
+        p for p in range(min(n_prod, len(products))) if products[p][2] != "fast"
+    ]
+    price_all = rp.max(axis=1) if n_prod else np.zeros(T)  # (T,)
+    price_slow = rp[:, slow_cols].max(axis=1) if slow_cols else np.zeros(T)  # (T,)
+
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    responsive = np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
+    quick = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+    fast_unit = responsive & ~quick  # spinning set: every product
+    # Per-unit price proxy row (T,) broadcast per unit class.
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
+    headroom = np.maximum(
+        pmax[:, None] * avail - np.asarray(p1_dispatch, dtype=float), 0.0
+    )
+
+    as_value = np.zeros((n_gen, T), dtype=float)
+    if fast_unit.any():
+        as_value[fast_unit] = headroom[fast_unit] * price_all[None, :]
+    quick_only = quick & responsive
+    if quick_only.any():
+        as_value[quick_only] = headroom[quick_only] * price_slow[None, :]
+    return as_value
+
+
 def scarcity_prices(
     config,
     year: int,

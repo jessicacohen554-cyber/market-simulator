@@ -302,6 +302,7 @@ def compute_commitment(
     storage_discharge: np.ndarray | None = None,  # (n_storage, T), P1 solve
     storage_zone_idx: np.ndarray | None = None,  # (n_storage,)
     demand: np.ndarray | None = None,  # (n_zones, T)
+    as_value: np.ndarray | None = None,  # (n_gen, T) AS revenue estimate
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
@@ -316,7 +317,10 @@ def compute_commitment(
        above zero, its storage-charge weight clears that floor. A deep
        battery-charging trough therefore breaks a run in two, so the pieces
        face step 3's min-run filter on their own — a cycling unit is not
-       carried through the night purely to charge batteries.
+       carried through the night purely to charge batteries. When ``as_value``
+       is supplied (AS-aware commitment), an hour is ALSO in merit when the unit
+       earns positive AS revenue there — a unit ERCOT keeps online *for AS* stays
+       committed through hours where its energy margin alone is non-positive.
     3. Drop runs shorter than ``min_run_hours``.
     4. Drop runs whose total *storage-weighted* margin is below
        ``startup_per_mw × (1 + IRR)``. The weight discounts margin earned in
@@ -324,7 +328,11 @@ def compute_commitment(
        committed purely to serve speculative battery-charging load (see
        :func:`_storage_commitment_weight`). When the storage inputs are
        omitted, or ``config.commitment_storage_weight`` is zero, the weight
-       is ``1.0`` everywhere and step 4 reduces to a plain margin sum.
+       is ``1.0`` everywhere and step 4 reduces to a plain margin sum. When
+       ``as_value`` is supplied, each hour's AS revenue is ADDED to the
+       run's margin total, so a run that is energy-marginal but earns AS revenue
+       (the units a tight month keeps online for Reg/RRS/ECRS/NonSpin) clears the
+       startup hurdle and stays committed.
     5. Merge surviving runs separated by less than ``min_down_hours``.
 
     Coal, nuclear and non-thermal generators are never screened — they stay
@@ -342,6 +350,14 @@ def compute_commitment(
         storage_discharge: P1 storage discharging power, ``(n_storage, T)``.
         storage_zone_idx: Zone index of each storage unit, ``(n_storage,)``.
         demand: Zonal demand, ``(n_zones, T)``, the storage-weight denominator.
+        as_value: Optional ``(n_gen, T)`` per-unit-hour AS revenue estimate
+            (reserve clearing price × reserve-eligible headroom, from the model's
+            own P1 balance-row dual — see
+            :func:`market_sim.results.scarcity.ercot_as_aware_unit_value`). When
+            supplied (AS-aware commitment), AS revenue both keeps a unit in merit
+            in its AS-earning hours and counts toward the run's startup-hurdle
+            margin. ``None`` (the default) reproduces the energy-only screen
+            byte-identically.
 
     Returns:
         The commitment mask, shape ``(n_gen, T)``.
@@ -374,10 +390,20 @@ def compute_commitment(
         weighted_margin = margin * storage_weight[zone, :]
         hurdle = params["startup_per_mw"] * (1.0 + irr)
 
-        # An hour is in merit when its margin is positive; with the floor
-        # active, a deep storage-charging trough (weight below the floor)
-        # also drops out, breaking the run there.
+        # AS-aware: a unit's AS revenue (reserve price × headroom) counts toward
+        # both keeping it in merit and clearing the startup hurdle, so the units a
+        # tight month keeps online for AS are not decommitted on energy alone.
+        av = None if as_value is None else as_value[g, :]
+        if av is not None:
+            weighted_margin = weighted_margin + av
+
+        # An hour is in merit when its energy margin is positive (or, AS-aware,
+        # when it earns positive AS revenue); with the floor active, a deep
+        # storage-charging trough (weight below the floor) also drops out,
+        # breaking the run there.
         in_merit = margin > 0.0
+        if av is not None:
+            in_merit = in_merit | (av > 0.0)
         if in_merit_floor > 0.0:
             in_merit = in_merit & (storage_weight[zone, :] >= in_merit_floor)
 
