@@ -73,10 +73,36 @@ extrapolates past the observed envelope.
 
 This is a measured **temperature → commitment** rule, **not** a fit to a
 generation/TWh residual: the curve is fixed by the weather-vs-CF regression, and
-whatever annual CT energy it produces is what it produces. It deliberately
-floors only the **heat-driven** commitment; the small all-temperature evening
-baseline (~5% CF, the year-round local-RA minimum that is *not* weather-driven)
-is left to the economic dispatch, not forced.
+whatever annual CT energy it produces is what it produces.
+
+### Year-round baseline (`caiso_ct_floor_base`, added 2026-06 session 2)
+
+The hot-limb fit above clips to **zero** below T0, which left the measured
+**cool-day evening baseline** — the local-RA minimum the CT fleet holds even on
+mild days — to economic dispatch. An energy-only LP does not pick it up (the
+peakers are top-of-merit), so the backcast still under-ran CT_PEAKER off the hot
+limb (model ~1.9 vs ~5 TWh measured, 2024). CAISO's Local Capacity Requirement
+is in fact a **year-round** load-pocket floor: the contingency criterion binds
+hardest at the 1-in-10 summer peak, but RA resources carry a must-offer / local
+self-supply minimum that holds on mild days too.
+
+So the floor now adds that measured baseline:
+
+```
+floor_frac = clip(base + 0.047·(TMAX_degC − 25), base, 0.46)
+```
+
+with `base = 0.049` = the **median** EIA-930/CAMPD CT_PEAKER evening (15-22 local)
+capacity factor on cool days (TMAX < 25 °C), pooled 2023-2025
+(`scripts/derive_caiso_ct_reliability_floor.py`; cool-day evening CF: median
+0.049, mean 0.066, p25 0.019). This is the regression **intercept** the hot-limb
+fit discards — a measured quantity, forward-derivable and condition-responsive on
+the same TMAX series as the hot limb, **not** a TWh-residual tune. It lifts
+CT_PEAKER ~1.9 → ~2.7 TWh and trims CC_REGULAR ~0.3 TWh (2024) with no change to
+the modeled price level (mean LMP unchanged), and is composed with the hot limb
+via the same windowed `min_gen` mechanism. `base = 0.0` is byte-identical to the
+hot-limb-only floor; the CAISO `_calibration_config` sets 0.049, every other ISO
+0.0.
 
 ## Grounding in the literature (how other models / ISOs handle this)
 
@@ -137,16 +163,37 @@ heat rate is ~1.8-2.0× the reported topping-cycle simple HR, so a power-only-HR
 re-price is the physically correct treatment.
 
 **This fix is deferred** because it cannot be applied in isolation. A power-only
-re-price (committed ~1.75) was trialled and **reverted**: with the total CAISO
-gas envelope already over-sized by the import / energy-balance over-generation
-drift, cutting the cheap CT_CHP baseload does **not** lower total gas — it
-reshuffles straight onto **CC_REGULAR** (CC jumped +5 TWh worse, from +2.9 to
-+8.3 over), because CC is the next-cheapest dispatchable. The EOR re-price must
-therefore land **after** the total-gas / import-drift fix (so the freed energy
-leaves the system as imports rather than inflating CC), not before. This is the
-key remaining root cause for the next CAISO session, and it is the same
-mechanism that limits the CT_PEAKER floor's net effect (forcing peakers on in an
-over-sized envelope partly exports the surplus rather than backing down CC).
+re-price (committed ~1.75) was trialled and **reverted**: cutting the cheap
+CT_CHP baseload does **not** lower total gas — it reshuffles straight onto
+**CC_REGULAR** (CC jumped +5 TWh worse), because CC is the next-cheapest
+dispatchable.
+
+**Session-2 update — the mechanism is the gas-commitment floor, not an
+energy-balance drift.** A clean energy-balance audit
+(`scripts/caiso_energy_balance_probe.py`) shows the keeper balance closes:
+served demand is exact (clean EIA-930 net load, no BTM add-back), curtailment is
+~0, storage round-trip loss ~2.7 TWh, net-import error only ±2-3 TWh (mixed sign
+by year). The "+4-5 TWh domestic over-gen" of the prior handoff is mostly an
+artifact of differencing against EIA-930's **raw net-gen** series, which carries
+a ~5 TWh internal demand/net-gen/interchange reconciliation gap. The real driver
+of the whack-a-mole is the **midday RA gas-commitment floor** (`frac` × measured
+EIA-930 NG:NG, 09-16): that measured NG:NG **includes the EOR cogens' flat midday
+output**, so when CT_CHP is repriced out, the floor still demands that midday gas
+and **CC_REGULAR is forced to backfill it cheapest-first**. Probes confirm it:
+re-pricing CT_CHP at gas-floor-frac 0.80 → CC 56.9 → 60.1 TWh (2024); at
+gas-floor-frac 0.50 the freed energy instead leaves as imports and CC barely
+moves (56.9 → 57.4) — but lowering the frac trades away the midday-price (C3)
+benefit the floor was added for.
+
+The **structural unlock** for the next session is therefore to make the gas
+floor target the **flexible merchant gas only** (CC_REGULAR + CT_PEAKER RA
+must-offer), netting the CHP/EOR steam-following contribution out of both the
+floor *fleet* and the *target* (today the floor target is the full NG:NG and the
+fleet includes CT_CHP). With CHP netted out, re-pricing the EOR cogens power-only
+no longer forces CC to substitute for them, so CT_CHP can fall to its true
+steam-driven level without inflating CC — and the EOR re-price (and a stronger
+CT_PEAKER baseline) can finally land. This is the same coupling that limits the
+CT_PEAKER floor's net CC-displacement.
 
 ## Why temperature, not net-load (CLAUDE.md #10/#11)
 
