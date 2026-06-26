@@ -136,13 +136,50 @@ class TestReserveAdequacyCommit(unittest.TestCase):
         committed = np.array([[True] * 4, [False] * 4])
         p1 = np.zeros((2, 4))
         p1[0, :] = 180.0  # unit 0 runs hot -> only 20 MW headroom
-        out = as_adequacy_commit(
-            committed, fa, gens, np.array([True, True]), np.full(4, 150.0), p1
-        )
+        hr_elig = np.array([[True, True]])  # one row, both eligible
+        hr_prod = np.array([[True]])  # one row bounds the one product
+        req = np.full((1, 4), 150.0)  # (n_prod, T)
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
         self.assertTrue(out[1].all())  # idle unit committed to cover the AS req
         net_hr = np.maximum(fa.pmax[:, None] * fa.availability - p1, 0.0)
         cov = (net_hr * out).sum(axis=0)
         self.assertTrue((cov >= 150.0).all())
+
+    def test_as_adequacy_floor_tier_aware_commits_from_rows_own_set(self):
+        # Fast row eligible = unit 0 only (a CC); all row eligible = both. Fast
+        # product req 150 must be covered from the FAST set (unit 0), not the cheap
+        # peaker unit 1 — so unit 0 is committed even though unit 1 has more room.
+        gens = [
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=200.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="CT",
+                name="CT",
+                zone="Z",
+                fuel_type="gas_ct",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                eford=0.0,
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["Z"], hours=4)
+        committed = np.zeros((2, 4), dtype=bool)
+        p1 = np.zeros((2, 4))
+        hr_elig = np.array([[True, False], [True, True]])  # fast row: CC only
+        hr_prod = np.array([[True, False], [True, True]])  # fast bounds prod 0
+        req = np.zeros((2, 4))
+        req[0, :] = 150.0  # fast product
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
+        self.assertTrue(out[0].all())  # the fast-eligible CC is committed
 
     def test_as_adequacy_floor_noop_when_already_covered(self):
         # When committed net headroom already covers the requirement, nothing is
@@ -150,9 +187,10 @@ class TestReserveAdequacyCommit(unittest.TestCase):
         gens, fa = self._two_ct()
         committed = np.array([[True] * 4, [False] * 4])
         p1 = np.zeros((2, 4))  # unit 0 idle -> 200 MW net headroom >= 150
-        out = as_adequacy_commit(
-            committed, fa, gens, np.array([True, True]), np.full(4, 150.0), p1
-        )
+        hr_elig = np.array([[True, True]])
+        hr_prod = np.array([[True]])
+        req = np.full((1, 4), 150.0)
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
         np.testing.assert_array_equal(out, committed)
 
 

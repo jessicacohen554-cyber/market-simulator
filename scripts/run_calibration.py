@@ -3026,15 +3026,13 @@ def _commitment_pass(state: dict, config=None):
     # acute hours still price the VOLL curve. Requirement = sum of the per-product
     # ASPLANNP433 quantities already in dispatch_kwargs.
     if as_value is not None:
-        from market_sim.results.scarcity import ercot_reserve_eligible
-
-        req_total = np.asarray(dk["reserve_requirement"], dtype=float).sum(axis=0)
         committed = as_adequacy_commit(
             committed,
             fa,
             fleet,
-            ercot_reserve_eligible(fa),
-            req_total,
+            dk["reserve_headroom_eligible"],
+            dk["reserve_headroom_products"],
+            np.asarray(dk["reserve_requirement"], dtype=float),
             p1.dispatch,
             headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
         )

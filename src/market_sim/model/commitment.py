@@ -513,22 +513,31 @@ def as_adequacy_commit(
     committed: np.ndarray,  # (n_gen, T) bool — the AS-aware energy/AS mask
     fleet_arrays: FleetArrays,
     generators: list[Generator],
-    eligible: np.ndarray,  # (n_gen,) bool — reserve-eligible (responsive) units
-    requirement_mw: np.ndarray,  # (T,) total AS requirement (MEASURED ASPLANNP433)
+    headroom_eligible: np.ndarray,  # (n_rows, n_gen) bool — each row's eligible set
+    headroom_products: np.ndarray,  # (n_rows, n_prod) bool — products each row bounds
+    requirement_mw: np.ndarray,  # (n_prod, T) per-product AS req (MEASURED ASPLANNP433)
     p1_dispatch: np.ndarray,  # (n_gen, T) P1 energy output
     headroom_frac: float = 1.0,
 ) -> np.ndarray:
-    """Re-commit eligible units so committed online HEADROOM covers the AS requirement.
+    """Re-commit eligible units so each headroom row's online HEADROOM covers its AS.
 
     The ERCOT analogue of :func:`reserve_adequacy_commit`, the anti-over-fire half
     of AS-aware commitment. :func:`compute_commitment` (AS-aware) decommits the
     cold idle slow-start capacity out of the reserve pool — necessary to make the
     co-opt's shared-headroom constraint bind and form the broad-month scarcity —
     but on its own it strips committed headroom *far below* the procured AS, so the
-    co-opt prices a false VOLL-scale shortage. This step force-commits the
-    cheapest-startup decommitted eligible units, hour by hour, until the committed
-    online headroom (``Σ committed (pmax × availability − P1_dispatch)``) covers
-    ``requirement_mw × headroom_frac``.
+    co-opt prices a false VOLL-scale shortage.
+
+    The floor is **tier-aware**, mirroring the co-opt's nested shared-headroom rows
+    (:func:`~market_sim.results.scarcity.ercot_multiproduct_reserve_coopt_inputs`):
+    the *fast* row (RegUp/RRS/ECRS, restricted to the synchronized CC/ST/coal/
+    nuclear set) and the *all* row (every product, adding the offline-capable
+    quick-start peakers). For each row this commits the cheapest-startup decommitted
+    units **from that row's own eligible set**, hour by hour, until the row's
+    committed online headroom (``Σ committed (pmax × availability − P1_dispatch)``)
+    covers the sum of its products' requirements × ``headroom_frac``. Covering the
+    fast row with peakers (which only back Non-Spin) would leave the fast products
+    short and pricing at VOLL — the tier restriction prevents exactly that.
 
     With the floor in place the co-opt can no longer manufacture a shortfall the
     real market would have procured around: the reserve-balance shortfall steps
@@ -547,9 +556,11 @@ def as_adequacy_commit(
         fleet_arrays: The vectorized fleet, for ``pmax`` and ``availability``.
         generators: The dispatch fleet, aligned with ``committed`` rows (for the
             per-unit startup cost that orders the greedy commit).
-        eligible: ``(n_gen,)`` boolean — the reserve-eligible (responsive) units
-            that may back the AS requirement.
-        requirement_mw: ``(T,)`` total AS requirement (MW), summed across products.
+        headroom_eligible: ``(n_rows, n_gen)`` boolean — the eligible generator set
+            of each nested headroom row (fast, all).
+        headroom_products: ``(n_rows, n_prod)`` boolean — which products each
+            headroom row bounds; the row's target is the sum of those products' req.
+        requirement_mw: ``(n_prod, T)`` per-product AS requirement (MW).
         p1_dispatch: The P1 energy dispatch, ``(n_gen, T)`` — the net-headroom base.
         headroom_frac: Coverage multiple on the measured requirement (1.0 = commit
             until committed net headroom covers the procured AS exactly).
@@ -558,9 +569,10 @@ def as_adequacy_commit(
         A new commitment mask (a copy) with the adequacy commits applied.
     """
     out = committed.copy()
-    elig_idx = np.flatnonzero(np.asarray(eligible, dtype=bool))
-    req = np.asarray(requirement_mw, dtype=float)
-    if elig_idx.size == 0 or req.max() <= 0.0:
+    he = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool))  # (n_rows, n_gen)
+    hp = np.atleast_2d(np.asarray(headroom_products, dtype=bool))  # (n_rows, n_prod)
+    req = np.asarray(requirement_mw, dtype=float)  # (n_prod, T)
+    if req.size == 0 or req.max() <= 0.0:
         return out
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
@@ -569,26 +581,34 @@ def as_adequacy_commit(
     net_hr = np.maximum(
         pmax[:, np.newaxis] * avail - np.asarray(p1_dispatch, float), 0.0
     )
-    target = req * float(headroom_frac)  # (T,)
-
-    # Already-committed eligible net headroom per hour.
-    cum = (net_hr[elig_idx, :] * out[elig_idx, :]).sum(axis=0)  # (T,)
-    # Greedy: commit cheapest-startup eligible units first into the short hours.
+    # Global cheapest-startup order; each row commits the cheapest units IN ITS set.
     startup = np.array(
         [
             _startup_cost(generators[g], float(fleet_arrays.heat_rate[g]))
-            for g in elig_idx
+            for g in range(len(generators))
         ]
     )
-    for g in elig_idx[np.argsort(startup, kind="stable")]:
-        short = cum < target
-        if not short.any():
-            break
-        add = short & (~out[g, :]) & (net_hr[g, :] > 0.0)
-        if not add.any():
+    order = np.argsort(startup, kind="stable")
+    # Process the most-restrictive row first (fewest eligible units = the fast
+    # row), so its restricted set is satisfied before the looser all row tops up
+    # with peakers; a unit committed for one row counts toward every row it is in.
+    rows = sorted(range(he.shape[0]), key=lambda h: int(he[h].sum()))
+    for h in rows:
+        target = req[hp[h]].sum(axis=0) * float(headroom_frac)  # (T,)
+        if target.max() <= 0.0:
             continue
-        out[g, add] = True
-        cum[add] += net_hr[g, add]
+        cum = (net_hr * (out & he[h][:, None])).sum(axis=0)  # (T,)
+        for g in order:
+            if not he[h, g]:
+                continue
+            short = cum < target
+            if not short.any():
+                break
+            add = short & (~out[g, :]) & (net_hr[g, :] > 0.0)
+            if not add.any():
+                continue
+            out[g, add] = True
+            cum[add] += net_hr[g, add]
     return out
 
 
