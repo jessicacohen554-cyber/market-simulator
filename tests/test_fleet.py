@@ -1401,3 +1401,72 @@ class TestOtherFossilScoring(unittest.TestCase):
         from market_sim.data.fleet import mixed_fossil_plants
 
         self.assertIn(6243, mixed_fossil_plants(2023))
+
+
+class TestCaisoEorPowerHr(unittest.TestCase):
+    """CAISO Kern-County EOR topping-cogen power-only heat-rate correction."""
+
+    def _gen(self, plant_code, group, hr):
+        from market_sim.data.fleet import Generator
+
+        return Generator(
+            unit_id=f"u{plant_code}",
+            name=f"p{plant_code}",
+            zone="SP15",
+            fuel_type="gas_ct",
+            pmax_mw=200.0,
+            pmin_mw=0.0,
+            heat_rate=hr,
+            plant_group=group,
+            plant_code=plant_code,
+        )
+
+    def test_eor_plants_lifted_to_power_only_hr(self):
+        from market_sim.data.fleet import (
+            CAISO_EOR_TOPPING_FACTOR,
+            _correct_caiso_eor_power_hr,
+        )
+
+        gens = [
+            self._gen(10496, "CT_CHP", 5.795),  # Kern River
+            self._gen(50134, "CT_CHP", 5.987),  # Sycamore
+            self._gen(52169, "CT_CHP", 5.090),  # Midway Sunset
+        ]
+        _correct_caiso_eor_power_hr(gens, "CAISO")
+        self.assertAlmostEqual(gens[0].heat_rate, 5.795 * CAISO_EOR_TOPPING_FACTOR, 3)
+        self.assertAlmostEqual(gens[1].heat_rate, 5.987 * CAISO_EOR_TOPPING_FACTOR, 3)
+        self.assertAlmostEqual(gens[2].heat_rate, 5.090 * CAISO_EOR_TOPPING_FACTOR, 3)
+        # Lands in the simple-cycle peaker band (~9-11 MMBtu/MWh).
+        self.assertTrue(all(9.0 <= g.heat_rate <= 11.0 for g in gens))
+
+    def test_non_caiso_is_noop(self):
+        from market_sim.data.fleet import _correct_caiso_eor_power_hr
+
+        g = self._gen(10496, "CT_CHP", 5.795)
+        _correct_caiso_eor_power_hr([g], "ERCOT")
+        self.assertEqual(g.heat_rate, 5.795)
+
+    def test_non_eor_and_non_ctchp_untouched(self):
+        from market_sim.data.fleet import _correct_caiso_eor_power_hr
+
+        # A CT_CHP plant not in the EOR set, and an EOR plant_code that is not
+        # a CT_CHP row, both keep their measured heat rate.
+        other = self._gen(99999, "CT_CHP", 7.0)
+        wrong_group = self._gen(10496, "CC_REGULAR", 7.0)
+        _correct_caiso_eor_power_hr([other, wrong_group], "CAISO")
+        self.assertEqual(other.heat_rate, 7.0)
+        self.assertEqual(wrong_group.heat_rate, 7.0)
+
+    def test_factor_is_multiplicative(self):
+        from market_sim.data.fleet import (
+            CAISO_EOR_TOPPING_FACTOR,
+            _correct_caiso_eor_power_hr,
+        )
+
+        g = self._gen(10496, "CT_CHP", 6.0)
+        _correct_caiso_eor_power_hr([g], "CAISO")
+        self.assertAlmostEqual(g.heat_rate, 6.0 * CAISO_EOR_TOPPING_FACTOR, 6)
+
+
+if __name__ == "__main__":
+    unittest.main()
