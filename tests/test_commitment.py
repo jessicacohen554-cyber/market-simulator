@@ -8,6 +8,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
+    as_adequacy_commit,
     compute_commitment,
     compute_monthly_markup,
     find_runs,
@@ -127,6 +128,71 @@ class TestReserveAdequacyCommit(unittest.TestCase):
         )
         np.testing.assert_array_equal(out, committed)  # nothing to add
 
+    def test_as_adequacy_floor_covers_net_headroom(self):
+        # Two 200-MW CTs; one committed running 180 MW (net headroom 20), the other
+        # decommitted. A 150-MW AS requirement is not met by the running unit's 20
+        # MW headroom, so the floor commits the idle unit (200 MW net headroom).
+        gens, fa = self._two_ct()
+        committed = np.array([[True] * 4, [False] * 4])
+        p1 = np.zeros((2, 4))
+        p1[0, :] = 180.0  # unit 0 runs hot -> only 20 MW headroom
+        hr_elig = np.array([[True, True]])  # one row, both eligible
+        hr_prod = np.array([[True]])  # one row bounds the one product
+        req = np.full((1, 4), 150.0)  # (n_prod, T)
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
+        self.assertTrue(out[1].all())  # idle unit committed to cover the AS req
+        net_hr = np.maximum(fa.pmax[:, None] * fa.availability - p1, 0.0)
+        cov = (net_hr * out).sum(axis=0)
+        self.assertTrue((cov >= 150.0).all())
+
+    def test_as_adequacy_floor_tier_aware_commits_from_rows_own_set(self):
+        # Fast row eligible = unit 0 only (a CC); all row eligible = both. Fast
+        # product req 150 must be covered from the FAST set (unit 0), not the cheap
+        # peaker unit 1 — so unit 0 is committed even though unit 1 has more room.
+        gens = [
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=200.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="CT",
+                name="CT",
+                zone="Z",
+                fuel_type="gas_ct",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                eford=0.0,
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["Z"], hours=4)
+        committed = np.zeros((2, 4), dtype=bool)
+        p1 = np.zeros((2, 4))
+        hr_elig = np.array([[True, False], [True, True]])  # fast row: CC only
+        hr_prod = np.array([[True, False], [True, True]])  # fast bounds prod 0
+        req = np.zeros((2, 4))
+        req[0, :] = 150.0  # fast product
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
+        self.assertTrue(out[0].all())  # the fast-eligible CC is committed
+
+    def test_as_adequacy_floor_noop_when_already_covered(self):
+        # When committed net headroom already covers the requirement, nothing is
+        # added — the floor never strips a genuinely-short hour's scarcity.
+        gens, fa = self._two_ct()
+        committed = np.array([[True] * 4, [False] * 4])
+        p1 = np.zeros((2, 4))  # unit 0 idle -> 200 MW net headroom >= 150
+        hr_elig = np.array([[True, True]])
+        hr_prod = np.array([[True]])
+        req = np.full((1, 4), 150.0)
+        out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
+        np.testing.assert_array_equal(out, committed)
+
 
 class TestFindRuns(unittest.TestCase):
     """Tests for the consecutive-True segment finder."""
@@ -243,6 +309,73 @@ class TestComputeCommitment(unittest.TestCase):
         committed_bid = compute_commitment(prices, bid_mc, gens, arrays, _CONFIG)
         self.assertTrue(committed_base.all())
         self.assertFalse(committed_bid.any())
+
+
+class TestASAwareCommitment(unittest.TestCase):
+    """AS revenue keeps energy-marginal units committed (AS-aware commitment)."""
+
+    def test_none_as_value_is_byte_identical(self):
+        # Passing as_value=None reproduces the energy-only screen exactly.
+        gens, arrays = _single_cc(hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 35.0  # 10-h run, margin 5x10=50 < 52 hurdle -> reject
+        baseline = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        explicit_none = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=None
+        )
+        self.assertFalse(baseline.any())
+        np.testing.assert_array_equal(baseline, explicit_none)
+
+    def test_as_value_lifts_run_over_hurdle(self):
+        # Energy margin alone (5x10=50) is below the 52.0 IRR hurdle, so the run
+        # is rejected. Adding AS revenue to those hours clears the hurdle.
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 35.0  # margin 5 x 10h = 50
+        rejected = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertFalse(rejected.any())
+
+        as_value = np.zeros((1, 24))
+        as_value[0, 5:15] = 1.0  # +10 AS -> 60 > 52 hurdle
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_as_value_extends_online_unit_into_as_hours(self):
+        # A unit online for energy (one in-merit run) has its commitment EXTENDED
+        # into the adjacent AS-priced hours it earns reserve.
+        gens, arrays = _single_ct(heat_rate=10.5, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 8:10] = 200.0  # a short, very profitable energy run (CT min_run 1)
+        energy_only = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertTrue(energy_only[0, 8:10].all())
+        self.assertFalse(energy_only[0, 10:14].any())
+
+        as_value = np.zeros((1, 24))
+        as_value[0, 8:14] = 100.0  # AS priced through hour 13
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        # The online unit now stays committed through its AS-earning hours.
+        self.assertTrue(committed[0, 8:14].all())
+
+    def test_as_value_does_not_resurrect_a_cold_unit(self):
+        # A unit the LP never runs for energy (no in-merit hour) is NOT brought
+        # online by its idle headroom's AS credit — it is the phantom headroom the
+        # screen must drop out of the reserve pool.
+        gens, arrays = _single_cc(hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)  # energy margin always negative -> cold
+        as_value = np.zeros((1, 24))
+        as_value[0, 8:20] = 5000.0  # huge idle AS credit
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        self.assertFalse(committed.any())
 
 
 class TestStorageWeightedCommitment(unittest.TestCase):
