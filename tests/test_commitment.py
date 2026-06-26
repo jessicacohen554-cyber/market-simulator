@@ -278,22 +278,38 @@ class TestASAwareCommitment(unittest.TestCase):
         )
         self.assertTrue(committed[0, 5:15].all())
 
-    def test_as_value_makes_energy_out_of_merit_hour_in_merit(self):
-        # With no positive energy margin anywhere, the energy-only screen commits
-        # nothing. AS revenue across a long window makes those hours in-merit and
-        # clears the CT's hurdle, keeping the unit online for AS.
+    def test_as_value_extends_online_unit_into_as_hours(self):
+        # A unit online for energy (one in-merit run) has its commitment EXTENDED
+        # into the adjacent AS-priced hours it earns reserve.
         gens, arrays = _single_ct(heat_rate=10.5, hours=24)
         base_mc = np.full((1, 24), 30.0)
-        prices = np.full((1, 24), 20.0)  # margin always negative
-        none_committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
-        self.assertFalse(none_committed.any())
+        prices = np.full((1, 24), 20.0)
+        prices[0, 8:10] = 200.0  # a short, very profitable energy run (CT min_run 1)
+        energy_only = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertTrue(energy_only[0, 8:10].all())
+        self.assertFalse(energy_only[0, 10:14].any())
 
         as_value = np.zeros((1, 24))
-        as_value[0, 8:20] = 50.0  # ample AS revenue over a 12-h window
+        as_value[0, 8:14] = 100.0  # AS priced through hour 13
         committed = compute_commitment(
             prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
         )
-        self.assertTrue(committed[0, 8:20].any())
+        # The online unit now stays committed through its AS-earning hours.
+        self.assertTrue(committed[0, 8:14].all())
+
+    def test_as_value_does_not_resurrect_a_cold_unit(self):
+        # A unit the LP never runs for energy (no in-merit hour) is NOT brought
+        # online by its idle headroom's AS credit — it is the phantom headroom the
+        # screen must drop out of the reserve pool.
+        gens, arrays = _single_cc(hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)  # energy margin always negative -> cold
+        as_value = np.zeros((1, 24))
+        as_value[0, 8:20] = 5000.0  # huge idle AS credit
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG, as_value=as_value
+        )
+        self.assertFalse(committed.any())
 
 
 class TestStorageWeightedCommitment(unittest.TestCase):
