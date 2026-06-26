@@ -1,0 +1,84 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "nyiso-32 steam-markup keeper 2026-06-26",
+    "note": "Re-solve of the nyiso-27 cc-offer keeper config (byte-identical flags: --gas-monthly-actuals --gas-hub-basis-overlay --gas-hub-basis-daily --priced-interchange --energy-reserve-coopt --nyiso-local-selfsupply --nyiso-firm-imports --nyiso-import-reconciliation; P1, no commitment) with ONE source change: the NYISO legacy gas-steam (ST_GAS) offer is re-levelled from the ERCOT-shaped rising ramp (committed 0.97 / econ_low 1.10 / econ_high 1.45) to NYISO's OWN measured CAMPD marginal heat rate times a grounded competitive markup (committed 1.05 / econ_low 1.08 / econ_high 1.13). This is the documented run-29 carry-forward from the rejected nyiso-28 native-hr probe: that probe stripped the cross-ISO borrow from ALL gas classes (CC + ST), which craters C3a because the bare CEMS marginal heat rate is the marginal COST, not the OFFER -- it omits the competitive markup (no-load/start/AS cost recovery + inframarginal rent) that NYISO has no offer disclosure to measure. nyiso-28 surfaced TWO sub-findings: (a) the steam re-level was directionally right (it nearly halved the 2024 ST_GAS under-run), and (b) the CC reach must stay (it proxies the markup). Run 32 acts on both: it KEEPS the CC reach at the nyiso-27 keeper (CC_REGULAR econ_high 1.21, CC_CHP 1.24 -- unchanged, the markup that holds the clearing price) and applies a markup ON TOP of the native steam marginal HR rather than a restored cross-ISO ramp. Grounding: NYISO+NJ pooled CAMPD steam marginal HR (scripts/derive_campd_marginal_hr.py -> data/raw/reference/nyiso_campd_marginal_hr_summary.csv) is committed 0.818 / econ_low 0.830 / econ_high 0.828 (essentially FLAT -- legacy steam part-load HR is no better than full-load, matching the 2023/2024 SOM). The stack-wide competitive markup is the CC class's own defensible reach ratio, keeper CC econ_high 1.21 / native CC marginal 0.925 = 1.31x; applied to the steam native marginal (~0.82-0.83 x 1.31 ~= 1.08) with a thin monotone spread 1.05 -> 1.13 to keep a valid rising offer and a modest scarcity reach below the existing inflexible peak tranche (4.20, 15% pct_peaking, unchanged). Merit order stays physically correct: steam effective HR 11.1-12.0 (1.05-1.13 x 10.61) sits ABOVE CC econ_high 9.4 (1.21 x 7.76) and BELOW CT_PEAKER 16.1 (1.35 x 11.95) -- no inversion. Effect vs the nyiso-27 keeper, all in the predicted structural direction: the over-priced legacy steam top (econ_high eff HR 15.4) comes down to the measured ~12, so steam recovers its under-run -- 2023 ST_GAS -1.26 -> -0.01 TWh (essentially EXACT, now PASS) and 2024 -4.14 -> -3.28 TWh (+0.86); the complementary CC over-run shrinks 2023 CC_REGULAR +1.70 -> +0.99 (PASS) and 2024 +2.09 -> +1.74. The flat measured steam band reproduces the MEASURED steam dispatch volume almost exactly (2023 -0.01 TWh), which validates the offer LEVEL: the volume is the direct measured signal, set a priori from the CC-grounded markup BEFORE the result was seen, NOT fitted to the residual (rules #11/#12). dispatch_corr stays PASS (gas r=0.91/0.84/0.80). The C3a tradeoff is documented in the exceptions below and kept per rule #1."
+  },
+  "_steam_offer_level_status": "The within-gas merit split that prior NYISO keepers localized to the legacy-steam offer is SUBSTANTIALLY CLOSED on the volume (C1, HARD) axis: ST_GAS 2023 -1.26 -> -0.01 TWh (PASS), 2024 -4.14 -> -3.28; CC_REGULAR 2023 +1.70 -> +0.99 (PASS), 2024 +2.09 -> +1.74; both moved toward zero with no merit inversion and no 2025 overshoot. What this re-level EXPOSES is that the nyiso-27 keeper's steep steam ramp (econ_high 1.45) was a compensating over-pricing: it propped up the mid-merit clearing price (holding C3a in band in 2023) by over-pricing steam's body well above its measured marginal HR. Removing that over-pricing -- the structurally-correct, measured-grounded move -- lowers C3a (2023 in-band -> -10.5%, 2024 -9.7% -> -11.2%), revealing the REAL price root cause: the missing reserve-scarcity / synchronised-reserve tail (the same root cause as the CT_PEAKER C1 under-run), confirmed by nyiso-29 (online-proxy spinning reserve) and nyiso-31 (commitment-gated reserve) to be NON-CLOSABLE with grounded inputs (the committed NYC quick-start fleet holds ~1,700 MW of online headroom vs a 250 MW spin requirement, so the requirement is non-binding and no RCPF tail forms; closing it would need an ungrounded requirement/adder, forbidden by rule #12). Per CLAUDE.md rule #1 the measured steam offer STAYS IN even though it worsens the C3a fit -- the keeper-27 ramp reached the right C3a number through a mechanism that isn't real (over-priced steam body), which is exactly the substitution rule #1 forbids; raising steam back up to chase C3a would distort the now-validated steam VOLUME, also forbidden. Same promotion principle as nyiso-25 (a measured-data correction kept despite a C3a over-band tradeoff attributed to the out-of-scope NYC incidence root cause). The next NYISO frontier (reserve-scarcity price formation) is CLEANER on run 32 because the compensating steam over-pricing is removed."
+  ,
+  "exceptions": [
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "metric": "C3a system load-weighted mean LMP vs actual RT",
+      "magnitude": "model -10.5% ($27.12 vs $30.29)",
+      "classification": "ACCEPTED (rule-#1 tradeoff; reserve-scarcity price-formation frontier)",
+      "reason": "SOFT criterion -> CAVEAT. Regressed from the nyiso-27 keeper (in-band) because the measured-grounded steam re-level removes the keeper ramp's compensating over-pricing of the steam body that had propped up the mid-merit clearing price. The residual under-pricing is the documented no-ORDC / no-reserve-scarcity signature (the model under-prices the scarcity tail), the SAME root cause as the CT_PEAKER C1 under-run, confirmed non-closable with grounded inputs by nyiso-29 and nyiso-31. Kept per rule #1: the measured steam offer is the real mechanism; reverting to the over-priced ramp to recover C3a would reach the right number through a mechanism that isn't real (and would re-open the ST_GAS/CC volume miss). Not chased (rule #12)."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "metric": "C3a system load-weighted mean LMP vs actual RT",
+      "magnitude": "model -11.2% ($31.92 vs $35.95)",
+      "classification": "ACCEPTED (rule-#1 tradeoff; reserve-scarcity price-formation frontier)",
+      "reason": "SOFT criterion -> CAVEAT. As 2023: the steam re-level worsens C3a (keeper -9.7% -> -11.2%) by removing the compensating steam over-pricing, exposing the missing reserve-scarcity tail. Same ledgered root cause (CT_PEAKER / RCPF tail, nyiso-29/31). Kept per rule #1; not chased (rule #12)."
+    },
+    {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2023,
+      "metric": "C1 CT_PEAKER grid-delivered TWh",
+      "magnitude": "model -1.73 TWh (0.50 vs 2.23)",
+      "classification": "MODEL MISS (reserve-scarcity / synchronised-reserve frontier; ledgered open)",
+      "reason": "The pure-ED LP credits idle, un-committed NYC peaker capacity as deliverable reserve, so reserve never goes short and the downstate RCPF scarcity tail never fires -- so the peakers never commit for the high-load/reliability tail. nyiso-29 (NYC online-proxy spinning reserve) and nyiso-31 (commitment-gated spinning reserve) both confirmed this is NON-CLOSABLE with grounded inputs (the committed quick-start fleet holds ~1,700 MW online headroom vs the measured 250 MW spin requirement -> non-binding). Unchanged by the steam re-level. Closing it would require an ungrounded reserve requirement/adder (forbidden, rule #12). Open frontier on every NYISO keeper to date."
+    },
+    {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2024,
+      "metric": "C1 CT_PEAKER grid-delivered TWh",
+      "magnitude": "model -1.92 TWh (0.14 vs 2.06)",
+      "classification": "MODEL MISS (reserve-scarcity / synchronised-reserve frontier; ledgered open)",
+      "reason": "Same root cause as 2023 (idle peaker credited as reserve; RCPF tail never fires). Confirmed non-closable with grounded inputs by nyiso-29/31. Unchanged by the steam re-level; not chased (rule #12)."
+    },
+    {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2024,
+      "metric": "C1 CC_REGULAR grid-delivered TWh",
+      "magnitude": "model +1.74 TWh (38.44 vs 36.70)",
+      "classification": "MODEL MISS (residual within-gas split at the grounded offer ceiling)",
+      "reason": "IMPROVED vs the nyiso-27 keeper (+2.09 -> +1.74) by the steam re-level pulling some energy from the over-running CC back to steam. The residual sits at the CAMPD/ERCOT-grounded CC offer reach (econ_high 1.21, the markup ceiling that holds the clearing price) and the measured steam markup level (volume-validated). Not chaseable further without distorting a grounded input (rule #12). The complementary 2024 ST_GAS -3.28 TWh residual shares this ceiling -- both reflect the import-constrained downstate leaning on its efficient CC, an incidence effect the energy-only LP cannot fully separate without the reserve-scarcity tail above."
+    },
+    {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2024,
+      "metric": "C1 ST_GAS grid-delivered TWh",
+      "magnitude": "model -3.28 TWh (7.40 vs 10.68)",
+      "classification": "MODEL MISS (residual within-gas split at the grounded offer ceiling)",
+      "reason": "IMPROVED vs the nyiso-27 keeper (-4.14 -> -3.28) by the measured steam re-level; the steam offer level is volume-validated by the 2023 near-exact match (-0.01 TWh). The larger 2024 residual is the complement of the 2024 CC over-run above (import-constrained downstate / reserve-incidence), at the grounded offer ceiling. Not chased by re-pricing steam (would distort the 2023-validated level, rule #12)."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "metric": "C2 gas total vs EIA-923 grid-delivered",
+      "magnitude": "model gas -3.8%",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+      "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the remaining gap is the EIA-930/EIA-923 basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md; td_loss_factor=0 settled) plus preliminary-data incompleteness, not a dispatch error. Essentially unchanged vs the nyiso-27 keeper; the steam re-level is a within-gas reshuffle (steam up, CC down) and does not move the gas TOTAL, which is at its basis floor. Not closable by an honest knob (rules #1/#11/#12)."
+    },
+    {
+      "criterion": "co2",
+      "year": 2024,
+      "metric": "C5a system CO2 vs eGRID",
+      "magnitude": "model -8.7% (26.55 vs 29.10 Mt)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+      "reason": "2024 CO2 is downstream of the 2024 gas volume: the gas family is at its EIA-923/EIA-930 basis floor, so the CO2 it generates is correspondingly low. The steam re-level shifts some energy from CC toward the (dirtier-per-MWh) steam class, a small offsetting CO2 effect, but the level stays governed by the gas-total basis floor. Not a separate emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+    }
+  ]
+}
