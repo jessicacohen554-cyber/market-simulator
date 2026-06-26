@@ -2959,9 +2959,17 @@ def run_year(
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
-    # coal to its P1 dispatch, and re-solve (a single LP solve).
+    # coal to its P1 dispatch, and re-solve (a single LP solve). ERCOT AS-aware
+    # commitment triggers the same P2 pass (valuing AS revenue in the screen)
+    # even when the energy-only commitment screen is off — it requires the
+    # multi-product co-opt to supply the per-product reserve duals.
+    as_aware = (
+        getattr(config, "ercot_as_aware_commitment", False)
+        and iso == "ERCOT"
+        and getattr(config, "energy_reserve_coopt", False)
+    )
     result_p1 = None
-    if config.commitment_enabled:
+    if config.commitment_enabled or as_aware:
         result_p1 = result
         result = _commitment_pass(p2_state)
 
@@ -2981,6 +2989,22 @@ def _commitment_pass(state: dict, config=None):
     fa = state["fleet_arrays"]
     p1 = state["p1_result"]
     dk = state["dispatch_kwargs"]
+    # AS-aware (ERCOT multi-product co-opt): value a unit's AS revenue (the P1
+    # per-product reserve dual x its reserve-eligible headroom) in the screen, so
+    # the units a tight month keeps online FOR AS stay committed and the P2 co-opt
+    # headroom reflects realistic online capacity. The AS value comes from the
+    # model's OWN P1 balance-row dual, never the measured MCPC (no fit).
+    as_value = None
+    if (
+        getattr(cfg, "ercot_as_aware_commitment", False)
+        and state["iso"] == "ERCOT"
+        and getattr(cfg, "energy_reserve_coopt", False)
+    ):
+        from market_sim.results.scarcity import ercot_as_aware_unit_value
+
+        as_value = ercot_as_aware_unit_value(
+            fa, p1.dispatch, p1.reserve_price_by_family, cfg.hours
+        )
     committed = compute_commitment(
         p1.prices,
         state["mc_base"],
@@ -2991,6 +3015,7 @@ def _commitment_pass(state: dict, config=None):
         storage_discharge=p1.storage_discharge,
         storage_zone_idx=dk["storage_zone_idx"],
         demand=state["demand"],
+        as_value=as_value,
     )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
