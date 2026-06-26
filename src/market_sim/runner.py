@@ -802,7 +802,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Both datasets are kept: the P1 dispatch as year_{year}_p1, the
             # final result (P2 here) as the primary year_{year}. With
             # commitment disabled only P1 is solved and it is the primary.
-            if config.commitment_enabled:
+            # AS-aware commitment (ERCOT, gated): value a unit's AS revenue when
+            # screening commitment so the units a tight month keeps online FOR AS
+            # stay committed and the P2 co-opt headroom reflects realistic online
+            # capacity (the phantom-headroom fix, Finding 1 / G1). Triggers a P2
+            # pass even with commitment_enabled off; ERCOT + multi-product co-opt
+            # only.
+            as_aware = (
+                getattr(config, "ercot_as_aware_commitment", False)
+                and iso == "ERCOT"
+                and getattr(config, "energy_reserve_coopt", False)
+            )
+            if config.commitment_enabled or as_aware:
                 save_result(
                     p1_result,
                     config,
@@ -810,6 +821,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     year,
                     context=context,
                     pass_label="p1",
+                )
+                # AS revenue estimate from the model's OWN P1 reserve dual
+                # (never the measured MCPC) — None for the energy-only screen.
+                as_value = (
+                    ercot_as_aware_unit_value(
+                        fleet_arrays,
+                        p1_result.dispatch,
+                        p1_result.reserve_price_by_family,
+                        config.hours,
+                    )
+                    if as_aware
+                    else None
                 )
                 committed = compute_commitment(
                     p1_result.prices,
@@ -821,6 +844,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     storage_discharge=p1_result.storage_discharge,
                     storage_zone_idx=storage.zone_idx,
                     demand=year_demand,
+                    as_value=as_value,
                 )
                 # NYISO path B (commitment-gated synchronised reserve): the
                 # energy-economic screen decommits NYC quick-start peakers that
