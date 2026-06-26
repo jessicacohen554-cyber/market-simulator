@@ -125,6 +125,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_reference_price_node,
     extend_with_import_node,
     get_ttc_array,
+    inject_reference_price_firm_export,
     inject_reference_price_mc,
     wecc_border_carbon_adder,
 )
@@ -2496,6 +2497,17 @@ def run_year(
                 iso,
                 year,
                 len(INTERFACE_NEIGHBORS.get(iso, [])),
+            )
+        # Firm scheduled-export floor: force the cheapest export tranches on at
+        # the measured firm base (firm_export_floor_by_year) so PJM's firm
+        # must-flow export to MISO/NYISO clears even in cheap-spread hours, the
+        # economic tranches clearing on top. Modifies fleet_arrays.pmax before
+        # the LP bounds are built. No-op unless a neighbor has a floor for `year`.
+        if inject_reference_price_firm_export(fleet_arrays, iso, year):
+            logger.info(
+                "%s %d: firm scheduled-export floor applied (must-flow seam base)",
+                iso,
+                year,
             )
     # CAISO measured-hub import pricing: overwrite each priced-import tranche's mc
     # row with the measured WECC neighbor-hub LMP it proxies (Mid-C/Malin for the
