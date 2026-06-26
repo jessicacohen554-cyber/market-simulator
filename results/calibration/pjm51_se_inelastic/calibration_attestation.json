@@ -1,0 +1,12 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "pjm-51 SE-inelastic seam session 2026-06-26",
+    "note": "Seam-diagnostic continuation of pjm-49/50 on the pjm-48 coal keeper base. Levers: measured F923 monthly gas (gas_monthly_actuals), CAMPD unit-outage overlay (outage_source=historic), per-year MISO/NYISO realized-LMP heat-rate anchors (hr_by_year), firm scheduled-export floor from PJM's OWN per-tie p10 scheduled export (firm_export_floor_by_year), losses-only seam hurdle (physical decomposition), TVA/LGEE seams from p99.5 of PJM's measured ties, and the NEW lever this run: Southeast (Carolinas/TVA/LGEE) gas-INELASTIC affine reference price (neighbor_price._HR_GAS_ELASTIC 5.6*gas+14.2), OLS-fit to documented Into-Southern/SERC hub levels (a measured neighbor price-formation series, scripts/derive_southeast_inelastic_hr.py) and BLIND to PJM's net interchange. No residual-tuned adders, no output pinning. pjm-48 remains the PJM keeper; this is a structural diagnostic (rule #1)."
+  },
+  "exceptions": []
+}
