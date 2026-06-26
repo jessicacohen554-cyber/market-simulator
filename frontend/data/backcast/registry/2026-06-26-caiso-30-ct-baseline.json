@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-26-caiso-30-ct-baseline",
+  "label": "caiso 30 ct baseline",
+  "date": "2026-06-26",
+  "shorthand": "caiso-30-ct-baseline",
+  "definition": "CAISO 30: add the year-round local-RA BASELINE to the CT_PEAKER reliability floor (caiso_ct_floor_base=0.049 = measured median CAMPD CT_PEAKER evening (15-22) capacity factor on cool days TMAX<25C, 2023-2025 \u2014 the regression intercept the temperature hot-limb fit clips to zero). frac = clip(base + slope*(TMAX-T0), base, cap). Lifts CT_PEAKER toward its measured local-RA level and trims CC_REGULAR with no price-level change. Strict improvement over caiso-29; CT_CHP EOR over-dispatch remains the open C1 blocker (gas-floor/CHP coupling, documented in docs/caiso-ct-reliability-floor-2026-06.md).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-26-caiso-30-ct-baseline.js",
+  "bundle": "results/calibration/caiso30_ctbase"
+}
