@@ -1,0 +1,18 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot-161 reserve-supply-cap+ordc-adder 2026-06-26",
+    "verdict": "REJECTED PROBE — not a keeper. The ERCOT keeper remains run157 (measured DAM-AS overlay, the pre-RTC+B backcast bridge).",
+    "note": "Run161 = run157's recipe with the measured DAM-AS overlay SWAPPED for the pre-RTC+B ORDC-regime construction: a single-product energy+reserve co-opt against ERCOT's published NP6-576-ER ORDC demand curve (ordc_lolp_params_path), with the cleared reserve SUPPLY capped at the MEASURED on-line responsive capability RTOLCAP (data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet, config.ercot_reserve_supply_cap), and the capped reserve dual added to the energy LMP as the ORDC price adder (RTSPP = SPP + ORDC(online reserves)) for ORDC-regime years only — the energy-only-SCED-plus-adder design of 2023-2025, gated OFF for RTC+B. The supply is the measured RTOLCAP, the demand the published curve; NOTHING reads the LMP, RTSPP, RTORPA or MCPC, no adder is tuned to a price residual, no unit is pinned to actuals. The lever is default-off, ERCOT-gated, pure-LP, legacy byte-identical (reserve/dispatch/commitment tests pass).",
+    "rejection_reason": "Greenlight gate NOT met, in BOTH directions, and neither failure is a reserve problem. 2024: the broad May month UNDER-fires ($24.3 vs actual RT $40.6) — the ORDC adder fires in only 70/744 May hours (+$5 dw) because May RTOLCAP (p10/p50/p90 = 9.5/14.0/21.6 GW) mostly exceeds the published curve top (~11.3 GW), exactly as the MEASURED RTORPA was ~$0 in the moderate band. So the broad-May elevation is an ENERGY-base / merit-order miss (CC over-run vs ST_GAS+CT_PEAKER under-dispatch), NOT an adder phenomenon, and an ORDC adder structurally must not paper over it (CLAUDE.md #1). 2023: the broad May OVER-fires ($72.1 vs actual $30.9, monthly MAE 15.4) — in the low-RTOLCAP 2023 year (mean 13.5 GW) the cap binds across far more hours so the adder fires too broadly, and double-counts with the RTORDPA overlay kept from the run157 recipe. 2025 is clean (MAE 2.7). The mechanism is structurally faithful to the ORDC regime and forms the acute/tail scarcity endogenously, but it is not deployable as-is; the broad-month residual routes to the separate energy-base/offer-curve track (docs/ercot-reserve-supply-cap-ordc-adder-2026-06.md)."
+  },
+  "metrics_demand_weighted_vs_actual_rtspp": {
+    "2023": {"model_annual": 62.28, "actual": 61.26, "monthly_mae": 15.42, "may_month": 72.14, "may_act": 30.88, "may_acute_8_24_26": 78.88, "aug_month": 180.86, "aug_act": 216.62},
+    "2024": {"model_annual": 23.69, "actual": 28.60, "monthly_mae": 4.82, "may_month": 24.28, "may_act": 40.61, "may_acute_8_24_26": 58.15, "aug_month": 33.20, "aug_act": 38.60},
+    "2025": {"model_annual": 33.51, "actual": 33.42, "monthly_mae": 2.68, "may_month": 30.16, "may_act": 37.44, "aug_month": 41.26, "aug_act": 37.12}
+  }
+}
