@@ -567,6 +567,19 @@ class ScenarioConfig:
     caiso_ct_floor_cap: float = 0.46  # Max CT commitment fraction (p97 of the
     # measured evening CF) — the hottest-day local-RA ceiling; prevents the line
     # extrapolating past the observed envelope.
+    caiso_ct_floor_base: float = 0.0  # Year-round local-RA BASELINE commitment
+    # fraction floored over the same afternoon-evening window on ALL days, not
+    # just hot ones. The temperature hot-limb (slope/T0/cap) deliberately clips to
+    # zero below T0, leaving the measured cool-day evening minimum (~0.049 CF, the
+    # median EIA-930/CAMPD CT_PEAKER evening CF for TMAX<25 deg C, 2023-2025) to
+    # economic dispatch — but CAISO's Local Capacity Requirement is a YEAR-ROUND
+    # load-pocket floor (the contingency criterion binds hardest at summer peak,
+    # yet the must-offer/local-reliability minimum holds on mild days too), so an
+    # energy-only LP under-runs CT_PEAKER even off the hot limb. This adds that
+    # measured cool-day floor: frac = clip(base + slope*(TMAX-T0), base, cap). It
+    # is the regression INTERCEPT the hot-limb fit clips away, not a TWh-residual
+    # tune (docs/caiso-ct-reliability-floor-2026-06.md §"year-round baseline").
+    # Default 0.0 (byte-identical / hot-limb only); CAISO calibration sets 0.049.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -2301,6 +2314,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ct_floor_slope_per_c": 3,
     "caiso_ct_floor_t0_c": 1,
     "caiso_ct_floor_cap": 2,
+    "caiso_ct_floor_base": 3,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
