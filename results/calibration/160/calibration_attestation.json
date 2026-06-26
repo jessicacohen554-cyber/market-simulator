@@ -1,0 +1,18 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot-160 as-aware-commit 2026-06-26",
+    "verdict": "REJECTED PROBE — not a keeper. The ERCOT keeper remains run157 (measured DAM-AS overlay, the pre-RTC+B backcast bridge).",
+    "note": "Run160 = run159's recipe (endogenous multi-product AS co-opt, measured DAM-AS overlay OFF) PLUS the new AS-aware commitment lever (ercot_as_aware_commitment): a P2 commitment screen that values a unit's AS revenue (the model's OWN P1 per-product reserve dual x reserve-eligible headroom, from reserve_price_by_family) alongside energy margin when deciding which units stay online, with a tier-aware AS-adequacy floor (as_adequacy_commit) that re-commits cheapest eligible units until each co-opt headroom row covers the MEASURED ASPLANNP433 AS requirement. The reserve dual forms end-to-end from the LP balance rows; NOTHING reads the measured MCPC, no adder is tuned to a price residual, and no unit is pinned to actuals. The lever is default-off, ERCOT-gated, and leaves every legacy/other-ISO path byte-identical (49 reserve/commitment tests pass).",
+    "rejection_reason": "Greenlight gate NOT met. The lever forms the May-2024 acute-day scarcity (8/24/26 -> ~$47, with the adequacy floor, vs the $40 run159 baseline and the ~$45 target) and holds August 2024 (~$33-41), but the BROAD May month OVER-FIRES TO VOLL (2024 May $187.8 vs the ~$46.7 target; 2024 annual $61.8 vs actual $26.8) and the over-fire is severe in 2023 ($175.3 annual vs $61.3 actual) and present in 2025 ($40.3 vs $33.4). Root cause (P2-actual headroom diagnostic, docs/ercot-as-aware-commitment-2026-06.md): the screen's reserve-thinning is bimodal — idle-only removal under-fires ($21), aggressive energy-margin removal collapses the committed fast (CC) fleet's headroom 3+ GW below the fast AS requirement in the evening-ramp hours (because the screen decommits the cheaper peakers/slow units the fast fleet must then back-fill for energy), so the VOLL-anchored shortfall curve prices the deficit at VOLL rather than the intended modest shared-headroom opportunity cost. The adequacy floor commits enough CAPACITY but the P2 redispatch converts it to energy, not headroom. Threading the ~$46.7 opportunity-cost target between the two regimes would require tuning the screen aggressiveness to the price — a forbidden fit (CLAUDE.md #1/#11). The better-grounded next track is the measured-RTOLCAP reserve-supply re-scope (docs/ercot-reserve-supply-scarcity-handoff-2026-06.md, Session 2)."
+  },
+  "metrics_demand_weighted_vs_actual_rtspp": {
+    "2023": {"model_annual": 175.33, "actual": 61.26, "monthly_mae": 137.05, "may_month": 432.95, "may_acute_8_24_26": 360.01},
+    "2024": {"model_annual": 61.80, "actual": 28.60, "monthly_mae": 35.33, "may_month": 187.83, "may_acute_8_24_26": 47.34, "aug_month": 32.50},
+    "2025": {"model_annual": 40.27, "actual": 33.42, "monthly_mae": 7.69, "may_month": 46.72}
+  }
+}
