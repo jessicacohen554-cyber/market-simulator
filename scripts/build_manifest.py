@@ -252,21 +252,25 @@ def main() -> None:
 
     from scripts.probes._backcast_shell import SHELL
 
+    # Cache-busting token appended to every data-script src so each deploy
+    # forces the CDN and browser to fetch fresh versions — prevents the stale-
+    # benchmark.js class of "Init error: undefined is not an object" crashes.
+    cb = datetime.now().strftime("%Y%m%d%H%M%S")
     shell = (
         SHELL.replace(
             "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
         )
         .replace(
             "__DATASCRIPTS__",
-            '<script src="frontend/data/backcast/manifest.js">'
+            f'<script src="frontend/data/backcast/manifest.js?v={cb}">'
             "</script>"
-            '<script src="frontend/data/backcast/benchmark.js">'
+            f'<script src="frontend/data/backcast/benchmark.js?v={cb}">'
             "</script>"
             # completeness.js (window.BC.completeness) color-codes the generation-
             # mix table's classes for a preliminary-EIA-923 vintage. Generated here
             # from the committed completeness parts; the table degrades gracefully
             # (no flags) if it is absent.
-            '<script src="frontend/data/backcast/completeness.js">'
+            f'<script src="frontend/data/backcast/completeness.js?v={cb}">'
             "</script>"
             # status.js (window.BC.status) drives the all-ISO Calibration Status
             # view. Unlike manifest/benchmark it is a COMMITTED file (built by
@@ -274,7 +278,7 @@ def main() -> None:
             # governance verdict needs each bundle's attestation, which the Pages
             # deploy's sparse checkout omits). We only wire it in here; the view
             # degrades gracefully if it is absent.
-            '<script src="frontend/data/backcast/status.js">'
+            f'<script src="frontend/data/backcast/status.js?v={cb}">'
             "</script>",
         )
         .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M"))
