@@ -87,14 +87,41 @@ years = [2023, 2024, 2025]
 if os.environ.get("KEEPER_YEARS"):
     years = [int(y) for y in os.environ["KEEPER_YEARS"].split(",")]
 
-# RUN162_OVERLAY=1 produces the KEEPER variant: the corrected merit order PLUS
-# run157's measured pre-RTC+B scarcity stack (DAM-AS overlay + energy/reserve
-# co-opt + load-resource / storage reserves + RTORDPA 2023 bridge), which
-# restores the broad-month PRICE LEVEL on top of the now-correct merit order.
-# Default off = pure dispatch (the merit order isolated, for the C1 gate).
+# RUN162_OVERLAY=1 produces the KEEPER variant (162f): the corrected merit order
+# PLUS run157's measured pre-RTC+B scarcity stack (DAM-AS overlay + single-
+# product energy/reserve co-opt + load-resource / storage reserves + RTORDPA
+# 2023 bridge), which restores the broad-month PRICE LEVEL on top of the now-
+# correct merit order.
+# RUN162_FWDAS=1 swaps the measured DAM-AS overlay for the FULL endogenous
+# forward-AS co-opt stack (runs 163–165 mechanisms): multi-product co-opt +
+# forward AS requirement + storage-AS-endogenous + load-resource RRS-UFR.
+# Tests whether the endogenous stack can form the 2025 scarcity signal that
+# lifts gas-family dispatch into the C2 band without re-tuning any offer lever.
+# Default (both off) = pure dispatch; the merit order isolated for the C1 gate.
 OVERLAY = os.environ.get("RUN162_OVERLAY", "0") == "1"
-overlay_kwargs = (
-    dict(
+FWDAS = os.environ.get("RUN162_FWDAS", "0") == "1"
+
+if FWDAS:
+    # Full endogenous forward-AS co-opt stack: multi-product + forward
+    # requirement + storage-AS-endogenous (run164 G5) + load-resource RRS-UFR
+    # (run165 G4).  DAM-AS overlay OFF — the endogenous co-opt must form its
+    # own scarcity signal.  RTORDPA bridge kept for 2023 (structural: pre-RTC+B
+    # era had no ORDC-like scarcity in the base energy LP).
+    overlay_kwargs = dict(
+        energy_reserve_coopt=True,
+        ercot_multiproduct_as_coopt=True,
+        ercot_as_forward_requirement=True,
+        ercot_storage_as_endogenous=True,
+        ercot_reserve_supply_cap=True,
+        ercot_reserve_supply_cap_from_year=2023,
+        ercot_load_resource_reserve=True,
+        ercot_load_resource_reserve_from_year=2023,
+        ercot_rtordpa_overlay=True,
+        ercot_dam_as_overlay=False,
+        battery_dispatch_adder=10.0,
+    )
+elif OVERLAY:
+    overlay_kwargs = dict(
         ercot_rtordpa_overlay=True,
         ercot_dam_as_overlay=True,
         ercot_dam_as_overlay_from_year=cf["ercot_dam_as_overlay_from_year"],
@@ -107,16 +134,15 @@ overlay_kwargs = (
         storage_as_commitment=True,
         battery_dispatch_adder=10.0,
     )
-    if OVERLAY
-    else dict(
+else:
+    overlay_kwargs = dict(
         # ALL price adders OFF: pure dispatch, merit order under test.
         ercot_rtordpa_overlay=False,
         ercot_dam_as_overlay=False,
         energy_reserve_coopt=False,
     )
-)
 
-out = os.environ.get("RUN162_OUT", "162")
+out = os.environ.get("RUN162_OUT", "162fwdas" if FWDAS else "162")
 run_dir = REPO / "results/calibration" / out
 run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -150,9 +176,10 @@ solve_and_persist(
     gas_st_netload_drag=True,  # net-load-indexed gas-steam min-gen floor
     ct_netload_drag=CT_DRAG,  # evening-ramp net-load CT_PEAKER min-gen floor
 )
+_mode = "FWDAS" if FWDAS else ("KEEPER" if OVERLAY else "OFF")
 print(
     f"162 done: {run_dir} (CC_DELTA=+{CC_DELTA}, PRB_FLOOR={PRB_FLOOR}, "
     f"PRB_FOLLOWER_FLOOR={PRB_FOLLOWER_FLOOR}, gas_st_netload_drag=ON, "
     f"ct_netload_drag={'ON' if CT_DRAG else 'OFF'}, "
-    f"overlays={'KEEPER' if OVERLAY else 'OFF'})"
+    f"overlays={_mode})"
 )
