@@ -172,7 +172,7 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
 # hourly P2 runs a bit under the monthly mean), and the cap keeps a
 # CEMS-invisible plant from being forced on harder than any CAMPD-observed
 # peer.
-_CHP_F923_FLOOR_FACTOR: float = 0.85
+_CHP_F923_FLOOR_FACTOR: float = 0.40
 _CHP_F923_FLOOR_CAP: float = 75.0
 
 # Days per month (non-leap); February is overridden per year so a leap-year
@@ -348,6 +348,8 @@ def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
         if p is not None:
             row["chp_pmin_cf"] = p.get("chp_pmin_cf")
             row["chp_sector"] = p.get("chp_sector")
+            if "chp_btm_pct" in p and p.get("chp_btm_pct") not in (None, float("nan")):
+                row["chp_btm_pct"] = p["chp_btm_pct"]
     for key, p in sorted(by_key.items()):
         if key in seen:
             continue
@@ -595,6 +597,38 @@ def main() -> None:
     ok = out[out["status"].isin(["ok", "eia923_cf", "chp_floor_only"])].sort_values(
         ["plant_group", "plant_code"]
     )
+
+    # Carry forward per-plant annotations from any existing output file.
+    # chp_btm_pct: manual BTM override (physical annotation, not re-derived).
+    # chp_sector: EIA-923 sector class — re-derived from ZIP archives; when
+    #   those archives are unavailable the column comes back all-NaN, so fall
+    #   back to the prior file to avoid silently losing sector classifications.
+    if out_path.exists():
+        _preserve_cols: list[str] = []
+        if "chp_btm_pct" not in ok.columns:
+            _preserve_cols.append("chp_btm_pct")
+        if ok.get("chp_sector", pd.Series(dtype=object)).isna().all():
+            _preserve_cols.append("chp_sector")
+        if _preserve_cols:
+            try:
+                prior_out = pd.read_csv(
+                    out_path,
+                    usecols=["plant_code", "plant_group"] + _preserve_cols,
+                )
+                # Only preserve rows that actually have a value in at least one col
+                mask = prior_out[_preserve_cols].notna().any(axis=1)
+                prior_out = prior_out[mask]
+                if not prior_out.empty:
+                    ok = ok.drop(
+                        columns=[c for c in _preserve_cols if c in ok.columns],
+                        errors="ignore",
+                    )
+                    ok = ok.merge(
+                        prior_out, on=["plant_code", "plant_group"], how="left"
+                    )
+            except (ValueError, KeyError):
+                pass  # prior file missing expected columns — nothing to preserve
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ok.to_csv(out_path, index=False)
 
