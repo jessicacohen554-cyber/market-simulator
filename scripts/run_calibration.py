@@ -893,28 +893,40 @@ def _calibration_config(
         #   ~0.35-0.40, hot-limb ~0.47) — physical temperature->commitment rules,
         #   NOT TWh-residual fits (scripts/derive_neiso_temp_reliability_floor.py).
         #   Other ISOs stay off (byte-identical); coefficients from ScenarioConfig.
-        caiso_ct_reliability_floor=(iso.upper() == "CAISO"),  # CAISO keeper
-        #   default-ON: the local-RA CT_PEAKER reliability floor holds simple-
-        #   cycle gas peakers online through the hot-day afternoon-evening ramp
-        #   for local capacity-area reliability (LA Basin / Big-Creek-Ventura /
-        #   Bay-Area). An energy-only LP leaves these top-of-merit peakers off and
-        #   spills their energy onto the cheaper CC fleet (CT_PEAKER under-runs,
-        #   CC_REGULAR over-runs); the floor restores the measured merit split. It
-        #   is keyed to the load-weighted CAISO daily max temperature (NOAA GHCN),
-        #   coefficients regressed from measured CAMPD CT_PEAKER evening CF vs
-        #   TMAX, 2023-2025 — a physical heat->commitment rule, not a TWh-residual
-        #   fit. See transmission.inject_caiso_ct_reliability_floor and
-        #   docs/caiso-ct-reliability-floor-2026-06.md. Other ISOs stay off
-        #   (byte-identical); coefficients from ScenarioConfig defaults.
-        caiso_ct_floor_base=(0.049 if iso.upper() == "CAISO" else 0.0),  # CAISO
-        #   keeper default-ON: the YEAR-ROUND local-RA baseline the temperature
-        #   hot-limb clips to zero. CAISO's Local Capacity Requirement is a
-        #   year-round load-pocket floor (binding hardest at summer peak but
-        #   holding a must-offer minimum on mild days too), so peakers run a steady
-        #   baseline even off the hot limb. 0.049 = the measured median CAMPD
-        #   CT_PEAKER evening (15-22) capacity factor on cool days (TMAX<25 degC),
-        #   2023-2025 — the regression intercept the hot-limb fit discards, not a
-        #   TWh-residual tune (scripts/derive_caiso_ct_reliability_floor.py).
+        caiso_ct_reliability_floor=False,  # CAISO: the OLD temperature/TMAX
+        #   CT_PEAKER local-RA floor is now DEFAULT-OFF — replaced by the
+        #   forward-native net-load-drag commitment (ct_netload_drag below). The
+        #   audit (docs/caiso-lever-audit-2026-06.md, Lever B) showed its flat
+        #   0.049 year-round baseline bound 61% of binding hours and made a FLAT
+        #   771 MW rectangle h15-22 instead of the real sharp h18 evening peak — a
+        #   constant tuned to the cool-day median CF, i.e. a level target (#1
+        #   forbidden). The inject fn stays re-armable for diagnostics / other
+        #   ISOs via --caiso-ct-reliability-floor (byte-identical when off). See
+        #   transmission.inject_caiso_ct_reliability_floor.
+        caiso_ct_floor_base=0.0,  # CAISO: the flat year-round baseline of the OLD
+        #   TMAX floor is removed (was 0.049 — the cool-day median CF level target
+        #   that made the rectangle); 0.0 leaves the inject byte-identical to the
+        #   hot-limb-only floor if it is ever re-armed.
+        ct_netload_drag=(iso.upper() == "CAISO"),  # CAISO keeper default-ON: the
+        #   forward-native CT_PEAKER reliability-drag floor that REPLACES the flat
+        #   TMAX floor above (audit Lever B). Same mechanism validated on ERCOT —
+        #   a min-gen floor clip(slope*netGW + intercept, 0, cap) x available
+        #   CT_PEAKER capacity gated to the afternoon-evening ramp window — but
+        #   keyed to system NET-LOAD (load - wind - solar) instead of TMAX, so it
+        #   RISES with the duck-curve neck and naturally PEAKS in the evening ramp
+        #   (h18-21) rather than holding a flat rectangle. Both the trigger
+        #   (net-load) and the magnitude (physical min-gen) are forward-derivable
+        #   and condition-responsive, admissible in backcast AND forecast (#10/#11)
+        #   — explicitly NOT the measured-actuals ct_mustrun_per_plant crutch. See
+        #   fleet.apply_ct_netload_drag_floor. Other ISOs use the CLI flag.
+        #   CAISO-specific curve coefficients (do NOT reuse ERCOT's 0.00703 /
+        #   -0.1427 / 0.47): regressed from measured CAMPD CT_PEAKER evening
+        #   (h15-22 local-std) capacity factor on EIA-930 CISO net-load, 2023-2025
+        #   (scripts/derive_caiso_ct_reliability_floor.py). Non-CAISO ISOs fall
+        #   back to the ScenarioConfig ERCOT defaults (byte-identical).
+        ct_drag_slope_per_gw=(0.00901 if iso.upper() == "CAISO" else 0.00703),
+        ct_drag_intercept=(-0.1124 if iso.upper() == "CAISO" else -0.1427),
+        ct_drag_cap=(0.36 if iso.upper() == "CAISO" else 0.47),
         negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
         #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
