@@ -1,96 +1,72 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-27): `nyiso 34 st-tempfloor`**
+> **KEEPER (2026-06-27): `nyiso 34 st-tempfloor` — CALIBRATED-WITH-CAVEATS**
 > (`2026-06-27-nyiso-34-st-tempfloor`, bundle
-> `results/calibration/nyiso_34_st_tempfloor`, all 3 years). Adds a
+> `results/calibration/nyiso_34_st_tempfloor`, all 3 years). **The first NYISO
+> keeper to clear the determination gate** (every prior keeper was NOT-YET). Adds a
 > **temperature-keyed downstate ST_GAS (gas-steam) local-reliability floor**
 > (`--nyiso-st-reliability-floor`, now the live NYISO default) on top of the
-> `nyiso 33` CT-floor keeper — the **ST-fleet companion to the CT floor**. NYISO's
-> downstate steam fleet (NYC zone J Ravenswood/Arthur Kill/Astoria; Long Island
-> zone K; the Capital region) runs a **persistent in-city / cable-islanded
-> reliability baseline plus a summer cooling hot-limb** that an energy-only LP
-> zeroes out — it imports cheaper upstate/NYC combined cycle instead — so the
-> backcast under-runs ST_GAS. The floor is a **persistent 24-hour baseline**
-> (`base_24h` × available capacity over ALL hours — the in-city must-run that the
-> measured cool-day CF shows running ~80% as high overnight as in the evening)
-> with the **evening cooling hot-limb layered on top** over HB14-21 via `maximum`:
-> overnight/midday `frac = base_24h`; evening `frac = max(base_24h, clip(base_ev +
-> slope·(TMAX−25), base_ev, cap))`. Each zone is keyed to its **own** load-center
-> daily max temperature (NOAA GHCN: Islip for Long Island, Central Park for NYC,
-> Albany for the Capital region). Per-zone coefficients
+> `nyiso 33` CT-floor keeper — the **ST-fleet companion to the CT floor** — plus
+> two structural corrections it depends on and a benchmark-basis fix (Task A).
+>
+> **Mechanism.** NYISO's downstate steam fleet (NYC zone J Ravenswood / Arthur
+> Kill / Astoria; Long Island; Capital) runs a persistent in-city / cable-islanded
+> reliability baseline an energy-only LP zeroes out (it imports cheaper CC instead),
+> under-running ST_GAS. The floor is a **persistent 24-hour baseline** (`base_24h`)
+> with an **evening cooling hot-limb** layered on over HB14-21 via `maximum`,
+> applied **per unit, pro-rata** (each in-pocket unit floored at `frac × its own
+> available capacity`), keyed per zone to its load-center daily max temperature
+> (Islip / Central Park / Albany, NOAA GHCN). Coefficients
 > (`transmission.NYISO_ST_FLOOR_COEFFS`) regressed **a priori** from the measured
-> per-zone CAMPD ST_GAS CF vs the zone's TMAX, pooled 2023-2025
-> (`scripts/derive_nyiso_st_reliability_floor.py`; archived
-> `data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv`): `base_24h` = cool-day
-> ALL-hours p25, `base_ev` = cool-day evening p25, `cap` = evening p97, `slope` =
-> evening hot-limb — **Long Island** `base_24h 0.148 / base_ev 0.191 / slope
-> 0.0588 / cap 0.851` (corr +0.63), **NYC** `base_24h 0.105 / base_ev 0.112 /
-> slope 0.0729 / cap 0.836` (corr +0.48), **Capital** hot-limb only `base 0 /
-> slope 0.040 / cap 0.419` (weak, corr +0.089). The flat, temperature-insensitive
-> **Upstate** steam fleet (CF ~0.50 flat) is deliberately **omitted** (no
-> un-grounded flat must-run). A **physical heat→commitment rule, forward-
-> reproducible** (a forecast year pins a weather year, hence a per-zone TMAX
-> series), **NOT a CEMS pin and NOT residual-tuned** — ST_GAS lands *under* actual
-> on the largest-miss year (2024 −1.45 TWh), so the floor is conservative
-> (rules #11/#12). The `pmax × availability` basis makes it automatically
-> **outage-aware**.
+> per-zone CAMPD ST_GAS CF vs zone TMAX, pooled 2023-2025
+> (`scripts/derive_nyiso_st_reliability_floor.py`).
 >
-> **Per-unit pro-rata distribution.** The hourly fraction is floored on **each
-> in-pocket steam unit at `frac × its own available capacity`**, NOT cheapest-first
-> over an aggregate target. In-city local reliability commits the
-> geographically-distributed units (NYC: Ravenswood / Astoria / Arthur Kill, each
-> in its own load pocket) by their locational role, and the measured CAMPD
-> distribution confirms all the in-pocket steam runs at similar moderate CFs.
-> A cheapest-first aggregate instead poured the whole NYC commitment into the one
-> cheapest unit (**Ravenswood** — which an energy-only LP already runs
-> economically, so the floor was redundant there) and left the costlier in-city
-> units idle; per-unit pro-rata both matches the real distribution and recovers
-> the class energy where the floor was being wasted. **Capacity-derate check
-> (this session):** the under-running in-city units are *not* capacity-capped —
-> they reach 0.66–0.92× nameplate in summer CAMPD yet sit at model summer CF
-> 0.02–0.17 with ample headroom, i.e. idle (not dispatched), not derated, so the
-> ceiling is correct and the under-run is a dispatch/distribution effect.
+> **Two structural corrections** (both fix real methodology errors that were
+> suppressing the costly in-city units — not residual tunes):
+> 1. **When-available CF basis.** `frac` is regressed on CF normalised by
+>    *available* capacity (nameplate net of the unit-outage derate), **not** by
+>    nameplate over all hours. The floor is applied as `frac × pmax × availability`,
+>    so the model already discounts outage downtime; regressing on the all-hours CF
+>    **double-discounted** it — the cool-day all-hours CF is itself deflated by the
+>    heavy NYC/LI steam downtime, then multiplying by availability again floored
+>    Astoria / Arthur Kill near zero. On the available basis these units run a
+>    steady ~0.3-0.4 baseline *whenever committed* (NYC temperature corr falls to
+>    ~0 — a flat in-city must-run), which `frac × availability` now reproduces.
+> 2. **Ravenswood outage routing** (`data.outages._FLEET_GROUP_OVERRIDE`).
+>    Ravenswood (2500) is a mixed CC/ST facility classified ST_GAS in our bin, but
+>    CAMPD tags every unit `CC_REGULAR`, so its outage rows never reached the ST_GAS
+>    bin → it read near-fully-available → the floor over-forced it to a baseload it
+>    never runs. The override routes plant 2500's outages to its ST_GAS bin so its
+>    model availability reflects the real downtime.
 >
-> **Effect — the HARD C1 fuel-mix improves** (rule-#1 right-structure step):
-> **ST_GAS** `2023 +1.12 TWh (PASS)`, `2024 −3.77 → −1.45 TWh` (recovers ~2.3 TWh
-> vs the `nyiso 33` keeper; still under band, kept as an **honest MODEL MISS** —
-> see below). The plant distribution is fixed (Northport now exact, Astoria /
-> Arthur Kill recovered, Ravenswood no longer floor-concentrated). **CC_REGULAR**
-> stays PASS (`2023/24 −0.58/−0.56`); **CT_PEAKER** stays PASS (`−0.93/−0.88`);
-> every other 2023-2024 gas class stays in C1 tolerance; **C5a CO2 returns to band
-> both years**. `dispatch_corr` stays PASS (gas r=0.91/0.84/0.80). **Plus a
-> benchmark-basis fix (Task A, reporting only):** NYISO solar actuals now route to
-> **EIA-923**
-> (`results.calibration.actuals_source` is ISO-aware). EIA-930 NYIS grid solar is
-> a structural 0 (NYISO solar is overwhelmingly behind-the-meter / net-metered,
-> invisible to the balancing-area telemetry), so the dashboard previously scored
-> the model's ~2 TWh of dispatched utility-scale grid solar against a spurious
-> zero; the EIA-923 utility-scale total (**2.05 / 2.90 TWh** for 2023/2024) is now
-> the actual on both the `classFull` and `e930`-slot benchmark parts, and solar
-> scores in tolerance (model 1.95/2.65, −5%/−9%).
+> **Capacity-derate check (answering the derate question):** the under-running
+> in-city units are **not** ceiling-capped — they reach 0.66-0.92× nameplate in
+> summer CAMPD with ample headroom; the under-run was a dispatch/availability/offer
+> effect (the two corrections above), **not** a derate to lift. ST_GAS lands *under*
+> actual both scored years, so the floor is conservative, not pinned (rules #11/#12).
 >
-> **Honest residual (un-ledgered MODEL MISS → determination NOT-YET):** the 2024
-> ST_GAS −1.45 TWh under-run, two named-not-chased components. **(1)** The under-run
-> is concentrated in the costlier in-city / Capital units (Astoria, Arthur Kill,
-> Bowline) and the broad winter/shoulder months; the deep-winter steam run is the
-> **gas-electric constraint** (pipeline scarcity pricing dual-fuel steam into
-> merit) — the dual-fuel / Transco-Z6 **gas-basis frontier**, a separate lever from
-> a cooling floor. Pushing the p25 base higher to close it would over-force a
-> cooling mechanism for a gas-constraint phenomenon (forbidden, rules #1/#11/#12).
-> **(2) Ravenswood** (plant 2500, the most efficient NYC steam, corrected base HR
-> 9.5) over-runs **economically** in the transmission-constrained NYC zone (2023
-> +1.76, 2024 +0.21 TWh gross): as the cheapest in-city steam it clears near
-> baseload where the real fleet spreads the in-city commitment more evenly (CAMPD
-> CF ~0.18–0.23 across Ravenswood/Astoria/Arthur Kill). The pro-rata floor lifts
-> the costlier units toward that even split but does not cap Ravenswood; raising
-> its cost would shift NYC load to CC/imports and push the steam class further
-> under, so it is named as an NYC in-city-commitment / offer-curve residual, not
-> forced. The `C3a` mean LMP (−14.9/−17.0/−12.7%) and empty `C3c` >$300 tail remain
-> the **ledgered reserve-scarcity (ORDC) frontier** (min-gen floors add
-> inframarginal supply but cannot restore scarcity price-setting; non-closable with
-> grounded inputs per `nyiso 29/31`); the steam floor regresses them further as the
-> documented rule-#1 tradeoff (kept, not chased). See the run-34 attestation
-> (`calibration_attestation.json`).
+> **Effect — the HARD C1 fuel-mix now PASSES every gas class both scored years:**
+> **ST_GAS** `2023 −0.24 (PASS)`, `2024 −3.77 → −1.03 TWh (PASS)`; **CC_REGULAR**
+> and **CT_PEAKER** PASS; `dispatch_corr` PASS (gas r=0.91/0.84/0.80); **C5a CO2 in
+> band all years.** Plant distribution improved (Arthur Kill near-exact, Astoria /
+> EF Barrett recovered, Ravenswood no longer over-forced); a zone-uniform floor
+> cannot match every in-pocket unit's heterogeneous when-available CF exactly, so
+> per-plant residuals offset *within* the C1 band. **Plus the Task-A benchmark fix:**
+> NYISO solar actuals route to **EIA-923** (`actuals_source` ISO-aware) — EIA-930
+> NYIS grid solar is a structural 0, so the dashboard now scores the model's ~2 TWh
+> of dispatched grid solar against the EIA-923 utility-scale total (2.05/2.90 TWh),
+> not a spurious zero.
+>
+> **Caveats (determination = CALIBRATED-WITH-CAVEATS):** the remaining open items
+> are all SOFT price criteria — the **ledgered reserve-scarcity (ORDC) + min-gen-
+> floor frontier**. `C3a` mean LMP regresses (−8.0/−19.4/−13.7%) and the `C3b`
+> duration curve flattens (2024/2025 just out of band) because the must-run steam
+> floor adds inframarginal supply and compresses the merit order rather than letting
+> the units SET a scarcity price; the `C3c` >$300 tail is empty in the under-priced
+> years (slightly *over* in 2023). Closing the price side needs an ORDC / reserve-
+> scarcity demand curve — the documented frontier, non-closable with grounded inputs
+> per `nyiso 29/31`, out of scope. Kept per rule #1 (HARD volume gain), not chased.
+> See the run-34 attestation (`calibration_attestation.json`).
 
 > **PRIOR KEEPER (2026-06-27): `nyiso 33 ct-tempfloor`**
 > (`2026-06-27-nyiso-33-ct-tempfloor`, bundle
