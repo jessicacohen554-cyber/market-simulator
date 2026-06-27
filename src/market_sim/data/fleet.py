@@ -1162,6 +1162,22 @@ def generators_to_fleet_arrays(
                 # clip it. Keep only the flat performance derate (the summer
                 # ambient derate still multiplies in below).
                 availability[g_idx, :] = 1.0 - derate
+            elif getattr(gen, "coal_sync_pmin_mw", 0.0) > 0.0:
+                # Coal synchronization floor tranche (_mustrun / _sync): held at
+                # the measured online Pmin via min_gen below. The STATISTICAL
+                # WEFOR and planned-maintenance derate must NOT erode this floor
+                # — a synced baseload coal unit physically holds min load in
+                # every hour it is online, and the min_gen floor is clipped to
+                # pmax x availability (line ~1682), so a statistical derate here
+                # would silently pull the floor below its measured cap (the
+                # MISO/Merom under-run bug). Genuine availability still relaxes
+                # it: the historic facility outage overlay and the unit-level
+                # outage derate apply AFTER this on the same array and still
+                # zero/derate the floor during real outages, and the online%-
+                # scaled top-k forcing already drops the floor in the bottom
+                # (1 - online_frac) load hours the cycler genuinely shuts.
+                # Mirrors the CT_PEAKER reliability-floor treatment above.
+                availability[g_idx, :] = 1.0
             elif drop_coal_pof and gen.fuel_type == "coal":
                 # Planned maintenance now comes from the historic outage
                 # overlay, so drop the statistical POF (and its summer->shoulder
