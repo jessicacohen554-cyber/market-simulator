@@ -101,15 +101,25 @@ _NONFOSSIL_KLASS = nonfossil_classes()
 # `klass.isin(FOSSIL_GROUPS)` filter keeps it, matching the EIA-923 side.
 FOSSIL_GROUPS = [*fossil_classes(), OTHER_FOSSIL_CLASS]
 MIX_GROUPS = list(FOSSIL_GROUPS)
-_GAS_GROUPS = classes_for_fuel930("gas")
+# OTHER_FOSSIL (the mixed gas-thermal reconciliation bucket) burns gas, so
+# EIA-930 books it in the "gas" series — include it in the gas family that
+# reconciles to the EIA-930 grid total, else its 923 generation double-counts
+# against the grid total (the canonical gas classes would absorb its share AND
+# it stays in the table). It is still excluded from the per-class merit GATE
+# (calibration_verdict.FUELMIX_EXCLUDED) — that is a scoring choice, separate
+# from the family grid-delivered reconciliation here.
+_GAS_GROUPS = (*classes_for_fuel930("gas"), OTHER_FOSSIL_CLASS)
 _COAL_GROUPS = classes_for_fuel930("coal")
-# Incomplete-vintage benchmark repair: the current-year EIA-923 release is a
-# preliminary monthly survey that under-counts thermal generation the CAMPD
-# backfill cannot fully repair (it keys off plants present in the 923 vintage).
-# When a fossil fuel's grid-delivered 923 class total falls below this fraction
-# of the complete EIA-930 grid series the model is calibrated to, the fuel's
-# classes are scaled up to the EIA-930 total (inter-class split preserved). A
-# complete vintage sits at ~1.0-1.02x and is left untouched -> byte-identical.
+# Grid-delivered benchmark reconciliation deadband (half-width ~3%). Each fossil
+# family's grid-delivered EIA-923 total is reconciled to the complete EIA-930
+# grid series — the same authority the model's gas/coal volume is scored on —
+# in BOTH directions: scaled UP when a preliminary monthly 923 vintage
+# under-counts thermal generation the CAMPD backfill can't fully repair, and
+# scaled DOWN when the 923 plant total over-states grid delivery (residual CHP
+# behind-the-meter + 923<->930 plant-to-BA assignment). A family already within
+# +/-(1-frac) of the grid series is left byte-identical (well-measured vintages
+# — e.g. ERCOT — unchanged). Keeps the actual gen+imports row reconciled to load
+# and the per-class shares on the model's grid-delivered denominator.
 _VINTAGE_RECONCILE_FRAC = 0.97
 # LEGACY FALLBACK ONLY. Balancing authorities whose EIA-930 "Natural Gas"
 # (NG: NG) aggregate silently folds in geothermal + biomass net generation, so
@@ -130,15 +140,23 @@ _T = 8760
 def reconcile_vintage_classes(
     classfull: dict[str, float], e930: dict[str, float], iso: str
 ) -> dict[str, float]:
-    """Scale a preliminary EIA-923 vintage's fossil classes up to EIA-930, in place.
+    """Reconcile each fossil family's EIA-923 total to the EIA-930 grid series, in place.
 
-    Repairs an incomplete current-year EIA-923 release: when a fossil fuel's
-    grid-delivered EIA-923 class total falls below :data:`_VINTAGE_RECONCILE_FRAC`
-    of the complete EIA-930 grid series the model is calibrated to, that fuel's
-    classes are scaled up to the EIA-930 total so the fossil volume error compares
-    the model against a COMPLETE benchmark, not a partial survey. The inter-class
-    split and monthly shape are preserved; complete vintages (>= frac) are left
-    byte-identical.
+    Puts the actual fossil benchmark on the SAME grid-delivered basis as the
+    model (and the C2 volume gate): each fossil family's grid-delivered EIA-923
+    class total is scaled to the complete EIA-930 grid series the model is
+    calibrated to, in BOTH directions —
+      * UP when the current-year 923 release is a preliminary monthly survey that
+        under-counts thermal generation the CAMPD backfill can't fully repair, and
+      * DOWN when the 923 plant total over-states grid delivery (residual CHP
+        behind-the-meter the ``btm.parquet`` hold-out under-removes, plus
+        923<->930 plant-to-BA assignment) — so the actual "gen + net imports" row
+        reconciles to load instead of reading as a phantom over-supply, and the
+        per-class shares share the model's grid-delivered denominator.
+    The inter-class split and monthly shape are preserved; a family already
+    within :data:`_VINTAGE_RECONCILE_FRAC` of the grid series (well-measured
+    vintages — e.g. ERCOT) is left byte-identical. ISO-agnostic: one rule for
+    every BA, no per-ISO branch.
 
     Some BAs silently fold geothermal + biomass into the EIA-930 "Natural Gas"
     cell, so the GAS target must be deflated by that fold-in before scaling — else
@@ -160,7 +178,28 @@ def reconcile_vintage_classes(
         _tgt = float(e930.get(_fuel, 0.0))
         if _fuel == "gas":
             _tgt -= _gas_foldin_deflation(classfull, e930, iso)
-        if _tgt > 0.0 and 0.0 < _cur < _VINTAGE_RECONCILE_FRAC * _tgt:
+        # Reconcile the family's grid-delivered EIA-923 total to the complete
+        # EIA-930 grid series — the same authority the model's gas/coal volume is
+        # scored on — in BOTH directions. Scale UP a preliminary/under-counting
+        # vintage (the original repair), and scale DOWN a vintage whose EIA-923
+        # plant total OVER-states grid delivery: residual CHP behind-the-meter
+        # the btm.parquet hold-out under-removes, plus 923<->930 plant-to-BA
+        # assignment. Either way the family lands on its grid-measured total, so
+        # the actual "gen + net imports" reconciles to load and the per-class
+        # shares use the SAME grid-delivered denominator the model does — without
+        # this the EIA-923 fossil total runs tens of TWh above the grid for
+        # CHP-heavy BAs (MISO 2023 +19 TWh) and the absolute supply row reads as
+        # a phantom over-supply. The inter-class split + monthly shape are
+        # preserved; a family already within +/-(1-frac) of the grid series is
+        # left byte-identical (well-measured vintages — e.g. ERCOT — unchanged).
+        # ISO-agnostic: one rule, no per-ISO branch.
+        if (
+            _tgt > 0.0
+            and _cur > 0.0
+            and not (
+                _VINTAGE_RECONCILE_FRAC * _tgt <= _cur <= _tgt / _VINTAGE_RECONCILE_FRAC
+            )
+        ):
             _scale = _tgt / _cur
             for g in _present:
                 classfull[g] = round(classfull[g] * _scale, 4)
