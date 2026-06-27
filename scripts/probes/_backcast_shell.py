@@ -226,6 +226,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </main>
 </div>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>window.BC=window.BC||{};window.BC._loadErr=[];</script>
 __DATASCRIPTS__
 <script>
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -1369,32 +1370,43 @@ async function selectIso(iso){
   updateIsoChrome(iso);
   build();
 }
-// The two data files (manifest.js → window.BC.meta/manifest, benchmark.js →
-// window.BC.benchGz) load via <script src> before boot() runs. A stale CDN /
-// browser cache or an out-of-sync deploy can leave one un-loaded (so meta /
-// benchGz is undefined and the old shell crashed with "undefined is not an
-// object"). Before giving up, re-fetch whichever is missing dynamically with a
-// cache-busting query so the page self-heals instead of blanking.
+// The data files (manifest.js, benchmark.js, completeness.js) load via
+// <script src> before boot() runs. A stale CDN / browser cache or an
+// out-of-sync deploy can leave one un-loaded (meta / benchGz undefined).
+// ensureData() re-fetches whichever is missing with a cache-busting query
+// so the page self-heals instead of blanking.
 async function ensureData(){
   const cb="?cb="+Date.now(),need=[];
-  if(!window.BC||!window.BC.meta||!window.BC.manifest)
+  if(!window.BC.meta||!window.BC.manifest)
     need.push("frontend/data/backcast/manifest.js");
-  if(!window.BC||!window.BC.benchGz)
+  if(!window.BC.benchGz)
     need.push("frontend/data/backcast/benchmark.js");
+  if(!window.BC.completeness)
+    need.push("frontend/data/backcast/completeness.js");
+  if(!need.length)return;
+  console.warn("data scripts missing, re-fetching: "+need.join(", "));
   for(const src of need){
     try{await loadScript(src+cb);}
-    catch(e){console.warn("data re-fetch failed: "+((e&&e.message)||e));}
+    catch(e){console.warn("data re-fetch failed: "+src+": "+((e&&e.message)||e));}
   }
+}
+function diagMsg(e){
+  const failed=(window.BC._loadErr||[]).map(u=>{try{return new URL(u).pathname.split("/").pop();}catch(_){return u;}});
+  let msg="Init error: "+((e&&e.message)||e);
+  if(failed.length)msg+="\n\nFailed to load: "+failed.join(", ")+". Check the browser console (Network tab) for 404s.";
+  msg+="\n\nFix: re-run the Pages deploy (push to main or trigger Deploy site to GitHub Pages manually).";
+  return msg;
 }
 async function boot(){try{
   await ensureData();
-  if(!window.BC||!window.BC.meta||!window.BC.manifest)
+  if(!window.BC.meta||!window.BC.manifest)
    throw new Error("manifest data is unavailable — "
     +"frontend/data/backcast/manifest.js did not load.");
   if(!window.BC.benchGz)
    throw new Error("benchmark data is unavailable — "
     +"frontend/data/backcast/benchmark.js did not load.");
   const isos=Object.keys(window.BC.meta);
+  if(!isos.length) throw new Error("manifest loaded but contains no ISOs.");
   const isoSel=document.getElementById("isoSel");
   isoSel.innerHTML=isos.map(i=>{const n=isoRunCount(i);
     return `<option value="${i}">${i} · ${n} run${n===1?"":"s"}</option>`;}).join("");
@@ -1404,6 +1416,6 @@ async function boot(){try{
   SUB_BASE=document.getElementById("pageSub").textContent;
   document.getElementById("diag").style.display="none";
   await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);
- }catch(e){const d=document.getElementById("diag");d.style.display="block";d.style.color="#c01c28";d.textContent="Init error: "+((e&&e.message)||e)+" "+((e&&e.stack)||"");}}
+ }catch(e){const d=document.getElementById("diag");d.style.display="block";d.style.color="#c01c28";d.style.whiteSpace="pre-wrap";d.textContent=diagMsg(e);}}
 boot();
 </script></body></html>"""

@@ -255,30 +255,23 @@ def main() -> None:
     # Cache-busting token appended to every data-script src so each deploy
     # forces the CDN and browser to fetch fresh versions — prevents the stale-
     # benchmark.js class of "Init error: undefined is not an object" crashes.
+    # Each tag also carries an onerror that records the failure into
+    # window.BC._loadErr so boot() can report exactly which files failed.
     cb = datetime.now().strftime("%Y%m%d%H%M%S")
+    _onerr = 'onerror="window.BC._loadErr.push(this.src)"'
     shell = (
         SHELL.replace(
             "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
         )
         .replace(
             "__DATASCRIPTS__",
-            f'<script src="frontend/data/backcast/manifest.js?v={cb}">'
+            f'<script src="frontend/data/backcast/manifest.js?v={cb}" {_onerr}>'
             "</script>"
-            f'<script src="frontend/data/backcast/benchmark.js?v={cb}">'
+            f'<script src="frontend/data/backcast/benchmark.js?v={cb}" {_onerr}>'
             "</script>"
-            # completeness.js (window.BC.completeness) color-codes the generation-
-            # mix table's classes for a preliminary-EIA-923 vintage. Generated here
-            # from the committed completeness parts; the table degrades gracefully
-            # (no flags) if it is absent.
-            f'<script src="frontend/data/backcast/completeness.js?v={cb}">'
+            f'<script src="frontend/data/backcast/completeness.js?v={cb}" {_onerr}>'
             "</script>"
-            # status.js (window.BC.status) drives the all-ISO Calibration Status
-            # view. Unlike manifest/benchmark it is a COMMITTED file (built by
-            # scripts/build_status.py where the bundles live, since the C6
-            # governance verdict needs each bundle's attestation, which the Pages
-            # deploy's sparse checkout omits). We only wire it in here; the view
-            # degrades gracefully if it is absent.
-            f'<script src="frontend/data/backcast/status.js?v={cb}">'
+            f'<script src="frontend/data/backcast/status.js?v={cb}" {_onerr}>'
             "</script>",
         )
         .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M"))
