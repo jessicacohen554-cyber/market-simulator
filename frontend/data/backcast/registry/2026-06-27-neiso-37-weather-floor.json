@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-neiso-37-weather-floor",
+  "label": "neiso 37 weather floor",
+  "date": "2026-06-27",
+  "shorthand": "neiso-37-weather-floor",
+  "definition": "Calibration run from bundle neiso_37_tempfloor_dailybasis_hydrofix_3yr.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-neiso-37-weather-floor.js",
+  "bundle": "results/calibration/neiso_37_tempfloor_dailybasis_hydrofix_3yr"
+}
