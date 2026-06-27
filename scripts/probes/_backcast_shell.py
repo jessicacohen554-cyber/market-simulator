@@ -102,6 +102,15 @@ th,td{padding:7px 11px;border-bottom:1px solid #eef1f4;text-align:left;white-spa
 th{background:#f0f3f6;font-size:var(--fs-xs);text-transform:uppercase;color:#46505f;position:sticky;top:0}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 tr.sub td{background:#f3f6f9;font-weight:700}
+/* EIA-923 completeness flags on the generation-mix table (preliminary vintage):
+   amber row = incomplete plant data (not gated), muted = immaterial, the ✓ badge
+   marks a verified-complete class that DOES gate C1. */
+tr.cmpl-inc td{background:#fff7ed}
+tr.cmpl-imm td{color:var(--ink-faint)}
+.badge923{display:inline-block;font-size:var(--fs-xs);font-weight:700;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.badge923.inc{background:#fde9d2;color:#9a5b12}
+.badge923.imm{background:#eceff2;color:#7b8794}
+.badge923.ok{background:#d8f0dd;color:#1f7a3d}
 .svgbox{width:100%;overflow:hidden}svg.chart{width:100%;height:auto;display:block;max-width:100%}
 canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid var(--border);border-radius:6px;background:#eef3f7;display:block}
 .ax{display:flex;justify-content:space-between;color:var(--ink-muted);font-size:var(--fs-xs);margin:3px 2px 0}
@@ -344,10 +353,24 @@ function genMixData(id,yr){const B=BENCH[yr];const gm=(MODEL[id].years[yr]||{}).
  const mFos=Object.keys(B.classFull).reduce((s,g)=>s+(gm[g]||0),0);
  const mGen=mFos+(nf.nuclear||0)+(nf.wind||0)+(nf.solar||0);
  return {gm,nf,mFos,mGen};}
+// EIA-923 completeness flag for one (year, iso, class). Returns null when the
+// year has no completeness part (a complete vintage — no flag), else
+// {status, gate} from window.BC.completeness. Drives the mix-table color code.
+function cmpInfo(yr,iso,g){const C=(window.BC.completeness||{})[yr];if(!C)return null;
+ return (C[iso]||{})[g]||{status:"incomplete",gate:false};}
+function cmpBadge(c){if(!c)return "";
+ if(c.status==="complete")return ' <span class="badge923 ok" title="EIA-923 verified complete — gates C1">✓ 923</span>';
+ if(c.status==="immaterial")return ' <span class="badge923 imm" title="immaterial volume — not gated">— 923</span>';
+ return ' <span class="badge923 inc" title="incomplete EIA-923 plant data — not gated this vintage">⚠ 923</span>';}
 function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  const cf=B.classFull,FG=Object.keys(cf),gm=(MODEL[id].years[yr]||{}).gmModel||{};
  const aGen=FG.reduce((s,g)=>s+(cf[g]||0),0);
  const mGen=FG.reduce((s,g)=>s+(gm[g]||0),0);
+ const iso=(META_RUN(id)||{}).iso||"ERCOT";
+ // Preliminary-EIA-923 vintage iff the year has a completeness part. When it
+ // does, color-code each class by whether its plant data is complete enough to
+ // gate the C1 fuel-mix test (only ✓ classes gate; ⚠/— are not gated).
+ const prelim=!!(window.BC.completeness||{})[yr];
  // Net imports (import-positive): the fuelRows "interchange" row is net-EXPORT
  // positive (EIA-930 sign), so flip it. Present only for a priced-interchange
  // bundle; a measured-schedule bundle nets interchange into demand (no row).
@@ -357,14 +380,24 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM); BTM excluded — grid-delivered only)</span></h2>';
  h+=`<p class=psub>${MODEL[id].label} generation ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh`
    +(mImp!=null?` · + net imports ${mImp.toFixed(1)} (actual ${aImp==null?"—":aImp.toFixed(1)}) → supply ${(mGen+mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh`:'')+`</p>`;
+ if(prelim)h+='<p class=psub style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> per-class plant data is still incomplete. '
+   +'Only <span class="badge923 ok">✓ 923</span> classes are verified-complete and gate the C1 fuel-mix test; '
+   +'<span class="badge923 inc">⚠ 923</span> (incomplete plant data) and <span class="badge923 imm">— 923</span> (immaterial) classes are shown for reference but not gated.</p>';
  h+='<div class=tablewrap><table><thead><tr><th>class</th>'
   +'<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
   +'<th>Δpp</th></tr></thead><tbody>';
  for(const g of FG){const a=cf[g]||0,m=gm[g]||0;
   const a_g=aGen>0?100*a/aGen:0,m_g=mGen>0?100*m/mGen:0,dpp=m_g-a_g;
-  h+=`<tr><td>${mixLabel(g)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${a.toFixed(2)}</td>`
+  // Only fossil classes carry a 923 completeness flag (cf carries non-fossil
+  // wind/solar/nuclear too, which are scored on EIA-930, not 923).
+  const ci=prelim&&(g in (((window.BC.completeness||{})[yr]||{})[iso]||{}))?cmpInfo(yr,iso,g):null;
+  const rowcls=ci?(ci.status==="incomplete"?" class=cmpl-inc":(ci.status==="immaterial"?" class=cmpl-imm":"")):"";
+  // Δpp is a pass/fail-flavored color only when the class actually gates; for a
+  // non-gated incomplete/immaterial class show it muted (it does not gate).
+  const dppcls=(ci&&!ci.gate)?"":ppcls(dpp);
+  h+=`<tr${rowcls}><td>${mixLabel(g)}${cmpBadge(ci)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${a.toFixed(2)}</td>`
     +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td>`
-    +`<td class="num ${ppcls(dpp)}">${fmtpp(dpp)}</td></tr>`;}
+    +`<td class="num ${dppcls}">${fmtpp(dpp)}</td></tr>`;}
  h+=`<tr class=sub><td>Total generation</td><td class=num>${mGen.toFixed(2)}</td><td class=num>${aGen.toFixed(2)}</td>`
    +`<td class=num>100.0</td><td class=num>100.0</td><td class=num></td></tr>`;
  // Reconcile generation + net imports = supply = load, so the net-import
