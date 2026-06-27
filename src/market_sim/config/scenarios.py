@@ -616,6 +616,45 @@ class ScenarioConfig:
     # evenings, set below the cool-day median (0.18) so the LP dispatches above it
     # economically on typical cool evenings rather than the floor over-forcing.
     # Default carried with the flag; 0.0 would be hot-limb-only.
+    neiso_temp_reliability_floor: bool = False  # NEISO DUAL-LIMB weather-
+    # correlated reliability floor. ISO-NE under-runs two structurally distinct
+    # weather-driven fleets that respond to OPPOSITE temperature limbs: (1) the
+    # simple-cycle CT_PEAKER fleet tracks the summer cooling HOT limb (TMAX) over
+    # the afternoon-evening ramp exactly like CAISO/NYISO; (2) the lone
+    # Merrimack-class COAL unit and lone steam-gas ST_GAS unit run almost only
+    # during deep-winter COLD snaps (TMIN), when the gas-electric constraint
+    # prices these oil/coal/steam reliability units into merit. An energy-only LP
+    # leaves both on the cheaper CC fleet. This floors each group at frac x
+    # available capacity over its window via the hour-varying FleetArrays.min_gen
+    # lower bound (transmission.inject_neiso_temp_reliability_floor). Coefficients
+    # regressed from measured CAMPD CF vs the NEISO load-weighted daily TMAX/TMIN,
+    # pooled 2023-2025 (scripts/derive_neiso_temp_reliability_floor.py) — physical
+    # temperature->commitment rules, NOT TWh-residual fits (cold-limb Spearman rho
+    # ~0.35-0.40, hot-limb ~0.47). Forward-reproducible (a forecast year pins a
+    # weather year, hence TMAX/TMIN) and condition-responsive (hotter summers ->
+    # more CT, colder winters -> more coal/steam). Default off (byte-identical);
+    # NEISO-only, no-op without an archived weather series.
+    neiso_ct_floor_slope_per_c: float = 0.037  # CT_PEAKER commitment fraction
+    # gained per deg C of NEISO daily max temperature above T0. From the CAMPD
+    # evening (HB16-21) CF-vs-TMAX hot-limb regression (>= 25 degC, 2023-2025).
+    neiso_ct_floor_t0_c: float = 25.0  # Hot-limb zero-crossing: below this daily
+    # max temperature the CT heat-driven floor is held at the baseline.
+    neiso_ct_floor_cap: float = 0.48  # Max CT_PEAKER commitment fraction (p97 of
+    # measured evening CF) — the hottest-day ceiling.
+    neiso_ct_floor_base: float = 0.0  # Year-round CT baseline commitment fraction
+    # (0.0 = hot-limb only; the measured cool-day evening p25 is ~0).
+    neiso_coldsnap_floor_slope_per_c: float = 0.033  # COAL/ST_GAS commitment
+    # fraction gained per deg C of NEISO daily MIN temperature BELOW the per-group
+    # zero-crossing (NEISO_COLDSNAP_T0_C: COAL +5 degC, ST_GAS 0 degC). Mean of
+    # the two cold-limb CF-vs-TMIN regressions (winter peaks HB6-9+17-20,
+    # 2023-2025; COAL 0.031, ST_GAS 0.035).
+    neiso_coldsnap_floor_cap: float = 1.0  # Max cold-limb commitment fraction. The
+    # measured cold-snap CF saturates near full available capacity (these single
+    # units run flat-out in deep cold), and the bin-nameplate capacity basis
+    # understates their CAMPD output, so the deep-cold ceiling is the unit's full
+    # availability (1.0).
+    neiso_coldsnap_floor_base: float = 0.0  # Year-round cold-limb baseline (0.0 =
+    # cold-limb only; these units idle on mild days and run on price).
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -2420,6 +2459,14 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ct_floor_t0_c": 1,
     "caiso_ct_floor_cap": 2,
     "caiso_ct_floor_base": 3,
+    "neiso_temp_reliability_floor": 1,
+    "neiso_ct_floor_slope_per_c": 3,
+    "neiso_ct_floor_t0_c": 1,
+    "neiso_ct_floor_cap": 2,
+    "neiso_ct_floor_base": 3,
+    "neiso_coldsnap_floor_slope_per_c": 3,
+    "neiso_coldsnap_floor_cap": 2,
+    "neiso_coldsnap_floor_base": 3,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
