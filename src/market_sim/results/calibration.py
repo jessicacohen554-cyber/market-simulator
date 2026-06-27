@@ -107,18 +107,37 @@ EIA930_SOURCE: str = "eia930"
 # Classes whose authoritative volume actual is EIA-930, not EIA-923.
 _EIA930_CLASSES: frozenset[str] = frozenset({"solar", "wind"})
 
+# (iso, class) pairs that OVERRIDE the default EIA-930 routing back to EIA-923.
+# NYISO grid solar is structurally 0 in EIA-930: NYISO solar is overwhelmingly
+# behind-the-meter / net-metered (invisible to the NYIS balancing-area telemetry),
+# so EIA-930 NYIS solar reads 0.0 even though EIA-923 reports ~2.05 TWh (2023) of
+# utility-scale grid solar — exactly the grid resource the model dispatches (from
+# NYISO_*_renewable_capacity.csv). Routing NYISO solar to EIA-930 would score the
+# model's ~2 TWh against a spurious zero; EIA-923 is the like-for-like utility-scale
+# actual. (Wind is fine on EIA-930 for NYISO — NYIS reports grid wind normally.)
+_EIA923_OVERRIDE: frozenset[tuple[str, str]] = frozenset({("NYISO", "solar")})
 
-def actuals_source(klass: str) -> str:
+
+def actuals_source(klass: str, iso: str | None = None) -> str:
     """Return the authoritative actuals source for a class's volume check.
 
     Args:
         klass: Model plant-class key (e.g. ``"CC_REGULAR"``, ``"solar"``).
+        iso: Optional ISO key (e.g. ``"NYISO"``). When given, lets an ISO override
+            the default source for a class — used for NYISO solar, whose EIA-930
+            grid series is structurally 0 (behind-the-meter), so its
+            authoritative utility-scale actual is EIA-923 (see
+            :data:`_EIA923_OVERRIDE`).
 
     Returns:
         :data:`EIA930_SOURCE` for the variable renewables (solar, wind),
-        :data:`EIA923_SOURCE` for every other class.
+        :data:`EIA923_SOURCE` for every other class — except the
+        :data:`_EIA923_OVERRIDE` ``(iso, class)`` pairs, forced back to EIA-923.
     """
-    return EIA930_SOURCE if str(klass).lower() in _EIA930_CLASSES else EIA923_SOURCE
+    k = str(klass).lower()
+    if iso is not None and (str(iso).upper(), k) in _EIA923_OVERRIDE:
+        return EIA923_SOURCE
+    return EIA930_SOURCE if k in _EIA930_CLASSES else EIA923_SOURCE
 
 
 def signed_volume_error(model_twh: float, actual_twh: float) -> float:
