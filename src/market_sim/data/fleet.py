@@ -456,6 +456,27 @@ MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5, 315: 11.85, 335: 11.85}
 CAISO_EOR_TOPPING_PLANTS: frozenset[int] = frozenset({10496, 50134, 52169})
 CAISO_EOR_TOPPING_FACTOR: float = 1.8
 
+# Generalized steam-credit HR correction for ALL CAISO CHP gas turbines, not
+# just the three big EOR plants.  Every CHP simple-cycle CT reports a steam-
+# credited EIA-923/CAMPD heat rate because total fuel includes steam-host
+# thermal energy.  No simple-cycle GT achieves HR < 8.0 MMBtu/MWh on a
+# power-only basis — the sub-8 values are artifacts of the CHP accounting.
+# The same 1.8× topping factor used for EOR applies: all CT_CHP plants are
+# physically simple-cycle turbines with similar thermodynamics; the correction
+# lands them at 9–11 MMBtu/MWh regardless of the steam host type (oilfield,
+# refinery, hospital, campus).  Applied only when it RAISES the heat rate.
+CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD: float = 8.0
+
+# CC_CHP plants also carry a steam credit, but smaller because the combined-
+# cycle steam turbine is part of the power conversion — only ADDITIONAL process-
+# steam extraction inflates efficiency.  A CC_CHP with reported HR < 6.0 is
+# below even the most efficient gas-CC class (h_class = 6.3), confirming steam
+# credit.  A 1.15× factor brings these into the 6.3–6.9 range (h_class to
+# f_class); a floor of 6.3 prevents under-correction of heavily credited units.
+CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD: float = 6.0
+CAISO_CHP_CC_STEAM_CREDIT_FACTOR: float = 1.15
+CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
+
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
 # months. Winter keeps the flat WEFOR.
@@ -3671,7 +3692,7 @@ def load_fleet_from_csv(
         source = parquet_path
 
     _correct_mixed_facility_steam_hr(generators)
-    _correct_caiso_eor_power_hr(generators, iso)
+    _correct_caiso_chp_steam_credit_hr(generators, iso)
     _cache_binned_fleet(iso, generators, source)
     return generators
 
@@ -3696,26 +3717,30 @@ def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
             gen.heat_rate = target
 
 
-def _correct_caiso_eor_power_hr(generators: list[Generator], iso: str) -> None:
-    """Reprice the CAISO Kern-County EOR topping cogens to their power-only HR.
+def _correct_caiso_chp_steam_credit_hr(generators: list[Generator], iso: str) -> None:
+    """Correct steam-credited heat rates for all CAISO CHP plants (in place).
 
-    See :data:`CAISO_EOR_TOPPING_PLANTS` / :data:`CAISO_EOR_TOPPING_FACTOR`:
-    the three big EOR cogens report a steam-credited (artificially efficient)
-    EIA-923 heat rate, so the model dispatches them as cheap baseload and
-    over-runs them. This lifts their CT_CHP heat rate to the power-only
-    (topping-cycle) basis — ``heat_rate × CAISO_EOR_TOPPING_FACTOR`` — landing
-    them in the simple-cycle peaker band where their power island physically
-    sits, so they clear on price like a peaker rather than as baseload. CAISO
-    only; CT_CHP rows only (the steam-credited regime these three report).
+    CT_CHP: all simple-cycle CHP gas turbines report a steam-credited HR that
+    is physically impossible on a power-only basis (< 8.0 MMBtu/MWh).  The
+    1.8× topping factor (same as the original EOR-only fix) restores the
+    power-only HR, landing these units at 9–11 MMBtu/MWh in the peaker band.
+
+    CC_CHP: combined-cycle CHP plants carry a smaller steam credit from
+    process-steam extraction.  Plants with HR below 6.0 (under the most
+    efficient CC class) get a 1.15× correction with a 6.3 floor.
     """
     if iso.upper() != "CAISO":
         return
     for gen in generators:
-        if (
-            int(gen.plant_code) in CAISO_EOR_TOPPING_PLANTS
-            and gen.plant_group == "CT_CHP"
-        ):
-            gen.heat_rate *= CAISO_EOR_TOPPING_FACTOR
+        if gen.plant_group == "CT_CHP":
+            if gen.heat_rate < CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD:
+                gen.heat_rate *= CAISO_EOR_TOPPING_FACTOR
+        elif gen.plant_group == "CC_CHP":
+            if gen.heat_rate < CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD:
+                gen.heat_rate = max(
+                    gen.heat_rate * CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
+                    CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR,
+                )
 
 
 def load_retired_within_window(
