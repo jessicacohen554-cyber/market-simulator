@@ -21,6 +21,7 @@ from market_sim.data.eia_loader import (
     measured_interchange_envelope,
     miso_zonal_load_shares,
     nyiso_zonal_load_shares,
+    pjm_zonal_interchange_envelope,
 )
 
 _TEST_YEAR = 2024
@@ -40,6 +41,48 @@ _NYISO_TEST_YEAR = 2023
 # CAISO ~47,571 MW for 2024.
 _ERCOT_PEAK_RANGE = (80_000.0, 90_000.0)
 _CAISO_PEAK_RANGE = (45_000.0, 50_000.0)
+
+
+class TestPjmZonalInterchangeEnvelope(unittest.TestCase):
+    """PJM congestion Lever A: per-border net-interchange deliverability envelope."""
+
+    _ZONES = [
+        "PJM_ComEd",
+        "PJM_AEP_Ohio",
+        "PJM_ATSI",
+        "PJM_West_APS",
+        "PJM_Central_PA",
+        "PJM_Dominion",
+        "PJM_EMAAC",
+        "PJM_SWMAAC",
+    ]
+
+    def test_shape_and_nonnegative_split(self):
+        env = pjm_zonal_interchange_envelope(2024, self._ZONES, HOURS_PER_YEAR, 95.0)
+        self.assertIsNotNone(env)
+        imp, exp = env
+        self.assertEqual(imp.shape, (len(self._ZONES), HOURS_PER_YEAR))
+        self.assertEqual(exp.shape, (len(self._ZONES), HOURS_PER_YEAR))
+        # Direction split is non-negative MW (each is a clipped one-sided cap).
+        self.assertGreaterEqual(imp.min(), 0.0)
+        self.assertGreaterEqual(exp.min(), 0.0)
+
+    def test_border_directionality_matches_measured(self):
+        # EMAAC physically exports to NYISO (net exporter) → its export ceiling
+        # dominates and its import ceiling collapses ~0, closing the copper-plate
+        # bypass. Dominion is a net importer → the mirror.
+        imp, exp = pjm_zonal_interchange_envelope(
+            2024, self._ZONES, HOURS_PER_YEAR, 95.0
+        )
+        emaac = self._ZONES.index("PJM_EMAAC")
+        dom = self._ZONES.index("PJM_Dominion")
+        self.assertGreater(np.median(exp[emaac]), np.median(imp[emaac]))
+        self.assertGreater(np.median(imp[dom]), np.median(exp[dom]))
+
+    def test_forecast_year_returns_none(self):
+        self.assertIsNone(
+            pjm_zonal_interchange_envelope(2099, self._ZONES, HOURS_PER_YEAR, 95.0)
+        )
 
 
 class TestEIALoader(unittest.TestCase):
