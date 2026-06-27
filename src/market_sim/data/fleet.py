@@ -2017,6 +2017,95 @@ def apply_gas_st_netload_drag_floor(
     return True
 
 
+def apply_ct_netload_drag_floor(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> bool:
+    """Impose the net-load-indexed CT_PEAKER reliability-drag min-gen floor.
+
+    The simple-cycle analog of :func:`apply_gas_st_netload_drag_floor`, and the
+    forward-native replacement for the ``ct_mustrun_per_plant`` actuals pin.
+    ERCOT commits fast-start gas peakers for summer-peak + evening
+    net-load-ramp local reliability (RUC / RMR); the hourly energy-only LP,
+    seeing their top-of-merit offer, never makes that commitment, so the
+    backcast under-runs CT_PEAKER and the freed energy spills onto cheaper CC.
+
+    Unlike the all-hours ST_GAS boiler, CT peakers serve reliability only in the
+    afternoon-evening ramp (solar collapse): the CAMPD overnight CF is ~0 even
+    at high net-load, while the evening (15-22h local-standard) CF rises cleanly
+    with net-load (Spearman rho ~0.7, 2023-2025). So the floor is the same
+    clipped net-load line ``clip(slope*netload_GW + intercept, 0, cap)`` but
+    **gated to the ramp window** ``[ct_drag_ramp_start, ct_drag_ramp_end)`` —
+    zero outside it. The window is on the model's local-standard hour-of-year
+    clock (hour t → t % 24), the same clock the CAMPD fit used. Each non-``_peak``
+    CT_PEAKER tranche (the duct-firing ``_peak`` scarcity band runs purely on
+    price) gets the floor, capped at available capacity and composed with any
+    existing floor via ``maximum``; the LP dispatches economically above it.
+
+    The defaults (``config.ct_drag_slope_per_gw`` / ``_intercept`` / ``_cap``)
+    are the CAMPD CT_PEAKER evening capacity factor regressed on contemporaneous
+    net-load, 2023-2025 (``docs/ercot-ct-netload-drag-2026-06.md``); both the
+    trigger (net-load) and the magnitude (physical min-gen) are forward-derivable
+    and condition-responsive, so the mechanism is admissible in both backcast and
+    forecast (CLAUDE.md #10/#11), unlike an offer markdown or actuals pin.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when the flag is off or the fleet has no
+    reliability CT_PEAKER units.
+
+    Args:
+        fleet_arrays: The vectorized fleet (``min_gen`` is set in place).
+        generators: The dispatch fleet, aligned row-for-row with ``fleet_arrays``.
+        net_load_mw: System net-load per hour (``load - wind - solar``), the same
+            LP-served convention the runner uses elsewhere, shape ``(T,)``.
+        config: Scenario config supplying the enable flag, curve coefficients and
+            ramp window.
+    """
+    if not getattr(config, "ct_netload_drag", False):
+        return False
+
+    rows = [
+        g
+        for g, gen in enumerate(generators)
+        if gen.plant_group == "CT_PEAKER" and not gen.unit_id.endswith("_peak")
+    ]
+    if not rows:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    net_load_gw = np.asarray(net_load_mw, dtype=float)[:hours] / 1000.0
+    floor_frac = np.clip(
+        config.ct_drag_slope_per_gw * net_load_gw + config.ct_drag_intercept,
+        0.0,
+        config.ct_drag_cap,
+    )  # (T,)
+    # Gate to the afternoon-evening ramp window: peakers serve reliability there,
+    # not overnight, so the floor is zero outside [ramp_start, ramp_end). Hour of
+    # day on the model's local-standard 8760 clock is t % 24.
+    hod = np.arange(hours) % 24
+    in_window = (hod >= config.ct_drag_ramp_start) & (hod < config.ct_drag_ramp_end)
+    floor_frac = np.where(in_window, floor_frac, 0.0)
+
+    if fleet_arrays.min_gen is None:
+        # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
+        # fresh floor must preserve export-sink rows (pmin < 0) by seeding from
+        # pmin rather than zeroing them (mirrors generators_to_fleet_arrays).
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
+
+    pmax = fleet_arrays.pmax
+    avail = fleet_arrays.availability
+    for g in rows:
+        # Never floor above the hour's available capacity, so the LP stays
+        # feasible (the drag can never manufacture unmet demand).
+        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
+        fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
+    return True
+
+
 def _capacity_weighted(units: list[Generator], attr: str) -> float:
     """Return the capacity-weighted average of ``attr`` over ``units``.
 
