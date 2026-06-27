@@ -58,7 +58,6 @@ from scripts.derive_campd_unit_outages import (  # noqa: E402
     _load_unit_year,
     _unit_year_grid,
     build_capacity_index,
-    plant_nameplate_index,
     unit_capacity_mw,
 )
 
@@ -150,7 +149,6 @@ def audit_iso(iso: str, years: list[int], min_outage_days: float) -> pd.DataFram
     group_by_code, name_by_code = _group_map(iso)
     eia860 = EIA_860_DIR / "eia860_generators.parquet"
     exact, by_digits = build_capacity_index(eia860)
-    npl_by_plant = plant_nameplate_index(eia860)
     states = campd.states_for_iso(iso)
 
     mask_cache: dict[int, np.ndarray | None] = {}
