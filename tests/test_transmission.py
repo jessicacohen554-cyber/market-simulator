@@ -41,6 +41,8 @@ from market_sim.model.transmission import (
     inject_caiso_export_hub_prices,
     inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
+    inject_nyiso_ct_reliability_floor,
+    NYISO_CT_FLOOR_HOURS,
     wecc_border_carbon_adder,
 )
 
@@ -830,6 +832,99 @@ class TestCaisoCtReliabilityFloor(unittest.TestCase):
         fa = generators_to_fleet_arrays(gens, ["NP15"], hours=48)
         self.assertFalse(
             inject_caiso_ct_reliability_floor(fa, "CAISO", 2024, 0.047, 25.0, 0.46)
+        )
+        self.assertIsNone(fa.min_gen)
+
+
+class TestNyisoCtReliabilityFloor(unittest.TestCase):
+    """The temperature-driven NYISO DOWNSTATE CT_PEAKER local-reliability floor."""
+
+    def _ct_fleet(self, hours, ds_mw=2000.0, up_mw=500.0, cc_mw=10000.0):
+        # A downstate (NYC) CT, an UPSTATE CT (must stay unfloored), and a CC.
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NYC",
+                fuel_type="gas_cc",
+                pmax_mw=cc_mw,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="ct_ds",
+                name="ct_ds",
+                zone="NYC",
+                fuel_type="gas_ct",
+                pmax_mw=ds_mw,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_PEAKER",
+            ),
+            Generator(
+                unit_id="ct_up",
+                name="ct_up",
+                zone="Upstate_West",
+                fuel_type="gas_ct",
+                pmax_mw=up_mw,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_PEAKER",
+            ),
+        ]
+        zones = ["NYC", "Upstate_West"]
+        fa = generators_to_fleet_arrays(gens, zones, hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, zones, clock.hour.to_numpy()
+
+    def test_floors_downstate_ct_only_in_window(self):
+        H = 8760
+        fa, gens, zones, hod = self._ct_fleet(H)
+        applied = inject_nyiso_ct_reliability_floor(
+            fa, "NYISO", 2024, zones, 0.053, 25.0, 0.68, 0.13
+        )
+        self.assertTrue(applied)
+        ds_row = next(i for i, g in enumerate(gens) if g.unit_id == "ct_ds")
+        up_row = next(i for i, g in enumerate(gens) if g.unit_id == "ct_up")
+        cc_row = next(i for i, g in enumerate(gens) if g.unit_id == "cc")
+        # Downstate CT carries a positive floor; upstate CT and CC never do.
+        self.assertGreater(float(fa.min_gen[ds_row].max()), 0.0)
+        np.testing.assert_array_equal(fa.min_gen[up_row], 0.0)
+        np.testing.assert_array_equal(fa.min_gen[cc_row], 0.0)
+        # Every floored hour is inside the afternoon-evening window.
+        lo, hi = NYISO_CT_FLOOR_HOURS
+        floored = fa.min_gen[ds_row] > 0.0
+        self.assertTrue(floored.any())
+        self.assertTrue(bool(np.all((hod[floored] >= lo) & (hod[floored] <= hi))))
+        # The floor never exceeds the downstate CT's available capacity.
+        cap = fa.pmax[ds_row] * fa.availability[ds_row]
+        self.assertTrue(bool((fa.min_gen[ds_row] <= cap + 1e-6).all()))
+
+    def test_non_nyiso_is_no_op(self):
+        fa, _, zones, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_nyiso_ct_reliability_floor(
+                fa, "CAISO", 2024, zones, 0.053, 25.0, 0.68, 0.13
+            )
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_nonpositive_slope_is_no_op(self):
+        fa, _, zones, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_nyiso_ct_reliability_floor(
+                fa, "NYISO", 2024, zones, 0.0, 25.0, 0.68, 0.13
+            )
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_forecast_year_is_no_op(self):
+        fa, _, zones, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_nyiso_ct_reliability_floor(
+                fa, "NYISO", 2040, zones, 0.053, 25.0, 0.68, 0.13
+            )
         )
         self.assertIsNone(fa.min_gen)
 

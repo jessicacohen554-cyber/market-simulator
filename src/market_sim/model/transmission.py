@@ -1928,6 +1928,121 @@ def inject_caiso_ct_reliability_floor(
     return True
 
 
+# NYISO downstate CT_PEAKER reliability-floor window (HB14-21 local) and the
+# load-pocket zones it applies to. The measured downstate (NYC + Long Island +
+# Lower Hudson) peaker fleet's hot-day capacity factor peaks HB14-18 (~0.69) and
+# tails through HB21 (derive_nyiso_ct_reliability_floor.py); the floor is keyed to
+# the in-city / cable-islanded load pockets, NOT the upstate peakers (which carry
+# no AC-cable reliability driver).
+NYISO_CT_FLOOR_HOURS: tuple[int, int] = (14, 21)
+NYISO_CT_FLOOR_ZONES: tuple[str, ...] = ("NYC", "Long_Island", "Lower_Hudson")
+
+
+def inject_nyiso_ct_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    slope_per_c: float,
+    t0_c: float,
+    cap: float,
+    base: float = 0.0,
+    hod_window: tuple[int, int] = NYISO_CT_FLOOR_HOURS,
+) -> bool:
+    """Floor NYISO **downstate** CT_PEAKER at a temperature-driven local-RA commitment.
+
+    Models NYISO's in-city / Long-Island local-reliability commitment of
+    simple-cycle gas peakers: on hot afternoons the cable-constrained downstate
+    cooling load (NYC zone J, Long Island zone K, Lower Hudson) climbs and the
+    UPNY-SENY / Long-Island-cable import limits bind, so fast-start GTs in the
+    load pockets are held online for local capacity-area reliability regardless of
+    system-energy economics. An energy-only LP never dispatches these
+    top-of-merit peakers (it imports cheap upstate/NYC CC instead), so the
+    backcast under-runs CT_PEAKER and the freed energy spills onto the cheaper
+    combined-cycle fleet (CC_REGULAR over-generates) — the documented downstate
+    CT_PEAKER miss.
+
+    Identical mechanism to :func:`inject_caiso_ct_reliability_floor`, with two
+    NYISO specializations: (1) the floor is restricted to the **downstate load
+    pockets** (``NYISO_CT_FLOOR_ZONES``) — upstate peakers carry no AC-cable
+    reliability driver and are left to economics; (2) the daily max temperature is
+    the NYC-metro series (:func:`~market_sim.data.eia_loader.nyiso_downstate_tmax`,
+    NOAA GHCN-Daily TMAX for Central Park / LaGuardia / JFK). The hourly
+    downstate-fleet target is ``frac = clip(base + slope_per_c*(TMAX - t0_c),
+    base, cap)`` over the afternoon-evening ``hod_window``, distributed
+    cheapest-first over the in-pocket CT_PEAKER units (each capped at available
+    capacity), composed with any existing ``FleetArrays.min_gen`` floor via
+    ``maximum``. The LP dispatches economically above the floor, so it binds only
+    on the hot-day evening hours an energy-only merit order would leave the
+    downstate peakers off.
+
+    The curve coefficients are the measured downstate CAMPD CT_PEAKER evening
+    (HB14-21) capacity factor regressed on NYC TMAX, 2023-2025
+    (``scripts/derive_nyiso_ct_reliability_floor.py``) — a physical
+    temperature->commitment rule, not a fit to a TWh residual. Forward-derivable
+    (a forecast year pins a weather year, hence a TMAX series) and
+    condition-responsive (hotter years -> more downstate CT), admissible in both
+    backcast and forecast (CLAUDE.md #10/#11). It does NOT address the *winter*
+    downstate run (a gas-electric constraint, not a cooling driver) — that belongs
+    to the dual-fuel / Transco-Z6 gas-basis frontier.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was applied,
+    ``False`` (byte-identical) when ``iso`` is not NYISO, ``slope_per_c``/``cap``
+    are non-positive, the fleet has no downstate CT_PEAKER units, or no archived
+    TMAX series is available (forecast year / unmapped ISO).
+    """
+    if iso != "NYISO" or slope_per_c <= 0.0 or cap <= 0.0:
+        return False
+    from market_sim.data.eia_loader import nyiso_downstate_tmax
+
+    if fleet_arrays.plant_group is None:
+        return False
+    # Restrict to the downstate load pockets (NYC / Long Island / Lower Hudson);
+    # upstate peakers carry no AC-cable reliability driver.
+    ds_zone_idx = {i for i, z in enumerate(zone_names) if z in NYISO_CT_FLOOR_ZONES}
+    is_ct = np.asarray(fleet_arrays.plant_group) == "CT_PEAKER"
+    is_downstate = np.isin(fleet_arrays.zone_idx, list(ds_zone_idx))
+    ct_rows = np.flatnonzero(is_ct & is_downstate & (fleet_arrays.pmax > 0.0))
+    if ct_rows.size == 0:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    tmax = nyiso_downstate_tmax(year, hours)
+    if tmax is None:
+        return False
+
+    frac = np.clip(
+        base + slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), base, cap
+    )
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    start, end = hod_window
+    window = (hod >= start) & (hod <= end)
+    frac = np.where(window, frac, 0.0)
+    if not np.any(frac > 0.0):
+        return False
+
+    avail_cap = (
+        fleet_arrays.pmax[ct_rows, np.newaxis] * fleet_arrays.availability[ct_rows, :]
+    )
+    target = frac * avail_cap.sum(axis=0)
+
+    if fleet_arrays.min_gen is None:
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis],
+            (fleet_arrays.pmin.size, hours),
+        ).copy()
+
+    order = ct_rows[np.argsort(fleet_arrays.heat_rate[ct_rows], kind="stable")]
+    remaining = target.copy()
+    for r in order:
+        cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        take = np.minimum(remaining, cap_r)
+        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+        remaining = remaining - take
+    return True
+
+
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the
 # in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
 # must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the
