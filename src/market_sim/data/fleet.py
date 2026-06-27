@@ -4545,15 +4545,21 @@ CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
 
 
 @lru_cache(maxsize=8)
-def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
-    """Return ``{plant_code: (chp_pmin_cf, sector_class)}`` for an ISO.
+def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float | None]]:
+    """Return ``{plant_code: (chp_pmin_cf, sector_class, btm_pct_override)}`` for an ISO.
 
     The per-ISO CHP steam-following data from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
     ``scripts/derive_thermal_tranches.py``): the plant's total must-run floor
     (CAMPD p2 available-CF where CEMS covers the plant, EIA-923 class CF
-    otherwise — see the row's ``status``) and its EIA-923 sector class
-    (merchant / industrial / commercial) sizing the behind-the-meter share.
+    otherwise — see the row's ``status``), its EIA-923 sector class
+    (merchant / industrial / commercial) sizing the behind-the-meter share,
+    and an optional per-plant ``chp_btm_pct`` override (% of nameplate) that
+    supersedes the sector-keyed :data:`CHP_BTM_PCT_BY_SECTOR` default when
+    measured grid-delivery data shows the sector default is mis-sized for that
+    plant (e.g. a large industrial cogen whose host consumes a higher-than-sector-
+    average share of output). The override is populated by the Step-5 CAISO CHP
+    re-derivation (Lever C) and is absent for ISOs without such a column.
     This is the ISO-generic analogue of the hardcoded ERCOT maps
     :data:`CHP_PMIN_CF_BY_PLANT` / :data:`CHP_SECTOR_CLASS_BY_PLANT`; empty
     when the ISO has no artifact or it predates the CHP columns.
@@ -4564,16 +4570,19 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
     df = pd.read_csv(path)
     if "chp_pmin_cf" not in df.columns:
         return {}
-    out: dict[int, tuple[float | None, str | None]] = {}
+    out: dict[int, tuple[float | None, str | None, float | None]] = {}
     for r in df.itertuples(index=False):
         pmin = getattr(r, "chp_pmin_cf", None)
         sector = getattr(r, "chp_sector", None)
         sector = str(sector) if isinstance(sector, str) and sector else None
+        btm_raw = getattr(r, "chp_btm_pct", None)
+        btm = float(btm_raw) if btm_raw is not None and not pd.isna(btm_raw) else None
         if pd.isna(pmin) and sector is None:
             continue
         out[int(r.plant_code)] = (
             None if pd.isna(pmin) else float(pmin),
             sector,
+            btm,
         )
     return out
 
@@ -4719,13 +4728,16 @@ def _eia860_plant_sector() -> dict[int, int]:
 def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
 
-    The sector class comes from the ISO's derived artifact
-    (:func:`chp_overrides`, EIA-923 Page 1) when present, else the hardcoded
-    ERCOT map. ST_CHP keeps the near-full-BTM default only when no measured
-    sector classifies it (the 90% was set for ERCOT's tiny chemical
-    host-steam plants, not as a universal cogen property).
+    Per-plant override from the ISO's derived artifact takes precedence when the
+    ``chp_btm_pct`` column is populated (e.g. CAISO industrial plants whose
+    measured grid delivery is below 30% of nameplate). Falls back to the
+    sector-keyed :data:`CHP_BTM_PCT_BY_SECTOR` default.
     """
-    _, sector = chp_overrides(iso).get(int(plant_code), (None, None))
+    _, sector, btm_override = chp_overrides(iso).get(
+        int(plant_code), (None, None, None)
+    )
+    if btm_override is not None:
+        return btm_override
     if sector is None:
         sector = CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code))
     if sector is None:
@@ -4743,7 +4755,7 @@ def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
     Per-ISO derived artifact first (:func:`chp_overrides`), then the hardcoded
     ERCOT CAMPD map (:data:`CHP_PMIN_CF_BY_PLANT`).
     """
-    pmin, _ = chp_overrides(iso).get(int(plant_code), (None, None))
+    pmin, *_ = chp_overrides(iso).get(int(plant_code), (None, None, None))
     if pmin is not None:
         return pmin
     return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))
