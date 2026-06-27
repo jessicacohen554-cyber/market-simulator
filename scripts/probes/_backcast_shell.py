@@ -412,7 +412,7 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
    const dM=mSup-load,dA=aSup-load;
    h+=`<tr><td>Load (EIA-930 demand)</td><td class=num>${load.toFixed(2)}</td><td class=num>${load.toFixed(2)}</td><td class=num></td><td class=num></td><td class="num ${ppcls(100*dM/load)}">${fmtTWh(dM)}</td></tr>`;
    if(Math.abs(dA)>2)
-    h+=`<tr><td colspan=6 class=psub style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation (grid-delivered, BTM removed), which for this ISO runs ${fmtTWh(dA)} above EIA-930 load — biomass/geothermal EIA-930 folds into its gas series, plus 923↔930 plant-to-BA assignment. The model is balanced to EIA-930 load: compare per-class shares and the net-imports row across the two sources, not the absolute actual-supply total.</td></tr>`;}
+    h+=`<tr><td colspan=6 class=psub style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation reconciled to the EIA-930 grid series per fossil family (grid-delivered: CHP behind-the-meter and 923↔930 plant-to-BA assignment removed so each family matches what reached the grid). Any residual ${fmtTWh(dA)} vs load is EIA-930's own net-generation-minus-demand discrepancy (the two series are independently surveyed), not behind-the-meter — both columns are now on the same grid-delivered basis, so the per-class shares and the absolute supply total are directly comparable.</td></tr>`;}
  }
  return h+'</tbody></table></div></div>';}
 // ---- tooltip + run-id ----
