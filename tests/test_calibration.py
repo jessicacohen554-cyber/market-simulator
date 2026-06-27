@@ -101,6 +101,19 @@ class TestActualsSourceAuthority(unittest.TestCase):
         ):
             self.assertEqual(actuals_source(klass), EIA923_SOURCE, klass)
 
+    def test_nyiso_solar_overrides_to_eia923(self):
+        """NYISO solar routes to EIA-923 (EIA-930 NYIS grid solar is a structural 0)."""
+        for iso in ("NYISO", "nyiso"):
+            self.assertEqual(actuals_source("solar", iso), EIA923_SOURCE, iso)
+            self.assertEqual(actuals_source("Solar", iso), EIA923_SOURCE, iso)
+        # NYISO wind is unaffected (NYIS reports grid wind normally) and other
+        # ISOs' solar keeps the default EIA-930 routing.
+        self.assertEqual(actuals_source("wind", "NYISO"), EIA930_SOURCE)
+        self.assertEqual(actuals_source("solar", "CAISO"), EIA930_SOURCE)
+        self.assertEqual(actuals_source("solar", "ERCOT"), EIA930_SOURCE)
+        # No iso argument keeps the historical default.
+        self.assertEqual(actuals_source("solar"), EIA930_SOURCE)
+
 
 class TestSignedVolumeError(unittest.TestCase):
     """``signed_volume_error`` is the (model - actual)/actual fraction."""
