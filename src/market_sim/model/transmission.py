@@ -2124,10 +2124,18 @@ def inject_nyiso_st_reliability_floor(
       the flat, temperature-insensitive Upstate steam fleet is deliberately
       omitted from ``coeffs`` (no un-grounded flat must-run).
 
-    The hourly per-zone target is distributed cheapest-first over the zone's
-    in-pocket ST_GAS units (each capped at available capacity) via the
-    hour-varying ``FleetArrays.min_gen`` lower bound, composed with any existing
-    floor (e.g. the Long Island self-supply floor,
+    The hourly fraction is applied **per unit, pro-rata** — each in-pocket ST_GAS
+    unit is floored at ``frac`` x its OWN available capacity (``pmax`` x
+    ``availability``) via the hour-varying ``FleetArrays.min_gen`` lower bound,
+    NOT cheapest-first over an aggregate target. In-city local reliability commits
+    the geographically-distributed steam units (NYC: Ravenswood, Astoria, Arthur
+    Kill — each in its own load pocket) by their locational role, so ``frac`` is a
+    per-unit fleet CF; a cheapest-first aggregate would instead pour the whole
+    commitment into the single cheapest unit (which an energy-only LP already runs
+    economically, making the floor redundant there) and leave the costlier in-city
+    units idle — the opposite of the measured CAMPD distribution, where all the
+    in-pocket steam runs at similar moderate CFs. Composed with any existing floor
+    (e.g. the Long Island self-supply floor,
     :func:`inject_nyiso_local_selfsupply`) via ``maximum`` so the two never
     double-force. The LP dispatches economically above the floor.
 
@@ -2188,7 +2196,29 @@ def inject_nyiso_st_reliability_floor(
             frac = np.where(in_window, np.maximum(frac, ev), frac)
         if not np.any(frac > 0.0):
             continue
-        _distribute_group_floor(fleet_arrays, rows, frac, hours)
+        # PER-UNIT pro-rata distribution: floor EACH in-pocket steam unit at frac x
+        # its OWN available capacity, NOT cheapest-first over an aggregate target.
+        # In-city local reliability commits the geographically-distributed steam
+        # units (NYC: Ravenswood, Astoria, Arthur Kill — each in its own load
+        # pocket) by their locational role, not by economics, so the measured frac
+        # is a per-unit fleet CF, applied to every unit. A cheapest-first aggregate
+        # instead pours the whole commitment into the single cheapest unit
+        # (Ravenswood, which an energy-only LP already runs economically, so the
+        # floor is redundant there) and leaves the costlier in-city units (Astoria,
+        # Arthur Kill) idle — the opposite of the measured CAMPD distribution, where
+        # all three run at similar moderate CFs. Composed with any existing floor
+        # via maximum; the LP dispatches economically above it.
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+            ).copy()
+        for r in rows:
+            avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+            np.maximum(
+                fleet_arrays.min_gen[r, :],
+                frac * avail_r,
+                out=fleet_arrays.min_gen[r, :],
+            )
         applied = True
     return applied
 
