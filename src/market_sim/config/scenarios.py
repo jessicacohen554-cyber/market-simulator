@@ -1341,6 +1341,22 @@ class ScenarioConfig:
     # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md (Thread D).
     coal_mustrun_online_pmin: bool = False
 
+    # Intermediate-duty CT split (MISO calibration). EIA-860 confirms MISO's
+    # high-CF CT_PEAKER units are genuine simple-cycle GT/IC (not mislabeled
+    # combined cycle), so the classification is correct — but ~half the fleet
+    # runs intermediate / near-baseload (measured CAMPD median CF >=
+    # ``ct_intermediate_cf_threshold``) rather than as true peakers. The single
+    # steep CT_PEAKER offer curve (a committed-band start-cost hurdle) prices
+    # their always-on energy above the CC fleet, so they never clear and
+    # CC_REGULAR over-runs (the CT_PEAKER under / CC over C1 miss). When set,
+    # that cohort (fleet.ct_intermediate_plants) is routed to the flatter
+    # ``CT_INTERMEDIATE`` offer curve so its energy clears. The median-CF cohort
+    # is a forward-reproducible duty-role signal assigning an offer *shape* (not
+    # a pin to measured output), admissible on the same basis as
+    # ST_GAS_PEAKER_PLANTS. Default off (keeper unchanged) until re-solved.
+    ct_intermediate_split: bool = False
+    ct_intermediate_cf_threshold: float = 50.0
+
     # SRMC-priced synchronization tranche (rebuild step 3a). Completes the
     # three-layer coal structure of Thread D. With this on (it requires
     # ``coal_mustrun_online_pmin`` so the synchronization band is sized to the
@@ -2475,6 +2491,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
     "miso_seam_flow_limit": 1,
+    "ct_intermediate_split": 1,
+    "ct_intermediate_cf_threshold": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
