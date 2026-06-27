@@ -1065,6 +1065,27 @@ def _calibration_config(
                 "econ_low_share": 0.526,
                 "pct_peaking": 7.0,
             },
+            # Intermediate-duty simple-cycle CTs (MISO). EIA-860 confirms these
+            # are genuine GT/IC units, not mislabeled CCs — but their measured
+            # CAMPD median CF (>= ct_intermediate_cf_threshold) shows they run
+            # intermediate/near-baseload, not as true peakers. Routed here only
+            # when config.ct_intermediate_split is set (fleet._offer_curve_for_group
+            # + fleet.ct_intermediate_plants); the rest of CT_PEAKER keeps the
+            # steep true-peaker curve above. The committed-band start-cost hurdle
+            # (CT_PEAKER 1.55) is dropped — an always-running unit amortizes its
+            # one start over thousands of hours, so its committed energy is priced
+            # at its own delivered marginal cost (base_HR x ~1.0-1.2) with a thin
+            # rising ramp, overlapping the CC fleet so it clears at intermediate
+            # load. A modest scarcity peak (3.0) is kept above the ramp. Inert for
+            # every ISO/run with the split off (keepers unchanged).
+            "CT_INTERMEDIATE": {
+                "committed": 1.00,
+                "econ_low": 1.00,
+                "econ_high": 1.20,
+                "peak": 3.00,
+                "econ_low_share": 0.50,
+                "pct_peaking": 5.0,
+            },
             # ERCOT bands fold in the run57 baseline (committed 0.81->0.91,
             # econ_low 1.05->1.15, econ_high 1.40->1.55). Other ISOs unchanged.
             "ST_GAS": {
@@ -1470,6 +1491,8 @@ def run_year(
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
+    ct_intermediate_split: bool = False,
+    ct_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -1619,6 +1642,16 @@ def run_year(
         # coal holds synchronized at min-load while dispatchable tranches above
         # price-follow.
         config = config.with_overrides(coal_sync_srmc_tranche=True)
+    if ct_intermediate_split:
+        # Route the measured intermediate-duty CT cohort
+        # (fleet.ct_intermediate_plants) to the flatter CT_INTERMEDIATE offer
+        # curve so their always-on energy clears instead of carrying the steep
+        # true-peaker start-cost hurdle (the CT_PEAKER-under / CC-over miss).
+        config = config.with_overrides(ct_intermediate_split=True)
+    if ct_intermediate_cf_threshold is not None:
+        config = config.with_overrides(
+            ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
     # validated keeper); an explicit True/False from the CLI overrides it (so a
