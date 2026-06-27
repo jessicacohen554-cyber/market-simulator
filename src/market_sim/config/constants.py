@@ -2430,6 +2430,49 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     ],
 }
 
+# --- PJM transmission-congestion calibration (config.pjm_congestion) ----------
+#
+# PJM clears as a perfect copper-plate (0.000 zonal LMP spread in all 8760 hours)
+# because (1) the priced external star node (PJM_external, IMPORT_NODE_LINKS
+# above) wires ~30 GW of *uncongested* transfer to 5 border zones — so the
+# dear-east load pockets import directly from one price hub and never pull power
+# through the internal west→east lines — and (2) the internal interface TTCs in
+# iso_configs._pjm_config are loose Tier-3 order-of-magnitude estimates that
+# never bind. Both are fixed with MEASURED PJM data, never values tuned to the
+# price/export residual (rules #11/#12).
+#
+# (1) External-node deliverability envelope. Each PJM_external→border link's
+# signed flow is capped, per (month × hour-of-day), at the measured per-border
+# net-interchange percentile (import direction up, export direction down) from
+# eia_loader.pjm_zonal_interchange_envelope — the same measured tie-flow file the
+# IMPORT_NODE_LINKS ratings were read from (PJM import_export_act_sch_interchange,
+# data/raw/iso-specific-transmission/). The dominant direction (ComEd/AEP/EMAAC
+# export, Dominion import) keeps a generous p95 ceiling the LP clears below; the
+# minor direction collapses toward ~0, so the hub can no longer flood the east
+# with cheap imports — closing the copper-plate bypass and shrinking the
+# over-export toward the measured schedule. A capability envelope (high
+# percentile), not the hourly residual, so it stays a forward-reproducible input.
+PJM_EXTERNAL_FLOW_PERCENTILE: float = 95.0
+
+# (2) Internal interface TTCs read from the measured PJM transfer-limit postings
+# (data/raw/iso-specific-transmission/PJM_<year>_transfer_limits_and_flows.csv,
+# pooled 2023-25 median of the per-interface ``transfer_limit`` contingency
+# limit). Only interfaces with a confident named-interface mapping AND a value
+# materially looser than measured are overridden; the rest keep their config
+# estimate (already ≈ measured). Keyed by the model link's (from_zone, to_zone).
+#   - ComEd→AEP_Ohio    ← "50045005 Post-Contingency"  (median 2900; config 6000
+#                          was the loose one the diagnosis flagged)
+#   - AEP_Ohio→Dominion ← "AEP/DOM Post-Contingency"   (median 4054; ≈ config 4069)
+#   - West_APS→SWMAAC   ← "AP-South Pre-Contingency"   (median 3932; the dominant
+#                          west→east cut — config 4453)
+#   - West_APS→Central_PA ← "Bedington-BlackOak"       (median ~1850; config 1947)
+PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
+    ("PJM_ComEd", "PJM_AEP_Ohio"): 2900.0,
+    ("PJM_AEP_Ohio", "PJM_Dominion"): 4050.0,
+    ("PJM_West_APS", "PJM_SWMAAC"): 3900.0,
+    ("PJM_West_APS", "PJM_Central_PA"): 1850.0,
+}
+
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
 # nominal; an (iso, year) entry here overrides the matching link's TTC for that
