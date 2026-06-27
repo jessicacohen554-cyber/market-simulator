@@ -64,6 +64,33 @@ def _artifacts(
     }
 
 
+def _completeness(isos, families):
+    """Build a synthetic 2025 EIA-923 completeness map and load it into the scorer.
+
+    ``isos`` is ``{iso: {class: gate_bool}}`` (status derived from the gate) and
+    ``families`` is ``{iso: {fam: complete_bool}}``. Sets ``cv._COMPLETENESS_CACHE``
+    directly so the scorer reads this map instead of the committed parts — keeping
+    the gating tests hermetic. Call :func:`_reset_completeness` to restore.
+    """
+    iso_map = {
+        iso: {
+            klass: {
+                "status": "complete" if gate else "incomplete",
+                "gate": gate,
+                "reasons": [] if gate else ["synthetic incomplete"],
+            }
+            for klass, gate in classes.items()
+        }
+        for iso, classes in isos.items()
+    }
+    cv._COMPLETENESS_CACHE = {2025: {"isos": iso_map, "families": families}}
+
+
+def _reset_completeness():
+    """Drop the injected completeness map so the next read reloads from disk."""
+    cv._COMPLETENESS_CACHE = None
+
+
 def _pjm_mix(model=None):
     """Realistic full-PJM fuel mix (TWh) -> ``(ypay, ybench)`` for score_fuelmix.
 
@@ -128,25 +155,54 @@ class FuelMixTests(unittest.TestCase):
         )
         self.assertFalse([r for r in rows if r["key"] == "CT_CHP"])
 
-    def test_preliminary_vintage_year_class_skipped(self):
-        # 2025 is a preliminary-EIA-923 vintage year (>= PRELIM_923_FROM_YEAR): the
-        # per-class actual is incomplete with no per-class EIA-930 substitute, so the
-        # asset-class tolerance does not apply — every fossil class is SKIPPED
-        # regardless of miss size (even a +8 TWh over-absorption that would FAIL in a
-        # complete-vintage year). The raw gap is kept as a report-only annotation
-        # that does not gate.
-        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
-        rows = cv.score_fuelmix(2025, ypay, ybench)
-        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
-        self.assertEqual(cc["status"], cv.SKIPPED)
-        self.assertIsNone(cc["classification"])
-        self.assertAlmostEqual(cc["vintage_gap_twh"], 8.0, places=3)
-        self.assertIn("complete-vintage years only", cc["magnitude"])
-        # A large miss is still SKIPPED, never FAIL.
-        ypay, ybench = _pjm_mix({"CC_REGULAR": 360.0})  # +35 TWh
-        rows = cv.score_fuelmix(2025, ypay, ybench)
-        cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
-        self.assertEqual(cc["status"], cv.SKIPPED)
+    def test_preliminary_incomplete_class_skipped(self):
+        # A preliminary-EIA-923 vintage class whose plant data the completeness
+        # audit flags INCOMPLETE has no trustworthy per-class actual to gate
+        # against, so it is SKIPPED regardless of miss size (even a +8 TWh
+        # over-absorption that would FAIL in a complete-vintage year). The raw gap
+        # is kept as a report-only annotation that does not gate.
+        _completeness(
+            {"ERCOT": {"CC_REGULAR": False}}, {"ERCOT": {"gas": False, "coal": False}}
+        )
+        try:
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+            rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
+            cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+            self.assertEqual(cc["status"], cv.SKIPPED)
+            self.assertIsNone(cc["classification"])
+            self.assertAlmostEqual(cc["vintage_gap_twh"], 8.0, places=3)
+            self.assertIn("incomplete plant data", cc["magnitude"])
+            self.assertEqual(cc["completeness"], "incomplete")
+            # A large miss is still SKIPPED, never FAIL.
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 360.0})  # +35 TWh
+            rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
+            cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+            self.assertEqual(cc["status"], cv.SKIPPED)
+        finally:
+            _reset_completeness()
+
+    def test_preliminary_complete_class_gated(self):
+        # A preliminary-vintage class the audit flags COMPLETE (its plants all
+        # reported AND its family fully reported) gates exactly like a
+        # complete-vintage year: a +8 TWh CC_REGULAR miss FAILs / MODEL MISS, a
+        # +3 TWh miss PASSes. Only the verified-complete classes gate in 2025.
+        _completeness(
+            {"ERCOT": {"CC_REGULAR": True}}, {"ERCOT": {"gas": True, "coal": False}}
+        )
+        try:
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})  # +8 TWh
+            rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
+            cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+            self.assertEqual(cc["status"], cv.FAIL)
+            self.assertEqual(cc["classification"], cv.MODEL_MISS)
+            self.assertEqual(cc["completeness"], "complete")
+            self.assertNotIn("vintage_gap_twh", cc)
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 328.0})  # +3 TWh
+            rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
+            cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
+            self.assertEqual(cc["status"], cv.PASS)
+        finally:
+            _reset_completeness()
 
     def test_complete_vintage_year_still_gated(self):
         # 2024 is a complete-vintage year (< PRELIM_923_FROM_YEAR): the same +8 TWh
@@ -217,18 +273,46 @@ class SysVolTests(unittest.TestCase):
         self.assertEqual(coal["status"], cv.PASS)  # (a) not invented
         self.assertIn("CT_PEAKER", gas["magnitude"])  # (b) not masked
 
-    def test_preliminary_vintage_uses_930_and_flags_reconcile(self):
-        # 2025: 923-BTM (360) well below 0.97 x 930 (372) -> reconcile fired,
-        # actual = 930, model 370.8 vs 372.7 is within 2.5%.
-        rows = cv.score_sysvol(
-            2025,
-            {"gmModel": {"CC_REGULAR": 370.8}},
-            {"classFull": {"CC_REGULAR": 360.0}, "e930": {"gas": 372.7}},
+    def test_preliminary_incomplete_family_uses_930_and_flags_reconcile(self):
+        # 2025 gas family flagged INCOMPLETE by the audit: no per-class actual, so
+        # C2 falls back to the EIA-930 family aggregate. 923-BTM (360) well below
+        # 0.97 x 930 (372) -> reconcile fired, actual = 930, model 370.8 vs 372.7
+        # is within 2.5%.
+        _completeness({"ERCOT": {}}, {"ERCOT": {"gas": False, "coal": False}})
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 370.8}},
+                {"classFull": {"CC_REGULAR": 360.0}, "e930": {"gas": 372.7}},
+                "ERCOT",
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertEqual(gas["status"], cv.PASS)
+            self.assertIn("930", gas["source"])
+            self.assertTrue(gas["vintage_reconciled"])
+        finally:
+            _reset_completeness()
+
+    def test_preliminary_complete_family_defers_to_c1(self):
+        # A 2025 family the audit flags COMPLETE defers to the C1 per-class gate
+        # exactly like a complete vintage — no EIA-930 family fallback. Here coal
+        # is fully reported, so C2.coal PASSES via C1 and surfaces no 930 source.
+        _completeness(
+            {"ERCOT": {"COAL_PRB": True}}, {"ERCOT": {"gas": False, "coal": True}}
         )
-        gas = [r for r in rows if r["key"] == "gas"][0]
-        self.assertEqual(gas["status"], cv.PASS)
-        self.assertIn("930", gas["source"])
-        self.assertTrue(gas["vintage_reconciled"])
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"COAL_PRB": 44.0}},
+                {"classFull": {"COAL_PRB": 43.7}, "e930": {"coal": 43.7}},
+                "ERCOT",
+            )
+            coal = [r for r in rows if r["key"] == "coal"][0]
+            self.assertEqual(coal["status"], cv.PASS)
+            self.assertIn("via C1", coal["source"])
+            self.assertFalse(coal["vintage_reconciled"])
+        finally:
+            _reset_completeness()
 
     def test_immaterial_family_skipped(self):
         rows = cv.score_sysvol(
