@@ -271,3 +271,8 @@ results/outage_gate_audit/
 results/calibration/_probe_160_2024/
 results/calibration/_probe*/
 results/calibration/MISO/miso17_y2024/
+
+# CAISO CT_PEAKER net-load-drag (Step 2 / Lever B) session scratch: keeper-repro
+# baseline vs net-load-drag bundles + solve logs (regenerable; not a registered
+# keeper — shape-only Step-2 groundwork).
+/scratch/caiso_netload_drag/
