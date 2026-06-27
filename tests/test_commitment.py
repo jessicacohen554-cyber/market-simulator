@@ -9,6 +9,7 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
     as_adequacy_commit,
+    caiso_ra_mustoffer_min_gen,
     compute_commitment,
     compute_monthly_markup,
     find_runs,
@@ -192,6 +193,94 @@ class TestReserveAdequacyCommit(unittest.TestCase):
         req = np.full((1, 4), 150.0)
         out = as_adequacy_commit(committed, fa, gens, hr_elig, hr_prod, req, p1)
         np.testing.assert_array_equal(out, committed)
+
+
+class TestCaisoRaMustofferMinGen(unittest.TestCase):
+    """The CAISO RA must-offer min-load bridge floor."""
+
+    def _cc(self, hours, dispatch, heat_rate=7.0, plant_group="CC_REGULAR"):
+        """One merchant CC, dispatched per ``dispatch`` (length ``hours``)."""
+        gen = Generator(
+            unit_id="CC",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=300.0,
+            pmin_mw=0.0,
+            heat_rate=heat_rate,
+            eford=0.0,
+            plant_group=plant_group,
+        )
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=hours)
+        return [gen], fa, np.asarray(dispatch, dtype=float).reshape(1, hours)
+
+    def test_bridges_short_midday_gap(self):
+        # f-class CC (hr 7.0): min_down 6h. Run 6-9, idle 10-12 (gap 3 < 6),
+        # run 13-18 -> the unit must stay online at min-load across 10-12.
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[13:19] = 300.0
+        gens, fa, p1 = self._cc(24, disp)
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.40)
+        expected = np.zeros(24)
+        expected[10:13] = 0.40 * 300.0  # 120 MW across the bridged gap
+        np.testing.assert_allclose(floor[0], expected)
+
+    def test_no_bridge_for_long_gap(self):
+        # Gap 10-19 is 9h >= 6h min-down: the unit can cycle off, no floor.
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[19:24] = 300.0
+        gens, fa, p1 = self._cc(24, disp)
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.40)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_floor_scales_with_availability(self):
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[13:19] = 300.0
+        gens, fa, p1 = self._cc(24, disp)
+        fa.availability[0, 11] = 0.5  # a derate mid-gap relaxes the floor there
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.40)
+        self.assertAlmostEqual(floor[0, 10], 120.0)
+        self.assertAlmostEqual(floor[0, 11], 60.0)
+        self.assertAlmostEqual(floor[0, 12], 120.0)
+
+    def test_ct_never_bridges(self):
+        # CT min-down is 1h, so no integer gap is shorter than min-down.
+        gen = Generator(
+            unit_id="CT",
+            name="CT",
+            zone="z",
+            fuel_type="gas_ct",
+            pmax_mw=200.0,
+            pmin_mw=0.0,
+            heat_rate=10.5,
+            eford=0.0,
+            plant_group="CT_PEAKER",
+        )
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = np.zeros((1, 24))
+        disp[0, 6:9] = 200.0
+        disp[0, 11:15] = 200.0
+        floor = caiso_ra_mustoffer_min_gen(disp, fa, [gen], min_load_frac=0.40)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_skips_cogens(self):
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[13:19] = 300.0
+        gens, fa, p1 = self._cc(24, disp, plant_group="CC_CHP")
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.40)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_noop_when_frac_nonpositive(self):
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[13:19] = 300.0
+        gens, fa, p1 = self._cc(24, disp)
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.0)
+        np.testing.assert_allclose(floor, np.zeros((1, 24)))
 
 
 class TestFindRuns(unittest.TestCase):

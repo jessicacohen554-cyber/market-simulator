@@ -792,21 +792,38 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
-        caiso_gas_commitment_floor=(iso.upper() == "CAISO"),  # CAISO keeper
-        #   default-ON: the RA must-offer midday gas-commitment floor holds the
-        #   RA-obligated gas fleet online at min-load through the solar glut (it
-        #   can't economically cycle off for the evening ramp), so the model goes
-        #   LONG midday and its surplus exports/curtails at ~$0 — the structurally
-        #   correct CAISO market design. Validated keeper caiso-6-floor-negrenew:
-        #   spring-midday LMP floor collapses (min 28->0 every year) with gas
-        #   disciplined vs EIA-923 (2024 71.3 vs 67.7). See
-        #   transmission.inject_caiso_gas_commitment_floor and
-        #   results/calibration/RESULTS-caiso-ra-mustoffer-floor.md. Other ISOs
-        #   stay off (byte-identical).
+        caiso_gas_commitment_floor=False,  # Step-1 overhaul: DEFAULT OFF. The
+        #   measured-NG:NG midday slab pinned the gas fleet to 0.80 x its measured
+        #   EIA-930 output (a measured-OUTCOME overlay, None for forecast years) —
+        #   it held CC_REGULAR ~2x above the real midday duck-belly and
+        #   manufactured the $0 midday price by forcing gas LONG, failing CLAUDE.md
+        #   #1/#11 (docs/caiso-lever-audit-2026-06.md, Lever A). Replaced by the
+        #   forward-derivable RA must-offer COMMITMENT below (caiso_ra_mustoffer):
+        #   units online at min-load, free to dispatch down to it. The inject fn
+        #   is kept (transmission.inject_caiso_gas_commitment_floor) and re-armable
+        #   via --caiso-gas-commitment-floor for the baseline A/B. Other ISOs were
+        #   already off (byte-identical).
         caiso_gas_floor_frac=(0.80 if iso.upper() == "CAISO" else 1.0),  # 0.80 =
         #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
         #   NG: NG silently absorbs (CISO reports neither) — targets the true
-        #   must-offer gas without padding the mix.
+        #   must-offer gas without padding the mix. Only used when the (now
+        #   default-off) caiso_gas_commitment_floor is re-armed.
+        caiso_ra_mustoffer=(iso.upper() == "CAISO"),  # CAISO Step-1 default-ON:
+        #   the forward-derivable RA must-offer COMMITMENT replacing the measured
+        #   gas slab above. Through the P2 pass it holds each merchant gas CC/CT
+        #   unit that the economic P1 dispatch runs before AND after a midday idle
+        #   gap shorter than its physical min-down time at min-load across the gap
+        #   (it cannot cycle off and restart for the evening ramp). Detected from
+        #   the model's own run pattern + min-down (model.commitment.
+        #   caiso_ra_mustoffer_min_gen) — no measured-outcome pin. The LP
+        #   dispatches economically above it, so it only binds when oversupply
+        #   would drive a committed unit cold; the midday ~$0 must come from real
+        #   oversupply (Lever D), not the floor. Other ISOs stay off (byte-
+        #   identical). Toggle with --no-caiso-ra-mustoffer.
+        caiso_ra_min_load_frac=0.40,  # min stable load of a committed gas unit
+        #   (fraction of available capacity) for the RA bridge above — typical
+        #   CC/CT minimum generation (NREL cycling-cost 2012; CAISO Master File
+        #   PMin/PMax). A physical turn-down limit, not a price/volume fit.
         nyiso_ct_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
         #   default-ON (nyiso-33): the downstate CT_PEAKER local-reliability floor
         #   holds in-city / Long-Island simple-cycle gas peakers online through the
@@ -1557,6 +1574,8 @@ def run_year(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_ra_mustoffer: bool | None = None,
+    caiso_ra_min_load_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
@@ -1700,6 +1719,10 @@ def run_year(
         )
     if caiso_gas_floor_frac is not None:
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
+    if caiso_ra_mustoffer is not None:
+        config = config.with_overrides(caiso_ra_mustoffer=caiso_ra_mustoffer)
+    if caiso_ra_min_load_frac is not None:
+        config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
     if caiso_ct_reliability_floor is not None:
         config = config.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
@@ -3338,8 +3361,13 @@ def run_year(
         and iso == "ERCOT"
         and getattr(config, "energy_reserve_coopt", False)
     )
+    # CAISO RA must-offer commitment (Step-1 overhaul): a min-load bridge floor
+    # on the merchant gas CC/CT fleet, derived from the economic P1 run pattern,
+    # re-solved in the same P2 pass. Triggers P2 even with the economic
+    # commitment screen off (CAISO runs P1-only otherwise).
+    caiso_ra = getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"
     result_p1 = None
-    if config.commitment_enabled or as_aware:
+    if config.commitment_enabled or as_aware or caiso_ra:
         result_p1 = result
         result = _commitment_pass(p2_state)
 
@@ -3359,6 +3387,49 @@ def _commitment_pass(state: dict, config=None):
     fa = state["fleet_arrays"]
     p1 = state["p1_result"]
     dk = state["dispatch_kwargs"]
+    # CAISO RA must-offer commitment (Step-1 overhaul): a PURE min-load bridge
+    # floor on the merchant gas CC/CT fleet — NO economic decommit screen. Each
+    # unit the economic P1 dispatch runs before AND after a midday idle gap
+    # shorter than its min-down time is held at min-load across the gap
+    # (model.commitment.caiso_ra_mustoffer_min_gen); the P2 re-solve then sets
+    # the level economically above that floor. This replaces the removed
+    # measured-NG:NG slab. Distinct from the ERCOT AS-aware path below (other
+    # ISO); engaged only when the economic commitment screen is off (the keeper
+    # config) so the two never compose.
+    if (
+        getattr(cfg, "caiso_ra_mustoffer", False)
+        and state["iso"] == "CAISO"
+        and not cfg.commitment_enabled
+    ):
+        import dataclasses
+
+        from market_sim.model.commitment import caiso_ra_mustoffer_min_gen
+
+        ra_floor = caiso_ra_mustoffer_min_gen(
+            p1.dispatch,
+            fa,
+            fleet,
+            float(getattr(cfg, "caiso_ra_min_load_frac", 0.40)),
+        )
+        base_min_gen = (
+            fa.min_gen
+            if fa.min_gen is not None
+            else np.broadcast_to(fa.pmin[:, None], ra_floor.shape)
+        )
+        new_min_gen = np.maximum(base_min_gen, ra_floor)
+        fa_ra = dataclasses.replace(fa, min_gen=new_min_gen, pmin=fa.pmin.copy())
+        # All-committed mask: no decommit. preserve_min_gen carries the RA
+        # min-load floor into P2 and raises availability to keep it feasible.
+        committed = np.ones(ra_floor.shape, dtype=bool)
+        fa_p2 = apply_commitment_with_coal_pin(
+            fa_ra,
+            committed,
+            p1.dispatch,
+            fleet,
+            screen_coal=False,
+            preserve_min_gen=True,
+        )
+        return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
     # AS-aware (ERCOT multi-product co-opt): value a unit's AS revenue (the P1
     # per-product reserve dual x its reserve-eligible headroom) in the screen, so
     # the units a tight month keeps online FOR AS stay committed and the P2 co-opt

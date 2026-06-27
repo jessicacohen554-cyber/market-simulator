@@ -437,6 +437,84 @@ def compute_commitment(
     return committed
 
 
+def caiso_ra_mustoffer_min_gen(
+    p1_dispatch: np.ndarray,  # (n_gen, T) — the economic P1 dispatch
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],  # fleet list aligned with p1_dispatch rows
+    min_load_frac: float,
+    run_threshold_frac: float = 0.05,
+) -> np.ndarray:
+    """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
+
+    Models CAISO's Resource-Adequacy **must-offer** obligation as a real
+    *commitment* — not a measured-output pin. A merchant gas CC/CT unit that the
+    economic P1 dispatch runs BEFORE *and* AFTER a midday idle gap SHORTER than
+    its physical minimum-down time cannot economically cycle off and restart for
+    the evening ramp, so it stays online at minimum stable load across the gap.
+    For every such "bridge" gap this sets a floor of ``min_load_frac × pmax ×
+    availability`` over the gap hours (zero everywhere else), so the unit
+    dispatches economically above the floor and DOWN TO minimum load — never to
+    zero — through the gap.
+
+    The bridge is detected from the model's OWN run pattern (``p1_dispatch``) and
+    the unit's physical minimum-down time (``CC_COMMITMENT_PARAMS`` /
+    ``CT_COMMITMENT_PARAMS`` via :func:`_commitment_params`), both
+    forward-derivable and condition-responsive — no measured generation enters
+    (CLAUDE.md #1/#11). CTs (min-down 1 h) never bridge a multi-hour solar glut,
+    so in practice the floor lands on the combined-cycle fleet (``CC_REGULAR``) —
+    the class an energy-only LP over-cycles midday. Only merchant CC/CT classes
+    (``CC_REGULAR`` / ``CT_PEAKER``) are floored: cogens (``*_CHP``) carry their
+    own steam-host must-run, and coal/nuclear/non-thermal are never RA-bridged.
+
+    The floor replaces the removed measured-NG:NG ``inject_caiso_gas_commitment_
+    floor`` slab: instead of pinning the fleet to 0.80 × its measured output, it
+    holds genuinely-committed units at min-load and lets the LP set the midday
+    level economically. It only binds when oversupply would otherwise drive a
+    committed unit cold; the midday ~$0 price must come from real oversupply
+    (solar/imports — Lever D), not from this floor.
+
+    Args:
+        p1_dispatch: The economic P1 dispatch, ``(n_gen, T)``.
+        fleet_arrays: The vectorized fleet, for ``pmax``/``availability``/``heat_rate``.
+        generators: The dispatch fleet, aligned with ``p1_dispatch`` rows.
+        min_load_frac: Minimum stable load as a fraction of available capacity.
+        run_threshold_frac: A unit counts as running when its dispatch exceeds
+            this fraction of ``pmax`` (matches the markup run detector).
+
+    Returns:
+        The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
+        ``min_load_frac`` is non-positive.
+    """
+    n_gen, T = p1_dispatch.shape
+    floor = np.zeros((n_gen, T), dtype=float)
+    if min_load_frac <= 0.0:
+        return floor
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)
+    for g, gen in enumerate(generators):
+        if gen.plant_group not in ("CC_REGULAR", "CT_PEAKER"):
+            continue
+        params = _commitment_params(gen, float(fleet_arrays.heat_rate[g]))
+        if params is None:
+            continue
+        min_down = float(params["min_down_hours"])
+        if min_down <= 0.0:
+            continue
+        threshold = pmax[g] * run_threshold_frac
+        runs = find_runs(p1_dispatch[g, :] > threshold)
+        if len(runs) < 2:
+            continue
+        # Floor every idle gap between two runs shorter than the unit's
+        # minimum-down time: it would have stayed online at min-load there.
+        for (_, end_prev), (start_next, _) in zip(runs[:-1], runs[1:]):
+            gap = start_next - end_prev
+            if 0 < gap < min_down:
+                floor[g, end_prev:start_next] = (
+                    min_load_frac * pmax[g] * avail[g, end_prev:start_next]
+                )
+    return floor
+
+
 def reserve_adequacy_commit(
     committed: np.ndarray,  # (n_gen, T) bool — the energy-economic mask
     fleet_arrays: FleetArrays,
