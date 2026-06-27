@@ -1153,6 +1153,26 @@ class ScenarioConfig:
     # ERCOT-only. Unlike thermal AS (tiny), storage carries ~2-3 GW of AS — a
     # large share of the battery fleet — and the energy-only LP otherwise dumps
     # the full fleet into the few highest-price hours. Reserves power, not SOC.
+    ercot_storage_as_endogenous: bool = False  # ERCOT forward (G5): make the
+    # battery CHOOSE energy vs upward-AS endogenously inside the multi-product
+    # co-opt, REPLACING the measured-award reservation (storage_as_commitment +
+    # ercot_storage_as_reserve). When on, the FULL battery power cap is handed to
+    # the co-opt (no measured subtraction), so a unit's upward-reserve room
+    # (cap − discharge + charge) competes with arbitrage on the same power cap in
+    # the shared-headroom rows and is priced by the per-product AS demand curves
+    # (reserve_price_by_family): the battery holds AS only when a product's
+    # reserve dual exceeds its energy-arbitrage opportunity cost — the real bid.
+    # The cleared storage AS is part of the capped reserve R, so it counts toward
+    # the measured RTOLCAP online-responsive supply (which already includes online
+    # batteries: RTOLCAP grows 13.5→16.7→19.1 GW in lockstep with the battery
+    # fleet 2023→25), consistent with ercot_reserve_supply_cap. FORWARD RESPONSE:
+    # as the fleet grows and AS saturates, the AS price falls and batteries tilt
+    # back to energy — no measured award needed. The measured 60-Day DAM awards
+    # stay ONLY as the backcast realization to validate the chosen split against,
+    # never to pin it (CLAUDE.md #12). Default off (byte-identical); ERCOT
+    # multi-product co-opt only. Mutually exclusive with storage_as_commitment
+    # (the measured path); endogenous takes precedence and forces the measured
+    # path off when both are set.
     negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
     # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
     # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
@@ -2572,6 +2592,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_reserve_supply_cap_from_year": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
+    "ercot_storage_as_endogenous": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
     "as_revenue_multiplier": 2,

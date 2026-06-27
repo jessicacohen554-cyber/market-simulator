@@ -145,7 +145,7 @@ The landing point is the grounded CAMPD/SRMC reach, not a residual-zeroing value
 | Energy+reserve co-opt, single-product ORDC steps (`energy_reserve_coopt`) | `results/scarcity.py:618,808` | none — VOLL-anchored LOLP curve | endogenous reserve dual (this **is** the forward co-opt) | PASS | **IMPL**² | — | — |
 | ECRS requirement series (`ercot_ecrs_requirement`) | `results/scarcity.py:756` | measured ASPLANNP433 ECRS MW | AS requirement-setting methodology (net-load ramp-risk / load-ratio share) | PASS | **DSGN** | M | Med |
 | Load-resource RRS-UFR credit (`ercot_load_resource_reserve`) | `results/scarcity.py:688` | measured NP3-911 RRS-UFR MW | enrollment-driven load-resource AS participation | PASS | **DSGN** | M | Low-Med |
-| Storage up-AS reservation (`ercot_storage_as_reserve` + `storage_as_commitment`) | `results/scarcity.py:721`; `data/fleet.py` storage cap | measured 60-Day DAM battery AS awards MW | endogenous storage **energy-vs-AS opportunity-cost** co-opt | PASS | **DSGN/MISSING** | L | Med |
+| Storage up-AS reservation (`ercot_storage_as_reserve` + `storage_as_commitment`) | `results/scarcity.py:721`; `data/fleet.py` storage cap | measured 60-Day DAM battery AS awards MW | endogenous storage **energy-vs-AS opportunity-cost** co-opt (`ercot_storage_as_endogenous`) — **BUILT 2026-06-27, G5** | PASS | **IMPL** | — | Med |
 | ORDC LOLP distribution (`ordc_lolp_params_path`) | `results/scarcity.py:139,393` | optional measured LOLP table | slow-varying market-design param; default μ/σ forward | PASS | **IMPL** | — | Low |
 | West/Panhandle Waha net-load gas shape (`ercot_west_netload_gas_shape`, `ercot_west_gas_endogenous_collapse`) | `data/fuel.py:1632`, `fuel.ercot_west_oversupply_collapse_freq` | (was measured Waha neg-price-day freq) | **endogenous West net-load oversupply** → collapse freq | PASS | **IMPL** (G6 closed 2026-06-25) | — | Low |
 | BTM CHP host steam (`CHP_PMIN_CF`, `chp_overrides`, `btm.parquet`) | `data/fleet.py:4195` | CAMPD p2 CF floors (ERCOT) / EIA-923 sector BTM% | CHP host-load forecast (sector BTM share) | PASS | **PART** | M | Low |
@@ -332,7 +332,25 @@ with `lr_rrs(t) = enrolled_MW(year) × availability_shape(t)`. **Forward respons
 DR enrollment grows → more load-side reserve supply → fewer scarcity hours.
 **Effort M, Risk Low-Med** (~0.8–0.9 GW today; matters most in tight hours).
 
-### G5 ERCOT storage up-AS reservation — energy-vs-AS opportunity-cost co-opt
+### G5 ERCOT storage up-AS reservation — energy-vs-AS opportunity-cost co-opt — **BUILT (2026-06-27)**
+
+**Built.** `ScenarioConfig.ercot_storage_as_endogenous` (CLI
+`--ercot-storage-as-endogenous`) makes the battery CHOOSE energy vs upward-AS
+inside the multi-product co-opt, replacing the measured reservation. Full battery
+power cap to the co-opt (no `reserve_storage_as_power` subtraction), the measured
+credit guarded off, and the cleared storage AS competing with arbitrage on the
+same power cap in the existing vectorized shared-headroom rows
+(`dispatch._build_reserve_rows`) — priced by the per-product AS demand curves
+(`reserve_price_by_family`). Paired with `ercot_reserve_supply_cap`, the cleared
+storage AS counts toward the measured RTOLCAP online-responsive supply (which
+already includes online batteries — RTOLCAP grows 13.5→16.7→19.1 GW with the
+2023→25 fleet). The measured 60-Day DAM award is kept ONLY as the backcast
+realization to validate against (`storage_as.parquet`,
+`scripts/probes/storage_as_split.py`), never pinned to. Forward response:
+fleet grows → AS saturates → reserve dual falls → batteries tilt back to energy.
+Run `164`; tests `tests/test_ercot_storage_as_endogenous.py`; design doc
+`docs/ercot-storage-as-endogenous-2026-06.md`. **Was: Effort L, Risk Med.** The
+original design note follows.
 
 **Forward analogue (DSGN/MISSING).** Today `storage_as_commitment` subtracts the
 *measured* battery AS-award MW from the storage power cap, and `ercot_storage_as_reserve`
@@ -563,7 +581,7 @@ first.
 | **P0 ✅ DONE 2026-06-25** | **Retire `ct_deployment_overlay` from the NEISO keeper** (Finding 0): re-solved as `neiso-33-no-ctfloor` with it off (dispatch- & determination-neutral), pruned the flag from the lineage `prb_overrides` bag; cross-keeper bag audit clean (only NEISO carried it; PJM `retiree_cems_cap` is an admissible availability cap, not a pin). | Live #10 violation in a keeper; pure hygiene, no new methodology. | S | n/a (correctness/governance) |
 | **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
 | ~~**P2**~~ | ~~**CAISO intertie reference-pricing + corridor ATC (G8)**~~ **DONE 2026-06-25** | CAISO is import-dominated; both levers went fully inert in forecast. **Built**: `caiso_intertie_reference_price` + `caiso_corridor_atc_forward`; keeper `caiso_intertie_forward_3yr`. | M×2 | Med-High (CAISO price formation) |
-| **P3** | **Storage energy-vs-AS opportunity-cost co-opt (G5)** | Completes the AS stack; matters more each year as the battery fleet grows. | L | Med (rising) |
+| ~~**P3**~~ | ~~**Storage energy-vs-AS opportunity-cost co-opt (G5)**~~ **DONE 2026-06-27** | Completes the AS stack; matters more each year as the battery fleet grows. **Built**: `ercot_storage_as_endogenous`; run `164`. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
 | **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11)** ~~NYISO import-recon forward (G10)~~ ✅ **G10 done 2026-06-25** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
 | **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12 — ✅ done 2026-06-25), weather-year ensemble (G13 — ✅ done 2026-06)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
@@ -581,7 +599,8 @@ Manitoba), NYISO local self-supply, storage vintage ramp, RTORDPA (BRIDGE).
 |---|---|---|---|
 | `ct_deployment_overlay` | NEISO (active!) | **FORBIDDEN — no forward analogue** | Measured-CEMS peaker floor; must go inert in forecast → NEISO peaker dispatch loses the propped energy and the keeper's validation isn't the forecast dispatch. **Fix = P0 (retire now).** |
 | DAM-AS overlay (G1) | ERCOT | PART → needs flagship build | Without the endogenous co-opt, forecast under-prices acute AS-scarcity days (already inert under RTC+B, so impact is the pre-RTC+B bridge + proving the co-opt). |
-| Measured AS requirements / credits (G3–G5) | ERCOT | DSGN | Forecast holds too little reserve / mis-credits load+storage AS → under-prices the tight mid-range; grows with VRE. |
+| Measured AS requirements / credits (G3–G4) | ERCOT | DSGN | Forecast holds too little reserve / mis-credits load AS → under-prices the tight mid-range; grows with VRE. |
+| ~~Storage up-AS reservation (G5)~~ | ERCOT | **RESOLVED 2026-06-27** | Endogenous storage energy-vs-AS co-opt built (`ercot_storage_as_endogenous`); the battery chooses, counts toward RTOLCAP, measured award validation-only. Run `164`. |
 | ~~CAISO intertie LMP + corridor ATC (G8)~~ | CAISO | **RESOLVED 2026-06-25** | Forward reference-price seam + ATC corridor cap built (`caiso_intertie_reference_price` / `caiso_corridor_atc_forward`); forward years now carry import price-formation + deliverability shaping. Backcast validation corr 0.96 (desert-SW). |
 | HSL 2024/25 + curtailment (G7) | ERCOT/CAISO | PART | Forecast cannot represent rising curtailment with penetration. |
 
