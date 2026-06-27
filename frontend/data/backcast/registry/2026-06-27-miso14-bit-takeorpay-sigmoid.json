@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-miso14-bit-takeorpay-sigmoid",
+  "label": "miso14 bit takeorpay sigmoid",
+  "date": "2026-06-27",
+  "shorthand": "miso14-bit-takeorpay-sigmoid",
+  "definition": "Calibration run from bundle bit_takeorpay_sigmoid.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-miso14-bit-takeorpay-sigmoid.js",
+  "bundle": "results/calibration/MISO/bit_takeorpay_sigmoid"
+}
