@@ -134,6 +134,10 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # re-run that exercises the new steam-augmented unit-outage capacities.
 # Regenerable from the run131 recipe; scratch until/unless adopted as a keeper.
 /results/calibration/ercot_dam_ccsteam_3yr/
+# CAISO CHP must-run floor re-derivation probe (Lever C, 2026-06-27): diagnostic
+# probe, NOT a registered keeper (Step 6 handles final keeper). Regenerable from
+# run_calibration_full.py with the updated thermal_tranches_CAISO.csv.
+/results/calibration/caiso_chp_rederive/
 
 # Forecast / scenario run caches: transient per-ISO LP outputs keyed by
 # cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
