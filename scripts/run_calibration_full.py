@@ -467,6 +467,7 @@ def _system_frame(
     ercot_dam_as_overlay_from_year: int = 2024,
     ercot_dam_as_scarcity_threshold: float = 150.0,
     ercot_reserve_supply_cap: bool = False,
+    ercot_storage_as_endogenous: bool = False,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -518,7 +519,11 @@ def _system_frame(
                 scarcity_threshold=ercot_dam_as_scarcity_threshold,
                 from_year=ercot_dam_as_overlay_from_year,
             )
-        if ercot_reserve_supply_cap and ercot_market_regime(year, None) == "ordc":
+        if (
+            ercot_reserve_supply_cap
+            and not ercot_storage_as_endogenous
+            and ercot_market_regime(year, None) == "ordc"
+        ):
             # PRE-RTC+B (ORDC-regime) ADDITIVE construction: with the reserve
             # supply capped at measured RTOLCAP, the co-opt reserve dual is the
             # ORDC price adder (RTORPA) ERCOT added to the energy SPP — RTSPP =
@@ -528,8 +533,15 @@ def _system_frame(
             # the energy-only-SCED-plus-adder design of 2023-2025. The forward
             # RTC+B regime instead co-optimizes (the dual lifts the LMP through
             # the shared-headroom constraint), so this additive step is gated OFF
-            # for year >= the RTC+B go-live. Measured supply + published-rule
-            # curve, no price fit.
+            # for year >= the RTC+B go-live AND under the G5 endogenous-storage
+            # forward co-opt (``ercot_storage_as_endogenous``): there the
+            # multi-product co-opt already prices the AS scarcity endogenously, so
+            # re-adding the capped reserve dual post-solve would DOUBLE-count it
+            # (the broad-month over-fire run161 documented). The cap then acts as a
+            # pure reserve-SUPPLY bound — storage's cleared AS counts toward the
+            # measured RTOLCAP online capability — while the LMP stays the co-opt's
+            # own price, so the acute/tail incidence holds vs the uncapped co-opt.
+            # Measured supply + published-rule curve, no price fit.
             ordc_adder = rp.copy()
     total_overlay = np.zeros(T, dtype=float)
     if overlay is not None:
@@ -1927,6 +1939,7 @@ def solve_and_persist(
                     ercot_dam_as_overlay_from_year=ercot_dam_as_overlay_from_year,
                     ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
                     ercot_reserve_supply_cap=ercot_reserve_supply_cap,
+                    ercot_storage_as_endogenous=ercot_storage_as_endogenous,
                 )
             )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
