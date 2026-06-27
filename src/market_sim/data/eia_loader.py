@@ -2333,6 +2333,66 @@ def pjm_zonal_interchange(year: int, zone_names: list[str]) -> np.ndarray | None
     return out
 
 
+def pjm_zonal_interchange_envelope(
+    year: int, zone_names: list[str], hours: int, percentile: float = 95.0
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return PJM's per-border (month×hod) import/export interchange envelope (MW).
+
+    The per-border-zone analogue of :func:`measured_interchange_envelope` (CAISO),
+    built from :func:`pjm_zonal_interchange` (the measured per-tie net export
+    attributed to the model border zone it physically interconnects). For each
+    border zone and each hour of the run horizon, the ``percentile`` of measured
+    net interchange in that hour's (month, hour-of-day) bucket, split into the
+    import and export directions (``pjm_zonal_interchange`` is export-positive):
+
+        import_cap[z, t] = P_pctile( max(0, -interchange) | z, month(t), hod(t) )
+        export_cap[z, t] = P_pctile( max(0, +interchange) | z, month(t), hod(t) )
+
+    The caller (:func:`market_sim.model.transmission.build_pjm_external_flow_groups`)
+    caps each ``PJM_external→border`` link's signed flow asymmetrically — import
+    (positive flow, hub→border) at ``import_cap`` and export (negative flow,
+    border→hub) at ``export_cap`` — so the priced external node delivers only
+    roughly its historical per-border capability in each period rather than ~30 GW
+    uncongested in every hour. The dominant direction keeps a generous high-
+    percentile ceiling the LP clears below; the minor direction (EMAAC import,
+    Dominion export, the interior zones with no tie) collapses toward ~0. A
+    measured capability envelope with no fitted constant (rule #12), the price
+    still clearing in merit order within it.
+
+    Returns ``(import_cap, export_cap)``, each ``(n_zones, hours)`` MW with row
+    order matching ``zone_names``, or ``None`` when the measured tie file is
+    absent (a forecast year), in which case the caller leaves the node uncapped.
+    """
+    zonal = pjm_zonal_interchange(year, zone_names)
+    if zonal is None:
+        return None
+    src_hours = zonal.shape[1]
+    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    s_month = src_clock.month.to_numpy()
+    s_hod = src_clock.hour.to_numpy()
+    n = len(zone_names)
+    imp_tab = np.zeros((n, 12, 24))
+    exp_tab = np.zeros((n, 12, 24))
+    for zi in range(n):
+        e = zonal[zi]
+        imp = np.clip(-e, 0.0, None)  # import into PJM at this border
+        exp = np.clip(e, 0.0, None)  # export out of PJM at this border
+        for m in range(1, 13):
+            for h in range(24):
+                sel = (s_month == m) & (s_hod == h)
+                if not sel.any():
+                    continue
+                imp_tab[zi, m - 1, h] = np.percentile(imp[sel], percentile)
+                exp_tab[zi, m - 1, h] = np.percentile(exp[sel], percentile)
+    # Map the (month, hod) tables onto the run horizon (row 0 = first local hour).
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    rm = clock.month.to_numpy() - 1
+    rh = clock.hour.to_numpy()
+    import_cap = imp_tab[:, rm, rh]
+    export_cap = exp_tab[:, rm, rh]
+    return import_cap, export_cap
+
+
 def _eia930_net_interchange(ba_code: str, year: int) -> np.ndarray | None:
     """Return a BA's hourly net export (MW, export-positive), or ``None``.
 

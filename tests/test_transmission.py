@@ -32,6 +32,7 @@ from market_sim.model.transmission import (
     build_import_generators,
     build_incidence_matrix,
     build_interface_groups,
+    build_pjm_external_flow_groups,
     build_wecc_export_sink,
     build_wecc_import_generators,
     extend_with_import_node,
@@ -1664,6 +1665,47 @@ class TestInterfaceGroups(unittest.TestCase):
     def test_no_interface_limits_is_empty(self):
         cfg = get_iso_config("ERCOT")
         self.assertEqual(build_interface_groups(cfg.links, cfg.interface_limits), [])
+
+
+class TestPjmExternalFlowGroups(unittest.TestCase):
+    """PJM congestion Lever A: external star-node deliverability caps."""
+
+    def test_one_asymmetric_group_per_external_link(self):
+        cfg = extend_with_import_node(get_iso_config("PJM"))
+        zone_names = cfg.zone_names
+        n = len(zone_names)
+        T = 8
+        import_cap = np.full((n, T), 1000.0)
+        export_cap = np.full((n, T), 2000.0)
+        groups = build_pjm_external_flow_groups(
+            cfg.links, import_cap, export_cap, zone_names
+        )
+        # One group per PJM_external link (the 5 IMPORT_NODE_LINKS borders).
+        ext_links = [ln for ln in cfg.links if ln.from_zone == "PJM_external"]
+        self.assertEqual(len(groups), len(ext_links))
+        self.assertTrue(ext_links)
+        for idx, ic, two_way, ec in groups:
+            # Asymmetric one-sided group: distinct import (up) and export (down)
+            # caps, never the symmetric two-way path.
+            self.assertEqual(idx.size, 1)
+            self.assertFalse(two_way)
+            link = cfg.links[int(idx[0])]
+            self.assertEqual(link.from_zone, "PJM_external")
+            np.testing.assert_array_equal(
+                ic, import_cap[zone_names.index(link.to_zone)]
+            )
+            np.testing.assert_array_equal(
+                ec, export_cap[zone_names.index(link.to_zone)]
+            )
+
+    def test_non_pjm_topology_yields_no_groups(self):
+        # An ISO whose links carry no PJM_external from_zone gets no caps.
+        cfg = get_iso_config("ERCOT")
+        n = len(cfg.zone_names)
+        groups = build_pjm_external_flow_groups(
+            cfg.links, np.zeros((n, 4)), np.zeros((n, 4)), cfg.zone_names
+        )
+        self.assertEqual(groups, [])
 
 
 if __name__ == "__main__":
