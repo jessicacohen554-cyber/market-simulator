@@ -90,7 +90,11 @@ def rubric() -> list[dict]:
             f"generation, {cv.FUELMIX_VOL_CAP_TWH:g} TWh) AND share of total generation "
             f"within ±{cv.FUELMIX_SHARE_PP:g} pp (the universal class gate — scales with "
             "system size but capped at an absolute 5 TWh, applied uniformly across "
-            "classes and ISOs).",
+            "classes and ISOs). In a preliminary current-year EIA-923 vintage "
+            f"(≥ {cv.PRELIM_923_FROM_YEAR}) only the (ISO, class) pairs the completeness "
+            "audit (scripts/audit_eia923_completeness.py) verifies COMPLETE are gated; "
+            "classes with incomplete plant data are SKIPPED (covered by the C2 family "
+            "EIA-930 reconcile), never silently passed.",
         ),
         row(
             "sysvol",
@@ -187,13 +191,18 @@ def methodology() -> list[dict]:
             "tolerance, not tuned to the residual.",
         },
         {
-            "head": "Preliminary-vintage reconcile (0.97)",
+            "head": "Preliminary-vintage reconcile (0.97) + per-class completeness gate",
             "body": f"The current-year ({cv.PRELIM_923_FROM_YEAR}+) EIA-923 release is a "
-            "preliminary survey that under-counts thermal generation. When the "
+            "preliminary survey that under-counts thermal generation because plants are "
+            "still reporting (2025: ~43% of plants nationally at audit time). A per-(ISO, "
+            "class) completeness audit (scripts/audit_eia923_completeness.py) marks each "
+            "class COMPLETE only when its prior-year plants all report and its whole "
+            "fossil family reported; the C1 fuel-mix gate then scores only those classes "
+            "(e.g. ERCOT coal 2025) and SKIPS the rest. At the family level, when the "
             f"grid-delivered 923 family total falls below {cv.VINTAGE_RECONCILE_FRAC:.2f}× "
-            "the complete EIA-930 grid series, the benchmark scales the classes up to "
-            "the EIA-930 total (split and monthly shape preserved) so the model is "
-            "compared against a complete benchmark, not a partial survey.",
+            "the complete EIA-930 grid series, C2 scales the classes up to the EIA-930 "
+            "total (split and monthly shape preserved) so the model is compared against a "
+            "complete benchmark, not a partial survey.",
         },
         {
             "head": "Keeper = most structurally faithful, not lowest error",
