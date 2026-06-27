@@ -60,10 +60,23 @@ PRB_FLOOR = float(os.environ.get("RUN162_PRB_FLOOR", "0.62"))
 PRB_FOLLOWER_FLOOR = float(os.environ.get("RUN162_PRB_FOLLOWER_FLOOR", "0.78"))
 prb["coal_prb_passthrough_floor"] = PRB_FLOOR
 prb["coal_prb_follower_floor"] = PRB_FOLLOWER_FLOOR
+# Optional: sharpen the gas-keyed sigmoid knee (default 2.85). Lowering gas_mid
+# concentrates the cheap-gas PRB discount nearer 2024's $2.19 gas, so the floor
+# cut bites 2024 harder than 2023 ($2.54, past the lower knee) and spares 2025
+# ($3.52, near the ceiling) — the multi-year-safe way to pull only 2024 PRB.
+PRB_GAS_MID = os.environ.get("RUN162_PRB_GAS_MID")
+if PRB_GAS_MID:
+    prb["coal_prb_passthrough_gas_mid"] = float(PRB_GAS_MID)
+    prb["coal_prb_follower_gas_mid"] = float(PRB_GAS_MID)
 
 # Lever 1 — CC_REGULAR dearer: ADD +0.12 to the run157 committed/econ_low/
 # econ_high deltas (deltas are added to the base curve; see
 # run_calibration._apply_offer_curve_deltas).
+# Lever 3 — CT_PEAKER evening-ramp net-load reliability floor (the forward-native
+# replacement for the ct_mustrun_per_plant actuals pin): lifts the deep CT
+# under-run toward actual, displacing the over-running CC in peak hours.
+CT_DRAG = os.environ.get("RUN162_CT_DRAG", "1") == "1"
+
 CC_DELTA = float(os.environ.get("RUN162_CC_DELTA", "0.12"))
 deltas = copy.deepcopy(cf["offer_curve_deltas"])
 cc = deltas.setdefault("CC_REGULAR", {})
@@ -106,10 +119,12 @@ solve_and_persist(
     ercot_rtordpa_overlay=False,
     ercot_dam_as_overlay=False,
     energy_reserve_coopt=False,
-    # --- the structural reliability floor (driver (b)) ---
+    # --- the structural reliability floors (driver (b)) ---
     gas_st_netload_drag=True,  # net-load-indexed gas-steam min-gen floor
+    ct_netload_drag=CT_DRAG,  # evening-ramp net-load CT_PEAKER min-gen floor
 )
 print(
     f"162 done: {run_dir} (CC_DELTA=+{CC_DELTA}, PRB_FLOOR={PRB_FLOOR}, "
-    f"PRB_FOLLOWER_FLOOR={PRB_FOLLOWER_FLOOR}, gas_st_netload_drag=ON, overlays OFF)"
+    f"PRB_FOLLOWER_FLOOR={PRB_FOLLOWER_FLOOR}, gas_st_netload_drag=ON, "
+    f"ct_netload_drag={'ON' if CT_DRAG else 'OFF'}, overlays OFF)"
 )
