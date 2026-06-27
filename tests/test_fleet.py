@@ -220,7 +220,7 @@ class TestCaisoChpOverrides(unittest.TestCase):
             50,
             "CAISO CHP artifact should cover the cogen fleet",
         )
-        for code, (pmin, sector) in overrides.items():
+        for code, (pmin, sector, btm_override) in overrides.items():
             if pmin is not None:
                 self.assertTrue(
                     0.0 <= pmin <= 75.0,
@@ -228,10 +228,15 @@ class TestCaisoChpOverrides(unittest.TestCase):
                 )
             if sector is not None:
                 self.assertIn(sector, ("merchant", "industrial", "commercial"))
-        # Watson Cogeneration (Torrance refinery host): measured EIA-923
-        # monthly floor with an industrial-sector BTM share.
-        self.assertEqual(chp_pmin_cf(50216, iso="CAISO"), 31.2)
-        self.assertEqual(chp_btm_pct(50216, "CC_CHP", iso="CAISO"), 50.0)
+            if btm_override is not None:
+                self.assertTrue(
+                    0.0 <= btm_override <= 100.0,
+                    f"plant {code} btm_override {btm_override} outside [0, 100]",
+                )
+        # Watson Cogeneration (Torrance refinery host): EIA-923 floor re-derived
+        # with factor=0.40 (Step 5 Lever C); BTM raised to 65% (per-plant override).
+        self.assertAlmostEqual(chp_pmin_cf(50216, iso="CAISO"), 14.7, places=0)
+        self.assertEqual(chp_btm_pct(50216, "CC_CHP", iso="CAISO"), 65.0)
         # The CAISO artifact must not leak into the ERCOT lookup (Baytown
         # keeps its hardcoded CAMPD value).
         self.assertEqual(chp_pmin_cf(55015, iso="ERCOT"), 49.7)
