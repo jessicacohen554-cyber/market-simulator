@@ -1,0 +1,87 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-34 st-tempfloor keeper 2026-06-27",
+        "note": "Builds on the nyiso-33 ct-tempfloor keeper (byte-identical flags + the temperature-keyed downstate CT_PEAKER local-reliability floor, now the live NYISO default) and adds ONE new structural mechanism plus ONE benchmark-basis fix. NEW MECHANISM: a temperature-keyed downstate ST_GAS (gas-steam) local-reliability floor (--nyiso-st-reliability-floor, transmission.inject_nyiso_st_reliability_floor), the ST-fleet companion to the CT floor. MECHANISM: NYISO's downstate steam fleet (NYC zone J Ravenswood/Arthur Kill/Astoria; Long Island zone K; the Capital region) runs a persistent in-city / cable-islanded reliability baseline PLUS a strong summer cooling hot-limb that an energy-only LP zeroes out -- it imports cheaper upstate/NYC combined cycle instead -- so the backcast under-runs ST_GAS. The floor is a PERSISTENT 24-hour baseline (base_24h x available capacity, applied over ALL hours -- the in-city must-run that the measured cool-day CF shows running ~80% as high overnight as in the evening) with the evening cooling hot-limb layered on top over HB14-21 via maximum: overnight/midday frac=base_24h; evening frac=max(base_24h, clip(base_ev+slope*(TMAX-T0), base_ev, cap)). GROUNDING (a physical temperature->commitment rule, NOT a residual fit or a CEMS pin): the measured per-zone CAMPD ST_GAS fleet capacity factor regressed on the zone's load-center daily max temperature (NOAA GHCN: Islip for Long Island, Central Park for NYC, Albany for the Capital region), pooled 2023-2025 (scripts/derive_nyiso_st_reliability_floor.py, archived data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv). Per-zone coefficients (transmission.NYISO_ST_FLOOR_COEFFS): base_24h is the cool-day ALL-hours p25, base_ev the cool-day evening p25, cap the evening p97 ceiling, slope the measured evening hot-limb -- Long Island base_24h 0.148 / base_ev 0.191 / slope 0.0588 / cap 0.851 (corr +0.63, hot CF 0.57 vs mild 0.25); NYC base_24h 0.105 / base_ev 0.112 / slope 0.0729 / cap 0.836 (corr +0.48, hot CF 0.32 vs mild 0.15); Capital hot-limb only base 0.0 / slope 0.0400 / cap 0.419 (weak, corr +0.089, hot CF 0.16 vs mild 0.00, binds only on the hottest afternoons). The flat/temperature-insensitive Upstate steam fleet (CF ~0.50 flat vs temperature) is deliberately OMITTED -- a flat must-run there would be an un-grounded fit. All coefficients were set a priori from the regression BEFORE the solve; ST_GAS then landed UNDER actual on the largest-miss scored year (2024 -2.39 TWh), i.e. the floor is conservative and does NOT pin to the measured outcome (rules #11/#12). The base x available-capacity basis (pmax x availability) is automatically outage-aware (a unit on a forced/planned outage is not floored). FORWARD-REPRODUCIBLE: a forecast year pins a weather year (hence a per-zone TMAX series) exactly as it pins load/wind/solar, and the floor responds to changed conditions (hotter years -> more downstate steam). EFFECT vs the nyiso-33 keeper -- the HARD C1 fuel-mix improves: ST_GAS 2023 lands +0.39 TWh (PASS), 2024 -3.77 -> -2.39 TWh (recovers ~1.4 TWh; still under band, kept as an honest MODEL MISS, see _st_floor_status). The complementary CC_REGULAR over-run shrinks (2024 +0.80 -> +0.17 PASS) as the recovered steam displaces it; CT_PEAKER stays PASS (2023/24 -0.87/-0.86); every other 2023-2024 gas class stays in C1 tolerance. dispatch_corr stays PASS (gas r=0.91/0.84/0.80). BENCHMARK-BASIS FIX (Task A, reporting only -- not a model lever): NYISO solar actuals now route to EIA-923 (results.calibration.actuals_source is ISO-aware). EIA-930 NYIS grid solar is a structural 0 (NYISO solar is overwhelmingly behind-the-meter / net-metered, invisible to the balancing-area telemetry), so the dashboard previously scored the model's ~2 TWh of dispatched utility-scale grid solar against a spurious zero; the EIA-923 utility-scale total (2.05/2.90 TWh for 2023/2024, the like-for-like grid resource the model dispatches) is now the actual on both the classFull and the e930-slot benchmark parts. The C3a/C3b/C3c tradeoff is documented in the exceptions and kept per rule #1: the steam floor is a min-gen (must-run) representation that recovers the local-reliability ENERGY but adds inframarginal supply, depressing the marginal LMP rather than letting the units set a scarcity price. This is the most structurally faithful NYISO config to date: it adds a real, measured, forward-reproducible local-reliability mechanism that closes the largest remaining C1 miss alongside the CT floor."
+    },
+    "_st_floor_status": "The downstate ST_GAS under-run -- the largest remaining C1 (HARD) miss on the nyiso-33 keeper (2024 -3.77 TWh) -- is SUBSTANTIALLY reduced (2024 -3.77 -> -2.39 TWh) by a grounded, measured, forward-reproducible temperature floor, and 2023 ST_GAS lands in band (+0.39 PASS). The residual 2024 -2.39 TWh is left as an honest, UN-LEDGERED MODEL MISS (fuelmix C1 FAIL -> determination NOT-YET): the monthly decomposition shows the 2024 steam under-run is broad-based across ALL months, with the LARGEST gaps in the winter/shoulder (Dec, Oct, Nov), NOT only the summer cooling hot-limb. That winter/shoulder run is the gas-electric constraint (deep-winter pipeline scarcity pricing dual-fuel steam into merit) -- the dual-fuel / Transco-Z6 gas-basis frontier, a SEPARATE structural lever from a cooling-driven reliability floor. Closing it by pushing the temperature floor's base above the measured p25 would be over-forcing a cooling mechanism to recover a gas-constraint phenomenon (forbidden, rules #1/#11/#12), so the floor is left at its conservative a-priori coefficients and the residual is named as the next frontier rather than ledgered away. 2025 is preliminary-vintage (per-class skipped). The C3a mean-LMP / C3c >$300 tail remain the ledgered reserve-scarcity (ORDC) frontier (min-gen floors add inframarginal supply but do not restore scarcity price-setting; non-closable with grounded inputs per nyiso-29/31), and the steam floor regresses them a further ~1-3pp as the documented rule-#1 tradeoff (kept, not chased).",
+    "exceptions": [
+        {
+            "criterion": "price_mean",
+            "year": 2023,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -12.7% ($26.43 vs $30.29)",
+            "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Regressed ~1.0pp from the nyiso-33 keeper (-11.7% -> -12.7%) because the new downstate ST_GAS floor, like the CT floor, is implemented as a min-gen (must-run) floor: it correctly recovers the local-reliability ENERGY but adds inframarginal steam supply in the floored hours, which depresses the marginal LMP rather than letting the units SET a high scarcity price. The fuller fix -- units setting price in scarcity hours via an ORDC/reserve-scarcity demand curve -- is the documented reserve-scarcity frontier (the same root cause as the C3c >$300 tail), confirmed non-closable with grounded inputs by nyiso-29/31. Kept per rule #1: the floor is the real local-RA mechanism and reduces the HARD C1 ST_GAS miss; reverting it to recover ~1pp of a SOFT price criterion would re-open the larger volume miss. Not chased (rule #12) -- ST_GAS lands UNDER actual, so the floor is not over-forced."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2024,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -15.1% ($30.51 vs $35.95)",
+            "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. As 2023, with a larger ~2.4pp depression vs the nyiso-33 keeper (-12.7% -> -15.1%) because 2024 is the year the model most under-ran downstate steam (the NYC in-city fleet collapsed to ~half its measured run), so the 24-hour persistent base recovers the most inframarginal steam here. Same ledgered root cause (reserve scarcity, nyiso-29/31): the recovered energy is correct but adds inframarginal supply, exposing the missing scarcity price tail. Kept per rule #1; not chased (rule #12) -- the base is the conservative cool-day p25 and ST_GAS still lands -2.39 TWh UNDER actual, so the floor is not over-forced; the price depression is the structural min-gen-floor consequence, not a too-high base."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2025,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -10.1% ($54.59 vs $60.74)",
+            "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same min-gen inframarginal-supply effect as 2023/2024 (~1.5pp below the nyiso-33 keeper's -8.6%). The downstate steam energy is correctly recovered; the price side is the ledgered reserve-scarcity frontier. Kept per rule #1; not chased (rule #12)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2024,
+            "metric": "C3b price duration / shape NRMSE vs actual RT",
+            "magnitude": "NRMSE 0.272 (band 0.25)",
+            "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Tipped just out of band by the same min-gen ST_GAS floor: must-run steam compresses the merit order and flattens the price duration curve (the high-price evening hours soften), the same root cause as the C3a/C3c reserve-scarcity frontier. 2023 (0.169) and 2025 (0.177) stay in band. Kept per rule #1; not chased (rule #12)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2023,
+            "metric": "C3c scarcity tail (>$300/MWh hour count) vs actual RT",
+            "magnitude": "model 1h vs actual 10h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. The >$300 scarcity tail is the canonical reserve-scarcity (ORDC) frontier: an energy-only LP with min-gen reliability floors recovers the local-RA energy but cannot form the scarcity price tail without an ORDC / reserve-scarcity demand curve that lets peakers/steam SET price in shortage. Confirmed non-closable with grounded inputs by nyiso-29/31 (a grounded reserve REQUIREMENT is non-binding against the committed quick-start headroom). The new steam floor adds inframarginal supply, if anything thinning the tail further -- the documented rule-#1 tradeoff. The ORDC frontier is named, not chased (rule #12)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2024,
+            "metric": "C3c scarcity tail (>$300/MWh hour count) vs actual RT",
+            "magnitude": "model 0h vs actual 12h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered reserve-scarcity (ORDC) frontier as 2023: the scarcity tail needs an ORDC / reserve-scarcity demand curve (out of scope, nyiso-29/31). Named, not chased (rule #12)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2025,
+            "metric": "C3c scarcity tail (>$300/MWh hour count) vs actual RT",
+            "magnitude": "model 8h vs actual 42h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered reserve-scarcity (ORDC) frontier as 2023/2024. Named, not chased (rule #12)."
+        },
+        {
+            "criterion": "sysvol",
+            "family": "gas",
+            "year": 2025,
+            "metric": "C2 gas family total vs EIA-930 grid (preliminary vintage)",
+            "magnitude": "model gas -3.6% ($67.69 vs $70.25 TWh)",
+            "classification": "ACCEPTED MEASURED-INPUT LIMITATION (preliminary EIA-923 / EIA-930 benchmark-basis floor)",
+            "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the C2 family gate falls back to the EIA-930 grid total, against which the model gas total sits ~-3.6% at its benchmark-basis floor (the same EIA-930/EIA-923 basis reconciliation as the prior NYISO keepers). The ST_GAS floor is a within-gas reshuffle (steam up, CC down) and does not move the gas TOTAL. Not closable by an honest knob (rules #1/#11/#12)."
+        },
+        {
+            "criterion": "co2",
+            "year": 2024,
+            "metric": "C5a system fossil CO2 vs eGRID/CAMPD",
+            "magnitude": "model -7.5% (26.93 vs 29.13 Mt)",
+            "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 ST_GAS volume miss + gas basis floor)",
+            "reason": "2024 CO2 is downstream of the 2024 ST_GAS under-run (the largest C1 miss, an honest MODEL MISS): the missing ~2.4 TWh of steam (a high-emission-rate class) is the dominant driver of the CO2 shortfall, alongside the gas-total EIA-923/EIA-930 basis floor. The ST_GAS floor recovers ~1.4 TWh of that steam and shifts the CO2 in the right direction (the 2024 miss narrowed from the nyiso-33 keeper), but the residual stays governed by the same volume miss / basis floor. Not a separate emission-rate error and not closable without re-pinning the steam volume to actuals (forbidden, rule #12) or over-forcing the floor above its measured p25."
+        }
+    ]
+}
