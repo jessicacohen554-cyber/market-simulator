@@ -1597,6 +1597,7 @@ def run_year(
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
+    neiso_gas_coldsnap_derate: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1791,6 +1792,10 @@ def run_year(
     if neiso_temp_reliability_floor is not None:
         config = config.with_overrides(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor
+        )
+    if neiso_gas_coldsnap_derate is not None:
+        config = config.with_overrides(
+            neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
         )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
@@ -2625,6 +2630,32 @@ def run_year(
                 "%s %d: dual-limb weather floor — CT_PEAKER hot-limb (TMAX) over "
                 "the afternoon-evening ramp + COAL/ST_GAS cold-limb (TMIN) over "
                 "the winter morning/evening peaks, frac x available capacity",
+                iso,
+                year,
+            )
+
+    # NEISO winter gas-availability derate (temperature-dependent forced outage):
+    # on cold snaps the gas-electric constraint makes non-dual-fuel gas-CC/CT
+    # capacity physically UNAVAILABLE, so the fleet goes reserve-short and the
+    # RCPF co-opt prices the >$300 scarcity tail (and widens the storage spread).
+    # Must run before the reserve-coopt inputs are built so the shared-headroom
+    # RHS sees the derated availability (transmission.inject_neiso_gas_coldsnap_
+    # derate). Dual-fuel units are excluded (they switch to oil, not vanish).
+    if getattr(config, "neiso_gas_coldsnap_derate", False):
+        from market_sim.model.transmission import inject_neiso_gas_coldsnap_derate
+
+        if inject_neiso_gas_coldsnap_derate(
+            fleet_arrays,
+            iso,
+            year,
+            float(getattr(config, "neiso_gas_derate_t0_c", -7.0)),
+            float(getattr(config, "neiso_gas_derate_slope_per_c", 0.018)),
+            float(getattr(config, "neiso_gas_derate_cap", 0.20)),
+        ):
+            logger.info(
+                "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
+                "availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap "
+                "window (TDFOR, NERC cold-weather anchored)",
                 iso,
                 year,
             )
