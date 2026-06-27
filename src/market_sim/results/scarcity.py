@@ -1396,9 +1396,6 @@ def ercot_as_aware_unit_value(
     n_prod = rp.shape[1]
     # Per-hour binding price over all products, and over the non-fast (Non-Spin)
     # subset only — the two tiers of the eligibility cascade.
-    fast_cols = [
-        p for p in range(min(n_prod, len(products))) if products[p][2] == "fast"
-    ]
     slow_cols = [
         p for p in range(min(n_prod, len(products))) if products[p][2] != "fast"
     ]
