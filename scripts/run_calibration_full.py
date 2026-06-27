@@ -1695,6 +1695,7 @@ def solve_and_persist(
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
+    neiso_gas_coldsnap_derate: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1884,6 +1885,7 @@ def solve_and_persist(
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
             neiso_temp_reliability_floor=neiso_temp_reliability_floor,
+            neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2127,6 +2129,7 @@ def solve_and_persist(
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
         "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
+        "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2304,6 +2307,10 @@ def solve_and_persist(
     if neiso_temp_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor
+        )
+    if neiso_gas_coldsnap_derate is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5212,6 +5219,21 @@ def main() -> None:
         "A/B probe).",
     )
     parser.add_argument(
+        "--neiso-gas-coldsnap-derate",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO winter gas-availability derate (temperature-dependent forced "
+        "outage): on deep-winter cold snaps the gas-electric constraint makes "
+        "non-dual-fuel gas-CC/CT capacity physically UNAVAILABLE (the pipeline "
+        "diverts to heating), so the fleet goes operating-reserve-short and the "
+        "RCPF reserve co-opt prices the >$300 cold-hour scarcity tail (and widens "
+        "the storage arbitrage spread). Cuts non-dual-fuel gas-CC/CT availability "
+        "by clip(slope*(t0-TMIN),0,cap) over the cold-snap window, keyed to the "
+        "NEISO load-weighted daily TMIN; magnitude anchored to NERC cold-weather "
+        "forced-outage data (Winter Storm Elliott), not the price residual. "
+        "Pair with --energy-reserve-coopt. NEISO-only; default off.",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5713,6 +5735,7 @@ def main() -> None:
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
         neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
+        neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
