@@ -2102,6 +2102,28 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_pjm_zonal_gas_basis.
     pjm_zonal_gas_basis: bool = False
 
+    # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
+    # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
+    # backcast years) because the priced external star node (PJM_external) wires
+    # ~30 GW of uncongested transfer to 5 border zones — the dear-east load
+    # pockets import directly from one price hub and never pull power through the
+    # internal west→east lines — and the internal interface TTCs are loose Tier-3
+    # estimates that never bind. When set (PJM only, requires the priced-
+    # interchange external node), each PJM_external→border link's signed flow is
+    # capped per hour at the measured per-border net-interchange envelope
+    # (constants.PJM_EXTERNAL_FLOW_PERCENTILE,
+    # eia_loader.pjm_zonal_interchange_envelope) and the internal interfaces with a
+    # confident measured mapping are tightened to their measured transfer-limit
+    # postings (constants.PJM_MEASURED_INTERNAL_TTC). The hub can no longer flood
+    # the east with cheap imports, so the interior zones source western power
+    # across the now-binding internal cuts: eastern LMP separates up, western coal
+    # runs to serve the east, and the over-export shrinks toward the measured
+    # schedule. Measured PJM transfer/interchange data, forward-reproducible, no
+    # residual tuning (rules #11/#12). Off by default (every other ISO and all
+    # forecasts byte-identical); the calibration harness enables it for PJM. See
+    # market_sim.model.transmission.build_pjm_external_flow_groups.
+    pjm_congestion: bool = False
+
     # Tier 3 (calibration) — ERCOT per-zone gas-hub basis. ERCOT's model zones
     # buy gas off structurally different regional hubs: West/Panhandle on Waha
     # (Permian, a deep takeaway-constrained discount — annual avg ~$0/MMBtu and
@@ -2833,6 +2855,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "pjm_zonal_gas_basis": 3,
+    "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
