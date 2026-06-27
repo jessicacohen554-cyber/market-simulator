@@ -48,11 +48,21 @@ measured reservation:
 3. **Cleared storage AS counts toward RTOLCAP.** Paired with
    `ercot_reserve_supply_cap` (300b89c), the cleared reserve `R` — storage-backed
    and thermal-backed alike — is capped at the measured online-responsive
-   capability. **RTOLCAP already includes online batteries** (it grows
-   13.5 → 16.7 → 19.1 GW in lockstep with the 2023→25 battery fleet, while the
-   offline RTOFFCAP holds ~5 GW), so storage's endogenously-cleared AS is
+   capability by the LP cap row. **RTOLCAP already includes online batteries** (it
+   grows 13.5 → 16.7 → 19.1 GW in lockstep with the 2023→25 battery fleet, while
+   the offline RTOFFCAP holds ~5 GW), so storage's endogenously-cleared AS is
    correctly counted toward the online reserve supply with no augmentation and no
-   double count.
+   double count. Under the endogenous flag the cap acts as a **pure reserve-supply
+   bound**: the post-solve additive ORDC adder (run161's energy-only-SCED-plus-
+   adder construction, `_system_frame`) is **gated OFF** — the multi-product
+   co-opt already prices the AS scarcity endogenously through its reserve duals
+   and shared headroom, so re-adding the capped reserve dual would DOUBLE-count
+   it (the broad-month over-fire run161 documented, sharpest in the low-RTOLCAP
+   2023 year that also carries the RTORDPA overlay). This is the same retirement
+   the additive adder already takes under RTC+B (the forward co-opt regime). The
+   LMP therefore stays the co-opt's own price, so the **acute/tail incidence holds
+   vs the uncapped run163** while storage's AS is now bounded by and counted
+   toward the measured online reserve supply.
 
 **Forward response.** As the battery fleet grows and AS saturates, each
 product's reserve dual falls and the batteries tilt back to energy —
