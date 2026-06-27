@@ -61,6 +61,10 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/calibration/_cg_ovl_*
 # Throwaway single-year diagnostic probes (rule #14): never registered keepers.
 /results/calibration/_diag_*
+# run159 measured-AS-requirement re-solve: the baseline for the forward-AS
+# requirement (run162) acute/tail comparison; throwaway (the dashboard keeper is
+# 162, compared against the committed run159).
+/results/calibration/159repro/
 /results/calibration/_cold_2023/
 /results/calibration/_warm_2023/
 /results/calibration/caiso_reprice_pass*/
