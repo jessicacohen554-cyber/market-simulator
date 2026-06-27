@@ -536,6 +536,29 @@ class ScenarioConfig:
     # measured profile; lower keeps modeled gas TWh nearer EIA-923 (forcing
     # commitment can inflate gas — the surplus must export/curtail, not pad the
     # mix). Only used when caiso_gas_commitment_floor is on.
+    caiso_ra_mustoffer: bool = False  # CAISO Resource-Adequacy must-offer
+    # COMMITMENT (Step-1 replacement for the measured-outcome gas floor above).
+    # A real RA must-offer obligation is a *commitment* — the unit is online at
+    # minimum stable load and FREE to dispatch down to it — NOT an energy floor
+    # pinned to measured generation. Through the P2 pass (runner P0->P1->P2,
+    # model.commitment.caiso_ra_mustoffer_min_gen) this holds each gas CC/CT unit
+    # that the economic P1 dispatch runs BEFORE and AFTER a midday idle gap
+    # SHORTER than its physical minimum-down time at caiso_ra_min_load_frac x
+    # available capacity across that gap: it cannot economically cycle off and
+    # restart for the evening ramp, so its RA commitment keeps it online at
+    # min-load instead of cold midday. The bridge is detected from the model's
+    # OWN dispatch run pattern + the physical min-down time (CC_COMMITMENT_PARAMS),
+    # both forward-derivable and condition-responsive — no measured-outcome pin
+    # (CLAUDE.md #1/#11). The LP dispatches economically above the floor, so it
+    # only binds when oversupply would otherwise drive the committed unit cold;
+    # the midday ~$0 price comes from real oversupply (solar/imports), not the
+    # floor. Default off (byte-identical); CAISO-only via _calibration_config.
+    caiso_ra_min_load_frac: float = 0.40  # Minimum stable load of a committed
+    # gas unit as a fraction of available capacity, for the RA must-offer bridge
+    # commitment above. ~0.40 is the typical combined-cycle / frame simple-cycle
+    # minimum generation (one combustion train at minimum; NREL "Power Plant
+    # Cycling Costs" 2012; CAISO Master File PMin/PMax). A physical turn-down
+    # limit, not a price/volume fit. Only used when caiso_ra_mustoffer is on.
     caiso_ct_reliability_floor: bool = False  # CAISO local-RA CT_PEAKER
     # temperature-driven reliability-commitment floor. CAISO commits its
     # simple-cycle gas peakers (CT_PEAKER) for LOCAL Resource Adequacy through
@@ -2576,6 +2599,8 @@ TIER_TAGS: dict[str, int] = {
     "caiso_corridor_atc_forward": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
+    "caiso_ra_mustoffer": 1,
+    "caiso_ra_min_load_frac": 2,
     "caiso_ct_reliability_floor": 1,
     "caiso_ct_floor_slope_per_c": 3,
     "caiso_ct_floor_t0_c": 1,
