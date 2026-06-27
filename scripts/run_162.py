@@ -50,9 +50,16 @@ if isinstance(prb.get("wefor_residual_groups"), list):
     prb["wefor_residual_groups"] = frozenset(prb["wefor_residual_groups"])
 
 # Lever 2 — coal-PRB cheaper: lower the cheap-gas passthrough discount floor
-# (0.78 -> 0.62) so PRB stays in baseload merit on 2024's cheap gas.
+# (0.78 -> 0.62) so PRB stays in baseload merit on 2024's cheap gas. The PRB
+# sigmoid is gas-keyed (gas_mid 2.85, gas_slope 2.5), so the floor only sets the
+# CHEAP-gas asymptote: dropping it pulls PRB up in 2024 (gas $2.19, well below
+# the midpoint) while 2025 (gas $3.52, above it) sits near the ceiling and barely
+# moves — the floor self-targets the years where CC over-runs. The tiered curve's
+# low-must-run follower tier gets the same treatment.
 PRB_FLOOR = float(os.environ.get("RUN162_PRB_FLOOR", "0.62"))
+PRB_FOLLOWER_FLOOR = float(os.environ.get("RUN162_PRB_FOLLOWER_FLOOR", "0.78"))
 prb["coal_prb_passthrough_floor"] = PRB_FLOOR
+prb["coal_prb_follower_floor"] = PRB_FOLLOWER_FLOOR
 
 # Lever 1 — CC_REGULAR dearer: ADD +0.12 to the run157 committed/econ_low/
 # econ_high deltas (deltas are added to the base curve; see
@@ -104,5 +111,5 @@ solve_and_persist(
 )
 print(
     f"162 done: {run_dir} (CC_DELTA=+{CC_DELTA}, PRB_FLOOR={PRB_FLOOR}, "
-    f"gas_st_netload_drag=ON, overlays OFF)"
+    f"PRB_FOLLOWER_FLOOR={PRB_FOLLOWER_FLOOR}, gas_st_netload_drag=ON, overlays OFF)"
 )
