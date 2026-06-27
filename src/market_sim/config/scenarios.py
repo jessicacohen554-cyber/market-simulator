@@ -2225,6 +2225,28 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # 2023 -4.7% -> -2.7%, 2025 (dear gas, near gas_mid) -1.7% -> -1.0%; gas
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
     # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
+    # MISO bituminous (Illinois-Basin / Appalachian blend). At FULL delivered
+    # cost the dispatchable bands sit out-of-merit vs gas-CC in every backcast
+    # year (measured qty-wtd bit SRMC ~$30-32/MWh at HR 10.5 x ~$2.5/MMBtu coal
+    # vs gas-CC ~$18-28/MWh; parity only at ~$3.86 gas, above even dear-2025),
+    # so the model cycles bituminous down when gas is cheap (2023/24 coal
+    # under-run -27 to -31%) and lets it over-respond when gas is dear (2025
+    # +16%). The real fleet ran a flat ~53-57 TWh every year — sticky, because
+    # it is heavily take-or-pay / must-run (measured EIA-923 Schedule-5 sunk
+    # share ~0.96 mean) yet the sunk band only covers the ~24% must-run tranche.
+    # This sigmoid marks the BID of the dispatchable bands gas-keyed: a
+    # cheap-gas discount (take-or-pay / stay-running competitive offering) so
+    # bituminous holds its sticky band when gas is cheap, and a dear-gas markup
+    # (opportunity cost) so it backs out of the over-run when gas is dear. It
+    # discounts the BID, not the delivered coal price; gas-keyed and
+    # forward-reproducible (rule #12). Recentered from the PJM bituminous curve
+    # for MISO's lower gas (mid 2.85 vs 3.40). First-pass; tune on the 3-year fit.
+    ("MISO", "bituminous"): {
+        "floor": 0.60,
+        "ceil": 1.30,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
     ("PJM", "bituminous"): {
         "floor": 0.76,
         "ceil": 1.32,
