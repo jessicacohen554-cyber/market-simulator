@@ -89,6 +89,7 @@ from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
+    ercot_as_aware_unit_value,
     ercot_multiproduct_reserve_coopt_inputs,
     ercot_reserve_coopt_inputs,
     ercot_rtolcap_supply_cap_mw,
