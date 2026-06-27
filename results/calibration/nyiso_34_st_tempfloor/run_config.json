@@ -1,31 +1,13 @@
 {
-  "timestamp": "2026-06-27T03:25:34",
+  "timestamp": "2026-06-27T05:46:48",
   "git": {
-    "sha": "c6a96ca",
+    "sha": "21f71c4",
     "branch": "claude/nyiso-run-34-solar-steam-bnu5zs",
     "dirty": true,
     "changed_files": [
-      "ackcast-results.html",
-      "frontend/data/backcast/bench/NYISO/2023.json.gz",
-      "frontend/data/backcast/bench/NYISO/2024.json.gz",
-      "frontend/data/backcast/bench/NYISO/2025.json.gz",
-      "frontend/data/backcast/benchmark.js",
-      "frontend/data/backcast/manifest.js",
-      "scripts/render_calibration_html.py",
-      "scripts/run_calibration.py",
-      "scripts/run_calibration_full.py",
-      "src/market_sim/config/scenarios.py",
-      "src/market_sim/data/eia_loader.py",
-      "src/market_sim/model/transmission.py",
-      "src/market_sim/results/calibration.py",
-      "tests/test_calibration.py",
-      "tests/test_transmission.py",
-      "data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv",
-      "frontend/data/backcast/registry/2026-06-27-nyiso-34-st-tempfloor.json",
-      "frontend/data/backcast/runs/2026-06-27-nyiso-34-st-tempfloor.js",
-      "scripts/derive_nyiso_st_reliability_floor.py"
+      "rc/market_sim/model/transmission.py"
     ],
-    "diffstat": "backcast-results.html                           |   6 +-\n frontend/data/backcast/bench/NYISO/2023.json.gz | Bin 158391 -> 158387 bytes\n frontend/data/backcast/bench/NYISO/2024.json.gz | Bin 159603 -> 159604 bytes\n frontend/data/backcast/bench/NYISO/2025.json.gz | Bin 172381 -> 172386 bytes\n frontend/data/backcast/benchmark.js             |   2 +-\n frontend/data/backcast/manifest.js              |   2 +-\n scripts/render_calibration_html.py              |  30 ++++-\n scripts/run_calibration.py                      |  46 ++++++++\n scripts/run_calibration_full.py                 |  28 +++++\n src/market_sim/config/scenarios.py              |  22 ++++\n src/market_sim/data/eia_loader.py               |  43 +++++++\n src/market_sim/model/transmission.py            | 150 ++++++++++++++++++++++++\n src/market_sim/results/calibration.py           |  27 ++++-\n tests/test_calibration.py                       |  13 ++\n tests/test_transmission.py                      | 145 +++++++++++++++++++++++\n 15 files changed, 500 insertions(+), 14 deletions(-)"
+    "diffstat": "src/market_sim/model/transmission.py | 40 +++++++++++++++++++++++++++++++-----\n 1 file changed, 35 insertions(+), 5 deletions(-)"
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -72,7 +54,7 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "c6a96ca"
+    "git_sha": "21f71c4"
   },
   "scenario_config": {
     "weather_year": 2023,
