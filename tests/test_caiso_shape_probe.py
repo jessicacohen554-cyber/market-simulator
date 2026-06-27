@@ -385,5 +385,211 @@ class TestCLIArgParsing(unittest.TestCase):
         self.assertAlmostEqual(args.ct_floor_base, 0.0)
 
 
+class TestSolarBandWindowSelection(unittest.TestCase):
+    """Solar labels select h10-15 band; thermal labels select h13-23.
+
+    Regression guard for the Bug-1 fix: ``label.startswith("solar")`` must be
+    used instead of ``label == "solar"`` so that ``"solar (EIA930)"`` and
+    ``"solar+curt pot"`` both pick the midday band.
+    """
+
+    def _select_band(self, label: str) -> tuple[int, int]:
+        """Mirror the fixed _row band-selection logic."""
+        return probe._BAND_HOURS["solar" if label.startswith("solar") else "default"]
+
+    def test_solar_eia930_label_picks_solar_band(self) -> None:
+        """'solar (EIA930)' label → h10-15 band, not h13-23."""
+        self.assertEqual(self._select_band("solar (EIA930)"), (10, 15))
+
+    def test_solar_curt_label_picks_solar_band(self) -> None:
+        """'solar+curt pot' label → h10-15 band, not h13-23."""
+        self.assertEqual(self._select_band("solar+curt pot"), (10, 15))
+
+    def test_thermal_label_picks_default_band(self) -> None:
+        """'CC_REGULAR' → h13-23 band."""
+        self.assertEqual(self._select_band("CC_REGULAR"), (13, 23))
+
+    def test_gas_total_label_picks_default_band(self) -> None:
+        """'GAS TOTAL' → h13-23 band."""
+        self.assertEqual(self._select_band("GAS TOTAL"), (13, 23))
+
+    def test_solar_band_includes_h12_not_thermal(self) -> None:
+        """H12 spike falls in the solar band (h10-15) but not the thermal band (h13-23)."""
+        arr = np.zeros(8760)
+        arr[12::24] = 1000.0  # peak only at noon (h12) — inside h10-15, outside h13-23
+        hod = probe.diurnal_mean(arr)
+
+        solar_band_mw = probe._band(hod, *self._select_band("solar (EIA930)"))
+        thermal_band_mw = probe._band(hod, *self._select_band("CC_REGULAR"))
+
+        self.assertGreater(
+            solar_band_mw, 100.0, "h12 spike must be captured by h10-15 band"
+        )
+        self.assertAlmostEqual(
+            thermal_band_mw,
+            0.0,
+            places=1,
+            msg="h12 spike must not appear in h13-23 band",
+        )
+
+
+class TestEia930LeapYearHoy(unittest.TestCase):
+    """After UTC-8 fix, 2024 EIA-930 hoy max == 8759 and no post-Feb-28 +24 h shift.
+
+    Regression guard for the Bug-3 fix: ``_hoy_from_date_hour`` must be used
+    instead of ``(local - t0) / 1h`` so that leap-year rows are correctly mapped
+    to the 8760-hour model grid.
+    """
+
+    def _make_boundary_frame(self) -> pd.DataFrame:
+        """Minimal 2024 EIA-930 frame covering Feb 28, Feb 29, Mar 1, Dec 31 h23."""
+        # LST (UTC-8) times and their UTC equivalents
+        # Feb 28 00:00 LST = Feb 28 08:00 UTC
+        # Feb 29 00:00 LST = Feb 29 08:00 UTC  (to be dropped)
+        # Mar 1 00:00 LST = Mar 1 08:00 UTC
+        # Dec 31 23:00 LST = Jan 1 07:00 UTC 2025
+        return pd.DataFrame(
+            {
+                "UTC time": [
+                    "2024-02-28T08:00:00Z",
+                    "2024-02-29T08:00:00Z",
+                    "2024-03-01T08:00:00Z",
+                    "2025-01-01T07:00:00Z",
+                ],
+                "Local time": [
+                    "2024-02-28T00:00:00",
+                    "2024-02-29T00:00:00",
+                    "2024-03-01T00:00:00",
+                    "2024-12-31T23:00:00",
+                ],
+                "NG: NG": [5000.0, 5000.0, 5000.0, 5000.0],
+                "NG: SUN": [0.0, 0.0, 0.0, 0.0],
+            }
+        )
+
+    def _make_full_2024_frame(self) -> pd.DataFrame:
+        """Full synthetic 2024 EIA-930 frame: 8784 UTC hours (full leap year in LST)."""
+        # 2024-01-01 08:00 UTC = 2024-01-01 00:00 LST (first model hour)
+        # 8784 rows covers through 2025-01-01 07:00 UTC = 2024-12-31 23:00 LST
+        utc_range = pd.date_range("2024-01-01 08:00", periods=8784, freq="h", tz="UTC")
+        return pd.DataFrame(
+            {
+                "UTC time": utc_range.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "Local time": "2024-01-01T00:00:00",  # placeholder; not used by fixed code
+                "NG: NG": 5000.0,
+                "NG: SUN": 1000.0,
+            }
+        )
+
+    def test_feb29_dropped(self) -> None:
+        """Feb 29 row must be filtered out, leaving 3 of 4 boundary rows."""
+        result = probe._eia930_to_8760(self._make_boundary_frame(), 2024)
+        self.assertEqual(len(result), 3, "Feb 29 must be dropped")
+
+    def test_mar1_maps_to_hoy_1416_not_1440(self) -> None:
+        """Mar 1 00:00 LST → hoy 1416 (31+28 days*24h), not 1440 (leap-year shift)."""
+        result = probe._eia930_to_8760(self._make_boundary_frame(), 2024)
+        hoy_list = result["hoy"].tolist()
+        self.assertIn(1416, hoy_list, "Mar 1 00:00 LST must be at hoy 1416")
+        self.assertNotIn(1440, hoy_list, "hoy 1440 indicates the leap-year +24 h bug")
+
+    def test_dec31_h23_maps_to_hoy_8759(self) -> None:
+        """Dec 31 23:00 LST → hoy 8759 (last slot), not beyond 8759."""
+        result = probe._eia930_to_8760(self._make_boundary_frame(), 2024)
+        self.assertIn(
+            8759, result["hoy"].tolist(), "Dec 31 23:00 LST must be at hoy 8759"
+        )
+
+    def test_full_year_hoy_max_is_8759(self) -> None:
+        """Full 2024 frame: hoy max must be 8759 after dropping Feb 29."""
+        result = probe._eia930_to_8760(self._make_full_2024_frame(), 2024)
+        self.assertLessEqual(
+            int(result["hoy"].max()),
+            8759,
+            "hoy must not exceed 8759 — no leap-year +24 h shift",
+        )
+
+    def test_full_year_no_hoy_above_8759(self) -> None:
+        """No row in the full 2024 frame may carry hoy > 8759."""
+        result = probe._eia930_to_8760(self._make_full_2024_frame(), 2024)
+        bad = result[result["hoy"] > 8759]
+        self.assertTrue(bad.empty, f"{len(bad)} rows with hoy > 8759 found")
+
+
+class TestEia930DstAlignment(unittest.TestCase):
+    """EIA-930 UTC processing: summer rows use fixed −8 h (PST), not −7 h (PDT).
+
+    Regression guard for the Bug-2 fix: the ``UTC time`` column minus a fixed
+    8 h must be used instead of the ``Local time`` column, which carries a −7 h
+    PDT offset in summer.
+    """
+
+    def _make_dst_frame(self, year: int = 2023) -> pd.DataFrame:
+        """Frame with one summer row (Jul 1 18:00 UTC) and one winter row (Jan 1 08:00 UTC)."""
+        # Jul 1 18:00 UTC = 10:00 PST (UTC-8) = 11:00 PDT (UTC-7)
+        # Jan 1 08:00 UTC = 00:00 PST = 00:00 PST (same in winter)
+        return pd.DataFrame(
+            {
+                "UTC time": [
+                    f"{year}-07-01T18:00:00Z",
+                    f"{year}-01-01T08:00:00Z",
+                ],
+                "Local time": [
+                    f"{year}-07-01T11:00:00",  # PDT (UTC-7) — old bug value
+                    f"{year}-01-01T00:00:00",  # PST (UTC-8) — same in winter
+                ],
+                "NG: NG": [5000.0, 3000.0],
+                "NG: SUN": [800.0, 0.0],
+            }
+        )
+
+    def test_summer_row_uses_pst_not_pdt(self) -> None:
+        """Jul 1 18:00 UTC → hoy for 10:00 PST (h10), not 11:00 PDT (h11)."""
+        result = probe._eia930_to_8760(self._make_dst_frame(2023), 2023)
+        hoys = set(result["hoy"].tolist())
+
+        # Jul 1 h10 PST: _MONTH_START_HOUR[6] + 0*24 + 10 = 4344 + 10 = 4354
+        expected_pst_hoy = probe._MONTH_START_HOUR[6] + 10  # h10 on Jul 1
+        wrong_pdt_hoy = probe._MONTH_START_HOUR[6] + 11  # h11 would be PDT
+
+        self.assertIn(
+            expected_pst_hoy,
+            hoys,
+            f"Jul 1 18:00 UTC must map to hoy {expected_pst_hoy} (10:00 PST)",
+        )
+        self.assertNotIn(
+            wrong_pdt_hoy,
+            hoys,
+            f"Jul 1 18:00 UTC must NOT map to hoy {wrong_pdt_hoy} (11:00 PDT = old bug)",
+        )
+
+    def test_winter_row_alignment_unchanged(self) -> None:
+        """Jan 1 08:00 UTC → hoy 0 (midnight PST); fix must not disturb winter rows."""
+        result = probe._eia930_to_8760(self._make_dst_frame(2023), 2023)
+        self.assertIn(
+            0, set(result["hoy"].tolist()), "Jan 1 08:00 UTC must map to hoy 0"
+        )
+
+    def test_summer_offset_is_8h_not_7h(self) -> None:
+        """Directly confirm the UTC-8 shift: Jul 1 15:00 UTC → h7 PST, not h8 PDT."""
+        year = 2023
+        df = pd.DataFrame(
+            {
+                "UTC time": [f"{year}-07-01T15:00:00Z"],
+                "Local time": [f"{year}-07-01T08:00:00"],  # PDT (UTC-7) — wrong
+                "NG: NG": [5000.0],
+                "NG: SUN": [500.0],
+            }
+        )
+        result = probe._eia930_to_8760(df, year)
+        # Jul 1 15:00 UTC - 8h = Jul 1 07:00 PST → h7 on Jul 1
+        expected_hoy = probe._MONTH_START_HOUR[6] + 7  # h7 on Jul 1
+        self.assertEqual(
+            int(result["hoy"].iloc[0]),
+            expected_hoy,
+            f"UTC-8 offset must give h7 PST (hoy {expected_hoy}), not h8 PDT",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
