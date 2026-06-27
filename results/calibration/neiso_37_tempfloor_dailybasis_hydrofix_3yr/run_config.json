@@ -1,11 +1,23 @@
 {
-  "timestamp": "2026-06-27T05:06:52",
+  "timestamp": "2026-06-27T06:12:45",
   "git": {
-    "sha": "5723fa5",
-    "branch": "claude/neiso-weather-floor",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "09c5c2a",
+    "branch": "claude/neiso-temp-reliability-floor-4gmm0c",
+    "dirty": true,
+    "changed_files": [
+      "ackcast-results.html",
+      "frontend/data/backcast/bench/NEISO/2023.json.gz",
+      "frontend/data/backcast/bench/NEISO/2024.json.gz",
+      "frontend/data/backcast/bench/NEISO/2025.json.gz",
+      "frontend/data/backcast/benchmark.js",
+      "frontend/data/backcast/manifest.js",
+      "scripts/caiso_shape_probe.py",
+      "scripts/run_calibration.py",
+      "scripts/run_calibration_full.py",
+      "frontend/data/backcast/registry/2026-06-27-neiso-37-weather-floor.json",
+      "frontend/data/backcast/runs/2026-06-27-neiso-37-weather-floor.js"
+    ],
+    "diffstat": "backcast-results.html                           |   4 +--\n frontend/data/backcast/bench/NEISO/2023.json.gz | Bin 128032 -> 128036 bytes\n frontend/data/backcast/bench/NEISO/2024.json.gz | Bin 129518 -> 129517 bytes\n frontend/data/backcast/bench/NEISO/2025.json.gz | Bin 136425 -> 136422 bytes\n frontend/data/backcast/benchmark.js             |   2 +-\n frontend/data/backcast/manifest.js              |   2 +-\n scripts/caiso_shape_probe.py                    |   4 +--\n scripts/run_calibration.py                      |  39 ++++++++++++++++--------\n scripts/run_calibration_full.py                 |  24 +++++++++++++++\n 9 files changed, 56 insertions(+), 19 deletions(-)"
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -38,7 +50,10 @@
     "ct_mustrun_floor_frac": 1.0,
     "coal_drop_pof": true,
     "coal_prb_passthrough_tiered": true,
-    "coal_prb_sigmoid_overrides": {},
+    "coal_prb_sigmoid_overrides": {
+      "gas_hub_basis_daily": true,
+      "dual_fuel_oil_reattribution": true
+    },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
     "coal_plant_monthly_pricing": true,
@@ -50,7 +65,7 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "5723fa5"
+    "git_sha": "09c5c2a"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -201,6 +216,7 @@
     "nyiso_ct_floor_t0_c": 25.0,
     "nyiso_ct_floor_cap": 0.68,
     "nyiso_ct_floor_base": 0.13,
+    "nyiso_st_reliability_floor": false,
     "neiso_temp_reliability_floor": true,
     "neiso_ct_floor_slope_per_c": 0.037,
     "neiso_ct_floor_t0_c": 25.0,
@@ -240,6 +256,7 @@
     "ercot_as_adequacy_frac": 1.0,
     "ercot_reserve_supply_cap": false,
     "ercot_reserve_supply_cap_from_year": 2023,
+    "ercot_as_forward_requirement": false,
     "as_reserve_formula": false,
     "storage_as_commitment": false,
     "negative_renewable_offers": false,
@@ -284,6 +301,8 @@
     "coal_bit_dispatchable": false,
     "coal_takeorpay_from_data": false,
     "coal_mustrun_online_pmin": false,
+    "ct_intermediate_split": false,
+    "ct_intermediate_cf_threshold": 50.0,
     "coal_sync_srmc_tranche": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
@@ -317,6 +336,12 @@
     "gas_st_drag_slope_per_gw": 0.00906,
     "gas_st_drag_intercept": -0.1376,
     "gas_st_drag_cap": 0.34,
+    "ct_netload_drag": false,
+    "ct_drag_slope_per_gw": 0.00703,
+    "ct_drag_intercept": -0.1427,
+    "ct_drag_cap": 0.47,
+    "ct_drag_ramp_start": 15,
+    "ct_drag_ramp_end": 22,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -365,6 +390,14 @@
         "peak": 13.15,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0
+      },
+      "CT_INTERMEDIATE": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.2,
+        "peak": 3.0,
+        "econ_low_share": 0.5,
+        "pct_peaking": 5.0
       },
       "ST_GAS": {
         "committed": 0.81,
@@ -438,8 +471,8 @@
     "ercot_west_gas_collapse_freq": null,
     "ercot_west_gas_endogenous_collapse": false,
     "ercot_west_gas_delivered_floor": null,
-    "gas_hub_basis_daily": false,
-    "dual_fuel_oil_reattribution": false,
+    "gas_hub_basis_daily": true,
+    "dual_fuel_oil_reattribution": true,
     "dual_fuel_switching": true,
     "outage_source": "historic",
     "gas_price_override": 2.54
