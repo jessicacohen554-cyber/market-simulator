@@ -3418,6 +3418,67 @@ ERCOT_AS_NSPIN_MAX_MW: float = 5700.0
 # horizon ECRS is sized to cover.
 ERCOT_AS_RAMP_WINDOW_HOURS: int = 3
 
+# --- ERCOT load-resource RRS-UFR enrollment forecast (G4) ------------------
+# Forward analogue of reading the measured NP3-911 cleared RRS-UFR MW
+# (scarcity.ercot_load_resource_reserve_mw). Load Resources — large interruptible
+# loads tripped by high-set under-frequency relays — provide Responsive Reserve
+# via the RRS-UFR sub-service, by ERCOT protocol an exclusively LOAD-side service.
+# Their participation is ENROLLMENT-driven: a growing market/policy trend as large
+# flexible loads (LNG, refining, data-center/crypto, industrial DR) increasingly
+# register as Load Resources. The forward credit is
+#   lr_rrs(t) = enrolled_MW(year) * availability_shape(t)
+# where enrolled_MW grows from the present ~0.9 GW toward the protocol-bounded
+# cap. This is a forward DR-enrollment trajectory — a policy/market input that
+# regenerates for a forward year and responds to changed conditions (more
+# enrollment -> more load-side reserve supply -> fewer scarcity hours) — NEVER the
+# measured cleared MW pinned to a price (CLAUDE.md #12). The measured NP3-911
+# series stays the backcast realization the forecast is validated against.
+# Validation: docs/ercot-load-resource-rrs-forward-2026-06.md.
+ERCOT_LR_RRS_ENROLL_BASE_YEAR: int = 2025  # anchor year of the enrollment trend
+ERCOT_LR_RRS_ENROLL_BASE_MW: float = 900.0  # ~0.9 GW load-side RRS-UFR enrolled
+# at the anchor year. The measured NP3-911 cleared level is 896 / 904 / 787 MW
+# for 2023 / 2024 / 2025 (mean ~0.86 GW); the trend anchor is the ~0.9 GW present
+# level — a trajectory anchor, NOT a per-year measured pin (forward years grow off
+# it; backcast years use the measured series directly).
+ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR: float = 60.0  # forward enrollment growth:
+# large flexible loads continue registering as Load Resources (the DR / demand-
+# flexibility policy trend). ~60 MW/yr reaches the protocol cap in the mid-2030s.
+ERCOT_LR_RRS_ENROLL_CAP_MW: float = 1400.0  # protocol-bounded ceiling on the
+# load-resource share of RRS (~1.4 GW; ERCOT limits the load-side fraction of RRS,
+# so enrollment saturates rather than growing without bound).
+# Hour-of-day availability shape (relative, normalized to a mean of 1 at use so the
+# enrolled annual-mean level is conserved exactly). Load Resources are large
+# industrial facilities, most available to be tripped when they are consuming
+# (weekday daytime/evening operating hours) and modestly less so in the deep
+# overnight — a deterministic calendar shape, forward-reproducible and tied to no
+# measured outcome. HE 01:00 -> 24:00 (index 0 = HE 01:00).
+ERCOT_LR_RRS_AVAILABILITY_HOD: tuple[float, ...] = (
+    0.92,
+    0.92,
+    0.92,
+    0.92,
+    0.92,
+    0.95,  # HE 01-06 overnight (lower industrial use)
+    1.02,
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,  # HE 07-12 daytime operations
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,  # HE 13-18 daytime/early-evening
+    1.05,
+    1.05,
+    1.02,
+    0.98,
+    0.95,
+    0.93,  # HE 19-24 evening wind-down
+)
+
 # --- ERCOT ORDC scarcity overlay ------------------------------------------
 # Multi-step RTORPA price floor: (reserve threshold MW, floor $/MWh) steps.
 # The adder is floored at $20/MWh when reserves <= 6,500 MW and at $10/MWh

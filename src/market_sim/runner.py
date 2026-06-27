@@ -662,6 +662,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         system_load=year_demand.sum(axis=0),
                         wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
                         solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
+                        sim_year=year,  # forecast enrollment grows with the sim year
                     )
                     dispatch_kwargs.update(
                         reserve_requirement=coopt_req,
@@ -688,7 +689,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         coopt_elig,
                         coopt_pens,
                         coopt_widths,
-                    ) = ercot_reserve_coopt_inputs(config, fleet_arrays, config.hours)
+                    ) = ercot_reserve_coopt_inputs(
+                        config, fleet_arrays, config.hours, sim_year=year
+                    )
                     dispatch_kwargs.update(
                         reserve_requirement=coopt_req,
                         reserve_eligible=coopt_elig,
