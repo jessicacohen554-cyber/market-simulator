@@ -26,11 +26,13 @@ from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
     apply_nyiso_zonal_gas_basis,
+    apply_pjm_zonal_gas_basis,
     ercot_west_oversupply_collapse_freq,
     iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
     nyiso_zonal_gas_offsets,
+    pjm_zonal_gas_basis_by_zone,
     resolve_annual_gas_price,
     resolve_fuel_prices,
     resolve_nox_price,
@@ -1428,6 +1430,97 @@ def test_nyiso_zonal_gas_basis_skips_other_isos():
     config = ScenarioConfig(iso="PJM", hours=hours, nyiso_zonal_gas_basis=True)
     prices = base.copy()
     apply_nyiso_zonal_gas_basis(prices, fleet, config, 2023)
+    np.testing.assert_array_equal(prices, base)
+
+
+_PJM_ZONES = [
+    "PJM_ComEd",
+    "PJM_AEP_Ohio",
+    "PJM_ATSI",
+    "PJM_West_APS",
+    "PJM_Central_PA",
+    "PJM_Dominion",
+    "PJM_EMAAC",
+    "PJM_SWMAAC",
+]
+
+
+def _pjm_gas_fleet(hours: int = 48):
+    """Three identical gas CCs: a western (cheap), a Dominion and an SWMAAC."""
+    generators = [
+        Generator(
+            unit_id="GAS_WEST",
+            name="West CC",
+            zone="PJM_West_APS",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_DOM",
+            name="Dominion CC",
+            zone="PJM_Dominion",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_SWMAAC",
+            name="SWMAAC CC",
+            zone="PJM_SWMAAC",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _PJM_ZONES, hours=hours)
+
+
+def test_pjm_zonal_gas_basis_west_below_east():
+    """The western coal belt sits below the dear east (Dominion/SWMAAC)."""
+    basis = pjm_zonal_gas_basis_by_zone(2024)
+    assert basis is not None
+    # Western Marcellus/Appalachian zones cheap; eastern pockets dear.
+    assert basis["PJM_West_APS"] < basis["PJM_Dominion"]
+    assert basis["PJM_Central_PA"] < basis["PJM_SWMAAC"]
+    assert basis["PJM_SWMAAC"] > 0.0  # Transco Z6 premium
+
+
+def test_pjm_zonal_gas_basis_mean_zero_preserves_level():
+    """With the flag on the cap-weighted mean shift is zero (level preserved)."""
+    hours = 48
+    fleet = _pjm_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="PJM", hours=hours)
+
+    off_prices = base.copy()
+    apply_pjm_zonal_gas_basis(off_prices, fleet, config, 2024)
+    np.testing.assert_array_equal(off_prices, base)  # flag off -> no-op
+
+    on_prices = base.copy()
+    apply_pjm_zonal_gas_basis(
+        on_prices, fleet, config.with_overrides(pjm_zonal_gas_basis=True), 2024
+    )
+    west = fleet.unit_ids.index("GAS_WEST")
+    dom = fleet.unit_ids.index("GAS_DOM")
+    swmaac = fleet.unit_ids.index("GAS_SWMAAC")
+    # West cheaper than Dominion and SWMAAC after the shift.
+    assert on_prices[west, 0] < on_prices[dom, 0]
+    assert on_prices[west, 0] < on_prices[swmaac, 0]
+    # Equal pmax -> the (unweighted) mean of the three shifts equals the base,
+    # i.e. the capacity-weighted-zero anchor preserves the aggregate level.
+    np.testing.assert_allclose(
+        np.mean([on_prices[west, 0], on_prices[dom, 0], on_prices[swmaac, 0]]),
+        3.0,
+        atol=1e-9,
+    )
+
+
+def test_pjm_zonal_gas_basis_skips_other_isos():
+    """A non-PJM ISO is untouched even with the flag set."""
+    hours = 48
+    fleet = _pjm_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="MISO", hours=hours, pjm_zonal_gas_basis=True)
+    prices = base.copy()
+    apply_pjm_zonal_gas_basis(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
 
 
