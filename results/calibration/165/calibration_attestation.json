@@ -1,0 +1,29 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot-165 load-resource-rrs-forward 2026-06-27",
+    "verdict": "STRUCTURAL FORWARD BUILD (G4) — the enrollment-driven forward load-resource RRS-UFR credit, the last measured AS *input* on the supply side given a forward analogue. Acute incidence HOLDS vs run164; the broad/tail relaxes per the designed forward response (more load-side reserve supply -> fewer scarcity hours). The credit is enrollment-from-a-forward-trend in forecast and the measured NP3-911 realization in backcast (validated against, never pinned). The ERCOT broad-month keeper remains run157 (measured DAM-AS overlay, the pre-RTC+B bridge).",
+    "note": "Run165 = run164's recipe (endogenous multi-product AS co-opt + forward AS requirement + endogenous storage energy-vs-AS + RTOLCAP reserve-supply cap, measured DAM-AS overlay OFF, P1-only) PLUS the G4 load-resource credit (ercot_load_resource_reserve, from_year 2023). Load Resources provide Responsive Reserve via high-set under-frequency relays (RRS-UFR) — by ERCOT protocol an exclusively load-side service the thermal+storage headroom rows omit. The credit nets the load-side RRS-UFR MW off the RRS product's reserve-balance RHS, AFTER the demand curve is sized to the gross requirement peak (so the steep tail is preserved; only the balance RHS drops) — equivalent to adding that MW of $0 RRS supply. It is mode-aware (scarcity.ercot_load_resource_reserve_credit_mw): BACKCAST reads the measured NP3-911 cleared RRS-UFR (ercot_load_resource_reserve_mw, ~0.9 GW, byte-identical to the legacy path), FORECAST reads the enrollment-driven forward forecast lr_rrs(t) = enrolled_DR_MW(year) x mean-1 availability shape (ercot_load_resource_reserve_forward_mw; enrollment grows ~0.9 GW today -> ~1.4 GW protocol cap). The three supply credits compose with NO double count: thermal headroom (capped at RTOLCAP) + endogenous storage AS (capped at RTOLCAP, which already includes online batteries) + load-resource RRS (requirement reduction, OUTSIDE RTOLCAP, since RTOLCAP is the on-line GENERATION responsive capability). NOTHING reads the measured MCPC/RTSPP/award on the dispatch path; no adder is tuned to a price residual; no unit is pinned; the credit is NOT retuned to the broad-May residual (separate merit-order track). Default-off, ERCOT-gated, legacy + NYISO/PJM/MISO byte-identical (tests/test_ercot_load_resource_rrs_forward.py + the co-opt/scarcity/storage/dispatch suites pass).",
+    "result": "Acute HELD vs run164: May 8/24/26 acute = $24.61/$21.71/$30.16 (2023/24/25) — essentially identical to run164's $24.61/$21.71/$30.16 (the acute days are reserve-supply-cap-bound, so the ~0.9 GW RRS-requirement reduction does not move the binding outcome). Tail RELAXES, the designed forward response (load-side reserve supply the co-opt was omitting -> fewer modeled scarcity hours): h>$200 = 36/4/1 (vs run164 57/12/3), h>$1000 = 8/0/0 (vs 21/1/0), $>200 share 18.7%/1.3%/0.2% (vs 29.3%/4.2%/0.7%); model demand-wtd annual 30.04/20.72/32.97 (vs run164 34.26/21.29/33.09; 2025 holds, 2024 ~flat, 2023 -4.2). Storage-AS split held (modeled AS 2277/3751/5226 vs measured 1249/2045/2824, ~1.82x; the load credit correctly shifts a slice of RRS from storage to load-side supply). Measured-vs-forward load-resource RRS (mean MW): measured NP3-911 884/904/787, forward enrollment 780/840/900 (0.88x/0.93x/1.14x) — the monotonic enrollment trend reproduces the present ~0.86 GW level without chasing the year-to-year clearing wiggle (2025 dipped to 787; the trend does not pin to it).",
+    "residual_note": "The 2023/2024 annual under-price (model demand-wtd 30.0/20.7 vs actual ~61.3/28.6) is INHERITED from run163/164 (the broad-May energy-base / merit-order residual the measured DAM-AS overlay carries as the pre-RTC+B bridge), NOT created by this lever. The 2023 tail reduction (57->36 h>$200) is the model correctly accounting for ~0.9 GW of real load-side reserve the co-opt was omitting; 2023's genuine tail is documented OUT-OF-MARKET scarcity (RTORDPA / ECRS-conservatism, IMM >$12B) an energy+ORDC model cannot reproduce regardless, so the modeled 2023 tail it relaxes was a coincidental reserve over-fire, not forecast skill. ACCEPTED measured-input limitation, not a MODEL MISS to re-floor (#1/#11). 2025 holds (33.0 vs 33.4)."
+  },
+  "metrics_demand_weighted_model": {
+    "2023": {"model_annual": 30.04, "acute_8_24_26": 24.61, "h_gt_200": 36, "h_gt_1000": 8, "dollar_gt_200_share": 0.187},
+    "2024": {"model_annual": 20.72, "acute_8_24_26": 21.71, "h_gt_200": 4, "h_gt_1000": 0, "dollar_gt_200_share": 0.013},
+    "2025": {"model_annual": 32.97, "acute_8_24_26": 30.16, "h_gt_200": 1, "h_gt_1000": 0, "dollar_gt_200_share": 0.002}
+  },
+  "load_resource_rrs_mean_mw": {
+    "2023": {"measured_np3911": 884, "forward_enrollment": 780, "fwd_over_meas": 0.88},
+    "2024": {"measured_np3911": 904, "forward_enrollment": 840, "fwd_over_meas": 0.93},
+    "2025": {"measured_np3911": 787, "forward_enrollment": 900, "fwd_over_meas": 1.14}
+  },
+  "storage_as_split_mean_mw": {
+    "2023": {"measured_as": 1249, "modeled_as_upper_bound": 2277, "modeled_energy": 129, "modeled_as_share": 0.946},
+    "2024": {"measured_as": 2045, "modeled_as_upper_bound": 3751, "modeled_energy": 288, "modeled_as_share": 0.929},
+    "2025": {"measured_as": 2824, "modeled_as_upper_bound": 5226, "modeled_energy": 699, "modeled_as_share": 0.882}
+  }
+}
