@@ -1636,6 +1636,8 @@ def solve_and_persist(
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
+    ct_netload_drag: bool = False,
+    ct_drag_overrides: dict | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1812,6 +1814,8 @@ def solve_and_persist(
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
+            ct_netload_drag=ct_netload_drag,
+            ct_drag_overrides=ct_drag_overrides,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)

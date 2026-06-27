@@ -70,6 +70,7 @@ from market_sim.data.fleet import (  # noqa: E402
     Generator,
     aggregate_fleet,
     apply_coal_tranches,
+    apply_ct_netload_drag_floor,
     apply_gas_st_netload_drag_floor,
     assemble_mc,
     bins_to_fleet,
@@ -1542,6 +1543,8 @@ def run_year(
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
+    ct_netload_drag: bool = False,
+    ct_drag_overrides: dict[str, float] | None = None,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -1608,6 +1611,10 @@ def run_year(
     if gas_st_netload_drag:
         config = config.with_overrides(
             gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
+        )
+    if ct_netload_drag:
+        config = config.with_overrides(
+            ct_netload_drag=True, **(ct_drag_overrides or {})
         )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
@@ -2255,7 +2262,9 @@ def run_year(
     # weather-driven floor (see fleet.apply_gas_st_netload_drag_floor). Net-load
     # uses the same LP-served (net-of-must-run) convention as the runner's other
     # net-load consumers below.
-    if getattr(config, "gas_st_netload_drag", False):
+    if getattr(config, "gas_st_netload_drag", False) or getattr(
+        config, "ct_netload_drag", False
+    ):
         net_load = (
             demand.sum(axis=0)
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
@@ -2273,6 +2282,22 @@ def run_year(
                 config.gas_st_drag_cap,
                 float(net_load.mean()),
                 float(net_load.max()),
+            )
+        # CT_PEAKER net-load reliability-drag floor (simple-cycle analog), gated
+        # to the afternoon-evening ramp window — the forward-native replacement
+        # for the ct_mustrun_per_plant actuals pin. See
+        # fleet.apply_ct_netload_drag_floor.
+        if apply_ct_netload_drag_floor(fleet_arrays, fleet, net_load, config):
+            logger.info(
+                "%s %d: CT_PEAKER net-load reliability-drag floor applied "
+                "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in ramp %dh-%dh)",
+                iso,
+                year,
+                config.ct_drag_slope_per_gw,
+                config.ct_drag_intercept,
+                config.ct_drag_cap,
+                config.ct_drag_ramp_start,
+                config.ct_drag_ramp_end,
             )
     # Shape the priced import/export node by the measured EIA-930 diurnal
     # interchange envelope (import overnight, export the midday solar glut) so
