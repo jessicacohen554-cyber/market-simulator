@@ -1,0 +1,24 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot-164 storage-as-endogenous 2026-06-27",
+    "verdict": "STRUCTURAL FORWARD BUILD (G5) — the endogenous storage energy-vs-AS co-opt. Acute/tail incidence HOLDS vs run163; the battery's energy-vs-AS split is the LP's choice, validated against (never pinned to) the measured 60-Day DAM award. The ERCOT broad-month keeper remains run157 (measured DAM-AS overlay, the pre-RTC+B bridge).",
+    "note": "Run164 = run163's recipe (endogenous multi-product AS co-opt with the forward AS requirement, measured DAM-AS overlay OFF, P1-only) PLUS the G5 endogenous storage lever (ercot_storage_as_endogenous) and the RTOLCAP reserve-supply cap (ercot_reserve_supply_cap). The battery is handed its FULL power cap (no measured reserve_storage_as_power subtraction) and a unit's upward-reserve room (cap - discharge + charge) competes with arbitrage on the same cap in the multi-product co-opt's shared-headroom rows, priced by the per-product AS demand curves (reserve_price_by_family) — so the battery holds AS only when a product's reserve dual exceeds its energy-arbitrage opportunity cost (the real bid; unit-tested in tests/test_ercot_storage_as_endogenous.py). The cleared storage AS is part of the capped reserve R, so it counts toward the measured RTOLCAP online-responsive supply (which already includes online batteries: RTOLCAP grows 13.5->16.7->19.1 GW with the 2023->25 fleet). Under the endogenous flag the cap is a PURE reserve-supply bound: the post-solve additive ORDC adder (run161's energy-only-SCED construction) is gated OFF because the co-opt already prices AS scarcity endogenously, so the LMP stays the co-opt's own price and the acute/tail incidence holds vs run163. NOTHING reads the measured MCPC/RTSPP/award on the dispatch path; no adder is tuned to a price residual; no unit is pinned. Default-off, ERCOT-gated, legacy + NYISO/PJM/MISO byte-identical (229 tests pass).",
+    "result": "Acute/tail HELD vs run163: May 8/24/26 acute = $24.61/$21.71/$30.16 (2023/24/25), matching run163 (2024 acute $21.7); tail h>$200 = 57/12/3, $>200 share 29.3%/4.2%/0.7%; 2025 clean. The cap (forward AS req ~7.3 GW vs RTOLCAP mean ~13.5 GW, p5 ~7.4 GW) binds only in the tightest ~5% of hours where storage AS counts toward the online supply, non-binding otherwise, so it does not disturb the broad incidence. Measured-vs-modeled battery AS split (mean MW, storage-FIRST upper-bound attribution): modeled AS 2427/4036/5680 vs measured 60-Day DAM 1249/2045/2824 (mod/meas 1.94x/1.97x/2.01x), modeled energy (discharge) 129/288/699 MW, modeled AS share 94.9%/93.3%/89.0%. The LP reproduces the AS-DOMINATED battery behaviour and the rising-AS-with-fleet trend (as in reality), but OVER-HOLDS AS / under-cycles energy vs the measured split — a documented residual kept per CLAUDE.md #1 (judge by structural faithfulness, not fit; do NOT retune the AS demand curves to the split, the separate merit-order track). The modeled AS is an upper bound (min(storage room, zone reserve), exact only when storage is the marginal fast-AS provider); the true modeled AS lies between the measured level and this bound.",
+    "residual_note": "The 2023/2024 annual under-price (model demand-wtd 34.3/21.3 vs actual ~61.3/28.6) is INHERITED from run163 (the broad-May energy-base / merit-order residual the measured DAM-AS overlay carries as the pre-RTC+B bridge), NOT from this lever — the storage-AS split does not touch the energy base. 2025 holds (33.1 vs 33.4)."
+  },
+  "metrics_demand_weighted_model": {
+    "2023": {"model_annual": 34.26, "acute_8_24_26": 24.61, "h_gt_200": 57, "h_gt_1000": 21, "dollar_gt_200_share": 0.293},
+    "2024": {"model_annual": 21.29, "acute_8_24_26": 21.71, "h_gt_200": 12, "h_gt_1000": 1, "dollar_gt_200_share": 0.042},
+    "2025": {"model_annual": 33.09, "acute_8_24_26": 30.16, "h_gt_200": 3, "h_gt_1000": 0, "dollar_gt_200_share": 0.007}
+  },
+  "storage_as_split_mean_mw": {
+    "2023": {"measured_as": 1249, "modeled_as_upper_bound": 2427, "modeled_energy": 129, "modeled_as_share": 0.949},
+    "2024": {"measured_as": 2045, "modeled_as_upper_bound": 4036, "modeled_energy": 288, "modeled_as_share": 0.933},
+    "2025": {"measured_as": 2824, "modeled_as_upper_bound": 5680, "modeled_energy": 699, "modeled_as_share": 0.890}
+  }
+}
