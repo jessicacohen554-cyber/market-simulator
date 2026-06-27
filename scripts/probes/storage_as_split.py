@@ -28,28 +28,29 @@ order = {"P0": 0, "P1": 1, "P2": 2}
 df["_o"] = df["pass"].astype(str).map(order).fillna(0)
 df = df.sort_values("_o").groupby(["year", "hour"], as_index=False).last()
 
-GWH = 1e3  # MWh -> GWh
 print(f"\nERCOT endogenous storage AS-vs-energy split — {bundle.name}\n")
 print(
-    f"{'year':>4} | {'measured AS':>11} | {'modeled AS':>10} | "
-    f"{'modeled energy':>14} | {'AS share (mod)':>14} | {'AS share (meas)':>15}"
+    f"{'year':>4} | {'measured AS':>11} | {'modeled AS (UB)':>15} | "
+    f"{'mod/meas':>8} | {'modeled energy':>14} | {'AS share (mod)':>14}"
 )
-print("-" * 92)
+print("-" * 84)
 for year, g in df.groupby("year"):
     meas_as = g["measured_as_mw"].mean()  # mean MW
     mod_as = g["modeled_as_mw"].mean()
     mod_en = g["modeled_discharge_mw"].mean()
     mod_share = mod_as / (mod_as + mod_en) if (mod_as + mod_en) > 0 else 0.0
-    # Measured energy proxy: not in this frame; report AS share vs modeled energy
-    # denominator is not apples-to-apples, so report measured AS MW for the level
-    # check and the modeled AS/energy split as the model's own choice.
-    meas_share = meas_as / (meas_as + mod_en) if (meas_as + mod_en) > 0 else 0.0
+    ratio = mod_as / meas_as if meas_as > 0 else float("nan")
     print(
-        f"{int(year):>4} | {meas_as:>8.0f} MW | {mod_as:>7.0f} MW | "
-        f"{mod_en:>11.0f} MW | {mod_share:>13.1%} | {meas_share:>14.1%}"
+        f"{int(year):>4} | {meas_as:>8.0f} MW | {mod_as:>12.0f} MW | "
+        f"{ratio:>7.2f}x | {mod_en:>11.0f} MW | {mod_share:>13.1%}"
     )
 print(
-    "\n(mean MW across 8760h; modeled AS = storage-first attribution of cleared "
-    "co-opt reserve, modeled energy = battery discharge. Measured AS = 60-Day DAM "
-    "battery award — the validation target, not a pin.)"
+    "\n(mean MW across 8760h. modeled AS = storage-FIRST attribution of cleared "
+    "co-opt reserve = min(storage room, zone reserve) — an UPPER BOUND on the "
+    "battery's AS (exact only when storage is the marginal fast-AS provider); the "
+    "true modeled AS lies between the measured level and this bound. modeled energy "
+    "= battery discharge. measured AS = 60-Day DAM battery award — the validation "
+    "target, never a pin. The LP CHOOSES the split; it is AS-dominated and rises "
+    "with the fleet, as in reality, but over-holds AS vs the measured level — a "
+    "documented residual, not retuned to it.)"
 )
