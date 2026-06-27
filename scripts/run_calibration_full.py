@@ -1575,6 +1575,8 @@ def solve_and_persist(
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
+    ct_intermediate_split: bool = False,
+    ct_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -1755,6 +1757,8 @@ def solve_and_persist(
             coal_takeorpay_from_data=coal_takeorpay_from_data,
             coal_mustrun_online_pmin=coal_mustrun_online_pmin,
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
+            ct_intermediate_split=ct_intermediate_split,
+            ct_intermediate_cf_threshold=ct_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             storage_vintage_ramp=storage_vintage_ramp,
@@ -1960,6 +1964,8 @@ def solve_and_persist(
         "coal_drop_pof": coal_drop_pof,
         "coal_mustrun_online_pmin": coal_mustrun_online_pmin,
         "coal_sync_srmc_tranche": coal_sync_srmc_tranche,
+        "ct_intermediate_split": ct_intermediate_split,
+        "ct_intermediate_cf_threshold": ct_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
         "coal_prb_sigmoid_overrides": {
             k: v for k, v in (prb_overrides or {}).items() if v is not None
@@ -2232,6 +2238,12 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
     if miso_seam_flow_limit:
         recorded_cfg = recorded_cfg.with_overrides(miso_seam_flow_limit=True)
+    if ct_intermediate_split:
+        recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
+    if ct_intermediate_cf_threshold is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             gas_hub_basis_overlay=gas_hub_basis_overlay
@@ -4152,6 +4164,25 @@ def main() -> None:
         "Requires --coal-mustrun-online-pmin.",
     )
     parser.add_argument(
+        "--ct-intermediate-split",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Route intermediate-duty simple-cycle CTs (measured CAMPD median "
+        "CF >= the threshold; EIA-860-confirmed genuine GT/IC, not mislabeled "
+        "CCs) to the flatter CT_INTERMEDIATE offer curve so their always-on "
+        "energy clears, instead of the steep true-peaker curve that holds them "
+        "idle and over-runs CC_REGULAR. MISO cohort "
+        "(fleet.ct_intermediate_plants).",
+    )
+    parser.add_argument(
+        "--ct-intermediate-cf-threshold",
+        type=float,
+        default=None,
+        help="Median-CF cut (percent) for the --ct-intermediate-split cohort "
+        "(default 50.0): CT_PEAKER units at or above this measured CAMPD median "
+        "capacity factor are treated as intermediate-duty.",
+    )
+    parser.add_argument(
         "--wefor-residual",
         type=float,
         default=None,
@@ -5390,6 +5421,8 @@ def main() -> None:
         },
         coal_mustrun_online_pmin=args.coal_mustrun_online_pmin,
         coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
+        ct_intermediate_split=args.ct_intermediate_split,
+        ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
