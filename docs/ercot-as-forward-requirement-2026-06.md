@@ -1,7 +1,7 @@
 # ERCOT forward AS requirement-setting formula (G3 — the requirement, not the price)
 
 **Date:** 2026-06-27
-**Branch:** `claude/ercot-as-forward-requirement-njx5rv`
+**Branch:** `claude/ercot-as-forward-requirement-rebased`
 **Status:** BUILT, tested, default-off, ERCOT-gated, legacy byte-identical.
 **Scope:** the **AS requirement** (demand-curve RHS) of the endogenous
 multi-product co-opt — the last measured read on the forward AS path. Replaces
@@ -133,6 +133,58 @@ model already does not reproduce). The forward formula reflects the **steady-sta
 methodology**, not the 2023 transition, and is honestly NOT pinned to 2023's
 excess. The diurnal shape is captured (REGUP/ECRS peak on the solar-driven
 midday/evening ramp, RRS rides its contingency floor, NSPIN tracks load).
+
+## Co-opt re-solve — acute/tail incidence (run163 vs run159 measured)
+
+`run163` = the run159 keeper recipe (multi-product co-opt, P1-only) with the AS
+requirement swapped measured → forward (the one delta,
+`ercot_as_forward_requirement=True`). `159repro` = run159 re-solved in the same
+environment (measured requirement) as the clean baseline. Demand-weighted model
+LMP; tail = hours above $200 / $1000 and the share of annual $ they carry
+(`scripts/probes/_eval_acute_tail.py`):
+
+| year | run | annual | May acute (8/24/26) | h>$200 | h>$1k | $>200 share |
+|---|---|---|---|---|---|---|
+| 2023 | 163 forward | 35.6 | 24.6 | 68 | 22 | 32% |
+| 2023 | 159 measured | 42.9 | 24.6 | 133 | 34 | 45% |
+| 2024 | 163 forward | 21.4 | **21.7** | 13 | 1 | 5% |
+| 2024 | 159 measured | 22.4 | **40.0** | 23 | 3 | 9% |
+| 2025 | 163 forward | 33.1 | 30.2 | 3 | 0 | 1% |
+| 2025 | 159 measured | 33.4 | 30.2 | 7 | 1 | 2% |
+
+**Held in 2025 and on the 2023 acute days; under-fires the 2024 May acute days.**
+
+* **2025 — clean** (May-gate MAE 2.46; acute 30.2 identical to measured). The
+  forward requirement reproduces the co-opt scarcity with no measured read.
+* **2023 — acute held** (24.6 identical): the 2023 acute/tail is carried by the
+  energy base + the RTORDPA overlay (G2 bridge, kept), not the AS requirement, so
+  swapping the requirement does not move it. The forward total tail is *lower*
+  (h>$200 68 vs 133) because the forward 2023 requirement is below ERCOT's
+  documented 2023 **over-procurement** — honest, not chased.
+* **2024 — May acute under-fires** ($21.7 vs the measured-requirement $40.0).
+  Diagnosis (`ercot_as_forward_drivers` on the May-2024 acute evenings, HE16-21):
+  the *measured* total up-AS spikes to ~8.8 GW, the forward formula sizes ~7.4 GW.
+  The gap is concentrated in ECRS/NonSpin and is a **discretionary day-specific
+  uplift**: ERCOT manually procured extra AS on those anticipated-tight days
+  beyond what any net-load / ramp / VRE relationship predicts (the same operator
+  conservatism behind the 2023 over-procurement). That uplift has **no
+  forward-driver analogue** — reproducing it would require keying the requirement
+  off the realized acute days, i.e. pinning the measured outcome, which the
+  honesty gate (CLAUDE.md #12) forbids.
+
+This is the **requirement-side mirror** of the multi-product co-opt's own finding
+(`docs/ercot-multiproduct-as-coopt-2026-06.md`): the broad/acute May-2024
+elevation the *measured* DAM-AS overlay carries is partly ERCOT
+discretionary/out-of-market procurement that an endogenous forward model
+legitimately does not reproduce. The forward requirement holds the **systematic,
+driver-driven** AS (annual level, diurnal/seasonal shape, 2025, the 2023/2025
+acute days); the measured DAM-AS overlay (run157) correctly **stays** the
+pre-RTC+B bridge for the discretionary acute/broad-May component. Honesty gate
+intact: the requirement is a formula of forward drivers, never the measured MW
+pinned to a price.
+
+_Re-solve: `python scripts/run_163.py` (run159 recipe +
+`ercot_as_forward_requirement=True`, all years, per-plant, P1-only)._
 
 ## Files
 

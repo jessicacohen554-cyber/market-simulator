@@ -3,7 +3,7 @@
 For each bundle/year: demand-weighted annual model LMP, the May 8/24/26 acute
 days, and tail incidence (count of hours above $200 / $1000, and the share of
 annual demand-weighted $ they carry). Lets us check the forward-requirement run
-(162) holds the same acute/tail behaviour as the measured-requirement run (159).
+(163) holds the same acute/tail behaviour as the measured-requirement run (159).
 
 Usage: python scripts/probes/_eval_acute_tail.py <bundle_dir> [<bundle_dir> ...]
 """
