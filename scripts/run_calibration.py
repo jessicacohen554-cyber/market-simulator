@@ -800,6 +800,18 @@ def _calibration_config(
         #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
         #   NG: NG silently absorbs (CISO reports neither) — targets the true
         #   must-offer gas without padding the mix.
+        nyiso_ct_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
+        #   default-ON (nyiso-33): the downstate CT_PEAKER local-reliability floor
+        #   holds in-city / Long-Island simple-cycle gas peakers online through the
+        #   hot-day afternoon-evening AC ramp at clip(base + slope*(TMAX-T0), base,
+        #   cap) x available downstate-CT capacity, keyed to the NYC-metro daily max
+        #   temperature (NOAA GHCN) and restricted to NYISO_CT_FLOOR_ZONES. Recovers
+        #   the local-RA CT_PEAKER energy an energy-only LP leaves on the cheaper CC
+        #   fleet (CT_PEAKER 2023/24 -1.7/-1.9 -> -0.85 TWh, FAIL -> PASS; CC over-run
+        #   shrinks). Coefficients regressed from measured downstate CAMPD evening
+        #   (HB14-21) CF vs TMAX, 2023-2025 — a physical heat->commitment rule, NOT a
+        #   TWh-residual fit (scripts/derive_nyiso_ct_reliability_floor.py). Other
+        #   ISOs stay off (byte-identical); coefficients from ScenarioConfig defaults.
         caiso_ct_reliability_floor=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: the local-RA CT_PEAKER reliability floor holds simple-
         #   cycle gas peakers online through the hot-day afternoon-evening ramp
@@ -1483,6 +1495,7 @@ def run_year(
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
+    nyiso_ct_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1609,6 +1622,10 @@ def run_year(
     if caiso_ct_reliability_floor is not None:
         config = config.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
+        )
+    if nyiso_ct_reliability_floor is not None:
+        config = config.with_overrides(
+            nyiso_ct_reliability_floor=nyiso_ct_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
@@ -2314,6 +2331,45 @@ def run_year(
                 _ct_t0,
                 _ct_base,
                 _ct_cap,
+            )
+
+    # NYISO downstate local-reliability CT_PEAKER floor: hold in-city / Long-Island
+    # simple-cycle gas peakers online through the hot-day afternoon-evening AC ramp
+    # at a temperature-driven commitment fraction (clip(base + slope*(TMAX-T0),
+    # base, cap) x available capacity), keyed to the NYC-metro daily max
+    # temperature and restricted to the downstate load pockets. Recovers the
+    # local-reliability energy an energy-only LP leaves on the (cheaper) CC fleet
+    # (transmission.inject_nyiso_ct_reliability_floor).
+    if getattr(config, "nyiso_ct_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_nyiso_ct_reliability_floor,
+        )
+
+        _nct_slope = float(getattr(config, "nyiso_ct_floor_slope_per_c", 0.053))
+        _nct_t0 = float(getattr(config, "nyiso_ct_floor_t0_c", 25.0))
+        _nct_cap = float(getattr(config, "nyiso_ct_floor_cap", 0.68))
+        _nct_base = float(getattr(config, "nyiso_ct_floor_base", 0.13))
+        if inject_nyiso_ct_reliability_floor(
+            fleet_arrays,
+            iso,
+            year,
+            zone_names,
+            _nct_slope,
+            _nct_t0,
+            _nct_cap,
+            _nct_base,
+        ):
+            logger.info(
+                "%s %d: downstate CT_PEAKER local-reliability floor — NYC/LI "
+                "peakers held online on hot afternoons/evenings at clip(%.3f + "
+                "%.3f*(TMAX-%.0f), %.3f, %.2f) x available capacity",
+                iso,
+                year,
+                _nct_base,
+                _nct_slope,
+                _nct_t0,
+                _nct_base,
+                _nct_cap,
             )
 
     # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly
