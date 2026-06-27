@@ -3345,6 +3345,74 @@ ERCOT_AS_PRODUCTS: tuple[tuple[str, str, str], ...] = (
     ("NonSpin", "NSPIN", "all"),
 )
 
+# --- ERCOT forward AS requirement-setting methodology (G3) -----------------
+# Per-product forward formulas req_product(t) = f(net-load, ramp, VRE-share,
+# forecast-error quantile, largest-contingency / load-ratio share) — the forward
+# analogue of reading the measured AS Plan (ASPLANNP433). They reproduce ERCOT's
+# *published* AS Methodology drivers (NP3-160-CD "Methodology for Setting Day-Ahead
+# and Real-Time Ancillary Service Requirements"): RegUp/RegDown from the net-load
+# forecast-error distribution, RRS from the largest-contingency frequency-response
+# floor plus a low-inertia adder, ECRS from the net-load ramp / forecast-error risk
+# over its deployment window (the ~2 GW ramp-risk product, live 2023-06-10), and
+# NonSpin from the longer-horizon net-load uncertainty (a load-ratio / net-load
+# share). The scale coefficients are CALIBRATED to reproduce the published
+# ASPLANNP433 *requirement MW* (the validation target — a procurement quantity,
+# never a price; CLAUDE.md #12), so the formula is forward-reproducible (it
+# regenerates for a forecast year from forecast net-load/VRE and grows as VRE
+# penetration grows) while matching the measured level. Modeled-vs-measured
+# validation: docs/ercot-as-forward-requirement-2026-06.md.
+#
+# Net-load day-ahead forecast-error standard deviation, combined in quadrature
+# from independent load / wind / solar error sources:
+#   sigma_fe(t) = sqrt((F_LOAD*load)^2 + (F_WIND*wind)^2 + (F_SOLAR*solar)^2)
+# The component fractions are the published-order day-ahead error magnitudes
+# (load ~1% of load; wind ~10% of output; solar ~18% of output — solar's relative
+# DA error is the largest and dominates the VRE-driven growth in the requirement).
+ERCOT_AS_FE_FRAC_LOAD: float = 0.01  # load DA forecast-error, frac of load MW
+ERCOT_AS_FE_FRAC_WIND: float = 0.10  # wind DA forecast-error, frac of wind output
+ERCOT_AS_FE_FRAC_SOLAR: float = 0.18  # solar DA forecast-error, frac of solar output
+
+# RegUp = REGUP_FLOOR + REGUP_SIGMA_COEF * sigma_fe, clipped. Regulation covers the
+# within-hour (sub-SCED) net-load variability — a small fraction of the hourly DA
+# error — so the sigma coefficient is the sub-hourly slice of the DA error std.
+ERCOT_AS_REGUP_FLOOR_MW: float = 275.0
+ERCOT_AS_REGUP_SIGMA_COEF: float = 0.065
+ERCOT_AS_REGUP_MIN_MW: float = 80.0
+ERCOT_AS_REGUP_MAX_MW: float = 1100.0
+
+# RRS = RRS_FLOOR + RRS_INERTIA_COEF * vre_share, clipped. The floor is the
+# largest-contingency frequency-response requirement (~2300 MW, the two-largest-
+# unit design basis); the adder grows with VRE share as synchronous inertia falls
+# (low-inertia hours need more responsive reserve to arrest frequency).
+ERCOT_AS_RRS_FLOOR_MW: float = 2300.0
+ERCOT_AS_RRS_INERTIA_COEF_MW: float = 1160.0  # per unit VRE share (0-1)
+ERCOT_AS_RRS_MAX_MW: float = 3300.0
+
+# ECRS = ECRS_BASE + ECRS_SIGMA_COEF * sigma_fe + ECRS_RAMP_COEF * ramp_up,
+# clipped. The ~2 GW ramp-risk product: net-load forecast-error plus the forward
+# net-load up-ramp over its deployment window (ERCOT_AS_RAMP_WINDOW_HOURS), the
+# solar-driven evening ramp it is designed to cover. Live 2023-06-10; the forward
+# formula treats it as a permanent product (the onset is a backcast detail carried
+# by the measured series).
+ERCOT_AS_ECRS_BASE_MW: float = 950.0
+ERCOT_AS_ECRS_SIGMA_COEF: float = 0.24
+ERCOT_AS_ECRS_RAMP_COEF: float = 0.017
+ERCOT_AS_ECRS_MIN_MW: float = 500.0
+ERCOT_AS_ECRS_MAX_MW: float = 3300.0
+
+# NonSpin = NSPIN_BASE + NSPIN_SIGMA_COEF * sigma_fe, clipped. The longer-horizon
+# net-load-uncertainty / load-ratio reserve (replaceable from offline quick-start
+# capacity), scaled by the same net-load forecast-error std.
+ERCOT_AS_NSPIN_BASE_MW: float = 2300.0
+ERCOT_AS_NSPIN_SIGMA_COEF: float = 0.20
+ERCOT_AS_NSPIN_MIN_MW: float = 1400.0
+ERCOT_AS_NSPIN_MAX_MW: float = 5700.0
+
+# Forward net-load up-ramp deployment window (hours) the ECRS ramp term integrates
+# over — the forward maximum net-load up-swing within this many hours of t, the
+# horizon ECRS is sized to cover.
+ERCOT_AS_RAMP_WINDOW_HOURS: int = 3
+
 # --- ERCOT ORDC scarcity overlay ------------------------------------------
 # Multi-step RTORPA price floor: (reserve threshold MW, floor $/MWh) steps.
 # The adder is floored at $20/MWh when reserves <= 6,500 MW and at $10/MWh
