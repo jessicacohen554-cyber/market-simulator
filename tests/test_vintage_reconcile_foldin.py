@@ -1,8 +1,11 @@
 """EIA-923 preliminary-vintage gas/coal reconcile + CAISO geo/biomass fold-in.
 
-``render_calibration_html.reconcile_vintage_classes`` scales a preliminary
-EIA-923 vintage's fossil classes up to the complete EIA-930 grid series the model
-is calibrated to. For balancing authorities whose EIA-930 "Natural Gas" aggregate
+``render_calibration_html.reconcile_vintage_classes`` reconciles each fossil
+family's EIA-923 class total to the complete EIA-930 grid series the model is
+calibrated to, in BOTH directions — scaling a preliminary vintage UP, and an
+EIA-923 total that over-states grid delivery (residual CHP behind-the-meter +
+923<->930 assignment) DOWN — so the actual is on the model's grid-delivered
+basis. For balancing authorities whose EIA-930 "Natural Gas" aggregate
 silently folds in geothermal + biomass (CISO is the documented live case), the
 gas target must be DEFLATED by that fold-in first, otherwise the gas classes are
 scaled to gas+geo+biomass and the per-class actual is inflated by ~10 TWh — the
@@ -72,12 +75,26 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
         # NOT the deflated 97.6 a fold-in subtraction would have produced.
         self.assertGreater(self._gas_sum(cf), 99.0)
 
-    def test_complete_vintage_untouched(self):
-        """A complete vintage (>= frac * target) is left byte-identical."""
-        cf = {"CC_REGULAR": 99.0, "CT_PEAKER": 5.0, "OTHER": 1.0, "biomass": 0.5}
+    def test_within_deadband_untouched(self):
+        """A family within +/-(1-frac) of the grid series is left byte-identical."""
+        # gas sum 96 + 5 = 101 vs target 100 -> +1% (inside the ~3% deadband).
+        cf = {"CC_REGULAR": 96.0, "CT_PEAKER": 5.0, "OTHER": 1.0, "biomass": 0.5}
         before = dict(cf)
         rch.reconcile_vintage_classes(cf, {"gas": 100.0}, "ERCOT")
         self.assertEqual(cf, before)
+
+    def test_over_count_scaled_down_to_grid(self):
+        """An EIA-923 family ABOVE the EIA-930 grid (residual CHP BTM / 923<->930
+        assignment) is scaled DOWN to the grid total — the bidirectional reconcile
+        that puts the actual on the model's grid-delivered basis. gas sum 104 + 6
+        = 110 vs grid 100 (+10%, outside the deadband) -> reconciled to 100."""
+        cf = {"CC_REGULAR": 104.0, "CT_PEAKER": 6.0, "OTHER": 1.0, "biomass": 0.5}
+        rch.reconcile_vintage_classes(cf, {"gas": 100.0}, "ERCOT")
+        self.assertAlmostEqual(self._gas_sum(cf), 100.0, places=2)
+        # Inter-class split preserved (each scaled by the same factor).
+        self.assertAlmostEqual(
+            cf["CC_REGULAR"] / cf["CT_PEAKER"], 104.0 / 6.0, places=2
+        )
 
     def test_caiso_complete_vintage_not_deflated_below_actual(self):
         """When CAISO raw gas already exceeds the deflated target, leave it alone.
