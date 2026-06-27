@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-pjm-56-cc-committed",
+  "label": "pjm 56 cc committed",
+  "date": "2026-06-27",
+  "shorthand": "pjm-56-cc-committed",
+  "definition": "pjm 56 CC inframarginal lift on pjm-55 keeper. CC_REGULAR committed 0.6624->0.75, econ_low 0.78->0.92 (less artificial self-schedule discount; offer baseload/low-econ CC nearer true full-load HR). Raises PJM LMP in low-price hours to close the over-export spread to MISO/NYISO and open the SERC import spread \u2014 the lift scales with gas price so it cools dear-gas 2025 (the worst miss) most. econ_high/peak and all coal sigmoids/structural levers pjm-55 verbatim.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-27-pjm-56-cc-committed.js",
+  "bundle": "results/calibration/pjm56_cc_committed_lift"
+}
