@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-miso16-st-gas-intermediate",
+  "label": "miso16 st gas intermediate",
+  "date": "2026-06-27",
+  "shorthand": "miso16-st-gas-intermediate",
+  "definition": "MISO intermediate gas-steam structure on top of miso15 (--st-gas-intermediate): ST_GAS_INTERMEDIATE offer-curve cohort routing for the measured median-CF>=50 steam fleet (Harding Street, Ames, Nine Mile Pt, Lewis Creek, Sabine), ST_GAS startup-cost/min-run P1 bid markup (steam drags, not peaker-cycles), and ERCOT-fitted ST_GAS WEFOR base 0.21->0.10 (realistic gas-steam EFOR). Targets the Moselle/Lewis Creek ST under-run + peaker-like steam cycling. Net-load reliability drag floor (Little Gypsy weather must-run) deferred: ERCOT drag coefficients saturate at MISO net-load scale, needs MISO-specific derivation.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-miso16-st-gas-intermediate.js",
+  "bundle": "results/calibration/MISO/miso16_st_gas_intermediate"
+}

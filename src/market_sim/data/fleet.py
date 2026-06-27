@@ -1106,6 +1106,19 @@ def generators_to_fleet_arrays(
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, run_year - gen.online_year
             )
+            # ISO-gated gas-steam forced-outage base override. The global ST_GAS
+            # WEFOR base (0.21) is fitted to ERCOT's once-through steamers and is
+            # >2x every other thermal class — an implicit availability crush that
+            # holds intermediate-duty steam off on top of the EIA-860 net-summer
+            # rating already applied. When configured, replace the base with a
+            # realistic NERC-GADS gas-steam EFOR, keeping the age escalation.
+            _st_wefor_base = getattr(config, "gas_st_wefor_base_override", None)
+            if _st_wefor_base is not None and gen.plant_group in ("ST_GAS", "ST_CHP"):
+                _, _w_base, _w_rate, _w_onset, *_ = THERMAL_AVAILABILITY[
+                    gen.plant_group
+                ]
+                _age = run_year - gen.online_year
+                wefor = _st_wefor_base + max(0.0, _age - _w_onset) * _w_rate
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
             wefor *= config.wefor_multiplier
@@ -5644,6 +5657,37 @@ def ct_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     return frozenset(int(c) for c in ct["plant_code"].dropna())
 
 
+def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``ST_GAS`` units for an ISO.
+
+    The gas-steam analogue of :func:`ct_intermediate_plants`. A legacy gas-steam
+    plant whose measured CAMPD median capacity factor
+    (``thermal_tranches_<ISO>.csv`` ``median_cf``) is at or above ``threshold``
+    runs intermediate / near-baseload duty (MISO's Harding Street, Ames, Nine
+    Mile Point, Lewis Creek, Sabine, ...), not as a peaker. The ERCOT-fitted
+    ST_GAS offer curve (steep econ_high ramp + a 15% peaking band) prices most of
+    each such unit above the CC fleet, so it never clears and the model
+    under-runs it (the Moselle / Lewis Creek under-run). The cohort is routed to
+    the flatter ``ST_GAS_INTERMEDIATE`` offer curve instead.
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed conditions
+    — and assigns an offer *shape*, never pins measured output, so it is
+    admissible under CLAUDE.md #11/#12 on the same basis as
+    :func:`ct_intermediate_plants` and :data:`outages.ST_GAS_PEAKER_PLANTS`.
+    Returns an empty set when the ISO has no tranche file (e.g. ERCOT's hand-set
+    bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    st = df[(df["plant_group"] == "ST_GAS") & (df["median_cf"] >= threshold)]
+    return frozenset(int(c) for c in st["plant_code"].dropna())
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
@@ -5672,6 +5716,13 @@ def _offer_curve_for_group(
         ) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
         return None
+    if group == "ST_GAS" and getattr(config, "st_gas_intermediate_split", False):
+        iso = str(getattr(config, "iso", "ERCOT"))
+        thr = float(getattr(config, "st_gas_intermediate_cf_threshold", 50.0))
+        if int(plant_code) in st_gas_intermediate_plants(iso, thr):
+            inter = curves.get("ST_GAS_INTERMEDIATE")
+            if inter:
+                return inter
     if group == "CT_PEAKER" and getattr(config, "ct_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
