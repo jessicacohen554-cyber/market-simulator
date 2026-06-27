@@ -1644,6 +1644,8 @@ def solve_and_persist(
     coal_sync_srmc_tranche: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
+    st_gas_intermediate: bool = False,
+    st_gas_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -1831,6 +1833,8 @@ def solve_and_persist(
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
             ct_intermediate_split=ct_intermediate_split,
             ct_intermediate_cf_threshold=ct_intermediate_cf_threshold,
+            st_gas_intermediate=st_gas_intermediate,
+            st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             storage_vintage_ramp=storage_vintage_ramp,
@@ -2055,6 +2059,8 @@ def solve_and_persist(
         "coal_sync_srmc_tranche": coal_sync_srmc_tranche,
         "ct_intermediate_split": ct_intermediate_split,
         "ct_intermediate_cf_threshold": ct_intermediate_cf_threshold,
+        "st_gas_intermediate": st_gas_intermediate,
+        "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
         "coal_prb_sigmoid_overrides": {
             k: v for k, v in (prb_overrides or {}).items() if v is not None
@@ -2346,6 +2352,16 @@ def solve_and_persist(
     if ct_intermediate_cf_threshold is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if st_gas_intermediate:
+        recorded_cfg = recorded_cfg.with_overrides(
+            st_gas_intermediate_split=True,
+            gas_st_startup_cost=True,
+            gas_st_wefor_base_override=0.10,
+        )
+    if st_gas_intermediate_cf_threshold is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            st_gas_intermediate_cf_threshold=float(st_gas_intermediate_cf_threshold)
         )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4286,6 +4302,33 @@ def main() -> None:
         "capacity factor are treated as intermediate-duty.",
     )
     parser.add_argument(
+        "--st-gas-intermediate",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="MISO intermediate gas-steam structure (one consolidated lever, "
+        "default OFF → prior keepers / other ISOs byte-identical). The legacy "
+        "ST_GAS fleet (Harding Street, Ames, Nine Mile Pt, Lewis Creek, Sabine, "
+        "...) runs intermediate-duty, not as peakers. Routes the measured "
+        "median-CF cohort (fleet.st_gas_intermediate_plants) to the flatter "
+        "ST_GAS_INTERMEDIATE offer curve; feeds the ST_GAS startup cost + "
+        "min-run into the P1 bid markup so steam drags rather than cycling like "
+        "a peaker; and replaces the ERCOT-fitted ST_GAS WEFOR base (0.21) with a "
+        "realistic gas-steam EFOR (0.10). Fixes the Moselle / Lewis Creek "
+        "under-run. (The net-load reliability-drag floor / Little Gypsy "
+        "weather-dependent must-run is NOT bundled in — the ScenarioConfig drag "
+        "coefficients are ERCOT-derived and saturate at MISO's net-load scale; "
+        "enable separately via --gas-st-netload-drag only once MISO-specific "
+        "coefficients are derived.)",
+    )
+    parser.add_argument(
+        "--st-gas-intermediate-cf-threshold",
+        type=float,
+        default=None,
+        help="Median-CF cut (percent) for the --st-gas-intermediate cohort "
+        "(default 50.0): ST_GAS units at or above this measured CAMPD median "
+        "capacity factor are routed to the flatter ST_GAS_INTERMEDIATE curve.",
+    )
+    parser.add_argument(
         "--wefor-residual",
         type=float,
         default=None,
@@ -5564,6 +5607,8 @@ def main() -> None:
         coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
         ct_intermediate_split=args.ct_intermediate_split,
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
+        st_gas_intermediate=args.st_gas_intermediate,
+        st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
