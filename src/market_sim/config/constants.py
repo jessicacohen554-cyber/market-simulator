@@ -64,6 +64,29 @@ CT_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
     (11.0, {"startup_per_mw": 24.5, "min_run_hours": 1, "min_down_hours": 1}),  # frame
     (99.0, {"startup_per_mw": 19.0, "min_run_hours": 1, "min_down_hours": 1}),  # older
 ]
+# Gas steam (legacy oil/gas boilers): high thermal inertia — slow to start, a
+# real fuel/wear cost per start, and a long minimum run because a stop-start
+# cycle is more expensive than idling at minimum load. The startup cost is far
+# larger than a combustion turbine's and the min-run/min-down windows much
+# longer, so these intermediate-duty units DRAG (hold online at part load)
+# rather than cycle like peakers. ISO-gated on ScenarioConfig.gas_st_startup_cost
+# (default OFF → ERCOT byte-identical); enabled for MISO's intermediate steam.
+# Source: NREL/SR-5500-55433 (Kumar et al. 2012) gas-steam class, OEM specs.
+ST_GAS_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
+    (
+        10.0,
+        {"startup_per_mw": 55.0, "min_run_hours": 12, "min_down_hours": 8},
+    ),  # efficient steam
+    (
+        99.0,
+        {"startup_per_mw": 75.0, "min_run_hours": 24, "min_down_hours": 12},
+    ),  # older subcritical
+]
+ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
+    (10.0, 55.0),  # efficient steam
+    (99.0, 75.0),  # older subcritical
+]
+
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
 

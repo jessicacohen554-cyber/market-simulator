@@ -1116,6 +1116,23 @@ def _calibration_config(
                 "econ_low_share": 0.500,
                 "pct_peaking": 15.0,
             },
+            # Flatter curve for the measured intermediate-duty MISO steam cohort
+            # (fleet.st_gas_intermediate_plants, median CF >= threshold), routed
+            # here only when st_gas_intermediate_split is set (--st-gas-intermediate;
+            # default OFF, so every prior keeper / other ISO is byte-identical and
+            # the base ST_GAS curve above is untouched). These near-baseload
+            # boilers (Harding Street, Ames, Nine Mile Pt, Lewis Creek, Sabine)
+            # carry almost no peaking band — their energy is sustained, not
+            # scarcity — so the steep peaker-shaped ST_GAS curve mis-prices them
+            # above merit and the model under-runs them. Mirrors CT_INTERMEDIATE.
+            "ST_GAS_INTERMEDIATE": {
+                "committed": 0.85,
+                "econ_low": 1.00,
+                "econ_high": 1.15,
+                "peak": 2.20,
+                "econ_low_share": 0.500,
+                "pct_peaking": 6.0,
+            },
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
             # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
             # lower econ-low start, slightly higher econ-high.
@@ -1579,6 +1596,8 @@ def run_year(
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
+    st_gas_intermediate: bool = False,
+    st_gas_intermediate_cf_threshold: float | None = None,
     ct_netload_drag: bool = False,
     ct_drag_overrides: dict[str, float] | None = None,
     fleet_only: bool = False,
@@ -1685,6 +1704,40 @@ def run_year(
     if ct_intermediate_cf_threshold is not None:
         config = config.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if st_gas_intermediate:
+        # MISO intermediate gas-steam structure (one consolidated lever, default
+        # OFF → prior keepers / other ISOs byte-identical). The legacy gas-steam
+        # fleet (Harding Street, Ames, Nine Mile Pt, Lewis Creek, Sabine, ...)
+        # runs intermediate-duty, not as peakers, but inherits ERCOT-fitted steam
+        # parameters that under-run it (Moselle / Lewis Creek) and let it cycle
+        # with peaker agility. Three coupled corrections, each well-grounded:
+        #  1. route the measured median-CF cohort (fleet.st_gas_intermediate_plants)
+        #     to the flatter ST_GAS_INTERMEDIATE offer curve so its sustained
+        #     energy clears;
+        #  2. the ST_GAS startup cost + min-run feed the P1 bid markup so a
+        #     stop-start costs more than idling (steam drags, not cycles);
+        #  3. replace the ERCOT-fitted ST_GAS WEFOR base (0.21, >2x every other
+        #     thermal class) with a realistic NERC-GADS gas-steam EFOR, lifting
+        #     the implicit availability crush off MISO's net-summer-rated steam.
+        # NOTE: the net-load reliability-drag floor (the Little Gypsy / River
+        # load-pocket weather-dependent must-run) is deliberately NOT enabled
+        # here. Its ScenarioConfig coefficients are ERCOT-derived and SATURATE at
+        # the 0.34 cap across all of MISO's larger net-load range (60-110 GW),
+        # degenerating into a flat 34% must-run rather than the weather-responsive
+        # curve intended — borrowed coefficients, not a MISO mechanism. It needs
+        # a MISO-specific regression (MISO overnight ST_GAS CAMPD CF vs MISO
+        # net-load), mirroring the ERCOT/NYISO/CAISO per-ISO floor derivations,
+        # before it can be a keeper lever. Tracked as the immediate follow-up;
+        # enable per-run via --gas-st-netload-drag once MISO coefficients exist.
+        config = config.with_overrides(
+            st_gas_intermediate_split=True,
+            gas_st_startup_cost=True,
+            gas_st_wefor_base_override=0.10,
+        )
+    if st_gas_intermediate_cf_threshold is not None:
+        config = config.with_overrides(
+            st_gas_intermediate_cf_threshold=float(st_gas_intermediate_cf_threshold)
         )
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
@@ -3284,6 +3337,7 @@ def run_year(
         r0.dispatch,
         config.hours,
         gas_st_season_spread=config.gas_st_startup_spread,
+        gas_st_startup_cost=getattr(config, "gas_st_startup_cost", False),
         chp_startup_covered=getattr(config, "chp_startup_covered", False),
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
     )
