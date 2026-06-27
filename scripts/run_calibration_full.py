@@ -1693,6 +1693,9 @@ def solve_and_persist(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
+    caiso_solar_deliverability: bool | None = None,
+    caiso_solar_deliverability_k: float | None = None,
+    caiso_solar_cap_at_delivered: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
@@ -1884,6 +1887,9 @@ def solve_and_persist(
             caiso_ra_mustoffer=caiso_ra_mustoffer,
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
+            caiso_solar_deliverability=caiso_solar_deliverability,
+            caiso_solar_deliverability_k=caiso_solar_deliverability_k,
+            caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered,
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
             neiso_temp_reliability_floor=neiso_temp_reliability_floor,
@@ -2129,6 +2135,9 @@ def solve_and_persist(
         "caiso_ra_mustoffer": caiso_ra_mustoffer,
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
+        "caiso_solar_deliverability": caiso_solar_deliverability,
+        "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
+        "caiso_solar_cap_at_delivered": caiso_solar_cap_at_delivered,
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
         "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
@@ -2300,6 +2309,18 @@ def solve_and_persist(
     if caiso_ct_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
+        )
+    if caiso_solar_deliverability is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_solar_deliverability=caiso_solar_deliverability
+        )
+    if caiso_solar_deliverability_k is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_solar_deliverability_k=caiso_solar_deliverability_k
+        )
+    if caiso_solar_cap_at_delivered is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
         )
     if nyiso_ct_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5171,6 +5192,40 @@ def main() -> None:
         "off (the no-floor baseline probe).",
     )
     parser.add_argument(
+        "--caiso-solar-deliverability",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO Lever-D local solar deliverability derate: re-curtail the "
+        "uncurtailed HSL solar potential the dispatch is handed for the local / "
+        "sub-area congestion the reduced 3-zone topology can't see (~70% of real "
+        "CAISO curtailment). Caps the per-zone solar CF upper bound at "
+        "clip(1 - k x solar_frac(t), floor, 1) — the solar analogue of the "
+        "accepted WECC corridor ATC derate, driven by the FORWARD solar-"
+        "penetration signal (CISO solar/demand) so the curtailed VOLUME emerges "
+        "per-year from that year's own build, not a pin to actuals "
+        "(docs/caiso-lever-audit-2026-06.md, Lever D). CAISO-only. Default "
+        "(unset) keeps the per-ISO base config value — ON for CAISO; "
+        "--no-caiso-solar-deliverability forces it off (the over-run baseline).",
+    )
+    parser.add_argument(
+        "--caiso-solar-deliverability-k",
+        type=float,
+        default=None,
+        help="Local-deliverability sensitivity to solar penetration for "
+        "--caiso-solar-deliverability (default 0.15 — the reference-year midday "
+        "curtailment-rate / solar-penetration ratio, stable across CAISO 2023/24).",
+    )
+    parser.add_argument(
+        "--caiso-solar-cap-at-delivered",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="INTERIM STOPGAP DIAGNOSTIC (default-off): cap the backcast solar "
+        "potential at the measured EIA-930 delivered solar profile. This PINS "
+        "solar to the measured outcome (no forward analogue) and must NEVER feed "
+        "a keeper or be quoted as forecast skill (CLAUDE.md #11) — it exists only "
+        "as an A/B reference for --caiso-solar-deliverability. CAISO-only.",
+    )
+    parser.add_argument(
         "--nyiso-ct-reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5737,6 +5792,9 @@ def main() -> None:
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
+        caiso_solar_deliverability=args.caiso_solar_deliverability,
+        caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
+        caiso_solar_cap_at_delivered=args.caiso_solar_cap_at_delivered,
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
         neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
