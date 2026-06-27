@@ -41,7 +41,10 @@ from market_sim.model.transmission import (
     inject_caiso_export_hub_prices,
     inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
+    inject_neiso_temp_reliability_floor,
     inject_nyiso_ct_reliability_floor,
+    NEISO_COLDSNAP_FLOOR_HOURS,
+    NEISO_CT_FLOOR_HOURS,
     NYISO_CT_FLOOR_HOURS,
     wecc_border_carbon_adder,
 )
@@ -924,6 +927,119 @@ class TestNyisoCtReliabilityFloor(unittest.TestCase):
         self.assertFalse(
             inject_nyiso_ct_reliability_floor(
                 fa, "NYISO", 2040, zones, 0.053, 25.0, 0.68, 0.13
+            )
+        )
+        self.assertIsNone(fa.min_gen)
+
+
+class TestNeisoTempReliabilityFloor(unittest.TestCase):
+    """The dual-limb (hot CT / cold COAL+ST_GAS) NEISO weather floor."""
+
+    def _neiso_fleet(self, hours):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="Boston",
+                fuel_type="gas_cc",
+                pmax_mw=12000.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="Connecticut",
+                fuel_type="gas_ct",
+                pmax_mw=1200.0,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_PEAKER",
+            ),
+            Generator(
+                unit_id="coal",
+                name="coal",
+                zone="North",
+                fuel_type="coal",
+                pmax_mw=108.0,
+                pmin_mw=0.0,
+                heat_rate=10.0,
+                plant_group="COAL",
+            ),
+            Generator(
+                unit_id="stgas",
+                name="stgas",
+                zone="Central",
+                fuel_type="gas_st",
+                pmax_mw=81.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                plant_group="ST_GAS",
+            ),
+        ]
+        zones = ["North", "Central", "Boston", "Connecticut"]
+        fa = generators_to_fleet_arrays(gens, zones, hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, clock.hour.to_numpy()
+
+    def _row(self, gens, group):
+        return [g.plant_group for g in gens].index(group)
+
+    def test_hot_limb_floors_ct_in_evening_window_only(self):
+        H = 8760
+        fa, gens, hod = self._neiso_fleet(H)
+        applied = inject_neiso_temp_reliability_floor(
+            fa, "NEISO", 2024, 0.037, 25.0, 0.48, 0.0, 0.033, 1.0, 0.0
+        )
+        self.assertTrue(applied)
+        ct = self._row(gens, "CT_PEAKER")
+        self.assertGreater(float(fa.min_gen[ct].max()), 0.0)
+        lo, hi = NEISO_CT_FLOOR_HOURS
+        floored = fa.min_gen[ct] > 0.0
+        self.assertTrue(floored.any())
+        self.assertTrue(bool(np.all((hod[floored] >= lo) & (hod[floored] <= hi))))
+        # The CC fleet is never floored by the weather mechanism.
+        np.testing.assert_array_equal(fa.min_gen[self._row(gens, "CC_REGULAR")], 0.0)
+
+    def test_cold_limb_floors_coal_and_stgas_in_winter_peaks_only(self):
+        H = 8760
+        fa, gens, hod = self._neiso_fleet(H)
+        inject_neiso_temp_reliability_floor(
+            fa, "NEISO", 2024, 0.037, 25.0, 0.48, 0.0, 0.033, 1.0, 0.0
+        )
+        cold_set = np.asarray(NEISO_COLDSNAP_FLOOR_HOURS)
+        for group in ("COAL", "ST_GAS"):
+            row = self._row(gens, group)
+            self.assertGreater(float(fa.min_gen[row].max()), 0.0)
+            floored = fa.min_gen[row] > 0.0
+            self.assertTrue(bool(np.all(np.isin(hod[floored], cold_set))))
+
+    def test_floor_never_exceeds_available_capacity(self):
+        H = 8760
+        fa, gens, _ = self._neiso_fleet(H)
+        inject_neiso_temp_reliability_floor(
+            fa, "NEISO", 2024, 0.037, 25.0, 0.48, 0.0, 0.033, 1.0, 0.0
+        )
+        for group in ("CT_PEAKER", "COAL", "ST_GAS"):
+            row = self._row(gens, group)
+            cap = fa.pmax[row] * fa.availability[row]
+            self.assertTrue(bool((fa.min_gen[row] <= cap + 1e-6).all()))
+
+    def test_non_neiso_is_no_op(self):
+        fa, _, _ = self._neiso_fleet(48)
+        self.assertFalse(
+            inject_neiso_temp_reliability_floor(
+                fa, "PJM", 2024, 0.037, 25.0, 0.48, 0.0, 0.033, 1.0, 0.0
+            )
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_forecast_year_is_no_op(self):
+        fa, _, _ = self._neiso_fleet(48)
+        self.assertFalse(
+            inject_neiso_temp_reliability_floor(
+                fa, "NEISO", 2040, 0.037, 25.0, 0.48, 0.0, 0.033, 1.0, 0.0
             )
         )
         self.assertIsNone(fa.min_gen)

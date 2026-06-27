@@ -812,6 +812,20 @@ def _calibration_config(
         #   (HB14-21) CF vs TMAX, 2023-2025 — a physical heat->commitment rule, NOT a
         #   TWh-residual fit (scripts/derive_nyiso_ct_reliability_floor.py). Other
         #   ISOs stay off (byte-identical); coefficients from ScenarioConfig defaults.
+        neiso_temp_reliability_floor=(iso.upper() == "NEISO"),  # NEISO keeper
+        #   default-ON: the DUAL-LIMB weather-correlated reliability floor. ISO-NE
+        #   under-runs two weather-driven fleets on OPPOSITE limbs: (1) CT_PEAKER
+        #   tracks the summer cooling HOT limb (TMAX) over the afternoon-evening
+        #   ramp like CAISO/NYISO; (2) the lone Merrimack-class COAL unit + lone
+        #   steam-gas ST_GAS unit run almost only in deep-winter COLD snaps (TMIN),
+        #   when the gas-electric constraint prices these oil/coal/steam units into
+        #   merit. An energy-only LP leaves both on the cheaper CC fleet. The floor
+        #   holds each group at frac x available capacity over its window, keyed to
+        #   the NEISO load-weighted daily TMAX/TMIN (NOAA GHCN). Coefficients
+        #   regressed from measured CAMPD CF, 2023-2025 (cold-limb Spearman rho
+        #   ~0.35-0.40, hot-limb ~0.47) — physical temperature->commitment rules,
+        #   NOT TWh-residual fits (scripts/derive_neiso_temp_reliability_floor.py).
+        #   Other ISOs stay off (byte-identical); coefficients from ScenarioConfig.
         caiso_ct_reliability_floor=(iso.upper() == "CAISO"),  # CAISO keeper
         #   default-ON: the local-RA CT_PEAKER reliability floor holds simple-
         #   cycle gas peakers online through the hot-day afternoon-evening ramp
@@ -2370,6 +2384,37 @@ def run_year(
                 _nct_t0,
                 _nct_base,
                 _nct_cap,
+            )
+
+    # NEISO dual-limb weather-correlated reliability floor: hold the summer
+    # CT_PEAKER fleet online through the hot-day afternoon-evening ramp (hot limb,
+    # TMAX) AND the lone cold-snap COAL + ST_GAS units online through the winter
+    # morning/evening peaks (cold limb, TMIN), each at frac x available capacity.
+    # Recovers the weather-driven reliability energy an energy-only LP leaves on
+    # the cheaper CC fleet (transmission.inject_neiso_temp_reliability_floor).
+    if getattr(config, "neiso_temp_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_neiso_temp_reliability_floor,
+        )
+
+        if inject_neiso_temp_reliability_floor(
+            fleet_arrays,
+            iso,
+            year,
+            float(getattr(config, "neiso_ct_floor_slope_per_c", 0.037)),
+            float(getattr(config, "neiso_ct_floor_t0_c", 25.0)),
+            float(getattr(config, "neiso_ct_floor_cap", 0.48)),
+            float(getattr(config, "neiso_ct_floor_base", 0.0)),
+            float(getattr(config, "neiso_coldsnap_floor_slope_per_c", 0.033)),
+            float(getattr(config, "neiso_coldsnap_floor_cap", 1.0)),
+            float(getattr(config, "neiso_coldsnap_floor_base", 0.0)),
+        ):
+            logger.info(
+                "%s %d: dual-limb weather floor — CT_PEAKER hot-limb (TMAX) over "
+                "the afternoon-evening ramp + COAL/ST_GAS cold-limb (TMIN) over "
+                "the winter morning/evening peaks, frac x available capacity",
+                iso,
+                year,
             )
 
     # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly
