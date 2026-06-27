@@ -580,6 +580,42 @@ class ScenarioConfig:
     # is the regression INTERCEPT the hot-limb fit clips away, not a TWh-residual
     # tune (docs/caiso-ct-reliability-floor-2026-06.md §"year-round baseline").
     # Default 0.0 (byte-identical / hot-limb only); CAISO calibration sets 0.049.
+    nyiso_ct_reliability_floor: bool = False  # NYISO DOWNSTATE CT_PEAKER local-
+    # reliability floor: hold in-city / Long-Island simple-cycle gas peakers
+    # online through the hot-day afternoon-evening AC ramp at a temperature-driven
+    # commitment fraction, keyed to the NYC-metro daily max temperature (NOAA
+    # GHCN, data/raw/nyiso-weather/). The cable-islanded NYC (zone J) / Long Island
+    # (zone K) / Lower Hudson load pockets hold fast-start GTs for local
+    # capacity-area reliability when the UPNY-SENY / LI-cable import limits bind on
+    # hot afternoons; an energy-only LP imports cheap upstate/NYC CC instead and
+    # under-runs CT_PEAKER (CC_REGULAR over-runs). This floors the DOWNSTATE
+    # CT_PEAKER fleet (NYISO_CT_FLOOR_ZONES) at frac x available capacity over
+    # CT_FLOOR_HOURS, frac = clip(base + slope*(TMAX-T0), base, cap), via the
+    # hour-varying FleetArrays.min_gen lower bound (transmission.
+    # inject_nyiso_ct_reliability_floor). Coefficients regressed from measured
+    # downstate CAMPD CT_PEAKER evening (HB14-21) CF vs NYC TMAX, 2023-2025
+    # (scripts/derive_nyiso_ct_reliability_floor.py) — a physical heat->commitment
+    # rule, NOT a TWh-residual fit. Forward-reproducible (a forecast year pins a
+    # weather year, hence a TMAX series) and condition-responsive (hotter years ->
+    # more downstate CT). Does NOT address the WINTER downstate run (a gas-electric
+    # constraint, not a cooling driver). Default off (byte-identical); NYISO-only,
+    # no-op without an archived TMAX series.
+    nyiso_ct_floor_slope_per_c: float = 0.053  # Downstate CT commitment fraction
+    # gained per deg C of NYC daily max temperature above T0. From the downstate
+    # CAMPD evening-CF-vs-TMAX hot-limb regression (>= 25 deg C, pooled 2023-2025).
+    nyiso_ct_floor_t0_c: float = 25.0  # Zero-crossing: below this NYC daily max
+    # temperature the heat-driven floor is held at the year-round baseline (mild
+    # days run the baseline local-reliability minimum on price, not the hot limb).
+    nyiso_ct_floor_cap: float = 0.68  # Max downstate CT commitment fraction (p97
+    # of the measured evening CF) — the hottest-day local-reliability ceiling;
+    # prevents the line extrapolating past the observed envelope.
+    nyiso_ct_floor_base: float = 0.13  # Year-round downstate baseline commitment
+    # fraction floored over the same afternoon-evening window on ALL days. 0.13 =
+    # the measured cool-day (TMAX<25 degC) evening 25th-percentile CF — a firm
+    # local-reliability minimum the downstate peaker fleet exceeds ~75% of cool
+    # evenings, set below the cool-day median (0.18) so the LP dispatches above it
+    # economically on typical cool evenings rather than the floor over-forcing.
+    # Default carried with the flag; 0.0 would be hot-limb-only.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity

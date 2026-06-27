@@ -743,6 +743,47 @@ def caiso_load_weighted_tmax(year: int, hours: int) -> np.ndarray | None:
     return out
 
 
+def nyiso_downstate_tmax(year: int, hours: int) -> np.ndarray | None:
+    """Return the NYC-metro daily max temperature (deg C) per run hour.
+
+    For each hour of the run horizon, the NYC-metro daily max temperature (NOAA
+    GHCN-Daily TMAX averaged over Central Park / LaGuardia / JFK,
+    ``data/raw/nyiso-weather/``) for that hour's calendar day. Drives the NYISO
+    downstate CT_PEAKER local-reliability floor (:func:`market_sim.model.
+    transmission.inject_nyiso_ct_reliability_floor`): in-city / Long-Island
+    fast-start peakers are held online through the hot-day afternoon-evening AC
+    ramp when the UPNY-SENY / Long-Island-cable import limits bind. The daily TMAX
+    is broadcast to all hours of its day; the injector applies the window and the
+    temperature->commitment curve.
+
+    The series is archived (not solved) so it regenerates for a forward year from
+    a pinned weather year exactly as the load / wind / solar shapes do (see
+    ``scripts/derive_nyiso_ct_reliability_floor.py``). Mirrors
+    :func:`caiso_load_weighted_tmax`.
+
+    Returns ``(hours,)`` deg C, or ``None`` when the archived TMAX file is absent
+    or the year is uncovered (a forecast year with no pinned weather data), in
+    which case the caller leaves the downstate CT fleet unfloored (byte-identical).
+    """
+    path = RAW_DIR / "nyiso-weather" / "nyiso_downstate_tmax_daily.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, parse_dates=["date"])
+    df = df[df["date"].dt.year == year]
+    if df.empty:
+        return None
+    doy_tmax = dict(
+        zip(df["date"].dt.dayofyear.to_numpy(), df["tmax_c"].to_numpy(dtype=float))
+    )
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    doy = clock.dayofyear.to_numpy()
+    out = np.array([doy_tmax.get(int(d), np.nan) for d in doy], dtype=float)
+    if not np.any(np.isfinite(out)):
+        return None
+    out = pd.Series(out).ffill().bfill().to_numpy()
+    return out
+
+
 # CAISO priced-import tranche -> WECC neighbor hub whose measured intertie LMP is
 # the tranche's real delivered energy cost. The PNW blocks (firm hydro + Mid-C
 # shoulder) clear against the Malin / COI-PDCI ties; the desert-SW blocks (solar +
