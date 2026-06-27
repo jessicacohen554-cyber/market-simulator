@@ -1715,6 +1715,10 @@ def solve_and_persist(
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
+    miso_seam_flow_percentile: float | None = None,
+    miso_temp_reliability_floor: bool = False,
+    miso_cc_coal_rebalance: bool = False,
+    miso_firm_import_floor: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -1909,6 +1913,10 @@ def solve_and_persist(
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
+            miso_seam_flow_percentile=miso_seam_flow_percentile,
+            miso_temp_reliability_floor=miso_temp_reliability_floor,
+            miso_cc_coal_rebalance=miso_cc_coal_rebalance,
+            miso_firm_import_floor=miso_firm_import_floor,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -2157,6 +2165,10 @@ def solve_and_persist(
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
+        "miso_seam_flow_percentile": miso_seam_flow_percentile,
+        "miso_temp_reliability_floor": miso_temp_reliability_floor,
+        "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
+        "miso_firm_import_floor": miso_firm_import_floor,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -2394,6 +2406,16 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
     if miso_seam_flow_limit:
         recorded_cfg = recorded_cfg.with_overrides(miso_seam_flow_limit=True)
+    if miso_seam_flow_percentile is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            miso_seam_flow_percentile=float(miso_seam_flow_percentile)
+        )
+    if miso_temp_reliability_floor:
+        recorded_cfg = recorded_cfg.with_overrides(miso_temp_reliability_floor=True)
+    if miso_cc_coal_rebalance:
+        recorded_cfg = recorded_cfg.with_overrides(miso_cc_coal_rebalance=True)
+    if miso_firm_import_floor:
+        recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
     if ct_intermediate_split:
         recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
     if ct_intermediate_cf_threshold is not None:
@@ -5532,6 +5554,67 @@ def main() -> None:
         "net-MWh residual. Requires --reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-seam-flow-percentile",
+        type=float,
+        default=None,
+        help="Override the per-seam import deliverability percentile used by "
+        "--miso-seam-flow-limit (default keeps p90). Raising it (e.g. 95) lifts "
+        "the deliverability envelope toward the measured upper-tail transfer so "
+        "the priced seam clears MORE import in tight hours — the round-2 "
+        "import-lift knob for the 2024/2025 structural under-import. Still a "
+        "measured-duration-curve ceiling, NOT a flow pinned to the net-MWh "
+        "residual; only bites with --miso-seam-flow-limit. MISO-only.",
+    )
+    parser.add_argument(
+        "--miso-temp-reliability-floor",
+        action="store_true",
+        help="MISO dual-limb, ZONAL weather-correlated reliability floor (the "
+        "MISO-native analogue of the NEISO/NYISO temperature floors). Holds the "
+        "gas-steam (ST_GAS) and simple-cycle (CT_PEAKER) fleets online at a "
+        "temperature-driven commitment keyed PER ZONE to that zone's "
+        "load-weighted daily TMAX/TMIN: a summer HOT limb (TMAX) over the "
+        "afternoon-evening AC ramp in all zones, plus a deep-winter COLD limb "
+        "(TMIN) over the morning/evening peaks grounded only in MISO-South (the "
+        "gas-constrained Entergy footprint; measured ST_GAS rho +0.42, CT +0.52). "
+        "Coefficients regressed from measured per-(zone x class) CAMPD CF vs the "
+        "zone TMAX/TMIN, pooled 2023-2025 "
+        "(scripts/derive_miso_temp_reliability_floor.py) — physical "
+        "temperature->commitment rules, NOT TWh-residual fits. Replaces the "
+        "ERCOT-coefficient --gas-st-netload-drag (which saturates across MISO's "
+        "net-load range). MISO-only; no-op without an archived weather series.",
+    )
+    parser.add_argument(
+        "--miso-cc-coal-rebalance",
+        action="store_true",
+        help="MISO CC_REGULAR / COAL_BIT offer-curve rebalance: raise the MISO "
+        "combined-cycle committed/econ-high bands and the bituminous-coal "
+        "econ-high band so the MARGINAL CC / coal-bit MWh sits ABOVE the "
+        "priced-import hurdle (and the under-running CT_PEAKER / ST_GAS), rather "
+        "than being the cheapest fill. Structural correction for the round-2 "
+        "conservation-of-energy miss (imports too low -> cheap domestic CC/coal "
+        "over-run and price out the peakers/steam). An offer-SHAPE correction, "
+        "ISO-gated to MISO (other ISOs / forecasts byte-identical), validated by "
+        "the import-up / CC-down / coal-down / CT-up / ST-up response.",
+    )
+    parser.add_argument(
+        "--miso-firm-import-floor",
+        action="store_true",
+        help="Firm (must-flow) import floor on the reference-price seam — the "
+        "import-direction mirror of the PJM firm-export floor and the Manitoba/HQ "
+        "firm-import blocks. MISO net-imports from the PJM seam (PJM + IESO/"
+        "Ontario) in ~99-100%% of hours at a stable multi-GW base (cheap Ontario "
+        "nuclear/hydro surplus + firm PJM-east scheduled transfers) that flows "
+        "regardless of the hourly spread, but the gas x heat-rate economic seam "
+        "prices the PJM border above MISO's cheap coal and so wrongly net-EXPORTS "
+        "over it (the 2024 -8.3 vs -23.1 net-import miss, the 2025 +18 vs -19 sign "
+        "flip, and the 2025 +20 TWh energy-balance overshoot). Forces the cheapest "
+        "import tranches on at the measured firm base "
+        "(NeighborInterface.firm_import_floor_by_year, p10 of the seam's net "
+        "import) so the inframarginal must-flow import displaces the over-running "
+        "domestic coal/CC, the economic tranches clearing on top. Requires "
+        "--reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5814,6 +5897,10 @@ def main() -> None:
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
+        miso_seam_flow_percentile=args.miso_seam_flow_percentile,
+        miso_temp_reliability_floor=args.miso_temp_reliability_floor,
+        miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
+        miso_firm_import_floor=args.miso_firm_import_floor,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
