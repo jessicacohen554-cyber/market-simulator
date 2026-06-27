@@ -1687,6 +1687,8 @@ def solve_and_persist(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_ra_mustoffer: bool | None = None,
+    caiso_ra_min_load_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
@@ -1872,6 +1874,8 @@ def solve_and_persist(
             negative_renewable_offers=negative_renewable_offers,
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
+            caiso_ra_mustoffer=caiso_ra_mustoffer,
+            caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
@@ -2111,6 +2115,8 @@ def solve_and_persist(
         "negative_renewable_offers": negative_renewable_offers,
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
+        "caiso_ra_mustoffer": caiso_ra_mustoffer,
+        "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
@@ -2268,6 +2274,14 @@ def solve_and_persist(
     if caiso_gas_floor_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_gas_floor_frac=caiso_gas_floor_frac
+        )
+    if caiso_ra_mustoffer is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_ra_mustoffer=caiso_ra_mustoffer
+        )
+    if caiso_ra_min_load_frac is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_ra_min_load_frac=caiso_ra_min_load_frac
         )
     if caiso_ct_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5060,6 +5074,31 @@ def main() -> None:
         "forces it off (the no-floor baseline probe).",
     )
     parser.add_argument(
+        "--caiso-ra-mustoffer",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO Resource-Adequacy must-offer COMMITMENT (Step-1 replacement "
+        "for --caiso-gas-commitment-floor): through the P2 pass, hold each "
+        "merchant gas CC/CT unit that the economic P1 dispatch runs before AND "
+        "after a midday idle gap shorter than its physical min-down time at "
+        "--caiso-ra-min-load-frac x available capacity across the gap (it "
+        "cannot economically cycle off and restart for the evening ramp). The "
+        "unit is online at min-load and free to dispatch DOWN to it — not "
+        "pinned to measured output. Detected from the model's own run pattern "
+        "+ min-down (forward-derivable, no measured-outcome pin). CAISO-only. "
+        "Default (unset) keeps the per-ISO base config value — ON for CAISO, "
+        "off elsewhere; --no-caiso-ra-mustoffer forces it off (the floor-off-"
+        "only baseline probe).",
+    )
+    parser.add_argument(
+        "--caiso-ra-min-load-frac",
+        type=float,
+        default=None,
+        help="Minimum stable load of a committed gas unit as a fraction of "
+        "available capacity, for --caiso-ra-mustoffer (default 0.40 — typical "
+        "CC/CT minimum generation). A physical turn-down limit, not a fit.",
+    )
+    parser.add_argument(
         "--caiso-ct-reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5623,6 +5662,8 @@ def main() -> None:
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
+        caiso_ra_mustoffer=args.caiso_ra_mustoffer,
+        caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
