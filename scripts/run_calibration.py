@@ -1120,7 +1120,7 @@ def _calibration_config(
             # offer curve's 1.10 committed multiplier priced them as cheap
             # baseload and the LP ran the three flat at ~88% CF (3.7 TWh in 2024)
             # vs ~0.8 measured. The fix is the POWER-ONLY heat-rate correction in
-            # fleet._correct_caiso_eor_power_hr (CAISO_EOR_TOPPING_FACTOR), which
+            # fleet._correct_caiso_chp_steam_credit_hr, which
             # lifts those three units to the simple-cycle band (~9-11) so they
             # clear on price like peakers — CT_CHP 6.95 -> 3.54 TWh (2024),
             # FAIL -> PASS. It is grounded in topping-cycle physics (steam-credit
