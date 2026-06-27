@@ -14,19 +14,30 @@ so the backcast under-runs ST_GAS. The floor is a **persistent 24-hour baseline*
 (`base_24h` × available capacity over all hours) with the **evening cooling
 hot-limb layered on top** over HB14-21 via `maximum`, keyed per zone to its
 load-center daily max temperature (NOAA GHCN: Islip / Central Park / Albany).
-Per-zone coefficients (`transmission.NYISO_ST_FLOOR_COEFFS`) are regressed a
-priori from the measured per-zone CAMPD ST_GAS CF vs zone TMAX, pooled 2023-2025
-(`scripts/derive_nyiso_st_reliability_floor.py`; archived
+The floor is applied **per unit, pro-rata** (each in-pocket steam unit floored at
+`frac × its own available capacity`, not cheapest-first over an aggregate) —
+in-city reliability commits the geographically-distributed units (Ravenswood /
+Astoria / Arthur Kill) by locational role, matching the measured even CAMPD
+distribution; a cheapest-first aggregate instead dumped the whole NYC commitment
+onto the single cheapest unit (Ravenswood, already economic) and left the costlier
+in-city units idle. Per-zone coefficients (`transmission.NYISO_ST_FLOOR_COEFFS`)
+are regressed a priori from the measured per-zone CAMPD ST_GAS CF vs zone TMAX,
+pooled 2023-2025 (`scripts/derive_nyiso_st_reliability_floor.py`; archived
 `data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv`) — `base_24h` cool-day
 all-hours p25, `base_ev` cool-day evening p25, `cap` evening p97, `slope` evening
 hot-limb. The flat/temperature-insensitive Upstate steam fleet is deliberately
-omitted. ST_GAS lands under actual (2024 −2.39 TWh), so the floor is conservative,
-not pinned (rules #11/#12). Effect: C1 ST_GAS 2023 +0.39 (PASS), 2024 −3.77 →
-−2.39 TWh (recovers ~1.4 TWh; the residual winter/shoulder run is the gas-electric
-/ dual-fuel frontier, named not chased — an honest MODEL MISS, determination
-NOT-YET); CC_REGULAR over-run shrinks; CT_PEAKER stays PASS; dispatch_corr PASS.
-The C3a/C3b/C3c price regression (~1-3 pp) is the documented rule-#1 min-gen-floor
-tradeoff + ledgered reserve-scarcity (ORDC) frontier.
+omitted. A capacity-derate check confirmed the under-running in-city units are not
+ceiling-capped (they reach 0.66–0.92× nameplate in summer CAMPD yet sit at model
+CF 0.02–0.17), so the under-run is a dispatch/distribution effect. ST_GAS lands
+under actual (2024 −1.45 TWh), conservative not pinned (rules #11/#12). Effect: C1
+ST_GAS 2023 +1.12 (PASS), 2024 −3.77 → −1.45 TWh (recovers ~2.3 TWh; plant
+distribution fixed — Northport exact, Astoria/Arthur Kill recovered, Ravenswood no
+longer floor-concentrated; the residual is the winter gas-constraint / dual-fuel
+frontier + Ravenswood's economic NYC in-city baseload, named not chased — an
+honest MODEL MISS, determination NOT-YET); CC_REGULAR/CT_PEAKER stay PASS;
+dispatch_corr PASS; C5a CO2 returns to band both years. The C3a/C3b/C3c price
+regression is the documented rule-#1 min-gen-floor tradeoff + ledgered
+reserve-scarcity (ORDC) frontier.
 
 **Benchmark-basis fix (reporting only, not a model lever):**
 `results.calibration.actuals_source(klass, iso)` is now ISO-aware — NYISO solar
