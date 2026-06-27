@@ -31,18 +31,36 @@
 > un-grounded flat must-run). A **physical heat→commitment rule, forward-
 > reproducible** (a forecast year pins a weather year, hence a per-zone TMAX
 > series), **NOT a CEMS pin and NOT residual-tuned** — ST_GAS lands *under* actual
-> on the largest-miss year (2024 −2.39 TWh), so the floor is conservative
+> on the largest-miss year (2024 −1.45 TWh), so the floor is conservative
 > (rules #11/#12). The `pmax × availability` basis makes it automatically
 > **outage-aware**.
 >
+> **Per-unit pro-rata distribution.** The hourly fraction is floored on **each
+> in-pocket steam unit at `frac × its own available capacity`**, NOT cheapest-first
+> over an aggregate target. In-city local reliability commits the
+> geographically-distributed units (NYC: Ravenswood / Astoria / Arthur Kill, each
+> in its own load pocket) by their locational role, and the measured CAMPD
+> distribution confirms all the in-pocket steam runs at similar moderate CFs.
+> A cheapest-first aggregate instead poured the whole NYC commitment into the one
+> cheapest unit (**Ravenswood** — which an energy-only LP already runs
+> economically, so the floor was redundant there) and left the costlier in-city
+> units idle; per-unit pro-rata both matches the real distribution and recovers
+> the class energy where the floor was being wasted. **Capacity-derate check
+> (this session):** the under-running in-city units are *not* capacity-capped —
+> they reach 0.66–0.92× nameplate in summer CAMPD yet sit at model summer CF
+> 0.02–0.17 with ample headroom, i.e. idle (not dispatched), not derated, so the
+> ceiling is correct and the under-run is a dispatch/distribution effect.
+>
 > **Effect — the HARD C1 fuel-mix improves** (rule-#1 right-structure step):
-> **ST_GAS** `2023 +0.39 TWh (PASS)`, `2024 −3.77 → −2.39 TWh` (recovers ~1.4 TWh
+> **ST_GAS** `2023 +1.12 TWh (PASS)`, `2024 −3.77 → −1.45 TWh` (recovers ~2.3 TWh
 > vs the `nyiso 33` keeper; still under band, kept as an **honest MODEL MISS** —
-> see below). The complementary **CC_REGULAR** over-run shrinks (`2024 +0.80 →
-> +0.17`, PASS) as recovered steam displaces it; **CT_PEAKER** stays PASS
-> (`2023/24 −0.87/−0.86`); every other 2023-2024 gas class stays in C1 tolerance.
-> `dispatch_corr` stays PASS (gas r=0.91/0.84/0.80). **Plus a benchmark-basis fix
-> (Task A, reporting only):** NYISO solar actuals now route to **EIA-923**
+> see below). The plant distribution is fixed (Northport now exact, Astoria /
+> Arthur Kill recovered, Ravenswood no longer floor-concentrated). **CC_REGULAR**
+> stays PASS (`2023/24 −0.58/−0.56`); **CT_PEAKER** stays PASS (`−0.93/−0.88`);
+> every other 2023-2024 gas class stays in C1 tolerance; **C5a CO2 returns to band
+> both years**. `dispatch_corr` stays PASS (gas r=0.91/0.84/0.80). **Plus a
+> benchmark-basis fix (Task A, reporting only):** NYISO solar actuals now route to
+> **EIA-923**
 > (`results.calibration.actuals_source` is ISO-aware). EIA-930 NYIS grid solar is
 > a structural 0 (NYISO solar is overwhelmingly behind-the-meter / net-metered,
 > invisible to the balancing-area telemetry), so the dashboard previously scored
@@ -52,20 +70,27 @@
 > scores in tolerance (model 1.95/2.65, −5%/−9%).
 >
 > **Honest residual (un-ledgered MODEL MISS → determination NOT-YET):** the 2024
-> ST_GAS −2.39 TWh under-run. The monthly decomposition shows the 2024 steam miss
-> is **broad-based across all months, largest in the winter/shoulder** (Dec, Oct,
-> Nov), NOT only the summer cooling hot-limb. That winter run is the **gas-electric
-> constraint** (deep-winter pipeline scarcity pricing dual-fuel steam into merit)
-> — the dual-fuel / Transco-Z6 **gas-basis frontier**, a separate structural lever
-> from a cooling-driven floor. Pushing the floor's base above the measured p25 to
-> close it would over-force a cooling mechanism to recover a gas-constraint
-> phenomenon (forbidden, rules #1/#11/#12), so it is **named as the next frontier,
-> not ledgered away.** The `C3a` mean LMP (−12.7/−15.1/−10.1%) and empty `C3c`
-> >$300 tail remain the **ledgered reserve-scarcity (ORDC) frontier** (min-gen
-> floors add inframarginal supply but cannot restore scarcity price-setting;
-> non-closable with grounded inputs per `nyiso 29/31`); the steam floor regresses
-> them a further ~1-3 pp as the documented rule-#1 tradeoff (kept, not chased).
-> See the run-34 attestation (`calibration_attestation.json`).
+> ST_GAS −1.45 TWh under-run, two named-not-chased components. **(1)** The under-run
+> is concentrated in the costlier in-city / Capital units (Astoria, Arthur Kill,
+> Bowline) and the broad winter/shoulder months; the deep-winter steam run is the
+> **gas-electric constraint** (pipeline scarcity pricing dual-fuel steam into
+> merit) — the dual-fuel / Transco-Z6 **gas-basis frontier**, a separate lever from
+> a cooling floor. Pushing the p25 base higher to close it would over-force a
+> cooling mechanism for a gas-constraint phenomenon (forbidden, rules #1/#11/#12).
+> **(2) Ravenswood** (plant 2500, the most efficient NYC steam, corrected base HR
+> 9.5) over-runs **economically** in the transmission-constrained NYC zone (2023
+> +1.76, 2024 +0.21 TWh gross): as the cheapest in-city steam it clears near
+> baseload where the real fleet spreads the in-city commitment more evenly (CAMPD
+> CF ~0.18–0.23 across Ravenswood/Astoria/Arthur Kill). The pro-rata floor lifts
+> the costlier units toward that even split but does not cap Ravenswood; raising
+> its cost would shift NYC load to CC/imports and push the steam class further
+> under, so it is named as an NYC in-city-commitment / offer-curve residual, not
+> forced. The `C3a` mean LMP (−14.9/−17.0/−12.7%) and empty `C3c` >$300 tail remain
+> the **ledgered reserve-scarcity (ORDC) frontier** (min-gen floors add
+> inframarginal supply but cannot restore scarcity price-setting; non-closable with
+> grounded inputs per `nyiso 29/31`); the steam floor regresses them further as the
+> documented rule-#1 tradeoff (kept, not chased). See the run-34 attestation
+> (`calibration_attestation.json`).
 
 > **PRIOR KEEPER (2026-06-27): `nyiso 33 ct-tempfloor`**
 > (`2026-06-27-nyiso-33-ct-tempfloor`, bundle
