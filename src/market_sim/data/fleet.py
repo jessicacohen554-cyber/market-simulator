@@ -5582,6 +5582,39 @@ def cc_duct_burner_peak_mult(turbine_class: object) -> float:
 _COAL_SUPPLY_TO_CURVE = COAL_SUPPLY_TO_CLASS
 
 
+@lru_cache(maxsize=8)
+def ct_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``CT_PEAKER`` units for an ISO.
+
+    A simple-cycle combustion turbine whose measured CAMPD median capacity
+    factor (``thermal_tranches_<ISO>.csv`` ``median_cf``) is at or above
+    ``threshold`` runs intermediate / near-baseload duty, not as a true
+    peaker. EIA-860 confirms these are genuine GT / IC simple-cycle units (not
+    mislabeled combined cycle or cogen), so their prime-mover *classification*
+    is correct — what differs is their *duty cycle*. The single steep
+    ``CT_PEAKER`` offer curve (a committed-band start-cost hurdle that holds
+    true peakers idle) mis-prices these always-on units above the CC fleet, so
+    they never clear and CC over-runs. The cohort is routed to the flatter
+    ``CT_INTERMEDIATE`` offer curve instead.
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed
+    conditions (a unit that stops running intermediate falls out of the
+    cohort) — and assigns an offer *shape*, never pins measured output, so it
+    is admissible under CLAUDE.md #11/#12 on the same basis as
+    :data:`market_sim.data.outages.ST_GAS_PEAKER_PLANTS`. Returns an empty set
+    when the ISO has no tranche file (e.g. ERCOT's hand-set bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    ct = df[(df["plant_group"] == "CT_PEAKER") & (df["median_cf"] >= threshold)]
+    return frozenset(int(c) for c in ct["plant_code"].dropna())
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
@@ -5595,6 +5628,12 @@ def _offer_curve_for_group(
     ``COAL_LIGNITE`` / ``COAL_PRB`` and the EIA-923-derived ``COAL_BIT`` /
     ``COAL_WC`` (bituminous / waste coal; sub-bituminous routes to
     ``COAL_PRB``) — falling back to the generic ``COAL`` entry.
+
+    When ``config.ct_intermediate_split`` is set, a ``CT_PEAKER`` plant in the
+    measured intermediate-duty cohort (:func:`ct_intermediate_plants`) resolves
+    to the flatter ``CT_INTERMEDIATE`` curve when one is configured, so its
+    always-on energy clears like the intermediate unit it is rather than
+    carrying the true-peaker start-cost hurdle.
     """
     curves = getattr(config, "offer_curve_by_group", None) or {}
     if group == "COAL":
@@ -5604,6 +5643,13 @@ def _offer_curve_for_group(
         ) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
         return None
+    if group == "CT_PEAKER" and getattr(config, "ct_intermediate_split", False):
+        iso = str(getattr(config, "iso", "ERCOT"))
+        thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
+        if int(plant_code) in ct_intermediate_plants(iso, thr):
+            inter = curves.get("CT_INTERMEDIATE")
+            if inter:
+                return inter
     return curves.get(group) or None
 
 
