@@ -72,9 +72,10 @@ from market_sim.config.constants import (
     ERCOT_AS_FE_FRAC_SOLAR,
     ERCOT_AS_FE_FRAC_WIND,
     ERCOT_AS_NSPIN_BASE_MW,
+    ERCOT_AS_NSPIN_LOAD_COEF,
     ERCOT_AS_NSPIN_MAX_MW,
     ERCOT_AS_NSPIN_MIN_MW,
-    ERCOT_AS_NSPIN_SIGMA_COEF,
+    ERCOT_AS_NSPIN_RAMP_COEF,
     ERCOT_AS_PRODUCTS,
     ERCOT_AS_RAMP_WINDOW_HOURS,
     ERCOT_AS_REGUP_FLOOR_MW,
@@ -1050,8 +1051,9 @@ def ercot_as_forward_requirement_mw(
       frequency-response floor plus a low-inertia adder that rises with VRE.
     * **ECRS** = base + sigma_coef x sigma_fe + ramp_coef x ramp_up — the ~2 GW
       ramp-risk product (forecast-error plus the forward net-load up-ramp).
-    * **NSPIN** = base + sigma_coef x sigma_fe — the longer-horizon net-load
-      uncertainty / load-ratio reserve.
+    * **NSPIN** = base + load_coef x load + ramp_coef x ramp_up — the
+      longer-horizon net-load uncertainty reserve, sized as a load-ratio share of
+      system load plus the forward net-load up-ramp it covers.
 
     All clipped to published min/max bands. **Forward response:** more VRE → larger
     ``sigma_fe`` / ``ramp_up`` / ``vre_share`` → larger requirement, automatically.
@@ -1082,7 +1084,11 @@ def ercot_as_forward_requirement_mw(
         )
         req = np.clip(req, ERCOT_AS_ECRS_MIN_MW, ERCOT_AS_ECRS_MAX_MW)
     elif code == "NSPIN":
-        req = ERCOT_AS_NSPIN_BASE_MW + ERCOT_AS_NSPIN_SIGMA_COEF * sigma
+        req = (
+            ERCOT_AS_NSPIN_BASE_MW
+            + ERCOT_AS_NSPIN_LOAD_COEF * drivers["load"]
+            + ERCOT_AS_NSPIN_RAMP_COEF * drivers["ramp_up"]
+        )
         req = np.clip(req, ERCOT_AS_NSPIN_MIN_MW, ERCOT_AS_NSPIN_MAX_MW)
     else:
         # Unknown product (e.g. REGDN, which the upward co-opt ignores): defer.
