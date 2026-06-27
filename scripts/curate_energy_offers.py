@@ -33,6 +33,15 @@ N (1–20)                       → ``step_idx``
 ``max_daily_starts``           → ``max_daily_starts``
 ``min_runtime``                → ``min_runtime_h``
 
+Memory model
+------------
+Each monthly wide parquet (~900 k rows × 57 cols) is loaded and pivoted to
+long format one at a time; the result is written to a temp parquet file and
+the wide/long DataFrames are freed before the next month is loaded.  After
+all months are processed, the temp files are streamed into the final output
+via :class:`pyarrow.parquet.ParquetWriter` so only one month's arrow table
+lives in memory at any moment.  Peak RSS is ≈ 1–2 GB rather than 8+ GB.
+
 Run
 ---
     python scripts/curate_energy_offers.py              # all years with raw data
@@ -42,17 +51,22 @@ Run
 from __future__ import annotations
 
 import argparse
+import datetime as dt
+import json
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config import paths  # noqa: E402
-from scripts.lib.clean_io import write_clean  # noqa: E402
+from scripts.lib.clean_io import load_schema, validate_df  # noqa: E402
 
 RAW_DIR = paths.PJM_ENERGY_OFFERS_DIR
 ISO = "PJM"
@@ -154,19 +168,16 @@ def _pivot_to_long(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Year-level curate
+# Per-month transform (wide → schema-ordered long)
 # ---------------------------------------------------------------------------
 
 
-def curate_year(year: int, raw_files: list[Path]) -> Path:
-    """Load all monthly raw files for ``year``, transform, and write clean Parquet."""
-    parts: list[pd.DataFrame] = []
-    for f in sorted(raw_files):
-        parts.append(pd.read_parquet(f))
+def _transform_month(wide: pd.DataFrame) -> pd.DataFrame:
+    """Apply all renames, type coercions, and pivot to one month's wide frame.
 
-    wide = pd.concat(parts, ignore_index=True)
-    print(f"  {year}: loaded {len(wide):,} wide rows from {len(raw_files)} file(s)")
-
+    Returns a long DataFrame with columns in SCHEMA_COLS order, ready to write
+    as a temp parquet.  Caller is responsible for deleting the input frame.
+    """
     # --- Timestamps ---
     wide["interval_start_utc"] = _parse_utc(wide["bid_datetime_beginning_utc"])
     wide["interval_start_local"] = _parse_local(wide["bid_datetime_beginning_ept"])
@@ -186,7 +197,7 @@ def curate_year(year: int, raw_files: list[Path]) -> Path:
     }
     wide = wide.rename(columns={k: v for k, v in rename.items() if k in wide.columns})
 
-    # --- Numeric safety ---
+    # --- Numeric safety: coerce to float64 (schema dtype for all these columns) ---
     for col in (
         "ecomin_mw",
         "ecomax_mw",
@@ -198,7 +209,7 @@ def curate_year(year: int, raw_files: list[Path]) -> Path:
         "min_runtime_h",
     ):
         if col in wide.columns:
-            wide[col] = pd.to_numeric(wide[col], errors="coerce")
+            wide[col] = pd.to_numeric(wide[col], errors="coerce").astype("float64")
 
     # --- bool coercion (in case raw was object from older parquets) ---
     if (
@@ -211,24 +222,130 @@ def curate_year(year: int, raw_files: list[Path]) -> Path:
 
     # --- Wide → long pivot ---
     long = _pivot_to_long(wide)
-    print(f"  {year}: {len(long):,} long rows after pivot (dropped null steps)")
 
     # --- Select and reorder to schema ---
     for col in SCHEMA_COLS:
         if col not in long.columns:
             long[col] = None
-    long = long[list(SCHEMA_COLS)]
+    return long[list(SCHEMA_COLS)]
 
-    out = write_clean(
-        long,
-        "energy-offers",
-        iso=ISO,
-        year=year,
-        source=(
-            f"PJM DataMiner2 energy_market_offers (api.pjm.com/api/v1); "
-            f"{len(raw_files)} monthly raw files"
-        ),
-    )
+
+# ---------------------------------------------------------------------------
+# Year-level curate (streaming, one month at a time)
+# ---------------------------------------------------------------------------
+
+
+def curate_year(year: int, raw_files: list[Path]) -> Path:
+    """Stream-curate one year: transform months individually, concat via ParquetWriter.
+
+    Processes one monthly raw file at a time to keep peak RSS to ~1–2 GB
+    (one month's wide frame + one month's long frame + one arrow table batch)
+    instead of loading the entire year's wide data at once (~8+ GB).
+    """
+    schema_obj = load_schema("energy-offers")
+    out = paths.clean_path("energy-offers", iso=ISO, year=year)
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    tmp_dir = Path(tempfile.mkdtemp(prefix=f"energy_offers_{year}_"))
+    tmp_files: list[Path] = []
+    total_wide = 0
+
+    try:
+        # --- Phase 1: transform each month to long, write temp parquet ---
+        for f in sorted(raw_files):
+            wide = pd.read_parquet(f)
+            n_wide = len(wide)
+            total_wide += n_wide
+
+            long = _transform_month(wide)
+            del wide  # release wide memory before writing long
+
+            n_long = len(long)
+            print(f"    {f.name}: {n_wide:,} wide → {n_long:,} long rows")
+
+            tmp_path = tmp_dir / f.name
+            long.to_parquet(str(tmp_path), index=False, compression="snappy")
+            tmp_files.append(tmp_path)
+            del long  # release long memory before next month
+
+        print(
+            f"  {year}: loaded {total_wide:,} wide rows from {len(raw_files)} file(s)"
+        )
+
+        if not tmp_files:
+            raise RuntimeError(f"no data produced for {year}")
+
+        # --- Validate schema on first month's output (catches dtype/column issues) ---
+        sample = pd.read_parquet(str(tmp_files[0]))
+        validate_df(sample, "energy-offers", schema=schema_obj)
+        del sample
+
+        # --- Build provenance metadata (mirrors clean_io._build_metadata) ---
+        try:
+            git_commit = (
+                subprocess.run(
+                    ["git", "rev-parse", "HEAD"],
+                    cwd=str(REPO),
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                ).stdout.strip()
+                or None
+            )
+        except Exception:
+            git_commit = None
+
+        units = {c.name: c.unit for c in schema_obj.columns}
+        kv: dict[bytes, bytes] = {
+            b"market_sim.datatype": b"energy-offers",
+            b"market_sim.schema_version": str(schema_obj.schema_version).encode(),
+            b"market_sim.units": json.dumps(units, sort_keys=True).encode(),
+            b"market_sim.key_columns": json.dumps(
+                list(schema_obj.key_columns)
+            ).encode(),
+            b"market_sim.created_utc": dt.datetime.now(dt.timezone.utc)
+            .isoformat()
+            .encode(),
+            b"market_sim.iso": ISO.encode(),
+            b"market_sim.year": str(year).encode(),
+            b"market_sim.source": (
+                f"PJM DataMiner2 energy_market_offers (api.pjm.com/api/v1); "
+                f"{len(raw_files)} monthly raw files"
+            ).encode(),
+        }
+        if git_commit:
+            kv[b"market_sim.git_commit"] = git_commit.encode()
+
+        # --- Phase 2: stream temp parquets → final output ---
+        writer = None
+        total_long = 0
+        try:
+            for tmp_path in tmp_files:
+                table = pq.read_table(str(tmp_path))
+                total_long += len(table)
+                if writer is None:
+                    existing_meta = table.schema.metadata or {}
+                    schema_with_meta = table.schema.with_metadata(
+                        {**existing_meta, **kv}
+                    )
+                    writer = pq.ParquetWriter(str(out), schema_with_meta)
+                writer.write_table(table)
+        finally:
+            if writer is not None:
+                writer.close()
+
+    finally:
+        for tmp_path in tmp_files:
+            try:
+                tmp_path.unlink()
+            except OSError:
+                pass
+        try:
+            tmp_dir.rmdir()
+        except OSError:
+            pass
+
+    print(f"  {year}: {total_long:,} long rows after pivot (dropped null steps)")
     mb = out.stat().st_size / 1_048_576
     print(f"  {year}: wrote {out} ({mb:.1f} MB)")
     return out
