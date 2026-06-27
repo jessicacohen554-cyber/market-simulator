@@ -761,16 +761,21 @@ def _calibration_config(
         #   Transco Z6 leg is still unsourced), so this is a NEISO-only
         #   repricing.
         gas_hub_basis_daily=False,
-        #   Daily resolution for the AGT overlay is an OFF-BY-DEFAULT diagnostic
-        #   (opt in with --gas-hub-basis-daily). It redistributes each winter
-        #   month's measured mean basis across days by NEISO
-        #   demand^AGT_DAILY_BASIS_CONVEXITY to build the winter >$200 tail the
-        #   flat monthly plateau can't — but that convexity is a value fitted to
-        #   the backcast (not a measured/forecast-grade input), and the daily
-        #   AGT spot it proxies (upload U4) is paywalled/unavailable, so the
-        #   keepers rest on the measured *monthly* overlay only and treat the
-        #   winter tail + near-zero oil as honest monthly-granularity limits.
-        #   See market_sim.data.fuel.iso_hub_daily_gas_prices and
+        #   Daily resolution for the AGT overlay (opt in with
+        #   --gas-hub-basis-daily). It replaces the flat monthly hub price with a
+        #   MEASURED daily series — measured Henry Hub daily + measured Algonquin
+        #   Citygate daily spot prints (EIA Weekly Update), Transco Z6 NY daily
+        #   basis as the sparse-print shape fallback — MEAN-PRESERVING to the
+        #   measured monthly basis, so the annual gas burn and fuel mix are
+        #   unchanged and only the within-month winter shape is added. (The old
+        #   demand^AGT_DAILY_BASIS_CONVEXITY exponent, which WAS fitted to the oil
+        #   burn, was RETIRED 2026-06; the daily leg is now all measured gas-market
+        #   data — forward-reproducible and condition-responsive, CLAUDE.md #10.)
+        #   The cold-day spikes it builds trip the physical dual-fuel gas->oil
+        #   switch, so it is what restores the measured ~1.5 TWh winter oil burn
+        #   (and trims the gas the flat monthly overlay leaves over-counted); the
+        #   NEISO keepers run it (neiso-33 onward). See
+        #   market_sim.data.fuel.iso_hub_daily_gas_prices and
         #   docs/multi-iso/neiso-data-audit.md.
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
@@ -1201,9 +1206,12 @@ def _calibration_config(
         # Re-attribute switched dual-fuel MWh to oil (doc-08 §2d) — OFF by
         # default (opt in with --gas-hub-basis-daily, which it rides with):
         # it only bites once the daily overlay pushes winter gas past oil
-        # parity, and the daily overlay is itself an off-by-default diagnostic.
-        # With the keepers on the monthly overlay, modeled oil stays near zero
-        # (the documented monthly-granularity limit), not relabeled.
+        # parity. The NEISO keepers run the measured daily overlay (neiso-33
+        # onward), so the switch trips on the real cold-day AGT spikes and the
+        # ~1.5 TWh measured winter oil burn is relabeled out of gas. Without the
+        # daily overlay (flat monthly hub) modeled oil collapses to ~zero and the
+        # gas family is over-counted by that ~1.5 TWh — the regression that broke
+        # neiso-36's C2 before the daily overlay was restored.
         dual_fuel_oil_reattribution=False,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
@@ -1550,6 +1558,7 @@ def run_year(
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
+    neiso_temp_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1700,6 +1709,10 @@ def run_year(
     if nyiso_st_reliability_floor is not None:
         config = config.with_overrides(
             nyiso_st_reliability_floor=nyiso_st_reliability_floor
+        )
+    if neiso_temp_reliability_floor is not None:
+        config = config.with_overrides(
+            neiso_temp_reliability_floor=neiso_temp_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
