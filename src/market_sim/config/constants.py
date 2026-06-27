@@ -3400,11 +3400,16 @@ ERCOT_AS_ECRS_RAMP_COEF: float = 0.017
 ERCOT_AS_ECRS_MIN_MW: float = 500.0
 ERCOT_AS_ECRS_MAX_MW: float = 3300.0
 
-# NonSpin = NSPIN_BASE + NSPIN_SIGMA_COEF * sigma_fe, clipped. The longer-horizon
-# net-load-uncertainty / load-ratio reserve (replaceable from offline quick-start
-# capacity), scaled by the same net-load forecast-error std.
-ERCOT_AS_NSPIN_BASE_MW: float = 2300.0
-ERCOT_AS_NSPIN_SIGMA_COEF: float = 0.20
+# NonSpin = NSPIN_BASE + NSPIN_LOAD_COEF * load + NSPIN_RAMP_COEF * ramp_up,
+# clipped. The longer-horizon net-load-uncertainty reserve (replaceable from
+# offline quick-start capacity), sized as a LOAD-RATIO share of system load plus
+# the forward net-load up-ramp it must cover — ERCOT's published Non-Spin driver
+# (a load-ratio / net-load share). The load term carries the diurnal/seasonal
+# shape (Non-Spin peaks with load, into the evening), the ramp term the
+# evening-ramp risk.
+ERCOT_AS_NSPIN_BASE_MW: float = 2475.0
+ERCOT_AS_NSPIN_LOAD_COEF: float = 0.00418  # frac of load MW (load-ratio share)
+ERCOT_AS_NSPIN_RAMP_COEF: float = 0.025  # per MW forward net-load up-ramp
 ERCOT_AS_NSPIN_MIN_MW: float = 1400.0
 ERCOT_AS_NSPIN_MAX_MW: float = 5700.0
 

@@ -388,10 +388,31 @@ class TestForwardRequirement(unittest.TestCase):
         )
         low = self._drivers(50000, 8000, 2000)
         high = self._drivers(50000, 20000, 14000)
-        for code in ("REGUP", "RRS", "ECRS", "NSPIN"):
+        # RegUp (forecast-error), RRS (inertia) and ECRS (forecast-error + ramp)
+        # rise with VRE at fixed load. Non-Spin is a load-ratio product (driven by
+        # load + ramp, not VRE level), so it is checked separately below.
+        for code in ("REGUP", "RRS", "ECRS"):
             lo = ercot_as_forward_requirement_mw(cfg, code, 48, low).mean()
             hi = ercot_as_forward_requirement_mw(cfg, code, 48, high).mean()
             self.assertGreater(hi, lo, f"{code} should rise with VRE")
+
+    def test_nspin_rises_with_load(self):
+        # Non-Spin is a load-ratio product: it rises with system load (the
+        # published Non-Spin driver), not VRE level.
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        lo = ercot_as_forward_requirement_mw(
+            cfg, "NSPIN", 48, self._drivers(45000, 10000, 5000)
+        ).mean()
+        hi = ercot_as_forward_requirement_mw(
+            cfg, "NSPIN", 48, self._drivers(70000, 10000, 5000)
+        ).mean()
+        self.assertGreater(hi, lo)
 
     def test_ramp_drives_ecrs(self):
         # ECRS carries a net-load up-ramp term: a swinging net-load profile must
