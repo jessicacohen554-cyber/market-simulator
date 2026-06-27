@@ -87,6 +87,35 @@ years = [2023, 2024, 2025]
 if os.environ.get("KEEPER_YEARS"):
     years = [int(y) for y in os.environ["KEEPER_YEARS"].split(",")]
 
+# RUN162_OVERLAY=1 produces the KEEPER variant: the corrected merit order PLUS
+# run157's measured pre-RTC+B scarcity stack (DAM-AS overlay + energy/reserve
+# co-opt + load-resource / storage reserves + RTORDPA 2023 bridge), which
+# restores the broad-month PRICE LEVEL on top of the now-correct merit order.
+# Default off = pure dispatch (the merit order isolated, for the C1 gate).
+OVERLAY = os.environ.get("RUN162_OVERLAY", "0") == "1"
+overlay_kwargs = (
+    dict(
+        ercot_rtordpa_overlay=True,
+        ercot_dam_as_overlay=True,
+        ercot_dam_as_overlay_from_year=cf["ercot_dam_as_overlay_from_year"],
+        ercot_dam_as_scarcity_threshold=cf["ercot_dam_as_scarcity_threshold"],
+        energy_reserve_coopt=True,
+        ercot_load_resource_reserve=True,
+        ercot_load_resource_reserve_from_year=2023,
+        ercot_storage_as_reserve=True,
+        ercot_storage_as_reserve_from_year=2024,
+        storage_as_commitment=True,
+        battery_dispatch_adder=10.0,
+    )
+    if OVERLAY
+    else dict(
+        # ALL price adders OFF: pure dispatch, merit order under test.
+        ercot_rtordpa_overlay=False,
+        ercot_dam_as_overlay=False,
+        energy_reserve_coopt=False,
+    )
+)
+
 out = os.environ.get("RUN162_OUT", "162")
 run_dir = REPO / "results/calibration" / out
 run_dir.mkdir(parents=True, exist_ok=True)
@@ -115,10 +144,8 @@ solve_and_persist(
     bit_overrides=cf["coal_bit_sigmoid_overrides"],
     offer_curve_overrides=cf["offer_curve_overrides"],
     offer_curve_deltas=deltas,  # CC_REGULAR bands nudged +CC_DELTA dearer
-    # --- ALL price adders OFF: pure dispatch, merit order under test ---
-    ercot_rtordpa_overlay=False,
-    ercot_dam_as_overlay=False,
-    energy_reserve_coopt=False,
+    # --- scarcity overlays: off (pure dispatch) or run157 keeper stack ---
+    **overlay_kwargs,
     # --- the structural reliability floors (driver (b)) ---
     gas_st_netload_drag=True,  # net-load-indexed gas-steam min-gen floor
     ct_netload_drag=CT_DRAG,  # evening-ramp net-load CT_PEAKER min-gen floor
@@ -126,5 +153,6 @@ solve_and_persist(
 print(
     f"162 done: {run_dir} (CC_DELTA=+{CC_DELTA}, PRB_FLOOR={PRB_FLOOR}, "
     f"PRB_FOLLOWER_FLOOR={PRB_FOLLOWER_FLOOR}, gas_st_netload_drag=ON, "
-    f"ct_netload_drag={'ON' if CT_DRAG else 'OFF'}, overlays OFF)"
+    f"ct_netload_drag={'ON' if CT_DRAG else 'OFF'}, "
+    f"overlays={'KEEPER' if OVERLAY else 'OFF'})"
 )
