@@ -893,6 +893,17 @@ def _calibration_config(
         #   frac reaches $0, not yet negative; bites with export shaping / a
         #   higher floor). See policy.eac.apply_negative_renewable_offer_floor
         #   and results/calibration/NEGRENEW-caiso-findings.md.
+        caiso_solar_deliverability=(iso.upper() == "CAISO"),  # CAISO Lever-D
+        #   default-ON: re-curtail the uncurtailed HSL solar potential for the
+        #   local / sub-area congestion the reduced 3-zone topology can't see
+        #   (~70% of real CAISO curtailment). Caps the per-zone solar CF upper
+        #   bound at clip(1 − k × solar_frac, floor, 1) — the solar analogue of
+        #   the accepted WECC corridor ATC derate, driven by the FORWARD solar-
+        #   penetration signal so the curtailed VOLUME emerges per-year from that
+        #   year's own build, not a pin to actuals (CLAUDE.md #1/#11). See
+        #   transmission.caiso_solar_deliverability_derate and docs/caiso-lever-
+        #   audit-2026-06.md (Lever D). Other ISOs stay off (byte-identical);
+        #   --no-caiso-solar-deliverability forces it off (the over-run baseline).
         storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT", "NEISO")),  # CAISO,
         #   ERCOT and NEISO commissioned batteries mid-backcast (CAISO 3.0 GW
         #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
@@ -1411,6 +1422,97 @@ def _apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
     return ttc_t
 
 
+def _apply_caiso_solar_deliverability(
+    solar_cf: np.ndarray, iso: str, year: int, config
+) -> np.ndarray:
+    """Re-curtail the CAISO solar potential for the local congestion the reduced
+    topology can't see (Lever D).
+
+    Two CAISO-only paths, both operating on the per-zone solar CF upper bound the
+    LP dispatches against:
+
+    * **Structural** (``config.caiso_solar_deliverability``, the keeper path): a
+      local-deliverability derate ``clip(1 − k × solar_frac(t), floor, 1)`` from
+      :func:`market_sim.model.transmission.caiso_solar_deliverability_derate`,
+      driven by the FORWARD solar-penetration signal. The curtailed VOLUME emerges
+      per-year from that year's own penetration/build — never a pin to actuals.
+
+    * **Interim stopgap** (``config.caiso_solar_cap_at_delivered``, a default-off
+      DIAGNOSTIC): caps each hour's solar at the measured EIA-930 delivered share
+      of the HSL potential. This PINS solar to the measured outcome (no forward
+      analogue) and must never feed a keeper — it exists only as an A/B reference
+      for the structural derate (CLAUDE.md #11).
+
+    Returns ``solar_cf`` unchanged (byte-identical) for non-CAISO ISOs, when
+    neither flag is set, or when the forward signal / HSL data is unavailable.
+    """
+    if iso.upper() != "CAISO":
+        return solar_cf
+    hours = solar_cf.shape[1]
+
+    if getattr(config, "caiso_solar_cap_at_delivered", False):
+        # DIAGNOSTIC: delivered/potential ratio from the HSL parquet (delivered
+        # gen ÷ uncurtailed potential), applied as a per-hour ceiling on the CF.
+        from market_sim.data.renewables import load_hsl_hourly
+
+        hsl = load_hsl_hourly("CAISO", year)
+        if hsl is not None:
+            pot = hsl["solar_hsl_mw"].to_numpy(dtype=float)[:hours]
+            gen = hsl["solar_gen_mw"].to_numpy(dtype=float)[:hours]
+            with np.errstate(divide="ignore", invalid="ignore"):
+                ratio = np.where(pot > 0.0, np.clip(gen / pot, 0.0, 1.0), 1.0)
+            logger.info(
+                "CAISO %d: solar cap-at-delivered DIAGNOSTIC (default-off pin, "
+                "not forecast skill) — solar potential haircut to measured "
+                "delivered, mean ratio %.3f midday",
+                year,
+                float(
+                    np.mean(
+                        ratio[
+                            (np.arange(hours) % 24 >= 9) & (np.arange(hours) % 24 <= 15)
+                        ]
+                    )
+                ),
+            )
+            return solar_cf * ratio[None, :]
+        logger.warning(
+            "CAISO %d: --caiso-solar-cap-at-delivered requested but no HSL "
+            "parquet — solar left uncapped (no-op)",
+            year,
+        )
+        return solar_cf
+
+    if getattr(config, "caiso_solar_deliverability", False):
+        from market_sim.model.transmission import caiso_solar_deliverability_derate
+
+        derate = caiso_solar_deliverability_derate(
+            year,
+            hours,
+            float(getattr(config, "caiso_solar_deliverability_k", 0.15)),
+            float(getattr(config, "caiso_solar_deliverability_floor", 0.50)),
+        )
+        if derate is not None:
+            hod = np.arange(hours) % 24
+            mid = (hod >= 9) & (hod <= 15)
+            logger.info(
+                "CAISO %d: local solar deliverability derate (Lever D) — "
+                "solar potential capped at clip(1 − %.3f × solar_frac, %.2f, 1); "
+                "midday mean derate %.3f (≈ %.1f%% midday curtailment headroom)",
+                year,
+                float(getattr(config, "caiso_solar_deliverability_k", 0.15)),
+                float(getattr(config, "caiso_solar_deliverability_floor", 0.50)),
+                float(np.mean(derate[mid])),
+                100.0 * (1.0 - float(np.mean(derate[mid]))),
+            )
+            return solar_cf * derate[None, :]
+        logger.warning(
+            "CAISO %d: caiso_solar_deliverability on but no forward solar "
+            "penetration signal — solar left uncapped (no-op)",
+            year,
+        )
+    return solar_cf
+
+
 def _hydro_fleet(
     iso: str,
     year: int,
@@ -1595,6 +1697,9 @@ def run_year(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
+    caiso_solar_deliverability: bool | None = None,
+    caiso_solar_deliverability_k: float | None = None,
+    caiso_solar_cap_at_delivered: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
@@ -1781,6 +1886,18 @@ def run_year(
     if caiso_ct_reliability_floor is not None:
         config = config.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
+        )
+    if caiso_solar_deliverability is not None:
+        config = config.with_overrides(
+            caiso_solar_deliverability=caiso_solar_deliverability
+        )
+    if caiso_solar_deliverability_k is not None:
+        config = config.with_overrides(
+            caiso_solar_deliverability_k=caiso_solar_deliverability_k
+        )
+    if caiso_solar_cap_at_delivered is not None:
+        config = config.with_overrides(
+            caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
         )
     if nyiso_ct_reliability_floor is not None:
         config = config.with_overrides(
@@ -2096,6 +2213,12 @@ def run_year(
         demand = demand[:, : config.hours]
         wind_cf = wind_cf[:, : config.hours]
         solar_cf = solar_cf[:, : config.hours]
+
+    # CAISO Lever-D: re-curtail the uncurtailed HSL solar potential the dispatch
+    # is handed. The reduced 3-zone topology cannot see the sub-area / local
+    # congestion that drives ~70% of CAISO solar curtailment, so the LP runs the
+    # full potential and curtails ~0 (docs/caiso-lever-audit-2026-06.md, Lever D).
+    solar_cf = _apply_caiso_solar_deliverability(solar_cf, iso, year, config)
 
     # Must-run "other" resources (biomass, process gas, ...) serve load
     # exogenously — they run for industrial/process reasons, not LP economics —
