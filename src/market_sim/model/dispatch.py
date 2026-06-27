@@ -979,6 +979,75 @@ def _build_reserve_rows(
     return block, row_lower, row_upper
 
 
+def storage_reserve_mw(
+    reserve_dispatch: np.ndarray,
+    storage_charge: np.ndarray,
+    storage_discharge: np.ndarray,
+    storage_power_cap: np.ndarray,
+    storage_zone_idx: np.ndarray,
+    n_reserve_classes: int,
+) -> np.ndarray:
+    """Attribute the co-opt's cleared zone reserve to storage, ``(n_zones, T)`` MW.
+
+    The endogenous storage energy-vs-AS split (``ercot_storage_as_endogenous``)
+    runs storage and thermal on **one shared per-zone reserve pool** in the
+    co-optimization headroom rows (``_build_reserve_rows`` ``use_storage`` block):
+    a unit's upward-reserve room ``cap − discharge + charge`` competes with its
+    own arbitrage on the same power cap, so the LP's energy-vs-AS *choice* is
+    exact, but the cleared reserve variable ``R[c,z]`` is a single pooled value
+    backed by thermal **and** storage room and is not split between them by the
+    LP. This attributes storage's share of that pool for VALIDATION ONLY — the
+    measured-vs-modeled battery AS-vs-energy split — never feeding back into the
+    LP.
+
+    The attribution is **storage-first by opportunity cost**: a battery's
+    marginal cost of holding upward reserve is near zero (just the forgone energy
+    arbitrage), and ERCOT batteries are the dominant, fastest fast-AS provider,
+    so in a reserve-priced hour the LP fills the requirement from storage room
+    before dearer thermal headroom. Storage AS in zone ``z`` hour ``t`` is then
+    ``min(storage upward room, total cleared zone reserve)`` — exact when storage
+    is the marginal fast-AS provider, an upper bound otherwise. Fully vectorized
+    (no hour loop): the per-zone reserve is the sum across reserve classes (each
+    AS product is a class in the multi-product co-opt), and storage room is
+    scatter-summed to zones.
+
+    Args:
+        reserve_dispatch: ``(n_reserve_classes * n_zones, T)`` cleared reserve,
+            class-major (``DispatchResult.reserve_dispatch``).
+        storage_charge: ``(n_storage, T)`` cleared charge MW.
+        storage_discharge: ``(n_storage, T)`` cleared discharge MW.
+        storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` power cap MW.
+        storage_zone_idx: ``(n_storage,)`` zone index of each storage unit.
+        n_reserve_classes: Number of reserve classes (AS products) folded into
+            the per-zone reserve pool.
+
+    Returns:
+        ``(n_zones, T)`` MW of cleared reserve attributed to storage. Sum over
+        zones (and divide hours) for the system AS-vs-energy split.
+    """
+    rd = np.asarray(reserve_dispatch, dtype=float)
+    n_cz, T = rd.shape
+    n_zones = n_cz // int(n_reserve_classes)
+    # Per-zone total cleared reserve = sum across the reserve classes (products).
+    zone_reserve = rd.reshape(int(n_reserve_classes), n_zones, T).sum(axis=0)
+    # Storage upward-reserve room: cap − discharge + charge (the max additional
+    # discharge swing a unit could offer up as reserve), floored at 0.
+    cap = np.asarray(storage_power_cap, dtype=float)
+    if cap.ndim == 1:
+        cap = cap[:, None]
+    room = np.clip(
+        cap
+        - np.asarray(storage_discharge, dtype=float)
+        + np.asarray(storage_charge, dtype=float),
+        0.0,
+        None,
+    )  # (n_storage, T)
+    s_zone = np.asarray(storage_zone_idx, dtype=int)
+    zone_room = np.zeros((n_zones, T), dtype=float)
+    np.add.at(zone_room, s_zone, room)  # scatter-sum storage room into its zone
+    return np.minimum(zone_room, zone_reserve)
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
