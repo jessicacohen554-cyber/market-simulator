@@ -60,6 +60,14 @@ PRB_FLOOR = float(os.environ.get("RUN162_PRB_FLOOR", "0.62"))
 PRB_FOLLOWER_FLOOR = float(os.environ.get("RUN162_PRB_FOLLOWER_FLOOR", "0.78"))
 prb["coal_prb_passthrough_floor"] = PRB_FLOOR
 prb["coal_prb_follower_floor"] = PRB_FOLLOWER_FLOOR
+# Optional: sharpen the gas-keyed sigmoid knee (default 2.85). Lowering gas_mid
+# concentrates the cheap-gas PRB discount nearer 2024's $2.19 gas, so the floor
+# cut bites 2024 harder than 2023 ($2.54, past the lower knee) and spares 2025
+# ($3.52, near the ceiling) — the multi-year-safe way to pull only 2024 PRB.
+PRB_GAS_MID = os.environ.get("RUN162_PRB_GAS_MID")
+if PRB_GAS_MID:
+    prb["coal_prb_passthrough_gas_mid"] = float(PRB_GAS_MID)
+    prb["coal_prb_follower_gas_mid"] = float(PRB_GAS_MID)
 
 # Lever 1 — CC_REGULAR dearer: ADD +0.12 to the run157 committed/econ_low/
 # econ_high deltas (deltas are added to the base curve; see
