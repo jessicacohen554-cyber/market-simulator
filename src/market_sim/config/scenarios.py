@@ -1414,6 +1414,39 @@ class ScenarioConfig:
     ct_intermediate_split: bool = False
     ct_intermediate_cf_threshold: float = 50.0
 
+    # ST_GAS analogue of ct_intermediate_split. MISO's legacy gas-steam fleet
+    # (Harding Street, Ames, Nine Mile Point, Lewis Creek, Sabine, ...) runs
+    # intermediate/near-baseload (measured CAMPD median CF >=
+    # ``st_gas_intermediate_cf_threshold``), not as peakers, but inherits the
+    # ERCOT-fitted steep ST_GAS offer curve (steep econ_high + 15% peaking band)
+    # that prices most of each unit above merit, so the model under-runs them
+    # (the Moselle / Lewis Creek under-run). When set, that cohort
+    # (fleet.st_gas_intermediate_plants) is routed to the flatter
+    # ``ST_GAS_INTERMEDIATE`` offer curve so its sustained energy clears. The
+    # median-CF cohort assigns an offer *shape* (not a pin to measured output),
+    # admissible on the same basis as ct_intermediate_split / ST_GAS_PEAKER_PLANTS.
+    # Default off (prior keeper unchanged) until re-solved.
+    st_gas_intermediate_split: bool = False
+    st_gas_intermediate_cf_threshold: float = 50.0
+
+    # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
+    # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the
+    # P1 monthly bid markup when this is set, so a stop-start costs more than
+    # idling and the intermediate steam fleet drags rather than cycling like a
+    # peaker. Default off → ERCOT and every prior keeper stay byte-identical.
+    gas_st_startup_cost: bool = False
+
+    # ISO-gated gas-steam forced-outage base override. The global ST_GAS WEFOR
+    # base (constants.THERMAL_AVAILABILITY["ST_GAS"] = 0.21) is fitted to ERCOT's
+    # once-through 1950s-60s steamers and is >2x every other thermal class — an
+    # implicit availability crush that holds MISO's intermediate steam off
+    # (compounding the Moselle / Lewis Creek under-run on top of the EIA-860
+    # net-summer rating already applied). When set, the ST_GAS/ST_CHP WEFOR base
+    # is replaced with this realistic NERC-GADS gas-steam EFOR (the age
+    # escalation and derate are kept). None leaves the global value (ERCOT/other
+    # ISOs byte-identical).
+    gas_st_wefor_base_override: float | None = None
+
     # SRMC-priced synchronization tranche (rebuild step 3a). Completes the
     # three-layer coal structure of Thread D. With this on (it requires
     # ``coal_mustrun_online_pmin`` so the synchronization band is sized to the
@@ -2599,6 +2632,10 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_limit": 1,
     "ct_intermediate_split": 1,
     "ct_intermediate_cf_threshold": 3,
+    "st_gas_intermediate_split": 1,
+    "st_gas_intermediate_cf_threshold": 3,
+    "gas_st_startup_cost": 3,
+    "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
