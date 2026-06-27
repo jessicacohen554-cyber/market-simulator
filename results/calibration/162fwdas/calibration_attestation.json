@@ -1,0 +1,41 @@
+{
+  "schema": "calibration-attestation/v1",
+  "determination": "REJECTED-PROBE",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "run162fwdas REJECTED PROBE — full endogenous forward-AS co-opt (163-165 mechanisms) on 162f merit-order levers, 2026-06-27",
+    "note": "run162fwdas = the run162f merit-order recipe (CC_DELTA=+0.10, PRB_FLOOR=0.53, PRB_FOLLOWER_FLOOR=0.59, PRB_GAS_MID=2.50, CT_DRAG=ON, ST_GAS_DRAG=ON) WITH THE MEASURED DAM-AS OVERLAY REMOVED and replaced by the FULL ENDOGENOUS FORWARD-AS CO-OPT STACK from runs 163-165: multi-product AS co-opt (4 products: RegUp/RRS/ECRS/NonSpin), forward AS requirement (formula-based, ASPLANNP433-fitted), storage-AS-endogenous (G5/run164 — battery chooses energy vs AS in LP), RTOLCAP reserve-supply cap, and load-resource RRS-UFR credit (G4/run165, enrollment forward from 2023). RTORDPA bridge kept (2023 scarcity). Tests the specific hypothesis: does the full endogenous forward-AS stack commit enough extra thermal in 2025 (via tighter reserves) to lift the gas family from 194.6 TWh into the C2 pass band (195.2-205.2 TWh), without re-tuning any offer lever? RESULT: REJECTED. (1) 2025 gas family = 194.56 TWh — essentially identical to run162f (194.6 TWh), C2 still FAILS at -6.3%. The forward AS requirement in 2025 is 7.61 GW up-AS, flat vs 7.27/7.41 GW in 2023/24 (documented in ercot-as-forward-requirement-2026-06.md). The endogenous stack pushes reserves OFF thermal onto batteries/load-resources, not more onto thermal. The prior was correct: this mechanism does NOT commit more gas. (2) 2024 May LMP collapses to $18.67 model vs $40.61 actual (run162f had $41.9; this run is -54% below actual). The endogenous multi-product co-opt WITHOUT the measured DAM-AS overlay fails to reproduce the acute-day May price elevation. The root cause is the documented 'phantom headroom' issue (ercot-multiproduct-as-coopt-2026-06.md): idle slow-start thermal units still count in the LP's headroom RHS, so the co-opt never truly runs short of reserves even during May's tight hours — the AS price duals stay near zero, no scarcity rents form, and the energy dual is not lifted. Fixing phantom headroom requires AS-aware commitment screening (beyond current LP scope). (3) 2023 May LMP collapses to $21.93 vs actual $30.88 for the same reason. NOTE: 2025 RTOLCAP data was absent — cap defaulted to ~74 million MW (unconstrained) for 2025; the reserve-supply constraint had no effect that year. This is a data gap but does not change the conclusion. VERDICT: run162f remains the merit-order keeper. This run exhausts the forward-AS track for the 2025 gas-family residual."
+  },
+  "exceptions": [
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "reason": "REJECTED-PROBE rejection criterion: C3a price-mean 2023 -38.9% (-$9 vs actual). Phantom headroom: endogenous multi-product co-opt without DAM-AS overlay cannot form scarcity rents; idle slow-start thermal counts in headroom RHS, AS duals near zero, energy LP is unlifted. Documented failure of the endogenous-only architecture (ercot-multiproduct-as-coopt-2026-06.md). NOT an accepted exception for a keeper — this is the rejection reason."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "reason": "REJECTED-PROBE rejection criterion: C3a price-mean 2024 -25.3% (model $18.67 vs actual $40.61; run162f with DAM-AS overlay had $41.9). Same phantom-headroom root cause. The endogenous stack cannot reproduce the broad May acute-day price elevation that the measured DAM-AS overlay provides."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2023,
+      "reason": "REJECTED-PROBE rejection criterion: C3b price-shape 2023 NRMSE 0.866. Consequence of the phantom-headroom LMP collapse — when the monthly mean is wrong, the shape metric inherits the error."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2024,
+      "reason": "REJECTED-PROBE rejection criterion: C3b price-shape 2024 NRMSE 0.331 (vs run162f 0.225). Same phantom-headroom root cause."
+    }
+  ],
+  "open_model_miss": [
+    {
+      "criterion": "sysvol",
+      "year": 2025,
+      "reason": "C2 gas-family 2025 -6.3% (model 194.56 vs actual 200.21 TWh). The endogenous forward-AS co-opt does not move 2025 gas dispatch relative to run162f (194.6 TWh). Total up-AS held is flat across years (7.27/7.41/7.61 GW 2023/24/25); the stack shifts reserves onto batteries/load-resources, not thermal. This exhausts the forward-AS mechanism as a candidate for closing the C2 residual. The miss is carried forward as an open MODEL MISS in run162f (the keeper), to be closed only by a forward-derivable mechanism: (i) preliminary-2025 EIA-923/930 vintage resolution, (ii) a re-fit of the year-stable POOLED net-load floor, or (iii) a genuinely forward-stable missing mechanism. A year-specific offer lever remains inadmissible."
+    }
+  ]
+}
