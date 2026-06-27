@@ -925,6 +925,7 @@ def ercot_reserve_coopt_inputs(
     if (
         getattr(config, "ercot_storage_as_reserve", False)
         and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
         and int(config.weather_year)
         >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
     ):
