@@ -2666,6 +2666,28 @@ class NeighborInterface:
     firm_export_floor_by_year: dict[int, float] | None = field(
         default=None, compare=False
     )
+    # Optional {year: floor_mw} of the neighbor's FIRM (must-flow) scheduled
+    # IMPORT into this ISO over the seam — the mirror of firm_export_floor_by_year
+    # and of the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
+    # seam (PJM + IESO/Ontario) in ~99-100% of hours at a stable multi-GW base
+    # that flows regardless of the hourly spread (cheap Ontario nuclear/hydro
+    # surplus + firm PJM-east scheduled transactions), so a pure gas-x-HR
+    # economic seam — which prices the PJM border ABOVE MISO's cheap coal — wrongly
+    # net-EXPORTS over it (the 2024 -8.3 vs -23.1 / 2025 +18.0 vs -19.0 net-import
+    # miss + the 2025 +20 TWh energy-balance overshoot). Each entry forces the
+    # cheapest IMPORT tranches on at floor_mw so the firm base flows every hour and
+    # displaces the marginal domestic coal/CC (inframarginal must-flow → does not
+    # set price), the economic tranches clearing on top
+    # (transmission.inject_reference_price_firm_import). The floor is the p10 of
+    # the seam's OWN measured net import (the base imported in >=90% of hours), NOT
+    # the realized net interchange that is the validation target (rule #11) — a
+    # measured market-operations input whose forward analogue is the contracted
+    # firm schedule / surplus-baseload transfer (rule #12). A year/seam absent here
+    # (forecast years, the net-EXPORT SPP/South seams) carries no floor, so the run
+    # is byte-identical. Derive with scripts/derive_firm_import_floor.py.
+    firm_import_floor_by_year: dict[int, float] | None = field(
+        default=None, compare=False
+    )
 
 
 # Per-ISO neighbor registry for the reference-price interface. ISO-agnostic
@@ -2961,6 +2983,19 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # Measured neighbor price-formation input (rule #12), blind to MISO's
             # own interchange (rule #11 — the derivation never sees MISO flow).
             hr_by_year={2023: 11.2, 2024: 13.49, 2025: 12.18},
+            # Firm (must-flow) import floor — the p10 of the measured net import
+            # over the PJM seam (PJM + IESO/Ontario; derive_firm_import_floor.py).
+            # MISO net-imports here in 99-100% of hours at a stable multi-GW base
+            # (cheap Ontario nuclear/hydro surplus + firm PJM-east scheduled
+            # transfers) that flows regardless of the hourly spread, so the
+            # gas-x-HR economic seam — which prices the PJM border above MISO's
+            # cheap coal — wrongly net-EXPORTS over it. Forcing the cheapest import
+            # tranches on at floor_mw (inframarginal must-flow → does not set
+            # price) restores the firm base and displaces the over-running domestic
+            # coal/CC. p10 (the base imported in >=90% of hours), NOT the realized
+            # net interchange (rule #11). Only the PJM seam is a firm importer; SPP
+            # nets ~0 and South net-EXPORTS, so neither carries a floor.
+            firm_import_floor_by_year={2023: 2615.0, 2024: 1710.0, 2025: 1135.0},
         ),
         NeighborInterface(
             name="SPP",
