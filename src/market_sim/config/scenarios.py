@@ -700,6 +700,37 @@ class ScenarioConfig:
     # availability (1.0).
     neiso_coldsnap_floor_base: float = 0.0  # Year-round cold-limb baseline (0.0 =
     # cold-limb only; these units idle on mild days and run on price).
+    neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
+    # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
+    # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
+    # generators (the pipeline diverts to heating; units without firm transport or
+    # oil backup cannot get fuel), so a share of the gas fleet is UNAVAILABLE — not
+    # merely expensive. An energy-only LP keeps them available-but-dear (price caps
+    # at the dual-fuel oil parity ~$258), so it never goes reserve-short and never
+    # produces the winter scarcity tail. This derates non-dual-fuel gas-fired
+    # availability over the cold-snap window (NEISO_COLDSNAP_FLOOR_HOURS) by
+    # clip(slope*(t0 - TMIN), 0, cap) keyed to the NEISO load-weighted daily MIN
+    # temperature (transmission.inject_neiso_gas_coldsnap_derate). Dual-fuel units
+    # are EXCLUDED — they switch to oil (apply_dual_fuel_pricing), not vanish.
+    # Pairs with energy_reserve_coopt: the derate creates the reserve shortage the
+    # NEISO RCPF co-opt then prices into the LMP (the >$300 cold-hour tail), which
+    # also widens the peak/trough spread so storage cycles. Forward-reproducible
+    # (a forecast year's pinned TMIN) and condition-responsive (colder winter ->
+    # more derate); the magnitude traces to NERC cold-weather forced-outage data,
+    # NOT a fit to the price tail. Default off (byte-identical); NEISO-only.
+    neiso_gas_derate_t0_c: float = -7.0  # Cold-limb zero-crossing (~20 degF): above
+    # this daily MIN temperature gas forced-outage stays at its base equipment rate
+    # (no incremental fuel-constraint derate). NERC cold-weather analyses place the
+    # onset of sharply-rising generator forced outages near 20 degF.
+    neiso_gas_derate_slope_per_c: float = 0.018  # Incremental gas forced-out
+    # fraction gained per deg C of TMIN below t0. Sets ~0.20 (the cap) at ~ -18 degC
+    # (0 degF): slope = cap / (t0 - T_extreme) = 0.20 / (-7 - -18) ~= 0.018.
+    neiso_gas_derate_cap: float = 0.20  # Max incremental gas-fired forced-out
+    # fraction at extreme cold. Anchored to the NERC/FERC Winter Storm Elliott
+    # analysis: gas fuel-supply issues drove ~20% of unplanned generator
+    # outages/derates and gas was the largest forced-out category (Eastern
+    # Interconnection 13% of all capacity forced out at the peak) — a published
+    # physical magnitude, not tuned to land a target number of >$300 hours.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -2647,6 +2678,10 @@ TIER_TAGS: dict[str, int] = {
     "neiso_coldsnap_floor_slope_per_c": 3,
     "neiso_coldsnap_floor_cap": 2,
     "neiso_coldsnap_floor_base": 3,
+    "neiso_gas_coldsnap_derate": 1,
+    "neiso_gas_derate_t0_c": 1,
+    "neiso_gas_derate_slope_per_c": 3,
+    "neiso_gas_derate_cap": 2,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
