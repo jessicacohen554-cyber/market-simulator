@@ -1932,6 +1932,84 @@ _AGGREGATABLE_FUELS: frozenset[str] = frozenset(
 )
 
 
+def apply_netload_reliability_floor(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    net_load_mw: np.ndarray,
+    *,
+    plant_group: str,
+    slope: float,
+    intercept: float,
+    cap: float,
+    ramp_window: tuple[int, int] | None = None,
+    exclude_plant_codes: frozenset[int] = frozenset(),
+) -> bool:
+    """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
+
+    The shared engine behind the per-class ERCOT reliability-drag floors
+    (:func:`apply_gas_st_netload_drag_floor`, :func:`apply_ct_netload_drag_floor`)
+    — the endogenous, weather-driven replacement for a fixed seasonal must-run
+    fraction or an actuals pin. ERCOT commits these out-of-merit thermal units
+    at minimum load for local/system reliability (RUC/RMR); the held fraction is
+    not a calendar season but rises with system **net-load** (``load - wind -
+    solar``), the operational proxy for the reserve tightness RUC keys off. Each
+    non-``_peak`` tranche of ``plant_group`` (the economic ``_peak`` scarcity
+    band runs purely on price) whose plant is not in ``exclude_plant_codes`` gets
+    a per-hour minimum-generation floor of
+    ``clip(slope*netload_GW + intercept, 0, cap) x pmax``, capped at available
+    capacity and composed with any existing floor via ``maximum``; the LP
+    dispatches economically *above* it.
+
+    ``ramp_window=(start, end)`` gates the floor to the local-standard
+    hour-of-day window ``[start, end)`` (``hour t -> t % 24`` on the model's
+    8760 clock), zeroing it elsewhere — used for resources that serve
+    reliability only in a diurnal window (CT peakers in the afternoon-evening
+    net-load ramp), where ``None`` applies the floor every hour (the all-hours
+    gas-steam boiler). Because both the trigger (net-load) and the magnitude
+    (physical min-gen) are forward-derivable and condition-responsive, the
+    mechanism is admissible in both backcast and forecast (CLAUDE.md #10/#11).
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when the class has no reliability units.
+    """
+    rows = [
+        g
+        for g, gen in enumerate(generators)
+        if gen.plant_group == plant_group
+        and not gen.unit_id.endswith("_peak")
+        and gen.plant_code not in exclude_plant_codes
+    ]
+    if not rows:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    net_load_gw = np.asarray(net_load_mw, dtype=float)[:hours] / 1000.0
+    floor_frac = np.clip(slope * net_load_gw + intercept, 0.0, cap)  # (T,)
+    if ramp_window is not None:
+        # Gate to the diurnal reliability window; zero outside it. Hour of day on
+        # the model's local-standard 8760 clock is t % 24.
+        start, end = ramp_window
+        hod = np.arange(hours) % 24
+        floor_frac = np.where((hod >= start) & (hod < end), floor_frac, 0.0)
+
+    if fleet_arrays.min_gen is None:
+        # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
+        # fresh floor must preserve export-sink rows (pmin < 0) by seeding from
+        # pmin rather than zeroing them (mirrors generators_to_fleet_arrays).
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
+
+    pmax = fleet_arrays.pmax
+    avail = fleet_arrays.availability
+    for g in rows:
+        # Never floor above the hour's available capacity, so the LP stays
+        # feasible (the drag can never manufacture unmet demand).
+        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
+        fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
+    return True
+
+
 def apply_gas_st_netload_drag_floor(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -1980,41 +2058,19 @@ def apply_gas_st_netload_drag_floor(
     """
     if not getattr(config, "gas_st_netload_drag", False):
         return False
-
-    rows = [
-        g
-        for g, gen in enumerate(generators)
-        if gen.plant_group == "ST_GAS"
-        and not gen.unit_id.endswith("_peak")
-        and gen.plant_code not in ST_GAS_PEAKER_PLANTS
-    ]
-    if not rows:
-        return False
-
-    hours = int(fleet_arrays.availability.shape[1])
-    net_load_gw = np.asarray(net_load_mw, dtype=float)[:hours] / 1000.0
-    floor_frac = np.clip(
-        config.gas_st_drag_slope_per_gw * net_load_gw + config.gas_st_drag_intercept,
-        0.0,
-        config.gas_st_drag_cap,
-    )  # (T,)
-
-    if fleet_arrays.min_gen is None:
-        # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
-        # fresh floor must preserve export-sink rows (pmin < 0) by seeding from
-        # pmin rather than zeroing them (mirrors generators_to_fleet_arrays).
-        fleet_arrays.min_gen = np.broadcast_to(
-            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
-        ).copy()
-
-    pmax = fleet_arrays.pmax
-    avail = fleet_arrays.availability
-    for g in rows:
-        # Never floor above the hour's available capacity, so the LP stays
-        # feasible (the drag can never manufacture unmet demand).
-        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
-        fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
-    return True
+    # All-hours boiler floor (no ramp window); peaker-class ST_GAS plants run on
+    # price and are excluded.
+    return apply_netload_reliability_floor(
+        fleet_arrays,
+        generators,
+        net_load_mw,
+        plant_group="ST_GAS",
+        slope=config.gas_st_drag_slope_per_gw,
+        intercept=config.gas_st_drag_intercept,
+        cap=config.gas_st_drag_cap,
+        ramp_window=None,
+        exclude_plant_codes=ST_GAS_PEAKER_PLANTS,
+    )
 
 
 def apply_ct_netload_drag_floor(
@@ -2065,45 +2121,18 @@ def apply_ct_netload_drag_floor(
     """
     if not getattr(config, "ct_netload_drag", False):
         return False
-
-    rows = [
-        g
-        for g, gen in enumerate(generators)
-        if gen.plant_group == "CT_PEAKER" and not gen.unit_id.endswith("_peak")
-    ]
-    if not rows:
-        return False
-
-    hours = int(fleet_arrays.availability.shape[1])
-    net_load_gw = np.asarray(net_load_mw, dtype=float)[:hours] / 1000.0
-    floor_frac = np.clip(
-        config.ct_drag_slope_per_gw * net_load_gw + config.ct_drag_intercept,
-        0.0,
-        config.ct_drag_cap,
-    )  # (T,)
-    # Gate to the afternoon-evening ramp window: peakers serve reliability there,
-    # not overnight, so the floor is zero outside [ramp_start, ramp_end). Hour of
-    # day on the model's local-standard 8760 clock is t % 24.
-    hod = np.arange(hours) % 24
-    in_window = (hod >= config.ct_drag_ramp_start) & (hod < config.ct_drag_ramp_end)
-    floor_frac = np.where(in_window, floor_frac, 0.0)
-
-    if fleet_arrays.min_gen is None:
-        # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
-        # fresh floor must preserve export-sink rows (pmin < 0) by seeding from
-        # pmin rather than zeroing them (mirrors generators_to_fleet_arrays).
-        fleet_arrays.min_gen = np.broadcast_to(
-            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
-        ).copy()
-
-    pmax = fleet_arrays.pmax
-    avail = fleet_arrays.availability
-    for g in rows:
-        # Never floor above the hour's available capacity, so the LP stays
-        # feasible (the drag can never manufacture unmet demand).
-        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
-        fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
-    return True
+    # Evening-ramp-gated floor (peakers serve reliability in the afternoon-
+    # evening net-load ramp, not overnight).
+    return apply_netload_reliability_floor(
+        fleet_arrays,
+        generators,
+        net_load_mw,
+        plant_group="CT_PEAKER",
+        slope=config.ct_drag_slope_per_gw,
+        intercept=config.ct_drag_intercept,
+        cap=config.ct_drag_cap,
+        ramp_window=(config.ct_drag_ramp_start, config.ct_drag_ramp_end),
+    )
 
 
 def _capacity_weighted(units: list[Generator], attr: str) -> float:
