@@ -1557,6 +1557,7 @@ def run_year(
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
+    pjm_congestion: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     curve_smoothing: dict[str, float | int | None] | None = None,
@@ -1964,6 +1965,12 @@ def run_year(
     # apply gates on iso == "PJM" — so setting it here is safe regardless.
     if pjm_zonal_gas_basis:
         config = config.with_overrides(pjm_zonal_gas_basis=True)
+    # PJM transmission-congestion lever (break the copper-plate): cap the priced
+    # external star node to the measured per-border interchange envelope + tighten
+    # the internal interfaces to their measured transfer limits. Wired below at
+    # the interface-group / TTC build; no-op for non-PJM ISOs.
+    if pjm_congestion:
+        config = config.with_overrides(pjm_congestion=True)
     # Econ-ramp rendering sweep (run_calibration_full --curve-n / --curve-exp):
     # offer_curve_smoothing_n / offer_curve_smoothing_exp; None entries keep
     # the ScenarioConfig defaults.
@@ -2104,6 +2111,26 @@ def run_year(
     ttc = _apply_ttc_overrides(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
     )
+    # PJM congestion lever (Lever B): tighten the internal interfaces with a
+    # confident measured mapping to their measured PJM transfer-limit postings
+    # (constants.PJM_MEASURED_INTERNAL_TTC). Applied to the scalar TTC array before
+    # the monthly expansion; no-op off the flag or for non-PJM ISOs.
+    if getattr(config, "pjm_congestion", False) and iso == "PJM":
+        from market_sim.config.constants import PJM_MEASURED_INTERNAL_TTC
+
+        ttc = ttc.copy()
+        for i, link in enumerate(iso_config.links):
+            measured = PJM_MEASURED_INTERNAL_TTC.get((link.from_zone, link.to_zone))
+            if measured is not None and measured != ttc[i]:
+                logger.info(
+                    "PJM congestion: internal TTC %s->%s %.0f -> %.0f MW "
+                    "(measured transfer-limit posting)",
+                    link.from_zone,
+                    link.to_zone,
+                    ttc[i],
+                    measured,
+                )
+                ttc[i] = measured
     # Seasonal interface envelope: expand the scalar TTC to a per-hour matrix
     # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
     # for ISOs/years without one.
@@ -2181,6 +2208,51 @@ def run_year(
                 float(np.median(corridor_env.get("WECC_DSW", [np.nan]))) / 1000.0,
                 float(np.median(corridor_env.get("WECC_PNW", [np.nan]))) / 1000.0,
                 exp_note,
+            )
+
+    # PJM congestion lever (Lever A): cap each PJM_external→border link's signed
+    # flow per hour at the measured per-border net-interchange envelope, so the
+    # priced external star node can no longer wheel ~30 GW uncongested into the 5
+    # border zones (the copper-plate bypass). Mirrors the CAISO corridor cap
+    # (asymmetric per-hour interface groups); no-op off the flag, for non-PJM, or
+    # when the measured tie file is absent (byte-identical).
+    if getattr(config, "pjm_congestion", False) and iso == "PJM" and priced_interchange:
+        from market_sim.config.constants import (
+            IMPORT_ZONE,
+            PJM_EXTERNAL_FLOW_PERCENTILE,
+        )
+        from market_sim.data.eia_loader import pjm_zonal_interchange_envelope
+        from market_sim.model.transmission import build_pjm_external_flow_groups
+
+        env = pjm_zonal_interchange_envelope(
+            year, zone_names, demand.shape[1], PJM_EXTERNAL_FLOW_PERCENTILE
+        )
+        if env is not None:
+            import_cap, export_cap = env
+            ext_groups = build_pjm_external_flow_groups(
+                iso_config.links, import_cap, export_cap, zone_names
+            )
+            interface_groups = interface_groups + ext_groups
+            # Per-border median caps (GW) for the log: dominant direction generous,
+            # minor direction ~0 (EMAAC import / Dominion export / interior zones).
+            border_rows = {
+                ln.to_zone
+                for ln in iso_config.links
+                if ln.from_zone == IMPORT_ZONE.get("PJM")
+            }
+            zone_idx = {z: i for i, z in enumerate(zone_names)}
+            cap_note = "; ".join(
+                f"{z.replace('PJM_', '')} imp {np.median(import_cap[zone_idx[z]]) / 1000.0:.1f}"
+                f"/exp {np.median(export_cap[zone_idx[z]]) / 1000.0:.1f} GW"
+                for z in sorted(border_rows)
+                if z in zone_idx
+            )
+            logger.info(
+                "PJM %d: external-node deliverability cap (p%g) on %d link(s) — %s",
+                year,
+                PJM_EXTERNAL_FLOW_PERCENTILE,
+                len(ext_groups),
+                cap_note,
             )
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet

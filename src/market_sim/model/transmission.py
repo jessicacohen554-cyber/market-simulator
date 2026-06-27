@@ -1523,6 +1523,75 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     return extended
 
 
+def build_pjm_external_flow_groups(
+    links: list[TransferLink],
+    import_cap: np.ndarray,
+    export_cap: np.ndarray,
+    zone_names: list[str],
+) -> list[tuple]:
+    """Return per-hour asymmetric flow caps for PJM's external star-node links.
+
+    Breaks the PJM copper-plate (0.000 zonal LMP spread in every hour): the
+    priced :data:`~market_sim.config.constants.IMPORT_ZONE` ``PJM_external`` node
+    wires ~30 GW of *uncongested* transfer to 5 border zones, so the dear-east
+    load pockets import directly from one price hub and never pull power through
+    the internal west→east lines — every zone's energy-balance dual ties to one
+    price. This caps each ``PJM_external→border`` link's signed flow, per hour, at
+    the measured per-border net-interchange envelope
+    (:func:`market_sim.data.eia_loader.pjm_zonal_interchange_envelope`): the import
+    direction (positive flow, hub→border) at ``import_cap`` and the export
+    direction (negative flow, border→hub) at ``export_cap``. Returned as one
+    asymmetric interface group per external link — a 4-tuple
+    ``(link_idx, import_cap_hourly, bidirectional=False, export_cap_hourly)`` for
+    :func:`market_sim.model.dispatch._build_interface_rows` (the same machinery
+    the CAISO per-hub corridor caps use). The link keeps its own (looser) static
+    TTC as an outer bound; this group binds first.
+
+    With the dominant tie direction (ComEd/AEP/EMAAC export, Dominion import)
+    holding a generous high-percentile ceiling and the minor direction collapsed
+    toward ~0, the hub can no longer flood the east with cheap imports, so the
+    interior dear-east zones must source western power across the internal
+    interfaces — opening the congestion the copper-plate suppressed — and the
+    over-export shrinks toward the measured schedule.
+
+    Args:
+        links: The (already import-node-extended) transfer links; the external
+            links are those whose ``from_zone`` is the PJM import zone.
+        import_cap: Per-border import ceiling, ``(n_zones, T)`` MW, row order
+            matching ``zone_names``.
+        export_cap: Per-border export ceiling, ``(n_zones, T)`` MW.
+        zone_names: Ordered zone names (the topology's zone set), giving each
+            border zone's row in ``import_cap`` / ``export_cap``.
+
+    Returns:
+        One 4-tuple interface group per external link, or an empty list when the
+        ISO has no external import zone (so the LP is byte-identical off the lever).
+    """
+    from market_sim.config.constants import IMPORT_ZONE
+
+    ext_zone = IMPORT_ZONE.get("PJM")
+    if ext_zone is None:
+        return []
+    zone_row = {name: i for i, name in enumerate(zone_names)}
+    groups: list[tuple] = []
+    for li, link in enumerate(links):
+        if link.from_zone != ext_zone:
+            continue
+        row = zone_row.get(link.to_zone)
+        if row is None:
+            continue
+        idx = np.array([li], dtype=int)
+        groups.append(
+            (
+                idx,
+                np.asarray(import_cap[row], dtype=float),
+                False,
+                np.asarray(export_cap[row], dtype=float),
+            )
+        )
+    return groups
+
+
 def build_wecc_import_generators(
     border_carbon_per_mwh: float = 0.0,
 ) -> list[Generator]:
