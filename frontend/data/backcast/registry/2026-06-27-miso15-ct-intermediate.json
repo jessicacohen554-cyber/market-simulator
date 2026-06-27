@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-miso15-ct-intermediate",
+  "label": "miso15 ct intermediate",
+  "date": "2026-06-27",
+  "shorthand": "miso15-ct-intermediate",
+  "definition": "Calibration run from bundle miso15_ct_intermediate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-miso15-ct-intermediate.js",
+  "bundle": "results/calibration/MISO/miso15_ct_intermediate"
+}
