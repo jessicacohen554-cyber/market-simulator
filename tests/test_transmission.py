@@ -30,6 +30,7 @@ from market_sim.model.transmission import (
     build_caiso_bidir_intertie,
     build_export_sinks,
     build_import_generators,
+    caiso_solar_deliverability_derate,
     build_incidence_matrix,
     build_interface_groups,
     build_pjm_external_flow_groups,
@@ -1706,6 +1707,54 @@ class TestPjmExternalFlowGroups(unittest.TestCase):
             cfg.links, np.zeros((n, 4)), np.zeros((n, 4)), cfg.zone_names
         )
         self.assertEqual(groups, [])
+
+
+class TestCaisoSolarDeliverabilityDerate(unittest.TestCase):
+    """Tests for the CAISO Lever-D local solar deliverability derate."""
+
+    def _patch_solar_frac(self, frac):
+        """Patch caiso_solar_fraction (imported inside the function) to return frac."""
+        return unittest.mock.patch(
+            "market_sim.data.eia_loader.caiso_solar_fraction",
+            return_value=(None if frac is None else np.asarray(frac, dtype=float)),
+        )
+
+    def test_derate_tracks_one_minus_k_times_penetration(self):
+        frac = np.array([0.0, 0.2, 0.5, 0.8])
+        with self._patch_solar_frac(frac):
+            d = caiso_solar_deliverability_derate(2024, 4, k=0.15, floor=0.50)
+        np.testing.assert_allclose(d, np.clip(1.0 - 0.15 * frac, 0.50, 1.0))
+        # No penetration → no derate (potential delivered in full).
+        self.assertAlmostEqual(d[0], 1.0)
+        # Higher penetration → deeper cut (more curtailment headroom).
+        self.assertLess(d[3], d[1])
+
+    def test_floor_clamps_extreme_penetration(self):
+        # A huge k would cut below the floor; the floor guards it.
+        with self._patch_solar_frac([1.0, 1.0]):
+            d = caiso_solar_deliverability_derate(2024, 2, k=0.9, floor=0.50)
+        np.testing.assert_allclose(d, 0.50)
+
+    def test_nonpositive_k_is_noop(self):
+        with self._patch_solar_frac([0.5, 0.5]):
+            self.assertIsNone(
+                caiso_solar_deliverability_derate(2024, 2, k=0.0, floor=0.50)
+            )
+
+    def test_missing_penetration_returns_none(self):
+        with self._patch_solar_frac(None):
+            self.assertIsNone(
+                caiso_solar_deliverability_derate(2024, 8, k=0.15, floor=0.50)
+            )
+
+    def test_more_solar_means_more_curtailment(self):
+        # The mechanism's forward property: at a higher penetration the SAME
+        # potential is curtailed more (the volume responds to the build).
+        with self._patch_solar_frac([0.3]):
+            low = caiso_solar_deliverability_derate(2024, 1, k=0.15, floor=0.50)
+        with self._patch_solar_frac([0.6]):
+            high = caiso_solar_deliverability_derate(2024, 1, k=0.15, floor=0.50)
+        self.assertGreater(1.0 - high[0], 1.0 - low[0])
 
 
 if __name__ == "__main__":
