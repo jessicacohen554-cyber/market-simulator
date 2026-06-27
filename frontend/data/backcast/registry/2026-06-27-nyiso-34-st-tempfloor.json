@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-nyiso-34-st-tempfloor",
+  "label": "nyiso 34 st tempfloor",
+  "date": "2026-06-27",
+  "shorthand": "nyiso-34-st-tempfloor",
+  "definition": "Calibration run from bundle nyiso_34_st_tempfloor.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-nyiso-34-st-tempfloor.js",
+  "bundle": "results/calibration/nyiso_34_st_tempfloor"
+}
