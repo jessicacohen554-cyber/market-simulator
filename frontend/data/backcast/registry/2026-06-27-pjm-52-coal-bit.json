@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-pjm-52-coal-bit",
+  "label": "pjm 52 coal bit",
+  "date": "2026-06-27",
+  "shorthand": "pjm-52-coal-bit",
+  "definition": "(DIAGNOSTIC; pjm-48 stays keeper) pjm-51 SE-inelastic seam base + the ISO-agnostic MISO coal-bituminous 3-lever stack. Lever 1 sticky online-sync floor (coal_mustrun_online_pmin + coal_sync_srmc_tranche; sizes coal must-run to the MEASURED ~31% online-net-MW Pmin from the CAMPD per-plant artifact vs the ~16% all-hours mustrun_pct, split into a fuel-free contracted floor + a full-SRMC sync band, both forced on, erosion fix holding the sync tranches at availability=1.0). Lever 2 coal min-run/min-down 36/16 (NREL baseload) firing in the P2 coal screen. Lever 3 bituminous BID sigmoid floor 0.76 -> 0.68 (deeper cheap-gas take-or-pay/stay-running BID discount, gas-keyed, dear-gas ceiling 1.32 put). RESULT -- the named primary problem MOVES the right way: COAL_BIT vs EIA-923 classFull recovers in every year, 85.3->94.0 (-23%->-15.2%, +8.7 TWh) 2023, 86.7->96.6 (-22%->-13.5%, +9.9) 2024, 122.9->128.2 (-8%->-4.2%, +5.3) 2025 -- bituminous holds flatter across the gas cycle as the sticky online floor + cheap-gas BID discount keep it in merit. BUT the dominant structural errors are UNCHANGED, so this is NOT a keeper: gas-CC (CC_REGULAR) is still massively over (+32.7 TWh 2023 / +53.8 2024), PJM LMP still under-priced (C3a 2024 -10.9% / 2025 -14.9%, ~flat vs pjm-51), net export still over (+49.9/+63.0/+60.9 vs actual +40.0/+32.7/+18.0), zero scarcity hours (C3c 0 vs 6/18/59). DIAGNOSIS -- forcing more (cheap, fuel-free-floor) must-run coal on does NOT make gas-CC back off as the unified-fix hypothesis predicted: with PJM structurally UNDER-priced and the priced export node uncapped, the extra forced coal exits as EXPORTS rather than displacing gas-CC (total gen drift grows to +10/+31/+30 TWh over EIA-930). The coal levers are real, measured, flow-blind market structure and STAY IN (rule #1), but they are not the lever for the binding constraint: PJM fossil being too cheap. The over-export / under-pricing must be fixed first (export-side scarcity / firm-import floor / making PJM fossil dearer) before the sticky-coal floor pays off on the seam. C6 PASS. Years 2023-25, single-process sequential solve.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-27-pjm-52-coal-bit.js",
+  "bundle": "results/calibration/pjm52_coalbit"
+}
