@@ -1537,6 +1537,7 @@ def run_year(
     ercot_ecrs_requirement_from_year: int = 2023,
     ordc_lolp_params_path: str | None = None,
     storage_as_commitment: bool = False,
+    ercot_storage_as_endogenous: bool = False,
     hydro_eia930_monthly: bool = False,
     hydro_forecast_budget: bool = False,
     hydro_year: str = "normal",
@@ -1844,6 +1845,15 @@ def run_year(
     # dispatch power cap (applied after storage_cap_profiles below).
     if storage_as_commitment:
         config = config.with_overrides(storage_as_commitment=True)
+    # Endogenous storage energy-vs-AS co-opt (run_calibration_full
+    # --ercot-storage-as-endogenous, G5): the battery CHOOSES energy vs upward-AS
+    # inside the multi-product co-opt, replacing the measured-award reservation.
+    # Full battery cap to the co-opt (no measured subtraction below), the measured
+    # reserve credit guarded off (scarcity.ercot_*_coopt_inputs), and the cleared
+    # storage AS counts toward the measured RTOLCAP supply cap. Takes precedence
+    # over storage_as_commitment when both are set.
+    if ercot_storage_as_endogenous:
+        config = config.with_overrides(ercot_storage_as_endogenous=True)
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
     if battery_dispatch_adder:
@@ -2904,7 +2914,14 @@ def run_year(
     )
     # Reserve the measured storage up-AS MW from the dispatch power cap so AS-
     # committed battery capacity cannot also arbitrage energy (ERCOT only).
-    if getattr(config, "storage_as_commitment", False) and iso == "ERCOT":
+    # SKIPPED under ercot_storage_as_endogenous (G5): the endogenous co-opt hands
+    # the FULL battery cap to the LP and lets it choose energy vs AS, so the
+    # measured-award subtraction must not apply (it would pre-commit the split).
+    if (
+        getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and iso == "ERCOT"
+    ):
         storage_power_cap = reserve_storage_as_power(
             storage_power_cap, config.weather_year, config.hours
         )
