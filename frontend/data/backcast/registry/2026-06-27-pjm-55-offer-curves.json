@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-pjm-55-offer-curves",
+  "label": "pjm 55 offer curves",
+  "date": "2026-06-27",
+  "shorthand": "pjm-55-offer-curves",
+  "definition": "pjm 55 offer-curve & coal sigmoid tuning on pjm-54 congestion keeper. CC_REGULAR: raise econ_high 1.14->1.38 (70-85% CF overrun), peak 2.77->3.40, remove blanket pct_peaking (per-plant EIA-860 duct shares, cap raised 8->12). econ_low 0.76->0.78 (slight lift). Enable cc_derate_from_top (outage derate from expensive end \u2014 structurally correct). Coal BIT: deepen sigmoid floor 0.68->0.55 (more take-or-pay vs MISO 0.60). Coal PRB: lower sub sigmoid floor 1.22->1.10 (less markup), econ_high 0.8568->0.80 (cheaper ramp). Targets: trim CC over-export, boost coal BIT+PRB dispatch across all years/zones.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-27-pjm-55-offer-curves.js",
+  "bundle": "results/calibration/pjm55_offer_curves"
+}
