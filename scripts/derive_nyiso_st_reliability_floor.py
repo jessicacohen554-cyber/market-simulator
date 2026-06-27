@@ -86,11 +86,66 @@ def fetch_station_tmax(station: str, start: str, end: str) -> pd.Series:
     return df.set_index("DATE")["TMAX"]
 
 
-def zone_steam_plant_codes(zone: str) -> tuple[set[int], float]:
-    """Return a zone's ST_GAS plant codes and their nameplate (MW)."""
+# Plants excluded from the steam reliability floor / its regression — none;
+# mirrors transmission.NYISO_ST_FLOOR_EXCLUDE_PLANTS. Ravenswood (2500)'s
+# over-availability (CC-tagged outages) is fixed at the source
+# (data.outages._FLEET_GROUP_OVERRIDE), so it is included like the other steam.
+EXCLUDE_PLANTS: frozenset[int] = frozenset()
+
+
+def zone_steam_plant_codes(zone: str) -> tuple[dict[int, float], float]:
+    """Return a zone's ST_GAS ``{plant_code: bin nameplate MW}`` and the total."""
     b = pd.read_csv(RAW_DIR / "_processed-legacy" / "bin_assignments_NYISO.csv")
     z = b[(b["Plant_Group"] == "ST_GAS") & (b["Zone"] == zone)]
-    return set(z["Plant_Code"].astype(int)), float(z["Nameplate_MW"].sum())
+    z = z[~z["Plant_Code"].astype(int).isin(EXCLUDE_PLANTS)]
+    by_plant = dict(zip(z["Plant_Code"].astype(int), z["Nameplate_MW"].astype(float)))
+    return by_plant, float(z["Nameplate_MW"].sum())
+
+
+def zone_available_capacity(
+    plant_npl: dict[int, float], index: pd.DatetimeIndex
+) -> pd.Series:
+    """Hourly AVAILABLE capacity (MW) for a zone's ST_GAS fleet.
+
+    ``nameplate`` minus the per-plant ``unit_pct_of_plant`` share of any unit on a
+    detected CAMPD outage (``campd-unit-outages-NYISO.csv``, the SAME extract and
+    the SAME ``unit_capacity_mw / plant_capacity_mw`` share basis the model derates
+    bin availability with — :func:`market_sim.data.outages.unit_outage_derate_
+    factors`), so the CF denominator excludes outage downtime. Using the NORMALISED
+    pct-of-plant (which sums to 100% per plant) rather than the raw
+    ``unit_capacity_mw`` is essential: CAMPD splits each steam unit's reheat /
+    superheat sections into separate rows (Astoria 31RH+32SH, 51RH+52SH) that each
+    carry the FULL section nameplate, so the raw caps sum to ~2x the plant
+    nameplate; ``plant_capacity_mw`` is that same inflated sum, so the share
+    ``unit_capacity_mw / plant_capacity_mw`` is the correct fraction.
+
+    The when-available CF is the basis the floor is applied on (``frac`` x ``pmax``
+    x ``availability``); normalising by nameplate over all hours instead would
+    double-discount the outage time (the all-hours CF is already deflated by
+    downtime, then the injector multiplies by availability again, leaving the
+    costly in-city reliability units floored near zero — the documented Astoria /
+    Arthur Kill suppression).
+    """
+    nameplate = float(sum(plant_npl.values()))
+    avail = pd.Series(nameplate, index=index)
+    path = RAW_DIR / "campd-unit-outages-NYISO.csv"
+    if not path.exists():
+        return avail
+    o = pd.read_csv(path)
+    o["facility_id"] = pd.to_numeric(o["facility_id"], errors="coerce")
+    o = o[o["facility_id"].isin(plant_npl)].copy()
+    o["outage_start"] = pd.to_datetime(o["outage_start"])
+    o["outage_end"] = pd.to_datetime(o["outage_end"])
+    # Derate each plant by its out units' capacity SHARE (unit_capacity_mw /
+    # plant_capacity_mw) of THAT plant's bin nameplate — matching the model's
+    # unit-outage derate. Per-plant so a zone with several plants is correct.
+    for _, e in o.iterrows():
+        pcap = float(e["plant_capacity_mw"]) or 1.0
+        pnpl = float(plant_npl.get(int(e["facility_id"]), 0.0))
+        share_mw = pnpl * float(e["unit_capacity_mw"]) / pcap
+        mask = (index >= e["outage_start"]) & (index < e["outage_end"])
+        avail.loc[mask] -= share_mw
+    return avail.clip(lower=0.0)
 
 
 def main() -> None:
@@ -139,7 +194,8 @@ def main() -> None:
 
     # --- per-zone evening CF vs zone TMAX regression -----------------------
     for zone in ZONE_TMAX_STATION:
-        codes, nameplate = zone_steam_plant_codes(zone)
+        plant_npl, nameplate = zone_steam_plant_codes(zone)
+        codes = set(plant_npl)
         if not codes or nameplate <= 0.0:
             continue
         pooled, pooled24 = [], []
@@ -149,16 +205,28 @@ def main() -> None:
                 continue
             c = pd.read_parquet(path)
             c = c[c["facilityId"].astype(int).isin(codes)].copy()
+            c["ts"] = pd.to_datetime(c["date"]) + pd.to_timedelta(c["hour"], unit="h")
             c["date"] = pd.to_datetime(c["date"])
-            ev = c[c["hour"].isin(EVENING_HOURS)]
-            daily = ev.groupby("date")["grossLoad"].sum() / (
-                nameplate * len(EVENING_HOURS)
+            # Hourly fleet gross + AVAILABLE capacity (nameplate net of unit
+            # outages); CF is normalised by available capacity, not nameplate.
+            gross_h = c.groupby("ts")["grossLoad"].sum()
+            avail_h = zone_available_capacity(plant_npl, gross_h.index)
+            g = pd.DataFrame({"gross": gross_h, "avail": avail_h})
+            g["date"] = g.index.normalize()
+            g["hour"] = g.index.hour
+            ev = g[g["hour"].isin(EVENING_HOURS)]
+            ev_day = ev.groupby("date").agg(
+                gross=("gross", "sum"), avail=("avail", "sum")
             )
+            daily = (ev_day["gross"] / ev_day["avail"]).where(ev_day["avail"] > 0)
             df = pd.DataFrame({"cf": daily})
             df["tmax"] = df.index.map(tser)
             pooled.append(df.dropna())
-            # 24-hour daily fleet CF (all hours) for the persistent baseline.
-            daily24 = c.groupby("date")["grossLoad"].sum() / (nameplate * 24)
+            # 24-hour daily WHEN-AVAILABLE CF for the persistent baseline.
+            all_day = g.groupby("date").agg(
+                gross=("gross", "sum"), avail=("avail", "sum")
+            )
+            daily24 = (all_day["gross"] / all_day["avail"]).where(all_day["avail"] > 0)
             d24 = pd.DataFrame({"cf": daily24})
             d24["tmax"] = d24.index.map(tser)
             pooled24.append(d24.dropna())
@@ -177,16 +245,18 @@ def main() -> None:
             if len(hot) >= 2
             else 0.0
         )
-        print(f"\n=== {zone} ST_GAS CF, pooled {args.years} ===")
+        print(f"\n=== {zone} ST_GAS WHEN-AVAILABLE CF, pooled {args.years} ===")
         print(f"  nameplate                 = {nameplate:.0f} MW, {len(codes)} plants")
         print(f"  corr(CF, TMAX) [evening]  = {corr:+.3f}")
         print(f"  hot-day (>=25C) median CF = {hot['cf'].median():.3f}")
         print(f"  mild-day (<25C) median CF = {cool['cf'].median():.3f}")
         print(f"  nyiso_st_floor_t0_c       = {T0_C:.1f}")
         print(f"  nyiso_st_floor_slope_per_c= {slope:.4f}   (hot-limb, TMAX>=T0)")
-        print(f"  nyiso_st_floor_cap        = {cap:.3f}    (p97 evening CF)")
-        print(f"  nyiso_st_floor_base_ev    = {base:.3f}    (cool-day evening p25)")
-        print(f"  nyiso_st_floor_base_24h   = {base24:.3f}    (cool-day ALL-hours p25)")
+        print(f"  nyiso_st_floor_cap        = {cap:.3f}    (p97 evening avail-CF)")
+        print(
+            f"  nyiso_st_floor_base_ev    = {base:.3f}    (cool-day evening avail-p25)"
+        )
+        print(f"  nyiso_st_floor_base_24h   = {base24:.3f}    (cool-day 24h avail-p25)")
 
 
 if __name__ == "__main__":
