@@ -1548,6 +1548,30 @@ class ScenarioConfig:
     gas_st_drag_intercept: float = -0.1376  # floor zero-crossing ~15.2 GW
     gas_st_drag_cap: float = 0.34  # max observed overnight floor fraction (~50 GW)
 
+    # CT_PEAKER net-load reliability drag (the simple-cycle analog of the ST_GAS
+    # drag). ERCOT commits fast-start peakers for summer-peak + evening
+    # net-load-ramp local reliability (RUC/RMR), which the hourly energy-only LP
+    # — seeing their top-of-merit offer — never makes, so the backcast
+    # under-runs CT_PEAKER and the freed energy spills onto cheaper CC. When
+    # ct_netload_drag is True, each non-_peak CT_PEAKER tranche carries a
+    # min-gen floor of clip(slope*netload_GW + intercept, 0, cap) x capacity,
+    # but ONLY in the afternoon-evening ramp window [ramp_start, ramp_end) where
+    # peakers actually serve reliability — CT overnight CF is ~0 even at high
+    # net-load (the solar-collapse ramp is the signal, unlike the all-hours
+    # ST_GAS boiler), so an ungated all-hours floor would over-floor. Defaults
+    # are the CAMPD CT_PEAKER evening (15-22h) capacity factor regressed on
+    # contemporaneous net-load, 2023-2025 (docs/ercot-ct-netload-drag-2026-06.md);
+    # like the ST_GAS curve the trigger (net-load) and magnitude (physical
+    # min-gen) are forward-derivable and condition-responsive, so it is the
+    # forward-native replacement for the ct_mustrun_per_plant actuals pin
+    # (CLAUDE.md #10/#11), admissible in both backcast and forecast.
+    ct_netload_drag: bool = False
+    ct_drag_slope_per_gw: float = 0.00703  # evening CF per GW net-load
+    ct_drag_intercept: float = -0.1427  # floor zero-crossing ~20.3 GW
+    ct_drag_cap: float = 0.47  # 95th-pct evening CF (hottest ramp hours)
+    ct_drag_ramp_start: int = 15  # ramp window start hour (inclusive, local std)
+    ct_drag_ramp_end: int = 22  # ramp window end hour (exclusive, local std)
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
@@ -2581,6 +2605,12 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_drag_slope_per_gw": 3,
     "gas_st_drag_intercept": 3,
     "gas_st_drag_cap": 3,
+    "ct_netload_drag": 3,
+    "ct_drag_slope_per_gw": 3,
+    "ct_drag_intercept": 3,
+    "ct_drag_cap": 3,
+    "ct_drag_ramp_start": 3,
+    "ct_drag_ramp_end": 3,
     "cc_committed_hr_override": 3,
     "cc_econ_hr_override": 3,
     "cc_peak_hr_override": 3,
