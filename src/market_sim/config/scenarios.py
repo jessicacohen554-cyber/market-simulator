@@ -1253,6 +1253,43 @@ class ScenarioConfig:
     # is no double-count); for solar — which earns the ITC, not the PTC, so its
     # dispatch offer is $0 — this REC value is what carries it negative.
 
+    caiso_solar_deliverability: bool = False  # CAISO Lever-D structural solar
+    # local-deliverability derate. The reduced 3-zone CAISO topology collapses
+    # the sub-area / distribution network where ~70% of CAISO solar curtailment
+    # actually occurs (CAISO production-&-curtailment workbooks; docs/caiso-lever-
+    # audit-2026-06.md, Lever D), so handed the uncurtailed HSL potential the LP
+    # dispatches ~the full potential and re-curtails ~0. This caps the per-zone
+    # solar dispatch upper bound at solar_pot × clip(1 − k × solar_frac(t), floor,
+    # 1) — the solar-generation analogue of the accepted WECC corridor ATC derate
+    # (transmission.forward_corridor_atc_envelope): as midday solar penetration
+    # rises, the local network can evacuate a smaller share of the concentrated
+    # solar and the surplus curtails. solar_frac(t) (eia_loader.caiso_solar_
+    # fraction, CISO solar / demand) is a FORWARD driver that responds to a
+    # changed solar build and load, never the measured curtailment outcome, so
+    # the curtailed VOLUME emerges per-year from that year's own penetration and
+    # potential (CLAUDE.md #1/#11). The LP still dispatches economically up to the
+    # ceiling and curtails further below it under system oversupply. CAISO-only;
+    # built by transmission.caiso_solar_deliverability_derate. Default off
+    # (byte-identical); --no-caiso-solar-deliverability forces it off.
+    caiso_solar_deliverability_k: float = 0.15  # local-deliverability sensitivity
+    # to solar penetration. Derived as the reference-year midday curtailment rate
+    # ÷ midday solar penetration: CAISO 2023/2024 midday curt/HSL = 0.073 ÷
+    # solar_frac 0.441/0.499 → k ≈ 0.166 / 0.146, stable across both reference
+    # years (so a structural sensitivity, not a per-year fit). 0.15 = the mid.
+    # The target year's curtailed MW = solar_pot × k × solar_frac emerges from
+    # that year's own forward penetration — never the target year's actuals.
+    caiso_solar_deliverability_floor: float = 0.50  # floor on the derate so even
+    # at extreme penetration (solar_frac → 1) the local network still evacuates
+    # ≥ 50% of potential — a guard against an unphysical deep cut, not a fit knob.
+    caiso_solar_cap_at_delivered: bool = False  # INTERIM STOPGAP (Lever-D P6),
+    # DEFAULT-OFF DIAGNOSTIC ONLY. Caps the backcast solar dispatch upper bound at
+    # the measured EIA-930 delivered solar profile (the "delivered-not-potential"
+    # item), so the model cannot over-run delivered. This PINS solar to the
+    # measured outcome — it has NO forward analogue and must NEVER be enabled in a
+    # keeper or quoted as forecast skill (CLAUDE.md #11). It exists only as an A/B
+    # reference for the structural caiso_solar_deliverability derate above; enable
+    # with --caiso-solar-cap-at-delivered for a diagnostic probe.
+
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
@@ -2692,6 +2729,10 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ct_floor_t0_c": 1,
     "caiso_ct_floor_cap": 2,
     "caiso_ct_floor_base": 3,
+    "caiso_solar_deliverability": 1,
+    "caiso_solar_deliverability_k": 3,
+    "caiso_solar_deliverability_floor": 3,
+    "caiso_solar_cap_at_delivered": 1,
     "neiso_temp_reliability_floor": 1,
     "neiso_ct_floor_slope_per_c": 3,
     "neiso_ct_floor_t0_c": 1,

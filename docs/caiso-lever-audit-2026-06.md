@@ -240,6 +240,15 @@ interim stopgap (already flagged as the `IMPORT_TRANCHES["CAISO"]`
 "delivered-not-potential" P6 item). Curtailment is a market **behaviour** to
 reproduce, not to suppress.
 
+**IMPLEMENTED (Step D, 2026-06-27).** A structural local-deliverability derate
+(`transmission.caiso_solar_deliverability_derate`, CAISO default-ON, the solar
+analogue of the WECC corridor ATC derate) re-curtails the HSL potential off the
+forward solar-penetration signal. Solar TWh now lands on delivered with curtailment
+**2.42 / 3.34 / 2.96 TWh emerging endogenously** (real 2.51 / 3.17 / 2.52), r ≥ 0.93,
+band× → ~1.0. The midday ~$0 price did **not** return — diagnosed as gated by the
+midday CC over-run (fact #1), not solar — handed to the CC-back-down step. Full
+write-up: `docs/caiso-lever-d-solar-curtailment-2026-06.md`.
+
 ---
 
 ## Lever E — interchange levers — **KEEP (separate check warranted)**
