@@ -38,6 +38,11 @@ DATA_DIR = REPO / "frontend" / "data" / "backcast"
 REGISTRY_DIR = DATA_DIR / "registry"
 RUNS_DIR = DATA_DIR / "runs"
 BENCH_DIR = DATA_DIR / "bench"
+# Per-year EIA-923 completeness parts (scripts/audit_eia923_completeness.py): the
+# committed source of truth for which (ISO, class) actuals are complete enough to
+# gate in a preliminary-vintage year. Stdlib-readable so this scorer stays
+# pandas/numpy-free.
+COMPLETENESS_DIR = DATA_DIR / "completeness"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -279,6 +284,62 @@ def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# EIA-923 completeness map (per-year committed part)
+# ---------------------------------------------------------------------------
+_COMPLETENESS_CACHE: dict | None = None
+
+
+def _completeness_map() -> dict:
+    """Return ``{year: {iso: {class: record}}}`` from the committed parts.
+
+    Reads every ``completeness/eia923_<year>.json`` produced by
+    ``scripts/audit_eia923_completeness.py``. Cached after the first load.
+    Returns an empty map when the directory is absent (no preliminary-year
+    completeness has been audited yet — every class then falls back to the blanket
+    preliminary-vintage skip).
+    """
+    global _COMPLETENESS_CACHE
+    if _COMPLETENESS_CACHE is not None:
+        return _COMPLETENESS_CACHE
+    out: dict[int, dict] = {}
+    if COMPLETENESS_DIR.exists():
+        for part in sorted(COMPLETENESS_DIR.glob("eia923_*.json")):
+            obj = json.loads(part.read_text())
+            out[int(obj["year"])] = obj  # full part: carries isos + families
+    _COMPLETENESS_CACHE = out
+    return out
+
+
+def class_is_gated(iso: str, klass: str, year: int) -> bool:
+    """Whether (iso, class) has a complete-enough 923 actual to gate in ``year``.
+
+    Complete-vintage years (those with no completeness part) always gate — only a
+    preliminary vintage with an audited completeness part restricts gating to the
+    verified-complete, verified-complete-family classes
+    (:func:`audit_eia923_completeness.audit`'s ``gate`` flag).
+    """
+    cmap = _completeness_map()
+    if year not in cmap:
+        return True  # complete vintage / no preliminary audit -> gate as usual
+    rec = cmap[year].get("isos", {}).get(iso.upper(), {}).get(klass)
+    return bool(rec and rec.get("gate"))
+
+
+def family_is_complete(iso: str, family: str, year: int) -> bool:
+    """Whether ``family`` (``gas``/``coal``) is fully reported for (iso, year).
+
+    Complete-vintage years (no completeness part) are always complete — C2 then
+    defers to the per-class C1 gate as it always has. A preliminary year defers
+    only the families the audit flagged complete; the rest fall back to the
+    EIA-930 family aggregate gate.
+    """
+    cmap = _completeness_map()
+    if year not in cmap:
+        return True
+    return bool(cmap[year].get("families", {}).get(iso.upper(), {}).get(family))
+
+
+# ---------------------------------------------------------------------------
 # Per-criterion scoring (one record per criterion-year, pre-ledger)
 # ---------------------------------------------------------------------------
 def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
@@ -303,22 +364,27 @@ def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
     return m_gen, a_gen
 
 
-def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
+def score_fuelmix(
+    year: int, ypay: dict, ybench: dict, iso: str = "ERCOT"
+) -> list[dict]:
     """C1 — per-class grid-delivered fuel-mix, the universal gate.
 
     A class passes iff BOTH its grid-delivered volume miss is within 1.0% of ISO
     annual generation AND its share of total generation is within 1.5 pp of
     actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis).
 
-    The per-class tolerance applies to COMPLETE-VINTAGE YEARS ONLY (years <
-    ``PRELIM_923_FROM_YEAR``). For preliminary-EIA-923 years
-    (``PRELIM_923_FROM_YEAR``+) the per-class actual is incomplete — preliminary
-    923 under-reports thermal generation and EIA-930 grid telemetry carries no
-    per-class split — so there is no per-class actual to gate against and every
-    fossil class is emitted SKIPPED (recorded, never a silent pass). The C2 family
-    system-volume gate still covers those years via its authoritative EIA-930 grid
-    reconcile. The boundary is read from the constant, so it auto-extends as a
-    year's 923 finalises and becomes scorable.
+    Gating is restricted to (ISO, class) pairs whose EIA-923 actual is VERIFIED
+    COMPLETE for the year. A complete-vintage year (no committed completeness part)
+    gates every benchmarked class as before. A PRELIMINARY-EIA-923 year (e.g. 2025
+    today) gates only the classes the completeness audit
+    (:mod:`scripts.audit_eia923_completeness`) flagged ``gate`` — a class whose own
+    plants ALL reported AND whose whole fossil family reported (so the
+    vintage-reconcile leaves its per-class actual un-scaled). Every other class is
+    emitted SKIPPED (recorded, never a silent pass): its plant data is incomplete,
+    so there is no trustworthy per-class actual to gate against. The C2 family
+    system-volume gate still covers the skipped classes via the authoritative
+    EIA-930 grid reconcile. The map auto-extends as a year's 923 finalises: re-run
+    the audit and the now-complete classes begin gating with no code change.
     """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
@@ -326,7 +392,7 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
     vol_band = min(FUELMIX_VOL_GEN_FRAC * a_gen, FUELMIX_VOL_CAP_TWH)
     out = []
     classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
-    prelim = year >= PRELIM_923_FROM_YEAR
+    cmap_year = _completeness_map().get(year, {}).get("isos", {}).get(iso.upper(), {})
     for c in classes:
         a = cf.get(c)
         if a is None:
@@ -338,13 +404,15 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
             share_pp = 100.0 * m / m_gen - 100.0 * a / a_gen
         else:
             share_pp = None
-        if prelim:
-            # Preliminary EIA-923 vintage: per-class actual incomplete; the
-            # asset-class tolerance applies to complete-vintage years only and
-            # EIA-930 carries no per-class substitute. SKIPPED — not gated, not a
-            # silent pass; C2's family gate still covers this year. The raw
-            # model/actual gap is kept as a report-only annotation, with no status
-            # effect.
+        if not class_is_gated(iso, c, year):
+            # Incomplete-plant-data class in a preliminary EIA-923 vintage: its
+            # per-class actual is under-reported (missing plants) and EIA-930
+            # carries no per-class substitute, so there is nothing trustworthy to
+            # gate against. SKIPPED — not gated, not a silent pass; C2's family
+            # gate still covers it. Annotated from the committed completeness map.
+            comp = cmap_year.get(c, {})
+            why = comp.get("status", "incomplete")
+            reasons = "; ".join(comp.get("reasons", [])) or "no per-class actual"
             rec = {
                 "criterion": "fuelmix",
                 "key": c,
@@ -356,10 +424,10 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
                 "actual": round(a, 3),
                 "share_pp": round(share_pp, 2) if share_pp is not None else None,
                 "tol": None,
+                "completeness": why,
                 "magnitude": (
-                    "preliminary EIA-923 vintage: per-class actual incomplete; "
-                    "asset-class tolerance applies to complete-vintage years only "
-                    "— no per-class EIA-930 substitute"
+                    f"preliminary EIA-923 vintage: {why} plant data ({reasons}); "
+                    "not gated — C2 family grid reconcile covers this class"
                 ),
                 "vintage_gap_twh": round(d, 3),  # report-only; does not gate
             }
@@ -396,13 +464,14 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
                 f"{FUELMIX_VOL_CAP_TWH:g} TWh) = ±{vol_band:.2f} TWh "
                 f"& ±{FUELMIX_SHARE_PP:g}pp share"
             ),
+            "completeness": cmap_year.get(c, {}).get("status", "complete"),
             "magnitude": mag,
         }
         out.append(rec)
     return out
 
 
-def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
+def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> list[dict]:
     """C2 — gas/coal family system volume, folded into the per-class universal gate.
 
     For COMPLETE-VINTAGE years a family passes iff EVERY constituent fossil class
@@ -417,24 +486,30 @@ def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
     family (e.g. a CT_PEAKER over-build cancelled by a CC under-build summing to
     ~0% at the family level). The per-class roll-up does neither: it nets nothing.
 
-    For PRELIMINARY-EIA-923 years there is no per-class actual (preliminary 923
-    under-reports thermal; EIA-930 carries no per-class split), so the family
-    aggregate vs the authoritative EIA-930 grid total is the only available volume
-    check — retained here as the ±2.5% family fallback, explicitly scoped to the
-    no-per-class-data case.
+    For a PRELIMINARY-EIA-923 family — one the completeness audit flags as not
+    fully reported (:func:`family_is_complete`) — there is no trustworthy per-class
+    actual (missing plants under-report thermal; EIA-930 carries no per-class
+    split), so the family aggregate vs the authoritative EIA-930 grid total is the
+    only available volume check — retained here as the ±2.5% family fallback,
+    explicitly scoped to the no-per-class-data case. A preliminary year whose
+    family DID fully report (e.g. ERCOT coal 2025) defers to the C1 per-class gate
+    exactly like a complete vintage — only the still-incomplete families fall back.
     """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
     e930 = ybench.get("e930", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
     vol_band = min(FUELMIX_VOL_GEN_FRAC * a_gen, FUELMIX_VOL_CAP_TWH)
-    prelim = year >= PRELIM_923_FROM_YEAR
     out = []
     for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
         scored = [c for c in classes if c not in FUELMIX_EXCLUDED]
         m = sum(float(gm.get(c, 0.0)) for c in scored)
         a923 = sum(float(cf.get(c, 0.0)) for c in scored)
         a930 = float(e930.get(fam, 0.0)) or None
+        # A family that did not fully report this year uses the EIA-930 aggregate
+        # fallback; a complete (or complete-vintage) family defers to the C1
+        # per-class gate.
+        use_family_fallback = not family_is_complete(iso, fam, year)
         # Immaterial family: the C1 per-class absolute band governs it, so the
         # family system-volume gate is not applicable (avoids a meaningless band
         # on a near-zero family like NEISO coal).
@@ -449,7 +524,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
                 )
             )
             continue
-        if prelim:
+        if use_family_fallback:
             # Preliminary EIA-923 vintage: no per-class actual; the EIA-930 grid
             # total is the authoritative family actual, gated on the ±2.5% family
             # fallback (record whether the 0.97 reconcile fired).
@@ -520,10 +595,10 @@ def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
                 "criterion": "sysvol",
                 "key": fam,
                 "year": year,
-                "status": PASS,  # complete vintage: governed by the C1 per-class gate
+                "status": PASS,  # fully-reported family: governed by C1 per-class
                 "classification": None,
                 "metric": (
-                    f"{fam} family — complete vintage; per-class volume/share "
+                    f"{fam} family — fully reported; per-class volume/share "
                     "governed by the C1 universal gate (no family netting/percent band)"
                 ),
                 "model": round(m, 2),
@@ -843,8 +918,8 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
     for year in scorable_years:
         ypay = payload["years"][str(year)]
         ybench = bench.get(year, {})
-        records += score_fuelmix(year, ypay, ybench)
-        records += score_sysvol(year, ypay, ybench)
+        records += score_fuelmix(year, ypay, ybench, iso)
+        records += score_sysvol(year, ypay, ybench, iso)
         records.append(score_price_mean(year, ypay, ybench))
         records.append(score_price_shape(year, ypay, ybench))
         records.append(score_price_tail(year, ypay, iso))
