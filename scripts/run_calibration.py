@@ -92,6 +92,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
     apply_nyiso_zonal_gas_basis,
+    apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
     coal_passthrough_by_supply,
     dual_fuel_switch_mask,
@@ -1521,6 +1522,7 @@ def run_year(
     battery_dispatch_adder: float = 0.0,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
+    pjm_zonal_gas_basis: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     curve_smoothing: dict[str, float | int | None] | None = None,
@@ -1876,6 +1878,11 @@ def run_year(
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
     if gas_monthly_actuals:
         config = config.with_overrides(gas_monthly_actuals=True)
+    # PJM per-zone gas basis (opens the west-cheap / east-dear spread so PJM
+    # stops clearing as a single copper-plate). No-op for non-PJM ISOs — the
+    # apply gates on iso == "PJM" — so setting it here is safe regardless.
+    if pjm_zonal_gas_basis:
+        config = config.with_overrides(pjm_zonal_gas_basis=True)
     # Econ-ramp rendering sweep (run_calibration_full --curve-n / --curve-exp):
     # offer_curve_smoothing_n / offer_curve_smoothing_exp; None entries keep
     # the ScenarioConfig defaults.
@@ -2668,6 +2675,15 @@ def run_year(
     # plant-monthly / hub overlay, before the dual-fuel min. No-op unless
     # ercot_zonal_gas_basis is set (ERCOT only).
     apply_ercot_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # PJM per-zone gas basis: shift each gas unit to its zone's measured regional
+    # delivered-to-electric-power basis (west coal belt cheap, eastern
+    # EMAAC/SWMAAC/Dominion dear) so PJM stops clearing as a single copper-plate —
+    # the internal TTCs bind, eastern LMP separates up, eastern CCs back off and
+    # western coal serves the east. Capacity-weighted mean-zero so the aggregate
+    # gas level is preserved. Same order as the resolve_fuel_prices
+    # apply_monthly=True branch: after the plant-monthly / hub overlay, before the
+    # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only).
+    apply_pjm_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
     # Net-load-indexed West/Panhandle Waha shape: redistribute the West gas basis
     # across hours (firm at high net-load, collapsed at low) so peakers — which
     # burn only in scarcity hours — see firm Waha and idle, while the West CCs on

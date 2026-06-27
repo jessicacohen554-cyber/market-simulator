@@ -522,6 +522,25 @@ NYISO_GAS_HUB_REFERENCE_ZONE: str = "Capital_Hudson"
 # cross-zonal split moves. Consumed by :func:`apply_ercot_zonal_gas_basis`.
 ERCOT_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
 
+# PJM per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. PJM clears as
+# a single copper-plate because every gas unit is priced off one ISO-wide
+# delivered series, so no zone ever wants cheap power from another and the
+# internal TTCs never bind. In reality the western coal belt (ComEd on Chicago
+# Citygate, AEP_Ohio / ATSI on Appalachian/Dominion-South, West_APS on
+# Appalachian, Central_PA on Marcellus/TETCO-M3) buys gas ~$0.3-0.6/MMBtu BELOW
+# Henry Hub, while the eastern/southeastern load pockets (Dominion on Transco
+# Z6/TETCO M3, SWMAAC on Transco Z6, EMAAC on Transco Z6 non-NY) pay a persistent
+# premium. The per-zone basis is the EIA "natural gas delivered to electric power
+# consumers" price by the zone's primary state (series N3045<ST>3M, $/Mcf monthly
+# -> $/MMBtu annual mean) minus the annual-mean Henry Hub — a measured,
+# forward-reproducible power-plant delivered cost that regenerates every year and
+# tracks changing regional supply. Like the ERCOT table (and unlike NYISO) this
+# is anchored to a gas-capacity-weighted mean of zero in
+# :func:`apply_pjm_zonal_gas_basis`, so the calibrated PJM fleet-aggregate gas
+# level is preserved and ONLY the cross-zonal spread opens. Consumed by
+# :func:`apply_pjm_zonal_gas_basis`.
+PJM_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "pjm_zonal_gas_hub.csv"
+
 # Measured EIA price of natural gas delivered to TX electric-power consumers
 # (series N3045TX3, $/Mcf monthly). This is the gen-weighted ERCOT-wide delivered
 # gas level — the *power-plant* delivered cost, NOT the TX city-gate price
@@ -1618,6 +1637,127 @@ def apply_ercot_zonal_gas_basis(
     )
 
 
+_PJM_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
+
+
+def _load_pjm_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
+    """Load the PJM per-zone annual gas-basis table, or ``None`` if absent."""
+    resolved = Path(path) if path else PJM_ZONAL_GAS_HUB_PATH
+    if resolved in _PJM_ZONAL_HUB_CACHE:
+        return _PJM_ZONAL_HUB_CACHE[resolved]
+    frame: pd.DataFrame | None = None
+    if resolved.exists():
+        loaded = pd.read_csv(resolved)
+        if not loaded.empty:
+            frame = loaded
+    _PJM_ZONAL_HUB_CACHE[resolved] = frame
+    return frame
+
+
+def pjm_zonal_gas_basis_by_zone(
+    year: int, path: Path | None = None
+) -> dict[str, float] | None:
+    """Return ``{zone: basis vs Henry Hub ($/MMBtu)}`` for PJM, or None.
+
+    The raw measured per-zone basis (each PJM zone's primary-state EIA
+    delivered-to-electric-power gas price minus Henry Hub;
+    :data:`PJM_ZONAL_GAS_HUB_PATH`). The mean-zero re-centring that preserves the
+    calibrated fleet-aggregate level is done in :func:`apply_pjm_zonal_gas_basis`,
+    which weights by each zone's gas capacity. Returns ``None`` when the table is
+    missing or has no rows for ``year`` (e.g. a forward year).
+    """
+    frame = _load_pjm_zonal_gas_hub(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
+
+
+def apply_pjm_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Shift each PJM gas unit's price by its zone's measured regional gas basis.
+
+    PJM is priced off a single ISO-wide delivered-gas series, so every gas-CC
+    carries the same marginal cost, every zone clears at the same LMP, no zone
+    ever wants cheaper power from a neighbour, and the internal transmission
+    topology (ComEd→AEP, AEP→Dominion, Central_PA→EMAAC, SWMAAC→EMAAC, …) never
+    binds — PJM collapses to one copper-plate. That flattens the real
+    west-cheap / east-dear gas gradient: the eastern load pockets
+    (EMAAC/SWMAAC/Dominion, ~38% of load) burn dear Transco Z6 / TETCO M3 gas but
+    are priced at the cheap ISO average, so eastern CCs over-run and pin the price
+    low, undercutting the western bituminous coal belt (AEP_Ohio + West_APS) and
+    pushing PJM to clear below its neighbours (over-export).
+
+    This adds each zone's measured **mean-zero** basis spread to every gas unit's
+    delivered price: each zone's EIA delivered-to-electric-power basis vs Henry
+    Hub (:func:`pjm_zonal_gas_basis_by_zone`) minus the **gas-capacity-weighted
+    mean** across the PJM gas fleet (weights = each gas unit's ``pmax``). The
+    weighted mean is subtracted so the calibrated PJM fleet-aggregate gas level is
+    untouched (CLAUDE.md #11 — the ISO-month ``gas_monthly_actuals`` level still
+    holds, and the coal-sigmoid reference on the ISO mean is left alone in
+    :func:`_gas_series`) and ONLY the cross-zonal split moves: the western coal
+    belt gets cheaper, the eastern pockets dearer. The shift is floored at a small
+    positive so a deep negative basis cannot drive fuel cost below zero. Runs
+    after the F923 plant-monthly overwrite and before
+    :func:`apply_dual_fuel_pricing`, so oil parity still caps any winter spike.
+
+    Unlike the NYISO single-reference-zone anchor, this mirrors
+    :func:`apply_ercot_zonal_gas_basis` (capacity-weighted mean zero) — but with
+    no level correction: PJM's level is already calibrated by the ISO-month
+    actuals, so only the spread is added.
+
+    Gated on ``config.pjm_zonal_gas_basis`` and ``config.iso == "PJM"`` (a
+    default-off diagnostic; see the field docstring on ScenarioConfig), so every
+    other ISO and all forecasts are byte-identical. Mutates ``fuel_prices`` in
+    place; idempotent given the same inputs.
+    """
+    if not getattr(config, "pjm_zonal_gas_basis", False):
+        return
+    if config.iso != "PJM":
+        return
+    basis = pjm_zonal_gas_basis_by_zone(year, path)
+    if basis is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    if gas_rows.size == 0:
+        return
+    # Per-generator raw basis from its zone (0.0 for any zone absent from the
+    # table — e.g. the priced external import node).
+    basis_by_zone_idx = np.array(
+        [basis.get(name, 0.0) for name in zone_names], dtype=float
+    )
+    gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
+    # Mean-zero zonal SPREAD: subtract the gas-capacity-weighted mean so only the
+    # cross-zonal shape survives and the calibrated fleet-aggregate level holds.
+    weights = fleet.pmax[gas_rows]
+    total_w = float(weights.sum())
+    weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
+    zone_spread = gen_basis - weighted_mean
+    floored = np.maximum(
+        fuel_prices[gas_rows, :] + zone_spread[:, np.newaxis], _GAS_PRICE_FLOOR
+    )
+    fuel_prices[gas_rows, :] = floored
+    logger.info(
+        "PJM zonal gas basis (%d): %d gas units; cap-weighted mean %+.2f removed, "
+        "zonal spread %.2f..%.2f $/MMBtu",
+        year,
+        gas_rows.size,
+        weighted_mean,
+        float(zone_spread.min()),
+        float(zone_spread.max()),
+    )
+
+
 # Fallback Waha negative-price-day frequency when the measured per-year value
 # (data/raw/ercot_zonal_gas_hub.csv neg_day_freq, e.g. a forward year) is absent.
 # The fraction of hours assigned to the COLLAPSED (deep-negative) regime in the
@@ -2001,6 +2141,12 @@ def resolve_fuel_prices(
         # gas. Mean-zero anchored, so the aggregate gas level is unchanged.
         # Before dual-fuel so oil parity still caps any winter blowout.
         apply_ercot_zonal_gas_basis(fuel_prices, fleet, config, year)
+        # PJM: shift each gas unit to its zone's measured regional gas basis
+        # (west coal belt cheap, eastern EMAAC/SWMAAC/Dominion dear) so PJM stops
+        # clearing as a single copper-plate and the internal TTCs bind.
+        # Capacity-weighted mean-zero, so the aggregate gas level is unchanged.
+        # Before dual-fuel so oil parity still caps any winter blowout.
+        apply_pjm_zonal_gas_basis(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices
