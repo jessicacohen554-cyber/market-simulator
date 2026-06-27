@@ -59,7 +59,7 @@ relative DA error is the largest and dominates the VRE-driven growth).
 | **RegUp** | `floor + k·sigma_fe` | regulation covers the within-hour (sub-SCED) net-load variability — a sub-hourly slice of the DA forecast-error std |
 | **RRS** | `floor + k·vre_share` | largest-contingency frequency-response floor (~2300 MW) + a low-inertia adder that rises as VRE displaces synchronous inertia |
 | **ECRS** | `base + k·sigma_fe + k'·ramp_up` | the ~2 GW ramp-risk product (live 2023-06-10): forecast-error + the forward net-load up-ramp (the solar-evening ramp it is sized to cover) |
-| **NonSpin** | `base + k·sigma_fe` | longer-horizon net-load-uncertainty / load-ratio reserve (replaceable from offline quick-start) |
+| **NonSpin** | `base + k·load + k'·ramp_up` | longer-horizon net-load-uncertainty reserve, sized as a **load-ratio** share of system load plus the forward net-load up-ramp (the published Non-Spin driver) |
 
 All clipped to published min/max bands. Coefficients live in `constants.py`
 (`ERCOT_AS_*`), **calibrated to reproduce the published `ASPLANNP433`
@@ -113,17 +113,17 @@ product, demand-active hours (ECRS scored over its 2023-H2 live window):
 | ECRS | 2023 | 1909 | 1419 | 527 | −490 | 0.44 |
 | ECRS | 2024 | 1753 | 1507 | 405 | −246 | 0.45 |
 | ECRS | 2025 | 1417 | 1619 | 452 | +203 | 0.66 |
-| NSPIN | 2023 | 3349 | 2659 | 942 | −690 | 0.10 |
-| NSPIN | 2024 | 2684 | 2724 | 510 | +40 | 0.20 |
-| NSPIN | 2025 | 2886 | 2808 | 585 | −78 | 0.34 |
+| NSPIN | 2023 | 3349 | 2755 | 940 | −594 | −0.08 |
+| NSPIN | 2024 | 2684 | 2767 | 520 | +83 | 0.16 |
+| NSPIN | 2025 | 2886 | 2796 | 622 | −90 | 0.18 |
 
 **Total up-AS held** (the quantity that drives the shared-headroom scarcity):
 
 | year | meas GW | model GW | ratio |
 |---|---|---|---|
-| 2023 | 7.73 | 7.17 | 0.93 |
-| 2024 | 7.56 | 7.37 | 0.97 |
-| 2025 | 7.48 | 7.63 | 1.02 |
+| 2023 | 7.73 | 7.27 | 0.94 |
+| 2024 | 7.56 | 7.41 | 0.98 |
+| 2025 | 7.48 | 7.61 | 1.02 |
 
 The 2024/2025 levels match the published requirement (total within ±3%, small
 per-product biases). **2023 is systematically under** (RRS −206, ECRS −490,
