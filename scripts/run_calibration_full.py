@@ -1689,6 +1689,7 @@ def solve_and_persist(
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
+    neiso_temp_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1872,6 +1873,7 @@ def solve_and_persist(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
+            neiso_temp_reliability_floor=neiso_temp_reliability_floor,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2109,6 +2111,7 @@ def solve_and_persist(
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
+        "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2272,6 +2275,10 @@ def solve_and_persist(
     if nyiso_st_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_st_reliability_floor=nyiso_st_reliability_floor
+        )
+    if neiso_temp_reliability_floor is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_temp_reliability_floor=neiso_temp_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5102,6 +5109,22 @@ def main() -> None:
         "probe).",
     )
     parser.add_argument(
+        "--neiso-temp-reliability-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO DUAL-LIMB weather-correlated reliability floor: hold the "
+        "CT_PEAKER fleet online over the summer cooling HOT limb (TMAX) and the "
+        "lone Merrimack-class COAL + steam-gas ST_GAS units online in deep-winter "
+        "COLD snaps (TMIN), each at a temperature-driven commitment fraction "
+        "keyed to the NEISO load-weighted daily TMAX/TMIN (NOAA GHCN). Recovers "
+        "the weather-reliability energy an energy-only LP leaves on the cheaper "
+        "CC fleet. Coefficients regressed from measured CAMPD CF, 2023-2025 "
+        "(scripts/derive_neiso_temp_reliability_floor.py). NEISO-only. Default "
+        "(unset) keeps the per-ISO base config value — ON for NEISO (the keeper); "
+        "--no-neiso-temp-reliability-floor forces it off (the no-floor baseline "
+        "A/B probe).",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5598,6 +5621,7 @@ def main() -> None:
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
+        neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
