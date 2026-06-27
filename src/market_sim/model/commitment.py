@@ -36,6 +36,8 @@ from market_sim.config.constants import (
     CC_STARTUP_PARAMS,
     CT_COMMITMENT_PARAMS,
     CT_STARTUP_PARAMS,
+    ST_GAS_COMMITMENT_PARAMS,
+    ST_GAS_STARTUP_PARAMS,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
@@ -44,11 +46,13 @@ from market_sim.data.fleet import FleetArrays, Generator
 COMMITMENT_PARAMS_BY_FUEL: dict[str, list] = {
     "gas_cc": CC_COMMITMENT_PARAMS,
     "gas_ct": CT_COMMITMENT_PARAMS,
+    "gas_st": ST_GAS_COMMITMENT_PARAMS,
 }
 
 STARTUP_PARAMS_BY_FUEL: dict[str, list] = {
     "gas_cc": CC_STARTUP_PARAMS,
     "gas_ct": CT_STARTUP_PARAMS,
+    "gas_st": ST_GAS_STARTUP_PARAMS,
 }
 
 
@@ -172,6 +176,7 @@ def compute_monthly_markup(
     dispatch: np.ndarray,
     T: int,
     gas_st_season_spread: bool = False,
+    gas_st_startup_cost: bool = False,
     chp_startup_covered: bool = False,
     coal_warm_committed: bool = False,
 ) -> np.ndarray:
@@ -228,6 +233,13 @@ def compute_monthly_markup(
             and gen.fuel_type == "coal"
             and getattr(gen, "must_run_pct", 0.0) > 0.0
         ):
+            continue
+        # Gas-steam startup amortization is ISO-gated (default OFF, so ERCOT and
+        # every other prior keeper stays byte-identical): only when
+        # gas_st_startup_cost is set does ST_GAS carry the startup markup that
+        # makes a stop-start cost more than idling, so the intermediate steam
+        # fleet drags rather than cycling like a peaker.
+        if gen.fuel_type == "gas_st" and not gas_st_startup_cost:
             continue
         startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:
