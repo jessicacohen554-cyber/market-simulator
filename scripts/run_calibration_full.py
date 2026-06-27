@@ -1617,6 +1617,7 @@ def solve_and_persist(
     caiso_gas_floor_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
+    nyiso_st_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1792,6 +1793,7 @@ def solve_and_persist(
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
+            nyiso_st_reliability_floor=nyiso_st_reliability_floor,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2009,6 +2011,7 @@ def solve_and_persist(
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
+        "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2164,6 +2167,10 @@ def solve_and_persist(
     if nyiso_ct_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor
+        )
+    if nyiso_st_reliability_floor is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_st_reliability_floor=nyiso_st_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4927,6 +4934,26 @@ def main() -> None:
         "(unset) keeps the base config value (off); pass the flag to enable.",
     )
     parser.add_argument(
+        "--nyiso-st-reliability-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO DOWNSTATE ST_GAS local-reliability floor: hold the gas-steam "
+        "fleet online at a temperature-driven commitment, keyed PER ZONE to that "
+        "zone's load-center daily max temperature (NOAA GHCN: Islip for Long "
+        "Island, Central Park for NYC, Albany for the Capital region). NYC carries "
+        "a non-zero base (the Ravenswood/Arthur Kill/Astoria in-city must-run) "
+        "plus a hot-limb; Long Island a strong hot-limb; Capital a weak hot-limb; "
+        "the flat/temperature-insensitive Upstate steam fleet is omitted. Recovers "
+        "the local-reliability steam energy an energy-only LP leaves on the cheaper "
+        "CC fleet (the documented ST_GAS under-run). Coefficients (transmission."
+        "NYISO_ST_FLOOR_COEFFS) regressed from measured per-zone CAMPD ST_GAS "
+        "evening (HB14-21) CF vs zone TMAX, 2023-2025 "
+        "(scripts/derive_nyiso_st_reliability_floor.py). NYISO-only. Default "
+        "(unset) keeps the per-ISO base config value — ON for NYISO (the keeper); "
+        "--no-nyiso-st-reliability-floor forces it off (the no-floor baseline "
+        "probe).",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5418,6 +5445,7 @@ def main() -> None:
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
+        nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
