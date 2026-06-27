@@ -1065,7 +1065,14 @@ function singleSeries(id,yr,grp,plant){const B=BENCH[yr],M=MODEL[id].years[yr];
  const mcf=new Float32Array(T),ccf=new Float32Array(T);for(let i=0;i<T;i++){mcf[i]=npl>0?100*a.mm[i]/npl:0;ccf[i]=npl>0?100*a.cc[i]/npl:0;}
  const m_mon=Array(12).fill(0),c_mon=Array(12).fill(0),e_mon=Array(12).fill(0);
  ps.forEach(c=>{M.plants[c].m_mon.forEach((v,i)=>m_mon[i]+=v);B.plants[c].c_mon.forEach((v,i)=>c_mon[i]+=v);B.plants[c].e_mon.forEach((v,i)=>e_mon[i]+=v);});
- const mt=classMetrics(id,yr,grp);return {mcf,ccf,npl,name:META.groupLabel[grp]+" (aggregate)",nodata:a.cA<=0,m_ann:a.mA,c_ann:a.cA,e_ann:a.eA,r:mt?+mt.r.toFixed(3):null,nr:mt?+mt.nr.toFixed(3):null,cap:mt?mt.m1:null,m_mon,c_mon,e_mon};}
+ // Aggregate VOLUME totals are the full grid-delivered class (mFull = grid-LP
+ // class total; bench923 = EIA-923 class − BTM, vintage-completed to EIA-930) —
+ // the SAME basis the gen-mix / fossil tables and the C1/C2 gate use, so the
+ // class total is one number everywhere. CAMPD (c_ann) stays the measured
+ // CEMS-reporting subset: it has no full-class analogue (CEMS covers only
+ // > 25 MW units) and is the dispatch-SHAPE benchmark (r/NRMSE), not a volume
+ // target. m_ann_matched keeps the matched-plant model sum for reference.
+ const mt=classMetrics(id,yr,grp);return {mcf,ccf,npl,name:META.groupLabel[grp]+" (aggregate)",nodata:a.cA<=0,agg:true,m_ann:mt?mt.mFull:a.mA,m_ann_matched:a.mA,c_ann:a.cA,e_ann:mt&&mt.bench923>0?mt.bench923:a.eA,r:mt?+mt.r.toFixed(3):null,nr:mt?+mt.nr.toFixed(3):null,cap:mt?mt.m1:null,m_mon,c_mon,e_mon};}
 // "Where the volume miss lives": the per-class signed monthly / zonal miss as
 // plain bar charts (model − actual). Replaces the old multi-axis error matrix.
 function volMissPanelHTML(grp,yr){return '<div class=panel><h2>Where the volume miss lives — '+META.groupLabel[grp]+' · '+yr
@@ -1095,10 +1102,10 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
   +`<div class=kpicard>${ridSpan(id)}<div class=lbl>${d.name}</div>
     <div class=kpirow><span class=k>Class capture</span><span class=v>${mt&&mt.m1!=null?mt.m1.toFixed(0):"—"}%</span></div>
     <div class=kpirow><span class=k>Plant capture</span><span class=v>${mt&&mt.m2!=null?mt.m2.toFixed(0):"—"}%</span></div></div>`
-  +`<div class=kpicard><div class=lbl>Generation</div>
+  +`<div class=kpicard><div class=lbl>Generation${d.agg?" <span class=psub>(class total)</span>":""}</div>
     <div class=kpirow><span class=k>Model</span><span class=v>${d.m_ann.toFixed(2)} TWh</span></div>
-    <div class=kpirow><span class=k>CAMPD</span><span class=v>${d.c_ann.toFixed(2)} TWh</span></div>
-    <div class=kpirow><span class=k>EIA-923</span><span class=v>${d.e_ann.toFixed(2)} TWh</span></div></div>`
+    <div class=kpirow><span class=k>CAMPD${d.agg?" (CEMS)":""}</span><span class=v>${d.c_ann.toFixed(2)} TWh</span></div>
+    <div class=kpirow><span class=k>EIA-923${d.agg?" (grid)":""}</span><span class=v>${d.e_ann.toFixed(2)} TWh</span></div></div>`
   +`<div class=kpicard><div class=lbl>Fit</div>
     <div class=kpirow><span class=k>Δ vs 923</span><span class="v ${d923==null?'':dcls(d923)}">${d923==null?"—":fmtPct(d923)}</span></div>
     <div class=kpirow><span class=k>Hourly r</span><span class="v ${rcls(d.r)}">${d.r??"—"}</span></div>
@@ -1111,7 +1118,9 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
  h+='<div class=panel><h2>Average daily profile (CF%)</h2><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sProf></div></div>';
  h+='<div class=panel><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2>Hours at each capacity factor</h2><div class=seg id=cfModeSeg><button data-m=bins>5% bins</button><button data-m=line>Per-CF line</button></div></div><p class=psub>Hours the plant spent at each capacity factor. <b>5% bins</b> (default) counts hours in 5-point CF intervals — the comparable shape; <b>per-CF line</b> is the raw 1-point density, whose spikes are the LP parking at offer-curve tranche edges. Vertical markers are this plant\'s tranche boundaries (tag = heat-rate multiplier priced from that CF up); pick a single plant for markers.</p><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
  h+='<div class=panel><h2>Monthly generation (GWh)</h2><div class=svgbox id=sMon></div></div>';
- h+='<div class=panel><h2>Annual total (TWh)</h2><div class=svgbox id=cAnn></div></div>';
+ h+='<div class=panel><h2>Annual total (TWh)</h2>'
+  +(d.agg?'<p class=psub>Class totals on the grid-delivered basis (model = grid-LP class; EIA-923 = grid-delivered class, vintage-completed to EIA-930) — the same numbers as the Generation-mix table and the C1/C2 gate. <b>CAMPD (CEMS)</b> is the measured continuous-monitoring subset (units &gt; 25 MW only), so it sits below the full-class EIA-923 by the non-CEMS + preliminary-vintage remainder; it is the dispatch-shape reference (r/NRMSE), not a volume target.</p>':'')
+  +'<div class=svgbox id=cAnn></div></div>';
  document.getElementById("content").innerHTML=h;
  const psel=document.getElementById("plantSel");
  psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${BENCH[yr].plants[c].name} · ${BENCH[yr].plants[c].zone}${BENCH[yr].plants[c].nodata?" · no CAMPD":""}</option>`).join("");
@@ -1140,7 +1149,11 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
  document.getElementById("sMon").appendChild(lineChart(ms,Math.max(1,...d.c_mon,...d.m_mon)*1.15,MONTHS,"",760,300));
  // annual totals for the class aggregate (model vs CAMPD vs EIA-923)
  const a=aggMW(id,yr,grp);
- const bs=[{label:"Model",v:a.mA,color:"#4A90D9"},{label:"CAMPD",v:a.cA,color:"#647184"},{label:"EIA-923",v:a.eA,color:"#2ECC71"}];
+ // Full grid-delivered class totals (same basis as the gen-mix/fossil tables and
+ // the C1/C2 gate): Model = grid-LP class (mFull), EIA-923 = grid-delivered class
+ // (bench923). CAMPD stays the measured CEMS-reporting subset (no full-class
+ // analogue; the dispatch-shape benchmark).
+ const bs=[{label:"Model",v:mt?mt.mFull:a.mA,color:"#4A90D9"},{label:"CAMPD (CEMS)",v:a.cA,color:"#647184"},{label:"EIA-923 (grid)",v:mt&&mt.bench923>0?mt.bench923:a.eA,color:"#2ECC71"}];
  document.getElementById("cAnn").appendChild(barChart(bs,Math.max(0.1,...bs.map(b=>b.v))*1.25,760,260));
  mountVolMiss(id,yr,grp);
  wireTips(document.getElementById("content"));}
