@@ -731,6 +731,31 @@ class ScenarioConfig:
     # outages/derates and gas was the largest forced-out category (Eastern
     # Interconnection 13% of all capacity forced out at the peak) — a published
     # physical magnitude, not tuned to land a target number of >$300 hours.
+    miso_temp_reliability_floor: bool = False  # MISO DUAL-LIMB, ZONAL weather-
+    # correlated reliability floor — the MISO-native analogue of the NEISO/NYISO
+    # temperature floors. MISO spans two OPPOSITE weather regimes within one ISO,
+    # so each zone is keyed to its OWN load-weighted daily TMAX/TMIN (NOAA GHCN
+    # load-center stations per zone; data/raw/miso-weather/) and BOTH limbs are
+    # fit per zone: (1) a summer HOT limb (TMAX) over the afternoon-evening AC
+    # ramp holds the gas-steam boilers and simple-cycle CTs online for local
+    # reliability in all zones (strongest in MISO-South / Entergy and
+    # MISO-Central); (2) a deep-winter COLD limb (TMIN) over the morning/evening
+    # peaks, grounded ONLY in MISO-South (the gas-constrained Entergy/Gulf
+    # footprint, where the gas-electric constraint prices gas-steam into merit;
+    # measured ST_GAS rho +0.42, CT +0.52), holds the gas-steam fleet online. The
+    # North/Central steam/CT cold correlation is ~0 (winter load there is
+    # coal/wind), so those cold limbs are left off rather than forced. Floors each
+    # (zone, class) at frac x available capacity over its window via the
+    # hour-varying FleetArrays.min_gen lower bound, distributed cheapest-first
+    # (transmission.inject_miso_temp_reliability_floor;
+    # MISO_ST_FLOOR_COEFFS / MISO_CT_FLOOR_COEFFS). Coefficients regressed from
+    # measured per-(zone × class) CAMPD CF vs the zone load-weighted TMAX/TMIN,
+    # pooled 2023-2025 (scripts/derive_miso_temp_reliability_floor.py) — physical
+    # temperature->commitment rules, NOT TWh-residual fits. Replaces the deferred
+    # gas_st_netload_drag (whose ERCOT-derived coefficients saturate at the 0.34
+    # cap across MISO's larger net-load range, degenerating into a flat must-run).
+    # Forward-reproducible and condition-responsive. Default off (byte-identical);
+    # MISO-only, no-op without an archived weather series.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -863,6 +888,49 @@ class ScenarioConfig:
     # for a forward year and flow-responsive — NOT fitted to the net-MWh residual
     # (rules #1/#12). Requires --reference-price-interface; MISO-only (no seam-DIBA
     # map → no-op, byte-identical for other ISOs). Default off; opt-in per run.
+    miso_seam_flow_percentile: float | None = None  # Override the per-seam import
+    # deliverability percentile used by miso_seam_flow_limit. None keeps the
+    # constants.MISO_SEAM_FLOW_PERCENTILE default (90). Raising it (e.g. 95) lifts
+    # the deliverability envelope toward the measured upper-tail transfer, letting
+    # the priced seam clear MORE import in tight hours — the round-2 import-lift
+    # knob for the 2024/2025 structural under-import (model 8.3 vs measured 23.1
+    # TWh in 2024; 2025 net-EXPORT vs measured net-IMPORT). Still a deliverability
+    # ceiling from the measured directed-flow duration curve, NOT a flow pinned to
+    # the net-MWh residual (rules #1/#12). A higher percentile only RELAXES the
+    # cap; the priced seam economics still clear the merit order below it. Used
+    # only when miso_seam_flow_limit is set; MISO-only; default keeps p90
+    # (byte-identical).
+    miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
+    # reference-price seam — the import-direction mirror of the PJM firm-export
+    # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
+    # seam (PJM + IESO/Ontario) in ~99-100% of hours at a stable multi-GW base
+    # (cheap Ontario nuclear/hydro surplus + firm PJM-east scheduled transfers)
+    # that flows regardless of the hourly spread. The gas x heat-rate economic
+    # seam prices the PJM border ABOVE MISO's cheap coal and so wrongly
+    # net-EXPORTS over it (the 2024 -8.3 vs -23.1 net-import miss, the 2025 +18 vs
+    # -19 sign flip, and the 2025 +20 TWh energy-balance overshoot). This forces
+    # the cheapest import tranches on at the measured firm base
+    # (NeighborInterface.firm_import_floor_by_year, the p10 of the seam's net
+    # import; transmission.inject_reference_price_firm_import) so the inframarginal
+    # must-flow import displaces the over-running domestic coal/CC, the economic
+    # tranches clearing on top. p10 (imported in >=90% of hours), NOT the realized
+    # net interchange (rule #11); a measured market-operations input whose forward
+    # analogue is the firm scheduled transfer (rule #12). Requires
+    # --reference-price-interface; MISO-only (only the PJM seam carries a floor).
+    # Default off (byte-identical); opt-in per run.
+    miso_cc_coal_rebalance: bool = False  # MISO CC_REGULAR / COAL_BIT offer-curve
+    # rebalance: raise the MISO combined-cycle committed/econ-high bands and the
+    # bituminous-coal econ-high band so the MARGINAL CC / coal-bit MWh sits ABOVE
+    # the priced-import hurdle (and above the under-running CT_PEAKER / ST_GAS),
+    # rather than being the cheapest fill. Structural correction for the round-2
+    # conservation-of-energy miss: with imports too low, cheap domestic CC_REGULAR
+    # and COAL_BIT over-run (2025 coal 232 vs EIA-923 201 TWh) and price out the
+    # CT peakers and gas steam. The marginal block of a baseload CC/coal unit is
+    # NOT the cheapest available supply when priced imports are on the bar, so its
+    # top tranche must clear above the import hurdle — an offer-SHAPE correction,
+    # not a residual-tuned adder. Applied as a deep-merge offer-curve override
+    # gated to iso=="MISO" (other ISOs / forecasts byte-identical). Default off;
+    # opt-in per run, validated by the import↑ / CC↓ / coal↓ / CT↑ / ST↑ response.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -2753,6 +2821,10 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_spin_headroom_frac": 2,
     "miso_firm_imports": 1,
     "miso_seam_flow_limit": 1,
+    "miso_seam_flow_percentile": 3,
+    "miso_temp_reliability_floor": 1,
+    "miso_cc_coal_rebalance": 1,
+    "miso_firm_import_floor": 1,
     "ct_intermediate_split": 1,
     "ct_intermediate_cf_threshold": 3,
     "st_gas_intermediate_split": 1,
