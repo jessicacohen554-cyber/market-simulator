@@ -1,57 +1,292 @@
+diff --git a/scripts/derive_nyiso_st_reliability_floor.py b/scripts/derive_nyiso_st_reliability_floor.py
+index 52e066d..c7a3728 100644
+--- a/scripts/derive_nyiso_st_reliability_floor.py
++++ b/scripts/derive_nyiso_st_reliability_floor.py
+@@ -86,11 +86,66 @@ def fetch_station_tmax(station: str, start: str, end: str) -> pd.Series:
+     return df.set_index("DATE")["TMAX"]
+ 
+ 
+-def zone_steam_plant_codes(zone: str) -> tuple[set[int], float]:
+-    """Return a zone's ST_GAS plant codes and their nameplate (MW)."""
++# Plants excluded from the steam reliability floor / its regression — none;
++# mirrors transmission.NYISO_ST_FLOOR_EXCLUDE_PLANTS. Ravenswood (2500)'s
++# over-availability (CC-tagged outages) is fixed at the source
++# (data.outages._FLEET_GROUP_OVERRIDE), so it is included like the other steam.
++EXCLUDE_PLANTS: frozenset[int] = frozenset()
++
++
++def zone_steam_plant_codes(zone: str) -> tuple[dict[int, float], float]:
++    """Return a zone's ST_GAS ``{plant_code: bin nameplate MW}`` and the total."""
+     b = pd.read_csv(RAW_DIR / "_processed-legacy" / "bin_assignments_NYISO.csv")
+     z = b[(b["Plant_Group"] == "ST_GAS") & (b["Zone"] == zone)]
+-    return set(z["Plant_Code"].astype(int)), float(z["Nameplate_MW"].sum())
++    z = z[~z["Plant_Code"].astype(int).isin(EXCLUDE_PLANTS)]
++    by_plant = dict(zip(z["Plant_Code"].astype(int), z["Nameplate_MW"].astype(float)))
++    return by_plant, float(z["Nameplate_MW"].sum())
++
++
++def zone_available_capacity(
++    plant_npl: dict[int, float], index: pd.DatetimeIndex
++) -> pd.Series:
++    """Hourly AVAILABLE capacity (MW) for a zone's ST_GAS fleet.
++
++    ``nameplate`` minus the per-plant ``unit_pct_of_plant`` share of any unit on a
++    detected CAMPD outage (``campd-unit-outages-NYISO.csv``, the SAME extract and
++    the SAME ``unit_capacity_mw / plant_capacity_mw`` share basis the model derates
++    bin availability with — :func:`market_sim.data.outages.unit_outage_derate_
++    factors`), so the CF denominator excludes outage downtime. Using the NORMALISED
++    pct-of-plant (which sums to 100% per plant) rather than the raw
++    ``unit_capacity_mw`` is essential: CAMPD splits each steam unit's reheat /
++    superheat sections into separate rows (Astoria 31RH+32SH, 51RH+52SH) that each
++    carry the FULL section nameplate, so the raw caps sum to ~2x the plant
++    nameplate; ``plant_capacity_mw`` is that same inflated sum, so the share
++    ``unit_capacity_mw / plant_capacity_mw`` is the correct fraction.
++
++    The when-available CF is the basis the floor is applied on (``frac`` x ``pmax``
++    x ``availability``); normalising by nameplate over all hours instead would
++    double-discount the outage time (the all-hours CF is already deflated by
++    downtime, then the injector multiplies by availability again, leaving the
++    costly in-city reliability units floored near zero — the documented Astoria /
++    Arthur Kill suppression).
++    """
++    nameplate = float(sum(plant_npl.values()))
++    avail = pd.Series(nameplate, index=index)
++    path = RAW_DIR / "campd-unit-outages-NYISO.csv"
++    if not path.exists():
++        return avail
++    o = pd.read_csv(path)
++    o["facility_id"] = pd.to_numeric(o["facility_id"], errors="coerce")
++    o = o[o["facility_id"].isin(plant_npl)].copy()
++    o["outage_start"] = pd.to_datetime(o["outage_start"])
++    o["outage_end"] = pd.to_datetime(o["outage_end"])
++    # Derate each plant by its out units' capacity SHARE (unit_capacity_mw /
++    # plant_capacity_mw) of THAT plant's bin nameplate — matching the model's
++    # unit-outage derate. Per-plant so a zone with several plants is correct.
++    for _, e in o.iterrows():
++        pcap = float(e["plant_capacity_mw"]) or 1.0
++        pnpl = float(plant_npl.get(int(e["facility_id"]), 0.0))
++        share_mw = pnpl * float(e["unit_capacity_mw"]) / pcap
++        mask = (index >= e["outage_start"]) & (index < e["outage_end"])
++        avail.loc[mask] -= share_mw
++    return avail.clip(lower=0.0)
+ 
+ 
+ def main() -> None:
+@@ -139,7 +194,8 @@ def main() -> None:
+ 
+     # --- per-zone evening CF vs zone TMAX regression -----------------------
+     for zone in ZONE_TMAX_STATION:
+-        codes, nameplate = zone_steam_plant_codes(zone)
++        plant_npl, nameplate = zone_steam_plant_codes(zone)
++        codes = set(plant_npl)
+         if not codes or nameplate <= 0.0:
+             continue
+         pooled, pooled24 = [], []
+@@ -149,16 +205,28 @@ def main() -> None:
+                 continue
+             c = pd.read_parquet(path)
+             c = c[c["facilityId"].astype(int).isin(codes)].copy()
++            c["ts"] = pd.to_datetime(c["date"]) + pd.to_timedelta(c["hour"], unit="h")
+             c["date"] = pd.to_datetime(c["date"])
+-            ev = c[c["hour"].isin(EVENING_HOURS)]
+-            daily = ev.groupby("date")["grossLoad"].sum() / (
+-                nameplate * len(EVENING_HOURS)
++            # Hourly fleet gross + AVAILABLE capacity (nameplate net of unit
++            # outages); CF is normalised by available capacity, not nameplate.
++            gross_h = c.groupby("ts")["grossLoad"].sum()
++            avail_h = zone_available_capacity(plant_npl, gross_h.index)
++            g = pd.DataFrame({"gross": gross_h, "avail": avail_h})
++            g["date"] = g.index.normalize()
++            g["hour"] = g.index.hour
++            ev = g[g["hour"].isin(EVENING_HOURS)]
++            ev_day = ev.groupby("date").agg(
++                gross=("gross", "sum"), avail=("avail", "sum")
+             )
++            daily = (ev_day["gross"] / ev_day["avail"]).where(ev_day["avail"] > 0)
+             df = pd.DataFrame({"cf": daily})
+             df["tmax"] = df.index.map(tser)
+             pooled.append(df.dropna())
+-            # 24-hour daily fleet CF (all hours) for the persistent baseline.
+-            daily24 = c.groupby("date")["grossLoad"].sum() / (nameplate * 24)
++            # 24-hour daily WHEN-AVAILABLE CF for the persistent baseline.
++            all_day = g.groupby("date").agg(
++                gross=("gross", "sum"), avail=("avail", "sum")
++            )
++            daily24 = (all_day["gross"] / all_day["avail"]).where(all_day["avail"] > 0)
+             d24 = pd.DataFrame({"cf": daily24})
+             d24["tmax"] = d24.index.map(tser)
+             pooled24.append(d24.dropna())
+@@ -177,16 +245,18 @@ def main() -> None:
+             if len(hot) >= 2
+             else 0.0
+         )
+-        print(f"\n=== {zone} ST_GAS CF, pooled {args.years} ===")
++        print(f"\n=== {zone} ST_GAS WHEN-AVAILABLE CF, pooled {args.years} ===")
+         print(f"  nameplate                 = {nameplate:.0f} MW, {len(codes)} plants")
+         print(f"  corr(CF, TMAX) [evening]  = {corr:+.3f}")
+         print(f"  hot-day (>=25C) median CF = {hot['cf'].median():.3f}")
+         print(f"  mild-day (<25C) median CF = {cool['cf'].median():.3f}")
+         print(f"  nyiso_st_floor_t0_c       = {T0_C:.1f}")
+         print(f"  nyiso_st_floor_slope_per_c= {slope:.4f}   (hot-limb, TMAX>=T0)")
+-        print(f"  nyiso_st_floor_cap        = {cap:.3f}    (p97 evening CF)")
+-        print(f"  nyiso_st_floor_base_ev    = {base:.3f}    (cool-day evening p25)")
+-        print(f"  nyiso_st_floor_base_24h   = {base24:.3f}    (cool-day ALL-hours p25)")
++        print(f"  nyiso_st_floor_cap        = {cap:.3f}    (p97 evening avail-CF)")
++        print(
++            f"  nyiso_st_floor_base_ev    = {base:.3f}    (cool-day evening avail-p25)"
++        )
++        print(f"  nyiso_st_floor_base_24h   = {base24:.3f}    (cool-day 24h avail-p25)")
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/src/market_sim/data/outages.py b/src/market_sim/data/outages.py
+index 8604af0..279f345 100644
+--- a/src/market_sim/data/outages.py
++++ b/src/market_sim/data/outages.py
+@@ -438,6 +438,17 @@ def _unit_outage_target(
+     return (facility_id, "ST_GAS")
+ 
+ 
++# Mixed CC/ST facilities whose CAMPD unit-outage rows are tagged with a different
++# asset class than the model's bin. Ravenswood (2500) is combined-cycle dominant,
++# so CAMPD tags every unit CC_REGULAR, but our NYISO fleet carries plant 2500 as a
++# single ST_GAS bin (with an HR correction, fleet.MIXED_FACILITY_STEAM_HR). Without
++# this override its outage rows route to a (2500, CC_REGULAR) bin that does not
++# exist, so the ST_GAS bin reads near-fully-available and over-runs (and the steam
++# reliability floor, frac x pmax x availability, over-forces it). Route the plant's
++# outages to its ST_GAS bin so the model availability reflects the real downtime.
++_FLEET_GROUP_OVERRIDE: dict[int, str] = {2500: "ST_GAS"}
++
++
+ def _generic_unit_outage_target(
+     facility_id: int, unit_id: object, group: object
+ ) -> tuple[int, str] | None:
+@@ -446,7 +457,8 @@ def _generic_unit_outage_target(
+     Non-ERCOT ISOs run a per-plant fleet with no split facilities, so each
+     unit routes straight to its plant's model group. Combustion turbines are
+     excluded from the derate (they dispatch economically), matching the
+-    ERCOT convention.
++    ERCOT convention. A handful of mixed CC/ST facilities whose CAMPD class tag
++    disagrees with the model bin are remapped via :data:`_FLEET_GROUP_OVERRIDE`.
+     """
+     g = (
+         ""
+@@ -455,6 +467,8 @@ def _generic_unit_outage_target(
+     )
+     if g in ("CT_PEAKER", "CT_CHP"):
+         return None
++    if facility_id in _FLEET_GROUP_OVERRIDE:
++        return (facility_id, _FLEET_GROUP_OVERRIDE[facility_id])
+     if not g or g == "OTHER":
+         return None
+     return (facility_id, g)
 diff --git a/src/market_sim/model/transmission.py b/src/market_sim/model/transmission.py
-index abdf6fc..d4391b8 100644
+index d4391b8..ecf3d14 100644
 --- a/src/market_sim/model/transmission.py
 +++ b/src/market_sim/model/transmission.py
-@@ -2124,10 +2124,18 @@ def inject_nyiso_st_reliability_floor(
-       the flat, temperature-insensitive Upstate steam fleet is deliberately
-       omitted from ``coeffs`` (no un-grounded flat must-run).
+@@ -2055,33 +2055,49 @@ def inject_nyiso_ct_reliability_floor(
+ #   overnight/midday: frac = base_24h
+ #   evening window  : frac = max(base_24h, clip(base_ev + slope*(TMAX-t0),
+ #                                               base_ev, cap))
+-# Coefficients regressed *a priori* from the measured per-zone CAMPD ST_GAS CF vs
+-# the zone's NOAA GHCN daily max temperature, pooled 2023-2025 (scripts/derive_
+-# nyiso_st_reliability_floor.py) — physical heat->commitment rules, NOT
+-# TWh-residual fits. base_24h is the cool-day ALL-hours p25; base_ev the cool-day
+-# evening (HB14-21) p25; cap the evening p97 ceiling; slope the evening hot-limb:
+-#   * Long_Island — strong hot-limb (corr +0.63, hot CF 0.57 vs mild 0.25),
+-#     cable-islanded; base_24h 0.148 / base_ev 0.191, slope 0.0588/degC, cap 0.851.
+-#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria,
+-#     corr +0.48, hot CF 0.32 vs mild 0.15): base_24h 0.105 / base_ev 0.112, slope
+-#     0.0729/degC, cap 0.836. The Task-C must-run-when-available baseline (NYISO's
+-#     in-city reliability rules are strongest in zone J); the measured cool-day CF
+-#     runs ~80% as high overnight as in the evening, so the baseline is a 24-hour
+-#     minimum, not an evening-only ramp.
+-#   * Capital_Hudson — WEAK hot-limb (corr +0.089, hot CF 0.16 vs mild 0.00): no
+-#     baseline (base_24h = base_ev = 0.0), hot-limb only, slope 0.0400/degC, cap
+-#     0.419 — binds only on the hottest afternoons, conservative for a weak class.
++# CRITICAL — frac is a WHEN-AVAILABLE capacity factor, regressed on CF normalised
++# by AVAILABLE capacity (nameplate net of the unit-outage derate), NOT by nameplate
++# over all hours. The floor is applied as frac x pmax x availability, so the model
++# already discounts outage downtime via `availability`; regressing frac on the
++# all-hours (nameplate) CF would double-discount it — the cool-day all-hours CF is
++# itself deflated by the heavy NYC/LI steam downtime, and multiplying by
++# availability again floored the costly in-city units (Astoria, Arthur Kill) at
++# near zero, the documented suppression. On the available basis these units run a
++# steady ~0.4 baseline whenever they are committed (NYC temperature corr falls to
++# ~0 — a flat in-city must-run, not a weather ramp), which the floor now
++# reproduces: frac x availability tracks the real duty cycle (full baseline when
++# available, zero on outage). Coefficients regressed *a priori* from the measured
++# per-zone CAMPD ST_GAS when-available CF vs the zone's NOAA GHCN daily max
++# temperature, pooled 2023-2025 (scripts/derive_nyiso_st_reliability_floor.py) —
++# NOT TWh-residual fits. base_24h is the cool-day 24h available-CF p25; base_ev the
++# cool-day evening available-CF p25; cap the evening available-CF p97 (clipped to
++# 0.95 to leave headroom and reject outage-edge artifacts > 1); slope the evening
++# hot-limb:
++#   * Long_Island — base_24h 0.289 / base_ev 0.383, slope 0.0406/degC, cap 0.891
++#     (corr +0.48), cable-islanded.
++#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria):
++#     base_24h 0.391 / base_ev 0.432, slope 0.0393/degC, cap 0.95 (corr ~0 — flat
++#     when committed). NYISO's in-city reliability rules are strongest in zone J.
++#   * Capital_Hudson — no baseline (base 0.0), weak hot-limb only, slope 0.0246/degC,
++#     cap 0.95 — binds only on the hottest afternoons, conservative for a weak class.
+ # The base x available-capacity basis (pmax x availability) is automatically
+ # outage-aware (a unit on a forced/planned outage is not floored). Upstate_West
+-# ST_GAS (150 MW, CF flat ~0.50 vs temperature) is NOT temperature-driven
+-# (baseload cogen-like) and is deliberately omitted — a flat must-run there would
+-# be an un-grounded fit, not a heat->commitment rule.
++# ST_GAS (150 MW, CF flat ~0.50) is NOT temperature-driven (baseload cogen-like)
++# and is deliberately omitted — a flat must-run there would be an un-grounded fit.
+ NYISO_ST_FLOOR_HOURS: tuple[int, int] = (14, 21)  # evening hot-limb (HB14-21)
++# Plants excluded from the steam reliability floor (none — kept as an explicit
++# hook). Ravenswood (2500), a mixed CC/ST facility, was a candidate because its
++# CAMPD outages are tagged CC_REGULAR and never reached its ST_GAS bin, leaving it
++# over-available so the floor over-forced it; that is now fixed at the SOURCE —
++# data.outages._FLEET_GROUP_OVERRIDE routes plant 2500's outages to its ST_GAS bin
++# so its model availability reflects the real downtime — so Ravenswood is included
++# in both the floor and the coefficient regression like the other in-city steam.
++NYISO_ST_FLOOR_EXCLUDE_PLANTS: frozenset[int] = frozenset()
+ NYISO_ST_FLOOR_COEFFS: dict[str, tuple[float, float, float, float, float]] = {
+-    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)
+-    "Long_Island": (0.0588, 25.0, 0.851, 0.191, 0.148),
+-    "NYC": (0.0729, 25.0, 0.836, 0.112, 0.105),
+-    "Capital_Hudson": (0.0400, 25.0, 0.419, 0.000, 0.000),
++    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)  — WHEN-AVAILABLE CF
++    "Long_Island": (0.0406, 25.0, 0.891, 0.383, 0.289),
++    "NYC": (0.0393, 25.0, 0.950, 0.432, 0.391),
++    "Capital_Hudson": (0.0246, 25.0, 0.950, 0.000, 0.000),
+ }
  
--    The hourly per-zone target is distributed cheapest-first over the zone's
--    in-pocket ST_GAS units (each capped at available capacity) via the
--    hour-varying ``FleetArrays.min_gen`` lower bound, composed with any existing
--    floor (e.g. the Long Island self-supply floor,
-+    The hourly fraction is applied **per unit, pro-rata** — each in-pocket ST_GAS
-+    unit is floored at ``frac`` x its OWN available capacity (``pmax`` x
-+    ``availability``) via the hour-varying ``FleetArrays.min_gen`` lower bound,
-+    NOT cheapest-first over an aggregate target. In-city local reliability commits
-+    the geographically-distributed steam units (NYC: Ravenswood, Astoria, Arthur
-+    Kill — each in its own load pocket) by their locational role, so ``frac`` is a
-+    per-unit fleet CF; a cheapest-first aggregate would instead pour the whole
-+    commitment into the single cheapest unit (which an energy-only LP already runs
-+    economically, making the floor redundant there) and leave the costlier in-city
-+    units idle — the opposite of the measured CAMPD distribution, where all the
-+    in-pocket steam runs at similar moderate CFs. Composed with any existing floor
-+    (e.g. the Long Island self-supply floor,
-     :func:`inject_nyiso_local_selfsupply`) via ``maximum`` so the two never
-     double-force. The LP dispatches economically above the floor.
  
-@@ -2188,7 +2196,29 @@ def inject_nyiso_st_reliability_floor(
-             frac = np.where(in_window, np.maximum(frac, ev), frac)
-         if not np.any(frac > 0.0):
+@@ -2176,11 +2192,16 @@ def inject_nyiso_st_reliability_floor(
+         z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
+         if z_idx is None:
              continue
--        _distribute_group_floor(fleet_arrays, rows, frac, hours)
-+        # PER-UNIT pro-rata distribution: floor EACH in-pocket steam unit at frac x
-+        # its OWN available capacity, NOT cheapest-first over an aggregate target.
-+        # In-city local reliability commits the geographically-distributed steam
-+        # units (NYC: Ravenswood, Astoria, Arthur Kill — each in its own load
-+        # pocket) by their locational role, not by economics, so the measured frac
-+        # is a per-unit fleet CF, applied to every unit. A cheapest-first aggregate
-+        # instead pours the whole commitment into the single cheapest unit
-+        # (Ravenswood, which an energy-only LP already runs economically, so the
-+        # floor is redundant there) and leaves the costlier in-city units (Astoria,
-+        # Arthur Kill) idle — the opposite of the measured CAMPD distribution, where
-+        # all three run at similar moderate CFs. Composed with any existing floor
-+        # via maximum; the LP dispatches economically above it.
-+        if fleet_arrays.min_gen is None:
-+            fleet_arrays.min_gen = np.broadcast_to(
-+                fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
-+            ).copy()
-+        for r in rows:
-+            avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-+            np.maximum(
-+                fleet_arrays.min_gen[r, :],
-+                frac * avail_r,
-+                out=fleet_arrays.min_gen[r, :],
+-        rows = np.flatnonzero(
++        sel = (
+             (groups == "ST_GAS")
+             & (fleet_arrays.zone_idx == z_idx)
+             & (fleet_arrays.pmax > 0.0)
+         )
++        if fleet_arrays.plant_code is not None:
++            sel &= ~np.isin(
++                np.asarray(fleet_arrays.plant_code), list(NYISO_ST_FLOOR_EXCLUDE_PLANTS)
 +            )
-         applied = True
-     return applied
++        rows = np.flatnonzero(sel)
+         if rows.size == 0:
+             continue
+         tmax = nyiso_zone_tmax(year, hours, zone)
+diff --git a/tests/test_transmission.py b/tests/test_transmission.py
+index 03bb2d8..e32cf05 100644
+--- a/tests/test_transmission.py
++++ b/tests/test_transmission.py
+@@ -1046,8 +1046,8 @@ class TestNyisoStReliabilityFloor(unittest.TestCase):
+         # base_24h * available capacity > 0 on every hour (overnight included).
+         for row in (nyc, li):
+             self.assertTrue(bool((fa.min_gen[row] > 0.0).all()))
+-        self.assertEqual(NYISO_ST_FLOOR_COEFFS["NYC"][4], 0.105)  # NYC base_24h
+-        self.assertEqual(NYISO_ST_FLOOR_COEFFS["Long_Island"][4], 0.148)
++        self.assertEqual(NYISO_ST_FLOOR_COEFFS["NYC"][4], 0.391)  # NYC base_24h
++        self.assertEqual(NYISO_ST_FLOOR_COEFFS["Long_Island"][4], 0.289)
+         # Capital's base_24h is 0 -> overnight hours are NOT floored.
+         cap = self._row(gens, "st_cap")
+         lo, hi = NYISO_ST_FLOOR_HOURS
