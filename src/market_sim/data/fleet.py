@@ -3832,6 +3832,18 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
     "COAL": 100.0,
 }
 
+# Coal boiler minimum run / minimum downtime for the P2 commitment screen. A
+# coal start is a slow, fuel- and wear-intensive boiler warm-up, so once
+# committed a unit stays on ~1.5 days and, once down, stays down ~16 h before a
+# restart pays off (NREL SR-5500-55433 baseload class; the same 36/16 ERCOT
+# carries per-plant in custom-bin-assignments.csv). Other CAMPD-binning ISOs
+# (MISO/PJM/CAISO/…) have no Min_Run column in their bin sheet, so coal there
+# falls back to these physical defaults instead of the 0/0 that would let it
+# cycle with peaker agility. Inert unless commitment screening runs with coal
+# screened (P1-only keepers never touch min_run_hours).
+COAL_BIN_MIN_RUN_HOURS: int = 36
+COAL_BIN_MIN_DOWN_HOURS: int = 16
+
 # ERCOT coal fuel-supply type by EIA plant code. Mine-mouth lignite plants
 # ("lignite") bid into SCED at the marginal extraction cost — fixed mine
 # costs are sunk on a dispatch-hour basis. PRB-by-rail plants ("prb") bid
@@ -6213,6 +6225,21 @@ def bins_to_fleet(
         # anchor — it carries the min-run / min-down / start cost and (below)
         # the must_run_pct / bin_nameplate tags — so commitment coupling and
         # the BTM add-back are unaffected.
+        # Min-run / min-down for the commitment screen: the bin's measured value
+        # when present (ERCOT carries 36/16 per-plant), else the physical coal-
+        # boiler default for coal on ISOs whose bin sheet has no Min_Run column.
+        # Non-coal keeps the bin value (0 when absent → screened on start cost
+        # alone, no duration hysteresis). Only the first committed slice carries
+        # it (the screened anchor).
+        _bm = b["min_run"]
+        _bd = b["min_down"]
+        bin_min_run = 0 if pd.isna(_bm) else int(_bm)
+        bin_min_down = 0 if pd.isna(_bd) else int(_bd)
+        if fuel == "coal":
+            if bin_min_run <= 0:
+                bin_min_run = COAL_BIN_MIN_RUN_HOURS
+            if bin_min_down <= 0:
+                bin_min_down = COAL_BIN_MIN_DOWN_HOURS
         cr_spread = float(getattr(config, "committed_ramp_spread", 0.0) or 0.0)
         if cr_spread > 0.0 and committed_cap > 0.5 and n_curve > 0 and base_hr > 0.0:
             cmt_mult = committed_hr / base_hr
@@ -6231,8 +6258,8 @@ def bins_to_fleet(
                     _cap,
                     _hr,
                     1.0,
-                    int(b["min_run"]) if i == 0 else 0,
-                    int(b["min_down"]) if i == 0 else 0,
+                    bin_min_run if i == 0 else 0,
+                    bin_min_down if i == 0 else 0,
                     startup if i == 0 else 0.0,
                 )
                 for i, (_s, _cap, _hr, *_r) in enumerate(cmt_steps)
@@ -6244,8 +6271,8 @@ def bins_to_fleet(
                     committed_cap,
                     committed_hr,
                     1.0,
-                    int(b["min_run"]),
-                    int(b["min_down"]),
+                    bin_min_run,
+                    bin_min_down,
                     startup,
                 ),
             ]
