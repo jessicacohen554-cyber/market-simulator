@@ -851,13 +851,11 @@ def _must_run_profiles(
     classes with positive net generation in ``iso`` and ``year``.
     """
     n_zones, hours = demand.shape
-    e923 = _eia923_frame(year, generation, iso=iso)
     months = _hour_months(year, hours)
     hours_per_month = np.array([(months == m).sum() for m in range(1, 13)], dtype=float)
     zone_tot = demand.sum(axis=1)
     grand = zone_tot.sum()
     zone_share = (zone_tot / grand) if grand > 0 else np.full(n_zones, 1.0 / n_zones)
-    mcols = [f"m{i:02d}" for i in range(1, 13)]
     out: dict[str, np.ndarray] = {}
     for klass in _INJECTED_MUSTRUN_CLASSES:
         if klass in skip_classes:
