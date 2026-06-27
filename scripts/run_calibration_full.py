@@ -597,6 +597,63 @@ def _storage_frame(
     return df
 
 
+def _storage_as_frame(
+    year: int,
+    pass_label: str,
+    result,
+    storage_units,
+    zone_names,
+) -> pd.DataFrame | None:
+    """Return the modeled-vs-measured storage AS-vs-energy split, one row/hour.
+
+    The G5 validation artifact (``ercot_storage_as_endogenous``): for each hour
+    it carries the LP's CHOSEN battery split — ``modeled_as_mw`` (cleared upward
+    reserve attributed to storage by :func:`market_sim.model.dispatch.storage_reserve_mw`,
+    the storage-first opportunity-cost attribution) and ``modeled_discharge_mw``
+    (energy) — alongside the **measured** 60-Day DAM battery AS award
+    (``measured_as_mw``, the ``storage`` column of the per-resource-type series).
+    The measured award is the backcast realization the chosen split is VALIDATED
+    against, never pinned to (CLAUDE.md #12). Returns ``None`` when the co-opt is
+    off (no ``reserve_dispatch``) or the storage fleet is empty.
+    """
+    rd = getattr(result, "reserve_dispatch", None)
+    if rd is None or not storage_units or result.storage_discharge is None:
+        return None
+    from market_sim.model.dispatch import storage_reserve_mw
+    from market_sim.results.scarcity import ercot_storage_as_reserve_mw
+
+    n_zones = len(zone_names)
+    rd = np.asarray(rd, dtype=float)
+    n_classes = max(1, rd.shape[0] // n_zones)
+    T = rd.shape[1]
+    zone_lookup = {z: i for i, z in enumerate(zone_names)}
+    s_zone = np.array([zone_lookup.get(u.zone, 0) for u in storage_units], dtype=int)
+    power_cap = np.array([float(u.power_cap_mw) for u in storage_units], dtype=float)
+    as_zone = storage_reserve_mw(
+        rd,
+        np.asarray(result.storage_charge, dtype=float),
+        np.asarray(result.storage_discharge, dtype=float),
+        power_cap,
+        s_zone,
+        n_classes,
+    )  # (n_zones, T)
+    modeled_as = as_zone.sum(axis=0)  # system total MW
+    modeled_dis = np.asarray(result.storage_discharge, dtype=float).sum(axis=0)
+    measured_as = ercot_storage_as_reserve_mw(int(year), T)
+    df = pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "pass": pass_label,
+            "hour": np.arange(T, dtype=np.int32),
+            "modeled_as_mw": modeled_as.astype(np.float32),
+            "modeled_discharge_mw": modeled_dis.astype(np.float32),
+            "measured_as_mw": measured_as.astype(np.float32),
+        }
+    )
+    df["pass"] = df["pass"].astype("category")
+    return df
+
+
 def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     """Return the EIA-930 hourly benchmark series for a year, long format.
 
@@ -1601,6 +1658,7 @@ def solve_and_persist(
     ordc_lolp_params_path: str | None = None,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
+    ercot_storage_as_endogenous: bool = False,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
@@ -1687,6 +1745,7 @@ def solve_and_persist(
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     storage_frames: list[pd.DataFrame] = []
+    storage_as_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
     passes_seen: set[str] = set()
 
@@ -1780,6 +1839,7 @@ def solve_and_persist(
             ordc_lolp_params_path=ordc_lolp_params_path,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
+            ercot_storage_as_endogenous=ercot_storage_as_endogenous,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
@@ -1872,6 +1932,14 @@ def solve_and_persist(
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
+            # G5 validation: the modeled-vs-measured battery AS-vs-energy split
+            # (ERCOT endogenous storage AS). Off otherwise (no extra frame).
+            if ercot_storage_as_endogenous and iso == "ERCOT":
+                sas = _storage_as_frame(
+                    year, label, res, p2_state["storage_units"], zone_names
+                )
+                if sas is not None:
+                    storage_as_frames.append(sas)
             # BTM CHP host self-supply is held out of the LP for ALL ISOs, so
             # write btm.parquet for every ISO (not just ERCOT) — render
             # subtracts it from EIA-923 to score the model on the same
@@ -1945,6 +2013,10 @@ def solve_and_persist(
         pd.concat(storage_frames, ignore_index=True).to_parquet(
             run_dir / "storage.parquet", index=False
         )
+    if storage_as_frames:
+        pd.concat(storage_as_frames, ignore_index=True).to_parquet(
+            run_dir / "storage_as.parquet", index=False
+        )
     meta = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "iso": iso,
@@ -2005,6 +2077,7 @@ def solve_and_persist(
         "ordc_lolp_params_path": ordc_lolp_params_path,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
+        "ercot_storage_as_endogenous": ercot_storage_as_endogenous,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
@@ -2138,6 +2211,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
         recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
+    if ercot_storage_as_endogenous:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_endogenous=True)
     if battery_dispatch_adder:
         recorded_cfg = recorded_cfg.with_overrides(
             battery_dispatch_adder=battery_dispatch_adder
@@ -4720,6 +4795,15 @@ def main() -> None:
         "committed capacity cannot also arbitrage energy. Off (default).",
     )
     parser.add_argument(
+        "--ercot-storage-as-endogenous",
+        action="store_true",
+        help="ERCOT multi-product co-opt (G5): the battery CHOOSES energy vs "
+        "upward-AS endogenously (full cap to the co-opt, priced by the per-product "
+        "AS demand curves), REPLACING the measured-award reservation "
+        "(--storage-as-commitment). Cleared storage AS counts toward the RTOLCAP "
+        "supply cap. Off (default); takes precedence over --storage-as-commitment.",
+    )
+    parser.add_argument(
         "--battery-adder",
         type=float,
         default=0.0,
@@ -5474,6 +5558,7 @@ def main() -> None:
         ordc_lolp_params_path=args.ordc_lolp_params_path,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
+        ercot_storage_as_endogenous=args.ercot_storage_as_endogenous,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
