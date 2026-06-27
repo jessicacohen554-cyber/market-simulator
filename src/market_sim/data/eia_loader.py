@@ -876,6 +876,56 @@ def neiso_load_weighted_temp(
     return series[0], series[1]
 
 
+def miso_zone_temp(
+    year: int, hours: int, zone: str
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return one MISO zone's load-weighted daily ``(tmax, tmin)`` (deg C) per hour.
+
+    For each hour of the run horizon, the load-weighted MISO-zone load-center
+    daily maximum AND minimum temperature (NOAA GHCN-Daily TMAX/TMIN over the
+    zone's load-center stations, ``data/raw/miso-weather/miso_zone_temp_daily.csv``)
+    for that hour's calendar day. Drives the MISO dual-limb, **zonal**
+    weather-correlated reliability floor (:func:`market_sim.model.transmission.
+    inject_miso_temp_reliability_floor`): MISO spans two opposite weather
+    regimes — MISO-South (the Entergy footprint) is summer-AC-peaking AND
+    winter-gas-constrained, MISO-North (the upper Midwest) is winter-peaking — so
+    each zone is keyed to its OWN daily TMAX (summer hot limb, CT/ST_GAS) and
+    TMIN (deep-winter cold limb, ST_GAS/coal). Both daily series are broadcast to
+    all hours of their day; the injector applies each class's window and
+    temperature->commitment curve.
+
+    The series are archived (not solved) so they regenerate for a forward year
+    from a pinned weather year exactly as the load / wind / solar shapes do (see
+    ``scripts/derive_miso_temp_reliability_floor.py``). Mirrors
+    :func:`nyiso_zone_tmax` (per-zone) and :func:`neiso_load_weighted_temp`
+    (dual TMAX/TMIN).
+
+    Returns ``(tmax, tmin)`` each ``(hours,)`` deg C, or ``None`` when the
+    archived file is absent, the zone is uncovered, or the year is uncovered (a
+    forecast year with no pinned weather data), in which case the caller leaves
+    that zone's fleet unfloored (byte-identical).
+    """
+    path = RAW_DIR / "miso-weather" / "miso_zone_temp_daily.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, parse_dates=["date"])
+    df = df[(df["zone"] == zone) & (df["date"].dt.year == year)]
+    if df.empty:
+        return None
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    doy = clock.dayofyear.to_numpy()
+    series = []
+    for col in ("tmax_c", "tmin_c"):
+        doy_t = dict(zip(df["date"].dt.dayofyear.to_numpy(), df[col].to_numpy(float)))
+        out = np.array([doy_t.get(int(d), np.nan) for d in doy], dtype=float)
+        if not np.any(np.isfinite(out)):
+            return None
+        # Hold the last valid reading over any missing station-day so the floor
+        # never reads NaN (forward-fill then back-fill).
+        series.append(pd.Series(out).ffill().bfill().to_numpy())
+    return series[0], series[1]
+
+
 # CAISO priced-import tranche -> WECC neighbor hub whose measured intertie LMP is
 # the tranche's real delivered energy cost. The PNW blocks (firm hydro + Mid-C
 # shoulder) clear against the Malin / COI-PDCI ties; the desert-SW blocks (solar +
