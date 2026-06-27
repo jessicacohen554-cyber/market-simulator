@@ -1,0 +1,185 @@
+# Canonical schema: PJM energy market generation offers (long/step format)
+#
+# Source: PJM DataMiner2 ``energy_market_offers`` feed via api.pjm.com/api/v1
+#   Browser UI: https://dataminer2.pjm.com/feed/energy_market_offers
+#   REST API:   https://api.pjm.com/api/v1/energy_market_offers
+#   Auth:       Ocp-Apim-Subscription-Key (public key embedded in settings.json)
+#
+# PJM context
+# -----------
+# These are the FINAL energy offers used in PJM's Real-Time Energy Market
+# after the Day-Ahead market has closed.  Generators may update their DA
+# submissions before the RT market closes; this feed contains the last
+# effective version.  Data is posted on a four-month delay; available from
+# 2017-11-01 onward with indefinite retention.
+#
+# Generator identity is masked: ``unit_code`` is an anonymised, base64-encoded
+# identifier that is ROTATED ANNUALLY — codes from 2023 cannot be joined to
+# codes from 2024.  Fuel type, zone, and company name are NOT provided.
+#
+# Raw (wide) ↔ clean (long) transform
+# ------------------------------------
+# The API returns one row per (unit_code × operating-hour) with up to 20
+# MW/price breakpoints as wide columns (``mw1``–``mw20``, ``bid1``–``bid20``).
+# The curate script (``scripts/curate_energy_offers.py``) pivots these into
+# long format: one row per (unit_code × operating-hour × step index), dropping
+# null steps.  This makes price/MW slices and aggregations natural queries
+# without parsing the wide format at read time.
+#
+# Cost parameters (startup, no-load) and capacity bounds (ecomin/ecomax) are
+# repeated on every step row for the same (unit_code, interval_start_utc)
+# — they are daily-level attributes stored redundantly for join convenience.
+#
+# Bid shape: ``bid_slope_flag=True`` → piecewise-LINEAR (MW/price points connected
+# by straight lines, so dispatch between two breakpoints has a continuously rising
+# MC).  ``False`` → step function (constant $/MWh across the MW block).
+datatype: energy-offers
+schema_version: 1
+title: PJM energy market generation offers (long step format)
+description: >-
+  PJM Real-Time effective energy offer curves in long (normalized) format.
+  One row per generating unit × operating hour × offer step.  Source: PJM
+  DataMiner2 energy_market_offers feed (api.pjm.com/api/v1); raw data fetched
+  by scripts/fetch_pjm_energy_offers.py and curated by
+  scripts/curate_energy_offers.py.  Posted on a four-month delay; available
+  from 2017-11-01 with indefinite retention.
+
+key_columns: [iso, unit_code, interval_start_utc, step_idx]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      tz-aware UTC start of the operating hour the offer applies to
+      (hour-beginning; maps to DataMiner2 ``bid_datetime_beginning_utc``).
+
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: >-
+      Wall-clock EPT (Eastern Prevailing Time) equivalent of
+      ``interval_start_utc`` — informational; UTC is authoritative for joins.
+      Maps to DataMiner2 ``bid_datetime_beginning_ept``.
+
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Always "PJM" for this feed.
+
+  - name: unit_code
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Anonymised, base64-encoded unit identifier assigned by PJM
+      (DataMiner2 ``unit_code``).  Rotated annually — codes are NOT
+      comparable across calendar years.
+
+  - name: bid_slope_flag
+    dtype: bool
+    unit: none
+    nullable: true
+    description: >-
+      True: bid curve is piecewise-linear (MW/price breakpoints connected
+      by straight lines; MC rises continuously between steps).
+      False: bid curve is a step function (constant $/MWh across each MW
+      block).  DataMiner2 ``bid_slope_flag``.
+
+  - name: step_idx
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      1-based index of this MW/price breakpoint in the unit's offer curve
+      for this hour.  Derived by the curate script from the wide API columns
+      ``mw1``/``bid1`` through ``mw20``/``bid20``; null breakpoints are
+      dropped so ``step_idx`` may not be contiguous.
+
+  - name: step_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      MW breakpoint value for this step — the MW level at which the
+      corresponding ``step_price_usd_per_mwh`` applies.  Maps to
+      DataMiner2 ``mwN`` columns (N = step_idx).
+
+  - name: step_price_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: false
+    description: >-
+      Energy offer price for this MW step in $/MWh.  Maps to DataMiner2
+      ``bidN`` columns (N = step_idx).  PJM's energy offer cap is
+      $2,000/MWh (cost-based cap); must-run offers may be negative.
+
+  - name: ecomin_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Average Economic Minimum (MW) for the unit for the operating day.
+      DataMiner2 ``avg_ecomin``.  Repeated on every step row for the same
+      (unit_code, interval_start_utc) tuple.
+
+  - name: ecomax_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Average Economic Maximum (MW) for the unit for the operating day.
+      DataMiner2 ``avg_ecomax``.  Repeated on every step row for the same
+      (unit_code, interval_start_utc) tuple.
+
+  - name: no_load_cost_usd_per_h
+    dtype: float64
+    unit: usd_per_h
+    nullable: true
+    description: >-
+      No-load cost ($/h) — the fixed cost component associated with keeping
+      a unit online regardless of MW output.  DataMiner2 ``no_load_cost``.
+
+  - name: hot_start_cost_usd
+    dtype: float64
+    unit: usd
+    nullable: true
+    description: >-
+      Hot start cost ($) — startup cost after a short outage (unit is still
+      warm).  DataMiner2 ``hot_start_cost``.
+
+  - name: cold_start_cost_usd
+    dtype: float64
+    unit: usd
+    nullable: true
+    description: >-
+      Cold start cost ($) — startup cost after an extended outage (unit is
+      fully cold).  DataMiner2 ``cold_start_cost``.
+
+  - name: inter_start_cost_usd
+    dtype: float64
+    unit: usd
+    nullable: true
+    description: >-
+      Intermediate start cost ($) — between hot and cold.
+      DataMiner2 ``inter_start_cost``.
+
+  - name: max_daily_starts
+    dtype: float64
+    unit: none
+    nullable: true
+    description: >-
+      Maximum number of starts the unit can make in a day.
+      DataMiner2 ``max_daily_starts``.
+
+  - name: min_runtime_h
+    dtype: float64
+    unit: h
+    nullable: true
+    description: >-
+      Minimum continuous runtime (hours) once the unit is committed.
+      DataMiner2 ``min_runtime``.
