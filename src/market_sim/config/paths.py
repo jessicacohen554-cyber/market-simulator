@@ -114,6 +114,10 @@ def set_eia860_vintage(year: int | None) -> Path:
 
 EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
+# PJM Day-Ahead energy market offers from DataMiner2 (energy_market_offers feed).
+# Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored
+# because the 3-year corpus is ~4 GB; re-fetch with scripts/fetch_pjm_energy_offers.py.
+PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
