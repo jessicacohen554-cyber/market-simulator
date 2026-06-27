@@ -1,6 +1,73 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-27): `nyiso 33 ct-tempfloor`**
+> **KEEPER (2026-06-27): `nyiso 34 st-tempfloor`**
+> (`2026-06-27-nyiso-34-st-tempfloor`, bundle
+> `results/calibration/nyiso_34_st_tempfloor`, all 3 years). Adds a
+> **temperature-keyed downstate ST_GAS (gas-steam) local-reliability floor**
+> (`--nyiso-st-reliability-floor`, now the live NYISO default) on top of the
+> `nyiso 33` CT-floor keeper — the **ST-fleet companion to the CT floor**. NYISO's
+> downstate steam fleet (NYC zone J Ravenswood/Arthur Kill/Astoria; Long Island
+> zone K; the Capital region) runs a **persistent in-city / cable-islanded
+> reliability baseline plus a summer cooling hot-limb** that an energy-only LP
+> zeroes out — it imports cheaper upstate/NYC combined cycle instead — so the
+> backcast under-runs ST_GAS. The floor is a **persistent 24-hour baseline**
+> (`base_24h` × available capacity over ALL hours — the in-city must-run that the
+> measured cool-day CF shows running ~80% as high overnight as in the evening)
+> with the **evening cooling hot-limb layered on top** over HB14-21 via `maximum`:
+> overnight/midday `frac = base_24h`; evening `frac = max(base_24h, clip(base_ev +
+> slope·(TMAX−25), base_ev, cap))`. Each zone is keyed to its **own** load-center
+> daily max temperature (NOAA GHCN: Islip for Long Island, Central Park for NYC,
+> Albany for the Capital region). Per-zone coefficients
+> (`transmission.NYISO_ST_FLOOR_COEFFS`) regressed **a priori** from the measured
+> per-zone CAMPD ST_GAS CF vs the zone's TMAX, pooled 2023-2025
+> (`scripts/derive_nyiso_st_reliability_floor.py`; archived
+> `data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv`): `base_24h` = cool-day
+> ALL-hours p25, `base_ev` = cool-day evening p25, `cap` = evening p97, `slope` =
+> evening hot-limb — **Long Island** `base_24h 0.148 / base_ev 0.191 / slope
+> 0.0588 / cap 0.851` (corr +0.63), **NYC** `base_24h 0.105 / base_ev 0.112 /
+> slope 0.0729 / cap 0.836` (corr +0.48), **Capital** hot-limb only `base 0 /
+> slope 0.040 / cap 0.419` (weak, corr +0.089). The flat, temperature-insensitive
+> **Upstate** steam fleet (CF ~0.50 flat) is deliberately **omitted** (no
+> un-grounded flat must-run). A **physical heat→commitment rule, forward-
+> reproducible** (a forecast year pins a weather year, hence a per-zone TMAX
+> series), **NOT a CEMS pin and NOT residual-tuned** — ST_GAS lands *under* actual
+> on the largest-miss year (2024 −2.39 TWh), so the floor is conservative
+> (rules #11/#12). The `pmax × availability` basis makes it automatically
+> **outage-aware**.
+>
+> **Effect — the HARD C1 fuel-mix improves** (rule-#1 right-structure step):
+> **ST_GAS** `2023 +0.39 TWh (PASS)`, `2024 −3.77 → −2.39 TWh` (recovers ~1.4 TWh
+> vs the `nyiso 33` keeper; still under band, kept as an **honest MODEL MISS** —
+> see below). The complementary **CC_REGULAR** over-run shrinks (`2024 +0.80 →
+> +0.17`, PASS) as recovered steam displaces it; **CT_PEAKER** stays PASS
+> (`2023/24 −0.87/−0.86`); every other 2023-2024 gas class stays in C1 tolerance.
+> `dispatch_corr` stays PASS (gas r=0.91/0.84/0.80). **Plus a benchmark-basis fix
+> (Task A, reporting only):** NYISO solar actuals now route to **EIA-923**
+> (`results.calibration.actuals_source` is ISO-aware). EIA-930 NYIS grid solar is
+> a structural 0 (NYISO solar is overwhelmingly behind-the-meter / net-metered,
+> invisible to the balancing-area telemetry), so the dashboard previously scored
+> the model's ~2 TWh of dispatched utility-scale grid solar against a spurious
+> zero; the EIA-923 utility-scale total (**2.05 / 2.90 TWh** for 2023/2024) is now
+> the actual on both the `classFull` and `e930`-slot benchmark parts, and solar
+> scores in tolerance (model 1.95/2.65, −5%/−9%).
+>
+> **Honest residual (un-ledgered MODEL MISS → determination NOT-YET):** the 2024
+> ST_GAS −2.39 TWh under-run. The monthly decomposition shows the 2024 steam miss
+> is **broad-based across all months, largest in the winter/shoulder** (Dec, Oct,
+> Nov), NOT only the summer cooling hot-limb. That winter run is the **gas-electric
+> constraint** (deep-winter pipeline scarcity pricing dual-fuel steam into merit)
+> — the dual-fuel / Transco-Z6 **gas-basis frontier**, a separate structural lever
+> from a cooling-driven floor. Pushing the floor's base above the measured p25 to
+> close it would over-force a cooling mechanism to recover a gas-constraint
+> phenomenon (forbidden, rules #1/#11/#12), so it is **named as the next frontier,
+> not ledgered away.** The `C3a` mean LMP (−12.7/−15.1/−10.1%) and empty `C3c`
+> >$300 tail remain the **ledgered reserve-scarcity (ORDC) frontier** (min-gen
+> floors add inframarginal supply but cannot restore scarcity price-setting;
+> non-closable with grounded inputs per `nyiso 29/31`); the steam floor regresses
+> them a further ~1-3 pp as the documented rule-#1 tradeoff (kept, not chased).
+> See the run-34 attestation (`calibration_attestation.json`).
+
+> **PRIOR KEEPER (2026-06-27): `nyiso 33 ct-tempfloor`**
 > (`2026-06-27-nyiso-33-ct-tempfloor`, bundle
 > `results/calibration/nyiso_33_ct_tempfloor`, all 3 years). Adds a
 > **temperature-keyed downstate CT_PEAKER local-reliability floor**

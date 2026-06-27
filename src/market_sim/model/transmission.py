@@ -2043,6 +2043,156 @@ def inject_nyiso_ct_reliability_floor(
     return True
 
 
+# NYISO ST_GAS (gas-steam) local-reliability floor: the afternoon-evening window
+# (HB14-21, matching the CT floor and the regression basis) and the per-zone
+# temperature->commitment coefficients. Unlike the CT floor's single pooled
+# NYC-metro series, the downstate steam fleet sits in three distinct weather
+# regimes, so each zone is keyed to its OWN load-center daily max temperature
+# (Islip for Long Island, Central Park for NYC, Albany for the Capital region).
+# Each entry is (slope_per_c, t0_c, cap, base_ev, base_24h). The hourly floor is a
+# PERSISTENT 24-hour baseline (base_24h, applied over ALL hours) with the evening
+# cooling hot-limb layered on top over NYISO_ST_FLOOR_HOURS via maximum:
+#   overnight/midday: frac = base_24h
+#   evening window  : frac = max(base_24h, clip(base_ev + slope*(TMAX-t0),
+#                                               base_ev, cap))
+# Coefficients regressed *a priori* from the measured per-zone CAMPD ST_GAS CF vs
+# the zone's NOAA GHCN daily max temperature, pooled 2023-2025 (scripts/derive_
+# nyiso_st_reliability_floor.py) — physical heat->commitment rules, NOT
+# TWh-residual fits. base_24h is the cool-day ALL-hours p25; base_ev the cool-day
+# evening (HB14-21) p25; cap the evening p97 ceiling; slope the evening hot-limb:
+#   * Long_Island — strong hot-limb (corr +0.63, hot CF 0.57 vs mild 0.25),
+#     cable-islanded; base_24h 0.148 / base_ev 0.191, slope 0.0588/degC, cap 0.851.
+#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria,
+#     corr +0.48, hot CF 0.32 vs mild 0.15): base_24h 0.105 / base_ev 0.112, slope
+#     0.0729/degC, cap 0.836. The Task-C must-run-when-available baseline (NYISO's
+#     in-city reliability rules are strongest in zone J); the measured cool-day CF
+#     runs ~80% as high overnight as in the evening, so the baseline is a 24-hour
+#     minimum, not an evening-only ramp.
+#   * Capital_Hudson — WEAK hot-limb (corr +0.089, hot CF 0.16 vs mild 0.00): no
+#     baseline (base_24h = base_ev = 0.0), hot-limb only, slope 0.0400/degC, cap
+#     0.419 — binds only on the hottest afternoons, conservative for a weak class.
+# The base x available-capacity basis (pmax x availability) is automatically
+# outage-aware (a unit on a forced/planned outage is not floored). Upstate_West
+# ST_GAS (150 MW, CF flat ~0.50 vs temperature) is NOT temperature-driven
+# (baseload cogen-like) and is deliberately omitted — a flat must-run there would
+# be an un-grounded fit, not a heat->commitment rule.
+NYISO_ST_FLOOR_HOURS: tuple[int, int] = (14, 21)  # evening hot-limb (HB14-21)
+NYISO_ST_FLOOR_COEFFS: dict[str, tuple[float, float, float, float, float]] = {
+    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)
+    "Long_Island": (0.0588, 25.0, 0.851, 0.191, 0.148),
+    "NYC": (0.0729, 25.0, 0.836, 0.112, 0.105),
+    "Capital_Hudson": (0.0400, 25.0, 0.419, 0.000, 0.000),
+}
+
+
+def inject_nyiso_st_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    coeffs: dict[str, tuple[float, float, float, float, float]] = NYISO_ST_FLOOR_COEFFS,
+    hod_window: tuple[int, int] = NYISO_ST_FLOOR_HOURS,
+) -> bool:
+    """Floor NYISO downstate ST_GAS at a temperature-driven local-RA commitment.
+
+    Companion to :func:`inject_nyiso_ct_reliability_floor` for the gas-steam fleet.
+    NYISO's downstate steam units run a persistent in-city / cable-islanded
+    reliability baseline plus a strong summer hot-limb that an energy-only LP
+    zeroes out — it imports cheaper upstate/NYC combined cycle instead — so the
+    backcast under-runs ST_GAS (the documented 2024 ST_GAS miss). Three
+    specializations vs the CT floor:
+
+    * **Per-zone temperature.** The downstate steam pockets sit in distinct
+      weather regimes, so each zone in ``coeffs`` is floored against its OWN
+      load-center daily max temperature (:func:`~market_sim.data.eia_loader.
+      nyiso_zone_tmax`: Islip for Long Island, Central Park for NYC, Albany for
+      the Capital region) rather than one pooled series.
+    * **Persistent 24-hour baseline + evening hot-limb (Task C).** Each zone is
+      floored at a PERSISTENT baseline ``base_24h`` over ALL hours (the in-city /
+      cable-islanded must-run that runs overnight and midday too — the measured
+      cool-day CF is ~80% as high overnight as in the evening), with the evening
+      cooling hot-limb layered on top over ``hod_window`` via ``maximum``:
+      overnight/midday ``frac = base_24h``; evening ``frac = max(base_24h,
+      clip(base_ev + slope*(TMAX-t0), base_ev, cap))``. NYISO's in-city
+      reliability rules are strongest in zone J (NYC: Ravenswood / Arthur Kill /
+      Astoria). Because the floor is ``frac`` x available capacity (``pmax`` x
+      ``availability``) it is automatically outage-aware: a unit on a
+      forced/planned outage (availability folds in the historic CEMS overlay) is
+      not floored.
+    * **Grounded, weak-class restraint.** Long Island and NYC carry a 24-hour
+      baseline plus a hot-limb; Capital a weak hot-limb-only floor (no baseline);
+      the flat, temperature-insensitive Upstate steam fleet is deliberately
+      omitted from ``coeffs`` (no un-grounded flat must-run).
+
+    The hourly per-zone target is distributed cheapest-first over the zone's
+    in-pocket ST_GAS units (each capped at available capacity) via the
+    hour-varying ``FleetArrays.min_gen`` lower bound, composed with any existing
+    floor (e.g. the Long Island self-supply floor,
+    :func:`inject_nyiso_local_selfsupply`) via ``maximum`` so the two never
+    double-force. The LP dispatches economically above the floor.
+
+    All coefficients are regressed *a priori* from the measured per-zone CAMPD
+    ST_GAS CF vs the zone's NOAA GHCN daily max temperature, pooled 2023-2025
+    (``scripts/derive_nyiso_st_reliability_floor.py``: ``base_24h`` the cool-day
+    ALL-hours p25, ``base_ev`` the cool-day evening p25, ``cap`` the evening p97,
+    ``slope`` the evening hot-limb) — a physical temperature->commitment rule, NOT
+    a fit to a TWh residual. Forward-reproducible (a forecast year pins a weather
+    year, hence a TMAX series) and condition-responsive (hotter years -> more
+    downstate steam), so it is admissible in both backcast and forecast (CLAUDE.md
+    #10/#11).
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when any zone floored a
+    fleet, ``False`` (byte-identical) when ``iso`` is not NYISO, the fleet has no
+    plant-group labels or no downstate ST_GAS units, or no archived TMAX series is
+    available (forecast year / unmapped ISO).
+    """
+    if iso != "NYISO":
+        return False
+    if fleet_arrays.plant_group is None:
+        return False
+    from market_sim.data.eia_loader import nyiso_zone_tmax
+
+    hours = int(fleet_arrays.availability.shape[1])
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    start, end = hod_window
+    in_window = (hod >= start) & (hod <= end)
+    groups = np.asarray(fleet_arrays.plant_group)
+    applied = False
+
+    for zone, (slope_per_c, t0_c, cap, base_ev, base_24h) in coeffs.items():
+        # A zone is floored when it carries either a hot-limb or a persistent
+        # baseline; skip only the fully-zero (no-op) zones.
+        if (slope_per_c <= 0.0 or cap <= 0.0) and base_24h <= 0.0:
+            continue
+        z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
+        if z_idx is None:
+            continue
+        rows = np.flatnonzero(
+            (groups == "ST_GAS")
+            & (fleet_arrays.zone_idx == z_idx)
+            & (fleet_arrays.pmax > 0.0)
+        )
+        if rows.size == 0:
+            continue
+        tmax = nyiso_zone_tmax(year, hours, zone)
+        if tmax is None:
+            continue
+        # Persistent 24-hour baseline, with the evening cooling hot-limb layered on
+        # top over the window via maximum.
+        frac = np.full(hours, base_24h, dtype=float)
+        if slope_per_c > 0.0 and cap > 0.0:
+            ev = np.clip(
+                base_ev + slope_per_c * (np.asarray(tmax, float) - t0_c), base_ev, cap
+            )
+            frac = np.where(in_window, np.maximum(frac, ev), frac)
+        if not np.any(frac > 0.0):
+            continue
+        _distribute_group_floor(fleet_arrays, rows, frac, hours)
+        applied = True
+    return applied
+
+
 # NEISO weather-correlated reliability-floor windows (local hour-of-day) and the
 # cold-limb plant groups. ISO-NE is a DUAL-LIMB weather system: the simple-cycle
 # peakers track the summer cooling HOT limb (TMAX) over the afternoon-evening

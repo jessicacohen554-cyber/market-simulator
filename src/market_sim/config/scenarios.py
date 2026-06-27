@@ -616,6 +616,28 @@ class ScenarioConfig:
     # evenings, set below the cool-day median (0.18) so the LP dispatches above it
     # economically on typical cool evenings rather than the floor over-forcing.
     # Default carried with the flag; 0.0 would be hot-limb-only.
+    nyiso_st_reliability_floor: bool = False  # NYISO DOWNSTATE ST_GAS local-
+    # reliability floor: hold the downstate gas-steam fleet online at a
+    # temperature-driven commitment, keyed PER ZONE to that zone's load-center
+    # daily max temperature (NOAA GHCN: Islip for Long Island, Central Park for
+    # NYC, Albany for the Capital region; data/raw/nyiso-weather/). NYISO's
+    # downstate steam runs a persistent in-city / cable-islanded reliability
+    # baseline plus a strong summer hot-limb that an energy-only LP zeroes out (it
+    # imports cheaper upstate/NYC CC instead), so the backcast under-runs ST_GAS.
+    # Floors each zone's ST_GAS fleet at frac x available capacity over
+    # NYISO_ST_FLOOR_HOURS, frac = clip(base + slope*(TMAX-T0), base, cap), via the
+    # hour-varying FleetArrays.min_gen lower bound (transmission.
+    # inject_nyiso_st_reliability_floor); NYC carries a non-zero base (the in-city
+    # must-run), Long Island a strong hot-limb, Capital a weak hot-limb, and the
+    # flat/temperature-insensitive Upstate steam fleet is omitted. Coefficients
+    # (transmission.NYISO_ST_FLOOR_COEFFS) regressed a priori from measured
+    # per-zone CAMPD ST_GAS evening (HB14-21) CF vs the zone's TMAX, 2023-2025
+    # (scripts/derive_nyiso_st_reliability_floor.py) — a physical heat->commitment
+    # rule, NOT a TWh-residual fit. Forward-reproducible (a forecast year pins a
+    # weather year, hence a TMAX series) and condition-responsive (hotter years ->
+    # more downstate steam). Composes via maximum with the LI self-supply floor so
+    # the two never double-force. Default off (byte-identical); NYISO-only, no-op
+    # without an archived TMAX series.
     neiso_temp_reliability_floor: bool = False  # NEISO DUAL-LIMB weather-
     # correlated reliability floor. ISO-NE under-runs two structurally distinct
     # weather-driven fleets that respond to OPPOSITE temperature limbs: (1) the

@@ -83,6 +83,7 @@ from market_sim.data.fleet import (  # noqa: E402
     plant_tranche_bands,
 )
 from market_sim.results.calibration import (  # noqa: E402
+    EIA930_SOURCE,
     actuals_source,
     signed_volume_error,
 )
@@ -715,10 +716,28 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # BTM-removal point; downstream system totals then count each class
             # exactly once (no separate EIA-930 add-on -- see calibration_verdict
             # ._gen_totals and _backcast_shell.totalGen).
+            #
+            # ISO override (NYISO solar). NYISO grid solar is structurally 0 in
+            # EIA-930 — NYISO solar is overwhelmingly behind-the-meter / net-metered
+            # and invisible to the NYIS balancing-area telemetry — so the default
+            # EIA-930 routing would score the model's ~2 TWh of dispatched grid
+            # solar against a spurious zero. For NYISO, `actuals_source("solar",
+            # iso)` returns EIA-923 (the ~2 TWh of utility-scale grid solar the
+            # model actually dispatches), so classFull KEEPS its EIA-923 value and
+            # that value is MIRRORED into the e930 slot, because the dashboard's
+            # nonFosErr reads the variable-renewable actual from bench.e930 (the
+            # bench part itself must carry the right number).
+            _iso_key = str(meta.get("iso", "ERCOT"))
             _cf = bench[int(year)]["classFull"]
-            for _vre in ("wind", "solar"):  # actuals_source EIA-930 classes
-                if _vre in _cf and _vre in _e930d:
-                    _cf[_vre] = round(float(_e930d[_vre]), 4)
+            for _vre in ("wind", "solar"):  # variable renewables
+                if actuals_source(_vre, _iso_key) == EIA930_SOURCE:
+                    if _vre in _cf and _vre in _e930d:
+                        _cf[_vre] = round(float(_e930d[_vre]), 4)
+                elif _vre in _cf:
+                    # EIA-923 is authoritative here (NYISO solar): keep classFull on
+                    # the utility-scale 923 total and mirror it into e930 so the
+                    # dashboard scores the variable-renewable row against it, not 0.
+                    _e930d[_vre] = round(float(_cf[_vre]), 4)
             # Repair a preliminary EIA-923 vintage: when a fossil fuel's class
             # total is materially below the complete EIA-930 grid series (the
             # same authority the model's gas/coal are calibrated to), scale that
@@ -1042,7 +1061,8 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 if grp is None or zone is None:
                     continue
                 cell = vol_err.setdefault(
-                    grp, {"src": actuals_source(grp), "zoneMon": {}}
+                    grp,
+                    {"src": actuals_source(grp, meta.get("iso")), "zoneMon": {}},
                 )
                 zc = cell["zoneMon"].setdefault(
                     zone, {"m": [0.0] * 12, "a": [0.0] * 12}
@@ -1067,7 +1087,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 vr_a = float(bench[int(year)]["e930"].get(_vr, 0.0))
                 if vr_a > 0.0 or vr_m > 0.0:
                     vol_err[_vr] = {
-                        "src": actuals_source(_vr),
+                        "src": actuals_source(_vr, meta.get("iso")),
                         "sys": {
                             "m": round(vr_m, 4),
                             "a": round(vr_a, 4),
