@@ -1,6 +1,59 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-26): `nyiso 32 steam-markup`**
+> **KEEPER (2026-06-27): `nyiso 33 ct-tempfloor`**
+> (`2026-06-27-nyiso-33-ct-tempfloor`, bundle
+> `results/calibration/nyiso_33_ct_tempfloor`, all 3 years). Adds a
+> **temperature-keyed downstate CT_PEAKER local-reliability floor**
+> (`--nyiso-ct-reliability-floor`, now the live NYISO default) on top of the
+> `nyiso 32` steam-markup keeper — the **CAISO local-RA CT floor ported to
+> NYISO**'s cable-constrained downstate load pockets (NYC zone J, Long Island
+> zone K, Lower Hudson). On hot afternoons the downstate cooling load climbs and
+> the UPNY-SENY / LI-cable import limits bind, so fast-start GTs are held online
+> for local capacity-area reliability; the energy-only LP imports cheap
+> upstate/NYC CC instead and under-runs CT_PEAKER. Floor =
+> `clip(base + slope·(TMAX−25), base, cap)` × available downstate-CT capacity
+> over HB14-21, with **slope 0.053/°C, cap 0.68, base 0.13** — all regressed *a
+> priori* from the measured downstate CAMPD CT_PEAKER evening CF vs NYC daily max
+> temperature (NOAA GHCN: Central Park/LaGuardia/JFK), pooled 2023-2025
+> (`scripts/derive_nyiso_ct_reliability_floor.py`; archived
+> `data/raw/nyiso-weather/`). The downstate peaker CF is flat ~0.10-0.18 below
+> 25 °C (77 °F) and rises ~2-3× to ~0.6-0.7 above it; ~40-50 % of annual
+> downstate peaker energy lands on the ~107 days with TMAX ≥ 25 °C. A **physical
+> heat→commitment rule, forward-reproducible** (a forecast year pins a weather
+> year, hence a TMAX series, exactly as it pins load/wind/solar), **NOT a CEMS
+> pin and NOT residual-tuned** — CT_PEAKER lands *under* actual (−0.85 TWh both
+> scored years), so the floor is conservative, not over-forced (rules #11/#12).
+>
+> **Effect — the HARD C1 fuel-mix improves decisively** (rule-#1 right-structure
+> step): **CT_PEAKER** — the open frontier on *every* prior NYISO keeper, and
+> confirmed **non-closable via a grounded reserve *requirement*** by `nyiso 29`
+> (online-proxy spin) and `nyiso 31` (commitment-gated spin) — `2023 −1.73 →
+> −0.85 TWh` and `2024 −1.92 → −0.85 TWh`, **FAIL → PASS both scored years**; the
+> complementary `CC_REGULAR` over-run drops `2023 +0.99 → +0.63` (PASS) and `2024
+> +1.74 → +1.25` (**FAIL → PASS**). **2023 now has every gas class in C1
+> tolerance.** `dispatch_corr` stays PASS (gas r=0.91/0.85/0.80). **Tradeoff
+> (kept per rule #1):** `C3a` mean LMP regresses ~1.3 pp (`2023 −10.5 → −11.7 %`,
+> `2024 −11.2 → −12.7 %`, `2025 −7.3 → −8.6 %`) because the floor is a **min-gen
+> (must-run) representation** — it recovers the local-RA *energy* but adds
+> inframarginal supply rather than letting the peakers **set** a scarcity price;
+> the price side (`C3a`/`C3c`) stays the **ledgered reserve-scarcity frontier**
+> (an ORDC / reserve-scarcity demand curve — non-closable with grounded inputs
+> per `nyiso 29`/`31`, would otherwise need an ungrounded adder, rule #12). The
+> grounded reserve *requirement* couldn't close CT_PEAKER (non-binding headroom);
+> the grounded *temperature floor* can, because it acts directly on the measured
+> heat→commitment relationship rather than on a reserve shortage that never
+> forms. Remaining C1 miss: `2024 ST_GAS −3.77 TWh` (the floor pulls some evening
+> energy from the also-downstate steam fleet too). New keeper because it is the
+> **most structurally faithful** NYISO config to date — a real, measured,
+> forward-reproducible local-reliability mechanism that closes the largest C1
+> miss. C6 governance **PASS** (attested); determination **NOT-YET** (2024 ST_GAS
+> C1 + `price_shape`/`price_tail` reserve-scarcity gap). **Import/export:** the
+> net-interchange import reconciliation + priced node are unchanged; the downstate
+> **interface-TTC congestion separation (U7)** remains data-blocked. Reproduce:
+> the `nyiso 32` keeper flags + `--nyiso-ct-reliability-floor` (now the NYISO
+> default). Superseded keeper below.
+
+> **PRIOR KEEPER (2026-06-26): `nyiso 32 steam-markup`**
 > (`2026-06-26-nyiso-32-steam-markup`, bundle
 > `results/calibration/nyiso_32_steam_markup`, all 3 years). The documented
 > **run-29 carry-forward** executed on ST_GAS only: re-level the legacy gas-steam

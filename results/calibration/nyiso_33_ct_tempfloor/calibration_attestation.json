@@ -1,0 +1,56 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "nyiso-33 ct-tempfloor keeper 2026-06-27",
+    "note": "Builds on the nyiso-32 steam-markup keeper (byte-identical flags + the ST_GAS markup re-level, now the live _NYISO_OFFER_CURVE default) and adds ONE new structural mechanism: a temperature-keyed downstate CT_PEAKER local-reliability floor (--nyiso-ct-reliability-floor, transmission.inject_nyiso_ct_reliability_floor). This is the CAISO local-RA CT floor ported to NYISO's cable-constrained downstate load pockets (NYC zone J, Long Island zone K, Lower Hudson). MECHANISM: on hot afternoons the downstate cooling load climbs and the UPNY-SENY / Long-Island-cable import limits bind, so fast-start GTs in the load pockets are held online for local capacity-area reliability regardless of system-energy economics; an energy-only LP imports cheap upstate/NYC combined cycle instead and under-runs CT_PEAKER while the freed energy spills onto the cheaper CC fleet. GROUNDING (a physical temperature->commitment rule, NOT a residual fit or a CEMS pin): the measured downstate CAMPD CT_PEAKER fleet (37 plants, 2,482 MW, bin_assignments_NYISO CT_PEAKER in the downstate zones) evening (HB14-21) capacity factor regressed on NYC-metro daily max temperature (NOAA GHCN, Central Park/LaGuardia/JFK), pooled 2023-2025 (scripts/derive_nyiso_ct_reliability_floor.py, archived data/raw/nyiso-weather/nyiso_downstate_tmax_daily.csv). The fleet CF is flat ~0.10-0.18 below TMAX 25 degC and rises ~2-3x to ~0.6-0.7 above it; ~40-50% of annual downstate peaker energy falls on the ~107 days with TMAX>=25C. Floor = clip(base + slope*(TMAX-T0), base, cap) x available downstate-CT capacity over HB14-21, with T0=25 degC (hot-limb zero-crossing), slope=0.053/degC (measured hot-limb), cap=0.68 (p97 evening CF), base=0.13 (cool-day evening p25 -- a firm year-round minimum BELOW the cool-day median 0.18 so the LP dispatches above it economically, NOT a pin). All four coefficients were set a priori from the regression BEFORE the solve; CT_PEAKER then landed slightly UNDER actual (-0.85 TWh both scored years), i.e. the floor is conservative and does not pin to the measured outcome (rules #11/#12). FORWARD-REPRODUCIBLE: a forecast year pins a weather year (hence a TMAX series) exactly as it pins load/wind/solar, and the floor responds to changed conditions (hotter years -> more downstate CT). EFFECT vs the nyiso-32 keeper -- the HARD C1 fuel-mix improves decisively: CT_PEAKER (the persistent real model miss on every prior NYISO keeper) 2023 -1.73 -> -0.85 TWh (FAIL -> PASS), 2024 -1.92 -> -0.85 TWh (FAIL -> PASS); the complementary CC_REGULAR over-run drops 2023 +0.99 -> +0.63 (PASS) and 2024 +1.74 -> +1.25 (FAIL -> PASS). 2023 now has EVERY gas class in C1 tolerance. dispatch_corr stays PASS (gas r=0.91/0.85/0.80). The C3a tradeoff is documented in the exceptions and kept per rule #1. This is the most structurally faithful NYISO config to date: it adds a real, measured, forward-reproducible local-reliability mechanism that closes the largest C1 miss -- the rule-#1 'right market structure' step the prior reserve-requirement attempts (nyiso-29/31, non-binding with grounded inputs) could not take."
+  },
+  "_ct_floor_status": "The downstate CT_PEAKER under-run -- the open frontier on every prior NYISO keeper (nyiso-27 through nyiso-32), and confirmed by nyiso-29/31 to be NON-closable via a grounded reserve REQUIREMENT (the committed quick-start fleet holds ~1,700 MW online headroom vs a 250 MW spin requirement -> non-binding) -- is now SUBSTANTIALLY CLOSED on the volume (C1, HARD) axis by a different, grounded lever: a temperature-keyed local-reliability commitment floor. CT_PEAKER 2023 -1.73 -> -0.85 TWh PASS, 2024 -1.92 -> -0.85 TWh PASS. The floor recovers the local-RA ENERGY but, implemented as a min-gen floor (added inframarginal supply), it does NOT restore the peakers' scarcity PRICE-SETTING role -- so the residual C3a under-pricing (and the C3c >$300 tail) remain the ledgered reserve-scarcity frontier. Closing the price side fully would need the peakers to SET price in scarcity hours (an ORDC / reserve-scarcity demand curve), which is the documented open frontier, not addressed here. The remaining C1 miss is the 2024 ST_GAS under-run (below); 2025 is preliminary-vintage (skipped per-class)."
+  ,
+  "exceptions": [
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "metric": "C3a system load-weighted mean LMP vs actual RT",
+      "magnitude": "model -11.7% ($26.75 vs $30.29)",
+      "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+      "reason": "SOFT criterion -> CAVEAT. Regressed ~1.2pp from the nyiso-32 keeper (-10.5% -> -11.7%) because the downstate CT floor is implemented as a min-gen (must-run) floor: it correctly recovers the local-reliability ENERGY but adds inframarginal supply in the floored hours, which depresses the marginal LMP rather than letting the peakers SET a high scarcity price. The fuller fix -- peakers setting price in scarcity hours via an ORDC/reserve-scarcity demand curve -- is the documented reserve-scarcity frontier (the same root cause as the C3c >$300 tail), confirmed non-closable with grounded inputs by nyiso-29/31. Kept per rule #1: the floor is the real local-RA mechanism and closes the HARD C1 CT_PEAKER miss; reverting it to recover ~1pp of a SOFT price criterion would re-open the larger volume miss. Not chased (rule #12) -- CT_PEAKER lands UNDER actual, so the floor is not over-forced."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "metric": "C3a system load-weighted mean LMP vs actual RT",
+      "magnitude": "model -12.7% ($31.39 vs $35.95)",
+      "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+      "reason": "SOFT criterion -> CAVEAT. As 2023: the min-gen CT floor adds inframarginal supply (~1.5pp depression vs nyiso-32's -11.2%), recovering CT_PEAKER + CC_REGULAR volume while exposing the missing reserve-scarcity price tail. Same ledgered root cause (reserve scarcity, nyiso-29/31). Kept per rule #1; not chased (rule #12)."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2025,
+      "metric": "C3a system load-weighted mean LMP vs actual RT",
+      "magnitude": "model -8.6% ($55.54 vs $60.74)",
+      "classification": "ACCEPTED (rule-#1 tradeoff; min-gen floor representation + reserve-scarcity frontier)",
+      "reason": "SOFT criterion -> CAVEAT. Tipped just out of band from the nyiso-32 keeper (-7.3% PASS -> -8.6%) by the same min-gen CT floor inframarginal-supply effect. The downstate peaker energy is correctly recovered (CT_PEAKER 0.58 -> 1.52 TWh); the price side is the ledgered reserve-scarcity frontier. Kept per rule #1; not chased (rule #12)."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "metric": "C2 gas total vs EIA-923 grid-delivered",
+      "magnitude": "model gas ~-3.9%",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-923/EIA-930 benchmark-basis floor)",
+      "reason": "2025 EIA-923 is the preliminary M-file (total under-reported); the remaining gap is the EIA-930/EIA-923 basis reconciliation (docs/nyiso-td-loss-resolution-2026-06.md; td_loss_factor=0 settled) plus preliminary-data incompleteness. The CT floor is a within-gas reshuffle (peakers up, CC/steam down) and does not move the gas TOTAL, which is at its basis floor. Not closable by an honest knob (rules #1/#11/#12)."
+    },
+    {
+      "criterion": "co2",
+      "year": 2024,
+      "metric": "C5a system CO2 vs eGRID",
+      "magnitude": "model -8.4% (26.66 vs 29.11 Mt)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (downstream of the 2024 gas basis floor)",
+      "reason": "2024 CO2 is downstream of the 2024 gas volume at its EIA-923/EIA-930 basis floor. The CT floor shifts some energy from CC toward the (dirtier-per-MWh) peaker class, a small offsetting CO2 effect, but the level stays governed by the gas-total basis floor. Not a separate emission-rate error and not closable without re-pinning the gas total to actuals (forbidden, rule #12)."
+    }
+  ]
+}
