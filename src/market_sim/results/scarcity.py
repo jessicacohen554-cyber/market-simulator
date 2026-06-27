@@ -63,7 +63,28 @@ import numpy as np
 from scipy.special import ndtr
 
 from market_sim.config.constants import (
+    ERCOT_AS_ECRS_BASE_MW,
+    ERCOT_AS_ECRS_MAX_MW,
+    ERCOT_AS_ECRS_MIN_MW,
+    ERCOT_AS_ECRS_RAMP_COEF,
+    ERCOT_AS_ECRS_SIGMA_COEF,
+    ERCOT_AS_FE_FRAC_LOAD,
+    ERCOT_AS_FE_FRAC_SOLAR,
+    ERCOT_AS_FE_FRAC_WIND,
+    ERCOT_AS_NSPIN_BASE_MW,
+    ERCOT_AS_NSPIN_LOAD_COEF,
+    ERCOT_AS_NSPIN_MAX_MW,
+    ERCOT_AS_NSPIN_MIN_MW,
+    ERCOT_AS_NSPIN_RAMP_COEF,
     ERCOT_AS_PRODUCTS,
+    ERCOT_AS_RAMP_WINDOW_HOURS,
+    ERCOT_AS_REGUP_FLOOR_MW,
+    ERCOT_AS_REGUP_MAX_MW,
+    ERCOT_AS_REGUP_MIN_MW,
+    ERCOT_AS_REGUP_SIGMA_COEF,
+    ERCOT_AS_RRS_FLOOR_MW,
+    ERCOT_AS_RRS_INERTIA_COEF_MW,
+    ERCOT_AS_RRS_MAX_MW,
     MISO_REGULATING_RESERVE_MW,
     MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
     MISO_RESERVE_DEMAND_CURVE_MAX,
@@ -948,26 +969,143 @@ def ercot_reserve_coopt_inputs(
     return requirement, eligible, penalties, widths
 
 
+def ercot_as_forward_drivers(
+    system_load: np.ndarray, wind_gen: np.ndarray, solar_gen: np.ndarray
+) -> dict[str, np.ndarray]:
+    """Compute the forward ERCOT AS-requirement drivers from forecast profiles.
+
+    The forward requirement formulas (:func:`ercot_as_forward_requirement_mw`) are
+    functions of forecast net-load, the net-load up-ramp, VRE share, and the
+    net-load day-ahead forecast-error standard deviation. All four derive from the
+    same three forecast series the dispatch already builds — total system load and
+    total wind / solar generation — so the requirement regenerates for a forecast
+    year and grows automatically as VRE capacity (hence ``wind_gen`` / ``solar_gen``)
+    grows.
+
+    Args:
+        system_load: ``(T,)`` total served load MW per hour.
+        wind_gen: ``(T,)`` total wind generation MW per hour (cap x CF).
+        solar_gen: ``(T,)`` total solar generation MW per hour (cap x CF).
+
+    Returns:
+        A dict of ``(T,)`` driver arrays: ``net_load``, ``vre_share``,
+        ``sigma_fe`` (net-load DA forecast-error std), ``ramp_up`` (forward
+        net-load up-ramp over ``ERCOT_AS_RAMP_WINDOW_HOURS``), plus the raw
+        ``load`` / ``wind`` / ``solar``.
+    """
+    load = np.asarray(system_load, dtype=float)
+    wind = np.asarray(wind_gen, dtype=float)
+    solar = np.asarray(solar_gen, dtype=float)
+    net_load = load - wind - solar
+    vre_share = (wind + solar) / np.maximum(load, 1.0)
+    # Net-load DA forecast-error std: independent load/wind/solar errors in
+    # quadrature (solar's relative error dominates the VRE-driven growth).
+    sigma_fe = np.sqrt(
+        (ERCOT_AS_FE_FRAC_LOAD * load) ** 2
+        + (ERCOT_AS_FE_FRAC_WIND * wind) ** 2
+        + (ERCOT_AS_FE_FRAC_SOLAR * solar) ** 2
+    )
+    # Forward net-load up-ramp over the deployment window: the largest positive
+    # net-load swing within the next W hours of t (the solar-evening ramp ECRS is
+    # sized to cover). Cyclic (np.roll) so the 8760 horizon has no edge gap; no
+    # Python loop over hours (CLAUDE.md rule: vectorize the hour axis).
+    w = int(ERCOT_AS_RAMP_WINDOW_HOURS)
+    swings = [np.roll(net_load, -k) - net_load for k in range(1, w + 1)]
+    ramp_up = np.clip(np.maximum.reduce(swings), 0.0, None)
+    return {
+        "load": load,
+        "wind": wind,
+        "solar": solar,
+        "net_load": net_load,
+        "vre_share": vre_share,
+        "sigma_fe": sigma_fe,
+        "ramp_up": ramp_up,
+    }
+
+
 def ercot_as_forward_requirement_mw(
-    config, product_code: str, hours: int
+    config,
+    product_code: str,
+    hours: int,
+    drivers: dict[str, np.ndarray] | None = None,
 ) -> np.ndarray | None:
     """Forward AS requirement for one product, or ``None`` to use the measured one.
 
     The forward analogue of reading ``ASPLANNP433`` — ERCOT sizes each AS product
-    from forward drivers it publishes (net-load ramp risk, forecast-error
-    quantiles, largest-contingency / load-ratio shares). That requirement-setting
-    methodology is **P1b**; until it lands this returns ``None`` so the caller
-    falls back to the measured ASPLANNP433 realization (the validation target).
-    Wiring it here keeps the forward seam explicit: when P1b lands it returns
-    ``req_product(t) = f(net_load(t), ramp(t), VRE_share(t))`` and the co-opt is
-    forward-native with no code change at the call site.
+    from forward drivers it publishes (net-load forecast-error quantiles, net-load
+    ramp risk, largest-contingency / load-ratio shares; NP3-160-CD "Methodology for
+    Setting Day-Ahead and Real-Time Ancillary Service Requirements"). When
+    ``config.ercot_as_forward_requirement`` is set **and** the forecast ``drivers``
+    are supplied (:func:`ercot_as_forward_drivers`), this returns
+    ``req_product(t) = f(net_load, ramp, VRE_share, sigma_fe)`` for the product;
+    otherwise it returns ``None`` so the caller falls back to the measured
+    ASPLANNP433 realization (the validation target — the keeper/backcast path).
+
+    The per-product forms (coefficients in ``constants.py``, calibrated to the
+    published requirement MW — a procurement quantity, never a price, CLAUDE.md
+    #12):
+
+    * **REGUP** = floor + sigma_coef x sigma_fe — regulation covers the within-hour
+      net-load variability (a sub-hourly slice of the DA forecast-error std).
+    * **RRS** = largest-contingency floor + inertia_coef x VRE_share — the
+      frequency-response floor plus a low-inertia adder that rises with VRE.
+    * **ECRS** = base + sigma_coef x sigma_fe + ramp_coef x ramp_up — the ~2 GW
+      ramp-risk product (forecast-error plus the forward net-load up-ramp).
+    * **NSPIN** = base + load_coef x load + ramp_coef x ramp_up — the
+      longer-horizon net-load uncertainty reserve, sized as a load-ratio share of
+      system load plus the forward net-load up-ramp it covers.
+
+    All clipped to published min/max bands. **Forward response:** more VRE → larger
+    ``sigma_fe`` / ``ramp_up`` / ``vre_share`` → larger requirement, automatically.
+
+    Returns ``(hours,)`` MW, or ``None`` to defer to the measured requirement.
     """
-    # P1b not yet implemented — fall back to the measured requirement.
-    return None
+    if not getattr(config, "ercot_as_forward_requirement", False):
+        return None
+    if drivers is None:
+        # Forward requested but the forecast drivers were not threaded through —
+        # defer to the measured requirement rather than guess.
+        return None
+    sigma = drivers["sigma_fe"]
+    code = str(product_code).upper()
+    if code == "REGUP":
+        req = ERCOT_AS_REGUP_FLOOR_MW + ERCOT_AS_REGUP_SIGMA_COEF * sigma
+        req = np.clip(req, ERCOT_AS_REGUP_MIN_MW, ERCOT_AS_REGUP_MAX_MW)
+    elif code == "RRS":
+        req = (
+            ERCOT_AS_RRS_FLOOR_MW + ERCOT_AS_RRS_INERTIA_COEF_MW * drivers["vre_share"]
+        )
+        req = np.clip(req, ERCOT_AS_RRS_FLOOR_MW, ERCOT_AS_RRS_MAX_MW)
+    elif code == "ECRS":
+        req = (
+            ERCOT_AS_ECRS_BASE_MW
+            + ERCOT_AS_ECRS_SIGMA_COEF * sigma
+            + ERCOT_AS_ECRS_RAMP_COEF * drivers["ramp_up"]
+        )
+        req = np.clip(req, ERCOT_AS_ECRS_MIN_MW, ERCOT_AS_ECRS_MAX_MW)
+    elif code == "NSPIN":
+        req = (
+            ERCOT_AS_NSPIN_BASE_MW
+            + ERCOT_AS_NSPIN_LOAD_COEF * drivers["load"]
+            + ERCOT_AS_NSPIN_RAMP_COEF * drivers["ramp_up"]
+        )
+        req = np.clip(req, ERCOT_AS_NSPIN_MIN_MW, ERCOT_AS_NSPIN_MAX_MW)
+    else:
+        # Unknown product (e.g. REGDN, which the upward co-opt ignores): defer.
+        return None
+    out = np.asarray(req, dtype=float)
+    if out.size >= int(hours):
+        return out[: int(hours)]
+    return np.concatenate([out, np.zeros(int(hours) - out.size)])
 
 
 def ercot_multiproduct_reserve_coopt_inputs(
-    config, fleet_arrays: FleetArrays, hours: int
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    system_load: np.ndarray | None = None,
+    wind_gen: np.ndarray | None = None,
+    solar_gen: np.ndarray | None = None,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -1018,9 +1156,14 @@ def ercot_multiproduct_reserve_coopt_inputs(
     backs both rows (batteries respond in seconds → every product).
 
     **Requirements** are the ERCOT-published per-product procurement quantities
-    (``ASPLANNP433``) for the weather year — the measured realization the forward
-    requirement-setting formula (:func:`ercot_as_forward_requirement_mw`, P1b)
-    validates against, never fitted to a price. **Demand-curve prices** are
+    (``ASPLANNP433``) for the weather year — UNLESS
+    ``config.ercot_as_forward_requirement`` is set and the forecast drivers
+    (``system_load`` / ``wind_gen`` / ``solar_gen``, all ``(T,)``) are supplied,
+    in which case each product's requirement is set from the forward formula
+    (:func:`ercot_as_forward_requirement_mw`) of net-load / ramp / VRE-share /
+    forecast-error. Either way the measured ASPLANNP433 series stays the backcast
+    realization the forward formula validates against, never fitted to a price.
+    **Demand-curve prices** are
     VOLL-anchored (``config.ordc_voll``, the AS offer cap) market-design
     schedules, so the hourly scarcity *incidence* comes from the responsive
     headroom in the shared-headroom RHS — a tighter fleet clears AS lower on the
@@ -1045,14 +1188,26 @@ def ercot_multiproduct_reserve_coopt_inputs(
     n_ramp = int(getattr(config, "ercot_as_n_ramp", 12))
     year = int(config.weather_year)
 
+    # Forward requirement drivers (net-load / ramp / VRE-share / forecast-error)
+    # when the forward formula is enabled and the forecast profiles were threaded
+    # in; else None → the per-product calls fall back to the measured ASPLANNP433.
+    forward_drivers: dict[str, np.ndarray] | None = None
+    if (
+        getattr(config, "ercot_as_forward_requirement", False)
+        and system_load is not None
+        and wind_gen is not None
+        and solar_gen is not None
+    ):
+        forward_drivers = ercot_as_forward_drivers(system_load, wind_gen, solar_gen)
+
     requirement = np.zeros((n_prod, T), dtype=float)
     pen_list: list[np.ndarray] = []
     wid_list: list[np.ndarray] = []
     counts = np.zeros(n_prod, dtype=int)
     for p, (_name, code, _tier) in enumerate(products):
-        # Forward requirement formula (P1b) when available, else the measured
-        # ASPLANNP433 realization for the weather year (the validation target).
-        req_t = ercot_as_forward_requirement_mw(config, code, T)
+        # Forward requirement formula when enabled, else the measured ASPLANNP433
+        # realization for the weather year (the validation target).
+        req_t = ercot_as_forward_requirement_mw(config, code, T, forward_drivers)
         if req_t is None:
             req_t = ercot_as_plan_requirement_mw(year, T, code)
         requirement[p, :] = req_t

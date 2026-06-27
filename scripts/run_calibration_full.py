@@ -1587,6 +1587,7 @@ def solve_and_persist(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1769,6 +1770,7 @@ def solve_and_persist(
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+            ercot_as_forward_requirement=ercot_as_forward_requirement,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
@@ -1989,6 +1991,7 @@ def solve_and_persist(
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
         "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
+        "ercot_as_forward_requirement": ercot_as_forward_requirement,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
@@ -2112,6 +2115,8 @@ def solve_and_persist(
             ercot_reserve_supply_cap=True,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
         )
+    if ercot_as_forward_requirement:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_as_forward_requirement=True)
     if ercot_load_resource_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_load_resource_reserve=True,
@@ -4550,6 +4555,19 @@ def main() -> None:
         "(default 2023; the measured RTOLCAP series exists 2023+).",
     )
     parser.add_argument(
+        "--ercot-as-forward-requirement",
+        action="store_true",
+        help="ERCOT: set each multi-product AS requirement (RegUp/RRS/ECRS/"
+        "NonSpin) from a FORWARD formula of forecast drivers (net-load, ramp, "
+        "VRE-share, net-load forecast-error, largest-contingency / load-ratio) "
+        "per ERCOT's published AS Methodology, instead of reading the measured AS "
+        "Plan (ASPLANNP433). The forward analogue of the measured requirement "
+        "(G3); the measured series stays the backcast validation target "
+        "(modeled-vs-measured requirement MW, not a price fit). Requires "
+        "--energy-reserve-coopt + --ercot-multiproduct-as-coopt. ERCOT-only. Off "
+        "(default → measured fallback).",
+    )
+    parser.add_argument(
         "--ercot-load-resource-reserve",
         action="store_true",
         help="ERCOT energy+reserve co-opt only: credit the measured "
@@ -5440,6 +5458,7 @@ def main() -> None:
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
         ercot_reserve_supply_cap_from_year=args.ercot_reserve_supply_cap_from_year,
+        ercot_as_forward_requirement=args.ercot_as_forward_requirement,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_load_resource_reserve_from_year=(
             args.ercot_load_resource_reserve_from_year

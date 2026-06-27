@@ -655,7 +655,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         coopt_hr_elig,
                         coopt_hr_prod,
                     ) = ercot_multiproduct_reserve_coopt_inputs(
-                        config, fleet_arrays, config.hours
+                        config,
+                        fleet_arrays,
+                        config.hours,
+                        system_load=year_demand.sum(axis=0),
+                        wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+                        solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
                     )
                     dispatch_kwargs.update(
                         reserve_requirement=coopt_req,

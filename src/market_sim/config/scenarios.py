@@ -1120,6 +1120,21 @@ class ScenarioConfig:
     # exists 2023+); the cap is physically correct in every ORDC-regime year. The
     # 2025 RTC+B go-live tail (post 2025-12-05) has no measured RTOLCAP and is
     # left uncapped (the cap series fills those hours with no constraint).
+    ercot_as_forward_requirement: bool = False  # ERCOT: set each multi-product AS
+    # requirement (RegUp/RRS/ECRS/NonSpin) from a FORWARD formula of forecast
+    # drivers — req_product(t) = f(net-load, ramp, VRE-share, net-load
+    # forecast-error quantile, largest-contingency / load-ratio share) per ERCOT's
+    # published AS Methodology — instead of reading the measured AS Plan
+    # (ASPLANNP433). The forward analogue of the measured requirement (G3); the
+    # measured series stays the backcast realization the formula is validated
+    # against (modeled-vs-measured requirement MW, NOT a price fit). Default off →
+    # the co-opt falls back to the measured ASPLANNP433 (the keeper/backcast
+    # behaviour is unchanged). When on, the requirement responds to forward
+    # conditions: more VRE → larger ramp/forecast-error → larger requirement.
+    # Requires energy_reserve_coopt + ercot_multiproduct_as_coopt. The coefficients
+    # are in constants.py (ERCOT_AS_*), calibrated to the published requirement MW,
+    # never to a price. ERCOT-only; GATED. See
+    # docs/ercot-as-forward-requirement-2026-06.md.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -2555,6 +2570,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_adequacy_frac": 2,
     "ercot_reserve_supply_cap": 1,
     "ercot_reserve_supply_cap_from_year": 1,
+    "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,

@@ -1528,6 +1528,7 @@ def run_year(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
@@ -1804,6 +1805,8 @@ def run_year(
             ercot_reserve_supply_cap=True,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
         )
+    if ercot_as_forward_requirement:
+        config = config.with_overrides(ercot_as_forward_requirement=True)
     # ERCOT load-resource reserve credit (run_calibration_full
     # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
     # responsive reserve) into the co-opt reserve balance. GATED — alters
@@ -3005,7 +3008,12 @@ def run_year(
                 coopt_hr_elig,
                 coopt_hr_prod,
             ) = ercot_multiproduct_reserve_coopt_inputs(
-                config, fleet_arrays, config.hours
+                config,
+                fleet_arrays,
+                config.hours,
+                system_load=demand.sum(axis=0),
+                wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+                solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
             )
             dispatch_kwargs.update(
                 reserve_requirement=coopt_req,
