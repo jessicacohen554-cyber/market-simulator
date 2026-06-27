@@ -57,41 +57,41 @@ plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustr
 50064,CT_CHP,University of California Santa Cruz,eia923_cf,0,4.4,,,,,,,,15.0,commercial,
 50115,CT_CHP,US Borax,eia923_cf,0,39.0,,,,,,,,2.8,industrial,
 50134,CT_CHP,Sycamore Cogeneration,eia923_cf,0,300.0,,,,,,,,0.0,merchant,
-50170,CT_CHP,Berry Cogen,eia923_cf,0,35.0,,,,,,,,0.0,industrial,
+50170,CT_CHP,Berry Cogen,eia923_cf,0,35.0,,,,,,,,0.0,industrial,75.0
 50234,CT_CHP,San Antonio Regional Hospital,eia923_cf,0,2.7,,,,,,,,8.1,commercial,
 50464,CT_CHP,Oxnard,eia923_cf,0,70.9,,,,,,,,21.8,industrial,
 50495,CT_CHP,High Sierra Limited,eia923_cf,0,46.0,,,,,,,,0.7,merchant,
 50537,CT_CHP,SRI International Cogen Project,eia923_cf,0,5.6,,,,,,,,17.2,commercial,
 50612,CT_CHP,McKittrick Limited,ok,1558,46.0,17.4,0.0,0.0,,71.7,82.6,,0.0,merchant,
-50622,CT_CHP,Berry Cogen Tanne Hills 18,eia923_cf,0,16.0,,,,,,,,13.5,industrial,
+50622,CT_CHP,Berry Cogen Tanne Hills 18,eia923_cf,0,16.0,,,,,,,,13.5,industrial,75.0
 50674,CT_CHP,Municipal Cogen Plant,eia923_cf,0,1.2,,,,,,,,5.5,commercial,
-50750,CT_CHP,Coalinga Cogeneration Facility,eia923_cf,0,6.4,,,,,,,,12.8,industrial,
-50751,CT_CHP,Southeast Kern River Cogen,eia923_cf,0,20.8,,,,,,,,0.0,industrial,
-50752,CT_CHP,South Belridge Cogeneration Facility,eia923_cf,0,57.0,,,,,,,,25.7,industrial,
+50750,CT_CHP,Coalinga Cogeneration Facility,eia923_cf,0,6.4,,,,,,,,12.8,industrial,75.0
+50751,CT_CHP,Southeast Kern River Cogen,eia923_cf,0,20.8,,,,,,,,0.0,industrial,75.0
+50752,CT_CHP,South Belridge Cogeneration Facility,eia923_cf,0,57.0,,,,,,,,25.7,industrial,75.0
 50865,CT_CHP,Salinas River Cogeneration,ok,22665,33.0,70.0,0.0,0.0,,93.9,100.0,,0.0,merchant,
 50963,CT_CHP,Naval Hospital Medical Center,eia923_cf,0,4.4,,,,,,,,0.0,commercial,
 50985,CT_CHP,Solano County Cogen Plant,eia923_cf,0,2.8,,,,,,,,5.5,commercial,
-52076,CT_CHP,McKittrick Cogen,eia923_cf,0,9.6,,,,,,,,12.3,industrial,
-52077,CT_CHP,Lost Hills Cogeneration Plant,eia923_cf,0,5.4,,,,,,,,1.0,industrial,
-52081,CT_CHP,Cymric 31X Cogen,eia923_cf,0,5.4,,,,,,,,8.5,industrial,
-52082,CT_CHP,Cymric 6Z Cogen,eia923_cf,0,5.4,,,,,,,,13.9,industrial,
-52085,CT_CHP,Taft 26C Cogen,eia923_cf,0,10.8,,,,,,,,12.0,industrial,
-52086,CT_CHP,Coalinga 25D Cogen,eia923_cf,0,10.8,,,,,,,,8.9,industrial,
-52096,CT_CHP,Berry Placerita Cogen,eia923_cf,0,40.0,,,,,,,,0.0,industrial,
-52104,CT_CHP,Cymric 36W Cogen,eia923_cf,0,10.8,,,,,,,,10.2,industrial,
-52107,CT_CHP,Kern River Eastridge Cogen,eia923_cf,0,41.6,,,,,,,,14.8,industrial,
+52076,CT_CHP,McKittrick Cogen,eia923_cf,0,9.6,,,,,,,,12.3,industrial,75.0
+52077,CT_CHP,Lost Hills Cogeneration Plant,eia923_cf,0,5.4,,,,,,,,1.0,industrial,75.0
+52081,CT_CHP,Cymric 31X Cogen,eia923_cf,0,5.4,,,,,,,,8.5,industrial,75.0
+52082,CT_CHP,Cymric 6Z Cogen,eia923_cf,0,5.4,,,,,,,,13.9,industrial,75.0
+52085,CT_CHP,Taft 26C Cogen,eia923_cf,0,10.8,,,,,,,,12.0,industrial,75.0
+52086,CT_CHP,Coalinga 25D Cogen,eia923_cf,0,10.8,,,,,,,,8.9,industrial,75.0
+52096,CT_CHP,Berry Placerita Cogen,eia923_cf,0,40.0,,,,,,,,0.0,industrial,75.0
+52104,CT_CHP,Cymric 36W Cogen,eia923_cf,0,10.8,,,,,,,,10.2,industrial,75.0
+52107,CT_CHP,Kern River Eastridge Cogen,eia923_cf,0,41.6,,,,,,,,14.8,industrial,75.0
 52147,CT_CHP,CP Kelco San Diego Plant,eia923_cf,0,18.5,,,,,,,,6.5,industrial,
 52169,CT_CHP,Midway Sunset Cogen,eia923_cf,0,219.0,,,,,,,,0.0,merchant,
 52186,CT_CHP,Yuba City Cogen Partners,eia923_cf,0,49.9,,,,,,,,0.8,merchant,
 54296,CT_CHP,Biola University Hybrid,eia923_cf,0,4.0,,,,,,,,9.4,commercial,
 54410,CT_CHP,Western Power & Steam Inc,eia923_cf,0,19.6,,,,,,,,0.0,industrial,
-54447,CT_CHP,Welport Lease Project,eia923_cf,0,4.0,,,,,,,,10.5,industrial,
-54449,CT_CHP,Dome Project,eia923_cf,0,5.0,,,,,,,,19.7,industrial,
+54447,CT_CHP,Welport Lease Project,eia923_cf,0,4.0,,,,,,,,10.5,industrial,75.0
+54449,CT_CHP,Dome Project,eia923_cf,0,5.0,,,,,,,,19.7,industrial,75.0
 54477,CT_CHP,"Oroville Cogeneration, LLC",eia923_cf,0,7.7,,,,,,,,0.1,industrial,
 54768,CT_CHP,Live Oak Limited,ok,1933,46.0,15.2,0.0,0.0,,76.1,80.4,,0.0,merchant,
 54800,CT_CHP,Saint Agnes Medical Center,eia923_cf,0,5.4,,,,,,,,9.4,commercial,
-55184,CT_CHP,Aera San Ardo Cogen Facility,eia923_cf,0,2.8,,,,,,,,14.0,industrial,
-55851,CT_CHP,Valero Refinery Cogeneration Unit 1,eia923_cf,0,45.4,,,,,,,,0.0,industrial,
+55184,CT_CHP,Aera San Ardo Cogen Facility,eia923_cf,0,2.8,,,,,,,,14.0,industrial,75.0
+55851,CT_CHP,Valero Refinery Cogeneration Unit 1,eia923_cf,0,45.4,,,,,,,,0.0,industrial,70.0
 56080,CT_CHP,SJ/SC WPCP,eia923_cf,0,12.8,,,,,,,,0.0,commercial,
 57573,CT_CHP,CCCSD Wastewater Treatment Plnt,eia923_cf,0,3.0,,,,,,,,0.0,commercial,
 57580,CT_CHP,Broadridge Cogen,eia923_cf,0,4.2,,,,,,,,7.9,merchant,
@@ -106,7 +106,7 @@ plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustr
 58619,CT_CHP,Transamerica Pyramid,eia923_cf,0,1.0,,,,,,,,1.1,commercial,
 58914,CT_CHP,MCAGCC Cogen Plant,eia923_cf,0,16.2,,,,,,,,5.2,merchant,
 59458,CT_CHP,W Plant,eia923_cf,0,4.0,,,,,,,,0.0,commercial,
-62176,CT_CHP,Berry NMW Cogens,eia923_cf,0,10.0,,,,,,,,14.5,industrial,
+62176,CT_CHP,Berry NMW Cogens,eia923_cf,0,10.0,,,,,,,,14.5,industrial,75.0
 66472,CT_CHP,San Manuel Central Plant Cogens,eia923_cf,0,5.0,,,,,,,,10.7,industrial,
 341,CT_PEAKER,Long Beach Generation,ok,466,260.0,8.1,0.0,0.0,,18.5,18.5,,,,
 422,CT_PEAKER,Glenarm,ok,5227,138.4,11.6,0.0,0.0,,13.0,22.4,,,,
