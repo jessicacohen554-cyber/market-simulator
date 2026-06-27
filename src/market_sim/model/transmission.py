@@ -1128,6 +1128,98 @@ def inject_reference_price_firm_export(fleet_arrays, iso: str, year: int) -> boo
     return applied
 
 
+def inject_reference_price_firm_import(fleet_arrays, iso: str, year: int) -> bool:
+    """Floor the firm (must-flow) scheduled IMPORT on the reference-price seam.
+
+    The import-direction mirror of :func:`inject_reference_price_firm_export` (and
+    of the Manitoba/HQ firm-import blocks). An ISO can net-import from a neighbor
+    in ~99-100% of hours at a stable multi-GW base — cheap surplus baseload
+    (Ontario nuclear/hydro behind the PJM seam) plus firm scheduled transfers —
+    that flows regardless of the hourly price spread. A pure gas x heat-rate
+    economic seam, which prices the neighbor's border ABOVE the ISO's own cheap
+    coal, then wrongly net-EXPORTS over that seam (MISO's 2024 -8.3 vs -23.1 net
+    interchange and 2025 +18 vs -19 sign flip + the +20 TWh energy-balance
+    overshoot).
+
+    For each neighbor carrying a
+    :attr:`~market_sim.config.constants.NeighborInterface.firm_import_floor_by_year`
+    entry for ``year``, this forces the neighbor's CHEAPEST import tranches on at
+    ``floor_mw`` by raising their hour-varying lower bound
+    (``FleetArrays.min_gen``) — the seam's import rows are positive-output
+    pseudo-generators, so a lower bound of ``x`` forces at least ``x`` MW of
+    import through that band. The floor is laid into the cheapest bands first
+    (lowest tranche index = the lowest delivered import price), exactly the bands
+    the economic seam fills first, so the firm base and the economic increment
+    above it are priced consistently along the same convex supply curve with no
+    double counting. Being inframarginal (must-flow), the firm base does not set
+    the clearing price; it displaces the marginal domestic unit (the over-running
+    coal/CC), and the economic tranches above the floor still clear on the hourly
+    spread. Each band's forced level is capped at its available capacity
+    (``pmax x availability``) each hour, so a feasible LP solution always exists
+    even after the seam deliverability envelope (:func:`inject_miso_seam_flow_limit`)
+    has scaled the bands' availability; composed with any existing ``min_gen``
+    floor via ``maximum``.
+
+    The floor is the p10 of the seam's OWN measured net import (the base imported
+    in >=90% of hours), so it cannot force a phantom over-import; in a year/seam
+    where the model already imports more than the floor it is simply non-binding.
+    Modifies ``fleet_arrays.min_gen`` in place.
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place).
+        iso: ISO identifier; only ISOs in ``INTERFACE_NEIGHBORS`` apply a floor.
+        year: Backcast year keying ``firm_import_floor_by_year``.
+
+    Returns:
+        ``True`` if any firm-import floor was applied, else ``False``
+        (byte-identical) when no neighbor has a floor for ``year``.
+    """
+    from market_sim.config.constants import INTERFACE_NEIGHBORS
+
+    specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    if not specs:
+        return False
+    unit_ids = list(fleet_arrays.unit_ids)
+    hours = int(fleet_arrays.availability.shape[1])
+    applied = False
+    for name, spec in specs.items():
+        table = spec.firm_import_floor_by_year
+        floor = table.get(year, 0.0) if table else 0.0
+        if floor <= 0.0:
+            continue
+        # Import tranche rows for this neighbor, indexed by tranche k (1-based).
+        suffix = f"{_REF_IMPORT_MARK}{name}#"
+        rows: dict[int, int] = {}
+        for r, uid in enumerate(unit_ids):
+            if suffix in uid:
+                rows[int(uid.rsplit("#", 1)[1])] = r
+        if not rows:
+            continue
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+            ).copy()
+        remaining = floor
+        # Lay the firm floor into the cheapest bands first (lowest k), forcing each
+        # up to its available capacity until the floor is met, then the partial
+        # remainder on the next band.
+        for k in sorted(rows):
+            if remaining <= 0.0:
+                break
+            r = rows[k]
+            avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+            forced = np.minimum(remaining, avail_r)
+            np.maximum(
+                fleet_arrays.min_gen[r, :], forced, out=fleet_arrays.min_gen[r, :]
+            )
+            # Reduce the remaining floor by the band's minimum forced capacity so
+            # the next band covers any shortfall (use the min across hours so the
+            # floor is met even in the band's tightest-availability hour).
+            remaining -= float(forced.min())
+            applied = True
+    return applied
+
+
 def inject_caiso_import_hub_prices(
     fleet_arrays,
     mc: np.ndarray,
@@ -2613,6 +2705,154 @@ def inject_neiso_gas_coldsnap_derate(
 
     fleet_arrays.availability[rows, :] *= (1.0 - frac)[None, :]
     return True
+
+
+# MISO dual-limb, ZONAL weather-correlated reliability-floor windows (local
+# hour-of-day) and per-zone, per-class coefficients. MISO spans two opposite
+# weather regimes within one ISO, so each zone is keyed to its OWN load-weighted
+# daily TMAX/TMIN and BOTH limbs are fit per zone (mirroring NEISO's dual-limb
+# and NYISO's per-zone templates). Hot limb = summer afternoon-evening AC ramp
+# (TMAX); cold limb = deep-winter morning/evening peaks (TMIN), where the
+# gas-electric constraint prices gas-steam into merit. Coefficients regressed
+# from the measured per-(zone × class) CAMPD CF vs the zone load-weighted
+# TMAX/TMIN, pooled 2023-2025 (scripts/derive_miso_temp_reliability_floor.py).
+MISO_HOT_FLOOR_HOURS: tuple[int, int] = (14, 20)  # afternoon-evening AC ramp
+MISO_COLDSNAP_FLOOR_HOURS: tuple[int, ...] = (6, 7, 8, 9, 17, 18, 19, 20)
+
+# Per-zone (hot_slope, hot_t0, hot_cap, hot_base, cold_slope, cold_t0, cold_cap).
+# A limb is INCLUDED only where the measured Spearman rho >= ~0.30 (a meaningful
+# temperature correlation); ungrounded limbs are zeroed (slope=cap=0). The data
+# shows the cold limb is grounded ONLY in MISO-South (the Entergy
+# gas-constrained footprint: ST_GAS rho +0.42, CT_PEAKER rho +0.52); the North
+# steam/CT fleet does NOT track cold (rho ~0.03-0.07 — winter load there is
+# served by coal/wind, not gas), so its cold limb is left off rather than forced.
+MISO_ST_FLOOR_COEFFS: dict[
+    str, tuple[float, float, float, float, float, float, float]
+] = {
+    "MISO-North": (0.0226, 25.0, 0.361, 0.071, 0.0, 10.0, 0.0),
+    "MISO-Central": (0.0316, 25.0, 0.568, 0.107, 0.0, 10.0, 0.0),
+    "MISO-South": (0.0366, 25.0, 0.882, 0.222, 0.0298, 5.0, 0.714),
+}
+MISO_CT_FLOOR_COEFFS: dict[
+    str, tuple[float, float, float, float, float, float, float]
+] = {
+    "MISO-North": (0.0373, 25.0, 0.525, 0.020, 0.0, 10.0, 0.0),
+    "MISO-Central": (0.0600, 25.0, 0.851, 0.206, 0.0, 10.0, 0.0),
+    "MISO-South": (0.0395, 25.0, 1.000, 0.264, 0.0296, 5.0, 0.736),
+}
+
+
+def inject_miso_temp_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    st_coeffs: dict[
+        str, tuple[float, float, float, float, float, float, float]
+    ] = MISO_ST_FLOOR_COEFFS,
+    ct_coeffs: dict[
+        str, tuple[float, float, float, float, float, float, float]
+    ] = MISO_CT_FLOOR_COEFFS,
+) -> bool:
+    """Floor MISO gas-steam and simple-cycle CTs at a zonal, dual-limb temperature
+    commitment.
+
+    MISO under-runs two weather-driven fleets an energy-only LP leaves on the
+    cheaper combined-cycle / coal stack, and — uniquely among the modelled ISOs —
+    the two limbs of the temperature distribution matter in DIFFERENT zones:
+
+    * **Hot limb (TMAX), all zones.** On hot summer afternoons local reliability
+      holds the gas-steam boilers and simple-cycle CTs online regardless of
+      system-energy economics. Floored over the afternoon-evening window
+      (``MISO_HOT_FLOOR_HOURS``) at ``frac = clip(hot_base + hot_slope*(TMAX -
+      hot_t0), hot_base, hot_cap)`` keyed to each zone's load-weighted daily max
+      temperature. Strongest in MISO-South (Entergy AC-peaking, rho +0.75 for
+      ST_GAS) and MISO-Central.
+
+    * **Cold limb (TMIN), MISO-South only.** In deep-winter cold snaps the
+      gas-electric constraint (pipeline scarcity feeding both heating and power
+      across the Entergy/Gulf footprint) prices the gas-steam / oil-capable units
+      into merit. Floored over the winter morning + evening peaks
+      (``MISO_COLDSNAP_FLOOR_HOURS``) at ``frac = clip(cold_slope*(cold_t0 -
+      TMIN), 0, cold_cap)`` keyed to the daily MIN temperature. The cold limb is
+      grounded (measured rho >= 0.30) ONLY in MISO-South; the North/Central
+      steam/CT cold correlation is ~0 (winter load there is coal/wind), so those
+      cold limbs are zeroed in the coefficient tables rather than forced.
+
+    All coefficients are the measured per-(zone × class) CAMPD CF regressed on
+    the zone load-weighted daily TMAX/TMIN, pooled 2023-2025
+    (``scripts/derive_miso_temp_reliability_floor.py``) — physical
+    temperature->commitment rules, NOT fits to a TWh residual. Forward-reproducible
+    (a forecast year pins a weather year, hence a TMAX/TMIN series) and
+    condition-responsive (hotter summers -> more CT/ST in the South; colder
+    winters -> more gas-steam), which makes them admissible in both backcast and
+    forecast (CLAUDE.md #10/#11). For each (zone, class) the hourly target is the
+    max of the applicable limbs and is distributed cheapest-first over the group's
+    in-zone units (each capped at available capacity) via the hour-varying
+    ``FleetArrays.min_gen`` lower bound, composed with any floor already present;
+    the LP dispatches economically above it.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when any (zone, class)
+    floored a fleet, ``False`` (byte-identical) when ``iso`` is not MISO, the
+    fleet has no plant-group labels, or no archived TMAX/TMIN series is available
+    (forecast year / unmapped ISO).
+    """
+    if iso != "MISO":
+        return False
+    if fleet_arrays.plant_group is None:
+        return False
+    from market_sim.data.eia_loader import miso_zone_temp
+
+    hours = int(fleet_arrays.availability.shape[1])
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    hot_start, hot_end = MISO_HOT_FLOOR_HOURS
+    in_hot = (hod >= hot_start) & (hod <= hot_end)
+    in_cold = np.isin(hod, np.asarray(MISO_COLDSNAP_FLOOR_HOURS))
+    groups = np.asarray(fleet_arrays.plant_group)
+    zone_to_idx = {z: i for i, z in enumerate(zone_names)}
+    applied = False
+
+    for group, coeffs in (("ST_GAS", st_coeffs), ("CT_PEAKER", ct_coeffs)):
+        for zone, (
+            hot_slope,
+            hot_t0,
+            hot_cap,
+            hot_base,
+            cold_slope,
+            cold_t0,
+            cold_cap,
+        ) in coeffs.items():
+            z_idx = zone_to_idx.get(zone)
+            if z_idx is None:
+                continue
+            rows = np.flatnonzero(
+                (groups == group)
+                & (fleet_arrays.zone_idx == z_idx)
+                & (fleet_arrays.pmax > 0.0)
+            )
+            if rows.size == 0:
+                continue
+            temp = miso_zone_temp(year, hours, zone)
+            if temp is None:
+                continue
+            tmax, tmin = temp
+            frac = np.zeros(hours, dtype=float)
+            # Hot limb over the afternoon-evening window.
+            if hot_cap > 0.0:
+                hot = np.clip(hot_base + hot_slope * (tmax - hot_t0), hot_base, hot_cap)
+                frac = np.where(in_hot, np.maximum(frac, hot), frac)
+            # Cold limb over the winter morning/evening peaks (South only —
+            # other zones carry cold_cap=0).
+            if cold_cap > 0.0 and cold_slope > 0.0:
+                cold = np.clip(cold_slope * (cold_t0 - tmin), 0.0, cold_cap)
+                frac = np.where(in_cold, np.maximum(frac, cold), frac)
+            if not np.any(frac > 0.0):
+                continue
+            _distribute_group_floor(fleet_arrays, rows, frac, hours)
+            applied = True
+
+    return applied
 
 
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the

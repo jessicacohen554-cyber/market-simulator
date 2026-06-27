@@ -542,6 +542,36 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
+# MISO round-2 CC_REGULAR / COAL_BIT offer-curve rebalance (deep-merged onto the
+# calibrated MISO base curve when --miso-cc-coal-rebalance is set; ISO-gated, so
+# only the named bands change and every other class/band keeps its default).
+# Structural correction for the conservation-of-energy miss: with imports too low
+# the cheap domestic CC_REGULAR and COAL_BIT over-run and price out the
+# under-running CT_PEAKER / ST_GAS. The marginal (top-tranche) MWh of a baseload
+# CC/coal unit is NOT the cheapest available supply once priced imports and the
+# reliability-floored gas-steam/CT are on the bar, so its committed + econ-high
+# bands are raised to clear ABOVE the import hurdle (MISO seam reference ~$36;
+# the all-MISO LMP sits above the neighbors most hours). An offer-SHAPE
+# correction, NOT a residual-tuned adder — validated by the import↑ / CC↓ / coal↓
+# / CT↑ / ST↑ response, not by MAE. Base MISO bands: CC_REGULAR committed 0.92 /
+# econ_high 1.27; COAL_BIT econ_high 1.10.
+_MISO_CC_COAL_REBALANCE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        # Lift the min-load committed tranche off the artificially-cheap 0.92 (a
+        # CC's min-stable-load $/MWh is ~30-40% above its full-load SRMC, the
+        # measured CAMPD shape) and steepen the econ ramp so the marginal CC MWh
+        # clears above the priced-import hurdle and the gas-steam/CT it displaces.
+        "committed": 1.00,
+        "econ_high": 1.42,
+    },
+    "COAL_BIT": {
+        # Raise the bituminous-coal econ-high so the marginal coal-bit MWh is no
+        # longer the cheapest top-of-merit fill (2025 coal 232 vs EIA-923 201 TWh).
+        "econ_high": 1.22,
+    },
+}
+
+
 def _calibration_config(
     year: int,
     iso: str,
@@ -1719,6 +1749,10 @@ def run_year(
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
+    miso_seam_flow_percentile: float | None = None,
+    miso_temp_reliability_floor: bool = False,
+    miso_cc_coal_rebalance: bool = False,
+    miso_firm_import_floor: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -1961,6 +1995,38 @@ def run_year(
         config = config.with_overrides(miso_firm_imports=miso_firm_imports)
     if miso_seam_flow_limit:
         config = config.with_overrides(miso_seam_flow_limit=True)
+    if miso_seam_flow_percentile is not None:
+        # Round-2 import-lift: raise the seam deliverability percentile (p90 ->
+        # e.g. p95) so the priced seam clears more import in tight hours. Only
+        # bites with --miso-seam-flow-limit; still a measured-duration ceiling.
+        config = config.with_overrides(
+            miso_seam_flow_percentile=float(miso_seam_flow_percentile)
+        )
+    if miso_temp_reliability_floor:
+        # MISO dual-limb, zonal weather reliability floor (the MISO-native
+        # temperature->commitment mechanism replacing the ERCOT-coefficient
+        # gas_st_netload_drag). MISO-only; coefficients baked in
+        # transmission.MISO_ST_FLOOR_COEFFS / MISO_CT_FLOOR_COEFFS.
+        config = config.with_overrides(miso_temp_reliability_floor=True)
+    if miso_cc_coal_rebalance and iso.upper() == "MISO":
+        # Raise the MISO CC_REGULAR / COAL_BIT offer curve so the marginal CC /
+        # coal-bit MWh sits above the priced-import hurdle (and the under-running
+        # CT_PEAKER / ST_GAS), correcting the cheap-domestic-fill-eats-imports
+        # miss. ISO-gated (other ISOs / forecasts byte-identical); applied as a
+        # deep-merge offer-curve override on top of the calibrated MISO curve.
+        rebalanced = _deep_merge_offer_curve(
+            config.offer_curve_by_group, _MISO_CC_COAL_REBALANCE
+        )
+        config = config.with_overrides(
+            offer_curve_by_group=rebalanced, miso_cc_coal_rebalance=True
+        )
+    if miso_firm_import_floor:
+        # Firm (must-flow) import floor on the reference-price seam — forces the
+        # measured near-firm PJM/IESO net-import base so the seam stops wrongly
+        # net-exporting (fixes the import shortfall + 2025 energy-balance overshoot
+        # by displacing the over-running domestic coal/CC). Requires the priced
+        # interface; MISO-only (only the PJM seam carries a floor).
+        config = config.with_overrides(miso_firm_import_floor=True)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -2671,7 +2737,11 @@ def run_year(
     ):
         from market_sim.model.transmission import inject_miso_seam_flow_limit
 
-        if inject_miso_seam_flow_limit(fleet_arrays, iso, year):
+        # Optional round-2 import-lift: raise the deliverability percentile so the
+        # priced seam clears more import in tight hours (None keeps the p90
+        # default). Still a measured-duration-curve ceiling, not a residual pin.
+        _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
+        if inject_miso_seam_flow_limit(fleet_arrays, iso, year, percentile=_seam_pct):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 
             logger.info(
@@ -2680,7 +2750,7 @@ def run_year(
                 "~0 import, PJM keeps its measured eastern transfer)",
                 iso,
                 year,
-                MISO_SEAM_FLOW_PERCENTILE,
+                MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
             )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
@@ -2851,6 +2921,31 @@ def run_year(
                 "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
                 "availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap "
                 "window (TDFOR, NERC cold-weather anchored)",
+                iso,
+                year,
+            )
+
+    # MISO dual-limb, ZONAL weather floor: hold the gas-steam and simple-cycle CT
+    # fleets online at a temperature-driven commitment, keyed PER ZONE to that
+    # zone's load-weighted daily TMAX/TMIN — a summer hot-limb (TMAX) over the
+    # afternoon-evening AC ramp in all zones, plus a deep-winter cold-limb (TMIN)
+    # over the morning/evening peaks grounded only in MISO-South (the Entergy
+    # gas-constrained footprint). Recovers the weather-driven reliability energy an
+    # energy-only LP leaves on the cheaper CC/coal stack (transmission.
+    # inject_miso_temp_reliability_floor). MISO-native replacement for the
+    # ERCOT-coefficient gas_st_netload_drag (which saturates across MISO's net-load
+    # range). No-op off the flag / for non-MISO / without an archived series.
+    if getattr(config, "miso_temp_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_miso_temp_reliability_floor,
+        )
+
+        if inject_miso_temp_reliability_floor(fleet_arrays, iso, year, zone_names):
+            logger.info(
+                "%s %d: zonal dual-limb weather floor — ST_GAS/CT_PEAKER hot-limb "
+                "(per-zone TMAX) over the afternoon-evening ramp + MISO-South "
+                "cold-limb (TMIN) over the winter morning/evening peaks, frac x "
+                "available capacity",
                 iso,
                 year,
             )
@@ -3087,6 +3182,26 @@ def run_year(
                 iso,
                 year,
             )
+        # Firm scheduled-IMPORT floor (the import-direction mirror): force the
+        # cheapest import tranches on at the measured firm base
+        # (firm_import_floor_by_year) so MISO's near-firm net import from the PJM
+        # (+IESO/Ontario) seam clears every hour — the inframarginal must-flow
+        # import displaces the over-running domestic coal/CC, the economic tranches
+        # clearing on top. Sets fleet_arrays.min_gen on the import rows AFTER the
+        # seam deliverability scaling. No-op off the flag / unless a neighbor has a
+        # floor for `year`.
+        if getattr(config, "miso_firm_import_floor", False):
+            from market_sim.model.transmission import (
+                inject_reference_price_firm_import,
+            )
+
+            if inject_reference_price_firm_import(fleet_arrays, iso, year):
+                logger.info(
+                    "%s %d: firm scheduled-import floor applied (must-flow seam "
+                    "base — net-import seam, displaces marginal domestic coal/CC)",
+                    iso,
+                    year,
+                )
     # CAISO measured-hub import pricing: overwrite each priced-import tranche's mc
     # row with the measured WECC neighbor-hub LMP it proxies (Mid-C/Malin for the
     # PNW blocks, Palo Verde for the desert-SW blocks) + per-tranche border carbon,
