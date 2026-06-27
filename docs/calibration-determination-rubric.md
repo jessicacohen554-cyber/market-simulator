@@ -99,23 +99,34 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     genuinely-mixed gas-thermal plants (`apply_other_fossil_scoring`); it is a
     reconciliation device, not a real merit-order class, so a per-class band on
     it scores a labelling artefact rather than a dispatch decision.
-- **Complete-vintage years only (per-class tolerance applies iff year <
-  `PRELIM_923_FROM_YEAR` = 2025).** The per-class actual (`classFull`) is built
-  from EIA-923 Schedule-5; for a **preliminary** 923 vintage (current-year release,
-  year ≥ `PRELIM_923_FROM_YEAR`) that per-class actual is **incomplete** — a
-  preliminary release under-reports thermal generation that is *already on the
-  grid* (per the authoritative EIA-930 total) but **not yet attributed to any
-  class** — and EIA-930 carries **no per-class split** to substitute. There is
-  therefore no complete per-class actual to gate against, so for those years the
-  asset-class tolerance **does not apply**: every fossil class is recorded
-  `SKIPPED` (not gated, never a silent pass), with the raw `model − actual` gap
-  kept only as a report-only annotation (`vintage_gap_twh`) that has no status
-  effect. The boundary is read from `PRELIM_923_FROM_YEAR`, so a year
-  auto-becomes scorable once its 923 finalises (the 2025 release finalises later →
-  2025 then re-enters the per-class gate). Complete-vintage years (today 2023 and
-  2024) keep the full PASS/FAIL gate. The 2025 fuel mix is **not** left
-  ungoverned: the **C2 family system-volume gate still covers it** via the
-  authoritative EIA-930 grid reconcile (§C2).
+- **Per-(ISO, class) completeness gate for a preliminary vintage (2026-06-27).**
+  The per-class actual (`classFull`) is built from EIA-923 Schedule-5. A
+  **preliminary** 923 vintage (current-year release, year ≥
+  `PRELIM_923_FROM_YEAR` = 2025) under-reports because plants are still filing
+  their monthly reports — at audit time the 2025 release carried only ~43% of the
+  plants present in the complete 2024 vintage. Whether a given class is usable is
+  **not uniform across ISOs and classes**: a class dominated by large always-on
+  units that file early (e.g. ERCOT's PRB/lignite coal fleet) can be fully
+  reported while the peaker-heavy gas classes are not. So instead of a blanket
+  per-year skip, a **completeness audit** (`scripts/audit_eia923_completeness.py`)
+  measures, per (ISO, class), two vintage-internal signals — **plant-reporting
+  retention** (of the prior complete year's material plants, how many report this
+  vintage) and **plant-month coverage** (how many of the 12 monthly cells the
+  reporting plants carry). A class is flagged **`gate`** only when it is itself
+  complete **and** its whole fossil family reported (so the vintage-reconcile,
+  §C2, leaves its per-class actual un-scaled). The audit writes a committed part,
+  `frontend/data/backcast/completeness/eia923_<year>.json`, that both this scorer
+  and the dashboard read.
+  - **Gated classes** (verified complete) score the full PASS/FAIL band exactly
+    like a complete vintage. For 2025 that is **ERCOT `COAL_PRB` and
+    `COAL_LIGNITE`** only.
+  - **Every other fossil class** is recorded `SKIPPED` (not gated, never a silent
+    pass), with the raw `model − actual` gap kept as a report-only annotation
+    (`vintage_gap_twh`, plus a `completeness` tag). The **C2 family system-volume
+    gate still covers these** via the authoritative EIA-930 grid reconcile (§C2).
+  - Complete-vintage years (no completeness part — today 2023 and 2024) gate every
+    class as before. The map **auto-extends**: re-run the audit as the 2025 release
+    finalises and the now-complete classes begin gating with no code change.
 - **Failure classification:** `MODEL MISS` by default — an out-of-tolerance class
   is a merit-order / offer-curve / must-run defect (e.g. CT_PEAKER under-dispatch
   ⇒ peaker offer band too high). Reclassify to `ACCEPTED MEASURED-INPUT
@@ -147,16 +158,19 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   CT_PEAKER over-build cancelled by a CC under-build summing to ≈0% at the family
   level). The fix scores at the class scale, sized to the *system* not to the
   class, so neither tiny nor mid-size classes blow up and nothing nets:
-  - **Complete vintage (year < 2025):** the family **defers to C1** — it passes
-    iff every constituent class is within the universal per-class gate
-    (|model−actual| ≤ 1.0% of ISO annual generation **and** share within ±1.5 pp;
-    actual = `classFull` = EIA-923 − BTM). C1 already scores these classes as a
-    HARD criterion, so any breach surfaces there; C2 records `PASS` and echoes any
-    C1-flagged class in its magnitude (no independent family pass/fail).
-  - **Preliminary current-year vintage (year ≥ 2025):** there is **no per-class
-    actual** (preliminary 923 under-reports; EIA-930 carries no per-class split),
-    so the **±2.5% family fallback** against the authoritative EIA-930 grid total
-    is retained — the only volume check the data supports, with the EIA-930
+  - **Fully-reported family (every complete vintage, plus a preliminary-vintage
+    family the completeness audit flags complete — e.g. ERCOT coal 2025):** the
+    family **defers to C1** — it passes iff every constituent class is within the
+    universal per-class gate (|model−actual| ≤ 1.0% of ISO annual generation
+    **and** share within ±1.5 pp; actual = `classFull` = EIA-923 − BTM). C1 already
+    scores these classes as a HARD criterion, so any breach surfaces there; C2
+    records `PASS` and echoes any C1-flagged class in its magnitude (no independent
+    family pass/fail).
+  - **Preliminary, not-fully-reported family (e.g. every ISO's gas family in 2025):**
+    there is **no trustworthy per-class actual** (missing plants under-report;
+    EIA-930 carries no per-class split), so the **±2.5% family fallback** against
+    the authoritative EIA-930 grid total is retained — the only volume check the
+    data supports, with the EIA-930
     incomplete-vintage handling made explicit. The current-year EIA-923 release is a preliminary
     monthly survey that under-counts thermal generation the CAMPD backfill cannot
     fully repair. The benchmark applies `_VINTAGE_RECONCILE_FRAC = 0.97`

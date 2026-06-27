@@ -45,6 +45,7 @@ DATA = REPO / "frontend" / "data" / "backcast"
 REGISTRY_DIR = DATA / "registry"
 RUNS_DIR = DATA / "runs"
 BENCH_DIR = DATA / "bench"
+COMPLETENESS_DIR = DATA / "completeness"
 
 # Manifest-entry fields the shell consumes (everything but the bundle path).
 ENTRY_FIELDS = (
@@ -176,6 +177,32 @@ def _assemble_benchmark() -> tuple[dict, dict]:
     return meta_by_iso, bench_by_iso
 
 
+def _assemble_completeness() -> dict:
+    """Slim ``{year: {iso: {class: {status, gate}}}}`` from the committed parts.
+
+    Reduces ``completeness/eia923_<year>.json`` (scripts/audit_eia923_completeness)
+    to just the per-(year, ISO, class) status + gate the dashboard needs to
+    color-code the generation-mix table for a preliminary-EIA-923 vintage. Returns
+    an empty map when no completeness parts are committed (the table then renders
+    with no completeness flags, exactly as before).
+    """
+    out: dict[str, dict] = {}
+    if not COMPLETENESS_DIR.exists():
+        return out
+    for part in sorted(COMPLETENESS_DIR.glob("eia923_*.json")):
+        obj = json.loads(part.read_text())
+        year = str(obj["year"])
+        isos = {
+            iso: {
+                klass: {"status": rec["status"], "gate": bool(rec.get("gate"))}
+                for klass, rec in classes.items()
+            }
+            for iso, classes in obj.get("isos", {}).items()
+        }
+        out[year] = isos
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
@@ -214,6 +241,14 @@ def main() -> None:
         + json.dumps({i: _gzb64(b) for i, b in bench_by_iso.items()})
         + ";"
     )
+    # EIA-923 completeness map (window.BC.completeness): per-(year, ISO, class)
+    # status the mix table uses to color-code incomplete-plant-data classes in a
+    # preliminary vintage. Generated from the committed completeness parts.
+    (out_data / "completeness.js").write_text(
+        "window.BC=window.BC||{};window.BC.completeness="
+        + json.dumps(_assemble_completeness())
+        + ";"
+    )
 
     from scripts.probes._backcast_shell import SHELL
 
@@ -226,6 +261,12 @@ def main() -> None:
             '<script src="frontend/data/backcast/manifest.js">'
             "</script>"
             '<script src="frontend/data/backcast/benchmark.js">'
+            "</script>"
+            # completeness.js (window.BC.completeness) color-codes the generation-
+            # mix table's classes for a preliminary-EIA-923 vintage. Generated here
+            # from the committed completeness parts; the table degrades gracefully
+            # (no flags) if it is absent.
+            '<script src="frontend/data/backcast/completeness.js">'
             "</script>"
             # status.js (window.BC.status) drives the all-ISO Calibration Status
             # view. Unlike manifest/benchmark it is a COMMITTED file (built by
