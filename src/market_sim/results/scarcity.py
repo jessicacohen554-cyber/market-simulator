@@ -85,6 +85,11 @@ from market_sim.config.constants import (
     ERCOT_AS_RRS_FLOOR_MW,
     ERCOT_AS_RRS_INERTIA_COEF_MW,
     ERCOT_AS_RRS_MAX_MW,
+    ERCOT_LR_RRS_AVAILABILITY_HOD,
+    ERCOT_LR_RRS_ENROLL_BASE_MW,
+    ERCOT_LR_RRS_ENROLL_BASE_YEAR,
+    ERCOT_LR_RRS_ENROLL_CAP_MW,
+    ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR,
     MISO_REGULATING_RESERVE_MW,
     MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
     MISO_RESERVE_DEMAND_CURVE_MAX,
@@ -760,6 +765,78 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     return series[: int(hours)]
 
 
+def ercot_lr_rrs_enrolled_mw(year: int) -> float:
+    """Forecast Load-Resource RRS-UFR enrolled MW for ``year`` (enrollment trend).
+
+    The forward analogue of the measured cleared RRS-UFR *level*: a forecast of how
+    much demand-response capacity is enrolled to provide ERCOT's load-side
+    Responsive Reserve (RRS-UFR), a growing market/policy trend. Linear growth off
+    the present ~0.9 GW anchor (:data:`ERCOT_LR_RRS_ENROLL_BASE_MW` at
+    :data:`ERCOT_LR_RRS_ENROLL_BASE_YEAR`) at
+    :data:`ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR`, saturating at the protocol-bounded
+    :data:`ERCOT_LR_RRS_ENROLL_CAP_MW` (~1.4 GW). A forward-reproducible enrollment
+    trajectory — it regenerates for any forecast year and responds to changed
+    conditions — never the measured cleared MW pinned to a price (CLAUDE.md #12).
+    """
+    enrolled = ERCOT_LR_RRS_ENROLL_BASE_MW + ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR * (
+        int(year) - ERCOT_LR_RRS_ENROLL_BASE_YEAR
+    )
+    return float(np.clip(enrolled, 0.0, ERCOT_LR_RRS_ENROLL_CAP_MW))
+
+
+def ercot_lr_rrs_availability_shape(hours: int) -> np.ndarray:
+    """``(hours,)`` hour-of-day availability shape for load-resource RRS-UFR, mean 1.
+
+    The deterministic calendar shape (:data:`ERCOT_LR_RRS_AVAILABILITY_HOD`)
+    normalized to a mean of exactly 1 so it redistributes — never rescales — the
+    enrolled annual-mean level: Load Resources are large industrial facilities most
+    available to be tripped during weekday daytime/evening operating hours and
+    modestly less so in the deep overnight. Tiled across the non-leap 8760-hour
+    fleet clock with no Python loop over hours (CLAUDE.md: vectorize the hour axis).
+    """
+    hod = np.asarray(ERCOT_LR_RRS_AVAILABILITY_HOD, dtype=float)
+    hod = hod / hod.mean()  # conserve the enrolled annual-mean level exactly
+    T = int(hours)
+    return np.tile(hod, T // hod.size + 1)[:T]
+
+
+def ercot_load_resource_reserve_forward_mw(year: int, hours: int) -> np.ndarray:
+    """Forward enrollment-driven load-resource RRS-UFR supply, ``(hours,)`` MW.
+
+    ``lr_rrs(t) = enrolled_MW(year) x availability_shape(t)`` — the forecast branch
+    of the load-resource credit (G4). ``enrolled_MW`` is the forward DR-enrollment
+    trajectory (:func:`ercot_lr_rrs_enrolled_mw`) and ``availability_shape`` the
+    mean-1 hour-of-day shape (:func:`ercot_lr_rrs_availability_shape`), so the
+    annual-mean credited MW equals the enrolled level and the hourly profile follows
+    industrial operating hours. Replaces the read of the measured NP3-911 series in
+    forecast mode; the measured series stays the backcast realization to validate
+    against. Forward response: DR enrollment grows -> more load-side reserve supply
+    -> fewer scarcity hours. Fully vectorized.
+    """
+    return ercot_lr_rrs_enrolled_mw(year) * ercot_lr_rrs_availability_shape(hours)
+
+
+def ercot_load_resource_reserve_credit_mw(
+    config, hours: int, year: int | None = None
+) -> np.ndarray:
+    """Mode-aware load-resource RRS-UFR reserve credit, ``(hours,)`` MW.
+
+    The single seam both co-opt input builders read for the load-resource (RRS-UFR)
+    reserve-supply credit (G4). **Backcast** returns the measured NP3-911 realization
+    (:func:`ercot_load_resource_reserve_mw`) — byte-identical to the legacy path, the
+    validation target. **Forecast** returns the enrollment-driven forward forecast
+    (:func:`ercot_load_resource_reserve_forward_mw`), so the dispatch validated in
+    backcast is the dispatch forecast (rule #10) and the credit regenerates and grows
+    with DR enrollment forward. ``year`` is the simulation year (defaults to
+    ``config.weather_year``; in backcast the two coincide, in forecast the runner
+    threads the evolving simulated year so enrollment grows year over year).
+    """
+    yr = int(config.weather_year if year is None else year)
+    if str(getattr(config, "mode", "forecast")) == "backcast":
+        return ercot_load_resource_reserve_mw(yr, int(hours))
+    return ercot_load_resource_reserve_forward_mw(yr, int(hours))
+
+
 def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
     """ERCOT's measured hourly storage-provided AS-up MW for ``year``.
 
@@ -868,7 +945,7 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
 
 
 def ercot_reserve_coopt_inputs(
-    config, fleet_arrays: FleetArrays, hours: int
+    config, fleet_arrays: FleetArrays, hours: int, sim_year: int | None = None
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Assemble the ERCOT energy+reserve co-optimization inputs for ``solve_dispatch``.
 
@@ -920,7 +997,11 @@ def ercot_reserve_coopt_inputs(
         # tightens 2023) the measured 2023 load credit corrects the 2023 MAE
         # 16.0->12.1 (run139) — unlike the storage-AS *reserve* credit, which
         # stays scoped off 2023/2024 (it would double-relax, run137).
-        load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
+        # Mode-aware (G4): backcast reads the measured NP3-911 realization
+        # (byte-identical), forecast the enrollment-driven forward forecast, so the
+        # validated dispatch is the forecast dispatch (rule #10) and the credit
+        # grows with DR enrollment forward.
+        load_mw = ercot_load_resource_reserve_credit_mw(config, hours, year=sim_year)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
     if (
         getattr(config, "ercot_storage_as_reserve", False)
@@ -1107,6 +1188,7 @@ def ercot_multiproduct_reserve_coopt_inputs(
     system_load: np.ndarray | None = None,
     wind_gen: np.ndarray | None = None,
     solar_gen: np.ndarray | None = None,
+    sim_year: int | None = None,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -1164,7 +1246,12 @@ def ercot_multiproduct_reserve_coopt_inputs(
     (:func:`ercot_as_forward_requirement_mw`) of net-load / ramp / VRE-share /
     forecast-error. Either way the measured ASPLANNP433 series stays the backcast
     realization the forward formula validates against, never fitted to a price.
-    **Demand-curve prices** are
+    When ``config.ercot_load_resource_reserve`` is set the load-side RRS-UFR supply
+    credit (G4, :func:`ercot_load_resource_reserve_credit_mw`) is netted off the
+    **RRS** product's balance RHS — measured NP3-911 in backcast, the enrollment
+    forward in forecast — composing with the RTOLCAP cap and endogenous storage AS
+    without double count (it is neither a thermal/storage cleared reserve nor in
+    RTOLCAP). **Demand-curve prices** are
     VOLL-anchored (``config.ordc_voll``, the AS offer cap) market-design
     schedules, so the hourly scarcity *incidence* comes from the responsive
     headroom in the shared-headroom RHS — a tighter fleet clears AS lower on the
@@ -1231,6 +1318,30 @@ def ercot_multiproduct_reserve_coopt_inputs(
 
     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
     ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
+
+    # Load-Resource RRS-UFR supply credit (G4). Load Resources provide Responsive
+    # Reserve via under-frequency relays — by ERCOT protocol an exclusively
+    # LOAD-side RRS service the thermal+storage headroom rows omit. Credit it as
+    # free reserve supply on the RRS product: lowering the RRS balance RHS by
+    # lr_mw(t) is equivalent to adding lr_mw of $0 RRS supply (the existing
+    # single-product equivalence), so the cleared thermal/storage RRS clears at
+    # total reserve R + lr_mw — physically exact, no double count. Applied AFTER
+    # the demand curve is sized to the GROSS requirement peak above, so the curve's
+    # steep tail is preserved (only the balance RHS drops). Composes cleanly with
+    # the RTOLCAP reserve-supply cap (300b89c — which bounds the thermal+storage
+    # cleared reserve, NOT load resources, which are outside RTOLCAP) and the
+    # endogenous storage AS (ea8c656 — a distinct supply competing on the battery
+    # power cap): the three supply credits add without overlap. Mode-aware: backcast
+    # reads measured NP3-911 (byte-identical), forecast the enrollment forward.
+    if getattr(config, "ercot_load_resource_reserve", False) and year >= int(
+        getattr(config, "ercot_load_resource_reserve_from_year", 2023)
+    ):
+        rrs_idx = next(
+            (i for i, (_n, c, _t) in enumerate(products) if c == "RRS"), None
+        )
+        if rrs_idx is not None and requirement[rrs_idx].max() > 0.0:
+            lr_mw = ercot_load_resource_reserve_credit_mw(config, T, year=sim_year)
+            requirement[rrs_idx, :] = np.maximum(requirement[rrs_idx, :] - lr_mw, 0.0)
 
     # Each product is its own reserve class (own per-zone R, own balance dual),
     # so n_reserve_classes == n_prod. Per-class eligibility is the responsive
