@@ -16,6 +16,8 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.results.scarcity import (
+    ercot_as_forward_drivers,
+    ercot_as_forward_requirement_mw,
     ercot_multiproduct_reserve_coopt_inputs,
     nyiso_rcpf_product_shortfall_steps,
 )
@@ -297,6 +299,167 @@ class TestMultiProductInputs(unittest.TestCase):
         self.assertGreater(means[1], 2000.0)  # RRS
         self.assertGreater(means[2], 1000.0)  # ECRS (active 2024)
         self.assertGreater(means[3], 2000.0)  # NonSpin
+
+
+class TestForwardRequirement(unittest.TestCase):
+    """The forward AS requirement formula (G3) — driver-responsive, not measured."""
+
+    def _fleet(self):
+        gens = [
+            Generator(
+                unit_id=f"G{i}",
+                name=f"G{i}",
+                zone="Z0",
+                fuel_type=f,
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            )
+            for i, f in enumerate(["gas_cc", "gas_ct", "coal", "nuclear", "oil"])
+        ]
+        return generators_to_fleet_arrays(gens, ["Z0"], hours=48)
+
+    def _drivers(self, load, wind, solar, hours=48):
+        return ercot_as_forward_drivers(
+            np.full(hours, load), np.full(hours, wind), np.full(hours, solar)
+        )
+
+    def test_off_returns_none_falls_back_to_measured(self):
+        # Default off → the forward formula returns None so the co-opt reads the
+        # measured ASPLANNP433 (keeper/backcast path unchanged).
+        cfg = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2024, hours=48)
+        d = self._drivers(50000, 10000, 5000)
+        for code in ("REGUP", "RRS", "ECRS", "NSPIN"):
+            self.assertIsNone(ercot_as_forward_requirement_mw(cfg, code, 48, d))
+
+    def test_on_but_no_drivers_returns_none(self):
+        # Forward requested but drivers not threaded → defer to measured, never
+        # guess.
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        self.assertIsNone(ercot_as_forward_requirement_mw(cfg, "REGUP", 48, None))
+
+    def test_products_in_published_bands(self):
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        d = self._drivers(50000, 13000, 6000)
+        reg = ercot_as_forward_requirement_mw(cfg, "REGUP", 48, d)
+        rrs = ercot_as_forward_requirement_mw(cfg, "RRS", 48, d)
+        ecrs = ercot_as_forward_requirement_mw(cfg, "ECRS", 48, d)
+        nspin = ercot_as_forward_requirement_mw(cfg, "NSPIN", 48, d)
+        # Published-order levels (cf. measured 2024 means REGUP~406, RRS~2722,
+        # ECRS~1747, NSPIN~2688 MW).
+        self.assertTrue(200 < reg.mean() < 900)
+        self.assertTrue(2300 <= rrs.mean() < 3300)  # floor = largest contingency
+        self.assertTrue(900 < ecrs.mean() < 2800)
+        self.assertTrue(2000 < nspin.mean() < 3600)
+        self.assertEqual(reg.shape, (48,))
+
+    def test_unknown_product_defers(self):
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        d = self._drivers(50000, 10000, 5000)
+        self.assertIsNone(ercot_as_forward_requirement_mw(cfg, "REGDN", 48, d))
+
+    def test_more_vre_raises_requirement(self):
+        # Forward response: more VRE → larger forecast-error / ramp / VRE-share →
+        # larger requirement, automatically (the whole point of the forward seam).
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        low = self._drivers(50000, 8000, 2000)
+        high = self._drivers(50000, 20000, 14000)
+        for code in ("REGUP", "RRS", "ECRS", "NSPIN"):
+            lo = ercot_as_forward_requirement_mw(cfg, code, 48, low).mean()
+            hi = ercot_as_forward_requirement_mw(cfg, code, 48, high).mean()
+            self.assertGreater(hi, lo, f"{code} should rise with VRE")
+
+    def test_ramp_drives_ecrs(self):
+        # ECRS carries a net-load up-ramp term: a swinging net-load profile must
+        # raise ECRS above a flat one with the same mean drivers.
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=24,
+            ercot_as_forward_requirement=True,
+        )
+        load = np.full(24, 50000.0)
+        wind = np.full(24, 10000.0)
+        # Solar that collapses across the evening → a large net-load up-ramp.
+        solar_flat = np.full(24, 6000.0)
+        solar_swing = 6000.0 + 8000.0 * np.sin(np.linspace(0, np.pi, 24))
+        d_flat = ercot_as_forward_drivers(load, wind, solar_flat)
+        d_swing = ercot_as_forward_drivers(load, wind, solar_swing)
+        e_flat = ercot_as_forward_requirement_mw(cfg, "ECRS", 24, d_flat).mean()
+        e_swing = ercot_as_forward_requirement_mw(cfg, "ECRS", 24, d_swing).mean()
+        self.assertGreater(e_swing, e_flat)
+
+    def test_builder_uses_forward_when_enabled(self):
+        # End-to-end through the co-opt input builder: with the flag on and
+        # profiles supplied, the requirement differs from the measured one and
+        # tracks the forward drivers.
+        fleet = self._fleet()
+        load = np.full(48, 55000.0)
+        wind = np.full(48, 14000.0)
+        solar = np.full(48, 7000.0)
+        cfg_meas = ScenarioConfig(
+            iso="ERCOT", mode="backcast", weather_year=2024, hours=48
+        )
+        cfg_fwd = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        req_meas = ercot_multiproduct_reserve_coopt_inputs(cfg_meas, fleet, 48)[0]
+        req_fwd = ercot_multiproduct_reserve_coopt_inputs(
+            cfg_fwd, fleet, 48, system_load=load, wind_gen=wind, solar_gen=solar
+        )[0]
+        self.assertEqual(req_fwd.shape, req_meas.shape)
+        # Forward path produced a genuinely different requirement (not the read).
+        self.assertFalse(np.allclose(req_fwd, req_meas))
+        # All four products are positive (active) under the forward formula.
+        self.assertTrue((req_fwd.mean(axis=1) > 0).all())
+
+    def test_builder_flag_on_but_no_profiles_falls_back(self):
+        # Flag on but the builder called without profiles (e.g. a path that does
+        # not thread them) → measured fallback, byte-identical to the flag-off
+        # requirement.
+        fleet = self._fleet()
+        cfg_meas = ScenarioConfig(
+            iso="ERCOT", mode="backcast", weather_year=2024, hours=48
+        )
+        cfg_fwd = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_as_forward_requirement=True,
+        )
+        req_meas = ercot_multiproduct_reserve_coopt_inputs(cfg_meas, fleet, 48)[0]
+        req_fwd = ercot_multiproduct_reserve_coopt_inputs(cfg_fwd, fleet, 48)[0]
+        np.testing.assert_array_equal(req_fwd, req_meas)
 
 
 class TestReserveSupplyCap(unittest.TestCase):
