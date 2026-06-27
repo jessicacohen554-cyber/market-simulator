@@ -1,5 +1,18 @@
 # CAISO CT_PEAKER local-RA reliability floor (temperature-driven)
 
+> **⚠️ SUPERSEDED (2026-06-27).** This temperature/TMAX-keyed floor is **no
+> longer the CAISO keeper default.** The shape audit
+> (`docs/caiso-lever-audit-2026-06.md`, Lever B) found its flat `0.049`
+> year-round baseline bound 61 % of binding hours and rendered a flat ~771 MW
+> rectangle h15-22 instead of the real sharp h18-19 evening peak — a constant
+> tuned to the cool-day median CF (a level target, CLAUDE.md #1 forbidden). It
+> is replaced by the forward-native **net-load-drag** commitment documented in
+> `docs/caiso-ct-netload-drag-2026-06.md` (Step 2 of the overhaul). The
+> `inject_caiso_ct_reliability_floor` mechanism below is retained, **default-off**
+> and re-armable via `--caiso-ct-reliability-floor` for diagnostics; the prose
+> below describes the retired keeper. The `derive_caiso_ct_reliability_floor.py`
+> script has been rewritten to the net-load regression.
+
 *2026-06 — companion to `docs/ercot-st-gas-netload-drag-2026-06.md`.*
 
 ## The miss
