@@ -1990,6 +1990,31 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
     nyiso_zonal_gas_basis: bool = False
 
+    # Tier 3 (calibration) — PJM per-zone gas basis. PJM is priced off a single
+    # ISO-wide delivered-gas series, so every gas-CC carries the same marginal
+    # cost, all 8 zones clear at one LMP (0.000 zonal spread in every hour), no
+    # zone wants cheaper power from a neighbour, and the internal TTCs
+    # (ComEd→AEP, AEP→Dominion, Central_PA→EMAAC, SWMAAC→EMAAC, …) never bind —
+    # PJM collapses to one copper-plate. That flattens the real west-cheap /
+    # east-dear gas gradient: the eastern load pockets (EMAAC/SWMAAC/Dominion,
+    # ~38% of load) burn dear Transco Z6 / TETCO M3 gas but are priced at the
+    # cheap ISO average, so eastern CC_REGULAR over-runs and pins the price low,
+    # undercutting the western bituminous coal belt (AEP_Ohio + West_APS carry 94%
+    # of PJM bit) and pushing PJM to clear below its neighbours (over-export).
+    # When set, each PJM gas unit is shifted by its zone's measured basis vs Henry
+    # Hub (data/raw/pjm_zonal_gas_hub.csv — the EIA delivered-to-electric-power
+    # price by the zone's primary state, a forward-reproducible measured series),
+    # re-centred to a gas-capacity-weighted mean of zero so the calibrated
+    # fleet-aggregate gas level is preserved and ONLY the cross-zonal split moves
+    # (the western coal belt gets cheaper, the eastern pockets dearer). Mirrors
+    # the ERCOT capacity-weighted-zero anchor (not the NYISO single-reference
+    # anchor), with no level correction since PJM's level is already calibrated by
+    # the ISO-month actuals. Off by default so other ISOs and all forecasts are
+    # byte-identical; the calibration harness enables it for PJM. Backcast-only
+    # (no hub rows in forward years). See
+    # market_sim.data.fuel.apply_pjm_zonal_gas_basis.
+    pjm_zonal_gas_basis: bool = False
+
     # Tier 3 (calibration) — ERCOT per-zone gas-hub basis. ERCOT's model zones
     # buy gas off structurally different regional hubs: West/Panhandle on Waha
     # (Permian, a deep takeaway-constrained discount — annual avg ~$0/MMBtu and
@@ -2710,6 +2735,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_monthly_actuals": 3,
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
+    "pjm_zonal_gas_basis": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
