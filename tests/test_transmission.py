@@ -43,9 +43,12 @@ from market_sim.model.transmission import (
     inject_interchange_shape,
     inject_neiso_temp_reliability_floor,
     inject_nyiso_ct_reliability_floor,
+    inject_nyiso_st_reliability_floor,
     NEISO_COLDSNAP_FLOOR_HOURS,
     NEISO_CT_FLOOR_HOURS,
     NYISO_CT_FLOOR_HOURS,
+    NYISO_ST_FLOOR_COEFFS,
+    NYISO_ST_FLOOR_HOURS,
     wecc_border_carbon_adder,
 )
 
@@ -929,6 +932,148 @@ class TestNyisoCtReliabilityFloor(unittest.TestCase):
                 fa, "NYISO", 2040, zones, 0.053, 25.0, 0.68, 0.13
             )
         )
+        self.assertIsNone(fa.min_gen)
+
+
+class TestNyisoStReliabilityFloor(unittest.TestCase):
+    """The per-zone temperature-driven NYISO ST_GAS local-reliability floor."""
+
+    def _st_fleet(self, hours):
+        # A Long Island ST (strong hot-limb), an NYC ST (base + hot-limb), a
+        # Capital ST (weak hot-limb), an Upstate ST (omitted from coeffs -> must
+        # stay unfloored), and a cheap CC that must never be floored.
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NYC",
+                fuel_type="gas_cc",
+                pmax_mw=10000.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="st_li",
+                name="st_li",
+                zone="Long_Island",
+                fuel_type="gas_st",
+                pmax_mw=2349.0,
+                pmin_mw=0.0,
+                heat_rate=10.0,
+                plant_group="ST_GAS",
+            ),
+            Generator(
+                unit_id="st_nyc",
+                name="st_nyc",
+                zone="NYC",
+                fuel_type="gas_st",
+                pmax_mw=3525.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                plant_group="ST_GAS",
+            ),
+            Generator(
+                unit_id="st_cap",
+                name="st_cap",
+                zone="Capital_Hudson",
+                fuel_type="gas_st",
+                pmax_mw=2879.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                plant_group="ST_GAS",
+            ),
+            Generator(
+                unit_id="st_up",
+                name="st_up",
+                zone="Upstate_West",
+                fuel_type="gas_st",
+                pmax_mw=150.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                plant_group="ST_GAS",
+            ),
+        ]
+        zones = ["NYC", "Long_Island", "Capital_Hudson", "Upstate_West"]
+        fa = generators_to_fleet_arrays(gens, zones, hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, zones, clock.hour.to_numpy()
+
+    def _row(self, gens, unit_id):
+        return next(i for i, g in enumerate(gens) if g.unit_id == unit_id)
+
+    def test_floors_downstate_steam_only_in_window(self):
+        H = 8760
+        fa, gens, zones, hod = self._st_fleet(H)
+        applied = inject_nyiso_st_reliability_floor(fa, "NYISO", 2024, zones)
+        self.assertTrue(applied)
+        li, nyc, cap, up, cc = (
+            self._row(gens, u) for u in ("st_li", "st_nyc", "st_cap", "st_up", "cc")
+        )
+        # The three coeff zones carry a positive floor; Upstate steam and the CC
+        # never do (Upstate is deliberately omitted from NYISO_ST_FLOOR_COEFFS).
+        self.assertGreater(float(fa.min_gen[li].max()), 0.0)
+        self.assertGreater(float(fa.min_gen[nyc].max()), 0.0)
+        self.assertGreater(float(fa.min_gen[cap].max()), 0.0)
+        np.testing.assert_array_equal(fa.min_gen[up], 0.0)
+        np.testing.assert_array_equal(fa.min_gen[cc], 0.0)
+        # The hot-limb lifts the evening window above the persistent baseline: the
+        # max floor for the baseline zones (LI/NYC) lands inside the window.
+        lo, hi = NYISO_ST_FLOOR_HOURS
+        for row in (li, nyc):
+            peak_h = int(np.argmax(fa.min_gen[row]))
+            self.assertTrue(lo <= hod[peak_h] <= hi)
+        # Capital is hot-limb only (no baseline): every floored hour is in-window.
+        cap_floored = fa.min_gen[cap] > 0.0
+        self.assertTrue(cap_floored.any())
+        self.assertTrue(
+            bool(np.all((hod[cap_floored] >= lo) & (hod[cap_floored] <= hi)))
+        )
+        # The floor never exceeds available capacity for any zone.
+        for row in (li, nyc, cap):
+            avail = fa.pmax[row] * fa.availability[row]
+            self.assertTrue(bool((fa.min_gen[row] <= avail + 1e-6).all()))
+
+    def test_persistent_base_floors_all_hours(self):
+        # LI and NYC carry a persistent 24-hour baseline (base_24h > 0): the floor
+        # binds on EVERY hour, not only the evening. Capital is hot-limb only
+        # (base_24h 0) so it binds only on hot evenings.
+        H = 8760
+        fa, gens, zones, hod = self._st_fleet(H)
+        inject_nyiso_st_reliability_floor(fa, "NYISO", 2024, zones)
+        nyc = self._row(gens, "st_nyc")
+        li = self._row(gens, "st_li")
+        # base_24h * available capacity > 0 on every hour (overnight included).
+        for row in (nyc, li):
+            self.assertTrue(bool((fa.min_gen[row] > 0.0).all()))
+        self.assertEqual(NYISO_ST_FLOOR_COEFFS["NYC"][4], 0.105)  # NYC base_24h
+        self.assertEqual(NYISO_ST_FLOOR_COEFFS["Long_Island"][4], 0.148)
+        # Capital's base_24h is 0 -> overnight hours are NOT floored.
+        cap = self._row(gens, "st_cap")
+        lo, hi = NYISO_ST_FLOOR_HOURS
+        overnight = (hod < lo) | (hod > hi)
+        np.testing.assert_array_equal(fa.min_gen[cap][overnight], 0.0)
+
+    def test_composes_with_existing_floor_via_maximum(self):
+        # An existing min_gen floor (e.g. the LI self-supply floor) is preserved
+        # where it already exceeds the temperature floor.
+        H = 8760
+        fa, gens, zones, _ = self._st_fleet(H)
+        li = self._row(gens, "st_li")
+        fa.min_gen = np.zeros((fa.pmax.size, H))
+        fa.min_gen[li, :] = 9.0e3  # above LI available capacity everywhere
+        inject_nyiso_st_reliability_floor(fa, "NYISO", 2024, zones)
+        # The pre-existing higher floor survives (maximum-compose).
+        self.assertTrue(bool((fa.min_gen[li] >= 9.0e3 - 1e-6).all()))
+
+    def test_non_nyiso_is_no_op(self):
+        fa, _, zones, _ = self._st_fleet(48)
+        self.assertFalse(inject_nyiso_st_reliability_floor(fa, "CAISO", 2024, zones))
+        self.assertIsNone(fa.min_gen)
+
+    def test_forecast_year_is_no_op(self):
+        fa, _, zones, _ = self._st_fleet(48)
+        self.assertFalse(inject_nyiso_st_reliability_floor(fa, "NYISO", 2040, zones))
         self.assertIsNone(fa.min_gen)
 
 

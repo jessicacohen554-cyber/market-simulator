@@ -784,6 +784,49 @@ def nyiso_downstate_tmax(year: int, hours: int) -> np.ndarray | None:
     return out
 
 
+def nyiso_zone_tmax(year: int, hours: int, zone: str) -> np.ndarray | None:
+    """Return one NYISO zone's load-center daily max temperature (deg C) per hour.
+
+    For each hour of the run horizon, the zone's NOAA GHCN-Daily TMAX
+    (``data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv``, one load-center station
+    per ST_GAS zone — Islip for Long Island, Central Park for NYC, Albany for the
+    Capital region) for that hour's calendar day. Drives the NYISO ST_GAS
+    (gas-steam) local-reliability floor (:func:`market_sim.model.transmission.
+    inject_nyiso_st_reliability_floor`): unlike the CT floor's one pooled NYC-metro
+    series, the steam fleet sits in three distinct weather regimes, so each zone is
+    keyed to its OWN daily max temperature. The daily TMAX is broadcast to all
+    hours of its day; the injector applies the window and temperature->commitment
+    curve.
+
+    The series is archived (not solved) so it regenerates for a forward year from a
+    pinned weather year exactly as the load / wind / solar shapes do (see
+    ``scripts/derive_nyiso_st_reliability_floor.py``). Mirrors
+    :func:`nyiso_downstate_tmax`.
+
+    Returns ``(hours,)`` deg C, or ``None`` when the archived file is absent, the
+    zone is uncovered, or the year is uncovered (a forecast year with no pinned
+    weather data), in which case the caller leaves that zone's steam fleet
+    unfloored (byte-identical).
+    """
+    path = RAW_DIR / "nyiso-weather" / "nyiso_zone_tmax_daily.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, parse_dates=["date"])
+    df = df[(df["zone"] == zone) & (df["date"].dt.year == year)]
+    if df.empty:
+        return None
+    doy_tmax = dict(
+        zip(df["date"].dt.dayofyear.to_numpy(), df["tmax_c"].to_numpy(dtype=float))
+    )
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    doy = clock.dayofyear.to_numpy()
+    out = np.array([doy_tmax.get(int(d), np.nan) for d in doy], dtype=float)
+    if not np.any(np.isfinite(out)):
+        return None
+    out = pd.Series(out).ffill().bfill().to_numpy()
+    return out
+
+
 def neiso_load_weighted_temp(
     year: int, hours: int
 ) -> tuple[np.ndarray, np.ndarray] | None:
