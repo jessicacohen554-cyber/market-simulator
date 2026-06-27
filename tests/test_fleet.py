@@ -25,6 +25,7 @@ from market_sim.data.fleet import (
     Generator,
     aggregate_fleet,
     apply_coal_tranches,
+    apply_ct_netload_drag_floor,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
@@ -487,6 +488,73 @@ class TestCcDerateFromTop(unittest.TestCase):
             config=ScenarioConfig(),
         )
         np.testing.assert_allclose(fa.availability[0], fa.availability[1])
+
+
+class TestCtNetloadDragFloor(unittest.TestCase):
+    """Evening-ramp net-load reliability-drag floor for CT_PEAKER."""
+
+    @staticmethod
+    def _ct_tranches():
+        """A CT_PEAKER plant: 100 MW committed + 100 MW econ + 100 MW peak."""
+        shared = dict(
+            name="CT",
+            zone="North",
+            fuel_type="gas_ct",
+            online_year=2018,
+            plant_group="CT_PEAKER",
+            plant_code=777,
+        )
+        return [
+            Generator(
+                unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.0, **shared
+            ),
+            Generator(unit_id="p777_econc00", pmax_mw=100.0, heat_rate=11.0, **shared),
+            Generator(unit_id="p777_peak", pmax_mw=100.0, heat_rate=13.0, **shared),
+        ]
+
+    def _net_load(self, hours):
+        # Constant 40 GW net-load so the floor fraction is the same every hour
+        # and only the ramp-window gate varies it.
+        return np.full(hours, 40_000.0)
+
+    def test_flag_off_is_noop(self):
+        gens = self._ct_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        applied = apply_ct_netload_drag_floor(
+            fa, gens, self._net_load(48), ScenarioConfig(ct_netload_drag=False)
+        )
+        self.assertFalse(applied)
+
+    def test_floor_only_in_ramp_window_and_not_on_peak(self):
+        gens = self._ct_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        cfg = ScenarioConfig(
+            ct_netload_drag=True,
+            ct_drag_slope_per_gw=0.00703,
+            ct_drag_intercept=-0.1427,
+            ct_drag_cap=0.47,
+            ct_drag_ramp_start=15,
+            ct_drag_ramp_end=22,
+        )
+        self.assertTrue(apply_ct_netload_drag_floor(fa, gens, self._net_load(48), cfg))
+        # Expected fraction at 40 GW: 0.00703*40 - 0.1427 = 0.1385.
+        frac = 0.00703 * 40.0 - 0.1427
+        hod = np.arange(48) % 24
+        in_win = (hod >= 15) & (hod < 22)
+        # committed + econ tranches carry the floor in-window, zero out of window.
+        for g in (0, 1):
+            np.testing.assert_allclose(fa.min_gen[g, in_win], frac * 100.0, rtol=1e-6)
+            np.testing.assert_allclose(fa.min_gen[g, ~in_win], 0.0)
+        # the _peak scarcity tranche is never floored.
+        np.testing.assert_allclose(fa.min_gen[2], 0.0)
+
+    def test_floor_never_exceeds_available_capacity(self):
+        gens = self._ct_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        fa.availability[0, :] = 0.05  # committed tranche nearly fully out
+        cfg = ScenarioConfig(ct_netload_drag=True)
+        apply_ct_netload_drag_floor(fa, gens, self._net_load(48), cfg)
+        self.assertTrue(np.all(fa.min_gen[0] <= fa.availability[0] * 100.0 + 1e-9))
 
 
 class TestAssembleMC(unittest.TestCase):
