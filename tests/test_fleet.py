@@ -26,6 +26,7 @@ from market_sim.data.fleet import (
     aggregate_fleet,
     apply_coal_tranches,
     apply_ct_netload_drag_floor,
+    apply_gas_st_netload_drag_floor,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
@@ -555,6 +556,57 @@ class TestCtNetloadDragFloor(unittest.TestCase):
         cfg = ScenarioConfig(ct_netload_drag=True)
         apply_ct_netload_drag_floor(fa, gens, self._net_load(48), cfg)
         self.assertTrue(np.all(fa.min_gen[0] <= fa.availability[0] * 100.0 + 1e-9))
+
+
+class TestGasStNetloadDragFloor(unittest.TestCase):
+    """All-hours net-load reliability-drag floor for ST_GAS (via the shared engine)."""
+
+    @staticmethod
+    def _st_tranches():
+        """An ST_GAS plant: 200 MW committed + 200 MW econ + 100 MW peak."""
+        shared = dict(
+            name="ST",
+            zone="North",
+            fuel_type="gas_st",
+            online_year=1975,
+            plant_group="ST_GAS",
+            plant_code=555,
+        )
+        return [
+            Generator(
+                unit_id="p555_committed", pmax_mw=200.0, heat_rate=11.0, **shared
+            ),
+            Generator(unit_id="p555_econc00", pmax_mw=200.0, heat_rate=12.0, **shared),
+            Generator(unit_id="p555_peak", pmax_mw=100.0, heat_rate=14.0, **shared),
+        ]
+
+    def test_flag_off_is_noop(self):
+        gens = self._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        applied = apply_gas_st_netload_drag_floor(
+            fa, gens, np.full(48, 40_000.0), ScenarioConfig(gas_st_netload_drag=False)
+        )
+        self.assertFalse(applied)
+
+    def test_all_hours_floor_on_non_peak_tranches(self):
+        gens = self._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        cfg = ScenarioConfig(
+            gas_st_netload_drag=True,
+            gas_st_drag_slope_per_gw=0.00906,
+            gas_st_drag_intercept=-0.1376,
+            gas_st_drag_cap=0.34,
+        )
+        self.assertTrue(
+            apply_gas_st_netload_drag_floor(fa, gens, np.full(48, 40_000.0), cfg)
+        )
+        # Expected fraction at 40 GW: 0.00906*40 - 0.1376 = 0.2264, every hour
+        # (no ramp window for the all-hours boiler).
+        frac = 0.00906 * 40.0 - 0.1376
+        np.testing.assert_allclose(fa.min_gen[0], frac * 200.0, rtol=1e-6)
+        np.testing.assert_allclose(fa.min_gen[1], frac * 200.0, rtol=1e-6)
+        # the _peak scarcity tranche is never floored.
+        np.testing.assert_allclose(fa.min_gen[2], 0.0)
 
 
 class TestAssembleMC(unittest.TestCase):
