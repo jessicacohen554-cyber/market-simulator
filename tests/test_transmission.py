@@ -1046,8 +1046,8 @@ class TestNyisoStReliabilityFloor(unittest.TestCase):
         # base_24h * available capacity > 0 on every hour (overnight included).
         for row in (nyc, li):
             self.assertTrue(bool((fa.min_gen[row] > 0.0).all()))
-        self.assertEqual(NYISO_ST_FLOOR_COEFFS["NYC"][4], 0.105)  # NYC base_24h
-        self.assertEqual(NYISO_ST_FLOOR_COEFFS["Long_Island"][4], 0.148)
+        self.assertEqual(NYISO_ST_FLOOR_COEFFS["NYC"][4], 0.391)  # NYC base_24h
+        self.assertEqual(NYISO_ST_FLOOR_COEFFS["Long_Island"][4], 0.289)
         # Capital's base_24h is 0 -> overnight hours are NOT floored.
         cap = self._row(gens, "st_cap")
         lo, hi = NYISO_ST_FLOOR_HOURS
