@@ -812,6 +812,19 @@ def _calibration_config(
         #   (HB14-21) CF vs TMAX, 2023-2025 — a physical heat->commitment rule, NOT a
         #   TWh-residual fit (scripts/derive_nyiso_ct_reliability_floor.py). Other
         #   ISOs stay off (byte-identical); coefficients from ScenarioConfig defaults.
+        nyiso_st_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
+        #   default-ON (nyiso-34): the downstate ST_GAS local-reliability floor
+        #   holds the gas-steam fleet online at a temperature-driven commitment,
+        #   keyed PER ZONE to its load-center daily max temperature (Islip / Central
+        #   Park / Albany). NYC carries a non-zero base (the Ravenswood/Arthur
+        #   Kill/Astoria in-city must-run), Long Island a strong hot-limb, Capital a
+        #   weak hot-limb; the flat Upstate steam fleet is omitted. Recovers the
+        #   local-RA steam energy an energy-only LP leaves on the cheaper CC fleet
+        #   (the documented 2024 ST_GAS under-run). Coefficients (transmission.
+        #   NYISO_ST_FLOOR_COEFFS) regressed from measured per-zone CAMPD ST_GAS
+        #   evening (HB14-21) CF vs zone TMAX, 2023-2025 — a physical
+        #   heat->commitment rule, NOT a TWh-residual fit (scripts/derive_nyiso_st_
+        #   reliability_floor.py). Other ISOs stay off (byte-identical).
         neiso_temp_reliability_floor=(iso.upper() == "NEISO"),  # NEISO keeper
         #   default-ON: the DUAL-LIMB weather-correlated reliability floor. ISO-NE
         #   under-runs two weather-driven fleets on OPPOSITE limbs: (1) CT_PEAKER
@@ -1510,6 +1523,7 @@ def run_year(
     caiso_gas_floor_frac: float | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
+    nyiso_st_reliability_floor: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1640,6 +1654,10 @@ def run_year(
     if nyiso_ct_reliability_floor is not None:
         config = config.with_overrides(
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor
+        )
+    if nyiso_st_reliability_floor is not None:
+        config = config.with_overrides(
+            nyiso_st_reliability_floor=nyiso_st_reliability_floor
         )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
@@ -2384,6 +2402,33 @@ def run_year(
                 _nct_t0,
                 _nct_base,
                 _nct_cap,
+            )
+
+    # NYISO downstate ST_GAS local-reliability floor: hold the gas-steam fleet
+    # online at a per-zone temperature-driven commitment — NYC's in-city must-run
+    # baseline (Ravenswood/Arthur Kill/Astoria) plus the Long Island / Capital
+    # summer hot-limbs — keyed to each zone's load-center daily max temperature.
+    # Recovers the local-RA steam energy an energy-only LP leaves on the cheaper CC
+    # fleet (transmission.inject_nyiso_st_reliability_floor). Composes via maximum
+    # with the LI self-supply floor.
+    if getattr(config, "nyiso_st_reliability_floor", False):
+        from market_sim.model.transmission import (
+            inject_nyiso_st_reliability_floor,
+        )
+
+        if inject_nyiso_st_reliability_floor(
+            fleet_arrays,
+            iso,
+            year,
+            zone_names,
+        ):
+            logger.info(
+                "%s %d: downstate ST_GAS local-reliability floor — NYC in-city "
+                "must-run baseline + Long Island/Capital hot-limbs held online at "
+                "clip(base + slope*(TMAX-T0), base, cap) x available capacity, "
+                "per-zone TMAX",
+                iso,
+                year,
             )
 
     # NEISO dual-limb weather-correlated reliability floor: hold the summer
@@ -3258,6 +3303,7 @@ def _commitment_pass(state: dict, config=None):
         or getattr(cfg, "reliability_deployment_overlay", False)
         or getattr(cfg, "caiso_gas_commitment_floor", False)
         or getattr(cfg, "nyiso_local_selfsupply", False)
+        or getattr(cfg, "nyiso_st_reliability_floor", False)
         or getattr(cfg, "nyiso_firm_imports", False)
         or getattr(cfg, "miso_firm_imports", False)
     )
