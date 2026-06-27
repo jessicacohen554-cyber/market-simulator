@@ -30,8 +30,9 @@ dropped in leap years):
 * **Model dispatch** – direct index (row i = hour i of the year).
 * **CEMS** – ``date + hour`` (0-23) in local standard time; Feb 29 mapped to
   -1 and dropped.
-* **EIA-930** – ``Local time`` column already in CAISO local standard time.
-  Leap-year Feb 29 rows dropped to keep 8760 hours.
+* **EIA-930** – ``UTC time`` column shifted by a fixed −8 h to local standard
+  time (PST, no DST). Feb 29 rows dropped via :func:`_hoy_from_date_hour` to
+  keep 8760 hours.
 * **Curtailment** – ``Date + hour`` (1-24, hour-ending); converted to 0-based
   and averaged from 5-minute to hourly.
 
@@ -203,23 +204,32 @@ def _hoy_from_date_hour(
 def _eia930_to_8760(df_hourly: pd.DataFrame, year: int) -> pd.DataFrame:
     """Filter CISO hourly frame to one year, drop Feb 29, return 8760 rows.
 
-    Aligns the EIA-930 ``Local time`` column to the model's naive local-standard
-    clock; returns the filtered frame sorted by local time, with a new ``hoy``
-    column (hour-of-year, 0–8759).  The returned frame has ≤ 8760 rows (missing
-    hours for the rare partially-uploaded year) but the ``hoy`` index is correct
-    for the rows present.
+    Derives local standard time from the ``UTC time`` column with a fixed −8 h
+    offset (PST year-round, no DST), aligning to the model's naive local-standard
+    clock.  Uses :func:`_hoy_from_date_hour` for hoy mapping so that Feb 29 in a
+    leap year is dropped (→ -1) and post-Feb-28 hours do not shift by +24 h on the
+    model's 8760-hour grid.
+
+    Returns the filtered frame sorted by hoy, with a new ``hoy`` column
+    (hour-of-year, 0–8759).  The returned frame has ≤ 8760 rows (missing hours
+    for the rare partially-uploaded year) but the ``hoy`` index is correct for
+    the rows present.
     """
-    local = pd.to_datetime(df_hourly["Local time"])
-    mask = local.dt.year == year
-    df = df_hourly[mask].copy()
-    local = pd.to_datetime(df["Local time"])
-    # Drop Feb 29
-    feb29 = (local.dt.month == 2) & (local.dt.day == 29)
-    df = df[~feb29].copy()
-    # Compute hour-of-year
-    t0 = pd.Timestamp(f"{year}-01-01")
-    hoy = ((pd.to_datetime(df["Local time"]) - t0) / pd.Timedelta("1h")).round()
-    df["hoy"] = hoy.astype(int)
+    # Derive no-DST local standard time: remove UTC timezone label, then subtract
+    # a fixed 8 h.  This avoids the −7 h summer offset carried by "Local time".
+    utc = pd.to_datetime(df_hourly["UTC time"], utc=True)
+    lst = utc.dt.tz_convert(None) - pd.Timedelta(hours=8)
+
+    mask = lst.dt.year == year
+    df = df_hourly[mask].copy().reset_index(drop=True)
+    lst_yr = lst[mask].reset_index(drop=True)
+
+    # _hoy_from_date_hour uses the same non-leap month-start table as the CEMS
+    # path: Feb 29 → -1 (dropped), no +24 h shift in leap years.
+    hoy_arr = _hoy_from_date_hour(lst_yr.dt.normalize(), lst_yr.dt.hour)
+    valid = hoy_arr >= 0
+    df = df[valid].copy().reset_index(drop=True)
+    df["hoy"] = hoy_arr[valid]
     return df.sort_values("hoy").reset_index(drop=True)
 
 
@@ -587,7 +597,7 @@ def _print_year_table(
         mets = shape_metrics(model_mw, meas_mw)
         hod_mdl = diurnal_mean(model_mw)
         hod_meas = diurnal_mean(meas_mw)
-        bh = _BAND_HOURS.get("solar" if label == "solar" else "default")
+        bh = _BAND_HOURS.get("solar" if label.startswith("solar") else "default")
         mdl_band = _band(hod_mdl, *bh)
         meas_band = _band(hod_meas, *bh)
         band_x = mdl_band / meas_band if meas_band > 0 else float("nan")
