@@ -93,6 +93,7 @@ from market_sim.config.constants import (
     MISO_REGULATING_RESERVE_MW,
     MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
     MISO_RESERVE_DEMAND_CURVE_MAX,
+    NEISO_RCPF_PRODUCTS,
     NYISO_RCPF_LOCATIONAL,
     NYISO_RCPF_PRODUCTS,
     ORDC_FLOOR_START_HOUR_2023,
@@ -2397,4 +2398,110 @@ def nyiso_reserve_coopt_inputs(
         balance_reserve_class,
         online_gated,
         online_rho,
+    )
+
+
+def neiso_reserve_coopt_inputs(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str],
+    n_ramp: int = 8,
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    None,
+    float,
+]:
+    """Assemble NEISO's *system-wide* energy+reserve co-optimization inputs.
+
+    The ISO-NE analogue of :func:`nyiso_reserve_coopt_inputs`, but ISO-NE prices
+    operating-reserve scarcity *pool-wide* (one Reserve Constraint Penalty Factor
+    set for the whole control area — the local NEMA/Boston/CT/SWCT second-
+    contingency zones are deferred to a locational follow-up, exactly as NYISO's
+    locational tier is separable). The three nested system products
+    (:data:`NEISO_RCPF_PRODUCTS`, ISO-NE Tariff Market Rule 1 / OP-8 anchors)
+    each become one reserve *family* — a balance row over every zone:
+
+    * ``ne_30min_total`` (TMOR + total 10-min, 1,800 MW, $1,000/MWh) — met by the
+      full dispatchable thermal fleet (30-minute response), reserve **class 0**.
+    * ``ne_10min_total``  (TMSR + TMNSR, 1,200 MW, $1,500/MWh) — met by the
+      **quick-start** fleet (gas-CT / oil, 10-minute response), reserve class 1.
+    * ``ne_10min_spin``   (TMSR, 600 MW, $50/MWh) — also a 10-minute product,
+      reserve class 1 (kept idle-allowed like NYISO's ``nyca_10min_spin``; the
+      online-only spinning refinement is the same deferred follow-up).
+
+    The classes are **nested** — a quick-start MW counts toward both its 10-minute
+    family and the larger 30-minute requirement (the correct reserve cascade) —
+    and storage (pumped storage + batteries, fast-responding) backs every class
+    via ``reserve_storage`` in the caller. When the available headroom in a tight
+    winter hour falls below a requirement, that family's demand curve sets the
+    reserve clearing price and, through the shared-headroom coupling, lifts the
+    energy LMP — the operating-reserve scarcity tail the energy-only LP cannot
+    produce (and which the post-solve RCPF adder prices but cannot let storage
+    arbitrage). Nothing here is fitted to the price residual: the requirement
+    magnitudes and RCPFs are the published ISO-NE values in
+    :data:`NEISO_RCPF_PRODUCTS`; the hourly scarcity *incidence* comes only from
+    the hourly fleet availability in the shared-headroom RHS.
+
+    Returns the :func:`nyiso_reserve_coopt_inputs` 9-tuple (system tier only, so
+    ``online_gated`` is always ``None``): ``(reserve_requirement, reserve_eligible,
+    ordc_penalties, ordc_step_widths, balance_zone_mask, balance_ordc_counts,
+    balance_reserve_class, online_gated, online_rho)``.
+    """
+    T = int(hours)
+    n_zones = len(zone_names)
+    all_zones = tuple(range(n_zones))
+    products = tuple(
+        getattr(config, "neiso_rcpf_products", None) or NEISO_RCPF_PRODUCTS
+    )
+
+    n_fam = len(products)
+    balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
+    balance_reserve_class = np.zeros(n_fam, dtype=int)
+    requirement = np.zeros((n_fam, T), dtype=float)
+    pen_list: list[np.ndarray] = []
+    wid_list: list[np.ndarray] = []
+    counts = np.zeros(n_fam, dtype=int)
+    for f, (name, req, crit, pen) in enumerate(products):
+        balance_zone_mask[f, list(all_zones)] = True
+        # 10-minute products (incl. spinning) need the quick-start fleet
+        # (class 1); the 30-minute / total product draws on the full
+        # dispatchable thermal fleet (class 0). Capability constraint grounded in
+        # unit response speed, the same nesting NYISO uses.
+        balance_reserve_class[f] = (
+            1 if "10min" in str(name) or "spin" in str(name) else 0
+        )
+        requirement[f, :] = float(req)
+        p, w = nyiso_rcpf_product_shortfall_steps(
+            float(req), float(crit), float(pen), n_ramp=n_ramp
+        )
+        pen_list.append(p)
+        wid_list.append(w)
+        counts[f] = p.size
+
+    ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
+    ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
+    # Nested eligibility: row 0 the full dispatchable thermal fleet (30-minute),
+    # row 1 the quick-start subset (10-minute). Storage is added by the caller
+    # (reserve_storage=True), so it backs every class.
+    full_elig = ercot_reserve_eligible(fleet_arrays)
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    quick_elig = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+    eligible = np.vstack([full_elig, quick_elig])
+    return (
+        requirement,
+        eligible,
+        ordc_penalties.astype(float),
+        ordc_step_widths.astype(float),
+        balance_zone_mask,
+        counts,
+        balance_reserve_class,
+        None,
+        1.0,
     )

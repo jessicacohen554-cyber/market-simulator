@@ -3324,6 +3324,60 @@ def run_year(
                 int((_np.asarray(coopt_class) == 2).sum()),
             )
 
+    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "NEISO":
+        # NEISO: SYSTEM-WIDE nested reserve co-optimization. ISO-NE prices
+        # operating-reserve scarcity pool-wide via Reserve Constraint Penalty
+        # Factors (NEISO_RCPF_PRODUCTS / ISO-NE Tariff Market Rule 1, OP-8): the
+        # nested 30-min-total ⊇ 10-min-total ⊇ 10-min-spin requirements each
+        # become a reserve family over every zone. In a tight winter hour the
+        # available headroom drops below a requirement, the family's demand curve
+        # sets the reserve clearing price, and through the shared-headroom
+        # coupling that dual lifts the energy LMP — the cold-snap scarcity tail
+        # (hours > $300) the energy-only LP cannot produce. Storage (pumped
+        # storage + batteries) backs every class, so the widened peak/trough
+        # spread also pulls storage throughput up. The local NEMA/Boston/CT/SWCT
+        # second-contingency zones are deferred to a locational follow-up (this
+        # system-wide tier matches the pool RT price). Nothing fitted to the
+        # residual — requirements and RCPFs are the published tariff values.
+        from market_sim.results.scarcity import neiso_reserve_coopt_inputs
+
+        (
+            coopt_req,
+            coopt_elig,
+            coopt_pen,
+            coopt_w,
+            coopt_mask,
+            coopt_counts,
+            coopt_class,
+            _coopt_online_gated,
+            _coopt_online_rho,
+        ) = neiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
+        dispatch_kwargs.update(
+            reserve_requirement=coopt_req,
+            reserve_eligible=coopt_elig,
+            reserve_storage=True,  # pumped storage + batteries back reserve
+            ordc_penalties=coopt_pen,
+            ordc_step_widths=coopt_w,
+            reserve_balance_zone_mask=coopt_mask,
+            reserve_balance_ordc_counts=coopt_counts,
+            reserve_balance_class=coopt_class,
+        )
+        import numpy as _np
+
+        _elig2d = _np.atleast_2d(coopt_elig)
+        logger.info(
+            "energy+reserve co-opt (NEISO): %d system reserve families "
+            "(%d 10-min/quick-start), %d ORDC steps ($%.0f-$%.0f), "
+            "%d full-fleet / %d quick-start reserve-eligible units",
+            coopt_mask.shape[0],
+            int((_np.asarray(coopt_class) == 1).sum()),
+            len(coopt_pen),
+            float(coopt_pen.min()) if len(coopt_pen) else 0.0,
+            float(coopt_pen.max()) if len(coopt_pen) else 0.0,
+            int(_elig2d[0].sum()),
+            int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
+        )
+
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
     # -- and differ only in the objective (P1 = base MC + startup markup). So
     # build the model once and warm-start P1 from P0's optimal basis
