@@ -2043,6 +2043,152 @@ def inject_nyiso_ct_reliability_floor(
     return True
 
 
+# NEISO weather-correlated reliability-floor windows (local hour-of-day) and the
+# cold-limb plant groups. ISO-NE is a DUAL-LIMB weather system: the simple-cycle
+# peakers track the summer cooling HOT limb (TMAX) over the afternoon-evening
+# ramp like CAISO/NYISO; the cold-snap reliability units (the lone
+# Merrimack-class COAL unit + the lone steam-gas ST_GAS unit, run when the
+# gas-electric constraint binds in deep winter) track the COLD limb (TMIN) over
+# the winter morning + evening load peaks. Coefficients regressed from measured
+# CAMPD CF vs the NEISO load-weighted daily TMAX/TMIN, pooled 2023-2025
+# (scripts/derive_neiso_temp_reliability_floor.py).
+NEISO_CT_FLOOR_HOURS: tuple[int, int] = (16, 21)  # hot-limb evening ramp (HB16-21)
+# Winter cold-snap peak hours (morning HB6-9 + evening HB17-20) — the gas-system
+# stress windows the oil/coal/steam reliability fleet covers; an explicit tuple
+# of local hours-of-day (two disjoint ranges, not a single [start,end] band).
+NEISO_COLDSNAP_FLOOR_HOURS: tuple[int, ...] = (6, 7, 8, 9, 17, 18, 19, 20)
+# Cold-limb groups and their per-group zero-crossing TMIN (deg C): below this
+# daily minimum temperature the cold-limb floor activates and rises as it gets
+# colder. COAL (Merrimack) starts hardening earlier (T0=+5 degC, the best-fit
+# cold limb); ST_GAS holds until the deep-cold gas-constraint hours (T0=0 degC).
+NEISO_COLDSNAP_CLASSES: tuple[str, ...] = ("COAL", "ST_GAS")
+NEISO_COLDSNAP_T0_C: dict[str, float] = {"COAL": 5.0, "ST_GAS": 0.0}
+
+
+def _distribute_group_floor(fleet_arrays, rows, frac: np.ndarray, hours: int) -> None:
+    """Floor a plant-group fleet at ``frac`` x available capacity, cheapest-first.
+
+    Shared kernel for the NEISO weather floor: sizes the hourly group target as
+    ``frac`` x the group's available capacity and distributes it over the group's
+    units cheapest-first (by heat rate), each capped at its available capacity,
+    composing with any existing ``FleetArrays.min_gen`` floor via ``maximum``.
+    Mirrors the distribution in :func:`inject_caiso_ct_reliability_floor`.
+    """
+    avail_cap = fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
+    target = frac * avail_cap.sum(axis=0)
+    if fleet_arrays.min_gen is None:
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
+    order = rows[np.argsort(fleet_arrays.heat_rate[rows], kind="stable")]
+    remaining = target.copy()
+    for r in order:
+        cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        take = np.minimum(remaining, cap_r)
+        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+        remaining = remaining - take
+
+
+def inject_neiso_temp_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    ct_slope_per_c: float,
+    ct_t0_c: float,
+    ct_cap: float,
+    ct_base: float,
+    cold_slope_per_c: float,
+    cold_cap: float,
+    cold_base: float,
+) -> bool:
+    """Floor NEISO weather-correlated reliability units at a temperature commitment.
+
+    ISO-NE under-runs two structurally distinct weather-driven fleets that an
+    energy-only LP leaves on the cheaper combined-cycle stack, and they respond
+    to OPPOSITE limbs of the temperature distribution:
+
+    * **CT_PEAKER (hot limb).** Simple-cycle gas peakers track the summer cooling
+      ramp exactly as in CAISO/NYISO: on hot afternoons the load climbs and the
+      fast-start CTs are held online for local reliability regardless of
+      system-energy economics. Floored over the afternoon-evening window
+      (``NEISO_CT_FLOOR_HOURS``) at ``frac = clip(ct_base + ct_slope*(TMAX -
+      ct_t0), ct_base, ct_cap)`` keyed to the NEISO load-weighted daily max
+      temperature.
+
+    * **COAL + ST_GAS (cold limb).** ISO-NE's lone Merrimack-class coal unit and
+      lone steam-gas unit run almost exclusively during deep-winter cold snaps,
+      when the gas-electric constraint (pipeline scarcity feeding both heating
+      and power) prices these oil/coal/steam reliability units into merit. The
+      measured CF correlates with cold, not heat (Spearman rho on the cold limb
+      ~0.35-0.40 vs ~0 against TMAX), so they are floored over the winter
+      morning + evening peaks (``NEISO_COLDSNAP_FLOOR_HOURS``) at ``frac =
+      clip(cold_base + cold_slope*(T0_group - TMIN), cold_base, cold_cap)`` keyed
+      to the daily MIN temperature, with per-group zero-crossings
+      (``NEISO_COLDSNAP_T0_C``; COAL hardens at +5 degC, ST_GAS at 0 degC).
+
+    All coefficients are the measured CAMPD CF regressed on the NEISO
+    load-weighted daily TMAX/TMIN, pooled 2023-2025 (``scripts/derive_neiso_temp_
+    reliability_floor.py``) — physical temperature->commitment rules, NOT fits to
+    a TWh residual. Forward-reproducible (a forecast year pins a weather year,
+    hence a TMAX/TMIN series, exactly as it pins load/wind/solar) and
+    condition-responsive (hotter summers -> more CT, colder winters -> more
+    coal/steam), which is what makes them admissible in both backcast and
+    forecast (CLAUDE.md #10/#11). The hourly group target is distributed
+    cheapest-first over the group's units (each capped at available capacity) via
+    the hour-varying ``FleetArrays.min_gen`` lower bound, composed with any floor
+    already present; the LP dispatches economically above it.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when any limb floored a
+    fleet, ``False`` (byte-identical) when ``iso`` is not NEISO, no archived
+    TMAX/TMIN series is available (forecast year / unmapped ISO), or no eligible
+    units exist.
+    """
+    if iso != "NEISO":
+        return False
+    if fleet_arrays.plant_group is None:
+        return False
+    from market_sim.data.eia_loader import neiso_load_weighted_temp
+
+    hours = int(fleet_arrays.availability.shape[1])
+    temp = neiso_load_weighted_temp(year, hours)
+    if temp is None:
+        return False
+    tmax, tmin = temp
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    groups = np.asarray(fleet_arrays.plant_group)
+    applied = False
+
+    # Hot limb: CT_PEAKER over the afternoon-evening ramp.
+    if ct_slope_per_c > 0.0 and ct_cap > 0.0:
+        ct_rows = np.flatnonzero((groups == "CT_PEAKER") & (fleet_arrays.pmax > 0.0))
+        if ct_rows.size:
+            frac = np.clip(ct_base + ct_slope_per_c * (tmax - ct_t0_c), ct_base, ct_cap)
+            start, end = NEISO_CT_FLOOR_HOURS
+            frac = np.where((hod >= start) & (hod <= end), frac, 0.0)
+            if np.any(frac > 0.0):
+                _distribute_group_floor(fleet_arrays, ct_rows, frac, hours)
+                applied = True
+
+    # Cold limb: COAL + ST_GAS over the winter morning + evening peaks.
+    if cold_slope_per_c > 0.0 and cold_cap > 0.0:
+        cold_window = np.isin(hod, np.asarray(NEISO_COLDSNAP_FLOOR_HOURS))
+        for grp in NEISO_COLDSNAP_CLASSES:
+            rows = np.flatnonzero((groups == grp) & (fleet_arrays.pmax > 0.0))
+            if rows.size == 0:
+                continue
+            t0 = NEISO_COLDSNAP_T0_C.get(grp, 0.0)
+            frac = np.clip(
+                cold_base + cold_slope_per_c * (t0 - tmin), cold_base, cold_cap
+            )
+            frac = np.where(cold_window, frac, 0.0)
+            if np.any(frac > 0.0):
+                _distribute_group_floor(fleet_arrays, rows, frac, hours)
+                applied = True
+
+    return applied
+
+
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the
 # in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
 # must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the
