@@ -438,6 +438,17 @@ def _unit_outage_target(
     return (facility_id, "ST_GAS")
 
 
+# Mixed CC/ST facilities whose CAMPD unit-outage rows are tagged with a different
+# asset class than the model's bin. Ravenswood (2500) is combined-cycle dominant,
+# so CAMPD tags every unit CC_REGULAR, but our NYISO fleet carries plant 2500 as a
+# single ST_GAS bin (with an HR correction, fleet.MIXED_FACILITY_STEAM_HR). Without
+# this override its outage rows route to a (2500, CC_REGULAR) bin that does not
+# exist, so the ST_GAS bin reads near-fully-available and over-runs (and the steam
+# reliability floor, frac x pmax x availability, over-forces it). Route the plant's
+# outages to its ST_GAS bin so the model availability reflects the real downtime.
+_FLEET_GROUP_OVERRIDE: dict[int, str] = {2500: "ST_GAS"}
+
+
 def _generic_unit_outage_target(
     facility_id: int, unit_id: object, group: object
 ) -> tuple[int, str] | None:
@@ -446,7 +457,8 @@ def _generic_unit_outage_target(
     Non-ERCOT ISOs run a per-plant fleet with no split facilities, so each
     unit routes straight to its plant's model group. Combustion turbines are
     excluded from the derate (they dispatch economically), matching the
-    ERCOT convention.
+    ERCOT convention. A handful of mixed CC/ST facilities whose CAMPD class tag
+    disagrees with the model bin are remapped via :data:`_FLEET_GROUP_OVERRIDE`.
     """
     g = (
         ""
@@ -455,6 +467,8 @@ def _generic_unit_outage_target(
     )
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
+    if facility_id in _FLEET_GROUP_OVERRIDE:
+        return (facility_id, _FLEET_GROUP_OVERRIDE[facility_id])
     if not g or g == "OTHER":
         return None
     return (facility_id, g)

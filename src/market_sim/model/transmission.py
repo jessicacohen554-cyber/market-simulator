@@ -2055,33 +2055,49 @@ def inject_nyiso_ct_reliability_floor(
 #   overnight/midday: frac = base_24h
 #   evening window  : frac = max(base_24h, clip(base_ev + slope*(TMAX-t0),
 #                                               base_ev, cap))
-# Coefficients regressed *a priori* from the measured per-zone CAMPD ST_GAS CF vs
-# the zone's NOAA GHCN daily max temperature, pooled 2023-2025 (scripts/derive_
-# nyiso_st_reliability_floor.py) — physical heat->commitment rules, NOT
-# TWh-residual fits. base_24h is the cool-day ALL-hours p25; base_ev the cool-day
-# evening (HB14-21) p25; cap the evening p97 ceiling; slope the evening hot-limb:
-#   * Long_Island — strong hot-limb (corr +0.63, hot CF 0.57 vs mild 0.25),
-#     cable-islanded; base_24h 0.148 / base_ev 0.191, slope 0.0588/degC, cap 0.851.
-#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria,
-#     corr +0.48, hot CF 0.32 vs mild 0.15): base_24h 0.105 / base_ev 0.112, slope
-#     0.0729/degC, cap 0.836. The Task-C must-run-when-available baseline (NYISO's
-#     in-city reliability rules are strongest in zone J); the measured cool-day CF
-#     runs ~80% as high overnight as in the evening, so the baseline is a 24-hour
-#     minimum, not an evening-only ramp.
-#   * Capital_Hudson — WEAK hot-limb (corr +0.089, hot CF 0.16 vs mild 0.00): no
-#     baseline (base_24h = base_ev = 0.0), hot-limb only, slope 0.0400/degC, cap
-#     0.419 — binds only on the hottest afternoons, conservative for a weak class.
+# CRITICAL — frac is a WHEN-AVAILABLE capacity factor, regressed on CF normalised
+# by AVAILABLE capacity (nameplate net of the unit-outage derate), NOT by nameplate
+# over all hours. The floor is applied as frac x pmax x availability, so the model
+# already discounts outage downtime via `availability`; regressing frac on the
+# all-hours (nameplate) CF would double-discount it — the cool-day all-hours CF is
+# itself deflated by the heavy NYC/LI steam downtime, and multiplying by
+# availability again floored the costly in-city units (Astoria, Arthur Kill) at
+# near zero, the documented suppression. On the available basis these units run a
+# steady ~0.4 baseline whenever they are committed (NYC temperature corr falls to
+# ~0 — a flat in-city must-run, not a weather ramp), which the floor now
+# reproduces: frac x availability tracks the real duty cycle (full baseline when
+# available, zero on outage). Coefficients regressed *a priori* from the measured
+# per-zone CAMPD ST_GAS when-available CF vs the zone's NOAA GHCN daily max
+# temperature, pooled 2023-2025 (scripts/derive_nyiso_st_reliability_floor.py) —
+# NOT TWh-residual fits. base_24h is the cool-day 24h available-CF p25; base_ev the
+# cool-day evening available-CF p25; cap the evening available-CF p97 (clipped to
+# 0.95 to leave headroom and reject outage-edge artifacts > 1); slope the evening
+# hot-limb:
+#   * Long_Island — base_24h 0.289 / base_ev 0.383, slope 0.0406/degC, cap 0.891
+#     (corr +0.48), cable-islanded.
+#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria):
+#     base_24h 0.391 / base_ev 0.432, slope 0.0393/degC, cap 0.95 (corr ~0 — flat
+#     when committed). NYISO's in-city reliability rules are strongest in zone J.
+#   * Capital_Hudson — no baseline (base 0.0), weak hot-limb only, slope 0.0246/degC,
+#     cap 0.95 — binds only on the hottest afternoons, conservative for a weak class.
 # The base x available-capacity basis (pmax x availability) is automatically
 # outage-aware (a unit on a forced/planned outage is not floored). Upstate_West
-# ST_GAS (150 MW, CF flat ~0.50 vs temperature) is NOT temperature-driven
-# (baseload cogen-like) and is deliberately omitted — a flat must-run there would
-# be an un-grounded fit, not a heat->commitment rule.
+# ST_GAS (150 MW, CF flat ~0.50) is NOT temperature-driven (baseload cogen-like)
+# and is deliberately omitted — a flat must-run there would be an un-grounded fit.
 NYISO_ST_FLOOR_HOURS: tuple[int, int] = (14, 21)  # evening hot-limb (HB14-21)
+# Plants excluded from the steam reliability floor (none — kept as an explicit
+# hook). Ravenswood (2500), a mixed CC/ST facility, was a candidate because its
+# CAMPD outages are tagged CC_REGULAR and never reached its ST_GAS bin, leaving it
+# over-available so the floor over-forced it; that is now fixed at the SOURCE —
+# data.outages._FLEET_GROUP_OVERRIDE routes plant 2500's outages to its ST_GAS bin
+# so its model availability reflects the real downtime — so Ravenswood is included
+# in both the floor and the coefficient regression like the other in-city steam.
+NYISO_ST_FLOOR_EXCLUDE_PLANTS: frozenset[int] = frozenset()
 NYISO_ST_FLOOR_COEFFS: dict[str, tuple[float, float, float, float, float]] = {
-    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)
-    "Long_Island": (0.0588, 25.0, 0.851, 0.191, 0.148),
-    "NYC": (0.0729, 25.0, 0.836, 0.112, 0.105),
-    "Capital_Hudson": (0.0400, 25.0, 0.419, 0.000, 0.000),
+    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)  — WHEN-AVAILABLE CF
+    "Long_Island": (0.0406, 25.0, 0.891, 0.383, 0.289),
+    "NYC": (0.0393, 25.0, 0.950, 0.432, 0.391),
+    "Capital_Hudson": (0.0246, 25.0, 0.950, 0.000, 0.000),
 }
 
 
@@ -2176,11 +2192,16 @@ def inject_nyiso_st_reliability_floor(
         z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
         if z_idx is None:
             continue
-        rows = np.flatnonzero(
+        sel = (
             (groups == "ST_GAS")
             & (fleet_arrays.zone_idx == z_idx)
             & (fleet_arrays.pmax > 0.0)
         )
+        if fleet_arrays.plant_code is not None:
+            sel &= ~np.isin(
+                np.asarray(fleet_arrays.plant_code), list(NYISO_ST_FLOOR_EXCLUDE_PLANTS)
+            )
+        rows = np.flatnonzero(sel)
         if rows.size == 0:
             continue
         tmax = nyiso_zone_tmax(year, hours, zone)
