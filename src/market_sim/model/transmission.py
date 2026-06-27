@@ -846,6 +846,59 @@ def forward_corridor_atc_envelope(
     return out or None
 
 
+def caiso_solar_deliverability_derate(
+    year: int, hours: int, k: float, floor: float
+) -> np.ndarray | None:
+    """Return CAISO's hourly LOCAL solar deliverability derate, or ``None``.
+
+    The solar-generation analogue of :func:`forward_corridor_atc_envelope`'s
+    midday import collapse, and the Lever-D fix for CAISO solar under-curtailment
+    (``docs/caiso-lever-audit-2026-06.md``). The reduced 3-zone CAISO topology
+    collapses the sub-area / distribution network where ~70% of CAISO solar
+    curtailment actually occurs, so handed the uncurtailed HSL potential the LP
+    dispatches ≈ the full potential and re-curtails ≈ 0. This returns a
+    multiplicative ceiling on the solar potential::
+
+        derate(t) = clip(1 − k × solar_frac(t), floor, 1)
+
+    where ``solar_frac(t)`` is CAISO's hourly solar penetration
+    (:func:`market_sim.data.eia_loader.caiso_solar_fraction`, CISO solar /
+    demand). As midday penetration rises the local network can evacuate a smaller
+    share of the concentrated solar and the surplus curtails. ``solar_frac`` is a
+    FORWARD driver that responds to a changed solar build and load — never the
+    measured curtailment outcome — so the curtailed VOLUME emerges per-year from
+    that year's own penetration and potential, not a pin to actuals (CLAUDE.md
+    #1/#11). The caller multiplies it onto the per-zone solar CF upper bound; the
+    LP still dispatches economically up to the ceiling and curtails further below
+    it under system oversupply.
+
+    ``k`` (the penetration sensitivity) is derived as the reference-year midday
+    curtailment rate ÷ midday solar penetration, stable across CAISO 2023/2024
+    (≈ 0.166 / 0.146); see ``ScenarioConfig.caiso_solar_deliverability_k``.
+
+    Args:
+        year: Calendar (backcast) year — selects the CISO solar-penetration series.
+        hours: Number of LP hours (the returned array length).
+        k: Local-deliverability sensitivity to solar penetration.
+        floor: Minimum derate, so even at extreme penetration the local network
+            still evacuates ``floor`` × potential.
+
+    Returns:
+        A ``(hours,)`` derate in ``[floor, 1]``, or ``None`` when the CISO solar
+        penetration is unavailable (a forecast year with no extract) or ``k`` is
+        non-positive — in which case the caller leaves solar uncapped
+        (byte-identical).
+    """
+    if k <= 0.0:
+        return None
+    from market_sim.data.eia_loader import caiso_solar_fraction
+
+    solar_frac = caiso_solar_fraction(year, hours)
+    if solar_frac is None:
+        return None
+    return np.clip(1.0 - k * np.asarray(solar_frac, dtype=float), floor, 1.0)
+
+
 # Unit-id markers tagging a reference-price seam pseudo-generator so the
 # post-assembly mc injector (:func:`inject_reference_price_mc`) can find each row
 # and map it back to its neighbor and flow tranche. The id is
