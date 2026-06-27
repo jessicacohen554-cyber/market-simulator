@@ -65,8 +65,6 @@ class TestSeamInjection(unittest.TestCase):
     def test_import_bands_capped_to_envelope(self):
         node, fleet = self._fleet()
         env = measured_seam_import_envelope("MISO", 2024, T)
-        # Pre-injection: every import band is fully available.
-        base_avail = fleet.availability.copy()
         self.assertTrue(inject_miso_seam_flow_limit(fleet, "MISO", 2024))
         for neighbor in INTERFACE_NEIGHBORS["MISO"]:
             name = neighbor.name

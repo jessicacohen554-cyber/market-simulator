@@ -234,7 +234,7 @@ def load_dispatch(bundle_dir: Path, year: int, pass_label: str = "P1") -> pd.Dat
     Args:
         bundle_dir: Path to the calibration bundle directory.
         year: Calendar year.
-        pass_label: LP pass label (``"P1"`` or ``"P2"``).  
+        pass_label: LP pass label (``"P1"`` or ``"P2"``).
 
     Returns:
         DataFrame with columns ``year``, ``plant_code``, ``klass``, ``hour``,
@@ -550,7 +550,7 @@ def run_shape_table(
     Args:
         bundle_dir: Calibration bundle directory (must contain ``dispatch/``).
         years: Year(s) to analyse.
-        pass_label: LP pass label (``"P1"`` or ``"P2"``).  
+        pass_label: LP pass label (``"P1"`` or ``"P2"``).
     """
     for year in years:
         disp = load_dispatch(bundle_dir, year, pass_label)
