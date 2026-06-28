@@ -900,6 +900,20 @@ class ScenarioConfig:
     # cap; the priced seam economics still clear the merit order below it. Used
     # only when miso_seam_flow_limit is set; MISO-only; default keeps p90
     # (byte-identical).
+    miso_pjm_border_anchor: bool = False  # MISO eastern PJM seam: re-anchor the
+    # PJM neighbor price from PJM's SYSTEM-average realized LMP to its MISO-facing
+    # WESTERN border hubs (ComEd / AEP-Ohio / ATSI; constants.MISO_PJM_BORDER_HR_
+    # BY_YEAR, applied in transmission.inject_reference_price_mc). The import
+    # mirror of the pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears
+    # against western PJM, which prices below the eastern-load-weighted system
+    # average, so the system anchor over-prices the import and MISO under-imports
+    # over its largest seam (2024 -15 vs measured -23, 2025 -3 vs -19 TWh). The
+    # per-year border HR is system_HR x (mean MISO-facing border-hub LMP / system
+    # LMP); the discount deepens in tight years (ratio 0.981/0.956/0.936) so 2023
+    # (already matched) barely moves while 2024/2025 clear more import up to the
+    # measured deliverability cap. A measured neighbor price-formation input
+    # (rule #12), blind to MISO's flow (rule #11; reads only PJM zonal LMP).
+    # Requires --reference-price-interface; MISO-only. Default off; opt-in.
     miso_seam_export_limit: bool = False  # MISO reference-price seam: the EXPORT
     # mirror of miso_seam_flow_limit. Cap each seam's (PJM/SPP/South) net EXPORT
     # at the MEASURED EIA-930 BA-to-BA net-export deliverability envelope (per
@@ -2898,6 +2912,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_limit": 1,
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
+    "miso_pjm_border_anchor": 1,
     "miso_temp_reliability_floor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
