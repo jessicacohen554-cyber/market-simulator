@@ -620,6 +620,86 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
+# MISO gas offer curves, grounded in the measured per-plant CAMPD heat rates
+# (bin_assignments_MISO.csv Plant_Avg_HR_MMBtu_MWh; cap-weighted class HRs:
+# CC_CHP 6.76, CC_REGULAR 7.44, ST_GAS 11.27, CT_PEAKER 12.37 MMBtu/MWh) and the
+# MISO market structure, NOT fitted to the backcast residual. Until now MISO was
+# the only large multi-zone ISO with no branch: it fell through EVERY
+# offer_curve_by_group ternary to the generic non-PJM/non-ERCOT/non-NEISO `else`,
+# whose band multipliers were fit to ERCOT plants (Colorado Bend II / Wolf Hollow
+# II) and never validated for MISO — including the 13.15x ERCOT-CT "peak" wall
+# that PJM and CAISO already discarded. These are merged on top of that branch
+# (_deep_merge_offer_curve), so ONLY the named gas classes change; coal / CC_CHP /
+# CT_CHP / ST_GAS keep the generic defaults (they sit correctly in merit for MISO
+# — see below). Per-plant committed % and duct-firing peaking % still come from
+# CAMPD (cc_committed_per_plant / cc_peaking_per_plant via thermal_tranches_
+# MISO.csv) and supersede the class-wide values here.
+#
+# Grounding (band multipliers scale each plant's own measured base heat rate):
+#  - CC_REGULAR: MISO's entire CC fleet runs intermediate/baseload (thermal_
+#    tranches_MISO.csv: all 44 CC_REGULAR plants measure median CF 50-150%, mean
+#    ~90% — near-100% CF). The generic curve was fit to ERCOT's duct-fire-heavy
+#    2x1 peaker CCs and carries a rising start-cost-amortized econ ramp (econ_low
+#    1.06 / econ_high 1.27) that over-prices the upper operating range of an
+#    already-committed baseload CC, whose incremental energy is ~flat at ~0.93x
+#    its own average heat rate (the measured CAMPD CC shape, negligible routine
+#    duct-firing). That over-pricing pushes the CC's upper econ tranches above the
+#    clearing price -> the model under-runs the CC fleet (the 2023/2024 gas-CC
+#    under-run, ~-23/-20 TWh vs EIA-923). Flatten the econ ramp to the measured
+#    near-baseload incremental cost (econ 0.95 -> 1.08, straddling the full-load
+#    0.93x and the average 1.0x) while KEEPING the physically-real F-class duct-
+#    burner scarcity peak (2.25) and the cheap min-stable-load committed base
+#    (0.92). This is the same flat curve validated this session via the
+#    cc_intermediate_split CC_INTERMEDIATE cohort routing; promoting it to the
+#    MISO CC_REGULAR BASE makes MISO's CC correct even on a non-split run, and
+#    renders the split a near-no-op for MISO's all-baseload fleet (it stays
+#    available for genuinely MIXED CC duty — a future MISO peaker CC, or another
+#    ISO). Merit preserved: CC econ_high 1.08*7.44 = 8.0 eff HR stays below
+#    ST_GAS's min-load (generic committed 0.81*11.27 = 9.1) and CT_PEAKER.
+#  - CT_PEAKER: CAP the peak band well below the inherited 13.15x ERCOT wall.
+#    MISO's energy offer cap is ~$1000-2000/MWh (the ELMP shadow price plus the
+#    Reserve Demand Curve / RDT scarcity adder), NOT ERCOT's $5000 ORDC, so a
+#    13x heat-rate wall is far too high and inflates the high-price tail — the
+#    same reasoning PJM used to cap its CT_PEAKER at 4.0. Drop the peak to 4.0
+#    (~$1500/MWh at a 12.4 base HR and typical MISO gas), the MISO-cap-consistent
+#    ballpark. The committed start-cost hurdle (1.55) and the econ ramp
+#    (1.27 -> 1.98) are left at the generic shape (they are not the ERCOT-specific
+#    artifact; only the $5000-ORDC peak is). MISO currently shows 0 scarcity
+#    (>$200) hours, so this is forward-correctness — removing an inherited tail
+#    that would mis-fire in a forecast — not a live price change.
+#  - CC_CHP / CT_CHP / ST_GAS: NOT overridden. The generic CC_CHP (econ
+#    0.96 -> 1.12) is already flat and the efficient cogen CCs (measured HR 6.76)
+#    sit correctly below CC_REGULAR. The generic ST_GAS committed 0.81*11.27 =
+#    9.1 eff HR sits ABOVE the new flat CC_REGULAR (max 8.0), so there is no merit
+#    inversion for MISO — and MISO's baseload steam is separately handled by the
+#    st_gas_intermediate split (ST_GAS_INTERMEDIATE), so the base ST_GAS curve
+#    only prices true-peaker steam. Leaving these generic keeps the change tight
+#    and grounded (rule #11: merge only the named bands that diverge).
+#
+# LEVEL sanity-checked against Potomac Economics, "State of the Market Report for
+# the MISO Electricity Markets" (the MISO IMM). A worse interchange / energy
+# balance from this curve is a discovered bug to root-cause, not a reason to
+# refit (rules #1/#11).
+_MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        "committed": 0.92,  # cheap min-stable-load base (CAMPD CC min-load shape)
+        "econ_low": 0.95,  # flat baseload incremental (straddles full-load 0.93x)
+        "econ_high": 1.08,  # measured near-flat full-load HR, NOT the ERCOT 1.27 ramp
+        "peak": 2.25,  # physically-real F-class duct-burner scarcity band (kept)
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_PEAKER": {
+        "committed": 1.55,  # generic start-cost hurdle (not the ERCOT artifact)
+        "econ_low": 1.27,
+        "econ_high": 1.98,
+        "peak": 4.00,  # MISO offer cap ~$1-2k/MWh -> cap the 13.15x ERCOT-ORDC wall
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+    },
+}
+
+
 # MISO round-2 CC_REGULAR / COAL_BIT offer-curve rebalance (deep-merged onto the
 # calibrated MISO base curve when --miso-cc-coal-rebalance is set; ISO-gated, so
 # only the named bands change and every other class/band keeps its default).
@@ -1451,6 +1531,19 @@ def _calibration_config(
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _CAISO_OFFER_CURVE
+            )
+        )
+    # MISO gas offer curves (CAMPD-/structure-grounded; see _MISO_OFFER_CURVE).
+    # Merged on top of the generic non-PJM/non-ERCOT branch so only the named gas
+    # classes change (CC_REGULAR flattened to MISO's measured baseload shape;
+    # CT_PEAKER peak capped off the inherited ERCOT 13.15x ORDC wall) and coal /
+    # CC_CHP / CT_CHP / ST_GAS keep their generic defaults. Replaces MISO's silent
+    # inheritance of the ERCOT-fitted `else` values. Operator --offer-curve
+    # overrides/deltas below still merge on top.
+    if iso.upper() == "MISO":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _MISO_OFFER_CURVE
             )
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
