@@ -1656,6 +1656,9 @@ def solve_and_persist(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    pjm_reserve_supply_cap: bool = False,
+    pjm_reserve_online_gated: bool = False,
+    pjm_reserve_online_rho: float = 1.0,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
@@ -1858,6 +1861,9 @@ def solve_and_persist(
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+            pjm_reserve_supply_cap=pjm_reserve_supply_cap,
+            pjm_reserve_online_gated=pjm_reserve_online_gated,
+            pjm_reserve_online_rho=pjm_reserve_online_rho,
             ercot_as_forward_requirement=ercot_as_forward_requirement,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
@@ -2109,6 +2115,9 @@ def solve_and_persist(
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
         "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
+        "pjm_reserve_supply_cap": pjm_reserve_supply_cap,
+        "pjm_reserve_online_gated": pjm_reserve_online_gated,
+        "pjm_reserve_online_rho": pjm_reserve_online_rho,
         "ercot_as_forward_requirement": ercot_as_forward_requirement,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
@@ -2239,6 +2248,13 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
+    if pjm_reserve_supply_cap:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
+    if pjm_reserve_online_gated:
+        recorded_cfg = recorded_cfg.with_overrides(
+            pjm_reserve_online_gated=True,
+            pjm_reserve_online_rho=pjm_reserve_online_rho,
+        )
     if ercot_multiproduct_as_coopt:
         recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_as_aware_commitment:
