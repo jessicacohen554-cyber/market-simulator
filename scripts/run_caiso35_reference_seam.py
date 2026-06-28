@@ -68,10 +68,16 @@ def main() -> int:
         coal_prb_passthrough_tiered=True,
         priced_interchange=True,
         # The seam change: forward reference price replaces the measured per-hub
-        # OASIS ladder; the corridor ATC envelope still caps the flow.
+        # OASIS ladder. The corridor ATC cap remains (task #5) but uses the
+        # FORWARD, one-sided import envelope (TTC × ATC-frac × solar derate)
+        # rather than the measured two-sided p95 — the measured EXPORT-direction
+        # cap collapses DSW export to ~0 and would mechanically forbid the very
+        # midday solar export the reference seam is built to enable. The forward
+        # ATC is consistent with the forward-native seam and leaves the export
+        # direction at the physical corridor TTC so the reference price governs.
         caiso_reference_price_seam=True,
         caiso_per_hub_intertie=False,
-        caiso_corridor_flow_limit=True,
+        caiso_corridor_atc_forward=True,
         note=(
             "caiso 35 reference-price seam: replace the measured per-hub OASIS "
             "hub-LMP ladder (caiso_per_hub_intertie) with the forward-native "
@@ -82,7 +88,10 @@ def main() -> int:
             "from measured Malin/Palo-Verde annual-mean RT LMP / delivered gas "
             "(derive_caiso_seam_hr_by_year.py; rule #11/#12). Fixes the over- "
             "import / never-export bias and the 2023 OASIS gap. Per-hub corridor "
-            "split + measured p95 corridor ATC envelope retained. All other "
+            "split retained; corridor ATC uses the FORWARD one-sided import "
+            "envelope (caiso_corridor_atc_forward) so the export direction is "
+            "free to the physical TTC (the measured two-sided p95 collapses DSW "
+            "export to ~0 and would block the midday solar export). All other "
             "caiso 34 levers verbatim."
         ),
     )
