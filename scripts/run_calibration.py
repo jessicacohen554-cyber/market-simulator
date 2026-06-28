@@ -542,6 +542,84 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
+# CAISO gas offer curves, grounded in the CAISO DMM (Department of Market
+# Monitoring) State-of-the-Market reports and the measured per-plant CAMPD heat
+# rates, NOT fitted to the price residual (CLAUDE.md rules #1/#11). Until now
+# CAISO fell through every per-band ternary to the generic non-PJM/non-ERCOT
+# `else` branch in offer_curve_by_group{} below, whose values were "fit to
+# Colorado Bend II / Wolf Hollow II" — ERCOT plants — and carried the ERCOT
+# CT_PEAKER `peak` 13.15x scarcity wall. That wall encodes ERCOT's $5,000 ORDC
+# scarcity, which has no CAISO analogue (CAISO's energy offer cap is the $1,000
+# soft cap, raised to $2,000 only with cost verification under extreme
+# scarcity), so it inflated the 2023 high-price tail (744 h > $200 vs 21
+# actual), while the ERCOT-fitted CC econ band (econ_low 1.06 / econ_high 1.27)
+# over-priced the midday CC body (the domestic source of the CA-zone LMP
+# over-price diagnosed in DIAGNOSIS-caiso36-body-overprice-domestic-2026-06-28).
+# These are merged on top of that generic branch (_deep_merge_offer_curve), so
+# only the named GAS classes (CC_REGULAR, CT_PEAKER) change; CC_CHP / CT_CHP /
+# ST_GAS / coal keep the generic defaults. Per-plant committed % and duct-firing
+# peaking % still come from CAMPD (cc_committed_per_plant / cc_peaking_per_plant
+# via thermal_tranches_CAISO.csv) and supersede the class-wide values here.
+#
+# Grounding (band multipliers scale each plant's own measured base heat rate,
+# bin_assignments_CAISO.csv Plant_Avg_HR; cap-weighted class base HRs:
+# CC_REGULAR 7.44, CT_PEAKER 10.86 MMBtu/MWh):
+#  - CAISO is a structurally competitive energy market (DMM 2023/2024 SOM): the
+#    market-power mitigation Default Energy Bid (DEB) for a gas unit is
+#    cost-based — gas x measured heat rate + variable O&M + a ~10% competitive
+#    adder — so suppliers offer close to short-run marginal cost. The
+#    multipliers therefore encode a near-SRMC SHAPE around each unit's real heat
+#    rate, NOT a strategic markup or a residual-tuned level.
+#  - CC_REGULAR: the efficient gas workhorse and the midday marginal class (the
+#    diagnosis shows CA midday needs ~6.5 GW of economic gas_cc whose bid sets
+#    the body price). The CAMPD CC marginal-HR fit is ~flat at ~0.95x average
+#    across the body, rising to ~1.21x average at the top of the economic range
+#    (the approach to duct firing) — the SAME fit ERCOT's and NYISO's keepers
+#    use (committed 0.90 / econ_low 0.95 / econ_high 1.21). The generic
+#    ERCOT-fitted econ_low 1.06 / econ_high 1.27 priced the CC body ~10% above
+#    that measured incremental cost, the domestic driver of the midday over-
+#    price; re-grounding to 0.95 -> 1.21 removes that ERCOT level premium. The
+#    duct-firing `peak` stays the physical F-class duct-burner multiplier (2.25),
+#    NOT capped — capping a real physical band to move price would be an
+#    unphysical fit (rule #11).
+#  - CT_PEAKER: offers near its DEB cost in CAISO's competitive market. The
+#    `peak` band is capped at 4.0 (cap-weighted eff HR ~43, ~$150/MWh at 2023-25
+#    gas — a defensible CAISO scarcity offer well inside the $1,000-2,000 soft
+#    cap), the SAME cap and reasoning PJM adopted ("an ERCOT-style 13x wall is
+#    far too high ... inflating the high-price tail"); it replaces the ERCOT
+#    13.15x $5,000-ORDC wall that drove the 2023 > $200 tail. The econ band is
+#    re-grounded to the DEB cost-plus-adder shape (econ_low 1.10 ~= HR x 1.1 at
+#    the bottom of the range, econ_high 1.50 the rising part-load/hot-day reach)
+#    in place of the ERCOT-fitted 1.27 / 1.98. The committed min-load start-cost
+#    hurdle is lowered from the ERCOT 1.55 (which parks peakers idle) to 1.35
+#    (NYISO-grounded): CAISO's fast-start CTs and aeroderivatives serve the steep
+#    net-load evening ramp and should clear on the ramp rather than forcing the
+#    CC duct-fire + startup tranches to set the evening price.
+_CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        "committed": 0.90,  # min-stable-load tranche offered near incremental
+        #   cost (NYISO-aligned); generic ERCOT-fit was 0.92.
+        "econ_low": 0.95,  # CAMPD CC flat body marginal HR ~0.95x avg
+        #   (generic ERCOT-fit 1.06 over-priced the midday body).
+        "econ_high": 1.21,  # CAMPD CC marginal-HR SRMC reach (ERCOT/NYISO fit;
+        #   generic 1.27).
+        "peak": 2.25,  # physical F-class duct-burner band, unchanged.
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_PEAKER": {
+        "committed": 1.35,  # NYISO-grounded start hurdle; CAISO CTs serve the
+        #   evening ramp (generic ERCOT idle-park hurdle was 1.55).
+        "econ_low": 1.10,  # DEB cost + ~10% adder (generic ERCOT-fit 1.27).
+        "econ_high": 1.50,  # rising part-load/hot-day reach (generic 1.98).
+        "peak": 4.0,  # CAISO $1,000-2,000 soft-cap scarcity, capped far below
+        #   the ERCOT $5,000-ORDC 13.15x wall (PJM's reasoning/value).
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+    },
+}
+
+
 # MISO round-2 CC_REGULAR / COAL_BIT offer-curve rebalance (deep-merged onto the
 # calibrated MISO base curve when --miso-cc-coal-rebalance is set; ISO-gated, so
 # only the named bands change and every other class/band keeps its default).
@@ -1360,6 +1438,19 @@ def _calibration_config(
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _NYISO_OFFER_CURVE
+            )
+        )
+    # CAISO gas offer curves (DMM-grounded near-SRMC shape + the $1,000-2,000
+    # soft-cap CT scarcity band; see _CAISO_OFFER_CURVE). Merged on top of the
+    # generic non-PJM/non-ERCOT branch so only the named gas classes change and
+    # CC_CHP / CT_CHP / ST_GAS / coal keep their generic defaults. Replaces the
+    # silently-inherited ERCOT offer multipliers (and the ERCOT 13.15x CT wall)
+    # that were the domestic source of the CA-zone midday/body LMP over-price.
+    # Operator --offer-curve overrides/deltas below still merge on top.
+    if iso.upper() == "CAISO":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _CAISO_OFFER_CURVE
             )
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
