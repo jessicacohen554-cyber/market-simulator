@@ -1096,6 +1096,35 @@ def _calibration_config(
                 "econ_low_share": 0.50,
                 "pct_peaking": 8.0,
             },
+            # Flatter curve for the measured baseload-duty MISO CC cohort
+            # (fleet.cc_intermediate_plants, median CF >= threshold), routed here
+            # only when cc_intermediate_split is set (--cc-intermediate-split;
+            # default OFF, so every prior keeper / other ISO is byte-identical and
+            # the CC_REGULAR curve above is untouched). MISO's entire CC fleet runs
+            # intermediate/baseload (median CF 50-150%, mean ~90%), but the
+            # CC_REGULAR curve was fit to ERCOT's duct-fire-heavy 2x1 peaker CCs:
+            # its rising start-cost-amortized econ ramp (econ_high 1.27) over-prices
+            # the upper operating range of an already-committed baseload CC, whose
+            # incremental energy is near its flat full-load heat rate (~0.93x its
+            # own average, the documented CC measured shape), so the upper econ
+            # tranches sit above the clearing price and the model under-runs the CC
+            # fleet (the 2023/2024 gas-CC under-run, -24 to -28 TWh vs EIA-923).
+            # This flattens the econ ramp to that measured near-baseload
+            # incremental cost (econ 0.95->1.08, straddling the full-load 0.93x and
+            # average 1.0x) while KEEPING the physically-real F-class duct-burner
+            # peak (2.25) — only the operating-range ramp is corrected, never the
+            # duct-fire peak (which would be an unphysical fit to volume; rule #11).
+            # The committed band stays 0.92 (the cheap min-stable-load base) and
+            # the peaking band stays per-plant via cc_peaking_per_plant. Mirrors
+            # ST_GAS_INTERMEDIATE / CT_INTERMEDIATE.
+            "CC_INTERMEDIATE": {
+                "committed": 0.92,
+                "econ_low": 0.95,
+                "econ_high": 1.08,
+                "peak": 2.25,
+                "econ_low_share": 0.50,
+                "pct_peaking": 8.0,
+            },
             "CC_CHP": {
                 "committed": 0.92,
                 "econ_low": 0.95 if iso == "PJM" else 0.96,
@@ -1694,6 +1723,8 @@ def run_year(
     coal_sync_srmc_tranche: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
+    cc_intermediate_split: bool = False,
+    cc_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -1881,6 +1912,17 @@ def run_year(
     if ct_intermediate_cf_threshold is not None:
         config = config.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if cc_intermediate_split:
+        # Route the measured baseload-duty CC cohort (fleet.cc_intermediate_plants)
+        # to the flatter CC_INTERMEDIATE offer curve so the upper operating-range
+        # tranches of MISO's near-baseload CC fleet clear instead of carrying the
+        # ERCOT-peaker-fit rising econ ramp (the 2023/2024 gas-CC under-run). Only
+        # the operating-range ramp is corrected; the duct-burner peak is unchanged.
+        config = config.with_overrides(cc_intermediate_split=True)
+    if cc_intermediate_cf_threshold is not None:
+        config = config.with_overrides(
+            cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
     if st_gas_intermediate:
         # MISO intermediate gas-steam structure (one consolidated lever, default

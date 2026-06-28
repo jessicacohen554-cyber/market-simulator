@@ -5725,6 +5725,46 @@ def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     return frozenset(int(c) for c in st["plant_code"].dropna())
 
 
+def cc_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
+    """EIA plant codes of intermediate-duty ``CC_REGULAR`` units for an ISO.
+
+    The combined-cycle analogue of :func:`ct_intermediate_plants` /
+    :func:`st_gas_intermediate_plants`. A combined-cycle plant whose measured
+    CAMPD median capacity factor (``thermal_tranches_<ISO>.csv`` ``median_cf``)
+    is at or above ``threshold`` runs intermediate / baseload duty, not as a
+    flexible mid-merit peaker. The ``CC_REGULAR`` offer curve was fit to ERCOT's
+    duct-fire-heavy 2x1 CCs (Colorado Bend II / Wolf Hollow II): a rising econ
+    ramp (start-cost-amortized) topped by a duct-burner peak band. For a fleet of
+    already-committed, high-CF baseload CCs (MISO's entire CC fleet measures a
+    median CF of 50-150 %, mean ~90 %) that rising ramp over-prices the upper
+    operating range — the incremental energy of a committed CC is near its
+    full-load heat rate (~0.93x its own average), flat across load, not a
+    start-cost-amortized peaker bid — so the upper econ tranches sit above the
+    clearing price and the model under-runs the CC fleet (the MISO gas under-run).
+    The cohort is routed to the flatter ``CC_INTERMEDIATE`` offer curve, which
+    flattens the econ ramp to the measured near-baseload incremental cost while
+    **keeping** the physically-real duct-burner peak band (the duct-fire reach is
+    still priced at its true ~2.25x heat rate — only the operating-range ramp is
+    corrected, never the peak).
+
+    The median CF is a durable, forward-reproducible duty-role signal — it
+    regenerates per unit and year from CAMPD and responds to changed conditions
+    (a CC that stops running baseload falls out of the cohort) — and assigns an
+    offer *shape*, never pins measured output, so it is admissible under
+    CLAUDE.md #11/#12 on the same basis as :func:`ct_intermediate_plants` and
+    :func:`st_gas_intermediate_plants`. Returns an empty set when the ISO has no
+    tranche file (e.g. ERCOT's hand-set bins).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_csv(path)
+    if "median_cf" not in df.columns or "plant_group" not in df.columns:
+        return frozenset()
+    cc = df[(df["plant_group"] == "CC_REGULAR") & (df["median_cf"] >= threshold)]
+    return frozenset(int(c) for c in cc["plant_code"].dropna())
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
@@ -5743,7 +5783,12 @@ def _offer_curve_for_group(
     measured intermediate-duty cohort (:func:`ct_intermediate_plants`) resolves
     to the flatter ``CT_INTERMEDIATE`` curve when one is configured, so its
     always-on energy clears like the intermediate unit it is rather than
-    carrying the true-peaker start-cost hurdle.
+    carrying the true-peaker start-cost hurdle. Likewise, when
+    ``config.cc_intermediate_split`` is set a ``CC_REGULAR`` plant in the
+    measured baseload-duty cohort (:func:`cc_intermediate_plants`) resolves to
+    the flatter ``CC_INTERMEDIATE`` curve, whose econ ramp matches a committed
+    CC's near-flat full-load incremental cost (the duct-burner peak band is
+    unchanged).
     """
     curves = getattr(config, "offer_curve_by_group", None) or {}
     if group == "COAL":
@@ -5765,6 +5810,13 @@ def _offer_curve_for_group(
         thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
         if int(plant_code) in ct_intermediate_plants(iso, thr):
             inter = curves.get("CT_INTERMEDIATE")
+            if inter:
+                return inter
+    if group == "CC_REGULAR" and getattr(config, "cc_intermediate_split", False):
+        iso = str(getattr(config, "iso", "ERCOT"))
+        thr = float(getattr(config, "cc_intermediate_cf_threshold", 50.0))
+        if int(plant_code) in cc_intermediate_plants(iso, thr):
+            inter = curves.get("CC_INTERMEDIATE")
             if inter:
                 return inter
     return curves.get(group) or None
