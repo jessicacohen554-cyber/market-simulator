@@ -1070,6 +1070,22 @@ class ScenarioConfig:
     # by transmission.forward_corridor_atc_envelope +
     # transmission.build_caiso_corridor_flow_groups +
     # eia_loader.caiso_solar_fraction. Default off (byte-identical); CAISO-only.
+    caiso_reference_price_seam: bool = False  # Price BOTH legs of CAISO's two WECC
+    # corridors with the forward-native reference-price seam (the PJM/MISO
+    # INTERFACE_NEIGHBORS construction, INTERFACE_NEIGHBORS["CAISO"]): per corridor,
+    # import + export flow tranches priced from (HH + gas_basis) × heat_rate ×
+    # load-shape ± hurdle, with the CARB border carbon added to the import leg.
+    # Replaces the measured per-hub OASIS ladder (caiso_per_hub_intertie): the
+    # export leg clears at hub − hurdle (the price a WECC neighbor pays for CAISO's
+    # midday solar surplus, fixing "model never exports") and the seam stays live
+    # in every year (no OASIS gap, e.g. 2023). When on, the per-hub split + the
+    # corridor ATC envelope (caiso_corridor_flow_limit) still apply — the
+    # reference price sets the PRICE, the ATC envelope the FLOW LIMIT. Mutually
+    # exclusive with caiso_per_hub_intertie (the runner skips the OASIS path when
+    # this is on). Carried by transmission.build_reference_price_node (per-corridor
+    # placement) + transmission.inject_reference_price_mc (carbon_price) +
+    # neighbor_price load-shape (net/gross via CISO proxy). Default off
+    # (byte-identical); CAISO-only.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
@@ -2788,6 +2804,7 @@ TIER_TAGS: dict[str, int] = {
     "reference_price_interface": 1,
     "caiso_intertie_reference_price": 1,
     "caiso_corridor_atc_forward": 1,
+    "caiso_reference_price_seam": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
     "caiso_ra_mustoffer": 1,

@@ -1754,6 +1754,7 @@ def run_year(
     caiso_corridor_flow_limit: bool | None = None,
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
+    caiso_reference_price_seam: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1986,6 +1987,10 @@ def run_year(
     if caiso_corridor_atc_forward is not None:
         config = config.with_overrides(
             caiso_corridor_atc_forward=caiso_corridor_atc_forward
+        )
+    if caiso_reference_price_seam is not None:
+        config = config.with_overrides(
+            caiso_reference_price_seam=caiso_reference_price_seam
         )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
@@ -2222,10 +2227,23 @@ def run_year(
         # inject_reference_price_mc after assembly). Gated to ISOs in
         # INTERFACE_NEIGHBORS; byte-identical (falls through to the fitted node)
         # otherwise. See docs/reference-price-interface.md.
-        caiso_per_hub = (
+        caiso_ref_seam = (
+            getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
+        )
+        # The forward reference-price seam supersedes the measured OASIS per-hub
+        # path (mutually exclusive); it still rides the per-hub corridor split +
+        # ATC envelope, so treat it as a per-hub corridor topology below.
+        caiso_per_hub = (not caiso_ref_seam) and (
             getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
         )
-        if caiso_per_hub:
+        caiso_corridors = caiso_per_hub or caiso_ref_seam
+        if caiso_ref_seam:
+            # Two WECC corridors priced from the forecast-native reference seam
+            # (INTERFACE_NEIGHBORS["CAISO"]): per corridor, import + export flow
+            # tranches placed in the corridor's own external zone (WECC_DSW /
+            # WECC_PNW), priced post-assembly by inject_reference_price_mc.
+            import_generators = build_reference_price_node(iso)
+        elif caiso_per_hub:
             # Two per-hub signed WECC corridors: COI/Path-66 at the Malin hub
             # (WECC_PNW → NP15) and Path-46/WOR at the Palo Verde hub (WECC_DSW →
             # SP15), each a single net direction over its own real link.
@@ -2244,8 +2262,14 @@ def run_year(
             from market_sim.model.transmission import build_caiso_bidir_intertie
 
             import_generators = build_caiso_bidir_intertie(border_carbon)
-        elif getattr(config, "reference_price_interface", False) and (
-            iso in INTERFACE_NEIGHBORS
+        elif (
+            getattr(config, "reference_price_interface", False)
+            and iso in INTERFACE_NEIGHBORS
+            # CAISO uses its dedicated caiso_reference_price_seam path (handled
+            # above), which also does the per-hub corridor split; the generic
+            # single-node path would land CAISO's per-corridor tranches with no
+            # corridor zones to host them.
+            and iso != "CAISO"
         ):
             import_generators = build_reference_price_node(iso)
         else:
@@ -2267,11 +2291,11 @@ def run_year(
                 iso, year=year, mode=getattr(config, "mode", "forecast")
             )
         iso_config = extend_with_import_node(iso_config)
-        if caiso_per_hub:
+        if caiso_corridors:
             # Split the single WECC_import node into the two per-hub corridors
             # (WECC_PNW → NP15, WECC_DSW → SP15) and re-home the import links +
             # the 8.3 GW simultaneous-import interface limit onto them, matching
-            # the zones build_caiso_per_hub_intertie placed its tranches in.
+            # the zones the per-hub / reference-seam builder placed its tranches in.
             from market_sim.model.transmission import split_caiso_import_node_per_hub
 
             iso_config = split_caiso_import_node_per_hub(iso_config)
@@ -2349,9 +2373,11 @@ def run_year(
     # hub up to the 8.3 GW simultaneous cap. One-sided hourly upper bounds, added
     # to the interface groups; export keeps the physical TTC. No-op off the flag
     # or when the year has no measured interchange (byte-identical).
-    forward_atc = caiso_per_hub and getattr(config, "caiso_corridor_atc_forward", False)
+    forward_atc = caiso_corridors and getattr(
+        config, "caiso_corridor_atc_forward", False
+    )
     if forward_atc or (
-        caiso_per_hub and getattr(config, "caiso_corridor_flow_limit", False)
+        caiso_corridors and getattr(config, "caiso_corridor_flow_limit", False)
     ):
         from market_sim.model.transmission import build_caiso_corridor_flow_groups
 
@@ -3170,8 +3196,12 @@ def run_year(
     # in the static vom). mc_bid inherits it (the import gens take no startup
     # markup). No-op unless the reference node is in the fleet, so non-reference
     # runs stay byte-identical.
-    if getattr(config, "reference_price_interface", False) and (
-        iso in INTERFACE_NEIGHBORS
+    if (
+        getattr(config, "reference_price_interface", False)
+        and iso in INTERFACE_NEIGHBORS
+        # CAISO is priced by the dedicated caiso_reference_price_seam block below
+        # (which adds the CARB border carbon); skip the generic carbon-free path.
+        and iso != "CAISO"
     ):
         if inject_reference_price_mc(
             fleet_arrays, mc_base, iso, year, config.gas_price_path
@@ -3226,8 +3256,37 @@ def run_year(
     # legs (import = hub + per-tranche carbon, export = hub) off the measured
     # hub, superseding the separate import-hub / export-hub / gas-coupling /
     # solar-shape injectors below (those target the legacy two-mechanism node).
+    # CAISO forward reference-price seam (caiso_reference_price_seam): price BOTH
+    # legs of each WECC corridor from the INTERFACE_NEIGHBORS["CAISO"] construction
+    # ((HH + gas_basis) × HR × load-shape ± hurdle), with the CARB border carbon on
+    # the import leg (carbon_price). The export tranches clear at hub − hurdle (the
+    # price a WECC neighbor pays for CAISO's midday solar surplus). Supersedes the
+    # measured OASIS per-hub path; no-op (byte-identical) off the flag.
+    caiso_ref_seam = (
+        getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
+    )
+    if caiso_ref_seam:
+        if inject_reference_price_mc(
+            fleet_arrays,
+            mc_base,
+            iso,
+            year,
+            config.gas_price_path,
+            carbon_price=carbon_price,
+        ):
+            logger.info(
+                "%s %d: CAISO reference-price seam — both legs of %d WECC "
+                "corridors priced from gas × heat-rate × load-shape "
+                "(PNW@Malin gross-load, DSW@Palo-Verde net-load; import + CARB "
+                "border carbon / export at hub − hurdle)",
+                iso,
+                year,
+                len(INTERFACE_NEIGHBORS.get(iso, [])),
+            )
     per_hub_intertie = (
-        getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
+        (not caiso_ref_seam)
+        and getattr(config, "caiso_per_hub_intertie", False)
+        and iso == "CAISO"
     )
     if per_hub_intertie and getattr(config, "caiso_intertie_reference_price", False):
         # FORWARD seam: price each corridor from the reference-price formula
