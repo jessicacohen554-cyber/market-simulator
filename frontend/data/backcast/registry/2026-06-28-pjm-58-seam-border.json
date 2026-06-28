@@ -3,7 +3,7 @@
   "label": "pjm 58 seam border",
   "date": "2026-06-28",
   "shorthand": "pjm-58-seam-border",
-  "definition": "pjm 58 seam-border: NYISO hr_by_year re-anchored from system-avg RT LMP to WEST zone (Zone A) border-proxy RT LMP. WEST/system same-month ratios 0.895/0.840/0.790 (2023/24/25) applied to prior sys-avg HRs: 9.66->8.65, 12.92->10.85, 14.67->11.59. Source: NYISO DART zonal CSVs (data/raw/lmp-data/NYISO/*realtime_zone*). Physical market-structure fix: PJM-NY exports clear at west-NY border, not congestion-inflated NYC system average. Forward analogue: border congestion discount is persistent structural feature of NYISO network (rule #12). All other levers pjm 57 verbatim.",
+  "definition": "pjm 58 seam-border builds on pjm-57 (measured hydro keeper) and corrects the PJM-NY interchange reference price: exports physically clear at the NYISO Zone A (west) border, not the congestion-inflated system average (Zone J/K import constraints inflate the system-avg by ~10-16%). Same-month WEST/system RT LMP ratios from NYISO zonal data (0.895/0.840/0.790 for 2023/24/25) are applied to the prior system-avg heat rates, lowering the seam HR from 9.66->8.65, 12.92->10.85, 14.67->11.59 (structural mean 13.1->10.4). All coal sigmoids, offer-curve levers, and hydro backfill are pjm-57 verbatim. Determination: NOT-YET — C1 (CC over-run, CT under-run 2023/24) and C2 (2025 gas +7.3%) remain open; C6 unattested.",
   "years": [
     2023,
     2024,
