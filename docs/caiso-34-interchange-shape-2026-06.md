@@ -1,13 +1,13 @@
-# CAISO Step 6 — Interchange Shape Diagnostic (2026-06-28)
+# CAISO 34 — Interchange Shape Diagnostic (2026-06-28)
 
 **Run:** caiso 34 (`2026-06-28-caiso-34-ixshape`)
 **Bundle:** `results/calibration/caiso_step6_ixshape`
 **Branch:** `claude/caiso-step6-interchange-shape-ann78m`
 
-## What changed vs step 5 (caiso 33)
+## What changed vs caiso 33
 
-Step 5 had all interchange levers OFF (static tranche ladder, fixed prices).
-Step 6 re-enables the Lever E interchange mechanisms from caiso 32:
+caiso 33 had all interchange levers OFF (static tranche ladder, fixed prices).
+caiso 34 re-enables the Lever E interchange mechanisms from caiso 32:
 
 - `--caiso-per-hub-intertie` — splits WECC_import into WECC_PNW (COI/Malin →
   NP15) and WECC_DSW (Path-46/Palo Verde → SP15), each priced at its own
@@ -34,9 +34,9 @@ drag, solar deliverability derate, CHP steam credit, gas monthly actuals.
 | 2024 | 32.38     | 47.64     | +15.26  | 2878 MW  | +0.77     | 3799 MW   | 4596 MW   | 96.9%       | 89.0%       |
 | 2025 | 36.16     | 51.93     | +15.77  | 1971 MW  | +0.75     | 4241 MW   | 4973 MW   | 99.5%       | 90.9%       |
 
-### Improvement vs step 5 baseline
+### Improvement vs caiso 33 baseline
 
-Step 5 (interchange OFF) had:
+caiso 33 (interchange OFF) had:
 - Flat diurnal amplitude ~450–960 MW → now 2900–4200 MW (3–6× improvement)
 - No diurnal correlation → now r = 0.75–0.97
 - 100% import hours → now 97–99% (slight improvement; model still rarely exports)
