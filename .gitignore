@@ -111,6 +111,9 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # Throwaway miso18 reproduction probe (byte-confirmed the reconstructed
 # export-cap source; the registered keeper is miso18, regenerable from source).
 /results/calibration/MISO/miso19_export_cap_repro/
+# CC-intermediate-only diagnostic probe (superseded by the combined CC+border run;
+# regenerable from --cc-intermediate-split).
+/results/calibration/MISO/miso20_cc_intermediate/
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
 # CAISO RA must-offer gas-floor scratch backcasts (Session A frac sweep +
