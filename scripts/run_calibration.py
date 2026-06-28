@@ -1766,6 +1766,7 @@ def run_year(
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
+    miso_seam_export_limit: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -2022,6 +2023,8 @@ def run_year(
         config = config.with_overrides(
             miso_seam_flow_percentile=float(miso_seam_flow_percentile)
         )
+    if miso_seam_export_limit:
+        config = config.with_overrides(miso_seam_export_limit=True)
     if miso_temp_reliability_floor:
         # MISO dual-limb, zonal weather reliability floor (the MISO-native
         # temperature->commitment mechanism replacing the ERCOT-coefficient
@@ -2796,6 +2799,31 @@ def run_year(
                 "%s %d: reference-price seam import capped at measured EIA-930 "
                 "BA-to-BA deliverability envelope (p%g; SPP/South clip toward "
                 "~0 import, PJM keeps its measured eastern transfer)",
+                iso,
+                year,
+                MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
+            )
+    # Export mirror: cap each seam's net EXPORT at the measured net-export
+    # envelope by raising the export bands' lower bound toward 0. Clips the PJM
+    # seam (which MISO net-imports over) to ~0 export, removing the spurious
+    # export of cheap MISO coal back east; SPP/South keep their measured export
+    # headroom. Shares the import cap's percentile (one envelope, both
+    # directions). No-op off the flag, for non-MISO, or with no measured year.
+    if getattr(config, "reference_price_interface", False) and getattr(
+        config, "miso_seam_export_limit", False
+    ):
+        from market_sim.model.transmission import inject_miso_seam_flow_limit
+
+        _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
+        if inject_miso_seam_flow_limit(
+            fleet_arrays, iso, year, percentile=_seam_pct, direction="export"
+        ):
+            from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
+
+            logger.info(
+                "%s %d: reference-price seam export capped at measured EIA-930 "
+                "BA-to-BA net-export envelope (p%g; PJM seam clips export toward "
+                "~0, SPP/South keep their measured export headroom)",
                 iso,
                 year,
                 MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,

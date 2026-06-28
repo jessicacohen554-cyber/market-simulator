@@ -1150,7 +1150,11 @@ def caiso_solar_fraction(year: int, hours: int) -> np.ndarray | None:
 
 
 def measured_seam_import_envelope(
-    iso: str, year: int, hours: int, percentile: float | None = None
+    iso: str,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+    direction: str = "import",
 ) -> dict[str, np.ndarray] | None:
     """Return each priced seam's measured net-import deliverability cap (MW).
 
@@ -1183,7 +1187,23 @@ def measured_seam_import_envelope(
     ``None`` when the ISO has no seam-DIBA map, the parquet is absent, or the
     year is uncovered (a forecast year) — in which case the caller leaves the
     seams uncapped (byte-identical).
+
+    With ``direction="export"`` the same machinery instead returns each seam's
+    measured net-*export* deliverability ceiling (the per-(month × hour-of-day)
+    ``percentile`` of measured net export = −net import, clipped at 0). It is the
+    symmetric counterpart of the import ceiling: just as the import cap clips a
+    net-importing seam, the export ceiling caps a seam's deliverable net export —
+    so the eastern PJM seam (which MISO reliably net-*imports* over) caps export
+    at ~0, forbidding the LP's unphysical export of cheap MISO coal back over the
+    PJM border, while the southern (TVA) and SPP seams keep their measured ~GW of
+    export headroom. Like the import ceiling it is a smoothed capability envelope
+    the LP clears *below*, not the hourly residual flow (rules #1/#12). Applied
+    by :func:`~market_sim.model.transmission.inject_miso_seam_flow_limit` as the
+    reverse-direction floor (raised ``min_gen`` lower bound) on each seam's
+    negative-output export bands.
     """
+    if direction not in ("import", "export"):
+        raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
     from market_sim.config.constants import (
         MISO_SEAM_DIBA,
         MISO_SEAM_FLOW_PERCENTILE,
@@ -1232,7 +1252,10 @@ def measured_seam_import_envelope(
             continue
         tab = np.full((12, 24), np.nan)
         for (m, h), g in sub.groupby(["month", "hod"], observed=True):
-            tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
+            vals = g["net_import"].to_numpy()
+            if direction == "export":
+                vals = -vals  # net export = -net import; pXX export deliverability
+            tab[m - 1, h] = np.percentile(vals, pct)
         # Fill any empty (month, hod) bucket with that month's max over hours,
         # then the global max, so the cap is always finite.
         for m in range(12):
@@ -1242,10 +1265,11 @@ def measured_seam_import_envelope(
             tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
         if np.any(np.isnan(tab)):
             tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
-        # Clip at 0: the cap bounds net *import*; a bucket whose pXX net import
-        # is negative (the seam reliably net-exports then — SPP/South) caps
-        # import at zero, never forces an export. The export direction is left
-        # to the priced seam's own economics.
+        # Clip at 0: the cap bounds net flow in ``direction``; a bucket whose pXX
+        # is negative (the seam reliably runs the OTHER way then — net import on a
+        # net-exporting seam, or net export on the net-importing PJM seam) caps
+        # that direction at zero, never forcing the reverse flow. The opposite
+        # direction is left to the priced seam's own economics.
         out[name] = np.clip(tab[rm - 1, rh], 0.0, None)
     return out or None
 
