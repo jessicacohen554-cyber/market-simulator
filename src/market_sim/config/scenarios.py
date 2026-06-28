@@ -900,6 +900,23 @@ class ScenarioConfig:
     # cap; the priced seam economics still clear the merit order below it. Used
     # only when miso_seam_flow_limit is set; MISO-only; default keeps p90
     # (byte-identical).
+    miso_seam_export_limit: bool = False  # MISO reference-price seam: the EXPORT
+    # mirror of miso_seam_flow_limit. Cap each seam's (PJM/SPP/South) net EXPORT
+    # at the MEASURED EIA-930 BA-to-BA net-export deliverability envelope (per
+    # (month × hour-of-day) p90 of the directed flow over the seam's DIBAs;
+    # data.eia_loader.measured_seam_import_envelope(direction="export"),
+    # transmission.inject_miso_seam_flow_limit(direction="export")). Fixes the
+    # structural over-EXPORT: the priced seam exports cheap MISO coal back over
+    # every border whenever a neighbor's price exceeds MISO's, but in reality MISO
+    # reliably net-IMPORTS over the eastern PJM seam — it cannot net-export there.
+    # Raising the negative-output export bands' lower bound (min_gen) toward 0
+    # clips the PJM seam's export to ~0 while SPP/South keep their measured ~GW of
+    # export headroom; the export bands keep their priced economics below the cap.
+    # An ATC/transfer-capability proxy from the directed-flow series — reproducible
+    # for a forward year and flow-responsive — NOT fitted to the net-MWh residual
+    # (rules #1/#12). Shares the miso_seam_flow_percentile knob with the import cap
+    # (one p90 envelope, both directions). Requires --reference-price-interface;
+    # MISO-only (no seam-DIBA map → no-op, byte-identical). Default off; opt-in.
     miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
     # reference-price seam — the import-direction mirror of the PJM firm-export
     # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
@@ -2859,6 +2876,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_firm_imports": 1,
     "miso_seam_flow_limit": 1,
     "miso_seam_flow_percentile": 3,
+    "miso_seam_export_limit": 1,
     "miso_temp_reliability_floor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
