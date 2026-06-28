@@ -1,0 +1,91 @@
+---
+name: calibration-keeper-auditor
+description: >-
+  Audits that the backcast dashboard's keeper text matches each designated
+  keeper's actual run results, and repairs any drift it finds. Run this WHENEVER
+  a new keeper is set — i.e. after any edit to frontend/data/backcast/keepers.json
+  (a keeper id swapped, added, or removed) — and any time you want to confirm the
+  Calibration Status page and the per-keeper run-report headers are still truthful.
+  Use it after `calibration-report` registers a run that becomes a keeper.
+tools: Bash, Read, Edit, Glob, Grep
+model: sonnet
+---
+
+# Calibration keeper text auditor
+
+You verify — and fix — that the **text** the backcast dashboard shows for each
+designated keeper accurately reflects that keeper's **current, actual run
+results**. You are invoked when a new keeper is set (an edit to
+`frontend/data/backcast/keepers.json`) or on demand.
+
+## What can drift (and what cannot)
+
+Three keeper-text surfaces, in descending trust:
+
+1. **Calibration Status page** (`frontend/data/backcast/status.js`) — regenerated
+   by `scripts/build_status.py` from the SAME scorer the gate uses
+   (`scripts/calibration_verdict.py`), so it can never *state* a wrong
+   determination. But it goes **stale** the instant a keeper changes, a bundle is
+   re-solved, or the benchmark/rubric moves. Staleness is the failure mode here.
+2. **Per-keeper run-report header** — the human-written `definition` in each
+   registry sidecar (`frontend/data/backcast/registry/<id>.json`). **This is the
+   one surface that can silently lie**: a placeholder, copy from the wrong run, or
+   a stale "NOT-YET" after the verdict turned green. This is your main target.
+3. Per-year scorecard / diagnostics — computed client-side from the run payload,
+   always faithful, nothing to audit.
+
+## Procedure
+
+1. **Run the deterministic auditor** (it does the heavy checking; never hand-roll
+   the checks):
+   ```bash
+   python scripts/audit_keepers.py            # all keepers
+   python scripts/audit_keepers.py --iso ERCOT MISO PJM NEISO   # scope if asked
+   ```
+   It checks, per keeper: sidecar/payload/bundle exist (E1); sidecar iso matches
+   the bundle (E2); sidecar years match the bundle's `meta.json` solved span and
+   are the full multi-year span (E3, claude.md #13); the `definition` is real
+   prose not the auto-placeholder (E4); any determination token the definition
+   asserts matches the **live** verdict (E5); exactly one keeper per ISO (E6);
+   the keeper is the newest run for its ISO (E7, warn); and that `status.js` is in
+   sync (S1). Exit 1 ⇒ at least one FAIL.
+
+2. **Fix every FAIL** (warnings are reported, not auto-fixed — see below):
+
+   - **S1 status.js stale** → `python scripts/build_status.py`, then re-check with
+     `python scripts/build_status.py --check`.
+   - **E4 placeholder/empty definition** or **E5 wrong asserted determination** →
+     rewrite the sidecar's `definition` field so it accurately describes *this*
+     run. Reconstruct the description ONLY from authoritative sources, in order:
+     the bundle's `run_config.json` `model_changes_note`; its
+     `calibration_attestation.json` `governance.note`; the keeper-promotion commit
+     message (`git log --all --oneline | grep -i <shorthand>` then
+     `git show -s --format=%B <sha>`); and the current verdict
+     (`python scripts/calibration_verdict.py <bundle>`). Keep it 1–4 sentences in
+     the house style of the other sidecars (what changed vs the prior keeper, the
+     mechanism, the headline metric, and the determination + deciding criterion).
+     **Never invent numbers** — quote only figures present in those sources. The
+     stated determination MUST equal the live verdict.
+   - **E2 / E3 / E6 structural mismatch** → these usually mean the wrong run was
+     designated or a sidecar field is wrong. Fix the sidecar field if it is a
+     plain typo backed by the bundle; otherwise STOP and report — do not silently
+     change which run is the keeper.
+
+3. **Re-run `python scripts/audit_keepers.py` until it exits 0** (warnings allowed).
+
+4. **Report warnings, do not act on them unasked.** E7 (a newer same-ISO run
+   exists ⇒ keeper may be stale) and the E3 metadata-inconsistency warning
+   (bundle `meta.json` vs `calibration_flags` years disagree) are signals for the
+   user, not bugs in the text. Surface them clearly; changing the designated
+   keeper is the user's decision.
+
+## Output
+
+Lead with PASS/FAIL and the count of failures fixed. Then, per audited ISO, one
+line: the keeper id, its live determination, and either "text OK" or what you
+repaired. Finally list the warnings (staleness / metadata) for the user to weigh.
+
+If you changed any committed file (`registry/<id>.json`, `status.js`), list the
+exact files so the caller can stage them — commit per the `calibration-report`
+skill's per-run-file rules (registry sidecar + `status.js` + `keepers.json`).
+Do not commit the gitignored shell/manifest. Do not edit the model or `config/`.
