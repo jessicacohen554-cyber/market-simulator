@@ -900,6 +900,37 @@ class ScenarioConfig:
     # cap; the priced seam economics still clear the merit order below it. Used
     # only when miso_seam_flow_limit is set; MISO-only; default keeps p90
     # (byte-identical).
+    miso_pjm_border_anchor: bool = False  # MISO eastern PJM seam: re-anchor the
+    # PJM neighbor price from PJM's SYSTEM-average realized LMP to its MISO-facing
+    # WESTERN border hubs (ComEd / AEP-Ohio / ATSI; constants.MISO_PJM_BORDER_HR_
+    # BY_YEAR, applied in transmission.inject_reference_price_mc). The import
+    # mirror of the pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears
+    # against western PJM, which prices below the eastern-load-weighted system
+    # average, so the system anchor over-prices the import and MISO under-imports
+    # over its largest seam (2024 -15 vs measured -23, 2025 -3 vs -19 TWh). The
+    # per-year border HR is system_HR x (mean MISO-facing border-hub LMP / system
+    # LMP); the discount deepens in tight years (ratio 0.981/0.956/0.936) so 2023
+    # (already matched) barely moves while 2024/2025 clear more import up to the
+    # measured deliverability cap. A measured neighbor price-formation input
+    # (rule #12), blind to MISO's flow (rule #11; reads only PJM zonal LMP).
+    # Requires --reference-price-interface; MISO-only. Default off; opt-in.
+    miso_seam_export_limit: bool = False  # MISO reference-price seam: the EXPORT
+    # mirror of miso_seam_flow_limit. Cap each seam's (PJM/SPP/South) net EXPORT
+    # at the MEASURED EIA-930 BA-to-BA net-export deliverability envelope (per
+    # (month × hour-of-day) p90 of the directed flow over the seam's DIBAs;
+    # data.eia_loader.measured_seam_import_envelope(direction="export"),
+    # transmission.inject_miso_seam_flow_limit(direction="export")). Fixes the
+    # structural over-EXPORT: the priced seam exports cheap MISO coal back over
+    # every border whenever a neighbor's price exceeds MISO's, but in reality MISO
+    # reliably net-IMPORTS over the eastern PJM seam — it cannot net-export there.
+    # Raising the negative-output export bands' lower bound (min_gen) toward 0
+    # clips the PJM seam's export to ~0 while SPP/South keep their measured ~GW of
+    # export headroom; the export bands keep their priced economics below the cap.
+    # An ATC/transfer-capability proxy from the directed-flow series — reproducible
+    # for a forward year and flow-responsive — NOT fitted to the net-MWh residual
+    # (rules #1/#12). Shares the miso_seam_flow_percentile knob with the import cap
+    # (one p90 envelope, both directions). Requires --reference-price-interface;
+    # MISO-only (no seam-DIBA map → no-op, byte-identical). Default off; opt-in.
     miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
     # reference-price seam — the import-direction mirror of the PJM firm-export
     # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
@@ -1623,6 +1654,27 @@ class ScenarioConfig:
     # Default off (prior keeper unchanged) until re-solved.
     st_gas_intermediate_split: bool = False
     st_gas_intermediate_cf_threshold: float = 50.0
+
+    # CC_REGULAR analogue of ct_intermediate_split / st_gas_intermediate_split.
+    # MISO's entire combined-cycle fleet runs intermediate/baseload (measured
+    # CAMPD median CF 50-150 %, mean ~90 %), but inherits the CC_REGULAR offer
+    # curve fit to ERCOT's duct-fire-heavy 2x1 peaker CCs (Colorado Bend II /
+    # Wolf Hollow II): a rising start-cost-amortized econ ramp (econ_high 1.27)
+    # that over-prices the upper operating range of an already-committed baseload
+    # CC, whose incremental energy is near its flat full-load heat rate
+    # (~0.93x average), so the upper econ tranches sit above the clearing price
+    # and the model under-runs the CC fleet (the MISO 2023/2024 gas-CC under-run,
+    # -24 to -28 TWh vs EIA-923). When set, that cohort
+    # (fleet.cc_intermediate_plants) is routed to the flatter ``CC_INTERMEDIATE``
+    # offer curve, which flattens the econ ramp to the measured near-baseload
+    # incremental cost while KEEPING the physically-real duct-burner peak band
+    # (only the operating-range ramp is corrected, never the ~2.25x duct-fire
+    # peak). The median-CF cohort assigns an offer *shape* (not a pin to measured
+    # output), admissible on the same basis as ct_intermediate_split /
+    # st_gas_intermediate_split. Default off (prior keeper unchanged) until
+    # re-solved.
+    cc_intermediate_split: bool = False
+    cc_intermediate_cf_threshold: float = 50.0
 
     # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
     # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the
@@ -2859,6 +2911,8 @@ TIER_TAGS: dict[str, int] = {
     "miso_firm_imports": 1,
     "miso_seam_flow_limit": 1,
     "miso_seam_flow_percentile": 3,
+    "miso_seam_export_limit": 1,
+    "miso_pjm_border_anchor": 1,
     "miso_temp_reliability_floor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
@@ -2866,6 +2920,8 @@ TIER_TAGS: dict[str, int] = {
     "ct_intermediate_cf_threshold": 3,
     "st_gas_intermediate_split": 1,
     "st_gas_intermediate_cf_threshold": 3,
+    "cc_intermediate_split": 1,
+    "cc_intermediate_cf_threshold": 3,
     "gas_st_startup_cost": 3,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
