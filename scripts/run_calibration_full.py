@@ -1720,6 +1720,7 @@ def solve_and_persist(
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
+    miso_seam_export_limit: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1923,6 +1924,7 @@ def solve_and_persist(
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
             miso_seam_flow_percentile=miso_seam_flow_percentile,
+            miso_seam_export_limit=miso_seam_export_limit,
             miso_temp_reliability_floor=miso_temp_reliability_floor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -2179,6 +2181,7 @@ def solve_and_persist(
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
+        "miso_seam_export_limit": miso_seam_export_limit,
         "miso_temp_reliability_floor": miso_temp_reliability_floor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -2434,6 +2437,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             miso_seam_flow_percentile=float(miso_seam_flow_percentile)
         )
+    if miso_seam_export_limit:
+        recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
     if miso_temp_reliability_floor:
         recorded_cfg = recorded_cfg.with_overrides(miso_temp_reliability_floor=True)
     if miso_cc_coal_rebalance:
@@ -5608,6 +5613,23 @@ def main() -> None:
         "residual; only bites with --miso-seam-flow-limit. MISO-only.",
     )
     parser.add_argument(
+        "--miso-seam-export-limit",
+        action="store_true",
+        help="MISO reference-price seam EXPORT cap — the symmetric mirror of "
+        "--miso-seam-flow-limit. Bound each seam's (PJM/SPP/South) net EXPORT at "
+        "the MEASURED EIA-930 BA-to-BA net-export envelope (per (month x hour-of-"
+        "day) p90 of the directed flow). Fixes the structural over-export: the "
+        "priced seam exports cheap MISO coal back over every border whenever a "
+        "neighbor's price exceeds MISO's, but MISO reliably net-IMPORTS over the "
+        "eastern PJM seam and cannot net-export there. Raising the export bands' "
+        "lower bound clips the PJM seam toward ~0 export while SPP/South keep "
+        "their measured export headroom. A transfer-capability proxy from the "
+        "directed-flow series, reproducible for a forward year and flow-"
+        "responsive, NOT fitted to the net-MWh residual. Shares "
+        "--miso-seam-flow-percentile with the import cap. Requires "
+        "--reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--miso-temp-reliability-floor",
         action="store_true",
         help="MISO dual-limb, ZONAL weather-correlated reliability floor (the "
@@ -5941,6 +5963,7 @@ def main() -> None:
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
+        miso_seam_export_limit=args.miso_seam_export_limit,
         miso_temp_reliability_floor=args.miso_temp_reliability_floor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
