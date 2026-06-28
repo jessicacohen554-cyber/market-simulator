@@ -1644,6 +1644,8 @@ def solve_and_persist(
     coal_sync_srmc_tranche: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
+    cc_intermediate_split: bool = False,
+    cc_intermediate_cf_threshold: float | None = None,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
@@ -1850,6 +1852,8 @@ def solve_and_persist(
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
             ct_intermediate_split=ct_intermediate_split,
             ct_intermediate_cf_threshold=ct_intermediate_cf_threshold,
+            cc_intermediate_split=cc_intermediate_split,
+            cc_intermediate_cf_threshold=cc_intermediate_cf_threshold,
             st_gas_intermediate=st_gas_intermediate,
             st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
@@ -2092,6 +2096,8 @@ def solve_and_persist(
         "coal_sync_srmc_tranche": coal_sync_srmc_tranche,
         "ct_intermediate_split": ct_intermediate_split,
         "ct_intermediate_cf_threshold": ct_intermediate_cf_threshold,
+        "cc_intermediate_split": cc_intermediate_split,
+        "cc_intermediate_cf_threshold": cc_intermediate_cf_threshold,
         "st_gas_intermediate": st_gas_intermediate,
         "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
@@ -2450,6 +2456,12 @@ def solve_and_persist(
     if ct_intermediate_cf_threshold is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if cc_intermediate_split:
+        recorded_cfg = recorded_cfg.with_overrides(cc_intermediate_split=True)
+    if cc_intermediate_cf_threshold is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
     if st_gas_intermediate:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4400,6 +4412,27 @@ def main() -> None:
         "capacity factor are treated as intermediate-duty.",
     )
     parser.add_argument(
+        "--cc-intermediate-split",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Route baseload-duty combined-cycle plants (measured CAMPD median "
+        "CF >= the threshold) to the flatter CC_INTERMEDIATE offer curve so the "
+        "upper operating-range tranches clear, instead of the CC_REGULAR curve "
+        "(fit to ERCOT's duct-fire-heavy peaker CCs) whose rising econ ramp "
+        "over-prices an already-committed baseload CC and under-runs the fleet "
+        "(the MISO 2023/2024 gas-CC under-run). Flattens only the econ ramp to "
+        "the measured near-baseload incremental cost; the physical duct-burner "
+        "peak is unchanged. MISO cohort (fleet.cc_intermediate_plants).",
+    )
+    parser.add_argument(
+        "--cc-intermediate-cf-threshold",
+        type=float,
+        default=None,
+        help="Median-CF cut (percent) for the --cc-intermediate-split cohort "
+        "(default 50.0): CC_REGULAR units at or above this measured CAMPD median "
+        "capacity factor are treated as baseload-duty.",
+    )
+    parser.add_argument(
         "--st-gas-intermediate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -5875,6 +5908,8 @@ def main() -> None:
         coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
         ct_intermediate_split=args.ct_intermediate_split,
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
+        cc_intermediate_split=args.cc_intermediate_split,
+        cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
