@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-27-caiso-5-chp-steam",
+  "label": "caiso 5 chp steam",
+  "date": "2026-06-27",
+  "shorthand": "caiso-5-chp-steam",
+  "definition": "Calibration run from bundle caiso_step5_chp_steam_credit.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-27-caiso-5-chp-steam.js",
+  "bundle": "results/calibration/caiso_step5_chp_steam_credit"
+}
