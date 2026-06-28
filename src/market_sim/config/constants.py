@@ -2662,6 +2662,22 @@ class NeighborInterface:
     border_zones: tuple[str, ...]
     proxy_ba: str | None = None
     load_shape_exponent: float = 1.0
+    # Load-shape driver for the neighbor's price shape: "gross" (the neighbor's
+    # own demand, the default and the only mode PJM/MISO use) or "net" (demand −
+    # solar − wind). "net" is for a solar-driven neighbor whose midday price
+    # trough rides the solar glut, not a gross-load peak — the CAISO desert-SW
+    # (Palo Verde) corridor, proxied off the CISO extract. Defaulting to "gross"
+    # keeps every existing seam byte-identical.
+    load_shape_kind: str = "gross"
+    # Optional CO2 emission factor (tCO2/MWh) of the seam's MARGINAL import for a
+    # border-carbon adjustment on the IMPORT leg (CAISO/CARB only). When set and a
+    # carbon price is in force, the import tranche pays
+    # ``border_adder × (import_emission_factor / CARB_UNSPECIFIED_IMPORT_EF)`` on
+    # top of the neighbor price + hurdle, mirroring build_import_generators'
+    # per-tranche EF scaling. ``None`` (every PJM/MISO seam) adds no carbon, so
+    # those seams stay byte-identical. The export leg never pays it (exports carry
+    # no CA compliance cost).
+    import_emission_factor: float | None = None
     hr_by_year: dict[int, float] | None = field(default=None, compare=False)
     firm_export_floor_by_year: dict[int, float] | None = field(
         default=None, compare=False
@@ -3031,6 +3047,57 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=3000.0,
             border_zones=("MISO-South",),
             load_shape_exponent=1.0,
+        ),
+    ],
+    # CAISO WECC seams (CAISO is a large structural net IMPORTER): the Pacific-NW
+    # at the Malin/COI hub (WECC_PNW → NP15) and the desert-SW at the Palo Verde /
+    # Path-46 hub (WECC_DSW → SP15). The forecast-grade replacement for the
+    # measured per-hub OASIS ladder (`caiso_per_hub_intertie`): the same forward-
+    # native (HH+basis)×HR×load-shape construction the PJM/MISO seams use, so the
+    # seam prices BOTH import and export legs in every year (no OASIS gap) and the
+    # export leg clears at hub − hurdle — the price a WECC neighbor pays for
+    # CAISO's midday solar surplus, the structural fix for "model never exports".
+    # The neighbor name IS the external corridor zone (the per-hub split creates
+    # WECC_PNW / WECC_DSW), so build_reference_price_node lands each corridor's
+    # tranches on its own link and the per-corridor ATC envelope
+    # (caiso_corridor_flow_limit) caps each independently. Gated on the dedicated
+    # `caiso_reference_price_seam` flag (default off → byte-identical). Per-year
+    # HR anchors and structural means: scripts/derive_caiso_seam_hr_by_year.py
+    # (measured Malin/Palo-Verde annual-mean RT LMP / delivered gas; rule #12,
+    # blind to CAISO's flow — rule #11). hr_by_year[2023] is anchored on the
+    # ~7,056 h of OASIS coverage that year (Jan–Feb aged out of retention), a
+    # measured-shape caveat documented here; the load shape itself is complete
+    # (CISO EIA-930), so 2023 is fully live.
+    "CAISO": [
+        NeighborInterface(
+            name="WECC_DSW",
+            ba_code="SRP",  # Arizona BA proxying the Palo Verde hub
+            # Only the CISO EIA-930 extract exists in-repo; the desert-SW shares
+            # CAISO's solar resource / time zone, so it proxies the shape.
+            proxy_ba="CISO",
+            gas_basis=0.30,  # desert-SW Permian/El-Paso ~flat-to-premium
+            marginal_heat_rate=12.97,  # mean of per-year Palo Verde anchors
+            hurdle=4.0,  # Path-46/WOR OATT PTP wheel (loss carried in hub LMP)
+            interface_limit_mw=10623.0,  # Path-46/WOR TTC (ATC envelope caps flow)
+            border_zones=("SP15",),
+            load_shape_kind="net",  # solar-driven midday net-load trough
+            load_shape_exponent=1.0,
+            import_emission_factor=0.37,  # desert-SW marginal CCGT (CARB border)
+            hr_by_year={2023: 17.01, 2024: 13.39, 2025: 8.50},
+        ),
+        NeighborInterface(
+            name="WECC_PNW",
+            ba_code="BPAT",  # Bonneville (the dominant PNW / Malin hub)
+            proxy_ba="CISO",
+            gas_basis=-0.30,  # PNW Sumas/Stanfield discount to Henry Hub
+            marginal_heat_rate=18.50,  # mean of per-year Malin anchors
+            hurdle=3.0,  # COI/Path-66 OATT PTP wheel (BPA + PacifiCorp)
+            interface_limit_mw=4800.0,  # COI/Path-66 TTC
+            border_zones=("NP15",),
+            load_shape_kind="gross",  # hydro-following; no solar midday trough
+            load_shape_exponent=1.0,
+            import_emission_factor=0.0,  # firm PNW hydro — specified, zero-EF
+            hr_by_year={2023: 22.50, 2024: 21.20, 2025: 11.80},
         ),
     ],
 }

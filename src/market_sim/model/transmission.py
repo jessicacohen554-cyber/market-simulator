@@ -945,9 +945,15 @@ def build_reference_price_node(iso: str) -> list[Generator]:
     from market_sim.config.constants import INTERFACE_NEIGHBORS
     from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
-    zone = IMPORT_ZONE.get(iso)
+    import_zone = IMPORT_ZONE.get(iso)
     gens: list[Generator] = []
     for neighbor in INTERFACE_NEIGHBORS.get(iso, []):
+        # CAISO lands each corridor's tranches in its OWN external corridor zone
+        # (the neighbor name IS the per-hub zone WECC_DSW / WECC_PNW, created by
+        # split_caiso_import_node_per_hub), so the corridor link and its ATC
+        # envelope cap each corridor independently. Every other ISO uses the
+        # single appended external node (byte-identical).
+        zone = neighbor.name if iso == "CAISO" else import_zone
         # Split each direction into SEAM_FLOW_TRANCHES bands of equal width so
         # the flow-responsive injector can price each band at its midpoint flow
         # along the neighbor's supply curve. The bands sum to the interface
@@ -989,6 +995,7 @@ def inject_reference_price_mc(
     iso: str,
     year: int,
     gas_scenario: str = "mid",
+    carbon_price: float = 0.0,
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
@@ -1006,10 +1013,23 @@ def inject_reference_price_mc(
     to the flat capacity-weighted aggregate (every band at the same price — no
     slope). Modifies ``mc`` in place.
 
+    ``carbon_price`` (> 0 only for the CAISO/CARB seam) adds a border-carbon
+    adjustment to each IMPORT tranche whose neighbor carries an
+    ``import_emission_factor``:
+    ``wecc_border_carbon_adder(carbon_price) × (EF / CARB_UNSPECIFIED_IMPORT_EF)``
+    — the same per-resource EF scaling :func:`build_import_generators` applies, so
+    a clean PNW-hydro corridor (EF 0) pays nothing and a desert-SW gas corridor
+    pays its share. Export legs never pay it (no CA compliance cost). PJM/MISO
+    pass ``carbon_price=0`` (and their neighbors carry no EF), so they are
+    byte-identical.
+
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
     """
-    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.config.constants import (
+        CARB_UNSPECIFIED_IMPORT_EF,
+        INTERFACE_NEIGHBORS,
+    )
     from market_sim.data.neighbor_price import (
         interface_reference_prices,
         seam_tranche_prices,
@@ -1018,6 +1038,7 @@ def inject_reference_price_mc(
     hours = int(mc.shape[1])
     aggregate = interface_reference_prices(iso, year, hours, gas_scenario).aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    border = wecc_border_carbon_adder(carbon_price) if carbon_price > 0.0 else 0.0
     # Cache each neighbor's (export, import) tranche price matrices once.
     tranches: dict[str, tuple | None] = {}
     applied = False
@@ -1038,14 +1059,24 @@ def inject_reference_price_mc(
                 else None
             )
         priced = tranches[name]
-        hurdle = specs[name].hurdle if name in specs else 0.0
+        spec = specs.get(name)
+        hurdle = spec.hurdle if spec is not None else 0.0
+        # CARB border carbon on the import leg only, scaled by the corridor's
+        # marginal-import EF (None / export → 0).
+        carbon_adder = 0.0
+        if (not is_export) and border > 0.0 and spec is not None:
+            ef = getattr(spec, "import_emission_factor", None)
+            if ef is not None:
+                carbon_adder = border * (ef / CARB_UNSPECIFIED_IMPORT_EF)
         if priced is not None:
             export_p, import_p, _ = priced
             band = export_p[k] if is_export else import_p[k]
-            mc[row, :] = band - hurdle if is_export else band + hurdle
+            mc[row, :] = band - hurdle if is_export else band + hurdle + carbon_adder
         elif aggregate is not None:
             # No load shape: flat aggregate, same for every band (no slope).
-            mc[row, :] = aggregate - hurdle if is_export else aggregate + hurdle
+            mc[row, :] = (
+                aggregate - hurdle if is_export else aggregate + hurdle + carbon_adder
+            )
         else:
             continue
         applied = True
