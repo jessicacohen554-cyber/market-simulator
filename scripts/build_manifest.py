@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import base64
 import gzip
+import hashlib
 import json
 import sys
 from datetime import datetime
@@ -226,55 +227,104 @@ def main() -> None:
             f"{BENCH_DIR}/{iso}/ — its runs will not be selectable",
             file=sys.stderr,
         )
+    completeness = _assemble_completeness()
+
+    from scripts.probes._backcast_shell import SHELL
+
+    # Pre-serialize what each data file will carry so the version hash covers the
+    # exact bytes the browser sees, not just the inputs that produced them.
+    meta_js = json.dumps(meta_by_iso, sort_keys=True)
+    manifest_js = json.dumps(entries, sort_keys=True)
+    bench_gz = {i: _gzb64(b) for i, b in bench_by_iso.items()}
+    bench_js = json.dumps(bench_gz, sort_keys=True)
+    completeness_js = json.dumps(completeness, sort_keys=True)
+
+    # Content-hash version stamp. Embedded in BOTH the shell HTML (SHELL_VER)
+    # and manifest.js (DATA_VER); if they don't match, the shell self-heals
+    # via a one-shot reload (see manifest.js prelude below). Hashing the
+    # actual emitted content + the shell template means the hash is stable
+    # across deploys when nothing changed — so a no-op deploy produces a
+    # byte-identical HTML and stops the steady drip of [skip ci] commits.
+    h = hashlib.sha1()
+    h.update(SHELL.encode())
+    h.update(b"|")
+    h.update(meta_js.encode())
+    h.update(b"|")
+    h.update(manifest_js.encode())
+    h.update(b"|")
+    h.update(bench_js.encode())
+    h.update(b"|")
+    h.update(completeness_js.encode())
+    ver = h.hexdigest()[:16]
 
     out_data = site / "frontend" / "data" / "backcast"
     out_data.mkdir(parents=True, exist_ok=True)
+    # Self-healing prelude — runs BEFORE benchmark.js / completeness.js (script
+    # order in the shell) so a stale cached shell paired with a fresh manifest
+    # triggers a single hard reload of the HTML before any downstream code can
+    # crash on a shape-changed window.BC.benchGz / .meta. SHELL_VER is set
+    # inline at the top of the shell HTML; if it is undefined (very old shell
+    # that predates this fix) or simply different from this manifest's
+    # DATA_VER, we replace the URL with a fresh cache-busting query so the
+    # network returns the current HTML. sessionStorage guards against an
+    # infinite loop if the upstream HTML is itself wedged stale.
+    prelude = (
+        f'window.BC=window.BC||{{}};window.BC.DATA_VER="{ver}";'
+        "(function(){if(window.BC.SHELL_VER===window.BC.DATA_VER)return;"
+        'try{var k="bc_shell_reload_"+window.BC.DATA_VER;'
+        "if(sessionStorage.getItem(k))return;"
+        'sessionStorage.setItem(k,"1");'
+        "var u=location.pathname+'?_='+Date.now()+location.hash;"
+        "location.replace(u);"
+        "}catch(e){}})();"
+    )
     (out_data / "manifest.js").write_text(
-        "window.BC=window.BC||{};window.BC.meta="
-        + json.dumps(meta_by_iso)
+        prelude
+        + "window.BC.meta="
+        + meta_js
         + ";window.BC.manifest="
-        + json.dumps(entries)
+        + manifest_js
         + ";"
     )
     (out_data / "benchmark.js").write_text(
-        "window.BC=window.BC||{};window.BC.benchGz="
-        + json.dumps({i: _gzb64(b) for i, b in bench_by_iso.items()})
-        + ";"
+        "window.BC=window.BC||{};window.BC.benchGz=" + bench_js + ";"
     )
     # EIA-923 completeness map (window.BC.completeness): per-(year, ISO, class)
     # status the mix table uses to color-code incomplete-plant-data classes in a
     # preliminary vintage. Generated from the committed completeness parts.
     (out_data / "completeness.js").write_text(
-        "window.BC=window.BC||{};window.BC.completeness="
-        + json.dumps(_assemble_completeness())
-        + ";"
+        "window.BC=window.BC||{};window.BC.completeness=" + completeness_js + ";"
     )
 
-    from scripts.probes._backcast_shell import SHELL
-
-    # Cache-busting token appended to every data-script src so each deploy
-    # forces the CDN and browser to fetch fresh versions — prevents the stale-
-    # benchmark.js class of "Init error: undefined is not an object" crashes.
-    # Each tag also carries an onerror that records the failure into
-    # window.BC._loadErr so boot() can report exactly which files failed.
-    cb = datetime.now().strftime("%Y%m%d%H%M%S")
+    # Cache-busting query strings now use the content hash, so they only change
+    # when content actually changes — the deploy step that writes back into the
+    # repo only commits on real updates (the per-deploy timestamp was forcing a
+    # no-op commit every deploy). Each tag carries an onerror that records the
+    # failure into window.BC._loadErr so boot() can report which files failed.
     _onerr = 'onerror="window.BC._loadErr.push(this.src)"'
+    # User-visible "as of" stamp — the newest registered run's date is what
+    # actually changed; that keeps the HTML byte-identical across deploys when
+    # no new run landed, while still telling the reader how fresh the data is.
+    as_of = max(
+        (e.get("date") or "" for e in entries), default=""
+    ) or datetime.now().strftime("%Y-%m-%d")
     shell = (
         SHELL.replace(
             "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
         )
         .replace(
             "__DATASCRIPTS__",
-            f'<script src="frontend/data/backcast/manifest.js?v={cb}" {_onerr}>'
+            f'<script src="frontend/data/backcast/manifest.js?v={ver}" {_onerr}>'
             "</script>"
-            f'<script src="frontend/data/backcast/benchmark.js?v={cb}" {_onerr}>'
+            f'<script src="frontend/data/backcast/benchmark.js?v={ver}" {_onerr}>'
             "</script>"
-            f'<script src="frontend/data/backcast/completeness.js?v={cb}" {_onerr}>'
+            f'<script src="frontend/data/backcast/completeness.js?v={ver}" {_onerr}>'
             "</script>"
-            f'<script src="frontend/data/backcast/status.js?v={cb}" {_onerr}>'
+            f'<script src="frontend/data/backcast/status.js?v={ver}" {_onerr}>'
             "</script>",
         )
-        .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M"))
+        .replace("__SHELL_VER__", ver)
+        .replace("__GEN__", as_of)
     )
     (site / "backcast-results.html").write_text(shell)
     print(
