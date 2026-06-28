@@ -1644,6 +1644,8 @@ def solve_and_persist(
     coal_sync_srmc_tranche: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
+    cc_intermediate_split: bool = False,
+    cc_intermediate_cf_threshold: float | None = None,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
@@ -1720,6 +1722,8 @@ def solve_and_persist(
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
+    miso_seam_export_limit: bool = False,
+    miso_pjm_border_anchor: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1849,6 +1853,8 @@ def solve_and_persist(
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
             ct_intermediate_split=ct_intermediate_split,
             ct_intermediate_cf_threshold=ct_intermediate_cf_threshold,
+            cc_intermediate_split=cc_intermediate_split,
+            cc_intermediate_cf_threshold=cc_intermediate_cf_threshold,
             st_gas_intermediate=st_gas_intermediate,
             st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
@@ -1923,6 +1929,8 @@ def solve_and_persist(
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
             miso_seam_flow_percentile=miso_seam_flow_percentile,
+            miso_seam_export_limit=miso_seam_export_limit,
+            miso_pjm_border_anchor=miso_pjm_border_anchor,
             miso_temp_reliability_floor=miso_temp_reliability_floor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -2090,6 +2098,8 @@ def solve_and_persist(
         "coal_sync_srmc_tranche": coal_sync_srmc_tranche,
         "ct_intermediate_split": ct_intermediate_split,
         "ct_intermediate_cf_threshold": ct_intermediate_cf_threshold,
+        "cc_intermediate_split": cc_intermediate_split,
+        "cc_intermediate_cf_threshold": cc_intermediate_cf_threshold,
         "st_gas_intermediate": st_gas_intermediate,
         "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
@@ -2179,6 +2189,8 @@ def solve_and_persist(
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
+        "miso_seam_export_limit": miso_seam_export_limit,
+        "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_temp_reliability_floor": miso_temp_reliability_floor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -2434,6 +2446,10 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             miso_seam_flow_percentile=float(miso_seam_flow_percentile)
         )
+    if miso_seam_export_limit:
+        recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
+    if miso_pjm_border_anchor:
+        recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
     if miso_temp_reliability_floor:
         recorded_cfg = recorded_cfg.with_overrides(miso_temp_reliability_floor=True)
     if miso_cc_coal_rebalance:
@@ -2445,6 +2461,12 @@ def solve_and_persist(
     if ct_intermediate_cf_threshold is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if cc_intermediate_split:
+        recorded_cfg = recorded_cfg.with_overrides(cc_intermediate_split=True)
+    if cc_intermediate_cf_threshold is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
     if st_gas_intermediate:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4395,6 +4417,27 @@ def main() -> None:
         "capacity factor are treated as intermediate-duty.",
     )
     parser.add_argument(
+        "--cc-intermediate-split",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Route baseload-duty combined-cycle plants (measured CAMPD median "
+        "CF >= the threshold) to the flatter CC_INTERMEDIATE offer curve so the "
+        "upper operating-range tranches clear, instead of the CC_REGULAR curve "
+        "(fit to ERCOT's duct-fire-heavy peaker CCs) whose rising econ ramp "
+        "over-prices an already-committed baseload CC and under-runs the fleet "
+        "(the MISO 2023/2024 gas-CC under-run). Flattens only the econ ramp to "
+        "the measured near-baseload incremental cost; the physical duct-burner "
+        "peak is unchanged. MISO cohort (fleet.cc_intermediate_plants).",
+    )
+    parser.add_argument(
+        "--cc-intermediate-cf-threshold",
+        type=float,
+        default=None,
+        help="Median-CF cut (percent) for the --cc-intermediate-split cohort "
+        "(default 50.0): CC_REGULAR units at or above this measured CAMPD median "
+        "capacity factor are treated as baseload-duty.",
+    )
+    parser.add_argument(
         "--st-gas-intermediate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -5608,6 +5651,39 @@ def main() -> None:
         "residual; only bites with --miso-seam-flow-limit. MISO-only.",
     )
     parser.add_argument(
+        "--miso-seam-export-limit",
+        action="store_true",
+        help="MISO reference-price seam EXPORT cap — the symmetric mirror of "
+        "--miso-seam-flow-limit. Bound each seam's (PJM/SPP/South) net EXPORT at "
+        "the MEASURED EIA-930 BA-to-BA net-export envelope (per (month x hour-of-"
+        "day) p90 of the directed flow). Fixes the structural over-export: the "
+        "priced seam exports cheap MISO coal back over every border whenever a "
+        "neighbor's price exceeds MISO's, but MISO reliably net-IMPORTS over the "
+        "eastern PJM seam and cannot net-export there. Raising the export bands' "
+        "lower bound clips the PJM seam toward ~0 export while SPP/South keep "
+        "their measured export headroom. A transfer-capability proxy from the "
+        "directed-flow series, reproducible for a forward year and flow-"
+        "responsive, NOT fitted to the net-MWh residual. Shares "
+        "--miso-seam-flow-percentile with the import cap. Requires "
+        "--reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
+        "--miso-pjm-border-anchor",
+        action="store_true",
+        help="Re-anchor the MISO eastern PJM seam from PJM's SYSTEM-average "
+        "realized LMP to its MISO-facing WESTERN border hubs (ComEd / AEP-Ohio / "
+        "ATSI; constants.MISO_PJM_BORDER_HR_BY_YEAR). The import mirror of the "
+        "pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears against western "
+        "PJM, which prices below the eastern-load-weighted system average, so the "
+        "system anchor over-prices the import and MISO under-imports over its "
+        "largest seam (2024 -15 vs measured -23, 2025 -3 vs -19 TWh). The per-year "
+        "border HR is system_HR x (mean border-hub LMP / system LMP); the discount "
+        "deepens in tight years so 2023 (already matched) barely moves while "
+        "2024/2025 clear more import up to the measured deliverability cap. "
+        "Measured neighbor price-formation (rule #12), blind to MISO's flow "
+        "(rule #11). Requires --reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--miso-temp-reliability-floor",
         action="store_true",
         help="MISO dual-limb, ZONAL weather-correlated reliability floor (the "
@@ -5853,6 +5929,8 @@ def main() -> None:
         coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
         ct_intermediate_split=args.ct_intermediate_split,
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
+        cc_intermediate_split=args.cc_intermediate_split,
+        cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
@@ -5941,6 +6019,8 @@ def main() -> None:
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
+        miso_seam_export_limit=args.miso_seam_export_limit,
+        miso_pjm_border_anchor=args.miso_pjm_border_anchor,
         miso_temp_reliability_floor=args.miso_temp_reliability_floor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
