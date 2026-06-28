@@ -1,5 +1,13 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
+<!-- Never serve the shell HTML from a stale cache: paired with the
+     content-hash SHELL_VER / DATA_VER stamps below, this keeps a long-lived
+     browser tab from rendering an out-of-date shell against freshly-fetched
+     data scripts (the class of crashes that produced
+     "undefined is not an object (evaluating 'window.BC.benchGz[iso]')"). -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Backcast Results — Run Report</title>
 <link rel=stylesheet href="frontend/css/style.css">
 <style>
@@ -186,7 +194,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 2px">
    <h1 style="font-size:var(--fs-xl);margin:0">Backcast Results</h1>
    <span id=isoBadge class=isobadge></span></div>
-  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-28 04:42</p>
+  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · latest run 2026-06-28</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top id=bcTop>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -199,8 +207,8 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </main>
 </div>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-<script>window.BC=window.BC||{};window.BC._loadErr=[];</script>
-<script src="frontend/data/backcast/manifest.js?v=20260628044239" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/benchmark.js?v=20260628044239" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/completeness.js?v=20260628044239" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/status.js?v=20260628044239" onerror="window.BC._loadErr.push(this.src)"></script>
+<script>window.BC=window.BC||{};window.BC._loadErr=[];window.BC.SHELL_VER="b868eafe395e55f1";</script>
+<script src="frontend/data/backcast/manifest.js?v=b868eafe395e55f1" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/benchmark.js?v=b868eafe395e55f1" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/completeness.js?v=b868eafe395e55f1" onerror="window.BC._loadErr.push(this.src)"></script><script src="frontend/data/backcast/status.js?v=b868eafe395e55f1" onerror="window.BC._loadErr.push(this.src)"></script>
 <script>
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const NS="http://www.w3.org/2000/svg",T=8760;
