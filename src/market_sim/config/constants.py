@@ -2834,22 +2834,23 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             name="NYISO",
             ba_code="NYIS",
             gas_basis=GAS_BASIS_DIFFERENTIAL["NYISO"],
-            marginal_heat_rate=13.1,
+            marginal_heat_rate=10.4,
             hurdle=1.0,
             interface_limit_mw=3900.0,
             border_zones=("PJM_EMAAC",),
             load_shape_exponent=1.63,
-            # Per-year measured anchor (derive_neighbor_hr_by_year.py): NYISO's
-            # LMP/HH ratio is the least stable seam (downstate congestion/
-            # scarcity), so the 13.1 mean badly over-prices cheap-2023 (measured
-            # 9.7) and under-prices tight-2025 (14.7). Anchored to the measured
-            # NYISO RT LMP each year. Smallest PJM seam (EMAAC only). CAVEAT: this
-            # is NYISO's NYC-weighted SYSTEM-average LMP, not the PJM-NY (west-NY)
-            # BORDER the seam physically clears against; the system average is
-            # congestion-inflated in tight hours, so the economic seam still
-            # over-exports NY in dear-2025 (the scope-B border-price re-anchor is
-            # a follow-up, gated on a committed west-NY hourly LMP extract).
-            hr_by_year={2023: 9.66, 2024: 12.92, 2025: 14.67},
+            # Per-year BORDER-PROXY anchor: NYISO Zone A (WEST) RT LMP, not the
+            # system average. PJM-NY exports clear at the west-NY border, not the
+            # NYC-weighted system average which is congestion-inflated by Zone J/K
+            # import constraints. The WEST/system ratio (same-month matching from
+            # NYISO dartmonthlylmpindex zonal CSVs, 2023-25) is 0.895/0.840/0.790
+            # — deepening in tight years as NYC congestion widens. Border HR =
+            # system_HR × ratio. Source: data/raw/lmp-data/NYISO/*realtime_zone*
+            # (Zone A = WEST hourly RT LMP). The 10.4 structural mean = average of
+            # border-proxy HRs (8.65/10.85/11.59). 2025 ratio (0.790) from Aug-Sep
+            # only — less reliable, but directionally consistent with the
+            # structural story (deeper discount when NYC congestion is extreme).
+            hr_by_year={2023: 8.65, 2024: 10.85, 2025: 11.59},
             # Firm scheduled-export floor (derive_firm_export_floor.py, p10 of
             # PJM's measured per-tie SCHEDULED export). NYISO export is firm-
             # dominated (100% of hours, a stable ~900-1650 MW scheduled base), so
