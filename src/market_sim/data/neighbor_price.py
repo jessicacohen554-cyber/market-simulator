@@ -246,13 +246,25 @@ def _neighbor_load(
     sliced to the model's clock. Returns ``None`` when neither extract yields a
     usable ``(hours,)`` series.
     """
+    kind = getattr(neighbor, "load_shape_kind", "gross")
     for ba in (neighbor.ba_code, neighbor.proxy_ba):
         if ba is None:
             continue
         frame = _eia_hourly_frame_filled(ba, year)
         if frame is None or "Demand" not in frame.columns:
             continue
-        load = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+        demand = pd.to_numeric(frame["Demand"], errors="coerce")
+        driver = demand
+        if kind == "net":
+            # Net load = demand − utility solar − wind, so a solar-driven
+            # neighbor's price troughs midday with the solar glut rather than
+            # tracking a gross-load peak (the desert-SW / Palo Verde corridor,
+            # proxied off the CISO extract). Gross neighbors (every PJM/MISO
+            # seam) skip this branch and stay byte-identical.
+            solar = pd.to_numeric(frame.get("NG: SUN"), errors="coerce").fillna(0.0)
+            wind = pd.to_numeric(frame.get("NG: WND"), errors="coerce").fillna(0.0)
+            driver = demand - solar - wind
+        load = driver.interpolate().bfill().ffill().to_numpy(dtype=float)
         # The extract is on the model's 8760 clock; a short-horizon run (hours
         # < 8760) takes the leading window, matching how demand is sliced. A
         # run asking for MORE hours than the extract has is unservable.
