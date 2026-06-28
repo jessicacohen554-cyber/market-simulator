@@ -150,7 +150,17 @@ checkout does not fetch. So when a keeper changes:
 
 1. Update the current keeper run id for that ISO in
    `frontend/data/backcast/keepers.json`.
-2. Regenerate + commit the status data (re-runs `calibration_verdict.py` for
+2. **Run the keeper-text auditor.** Editing `keepers.json` fires the
+   `keeper-audit.sh` PostToolUse hook, which asks you to launch the
+   `calibration-keeper-auditor` subagent (Agent tool, `subagent_type:
+   calibration-keeper-auditor`). It runs `scripts/audit_keepers.py` to confirm
+   every keeper's run-report header (its registry-sidecar `definition`) and the
+   Calibration Status page still match the keeper's actual results, repairs any
+   placeholder/stale text, and rebuilds `status.js`. You can also run it directly:
+   ```bash
+   python scripts/audit_keepers.py            # exits 1 on any FAIL
+   ```
+3. Regenerate + commit the status data (re-runs `calibration_verdict.py` for
    every keeper, so the page can never disagree with the gate):
    ```bash
    python scripts/build_status.py
