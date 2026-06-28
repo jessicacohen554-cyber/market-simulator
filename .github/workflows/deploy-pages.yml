@@ -19,11 +19,18 @@ on:
   push:
     branches: [main]
     # Any merge that changes what the site serves, including new calibration
-    # runs (their sidecar/payload/bench parts live under frontend/).
+    # runs (their sidecar/payload/bench parts live under frontend/), AND the
+    # build scripts / shell template that produce the generated dashboard files.
+    # Missing the shell template from this list was the root cause of the stale-
+    # HTML "Init error: undefined is not an object (benchGz)" bug — the template
+    # gained ensureData() / guards but the deploy never fired to pick them up.
     paths:
       - "*.html"
       - "frontend/**"
       - "learning-hub/**"
+      - "scripts/probes/_backcast_shell.py"
+      - "scripts/build_manifest.py"
+      - "scripts/build_status.py"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch: {}
   # Calibration run / Bulk-merge push to main with GITHUB_TOKEN, whose pushes
@@ -100,23 +107,26 @@ jobs:
         # serves a real page too (not a 404), but only THIS workflow writes them:
         # it is the single writer on main, so calibration-run PRs never touch them
         # and merge conflict-free. Regenerate into the working tree (repo root)
-        # and commit only when the data (manifest/benchmark) actually changed —
-        # the per-deploy timestamp in the HTML alone is not worth a commit. A push
-        # by GITHUB_TOKEN does not re-trigger this workflow (GitHub's recursion
-        # guard), so there is no deploy loop.
+        # and commit only when the data (manifest/benchmark/completeness) or the
+        # shell template actually changed — the per-deploy timestamp in the HTML
+        # alone is not worth a commit. A push by GITHUB_TOKEN does not re-trigger
+        # this workflow (GitHub's recursion guard), so there is no deploy loop.
         run: |
           set -euo pipefail
           python3 scripts/build_manifest.py
-          if git diff --quiet -- frontend/data/backcast/manifest.js \
-                                 frontend/data/backcast/benchmark.js; then
-            echo "Dashboard data unchanged — nothing to commit."
+          if git diff --quiet -- backcast-results.html \
+                                 frontend/data/backcast/manifest.js \
+                                 frontend/data/backcast/benchmark.js \
+                                 frontend/data/backcast/completeness.js; then
+            echo "Dashboard files unchanged — nothing to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add backcast-results.html \
                   frontend/data/backcast/manifest.js \
-                  frontend/data/backcast/benchmark.js
+                  frontend/data/backcast/benchmark.js \
+                  frontend/data/backcast/completeness.js
           git commit -m "dashboard: refresh generated files [skip ci]"
           for i in 1 2 3 4; do
             git pull --rebase origin main \
