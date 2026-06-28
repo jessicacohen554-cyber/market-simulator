@@ -1708,6 +1708,7 @@ def solve_and_persist(
     caiso_corridor_flow_limit: bool | None = None,
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
+    caiso_reference_price_seam: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1735,11 +1736,12 @@ def solve_and_persist(
         # the bundle's zone set and demand frames follow the extended
         # topology so they match run_year's solve.
         iso_config = extend_with_import_node(iso_config)
-        if caiso_per_hub_intertie and iso == "CAISO":
+        if (caiso_per_hub_intertie or caiso_reference_price_seam) and iso == "CAISO":
             # Split WECC_import into the two per-hub corridors so this caller's
             # zone_names / must-run / report frames match run_year's solve
-            # (run_year applies the same split idempotently). See
-            # transmission.split_caiso_import_node_per_hub.
+            # (run_year applies the same split idempotently). Both the measured
+            # per-hub path and the forward reference-price seam ride the corridor
+            # split. See transmission.split_caiso_import_node_per_hub.
             from market_sim.model.transmission import split_caiso_import_node_per_hub
 
             iso_config = split_caiso_import_node_per_hub(iso_config)
@@ -1906,6 +1908,7 @@ def solve_and_persist(
             caiso_corridor_flow_limit=caiso_corridor_flow_limit,
             caiso_intertie_reference_price=caiso_intertie_reference_price,
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
+            caiso_reference_price_seam=caiso_reference_price_seam,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
@@ -2158,6 +2161,7 @@ def solve_and_persist(
         "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
         "caiso_intertie_reference_price": caiso_intertie_reference_price,
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
+        "caiso_reference_price_seam": caiso_reference_price_seam,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
@@ -2381,6 +2385,10 @@ def solve_and_persist(
     if caiso_corridor_atc_forward is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_corridor_atc_forward=caiso_corridor_atc_forward
+        )
+    if caiso_reference_price_seam is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_reference_price_seam=caiso_reference_price_seam
         )
     if nyiso_local_selfsupply is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5456,6 +5464,24 @@ def main() -> None:
         "limit. CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--caiso-reference-price-seam",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Price BOTH legs of CAISO's two WECC corridors with the forward-"
+        "native reference-price seam (the PJM/MISO INTERFACE_NEIGHBORS "
+        "construction, INTERFACE_NEIGHBORS['CAISO']): per corridor, import + "
+        "export flow tranches priced from (henry_hub[year] + gas_basis) × "
+        "marginal heat rate × load-shape ± hurdle, with the CARB border carbon "
+        "added to the import leg. The export tranches clear at hub − hurdle (the "
+        "price a WECC neighbor pays for CAISO's midday solar surplus), the "
+        "structural fix for the over-import / never-export bias; and the seam "
+        "stays live in every year (no OASIS gap, e.g. 2023). The per-hub corridor "
+        "split + the corridor ATC envelope (--caiso-corridor-flow-limit) still "
+        "apply — the reference price sets the PRICE, the ATC envelope the FLOW "
+        "LIMIT. Supersedes --caiso-per-hub-intertie (mutually exclusive). "
+        "CAISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5890,6 +5916,7 @@ def main() -> None:
         caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,
         caiso_intertie_reference_price=args.caiso_intertie_reference_price,
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
+        caiso_reference_price_seam=args.caiso_reference_price_seam,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
