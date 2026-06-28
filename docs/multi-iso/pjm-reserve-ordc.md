@@ -346,6 +346,53 @@ headroom abundant). Net: the top-tail decompression is now blocked only on
 (a) hardware (a box that fits the per-gen co-opt LP) and (b) the commitment
 posture — not on data or on the reserve-row primitives, both of which are ready.
 
+**Phase 2 re-gate, EMPIRICAL (2026-06-28, pjm-62-price-duration-curve branch).**
+The 2026-06-28 re-gate above made two claims that are now tested with code, not
+asserted — one is **falsified**, the other **confirmed**:
+
+1. **The memory blocker (#3 above) is WRONG — the zone-aggregate co-opt FITS the
+   15 GB box.** A single-year memtest (pjm 61 config + `energy_reserve_coopt`,
+   2024) peaked at **~13.9 GB**, and the full 3-year `pjm 62` run below peaked at
+   **~14.5 GB** (year 2025, the tightest), well under the 15 GB ceiling. Years
+   solve sequentially with memory released between them, so the per-year peak —
+   not a 3-year sum — is what matters. The earlier "OOMs above ~16 GB / cannot run
+   *any* co-opt variant on 15 GB" was stale (likely a heavier earlier config). So
+   the cheap zone-aggregate re-scope was always runnable here; only the **per-gen**
+   `R[g] ≤ ramp10[g]` build remains plausibly memory-heavy (untested).
+
+2. **The deliverable/online scoping (#2 above) was wired and run — and clears
+   $0, exactly as the analytical conclusion predicted.** `pjm 62` (bundle
+   `results/calibration/pjm62_coopt_deliverable`, dashboard
+   `2026-06-28-pjm-62-coopt-deliverable`, registered PROBE) completes the PJM
+   co-opt to ERCOT parity: new `scarcity.pjm_reserve_deliverable_supply_cap_mw`
+   (Σ ramp10[eligible], availability-scaled) + `pjm_reserve_supply_cap` /
+   `pjm_reserve_online_gated` (ρ=1.0) config flags, wired into the
+   `run_calibration` PJM co-opt branch. Run with both on, 2023–2025:
+
+   | year | pjm 62 avg/max $/MWh | pjm 61 energy-only avg/max | reserve_price |
+   |---|---|---|---|
+   | 2023 | 26.42 / 56.50 | 26.42 / 56.50 | $0 every hour |
+   | 2024 | 24.89 / 58.66 | 24.89 / 58.66 | $0 every hour |
+   | 2025 | 35.06 / 76.97 | 35.06 / 76.97 | $0 every hour |
+
+   Identical to the cent. The logged deliverable cap is **~50 GW** (Σ ramp10 over
+   ~2,650 eligible units — CT peakers contribute 100% of pmax, CCs 40%) and the
+   online-gated bound ρ·ΣP is larger still; both sit **~15× above** the ~3.4 GW
+   measured Primary requirement, so the balance row never binds and the published
+   vertical ORDC step never fires — `reserve_price` is $0 in all 8,760 hours of
+   every year (verified in `system.parquet`). This is the empirical confirmation
+   the older note reached by analysis: **no zone-aggregate scoping can price the
+   $75–200 band, because the perfect-foresight LP is not tight.** No breakpoint
+   was lowered and no penalty inflated to force a non-zero (claude.md #11); the
+   honest result is a clean $0.
+
+   Net unchanged: the top-tail decompression is blocked **only** on (a) the
+   per-gen `R[g] ≤ ramp10[g]` co-opt (reserve competing with energy on the same
+   marginal unit) and (b) Phase-1 commitment tightening (so online reserve thins
+   from ~14 GW toward PJM's real ~3 GW). The reserve-row primitives, the
+   deliverable-cap data, AND the 15 GB box are all ready — the remaining blocker
+   is the per-gen build's memory (untested) plus commitment posture, not the box.
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 

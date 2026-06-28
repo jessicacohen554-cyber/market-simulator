@@ -21,6 +21,7 @@ from market_sim.results.scarcity import (
     pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
     pjm_reserve_coopt_inputs,
+    pjm_reserve_deliverable_supply_cap_mw,
 )
 
 _PJM_AS_DIR = RAW_DATA_DIR / "PJM-AS"
@@ -205,6 +206,65 @@ class TestMeasuredRequirementHonestyGate(unittest.TestCase):
         mssc = mean_req / PJM_PRIMARY_RESERVE_LSC_FACTOR
         formula = pjm_primary_reserve_requirement(mssc, len(pr))
         self.assertAlmostEqual(formula[0], mean_req, delta=0.03 * mean_req)
+
+
+class TestPjmReserveDeliverableSupplyCap(unittest.TestCase):
+    """The PJM deliverable (10-min ramp) reserve-supply cap helper."""
+
+    def _fleet(self, ramp10=None):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        wind_idx = FUEL_TYPE_NAMES.index("wind")
+        n, T = 2, 24
+        return FleetArrays(
+            pmax=np.array([400.0, 200.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0]),
+            fuel_type_idx=np.array([gas_idx, wind_idx]),
+            availability=np.ones((n, T)),
+            unit_ids=["g0", "w1"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 200]),
+            ramp10=ramp10,
+        )
+
+    def _config(self, on=True):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(pjm_reserve_supply_cap=on)
+
+    def test_gated_off_returns_none(self):
+        fleet = self._fleet(ramp10=np.array([160.0, 0.0]))
+        self.assertIsNone(
+            pjm_reserve_deliverable_supply_cap_mw(self._config(on=False), fleet, 24)
+        )
+
+    def test_missing_ramp10_returns_none(self):
+        self.assertIsNone(
+            pjm_reserve_deliverable_supply_cap_mw(
+                self._config(on=True), self._fleet(ramp10=None), 24
+            )
+        )
+
+    def test_sums_only_eligible_units(self):
+        # gas-CC (160 MW ramp, eligible) + wind (80 MW ramp, NOT eligible).
+        fleet = self._fleet(ramp10=np.array([160.0, 80.0]))
+        cap = pjm_reserve_deliverable_supply_cap_mw(self._config(), fleet, 24)
+        self.assertEqual(cap.shape, (1, 24))
+        np.testing.assert_allclose(cap, 160.0)  # wind excluded
+
+    def test_availability_scales_deliverable(self):
+        fleet = self._fleet(ramp10=np.array([160.0, 0.0]))
+        fleet.availability[0, :12] = 0.5  # gas unit half-available first 12 h
+        cap = pjm_reserve_deliverable_supply_cap_mw(self._config(), fleet, 24)
+        np.testing.assert_allclose(cap[0, :12], 80.0)
+        np.testing.assert_allclose(cap[0, 12:], 160.0)
 
 
 class TestPjmReserveCooptInputs(unittest.TestCase):
