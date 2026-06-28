@@ -108,9 +108,14 @@ jobs:
         # it is the single writer on main, so calibration-run PRs never touch them
         # and merge conflict-free. Regenerate into the working tree (repo root)
         # and commit only when the data (manifest/benchmark/completeness) or the
-        # shell template actually changed — the per-deploy timestamp in the HTML
-        # alone is not worth a commit. A push by GITHUB_TOKEN does not re-trigger
-        # this workflow (GitHub's recursion guard), so there is no deploy loop.
+        # shell template actually changed. The generator is now content-addressed
+        # (build_manifest.py hashes the emitted bytes for the SHELL_VER/DATA_VER
+        # stamps and uses that hash for the cache-busting query strings and the
+        # newest-run date for the page subtitle), so a no-op deploy regenerates
+        # the files byte-identical and the git-diff check below short-circuits —
+        # no more steady drip of "dashboard: refresh generated files" no-op commits.
+        # A push by GITHUB_TOKEN does not re-trigger this workflow (GitHub's
+        # recursion guard), so there is no deploy loop.
         run: |
           set -euo pipefail
           python3 scripts/build_manifest.py
