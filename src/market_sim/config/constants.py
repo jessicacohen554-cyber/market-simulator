@@ -2822,6 +2822,26 @@ class NeighborInterface:
 #     (CAISO's gross exponent collapses to
 #     0.47 under heavy solar, which is exactly why gross-load convexity is used
 #     ONLY for these low-solar thermal neighbors; CAISO net-load holds at 1.00.)
+# Border-proxy re-anchor for MISO's eastern PJM seam (opt-in via
+# ScenarioConfig.miso_pjm_border_anchor; the import mirror of the pjm58 NYISO-WEST
+# re-anchor). The default PJM hr_by_year above is anchored to PJM's SYSTEM-average
+# realized RT LMP, but the MISO-Central seam physically clears against PJM's
+# WESTERN border zones (ComEd / AEP-Ohio / ATSI), which price BELOW the
+# eastern-load-weighted system average — so the system anchor over-prices the
+# import and MISO under-imports over its largest seam (2024 -15 vs measured -23,
+# 2025 -3 vs -19 TWh net interchange). This table re-anchors the per-year HR to
+# the equal-weight mean of the three MISO-facing PJM generator hubs (CHICAGO GEN /
+# AEP GEN / ATSI GEN, the model's declared border_zones), measured from the PJM
+# RT LMP extract: HR_border[y] = HR_system[y] x (mean border-hub LMP / system LMP).
+# The border discount deepens in the tight years as eastern-PJM congestion widens
+# (ratio 0.981/0.956/0.936 for 2023/2024/2025) — so 2023 (already matched on
+# interchange) barely moves while 2024/2025 cheapen and clear more import up to
+# the measured deliverability cap. A measured neighbor price-formation input
+# (rule #12), blind to MISO's own flow (rule #11 — it reads only PJM zonal LMP).
+# Derived by scripts/derive_miso_pjm_border_hr.py; forward-reproducible.
+MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {2023: 10.99, 2024: 12.90, 2025: 11.40}
+
+
 INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     "PJM": [
         NeighborInterface(
