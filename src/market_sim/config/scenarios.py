@@ -1258,6 +1258,26 @@ class ScenarioConfig:
     # exists 2023+); the cap is physically correct in every ORDC-regime year. The
     # 2025 RTC+B go-live tail (post 2025-12-05) has no measured RTOLCAP and is
     # left uncapped (the cap series fills those hours with no constraint).
+    pjm_reserve_supply_cap: bool = False  # PJM analogue of ercot_reserve_supply_cap:
+    # cap the energy+reserve co-opt's cleared reserve at the fleet's 10-min
+    # DELIVERABLE ramp (FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax,
+    # availability-scaled) instead of total eligible thermal headroom. The bare
+    # PJM co-opt draws reserve on ~38 GW of full-fleet headroom vs the ~3.4 GW
+    # Primary requirement, so the published vertical ORDC step never fires; this
+    # re-scopes reserve SUPPLY to the deliverable slice (scarcity.
+    # pjm_reserve_deliverable_supply_cap_mw). A physical deliverability definition
+    # (ramp × cap), never fitted to the LMP residual. Requires energy_reserve_coopt
+    # + PJM; default off; GATED.
+    pjm_reserve_online_gated: bool = False  # PJM: gate co-opt reserve to ONLINE
+    # (synchronized) capacity — the shared-headroom row becomes
+    # R[z] − ρ·Σ_g P[g] ≤ 0, so an idle (P=0) unit backs no reserve and an online
+    # unit backs ρ × its output. Pairs with pjm_reserve_supply_cap to reproduce
+    # PJM's "online + 10-min-deliverable" reserve measure (the tightest defensible
+    # supply definition, docs/multi-iso/pjm-reserve-ordc.md bind-gate). Requires
+    # energy_reserve_coopt + PJM; default off; GATED.
+    pjm_reserve_online_rho: float = 1.0  # online-headroom multiplier for the gated
+    # PJM reserve class (~ fleet (pmax−pmin)/pmin near min load). Default 1.0 (the
+    # dispatch._build_reserve_rows documented default); not fitted to a residual.
     ercot_as_forward_requirement: bool = False  # ERCOT: set each multi-product AS
     # requirement (RegUp/RRS/ECRS/NonSpin) from a FORWARD formula of forecast
     # drivers — req_product(t) = f(net-load, ramp, VRE-share, net-load
@@ -2864,6 +2884,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_adequacy_frac": 2,
     "ercot_reserve_supply_cap": 1,
     "ercot_reserve_supply_cap_from_year": 1,
+    "pjm_reserve_supply_cap": 1,
+    "pjm_reserve_online_gated": 1,
+    "pjm_reserve_online_rho": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
     "ercot_storage_as_endogenous": 1,
