@@ -1723,6 +1723,7 @@ def solve_and_persist(
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
+    miso_pjm_border_anchor: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1929,6 +1930,7 @@ def solve_and_persist(
             miso_seam_flow_limit=miso_seam_flow_limit,
             miso_seam_flow_percentile=miso_seam_flow_percentile,
             miso_seam_export_limit=miso_seam_export_limit,
+            miso_pjm_border_anchor=miso_pjm_border_anchor,
             miso_temp_reliability_floor=miso_temp_reliability_floor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -2188,6 +2190,7 @@ def solve_and_persist(
         "miso_seam_flow_limit": miso_seam_flow_limit,
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
         "miso_seam_export_limit": miso_seam_export_limit,
+        "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_temp_reliability_floor": miso_temp_reliability_floor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -2445,6 +2448,8 @@ def solve_and_persist(
         )
     if miso_seam_export_limit:
         recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
+    if miso_pjm_border_anchor:
+        recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
     if miso_temp_reliability_floor:
         recorded_cfg = recorded_cfg.with_overrides(miso_temp_reliability_floor=True)
     if miso_cc_coal_rebalance:
@@ -5663,6 +5668,22 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-pjm-border-anchor",
+        action="store_true",
+        help="Re-anchor the MISO eastern PJM seam from PJM's SYSTEM-average "
+        "realized LMP to its MISO-facing WESTERN border hubs (ComEd / AEP-Ohio / "
+        "ATSI; constants.MISO_PJM_BORDER_HR_BY_YEAR). The import mirror of the "
+        "pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears against western "
+        "PJM, which prices below the eastern-load-weighted system average, so the "
+        "system anchor over-prices the import and MISO under-imports over its "
+        "largest seam (2024 -15 vs measured -23, 2025 -3 vs -19 TWh). The per-year "
+        "border HR is system_HR x (mean border-hub LMP / system LMP); the discount "
+        "deepens in tight years so 2023 (already matched) barely moves while "
+        "2024/2025 clear more import up to the measured deliverability cap. "
+        "Measured neighbor price-formation (rule #12), blind to MISO's flow "
+        "(rule #11). Requires --reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--miso-temp-reliability-floor",
         action="store_true",
         help="MISO dual-limb, ZONAL weather-correlated reliability floor (the "
@@ -5999,6 +6020,7 @@ def main() -> None:
         miso_seam_flow_limit=args.miso_seam_flow_limit,
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
         miso_seam_export_limit=args.miso_seam_export_limit,
+        miso_pjm_border_anchor=args.miso_pjm_border_anchor,
         miso_temp_reliability_floor=args.miso_temp_reliability_floor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
