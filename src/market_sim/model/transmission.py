@@ -996,6 +996,7 @@ def inject_reference_price_mc(
     year: int,
     gas_scenario: str = "mid",
     carbon_price: float = 0.0,
+    border_anchor: bool = False,
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
@@ -1023,12 +1024,23 @@ def inject_reference_price_mc(
     pass ``carbon_price=0`` (and their neighbors carry no EF), so they are
     byte-identical.
 
+    ``border_anchor`` (MISO opt-in) re-anchors the PJM seam from PJM's
+    system-average realized LMP to its MISO-facing western border hubs (ComEd /
+    AEP-Ohio / ATSI; :data:`~market_sim.config.constants.MISO_PJM_BORDER_HR_BY_YEAR`)
+    by swapping the PJM spec's ``hr_by_year`` for the lower border table — the
+    cheaper western border clears more import in tight hours (the 2024/2025 MISO
+    import under-run), while 2023 (already matched) barely moves. No-op for every
+    other ISO / when off (byte-identical).
+
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
     """
+    from dataclasses import replace
+
     from market_sim.config.constants import (
         CARB_UNSPECIFIED_IMPORT_EF,
         INTERFACE_NEIGHBORS,
+        MISO_PJM_BORDER_HR_BY_YEAR,
     )
     from market_sim.data.neighbor_price import (
         interface_reference_prices,
@@ -1038,6 +1050,12 @@ def inject_reference_price_mc(
     hours = int(mc.shape[1])
     aggregate = interface_reference_prices(iso, year, hours, gas_scenario).aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    if border_anchor and iso == "MISO" and "PJM" in specs:
+        # Western-border re-anchor: price the PJM seam off its MISO-facing border
+        # hubs (lower than PJM's eastern-weighted system average) so the seam
+        # clears more import. Only the hr_by_year level changes; the load shape,
+        # hurdle and tranche structure are untouched.
+        specs["PJM"] = replace(specs["PJM"], hr_by_year=MISO_PJM_BORDER_HR_BY_YEAR)
     border = wecc_border_carbon_adder(carbon_price) if carbon_price > 0.0 else 0.0
     # Cache each neighbor's (export, import) tranche price matrices once.
     tranches: dict[str, tuple | None] = {}
