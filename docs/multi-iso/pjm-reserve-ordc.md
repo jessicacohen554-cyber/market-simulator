@@ -312,6 +312,40 @@ plant scale are heavier) and is **blocked on ramp-rate data absent from
 inflated. Commitment posture (Phase 1) is the prerequisite lever, coupled with the
 cheap-marginal-coal suppression (`docs/multi-iso/pjm-coal-offer-handoff-2026-06.md`).
 
+**Phase 2 re-gate (2026-06-28, pjm-price-compression-61 branch).** Two of the
+three blockers above have since cleared, but the binding one has not:
+
+1. **Ramp-rate data is no longer absent.** `FleetArrays.ramp10` now exists and is
+   populated (`data/fleet.py`: `RAMP10_FRAC_BY_GROUP`/`RAMP10_FRAC_BY_FUEL` ×
+   `pmax`, wired at build, regenerates for a forecast year). The
+   `R[g] ≤ ramp10[g]` deliverable cap is therefore now buildable from fleet
+   data — the data blocker the 2026-06-22 note recorded is resolved.
+2. **The deliverable/online reserve-scoping mechanisms now exist.**
+   `dispatch._build_reserve_rows` gained an `online_gated`/`online_rho` path
+   (`R[c,z] − ρ·ΣP ≤ 0`, idle capacity contributes no reserve) and a
+   `reserve_supply_cap` re-scope (cap cleared reserve at a measured/deliverable
+   capability instead of full-fleet headroom). ERCOT uses both
+   (`ercot_rtolcap_supply_cap_mw`); PJM's `pjm_reserve_coopt_inputs` + runner
+   branch still pass only the bare `(req, eligible, penalties, widths)`, so PJM
+   is **wired but un-scoped** — it still draws on total zone headroom.
+3. **The memory blocker stands, and it now gates everything.** The zone-aggregate
+   co-opt OOMs above ~16 GB; the 15 GB calibration box cannot run *any* co-opt
+   variant (zone-aggregate or per-gen). So even the cheap re-scope in #2 cannot
+   be exercised here, let alone the per-gen rows.
+
+And the analytical conclusion from the bind-gate table above is unchanged by #1/#2:
+**no zone-aggregate scoping can price the $75–200 band, because the model is not
+tight.** Online-gating bounds reserve at `ρ·ΣP`, and a deliverable supply cap
+bounds it at `Σ ramp10` — both are ≫ the ~3.3 GW requirement on a 180 GW fleet,
+so the balance still clears at $0 from free headroom. The opportunity-cost band
+requires reserve to compete with energy on the *same marginal unit* (per-gen
+`R[g] ≤ ramp10[g]` with `P[g]+R[g] ≤ cap[g]`), which is the heavier build, **and**
+the Phase-1 commitment tightening so the model's online reserve thins from ~14 GW
+toward PJM's real ~3 GW (the perfect-foresight over-commitment is what keeps free
+headroom abundant). Net: the top-tail decompression is now blocked only on
+(a) hardware (a box that fits the per-gen co-opt LP) and (b) the commitment
+posture — not on data or on the reserve-row primitives, both of which are ready.
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 
