@@ -1641,6 +1641,27 @@ class ScenarioConfig:
     st_gas_intermediate_split: bool = False
     st_gas_intermediate_cf_threshold: float = 50.0
 
+    # CC_REGULAR analogue of ct_intermediate_split / st_gas_intermediate_split.
+    # MISO's entire combined-cycle fleet runs intermediate/baseload (measured
+    # CAMPD median CF 50-150 %, mean ~90 %), but inherits the CC_REGULAR offer
+    # curve fit to ERCOT's duct-fire-heavy 2x1 peaker CCs (Colorado Bend II /
+    # Wolf Hollow II): a rising start-cost-amortized econ ramp (econ_high 1.27)
+    # that over-prices the upper operating range of an already-committed baseload
+    # CC, whose incremental energy is near its flat full-load heat rate
+    # (~0.93x average), so the upper econ tranches sit above the clearing price
+    # and the model under-runs the CC fleet (the MISO 2023/2024 gas-CC under-run,
+    # -24 to -28 TWh vs EIA-923). When set, that cohort
+    # (fleet.cc_intermediate_plants) is routed to the flatter ``CC_INTERMEDIATE``
+    # offer curve, which flattens the econ ramp to the measured near-baseload
+    # incremental cost while KEEPING the physically-real duct-burner peak band
+    # (only the operating-range ramp is corrected, never the ~2.25x duct-fire
+    # peak). The median-CF cohort assigns an offer *shape* (not a pin to measured
+    # output), admissible on the same basis as ct_intermediate_split /
+    # st_gas_intermediate_split. Default off (prior keeper unchanged) until
+    # re-solved.
+    cc_intermediate_split: bool = False
+    cc_intermediate_cf_threshold: float = 50.0
+
     # ISO-gated gas-steam startup amortization. The ST_GAS startup cost +
     # min-run/min-down (constants.ST_GAS_COMMITMENT_PARAMS) are only fed into the
     # P1 monthly bid markup when this is set, so a stop-start costs more than
@@ -2884,6 +2905,8 @@ TIER_TAGS: dict[str, int] = {
     "ct_intermediate_cf_threshold": 3,
     "st_gas_intermediate_split": 1,
     "st_gas_intermediate_cf_threshold": 3,
+    "cc_intermediate_split": 1,
+    "cc_intermediate_cf_threshold": 3,
     "gas_st_startup_cost": 3,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
