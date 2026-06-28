@@ -1798,6 +1798,7 @@ def run_year(
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
+    miso_pjm_border_anchor: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -2067,6 +2068,8 @@ def run_year(
         )
     if miso_seam_export_limit:
         config = config.with_overrides(miso_seam_export_limit=True)
+    if miso_pjm_border_anchor:
+        config = config.with_overrides(miso_pjm_border_anchor=True)
     if miso_temp_reliability_floor:
         # MISO dual-limb, zonal weather reliability floor (the MISO-native
         # temperature->commitment mechanism replacing the ERCOT-coefficient
@@ -3283,15 +3286,24 @@ def run_year(
         # (which adds the CARB border carbon); skip the generic carbon-free path.
         and iso != "CAISO"
     ):
+        _border_anchor = getattr(config, "miso_pjm_border_anchor", False)
         if inject_reference_price_mc(
-            fleet_arrays, mc_base, iso, year, config.gas_price_path
+            fleet_arrays,
+            mc_base,
+            iso,
+            year,
+            config.gas_price_path,
+            border_anchor=_border_anchor,
         ):
             logger.info(
                 "%s %d: reference-price interface — %d neighbor seams priced "
-                "from gas x heat-rate x load-shape (hurdle in $/MWh)",
+                "from gas x heat-rate x load-shape (hurdle in $/MWh)%s",
                 iso,
                 year,
                 len(INTERFACE_NEIGHBORS.get(iso, [])),
+                "; PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs"
+                if _border_anchor and iso == "MISO"
+                else "",
             )
         # Firm scheduled-export floor: force the cheapest export tranches on at
         # the measured firm base (firm_export_floor_by_year) so PJM's firm
