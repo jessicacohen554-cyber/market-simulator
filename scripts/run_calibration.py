@@ -1717,6 +1717,9 @@ def run_year(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    pjm_reserve_supply_cap: bool = False,
+    pjm_reserve_online_gated: bool = False,
+    pjm_reserve_online_rho: float = 1.0,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
@@ -2102,6 +2105,13 @@ def run_year(
         config = config.with_overrides(
             ercot_reserve_supply_cap=True,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+        )
+    if pjm_reserve_supply_cap:
+        config = config.with_overrides(pjm_reserve_supply_cap=True)
+    if pjm_reserve_online_gated:
+        config = config.with_overrides(
+            pjm_reserve_online_gated=True,
+            pjm_reserve_online_rho=pjm_reserve_online_rho,
         )
     if ercot_as_forward_requirement:
         config = config.with_overrides(ercot_as_forward_requirement=True)
@@ -3668,6 +3678,41 @@ def run_year(
             ordc_penalties=ordc_pen,
             ordc_step_widths=ordc_w,
         )
+        # OPTIONAL deliverable / online reserve-supply re-scope (PJM analogue of
+        # ercot_reserve_supply_cap): the bare co-opt draws reserve on ~38 GW of
+        # total eligible thermal headroom vs the ~3.4 GW Primary requirement, so
+        # the published vertical ORDC step never fires. The supply cap bounds
+        # cleared reserve at the 10-min DELIVERABLE ramp (Σ ramp10[eligible]) and
+        # online-gating restricts it to synchronized capacity (R − ρ·ΣP ≤ 0), so
+        # reserve thins toward the requirement. Physical deliverability
+        # definitions, never fitted to the LMP residual (claude.md #11). See
+        # docs/multi-iso/pjm-reserve-ordc.md.
+        from market_sim.results.scarcity import (
+            pjm_reserve_deliverable_supply_cap_mw,
+        )
+
+        pjm_supply_cap = pjm_reserve_deliverable_supply_cap_mw(
+            config, fleet_arrays, config.hours
+        )
+        if pjm_supply_cap is not None:
+            dispatch_kwargs.update(reserve_supply_cap=pjm_supply_cap)
+            logger.info(
+                "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
+                "%d MW (vs ~%d MW total eligible headroom)",
+                int(pjm_supply_cap.mean()),
+                int(
+                    (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[elig]
+                    .sum(axis=0)
+                    .mean()
+                ),
+            )
+        if getattr(config, "pjm_reserve_online_gated", False):
+            rho = float(getattr(config, "pjm_reserve_online_rho", 1.0))
+            dispatch_kwargs.update(
+                reserve_online_gated=np.array([True]),
+                reserve_online_rho=rho,
+            )
+            logger.info("PJM reserve online-gating ON: ρ=%.2f", rho)
         logger.info(
             "energy+reserve co-opt (PJM): MSSC %.0f MW (formula req %.0f), using "
             "%s req mean %.0f MW (+%.0f ORDC shoulder), %d reserve-eligible units",
