@@ -1,0 +1,375 @@
+"""Audit that the dashboard text matches each designated keeper's actual results.
+
+The backcast dashboard shows three kinds of keeper text, with very different
+trust levels:
+
+* The **Calibration Status** page (``status.js``) is regenerated from the SAME
+  scorer the gate uses (``scripts/build_status.py`` -> ``calibration_verdict``),
+  so it can never *say* the wrong determination — but it goes **stale** the
+  moment a keeper changes, a bundle is re-solved, or the benchmark/rubric moves.
+* Each keeper's **run-report header** is the human-written ``definition`` in its
+  registry sidecar (``frontend/data/backcast/registry/<id>.json``). This is the
+  one surface that can silently *lie*: a placeholder, a copy from the wrong run,
+  or a stale "NOT-YET" after the verdict turned green.
+* The per-year scorecard / diagnostics are computed client-side from the run
+  payload, so they are always faithful and are not audited here.
+
+This module checks the editable surfaces against the bundle and the live
+verdict. It is the deterministic core the ``calibration-keeper-auditor``
+subagent runs (and is safe to wire into CI / a pre-commit ``--check``).
+
+For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
+
+  E1  sidecar, run payload and bundle dir all exist.
+  E2  sidecar ``iso`` matches the bundle's ``calibration_flags.iso``.
+  E3  sidecar ``years`` matches the bundle's solved years AND, for a multi-year
+      ISO, is the full span (claude.md #13: never a single-year keeper).
+  E4  ``definition`` is real prose, not the auto-generated placeholder / empty.
+  E5  any determination token the ``definition`` asserts ("NOT-YET",
+      "CALIBRATED-WITH-CAVEATS", "CALIBRATED") matches the CURRENT verdict.
+  E6  keepers.json names exactly one keeper per ISO.
+  E7  (warn) the keeper is the newest-dated run for its ISO in the registry;
+      a newer same-ISO sidecar means the keeper may be stale.
+  S1  ``status.js`` is in sync with the current verdicts
+      (``build_status.py --check``).
+
+Usage:
+    python scripts/audit_keepers.py                  # audit every keeper
+    python scripts/audit_keepers.py --iso ERCOT PJM  # scope to ISOs
+    python scripts/audit_keepers.py --check          # exit 1 on any FAIL
+    python scripts/audit_keepers.py --json           # machine-readable report
+
+Exit code is 0 when there are no FAILs (warnings allowed), 1 otherwise.
+Stdlib-only; reuses ``scripts.calibration_verdict``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path insert)
+
+DATA = REPO / "frontend" / "data" / "backcast"
+KEEPERS_FILE = DATA / "keepers.json"
+
+# A sidecar whose definition still reads like this never described the run.
+_PLACEHOLDER_RE = re.compile(r"^\s*calibration run from bundle\b", re.IGNORECASE)
+
+# Determination tokens, longest-first so "CALIBRATED-WITH-CAVEATS" wins over
+# the substring "CALIBRATED".
+_DET_TOKENS = ("CALIBRATED-WITH-CAVEATS", "NOT-YET", "CALIBRATED")
+
+# ISOs that must always carry the full backcast year span (claude.md #13).
+_MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO"}
+
+
+def _load_json(path: Path) -> dict | None:
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def _bundle_flags(bundle: Path) -> dict | None:
+    cfg = _load_json(bundle / "run_config.json")
+    return (cfg or {}).get("calibration_flags") if cfg else None
+
+
+def _asserted_determination(definition: str) -> str | None:
+    """Return the determination token the definition prose claims, if any.
+
+    We only treat a token as an *assertion about this run's status* when it is
+    not merely naming another run's recipe. The common, checkable phrasings are
+    "Still NOT-YET", "now CALIBRATED", "remains CALIBRATED-WITH-CAVEATS", or a
+    trailing "... NOT-YET." — i.e. the token stands on its own near a status
+    verb. To stay conservative (avoid false positives) we require the token to
+    appear AND not be immediately followed by "recipe"/"keeper"/"run".
+    """
+    text = definition or ""
+    for tok in _DET_TOKENS:
+        for m in re.finditer(re.escape(tok), text):
+            tail = text[m.end() : m.end() + 8].lower()
+            if tail.lstrip().startswith(("recipe", "keeper", "run", "step")):
+                continue
+            return tok
+    return None
+
+
+def _registry_dates_by_iso() -> dict[str, list[tuple[str, str]]]:
+    """Map ISO -> sorted [(date, run_id)] across every registry sidecar."""
+    by_iso: dict[str, list[tuple[str, str]]] = {}
+    for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
+        side = _load_json(path)
+        if not side:
+            continue
+        iso = side.get("iso")
+        date = side.get("date") or path.stem[:10]
+        if iso:
+            by_iso.setdefault(iso, []).append((date, path.stem))
+    for iso in by_iso:
+        by_iso[iso].sort()
+    return by_iso
+
+
+class Report:
+    """Accumulates FAIL/WARN/OK findings, grouped by keeper, for one audit run."""
+
+    def __init__(self) -> None:
+        self.findings: list[dict] = []
+
+    def add(self, run_id: str, iso: str, level: str, code: str, msg: str) -> None:
+        self.findings.append(
+            {"run_id": run_id, "iso": iso, "level": level, "code": code, "msg": msg}
+        )
+
+    def ok(self, run_id, iso, code, msg):
+        self.add(run_id, iso, "OK", code, msg)
+
+    def warn(self, run_id, iso, code, msg):
+        self.add(run_id, iso, "WARN", code, msg)
+
+    def fail(self, run_id, iso, code, msg):
+        self.add(run_id, iso, "FAIL", code, msg)
+
+    @property
+    def n_fail(self) -> int:
+        return sum(1 for f in self.findings if f["level"] == "FAIL")
+
+    @property
+    def n_warn(self) -> int:
+        return sum(1 for f in self.findings if f["level"] == "WARN")
+
+
+def audit_keeper(run_id: str, rep: Report, newest_by_iso: dict) -> None:
+    """Run every per-keeper check (E1–E7) for one run id, recording findings."""
+    side_path = cv.REGISTRY_DIR / f"{run_id}.json"
+    side = _load_json(side_path)
+    if side is None:
+        rep.fail(run_id, "?", "E1", f"missing/unreadable sidecar {side_path.name}")
+        return
+    iso = side.get("iso", "?")
+
+    # E1: payload + bundle exist.
+    payload = REPO / side.get("file", "")
+    if not side.get("file") or not payload.exists():
+        rep.fail(run_id, iso, "E1", f"run payload missing: {side.get('file')!r}")
+    bundle = REPO / side.get("bundle", "")
+    if not side.get("bundle") or not bundle.exists():
+        rep.fail(run_id, iso, "E1", f"bundle dir missing: {side.get('bundle')!r}")
+        flags = None
+    else:
+        rep.ok(run_id, iso, "E1", "sidecar, payload and bundle present")
+        flags = _bundle_flags(bundle)
+        meta = _load_json(bundle / "meta.json")
+
+    # E2 / E3: iso + years agree with the bundle the run was solved from.
+    if flags is not None:
+        if flags.get("iso") and flags["iso"] != iso:
+            rep.fail(
+                run_id, iso, "E2", f"sidecar iso={iso} but bundle iso={flags['iso']}"
+            )
+        else:
+            rep.ok(run_id, iso, "E2", f"iso matches bundle ({iso})")
+        side_years = sorted(side.get("years") or [])
+        # meta.json["years"] is the authoritative solved span (what the verdict
+        # scores and the dashboard renders); calibration_flags["years"] is an
+        # invocation echo that some probe wrappers leave incomplete, so it is
+        # only a cross-check, never the basis for a text-accuracy FAIL.
+        meta_years = sorted((meta or {}).get("years") or [])
+        flag_years = sorted(flags.get("years") or [])
+        bundle_years = meta_years or flag_years
+        if meta_years and flag_years and meta_years != flag_years:
+            rep.warn(
+                run_id,
+                iso,
+                "E3",
+                f"bundle metadata inconsistent: meta.json years {meta_years} != "
+                f"calibration_flags years {flag_years} (using meta.json)",
+            )
+        if bundle_years and side_years != bundle_years:
+            rep.fail(
+                run_id,
+                iso,
+                "E3",
+                f"sidecar years {side_years} != bundle years {bundle_years}",
+            )
+        elif iso in _MULTI_YEAR_ISOS and len(side_years) < 2:
+            rep.fail(
+                run_id,
+                iso,
+                "E3",
+                f"{iso} keeper covers only {side_years} — multi-year ISOs must "
+                "register the full year span (claude.md #13)",
+            )
+        else:
+            rep.ok(run_id, iso, "E3", f"years {side_years} match bundle")
+
+    # E4: definition is real prose.
+    definition = (side.get("definition") or "").strip()
+    if not definition:
+        rep.fail(run_id, iso, "E4", "definition is empty")
+    elif _PLACEHOLDER_RE.match(definition):
+        rep.fail(
+            run_id,
+            iso,
+            "E4",
+            "definition is the auto-generated placeholder "
+            f'("{definition[:60]}…") — describe what the run actually changed',
+        )
+    else:
+        rep.ok(run_id, iso, "E4", "definition is descriptive prose")
+
+    # E5: definition's asserted determination matches the live verdict.
+    try:
+        verdict = cv.determine(run_id)
+        live_det = verdict["determination"]
+    except Exception as exc:  # scoring failure is itself a finding
+        rep.fail(run_id, iso, "E5", f"verdict could not be computed: {exc}")
+        live_det = None
+    if live_det is not None:
+        asserted = _asserted_determination(definition)
+        if asserted and asserted != live_det:
+            rep.fail(
+                run_id,
+                iso,
+                "E5",
+                f'definition asserts "{asserted}" but current verdict is '
+                f'"{live_det}" — update the sidecar text',
+            )
+        else:
+            note = f" (text says {asserted})" if asserted else ""
+            rep.ok(run_id, iso, "E5", f"verdict {live_det}{note}")
+
+    # E7: staleness — is this the newest-dated run for its ISO?
+    newest_date, newest_id = newest_by_iso.get(iso, (None, None))
+    if newest_id and newest_id != run_id:
+        rep.warn(
+            run_id,
+            iso,
+            "E7",
+            f"a newer {iso} run exists in the registry "
+            f"({newest_id}, {newest_date}); keeper may be stale",
+        )
+    elif newest_id:
+        rep.ok(run_id, iso, "E7", "keeper is the newest run for its ISO")
+
+
+def audit(isos: list[str] | None) -> Report:
+    """Audit every keeper in keepers.json (optionally filtered to ``isos``)."""
+    rep = Report()
+    spec = _load_json(KEEPERS_FILE)
+    if not spec:
+        rep.fail("-", "-", "E0", f"cannot read {KEEPERS_FILE}")
+        return rep
+    keeper_ids = spec.get("keepers", [])
+
+    # E6: exactly one keeper per ISO.
+    seen: dict[str, list[str]] = {}
+    for run_id in keeper_ids:
+        side = _load_json(cv.REGISTRY_DIR / f"{run_id}.json")
+        iso = (side or {}).get("iso", "?")
+        seen.setdefault(iso, []).append(run_id)
+    for iso, ids in seen.items():
+        if len(ids) > 1:
+            rep.fail(ids[0], iso, "E6", f"{iso} has {len(ids)} keepers: {ids}")
+
+    newest_by_iso = _registry_dates_by_iso()
+    newest_by_iso = {k: v[-1] for k, v in newest_by_iso.items()}
+
+    want = {s.upper() for s in isos} if isos else None
+    for run_id in keeper_ids:
+        side = _load_json(cv.REGISTRY_DIR / f"{run_id}.json")
+        iso = (side or {}).get("iso", "?")
+        if want and iso.upper() not in want:
+            continue
+        audit_keeper(run_id, rep, newest_by_iso)
+
+    # S1: global status.js sync check.
+    proc = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "build_status.py"), "--check"],
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode == 0:
+        rep.ok("status.js", "-", "S1", proc.stdout.strip() or "status.js in sync")
+    else:
+        rep.fail(
+            "status.js",
+            "-",
+            "S1",
+            (proc.stdout + proc.stderr).strip()
+            or "status.js stale — run scripts/build_status.py",
+        )
+    return rep
+
+
+def _print_human(rep: Report) -> None:
+    icons = {"OK": "✓", "WARN": "!", "FAIL": "✗"}
+    # Group by run_id preserving first-seen order.
+    order: list[str] = []
+    groups: dict[str, list[dict]] = {}
+    for f in rep.findings:
+        if f["run_id"] not in groups:
+            order.append(f["run_id"])
+            groups[f["run_id"]] = []
+        groups[f["run_id"]].append(f)
+    print("=" * 72)
+    print("KEEPER TEXT AUDIT")
+    print("=" * 72)
+    for run_id in order:
+        items = groups[run_id]
+        iso = items[0]["iso"]
+        worst = (
+            "FAIL"
+            if any(i["level"] == "FAIL" for i in items)
+            else ("WARN" if any(i["level"] == "WARN" for i in items) else "OK")
+        )
+        print(f"\n[{icons[worst]}] {iso:6} {run_id}")
+        for i in items:
+            if i["level"] == "OK":
+                continue  # keep the human view focused on problems
+            print(f"      {icons[i['level']]} {i['code']}: {i['msg']}")
+        if all(i["level"] == "OK" for i in items):
+            print("      all checks passed")
+    print("\n" + "-" * 72)
+    verdict = "PASS" if rep.n_fail == 0 else "FAIL"
+    print(f"{verdict}: {rep.n_fail} failure(s), {rep.n_warn} warning(s)")
+    print("=" * 72)
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument("--iso", nargs="+", help="restrict to these ISOs")
+    ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 on any FAIL (same as default exit code)",
+    )
+    args = ap.parse_args()
+
+    rep = audit(args.iso)
+    if args.json:
+        print(
+            json.dumps(
+                {"fail": rep.n_fail, "warn": rep.n_warn, "findings": rep.findings},
+                indent=2,
+            )
+        )
+    else:
+        _print_human(rep)
+    sys.exit(1 if rep.n_fail else 0)
+
+
+if __name__ == "__main__":
+    main()
