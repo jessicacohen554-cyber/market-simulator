@@ -1096,6 +1096,35 @@ def _calibration_config(
                 "econ_low_share": 0.50,
                 "pct_peaking": 8.0,
             },
+            # Flatter curve for the measured baseload-duty MISO CC cohort
+            # (fleet.cc_intermediate_plants, median CF >= threshold), routed here
+            # only when cc_intermediate_split is set (--cc-intermediate-split;
+            # default OFF, so every prior keeper / other ISO is byte-identical and
+            # the CC_REGULAR curve above is untouched). MISO's entire CC fleet runs
+            # intermediate/baseload (median CF 50-150%, mean ~90%), but the
+            # CC_REGULAR curve was fit to ERCOT's duct-fire-heavy 2x1 peaker CCs:
+            # its rising start-cost-amortized econ ramp (econ_high 1.27) over-prices
+            # the upper operating range of an already-committed baseload CC, whose
+            # incremental energy is near its flat full-load heat rate (~0.93x its
+            # own average, the documented CC measured shape), so the upper econ
+            # tranches sit above the clearing price and the model under-runs the CC
+            # fleet (the 2023/2024 gas-CC under-run, -24 to -28 TWh vs EIA-923).
+            # This flattens the econ ramp to that measured near-baseload
+            # incremental cost (econ 0.95->1.08, straddling the full-load 0.93x and
+            # average 1.0x) while KEEPING the physically-real F-class duct-burner
+            # peak (2.25) — only the operating-range ramp is corrected, never the
+            # duct-fire peak (which would be an unphysical fit to volume; rule #11).
+            # The committed band stays 0.92 (the cheap min-stable-load base) and
+            # the peaking band stays per-plant via cc_peaking_per_plant. Mirrors
+            # ST_GAS_INTERMEDIATE / CT_INTERMEDIATE.
+            "CC_INTERMEDIATE": {
+                "committed": 0.92,
+                "econ_low": 0.95,
+                "econ_high": 1.08,
+                "peak": 2.25,
+                "econ_low_share": 0.50,
+                "pct_peaking": 8.0,
+            },
             "CC_CHP": {
                 "committed": 0.92,
                 "econ_low": 0.95 if iso == "PJM" else 0.96,
@@ -1694,6 +1723,8 @@ def run_year(
     coal_sync_srmc_tranche: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
+    cc_intermediate_split: bool = False,
+    cc_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -1766,6 +1797,8 @@ def run_year(
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
+    miso_seam_export_limit: bool = False,
+    miso_pjm_border_anchor: bool = False,
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1880,6 +1913,17 @@ def run_year(
     if ct_intermediate_cf_threshold is not None:
         config = config.with_overrides(
             ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+        )
+    if cc_intermediate_split:
+        # Route the measured baseload-duty CC cohort (fleet.cc_intermediate_plants)
+        # to the flatter CC_INTERMEDIATE offer curve so the upper operating-range
+        # tranches of MISO's near-baseload CC fleet clear instead of carrying the
+        # ERCOT-peaker-fit rising econ ramp (the 2023/2024 gas-CC under-run). Only
+        # the operating-range ramp is corrected; the duct-burner peak is unchanged.
+        config = config.with_overrides(cc_intermediate_split=True)
+    if cc_intermediate_cf_threshold is not None:
+        config = config.with_overrides(
+            cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
     if st_gas_intermediate:
         # MISO intermediate gas-steam structure (one consolidated lever, default
@@ -2022,6 +2066,10 @@ def run_year(
         config = config.with_overrides(
             miso_seam_flow_percentile=float(miso_seam_flow_percentile)
         )
+    if miso_seam_export_limit:
+        config = config.with_overrides(miso_seam_export_limit=True)
+    if miso_pjm_border_anchor:
+        config = config.with_overrides(miso_pjm_border_anchor=True)
     if miso_temp_reliability_floor:
         # MISO dual-limb, zonal weather reliability floor (the MISO-native
         # temperature->commitment mechanism replacing the ERCOT-coefficient
@@ -2800,6 +2848,31 @@ def run_year(
                 year,
                 MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
             )
+    # Export mirror: cap each seam's net EXPORT at the measured net-export
+    # envelope by raising the export bands' lower bound toward 0. Clips the PJM
+    # seam (which MISO net-imports over) to ~0 export, removing the spurious
+    # export of cheap MISO coal back east; SPP/South keep their measured export
+    # headroom. Shares the import cap's percentile (one envelope, both
+    # directions). No-op off the flag, for non-MISO, or with no measured year.
+    if getattr(config, "reference_price_interface", False) and getattr(
+        config, "miso_seam_export_limit", False
+    ):
+        from market_sim.model.transmission import inject_miso_seam_flow_limit
+
+        _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
+        if inject_miso_seam_flow_limit(
+            fleet_arrays, iso, year, percentile=_seam_pct, direction="export"
+        ):
+            from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
+
+            logger.info(
+                "%s %d: reference-price seam export capped at measured EIA-930 "
+                "BA-to-BA net-export envelope (p%g; PJM seam clips export toward "
+                "~0, SPP/South keep their measured export headroom)",
+                iso,
+                year,
+                MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
+            )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
     # its surplus exports/curtails at ~$0 (mirrors inject_interchange_shape).
@@ -3213,15 +3286,24 @@ def run_year(
         # (which adds the CARB border carbon); skip the generic carbon-free path.
         and iso != "CAISO"
     ):
+        _border_anchor = getattr(config, "miso_pjm_border_anchor", False)
         if inject_reference_price_mc(
-            fleet_arrays, mc_base, iso, year, config.gas_price_path
+            fleet_arrays,
+            mc_base,
+            iso,
+            year,
+            config.gas_price_path,
+            border_anchor=_border_anchor,
         ):
             logger.info(
                 "%s %d: reference-price interface — %d neighbor seams priced "
-                "from gas x heat-rate x load-shape (hurdle in $/MWh)",
+                "from gas x heat-rate x load-shape (hurdle in $/MWh)%s",
                 iso,
                 year,
                 len(INTERFACE_NEIGHBORS.get(iso, [])),
+                "; PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs"
+                if _border_anchor and iso == "MISO"
+                else "",
             )
         # Firm scheduled-export floor: force the cheapest export tranches on at
         # the measured firm base (firm_export_floor_by_year) so PJM's firm

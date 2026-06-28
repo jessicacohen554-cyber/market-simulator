@@ -996,6 +996,7 @@ def inject_reference_price_mc(
     year: int,
     gas_scenario: str = "mid",
     carbon_price: float = 0.0,
+    border_anchor: bool = False,
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
@@ -1023,12 +1024,23 @@ def inject_reference_price_mc(
     pass ``carbon_price=0`` (and their neighbors carry no EF), so they are
     byte-identical.
 
+    ``border_anchor`` (MISO opt-in) re-anchors the PJM seam from PJM's
+    system-average realized LMP to its MISO-facing western border hubs (ComEd /
+    AEP-Ohio / ATSI; :data:`~market_sim.config.constants.MISO_PJM_BORDER_HR_BY_YEAR`)
+    by swapping the PJM spec's ``hr_by_year`` for the lower border table — the
+    cheaper western border clears more import in tight hours (the 2024/2025 MISO
+    import under-run), while 2023 (already matched) barely moves. No-op for every
+    other ISO / when off (byte-identical).
+
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
     """
+    from dataclasses import replace
+
     from market_sim.config.constants import (
         CARB_UNSPECIFIED_IMPORT_EF,
         INTERFACE_NEIGHBORS,
+        MISO_PJM_BORDER_HR_BY_YEAR,
     )
     from market_sim.data.neighbor_price import (
         interface_reference_prices,
@@ -1038,6 +1050,12 @@ def inject_reference_price_mc(
     hours = int(mc.shape[1])
     aggregate = interface_reference_prices(iso, year, hours, gas_scenario).aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    if border_anchor and iso == "MISO" and "PJM" in specs:
+        # Western-border re-anchor: price the PJM seam off its MISO-facing border
+        # hubs (lower than PJM's eastern-weighted system average) so the seam
+        # clears more import. Only the hr_by_year level changes; the load shape,
+        # hurdle and tranche structure are untouched.
+        specs["PJM"] = replace(specs["PJM"], hr_by_year=MISO_PJM_BORDER_HR_BY_YEAR)
     border = wecc_border_carbon_adder(carbon_price) if carbon_price > 0.0 else 0.0
     # Cache each neighbor's (export, import) tranche price matrices once.
     tranches: dict[str, tuple | None] = {}
@@ -1888,6 +1906,7 @@ def inject_miso_seam_flow_limit(
     iso: str,
     year: int,
     percentile: float | None = None,
+    direction: str = "import",
 ) -> bool:
     """Cap each MISO reference-price seam's import bands at the measured envelope.
 
@@ -1913,37 +1932,78 @@ def inject_miso_seam_flow_limit(
     per-seam and on the measured *directed* BA-to-BA flow rather than the
     aggregate net interchange. Modifies ``fleet_arrays`` in place.
 
+    With ``direction="export"`` this instead caps each seam's net *export* at the
+    measured net-export envelope (:func:`~market_sim.data.eia_loader
+    .measured_seam_import_envelope` with ``direction="export"``) — the exact
+    symmetric mirror of the import availability derate. The seam's export bands
+    are negative-output sinks bounded ``[pmin=-step, 0]``; raising their lower
+    bound (``FleetArrays.min_gen``) toward 0 caps the deliverable net export. The
+    eastern PJM seam (which MISO reliably net-*imports* over) clips export to ~0,
+    removing the LP's spurious export of cheap MISO coal back over the PJM border;
+    the southern (TVA) and SPP seams keep their measured ~GW of export headroom.
+    Composed with any existing ``min_gen`` floor via ``maximum`` (the cap can only
+    reduce export, never force it); the export bands keep their priced economics
+    and clear the merit order below the cap. Modifies ``fleet_arrays`` in place.
+
     Returns ``True`` when at least one seam was capped, ``False`` when no
-    reference-price import bands are present or no measured envelope is available
-    (forecast year / unmapped ISO), leaving the seam unchanged (byte-identical).
+    reference-price bands (of the requested direction) are present or no measured
+    envelope is available (forecast year / unmapped ISO), leaving the seam
+    unchanged (byte-identical).
     """
+    if direction not in ("import", "export"):
+        raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
     from market_sim.data.eia_loader import measured_seam_import_envelope
 
     hours = int(fleet_arrays.availability.shape[1])
-    env = measured_seam_import_envelope(iso, year, hours, percentile)
+    env = measured_seam_import_envelope(
+        iso, year, hours, percentile, direction=direction
+    )
     if not env:
         return False
+    mark = _REF_IMPORT_MARK if direction == "import" else _REF_EXPORT_MARK
+    if direction == "export" and fleet_arrays.min_gen is None:
+        # Export rows take their lower bound from min_gen; broadcast pmin first so
+        # every other row keeps its natural bound (byte-identical elsewhere).
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
     applied = False
     for name, cap in env.items():
-        # Import bands of this neighbor: uid is "<zone>_refimp_<name>#k".
+        # Bands of this neighbor: uid is "<zone>_ref{imp,exp}_<name>#k".
         rows = [
             r
             for r, uid in enumerate(fleet_arrays.unit_ids)
-            if _REF_IMPORT_MARK in uid
-            and uid.rsplit(_REF_IMPORT_MARK, 1)[1].partition("#")[0] == name
+            if mark in uid and uid.rsplit(mark, 1)[1].partition("#")[0] == name
         ]
         if not rows:
             continue
-        total = float(fleet_arrays.pmax[rows].sum())  # = interface_limit_mw
-        if total <= 0.0:
-            continue
-        # Uniform per-band derate so the seam's summed import availability ≤ cap
-        # each hour; the bands keep their rising (flow-responsive) prices, so the
-        # LP still fills the cheapest first below the ceiling.
-        frac = np.clip(np.asarray(cap, dtype=float) / total, 0.0, 1.0)
-        for r in rows:
-            fleet_arrays.availability[r, :] *= frac
-        applied = True
+        cap = np.asarray(cap, dtype=float)
+        if direction == "import":
+            total = float(fleet_arrays.pmax[rows].sum())  # = interface_limit_mw
+            if total <= 0.0:
+                continue
+            # Uniform per-band derate so the seam's summed import availability ≤
+            # cap each hour; the bands keep their rising (flow-responsive) prices,
+            # so the LP still fills the cheapest first below the ceiling.
+            frac = np.clip(cap / total, 0.0, 1.0)
+            for r in rows:
+                fleet_arrays.availability[r, :] *= frac
+            applied = True
+        else:
+            total = -float(fleet_arrays.pmin[rows].sum())  # = interface_limit_mw
+            if total <= 0.0:
+                continue
+            # Uniform per-band lower-bound raise so the seam's summed max export ≤
+            # cap each hour. pmin[r] < 0; pmin[r] × frac ∈ [pmin[r], 0] raises the
+            # bound toward 0 as the cap tightens, and maximum() composes with any
+            # existing floor (the cap only reduces export, never forces it).
+            frac = np.clip(cap / total, 0.0, 1.0)
+            for r in rows:
+                capped = float(fleet_arrays.pmin[r]) * frac
+                np.maximum(
+                    fleet_arrays.min_gen[r, :], capped, out=fleet_arrays.min_gen[r, :]
+                )
+            applied = True
     return applied
 
 
