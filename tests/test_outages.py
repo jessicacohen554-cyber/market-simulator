@@ -266,13 +266,11 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         for yr in ("2023", "2024", "2025"):
             self.assertIn(yr, years_present, f"Year {yr} absent from NEISO CSV")
 
-    def test_nh_gap_shows_as_merrimack_absence_not_lower_count(self):
-        # NH_2025 unit-level is still missing, but every other NEISO state now
-        # has a complete 2025 extract, so 2025 coverage is no longer thinner
-        # overall (it is in fact broader than the earlier partial snapshot).
-        # The NH gap shows specifically as Merrimack (2364, the lone NEISO
-        # coal plant, in NH) dropping out of 2025 — not as a lower total
-        # facility count.
+    def test_merrimack_present_every_year(self):
+        # The NH_2025 unit-level extract has since landed, so every backcast year
+        # is broadly covered AND Merrimack (2364, the lone NEISO coal plant, in
+        # NH) appears in all three years. (This formerly asserted a 2025 NH gap;
+        # the gap closed when the NH_2025 CAMPD parquet was uploaded.)
         df = self._df()
         facs = {
             yr: set(
@@ -287,9 +285,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         )
         self.assertIn(2364, facs["2023"], "Merrimack (NH coal) present in 2023")
         self.assertIn(2364, facs["2024"], "Merrimack (NH coal) present in 2024")
-        self.assertNotIn(
-            2364, facs["2025"], "Merrimack (NH) must drop out of 2025 (NH_2025 gap)"
-        )
+        self.assertIn(2364, facs["2025"], "Merrimack (NH coal) present in 2025")
 
     def test_event_based_rule_dominates_plant_group_mix(self):
         # CC_REGULAR + CC_CHP + ST_GAS + CT_CHP (all event-based) > COAL rows.
@@ -302,7 +298,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
             event_based, coal * 10, "event-based rows should heavily dominate"
         )
 
-    def test_coal_target_is_merrimack_only_in_2023_2024(self):
+    def test_coal_target_is_merrimack_only_all_years(self):
         # Merrimack (2364, NH) is the single NEISO coal facility.
         df = self._df()
         coal = df[df["plant_group"] == "COAL"]
@@ -312,9 +308,13 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
             {2364},
             "COAL group must be exclusively Merrimack (2364)",
         )
-        # Coal rows only span 2023–2024; NH_2025 unit-level is missing.
+        # Coal rows now span all three years (NH_2025 unit-level has landed).
         coal_years = set(coal["outage_start"].str[:4].unique())
-        self.assertNotIn("2025", coal_years, "No COAL rows expected for 2025 (NH gap)")
+        self.assertEqual(
+            coal_years,
+            {"2023", "2024", "2025"},
+            "COAL rows expected in every backcast year",
+        )
 
     def test_kleen_energy_cc_windows_detected(self):
         # Kleen Energy (56798, Southington CT) is a CC_REGULAR plant with
@@ -353,23 +353,21 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
                 )
 
     def test_derate_factors_load_for_2025(self):
-        # 2025 coverage is now complete for every NEISO state except NH, so the
-        # derate factors load and are non-empty. The NH_2025 gap shows as the
-        # absence of NH's coal plant (Merrimack), asserted in
-        # test_merrimack_coal_in_derate_2023_not_2025 and
-        # test_no_coal_in_neiso_for_2025 — not as a lower overall factor count.
+        # 2025 coverage is now complete for every NEISO state including NH, so the
+        # derate factors load and are non-empty (Merrimack coal is present —
+        # see test_merrimack_coal_in_derate_all_years).
         factors = unit_outage_derate_factors(2025, iso="NEISO")
         self.assertGreater(
             len(factors), 0, "NEISO 2025 derate factors must be non-empty"
         )
 
-    def test_merrimack_coal_in_derate_2023_not_2025(self):
-        # Merrimack coal (2364) is in 2023/2024 derate but absent from 2025
-        # because NH_2025 unit-level parquet is missing.
+    def test_merrimack_coal_in_derate_all_years(self):
+        # Merrimack coal (2364) is in the derate for all three years now that the
+        # NH_2025 unit-level parquet has landed.
         key = (2364, "COAL")
         self.assertIn(key, unit_outage_derate_factors(2023, iso="NEISO"))
         self.assertIn(key, unit_outage_derate_factors(2024, iso="NEISO"))
-        self.assertNotIn(key, unit_outage_derate_factors(2025, iso="NEISO"))
+        self.assertIn(key, unit_outage_derate_factors(2025, iso="NEISO"))
 
     def test_kleen_energy_in_derate_all_years(self):
         key = (56798, "CC_REGULAR")
@@ -415,12 +413,13 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
                     float(arr.max()), 1.0, f"Availability > 1 for {key} in {year}"
                 )
 
-    def test_no_coal_in_neiso_for_2025(self):
-        # With NH_2025 missing, there must be zero COAL derate entries in 2025.
+    def test_coal_in_neiso_for_2025(self):
+        # The NH_2025 unit-level parquet has landed, so Merrimack's COAL derate
+        # entry is now present in 2025 (it formerly asserted the NH_2025 gap).
         factors_2025 = unit_outage_derate_factors(2025, iso="NEISO")
         coal_keys = [k for k in factors_2025 if k[1] == "COAL"]
         self.assertEqual(
-            coal_keys, [], "No COAL derate entries expected for NEISO 2025"
+            coal_keys, [(2364, "COAL")], "Merrimack COAL derate expected for NEISO 2025"
         )
 
     def test_other_iso_unit_outage_csvs_untouched(self):
@@ -432,6 +431,75 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         # ERCOT uses the canonical name.
         ercot_path = raw / "campd-unit-outages.csv"
         self.assertTrue(ercot_path.exists(), "ERCOT unit-outage CSV must still exist")
+
+
+class NEISOFloorOutageExemptTest(unittest.TestCase):
+    """The NEISO temperature-reliability-floor outage exemption (CLAUDE.md #11).
+
+    The CAMPD unit-outage overlay's "sustained CF < 5%" detector, built for
+    baseload coal/CC, misreads the lone Merrimack-class COAL unit's economic
+    idleness (a sub-10% annual-CF winter peaker) as a forced outage, and its
+    ``unit_capacity_mw / plant_capacity_mw`` derate is taken against the 108 MW
+    model bin while the CSV unit capacities are the real ~460 MW plant — so a
+    single coal-unit "outage" over-derates the bin to ZERO (Merrimack
+    availability was 0 of 8760 h in 2024), structurally capping the temperature
+    floor's ``frac × available`` at ~0. ``neiso_floor_outage_exempt`` (default
+    ON) skips the unit-outage overlay for the floor classes so the floor — whose
+    coefficients are regressed from each unit's own measured CF, already netting
+    out real downtime — governs their availability, mirroring
+    ``ct_mustrun_per_plant``'s WEFOR/planned-outage exemption.
+    """
+
+    def _merrimack_avail(self, *, floor: bool, exempt: bool, year: int = 2024):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import (
+            generators_to_fleet_arrays,
+            load_fleet_from_csv,
+        )
+
+        iso_config = get_iso_config("NEISO")
+        zones = [z.name for z in iso_config.zones]
+        gens = load_fleet_from_csv("NEISO", iso_config, year=year)
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=year,
+            outage_source="historic",
+            neiso_temp_reliability_floor=floor,
+            neiso_floor_outage_exempt=exempt,
+        )
+        fa = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="NEISO", config=cfg, year=year
+        )
+        groups = np.asarray(fa.plant_group)
+        codes = np.asarray(fa.plant_code)
+        rows = np.flatnonzero((codes == 2364) & (groups == "COAL"))
+        self.assertGreater(rows.size, 0, "Merrimack COAL tranche must exist")
+        return fa.availability[rows].mean(axis=0)
+
+    def test_exemption_restores_merrimack_availability_2024(self):
+        # With the floor on and the exemption on (the keeper default), Merrimack
+        # is available year-round (the floor governs it). With the exemption off
+        # (the no-fix baseline) the unit-outage overlay zeros it for all of 2024.
+        avail_fixed = self._merrimack_avail(floor=True, exempt=True)
+        avail_bug = self._merrimack_avail(floor=True, exempt=False)
+        self.assertEqual(
+            int((avail_bug > 1e-6).sum()),
+            0,
+            "no-fix baseline: 2024 Merrimack availability is zeroed by the overlay",
+        )
+        self.assertEqual(
+            int((avail_fixed > 1e-6).sum()),
+            HOURS_PER_YEAR,
+            "exemption: 2024 Merrimack availability restored every hour",
+        )
+
+    def test_exemption_is_noop_without_floor(self):
+        # The exemption only fires when the temperature floor governs the units,
+        # so a floor-off run is byte-identical with the flag on or off.
+        avail_off_exempt = self._merrimack_avail(floor=False, exempt=True)
+        avail_off_noexempt = self._merrimack_avail(floor=False, exempt=False)
+        np.testing.assert_array_equal(avail_off_exempt, avail_off_noexempt)
 
 
 class RetireeCemsEnvelopeTest(unittest.TestCase):

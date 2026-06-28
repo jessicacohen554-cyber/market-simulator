@@ -2045,6 +2045,7 @@ def run_year(
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
+    neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
@@ -2270,6 +2271,10 @@ def run_year(
     if neiso_temp_reliability_floor is not None:
         config = config.with_overrides(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor
+        )
+    if neiso_floor_outage_exempt is not None:
+        config = config.with_overrides(
+            neiso_floor_outage_exempt=neiso_floor_outage_exempt
         )
     if neiso_gas_coldsnap_derate is not None:
         config = config.with_overrides(
@@ -2525,10 +2530,12 @@ def run_year(
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
-    # Default the CAISO per-hub intertie flag so the later corridor-limit check
-    # is bound on every path; it is only set True inside the priced-interchange
-    # block below (CAISO-only), so a non-priced or non-CAISO run keeps it False.
+    # Default the CAISO per-hub / corridor intertie flags so the later
+    # corridor-limit and forward-ATC checks are bound on every path; they are
+    # only set True inside the priced-interchange block below (CAISO-only), so a
+    # non-priced or non-CAISO run keeps them False.
     caiso_per_hub = False
+    caiso_corridors = False
     if priced_interchange:
         # CARB levies its cap-and-trade allowance on unspecified WECC imports
         # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every
