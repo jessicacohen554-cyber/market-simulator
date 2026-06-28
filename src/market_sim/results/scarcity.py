@@ -1455,6 +1455,48 @@ def ercot_rtolcap_supply_cap_mw(config, hours: int) -> np.ndarray | None:
     return cap.astype(float)
 
 
+def pjm_reserve_deliverable_supply_cap_mw(
+    config, fleet_arrays: FleetArrays, hours: int
+) -> np.ndarray | None:
+    """PJM's deliverable (10-min ramp) reserve-supply cap, ``(1, hours)`` MW.
+
+    The PJM analogue of :func:`ercot_rtolcap_supply_cap_mw`, but built from the
+    fleet's **10-minute deliverable ramp** capability
+    (:attr:`FleetArrays.ramp10` = :data:`~market_sim.data.fleet.RAMP10_FRAC_BY_GROUP`
+    × ``pmax``) rather than a measured ERCOT RTOLCAP series — PJM has no such
+    published online-capability parquet, but the deliverable slice is the physical
+    quantity that can actually be offered into the reserve-deployment window.
+
+    The bare PJM co-opt's single shared-headroom row counts every reserve-eligible
+    thermal unit's *full* availability-derated headroom as reserve supply (~38 GW),
+    far above the ~3.4 GW Primary requirement, so the published vertical ORDC step
+    never fires (``docs/multi-iso/pjm-reserve-ordc.md`` honesty gate). This caps the
+    co-opt's single reserve class's cleared reserve at the deliverable 10-min ramp
+    of the reserve-eligible fleet, so modeled reserve can tighten toward the
+    requirement instead of drawing on idle full-fleet headroom.
+
+    Availability-scaled per hour (an out-of-service unit delivers no reserve). A
+    physical deliverability definition (ramp rate × capacity), regenerable for a
+    forecast year and responsive to the fleet — never fitted to the LMP residual
+    (claude.md #11). Returns ``(1, hours)`` (one row, the single PJM reserve
+    class) or ``None`` when gated off (``config.pjm_reserve_supply_cap`` false) or
+    ``FleetArrays.ramp10`` is unpopulated (the co-opt then runs uncapped).
+    """
+    if not getattr(config, "pjm_reserve_supply_cap", False):
+        return None
+    ramp10 = getattr(fleet_arrays, "ramp10", None)
+    if ramp10 is None:
+        return None
+    eligible = ercot_reserve_eligible(fleet_arrays)  # ISO-agnostic thermal mask
+    ramp10 = np.asarray(ramp10, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
+    T = int(hours)
+    # Deliverable reserve per hour = Σ over eligible units of their 10-min ramp,
+    # availability-scaled. (n_gen,1)*(n_gen,T) -> mask eligible rows -> sum.
+    cap = (ramp10[:, None] * avail)[eligible].sum(axis=0)  # (T,)
+    return cap.reshape(1, T).astype(float)
+
+
 def ercot_as_aware_unit_value(
     fleet_arrays: FleetArrays,
     p1_dispatch: np.ndarray,
