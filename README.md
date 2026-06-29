@@ -8,7 +8,7 @@ CAMPD, eGRID and EIA-923 actuals.
 - **Solver:** HiGHS via `highspy` (pure LP, no MIP). Prices are LP duals.
 - **ISOs:** ERCOT (calibrated reference) plus CAISO, PJM, MISO, SPP, NYISO, NEISO.
 - **Methodology:** see [`model-methodology-spec.md`](model-methodology-spec.md).
-- **Working instructions / conventions:** see [`claude.md`](claude.md) and
+- **Working instructions / conventions:** see [`CLAUDE.md`](CLAUDE.md) and
   [`CONVENTIONS.md`](CONVENTIONS.md).
 
 ## Quickstart
@@ -35,17 +35,17 @@ uv run python -m pytest -q
 The installed console script exposes the scenario runner directly:
 
 ```bash
-uv run market-sim --help                 # subcommands: run, sweep
+uv run market-sim --help                 # subcommands: run, sweep, ensemble
 uv run market-sim run --config <scenario.yaml> [--iso ERCOT]
 uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 ```
 
-> **Test status:** the suite has a handful of *known, pre-existing* failures
-> tied to optional local data that are unrelated to setup — the four
-> `test_eia_loader` CAISO/NYISO zonal-share fallback cases, plus a NEISO
-> committed-artifact determinism check. A clean checkout reports
-> ~1369 passed / 2 skipped alongside these. Don't chase them as part of a
-> docs or environment change.
+> **Test status:** the suite collects ~1900 tests (1937 as of this writing). A
+> handful of *known, pre-existing* failures are tied to optional local data and
+> are unrelated to setup — the four `test_eia_loader` CAISO/NYISO zonal-share
+> fallback cases, plus a NEISO committed-artifact determinism check. A clean
+> checkout reports almost all passing / 2 skipped alongside these. Don't chase
+> them as part of a docs or environment change.
 
 ### Without `uv`
 
@@ -67,8 +67,10 @@ market-simulator/
 │                        #   tooling (e.g. run_calibration_full.py).
 ├── tests/               # pytest suite (unit + regression against golden baselines).
 ├── docs/                # Methodology notes, calibration logs, cleanup/reorg plans.
-├── frontend/            # Static explainer site (HTML/CSS/JS, parameter views).
-├── dashboard/           # Deployable backcast-calibration results dashboard.
+├── frontend/            # Static explainer site (HTML/CSS/JS, parameter views) and
+│                        #   backcast-dashboard payloads (frontend/data/backcast/). The
+│                        #   deployable dashboard is backcast-results.html at repo root
+│                        #   (gitignored; auto-built at deploy from those payloads).
 ├── learning-hub/        # Scrollytelling explainers (LP dispatch, storage, zones…).
 ├── tools/               # Desktop launcher UI (tools/launcher.py).
 ├── results/             # Cached run outputs and golden baselines.
@@ -80,7 +82,7 @@ market-simulator/
 
 - [`model-methodology-spec.md`](model-methodology-spec.md) — the full model
   methodology (LP formulation, pricing, capacity evolution, calibration).
-- [`claude.md`](claude.md) — working instructions, architecture overview, and
+- [`CLAUDE.md`](CLAUDE.md) — working instructions, architecture overview, and
   repo conventions for contributors and agents.
 - [`docs/data-reorg-plan.md`](docs/data-reorg-plan.md) — the data-layout
   reorganization plan (`data/raw` → `data/clean`, dictionary).

@@ -7,7 +7,7 @@ the duals on the energy-balance constraint rows.
 
 ## 2.1 Variable layout
 
-`VariableLayout` (lines 28–189) is an immutable map from decision variables to
+`VariableLayout` (line 29) is an immutable map from decision variables to
 flat LP column indices. Columns are **hour-major**: each hour `t` owns a
 contiguous block of `vars_per_hour` columns, and the block is laid out in this
 order:
@@ -162,14 +162,14 @@ helpers (PJM/NYISO/MISO). See [`05-policy.md`](05-policy.md) §5.5.
 
 ## 2.6 Results and prices
 
-`DispatchResult` (line 1549) holds the solved quantities and prices:
+`DispatchResult` (line 1550) holds the solved quantities and prices:
 
 ```
 dispatch[n_gen,T], wind_dispatched[n_zones,T], solar_dispatched[n_zones,T],
 slack[n_zones,T], dump[n_zones,T], prices[n_zones,T],
 storage_charge/discharge/soc[n_storage,T], flows[n_links,T],
 objective_value, status, build_time, solve_time,
-reserve_dispatch[n_reserve,T], reserve_price[T],
+reserve_dispatch[n_zones,T], reserve_price[T],
 reserve_price_by_family[T,n_families], rps_shadow_price
 ```
 
@@ -202,7 +202,7 @@ that builds a `DispatchModel` and calls `.solve()`.
 
 ### Cross-year warm-start
 
-`CrossYearBasis` (line 1609) freezes a solved HiGHS basis (column/row statuses)
+`CrossYearBasis` (line 1610) freezes a solved HiGHS basis (column/row statuses)
 plus the layout identity and unit IDs. `export_cross_year_basis()` /
 `apply_cross_year_basis()` carry a basis into the next year: surviving units are
 remapped by `unit_id`, index-stable blocks (W/S/storage/flow/slack/dump) copy
