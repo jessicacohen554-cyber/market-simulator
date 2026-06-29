@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-29T06:21:31",
+  "timestamp": "2026-06-29T07:03:46",
   "iso": "CAISO",
   "years": [
     2023,
@@ -70,91 +70,12 @@
   "storage_as_commitment": false,
   "ercot_storage_as_endogenous": false,
   "gas_offer_curve": false,
-  "gas_monthly_actuals": true,
+  "gas_monthly_actuals": false,
   "pjm_zonal_gas_basis": false,
   "pjm_congestion": false,
-  "offer_curve_overrides": {
-    "CC_REGULAR": {
-      "committed": 0.9,
-      "econ_low": 0.95,
-      "econ_high": 1.21,
-      "peak": 2.25,
-      "econ_low_share": 0.5,
-      "pct_peaking": 8.0
-    },
-    "CC_CHP": {
-      "committed": 0.92,
-      "econ_low": 0.96,
-      "econ_high": 1.12,
-      "peak": 2.25,
-      "econ_low_share": 0.5,
-      "pct_peaking": 8.0
-    },
-    "CT_CHP": {
-      "committed": 1.1,
-      "econ_low": 1.2,
-      "econ_high": 1.2,
-      "peak": 1.4,
-      "econ_low_share": 0.5
-    },
-    "CT_PEAKER": {
-      "committed": 1.35,
-      "econ_low": 1.1,
-      "econ_high": 1.5,
-      "peak": 4.0,
-      "econ_low_share": 0.526,
-      "pct_peaking": 7.0
-    },
-    "ST_GAS": {
-      "committed": 0.81,
-      "econ_low": 1.05,
-      "econ_high": 1.4,
-      "peak": 4.2,
-      "econ_low_share": 0.5,
-      "pct_peaking": 15.0
-    },
-    "COAL_LIGNITE": {
-      "committed": 0.95,
-      "econ_low": 1.14,
-      "econ_high": 1.15,
-      "peak": 1.55,
-      "econ_low_share": 0.556
-    },
-    "COAL_PRB": {
-      "committed": 0.95,
-      "econ_low": 0.77,
-      "econ_high": 1.19,
-      "peak": 1.48,
-      "econ_low_share": 0.556
-    },
-    "COAL_BIT": {
-      "committed": 0.9,
-      "econ_low": 0.95,
-      "econ_high": 1.1,
-      "peak": 1.45,
-      "econ_low_share": 0.55
-    },
-    "COAL_WC": {
-      "committed": 0.85,
-      "econ_low": 0.9,
-      "econ_high": 1.02,
-      "peak": 1.2,
-      "econ_low_share": 0.55
-    },
-    "COAL": {
-      "committed": 0.9,
-      "econ_low": 0.95,
-      "econ_high": 1.1,
-      "peak": 1.45,
-      "econ_low_share": 0.55
-    }
-  },
+  "offer_curve_overrides": {},
   "offer_curve_deltas": {},
-  "curve_smoothing": {
-    "offer_curve_smoothing_n": null,
-    "offer_curve_smoothing_exp": null,
-    "offer_curve_smoothing_mid": null
-  },
+  "curve_smoothing": {},
   "cc_derate_from_top": false,
   "priced_interchange": true,
   "hydro_backfill_year": null,
@@ -164,13 +85,13 @@
   "interchange_shaping": false,
   "interchange_shaping_export_only": false,
   "reference_price_interface": false,
-  "negative_renewable_offers": true,
+  "negative_renewable_offers": null,
   "caiso_gas_commitment_floor": null,
   "caiso_gas_floor_frac": null,
-  "caiso_ra_mustoffer": true,
+  "caiso_ra_mustoffer": null,
   "caiso_ra_min_load_frac": null,
   "caiso_ct_reliability_floor": null,
-  "caiso_solar_deliverability": true,
+  "caiso_solar_deliverability": null,
   "caiso_solar_deliverability_k": null,
   "caiso_solar_cap_at_delivered": null,
   "nyiso_ct_reliability_floor": null,
@@ -182,7 +103,7 @@
   "caiso_import_gas_coupling": null,
   "caiso_import_solar_shape": null,
   "caiso_bidir_intertie": null,
-  "caiso_per_hub_intertie": null,
+  "caiso_per_hub_intertie": false,
   "caiso_corridor_flow_limit": null,
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": true,
@@ -192,7 +113,7 @@
   "nyiso_import_reconciliation": null,
   "nyiso_synchronised_reserve": null,
   "nyiso_spin_headroom_frac": null,
-  "miso_firm_imports": false,
+  "miso_firm_imports": null,
   "miso_seam_flow_limit": false,
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
@@ -200,7 +121,7 @@
   "miso_temp_reliability_floor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
-  "gas_hub_basis_overlay": true,
+  "gas_hub_basis_overlay": null,
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/CAISO/eia930-3697b3115384.parquet",

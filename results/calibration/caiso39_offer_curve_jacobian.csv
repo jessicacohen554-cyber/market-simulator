@@ -1,0 +1,15 @@
+iso,year,metric,out_class,band,in_class,dTWh_per_unit_mult,n_obs,stderr,confidence
+CAISO,2024,shape,CC_REGULAR,econ_high,gas,0.003539,1,,low
+CAISO,2024,shape,CC_REGULAR,econ_low,gas,0.058063,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_high,CC_CHP,0.051307,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_high,CC_REGULAR,-15.362004,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_high,COAL,0.023686,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_high,CT_CHP,0.024647,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_high,CT_PEAKER,0.280912,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_high,ST_GAS,0.061778,1,,low
+CAISO,2024,twh,CC_REGULAR,econ_low,CC_CHP,0.049972,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_low,CC_REGULAR,-8.280471,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_low,COAL,0.013692,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_low,CT_CHP,0.011059,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_low,CT_PEAKER,0.149718,2,,med
+CAISO,2024,twh,CC_REGULAR,econ_low,ST_GAS,0.048338,2,,med

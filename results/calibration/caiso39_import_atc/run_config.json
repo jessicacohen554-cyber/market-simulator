@@ -1,15 +1,18 @@
 {
-  "timestamp": "2026-06-29T06:21:31",
+  "timestamp": "2026-06-29T07:03:46",
   "git": {
     "sha": "d11bc23",
-    "branch": "claude/caiso-atc-recalibration-qh7tsa",
+    "branch": "claude/caiso-offer-curve-tune-u6t504",
     "dirty": true,
     "changed_files": [
-      "rc/market_sim/config/constants.py"
+      "rc/market_sim/config/constants.py",
+      "scripts/_caiso_class_lmp.py",
+      "scripts/run_caiso39_import_atc.py",
+      "scripts/run_caiso_offer_probe.py"
     ],
-    "diffstat": "src/market_sim/config/constants.py | 11 ++++++++---\n 1 file changed, 8 insertions(+), 3 deletions(-)"
+    "diffstat": "src/market_sim/config/constants.py | 45 +++++++++++++++++++++++++++-----------\n 1 file changed, 32 insertions(+), 13 deletions(-)"
   },
-  "model_changes_note": "caiso-39 ATC recalibration: re-grounded CAISO corridor forward-ATC to 3yr EIA-930 p95 import envelope. PNW atc_base_frac 0.30->0.44, DSW 0.50->0.53 + solar_floor 0.30->0.65. All caiso-38 offer-curve + seam levers carried verbatim.",
+  "model_changes_note": "caiso 39 import-ATC re-grounding: re-ground the WECC corridor forward-ATC base fractions (CAISO_PER_HUB_NEIGHBORS) to the measured p95 overnight net-import deliverability (PNW 0.30->0.43, DSW 0.50->0.56), closing the import-ATC compression the caiso 38 finding exposed (model import swing 2,321 vs actual 4,596 MW). Midday solar floor stays 0.30 (the p95 midday ratio overstates the typical ceiling and inverts the diurnal). Measured-deliverability grounded (rule #11/#12), NOT residual-tuned. All caiso 38 levers verbatim; ERCOT/PJM/NYISO/NEISO byte-identical.",
   "calibration_flags": {
     "iso": "CAISO",
     "years": [
@@ -45,82 +48,7 @@
     "coal_bit_sigmoid_overrides": {},
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "offer_curve_overrides": {
-      "CC_REGULAR": {
-        "committed": 0.9,
-        "econ_low": 0.95,
-        "econ_high": 1.21,
-        "peak": 2.25,
-        "econ_low_share": 0.5,
-        "pct_peaking": 8.0
-      },
-      "CC_CHP": {
-        "committed": 0.92,
-        "econ_low": 0.96,
-        "econ_high": 1.12,
-        "peak": 2.25,
-        "econ_low_share": 0.5,
-        "pct_peaking": 8.0
-      },
-      "CT_CHP": {
-        "committed": 1.1,
-        "econ_low": 1.2,
-        "econ_high": 1.2,
-        "peak": 1.4,
-        "econ_low_share": 0.5
-      },
-      "CT_PEAKER": {
-        "committed": 1.35,
-        "econ_low": 1.1,
-        "econ_high": 1.5,
-        "peak": 4.0,
-        "econ_low_share": 0.526,
-        "pct_peaking": 7.0
-      },
-      "ST_GAS": {
-        "committed": 0.81,
-        "econ_low": 1.05,
-        "econ_high": 1.4,
-        "peak": 4.2,
-        "econ_low_share": 0.5,
-        "pct_peaking": 15.0
-      },
-      "COAL_LIGNITE": {
-        "committed": 0.95,
-        "econ_low": 1.14,
-        "econ_high": 1.15,
-        "peak": 1.55,
-        "econ_low_share": 0.556
-      },
-      "COAL_PRB": {
-        "committed": 0.95,
-        "econ_low": 0.77,
-        "econ_high": 1.19,
-        "peak": 1.48,
-        "econ_low_share": 0.556
-      },
-      "COAL_BIT": {
-        "committed": 0.9,
-        "econ_low": 0.95,
-        "econ_high": 1.1,
-        "peak": 1.45,
-        "econ_low_share": 0.55
-      },
-      "COAL_WC": {
-        "committed": 0.85,
-        "econ_low": 0.9,
-        "econ_high": 1.02,
-        "peak": 1.2,
-        "econ_low_share": 0.55
-      },
-      "COAL": {
-        "committed": 0.9,
-        "econ_low": 0.95,
-        "econ_high": 1.1,
-        "peak": 1.45,
-        "econ_low_share": 0.55
-      }
-    },
+    "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": true,
     "ercot_rtordpa_overlay": false,
