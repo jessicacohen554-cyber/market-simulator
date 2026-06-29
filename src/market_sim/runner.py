@@ -727,6 +727,49 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_mc, solar_mc = apply_negative_renewable_offer_floor(
                     wind_mc, solar_mc, config
                 )
+            # NYISO priced import-node boundary-flow reconciliation (FORECAST
+            # mode): pin the priced node's MONTHLY net interchange to a band
+            # around the neighbor's forward net position
+            # (config.nyiso_forward_net_import_twh, shaped to monthly by the
+            # forecast load), leaving the priced tranches free to set the
+            # marginal price within each month's envelope. Mirrors the
+            # calibration path (run_calibration.py) but with mode="forecast" —
+            # the forecast has no measured EIA-930 schedule to target. No-op
+            # (returns None, no dispatch keys) unless the flag is on, the ISO is
+            # NYISO, the priced import node is in the fleet, and a forward target
+            # is supplied. Must run after fleet_arrays + year_demand are built.
+            import_node_recon = None
+            if (
+                getattr(config, "nyiso_import_reconciliation", False)
+                and iso == "NYISO"
+                and import_generators
+            ):
+                from market_sim.model.transmission import (
+                    build_import_node_reconciliation,
+                )
+
+                import_node_recon = build_import_node_reconciliation(
+                    fleet_arrays,
+                    iso,
+                    year,
+                    mode="forecast",
+                    forward_net_import_twh=getattr(
+                        config, "nyiso_forward_net_import_twh", None
+                    ),
+                    system_demand=year_demand,
+                )
+                if import_node_recon is not None:
+                    node_idx, recon_lo, recon_hi = import_node_recon
+                    logger.info(
+                        "%s %d: priced import node reconciled to the neighbor's "
+                        "forecast net position — %d node rows, annual band "
+                        "[%.2f, %.2f] TWh",
+                        iso,
+                        year,
+                        int(node_idx.size),
+                        recon_lo.sum() / 1e6,
+                        recon_hi.sum() / 1e6,
+                    )
             # The RPS is enforced as an LP constraint when enabled; its dual
             # is the RPS shadow price returned in the dispatch result.
             rps_target = None
@@ -770,6 +813,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 hydro_monthly_energy=hydro_monthly_energy,
                 T=config.hours,
             )
+            # Priced import-node monthly net-interchange band (NYISO forecast
+            # reconciliation, built above). Part of the LP feasible region (same
+            # for P0/P1), so it warm-starts cleanly. No keys (identical LP)
+            # unless the reconciliation was built above.
+            if import_node_recon is not None:
+                node_idx, recon_lo, recon_hi = import_node_recon
+                dispatch_kwargs.update(
+                    import_node_gen_idx=node_idx,
+                    import_node_monthly_lo=recon_lo,
+                    import_node_monthly_hi=recon_hi,
+                )
             # Energy + operating-reserve co-optimization (ERCOT-only, gated): the
             # published ORDC reserve demand curve enters the LP as a VOLL-anchored
             # reserve demand, so reserve-eligible thermal units part-load against a
