@@ -814,10 +814,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         ordc_penalties=coopt_pens,
                         ordc_step_widths=coopt_widths,
                     )
-                    # Apply RTOLCAP supply cap (same as multi-product path)
-                    coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
-                    if coopt_supply_cap is not None:
-                        dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
             # PJM analogue: the measured PJM_RTO Primary Reserve requirement
             # (~3.4 GW) clears against the published vertical two-step ORDC
             # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
@@ -984,7 +980,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 and iso == "ERCOT"
                 and getattr(config, "energy_reserve_coopt", False)
             )
-            if config.commitment_enabled or as_aware:
+            caiso_ra = getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"
+            if config.commitment_enabled or as_aware or caiso_ra:
                 save_result(
                     p1_result,
                     config,
