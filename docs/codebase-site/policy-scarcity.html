@@ -346,15 +346,15 @@
   <!-- Main content -->
   <main id="main">
     <!-- Page header -->
-    <div class="header" data-header-variant="default">
+    <header class="header" data-header-variant="default">
       <div class="header__eyebrow">Evolution &amp; Policy</div>
       <h1 class="header__title">Policy &amp; Scarcity</h1>
       <p class="header__subtitle">
         How tax credits, RPS mandates, carbon pricing, and operating-reserve demand curves shape the dispatch
         and drive investment. Plus reserve co-optimization for ISOs that endogenize scarcity in the LP.
       </p>
-      <div class="header-accent"></div>
-    </div>
+      <div class="header__accent"></div>
+    </header>
 
     <!-- Section 1: IRA Tax Credits -->
     <section class="section-light">
@@ -909,10 +909,15 @@
     </section>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb">
-      <a href="capacity-evolution.html">← Capacity Evolution</a>
-      <span style="flex: 1;"></span>
-      <a href="results-calibration.html">Results &amp; Calibration →</a>
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="capacity-evolution.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Capacity Evolution</span>
+      </a>
+      <a href="results-calibration.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Results &amp; Calibration</span>
+      </a>
     </nav>
   </main>
 
