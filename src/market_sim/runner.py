@@ -30,6 +30,7 @@ from market_sim.config.constants import (
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
+from market_sim.data.hydro import build_hydro_fleet
 from market_sim.data.fleet import (
     _AGGREGATABLE_FUELS,
     Generator,
@@ -525,6 +526,40 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
                 fleet + import_generators, config, split_takeorpay
             )
+        # Energy-limited conventional hydro (every ISO with hydro plants): one
+        # LP unit per EIA-923-reporting hydro plant, capped per hour by its
+        # EIA-860 nameplate and per month by its energy budget via the dispatch
+        # LP's hydro budget rows (the plant chooses WHEN within a month to
+        # generate — peak shaving). forecast_budget sets the monthly level to
+        # the normal-water-year climatology scaled by config.hydro_year (the
+        # forward analogue of the measured EIA-930 pin; CLAUDE.md #12). Appended
+        # to the LP fleet (dispatch_fleet) before the fleet-array build so the
+        # units flow through assemble_mc and the dispatch like any generator;
+        # hydro_gen_idx points the dispatch budget constraint at their columns.
+        hydro_units, hydro_monthly_energy = build_hydro_fleet(
+            iso,
+            year,
+            zone_names,
+            forecast_budget=True,
+            hydro_year=config.hydro_year,
+        )
+        hydro_gen_idx = None
+        if hydro_units:
+            hydro_gen_idx = np.arange(
+                len(dispatch_fleet),
+                len(dispatch_fleet) + len(hydro_units),
+                dtype=int,
+            )
+            dispatch_fleet = dispatch_fleet + hydro_units
+            fuel_fracs = list(fuel_fracs) + [1.0] * len(hydro_units)
+            logger.info(
+                "%s %d: %d hydro plants in LP (%.0f MW, %.2f TWh monthly budget)",
+                iso,
+                year,
+                len(hydro_units),
+                sum(g.pmax_mw for g in hydro_units),
+                hydro_monthly_energy.sum() / 1e6,
+            )
         # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific
         # ones for generators pinned to a single plant, so emission prices
         # bite at each plant's measured per-MWh-net intensity.
@@ -644,6 +679,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 storage_daily_cycle_hours=(
                     24 if config.storage_daily_cycling else None
                 ),
+                # Conventional-hydro monthly energy budget: constrains each
+                # hydro plant's monthly generation to its (climatology) budget
+                # while letting the LP choose when within the month to generate.
+                # Both None (the default) when the ISO has no hydro plants.
+                hydro_gen_idx=hydro_gen_idx,
+                hydro_monthly_energy=hydro_monthly_energy,
                 T=config.hours,
             )
             # Energy + operating-reserve co-optimization (ERCOT-only, gated): the
