@@ -737,6 +737,24 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "MISO": 0.30,  # Chicago Citygate footprint blend, reconciled (see above)
 }
 
+# CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
+# overlay (gas_hub_basis_overlay) reprices each gas unit at the measured SoCal /
+# PG&E Citygate spot (EIA N3050CA3 - Henry Hub, data/raw/gas_basis_by_iso_month.csv).
+# That citygate is the price where the interstate pipe hands to the CA LDC; a
+# power plant deep in the SoCalGas / PG&E system pays the citygate PLUS the LDC
+# intrastate backbone + local transmission to its burner tip, so the plant's true
+# delivered fuel cost (the cost-based DEB bid in CAISO's mitigated market) is the
+# citygate + that transport. The adder is the MEASURED differential between the
+# two EIA series: CA delivered-to-electric-power (N3045CA3, 2024 annual $3.98/Mcf
+# = $3.84/MMBtu) minus the CA citygate (N3050CA3, 2024 $3.38/MMBtu) = +$0.46. It
+# is a slow-moving regulated intrastate tariff (held flat across years like the
+# basis differentials) and forward-reproducible (rule #11) — NOT tuned to the
+# price or interchange residual. Without it the pure citygate under-prices the
+# marginal CC to ~the import price and collapses the import knife-edge (the
+# discovered caiso-38 under-import); reconciling up to the measured census level
+# restores it. Source: EIA N3045CA3 - N3050CA3, 2024 annual.
+CAISO_CITYGATE_TRANSPORT_ADDER: float = 0.46
+
 # --- Monthly Gas Price Seasonality Factors ---
 # Source: EIA Henry Hub spot price monthly averages, 2019-2024 (excluding
 #   anomalous Feb 2021 Uri event and Jan 2026 spike).
