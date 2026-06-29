@@ -278,7 +278,8 @@
               After market-driven evolution, check the planning reserve margin.
               If firm capacity is short, force-build gas-CT peakers to close
               the gap. This ensures reliability even when market signals don't
-              drive enough thermal entry.
+              drive enough thermal entry — an adequacy backstop that is
+              <code>reserve_margin_build_enabled</code> (default off).
             </div>
           </div>
         </div>
@@ -367,8 +368,8 @@
             <div class="code-block" style="margin: 16px 0;">
               <span class="token-comment"># capacity.py — economic retirement screen</span><br>
               margin = <span class="token-keyword">Σ</span> (price[t] − mc[g,t]) × dispatch[g,t]<br>
-              &nbsp;&nbsp;<span class="token-comment">for t where price[t] > mc[g,t]</span><br><br>
-              <span class="token-keyword">if</span> margin &lt; FOM × multiplier<br>
+              &nbsp;&nbsp;<span class="token-comment"># summed over all hours t</span><br><br>
+              <span class="token-keyword">if</span> margin &lt; FOM × multiplier × pmax<br>
               &nbsp;&nbsp;<span class="token-keyword">for</span> N consecutive years:<br>
               &nbsp;&nbsp;&nbsp;&nbsp;retire(g)
             </div>
@@ -483,9 +484,9 @@
             <div class="code-block" style="margin: 16px 0;">
               <span class="token-comment"># Wright's Law</span><br>
               Cost(t) = C₀ × (Cumulative(t) / Cumulative(0))<span style="color:#E06C75;"><sup>−α</sup></span><br><br>
-              <span class="token-comment"># where α = log₂(1 − learning_rate)</span><br>
-              <span class="token-comment"># Solar α = 0.276 (15.2% LR)</span><br>
-              <span class="token-comment"># Li-Ion α = 0.371 (21.0% LR)</span>
+              <span class="token-comment"># where α = −log₂(1 − learning_rate)</span><br>
+              <span class="token-comment"># Solar α = 0.238 (15.2% LR)</span><br>
+              <span class="token-comment"># Li-Ion α = 0.340 (21.0% LR)</span>
             </div>
             <p>
               The learning exponent <em>α</em> is derived from the learning rate:
