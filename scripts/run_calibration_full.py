@@ -1704,6 +1704,7 @@ def solve_and_persist(
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
+    neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
@@ -1911,6 +1912,7 @@ def solve_and_persist(
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
             neiso_temp_reliability_floor=neiso_temp_reliability_floor,
+            neiso_floor_outage_exempt=neiso_floor_outage_exempt,
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
@@ -2171,6 +2173,7 @@ def solve_and_persist(
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
         "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
+        "neiso_floor_outage_exempt": neiso_floor_outage_exempt,
         "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
@@ -2377,6 +2380,10 @@ def solve_and_persist(
     if neiso_temp_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor
+        )
+    if neiso_floor_outage_exempt is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_floor_outage_exempt=neiso_floor_outage_exempt
         )
     if neiso_gas_coldsnap_derate is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5368,6 +5375,26 @@ def main() -> None:
         "A/B probe).",
     )
     parser.add_argument(
+        "--neiso-floor-outage-exempt",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO temperature-reliability-floor outage exemption (CLAUDE.md #11 "
+        "correctness fix; default ON for NEISO). The lone Merrimack-class COAL and "
+        "ST_GAS units are winter cold-snap RELIABILITY runners governed by the "
+        "temperature floor, whose coefficients are regressed from each unit's own "
+        "measured CAMPD CF (already netting out real downtime). The CAMPD "
+        "unit-outage 'sustained CF<5%' detector, built for baseload coal/CC, "
+        "misreads a winter peaker's economic idleness as a forced outage and (with "
+        "the CSV's real ~460 MW unit capacities derated against the 108 MW model "
+        "bin) over-derates Merrimack's availability to ZERO (0 of 8760 h in 2024), "
+        "structurally capping the floor's frac×available at ~0. When on, the floor "
+        "classes skip the unit-outage overlay so the floor governs their "
+        "availability (mirrors ct_mustrun_per_plant's WEFOR/planned-outage "
+        "exemption). NEISO-only, no-op without the floor. "
+        "--no-neiso-floor-outage-exempt restores the (buggy) overlay for the "
+        "no-fix A/B baseline.",
+    )
+    parser.add_argument(
         "--neiso-gas-coldsnap-derate",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6001,6 +6028,7 @@ def main() -> None:
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
         neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
+        neiso_floor_outage_exempt=args.neiso_floor_outage_exempt,
         neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
