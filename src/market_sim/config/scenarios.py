@@ -758,6 +758,22 @@ class ScenarioConfig:
     # outages/derates and gas was the largest forced-out category (Eastern
     # Interconnection 13% of all capacity forced out at the peak) — a published
     # physical magnitude, not tuned to land a target number of >$300 hours.
+    neiso_oil_burn_budget: bool = False  # NEISO oil-burn inventory budget.
+    # ISO-NE's dual-fuel and oil-primary peaker fleet rations a LIMITED
+    # on-site distillate stock over multi-day cold snaps. The energy-only LP
+    # caps every top hour at the flat dual-fuel oil-parity (~$258/MWh) and
+    # produces 0 hours > $300, because oil commodity price does NOT spike
+    # like pipeline-gas basis. The real scarcity is a QUANTITY (inventory)
+    # limit, not a price: when the monthly oil-burn budget binds in a cold
+    # snap, the marginal oil MWh is priced at SRMC + shadow price, lifting
+    # the cleared LMP above oil parity and producing >$300 hours
+    # endogenously. Structurally identical to the hydro monthly energy
+    # budget (dispatch.py:_build_hydro_rows). Budget derived from measured
+    # EIA-923 Schedule 5 monthly Petroleum receipts (MMBtu, converted to
+    # MWh via fleet heat rates) — a reproducible physical deliverability
+    # input (CLAUDE.md #10: could be produced for a forward year from a
+    # seasonal oil-deliverability assumption). NEISO-only, backcast-only,
+    # default off (byte-identical). See data/fuel.py:load_oil_burn_budget.
     miso_temp_reliability_floor: bool = False  # MISO DUAL-LIMB, ZONAL weather-
     # correlated reliability floor — the MISO-native analogue of the NEISO/NYISO
     # temperature floors. MISO spans two OPPOSITE weather regimes within one ISO,
@@ -2947,6 +2963,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_gas_derate_t0_c": 1,
     "neiso_gas_derate_slope_per_c": 3,
     "neiso_gas_derate_cap": 2,
+    "neiso_oil_burn_budget": 1,
     "nyiso_ct_reliability_floor": 1,
     "nyiso_ct_floor_slope_per_c": 3,
     "nyiso_ct_floor_t0_c": 1,
