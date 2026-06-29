@@ -1,5 +1,31 @@
 # Market Simulation Model — Build Plan
 
+> ⚠️ **HISTORICAL ARTIFACT — build provenance, not a current spec.** This plan
+> describes how the codebase was *bootstrapped* from an old heuristic engine. It
+> is preserved for provenance (the extraction manifest in §3 documents a
+> long-completed migration) and is **not maintained against the live code**.
+> Where it disagrees with reality, the code wins. Known drift vs. the current
+> repo:
+> - **7 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO, SPP,
+>   NYISO, NEISO — all share one ISO-agnostic LP (not "separate model
+>   instances"). Zone counts: ERCOT 7 (6 carry load), CAISO 3 + WECC import,
+>   PJM 8, MISO 3, SPP 2, NYISO 5, NEISO 4 + HQ import. Phrases like "ERCOT
+>   4-zone" / "CAISO single zone" / two-ISO framing below are stale.
+> - **Major subsystems built since this plan and absent from it:** the
+>   backcast/calibration mode (`ScenarioConfig.mode`), the P0→P1→P2 commitment
+>   screen (`model/commitment.py`), energy–reserve co-optimization and scarcity
+>   pricing (`model/ancillary.py`, `results/scarcity.py`, `results/rcpf.py`),
+>   CAMPD per-plant binning with tranche offer curves (`data/campd.py`,
+>   `data/fleet.py`), and the deployable backcast results dashboard
+>   (`frontend/data/backcast/`).
+> - The module/dependency lists below are a *subset* of the real tree.
+>
+> **For current truth use, in priority order:** the source under
+> `src/market_sim/`; the code-derived reference set in
+> [`docs/codebase/`](docs/codebase/README.md); the design spec
+> [`model-methodology-spec.md`](model-methodology-spec.md); and `CLAUDE.md` for
+> the architecture overview and repo rules.
+
 **Purpose:** Instruction document for building a clean, LP-based electricity market simulation model. The old repo contains a heuristic dispatch engine that cannot be salvaged architecturally, but has valuable data constants, fleet parameters, and capacity-evolution logic worth extracting. This plan specifies what to build new, what to extract, and in what order — plus a task registry for sub-agents that handle documentation, expert review, citations, and visual explainers.
 
 **Companion document:** `model-methodology-spec.md` governs all model design decisions: LP formulation, matrix construction patterns, scenario architecture, capacity evolution logic, performance patterns, and explicit build-agent rules. **When this plan and the methodology spec conflict, the methodology spec wins.**

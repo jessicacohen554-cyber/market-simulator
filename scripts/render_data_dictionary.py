@@ -48,11 +48,16 @@ DOC_PATH: Path = paths.DICTIONARY_DIR / "data-dictionary.md"
 # ISO columns of the coverage matrix, in the project's canonical order.
 ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "SPP", "NYISO", "NEISO")
 
-# Datatype sections, in render order (matches scripts/regenerate_clean.DATATYPES).
+# Datatype sections, in render order. Mostly mirrors scripts/regenerate_clean.DATATYPES,
+# plus `energy-offers`, which ships a schema but is curated by a dedicated pipeline
+# (scripts/fetch_pjm_energy_offers.py → scripts/curate_energy_offers.py) rather than
+# the generic regenerate path. This tuple must cover every data/dictionary/schema/*.yaml
+# (enforced by tests/test_data_dictionary_sync.py).
 DATATYPE_ORDER: tuple[str, ...] = (
     "lmp",
     "load",
     "ancillary-services",
+    "energy-offers",
     "generation",
     "renewables",
     "emissions",
@@ -92,6 +97,17 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`ancillary_service/value`, ERCOT `REGUP/REGDN/RRS/ECRS/NSPIN`, "
             "CAISO `RU/RD/SR/NR` — onto a common product taxonomy (reg up/down, "
             "spin, nonspin, 30-min supplemental), prices in `$/MW`."
+        ),
+    },
+    "energy-offers": {
+        "summary": "PJM Real-Time effective energy offer curves (long step form).",
+        "reconciles": (
+            "PJM DataMiner2 `energy_market_offers` wide `mw1..mw20`/`bid1..bid20` "
+            "breakpoints (plus daily `avg_ecomin`/`avg_ecomax`, no-load and "
+            "hot/cold/inter start costs) — pivoted to one row per "
+            "(`unit_code` × operating-hour × `step_idx`) with `step_mw` / "
+            "`step_price_usd_per_mwh`. PJM-only; unit identity is anonymised and "
+            "rotated annually (not joinable across calendar years)."
         ),
     },
     "generation": {
