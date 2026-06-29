@@ -373,6 +373,7 @@ function cmpBadge(c){if(!c)return "";
  return ' <span class="badge923 inc" title="incomplete EIA-923 plant data — not gated this vintage">⚠ 923</span>';}
 function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  const cf=B.classFull,FG=Object.keys(cf),gm=(MODEL[id].years[yr]||{}).gmModel||{};
+ // Totals over ALL classes (including CHP) for share denominators and footer.
  const aGen=FG.reduce((s,g)=>s+(cf[g]||0),0);
  const mGen=FG.reduce((s,g)=>s+(gm[g]||0),0);
  const iso=(META_RUN(id)||{}).iso||"ERCOT";
@@ -386,7 +387,19 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  const ix=((MODEL[id].years[yr]||{}).fuelRows||[]).find(x=>x.fuel==="interchange");
  const mImp=ix?-ix.m:null,aImp=(ix&&ix.b!=null)?-ix.b:null;
  const load=sysDemand(id,yr);
- let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM); BTM excluded — grid-delivered only)</span></h2>';
+ // Merge CHP classes into parent classes for display: CC_CHP→CC_REGULAR,
+ // CT_CHP→CT_PEAKER, ST_CHP→ST_GAS. Grid-delivered values are already
+ // BTM-subtracted on both sides (classFull = EIA-923 − BTM; gmModel = LP
+ // dispatch). Merging keeps the table rows summing to total generation while
+ // hiding the BTM-concept CHP rows that confuse the class-level diagnosis.
+ const CHP_MERGE={'CC_CHP':'CC_REGULAR','CT_CHP':'CT_PEAKER','ST_CHP':'ST_GAS'};
+ const FG_disp=FG.filter(g=>!(g in CHP_MERGE));
+ const cf_d=Object.fromEntries(FG_disp.map(g=>[g,cf[g]||0]));
+ const gm_d=Object.fromEntries(FG_disp.map(g=>[g,gm[g]||0]));
+ for(const[chp,par]of Object.entries(CHP_MERGE)){
+  if(par in cf_d)cf_d[par]=(cf_d[par]||0)+(cf[chp]||0);
+  if(par in gm_d)gm_d[par]=(gm_d[par]||0)+(gm[chp]||0);}
+ let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM); CHP folded into parent class; BTM excluded — grid-delivered only)</span></h2>';
  h+=`<p class=psub>${MODEL[id].label} generation ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh`
    +(mImp!=null?` · + net imports ${mImp.toFixed(1)} (actual ${aImp==null?"—":aImp.toFixed(1)}) → supply ${(mGen+mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh`:'')+`</p>`;
  if(prelim)h+='<p class=psub style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> per-class plant data is still incomplete. '
@@ -395,7 +408,7 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  h+='<div class=tablewrap><table><thead><tr><th>class</th>'
   +'<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
   +'<th>Δpp</th></tr></thead><tbody>';
- for(const g of FG){const a=cf[g]||0,m=gm[g]||0;
+ for(const g of FG_disp){const a=cf_d[g]||0,m=gm_d[g]||0;
   const a_g=aGen>0?100*a/aGen:0,m_g=mGen>0?100*m/mGen:0,dpp=m_g-a_g;
   // Only fossil classes carry a 923 completeness flag (cf carries non-fossil
   // wind/solar/nuclear too, which are scored on EIA-930, not 923).
@@ -414,13 +427,17 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  // a phantom "model is N TWh short of actual". Only when the run carries a
  // priced-interchange row; otherwise interchange is already in demand.
  if(mImp!=null){
-  const mSup=mGen+mImp,aSup=aGen+(aImp||0);
+  const mSup=mGen+mImp;
+  // Actual total supply is only meaningful when actual imports are known.
+  // Use null (show "—") rather than silently using aGen alone when aImp is
+  // absent, which would make aSup ~20-40 TWh short of load for net importers.
+  const aSup=aImp!=null?aGen+aImp:null;
   h+=`<tr><td>net imports</td><td class=num>${mImp.toFixed(2)}</td><td class=num>${aImp==null?"—":aImp.toFixed(2)}</td><td class=num></td><td class=num></td><td class=num></td></tr>`;
-  h+=`<tr class=sub><td>Total supply (gen + net imports)</td><td class=num>${mSup.toFixed(2)}</td><td class=num>${aSup.toFixed(2)}</td><td class=num></td><td class=num></td><td class=num></td></tr>`;
+  h+=`<tr class=sub><td>Total supply (gen + net imports)</td><td class=num>${mSup.toFixed(2)}</td><td class=num>${aSup==null?"—":aSup.toFixed(2)}</td><td class=num></td><td class=num></td><td class=num></td></tr>`;
   if(load>0){
-   const dM=mSup-load,dA=aSup-load;
+   const dM=mSup-load,dA=aSup!=null?aSup-load:null;
    h+=`<tr><td>Load (EIA-930 demand)</td><td class=num>${load.toFixed(2)}</td><td class=num>${load.toFixed(2)}</td><td class=num></td><td class=num></td><td class="num ${ppcls(100*dM/load)}">${fmtTWh(dM)}</td></tr>`;
-   if(Math.abs(dA)>2)
+   if(dA!=null&&Math.abs(dA)>2)
     h+=`<tr><td colspan=6 class=psub style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation reconciled to the EIA-930 grid series per fossil family (grid-delivered: CHP behind-the-meter and 923↔930 plant-to-BA assignment removed so each family matches what reached the grid). Any residual ${fmtTWh(dA)} vs load is EIA-930's own net-generation-minus-demand discrepancy (the two series are independently surveyed), not behind-the-meter — both columns are now on the same grid-delivered basis, so the per-class shares and the absolute supply total are directly comparable.</td></tr>`;}
  }
  return h+'</tbody></table></div></div>';}
