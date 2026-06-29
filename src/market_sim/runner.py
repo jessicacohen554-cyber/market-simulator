@@ -25,6 +25,7 @@ from market_sim.config.constants import (
     DEMAND_GROWTH_TRANSITION_YEAR,
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
+    INTERFACE_NEIGHBORS,
     START_YEAR,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -77,8 +78,11 @@ from market_sim.model.transmission import (
     build_export_sinks,
     build_import_generators,
     build_interface_groups,
+    build_reference_price_node,
     extend_with_import_node,
     get_ttc_array,
+    inject_reference_price_firm_export,
+    inject_reference_price_mc,
     wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price
@@ -702,6 +706,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         iso,
                         year,
                     )
+            # Manitoba firm-hydro import floor (MISO only): the contracted firm
+            # baseload flows into MISO-North every hour regardless of MISO's
+            # hourly price (the firm-schedule pattern). Mirrors the must-flow
+            # floor laid on the build_miso_firm_imports block above. No-op
+            # unless the flag is on and the block is in the fleet.
+            if getattr(config, "miso_firm_imports", False):
+                from market_sim.model.transmission import inject_miso_firm_imports
+
+                if inject_miso_firm_imports(fleet_arrays, iso, year):
+                    logger.info(
+                        "%s %d: Manitoba firm-hydro import baseload floored "
+                        "(must-flow)",
+                        iso,
+                        year,
+                    )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
@@ -814,10 +833,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         ordc_penalties=coopt_pens,
                         ordc_step_widths=coopt_widths,
                     )
-                    # Apply RTOLCAP supply cap (same as multi-product path)
-                    coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
-                    if coopt_supply_cap is not None:
-                        dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
             # PJM analogue: the measured PJM_RTO Primary Reserve requirement
             # (~3.4 GW) clears against the published vertical two-step ORDC
             # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
@@ -838,41 +853,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )
-                # Optional deliverable / online reserve-supply re-scope: the bare
-                # co-opt draws reserve on ~38 GW of total eligible thermal headroom
-                # vs the ~3.4 GW Primary requirement, so the vertical ORDC step never
-                # fires. Supply cap bounds cleared reserve at the 10-min deliverable
-                # ramp; online-gating restricts it to synchronized capacity.
-                # Physical deliverability definitions, never fitted to the residual
-                # (CLAUDE.md #11). See docs/multi-iso/pjm-reserve-ordc.md.
-                from market_sim.results.scarcity import (
-                    pjm_reserve_deliverable_supply_cap_mw,
-                )
-
-                pjm_supply_cap = pjm_reserve_deliverable_supply_cap_mw(
-                    config, fleet_arrays, config.hours
-                )
-                if pjm_supply_cap is not None:
-                    dispatch_kwargs.update(reserve_supply_cap=pjm_supply_cap)
-                    logger.info(
-                        "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
-                        "%d MW (vs ~%d MW total eligible headroom)",
-                        int(pjm_supply_cap.mean()),
-                        int(
-                            (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[
-                                coopt_elig
-                            ]
-                            .sum(axis=0)
-                            .mean()
-                        ),
-                    )
-                if getattr(config, "pjm_reserve_online_gated", False):
-                    rho = float(getattr(config, "pjm_reserve_online_rho", 1.0))
-                    dispatch_kwargs.update(
-                        reserve_online_gated=np.array([True]),
-                        reserve_online_rho=rho,
-                    )
-                    logger.info("PJM reserve online-gating ON: ρ=%.2f", rho)
             # NYISO analogue: nested LOCATIONAL reserve families (NYCA ⊃ East ⊃
             # SENY ⊃ NYC). Each (region, product) is a balance row over its
             # member zones, so a downstate reserve shortage stacks the regional
