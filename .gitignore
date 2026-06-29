@@ -294,3 +294,8 @@ results/calibration/MISO/miso17_y2024/
 # baseline vs net-load-drag bundles + solve logs (regenerable; not a registered
 # keeper — shape-only Step-2 groundwork).
 /scratch/caiso_netload_drag/
+
+# NOAA GHCN-Daily raw per-station pull cache for scripts/fetch_zone_temperature.py
+# (re-fetchable; --no-fetch re-derives the zone CSVs from it). NEVER commit — the
+# raw station archives are hundreds of MB and trip the remote's 413 push limit.
+data/raw/*-weather/_ghcn_cache/
