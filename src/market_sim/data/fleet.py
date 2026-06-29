@@ -389,11 +389,6 @@ _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
 # annual-average availability unchanged. See generators_to_fleet_arrays.
 _SUMMER_MONTHS: frozenset[int] = frozenset({6, 7, 8, 9})
 
-# Months (1-based) over which the legacy gas-steam (ST_GAS) reliability
-# must-run floor and its seasonal startup-cost amortization apply: May through
-# September, ERCOT's high-load season when these old units are dragged online.
-_GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
-
 # Mixed CC+ST facility steam heat-rate corrections (MMBtu/MWh), keyed by EIA
 # plant code. A facility that runs BOTH an efficient combined cycle and a legacy
 # steam turbine reports ONE plant-level EIA-923 heat rate (fuel / net-gen
@@ -1352,7 +1347,7 @@ def generators_to_fleet_arrays(
             # NEISO temperature-reliability-floor exemption (CLAUDE.md #11). The
             # lone Merrimack-class COAL unit and lone ST_GAS unit are winter
             # cold-snap RELIABILITY runners whose commitment is governed by
-            # transmission.inject_neiso_temp_reliability_floor, with coefficients
+            # transmission.inject_reliability_floor, with coefficients
             # regressed from each unit's own measured CAMPD capacity factor. That
             # regression already nets out the unit's real maintenance downtime, so
             # re-applying the CF-gap unit-outage derate on top double-counts it.
@@ -1368,13 +1363,8 @@ def generators_to_fleet_arrays(
             # exempt them here exactly as the ct_mustrun_per_plant floor exempts
             # its units from WEFOR/planned outage. Scoped to NEISO + the two floor
             # classes + floor-on, so non-floor runs stay byte-identical.
-            neiso_floor_exempt = (
-                _iso == "NEISO"
-                and (
-                    getattr(config, "neiso_temp_reliability_floor", False)
-                    or getattr(config, "reliability_floor", False)
-                )
-                and getattr(config, "neiso_floor_outage_exempt", True)
+            neiso_floor_exempt = _iso == "NEISO" and getattr(
+                config, "reliability_floor", False
             )
             exempt_groups = {"COAL", "ST_GAS"}
             applied_u = 0
@@ -1498,18 +1488,12 @@ def generators_to_fleet_arrays(
                 realloc_plants,
             )
 
-    # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
-    # bound on the legacy gas-steam fleet in the summer months, modeling units
-    # held online at min load for grid reliability ("reliability dragging").
-    # Applied to the base (non-peak) ST_GAS tranches so the peak slice stays
-    # economic; capped by availability.
+    # Hard minimum-generation bounds composed below: CHP grid-steam floors,
+    # coal synchronization Pmin, nuclear flat must-run, and the per-plant
+    # CT/reliability deployment overlays. Temperature-driven ST_GAS commitment is
+    # now handled by the generic reliability-floor engine
+    # (transmission.inject_reliability_floor), not a calendar-month seasonal floor.
     min_gen = None
-    st_mr_frac = (
-        getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None else 0.0
-    )
-    st_off_frac = (
-        getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None else 0.0
-    )
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
     coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
     # Nuclear runs flat as must-run baseload — it physically cannot load-follow
@@ -1525,9 +1509,7 @@ def generators_to_fleet_arrays(
         and any(g.fuel_type == "nuclear" for g in generators)
     )
     if (
-        st_mr_frac > 0.0
-        or st_off_frac > 0.0
-        or chp_pmin_any
+        chp_pmin_any
         or ct_floor_plants
         or ct_deploy_plants
         or rd_deploy_plants
@@ -1549,20 +1531,6 @@ def generators_to_fleet_arrays(
             for g_idx, gen in enumerate(generators):
                 if gen.fuel_type == "nuclear":
                     min_gen[g_idx, :] = availability[g_idx, :] * pmax[g_idx]
-        if st_mr_frac > 0.0 or st_off_frac > 0.0:
-            summer_mask = np.isin(
-                _hour_to_month_index(hours) + 1, list(_GAS_ST_SUMMER_MONTHS)
-            )
-            # Reliability (non-peaker) ST_GAS held at the summer / off-summer
-            # floor; peaker-class ST_GAS run purely economically (no floor).
-            for g_idx, gen in enumerate(generators):
-                if (
-                    gen.plant_group == "ST_GAS"
-                    and not gen.unit_id.endswith("_peak")
-                    and gen.plant_code not in ST_GAS_PEAKER_PLANTS
-                ):
-                    min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
-                    min_gen[g_idx, ~summer_mask] = st_off_frac * pmax[g_idx]
         # CHP grid-delivered steam-following floor: the cogen's steady export
         # is forced on flat all year (the dispatchable surplus rides above it
         # via the load-following tranches).
@@ -2089,8 +2057,9 @@ def apply_gas_st_netload_drag_floor(
 ) -> bool:
     """Impose the net-load-indexed ST_GAS reliability-drag min-gen floor.
 
-    The endogenous, weather-driven replacement for the fixed seasonal
-    ``gas_st_summer_mustrun`` calendar fraction. ERCOT holds legacy gas-steam
+    The endogenous, weather-driven net-load drag floor (a forward-native
+    replacement for a fixed seasonal calendar fraction). ERCOT holds legacy
+    gas-steam
     units committed at minimum load for local/system reliability (RUC); the
     held fraction is not a fixed season but rises with system **net-load**
     (``load - wind - solar``), the operational proxy for reserve tightness RUC
