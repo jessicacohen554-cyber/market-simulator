@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results & Calibration — Codebase Explorer</title>
+  <meta name="description" content="How the model outputs and validates results. Result structure, Parquet caching, forecast vs backcast distinction, and calibration diagnostics.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 and GSAP for animations -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+
+  <style>
+    /* Result flow diagram */
+    #result-flow-svg {
+      width: 100%;
+      height: 320px;
+      display: block;
+    }
+
+    /* Forecast vs Backcast toggle section */
+    .forecast-backcast-container {
+      display: grid;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .forecast-backcast-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .forecast-backcast-column {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .forecast-backcast-column.hidden {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .forecast-backcast-column.visible {
+      opacity: 1;
+      position: relative;
+      width: auto;
+    }
+
+    .forecast-backcast-column h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .forecast-backcast-column h3::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .forecast-backcast-column.forecast h3::before {
+      background: var(--hydro);
+    }
+
+    .forecast-backcast-column.backcast h3::before {
+      background: var(--amber-text);
+    }
+
+    .forecast-backcast-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .forecast-backcast-column li {
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.02);
+      border-left: 3px solid var(--border-light);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .forecast-backcast-column.backcast li {
+      background: rgba(245, 158, 11, 0.04);
+      border-left-color: var(--amber-text);
+    }
+
+    .forecast-backcast-column.forecast li {
+      background: rgba(14, 165, 233, 0.04);
+      border-left-color: var(--hydro);
+    }
+
+    .toggle-switch-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 24px 0;
+    }
+
+    .toggle-switch {
+      display: inline-flex;
+      background: var(--bg-page);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: all 200ms ease;
+      white-space: nowrap;
+    }
+
+    .toggle-btn.active {
+      background: var(--bg-card);
+      color: var(--navy);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .toggle-btn:hover {
+      color: var(--navy);
+    }
+
+    /* Calibration scorecard table */
+    .calibration-table-wrapper {
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+
+    .calibration-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .calibration-table thead {
+      background: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .calibration-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .calibration-table tbody tr {
+      border-bottom: 1px solid var(--border-light);
+      transition: background 150ms ease;
+    }
+
+    .calibration-table tbody tr:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .calibration-table td {
+      padding: 12px 16px;
+      color: var(--text-secondary);
+    }
+
+    .calibration-table td:first-child {
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .badge-status.pass {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--positive);
+    }
+
+    .badge-status.warn {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--warning);
+    }
+
+    .badge-status.fail {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--negative);
+    }
+
+    .badge-status::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .calibration-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .calibration-summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .calibration-summary-card__value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .calibration-summary-card__label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* Dashboard callout */
+    .dashboard-link-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 200ms ease;
+    }
+
+    .dashboard-link-box:hover {
+      border-color: var(--hydro);
+      box-shadow: var(--shadow-md);
+    }
+
+    .dashboard-link-box__icon {
+      width: 48px;
+      height: 48px;
+      background: var(--hydro-bg);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .dashboard-link-box__icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--hydro-text);
+    }
+
+    .dashboard-link-box__content {
+      flex: 1;
+    }
+
+    .dashboard-link-box__title {
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .dashboard-link-box__desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .dashboard-link-box__arrow {
+      width: 20px;
+      height: 20px;
+      color: var(--hydro-text);
+      flex-shrink: 0;
+      transition: transform 200ms ease;
+    }
+
+    .dashboard-link-box:hover .dashboard-link-box__arrow {
+      transform: translateX(4px);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .forecast-backcast-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .calibration-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .calibration-table {
+        font-size: 0.75rem;
+      }
+
+      .calibration-table th,
+      .calibration-table td {
+        padding: 8px 10px;
+      }
+
+      .calibration-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-link-box {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="default">
+      <div class="header__eyebrow">Evolution & Policy</div>
+      <h1 class="header__title">Results & Calibration</h1>
+      <p class="header__subtitle">
+        How the model's outputs are structured and validated. From Parquet caching and result export through forecast vs. backcast distinction to the calibration diagnostics that validate the model against real-world data.
+      </p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: Result Structure -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>Result Structure</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            When the LP solves, it produces a <code>DispatchResult</code> object containing the primal solution (generator dispatch, renewable production, storage charge/discharge, transmission flows) and dual solution (nodal prices). This result flows through several stages before landing on the dashboard.
+          </p>
+          <p style="margin-bottom: 0;">
+            Each stage is deterministic and reproducible — no intermediate files are committed, and the entire pipeline can be re-run from the cache.
+          </p>
+        </div>
+
+        <!-- Result flow diagram -->
+        <div class="fig">
+          <div class="fig__chart">
+            <svg id="result-flow-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMid meet">
+              <!-- Define markers for arrows -->
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <polygon points="0 0, 10 3, 0 6" fill="rgba(10,18,38,0.40)" />
+                </marker>
+              </defs>
+
+              <!-- Stage 1: LP Solve -->
+              <g>
+                <rect x="20" y="120" width="140" height="80" rx="12" fill="rgba(14,165,233,0.08)" stroke="var(--hydro)" stroke-width="2" />
+                <text x="90" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="var(--hydro-text)">LP Solve</text>
+                <text x="90" y="171" text-anchor="middle" font-size="11" fill="var(--text-muted)">DispatchResult</text>
+                <text x="90" y="186" text-anchor="middle" font-size="10" fill="var(--text-muted)">(8760 hours)</text>
+              </g>
+
+              <!-- Arrow 1 -->
+              <line x1="160" y1="160" x2="200" y2="160" stroke="rgba(10,18,38,0.25)" stroke-width="2" marker-end="url(#arrowhead)" />
+
+              <!-- Stage 2: Parquet Cache -->
+              <g>
+                <rect x="200" y="120" width="140" height="80" rx="12" fill="rgba(99,102,241,0.08)" stroke="var(--purple-text)" stroke-width="2" />
+                <text x="270" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="var(--purple-text)">Parquet Cache</text>
+                <text x="270" y="171" text-anchor="middle" font-size="11" fill="var(--text-muted)">year_YYYY.parquet</text>
+                <text x="270" y="186" text-anchor="middle" font-size="10" fill="var(--text-muted)">+ metadata</text>
+              </g>
+
+              <!-- Arrow 2 -->
+              <line x1="340" y1="160" x2="380" y2="160" stroke="rgba(10,18,38,0.25)" stroke-width="2" marker-end="url(#arrowhead)" />
+
+              <!-- Stage 3: Annual Aggregation -->
+              <g>
+                <rect x="380" y="120" width="140" height="80" rx="12" fill="rgba(34,197,94,0.08)" stroke="var(--green-text)" stroke-width="2" />
+                <text x="450" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="var(--green-text)">Aggregation</text>
+                <text x="450" y="171" text-anchor="middle" font-size="11" fill="var(--text-muted)">Emissions, plant</text>
+                <text x="450" y="186" text-anchor="middle" font-size="10" fill="var(--text-muted)">financials, summaries</text>
+              </g>
+
+              <!-- Arrow 3 -->
+              <line x1="520" y1="160" x2="560" y2="160" stroke="rgba(10,18,38,0.25)" stroke-width="2" marker-end="url(#arrowhead)" />
+
+              <!-- Stage 4: JSON Export -->
+              <g>
+                <rect x="560" y="120" width="140" height="80" rx="12" fill="rgba(245,158,11,0.08)" stroke="var(--amber-text)" stroke-width="2" />
+                <text x="630" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="var(--amber-text)">JSON Export</text>
+                <text x="630" y="171" text-anchor="middle" font-size="11" fill="var(--text-muted)">Scenario summary</text>
+                <text x="630" y="186" text-anchor="middle" font-size="10" fill="var(--text-muted)">&lt; 2 MB</text>
+              </g>
+
+              <!-- Arrow 4 -->
+              <line x1="700" y1="160" x2="740" y2="160" stroke="rgba(10,18,38,0.25)" stroke-width="2" marker-end="url(#arrowhead)" />
+
+              <!-- Stage 5: Dashboard -->
+              <g>
+                <rect x="740" y="120" width="140" height="80" rx="12" fill="rgba(219,39,119,0.08)" stroke="#D9277F" stroke-width="2" />
+                <text x="810" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="#C2185B">Dashboard</text>
+                <text x="810" y="171" text-anchor="middle" font-size="11" fill="var(--text-muted)">backcast-results.html</text>
+                <text x="810" y="186" text-anchor="middle" font-size="10" fill="var(--text-muted)">Results live here</text>
+              </g>
+
+              <!-- Annotations below -->
+              <text x="90" y="240" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-weight="600">Solve</text>
+              <text x="270" y="240" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-weight="600">Cache (check-before-run)</text>
+              <text x="450" y="240" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-weight="600">Derive outputs</text>
+              <text x="630" y="240" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-weight="600">Compact export</text>
+              <text x="810" y="240" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-weight="600">Public view</text>
+            </svg>
+          </div>
+          <div class="fig__caption">
+            <strong>Figure V26:</strong> Result data flow from LP solve to dashboard. Each stage is deterministic; only Parquet files are persisted. The dashboard ingests the JSON export to display results and historical runs.
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The key insight: <strong>the Parquet file is the single source of truth.</strong> Everything downstream — emissions, plant-by-plant financials, annual summaries — is derived from it in a single pass. This means:
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>Reproducibility:</strong> Given a Parquet file and the configuration that produced it, all derivatives are deterministic.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Compact storage:</strong> The Parquet file is ~100–200 MB per ISO-year. Derivatives are computed on-the-fly at analysis time.</li>
+            <li><strong>No intermediate commits:</strong> Results don't clutter the repository. Only the Parquet file needs to be kept if we want to re-derive outputs later.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: What Gets Cached -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>What Gets Cached</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Before solving a year, the runner checks if a Parquet file already exists for that scenario-year combination. The check uses a deterministic cache key derived from the scenario configuration (data sources, policy settings, solver parameters, etc.). If a cache hit occurs, the LP is skipped entirely and the cached result is loaded.
+          </p>
+          <p style="margin-bottom: 0;">
+            The cache directory structure mirrors the scenario registry:
+          </p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block__lang">bash</div>
+          <pre><code>results/{iso}/{cache_key}/
+├── year_2026.parquet          # Hourly dispatch + prices (8760 × n_vars)
+├── year_2026_p1.parquet       # P1 result (before optional commitment screen)
+├── year_2027.parquet
+├── ...
+├── year_2050.parquet
+└── config.yaml                # Full scenario config (written once)</code></pre>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Each Parquet file contains:
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><code>dispatch</code> — per-generator hourly output (MWh)</li>
+            <li style="margin-bottom: var(--space-sm);"><code>wind, solar</code> — per-zone renewable production (MWh)</li>
+            <li style="margin-bottom: var(--space-sm);"><code>price</code> — system and zonal LMP ($/MWh)</li>
+            <li style="margin-bottom: var(--space-sm);"><code>slack, dump</code> — unserved demand and curtailed renewables</li>
+            <li style="margin-bottom: var(--space-sm);"><code>storage_charge, storage_discharge, storage_soc</code> — battery dispatch and state-of-charge</li>
+            <li style="margin-bottom: var(--space-sm);"><code>flows</code> — transmission line flows (MWh)</li>
+            <li><code>emissions</code> — hourly CO₂, NOx by zone (optional)</li>
+          </ul>
+          <p>
+            Metadata in the file's schema includes the fleet context: unit IDs, heat rates, emission rates, zone assignments, and capacity totals. This lets any downstream tool reconstruct per-plant financials and emissions without re-deriving the fleet.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Forecast vs. Backcast -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>Forecast vs. Backcast</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The model runs in two modes, set explicitly by <code>ScenarioConfig.mode</code>: <strong>forecast</strong> (projection) and <strong>backcast</strong> (historical validation). The mode is never inferred — it must be specified. The two modes differ fundamentally in their data inputs.
+          </p>
+        </div>
+
+        <!-- Toggle switch -->
+        <div class="toggle-switch-wrapper">
+          <div class="toggle-switch">
+            <button class="toggle-btn active" data-mode="forecast">📊 Forecast</button>
+            <button class="toggle-btn" data-mode="backcast">📈 Backcast</button>
+          </div>
+        </div>
+
+        <!-- Comparison columns -->
+        <div class="forecast-backcast-columns">
+          <!-- Forecast column -->
+          <div class="forecast-backcast-column forecast visible" data-mode="forecast">
+            <h3>Forecast Mode (2026–2050)</h3>
+            <ul>
+              <li><strong>Outages:</strong> Statistical availability by fuel type; parametric forced-outage rates (NERC, EIA-860)</li>
+              <li><strong>Fuel prices:</strong> AEO-sourced forecasts (EIA); Henry Hub gas curves, coal regional index, renewable curtailment costs</li>
+              <li><strong>Renewable CFs:</strong> Historical-average (eia-930 era-average by month, zone)</li>
+              <li><strong>Weather year:</strong> Representative/synthetic (30-year median wind/solar profiles)</li>
+              <li><strong>Fleet:</strong> EIA-860 known pipeline (construction-committed capacity additions)</li>
+              <li><strong>Transmission:</strong> Base topology; no network upgrades unless explicitly added to config</li>
+              <li><strong>No measured overlays:</strong> Pure forward-looking dispatch</li>
+            </ul>
+          </div>
+
+          <!-- Backcast column -->
+          <div class="forecast-backcast-column backcast hidden" data-mode="backcast">
+            <h3>Backcast Mode (2023–2025)</h3>
+            <ul>
+              <li><strong>Outages:</strong> CAMPD unit-level outage windows (actual forced and scheduled outages by hour, 2023–2025)</li>
+              <li><strong>Fuel prices:</strong> EIA-923 delivered fuel prices (actual coal, gas, oil prices by state-month); real Henry Hub for gas</li>
+              <li><strong>Renewable CFs:</strong> EIA-930 measured grid-level generation by fuel (hourly, 2023–2025)</li>
+              <li><strong>Weather year:</strong> Actual meteorological year (2023, 2024, or 2025); fixes the solar/wind resource to what actually happened</li>
+              <li><strong>Fleet:</strong> Historical fleet composition (EIA-860 reference data for each year)</li>
+              <li><strong>Transmission:</strong> Base topology (same as forecast)</li>
+              <li><strong>Measured inputs only:</strong> No tuning or fitted parameters. Inputs are reproducible physical/market facts.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Insight box warning -->
+        <div class="insight-box warn">
+          <strong>⚠️ Measured data is allowed only as a reproducible physical/market input, never as the answer.</strong> You can use CAMPD outage windows, actual fuel prices, and metered renewable output because these are grounded in physics or market design and could be regenerated for a forward year. What is <strong>forbidden:</strong> pinning a unit's dispatch to its observed generation, adding an offset tuned to the price residual, or rescaling an input to force the backcast to match. Those moves make the "fit" measure plumbing, not model skill. If a measured input makes the backcast worse, keep it and find the real root cause in the model. (See <a href="/CLAUDE.md">CLAUDE.md rule #12</a>.)
+        </div>
+
+        <div class="story-section" style="margin-top: 24px;">
+          <p>
+            <strong>Why two modes?</strong> Forecast mode answers "what if?"; backcast mode answers "how well does the model reproduce what happened?" Backcasts validate that the model's mechanisms — price formation, commitment, congestion, scarcity — mirror the real market. Only after validation do we trust the forecast.
+          </p>
+          <p style="margin-bottom: 0;">
+            A run is labeled a <strong>keeper</strong> if it passes calibration checks (generation mix, price duration, capacity factors within ±5% of measured). Keepers set the baseline for forward scenarios; probes are diagnostic tools that inform next-run tuning but do not enter the forecast production line.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Calibration Diagnostics -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>Calibration Diagnostics</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Every backcast run is validated against four ordered diagnostics. Failure in check #1 usually explains failures in #2–#4, so they're designed to be interpreted top-down.
+          </p>
+        </div>
+
+        <!-- Scorecard summary -->
+        <div class="calibration-summary">
+          <div class="calibration-summary-card">
+            <div class="calibration-summary-card__value">10</div>
+            <div class="calibration-summary-card__label">Pass</div>
+          </div>
+          <div class="calibration-summary-card">
+            <div class="calibration-summary-card__value">2</div>
+            <div class="calibration-summary-card__label">Warning</div>
+          </div>
+          <div class="calibration-summary-card">
+            <div class="calibration-summary-card__value">1</div>
+            <div class="calibration-summary-card__label">Fail</div>
+          </div>
+          <div class="calibration-summary-card">
+            <div class="calibration-summary-card__value">77%</div>
+            <div class="calibration-summary-card__label">Pass Rate</div>
+          </div>
+        </div>
+
+        <!-- Scorecard table -->
+        <div class="calibration-table-wrapper">
+          <table class="calibration-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Metric</th>
+                <th>Actual</th>
+                <th>Modeled</th>
+                <th>Error</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Generation Mix -->
+              <tr>
+                <td>Generation</td>
+                <td>Nuclear (TWh)</td>
+                <td>43.6</td>
+                <td>43.8</td>
+                <td>+0.5%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Coal (TWh)</td>
+                <td>67.2</td>
+                <td>68.5</td>
+                <td>+1.9%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Gas-CC (TWh)</td>
+                <td>115.8</td>
+                <td>114.2</td>
+                <td>−1.4%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Gas-CT (TWh)</td>
+                <td>18.5</td>
+                <td>17.9</td>
+                <td>−3.2%</td>
+                <td><span class="badge-status warn">Warn</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Wind (TWh)</td>
+                <td>127.5</td>
+                <td>128.1</td>
+                <td>+0.5%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Solar (TWh)</td>
+                <td>56.8</td>
+                <td>55.2</td>
+                <td>−2.8%</td>
+                <td><span class="badge-status warn">Warn</span></td>
+              </tr>
+              <!-- Price Duration -->
+              <tr>
+                <td>Prices</td>
+                <td>Mean LMP ($/MWh)</td>
+                <td>41.8</td>
+                <td>42.5</td>
+                <td>+1.7%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>P10 LMP ($/MWh)</td>
+                <td>18.5</td>
+                <td>22.3</td>
+                <td>+20.5%</td>
+                <td><span class="badge-status fail">Fail</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>P50 LMP ($/MWh)</td>
+                <td>35.2</td>
+                <td>36.1</td>
+                <td>+2.6%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>P90 LMP ($/MWh)</td>
+                <td>78.5</td>
+                <td>75.3</td>
+                <td>−4.1%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <!-- Capacity Factors -->
+              <tr>
+                <td>Capacity Factors</td>
+                <td>Coal CF</td>
+                <td>0.540</td>
+                <td>0.557</td>
+                <td>+3.1%</td>
+                <td><span class="badge-status warn">Warn</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Gas-CC CF</td>
+                <td>0.472</td>
+                <td>0.462</td>
+                <td>−2.1%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Wind CF</td>
+                <td>0.430</td>
+                <td>0.432</td>
+                <td>+0.5%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Solar CF</td>
+                <td>0.285</td>
+                <td>0.278</td>
+                <td>−2.4%</td>
+                <td><span class="badge-status pass">Pass</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="story-section">
+          <p>
+            <strong>Interpretation:</strong> This example keeper run passes 10 of 13 checks (77%). The two warnings (gas-CT generation, solar generation) and the failure (P10 price overshoot) all trace to the same root cause: the coal must-run tranche offer curve is priced too low, forcing the model to run coal plants beyond their actual dispatch. The fix is structural (adjust the coal sigmoid steepness parameter in the next run), not a tuning tweak.
+          </p>
+          <p style="margin-bottom: 0;">
+            A run becomes a keeper when it passes the majority of checks AND the failures are traceable to tunable parameters, not missing mechanisms. The moment a run is marked keeper, its Parquet bundle and metadata are registered on the calibration dashboard and committed to the repository.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: The Dashboard -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>The Calibration Dashboard</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Every backcast run — keeper or rejected probe — is registered on the deployable <strong>backcast results dashboard</strong> the same session it completes. The dashboard is a static HTML site that displays the calibration results, keeper timelines, and per-run metadata across all ISOs and years.
+          </p>
+          <p>
+            Results do not live in chat; they live on the dashboard. A run is <strong>not "done" until its Parquet bundle and metadata files are committed and pushed</strong> to the repository. The workflow is:
+          </p>
+          <ol style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>Solver finishes.</strong> A Parquet file lands in <code>results/{iso}/{cache_key}/</code>.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Calibration checks run.</strong> The four diagnostics are computed; a <code>CalibrationReport</code> is generated.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Dashboard registration.</strong> Use the <code>calibration-report</code> skill (or run <code>scripts/dashboard_add_run.py</code>) to commit the run's metadata to <code>frontend/data/backcast/registry/{run_id}.json</code> and the run script to <code>runs/{run_id}.js</code>.</li>
+            <li><strong>Push to origin.</strong> The Parquet bundle, sidecar, and run manifest are committed. The GitHub Pages deploy auto-builds the dashboard HTML from the manifest.</li>
+          </ol>
+
+          <p>
+            <strong>Keeper vs. probe:</strong> A <strong>keeper</strong> is a run passing calibration checks and deemed structurally sound. It becomes the baseline for the next forecast year. A <strong>probe</strong> is a diagnostic run isolating a single-year effect or tuning option; it is never used in production and is pruned from the dashboard after its insights are extracted.
+          </p>
+
+          <p>
+            The top 15 runs per ISO are retained; older runs are pruned to keep the dashboard lean. Retention order is by status (keepers first) and recency.
+          </p>
+        </div>
+
+        <!-- Link to dashboard -->
+        <a href="/backcast-results.html" class="dashboard-link-box">
+          <div class="dashboard-link-box__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </div>
+          <div class="dashboard-link-box__content">
+            <div class="dashboard-link-box__title">View the Calibration Dashboard</div>
+            <p class="dashboard-link-box__desc">Explore calibration results, keeper timelines, and per-run diagnostics across all ISOs and years.</p>
+          </div>
+          <div class="dashboard-link-box__arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </a>
+
+        <div class="story-section" style="margin-top: 24px;">
+          <p style="margin-bottom: 0;">
+            The dashboard is the source of truth for calibration status. When reviewing a run, always check the dashboard entry for the keeper decision, action items, and confidence level. The prose notes in the dashboard (linked from each run's metadata) explain the root causes of any warnings or failures and suggest the next tuning step.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insight box summary -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="insight-box info">
+          <strong>🎯 Key takeaway:</strong> Results flow deterministically from LP solve → Parquet cache → derived outputs → JSON export → dashboard. The cache is the gate; the dashboard is the publication. Backcast validation isolates structural issues from tuning tweaks. Every keeper run becomes the calibration baseline; probes are temporary diagnostic tools.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="policy-scarcity.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Policy & Scarcity</span>
+      </a>
+      <span style="flex: 1;"></span>
+      <a href="config-reference.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Config Reference</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+
+  <!-- Forecast/Backcast toggle -->
+  <script>
+    (function () {
+      'use strict';
+
+      const toggleButtons = document.querySelectorAll('.toggle-btn');
+      const columns = document.querySelectorAll('.forecast-backcast-column');
+
+      toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.dataset.mode;
+
+          // Update button states
+          toggleButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // Update column visibility
+          columns.forEach(col => {
+            if (col.dataset.mode === mode) {
+              col.classList.remove('hidden');
+              col.classList.add('visible');
+            } else {
+              col.classList.add('hidden');
+              col.classList.remove('visible');
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
