@@ -167,3 +167,44 @@ would be slack. Correctly disabled, not invented.
 temperature limbs disabled — 4 by `min_stable_pct=0` (NP15/SP15/ZP26 CC_REGULAR +
 SP15 ST_GAS) and 2 CC_CHP by floor ≤ baseline (NP15, ZP26). No limb was tuned to a
 price/volume residual; no measured-CF ceiling was used.
+
+## NYISO
+
+| zone | plant_class | driver | threshold | floor_pct | enabled | commit_frac | min_stable_pct | rho | n | baseline |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Capital_Hudson | ST_GAS | tmax | 25.0 | 0.0 | False | 0.6308 | 0.0 | 0.5538 | 233 | 0.1302 |
+| Capital_Hudson | ST_GAS | tmin | 0.0 | 0.0 | False | 0.4612 | 0.0 | 0.4634 | 204 | 0.1335 |
+| Capital_Hudson | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.4413 | 0.0 | 0.3578 | 41 | 0.0195 |
+| Capital_Hudson | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.4902 | 0.0 | 0.2046 | 37 | 0.0253 |
+| NYC | ST_GAS | tmax | 25.0 | 0.0 | False | 0.9695 | 0.0 | 0.6302 | 343 | 0.1583 |
+| NYC | ST_GAS | tmin | 0.0 | 0.0 | False | 0.8577 | 0.0 | 0.143 | 143 | 0.2101 |
+| NYC | CT_CHP | tmax | 25.0 | 0.4021 | False | 0.8693 | 0.4625 | 0.3262 | 343 | 0.7037 |
+| NYC | CT_CHP | tmin | 0.0 | 0.4021 | False | 0.8693 | 0.4625 | 0.2121 | 143 | 0.6562 |
+| NYC | ST_CHP | tmax | 25.0 | 0.35 | False | 1.0 | 0.35 | 0.3268 | 343 | 0.742 |
+| NYC | ST_CHP | tmin | 0.0 | 0.35 | False | 1.0 | 0.35 | 0.2576 | 143 | 0.7171 |
+| NYC | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.3456 | 0.0 | 0.6622 | 333 | 0.0398 |
+| NYC | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.2641 | 0.0 | 0.0235 | 142 | 0.06 |
+| NYC | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.7129 | 0.0 | 0.51 | 343 | 0.7307 |
+| NYC | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.705 | 0.0 | -0.0126 | 143 | 0.7799 |
+| Long_Island | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.8177 | 0.0 | 0.6053 | 304 | 0.3142 |
+| Long_Island | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.7274 | 0.0 | 0.3242 | 209 | 0.3848 |
+| Long_Island | ST_GAS | tmax | 25.0 | 0.0 | False | 0.9828 | 0.0 | 0.6619 | 304 | 0.2009 |
+| Long_Island | ST_GAS | tmin | 0.0 | 0.0 | False | 0.9419 | 0.0 | 0.3447 | 209 | 0.27 |
+| Upstate_West | ST_GAS | tmax | 25.0 | 0.0 | False | 0.7795 | 0.0 | 0.2229 | 261 | 0.5627 |
+| Upstate_West | ST_GAS | tmin | 0.0 | 0.0 | False | 0.7704 | 0.0 | 0.3756 | 290 | 0.5556 |
+| Capital_Hudson | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.9183 | 0.0 | 0.4416 | 328 | 0.5035 |
+| Capital_Hudson | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.7321 | 0.0 | -0.2363 | 348 | 0.6002 |
+| Upstate_West | CT_PEAKER | tmax | 25.0 | 0.0 | False | 1.0 | 0.0 | -0.2924 | 69 | 0.6933 |
+| Upstate_West | CT_PEAKER | tmin | 0.0 | 0.0 | False | 1.0 | 0.0 | 0.3088 | 101 | 0.5095 |
+| Long_Island | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.8429 | 0.0 | 0.3213 | 303 | 0.5223 |
+| Long_Island | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.7162 | 0.0 | 0.2729 | 209 | 0.52 |
+| Upstate_West | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.3438 | 0.0 | 0.2703 | 224 | 0.1106 |
+| Upstate_West | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.3835 | 0.0 | 0.335 | 263 | 0.1065 |
+| Capital_Hudson | CC_CHP | tmax | 25.0 | 0.2572 | False | 0.6638 | 0.3875 | 0.4769 | 317 | 0.308 |
+| Capital_Hudson | CC_CHP | tmin | 0.0 | 0.1938 | False | 0.5002 | 0.3875 | -0.1778 | 344 | 0.3743 |
+| Upstate_West | CC_CHP | tmax | 25.0 | 0.2688 | False | 0.7332 | 0.3667 | 0.4294 | 270 | 0.4242 |
+| Upstate_West | CC_CHP | tmin | 0.0 | 0.2607 | False | 0.711 | 0.3667 | 0.5289 | 284 | 0.39 |
+| NYC | CC_CHP | tmax | 25.0 | 0.1195 | False | 0.3085 | 0.3875 | 0.1911 | 343 | 0.1924 |
+| NYC | CC_CHP | tmin | 0.0 | 0.1024 | False | 0.2643 | 0.3875 | 0.2939 | 143 | 0.1924 |
+| Long_Island | CT_CHP | tmax | 25.0 | 0.4207 | False | 0.9349 | 0.45 | 0.0398 | 294 | 0.9819 |
+| Long_Island | CT_CHP | tmin | 0.0 | 0.4207 | False | 0.9349 | 0.45 | -0.0624 | 209 | 0.9815 |
