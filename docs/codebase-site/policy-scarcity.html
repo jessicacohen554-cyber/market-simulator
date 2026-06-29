@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Policy & Scarcity — Codebase Explorer</title>
+  <meta name="description" content="IRA tax credits, RPS constraints, carbon pricing, ORDC/RCPF scarcity curves, and reserve co-optimization in the LP dispatch model.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- KaTeX for equations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    .fig {
+      margin: 32px 0;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .fig__header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-light);
+      background: rgba(245, 158, 11, 0.03);
+    }
+
+    .fig__title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .fig__controls {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+
+    .fig__controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .fig__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .fig__body {
+      padding: 24px;
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fig__caption {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .btn:hover {
+      border-color: var(--text-secondary);
+      background: var(--bg-page);
+    }
+
+    .btn.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
+
+    /* IRA Timeline */
+    .ira-timeline {
+      width: 100%;
+      margin: 24px 0;
+    }
+
+    .ira-timeline svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* RPS Diagram */
+    .rps-diagram {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+    }
+
+    .rps-diagram svg {
+      display: inline-block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Equation block */
+    .equation-block {
+      background: var(--bg-page);
+      border-left: 3px solid var(--purple-text);
+      padding: 20px 24px;
+      margin: 24px 0;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .equation-block .katex-display {
+      margin: 12px 0;
+    }
+
+    /* Carbon pricing table */
+    .carbon-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .carbon-table thead {
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .carbon-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--navy);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .carbon-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.9rem;
+    }
+
+    .carbon-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .carbon-table tbody tr:hover {
+      background: var(--bg-page);
+    }
+
+    .iso-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .iso-badge.iso-caiso {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-text);
+    }
+
+    .iso-badge.iso-pjm {
+      background: rgba(14, 165, 233, 0.15);
+      color: var(--hydro-text);
+    }
+
+    .iso-badge.iso-nyiso {
+      background: rgba(233, 30, 99, 0.15);
+      color: #c2185b;
+    }
+
+    /* Expandable panel */
+    .expandable-panel {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      margin: 24px 0;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .expandable-header {
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      background: rgba(99, 102, 241, 0.05);
+      transition: background 150ms ease;
+    }
+
+    .expandable-header:hover {
+      background: rgba(99, 102, 241, 0.10);
+    }
+
+    .expandable-header::before {
+      content: '▼';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      text-align: center;
+      font-size: 0.75rem;
+      transition: transform 200ms ease;
+    }
+
+    .expandable-panel.closed .expandable-header::before {
+      transform: rotate(-90deg);
+    }
+
+    .expandable-body {
+      padding: 24px;
+      border-top: 1px solid var(--border-light);
+      max-height: 2000px;
+      overflow: hidden;
+      transition: max-height 300ms ease, opacity 300ms ease;
+      opacity: 1;
+    }
+
+    .expandable-panel.closed .expandable-body {
+      max-height: 0;
+      opacity: 0;
+      padding: 0 24px;
+      border-top: none;
+    }
+
+    /* EAC table */
+    .eac-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .eac-table thead {
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .eac-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--navy);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .eac-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.9rem;
+    }
+
+    .eac-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .eac-table tbody tr:hover {
+      background: var(--bg-page);
+    }
+
+    .tech-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .fig__controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .carbon-table, .eac-table {
+        font-size: 0.8rem;
+      }
+
+      .carbon-table th, .carbon-table td,
+      .eac-table th, .eac-table td {
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main id="main">
+    <!-- Page header -->
+    <div class="header" data-header-variant="default">
+      <div class="header__eyebrow">Evolution &amp; Policy</div>
+      <h1 class="header__title">Policy &amp; Scarcity</h1>
+      <p class="header__subtitle">
+        How tax credits, RPS mandates, carbon pricing, and operating-reserve demand curves shape the dispatch
+        and drive investment. Plus reserve co-optimization for ISOs that endogenize scarcity in the LP.
+      </p>
+      <div class="header-accent"></div>
+    </div>
+
+    <!-- Section 1: IRA Tax Credits -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>IRA Tax Credits (§45, §45Q, §45V, §45E)</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The Inflation Reduction Act (2022) provides production tax credits (PTC) and investment tax credits
+            (ITC) for clean energy. These credits reduce the effective marginal cost of low-carbon generation in
+            the dispatch or lower the capital costs for capacity investment decisions.
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            Credit Timeline
+          </h3>
+          <p style="margin-bottom: 20px; font-size: 0.95rem; color: var(--text-muted);">
+            Each credit has a scheduled expiration date. §45 Wind PTC and §48 Solar ITC phase out in 2027 (OBBBA),
+            while geothermal (§45E) and CCUS (§45Q) extend further. Hydrogen (§45V) is tied to cost-reduction schedules.
+          </p>
+
+          <div class="ira-timeline" id="ira-timeline-container"></div>
+
+          <div class="insight-box info" style="margin-top: 28px;">
+            <strong>⚡ How they enter dispatch:</strong> Wind and solar are applied as negative marginal-cost adders —
+            reducing their effective cost to $0 or below (internalizing the credit), making them marginal in merit order.
+            Hydrogen (§45V) reduces the fuel cost of hydrogen production. CCUS (§45Q) applies per tonne of CO₂ captured.
+            For capacity investment screens, LCOE calculations deduct the PTC or apply the ITC to capex.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: RPS Constraint -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>RPS Annual Clean-Energy Floor</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Many states mandate a minimum fraction of retail electricity sales from renewable or clean sources.
+            This is modeled in the LP as an annual constraint binding energy-balance rows: each zone must generate
+            (or purchase) at least the RPS target fraction of demand from eligible resources.
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            The Constraint
+          </h3>
+
+          <div class="equation-block">
+            <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px;">
+              Annual renewable energy floor
+            </div>
+            <div id="rps-eq"></div>
+          </div>
+
+          <p style="margin-top: 20px;">
+            where <em>W<sub>z,t</sub></em> is wind, <em>S<sub>z,t</sub></em> is solar, <em>P<sub>nuclear</sub></em> is
+            nuclear generation, and <em>target<sub>iso,year</sub></em> is the RPS percentage (0–1) for that ISO-year.
+            <strong>The dual on this constraint is the REC (Renewable Energy Certificate) shadow price</strong> — the
+            value of one MWh of renewable generation. This REC price competes with exogenous EAC prices (see §6) in
+            new-entry capacity economics: a unit capturing both receives the higher of the two, not both.
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            RPS Targets by State
+          </h3>
+
+          <table class="carbon-table">
+            <thead>
+              <tr>
+                <th>ISO / State</th>
+                <th>Program</th>
+                <th>2026 Target</th>
+                <th>2030 Target</th>
+                <th>2040+ Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>CAISO / California</strong></td>
+                <td>SB 100</td>
+                <td>65%</td>
+                <td>85%</td>
+                <td>100% (by 2045)</td>
+              </tr>
+              <tr>
+                <td><strong>NYISO / New York</strong></td>
+                <td>CLCPA</td>
+                <td>45%</td>
+                <td>70%</td>
+                <td>100% (by 2040)</td>
+              </tr>
+              <tr>
+                <td><strong>NEISO / Massachusetts</strong></td>
+                <td>CES</td>
+                <td>38%</td>
+                <td>50%</td>
+                <td>100% (by 2050)</td>
+              </tr>
+              <tr>
+                <td><strong>PJM / Regional</strong></td>
+                <td>None federally</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>ERCOT / Regional</strong></td>
+                <td>None federally</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top: 20px;">
+            The RPS is <strong>not</strong> a force-build step. Instead, we solve the LP with the constraint active,
+            and the resulting REC shadow price tells us the system's implicit value of one additional MW of renewable
+            capacity. This price feeds next year's entry screen and competes with exogenous credits.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Carbon Pricing -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>Carbon Pricing Resolution</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Thermal generators' marginal costs include carbon emissions multiplied by a price per tonne of CO₂.
+            The model resolves a carbon price by priority:
+          </p>
+
+          <ol style="margin-bottom: 24px; padding-left: 24px;">
+            <li style="margin-bottom: 12px;">
+              <strong>Flat override:</strong> if <code>ScenarioConfig.carbon_price &gt; 0</code>, use that ($/tCO₂).
+            </li>
+            <li style="margin-bottom: 12px;">
+              <strong>State program:</strong> if <code>state_carbon_pricing=True</code>, use measured cap-and-trade
+              (CA) or RGGI auction settlements (Northeast), 2023–2025 actuals.
+            </li>
+            <li style="margin-bottom: 12px;">
+              <strong>Trajectory:</strong> if <code>carbon_price_path</code> is specified (e.g., <code>'rff_low'</code>,
+              <code>'rff_mid'</code>, <code>'rff_high'</code>), interpolate from that named curve.
+            </li>
+            <li style="margin-bottom: 12px;">
+              <strong>Fallback:</strong> $0 if none of the above apply.
+            </li>
+          </ol>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            State Carbon Markets
+          </h3>
+
+          <table class="carbon-table">
+            <thead>
+              <tr>
+                <th>ISO</th>
+                <th>State Program</th>
+                <th>Type</th>
+                <th>2026 Estimated Price</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="iso-badge iso-caiso">CAISO</span></td>
+                <td><strong>California Cap-and-Trade</strong></td>
+                <td>Cap &amp; Trade</td>
+                <td>$35–50/tCO₂</td>
+                <td>Electricity sector covered. Unspecified imports get CARB border adder (0.428 tCO₂e/MWh).</td>
+              </tr>
+              <tr>
+                <td><span class="iso-badge iso-pjm">PJM</span></td>
+                <td><strong>RGGI (NJ, PA, MD)</strong></td>
+                <td>Cap &amp; Trade</td>
+                <td>$15–25/tCO₂</td>
+                <td>Only applicable to NJ and PA zones. Partial coverage.</td>
+              </tr>
+              <tr>
+                <td><span class="iso-badge iso-nyiso">NYISO</span></td>
+                <td><strong>RGGI (NY)</strong></td>
+                <td>Cap &amp; Trade</td>
+                <td>$12–22/tCO₂</td>
+                <td>Regional emissions program; electricity sector included.</td>
+              </tr>
+              <tr>
+                <td>MISO</td>
+                <td>None</td>
+                <td>—</td>
+                <td>$0 (default)</td>
+                <td>No state carbon program; uses trajectory if specified.</td>
+              </tr>
+              <tr>
+                <td>ERCOT</td>
+                <td>None</td>
+                <td>—</td>
+                <td>$0 (default)</td>
+                <td>No state carbon program; uses trajectory if specified.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="insight-box info" style="margin-top: 28px;">
+            <strong>⚡ Carbon as marginal cost:</strong> Each generator's dispatch MC includes
+            <code>carbon_price × emission_rate × generation</code>. No constraint row is created; instead, carbon lifts
+            the cost curve for coal and gas, making cleaner units more likely to be marginal at high prices. RPS is a
+            separate constraint whose dual is the REC price.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: ORDC Scarcity Pricing -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>ORDC &amp; RCPF Scarcity Curves</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Operating Reserve Demand Curves (ORDC) and Reserve Constraint Penalty Factors (RCPF) add a
+            <strong>post-solve scarcity overlay</strong> when reserve co-optimization is disabled. The overlay lifts
+            the energy price endogenously based on how tight operating reserves are — capturing the real-time cost of
+            potential load shedding.
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            ERCOT ORDC (Loss-of-Load-Probability Model)
+          </h3>
+
+          <p style="margin-bottom: 20px;">
+            ERCOT's ORDC uses a loss-of-load-probability (LOLP) curve parameterized by online and offline reserves:
+          </p>
+
+          <div class="equation-block">
+            <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px;">
+              ORDC penalty (ERCOT)
+            </div>
+            <div id="ordc-eq"></div>
+          </div>
+
+          <p style="margin-top: 16px;">
+            where <em>R<sub>online</sub></em> is spinning reserves, <em>R<sub>offline</sub></em> is quick-start only,
+            <em>MCL</em> is the minimum contingency level (threshold below which LOLP jumps), and <em>Φ</em> is the
+            cumulative normal distribution. The penalty is capped at VOLL (Value of Lost Load, typically $5,000/MWh).
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            Interactive ORDC Curve
+          </h3>
+
+          <div class="fig">
+            <div class="fig__header">
+              <h3 class="fig__title">ORDC Penalty vs. Reserve Level</h3>
+            </div>
+            <div class="fig__body" id="ordc-chart-container"></div>
+            <div class="fig__caption">
+              Use the slider to adjust reserve levels and see how the penalty price changes. At the target reserve
+              (3,000 MW for ERCOT), penalty ≈ $25/MWh. As reserves tighten, penalty rises exponentially. At 500 MW
+              reserves, penalty hits ~$4,700/MWh (near VOLL). This overlay feeds into next year's entry screen,
+              incentivizing investment in fast-start resources and energy-storage capacity.
+            </div>
+          </div>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            Comparison: NYISO RCPF &amp; PJM Stepped ORDC
+          </h3>
+
+          <p style="margin-bottom: 16px;">
+            Different ISOs have different scarcity models:
+          </p>
+
+          <ul style="margin-bottom: 24px; padding-left: 24px;">
+            <li style="margin-bottom: 12px;">
+              <strong>NYISO RCPF (Reserve Constraint Penalty Factors):</strong>
+              Nested locational reserve families (10-min spin ⊂ 10-min total ⊂ 30-min total; NYC ⊂ SENY ⊂ East).
+              Penalties <strong>stack</strong> as deeper reserve categories become binding. Captures congestion-induced scarcity.
+            </li>
+            <li style="margin-bottom: 12px;">
+              <strong>PJM Stepped ORDC:</strong>
+              Discrete steps (Synchronized ⊂ Primary ⊂ 30-min) based on Largest Single Contingency (LSC).
+              Requirement = 1.5 × MSSC. Post-solve overlay like ERCOT but with steeper steps.
+            </li>
+            <li>
+              <strong>CAISO:</strong>
+              Embedded in energy prices (E-ASM market design). Reserve scarcity is reflected in real-time LMP without
+              a separate ORDC adder.
+            </li>
+          </ul>
+
+          <div class="insight-box info">
+            <strong>⚡ Why post-solve?</strong> When reserve co-optimization is <strong>off</strong>, the LP solves for
+            energy dispatch only. Reserve requirements are soft constraints or implicit in startup availability. After
+            the solve, we measure online/offline reserves, compute their LOLP, and add a scarcity penalty to the
+            energy price. This penalty then feeds next year's capacity investment screen. When co-optimization is
+            <strong>on</strong>, reserves are endogenous LP variables and the overlay is skipped (to avoid double-counting).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Reserve Co-Optimization -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>Reserve Co-Optimization (Optional In-LP)</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Some ISOs (ERCOT, PJM, NYISO, MISO) offer the option to <strong>endogenize reserves inside the LP</strong>
+            — clearing energy and reserve products jointly. This allows demand relief and storage to compete for
+            capacity and generates endogenous scarcity prices. When enabled, the post-solve ORDC overlay is skipped.
+          </p>
+
+          <div class="expandable-panel" id="reserve-coopt-panel">
+            <div class="expandable-header">
+              Expand: Full Formulation
+            </div>
+            <div class="expandable-body">
+              <p style="margin-bottom: 16px;">
+                When <code>reserve_coopt_enabled = True</code>, we add additional LP variables and constraints:
+              </p>
+
+              <div class="equation-block" style="margin-bottom: 16px;">
+                <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px;">
+                  Reserve variables per product per zone per hour
+                </div>
+                <div id="reserve-vars-eq"></div>
+              </div>
+
+              <p style="margin-bottom: 16px;">
+                where <em>r</em> ∈ {RegUp, RRS, ECRS, NonSpin} for ERCOT. Each product has:
+              </p>
+
+              <ul style="margin-bottom: 16px; padding-left: 24px;">
+                <li style="margin-bottom: 8px;">
+                  <strong>Supply:</strong> each generator contributes based on its ramp rate and availability;
+                  storage and demand response can also supply.
+                </li>
+                <li style="margin-bottom: 8px;">
+                  <strong>Demand:</strong> requirements (MWh/h) set by load, ramp, and VRE forecast error.
+                </li>
+                <li>
+                  <strong>Shared-headroom constraints:</strong> nested products share available capacity.
+                </li>
+              </ul>
+
+              <div class="equation-block" style="margin-bottom: 16px;">
+                <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px;">
+                  Shared headroom (ERCOT multi-product nesting)
+                </div>
+                <div id="reserve-headroom-eq"></div>
+              </div>
+
+              <p style="margin-bottom: 16px;">
+                The objective includes both energy dispatch cost and reserve shortage penalties (ORDC steps embedded as
+                demand-curve steps in the constraint RHS). The dual on the reserve-balance constraint is the clearing
+                price for that product, which can be negative (if overabundant) or high (if tight).
+              </p>
+
+              <h4 style="font-weight: 600; margin-top: 20px; margin-bottom: 12px; color: var(--navy);">
+                ERCOT Multi-Product Nesting
+              </h4>
+
+              <p style="margin-bottom: 12px;">
+                Regulation Up (fastest) ⊂ RRS (10-min spinning) ⊂ ECRS (30-min online) ⊂ Non-Spinning.
+                Capacity used for a tighter product counts toward looser ones. Load-resource and storage
+                provide AS credits (MWh available minus committed dispatch).
+              </p>
+
+              <div class="insight-box info">
+                <strong>⚡ Impact on dispatch:</strong> Reserve co-optimization makes the system reserve-aware in
+                real-time. If reserves are tight, the marginal reserve cost gets internalized into the energy price
+                (via shared-headroom constraints and reserve-balance duals). Dispatch volumes change compared to
+                pure economic dispatch. This results in higher prices and different retirement/entry economics.
+              </div>
+            </div>
+          </div>
+
+          <p style="margin-top: 24px;">
+            When disabled (default for most scenarios), <strong>reserve requirements are not explicitly modeled</strong> —
+            instead, we use the post-solve ORDC overlay to approximate scarcity. This simplification keeps the LP tractable
+            while still capturing the essence of reserve value in the price tail.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Environmental Attribute Credits -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑥</div>
+          <h2>Environmental Attribute Credits (EAC)</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Beyond carbon pricing and RPS, some clean technologies receive exogenous environmental credits as a
+            $/MWh adder to their dispatch or as a $/MW/year capacity value. These are distinct from the RPS shadow
+            price; a unit captures the <strong>higher</strong> of EAC and REC price, not both.
+          </p>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            EAC Dispatch Credits
+          </h3>
+
+          <table class="eac-table">
+            <thead>
+              <tr>
+                <th>Technology</th>
+                <th>EAC Price ($/MWh)</th>
+                <th>How Applied</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(99, 102, 241, 0.15); color: var(--purple-text);">
+                    Nuclear
+                  </span>
+                </td>
+                <td>Exogenous (<code>eac_price_nuclear</code>)</td>
+                <td>Subtracts from dispatch MC</td>
+                <td>Reflects zero-carbon attribute value. Default ~$0–5/MWh.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(34, 197, 94, 0.15); color: var(--green-text);">
+                    Onshore Wind
+                  </span>
+                </td>
+                <td>Computed dispatch credit or REC price</td>
+                <td>Wind MC adder (negative cost)</td>
+                <td>Either fixed EAC or max(EAC, RPS shadow price). IRA §45 PTC is separate.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--amber-text);">
+                    Solar
+                  </span>
+                </td>
+                <td>Computed dispatch credit or REC price</td>
+                <td>Solar MC adder</td>
+                <td>Dispatch solar gets exogenous EAC or RPS-shadow-driven REC. IRA §48 ITC reduces capex only.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(230, 126, 34, 0.15); color: #d97706;">
+                    Battery Storage
+                  </span>
+                </td>
+                <td>Exogenous (<code>eac_price_storage</code>)</td>
+                <td>Storage discharge MC adder</td>
+                <td>Often zero; some markets provide storage-capacity credits.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(38, 166, 154, 0.15); color: #00897b;">
+                    Gas CC with CCS
+                  </span>
+                </td>
+                <td>Exogenous (<code>eac_price_gas_cc_ccs</code>)</td>
+                <td>Subtracts from dispatch MC</td>
+                <td>§45Q CCUS credits ($85/tCO₂) also apply if carbon is captured. May stack.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(215, 123, 6, 0.15); color: var(--amber-text);">
+                    Geothermal
+                  </span>
+                </td>
+                <td>Exogenous (<code>eac_price_geothermal</code>)</td>
+                <td>Subtracts from dispatch MC</td>
+                <td>IRA §45E phases out after ~2033. EAC bridges the gap for later years.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="tech-badge" style="background: rgba(0, 150, 136, 0.15); color: #00897b;">
+                    Offshore Wind
+                  </span>
+                </td>
+                <td>Exogenous (<code>eac_price_offshore_wind</code>)</td>
+                <td>Offshore wind MC adder</td>
+                <td>Separate from onshore. Higher risk; may receive additional support.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">
+            Capacity-Value Credits for New Entry
+          </h3>
+
+          <p style="margin-bottom: 16px;">
+            Some ISOs assign capacity-market revenue to clean resources. In the new-entry screen, we compute:
+          </p>
+
+          <div class="equation-block">
+            <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px;">
+              Total revenue for new clean capacity
+            </div>
+            <div id="cap-value-eq"></div>
+          </div>
+
+          <p style="margin-top: 16px;">
+            The REC price from the RPS constraint dual competes with exogenous EAC; the maximum determines the final
+            credit applied. This means if RPS is tight (high REC shadow price), REC wins; if RPS is slack, exogenous
+            EAC applies. No double-stacking.
+          </p>
+
+          <div class="insight-box info" style="margin-top: 28px;">
+            <strong>⚡ Policy layering:</strong> A single MWh can be: (1) subject to RPS (if in a state with a mandate);
+            (2) eligible for federal EAC (if the tech qualifies); (3) eligible for state or ISO capacity-market credits
+            (if the region has one). These stack in the capacity investment screen (max of REC and EAC, plus capacity revenue),
+            but a single MWh = one certificate — it's not sold twice.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insight box: Interaction -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="insight-box success">
+          <strong>🎯 Policy Interaction:</strong> Tax credits (IRA), mandates (RPS), carbon pricing, scarcity
+          overlays, and reserve co-optimization all feed into dispatch via marginal-cost adjustments or constraints,
+          and into capacity investment via next-year price signals. A tight RPS drives REC prices high, which crowds
+          out exogenous EAC. High carbon prices lift thermal costs, making renewables marginal. Reserve co-optimization
+          makes scarcity explicit in energy prices instead of post-solve. These interactions are why the order of
+          magnitude — and structure — of policy matters as much as the headline rates.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="capacity-evolution.html">← Capacity Evolution</a>
+      <span style="flex: 1;"></span>
+      <a href="results-calibration.html">Results &amp; Calibration →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, KaTeX, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/viz-ordc.js" type="module"></script>
+
+  <script>
+    // Render KaTeX equations
+    document.addEventListener('DOMContentLoaded', () => {
+      const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // RPS constraint
+      const rpsEq = document.getElementById('rps-eq');
+      if (rpsEq) {
+        katex.render(
+          '\\sum_{t=1}^{8760} (W_{z,t} + S_{z,t} + P_{\\text{nuclear},z,t}) \\geq \\text{target}_{\\text{iso},\\text{year}} \\cdot \\sum_{t=1}^{8760} D_{z,t}',
+          rpsEq,
+          { displayMode: true }
+        );
+      }
+
+      // ORDC equation
+      const ordcEq = document.getElementById('ordc-eq');
+      if (ordcEq) {
+        katex.render(
+          '\\text{RTORPA} = 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}} + R_{\\text{offline}}) + 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}}/2)',
+          ordcEq,
+          { displayMode: true }
+        );
+      }
+
+      // Reserve variables
+      const reserveVarsEq = document.getElementById('reserve-vars-eq');
+      if (reserveVarsEq) {
+        katex.render(
+          'R_{r,z,t} \\geq 0 \\quad \\forall r \\in \\{\\text{RegUp, RRS, ECRS, NonSpin}\\}, z, t',
+          reserveVarsEq,
+          { displayMode: true }
+        );
+      }
+
+      // Reserve headroom
+      const reserveHeadroomEq = document.getElementById('reserve-headroom-eq');
+      if (reserveHeadroomEq) {
+        katex.render(
+          'R_{\\text{RegUp},z,t} \\subseteq R_{\\text{RRS},z,t} \\subseteq R_{\\text{ECRS},z,t} \\subseteq R_{\\text{NonSpin},z,t}',
+          reserveHeadroomEq,
+          { displayMode: true }
+        );
+      }
+
+      // Capacity value
+      const capValueEq = document.getElementById('cap-value-eq');
+      if (capValueEq) {
+        katex.render(
+          '\\text{Rev} = \\text{Energy + Arbitrage Revenue} + \\max(\\text{REC Price, EAC Price}) \\cdot \\text{annual supply} + \\text{capacity credit}',
+          capValueEq,
+          { displayMode: true }
+        );
+      }
+    });
+  </script>
+
+  <script>
+    // Expandable panels
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.expandable-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const panel = header.closest('.expandable-panel');
+          panel.classList.toggle('closed');
+        });
+      });
+      // Default: closed
+      document.querySelectorAll('.expandable-panel').forEach(panel => {
+        panel.classList.add('closed');
+      });
+    });
+  </script>
+
+  <script>
+    // IRA Timeline SVG (static Gantt-style)
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('ira-timeline-container');
+      if (!container) return;
+
+      const credits = [
+        { name: '§45 Wind PTC', start: 2022, end: 2027, amount: '$26/MWh', color: '#22C55E' },
+        { name: '§48 Solar ITC', start: 2022, end: 2027, amount: '30% CAPEX', color: '#F59E0B' },
+        { name: '§45Q CCUS', start: 2022, end: 2032, amount: '$85/tCO₂', color: '#26A69A' },
+        { name: '§45V Hydrogen', start: 2022, end: 2027, amount: '$3/kg', color: '#10B981' },
+        { name: '§45E Geothermal', start: 2028, end: 2033, amount: 'Phased', color: '#D97706' },
+      ];
+
+      const W = Math.min(800, container.clientWidth);
+      const H = 200;
+      const padding = { top: 20, right: 20, bottom: 40, left: 140 };
+      const barHeight = 24;
+      const barGap = 8;
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', W);
+      svg.setAttribute('height', H);
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+      const x = d3.scaleLinear()
+        .domain([2020, 2035])
+        .range([padding.left, W - padding.right]);
+
+      const defs = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'defs'));
+      const style = defs.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'style'));
+      style.textContent = `
+        .timeline-bar { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08)); }
+        .timeline-label { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; }
+        .timeline-year { font-family: 'DM Sans', sans-serif; font-size: 10px; color: #666; }
+      `;
+
+      // Grid lines
+      for (let year = 2020; year <= 2035; year += 5) {
+        const line = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'line'));
+        line.setAttribute('x1', x(year));
+        line.setAttribute('x2', x(year));
+        line.setAttribute('y1', padding.top);
+        line.setAttribute('y2', H - padding.bottom);
+        line.setAttribute('stroke', '#e5e7eb');
+        line.setAttribute('stroke-width', 1);
+        if (year % 10 === 0) line.setAttribute('stroke-opacity', 0.5);
+      }
+
+      // Year labels
+      for (let year = 2020; year <= 2035; year += 5) {
+        const text = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+        text.setAttribute('x', x(year));
+        text.setAttribute('y', H - 12);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'timeline-year');
+        text.textContent = year;
+      }
+
+      // Bars
+      credits.forEach((credit, i) => {
+        const barY = padding.top + i * (barHeight + barGap);
+        const barX = x(credit.start);
+        const barW = x(credit.end) - x(credit.start);
+
+        const g = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+        g.setAttribute('class', 'timeline-bar');
+
+        const rect = g.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'rect'));
+        rect.setAttribute('x', barX);
+        rect.setAttribute('y', barY);
+        rect.setAttribute('width', Math.max(2, barW));
+        rect.setAttribute('height', barHeight);
+        rect.setAttribute('fill', credit.color);
+        rect.setAttribute('rx', 4);
+        rect.setAttribute('opacity', 0.85);
+
+        const label = g.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+        label.setAttribute('x', padding.left - 8);
+        label.setAttribute('y', barY + barHeight / 2 + 3);
+        label.setAttribute('text-anchor', 'end');
+        label.setAttribute('class', 'timeline-label');
+        label.setAttribute('fill', '#1e293b');
+        label.textContent = credit.name;
+
+        const amount = g.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+        amount.setAttribute('x', barX + barW / 2);
+        amount.setAttribute('y', barY + barHeight / 2 + 3);
+        amount.setAttribute('text-anchor', 'middle');
+        amount.setAttribute('class', 'timeline-label');
+        amount.setAttribute('fill', '#fff');
+        amount.setAttribute('font-weight', '600');
+        amount.setAttribute('font-size', '10px');
+        amount.textContent = credit.amount;
+      });
+
+      container.appendChild(svg);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The LP Core — Codebase Explorer</title>
+  <meta name="description" content="The linear program formulation: variable layout, constraints, objective, and how duals become prices.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iNftRA4LAWxB0K1JcLEJcg+9SnYQF+gFeRjMoA0b" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZV/phavutF+AssIqIfZTOTmsWwj+KqIdy4jo2P9YrXD9BqwMx8f50c+5j" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ0OxrHlwNO15aCLGrqHEN4oN+9FlEoaoPazzvTpyv2Ao9akC" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+  <style>
+    .variable-layout {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      margin: var(--space-lg) 0;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+
+    .layout-block {
+      display: inline-block;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      margin-right: 2px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .layout-block.thermal {
+      border-left: 3px solid var(--primary);
+    }
+
+    .layout-block.renewable {
+      border-left: 3px solid var(--success);
+    }
+
+    .layout-block.storage {
+      border-left: 3px solid var(--warning);
+    }
+
+    .layout-block.transmission {
+      border-left: 3px solid var(--info);
+    }
+
+    .layout-block.slack {
+      border-left: 3px solid var(--error);
+    }
+
+    .constraint-family {
+      background: var(--bg-tertiary);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .constraint-family.optional {
+      border-left-color: var(--warning);
+    }
+
+    .constraint-family__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-sm);
+    }
+
+    .constraint-family__name {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .constraint-family__rows {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .constraint-family__desc {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .constraint-family__formula {
+      background: var(--bg-secondary);
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: var(--space-sm);
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      overflow-x: auto;
+    }
+
+    .objective-breakdown {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .objective-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .objective-item__variable {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+      margin-bottom: var(--space-xs);
+    }
+
+    .objective-item__coefficient {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .katex-display {
+      overflow-x: auto;
+      padding: var(--space-sm) 0;
+    }
+
+    .dual-explanation {
+      background: linear-gradient(135deg, var(--info) 15%, var(--primary) 85%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      color: white;
+    }
+
+    .dual-explanation__title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .dual-explanation__text {
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .solver-info {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .solver-info__item {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+      font-size: 0.9rem;
+    }
+
+    .solver-info__label {
+      font-weight: 600;
+      color: var(--text-primary);
+      flex-shrink: 0;
+      min-width: 140px;
+    }
+
+    .solver-info__value {
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 900px) {
+      .objective-breakdown {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .dual-explanation {
+        padding: var(--space-md);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .objective-breakdown {
+        grid-template-columns: 1fr;
+      }
+
+      .constraint-family__header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .constraint-family__rows {
+        margin-top: var(--space-xs);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="pulse">
+      <div class="header__eyebrow">The Engine</div>
+      <h1 class="header__title">The LP Core</h1>
+      <p class="header__subtitle">The linear program formulation: variable layout, constraint families, objective function, and how the duals become locational marginal prices.</p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: Variable Layout -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>The Variable Layout</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The LP has a single flat column vector containing all decision variables, arranged <strong>hour-major</strong>: all variables for hour 1, then hour 2, etc. Within each hour, variables are grouped by type.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Per-Hour Block Layout</h3>
+
+          <div class="variable-layout">
+            <div style="margin-bottom: 16px;">
+              <strong>Hour t block:</strong>
+            </div>
+            <div>
+              <div class="layout-block thermal">P[g,t] × n_gen</div>
+              <div class="layout-block renewable">W[z,t] × n_zones</div>
+              <div class="layout-block renewable">S[z,t] × n_zones</div>
+              <div class="layout-block storage">Chg[s,t] × n_storage</div>
+              <div class="layout-block storage">Dis[s,t] × n_storage</div>
+              <div class="layout-block storage">SOC[s,t] × n_storage</div>
+              <div class="layout-block transmission">Flow[l,t] × n_links</div>
+              <div class="layout-block slack">Slack[z,t] × n_zones</div>
+              <div class="layout-block slack">Dump[z,t] × n_zones</div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Variable Definitions</h3>
+
+          <table style="width: 100%; border-collapse: collapse; margin: var(--space-lg) 0; font-size: 0.9rem;">
+            <thead style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-emphasis);">
+              <tr>
+                <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Variable</th>
+                <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Symbol</th>
+                <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Meaning</th>
+                <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Thermal generation</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">P[g,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Output of generator g at hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Wind dispatch</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">W[z,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Wind generation dispatched at zone z, hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Solar dispatch</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">S[z,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Solar generation dispatched at zone z, hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Storage charge</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Chg[s,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy flowing into storage device s at hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Storage discharge</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Dis[s,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy flowing out of storage device s at hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Storage SOC</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">SOC[s,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy stored in device s at start of hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Transmission flow</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Flow[l,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Power flowing on transmission link l at hour t (signed: positive = forward)</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Load slack</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Slack[z,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Unserved energy at zone z, hour t (priced at VOLL)</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: var(--space-sm) var(--space-md);">Overgeneration</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Dump[z,t]</td>
+                <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Excess generation / curtailment at zone z, hour t</td>
+                <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="insight-box info" style="margin-top: var(--space-lg);">
+            <strong>⚡ Renewables are decision variables:</strong> Wind and solar are NOT netted from demand. Instead, they are decision variables with capacity-factor upper bounds: <code>0 ≤ W[z,t] ≤ cf[z,t] × wind_capacity[z]</code>. The LP decides how much wind/solar to dispatch (up to their available capacity). This lets the LP re-curtail endogenously when supply is abundant and prices turn negative.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Objective Function -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>The Objective Function</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The LP minimizes total system cost. Each variable has a cost coefficient that is either a real economic cost or a shadow cost (for variables we want to minimize incidentally):
+          </p>
+
+          <div class="objective-breakdown">
+            <div class="objective-item">
+              <div class="objective-item__variable">P[g,t]</div>
+              <div class="objective-item__coefficient">Thermal generation cost = heat_rate × fuel_price + VOM + emissions costs − credits</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">W[z,t]</div>
+              <div class="objective-item__coefficient">Wind MC = 0 (unless negative offer floor applied for dynamics)</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">S[z,t]</div>
+              <div class="objective-item__coefficient">Solar MC = 0 (unless negative offer floor applied for dynamics)</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">Chg[s,t]</div>
+              <div class="objective-item__coefficient">Storage charge cost = ε (0.001 $/MWh, tiebreaker)</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">Dis[s,t]</div>
+              <div class="objective-item__coefficient">Storage discharge cost = ε + dispatch_adder − EAC</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">SOC[s,t]</div>
+              <div class="objective-item__coefficient">State of charge: no cost</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">Flow[l,t]</div>
+              <div class="objective-item__coefficient">Transmission flow: no cost (congestion managed via constraint)</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">Slack[z,t]</div>
+              <div class="objective-item__coefficient">Unserved energy: VOLL = $9000/MWh (penalty for shortfall)</div>
+            </div>
+
+            <div class="objective-item">
+              <div class="objective-item__variable">Dump[z,t]</div>
+              <div class="objective-item__coefficient">Curtailment: cost = max(ε, -min(wind_mc, solar_mc) + ε), prevents negative-cost gaming</div>
+            </div>
+          </div>
+
+          <p style="margin-top: var(--space-lg);">
+            The objective is to <strong>minimize total cost</strong>. This will dispatch the cheapest available supply to meet demand every hour.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Constraint Families -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>Constraint Families</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The constraint matrix contains thousands of rows, grouped into families. Each family models a different physical or market rule.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">1. Energy Balance (Mandatory)</h3>
+
+          <div class="constraint-family">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Energy Balance Constraints</div>
+              <div class="constraint-family__rows">n_zones × T rows</div>
+            </div>
+            <div class="constraint-family__desc">
+              For each zone z and hour t, generation must equal demand:
+            </div>
+            <div class="constraint-family__formula">
+              Σ<sub>g∈z</sub> P[g,t] + W[z,t] + S[z,t] + Σ<sub>s∈z</sub> Dis[s,t] − Σ<sub>s∈z</sub> Chg[s,t] + Σ<sub>l</sub> incidence[z,l] × Flow[l,t] + Slack[z,t] − Dump[z,t] = Demand[z,t]
+            </div>
+            <p style="margin-top: var(--space-sm); color: var(--text-secondary); font-size: 0.9rem;">
+              <strong>The dual of this constraint IS the zonal locational marginal price (LMP).</strong>
+            </p>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">2. Storage Dynamics (Mandatory for Battery Units)</h3>
+
+          <div class="constraint-family">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Storage State of Charge</div>
+              <div class="constraint-family__rows">n_storage × T rows</div>
+            </div>
+            <div class="constraint-family__desc">
+              For each storage device s and hour t, track energy stored:
+            </div>
+            <div class="constraint-family__formula">
+              SOC[s,t] − SOC[s,t−1] − η<sub>chg</sub> × Chg[s,t] + Dis[s,t] / η<sub>dis</sub> = 0<br>
+              (Cyclic boundary: SOC[s,0] = SOC[s,T] at year-end)
+            </div>
+            <p style="margin-top: var(--space-sm); color: var(--text-secondary); font-size: 0.9rem;">
+              Enforces energy conservation: the change in stored energy equals charge minus discharge losses.
+            </p>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">3. Generator Bounds (Implicit)</h3>
+
+          <div class="constraint-family">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Generator Capacity & Availability</div>
+              <div class="constraint-family__rows">Enforced via variable bounds</div>
+            </div>
+            <div class="constraint-family__desc">
+              <code>pmin[g,t] ≤ P[g,t] ≤ pmax[g] × availability[g,t]</code><br>
+              Each unit's output is bounded by its nameplate capacity and hourly availability (outages, seasonal derates, age-based forced-outage probability).
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">4. Transmission Constraints (Mandatory)</h3>
+
+          <div class="constraint-family">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Transmission Limits</div>
+              <div class="constraint-family__rows">n_links × T rows (or static capacity)</div>
+            </div>
+            <div class="constraint-family__desc">
+              <code>−TTC[l] ≤ Flow[l,t] ≤ TTC[l]</code> for each link l.<br>
+              Power on a transmission link is capped by its thermal transfer capability (measured or modeled). This enforces congestion and price separation between zones.
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">5. Optional Row Families</h3>
+
+          <div class="constraint-family optional">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Renewable Portfolio Standard (RPS)</div>
+              <div class="constraint-family__rows">1 row per year</div>
+            </div>
+            <div class="constraint-family__desc">
+              Σ<sub>t</sub> (W[z,t] + S[z,t] + P[nuclear, z, t]) ≥ rps_target × Σ<sub>t</sub> Demand[z,t]<br>
+              Forces minimum clean-energy fraction each year. The dual of this constraint is the REC (renewable energy certificate) shadow price.
+            </div>
+          </div>
+
+          <div class="constraint-family optional">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Hydro Monthly Energy</div>
+              <div class="constraint-family__rows">n_hydro × 12 rows</div>
+            </div>
+            <div class="constraint-family__desc">
+              For each hydro unit and month: Σ<sub>t∈month</sub> P[hydro,t] ≤ monthly_budget<br>
+              Enforces seasonal hydroelectric budgets (limited water availability).
+            </div>
+          </div>
+
+          <div class="constraint-family optional">
+            <div class="constraint-family__header">
+              <div class="constraint-family__name">Reserve Co-Optimization</div>
+              <div class="constraint-family__rows">varies (ERCOT: ~100+ rows)</div>
+            </div>
+            <div class="constraint-family__desc">
+              When enabled: shared headroom, reserve balance, and supply-cap rows that co-optimize energy and ancillary services. See <a href="policy-scarcity.html">Policy & Scarcity</a> §5.5.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: From Duals to Prices -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>From Duals to Prices</h2>
+        </div>
+
+        <div class="dual-explanation">
+          <div class="dual-explanation__title">How the LP Discovers Prices</div>
+          <div class="dual-explanation__text">
+            When you solve a linear program, you get two solutions: the <strong>primal</strong> (decision variables: generation, flows, etc.) and the <strong>dual</strong> (shadow prices: the marginal value of relaxing each constraint). The dual on the energy-balance constraint is the most valuable quantity in the entire model: it IS the locational marginal price (LMP).
+          </div>
+        </div>
+
+        <div class="story-section" style="margin-top: var(--space-lg);">
+          <h3 style="margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Why Are Duals the Prices?</h3>
+
+          <p>
+            Consider the energy-balance constraint for zone z at hour t. The LP is minimizing cost subject to satisfying demand. If you could relax the demand constraint by 1 MWh — i.e., allow demand to be 1 MWh less — how much would the total cost decrease?
+          </p>
+
+          <p>
+            <strong>The answer is the dual.</strong> If the dual is $45/MWh, relaxing demand by 1 MWh saves $45 of cost. This is exactly the price the marginal unit is bidding — any generator running at that hour would accept that price and want to produce more.
+          </p>
+
+          <p>
+            In real markets, prices emerge from bid/offer matching. <strong>In our LP, prices are the duals.</strong> We don't need a bid-stack simulator; the LP IS the market-clearing algorithm. The duals are the market-clearing prices.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Multi-Zonal Congestion</h3>
+
+          <p>
+            When transmission is uncongested (flows below TTC), zones have similar prices — the marginal cost of supplying one more MWh is the same everywhere. But when a transmission link hits its limit, the constraint becomes binding. The dual on the transmission constraint then adjusts the LMPs on either side: the importing zone's price rises, the exporting zone's price falls. The price difference compensates for congestion cost.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            This is why <strong>congestion pricing works</strong>. It emerges naturally from the LP's solution structure. No special logic needed — just let the duals do their job.
+          </p>
+        </div>
+
+        <div class="insight-box success">
+          <strong>⚡ No separate pricing model:</strong> Many dispatch simulators have an LP for dispatch and a separate bid-stack module for pricing. We have just one. The LP solves once; the duals ARE the prices. This is faster, simpler, and mathematically correct.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: The Solver -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>Solving with HiGHS</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The LP is solved using <strong>HiGHS</strong>, a state-of-the-art open-source LP solver. The model builds the constraint matrix as a sparse CSC (compressed sparse column) matrix and feeds it to HiGHS via its Python API.
+          </p>
+
+          <div class="solver-info">
+            <div class="solver-info__item">
+              <div class="solver-info__label">Matrix Sparsity</div>
+              <div class="solver-info__value">Typical 8760-hour solve: ~2.5M columns, ~5M rows, ~15M nonzeros (~0.2% dense)</div>
+            </div>
+            <div class="solver-info__item">
+              <div class="solver-info__label">Algorithm</div>
+              <div class="solver-info__value">Dual simplex (fast warm-starts from prior year's basis)</div>
+            </div>
+            <div class="solver-info__item">
+              <div class="solver-info__label">Presolve</div>
+              <div class="solver-info__value">Off (the model is already tight; presolve overhead not worth it)</div>
+            </div>
+            <div class="solver-info__item">
+              <div class="solver-info__label">Parallel Threads</div>
+              <div class="solver-info__value">Configurable via env var MARKET_SIM_HIGHS_THREADS (default: 4)</div>
+            </div>
+            <div class="solver-info__item">
+              <div class="solver-info__label">Solve Time</div>
+              <div class="solver-info__value">Typical: 30–60 seconds per year on a modern CPU</div>
+            </div>
+            <div class="solver-info__item">
+              <div class="solver-info__label">P0→P1→P2 Sequence</div>
+              <div class="solver-info__value">After P0 solves, P1 only changes the cost vector (startup markup) and warm-starts from P0's basis. Converges in <5 iterations. P2 is optional.</div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Warm-Starting & Cross-Year Basis</h3>
+
+          <p>
+            The P0→P1→P2 sequence is fast because <strong>P1 warm-starts from P0's optimal basis</strong>. Instead of solving P1 cold, HiGHS uses P0's variable statuses (in-basis, at-lower, at-upper) as a starting point. Since the matrix and bounds haven't changed, only 1–5 simplex iterations are needed to re-optimize after the cost change.
+          </p>
+
+          <p>
+            Similarly, <strong>year N+1 warm-starts from year N's basis</strong>. Surviving generators keep their statuses, new generators start non-basic-at-bound, and the solve converges in seconds instead of minutes.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            This is a key reason the 25-year forecast solves in under an hour — warm-starting buys enormous speed gains.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="fleet-offer-curves.html">← Fleet & Offer Curves</a>
+      <span style="flex: 1;"></span>
+      <a href="solving-pricing.html">Solving & Pricing →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+</body>
+</html>
