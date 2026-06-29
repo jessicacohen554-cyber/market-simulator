@@ -1728,6 +1728,7 @@ def solve_and_persist(
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
+    miso_pjm_lmp_import_pricing: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -1936,6 +1937,7 @@ def solve_and_persist(
             miso_temp_reliability_floor=miso_temp_reliability_floor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
+            miso_pjm_lmp_import_pricing=miso_pjm_lmp_import_pricing,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -2463,6 +2465,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_cc_coal_rebalance=True)
     if miso_firm_import_floor:
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
+    if miso_pjm_lmp_import_pricing:
+        recorded_cfg = recorded_cfg.with_overrides(miso_pjm_lmp_import_pricing=True)
     if ct_intermediate_split:
         recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
     if ct_intermediate_cf_threshold is not None:
@@ -5760,6 +5764,23 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-pjm-lmp-import-pricing",
+        action="store_true",
+        help="Price each PJM import/export tranche on MISO's reference-price "
+        "seam at the MEASURED hourly PJM Day-Ahead LMP at the MISO-facing "
+        "western border hubs (equal-weight mean of CHICAGO GEN / AEP GEN / "
+        "ATSI GEN) + hurdle, replacing the synthetic gas x heat-rate x "
+        "load-shape ladder. The gas x HR ladder is too FLAT: its off-peak "
+        "price never dips below MISO's own cheap coal, so the model wrongly "
+        "under-imports in 2024/2025. The real PJM border LMP dips well below "
+        "the flat gas x HR average in off-peak hours, pulling import into "
+        "those cheap hours. DISPLACES miso_pjm_border_anchor for the PJM "
+        "seam (the two are alternatives; don't stack). SPP/South seams keep "
+        "their gas x HR pricing. Measured neighbor price-formation "
+        "(rule #12), blind to MISO's flow (rule #11). Requires "
+        "--reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6052,6 +6073,7 @@ def main() -> None:
         miso_temp_reliability_floor=args.miso_temp_reliability_floor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
+        miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,

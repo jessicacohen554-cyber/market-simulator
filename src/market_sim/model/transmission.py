@@ -1348,6 +1348,65 @@ def inject_caiso_import_hub_prices(
     return applied
 
 
+def inject_miso_pjm_lmp_import_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+) -> bool:
+    """Overwrite MISO's PJM seam rows of ``mc`` with measured PJM border LMP.
+
+    The MISO analog of :func:`inject_caiso_import_hub_prices`: each PJM import
+    tranche's marginal cost is set to the **measured hourly PJM Day-Ahead LMP**
+    at the MISO-facing western border hubs (equal-weight mean of CHICAGO GEN /
+    AEP GEN / ATSI GEN) plus the inter-RTO wheeling hurdle, replacing the
+    synthetic gas × heat-rate × load-shape ladder that is too flat / too high
+    to reproduce the off-peak price dips that drive real PJM-to-MISO import.
+
+    Export tranches are also repriced at hub_price − hurdle, so the seam is
+    arbitrage-free: MISO exports to PJM only when MISO's LMP dips below the
+    measured PJM border price minus the wheeling cost.
+
+    All import tranches get the SAME measured price (no flow-responsive slope)
+    because the measured PJM LMP is the actual border price regardless of flow
+    volume — the slope in the gas × HR mechanism is a modeling artifact of the
+    supply-curve approximation, not a real market feature.
+
+    Requires the ``pjm_border_lmp_hourly_MISO.parquet`` built by
+    ``scripts/build_pjm_border_lmp_miso.py``. Returns ``True`` when at least
+    one seam row was repriced, ``False`` when MISO has no measured PJM border
+    series (so the run keeps the gas × HR ladder and is byte-identical).
+    """
+    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.data.eia_loader import measured_miso_pjm_border_prices
+
+    prices = measured_miso_pjm_border_prices(iso, year, int(mc.shape[1]))
+    if prices is None:
+        return False
+
+    specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    pjm_spec = specs.get("PJM")
+    hurdle = pjm_spec.hurdle if pjm_spec is not None else 2.0
+
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if _REF_IMPORT_MARK in uid:
+            tag = uid.rsplit(_REF_IMPORT_MARK, 1)[1]
+            name = tag.partition("#")[0]
+            if name != "PJM":
+                continue
+            mc[row, :] = prices + hurdle
+            applied = True
+        elif _REF_EXPORT_MARK in uid:
+            tag = uid.rsplit(_REF_EXPORT_MARK, 1)[1]
+            name = tag.partition("#")[0]
+            if name != "PJM":
+                continue
+            mc[row, :] = prices - hurdle
+            applied = True
+    return applied
+
+
 # CAISO export sink(s) repriced to the measured neighbor hub — the blocks that
 # carry the neighbors' willingness-to-pay (sold to WECC), NOT the deep in-state
 # curtailment floor (export_curtail stays at its $0 value as the beyond-tie
