@@ -22,7 +22,7 @@ on:
         description: "ISO to backcast"
         type: choice
         default: ERCOT
-        options: [ERCOT, CAISO, PJM, MISO, SPP, NYISO, NEISO]
+        options: [ERCOT, CAISO, PJM, MISO, NYISO, NEISO]
       year:
         description: "Year(s): one of 2023/2024/2025, or a comma/space list e.g. '2023,2024'"
         type: string

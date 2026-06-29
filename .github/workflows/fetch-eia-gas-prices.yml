@@ -15,7 +15,7 @@ on:
         type: string
       isos:
         description: "ISOs for citygate basis (space-separated)"
-        default: "CAISO ERCOT PJM MISO SPP NYISO NEISO"
+        default: "CAISO ERCOT PJM MISO NYISO NEISO"
         type: string
       start_year:
         description: "Earliest citygate-basis year to add"

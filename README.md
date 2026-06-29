@@ -6,7 +6,7 @@ from 2026→2050, with a historical-backcast mode for calibration against EIA-93
 CAMPD, eGRID and EIA-923 actuals.
 
 - **Solver:** HiGHS via `highspy` (pure LP, no MIP). Prices are LP duals.
-- **ISOs:** ERCOT (calibrated reference) plus CAISO, PJM, MISO, SPP, NYISO, NEISO.
+- **ISOs:** ERCOT (calibrated reference) plus CAISO, PJM, MISO, NYISO, NEISO.
 - **Methodology:** see [`model-methodology-spec.md`](model-methodology-spec.md).
 - **Working instructions / conventions:** see [`CLAUDE.md`](CLAUDE.md) and
   [`CONVENTIONS.md`](CONVENTIONS.md).

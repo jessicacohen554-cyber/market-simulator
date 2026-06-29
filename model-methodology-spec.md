@@ -2,7 +2,7 @@
 
 **Purpose:** Methodology specification for the LP-based electricity market dispatch model. This document governs the model’s mathematical formulation, computational patterns, scenario architecture, and performance requirements. It is the primary reference for how the model works; where this document and the code disagree, the **code is the source of truth** — open a `/sync-docs` pass to reconcile.
 
-**Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Seven ISOs are registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (3 zones), SPP (2 zones), NYISO (5 zones) and NEISO (4 zones + HQ import node) — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
+**Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Six ISOs are registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (3 zones), NYISO (5 zones) and NEISO (4 zones + HQ import node) — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
 
 **Forecast vs. backcast.** The model is fundamentally a **forecasting** tool (2026→2050). A *backcast* mode reruns a historical weather year against actuals (EIA-930, CAMPD, eGRID, EIA-923) to calibrate parameters. The switch is the explicit **`ScenarioConfig.mode`** field (`"forecast"` default / `"backcast"`, Tier 0) — never inferred from other parameters (it used to ride on `gas_price_override`, which wrongly flipped any pinned-gas forecast sensitivity into backcast behavior). Several mechanisms — historic outage overlays, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration devices only**; forecast runs use the statistical/parametric models. This distinction is called out throughout; do not conflate the two.
 
@@ -123,7 +123,6 @@ The topology (zones, load shares, links, TTCs) is per-ISO data in `config/iso_co
 - **CAISO** — 3 in-state zones (NP15, ZP26, SP15) split on Path 15 / Path 26, **plus** a WECC import/export node (see below); 4 links + 1 interface limit.
 - **PJM** — 8 aggregated zones (`PJM_ComEd`, `PJM_AEP_Ohio`, `PJM_ATSI`, `PJM_West_APS`, `PJM_Central_PA`, `PJM_Dominion`, `PJM_EMAAC`, `PJM_SWMAAC`), 11 links, rolling up PJM's 20+ transmission zones onto the chronic west→Mid-Atlantic congestion corridors.
 - **MISO** — 3 zones (North, Central, South) with the MISO-South contract-path constraint.
-- **SPP** — 2 zones (North, South).
 - **NYISO** — 5 zones (Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island) with nested downstate import cutsets.
 - **NEISO** — 4 load zones (North, Central, Boston, Connecticut) **plus** an HQ import node; 7 links.
 
