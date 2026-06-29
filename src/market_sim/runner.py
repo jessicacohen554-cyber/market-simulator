@@ -624,6 +624,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_mc=wind_mc,
                 solar_mc=solar_mc,
                 storage_discharge_eac=storage_eac,
+                storage_discharge_cost=storage.vom,
                 rps_target=rps_target,
                 # Bound storage foresight to within-day arbitrage when the
                 # config asks for it (methodology spec §1.3); previously
