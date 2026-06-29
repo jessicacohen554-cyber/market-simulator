@@ -1032,7 +1032,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 and iso == "ERCOT"
                 and getattr(config, "energy_reserve_coopt", False)
             )
-            if config.commitment_enabled or as_aware:
+            caiso_ra = getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"
+            if config.commitment_enabled or as_aware or caiso_ra:
                 save_result(
                     p1_result,
                     config,
