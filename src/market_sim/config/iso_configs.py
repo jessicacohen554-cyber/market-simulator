@@ -526,8 +526,11 @@ def _nyiso_config() -> ISOConfig:
     #   - Central-East / Total East (Upstate-West -> Capital/Hudson): the
     #     major west-to-east constraint that limits upstate generation —
     #     including the Niagara and St. Lawrence hydro and upstate wind —
-    #     from reaching the east. Central-East normal limit ~2,850 MW (the
-    #     tighter binding cut within the broader Total East envelope).
+    #     from reaching the east. Post-upgrade TTC ~2,850 MW (annual mean
+    #     of measured DAM postings, 2024-25); reflects the NY Transco AC
+    #     Transmission project (in service Dec 2023) which raised the
+    #     Central-East limit from ~1,750 MW. Backcast years apply
+    #     year-varying overrides via constants.NYISO_INTERFACE_TTC_BY_YEAR.
     #   - UPNY-SENY (Capital/Hudson -> Lower-Hudson): the Upstate-NY to
     #     Southeast-NY interface, ~5,150 MW.
     #   - Dunwoodie-South (Lower-Hudson -> NYC): the binding import limit
