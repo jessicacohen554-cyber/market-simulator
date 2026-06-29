@@ -1,0 +1,258 @@
+/**
+ * iso-configs-table.js — ISO Configuration renderer
+ *
+ * Loads iso-topologies.json and renders:
+ * - Collapsible per-ISO sections
+ * - Zone table (name, load share %)
+ * - Transfer link table (from, to, TTC)
+ * - Interface limits if present
+ * - VOLL
+ */
+
+(function () {
+  'use strict';
+
+  const ISO_COLORS = {
+    ERCOT: '#22C55E',
+    CAISO: '#F59E0B',
+    PJM: '#0EA5E9',
+    MISO: '#F97316',
+    NYISO: '#E91E63',
+    NEISO: '#9C27B0',
+  };
+
+  const ISO_DESCRIPTIONS = {
+    ERCOT: 'Seven zones with major congestion interfaces (WESTEX, PNHNDL, NE_LOB); calibrated reference.',
+    CAISO: 'North–south trading zones (NP15, ZP26, SP15) plus WECC import node.',
+    PJM: 'Eight LDA zones capturing west-to-east price gradients and eastern load pockets.',
+    MISO: 'Three regions (North/Central/South) with asymmetric RDT directional limits.',
+    NYISO: 'Five zones with downstate import constraints (Progressive eastern islanding).',
+    NEISO: 'Five zones plus HQ import node for Quebec interconnection.',
+  };
+
+  /**
+   * Fetch and parse iso-topologies.json.
+   */
+  async function loadIsoData() {
+    try {
+      const response = await fetch('data/iso-topologies.json');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (e) {
+      console.error('Failed to load ISO topologies:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Format a percentage from 0–1.
+   */
+  function formatPct(val) {
+    return (val * 100).toFixed(1);
+  }
+
+  /**
+   * Build a zone table for an ISO.
+   */
+  function renderZoneTable(zones) {
+    const totalShare = zones.reduce((sum, z) => sum + z.load_share, 0);
+    let html = `
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Zone Name</th>
+            <th style="text-align: right;">Load Share</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    zones.forEach((zone) => {
+      html += `
+        <tr>
+          <td>${zone.name}</td>
+          <td style="text-align: right;">${formatPct(zone.load_share)}%</td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Build a transfer links table for an ISO.
+   */
+  function renderLinksTable(links) {
+    if (links.length === 0) {
+      return '<p style="color: var(--text-muted); font-size: 0.9rem;">No transfer links defined.</p>';
+    }
+
+    let html = `
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>From Zone</th>
+            <th>To Zone</th>
+            <th style="text-align: right;">TTC (MW)</th>
+            <th>Direction</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    links.forEach((link) => {
+      const direction = link.bidirectional ? 'Bidirectional' : 'One-way';
+      html += `
+        <tr>
+          <td>${link.from}</td>
+          <td>${link.to}</td>
+          <td style="text-align: right;"><strong>${link.ttc_mw.toLocaleString()}</strong></td>
+          <td><span class="badge" style="background: ${link.bidirectional ? '#10B981' : '#F59E0B'}; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600;">${direction}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Build interface limits table if present.
+   */
+  function renderInterfaceLimits(limits) {
+    if (!limits || limits.length === 0) {
+      return '';
+    }
+
+    let html = '<h4>Aggregate Interface Limits</h4>';
+    html += `
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Interface Name</th>
+            <th>Linked Paths</th>
+            <th style="text-align: right;">Aggregate Cap (MW)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    limits.forEach((limit) => {
+      const paths = limit.links.map((pair) => `${pair[0]} → ${pair[1]}`).join('; ');
+      html += `
+        <tr>
+          <td><strong>${limit.name}</strong></td>
+          <td>${paths}</td>
+          <td style="text-align: right;"><strong>${limit.cap_mw.toLocaleString()}</strong></td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Render a single ISO section.
+   */
+  function renderIsoSection(isoName, isoData) {
+    const color = ISO_COLORS[isoName] || '#6B7280';
+    const description = ISO_DESCRIPTIONS[isoName] || '';
+
+    const html = `
+      <div class="iso-section">
+        <div class="iso-header" data-iso="${isoName}">
+          <span class="iso-badge" style="background: ${color};">${isoName}</span>
+          <div>
+            <strong>${isoName}</strong>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">${description}</p>
+          </div>
+        </div>
+
+        <div class="iso-content" data-iso="${isoName}">
+          <div>
+            <h4>Zones (${isoData.n_zones})</h4>
+            ${renderZoneTable(isoData.zones)}
+          </div>
+
+          <div>
+            <h4>Transfer Links (${isoData.n_links})</h4>
+            ${renderLinksTable(isoData.links)}
+          </div>
+
+          ${renderInterfaceLimits(isoData.interface_limits)}
+
+          <div>
+            <h4>Economic Parameters</h4>
+            <table class="data-table" style="width: auto;">
+              <tbody>
+                <tr>
+                  <td><strong>VOLL ($/MWh)</strong></td>
+                  <td style="text-align: right;"><strong>${isoData.voll.toLocaleString()}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  /**
+   * Initialize ISO sections.
+   */
+  async function init() {
+    const container = document.querySelector('#isoConfigs');
+    if (!container) return;
+
+    const data = await loadIsoData();
+    if (!data) {
+      container.innerHTML = '<p style="color: var(--negative);">Failed to load ISO topology data.</p>';
+      return;
+    }
+
+    let html = '';
+    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO'];
+    isoOrder.forEach((iso) => {
+      if (data[iso]) {
+        html += renderIsoSection(iso, data[iso]);
+      }
+    });
+
+    container.innerHTML = html;
+
+    // Add toggle handlers
+    document.querySelectorAll('.iso-header').forEach((header) => {
+      header.addEventListener('click', () => {
+        const isoName = header.dataset.iso;
+        const content = document.querySelector(`.iso-content[data-iso="${isoName}"]`);
+        if (content) {
+          header.classList.toggle('expanded');
+          content.classList.toggle('show');
+        }
+      });
+    });
+  }
+
+  // Run on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
