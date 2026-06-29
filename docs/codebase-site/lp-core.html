@@ -393,7 +393,7 @@
 
             <div class="objective-item">
               <div class="objective-item__variable">Slack[z,t]</div>
-              <div class="objective-item__coefficient">Unserved energy: VOLL = $9000/MWh (penalty for shortfall)</div>
+              <div class="objective-item__coefficient">Unserved energy: VOLL = $5000/MWh (penalty for shortfall)</div>
             </div>
 
             <div class="objective-item">
@@ -452,7 +452,7 @@
             </div>
             <div class="constraint-family__formula">
               SOC[s,t] − SOC[s,t−1] − η<sub>chg</sub> × Chg[s,t] + Dis[s,t] / η<sub>dis</sub> = 0<br>
-              (Cyclic boundary: SOC[s,0] = SOC[s,T] at year-end)
+              (Cyclic boundary at t=0: SOC[s,t−1] wraps to SOC[s,T−1], closing the year-end cycle)
             </div>
             <p style="margin-top: var(--space-sm); color: var(--text-secondary); font-size: 0.9rem;">
               Enforces energy conservation: the change in stored energy equals charge minus discharge losses.
@@ -585,7 +585,7 @@
           <div class="solver-info">
             <div class="solver-info__item">
               <div class="solver-info__label">Matrix Sparsity</div>
-              <div class="solver-info__value">Typical 8760-hour solve: ~2.5M columns, ~5M rows, ~15M nonzeros (~0.2% dense)</div>
+              <div class="solver-info__value">Typical 8760-hour solve: ~1.8M columns, with far fewer rows (mostly the n_zones×T energy-balance + n_storage×T SOC equalities); a sparse CSC matrix (well under 1% dense)</div>
             </div>
             <div class="solver-info__item">
               <div class="solver-info__label">Algorithm</div>
@@ -597,7 +597,7 @@
             </div>
             <div class="solver-info__item">
               <div class="solver-info__label">Parallel Threads</div>
-              <div class="solver-info__value">Configurable via env var MARKET_SIM_HIGHS_THREADS (default: 4)</div>
+              <div class="solver-info__value">Configurable via env var MARKET_SIM_HIGHS_THREADS (unset → HiGHS automatic threading)</div>
             </div>
             <div class="solver-info__item">
               <div class="solver-info__label">Solve Time</div>

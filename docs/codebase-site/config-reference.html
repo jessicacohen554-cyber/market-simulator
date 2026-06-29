@@ -504,7 +504,7 @@
           <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
             <li><strong>RTE (round-trip):</strong> 4-hour 85%, 8-hour 80%, 12+ hour 75%</li>
             <li><strong>Cycling Degradation:</strong> 0.05% per cycle (when storage_degradation=True)</li>
-            <li><strong>ELCC by Duration:</strong> 4h ≈ 75%, 8h ≈ 85%, 12h ≈ 95% of capacity value</li>
+            <li><strong>ELCC by Duration:</strong> 4h ≈ 60%, 8h ≈ 87%, 12h ≈ 97% of capacity value (STORAGE_ELCC_BY_DURATION)</li>
             <li><strong>Deployment Ceilings:</strong> Per-ISO build caps (e.g., ERCOT 15 GW total)</li>
           </ul>
           <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: NREL battery storage review, ISO capacity-market rules</p>
@@ -516,9 +516,10 @@
           <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
             <li><strong>ERCOT:</strong> 13.75% reserve margin, energy-only (no capacity market)</li>
             <li><strong>CAISO:</strong> 15% reserve margin, RA program (~$50–100/kW-yr capacity value)</li>
-            <li><strong>PJM:</strong> 15.5% reserve margin, RPM capacity auction</li>
-            <li><strong>NYISO:</strong> 20% reserve margin, ICAP capacity market</li>
-            <li><strong>NEISO:</strong> 13.6% reserve margin, Forward Capacity Market (FCM)</li>
+            <li><strong>PJM:</strong> 17.8% reserve margin, RPM capacity auction</li>
+            <li><strong>MISO:</strong> 17.9% reserve margin (ICAP PRMR)</li>
+            <li><strong>NYISO:</strong> 24.4% reserve margin, ICAP capacity market</li>
+            <li><strong>NEISO:</strong> 15.7% reserve margin, Forward Capacity Market (FCM)</li>
           </ul>
           <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: PRM by ISO (constants.PLANNING_RESERVE_MARGIN_BY_ISO), ISO tariffs</p>
         </div>

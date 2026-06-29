@@ -595,7 +595,7 @@
             <strong>Why two modes?</strong> Forecast mode answers "what if?"; backcast mode answers "how well does the model reproduce what happened?" Backcasts validate that the model's mechanisms — price formation, commitment, congestion, scarcity — mirror the real market. Only after validation do we trust the forecast.
           </p>
           <p style="margin-bottom: 0;">
-            A run is labeled a <strong>keeper</strong> if it passes calibration checks (generation mix, price duration, capacity factors within ±5% of measured). Keepers set the baseline for forward scenarios; probes are diagnostic tools that inform next-run tuning but do not enter the forecast production line.
+            A run is labeled a <strong>keeper</strong> if it passes calibration checks (generation mix, price duration curve, average price, and capacity factors, each within ±5% of measured). Keepers set the baseline for forward scenarios; probes are diagnostic tools that inform next-run tuning but do not enter the forecast production line.
           </p>
         </div>
       </div>
@@ -611,26 +611,26 @@
 
         <div class="story-section">
           <p>
-            Every backcast run is validated against four ordered diagnostics. Failure in check #1 usually explains failures in #2–#4, so they're designed to be interpreted top-down.
+            Every backcast run is validated against four ordered diagnostics (<code>check_generation_mix</code>, <code>check_price_duration_curve</code>, average price, <code>check_cf_band_occupancy</code>). Failure in check #1 usually explains failures in #2–#4, so they're designed to be interpreted top-down. Each metric is graded against a single <code>DEFAULT_TOLERANCE</code> of ±5%, and every comparison is a binary <strong>pass / fail</strong> (a metric with no benchmark supplied is reported <em>skipped</em>) — there is no intermediate "warning" tier. A <code>CalibrationReport</code> passes only when no diagnostic fails.
           </p>
         </div>
 
         <!-- Scorecard summary -->
         <div class="calibration-summary">
           <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">10</div>
+            <div class="calibration-summary-card__value">13</div>
             <div class="calibration-summary-card__label">Pass</div>
-          </div>
-          <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">2</div>
-            <div class="calibration-summary-card__label">Warning</div>
           </div>
           <div class="calibration-summary-card">
             <div class="calibration-summary-card__value">1</div>
             <div class="calibration-summary-card__label">Fail</div>
           </div>
           <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">77%</div>
+            <div class="calibration-summary-card__value">±5%</div>
+            <div class="calibration-summary-card__label">Tolerance</div>
+          </div>
+          <div class="calibration-summary-card">
+            <div class="calibration-summary-card__value">93%</div>
             <div class="calibration-summary-card__label">Pass Rate</div>
           </div>
         </div>
@@ -680,7 +680,7 @@
                 <td>18.5</td>
                 <td>17.9</td>
                 <td>−3.2%</td>
-                <td><span class="badge-status warn">Warn</span></td>
+                <td><span class="badge-status pass">Pass</span></td>
               </tr>
               <tr>
                 <td></td>
@@ -696,7 +696,7 @@
                 <td>56.8</td>
                 <td>55.2</td>
                 <td>−2.8%</td>
-                <td><span class="badge-status warn">Warn</span></td>
+                <td><span class="badge-status pass">Pass</span></td>
               </tr>
               <!-- Price Duration -->
               <tr>
@@ -738,7 +738,7 @@
                 <td>0.540</td>
                 <td>0.557</td>
                 <td>+3.1%</td>
-                <td><span class="badge-status warn">Warn</span></td>
+                <td><span class="badge-status pass">Pass</span></td>
               </tr>
               <tr>
                 <td></td>
@@ -770,10 +770,10 @@
 
         <div class="story-section">
           <p>
-            <strong>Interpretation:</strong> This example keeper run passes 10 of 13 checks (77%). The two warnings (gas-CT generation, solar generation) and the failure (P10 price overshoot) all trace to the same root cause: the coal must-run tranche offer curve is priced too low, forcing the model to run coal plants beyond their actual dispatch. The fix is structural (adjust the coal sigmoid steepness parameter in the next run), not a tuning tweak.
+            <strong>Interpretation:</strong> This example keeper run passes 13 of 14 metrics (93%) within the ±5% band; the single failure is the P10 price overshoot (+20.5%). The near-misses that sit just inside tolerance (gas-CT and solar generation, coal CF) and that one failure all trace to the same root cause: the coal must-run tranche offer curve is priced too low, forcing the model to run coal plants beyond their actual dispatch. The fix is structural (adjust the coal sigmoid steepness parameter in the next run), not a tuning tweak.
           </p>
           <p style="margin-bottom: 0;">
-            A run becomes a keeper when it passes the majority of checks AND the failures are traceable to tunable parameters, not missing mechanisms. The moment a run is marked keeper, its Parquet bundle and metadata are registered on the calibration dashboard and committed to the repository.
+            Note the distinction: <code>CalibrationReport.passed</code> is strict — it is true only when <em>no</em> diagnostic fails. The <strong>keeper</strong> decision is a separate, human judgment that can certify a structurally-sound run even with a failing diagnostic, provided the failure is traceable to a tunable parameter rather than a missing mechanism (per the project's structural-fidelity-first rule). The moment a run is marked keeper, its bundle and metadata are registered on the calibration dashboard and committed to the repository.
           </p>
         </div>
       </div>

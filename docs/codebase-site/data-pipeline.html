@@ -404,19 +404,19 @@
                 <td><code>_committed</code></td>
                 <td>All</td>
                 <td>Part-load when online; carries startup cost and min-run/min-down</td>
-                <td>Base HR × fuel price</td>
+                <td>HR × committed_mult × fuel</td>
               </tr>
               <tr>
                 <td><code>_econ</code></td>
                 <td>All</td>
                 <td>Incremental dispatch above committed; rising cost steps</td>
-                <td>HR × (1 + econ_mult) × fuel</td>
+                <td>HR × econ_mult × fuel</td>
               </tr>
               <tr>
                 <td><code>_peak</code></td>
                 <td>All</td>
                 <td>Duct-firing / scarcity band at extreme supply shortage</td>
-                <td>HR × (1 + peak_mult) × fuel</td>
+                <td>HR × peak_mult × fuel</td>
               </tr>
             </tbody>
           </table>
@@ -424,7 +424,7 @@
           <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Coal Take-or-Pay & PRB Passthrough</h3>
 
           <p>
-            The <code>_mustrun</code> tranche models contracted coal: its marginal cost excludes fuel (already paid). The <code>_sync</code> tranche is spot coal, and uses a <strong>logistic sigmoid function</strong> that adjusts the fraction of cost covered by fuel based on gas prices. Low gas prices → buyers switch to coal (high fuel fraction). High gas prices → coal less competitive (low fuel fraction, more VOM-like). This captures the real economics of PRB (powder river basin) coal supply without explicit supply curves.
+            The <code>_mustrun</code> tranche models contracted coal: its marginal cost excludes fuel (already paid). The <code>_sync</code> tranche is spot (non-contracted) coal at full SRMC. The economic coal tranches above must-run use a <strong>logistic sigmoid function</strong> that adjusts the fraction of cost covered by fuel based on gas prices. Cheap gas → the passthrough sits at its <em>floor</em> (low fuel fraction): coal must discount its fuel cost to clear against cheap gas CCs. Dear gas → the passthrough rises toward its <em>ceiling</em> (full cost, or a markup &gt; 1.0): coal is inframarginal and prices at full SRMC. This captures the real economics of PRB (powder river basin) coal supply without explicit supply curves.
           </p>
 
           <p style="margin-bottom: 0;">
@@ -566,7 +566,7 @@
               </tr>
               <tr>
                 <td><strong>eGRID 2023</strong></td>
-                <td>Plant-level CO₂ intensity and resource mix (2021 data)</td>
+                <td>Plant-level CO₂ intensity and resource mix (eGRID 2023 anchors 2023; eGRID 2024 anchors 2024+)</td>
                 <td>Annual (December release)</td>
                 <td>CO₂ emission rates, plant classification, generation-weighted averages</td>
               </tr>
@@ -648,7 +648,10 @@
               <strong>Contracted (must-run tranche):</strong> fuel_fraction = 0, cost = VOM only. Reflects take-or-pay long-term contracts.
             </li>
             <li style="margin-bottom: var(--space-sm);">
-              <strong>Spot (sync tranche):</strong> fuel_fraction = sigmoid(gas_price), rising from ~0.3 at high gas to ~1.0 at low gas. When gas is expensive, buyers avoid coal supply cost sharing; when gas is cheap, coal becomes unattractive even with shared fuel cost.
+              <strong>Spot (sync tranche):</strong> fuel_fraction = 1.0, full SRMC — non-contracted coal pays its delivered fuel cost in full.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Economic tranches (above must-run):</strong> fuel_fraction = sigmoid(gas_price), rising from a floor (~0.3) at cheap gas to ~1.0 (or a markup &gt; 1.0) at dear gas. When gas is cheap, coal discounts its fuel to clear against gas CCs; when gas is dear, coal is inframarginal and prices at full cost.
             </li>
           </ul>
 
@@ -735,7 +738,7 @@
               <tr>
                 <td><code>nox_rate</code></td>
                 <td><code>(n_gen,)</code></td>
-                <td><strong>Optional</strong>; NOx emission rate [t/MWh]; used when NOx pricing is on</td>
+                <td>NOx emission rate [t/MWh]; used when NOx pricing is on</td>
               </tr>
             </tbody>
           </table>
