@@ -1701,6 +1701,7 @@ def solve_and_persist(
     caiso_ct_reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
+    caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
@@ -1912,6 +1913,7 @@ def solve_and_persist(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
+            caiso_solar_endogenous_spill=caiso_solar_endogenous_spill,
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered,
             nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
             nyiso_st_reliability_floor=nyiso_st_reliability_floor,
@@ -2176,6 +2178,7 @@ def solve_and_persist(
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
+        "caiso_solar_endogenous_spill": caiso_solar_endogenous_spill,
         "caiso_solar_cap_at_delivered": caiso_solar_cap_at_delivered,
         "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
         "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
@@ -2374,6 +2377,10 @@ def solve_and_persist(
     if caiso_solar_deliverability_k is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_solar_deliverability_k=caiso_solar_deliverability_k
+        )
+    if caiso_solar_endogenous_spill is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_solar_endogenous_spill=caiso_solar_endogenous_spill
         )
     if caiso_solar_cap_at_delivered is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5340,6 +5347,17 @@ def main() -> None:
         "curtailment-rate / solar-penetration ratio, stable across CAISO 2023/24).",
     )
     parser.add_argument(
+        "--caiso-solar-endogenous-spill",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO midday price fix: skip the pre-LP solar CF derate and pass "
+        "the full solar potential to the LP. The LP endogenously curtails in "
+        "oversupply hours (solar not fully dispatched → solar marginal → "
+        "energy-balance dual = solar_mc ≈ $0 or negative via the keep-running "
+        "value offer). Overrides --caiso-solar-deliverability when on. "
+        "CAISO-only. Default (unset) keeps the per-ISO base config value.",
+    )
+    parser.add_argument(
         "--caiso-solar-cap-at-delivered",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6086,6 +6104,7 @@ def main() -> None:
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
+        caiso_solar_endogenous_spill=args.caiso_solar_endogenous_spill,
         caiso_solar_cap_at_delivered=args.caiso_solar_cap_at_delivered,
         nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
         nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
