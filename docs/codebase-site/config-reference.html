@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration Reference — Market Simulator Codebase Explorer</title>
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <style>
+    .tier-0 { --badge-color: #0284C7; }
+    .tier-1 { --badge-color: #16A34A; }
+    .tier-2 { --badge-color: #D97706; }
+    .tier-3 { --badge-color: #DC2626; }
+
+    .config-search {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--hydro);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .tier-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tier-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 200ms ease;
+    }
+
+    .tier-btn:hover {
+      border-color: currentColor;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .tier-btn.active {
+      background: var(--badge-color);
+      color: white;
+      border-color: var(--badge-color);
+    }
+
+    .config-table-container {
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .data-table thead {
+      background: var(--bg-page);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .data-table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--border-light);
+      transition: background 150ms ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    .data-table td {
+      padding: 0.75rem 1rem;
+      vertical-align: top;
+    }
+
+    .field-name {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      background: var(--badge-color);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .expandable-row {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .expandable-row::after {
+      content: '▶';
+      display: inline-block;
+      margin-right: 0.5rem;
+      transition: transform 200ms ease;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .expandable-row.expanded::after {
+      transform: rotate(90deg);
+    }
+
+    .detail-row {
+      display: none;
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .detail-row.show {
+      display: table-row;
+    }
+
+    .detail-content {
+      padding: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .detail-content h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .detail-content p {
+      margin: 0 0 1rem 0;
+      color: var(--text-secondary);
+    }
+
+    .detail-content .citation {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+    }
+
+    .iso-section {
+      margin-bottom: 2rem;
+    }
+
+    .iso-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-page);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 1rem;
+    }
+
+    .iso-header::before {
+      content: '▶';
+      font-size: 0.9rem;
+      transition: transform 200ms ease;
+      color: var(--text-muted);
+      min-width: 1rem;
+    }
+
+    .iso-header.expanded::before {
+      transform: rotate(90deg);
+    }
+
+    .iso-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .iso-content {
+      display: none;
+      margin-left: 0;
+    }
+
+    .iso-content.show {
+      display: block;
+    }
+
+    .iso-content > div {
+      margin-bottom: 2rem;
+    }
+
+    .iso-content h4 {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .constants-group {
+      margin-bottom: 3rem;
+    }
+
+    .constants-group h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .constants-group > p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .no-results {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      background: var(--bg-page);
+      border-radius: var(--radius-md);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      margin-top: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--energy-divider, linear-gradient(to right, #F59E0B, #22C55E, #0EA5E9, #6366F1));
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .section-header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .code-block {
+      background: var(--navy);
+      color: #f0f0f0;
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 1.5rem 0;
+    }
+
+    .code-block code {
+      color: inherit;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--hydro);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb .disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .config-search {
+        flex-direction: column;
+      }
+
+      .tier-filters {
+        justify-content: space-between;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .data-table {
+        font-size: 0.8rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 0.5rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav id="topNav"></nav>
+  <header class="header"></header>
+
+  <main>
+    <div class="content-section">
+      <!-- Section 1: ScenarioConfig Fields -->
+      <div class="section-header">
+        <div>
+          <h2>ScenarioConfig Fields</h2>
+          <p>Run parameters organized by tier: Tier 0 (structural) → Tier 3 (calibration).</p>
+        </div>
+      </div>
+
+      <div class="config-search">
+        <div class="search-box">
+          <input
+            type="text"
+            id="configSearch"
+            placeholder="Search field names, types, descriptions..."
+            aria-label="Search configuration fields"
+          >
+        </div>
+        <div class="tier-filters">
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Filter by tier:</span>
+          <button class="tier-btn active" data-tier="0">Tier 0</button>
+          <button class="tier-btn active" data-tier="1">Tier 1</button>
+          <button class="tier-btn active" data-tier="2">Tier 2</button>
+          <button class="tier-btn active" data-tier="3">Tier 3</button>
+        </div>
+      </div>
+
+      <div class="config-table-container">
+        <table class="data-table" id="configTable">
+          <thead>
+            <tr>
+              <th>Field Name</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Tier</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="configTableBody">
+          </tbody>
+        </table>
+        <div class="no-results" id="noResults" style="display: none;">
+          No fields match your search. Try adjusting the filters or search term.
+        </div>
+      </div>
+
+      <!-- Section 2: ISO Configurations -->
+      <div class="section-header">
+        <div>
+          <h2>ISO Configurations</h2>
+          <p>Seven-ISO topology: zones, transfer limits, VOLL, and interface constraints.</p>
+        </div>
+      </div>
+
+      <div id="isoConfigs"></div>
+
+      <!-- Section 3: Constants Catalogue -->
+      <div class="section-header">
+        <div>
+          <h2>Constants Catalogue</h2>
+          <p>Physical and economic constants with citation comments (grouped by category).</p>
+        </div>
+      </div>
+
+      <div id="constantsCatalogue" style="line-height: 1.8;">
+        <div class="constants-group">
+          <h3>Heat Rates (MMBtu/MWh)</h3>
+          <p>Thermal efficiency bins by fuel class and vintage. Lower is better (higher efficiency).</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Gas CC:</strong> H-class 6.3, F-class 6.7, older 7.5</li>
+            <li><strong>Gas CT:</strong> Aero 9.0, frame 10.5, older 11.5</li>
+            <li><strong>Coal:</strong> Supercritical 8.8, subcritical 10.0, older 10.8</li>
+            <li><strong>Oil/Biomass:</strong> Default 13.5</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: EIA Table 8</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Commitment Parameters</h3>
+          <p>Startup costs ($/MW) and min-run/min-down (hours) by fuel class.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>CC H-class:</strong> Startup 63.8, min-run 10h, min-down 8h</li>
+            <li><strong>CT Aero:</strong> Startup 12.3, min-run 1h, min-down 1h</li>
+            <li><strong>Gas ST (legacy):</strong> Startup 55–75, min-run 12–24h, min-down 8–12h</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: NREL/SR-5500-55433 (Kumar et al. 2012), OEM specs</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Emissions Rates</h3>
+          <p>CO₂, NOx, SO₂ by fuel type and plant-specific CEMS measurements.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>CO₂:</strong> Coal 0.090–0.095 tCO₂/MWh, Gas 0.038–0.042 tCO₂/MWh</li>
+            <li><strong>NOx:</strong> Coal 0.003–0.005 ton/MWh, Gas 0.0008–0.0015 ton/MWh</li>
+            <li><strong>Plant-specific:</strong> CEMS-measured rates per unit (when use_plant_emission_rates=True)</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: EIA-923 fuel consumption, CAMPD CEMS, eGRID</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Variable Operating & Maintenance (VOM)</h3>
+          <p>$/MWh operating cost by fuel class (before carbon/NOx/SO₂ adders).</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Gas:</strong> 2.0–3.0 $/MWh</li>
+            <li><strong>Coal:</strong> 3.5–4.5 $/MWh</li>
+            <li><strong>Nuclear:</strong> 10–12 $/MWh (fuel + cask storage)</li>
+            <li><strong>Wind/Solar:</strong> 0 $/MWh (marginal cost)</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: Lazard LCOE 2024, EIA-860 cost surveys</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Gas Market</h3>
+          <p>Henry Hub trajectory, basis differentials, and seasonality.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Henry Hub Paths:</strong> AEO2025 low/mid/high scenarios (2026–2050)</li>
+            <li><strong>Basis Differential:</strong> Regional markup/discount (ERCOT +$1.50, CA −$0.50, etc.)</li>
+            <li><strong>Monthly Seasonality:</strong> Winter peak ~15%, summer trough ~30% of annual avg</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: EIA AEO2025, Henry Hub NYMEX futures</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Coal Market</h3>
+          <p>Coal pricing by rank (bituminous, PRB, lignite) and escalation.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Base Price (2026):</strong> ~50–80 $/ton depending on rank</li>
+            <li><strong>Escalation:</strong> 1% annual (COAL_PRICE_ESCALATION)</li>
+            <li><strong>By Rank:</strong> Bituminous ≈ $65, PRB ≈ $20, lignite ≈ $12 (regional/year-dependent)</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: Coal market surveys, EIA-923</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Carbon Pricing</h3>
+          <p>Federal carbon price paths and state-level programs (CA, RGGI, NY).</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Federal (RFF):</strong> Low/mid/high paths with year-by-year escalation</li>
+            <li><strong>CA Cap-and-Trade (CAISO):</strong> Measured allowance prices (2023–2025)</li>
+            <li><strong>RGGI (NEISO):</strong> Measured allowance prices (when available)</li>
+            <li><strong>NY CLCPA:</strong> Implicit carbon price via RPS/ZERO credit stacking</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: RFF SCC trajectories, ARB, RGGI, NYISO tariffs</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Energy Storage</h3>
+          <p>Storage technology parameters and deployment limits.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>RTE (round-trip):</strong> 4-hour 85%, 8-hour 80%, 12+ hour 75%</li>
+            <li><strong>Cycling Degradation:</strong> 0.05% per cycle (when storage_degradation=True)</li>
+            <li><strong>ELCC by Duration:</strong> 4h ≈ 75%, 8h ≈ 85%, 12h ≈ 95% of capacity value</li>
+            <li><strong>Deployment Ceilings:</strong> Per-ISO build caps (e.g., ERCOT 15 GW total)</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: NREL battery storage review, ISO capacity-market rules</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Reserve Margins & Market Design</h3>
+          <p>Planning reserve margin and capacity-market revenue mechanisms by ISO.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>ERCOT:</strong> 13.75% reserve margin, energy-only (no capacity market)</li>
+            <li><strong>CAISO:</strong> 15% reserve margin, RA program (~$50–100/kW-yr capacity value)</li>
+            <li><strong>PJM:</strong> 15.5% reserve margin, RPM capacity auction</li>
+            <li><strong>NYISO:</strong> 20% reserve margin, ICAP capacity market</li>
+            <li><strong>NEISO:</strong> 13.6% reserve margin, Forward Capacity Market (FCM)</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: PRM by ISO (constants.PLANNING_RESERVE_MARGIN_BY_ISO), ISO tariffs</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>RPS Floors</h3>
+          <p>State-mandated renewable/clean generation targets driving capacity evolution.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>CA SB-100:</strong> 100% clean by 2045 (RPS 60% by 2030, 80% by 2040)</li>
+            <li><strong>NY CLCPA:</strong> 100% carbon-free by 2040 (RPS 70% by 2030)</li>
+            <li><strong>MA CES:</strong> 80% clean by 2050</li>
+            <li><strong>Other states:</strong> 20–40% by 2030–2035</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: STATE_RPS_FLOORS (constants.py), state legislation</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>New-Entry Economics</h3>
+          <p>LCOE, learning curves, and Wright's-Law deployment scaling.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Solar (2026):</strong> ~40 $/MWh, learning rate 8% per doubling of cumulative deployment</li>
+            <li><strong>Wind (2026):</strong> ~45 $/MWh, learning rate 5%</li>
+            <li><strong>Battery 4-hour (2026):</strong> ~180 $/kW, learning rate 12%</li>
+            <li><strong>Gas CC (2026):</strong> ~60 $/MWh with carbon price, escalation 1–2% annually</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: NREL ATB 2024, historical deployment (IRENA, BloombergNEF)</p>
+        </div>
+
+        <div class="constants-group">
+          <h3>Emerging Technologies</h3>
+          <p>Hydrogen, geothermal, CCS availability and cost parameters.</p>
+          <ul style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+            <li><strong>Green Hydrogen (PEM):</strong> Available 2035+, ~2–4 $/kg with §45V credit</li>
+            <li><strong>EGS Geothermal:</strong> Available 2030+, ~90 $/MWh (Tier 3: pilot projects)</li>
+            <li><strong>CCS Retrofit (Gas-CC):</strong> Available 2028+, ~900 $/kW capex, 12% HR penalty</li>
+            <li><strong>Offshore Wind:</strong> Available 2030+ (CAISO only in current model), ~140 $/MWh</li>
+          </ul>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: DOE Hydrogen Roadmap, NREL Geothermal, NETL CCS cost baseline</p>
+        </div>
+      </div>
+
+      <!-- Section 4: Path Resolution -->
+      <div class="section-header">
+        <div>
+          <h2>Path Resolution</h2>
+          <p>Centralized file-path registry via <code>paths.py</code>.</p>
+        </div>
+      </div>
+
+      <div class="insight-box" style="margin-bottom: 1.5rem;">
+        <strong>Single source of truth:</strong> All file paths resolve through <code>config/paths.py</code>.
+        Never use <code>Path(__file__).parents[...]</code> scattered through the code.
+      </div>
+
+      <h3>Key Path Constants</h3>
+      <div class="code-block"><pre><code>REPO_ROOT = parents[3]
+DATA_ROOT = $MARKET_SIM_DATA_ROOT or REPO_ROOT
+RAW_DATA_DIR = DATA_ROOT / 'data' / 'raw'
+
+# Major source directories
+EIA_860_DIR              # EIA generation/retirement pipeline
+EIA_930_DIR              # EIA-930 historical profiles
+ZONE_DEMAND_DIR          # Per-ISO zonal load files
+GAS_PRICES_DIR           # Henry Hub + basis differentials
+PLANT_REGISTRY_CSV       # Master plant taxonomy
+CAMPD_BINS_CSV           # CAMPD per-plant binning assignments
+
+# Derived directories
+PROCESSED_DIR            # Curated Parquet outputs (_processed-legacy)
+CALIBRATION_DIR          # Validation & backcast source (_validation-source)
+CLEAN_DIR                # Forward-mode clean Parquet (when MARKET_SIM_USE_CLEAN=1)
+DICTIONARY_DIR           # Data contract: schema/*.schema.yaml + data-dictionary.md
+
+# EIA-860 vintage management
+active_eia860_dir()      # Returns the active vintage
+set_eia860_vintage(year) # Switch to a specific year's release</code></pre></div>
+
+      <p style="color: var(--text-secondary); margin-top: 1rem;">
+        <strong>Two-level EIA-860 vintage seam:</strong> A canonical 2025 Early Release (filtered by COD ramp
+        for backcasts) and optional year-matched <code>vintage_&lt;year&gt;/</code> releases. Vintage-keyed
+        caches auto-pick up the switch.
+      </p>
+
+      <!-- Plant Taxonomy -->
+      <h3 style="margin-top: 3rem;">Plant Taxonomy (<code>plant_taxonomy.py</code>)</h3>
+      <p style="color: var(--text-secondary);">
+        Single source of truth for fuel/class buckets — no scattered hardcoded fuel lists.
+      </p>
+      <div class="code-block"><pre><code>PLANT_CLASSES                    # Registry of PlantClass objects
+class_label(klass)               # Get display label for a class
+fuel930_of(klass)                # Get EIA-930 fuel bucket
+is_fossil(klass)                 # Check if fuel is fossil
+fossil_classes()                 # List all fossil plant classes
+nonfossil_classes()              # List all clean plant classes
+
+classify_plant(                  # Canonical classifier — used identically
+  fuel,                          # across ERCOT bins, EIA-860, and EIA-923
+  prime_mover,                   # so all three bucket plants the same way
+  chp_flag,
+  plant_id,
+  coal_class_resolver=None
+)</code></pre></div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="results-calibration.html">← Results & Calibration</a>
+        <span style="color: var(--text-muted);">Configuration Reference</span>
+        <span class="disabled">Overview →</span>
+      </div>
+    </div>
+  </main>
+
+  <div class="toc-rail"></div>
+
+  <!-- Data: inline JSON for ScenarioConfig fields -->
+  <script type="application/json" id="configData">
+  {
+    "fields": [
+      {
+        "name": "mode",
+        "type": "str",
+        "default": "\"forecast\"",
+        "tier": 0,
+        "description": "\"forecast\" vs \"backcast\" — the explicit forecast/backcast switch (never inferred). Backcast gates a coherent set of behaviors: renewable capacity resolves to that year's EIA-860 actuals, measured hourly profiles replace statistical ones, and planned additions are not injected."
+      },
+      {
+        "name": "iso",
+        "type": "str",
+        "default": "\"ERCOT\"",
+        "tier": 0,
+        "description": "Target ISO: ERCOT, CAISO, PJM, MISO, NYISO, or NEISO."
+      },
+      {
+        "name": "weather_year",
+        "type": "int",
+        "default": "2024",
+        "tier": 0,
+        "description": "Which historical year's load/VRE profiles to use for dispatch. Pinned in backcast mode; forecast mode uses the selected year's profiles."
+      },
+      {
+        "name": "voll",
+        "type": "float",
+        "default": "5000.0",
+        "tier": 0,
+        "description": "Value of lost load ($/MWh). ISO-specific; ERCOT default 5000, FERC Order 831 cap of 2000 for other ISOs."
+      },
+      {
+        "name": "hours",
+        "type": "int",
+        "default": "8760",
+        "tier": 0,
+        "description": "Dispatch horizon. 8760 for full-year; smaller only for smoke tests."
+      },
+      {
+        "name": "gas_price_path",
+        "type": "str",
+        "default": "\"mid\"",
+        "tier": 1,
+        "description": "Henry Hub trajectory: \"low\", \"mid\", \"high\", or path to a CSV file. Used to populate hourly fuel costs when carbon_price=0."
+      },
+      {
+        "name": "carbon_price",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Flat federal $/tCO2 adder. When non-zero, takes priority over carbon_price_path and state carbon pricing."
+      },
+      {
+        "name": "carbon_price_path",
+        "type": "str",
+        "default": "\"zero\"",
+        "tier": 1,
+        "description": "Trajectory used when carbon_price == 0.0. Options: \"zero\", \"low\", \"mid\", \"high\" from RFF data."
+      },
+      {
+        "name": "state_carbon_pricing",
+        "type": "bool",
+        "default": "True",
+        "tier": 1,
+        "description": "Apply CA cap-and-trade (CAISO) or RGGI measured prices when carbon_price == 0. Only CAISO 2023-2025 is registered; forward years fall through to carbon_price_path."
+      },
+      {
+        "name": "nox_price",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Optional NOx adder ($/ton). Applied to thermal generation based on plant-specific CEMS rates."
+      },
+      {
+        "name": "so2_price",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Optional SO2 adder ($/ton). Applied to coal generation based on plant-specific CEMS rates."
+      },
+      {
+        "name": "demand_growth_path",
+        "type": "str",
+        "default": "\"mid\"",
+        "tier": 1,
+        "description": "Per-ISO escalation trajectory: \"low\", \"mid\", or \"high\". Overrides demand_growth_rate when structured rates exist."
+      },
+      {
+        "name": "renewable_buildout_pace",
+        "type": "str",
+        "default": "\"mid\"",
+        "tier": 1,
+        "description": "Wind/solar/offshore deployment rate: \"slow\", \"mid\", or \"aggressive\". Governs planned-addition injection into forecast mode."
+      },
+      {
+        "name": "storage_deployment",
+        "type": "str",
+        "default": "\"mid\"",
+        "tier": 1,
+        "description": "Battery deployment rate: \"slow\", \"mid\", or \"aggressive\". Affects storage-new-entry economics."
+      },
+      {
+        "name": "retirement_aggressiveness",
+        "type": "str",
+        "default": "\"mid\"",
+        "tier": 1,
+        "description": "Retirement screen aggressiveness: \"slow\", \"mid\", or \"aggressive\". Affects the inframarginal-energy threshold for economic retirement."
+      },
+      {
+        "name": "hydro_year",
+        "type": "str",
+        "default": "\"normal\"",
+        "tier": 1,
+        "description": "Forecast water-year multiplier: \"dry\", \"normal\", or \"wet\". Scales the monthly hydro budget; backcast pins to measured EIA-930 realizations."
+      },
+      {
+        "name": "rps_enabled",
+        "type": "bool",
+        "default": "True",
+        "tier": 1,
+        "description": "Whether to enforce RPS as an annual LP constraint. The constraint's dual becomes the REC price."
+      },
+      {
+        "name": "use_campd_bins",
+        "type": "bool",
+        "default": "True",
+        "tier": 2,
+        "description": "ERCOT default: use CAMPD per-plant 4-tranche binning. False reverts to legacy equal-width heat-rate bins."
+      },
+      {
+        "name": "storage_rte_4hr",
+        "type": "float",
+        "default": "0.85",
+        "tier": 2,
+        "description": "Round-trip efficiency for 4-hour battery storage (85% = 0.85)."
+      },
+      {
+        "name": "storage_rte_8hr",
+        "type": "float",
+        "default": "0.80",
+        "tier": 2,
+        "description": "Round-trip efficiency for 8-hour battery storage (80% = 0.80)."
+      },
+      {
+        "name": "storage_capacity_value",
+        "type": "bool",
+        "default": "True",
+        "tier": 2,
+        "description": "Gate resource-adequacy revenue in the storage new-entry value stack. Paid only in ISOs with a capacity market (PJM, NYISO, ISO-NE, CAISO); no effect on energy-only ERCOT."
+      },
+      {
+        "name": "storage_degradation",
+        "type": "bool",
+        "default": "True",
+        "tier": 2,
+        "description": "Charge cycling-degradation cost against arbitrage margin, penalizing high-cycling short-duration storage."
+      },
+      {
+        "name": "storage_daily_cycling",
+        "type": "bool",
+        "default": "False",
+        "tier": 2,
+        "description": "When True, storage SOC must return to start-of-day every 24h; bounds perfect-foresight advantage to within-day arbitrage only."
+      },
+      {
+        "name": "commitment_enabled",
+        "type": "bool",
+        "default": "False",
+        "tier": 2,
+        "description": "Master gate for P2 optional commitment screen. Decommits unprofitable CC/CT runs via IRR hurdle + min-run/min-down + storage-weighted margin discount."
+      },
+      {
+        "name": "forecast_fossil_retirement_economic",
+        "type": "bool",
+        "default": "True",
+        "tier": 2,
+        "description": "In forecast mode: fossil units retire on economics (capacity.apply_economic_retirements), not announced EIA-860 dates. False uses legacy announced-date behaviour."
+      },
+      {
+        "name": "retirement_years_coal",
+        "type": "int",
+        "default": "1",
+        "tier": 2,
+        "description": "Grace period (years) before coal retires after becoming unprofitable."
+      },
+      {
+        "name": "retirement_years_gas_cc",
+        "type": "int",
+        "default": "3",
+        "tier": 2,
+        "description": "Grace period (years) for modern combined-cycle units (most flexible, highest value)."
+      },
+      {
+        "name": "retirement_fom_multiplier_coal",
+        "type": "float",
+        "default": "1.3",
+        "tier": 2,
+        "description": "Coal FOM multiplier (1.3×) accounting for regulatory risk and carbon liability."
+      },
+      {
+        "name": "retirement_reserve_margin",
+        "type": "float",
+        "default": "0.15",
+        "tier": 2,
+        "description": "Reliability floor: do not retire thermal below (peak_demand - firm_clean) × (1 + 0.15)."
+      },
+      {
+        "name": "fixed_om_gas_cc",
+        "type": "float",
+        "default": "12.0",
+        "tier": 2,
+        "description": "Going-forward fixed operating & maintenance cost for gas CC ($/kW-yr)."
+      },
+      {
+        "name": "cc_peak_hr_penalty",
+        "type": "float",
+        "default": "1.15",
+        "tier": 2,
+        "description": "Heat-rate penalty multiplier for peaking (15% loss) in combined-cycle dispatch curves."
+      },
+      {
+        "name": "ccs_retrofit_available_year",
+        "type": "int",
+        "default": "2028",
+        "tier": 2,
+        "description": "Year CCS retrofit becomes available for economic evaluation on gas-CC units."
+      },
+      {
+        "name": "ccs_retrofit_capex_kw",
+        "type": "float",
+        "default": "900.0",
+        "tier": 2,
+        "description": "Capital cost for CCS retrofit ($/kW)."
+      },
+      {
+        "name": "ccs_retrofit_capture_rate",
+        "type": "float",
+        "default": "0.90",
+        "tier": 2,
+        "description": "CO2 capture rate (90% of flue gas)."
+      },
+      {
+        "name": "ccs_retrofit_max_gw_per_year",
+        "type": "float",
+        "default": "3.0",
+        "tier": 2,
+        "description": "Annual retrofit capacity limit (GW/yr), scaled per ISO."
+      },
+      {
+        "name": "h2_available_year",
+        "type": "int",
+        "default": "2035",
+        "tier": 1,
+        "description": "Year hydrogen turbine enters the candidate new-entry pool. Delayed to mid-2030s pending electrolyzer cost declines and §45V credit expiration (Dec 31, 2027)."
+      },
+      {
+        "name": "eac_price_nuclear",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Clean-energy credit ($/MWh) for nuclear: e.g., NY/IL Zero Emission Credit ≈ $17."
+      },
+      {
+        "name": "eac_price_wind",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Clean-energy credit ($/MWh) for onshore wind."
+      },
+      {
+        "name": "eac_price_solar",
+        "type": "float",
+        "default": "0.0",
+        "tier": 1,
+        "description": "Clean-energy credit ($/MWh) for solar."
+      },
+      {
+        "name": "ira_ptc_wind",
+        "type": "float",
+        "default": "26.0",
+        "tier": 1,
+        "description": "IRA Production Tax Credit ($/MWh) for wind. Phase-out cliff at ira_wind_solar_last_year."
+      },
+      {
+        "name": "ira_itc_solar",
+        "type": "float",
+        "default": "0.30",
+        "tier": 1,
+        "description": "IRA Investment Tax Credit (fraction of capex) for solar. Phase-out cliff at ira_wind_solar_last_year."
+      },
+      {
+        "name": "ira_wind_solar_last_year",
+        "type": "int",
+        "default": "2027",
+        "tier": 1,
+        "description": "Last year wind/solar IRA credits are paid at full value; phase-out begins afterward."
+      },
+      {
+        "name": "scarcity_pricing_enabled",
+        "type": "bool",
+        "default": "False",
+        "tier": 3,
+        "description": "ERCOT ORDC scarcity pricing overlay. When True, applies LOLP-based penalty curve in post-solve pricing."
+      },
+      {
+        "name": "ordc_voll",
+        "type": "float",
+        "default": "5000.0",
+        "tier": 3,
+        "description": "ORDC VOLL target ($/MWh). The maximum scarcity price."
+      },
+      {
+        "name": "ordc_mcl_mw",
+        "type": "float",
+        "default": "3000.0",
+        "tier": 3,
+        "description": "ERCOT maximum controllable load (MCL) in MW; used in LOLP calculation."
+      },
+      {
+        "name": "ordc_lolp_sigma_mw",
+        "type": "float",
+        "default": "1400.0",
+        "tier": 3,
+        "description": "ORDC LOLP standard deviation (MW) — distribution spread in reserve shortage."
+      },
+      {
+        "name": "commitment_irr_hurdle",
+        "type": "float",
+        "default": "0.07",
+        "tier": 3,
+        "description": "Internal rate of return threshold (7%) for accepting a unit commitment in the P2 screen."
+      },
+      {
+        "name": "nominal_discount_rate",
+        "type": "float",
+        "default": "0.08",
+        "tier": 2,
+        "description": "Nominal WACC (8%) used for LCOE calculations and new-entry economics."
+      }
+    ]
+  }
+  </script>
+
+  <!-- Scripts -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NkXjwHDM7CjnDTGLF/7f7IvHs7VgF0Lc5dHmRcPMQrJQXzLuEJvvwGtHiDK6r/8w" crossorigin="anonymous"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/viz-config-table.js"></script>
+  <script src="js/iso-configs-table.js"></script>
+</body>
+</html>
