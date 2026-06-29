@@ -208,7 +208,6 @@ _ISO_TO_HOURLY_BA: dict[str, str] = {
     "NYISO": "NYIS",
     "MISO": "MISO",
     "NEISO": "ISNE",
-    "SPP": "SWPP",
 }
 
 # ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.
@@ -244,7 +243,6 @@ _ISO_LOCAL_TZ: dict[str, str] = {
     "ERCOT": "America/Chicago",
     "NEISO": "America/New_York",
     "NYISO": "America/New_York",
-    "SPP": "America/Chicago",
 }
 
 # ISOs whose clean ``load`` dataset reconstructs the *system* demand series the

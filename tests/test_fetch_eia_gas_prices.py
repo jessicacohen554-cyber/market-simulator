@@ -77,7 +77,7 @@ class TestCitygateBasis(unittest.TestCase):
 
     def test_every_iso_has_a_citygate_mapping(self):
         # Guards against an ISO config drifting out of the fetch map.
-        for iso in ("CAISO", "ERCOT", "PJM", "MISO", "SPP", "NYISO", "NEISO"):
+        for iso in ("CAISO", "ERCOT", "PJM", "MISO", "NYISO", "NEISO"):
             self.assertIn(iso, feg.ISO_CITYGATE)
             state, hub = feg.ISO_CITYGATE[iso]
             self.assertTrue(state.isalpha() and len(state) == 2)
