@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solving & Pricing — Codebase Explorer</title>
+  <meta name="description" content="The P0→P1→P2 commitment sequence: startup costs, clearing prices, and the optional commitment screen.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+
+  <style>
+    .solve-sequence {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .solve-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .solve-card.p0 {
+      border-left: 6px solid var(--info);
+    }
+
+    .solve-card.p1 {
+      border-left: 6px solid var(--primary);
+    }
+
+    .solve-card.p2 {
+      border-left: 6px solid var(--warning);
+    }
+
+    .solve-card__title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: var(--space-sm);
+      color: var(--text-primary);
+    }
+
+    .solve-card__step {
+      display: inline-block;
+      background: var(--bg-tertiary);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      color: var(--text-secondary);
+    }
+
+    .solve-card__content {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .solve-card__formula {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+
+    .solve-sequence-flow {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 40px;
+      margin: var(--space-lg) 0;
+    }
+
+    .flow-svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .startup-calc {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: var(--space-md);
+      margin: var(--space-lg) 0;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .startup-calc code {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .price-matrix {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      overflow-x: auto;
+    }
+
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .price-table thead {
+      background: var(--bg-tertiary);
+      border-bottom: 2px solid var(--border-emphasis);
+    }
+
+    .price-table th {
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .price-table td {
+      padding: var(--space-xs) var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .price-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .price-cell {
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .commitment-decision {
+      background: linear-gradient(135deg, var(--warning) 15%, var(--error) 85%);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      color: white;
+    }
+
+    .commitment-decision__title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .commitment-decision__text {
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .solve-sequence {
+        grid-template-columns: 1fr;
+      }
+
+      .solve-sequence-flow {
+        padding: 24px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .price-table {
+        font-size: 0.75rem;
+      }
+
+      .price-table th,
+      .price-table td {
+        padding: var(--space-xs) 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="pulse">
+      <div class="header__eyebrow">The Engine</div>
+      <h1 class="header__title">Solving & Pricing</h1>
+      <p class="header__subtitle">Why three LP solves per year: the P0→P1→P2 sequence that incorporates startup costs and sets clearing prices.</p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: The Problem -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>Why Three Solves?</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            In real markets, generators bid their full cost: fuel, variable O&amp;M, AND startup costs (amortized over their expected run length). But in an ideal "economic dispatch," generators should run if their energy margin (price minus variable cost) covers their fixed startup cost. This creates a chicken-and-egg problem:
+          </p>
+
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>How long will the unit run?</strong> That depends on prices.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>What price do we set?</strong> That depends on which units are committed.
+            </li>
+            <li>
+              <strong>Chicken-and-egg:</strong> Startup costs and commitment decisions are interdependent.
+            </li>
+          </ul>
+
+          <p>
+            The solution is the <strong>three-pass sequence</strong>. It's pure LP — no integer variables or mixed-integer tricks — but it reconciles startup economics with clearing prices.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Three Passes -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>P0 → P1 → P2: The Sequence</h2>
+        </div>
+
+        <div class="story-section">
+          <div class="solve-sequence">
+            <div class="solve-card p0">
+              <div class="solve-card__step">Pass 0</div>
+              <div class="solve-card__title">P0: Base Cost</div>
+              <div class="solve-card__content">
+                <strong>Cost vector:</strong> Base marginal cost (fuel + VOM + carbon).<br>
+                <strong>Purpose:</strong> Discover run lengths from the economic-dispatch solution.
+              </div>
+            </div>
+
+            <div class="solve-card p1">
+              <div class="solve-card__step">Pass 1</div>
+              <div class="solve-card__title">P1: Startup Markup</div>
+              <div class="solve-card__content">
+                <strong>Cost vector:</strong> Base MC + startup markup.<br>
+                <strong>Purpose:</strong> Set clearing prices. Reflects cycling and startup burden.<br>
+                <strong>Basis:</strong> Warm-start from P0.
+              </div>
+            </div>
+
+            <div class="solve-card p2">
+              <div class="solve-card__step">Pass 2</div>
+              <div class="solve-card__title">P2: Commitment Screen</div>
+              <div class="solve-card__content">
+                <strong>Decision:</strong> Which CC/CT units stay committed?<br>
+                <strong>Purpose:</strong> Optional check: decommit units whose margin doesn't justify startup.<br>
+                <strong>Default:</strong> Off (most ISOs). On for ERCOT.
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Sequence Flow</h3>
+
+          <div class="solve-sequence-flow">
+            <svg class="flow-svg" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+              <!-- P0 Box -->
+              <rect x="20" y="40" width="140" height="100" rx="6" fill="var(--info)" opacity="0.15" stroke="var(--info)" stroke-width="2"/>
+              <text x="90" y="65" text-anchor="middle" font-weight="700" font-size="14" fill="var(--text-primary)">P0: Base Cost</text>
+              <text x="90" y="85" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Solve for dispatch</text>
+              <text x="90" y="100" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Extract run lengths</text>
+              <text x="90" y="115" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Save basis</text>
+
+              <!-- Arrow 1 -->
+              <line x1="160" y1="90" x2="200" y2="90" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- P1 Box -->
+              <rect x="200" y="40" width="140" height="100" rx="6" fill="var(--primary)" opacity="0.15" stroke="var(--primary)" stroke-width="2"/>
+              <text x="270" y="65" text-anchor="middle" font-weight="700" font-size="14" fill="var(--text-primary)">P1: Startup Markup</text>
+              <text x="270" y="85" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Add markup to MC</text>
+              <text x="270" y="100" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Warm-start from P0</text>
+              <text x="270" y="115" text-anchor="middle" font-size="11" fill="var(--text-secondary)">→ Clearing prices</text>
+
+              <!-- Arrow 2 -->
+              <line x1="340" y1="90" x2="380" y2="90" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+              <!-- Decision Diamond -->
+              <polygon points="450,50 500,90 450,130 400,90" fill="var(--warning)" opacity="0.15" stroke="var(--warning)" stroke-width="2"/>
+              <text x="450" y="95" text-anchor="middle" font-weight="700" font-size="11" fill="var(--text-primary)">Commitment</text>
+              <text x="450" y="108" text-anchor="middle" font-size="10" fill="var(--text-secondary)">Enabled?</text>
+
+              <!-- P2 Path (Yes) -->
+              <line x1="500" y1="90" x2="540" y2="90" stroke="var(--success)" stroke-width="2" marker-end="url(#arrowhead)"/>
+              <text x="520" y="80" text-anchor="middle" font-size="10" fill="var(--success)" font-weight="600">Yes</text>
+
+              <rect x="540" y="40" width="140" height="100" rx="6" fill="var(--warning)" opacity="0.15" stroke="var(--warning)" stroke-width="2"/>
+              <text x="610" y="65" text-anchor="middle" font-weight="700" font-size="14" fill="var(--text-primary)">P2: Commitment</text>
+              <text x="610" y="85" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Decommit unprofitable</text>
+              <text x="610" y="100" text-anchor="middle" font-size="11" fill="var(--text-secondary)">CC/CT units</text>
+              <text x="610" y="115" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Re-solve</text>
+
+              <!-- No Path -->
+              <line x1="450" y1="130" x2="450" y2="160" stroke="var(--error)" stroke-width="2" marker-end="url(#arrowhead)"/>
+              <text x="470" y="147" text-anchor="start" font-size="10" fill="var(--error)" font-weight="600">No</text>
+              <text x="450" y="175" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Use P1 as final</text>
+
+              <!-- Arrow marker definition -->
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <polygon points="0 0, 10 3, 0 6" fill="var(--text-muted)"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <p style="margin-top: var(--space-lg); color: var(--text-secondary); font-size: 0.9rem;">
+            <strong>Warm-starting is key:</strong> P1 only changes the cost vector; the matrix and bounds stay the same. HiGHS uses P0's optimal basis and re-optimizes in just a few simplex iterations. This makes P1 nearly free — seconds instead of minutes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: P1 Startup Markup -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>P1: The Startup Markup</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            After P0 solves, the model measures how long each unit runs per month. A unit that runs 80% of the month is expected to be committed for ~24 days. Its startup cost is amortized over that run length:
+          </p>
+
+          <div class="startup-calc">
+            <code>run_length</code> = number of hours in month where dispatch > 5% of pmax<br>
+            <br>
+            <code>markup = startup_cost_per_mw / run_length</code><br>
+            <br>
+            For example:<br>
+            &nbsp;&nbsp;Startup cost = $50,000<br>
+            &nbsp;&nbsp;Pmax = 500 MW<br>
+            &nbsp;&nbsp;Run length = 480 hours (16 days)<br>
+            &nbsp;&nbsp;<strong>Markup = $50,000 / (500 × 480) = $0.21/MWh</strong><br>
+            <br>
+            P1 cost = base MC + $0.21/MWh
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Which Units Get the Markup?</h3>
+
+          <p style="margin-bottom: var(--space-md);">
+            Not all units pay startup. The model exempts:
+          </p>
+
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Must-run units:</strong> Coal with a must-run floor. Already committed, so no startup decision.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Nuclear & baseload:</strong> Run continuously, so startup is amortized over 12 months.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Renewables & storage:</strong> No startup cost.
+            </li>
+            <li>
+              <strong>Gas CC/CT & gas steam turbines:</strong> Full startup markup based on measured run length.
+            </li>
+          </ul>
+
+          <p>
+            The result: P1 prices reflect the real burden of cycling and startup. If a unit has to start 40 times a month, that cost is spread across its generation. If it runs continuously, the amortized cost is nearly zero.
+          </p>
+        </div>
+
+        <div class="insight-box success">
+          <strong>⚡ Why P1 prices are credible:</strong> Real electricity prices include startup burden because generators can't afford to commit without knowing they'll recover their costs. By amortizing startup over measured run lengths, P1 captures this reality and sets prices that reflect what generators actually need to stay in the money.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: P2 Commitment Screen -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>P2: The Commitment Screen (Optional)</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            P1 sets prices. But not all committed units are profitable at those prices. P2 (optional, default off for most ISOs) performs an economic check: <strong>should this CC/CT unit stay committed?</strong>
+          </p>
+
+          <div class="commitment-decision">
+            <div class="commitment-decision__title">P2 Decommitment Decision</div>
+            <div class="commitment-decision__text">
+              For each CC/CT unit, sum its hourly margin over the year:<br>
+              <br>
+              <strong>margin = (P1_price[zone, hour] − base_MC[unit]) × dispatch[unit, hour]</strong><br>
+              <br>
+              Decommit if: <code>sum(margin) &lt; startup_cost_per_mw × (1 + irr_hurdle)</code><br>
+              <br>
+              In other words: "If the energy margin doesn't cover startup costs with a hurdle rate for IRR, don't commit." This catches units that P1 marginal cost suggested were in-the-money, but weren't actually profitable when you account for startup explicitly.
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">What Happens After P2?</h3>
+
+          <p style="margin-bottom: var(--space-md);">
+            If a unit is decommitted in P2:
+          </p>
+
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Its availability is set to 0</strong> in those decommitted hours. It can't run.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Coal is pinned to P1 dispatch.</strong> If coal was already committed, keep it at its P1 output (no part-loading re-optimization).
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>A reliability floor prevents blackouts.</strong> If committed capacity would drop below P1's thermal dispatch in any zone-hour, restore units until the floor is met.
+            </li>
+            <li>
+              <strong>P2 re-solves</strong> the LP with this tightened fleet, obtaining final dispatch and prices.
+            </li>
+          </ul>
+
+          <p>
+            P2 is <strong>pure LP — still no MIP</strong>. We're just changing availability bounds and re-solving.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Price Implications -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>Price Impact Across the Solves</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Here's how prices differ between the three passes. This is a hypothetical evening ramp hour (high demand, solar dropping):
+          </p>
+
+          <div class="price-matrix">
+            <table class="price-table">
+              <thead>
+                <tr>
+                  <th>Zone</th>
+                  <th>P0 Price ($/MWh)</th>
+                  <th>P1 Price ($/MWh)</th>
+                  <th>Change</th>
+                  <th>Why?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>North</strong></td>
+                  <td class="price-cell">$38</td>
+                  <td class="price-cell">$42</td>
+                  <td><strong>+$4</strong></td>
+                  <td style="font-size: 0.85rem;">CC unit starts several times/month; startup markup pushes price up</td>
+                </tr>
+                <tr>
+                  <td><strong>South (congested)</strong></td>
+                  <td class="price-cell">$41</td>
+                  <td class="price-cell">$48</td>
+                  <td><strong>+$7</strong></td>
+                  <td style="font-size: 0.85rem;">High startup burden + transmission congestion; importing zone pays more</td>
+                </tr>
+                <tr>
+                  <td><strong>East (exporting)</strong></td>
+                  <td class="price-cell">$35</td>
+                  <td class="price-cell">$36</td>
+                  <td><strong>+$1</strong></td>
+                  <td style="font-size: 0.85rem;">Baseload + renewables; minimal cycling; startup markup is small</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="margin-top: var(--space-lg);">
+            <strong>P0 → P1 price lift:</strong> Typically $2–8/MWh during peak/scarcity hours. The lift is smallest in baseload zones (less cycling) and largest in zones with frequent peaking-unit starts.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            <strong>P1 → P2 adjustment:</strong> If P2 commitment screen is on, decommitting unprofitable units can lift prices further by tightening supply. If it's off (default), P2 prices are identical to P1.
+          </p>
+        </div>
+
+        <div class="insight-box info">
+          <strong>⚡ Why this matters for investment:</strong> Capacity decisions in next year are based on the prices set by P1 (the default final prices). If you're a gas-CC owner deciding whether to stay in ERCOT, you look at P1 prices — they include your startup burden. This is how the model captures the real incentives that drive investment.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="lp-core.html">← The LP Core</a>
+      <span style="flex: 1;"></span>
+      <a href="network.html">The Network →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+</body>
+</html>
