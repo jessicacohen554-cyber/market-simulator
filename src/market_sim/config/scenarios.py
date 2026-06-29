@@ -518,16 +518,29 @@ class ScenarioConfig:
     # backcast net export is a genuine validation. Requires priced_interchange;
     # gated to ISOs present in INTERFACE_NEIGHBORS (PJM today), byte-identical
     # otherwise. Default off. See docs/reference-price-interface.md.
-    reliability_floor: bool = False  # ISO-agnostic temperature-driven
+    reliability_floor: bool = False  # ISO-agnostic temperature/net-load
     # reliability-commitment floor: look up the ISO in
-    # RELIABILITY_FLOOR_REGISTRY (iso_configs.py) and apply ALL limb specs
-    # via the single generic engine (transmission.inject_reliability_floor).
-    # Replaces the per-ISO booleans below (caiso_ct_reliability_floor,
-    # nyiso_ct_reliability_floor, nyiso_st_reliability_floor,
-    # neiso_temp_reliability_floor, miso_temp_reliability_floor) which are
-    # kept for back-compat — setting ANY of them also activates the generic
-    # engine for that ISO. New ISOs need ONLY this flag + a registry entry +
-    # a weather file; no new code required. Default off (byte-identical).
+    # RELIABILITY_FLOOR_REGISTRY (iso_configs.py) and apply ALL enabled
+    # (zone, class, driver) limb specs via the single generic engine
+    # (transmission.inject_reliability_floor). One flag arms every limb; the
+    # registry is the single source of truth (seeded from the derived
+    # reliability_floor_coeffs_<ISO>.csv). New ISOs/limbs need ONLY this flag +
+    # a registry row + a weather file; no new code. Default off (byte-identical;
+    # the registry is empty until Phase 2 fills the coefficient CSVs).
+    reliability_floor_overrides: dict[str, dict] = field(default_factory=dict)
+    # Per-limb run-config overrides for the generic floor, keyed
+    # "<ZONE>:<CLASS>:<driver>" -> {"enabled"?: bool, "floor_pct"?: float,
+    # "threshold"?: float}. Applied to the registry specs at run time via
+    # iso_configs.apply_reliability_floor_overrides before the engine runs, so a
+    # single limb can be toggled or re-tuned (e.g. --floor-disable ZONE:CLASS)
+    # without editing the registry. Empty = registry defaults verbatim.
+    class_commitment_overrides: dict[str, dict] = field(default_factory=dict)
+    # Per-class commitment overrides for THIS run's ISO, keyed by plant_group
+    # class (e.g. "ST_GAS") -> {"min_run_hours"?: int, "min_down_hours"?: int}.
+    # Threaded through model.commitment._commitment_params so a longer steam-gas
+    # min-run (a boiler held across a multi-day temperature event) can be enabled
+    # per ISO×class without editing config.constants.ST_GAS_COMMITMENT_PARAMS.
+    # Empty = the constant-table defaults. Default off (byte-identical).
     caiso_gas_commitment_floor: bool = False  # CAISO Resource-Adequacy
     # must-offer minimum-commitment floor: hold the gas fleet (gas_cc/gas_ct/
     # gas_st) online over the midday solar-glut window at the measured EIA-930
@@ -569,164 +582,6 @@ class ScenarioConfig:
     # minimum generation (one combustion train at minimum; NREL "Power Plant
     # Cycling Costs" 2012; CAISO Master File PMin/PMax). A physical turn-down
     # limit, not a price/volume fit. Only used when caiso_ra_mustoffer is on.
-    caiso_ct_reliability_floor: bool = False  # CAISO local-RA CT_PEAKER
-    # temperature-driven reliability-commitment floor. CAISO commits its
-    # simple-cycle gas peakers (CT_PEAKER) for LOCAL Resource Adequacy through
-    # the summer afternoon-evening net-load ramp: as load-pocket cooling load
-    # climbs with temperature and solar collapses at sunset, fast-start CTs in
-    # the LA Basin / Big-Creek-Ventura / Bay-Area local capacity areas are held
-    # online for local reliability regardless of system-energy economics. An
-    # energy-only LP never dispatches these top-of-merit peakers, so the backcast
-    # under-runs CT_PEAKER and the freed energy spills onto the cheaper CC fleet
-    # (CC_REGULAR over-runs). This floors each CT_PEAKER unit at frac x available
-    # capacity over the afternoon-evening window (CT_FLOOR_HOURS), where frac =
-    # clip(slope*(TMAX-T0), 0, cap) is keyed to the load-weighted CAISO daily max
-    # temperature (NOAA GHCN, data/raw/caiso-weather/), via the hour-varying
-    # FleetArrays.min_gen lower bound (transmission.
-    # inject_caiso_ct_reliability_floor). The curve is the measured CAMPD
-    # CT_PEAKER evening capacity factor regressed on TMAX, 2023-2025 (a physical
-    # temperature->commitment rule, NOT a fit to a TWh residual — see
-    # docs/caiso-ct-reliability-floor-2026-06.md). Forward-reproducible: a
-    # forecast year pins a weather year (hence a TMAX series) exactly as it pins
-    # load/wind/solar, and the floor responds to changed conditions (hotter
-    # years -> more CT). Default off (byte-identical); CAISO-only, no-op without
-    # an archived TMAX series.
-    caiso_ct_floor_slope_per_c: float = 0.047  # CT commitment fraction gained per
-    # deg C of CAISO daily max temperature above the zero-crossing T0. From the
-    # CAMPD evening-CF-vs-TMAX hot-limb regression (>= 26 deg C, 2023-2025).
-    caiso_ct_floor_t0_c: float = 25.0  # Zero-crossing: below this load-weighted
-    # daily max temperature the heat-driven floor is zero (mild days run the
-    # baseline local-RA minimum on price, which this floor does NOT force).
-    caiso_ct_floor_cap: float = 0.46  # Max CT commitment fraction (p97 of the
-    # measured evening CF) — the hottest-day local-RA ceiling; prevents the line
-    # extrapolating past the observed envelope.
-    caiso_ct_floor_base: float = 0.0  # Year-round local-RA BASELINE commitment
-    # fraction floored over the same afternoon-evening window on ALL days, not
-    # just hot ones. The temperature hot-limb (slope/T0/cap) deliberately clips to
-    # zero below T0, leaving the measured cool-day evening minimum (~0.049 CF, the
-    # median EIA-930/CAMPD CT_PEAKER evening CF for TMAX<25 deg C, 2023-2025) to
-    # economic dispatch — but CAISO's Local Capacity Requirement is a YEAR-ROUND
-    # load-pocket floor (the contingency criterion binds hardest at summer peak,
-    # yet the must-offer/local-reliability minimum holds on mild days too), so an
-    # energy-only LP under-runs CT_PEAKER even off the hot limb. This adds that
-    # measured cool-day floor: frac = clip(base + slope*(TMAX-T0), base, cap). It
-    # is the regression INTERCEPT the hot-limb fit clips away, not a TWh-residual
-    # tune (docs/caiso-ct-reliability-floor-2026-06.md §"year-round baseline").
-    # Default 0.0 (byte-identical / hot-limb only); CAISO calibration sets 0.049.
-    nyiso_ct_reliability_floor: bool = False  # NYISO DOWNSTATE CT_PEAKER local-
-    # reliability floor: hold in-city / Long-Island simple-cycle gas peakers
-    # online through the hot-day afternoon-evening AC ramp at a temperature-driven
-    # commitment fraction, keyed to the NYC-metro daily max temperature (NOAA
-    # GHCN, data/raw/nyiso-weather/). The cable-islanded NYC (zone J) / Long Island
-    # (zone K) / Lower Hudson load pockets hold fast-start GTs for local
-    # capacity-area reliability when the UPNY-SENY / LI-cable import limits bind on
-    # hot afternoons; an energy-only LP imports cheap upstate/NYC CC instead and
-    # under-runs CT_PEAKER (CC_REGULAR over-runs). This floors the DOWNSTATE
-    # CT_PEAKER fleet (NYISO_CT_FLOOR_ZONES) at frac x available capacity over
-    # CT_FLOOR_HOURS, frac = clip(base + slope*(TMAX-T0), base, cap), via the
-    # hour-varying FleetArrays.min_gen lower bound (transmission.
-    # inject_nyiso_ct_reliability_floor). Coefficients regressed from measured
-    # downstate CAMPD CT_PEAKER evening (HB14-21) CF vs NYC TMAX, 2023-2025
-    # (scripts/derive_nyiso_ct_reliability_floor.py) — a physical heat->commitment
-    # rule, NOT a TWh-residual fit. Forward-reproducible (a forecast year pins a
-    # weather year, hence a TMAX series) and condition-responsive (hotter years ->
-    # more downstate CT). Does NOT address the WINTER downstate run (a gas-electric
-    # constraint, not a cooling driver). Default off (byte-identical); NYISO-only,
-    # no-op without an archived TMAX series.
-    nyiso_ct_floor_slope_per_c: float = 0.053  # Downstate CT commitment fraction
-    # gained per deg C of NYC daily max temperature above T0. From the downstate
-    # CAMPD evening-CF-vs-TMAX hot-limb regression (>= 25 deg C, pooled 2023-2025).
-    nyiso_ct_floor_t0_c: float = 25.0  # Zero-crossing: below this NYC daily max
-    # temperature the heat-driven floor is held at the year-round baseline (mild
-    # days run the baseline local-reliability minimum on price, not the hot limb).
-    nyiso_ct_floor_cap: float = 0.68  # Max downstate CT commitment fraction (p97
-    # of the measured evening CF) — the hottest-day local-reliability ceiling;
-    # prevents the line extrapolating past the observed envelope.
-    nyiso_ct_floor_base: float = 0.13  # Year-round downstate baseline commitment
-    # fraction floored over the same afternoon-evening window on ALL days. 0.13 =
-    # the measured cool-day (TMAX<25 degC) evening 25th-percentile CF — a firm
-    # local-reliability minimum the downstate peaker fleet exceeds ~75% of cool
-    # evenings, set below the cool-day median (0.18) so the LP dispatches above it
-    # economically on typical cool evenings rather than the floor over-forcing.
-    # Default carried with the flag; 0.0 would be hot-limb-only.
-    nyiso_st_reliability_floor: bool = False  # NYISO DOWNSTATE ST_GAS local-
-    # reliability floor: hold the downstate gas-steam fleet online at a
-    # temperature-driven commitment, keyed PER ZONE to that zone's load-center
-    # daily max temperature (NOAA GHCN: Islip for Long Island, Central Park for
-    # NYC, Albany for the Capital region; data/raw/nyiso-weather/). NYISO's
-    # downstate steam runs a persistent in-city / cable-islanded reliability
-    # baseline plus a strong summer hot-limb that an energy-only LP zeroes out (it
-    # imports cheaper upstate/NYC CC instead), so the backcast under-runs ST_GAS.
-    # Floors each zone's ST_GAS fleet at frac x available capacity over
-    # NYISO_ST_FLOOR_HOURS, frac = clip(base + slope*(TMAX-T0), base, cap), via the
-    # hour-varying FleetArrays.min_gen lower bound (transmission.
-    # inject_nyiso_st_reliability_floor); NYC carries a non-zero base (the in-city
-    # must-run), Long Island a strong hot-limb, Capital a weak hot-limb, and the
-    # flat/temperature-insensitive Upstate steam fleet is omitted. Coefficients
-    # (transmission.NYISO_ST_FLOOR_COEFFS) regressed a priori from measured
-    # per-zone CAMPD ST_GAS evening (HB14-21) CF vs the zone's TMAX, 2023-2025
-    # (scripts/derive_nyiso_st_reliability_floor.py) — a physical heat->commitment
-    # rule, NOT a TWh-residual fit. Forward-reproducible (a forecast year pins a
-    # weather year, hence a TMAX series) and condition-responsive (hotter years ->
-    # more downstate steam). Composes via maximum with the LI self-supply floor so
-    # the two never double-force. Default off (byte-identical); NYISO-only, no-op
-    # without an archived TMAX series.
-    neiso_temp_reliability_floor: bool = False  # NEISO DUAL-LIMB weather-
-    # correlated reliability floor. ISO-NE under-runs two structurally distinct
-    # weather-driven fleets that respond to OPPOSITE temperature limbs: (1) the
-    # simple-cycle CT_PEAKER fleet tracks the summer cooling HOT limb (TMAX) over
-    # the afternoon-evening ramp exactly like CAISO/NYISO; (2) the lone
-    # Merrimack-class COAL unit and lone steam-gas ST_GAS unit run almost only
-    # during deep-winter COLD snaps (TMIN), when the gas-electric constraint
-    # prices these oil/coal/steam reliability units into merit. An energy-only LP
-    # leaves both on the cheaper CC fleet. This floors each group at frac x
-    # available capacity over its window via the hour-varying FleetArrays.min_gen
-    # lower bound (transmission.inject_neiso_temp_reliability_floor). Coefficients
-    # regressed from measured CAMPD CF vs the NEISO load-weighted daily TMAX/TMIN,
-    # pooled 2023-2025 (scripts/derive_neiso_temp_reliability_floor.py) — physical
-    # temperature->commitment rules, NOT TWh-residual fits (cold-limb Spearman rho
-    # ~0.35-0.40, hot-limb ~0.47). Forward-reproducible (a forecast year pins a
-    # weather year, hence TMAX/TMIN) and condition-responsive (hotter summers ->
-    # more CT, colder winters -> more coal/steam). Default off (byte-identical);
-    # NEISO-only, no-op without an archived weather series.
-    neiso_ct_floor_slope_per_c: float = 0.037  # CT_PEAKER commitment fraction
-    # gained per deg C of NEISO daily max temperature above T0. From the CAMPD
-    # evening (HB16-21) CF-vs-TMAX hot-limb regression (>= 25 degC, 2023-2025).
-    neiso_ct_floor_t0_c: float = 25.0  # Hot-limb zero-crossing: below this daily
-    # max temperature the CT heat-driven floor is held at the baseline.
-    neiso_ct_floor_cap: float = 0.48  # Max CT_PEAKER commitment fraction (p97 of
-    # measured evening CF) — the hottest-day ceiling.
-    neiso_ct_floor_base: float = 0.0  # Year-round CT baseline commitment fraction
-    # (0.0 = hot-limb only; the measured cool-day evening p25 is ~0).
-    neiso_coldsnap_floor_slope_per_c: float = 0.033  # COAL/ST_GAS commitment
-    # fraction gained per deg C of NEISO daily MIN temperature BELOW the per-group
-    # zero-crossing (NEISO_COLDSNAP_T0_C: COAL +5 degC, ST_GAS 0 degC). Mean of
-    # the two cold-limb CF-vs-TMIN regressions (winter peaks HB6-9+17-20,
-    # 2023-2025; COAL 0.031, ST_GAS 0.035).
-    neiso_coldsnap_floor_cap: float = 1.0  # Max cold-limb commitment fraction. The
-    # measured cold-snap CF saturates near full available capacity (these single
-    # units run flat-out in deep cold), and the bin-nameplate capacity basis
-    # understates their CAMPD output, so the deep-cold ceiling is the unit's full
-    # availability (1.0).
-    neiso_coldsnap_floor_base: float = 0.0  # Year-round cold-limb baseline (0.0 =
-    # cold-limb only; these units idle on mild days and run on price).
-    neiso_floor_outage_exempt: bool = True  # NEISO temperature-reliability-floor
-    # outage exemption (CLAUDE.md #11 correctness fix; default ON). The lone
-    # Merrimack-class COAL unit and lone ST_GAS unit are winter cold-snap
-    # RELIABILITY runners whose commitment is governed by the temperature floor
-    # (neiso_temp_reliability_floor), with coefficients regressed from each unit's
-    # own measured CAMPD capacity factor — a regression that already nets out the
-    # unit's real maintenance downtime. The CAMPD unit-outage overlay's "sustained
-    # CF < 5%" detector, built for baseload coal/CC, misreads a winter peaker's
-    # economic idleness (sub-10% annual CF) as a forced outage, and its
-    # unit_capacity_mw / plant_capacity_mw derate is taken against the 108 MW model
-    # bin while the CSV unit capacities are the real ~460 MW plant — so a single
-    # coal-unit "outage" over-derates the bin to zero (Merrimack availability was 0
-    # of 8760 h in 2024, structurally capping the floor's frac×available at ~0).
-    # When True, the floor classes (COAL/ST_GAS) skip the unit-outage overlay so
-    # the floor governs their availability, exactly as ct_mustrun_per_plant exempts
-    # its floor units from WEFOR/planned outage. Only takes effect for NEISO with
-    # neiso_temp_reliability_floor on; non-floor runs stay byte-identical.
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -774,31 +629,6 @@ class ScenarioConfig:
     # input (CLAUDE.md #10: could be produced for a forward year from a
     # seasonal oil-deliverability assumption). NEISO-only, backcast-only,
     # default off (byte-identical). See data/fuel.py:load_oil_burn_budget.
-    miso_temp_reliability_floor: bool = False  # MISO DUAL-LIMB, ZONAL weather-
-    # correlated reliability floor — the MISO-native analogue of the NEISO/NYISO
-    # temperature floors. MISO spans two OPPOSITE weather regimes within one ISO,
-    # so each zone is keyed to its OWN load-weighted daily TMAX/TMIN (NOAA GHCN
-    # load-center stations per zone; data/raw/miso-weather/) and BOTH limbs are
-    # fit per zone: (1) a summer HOT limb (TMAX) over the afternoon-evening AC
-    # ramp holds the gas-steam boilers and simple-cycle CTs online for local
-    # reliability in all zones (strongest in MISO-South / Entergy and
-    # MISO-Central); (2) a deep-winter COLD limb (TMIN) over the morning/evening
-    # peaks, grounded ONLY in MISO-South (the gas-constrained Entergy/Gulf
-    # footprint, where the gas-electric constraint prices gas-steam into merit;
-    # measured ST_GAS rho +0.42, CT +0.52), holds the gas-steam fleet online. The
-    # North/Central steam/CT cold correlation is ~0 (winter load there is
-    # coal/wind), so those cold limbs are left off rather than forced. Floors each
-    # (zone, class) at frac x available capacity over its window via the
-    # hour-varying FleetArrays.min_gen lower bound, distributed cheapest-first
-    # (transmission.inject_miso_temp_reliability_floor;
-    # MISO_ST_FLOOR_COEFFS / MISO_CT_FLOOR_COEFFS). Coefficients regressed from
-    # measured per-(zone × class) CAMPD CF vs the zone load-weighted TMAX/TMIN,
-    # pooled 2023-2025 (scripts/derive_miso_temp_reliability_floor.py) — physical
-    # temperature->commitment rules, NOT TWh-residual fits. Replaces the deferred
-    # gas_st_netload_drag (whose ERCOT-derived coefficients saturate at the 0.34
-    # cap across MISO's larger net-load range, degenerating into a flat must-run).
-    # Forward-reproducible and condition-responsive. Default off (byte-identical);
-    # MISO-only, no-op without an archived weather series.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -1942,31 +1772,11 @@ class ScenarioConfig:
     # gas_st_startup_spread is True, ST_GAS amortizes its startup cost over the
     # whole May-Sep season (one seasonal start) rather than per calendar month,
     # so its summer bid markup is near zero.
-    gas_st_summer_mustrun: float = 0.0
     gas_st_startup_spread: bool = False
     # Off-summer (Oct-Apr) ST_GAS reliability min-gen floor, as a fraction of
     # capacity, applied to the same reliability (non-peaker) ST_GAS units as
     # gas_st_summer_mustrun. Peaker-class ST_GAS (fleet.ST_GAS_PEAKER_PLANTS)
     # get neither floor and run purely economically.
-    gas_st_offsummer_mustrun: float = 0.0
-
-    # Net-load-indexed ST_GAS reliability-drag floor — the endogenous,
-    # weather-driven replacement for the blunt seasonal gas_st_summer_mustrun
-    # calendar fraction. ERCOT holds legacy gas-steam committed at minimum load
-    # for local/system reliability (RUC); the held fraction is not a fixed
-    # season but rises with system net-load (load - wind - solar), the
-    # operational proxy for reserve tightness RUC keys off. When
-    # gas_st_netload_drag is True, each non-peaker ST_GAS unit carries a per-hour
-    # min-gen floor of clip(slope*netload_GW + intercept, 0, cap) x capacity,
-    # over which the LP dispatches economically. The defaults are the CAMPD
-    # overnight (low-price) ST_GAS capacity factor regressed on contemporaneous
-    # system net-load, 2023-2025 (docs/ercot-st-gas-netload-drag-2026-06.md);
-    # the relationship is year-stable, so a single curve regenerates for a
-    # forward year (which has a load forecast and wind/solar build -> net-load)
-    # and responds to changed conditions (more VRE -> lower net-load -> less
-    # drag). That forward-derivability + condition-response makes it a
-    # legitimate input in both backcast and forecast (CLAUDE.md #10), unlike a
-    # fixed seasonal fraction or an offer markdown tuned to the ST_GAS residual.
     gas_st_netload_drag: bool = False
     gas_st_drag_slope_per_gw: float = 0.00906  # overnight CF per GW net-load
     gas_st_drag_intercept: float = -0.1376  # floor zero-crossing ~15.2 GW
@@ -2953,36 +2763,16 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_mustoffer": 1,
     "caiso_ra_min_load_frac": 2,
     "reliability_floor": 1,
-    "caiso_ct_reliability_floor": 1,
-    "caiso_ct_floor_slope_per_c": 3,
-    "caiso_ct_floor_t0_c": 1,
-    "caiso_ct_floor_cap": 2,
-    "caiso_ct_floor_base": 3,
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
     "caiso_solar_deliverability_floor": 3,
     "caiso_solar_endogenous_spill": 1,
     "caiso_solar_cap_at_delivered": 1,
-    "neiso_temp_reliability_floor": 1,
-    "neiso_ct_floor_slope_per_c": 3,
-    "neiso_ct_floor_t0_c": 1,
-    "neiso_ct_floor_cap": 2,
-    "neiso_ct_floor_base": 3,
-    "neiso_coldsnap_floor_slope_per_c": 3,
-    "neiso_coldsnap_floor_cap": 2,
-    "neiso_coldsnap_floor_base": 3,
-    "neiso_floor_outage_exempt": 1,
     "neiso_gas_coldsnap_derate": 1,
     "neiso_gas_derate_t0_c": 1,
     "neiso_gas_derate_slope_per_c": 3,
     "neiso_gas_derate_cap": 2,
     "neiso_oil_burn_budget": 1,
-    "nyiso_ct_reliability_floor": 1,
-    "nyiso_ct_floor_slope_per_c": 3,
-    "nyiso_ct_floor_t0_c": 1,
-    "nyiso_ct_floor_cap": 2,
-    "nyiso_ct_floor_base": 3,
-    "nyiso_st_reliability_floor": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
@@ -2994,7 +2784,6 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
     "miso_pjm_border_anchor": 1,
-    "miso_temp_reliability_floor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
     "miso_pjm_lmp_import_pricing": 1,
@@ -3110,9 +2899,7 @@ TIER_TAGS: dict[str, int] = {
     "reliability_deployment_overlay": 3,
     "reliability_deployment_floor_frac": 3,
     "coal_drop_pof": 3,
-    "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
-    "gas_st_offsummer_mustrun": 3,
     "gas_st_netload_drag": 3,
     "gas_st_drag_slope_per_gw": 3,
     "gas_st_drag_intercept": 3,
