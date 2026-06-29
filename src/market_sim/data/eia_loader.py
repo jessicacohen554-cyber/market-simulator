@@ -928,26 +928,6 @@ def miso_zone_temp(
 # Generic temperature loader (replaces the 5 bespoke loaders above)
 # ---------------------------------------------------------------------------
 
-# Per-ISO weather-file registry: maps ISO -> list of (filename, has_zone_col)
-# pairs. The loader tries each in order; the first existing file wins.  For
-# ISOs with both a pooled and a per-zone file (NYISO), the caller selects via
-# the ``zone`` argument: zone=None -> pooled file, zone=<name> -> per-zone.
-_WEATHER_FILES: dict[str, dict[str, str]] = {
-    "CAISO": {
-        "pooled": "caiso-weather/caiso_load_weighted_tmax_daily.csv",
-    },
-    "NYISO": {
-        "pooled": "nyiso-weather/nyiso_downstate_tmax_daily.csv",
-        "per_zone": "nyiso-weather/nyiso_zone_tmax_daily.csv",
-    },
-    "NEISO": {
-        "pooled": "neiso-weather/neiso_load_weighted_temp_daily.csv",
-    },
-    "MISO": {
-        "per_zone": "miso-weather/miso_zone_temp_daily.csv",
-    },
-}
-
 
 def _broadcast_daily_to_hourly(
     df: pd.DataFrame, year: int, hours: int, col: str
@@ -972,74 +952,39 @@ def iso_zone_tmax(
 ) -> tuple[np.ndarray, np.ndarray | None] | None:
     """Return daily ``(tmax, tmin)`` broadcast to hourly for a given ISO/zone.
 
-    Generic temperature loader that replaces the five bespoke per-ISO loaders.
-    For each hour of the run horizon, returns the daily NOAA GHCN-Daily TMAX
-    (and TMIN when the file carries it) for that hour's calendar day, exactly
-    as the legacy loaders do — same CSV schema, same day-of-year broadcast,
-    same ffill/bfill NaN handling.
+    Generic temperature loader for the reliability-floor engine. Reads the one
+    canonical per-ISO weather file
+    ``data/raw/<iso>-weather/<iso>_zone_temp_daily.csv`` (schema
+    ``date,zone,tmax_c,tmin_c``, one row per (zone, date)), filters to *zone*
+    and *year*, and broadcasts the daily TMAX/TMIN to the hourly run horizon via
+    a day-of-year lookup with ``ffill``/``bfill`` gap fill.
 
     Args:
         iso: ISO identifier (e.g. ``"CAISO"``).
         year: Calendar year to extract.
         hours: Number of run hours (typically 8760).
-        zone: Zone name for per-zone files, or ``None`` for the pooled
-            (system-wide / load-weighted) series.
+        zone: Model zone name. When the file carries a ``zone`` column the rows
+            are filtered to this zone; ``None`` leaves the file unfiltered (the
+            engine always passes a concrete zone).
 
     Returns:
         ``(tmax, tmin)`` where each is ``(hours,)`` ndarray in deg C, or
-        ``None`` when no weather file exists, the year/zone is uncovered, or
-        ``tmin`` is absent from the file (in which case ``tmin`` is ``None``
-        in the returned tuple).  Returns ``None`` outright when no data is
-        found at all, so the caller leaves the fleet unfloored (byte-identical
-        to a year with no weather data).
+        ``None`` when the canonical file is missing, the zone/year is uncovered
+        (e.g. a forecast year with no pinned weather), or TMAX cannot be built —
+        so the caller leaves the fleet unfloored (byte-identical to a year with
+        no weather data). ``tmin`` is ``None`` when the file lacks a ``tmin_c``
+        column.
     """
-    iso_upper = iso.upper()
-    files = _WEATHER_FILES.get(iso_upper)
-    if files is None:
-        # New ISO with canonical file: <iso>-weather/<iso>_zone_tmax_daily.csv
-        canonical = (
-            f"{iso_upper.lower()}-weather/{iso_upper.lower()}_zone_tmax_daily.csv"
-        )
-        path = RAW_DIR / canonical
-        if not path.exists():
-            return None
-        df = pd.read_csv(path, parse_dates=["date"])
-        df = df[df["date"].dt.year == year]
-        if zone is not None and "zone" in df.columns:
-            df = df[df["zone"] == zone]
-        elif zone is None and "zone" in df.columns:
-            df = df[df["zone"] == "system"] if "system" in df["zone"].values else df
-        if df.empty:
-            return None
-        tmax = _broadcast_daily_to_hourly(df, year, hours, "tmax_c")
-        tmin = (
-            _broadcast_daily_to_hourly(df, year, hours, "tmin_c")
-            if "tmin_c" in df.columns
-            else None
-        )
-        return (tmax, tmin) if tmax is not None else None
-
-    # Known ISO: dispatch to the right file based on zone argument.
-    if zone is not None:
-        key = "per_zone" if "per_zone" in files else "pooled"
-    else:
-        key = "pooled" if "pooled" in files else "per_zone"
-
-    rel = files.get(key)
-    if rel is None:
-        return None
-    path = RAW_DIR / rel
+    iso_lower = iso.lower()
+    path = RAW_DIR / f"{iso_lower}-weather" / f"{iso_lower}_zone_temp_daily.csv"
     if not path.exists():
         return None
     df = pd.read_csv(path, parse_dates=["date"])
-    # Filter by zone column if present and a zone was requested.
+    df = df[df["date"].dt.year == year]
     if zone is not None and "zone" in df.columns:
-        df = df[(df["zone"] == zone) & (df["date"].dt.year == year)]
-    else:
-        df = df[df["date"].dt.year == year]
+        df = df[df["zone"] == zone]
     if df.empty:
         return None
-
     tmax = _broadcast_daily_to_hourly(df, year, hours, "tmax_c")
     tmin = (
         _broadcast_daily_to_hourly(df, year, hours, "tmin_c")

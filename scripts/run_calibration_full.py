@@ -1698,15 +1698,10 @@ def solve_and_persist(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     reliability_floor: bool | None = None,
-    caiso_ct_reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
     caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
-    nyiso_ct_reliability_floor: bool | None = None,
-    nyiso_st_reliability_floor: bool | None = None,
-    neiso_temp_reliability_floor: bool | None = None,
-    neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
@@ -1728,7 +1723,6 @@ def solve_and_persist(
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
     miso_pjm_border_anchor: bool = False,
-    miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
@@ -1910,15 +1904,10 @@ def solve_and_persist(
             caiso_ra_mustoffer=caiso_ra_mustoffer,
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             reliability_floor=reliability_floor,
-            caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
             caiso_solar_endogenous_spill=caiso_solar_endogenous_spill,
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered,
-            nyiso_ct_reliability_floor=nyiso_ct_reliability_floor,
-            nyiso_st_reliability_floor=nyiso_st_reliability_floor,
-            neiso_temp_reliability_floor=neiso_temp_reliability_floor,
-            neiso_floor_outage_exempt=neiso_floor_outage_exempt,
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
             neiso_oil_burn_budget=neiso_oil_burn_budget,
             caiso_import_hub_prices=caiso_import_hub_prices,
@@ -1940,7 +1929,6 @@ def solve_and_persist(
             miso_seam_flow_percentile=miso_seam_flow_percentile,
             miso_seam_export_limit=miso_seam_export_limit,
             miso_pjm_border_anchor=miso_pjm_border_anchor,
-            miso_temp_reliability_floor=miso_temp_reliability_floor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
             miso_pjm_lmp_import_pricing=miso_pjm_lmp_import_pricing,
@@ -2175,15 +2163,10 @@ def solve_and_persist(
         "caiso_ra_mustoffer": caiso_ra_mustoffer,
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "reliability_floor": reliability_floor,
-        "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
         "caiso_solar_endogenous_spill": caiso_solar_endogenous_spill,
         "caiso_solar_cap_at_delivered": caiso_solar_cap_at_delivered,
-        "nyiso_ct_reliability_floor": nyiso_ct_reliability_floor,
-        "nyiso_st_reliability_floor": nyiso_st_reliability_floor,
-        "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
-        "neiso_floor_outage_exempt": neiso_floor_outage_exempt,
         "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
         "neiso_oil_burn_budget": neiso_oil_burn_budget,
         "caiso_import_hub_prices": caiso_import_hub_prices,
@@ -2205,7 +2188,6 @@ def solve_and_persist(
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
         "miso_seam_export_limit": miso_seam_export_limit,
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
-        "miso_temp_reliability_floor": miso_temp_reliability_floor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
@@ -2366,10 +2348,6 @@ def solve_and_persist(
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
-    if caiso_ct_reliability_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_ct_reliability_floor=caiso_ct_reliability_floor
-        )
     if caiso_solar_deliverability is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_solar_deliverability=caiso_solar_deliverability
@@ -2385,22 +2363,6 @@ def solve_and_persist(
     if caiso_solar_cap_at_delivered is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
-        )
-    if nyiso_ct_reliability_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_ct_reliability_floor=nyiso_ct_reliability_floor
-        )
-    if nyiso_st_reliability_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_st_reliability_floor=nyiso_st_reliability_floor
-        )
-    if neiso_temp_reliability_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_temp_reliability_floor=neiso_temp_reliability_floor
-        )
-    if neiso_floor_outage_exempt is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_floor_outage_exempt=neiso_floor_outage_exempt
         )
     if neiso_gas_coldsnap_derate is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -2478,8 +2440,6 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
     if miso_pjm_border_anchor:
         recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
-    if miso_temp_reliability_floor:
-        recorded_cfg = recorded_cfg.with_overrides(miso_temp_reliability_floor=True)
     if miso_cc_coal_rebalance:
         recorded_cfg = recorded_cfg.with_overrides(miso_cc_coal_rebalance=True)
     if miso_firm_import_floor:
@@ -5306,23 +5266,6 @@ def main() -> None:
         "flag + a registry entry + a weather file.",
     )
     parser.add_argument(
-        "--caiso-ct-reliability-floor",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="CAISO local-RA CT_PEAKER reliability floor: hold simple-cycle gas "
-        "peakers online through the hot-day afternoon-evening ramp at a "
-        "temperature-driven commitment fraction (clip(slope*(TMAX-T0), 0, "
-        "cap) x available capacity), keyed to the load-weighted CAISO daily "
-        "max temperature (NOAA GHCN). Recovers the local capacity-area "
-        "reliability energy an energy-only LP leaves on the cheaper CC fleet "
-        "(CT_PEAKER under-runs / CC_REGULAR over-runs). Coefficients regressed "
-        "from measured CAMPD CT_PEAKER evening CF vs TMAX, 2023-2025 (see "
-        "docs/caiso-ct-reliability-floor-2026-06.md). CAISO-only. Default "
-        "(unset) keeps the per-ISO base config value — ON for CAISO (the "
-        "keeper), off elsewhere; --no-caiso-ct-reliability-floor forces it "
-        "off (the no-floor baseline probe).",
-    )
-    parser.add_argument(
         "--caiso-solar-deliverability",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5366,79 +5309,6 @@ def main() -> None:
         "solar to the measured outcome (no forward analogue) and must NEVER feed "
         "a keeper or be quoted as forecast skill (CLAUDE.md #11) — it exists only "
         "as an A/B reference for --caiso-solar-deliverability. CAISO-only.",
-    )
-    parser.add_argument(
-        "--nyiso-ct-reliability-floor",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="NYISO DOWNSTATE CT_PEAKER local-reliability floor: hold in-city / "
-        "Long-Island simple-cycle gas peakers online through the hot-day "
-        "afternoon-evening AC ramp at a temperature-driven commitment fraction "
-        "(clip(base + slope*(TMAX-T0), base, cap) x available capacity), keyed "
-        "to the NYC-metro daily max temperature (NOAA GHCN) and restricted to "
-        "the cable-constrained downstate load pockets (NYC / Long Island / "
-        "Lower Hudson). Recovers the local-reliability energy an energy-only LP "
-        "leaves on the cheaper CC fleet (CT_PEAKER under-runs / CC_REGULAR "
-        "over-runs). Coefficients regressed from measured downstate CAMPD "
-        "CT_PEAKER evening (HB14-21) CF vs NYC TMAX, 2023-2025 "
-        "(scripts/derive_nyiso_ct_reliability_floor.py). NYISO-only. Default "
-        "(unset) keeps the base config value (off); pass the flag to enable.",
-    )
-    parser.add_argument(
-        "--nyiso-st-reliability-floor",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="NYISO DOWNSTATE ST_GAS local-reliability floor: hold the gas-steam "
-        "fleet online at a temperature-driven commitment, keyed PER ZONE to that "
-        "zone's load-center daily max temperature (NOAA GHCN: Islip for Long "
-        "Island, Central Park for NYC, Albany for the Capital region). NYC carries "
-        "a non-zero base (the Ravenswood/Arthur Kill/Astoria in-city must-run) "
-        "plus a hot-limb; Long Island a strong hot-limb; Capital a weak hot-limb; "
-        "the flat/temperature-insensitive Upstate steam fleet is omitted. Recovers "
-        "the local-reliability steam energy an energy-only LP leaves on the cheaper "
-        "CC fleet (the documented ST_GAS under-run). Coefficients (transmission."
-        "NYISO_ST_FLOOR_COEFFS) regressed from measured per-zone CAMPD ST_GAS "
-        "evening (HB14-21) CF vs zone TMAX, 2023-2025 "
-        "(scripts/derive_nyiso_st_reliability_floor.py). NYISO-only. Default "
-        "(unset) keeps the per-ISO base config value — ON for NYISO (the keeper); "
-        "--no-nyiso-st-reliability-floor forces it off (the no-floor baseline "
-        "probe).",
-    )
-    parser.add_argument(
-        "--neiso-temp-reliability-floor",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="NEISO DUAL-LIMB weather-correlated reliability floor: hold the "
-        "CT_PEAKER fleet online over the summer cooling HOT limb (TMAX) and the "
-        "lone Merrimack-class COAL + steam-gas ST_GAS units online in deep-winter "
-        "COLD snaps (TMIN), each at a temperature-driven commitment fraction "
-        "keyed to the NEISO load-weighted daily TMAX/TMIN (NOAA GHCN). Recovers "
-        "the weather-reliability energy an energy-only LP leaves on the cheaper "
-        "CC fleet. Coefficients regressed from measured CAMPD CF, 2023-2025 "
-        "(scripts/derive_neiso_temp_reliability_floor.py). NEISO-only. Default "
-        "(unset) keeps the per-ISO base config value — ON for NEISO (the keeper); "
-        "--no-neiso-temp-reliability-floor forces it off (the no-floor baseline "
-        "A/B probe).",
-    )
-    parser.add_argument(
-        "--neiso-floor-outage-exempt",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="NEISO temperature-reliability-floor outage exemption (CLAUDE.md #11 "
-        "correctness fix; default ON for NEISO). The lone Merrimack-class COAL and "
-        "ST_GAS units are winter cold-snap RELIABILITY runners governed by the "
-        "temperature floor, whose coefficients are regressed from each unit's own "
-        "measured CAMPD CF (already netting out real downtime). The CAMPD "
-        "unit-outage 'sustained CF<5%' detector, built for baseload coal/CC, "
-        "misreads a winter peaker's economic idleness as a forced outage and (with "
-        "the CSV's real ~460 MW unit capacities derated against the 108 MW model "
-        "bin) over-derates Merrimack's availability to ZERO (0 of 8760 h in 2024), "
-        "structurally capping the floor's frac×available at ~0. When on, the floor "
-        "classes skip the unit-outage overlay so the floor governs their "
-        "availability (mirrors ct_mustrun_per_plant's WEFOR/planned-outage "
-        "exemption). NEISO-only, no-op without the floor. "
-        "--no-neiso-floor-outage-exempt restores the (buggy) overlay for the "
-        "no-fix A/B baseline.",
     )
     parser.add_argument(
         "--neiso-gas-coldsnap-derate",
@@ -5773,24 +5643,6 @@ def main() -> None:
         "(rule #11). Requires --reference-price-interface; MISO-only.",
     )
     parser.add_argument(
-        "--miso-temp-reliability-floor",
-        action="store_true",
-        help="MISO dual-limb, ZONAL weather-correlated reliability floor (the "
-        "MISO-native analogue of the NEISO/NYISO temperature floors). Holds the "
-        "gas-steam (ST_GAS) and simple-cycle (CT_PEAKER) fleets online at a "
-        "temperature-driven commitment keyed PER ZONE to that zone's "
-        "load-weighted daily TMAX/TMIN: a summer HOT limb (TMAX) over the "
-        "afternoon-evening AC ramp in all zones, plus a deep-winter COLD limb "
-        "(TMIN) over the morning/evening peaks grounded only in MISO-South (the "
-        "gas-constrained Entergy footprint; measured ST_GAS rho +0.42, CT +0.52). "
-        "Coefficients regressed from measured per-(zone x class) CAMPD CF vs the "
-        "zone TMAX/TMIN, pooled 2023-2025 "
-        "(scripts/derive_miso_temp_reliability_floor.py) — physical "
-        "temperature->commitment rules, NOT TWh-residual fits. Replaces the "
-        "ERCOT-coefficient --gas-st-netload-drag (which saturates across MISO's "
-        "net-load range). MISO-only; no-op without an archived weather series.",
-    )
-    parser.add_argument(
         "--miso-cc-coal-rebalance",
         action="store_true",
         help="MISO CC_REGULAR / COAL_BIT offer-curve rebalance: raise the MISO "
@@ -6101,15 +5953,10 @@ def main() -> None:
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         reliability_floor=args.reliability_floor,
-        caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
         caiso_solar_endogenous_spill=args.caiso_solar_endogenous_spill,
         caiso_solar_cap_at_delivered=args.caiso_solar_cap_at_delivered,
-        nyiso_ct_reliability_floor=args.nyiso_ct_reliability_floor,
-        nyiso_st_reliability_floor=args.nyiso_st_reliability_floor,
-        neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
-        neiso_floor_outage_exempt=args.neiso_floor_outage_exempt,
         neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
         neiso_oil_burn_budget=args.neiso_oil_burn_budget,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
@@ -6131,7 +5978,6 @@ def main() -> None:
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
         miso_seam_export_limit=args.miso_seam_export_limit,
         miso_pjm_border_anchor=args.miso_pjm_border_anchor,
-        miso_temp_reliability_floor=args.miso_temp_reliability_floor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
         miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,

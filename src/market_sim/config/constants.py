@@ -75,11 +75,18 @@ CT_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
 ST_GAS_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
     (
         10.0,
-        {"startup_per_mw": 55.0, "min_run_hours": 12, "min_down_hours": 8},
+        # efficient steam: min-run raised 12 -> 24h so a boiler committed for a
+        # heat-wave / cold-snap stays online across the multi-day event rather
+        # than two-shifting (NREL/SR-5500-55433 gas-steam cycling cost; a
+        # stop-start is dearer than idling at minimum load over a sustained event).
+        {"startup_per_mw": 55.0, "min_run_hours": 24, "min_down_hours": 8},
     ),  # efficient steam
     (
         99.0,
-        {"startup_per_mw": 75.0, "min_run_hours": 24, "min_down_hours": 12},
+        # older subcritical: min-run raised 24 -> 48h (higher thermal inertia,
+        # larger per-start wear cost — these legacy boilers drag online across a
+        # whole multi-day temperature event rather than cycle).
+        {"startup_per_mw": 75.0, "min_run_hours": 48, "min_down_hours": 12},
     ),  # older subcritical
 ]
 ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
