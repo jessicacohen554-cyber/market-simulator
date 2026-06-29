@@ -382,8 +382,9 @@
           <div class="ira-timeline" id="ira-timeline-container"></div>
 
           <div class="insight-box info" style="margin-top: 28px;">
-            <strong>⚡ How they enter dispatch:</strong> Wind and solar are applied as negative marginal-cost adders —
-            reducing their effective cost to $0 or below (internalizing the credit), making them marginal in merit order.
+            <strong>⚡ How they enter dispatch:</strong> The §45 wind PTC is applied as a negative marginal-cost adder
+            (<code>wind_mc = −ira_ptc_wind</code>, $26/MWh), driving wind's effective offer below $0. Solar's dispatch MC
+            is unchanged ($0) — its §48 ITC reduces capex, not dispatch cost.
             Hydrogen (§45V) reduces the fuel cost of hydrogen production. CCUS (§45Q) applies per tonne of CO₂ captured.
             For capacity investment screens, LCOE calculations deduct the PTC or apply the ITC to capex.
           </div>
@@ -434,49 +435,59 @@
               <tr>
                 <th>ISO / State</th>
                 <th>Program</th>
-                <th>2026 Target</th>
-                <th>2030 Target</th>
-                <th>2040+ Target</th>
+                <th>2026</th>
+                <th>2030</th>
+                <th>2040</th>
+                <th>2045</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>CAISO / California</strong></td>
                 <td>SB 100</td>
-                <td>65%</td>
-                <td>85%</td>
-                <td>100% (by 2045)</td>
+                <td>50%</td>
+                <td>60%</td>
+                <td>80%</td>
+                <td>100%</td>
               </tr>
               <tr>
                 <td><strong>NYISO / New York</strong></td>
                 <td>CLCPA</td>
-                <td>45%</td>
+                <td>40%</td>
                 <td>70%</td>
-                <td>100% (by 2040)</td>
+                <td>100%</td>
+                <td>100%</td>
               </tr>
               <tr>
                 <td><strong>NEISO / Massachusetts</strong></td>
                 <td>CES</td>
-                <td>38%</td>
-                <td>50%</td>
-                <td>100% (by 2050)</td>
+                <td>30%</td>
+                <td>45%</td>
+                <td>70%</td>
+                <td>80%</td>
               </tr>
               <tr>
                 <td><strong>PJM / Regional</strong></td>
-                <td>None federally</td>
+                <td>None ISO-wide</td>
+                <td>—</td>
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
               </tr>
               <tr>
                 <td><strong>ERCOT / Regional</strong></td>
-                <td>None federally</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
+                <td>None</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
               </tr>
             </tbody>
           </table>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -8px;">
+            Values are the <code>STATE_RPS_FLOORS</code> knot points (<code>constants.py</code>); intermediate years are
+            linearly interpolated by <code>get_rps_target</code>. ERCOT's floor is defined but pinned to 0%.
+          </p>
 
           <p style="margin-top: 20px;">
             The RPS is <strong>not</strong> a force-build step. Instead, we solve the LP with the constraint active,
@@ -962,7 +973,7 @@
       const ordcEq = document.getElementById('ordc-eq');
       if (ordcEq) {
         katex.render(
-          '\\text{RTORPA} = 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}} + R_{\\text{offline}}) + 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}}/2)',
+          '\\text{RTORPA} = 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}} + R_{\\text{offline}};\\, \\mu, \\sigma) + 0.5 \\cdot (\\text{VOLL} - \\lambda) \\cdot \\text{LOLP}(R_{\\text{online}};\\, \\mu/2, \\sigma/\\sqrt{2})',
           ordcEq,
           { displayMode: true }
         );
