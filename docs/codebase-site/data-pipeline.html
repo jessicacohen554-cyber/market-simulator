@@ -19,8 +19,8 @@
 
   <style>
     .data-flow-diagram {
-      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-      border: 1px solid var(--border-subtle);
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-page) 100%);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       padding: 40px;
       margin: var(--space-lg) 0;
@@ -43,22 +43,22 @@
     }
 
     .module-card {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-subtle);
+      background: var(--bg-page);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       padding: var(--space-md);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .module-card:hover {
-      border-color: var(--primary);
+      border-color: var(--hydro);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
       transform: translateY(-2px);
     }
 
     .module-card__name {
       font-weight: 700;
-      color: var(--primary);
+      color: var(--hydro);
       margin-bottom: var(--space-sm);
       font-size: 0.95rem;
       font-family: var(--font-mono);
@@ -78,8 +78,8 @@
     }
 
     .data-table thead {
-      background: var(--bg-secondary);
-      border-bottom: 2px solid var(--border-emphasis);
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--border);
     }
 
     .data-table th {
@@ -91,16 +91,16 @@
 
     .data-table td {
       padding: var(--space-sm) var(--space-md);
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-light);
       color: var(--text-secondary);
     }
 
     .data-table tbody tr:hover {
-      background: var(--bg-secondary);
+      background: var(--bg-card);
     }
 
     .data-table code {
-      background: var(--bg-tertiary);
+      background: var(--bg-page);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.9em;
@@ -110,8 +110,8 @@
 
     .source-badge {
       display: inline-block;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-emphasis);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 0.85rem;
@@ -148,7 +148,7 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: var(--primary);
+      background: var(--hydro);
       color: white;
       display: flex;
       align-items: center;
@@ -206,12 +206,12 @@
   <!-- Main content -->
   <main>
     <!-- Page header -->
-    <div class="header" data-header-variant="pulse">
+    <header class="header" data-header-variant="pulse">
       <div class="header__eyebrow">Foundations</div>
       <h1 class="header__title">The Data Pipeline</h1>
       <p class="header__subtitle">From raw EIA and EPA sources to FleetArrays: how the data layer turns public datasets into the numerical inputs the LP dispatch model consumes.</p>
       <div class="header__accent"></div>
-    </div>
+    </header>
 
     <!-- Section 1: The Data Journey -->
     <section class="section-light">
@@ -245,7 +245,7 @@
           <div class="journey-step">
             <div class="journey-step__number">③</div>
             <div class="journey-step__content">
-              <div class="journey-step__title">Struct-of-Arrays (FleetArrays)</div>
+              <div class="journey-step__title">Struct-of-Arrays (<a href="fleet-offer-curves.html">FleetArrays</a>)</div>
               <div class="journey-step__desc">Cleaned data is vectorized into parallel numpy arrays: <code>pmax[g], pmin[g], heat_rate[g], zone_idx[g], availability[g,t], ...</code>. This is the memory-efficient struct-of-arrays format that the LP builder consumes directly — no loops over generators, pure matrix ops.</div>
             </div>
           </div>
@@ -288,7 +288,7 @@
 
                 <!-- Layer 2: Cleaned Parquet -->
                 <g>
-                  <rect x="180" y="20" width="120" height="80" rx="6" fill="var(--success)" opacity="0.15" stroke="var(--success)" stroke-width="2"/>
+                  <rect x="180" y="20" width="120" height="80" rx="6" fill="var(--positive)" opacity="0.15" stroke="var(--positive)" stroke-width="2"/>
                   <text x="240" y="50" text-anchor="middle" font-weight="700" font-size="13">Cleaned Data</text>
                   <text x="240" y="68" text-anchor="middle" font-size="11" opacity="0.75">Parquet Files</text>
                   <text x="240" y="82" text-anchor="middle" font-size="11" opacity="0.75">data/clean/</text>
@@ -321,7 +321,7 @@
 
                 <!-- Layer 5: LP Model -->
                 <g>
-                  <rect x="660" y="20" width="120" height="80" rx="6" fill="var(--primary)" opacity="0.15" stroke="var(--primary)" stroke-width="2"/>
+                  <rect x="660" y="20" width="120" height="80" rx="6" fill="var(--hydro)" opacity="0.15" stroke="var(--hydro)" stroke-width="2"/>
                   <text x="720" y="50" text-anchor="middle" font-weight="700" font-size="13">LP Model</text>
                   <text x="720" y="68" text-anchor="middle" font-size="11" opacity="0.75">Dispatch &amp;</text>
                   <text x="720" y="82" text-anchor="middle" font-size="11" opacity="0.75">Pricing</text>
@@ -607,7 +607,7 @@
             The LP objective is the sum of marginal costs. Each generator's marginal cost is assembled in real time from fuel prices, emissions rates, policy credits, and plant physics:
           </p>
 
-          <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: var(--space-md); margin: var(--space-lg) 0; font-family: var(--font-mono); line-height: 1.6; font-size: 0.9rem;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 8px; padding: var(--space-md); margin: var(--space-lg) 0; font-family: var(--font-mono); line-height: 1.6; font-size: 0.9rem;">
             <div style="color: var(--text-primary);">mc[g,t] =</div>
             <div style="margin-left: 2rem; color: var(--text-secondary);">
               heat_rate[g] × fuel_price[g,t]
@@ -756,10 +756,15 @@
     </section>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb">
-      <a href="mental-model.html">← Mental Model</a>
-      <span style="flex: 1;"></span>
-      <a href="fleet-offer-curves.html">Fleet & Offer Curves →</a>
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="mental-model.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Mental Model</span>
+      </a>
+      <a href="fleet-offer-curves.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Fleet &amp; Offer Curves</span>
+      </a>
     </nav>
   </main>
 

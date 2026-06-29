@@ -24,8 +24,8 @@
 
   <style>
     .variable-layout {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       padding: 24px;
       margin: var(--space-lg) 0;
@@ -36,8 +36,8 @@
 
     .layout-block {
       display: inline-block;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-subtle);
+      background: var(--bg-page);
+      border: 1px solid var(--border-light);
       padding: 12px 16px;
       margin-right: 2px;
       margin-bottom: 8px;
@@ -47,11 +47,11 @@
     }
 
     .layout-block.thermal {
-      border-left: 3px solid var(--primary);
+      border-left: 3px solid var(--hydro);
     }
 
     .layout-block.renewable {
-      border-left: 3px solid var(--success);
+      border-left: 3px solid var(--positive);
     }
 
     .layout-block.storage {
@@ -63,12 +63,12 @@
     }
 
     .layout-block.slack {
-      border-left: 3px solid var(--error);
+      border-left: 3px solid var(--negative);
     }
 
     .constraint-family {
-      background: var(--bg-tertiary);
-      border-left: 4px solid var(--primary);
+      background: var(--bg-page);
+      border-left: 4px solid var(--hydro);
       border-radius: 6px;
       padding: var(--space-md);
       margin: var(--space-md) 0;
@@ -104,7 +104,7 @@
     }
 
     .constraint-family__formula {
-      background: var(--bg-secondary);
+      background: var(--bg-card);
       padding: 12px;
       border-radius: 4px;
       margin-top: var(--space-sm);
@@ -121,8 +121,8 @@
     }
 
     .objective-item {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       padding: var(--space-md);
       display: flex;
@@ -131,7 +131,7 @@
 
     .objective-item__variable {
       font-weight: 700;
-      color: var(--primary);
+      color: var(--hydro);
       font-size: 0.9rem;
       font-family: var(--font-mono);
       margin-bottom: var(--space-xs);
@@ -149,7 +149,7 @@
     }
 
     .dual-explanation {
-      background: linear-gradient(135deg, var(--info) 15%, var(--primary) 85%);
+      background: linear-gradient(135deg, var(--info) 15%, var(--nuclear) 85%);
       border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 8px;
       padding: var(--space-lg);
@@ -169,8 +169,8 @@
     }
 
     .solver-info {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
       padding: var(--space-md);
       margin: var(--space-lg) 0;
@@ -227,12 +227,12 @@
   <!-- Main content -->
   <main>
     <!-- Page header -->
-    <div class="header" data-header-variant="pulse">
+    <header class="header" data-header-variant="pulse">
       <div class="header__eyebrow">The Engine</div>
       <h1 class="header__title">The LP Core</h1>
       <p class="header__subtitle">The linear program formulation: variable layout, constraint families, objective function, and how the duals become locational marginal prices.</p>
       <div class="header__accent"></div>
-    </div>
+    </header>
 
     <!-- Section 1: Variable Layout -->
     <section class="section-light">
@@ -269,7 +269,7 @@
           <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Variable Definitions</h3>
 
           <table style="width: 100%; border-collapse: collapse; margin: var(--space-lg) 0; font-size: 0.9rem;">
-            <thead style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-emphasis);">
+            <thead style="background: var(--bg-card); border-bottom: 2px solid var(--border);">
               <tr>
                 <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Variable</th>
                 <th style="text-align: left; padding: var(--space-sm) var(--space-md); font-weight: 700;">Symbol</th>
@@ -278,55 +278,55 @@
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Thermal generation</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">P[g,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Output of generator g at hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Wind dispatch</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">W[z,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Wind generation dispatched at zone z, hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Solar dispatch</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">S[z,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Solar generation dispatched at zone z, hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Storage charge</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Chg[s,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy flowing into storage device s at hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Storage discharge</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Dis[s,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy flowing out of storage device s at hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Storage SOC</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">SOC[s,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Energy stored in device s at start of hour t</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Transmission flow</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Flow[l,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Power flowing on transmission link l at hour t (signed: positive = forward)</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Load slack</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Slack[z,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Unserved energy at zone z, hour t (priced at VOLL)</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">MWh</td>
               </tr>
-              <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <tr style="border-bottom: 1px solid var(--border-light);">
                 <td style="padding: var(--space-sm) var(--space-md);">Overgeneration</td>
                 <td style="padding: var(--space-sm) var(--space-md); font-family: var(--font-mono);">Dump[z,t]</td>
                 <td style="padding: var(--space-sm) var(--space-md); color: var(--text-secondary);">Excess generation / curtailment at zone z, hour t</td>
@@ -559,7 +559,7 @@
           </p>
 
           <p style="margin-bottom: 0;">
-            This is why <strong>congestion pricing works</strong>. It emerges naturally from the LP's solution structure. No special logic needed — just let the duals do their job.
+            This is why <strong>congestion pricing works</strong>. It emerges naturally from the LP's solution structure. No special logic needed — just let the duals do their job. The <a href="solving-pricing.html">Solving &amp; Pricing page</a> explains how P0→P1→P2 refines these prices to account for startup costs.
           </p>
         </div>
 
@@ -627,10 +627,15 @@
     </section>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb">
-      <a href="fleet-offer-curves.html">← Fleet & Offer Curves</a>
-      <span style="flex: 1;"></span>
-      <a href="solving-pricing.html">Solving & Pricing →</a>
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="fleet-offer-curves.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Fleet &amp; Offer Curves</span>
+      </a>
+      <a href="solving-pricing.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Solving &amp; Pricing</span>
+      </a>
     </nav>
   </main>
 
