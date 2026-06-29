@@ -2172,472 +2172,20 @@ def inject_caiso_gas_commitment_floor(
     return True
 
 
-# Afternoon-evening window (local hour-of-day, ``[start, end]`` inclusive) over
-# which the CAISO CT_PEAKER local-RA reliability floor binds — the net-load ramp
-# / duck-curve neck. On hot days (TMAX >= 30 deg C) this window carries ~80% of
-# measured CT_PEAKER energy; outside it the peakers dispatch purely on price. A
-# documented operating window, mirroring CAISO_GAS_FLOOR_HOURS.
-CAISO_CT_FLOOR_HOURS: tuple[int, int] = (15, 22)
-
-
-def inject_caiso_ct_reliability_floor(
-    fleet_arrays,
-    iso: str,
-    year: int,
-    slope_per_c: float,
-    t0_c: float,
-    cap: float,
-    base: float = 0.0,
-    hod_window: tuple[int, int] = CAISO_CT_FLOOR_HOURS,
-) -> bool:
-    """Floor CAISO CT_PEAKER at a temperature-driven local-RA commitment.
-
-    Models CAISO's **local Resource-Adequacy** commitment of simple-cycle gas
-    peakers (``CT_PEAKER``): on hot afternoons the load-pocket cooling load climbs
-    and solar collapses at sunset, so fast-start CTs in the LA Basin /
-    Big-Creek-Ventura / Bay-Area local capacity areas are held online for local
-    reliability regardless of system-energy economics. An energy-only LP never
-    dispatches these top-of-merit peakers, so the backcast under-runs CT_PEAKER
-    and the freed energy spills onto the cheaper combined-cycle fleet
-    (CC_REGULAR over-generates).
-
-    After :func:`~market_sim.data.fleet.generators_to_fleet_arrays` builds the
-    fleet, this imposes a hard minimum-generation floor on the CT_PEAKER units
-    over the afternoon-evening ``hod_window``, sized to ``frac`` x available
-    capacity where ``frac = clip(base + slope_per_c*(TMAX - t0_c), base, cap)`` is
-    keyed to the load-weighted CAISO daily max temperature (:func:`~market_sim
-    .data.eia_loader.caiso_load_weighted_tmax`). ``base`` is the YEAR-ROUND
-    local-RA baseline (the measured cool-day evening CF the hot-limb fit clips to
-    zero — CAISO's Local Capacity Requirement holds a must-offer minimum on mild
-    days, not only hot ones); ``base = 0`` is byte-identical to the hot-limb-only
-    floor. The hourly fleet target is
-    distributed over the CT_PEAKER units **cheapest-first** (by heat rate), each
-    capped at its available capacity — the same hour-varying
-    ``FleetArrays.min_gen`` lower bound the CHP steam floor and the gas
-    commitment floor use, composed with any floor already present via
-    ``maximum``. The LP dispatches economically *above* the floor, so it only
-    binds on the hot-day evening hours an energy-only merit order would leave the
-    peakers off — exactly the missing local-RA energy.
-
-    The curve coefficients are the measured CAMPD CT_PEAKER evening capacity
-    factor regressed on TMAX (2023-2025; ``scripts/derive_caiso_ct_reliability_
-    floor.py``, ``docs/caiso-ct-reliability-floor-2026-06.md``) — a physical
-    temperature->commitment rule, not a fit to a TWh residual. It is forward-
-    derivable (a forecast year pins a weather year, hence a TMAX series, exactly
-    as it pins load/wind/solar) and condition-responsive (hotter years -> more
-    CT), which is what makes it admissible in both backcast and forecast
-    (CLAUDE.md #10/#11).
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was applied,
-    ``False`` (byte-identical) when ``iso`` is not CAISO, ``slope_per_c``/``cap``
-    are non-positive, the fleet has no CT_PEAKER units, or no archived TMAX
-    series is available (forecast year / unmapped ISO).
-    """
-    if iso != "CAISO" or slope_per_c <= 0.0 or cap <= 0.0:
-        return False
-    from market_sim.data.eia_loader import caiso_load_weighted_tmax
-
-    if fleet_arrays.plant_group is None:
-        return False
-    is_ct = np.asarray(fleet_arrays.plant_group) == "CT_PEAKER"
-    ct_rows = np.flatnonzero(is_ct & (fleet_arrays.pmax > 0.0))
-    if ct_rows.size == 0:
-        return False
-
-    hours = int(fleet_arrays.availability.shape[1])
-    tmax = caiso_load_weighted_tmax(year, hours)
-    if tmax is None:
-        return False
-
-    # Temperature->commitment fraction: the hot-limb line clipped between the
-    # year-round local-RA BASELINE (``base``, the measured cool-day evening
-    # minimum the hot-limb fit clips to zero) and the hottest-day ceiling
-    # (``cap``), restricted to the afternoon-evening window (zero elsewhere). With
-    # base = 0 this is byte-identical to the hot-limb-only floor. Row 0 of the
-    # dispatch is the first local hour of the year, so a plain local clock
-    # reproduces the hour-of-day index.
-    frac = np.clip(
-        base + slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), base, cap
-    )
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
-    start, end = hod_window
-    window = (hod >= start) & (hod <= end)
-    frac = np.where(window, frac, 0.0)
-    if not np.any(frac > 0.0):
-        return False
-
-    # Per-hour CT fleet target = frac x available CT_PEAKER capacity that hour.
-    avail_cap = (
-        fleet_arrays.pmax[ct_rows, np.newaxis] * fleet_arrays.availability[ct_rows, :]
-    )
-    target = frac * avail_cap.sum(axis=0)
-
-    if fleet_arrays.min_gen is None:
-        fleet_arrays.min_gen = np.broadcast_to(
-            fleet_arrays.pmin[:, np.newaxis],
-            (fleet_arrays.pmin.size, hours),
-        ).copy()
-
-    # Distribute the hourly fleet target cheapest-first (by heat rate) over the
-    # CT_PEAKER units, each capped at its available capacity; ``maximum`` composes
-    # with any existing floor rather than clobbering it.
-    order = ct_rows[np.argsort(fleet_arrays.heat_rate[ct_rows], kind="stable")]
-    remaining = target.copy()
-    for r in order:
-        cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-        take = np.minimum(remaining, cap_r)
-        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
-        remaining = remaining - take
-    return True
-
-
-# NYISO downstate CT_PEAKER reliability-floor window (HB14-21 local) and the
-# load-pocket zones it applies to. The measured downstate (NYC + Long Island +
-# Lower Hudson) peaker fleet's hot-day capacity factor peaks HB14-18 (~0.69) and
-# tails through HB21 (derive_nyiso_ct_reliability_floor.py); the floor is keyed to
-# the in-city / cable-islanded load pockets, NOT the upstate peakers (which carry
-# no AC-cable reliability driver).
-NYISO_CT_FLOOR_HOURS: tuple[int, int] = (14, 21)
-NYISO_CT_FLOOR_ZONES: tuple[str, ...] = ("NYC", "Long_Island", "Lower_Hudson")
-
-
-def inject_nyiso_ct_reliability_floor(
-    fleet_arrays,
-    iso: str,
-    year: int,
-    zone_names: list[str],
-    slope_per_c: float,
-    t0_c: float,
-    cap: float,
-    base: float = 0.0,
-    hod_window: tuple[int, int] = NYISO_CT_FLOOR_HOURS,
-) -> bool:
-    """Floor NYISO **downstate** CT_PEAKER at a temperature-driven local-RA commitment.
-
-    Models NYISO's in-city / Long-Island local-reliability commitment of
-    simple-cycle gas peakers: on hot afternoons the cable-constrained downstate
-    cooling load (NYC zone J, Long Island zone K, Lower Hudson) climbs and the
-    UPNY-SENY / Long-Island-cable import limits bind, so fast-start GTs in the
-    load pockets are held online for local capacity-area reliability regardless of
-    system-energy economics. An energy-only LP never dispatches these
-    top-of-merit peakers (it imports cheap upstate/NYC CC instead), so the
-    backcast under-runs CT_PEAKER and the freed energy spills onto the cheaper
-    combined-cycle fleet (CC_REGULAR over-generates) — the documented downstate
-    CT_PEAKER miss.
-
-    Identical mechanism to :func:`inject_caiso_ct_reliability_floor`, with two
-    NYISO specializations: (1) the floor is restricted to the **downstate load
-    pockets** (``NYISO_CT_FLOOR_ZONES``) — upstate peakers carry no AC-cable
-    reliability driver and are left to economics; (2) the daily max temperature is
-    the NYC-metro series (:func:`~market_sim.data.eia_loader.nyiso_downstate_tmax`,
-    NOAA GHCN-Daily TMAX for Central Park / LaGuardia / JFK). The hourly
-    downstate-fleet target is ``frac = clip(base + slope_per_c*(TMAX - t0_c),
-    base, cap)`` over the afternoon-evening ``hod_window``, distributed
-    cheapest-first over the in-pocket CT_PEAKER units (each capped at available
-    capacity), composed with any existing ``FleetArrays.min_gen`` floor via
-    ``maximum``. The LP dispatches economically above the floor, so it binds only
-    on the hot-day evening hours an energy-only merit order would leave the
-    downstate peakers off.
-
-    The curve coefficients are the measured downstate CAMPD CT_PEAKER evening
-    (HB14-21) capacity factor regressed on NYC TMAX, 2023-2025
-    (``scripts/derive_nyiso_ct_reliability_floor.py``) — a physical
-    temperature->commitment rule, not a fit to a TWh residual. Forward-derivable
-    (a forecast year pins a weather year, hence a TMAX series) and
-    condition-responsive (hotter years -> more downstate CT), admissible in both
-    backcast and forecast (CLAUDE.md #10/#11). It does NOT address the *winter*
-    downstate run (a gas-electric constraint, not a cooling driver) — that belongs
-    to the dual-fuel / Transco-Z6 gas-basis frontier.
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was applied,
-    ``False`` (byte-identical) when ``iso`` is not NYISO, ``slope_per_c``/``cap``
-    are non-positive, the fleet has no downstate CT_PEAKER units, or no archived
-    TMAX series is available (forecast year / unmapped ISO).
-    """
-    if iso != "NYISO" or slope_per_c <= 0.0 or cap <= 0.0:
-        return False
-    from market_sim.data.eia_loader import nyiso_downstate_tmax
-
-    if fleet_arrays.plant_group is None:
-        return False
-    # Restrict to the downstate load pockets (NYC / Long Island / Lower Hudson);
-    # upstate peakers carry no AC-cable reliability driver.
-    ds_zone_idx = {i for i, z in enumerate(zone_names) if z in NYISO_CT_FLOOR_ZONES}
-    is_ct = np.asarray(fleet_arrays.plant_group) == "CT_PEAKER"
-    is_downstate = np.isin(fleet_arrays.zone_idx, list(ds_zone_idx))
-    ct_rows = np.flatnonzero(is_ct & is_downstate & (fleet_arrays.pmax > 0.0))
-    if ct_rows.size == 0:
-        return False
-
-    hours = int(fleet_arrays.availability.shape[1])
-    tmax = nyiso_downstate_tmax(year, hours)
-    if tmax is None:
-        return False
-
-    frac = np.clip(
-        base + slope_per_c * (np.asarray(tmax, dtype=float) - t0_c), base, cap
-    )
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
-    start, end = hod_window
-    window = (hod >= start) & (hod <= end)
-    frac = np.where(window, frac, 0.0)
-    if not np.any(frac > 0.0):
-        return False
-
-    avail_cap = (
-        fleet_arrays.pmax[ct_rows, np.newaxis] * fleet_arrays.availability[ct_rows, :]
-    )
-    target = frac * avail_cap.sum(axis=0)
-
-    if fleet_arrays.min_gen is None:
-        fleet_arrays.min_gen = np.broadcast_to(
-            fleet_arrays.pmin[:, np.newaxis],
-            (fleet_arrays.pmin.size, hours),
-        ).copy()
-
-    order = ct_rows[np.argsort(fleet_arrays.heat_rate[ct_rows], kind="stable")]
-    remaining = target.copy()
-    for r in order:
-        cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-        take = np.minimum(remaining, cap_r)
-        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
-        remaining = remaining - take
-    return True
-
-
-# NYISO ST_GAS (gas-steam) local-reliability floor: the afternoon-evening window
-# (HB14-21, matching the CT floor and the regression basis) and the per-zone
-# temperature->commitment coefficients. Unlike the CT floor's single pooled
-# NYC-metro series, the downstate steam fleet sits in three distinct weather
-# regimes, so each zone is keyed to its OWN load-center daily max temperature
-# (Islip for Long Island, Central Park for NYC, Albany for the Capital region).
-# Each entry is (slope_per_c, t0_c, cap, base_ev, base_24h). The hourly floor is a
-# PERSISTENT 24-hour baseline (base_24h, applied over ALL hours) with the evening
-# cooling hot-limb layered on top over NYISO_ST_FLOOR_HOURS via maximum:
-#   overnight/midday: frac = base_24h
-#   evening window  : frac = max(base_24h, clip(base_ev + slope*(TMAX-t0),
-#                                               base_ev, cap))
-# CRITICAL — frac is a WHEN-AVAILABLE capacity factor, regressed on CF normalised
-# by AVAILABLE capacity (nameplate net of the unit-outage derate), NOT by nameplate
-# over all hours. The floor is applied as frac x pmax x availability, so the model
-# already discounts outage downtime via `availability`; regressing frac on the
-# all-hours (nameplate) CF would double-discount it — the cool-day all-hours CF is
-# itself deflated by the heavy NYC/LI steam downtime, and multiplying by
-# availability again floored the costly in-city units (Astoria, Arthur Kill) at
-# near zero, the documented suppression. On the available basis these units run a
-# steady ~0.4 baseline whenever they are committed (NYC temperature corr falls to
-# ~0 — a flat in-city must-run, not a weather ramp), which the floor now
-# reproduces: frac x availability tracks the real duty cycle (full baseline when
-# available, zero on outage). Coefficients regressed *a priori* from the measured
-# per-zone CAMPD ST_GAS when-available CF vs the zone's NOAA GHCN daily max
-# temperature, pooled 2023-2025 (scripts/derive_nyiso_st_reliability_floor.py) —
-# NOT TWh-residual fits. base_24h is the cool-day 24h available-CF p25; base_ev the
-# cool-day evening available-CF p25; cap the evening available-CF p97 (clipped to
-# 0.95 to leave headroom and reject outage-edge artifacts > 1); slope the evening
-# hot-limb:
-#   * Long_Island — base_24h 0.289 / base_ev 0.383, slope 0.0406/degC, cap 0.891
-#     (corr +0.48), cable-islanded.
-#   * NYC          — persistent in-city must-run (Ravenswood/Arthur Kill/Astoria):
-#     base_24h 0.391 / base_ev 0.432, slope 0.0393/degC, cap 0.95 (corr ~0 — flat
-#     when committed). NYISO's in-city reliability rules are strongest in zone J.
-#   * Capital_Hudson — no baseline (base 0.0), weak hot-limb only, slope 0.0246/degC,
-#     cap 0.95 — binds only on the hottest afternoons, conservative for a weak class.
-# The base x available-capacity basis (pmax x availability) is automatically
-# outage-aware (a unit on a forced/planned outage is not floored). Upstate_West
-# ST_GAS (150 MW, CF flat ~0.50) is NOT temperature-driven (baseload cogen-like)
-# and is deliberately omitted — a flat must-run there would be an un-grounded fit.
-NYISO_ST_FLOOR_HOURS: tuple[int, int] = (14, 21)  # evening hot-limb (HB14-21)
-# Plants excluded from the steam reliability floor (none — kept as an explicit
-# hook). Ravenswood (2500), a mixed CC/ST facility, was a candidate because its
-# CAMPD outages are tagged CC_REGULAR and never reached its ST_GAS bin, leaving it
-# over-available so the floor over-forced it; that is now fixed at the SOURCE —
-# data.outages._FLEET_GROUP_OVERRIDE routes plant 2500's outages to its ST_GAS bin
-# so its model availability reflects the real downtime — so Ravenswood is included
-# in both the floor and the coefficient regression like the other in-city steam.
-NYISO_ST_FLOOR_EXCLUDE_PLANTS: frozenset[int] = frozenset()
-NYISO_ST_FLOOR_COEFFS: dict[str, tuple[float, float, float, float, float]] = {
-    # zone: (slope_per_c, t0_c, cap, base_ev, base_24h)  — WHEN-AVAILABLE CF
-    "Long_Island": (0.0406, 25.0, 0.891, 0.383, 0.289),
-    "NYC": (0.0393, 25.0, 0.950, 0.432, 0.391),
-    "Capital_Hudson": (0.0246, 25.0, 0.950, 0.000, 0.000),
-}
-
-
-def inject_nyiso_st_reliability_floor(
-    fleet_arrays,
-    iso: str,
-    year: int,
-    zone_names: list[str],
-    coeffs: dict[str, tuple[float, float, float, float, float]] = NYISO_ST_FLOOR_COEFFS,
-    hod_window: tuple[int, int] = NYISO_ST_FLOOR_HOURS,
-) -> bool:
-    """Floor NYISO downstate ST_GAS at a temperature-driven local-RA commitment.
-
-    Companion to :func:`inject_nyiso_ct_reliability_floor` for the gas-steam fleet.
-    NYISO's downstate steam units run a persistent in-city / cable-islanded
-    reliability baseline plus a strong summer hot-limb that an energy-only LP
-    zeroes out — it imports cheaper upstate/NYC combined cycle instead — so the
-    backcast under-runs ST_GAS (the documented 2024 ST_GAS miss). Three
-    specializations vs the CT floor:
-
-    * **Per-zone temperature.** The downstate steam pockets sit in distinct
-      weather regimes, so each zone in ``coeffs`` is floored against its OWN
-      load-center daily max temperature (:func:`~market_sim.data.eia_loader.
-      nyiso_zone_tmax`: Islip for Long Island, Central Park for NYC, Albany for
-      the Capital region) rather than one pooled series.
-    * **Persistent 24-hour baseline + evening hot-limb (Task C).** Each zone is
-      floored at a PERSISTENT baseline ``base_24h`` over ALL hours (the in-city /
-      cable-islanded must-run that runs overnight and midday too — the measured
-      cool-day CF is ~80% as high overnight as in the evening), with the evening
-      cooling hot-limb layered on top over ``hod_window`` via ``maximum``:
-      overnight/midday ``frac = base_24h``; evening ``frac = max(base_24h,
-      clip(base_ev + slope*(TMAX-t0), base_ev, cap))``. NYISO's in-city
-      reliability rules are strongest in zone J (NYC: Ravenswood / Arthur Kill /
-      Astoria). Because the floor is ``frac`` x available capacity (``pmax`` x
-      ``availability``) it is automatically outage-aware: a unit on a
-      forced/planned outage (availability folds in the historic CEMS overlay) is
-      not floored.
-    * **Grounded, weak-class restraint.** Long Island and NYC carry a 24-hour
-      baseline plus a hot-limb; Capital a weak hot-limb-only floor (no baseline);
-      the flat, temperature-insensitive Upstate steam fleet is deliberately
-      omitted from ``coeffs`` (no un-grounded flat must-run).
-
-    The hourly fraction is applied **per unit, pro-rata** — each in-pocket ST_GAS
-    unit is floored at ``frac`` x its OWN available capacity (``pmax`` x
-    ``availability``) via the hour-varying ``FleetArrays.min_gen`` lower bound,
-    NOT cheapest-first over an aggregate target. In-city local reliability commits
-    the geographically-distributed steam units (NYC: Ravenswood, Astoria, Arthur
-    Kill — each in its own load pocket) by their locational role, so ``frac`` is a
-    per-unit fleet CF; a cheapest-first aggregate would instead pour the whole
-    commitment into the single cheapest unit (which an energy-only LP already runs
-    economically, making the floor redundant there) and leave the costlier in-city
-    units idle — the opposite of the measured CAMPD distribution, where all the
-    in-pocket steam runs at similar moderate CFs. Composed with any existing floor
-    (e.g. the Long Island self-supply floor,
-    :func:`inject_nyiso_local_selfsupply`) via ``maximum`` so the two never
-    double-force. The LP dispatches economically above the floor.
-
-    All coefficients are regressed *a priori* from the measured per-zone CAMPD
-    ST_GAS CF vs the zone's NOAA GHCN daily max temperature, pooled 2023-2025
-    (``scripts/derive_nyiso_st_reliability_floor.py``: ``base_24h`` the cool-day
-    ALL-hours p25, ``base_ev`` the cool-day evening p25, ``cap`` the evening p97,
-    ``slope`` the evening hot-limb) — a physical temperature->commitment rule, NOT
-    a fit to a TWh residual. Forward-reproducible (a forecast year pins a weather
-    year, hence a TMAX series) and condition-responsive (hotter years -> more
-    downstate steam), so it is admissible in both backcast and forecast (CLAUDE.md
-    #10/#11).
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when any zone floored a
-    fleet, ``False`` (byte-identical) when ``iso`` is not NYISO, the fleet has no
-    plant-group labels or no downstate ST_GAS units, or no archived TMAX series is
-    available (forecast year / unmapped ISO).
-    """
-    if iso != "NYISO":
-        return False
-    if fleet_arrays.plant_group is None:
-        return False
-    from market_sim.data.eia_loader import nyiso_zone_tmax
-
-    hours = int(fleet_arrays.availability.shape[1])
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
-    start, end = hod_window
-    in_window = (hod >= start) & (hod <= end)
-    groups = np.asarray(fleet_arrays.plant_group)
-    applied = False
-
-    for zone, (slope_per_c, t0_c, cap, base_ev, base_24h) in coeffs.items():
-        # A zone is floored when it carries either a hot-limb or a persistent
-        # baseline; skip only the fully-zero (no-op) zones.
-        if (slope_per_c <= 0.0 or cap <= 0.0) and base_24h <= 0.0:
-            continue
-        z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
-        if z_idx is None:
-            continue
-        sel = (
-            (groups == "ST_GAS")
-            & (fleet_arrays.zone_idx == z_idx)
-            & (fleet_arrays.pmax > 0.0)
-        )
-        if fleet_arrays.plant_code is not None:
-            sel &= ~np.isin(
-                np.asarray(fleet_arrays.plant_code), list(NYISO_ST_FLOOR_EXCLUDE_PLANTS)
-            )
-        rows = np.flatnonzero(sel)
-        if rows.size == 0:
-            continue
-        tmax = nyiso_zone_tmax(year, hours, zone)
-        if tmax is None:
-            continue
-        # Persistent 24-hour baseline, with the evening cooling hot-limb layered on
-        # top over the window via maximum.
-        frac = np.full(hours, base_24h, dtype=float)
-        if slope_per_c > 0.0 and cap > 0.0:
-            ev = np.clip(
-                base_ev + slope_per_c * (np.asarray(tmax, float) - t0_c), base_ev, cap
-            )
-            frac = np.where(in_window, np.maximum(frac, ev), frac)
-        if not np.any(frac > 0.0):
-            continue
-        # PER-UNIT pro-rata distribution: floor EACH in-pocket steam unit at frac x
-        # its OWN available capacity, NOT cheapest-first over an aggregate target.
-        # In-city local reliability commits the geographically-distributed steam
-        # units (NYC: Ravenswood, Astoria, Arthur Kill — each in its own load
-        # pocket) by their locational role, not by economics, so the measured frac
-        # is a per-unit fleet CF, applied to every unit. A cheapest-first aggregate
-        # instead pours the whole commitment into the single cheapest unit
-        # (Ravenswood, which an energy-only LP already runs economically, so the
-        # floor is redundant there) and leaves the costlier in-city units (Astoria,
-        # Arthur Kill) idle — the opposite of the measured CAMPD distribution, where
-        # all three run at similar moderate CFs. Composed with any existing floor
-        # via maximum; the LP dispatches economically above it.
-        if fleet_arrays.min_gen is None:
-            fleet_arrays.min_gen = np.broadcast_to(
-                fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
-            ).copy()
-        for r in rows:
-            avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-            np.maximum(
-                fleet_arrays.min_gen[r, :],
-                frac * avail_r,
-                out=fleet_arrays.min_gen[r, :],
-            )
-        applied = True
-    return applied
-
-
-# NEISO weather-correlated reliability-floor windows (local hour-of-day) and the
-# cold-limb plant groups. ISO-NE is a DUAL-LIMB weather system: the simple-cycle
-# peakers track the summer cooling HOT limb (TMAX) over the afternoon-evening
-# ramp like CAISO/NYISO; the cold-snap reliability units (the lone
-# Merrimack-class COAL unit + the lone steam-gas ST_GAS unit, run when the
-# gas-electric constraint binds in deep winter) track the COLD limb (TMIN) over
-# the winter morning + evening load peaks. Coefficients regressed from measured
-# CAMPD CF vs the NEISO load-weighted daily TMAX/TMIN, pooled 2023-2025
-# (scripts/derive_neiso_temp_reliability_floor.py).
-NEISO_CT_FLOOR_HOURS: tuple[int, int] = (16, 21)  # hot-limb evening ramp (HB16-21)
 # Winter cold-snap peak hours (morning HB6-9 + evening HB17-20) — the gas-system
 # stress windows the oil/coal/steam reliability fleet covers; an explicit tuple
 # of local hours-of-day (two disjoint ranges, not a single [start,end] band).
 NEISO_COLDSNAP_FLOOR_HOURS: tuple[int, ...] = (6, 7, 8, 9, 17, 18, 19, 20)
-# Cold-limb groups and their per-group zero-crossing TMIN (deg C): below this
-# daily minimum temperature the cold-limb floor activates and rises as it gets
-# colder. COAL (Merrimack) starts hardening earlier (T0=+5 degC, the best-fit
-# cold limb); ST_GAS holds until the deep-cold gas-constraint hours (T0=0 degC).
-NEISO_COLDSNAP_CLASSES: tuple[str, ...] = ("COAL", "ST_GAS")
-NEISO_COLDSNAP_T0_C: dict[str, float] = {"COAL": 5.0, "ST_GAS": 0.0}
 
 
 def _distribute_group_floor(fleet_arrays, rows, frac: np.ndarray, hours: int) -> None:
     """Floor a plant-group fleet at ``frac`` x available capacity, cheapest-first.
 
-    Shared kernel for the NEISO weather floor: sizes the hourly group target as
-    ``frac`` x the group's available capacity and distributes it over the group's
-    units cheapest-first (by heat rate), each capped at its available capacity,
-    composing with any existing ``FleetArrays.min_gen`` floor via ``maximum``.
-    Mirrors the distribution in :func:`inject_caiso_ct_reliability_floor`.
+    Shared kernel for :func:`inject_reliability_floor`: sizes the hourly group
+    target as ``frac`` x the group's available capacity and distributes it over
+    the group's units cheapest-first (by heat rate), each capped at its available
+    capacity, composing with any existing ``FleetArrays.min_gen`` floor via
+    ``maximum``.
     """
     avail_cap = fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
     target = frac * avail_cap.sum(axis=0)
@@ -2652,106 +2200,6 @@ def _distribute_group_floor(fleet_arrays, rows, frac: np.ndarray, hours: int) ->
         take = np.minimum(remaining, cap_r)
         np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
         remaining = remaining - take
-
-
-def inject_neiso_temp_reliability_floor(
-    fleet_arrays,
-    iso: str,
-    year: int,
-    ct_slope_per_c: float,
-    ct_t0_c: float,
-    ct_cap: float,
-    ct_base: float,
-    cold_slope_per_c: float,
-    cold_cap: float,
-    cold_base: float,
-) -> bool:
-    """Floor NEISO weather-correlated reliability units at a temperature commitment.
-
-    ISO-NE under-runs two structurally distinct weather-driven fleets that an
-    energy-only LP leaves on the cheaper combined-cycle stack, and they respond
-    to OPPOSITE limbs of the temperature distribution:
-
-    * **CT_PEAKER (hot limb).** Simple-cycle gas peakers track the summer cooling
-      ramp exactly as in CAISO/NYISO: on hot afternoons the load climbs and the
-      fast-start CTs are held online for local reliability regardless of
-      system-energy economics. Floored over the afternoon-evening window
-      (``NEISO_CT_FLOOR_HOURS``) at ``frac = clip(ct_base + ct_slope*(TMAX -
-      ct_t0), ct_base, ct_cap)`` keyed to the NEISO load-weighted daily max
-      temperature.
-
-    * **COAL + ST_GAS (cold limb).** ISO-NE's lone Merrimack-class coal unit and
-      lone steam-gas unit run almost exclusively during deep-winter cold snaps,
-      when the gas-electric constraint (pipeline scarcity feeding both heating
-      and power) prices these oil/coal/steam reliability units into merit. The
-      measured CF correlates with cold, not heat (Spearman rho on the cold limb
-      ~0.35-0.40 vs ~0 against TMAX), so they are floored over the winter
-      morning + evening peaks (``NEISO_COLDSNAP_FLOOR_HOURS``) at ``frac =
-      clip(cold_base + cold_slope*(T0_group - TMIN), cold_base, cold_cap)`` keyed
-      to the daily MIN temperature, with per-group zero-crossings
-      (``NEISO_COLDSNAP_T0_C``; COAL hardens at +5 degC, ST_GAS at 0 degC).
-
-    All coefficients are the measured CAMPD CF regressed on the NEISO
-    load-weighted daily TMAX/TMIN, pooled 2023-2025 (``scripts/derive_neiso_temp_
-    reliability_floor.py``) — physical temperature->commitment rules, NOT fits to
-    a TWh residual. Forward-reproducible (a forecast year pins a weather year,
-    hence a TMAX/TMIN series, exactly as it pins load/wind/solar) and
-    condition-responsive (hotter summers -> more CT, colder winters -> more
-    coal/steam), which is what makes them admissible in both backcast and
-    forecast (CLAUDE.md #10/#11). The hourly group target is distributed
-    cheapest-first over the group's units (each capped at available capacity) via
-    the hour-varying ``FleetArrays.min_gen`` lower bound, composed with any floor
-    already present; the LP dispatches economically above it.
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when any limb floored a
-    fleet, ``False`` (byte-identical) when ``iso`` is not NEISO, no archived
-    TMAX/TMIN series is available (forecast year / unmapped ISO), or no eligible
-    units exist.
-    """
-    if iso != "NEISO":
-        return False
-    if fleet_arrays.plant_group is None:
-        return False
-    from market_sim.data.eia_loader import neiso_load_weighted_temp
-
-    hours = int(fleet_arrays.availability.shape[1])
-    temp = neiso_load_weighted_temp(year, hours)
-    if temp is None:
-        return False
-    tmax, tmin = temp
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
-    groups = np.asarray(fleet_arrays.plant_group)
-    applied = False
-
-    # Hot limb: CT_PEAKER over the afternoon-evening ramp.
-    if ct_slope_per_c > 0.0 and ct_cap > 0.0:
-        ct_rows = np.flatnonzero((groups == "CT_PEAKER") & (fleet_arrays.pmax > 0.0))
-        if ct_rows.size:
-            frac = np.clip(ct_base + ct_slope_per_c * (tmax - ct_t0_c), ct_base, ct_cap)
-            start, end = NEISO_CT_FLOOR_HOURS
-            frac = np.where((hod >= start) & (hod <= end), frac, 0.0)
-            if np.any(frac > 0.0):
-                _distribute_group_floor(fleet_arrays, ct_rows, frac, hours)
-                applied = True
-
-    # Cold limb: COAL + ST_GAS over the winter morning + evening peaks.
-    if cold_slope_per_c > 0.0 and cold_cap > 0.0:
-        cold_window = np.isin(hod, np.asarray(NEISO_COLDSNAP_FLOOR_HOURS))
-        for grp in NEISO_COLDSNAP_CLASSES:
-            rows = np.flatnonzero((groups == grp) & (fleet_arrays.pmax > 0.0))
-            if rows.size == 0:
-                continue
-            t0 = NEISO_COLDSNAP_T0_C.get(grp, 0.0)
-            frac = np.clip(
-                cold_base + cold_slope_per_c * (t0 - tmin), cold_base, cold_cap
-            )
-            frac = np.where(cold_window, frac, 0.0)
-            if np.any(frac > 0.0):
-                _distribute_group_floor(fleet_arrays, rows, frac, hours)
-                applied = True
-
-    return applied
 
 
 # Gas-fired plant groups exposed to the winter gas-electric constraint (the
@@ -2781,8 +2229,9 @@ def inject_neiso_gas_coldsnap_derate(
 ) -> bool:
     """Derate NON-dual-fuel gas-fired availability on deep-winter cold snaps.
 
-    The physical counterpart to :func:`inject_neiso_temp_reliability_floor`'s
-    cold limb. On the coldest hours ISO-NE's gas-electric constraint — the
+    The physical counterpart to the reliability floor's NEISO cold limb
+    (a gas-pipeline availability derate, not a must-run commitment). On the
+    coldest hours ISO-NE's gas-electric constraint — the
     pipeline diverting deliverability to heating — leaves a share of the
     gas-fired fleet *unable to get fuel*: not merely expensive, physically
     UNAVAILABLE. An energy-only LP that keeps those units available-but-dear
@@ -2857,157 +2306,30 @@ def inject_neiso_gas_coldsnap_derate(
     return True
 
 
-# MISO dual-limb, ZONAL weather-correlated reliability-floor windows (local
-# hour-of-day) and per-zone, per-class coefficients. MISO spans two opposite
-# weather regimes within one ISO, so each zone is keyed to its OWN load-weighted
-# daily TMAX/TMIN and BOTH limbs are fit per zone (mirroring NEISO's dual-limb
-# and NYISO's per-zone templates). Hot limb = summer afternoon-evening AC ramp
-# (TMAX); cold limb = deep-winter morning/evening peaks (TMIN), where the
-# gas-electric constraint prices gas-steam into merit. Coefficients regressed
-# from the measured per-(zone × class) CAMPD CF vs the zone load-weighted
-# TMAX/TMIN, pooled 2023-2025 (scripts/derive_miso_temp_reliability_floor.py).
-MISO_HOT_FLOOR_HOURS: tuple[int, int] = (14, 20)  # afternoon-evening AC ramp
-MISO_COLDSNAP_FLOOR_HOURS: tuple[int, ...] = (6, 7, 8, 9, 17, 18, 19, 20)
-
-# Per-zone (hot_slope, hot_t0, hot_cap, hot_base, cold_slope, cold_t0, cold_cap).
-# A limb is INCLUDED only where the measured Spearman rho >= ~0.30 (a meaningful
-# temperature correlation); ungrounded limbs are zeroed (slope=cap=0). The data
-# shows the cold limb is grounded ONLY in MISO-South (the Entergy
-# gas-constrained footprint: ST_GAS rho +0.42, CT_PEAKER rho +0.52); the North
-# steam/CT fleet does NOT track cold (rho ~0.03-0.07 — winter load there is
-# served by coal/wind, not gas), so its cold limb is left off rather than forced.
-MISO_ST_FLOOR_COEFFS: dict[
-    str, tuple[float, float, float, float, float, float, float]
-] = {
-    "MISO-North": (0.0226, 25.0, 0.361, 0.071, 0.0, 10.0, 0.0),
-    "MISO-Central": (0.0316, 25.0, 0.568, 0.107, 0.0, 10.0, 0.0),
-    "MISO-South": (0.0366, 25.0, 0.882, 0.222, 0.0298, 5.0, 0.714),
-}
-MISO_CT_FLOOR_COEFFS: dict[
-    str, tuple[float, float, float, float, float, float, float]
-] = {
-    "MISO-North": (0.0373, 25.0, 0.525, 0.020, 0.0, 10.0, 0.0),
-    "MISO-Central": (0.0600, 25.0, 0.851, 0.206, 0.0, 10.0, 0.0),
-    "MISO-South": (0.0395, 25.0, 1.000, 0.264, 0.0296, 5.0, 0.736),
-}
-
-
-def inject_miso_temp_reliability_floor(
-    fleet_arrays,
-    iso: str,
-    year: int,
-    zone_names: list[str],
-    st_coeffs: dict[
-        str, tuple[float, float, float, float, float, float, float]
-    ] = MISO_ST_FLOOR_COEFFS,
-    ct_coeffs: dict[
-        str, tuple[float, float, float, float, float, float, float]
-    ] = MISO_CT_FLOOR_COEFFS,
-) -> bool:
-    """Floor MISO gas-steam and simple-cycle CTs at a zonal, dual-limb temperature
-    commitment.
-
-    MISO under-runs two weather-driven fleets an energy-only LP leaves on the
-    cheaper combined-cycle / coal stack, and — uniquely among the modelled ISOs —
-    the two limbs of the temperature distribution matter in DIFFERENT zones:
-
-    * **Hot limb (TMAX), all zones.** On hot summer afternoons local reliability
-      holds the gas-steam boilers and simple-cycle CTs online regardless of
-      system-energy economics. Floored over the afternoon-evening window
-      (``MISO_HOT_FLOOR_HOURS``) at ``frac = clip(hot_base + hot_slope*(TMAX -
-      hot_t0), hot_base, hot_cap)`` keyed to each zone's load-weighted daily max
-      temperature. Strongest in MISO-South (Entergy AC-peaking, rho +0.75 for
-      ST_GAS) and MISO-Central.
-
-    * **Cold limb (TMIN), MISO-South only.** In deep-winter cold snaps the
-      gas-electric constraint (pipeline scarcity feeding both heating and power
-      across the Entergy/Gulf footprint) prices the gas-steam / oil-capable units
-      into merit. Floored over the winter morning + evening peaks
-      (``MISO_COLDSNAP_FLOOR_HOURS``) at ``frac = clip(cold_slope*(cold_t0 -
-      TMIN), 0, cold_cap)`` keyed to the daily MIN temperature. The cold limb is
-      grounded (measured rho >= 0.30) ONLY in MISO-South; the North/Central
-      steam/CT cold correlation is ~0 (winter load there is coal/wind), so those
-      cold limbs are zeroed in the coefficient tables rather than forced.
-
-    All coefficients are the measured per-(zone × class) CAMPD CF regressed on
-    the zone load-weighted daily TMAX/TMIN, pooled 2023-2025
-    (``scripts/derive_miso_temp_reliability_floor.py``) — physical
-    temperature->commitment rules, NOT fits to a TWh residual. Forward-reproducible
-    (a forecast year pins a weather year, hence a TMAX/TMIN series) and
-    condition-responsive (hotter summers -> more CT/ST in the South; colder
-    winters -> more gas-steam), which makes them admissible in both backcast and
-    forecast (CLAUDE.md #10/#11). For each (zone, class) the hourly target is the
-    max of the applicable limbs and is distributed cheapest-first over the group's
-    in-zone units (each capped at available capacity) via the hour-varying
-    ``FleetArrays.min_gen`` lower bound, composed with any floor already present;
-    the LP dispatches economically above it.
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when any (zone, class)
-    floored a fleet, ``False`` (byte-identical) when ``iso`` is not MISO, the
-    fleet has no plant-group labels, or no archived TMAX/TMIN series is available
-    (forecast year / unmapped ISO).
-    """
-    if iso != "MISO":
-        return False
-    if fleet_arrays.plant_group is None:
-        return False
-    from market_sim.data.eia_loader import miso_zone_temp
-
-    hours = int(fleet_arrays.availability.shape[1])
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
-    hot_start, hot_end = MISO_HOT_FLOOR_HOURS
-    in_hot = (hod >= hot_start) & (hod <= hot_end)
-    in_cold = np.isin(hod, np.asarray(MISO_COLDSNAP_FLOOR_HOURS))
-    groups = np.asarray(fleet_arrays.plant_group)
-    zone_to_idx = {z: i for i, z in enumerate(zone_names)}
-    applied = False
-
-    for group, coeffs in (("ST_GAS", st_coeffs), ("CT_PEAKER", ct_coeffs)):
-        for zone, (
-            hot_slope,
-            hot_t0,
-            hot_cap,
-            hot_base,
-            cold_slope,
-            cold_t0,
-            cold_cap,
-        ) in coeffs.items():
-            z_idx = zone_to_idx.get(zone)
-            if z_idx is None:
-                continue
-            rows = np.flatnonzero(
-                (groups == group)
-                & (fleet_arrays.zone_idx == z_idx)
-                & (fleet_arrays.pmax > 0.0)
-            )
-            if rows.size == 0:
-                continue
-            temp = miso_zone_temp(year, hours, zone)
-            if temp is None:
-                continue
-            tmax, tmin = temp
-            frac = np.zeros(hours, dtype=float)
-            # Hot limb over the afternoon-evening window.
-            if hot_cap > 0.0:
-                hot = np.clip(hot_base + hot_slope * (tmax - hot_t0), hot_base, hot_cap)
-                frac = np.where(in_hot, np.maximum(frac, hot), frac)
-            # Cold limb over the winter morning/evening peaks (South only —
-            # other zones carry cold_cap=0).
-            if cold_cap > 0.0 and cold_slope > 0.0:
-                cold = np.clip(cold_slope * (cold_t0 - tmin), 0.0, cold_cap)
-                frac = np.where(in_cold, np.maximum(frac, cold), frac)
-            if not np.any(frac > 0.0):
-                continue
-            _distribute_group_floor(fleet_arrays, rows, frac, hours)
-            applied = True
-
-    return applied
-
-
 # ---------------------------------------------------------------------------
 # Generic registry-driven reliability-floor engine
 # ---------------------------------------------------------------------------
+
+
+def _bridge_flagged_runs(flagged: np.ndarray, min_event_hours: int) -> np.ndarray:
+    """Extend/merge a boolean hour mask so each flagged run spans ≥ min_event_hours.
+
+    Steam units committed for a temperature event stay online for a minimum run,
+    so an isolated flagged calendar day (24 flagged hours) extends forward to
+    ``min_event_hours`` and bridges into the next flagged day, merging adjacent
+    runs separated by a sub-event gap. Returns a new mask (input unchanged).
+    """
+    out = np.asarray(flagged, dtype=bool).copy()
+    if not out.any() or min_event_hours <= 24:
+        return out
+    n = out.size
+    padded = np.concatenate(([0], out.astype(np.int8), [0]))
+    diff = np.diff(padded)
+    starts = np.flatnonzero(diff == 1)
+    ends = np.flatnonzero(diff == -1)  # exclusive end index into `out`
+    for s, e in zip(starts, ends):
+        out[s : min(s + min_event_hours, n)] = True
+    return out
 
 
 def inject_reliability_floor(
@@ -3017,21 +2339,40 @@ def inject_reliability_floor(
     specs: list,
     zone_names: list[str],
 ) -> bool:
-    """Apply temperature-driven reliability floors from a list of limb specs.
+    """Apply temperature / net-load reliability-commitment floors from limb specs.
 
-    One function that replaces all six bespoke ``inject_*_reliability_floor``
-    injectors.  Each :class:`~market_sim.config.iso_configs.ReliabilityFloorSpec`
-    in *specs* describes one limb (hot or cold, one or more plant-group classes,
-    system-wide or zonal, pooled or per-zone temperature, cheapest-first or
-    pro-rata distribution).  The engine iterates the specs, loads temperature
-    data via :func:`~market_sim.data.eia_loader.iso_zone_tmax`, computes the
-    ``frac`` curve, selects the in-scope units, and distributes the floor into
-    ``FleetArrays.min_gen`` — producing numerically identical results to the
-    legacy per-ISO injectors for all four calibrated ISOs (CAISO / NYISO /
-    NEISO / MISO).
+    The single ISO-agnostic floor engine. Each
+    :class:`~market_sim.config.iso_configs.ReliabilityFloorSpec` in *specs* is one
+    ``(zone, plant_class, driver)`` limb. For each ENABLED limb:
 
-    Modifies *fleet_arrays* in place.  Returns ``True`` when any limb applied
-    a floor, ``False`` (byte-identical) otherwise.
+    1. Load the zone's daily weather via
+       :func:`~market_sim.data.eia_loader.iso_zone_tmax` (already broadcast to the
+       hourly horizon, constant within each calendar day).
+    2. Build the full-day gate — no hour-of-day windows:
+       ``driver="tmax"`` → flag every hour of a day with ``tmax_c > threshold``;
+       ``driver="tmin"`` → ``tmin_c < threshold``;
+       ``driver="netload"`` → ``net_load_mw > threshold`` (see note below).
+    3. For steam classes (``min_event_hours > 24``) bridge an isolated flagged
+       day to adjacent flagged days so a committed boiler spans a multi-day event.
+    4. Set ``frac = floor_pct`` on flagged hours (0 elsewhere) and select rows
+       ``plant_group == plant_class & zone_idx == zone & pmax > 0``.
+    5. Distribute the floor into ``FleetArrays.min_gen`` via
+       :func:`_distribute_group_floor` (cheapest-first) or pro-rata, composing
+       with any existing floor through ``maximum``.
+
+    ``floor_pct`` is ``commit_frac × min_stable_pct`` — a structural commitment
+    share times the class's physical minimum-stable level, derived from the
+    temperature→commitment relationship only and never tuned to a price/volume
+    residual (CLAUDE.md #9/#11; plan §B.3).
+
+    .. note::
+       ``driver="netload"`` limbs require a per-zone net-load series, which is not
+       yet plumbed through this signature; such limbs are skipped (no-op) until
+       Phase 2 wires net load in. The registry ships empty, so the foundation
+       engine no-ops byte-identically.
+
+    Modifies *fleet_arrays* in place. Returns ``True`` iff any enabled limb
+    floored at least one unit, ``False`` (byte-identical) otherwise.
     """
     if fleet_arrays.plant_group is None:
         return False
@@ -3039,178 +2380,74 @@ def inject_reliability_floor(
 
     groups = np.asarray(fleet_arrays.plant_group)
     hours = int(fleet_arrays.availability.shape[1])
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
-    hod = clock.hour.to_numpy()
     applied = False
 
     for spec in specs:
-        # Build hour-of-day window mask.
-        if spec.hod_range:
-            w_start, w_end = spec.hod_hours
-            in_window = (hod >= w_start) & (hod <= w_end)
-        else:
-            in_window = np.isin(hod, np.asarray(spec.hod_hours))
+        if not getattr(spec, "enabled", True):
+            continue
 
-        applicable_zones = list(spec.zones) if spec.zones else list(zone_names)
+        z_idx = next((i for i, z in enumerate(zone_names) if z == spec.zone), None)
+        if z_idx is None:
+            continue
 
-        if spec.tmax_mode == "pooled":
-            temp_result = iso_zone_tmax(iso, year, hours, zone=None)
+        driver = spec.driver
+        if driver in ("tmax", "tmin"):
+            temp_result = iso_zone_tmax(iso, year, hours, zone=spec.zone)
             if temp_result is None:
-                continue
+                continue  # no pinned weather (forecast year / unmapped) → no-op
             tmax, tmin = temp_result
-            driver = tmax if spec.limb == "hot" else tmin
-            if driver is None:
+            series = tmax if driver == "tmax" else tmin
+            if series is None:
                 continue
+            series = np.asarray(series, dtype=float)
+            if driver == "tmax":
+                flagged = series > spec.threshold
+            else:
+                flagged = series < spec.threshold
+        elif driver == "netload":
+            # Phase-2: per-zone net load is not available through this signature.
+            continue
+        else:
+            continue
 
-            for cls in spec.classes:
-                t0 = spec.t0_c[cls] if isinstance(spec.t0_c, dict) else spec.t0_c
-                slope = (
-                    spec.slope_per_c[cls]
-                    if isinstance(spec.slope_per_c, dict)
-                    else spec.slope_per_c
+        if not np.any(flagged):
+            continue
+
+        # Steam event bridging: a committed boiler stays online across a multi-day
+        # event, so extend/merge flagged runs to at least min_event_hours.
+        if int(getattr(spec, "min_event_hours", 24)) > 24:
+            flagged = _bridge_flagged_runs(flagged, int(spec.min_event_hours))
+
+        frac = np.where(flagged, float(spec.floor_pct), 0.0)
+        if not np.any(frac > 0.0):
+            continue
+
+        sel = (
+            (groups == spec.plant_class)
+            & (fleet_arrays.zone_idx == z_idx)
+            & (fleet_arrays.pmax > 0.0)
+        )
+        rows = np.flatnonzero(sel)
+        if rows.size == 0:
+            continue
+
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+
+        if spec.distribution == "cheapest_first":
+            _distribute_group_floor(fleet_arrays, rows, frac, hours)
+        else:  # pro_rata: each unit floored at frac x its own available capacity
+            for r in rows:
+                avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                np.maximum(
+                    fleet_arrays.min_gen[r, :],
+                    frac * avail_r,
+                    out=fleet_arrays.min_gen[r, :],
                 )
-                cap_val = spec.cap[cls] if isinstance(spec.cap, dict) else spec.cap
-                base_val = spec.base[cls] if isinstance(spec.base, dict) else spec.base
-
-                if slope <= 0.0 and cap_val <= 0.0 and base_val <= 0.0:
-                    continue
-
-                if spec.limb == "hot":
-                    ev = np.clip(base_val + slope * (driver - t0), base_val, cap_val)
-                else:
-                    ev = np.clip(base_val + slope * (t0 - driver), base_val, cap_val)
-                frac = np.where(in_window, ev, 0.0)
-                if not np.any(frac > 0.0):
-                    continue
-
-                zone_idxs = [
-                    i for i, z in enumerate(zone_names) if z in applicable_zones
-                ]
-                sel = (
-                    (groups == cls)
-                    & np.isin(fleet_arrays.zone_idx, zone_idxs)
-                    & (fleet_arrays.pmax > 0.0)
-                )
-                rows = np.flatnonzero(sel)
-                if rows.size == 0:
-                    continue
-
-                if fleet_arrays.min_gen is None:
-                    fleet_arrays.min_gen = np.broadcast_to(
-                        fleet_arrays.pmin[:, np.newaxis],
-                        (fleet_arrays.pmin.size, hours),
-                    ).copy()
-
-                if spec.distribution == "cheapest_first":
-                    _distribute_group_floor(fleet_arrays, rows, frac, hours)
-                else:
-                    for r in rows:
-                        avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-                        np.maximum(
-                            fleet_arrays.min_gen[r, :],
-                            frac * avail_r,
-                            out=fleet_arrays.min_gen[r, :],
-                        )
-                applied = True
-
-        else:  # per_zone
-            for zone in applicable_zones:
-                temp_result = iso_zone_tmax(iso, year, hours, zone=zone)
-                if temp_result is None:
-                    continue
-                tmax, tmin = temp_result
-                driver = tmax if spec.limb == "hot" else tmin
-                if driver is None:
-                    continue
-
-                z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
-                if z_idx is None:
-                    continue
-
-                for cls in spec.classes:
-                    t0 = spec.t0_c[cls] if isinstance(spec.t0_c, dict) else spec.t0_c
-                    slope = (
-                        spec.slope_per_c[zone]
-                        if isinstance(spec.slope_per_c, dict)
-                        else spec.slope_per_c
-                    )
-                    cap_val = spec.cap[zone] if isinstance(spec.cap, dict) else spec.cap
-                    base_val = (
-                        spec.base[zone] if isinstance(spec.base, dict) else spec.base
-                    )
-                    b24h = spec.base_24h.get(zone, 0.0) if spec.base_24h else 0.0
-
-                    if (
-                        (slope <= 0.0 or cap_val <= 0.0)
-                        and b24h <= 0.0
-                        and base_val <= 0.0
-                    ):
-                        continue
-
-                    # NYISO ST pattern: persistent 24h baseline with evening
-                    # hot-limb layered on top via maximum.
-                    if b24h > 0.0:
-                        frac = np.full(hours, b24h, dtype=float)
-                        if slope > 0.0 and cap_val > 0.0:
-                            if spec.limb == "hot":
-                                ev = np.clip(
-                                    base_val + slope * (driver - t0),
-                                    base_val,
-                                    cap_val,
-                                )
-                            else:
-                                ev = np.clip(
-                                    base_val + slope * (t0 - driver),
-                                    base_val,
-                                    cap_val,
-                                )
-                            frac = np.where(in_window, np.maximum(frac, ev), frac)
-                    else:
-                        if spec.limb == "hot":
-                            raw = np.clip(
-                                base_val + slope * (driver - t0),
-                                base_val,
-                                cap_val,
-                            )
-                        else:
-                            raw = np.clip(
-                                base_val + slope * (t0 - driver),
-                                base_val,
-                                cap_val,
-                            )
-                        frac = np.where(in_window, raw, 0.0)
-
-                    if not np.any(frac > 0.0):
-                        continue
-
-                    sel = (
-                        (groups == cls)
-                        & (fleet_arrays.zone_idx == z_idx)
-                        & (fleet_arrays.pmax > 0.0)
-                    )
-                    rows = np.flatnonzero(sel)
-                    if rows.size == 0:
-                        continue
-
-                    if fleet_arrays.min_gen is None:
-                        fleet_arrays.min_gen = np.broadcast_to(
-                            fleet_arrays.pmin[:, np.newaxis],
-                            (fleet_arrays.pmin.size, hours),
-                        ).copy()
-
-                    if spec.distribution == "cheapest_first":
-                        _distribute_group_floor(fleet_arrays, rows, frac, hours)
-                    else:
-                        for r in rows:
-                            avail_r = (
-                                fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-                            )
-                            np.maximum(
-                                fleet_arrays.min_gen[r, :],
-                                frac * avail_r,
-                                out=fleet_arrays.min_gen[r, :],
-                            )
-                    applied = True
+        applied = True
 
     return applied
 

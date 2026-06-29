@@ -94,11 +94,21 @@ def _merge_runs(
     return merged
 
 
-def _commitment_params(gen: Generator, heat_rate: float) -> dict[str, float] | None:
+def _commitment_params(
+    gen: Generator,
+    heat_rate: float,
+    class_overrides: dict[str, dict] | None = None,
+) -> dict[str, float] | None:
     """Return startup/min-run params for a generator, or ``None`` to skip.
 
     ``None`` means the generator is never commitment-screened (always
     committed): nuclear and every non-thermal fuel.
+
+    *class_overrides* (``ScenarioConfig.class_commitment_overrides``, resolved
+    for this run's ISO) maps a ``plant_group`` class (e.g. ``"ST_GAS"``) to
+    ``{"min_run_hours"?, "min_down_hours"?}``; when the generator's class
+    matches, those keys override the table/bin defaults so a longer steam-gas
+    min-run can be enabled per ISO×class without editing the constant table.
 
     For a CAMPD-bin generator the parameters come straight from the bin
     (``min_run_hours`` / ``min_down_hours`` / ``startup_cost_per_mw``).
@@ -116,18 +126,33 @@ def _commitment_params(gen: Generator, heat_rate: float) -> dict[str, float] | N
     if gen.is_campd_bin:
         if gen.min_run_hours <= 0:
             return None
-        return {
+        base = {
             "startup_per_mw": gen.startup_cost_per_mw,
             "min_run_hours": gen.min_run_hours,
             "min_down_hours": gen.min_down_hours,
         }
-    table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
-    if table is None:
-        return None
-    for cutoff, params in table:
-        if heat_rate < cutoff:
-            return params
-    return table[-1][1]
+    else:
+        table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
+        if table is None:
+            return None
+        base = None
+        for cutoff, params in table:
+            if heat_rate < cutoff:
+                base = params
+                break
+        if base is None:
+            base = table[-1][1]
+
+    # Per-ISO×class override (e.g. a longer steam-gas min-run). Copy so the
+    # shared constant table dict is never mutated.
+    ov = (class_overrides or {}).get(gen.plant_group)
+    if ov:
+        merged = dict(base)
+        for k in ("min_run_hours", "min_down_hours"):
+            if k in ov:
+                merged[k] = ov[k]
+        return merged
+    return base
 
 
 def _startup_cost(gen: Generator, heat_rate: float) -> float:
@@ -390,10 +415,14 @@ def compute_commitment(
         config.commitment_storage_weight,
     )
 
+    class_overrides = getattr(config, "class_commitment_overrides", None)
+
     for g, gen in enumerate(generators):
         if gen.fuel_type == "coal" and not config.commitment_screen_coal:
             continue  # coal exempt from the screen — stays committed everywhere
-        params = _commitment_params(gen, float(fleet_arrays.heat_rate[g]))
+        params = _commitment_params(
+            gen, float(fleet_arrays.heat_rate[g]), class_overrides
+        )
         if params is None:
             continue  # coal, nuclear, non-thermal: always committed
 

@@ -688,195 +688,130 @@ def get_iso_config(iso_name: str) -> ISOConfig:
     return config
 
 
-from dataclasses import dataclass, field
+import csv as _csv
+from dataclasses import dataclass
+
+from market_sim.config.paths import REFERENCE_DIR
 
 
 @dataclass(frozen=True)
 class ReliabilityFloorSpec:
-    """One temperature-driven reliability-floor limb for the generic engine.
+    """One temperature- or net-load-driven reliability-commitment floor limb.
 
-    An ISO's floor = a list of limbs in RELIABILITY_FLOOR_REGISTRY[iso].
+    An ISO's floor = a list of limbs in ``RELIABILITY_FLOOR_REGISTRY[iso]``.
+    Each limb pins one ``plant_class`` in one ``zone`` at ``floor_pct`` ×
+    available capacity for ALL 24 hours of every day its ``driver`` gate is
+    flagged (no hour-of-day windows). The day gate is:
+
+    * ``driver="tmax"`` — hot day ⇔ ``tmax_c > threshold`` (°C)
+    * ``driver="tmin"`` — cold day ⇔ ``tmin_c < threshold`` (°C)
+    * ``driver="netload"`` — high-stress day ⇔ ``net_load_mw > threshold`` (MW)
+
+    ``floor_pct = commit_frac × min_stable_pct`` (a structural commitment share
+    times the class's physical minimum-stable level — never a measured-CF
+    ceiling; see ``docs/multi-iso/reliability-floor-rebuild-plan.md`` §B.3).
+    ``min_event_hours`` (≥ 24) bridges an isolated flagged day to adjacent
+    flagged days for steam classes so a committed boiler spans a multi-day
+    heat-wave / cold-snap rather than a single calendar day.
     """
 
-    classes: tuple[str, ...]
-    limb: str  # "hot" or "cold"
-    hod_hours: tuple[int, ...] | tuple[int, int]
-    hod_range: bool = (
-        True  # True = [start, end] inclusive range; False = explicit hours
-    )
-    zones: tuple[str, ...] | None = None  # None = system-wide
-    tmax_mode: str = "pooled"  # "pooled" or "per_zone"
-    t0_c: float | dict[str, float] = 25.0  # per-class for cold
-    slope_per_c: float | dict[str, float] = 0.0
-    cap: float | dict[str, float] = 0.0
-    base: float | dict[str, float] = 0.0
-    outage_exempt: bool = False
+    zone: str  # model zone name
+    plant_class: str  # plant_group: "ST_GAS", "CT_PEAKER", "COAL", "oil", …
+    driver: str  # "tmax" (hot gate) | "tmin" (cold gate) | "netload"
+    threshold: float  # °C for tmax/tmin; MW for netload
+    floor_pct: float  # = commit_frac × min_stable_pct (see plan §B.3)
+    enabled: bool = True  # toggle this exact (iso, zone, class, driver) limb
+    min_event_hours: int = 24  # steam-gas event bridging; 24 = single-day
     distribution: str = "cheapest_first"  # "cheapest_first" or "pro_rata"
-    base_24h: dict[str, float] = field(
-        default_factory=dict
-    )  # NYISO ST persistent 24h baseline per zone
 
 
-RELIABILITY_FLOOR_REGISTRY: dict[str, list[ReliabilityFloorSpec]] = {
-    # -- CAISO: single hot-limb CT_PEAKER, system-wide, pooled TMAX --------
-    "CAISO": [
-        ReliabilityFloorSpec(
-            classes=("CT_PEAKER",),
-            limb="hot",
-            hod_hours=(15, 22),
-            hod_range=True,
-            zones=None,
-            tmax_mode="pooled",
-            t0_c=25.0,
-            slope_per_c=0.047,
-            cap=0.46,
-            base=0.0,
-        ),
-    ],
-    # -- NYISO: hot-limb CT_PEAKER downstate (pooled) + hot-limb ST_GAS per-zone
-    "NYISO": [
-        # CT_PEAKER: downstate only, pooled NYC-metro TMAX
-        ReliabilityFloorSpec(
-            classes=("CT_PEAKER",),
-            limb="hot",
-            hod_hours=(14, 21),
-            hod_range=True,
-            zones=("NYC", "Long_Island", "Lower_Hudson"),
-            tmax_mode="pooled",
-            t0_c=25.0,
-            slope_per_c=0.053,
-            cap=0.68,
-            base=0.13,
-        ),
-        # ST_GAS: per-zone TMAX, per-zone coefficients, pro-rata distribution,
-        # persistent 24h baseline (base_24h) + evening hot-limb (base).
-        ReliabilityFloorSpec(
-            classes=("ST_GAS",),
-            limb="hot",
-            hod_hours=(14, 21),
-            hod_range=True,
-            zones=("Long_Island", "NYC", "Capital_Hudson"),
-            tmax_mode="per_zone",
-            t0_c=25.0,
-            slope_per_c={
-                "Long_Island": 0.0406,
-                "NYC": 0.0393,
-                "Capital_Hudson": 0.0246,
-            },
-            cap={"Long_Island": 0.891, "NYC": 0.950, "Capital_Hudson": 0.950},
-            base={"Long_Island": 0.383, "NYC": 0.432, "Capital_Hudson": 0.000},
-            distribution="pro_rata",
-            base_24h={"Long_Island": 0.289, "NYC": 0.391, "Capital_Hudson": 0.000},
-        ),
-    ],
-    # -- NEISO: dual-limb — hot CT_PEAKER + cold COAL/ST_GAS, system-wide, pooled
-    "NEISO": [
-        # Hot limb: CT_PEAKER
-        ReliabilityFloorSpec(
-            classes=("CT_PEAKER",),
-            limb="hot",
-            hod_hours=(16, 21),
-            hod_range=True,
-            zones=None,
-            tmax_mode="pooled",
-            t0_c=25.0,
-            slope_per_c=0.037,
-            cap=0.48,
-            base=0.0,
-            outage_exempt=False,
-        ),
-        # Cold limb: COAL + ST_GAS (per-class T0)
-        ReliabilityFloorSpec(
-            classes=("COAL", "ST_GAS"),
-            limb="cold",
-            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
-            hod_range=False,
-            zones=None,
-            tmax_mode="pooled",
-            t0_c={"COAL": 5.0, "ST_GAS": 0.0},
-            slope_per_c=0.033,
-            cap=1.0,
-            base=0.0,
-            outage_exempt=True,
-        ),
-    ],
-    # -- MISO: dual-limb + zonal, per-zone per-class coefficients -----------
-    "MISO": [
-        # Hot limb: ST_GAS per zone
-        ReliabilityFloorSpec(
-            classes=("ST_GAS",),
-            limb="hot",
-            hod_hours=(14, 20),
-            hod_range=True,
-            zones=("MISO-North", "MISO-Central", "MISO-South"),
-            tmax_mode="per_zone",
-            t0_c=25.0,
-            slope_per_c={
-                "MISO-North": 0.0226,
-                "MISO-Central": 0.0316,
-                "MISO-South": 0.0366,
-            },
-            cap={
-                "MISO-North": 0.361,
-                "MISO-Central": 0.568,
-                "MISO-South": 0.882,
-            },
-            base={
-                "MISO-North": 0.071,
-                "MISO-Central": 0.107,
-                "MISO-South": 0.222,
-            },
-        ),
-        # Hot limb: CT_PEAKER per zone
-        ReliabilityFloorSpec(
-            classes=("CT_PEAKER",),
-            limb="hot",
-            hod_hours=(14, 20),
-            hod_range=True,
-            zones=("MISO-North", "MISO-Central", "MISO-South"),
-            tmax_mode="per_zone",
-            t0_c=25.0,
-            slope_per_c={
-                "MISO-North": 0.0373,
-                "MISO-Central": 0.0600,
-                "MISO-South": 0.0395,
-            },
-            cap={
-                "MISO-North": 0.525,
-                "MISO-Central": 0.851,
-                "MISO-South": 1.000,
-            },
-            base={
-                "MISO-North": 0.020,
-                "MISO-Central": 0.206,
-                "MISO-South": 0.264,
-            },
-        ),
-        # Cold limb: ST_GAS in MISO-South only
-        ReliabilityFloorSpec(
-            classes=("ST_GAS",),
-            limb="cold",
-            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
-            hod_range=False,
-            zones=("MISO-South",),
-            tmax_mode="per_zone",
-            t0_c=5.0,
-            slope_per_c={"MISO-South": 0.0298},
-            cap={"MISO-South": 0.714},
-            base=0.0,
-        ),
-        # Cold limb: CT_PEAKER in MISO-South only
-        ReliabilityFloorSpec(
-            classes=("CT_PEAKER",),
-            limb="cold",
-            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
-            hod_range=False,
-            zones=("MISO-South",),
-            tmax_mode="per_zone",
-            t0_c=5.0,
-            slope_per_c={"MISO-South": 0.0296},
-            cap={"MISO-South": 0.736},
-            base=0.0,
-        ),
-    ],
-}
+# Steam classes carry multi-day event bridging by default (a committed boiler
+# stays online across a multi-day temperature event); fast-start peakers do not.
+_STEAM_CLASSES: frozenset[str] = frozenset({"ST_GAS", "ST_CHP"})
+_STEAM_MIN_EVENT_HOURS: int = 48  # bridge an isolated flagged day to neighbours
+
+
+def _coerce_bool(value: str) -> bool:
+    """Parse a CSV truthy string (``"True"``/``"1"``/``"yes"``) to ``bool``."""
+    return str(value).strip().lower() in ("true", "1", "yes", "y", "t")
+
+
+def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
+    """Build ``RELIABILITY_FLOOR_REGISTRY`` from per-ISO coefficient CSVs.
+
+    Reads ``data/raw/reference/reliability_floor_coeffs_<ISO>.csv`` (one row per
+    (zone, class, driver) limb) for every registered ISO and maps each row to a
+    :class:`ReliabilityFloorSpec`. Missing or header-only files yield an empty
+    limb list for that ISO — the single source of truth is the CSV, so the
+    registry is empty until ``scripts/derive_reliability_coeffs.py`` populates
+    the coefficients (Phase 2). Required columns: ``zone, plant_class, driver,
+    threshold, floor_pct, enabled``; optional: ``min_event_hours``,
+    ``distribution``.
+    """
+    registry: dict[str, list[ReliabilityFloorSpec]] = {}
+    for iso in _ISO_BUILDERS:
+        path = REFERENCE_DIR / f"reliability_floor_coeffs_{iso}.csv"
+        limbs: list[ReliabilityFloorSpec] = []
+        if path.exists():
+            with path.open(newline="") as fh:
+                for row in _csv.DictReader(fh):
+                    if not row.get("zone") or not row.get("plant_class"):
+                        continue
+                    cls = row["plant_class"].strip()
+                    default_event = (
+                        _STEAM_MIN_EVENT_HOURS if cls in _STEAM_CLASSES else 24
+                    )
+                    limbs.append(
+                        ReliabilityFloorSpec(
+                            zone=row["zone"].strip(),
+                            plant_class=cls,
+                            driver=row["driver"].strip(),
+                            threshold=float(row["threshold"]),
+                            floor_pct=float(row["floor_pct"]),
+                            enabled=_coerce_bool(row.get("enabled", "True")),
+                            min_event_hours=int(row["min_event_hours"])
+                            if row.get("min_event_hours")
+                            else default_event,
+                            distribution=(
+                                row.get("distribution") or "cheapest_first"
+                            ).strip(),
+                        )
+                    )
+        registry[iso] = limbs
+    return registry
+
+
+# Per-ISO list of (zone, class, driver) reliability-floor limbs, seeded from the
+# derived coefficient CSVs (single source of truth). Empty until Phase 2 fills
+# the CSVs; the engine no-ops byte-identically when an ISO has no enabled limbs.
+RELIABILITY_FLOOR_REGISTRY: dict[str, list[ReliabilityFloorSpec]] = (
+    _load_reliability_floor_registry()
+)
+
+
+def apply_reliability_floor_overrides(
+    specs: list[ReliabilityFloorSpec],
+    overrides: dict[str, dict] | None,
+) -> list[ReliabilityFloorSpec]:
+    """Return *specs* with per-limb run-config overrides applied.
+
+    *overrides* is keyed ``"<ZONE>:<CLASS>:<driver>"`` →
+    ``{"enabled"?: bool, "floor_pct"?: float, "threshold"?: float}`` (matching
+    ``ScenarioConfig.reliability_floor_overrides``). Each matching limb is
+    replaced via :func:`dataclasses.replace`; unrecognized keys are ignored.
+    Returns the input list unchanged when *overrides* is falsy.
+    """
+    if not overrides:
+        return specs
+    import dataclasses as _dc
+
+    out: list[ReliabilityFloorSpec] = []
+    for spec in specs:
+        key = f"{spec.zone}:{spec.plant_class}:{spec.driver}"
+        ov = overrides.get(key)
+        if not ov:
+            out.append(spec)
+            continue
+        changes = {f: ov[f] for f in ("enabled", "floor_pct", "threshold") if f in ov}
+        out.append(_dc.replace(spec, **changes) if changes else spec)
+    return out
