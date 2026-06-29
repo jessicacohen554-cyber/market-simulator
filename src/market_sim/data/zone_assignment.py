@@ -55,7 +55,6 @@ _ISO_TO_BA_CODE: dict[str, str] = {
     "ERCOT": "ERCO",
     "CAISO": "CISO",
     "MISO": "MISO",
-    "SPP": "SWPP",
     "PJM": "PJM",
     "NYISO": "NYIS",
     "NEISO": "ISNE",
@@ -85,9 +84,6 @@ _LARGEST_ZONE: dict[str, str] = {
     # Central (WCMA/SEMA/RI) is ISO-NE's largest-load-share zone (0.30) and
     # holds central/coastal Massachusetts, so unlocated NEISO plants land there.
     "NEISO": "Central",
-    # SPP-North is the largest-load-share zone (0.52) — the Kansas/Nebraska
-    # core plus the Kansas-City metro — so unlocated SPP plants land there.
-    "SPP": "SPP-North",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -356,45 +352,6 @@ _NEISO_CT_LAT: float = 42.05
 _NEISO_CT_LON: float = -71.8
 _NEISO_BOSTON_LAT: float = 42.1
 _NEISO_BOSTON_LON: float = -71.3
-
-# SPP model region by FIPS state code. SPP's two zones split the footprint
-# north/south: the Kansas/Nebraska core and the upper-Plains states (the
-# Dakotas, Minnesota, Iowa, eastern Colorado and far-eastern Montana) sit in
-# SPP-North; the Oklahoma core, the Xcel SPS Texas-panhandle / eastern-New-
-# Mexico footprint, and the SWEPCO northwest-Louisiana / Arkansas footprint
-# sit in SPP-South. Missouri straddles the divide (Kansas-City metro north,
-# Empire District southwest-Missouri south) and is split by latitude below.
-# eGRID carries a FIPS state for every SWPP plant, so the state map is
-# authoritative; the latitude fallback only handles the rare coords-only caller.
-_SPP_STATE_ZONES: dict[int, str] = {
-    20: "SPP-North",  # KS
-    31: "SPP-North",  # NE
-    19: "SPP-North",  # IA
-    27: "SPP-North",  # MN
-    46: "SPP-North",  # SD
-    38: "SPP-North",  # ND
-    30: "SPP-North",  # MT (far-eastern Montana: Basin Electric / WAPA UGP)
-    8: "SPP-North",  # CO (Denver-metro & southeastern-Colorado SPP load)
-    40: "SPP-South",  # OK
-    48: "SPP-South",  # TX (panhandle: Xcel SPS / Southwestern Public Service)
-    35: "SPP-South",  # NM (eastern New Mexico: Xcel SPS)
-    22: "SPP-South",  # LA (northwest Louisiana: SWEPCO)
-    5: "SPP-South",  # AR (Arkansas SPP: SWEPCO / AECC)
-}
-
-# Missouri straddles the SPP north–south divide. The Kansas-City metro
-# (Evergy / KCP&L, ~lat 39) sits in SPP-North; the Empire District /
-# City-Utilities-of-Springfield southwest-Missouri load (~lat 37) sits in
-# SPP-South. The 38th parallel separates the two clusters in the eGRID data.
-_SPP_MISSOURI_FIPS: int = 29
-_SPP_MISSOURI_NORTH_LAT: float = 38.0
-
-# Latitude band for the coords-only SPP fallback (no FIPS state). The KS/OK
-# border — the 37th parallel — is the canonical SPP north/south geographic
-# divide: Kansas and north sit in SPP-North, Oklahoma and south in SPP-South.
-# Coarse; FIPS state is preferred and this only triggers when a caller supplies
-# coordinates without a state code.
-_SPP_NORTH_LAT: float = 37.0
 
 # Cached parsed eGRID DataFrame and derived ORIS→location lookup, so the
 # 21 MB workbook is read at most once per process.
@@ -712,34 +669,6 @@ def _neiso_zone(
     return _LARGEST_ZONE["NEISO"]
 
 
-def _spp_zone(lat: float | None, fips_state: int | None) -> str:
-    """Return the SPP model region for a plant location.
-
-    FIPS state carries the assignment — SPP-North (the Kansas/Nebraska core
-    and the upper-Plains states) or SPP-South (Oklahoma, the Xcel SPS
-    panhandle / eastern New Mexico, and SWEPCO Louisiana/Arkansas) — since
-    SPP's two zones follow state lines and eGRID has a state for every SWPP
-    plant. Missouri straddles the divide and is split by latitude (Kansas-City
-    metro north, Empire District southwest-Missouri south). A plant whose
-    state is outside the SPP map falls back to a coarse latitude band (the
-    37th-parallel KS/OK divide) when coordinates are available, and otherwise
-    to the largest-load-share zone (North).
-    """
-    if fips_state == _SPP_MISSOURI_FIPS:
-        if lat is not None:
-            if lat >= _SPP_MISSOURI_NORTH_LAT:
-                return "SPP-North"
-            return "SPP-South"
-        return _LARGEST_ZONE["SPP"]
-    if fips_state in _SPP_STATE_ZONES:
-        return _SPP_STATE_ZONES[fips_state]
-    if lat is not None:
-        if lat >= _SPP_NORTH_LAT:
-            return "SPP-North"
-        return "SPP-South"
-    return _LARGEST_ZONE["SPP"]
-
-
 def _zone_from_location(
     iso: str,
     lat: float | None,
@@ -756,8 +685,6 @@ def _zone_from_location(
         return _caiso_zone(lat, lon, fips_state, fips_county)
     if iso == "MISO":
         return _miso_zone(lat, fips_state)
-    if iso == "SPP":
-        return _spp_zone(lat, fips_state)
     if iso == "NYISO":
         return _nyiso_zone(lat, lon, fips_state, fips_county)
     if iso == "NEISO":

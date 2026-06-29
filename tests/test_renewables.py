@@ -547,28 +547,23 @@ def test_miso_cf_profile_mean_matches_annual_average_cf():
         np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
 
 
-def test_spp_and_neiso_cf_profiles_match_annual_average_cf():
-    """SPP and ISO-NE wind/solar resolve to their converted hourly extracts.
+def test_neiso_cf_profiles_match_annual_average_cf():
+    """ISO-NE wind/solar resolve to their converted hourly extracts.
 
-    Like MISO, neither has a full ``ISOConfig`` yet, so the generalized loader
-    is exercised directly: it must resolve SPP→SWPP and NEISO→ISNE and return
-    a full 8760-hour wind and solar series. Rescaling a series into an hourly
-    CF profile yields a mean equal to the chosen annual-average CF for
-    representative CFs below the clip ceiling.
+    The generalized loader is exercised directly: it must resolve NEISO→ISNE
+    and return a full 8760-hour wind and solar series. Rescaling a series into
+    an hourly CF profile yields a mean equal to the chosen annual-average CF
+    for representative CFs below the clip ceiling.
     """
-    for iso in ("SPP", "NEISO"):
-        gen = load_eia_hourly_renewable_gen(iso, _CAL_YEAR)
-        assert gen is not None
-        assert {"wind", "solar"} <= set(gen)
-        assert all(len(gen[fuel]) == HOURS_PER_YEAR for fuel in ("wind", "solar"))
+    gen = load_eia_hourly_renewable_gen("NEISO", _CAL_YEAR)
+    assert gen is not None
+    assert {"wind", "solar"} <= set(gen)
+    assert all(len(gen[fuel]) == HOURS_PER_YEAR for fuel in ("wind", "solar"))
 
-    # Clip-free (iso, fuel, representative annual CF) cases for an exact mean.
-    # SPP wind carries a known EIA outlier hour, so its solar series is used.
-    for iso, fuel, avg_cf in (("SPP", "solar", 0.15), ("NEISO", "wind", 0.30)):
-        mw = load_eia_hourly_renewable_gen(iso, _CAL_YEAR)[fuel]
-        cf = derive_cf_profile(mw / mw.sum(), avg_cf)
-        assert cf.min() >= 0.0 and cf.max() <= 1.0
-        np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
+    mw = load_eia_hourly_renewable_gen("NEISO", _CAL_YEAR)["wind"]
+    cf = derive_cf_profile(mw / mw.sum(), 0.30)
+    assert cf.min() >= 0.0 and cf.max() <= 1.0
+    np.testing.assert_allclose(cf.mean(), 0.30, atol=1e-5)
 
 
 def test_neiso_backcast_eia930_zone_distribution():

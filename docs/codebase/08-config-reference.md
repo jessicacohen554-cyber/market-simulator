@@ -161,13 +161,12 @@ The seven registered ISOs:
 | **CAISO** | 4: NP15, ZP26, SP15, WECC_import | Path 15/26 cutsets; WECC import bubble, 8,300 MW simultaneous cap; VOLL $2,000 |
 | **PJM** | 8: ComEd, AEP_Ohio, ATSI, West_APS, Central_PA, Dominion, EMAAC, SWMAAC | 8-zone split captures AP-South / Eastern-Hub gradients |
 | **MISO** | 3: North, Central, South | RDT one-way links (3,000 N→S / 2,500 S→N) |
-| **SPP** | 2: North, South | N–S wind-export corridor |
 | **NYISO** | 5: Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island | nested downstate import cutsets; cable-limited LI |
 | **NEISO** | 5: North, Central, Boston, Connecticut, HQ_import | import pockets + HQ Phase-II HVDC node |
 
 Zone names above are shown unprefixed for readability; in `iso_configs.py` the
-literal `Zone.name` strings for PJM/MISO/SPP carry an ISO prefix — `PJM_ComEd`,
-`MISO-North`, `SPP-North`, etc. (ERCOT, CAISO, NYISO, NEISO zone names are
+literal `Zone.name` strings for PJM/MISO carry an ISO prefix — `PJM_ComEd`,
+`MISO-North`, etc. (ERCOT, CAISO, NYISO, NEISO zone names are
 unprefixed as listed).
 
 VOLL is $2,000/MWh for all non-ERCOT ISOs (FERC Order 831 / tariff caps).
