@@ -1350,17 +1350,52 @@ def generators_to_fleet_arrays(
             iso=_iso or "ERCOT",
         )
         if ufac:
+            # NEISO temperature-reliability-floor exemption (CLAUDE.md #11). The
+            # lone Merrimack-class COAL unit and lone ST_GAS unit are winter
+            # cold-snap RELIABILITY runners whose commitment is governed by
+            # transmission.inject_neiso_temp_reliability_floor, with coefficients
+            # regressed from each unit's own measured CAMPD capacity factor. That
+            # regression already nets out the unit's real maintenance downtime, so
+            # re-applying the CF-gap unit-outage derate on top double-counts it.
+            # Worse, for a unit that runs only on cold snaps (sub-10% annual CF)
+            # the detector's "sustained CF < 5%" rule reads the unit's *economic
+            # idleness* as a forced outage, and the derate's unit_capacity_mw /
+            # plant_capacity_mw fraction is taken against the 108 MW model bin
+            # while the CSV's unit capacities are the real ~460 MW plant, so a
+            # single coal-unit "outage" over-derates the bin to zero -- collapsing
+            # availability (0 of 8760 h in 2024) and structurally capping the
+            # floor (frac x available) at ~0. The floor is the correct,
+            # forward-faithful availability/commitment model for these units, so
+            # exempt them here exactly as the ct_mustrun_per_plant floor exempts
+            # its units from WEFOR/planned outage. Scoped to NEISO + the two floor
+            # classes + floor-on, so non-floor runs stay byte-identical.
+            neiso_floor_exempt = (
+                _iso == "NEISO"
+                and getattr(config, "neiso_temp_reliability_floor", False)
+                and getattr(config, "neiso_floor_outage_exempt", True)
+            )
+            exempt_groups = {"COAL", "ST_GAS"}
             applied_u = 0
+            exempted_u = 0
             for g_idx, gen in enumerate(generators):
+                if neiso_floor_exempt and gen.plant_group in exempt_groups:
+                    exempted_u += 1
+                    continue
                 f = ufac.get((int(gen.plant_code), gen.plant_group))
                 if f is not None:
                     availability[g_idx, :] *= f
                     applied_u += 1
             logger.info(
-                "unit-outage derate (%s %d): %d plant-tranches derated",
+                "unit-outage derate (%s %d): %d plant-tranches derated%s",
                 _iso or "ERCOT",
                 config.weather_year,
                 applied_u,
+                (
+                    f"; {exempted_u} NEISO floor-class tranche(s) exempted "
+                    "(temp-reliability floor governs availability)"
+                    if exempted_u
+                    else ""
+                ),
             )
         # Within-window retiree measured-availability cap (CAMPD unit-level):
         # a unit winding down to retirement is held at its coal must-run floor

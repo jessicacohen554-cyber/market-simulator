@@ -700,6 +700,85 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
+# NEISO gas offer curve — consolidation of the curve NEISO already runs into one
+# grounded, commented place, at parity with _PJM_OFFER_CURVE / _NYISO_OFFER_CURVE.
+# Until now NEISO carried a single scattered inline override (CC_REGULAR committed
+# 1.27 if iso=="NEISO" else 0.92) and otherwise fell through to the generic
+# non-PJM/non-ERCOT `else` branch of offer_curve_by_group{} below for every gas
+# band — including the ERCOT-derived 13.15x CT_PEAKER peak wall. This dict gathers
+# NEISO's effective gas curve here and is deep-merged on top of that generic
+# branch (so only the named GAS classes change; coal / *_INTERMEDIATE keep the
+# generic defaults, and the per-plant committed/peaking % from NEISO's CAMPD sheet
+# still supersede the class-wide values).
+#
+# STEP 1 — behavior-preserving consolidation (this dict): every value below is
+# transcribed EXACTLY from NEISO's current effective curve, so a NEISO config
+# build is byte-identical before vs after the refactor (verified against the
+# pre-edit snapshot). The CC_REGULAR committed 1.27 that used to live in the
+# inline ternary now lives here; the other four classes reproduce the generic
+# `else` values they previously inherited:
+#  - CC_REGULAR: committed 1.27 — NEISO min-stable-load offer anchored to the
+#    measured CAMPD CC heat-rate shape (min-load 40-55% of nameplate runs ~1.30x
+#    the fleet-average HR; raising committed to the full-load offer level (=
+#    econ_high 1.27) removes the artificially-cheap min-load block the removed
+#    net-summer CC "wall" was masking — ISO-NE Market Rule 1 incremental-energy
+#    shape, a conservative floor, not residual-fitted). econ_low 1.06 / econ_high
+#    1.27 / peak 2.25 (F-class duct-burner mult) carried from the generic curve.
+#  - CC_CHP / CT_CHP / ST_GAS: the generic gas-class values, unchanged.
+#  - CT_PEAKER: the generic ERCOT-derived peaker curve, INCLUDING the 13.15x peak
+#    wall. NOTE this ERCOT-style scarcity wall is far above ISO-NE price formation
+#    (ISO-NE energy offers cap at $1,000 then $2,000 cost-based; reserve/RCPF
+#    scarcity tops near ~$1,500-2,000, NOT ERCOT's $5,000 ORDC) — PJM threw out the
+#    same wall (capped CT peak at 4.0). A grounded NEISO re-level (cap the peak
+#    ~3-4x, shape from NEISO's own CAMPD marginal HR, level vs the ISO-NE IMM /
+#    Potomac EMM State-of-the-Market) is a follow-up; it is deferred here because
+#    NEISO's prices ALREADY PASS C3a/C3b/C2 on this curve (the price level is
+#    pinned by the measured daily gas-hub basis + dual-fuel oil parity, not the
+#    peak band), and a re-level must be at-worst-neutral on those passing metrics
+#    (CLAUDE.md #1/#11) rather than tuned to a residual.
+_NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {
+        "committed": 1.27,
+        "econ_low": 1.06,
+        "econ_high": 1.27,
+        "peak": 2.25,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CC_CHP": {
+        "committed": 0.92,
+        "econ_low": 0.96,
+        "econ_high": 1.12,
+        "peak": 2.25,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_CHP": {
+        "committed": 1.10,
+        "econ_low": 1.20,
+        "econ_high": 1.20,
+        "peak": 1.40,
+        "econ_low_share": 0.50,
+    },
+    "CT_PEAKER": {
+        "committed": 1.55,
+        "econ_low": 1.27,
+        "econ_high": 1.98,
+        "peak": 13.15,
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+    },
+    "ST_GAS": {
+        "committed": 0.81,
+        "econ_low": 1.05,
+        "econ_high": 1.40,
+        "peak": 4.20,
+        "econ_low_share": 0.500,
+        "pct_peaking": 15.0,
+    },
+}
+
+
 # MISO round-2 CC_REGULAR / COAL_BIT offer-curve rebalance (deep-merged onto the
 # calibrated MISO base curve when --miso-cc-coal-rebalance is set; ISO-gated, so
 # only the named bands change and every other class/band keeps its default).
@@ -1227,23 +1306,13 @@ def _calibration_config(
             # econ_high 1.27->1.41) so a no-tweak ERCOT run reproduces run57 and
             # workflow tweaks are +/- relative to it. PJM / other ISOs unchanged.
             "CC_REGULAR": {
-                # NEISO min-stable-load offer re-anchored to the measured CAMPD
-                # heat-rate curve. The CC_REGULAR fleet's gen-weighted average
-                # heat rate is set at full load (load-fraction >0.90 HR = 0.93x
-                # the fleet average), while the min-stable-load band (40-55% of
-                # nameplate, the committed tranche) runs at 1.30x the average —
-                # min-load is ~40% less efficient than full load. The legacy
-                # committed 0.92 priced min-load *below* full-load (econ_high
-                # 1.27), the inverse of the measured shape, leaving an
-                # artificially-cheap min-load block that the (now-removed,
-                # a8b0e55) net-summer CC "wall" was masking. Raise the NEISO
-                # committed tranche to the full-load offer level (= econ_high
-                # 1.27) so min-load $/MWh is at-or-above full-load SRMC
-                # (ISO-NE Market Rule 1 incremental-energy shape); a
-                # conservative floor (the measured curve supports up to ~1.30)
-                # that removes the cheap min-load block without fitting to the
-                # price residual. ISO-gated; ERCOT/PJM and forecasts unchanged.
-                "committed": 1.27 if iso == "NEISO" else 0.92,
+                # Generic CC_REGULAR min-stable-load committed band. NEISO's
+                # ISO-specific committed lift (1.27, anchored to its measured
+                # CAMPD CC heat-rate shape — min-load ~1.30x the fleet-average HR,
+                # removing the artificially-cheap min-load block the removed
+                # net-summer CC "wall" was masking) now lives in _NEISO_OFFER_CURVE
+                # and is deep-merged on top below, so this stays the generic 0.92.
+                "committed": 0.92,
                 "econ_low": 1.20
                 if iso == "PJM"
                 else (1.16 if iso == "ERCOT" else 1.06),
@@ -1544,6 +1613,19 @@ def _calibration_config(
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _MISO_OFFER_CURVE
+            )
+        )
+    # NEISO gas offer curve (see _NEISO_OFFER_CURVE). Consolidates NEISO's
+    # effective gas curve — previously a scattered inline CC_REGULAR committed
+    # override plus a silent fall-through to the generic ERCOT-derived else — into
+    # one grounded, commented place at parity with PJM/NYISO. Merged on top of the
+    # generic branch so only the named gas classes change and coal / *_INTERMEDIATE
+    # keep their defaults; per-plant committed/peaking % from CAMPD still supersede.
+    # Operator --offer-curve overrides/deltas below still merge on top.
+    if iso.upper() == "NEISO":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _NEISO_OFFER_CURVE
             )
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
@@ -1963,6 +2045,7 @@ def run_year(
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
     neiso_temp_reliability_floor: bool | None = None,
+    neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
@@ -2188,6 +2271,10 @@ def run_year(
     if neiso_temp_reliability_floor is not None:
         config = config.with_overrides(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor
+        )
+    if neiso_floor_outage_exempt is not None:
+        config = config.with_overrides(
+            neiso_floor_outage_exempt=neiso_floor_outage_exempt
         )
     if neiso_gas_coldsnap_derate is not None:
         config = config.with_overrides(
@@ -2443,10 +2530,12 @@ def run_year(
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
-    # Default the CAISO per-hub intertie flag so the later corridor-limit check
-    # is bound on every path; it is only set True inside the priced-interchange
-    # block below (CAISO-only), so a non-priced or non-CAISO run keeps it False.
+    # Default the CAISO per-hub / corridor intertie flags so the later
+    # corridor-limit and forward-ATC checks are bound on every path; they are
+    # only set True inside the priced-interchange block below (CAISO-only), so a
+    # non-priced or non-CAISO run keeps them False.
     caiso_per_hub = False
+    caiso_corridors = False
     if priced_interchange:
         # CARB levies its cap-and-trade allowance on unspecified WECC imports
         # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every

@@ -700,6 +700,23 @@ class ScenarioConfig:
     # availability (1.0).
     neiso_coldsnap_floor_base: float = 0.0  # Year-round cold-limb baseline (0.0 =
     # cold-limb only; these units idle on mild days and run on price).
+    neiso_floor_outage_exempt: bool = True  # NEISO temperature-reliability-floor
+    # outage exemption (CLAUDE.md #11 correctness fix; default ON). The lone
+    # Merrimack-class COAL unit and lone ST_GAS unit are winter cold-snap
+    # RELIABILITY runners whose commitment is governed by the temperature floor
+    # (neiso_temp_reliability_floor), with coefficients regressed from each unit's
+    # own measured CAMPD capacity factor — a regression that already nets out the
+    # unit's real maintenance downtime. The CAMPD unit-outage overlay's "sustained
+    # CF < 5%" detector, built for baseload coal/CC, misreads a winter peaker's
+    # economic idleness (sub-10% annual CF) as a forced outage, and its
+    # unit_capacity_mw / plant_capacity_mw derate is taken against the 108 MW model
+    # bin while the CSV unit capacities are the real ~460 MW plant — so a single
+    # coal-unit "outage" over-derates the bin to zero (Merrimack availability was 0
+    # of 8760 h in 2024, structurally capping the floor's frac×available at ~0).
+    # When True, the floor classes (COAL/ST_GAS) skip the unit-outage overlay so
+    # the floor governs their availability, exactly as ct_mustrun_per_plant exempts
+    # its floor units from WEFOR/planned outage. Only takes effect for NEISO with
+    # neiso_temp_reliability_floor on; non-floor runs stay byte-identical.
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -2898,6 +2915,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_coldsnap_floor_slope_per_c": 3,
     "neiso_coldsnap_floor_cap": 2,
     "neiso_coldsnap_floor_base": 3,
+    "neiso_floor_outage_exempt": 1,
     "neiso_gas_coldsnap_derate": 1,
     "neiso_gas_derate_t0_c": 1,
     "neiso_gas_derate_slope_per_c": 3,
