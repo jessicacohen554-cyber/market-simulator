@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-29-miso-26-reserve-coopt",
+  "label": "miso 26 reserve coopt",
+  "date": "2026-06-29",
+  "shorthand": "miso-26-reserve-coopt",
+  "definition": "Calibration run from bundle miso26_reserve_coopt.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-29-miso-26-reserve-coopt.js",
+  "bundle": "results/calibration/MISO/miso26_reserve_coopt"
+}
