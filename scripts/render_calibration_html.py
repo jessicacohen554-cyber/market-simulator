@@ -263,8 +263,8 @@ def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | N
     Sums ``discharge_mw`` over every storage unit (li-ion + pumped storage) and
     hour from the bundle's ``storage.parquet`` P1 frame — the same dispatch pass
     the price/mix metrics score. Returns ``None`` when the bundle has no storage
-    frame (no storage fleet), so the C5b throughput criterion stays SKIPPED
-    rather than scoring an absent series as zero.
+    frame (no storage fleet); callers coerce to ``0.0`` so the payload always
+    carries the key.
     """
     if storage_all is None:
         return None
@@ -803,13 +803,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
 
             # Observed storage discharge throughput (TWh), the C5b cycling-realism
             # actual: the positive half of the EIA-930 battery + pumped-storage
-            # net-gen series. Only set when the BA reports a storage breakout
-            # (absent for NEISO 2023) so the criterion stays SKIPPED, not FAILed
-            # against a spurious zero. Keyed "throughput_twh" — the name
-            # calibration_verdict's score_storage reads.
+            # net-gen series. None when the BA doesn't report a storage breakout
+            # or coverage is below the threshold — the verdict's score_storage
+            # distinguishes "no EIA-930 data" from "data says zero".
             actual_storage = _actual_storage_twh(e930)
-            if actual_storage is not None:
-                bench[int(year)]["storage"] = {"throughput_twh": actual_storage}
+            bench[int(year)]["storage"] = {"throughput_twh": actual_storage}
 
             # Actual fossil CO2 (Mt), the calibration-page emissions metric.
             # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
@@ -1145,10 +1143,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             }
             # Model storage discharge throughput (TWh) for the C5b criterion —
             # li-ion + pumped storage from this run's storage.parquet P1 frame.
-            # Only set when the bundle has a storage fleet; absent ⇒ SKIPPED.
+            # Always set: 0.0 when no storage fleet, so the verdict can
+            # distinguish "model has no storage" from "model has storage but
+            # data is missing".
             model_storage = _model_storage_twh(storage_all, year)
-            if model_storage is not None:
-                run_years[int(year)]["storage"] = {"throughput_twh": model_storage}
+            run_years[int(year)]["storage"] = {
+                "throughput_twh": model_storage if model_storage is not None else 0.0,
+            }
             # Year-level scarcity-overlay summary (display-only): demand-weighted
             # monthly LMP MAE vs actual RT for the energy-only and overlaid
             # series, and tail-hour counts. Reuses the deriver's _monthly_mae /
