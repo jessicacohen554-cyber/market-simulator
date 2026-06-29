@@ -1,0 +1,56 @@
+# Canonical schema: measured neighbor-border hourly LMP
+#
+# Dense 8760-hour parquet of the measured Day-Ahead LMP at a neighbor ISO's
+# border hub, on the model's fixed non-leap local-year calendar (one row per
+# year x hour x hub). Used by the measured-hub import pricing mechanisms
+# (CAISO caiso_import_hub_prices, MISO miso_pjm_lmp_import_pricing) to
+# overwrite the reference-price seam's gas x HR ladder with the actual
+# hourly neighbor price.
+#
+# Files:
+#   wecc_intertie_lmp_hourly_CAISO.parquet  — CAISO WECC intertie (MALIN, PALOVRDE)
+#   pjm_border_lmp_hourly_MISO.parquet      — MISO PJM border (PJM_WEST)
+#
+# Location: data/raw/_validation-source/
+datatype: border-lmp
+schema_version: 1
+title: Measured neighbor-border hourly LMP
+description: >-
+  Hourly Day-Ahead LMP at the ISO's border hub(s) facing a neighbor, on the
+  model's fixed non-leap 8760-hour local-year calendar. Dense: one row per
+  (year, hour, hub); NaN for missing hours (DST gaps, OASIS retention).
+
+key_columns: [year, hour, hub]
+allow_additional_columns: false
+
+columns:
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year of the price observation.
+  - name: hour
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Hour-of-year index [0..8759] on the model's fixed non-leap local-time
+      calendar (Pacific for CAISO, Central for MISO). Feb 29 is excluded;
+      DST spring-forward gap interpolated (limit=2).
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point),
+      PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST
+      (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs).
+  - name: price
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss
+      (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector).
+      MISO/PJM: total_lmp_da (energy + congestion + loss). NaN for hours
+      with no data (OASIS retention gap, missing source).

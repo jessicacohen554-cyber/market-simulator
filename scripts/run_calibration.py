@@ -2117,6 +2117,7 @@ def run_year(
     miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
+    miso_pjm_lmp_import_pricing: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -2414,6 +2415,8 @@ def run_year(
         # by displacing the over-running domestic coal/CC). Requires the priced
         # interface; MISO-only (only the PJM seam carries a floor).
         config = config.with_overrides(miso_firm_import_floor=True)
+    if miso_pjm_lmp_import_pricing:
+        config = config.with_overrides(miso_pjm_lmp_import_pricing=True)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -3626,6 +3629,35 @@ def run_year(
                 if _border_anchor and iso == "MISO"
                 else "",
             )
+        # Measured PJM border-hub LMP overwrite (MISO only): replace the PJM
+        # seam's gas × HR rows with the measured hourly PJM DA LMP at the
+        # MISO-facing western border hubs + hurdle. Runs AFTER the generic
+        # inject_reference_price_mc (which sets all seams including PJM from the
+        # gas × HR formula), so it overwrites ONLY the PJM seam rows while
+        # SPP/South keep their gas × HR pricing. The two mechanisms (border-
+        # anchor vs measured LMP) are alternatives; measured LMP takes precedence
+        # when both are on. No-op without the measured parquet.
+        if getattr(config, "miso_pjm_lmp_import_pricing", False):
+            from market_sim.model.transmission import (
+                inject_miso_pjm_lmp_import_prices,
+            )
+
+            if inject_miso_pjm_lmp_import_prices(fleet_arrays, mc_base, iso, year):
+                logger.info(
+                    "%s %d: PJM seam repriced to MEASURED hourly PJM "
+                    "border-hub DA LMP (CHICAGO GEN / AEP GEN / ATSI GEN "
+                    "mean + $%.0f hurdle)",
+                    iso,
+                    year,
+                    next(
+                        (
+                            n.hurdle
+                            for n in INTERFACE_NEIGHBORS.get(iso, [])
+                            if n.name == "PJM"
+                        ),
+                        2.0,
+                    ),
+                )
         # Firm scheduled-export floor: force the cheapest export tranches on at
         # the measured firm base (firm_export_floor_by_year) so PJM's firm
         # must-flow export to MISO/NYISO clears even in cheap-spread hours, the
