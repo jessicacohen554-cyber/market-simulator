@@ -2295,6 +2295,139 @@ def dual_fuel_switch_mask(
     return mask
 
 
+def load_oil_burn_budget(
+    iso: str,
+    year: int,
+    fleet: "FleetArrays",
+    monthly_costs_path: Path | None = None,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return ``(oil_gen_idx, monthly_budget_mwh)`` for the oil inventory constraint.
+
+    Derives a monthly oil-burn cap (MWh) from measured EIA-923 Schedule 5
+    Petroleum receipts — the ISO's total monthly petroleum heat-input
+    (MMBtu), allocated pro-rata by nameplate to each oil-primary generator
+    in the fleet, then converted to MWh via that generator's heat rate.
+    The result is a per-generator monthly budget exactly like the hydro
+    family (one LP row per generator × month).
+
+    Scope is **oil-primary generators only** (``fuel_type_idx ==
+    FUEL_TYPE_MAP["oil"]``). Dual-fuel gas units are excluded: their oil
+    consumption is not captured in F923 petroleum receipts (they report as
+    gas plants), so constraining them with this budget would produce a
+    budget far below actual consumption and make the LP infeasible.
+
+    When no EIA-923 petroleum data exists for the ISO-year, returns
+    ``None`` (the caller skips the constraint, identical LP).
+
+    Source: EIA-923 Schedule 5 monthly Petroleum receipts (quantity in
+    MMBtu) — measured oil DELIVERIES, the physical stock of distillate
+    available to burn. This is a reproducible deliverability input whose
+    forward analogue is a seasonal oil-storage/contract assumption
+    (CLAUDE.md #10). NOT sized to land a target number of >$300 hours.
+
+    Args:
+        iso: ISO identifier.
+        year: Calendar year.
+        fleet: Vectorized fleet arrays carrying ``fuel_type_idx``,
+            ``plant_code``, ``plant_group``, ``pmax``, ``heat_rate``.
+        monthly_costs_path: Optional override for the F923 parquet path.
+
+    Returns:
+        ``(oil_gen_idx, monthly_budget_mwh)`` with ``oil_gen_idx`` shape
+        ``(n_oil,)`` (thermal-block column indices) and
+        ``monthly_budget_mwh`` shape ``(n_oil, 12)`` in MWh; or ``None``
+        when no measured data exists.
+    """
+    costs = _load_monthly_cache(monthly_costs_path)
+    if costs is None or year not in available_years(costs):
+        return None
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        iso_plants = frozenset(build_zone_lookup(iso.upper()))
+    except Exception:
+        return None
+    if not iso_plants:
+        return None
+
+    # Total ISO petroleum receipts by month (MMBtu).
+    sub = costs[
+        (costs["year"] == year)
+        & (costs["fuel_group"] == "Petroleum")
+        & costs["plant_id"].isin(iso_plants)
+    ]
+    if sub.empty:
+        return None
+    iso_monthly_mmbtu = np.zeros(12, dtype=float)
+    for m, qty in sub.groupby("month")["quantity"].sum().items():
+        iso_monthly_mmbtu[int(m) - 1] = float(qty)
+    if iso_monthly_mmbtu.sum() <= 0:
+        return None
+
+    # Identify oil-primary generators only (fuel_type_idx == oil).
+    oil_idx = FUEL_TYPE_MAP["oil"]
+    oil_gen_idx = np.flatnonzero(np.asarray(fleet.fuel_type_idx) == oil_idx)
+    if oil_gen_idx.size == 0:
+        return None
+
+    # Allocate the ISO-level monthly MMBtu budget pro-rata by nameplate MW.
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    total_oil_mw = pmax[oil_gen_idx].sum()
+    if total_oil_mw <= 0:
+        return None
+    shares = pmax[oil_gen_idx] / total_oil_mw  # (n_oil,)
+
+    # Convert each generator's MMBtu allocation to MWh: MWh = MMBtu / HR.
+    hr = np.asarray(fleet.heat_rate, dtype=float)[oil_gen_idx]
+    hr = np.where(hr > 0, hr, 10.0)  # fallback HR for safety
+    monthly_budget_mwh = np.outer(shares, iso_monthly_mmbtu) / hr[:, None]
+
+    # Check how many reporting plants actually contributed to these receipts.
+    n_reporting = sub["plant_id"].nunique()
+    finite_months = int((iso_monthly_mmbtu > 0).sum())
+    finite_mwh = monthly_budget_mwh[:, iso_monthly_mmbtu > 0].sum()
+
+    # Skip when petroleum receipt coverage is too sparse to be a meaningful
+    # fleet-wide constraint: fewer than half the months have any deliveries,
+    # or the budget derives from fewer reporting plants than the constrained
+    # fleet. F923 receipts measure deliveries to tank, not inventory; gaps
+    # mean the tank wasn't refilled, not that no oil was available.
+    if finite_months < 6 or n_reporting < max(2, oil_gen_idx.size // 20):
+        logger.info(
+            "oil burn budget (%s %d): SKIPPED — F923 petroleum receipts "
+            "too sparse (%d reporting plant(s), %d/12 months with "
+            "deliveries, %.1f GWh) to constrain %d generators (%.0f MW)",
+            iso,
+            year,
+            n_reporting,
+            finite_months,
+            finite_mwh / 1e3,
+            oil_gen_idx.size,
+            total_oil_mw,
+        )
+        return None
+
+    # Months with zero receipts are unconstrained (inf) — zero deliveries
+    # does not mean zero available fuel; plants burn from tank inventory.
+    monthly_budget_mwh[:, iso_monthly_mmbtu <= 0] = np.inf
+
+    n_oil = oil_gen_idx.size
+    total_mwh = monthly_budget_mwh.sum()
+    logger.info(
+        "oil burn budget (%s %d): %d oil-capable generators "
+        "(%.0f MW, %.1f GWh annual budget from EIA-923 petroleum receipts, "
+        "%d/12 months constrained, %d reporting plant(s))",
+        iso,
+        year,
+        n_oil,
+        total_oil_mw,
+        finite_mwh / 1e3,
+        finite_months,
+        n_reporting,
+    )
+    return oil_gen_idx, monthly_budget_mwh
+
+
 def apply_plant_monthly_fuel_prices(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
