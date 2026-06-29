@@ -1143,51 +1143,14 @@ def _calibration_config(
         #   plant pmax across a plant's tranches.
         reliability_floor=(
             iso.upper() in ("CAISO", "NYISO", "NEISO", "MISO")
-        ),  # Generic registry-driven temperature-reliability floor: ON for
-        #   all four calibrated ISOs that have entries in
-        #   RELIABILITY_FLOOR_REGISTRY (iso_configs.py). Replaces the per-ISO
-        #   flags below, which are kept for back-compat but are now redundant
-        #   when reliability_floor is on. New ISOs need ONLY this flag + a
-        #   registry entry + a weather file.
-        nyiso_ct_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
-        #   default-ON (nyiso-33): the downstate CT_PEAKER local-reliability floor
-        #   holds in-city / Long-Island simple-cycle gas peakers online through the
-        #   hot-day afternoon-evening AC ramp at clip(base + slope*(TMAX-T0), base,
-        #   cap) x available downstate-CT capacity, keyed to the NYC-metro daily max
-        #   temperature (NOAA GHCN) and restricted to NYISO_CT_FLOOR_ZONES. Recovers
-        #   the local-RA CT_PEAKER energy an energy-only LP leaves on the cheaper CC
-        #   fleet (CT_PEAKER 2023/24 -1.7/-1.9 -> -0.85 TWh, FAIL -> PASS; CC over-run
-        #   shrinks). Coefficients regressed from measured downstate CAMPD evening
-        #   (HB14-21) CF vs TMAX, 2023-2025 — a physical heat->commitment rule, NOT a
-        #   TWh-residual fit (scripts/derive_nyiso_ct_reliability_floor.py). Other
-        #   ISOs stay off (byte-identical); coefficients from ScenarioConfig defaults.
-        nyiso_st_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
-        #   default-ON (nyiso-34): the downstate ST_GAS local-reliability floor
-        #   holds the gas-steam fleet online at a temperature-driven commitment,
-        #   keyed PER ZONE to its load-center daily max temperature (Islip / Central
-        #   Park / Albany). NYC carries a non-zero base (the Ravenswood/Arthur
-        #   Kill/Astoria in-city must-run), Long Island a strong hot-limb, Capital a
-        #   weak hot-limb; the flat Upstate steam fleet is omitted. Recovers the
-        #   local-RA steam energy an energy-only LP leaves on the cheaper CC fleet
-        #   (the documented 2024 ST_GAS under-run). Coefficients (transmission.
-        #   NYISO_ST_FLOOR_COEFFS) regressed from measured per-zone CAMPD ST_GAS
-        #   evening (HB14-21) CF vs zone TMAX, 2023-2025 — a physical
-        #   heat->commitment rule, NOT a TWh-residual fit (scripts/derive_nyiso_st_
-        #   reliability_floor.py). Other ISOs stay off (byte-identical).
-        neiso_temp_reliability_floor=(iso.upper() == "NEISO"),  # NEISO keeper
-        #   default-ON: the DUAL-LIMB weather-correlated reliability floor. ISO-NE
-        #   under-runs two weather-driven fleets on OPPOSITE limbs: (1) CT_PEAKER
-        #   tracks the summer cooling HOT limb (TMAX) over the afternoon-evening
-        #   ramp like CAISO/NYISO; (2) the lone Merrimack-class COAL unit + lone
-        #   steam-gas ST_GAS unit run almost only in deep-winter COLD snaps (TMIN),
-        #   when the gas-electric constraint prices these oil/coal/steam units into
-        #   merit. An energy-only LP leaves both on the cheaper CC fleet. The floor
-        #   holds each group at frac x available capacity over its window, keyed to
-        #   the NEISO load-weighted daily TMAX/TMIN (NOAA GHCN). Coefficients
-        #   regressed from measured CAMPD CF, 2023-2025 (cold-limb Spearman rho
-        #   ~0.35-0.40, hot-limb ~0.47) — physical temperature->commitment rules,
-        #   NOT TWh-residual fits (scripts/derive_neiso_temp_reliability_floor.py).
-        #   Other ISOs stay off (byte-identical); coefficients from ScenarioConfig.
+        ),  # Registry-driven temperature/net-load reliability floor: ON for the
+        #   four calibrated ISOs. Every enabled (zone, class, driver) limb in
+        #   RELIABILITY_FLOOR_REGISTRY[iso] (seeded from the derived
+        #   reliability_floor_coeffs_<ISO>.csv) is applied by the single engine.
+        #   The registry is empty until Phase 2 fills the coefficient CSVs, so
+        #   this is a no-op today; per-limb tuning is via
+        #   reliability_floor_overrides. New ISOs need ONLY this flag + a registry
+        #   row + a weather file.
         neiso_oil_burn_budget=(iso.upper() == "NEISO"),  # NEISO keeper
         #   default-ON: inventory-limited oil-burn monthly budget. Oil/dual-fuel
         #   peakers ration limited on-site distillate over multi-day cold snaps;
@@ -1197,20 +1160,6 @@ def _calibration_config(
         #   Schedule 5 monthly Petroleum receipts (MMBtu -> MWh); a reproducible
         #   physical deliverability input (CLAUDE.md #10). NEISO-only, no-op for
         #   other ISOs (byte-identical).
-        caiso_ct_reliability_floor=False,  # CAISO: the OLD temperature/TMAX
-        #   CT_PEAKER local-RA floor is now DEFAULT-OFF — replaced by the
-        #   forward-native net-load-drag commitment (ct_netload_drag below). The
-        #   audit (docs/caiso-lever-audit-2026-06.md, Lever B) showed its flat
-        #   0.049 year-round baseline bound 61% of binding hours and made a FLAT
-        #   771 MW rectangle h15-22 instead of the real sharp h18 evening peak — a
-        #   constant tuned to the cool-day median CF, i.e. a level target (#1
-        #   forbidden). The inject fn stays re-armable for diagnostics / other
-        #   ISOs via --caiso-ct-reliability-floor (byte-identical when off). See
-        #   transmission.inject_caiso_ct_reliability_floor.
-        caiso_ct_floor_base=0.0,  # CAISO: the flat year-round baseline of the OLD
-        #   TMAX floor is removed (was 0.049 — the cool-day median CF level target
-        #   that made the rectangle); 0.0 leaves the inject byte-identical to the
-        #   hot-limb-only floor if it is ever re-armed.
         ct_netload_drag=(iso.upper() == "CAISO"),  # CAISO keeper default-ON: the
         #   forward-native CT_PEAKER reliability-drag floor that REPLACES the flat
         #   TMAX floor above (audit Lever B). Same mechanism validated on ERCOT —
@@ -2025,15 +1974,11 @@ def run_year(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     reliability_floor: bool | None = None,
-    caiso_ct_reliability_floor: bool | None = None,
+    reliability_floor_overrides: dict | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
     caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
-    nyiso_ct_reliability_floor: bool | None = None,
-    nyiso_st_reliability_floor: bool | None = None,
-    neiso_temp_reliability_floor: bool | None = None,
-    neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
@@ -2055,7 +2000,6 @@ def run_year(
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
     miso_pjm_border_anchor: bool = False,
-    miso_temp_reliability_floor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
@@ -2236,9 +2180,9 @@ def run_year(
         config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
-    if caiso_ct_reliability_floor is not None:
+    if reliability_floor_overrides is not None:
         config = config.with_overrides(
-            caiso_ct_reliability_floor=caiso_ct_reliability_floor
+            reliability_floor_overrides=reliability_floor_overrides
         )
     if caiso_solar_deliverability is not None:
         config = config.with_overrides(
@@ -2255,22 +2199,6 @@ def run_year(
     if caiso_solar_cap_at_delivered is not None:
         config = config.with_overrides(
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
-        )
-    if nyiso_ct_reliability_floor is not None:
-        config = config.with_overrides(
-            nyiso_ct_reliability_floor=nyiso_ct_reliability_floor
-        )
-    if nyiso_st_reliability_floor is not None:
-        config = config.with_overrides(
-            nyiso_st_reliability_floor=nyiso_st_reliability_floor
-        )
-    if neiso_temp_reliability_floor is not None:
-        config = config.with_overrides(
-            neiso_temp_reliability_floor=neiso_temp_reliability_floor
-        )
-    if neiso_floor_outage_exempt is not None:
-        config = config.with_overrides(
-            neiso_floor_outage_exempt=neiso_floor_outage_exempt
         )
     if neiso_gas_coldsnap_derate is not None:
         config = config.with_overrides(
@@ -2339,12 +2267,6 @@ def run_year(
         config = config.with_overrides(miso_seam_export_limit=True)
     if miso_pjm_border_anchor:
         config = config.with_overrides(miso_pjm_border_anchor=True)
-    if miso_temp_reliability_floor:
-        # MISO dual-limb, zonal weather reliability floor (the MISO-native
-        # temperature->commitment mechanism replacing the ERCOT-coefficient
-        # gas_st_netload_drag). MISO-only; coefficients baked in
-        # transmission.MISO_ST_FLOOR_COEFFS / MISO_CT_FLOOR_COEFFS.
-        config = config.with_overrides(miso_temp_reliability_floor=True)
     if miso_cc_coal_rebalance and iso.upper() == "MISO":
         # Raise the MISO CC_REGULAR / COAL_BIT offer curve so the marginal CC /
         # coal-bit MWh sits above the priced-import hurdle (and the under-running
@@ -3164,167 +3086,32 @@ def run_year(
                 frac,
             )
 
-    # ── Generic registry-driven temperature-reliability floor ──────────────
-    # One flag, one engine, one registry: replaces the per-ISO inject blocks
-    # below for any ISO with entries in RELIABILITY_FLOOR_REGISTRY.  The per-
-    # ISO flags (caiso_ct_reliability_floor, nyiso_ct/st, neiso_temp,
-    # miso_temp) are kept for back-compat and still fire the legacy injectors
-    # if reliability_floor is off; when reliability_floor is on the generic
-    # engine handles all limbs and the legacy blocks are skipped.
-    _generic_floor_applied = False
+    # ── Generic registry-driven reliability floor ──────────────────────────
+    # One flag, one engine, one registry: every enabled (zone, class, driver)
+    # limb in RELIABILITY_FLOOR_REGISTRY[iso] (seeded from the derived
+    # reliability_floor_coeffs_<ISO>.csv) is applied by the single ISO-agnostic
+    # engine. Per-run overrides (config.reliability_floor_overrides) can toggle
+    # or re-tune individual limbs without editing the registry.
     if getattr(config, "reliability_floor", False):
-        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+        from market_sim.config.iso_configs import (
+            RELIABILITY_FLOOR_REGISTRY,
+            apply_reliability_floor_overrides,
+        )
         from market_sim.model.transmission import inject_reliability_floor
 
-        _floor_specs = RELIABILITY_FLOOR_REGISTRY.get(iso, [])
-        if _floor_specs:
-            _generic_floor_applied = inject_reliability_floor(
-                fleet_arrays, iso, year, _floor_specs, zone_names
-            )
-            if _generic_floor_applied:
-                logger.info(
-                    "%s %d: generic reliability floor — %d limb spec(s) applied "
-                    "from RELIABILITY_FLOOR_REGISTRY",
-                    iso,
-                    year,
-                    len(_floor_specs),
-                )
-
-    # CAISO local-RA CT_PEAKER reliability floor (legacy — skipped when the
-    # generic reliability_floor handled this ISO above).
-    if (
-        getattr(config, "caiso_ct_reliability_floor", False)
-        and not _generic_floor_applied
-    ):
-        from market_sim.model.transmission import (
-            inject_caiso_ct_reliability_floor,
+        _floor_specs = apply_reliability_floor_overrides(
+            RELIABILITY_FLOOR_REGISTRY.get(iso, []),
+            getattr(config, "reliability_floor_overrides", None),
         )
-
-        _ct_slope = float(getattr(config, "caiso_ct_floor_slope_per_c", 0.047))
-        _ct_t0 = float(getattr(config, "caiso_ct_floor_t0_c", 25.0))
-        _ct_cap = float(getattr(config, "caiso_ct_floor_cap", 0.46))
-        _ct_base = float(getattr(config, "caiso_ct_floor_base", 0.0))
-        if inject_caiso_ct_reliability_floor(
-            fleet_arrays, iso, year, _ct_slope, _ct_t0, _ct_cap, _ct_base
+        if _floor_specs and inject_reliability_floor(
+            fleet_arrays, iso, year, _floor_specs, zone_names
         ):
             logger.info(
-                "%s %d: local-RA CT_PEAKER reliability floor — peakers held "
-                "online on afternoons/evenings at clip(%.3f + %.3f*(TMAX-%.0f), "
-                "%.3f, %.2f) x available capacity (temperature hot-limb + "
-                "year-round baseline)",
+                "%s %d: reliability floor — %d enabled limb spec(s) applied "
+                "from RELIABILITY_FLOOR_REGISTRY",
                 iso,
                 year,
-                _ct_base,
-                _ct_slope,
-                _ct_t0,
-                _ct_base,
-                _ct_cap,
-            )
-
-    # NYISO downstate local-reliability CT_PEAKER floor: hold in-city / Long-Island
-    # simple-cycle gas peakers online through the hot-day afternoon-evening AC ramp
-    # at a temperature-driven commitment fraction (clip(base + slope*(TMAX-T0),
-    # base, cap) x available capacity), keyed to the NYC-metro daily max
-    # temperature and restricted to the downstate load pockets. Recovers the
-    # local-reliability energy an energy-only LP leaves on the (cheaper) CC fleet
-    # (transmission.inject_nyiso_ct_reliability_floor).
-    if (
-        getattr(config, "nyiso_ct_reliability_floor", False)
-        and not _generic_floor_applied
-    ):
-        from market_sim.model.transmission import (
-            inject_nyiso_ct_reliability_floor,
-        )
-
-        _nct_slope = float(getattr(config, "nyiso_ct_floor_slope_per_c", 0.053))
-        _nct_t0 = float(getattr(config, "nyiso_ct_floor_t0_c", 25.0))
-        _nct_cap = float(getattr(config, "nyiso_ct_floor_cap", 0.68))
-        _nct_base = float(getattr(config, "nyiso_ct_floor_base", 0.13))
-        if inject_nyiso_ct_reliability_floor(
-            fleet_arrays,
-            iso,
-            year,
-            zone_names,
-            _nct_slope,
-            _nct_t0,
-            _nct_cap,
-            _nct_base,
-        ):
-            logger.info(
-                "%s %d: downstate CT_PEAKER local-reliability floor — NYC/LI "
-                "peakers held online on hot afternoons/evenings at clip(%.3f + "
-                "%.3f*(TMAX-%.0f), %.3f, %.2f) x available capacity",
-                iso,
-                year,
-                _nct_base,
-                _nct_slope,
-                _nct_t0,
-                _nct_base,
-                _nct_cap,
-            )
-
-    # NYISO downstate ST_GAS local-reliability floor: hold the gas-steam fleet
-    # online at a per-zone temperature-driven commitment — NYC's in-city must-run
-    # baseline (Ravenswood/Arthur Kill/Astoria) plus the Long Island / Capital
-    # summer hot-limbs — keyed to each zone's load-center daily max temperature.
-    # Recovers the local-RA steam energy an energy-only LP leaves on the cheaper CC
-    # fleet (transmission.inject_nyiso_st_reliability_floor). Composes via maximum
-    # with the LI self-supply floor.
-    if (
-        getattr(config, "nyiso_st_reliability_floor", False)
-        and not _generic_floor_applied
-    ):
-        from market_sim.model.transmission import (
-            inject_nyiso_st_reliability_floor,
-        )
-
-        if inject_nyiso_st_reliability_floor(
-            fleet_arrays,
-            iso,
-            year,
-            zone_names,
-        ):
-            logger.info(
-                "%s %d: downstate ST_GAS local-reliability floor — NYC in-city "
-                "must-run baseline + Long Island/Capital hot-limbs held online at "
-                "clip(base + slope*(TMAX-T0), base, cap) x available capacity, "
-                "per-zone TMAX",
-                iso,
-                year,
-            )
-
-    # NEISO dual-limb weather-correlated reliability floor: hold the summer
-    # CT_PEAKER fleet online through the hot-day afternoon-evening ramp (hot limb,
-    # TMAX) AND the lone cold-snap COAL + ST_GAS units online through the winter
-    # morning/evening peaks (cold limb, TMIN), each at frac x available capacity.
-    # Recovers the weather-driven reliability energy an energy-only LP leaves on
-    # the cheaper CC fleet (transmission.inject_neiso_temp_reliability_floor).
-    if (
-        getattr(config, "neiso_temp_reliability_floor", False)
-        and not _generic_floor_applied
-    ):
-        from market_sim.model.transmission import (
-            inject_neiso_temp_reliability_floor,
-        )
-
-        if inject_neiso_temp_reliability_floor(
-            fleet_arrays,
-            iso,
-            year,
-            float(getattr(config, "neiso_ct_floor_slope_per_c", 0.037)),
-            float(getattr(config, "neiso_ct_floor_t0_c", 25.0)),
-            float(getattr(config, "neiso_ct_floor_cap", 0.48)),
-            float(getattr(config, "neiso_ct_floor_base", 0.0)),
-            float(getattr(config, "neiso_coldsnap_floor_slope_per_c", 0.033)),
-            float(getattr(config, "neiso_coldsnap_floor_cap", 1.0)),
-            float(getattr(config, "neiso_coldsnap_floor_base", 0.0)),
-        ):
-            logger.info(
-                "%s %d: dual-limb weather floor — CT_PEAKER hot-limb (TMAX) over "
-                "the afternoon-evening ramp + COAL/ST_GAS cold-limb (TMIN) over "
-                "the winter morning/evening peaks, frac x available capacity",
-                iso,
-                year,
+                sum(1 for s in _floor_specs if getattr(s, "enabled", True)),
             )
 
     # NEISO winter gas-availability derate (temperature-dependent forced outage):
@@ -3349,34 +3136,6 @@ def run_year(
                 "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
                 "availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap "
                 "window (TDFOR, NERC cold-weather anchored)",
-                iso,
-                year,
-            )
-
-    # MISO dual-limb, ZONAL weather floor: hold the gas-steam and simple-cycle CT
-    # fleets online at a temperature-driven commitment, keyed PER ZONE to that
-    # zone's load-weighted daily TMAX/TMIN — a summer hot-limb (TMAX) over the
-    # afternoon-evening AC ramp in all zones, plus a deep-winter cold-limb (TMIN)
-    # over the morning/evening peaks grounded only in MISO-South (the Entergy
-    # gas-constrained footprint). Recovers the weather-driven reliability energy an
-    # energy-only LP leaves on the cheaper CC/coal stack (transmission.
-    # inject_miso_temp_reliability_floor). MISO-native replacement for the
-    # ERCOT-coefficient gas_st_netload_drag (which saturates across MISO's net-load
-    # range). No-op off the flag / for non-MISO / without an archived series.
-    if (
-        getattr(config, "miso_temp_reliability_floor", False)
-        and not _generic_floor_applied
-    ):
-        from market_sim.model.transmission import (
-            inject_miso_temp_reliability_floor,
-        )
-
-        if inject_miso_temp_reliability_floor(fleet_arrays, iso, year, zone_names):
-            logger.info(
-                "%s %d: zonal dual-limb weather floor — ST_GAS/CT_PEAKER hot-limb "
-                "(per-zone TMAX) over the afternoon-evening ramp + MISO-South "
-                "cold-limb (TMIN) over the winter morning/evening peaks, frac x "
-                "available capacity",
                 iso,
                 year,
             )
@@ -4490,7 +4249,7 @@ def _commitment_pass(state: dict, config=None):
         or getattr(cfg, "reliability_deployment_overlay", False)
         or getattr(cfg, "caiso_gas_commitment_floor", False)
         or getattr(cfg, "nyiso_local_selfsupply", False)
-        or getattr(cfg, "nyiso_st_reliability_floor", False)
+        or getattr(cfg, "reliability_floor", False)
         or getattr(cfg, "nyiso_firm_imports", False)
         or getattr(cfg, "miso_firm_imports", False)
     )
