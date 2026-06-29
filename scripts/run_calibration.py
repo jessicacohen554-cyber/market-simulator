@@ -1018,16 +1018,31 @@ def _calibration_config(
         #   overlay below supersedes it in covered months. PJM keeps the
         #   --gas-monthly-actuals flag (its keeper runs pass it explicitly);
         #   ERCOT stays on annual + shape (E1).
-        gas_hub_basis_overlay=(iso.upper() == "NEISO"),
-        #   Doc-08 NEISO design decision 1: the marginal NEISO gas unit
-        #   prices off Algonquin Citygate spot, whose Dec-Feb basis blows out
-        #   to +$4-13/MMBtu (measured ISO-NE MA gas index 2023-2025,
-        #   data/raw/gas_basis_by_iso_month.csv). The overlay replaces
-        #   the gas price with HH-month + measured AGT basis in covered
-        #   months — THE ISO-NE winter price driver and the dual-fuel switch
-        #   trigger (P13). No basis rows exist for other ISOs (the NYISO
-        #   Transco Z6 leg is still unsourced), so this is a NEISO-only
-        #   repricing.
+        gas_hub_basis_overlay=(iso.upper() in ("NEISO", "CAISO")),
+        #   Doc-08 NEISO design decision 1: the marginal gas unit prices off
+        #   its constrained trading hub's spot (the opportunity cost of gas in
+        #   hand is the spot price it could be resold at), NOT the contract-
+        #   laden plant-average EIA-923 delivered cost. The overlay replaces
+        #   the gas price with HH-month + the measured hub basis in covered
+        #   months (data/raw/gas_basis_by_iso_month.csv).
+        #     - NEISO: Algonquin Citygate, whose Dec-Feb basis blows out to
+        #       +$4-13/MMBtu (measured ISO-NE MA gas index 2023-2025) — THE
+        #       ISO-NE winter price driver and the dual-fuel switch trigger (P13).
+        #     - CAISO (caiso 38): the SoCal / PG&E Citygate (EIA N3050CA3
+        #       citygate - Henry Hub). The default ISO-month EIA-923 series for
+        #       CAISO is volume-weighted across only ~7 reporting plants
+        #       (Gateway/Colusa/Lodi PG&E + SDGE Palomar — NorCal/SDGE-skewed),
+        #       running ~$0.6/MMBtu above the full-census CA electric-power
+        #       delivered gas (EIA N3045CA3 2024 = $3.98/Mcf = $3.84/MMBtu) and
+        #       missing the cheap SoCal-border gas the SP15-dominated marginal
+        #       CC actually burns (SoCal border fell to a discount to Henry Hub
+        #       in summer 2024). The citygate overlay is the measured CA trading
+        #       hub the marginal CC prices off — captures both the Jan-2023
+        #       western gas crisis (+$24/MMBtu basis) and the summer-2024 SoCal
+        #       discount — and supersedes the skewed 7-plant sample (rule #11:
+        #       prefer accurate measured data; reconcile a misaligned sample to
+        #       the representative hub). NYISO's Transco Z6 leg is still
+        #       unsourced, so it keeps the ISO-month 923 series.
         gas_hub_basis_daily=False,
         #   Daily resolution for the AGT overlay (opt in with
         #   --gas-hub-basis-daily). It replaces the flat monthly hub price with a
