@@ -3005,6 +3005,216 @@ def inject_miso_temp_reliability_floor(
     return applied
 
 
+# ---------------------------------------------------------------------------
+# Generic registry-driven reliability-floor engine
+# ---------------------------------------------------------------------------
+
+
+def inject_reliability_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    specs: list,
+    zone_names: list[str],
+) -> bool:
+    """Apply temperature-driven reliability floors from a list of limb specs.
+
+    One function that replaces all six bespoke ``inject_*_reliability_floor``
+    injectors.  Each :class:`~market_sim.config.iso_configs.ReliabilityFloorSpec`
+    in *specs* describes one limb (hot or cold, one or more plant-group classes,
+    system-wide or zonal, pooled or per-zone temperature, cheapest-first or
+    pro-rata distribution).  The engine iterates the specs, loads temperature
+    data via :func:`~market_sim.data.eia_loader.iso_zone_tmax`, computes the
+    ``frac`` curve, selects the in-scope units, and distributes the floor into
+    ``FleetArrays.min_gen`` — producing numerically identical results to the
+    legacy per-ISO injectors for all four calibrated ISOs (CAISO / NYISO /
+    NEISO / MISO).
+
+    Modifies *fleet_arrays* in place.  Returns ``True`` when any limb applied
+    a floor, ``False`` (byte-identical) otherwise.
+    """
+    if fleet_arrays.plant_group is None:
+        return False
+    from market_sim.data.eia_loader import iso_zone_tmax
+
+    groups = np.asarray(fleet_arrays.plant_group)
+    hours = int(fleet_arrays.availability.shape[1])
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    applied = False
+
+    for spec in specs:
+        # Build hour-of-day window mask.
+        if spec.hod_range:
+            w_start, w_end = spec.hod_hours
+            in_window = (hod >= w_start) & (hod <= w_end)
+        else:
+            in_window = np.isin(hod, np.asarray(spec.hod_hours))
+
+        applicable_zones = list(spec.zones) if spec.zones else list(zone_names)
+
+        if spec.tmax_mode == "pooled":
+            temp_result = iso_zone_tmax(iso, year, hours, zone=None)
+            if temp_result is None:
+                continue
+            tmax, tmin = temp_result
+            driver = tmax if spec.limb == "hot" else tmin
+            if driver is None:
+                continue
+
+            for cls in spec.classes:
+                t0 = spec.t0_c[cls] if isinstance(spec.t0_c, dict) else spec.t0_c
+                slope = (
+                    spec.slope_per_c[cls]
+                    if isinstance(spec.slope_per_c, dict)
+                    else spec.slope_per_c
+                )
+                cap_val = spec.cap[cls] if isinstance(spec.cap, dict) else spec.cap
+                base_val = spec.base[cls] if isinstance(spec.base, dict) else spec.base
+
+                if slope <= 0.0 and cap_val <= 0.0 and base_val <= 0.0:
+                    continue
+
+                if spec.limb == "hot":
+                    ev = np.clip(base_val + slope * (driver - t0), base_val, cap_val)
+                else:
+                    ev = np.clip(base_val + slope * (t0 - driver), base_val, cap_val)
+                frac = np.where(in_window, ev, 0.0)
+                if not np.any(frac > 0.0):
+                    continue
+
+                zone_idxs = [
+                    i for i, z in enumerate(zone_names) if z in applicable_zones
+                ]
+                sel = (
+                    (groups == cls)
+                    & np.isin(fleet_arrays.zone_idx, zone_idxs)
+                    & (fleet_arrays.pmax > 0.0)
+                )
+                rows = np.flatnonzero(sel)
+                if rows.size == 0:
+                    continue
+
+                if fleet_arrays.min_gen is None:
+                    fleet_arrays.min_gen = np.broadcast_to(
+                        fleet_arrays.pmin[:, np.newaxis],
+                        (fleet_arrays.pmin.size, hours),
+                    ).copy()
+
+                if spec.distribution == "cheapest_first":
+                    _distribute_group_floor(fleet_arrays, rows, frac, hours)
+                else:
+                    for r in rows:
+                        avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                        np.maximum(
+                            fleet_arrays.min_gen[r, :],
+                            frac * avail_r,
+                            out=fleet_arrays.min_gen[r, :],
+                        )
+                applied = True
+
+        else:  # per_zone
+            for zone in applicable_zones:
+                temp_result = iso_zone_tmax(iso, year, hours, zone=zone)
+                if temp_result is None:
+                    continue
+                tmax, tmin = temp_result
+                driver = tmax if spec.limb == "hot" else tmin
+                if driver is None:
+                    continue
+
+                z_idx = next((i for i, z in enumerate(zone_names) if z == zone), None)
+                if z_idx is None:
+                    continue
+
+                for cls in spec.classes:
+                    t0 = spec.t0_c[cls] if isinstance(spec.t0_c, dict) else spec.t0_c
+                    slope = (
+                        spec.slope_per_c[zone]
+                        if isinstance(spec.slope_per_c, dict)
+                        else spec.slope_per_c
+                    )
+                    cap_val = spec.cap[zone] if isinstance(spec.cap, dict) else spec.cap
+                    base_val = (
+                        spec.base[zone] if isinstance(spec.base, dict) else spec.base
+                    )
+                    b24h = spec.base_24h.get(zone, 0.0) if spec.base_24h else 0.0
+
+                    if (
+                        (slope <= 0.0 or cap_val <= 0.0)
+                        and b24h <= 0.0
+                        and base_val <= 0.0
+                    ):
+                        continue
+
+                    # NYISO ST pattern: persistent 24h baseline with evening
+                    # hot-limb layered on top via maximum.
+                    if b24h > 0.0:
+                        frac = np.full(hours, b24h, dtype=float)
+                        if slope > 0.0 and cap_val > 0.0:
+                            if spec.limb == "hot":
+                                ev = np.clip(
+                                    base_val + slope * (driver - t0),
+                                    base_val,
+                                    cap_val,
+                                )
+                            else:
+                                ev = np.clip(
+                                    base_val + slope * (t0 - driver),
+                                    base_val,
+                                    cap_val,
+                                )
+                            frac = np.where(in_window, np.maximum(frac, ev), frac)
+                    else:
+                        if spec.limb == "hot":
+                            raw = np.clip(
+                                base_val + slope * (driver - t0),
+                                base_val,
+                                cap_val,
+                            )
+                        else:
+                            raw = np.clip(
+                                base_val + slope * (t0 - driver),
+                                base_val,
+                                cap_val,
+                            )
+                        frac = np.where(in_window, raw, 0.0)
+
+                    if not np.any(frac > 0.0):
+                        continue
+
+                    sel = (
+                        (groups == cls)
+                        & (fleet_arrays.zone_idx == z_idx)
+                        & (fleet_arrays.pmax > 0.0)
+                    )
+                    rows = np.flatnonzero(sel)
+                    if rows.size == 0:
+                        continue
+
+                    if fleet_arrays.min_gen is None:
+                        fleet_arrays.min_gen = np.broadcast_to(
+                            fleet_arrays.pmin[:, np.newaxis],
+                            (fleet_arrays.pmin.size, hours),
+                        ).copy()
+
+                    if spec.distribution == "cheapest_first":
+                        _distribute_group_floor(fleet_arrays, rows, frac, hours)
+                    else:
+                        for r in rows:
+                            avail_r = (
+                                fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                            )
+                            np.maximum(
+                                fleet_arrays.min_gen[r, :],
+                                frac * avail_r,
+                                out=fleet_arrays.min_gen[r, :],
+                            )
+                    applied = True
+
+    return applied
+
+
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the
 # in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
 # must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the
