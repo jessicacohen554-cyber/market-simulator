@@ -27,6 +27,7 @@ on:
       - "*.html"
       - "frontend/**"
       - "learning-hub/**"
+      - "docs/codebase-site/**"
       - "scripts/probes/_backcast_shell.py"
       - "scripts/build_manifest.py"
       - "scripts/build_status.py"
@@ -80,6 +81,7 @@ jobs:
           sparse-checkout: |
             frontend
             learning-hub
+            docs/codebase-site
             scripts
 
       - name: Stage the web assets
@@ -89,6 +91,10 @@ jobs:
           cp ./*.html _site/
           cp -r frontend _site/
           [ -d learning-hub ] && cp -r learning-hub _site/
+          # Codebase Explorer doc site — the root landing page links to
+          # docs/codebase-site/index.html, so stage it at the matching path.
+          mkdir -p _site/docs
+          cp -r docs/codebase-site _site/docs/codebase-site
           # Serve files verbatim (no Jekyll processing of the data JS).
           touch _site/.nojekyll
 
