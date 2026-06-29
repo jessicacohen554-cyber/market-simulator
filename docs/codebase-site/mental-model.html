@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Model — Codebase Explorer</title>
+  <meta name="description" content="The 8,760-hour problem: how electricity demand must be met every hour. Learn the core dispatch logic.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 (for future use in viz) -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+
+  <!-- GSAP for scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="pulse">
+      <div class="header__eyebrow">Foundations</div>
+      <h1 class="header__title">The 8,760-Hour Problem</h1>
+      <p class="header__subtitle">Electricity demand must be met every hour of every day. How does an LP dispatch model balance supply and demand to minimize cost?</p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: Supply Meets Demand -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>Supply Meets Demand</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Every hour of every year, electricity demand at every zone must be satisfied. There are 8,760 hours in a year (365 days × 24 hours). Each hour presents the same problem: <strong>match supply to demand, using the cheapest generators possible.</strong>
+          </p>
+          <p>
+            Unlike fossil fuels you can stockpile or goods you can warehouse, electricity cannot be stored economically at scale (with some exceptions like batteries or hydro reservoirs). Every kilowatt-hour demanded must be generated that same moment. This creates a real-time matching problem.
+          </p>
+          <p>
+            The fleet is diverse: nuclear plants run at low cost night and day, coal plants are cheaper than gas but slower to start, wind and solar are free to run once built (but intermittent), battery systems can hold energy for hours, and gas turbines can fire up quickly for peaks. The challenge: find the minimum-cost way to satisfy demand, hour by hour, respecting each generator's technical limits.
+          </p>
+        </div>
+
+        <!-- Visualization: 24-hour dispatch -->
+        <div class="fig">
+          <div class="fig__header">
+            <h3 class="fig__title">24-Hour Dispatch on a Summer Peak Day</h3>
+          </div>
+          <div class="fig__controls">
+            <div class="fig__controls-group">
+              <label class="fig__label">Fuel filters:</label>
+              <div class="btn-group" id="fuelToggle">
+                <button class="btn active" data-fuel="*">All</button>
+                <button class="btn" data-fuel="coal">Coal</button>
+                <button class="btn" data-fuel="gas">Gas</button>
+                <button class="btn" data-fuel="wind">Wind</button>
+                <button class="btn" data-fuel="solar">Solar</button>
+                <button class="btn" data-fuel="nuclear">Nuclear</button>
+              </div>
+            </div>
+            <div class="fig__controls-group">
+              <label class="fig__label" for="hourSlider">Hour:</label>
+              <input type="range" id="hourSlider" min="0" max="23" value="0" style="width: 120px;">
+              <span id="hourLabel">Midnight</span>
+            </div>
+          </div>
+          <div class="fig__body" id="dispatch-24h-container"></div>
+          <div class="fig__caption">
+            Interactive stacked-area chart showing 24 hours of dispatch on a summer peak weekday (July 15). The chart shows how generators stack by marginal cost: renewables (wind/solar) at cost ~$0, nuclear and coal baseload, then gas-CC filling the middle, gas-CT peaking, with storage and imports adjusting balance. The demand line (dashed) shows how the grid must serve all loads. The price line (secondary y-axis) reflects the cost of the most expensive unit needed to meet demand at each hour — during mid-afternoon (peak solar + demand), prices drop; during evening ramp (solar drops, demand high), prices spike.
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Notice how the dispatch changes hour by hour:
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>Midnight to dawn:</strong> Demand is low. Nuclear and coal provide the baseload. Wind fills the mid-layer. Gas units are mostly idle. Prices are low.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Morning ramp (5–7 AM):</strong> Demand starts rising. Gas-CC units start, then gas-CT (faster but costlier). Prices rise.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Midday (9 AM–3 PM):</strong> Solar is at peak. Demand is high but solar suppresses prices despite the load. Notice: when solar is producing most of the supply, the marginal unit is cheaper, so prices drop.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Evening ramp (4–6 PM):</strong> Solar plummets as sun sets. Demand remains high. Gas-CT runs at full tilt. <span class="em-amber-text">This is when prices spike</span> — the grid needs every expensive peaking unit.</li>
+            <li><strong>Night (8 PM–4 AM):</strong> Demand tapers, wind picks up, prices decline back to baseload.</li>
+          </ul>
+
+          <p>
+            This hourly matching — and the prices that emerge — is exactly what the LP model solves. <strong>The dispatch is the optimal allocation of generators to meet demand at each hour. The prices come from the LP's shadow values (duals).</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: The Merit Order -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>The Merit Order</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Generators have different marginal costs — the cost to produce one additional MWh. This includes fuel cost (Henry Hub gas, coal, etc.), variable operating & maintenance, emissions costs (if carbon is priced), and other hourly costs.
+          </p>
+          <p>
+            The <strong>merit order</strong> is the ranking of all generators by marginal cost, cheapest first. The optimal dispatch runs generators in merit-order sequence: first all the $0 renewables (wind, solar), then nuclear and coal (low fuel cost), then gas-CC (medium cost), then gas-CT (high cost), then oil or hydrogen if needed, until demand is satisfied.
+          </p>
+          <p>
+            The most expensive generator that needs to run sets the market price. This is called the <strong>marginal unit</strong> or <strong>marginal cost pricing</strong>. Why? Because every other generator that's running is cheaper, so they all want to bid at the marginal cost — if they bid lower, they lose money; if they bid higher, they don't clear. The system is in equilibrium when every generator that's dispatched can just break even at the marginal price, and all cheaper generators are running at full tilt.
+          </p>
+          <p style="margin-bottom: 0;">
+            This principle is not specific to our model — it's how real electricity markets work. The <a href="fleet-offer-curves.html">Fleet & Offer Curves page</a> explains how we build the cost curves for each generator to reflect this in detail.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: From Dispatch to Prices -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>From Dispatch to Prices</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The linear program solves for the minimum-cost dispatch and returns:
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>Primal solution:</strong> How much each generator produces, how much wind/solar is curtailed, how much storage charges/discharges, and how much power flows on each transmission link.</li>
+            <li><strong>Dual solution (shadow prices):</strong> The marginal value of relaxing each constraint. For the energy-balance constraint (demand = supply at each zone-hour), the dual is the price at that zone and hour.</li>
+          </ul>
+
+          <p>
+            In real markets, prices emerge from bids and market clearing. <strong>In our model, prices ARE the LP duals.</strong> We don't bid generators in; instead, we solve the LP once and read off the duals. This is mathematically equivalent to a competitive market where all generators bid their true marginal cost.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            The <a href="solving-pricing.html">Solving & Pricing page</a> explains the full three-solve sequence (P0→P1→P2) and how startup costs and unit-commitment effects enter the pricing. For now: <strong>dispatch → LP → duals = prices.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: The Year Loop -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>The Year Loop: From 2026 to 2050</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            This dispatch happens for every single hour of a single year. But we solve 25 years in sequence: 2026, 2027, …, 2050.
+          </p>
+          <p>
+            Each year:</p>
+          <ol style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>The fleet evolves.</strong> Some old plants retire because they're no longer economic. New renewable and storage plants are built based on the previous year's prices. Gas plants may retrofit with carbon capture.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>We dispatch that year's fleet</strong> for all 8,760 hours.</li>
+            <li><strong>Prices and dispatch outcomes feed into next year's investment screen.</strong> If prices were high last year, new plants enter. If they were low, some plants retire.</li>
+          </ol>
+
+          <p>
+            This creates a dynamic feedback loop: prices drive investment, investment changes the fleet, a different fleet produces different prices, and so on. By 2050, you have a very different resource mix than you started with — much more solar/wind and storage, likely, depending on the cost trajectories.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            The <a href="capacity-evolution.html">Capacity Evolution page</a> walks through the six-step annual loop: known retirements, economic retirements, known additions, CCS retrofits, economic new entry, and reserve-margin backstop. For now, know that <strong>the model is not static — it forecasts how the fleet changes year-by-year in response to economic signals.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insight box -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="insight-box info">
+          <strong>⚡ Key takeaway:</strong> This is a <strong>dispatch model</strong>, not a commitment model. The LP finds the cheapest way to meet demand hour by hour. We assume all generators can be started and stopped instantly at no cost — we don't model minimum-run times, startup lags, or ramping constraints. (For ERCOT, an optional P2 commitment screen can tighten the solution, but the default mode is pure economic dispatch.) This simplification lets us solve 8,760 hours for 25 years in parallel, keeping the model tractable while still capturing the core economics.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="index.html">← Overview</a>
+      <span style="flex: 1;"></span>
+      <a href="data-pipeline.html">Data Pipeline →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/viz-dispatch-24h.js" type="module"></script>
+</body>
+</html>
