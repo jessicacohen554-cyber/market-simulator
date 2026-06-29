@@ -1,16 +1,33 @@
 # Transmission Zones, Congestion Corridors, TTC & Renewable HSL
 
-Status: **planning**. This proposes an aggregated zone topology and the major
-congestion corridors for each ISO, identifies where to source TTC (transfer-
-limit) data, and identifies where to source uncurtailed renewable potential
-(the ERCOT "HSL" analogue). Pairs with Stage A/D in `00-iso-addition-protocol.md`
-and Pack A/B in `03-prompt-pack-plan.md`.
+> **As-built note:** the topologies *proposed* below have since landed in
+> `config/iso_configs.py`, in several cases at a finer grain than this plan
+> sketched. The authoritative current zone/link counts are:
+>
+> | ISO | Zones | Links | Notes |
+> |-----|-------|-------|-------|
+> | ERCOT | 7 (6 carry load) | 9 | calibrated reference |
+> | CAISO | 3 + WECC import | 4 | +1 interface limit |
+> | PJM | **8** (ComEd, AEP_Ohio, ATSI, West_APS, Central_PA, Dominion, EMAAC, SWMAAC) | 11 | built at 8 zones, not the 4–5 sketched below |
+> | MISO | 3 (N/C/S) | 3 | |
+> | SPP | 2 (N/S) | 1 | |
+> | NYISO | 5 | 4 | |
+> | NEISO | 4 + HQ import | 7 | |
+>
+> Read the per-ISO "Target topology" / "Start" lines below as the original
+> sourcing plan, not current state. **Code is the source of truth for topology.**
+
+Status: **planning (topologies since landed — see as-built note above).** This
+proposes an aggregated zone topology and the major congestion corridors for each
+ISO, identifies where to source TTC (transfer-limit) data, and identifies where to
+source uncurtailed renewable potential (the ERCOT "HSL" analogue). Pairs with
+Stage A/D in `00-iso-addition-protocol.md` and Pack A/B in `03-prompt-pack-plan.md`.
 
 ## Modeling philosophy (carried from ERCOT)
 
 The model uses **aggregated transmission zones** connected by `TransferLink`s
 with a single `ttc_mw`, *not* full nodal/PTDF. ERCOT collapses real GTCs into
-6 zones and 8 links; the same aggregation applies to every ISO — pick zones
+7 zones (6 carry load) and 9 links; the same aggregation applies to every ISO — pick zones
 that bound the ISO's real recurring congestion, then set each link's TTC from
 the binding interface's observed limit.
 
@@ -60,13 +77,12 @@ hourly wind/solar; the curtailment report gives the add-back.
 
 ## PJM
 
-**Start:** 4-zone stub with **placeholder** TTC/load shares (the current
-`# TODO: verify from PJM` markers).
-**Target topology:** keep ~4–5 aggregated zones spanning PJM's real geography:
-**West** (AEP/ComEd/APS/DAY/ATSI), **Mid-Atlantic/East** (PSEG/JCPL/PECO/
-BGE/PEPCO), **Central** (PPL/METED/PENELEC), **Dominion/South** (DOM). PJM has
-20+ real transmission zones; this aggregation captures the chronic west→east
-congestion.
+**As-built:** **8 zones / 11 links** in `config/iso_configs.py` — `PJM_ComEd`,
+`PJM_AEP_Ohio`, `PJM_ATSI`, `PJM_West_APS`, `PJM_Central_PA`, `PJM_Dominion`,
+`PJM_EMAAC`, `PJM_SWMAAC` — with cited zonal-peak load shares. (The "~4–5 zone
+stub" described in the original plan below was superseded by this finer build;
+PJM has 20+ real transmission zones, and this aggregation captures the chronic
+west→east congestion.)
 
 **Congestion corridors / links:**
 - **AP South / 5004-5005 West interface** (West → East) — the classic PJM
