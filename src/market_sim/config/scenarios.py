@@ -1475,6 +1475,18 @@ class ScenarioConfig:
     caiso_solar_deliverability_floor: float = 0.50  # floor on the derate so even
     # at extreme penetration (solar_frac → 1) the local network still evacuates
     # ≥ 50% of potential — a guard against an unphysical deep cut, not a fit knob.
+    caiso_solar_endogenous_spill: bool = False  # CAISO midday price fix: give the
+    # LP the FULL (underated) solar potential as the upper bound and let the LP
+    # endogenously curtail solar via reduced dispatch in oversupply hours. When on,
+    # the pre-LP solar CF ceiling derate (caiso_solar_deliverability) is SKIPPED —
+    # the LP sees the full HSL potential, dispatches solar up to what the system
+    # can absorb, and any excess potential is simply not dispatched (solar becomes
+    # the marginal resource, setting the energy-balance dual to solar_mc ≈ $0 or
+    # negative via the keep-running-value offer). This replaces the CF-ceiling
+    # haircut that silently removed solar from the merit order and kept gas
+    # marginal every midday hour. CAISO-only; overrides caiso_solar_deliverability
+    # when True. The curtailment VOLUME emerges endogenously from LP economics
+    # (CLAUDE.md #1: right mechanism, not fitted level).
     caiso_solar_cap_at_delivered: bool = False  # INTERIM STOPGAP (Lever-D P6),
     # DEFAULT-OFF DIAGNOSTIC ONLY. Caps the backcast solar dispatch upper bound at
     # the measured EIA-930 delivered solar profile (the "delivered-not-potential"
@@ -2949,6 +2961,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
     "caiso_solar_deliverability_floor": 3,
+    "caiso_solar_endogenous_spill": 1,
     "caiso_solar_cap_at_delivered": 1,
     "neiso_temp_reliability_floor": 1,
     "neiso_ct_floor_slope_per_c": 3,
