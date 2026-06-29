@@ -2,7 +2,7 @@
   "PJM": "2026-06-28-pjm-58-seam-border",
   "keepers": [
     "2026-06-25-run157-dam-as-overlay",
-    "2026-06-29-caiso-39-import-atc",
+    "2026-06-29-caiso-40-ra-minload",
     "2026-06-28-pjm-58-seam-border",
     "2026-06-27-nyiso-34-st-tempfloor",
     "2026-06-28-neiso-39-offer-curve",

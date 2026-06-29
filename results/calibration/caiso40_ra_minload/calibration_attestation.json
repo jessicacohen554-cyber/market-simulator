@@ -1,0 +1,25 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "caiso-40 RA must-offer bridge min-load re-grounding 2026-06-29",
+    "note": "caiso-40 carries every caiso-39 lever verbatim and changes ONE parameter: the CAISO RA must-offer bridge minimum-stable-load (caiso_ra_min_load_frac) 0.40 -> 0.26. The new value is the CAMPD/CEMS-measured CAISO combined-cycle minimum stable load (P5 of net capacity factor over online hours, scripts/derive_thermal_tranches.py -> data/raw/_processed-legacy/thermal_tranches_CAISO.csv committed_pct): capacity-weighted 0.259 over the 23-plant / 12.7 GW CA CC fleet (range 0.10-0.63, median 0.25). It supersedes the generic 0.40 (NREL 'Power Plant Cycling Costs' 2012 / CAISO Master File textbook turn-down) per CLAUDE.md #11 -- a measured, forward-reproducible physical turn-down limit that responds to fleet composition, NOT a fit to the price or volume residual. All other active levers trace to measured inputs as in caiso-39: CAMPD unit-level net-load-filtered outage windows (exogenous availability), EIA-860 cogen-flagged BTM CHP host steam pulled out of the LP (btm.parquet), measured F923 per-plant monthly delivered gas + measured monthly hub-spot overlay, measured EIA-930 net interchange via the priced import/export node, the measured 3yr EIA-930 p95 corridor forward-ATC envelope, and the measured monthly hydro budget. No adder/haircut/sigmoid tuned to a residual; no unit pinned to its observed CEMS generation; no input rescaled so the model output lands on actuals.",
+    "model_miss_note": "Deciding hard fails are genuine MODEL MISSes (not ledgered): C1 the CC-over / CT-under merit split (caiso_ra_min_load 0.40->0.26 narrows the 2024 CC_REGULAR over-run +9.31 -> +8.16 TWh and brings 2023 CC_REGULAR in band, but the residual midday-import / solar-glut wedge keeps CC infra-marginal too many hours), and C3a/b/c the structural CA combined-cycle SRMC floor (gas + CARB) that sets the midday body above the import-/hydro-marginal actual. caiso-40 improves both on the structurally-clean gateable years (2023/2024): C3a LMP 2023 +90.2->+74.7%, 2024 +70.3->+63.1%; C3b shape 2023 0.594->0.465, 2024 0.770->0.729; 2024 CO2 now PASSES."
+  },
+  "exceptions": [
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "reason": "ACCEPTED MEASURED-INPUT LIMITATION (vintage, not model bug). The 2025 CAISO hydro budget is built from a PRELIMINARY EIA-923 vintage that is materially incomplete: only 26 of ~160 hydro plants have reported (3916 vs 6568 MW nameplate, 12.32 vs 21.48 TWh in 2024), so the model loads a 12.3 TWh hydro budget while the true 2025 hydro was ~21.35 TWh (EIA-930 grid total; solve.log: 'EIA-923 2025 hydro 12.42 TWh under-counts EIA-930 21.35 TWh'). Gas backfills the ~9 TWh of not-yet-reported hydro, driving gas +16.8%. Forward-reproducible: a finalized 2025 EIA-923 vintage (or the EIA-930 monthly hydro budget, hydro_eia930_monthly) regenerates the full hydro and the gap closes -- the hydro methodology is correct, only the 2025 input is vintage-incomplete. Pre-existing (caiso-39 carried the same +12.5%); not caused by the min-load change. Hydro-vintage backfill is the dedicated next workstream."
+    },
+    {
+      "criterion": "co2",
+      "year": 2025,
+      "reason": "ACCEPTED MEASURED-INPUT LIMITATION (vintage, not model bug). Same root cause as C2 2025 gas: the preliminary 2025 EIA-923 hydro vintage (26/160 plants) under-counts hydro by ~9 TWh, gas backfills it, lifting CO2 +19.3%. Closes when the 2025 hydro input is completed (finalized EIA-923 or EIA-930 monthly budget). Not a model bug, not caused by the min-load change."
+    }
+  ]
+}
