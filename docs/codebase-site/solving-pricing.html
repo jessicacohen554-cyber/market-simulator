@@ -467,7 +467,7 @@
               The commitment screen never creates unserved demand. If decommitting a unit would leave
               committed capacity below P1's thermal dispatch in any zone-hour,
               <code style="background:rgba(14,165,233,0.12);color:#7DD3FC;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.80em;">apply_commitment_with_coal_pin()</code>
-              restores the cheapest decommitted units until the floor is met.
+              restores every decommitted unit in that zone to its P1 availability, so the P1 solution stays feasible.
             </p>
           </div>
         </div>
@@ -720,9 +720,10 @@
               </div>
               <div class="perf-card__title">~5× warm-start speedup (P1 from P0)</div>
               <div class="perf-card__body">
-                P0 solves the full ~200k-variable LP from scratch (~8–15 min on a large ISO).
-                P1 re-enters at the P0 basis and re-optimises in minutes. The HiGHS
-                <code class="code-ref">set_hot_start()</code> call passes the primal and dual solutions.
+                P0 solves the full ~1.8M-column LP from scratch (~8–15 min on a large plant-level ISO).
+                P1 re-enters at the P0 basis and re-optimises in minutes: only the cost
+                coefficients change, so HiGHS warm-starts the dual simplex from the previous
+                optimal basis (<code class="code-ref">getBasis()</code> / <code class="code-ref">setBasis()</code>).
               </div>
             </div>
 
