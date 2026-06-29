@@ -399,6 +399,18 @@ class TestISOConfig(unittest.TestCase):
         caiso = get_iso_config("CAISO")
         self.assertEqual(caiso.voll, 2000.0)
 
+    def test_caiso_default_scenario_overrides_negative_renewable(self):
+        """CAISO enables negative renewable offers by default."""
+        caiso = get_iso_config("CAISO")
+        self.assertTrue(
+            caiso.default_scenario_overrides.get("negative_renewable_offers")
+        )
+
+    def test_ercot_no_default_scenario_overrides(self):
+        """ERCOT has no default scenario overrides."""
+        ercot = get_iso_config("ERCOT")
+        self.assertEqual(ercot.default_scenario_overrides, {})
+
 
 if __name__ == "__main__":
     unittest.main()
