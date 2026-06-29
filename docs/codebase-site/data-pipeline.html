@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Pipeline — Codebase Explorer</title>
+  <meta name="description" content="From raw EIA and EPA sources to FleetArrays: how the data layer feeds the LP dispatch model.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 (for future use in viz) -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+
+  <!-- GSAP for scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+
+  <style>
+    .data-flow-diagram {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 40px;
+      margin: var(--space-lg) 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .data-flow-svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .module-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-md);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .module-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .module-card__name {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-sm);
+      font-size: 0.95rem;
+      font-family: var(--font-mono);
+    }
+
+    .module-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-lg) 0;
+      font-size: 0.95rem;
+    }
+
+    .data-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-emphasis);
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .data-table td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .data-table code {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .source-badge {
+      display: inline-block;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-emphasis);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: var(--space-xs);
+      margin-bottom: var(--space-xs);
+      font-family: var(--font-mono);
+    }
+
+    .source-badge.eia {
+      border-color: rgba(34, 197, 94, 0.5);
+      color: #22c55e;
+    }
+
+    .source-badge.epa {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #ef4444;
+    }
+
+    .source-badge.calculated {
+      border-color: rgba(168, 85, 247, 0.5);
+      color: #a855f7;
+    }
+
+    .journey-step {
+      display: flex;
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+      align-items: flex-start;
+    }
+
+    .journey-step__number {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .journey-step__content {
+      flex: 1;
+      padding-top: 2px;
+    }
+
+    .journey-step__title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .journey-step__desc {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .data-flow-diagram {
+        padding: 24px;
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        font-size: 0.85rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: var(--space-xs) var(--space-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="pulse">
+      <div class="header__eyebrow">Foundations</div>
+      <h1 class="header__title">The Data Pipeline</h1>
+      <p class="header__subtitle">From raw EIA and EPA sources to FleetArrays: how the data layer turns public datasets into the numerical inputs the LP dispatch model consumes.</p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: The Data Journey -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>The Data Journey: Five Layers</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The model consumes electricity data from multiple public sources (EIA, EPA, NOAA, gas price indices) and transforms it through five layers:
+          </p>
+
+          <div class="journey-step">
+            <div class="journey-step__number">①</div>
+            <div class="journey-step__content">
+              <div class="journey-step__title">Raw Source Downloads</div>
+              <div class="journey-step__desc">Public datasets: EIA-860 (plant inventory), EIA-930 (demand & generation), EIA-923 (fuel costs), EPA CAMPD (emission records), eGRID (CO₂ rates), gas price indices (Henry Hub), weather data (MERRA-2). Stored immutably in <code>data/raw/</code>. Never modified in place.</div>
+            </div>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-step__number">②</div>
+            <div class="journey-step__content">
+              <div class="journey-step__title">Cleaned & Validated Parquet</div>
+              <div class="journey-step__desc">Raw sources pass through loader modules (eia_loader.py, campd.py, fuel.py) that parse, validate, and normalize schemas. Output: curated Parquet files in <code>data/clean/</code> with typed columns, missing-data handling, and range checks. These are <strong>disposable</strong> — regenerated every run from raw sources.</div>
+            </div>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-step__number">③</div>
+            <div class="journey-step__content">
+              <div class="journey-step__title">Struct-of-Arrays (FleetArrays)</div>
+              <div class="journey-step__desc">Cleaned data is vectorized into parallel numpy arrays: <code>pmax[g], pmin[g], heat_rate[g], zone_idx[g], availability[g,t], ...</code>. This is the memory-efficient struct-of-arrays format that the LP builder consumes directly — no loops over generators, pure matrix ops.</div>
+            </div>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-step__number">④</div>
+            <div class="journey-step__content">
+              <div class="journey-step__title">Marginal-Cost Assembly</div>
+              <div class="journey-step__desc">Arrays combine into generator marginal costs: <code>mc[g,t] = heat_rate × fuel_price + VOM + carbon_price × emission_rate − credits</code>. Fossil fuel costs reflect real delivered prices by zone. Carbon pricing uses either flat config values or state-measured prices (CA cap-and-trade, RGGI auction settlements).</div>
+            </div>
+          </div>
+
+          <div class="journey-step">
+            <div class="journey-step__number">⑤</div>
+            <div class="journey-step__content">
+              <div class="journey-step__title">LP Model Input</div>
+              <div class="journey-step__desc">The LP builder receives FleetArrays, demand, transmission limits, and policies. It constructs a sparse constraint matrix and solves for dispatch and prices. Duals on the energy-balance constraints ARE the zonal prices.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data flow visualization -->
+        <div class="fig">
+          <div class="fig__header">
+            <h3 class="fig__title">Data Pipeline Flow</h3>
+          </div>
+          <div class="fig__body">
+            <div class="data-flow-diagram">
+              <svg class="data-flow-svg" viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Layer 1: Raw Sources -->
+                <g>
+                  <rect x="20" y="20" width="120" height="80" rx="6" fill="var(--warning)" opacity="0.15" stroke="var(--warning)" stroke-width="2"/>
+                  <text x="80" y="50" text-anchor="middle" font-weight="700" font-size="13">Raw Sources</text>
+                  <text x="80" y="68" text-anchor="middle" font-size="11" opacity="0.75">EIA, EPA, NOAA</text>
+                  <text x="80" y="82" text-anchor="middle" font-size="11" opacity="0.75">data/raw/</text>
+                </g>
+
+                <!-- Arrow 1 -->
+                <line x1="140" y1="60" x2="180" y2="60" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Layer 2: Cleaned Parquet -->
+                <g>
+                  <rect x="180" y="20" width="120" height="80" rx="6" fill="var(--success)" opacity="0.15" stroke="var(--success)" stroke-width="2"/>
+                  <text x="240" y="50" text-anchor="middle" font-weight="700" font-size="13">Cleaned Data</text>
+                  <text x="240" y="68" text-anchor="middle" font-size="11" opacity="0.75">Parquet Files</text>
+                  <text x="240" y="82" text-anchor="middle" font-size="11" opacity="0.75">data/clean/</text>
+                </g>
+
+                <!-- Arrow 2 -->
+                <line x1="300" y1="60" x2="340" y2="60" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Layer 3: FleetArrays -->
+                <g>
+                  <rect x="340" y="20" width="120" height="80" rx="6" fill="var(--info)" opacity="0.15" stroke="var(--info)" stroke-width="2"/>
+                  <text x="400" y="50" text-anchor="middle" font-weight="700" font-size="13">FleetArrays</text>
+                  <text x="400" y="68" text-anchor="middle" font-size="11" opacity="0.75">Vectorized</text>
+                  <text x="400" y="82" text-anchor="middle" font-size="11" opacity="0.75">numpy arrays</text>
+                </g>
+
+                <!-- Arrow 3 -->
+                <line x1="460" y1="60" x2="500" y2="60" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Layer 4: Marginal Cost -->
+                <g>
+                  <rect x="500" y="20" width="120" height="80" rx="6" fill="var(--warning)" opacity="0.15" stroke="var(--warning)" stroke-width="2"/>
+                  <text x="560" y="50" text-anchor="middle" font-weight="700" font-size="13">MC Assembly</text>
+                  <text x="560" y="68" text-anchor="middle" font-size="11" opacity="0.75">Fuel + Carbon</text>
+                  <text x="560" y="82" text-anchor="middle" font-size="11" opacity="0.75">+ Policies</text>
+                </g>
+
+                <!-- Arrow 4 -->
+                <line x1="620" y1="60" x2="660" y2="60" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Layer 5: LP Model -->
+                <g>
+                  <rect x="660" y="20" width="120" height="80" rx="6" fill="var(--primary)" opacity="0.15" stroke="var(--primary)" stroke-width="2"/>
+                  <text x="720" y="50" text-anchor="middle" font-weight="700" font-size="13">LP Model</text>
+                  <text x="720" y="68" text-anchor="middle" font-size="11" opacity="0.75">Dispatch &amp;</text>
+                  <text x="720" y="82" text-anchor="middle" font-size="11" opacity="0.75">Pricing</text>
+                </g>
+
+                <!-- Arrow marker definition -->
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="var(--text-muted)"/>
+                  </marker>
+                </defs>
+
+                <!-- Labels below arrows -->
+                <text x="160" y="120" text-anchor="middle" font-size="11" fill="var(--text-muted)">Load, parse,</text>
+                <text x="160" y="135" text-anchor="middle" font-size="11" fill="var(--text-muted)">validate</text>
+                <text x="270" y="120" text-anchor="middle" font-size="11" fill="var(--text-muted)">Vectorize to</text>
+                <text x="270" y="135" text-anchor="middle" font-size="11" fill="var(--text-muted)">FleetArrays</text>
+                <text x="400" y="120" text-anchor="middle" font-size="11" fill="var(--text-muted)">Add fuel cost,</text>
+                <text x="400" y="135" text-anchor="middle" font-size="11" fill="var(--text-muted)">carbon price</text>
+                <text x="560" y="120" text-anchor="middle" font-size="11" fill="var(--text-muted)">Build matrix</text>
+                <text x="560" y="135" text-anchor="middle" font-size="11" fill="var(--text-muted)">constraints</text>
+              </svg>
+            </div>
+          </div>
+          <div class="fig__caption">
+            The five-layer data pipeline. Raw public sources flow through cleaned Parquet files, get vectorized into numpy arrays (FleetArrays), combine with fuel costs and carbon pricing into marginal costs, and feed the LP model. Each layer is disposable except the raw sources — they are regenerated from scratch every run.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Fleet Construction & CAMPD Binning -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>Fleet Construction & CAMPD Binning</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The core of the data layer is the <strong>fleet module</strong> (<code>fleet.py</code>), which turns EIA-860 power plants into LP units with rising offer curves.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Generator Representation</h3>
+
+          <p>
+            Each generator has basic physics: <code>pmax_mw, pmin_mw, heat_rate, vom</code> (variable operating & maintenance), and emissions: <code>emission_rate_co2, nox_rate, so2_rate</code>. In <strong>ERCOT</strong>, the default (and calibrated) approach is <strong>CAMPD per-plant binning</strong>: one physical plant becomes one LP unit split into tranches with different marginal costs.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Tranche-Based Offer Curves</h3>
+
+          <p>
+            Each plant is split into five tranches forming a rising offer curve:
+          </p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tranche</th>
+                <th>Applies To</th>
+                <th>Role</th>
+                <th>Marginal Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>_mustrun</code></td>
+                <td>Coal</td>
+                <td>Mine-mouth take-or-pay floor; fuel sunk from long-term contract</td>
+                <td>VOM + carbon (no fuel)</td>
+              </tr>
+              <tr>
+                <td><code>_sync</code></td>
+                <td>Coal</td>
+                <td>Spot-market coal; price-responsive at real-time gas price</td>
+                <td>Full SRMC</td>
+              </tr>
+              <tr>
+                <td><code>_committed</code></td>
+                <td>All</td>
+                <td>Part-load when online; carries startup cost and min-run/min-down</td>
+                <td>Base HR × fuel price</td>
+              </tr>
+              <tr>
+                <td><code>_econ</code></td>
+                <td>All</td>
+                <td>Incremental dispatch above committed; rising cost steps</td>
+                <td>HR × (1 + econ_mult) × fuel</td>
+              </tr>
+              <tr>
+                <td><code>_peak</code></td>
+                <td>All</td>
+                <td>Duct-firing / scarcity band at extreme supply shortage</td>
+                <td>HR × (1 + peak_mult) × fuel</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Coal Take-or-Pay & PRB Passthrough</h3>
+
+          <p>
+            The <code>_mustrun</code> tranche models contracted coal: its marginal cost excludes fuel (already paid). The <code>_sync</code> tranche is spot coal, and uses a <strong>logistic sigmoid function</strong> that adjusts the fraction of cost covered by fuel based on gas prices. Low gas prices → buyers switch to coal (high fuel fraction). High gas prices → coal less competitive (low fuel fraction, more VOM-like). This captures the real economics of PRB (powder river basin) coal supply without explicit supply curves.
+          </p>
+
+          <p style="margin-bottom: 0;">
+            The total offer curve is the concatenation of all five tranches, each with its own capacity (drawn from CAMPD plant binning) and heat-rate multiplier. This mirrors real plants' multi-speed economics.
+          </p>
+        </div>
+
+        <div class="insight-box success" style="margin-top: var(--space-lg);">
+          <strong>⚡ Why binning matters:</strong> A single thermal plant often has different operating modes: boiler-minimum (must-run), incremental loading (committed/econ), and rarely-used duct-firing (peak). Without tranches, the LP would mis-dispatch by lumping all capacity at one marginal cost. Binning captures the real cost steps, which is essential for accurate pricing in scarcity conditions and accurate revenue attribution to each plant.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Data Source Modules -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>Data Source Modules</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The data layer is composed of loader modules, each responsible for one or more data sources. Here is the module inventory:
+          </p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Provides</th>
+              <th>Source(s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>eia_loader.py</code></td>
+              <td>Hourly zonal demand, per-fuel generation (8760 hours), interchange envelopes, load-weighted temperatures</td>
+              <td><span class="source-badge eia">EIA-930</span> <span class="source-badge calculated">NOAA</span></td>
+            </tr>
+            <tr>
+              <td><code>fleet.py</code></td>
+              <td>Thermal/renewable generators (name, capacity, heat rate, emissions, zone), CAMPD per-plant binning, tranche offer curves, coal passthrough sigmoid</td>
+              <td><span class="source-badge eia">EIA-860</span> <span class="source-badge epa">CAMPD</span></td>
+            </tr>
+            <tr>
+              <td><code>renewables.py</code></td>
+              <td>Wind and solar capacity-factor profiles (8760 hours per zone), uncurtailed potential (HSL), daily/seasonal derates</td>
+              <td><span class="source-badge eia">EIA-930</span> <span class="source-badge calculated">MERRA-2</span></td>
+            </tr>
+            <tr>
+              <td><code>fuel.py</code></td>
+              <td>Per-generator delivered fuel prices (gas Henry Hub + ISO basis, coal, oil), hydrogen-cost grounding, coal passthrough sigmoid</td>
+              <td><span class="source-badge calculated">Henry Hub</span> <span class="source-badge eia">EIA-923</span> <span class="source-badge eia">EIA-930</span></td>
+            </tr>
+            <tr>
+              <td><code>outages.py</code></td>
+              <td>Unit availability masks (backcast only): sustained outages, unit derates, unit retirement capping</td>
+              <td><span class="source-badge epa">CAMPD</span> <span class="source-badge calculated">Custom archive</span></td>
+            </tr>
+            <tr>
+              <td><code>hydro.py</code></td>
+              <td>Run-of-river min generation, monthly energy budgets (forecast or measured EIA-930)</td>
+              <td><span class="source-badge eia">EIA-923</span> <span class="source-badge eia">EIA-860</span></td>
+            </tr>
+            <tr>
+              <td><code>campd.py</code></td>
+              <td>Plant-level CEMS emission rates, parasitic (net/gross) factors, hourly availability benchmarks, startup emission adders</td>
+              <td><span class="source-badge epa">EPA CAMPD</span></td>
+            </tr>
+            <tr>
+              <td><code>egrid.py</code></td>
+              <td>Plant CO₂ intensity (eGRID base + CAMPD override), per-plant-class net-gen weights</td>
+              <td><span class="source-badge eia">eGRID 2023</span> <span class="source-badge epa">CAMPD</span></td>
+            </tr>
+            <tr>
+              <td><code>zone_assignment.py</code></td>
+              <td>eGRID lat/lon/FIPS → model zone mapping, per-ISO geographic rules</td>
+              <td><span class="source-badge eia">eGRID 2023</span> <span class="source-badge eia">EIA-860</span></td>
+            </tr>
+            <tr>
+              <td><code>eia923.py</code></td>
+              <td>Schedule-5 monthly fuel receipts (cost, quantity, type); Page-1 monthly generation by plant</td>
+              <td><span class="source-badge eia">EIA-923</span></td>
+            </tr>
+            <tr>
+              <td><code>ownership.py</code></td>
+              <td>Plant → parent company mapping, M&A overlays, ownership-scaled emission/financial attribution</td>
+              <td><span class="source-badge eia">EIA-860 Sch 3&4</span></td>
+            </tr>
+            <tr>
+              <td><code>neighbor_price.py</code></td>
+              <td>Reference-grade seam prices (forecast) or measured neighbor LMP (backcast anchor)</td>
+              <td><span class="source-badge calculated">Henry Hub × HR</span> <span class="source-badge calculated">Public LMP</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="story-section" style="margin-top: var(--space-lg);">
+          <h3 style="margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Public Data Sources Referenced</h3>
+          <p style="margin-bottom: var(--space-md);">
+            The model leans on these authoritative, openly-available datasets:
+          </p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Coverage</th>
+                <th>Update Frequency</th>
+                <th>Used For</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>EIA-860</strong></td>
+                <td>All US power plants (thermal, solar, wind, hydro)</td>
+                <td>Annual (July release)</td>
+                <td>Fleet inventory, capacity, fuel type, location, heat rate</td>
+              </tr>
+              <tr>
+                <td><strong>EIA-930</strong></td>
+                <td>Balancing authority: demand, generation by fuel, interchange</td>
+                <td>Real-time to next month</td>
+                <td>Hourly demand profiles, renewable generation traces, zone interchange</td>
+              </tr>
+              <tr>
+                <td><strong>EIA-923</strong></td>
+                <td>Monthly fuel receipts, generation, emissions</td>
+                <td>Quarterly (3 months lag)</td>
+                <td>Delivered fuel costs by plant, monthly fuel consumption, emission rates</td>
+              </tr>
+              <tr>
+                <td><strong>EPA CAMPD</strong></td>
+                <td>Continuous emissions monitoring (hourly, per coal/gas/oil unit)</td>
+                <td>Monthly updates (3-4 months lag)</td>
+                <td>Plant-specific CO₂/NOx/SO₂ rates, hourly availability, generation benchmarks</td>
+              </tr>
+              <tr>
+                <td><strong>eGRID 2023</strong></td>
+                <td>Plant-level CO₂ intensity and resource mix (2021 data)</td>
+                <td>Annual (December release)</td>
+                <td>CO₂ emission rates, plant classification, generation-weighted averages</td>
+              </tr>
+              <tr>
+                <td><strong>NREL ATB</strong></td>
+                <td>Technology cost and performance (solar, wind, battery, hydrogen)</td>
+                <td>Annual</td>
+                <td>Capacity economics, new-build cost, Wright's-Law learning rates</td>
+              </tr>
+              <tr>
+                <td><strong>MERRA-2 Reanalysis</strong></td>
+                <td>Global hourly climate (wind, solar, temperature)</td>
+                <td>Retrospective (20+ years)</td>
+                <td>Clear-sky irradiance, wind power curves, weather-drive demand</td>
+              </tr>
+              <tr>
+                <td><strong>Henry Hub Natural Gas</strong></td>
+                <td>Daily natural gas spot price ($/MMBtu)</td>
+                <td>Real-time</td>
+                <td>Base gas price; combined with ISO basis to set delivered gas costs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Fuel Pricing & Marginal Costs -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>Fuel Pricing & Marginal Cost Assembly</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The LP objective is the sum of marginal costs. Each generator's marginal cost is assembled in real time from fuel prices, emissions rates, policy credits, and plant physics:
+          </p>
+
+          <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: var(--space-md); margin: var(--space-lg) 0; font-family: var(--font-mono); line-height: 1.6; font-size: 0.9rem;">
+            <div style="color: var(--text-primary);">mc[g,t] =</div>
+            <div style="margin-left: 2rem; color: var(--text-secondary);">
+              heat_rate[g] × fuel_price[g,t]
+              <br>+ vom[g] (variable ops &amp; maintenance)
+              <br>+ emission_rate[g] × carbon_price[t]
+              <br>+ nox_rate[g] × nox_price[t]  (where applicable)
+              <br>+ so2_rate[g] × so2_price[t]  (where applicable)
+              <br>− coal_fuel_sunk[g,t]  (take-or-pay reduction, apply_coal_tranches)
+              <br>− ira_credits[g]  (45V hydrogen, 45Q CCUS, etc.)
+              <br>− eac_credits[g]  (environmental attribute credits)
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Fuel Price Resolution</h3>
+
+          <p>
+            <strong>Natural gas</strong> follows a transparent formula:
+          </p>
+
+          <ul style="margin-bottom: var(--space-md); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Base price:</strong> Henry Hub daily or seasonal trajectory (forecast) or measured daily settlements (backcast).
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>ISO basis:</strong> Regional adders (e.g., ERCOT electric-power gas, Algonquin for NYISO) reflect pipeline distance and congestion. Basis shapes are measured real-world price differences stored in config.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Monthly/daily refinement:</strong> Optional intra-month volatility shapes (mean-preserving) or measured EIA-923 monthly basis swings (backcast only).
+            </li>
+          </ul>
+
+          <p>
+            <strong>Coal</strong> uses a logistic sigmoid keyed to gas price, not a flat assumption. The coal supply is split:
+          </p>
+
+          <ul style="margin-bottom: var(--space-md); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Contracted (must-run tranche):</strong> fuel_fraction = 0, cost = VOM only. Reflects take-or-pay long-term contracts.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Spot (sync tranche):</strong> fuel_fraction = sigmoid(gas_price), rising from ~0.3 at high gas to ~1.0 at low gas. When gas is expensive, buyers avoid coal supply cost sharing; when gas is cheap, coal becomes unattractive even with shared fuel cost.
+            </li>
+          </ul>
+
+          <p>
+            <strong>Oil &amp; Hydrogen</strong> use measured or self-grounding formulas. Hydrogen's fuel cost is the minimum of solar/wind LCOE divided by electrolyzer efficiency — it grounds itself in renewable costs with no circular pricing.
+          </p>
+        </div>
+
+        <div class="insight-box info">
+          <strong>🔍 Why real fuel prices matter:</strong> Real electricity prices move with commodity costs. Using measured fuel prices (Henry Hub, EIA-923 delivered costs) makes the model's prices responsive to real drivers, which is essential for capacity-economics screens in later years. Flat or estimated prices hide this signal, making new-entry and retirement decisions appear arbitrary.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Vectorization & the FleetArrays Standard -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>Vectorization & FleetArrays</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The data layer's final payload is the <strong>FleetArrays</strong> dataclass: a set of parallel numpy arrays that the LP builder consumes directly. <strong>No Python loops over generators.</strong> The LP construction uses vectorized operations: <code>np.tile, np.repeat, scipy.sparse.kron, block_diag</code>.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">The FleetArrays Struct</h3>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Array</th>
+                <th>Shape</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pmax</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Maximum capacity [MW] of each generator</td>
+              </tr>
+              <tr>
+                <td><code>pmin</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Minimum stable generation [MW] when online</td>
+              </tr>
+              <tr>
+                <td><code>heat_rate</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Fuel heat rate [MMBtu/MWh], including tranche multipliers</td>
+              </tr>
+              <tr>
+                <td><code>vom</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Variable operating &amp; maintenance cost [$/MWh]</td>
+              </tr>
+              <tr>
+                <td><code>zone_idx</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Which zone [0…n_zones-1] this gen belongs to</td>
+              </tr>
+              <tr>
+                <td><code>fuel_type_idx</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>Fuel code [0…15], maps to FUEL_TYPE_MAP (gas_cc, coal, wind, solar, …)</td>
+              </tr>
+              <tr>
+                <td><code>availability</code></td>
+                <td><code>(n_gen, T)</code></td>
+                <td><strong>Optional</strong>; hour-by-hour availability [0…1]. Backcast: outage overlays. Forecast: age-based POF/WEFOR.</td>
+              </tr>
+              <tr>
+                <td><code>min_gen</code></td>
+                <td><code>(n_gen, T)</code></td>
+                <td><strong>Optional</strong>; hourly minimum generation floor [MW]. Reliability binding, must-run, CHP steam-following.</td>
+              </tr>
+              <tr>
+                <td><code>emission_rate</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td>CO₂ emission rate [tCO₂/MWh]; used in carbon cost</td>
+              </tr>
+              <tr>
+                <td><code>nox_rate</code></td>
+                <td><code>(n_gen,)</code></td>
+                <td><strong>Optional</strong>; NOx emission rate [t/MWh]; used when NOx pricing is on</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top: var(--space-lg);">
+            The LP builder then creates column vectors by tiling these arrays across the 8,760 hours, concatenates them, and constructs the sparse constraint matrix. The duality between arrays and matrix shape is key: <code>n_gen × T</code> total columns, grouped as <code>P | W | S | Chg | Dis | SOC | Flow | Slack | Dump</code>.
+          </p>
+
+          <p>
+            This vectorization is <strong>non-negotiable</strong> in the codebase (§2 of CLAUDE.md). It keeps memory footprint down and makes the LP solve fast. A 7-zone, multi-thousand-unit model with 8,760 hours still fits in a few GB of RAM and solves in minutes.
+          </p>
+        </div>
+
+        <div class="insight-box success">
+          <strong>⚡ Why this matters for forecast credibility:</strong> Real data sources (EIA, EPA, NREL) are the bridge between the model's assumptions and the real world. By staying close to real fuel prices, real plant CEMS rates, and real capacity factors, the model's results carry credibility. When you read a forecast price or a capacity decision, you can trace it back to a real number in a real dataset. No black boxes, no unexplained tuning parameters.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="mental-model.html">← Mental Model</a>
+      <span style="flex: 1;"></span>
+      <a href="fleet-offer-curves.html">Fleet & Offer Curves →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+</body>
+</html>

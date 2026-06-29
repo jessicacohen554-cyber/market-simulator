@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleet & Offer Curves — Codebase Explorer</title>
+  <meta name="description" content="From EIA-860 plants to LP units: CAMPD binning, tranches, and rising offer curves.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 -->
+  <script src="https://d3js.org/d3.v7.min.js" integrity="sha384-NhpgWRIryS/FeutzK7tDCS34xBLRn5NjxZtPa2hWXa8CZkweCuTmwLVZ29ZsmqDF5" crossorigin="anonymous"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztpgIIqv/QXVjvV5zt0dx3th/GaZa22xJPmYOcUQYtvSktRSQZo39v1DA47ef6FCZo0EV00lIchF2BDcqA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha512-/8arET4sKFq02b2sW8ZyA03jXBnha6wdL1Z4YvCvn3a5/zT65Ybit7D+B9o5llRMnKtoaQGh3M1UYuZAmvhqizA==" crossorigin="anonymous"></script>
+
+  <style>
+    .merit-order-chart {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 40px;
+      margin: var(--space-lg) 0;
+    }
+
+    .offer-curve-formula {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: var(--space-md);
+      margin: var(--space-lg) 0;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .offer-curve-formula code {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .tranche-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .tranche-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-md);
+      border-top: 3px solid var(--primary);
+    }
+
+    .tranche-card.committed {
+      border-top-color: var(--success);
+    }
+
+    .tranche-card.econ {
+      border-top-color: var(--warning);
+    }
+
+    .tranche-card.peak {
+      border-top-color: var(--error);
+    }
+
+    .tranche-card__name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: var(--space-xs);
+      font-family: var(--font-mono);
+    }
+
+    .tranche-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-sm);
+    }
+
+    .tranche-card__cost {
+      background: var(--bg-secondary);
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+
+    .fleet-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .fleet-stat {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-md);
+      text-align: center;
+    }
+
+    .fleet-stat__value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .fleet-stat__label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sigmoid-diagram {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 40px;
+      margin: var(--space-lg) 0;
+    }
+
+    .sigmoid-svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-lg) 0;
+      font-size: 0.9rem;
+    }
+
+    .comparison-table thead {
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-emphasis);
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .comparison-table td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .comparison-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .fuel-type-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      margin-right: var(--space-xs);
+    }
+
+    .fuel-type-badge.gas {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+
+    .fuel-type-badge.coal {
+      background: rgba(107, 114, 128, 0.15);
+      color: #6b7280;
+    }
+
+    .fuel-type-badge.nuclear {
+      background: rgba(139, 92, 246, 0.15);
+      color: #8b5cf6;
+    }
+
+    .fuel-type-badge.renewable {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    @media (max-width: 900px) {
+      .merit-order-chart,
+      .sigmoid-diagram {
+        padding: 24px;
+      }
+
+      .tranche-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .tranche-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fleet-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (injected by nav.js) -->
+  <nav id="topNav"></nav>
+
+  <!-- Main content -->
+  <main>
+    <!-- Page header -->
+    <div class="header" data-header-variant="pulse">
+      <div class="header__eyebrow">Foundations</div>
+      <h1 class="header__title">Fleet & Offer Curves</h1>
+      <p class="header__subtitle">How EIA-860 power plants become LP dispatch units with rising cost curves. CAMPD binning, tranches, and the real economics of dispatchable generation.</p>
+      <div class="header__accent"></div>
+    </div>
+
+    <!-- Section 1: The Merit Order -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>The Merit Order: Cheapest First</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            In every hour, the LP solves a simple optimization: satisfy demand using the cheapest available generators. To do this, it ranks all generators by their marginal cost (the $/MWh cost to produce one more megawatt-hour) and dispatches them in order from cheapest to most expensive until demand is met. This ranking is called the <strong>merit order</strong>.
+          </p>
+
+          <p>
+            The most expensive generator that must run to meet demand sets the market price. All cheaper generators are running, so they all compete at that marginal price. This is why the LP's dual on the energy-balance constraint (the shadow price) IS the zonal price — it is exactly the marginal cost of the last unit needed.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Example Merit Order (Summer Afternoon)</h3>
+
+          <p style="margin-bottom: var(--space-md);">
+            Here's how generators stack at a typical 3 PM hour on a summer peak day:
+          </p>
+
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Fuel Type</th>
+                <th>Capacity (GW)</th>
+                <th>Marginal Cost ($/MWh)</th>
+                <th>Dispatch Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1–3</strong></td>
+                <td><span class="fuel-type-badge renewable">Wind</span></td>
+                <td>8.0</td>
+                <td>$0 (capacity factor limited)</td>
+                <td>Full output available</td>
+              </tr>
+              <tr>
+                <td><strong>4–6</strong></td>
+                <td><span class="fuel-type-badge renewable">Solar</span></td>
+                <td>15.0</td>
+                <td>$0 (capacity factor limited)</td>
+                <td><strong>Running at peak</strong></td>
+              </tr>
+              <tr>
+                <td><strong>7</strong></td>
+                <td><span class="fuel-type-badge nuclear">Nuclear</span></td>
+                <td>5.0</td>
+                <td>$12 (fuel + O&amp;M)</td>
+                <td><strong>Running baseload</strong></td>
+              </tr>
+              <tr>
+                <td><strong>8–10</strong></td>
+                <td><span class="fuel-type-badge coal">Coal</span></td>
+                <td>8.5</td>
+                <td>$28 (fuel + carbon + O&amp;M)</td>
+                <td><strong>Running baseload</strong></td>
+              </tr>
+              <tr>
+                <td><strong>11–18</strong></td>
+                <td><span class="fuel-type-badge gas">Gas-CC (committed)</span></td>
+                <td>12.0</td>
+                <td>$35 (base + startup mark-up)</td>
+                <td><strong>Partially dispatched</strong></td>
+              </tr>
+              <tr>
+                <td><strong>19–25</strong></td>
+                <td><span class="fuel-type-badge gas">Gas-CC (economic)</span></td>
+                <td>8.0</td>
+                <td>$38–$48 (rising ramp)</td>
+                <td><strong>Dispatched to meet demand</strong> ← Marginal unit</td>
+              </tr>
+              <tr>
+                <td><strong>26–30</strong></td>
+                <td><span class="fuel-type-badge gas">Gas-CT (peaking)</span></td>
+                <td>6.0</td>
+                <td>$55+ (fuel + startup)</td>
+                <td>Idle</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top: var(--space-lg);">
+            At the market-clearing price of ~$45/MWh, all generators from 1–25 want to bid in (they make positive margin), and generators 26+ stay offline. The system is in equilibrium.
+          </p>
+        </div>
+
+        <div class="insight-box info" style="margin-top: var(--space-lg);">
+          <strong>⚡ Price discovery:</strong> The merit order is not a day-ahead forecast — it is what the LP *discovers* once it solves. We don't bid generators in; we give the LP the marginal costs and let it find the order that minimizes total cost. The price emerges from the solution.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: CAMPD Per-Plant Binning -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>CAMPD Per-Plant Binning</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The data layer takes EIA-860 power plants and turns each one into an <strong>LP unit with a rising offer curve</strong>. For ERCOT (the calibrated default), this binning is driven by EPA CAMPD (Continuous Emissions Monitoring Data), which gives us hourly generation and emissions for every coal and gas thermal plant.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">One Plant = One LP Generator (with Tranches)</h3>
+
+          <p>
+            Despite the name "binning," <strong>every physical power plant becomes a separate LP generator</strong>. It is not aggregated with other plants. What is "binned" is the plant's <strong>internal capacity split</strong> — each plant is carved into five tranches (layers) that form a rising cost curve:
+          </p>
+
+          <div class="tranche-grid">
+            <div class="tranche-card">
+              <div class="tranche-card__name">Must-Run</div>
+              <div class="tranche-card__desc">Coal-only. Sunk fuel from long-term contracts. Bids at VOM + carbon only.</div>
+              <div class="tranche-card__cost">MC = VOM + carbon</div>
+            </div>
+
+            <div class="tranche-card committed">
+              <div class="tranche-card__name">Committed</div>
+              <div class="tranche-card__desc">Part-load when online. Minimum stable generation. Carries startup cost and min-run constraints.</div>
+              <div class="tranche-card__cost">MC = base_hr × 0.92–0.95</div>
+            </div>
+
+            <div class="tranche-card econ">
+              <div class="tranche-card__name">Economic</div>
+              <div class="tranche-card__desc">Incremental dispatch. Rises from low to high via N-step ramp (typically 6 steps).</div>
+              <div class="tranche-card__cost">MC = base_hr × (1.05–1.18)</div>
+            </div>
+
+            <div class="tranche-card peak">
+              <div class="tranche-card__name">Peaking</div>
+              <div class="tranche-card__desc">Duct-firing (CC) or extreme scarcity. Separate flat tranche above econ ramp.</div>
+              <div class="tranche-card__cost">MC = base_hr × 2.0–2.5</div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Why Tranches Matter</h3>
+
+          <p>
+            Without tranches, a single 500 MW plant would have a single marginal cost. In reality, plants operate in different modes:
+          </p>
+
+          <ul style="margin-bottom: var(--space-md); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Low output:</strong> Run at boiler minimum (committed tranche), high heat rate, cheap (amortizes startup).
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Normal output:</strong> Ramp up through economic tranches, heat rate rises slightly as steam cycles degrade.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>High output:</strong> Duct-firing (combined cycles) or extreme scarcity, much higher heat rate.
+            </li>
+          </ul>
+
+          <p>
+            Tranches capture this. The committed tranche bids cheap (VOM only for coal), so it clears first when the plant is needed. The economic tranches ramp up, reflecting real incremental costs. The peak tranche sits above with a high heat-rate multiplier, so it only clears in scarcity.
+          </p>
+        </div>
+
+        <div class="fleet-stats">
+          <div class="fleet-stat">
+            <div class="fleet-stat__value">1,000+</div>
+            <div class="fleet-stat__label">Thermal Units</div>
+          </div>
+          <div class="fleet-stat">
+            <div class="fleet-stat__value">5</div>
+            <div class="fleet-stat__label">Tranches/Plant</div>
+          </div>
+          <div class="fleet-stat">
+            <div class="fleet-stat__value">6</div>
+            <div class="fleet-stat__label">Econ Steps</div>
+          </div>
+          <div class="fleet-stat">
+            <div class="fleet-stat__value">Measured</div>
+            <div class="fleet-stat__label">Heat Rates</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Offer Curves & Tranches -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>Building Offer Curves</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Each plant's offer curve is built from its <strong>base heat rate</strong> (measured from CAMPD or EIA-860) and a set of tranche-specific multipliers. The formula is simple:
+          </p>
+
+          <div class="offer-curve-formula">
+            Heat Rate (tranche) = Base Heat Rate × HR Multiplier (tranche)<br>
+            <br>
+            Marginal Cost = Heat Rate × Fuel Price + VOM + Carbon Price
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Tranche Heat-Rate Multipliers</h3>
+
+          <p style="margin-bottom: var(--space-md);">
+            Each fuel type and plant class (CC, coal, CT, etc.) has standard multipliers. For example, a typical ERCOT gas combined cycle:
+          </p>
+
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Tranche</th>
+                <th>Multiplier</th>
+                <th>Typical HR for 8 MMBtu/MWh Base</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Committed</code></td>
+                <td>0.92</td>
+                <td>7.36 MMBtu/MWh</td>
+                <td>Boiler-minimum efficiency (high parasitic load)</td>
+              </tr>
+              <tr>
+                <td><code>Econ-Low</code></td>
+                <td>1.06</td>
+                <td>8.48 MMBtu/MWh</td>
+                <td>Start of economic ramp</td>
+              </tr>
+              <tr>
+                <td><code>Econ-Mid</code></td>
+                <td>1.09</td>
+                <td>8.72 MMBtu/MWh</td>
+                <td>Middle of ramp</td>
+              </tr>
+              <tr>
+                <td><code>Econ-High</code></td>
+                <td>1.15</td>
+                <td>9.20 MMBtu/MWh</td>
+                <td>Top of economic ramp (before duct-firing)</td>
+              </tr>
+              <tr>
+                <td><code>Peaking (CC)</code></td>
+                <td>2.25–2.50</td>
+                <td>18–20 MMBtu/MWh</td>
+                <td>Duct-firing; separate scarcity band</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top: var(--space-lg);">
+            Notice the jump from `Econ-High (1.15×)` to `Peaking (2.25×)`. This is <strong>intentional</strong>. The peak band is a separate flat tranche, not the tail end of the econ ramp. This creates a price discontinuity that keeps combined cycles from reaching very high capacity factors — they don't fill their peak tranche except in scarcity hours, which matches real ERCOT data.
+          </p>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">The Economic Ramp</h3>
+
+          <p>
+            The six economic steps form a <strong>smooth rising ramp</strong>. Rather than a staircase, each step is a fractional capacity with a rising marginal cost. The multiplier at step <code>k</code> (out of 6) is:
+          </p>
+
+          <div class="offer-curve-formula">
+            mult(k) = econ_low + (econ_high − econ_low) × (k + 0.5) / 6<br>
+            <br>
+            For example: 1.06 + (1.15 − 1.06) × (0.5 / 6) ≈ 1.067 at step 0
+          </div>
+
+          <p>
+            This captures the reality that a plant doesn't jump discretely between two heat rates — it ramps smoothly as internal steam flows adjust. The LP will dispatch partial amounts of each step, filling the plant gradually as the hourly price rises.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Coal Take-or-Pay & PRB Passthrough -->
+    <section class="section-dark">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>Coal Take-or-Pay & PRB Passthrough</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Coal is not a commodity with a single national price. It comes from different sources (Powder River Basin, Appalachia, Wyoming lignite) at different delivered costs. More importantly, <strong>not all coal is spot-market coal</strong>. Many plants have long-term supply contracts where fuel is already paid for ("take-or-pay"). The marginal cost of burning contracted coal is just the variable cost (VOM + carbon), not the full heat-rate-times-price formula.
+          </p>
+
+          <p>
+            The model captures this by splitting coal capacity into two tranches:
+          </p>
+
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Must-Run (contracted):</strong> Fuel is sunk. Marginal cost = VOM + carbon only.
+            </li>
+            <li>
+              <strong>Sync (spot):</strong> Fuel is fresh at real-time price. Marginal cost = full SRMC (short-run marginal cost = heat rate × fuel price + VOM + carbon).
+            </li>
+          </ul>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">PRB Passthrough Sigmoid</h3>
+
+          <p>
+            The fraction of coal that is spot (vs. contracted) depends on the gas price. When gas is expensive, coal buyers want to lock in coal supply. When gas is cheap, coal competes poorly even at its own fuel cost, so the model "passes through" less coal supply (lower spot fraction). This is modeled as a <strong>logistic sigmoid function</strong> keyed to the Henry Hub gas price:
+          </p>
+
+          <div class="sigmoid-diagram">
+            <svg class="sigmoid-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Axes -->
+              <line x1="60" y1="250" x2="580" y2="250" stroke="var(--text-muted)" stroke-width="2"/>
+              <line x1="60" y1="20" x2="60" y2="250" stroke="var(--text-muted)" stroke-width="2"/>
+
+              <!-- Grid lines -->
+              <line x1="60" y1="200" x2="580" y2="200" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="60" y1="150" x2="580" y2="150" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="60" y1="100" x2="580" y2="100" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="160" y1="20" x2="160" y2="250" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="320" y1="20" x2="320" y2="250" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="480" y1="20" x2="480" y2="250" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="4,4"/>
+
+              <!-- Sigmoid curve (logistic function) -->
+              <path d="M 70 235 Q 150 220 200 190 T 320 125 T 400 85 T 480 40"
+                    stroke="var(--warning)" stroke-width="3" fill="none" vector-effect="non-scaling-stroke"/>
+
+              <!-- Area under curve (shading) -->
+              <path d="M 70 235 Q 150 220 200 190 T 320 125 T 400 85 T 480 40 L 480 250 L 70 250 Z"
+                    fill="var(--warning)" opacity="0.1"/>
+
+              <!-- Axis labels -->
+              <text x="60" y="280" text-anchor="end" font-size="12" fill="var(--text-secondary)">$0</text>
+              <text x="160" y="280" text-anchor="middle" font-size="12" fill="var(--text-secondary)">$3</text>
+              <text x="320" y="280" text-anchor="middle" font-size="12" fill="var(--text-secondary)">$6</text>
+              <text x="480" y="280" text-anchor="middle" font-size="12" fill="var(--text-secondary)">$9</text>
+
+              <text x="15" y="20" text-anchor="middle" font-size="12" fill="var(--text-secondary)">100%</text>
+              <text x="15" y="100" text-anchor="middle" font-size="12" fill="var(--text-secondary)">50%</text>
+              <text x="15" y="250" text-anchor="middle" font-size="12" fill="var(--text-secondary)">0%</text>
+
+              <!-- Axis titles -->
+              <text x="310" y="295" text-anchor="middle" font-weight="600" font-size="13" fill="var(--text-primary)">Henry Hub Gas Price ($/MMBtu)</text>
+              <text x="25" y="140" text-anchor="middle" font-weight="600" font-size="13" fill="var(--text-primary)" transform="rotate(-90 25 140)">Coal Spot Fraction</text>
+
+              <!-- Annotations -->
+              <circle cx="160" cy="200" r="4" fill="var(--success)"/>
+              <text x="160" y="215" text-anchor="middle" font-size="11" fill="var(--text-secondary)">High gas:</text>
+              <text x="160" y="227" text-anchor="middle" font-size="11" fill="var(--text-secondary)">buy coal</text>
+
+              <circle cx="480" cy="40" r="4" fill="var(--error)"/>
+              <text x="480" y="25" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Low gas:</text>
+              <text x="480" y="12" text-anchor="middle" font-size="11" fill="var(--text-secondary)">skip coal</text>
+            </svg>
+          </div>
+
+          <p style="margin-top: var(--space-lg);">
+            When gas is expensive (right side), buyers pass through coal supply at high fuel-cost fraction (steep slope). When gas is cheap (left side), coal is less competitive, so spot fraction drops. This sigmoid is not tuned to the backcast — it is the real coal-gas economics, derived from the supply physics.
+          </p>
+        </div>
+
+        <div class="insight-box success">
+          <strong>⚡ Why this structure works:</strong> By splitting coal into must-run (sunk) and spot (price-responsive), and making spot fraction a function of gas price, the model captures how real coal plants behave without needing to forecast or tune coal supply curves. A high gas price makes coal attractive; a low gas price doesn't. The fuel cost shifts endogenously with the merit order — this is real energy economics, not a fitted adder.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: From Heat Rates to Prices -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>From Heat Rates to Prices</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Once every plant's tranches are defined with their heat-rate multipliers, the marginal cost is assembled every hour:
+          </p>
+
+          <div class="offer-curve-formula">
+            mc[plant, tranche, hour] =<br>
+            &nbsp;&nbsp;heat_rate × fuel_price[hour]<br>
+            &nbsp;&nbsp;+ vom (variable operations &amp; maintenance)<br>
+            &nbsp;&nbsp;+ emission_rate × carbon_price<br>
+            &nbsp;&nbsp;− coal_fuel_sunk × (1 − spot_fraction)<br>
+            &nbsp;&nbsp;− ira_credits<br>
+            &nbsp;&nbsp;− eac (environmental attribute) credits
+          </div>
+
+          <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">Why Real Data Matters</h3>
+
+          <p>
+            The denominator here is "Fuel Price [hour]." This is <strong>real, measured data</strong>:
+          </p>
+
+          <ul style="margin-bottom: var(--space-md); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Gas:</strong> Henry Hub daily or monthly trajectory + ISO basis differential.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Coal:</strong> EIA-923 delivered fuel costs per plant (where reported) or coal supply-class trajectory.
+            </li>
+            <li style="margin-bottom: var(--space-sm);">
+              <strong>Carbon:</strong> Measured state prices (CA cap-and-trade, RGGI auction settlements) or config-specified trajectory.
+            </li>
+          </ul>
+
+          <p>
+            When you read a forecast price or a unit's dispatch in the model, you can trace the reason back to a real number: a measured heat rate from CAMPD, a real fuel price from Henry Hub, a real emission rate from EPA. No black boxes. This transparency is what makes the results credible and useful for capacity planning.
+          </p>
+
+          <p>
+            The merit order is not a hand-tuned ranking; it emerges from data. And because fuel prices change with commodity markets and carbon policy shifts, the merit order responds to those changes — which is essential for forecasting how future fleets will invest.
+          </p>
+        </div>
+
+        <div class="insight-box info">
+          <strong>⚡ The closed loop:</strong> Dispatch determines prices (via LP duals). Prices determine next year's investment (capacity economics screens). Investment changes the fleet. A different fleet produces different prices. This is how the 25-year forecast evolves — it's not a static prediction, but a feedback loop driven by real commodity economics and policy.
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="data-pipeline.html">← Data Pipeline</a>
+      <span style="flex: 1;"></span>
+      <a href="lp-core.html">The LP Core →</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg);">
+      <p style="margin-bottom: var(--space-sm);">
+        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
+      </p>
+      <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.55); margin: 0;">
+        © 2026. Built with D3, GSAP, and the Observatory design system.
+      </p>
+    </div>
+    <div class="bottom-banner"></div>
+  </footer>
+
+  <!-- TOC Rail (injected by shared.js) -->
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <!-- Scripts -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+</body>
+</html>
