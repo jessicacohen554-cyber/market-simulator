@@ -1129,10 +1129,18 @@ def _calibration_config(
         #   would drive a committed unit cold; the midday ~$0 must come from real
         #   oversupply (Lever D), not the floor. Other ISOs stay off (byte-
         #   identical). Toggle with --no-caiso-ra-mustoffer.
-        caiso_ra_min_load_frac=0.40,  # min stable load of a committed gas unit
-        #   (fraction of available capacity) for the RA bridge above — typical
-        #   CC/CT minimum generation (NREL cycling-cost 2012; CAISO Master File
-        #   PMin/PMax). A physical turn-down limit, not a price/volume fit.
+        caiso_ra_min_load_frac=0.26,  # min stable load of a committed gas unit
+        #   (fraction of available capacity) for the RA bridge above. Grounded in
+        #   the CAMPD/CEMS-measured CAISO combined-cycle minimum stable load
+        #   (P5 of net CF over online hours, scripts/derive_thermal_tranches.py;
+        #   data/raw/_processed-legacy/thermal_tranches_CAISO.csv committed_pct):
+        #   capacity-weighted 0.259 over the 23-plant, 12.7 GW CA CC fleet
+        #   (range 0.10-0.63, median 0.25). Supersedes the generic 0.40 NREL/
+        #   Master-File textbook turn-down (~14pp too high for this fleet) per
+        #   CLAUDE.md #11 — a measured, forward-reproducible physical limit that
+        #   responds to fleet composition, NOT a price/volume fit. The flat
+        #   fraction multiplies each tranche row's pmax, so it sums to ~0.26 of
+        #   plant pmax across a plant's tranches.
         reliability_floor=(
             iso.upper() in ("CAISO", "NYISO", "NEISO", "MISO")
         ),  # Generic registry-driven temperature-reliability floor: ON for
