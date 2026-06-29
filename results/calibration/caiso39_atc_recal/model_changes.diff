@@ -1,0 +1,28 @@
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 0b8f97d..ec4d109 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -3466,7 +3466,9 @@ CAISO_PER_HUB_NEIGHBORS: dict[str, CaisoHubNeighbor] = {
+         marginal_heat_rate=16.0,
+         load_shape_kind="gross",  # hydro-following; no solar midday trough
+         load_shape_exponent=1.0,
+-        atc_base_fraction=0.30,  # COI economy-ATC slice (firm hydro + PDCI parallel)
++        # COI economy-ATC: 3yr (2023-25) EIA-930 p95 nighttime import
++        # ceiling avg 2102 MW / 4800 MW TTC = 0.438 → 0.44.
++        atc_base_fraction=0.44,
+         atc_solar_floor=0.30,
+     ),
+     "WECC_DSW": CaisoHubNeighbor(
+@@ -3476,8 +3478,11 @@ CAISO_PER_HUB_NEIGHBORS: dict[str, CaisoHubNeighbor] = {
+         marginal_heat_rate=13.0,
+         load_shape_kind="net",  # solar-driven; midday net-load trough
+         load_shape_exponent=1.0,
+-        atc_base_fraction=0.50,
+-        atc_solar_floor=0.30,
++        # Path-46/WOR economy-ATC: nighttime p95 avg 5660 / 10623 = 0.533 → 0.53.
++        atc_base_fraction=0.53,
++        # Midday p95 avg 3694 / (10623 × 0.533) = 0.653 → 0.65; the desert-SW
++        # retains ~65% deliverability at peak solar (large AZ/NV non-solar base).
++        atc_solar_floor=0.65,
+     ),
+ }
