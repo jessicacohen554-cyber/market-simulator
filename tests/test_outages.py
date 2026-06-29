@@ -450,7 +450,7 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
     ``ct_mustrun_per_plant``'s WEFOR/planned-outage exemption.
     """
 
-    def _merrimack_avail(self, *, floor: bool, exempt: bool, year: int = 2024):
+    def _merrimack_avail(self, *, floor: bool, year: int = 2024):
         from market_sim.config.iso_configs import get_iso_config
         from market_sim.config.scenarios import ScenarioConfig
         from market_sim.data.fleet import (
@@ -465,8 +465,7 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
             mode="backcast",
             weather_year=year,
             outage_source="historic",
-            neiso_temp_reliability_floor=floor,
-            neiso_floor_outage_exempt=exempt,
+            reliability_floor=floor,
         )
         fa = generators_to_fleet_arrays(
             gens, zones, hours=HOURS_PER_YEAR, iso="NEISO", config=cfg, year=year
@@ -478,11 +477,12 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
         return fa.availability[rows].mean(axis=0)
 
     def test_exemption_restores_merrimack_availability_2024(self):
-        # With the floor on and the exemption on (the keeper default), Merrimack
-        # is available year-round (the floor governs it). With the exemption off
-        # (the no-fix baseline) the unit-outage overlay zeros it for all of 2024.
-        avail_fixed = self._merrimack_avail(floor=True, exempt=True)
-        avail_bug = self._merrimack_avail(floor=True, exempt=False)
+        # With the reliability floor ON, the NEISO floor-class outage exemption
+        # fires and Merrimack is available year-round (the floor governs it). With
+        # the floor OFF (the no-fix baseline) the unit-outage overlay zeros it for
+        # all of 2024.
+        avail_fixed = self._merrimack_avail(floor=True)
+        avail_bug = self._merrimack_avail(floor=False)
         self.assertEqual(
             int((avail_bug > 1e-6).sum()),
             0,
@@ -493,13 +493,6 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
             HOURS_PER_YEAR,
             "exemption: 2024 Merrimack availability restored every hour",
         )
-
-    def test_exemption_is_noop_without_floor(self):
-        # The exemption only fires when the temperature floor governs the units,
-        # so a floor-off run is byte-identical with the flag on or off.
-        avail_off_exempt = self._merrimack_avail(floor=False, exempt=True)
-        avail_off_noexempt = self._merrimack_avail(floor=False, exempt=False)
-        np.testing.assert_array_equal(avail_off_exempt, avail_off_noexempt)
 
 
 class RetireeCemsEnvelopeTest(unittest.TestCase):
