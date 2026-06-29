@@ -649,6 +649,59 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         year_demand = _scale_demand(base_demand, config, year)
         peak_demand = float(year_demand.sum(axis=0).max())
 
+        # Net-load-indexed reliability-drag min-gen floors (gas-ST boiler +
+        # CT_PEAKER simple-cycle), the forecast-path mirror of the calibration
+        # script. Each floors a tranche's per-hour min generation by a curve
+        # rising with system net-load (load - wind - solar) — the operational
+        # proxy for the reserve tightness ERCOT RUC keys off — over which the LP
+        # dispatches economically. Both functions modify fleet_arrays.min_gen in
+        # place and are no-ops when their flag is off. Net-load uses the same
+        # LP-served convention as the calibration path.
+        if getattr(config, "gas_st_netload_drag", False) or getattr(
+            config, "ct_netload_drag", False
+        ):
+            net_load = (
+                year_demand.sum(axis=0)
+                - (solar_cap[:, None] * solar_cf).sum(axis=0)
+                - (wind_cap[:, None] * wind_cf).sum(axis=0)
+            )
+            if getattr(config, "gas_st_netload_drag", False):
+                from market_sim.data.fleet import apply_gas_st_netload_drag_floor
+
+                if apply_gas_st_netload_drag_floor(
+                    fleet_arrays, dispatch_fleet, net_load, config
+                ):
+                    logger.info(
+                        "%s %d: ST_GAS net-load reliability-drag floor applied "
+                        "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load "
+                        "mean %.0f / max %.0f MW)",
+                        iso,
+                        year,
+                        config.gas_st_drag_slope_per_gw,
+                        config.gas_st_drag_intercept,
+                        config.gas_st_drag_cap,
+                        float(net_load.mean()),
+                        float(net_load.max()),
+                    )
+            if getattr(config, "ct_netload_drag", False):
+                from market_sim.data.fleet import apply_ct_netload_drag_floor
+
+                if apply_ct_netload_drag_floor(
+                    fleet_arrays, dispatch_fleet, net_load, config
+                ):
+                    logger.info(
+                        "%s %d: CT_PEAKER net-load reliability-drag floor "
+                        "applied (frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in "
+                        "ramp %dh-%dh)",
+                        iso,
+                        year,
+                        config.ct_drag_slope_per_gw,
+                        config.ct_drag_intercept,
+                        config.ct_drag_cap,
+                        config.ct_drag_ramp_start,
+                        config.ct_drag_ramp_end,
+                    )
+
         fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
         # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
         # lignite vs PRB by rail); no-op for the legacy fleet.
