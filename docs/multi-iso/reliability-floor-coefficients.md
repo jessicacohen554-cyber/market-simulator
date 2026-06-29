@@ -208,3 +208,36 @@ price/volume residual; no measured-CF ceiling was used.
 | NYC | CC_CHP | tmin | 0.0 | 0.1024 | False | 0.2643 | 0.3875 | 0.2939 | 143 | 0.1924 |
 | Long_Island | CT_CHP | tmax | 25.0 | 0.4207 | False | 0.9349 | 0.45 | 0.0398 | 294 | 0.9819 |
 | Long_Island | CT_CHP | tmin | 0.0 | 0.4207 | False | 0.9349 | 0.45 | -0.0624 | 209 | 0.9815 |
+
+## NEISO
+
+| zone | plant_class | driver | threshold | floor_pct | enabled | commit_frac | min_stable_pct | rho | n | baseline |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Connecticut | ST_GAS | tmax | 25.0 | 0.0 | False | 1.0 | 0.0 | 0.4714 | 81 | 0.3381 |
+| Connecticut | ST_GAS | tmin | 0.0 | 0.0 | False | 1.0 | 0.0 | 0.6764 | 52 | 0.4325 |
+| Connecticut | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.9358 | 0.0 | 0.3896 | 360 | 0.6376 |
+| Connecticut | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.8919 | 0.0 | 0.1098 | 301 | 0.667 |
+| Boston | CC_CHP | tmax | 25.0 | 0.35 | False | 1.0 | 0.35 | -0.0147 | 235 | 0.9822 |
+| Boston | CC_CHP | tmin | 0.0 | 0.35 | False | 1.0 | 0.35 | -0.1274 | 211 | 0.9749 |
+| Boston | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.598 | 0.0 | 0.337 | 226 | 0.0772 |
+| Boston | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.5736 | 0.0 | 0.06 | 162 | 0.0938 |
+| Central | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.8398 | 0.0 | 0.524 | 233 | 0.3112 |
+| Central | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.5395 | 0.0 | -0.2687 | 309 | 0.3818 |
+| North | COAL | tmax | 25.0 | 0.0 | False | 1.0 | 0.0 | 0.4049 | 61 | 0.738 |
+| North | COAL | tmin | 0.0 | 0.0 | False | 1.0 | 0.0 | 0.2273 | 87 | 0.4957 |
+| Connecticut | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.5915 | 0.0 | 0.348 | 300 | 0.0494 |
+| Connecticut | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.5041 | 0.0 | -0.0159 | 159 | 0.0645 |
+| Boston | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.8896 | 0.0 | 0.4982 | 246 | 0.2485 |
+| Boston | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.7122 | 0.0 | 0.3508 | 212 | 0.2749 |
+| Connecticut | CC_CHP | tmax | 25.0 | 0.2309 | False | 0.4912 | 0.47 | -0.0054 | 63 | 0.0912 |
+| Connecticut | CC_CHP | tmin | 0.0 | 0.2309 | False | 0.4912 | 0.47 | -0.1629 | 25 | 0.0958 |
+| Central | CC_CHP | tmax | 25.0 | 0.35 | True | 1.0 | 0.35 | 0.4022 | 93 | 0.1607 |
+| Central | CC_CHP | tmin | 0.0 | 0.35 | False | 1.0 | 0.35 | 0.2923 | 14 | 0.2891 |
+| North | CT_PEAKER | tmax | 25.0 | 0.0 | False | 1.0 | 0.0 | 0.5353 | 44 | 0.0685 |
+| North | CT_PEAKER | tmin | 0.0 | 0.0 | False | 1.0 | 0.0 | -0.022 | 42 | 0.0981 |
+| Central | CT_PEAKER | tmax | 25.0 | 0.0 | False | 0.8869 | 0.0 | 0.3746 | 167 | 0.4543 |
+| Central | CT_PEAKER | tmin | 0.0 | 0.0 | False | 0.8869 | 0.0 | -0.1073 | 77 | 0.6184 |
+| Connecticut | CT_CHP | tmax | 25.0 | 0.1167 | False | 0.2536 | 0.46 | -0.1777 | 305 | 0.1581 |
+| Connecticut | CT_CHP | tmin | 0.0 | 0.1167 | False | 0.2536 | 0.46 | 0.0719 | 181 | 0.1605 |
+| North | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.9051 | 0.0 | 0.4126 | 227 | 0.3477 |
+| North | CC_REGULAR | tmin | 0.0 | 0.0 | False | 0.6479 | 0.0 | 0.2395 | 403 | 0.4292 |
