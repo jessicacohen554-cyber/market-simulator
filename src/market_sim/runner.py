@@ -71,6 +71,7 @@ from market_sim.model.storage import (
     apply_storage_new_entry,
     build_default_storage,
     load_eia860_pumped_storage,
+    storage_cap_profiles,
     storage_units_to_arrays,
 )
 from market_sim.model.transmission import (
@@ -491,6 +492,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 cumulative=cumulative,
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
+
+        if getattr(config, "storage_vintage_ramp", False):
+            power_cap_2d, energy_cap_2d = storage_cap_profiles(
+                storage_units, storage, config.hours
+            )
+            if power_cap_2d is not storage.power_cap:
+                storage.power_cap = power_cap_2d
+                storage.energy_cap = energy_cap_2d
+                logger.info(
+                    "%s %d: storage vintage ramp applied — %d units with mid-year COD",
+                    iso,
+                    year,
+                    int((power_cap_2d != power_cap_2d[:, :1]).any(axis=1).sum()),
+                )
 
         # Advance global cumulative deployment by one year, folding in this
         # ISO's local builds (GW) so the learning curves see them next year.
