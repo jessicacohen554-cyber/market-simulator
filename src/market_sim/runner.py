@@ -70,6 +70,7 @@ from market_sim.model.storage import (
     _elcc_for_duration,
     apply_storage_new_entry,
     build_default_storage,
+    load_eia860_pumped_storage,
     storage_units_to_arrays,
 )
 from market_sim.model.transmission import (
@@ -333,6 +334,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # year starts from the deployment-pace fleet, later years grow via the
     # economic new-entry screen.
     storage_units = build_default_storage(iso_config, config)
+
+    # Pumped storage is existing installed capacity (EIA-860 prime mover ``PS``,
+    # ~20 GW nationally) with no new build, so the parameterized battery builder
+    # never includes it. Prepend the EIA-860 PS fleet to the storage list once,
+    # before the new-entry screen -- PS is fixed existing capacity and does not
+    # participate in the endogenous battery-growth screen (it persists across
+    # years because ``apply_storage_new_entry`` preserves existing units). Per
+    # CLAUDE.md rule #12, EIA-860 installed capacity is a physical asset
+    # registry, admissible as a forward input in any year.
+    ps_units = load_eia860_pumped_storage(iso, START_YEAR, config=config)
+    if ps_units:
+        storage_units = ps_units + storage_units
+        logger.info(
+            "%s %d: %d pumped-storage units (%.0f MW) from EIA-860",
+            iso,
+            START_YEAR,
+            len(ps_units),
+            sum(u.power_cap_mw for u in ps_units),
+        )
 
     # Known additions (methodology spec §5.4): EIA-860 planned /
     # under-construction thermal units, deterministic through the data
