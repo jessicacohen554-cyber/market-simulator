@@ -578,6 +578,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
                 fleet + import_generators, config, split_takeorpay
             )
+            if getattr(config, "gas_offer_curve", False):
+                from market_sim.data.fleet import split_gas_tranches
+
+                dispatch_fleet, fuel_fracs = split_gas_tranches(
+                    dispatch_fleet, fuel_fracs, config
+                )
         # Energy-limited conventional hydro (every ISO with hydro plants): one
         # LP unit per EIA-923-reporting hydro plant, capped per hour by its
         # EIA-860 nameplate and per month by its energy budget via the dispatch
