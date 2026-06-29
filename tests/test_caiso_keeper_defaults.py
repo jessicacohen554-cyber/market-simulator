@@ -32,9 +32,8 @@ class TestCaisoKeeperDefaults(unittest.TestCase):
         self.assertAlmostEqual(c.caiso_ra_min_load_frac, 0.26)
         self.assertTrue(c.negative_renewable_offers)
         self.assertTrue(c.reliability_floor)
-        # Legacy levers superseded by the must-offer bridge / generic registry.
+        # Legacy lever superseded by the must-offer bridge / generic registry.
         self.assertFalse(c.caiso_gas_commitment_floor)
-        self.assertFalse(c.caiso_ct_reliability_floor)
 
     def test_other_isos_are_unaffected(self):
         for iso in ("ERCOT", "PJM", "NYISO", "NEISO"):
@@ -43,7 +42,6 @@ class TestCaisoKeeperDefaults(unittest.TestCase):
             self.assertFalse(c.caiso_gas_commitment_floor, iso)
             self.assertEqual(c.caiso_gas_floor_frac, 1.0, iso)
             self.assertFalse(c.negative_renewable_offers, iso)
-            self.assertFalse(c.caiso_ct_reliability_floor, iso)
 
     def test_explicit_override_can_disable_for_a_baseline_probe(self):
         c = rc._calibration_config(2024, "CAISO", 8760, 3.0).with_overrides(

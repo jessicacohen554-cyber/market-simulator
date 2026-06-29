@@ -261,7 +261,6 @@ class TestCodRampInFleetArrays(unittest.TestCase):
             mode="backcast",
             weather_year=2024,
             cod_ramp_enabled=True,
-            gas_st_summer_mustrun=0.3,
         )
         gen = Generator(
             unit_id="s1",
@@ -275,6 +274,9 @@ class TestCodRampInFleetArrays(unittest.TestCase):
             plant_group="ST_GAS",
             online_year=2024,
             online_month=8,
+            # A flat grid-steam must-run floor (90 MW all year) stands in for any
+            # hard min-gen source; the COD ramp must still zero it before COD.
+            chp_grid_pmin_mw=90.0,
         )
         with mock.patch("market_sim.data.fleet.load_cod_map", return_value={}):
             fa = generators_to_fleet_arrays(
@@ -284,8 +286,8 @@ class TestCodRampInFleetArrays(unittest.TestCase):
                 year=2024,
                 load_shape=np.ones(8760) * 1000.0,
             )
-        # ST_GAS summer must-run (May-Sep) would otherwise floor Jul; the unit
-        # is not online until August, so July's floor must be zero.
+        # The 90 MW floor would otherwise bind in July; the unit is not online
+        # until August, so the COD ramp must zero July's floor.
         jul = self._starts[6]
         aug = self._starts[7]
         self.assertIsNotNone(fa.min_gen)
