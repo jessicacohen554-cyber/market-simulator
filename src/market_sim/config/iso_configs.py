@@ -6,8 +6,6 @@ ISO using Pydantic models, plus a factory for retrieving them by name.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
 from pydantic import BaseModel, Field
 
 # Tolerance for the load-share sum check; absorbs floating-point rounding.
@@ -413,7 +411,7 @@ def _pjm_config() -> ISOConfig:
     roll-up of PJM transmission zones (real zone codes in parentheses):
 
     - **PJM_ComEd** (CE) — northern Illinois. The cheap, *export*-congested
-      west (~$24/MWh, congestion −5).
+      west (~$24/MWh, congestion −$5).
     - **PJM_AEP_Ohio** (AEP, DAY, DEOK, OVEC) — the central coal belt
       (OH/IN/MI/KY), ~$30/MWh, congestion ≈ 0.
     - **PJM_ATSI** (ATSI) — FirstEnergy northern Ohio / NW Pennsylvania.
@@ -505,7 +503,7 @@ def _nyiso_config() -> ISOConfig:
     Capital/Hudson ≈ F+G, Lower-Hudson ≈ H+I, NYC = J, Long Island = K. New
     York load is heavily downstate — zone J alone is ≈ 28% — so the link
     structure has to carry that load behind the import interfaces. Source:
-    NYISO Load & Capacity Data (“Gold Book”), zonal energy/peak by load
+    NYISO Load & Capacity Data ("Gold Book"), zonal energy/peak by load
     zone. **Tier 3 (calibration)** — static Gold-Book shares are the fallback
     pending upload U3. When ``data/raw/zone-specific-demand/NYISO/
     NYISO_load_actuals_<year>.csv`` is present, :func:`eia_loader.load_demand`
@@ -537,7 +535,7 @@ def _nyiso_config() -> ISOConfig:
     #     ~3,900 MW.
     #   - Long Island import (NYC -> Long Island): the cable-limited import
     #     into zone K, ~1,650 MW.
-    # Source: NYISO Load & Capacity Data (“Gold Book”), interface transfer
+    # Source: NYISO Load & Capacity Data ("Gold Book"), interface transfer
     # limits; NYISO Reliability Needs Assessment / locational ICAP studies.
     # Tier 3 (calibration) — verify against NYISO operating-limit postings
     # and binding-frequency from NYISO congestion data.
@@ -685,6 +683,9 @@ def get_iso_config(iso_name: str) -> ISOConfig:
     config = builder()
     config.validate_topology()
     return config
+
+
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
