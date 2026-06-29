@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Network — Codebase Explorer</title>
+  <meta name="description"
+    content="7-ISO topology visualization: pipe-and-bubble transmission model, zone network graphs, interface limits, congestion pricing, and priced seams." />
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/site.css" />
+
+  <!-- Page-specific styles -->
+  <style>
+    /* ── ISO topology section ───────────────────────────────────── */
+    .iso-tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 20px;
+    }
+
+    .iso-tab-bar .tabs__tab {
+      border-bottom-width: 2px;
+    }
+
+    .iso-graph-area {
+      width: 100%;
+      min-height: 300px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .iso-stat-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.82rem;
+      color: rgba(241,245,249,0.55);
+    }
+
+    .iso-stat-bar strong { color: rgba(241,245,249,0.90); }
+
+    /* ── Interface limits table ────────────────────────────────── */
+    .interface-table-wrap { overflow-x: auto; }
+
+    /* ── Congestion section ────────────────────────────────────── */
+    .congestion-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .congestion-price-chart,
+    .congestion-flow-chart {
+      width: 100%;
+    }
+
+    .congestion-price-chart { min-height: 260px; }
+    .congestion-flow-chart  { min-height: 130px; }
+
+    /* ── Priced-seams tranche diagram ──────────────────────────── */
+    .tranche-diagram {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .tranche-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tranche-label {
+      width: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(241,245,249,0.60);
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .tranche-bar {
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.90);
+      min-width: 60px;
+      transition: opacity 0.2s;
+    }
+
+    .tranche-row:hover .tranche-bar { opacity: 0.85; }
+
+    .tranche-price {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: rgba(241,245,249,0.55);
+      white-space: nowrap;
+      min-width: 60px;
+    }
+
+    /* ── Incidence matrix diagram ──────────────────────────────── */
+    .incidence-diagram {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: #0B1120;
+      color: #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow-x: auto;
+      line-height: 1.8;
+    }
+
+    .incidence-diagram .row-label { color: #61AFEF; }
+    .incidence-diagram .neg { color: #E06C75; }
+    .incidence-diagram .pos { color: #98C379; }
+    .incidence-diagram .zer { color: rgba(255,255,255,0.20); }
+    .incidence-diagram .comment { color: #5C6370; font-style: italic; }
+
+    /* ── Pipe-and-bubble concept art ──────────────────────────── */
+    .concept-svg {
+      width: 100%;
+      max-width: 460px;
+      margin: 24px auto 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation (injected by nav.js) -->
+  <nav id="topNav" class="top-nav" role="navigation" aria-label="Site navigation"></nav>
+
+  <!-- TOC rail (populated by shared.js) -->
+  <aside class="toc-rail" aria-label="Page contents"></aside>
+
+  <!-- ════════════════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════════════════ -->
+  <header class="header" data-header-variant="grid">
+    <div class="header__inner">
+      <div class="header__eyebrow">The Engine</div>
+      <h1 class="header__title">The Network</h1>
+      <p class="header__subtitle">
+        Zones are copper-plate bubbles; links are pipes with TTC limits.
+        When a pipe fills, prices diverge — and that spread is a signal.
+      </p>
+    </div>
+  </header>
+
+  <div class="energy-divider"></div>
+
+  <main>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 1: PIPE AND BUBBLE
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-light story-section" id="pipe-and-bubble">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 1</div>
+          <h2>Pipe &amp; Bubble</h2>
+          <p>
+            The transmission model is deliberately simple: each zone is a
+            <strong>copper-plate bubble</strong> where all generators and loads
+            see the same price, and links between zones are
+            <strong>pipes</strong> with a maximum power transfer capability (TTC).
+          </p>
+        </div>
+
+        <div class="grid-2col" style="align-items: start; gap: 40px;">
+          <div>
+            <h3>How it works</h3>
+            <p>
+              Inside a zone the LP energy-balance constraint enforces supply
+              equals demand every hour — there is no internal congestion.
+              Across a link, a flow variable <code>Flow[l,t]</code> moves power
+              from the exporting zone's balance to the importing zone's balance,
+              bounded by:
+            </p>
+            <div class="incidence-diagram" style="margin:16px 0;">
+              <span class="comment">// LP transmission constraint, per link l</span><br>
+              <span class="neg">−TTC[l]</span> &nbsp;≤&nbsp;
+              <span style="color:#61AFEF;">Flow[l,t]</span> &nbsp;≤&nbsp;
+              <span class="pos">+TTC[l]</span> &nbsp;&nbsp;
+              <span class="comment">∀ t = 1…8760</span>
+            </div>
+            <p>
+              The <strong>incidence matrix</strong>
+              <em>A</em>&nbsp;∈&nbsp;ℝ<sup>n_zones × n_links</sup> wires links
+              into zone balances: entry −1 for the exporting zone, +1 for the
+              importing zone. The LP adds <em>A · Flow[:, t]</em> to each zone's
+              energy balance row.
+            </p>
+            <p>
+              The <strong>shadow price</strong> on each zone's energy-balance
+              constraint is the zonal LMP. When a link is uncongested the two
+              LMPs on either end are equal. When it binds, they diverge —
+              the spread equals the dual on the flow constraint.
+            </p>
+          </div>
+
+          <div>
+            <!-- Concept SVG: pipe-and-bubble diagram -->
+            <svg class="concept-svg" viewBox="0 0 460 220" aria-label="Pipe and bubble diagram">
+              <!-- Zone A bubble -->
+              <circle cx="110" cy="110" r="72" fill="rgba(14,165,233,0.08)"
+                stroke="#0EA5E9" stroke-width="2" stroke-dasharray="none"/>
+              <text x="110" y="86" text-anchor="middle" font-size="11" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="#0EA5E9">Zone A</text>
+              <text x="110" y="104" text-anchor="middle" font-size="9"
+                font-family="DM Sans,sans-serif" fill="rgba(14,165,233,0.70)">Copper plate</text>
+              <!-- Generators in A -->
+              <rect x="64" y="118" width="28" height="16" rx="3"
+                fill="#22C55E" fill-opacity="0.30" stroke="#22C55E" stroke-width="1.2"/>
+              <text x="78" y="130" text-anchor="middle" font-size="7.5"
+                font-family="DM Sans,sans-serif" fill="#22C55E" font-weight="600">Wind</text>
+              <rect x="100" y="118" width="28" height="16" rx="3"
+                fill="#6B7280" fill-opacity="0.30" stroke="#6B7280" stroke-width="1.2"/>
+              <text x="114" y="130" text-anchor="middle" font-size="7.5"
+                font-family="DM Sans,sans-serif" fill="#6B7280" font-weight="600">Gas</text>
+              <!-- Price A -->
+              <text x="110" y="155" text-anchor="middle" font-size="11" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="rgba(14,165,233,0.85)">LMP = $62</text>
+
+              <!-- Pipe (link) -->
+              <line x1="185" y1="110" x2="275" y2="110"
+                stroke="#94A3B8" stroke-width="8" stroke-linecap="round" stroke-opacity="0.25"/>
+              <line x1="185" y1="110" x2="275" y2="110"
+                stroke="#0EA5E9" stroke-width="3" stroke-linecap="round" stroke-opacity="0.60"/>
+              <!-- Flow arrow -->
+              <polygon points="265,105 275,110 265,115"
+                fill="#0EA5E9" opacity="0.70"/>
+              <!-- TTC label -->
+              <text x="230" y="102" text-anchor="middle" font-size="9" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="rgba(255,255,255,0.55)">TTC 8 GW</text>
+              <!-- Flow label -->
+              <text x="230" y="128" text-anchor="middle" font-size="9"
+                font-family="DM Sans,sans-serif" fill="#0EA5E9" fill-opacity="0.75">Flow = 8 GW ⚠</text>
+
+              <!-- Zone B bubble -->
+              <circle cx="350" cy="110" r="72" fill="rgba(233,30,99,0.08)"
+                stroke="#E91E63" stroke-width="2"/>
+              <text x="350" y="86" text-anchor="middle" font-size="11" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="#E91E63">Zone B</text>
+              <text x="350" y="104" text-anchor="middle" font-size="9"
+                font-family="DM Sans,sans-serif" fill="rgba(233,30,99,0.70)">Copper plate</text>
+              <!-- Gas CT in B -->
+              <rect x="324" y="118" width="52" height="16" rx="3"
+                fill="#6B7280" fill-opacity="0.30" stroke="#6B7280" stroke-width="1.2"/>
+              <text x="350" y="130" text-anchor="middle" font-size="7.5"
+                font-family="DM Sans,sans-serif" fill="#6B7280" font-weight="600">Gas CT (expensive)</text>
+              <!-- Price B higher -->
+              <text x="350" y="155" text-anchor="middle" font-size="11" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="rgba(233,30,99,0.85)">LMP = $86</text>
+
+              <!-- Spread callout -->
+              <line x1="182" y1="155" x2="318" y2="155"
+                stroke="rgba(245,158,11,0.5)" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="230" y="173" text-anchor="middle" font-size="9" font-weight="700"
+                font-family="DM Sans,sans-serif" fill="#F59E0B">Spread = $24 (congestion rent)</text>
+            </svg>
+
+            <div class="insight-box info" style="margin-top:20px;">
+              <div class="insight-title">💡 Dual on the flow constraint</div>
+              is exactly the LMP spread: $$\lambda_B - \lambda_A = \mu_{\text{link}}$$
+              where <em>μ</em> is the shadow price on the TTC bound.
+            </div>
+          </div>
+        </div>
+
+        <!-- Incidence matrix explained -->
+        <div style="margin-top: 40px;">
+          <h3>Incidence matrix <em>A</em> — a small example</h3>
+          <p>
+            For ERCOT's three-zone sub-network (West → North ← South_Central),
+            the incidence matrix and its LP role look like:
+          </p>
+          <div class="incidence-diagram">
+            <span class="comment"># A ∈ ℝ^{3 zones × 2 links}</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="color:#61AFEF;">Link W→N</span>&nbsp;&nbsp;
+            <span style="color:#61AFEF;">Link SC→N</span><br>
+            <span class="row-label">West&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [</span>
+            &nbsp;&nbsp;<span class="neg">-1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="zer">&nbsp;0</span>&nbsp;&nbsp;
+            <span class="row-label">]</span>
+            &nbsp;&nbsp;<span class="comment"># West exports on W→N</span><br>
+            <span class="row-label">North&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [</span>
+            &nbsp;&nbsp;<span class="pos">+1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="pos">+1</span>&nbsp;&nbsp;
+            <span class="row-label">]</span>
+            &nbsp;&nbsp;<span class="comment"># North imports from both</span><br>
+            <span class="row-label">South_Central [</span>
+            &nbsp;&nbsp;<span class="zer">&nbsp;0</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="neg">-1</span>&nbsp;&nbsp;
+            <span class="row-label">]</span>
+            &nbsp;&nbsp;<span class="comment"># SC exports on SC→N</span><br><br>
+            <span class="comment"># LP balance rows include: A @ Flow[:, t]</span><br>
+            <span class="comment"># build_incidence_matrix(links, zone_names) → CSR</span>
+          </div>
+        </div>
+
+      </div><!-- /content-section -->
+    </section><!-- /#pipe-and-bubble -->
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 2: 7-ISO TOPOLOGIES
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-dark story-section" id="iso-topologies">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 2</div>
+          <h2>6-ISO Topologies</h2>
+          <p>
+            Click an ISO tab to explore its zonal structure. Zones are sized by
+            load share; link thickness scales with TTC. Dashed borders mark
+            import/synthetic nodes. Drag nodes to re-arrange.
+          </p>
+        </div>
+
+        <!-- Topology visualization -->
+        <div id="viz-iso-topology" class="glass-chart-panel" style="padding: 16px;">
+          <div class="iso-tab-bar" role="tablist" aria-label="ISO selector"></div>
+          <div class="iso-graph-area" role="img" aria-label="ISO zone topology graph"></div>
+          <div class="iso-stat-bar"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="chart-legend" style="margin-top: 16px;">
+          <span class="legend-item">
+            <span class="swatch-circle"
+              style="background: var(--hydro); opacity: 0.7;"></span>
+            Load zone (sized by load share)
+          </span>
+          <span class="legend-item">
+            <svg width="16" height="14" style="overflow:visible">
+              <circle cx="8" cy="7" r="7" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+            </svg>
+            Import / synthetic node
+          </span>
+          <span class="legend-item">
+            <span class="swatch-line"
+              style="background: var(--hydro); opacity: 0.6;"></span>
+            Bidirectional link (width ∝ TTC)
+          </span>
+          <span class="legend-item">
+            <span class="swatch-dashed"
+              style="color: rgba(255,255,255,0.40);"></span>
+            One-way link
+          </span>
+        </div>
+
+      </div><!-- /content-section -->
+    </section><!-- /#iso-topologies -->
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 3: INTERFACE LIMITS
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-light story-section" id="interface-limits">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 3</div>
+          <h2>Interface Limits</h2>
+          <p>
+            Individual link TTCs don't tell the whole story.
+            Some ISOs impose <strong>aggregate interface limits</strong> — a
+            cap on the combined flow across a group of parallel paths —
+            tighter than the sum of individual limits.
+          </p>
+        </div>
+
+        <div class="grid-2col" style="align-items:start; gap: 40px;">
+          <div>
+            <h3>Why aggregate limits exist</h3>
+            <p>
+              Transmission corridors share physical rights-of-way, substations,
+              and stability margins. A single link's rated TTC assumes the others
+              aren't simultaneously maxed out. When multiple paths feed the same
+              import area, their simultaneous flow is limited by the
+              <em>weakest shared element</em> — typically a substation or a
+              voltage constraint — not by their individual rated capacities.
+            </p>
+            <p>
+              The LP enforces these with an additional constraint:
+            </p>
+            <div class="code-block">
+              <span class="token-comment"># build_interface_groups() in transmission.py</span><br/>
+              <span class="token-keyword">Σ</span> Flow[l,t]&nbsp;≤&nbsp;interface_cap<br/>
+              &nbsp;&nbsp;<span class="token-comment">for each l in interface_links</span>
+            </div>
+            <p>
+              The dual on this constraint contributes to the LMP difference
+              between the import zone and its neighbors — it is part of the
+              congestion component.
+            </p>
+
+            <div class="insight-box warn" style="margin-top:20px;">
+              <div class="insight-title">⚠ CAISO example</div>
+              WECC_import → NP15 is rated 4,800 MW and WECC_import → SP15 is
+              rated 10,623 MW, but the <em>simultaneous</em> import cap is only
+              8,300 MW — well below the 15,423 MW naive sum.
+            </div>
+          </div>
+
+          <div>
+            <h3>Interface limits by ISO</h3>
+            <div class="interface-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ISO</th>
+                    <th>Interface name</th>
+                    <th>Paths</th>
+                    <th>Cap (MW)</th>
+                    <th>Bidir</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge badge--iso-caiso">CAISO</span></td>
+                    <td>WECC simultaneous import</td>
+                    <td>WECC→NP15, WECC→SP15</td>
+                    <td>8,300</td>
+                    <td>✓</td>
+                  </tr>
+                  <tr>
+                    <td colspan="5" style="color:var(--text-muted);font-size:0.82rem;font-style:italic;">
+                      ERCOT, MISO, PJM, NYISO, NEISO — no aggregate interface limits modeled (individual TTC limits apply)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p style="margin-top:16px; font-size:0.875rem; color:var(--text-secondary);">
+              Additional interface limit groups can be added via
+              <code>build_interface_groups()</code> in
+              <code>model/transmission.py</code> as calibration data
+              improves. The CAISO simultaneous import cap has material
+              impact on West-to-East price spreads during high-demand hours.
+            </p>
+
+            <!-- Stat cards row -->
+            <div class="headline-row" style="margin-top:20px;">
+              <div class="stat-card">
+                <div class="stat-card__value">6</div>
+                <div class="stat-card__label">ISOs modeled</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card__value">38</div>
+                <div class="stat-card__label">Total zones</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card__value">38</div>
+                <div class="stat-card__label">Transmission links</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /content-section -->
+    </section><!-- /#interface-limits -->
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 4: CONGESTION & PRICE SEPARATION
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-dark story-section" id="congestion">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 4</div>
+          <h2>Congestion &amp; Price Separation</h2>
+          <p>
+            When a transmission link reaches its TTC, the marginal generator
+            serving each zone diverges — and so do the LMPs. The price spread
+            is a real signal: it says "cheap power can't reach expensive demand."
+          </p>
+        </div>
+
+        <!-- Congestion chart -->
+        <div id="viz-congestion" class="congestion-card">
+
+          <!-- Price chart header -->
+          <div style="padding: 16px 20px 0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:rgba(241,245,249,0.45); margin-bottom:4px;">
+                ERCOT North → Houston link · TTC = 8,000 MW
+              </div>
+              <div style="font-size:0.90rem; font-weight:600; color:rgba(241,245,249,0.80);">
+                Zonal LMP over a summer peak day
+              </div>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="swatch-line" style="background:#0EA5E9;"></span>
+                North LMP
+              </span>
+              <span class="legend-item">
+                <span class="swatch-dashed" style="color:#E91E63;"></span>
+                Houston LMP
+              </span>
+              <span class="legend-item">
+                <span class="swatch-fill" style="background:#F59E0B; opacity:0.5; width:12px; height:12px; border-radius:3px;"></span>
+                Binding hours
+              </span>
+            </div>
+          </div>
+
+          <!-- Price chart -->
+          <div class="congestion-price-chart" style="padding: 0 8px;"></div>
+
+          <!-- Flow bar header -->
+          <div style="padding: 8px 20px 0; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:rgba(241,245,249,0.40);">
+            North→Houston flow vs TTC limit
+          </div>
+
+          <!-- Flow chart -->
+          <div class="congestion-flow-chart" style="padding: 0 8px;"></div>
+
+          <!-- Scrubber -->
+          <div class="scrubber" style="border-top:1px solid rgba(255,255,255,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+              <span class="scrubber__label">Hour scrubber</span>
+              <span class="scrubber-hour-label" style="font-size:0.80rem; color:rgba(241,245,249,0.60);"></span>
+            </div>
+            <input type="range" class="hour-scrubber" min="1" max="9" step="1"
+              aria-label="Select hour to inspect" />
+            <div class="scrubber__info">
+              <span>Flow <strong class="scrubber-flow-val">—</strong></span>
+              <span>Congestion: <strong class="scrubber-spread-val">—</strong></span>
+            </div>
+          </div>
+
+        </div><!-- /#viz-congestion -->
+
+        <!-- Narrative below chart -->
+        <div class="grid-3col" style="margin-top:32px;">
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">📍 When does it happen?</div>
+            <div class="narrative-card__body">
+              Afternoon summer peaks in Houston drive demand above what local
+              generation can meet. Power tries to flow from cheaper North
+              generators, but the 8 GW TTC is the limiting factor.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">💰 What's the spread?</div>
+            <div class="narrative-card__body">
+              In this example, the North LMP settles at ~$62/MWh (gas-CC
+              marginal) while Houston clears at ~$85/MWh (gas-CT peaker).
+              The $23/MWh spread is the LP dual on the TTC constraint.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">🔓 When does it clear?</div>
+            <div class="narrative-card__body">
+              Once Houston demand eases (evening cooling load) or additional
+              local generation comes online, the flow drops below 8 GW and
+              both zones snap back to the same system price.
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-glass" style="margin-top:24px;">
+          <p>
+            <strong style="color:#F1F5F9;">Congestion rent</strong>
+            = LMP spread × constrained flow × hours =
+            $24/MWh × 8,000 MW × 2 h ≈ <strong style="color:#F59E0B;">$384,000</strong>.
+            In real markets this accrues to the ISO and is redistributed through
+            financial transmission rights (FTRs). The model captures the
+            <em>price effect</em> correctly even without explicit FTR settlement.
+          </p>
+        </div>
+
+      </div><!-- /content-section -->
+    </section><!-- /#congestion -->
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 5: PRICED SEAMS
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-light story-section" id="priced-seams">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 5</div>
+          <h2>Priced Seams</h2>
+          <p>
+            ISOs don't exist in isolation. CAISO imports from the Western
+            Interconnect; NEISO imports from Hydro-Québec. These cross-border
+            flows are modeled as synthetic generators with price-responsive
+            bid curves — a <strong>tranche ladder</strong>.
+          </p>
+        </div>
+
+        <div class="grid-2col" style="align-items:start; gap: 40px;">
+          <div>
+            <h3>How seams are modeled</h3>
+            <p>
+              A synthetic external zone (e.g. <code>WECC_import</code>) hosts
+              <strong>import generators</strong> and <strong>export sinks</strong>.
+              Each import tranche is a LP generator with a variable-cost (VOM)
+              equal to its price band midpoint. The LP decides how much to
+              import at each price — a merit-order of inter-ISO flows.
+            </p>
+            <p>
+              Separate code paths exist for different seam types:
+            </p>
+            <ul style="font-size:0.9rem; color:var(--text-secondary); line-height:1.8; margin-bottom:16px;">
+              <li><code>build_import_generators()</code> — generic stepped tranches</li>
+              <li><code>build_caiso_bidir_intertie()</code> — WECC tie as bidirectional signed flow, repriced hour-by-hour to measured hub LMPs (Malin / Palo Verde)</li>
+              <li><code>build_reference_price_node()</code> — split import/export tranches priced at the neighbor's forecast price distribution</li>
+              <li><code>build_export_sinks()</code> — negative-output sinks for exports (LP chooses when to export at each price)</li>
+            </ul>
+            <p>
+              For CAISO, a CARB unspecified-import emission factor is added to
+              tranche VOM — imports from unknown sources carry a carbon cost
+              under the California cap-and-trade program.
+            </p>
+
+            <div class="insight-box info" style="margin-top:16px;">
+              <div class="insight-title">🔗 Linked interface paths</div>
+              The WECC import node connects to both NP15 and SP15 with
+              separate TTC limits, subject to the 8.3 GW simultaneous import
+              cap (§ 3). The LP treats each path independently but the
+              interface constraint links them.
+            </div>
+          </div>
+
+          <div>
+            <h3>Example: CAISO WECC import ladder</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:20px;">
+              Each tranche is a separate LP generator — cheapest dispatched first.
+              The last cleared tranche sets the import marginal cost.
+            </p>
+
+            <!-- Tranche ladder diagram -->
+            <div class="tranche-diagram">
+              <!-- Header -->
+              <div class="tranche-row">
+                <div class="tranche-label" style="color:var(--text-muted);">Tranche</div>
+                <div style="flex:1; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-muted);">
+                  Capacity band
+                </div>
+                <div class="tranche-price" style="font-weight:700; text-transform:uppercase; letter-spacing:0.07em; font-size:0.75rem; color:var(--text-muted);">
+                  Price (VOM)
+                </div>
+              </div>
+
+              <!-- Tranches: cheap → expensive -->
+              <div class="tranche-row">
+                <div class="tranche-label">T1 · Hydro</div>
+                <div class="tranche-bar" style="width: 88%; background: linear-gradient(90deg, #0EA5E9, rgba(14,165,233,0.7));">
+                  0 – 2,500 MW
+                </div>
+                <div class="tranche-price">$18/MWh</div>
+              </div>
+              <div class="tranche-row">
+                <div class="tranche-label">T2 · Nuclear</div>
+                <div class="tranche-bar" style="width: 62%; background: linear-gradient(90deg, #6366F1, rgba(99,102,241,0.7));">
+                  0 – 1,800 MW
+                </div>
+                <div class="tranche-price">$25/MWh</div>
+              </div>
+              <div class="tranche-row">
+                <div class="tranche-label">T3 · Wind</div>
+                <div class="tranche-bar" style="width: 72%; background: linear-gradient(90deg, #22C55E, rgba(34,197,94,0.7));">
+                  0 – 2,100 MW
+                </div>
+                <div class="tranche-price">$30/MWh</div>
+              </div>
+              <div class="tranche-row">
+                <div class="tranche-label">T4 · Gas-CC</div>
+                <div class="tranche-bar" style="width: 58%; background: linear-gradient(90deg, #6B7280, rgba(107,114,128,0.7));">
+                  0 – 1,700 MW
+                </div>
+                <div class="tranche-price">$55/MWh</div>
+              </div>
+              <div class="tranche-row">
+                <div class="tranche-label">T5 · Gas-CT</div>
+                <div class="tranche-bar" style="width: 30%; background: linear-gradient(90deg, #F97316, rgba(249,115,22,0.7));">
+                  0 – 900 MW
+                </div>
+                <div class="tranche-price">$85/MWh</div>
+              </div>
+              <div class="tranche-row">
+                <div class="tranche-label" style="color:rgba(239,68,68,0.7);">TTC limit</div>
+                <div style="flex:1; height:2px; background: rgba(239,68,68,0.4); border-radius:1px; align-self:center;"></div>
+                <div class="tranche-price" style="color:rgba(239,68,68,0.7);">8,300 MW cap</div>
+              </div>
+            </div>
+
+            <p style="margin-top:16px; font-size:0.82rem; color:var(--text-secondary);">
+              In practice the tranches are parameterized from the neighbor
+              ISO's price-duration curve (or measured hub LMPs in backcast mode).
+              The LP imports on the cheapest available tranches up to the
+              interface limit.
+            </p>
+          </div>
+        </div>
+
+        <!-- Hydro-Québec seam for NEISO -->
+        <div style="margin-top: 40px;">
+          <h3>NEISO — Hydro-Québec seam</h3>
+          <p>
+            The NEISO model includes a <code>HQ_import</code> node connected
+            to North (900 MW), Boston (2,000 MW), and Connecticut (1,500 MW).
+            Hydro-Québec power is modeled as a low-cost import — hydro generation
+            with a VOM near its opportunity cost. In practice HQ exports vary
+            seasonally and with Quebec's own reservoir levels; the model
+            approximates this via the tranche structure and a reference
+            price node.
+          </p>
+          <div class="grid-3col" style="margin-top:20px;">
+            <div class="narrative-card">
+              <div class="narrative-card__eyebrow">🌊 HQ_import node</div>
+              <div class="narrative-card__body">
+                Load share = 0 (pure import synthetic). Connected with 4,400 MW
+                combined capacity across three paths into NEISO zones.
+              </div>
+            </div>
+            <div class="narrative-card">
+              <div class="narrative-card__eyebrow">⚡ WECC_import node</div>
+              <div class="narrative-card__body">
+                CAISO's external node. Connects to NP15 (4,800 MW) and SP15
+                (10,623 MW), subject to the 8,300 MW simultaneous import cap.
+              </div>
+            </div>
+            <div class="narrative-card">
+              <div class="narrative-card__eyebrow">📐 Panhandle (ERCOT)</div>
+              <div class="narrative-card__body">
+                Zero load-share zone modeling the Texas Panhandle's wind corridor.
+                Connected to North (2,680 MW) — predominantly a generation
+                source, not a load center.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /content-section -->
+    </section><!-- /#priced-seams -->
+
+    <!-- Breadcrumb navigation -->
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="solving-pricing.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Solving &amp; Pricing</span>
+      </a>
+      <a href="capacity-evolution.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Capacity Evolution</span>
+      </a>
+    </nav>
+
+  </main><!-- /main -->
+
+  <!-- Footer -->
+  <footer class="page-footer" role="contentinfo">
+    <div class="page-footer__inner">
+      <div class="page-footer__main">
+        <div>
+          <div class="page-footer__brand">Codebase Explorer</div>
+          <p class="page-footer__tagline">
+            Topology sourced from <code>src/market_sim/config/iso_configs.py</code>
+            and <code>model/transmission.py</code>; JSON regenerated by
+            <code>scripts/extract_iso_topologies.py</code>.
+          </p>
+        </div>
+        <nav class="page-footer__links" aria-label="Footer navigation">
+          <a class="page-footer__link" href="index.html">Home</a>
+          <a class="page-footer__link" href="lp-core.html">LP Core</a>
+          <a class="page-footer__link" href="solving-pricing.html">Solving &amp; Pricing</a>
+          <a class="page-footer__link" href="capacity-evolution.html">Capacity Evolution</a>
+          <a class="page-footer__link" href="config-reference.html">Config Reference</a>
+        </nav>
+      </div>
+      <p class="page-footer__copy">Market Simulator · LP-based electricity market dispatch model · 2026–2050 forecast horizon</p>
+    </div>
+  </footer>
+
+  <!-- Scripts: infrastructure -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+
+  <!-- D3 v7 (global, required by chart modules) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+
+  <!-- GSAP + ScrollTrigger (optional, shared.js falls back gracefully) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Visualization modules (ES modules, load after D3) -->
+  <script type="module" src="js/viz-iso-topology.js"></script>
+  <script type="module" src="js/viz-congestion.js"></script>
+
+</body>
+</html>
