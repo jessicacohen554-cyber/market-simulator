@@ -705,6 +705,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
+            if getattr(config, "negative_renewable_offers", False):
+                from market_sim.policy.eac import apply_negative_renewable_offer_floor
+
+                wind_mc, solar_mc = apply_negative_renewable_offer_floor(
+                    wind_mc, solar_mc, config
+                )
             # The RPS is enforced as an LP constraint when enabled; its dual
             # is the RPS shadow price returned in the dispatch result.
             rps_target = None
@@ -814,10 +820,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         ordc_penalties=coopt_pens,
                         ordc_step_widths=coopt_widths,
                     )
-                    # Apply RTOLCAP supply cap (same as multi-product path)
-                    coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
-                    if coopt_supply_cap is not None:
-                        dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
             # PJM analogue: the measured PJM_RTO Primary Reserve requirement
             # (~3.4 GW) clears against the published vertical two-step ORDC
             # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
