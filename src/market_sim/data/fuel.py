@@ -39,6 +39,7 @@ import pandas as pd
 
 from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
+    CAISO_CITYGATE_TRANSPORT_ADDER,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
     END_YEAR,
@@ -1163,6 +1164,15 @@ def apply_hub_basis_overlay(
     covered = ~np.isnan(hourly)
     if not covered.any():
         return
+    # CAISO: the basis rows are the SoCal / PG&E *citygate* (border) spot; a CA
+    # power plant pays the citygate PLUS the LDC intrastate backbone/transmission
+    # to its burner tip, so the marginal CC's true delivered (cost-based-bid)
+    # fuel cost is citygate + that transport. Reconcile up to the measured CA
+    # delivered-to-electric-power census (EIA N3045CA3) with the measured
+    # citygate->plant differential (rule #11; see CAISO_CITYGATE_TRANSPORT_ADDER).
+    # NEISO (the AGT marginal-unit hub) and every other ISO are unchanged.
+    if config.iso.upper() == "CAISO":
+        hourly = np.where(covered, hourly + CAISO_CITYGATE_TRANSPORT_ADDER, hourly)
     gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
     if gas_rows.size == 0:
         return
