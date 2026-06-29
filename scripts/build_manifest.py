@@ -1,30 +1,32 @@
-"""Assemble the backcast dashboard's shared files from committed parts.
+"""Assemble the backcast dashboard from committed parts.
 
-The dashboard's shared files — ``frontend/data/backcast/manifest.js``,
-``benchmark.js`` and the ``backcast-results.html`` shell — are GENERATED from the
-committed parts by this script. They ARE committed (so a raw-branch GitHub Pages
-build serves the dashboard too), but only the Pages deploy workflow refreshes them
-on main — it is their single writer. Every calibration run commits only files in
-its own namespace:
+The dashboard HTML (``backcast-results.html``) INLINES manifest + completeness
+data (~108 KB) directly into the page — these carry the ISO list that boot()
+and selectIso() need. Benchmark data (~7 MB) stays external (too large to
+inline without slowing the initial page load) and is loaded via ``<script src>``
+with cache-busting + robust ``ensureData()`` fallback.
 
-  * ``frontend/data/backcast/registry/<id>.json`` — the run's complete manifest
-    entry (id, label, date, shorthand, definition, years, iso, file, bundle).
-  * ``frontend/data/backcast/runs/<id>.js``       — the run's payload.
-  * ``frontend/data/backcast/bench/<ISO>/<year>.json.gz`` — per-(ISO, year)
-    benchmark part: ``{"meta": {...}, "bench": {...}}`` (newest run covering
-    the year supplies it).
+This hybrid approach eliminates the recurring “undefined is not an object
+(evaluating ‘window.BC.benchGz[iso]’)” crash: the ISO list is always in the
+same cache entry as the shell JS (no cross-file desync), and any benchmark
+staleness is caught by the self-healing boot logic that re-fetches with
+cache-busting before falling back to a full page reload.
 
-This script is the pure, stdlib-only reducer over those parts: it unions the
-per-part ISO metas, merges the year payloads into one gzip+base64 benchmark
-per ISO, lists every registered run whose payload file exists, and writes the
-three shared files. Because it needs no bundles, pandas or the model package,
-the Pages deploy runs it in seconds on a sparse checkout — and locally it
-rebuilds the preview after any run is added/removed:
+The standalone ``.js`` files are still written for the deploy staging, for
+``ensureData()`` fallback re-fetches, and for backward compat.
+
+Per-run files committed by calibration sessions (never by this script):
+
+  * ``frontend/data/backcast/registry/<id>.json`` — manifest sidecar.
+  * ``frontend/data/backcast/runs/<id>.js``       — run payload.
+  * ``frontend/data/backcast/bench/<ISO>/<year>.json.gz`` — benchmark part.
+
+Usage::
 
     python scripts/build_manifest.py                 # refresh repo-root preview
     python scripts/build_manifest.py --site-dir _site  # deploy staging
 
-Output is byte-deterministic (gzip mtime=0) apart from the page's generated-at
+Output is byte-deterministic (gzip mtime=0) apart from the page’s generated-at
 stamp.
 """
 
@@ -259,25 +261,11 @@ def main() -> None:
 
     out_data = site / "frontend" / "data" / "backcast"
     out_data.mkdir(parents=True, exist_ok=True)
-    # Self-healing prelude — runs BEFORE benchmark.js / completeness.js (script
-    # order in the shell) so a stale cached shell paired with a fresh manifest
-    # triggers a single hard reload of the HTML before any downstream code can
-    # crash on a shape-changed window.BC.benchGz / .meta. SHELL_VER is set
-    # inline at the top of the shell HTML; if it is undefined (very old shell
-    # that predates this fix) or simply different from this manifest's
-    # DATA_VER, we replace the URL with a fresh cache-busting query so the
-    # network returns the current HTML. sessionStorage guards against an
-    # infinite loop if the upstream HTML is itself wedged stale.
-    prelude = (
-        f'window.BC=window.BC||{{}};window.BC.DATA_VER="{ver}";'
-        "(function(){if(window.BC.SHELL_VER===window.BC.DATA_VER)return;"
-        'try{var k="bc_shell_reload_"+window.BC.DATA_VER;'
-        "if(sessionStorage.getItem(k))return;"
-        'sessionStorage.setItem(k,"1");'
-        "var u=location.pathname+'?_='+Date.now()+location.hash;"
-        "location.replace(u);"
-        "}catch(e){}})();"
-    )
+    # Standalone .js files: still written for deploy staging, ensureData()
+    # fallback, and backward compat. The HTML inlines manifest + completeness
+    # (the ISO-list data that MUST be in sync with the shell) but keeps
+    # benchmark external (7+ MB, loaded on demand with robust fallback).
+    prelude = f'window.BC=window.BC||{{}};window.BC.DATA_VER="{ver}";'
     (out_data / "manifest.js").write_text(
         prelude
         + "window.BC.meta="
@@ -289,40 +277,44 @@ def main() -> None:
     (out_data / "benchmark.js").write_text(
         "window.BC=window.BC||{};window.BC.benchGz=" + bench_js + ";"
     )
-    # EIA-923 completeness map (window.BC.completeness): per-(year, ISO, class)
-    # status the mix table uses to color-code incomplete-plant-data classes in a
-    # preliminary vintage. Generated from the committed completeness parts.
     (out_data / "completeness.js").write_text(
         "window.BC=window.BC||{};window.BC.completeness=" + completeness_js + ";"
     )
 
-    # Cache-busting query strings now use the content hash, so they only change
-    # when content actually changes — the deploy step that writes back into the
-    # repo only commits on real updates (the per-deploy timestamp was forcing a
-    # no-op commit every deploy). Each tag carries an onerror that records the
-    # failure into window.BC._loadErr so boot() can report which files failed.
-    _onerr = 'onerror="window.BC._loadErr.push(this.src)"'
-    # User-visible "as of" stamp — the newest registered run's date is what
+    # User-visible “as of” stamp — the newest registered run's date is what
     # actually changed; that keeps the HTML byte-identical across deploys when
     # no new run landed, while still telling the reader how fresh the data is.
     as_of = max(
         (e.get("date") or "" for e in entries), default=""
     ) or datetime.now().strftime("%Y-%m-%d")
+    # Inline manifest + completeness (small, ~108KB) directly into the HTML.
+    # These carry the ISO list that boot()/selectIso() need — inlining them
+    # eliminates the root cause of the recurring “benchGz[iso] undefined”
+    # crash: the ISO list and the shell JS are always in the same cache entry.
+    # Benchmark stays external (~7 MB, too large to inline without slowing
+    # initial load): loaded via <script src> with cache-busting, and
+    # ensureData() re-fetches it if missing or stale.
+    _onerr = 'onerror="window.BC._loadErr.push(this.src)"'
+    inline_data = (
+        "<script>"
+        + prelude
+        + "window.BC.meta="
+        + meta_js
+        + ";window.BC.manifest="
+        + manifest_js
+        + ";window.BC.completeness="
+        + completeness_js
+        + ";</script>"
+        f'<script src="frontend/data/backcast/benchmark.js?v={ver}" {_onerr}>'
+        "</script>"
+        f'<script src="frontend/data/backcast/status.js?v={ver}" {_onerr}>'
+        "</script>"
+    )
     shell = (
         SHELL.replace(
             "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
         )
-        .replace(
-            "__DATASCRIPTS__",
-            f'<script src="frontend/data/backcast/manifest.js?v={ver}" {_onerr}>'
-            "</script>"
-            f'<script src="frontend/data/backcast/benchmark.js?v={ver}" {_onerr}>'
-            "</script>"
-            f'<script src="frontend/data/backcast/completeness.js?v={ver}" {_onerr}>'
-            "</script>"
-            f'<script src="frontend/data/backcast/status.js?v={ver}" {_onerr}>'
-            "</script>",
-        )
+        .replace("__DATASCRIPTS__", inline_data)
         .replace("__SHELL_VER__", ver)
         .replace("__GEN__", as_of)
     )
