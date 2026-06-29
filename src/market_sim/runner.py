@@ -872,8 +872,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
+            # When caiso_solar_endogenous_spill is on, the CF derate is SKIPPED:
+            # the LP gets the full solar potential and curtails endogenously
+            # (solar becomes marginal in oversupply, crashing the dual to
+            # solar_mc instead of pinning at gas MC).
             year_solar_cf = solar_cf
-            if iso == "CAISO" and getattr(config, "caiso_solar_deliverability", False):
+            _endogenous_spill = getattr(config, "caiso_solar_endogenous_spill", False)
+            if (
+                iso == "CAISO"
+                and getattr(config, "caiso_solar_deliverability", False)
+                and not _endogenous_spill
+            ):
                 from market_sim.model.transmission import (
                     caiso_solar_deliverability_derate,
                 )
@@ -895,6 +904,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         float(np.mean(_sol_derate[mid])),
                         100.0 * (1.0 - float(np.mean(_sol_derate[mid]))),
                     )
+            elif iso == "CAISO" and _endogenous_spill:
+                logger.info(
+                    "CAISO %d: endogenous solar spill — full solar potential "
+                    "passed to LP (no pre-LP CF derate); solar sets the midday "
+                    "dual when curtailed",
+                    year,
+                )
             dispatch_kwargs = dict(
                 wind_cf=wind_cf,
                 wind_cap=wind_cap,
