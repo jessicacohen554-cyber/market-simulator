@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-29T01:49:48",
+  "timestamp": "2026-06-29T02:21:00",
   "iso": "CAISO",
   "years": [
     2023,
@@ -128,6 +128,6 @@
     "eia923": "../_shared/CAISO/eia923-b95fbbedf1f2.parquet",
     "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "6f568dd",
+  "git_sha": "c3bb387",
   "highspy_version": "1.14.0"
 }

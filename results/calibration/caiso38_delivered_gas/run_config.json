@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-06-29T01:49:48",
+  "timestamp": "2026-06-29T02:21:00",
   "git": {
-    "sha": "6f568dd",
+    "sha": "c3bb387",
     "branch": "claude/caiso-38-delivered-gas-p66pwm",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso 38 delivered-gas: reprice CAISO gas off the measured SoCal / PG&E Citygate trading hub (gas_hub_basis_overlay, the doc-08 NEISO mechanism, now keyed on the in-repo CAISO citygate basis rows in gas_basis_by_iso_month.csv: EIA N3050CA3 - Henry Hub) instead of the EIA-923 ISO-month series volume-weighted across only ~7 NorCal/SDGE- skewed reporting plants. caiso 37 proved the ~2x CA-zone body over- price is the domestic gas_cc marginal bid; the 7-plant sample assigns the marginal CC ~$4.45/MMBtu (2024) vs the full-census CA electric-power delivered gas (EIA N3045CA3 $3.84) and the citygate ($3.38) the SP15 marginal CC actually prices off (SoCal border fell to a discount to Henry Hub in summer 2024). The citygate overlay is the measured marginal opportunity-cost price (captures the Jan-2023 western gas crisis and the summer-2024 SoCal discount) and supersedes the skewed 7-plant sample \u2014 measured, forward-reproducible (rule #11), NOT residual-tuned. Per the diagnosis the seam is already anchored to the measured Palo Verde/Malin means and imports are ATC-capped, so the residual above target is the structurally-real CA-CC SRMC floor (gas + CARB carbon). All caiso 37 offer-curve + seam levers carried verbatim; ERCOT/PJM/NYISO/NEISO byte-identical.",
+  "model_changes_note": "caiso 38 delivered-gas: reprice CAISO gas off the measured SoCal / PG&E Citygate trading hub (gas_hub_basis_overlay, the doc-08 NEISO mechanism, now keyed on the in-repo CAISO citygate basis rows in gas_basis_by_iso_month.csv: EIA N3050CA3 - Henry Hub) instead of the EIA-923 ISO-month series volume-weighted across only ~7 NorCal/SDGE- skewed reporting plants. caiso 37 proved the ~2x CA-zone body over- price is the domestic gas_cc marginal bid; the 7-plant sample assigns the marginal CC ~$4.45/MMBtu (2024) vs the full-census CA electric-power delivered gas (EIA N3045CA3 $3.84) and the citygate ($3.38). The citygate overlay (captures the Jan-2023 western gas crisis and the summer-2024 SoCal discount) is reconciled UP to the measured census delivered-to-electric-power level with the measured citygate->burner-tip intrastate-transport differential (CAISO_CITYGATE_TRANSPORT_ADDER +0.46 = N3045CA3-N3050CA3 2024), so the marginal CC bids its true delivered fuel cost ($3.84 in 2024) and supersedes the skewed 7-plant sample \u2014 measured, forward-reproducible (rule #11), NOT residual-tuned. Per the diagnosis the seam is already anchored to the measured Palo Verde/Malin means and imports are ATC-capped, so the residual above target is the structurally-real CA-CC SRMC floor (gas + CARB carbon). All caiso 37 offer-curve + seam levers carried verbatim; ERCOT/PJM/NYISO/NEISO byte-identical.",
   "calibration_flags": {
     "iso": "CAISO",
     "years": [
@@ -50,7 +50,7 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "6f568dd"
+    "git_sha": "c3bb387"
   },
   "scenario_config": {
     "weather_year": 2023,
