@@ -1707,6 +1707,7 @@ def solve_and_persist(
     neiso_temp_reliability_floor: bool | None = None,
     neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
+    neiso_oil_burn_budget: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1917,6 +1918,7 @@ def solve_and_persist(
             neiso_temp_reliability_floor=neiso_temp_reliability_floor,
             neiso_floor_outage_exempt=neiso_floor_outage_exempt,
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
+            neiso_oil_burn_budget=neiso_oil_burn_budget,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2180,6 +2182,7 @@ def solve_and_persist(
         "neiso_temp_reliability_floor": neiso_temp_reliability_floor,
         "neiso_floor_outage_exempt": neiso_floor_outage_exempt,
         "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
+        "neiso_oil_burn_budget": neiso_oil_burn_budget,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2395,6 +2398,10 @@ def solve_and_persist(
     if neiso_gas_coldsnap_derate is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
+        )
+    if neiso_oil_burn_budget is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_oil_burn_budget=neiso_oil_burn_budget
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5431,6 +5438,22 @@ def main() -> None:
         "Pair with --energy-reserve-coopt. NEISO-only; default off.",
     )
     parser.add_argument(
+        "--neiso-oil-burn-budget",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO oil-burn inventory budget: cap monthly oil-fueled generation "
+        "(oil-primary + dual-fuel-switched MWh) at the measured EIA-923 "
+        "Schedule 5 Petroleum receipt quantity (MMBtu -> MWh via fleet heat "
+        "rates). When the budget binds in a cold-snap month, the LP shadow "
+        "price IS the scarcity rent — the marginal oil MWh is priced at "
+        "SRMC + shadow price, lifting the cleared LMP above the flat "
+        "dual-fuel oil-parity cap (~$258) and producing >$300 hours "
+        "endogenously. A reproducible physical deliverability input "
+        "(CLAUDE.md #10); NOT sized to land a target tail-hour count. "
+        "NEISO-only; default ON for NEISO (the keeper). "
+        "--no-neiso-oil-burn-budget disables it for the no-budget A/B probe.",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6069,6 +6092,7 @@ def main() -> None:
         neiso_temp_reliability_floor=args.neiso_temp_reliability_floor,
         neiso_floor_outage_exempt=args.neiso_floor_outage_exempt,
         neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
+        neiso_oil_burn_budget=args.neiso_oil_burn_budget,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
