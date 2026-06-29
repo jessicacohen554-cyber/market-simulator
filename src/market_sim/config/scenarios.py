@@ -979,6 +979,22 @@ class ScenarioConfig:
     # not a residual-tuned adder. Applied as a deep-merge offer-curve override
     # gated to iso=="MISO" (other ISOs / forecasts byte-identical). Default off;
     # opt-in per run, validated by the import↑ / CC↓ / coal↓ / CT↑ / ST↑ response.
+    miso_pjm_lmp_import_pricing: bool = False  # MISO PJM seam: price each PJM
+    # import/export tranche at the MEASURED hourly PJM Day-Ahead LMP at the
+    # MISO-facing western border hubs (equal-weight mean of CHICAGO GEN / AEP
+    # GEN / ATSI GEN — the same border decomposition as MISO_PJM_BORDER_HR_BY_
+    # YEAR) + hurdle, replacing the synthetic gas × heat-rate × load-shape
+    # ladder. The gas × HR ladder is too FLAT: its off-peak price never dips
+    # below MISO's own cheap coal, so the model wrongly under-imports in 2024/
+    # 2025 (import 17/5.8 vs actual 23/19 TWh). The real PJM border LMP dips
+    # well below the flat gas × HR average in PJM's off-peak hours (p10 $15-22,
+    # 29-49% of hours below $25 vs the flat $30+ ladder), pulling import into
+    # those cheap hours. DISPLACES the miso_pjm_border_anchor gas × HR HR for
+    # the PJM seam (the two are alternatives; don't stack). SPP/South seams
+    # keep their gas × HR pricing. Requires --reference-price-interface;
+    # MISO-only; no-op without the measured parquet (byte-identical).
+    # Measured neighbor price-formation input (rule #12), blind to MISO's own
+    # flow (rule #11 — reads only PJM hub LMP). Default off; opt-in.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -2934,6 +2950,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_temp_reliability_floor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
+    "miso_pjm_lmp_import_pricing": 1,
     "ct_intermediate_split": 1,
     "ct_intermediate_cf_threshold": 3,
     "st_gas_intermediate_split": 1,
