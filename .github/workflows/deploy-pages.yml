@@ -1,20 +1,19 @@
 name: Deploy site to GitHub Pages
 
 # The ONE publish pipeline. Stages the static site (landing page + learning
-# hub + backcast dashboard) and deploys it to GitHub Pages. The dashboard's
-# shared files (manifest.js / benchmark.js / backcast-results.html) are NOT
-# tracked in git: they are assembled here, at deploy time, from the committed
-# per-run registry sidecars + per-(ISO, year) benchmark parts by the
-# stdlib-only scripts/build_manifest.py (seconds, no model deps, no bundles).
-# That is what lets any number of concurrent calibration sessions/runs land on
-# main with zero merge conflicts — each run only ever ADDS its own files, and
-# nothing ever commits a shared generated file.
+# hub + backcast dashboard) and deploys it to GitHub Pages. The dashboard HTML
+# inlines manifest + completeness data (eliminates stale-cache ISO-list desync);
+# benchmark stays external with self-healing fallback. Assembled from committed
+# per-run registry sidecars + per-(ISO, year) bench parts by the stdlib-only
+# scripts/build_manifest.py (seconds, no model deps, no bundles). Concurrent
+# calibration sessions merge conflict-free — each only ADDS its own files
+# (registry/<id>.json, runs/<id>.js, bench parts).
 #
 # Speed: the checkout is sparse (web roots + scripts only) and blobless, so the
 # ~GBs of model bundles/inputs the repo tracks are never downloaded. End-to-end
 # the deploy takes well under a minute, vs ~8 min for the old
 # regen-commit -> chained-deploy pipeline (which this replaces — the
-# "Regenerate backcast dashboard" workflow is retired).
+# “Regenerate backcast dashboard” workflow is retired).
 on:
   push:
     branches: [main]
@@ -22,7 +21,7 @@ on:
     # runs (their sidecar/payload/bench parts live under frontend/), AND the
     # build scripts / shell template that produce the generated dashboard files.
     # Missing the shell template from this list was the root cause of the stale-
-    # HTML "Init error: undefined is not an object (benchGz)" bug — the template
+    # HTML “Init error: undefined is not an object (benchGz)” bug — the template
     # gained ensureData() / guards but the deploy never fired to pick them up.
     paths:
       - "*.html"
@@ -34,7 +33,7 @@ on:
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch: {}
   # Calibration run / Bulk-merge push to main with GITHUB_TOKEN, whose pushes
-  # do not fire the `push` trigger above (GitHub's recursion guard). Chain off
+  # do not fire the `push` trigger above (GitHub’s recursion guard). Chain off
   # their completion so a freshly published run still deploys.
   workflow_run:
     workflows: ["Calibration run", "Bulk-merge auto runs"]
@@ -53,7 +52,7 @@ permissions:
 # partial state (a hard 404 on freshly-generated files) even though the
 # cancelled workflow reports success. When two merges land seconds apart the
 # newer run queues behind the in-flight publish and supersedes any other queued
-# run instead of killing the one that is mid-publish. This matches GitHub's
+# run instead of killing the one that is mid-publish. This matches GitHub’s
 # official Pages deploy template.
 concurrency:
   group: pages
@@ -113,8 +112,8 @@ jobs:
         # stamps and uses that hash for the cache-busting query strings and the
         # newest-run date for the page subtitle), so a no-op deploy regenerates
         # the files byte-identical and the git-diff check below short-circuits —
-        # no more steady drip of "dashboard: refresh generated files" no-op commits.
-        # A push by GITHUB_TOKEN does not re-trigger this workflow (GitHub's
+        # no more steady drip of “dashboard: refresh generated files” no-op commits.
+        # A push by GITHUB_TOKEN does not re-trigger this workflow (GitHub’s
         # recursion guard), so there is no deploy loop.
         run: |
           set -euo pipefail
