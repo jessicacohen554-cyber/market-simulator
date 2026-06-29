@@ -123,6 +123,20 @@ class StorageVerdictWiringTests(unittest.TestCase):
         r = cv.score_storage(2024, {"storage": {"throughput_twh": 0.34}}, {})
         self.assertEqual(r["status"], cv.SKIPPED)
 
+    def test_c5b_skips_with_null_actual(self):
+        r = cv.score_storage(
+            2024,
+            {"storage": {"throughput_twh": 0.34}},
+            {"storage": {"throughput_twh": None}},
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("EIA-930", r["magnitude"])
+
+    def test_c5b_skips_with_null_model(self):
+        r = cv.score_storage(2024, {}, {"storage": {"throughput_twh": 1.0}})
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("legacy bundle", r["magnitude"])
+
 
 if __name__ == "__main__":
     unittest.main()
