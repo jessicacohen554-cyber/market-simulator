@@ -729,3 +729,197 @@ def get_iso_config(iso_name: str) -> ISOConfig:
     config = builder()
     config.validate_topology()
     return config
+
+
+from dataclasses import dataclass, field
+
+
+@dataclass(frozen=True)
+class ReliabilityFloorSpec:
+    """One temperature-driven reliability-floor limb for the generic engine.
+
+    An ISO's floor = a list of limbs in RELIABILITY_FLOOR_REGISTRY[iso].
+    """
+
+    classes: tuple[str, ...]
+    limb: str  # "hot" or "cold"
+    hod_hours: tuple[int, ...] | tuple[int, int]
+    hod_range: bool = (
+        True  # True = [start, end] inclusive range; False = explicit hours
+    )
+    zones: tuple[str, ...] | None = None  # None = system-wide
+    tmax_mode: str = "pooled"  # "pooled" or "per_zone"
+    t0_c: float | dict[str, float] = 25.0  # per-class for cold
+    slope_per_c: float | dict[str, float] = 0.0
+    cap: float | dict[str, float] = 0.0
+    base: float | dict[str, float] = 0.0
+    outage_exempt: bool = False
+    distribution: str = "cheapest_first"  # "cheapest_first" or "pro_rata"
+    base_24h: dict[str, float] = field(
+        default_factory=dict
+    )  # NYISO ST persistent 24h baseline per zone
+
+
+RELIABILITY_FLOOR_REGISTRY: dict[str, list[ReliabilityFloorSpec]] = {
+    # -- CAISO: single hot-limb CT_PEAKER, system-wide, pooled TMAX --------
+    "CAISO": [
+        ReliabilityFloorSpec(
+            classes=("CT_PEAKER",),
+            limb="hot",
+            hod_hours=(15, 22),
+            hod_range=True,
+            zones=None,
+            tmax_mode="pooled",
+            t0_c=25.0,
+            slope_per_c=0.047,
+            cap=0.46,
+            base=0.0,
+        ),
+    ],
+    # -- NYISO: hot-limb CT_PEAKER downstate (pooled) + hot-limb ST_GAS per-zone
+    "NYISO": [
+        # CT_PEAKER: downstate only, pooled NYC-metro TMAX
+        ReliabilityFloorSpec(
+            classes=("CT_PEAKER",),
+            limb="hot",
+            hod_hours=(14, 21),
+            hod_range=True,
+            zones=("NYC", "Long_Island", "Lower_Hudson"),
+            tmax_mode="pooled",
+            t0_c=25.0,
+            slope_per_c=0.053,
+            cap=0.68,
+            base=0.13,
+        ),
+        # ST_GAS: per-zone TMAX, per-zone coefficients, pro-rata distribution,
+        # persistent 24h baseline (base_24h) + evening hot-limb (base).
+        ReliabilityFloorSpec(
+            classes=("ST_GAS",),
+            limb="hot",
+            hod_hours=(14, 21),
+            hod_range=True,
+            zones=("Long_Island", "NYC", "Capital_Hudson"),
+            tmax_mode="per_zone",
+            t0_c=25.0,
+            slope_per_c={
+                "Long_Island": 0.0406,
+                "NYC": 0.0393,
+                "Capital_Hudson": 0.0246,
+            },
+            cap={"Long_Island": 0.891, "NYC": 0.950, "Capital_Hudson": 0.950},
+            base={"Long_Island": 0.383, "NYC": 0.432, "Capital_Hudson": 0.000},
+            distribution="pro_rata",
+            base_24h={"Long_Island": 0.289, "NYC": 0.391, "Capital_Hudson": 0.000},
+        ),
+    ],
+    # -- NEISO: dual-limb — hot CT_PEAKER + cold COAL/ST_GAS, system-wide, pooled
+    "NEISO": [
+        # Hot limb: CT_PEAKER
+        ReliabilityFloorSpec(
+            classes=("CT_PEAKER",),
+            limb="hot",
+            hod_hours=(16, 21),
+            hod_range=True,
+            zones=None,
+            tmax_mode="pooled",
+            t0_c=25.0,
+            slope_per_c=0.037,
+            cap=0.48,
+            base=0.0,
+            outage_exempt=False,
+        ),
+        # Cold limb: COAL + ST_GAS (per-class T0)
+        ReliabilityFloorSpec(
+            classes=("COAL", "ST_GAS"),
+            limb="cold",
+            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
+            hod_range=False,
+            zones=None,
+            tmax_mode="pooled",
+            t0_c={"COAL": 5.0, "ST_GAS": 0.0},
+            slope_per_c=0.033,
+            cap=1.0,
+            base=0.0,
+            outage_exempt=True,
+        ),
+    ],
+    # -- MISO: dual-limb + zonal, per-zone per-class coefficients -----------
+    "MISO": [
+        # Hot limb: ST_GAS per zone
+        ReliabilityFloorSpec(
+            classes=("ST_GAS",),
+            limb="hot",
+            hod_hours=(14, 20),
+            hod_range=True,
+            zones=("MISO-North", "MISO-Central", "MISO-South"),
+            tmax_mode="per_zone",
+            t0_c=25.0,
+            slope_per_c={
+                "MISO-North": 0.0226,
+                "MISO-Central": 0.0316,
+                "MISO-South": 0.0366,
+            },
+            cap={
+                "MISO-North": 0.361,
+                "MISO-Central": 0.568,
+                "MISO-South": 0.882,
+            },
+            base={
+                "MISO-North": 0.071,
+                "MISO-Central": 0.107,
+                "MISO-South": 0.222,
+            },
+        ),
+        # Hot limb: CT_PEAKER per zone
+        ReliabilityFloorSpec(
+            classes=("CT_PEAKER",),
+            limb="hot",
+            hod_hours=(14, 20),
+            hod_range=True,
+            zones=("MISO-North", "MISO-Central", "MISO-South"),
+            tmax_mode="per_zone",
+            t0_c=25.0,
+            slope_per_c={
+                "MISO-North": 0.0373,
+                "MISO-Central": 0.0600,
+                "MISO-South": 0.0395,
+            },
+            cap={
+                "MISO-North": 0.525,
+                "MISO-Central": 0.851,
+                "MISO-South": 1.000,
+            },
+            base={
+                "MISO-North": 0.020,
+                "MISO-Central": 0.206,
+                "MISO-South": 0.264,
+            },
+        ),
+        # Cold limb: ST_GAS in MISO-South only
+        ReliabilityFloorSpec(
+            classes=("ST_GAS",),
+            limb="cold",
+            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
+            hod_range=False,
+            zones=("MISO-South",),
+            tmax_mode="per_zone",
+            t0_c=5.0,
+            slope_per_c={"MISO-South": 0.0298},
+            cap={"MISO-South": 0.714},
+            base=0.0,
+        ),
+        # Cold limb: CT_PEAKER in MISO-South only
+        ReliabilityFloorSpec(
+            classes=("CT_PEAKER",),
+            limb="cold",
+            hod_hours=(6, 7, 8, 9, 17, 18, 19, 20),
+            hod_range=False,
+            zones=("MISO-South",),
+            tmax_mode="per_zone",
+            t0_c=5.0,
+            slope_per_c={"MISO-South": 0.0296},
+            cap={"MISO-South": 0.736},
+            base=0.0,
+        ),
+    ],
+}
