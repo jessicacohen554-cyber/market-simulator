@@ -1697,6 +1697,7 @@ def solve_and_persist(
     caiso_gas_floor_frac: float | None = None,
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
+    reliability_floor: bool | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
@@ -1906,6 +1907,7 @@ def solve_and_persist(
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_ra_mustoffer=caiso_ra_mustoffer,
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
+            reliability_floor=reliability_floor,
             caiso_ct_reliability_floor=caiso_ct_reliability_floor,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
@@ -2168,6 +2170,7 @@ def solve_and_persist(
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_ra_mustoffer": caiso_ra_mustoffer,
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
+        "reliability_floor": reliability_floor,
         "caiso_ct_reliability_floor": caiso_ct_reliability_floor,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
@@ -2355,6 +2358,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ra_min_load_frac=caiso_ra_min_load_frac
         )
+    if reliability_floor is not None:
+        recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
     if caiso_ct_reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
@@ -5275,6 +5280,18 @@ def main() -> None:
         "CC/CT minimum generation). A physical turn-down limit, not a fit.",
     )
     parser.add_argument(
+        "--reliability-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Generic registry-driven temperature-reliability floor: look up "
+        "the ISO in RELIABILITY_FLOOR_REGISTRY (iso_configs.py) and apply all "
+        "limb specs via the single generic engine "
+        "(transmission.inject_reliability_floor). Replaces the per-ISO flags "
+        "below. Default (unset) keeps the per-ISO base config value. ON for "
+        "CAISO/NYISO/NEISO/MISO calibration keepers; new ISOs need ONLY this "
+        "flag + a registry entry + a weather file.",
+    )
+    parser.add_argument(
         "--caiso-ct-reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6042,6 +6059,7 @@ def main() -> None:
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
+        reliability_floor=args.reliability_floor,
         caiso_ct_reliability_floor=args.caiso_ct_reliability_floor,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,

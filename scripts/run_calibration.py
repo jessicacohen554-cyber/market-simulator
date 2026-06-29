@@ -1139,6 +1139,14 @@ def _calibration_config(
         #   (fraction of available capacity) for the RA bridge above — typical
         #   CC/CT minimum generation (NREL cycling-cost 2012; CAISO Master File
         #   PMin/PMax). A physical turn-down limit, not a price/volume fit.
+        reliability_floor=(
+            iso.upper() in ("CAISO", "NYISO", "NEISO", "MISO")
+        ),  # Generic registry-driven temperature-reliability floor: ON for
+        #   all four calibrated ISOs that have entries in
+        #   RELIABILITY_FLOOR_REGISTRY (iso_configs.py). Replaces the per-ISO
+        #   flags below, which are kept for back-compat but are now redundant
+        #   when reliability_floor is on. New ISOs need ONLY this flag + a
+        #   registry entry + a weather file.
         nyiso_ct_reliability_floor=(iso.upper() == "NYISO"),  # NYISO keeper
         #   default-ON (nyiso-33): the downstate CT_PEAKER local-reliability floor
         #   holds in-city / Long-Island simple-cycle gas peakers online through the
@@ -2086,6 +2094,7 @@ def run_year(
     caiso_gas_floor_frac: float | None = None,
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
+    reliability_floor: bool | None = None,
     caiso_ct_reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
@@ -2293,6 +2302,8 @@ def run_year(
         config = config.with_overrides(caiso_ra_mustoffer=caiso_ra_mustoffer)
     if caiso_ra_min_load_frac is not None:
         config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
+    if reliability_floor is not None:
+        config = config.with_overrides(reliability_floor=reliability_floor)
     if caiso_ct_reliability_floor is not None:
         config = config.with_overrides(
             caiso_ct_reliability_floor=caiso_ct_reliability_floor
@@ -3215,13 +3226,38 @@ def run_year(
                 frac,
             )
 
-    # CAISO local-RA CT_PEAKER reliability floor: hold simple-cycle gas peakers
-    # online through the hot-day afternoon-evening ramp at a temperature-driven
-    # commitment fraction (clip(slope*(TMAX-T0),0,cap) x available capacity),
-    # keyed to the load-weighted CAISO daily max temperature. Recovers the local
-    # capacity-area reliability energy an energy-only LP leaves on the (cheaper)
-    # CC fleet (transmission.inject_caiso_ct_reliability_floor).
-    if getattr(config, "caiso_ct_reliability_floor", False):
+    # ── Generic registry-driven temperature-reliability floor ──────────────
+    # One flag, one engine, one registry: replaces the per-ISO inject blocks
+    # below for any ISO with entries in RELIABILITY_FLOOR_REGISTRY.  The per-
+    # ISO flags (caiso_ct_reliability_floor, nyiso_ct/st, neiso_temp,
+    # miso_temp) are kept for back-compat and still fire the legacy injectors
+    # if reliability_floor is off; when reliability_floor is on the generic
+    # engine handles all limbs and the legacy blocks are skipped.
+    _generic_floor_applied = False
+    if getattr(config, "reliability_floor", False):
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+        from market_sim.model.transmission import inject_reliability_floor
+
+        _floor_specs = RELIABILITY_FLOOR_REGISTRY.get(iso, [])
+        if _floor_specs:
+            _generic_floor_applied = inject_reliability_floor(
+                fleet_arrays, iso, year, _floor_specs, zone_names
+            )
+            if _generic_floor_applied:
+                logger.info(
+                    "%s %d: generic reliability floor — %d limb spec(s) applied "
+                    "from RELIABILITY_FLOOR_REGISTRY",
+                    iso,
+                    year,
+                    len(_floor_specs),
+                )
+
+    # CAISO local-RA CT_PEAKER reliability floor (legacy — skipped when the
+    # generic reliability_floor handled this ISO above).
+    if (
+        getattr(config, "caiso_ct_reliability_floor", False)
+        and not _generic_floor_applied
+    ):
         from market_sim.model.transmission import (
             inject_caiso_ct_reliability_floor,
         )
@@ -3254,7 +3290,10 @@ def run_year(
     # temperature and restricted to the downstate load pockets. Recovers the
     # local-reliability energy an energy-only LP leaves on the (cheaper) CC fleet
     # (transmission.inject_nyiso_ct_reliability_floor).
-    if getattr(config, "nyiso_ct_reliability_floor", False):
+    if (
+        getattr(config, "nyiso_ct_reliability_floor", False)
+        and not _generic_floor_applied
+    ):
         from market_sim.model.transmission import (
             inject_nyiso_ct_reliability_floor,
         )
@@ -3293,7 +3332,10 @@ def run_year(
     # Recovers the local-RA steam energy an energy-only LP leaves on the cheaper CC
     # fleet (transmission.inject_nyiso_st_reliability_floor). Composes via maximum
     # with the LI self-supply floor.
-    if getattr(config, "nyiso_st_reliability_floor", False):
+    if (
+        getattr(config, "nyiso_st_reliability_floor", False)
+        and not _generic_floor_applied
+    ):
         from market_sim.model.transmission import (
             inject_nyiso_st_reliability_floor,
         )
@@ -3319,7 +3361,10 @@ def run_year(
     # morning/evening peaks (cold limb, TMIN), each at frac x available capacity.
     # Recovers the weather-driven reliability energy an energy-only LP leaves on
     # the cheaper CC fleet (transmission.inject_neiso_temp_reliability_floor).
-    if getattr(config, "neiso_temp_reliability_floor", False):
+    if (
+        getattr(config, "neiso_temp_reliability_floor", False)
+        and not _generic_floor_applied
+    ):
         from market_sim.model.transmission import (
             inject_neiso_temp_reliability_floor,
         )
@@ -3380,7 +3425,10 @@ def run_year(
     # inject_miso_temp_reliability_floor). MISO-native replacement for the
     # ERCOT-coefficient gas_st_netload_drag (which saturates across MISO's net-load
     # range). No-op off the flag / for non-MISO / without an archived series.
-    if getattr(config, "miso_temp_reliability_floor", False):
+    if (
+        getattr(config, "miso_temp_reliability_floor", False)
+        and not _generic_floor_applied
+    ):
         from market_sim.model.transmission import (
             inject_miso_temp_reliability_floor,
         )
