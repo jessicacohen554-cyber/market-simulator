@@ -132,6 +132,7 @@ def _distribute_storage(
         One ``StorageUnit`` per (load zone, technology) pair with nonzero
         power capacity.
     """
+    battery_adder = float(getattr(config, "battery_dispatch_adder", 0.0))
     units: list[StorageUnit] = []
     for z_idx, zone in enumerate(iso.zones):
         if zone.load_share <= 0.0:
@@ -157,6 +158,7 @@ def _distribute_storage(
                     eta_charge=eta,
                     eta_discharge=eta,
                     zone_idx=z_idx,
+                    vom=battery_adder,
                 )
             )
     return units

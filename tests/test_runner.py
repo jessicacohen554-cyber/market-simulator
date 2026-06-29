@@ -365,5 +365,70 @@ class TestDemandGrowth(unittest.TestCase):
         np.testing.assert_allclose(runner._scale_demand(base, config, 2023), base)
 
 
+class _CapturingDispatchModel(_FakeDispatchModel):
+    """``_FakeDispatchModel`` that records the kwargs passed at construction."""
+
+    captured_kwargs: list[dict] = []
+
+    def __init__(self, fleet, demand, **kwargs):
+        super().__init__(fleet, demand, **kwargs)
+        type(self).captured_kwargs.append(kwargs)
+
+
+class TestStorageDischargeCostWiring(RunnerTestBase):
+    """``storage_discharge_cost`` reaches the forecast dispatch path."""
+
+    def setUp(self):
+        super().setUp()
+        _CapturingDispatchModel.captured_kwargs = []
+        _CapturingDispatchModel.n_solves = 0
+
+    def test_battery_dispatch_adder_reaches_dispatch_kwargs(self):
+        config = ScenarioConfig(iso="ERCOT", battery_dispatch_adder=7.5)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        self.assertTrue(_CapturingDispatchModel.captured_kwargs)
+        kw = _CapturingDispatchModel.captured_kwargs[0]
+        sdc = kw.get("storage_discharge_cost")
+        self.assertIsNotNone(sdc, "storage_discharge_cost missing from dispatch kwargs")
+        # Every battery unit's vom should be the adder (7.5); PS has 0.
+        import numpy as np
+
+        sdc_arr = np.asarray(sdc)
+        self.assertTrue(
+            (sdc_arr >= 0.0).all(),
+            "storage_discharge_cost should be non-negative",
+        )
+        # At least one entry equals the battery adder.
+        self.assertTrue(
+            np.any(np.isclose(sdc_arr, 7.5)),
+            "battery_dispatch_adder=7.5 not found in storage_discharge_cost",
+        )
+
+    def test_zero_adder_leaves_dispatch_cost_zero(self):
+        config = ScenarioConfig(iso="ERCOT", battery_dispatch_adder=0.0)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        kw = _CapturingDispatchModel.captured_kwargs[0]
+        sdc = kw.get("storage_discharge_cost")
+        self.assertIsNotNone(sdc, "storage_discharge_cost missing from dispatch kwargs")
+        import numpy as np
+
+        self.assertTrue(
+            np.allclose(np.asarray(sdc), 0.0),
+            "default adder=0 should yield all-zero storage_discharge_cost",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
