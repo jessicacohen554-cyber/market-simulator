@@ -442,6 +442,62 @@ def _build_hydro_rows(
     return block, row_lower, row_upper
 
 
+def _build_oil_budget_rows(
+    layout: "VariableLayout",
+    oil_gen_idx: np.ndarray,
+    oil_monthly_budget: np.ndarray,
+    oil_month_index: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Return oil-burn monthly inventory budget rows and bound vectors.
+
+    Structurally identical to :func:`_build_hydro_rows`: one row per
+    ``(oil-capable generator, month)`` enforcing::
+
+        0 <= sum_{t in month m} P[g, t] <= oil_monthly_budget[g, m]
+
+    When the budget binds in a cold-snap month, the constraint's dual
+    (shadow price) IS the scarcity rent — the LP endogenously prices the
+    marginal oil MWh at SRMC + shadow price, lifting the cleared LMP
+    above the flat dual-fuel oil-parity cap (~$258) and producing >$300
+    hours. Budget derived from EIA-923 petroleum receipts (MWh).
+
+    Args:
+        layout: Variable layout describing the column structure.
+        oil_gen_idx: Thermal-block indices of oil-capable generators,
+            shape ``(n_oil,)``.
+        oil_monthly_budget: Monthly energy cap in MWh, shape
+            ``(n_oil, n_months)``.
+        oil_month_index: Month index (``0 <= m < n_months``) of each
+            hour, shape ``(T,)``.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR
+        matrix of shape ``(n_oil * n_months, layout.total_columns)``.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    gen_idx = np.asarray(oil_gen_idx, dtype=int)
+    month_index = np.asarray(oil_month_index, dtype=int)
+    budget = np.asarray(oil_monthly_budget, dtype=float)
+    n_oil = gen_idx.size
+    n_months = budget.shape[1]
+
+    hours = np.arange(T)
+    g = np.arange(n_oil)
+
+    rows = (g[:, None] * n_months + month_index[None, :]).ravel()
+    cols = (hours[None, :] * vph + layout._p_off + gen_idx[:, None]).ravel()
+    data = np.ones(n_oil * T, dtype=float)
+    block = sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_oil * n_months, layout.total_columns),
+    ).tocsr()
+
+    row_upper = budget.ravel()
+    row_lower = np.zeros(n_oil * n_months, dtype=float)
+    return block, row_lower, row_upper
+
+
 def _build_import_node_rows(
     layout: VariableLayout,
     node_gen_idx: np.ndarray,
@@ -1061,6 +1117,9 @@ def build_constraints(
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
+    oil_monthly_budget: np.ndarray | None = None,
+    oil_gen_idx: np.ndarray | None = None,
+    oil_month_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     import_node_gen_idx: np.ndarray | None = None,
@@ -1333,6 +1392,24 @@ def build_constraints(
             A = sp.vstack([A, hydro_block], format="csr")
             row_lower = np.concatenate([row_lower, hydro_lower])
             row_upper = np.concatenate([row_upper, hydro_upper])
+
+    # Optional oil-burn monthly inventory budget: one row per oil-capable
+    # generator and month. When the budget binds, the shadow price is the
+    # scarcity rent that lifts the LMP above the oil-parity cap.
+    if oil_monthly_budget is not None and oil_gen_idx is not None:
+        oil_gen_idx_arr = np.asarray(oil_gen_idx, dtype=int)
+        if oil_month_index is None:
+            oil_month_index = _hour_to_month_index(T)
+        if oil_gen_idx_arr.size:
+            oil_block, oil_lower, oil_upper = _build_oil_budget_rows(
+                layout,
+                oil_gen_idx_arr,
+                oil_monthly_budget,
+                oil_month_index,
+            )
+            A = sp.vstack([A, oil_block], format="csr")
+            row_lower = np.concatenate([row_lower, oil_lower])
+            row_upper = np.concatenate([row_upper, oil_upper])
 
     # Optional priced import-node monthly net-throughput band: one row per month
     # pinning the node's net interchange (import tranches minus export sinks) to
@@ -1691,6 +1768,9 @@ class DispatchModel:
         hydro_month_index: np.ndarray | None = None,
         hydro_gen_idx: np.ndarray | None = None,
         hydro_monthly_min: np.ndarray | None = None,
+        oil_monthly_budget: np.ndarray | None = None,
+        oil_gen_idx: np.ndarray | None = None,
+        oil_month_index: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
         interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
         import_node_gen_idx: np.ndarray | None = None,
@@ -1782,6 +1862,9 @@ class DispatchModel:
             hydro_month_index=hydro_month_index,
             hydro_gen_idx=hydro_gen_idx,
             hydro_monthly_min=hydro_monthly_min,
+            oil_monthly_budget=oil_monthly_budget,
+            oil_gen_idx=oil_gen_idx,
+            oil_month_index=oil_month_index,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             interface_groups=interface_groups,
             import_node_gen_idx=import_node_gen_idx,
@@ -2269,6 +2352,9 @@ def solve_dispatch(
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
+    oil_monthly_budget: np.ndarray | None = None,
+    oil_gen_idx: np.ndarray | None = None,
+    oil_month_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     import_node_gen_idx: np.ndarray | None = None,
@@ -2380,6 +2466,9 @@ def solve_dispatch(
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,
         hydro_monthly_min=hydro_monthly_min,
+        oil_monthly_budget=oil_monthly_budget,
+        oil_gen_idx=oil_gen_idx,
+        oil_month_index=oil_month_index,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
         interface_groups=interface_groups,
         import_node_gen_idx=import_node_gen_idx,
