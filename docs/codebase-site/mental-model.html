@@ -24,12 +24,12 @@
   <!-- Main content -->
   <main>
     <!-- Page header -->
-    <div class="header" data-header-variant="pulse">
+    <header class="header" data-header-variant="pulse">
       <div class="header__eyebrow">Foundations</div>
       <h1 class="header__title">The 8,760-Hour Problem</h1>
       <p class="header__subtitle">Electricity demand must be met every hour of every day. How does an LP dispatch model balance supply and demand to minimize cost?</p>
       <div class="header__accent"></div>
-    </div>
+    </header>
 
     <!-- Section 1: Supply Meets Demand -->
     <section class="section-light">
@@ -112,7 +112,7 @@
             Generators have different marginal costs — the cost to produce one additional MWh. This includes fuel cost (Henry Hub gas, coal, etc.), variable operating & maintenance, emissions costs (if carbon is priced), and other hourly costs.
           </p>
           <p>
-            The <strong>merit order</strong> is the ranking of all generators by marginal cost, cheapest first. The optimal dispatch runs generators in merit-order sequence: first all the $0 renewables (wind, solar), then nuclear and coal (low fuel cost), then gas-CC (medium cost), then gas-CT (high cost), then oil or hydrogen if needed, until demand is satisfied.
+            The <strong><a href="fleet-offer-curves.html">merit order</a></strong> is the ranking of all generators by marginal cost, cheapest first. The optimal dispatch runs generators in merit-order sequence: first all the $0 renewables (wind, solar), then nuclear and coal (low fuel cost), then gas-CC (medium cost), then gas-CT (high cost), then oil or hydrogen if needed, until demand is satisfied.
           </p>
           <p>
             The most expensive generator that needs to run sets the market price. This is called the <strong>marginal unit</strong> or <strong>marginal cost pricing</strong>. Why? Because every other generator that's running is cheaper, so they all want to bid at the marginal cost — if they bid lower, they lose money; if they bid higher, they don't clear. The system is in equilibrium when every generator that's dispatched can just break even at the marginal price, and all cheaper generators are running at full tilt.
@@ -193,10 +193,15 @@
     </section>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb">
-      <a href="index.html">← Overview</a>
-      <span style="flex: 1;"></span>
-      <a href="data-pipeline.html">Data Pipeline →</a>
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="index.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">Overview</span>
+      </a>
+      <a href="data-pipeline.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Data Pipeline</span>
+      </a>
     </nav>
   </main>
 
