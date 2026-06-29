@@ -998,6 +998,43 @@ def measured_import_hub_prices(
     return out or None
 
 
+def measured_miso_pjm_border_prices(
+    iso: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return measured hourly PJM border-hub DA LMP for MISO's PJM import seam.
+
+    Reads ``pjm_border_lmp_hourly_MISO.parquet`` (columns ``year``, ``hour``
+    [0..8759, MISO Central-time calendar], ``hub`` [``PJM_WEST``], ``price``
+    [$/MWh, DA total LMP = energy + congestion + loss]) built by
+    ``scripts/build_pjm_border_lmp_miso.py`` from PJM Data Miner hub exports.
+    ``PJM_WEST`` is the equal-weight mean of the three MISO-facing PJM gen hubs
+    (CHICAGO GEN / AEP GEN / ATSI GEN), the same border decomposition the
+    ``MISO_PJM_BORDER_HR_BY_YEAR`` derivation uses.
+
+    Returns ``(hours,)`` array of $/MWh, or ``None`` when the ISO is not MISO,
+    the parquet is absent, or the year is uncovered — in which case the caller
+    keeps the gas × HR ladder (byte-identical).
+    """
+    if iso.upper() != "MISO":
+        return None
+    path = CALIBRATION_DIR / "pjm_border_lmp_hourly_MISO.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[(frame["year"] == year) & (frame["hub"] == "PJM_WEST")]
+    if frame.empty:
+        return None
+    series = frame.sort_values("hour")
+    price = (
+        pd.to_numeric(series["price"], errors="coerce")
+        .interpolate(limit=2)
+        .to_numpy(dtype=float)
+    )
+    if price.shape[0] < hours or not np.all(np.isfinite(price[:hours])):
+        return None
+    return price[:hours]
+
+
 def measured_corridor_flow_envelope(
     iso: str,
     year: int,
