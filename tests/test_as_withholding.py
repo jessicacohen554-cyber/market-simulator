@@ -321,6 +321,21 @@ class TestCaisoReserveFormula:
         assert fa.availability.min() >= 0.0
         assert fa.availability.max() <= 1.0
 
+    def test_formula_range_20_to_40_gw_load(self):
+        """R ≈ 1.5–2.5 GW for 20–40 GW load (WECC BAL-002, CAISO Tariff §8.2.3)."""
+        mssc = 1_150.0  # Diablo Canyon unit
+        for load_mw, r_lo, r_hi in [
+            (20_000.0, 1_300.0, 1_700.0),
+            (30_000.0, 1_800.0, 2_500.0),
+            (40_000.0, 2_500.0, 3_200.0),
+        ]:
+            r = caiso_operating_reserve_mw(np.full(HOURS, load_mw), mssc, HOURS)
+            mean_r = float(r.mean())
+            assert r_lo <= mean_r <= r_hi, (
+                f"load={load_mw / 1e3:.0f} GW: R={mean_r:.0f} MW outside "
+                f"[{r_lo:.0f}, {r_hi:.0f}]"
+            )
+
     # --- price impact: lifts the tight hour, leaves the slack hour flat ---
 
     def test_lifts_tight_hour_price_only(self):
