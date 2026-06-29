@@ -785,12 +785,22 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
 
 
 def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5b — storage throughput; SKIPPED unless a throughput series is committed."""
+    """C5b — storage throughput; SKIPPED when EIA-930 has no storage breakout."""
     model = (ypay.get("storage") or {}).get("throughput_twh")
     actual = (ybench.get("storage") or {}).get("throughput_twh")
-    if model is None or actual is None:
+    if actual is None:
         return _skip(
-            "storage", year, "no storage-throughput series in committed artifacts"
+            "storage",
+            year,
+            "EIA-930 has no battery/pumped-storage breakout for this BA-year"
+            + (f" (model discharged {model:.3f} TWh)" if model else ""),
+        )
+    if model is None:
+        return _skip(
+            "storage",
+            year,
+            "model storage throughput absent (legacy bundle without storage.parquet)"
+            + f" (actual {actual:.3f} TWh)",
         )
     err = _pct(model, actual)
     ok = err is not None and abs(err) <= STORAGE_TOL
