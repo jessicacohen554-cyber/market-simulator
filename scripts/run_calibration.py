@@ -48,7 +48,6 @@ from market_sim.config.constants import (  # noqa: E402
     NYISO_INTERFACE_TTC_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_YEAR,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
-    VOM,
     resolve_priced_interchange,
     resolve_reference_price_interface,
 )
@@ -58,16 +57,11 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_ercot_fossil_gen,
-    measured_monthly_hydro,
 )
-from market_sim.data.hydro import (  # noqa: E402
-    forecast_monthly_hydro,
-    load_hydro_budget,
-)
+from market_sim.data.hydro import build_hydro_fleet  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
-    Generator,
     aggregate_fleet,
     apply_coal_tranches,
     apply_ct_netload_drag_floor,
@@ -1915,103 +1909,6 @@ def _apply_caiso_solar_deliverability(
     return solar_cf
 
 
-def _hydro_fleet(
-    iso: str,
-    year: int,
-    zone_names: list[str],
-    backfill_year: int | None = None,
-    eia930_monthly: bool = False,
-    forecast_budget: bool = False,
-    hydro_year: str = "normal",
-) -> tuple[list[Generator], np.ndarray | None]:
-    """Return the ISO's conventional-hydro LP units and their monthly budgets.
-
-    Each EIA-923-reporting conventional hydro plant (prime mover ``HY``;
-    pumped storage is a storage resource, not inflow hydro) becomes one LP
-    unit at its EIA-860 nameplate, paired row-for-row with its EIA-923
-    monthly net-generation energy budget. The dispatch LP's hydro budget
-    family then lets each plant choose *when* within a month to generate
-    (peak shaving) while its monthly energy stays pinned to the measured
-    inflow — strictly better than the flat-monthly must-run injection it
-    replaces, which couldn't shave peaks at all.
-
-    Plants that resolve to no model zone are dropped. Returns
-    ``([], None)`` when the ISO has no usable hydro for ``year``.
-
-    ``backfill_year`` carries plants that reported hydro in that prior year
-    but not in ``year`` at their prior-year monthly generation — the
-    :func:`load_hydro_budget` early-release path. The most recent EIA-923
-    vintage is a monthly-survey-only release covering the large reporters, so
-    a current-year backcast under-counts conventional hydro until the final
-    annual file lands (NEISO 2025: 5 of ~166 plants, 0.09 of ~6 TWh); the
-    missing inflow is otherwise served by gas, inflating the modeled gas
-    level. ``None`` (default) loads ``year`` exactly as reported and changes
-    no existing run.
-
-    ``eia930_monthly`` repins the assembled budget's monthly energy to the
-    measured EIA-930 ``NG: WAT`` monthly total for ``(iso, year)`` (preserving
-    per-plant within-month shares), correcting both the level and the monthly
-    shape when the backfilled early-release vintage misstates an off-year
-    (NEISO 2025: 2024 backfill 6.65 TWh, flat, vs measured 5.12 TWh). No-op
-    when EIA-930 hydro for the ISO/year is unavailable. ``False`` (default)
-    changes no existing run.
-
-    ``forecast_budget`` is the forward analogue of ``eia930_monthly``: instead
-    of pinning the budget to a measured year, it sets the monthly *level* to a
-    normal-water-year climatology (the multi-year mean of measured EIA-930
-    ``NG: WAT``) scaled by the wet/dry ``hydro_year`` lever — see
-    :func:`market_sim.data.hydro.forecast_monthly_hydro`. The per-plant
-    within-month shares still come from ``year``'s EIA-923 (the budget shape);
-    only the level is the forecast climatology, so the same when-to-generate
-    dispatch mechanism runs against a forward-reproducible level rather than a
-    realized one. Mutually exclusive with ``eia930_monthly`` (a run is either a
-    backcast realization or a forecast). No-op when no climatology exists for
-    the ISO. ``False`` (default) changes no existing run.
-    """
-    if eia930_monthly and forecast_budget:
-        raise ValueError(
-            "eia930_monthly (measured backcast level) and forecast_budget "
-            "(normal-water-year forecast level) are mutually exclusive"
-        )
-    if eia930_monthly:
-        target = measured_monthly_hydro(iso, year)
-    elif forecast_budget:
-        target = forecast_monthly_hydro(iso, hydro_year)
-    else:
-        target = None
-    try:
-        budget = load_hydro_budget(
-            iso, year, backfill_year=backfill_year, monthly_target_mwh=target
-        )
-    except (FileNotFoundError, ValueError):
-        return [], None
-    units: list[Generator] = []
-    monthly: list[np.ndarray] = []
-    for i, pid in enumerate(budget.plant_ids):
-        zone = budget.zones[i]
-        cap = float(budget.max_mw[i])
-        energy = np.asarray(budget.monthly_energy[i], dtype=float)
-        if zone not in zone_names or cap <= 0.0 or energy.sum() <= 0.0:
-            continue
-        units.append(
-            Generator(
-                unit_id=f"{int(pid)}_hydro",
-                name=budget.plant_names[i],
-                zone=zone,
-                fuel_type="hydro",
-                pmax_mw=cap,
-                vom=VOM["hydro"],
-                eford=0.0,  # availability is captured by the energy budget
-                plant_group="hydro",
-                plant_code=int(pid),
-            )
-        )
-        monthly.append(energy)
-    if not units:
-        return [], None
-    return units, np.vstack(monthly)
-
-
 def _drop_biomass_units(fleet, fuel_fracs):
     """Remove biomass LP units (and their parallel fuel fractions) from a fleet.
 
@@ -3043,7 +2940,7 @@ def run_year(
     # and by its measured monthly net generation via the dispatch LP's hydro
     # budget rows. Replaces the flat-monthly must-run injection (which could
     # not peak-shave) and leaves ISOs without hydro data unchanged.
-    hydro_units, hydro_monthly_energy = _hydro_fleet(
+    hydro_units, hydro_monthly_energy = build_hydro_fleet(
         iso,
         year,
         zone_names,
