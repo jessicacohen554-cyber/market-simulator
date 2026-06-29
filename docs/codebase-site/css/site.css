@@ -383,3 +383,69 @@
   .fig { break-inside: avoid; }
   a[href]:not(.breadcrumb__item)::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
 }
+
+/* ---------------------------------------------------------------------------
+   10. Network page (page 6) additions
+       — components unique to network.html: ISO-tab accents, hour scrubber,
+         and a tooltip swatch helper. Uses shared.css design tokens.
+   --------------------------------------------------------------------------- */
+
+/* ISO-colored tab accents (topology tab bar) */
+.tabs__tab[data-iso="ERCOT"] { --iso-accent: var(--iso-ercot); }
+.tabs__tab[data-iso="CAISO"] { --iso-accent: var(--iso-caiso); }
+.tabs__tab[data-iso="PJM"]   { --iso-accent: var(--iso-pjm); }
+.tabs__tab[data-iso="MISO"]  { --iso-accent: var(--iso-miso); }
+.tabs__tab[data-iso="NYISO"] { --iso-accent: var(--iso-nyiso); }
+.tabs__tab[data-iso="NEISO"] { --iso-accent: var(--iso-neiso); }
+
+.tabs__tab.active[data-iso] {
+  color: var(--iso-accent);
+  border-bottom-color: var(--iso-accent);
+}
+
+/* Tooltip color swatch (used inside .tooltip__key rows) */
+.tooltip__swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* Hour scrubber (congestion explorer) */
+.scrubber {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.section-dark .scrubber { border-top-color: rgba(255, 255, 255, 0.10); }
+
+.scrubber__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.scrubber input[type="range"] {
+  width: 100%;
+  accent-color: var(--hydro);
+  cursor: pointer;
+  height: 4px;
+}
+
+.scrubber__info {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.section-dark .scrubber__info { color: rgba(255, 255, 255, 0.60); }
+.scrubber__info strong { color: var(--hydro); font-weight: 700; }
