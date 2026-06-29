@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capacity Evolution — Codebase Explorer</title>
+  <meta name="description" content="Six-step annual capacity evolution loop: retirements, additions, CCS retrofits, economic new entry, Wright's-Law learning curves, and storage value-stack screening.">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <!-- D3 -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ── Flowchart section ─────────────────────────────────────── */
+    .flow-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .flow-controls .btn {
+      font-size: 0.82rem;
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: rgba(241,245,249,0.80);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .flow-controls .btn:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .flow-chart-area {
+      width: 100%;
+      min-height: 220px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+    }
+
+    #step-explanation {
+      margin-top: 16px;
+      min-height: 80px;
+    }
+
+    .step-prompt {
+      color: rgba(241,245,249,0.45);
+      font-size: 0.88rem;
+      font-style: italic;
+    }
+
+    .step-detail {
+      animation: fadeSlideIn 0.3s ease;
+    }
+
+    .step-detail__header {
+      font-size: 0.95rem;
+      color: rgba(241,245,249,0.90);
+      margin-bottom: 8px;
+    }
+
+    .step-detail__icon {
+      margin-right: 6px;
+    }
+
+    .step-detail p {
+      font-size: 0.88rem;
+      color: rgba(241,245,249,0.65);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Retirement table ──────────────────────────────────────── */
+    .retirement-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .retirement-table th,
+    .retirement-table td {
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .retirement-table th {
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(241,245,249,0.45);
+    }
+
+    .retirement-table td {
+      color: rgba(241,245,249,0.70);
+    }
+
+    .retirement-table code {
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: rgba(241,245,249,0.85);
+    }
+
+    /* Light-section table overrides */
+    .section-light .retirement-table th,
+    .section-light .retirement-table td {
+      border-bottom-color: var(--border-light);
+    }
+
+    .section-light .retirement-table th {
+      color: var(--text-muted);
+    }
+
+    .section-light .retirement-table td {
+      color: var(--text-secondary);
+    }
+
+    .section-light .retirement-table code {
+      background: rgba(0,0,0,0.05);
+      color: var(--text-primary);
+    }
+
+    /* ── Trajectory toggle ─────────────────────────────────────── */
+    .trajectory-toggle {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: fit-content;
+    }
+
+    .trajectory-toggle .btn {
+      padding: 6px 18px;
+      font-size: 0.82rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .trajectory-toggle .btn.active {
+      background: var(--hydro);
+      color: #fff;
+    }
+
+    /* ── SOC legend ────────────────────────────────────────────── */
+    .soc-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.82rem;
+    }
+
+    .soc-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .soc-swatch {
+      width: 14px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    .soc-swatch--dashed {
+      border-top: 2px dashed;
+      background: none;
+      width: 14px;
+      height: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <nav id="topNav" class="top-nav" role="navigation" aria-label="Site navigation"></nav>
+
+  <!-- TOC rail -->
+  <aside class="toc-rail" aria-label="Page contents"></aside>
+
+  <!-- ════════════════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════════════════ -->
+  <header class="header" data-header-variant="energy-flow">
+    <div class="header__inner">
+      <div class="header__eyebrow">Evolution &amp; Policy</div>
+      <h1 class="header__title">Capacity Evolution</h1>
+      <p class="header__subtitle">
+        How the fleet changes year over year — a six-step loop of retirements,
+        additions, retrofits, and new builds, driven by economics and policy,
+        repeated from 2026 to 2050.
+      </p>
+    </div>
+  </header>
+
+  <div class="energy-divider"></div>
+
+  <main>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 1: THE SIX STEPS
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-dark story-section" id="six-steps">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 1</div>
+          <h2>The Six Steps</h2>
+          <p>
+            Every simulated year, the fleet passes through six sequential
+            capacity-evolution steps before the next year's dispatch LP runs.
+            The loop is <strong>one-pass</strong> — no within-year convergence
+            iteration — and the output of each step feeds the next.
+          </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flow-controls">
+          <button class="btn" id="flow-play" aria-label="Play animation">▶ Play</button>
+          <button class="btn" id="flow-step" aria-label="Step forward">Step →</button>
+          <button class="btn" id="flow-reset" aria-label="Reset">⟲ Reset</button>
+        </div>
+
+        <!-- Flowchart -->
+        <div class="glass-chart-panel" style="padding: 16px;">
+          <div class="flow-chart-area" id="capacity-flow-container"></div>
+        </div>
+
+        <!-- Explanation panel -->
+        <div id="step-explanation"></div>
+
+        <!-- Summary cards -->
+        <div class="grid-3col" style="margin-top: 32px;">
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">🔻 Steps 1–2: Exits</div>
+            <div class="narrative-card__body">
+              Known retirements are deterministic (filed closures). Economic
+              retirements screen inframarginal margin against FOM — with
+              per-fuel hurdle thresholds and a reliability floor that prevents
+              thermal capacity from falling below (peak − firm clean) × 1.15.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">🏗️ Steps 3–5: Entry</div>
+            <div class="narrative-card__body">
+              Known additions come from the EIA-860 pipeline. CCS retrofits
+              target gas-CCs with ≥15yr remaining life. Economic new entry
+              compares Wright's-Law LCOE against expected revenue, respecting
+              per-tech annual queue caps.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow">🛡️ Step 6: Backstop</div>
+            <div class="narrative-card__body">
+              After market-driven evolution, check the planning reserve margin.
+              If firm capacity is short, force-build gas-CT peakers to close
+              the gap. This ensures reliability even when market signals don't
+              drive enough thermal entry.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 2: CAPACITY OVER TIME
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-light story-section" id="capacity-over-time">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 2</div>
+          <h2>Capacity Over Time</h2>
+          <p>
+            The cumulative effect of the six-step loop: a 25-year trajectory
+            of installed capacity by fuel type, showing the transition from
+            coal to renewables and storage.
+          </p>
+        </div>
+
+        <!-- Toggle -->
+        <div class="fig">
+          <div class="fig__header">
+            <h3 class="fig__title">ERCOT Fleet Trajectory 2026–2050</h3>
+            <div class="fig__controls">
+              <div class="fig__controls-group">
+                <label class="fig__label">View:</label>
+                <div class="btn-group trajectory-toggle" id="trajectory-mode">
+                  <button class="btn active" data-mode="capacity">Capacity (GW)</button>
+                  <button class="btn" data-mode="generation">Generation (TWh)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fig__body" id="stacked-area-container" style="min-height: 380px;"></div>
+
+          <div class="fig__caption">
+            Stacked area shows installed capacity (or annual generation) by fuel type.
+            Coal declines from 18 GW to near-zero by 2050; solar and wind grow to dominate
+            the installed base. Storage enters around 2028 and reaches 35 GW by 2050.
+            Toggle between capacity and generation to see the effect of capacity factors.
+          </div>
+        </div>
+
+        <div class="insight-box info" style="margin-top: 20px;">
+          <div class="insight-title">Capacity ≠ generation</div>
+          Solar's installed capacity exceeds wind by 2035, but wind generates more energy
+          because its capacity factor (~42%) is higher than solar's (~28%). Switching between
+          views reveals this — the <em>generation</em> stacked area reorders the fuel ranking.
+        </div>
+
+      </div>
+    </section>
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 3: ECONOMIC RETIREMENT LOGIC
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-dark story-section" id="retirement-logic">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 3</div>
+          <h2>Economic Retirement Logic</h2>
+          <p>
+            The going-forward test: does the unit earn enough to justify staying open?
+            Revenue from energy margins, attribute payments, and capacity markets is
+            weighed against the fixed O&amp;M cost of continued operation.
+          </p>
+        </div>
+
+        <div class="grid-2col" style="align-items: start; gap: 40px;">
+          <div>
+            <h3>The going-forward test</h3>
+            <p>
+              For each thermal unit, the model computes the
+              <strong>inframarginal energy margin</strong>:
+            </p>
+            <div class="code-block" style="margin: 16px 0;">
+              <span class="token-comment"># capacity.py — economic retirement screen</span><br>
+              margin = <span class="token-keyword">Σ</span> (price[t] − mc[g,t]) × dispatch[g,t]<br>
+              &nbsp;&nbsp;<span class="token-comment">for t where price[t] > mc[g,t]</span><br><br>
+              <span class="token-keyword">if</span> margin &lt; FOM × multiplier<br>
+              &nbsp;&nbsp;<span class="token-keyword">for</span> N consecutive years:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;retire(g)
+            </div>
+            <p>
+              The margin is threaded from the prior year's dispatch results as
+              <code>prior_results["mc_cost"]</code> — never gross revenue.
+              A unit retires when its margin falls below FOM for
+              <em>N consecutive years</em>, where N varies by fuel type to
+              reflect different owner tolerance for losses.
+            </p>
+
+            <div class="insight-box warn" style="margin-top: 16px;">
+              <div class="insight-title">⚠ Reliability floor</div>
+              Even when economics say "retire", the model won't let firm thermal
+              capacity fall below (peak demand − firm clean capacity) × 1.15.
+              This prevents the model from retiring into a reliability crisis.
+            </div>
+          </div>
+
+          <div>
+            <h3>Per-fuel thresholds</h3>
+            <table class="retirement-table">
+              <thead>
+                <tr>
+                  <th>Fuel Type</th>
+                  <th>Hurdle (yrs)</th>
+                  <th>FOM Multiplier</th>
+                  <th>Rationale</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Coal</strong></td>
+                  <td><code>1</code></td>
+                  <td><code>1.3×</code></td>
+                  <td>Quick exit; ESG/regulatory cost premium</td>
+                </tr>
+                <tr>
+                  <td><strong>Gas CT</strong></td>
+                  <td><code>2</code></td>
+                  <td><code>1.0×</code></td>
+                  <td>Low FOM, but rarely dispatched</td>
+                </tr>
+                <tr>
+                  <td><strong>Gas CC</strong></td>
+                  <td><code>3</code></td>
+                  <td><code>1.0×</code></td>
+                  <td>Patient capital; higher utilization</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p style="margin-top: 20px; font-size: 0.88rem; color: rgba(241,245,249,0.60);">
+              All thresholds are <code>ScenarioConfig</code> fields — not
+              hardcoded. The coal FOM multiplier of 1.3× captures regulatory
+              risk, ESG pressure, and rising environmental compliance costs
+              that make coal plant economics worse than pure energy margin
+              would suggest.
+            </p>
+
+            <div class="headline-row" style="margin-top: 20px;">
+              <div class="stat-card">
+                <div class="stat-card__value" style="color:#EF4444;">18→0 GW</div>
+                <div class="stat-card__label">Coal retirement 2026–2050</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-card__value" style="color:#22C55E;">1.15×</div>
+                <div class="stat-card__label">Reliability floor (peak margin)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 4: WRIGHT'S-LAW LEARNING
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-light story-section" id="learning-curves">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 4</div>
+          <h2>Wright's-Law Learning</h2>
+          <p>
+            Technology costs fall as cumulative deployment grows. The model
+            uses Wright's Law — cost declines as a power function of cumulative
+            capacity — to endogenize CAPEX for solar, wind, and batteries.
+          </p>
+        </div>
+
+        <div class="fig">
+          <div class="fig__header">
+            <h3 class="fig__title">Learning Curves: Cost vs Cumulative Deployment</h3>
+          </div>
+          <div class="fig__body" id="learning-curves-container" style="min-height: 380px;"></div>
+          <div class="fig__caption">
+            Log-log plot of capital cost ($/kW) vs cumulative global deployment (GW).
+            Li-ion batteries have the steepest learning curve (~21% cost reduction per
+            capacity doubling); solar follows at ~15%. These cost trajectories drive
+            the economic new-entry screening in Step 5.
+          </div>
+        </div>
+
+        <!-- Wright's Law equation -->
+        <div class="grid-2col" style="align-items: start; gap: 40px; margin-top: 32px;">
+          <div>
+            <h3>The formula</h3>
+            <div class="code-block" style="margin: 16px 0;">
+              <span class="token-comment"># Wright's Law</span><br>
+              Cost(t) = C₀ × (Cumulative(t) / Cumulative(0))<span style="color:#E06C75;"><sup>−α</sup></span><br><br>
+              <span class="token-comment"># where α = log₂(1 − learning_rate)</span><br>
+              <span class="token-comment"># Solar α = 0.276 (15.2% LR)</span><br>
+              <span class="token-comment"># Li-Ion α = 0.371 (21.0% LR)</span>
+            </div>
+            <p>
+              The learning exponent <em>α</em> is derived from the learning rate:
+              if cumulative capacity doubles and cost falls by 15%, the learning
+              rate is 15% and <em>α</em> = −log₂(0.85) ≈ 0.234.
+            </p>
+          </div>
+          <div>
+            <h3>Learning rates by technology</h3>
+            <table class="retirement-table">
+              <thead>
+                <tr>
+                  <th>Technology</th>
+                  <th>Learning Rate</th>
+                  <th>2026 Cost</th>
+                  <th>2050 Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Solar PV</td>
+                  <td>15.2%</td>
+                  <td>$640/kW</td>
+                  <td>$210/kW</td>
+                </tr>
+                <tr>
+                  <td>Onshore Wind</td>
+                  <td>12.8%</td>
+                  <td>$1,080/kW</td>
+                  <td>$610/kW</td>
+                </tr>
+                <tr>
+                  <td>Li-Ion 4hr</td>
+                  <td>21.0%</td>
+                  <td>$375/kW</td>
+                  <td>$65/kW</td>
+                </tr>
+                <tr>
+                  <td>Offshore Wind</td>
+                  <td>14.5%</td>
+                  <td>$3,350/kW</td>
+                  <td>$1,450/kW</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top: 12px; font-size: 0.82rem; color: var(--text-muted);">
+              Source: NREL Annual Technology Baseline 2024, Conservative case.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="energy-divider"></div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         SECTION 5: STORAGE NEW ENTRY
+         ════════════════════════════════════════════════════════════ -->
+    <section class="section-dark story-section" id="storage-entry">
+      <div class="content-section">
+
+        <div class="section-header">
+          <div class="section-number">§ 5</div>
+          <h2>Storage New Entry</h2>
+          <p>
+            Storage grows via an economics-based value stack — not a fixed growth
+            rate. Each technology's revenue potential (arbitrage + capacity value
+            + ancillary services) is compared against its annualized LCOE.
+          </p>
+        </div>
+
+        <!-- Value stack chart -->
+        <div class="fig" style="margin-bottom: 32px;">
+          <div class="fig__header">
+            <h3 class="fig__title">Storage Value Stack vs LCOE (2026)</h3>
+          </div>
+          <div class="fig__body" id="storage-value-container" style="min-height: 340px;"></div>
+          <div class="fig__caption">
+            Stacked bars show annual revenue per kW from arbitrage (buy low / sell high),
+            capacity-market payments (ELCC × capacity price), and ancillary services.
+            The red line marks annualized LCOE. Technologies with the bar above the line
+            are economic; below it, they wait for CAPEX decline.
+          </div>
+        </div>
+
+        <!-- Value stack explanation -->
+        <div class="grid-3col" style="margin-bottom: 32px;">
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow" style="color:#0EA5E9;">📈 Arbitrage</div>
+            <div class="narrative-card__body">
+              Revenue from buying during low-price hours and selling during
+              high-price hours. Driven by price spread × round-trip efficiency ×
+              power capacity. Longer duration captures more spread.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow" style="color:#6366F1;">🏛️ Capacity Value</div>
+            <div class="narrative-card__body">
+              Payment for availability during peak demand. Calculated as
+              ELCC × net-CONE × saturation derate. ERCOT pays $0 (energy-only);
+              PJM/NYISO/NEISO/CAISO pay via capacity markets. Longer duration
+              → higher ELCC.
+            </div>
+          </div>
+          <div class="narrative-card">
+            <div class="narrative-card__eyebrow" style="color:#22C55E;">⚡ Ancillary Services</div>
+            <div class="narrative-card__body">
+              Revenue from regulation, spinning reserves, and voltage support.
+              Typically $8–15/kW/yr for standalone batteries. Often absorbed
+              by larger generators in the fleet.
+            </div>
+          </div>
+        </div>
+
+        <!-- SOC trace -->
+        <div class="fig">
+          <div class="fig__header">
+            <h3 class="fig__title">Battery Cycling: 48-Hour SOC Trace</h3>
+          </div>
+
+          <div class="soc-legend" style="padding: 0 20px 8px;">
+            <span class="soc-legend-item">
+              <span class="soc-swatch" style="background: #E67E22;"></span>
+              4h Battery SOC
+            </span>
+            <span class="soc-legend-item">
+              <span class="soc-swatch" style="background: #0EA5E9;"></span>
+              8h Battery SOC
+            </span>
+            <span class="soc-legend-item">
+              <span class="soc-swatch soc-swatch--dashed" style="border-color: #E91E63;"></span>
+              LMP ($/MWh)
+            </span>
+          </div>
+
+          <div class="fig__body" id="storage-soc-container" style="min-height: 300px;"></div>
+
+          <div class="fig__caption">
+            Two summer peak days (Jul 15–16). The 4-hour battery fully cycles
+            each day — charging overnight when LMP is ~$23/MWh, discharging
+            during the morning ramp when LMP reaches $60–70/MWh, then sitting
+            empty during the afternoon superpeak. The 8-hour battery distributes
+            discharge across a wider window, capturing peak afternoon prices
+            ($85–125/MWh) that the exhausted 4h battery misses.
+          </div>
+        </div>
+
+        <div class="insight-glass" style="margin-top: 24px;">
+          <p>
+            <strong style="color:#F1F5F9;">Duration matters for value capture.</strong>
+            The 4h battery cycles daily but misses the highest-price hours because
+            it's already empty. The 8h battery earns more per kW because it can
+            discharge across the full superpeak window. This duration advantage
+            is why the model's value-stack screening tilts toward longer duration
+            at high storage penetration — the <code>STORAGE_TECH_BUILD_SHARE_CAP</code>
+            diversifies the build across technologies.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Breadcrumb navigation -->
+    <nav class="breadcrumb" aria-label="Page navigation">
+      <a href="network.html" class="breadcrumb__item breadcrumb__item--prev">
+        <span class="breadcrumb__dir">← Previous</span>
+        <span class="breadcrumb__title">The Network</span>
+      </a>
+      <a href="policy-scarcity.html" class="breadcrumb__item breadcrumb__item--next">
+        <span class="breadcrumb__dir">Next →</span>
+        <span class="breadcrumb__title">Policy &amp; Scarcity</span>
+      </a>
+    </nav>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="page-footer" role="contentinfo">
+    <div class="page-footer__inner">
+      <div class="page-footer__main">
+        <div>
+          <div class="page-footer__brand">Codebase Explorer</div>
+          <p class="page-footer__tagline">
+            Capacity evolution sourced from
+            <code>src/market_sim/model/capacity.py</code> and
+            <code>runner.py</code>; learning curves from NREL ATB 2024.
+          </p>
+        </div>
+        <nav class="page-footer__links" aria-label="Footer navigation">
+          <a class="page-footer__link" href="index.html">Home</a>
+          <a class="page-footer__link" href="lp-core.html">LP Core</a>
+          <a class="page-footer__link" href="network.html">The Network</a>
+          <a class="page-footer__link" href="policy-scarcity.html">Policy &amp; Scarcity</a>
+          <a class="page-footer__link" href="config-reference.html">Config Reference</a>
+        </nav>
+      </div>
+      <p class="page-footer__copy">Market Simulator · LP-based electricity market dispatch model · 2026–2050 forecast horizon</p>
+    </div>
+  </footer>
+
+  <!-- Scripts: infrastructure -->
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+
+  <!-- Visualization modules -->
+  <script type="module" src="js/viz-capacity-flow.js"></script>
+  <script type="module" src="js/viz-stacked-area.js"></script>
+  <script type="module" src="js/viz-learning.js"></script>
+  <script type="module" src="js/viz-storage-soc.js"></script>
+  <script type="module" src="js/viz-storage-value.js"></script>
+
+</body>
+</html>
