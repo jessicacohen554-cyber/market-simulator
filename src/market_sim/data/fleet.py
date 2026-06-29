@@ -1370,7 +1370,10 @@ def generators_to_fleet_arrays(
             # classes + floor-on, so non-floor runs stay byte-identical.
             neiso_floor_exempt = (
                 _iso == "NEISO"
-                and getattr(config, "neiso_temp_reliability_floor", False)
+                and (
+                    getattr(config, "neiso_temp_reliability_floor", False)
+                    or getattr(config, "reliability_floor", False)
+                )
                 and getattr(config, "neiso_floor_outage_exempt", True)
             )
             exempt_groups = {"COAL", "ST_GAS"}
