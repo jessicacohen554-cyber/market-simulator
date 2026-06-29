@@ -1186,6 +1186,15 @@ def _calibration_config(
         #   ~0.35-0.40, hot-limb ~0.47) — physical temperature->commitment rules,
         #   NOT TWh-residual fits (scripts/derive_neiso_temp_reliability_floor.py).
         #   Other ISOs stay off (byte-identical); coefficients from ScenarioConfig.
+        neiso_oil_burn_budget=(iso.upper() == "NEISO"),  # NEISO keeper
+        #   default-ON: inventory-limited oil-burn monthly budget. Oil/dual-fuel
+        #   peakers ration limited on-site distillate over multi-day cold snaps;
+        #   the LP shadow price when the budget binds IS the scarcity rent that
+        #   lifts the cleared LMP above the flat dual-fuel oil-parity cap (~$258)
+        #   and produces >$300 hours endogenously. Budget from measured EIA-923
+        #   Schedule 5 monthly Petroleum receipts (MMBtu -> MWh); a reproducible
+        #   physical deliverability input (CLAUDE.md #10). NEISO-only, no-op for
+        #   other ISOs (byte-identical).
         caiso_ct_reliability_floor=False,  # CAISO: the OLD temperature/TMAX
         #   CT_PEAKER local-RA floor is now DEFAULT-OFF — replaced by the
         #   forward-native net-load-drag commitment (ct_netload_drag below). The
@@ -2104,6 +2113,7 @@ def run_year(
     neiso_temp_reliability_floor: bool | None = None,
     neiso_floor_outage_exempt: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
+    neiso_oil_burn_budget: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -2340,6 +2350,8 @@ def run_year(
         config = config.with_overrides(
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
         )
+    if neiso_oil_burn_budget is not None:
+        config = config.with_overrides(neiso_oil_burn_budget=neiso_oil_burn_budget)
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
     if caiso_import_gas_coupling is not None:
@@ -3955,6 +3967,22 @@ def run_year(
             "demand": demand,
         }
 
+    # Oil-burn inventory budget (NEISO-gated): load measured EIA-923 petroleum
+    # receipts and build per-generator monthly MWh caps. When the budget binds
+    # in a cold-snap month, the LP shadow price lifts the LMP above oil parity.
+    oil_monthly_budget = None
+    oil_budget_gen_idx = None
+    if getattr(config, "neiso_oil_burn_budget", False):
+        from market_sim.data.fuel import load_oil_burn_budget
+
+        _oil_result = load_oil_burn_budget(
+            iso,
+            year,
+            fleet_arrays,
+        )
+        if _oil_result is not None:
+            oil_budget_gen_idx, oil_monthly_budget = _oil_result
+
     dispatch_kwargs = dict(
         wind_cf=wind_cf,
         wind_cap=wind_cap,
@@ -3982,6 +4010,8 @@ def run_year(
         interface_groups=interface_groups or None,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
+        oil_monthly_budget=oil_monthly_budget,
+        oil_gen_idx=oil_budget_gen_idx,
         T=config.hours,
     )
     # Priced import-node monthly net-interchange band (NYISO boundary-flow
