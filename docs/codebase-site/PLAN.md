@@ -78,17 +78,20 @@ but allows random access — a reader can jump to any page from the sidebar.
 
 ### Navigation model
 
-- **Persistent left sidebar** (collapsible on mobile) with the 10 spine pages,
-  grouped into three sections:
-  - *Foundations* (①–③): Mental Model, Data Pipeline, Fleet & Offer Curves
-  - *The Engine* (④–⑥): LP Core, Solving & Pricing, The Network
-  - *Evolution & Policy* (⑦–⑨): Capacity Evolution, Policy & Scarcity, Calibration
-  - *Reference* (⑩): Config Reference
+- **Persistent top navigation bar** (`.top-nav`, Observatory pattern) with
+  dropdown groups — injected into every page via `nav.js` (same pattern as the
+  CFE optimizer):
+  - *Home* — link to landing page
+  - *Foundations* ▾ — Mental Model, Data Pipeline, Fleet & Offer Curves
+  - *The Engine* ▾ — LP Core, Solving & Pricing, The Network
+  - *Evolution & Policy* ▾ — Capacity Evolution, Policy & Scarcity, Calibration
+  - *Reference* — Config Reference (single link, no dropdown)
+  - Hamburger collapse on mobile (< 768px)
 - **In-page anchor navigation**: a floating right-rail mini-TOC on wide screens
   (auto-generated from `<h2>`/`<h3>` headings) for within-page orientation.
 - **Cross-links**: inline links between pages where concepts connect (e.g.,
   "duals→LMP" on the LP page links to the Pricing section of page ⑤).
-- **No full-text search in v1** — scope guardrail. The sidebar + anchor nav +
+- **No full-text search in v1** — scope guardrail. The top nav + anchor nav +
   cross-links are sufficient for 10 pages. Search is a Phase 2+ enhancement
   if needed.
 
@@ -212,12 +215,13 @@ docs/codebase-site/data/
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
 | **Markup** | Vanilla HTML | No build step, Pages-deployable, matches repo convention |
-| **Styling** | Vanilla CSS (custom properties) | Matches both existing design systems; no preprocessor needed |
+| **Styling** | Vanilla CSS (custom properties) | Observatory design system from `hourly-cfe-optimizer`; no preprocessor |
 | **Charts** | D3.js v7 (CDN) | Already used by learning-hub; full control over interactive viz |
 | **Diagrams** | Hand-built SVG | Better control than Mermaid for the specific block/flow diagrams needed |
 | **Math** | KaTeX (CDN) | Lightweight, fast, static rendering — no MathJax bloat |
 | **Layout** | CSS Grid + Flexbox | Native, no framework overhead |
-| **Fonts** | Plus Jakarta Sans + DM Sans (Google Fonts) | Matches learning-hub; more polished than the dashboard's system fonts |
+| **Fonts** | Plus Jakarta Sans + DM Sans (Google Fonts) | Observatory standard; matches both repos |
+| **Animations** | GSAP + ScrollTrigger (CDN) | Observatory standard for scroll-triggered entrance animations |
 | **Icons** | Inline SVG | No icon library dependency |
 
 ### Why not a framework?
@@ -225,8 +229,9 @@ docs/codebase-site/data/
 - The site is ~11 HTML files with shared CSS/JS — a framework adds build
   complexity for no gain.
 - No client-side routing needed — each page is a standalone document.
-- Shared components (nav, footer, theme toggle) are small enough to inline
-  or include via a tiny JS module that injects them.
+- Shared components (nav, footer, banner) injected via JS modules (same
+  pattern as the CFE optimizer's `nav.js` / `shared-header.js` /
+  `shared-footer.js`).
 
 ### Library loading
 
@@ -234,9 +239,10 @@ All external libraries loaded via CDN with `integrity` hashes and
 `crossorigin="anonymous"`:
 - `d3.v7.min.js` (~290 KB)
 - `katex.min.js` + `katex.min.css` (~120 KB)
+- `gsap.min.js` + `ScrollTrigger.min.js` (~60 KB)
 - `d3-sankey.min.js` (~15 KB, for V10 only — loaded on that page)
 
-Total external payload: ~425 KB (cached after first page load).
+Total external payload: ~485 KB (cached after first page load).
 
 ### Performance budget
 
@@ -246,12 +252,19 @@ Total external payload: ~425 KB (cached after first page load).
 - All images as inline SVG (no image requests)
 - Data JSON files are small (< 50 KB each) and loaded on demand
 
-### Dark/light mode
+### Light/dark section rhythm (not theme toggle)
 
-- CSS `prefers-color-scheme` media query for auto-detection
-- Manual toggle button in the nav (persisted to `localStorage`)
-- All colors defined as CSS custom properties with light/dark variants
-- D3 charts read CSS custom properties for colors (no hardcoded hex in JS)
+The Observatory design system uses a **section-level light/dark rhythm**
+rather than a global dark-mode toggle:
+- `.section-light` — white background, crisp card shadows, dark text
+- `.section-dark` — navy gradient background, glassmorphic cards, white text
+- `.section-transition-light-to-dark` / `.section-transition-dark-to-light`
+  — gradient transitions between sections
+- `.energy-divider` — colorful 3px gradient bar separating major sections
+
+This creates visual variety and depth without a global theme switch. The
+Observatory palette already has WCAG AA contrast-safe text variants for
+both light and dark backgrounds.
 
 ### Accessibility
 
@@ -259,16 +272,20 @@ Total external payload: ~425 KB (cached after first page load).
 - ARIA labels on interactive elements
 - Keyboard navigation for all interactive charts (arrow keys for sliders,
   Enter/Space for toggles)
-- Color contrast: WCAG AA minimum (4.5:1 text, 3:1 large text/UI)
+- Color contrast: WCAG AA minimum (4.5:1 text, 3:1 large text/UI) — the
+  Observatory CSS uses dedicated `-text` variants (e.g., `--hydro-text:
+  #0369A1` instead of `--hydro: #0EA5E9`) for text on light backgrounds
 - SVG charts include `<title>` and `<desc>` elements
-- Reduced-motion: `prefers-reduced-motion` disables animations
+- Reduced-motion: `prefers-reduced-motion` disables GSAP and CSS animations
+- Min touch targets: 44px (already enforced in Observatory CSS)
 
 ### Responsiveness
 
 - Desktop-first (matches repo convention), with breakpoints at:
-  - 1200px: sidebar collapses to hamburger
-  - 900px: two-column layouts stack
-  - 600px: mobile typography scale
+  - 900px: two-column layouts stack, hero grids collapse
+  - 768px: nav collapses to hamburger, grids go single-column
+  - 600px: chart legends shrink, padding reduces
+  - 480px: mobile typography scale, stat cards stack
 - Charts resize via `ResizeObserver` (D3 redraws on container resize)
 - Touch targets ≥ 44px on mobile
 
@@ -276,58 +293,75 @@ Total external payload: ~425 KB (cached after first page load).
 
 ## 6. Design System
 
-### Decision: extend the learning-hub aesthetic
+### Decision: adopt the Observatory design system
 
-The codebase site adopts the **learning-hub** design language (Plus Jakarta
-Sans + DM Sans, navy/cyan palette, card-based layout) rather than the
-dashboard's system-font/blue-accent style. Rationale:
-- The learning hub is the closest existing analog (educational, visualization-
-  heavy)
-- Its typography is more polished and distinctive
-- Its color tokens are already designed for data visualization
-- The codebase site is a natural sibling of the learning hub, not the
-  dashboard
+The codebase site adopts the **Observatory** design system from the
+`hourly-cfe-optimizer` repo (specifically `dashboard/styles/shared.css` and
+`dashboard/styles/article.css`). Rationale:
+- Already proven across the CFE optimizer's multi-page dashboard
+- Uses the same fonts (Plus Jakarta Sans + DM Sans), navy palette, and
+  fuel/ISO color tokens the rest of the project shares
+- Provides a complete component library: glassmorphic cards, section rhythm
+  (light/dark), data tables, insight boxes, chart panels, stat cards,
+  animated waveform headers, sticky top nav, ISO selectors
+- GSAP + ScrollTrigger for scroll-driven animations (entrance, parallax)
+- WCAG AA text-safe color variants already defined
+- No global dark-mode toggle — uses section-level light/dark rhythm instead,
+  creating visual depth without doubling CSS work
 
-### Extended token set
+### Token set (from Observatory `shared.css`)
 
 ```css
 :root {
-  /* --- Typography --- */
-  --font-heading: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
-  --font-body:    'DM Sans', 'Plus Jakarta Sans', sans-serif;
-  --font-mono:    'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
-
-  --fs-xs:   0.75rem;    /* 12px — captions, badges */
-  --fs-sm:   0.875rem;   /* 14px — secondary text */
-  --fs-base: 1rem;       /* 16px — body */
-  --fs-lg:   1.125rem;   /* 18px — lead text */
-  --fs-xl:   1.5rem;     /* 24px — h3 */
-  --fs-2xl:  2rem;       /* 32px — h2 */
-  --fs-3xl:  2.75rem;    /* 44px — h1 */
-
-  /* --- Surfaces (light mode) --- */
-  --bg:          #F8F9FC;
-  --bg-surface:  #FFFFFF;
-  --bg-inset:    #F1F3F7;
-  --bg-nav:      #1A2744;
-  --bg-code:     #1E293B;
-
-  /* --- Text --- */
-  --text:        #1E293B;
-  --text-muted:  #566370;
-  --text-faint:  #94A3B8;
-  --text-inverse:#FFFFFF;
+  /* --- Surfaces --- */
+  --bg-page:      #F8F9FC;
+  --navy:         #1A2744;
+  --navy-dark:    #0F1A2E;
+  --bg-card:      #FFFFFF;
+  --bg-card-dark: rgba(255, 255, 255, 0.06);
 
   /* --- Borders --- */
-  --border:      #D4D8E0;
-  --border-soft: #E5E7EB;
-  --border-strong:#B0B8C4;
+  --border:       #D4D8E0;
+  --border-light: #E5E7EB;
 
-  /* --- Accent (cyan, from learning hub) --- */
-  --accent:        #38BDF8;
-  --accent-deep:   #0E7490;
-  --accent-soft:   rgba(56, 189, 248, 0.12);
-  --accent-border: rgba(56, 189, 248, 0.45);
+  /* --- Text --- */
+  --text-primary:   #000000;
+  --text-secondary: #1E293B;
+  --text-muted:     #566370;
+
+  /* --- Typography --- */
+  --font-heading: 'Plus Jakarta Sans', 'DM Sans', 'Helvetica Neue', sans-serif;
+  --font-body:    'DM Sans', 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+  /* --- Fuel palette --- */
+  --solar:       #F59E0B;
+  --wind:        #22C55E;
+  --hydro:       #0EA5E9;
+  --nuclear:     #6366F1;
+  --fossil-gas:  #6B7280;
+  --fossil-coal: #374151;
+  --storage:     #E67E22;
+  --oil:         #92400E;
+  --ccs:         #26A69A;
+  --hydrogen:    #10B981;
+  --geothermal:  #D97706;
+  --offshore:    #009688;
+
+  /* --- WCAG AA text-safe variants (for use on light backgrounds) --- */
+  --hydro-text:  #0369A1;
+  --green-text:  #15803D;
+  --amber-text:  #B45309;
+  --purple-text: #7C3AED;
+
+  /* --- ISO palette --- */
+  --iso-caiso:  #F59E0B;
+  --iso-ercot:  #22C55E;
+  --iso-pjm:    #0EA5E9;
+  --iso-nyiso:  #E91E63;
+  --iso-neiso:  #9C27B0;
+  --iso-miso:   #F97316;
+  --iso-spp:    #14B8A6;
 
   /* --- Semantic --- */
   --positive: #16A34A;
@@ -335,99 +369,78 @@ dashboard's system-font/blue-accent style. Rationale:
   --warning:  #D97706;
   --info:     #0284C7;
 
-  /* --- Fuel palette (canonical, from frontend/css/style.css) --- */
-  --fuel-gas-cc:   #4A90D9;
-  --fuel-gas-ct:   #7BB3E0;
-  --fuel-coal:     #8B4513;
-  --fuel-nuclear:  #9B59B6;
-  --fuel-wind:     #2ECC71;
-  --fuel-solar:    #F1C40F;
-  --fuel-storage:  #E67E22;
-  --fuel-hydro:    #1ABC9C;
-  --fuel-oil:      #92400E;
-  --fuel-ccs:      #26A69A;
-  --fuel-hydrogen: #10B981;
-  --fuel-geo:      #D97706;
-  --fuel-offshore: #009688;
-
-  /* --- ISO palette (canonical, from docs/DESIGN_SYSTEM.md) --- */
-  --iso-ercot:  #22C55E;
-  --iso-caiso:  #F59E0B;
-  --iso-pjm:    #0EA5E9;
-  --iso-nyiso:  #E91E63;
-  --iso-neiso:  #9C27B0;
-  --iso-miso:   #F97316;
-  --iso-spp:    #14B8A6;
-
-  /* --- Spacing --- */
-  --sp-xs:  4px;
-  --sp-sm:  8px;
-  --sp-md:  16px;
-  --sp-lg:  24px;
-  --sp-xl:  36px;
-  --sp-2xl: 56px;
-  --sp-3xl: 80px;
+  /* --- Layout --- */
+  --max-content: 1440px;
+  --max-prose:   1080px;
+  --nav-height:  56px;
 
   /* --- Radius & elevation --- */
-  --radius-sm:  6px;
-  --radius-md:  10px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
   --radius-lg:  16px;
   --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-md:  0 4px 20px rgba(0, 0, 0, 0.08);
   --shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.12);
-  --shadow-glow:0 0 20px rgba(56, 189, 248, 0.15);
-
-  /* --- Layout --- */
-  --content-max:  1280px;
-  --sidebar-w:    260px;
-  --nav-height:   56px;
 }
 ```
 
-### Dark-mode overrides
+### Section rhythm (no global dark mode)
 
-```css
-[data-theme="dark"] {
-  --bg:          #0F172A;
-  --bg-surface:  #1E293B;
-  --bg-inset:    #162032;
-  --bg-code:     #0D1420;
-  --text:        #E2E8F0;
-  --text-muted:  #94A3B8;
-  --text-faint:  #64748B;
-  --border:      #334155;
-  --border-soft: #1E293B;
-  --border-strong:#475569;
-}
-```
+Instead of a dark-mode toggle, the site alternates between light and dark
+sections — same pattern as the CFE optimizer:
 
-### Component library
+| Class | Background | Cards | Text | Use for |
+|-------|-----------|-------|------|---------|
+| `.section-light` | `--bg-page` (#F8F9FC) | `.card` (white, crisp shadow) | `--text-secondary` | Most content sections |
+| `.section-dark` | Navy gradient (`--navy` → `--navy-dark`) | `.card` glassmorphic (white 6% bg, blurred border) | White | Hero areas, emphasis sections, key takeaways |
+| `.section-transition-*` | CSS gradient blend | — | — | Between light↔dark sections |
+| `.energy-divider` | 3px gradient bar (solar→wind→hydro→nuclear) | — | — | Major section breaks |
+
+### Component library (Observatory)
 
 | Component | Description | Used on |
 |-----------|-------------|---------|
-| **`.sidebar`** | Persistent left nav with section groups, active-page highlight | All pages |
-| **`.page-hero`** | Dark navy header with eyebrow, title, lead paragraph | All pages |
-| **`.card`** | White surface with border, radius, shadow; accent top-border variant | Landing, several pages |
-| **`.fig`** | Figure wrapper: chart container + caption + optional expand toggle | All viz pages |
-| **`.fig-controls`** | Toolbar above a chart: toggles, sliders, selectors | Interactive viz |
-| **`.callout`** | Highlighted aside (info, warning, key-insight variants) | All pages |
+| **`.top-nav`** | Sticky navy top bar with dropdown groups, hamburger on mobile; injected via `nav.js` | All pages |
+| **`.header`** | Page header with SVG waveform overlay, `header-accent` gradient bar; injected via `shared-header.js` | All pages |
+| **`.hero-overview`** | Light-bg intro section (eyebrow + title + subtitle + optional grid) | Landing page |
+| **`.content-section`** | Max-width prose container (`--max-content`) with vertical padding | All pages |
+| **`.content-section-narrow`** | Narrower prose width (`--max-prose`) for text-heavy sections | Several pages |
+| **`.card`** | White surface with border, radius, shadow; hover lift variant | Landing, several |
+| **`.chart-panel`** | White container for D3/SVG charts: border, radius, overflow hidden | All viz pages |
+| **`.glass-chart-panel`** | Frosted-glass variant for charts on dark sections | Dark-section charts |
+| **`.stat-card`** | Compact metric display (value + label + optional delta) | Landing, Capacity |
+| **`.insight-box`** | Highlighted aside with left accent bar (`.info` / `.warn` / `.danger` / `.success` variants) | All pages |
+| **`.insight-glass`** | Glassmorphic insight box for dark sections | Dark sections |
+| **`.emphasis-callout`** | Full-width dark-bg callout for key insights | LP Core, Pricing |
+| **`.section-header`** + **`.section-number`** | Numbered section heading (circled number + title) | All content pages |
+| **`.narrative-card`** | Fade-in article card with story-section entrance animation | Mental Model, Capacity |
+| **`.scroll-section`** | Sticky chart + scrolling narrative column (scrollytelling layout) | Fleet, LP Core |
+| **`.data-table`** | Styled table with header, striped rows, numeric alignment | Config Ref, several |
+| **`.badge`** | Inline colored pill (tier badges, fuel tags, ISO tags) | Config Ref, Fleet |
+| **`.stat-badge`** | Colored pill badge with value for inline metrics | Several |
+| **`.toggle-btn-group`** | Button group for chart view switching (capacity/generation, fuel filter) | Capacity, Fleet |
+| **`.iso-selector`** / **`.iso-btn`** | ISO-colored toggle buttons for ISO selection | Network |
+| **`.chart-legend`** | Horizontal legend with swatch types (`.swatch-line`, `.swatch-fill`, `.swatch-dashed`) | All charts |
 | **`.equation`** | KaTeX-rendered block equation with optional label | LP Core, Policy |
 | **`.code-block`** | Syntax-highlighted code snippet (dark bg, mono font) | Data Pipeline, Config |
-| **`.data-table`** | Styled table with header, striped rows, numeric alignment | Config Ref, several |
-| **`.badge`** | Small pill label (tier badges, fuel-type tags, ISO tags) | Config Ref, Fleet |
-| **`.tabs`** | Tab group for switching between views in the same container | Network (per-ISO), Policy |
+| **`.tabs`** | Tab group for switching views in the same container | Network, Policy |
 | **`.tooltip`** | Hover/focus tooltip for chart elements | All interactive viz |
 | **`.breadcrumb`** | Previous/next page links at bottom | All pages |
-| **`.toc-rail`** | Right-rail floating mini-TOC (auto from headings) | All pages (wide screens) |
-| **`.theme-toggle`** | Dark/light switch in nav | All pages |
+| **`.toc-rail`** | Right-rail floating mini-TOC (auto from headings, IntersectionObserver highlight) | All pages (wide) |
+| **`.headline-card`** / **`.headline-row`** | Summary cards at top of page sections | Landing |
+| **`.page-footer`** + **`.bottom-banner`** | Footer with 4-color gradient accent bar | All pages |
 
-### Motion guidelines
+### Motion guidelines (GSAP + ScrollTrigger)
 
-- Page transitions: none (multi-page, not SPA)
-- Chart enter animations: fade-in + slight upward slide (300ms ease-out)
-- Interactive state transitions: 200ms ease
-- Step-through animations (P0→P1→P2, capacity evolution): 600ms per step
-- `prefers-reduced-motion`: all durations → 0
+- **Entrance animations**: `.story-section` / `.narrative-card` elements
+  fade-in + translateY(30px→0) on scroll via GSAP ScrollTrigger
+- **SVG waveform headers**: animated via `shared-header.js` on page load
+- **Chart enter**: fade-in + slight upward slide (300ms ease-out)
+- **Interactive state transitions**: 200ms ease
+- **Step-through animations** (P0→P1→P2, capacity evolution): 600ms per step
+  via GSAP timeline
+- **`prefers-reduced-motion`**: all GSAP animations disabled, CSS transitions
+  reduced to 0, `scroll-behavior: auto`
 
 ---
 
@@ -447,9 +460,15 @@ docs/codebase-site/
 ├── results-calibration.html      # Page 9
 ├── config-reference.html         # Page 10
 ├── css/
-│   └── site.css                  # Full design system + component styles
+│   ├── shared.css                # Observatory design system (ported from
+│   │                             #   hourly-cfe-optimizer shared.css + article.css)
+│   └── site.css                  # Site-specific overrides & additions
 ├── js/
-│   ├── shared.js                 # Nav injection, theme toggle, TOC builder
+│   ├── nav.js                    # Top-nav injection with dropdown groups
+│   │                             #   (same pattern as CFE optimizer nav.js)
+│   ├── shared-header.js          # SVG waveform header injection
+│   ├── shared.js                 # TOC builder, scroll animations (GSAP),
+│   │                             #   story-section entrance observer
 │   ├── chart-utils.js            # D3 helpers (responsive resize, tooltips,
 │   │                             #   color scale from CSS vars, axis formatting)
 │   ├── viz-merit-order.js        # V4 merit-order chart
@@ -495,8 +514,11 @@ docs/codebase-site/
 ### Shared files created in Phase 0 (collision-prevention)
 
 These files MUST exist before any Phase 1 parallel prompt runs:
-- `css/site.css` — full design system
-- `js/shared.js` — nav, theme toggle, TOC
+- `css/shared.css` — Observatory design system (ported)
+- `css/site.css` — site-specific overrides
+- `js/nav.js` — top-nav injection with dropdowns
+- `js/shared-header.js` — SVG waveform header injection
+- `js/shared.js` — TOC builder, GSAP scroll animations
 - `js/chart-utils.js` — D3 helpers
 - `index.html` — landing page (the "golden" quality-bar example)
 - All `data/*.json` files — so parallel pages can reference them
@@ -512,20 +534,16 @@ These files MUST exist before any Phase 1 parallel prompt runs:
 | Illustrative data drifts from model reality | Each JSON file has `_meta.source` citing the code/doc it represents; QA phase verifies |
 | D3 charts are complex to build correctly | `chart-utils.js` provides shared patterns; golden page sets the bar |
 | 26 visualizations is ambitious | Prioritize: V2, V4, V5, V7, V10, V12, V14, V16, V17 are must-haves; others can be static SVG fallbacks |
-| Dark mode doubles CSS/chart work | CSS custom properties + D3 reading from CSS vars handles most; test both in QA |
+| Observatory CSS port diverges from upstream | Port the tokens + components needed; document which Observatory classes are included vs skipped |
 | CDN availability | Fallback: vendored copies in `js/vendor/` if CDN is unreliable |
 
 ### Open questions (for approval)
 
-1. **Separate site vs. integrated into learning-hub?** Plan assumes separate
-   (`docs/codebase-site/`) because this is a reference explorer, not a
-   scrollytelling narrative. The learning hub is concept-first; this is
-   code-first. They can cross-link. Confirm?
-2. **JetBrains Mono for code?** It requires a Google Fonts load (~50 KB).
+1. **JetBrains Mono for code?** It requires a Google Fonts load (~50 KB).
    Alternative: use `font-mono` from system stack (Consolas/SF Mono). The
    plan uses JetBrains Mono for the polished look, falling back to system
    mono.
-3. **Landing page on root index or nested?** Plan puts the site landing at
+2. **Landing page on root index or nested?** Plan puts the site landing at
    `docs/codebase-site/index.html`. The root `index.html` would need a new
    card linking to it (simple addition). Confirm?
 
