@@ -98,9 +98,9 @@ the band heat rates come from the curve, **not** from the CSV `HR_Mult_*`
 columns:
 
 ```
-committed_hr = base_hr * offer["committed"]                 # e.g. 0.92×
-econ ramp    = base_hr * mult(t),  mult: econ_low → peak    # n-slice ramp (§2)
-peak (CC)    = base_hr * duct_burner_mult(turbine_class)    # 2.0–2.5×
+committed_hr = base_hr * offer["committed"]                      # e.g. 0.92×
+econ ramp    = base_hr * mult(t),  mult: econ_low → econ_high     # n-slice ramp (§2)
+peak (CC)    = base_hr * cc_duct_burner_peak_mult(turbine_class)  # 2.0–2.5×, SEPARATE flat tranche above the ramp
 ```
 
 ---
@@ -130,28 +130,28 @@ with the active ERCOT values:
   `1.0` is a straight linear ramp, `exp > 1` is convex (cheap-bottomed).
 - **`lo  = offer_curve_by_group[group]["econ_low"]`** — the multiplier at
   the bottom of the ramp (CC_REGULAR ≈ 1.06–1.16).
-- **`pk`** — the top of the ramp: `duct_burner_mult(turbine_class)` for CC
-  (F-class **2.25×**, G/H-class **2.50×**, older E-class **2.00×**), or
-  `offer_curve_by_group[group]["peak"]` for groups whose peak band is not
-  folded in.
+- **`pk`** — the top of the ramp: `offer_curve_by_group[group]["econ_high"]`,
+  the econ-high multiplier. This is the **ramp endpoint for every group**; the
+  duct-firing / scarcity peak is *not* a ramp endpoint (see below).
 
 Each slice carries no min-run hours and no start cost — it is incremental
 output of an already-committed unit. The midpoint sampling `t = (k+0.5)/n`
 places each slice's price at the centre of its capacity band, so the six
 slices step smoothly from `≈ base_hr × econ_low` up to
-`base_hr × peak`. A CC plant is therefore a cheap Committed block at
+`base_hr × econ_high`. A CC plant is therefore a cheap Committed block at
 `base_hr × 0.92` followed by **six rising slices** scaled entirely by its
 own `base_hr`.
 
-**Where the curve ends depends on the group:**
-
-- **`CC_REGULAR`, `CC_CHP`, `COAL`** (`_CURVE_FOLD_PEAK`) — the duct-firing
-  peak band is **folded into the top of the ramp** (`lo → peak`), so the
-  six slices span econ-low all the way to the duct-burner multiplier.
-- **`CT_PEAKER`, `ST_GAS`** (`_CURVE_ECON_ONLY`) — the ramp spans only
-  `econ_low → econ_high`; the **Peak band stays a separate flat scarcity
-  tranche** whose high multiplier acts as a price-wall floor, not a real
-  ramp endpoint.
+**Uniform shape across groups — the peak is always separate.** Every thermal
+group uses the *same* construction (`fleet.py` `_econ_curve_steps`, see the
+module comment "Nothing is folded into the ramp"): the smooth economic ramp
+spans `econ_low → econ_high`, and the duct-firing / scarcity **peak band is
+kept as a SEPARATE flat tranche appended above the ramp top** — its capacity
+set by `pct_peaking`, its height by the `peak` multiplier (the per-turbine-class
+`cc_duct_burner_peak_mult` for CC when no explicit `peak` is given; an explicit
+`offer_curve_by_group[group]["peak"]` otherwise). There is **no** "fold the peak
+into the ramp" branch — the former `_CURVE_FOLD_PEAK` / `_CURVE_ECON_ONLY`
+distinction no longer exists in the code.
 
 The *n*-slice ramp engages only when `offer_curve_smoothing_n > 0`,
 `econ_cap > 0`, and `pk > lo`; otherwise the model falls back to two flat
