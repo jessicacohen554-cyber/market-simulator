@@ -95,7 +95,6 @@ from market_sim.results.scarcity import (
     ercot_reserve_coopt_inputs,
     ercot_rtolcap_supply_cap_mw,
     miso_reserve_coopt_inputs,
-    neiso_reserve_coopt_inputs,
     nyiso_reserve_coopt_inputs,
     nyiso_spin_eligible,
     nyiso_spin_requirement_mw,
@@ -774,6 +773,41 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )
+                # Optional deliverable / online reserve-supply re-scope: the bare
+                # co-opt draws reserve on ~38 GW of total eligible thermal headroom
+                # vs the ~3.4 GW Primary requirement, so the vertical ORDC step never
+                # fires. Supply cap bounds cleared reserve at the 10-min deliverable
+                # ramp; online-gating restricts it to synchronized capacity.
+                # Physical deliverability definitions, never fitted to the residual
+                # (CLAUDE.md #11). See docs/multi-iso/pjm-reserve-ordc.md.
+                from market_sim.results.scarcity import (
+                    pjm_reserve_deliverable_supply_cap_mw,
+                )
+
+                pjm_supply_cap = pjm_reserve_deliverable_supply_cap_mw(
+                    config, fleet_arrays, config.hours
+                )
+                if pjm_supply_cap is not None:
+                    dispatch_kwargs.update(reserve_supply_cap=pjm_supply_cap)
+                    logger.info(
+                        "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
+                        "%d MW (vs ~%d MW total eligible headroom)",
+                        int(pjm_supply_cap.mean()),
+                        int(
+                            (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[
+                                coopt_elig
+                            ]
+                            .sum(axis=0)
+                            .mean()
+                        ),
+                    )
+                if getattr(config, "pjm_reserve_online_gated", False):
+                    rho = float(getattr(config, "pjm_reserve_online_rho", 1.0))
+                    dispatch_kwargs.update(
+                        reserve_online_gated=np.array([True]),
+                        reserve_online_rho=rho,
+                    )
+                    logger.info("PJM reserve online-gating ON: ρ=%.2f", rho)
             # NYISO analogue: nested LOCATIONAL reserve families (NYCA ⊃ East ⊃
             # SENY ⊃ NYC). Each (region, product) is a balance row over its
             # member zones, so a downstate reserve shortage stacks the regional
@@ -824,43 +858,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     reserve_eligible=coopt_elig,
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
-                )
-            # NEISO analogue: system-wide nested reserve co-optimization via
-            # Reserve Constraint Penalty Factors (ISO-NE Tariff Market Rule 1,
-            # OP-8). The nested 30-min-total ⊇ 10-min-total ⊇ 10-min-spin
-            # requirements each become a reserve family spanning every zone.
-            # In tight winter hours the available headroom drops below a
-            # requirement, the family's RCPF demand curve sets the clearing
-            # price, and through the shared-headroom coupling that dual lifts
-            # the energy LMP — reproducing the cold-snap scarcity tail (hours
-            # > $300) the energy-only LP cannot produce. Storage (pumped
-            # storage + batteries) backs every class. The local
-            # NEMA/Boston/CT/SWCT second-contingency zones are deferred to a
-            # locational follow-up; this system-wide tier matches the pool RT
-            # price. See docs/multi-iso/.
-            elif getattr(config, "energy_reserve_coopt", False) and iso == "NEISO":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                    coopt_mask,
-                    coopt_counts,
-                    coopt_class,
-                    coopt_online_gated,
-                    coopt_online_rho,
-                ) = neiso_reserve_coopt_inputs(
-                    config, fleet_arrays, config.hours, zone_names
-                )
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    reserve_storage=True,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                    reserve_balance_zone_mask=coopt_mask,
-                    reserve_balance_ordc_counts=coopt_counts,
-                    reserve_balance_class=coopt_class,
                 )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
