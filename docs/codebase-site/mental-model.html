@@ -187,7 +187,7 @@
     <section class="section-light">
       <div class="content-section">
         <div class="insight-box info">
-          <strong>⚡ Key takeaway:</strong> This is a <strong>dispatch model</strong>, not a commitment model. The LP finds the cheapest way to meet demand hour by hour. We assume all generators can be started and stopped instantly at no cost — we don't model minimum-run times, startup lags, or ramping constraints. (For ERCOT, an optional P2 commitment screen can tighten the solution, but the default mode is pure economic dispatch.) This simplification lets us solve 8,760 hours for 25 years in parallel, keeping the model tractable while still capturing the core economics.
+          <strong>⚡ Key takeaway:</strong> This is a <strong>dispatch model</strong>, not a commitment model. The LP finds the cheapest way to meet demand hour by hour. We assume all generators can be started and stopped instantly at no cost — we don't model minimum-run times, startup lags, or ramping constraints. (An optional P2 commitment screen can tighten the solution, but it is off by default — the default mode is pure economic dispatch.) This simplification lets us solve all 8,760 hours of a year together as a single LP — then step through the 25 years sequentially — keeping the model tractable while still capturing the core economics.
         </div>
       </div>
     </section>
