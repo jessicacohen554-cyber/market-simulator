@@ -21,96 +21,148 @@ You are building a static HTML documentation site for an LP-based electricity
 market dispatch simulator. The site lives at docs/codebase-site/ in the
 market-simulator repo. Read docs/codebase-site/PLAN.md for the full plan.
 
+The design system is the **Observatory** system from the hourly-cfe-optimizer
+repo (dashboard/styles/shared.css + article.css). Fetch the upstream files for
+reference — the key tokens, components, and patterns are documented in
+PLAN.md §6, but the full CSS is the source of truth for the port.
+
+UPSTREAM REFERENCE (read before building)
+- https://raw.githubusercontent.com/jessicacohen554-cyber/hourly-cfe-optimizer/master/dashboard/styles/shared.css
+- https://raw.githubusercontent.com/jessicacohen554-cyber/hourly-cfe-optimizer/master/dashboard/styles/article.css
+- https://raw.githubusercontent.com/jessicacohen554-cyber/hourly-cfe-optimizer/master/dashboard/js/nav.js
+- https://raw.githubusercontent.com/jessicacohen554-cyber/hourly-cfe-optimizer/master/dashboard/js/shared-header.js
+
 TASK
 Build the shared infrastructure and the landing page (index.html) — the
 "golden" page that sets the quality bar for all subsequent pages.
 
 DELIVERABLES (exact files)
-1. docs/codebase-site/css/site.css
-   - Full design system from PLAN.md §6 (all CSS custom properties, light +
-     dark mode, typography, spacing, all components listed in the component
-     table).
-   - Responsive breakpoints at 1200px, 900px, 600px.
-   - Import Plus Jakarta Sans + DM Sans via @import (Google Fonts).
-   - Component styles for: .sidebar, .page-hero, .card, .fig, .fig-controls,
-     .callout (info/warning/insight variants), .equation, .code-block,
-     .data-table, .badge, .tabs, .tooltip, .breadcrumb, .toc-rail,
-     .theme-toggle.
-   - KaTeX overrides so equations match the site typography.
-   - Print styles (hide nav, full-width content).
+1. docs/codebase-site/css/shared.css
+   - Port of the Observatory design system. Include:
+     - All :root tokens from PLAN.md §6 (surfaces, text, fonts, fuel palette,
+       ISO palette, layout, radius, elevation).
+     - Section-rhythm classes: .section-light, .section-dark (navy gradient bg,
+       white text, glassmorphic cards), .section-transition-light-to-dark,
+       .section-transition-dark-to-light, .energy-divider (3px gradient bar).
+     - Components: .top-nav (sticky, hamburger < 768px), .header (with SVG
+       waveform overlay placeholder), .hero-overview, .content-section,
+       .content-section-narrow, .card (with hover lift), .chart-panel,
+       .glass-chart-panel (frosted glass), .stat-card, .insight-box
+       (.info/.warn/.danger/.success), .insight-glass, .emphasis-callout,
+       .section-header + .section-number, .narrative-card, .scroll-section,
+       .data-table, .badge, .stat-badge, .toggle-btn-group, .iso-selector +
+       .iso-btn, .chart-legend (with swatch types), .headline-card,
+       .headline-row, .page-footer + .bottom-banner (4-color gradient bar).
+     - .story-section (fade-in on scroll, works with GSAP ScrollTrigger).
+     - Responsive breakpoints at 900px, 768px, 600px, 480px.
+     - @import Plus Jakarta Sans + DM Sans (Google Fonts).
+   - NO global dark-mode toggle or [data-theme] overrides — use the
+     section-level .section-light / .section-dark rhythm instead.
 
-2. docs/codebase-site/js/shared.js
-   - On DOMContentLoaded: inject the sidebar nav into a <nav id="sidebar">
-     placeholder on every page. The sidebar lists all 10 pages grouped into
-     Foundations / The Engine / Evolution & Policy / Reference (see PLAN.md §2).
-     Highlight the current page with an .active class (match by filename).
-   - Theme toggle: read localStorage('theme'), apply [data-theme="dark"] to
-     <html>, toggle on click, persist.
+2. docs/codebase-site/css/site.css
+   - Site-specific additions not in Observatory:
+     - .fig (figure wrapper: chart container + caption + expand toggle)
+     - .fig-controls (toolbar above chart: toggles, sliders, selectors)
+     - .equation (KaTeX block with optional label)
+     - .code-block (dark bg, mono font)
+     - .tabs (tab group for view switching)
+     - .tooltip (chart hover/focus tooltip)
+     - .breadcrumb (prev/next page links)
+     - .toc-rail (right-rail floating mini-TOC)
+     - KaTeX overrides so equations match the site typography.
+     - Print styles (hide nav, full-width content).
+
+3. docs/codebase-site/js/nav.js
+   - Inject a sticky top nav bar into <nav id="topNav"> placeholder on every
+     page. Structure (match CFE optimizer pattern):
+     - Logo/home link: "Codebase Explorer" → index.html
+     - Dropdown group: "Foundations" → Mental Model, Data Pipeline,
+       Fleet & Offer Curves
+     - Dropdown group: "The Engine" → LP Core, Solving & Pricing, The Network
+     - Dropdown group: "Evolution & Policy" → Capacity Evolution,
+       Policy & Scarcity, Results & Calibration
+     - Single link: "Reference" → Config Reference
+     - Hamburger toggle on mobile (< 768px)
+   - Active page detection: highlight the current page link by matching
+     filename from window.location.pathname.
+
+4. docs/codebase-site/js/shared-header.js
+   - Inject SVG waveform overlay into .header elements (same pattern as CFE
+     optimizer). Read data-header-variant attribute for variant selection.
+   - Lazy-load pattern for below-fold headers.
+
+5. docs/codebase-site/js/shared.js
    - Auto-build floating right-rail mini-TOC from <h2> and <h3> elements
      inside <main>. Highlight the currently-visible heading via
      IntersectionObserver.
-   - Sidebar collapse: hamburger button on screens < 1200px; overlay sidebar
-     on mobile.
+   - Initialize GSAP ScrollTrigger for .story-section and .narrative-card
+     entrance animations (fade-in + translateY).
+   - Register prefers-reduced-motion: disable all GSAP animations.
 
-3. docs/codebase-site/js/chart-utils.js
+6. docs/codebase-site/js/chart-utils.js
    - D3 v7 helper module (imported as ES module by viz scripts).
    - responsiveChart(containerSelector, drawFn): handles ResizeObserver,
      calls drawFn(width, height) on resize, debounced.
    - cssColor(varName): reads a CSS custom property value from :root.
    - fuelColorScale(): returns a D3 ordinal scale mapping fuel names to
-     --fuel-* CSS vars.
+     Observatory --solar/--wind/--hydro/--nuclear/--fossil-gas/--fossil-coal
+     CSS vars.
    - isoColorScale(): same for --iso-* vars.
    - addTooltip(svg, className): creates a tooltip <div> positioned on
      mousemove, with show(html, event)/hide() methods.
    - formatMW(value), formatPrice(value), formatPct(value): locale-aware
      number formatters for chart labels.
 
-4. docs/codebase-site/index.html
+7. docs/codebase-site/index.html
    The landing page. Requirements:
-   - Dark navy hero section with:
+   - <nav id="topNav"></nav> placeholder (filled by nav.js).
+   - .header section with SVG waveform overlay (filled by shared-header.js):
      - Eyebrow: "Codebase Explorer"
      - Title: "Inside the Market Simulator"
-     - Subtitle: one paragraph explaining what the site is (explore the LP-based
-       dispatch model, visualization-heavy, code-grounded).
-   - Below the hero: a grid of 10 cards (one per page), each with:
-     - A small icon (inline SVG — lightning bolt, database, chart, matrix,
-       price tag, network, growth arrow, policy shield, target, settings gear).
+     - Subtitle: one paragraph explaining what the site is.
+   - .section-light with a .headline-row of 3–4 .stat-cards showing key
+     model facts (7 ISOs, 8,760 hours, ~200k LP variables, 2026–2050 horizon).
+   - .energy-divider
+   - .section-light with a grid of 10 .cards (one per page), each with:
+     - A small icon (inline SVG).
      - The page title and a one-sentence description.
      - A link to the page.
-     - Cards grouped visually into the 3+1 sections (Foundations, Engine,
-       Evolution & Policy, Reference).
-   - A "system overview" animated diagram (V1 from the plan): a simplified
-     flow showing Demand → Fleet → LP → Prices → Capacity Evolution → next
-     year, built with D3 SVG. Nodes are rounded rectangles with labels;
-     arrows animate on load (draw-in effect). On hover, each node shows a
-     tooltip with a one-line explanation. This is the hero visualization.
-   - Sidebar is present but the landing page is the one currently active.
-   - Footer with: "Built from the docs/codebase reference. Code is the source
-     of truth." and a link back to the repo root index.html.
+     - Cards grouped visually into the 3+1 sections with .section-header
+       labels (Foundations, Engine, Evolution & Policy, Reference).
+   - .section-dark with the "system overview" animated diagram (V1): a
+     simplified flow showing Demand → Fleet → LP → Prices → Capacity
+     Evolution → next year, built with D3 SVG. Nodes are rounded rectangles;
+     arrows animate on load via GSAP. Hover tooltips per node. Use
+     .glass-chart-panel for the diagram container.
+   - .section-transition-dark-to-light
+   - .page-footer with .bottom-banner (4-color gradient bar).
+     Text: "Built from the docs/codebase reference. Code is the source of
+     truth." Link back to the repo root.
 
 QUALITY BAR
 - The landing page must look polished enough to serve as a portfolio piece.
   Typography, spacing, color, and animation quality set the standard for
-  every subsequent page.
-- Dark mode must work fully (toggle + prefers-color-scheme).
+  every subsequent page — the Observatory design system sets a high visual bar.
+- Section rhythm (light/dark) must feel intentional and varied.
 - Lighthouse accessibility score ≥ 90.
-- All external libraries (D3 v7, KaTeX) loaded via CDN with integrity hashes.
-  Load D3 on this page; KaTeX only on pages that need it (not this one).
-- Every component in site.css must have a visual example on at least one page
-  (the landing page should use: .sidebar, .page-hero, .card, .theme-toggle,
-  .breadcrumb, .toc-rail at minimum).
+- All external libraries loaded via CDN with integrity hashes:
+  D3 v7, GSAP + ScrollTrigger. KaTeX only on pages that need it.
+- The landing page should showcase: .top-nav, .header, .stat-card, .card,
+  .section-light, .section-dark, .glass-chart-panel, .energy-divider,
+  .page-footer, .bottom-banner, .toc-rail, .breadcrumb.
 - Responsive: test at 1400px, 1000px, 700px, 400px widths.
 
 ACCEPTANCE CRITERIA
-- [ ] All four files exist and are syntactically valid.
+- [ ] All seven files exist and are syntactically valid.
 - [ ] index.html loads in a browser with no console errors.
-- [ ] Sidebar navigation renders with all 10 pages listed.
-- [ ] Theme toggle switches light/dark and persists across reload.
+- [ ] Top nav renders with dropdown groups and all 10 pages listed.
+- [ ] SVG waveform header renders in the .header section.
 - [ ] Mini-TOC auto-generates from headings.
-- [ ] System overview diagram animates on load.
+- [ ] System overview diagram animates on load (GSAP).
+- [ ] Section rhythm: light → dark → light transitions are smooth.
 - [ ] Cards link to the correct (not-yet-built) page slugs.
 - [ ] Responsive at all four breakpoints (no horizontal scroll, no overlap).
-- [ ] Dark mode: all text readable, all borders visible, diagram colors adjust.
+- [ ] prefers-reduced-motion disables all animations.
 ```
 
 ### Prompt 0B — Illustrative Data Files (PARALLEL with 0A)
@@ -266,7 +318,7 @@ Read docs/codebase-site/PLAN.md for the full architecture, design system, and
 visualization inventory.
 
 REQUIRED READING (before writing any code)
-- docs/codebase-site/css/site.css — use these classes, don't invent new ones
+- docs/codebase-site/css/shared.css + css/site.css — use these classes, don't invent new ones
 - docs/codebase-site/index.html — match this quality bar exactly
 - docs/codebase/01-architecture.md — the content source for this page
 
@@ -278,7 +330,7 @@ DELIVERABLES
 2. docs/codebase-site/js/viz-dispatch-24h.js
 
 PAGE STRUCTURE
-- Hero: eyebrow "Foundations", title "The 8,760-Hour Problem", subtitle about
+- .header with SVG waveform (via shared-header.js): eyebrow "Foundations", title "The 8,760-Hour Problem", subtitle about
   how electricity demand must be met every hour.
 - Section 1: "Supply Meets Demand" — explain the core problem. Text: demand
   varies by hour, generators have different costs, cheapest run first, price
@@ -299,16 +351,16 @@ PAGE STRUCTURE
 - Section 4: "The Year Loop" — one paragraph explaining that this dispatch
   repeats for every year 2026–2050, with fleet changes between years.
   Link forward to page 7 (Capacity Evolution).
-- Callout (insight): "This is a dispatch model, not a unit commitment model.
+- .insight-box (info): "This is a dispatch model, not a unit commitment model.
   The LP finds the cheapest way to meet demand — no binary on/off decisions."
 - Breadcrumb: ← Overview | Data Pipeline →
 
 ACCEPTANCE CRITERIA
 - [ ] Page loads with no console errors.
 - [ ] Uses only classes from site.css (no custom styles beyond minor layout).
-- [ ] Sidebar highlights "Mental Model" as active.
+- [ ] Top nav highlights "Mental Model" as active.
 - [ ] V2 chart renders correctly with data from dispatch-24h.json.
-- [ ] Chart responds to theme toggle (colors update).
+- [ ] Chart works in both .section-light and .section-dark contexts.
 - [ ] Chart is responsive (readable at 900px and 600px).
 - [ ] All cross-links point to correct page slugs.
 - [ ] Mini-TOC generates from section headings.
@@ -334,7 +386,7 @@ DELIVERABLES
 1. docs/codebase-site/data-pipeline.html
 
 PAGE STRUCTURE
-- Hero: eyebrow "Foundations", title "The Data Pipeline", subtitle about
+- .header with SVG waveform (via shared-header.js): eyebrow "Foundations", title "The Data Pipeline", subtitle about
   turning raw EIA/CAMPD/eGRID data into the arrays the LP consumes.
 - Section 1: "Raw Sources" — table of data sources:
   | Source | What It Provides | Files |
@@ -355,7 +407,7 @@ PAGE STRUCTURE
   is assembled: fuel cost + VOM + carbon + NOx − EAC. Interactive hover.
   Data: data/mc-waterfall.json. Build in a small inline <script> or a
   dedicated viz-waterfall.js file.
-- Callout (key insight): "The LP builder only touches arrays and scalars.
+- .insight-box (info): "The LP builder only touches arrays and scalars.
   The conversion from rich Pydantic objects to flat arrays is the architectural
   seam — all complexity is resolved before the LP sees it."
 - Breadcrumb: ← Mental Model | Fleet & Offer Curves →
@@ -365,7 +417,7 @@ ACCEPTANCE CRITERIA
 - [ ] Data-flow SVG diagram renders with animated arrows.
 - [ ] Waterfall chart renders from mc-waterfall.json with hover tooltips.
 - [ ] Source table is properly styled with .data-table.
-- [ ] Dark mode works for all elements including SVG diagram.
+- [ ] .section-dark sections render with glassmorphic cards and white text.
 - [ ] Responsive at all breakpoints.
 ```
 
@@ -378,7 +430,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/04-data-layer.md (fleet section)
 - docs/binning-methodology.md (tranche structure, offer curves)
 
@@ -393,7 +445,7 @@ DELIVERABLES
 4. docs/codebase-site/js/viz-coal-sigmoid.js (V6)
 
 PAGE STRUCTURE
-- Hero: eyebrow "Foundations", title "Fleet & Offer Curves", subtitle about
+- .header with SVG waveform (via shared-header.js): eyebrow "Foundations", title "Fleet & Offer Curves", subtitle about
   how each plant becomes an LP generator with a rising cost curve.
 - Section 1: "CAMPD Per-Plant Binning" — explain that each plant splits into
   tranches: must-run, committed, economic (N slices), peaking. Table showing
@@ -417,7 +469,7 @@ PAGE STRUCTURE
   and a marker move in real time.
   Explain: mine-mouth lignite = full cost always; PRB = sigmoid passthrough;
   bituminous = full spot.
-- Callout: "One plant = one LP generator. Despite the legacy name 'binning',
+- .insight-box: "One plant = one LP generator. Despite the legacy name 'binning',
   there are no aggregated bins — each plant dispatches on its own heat rate."
 - Breadcrumb: ← Data Pipeline | The LP Core →
 
@@ -439,7 +491,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/02-lp-dispatch.md (content source — the LP formulation)
 - src/market_sim/model/dispatch.py (variable layout, constraints)
 
@@ -454,7 +506,7 @@ DELIVERABLES
 3. docs/codebase-site/js/viz-sankey.js (V10)
 
 PAGE STRUCTURE
-- Hero: eyebrow "The Engine", title "The LP Core", subtitle about the
+- .header with SVG waveform (via shared-header.js): eyebrow "The Engine", title "The LP Core", subtitle about the
   linear program that clears 8,760 hours of electricity demand.
 - Section 1: "Decision Variables" — V7 variable-layout block diagram.
   Build as a static SVG: a long horizontal bar divided into colored blocks
@@ -499,7 +551,7 @@ ACCEPTANCE CRITERIA
 - [ ] Sparsity pattern renders in D3 canvas with zoom and hover.
 - [ ] Sankey diagram renders with d3-sankey plugin.
 - [ ] All expandable panels work (click to toggle).
-- [ ] Dark mode works for all elements including KaTeX equations.
+- [ ] KaTeX equations render correctly in both .section-light and .section-dark.
 - [ ] Page is responsive; complex charts stack vertically on mobile.
 ```
 
@@ -512,7 +564,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/03-capacity-and-commitment.md (P0→P1→P2 section)
 - docs/codebase/02-lp-dispatch.md (duals, pricing)
 
@@ -526,7 +578,7 @@ DELIVERABLES
 3. docs/codebase-site/js/viz-price-duration.js (V13)
 
 PAGE STRUCTURE
-- Hero: eyebrow "The Engine", title "Solving & Pricing", subtitle about the
+- .header with SVG waveform (via shared-header.js): eyebrow "The Engine", title "Solving & Pricing", subtitle about the
   three-solve sequence and how prices emerge from LP duals.
 - Section 1: "Why Three Solves?" — brief motivation: base cost discovers
   run lengths, bid cost adds startup recovery, commitment screens unprofitable
@@ -559,7 +611,7 @@ ACCEPTANCE CRITERIA
 - [ ] P0→P1→P2 diagram animates correctly with step-through controls.
 - [ ] Price-duration curve renders with hover, annotations, and log toggle.
 - [ ] Step indicator dots track current animation state.
-- [ ] Dark mode works. Responsive at all breakpoints.
+- [ ] Section rhythm (light/dark) renders correctly. Responsive at all breakpoints.
 - [ ] Cross-links to LP Core and Network pages work.
 ```
 
@@ -572,7 +624,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/03-capacity-and-commitment.md (transmission section)
 - src/market_sim/config/iso_configs.py (zone/link definitions)
 - data/iso-topologies.json (created in Phase 0B)
@@ -587,7 +639,7 @@ DELIVERABLES
 3. docs/codebase-site/js/viz-congestion.js (V15)
 
 PAGE STRUCTURE
-- Hero: eyebrow "The Engine", title "The Network", subtitle about the
+- .header with SVG waveform (via shared-header.js): eyebrow "The Engine", title "The Network", subtitle about the
   pipe-and-bubble model connecting zones within and between ISOs.
 - Section 1: "Pipe and Bubble" — explain the transmission model: zones are
   copper-plate bubbles, links are pipes with TTC limits. Incidence matrix
@@ -622,7 +674,7 @@ ACCEPTANCE CRITERIA
 - [ ] Zone and link hover tooltips work correctly.
 - [ ] Congestion chart shows price divergence when flow binds.
 - [ ] All 7 ISOs' data matches iso-topologies.json.
-- [ ] Dark mode and responsive design work.
+- [ ] Section rhythm and responsive design work.
 ```
 
 ### Prompt 1G — Capacity Evolution (page 7)
@@ -634,7 +686,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/03-capacity-and-commitment.md (capacity evolution section)
 
 TASK
@@ -648,7 +700,7 @@ DELIVERABLES
 4. docs/codebase-site/js/viz-learning.js (V18)
 
 PAGE STRUCTURE
-- Hero: eyebrow "Evolution & Policy", title "Capacity Evolution", subtitle
+- .header with SVG waveform (via shared-header.js): eyebrow "Evolution & Policy", title "Capacity Evolution", subtitle
   about how the fleet changes year over year.
 - Section 1: "The Six Steps" — V16 animated flowchart.
   Six connected boxes: Known Retirements → Economic Retirements → Known
@@ -705,7 +757,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/05-policy.md (content source)
 
 TASK
@@ -717,7 +769,7 @@ DELIVERABLES
 2. docs/codebase-site/js/viz-ordc.js (V22)
 
 PAGE STRUCTURE
-- Hero: eyebrow "Evolution & Policy", title "Policy & Scarcity", subtitle
+- .header with SVG waveform (via shared-header.js): eyebrow "Evolution & Policy", title "Policy & Scarcity", subtitle
   about how policy layers and scarcity pricing shape the market.
 - Section 1: "IRA Tax Credits" — V21 timeline/Gantt chart (static SVG).
   Horizontal bars showing each credit's duration:
@@ -754,7 +806,7 @@ ACCEPTANCE CRITERIA
 - [ ] ORDC curve is interactive with slider and tooltip.
 - [ ] KaTeX equations render for RPS and reserve co-opt formulations.
 - [ ] All expandable panels work.
-- [ ] Dark mode works for all elements.
+- [ ] Section rhythm works for all elements.
 - [ ] Responsive at all breakpoints.
 ```
 
@@ -767,7 +819,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/06-results-and-calibration.md (content source)
 
 TASK
@@ -778,7 +830,7 @@ DELIVERABLES
 1. docs/codebase-site/results-calibration.html
 
 PAGE STRUCTURE
-- Hero: eyebrow "Evolution & Policy", title "Results & Calibration", subtitle
+- .header with SVG waveform (via shared-header.js): eyebrow "Evolution & Policy", title "Results & Calibration", subtitle
   about how the model's outputs are structured and validated.
 - Section 1: "Result Structure" — V26 flow diagram (static SVG).
   LP solve → DispatchResult → Parquet cache → annual aggregation → JSON
@@ -792,7 +844,7 @@ PAGE STRUCTURE
   renewable buildout). Right: "Backcast" column listing what backcast mode
   uses (CAMPD outage windows, EIA-923 fuel prices, measured CFs, historic
   weather year). The toggle highlights one column at a time.
-  Callout (warning): "Measured data is allowed as a reproducible physical
+  .insight-box.warn: "Measured data is allowed as a reproducible physical
   input, never as the answer — no pinning the backcast to actuals."
 - Section 4: "Calibration Diagnostics" — V25 scorecard table.
   Data: calibration-scorecard.json. Traffic-light table with PASS (green),
@@ -809,8 +861,8 @@ ACCEPTANCE CRITERIA
 - [ ] Result-flow SVG diagram renders clearly.
 - [ ] Forecast/backcast toggle comparison works.
 - [ ] Calibration scorecard renders with colored badges.
-- [ ] Warning callout uses the .callout.warning component.
-- [ ] Dark mode works. Responsive at all breakpoints.
+- [ ] Warning callout uses the .insight-box.warn component.
+- [ ] Section rhythm (light/dark) renders correctly. Responsive at all breakpoints.
 ```
 
 ### Prompt 1J — Config Reference (page 10)
@@ -822,7 +874,7 @@ electricity market dispatch simulator at docs/codebase-site/. Read PLAN.md.
 Match index.html quality.
 
 REQUIRED READING
-- css/site.css, js/shared.js, js/chart-utils.js
+- css/shared.css, css/site.css, js/nav.js, js/shared.js, js/chart-utils.js
 - docs/codebase/08-config-reference.md (content source)
 
 TASK
@@ -834,7 +886,7 @@ DELIVERABLES
 2. docs/codebase-site/js/viz-config-table.js
 
 PAGE STRUCTURE
-- Hero: eyebrow "Reference", title "Configuration Reference", subtitle
+- .header with SVG waveform (via shared-header.js): eyebrow "Reference", title "Configuration Reference", subtitle
   about the full parameter inventory.
 - Section 1: "ScenarioConfig Fields" — large filterable table.
   Columns: Field Name | Type | Default | Tier | Description.
@@ -866,7 +918,7 @@ ACCEPTANCE CRITERIA
 - [ ] Tier filter buttons toggle visibility correctly.
 - [ ] Category sections collapse/expand.
 - [ ] Per-ISO sections show correct zone/link data.
-- [ ] Dark mode works. Responsive (table scrolls horizontally on mobile).
+- [ ] Section rhythm works. Responsive (table scrolls horizontally on mobile).
 ```
 
 ---
@@ -891,9 +943,10 @@ TASK
    concepts connect (e.g., "duals→LMP" on page 4 → page 5 Pricing section;
    "merit order" on page 1 → page 3; "FleetArrays" on page 2 → page 3).
 
-2. Navigation consistency: verify the sidebar on every page lists all 10
-   pages in the correct order with correct grouping and highlights the
-   current page. Verify breadcrumbs (prev/next) are correct on every page.
+2. Navigation consistency: verify the top nav on every page renders all
+   dropdown groups with all 10 pages in the correct order and highlights
+   the current page. Verify breadcrumbs (prev/next) are correct on every
+   page.
 
 3. Responsive audit: test every page at 1400px, 1000px, 700px, 400px.
    Fix any:
@@ -902,11 +955,11 @@ TASK
    - Unreadable text or charts
    - Broken chart layouts (D3 charts should resize)
 
-4. Dark mode audit: toggle dark mode on every page. Fix any:
-   - Unreadable text (contrast < 4.5:1)
-   - Charts with hardcoded light-mode colors
-   - SVG diagrams with white backgrounds
-   - KaTeX equations not adapting
+4. Section rhythm audit: verify .section-dark sections on every page. Fix:
+   - Unreadable text in dark sections (contrast < 4.5:1)
+   - Charts with hardcoded colors that don't work on navy backgrounds
+   - SVG diagrams missing glassmorphic treatment in dark sections
+   - KaTeX equations not adapting in dark sections
 
 5. Accessibility pass:
    - Every interactive element has a focus indicator
@@ -930,9 +983,9 @@ DELIVERABLES
 
 ACCEPTANCE CRITERIA
 - [ ] All cross-links resolve (no 404s between pages).
-- [ ] Sidebar consistent across all 11 HTML files.
+- [ ] Top nav consistent across all 11 HTML files.
 - [ ] No horizontal scroll at any breakpoint on any page.
-- [ ] Dark mode fully functional on all pages.
+- [ ] Section rhythm (light/dark) correct on all pages.
 - [ ] All interactive elements keyboard-accessible.
 - [ ] Root index.html has the new card.
 ```
