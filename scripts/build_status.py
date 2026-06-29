@@ -42,7 +42,7 @@ KEEPERS_FILE = DATA / "keepers.json"
 STATUS_FILE = DATA / "status.js"
 
 # Display order for the ISO card grid (others fall in alphabetically after these).
-ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP")
+ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO")
 
 
 def _tail_note() -> str:

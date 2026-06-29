@@ -204,7 +204,6 @@ BA_CODE_TO_ISO: dict[str, str] = {
     "MISO": "MISO",
     "NYIS": "NYISO",
     "ISNE": "NEISO",
-    "SWPP": "SPP",
 }
 
 # Inverse of BA_CODE_TO_ISO: EIA balancing-authority code keyed by ISO name.
@@ -4109,7 +4108,7 @@ def _eia860_retiree_coal_supply() -> dict[int, str]:
     plant that retired mid-backcast (e.g. W H Sammis, Homer City, AES Warrior
     Run — all bituminous) has no recent burned-fuel receipts to derive a rank
     from. Operable coal is intentionally NOT read here: an unresolved operable
-    plant means its ISO's receipt map was never derived (e.g. MISO/SPP), a
+    plant means its ISO's receipt map was never derived (e.g. MISO), a
     separate, deliberate piece of work — not something a retiree fallback should
     silently reprice. The model rank sets the dispatch coal-supply passthrough
     and the reporting class, so an unranked retiree otherwise bids generic

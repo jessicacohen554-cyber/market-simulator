@@ -39,7 +39,7 @@ from market_sim.model.capacity import (
 from market_sim.model.transmission import build_import_generators
 from market_sim.policy.carbon import state_carbon_price
 
-# The seven registered ISOs the sweep is parametrized over.
+# The registered ISOs the sweep is parametrized over.
 ALL_ISOS = sorted(_ISO_BUILDERS)
 
 # Every thermal fuel class the economic-retirement screen must cover. These
@@ -129,7 +129,7 @@ def test_import_node_resolves_where_imports_configured(iso):
     An ISO with IMPORT_TRANCHES must also name an IMPORT_ZONE, and
     build_import_generators must materialize one pseudo-generator per
     tranche in that zone. An ISO without tranches builds an empty node
-    (ERCOT/MISO/SPP) -- a deliberate no-op, not a gap.
+    (ERCOT/MISO) -- a deliberate no-op, not a gap.
     """
     tranches = IMPORT_TRANCHES.get(iso, [])
     generators = build_import_generators(iso)

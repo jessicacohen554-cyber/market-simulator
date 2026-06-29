@@ -609,13 +609,13 @@ def test_calibration_config_dual_fuel_gating():
     """The backcast config activates dual-fuel for the NE/NY/PJM cluster only.
 
     Test req #4 / doc-07 P13: NYISO and NEISO switch on (NE/NY winter
-    switching), PJM stays on (unchanged), and ERCOT/CAISO/MISO/SPP stay off
+    switching), PJM stays on (unchanged), and ERCOT/CAISO/MISO stay off
     (byte-identical). Guards the ERCOT/PJM/CAISO regression.
     """
     from scripts.run_calibration import _calibration_config
 
     on = {"NYISO", "NEISO", "PJM"}
-    for iso in ("NYISO", "NEISO", "PJM", "ERCOT", "CAISO", "MISO", "SPP"):
+    for iso in ("NYISO", "NEISO", "PJM", "ERCOT", "CAISO", "MISO"):
         cfg = _calibration_config(2023, iso, 24, 3.0)
         assert cfg.dual_fuel_switching is (iso in on), iso
 

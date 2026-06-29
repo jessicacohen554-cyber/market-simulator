@@ -62,7 +62,6 @@ EIA_BA_TO_ISO: dict[str, str] = {
     "ISNE": "NEISO",
     "MISO": "MISO",
     "NYIS": "NYISO",
-    "SWPP": "SPP",
 }
 
 # EIA-930 ``NG: <CODE>`` energy-source code -> canonical fuel bucket. The five
