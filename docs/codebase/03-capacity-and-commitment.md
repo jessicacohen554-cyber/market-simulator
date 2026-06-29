@@ -90,7 +90,7 @@ throughput. Disabled by default (`reserve_margin_build_enabled`).
 
 ### Learning curves
 
-`CumulativeDeployment` (line 630) tracks global cumulative installed capacity per
+`CumulativeDeployment` (line 631) tracks global cumulative installed capacity per
 tech, seeded from `WRIGHT_REFERENCE_GW` and advanced each year by
 `GLOBAL_ANNUAL_DEPLOYMENT_GW` plus local builds. Wright's-Law capex reductions are
 a function of cumulative deployment, feeding next year's `compute_lcoe`.
