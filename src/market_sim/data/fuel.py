@@ -39,6 +39,7 @@ import pandas as pd
 
 from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
+    CAISO_CITYGATE_TRANSPORT_ADDER,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
     END_YEAR,
