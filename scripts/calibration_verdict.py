@@ -102,7 +102,6 @@ TAIL_THRESHOLD = {
     "ERCOT": 200.0,
     "PJM": 200.0,
     "MISO": 200.0,
-    "SPP": 200.0,
     "CAISO": 200.0,
     "NYISO": 300.0,
     "NEISO": 300.0,

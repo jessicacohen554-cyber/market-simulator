@@ -79,7 +79,6 @@ ISO_CITYGATE: dict[str, tuple[str, str]] = {
     "ERCOT": ("TX", "Houston Ship Channel region (EIA TX citygate proxy)"),
     "PJM": ("PA", "Transco Z6 / Appalachia (EIA PA citygate proxy)"),
     "MISO": ("IL", "Chicago Citygate (EIA IL citygate proxy)"),
-    "SPP": ("OK", "Panhandle / OK (EIA OK citygate proxy)"),
     "NYISO": ("NY", "Transco Z6 NY / Iroquois (EIA NY citygate proxy)"),
     "NEISO": ("MA", "Algonquin Citygate (EIA MA citygate proxy)"),
 }

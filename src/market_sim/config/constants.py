@@ -1320,9 +1320,6 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # MISO ICAP Planning Reserve Margin Requirement (PRMR). Source: MISO
     # Planning Year 2024-25 LOLE Study Report (ICAP PRM ~17.9%).
     "MISO": 0.179,
-    # SPP planning reserve margin, increased from 12% to 15% effective the 2023
-    # summer season. Source: SPP Planning Criteria Rev 4.1A (2023), §PRM.
-    "SPP": 0.15,
     # NYCA Installed Reserve Margin set by NYSRC. Source: NYSRC 2025-2026 IRM
     # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
     # transmission-security constraints).
@@ -1380,8 +1377,7 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM/MISO
 # are covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
 # (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
-# artifacts). The ISO WITHOUT a bin artifact (SPP) is intentionally absent
-# and falls back to ``aggregate_fleet`` exactly as before. The runner gate keys
+# artifacts). The runner gate keys
 # off this set so the per-plant path unlocks per ISO as its artifact lands.
 CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
     {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
@@ -1484,7 +1480,6 @@ QUEUE_CAP_GW: dict[str, float] = {
     # planning report before quoting any eastern-ISO forecast.
     "PJM": 10,
     "MISO": 10,
-    "SPP": 6,
     "NYISO": 4,
     "NEISO": 4,
 }
@@ -1530,15 +1525,6 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "nuclear": 1.0,
         "geothermal": 0.0,
         "offshore_wind": 0.0,  # Great Lakes not leased
-    },
-    "SPP": {
-        "wind": 4.0,
-        "solar": 3.0,
-        "gas_cc": 2.0,
-        "gas_ct": 1.0,
-        "nuclear": 0.5,
-        "geothermal": 0.0,
-        "offshore_wind": 0.0,
     },
     "NYISO": {
         "wind": 1.0,
@@ -1816,7 +1802,6 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     # utility-PV value for the latitude band. needs-citation: verify
     # against EIA-923 ISO totals before quoting a forecast.
     "MISO": {"wind": 0.34, "solar": 0.22},
-    "SPP": {"wind": 0.41, "solar": 0.24},
     "NYISO": {"wind": 0.26, "solar": 0.15},
     "NEISO": {"wind": 0.30, "solar": 0.15},
 }
@@ -1837,7 +1822,6 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # refresh from the processed EIA-860 parquet before quoting a forecast.
     "PJM": {"wind": 11000.0, "solar": 14000.0},
     "MISO": {"wind": 32000.0, "solar": 7000.0},
-    "SPP": {"wind": 34000.0, "solar": 600.0},
     "NYISO": {"wind": 2400.0, "solar": 1500.0},
     "NEISO": {"wind": 1400.0, "solar": 2700.0},
 }

@@ -169,7 +169,7 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     # technology's current fleet / pipeline. PJM wind sits in the western
     # (ComEd, IL/IN belt) zone, PJM solar in Dominion (the VA build wave),
     # PJM offshore off the NJ coast (EMAAC). MISO wind is the IA/MN belt
-    # (North); SPP wind the OK/KS belt (South). NYISO utility wind/solar
+    # (North). NYISO utility wind/solar
     # are upstate-west; offshore is the NY Bight off Long Island. NEISO
     # wind is Maine (North), solar CT, offshore the MA/RI lease areas.
     "PJM": {
@@ -178,7 +178,6 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
         "offshore_wind": "PJM_EMAAC",
     },
     "MISO": {"wind": "MISO-North", "solar": "MISO-Central"},
-    "SPP": {"wind": "SPP-South", "solar": "SPP-South"},
     "NYISO": {
         "wind": "Upstate_West",
         "solar": "Upstate_West",

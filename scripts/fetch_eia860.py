@@ -7,7 +7,7 @@ Usage:
 
 Scopes:
     full    Pull all U.S. generators (default)
-    markets Pull only generators in ERCOT, PJM, CAISO, NEISO, NYISO, SPP
+    markets Pull only generators in ERCOT, PJM, CAISO, NEISO, NYISO, MISO
 
 Outputs (CSV, one file per scope/BA):
     data/raw/eia-860/generators_us.csv          (full scope)
@@ -49,7 +49,6 @@ MARKETS = {
     "CISO": "CAISO",
     "ISNE": "NEISO",
     "NYIS": "NYISO",
-    "SWPP": "SPP",
     "MISO": "MISO",
 }
 
@@ -184,7 +183,7 @@ def main():
         "--scope",
         choices=["full", "markets"],
         default="full",
-        help="'full' = all U.S.; 'markets' = ERCOT/PJM/CAISO/NEISO/NYISO/SPP only",
+        help="'full' = all U.S.; 'markets' = ERCOT/PJM/CAISO/NEISO/NYISO/MISO only",
     )
     args = parser.parse_args()
 
