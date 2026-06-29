@@ -155,6 +155,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     iso = iso.upper()
     if config.iso != iso:
         config = config.with_overrides(iso=iso)
+
+    iso_config = get_iso_config(iso)
+    # Apply ISO-level scenario defaults (e.g. CAISO negative_renewable_offers)
+    # for fields the caller has not explicitly set.
+    if iso_config.default_scenario_overrides:
+        defaults = ScenarioConfig()
+        overrides_to_apply = {
+            k: v
+            for k, v in iso_config.default_scenario_overrides.items()
+            if getattr(config, k) == getattr(defaults, k)
+        }
+        if overrides_to_apply:
+            config = config.with_overrides(**overrides_to_apply)
+
     cache_key = config.cache_key()
 
     logger.info(
@@ -163,8 +177,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         cache_key,
         asdict(config),
     )
-
-    iso_config = get_iso_config(iso)
     # Interconnected ISOs with a configured import node (CAISO's WECC node,
     # PJM's external node) model their neighbors as priced import tranches
     # plus export sinks: pseudo-generators that ride along with the dispatch
