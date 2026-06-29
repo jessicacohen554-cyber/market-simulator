@@ -518,6 +518,16 @@ class ScenarioConfig:
     # backcast net export is a genuine validation. Requires priced_interchange;
     # gated to ISOs present in INTERFACE_NEIGHBORS (PJM today), byte-identical
     # otherwise. Default off. See docs/reference-price-interface.md.
+    reliability_floor: bool = False  # ISO-agnostic temperature-driven
+    # reliability-commitment floor: look up the ISO in
+    # RELIABILITY_FLOOR_REGISTRY (iso_configs.py) and apply ALL limb specs
+    # via the single generic engine (transmission.inject_reliability_floor).
+    # Replaces the per-ISO booleans below (caiso_ct_reliability_floor,
+    # nyiso_ct_reliability_floor, nyiso_st_reliability_floor,
+    # neiso_temp_reliability_floor, miso_temp_reliability_floor) which are
+    # kept for back-compat — setting ANY of them also activates the generic
+    # engine for that ISO. New ISOs need ONLY this flag + a registry entry +
+    # a weather file; no new code required. Default off (byte-identical).
     caiso_gas_commitment_floor: bool = False  # CAISO Resource-Adequacy
     # must-offer minimum-commitment floor: hold the gas fleet (gas_cc/gas_ct/
     # gas_st) online over the midday solar-glut window at the measured EIA-930
@@ -2914,6 +2924,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "caiso_ra_mustoffer": 1,
     "caiso_ra_min_load_frac": 2,
+    "reliability_floor": 1,
     "caiso_ct_reliability_floor": 1,
     "caiso_ct_floor_slope_per_c": 3,
     "caiso_ct_floor_t0_c": 1,
@@ -2936,6 +2947,12 @@ TIER_TAGS: dict[str, int] = {
     "neiso_gas_derate_t0_c": 1,
     "neiso_gas_derate_slope_per_c": 3,
     "neiso_gas_derate_cap": 2,
+    "nyiso_ct_reliability_floor": 1,
+    "nyiso_ct_floor_slope_per_c": 3,
+    "nyiso_ct_floor_t0_c": 1,
+    "nyiso_ct_floor_cap": 2,
+    "nyiso_ct_floor_base": 3,
+    "nyiso_st_reliability_floor": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
