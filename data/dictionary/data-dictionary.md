@@ -44,12 +44,13 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | SPP | NYISO | NEISO |
 |---|---|---|---|---|---|---|---|
-| lmp | — | 2023–2025 | 2023–2025 | — | — | 2023–2025 | 2023–2025 |
-| load | 2015–2026 | 2023–2026 | 2023–2025 | 2023–2025 | 2015–2026 | 2023–2026 | 2015–2026 |
-| ancillary-services | 2025–2026 | — | 2023–2026 | — | — | 2023–2026 | — |
-| generation | 2018–2026 | 2023–2025 | 2022–2026 | 2023–2025 | 2018–2026 | 2018–2026 | 2018–2026 |
-| renewables | 2023 | 2023–2024 | — | — | — | — | — |
-| validation | 2021–2025 | 2023–2025 | 2021–2025 | — | — | 2023–2025 | 2023–2025 |
+| lmp | — | — | — | — | — | — | — |
+| load | — | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — | — |
+| energy-offers | — | — | — | — | — | — | — |
+| generation | — | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -59,9 +60,9 @@ snapshot).
 
 | datatype | scope | years |
 |---|---|---|
-| emissions | CAMPD/CEMS, by plant and unit | 2023–2025 |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
-| fleet | EIA-860 / eGRID / master registry | 2023–2025 |
+| emissions | CAMPD/CEMS, by plant and unit | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | reference | crosswalks / lookups (ISO-agnostic) | n/a |
 
@@ -139,6 +140,38 @@ AS clearing prices and cleared quantities. Schema:
 | `spin_mw` | `float64` | `mw` | yes | Cleared spinning / synchronized reserve. |
 | `nonspin_mw` | `float64` | `mw` | yes | Cleared non-spinning reserve. |
 | `supp_30min_mw` | `float64` | `mw` | yes | Cleared 30-minute supplemental reserve. |
+
+## energy-offers
+
+PJM Real-Time effective energy offer curves (long step form). Schema:
+[`schema/energy-offers.schema.yaml`](schema/energy-offers.schema.yaml).
+
+- **Keys:** `iso`, `unit_code`, `interval_start_utc`, `step_idx`
+- **Reconciles:** PJM DataMiner2 `energy_market_offers` wide
+  `mw1..mw20`/`bid1..bid20` breakpoints (plus daily `avg_ecomin`/`avg_ecomax`,
+  no-load and hot/cold/inter start costs) — pivoted to one row per (`unit_code`
+  × operating-hour × `step_idx`) with `step_mw` / `step_price_usd_per_mwh`.
+  PJM-only; unit identity is anonymised and rotated annually (not joinable
+  across calendar years).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the operating hour the offer applies to (hour-beginning; maps to DataMiner2 ``bid_datetime_beginning_utc``). |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock EPT (Eastern Prevailing Time) equivalent of ``interval_start_utc`` — informational; UTC is authoritative for joins. Maps to DataMiner2 ``bid_datetime_beginning_ept``. |
+| `iso` | `string` | `none` | no | Always "PJM" for this feed. |
+| `unit_code` | `string` | `none` | no | Anonymised, base64-encoded unit identifier assigned by PJM (DataMiner2 ``unit_code``). Rotated annually — codes are NOT comparable across calendar years. |
+| `bid_slope_flag` | `bool` | `none` | yes | True: bid curve is piecewise-linear (MW/price breakpoints connected by straight lines; MC rises continuously between steps). False: bid curve is a step function (constant $/MWh across each MW block). DataMiner2 ``bid_slope_flag``. |
+| `step_idx` | `int64` | `none` | no | 1-based index of this MW/price breakpoint in the unit's offer curve for this hour. Derived by the curate script from the wide API columns ``mw1``/``bid1`` through ``mw20``/``bid20``; null breakpoints are dropped so ``step_idx`` may not be contiguous. |
+| `step_mw` | `float64` | `mw` | no | MW breakpoint value for this step — the MW level at which the corresponding ``step_price_usd_per_mwh`` applies. Maps to DataMiner2 ``mwN`` columns (N = step_idx). |
+| `step_price_usd_per_mwh` | `float64` | `usd_per_mwh` | no | Energy offer price for this MW step in $/MWh. Maps to DataMiner2 ``bidN`` columns (N = step_idx). PJM's energy offer cap is $2,000/MWh (cost-based cap); must-run offers may be negative. |
+| `ecomin_mw` | `float64` | `mw` | yes | Average Economic Minimum (MW) for the unit for the operating day. DataMiner2 ``avg_ecomin``. Repeated on every step row for the same (unit_code, interval_start_utc) tuple. |
+| `ecomax_mw` | `float64` | `mw` | yes | Average Economic Maximum (MW) for the unit for the operating day. DataMiner2 ``avg_ecomax``. Repeated on every step row for the same (unit_code, interval_start_utc) tuple. |
+| `no_load_cost_usd_per_h` | `float64` | `usd_per_h` | yes | No-load cost ($/h) — the fixed cost component associated with keeping a unit online regardless of MW output. DataMiner2 ``no_load_cost``. |
+| `hot_start_cost_usd` | `float64` | `usd` | yes | Hot start cost ($) — startup cost after a short outage (unit is still warm). DataMiner2 ``hot_start_cost``. |
+| `cold_start_cost_usd` | `float64` | `usd` | yes | Cold start cost ($) — startup cost after an extended outage (unit is fully cold). DataMiner2 ``cold_start_cost``. |
+| `inter_start_cost_usd` | `float64` | `usd` | yes | Intermediate start cost ($) — between hot and cold. DataMiner2 ``inter_start_cost``. |
+| `max_daily_starts` | `float64` | `none` | yes | Maximum number of starts the unit can make in a day. DataMiner2 ``max_daily_starts``. |
+| `min_runtime_h` | `float64` | `h` | yes | Minimum continuous runtime (hours) once the unit is committed. DataMiner2 ``min_runtime``. |
 
 ## generation
 
