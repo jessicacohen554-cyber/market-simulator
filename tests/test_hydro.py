@@ -247,6 +247,40 @@ class TestHydroDispatch(unittest.TestCase):
         self.assertGreater(free.dispatch[0].sum(), capped.dispatch[0].sum())
         self.assertAlmostEqual(capped.dispatch[0].sum(), 60.0, places=4)
 
+    def test_trivial_one_unit_one_zone_31_days_respects_monthly_budget(self):
+        # Acceptance criterion #4: 1 hydro unit, 1 zone, 24 hours x 31 days.
+        # The single hydro plant's total generation over the month must not
+        # exceed its monthly energy budget, while it is free to shift WHEN it
+        # generates within the 744 hours.
+        hours = 24 * 31  # 744-hour single calendar month
+        fleet = _hydro_fleet(hours)
+        # Demand the cheap thermal can always meet, so hydro is purely
+        # economic; a price spike in the last day pulls hydro into those hours.
+        demand = np.full((1, hours), 40.0)
+        demand[0, -24:] = 130.0  # day-31 peak draws hydro to its budget
+        mc = _mc(hours)
+        month_idx = np.zeros(hours, dtype=int)  # all hours -> month 0
+        budget = np.array([[600.0]])  # one unit, one month (MWh)
+        res = solve_dispatch(
+            fleet,
+            demand,
+            np.zeros((1, hours)),
+            np.zeros(1),
+            np.zeros((1, hours)),
+            np.zeros(1),
+            mc=mc,
+            voll=5000.0,
+            hydro_monthly_energy=budget,
+            hydro_gen_idx=np.array([0]),
+            hydro_month_index=month_idx,
+        )
+        hydro = res.dispatch[0]
+        self.assertLessEqual(hydro.sum(), 600.0 + 1e-6)
+        # The budget binds (peak hours alone exceed it), so it is fully used.
+        self.assertAlmostEqual(hydro.sum(), 600.0, places=3)
+        # Energy is concentrated in the high-price final day, not spread flat.
+        self.assertGreater(hydro[-24:].sum(), hydro[:-24].sum())
+
     def test_none_solution_unchanged_vs_current_build(self):
         # Default-off reproduces today's flat-thermal-block solution exactly:
         # solving with hydro_monthly_energy=None equals the kwarg-free solve.
@@ -734,23 +768,24 @@ class TestForecastHydroBudget(unittest.TestCase):
         with self.assertRaises(ValueError):
             ScenarioConfig(hydro_year="soggy")
 
-    def test_run_calibration_hydro_fleet_forecast_wiring(self):
-        # The calibration harness's _hydro_fleet forecast path scales the
-        # assembled budget by the wet/dry lever and is mutually exclusive with
-        # the measured backcast pin.
-        import scripts.run_calibration as rc
+    def test_build_hydro_fleet_forecast_wiring(self):
+        # The shared build_hydro_fleet forecast path scales the assembled
+        # budget by the wet/dry lever and is mutually exclusive with the
+        # measured backcast pin. (Used by both the calibration harness and the
+        # forecast runner.)
         from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.hydro import build_hydro_fleet
 
         zones = get_iso_config("CAISO").zone_names
-        _, normal = rc._hydro_fleet(
+        _, normal = build_hydro_fleet(
             "CAISO", 2024, zones, forecast_budget=True, hydro_year="normal"
         )
-        _, wet = rc._hydro_fleet(
+        _, wet = build_hydro_fleet(
             "CAISO", 2024, zones, forecast_budget=True, hydro_year="wet"
         )
         self.assertAlmostEqual(wet.sum() / normal.sum(), 1.15, places=3)
         with self.assertRaises(ValueError):
-            rc._hydro_fleet(
+            build_hydro_fleet(
                 "CAISO", 2024, zones, eia930_monthly=True, forecast_budget=True
             )
 
