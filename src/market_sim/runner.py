@@ -732,10 +732,36 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             rps_target = None
             if config.rps_enabled:
                 rps_target = get_rps_target(iso, year)
+            # CAISO solar deliverability derate (Lever D): reduce the solar CF
+            # ceiling by the forward solar-penetration signal so the LP sees
+            # the local-network congestion the reduced 3-zone topology misses.
+            year_solar_cf = solar_cf
+            if iso == "CAISO" and getattr(config, "caiso_solar_deliverability", False):
+                from market_sim.model.transmission import (
+                    caiso_solar_deliverability_derate,
+                )
+
+                _sol_derate = caiso_solar_deliverability_derate(
+                    config.weather_year,
+                    solar_cf.shape[1],
+                    float(getattr(config, "caiso_solar_deliverability_k", 0.15)),
+                    float(getattr(config, "caiso_solar_deliverability_floor", 0.50)),
+                )
+                if _sol_derate is not None:
+                    year_solar_cf = solar_cf * _sol_derate[None, :]
+                    hod = np.arange(len(_sol_derate)) % 24
+                    mid = (hod >= 9) & (hod <= 15)
+                    logger.info(
+                        "CAISO %d: solar deliverability derate (Lever D) — "
+                        "midday mean %.3f (≈ %.1f%% curtailment headroom)",
+                        year,
+                        float(np.mean(_sol_derate[mid])),
+                        100.0 * (1.0 - float(np.mean(_sol_derate[mid]))),
+                    )
             dispatch_kwargs = dict(
                 wind_cf=wind_cf,
                 wind_cap=wind_cap,
-                solar_cf=solar_cf,
+                solar_cf=year_solar_cf,
                 solar_cap=solar_cap,
                 # Load-shed penalty = the ISO's own energy bid cap, not the
                 # ERCOT-flavored ScenarioConfig default ($5,000). Each ISOConfig
@@ -798,7 +824,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         config.hours,
                         system_load=year_demand.sum(axis=0),
                         wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
-                        solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
+                        solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
                         sim_year=year,  # forecast enrollment grows with the sim year
                     )
                     dispatch_kwargs.update(
@@ -1010,7 +1036,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 iso_config,
                 wind_cf,
                 wind_cap,
-                solar_cf,
+                year_solar_cf,
                 solar_cap,
                 storage.energy_cap,
             )
