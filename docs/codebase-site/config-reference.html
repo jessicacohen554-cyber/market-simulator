@@ -345,7 +345,12 @@
 </head>
 <body>
   <nav id="topNav"></nav>
-  <header class="header"></header>
+  <header class="header" data-header-variant="pulse">
+    <div class="header__eyebrow">Reference</div>
+    <h1 class="header__title">Configuration Reference</h1>
+    <p class="header__subtitle">ScenarioConfig fields, ISO topology constants, and physical/economic parameters — every tunable lever in the model with tier, type, default, and citation.</p>
+    <div class="header__accent"></div>
+  </header>
 
   <main>
     <div class="content-section">
@@ -626,7 +631,7 @@ classify_plant(                  # Canonical classifier — used identically
     </div>
   </main>
 
-  <div class="toc-rail"></div>
+  <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
 
   <!-- Data: inline JSON for ScenarioConfig fields -->
   <script type="application/json" id="configData">
