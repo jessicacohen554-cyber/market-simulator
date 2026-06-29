@@ -10,7 +10,7 @@ Reconciles three raw demand layouts into the canonical ``load`` schema
   NYISO    data/raw/zone-specific-demand/NYISO/NYISO_load_actuals_*.csv
            (per-zone actual load; "Time Stamp" is local wall-clock).
   EIA-930  data/raw/eia-930-hourly/<BA> hourly.parquet, for the ISOs that have
-           no native feed wired up here (ERCOT, NEISO, MISO, PJM, SPP). CAISO and
+           no native feed wired up here (ERCOT, NEISO, MISO, PJM). CAISO and
            NYISO are skipped (native feeds above); FLA/SOCO are not ISOs.
 
 Reconciliation onto the canonical columns:
@@ -53,7 +53,6 @@ EIA_BA_TO_ISO: dict[str, str] = {
     "ISNE": "NEISO",
     "MISO": "MISO",
     "PJM": "PJM",
-    "SWPP": "SPP",
 }
 
 # NYISO reports in Eastern prevailing (wall-clock) time.

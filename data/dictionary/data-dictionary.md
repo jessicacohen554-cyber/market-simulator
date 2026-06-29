@@ -42,15 +42,15 @@ the span of calendar years curated for that datatype and ISO; `—` means none i
 curated. Markets (DAM/RTM) are aggregated here — see each datatype's section
 for the market split.
 
-| datatype | ERCOT | CAISO | PJM | MISO | SPP | NYISO | NEISO |
-|---|---|---|---|---|---|---|---|
-| lmp | — | — | — | — | — | — | — |
-| load | — | — | — | — | — | — | — |
-| ancillary-services | — | — | — | — | — | — | — |
-| energy-offers | — | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — | — |
-| renewables | — | — | — | — | — | — | — |
-| validation | — | — | — | — | — | — | — |
+| datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
+|---|---|---|---|---|---|---|
+| lmp | — | — | — | — | — | — |
+| load | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — |
+| energy-offers | — | — | — | — | — | — |
+| generation | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -83,7 +83,7 @@ Locational marginal prices and components. Schema:
 |---|---|---|---|---|
 | `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the settlement interval (hour beginning). |
 | `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Optional wall-clock local interval start in the ISO's prevailing zone (informational; UTC is authoritative for joins). |
-| `iso` | `string` | `none` | no | ISO/RTO code (ERCOT, CAISO, PJM, MISO, SPP, NYISO, NEISO). |
+| `iso` | `string` | `none` | no | ISO/RTO code (ERCOT, CAISO, PJM, MISO, NYISO, NEISO). |
 | `market` | `string` | `none` | no | Market run — "DAM" (day-ahead) or "RTM" (real-time). |
 | `node` | `string` | `none` | no | Pricing node / settlement point / hub identifier. Use the ISO's native node id; zone-level series use the zone name here. |
 | `zone` | `string` | `none` | yes | Load/reporting zone the node rolls up to, when known. |

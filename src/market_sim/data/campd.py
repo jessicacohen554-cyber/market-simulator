@@ -149,10 +149,6 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
         "TX",
         "WI",
     ),
-    # SPP fleet spans AR, IA, KS, LA, MN, MO, ND, NE, NM, OK, SD, TX, but SPP
-    # is not yet stood up as a calibration target and has no consumed
-    # unit-outage CSV; populate this and regenerate when SPP is added.
-    "SPP": (),
 }
 
 # CEMS-to-EIA split-plant remap: units that report CAMPD under a *legacy*
