@@ -1757,5 +1757,132 @@ class TestCaisoSolarDeliverabilityDerate(unittest.TestCase):
         self.assertGreater(1.0 - high[0], 1.0 - low[0])
 
 
+class TestGenericReliabilityFloor(unittest.TestCase):
+    """The generic registry-driven reliability-floor engine."""
+
+    def _ct_fleet(self, hours, ct_mw=8000.0, cc_mw=20000.0):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=cc_mw,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="SP15",
+                fuel_type="gas_ct",
+                pmax_mw=ct_mw,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_PEAKER",
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["NP15", "SP15"], hours=hours)
+        return fa, gens
+
+    def _mock_tmax(self, hours, mean_temp=30.0):
+        """Return a synthetic daily-broadcast TMAX array."""
+        np.random.seed(42)
+        n_days = hours // 24 + 1
+        daily = mean_temp + np.random.randn(n_days) * 5.0
+        tmax = np.repeat(daily, 24)[:hours]
+        return tmax
+
+    def test_caiso_parity_with_legacy(self):
+        """Generic engine with CAISO registry spec = legacy inject."""
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+        from market_sim.model.transmission import inject_reliability_floor
+
+        H = 8760
+        tmax = self._mock_tmax(H)
+
+        fa_legacy, _ = self._ct_fleet(H)
+        fa_generic, _ = self._ct_fleet(H)
+
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.caiso_load_weighted_tmax",
+            return_value=tmax,
+        ):
+            inject_caiso_ct_reliability_floor(
+                fa_legacy, "CAISO", 2024, 0.047, 25.0, 0.46, base=0.0
+            )
+
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.iso_zone_tmax",
+            return_value=(tmax, None),
+        ):
+            inject_reliability_floor(
+                fa_generic,
+                "CAISO",
+                2024,
+                RELIABILITY_FLOOR_REGISTRY["CAISO"],
+                ["NP15", "SP15"],
+            )
+
+        np.testing.assert_array_equal(fa_legacy.min_gen, fa_generic.min_gen)
+
+    def test_empty_registry_is_no_op(self):
+        from market_sim.model.transmission import inject_reliability_floor
+
+        fa, _ = self._ct_fleet(48)
+        self.assertFalse(
+            inject_reliability_floor(fa, "PJM", 2024, [], ["PJM-East", "PJM-West"])
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_no_weather_data_is_no_op(self):
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+        from market_sim.model.transmission import inject_reliability_floor
+
+        fa, _ = self._ct_fleet(48)
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.iso_zone_tmax",
+            return_value=None,
+        ):
+            self.assertFalse(
+                inject_reliability_floor(
+                    fa,
+                    "CAISO",
+                    2024,
+                    RELIABILITY_FLOOR_REGISTRY["CAISO"],
+                    ["NP15", "SP15"],
+                )
+            )
+        self.assertIsNone(fa.min_gen)
+
+    def test_floors_only_in_hod_window(self):
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+        from market_sim.model.transmission import inject_reliability_floor
+
+        H = 8760
+        tmax = self._mock_tmax(H, mean_temp=35.0)
+        fa, gens = self._ct_fleet(H)
+
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.iso_zone_tmax",
+            return_value=(tmax, None),
+        ):
+            inject_reliability_floor(
+                fa,
+                "CAISO",
+                2024,
+                RELIABILITY_FLOOR_REGISTRY["CAISO"],
+                ["NP15", "SP15"],
+            )
+
+        ct_row = [g.plant_group for g in gens].index("CT_PEAKER")
+        clock = pd.date_range("2024-01-01", periods=H, freq="h")
+        hod = clock.hour.to_numpy()
+        floored = fa.min_gen[ct_row] > 0.0
+        self.assertTrue(floored.any())
+        self.assertTrue(bool(np.all((hod[floored] >= 15) & (hod[floored] <= 22))))
+
+
 if __name__ == "__main__":
     unittest.main()
