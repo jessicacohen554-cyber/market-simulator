@@ -717,7 +717,7 @@ class TestAssembleMC(unittest.TestCase):
 class TestFleetLoader(unittest.TestCase):
     """Tests for ``load_fleet_from_csv``."""
 
-    ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]
+    ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
 
     def _gw(self, generators: list[Generator]) -> float:
         """Return the total fleet capacity in GW."""

@@ -443,67 +443,6 @@ def test_neiso_every_plant_resolves():
     assert "NEISO_main" not in lookup.values()
 
 
-def test_spp_state_mapping():
-    """SPP regions follow state boundaries (FIPS state is authoritative)."""
-    assert assign_zone_by_fips("20", None, "SPP") == "SPP-North"  # KS
-    assert assign_zone_by_fips("31", None, "SPP") == "SPP-North"  # NE
-    assert assign_zone_by_fips("46", None, "SPP") == "SPP-North"  # SD
-    assert assign_zone_by_fips("8", None, "SPP") == "SPP-North"  # CO
-    assert assign_zone_by_fips("40", None, "SPP") == "SPP-South"  # OK
-    assert assign_zone_by_fips("48", None, "SPP") == "SPP-South"  # TX panhandle
-    assert assign_zone_by_fips("35", None, "SPP") == "SPP-South"  # NM
-    assert assign_zone_by_fips("22", None, "SPP") == "SPP-South"  # LA
-    assert assign_zone_by_fips("5", None, "SPP") == "SPP-South"  # AR
-
-
-def test_spp_unmapped_state_falls_back_to_north():
-    """A plant with no FIPS state and no coords falls back to the largest zone."""
-    assert assign_zone_by_fips(None, None, "SPP") == "SPP-North"
-
-
-def test_spp_coords_fallback_latitude_bands():
-    """Coords-only callers (no FIPS state) get the 37th-parallel fallback."""
-    # Oklahoma City latitude (~35.5) — south of the KS/OK divide -> South.
-    assert assign_zone_by_coords(35.5, -97.5, "SPP") == "SPP-South"
-    # Wichita, KS latitude (~37.7) — north of the divide -> North.
-    assert assign_zone_by_coords(37.7, -97.3, "SPP") == "SPP-North"
-
-
-def test_spp_known_plants_resolve_to_expected_zones():
-    """Named SPP plants land in their real north/south region.
-
-    Missouri straddles the divide, so the two Missouri cases exercise the
-    latitude split: Iatan (Platte County, ~lat 39.4) is Kansas-City-metro
-    North; John Twitty (Springfield, ~lat 37.2) is southwest-Missouri South.
-    """
-    # ORIS codes from eGRID 2023 PLNT23 (BACODE == SWPP).
-    cases = {
-        210: "SPP-North",  # Wolf Creek nuclear (Kansas)
-        6068: "SPP-North",  # Jeffrey Energy Center (Kansas)
-        6077: "SPP-North",  # Gerald Gentleman Station (Nebraska)
-        8036: "SPP-North",  # Cooper Nuclear Station (Nebraska)
-        6065: "SPP-North",  # Iatan (Kansas-City-metro Missouri)
-        165: "SPP-South",  # Grand River Dam Authority (Oklahoma)
-        8059: "SPP-South",  # Comanche (Oklahoma)
-        6194: "SPP-South",  # Tolk Station (Texas panhandle)
-        6193: "SPP-South",  # Harrington Station (Texas panhandle)
-        2454: "SPP-South",  # Cunningham (eastern New Mexico)
-        6195: "SPP-South",  # John Twitty Energy Center (southwest Missouri)
-    }
-    for oris, expected in cases.items():
-        assert assign_zone(oris, "SPP") == expected, f"ORIS {oris}"
-
-
-def test_spp_every_plant_resolves():
-    """Every SWPP plant resolves to a real region; none are dropped."""
-    lookup = build_zone_lookup("SPP")
-    assert len(lookup) > 600  # SPP has ~660 plants in eGRID
-    valid = {"SPP-North", "SPP-South"}
-    assert set(lookup.values()) <= valid
-    # Both regions are populated.
-    assert valid <= set(lookup.values())
-
-
 def test_egrid_lookup_loads():
     """eGRID PLNT23 lookup table loads without error."""
     lookup = build_zone_lookup("ERCOT")

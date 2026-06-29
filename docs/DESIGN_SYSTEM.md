@@ -33,7 +33,6 @@
 | NYISO | `--iso-nyiso` | `#E91E63` |
 | NEISO | `--iso-neiso` | `#9C27B0` |
 | MISO | `--iso-miso` | `#F97316` |
-| SPP | `--iso-spp` | `#14B8A6` |
 
 Transparent variants are the same hex at 12% opacity (`--iso-caiso-t`, …).
 

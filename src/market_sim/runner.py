@@ -240,7 +240,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # Load the CAMPD operational bins once when enabled. The same bin frame
     # builds the dispatch fleet and drives the CHP must-run post-processing.
     # The per-plant binning path is taken by any ISO with a bin artifact
-    # (CAMPD_BINNING_ISOS); ISOs without one (e.g. MISO/SPP) always fall back
+    # (CAMPD_BINNING_ISOS); ISOs without one always fall back
     # to the legacy aggregate_fleet path regardless of ``use_campd_bins``.
     #
     # ERCOT reads its curated per-plant bin sheet
@@ -498,7 +498,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 for g in dispatch_fleet
             ]
         else:
-            # Non-CAMPD-binned ISOs (e.g. SPP) split coal into take-or-pay
+            # Non-CAMPD-binned ISOs split coal into take-or-pay
             # tranches here. With coal_takeorpay_from_data the sunk first tranche
             # uses each plant's MEASURED EIA-923 Schedule-5 contracted share
             # (CLAUDE.md #11/#12) instead of the uniform 100%-sunk assumption.
