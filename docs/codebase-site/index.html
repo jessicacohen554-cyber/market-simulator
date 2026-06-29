@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Codebase Explorer: an interactive guide to the LP-based electricity market dispatch simulator — data pipeline, LP formulation, pricing, capacity evolution, and calibration.">
+  <title>Codebase Explorer — Inside the Market Simulator</title>
+
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    .page-group-header {
+      display: flex; align-items: center; gap: 12px;
+      margin: 40px 0 20px;
+    }
+    .page-group-header:first-of-type { margin-top: 0; }
+    .page-group-label {
+      font-family: var(--font-heading);
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted); white-space: nowrap;
+    }
+    .page-group-line { flex: 1; height: 1px; background: var(--border-light); }
+
+    .page-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .page-card {
+      display: flex; flex-direction: column; gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-decoration: none; color: inherit;
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .page-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--hydro); color: inherit;
+    }
+    .page-card__icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--hydro-bg);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .page-card__icon svg { width: 20px; height: 20px; }
+    .page-card__num {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .page-card__title {
+      font-family: var(--font-heading);
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--navy); line-height: 1.25;
+    }
+    .page-card__desc { font-size: 0.80rem; color: var(--text-muted); line-height: 1.55; flex: 1; }
+    .page-card__arrow {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--hydro-text); margin-top: 4px;
+    }
+    .page-card__arrow svg { width: 13px; height: 13px; transition: transform 180ms ease; }
+    .page-card:hover .page-card__arrow svg { transform: translateX(3px); }
+
+    .page-card--foundations .page-card__icon  { background: rgba(14,165,233,0.10); }
+    .page-card--foundations .page-card__icon svg { color: var(--hydro-text); }
+    .page-card--engine .page-card__icon       { background: rgba(99,102,241,0.10); }
+    .page-card--engine .page-card__icon svg   { color: var(--purple-text); }
+    .page-card--policy .page-card__icon       { background: rgba(34,197,94,0.10); }
+    .page-card--policy .page-card__icon svg   { color: var(--green-text); }
+    .page-card--ref .page-card__icon          { background: rgba(245,158,11,0.10); }
+    .page-card--ref .page-card__icon svg      { color: var(--amber-text); }
+
+    #sysdiag { width: 100%; min-height: 340px; }
+    #sysdiag svg { display: block; width: 100%; overflow: visible; }
+
+    #diag-tooltip {
+      position: fixed;
+      background: rgba(10,18,38,0.96);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      padding: 12px 16px;
+      pointer-events: none;
+      z-index: 9999; opacity: 0;
+      transition: opacity 140ms ease;
+      max-width: 240px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.40);
+    }
+    #diag-tooltip.show { opacity: 1; }
+    #diag-tooltip .tt-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700; font-size: 0.82rem; color: #fff; margin-bottom: 5px;
+    }
+    #diag-tooltip .tt-body { font-size: 0.74rem; color: rgba(255,255,255,0.70); line-height: 1.5; }
+
+    .stat-card--solar::before   { content:''; display:block; height:3px; background:var(--solar);   border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
+    .stat-card--wind::before    { content:''; display:block; height:3px; background:var(--wind);    border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
+    .stat-card--hydro::before   { content:''; display:block; height:3px; background:var(--hydro);   border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
+    .stat-card--nuclear::before { content:''; display:block; height:3px; background:var(--nuclear); border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
+
+    @media (max-width: 768px) { .page-cards-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .page-cards-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <header class="header" data-header-variant="default" aria-label="Page header">
+    <div class="header__overlay" aria-hidden="true"></div>
+    <div class="header__inner">
+      <span class="header__eyebrow">Codebase Explorer</span>
+      <h1 class="header__title">Inside the Market Simulator</h1>
+      <p class="header__subtitle">
+        A visual, interactive guide to the LP-based electricity market dispatch model —
+        from raw EIA data and fleet offer curves through the linear program, zonal prices,
+        and multi-year capacity evolution. Ten pages, 26 visualizations, zero jargon walls.
+      </p>
+    </div>
+    <div class="header-accent" aria-hidden="true"></div>
+  </header>
+
+  <main id="main">
+
+    <section class="section-light" aria-labelledby="facts-heading">
+      <div class="content-section">
+        <h2 id="facts-heading" class="visually-hidden">Model at a glance</h2>
+        <div class="headline-row story-section" role="list" aria-label="Key model statistics">
+
+          <div class="stat-card stat-card--hydro" role="listitem">
+            <div class="stat-card__value">7</div>
+            <div class="stat-card__label">ISOs modelled — ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP — sharing one ISO-agnostic LP</div>
+          </div>
+
+          <div class="stat-card stat-card--wind" role="listitem">
+            <div class="stat-card__value">8,760</div>
+            <div class="stat-card__label">Hours per year — every hour solved, no representative days or reduced time sets</div>
+          </div>
+
+          <div class="stat-card stat-card--solar" role="listitem">
+            <div class="stat-card__value">~200k</div>
+            <div class="stat-card__label">LP variables per ISO-year — generators, renewables, storage, flows, slack &amp; dump</div>
+          </div>
+
+          <div class="stat-card stat-card--nuclear" role="listitem">
+            <div class="stat-card__value">2026–2050</div>
+            <div class="stat-card__label">Forecast horizon — annual capacity evolution loop with Wright’s-Law learning curves</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="energy-divider" aria-hidden="true">
+
+    <section class="section-light" aria-labelledby="explore-heading">
+      <div class="content-section">
+        <div class="text-center" style="margin-bottom:40px;">
+          <h2 id="explore-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);letter-spacing:-0.025em;font-weight:800;color:var(--navy);">
+            Explore the Model
+          </h2>
+          <p style="color:var(--text-muted);font-size:1rem;margin-top:10px;max-width:580px;margin-left:auto;margin-right:auto;">
+            Ten pages built around the narrative arc — from intuition to LP formulation
+            to calibration. Jump to any page or follow the sequence.
+          </p>
+        </div>
+
+        <div class="page-group-header">
+          <span class="page-group-label">Foundations</span>
+          <div class="page-group-line" aria-hidden="true"></div>
+        </div>
+        <div class="page-cards-grid" aria-label="Foundations pages">
+
+          <a class="page-card page-card--foundations story-section" href="mental-model.html" aria-label="Mental Model page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M1 13 C3 13 3 7 5 7 S7 13 9 13 S11 7 13 7 S15 13 17 13 S19 10 19 10"/>
+                <circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="page-card__num">01 — Foundations</div>
+            <div class="page-card__title">Mental Model</div>
+            <p class="page-card__desc">Electricity demand must be met every hour. Generators bid costs into a merit order. The LP clears supply against demand. The shadow price on the balance constraint <em>is</em> the market price.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--foundations story-section" href="data-pipeline.html" aria-label="Data Pipeline page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <ellipse cx="10" cy="5" rx="7" ry="2.5"/>
+                <path d="M3 5v4c0 1.38 3.13 2.5 7 2.5S17 10.38 17 9V5"/>
+                <path d="M3 9v4c0 1.38 3.13 2.5 7 2.5S17 14.38 17 13V9"/>
+              </svg>
+            </div>
+            <div class="page-card__num">02 — Foundations</div>
+            <div class="page-card__title">Data Pipeline</div>
+            <p class="page-card__desc">Raw EIA-860, EIA-930, CAMPD, and eGRID sources flow through loaders into schema-validated Parquet. Follows data from download through FleetArrays to LP inputs.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--foundations story-section" href="fleet-offer-curves.html" aria-label="Fleet &amp; Offer Curves page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="12" width="3" height="6" fill="currentColor" stroke="none" rx="1"/>
+                <rect x="6.5" y="9" width="3" height="9" fill="currentColor" stroke="none" rx="1" opacity="0.75"/>
+                <rect x="11" y="6" width="3" height="12" fill="currentColor" stroke="none" rx="1" opacity="0.55"/>
+                <rect x="15.5" y="3" width="3" height="15" fill="currentColor" stroke="none" rx="1" opacity="0.35"/>
+              </svg>
+            </div>
+            <div class="page-card__num">03 — Foundations</div>
+            <div class="page-card__title">Fleet &amp; Offer Curves</div>
+            <p class="page-card__desc">CAMPD per-plant binning, four-tranche offer curves, and the coal take-or-pay sigmoid. How the real fleet becomes the rising supply curves the LP dispatches against.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+        </div>
+
+        <div class="page-group-header">
+          <span class="page-group-label">The Engine</span>
+          <div class="page-group-line" aria-hidden="true"></div>
+        </div>
+        <div class="page-cards-grid" aria-label="The Engine pages">
+
+          <a class="page-card page-card--engine story-section" href="lp-core.html" aria-label="LP Core page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="16" height="16" rx="2"/>
+                <line x1="2" y1="7" x2="18" y2="7"/><line x1="2" y1="13" x2="18" y2="13"/>
+                <line x1="7" y1="2" x2="7" y2="18"/><line x1="13" y1="2" x2="13" y2="18"/>
+              </svg>
+            </div>
+            <div class="page-card__num">04 — The Engine</div>
+            <div class="page-card__title">The LP Core</div>
+            <p class="page-card__desc">Flat column-vector layout, sparse CSC constraint matrix, objective function assembly. The full linear program — variable counts, constraint structure, and the energy-balance Sankey.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--engine story-section" href="solving-pricing.html" aria-label="Solving &amp; Pricing page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="10" cy="10" r="8"/>
+                <path d="M10 6v8M7.5 8.5c0-1.1.9-2 2.5-2h.5c1.4 0 2 .9 2 1.75S11.5 9.75 10 10c-1.5.25-2.5 1-2.5 2C7.5 13.1 8.7 14 10 14h.5c1.4 0 2.5-.9 2.5-2"/>
+              </svg>
+            </div>
+            <div class="page-card__num">05 — The Engine</div>
+            <div class="page-card__title">Solving &amp; Pricing</div>
+            <p class="page-card__desc">The P0→P1→P2 three-solve sequence. How startup costs enter bid-cost pricing. The commitment screen. Duals on energy balance constraints become LMPs.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--engine story-section" href="network.html" aria-label="The Network page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <circle cx="10" cy="4"  r="2" fill="currentColor" stroke="none" opacity="0.8"/>
+                <circle cx="4"  cy="14" r="2" fill="currentColor" stroke="none" opacity="0.8"/>
+                <circle cx="16" cy="14" r="2" fill="currentColor" stroke="none" opacity="0.8"/>
+                <circle cx="10" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+                <line x1="10" y1="6" x2="10" y2="10.5"/>
+                <line x1="10" y1="12" x2="5.4" y2="12.8"/>
+                <line x1="10" y1="12" x2="14.6" y2="12.8"/>
+              </svg>
+            </div>
+            <div class="page-card__num">06 — The Engine</div>
+            <div class="page-card__title">The Network</div>
+            <p class="page-card__desc">Seven ISOs, 34 zones, 50+ transmission links. Pipe-and-bubble representation, transfer capacity limits, and how binding constraints manifest as zonal price separation.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+        </div>
+
+        <div class="page-group-header">
+          <span class="page-group-label">Evolution &amp; Policy</span>
+          <div class="page-group-line" aria-hidden="true"></div>
+        </div>
+        <div class="page-cards-grid" aria-label="Evolution and Policy pages">
+
+          <a class="page-card page-card--policy story-section" href="capacity-evolution.html" aria-label="Capacity Evolution page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="2,15 7,9 11,12 18,4"/>
+                <polyline points="13,4 18,4 18,9"/>
+              </svg>
+            </div>
+            <div class="page-card__num">07 — Evolution &amp; Policy</div>
+            <div class="page-card__title">Capacity Evolution</div>
+            <p class="page-card__desc">The 6-step annual loop: known retirements → economic retirements → known additions → CCS retrofit → new entry → backstop. How prior-year prices drive next-year investment.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--policy story-section" href="policy-scarcity.html" aria-label="Policy &amp; Scarcity page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10 2L4 5v5c0 4.2 3.2 7.5 6 8.5 2.8-1 6-4.3 6-8.5V5l-6-3z"/>
+                <polyline points="7,10 9,12 13,8"/>
+              </svg>
+            </div>
+            <div class="page-card__num">08 — Evolution &amp; Policy</div>
+            <div class="page-card__title">Policy &amp; Scarcity</div>
+            <p class="page-card__desc">IRA production and investment tax credits, RPS annual clean-energy floor (dual = REC price), carbon pricing, and ORDC/RCPF operating-reserve demand curves.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+          <a class="page-card page-card--policy story-section" href="results-calibration.html" aria-label="Results &amp; Calibration page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="14" height="14" rx="2"/>
+                <line x1="7" y1="10" x2="9" y2="12"/>
+                <line x1="9" y1="12" x2="13" y2="8"/>
+                <line x1="7" y1="6.5" x2="13" y2="6.5"/>
+              </svg>
+            </div>
+            <div class="page-card__num">09 — Evolution &amp; Policy</div>
+            <div class="page-card__title">Results &amp; Calibration</div>
+            <p class="page-card__desc">What makes a backcast run a “keeper.” Forecast vs. backcast methodology, diagnostic scorecard, the dashboard pipeline from LP solve to Parquet to published metrics.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+        </div>
+
+        <div class="page-group-header">
+          <span class="page-group-label">Reference</span>
+          <div class="page-group-line" aria-hidden="true"></div>
+        </div>
+        <div class="page-cards-grid" style="grid-template-columns: minmax(280px, 640px);" aria-label="Reference pages">
+
+          <a class="page-card page-card--ref story-section" href="config-reference.html" aria-label="Config Reference page">
+            <div class="page-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="10" cy="10" r="2.5"/>
+                <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.1 4.1l1.5 1.5M14.4 14.4l1.5 1.5M4.1 15.9l1.5-1.5M14.4 5.6l1.5-1.5"/>
+              </svg>
+            </div>
+            <div class="page-card__num">10 — Reference</div>
+            <div class="page-card__title">Config Reference</div>
+            <p class="page-card__desc">Every <code>ScenarioConfig</code> field, every constant, every path — searchable and filterable by tier (Core / Tuning / Feature), with citations to primary sources and default values.</p>
+            <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="section-transition-light-to-dark" aria-hidden="true"></div>
+
+    <section class="section-dark" aria-labelledby="diag-heading">
+      <div class="content-section">
+
+        <div class="text-center" style="margin-bottom:40px;">
+          <h2 id="diag-heading" style="font-size:clamp(1.3rem,3vw,1.85rem);font-weight:800;letter-spacing:-0.025em;">
+            How the Pieces Connect
+          </h2>
+          <p style="color:rgba(255,255,255,0.65);font-size:0.95rem;margin-top:10px;max-width:560px;margin-left:auto;margin-right:auto;">
+            Demand, fleet, LP solver, prices, and capacity evolution form an annual feedback loop.
+            Hover any node to learn what it does.
+          </p>
+        </div>
+
+        <div class="glass-chart-panel" style="padding:40px 32px;">
+          <div id="sysdiag" role="img" aria-label="System overview: Demand and Fleet feed the LP Solver. The LP returns LMPs. LMPs drive Capacity Evolution, which updates the Fleet for the next year."></div>
+        </div>
+
+        <div class="chart-legend text-center" style="justify-content:center;margin-top:24px;" aria-label="Diagram legend">
+          <div class="legend-item"><div class="swatch-fill" style="background:rgba(14,165,233,0.7);" aria-hidden="true"></div><span>Model inputs</span></div>
+          <div class="legend-item"><div class="swatch-fill" style="background:rgba(99,102,241,0.7);" aria-hidden="true"></div><span>LP engine</span></div>
+          <div class="legend-item"><div class="swatch-fill" style="background:rgba(34,197,94,0.7);" aria-hidden="true"></div><span>Outputs &amp; evolution</span></div>
+          <div class="legend-item"><div class="swatch-line" style="background:rgba(255,255,255,0.50);" aria-hidden="true"></div><span>Data flow</span></div>
+          <div class="legend-item"><div class="swatch-dashed" style="color:rgba(255,255,255,0.40);" aria-hidden="true"></div><span>Feedback (next year)</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-transition-dark-to-light" aria-hidden="true"></div>
+
+  </main>
+
+  <footer class="page-footer" role="contentinfo">
+    <div class="page-footer__inner">
+      <div class="page-footer__main">
+        <div>
+          <div class="page-footer__brand">Codebase Explorer</div>
+          <p class="page-footer__tagline">Built from the docs/codebase reference. Code is the source of truth — when docs and code disagree, fix the docs.</p>
+        </div>
+        <nav class="page-footer__links" aria-label="Footer navigation">
+          <a class="page-footer__link" href="mental-model.html">Mental Model</a>
+          <a class="page-footer__link" href="lp-core.html">LP Core</a>
+          <a class="page-footer__link" href="capacity-evolution.html">Capacity Evolution</a>
+          <a class="page-footer__link" href="config-reference.html">Config Reference</a>
+          <a class="page-footer__link" href="../../../" aria-label="Back to repository root">Repository Root ↗</a>
+        </nav>
+      </div>
+      <p class="page-footer__copy">Market Simulator · LP-based electricity market dispatch model · 2026–2050 forecast horizon</p>
+    </div>
+  </footer>
+  <div class="bottom-banner" aria-hidden="true"></div>
+
+  <div id="diag-tooltip" role="tooltip" aria-live="polite"></div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/shared-header.js"></script>
+  <script src="js/shared.js"></script>
+
+  <script>
+  (function buildSystemDiagram() {
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const nodes = [
+      { id: 'demand', label: 'Demand',    sub: '8,760 h/yr',      color: '#0EA5E9', fill: 'rgba(14,165,233,0.18)',  stroke: 'rgba(14,165,233,0.70)',
+        tip: { title: 'Demand', body: '8,760 hourly zonal load values per zone per hour. Sourced from EIA-930 actuals (backcast) or load-growth projections (forecast). The right-hand side of every energy-balance constraint.' } },
+      { id: 'fleet',  label: 'Fleet',     sub: 'Offer curves',    color: '#0EA5E9', fill: 'rgba(14,165,233,0.14)',  stroke: 'rgba(14,165,233,0.60)',
+        tip: { title: 'Fleet', body: 'Generators with CAMPD per-plant binning (must-run / committed / economic / peaking tranches). Each tranche has a marginal cost = fuel × heat rate + VOM + carbon + NOx. Renewable CFs from EIA-930.' } },
+      { id: 'lp',     label: 'LP Solver', sub: 'HiGHS · ~200k vars', color: '#6366F1', fill: 'rgba(99,102,241,0.22)',  stroke: 'rgba(99,102,241,0.75)',
+        tip: { title: 'LP Solver (HiGHS)', body: 'Three solves per year: P0 base-cost → P1 bid-cost (startup markup) → P2 optional commitment screen. Direct CSC matrix → HiGHS. No Pyomo, PuLP, or scipy. Vectorized — no Python loops over hours.' } },
+      { id: 'lmps',   label: 'LMPs',      sub: 'Shadow prices',   color: '#22C55E', fill: 'rgba(34,197,94,0.16)',   stroke: 'rgba(34,197,94,0.65)',
+        tip: { title: 'LMPs — Locational Marginal Prices', body: 'The dual variables on energy-balance constraints. No separate pricing model — prices ARE the LP duals. Zonal separation emerges when transmission hits TTC limits. Scarcity via VOLL × slack dispatch.' } },
+      { id: 'capevo', label: 'Capacity Evolution', sub: '6-step annual loop', color: '#22C55E', fill: 'rgba(34,197,94,0.14)', stroke: 'rgba(34,197,94,0.60)',
+        tip: { title: 'Capacity Evolution', body: '6 steps per year: known retirements → economic retirements (inframarginal margin vs. FOM) → known additions → CCS retrofit → economic new entry → reliability backstop. One-pass, no within-year iteration.' } },
+    ];
+
+    const edges = [
+      { from: 'demand', to: 'lp',     dash: false, label: 'load\nshape' },
+      { from: 'fleet',  to: 'lp',     dash: false, label: 'offer\ncurves' },
+      { from: 'lp',     to: 'lmps',   dash: false, label: 'duals' },
+      { from: 'lmps',   to: 'capevo', dash: false, label: 'price\nsignals' },
+      { from: 'capevo', to: 'fleet',  dash: true,  label: 'next\nyear' },
+    ];
+
+    const container = document.getElementById('sysdiag');
+    if (!container) return;
+
+    function draw(W) {
+      container.innerHTML = '';
+      const H = Math.min(320, Math.max(260, W * 0.38));
+      const padX = Math.min(40, W * 0.04);
+      const padY = 40;
+      const nW = Math.max(100, Math.min(140, (W - padX * 2) / 5.6));
+      const nH = 60;
+      const rx = 10;
+      const fontSize = Math.max(10, Math.min(13, W / 80));
+
+      const usableW = W - padX * 2;
+      const slotW = usableW / 5;
+
+      const positions = {
+        demand: { x: padX + slotW * 0.2, y: padY },
+        fleet:  { x: padX + slotW * 0.2, y: padY + H * 0.46 },
+        lp:     { x: padX + slotW * 2.0, y: padY + H * 0.20 },
+        lmps:   { x: padX + slotW * 3.8, y: padY },
+        capevo: { x: padX + slotW * 3.8, y: padY + H * 0.46 },
+      };
+
+      const svg = d3.select(container).append('svg')
+        .attr('width', W).attr('height', H + padY + 20).attr('aria-hidden', 'true');
+
+      const defs = svg.append('defs');
+      const mkArrow = (id, color) => {
+        defs.append('marker').attr('id', id)
+          .attr('viewBox', '0 0 10 10').attr('refX', 8).attr('refY', 5)
+          .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+          .append('path').attr('d', 'M0,1 L8,5 L0,9 Z').attr('fill', color);
+      };
+      mkArrow('arr-solid', 'rgba(255,255,255,0.55)');
+      mkArrow('arr-dash',  'rgba(255,255,255,0.35)');
+
+      function cx(id) { return positions[id].x + nW / 2; }
+      function cy(id) { return positions[id].y + nH / 2; }
+
+      const edgeG = svg.append('g').attr('class', 'edges');
+
+      edges.forEach((e, i) => {
+        let path;
+        if (e.from === 'capevo' && e.to === 'fleet') {
+          const sx = cx('capevo'), sy = positions['capevo'].y + nH;
+          const tx = cx('fleet'),  ty = positions['fleet'].y + nH;
+          path = `M${sx},${sy} C${sx},${sy+60} ${tx},${ty+60} ${tx},${ty}`;
+        } else {
+          const sx = positions[e.from].x + nW, sy = cy(e.from);
+          const tx = positions[e.to].x,        ty = cy(e.to);
+          if (Math.abs(sy - ty) < 5) {
+            path = `M${sx},${sy} L${tx},${ty}`;
+          } else {
+            const mx = sx + (tx - sx) / 2;
+            path = `M${sx},${sy} C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+          }
+        }
+
+        const line = edgeG.append('path')
+          .attr('d', path).attr('fill', 'none')
+          .attr('stroke', e.dash ? 'rgba(255,255,255,0.38)' : 'rgba(255,255,255,0.52)')
+          .attr('stroke-width', 1.5)
+          .attr('marker-end', e.dash ? 'url(#arr-dash)' : 'url(#arr-solid)')
+          .style('opacity', 0);
+
+        if (!REDUCED) {
+          const totalLen = line.node().getTotalLength();
+          line.attr('stroke-dashoffset', totalLen)
+              .attr('stroke-dasharray', `${totalLen} ${totalLen}`)
+              .style('opacity', 1);
+          if (typeof gsap !== 'undefined') {
+            gsap.to(line.node(), { strokeDashoffset: 0, duration: 0.8, delay: 0.6 + i * 0.25, ease: 'power2.out' });
+          } else {
+            line.style('opacity', 1).attr('stroke-dashoffset', 0);
+          }
+        } else {
+          line.style('opacity', 1).attr('stroke-dashoffset', 0);
+        }
+
+        if (e.label) {
+          const pathEl = line.node();
+          const mid = pathEl.getPointAtLength(pathEl.getTotalLength() / 2);
+          edgeG.append('text')
+            .attr('x', mid.x + 4).attr('y', mid.y)
+            .attr('fill', 'rgba(255,255,255,0.40)')
+            .attr('font-size', Math.max(8, fontSize - 2))
+            .attr('font-family', "'DM Sans', sans-serif")
+            .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+            .selectAll('tspan').data(e.label.split('\n')).join('tspan')
+            .attr('x', mid.x + 4).attr('dy', (d, i2) => i2 === 0 ? 0 : '1.1em')
+            .text(d => d);
+        }
+      });
+
+      const tooltip = document.getElementById('diag-tooltip');
+      const nodeG = svg.append('g').attr('class', 'nodes');
+
+      nodes.forEach((node, i) => {
+        const pos = positions[node.id];
+        if (!pos) return;
+        const g = nodeG.append('g')
+          .attr('transform', `translate(${pos.x},${pos.y})`)
+          .attr('role', 'button').attr('tabindex', '0')
+          .attr('aria-label', `${node.label}: ${node.tip.body.substring(0, 80)}...`)
+          .style('cursor', 'pointer').style('opacity', REDUCED ? 1 : 0);
+
+        g.append('rect').attr('x', -4).attr('y', -4)
+          .attr('width', nW + 8).attr('height', nH + 8).attr('rx', rx + 4)
+          .attr('fill', 'none').attr('stroke', node.stroke).attr('stroke-width', 1).attr('opacity', 0.25);
+
+        g.append('rect').attr('width', nW).attr('height', nH).attr('rx', rx)
+          .attr('fill', node.fill).attr('stroke', node.stroke).attr('stroke-width', 1.5);
+
+        g.append('text').attr('x', nW / 2).attr('y', nH / 2 - 7)
+          .attr('fill', '#fff').attr('font-size', fontSize)
+          .attr('font-family', "'Plus Jakarta Sans', sans-serif").attr('font-weight', '700')
+          .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(node.label);
+
+        g.append('text').attr('x', nW / 2).attr('y', nH / 2 + 10)
+          .attr('fill', 'rgba(255,255,255,0.58)').attr('font-size', Math.max(8, fontSize - 2))
+          .attr('font-family', "'DM Sans', sans-serif")
+          .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').text(node.sub);
+
+        function showTip(evt) {
+          tooltip.innerHTML = `<div class="tt-title">${node.tip.title}</div><div class="tt-body">${node.tip.body}</div>`;
+          tooltip.classList.add('show'); moveTip(evt);
+          g.select('rect:nth-child(2)').attr('stroke-width', 2.5);
+        }
+        function hideTip() {
+          tooltip.classList.remove('show');
+          g.select('rect:nth-child(2)').attr('stroke-width', 1.5);
+        }
+        function moveTip(evt) {
+          const m = 14, tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+          const vw = window.innerWidth, vh = window.innerHeight;
+          let left = evt.clientX + m, top = evt.clientY + m;
+          if (left + tw > vw - 8) left = evt.clientX - tw - m;
+          if (top + th > vh - 8) top  = evt.clientY - th - m;
+          tooltip.style.left = `${Math.max(8, left)}px`;
+          tooltip.style.top  = `${Math.max(8, top)}px`;
+        }
+
+        g.on('mouseenter', showTip).on('mousemove', moveTip).on('mouseleave', hideTip)
+         .on('focus', e => showTip(e.nativeEvent || e)).on('blur', hideTip)
+         .on('keydown', e => {
+           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showTip(e); }
+           if (e.key === 'Escape') hideTip();
+         });
+
+        if (!REDUCED && typeof gsap !== 'undefined') {
+          gsap.to(g.node(), { opacity: 1, duration: 0.5, delay: 0.1 + i * 0.15, ease: 'power2.out' });
+        }
+      });
+
+      svg.append('text').attr('x', W / 2).attr('y', H + padY + 10)
+        .attr('fill', 'rgba(255,255,255,0.28)').attr('font-size', 10)
+        .attr('font-family', "'DM Sans', sans-serif").attr('text-anchor', 'middle')
+        .text('Annual loop — each year feeds the next');
+    }
+
+    draw(container.clientWidth || 800);
+
+    if ('ResizeObserver' in window) {
+      let rafId;
+      const ro = new ResizeObserver(() => {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => draw(container.clientWidth));
+      });
+      ro.observe(container);
+    }
+  })();
+  </script>
+
+</body>
+</html>
