@@ -648,14 +648,37 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    under-run, ~-23/-20 TWh vs EIA-923). Flatten the econ ramp to the measured
 #    near-baseload incremental cost (econ 0.95 -> 1.08, straddling the full-load
 #    0.93x and the average 1.0x) while KEEPING the physically-real F-class duct-
-#    burner scarcity peak (2.25) and the cheap min-stable-load committed base
-#    (0.92). This is the same flat curve validated this session via the
+#    burner scarcity peak (2.25). This is the same flat curve validated via the
 #    cc_intermediate_split CC_INTERMEDIATE cohort routing; promoting it to the
 #    MISO CC_REGULAR BASE makes MISO's CC correct even on a non-split run, and
 #    renders the split a near-no-op for MISO's all-baseload fleet (it stays
 #    available for genuinely MIXED CC duty — a future MISO peaker CC, or another
-#    ISO). Merit preserved: CC econ_high 1.08*7.44 = 8.0 eff HR stays below
-#    ST_GAS's min-load (generic committed 0.81*11.27 = 9.1) and CT_PEAKER.
+#    ISO).
+#    The committed (min-stable-load) band was separately raised 0.92 -> 1.20 to
+#    the measured part-load premium: a CC's min-load $/MWh is ~30-40% above its
+#    full-load SRMC (CAMPD part-load shape), so the min-load tranche MUST price
+#    above the full-load body. The old 0.92 (6.84 eff HR) sat BELOW econ_low
+#    (0.95*7.44 = 7.07) — the inverse of the real part-load curve — an unphysical,
+#    artificially-cheap min-load block. Lifting committed to 1.20 (8.93 eff HR)
+#    restores the correct part-load ordering (committed > econ_high > econ_low).
+#    This is a pure offer-SHAPE faithfulness fix and is METRIC-NEUTRAL: vs the
+#    miso22 base (committed 0.92), gmModel CC_REGULAR moves only -1.5/-0.8/-0.9
+#    TWh (2023/24/25, right direction) and ST_GAS / CT_PEAKER / coal / prices all
+#    move <0.5 TWh and <$0.1/MWh. It does NOT close the ST_GAS under-run
+#    (gmModel ST_GAS stays -7.2/-9.5/-8.1 vs EIA-923) — the committed band is a
+#    must-run min-load PRICE block whose VOLUME is set by commitment, not by its
+#    own offer, so raising its price corrects the merit ORDER without moving
+#    volume. 1.20 is capped just under the ST_GAS non-inversion ceiling
+#    (9.13/7.44 = 1.227). Merit preserved: CC econ_high 1.08*7.44 = 8.0 and CC
+#    committed 1.20*7.44 = 8.93 eff HR both stay below ST_GAS's min-load (generic
+#    committed 0.81*11.27 = 9.1) and CT_PEAKER.
+#    NOTE the residual CC_REGULAR over-run (+24/+25/+13) and CT_PEAKER under-run
+#    (-19.6/-15.1/-16.6) are NOT offer-curve-addressable: CC's excess is in its
+#    measured-flat econ body (must not be steepened — rule #11) and CT's deficit
+#    is gated by the missing scarcity mechanism (0 model >$200 hours; RDC/ELMP
+#    co-optimization is a separate future lever) plus the 2024/2025 import
+#    under-run (-17.0/-5.9 vs actual -23.1/-19.0 TWh). Both are flagged as
+#    discovered root causes (rules #1/#11), not papered over here.
 #  - CT_PEAKER: CAP the peak band well below the inherited 13.15x ERCOT wall.
 #    MISO's energy offer cap is ~$1000-2000/MWh (the ELMP shadow price plus the
 #    Reserve Demand Curve / RDT scarcity adder), NOT ERCOT's $5000 ORDC, so a
@@ -682,7 +705,17 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 # refit (rules #1/#11).
 _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
-        "committed": 0.92,  # cheap min-stable-load base (CAMPD CC min-load shape)
+        # Min-stable-load premium: a CC's part-load $/MWh is ~30-40% above its
+        # full-load SRMC (measured CAMPD part-load shape), so the committed
+        # (min-load) tranche must price ABOVE the full-load body, not below it.
+        # 0.93x full-load incremental * 1.30 (low end of the premium) = 1.21;
+        # set 1.20, just under the ST_GAS non-inversion ceiling (ST_GAS committed
+        # 0.81*11.27 = 9.13 eff HR -> CC committed <= 9.13/7.44 = 1.227). The
+        # prior 0.92 priced CC min-load (6.84 eff HR) BELOW its own econ_low
+        # (0.95*7.44 = 7.07) -- the inverse of the measured part-load curve, an
+        # unphysical min-load OFFER block. Offer-shape fix only (corrects merit
+        # ORDER); metric-neutral on volumes -- see the grounding comment above.
+        "committed": 1.20,
         "econ_low": 0.95,  # flat baseload incremental (straddles full-load 0.93x)
         "econ_high": 1.08,  # measured near-flat full-load HR, NOT the ERCOT 1.27 ramp
         "peak": 2.25,  # physically-real F-class duct-burner scarcity band (kept)
