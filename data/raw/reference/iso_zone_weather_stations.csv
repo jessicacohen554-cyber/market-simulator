@@ -1,0 +1,49 @@
+iso,zone,station_id,weight,station_name
+ERCOT,West,USW00023023,1.0,Midland Intl Airport TX
+ERCOT,North,USW00003927,1.0,Dallas-Fort Worth WSCMO Airport TX
+ERCOT,Northeast,USW00013972,1.0,Tyler Pounds Field TX
+ERCOT,Houston,USW00012960,1.0,Houston Bush Intercontinental TX
+ERCOT,South_Central,USW00013904,0.6,Austin-Bergstrom Intl Airport TX
+ERCOT,South_Central,USW00012921,0.4,San Antonio Intl Airport TX
+ERCOT,South,USW00012924,0.6,Corpus Christi Intl Airport TX
+ERCOT,South,USW00012959,0.4,McAllen Miller Intl Airport TX
+CAISO,NP15,USW00023232,0.6,Sacramento Airport ASOS CA
+CAISO,NP15,USW00023234,0.4,San Francisco Intl Airport CA
+CAISO,ZP26,USW00093193,1.0,Fresno Yosemite Intl CA
+CAISO,SP15,USW00023174,0.6,Los Angeles Intl Airport CA
+CAISO,SP15,USW00023188,0.4,San Diego Intl Airport CA
+PJM,PJM_ComEd,USW00094846,1.0,Chicago O'Hare Intl IL
+PJM,PJM_AEP_Ohio,USW00014821,1.0,Columbus John Glenn Intl OH
+PJM,PJM_ATSI,USW00014820,0.65,Cleveland Hopkins Intl OH
+PJM,PJM_ATSI,USW00014895,0.35,Akron-Canton Airport OH
+PJM,PJM_West_APS,USW00094823,1.0,Pittsburgh Intl PA
+PJM,PJM_Central_PA,USW00014711,1.0,Harrisburg Intl PA
+PJM,PJM_Dominion,USW00013740,0.6,Richmond Intl VA
+PJM,PJM_Dominion,USW00013737,0.4,Norfolk Intl VA
+PJM,PJM_EMAAC,USW00013739,0.6,Philadelphia Intl PA
+PJM,PJM_EMAAC,USW00014734,0.4,Newark Liberty Intl NJ
+PJM,PJM_SWMAAC,USW00093721,0.6,Baltimore-Washington Intl MD
+PJM,PJM_SWMAAC,USW00013743,0.4,Washington Reagan National VA
+MISO,MISO-North,USW00014922,0.45,Minneapolis-St Paul MN
+MISO,MISO-North,USW00014933,0.25,Des Moines IA
+MISO,MISO-North,USW00013994,0.30,St Louis Lambert MO
+MISO,MISO-Central,USW00094846,0.35,Chicago O'Hare IL
+MISO,MISO-Central,USW00093819,0.25,Indianapolis IN
+MISO,MISO-Central,USW00094847,0.25,Detroit Metro MI
+MISO,MISO-Central,USW00014839,0.15,Milwaukee WI
+MISO,MISO-South,USW00012916,0.35,New Orleans LA
+MISO,MISO-South,USW00013963,0.25,Little Rock AR
+MISO,MISO-South,USW00013940,0.20,Jackson MS
+MISO,MISO-South,USW00013957,0.20,Shreveport LA
+NYISO,Upstate_West,USW00014733,1.0,Buffalo NY
+NYISO,Capital_Hudson,USW00014735,1.0,Albany NY
+NYISO,Lower_Hudson,USW00094745,1.0,Westchester County Airport (White Plains) NY
+NYISO,NYC,USW00094728,1.0,Central Park NY
+NYISO,Long_Island,USW00004781,1.0,Islip NY
+NEISO,North,USW00014764,0.48,Portland ME Intl Jetport
+NEISO,North,USW00014745,0.29,Concord NH
+NEISO,North,USW00014742,0.23,Burlington VT
+NEISO,Central,USW00014765,0.6,Providence T.F. Green RI
+NEISO,Central,USW00094746,0.4,Worcester Regional Airport MA
+NEISO,Boston,USW00014739,1.0,Boston Logan MA
+NEISO,Connecticut,USW00014740,1.0,Hartford-Bradley (Windsor Locks) CT
