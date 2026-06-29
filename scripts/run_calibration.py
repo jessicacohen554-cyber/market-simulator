@@ -1250,6 +1250,13 @@ def _calibration_config(
         #   transmission.caiso_solar_deliverability_derate and docs/caiso-lever-
         #   audit-2026-06.md (Lever D). Other ISOs stay off (byte-identical);
         #   --no-caiso-solar-deliverability forces it off (the over-run baseline).
+        caiso_solar_endogenous_spill=(iso.upper() == "CAISO"),  # CAISO midday
+        #   price fix: skip the pre-LP solar CF derate and pass the full solar
+        #   potential to the LP. The LP endogenously curtails in oversupply hours
+        #   (solar not fully dispatched → solar marginal → dual = solar_mc ≈ $0
+        #   or negative via the keep-running value). Overrides the pre-LP CF
+        #   derate from caiso_solar_deliverability while leaving the flag on for
+        #   the derate profile computation (used in diagnostics/logging).
         storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT", "NEISO")),  # CAISO,
         #   ERCOT and NEISO commissioned batteries mid-backcast (CAISO 3.0 GW
         #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
@@ -1886,6 +1893,15 @@ def _apply_caiso_solar_deliverability(
         )
         return solar_cf
 
+    if getattr(config, "caiso_solar_endogenous_spill", False):
+        logger.info(
+            "CAISO %d: endogenous solar spill — full solar potential passed "
+            "to LP (no pre-LP CF derate); solar sets the midday dual when "
+            "curtailed",
+            year,
+        )
+        return solar_cf
+
     if getattr(config, "caiso_solar_deliverability", False):
         from market_sim.model.transmission import caiso_solar_deliverability_derate
 
@@ -2012,6 +2028,7 @@ def run_year(
     caiso_ct_reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
+    caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
     nyiso_ct_reliability_floor: bool | None = None,
     nyiso_st_reliability_floor: bool | None = None,
@@ -2230,6 +2247,10 @@ def run_year(
     if caiso_solar_deliverability_k is not None:
         config = config.with_overrides(
             caiso_solar_deliverability_k=caiso_solar_deliverability_k
+        )
+    if caiso_solar_endogenous_spill is not None:
+        config = config.with_overrides(
+            caiso_solar_endogenous_spill=caiso_solar_endogenous_spill
         )
     if caiso_solar_cap_at_delivered is not None:
         config = config.with_overrides(
