@@ -193,13 +193,44 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         if iso == "CAISO"
         else 0.0
     )
-    # Year-grounded import ladder for backcasts: the priced node's neighbor-hub
-    # blocks are gas-priced, so a backcast pins the ladder to the simulated
-    # (weather) year. Forecasts pass weather_year too, but un-tabulated years
-    # fall back to the static ladder inside build_import_generators.
-    import_generators = build_import_generators(
-        iso, border_carbon, year=config.weather_year
-    ) + build_export_sinks(iso)
+    # Forecast-grade reference-price interface (the forward-scenario seam):
+    # replace the static fitted tranche ladder with one import/export
+    # pseudo-gen per neighbor, priced hourly from neighbor gas x heat-rate x
+    # load-shape ± hurdle (the mc rows are overwritten by
+    # inject_reference_price_mc after assembly, per year). A forward-derivable
+    # formula that regenerates for any year and responds to changed gas prices
+    # (CLAUDE.md #1, #12) — NOT the measured neighbor LMP. Gated to ISOs in
+    # INTERFACE_NEIGHBORS. CAISO is excluded here: its reference-price seam also
+    # needs the per-hub corridor split + CARB border carbon, wired separately on
+    # the calibration path (caiso_reference_price_seam); the generic single-node
+    # path would land CAISO's per-corridor tranches with no corridor zones to
+    # host them.
+    if (
+        getattr(config, "reference_price_interface", False)
+        and iso in INTERFACE_NEIGHBORS
+        and iso != "CAISO"
+    ):
+        import_generators = build_reference_price_node(iso)
+    else:
+        # Year-grounded import ladder for backcasts: the priced node's
+        # neighbor-hub blocks are gas-priced, so a backcast pins the ladder to
+        # the simulated (weather) year. Forecasts pass weather_year too, but
+        # un-tabulated years fall back to the static ladder inside
+        # build_import_generators.
+        import_generators = build_import_generators(
+            iso, border_carbon, year=config.weather_year
+        ) + build_export_sinks(iso)
+    # Manitoba Hydro firm-hydro import (MISO only): ~10-15 TWh/yr of firm
+    # contracted hydro into MISO-North, OUTSIDE the gas-margin reference-price
+    # seam. A SEPARATE block priced as firm hydro (low, near-constant offer),
+    # landed directly in MISO-North and ADDED to the seam gens. No-op for
+    # non-MISO ISOs (forecast mode keeps the flat contract midpoint).
+    if getattr(config, "miso_firm_imports", False):
+        from market_sim.model.transmission import build_miso_firm_imports
+
+        import_generators = import_generators + build_miso_firm_imports(
+            iso, year=config.weather_year, mode=config.mode
+        )
     if import_generators:
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
@@ -641,6 +672,36 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_coal_tranches(
                 mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
             )
+            # Reference-price seam: overwrite each neighbor pseudo-gen's mc row
+            # with its hourly reference price ± hurdle (gas x heat-rate x
+            # load-shape — the cost is hourly, so it could not ride in the
+            # static vom). Then floor the firm (must-flow) scheduled export on
+            # the cheapest tranches. No-op (byte-identical) unless the reference
+            # node is in the fleet, so non-reference runs are unaffected. CAISO
+            # is priced by its dedicated calibration-path seam.
+            if (
+                getattr(config, "reference_price_interface", False)
+                and iso in INTERFACE_NEIGHBORS
+                and iso != "CAISO"
+            ):
+                if inject_reference_price_mc(
+                    fleet_arrays, mc_base, iso, year, config.gas_price_path
+                ):
+                    logger.info(
+                        "%s %d: reference-price interface — %d neighbor seams "
+                        "priced from gas x heat-rate x load-shape "
+                        "(hurdle in $/MWh)",
+                        iso,
+                        year,
+                        len(INTERFACE_NEIGHBORS.get(iso, [])),
+                    )
+                if inject_reference_price_firm_export(fleet_arrays, iso, year):
+                    logger.info(
+                        "%s %d: firm scheduled-export floor applied "
+                        "(must-flow seam base)",
+                        iso,
+                        year,
+                    )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
