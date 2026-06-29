@@ -41,7 +41,7 @@ columns:
     dtype: string
     unit: none
     nullable: false
-    description: ISO/RTO code (ERCOT, CAISO, PJM, MISO, SPP, NYISO, NEISO).
+    description: ISO/RTO code (ERCOT, CAISO, PJM, MISO, NYISO, NEISO).
   - name: market
     dtype: string
     unit: none

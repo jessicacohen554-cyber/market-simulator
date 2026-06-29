@@ -275,21 +275,11 @@ class TestCampdBinningGate(unittest.TestCase):
                 self.assertEqual(rec["bins_source"], "synth")
                 self.assertEqual(rec["builder"], "campd")
 
-    def test_isos_without_artifact_fall_back_to_legacy(self):
-        # SPP has no bin artifact: no per-plant bins are built and the legacy
-        # aggregate_fleet path runs cleanly, exactly as before.
-        for iso in ("SPP",):
-            with self.subTest(iso=iso):
-                rec = _trace_fleet_build(iso)
-                self.assertIsNone(rec["bins_source"])
-                self.assertEqual(rec["builder"], "legacy")
-
     def test_gate_membership(self):
         from market_sim.config.constants import CAMPD_BINNING_ISOS
 
         for iso in ("ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"):
             self.assertIn(iso, CAMPD_BINNING_ISOS)
-        self.assertNotIn("SPP", CAMPD_BINNING_ISOS)
 
 
 class TestHistoricOutageOverlayDefault(unittest.TestCase):

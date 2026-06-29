@@ -373,50 +373,12 @@ class TestISOConfig(unittest.TestCase):
         neiso = get_iso_config("NEISO")
         self.assertEqual(neiso.voll, 2000.0)
 
-    def test_spp_has_two_zones(self):
-        """SPP defines two north–south load zones."""
-        spp = get_iso_config("SPP")
-        self.assertEqual(spp.n_zones, 2)
-        self.assertEqual(set(spp.zone_names), {"SPP-North", "SPP-South"})
-
-    def test_spp_validates(self):
-        """SPP topology passes the consistency check."""
-        # get_iso_config already calls validate_topology(); an explicit call
-        # documents the Stage-A requirement and fails loudly on regression.
-        get_iso_config("SPP").validate_topology()
-
-    def test_spp_load_shares_sum_to_one(self):
-        """SPP zone load shares sum to 1.0."""
-        spp = get_iso_config("SPP")
-        total = sum(zone.load_share for zone in spp.zones)
-        self.assertAlmostEqual(total, 1.0)
-
-    def test_spp_wind_export_corridor_present(self):
-        """The defining SPP-North <-> SPP-South wind-export link is present.
-
-        SPP's recurring congestion is moving the wind-rich north/west output
-        to load, so the topology must carry the single North<->South corridor.
-        """
-        spp = get_iso_config("SPP")
-        corridor = [
-            link
-            for link in spp.links
-            if {link.from_zone, link.to_zone} == {"SPP-North", "SPP-South"}
-        ]
-        self.assertEqual(len(corridor), 1)
-
-    def test_spp_voll_is_2000(self):
-        """SPP uses a VOLL of $2,000/MWh (FERC Order 831 offer cap)."""
-        spp = get_iso_config("SPP")
-        self.assertEqual(spp.voll, 2000.0)
-
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
         for iso_name in (
             "ERCOT",
             "CAISO",
             "MISO",
-            "SPP",
             "PJM",
             "NYISO",
             "NEISO",

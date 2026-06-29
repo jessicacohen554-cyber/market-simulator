@@ -6,10 +6,10 @@
 > long-completed migration) and is **not maintained against the live code**.
 > Where it disagrees with reality, the code wins. Known drift vs. the current
 > repo:
-> - **7 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO, SPP,
+> - **6 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO,
 >   NYISO, NEISO — all share one ISO-agnostic LP (not "separate model
 >   instances"). Zone counts: ERCOT 7 (6 carry load), CAISO 3 + WECC import,
->   PJM 8, MISO 3, SPP 2, NYISO 5, NEISO 4 + HQ import. Phrases like "ERCOT
+>   PJM 8, MISO 3, NYISO 5, NEISO 4 + HQ import. Phrases like "ERCOT
 >   4-zone" / "CAISO single zone" / two-ISO framing below are stale.
 > - **Major subsystems built since this plan and absent from it:** the
 >   backcast/calibration mode (`ScenarioConfig.mode`), the P0→P1→P2 commitment
@@ -36,7 +36,7 @@
 
 ## 1. Architecture Overview
 
-The model simulates hourly electricity dispatch across U.S. ISOs (ERCOT 6-zone is the calibrated reference; CAISO, PJM, MISO, SPP, NYISO and NEISO topologies are also registered — see `model-methodology-spec.md`) for every year from 2026–2050 under a parameterized scenario system. (The phase steps below were written against the original two-ISO target; treat them as the build history.) The core loop is:
+The model simulates hourly electricity dispatch across U.S. ISOs (ERCOT 6-zone is the calibrated reference; CAISO, PJM, MISO, NYISO and NEISO topologies are also registered — see `model-methodology-spec.md`) for every year from 2026–2050 under a parameterized scenario system. (The phase steps below were written against the original two-ISO target; treat them as the build history.) The core loop is:
 
 ```
 For each scenario config:
