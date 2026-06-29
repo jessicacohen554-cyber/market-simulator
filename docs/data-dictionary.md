@@ -1,4 +1,9 @@
-# Data Dictionary
+# Data Dictionary — Result-Cache Schema
+
+> **Scope:** this file documents the **output** schema — the Parquet a
+> simulation *writes* per scenario-year. For the **input** data contract
+> (curated `data/clean` schemas, source reconciliation), see the canonical,
+> auto-generated [`data/dictionary/data-dictionary.md`](../data/dictionary/data-dictionary.md).
 
 This document describes the on-disk schema of a cached simulation result.
 
@@ -105,9 +110,9 @@ Per-ISO specifics:
 
 | ISO | System series | Interchange handling | Zonal allocation |
 |---|---|---|---|
-| ERCOT | `data/eia_hourly/ERCO hourly.parquet` | DC-tie net interchange folded into demand | Measured hourly weather-zone shapes (NP3-565-CD native load) |
+| ERCOT | `data/raw/eia-930-hourly/ERCO hourly.parquet` | DC-tie net interchange folded into demand | Measured hourly weather-zone shapes (NP3-565-CD native load) |
 | PJM | demand-profiles parquet | Measured tie-line net export added per border zone | Measured hourly transmission-zone shapes (metered-load files) |
-| CAISO | `data/eia_hourly/CISO hourly.parquet` | **None** — imports are supply via the `WECC_import` node's priced pseudo-generators | Measured hourly TAC-area shapes (upload U4, OASIS `SLD_FCST` ACTUAL) where covered; static measured shares (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, Jan-2023 sample) elsewhere. PGE-TAC splits 0.86/0.14 onto NP15/ZP26; SCE+SDGE+VEA map to SP15. Refresh: complete the U4 monthly pulls 2023–2025. |
-| NEISO | `data/eia_hourly/ISNE hourly.parquet` | Measured hourly net interchange (`Total interchange` column, import-negative) netted into demand (`neiso_net_interchange`); the internal fleet serves the residual. 2024: −10.30 TWh (−1,175 MW avg); 2023: −15.14 TWh; 2025: −8.13 TWh. Forward scenarios use the priced `HQ_import` node. | Static 4-zone RSP shares (North 0.20 / Central 0.30 / Boston 0.21 / Connecticut 0.29); hourly system shape from EIA-930 ISNE series allocated by zone share. Refresh: upload U3 (8-zone ISO-NE metered load; `derive_load_shares.py`). |
-| NYISO | `data/eia_hourly/NYIS hourly.parquet` | Measured hourly net interchange (`Total interchange` column, import-negative) netted into demand (`nyiso_net_interchange`). 2023: −23.45 TWh. Forward scenarios use the priced `NYISO_external` node. | Static 5-zone RSP shares (A/B/C/D/E aggregated to model zones); hourly system shape from EIA-930 NYIS series. |
+| CAISO | `data/raw/eia-930-hourly/CISO hourly.parquet` | **None** — imports are supply via the `WECC_import` node's priced pseudo-generators | Measured hourly TAC-area shapes (upload U4, OASIS `SLD_FCST` ACTUAL) where covered; static measured shares (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, Jan-2023 sample) elsewhere. PGE-TAC splits 0.86/0.14 onto NP15/ZP26; SCE+SDGE+VEA map to SP15. Refresh: complete the U4 monthly pulls 2023–2025. |
+| NEISO | `data/raw/eia-930-hourly/ISNE hourly.parquet` | Measured hourly net interchange (`Total interchange` column, import-negative) netted into demand (`neiso_net_interchange`); the internal fleet serves the residual. 2024: −10.30 TWh (−1,175 MW avg); 2023: −15.14 TWh; 2025: −8.13 TWh. Forward scenarios use the priced `HQ_import` node. | Static 4-zone RSP shares (North 0.20 / Central 0.30 / Boston 0.21 / Connecticut 0.29); hourly system shape from EIA-930 ISNE series allocated by zone share. Refresh: upload U3 (8-zone ISO-NE metered load; `derive_load_shares.py`). |
+| NYISO | `data/raw/eia-930-hourly/NYIS hourly.parquet` | Measured hourly net interchange (`Total interchange` column, import-negative) netted into demand (`nyiso_net_interchange`). 2023: −23.45 TWh. Forward scenarios use the priced `NYISO_external` node. | Static 5-zone RSP shares (A/B/C/D/E aggregated to model zones); hourly system shape from EIA-930 NYIS series. |
 | others | demand-profiles parquet | none | static per-zone `load_share` |

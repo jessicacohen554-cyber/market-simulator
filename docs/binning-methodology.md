@@ -67,8 +67,8 @@ grid-facing capacity.
 
 ## Plant groups
 
-`Plant_Group` is the primary classifier. The six dispatched groups and
-their model fuel type:
+`Plant_Group` is the primary classifier (`config/plant_taxonomy.py`). The
+seven dispatched groups and their model fuel type:
 
 | Group        | Fuel type | Notes                                  |
 |--------------|-----------|----------------------------------------|
@@ -76,11 +76,12 @@ their model fuel type:
 | `CC_REGULAR` | `gas_cc`  | Grid-serving combined cycle            |
 | `CT_CHP`     | `gas_ct`  | Combustion-turbine cogeneration        |
 | `CT_PEAKER`  | `gas_ct`  | Peaking combustion turbines            |
-| `GAS_STEAM`  | `gas_st`  | Legacy natural-gas steam boilers       |
-| `COAL`       | `coal`    | Coal steam                             |
+| `ST_GAS`     | `gas_st`  | Legacy natural-gas steam boilers       |
+| `ST_CHP`     | `gas_st`  | Gas steam cogeneration                 |
+| `COAL`       | `coal`    | Coal steam (taxonomy splits coal into ranks `COAL_LIGNITE`/`COAL_PRB`/`COAL_BIT`/`COAL_WC` for fuel pricing) |
 
 `gas_st` is a dedicated fuel type for legacy gas steam boilers (W A
-Parish, Cedar Bayou, Handley, ...). It pays the Henry Hub gas price and
+Parish, Cedar Bayou, Handley, ...); both `ST_GAS` and `ST_CHP` map to it. It pays the Henry Hub gas price and
 carries its own VOM, NOx and forced-outage parameters. Plants in the
 registry's `OTHER` group are non-dispatchable (BTM-only, industrial, or
 too small) and never enter the LP.
@@ -142,9 +143,9 @@ columns, whenever a curve is configured (the ERCOT default).** With
 `offer_curve_by_group[group]` set:
 
 ```
-committed_hr = base_hr * offer["committed"]                 # e.g. 0.92×
-econ ramp    = base_hr * mult(t),  mult: econ_low → peak    # N-slice ramp
-peak (CC)    = base_hr * duct_burner_mult(turbine_class)    # 2.0–2.5×
+committed_hr = base_hr * offer["committed"]                      # e.g. 0.92×
+econ ramp    = base_hr * mult(t),  mult: econ_low → econ_high     # N-slice ramp
+peak (CC)    = base_hr * cc_duct_burner_peak_mult(turbine_class)  # 2.0–2.5×, separate flat tranche above the ramp
 ```
 
 Only when **no** offer curve covers the group do the CSV `HR_Mult_<tranche>`
@@ -179,7 +180,7 @@ with the active ERCOT values:
   linear ramp; `exp > 1` would be convex / cheap-bottomed)
 - `lo  = offer_curve_by_group[group]["econ_low"]`  (CC_REGULAR ≈ **1.06**)
 - `pk  = econ_high` — the **top of the econ ramp**, not the duct-firing
-  multiplier. The duct-firing peak (`duct_burner_mult(turbine_class)` for CC —
+  multiplier. The duct-firing peak (`cc_duct_burner_peak_mult(turbine_class)` for CC —
   F-class **2.25**, G/H-class **2.50**, older **2.00** — or
   `offer_curve_by_group[...]["peak"]`) is a **separate flat tranche above the
   ramp**, so there is a deliberate price jump from `econ_high` to the peak
@@ -328,7 +329,7 @@ Commitment parameters (`min_run_hours`, `min_down_hours`,
   | COAL        | 0   | 40    | 45    | 15    | 36h     | 16h      |
   | CT_CHP      | 62-65 | 15-17 | 15-16 | 5-6 | 23h     | 2h       |
   | CT_PEAKER   | 0   | 30-40 | 25-27 | 25-45 | 1h     | 1h       |
-  | GAS_STEAM   | 0   | 20    | 40    | 40    | 4h      | 4h       |
+  | ST_GAS      | 0   | 20    | 40    | 40    | 4h      | 4h       |
 
 ## CHP must-run post-processing
 
@@ -338,12 +339,18 @@ dispatch, `compute_must_run_emissions()` reconstructs that generation and
 its CO2 for asset-level emissions trajectories:
 
 ```
+# Primary path — when metered generation is supplied:
+mr_gen_mwh  = max(0, total_gen_by_plant - grid_gen_by_plant)   # behind-the-meter portion
+mr_mw       = mr_gen_mwh / 8760
+
+# Fallback — only when no metered total is available:
 mr_mw       = nameplate * MR% / 100
-mr_gen_mwh  = mr_mw * 8760 * must_run_cf      # must_run_cf default 0.85
+mr_gen_mwh  = mr_mw * 8760 * must_run_cf                        # must_run_cf default 0.85
+
 mr_co2_tons = mr_gen_mwh * emission_rate
 ```
 
-This applies to both `CC_CHP` and `CT_CHP`.
+This applies to both `CC_CHP` and `CT_CHP` (non-coal must-run plants).
 
 ## What this replaces
 

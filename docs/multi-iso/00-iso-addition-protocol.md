@@ -42,9 +42,9 @@ Companion documents in this directory:
 
 | ISO   | Config in `iso_configs.py`               | BA map | Zone assign         | Calib. ref | EIA-930 hourly | Backcast |
 |-------|------------------------------------------|--------|---------------------|------------|----------------|----------|
-| ERCOT | Full: 6 zones, cited TTCs, real CF/HSL    | ERCO   | lat/lon+FIPS        | 2021–2025  | `ERCO hourly`  | **Yes**  |
+| ERCOT | Full: 7 zones (6 carry load), cited TTCs, real CF/HSL | ERCO   | lat/lon+FIPS        | 2021–2025  | `ERCO hourly`  | **Yes**  |
 | CAISO | 3 zones (NP15/ZP26/SP15) + WECC import    | CISO   | Path 15/26 + FIPS   | none       | none           | No       |
-| PJM   | 4 zones, cited zonal-peak shares + TTCs    | PJM    | FIPS state→zone     | none       | none           | No       |
+| PJM   | 8 zones (ComEd…SWMAAC), cited zonal-peak shares + TTCs | PJM    | FIPS state→zone     | none       | none           | No       |
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
 | SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
@@ -202,6 +202,12 @@ STAGE H — Docs
 ---
 
 ## 3. Suggested sequencing across ISOs
+
+> **Status (now executed):** this section is the *original* build order and
+> describes each ISO's pre-build starting state. All seven are now registered
+> **multi-zone** in `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO
+> 4+import, PJM 8, MISO 3, SPP 2 — so phrases like "single zone today" and
+> "4-zone stub" below are the historical starting point, not current state.
 
 Order by *incremental difficulty* so each ISO reuses the last one's new
 machinery:
