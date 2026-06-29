@@ -702,6 +702,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         iso,
                         year,
                     )
+            # Manitoba firm-hydro import floor (MISO only): the contracted firm
+            # baseload flows into MISO-North every hour regardless of MISO's
+            # hourly price (the firm-schedule pattern). Mirrors the must-flow
+            # floor laid on the build_miso_firm_imports block above. No-op
+            # unless the flag is on and the block is in the fleet.
+            if getattr(config, "miso_firm_imports", False):
+                from market_sim.model.transmission import inject_miso_firm_imports
+
+                if inject_miso_firm_imports(fleet_arrays, iso, year):
+                    logger.info(
+                        "%s %d: Manitoba firm-hydro import baseload floored "
+                        "(must-flow)",
+                        iso,
+                        year,
+                    )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
