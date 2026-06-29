@@ -99,3 +99,71 @@ Derived by `scripts/derive_reliability_coeffs.py`. `floor_pct = commit_frac x mi
 | MISO-South | CC_CHP | tmin | 0.0 | 0.2935 | False | 0.8385 | 0.35 | 0.2759 | 48 | 0.7479 |
 | MISO-North | CC_CHP | tmax | 25.0 | 0.2387 | False | 0.6819 | 0.35 | 0.241 | 274 | 0.3937 |
 | MISO-North | CC_CHP | tmin | 0.0 | 0.2387 | False | 0.6819 | 0.35 | -0.116 | 247 | 0.4017 |
+
+## CAISO
+
+| zone | plant_class | driver | threshold | floor_pct | enabled | commit_frac | min_stable_pct | rho | n | baseline |
+|---|---|---|---|---|---|---|---|---|---|---|
+| NP15 | CT_PEAKER | netload | 0.0 | 0.0 | False | 0.3334 | 0.0 | 0.4816 | 394 | 0.053 |
+| NP15 | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.7899 | 0.0 | 0.5998 | 407 | 0.4225 |
+| SP15 | ST_GAS | tmax | 25.0 | 0.0 | False | 0.5694 | 0.0 | 0.2327 | 135 | 0.2113 |
+| SP15 | CT_PEAKER | netload | 0.0 | 0.0 | False | 0.4401 | 0.0 | 0.2322 | 134 | 0.0286 |
+| SP15 | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.5982 | 0.0 | 0.2047 | 136 | 0.2262 |
+| NP15 | CC_CHP | tmax | 25.0 | 0.1813 | False | 0.4422 | 0.41 | 0.4003 | 384 | 0.3008 |
+| ZP26 | CT_PEAKER | netload | 0.0 | 0.0 | False | 0.3022 | 0.0 | 0.2738 | 195 | 0.0169 |
+| NP15 | CT_CHP | netload | 0.0 | 0.094 | False | 0.2123 | 0.4429 | 0.3589 | 394 | 0.1122 |
+| SP15 | CC_CHP | tmax | 25.0 | 0.028 | True | 0.0637 | 0.44 | 0.3889 | 39 | 0.0177 |
+| ZP26 | CT_CHP | netload | 0.0 | 0.0299 | False | 0.0675 | 0.4431 | 0.3314 | 317 | 0.0156 |
+| ZP26 | CC_REGULAR | tmax | 25.0 | 0.0 | False | 0.8293 | 0.0 | 0.3948 | 562 | 0.3097 |
+| ZP26 | CC_CHP | tmax | 25.0 | 0.35 | False | 1.0 | 0.35 | 0.2563 | 524 | 0.7416 |
+
+### CAISO review notes (post-derivation, CLAUDE.md #1/#9/#11)
+
+Only **tmax** limbs were produced — CAISO zone TMIN never falls below the 0 °C
+cold onset in 2023–2025 (mild California winters), so no cold limb has data. This
+is physically correct, not a gap.
+
+**CT classes are net-load-driven, not temperature-driven (architecture decision,
+rebuild-plan §B/§C resolved-decision #2).** The derive script regresses every
+class on temperature; for CAISO the CT fleet (simple-cycle peakers + CT cogen)
+commits for the evening net-load ramp / duck curve, *not* for absolute air
+temperature. The five `CT_PEAKER`/`CT_CHP` rows are therefore reclassified to
+`driver="netload"` and ship **`enabled=False`**, because:
+- The reported `commit_frac`/`rho`/`n` were measured against a **tmax** gate. A
+  temperature correlation does **not** validate a net-load gate, so it would be
+  dishonest to enable a net-load limb on that evidence.
+- Per-zone net load is not yet plumbed into the derive script (no net-load-gated
+  `commit_frac`) nor into the floor engine (`driver="netload"` limbs no-op until
+  Phase 2). `threshold=0.0` is a **placeholder**, not a derived MW gate — the
+  net-load threshold and a net-load-gated `commit_frac` are Phase-2 work.
+- The retained `floor_pct`/`commit_frac` are the temperature-measured **structural
+  placeholders** only; they are NOT quoted as forward skill and the limbs are OFF.
+
+**Why so many limbs are OFF — `min_stable_pct = 0` for merchant thermal.** In the
+CAISO model bins (`bin_assignments_CAISO.csv`), `CC_REGULAR` (13.7 GW), `CT_PEAKER`
+(7.6 GW) and `ST_GAS` (2.9 GW) carry **0 % must-run** — merchant CAISO thermal has
+no must-run obligation. Since `floor_pct = commit_frac × min_stable_pct`, their
+floor is **0 by construction** regardless of how heavily they commit on hot days
+(e.g. ZP26 `CC_REGULAR` runs `commit_frac=0.83` on hot days but still floors 0).
+This is the correct CLAUDE.md #9/#11 outcome: no physical must-run tranche → no
+floor. Only the **CHP** classes carry a must-run tranche (CC_CHP ≈ 0.42, CT_CHP ≈
+0.45 — the cogeneration thermal-host obligation), so they are the only classes that
+can produce a non-zero structural floor.
+
+**The single enabled limb — `SP15 CC_CHP` (tmax, floor_pct = 0.028).** Passes the
+gate (ρ=0.389 ≥ 0.3, n=39 ≥ 30, floor 0.028 > baseline 0.0177). Note this is a
+**marginal, low-commitment** limb (`commit_frac=0.064`, small n=39) — only ~6 % of
+SP15 CC_CHP nameplate reports online on hot days in CAMPD, so the floor it imposes
+is tiny (2.8 % of available). It is a real-but-weak positive temperature response;
+kept enabled per the honest gate, but flagged here as marginal.
+
+**Other CC_CHP limbs ship OFF correctly:** NP15 (floor 0.181 < baseline 0.301) and
+ZP26 (floor 0.350 < baseline 0.742) both fail `floor_pct > baseline` — on mild days
+these cogen fleets already run *above* the hot-day commitment floor, so a floor
+would be slack. Correctly disabled, not invented.
+
+**Net:** 12 limbs, **1 enabled** (SP15 CC_CHP, tmax). 5 CT limbs reclassified to
+`driver="netload"` and disabled (Phase-2 net-load derivation pending); 6 other
+temperature limbs disabled — 4 by `min_stable_pct=0` (NP15/SP15/ZP26 CC_REGULAR +
+SP15 ST_GAS) and 2 CC_CHP by floor ≤ baseline (NP15, ZP26). No limb was tuned to a
+price/volume residual; no measured-CF ceiling was used.
