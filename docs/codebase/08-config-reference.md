@@ -130,16 +130,26 @@ curves): `cc_committed_hr_mult=1.23` / `cc_econ_hr_mult=0.96`, with `ct_*`,
 - **Reserve co-optimization**: `energy_reserve_coopt`,
   `ercot_multiproduct_as_coopt`.
 
-### ISO-specific reliability floors
+### Reliability floors
 
-Hour-varying `min_gen` floors driven by measured temperature/RA must-offer rules:
+**Unified temperature/net-load floor** (replaces all legacy per-ISO floor
+bools — `caiso_ct_reliability_floor`, `nyiso_ct/st_reliability_floor`,
+`neiso_temp_reliability_floor`, `miso_temp_reliability_floor`, which are
+removed):
+- `reliability_floor: bool = False` — master switch; arms all enabled limbs
+  from `RELIABILITY_FLOOR_REGISTRY` (CSV-seeded per-(zone, class, driver)
+  specs). See `docs/multi-iso/reliability-floor-feature.md`.
+- `reliability_floor_overrides: dict` — per-limb overrides keyed
+  `"<ZONE>:<CLASS>:<driver>"`.
+- `class_commitment_overrides: dict` — per-class commitment params
+  (min_run/min_down) for steam-gas event bridging.
+
+**Other ISO-specific min_gen mechanisms** (not part of the reliability floor):
 - **CAISO**: `caiso_gas_commitment_floor`, `caiso_ra_mustoffer`
-  (`caiso_ra_min_load_frac=0.40`), `caiso_ct_reliability_floor` (slope/T0/cap/base).
-- **NYISO**: `nyiso_ct_reliability_floor`, `nyiso_st_reliability_floor`,
-  `nyiso_local_selfsupply`.
-- **NEISO**: `neiso_temp_reliability_floor` (dual-limb CT hot + coal/ST cold),
-  `neiso_gas_coldsnap_derate`, `neiso_floor_outage_exempt=True`.
-- **MISO**: `miso_temp_reliability_floor` (zonal dual-limb).
+  (`caiso_ra_min_load_frac=0.40`).
+- **NYISO**: `nyiso_local_selfsupply`.
+- **NEISO**: `neiso_gas_coldsnap_derate` (gas-pipeline availability derate,
+  not a commitment floor).
 
 ### Transmission / interchange
 
