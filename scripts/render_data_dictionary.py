@@ -74,6 +74,9 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "border-lmp",
     "zonal-shares",
     "weather",
+    "egrid",
+    "unit-outage-events",
+    "partial-outages",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -252,6 +255,31 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "(`data/clean/weather/<ISO>/`)."
         ),
     },
+    "egrid": {
+        "summary": "eGRID plant-level extract (location, BA, fuel/CO2 columns).",
+        "reconciles": (
+            "EPA eGRID workbook plant sheet (`PLNT<YY>`) `ORISPL/LAT/LON/"
+            "FIPSST/FIPSCNTY/BACODE/PLFUELCT/PLNGENAN/PLCO2AN` — the union of "
+            "what `zone_assignment.py` (geography) and `egrid.py` (fossil CO2 "
+            "rate) each need, unfiltered, one file per eGRID vintage year."
+        ),
+    },
+    "unit-outage-events": {
+        "summary": "Per-unit CAMPD outage events (one row per detected window).",
+        "reconciles": (
+            "`campd-unit-outages.csv` (ERCOT) / `campd-unit-outages-<ISO>.csv` "
+            "(CAISO/MISO/NEISO/NYISO/PJM) — event grain (not hourly-expanded), "
+            "`iso` stamped at curation."
+        ),
+    },
+    "partial-outages": {
+        "summary": "Per-plant CAMPD CF-ceiling partial-outage derate windows.",
+        "reconciles": (
+            "`campd-partial-outages.csv` (ERCOT) — a multiplicative "
+            "availability `derate_factor` per detected window, `iso` stamped "
+            "at curation."
+        ),
+    },
 }
 
 # Short scope note for the national (non-ISO-partitioned) datatypes' table.
@@ -268,6 +296,7 @@ NATIONAL_SCOPE: dict[str, str] = {
     "border-lmp": "neighbor-border hubs (WECC intertie, PJM_WEST)",
     "zonal-shares": "per-ISO via directory partitioning",
     "weather": "per-ISO via directory partitioning",
+    "egrid": "national (EPA eGRID, by vintage year)",
 }
 
 NA = "n/a"
