@@ -42,7 +42,7 @@ import argparse
 
 import pandas as pd
 
-from market_sim.config.constants import MISO_SEAM_DIBA
+from market_sim.config.interchange_config import MISO_SEAM_DIBA
 from market_sim.config.paths import RAW_DIR
 
 YEARS = (2023, 2024, 2025)

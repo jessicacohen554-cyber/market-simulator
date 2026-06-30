@@ -18,7 +18,7 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import NYISO_IMPORT_RECON_BAND_FRAC
+from market_sim.config.interchange_config import NYISO_IMPORT_RECON_BAND_FRAC
 from market_sim.data.fleet import (
     Generator,
     generators_to_fleet_arrays,

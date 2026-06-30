@@ -15,7 +15,7 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import IMPORT_ZONE
+from market_sim.config.interchange_config import IMPORT_ZONE
 from market_sim.data.fleet import generators_to_fleet_arrays
 from market_sim.model.transmission import (
     _CAISO_SOLAR_SHAPE_EXPORT_TRANCHES,
