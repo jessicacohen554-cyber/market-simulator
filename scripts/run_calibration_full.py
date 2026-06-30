@@ -86,11 +86,11 @@ from market_sim.data.eia_loader import (  # noqa: E402
 )
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
 from market_sim.model.transmission import extend_with_import_node  # noqa: E402
+from market_sim.data.coal import coal_supply_class  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _COAL_SUPPLY_TO_CURVE,
     OTHER_FOSSIL_CLASS,
     apply_other_fossil_scoring,
-    coal_supply_class,
 )
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
@@ -888,7 +888,8 @@ def _pumped_storage_plant_ids() -> frozenset[int]:
     storage resource (``load_eia860_pumped_storage``), so leaving its EIA-923
     net generation in the injection would double-count it.
     """
-    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+    from market_sim.config.paths import EIA_860_DIR
+    from market_sim.data.fleet import EIA_860_PARQUET_NAME
 
     path = EIA_860_DIR / EIA_860_PARQUET_NAME
     if not path.exists():
@@ -1298,10 +1299,10 @@ def _btm_frame(
     flat-CF / CO2 estimates, never ``btm_twh``.
     """
     from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.coal import coal_chp_overrides
     from market_sim.data.fleet import (
         CHP_BTM_PCT_BY_SECTOR,
         BIN_GROUP_TO_FUEL,
-        coal_chp_overrides,
         load_campd_bins,
     )
     from market_sim.results.emissions import compute_must_run_emissions

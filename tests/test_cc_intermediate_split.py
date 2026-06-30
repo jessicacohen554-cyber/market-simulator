@@ -14,7 +14,8 @@ CT/ST intermediate-split levers.
 import unittest
 
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.fleet import _offer_curve_for_group, cc_intermediate_plants
+from market_sim.data.fleet import cc_intermediate_plants
+from market_sim.data.offer_curves import _offer_curve_for_group
 
 _CURVES = {
     "CC_REGULAR": {

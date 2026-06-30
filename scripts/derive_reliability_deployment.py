@@ -64,7 +64,7 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.constants import HOURS_PER_YEAR, VOM  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
+from market_sim.data.coal import COAL_PLANT_SUPPLY  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
