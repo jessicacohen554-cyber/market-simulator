@@ -45,6 +45,10 @@ data/raw/_processed-legacy/*.parquet
 # and must never hand-commit these shared files, which is what keeps concurrent
 # sessions merging without conflicts.
 
+# Codebase-site backcast data subset — generated at deploy time by
+# scripts/build_codebase_site_backcast.py from frontend/data/backcast/.
+docs/codebase-site/data/backcast/
+
 # Class-totals cache for scripts/derive_offer_curve_jacobian.py (rebuilt on
 # demand from the calibration bundles; the CSV it derives IS committed)
 data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
