@@ -1,13 +1,19 @@
-iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline
-CAISO,NP15,CT_PEAKER,netload,0.0,0.0,False,0.3334,0.0,0.4816,394,0.053
-CAISO,NP15,CC_REGULAR,tmax,25.0,0.0,False,0.7899,0.0,0.5998,407,0.4225
-CAISO,SP15,ST_GAS,tmax,25.0,0.0,False,0.5694,0.0,0.2327,135,0.2113
-CAISO,SP15,CT_PEAKER,netload,0.0,0.0,False,0.4401,0.0,0.2322,134,0.0286
-CAISO,SP15,CC_REGULAR,tmax,25.0,0.0,False,0.5982,0.0,0.2047,136,0.2262
-CAISO,NP15,CC_CHP,tmax,25.0,0.1813,False,0.4422,0.41,0.4003,384,0.3008
-CAISO,ZP26,CT_PEAKER,netload,0.0,0.0,False,0.3022,0.0,0.2738,195,0.0169
-CAISO,NP15,CT_CHP,netload,0.0,0.094,False,0.2123,0.4429,0.3589,394,0.1122
-CAISO,SP15,CC_CHP,tmax,25.0,0.028,True,0.0637,0.44,0.3889,39,0.0177
-CAISO,ZP26,CT_CHP,netload,0.0,0.0299,False,0.0675,0.4431,0.3314,317,0.0156
-CAISO,ZP26,CC_REGULAR,tmax,25.0,0.0,False,0.8293,0.0,0.3948,562,0.3097
-CAISO,ZP26,CC_CHP,tmax,25.0,0.35,False,1.0,0.35,0.2563,524,0.7416
+iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis
+CAISO,NP15,CT_PEAKER,netload,0.0,0.2128,False,0.5601,0.38,0.2437,55,0.055,0.2431,net-load ramp (duck-curve); per-zone net load not yet plumbed (Phase-2 placeholder)
+CAISO,NP15,CC_REGULAR,tmax,32.66,0.499,False,0.9596,0.52,0.1276,55,0.4276,0.7274,hot: zone p95 tmax (design cooling day)
+CAISO,NP15,CC_REGULAR,tmin,1.75,0.4382,False,0.8426,0.52,-0.2069,11,0.4392,0.738,cold: zone p1 tmin (design heating day)
+CAISO,SP15,ST_GAS,tmax,26.7,0.0711,False,0.5924,0.12,0.2121,56,0.2196,0.4681,hot: zone p95 tmax (design cooling day)
+CAISO,SP15,ST_GAS,tmin,5.66,0.0627,False,0.5227,0.12,-0.0122,10,0.2268,0.4746,cold: zone p1 tmin (design heating day)
+CAISO,SP15,CT_PEAKER,netload,0.0,0.1823,False,0.4797,0.38,0.2595,56,0.031,0.2873,net-load ramp (duck-curve); per-zone net load not yet plumbed (Phase-2 placeholder)
+CAISO,SP15,CC_REGULAR,tmax,26.7,0.3171,True,0.6098,0.52,0.3211,56,0.2373,0.4751,hot: zone p95 tmax (design cooling day)
+CAISO,SP15,CC_REGULAR,tmin,5.66,0.3292,False,0.6331,0.52,0.0061,10,0.2447,0.4806,cold: zone p1 tmin (design heating day)
+CAISO,NP15,CC_CHP,tmax,32.66,0.2683,False,0.5159,0.52,0.0033,55,0.2994,0.4188,hot: zone p95 tmax (design cooling day)
+CAISO,NP15,CC_CHP,tmin,1.75,0.2369,False,0.4556,0.52,-0.3357,11,0.3033,0.4238,cold: zone p1 tmin (design heating day)
+CAISO,ZP26,CT_PEAKER,netload,0.0,0.1442,False,0.3794,0.38,0.0699,42,0.0217,0.2651,net-load ramp (duck-curve); per-zone net load not yet plumbed (Phase-2 placeholder)
+CAISO,NP15,CT_CHP,netload,0.0,0.1039,False,0.2735,0.38,0.3618,55,0.1114,0.1876,net-load ramp (duck-curve); per-zone net load not yet plumbed (Phase-2 placeholder)
+CAISO,SP15,CC_CHP,tmax,26.7,0.0331,False,0.0637,0.52,0.4531,22,0.0183,0.0637,hot: zone p95 tmax (design cooling day)
+CAISO,ZP26,CT_CHP,netload,0.0,0.0373,False,0.0982,0.38,0.263,58,0.017,0.0571,net-load ramp (duck-curve); per-zone net load not yet plumbed (Phase-2 placeholder)
+CAISO,ZP26,CC_REGULAR,tmax,40.6,0.52,False,1.0,0.52,0.2568,59,0.3228,0.7967,hot: zone p95 tmax (design cooling day)
+CAISO,ZP26,CC_REGULAR,tmin,1.1,0.52,False,1.0,0.52,-0.3354,5,0.3399,0.8068,cold: zone p1 tmin (design heating day)
+CAISO,ZP26,CC_CHP,tmax,40.6,0.52,False,1.0,0.52,0.038,46,0.7509,1.0,hot: zone p95 tmax (design cooling day)
+CAISO,ZP26,CC_CHP,tmin,1.1,0.52,False,1.0,0.52,-0.2236,5,0.7545,1.0,cold: zone p1 tmin (design heating day)
