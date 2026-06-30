@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-30T05:16:15",
+  "timestamp": "2026-06-30T14:22:18",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -79,7 +79,7 @@
   "ercot_dam_as_scarcity_threshold": 150.0,
   "ordc_lolp_params_path": null,
   "as_reserve_formula": false,
-  "storage_as_commitment": false,
+  "storage_as_commitment": true,
   "ercot_storage_as_endogenous": false,
   "gas_offer_curve": false,
   "gas_monthly_actuals": false,
@@ -139,7 +139,9 @@
       "econ_high": -0.037
     }
   },
-  "curve_smoothing": {},
+  "curve_smoothing": {
+    "offer_curve_smoothing_mid": 0.35
+  },
   "cc_derate_from_top": false,
   "priced_interchange": false,
   "hydro_backfill_year": null,
@@ -189,6 +191,6 @@
     "eia923": "../_shared/ERCOT/eia923-1baf3fae644b.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "a1438a8",
-  "highspy_version": "1.14.0"
+  "git_sha": "77a1277",
+  "highspy_version": "1.15.0"
 }
