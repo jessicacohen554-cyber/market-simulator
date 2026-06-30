@@ -1836,409 +1836,40 @@ def _hourly_shares_from_groups(
     return grid / col_tot[None, :]
 
 
-def pjm_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly PJM load shares, or ``None``.
+def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Load zonal load share fractions from clean Parquet.
 
-    Reads PJM's hourly metered-load file for ``year``, aggregates the 20 real
-    transmission zones into the eight model zones (:data:`_PJM_LOAD_ZONE_GROUPS`)
-    and, for each hour, returns each model zone's fraction of system load. The
-    caller multiplies these time-varying shares by the system demand total, so
-    each zone gets its own measured shape (zones peak at different times) while
-    the system level stays tied to the existing demand series.
+    Reads the curated ``zonal-shares`` dataset produced by
+    ``scripts/curate_zonal_shares.py`` and returns a
+    ``(n_zones, HOURS_PER_YEAR)`` array of hourly fractional load shares, where
+    each column sums to 1.0 across zones. Returns ``None`` when the clean
+    Parquet has not been curated yet (the caller falls back to the static
+    per-zone ``load_share``).
 
-    Returns ``None`` when the file is absent so the caller falls back to the
-    static per-zone ``load_share``. The series is placed on the model's fixed
-    non-leap 8760-hour clock (Feb 29 dropped); the lone DST spring-forward gap
-    is back-filled from the previous hour.
+    Args:
+        iso: ISO code (e.g. ``"ERCOT"``).
+        year: Calendar year.
+        zone_names: Model zone names in the order the caller expects (must
+            match the zones written by the curation script).
+
+    Returns:
+        ``(n_zones, HOURS_PER_YEAR)`` float64 array, or ``None`` if the clean
+        Parquet for this ISO-year is absent.
     """
-    path = _ZONAL_LOAD_DIR / f"PJM{year}_hrl_load_metered.csv"
-    if not path.exists():
-        logger.warning(
-            "PJM zonal metered-load file not found (%s); using static load_share split",
-            path,
-        )
+    seam = _read_clean_seam()
+    if seam is None:
         return None
-    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "zone", "mw"])
-    df = df[df["zone"] != "RTO"].copy()
-    df["mzone"] = df["zone"].map(_PJM_LOAD_ZONE_GROUPS)
-    if df["mzone"].isna().any():
-        missing = sorted(df.loc[df["mzone"].isna(), "zone"].unique())
-        logger.warning("PJM load zones not mapped to a model zone: %s", missing)
-        df = df.dropna(subset=["mzone"])
-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
-    file_year = int(ts.dt.year.mode().iat[0])
-    if file_year != year:
-        logger.warning(
-            "PJM%d_hrl_load_metered.csv actually contains %d data; using its "
-            "zonal *shape* (stable year-to-year) against %d system demand",
-            year,
-            file_year,
-            year,
-        )
-    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
-    return _hourly_shares_from_groups(
-        df["mzone"], _hours_of_year(ts), df["mw"], zone_names
-    )
-
-
-def ercot_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly ERCOT load shares, or ``None``.
-
-    Reads ERCOT's hourly *Actual System Load by Weather Zone* (NP3-565-CD;
-    ``ERCOT_Native_Load_<year>.xlsx``) and aggregates the eight weather zones
-    onto the six model transmission zones (:data:`_ERCOT_LOAD_ZONE_GROUPS`),
-    returning each model zone's hour-by-hour fraction of system load. The caller
-    multiplies these time-varying shares by the EIA-930 system demand total, so
-    each zone gets its own measured shape — the hot, wind-rich West and the
-    coastal Houston load peak at different hours than North Central — while the
-    system level stays tied to the existing EIA-930 demand series.
-
-    This replaces the single ERCOT-wide demand curve (one shape scaled by a
-    fixed per-zone ``load_share``) that previously fed every zone's demand.
-
-    Returns ``None`` when the file is absent so the caller falls back to the
-    static per-zone ``load_share``. The native-load file stamps each hour as
-    "Hour Ending HH:00" (01..24 within the day, no DST gaps); the series is
-    placed on the model's fixed non-leap 8760-hour clock (Feb 29 dropped).
-    """
-    path = _ZONAL_LOAD_DIR / f"ERCOT_Native_Load_{year}.xlsx"
-    if not path.exists():
-        logger.warning(
-            "ERCOT native-load file not found (%s); using static load_share split",
-            path,
-        )
+    read_clean, clean_exists = seam
+    if not clean_exists("zonal-shares", iso=iso, year=year):
         return None
-    df = pd.read_excel(path)
-    # "Hour Ending" is "MM/DD/YYYY HH:00" with HH in 01..24; hour-ending HH is
-    # hour-of-day HH-1 (01:00 -> 0, 24:00 -> 23, same calendar date).
-    he = df["Hour Ending"].astype(str).str.split(" ", n=1, expand=True)
-    date = pd.to_datetime(he[0], format="%m/%d/%Y")
-    hour_of_day = he[1].str.slice(0, 2).astype(int) - 1
-    month = date.dt.month.to_numpy()
-    day = date.dt.day.to_numpy()
-    keep = ~((month == 2) & (day == 29))
-    df = df[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[month[keep] - 1]
-        + (day[keep] - 1) * 24
-        + hour_of_day.to_numpy()[keep]
-    )
-    # Melt the weather-zone columns into long form, mapping each to its model
-    # zone; the ERCOT system-total column and any spare columns are dropped.
-    wz_cols = [c for c in _ERCOT_LOAD_ZONE_GROUPS if c in df.columns]
-    missing_cols = sorted(set(_ERCOT_LOAD_ZONE_GROUPS) - set(df.columns))
-    if missing_cols:
-        logger.warning(
-            "ERCOT native-load weather zones absent from %s: %s",
-            path.name,
-            missing_cols,
-        )
-    mzone = pd.concat(
-        [pd.Series([_ERCOT_LOAD_ZONE_GROUPS[c]] * len(df)) for c in wz_cols],
-        ignore_index=True,
-    )
-    hoy_long = np.tile(hoy, len(wz_cols))
-    mw = pd.concat([df[c].reset_index(drop=True) for c in wz_cols], ignore_index=True)
-    return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
-
-
-def caiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly CAISO load shares, or ``None``.
-
-    Reads CAISO's TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
-    with ``market_run_id=ACTUAL``; ``CAISO_tac_load_hourly_<year>.csv``) and
-    maps the TAC areas onto the three trading-hub zones via
-    :data:`_CAISO_TAC_ZONE_WEIGHTS` — PGE-TAC split 0.86/0.14 between NP15
-    and ZP26, SCE + SDG&E + VEA to SP15 — returning each model zone's
-    hour-by-hour fraction of system load. The caller multiplies these
-    time-varying shares by the EIA-930 system demand total, so the system
-    level stays tied to the CISO demand series while zones get measured
-    shapes. The ``WECC_import`` node is absent from the weights and keeps an
-    all-zero row.
-
-    U4 arrives in monthly OASIS pulls, so the file may cover only part of the
-    year. Hours inside the measured window get their measured shares; hours
-    outside it (and any DST spring-forward gap) carry the sample-average zone
-    shares, so the matrix always partitions every hour. Fewer than
-    :data:`_CAISO_TAC_MIN_HOURS` measured hours — or a missing file — returns
-    ``None`` and the caller falls back to the static per-zone ``load_share``
-    (itself derived from this data via ``scripts/derive_load_shares.py``).
-    Refresh path: complete the U4 monthly pulls for 2023–2025.
-
-    Timestamps are UTC interval starts; they are converted to Pacific local
-    time and placed on the model's fixed non-leap 8760-hour clock (Feb 29
-    dropped). Overlapping OASIS pulls duplicate rows verbatim; duplicates are
-    dropped on ``(tac_area, interval_start_gmt)``.
-    """
-    path = _ZONAL_LOAD_DIR / "CAISO" / f"CAISO_tac_load_hourly_{year}.csv"
-    if not path.exists():
-        logger.warning(
-            "CAISO TAC-area load file not found (%s); using static load_share split",
-            path,
-        )
+    try:
+        df = read_clean("zonal-shares", iso=iso, year=year, validate=False)
+    except Exception as exc:
+        logger.warning("zonal-shares read failed for %s %d: %s", iso, year, exc)
         return None
-    df = pd.read_csv(path, parse_dates=["interval_start_gmt"])
-    df = df[df["tac_area"].isin(_CAISO_TAC_ZONE_WEIGHTS)]
-    df = df.drop_duplicates(subset=["tac_area", "interval_start_gmt"])
-    ts = (
-        pd.DatetimeIndex(df["interval_start_gmt"])
-        .tz_convert("America/Los_Angeles")
-        .tz_localize(None)
-    )
-    keep = (ts.year == year) & ~((ts.month == 2) & (ts.day == 29))
-    df, ts = df[keep], ts[keep]
-    if df.empty:
-        logger.warning(
-            "CAISO TAC-area load file %s has no %d rows; using static load_share split",
-            path.name,
-            year,
-        )
-        return None
-    hoy = np.array(_MONTH_START_HOUR)[ts.month - 1] + (ts.day - 1) * 24 + ts.hour
-    zone_idx = {z: i for i, z in enumerate(zone_names)}
-    grid = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
-    mw = df["mw"].to_numpy(dtype=float)
-    tac = df["tac_area"].to_numpy()
-    for tac_name, weights in _CAISO_TAC_ZONE_WEIGHTS.items():
-        sel = (tac == tac_name) & ~np.isnan(mw)
-        if not sel.any():
-            continue
-        for zone, weight in weights.items():
-            np.add.at(grid[zone_idx[zone]], hoy[sel], weight * mw[sel])
-    col_tot = grid.sum(axis=0)
-    covered = col_tot > 0.0
-    n_covered = int(covered.sum())
-    if n_covered < _CAISO_TAC_MIN_HOURS:
-        logger.warning(
-            "CAISO TAC-area load for %d covers only %d hours "
-            "(< %d required); using static load_share split",
-            year,
-            n_covered,
-            _CAISO_TAC_MIN_HOURS,
-        )
-        return None
-    shares = np.empty_like(grid)
-    shares[:, covered] = grid[:, covered] / col_tot[covered]
-    if n_covered < HOURS_PER_YEAR:
-        mean_share = grid[:, covered].sum(axis=1) / col_tot[covered].sum()
-        shares[:, ~covered] = mean_share[:, None]
-        logger.warning(
-            "CAISO TAC-area load for %d covers %d/%d hours; uncovered hours "
-            "use the sample-average zone shares (refresh: complete the U4 "
-            "monthly OASIS pulls)",
-            year,
-            n_covered,
-            HOURS_PER_YEAR,
-        )
-    return shares
-
-
-def nyiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NYISO load shares, or ``None``.
-
-    Reads NYISO actual zonal hourly load (upload U3: NYISO OASIS ``pal``
-    actual-load CSV, ``NYISO_load_actuals_<year>.csv``) and maps the eleven
-    settlement zones (A–K) onto the five model zones via
-    :data:`_NYISO_LOAD_ZONE_GROUPS`, returning each model zone's hour-by-hour
-    fraction of system load. The caller multiplies these time-varying shares by
-    the EIA-930 NYIS system demand total, so each zone gets its own measured
-    shape — the heavily loaded downstate NYC (J) and Long Island (K) pockets
-    peak at different hours than cheap upstate generation — while the system
-    level stays tied to the existing demand series.
-
-    **Expected CSV format (upload U3):** ``NYISO_load_actuals_<year>.csv``
-    under ``data/raw/zone-specific-demand/NYISO/``, with columns
-    ``Time Stamp`` (Eastern local, hour-beginning), ``Name`` (NYISO zone name
-    CAPITL/CENTRL/… or letter A–K), and ``Load`` (MW). Files are sourced from
-    the NYISO OASIS "pal" actual-load endpoint (hourly integrated, all eleven
-    zones, 2023–2025).
-
-    Returns ``None`` when the file is absent so the caller falls back to the
-    static Gold-Book load shares in :func:`_nyiso_config` (Tier 3 —
-    calibration). Refresh path: upload NYISO OASIS pal actual-load CSVs for
-    2023–2025 as ``NYISO_load_actuals_<year>.csv`` (see upload manifest U3).
-
-    Timestamps are Eastern local time (America/New_York); they are placed on
-    the model's fixed non-leap 8760-hour clock (Feb 29 dropped). Any
-    spring-forward DST gap is back-filled from the previous hour.
-    """
-    path = _NYISO_ZONAL_LOAD_DIR / f"NYISO_load_actuals_{year}.csv"
-    if not path.exists():
-        logger.warning(
-            "NYISO zonal load file not found (%s); using static load_share "
-            "split (Tier 3 — upload U3 to refresh)",
-            path,
-        )
-        return None
-    df = pd.read_csv(path)
-    # Flexible column detection: NYISO OASIS downloads use "Time Stamp" for
-    # the timestamp and "Name" for the zone; tolerate minor naming variants.
-    ts_col = next(
-        (
-            c
-            for c in df.columns
-            if c.lower().replace(" ", "_")
-            in ("time_stamp", "timestamp", "datetime", "date_time")
-        ),
-        None,
-    )
-    zone_col = next(
-        (c for c in df.columns if c.lower() in ("name", "zone", "zone_name")),
-        None,
-    )
-    load_col = next(
-        (c for c in df.columns if c.lower() in ("load", "mw", "load_mw")),
-        None,
-    )
-    if ts_col is None or zone_col is None or load_col is None:
-        logger.warning(
-            "NYISO zonal load file %s is missing expected columns "
-            "(need timestamp, zone-name, and MW load); using static shares",
-            path.name,
-        )
-        return None
-    ts = pd.to_datetime(df[ts_col], errors="coerce")
-    # NYISO OASIS timestamps are Eastern local (tz-naive). If the file carries
-    # tz-aware UTC timestamps (uncommon), convert to Eastern first.
-    if ts.dt.tz is not None:
-        ts = ts.dt.tz_convert("America/New_York")
-    else:
-        ts = ts.dt.tz_localize("America/New_York", ambiguous="NaT", nonexistent="NaT")
-    ts_local = ts.dt.tz_localize(None)
-    keep = (
-        (ts_local.dt.year == year)
-        & ts_local.notna()
-        & ~((ts_local.dt.month == 2) & (ts_local.dt.day == 29))
-    )
-    df = df[keep].copy()
-    ts_local = ts_local[keep]
-    if df.empty:
-        logger.warning(
-            "NYISO zonal load file %s has no %d data after filtering; "
-            "using static shares",
-            path.name,
-            year,
-        )
-        return None
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts_local.dt.month.to_numpy() - 1]
-        + (ts_local.dt.day.to_numpy() - 1) * 24
-        + ts_local.dt.hour.to_numpy()
-    )
-    df["_mzone"] = df[zone_col].astype(str).str.strip().map(_NYISO_LOAD_ZONE_GROUPS)
-    unmapped = df["_mzone"].isna()
-    if unmapped.any():
-        missing = sorted(df.loc[unmapped, zone_col].unique())
-        logger.warning("NYISO load zones not mapped to a model zone: %s", missing)
-        df = df[~unmapped]
-        hoy = hoy[~unmapped.to_numpy()]
-    mw = pd.to_numeric(df[load_col], errors="coerce").to_numpy(dtype=float)
-    return _hourly_shares_from_groups(df["_mzone"], hoy, pd.Series(mw), zone_names)
-
-
-def neiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NEISO load shares, or ``None``.
-
-    Reads the ISO-NE hourly load-zone net energy for load (upload U3:
-    ``data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_{year}.csv``)
-    and maps the eight ISO-NE load zones onto the four model zones via
-    :data:`_NEISO_LOAD_ZONE_GROUPS`:
-
-    - **North**: ME + NH + VT
-    - **Central**: WCMASS + SEMASS + RI
-    - **Boston**: NEMA (the NEMA/Boston load pocket)
-    - **Connecticut**: CT
-
-    ``HQ_import`` is a priced-import node and keeps an all-zero row. The
-    caller multiplies these time-varying shares by the EIA-930 ISNE system
-    demand total, giving each zone its own measured hourly shape rather than
-    a single system curve scaled by a static share.
-
-    **Net-load convention (playbook §8.1):** ISO-NE demand is metered at
-    the transmission level and is already net of behind-the-meter PV
-    (material in MA/CT). Backcasts model only front-of-meter resources.
-
-    Expected CSV format (ISO-NE SMD wide): ``Date`` (MM/DD/YYYY),
-    ``Hour Ending`` (1–24), then zone columns (CT, ME, NH, RI, VT, NEMA,
-    SEMASS, WCMASS). The ``.H.NEMA`` / ``.H.SEMASS`` / ``.H.WCMASS``
-    hub-prefixed variants are also accepted. The DST fall-back 25th hour
-    and Feb 29 of a leap year are dropped; the spring-forward gap is
-    back-filled from the previous hour.
-
-    Returns ``None`` when the file is absent so the caller falls back to
-    the static per-zone ``load_share`` (the current RSP-seeded
-    0.20/0.30/0.21/0.29 split). **Refresh path (U3):** upload the ISO-NE
-    hourly load-zone NEL file for 2023–2025 to
-    ``data/raw/zone-specific-demand/NEISO/`` and run
-    ``scripts/derive_load_shares.py neiso`` to re-derive the annual shares
-    and replace the static Tier-3 values.
-    """
-    path = _ZONAL_LOAD_DIR / "NEISO" / f"NEISO_load_hourly_{year}.csv"
-    if not path.exists():
-        logger.warning(
-            "NEISO zonal load file not found (%s); using static "
-            "load_share split. Refresh path: upload U3 (ISO-NE hourly_load "
-            "SMD CSV for %d) to data/raw/zone-specific-demand/NEISO/",
-            path,
-            year,
-        )
-        return None
-    df = pd.read_csv(path)
-    df.columns = [str(c).strip() for c in df.columns]
-    date_col = next((c for c in df.columns if c.upper().startswith("DATE")), None)
-    he_col = next(
-        (c for c in df.columns if "HOUR" in c.upper() and "END" in c.upper()), None
-    )
-    if date_col is None or he_col is None:
-        logger.warning(
-            "NEISO zonal load file %s missing Date / Hour Ending columns; "
-            "using static load_share split",
-            path.name,
-        )
-        return None
-    date = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
-    hour_ending = pd.to_numeric(df[he_col], errors="coerce")
-    # HE 1 = midnight–1am → hour_of_day 0; HE 24 = 11pm–midnight → 23.
-    # Skip HE 25 (DST fall-back extra hour).
-    valid_he = hour_ending.notna() & (hour_ending >= 1) & (hour_ending <= 24)
-    df = df[valid_he].copy()
-    date = date[valid_he].reset_index(drop=True)
-    hour_of_day = (hour_ending[valid_he].astype(int) - 1).to_numpy()
-    month = date.dt.month.to_numpy()
-    day = date.dt.day.to_numpy()
-    keep = ~((month == 2) & (day == 29))
-    df = df[keep]
-    month, day, hour_of_day = month[keep], day[keep], hour_of_day[keep]
-    hoy = np.array(_MONTH_START_HOUR)[month - 1] + (day - 1) * 24 + hour_of_day
-    zone_cols = [c for c in _NEISO_LOAD_ZONE_GROUPS if c in df.columns]
-    missing_cols = sorted(set(_NEISO_LOAD_ZONE_GROUPS) - set(df.columns))
-    if missing_cols:
-        logger.warning(
-            "NEISO load zones absent from %s: %s",
-            path.name,
-            missing_cols,
-        )
-    if not zone_cols:
-        logger.warning(
-            "NEISO zonal load file %s has no recognised zone columns; "
-            "using static load_share split",
-            path.name,
-        )
-        return None
-    mzone = pd.concat(
-        [pd.Series([_NEISO_LOAD_ZONE_GROUPS[c]] * len(df)) for c in zone_cols],
-        ignore_index=True,
-    )
-    hoy_long = np.tile(hoy, len(zone_cols))
-    mw = pd.concat(
-        [
-            pd.to_numeric(df[c], errors="coerce").reset_index(drop=True)
-            for c in zone_cols
-        ],
-        ignore_index=True,
-    )
-    return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
+    pivot = df.pivot(index="hour", columns="zone", values="share")
+    pivot = pivot.reindex(columns=zone_names, fill_value=0.0)
+    return pivot.to_numpy(dtype=float).T
 
 
 # EIA-930 MISO sub-BA -> model zone. The six sub-BAs are LRZ groupings, and the
@@ -2284,93 +1915,6 @@ def _miso_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None
     hoy_of_utc = pd.Series(np.arange(len(frame), dtype=float), index=utc_index)
     hoy_of_utc = hoy_of_utc[~hoy_of_utc.index.duplicated(keep="first")]
     return period_utc.map(hoy_of_utc)
-
-
-def miso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly MISO load shares, or ``None``.
-
-    Reads EIA-930 MISO sub-BA hourly demand (one combined multi-year file,
-    ``data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv``),
-    filters to ``year``, aggregates the six sub-BAs onto the three model zones
-    via :data:`_MISO_SUBBA_ZONE_GROUPS`, and returns each zone's hour-by-hour
-    fraction of system load. The caller multiplies these time-varying shares by
-    the EIA-930 MISO system demand total, so each zone gets its own measured
-    shape — the wind-rich North, the lower-Midwest Central load centers and the
-    Entergy South peak at different hours — while the system level stays tied to
-    the existing demand series.
-
-    The sub-BAs are LRZ groupings and the model bubbles are whole-sub-BA unions,
-    so the load partition and the transmission partition coincide (pipe-and-
-    bubble). Returns ``None`` when the file (or the MISO hourly frame used to
-    place it on the local clock) is absent so the caller falls back to the
-    static per-zone ``load_share``. The CSV ``period`` is UTC and is converted
-    to the model's fixed non-leap 8760-hour *local* clock (Feb 29 dropped) via
-    the same hourly frame the renewables and system demand use, so the zonal
-    shapes index the same wall-clock hour as renewable CF; any all-zero hour (a
-    DST spring-forward gap) is back-filled from the previous hour.
-    """
-    path = _ZONAL_LOAD_DIR / "MISO" / "miso_subba_demand_2023-2025.csv"
-    if not path.exists():
-        logger.warning(
-            "MISO sub-BA load file not found (%s); using static load_share split",
-            path,
-        )
-        return None
-    df = pd.read_csv(path, usecols=["period", "subba", "value"], dtype={"subba": str})
-    df = df[df["subba"].isin(_MISO_SUBBA_ZONE_GROUPS)].copy()
-    # The CSV ``period`` is UTC; convert to the model's local hour-of-year on the
-    # same clock the MISO renewables and system demand use (frame row k = local
-    # hour k). Doing the year window / Feb-29 drop on the local clock — rather
-    # than on the raw UTC ``period`` as before — is what keeps the zonal shares
-    # aligned to renewable CF (the old code indexed shares by UTC hour, ~5-6h
-    # ahead of the local renewable/demand clock). Feb 29 is already excluded by
-    # the frame, so out-of-window periods simply map to NaN below.
-    period_utc = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
-    hoy_local = _miso_utc_to_local_hoy(period_utc, year)
-    if hoy_local is None:
-        logger.warning(
-            "MISO hourly frame unavailable for %d; using static load_share split",
-            year,
-        )
-        return None
-    # De-duplicate the paginated year-boundary hour (audit Item 2): keep one row
-    # per (period, subba) before aggregating so no hour is double-counted; drop
-    # periods that fall outside this local year's window (NaN local hour).
-    keep = ~df.duplicated(subset=["period", "subba"], keep="first")
-    keep &= hoy_local.notna().to_numpy()
-    df, hoy_local = df[keep], hoy_local[keep]
-    if df.empty:
-        logger.warning(
-            "MISO sub-BA load file has no rows for %d; using static load_share split",
-            year,
-        )
-        return None
-    df = df.assign(
-        hoy=hoy_local.to_numpy(dtype=int),
-        mw=pd.to_numeric(df["value"], errors="coerce"),
-    )
-    # Repair EIA-930 reporting gaps where some sub-BAs drop out for a stretch of
-    # hours but others keep reporting (e.g. the 2024-08-26 06:00–08-27 05:00
-    # window where 0027/8910 go missing). Pivot to (hour x sub-BA) and forward/
-    # back-fill each sub-BA so a zone never loses its load for an hour its peers
-    # report; without this the normalization would hand that zone a spuriously
-    # near-zero share. Hours with *every* sub-BA absent stay out and are
-    # back-filled by the shared all-zero-total step in _hourly_shares_from_groups.
-    wide = (
-        df.pivot_table(index="hoy", columns="subba", values="mw", aggfunc="first")
-        .sort_index()
-        .ffill()
-        .bfill()
-    )
-    long = (
-        wide.reset_index()
-        .melt(id_vars="hoy", var_name="subba", value_name="mw")
-        .dropna(subset=["mw"])
-    )
-    mzone = long["subba"].map(_MISO_SUBBA_ZONE_GROUPS)
-    return _hourly_shares_from_groups(
-        mzone, long["hoy"].to_numpy(), long["mw"], zone_names
-    )
 
 
 def pjm_net_interchange(year: int) -> np.ndarray | None:
@@ -2850,23 +2394,9 @@ def load_demand(
     # CAISO TAC-area / NYISO pal / ISO-NE SMD / MISO sub-BA demand files) when
     # available, so zones peak at different times; every other ISO (and these
     # six without their file) uses the static per-zone share broadcast across
-    # hours. Both
-    # are (n_zones, T) weight matrices summing to 1.0 down each hour, so the
-    # rest of the math is identical.
-    if iso == "PJM":
-        zonal_shares = pjm_zonal_load_shares(year, iso_config.zone_names)
-    elif iso == "ERCOT":
-        zonal_shares = ercot_zonal_load_shares(year, iso_config.zone_names)
-    elif iso == "CAISO":
-        zonal_shares = caiso_zonal_load_shares(year, iso_config.zone_names)
-    elif iso == "NYISO":
-        zonal_shares = nyiso_zonal_load_shares(year, iso_config.zone_names)
-    elif iso == "NEISO":
-        zonal_shares = neiso_zonal_load_shares(year, iso_config.zone_names)
-    elif iso == "MISO":
-        zonal_shares = miso_zonal_load_shares(year, iso_config.zone_names)
-    else:
-        zonal_shares = None
+    # hours. Both are (n_zones, T) weight matrices summing to 1.0 down each
+    # hour, so the rest of the math is identical.
+    zonal_shares = load_zonal_shares(iso, year, iso_config.zone_names)
     if zonal_shares is not None:
         weights = zonal_shares
     else:

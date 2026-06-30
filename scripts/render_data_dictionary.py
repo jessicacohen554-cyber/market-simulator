@@ -66,6 +66,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "fleet",
     "fuel-prices",
     "reference",
+    "border-lmp",
+    "zonal-shares",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -171,6 +173,29 @@ NARRATIVE: dict[str, dict[str, str]] = {
         ),
         "keys": "`key` (+ `plant_id`/`iso`/`zone`/`node` when applicable)",
     },
+    "border-lmp": {
+        "summary": "Measured neighbor-border hourly Day-Ahead LMP.",
+        "reconciles": (
+            "CAISO OASIS WECC intertie LMP (MALIN, PALOVRDE), PJM hub LMP "
+            "(CHICAGO GEN / AEP GEN / ATSI GEN equal-weight mean for MISO "
+            "PJM_WEST) — on the model's fixed non-leap 8760-hour local-year "
+            "calendar, dense `price` (NaN for gaps)."
+        ),
+    },
+    "zonal-shares": {
+        "summary": "Hourly zonal load share fractions (per ISO, per year).",
+        "reconciles": (
+            "PJM metered-load CSV (20 real zones → 8 model zones), ERCOT "
+            "native-load XLSX (8 weather zones → 6 model zones), CAISO "
+            "TAC-area CSV (4 areas → 3 trading-hub zones), MISO EIA-930 "
+            "sub-BA CSV (6 sub-BAs → 3 model zones), NYISO pal CSV "
+            "(11 settlement zones → 5 model zones), NEISO SMD wide CSV "
+            "(8 load zones → 4 model zones) — into `share` fractions "
+            "summing to ≈1.0 per hour, long format `(hour, zone, share)`. "
+            "Files are ISO-partitioned by directory path "
+            "(`data/clean/zonal-shares/<ISO>/`)."
+        ),
+    },
 }
 
 # Short scope note for the national (non-ISO-partitioned) datatypes' table.
@@ -180,6 +205,8 @@ NATIONAL_SCOPE: dict[str, str] = {
     "fleet": "EIA-860 / eGRID / master registry",
     "fuel-prices": "national hubs (Henry Hub)",
     "reference": "crosswalks / lookups (ISO-agnostic)",
+    "border-lmp": "neighbor-border hubs (WECC intertie, PJM_WEST)",
+    "zonal-shares": "per-ISO via directory partitioning",
 }
 
 NA = "n/a"
