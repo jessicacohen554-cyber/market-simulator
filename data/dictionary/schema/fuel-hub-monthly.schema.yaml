@@ -1,0 +1,49 @@
+# Canonical schema: monthly hub fuel-price averages
+#
+# Monthly average delivered fuel prices by hub and fuel type, in $/MMBtu.
+# Henry Hub monthly (EIA RNGWHHDm, reported as year+month integers) is the
+# first and only series today; the fuel/hub keys distinguish benchmarks when
+# additional monthly hub series are added.  The interval granularity is
+# monthly (keyed by year + month integers), deliberately distinct from the
+# daily fuel-prices datatype so that first-of-month rows never collide with
+# the daily series under the same (fuel, hub, interval_start_utc) key.
+#
+# Curated by scripts/curate_fuel_prices.py from
+#   data/raw/gas-prices/henry_hub_monthly.csv
+datatype: fuel-hub-monthly
+schema_version: 1
+title: Monthly hub fuel-price averages
+description: >-
+  Monthly average delivered fuel prices by hub and fuel type ($/MMBtu).
+  Henry Hub monthly (EIA RNGWHHDm) is the reference series; the fuel/hub
+  keys distinguish benchmarks as additional monthly hubs are added.
+
+key_columns: [fuel, hub, year, month]
+allow_additional_columns: false
+
+columns:
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: Fuel type (gas, coal, oil).
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pricing hub / region (e.g. henry_hub).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: month
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar month (1–12).
+  - name: price_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Monthly average delivered fuel price in $/MMBtu.
