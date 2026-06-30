@@ -276,6 +276,27 @@ def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | N
     return round(float(sy["discharge_mw"].to_numpy(float).sum()) / 1e6, 4)
 
 
+def _model_storage_monthly(
+    storage_all: pd.DataFrame | None, year: int
+) -> list[float] | None:
+    """Return 12 monthly net-discharge GWh from the model's storage.parquet P1."""
+    if storage_all is None:
+        return None
+    sy = storage_all[storage_all["year"] == year]
+    if "pass" in sy.columns and (sy["pass"] == "P1").any():
+        sy = sy[sy["pass"] == "P1"]
+    if sy.empty:
+        return None
+    net = np.zeros(_T, dtype=float)
+    for _, row in sy.iterrows():
+        h = int(row["hour"])
+        if 0 <= h < _T:
+            net[h] += float(row.get("discharge_mw", 0.0)) - float(
+                row.get("charge_mw", 0.0)
+            )
+    return [round(float(net[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
+
+
 # EIA-930 net-generation-by-energy-source series that are storage discharge when
 # positive (charging is the negative half). ``battery_discharge`` is the ERCOT
 # loader's already-split positive series; ``battery`` / ``pumped_storage`` are the
@@ -299,6 +320,21 @@ def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
         return None
     disch = np.clip(present["mw"].to_numpy(float), 0.0, None).sum() / 1e6
     return round(float(disch), 4) if disch > 1e-6 else None
+
+
+def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
+    """Return 12 monthly net-discharge GWh from EIA-930 storage series, or None."""
+    present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
+    if present.empty:
+        return None
+    net = np.zeros(_T, dtype=float)
+    for _, row in present.iterrows():
+        h = int(row["hour"])
+        if 0 <= h < _T:
+            net[h] += float(row["mw"])
+    if abs(net.sum()) < 1.0:
+        return None
+    return [round(float(net[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
 
 
 def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -> int:
@@ -807,7 +843,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # or coverage is below the threshold — the verdict's score_storage
             # distinguishes "no EIA-930 data" from "data says zero".
             actual_storage = _actual_storage_twh(e930)
-            bench[int(year)]["storage"] = {"throughput_twh": actual_storage}
+            actual_storage_monthly = _actual_storage_monthly(e930)
+            bench[int(year)]["storage"] = {
+                "throughput_twh": actual_storage,
+                "monthly_net_gwh": actual_storage_monthly,
+            }
 
             # Actual fossil CO2 (Mt), the calibration-page emissions metric.
             # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
@@ -1147,8 +1187,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # distinguish "model has no storage" from "model has storage but
             # data is missing".
             model_storage = _model_storage_twh(storage_all, year)
+            model_storage_monthly = _model_storage_monthly(storage_all, year)
             run_years[int(year)]["storage"] = {
                 "throughput_twh": model_storage if model_storage is not None else 0.0,
+                "monthly_net_gwh": model_storage_monthly,
             }
             # Year-level scarcity-overlay summary (display-only): demand-weighted
             # monthly LMP MAE vs actual RT for the energy-only and overlaid
