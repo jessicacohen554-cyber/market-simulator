@@ -1,0 +1,70 @@
+# Canonical schema: eGRID plant-level extract
+#
+# One row per plant for a single eGRID vintage (year = vintage, e.g. 2023,
+# 2024). Source: EPA eGRID workbook plant sheet (PLNT<YY>), the same sheet two
+# separate consumers each read a disjoint column subset of:
+#   market_sim.data.zone_assignment : ORISPL, LAT, LON, FIPSST, FIPSCNTY, BACODE
+#     (geographic zone assignment from plant location / balancing authority)
+#   market_sim.data.egrid           : ORISPL, PLFUELCT, PLNGENAN, PLCO2AN
+#     (fleet-wide fossil CO2 emission rate, kg CO2 / net MWh)
+# This datatype carries the union, unfiltered (every plant in the sheet,
+# fossil or not, zero-generation or not) so both consumers can read one
+# curated table and apply their own filtering downstream.
+#
+# Curated by scripts/curate_egrid.py.
+datatype: egrid
+schema_version: 1
+title: eGRID plant-level extract
+description: >-
+  Plant-level location, balancing authority and CO2/generation columns from a
+  single EPA eGRID vintage's plant sheet (PLNT<YY>). Year = the eGRID vintage.
+
+key_columns: [plant_id]
+allow_additional_columns: false
+
+columns:
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: ORIS plant code (eGRID ORISPL).
+  - name: lat
+    dtype: float64
+    unit: degrees
+    nullable: true
+    description: Plant latitude (eGRID LAT).
+  - name: lon
+    dtype: float64
+    unit: degrees
+    nullable: true
+    description: Plant longitude (eGRID LON).
+  - name: fips_state
+    dtype: int64
+    unit: none
+    nullable: true
+    description: FIPS state code (eGRID FIPSST).
+  - name: fips_county
+    dtype: int64
+    unit: none
+    nullable: true
+    description: FIPS county code (eGRID FIPSCNTY).
+  - name: ba_code
+    dtype: string
+    unit: none
+    nullable: true
+    description: Balancing-authority code (eGRID BACODE).
+  - name: fuel_cat
+    dtype: string
+    unit: none
+    nullable: true
+    description: Plant primary fuel category (eGRID PLFUELCT).
+  - name: net_mwh
+    dtype: float64
+    unit: mwh
+    nullable: true
+    description: Plant annual net generation (eGRID PLNGENAN).
+  - name: co2_tons
+    dtype: float64
+    unit: short_tons
+    nullable: true
+    description: Plant annual CO2 mass, short tons (eGRID PLCO2AN).

@@ -1,0 +1,64 @@
+# Canonical schema: per-plant PARTIAL outage derate windows
+#
+# CAMPD CF-ceiling plateau windows (scripts/derive_partial_outages.py): a
+# multiplicative availability derate factor (not a binary outage), used by
+# market_sim.data.outages.partial_outage_derate_factors. Distinct from the
+# ``outages`` datatype (binary offline/available MW) and from
+# ``unit-outage-events`` (per-unit binary windows): this is a per-plant
+# fractional ceiling.
+#
+# Source (data/raw): campd-partial-outages.csv. iso is stamped at curation
+# time (ERCOT-only today; the raw file carries no iso column).
+#
+# Curated by scripts/curate_partial_outages.py.
+datatype: partial-outages
+schema_version: 1
+title: Per-plant partial-outage derate windows
+description: >-
+  CAMPD CF-ceiling plateau windows: a per-plant multiplicative availability
+  derate factor (1.0 outside detected windows) over a date range.
+
+key_columns: [iso, plant_id, outage_start]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO the plant is assigned to (stamped at curation).
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant identifier (CAMPD oris_code).
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: true
+    description: Plant name.
+  - name: plant_group
+    dtype: string
+    unit: none
+    nullable: true
+    description: Model dispatch-class / asset-group tag.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year the window was detected in.
+  - name: outage_start
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Derate window start (tz-naive, CAMPD local reporting clock).
+  - name: outage_stop
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Derate window end (tz-naive, CAMPD local reporting clock).
+  - name: derate_factor
+    dtype: float64
+    unit: frac
+    nullable: false
+    description: Multiplicative availability factor during the window (0-1).
