@@ -203,20 +203,88 @@ class TestReliabilityFloorEngine(unittest.TestCase):
         self.assertFalse(applied)
         self.assertIsNone(fa.min_gen)
 
-    def test_netload_driver_is_skipped_until_phase2(self):
-        # driver="netload" is recognized but skipped (no net-load plumbing yet).
+    def test_netload_high_day_floors_all_24h(self):
+        # Day 0: peak net-load 30 GW (> 27 threshold) -> floored all 24h.
+        # Day 1: peak net-load 20 GW (< 27 threshold) -> stays at pmin (0).
         H = 48
-        fa, _ = _build_fleet(H)
-        loader = _weather_from_daily([35.0, 36.0], [20.0, 22.0], H)
+        n_zones = 1
+        fa, rows = _build_fleet(H)
+        # Demand 35 GW day 0, 25 GW day 1; wind+solar eat 5 GW -> net 30, 20.
+        demand = np.full((n_zones, H), 25000.0)
+        demand[0, :24] = 35000.0
+        wind_cf = np.ones((n_zones, H))
+        wind_cap = np.array([2500.0])
+        solar_cf = np.ones((n_zones, H))
+        solar_cap = np.array([2500.0])
         spec = ReliabilityFloorSpec(
             zone="Z",
             plant_class="CT_PEAKER",
             driver="netload",
-            threshold=1000.0,
+            threshold=27.0,
             floor_pct=0.5,
         )
-        with mock.patch(_LOADER, loader):
-            applied = T.inject_reliability_floor(fa, "TEST", 2024, [spec], ["Z"])
+        applied = T.inject_reliability_floor(
+            fa,
+            "TEST",
+            2024,
+            [spec],
+            ["Z"],
+            demand=demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
+        )
+        self.assertTrue(applied)
+        ct = rows["CT_PEAKER"]
+        expected = 0.5 * fa.pmax[ct] * fa.availability[ct, :]
+        np.testing.assert_allclose(fa.min_gen[ct, :24], expected[:24])
+        np.testing.assert_allclose(fa.min_gen[ct, 24:48], 0.0)
+
+    def test_netload_low_day_no_floor_byte_identical(self):
+        # Both days below threshold -> no floor, min_gen stays None.
+        H = 48
+        n_zones = 1
+        fa, _ = _build_fleet(H)
+        demand = np.full((n_zones, H), 20000.0)
+        wind_cf = np.ones((n_zones, H))
+        wind_cap = np.array([2500.0])
+        solar_cf = np.ones((n_zones, H))
+        solar_cap = np.array([2500.0])
+        spec = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="netload",
+            threshold=27.0,
+            floor_pct=0.5,
+        )
+        applied = T.inject_reliability_floor(
+            fa,
+            "TEST",
+            2024,
+            [spec],
+            ["Z"],
+            demand=demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
+        )
+        self.assertFalse(applied)
+        self.assertIsNone(fa.min_gen)
+
+    def test_netload_without_exogenous_inputs_is_noop(self):
+        # No demand/wind/solar passed -> netload limb is skipped (byte-identical).
+        H = 48
+        fa, _ = _build_fleet(H)
+        spec = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="netload",
+            threshold=27.0,
+            floor_pct=0.5,
+        )
+        applied = T.inject_reliability_floor(fa, "TEST", 2024, [spec], ["Z"])
         self.assertFalse(applied)
         self.assertIsNone(fa.min_gen)
 
@@ -376,6 +444,45 @@ class TestThresholdAnchors(unittest.TestCase):
                 thr, float(np.percentile(zt["tmax_c"], drc.HOT_PERCENTILE)), places=6
             )
             self.assertIn("p95 tmax", basis)
+
+
+class TestNetloadDerivation(unittest.TestCase):
+    """Tests for the net-load regression helpers in derive_reliability_coeffs."""
+
+    def _nl_df(self, peak_gw_values):
+        idx = pd.date_range("2024-01-01", periods=len(peak_gw_values), freq="D")
+        return pd.DataFrame({"date": idx, "peak_nl_gw": peak_gw_values})
+
+    def test_netload_threshold_is_p70(self):
+        vals = list(range(100))
+        nl = self._nl_df(vals)
+        thr, basis = drc._netload_threshold_gw(nl)
+        self.assertAlmostEqual(thr, float(np.percentile(vals, 70)), places=4)
+        self.assertIn("p70", basis)
+
+    def test_fit_netload_limb_responsive_commitment(self):
+        n = 40
+        mild_nl = [20.0] * 20
+        high_nl = [30.0 + 0.1 * i for i in range(20)]
+        online = [0.2] * 20 + [0.8] * 20
+        cf = [0.05] * 20 + [0.05 + 0.005 * i for i in range(20)]
+        idx = pd.date_range("2024-01-01", periods=n, freq="D")
+        cf_df = pd.DataFrame({"cf": cf, "online_frac": online}, index=idx)
+        daily_nl = pd.DataFrame({"date": idx, "peak_nl_gw": mild_nl + high_nl})
+        fit = drc._fit_netload_limb(cf_df, daily_nl, threshold_gw=25.0)
+        self.assertIsNotNone(fit)
+        self.assertAlmostEqual(fit["commit_frac"], 0.8)
+        self.assertAlmostEqual(fit["baseline_commit"], 0.2)
+        self.assertGreater(fit["commit_frac"], fit["baseline_commit"])
+        self.assertEqual(fit["n"], 20)
+
+    def test_fit_netload_limb_no_flagged_days(self):
+        n = 20
+        idx = pd.date_range("2024-01-01", periods=n, freq="D")
+        cf_df = pd.DataFrame({"cf": [0.1] * n, "online_frac": [0.3] * n}, index=idx)
+        daily_nl = pd.DataFrame({"date": idx, "peak_nl_gw": [20.0] * n})
+        fit = drc._fit_netload_limb(cf_df, daily_nl, threshold_gw=25.0)
+        self.assertIsNone(fit)
 
 
 if __name__ == "__main__":

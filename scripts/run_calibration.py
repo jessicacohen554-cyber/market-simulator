@@ -3104,7 +3104,16 @@ def run_year(
             getattr(config, "reliability_floor_overrides", None),
         )
         if _floor_specs and inject_reliability_floor(
-            fleet_arrays, iso, year, _floor_specs, zone_names
+            fleet_arrays,
+            iso,
+            year,
+            _floor_specs,
+            zone_names,
+            demand=demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
         ):
             logger.info(
                 "%s %d: reliability floor — %d enabled limb spec(s) applied "
