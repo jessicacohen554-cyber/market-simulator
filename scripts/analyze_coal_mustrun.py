@@ -42,7 +42,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
-from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
+from market_sim.data.coal import COAL_PLANT_SUPPLY  # noqa: E402
 
 # EIA-923 fuel codes burned by coal-class units.
 _COAL_FUELS: frozenset[str] = frozenset({"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"})

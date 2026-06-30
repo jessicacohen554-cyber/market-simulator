@@ -2980,7 +2980,7 @@ def _prb_monthly_actuals() -> dict[int, np.ndarray]:
     costs = _load_monthly_cache(None)
     if costs is None:
         return {}
-    from market_sim.data.fleet import COAL_PLANT_SUPPLY
+    from market_sim.data.coal import COAL_PLANT_SUPPLY
 
     prb_plants = {p for p, s in COAL_PLANT_SUPPLY.items() if s == "prb"}
     sub = costs[

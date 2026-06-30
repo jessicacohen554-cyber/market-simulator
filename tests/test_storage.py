@@ -967,7 +967,7 @@ class TestEIA860CAISOBatteryFleet(unittest.TestCase):
         # the raw parquet through the same eGRID/EIA-860 zone lookup.
         import pandas as pd
 
-        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.config.paths import EIA_860_DIR
         from market_sim.data.zone_assignment import build_zone_lookup
 
         path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
@@ -1126,7 +1126,7 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
         """Return (expected_mw, expected_mwh) from the raw parquet for year."""
         import pandas as pd
 
-        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.config.paths import EIA_860_DIR
         from market_sim.data.zone_assignment import build_zone_lookup
 
         path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
@@ -1260,7 +1260,7 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
         covers both eGRID-vintage and post-eGRID-2023 plants.
         """
         import pandas as pd
-        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.config.paths import EIA_860_DIR
         from market_sim.data.zone_assignment import build_zone_lookup
 
         path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
