@@ -20,6 +20,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from market_sim.config.constants import (
+    CAMPD_BINNING_ISOS,
     CO2_RATES,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
@@ -29,6 +30,7 @@ from market_sim.config.constants import (
     NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF,
     NUCLEAR_MONTHLY_CF_BY_YEAR,
+    START_YEAR,
     THERMAL_AVAILABILITY,
     VOM,
 )
@@ -6955,3 +6957,241 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
             }
         )
     return bands
+
+
+def load_or_synthesize_bins(
+    config: ScenarioConfig,
+    iso: str,
+    iso_config: ISOConfig,
+    retired_within_window: list[Generator],
+) -> pd.DataFrame | None:
+    """Resolve the per-plant bin frame driving the offer-curve fleet path.
+
+    ERCOT reads its curated per-plant bin sheet (``config.campd_bins_path``)
+    directly via :func:`load_campd_bins`. Every other ISO in
+    :data:`~market_sim.config.constants.CAMPD_BINNING_ISOS` synthesizes the
+    same per-plant bin schema from its EIA-860 fleet plus the CAMPD-derived
+    thermal-tranche artifact via :func:`fleet_to_bins`. Returns ``None`` --
+    the signal to fall back to the legacy :func:`aggregate_fleet` path --
+    when ``use_campd_bins`` is off, the ISO has no CAMPD artifact, the
+    curated CSV is missing, or the synthesis yields no thermal bins.
+    """
+    if not (config.use_campd_bins and iso in CAMPD_BINNING_ISOS):
+        return None
+    if iso == "ERCOT":
+        if not Path(config.campd_bins_path).exists():
+            logger.info(
+                "%s: use_campd_bins=True but %s does not exist; falling back "
+                "to the legacy aggregate_fleet path",
+                iso,
+                config.campd_bins_path,
+            )
+            return None
+        return load_campd_bins(
+            config.campd_bins_path,
+            year=START_YEAR,
+            capacity_reconcile_path=(
+                config.cc_capacity_reconcile_path
+                if config.cc_capacity_reconcile
+                else None
+            ),
+        )
+    bins = fleet_to_bins(
+        load_fleet_from_csv(iso, iso_config) + retired_within_window,
+        iso,
+        config,
+    )
+    if bins.empty:
+        logger.info(
+            "%s: use_campd_bins=True but fleet_to_bins synthesized no "
+            "thermal bins (no CAMPD-derived thermal_tranches artifact); "
+            "falling back to the legacy aggregate_fleet path",
+            iso,
+        )
+        return None
+    return bins
+
+
+def build_base_fleet(
+    campd_bins: pd.DataFrame | None,
+    iso: str,
+    iso_config: ISOConfig,
+    zone_names: list[str],
+    config: ScenarioConfig,
+    retired_within_window: list[Generator],
+    planned_additions: list[Generator],
+    year: int,
+) -> list[Generator]:
+    """Build the first simulated year's persistent generation fleet.
+
+    Takes the per-plant bin choice already resolved by
+    :func:`load_or_synthesize_bins`: per-plant tranche generators
+    (:func:`bins_to_fleet`) when bins were found, else the legacy
+    equal-width heat-rate-bin aggregation (:func:`aggregate_fleet`). Either
+    way the collapse happens once, here, before the per-year dispatch loop.
+    Planned EIA-860 additions already due by ``year`` are appended; later
+    years instead evolve this fleet via
+    :func:`~market_sim.model.capacity.evolve_fleet`.
+    """
+    if campd_bins is not None:
+        campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
+        all_gens = load_fleet_from_csv(iso, iso_config) + retired_within_window
+        if iso == "ERCOT":
+            # ERCOT's curated sheet covers the full gas/coal thermal fleet;
+            # nuclear (and any other non-aggregatable unit) still comes from
+            # EIA-860 so it stays in the dispatch LP.
+            non_thermal = [
+                g for g in all_gens if g.fuel_type not in _AGGREGATABLE_FUELS
+            ]
+        else:
+            # The synthesized bins cover exactly the thermal (plant_code,
+            # plant_group) pairs in ``campd_bins``; every other unit
+            # (nuclear, oil, biomass, and any thermal plant the synthesis
+            # didn't bin) stays a raw LP unit. Filtering on the exact binned
+            # set -- rather than a fuel allow-list -- avoids dropping or
+            # double-counting any plant (the bin groups include gas_st,
+            # which is not an aggregatable fuel).
+            binned = set(
+                zip(
+                    campd_bins["Plant_Code"].astype(int),
+                    campd_bins["Plant_Group"],
+                )
+            )
+            non_thermal = [
+                g for g in all_gens if (int(g.plant_code), g.plant_group) not in binned
+            ]
+        fleet = non_thermal + campd_fleet
+    else:
+        fleet = aggregate_fleet(
+            load_fleet_from_csv(iso, iso_config) + retired_within_window,
+            n_bins=config.heat_rate_bin_count,
+        )
+    # Planned units already due by the first simulated year (their EIA-860
+    # effective year falls after the operable snapshot but at or before
+    # ``year``) join the base fleet now; evolve_fleet only runs from the
+    # second year on.
+    due = [g for g in planned_additions if g.online_year <= year]
+    if due:
+        logger.info(
+            "year %d: %d planned additions already due (%.0f MW)",
+            year,
+            len(due),
+            sum(g.pmax_mw for g in due),
+        )
+        fleet = fleet + due
+    return fleet
+
+
+def build_dispatch_fleet(
+    fleet: list[Generator],
+    campd_bins: pd.DataFrame | None,
+    import_generators: list[Generator],
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    config: ScenarioConfig,
+) -> tuple[list[Generator], list[float], np.ndarray | None, np.ndarray | None]:
+    """Assemble this year's LP-ready dispatch fleet from the persistent fleet.
+
+    Splits coal (and optionally gas) into take-or-pay / SRMC tranches --
+    CAMPD per-plant fuel fractions (:func:`campd_tranche_fuel_frac`) when
+    ``campd_bins`` is active, else the legacy :func:`split_coal_tranches` /
+    :func:`split_gas_tranches` -- then appends energy-limited hydro plants
+    and overrides plant-specific CAMPD emission rates. Both branches start
+    from the same ``fleet`` and end at the same shape: a list of
+    :class:`Generator` ready for :func:`generators_to_fleet_arrays`.
+
+    Returns:
+        ``(dispatch_fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy)``.
+        ``hydro_gen_idx`` / ``hydro_monthly_energy`` are ``None`` when the
+        ISO has no hydro plants.
+    """
+    if campd_bins is not None:
+        dispatch_fleet = fleet + import_generators
+        # Must-run tranches bid at VOM + carbon + NOx only -- the fuel is
+        # sunk under take-or-pay coal contracts, CHP host steam obligations
+        # or ERCOT RUC. In step-3a sync mode the contract share is consumed
+        # in bins_to_fleet to SIZE the fuel-free _mustrun band vs the SRMC
+        # _sync band, so it must NOT be re-applied here (that would
+        # double-discount).
+        takeorpay = None
+        if getattr(config, "coal_takeorpay_from_data", False) and not getattr(
+            config, "coal_sync_srmc_tranche", False
+        ):
+            takeorpay = {
+                int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
+                for g in dispatch_fleet
+                if g.fuel_type == "coal"
+                and coal_takeorpay_share(int(g.plant_code)) is not None
+            }
+        fuel_fracs = [
+            campd_tranche_fuel_frac(
+                g,
+                {
+                    "prb": config.coal_prb_passthrough,
+                    "subbituminous": config.coal_prb_passthrough,
+                },
+                takeorpay,
+            )
+            for g in dispatch_fleet
+        ]
+    else:
+        # Non-CAMPD-binned ISOs split coal into take-or-pay tranches here.
+        # With coal_takeorpay_from_data the sunk first tranche uses each
+        # plant's MEASURED EIA-923 Schedule-5 contracted share (CLAUDE.md
+        # #11/#12) instead of the uniform 100%-sunk assumption.
+        split_takeorpay = None
+        if getattr(config, "coal_takeorpay_from_data", False):
+            split_takeorpay = {
+                int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
+                for g in fleet
+                if g.fuel_type == "coal"
+                and coal_takeorpay_share(int(g.plant_code)) is not None
+            }
+        dispatch_fleet, fuel_fracs = split_coal_tranches(
+            fleet + import_generators, config, split_takeorpay
+        )
+        if getattr(config, "gas_offer_curve", False):
+            dispatch_fleet, fuel_fracs = split_gas_tranches(
+                dispatch_fleet, fuel_fracs, config
+            )
+
+    # Energy-limited conventional hydro (every ISO with hydro plants): one LP
+    # unit per EIA-923-reporting hydro plant, capped per hour by its EIA-860
+    # nameplate and per month by its energy budget via the dispatch LP's
+    # hydro budget rows. Appended after the coal/gas split so it flows
+    # through assemble_mc and the dispatch like any other generator.
+    from market_sim.data.hydro import build_hydro_fleet
+
+    hydro_units, hydro_monthly_energy = build_hydro_fleet(
+        iso,
+        year,
+        zone_names,
+        forecast_budget=True,
+        hydro_year=config.hydro_year,
+    )
+    hydro_gen_idx = None
+    if hydro_units:
+        hydro_gen_idx = np.arange(
+            len(dispatch_fleet),
+            len(dispatch_fleet) + len(hydro_units),
+            dtype=int,
+        )
+        dispatch_fleet = dispatch_fleet + hydro_units
+        fuel_fracs = list(fuel_fracs) + [1.0] * len(hydro_units)
+        logger.info(
+            "%s %d: %d hydro plants in LP (%.0f MW, %.2f TWh monthly budget)",
+            iso,
+            year,
+            len(hydro_units),
+            sum(g.pmax_mw for g in hydro_units),
+            hydro_monthly_energy.sum() / 1e6,
+        )
+
+    # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific ones
+    # for generators pinned to a single plant, so emission prices bite at
+    # each plant's measured per-MWh-net intensity.
+    if config.use_plant_emission_rates:
+        apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
+
+    return dispatch_fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy
