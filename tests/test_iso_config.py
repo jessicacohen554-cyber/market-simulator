@@ -406,10 +406,19 @@ class TestISOConfig(unittest.TestCase):
             caiso.default_scenario_overrides.get("negative_renewable_offers")
         )
 
-    def test_ercot_no_default_scenario_overrides(self):
-        """ERCOT has no default scenario overrides."""
+    def test_ercot_default_scenario_overrides_scarcity_overlay(self):
+        """ERCOT enables the ORDC scarcity-price overlay by default."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.default_scenario_overrides, {})
+        self.assertTrue(ercot.default_scenario_overrides.get("scarcity_price_overlay"))
+
+    def test_other_isos_no_scarcity_overlay_default(self):
+        """Non-ERCOT ISOs do not default-enable the scarcity overlay."""
+        for iso in ("CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+            overrides = get_iso_config(iso).default_scenario_overrides
+            self.assertFalse(
+                overrides.get("scarcity_price_overlay", False),
+                msg=f"{iso} should not default scarcity_price_overlay to True",
+            )
 
 
 if __name__ == "__main__":
