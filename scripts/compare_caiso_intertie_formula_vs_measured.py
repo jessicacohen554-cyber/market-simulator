@@ -42,7 +42,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config import paths
-from market_sim.config.constants import CAISO_PER_HUB_NEIGHBORS
+from market_sim.config.interchange_config import CAISO_PER_HUB_NEIGHBORS
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import measured_corridor_flow_envelope
 from market_sim.data.neighbor_price import caiso_hub_reference_price

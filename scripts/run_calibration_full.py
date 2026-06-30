@@ -54,11 +54,11 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-from market_sim.config.constants import (  # noqa: E402
+from market_sim.config.constants import resolve_reference_price_interface  # noqa: E402
+from market_sim.config.interchange_config import (  # noqa: E402
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     resolve_miso_firm_imports,
     resolve_priced_interchange,
-    resolve_reference_price_interface,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
@@ -3262,7 +3262,7 @@ def _priced_node_fit_rmse(iso: str, net_export: np.ndarray) -> float | None:
     level (the optimal price-orthogonal placement). ``None`` when the ISO has
     no priced node configured.
     """
-    from market_sim.config.constants import EXPORT_TRANCHES, IMPORT_TRANCHES
+    from market_sim.config.interchange_config import EXPORT_TRANCHES, IMPORT_TRANCHES
 
     imports = IMPORT_TRANCHES.get(iso, [])
     sinks = EXPORT_TRANCHES.get(iso, [])

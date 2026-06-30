@@ -13,10 +13,8 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import (
-    NYISO_FIRM_IMPORT_FLOOR_FRAC,
-    NYISO_LOCAL_SELFSUPPLY_FRAC,
-)
+from market_sim.config.constants import NYISO_LOCAL_SELFSUPPLY_FRAC
+from market_sim.config.interchange_config import NYISO_FIRM_IMPORT_FLOOR_FRAC
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.model.transmission import (
     inject_nyiso_firm_imports,

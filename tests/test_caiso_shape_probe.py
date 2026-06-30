@@ -330,7 +330,14 @@ class TestRunFloorAttributionSmoke(unittest.TestCase):
             )
 
             fake_profile = np.full(8760, 8000.0)
-            fake_tmax = np.full(8760, 30.0)
+            fake_weather = pd.DataFrame(
+                {
+                    "date": pd.date_range("2024-01-01", periods=366, freq="D"),
+                    "zone": "_load_weighted",
+                    "tmax_c": 30.0,
+                    "tmin_c": np.nan,
+                }
+            )
 
             with (
                 patch(
@@ -338,8 +345,8 @@ class TestRunFloorAttributionSmoke(unittest.TestCase):
                     return_value=fake_profile,
                 ),
                 patch(
-                    "market_sim.data.eia_loader.caiso_load_weighted_tmax",
-                    return_value=fake_tmax,
+                    "market_sim.data.eia_loader.load_weather",
+                    return_value=fake_weather,
                 ),
             ):
                 probe.run_floor_attribution(bundle, years=[2024])
