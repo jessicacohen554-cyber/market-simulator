@@ -1,0 +1,76 @@
+# Canonical schema: per-ISO zonal gas-hub annual prices / basis
+#
+# Annual gas-price data by model zone and ISO.  ERCOT, PJM and MISO carry
+# a basis vs Henry Hub (basis_vs_hh_usd_mmbtu); NYISO carries absolute annual
+# hub prices (hub_usd_mmbtu).  Only the columns relevant to each ISO are
+# populated in that ISO's partition; the rest are absent from the file (all
+# price columns are declared nullable so an ISO's file need not include the
+# column irrelevant to it).  The neg_day_freq column (ERCOT-only) records the
+# fraction of the year the Waha hub spot price was negative.
+#
+# Files are partitioned by ISO directory:
+#   data/clean/fuel-zonal-hub/ERCOT/fuel-zonal-hub.parquet
+#   data/clean/fuel-zonal-hub/NYISO/fuel-zonal-hub.parquet
+#   data/clean/fuel-zonal-hub/PJM/fuel-zonal-hub.parquet
+#   data/clean/fuel-zonal-hub/MISO/fuel-zonal-hub.parquet
+#
+# Curated by scripts/curate_fuel_prices.py from
+#   data/raw/ercot_zonal_gas_hub.csv
+#   data/raw/nyiso_zonal_gas_hub.csv
+#   data/raw/pjm_zonal_gas_hub.csv
+#   data/raw/miso_zonal_gas_hub.csv
+datatype: fuel-zonal-hub
+schema_version: 1
+title: Per-ISO zonal gas-hub annual prices/basis
+description: >-
+  Annual gas-price data by model zone and ISO.  ERCOT, PJM and MISO store a
+  basis vs Henry Hub (basis_vs_hh_usd_mmbtu); NYISO stores absolute annual hub
+  prices (hub_usd_mmbtu).  Only the columns appropriate to each ISO are
+  populated; the rest are absent from that ISO's partition file.  Files are
+  partitioned by ISO directory under data/clean/fuel-zonal-hub/.
+
+key_columns: [iso, zone, year, hub]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/market region (ERCOT, NYISO, PJM, MISO).
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model zone name.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pipeline hub name for this zone (e.g. Waha, Iroquois Z2, Chicago Citygate).
+  - name: basis_vs_hh_usd_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: true
+    description: >-
+      Annual average basis vs Henry Hub ($/MMBtu).  Present for ERCOT, PJM,
+      MISO; absent for NYISO (which uses hub_usd_mmbtu instead).
+  - name: hub_usd_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: true
+    description: >-
+      Annual average absolute hub price ($/MMBtu).  Present for NYISO only;
+      absent for ISOs that record basis_vs_hh_usd_mmbtu instead.
+  - name: neg_day_freq
+    dtype: float64
+    unit: fraction
+    nullable: true
+    description: >-
+      Fraction of the year the hub spot price was negative (0.0–1.0).
+      Populated for ERCOT West/Panhandle (Waha hub) only; absent elsewhere.

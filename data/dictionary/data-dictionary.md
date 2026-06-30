@@ -51,6 +51,8 @@ for the market split.
 | generation | — | — | — | — | — | — |
 | renewables | — | — | — | — | — | — |
 | validation | — | — | — | — | — | — |
+| fuel-basis | — | — | — | — | — | — |
+| fuel-zonal-hub | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -61,9 +63,12 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
+| fuel-hub-monthly | national (Henry Hub monthly) | n/a |
+| fuel-ercot-ep-gas | ERCOT / TX electric-power consumers | n/a |
+| fuel-takeorpay | ERCOT plants (EIA-923 Schedule-5) | n/a |
 | reference | crosswalks / lookups (ISO-agnostic) | n/a |
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
@@ -322,6 +327,92 @@ Delivered fuel price benchmarks. Schema:
 | `fuel` | `string` | `none` | no | Fuel type (gas, coal, oil). |
 | `hub` | `string` | `none` | no | Pricing hub / region (e.g. henry_hub, socal_citygate). |
 | `price_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Delivered fuel price (henry_hub_daily price_usd_mmbtu). |
+
+## fuel-hub-monthly
+
+Monthly Henry Hub spot averages (EIA RNGWHHDm). Schema:
+[`schema/fuel-hub-monthly.schema.yaml`](schema/fuel-hub-monthly.schema.yaml).
+
+- **Keys:** `fuel`, `hub`, `year`, `month`
+- **Reconciles:** `henry_hub_monthly.csv` `price_usd_mmbtu` — into
+  `price_usd_per_mmbtu` keyed by `fuel`/`hub`/`year`/`month`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `fuel` | `string` | `none` | no | Fuel type (gas, coal, oil). |
+| `hub` | `string` | `none` | no | Pricing hub / region (e.g. henry_hub). |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `month` | `int64` | `none` | no | Calendar month (1–12). |
+| `price_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Monthly average delivered fuel price in $/MMBtu. |
+
+## fuel-basis
+
+Per-ISO monthly gas basis vs Henry Hub (winter hub overlay). Schema:
+[`schema/fuel-basis.schema.yaml`](schema/fuel-basis.schema.yaml).
+
+- **Keys:** `iso`, `year`, `month`, `hub`
+- **Reconciles:** `gas_basis_by_iso_month.csv` `basis_usd_mmbtu` (Algonquin for
+  NEISO, Transco Z6/Iroquois for NYISO when filled) — `source` column stripped;
+  keyed by `iso`/`year`/`month`/`hub`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/market region (ERCOT, CAISO, PJM, MISO, NYISO, NEISO). |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `month` | `int64` | `none` | no | Calendar month (1–12). |
+| `hub` | `string` | `none` | no | Pipeline trading-hub name (e.g. Algonquin Citygate, Transco Z6 NY). |
+| `basis_usd_mmbtu` | `float64` | `usd_per_mmbtu` | no | Basis vs Henry Hub in $/MMBtu (positive = above HH, negative = below). Measured from pipeline-hub spot or EIA citygate proxy. |
+
+## fuel-zonal-hub
+
+Per-ISO zonal gas-hub annual prices/basis. Schema:
+[`schema/fuel-zonal-hub.schema.yaml`](schema/fuel-zonal-hub.schema.yaml).
+
+- **Keys:** `iso`, `zone`, `year`, `hub`
+- **Reconciles:** ERCOT/PJM/MISO `basis_vs_hh_usd_mmbtu`; NYISO absolute
+  `hub_usd_mmbtu`; ERCOT West `neg_day_freq` — keyed by
+  `iso`/`zone`/`year`/`hub`, ISO-partitioned by directory.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/market region (ERCOT, NYISO, PJM, MISO). |
+| `zone` | `string` | `none` | no | Model zone name. |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `hub` | `string` | `none` | no | Pipeline hub name for this zone (e.g. Waha, Iroquois Z2, Chicago Citygate). |
+| `basis_vs_hh_usd_mmbtu` | `float64` | `usd_per_mmbtu` | yes | Annual average basis vs Henry Hub ($/MMBtu). Present for ERCOT, PJM, MISO; absent for NYISO (which uses hub_usd_mmbtu instead). |
+| `hub_usd_mmbtu` | `float64` | `usd_per_mmbtu` | yes | Annual average absolute hub price ($/MMBtu). Present for NYISO only; absent for ISOs that record basis_vs_hh_usd_mmbtu instead. |
+| `neg_day_freq` | `float64` | `fraction` | yes | Fraction of the year the hub spot price was negative (0.0–1.0). Populated for ERCOT West/Panhandle (Waha hub) only; absent elsewhere. |
+
+## fuel-ercot-ep-gas
+
+Monthly EIA N3045TX3 TX delivered-to-electric-power gas price ($/Mcf). Schema:
+[`schema/fuel-ercot-ep-gas.schema.yaml`](schema/fuel-ercot-ep-gas.schema.yaml).
+
+- **Keys:** `year`, `month`
+- **Reconciles:** `ercot_electric_power_gas_price.csv` `price_usd_mcf` —
+  `source` column stripped; keyed by `year`/`month`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `year` | `int64` | `none` | no | Calendar year. |
+| `month` | `int64` | `none` | no | Calendar month (1–12). |
+| `price_usd_mcf` | `float64` | `usd_per_mcf` | no | Monthly average price of natural gas delivered to TX electric-power consumers ($/Mcf; multiply by 1/1.036 MMBtu/Mcf to convert to $/MMBtu). |
+
+## fuel-takeorpay
+
+ERCOT per-plant EIA-923 gas spot vs contract share. Schema:
+[`schema/fuel-takeorpay.schema.yaml`](schema/fuel-takeorpay.schema.yaml).
+
+- **Keys:** `plant_code`
+- **Reconciles:** `gas_takeorpay_ERCOT.csv` — retains `plant_code`,
+  `spot_share`, `total_mmbtu`; strips `contract_share`, `n_receipts`, `source`,
+  `breakdown`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `plant_code` | `int64` | `none` | no | EIA plant code (integer, matches fleet plant_id). |
+| `spot_share` | `float64` | `fraction` | no | Fraction of annual natural-gas purchases at spot prices (0.0–1.0). The complement (1 - spot_share) is firm-contracted and insulated from hub-price swings. |
+| `total_mmbtu` | `float64` | `mmbtu` | no | Total annual gas volume in MMBtu. Used as the MMBtu weight when aggregating per-plant spot shares to model zones. |
 
 ## reference
 
