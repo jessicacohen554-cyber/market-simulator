@@ -8,14 +8,27 @@ exactly (the engine imports the loader inside the function, so the patch on the
 loader module's attribute takes effect).
 """
 
+import importlib.util
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import numpy as np
+import pandas as pd
 
+from market_sim.config.constants import MIN_STABLE_PCT_PHYSICAL
 from market_sim.config.iso_configs import ReliabilityFloorSpec
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model import transmission as T
+
+# The derivation lives under scripts/ (not an importable package); load by path
+# so the coefficient-magnitude and enable-gate logic can be unit-tested directly.
+_REPO = Path(__file__).resolve().parent.parent
+_spec = importlib.util.spec_from_file_location(
+    "derive_reliability_coeffs", str(_REPO / "scripts" / "derive_reliability_coeffs.py")
+)
+drc = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(drc)
 
 # Loader symbol the engine resolves at call time (``from ... import
 # iso_zone_tmax`` inside inject_reliability_floor).
@@ -260,6 +273,109 @@ class TestReliabilityFloorEngine(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[st, 0:24], 0.0)
         np.testing.assert_allclose(fa.min_gen[st, 24:72], expected[24:72])
         np.testing.assert_allclose(fa.min_gen[st, 72:120], 0.0)
+
+
+class TestPhysicalFloorMagnitude(unittest.TestCase):
+    """The floor magnitude is the physical Pmin/Pmax, not the must-run share."""
+
+    def test_min_stable_pct_matches_physical_table(self):
+        # Merchant priority classes carry a NON-ZERO physical floor (the bug was
+        # that Pct_Must_Run = 0 zeroed them); values are NREL WWSIS-2 Table 7.
+        self.assertEqual(drc._min_stable_pct("ST_GAS"), 0.12)
+        self.assertEqual(drc._min_stable_pct("CT_PEAKER"), 0.38)
+        self.assertEqual(drc._min_stable_pct("CC_REGULAR"), 0.52)
+        self.assertEqual(drc._min_stable_pct("COAL"), 0.40)
+        self.assertEqual(drc._min_stable_pct("oil"), 0.12)
+        self.assertEqual(
+            drc._min_stable_pct("ST_GAS"), MIN_STABLE_PCT_PHYSICAL["ST_GAS"]
+        )
+
+    def test_coal_subclasses_fall_back_to_coal(self):
+        for sub in ("COAL_PRB", "COAL_BIT", "COAL_LIGNITE", "COAL_WC"):
+            self.assertEqual(drc._min_stable_pct(sub), 0.40)
+
+    def test_unknown_class_has_no_physical_floor(self):
+        self.assertEqual(drc._min_stable_pct("NUCLEAR"), 0.0)
+
+
+def _limb_df(temps, online_frac, cf):
+    """Build the ``(cf, online_frac)`` daily frame + temp series _fit_limb wants."""
+    idx = pd.date_range("2024-01-01", periods=len(temps), freq="D")
+    df = pd.DataFrame({"cf": cf, "online_frac": online_frac}, index=idx)
+    return df, pd.Series(np.asarray(temps, dtype=float), index=idx)
+
+
+class TestEnableGateLikeForLike(unittest.TestCase):
+    """Plan C: enable on commit_frac > baseline_commit (online share), not CF."""
+
+    def test_temperature_responsive_commitment_passes_gate(self):
+        # 20 mild days (online 0.3) + 20 hot days (online 0.9, CF rising with temp):
+        # flagged-day commit share (0.9) exceeds mild-day share (0.3) -> the gate's
+        # third clause is True and rho is strongly positive.
+        mild_t = list(range(0, 20))  # < 25 -> mild
+        hot_t = list(range(26, 46))  # >= 25 -> flagged, distinct so rho is defined
+        online = [0.3] * 20 + [0.9] * 20
+        cf = [0.2] * 20 + [0.2 + 0.01 * i for i in range(20)]
+        df, temp = _limb_df(mild_t + hot_t, online, cf)
+        fit = drc._fit_limb(df, temp, threshold=25.0, cold=False)
+        self.assertAlmostEqual(fit["commit_frac"], 0.9)
+        self.assertAlmostEqual(fit["baseline_commit"], 0.3)
+        self.assertGreater(fit["rho"], 0.3)
+        self.assertGreater(fit["commit_frac"], fit["baseline_commit"])  # gate clause
+
+    def test_always_online_unit_fails_gate(self):
+        # A unit online every day (mild AND hot) shows no temperature-driven
+        # commitment: commit_frac == baseline_commit, so the like-for-like clause
+        # is False even though it would pass the old floor_pct > baseline test.
+        mild_t = list(range(0, 20))
+        hot_t = list(range(26, 46))
+        online = [1.0] * 40
+        cf = [0.5] * 20 + [0.6] * 20
+        df, temp = _limb_df(mild_t + hot_t, online, cf)
+        fit = drc._fit_limb(df, temp, threshold=25.0, cold=False)
+        self.assertAlmostEqual(fit["commit_frac"], 1.0)
+        self.assertAlmostEqual(fit["baseline_commit"], 1.0)
+        self.assertFalse(fit["commit_frac"] > fit["baseline_commit"])  # gate clause
+
+
+class TestThresholdAnchors(unittest.TestCase):
+    """Plan D: physical onset anchors, not flat 25 °C / 0 °C priors."""
+
+    def _zt(self):
+        # A spread of daily temps so percentiles are well-defined.
+        n = 200
+        return pd.DataFrame(
+            {
+                "tmax_c": np.linspace(-5.0, 40.0, n),
+                "tmin_c": np.linspace(-25.0, 20.0, n),
+            }
+        )
+
+    def test_pjm_cold_uses_operational_anchors(self):
+        zt = self._zt()
+        thr, basis = drc._limb_threshold("PJM", "ST_GAS", "tmin", zt)
+        self.assertEqual(thr, drc.PJM_COLD_ALERT_C)  # -12 C
+        self.assertIn("Cold Weather Alert", basis)
+        thr_ct, basis_ct = drc._limb_threshold("PJM", "CT_PEAKER", "tmin", zt)
+        self.assertEqual(thr_ct, drc.PJM_COLD_CT_MOBILIZE_C)  # -20.5 C (CT tier)
+        self.assertIn("CT-mobilization", basis_ct)
+
+    def test_non_pjm_cold_uses_zone_percentile(self):
+        zt = self._zt()
+        thr, basis = drc._limb_threshold("NYISO", "ST_GAS", "tmin", zt)
+        self.assertAlmostEqual(
+            thr, float(np.percentile(zt["tmin_c"], drc.COLD_PERCENTILE)), places=6
+        )
+        self.assertIn("p1 tmin", basis)
+
+    def test_hot_uses_zone_percentile_for_all_isos(self):
+        zt = self._zt()
+        for iso in ("PJM", "ERCOT", "NYISO"):
+            thr, basis = drc._limb_threshold(iso, "CT_PEAKER", "tmax", zt)
+            self.assertAlmostEqual(
+                thr, float(np.percentile(zt["tmax_c"], drc.HOT_PERCENTILE)), places=6
+            )
+            self.assertIn("p95 tmax", basis)
 
 
 if __name__ == "__main__":

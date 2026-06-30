@@ -97,6 +97,28 @@ ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
 
+# Physical minimum-stable level (Pmin/Pmax) of a *committed* thermal unit, by
+# plant class. This is the turbine floor a unit holds once it is physically
+# turned on — distinct from the offer-curve must-run tranche share (Pct_Must_Run),
+# which is 0 for merchant units that carry no market must-offer obligation. The
+# temperature-gated reliability floor reliability-commits these merchant units on
+# an extreme day (RUC / cold-weather CT mobilization) and then enforces P ≥ Pmin,
+# so its magnitude is sourced from THIS table, not from Pct_Must_Run.
+# Source: NREL WWSIS-2 / TEPPC (NREL/TP-5500-55588) Table 7 — Western
+# Interconnection per-type min-stable averages. PHYSICAL and forward-reproducible
+# (regenerates for a forward year from engineering specs); NOT tuned to the
+# backcast residual (CLAUDE.md #9/#11). Do not nudge these to improve MAE.
+MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
+    "ST_GAS": 0.12,  # gas steam — WWSIS-2 12% (older subcritical sits high end)
+    "ST_CHP": 0.12,  # gas-steam cogeneration — same steam physics
+    "CT_PEAKER": 0.38,  # simple-cycle CT — WWSIS-2 38% (older frame up to 50–60%)
+    "CT_CHP": 0.38,  # simple-cycle CT cogeneration — same CT physics
+    "CC_REGULAR": 0.52,  # combined cycle — WWSIS-2 52% (least-flexible fossil)
+    "CC_CHP": 0.52,  # combined-cycle cogeneration — same CC physics
+    "COAL": 0.40,  # subcritical/supercritical steam — WWSIS-2 40%
+    "oil": 0.12,  # oil / oil-steam — steam physics (taxonomy lumps oil into one)
+}
+
 # CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
 # Used to amortize startup cost into the monthly bid markup: a generator bids
 # above marginal cost to recover startup_cost / expected_run_length.
