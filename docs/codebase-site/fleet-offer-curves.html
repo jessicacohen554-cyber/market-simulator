@@ -207,7 +207,7 @@
     <div class="header" data-header-variant="grid">
       <div class="header__overlay"></div>
       <div class="header__inner">
-        <div class="header__eyebrow">Foundations</div>
+        <span class="header__eyebrow">Foundations</span>
         <h1 class="header__title">Fleet &amp; Offer Curves</h1>
         <p class="header__subtitle">Each power plant in the CAMPD fleet becomes a single LP generator with a rising cost curve — from must-run baseload through economic dispatch to peaking. This page explains the binning system, the merit order, and how coal's take-or-pay contracts shape offer prices.</p>
         <div class="header-accent"></div>
@@ -530,17 +530,24 @@
   </main>
 
   <!-- Footer -->
-  <footer class="page-footer">
-    <div style="max-width: var(--max-content); margin: 0 auto; padding: 0 var(--space-lg, 24px);">
-      <p style="margin-bottom: 8px;">
-        Codebase Explorer — an interactive guide to the market-simulator LP-based dispatch model.
-      </p>
-      <p style="font-size: 0.9rem; color: rgba(255,255,255,0.55); margin: 0;">
-        © 2026. Built with D3, GSAP, and the Observatory design system.
-      </p>
+  <footer class="page-footer" role="contentinfo">
+    <div class="page-footer__inner">
+      <div class="page-footer__main">
+        <div>
+          <div class="page-footer__brand">Codebase Explorer</div>
+          <p class="page-footer__tagline">An interactive guide to the market-simulator LP-based dispatch model.</p>
+        </div>
+        <nav class="page-footer__links" aria-label="Footer navigation">
+          <a class="page-footer__link" href="index.html">Overview</a>
+          <a class="page-footer__link" href="lp-core.html">LP Core</a>
+          <a class="page-footer__link" href="capacity-evolution.html">Capacity Evolution</a>
+          <a class="page-footer__link" href="config-reference.html">Config Reference</a>
+        </nav>
+      </div>
+      <p class="page-footer__copy">Market Simulator · LP-based electricity market dispatch model · 2026–2050 forecast horizon</p>
     </div>
-    <div class="bottom-banner"></div>
   </footer>
+  <div class="bottom-banner" aria-hidden="true"></div>
 
   <!-- TOC Rail (injected by shared.js) -->
   <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
