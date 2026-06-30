@@ -10,7 +10,7 @@ objects into the ``incidence`` and ``ttc`` arrays that
 Priced import/export nodes are also modeled here: rather than a bespoke LP
 formulation, an ISO's neighbors are represented as a handful of synthetic
 :class:`~market_sim.data.fleet.Generator` objects in the ISO's external
-zone (:data:`~market_sim.config.constants.IMPORT_ZONE`) — import supply
+zone (:data:`~market_sim.config.interchange_config.IMPORT_ZONE`) — import supply
 tranches plus export sinks. Appended to the fleet, they participate in
 dispatch purely through the ordinary energy balance and the external zone's
 links into the ISO's trading zones. CAISO's WECC node was the original;
@@ -162,10 +162,10 @@ def build_import_generators(
 
     The aggregate import capability from the ISO's neighbors is modeled as a
     stepped supply curve: each tranche of
-    :data:`~market_sim.config.constants.IMPORT_TRANCHES` becomes a synthetic
+    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES` becomes a synthetic
     :class:`~market_sim.data.fleet.Generator` in the ISO's external zone.
     When ``year`` matches an
-    :data:`~market_sim.config.constants.IMPORT_TRANCHES_BY_YEAR` entry for the
+    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES_BY_YEAR` entry for the
     ISO, that year-grounded ladder is used instead of the static default — the
     priced node's neighbor-hub blocks are gas-priced, so a backcast year with a
     different gas/neighbor-price level needs its own price ladder (an unmapped
@@ -180,7 +180,7 @@ def build_import_generators(
     enters as ``border_carbon_per_mwh`` — the *unspecified* adjustment
     (``CARB_UNSPECIFIED_IMPORT_EF`` × allowance price). Each tranche pays it
     scaled by its own emission factor relative to the unspecified default
-    (:data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`), so a firm
+    (:data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF`), so a firm
     hydro/solar block (EF 0) pays nothing while an unspecified block pays the
     full adder — matching CARB, which charges specified imports their actual
     (often zero) emissions and only unspecified power the 0.428 default. A
@@ -305,8 +305,8 @@ def build_caiso_bidir_intertie(border_carbon_per_mwh: float = 0.0) -> list[Gener
     The structurally-faithful replacement for the separate
     :func:`build_import_generators` + :func:`build_export_sinks` pair on the
     ``WECC_import`` node. The import leg keeps the per-tranche supply curve of
-    :data:`~market_sim.config.constants.IMPORT_TRANCHES` (so the rising
-    border-carbon ladder of :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`
+    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES` (so the rising
+    border-carbon ladder of :data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF`
     is preserved — firm hydro/solar pay no CARB adder, unspecified gas pays the
     full one), but the aggregate import capacity is rescaled to
     :data:`CAISO_BIDIR_IMPORT_CAP_MW` (the tightened simultaneous-import cap).
@@ -417,15 +417,15 @@ def build_caiso_per_hub_intertie(border_carbon_per_mwh: float = 0.0) -> list[Gen
     The structurally-faithful successor to :func:`build_caiso_bidir_intertie`
     (single averaged node) and the :func:`build_import_generators` +
     :func:`build_export_sinks` pair (pooled node). Each import tranche of
-    :data:`~market_sim.config.constants.IMPORT_TRANCHES` is placed in the
+    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES` is placed in the
     external zone of the WECC neighbor hub it proxies
-    (:data:`~market_sim.config.constants.CAISO_IMPORT_TRANCHE_HUB` →
-    :data:`~market_sim.config.constants.CAISO_PER_HUB_IMPORT_ZONES`), and each hub
+    (:data:`~market_sim.config.interchange_config.CAISO_IMPORT_TRANCHE_HUB` →
+    :data:`~market_sim.config.interchange_config.CAISO_PER_HUB_IMPORT_ZONES`), and each hub
     zone gets ONE export leg (a negative-generation sink, see
     :func:`build_export_sinks`). Tranche capacities are the natural
     :data:`IMPORT_TRANCHES` values (the simultaneous cap is the interface limit,
     not a per-tranche rescale, matching the keeper); the rising border-carbon
-    ladder of :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF` is preserved.
+    ladder of :data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF` is preserved.
 
     Prices are placeholders, overwritten hour-by-hour by
     :func:`inject_caiso_per_hub_intertie_prices` to each leg's own measured hub.
@@ -643,7 +643,7 @@ def inject_caiso_per_hub_intertie_prices(
 
     where ``hub`` is the tranche/corridor's own measured nodal LMP (energy +
     congestion + loss, GHG excluded), ``wheel`` the additive OATT point-to-point
-    charge of :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS`
+    charge of :data:`~market_sim.config.interchange_config.CAISO_IMPORT_DELIVERY_BASIS`
     (the multiplicative line-loss markup is dropped — the measured MCL already
     carries the real loss; rules #11/#12), and ``border`` the CARB adder (clean
     hydro/solar pay none). Because wheel ≥ 0 and carbon ≥ 0, every import leg is
@@ -814,7 +814,7 @@ def forward_corridor_atc_envelope(
     where ``TTC`` is the corridor's physical import-link rating
     (:func:`_caiso_corridor_import_ttc_mw`), ``atc_base_fraction`` the posted-ATC
     share of that rating available for CAISO economy imports
-    (:data:`~market_sim.config.constants.CAISO_PER_HUB_NEIGHBORS`), and
+    (:data:`~market_sim.config.interchange_config.CAISO_PER_HUB_NEIGHBORS`), and
     ``solar_frac(t)`` the region's hourly solar penetration
     (:func:`market_sim.data.eia_loader.caiso_solar_fraction`, CISO solar /
     demand) — a FORWARD driver that responds to a changed solar build. The solar
@@ -915,7 +915,7 @@ def build_reference_price_node(iso: str) -> list[Generator]:
 
     The forecast-grade replacement for the fitted
     :func:`build_import_generators` / :func:`build_export_sinks`: per neighbor in
-    :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`, the import and
+    :data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS`, the import and
     export ranges are each split into
     :data:`~market_sim.data.neighbor_price.SEAM_FLOW_TRANCHES` equal-width flow
     bands, all placed in the ISO's external zone. Splitting into bands lets the
@@ -938,7 +938,7 @@ def build_reference_price_node(iso: str) -> list[Generator]:
 
     Args:
         iso: ISO identifier; must have an entry in ``INTERFACE_NEIGHBORS`` and
-            in :data:`~market_sim.config.constants.IMPORT_ZONE`.
+            in :data:`~market_sim.config.interchange_config.IMPORT_ZONE`.
 
     Returns:
         Import + export pseudo-generators; empty for an ISO with no neighbor
@@ -1028,7 +1028,7 @@ def inject_reference_price_mc(
 
     ``border_anchor`` (MISO opt-in) re-anchors the PJM seam from PJM's
     system-average realized LMP to its MISO-facing western border hubs (ComEd /
-    AEP-Ohio / ATSI; :data:`~market_sim.config.constants.MISO_PJM_BORDER_HR_BY_YEAR`)
+    AEP-Ohio / ATSI; :data:`~market_sim.config.interchange_config.MISO_PJM_BORDER_HR_BY_YEAR`)
     by swapping the PJM spec's ``hr_by_year`` for the lower border table — the
     cheaper western border clears more import in tight hours (the 2024/2025 MISO
     import under-run), while 2023 (already matched) barely moves. No-op for every
@@ -1114,7 +1114,7 @@ def inject_reference_price_firm_export(fleet_arrays, iso: str, year: int) -> boo
     base off in cheap-spread hours (the PJM 2023 NYISO +4.3 vs +18.5 TWh miss).
 
     For each neighbor carrying a
-    :attr:`~market_sim.config.constants.NeighborInterface.firm_export_floor_by_year`
+    :attr:`~market_sim.config.interchange_config.NeighborInterface.firm_export_floor_by_year`
     entry for ``year``, this forces the neighbor's CHEAPEST export tranches on at
     ``floor_mw`` by lowering their upper bound (``pmax``) to a negative value —
     the seam's export rows are negative-output sinks (output ``<= 0``), so an
@@ -1193,7 +1193,7 @@ def inject_reference_price_firm_import(fleet_arrays, iso: str, year: int) -> boo
     overshoot).
 
     For each neighbor carrying a
-    :attr:`~market_sim.config.constants.NeighborInterface.firm_import_floor_by_year`
+    :attr:`~market_sim.config.interchange_config.NeighborInterface.firm_import_floor_by_year`
     entry for ``year``, this forces the neighbor's CHEAPEST import tranches on at
     ``floor_mw`` by raising their hour-varying lower bound
     (``FleetArrays.min_gen``) — the seam's import rows are positive-output
@@ -1306,7 +1306,7 @@ def inject_caiso_import_hub_prices(
     (the gap behind DIAGNOSIS-caiso-body-overprice-2026-06-21). Delivered-cost
     basis: because the nodal MCL already carries the real loss, only the OATT
     point-to-point wheeling charge of
-    :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS` is added
+    :data:`~market_sim.config.interchange_config.CAISO_IMPORT_DELIVERY_BASIS` is added
     (the modeled multiplicative line-loss markup is dropped to avoid
     double-counting — rules #11/#12). The gas blocks (``DSW_CCGT`` / ``DSW_CT``)
     carry the wheel here but are then overwritten off measured gas by
@@ -1482,13 +1482,13 @@ def inject_caiso_bidir_intertie_prices(
 
     * each import tranche row → ``hub + border_carbon × (EF / EF_unspecified)``
       (the per-tranche CARB adder of
-      :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`), and
+      :data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF`), and
     * the single export leg row → ``hub`` (exports owe no CA compliance cost).
 
     PROBE NOTE (caiso 24 bidir+wheel-only): each import leg is priced at
     ``hub + wheel + border_carbon × (EF / EF_unspecified)`` — the ADDITIVE
     per-tranche OATT point-to-point wheeling charge of
-    :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS`, but NOT its
+    :data:`~market_sim.config.interchange_config.CAISO_IMPORT_DELIVERY_BASIS`, but NOT its
     multiplicative line-loss markup (``loss·max(hub,0)``). On the capped 8.3 GW
     single-flow bidir node the multiplicative loss double-counts the congestion
     the cap already prices and over-suppresses imports (caiso-23 basis-only: net
@@ -1745,9 +1745,9 @@ def inject_caiso_import_solar_shape(
 def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     """Return ``iso_config`` with its external import/export zone appended.
 
-    Adds the ISO's :data:`~market_sim.config.constants.IMPORT_ZONE` as a
+    Adds the ISO's :data:`~market_sim.config.interchange_config.IMPORT_ZONE` as a
     zero-load zone plus its border links
-    (:data:`~market_sim.config.constants.IMPORT_NODE_LINKS`). A no-op when
+    (:data:`~market_sim.config.interchange_config.IMPORT_NODE_LINKS`). A no-op when
     the ISO has no import node configured or the zone is already part of
     the topology (CAISO bakes ``WECC_import`` into ``_caiso_config``).
 
@@ -1787,7 +1787,7 @@ def build_pjm_external_flow_groups(
     """Return per-hour asymmetric flow caps for PJM's external star-node links.
 
     Breaks the PJM copper-plate (0.000 zonal LMP spread in every hour): the
-    priced :data:`~market_sim.config.constants.IMPORT_ZONE` ``PJM_external`` node
+    priced :data:`~market_sim.config.interchange_config.IMPORT_ZONE` ``PJM_external`` node
     wires ~30 GW of *uncongested* transfer to 5 border zones, so the dear-east
     load pockets import directly from one price hub and never pull power through
     the internal west→east lines — every zone's energy-balance dual ties to one
@@ -2626,7 +2626,7 @@ def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
     only when NYISO's price exceeds the tranche cost), which backs them off in
     cheap-overnight hours / low-price years even though the real schedule keeps
     flowing. For each tranche in
-    :data:`~market_sim.config.constants.NYISO_FIRM_IMPORT_FLOOR_FRAC`, this sets
+    :data:`~market_sim.config.interchange_config.NYISO_FIRM_IMPORT_FLOOR_FRAC`, this sets
     a constant hourly ``min_gen`` floor of ``frac × tranche capacity`` on the
     matching import row (capped at the row's available capacity), so the firm
     baseload flows every hour. The configured fractions keep the total firm
@@ -2818,26 +2818,26 @@ def build_miso_firm_imports(
     reason MISO is a net IMPORTER: it sells ~10-15 TWh/yr of FIRM contracted
     hydro into MISO-North over the Manitoba<->US HVDC / 500 kV ties. This import
     sits OUTSIDE the gas-margin reference-price seam
-    (:data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`): firm hydro has no
+    (:data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS`): firm hydro has no
     gas x heat-rate price analogue, so it is a SEPARATE block priced as firm
     hydro — a low, near-constant energy offer reflecting the contract.
 
     The block is a single ``fuel_type="import"`` pseudo-generator landed directly
-    in :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_ZONE`
+    in :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_ZONE`
     (``MISO-North``, the model zone the ties physically enter), bounded
     ``[0, pmax]`` and offered at
-    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_OFFER`. Because
+    :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_OFFER`. Because
     its ``fuel_type`` is ``"import"`` it is counted as net interchange (not
     in-state generation), and its must-flow firm floor is applied post-assembly
     by :func:`inject_miso_firm_imports`.
 
     The block capacity ``pmax`` is forecast-native — the flat contract midpoint
-    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_MW` — for any
+    :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_MW` — for any
     forecast year, and in BACKCAST mode is overlaid with the measured per-year
     firm-hydro delivery
-    (:data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR`,
+    (:data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR`,
     drought-responsive) via
-    :func:`~market_sim.config.constants.resolve_miso_manitoba_firm_import_mw`.
+    :func:`~market_sim.config.interchange_config.resolve_miso_manitoba_firm_import_mw`.
     Neither is fitted to the net-interchange residual (claude.md rules #11/#12):
     the per-year delivery is the measured DIRECTED firm import computed before any
     LP runs, regenerable for a forward year from Manitoba's hydro outlook + the
@@ -2879,7 +2879,7 @@ def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
     every hour regardless of MISO's hourly price (the Hydro-Québec firm-import
     pattern, :func:`inject_nyiso_firm_imports`). This sets a constant hourly
     ``min_gen`` floor of
-    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC` ×
+    :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC` ×
     the block's available capacity on the Manitoba import row
     (:func:`build_miso_firm_imports`), so the firm baseload flows even in
     cheap-overnight hours / low-price years where an unfloored economic offer

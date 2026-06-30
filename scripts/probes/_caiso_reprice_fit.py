@@ -35,9 +35,11 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
     CARB_UNSPECIFIED_IMPORT_EF,
+    STATE_CARBON_PRICE_BY_ISO,
+)
+from market_sim.config.interchange_config import (  # noqa: E402
     EXPORT_TRANCHES,
     IMPORT_TRANCHES,
-    STATE_CARBON_PRICE_BY_ISO,
 )
 
 sys.path.insert(0, str(REPO / "scripts"))

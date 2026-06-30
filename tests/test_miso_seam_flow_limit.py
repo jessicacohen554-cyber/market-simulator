@@ -12,7 +12,7 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import (
+from market_sim.config.interchange_config import (
     INTERFACE_NEIGHBORS,
     MISO_SEAM_DIBA,
 )

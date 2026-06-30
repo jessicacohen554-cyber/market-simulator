@@ -44,12 +44,14 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.constants import (  # noqa: E402
     GAS_BASIS_DIFFERENTIAL,
     HOURS_PER_YEAR,
-    INTERFACE_NEIGHBORS,
     NYISO_INTERFACE_TTC_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_YEAR,
+    resolve_reference_price_interface,
+)
+from market_sim.config.interchange_config import (  # noqa: E402
+    INTERFACE_NEIGHBORS,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     resolve_priced_interchange,
-    resolve_reference_price_interface,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
@@ -2666,7 +2668,9 @@ def run_year(
             corridor_export_env = measured_corridor_flow_envelope(
                 iso, year, demand.shape[1], direction="export"
             )
-            from market_sim.config.constants import CAISO_CORRIDOR_FLOW_PERCENTILE
+            from market_sim.config.interchange_config import (
+                CAISO_CORRIDOR_FLOW_PERCENTILE,
+            )
 
             cap_label = f"measured p{CAISO_CORRIDOR_FLOW_PERCENTILE:g} ATC proxy"
         if corridor_env:
@@ -2702,10 +2706,8 @@ def run_year(
     # (asymmetric per-hour interface groups); no-op off the flag, for non-PJM, or
     # when the measured tie file is absent (byte-identical).
     if getattr(config, "pjm_congestion", False) and iso == "PJM" and priced_interchange:
-        from market_sim.config.constants import (
-            IMPORT_ZONE,
-            PJM_EXTERNAL_FLOW_PERCENTILE,
-        )
+        from market_sim.config.constants import PJM_EXTERNAL_FLOW_PERCENTILE
+        from market_sim.config.interchange_config import IMPORT_ZONE
         from market_sim.data.eia_loader import pjm_zonal_interchange_envelope
         from market_sim.model.transmission import build_pjm_external_flow_groups
 
