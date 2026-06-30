@@ -1,12 +1,11 @@
-"""Calibration-page storage throughput metric: payload helpers + C5b wiring.
+"""Calibration-page storage metrics: payload helpers + C5b/C5c wiring.
 
 The render payload carries a ``storage`` block on both the benchmark side
 (``bench[year].storage.throughput_twh``, from the EIA-930 battery + pumped-storage
 discharge half) and the model side (``run.years[year].storage.throughput_twh``,
 from the bundle's ``storage.parquet`` discharge), keyed exactly as
-``calibration_verdict.score_storage`` (C5b) reads them. These tests pin the
-discharge-TWh contract of the two render helpers and confirm the verdict
-activates off that payload shape (it was SKIPPED for want of a committed series).
+``calibration_verdict.score_storage`` (C5b) reads them. The ``monthly_net_gwh``
+key carries 12 monthly net-discharge GWh totals for C5c dispatch shape scoring.
 """
 
 import importlib.util
@@ -136,6 +135,79 @@ class StorageVerdictWiringTests(unittest.TestCase):
         r = cv.score_storage(2024, {}, {"storage": {"throughput_twh": 1.0}})
         self.assertEqual(r["status"], cv.SKIPPED)
         self.assertIn("legacy bundle", r["magnitude"])
+
+
+class ModelMonthlyTests(unittest.TestCase):
+    def test_none_without_storage_frame(self):
+        self.assertIsNone(rch._model_storage_monthly(None, 2024))
+
+    def test_returns_twelve_months(self):
+        df = _storage_frame(2024, [("P1", "li_ion", 100.0, 8760)])
+        result = rch._model_storage_monthly(df, 2024)
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), 12)
+
+    def test_net_discharge_is_positive(self):
+        recs = []
+        for h in range(744):
+            recs.append(
+                {
+                    "year": 2024,
+                    "pass": "P1",
+                    "unit_id": "b1",
+                    "tech": "li_ion",
+                    "zone": "Z",
+                    "hour": h,
+                    "charge_mw": 50.0,
+                    "discharge_mw": 100.0,
+                }
+            )
+        df = pd.DataFrame(recs)
+        result = rch._model_storage_monthly(df, 2024)
+        self.assertGreater(result[0], 0)
+
+
+class ActualMonthlyTests(unittest.TestCase):
+    def test_none_when_series_absent(self):
+        e = _e930(2024, [("gas", [100.0] * 10)])
+        self.assertIsNone(rch._actual_storage_monthly(e[e["year"] == 2024]))
+
+    def test_returns_twelve_months(self):
+        e = _e930(2024, [("battery", [100.0, -80.0] * 4380)])
+        result = rch._actual_storage_monthly(e[e["year"] == 2024])
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), 12)
+
+
+class StorageShapeVerdictTests(unittest.TestCase):
+    def test_c5c_passes_correlated_monthly(self):
+        mon = [10.0, 8.0, 12.0, 15.0, 20.0, 25.0, 30.0, 28.0, 22.0, 18.0, 12.0, 9.0]
+        ypay = {"storage": {"monthly_net_gwh": mon}}
+        ybench = {"storage": {"monthly_net_gwh": mon}}
+        r = cv.score_storage_shape(2024, ypay, ybench)
+        self.assertEqual(r["status"], cv.PASS)
+
+    def test_c5c_fails_anticorrelated(self):
+        mon_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]
+        mon_a = [12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        r = cv.score_storage_shape(
+            2024,
+            {"storage": {"monthly_net_gwh": mon_m}},
+            {"storage": {"monthly_net_gwh": mon_a}},
+        )
+        self.assertEqual(r["status"], cv.FAIL)
+
+    def test_c5c_skips_without_actual(self):
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": [1.0] * 12}}, {}
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_c5c_skips_without_model(self):
+        r = cv.score_storage_shape(
+            2024, {}, {"storage": {"monthly_net_gwh": [1.0] * 12}}
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
 
 
 if __name__ == "__main__":
