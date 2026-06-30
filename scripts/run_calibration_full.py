@@ -1685,6 +1685,7 @@ def solve_and_persist(
     offer_curve_deltas: dict | None = None,
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
+    cc_nameplate_summer_derate: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -1890,6 +1891,7 @@ def solve_and_persist(
             offer_curve_deltas=offer_curve_deltas,
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
+            cc_nameplate_summer_derate=cc_nameplate_summer_derate,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2152,6 +2154,7 @@ def solve_and_persist(
         "offer_curve_deltas": offer_curve_deltas or {},
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
+        "cc_nameplate_summer_derate": cc_nameplate_summer_derate,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -5071,6 +5074,15 @@ def main() -> None:
         "committed floor) pro-rata. Plant hourly available MW unchanged.",
     )
     parser.add_argument(
+        "--cc-nameplate-summer-derate",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Raise each CC plant's LP capacity to its demonstrated CAMPD "
+        "peak and derate to EIA-860 net summer capacity during cooling "
+        "months, correcting plants whose nameplate understates actual "
+        "capability (the Hinds / Zeeland 131%% CF issue).",
+    )
+    parser.add_argument(
         "--cc-duct-peaking",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -5696,6 +5708,16 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-zonal-gas-basis",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Shift each MISO gas unit's fuel price by its zone's measured "
+        "regional gas basis vs Henry Hub (data/raw/miso_zonal_gas_hub.csv). "
+        "MISO-North on MidCon/Northern Natural (IA), Central on Chicago "
+        "Citygate (IL), South on Gulf Coast (LA). Capacity-weighted "
+        "mean-zero (fleet-aggregate gas level preserved). MISO-only.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -5940,6 +5962,7 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
+        cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False
@@ -5986,6 +6009,7 @@ def main() -> None:
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
         miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,
+        miso_zonal_gas_basis=args.miso_zonal_gas_basis,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
