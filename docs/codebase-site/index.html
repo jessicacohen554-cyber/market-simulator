@@ -107,12 +107,26 @@
     }
     #diag-tooltip .tt-body { font-size: 0.74rem; color: rgba(255,255,255,0.70); line-height: 1.5; }
 
-    .stat-card--solar::before   { content:''; display:block; height:3px; background:var(--solar);   border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
-    .stat-card--wind::before    { content:''; display:block; height:3px; background:var(--wind);    border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
-    .stat-card--hydro::before   { content:''; display:block; height:3px; background:var(--hydro);   border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
-    .stat-card--nuclear::before { content:''; display:block; height:3px; background:var(--nuclear); border-radius:var(--radius-sm) var(--radius-sm) 0 0; margin:-24px -28px 16px; }
+    .stat-card--solar::before,
+    .stat-card--wind::before,
+    .stat-card--hydro::before,
+    .stat-card--nuclear::before {
+      content:''; display:block; height:3px;
+      border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+      margin:-24px -28px 16px;
+    }
+    .stat-card--solar::before   { background:var(--solar); }
+    .stat-card--wind::before    { background:var(--wind); }
+    .stat-card--hydro::before   { background:var(--hydro); }
+    .stat-card--nuclear::before { background:var(--nuclear); }
 
     @media (max-width: 768px) { .page-cards-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) {
+      .stat-card--solar::before,
+      .stat-card--wind::before,
+      .stat-card--hydro::before,
+      .stat-card--nuclear::before { margin: -18px -20px 12px; }
+    }
     @media (max-width: 520px) { .page-cards-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -369,7 +383,7 @@
           </p>
         </div>
 
-        <div class="glass-chart-panel" style="padding:40px 32px;">
+        <div class="glass-chart-panel">
           <div id="sysdiag" role="img" aria-label="System overview: Demand and Fleet feed the LP Solver. The LP returns LMPs. LMPs drive Capacity Evolution, which updates the Fleet for the next year."></div>
         </div>
 
