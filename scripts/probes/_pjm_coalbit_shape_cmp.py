@@ -16,7 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from lib.bundle_io import bundle_input_path  # noqa: E402
-from market_sim.data.fleet import coal_supply_class  # noqa: E402
+from market_sim.data.coal import coal_supply_class  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 
 keeper, marg, year = Path(sys.argv[1]), Path(sys.argv[2]), int(sys.argv[3])
