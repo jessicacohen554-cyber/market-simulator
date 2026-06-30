@@ -449,3 +449,124 @@
 
 .section-dark .scrubber__info { color: rgba(255, 255, 255, 0.60); }
 .scrubber__info strong { color: var(--hydro); font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   11. Figure sub-components (used by sub-pages)
+   --------------------------------------------------------------------------- */
+
+.fig__header {
+  padding: 16px 20px 0;
+}
+
+.fig__title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fig__controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-light);
+  background: rgba(0,0,0,0.018);
+  font-size: 0.82rem;
+}
+
+.fig__controls-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fig__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.fig__body {
+  width: 100%;
+  min-height: 280px;
+  position: relative;
+}
+
+.btn-group {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 100px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--border-light); color: var(--text-primary); }
+.btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+.em-amber-text { color: var(--amber-text); font-weight: 600; }
+
+/* ---------------------------------------------------------------------------
+   12. Breadcrumb mobile
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .breadcrumb {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .breadcrumb__item { max-width: 100%; }
+  .breadcrumb__item--next { margin-left: 0; text-align: left; }
+  .breadcrumb__item--next .breadcrumb__dir { justify-content: flex-start; }
+}
+
+/* ---------------------------------------------------------------------------
+   13. Data table mobile scroll
+   --------------------------------------------------------------------------- */
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: var(--space-lg) 0;
+}
+
+.table-scroll .data-table { margin: 0; }
+
+/* ---------------------------------------------------------------------------
+   14. Mobile adjustments for sub-page components
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .fig__controls {
+    gap: 8px 16px;
+    padding: 10px 16px;
+  }
+  .fig__header { padding: 12px 16px 0; }
+  .fig__body { min-height: 200px; }
+  .fig__caption { padding: 10px 16px; flex-direction: column; align-items: flex-start; }
+  .btn { padding: 4px 10px; font-size: 0.72rem; }
+  .equation { padding: 16px 20px; }
+  .equation__label { position: static; transform: none; display: block; text-align: right; margin-top: 8px; }
+  .code-block { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .btn-group { gap: 3px; }
+  .btn { padding: 4px 8px; font-size: 0.70rem; }
+}

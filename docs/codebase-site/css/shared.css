@@ -89,6 +89,14 @@
   --warning:  #D97706;
   --info:     #0284C7;
 
+  /* Spacing scale */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+
   /* Layout */
   --max-content: 1440px;
   --max-prose:   1080px;
@@ -126,6 +134,7 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -135,6 +144,7 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -1322,10 +1332,14 @@ ul, ol {
 @media (max-width: 600px) {
   .chart-legend { gap: 8px 12px; font-size: 0.72rem; }
   .stat-card__value { font-size: 1.6rem; }
+  .stat-card { padding: 18px 20px; }
   .headline-card__value { font-size: 1.4rem; }
+  .headline-card { padding: 18px; }
   .chart-panel { padding: 16px; }
   .glass-chart-panel { padding: 20px; }
   .card { padding: 18px; }
+  .narrative-card { padding: 20px; }
+  .emphasis-callout { padding: 28px 20px; }
 }
 
 @media (max-width: 480px) {
