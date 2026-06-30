@@ -1,9 +1,13 @@
 """Tests for the EIA-930 demand and generation loaders."""
 
+import sys
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
@@ -11,17 +15,19 @@ from market_sim.data.eia_loader import (
     _eia_hourly_frame_filled,
     _load_caiso_hourly_demand,
     _load_nyiso_hourly_demand,
-    caiso_zonal_load_shares,
-    ercot_zonal_load_shares,
     load_demand,
     load_demand_meta,
     load_ercot_battery_gen,
     load_generation_profiles,
     measured_gas_floor_profile,
     measured_interchange_envelope,
-    miso_zonal_load_shares,
-    nyiso_zonal_load_shares,
     pjm_zonal_interchange_envelope,
+)
+from scripts.curate_zonal_shares import (
+    parse_caiso_shares as caiso_zonal_load_shares,
+    parse_ercot_shares as ercot_zonal_load_shares,
+    parse_miso_shares as miso_zonal_load_shares,
+    parse_nyiso_shares as nyiso_zonal_load_shares,
 )
 
 _TEST_YEAR = 2024
@@ -122,9 +128,12 @@ class TestEIALoader(unittest.TestCase):
         self.assertLessEqual(peak, _CAISO_PEAK_RANGE[1])
 
     def test_caiso_zone_rows_are_static_share_split(self):
-        """CAISO (no per-zone file) splits one series by constant load shares."""
+        """Without measured hourly shares, CAISO splits by constant load fractions."""
         iso_config = get_iso_config("CAISO")
-        demand = load_demand("CAISO", _TEST_YEAR, iso_config)
+        with mock.patch(
+            "market_sim.data.eia_loader.load_zonal_shares", return_value=None
+        ):
+            demand = load_demand("CAISO", _TEST_YEAR, iso_config)
         # Each zone's row is its load_share fraction of one system series,
         # so the rows are constant multiples of each other every hour.
         nonzero = [
@@ -161,9 +170,9 @@ class TestEIALoader(unittest.TestCase):
         self.assertEqual(len(np.unique(rest)), 1)
 
     def test_caiso_zonal_shares_fall_back_without_file(self):
-        """A year with no TAC-area file falls back to the static split."""
+        """A year with no TAC-area file returns None."""
         zone_names = get_iso_config("CAISO").zone_names
-        self.assertIsNone(caiso_zonal_load_shares(_TEST_YEAR, zone_names))
+        self.assertIsNone(caiso_zonal_load_shares(2099, zone_names))
 
     def test_caiso_zonal_demand_reconciles_to_system_series(self):
         """Zonal demand sums back to the EIA-930 CISO system series each hour."""
@@ -220,7 +229,7 @@ class TestEIALoader(unittest.TestCase):
         miso = get_iso_config("MISO")
         hourly = load_demand("MISO", _MISO_TEST_YEAR, miso)
         with mock.patch(
-            "market_sim.data.eia_loader.miso_zonal_load_shares", return_value=None
+            "market_sim.data.eia_loader.load_zonal_shares", return_value=None
         ):
             static = load_demand("MISO", _MISO_TEST_YEAR, miso)
         self.assertEqual(hourly.shape, (miso.n_zones, HOURS_PER_YEAR))
@@ -373,9 +382,12 @@ class TestNYISODemand(unittest.TestCase):
         self.assertAlmostEqual(total, 1.0, places=10)
 
     def test_nyiso_static_zone_rows_are_share_split(self):
-        """Without U3, each NYISO zone row is a constant multiple of the system series."""
+        """Without measured hourly shares, each NYISO zone row is a constant multiple."""
         nyiso = get_iso_config("NYISO")
-        demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
+        with mock.patch(
+            "market_sim.data.eia_loader.load_zonal_shares", return_value=None
+        ):
+            demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
         nonzero = [
             (i, z.load_share) for i, z in enumerate(nyiso.zones) if z.load_share > 0.0
         ]
@@ -402,15 +414,9 @@ class TestNYISODemand(unittest.TestCase):
         np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
 
     def test_nyiso_zonal_shares_fall_back_without_u3(self):
-        """``nyiso_zonal_load_shares`` returns ``None`` when U3 is absent.
-
-        Without the NYISO OASIS pal actual-load files, the loader must fall
-        back to the static Gold-Book shares rather than raising an error.
-        Refresh path: upload U3 (NYISO_load_actuals_<year>.csv) to
-        data/raw/zone-specific-demand/NYISO/.
-        """
+        """``nyiso_zonal_load_shares`` returns ``None`` for a year with no U3 file."""
         zone_names = get_iso_config("NYISO").zone_names
-        self.assertIsNone(nyiso_zonal_load_shares(_NYISO_TEST_YEAR, zone_names))
+        self.assertIsNone(nyiso_zonal_load_shares(2099, zone_names))
 
 
 class TestInterchangeEnvelope(unittest.TestCase):
