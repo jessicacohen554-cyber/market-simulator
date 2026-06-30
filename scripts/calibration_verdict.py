@@ -96,6 +96,7 @@ DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
 CO2_TOL = 0.07  # +/-7% vs eGRID
 STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
+STORAGE_SHAPE_R_FLOOR = 0.50  # monthly net-discharge pearson r floor
 VRE_TOL = 0.10  # +/-10% advisory band for solar/wind (report-only)
 
 # Per-ISO scarcity-tail definition (rubric §5): (threshold $/MWh).
@@ -132,6 +133,7 @@ CRITERIA = {
     "dispatch_corr": ("C4 fleet hourly dispatch correlation", SOFT),
     "co2": ("C5a CO2 vs eGRID", SOFT),
     "storage": ("C5b storage throughput", SOFT),
+    "storage_shape": ("C5c storage dispatch shape", SOFT),
     "governance": ("C6 governance gate", HARD),
 }
 
@@ -419,11 +421,6 @@ def score_fuelmix(
         else:
             share_pp = None
         if not class_is_gated(iso, c, year):
-            # Incomplete-plant-data class in a preliminary EIA-923 vintage: its
-            # per-class actual is under-reported (missing plants) and EIA-930
-            # carries no per-class substitute, so there is nothing trustworthy to
-            # gate against. SKIPPED — not gated, not a silent pass; C2's family
-            # gate still covers it. Annotated from the committed completeness map.
             comp = cmap_year.get(c, {})
             why = comp.get("status", "incomplete")
             reasons = "; ".join(comp.get("reasons", [])) or "no per-class actual"
@@ -521,13 +518,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
         m = sum(float(gm.get(c, 0.0)) for c in scored)
         a923 = sum(float(cf.get(c, 0.0)) for c in scored)
         a930 = float(e930.get(fam, 0.0)) or None
-        # A family that did not fully report this year uses the EIA-930 aggregate
-        # fallback; a complete (or complete-vintage) family defers to the C1
-        # per-class gate.
         use_family_fallback = not family_is_complete(iso, fam, year)
-        # Immaterial family: the C1 per-class absolute band governs it, so the
-        # family system-volume gate is not applicable (avoids a meaningless band
-        # on a near-zero family like NEISO coal).
         if max(a923, a930 or 0.0) < SYSVOL_MIN_TWH:
             out.append(
                 _skip(
@@ -540,18 +531,8 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
             )
             continue
         if use_family_fallback:
-            # Preliminary EIA-923 vintage: no per-class actual; the EIA-930 grid
-            # total is the authoritative family actual, gated on the ±2.5% family
-            # fallback (record whether the 0.97 reconcile fired).
             actual = a930
             if fam == "gas" and actual is not None and "other" in e930:
-                # Same geo/biomass fold-in deflation reconcile_vintage_classes
-                # applies to classFull (render_calibration_html._gas_foldin_
-                # deflation): subtract the GENUINELY-folded geo/biomass so the
-                # preliminary family gate compares the model to TRUE natural gas,
-                # not the inflated EIA-930 NG cell. Self-zeroes for clean BAs.
-                # (Legacy bundles without the 930 "other" series keep raw a930 and
-                # should be re-extracted.)
                 actual -= max(
                     0.0,
                     float(cf.get("OTHER", 0.0))
@@ -578,16 +559,6 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                 }
             )
             continue
-        # Complete vintage: the per-class universal gate (C1) already scores every
-        # constituent fossil class of this family as a HARD criterion, on the same
-        # 1.0%-ISO-gen volume + 1.5pp share band. Re-scoring the family here would
-        # duplicate C1 exactly (same classes, same band, same ledger), so C2
-        # DEFERS to C1 for complete vintages: it neither nets the family aggregate
-        # (which used to MASK an offsetting per-class miss like CT_PEAKER) nor
-        # applies a percent-of-family band (which used to INVENT a fail on a
-        # mid-size family like coal). Any family breach surfaces as a C1 per-class
-        # FAIL. C2's independent role is now the preliminary-year family fallback
-        # above, where C1 has no per-class actual to gate against.
         breaches = [
             c
             for c in scored
@@ -710,7 +681,6 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> dict:
     h = ordc["hoursGt200"]
     actual, model = float(h.get("actual", 0)), float(h.get("model", 0))
     if actual <= 0:
-        # No observed scarcity: a quiet tail can't be over/under-shot meaningfully.
         ok = model <= 0 or model < 50  # token guard against an invented tail
         mag = f"model {model:.0f}h vs actual ~0h (>${thr:.0f})"
     else:
@@ -743,8 +713,6 @@ def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
                 _skip("dispatch_corr", year, f"{fam} hourly fit absent", key=fam)
             )
             continue
-        # Immaterial fleet: an hourly correlation on a near-zero series is
-        # degenerate (NEISO coal r≈0); C1's per-class band is the real check.
         twh = max(abs(r.get("m") or 0.0), abs(r.get("b") or 0.0))
         if twh < DISP_MIN_TWH:
             out.append(
@@ -830,6 +798,48 @@ def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
         "actual": actual,
         "tol": f"±{STORAGE_TOL * 100:.0f}%",
         "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+    }
+
+
+def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
+    """C5c — monthly storage dispatch shape; SKIPPED when either side is absent."""
+    model_mon = (ypay.get("storage") or {}).get("monthly_net_gwh")
+    actual_mon = (ybench.get("storage") or {}).get("monthly_net_gwh")
+    if actual_mon is None:
+        return _skip(
+            "storage_shape",
+            year,
+            "EIA-930 has no monthly storage dispatch breakout for this BA-year",
+        )
+    if model_mon is None:
+        return _skip(
+            "storage_shape",
+            year,
+            "model storage monthly dispatch absent (legacy bundle)",
+        )
+    if len(model_mon) != 12 or len(actual_mon) != 12:
+        return _skip("storage_shape", year, "monthly vector length != 12")
+    m = [float(x) for x in model_mon]
+    a = [float(x) for x in actual_mon]
+    n = len(m)
+    m_mean = sum(m) / n
+    a_mean = sum(a) / n
+    cov = sum((m[i] - m_mean) * (a[i] - a_mean) for i in range(n)) / n
+    m_std = (sum((x - m_mean) ** 2 for x in m) / n) ** 0.5
+    a_std = (sum((x - a_mean) ** 2 for x in a) / n) ** 0.5
+    r = cov / (m_std * a_std) if m_std > 0 and a_std > 0 else 0.0
+    ok = r >= STORAGE_SHAPE_R_FLOOR
+    return {
+        "criterion": "storage_shape",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": "monthly net-discharge pearson r",
+        "model": round(r, 3),
+        "actual": None,
+        "tol": f"r ≥ {STORAGE_SHAPE_R_FLOOR}",
+        "magnitude": f"r={r:.3f}",
     }
 
 
@@ -951,6 +961,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records += score_dispatch_corr(year, ypay)
         records.append(score_co2(year, ypay, ybench))
         records.append(score_storage(year, ypay, ybench))
+        records.append(score_storage_shape(year, ypay, ybench))
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
     for r in records:
