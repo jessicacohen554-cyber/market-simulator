@@ -61,7 +61,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import INTERFACE_NEIGHBORS
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 
 # PJM neighbor name -> realized-LMP parquet key (the

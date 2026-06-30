@@ -17,7 +17,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import CAISO_IMPORT_TRANCHE_HUB, HOURS_PER_YEAR
+from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.interchange_config import CAISO_IMPORT_TRANCHE_HUB
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
     CALIBRATION_DIR,
@@ -864,23 +865,6 @@ def iso_zone_tmax(
     return (tmax, tmin) if tmax is not None else None
 
 
-def caiso_load_weighted_tmax(year: int, hours: int) -> np.ndarray | None:
-    """Return the load-weighted CAISO daily max temperature (deg C) per run hour.
-
-    Thin wrapper around :func:`load_weather` (``zone='_load_weighted'``) +
-    :func:`_broadcast_daily_to_hourly`.  Kept for backward compatibility with
-    ``scripts/caiso_shape_probe.py`` and its tests; new callers should use
-    ``load_weather("CAISO", year, zone="_load_weighted")`` directly.
-
-    Returns ``(hours,)`` deg C, or ``None`` when the archived TMAX file is
-    absent or the year is uncovered.
-    """
-    df = load_weather("CAISO", year, zone="_load_weighted")
-    if df is None:
-        return None
-    return _broadcast_daily_to_hourly(df, year, hours, "tmax_c")
-
-
 def neiso_load_weighted_temp(
     year: int, hours: int
 ) -> tuple[np.ndarray, np.ndarray] | None:
@@ -1036,7 +1020,7 @@ def measured_corridor_flow_envelope(
     (``data/raw/eia-930-interchange/CISO interchange hourly.parquet``; columns
     ``diba``, ``mw`` [EIA sign: + = CISO exports to the DIBA], ``local_time``).
     Each CISO↔DIBA pair is summed into its corridor via
-    :data:`~market_sim.config.constants.CAISO_CORRIDOR_DIBA`, then
+    :data:`~market_sim.config.interchange_config.CAISO_CORRIDOR_DIBA`, then
     ``net_import = -sum(interchange over the corridor's DIBAs)``.
 
     This is an ATC proxy: the corridor's *deliverable* transfer ceiling (the
@@ -1046,7 +1030,7 @@ def measured_corridor_flow_envelope(
     bound on the corridor link's import-direction flow, so the LP still clears
     its merit order *below* the ceiling — a capability limit, not a flow pinned
     to the residual (rule #12). ``percentile`` defaults to
-    :data:`~market_sim.config.constants.CAISO_CORRIDOR_FLOW_PERCENTILE` (95).
+    :data:`~market_sim.config.interchange_config.CAISO_CORRIDOR_FLOW_PERCENTILE` (95).
 
     Hours are mapped onto the model's fixed non-leap calendar
     (:func:`~market_sim.data.fleet._hour_to_month_index` for the month, ``hour %
@@ -1076,7 +1060,7 @@ def measured_corridor_flow_envelope(
         raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
     if iso.upper() != "CAISO":
         return None
-    from market_sim.config.constants import (
+    from market_sim.config.interchange_config import (
         CAISO_CORRIDOR_DIBA,
         CAISO_CORRIDOR_FLOW_PERCENTILE,
     )
@@ -1181,7 +1165,7 @@ def measured_seam_import_envelope(
     """Return each priced seam's measured net-import deliverability cap (MW).
 
     The MISO analogue of :func:`measured_corridor_flow_envelope`. For each
-    reference-price seam in :data:`~market_sim.config.constants.MISO_SEAM_DIBA`
+    reference-price seam in :data:`~market_sim.config.interchange_config.MISO_SEAM_DIBA`
     (``PJM`` / ``SPP`` / ``South``), returns the per-hour ceiling on net import
     (MW), built as the per-(month × hour-of-day) ``percentile`` of the MEASURED
     net import summed over that seam's EIA-930 Directly-Interconnected BAs
@@ -1226,10 +1210,8 @@ def measured_seam_import_envelope(
     """
     if direction not in ("import", "export"):
         raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
-    from market_sim.config.constants import (
-        MISO_SEAM_DIBA,
-        MISO_SEAM_FLOW_PERCENTILE,
-    )
+    from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
+    from market_sim.config.interchange_config import MISO_SEAM_DIBA
     from market_sim.data.fleet import _hour_to_month_index
 
     seam_diba = {"MISO": MISO_SEAM_DIBA}.get(iso.upper())

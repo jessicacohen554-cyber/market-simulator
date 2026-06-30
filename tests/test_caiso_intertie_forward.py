@@ -13,9 +13,9 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import (
+from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
+from market_sim.config.interchange_config import (
     CAISO_PER_HUB_NEIGHBORS,
-    HENRY_HUB_TRAJECTORIES,
     IMPORT_TRANCHES,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -172,7 +172,7 @@ class TestImportTrancheCoverage(unittest.TestCase):
     """Every CAISO import tranche maps to one of the two forward corridors."""
 
     def test_all_tranches_have_a_corridor(self):
-        from market_sim.config.constants import (
+        from market_sim.config.interchange_config import (
             CAISO_IMPORT_TRANCHE_HUB,
             CAISO_PER_HUB_IMPORT_ZONES,
         )

@@ -12,7 +12,7 @@ import unittest.mock
 
 import numpy as np
 
-from market_sim.config.constants import (
+from market_sim.config.interchange_config import (
     CAISO_IMPORT_TRANCHE_HUB,
     CAISO_PER_HUB_IMPORT_ZONES,
     IMPORT_TRANCHES,

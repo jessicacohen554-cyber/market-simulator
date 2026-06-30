@@ -6,7 +6,7 @@ import unittest.mock
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import (
+from market_sim.config.interchange_config import (
     EXPORT_TRANCHES,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHE_EF,

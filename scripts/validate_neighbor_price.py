@@ -34,7 +34,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import INTERFACE_NEIGHBORS
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 from market_sim.data.eia_loader import _eia930_net_interchange
 from market_sim.data.neighbor_price import (
     interface_reference_prices,

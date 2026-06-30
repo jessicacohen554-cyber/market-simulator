@@ -13,11 +13,8 @@ import unittest
 import numpy as np
 
 import market_sim.data.neighbor_price as np_mod
-from market_sim.config.constants import (
-    HENRY_HUB_TRAJECTORIES,
-    INTERFACE_NEIGHBORS,
-    NeighborInterface,
-)
+from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS, NeighborInterface
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 from market_sim.data.neighbor_price import (
     InterfacePrices,
