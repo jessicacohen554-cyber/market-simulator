@@ -242,20 +242,8 @@
       let pd = 0, d = 0;
       for (const z in L) {
         if (!st.zones.has(z)) continue;
-        const zd = L[z]; pd += (zd.p?.reduce((a, v) => a + v, 0) || 0) / 12 * (zd.d || 0); d += zd.d || 0;
-      }
-      // Actually: the old code does monthly demand-weighted roll-up.
-      // Simplified: use the zone's annual avg LMP * demand weight.
-      pd = 0; d = 0;
-      for (const z in L) {
-        if (!st.zones.has(z)) continue;
-        const zd = L[z];
-        if (zd.p && zd.dMon) {
-          for (let m = 0; m < 12; m++) { pd += (zd.p[m] || 0) * (zd.dMon[m] || 0); d += zd.dMon[m] || 0; }
-        } else if (zd.d) {
-          const ap = zd.p ? zd.p.reduce((s, v) => s + v, 0) / zd.p.length : 0;
-          pd += ap * zd.d; d += zd.d;
-        }
+        pd += (L[z].p || 0) * (L[z].d || 0);
+        d += L[z].d || 0;
       }
       return d > 0 ? pd / d : null;
     }
@@ -263,43 +251,43 @@
     /* Monthly model LMP (demand-weighted across selected zones). */
     function avgLMPMon(yr) {
       const L = RUN(yr).lmp || {};
-      const out = Array(12).fill(null);
+      const out = Array(12).fill(0);
       const dMon = Array(12).fill(0);
       let any = false;
       for (const z in L) {
         if (!st.zones.has(z)) continue;
         const zd = L[z];
-        if (!zd.p || !zd.dMon) continue;
+        if (!zd.pMon || !zd.dMon) continue;
         any = true;
         for (let m = 0; m < 12; m++) {
-          out[m] = (out[m] || 0) + (zd.p[m] || 0) * (zd.dMon[m] || 0);
+          if (zd.pMon[m] == null) continue;
+          out[m] += zd.pMon[m] * (zd.dMon[m] || 0);
           dMon[m] += zd.dMon[m] || 0;
         }
       }
       if (!any) return null;
-      for (let m = 0; m < 12; m++) out[m] = dMon[m] > 0 ? out[m] / dMon[m] : null;
-      return out;
+      return out.map((s, m) => dMon[m] > 0 ? s / dMon[m] : null);
     }
 
     /* ORDC-overlaid monthly LMP. */
     function avgLMPMonScar(yr) {
       const Y = RUN(yr), S = Y.lmpScar, L = Y.lmp || {};
       if (!S) return null;
-      const out = Array(12).fill(null), dMon = Array(12).fill(0);
+      const out = Array(12).fill(0), dMon = Array(12).fill(0);
       let any = false;
-      for (const z in L) {
+      for (const z in S) {
         if (!st.zones.has(z)) continue;
-        const zd = L[z], sm = S[z];
-        if (!sm || !zd.dMon) continue;
+        const sp = S[z].pMonScar, dm = (L[z] || {}).dMon;
+        if (!sp || !dm) continue;
         any = true;
         for (let m = 0; m < 12; m++) {
-          out[m] = (out[m] || 0) + (sm[m] || 0) * (zd.dMon[m] || 0);
-          dMon[m] += zd.dMon[m] || 0;
+          if (sp[m] == null) continue;
+          out[m] += sp[m] * dm[m];
+          dMon[m] += dm[m] || 0;
         }
       }
       if (!any) return null;
-      for (let m = 0; m < 12; m++) out[m] = dMon[m] > 0 ? out[m] / dMon[m] : null;
-      return out;
+      return out.map((s, m) => dMon[m] > 0 ? s / dMon[m] : null);
     }
 
     /* Annual demand-weighted ORDC-overlaid avg LMP. */
@@ -847,21 +835,17 @@
       const labels = META().groupLabel || {};
       let html = '';
 
-      // Price duration curve
-      html += `<div class="bc-panel">
-        <h2>Price Duration Curve</h2>
-        <p class="panel-sub">${yr} — sorted hourly LMPs, model vs benchmark</p>
-        <div class="chart-legend">
-          <span><span class="swatch" style="border-color:${isoColor(st.iso)}"></span>Model</span>
-          <span><span class="swatch" style="border-color:#94A3B8"></span>Benchmark</span>
-        </div>
-        <div id="priceDurChart" style="width:100%;height:320px"></div>
-      </div>`;
-
-      // Monthly LMP error
+      // Monthly LMP bar chart (model vs actual)
       html += `<div class="bc-panel">
         <h2>Monthly LMP — Model vs Actual</h2>
-        <p class="panel-sub">${yr} — $/MWh per month</p>
+        <p class="panel-sub">${yr} — $/MWh, bars = model, markers = actual DA</p>
+        <div id="priceDurChart" style="width:100%;height:280px"></div>
+      </div>`;
+
+      // Monthly LMP line chart (with ORDC overlay if present)
+      html += `<div class="bc-panel">
+        <h2>Monthly LMP — Overlay Comparison</h2>
+        <p class="panel-sub">${yr} — energy vs overlay $/MWh per month</p>
         <div id="monthlyLmpChart" style="width:100%;height:280px"></div>
       </div>`;
 
@@ -890,53 +874,51 @@
     function drawPriceDuration(yr) {
       const container = document.getElementById('priceDurChart');
       if (!container) return;
-      const M = RUN(yr), B = BENCH(yr);
-      const modelPD = M.priceDuration?.model;
-      const benchPD = M.priceDuration?.actual || B.priceDuration?.actual;
-
-      if (!modelPD) {
-        container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No hourly price data in this payload (monthly averages only).</p>';
+      const mm = avgLMPMon(yr);
+      const aL = actualLMP(yr) || {};
+      if (!mm) {
+        container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No LMP data for this year.</p>';
         return;
       }
-
-      const modelSorted = [...modelPD].sort((a, b) => b - a);
-      const benchSorted = benchPD ? [...benchPD].sort((a, b) => b - a) : null;
-
       const w = container.clientWidth || 600;
-      const h = 320;
-      const m = { top: 20, right: 30, bottom: 40, left: 55 };
+      const h = 280;
+      const L = 55, R = 20, Tp = 20, B = 45;
+      const pw = w - L - R, ph = h - Tp - B;
+      const allVals = [...mm.filter(v => v != null), ...(aL.da_mon || []), ...(aL.rt_mon || [])];
+      const ymax = Math.max(20, ...allVals) * 1.15;
+      const barW = pw / 12 * 0.7;
+      const X = i => L + pw * (i + 0.5) / 12;
+      const Y = v => Tp + ph * (1 - Math.min(Math.max(Number(v) || 0, 0), ymax) / ymax);
 
       const svg = d3.select(container).append('svg')
         .attr('width', w).attr('height', h).attr('class', 'chart');
 
-      const n = modelSorted.length;
-      const x = d3.scaleLinear().domain([0, n]).range([m.left, w - m.right]);
-
-      const allVals = [...modelSorted, ...(benchSorted || [])];
-      const yMax = d3.quantile(allVals.sort((a, b) => b - a), 0.005) || d3.max(allVals) || 100;
-      const yMin = Math.min(0, d3.min(allVals) || 0);
-      const y = d3.scaleLinear().domain([yMin, Math.min(yMax * 1.1, 500)]).range([h - m.bottom, m.top]);
-
-      svg.append('g').attr('transform', `translate(0,${h - m.bottom})`)
-        .call(d3.axisBottom(x).ticks(6).tickFormat(d => d >= 1000 ? `${(d / 1000).toFixed(0)}k` : d))
-        .call(g => { g.select('.domain').remove(); g.selectAll('.tick line').attr('stroke', '#ddd'); });
-      svg.append('g').attr('transform', `translate(${m.left},0)`)
-        .call(d3.axisLeft(y).ticks(6).tickFormat(d => `$${d}`))
-        .call(g => { g.select('.domain').remove(); g.selectAll('.tick line').attr('stroke', '#ddd'); });
-
-      const step = v => Math.max(1, Math.floor(v.length / 2000));
-      if (benchSorted) {
-        const s = step(benchSorted);
-        const sampled = benchSorted.filter((_, i) => i % s === 0);
-        svg.append('path').datum(sampled)
-          .attr('fill', 'none').attr('stroke', '#94A3B8').attr('stroke-width', 1.5)
-          .attr('d', d3.line().x((d, i) => x(i * s)).y(d => y(Math.max(yMin, Math.min(d, yMax * 1.1)))));
+      for (let i = 0; i <= 4; i++) {
+        const y = Tp + ph * i / 4;
+        svg.append('line').attr('x1', L).attr('y1', y).attr('x2', w - R).attr('y2', y).attr('stroke', '#eef1f4');
+        svg.append('text').attr('x', L - 7).attr('y', y + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', '#8a93a0')
+          .text('$' + (ymax * (1 - i / 4)).toFixed(0));
       }
-      const ms = step(modelSorted);
-      const sampled = modelSorted.filter((_, i) => i % ms === 0);
-      svg.append('path').datum(sampled)
-        .attr('fill', 'none').attr('stroke', isoColor(st.iso)).attr('stroke-width', 2)
-        .attr('d', d3.line().x((d, i) => x(i * ms)).y(d => y(Math.max(yMin, Math.min(d, yMax * 1.1)))));
+      MONTHS.forEach((m, i) => svg.append('text').attr('x', X(i)).attr('y', h - 14).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', '#46505f').text(m));
+
+      for (let i = 0; i < 12; i++) {
+        if (mm[i] != null) {
+          svg.append('rect').attr('x', X(i) - barW / 2).attr('y', Y(mm[i])).attr('width', barW).attr('height', Tp + ph - Y(mm[i]))
+            .attr('fill', isoColor(st.iso)).attr('opacity', 0.7).attr('rx', 2);
+        }
+        if (aL.da_mon?.[i] != null) {
+          svg.append('line').attr('x1', X(i) - barW / 2 - 4).attr('x2', X(i) + barW / 2 + 4)
+            .attr('y1', Y(aL.da_mon[i])).attr('y2', Y(aL.da_mon[i]))
+            .attr('stroke', '#647184').attr('stroke-width', 2.5);
+        }
+      }
+      const leg = svg.append('g').attr('transform', `translate(${L + 10},${Tp - 2})`);
+      leg.append('rect').attr('x', 0).attr('y', -5).attr('width', 12).attr('height', 10).attr('fill', isoColor(st.iso)).attr('opacity', 0.7);
+      leg.append('text').attr('x', 16).attr('y', 4).attr('font-size', 10).attr('fill', '#666').text('Model');
+      if (aL.da_mon) {
+        leg.append('line').attr('x1', 80).attr('x2', 100).attr('y1', 0).attr('y2', 0).attr('stroke', '#647184').attr('stroke-width', 2.5);
+        leg.append('text').attr('x', 104).attr('y', 4).attr('font-size', 10).attr('fill', '#666').text('Actual DA');
+      }
     }
 
     function drawMonthlyLmpChart(yr) {
@@ -1343,7 +1325,7 @@
 
       for (const z of zones) {
         const zd = L[z] || {};
-        const p = zd.p ? zd.p.reduce((s, v) => s + v, 0) / zd.p.length : null;
+        const p = zd.p != null ? zd.p : null;
         h += `<tr>
           <td>${esc(z)}</td>
           <td class="num">${p != null ? '$' + p.toFixed(1) : '—'}</td>
