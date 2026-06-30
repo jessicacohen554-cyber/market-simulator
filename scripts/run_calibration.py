@@ -1142,9 +1142,9 @@ def _calibration_config(
         #   fraction multiplies each tranche row's pmax, so it sums to ~0.26 of
         #   plant pmax across a plant's tranches.
         reliability_floor=(
-            iso.upper() in ("CAISO", "NYISO", "NEISO", "MISO")
+            iso.upper() in ("ERCOT", "CAISO", "NYISO", "NEISO", "MISO")
         ),  # Registry-driven temperature/net-load reliability floor: ON for the
-        #   four calibrated ISOs. Every enabled (zone, class, driver) limb in
+        #   five calibrated ISOs. Every enabled (zone, class, driver) limb in
         #   RELIABILITY_FLOOR_REGISTRY[iso] (seeded from the derived
         #   reliability_floor_coeffs_<ISO>.csv) is applied by the single engine.
         #   The registry is empty until Phase 2 fills the coefficient CSVs, so
