@@ -835,20 +835,6 @@
       const labels = META().groupLabel || {};
       let html = '';
 
-      // Monthly LMP bar chart (model vs actual)
-      html += `<div class="bc-panel">
-        <h2>Monthly LMP — Model vs Actual</h2>
-        <p class="panel-sub">${yr} — $/MWh, bars = model, markers = actual DA</p>
-        <div id="priceDurChart" style="width:100%;height:280px"></div>
-      </div>`;
-
-      // Monthly LMP line chart (with ORDC overlay if present)
-      html += `<div class="bc-panel">
-        <h2>Monthly LMP — Overlay Comparison</h2>
-        <p class="panel-sub">${yr} — energy vs overlay $/MWh per month</p>
-        <div id="monthlyLmpChart" style="width:100%;height:280px"></div>
-      </div>`;
-
       // CF Heatmap for selected class
       html += `<div class="bc-panel">
         <h2>Capacity Factor — ${esc(labels[grp] || grp)}</h2>
@@ -865,8 +851,6 @@
 
       el.innerHTML = html;
 
-      drawPriceDuration(yr);
-      drawMonthlyLmpChart(yr);
       drawCfHeatmap(yr, grp);
       drawCfDistribution(yr, grp);
     }
@@ -990,13 +974,15 @@
       if (maxMW > 0) for (let i = 0; i < T; i++) cf[i] = a.mm[i] / maxMW * 100;
 
       // Model heatmap
-      let html = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
-      section.innerHTML = html;
+      section.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
       const cv = document.createElement('canvas');
       cv.className = 'heat'; cv.width = 365; cv.height = 24;
       section.appendChild(cv);
       drawHeat(cv, cf);
-      section.innerHTML += '<div class="heat-axis"><span>Jan</span><span>Jul</span><span>Dec</span></div>';
+      const axis1 = document.createElement('div');
+      axis1.className = 'heat-axis';
+      axis1.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+      section.appendChild(axis1);
 
       // CAMPD heatmap
       if (a.cc && a.cc.length >= T) {
@@ -1012,7 +998,10 @@
         cv2.className = 'heat'; cv2.width = 365; cv2.height = 24;
         div2.appendChild(cv2);
         drawHeat(cv2, cfC);
-        div2.innerHTML += '<div class="heat-axis"><span>Jan</span><span>Jul</span><span>Dec</span></div>';
+        const axis2 = document.createElement('div');
+        axis2.className = 'heat-axis';
+        axis2.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+        div2.appendChild(axis2);
       }
 
       // Ramp
