@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-30-neiso-41-relfloor-rebuild",
+  "label": "neiso 41 relfloor rebuild",
+  "date": "2026-06-30",
+  "shorthand": "neiso-41-relfloor-rebuild",
+  "definition": "NEISO reliability-floor rebuild: per-(zone,class) full-day day-gate",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-30-neiso-41-relfloor-rebuild.js",
+  "bundle": "results/calibration/neiso_relfloor_rebuild"
+}
