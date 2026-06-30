@@ -68,6 +68,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "reference",
     "border-lmp",
     "zonal-shares",
+    "weather",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -196,6 +197,18 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "(`data/clean/zonal-shares/<ISO>/`)."
         ),
     },
+    "weather": {
+        "summary": "Daily maximum and minimum temperature by model zone.",
+        "reconciles": (
+            "Per-ISO NOAA GHCN-Daily TMAX/TMIN CSVs (zone-level files plus "
+            "load-weighted ISO aggregates for CAISO and NEISO, NYC-metro "
+            "aggregate for NYISO) — into one `(date, zone, tmax_c, tmin_c)` "
+            "row per zone per calendar day. Sentinel zones: `_load_weighted` "
+            "(CAISO, NEISO ISO-level aggregate), `_downstate` (NYISO "
+            "NYC-metro). Files are ISO-partitioned by directory path "
+            "(`data/clean/weather/<ISO>/`)."
+        ),
+    },
 }
 
 # Short scope note for the national (non-ISO-partitioned) datatypes' table.
@@ -207,6 +220,7 @@ NATIONAL_SCOPE: dict[str, str] = {
     "reference": "crosswalks / lookups (ISO-agnostic)",
     "border-lmp": "neighbor-border hubs (WECC intertie, PJM_WEST)",
     "zonal-shares": "per-ISO via directory partitioning",
+    "weather": "per-ISO via directory partitioning",
 }
 
 NA = "n/a"
