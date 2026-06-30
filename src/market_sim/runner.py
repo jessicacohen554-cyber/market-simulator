@@ -93,15 +93,8 @@ from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
     ercot_as_aware_unit_value,
-    ercot_multiproduct_reserve_coopt_inputs,
-    ercot_reserve_coopt_inputs,
-    ercot_rtolcap_supply_cap_mw,
-    miso_reserve_coopt_inputs,
-    neiso_reserve_coopt_inputs,
-    nyiso_reserve_coopt_inputs,
     nyiso_spin_eligible,
     nyiso_spin_requirement_mw,
-    pjm_reserve_coopt_inputs,
     reserve_headroom,
     scarcity_prices,
 )
@@ -960,208 +953,49 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     import_node_monthly_lo=recon_lo,
                     import_node_monthly_hi=recon_hi,
                 )
-            # Energy + operating-reserve co-optimization (ERCOT-only, gated): the
-            # published ORDC reserve demand curve enters the LP as a VOLL-anchored
-            # reserve demand, so reserve-eligible thermal units part-load against a
-            # shared-headroom constraint and the reserve clearing price lifts the
-            # energy LMP endogenously (RTSPP = LMP + reserve price). Replaces the
-            # post-solve adder below when on — alters dispatch volumes, so it is a
-            # gated, recalibration-requiring change. See docs/ordc-overlay.md.
-            if getattr(config, "energy_reserve_coopt", False) and iso == "ERCOT":
-                if getattr(config, "ercot_multiproduct_as_coopt", False):
-                    # Multi-product AS stack (RegUp/RRS/ECRS/NonSpin): one
-                    # additive, cascading co-opt demand curve per product; the
-                    # binding product's reserve dual is the MCPC, endogenous.
-                    (
-                        coopt_req,
-                        coopt_elig,
-                        coopt_pens,
-                        coopt_widths,
-                        coopt_mask,
-                        coopt_counts,
-                        coopt_class,
-                        coopt_hr_elig,
-                        coopt_hr_prod,
-                    ) = ercot_multiproduct_reserve_coopt_inputs(
-                        config,
-                        fleet_arrays,
-                        config.hours,
-                        system_load=year_demand.sum(axis=0),
-                        wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
-                        solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
-                        sim_year=year,  # forecast enrollment grows with the sim year
-                    )
-                    dispatch_kwargs.update(
-                        reserve_requirement=coopt_req,
-                        reserve_eligible=coopt_elig,
-                        reserve_storage=True,
-                        ordc_penalties=coopt_pens,
-                        ordc_step_widths=coopt_widths,
-                        reserve_balance_zone_mask=coopt_mask,
-                        reserve_balance_ordc_counts=coopt_counts,
-                        reserve_balance_class=coopt_class,
-                        reserve_headroom_eligible=coopt_hr_elig,
-                        reserve_headroom_products=coopt_hr_prod,
-                    )
-                    # Optional reserve-supply re-scope (RTOLCAP cap): cap each
-                    # headroom tier's cleared reserve at the measured ERCOT
-                    # online-responsive capability instead of full-fleet headroom
-                    # (Finding 1 / G1 broad-month fix). Measured series, not a fit.
-                    coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
-                    if coopt_supply_cap is not None:
-                        dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
-                else:
-                    (
-                        coopt_req,
-                        coopt_elig,
-                        coopt_pens,
-                        coopt_widths,
-                    ) = ercot_reserve_coopt_inputs(
-                        config, fleet_arrays, config.hours, sim_year=year
-                    )
-                    dispatch_kwargs.update(
-                        reserve_requirement=coopt_req,
-                        reserve_eligible=coopt_elig,
-                        reserve_storage=True,
-                        ordc_penalties=coopt_pens,
-                        ordc_step_widths=coopt_widths,
-                    )
-            # PJM analogue: the measured PJM_RTO Primary Reserve requirement
-            # (~3.4 GW) clears against the published vertical two-step ORDC
-            # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
-            # clearing price emerges as the balance-row dual and lifts the energy
-            # LMP (PJM RT = LMP + reserve price). Withholding is its pre-condition
-            # (and mutually exclusive with the post-solve ORDC overlay). See
-            # docs/multi-iso/pjm-reserve-ordc.md.
-            elif getattr(config, "energy_reserve_coopt", False) and iso == "PJM":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                ) = pjm_reserve_coopt_inputs(config, fleet_arrays, config.hours)
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                )
-                # Optional deliverable / online reserve-supply re-scope: the bare
-                # co-opt draws reserve on ~38 GW of total eligible thermal headroom
-                # vs the ~3.4 GW Primary requirement, so the vertical ORDC step never
-                # fires. Supply cap bounds cleared reserve at the 10-min deliverable
-                # ramp; online-gating restricts it to synchronized capacity.
-                # Physical deliverability definitions, never fitted to the residual
-                # (CLAUDE.md #11). See docs/multi-iso/pjm-reserve-ordc.md.
-                from market_sim.results.scarcity import (
-                    pjm_reserve_deliverable_supply_cap_mw,
+            # Energy + operating-reserve co-optimization (multi-ISO, gated):
+            # the ISO's reserve demand curve enters the LP as reserve balance
+            # rows so the reserve clearing price lifts the energy LMP
+            # endogenously. Config-driven: see reserve_config.py.
+            if getattr(config, "energy_reserve_coopt", False) and iso != "CAISO":
+                from market_sim.config.reserve_config import (
+                    build_reserve_dispatch_kwargs,
+                    get_reserve_design,
                 )
 
-                pjm_supply_cap = pjm_reserve_deliverable_supply_cap_mw(
-                    config, fleet_arrays, config.hours
+                design = get_reserve_design(
+                    config,
+                    fleet_arrays,
+                    config.hours,
+                    zone_names,
+                    system_load=year_demand.sum(axis=0),
+                    wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+                    solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
+                    sim_year=year,
                 )
-                if pjm_supply_cap is not None:
-                    dispatch_kwargs.update(reserve_supply_cap=pjm_supply_cap)
+                dispatch_kwargs.update(build_reserve_dispatch_kwargs(design))
+                if iso == "PJM" and design.supply_cap is not None:
+                    elig_1d = (
+                        design.eligible[0]
+                        if design.eligible.ndim == 2
+                        else design.eligible
+                    )
                     logger.info(
                         "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
                         "%d MW (vs ~%d MW total eligible headroom)",
-                        int(pjm_supply_cap.mean()),
+                        int(design.supply_cap.mean()),
                         int(
                             (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[
-                                coopt_elig
+                                elig_1d
                             ]
                             .sum(axis=0)
                             .mean()
                         ),
                     )
-                if getattr(config, "pjm_reserve_online_gated", False):
-                    rho = float(getattr(config, "pjm_reserve_online_rho", 1.0))
-                    dispatch_kwargs.update(
-                        reserve_online_gated=np.array([True]),
-                        reserve_online_rho=rho,
+                if iso == "PJM" and design.online_gated is not None:
+                    logger.info(
+                        "PJM reserve online-gating ON: ρ=%.2f", design.online_rho
                     )
-                    logger.info("PJM reserve online-gating ON: ρ=%.2f", rho)
-            # NYISO analogue: nested LOCATIONAL reserve families (NYCA ⊃ East ⊃
-            # SENY ⊃ NYC). Each (region, product) is a balance row over its
-            # member zones, so a downstate reserve shortage stacks the regional
-            # penalties into the downstate zonal LMP — the locational scarcity
-            # the NYCA-aggregate curve never sees. See docs/multi-iso/.
-            elif getattr(config, "energy_reserve_coopt", False) and iso == "NYISO":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                    coopt_mask,
-                    coopt_counts,
-                    coopt_class,
-                    coopt_online_gated,
-                    coopt_online_rho,
-                ) = nyiso_reserve_coopt_inputs(
-                    config, fleet_arrays, config.hours, zone_names
-                )
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    reserve_storage=True,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                    reserve_balance_zone_mask=coopt_mask,
-                    reserve_balance_ordc_counts=coopt_counts,
-                    reserve_balance_class=coopt_class,
-                    reserve_online_gated=coopt_online_gated,
-                    reserve_online_rho=coopt_online_rho,
-                )
-            # MISO analogue: the footprint-wide market-wide operating-reserve
-            # requirement (MSSC + regulation) clears against MISO's VOLL-anchored
-            # Reliability-Based Demand Curve inside the LP, so the reserve
-            # clearing price emerges as the balance-row dual and lifts the energy
-            # LMP (MISO RT = LMP + market-wide reserve price). System-wide (one
-            # reserve family over the whole footprint), not locational. See
-            # docs/multi-iso/miso-reserve-coopt.md.
-            elif getattr(config, "energy_reserve_coopt", False) and iso == "MISO":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                ) = miso_reserve_coopt_inputs(config, fleet_arrays, config.hours)
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                )
-            # NEISO analogue: system-wide nested reserve co-optimization.
-            # ISO-NE prices operating-reserve scarcity pool-wide via Reserve
-            # Constraint Penalty Factors (RCPF, OP-8): nested 30-min-total ⊇
-            # 10-min-total ⊇ 10-min-spin requirements each become a reserve
-            # family over every zone. Storage backs every class. See
-            # docs/multi-iso/.
-            elif getattr(config, "energy_reserve_coopt", False) and iso == "NEISO":
-                (
-                    coopt_req,
-                    coopt_elig,
-                    coopt_pens,
-                    coopt_widths,
-                    coopt_mask,
-                    coopt_counts,
-                    coopt_class,
-                    _coopt_online_gated,
-                    _coopt_online_rho,
-                ) = neiso_reserve_coopt_inputs(
-                    config, fleet_arrays, config.hours, zone_names
-                )
-                dispatch_kwargs.update(
-                    reserve_requirement=coopt_req,
-                    reserve_eligible=coopt_elig,
-                    reserve_storage=True,
-                    ordc_penalties=coopt_pens,
-                    ordc_step_widths=coopt_widths,
-                    reserve_balance_zone_mask=coopt_mask,
-                    reserve_balance_ordc_counts=coopt_counts,
-                    reserve_balance_class=coopt_class,
-                )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
             # markup). Build the model once and warm-start P1 from P0's optimal

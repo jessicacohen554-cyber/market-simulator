@@ -3752,42 +3752,25 @@ def run_year(
             # forward analogue of the measured DAM-AS overlay. Pair with
             # commitment_enabled for the phantom-headroom fix (the P2 solve's
             # availability zeroes idle slow-start units out of the reserve pool).
-            from market_sim.results.scarcity import (
-                ercot_multiproduct_reserve_coopt_inputs,
+            from market_sim.config.reserve_config import (
+                ERCOT_AS_PRODUCTS,
+                build_reserve_dispatch_kwargs,
+                get_reserve_design,
             )
 
-            (
-                coopt_req,
-                coopt_elig,
-                coopt_pen,
-                coopt_w,
-                coopt_mask,
-                coopt_counts,
-                coopt_class,
-                coopt_hr_elig,
-                coopt_hr_prod,
-            ) = ercot_multiproduct_reserve_coopt_inputs(
+            design = get_reserve_design(
                 config,
                 fleet_arrays,
                 config.hours,
+                zone_names,
                 system_load=demand.sum(axis=0),
                 wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
                 solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
             )
-            dispatch_kwargs.update(
-                reserve_requirement=coopt_req,
-                reserve_eligible=coopt_elig,
-                reserve_storage=True,
-                ordc_penalties=coopt_pen,
-                ordc_step_widths=coopt_w,
-                reserve_balance_zone_mask=coopt_mask,
-                reserve_balance_ordc_counts=coopt_counts,
-                reserve_balance_class=coopt_class,
-                reserve_headroom_eligible=coopt_hr_elig,
-                reserve_headroom_products=coopt_hr_prod,
-            )
-            from market_sim.config.constants import ERCOT_AS_PRODUCTS
-
+            coopt_kw = build_reserve_dispatch_kwargs(design)
+            dispatch_kwargs.update(coopt_kw)
+            coopt_req = coopt_kw["reserve_requirement"]
+            coopt_pen = coopt_kw["ordc_penalties"]
             logger.info(
                 "energy+reserve co-opt (ERCOT MULTI-PRODUCT): %d AS products %s, "
                 "per-product req means %s MW, %d steps total, %d headroom tiers",
@@ -3795,23 +3778,20 @@ def run_year(
                 [p[0] for p in ERCOT_AS_PRODUCTS],
                 [int(coopt_req[p].mean()) for p in range(coopt_req.shape[0])],
                 len(coopt_pen),
-                int(coopt_hr_prod.shape[0]),
+                int(coopt_kw["reserve_headroom_products"].shape[0]),
             )
         else:
-            from market_sim.results.scarcity import ercot_reserve_coopt_inputs
+            from market_sim.config.reserve_config import (
+                build_reserve_dispatch_kwargs,
+                get_reserve_design,
+            )
 
-            coopt_req, coopt_elig, coopt_pen, coopt_w = ercot_reserve_coopt_inputs(
-                config, fleet_arrays, config.hours
-            )
-            dispatch_kwargs.update(
-                reserve_requirement=coopt_req,
-                reserve_eligible=coopt_elig,
-                reserve_storage=True,  # ERCOT batteries are the dominant RRS/ECRS
-                # provider — count their headroom as reserve, else scarcity
-                # overshoots.
-                ordc_penalties=coopt_pen,
-                ordc_step_widths=coopt_w,
-            )
+            design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
+            coopt_kw = build_reserve_dispatch_kwargs(design)
+            dispatch_kwargs.update(coopt_kw)
+            coopt_req = coopt_kw["reserve_requirement"]
+            coopt_pen = coopt_kw["ordc_penalties"]
+            coopt_elig = coopt_kw["reserve_eligible"]
             logger.info(
                 "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
                 "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
@@ -3842,7 +3822,7 @@ def run_year(
                 ],
             )
     elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
-        from market_sim.config.constants import PJM_ORDC_CURVE_PATH
+        from market_sim.config.reserve_config import PJM_ORDC_CURVE_PATH
         from market_sim.data.fleet import FUEL_TYPE_NAMES
         from market_sim.results.scarcity import (
             RESERVE_FUEL_TYPES,
@@ -3948,33 +3928,20 @@ def run_year(
         # units clear on energy and the reserve shortfall stacks a scarcity price
         # into the downstate zonal LMP (the locational tail the NYCA-aggregate
         # energy LP and the post-solve RCPF adder cannot dispatch).
-        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
-
-        (
-            coopt_req,
-            coopt_elig,
-            coopt_pen,
-            coopt_w,
-            coopt_mask,
-            coopt_counts,
-            coopt_class,
-            coopt_online_gated,
-            coopt_online_rho,
-        ) = nyiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
-        dispatch_kwargs.update(
-            reserve_requirement=coopt_req,
-            reserve_eligible=coopt_elig,
-            reserve_storage=True,  # downstate batteries back reserve too
-            ordc_penalties=coopt_pen,
-            ordc_step_widths=coopt_w,
-            reserve_balance_zone_mask=coopt_mask,
-            reserve_balance_ordc_counts=coopt_counts,
-            reserve_balance_class=coopt_class,
-            reserve_online_gated=coopt_online_gated,
-            reserve_online_rho=coopt_online_rho,
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
         )
+
+        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
+        coopt_kw = build_reserve_dispatch_kwargs(design)
+        dispatch_kwargs.update(coopt_kw)
         import numpy as _np
 
+        coopt_elig = coopt_kw["reserve_eligible"]
+        coopt_pen = coopt_kw["ordc_penalties"]
+        coopt_mask = coopt_kw["reserve_balance_zone_mask"]
+        coopt_class = coopt_kw["reserve_balance_class"]
         _elig2d = _np.atleast_2d(coopt_elig)
         logger.info(
             "energy+reserve co-opt (NYISO): %d locational reserve families "
@@ -3988,11 +3955,11 @@ def run_year(
             int(_elig2d[0].sum()),
             int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
         )
-        if coopt_online_gated is not None:
+        if design.online_gated is not None:
             logger.info(
                 "  NYISO synchronised reserve ON: online-gated spinning class "
                 "(rho=%.2f), %d gated reserve family/ies",
-                float(coopt_online_rho),
+                float(design.online_rho),
                 int((_np.asarray(coopt_class) == 2).sum()),
             )
 
@@ -4011,31 +3978,20 @@ def run_year(
         # second-contingency zones are deferred to a locational follow-up (this
         # system-wide tier matches the pool RT price). Nothing fitted to the
         # residual — requirements and RCPFs are the published tariff values.
-        from market_sim.results.scarcity import neiso_reserve_coopt_inputs
-
-        (
-            coopt_req,
-            coopt_elig,
-            coopt_pen,
-            coopt_w,
-            coopt_mask,
-            coopt_counts,
-            coopt_class,
-            _coopt_online_gated,
-            _coopt_online_rho,
-        ) = neiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
-        dispatch_kwargs.update(
-            reserve_requirement=coopt_req,
-            reserve_eligible=coopt_elig,
-            reserve_storage=True,  # pumped storage + batteries back reserve
-            ordc_penalties=coopt_pen,
-            ordc_step_widths=coopt_w,
-            reserve_balance_zone_mask=coopt_mask,
-            reserve_balance_ordc_counts=coopt_counts,
-            reserve_balance_class=coopt_class,
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
         )
+
+        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
+        coopt_kw = build_reserve_dispatch_kwargs(design)
+        dispatch_kwargs.update(coopt_kw)
         import numpy as _np
 
+        coopt_elig = coopt_kw["reserve_eligible"]
+        coopt_pen = coopt_kw["ordc_penalties"]
+        coopt_mask = coopt_kw["reserve_balance_zone_mask"]
+        coopt_class = coopt_kw["reserve_balance_class"]
         _elig2d = _np.atleast_2d(coopt_elig)
         logger.info(
             "energy+reserve co-opt (NEISO): %d system reserve families "

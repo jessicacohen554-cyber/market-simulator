@@ -15,7 +15,15 @@ import unittest
 
 import numpy as np
 
-from market_sim.config import constants as C
+from market_sim.config.reserve_config import (
+    ERCOT_AS_PRODUCTS,
+    ERCOT_LR_RRS_ENROLL_BASE_MW,
+    ERCOT_LR_RRS_ENROLL_BASE_YEAR,
+    ERCOT_LR_RRS_ENROLL_CAP_MW,
+    ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR,
+    build_reserve_dispatch_kwargs,
+    get_reserve_design,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.results.scarcity import (
@@ -25,11 +33,9 @@ from market_sim.results.scarcity import (
     ercot_load_resource_reserve_mw,
     ercot_lr_rrs_availability_shape,
     ercot_lr_rrs_enrolled_mw,
-    ercot_multiproduct_reserve_coopt_inputs,
-    ercot_reserve_coopt_inputs,
 )
 
-_RRS_IDX = next(i for i, (_n, c, _t) in enumerate(C.ERCOT_AS_PRODUCTS) if c == "RRS")
+_RRS_IDX = next(i for i, (_n, c, _t) in enumerate(ERCOT_AS_PRODUCTS) if c == "RRS")
 
 
 def _fleet(hours):
@@ -48,32 +54,44 @@ def _fleet(hours):
     return generators_to_fleet_arrays(gens, ["Z0"], hours=hours)
 
 
+def _get_req(cfg, fleet, hours, sim_year=None):
+    """Get reserve requirement via the unified API."""
+    design = get_reserve_design(cfg, fleet, hours, ["ERCOT"], sim_year=sim_year)
+    kw = build_reserve_dispatch_kwargs(design)
+    return kw["reserve_requirement"]
+
+
+def _get_multi_req(cfg, fleet, hours, sim_year=None):
+    """Get multi-product reserve design via the unified API."""
+    design = get_reserve_design(cfg, fleet, hours, ["ERCOT"], sim_year=sim_year)
+    kw = build_reserve_dispatch_kwargs(design)
+    return kw["reserve_requirement"], kw["ordc_penalties"], kw["ordc_step_widths"]
+
+
 class TestEnrollmentTrajectory(unittest.TestCase):
     """enrolled_DR_MW(year): present ~0.9 GW, growing, protocol-capped ~1.4 GW."""
 
     def test_anchor_year_is_base_mw(self):
         self.assertAlmostEqual(
-            ercot_lr_rrs_enrolled_mw(C.ERCOT_LR_RRS_ENROLL_BASE_YEAR),
-            C.ERCOT_LR_RRS_ENROLL_BASE_MW,
+            ercot_lr_rrs_enrolled_mw(ERCOT_LR_RRS_ENROLL_BASE_YEAR),
+            ERCOT_LR_RRS_ENROLL_BASE_MW,
         )
 
     def test_grows_with_year(self):
-        y0 = C.ERCOT_LR_RRS_ENROLL_BASE_YEAR
+        y0 = ERCOT_LR_RRS_ENROLL_BASE_YEAR
         self.assertGreater(
             ercot_lr_rrs_enrolled_mw(y0 + 3), ercot_lr_rrs_enrolled_mw(y0)
         )
         # Linear growth at the published rate before the cap binds.
         self.assertAlmostEqual(
             ercot_lr_rrs_enrolled_mw(y0 + 2) - ercot_lr_rrs_enrolled_mw(y0),
-            2 * C.ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR,
+            2 * ERCOT_LR_RRS_ENROLL_GROWTH_MW_PER_YR,
         )
 
     def test_saturates_at_cap(self):
-        self.assertLessEqual(
-            ercot_lr_rrs_enrolled_mw(2100), C.ERCOT_LR_RRS_ENROLL_CAP_MW
-        )
+        self.assertLessEqual(ercot_lr_rrs_enrolled_mw(2100), ERCOT_LR_RRS_ENROLL_CAP_MW)
         self.assertAlmostEqual(
-            ercot_lr_rrs_enrolled_mw(2100), C.ERCOT_LR_RRS_ENROLL_CAP_MW
+            ercot_lr_rrs_enrolled_mw(2100), ERCOT_LR_RRS_ENROLL_CAP_MW
         )
 
     def test_today_is_about_point9_gw(self):
@@ -159,8 +177,8 @@ class TestSingleProductCredit(unittest.TestCase):
             iso="ERCOT", mode="backcast", weather_year=2024, hours=8760
         )
         on = off.with_overrides(ercot_load_resource_reserve=True)
-        req_off = ercot_reserve_coopt_inputs(off, fleet, 8760)[0]
-        req_on = ercot_reserve_coopt_inputs(on, fleet, 8760)[0]
+        req_off = _get_req(off, fleet, 8760)
+        req_on = _get_req(on, fleet, 8760)
         self.assertLess(float(req_on.mean()), float(req_off.mean()))
         # Reduced by exactly the measured credit, clipped to the MCL floor.
         measured = ercot_load_resource_reserve_mw(2024, 8760)
@@ -177,11 +195,11 @@ class TestSingleProductCredit(unittest.TestCase):
             hours=8760,
             ercot_load_resource_reserve=True,
         )
-        req_off = ercot_reserve_coopt_inputs(
+        req_off = _get_req(
             cfg.with_overrides(ercot_load_resource_reserve=False), fleet, 8760
-        )[0]
-        req_near = ercot_reserve_coopt_inputs(cfg, fleet, 8760, sim_year=2026)[0]
-        req_far = ercot_reserve_coopt_inputs(cfg, fleet, 8760, sim_year=2034)[0]
+        )
+        req_near = _get_req(cfg, fleet, 8760, sim_year=2026)
+        req_far = _get_req(cfg, fleet, 8760, sim_year=2034)
         # More enrollment (later year) -> more credit -> lower requirement.
         self.assertLess(float(req_far.mean()), float(req_near.mean()))
         self.assertLess(float(req_near.mean()), float(req_off.mean()))
@@ -191,8 +209,11 @@ class TestMultiProductCredit(unittest.TestCase):
     """The credit nets off only the RRS product RHS; the demand curve is untouched."""
 
     def _build(self, cfg, fleet, sim_year=None):
-        return ercot_multiproduct_reserve_coopt_inputs(
-            cfg, fleet, 8760, sim_year=sim_year
+        return _get_multi_req(
+            cfg.with_overrides(ercot_multiproduct_as_coopt=True),
+            fleet,
+            8760,
+            sim_year=sim_year,
         )
 
     def test_flag_off_is_byte_identical(self):
@@ -200,7 +221,7 @@ class TestMultiProductCredit(unittest.TestCase):
         cfg = ScenarioConfig(
             iso="ERCOT", mode="backcast", weather_year=2024, hours=8760
         )
-        req = self._build(cfg, fleet)[0]
+        req, _, _ = self._build(cfg, fleet)
         # With the flag off, the RRS row is the bare measured ASPLANNP433 series.
         np.testing.assert_array_equal(
             req[_RRS_IDX], ercot_as_plan_requirement_mw(2024, 8760, "RRS")
@@ -212,8 +233,8 @@ class TestMultiProductCredit(unittest.TestCase):
             iso="ERCOT", mode="backcast", weather_year=2024, hours=8760
         )
         on = off.with_overrides(ercot_load_resource_reserve=True)
-        req_off, _, pen_off, wid_off, *_ = self._build(off, fleet)
-        req_on, _, pen_on, wid_on, *_ = self._build(on, fleet)
+        req_off, pen_off, wid_off = self._build(off, fleet)
+        req_on, pen_on, wid_on = self._build(on, fleet)
         measured = ercot_load_resource_reserve_mw(2024, 8760)
         # RRS row drops by the measured credit (clipped at 0).
         np.testing.assert_allclose(
@@ -240,9 +261,9 @@ class TestMultiProductCredit(unittest.TestCase):
         )
         # Forward AS requirement needs drivers; without them it falls back to the
         # measured RRS plan, which is enough to exercise the credit growth.
-        near = self._build(cfg, fleet, sim_year=2026)[0][_RRS_IDX]
-        far = self._build(cfg, fleet, sim_year=2034)[0][_RRS_IDX]
-        self.assertLess(float(far.mean()), float(near.mean()))
+        near, _, _ = self._build(cfg, fleet, sim_year=2026)
+        far, _, _ = self._build(cfg, fleet, sim_year=2034)
+        self.assertLess(float(far[_RRS_IDX].mean()), float(near[_RRS_IDX].mean()))
 
 
 if __name__ == "__main__":
