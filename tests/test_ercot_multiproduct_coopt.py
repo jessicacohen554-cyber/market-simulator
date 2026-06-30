@@ -18,7 +18,6 @@ from market_sim.model.dispatch import solve_dispatch
 from market_sim.results.scarcity import (
     ercot_as_forward_drivers,
     ercot_as_forward_requirement_mw,
-    ercot_multiproduct_reserve_coopt_inputs,
     nyiso_rcpf_product_shortfall_steps,
 )
 
@@ -253,19 +252,30 @@ class TestMultiProductInputs(unittest.TestCase):
         return generators_to_fleet_arrays(gens, ["Z0"], hours=48)
 
     def test_builder_shapes_and_cascade(self):
-        cfg = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2024, hours=48)
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_multiproduct_as_coopt=True,
+        )
         fleet = self._fleet()
-        (
-            req,
-            elig,
-            pen,
-            wid,
-            zmask,
-            counts,
-            rclass,
-            hr_elig,
-            hr_prod,
-        ) = ercot_multiproduct_reserve_coopt_inputs(cfg, fleet, 48)
+        design = get_reserve_design(cfg, fleet, 48, ["Z0"])
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
+        pen = kw["ordc_penalties"]
+        wid = kw["ordc_step_widths"]
+        zmask = kw["reserve_balance_zone_mask"]
+        counts = kw["reserve_balance_ordc_counts"]
+        rclass = kw["reserve_balance_class"]
+        hr_elig = kw["reserve_headroom_eligible"]
+        hr_prod = kw["reserve_headroom_products"]
         n_prod = 4  # RegUp/RRS/ECRS/NonSpin
         self.assertEqual(req.shape, (n_prod, 48))
         self.assertEqual(elig.shape, (n_prod, fleet.n_gen))
@@ -286,14 +296,25 @@ class TestMultiProductInputs(unittest.TestCase):
         self.assertGreater(int(hr_elig[1].sum()), int(hr_elig[0].sum()))
 
     def test_requirements_match_measured_as_plan(self):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
         # The per-product requirement is the measured ASPLANNP433 realization —
         # a validation target, not a fit. 2024 means are well-known (REGUP ~406,
         # RRS ~2722, ECRS ~1747, NSPIN ~2688 MW).
         cfg = ScenarioConfig(
-            iso="ERCOT", mode="backcast", weather_year=2024, hours=8760
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=8760,
+            ercot_multiproduct_as_coopt=True,
         )
         fleet = self._fleet()
-        req = ercot_multiproduct_reserve_coopt_inputs(cfg, fleet, 8760)[0]
+        design = get_reserve_design(cfg, fleet, 8760, ["Z0"])
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
         means = req.mean(axis=1)
         self.assertGreater(means[0], 300.0)  # RegUp
         self.assertGreater(means[1], 2000.0)  # RRS
@@ -436,6 +457,11 @@ class TestForwardRequirement(unittest.TestCase):
         self.assertGreater(e_swing, e_flat)
 
     def test_builder_uses_forward_when_enabled(self):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
         # End-to-end through the co-opt input builder: with the flag on and
         # profiles supplied, the requirement differs from the measured one and
         # tracks the forward drivers.
@@ -444,19 +470,32 @@ class TestForwardRequirement(unittest.TestCase):
         wind = np.full(48, 14000.0)
         solar = np.full(48, 7000.0)
         cfg_meas = ScenarioConfig(
-            iso="ERCOT", mode="backcast", weather_year=2024, hours=48
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_multiproduct_as_coopt=True,
         )
         cfg_fwd = ScenarioConfig(
             iso="ERCOT",
             mode="backcast",
             weather_year=2024,
             hours=48,
+            ercot_multiproduct_as_coopt=True,
             ercot_as_forward_requirement=True,
         )
-        req_meas = ercot_multiproduct_reserve_coopt_inputs(cfg_meas, fleet, 48)[0]
-        req_fwd = ercot_multiproduct_reserve_coopt_inputs(
-            cfg_fwd, fleet, 48, system_load=load, wind_gen=wind, solar_gen=solar
-        )[0]
+        design_meas = get_reserve_design(cfg_meas, fleet, 48, ["Z0"])
+        req_meas = build_reserve_dispatch_kwargs(design_meas)["reserve_requirement"]
+        design_fwd = get_reserve_design(
+            cfg_fwd,
+            fleet,
+            48,
+            ["Z0"],
+            system_load=load,
+            wind_gen=wind,
+            solar_gen=solar,
+        )
+        req_fwd = build_reserve_dispatch_kwargs(design_fwd)["reserve_requirement"]
         self.assertEqual(req_fwd.shape, req_meas.shape)
         # Forward path produced a genuinely different requirement (not the read).
         self.assertFalse(np.allclose(req_fwd, req_meas))
@@ -464,22 +503,34 @@ class TestForwardRequirement(unittest.TestCase):
         self.assertTrue((req_fwd.mean(axis=1) > 0).all())
 
     def test_builder_flag_on_but_no_profiles_falls_back(self):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
         # Flag on but the builder called without profiles (e.g. a path that does
         # not thread them) → measured fallback, byte-identical to the flag-off
         # requirement.
         fleet = self._fleet()
         cfg_meas = ScenarioConfig(
-            iso="ERCOT", mode="backcast", weather_year=2024, hours=48
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_multiproduct_as_coopt=True,
         )
         cfg_fwd = ScenarioConfig(
             iso="ERCOT",
             mode="backcast",
             weather_year=2024,
             hours=48,
+            ercot_multiproduct_as_coopt=True,
             ercot_as_forward_requirement=True,
         )
-        req_meas = ercot_multiproduct_reserve_coopt_inputs(cfg_meas, fleet, 48)[0]
-        req_fwd = ercot_multiproduct_reserve_coopt_inputs(cfg_fwd, fleet, 48)[0]
+        design_meas = get_reserve_design(cfg_meas, fleet, 48, ["Z0"])
+        req_meas = build_reserve_dispatch_kwargs(design_meas)["reserve_requirement"]
+        design_fwd = get_reserve_design(cfg_fwd, fleet, 48, ["Z0"])
+        req_fwd = build_reserve_dispatch_kwargs(design_fwd)["reserve_requirement"]
         np.testing.assert_array_equal(req_fwd, req_meas)
 
 
