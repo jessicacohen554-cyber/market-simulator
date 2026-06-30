@@ -274,18 +274,19 @@ def _caiso_config() -> ISOConfig:
     # max import is far lower. Without this cap the priced-import supply curve
     # (IMPORT_TRANCHES["CAISO"], 11.4 GW total) clears its full depth in CAISO's
     # tightest hours, putting the modeled deepest-import tail at ~-11.2 GW versus
-    # the EIA-930 CISO measured p01 of ~-8.3 GW. The aggregate cap binds the
-    # signed sum of the two import-link flows at the measured simultaneous
-    # rating, leaving the per-path TTCs intact; the WECC_scarcity import block
-    # stays in the merit order but only clears within the cap.
-    # Source: CAISO published Maximum Import Capability; EIA-930 CISO
-    # net-interchange p01, 2023-25. Tier 3 (calibration) — verify against CAISO
-    # OASIS simultaneous import transfer capability.
+    # the EIA-930 CISO measured p01 of ~-8.3 GW. Tightened from 8,300 (raw p01)
+    # to 7,500 MW: the p01 extreme rarely sustains across both corridors
+    # simultaneously (overlapping WECC source generation); 7,500 is closer to
+    # the sustained p05 simultaneous capability. The CAISO RA summer import
+    # assumption is 5,500 MW, further supporting that 8,300 over-allocates.
+    # Source: CAISO published Maximum Import Capability (11,665 MW non-peak);
+    # CAISO RA 5,500 MW summer peak; EIA-930 CISO net-interchange 2023-25.
+    # Tier 3 (calibration).
     interface_limits = [
         InterfaceLimit(
             name="WECC_import_simultaneous",
             links=[("WECC_import", "NP15"), ("WECC_import", "SP15")],
-            cap_mw=8300.0,
+            cap_mw=7500.0,
         ),
     ]
     # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
