@@ -10,9 +10,12 @@ Covers:
 
 from __future__ import annotations
 
+import sys
 import tempfile
 from pathlib import Path
 from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 import pandas as pd
@@ -20,12 +23,11 @@ import pytest
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
-from market_sim.data import eia_loader
 from market_sim.data.eia_loader import (
     _load_neiso_hourly_demand,
     load_demand,
-    neiso_zonal_load_shares,
 )
+from scripts.curate_zonal_shares import parse_neiso_shares as neiso_zonal_load_shares
 
 _TEST_YEAR = 2024
 
@@ -185,7 +187,7 @@ def test_neiso_zonal_load_shares_sum_to_one_each_hour():
         _build_synthetic_neiso_csv(
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
-        with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
+        with mock.patch("scripts.curate_zonal_shares.ZONE_DEMAND_DIR", Path(tmp)):
             shares = neiso_zonal_load_shares(_TEST_YEAR, zone_names)
 
     assert shares is not None
@@ -202,7 +204,7 @@ def test_neiso_zonal_load_shares_hq_import_is_zero():
         _build_synthetic_neiso_csv(
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
-        with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
+        with mock.patch("scripts.curate_zonal_shares.ZONE_DEMAND_DIR", Path(tmp)):
             shares = neiso_zonal_load_shares(_TEST_YEAR, zone_names)
 
     assert shares is not None
@@ -229,7 +231,7 @@ def test_neiso_zonal_load_shares_expected_values():
         _build_synthetic_neiso_csv(
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
-        with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
+        with mock.patch("scripts.curate_zonal_shares.ZONE_DEMAND_DIR", Path(tmp)):
             shares = neiso_zonal_load_shares(_TEST_YEAR, zone_names)
 
     assert shares is not None
@@ -260,7 +262,13 @@ def test_neiso_zonal_demand_reconciles_with_synthetic_file():
         _build_synthetic_neiso_csv(
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
-        with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
-            demand = load_demand("NEISO", _TEST_YEAR, neiso, include_interchange=False)
+        with mock.patch("scripts.curate_zonal_shares.ZONE_DEMAND_DIR", Path(tmp)):
+            shares = neiso_zonal_load_shares(_TEST_YEAR, neiso.zone_names)
+
+    assert shares is not None
+    with mock.patch(
+        "market_sim.data.eia_loader.load_zonal_shares", return_value=shares
+    ):
+        demand = load_demand("NEISO", _TEST_YEAR, neiso, include_interchange=False)
 
     np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
