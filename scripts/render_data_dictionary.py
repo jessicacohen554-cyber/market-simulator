@@ -65,6 +65,11 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "validation",
     "fleet",
     "fuel-prices",
+    "fuel-hub-monthly",
+    "fuel-basis",
+    "fuel-zonal-hub",
+    "fuel-ercot-ep-gas",
+    "fuel-takeorpay",
     "reference",
     "border-lmp",
     "zonal-shares",
@@ -166,6 +171,44 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "into `price_usd_per_mmbtu` by `fuel`/`hub`."
         ),
     },
+    "fuel-hub-monthly": {
+        "summary": "Monthly Henry Hub spot averages (EIA RNGWHHDm).",
+        "reconciles": (
+            "`henry_hub_monthly.csv` `price_usd_mmbtu` — into "
+            "`price_usd_per_mmbtu` keyed by `fuel`/`hub`/`year`/`month`."
+        ),
+    },
+    "fuel-basis": {
+        "summary": "Per-ISO monthly gas basis vs Henry Hub (winter hub overlay).",
+        "reconciles": (
+            "`gas_basis_by_iso_month.csv` `basis_usd_mmbtu` (Algonquin for "
+            "NEISO, Transco Z6/Iroquois for NYISO when filled) — `source` "
+            "column stripped; keyed by `iso`/`year`/`month`/`hub`."
+        ),
+    },
+    "fuel-zonal-hub": {
+        "summary": "Per-ISO zonal gas-hub annual prices/basis.",
+        "reconciles": (
+            "ERCOT/PJM/MISO `basis_vs_hh_usd_mmbtu`; NYISO absolute "
+            "`hub_usd_mmbtu`; ERCOT West `neg_day_freq` — keyed by "
+            "`iso`/`zone`/`year`/`hub`, ISO-partitioned by directory."
+        ),
+    },
+    "fuel-ercot-ep-gas": {
+        "summary": "Monthly EIA N3045TX3 TX delivered-to-electric-power gas price ($/Mcf).",
+        "reconciles": (
+            "`ercot_electric_power_gas_price.csv` `price_usd_mcf` — `source` "
+            "column stripped; keyed by `year`/`month`."
+        ),
+    },
+    "fuel-takeorpay": {
+        "summary": "ERCOT per-plant EIA-923 gas spot vs contract share.",
+        "reconciles": (
+            "`gas_takeorpay_ERCOT.csv` — retains `plant_code`, `spot_share`, "
+            "`total_mmbtu`; strips `contract_share`, `n_receipts`, `source`, "
+            "`breakdown`."
+        ),
+    },
     "reference": {
         "summary": "Crosswalk / lookup tables (heterogeneous).",
         "reconciles": (
@@ -217,6 +260,10 @@ NATIONAL_SCOPE: dict[str, str] = {
     "outages": "derived (CAMPD downtime + curated ERCOT lists)",
     "fleet": "EIA-860 / eGRID / master registry",
     "fuel-prices": "national hubs (Henry Hub)",
+    "fuel-hub-monthly": "national (Henry Hub monthly)",
+    "fuel-basis": "per-ISO rows in one file (iso column key)",
+    "fuel-ercot-ep-gas": "ERCOT / TX electric-power consumers",
+    "fuel-takeorpay": "ERCOT plants (EIA-923 Schedule-5)",
     "reference": "crosswalks / lookups (ISO-agnostic)",
     "border-lmp": "neighbor-border hubs (WECC intertie, PJM_WEST)",
     "zonal-shares": "per-ISO via directory partitioning",
