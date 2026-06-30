@@ -5197,6 +5197,39 @@ def load_campd_bins(
             f"Add them to BIN_GROUP_TO_FUEL."
         )
 
+    # Multi-tech CT correction: at mixed-facility plants (CC+CT, COAL+CT)
+    # the plant-average HR is dominated by the efficient dominant technology,
+    # making the CT bin 25-40% cheaper than a standalone CT. Clip multi-tech
+    # CT heat rates to the standalone CT median for the ISO.
+    if "Mixed_Facility" in detail.columns:
+        ct_mask = detail["Plant_Group"] == "CT_PEAKER"
+        mixed_mask = detail["Mixed_Facility"].notna() & (
+            detail["Mixed_Facility"].astype(str).str.strip() != ""
+        )
+        multi_ct = ct_mask & mixed_mask
+        if multi_ct.any():
+            standalone_ct = ct_mask & ~mixed_mask
+            median_ct_hr = (
+                float(detail.loc[standalone_ct, "Plant_Avg_HR_MMBtu_MWh"].median())
+                if standalone_ct.any()
+                else 11.5
+            )
+            before = detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"].copy()
+            detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"] = detail.loc[
+                multi_ct, "Plant_Avg_HR_MMBtu_MWh"
+            ].clip(lower=median_ct_hr)
+            raised = (
+                detail.loc[multi_ct, "Plant_Avg_HR_MMBtu_MWh"] > before + 1e-6
+            ).sum()
+            if raised:
+                logger.info(
+                    "Multi-tech CT HR correction: raised %d/%d CT(s) to "
+                    "standalone median %.2f MMBtu/MWh",
+                    int(raised),
+                    int(multi_ct.sum()),
+                    median_ct_hr,
+                )
+
     # Each plant's tranche HR = Plant_Avg_HR × HR_Mult_<tranche>. We fill
     # missing plant heat rates with the per-group default and missing
     # multipliers with the group-typical value so the tranche arithmetic
@@ -5697,7 +5730,28 @@ def ct_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     if "median_cf" not in df.columns or "plant_group" not in df.columns:
         return frozenset()
     ct = df[(df["plant_group"] == "CT_PEAKER") & (df["median_cf"] >= threshold)]
-    return frozenset(int(c) for c in ct["plant_code"].dropna())
+    codes = set(int(c) for c in ct["plant_code"].dropna())
+
+    # Exclude CTs at multi-technology sites (COAL+CT, CC+CT, etc.): the CT
+    # at such a plant is a supplemental peaker, not an intermediate-duty
+    # unit, so it keeps the steep CT_PEAKER curve.
+    bin_path = PROCESSED_DIR / f"bin_assignments_{iso.upper()}.csv"
+    if bin_path.exists() and codes:
+        bins_df = pd.read_csv(
+            bin_path, usecols=["Plant_Code", "Plant_Group", "Mixed_Facility"]
+        )
+        ct_bins = bins_df[bins_df["Plant_Group"] == "CT_PEAKER"]
+        mixed = set(
+            int(c)
+            for c in ct_bins.loc[
+                ct_bins["Mixed_Facility"].notna()
+                & (ct_bins["Mixed_Facility"].astype(str).str.strip() != ""),
+                "Plant_Code",
+            ].dropna()
+        )
+        codes -= mixed
+
+    return frozenset(codes)
 
 
 def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
