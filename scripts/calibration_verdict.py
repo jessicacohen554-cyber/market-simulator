@@ -66,15 +66,16 @@ FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 # C1 fuel-mix — the universal class gate (mirrors
 # scripts/probes/_backcast_shell.classInTol, supersedes the old ±5%/±1 TWh
 # size-tiered band): a class passes iff BOTH (a) its grid-delivered volume miss
-# |model−actual| is within min(1.0% of ISO annual generation, 5 TWh), AND (b) its
+# |model−actual| is within min(1.0% of ISO total load, 5 TWh), AND (b) its
 # share of total generation is within 1.5 percentage points of the actual share.
-# The volume band scales with system size (≈1 pp of share) but is capped at an
+# The volume band scales with system size (≈1 pp of load) but is capped at an
 # absolute 5 TWh so it can't balloon on large ISOs (1% of an 800 TWh system would
 # be 8 TWh, letting a small class drift far on the margin). Applied uniformly
 # across classes and ISOs; the share band stops a class passing on volume alone
-# while still misrepresenting the mix. (Loosened from 0.5%→1.0% so the band gates
-# at ~1 pp of share rather than the old too-tight ~0.5 pp, then capped at 5 TWh.)
-FUELMIX_VOL_GEN_FRAC = 0.01  # volume band = 1.0% of ISO annual generation ...
+# while still misrepresenting the mix. Using total LOAD (= gen + net imports)
+# rather than generation so net-importing ISOs get the correct ≈1 pp band; for
+# energy-only ISOs with no interchange, load = gen and the band is unchanged.
+FUELMIX_VOL_LOAD_FRAC = 0.01  # volume band = 1.0% of ISO total load ...
 FUELMIX_VOL_CAP_TWH = 5.0  # ... but never more than an absolute 5 TWh
 FUELMIX_SHARE_PP = 1.5  # +/-1.5 share percentage points of total generation
 # Non-fossil fuels whose grid actual comes from EIA-930 (not 923) for the
@@ -363,13 +364,26 @@ def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
     return m_gen, a_gen
 
 
+def _total_load(ypay: dict, a_gen: float) -> float:
+    """Total load served (TWh) = sum of zone demand from the LMP payload.
+
+    For ISOs with scheduled interchange folded into demand (NEISO, NYISO, …),
+    this equals generation + net imports — the correct denominator for the
+    ≈1 pp volume band.  Falls back to ``a_gen`` when zone data is absent.
+    """
+    lmp = ypay.get("lmp", {})
+    if not lmp:
+        return a_gen
+    return sum(float(z.get("d", 0.0)) for z in lmp.values())
+
+
 def score_fuelmix(
     year: int, ypay: dict, ybench: dict, iso: str = "ERCOT"
 ) -> list[dict]:
     """C1 — per-class grid-delivered fuel-mix, the universal gate.
 
     A class passes iff BOTH its grid-delivered volume miss is within 1.0% of ISO
-    annual generation AND its share of total generation is within 1.5 pp of
+    total load AND its share of total generation is within 1.5 pp of
     actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis).
 
     Gating is restricted to (ISO, class) pairs whose EIA-923 actual is VERIFIED
@@ -388,7 +402,8 @@ def score_fuelmix(
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
-    vol_band = min(FUELMIX_VOL_GEN_FRAC * a_gen, FUELMIX_VOL_CAP_TWH)
+    total_load = _total_load(ypay, a_gen)
+    vol_band = min(FUELMIX_VOL_LOAD_FRAC * total_load, FUELMIX_VOL_CAP_TWH)
     out = []
     classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
     cmap_year = _completeness_map().get(year, {}).get("isos", {}).get(iso.upper(), {})
@@ -459,7 +474,7 @@ def score_fuelmix(
             "actual": round(a, 3),
             "share_pp": round(share_pp, 2) if share_pp is not None else None,
             "tol": (
-                f"±min({FUELMIX_VOL_GEN_FRAC * 100:.1f}% ISO-gen, "
+                f"±min({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% ISO-load, "
                 f"{FUELMIX_VOL_CAP_TWH:g} TWh) = ±{vol_band:.2f} TWh "
                 f"& ±{FUELMIX_SHARE_PP:g}pp share"
             ),
@@ -480,7 +495,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
     the old ±2.5%-of-family percent band, which had two failure modes: it (a)
     INVENTED a family fail when a mid-size family's small absolute miss exceeded
     2.5% of itself (e.g. ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only
-    +0.34 pp of generation and well inside the 1.0%-ISO-gen volume band), and (b)
+    +0.34 pp of generation and well inside the 1.0%-ISO-load volume band), and (b)
     MASKED a real per-class miss when offsetting class errors netted out across the
     family (e.g. a CT_PEAKER over-build cancelled by a CC under-build summing to
     ~0% at the family level). The per-class roll-up does neither: it nets nothing.
@@ -498,7 +513,8 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
     cf = ybench.get("classFull", {})
     e930 = ybench.get("e930", {})
     m_gen, a_gen = _gen_totals(ypay, ybench)
-    vol_band = min(FUELMIX_VOL_GEN_FRAC * a_gen, FUELMIX_VOL_CAP_TWH)
+    total_load = _total_load(ypay, a_gen)
+    vol_band = min(FUELMIX_VOL_LOAD_FRAC * total_load, FUELMIX_VOL_CAP_TWH)
     out = []
     for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
         scored = [c for c in classes if c not in FUELMIX_EXCLUDED]
@@ -603,7 +619,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                 "model": round(m, 2),
                 "actual": round(a923, 2),
                 "tol": (
-                    f"per-class ±min({FUELMIX_VOL_GEN_FRAC * 100:.1f}% ISO-gen, "
+                    f"per-class ±min({FUELMIX_VOL_LOAD_FRAC * 100:.1f}% ISO-load, "
                     f"{FUELMIX_VOL_CAP_TWH:g} TWh) = ±{vol_band:.2f} TWh "
                     f"& ±{FUELMIX_SHARE_PP:g}pp share (via C1)"
                 ),
