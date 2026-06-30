@@ -61,7 +61,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from market_sim.config.constants import (
+from market_sim.config.reserve_config import (
     NEISO_RCPF_PRODUCTS,
     NYISO_RCPF_LOCATIONAL,
     NYISO_RCPF_PRODUCTS,
