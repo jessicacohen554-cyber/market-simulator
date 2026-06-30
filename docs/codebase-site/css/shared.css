@@ -534,6 +534,9 @@ ul, ol {
 
 .section-dark h2, .section-dark h3, .section-dark h4 { color: #fff; }
 .section-dark p, .section-dark li { color: rgba(255,255,255,0.80); }
+.section-dark a { color: #7DD3FC; }
+.section-dark a:hover { color: #BAE6FD; }
+.section-dark strong { color: rgba(255,255,255,0.95); }
 
 .section-transition-light-to-dark {
   height: 80px;
@@ -778,6 +781,13 @@ ul, ol {
 .insight-box.danger  .insight-title { color: var(--negative); }
 .insight-box.success .insight-title { color: var(--positive); }
 
+.section-dark .insight-box         { color: rgba(255,255,255,0.85); }
+.section-dark .insight-box.info    { background: rgba(2,132,199,0.15); }
+.section-dark .insight-box.warn    { background: rgba(217,119,6,0.15); }
+.section-dark .insight-box.danger  { background: rgba(220,38,38,0.15); }
+.section-dark .insight-box.success { background: rgba(22,163,74,0.15); }
+.section-dark .insight-box .insight-title { color: rgba(255,255,255,0.95); }
+
 .insight-glass {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
@@ -1001,6 +1011,13 @@ ul, ol {
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:nth-child(even) td { background: rgba(0,0,0,0.018); }
 .data-table tr:hover td { background: rgba(14,165,233,0.04); }
+
+.section-dark .data-table { box-shadow: none; }
+.section-dark .data-table th { background: rgba(255,255,255,0.10); }
+.section-dark .data-table td { color: rgba(255,255,255,0.80); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark .data-table td.num { color: #fff; }
+.section-dark .data-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+.section-dark .data-table tr:hover td { background: rgba(14,165,233,0.08); }
 
 /* ---------------------------------------------------------------------------
    17. Badges
