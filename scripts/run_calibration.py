@@ -1921,6 +1921,7 @@ def run_year(
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
+    miso_zonal_gas_basis: bool = False,
     pjm_congestion: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
@@ -2404,6 +2405,10 @@ def run_year(
     # apply gates on iso == "PJM" — so setting it here is safe regardless.
     if pjm_zonal_gas_basis:
         config = config.with_overrides(pjm_zonal_gas_basis=True)
+    # MISO per-zone gas basis (opens the north/south gas gradient). No-op for
+    # non-MISO ISOs — the apply gates on iso == "MISO".
+    if miso_zonal_gas_basis:
+        config = config.with_overrides(miso_zonal_gas_basis=True)
     # PJM transmission-congestion lever (break the copper-plate): cap the priced
     # external star node to the measured per-border interchange envelope + tighten
     # the internal interfaces to their measured transfer limits. Wired below at
@@ -3268,6 +3273,9 @@ def run_year(
     # apply_monthly=True branch: after the plant-monthly / hub overlay, before the
     # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only).
     apply_pjm_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
+    # PJM. No-op unless miso_zonal_gas_basis is set (MISO only).
+    apply_miso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
     # Net-load-indexed West/Panhandle Waha shape: redistribute the West gas basis
     # across hours (firm at high net-load, collapsed at low) so peakers — which
     # burn only in scarcity hours — see firm Waha and idle, while the West CCs on

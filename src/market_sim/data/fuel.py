@@ -542,6 +542,16 @@ ERCOT_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
 # :func:`apply_pjm_zonal_gas_basis`.
 PJM_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "pjm_zonal_gas_hub.csv"
 
+# MISO per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. MISO's three
+# zones sit on different pipeline hubs: MISO-North on MidCon / Northern Natural
+# (IA proxy, EIA N3045IA3), MISO-Central on Chicago Citygate (IL, N3045IL3),
+# MISO-South on the Gulf Coast (LA, N3045LA3). Like PJM (and unlike NYISO) this
+# is anchored to a gas-capacity-weighted mean of zero in
+# :func:`apply_miso_zonal_gas_basis`, so the calibrated MISO fleet-aggregate gas
+# level is preserved and ONLY the cross-zonal spread opens. Consumed by
+# :func:`apply_miso_zonal_gas_basis`.
+MISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "miso_zonal_gas_hub.csv"
+
 # Measured EIA price of natural gas delivered to TX electric-power consumers
 # (series N3045TX3, $/Mcf monthly). This is the gen-weighted ERCOT-wide delivered
 # gas level — the *power-plant* delivered cost, NOT the TX city-gate price
@@ -1647,21 +1657,31 @@ def apply_ercot_zonal_gas_basis(
     )
 
 
-_PJM_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
+_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 
-def _load_pjm_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
-    """Load the PJM per-zone annual gas-basis table, or ``None`` if absent."""
-    resolved = Path(path) if path else PJM_ZONAL_GAS_HUB_PATH
-    if resolved in _PJM_ZONAL_HUB_CACHE:
-        return _PJM_ZONAL_HUB_CACHE[resolved]
+def _load_zonal_gas_hub(path: Path) -> pd.DataFrame | None:
+    """Load a per-zone annual gas-basis table, or ``None`` if absent."""
+    if path in _ZONAL_HUB_CACHE:
+        return _ZONAL_HUB_CACHE[path]
     frame: pd.DataFrame | None = None
-    if resolved.exists():
-        loaded = pd.read_csv(resolved)
+    if path.exists():
+        loaded = pd.read_csv(path)
         if not loaded.empty:
             frame = loaded
-    _PJM_ZONAL_HUB_CACHE[resolved] = frame
+    _ZONAL_HUB_CACHE[path] = frame
     return frame
+
+
+def _zonal_gas_basis_by_zone(path: Path, year: int) -> dict[str, float] | None:
+    """Return ``{zone: basis vs Henry Hub ($/MMBtu)}`` from a hub CSV, or None."""
+    frame = _load_zonal_gas_hub(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
 
 
 def pjm_zonal_gas_basis_by_zone(
@@ -1676,13 +1696,80 @@ def pjm_zonal_gas_basis_by_zone(
     which weights by each zone's gas capacity. Returns ``None`` when the table is
     missing or has no rows for ``year`` (e.g. a forward year).
     """
-    frame = _load_pjm_zonal_gas_hub(path)
-    if frame is None:
-        return None
-    sub = frame[frame["year"] == year]
-    if sub.empty:
-        return None
-    return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
+    return _zonal_gas_basis_by_zone(
+        Path(path) if path else PJM_ZONAL_GAS_HUB_PATH, year
+    )
+
+
+def miso_zonal_gas_basis_by_zone(
+    year: int, path: Path | None = None
+) -> dict[str, float] | None:
+    """Return ``{zone: basis vs Henry Hub ($/MMBtu)}`` for MISO, or None.
+
+    Same format and semantics as :func:`pjm_zonal_gas_basis_by_zone` but reads
+    :data:`MISO_ZONAL_GAS_HUB_PATH`.
+    """
+    return _zonal_gas_basis_by_zone(
+        Path(path) if path else MISO_ZONAL_GAS_HUB_PATH, year
+    )
+
+
+def _apply_meanzero_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    *,
+    iso: str,
+    config_field: str,
+    hub_path: Path,
+    path_override: Path | None = None,
+) -> None:
+    """Shared core for mean-zero capacity-weighted zonal gas basis (PJM / MISO).
+
+    Adds each zone's measured basis spread (EIA delivered-to-electric-power minus
+    Henry Hub) to every gas unit's delivered price, after subtracting the
+    gas-capacity-weighted mean so the calibrated fleet-aggregate level is
+    preserved and only the cross-zonal shape moves. Floored at
+    :data:`_GAS_PRICE_FLOOR` so a deep negative basis cannot drive fuel cost
+    below zero. Gated on ``config.<config_field>`` and ``config.iso == iso``.
+    """
+    if not getattr(config, config_field, False):
+        return
+    if config.iso != iso:
+        return
+    path = path_override if path_override else hub_path
+    basis = _zonal_gas_basis_by_zone(path, year)
+    if basis is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    if gas_rows.size == 0:
+        return
+    basis_by_zone_idx = np.array(
+        [basis.get(name, 0.0) for name in zone_names], dtype=float
+    )
+    gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
+    weights = fleet.pmax[gas_rows]
+    total_w = float(weights.sum())
+    weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
+    zone_spread = gen_basis - weighted_mean
+    floored = np.maximum(
+        fuel_prices[gas_rows, :] + zone_spread[:, np.newaxis], _GAS_PRICE_FLOOR
+    )
+    fuel_prices[gas_rows, :] = floored
+    logger.info(
+        "%s zonal gas basis (%d): %d gas units; cap-weighted mean %+.2f removed, "
+        "zonal spread %.2f..%.2f $/MMBtu",
+        iso,
+        year,
+        gas_rows.size,
+        weighted_mean,
+        float(zone_spread.min()),
+        float(zone_spread.max()),
+    )
 
 
 def apply_pjm_zonal_gas_basis(
@@ -1694,77 +1781,54 @@ def apply_pjm_zonal_gas_basis(
 ) -> None:
     """Shift each PJM gas unit's price by its zone's measured regional gas basis.
 
-    PJM is priced off a single ISO-wide delivered-gas series, so every gas-CC
-    carries the same marginal cost, every zone clears at the same LMP, no zone
-    ever wants cheaper power from a neighbour, and the internal transmission
-    topology (ComEd→AEP, AEP→Dominion, Central_PA→EMAAC, SWMAAC→EMAAC, …) never
-    binds — PJM collapses to one copper-plate. That flattens the real
-    west-cheap / east-dear gas gradient: the eastern load pockets
-    (EMAAC/SWMAAC/Dominion, ~38% of load) burn dear Transco Z6 / TETCO M3 gas but
-    are priced at the cheap ISO average, so eastern CCs over-run and pin the price
-    low, undercutting the western bituminous coal belt (AEP_Ohio + West_APS) and
-    pushing PJM to clear below its neighbours (over-export).
-
-    This adds each zone's measured **mean-zero** basis spread to every gas unit's
-    delivered price: each zone's EIA delivered-to-electric-power basis vs Henry
-    Hub (:func:`pjm_zonal_gas_basis_by_zone`) minus the **gas-capacity-weighted
-    mean** across the PJM gas fleet (weights = each gas unit's ``pmax``). The
-    weighted mean is subtracted so the calibrated PJM fleet-aggregate gas level is
-    untouched (CLAUDE.md #11 — the ISO-month ``gas_monthly_actuals`` level still
-    holds, and the coal-sigmoid reference on the ISO mean is left alone in
-    :func:`_gas_series`) and ONLY the cross-zonal split moves: the western coal
-    belt gets cheaper, the eastern pockets dearer. The shift is floored at a small
-    positive so a deep negative basis cannot drive fuel cost below zero. Runs
-    after the F923 plant-monthly overwrite and before
-    :func:`apply_dual_fuel_pricing`, so oil parity still caps any winter spike.
-
-    Unlike the NYISO single-reference-zone anchor, this mirrors
-    :func:`apply_ercot_zonal_gas_basis` (capacity-weighted mean zero) — but with
-    no level correction: PJM's level is already calibrated by the ISO-month
-    actuals, so only the spread is added.
+    Delegates to :func:`_apply_meanzero_zonal_gas_basis` — the shared
+    capacity-weighted mean-zero core that PJM and MISO both use. See that
+    function's docstring for the mechanics.
 
     Gated on ``config.pjm_zonal_gas_basis`` and ``config.iso == "PJM"`` (a
     default-off diagnostic; see the field docstring on ScenarioConfig), so every
     other ISO and all forecasts are byte-identical. Mutates ``fuel_prices`` in
     place; idempotent given the same inputs.
     """
-    if not getattr(config, "pjm_zonal_gas_basis", False):
-        return
-    if config.iso != "PJM":
-        return
-    basis = pjm_zonal_gas_basis_by_zone(year, path)
-    if basis is None:
-        return
-    from market_sim.config.iso_configs import get_iso_config
-
-    zone_names = get_iso_config(config.iso).zone_names
-    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
-    if gas_rows.size == 0:
-        return
-    # Per-generator raw basis from its zone (0.0 for any zone absent from the
-    # table — e.g. the priced external import node).
-    basis_by_zone_idx = np.array(
-        [basis.get(name, 0.0) for name in zone_names], dtype=float
-    )
-    gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
-    # Mean-zero zonal SPREAD: subtract the gas-capacity-weighted mean so only the
-    # cross-zonal shape survives and the calibrated fleet-aggregate level holds.
-    weights = fleet.pmax[gas_rows]
-    total_w = float(weights.sum())
-    weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
-    zone_spread = gen_basis - weighted_mean
-    floored = np.maximum(
-        fuel_prices[gas_rows, :] + zone_spread[:, np.newaxis], _GAS_PRICE_FLOOR
-    )
-    fuel_prices[gas_rows, :] = floored
-    logger.info(
-        "PJM zonal gas basis (%d): %d gas units; cap-weighted mean %+.2f removed, "
-        "zonal spread %.2f..%.2f $/MMBtu",
+    _apply_meanzero_zonal_gas_basis(
+        fuel_prices,
+        fleet,
+        config,
         year,
-        gas_rows.size,
-        weighted_mean,
-        float(zone_spread.min()),
-        float(zone_spread.max()),
+        iso="PJM",
+        config_field="pjm_zonal_gas_basis",
+        hub_path=PJM_ZONAL_GAS_HUB_PATH,
+        path_override=Path(path) if path else None,
+    )
+
+
+def apply_miso_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Shift each MISO gas unit's price by its zone's measured regional gas basis.
+
+    Delegates to :func:`_apply_meanzero_zonal_gas_basis` — the same
+    capacity-weighted mean-zero core used by PJM. MISO-North sits on
+    MidCon / Northern Natural (IA), MISO-Central on Chicago Citygate (IL),
+    and MISO-South on Gulf Coast (LA); the spread opens while the
+    fleet-aggregate gas level is preserved.
+
+    Gated on ``config.miso_zonal_gas_basis`` and ``config.iso == "MISO"``.
+    Default-off; the calibration harness enables it for MISO.
+    """
+    _apply_meanzero_zonal_gas_basis(
+        fuel_prices,
+        fleet,
+        config,
+        year,
+        iso="MISO",
+        config_field="miso_zonal_gas_basis",
+        hub_path=MISO_ZONAL_GAS_HUB_PATH,
+        path_override=Path(path) if path else None,
     )
 
 
@@ -2157,6 +2221,11 @@ def resolve_fuel_prices(
         # Capacity-weighted mean-zero, so the aggregate gas level is unchanged.
         # Before dual-fuel so oil parity still caps any winter blowout.
         apply_pjm_zonal_gas_basis(fuel_prices, fleet, config, year)
+        # MISO: shift each gas unit to its zone's measured regional gas basis
+        # (North on MidCon/Northern Natural, Central on Chicago Citygate, South
+        # on Gulf Coast). Same mean-zero core as PJM. Before dual-fuel so oil
+        # parity still caps any winter blowout.
+        apply_miso_zonal_gas_basis(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices
