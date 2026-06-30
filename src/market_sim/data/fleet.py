@@ -37,18 +37,16 @@ from market_sim.config.constants import (
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
     CAMPD_BINS_CSV,
-    EIA_860_DIR,
+    EIA_860_DIR,  # noqa: F401 — re-exported; many modules import from fleet
     PROCESSED_DIR,
     RAW_DATA_DIR,
     active_eia860_dir,
 )
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
-    COAL_CODE_TO_SUPPLY,
     COAL_SUPPLY_TO_CLASS,
     OIL_ENERGY_SOURCES,
     classify_plant,
-    coal_code_to_class,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
@@ -2441,178 +2439,13 @@ def assemble_mc(
     return mc
 
 
-def _coal_tranches(config: ScenarioConfig) -> list[tuple[float, float]]:
-    """Return the coal take-or-pay tranches as ``(cap_frac, fuel_frac)`` pairs.
-
-    Mirrors :data:`~market_sim.config.constants.COAL_TRANCHES`, reading the
-    per-tranche capacity fraction and fuel-cost passthrough from the scenario
-    config so calibration can override the defaults.
-    """
-    return [
-        (config.coal_tranche_1_frac, config.coal_tranche_1_fuel_passthrough),
-        (config.coal_tranche_2_frac, config.coal_tranche_2_fuel_passthrough),
-        (config.coal_tranche_3_frac, config.coal_tranche_3_fuel_passthrough),
-    ]
-
-
-def split_coal_tranches(
-    generators: list[Generator],
-    config: ScenarioConfig,
-    takeorpay_by_plant: "dict[int, float] | None" = None,
-) -> tuple[list[Generator], list[float]]:
-    """Split each coal generator into take-or-pay supply-curve tranches.
-
-    Coal plants hold take-or-pay fuel contracts: the contracted volume bids
-    at VOM only (its fuel is sunk) while volume above the contract bids at
-    progressively more of full fuel cost. Each coal :class:`Generator` is
-    therefore replaced by three sub-generators — one per tranche — that
-    together reproduce its capacity but expose a stepped supply curve to the
-    dispatch LP. Tranches carry ``pmin_mw = 0``: coal's baseload behavior
-    emerges from tranche 1's near-zero (VOM-only) bid, not a hard minimum.
-
-    Non-coal generators pass through unchanged.
-
-    Args:
-        generators: The fleet to expand.
-        config: Scenario configuration supplying the ``coal_tranche_*`` fields.
-        takeorpay_by_plant: Optional ``{plant_code: contract_share}`` from the
-            measured EIA-923 Schedule-5 Purchase Type
-            (:func:`coal_takeorpay_share`, set when
-            ``ScenarioConfig.coal_takeorpay_from_data`` is on). When given, the
-            **sunk** first tranche (tranche 1, the must-run / take-or-pay band)
-            passes ``1 - contract_share`` of its fuel instead of the assumed
-            ``coal_tranche_1_fuel_passthrough``: only the measured contracted
-            tonnage is sunk, the spot remainder bids full delivered fuel. This
-            is the split-fleet (non-CAMPD ISO) analogue of the must-run
-            adjustment :func:`campd_tranche_fuel_frac` applies in the binned
-            path. A plant absent from the map keeps the configured passthrough.
-
-    Returns:
-        A tuple ``(expanded_fleet, fuel_fracs)`` where ``fuel_fracs[g]`` is the
-        fraction of fuel cost passed through to generator ``g``'s marginal
-        cost. Non-coal generators have ``fuel_frac = 1.0``.
-    """
-    tranches = _coal_tranches(config)
-    expanded: list[Generator] = []
-    fuel_fracs: list[float] = []
-    for gen in generators:
-        if gen.fuel_type != "coal":
-            expanded.append(gen)
-            fuel_fracs.append(1.0)
-            continue
-        for ti, (cap_frac, fuel_frac) in enumerate(tranches):
-            # Measured take-or-pay (CLAUDE.md #11/#12): replace the assumed
-            # 100%-sunk first tranche with the plant's measured contracted
-            # share — only the sunk (tranche-1) band is adjusted, mirroring the
-            # binned path's must-run treatment.
-            if ti == 0 and takeorpay_by_plant is not None:
-                share = takeorpay_by_plant.get(int(gen.plant_code))
-                if share is not None:
-                    fuel_frac = 1.0 - float(share)
-            expanded.append(
-                Generator(
-                    unit_id=f"{gen.unit_id}_t{ti + 1}",
-                    name=gen.name,
-                    zone=gen.zone,
-                    fuel_type="coal",
-                    efficiency_bin=gen.efficiency_bin,
-                    pmax_mw=gen.pmax_mw * cap_frac,
-                    pmin_mw=0.0,
-                    heat_rate=gen.heat_rate,
-                    vom=gen.vom,
-                    emission_rate_co2=gen.emission_rate_co2,
-                    nox_rate=gen.nox_rate,
-                    so2_rate=gen.so2_rate,
-                    eford=gen.eford,
-                    online_year=gen.online_year,
-                    retirement_year=gen.retirement_year,
-                    plant_code=gen.plant_code,
-                    plant_group=gen.plant_group,
-                    state=gen.state,
-                    coal_supply=gen.coal_supply,
-                )
-            )
-            fuel_fracs.append(fuel_frac)
-    return expanded, fuel_fracs
-
-
-# Gas fuel types eligible for the generic offer-curve tranche split.
-_GAS_OFFER_FUELS: frozenset[str] = frozenset(
-    {"gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"}
+from market_sim.data.offer_curves import (  # noqa: E402
+    _econ_curve_steps,
+    _econ_split_for_group,
+    _offer_curve_for_group,
+    split_coal_tranches,
+    split_gas_tranches,
 )
-
-# Gas offer-curve tranche shares (committed / economic / peaking) of nameplate
-# by group, for the generic (non-CAMPD) offer curve. CTs are peakers with no
-# part-load committed band; CC/ST split a part-load committed band off the
-# efficient economic band, plus a small duct-fired peaking top slice. Mirrors
-# the bands ERCOT's CAMPD sheet encodes, as class defaults. Tier 3 — tune per
-# ISO against the CEMS load-duration shape.
-_GAS_TRANCHE_SHARES: dict[str, tuple[float, float, float]] = {
-    "CC_REGULAR": (0.30, 0.60, 0.10),
-    "CC_CHP": (0.30, 0.60, 0.10),
-    "ST_GAS": (0.40, 0.50, 0.10),
-    "ST_CHP": (0.40, 0.50, 0.10),
-    "CT_PEAKER": (0.0, 0.88, 0.12),
-    "CT_CHP": (0.0, 0.88, 0.12),
-}
-
-
-def split_gas_tranches(
-    generators: list[Generator], fuel_fracs: list[float], config: ScenarioConfig
-) -> tuple[list[Generator], list[float]]:
-    """Split each gas generator into committed / economic / peaking tranches.
-
-    Gives the generic (non-CAMPD) gas fleet a stepped offer curve instead of a
-    single flat block: a part-load **committed** band priced at the unit's heat
-    rate × the per-class committed multiplier (``cc_/ct_/gas_st_committed_hr_mult``,
-    >1, less efficient), an efficient **economic** band at the base heat rate,
-    and a small **peaking** top slice at × ``ct_peak_hr_penalty`` (duct firing).
-    CTs carry no committed band (peakers). Capacity is conserved; every gas
-    tranche bids full fuel cost (gas is not take-or-pay), so ``fuel_frac = 1.0``.
-
-    Runs after :func:`split_coal_tranches`, so it takes that pass's
-    ``fuel_fracs`` and carries each non-gas generator (incl. coal tranches with
-    their take-or-pay passthrough) through unchanged. Used for non-ERCOT
-    calibration when ``config.gas_offer_curve`` is set; ERCOT's offer curve
-    comes from its CAMPD bins, not this path.
-    """
-    committed_mult = {
-        "CC_REGULAR": config.cc_committed_hr_mult,
-        "CC_CHP": config.cc_committed_hr_mult,
-        "ST_GAS": config.gas_st_committed_hr_mult,
-        "ST_CHP": config.gas_st_committed_hr_mult,
-        "CT_PEAKER": config.ct_committed_hr_mult,
-        "CT_CHP": config.ct_committed_hr_mult,
-    }
-    expanded: list[Generator] = []
-    out_fracs: list[float] = []
-    for gen, ff in zip(generators, fuel_fracs):
-        shares = _GAS_TRANCHE_SHARES.get(gen.plant_group)
-        if gen.fuel_type not in _GAS_OFFER_FUELS or shares is None:
-            expanded.append(gen)
-            out_fracs.append(ff)
-            continue
-        c_share, e_share, p_share = shares
-        bands = (
-            ("committed", c_share, committed_mult[gen.plant_group]),
-            ("economic", e_share, 1.0),
-            ("peaking", p_share, config.ct_peak_hr_penalty),
-        )
-        for suffix, share, hr_mult in bands:
-            if share <= 0.0:
-                continue
-            expanded.append(
-                gen.model_copy(
-                    update={
-                        "unit_id": f"{gen.unit_id}_{suffix}",
-                        "pmax_mw": gen.pmax_mw * share,
-                        "pmin_mw": 0.0,
-                        "heat_rate": gen.heat_rate * hr_mult,
-                    }
-                )
-            )
-            out_fracs.append(1.0)
-    return expanded, out_fracs
 
 
 def campd_tranche_fuel_frac(
@@ -3255,42 +3088,12 @@ def _rows_to_generators(
     ]
 
 
-# Per-year EIA-860 plant-level CHP lookup (built by
-# ``scripts/build_eia860_chp_by_year.py``): columns (year, plant_id, chp). When
-# present it lets a multi-year backcast bucket each year with its own vintage's
-# CHP designation instead of the single committed snapshot.
-EIA_860_CHP_BY_YEAR_NAME: str = "eia860_chp_by_year.parquet"
-
-
-@lru_cache(maxsize=8)
-def _chp_by_plant(eia860_dir: Path, year: int | None = None) -> "pd.Series":
-    """Return ``{plant_id: "Y"/"N"}`` plant-level CHP flag from EIA-860.
-
-    With ``year`` set and the per-year lookup
-    (:data:`EIA_860_CHP_BY_YEAR_NAME`, under ``data/raw/_processed-legacy``) present, the
-    flag is read from THAT year's EIA-860 release, so a 3-year backcast does not
-    classify 2023/2024 with the latest snapshot's cogen status. Falls back to
-    the single committed operable-generator sheet (the most recent vintage) when
-    no year is given, the per-year lookup is missing, or the year is absent from
-    it. A plant is CHP when *any* of its operable units is flagged. Empty series
-    when no source exists, so callers default every plant to non-CHP.
-    """
-    if year is not None:
-        by_year = PROCESSED_DIR / EIA_860_CHP_BY_YEAR_NAME
-        if by_year.exists():
-            df = pd.read_parquet(by_year)
-            sub = df[df["year"] == int(year)]
-            if not sub.empty:
-                return pd.Series(
-                    sub["chp"].to_numpy(), index=sub["plant_id"].to_numpy()
-                )
-    path = eia860_dir / "eia860_generator_operable.parquet"
-    col = "Associated with Combined Heat and Power System"
-    if not path.exists():
-        return pd.Series(dtype="object")
-    raw = pd.read_parquet(path, columns=["Plant Code", col])
-    is_y = raw[col].astype(str).str.strip().str.upper().str.startswith("Y")
-    return is_y.groupby(raw["Plant Code"]).any().map({True: "Y", False: "N"})
+from market_sim.data.chp import (  # noqa: E402
+    _chp_by_plant,
+    _correct_caiso_chp_steam_credit_hr,
+    chp_btm_pct,
+    chp_pmin_cf,
+)
 
 
 def dual_fuel_plant_groups(
@@ -3725,32 +3528,6 @@ def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
             gen.heat_rate = target
 
 
-def _correct_caiso_chp_steam_credit_hr(generators: list[Generator], iso: str) -> None:
-    """Correct steam-credited heat rates for all CAISO CHP plants (in place).
-
-    CT_CHP: all simple-cycle CHP gas turbines report a steam-credited HR that
-    is physically impossible on a power-only basis (< 8.0 MMBtu/MWh).  The
-    1.8× topping factor (same as the original EOR-only fix) restores the
-    power-only HR, landing these units at 9–11 MMBtu/MWh in the peaker band.
-
-    CC_CHP: combined-cycle CHP plants carry a smaller steam credit from
-    process-steam extraction.  Plants with HR below 6.0 (under the most
-    efficient CC class) get a 1.15× correction with a 6.3 floor.
-    """
-    if iso.upper() != "CAISO":
-        return
-    for gen in generators:
-        if gen.plant_group == "CT_CHP":
-            if gen.heat_rate < CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD:
-                gen.heat_rate *= CAISO_EOR_TOPPING_FACTOR
-        elif gen.plant_group == "CC_CHP":
-            if gen.heat_rate < CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD:
-                gen.heat_rate = max(
-                    gen.heat_rate * CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
-                    CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR,
-                )
-
-
 def load_retired_within_window(
     iso: str,
     iso_config: ISOConfig | None = None,
@@ -4023,156 +3800,6 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
 # screened (P1-only keepers never touch min_run_hours).
 COAL_BIN_MIN_RUN_HOURS: int = 36
 COAL_BIN_MIN_DOWN_HOURS: int = 16
-
-# ERCOT coal fuel-supply type by EIA plant code. Mine-mouth lignite plants
-# ("lignite") bid into SCED at the marginal extraction cost — fixed mine
-# costs are sunk on a dispatch-hour basis. PRB-by-rail plants ("prb") bid
-# at the delivered contract price (mine-gate plus rail freight). The two
-# differ by ~$13/MWh in fuel cost, enough to swing merit order against gas
-# CC when gas is cheap. Drives fuel.apply_coal_supply_pricing.
-COAL_PLANT_SUPPLY: dict[int, str] = {
-    6180: "lignite",  # Oak Grove — Kosse mine
-    298: "prb",  # Limestone — now PRB by rail (switched off local lignite)
-    6146: "prb",  # Martin Lake — now PRB by rail (was East Texas lignite)
-    6183: "lignite",  # San Miguel — adjacent lignite mine
-    7030: "lignite",  # Major Oak Power
-    6178: "prb",  # Coleto Creek — PRB by rail
-    6179: "prb",  # Fayette / Sam Seymour — PRB by rail
-    7097: "prb",  # J K Spruce — PRB by rail
-    56611: "prb",  # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
-    3470: "prb",  # W A Parish (coal units 5-8, subbituminous) — PRB by rail
-}
-
-
-@lru_cache(maxsize=1)
-def _derived_coal_supply() -> dict[int, str]:
-    """Return ``{plant_code: supply_class}`` from derived per-ISO CSVs.
-
-    Loads every ``data/raw/_processed-legacy/coal_supply_<ISO>.csv`` written by
-    ``scripts/derive_coal_supply.py`` (EIA-923 fuel-receipt coal ranks:
-    ``bituminous`` / ``subbituminous`` / ``waste`` / ``lignite``). EIA plant
-    codes are national so the per-ISO files never collide. This generalises the
-    ERCOT-only :data:`COAL_PLANT_SUPPLY` to any ISO whose coal ranks have been
-    derived — see :func:`coal_supply_class`.
-    """
-    out: dict[int, str] = {}
-    for path in sorted(PROCESSED_DIR.glob("coal_supply_*.csv")):
-        df = pd.read_csv(path)
-        for code, cls in zip(df["plant_code"], df["supply_class"]):
-            out[int(code)] = str(cls)
-    return out
-
-
-@lru_cache(maxsize=1)
-def _eia860_retiree_coal_supply() -> dict[int, str]:
-    """Return ``{plant_code: supply_class}`` for mid-backcast coal retirees.
-
-    The narrow tertiary coal-rank fallback (after the curated and EIA-923-receipt
-    maps): a retiring plant's coal rank read from its EIA-860 ``energy_source``
-    code (``BIT`` → bituminous, ``SUB`` → PRB, ``LIG`` → lignite, ``WC`` →
-    waste), via :data:`plant_taxonomy.COAL_CODE_TO_SUPPLY`. This is the same
-    fuel-code fallback the EIA-923 calibration benchmark already applies
-    (``classify_plant``'s ``coal_code_to_class``), so the model resolves these
-    plants to the SAME class the benchmark does instead of leaving them in the
-    unranked ``COAL`` bucket.
-
-    Scope is deliberately limited to the **retired-within-window** EIA-860
-    vintage (:data:`EIA_860_RETIRED_WINDOW_PARQUET_NAME`) — the structural gap
-    the receipt-based :func:`_derived_coal_supply` map cannot cover, because a
-    plant that retired mid-backcast (e.g. W H Sammis, Homer City, AES Warrior
-    Run — all bituminous) has no recent burned-fuel receipts to derive a rank
-    from. Operable coal is intentionally NOT read here: an unresolved operable
-    plant means its ISO's receipt map was never derived (e.g. MISO), a
-    separate, deliberate piece of work — not something a retiree fallback should
-    silently reprice. The model rank sets the dispatch coal-supply passthrough
-    and the reporting class, so an unranked retiree otherwise bids generic
-    full-cost fuel AND shows up as a spurious generic ``COAL`` row the EIA-923
-    benchmark never has.
-    """
-    path = EIA_860_DIR / EIA_860_RETIRED_WINDOW_PARQUET_NAME
-    if not path.exists():
-        return {}
-    df = pd.read_parquet(path, columns=["plant_id", "energy_source"])
-    out: dict[int, str] = {}
-    for code, src in zip(df["plant_id"], df["energy_source"]):
-        supply = COAL_CODE_TO_SUPPLY.get(str(src).strip().upper())
-        if supply:
-            out.setdefault(int(code), supply)  # first coal energy_source wins
-    return out
-
-
-def coal_supply_class(plant_code: int) -> str:
-    """Return a plant's coal supply class, or ``""`` if unclassified.
-
-    Resolution order, most authoritative first:
-
-    1. The hand-curated ERCOT :data:`COAL_PLANT_SUPPLY` (encodes contract
-       knowledge EIA-923 ranks miss, e.g. Limestone burning PRB despite its
-       lignite history).
-    2. The EIA-923 fuel-receipt-derived per-ISO map (:func:`_derived_coal_supply`).
-    3. The EIA-860 ``energy_source`` rank of a mid-backcast retiree
-       (:func:`_eia860_retiree_coal_supply`) — the fuel-code fallback the
-       EIA-923 benchmark already applies, covering coal plants that retired
-       with no recent receipts so they are ranked rather than left in the
-       generic ``COAL`` bucket.
-    """
-    base = COAL_PLANT_SUPPLY.get(int(plant_code))
-    if base:
-        return base
-    derived = _derived_coal_supply().get(int(plant_code))
-    if derived:
-        return derived
-    return _eia860_retiree_coal_supply().get(int(plant_code), "")
-
-
-@lru_cache(maxsize=1)
-def _derived_coal_takeorpay() -> dict[int, float]:
-    """Return ``{plant_code: contract_share}`` from derived per-ISO CSVs.
-
-    Loads every ``data/raw/_processed-legacy/coal_takeorpay_<ISO>.csv`` written
-    by ``scripts/derive_coal_takeorpay.py`` (EIA-923 Schedule-5 Purchase Type:
-    the contracted / take-or-pay share of each coal plant's delivered tonnage).
-    EIA plant codes are national so the per-ISO files never collide.
-    """
-    out: dict[int, float] = {}
-    for path in sorted(PROCESSED_DIR.glob("coal_takeorpay_*.csv")):
-        df = pd.read_csv(path)
-        for code, share in zip(df["plant_code"], df["contract_share"]):
-            out[int(code)] = float(share)
-    return out
-
-
-def coal_takeorpay_share(plant_code: int) -> float | None:
-    """Return a coal plant's measured take-or-pay (contract) share, or ``None``.
-
-    The contracted (sunk, must-burn) fraction of delivered tonnage from
-    EIA-923 Schedule-5 Purchase Type (:func:`_derived_coal_takeorpay`). ``None``
-    when the plant filed no classifiable coal Purchase Type — the caller then
-    keeps the model's default 100%-sunk must-run treatment. Consumed by
-    :func:`campd_tranche_fuel_frac` when ``ScenarioConfig.coal_takeorpay_from_data``
-    is set: the coal must-run tranche's sunk fraction becomes this share instead
-    of the hardcoded 1.0, so the spot remainder ``1 - share`` bids full fuel.
-    """
-    return _derived_coal_takeorpay().get(int(plant_code))
-
-
-def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
-    """Return the model coal class (``COAL_LIGNITE`` / ``COAL_PRB`` /
-    ``COAL_BIT`` / ``COAL_WC``) for a coal plant.
-
-    The coal-rank resolver :func:`classify_plant` uses: the authoritative model
-    supply map (:func:`coal_supply_class`, curated ERCOT lignite/PRB plus the
-    EIA-923-derived per-ISO ranks), falling back to the EIA-923 receipt fuel
-    code and finally the bare ``COAL`` class. Mirrors the calibration
-    benchmark's coal resolver so the model and benchmark split coal identically.
-    """
-    return (
-        COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)))
-        or coal_code_to_class(fuel_code)
-        or "COAL"
-    )
-
-
 # The gas dispatch classes the EIA-923 override may assign to an ERCOT bin.
 # Coal bins keep their bare ``COAL`` group (the supply rank is split downstream
 # from :func:`coal_supply_class`), so the override only ever moves a plant among
@@ -4577,176 +4204,6 @@ CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-@lru_cache(maxsize=8)
-def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float | None]]:
-    """Return ``{plant_code: (chp_pmin_cf, sector_class, btm_pct_override)}`` for an ISO.
-
-    The per-ISO CHP steam-following data from
-    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
-    ``scripts/derive_thermal_tranches.py``): the plant's total must-run floor
-    (CAMPD p2 available-CF where CEMS covers the plant, EIA-923 class CF
-    otherwise — see the row's ``status``), its EIA-923 sector class
-    (merchant / industrial / commercial) sizing the behind-the-meter share,
-    and an optional per-plant ``chp_btm_pct`` override (% of nameplate) that
-    supersedes the sector-keyed :data:`CHP_BTM_PCT_BY_SECTOR` default when
-    measured grid-delivery data shows the sector default is mis-sized for that
-    plant (e.g. a large industrial cogen whose host consumes a higher-than-sector-
-    average share of output). The override is populated by the Step-5 CAISO CHP
-    re-derivation (Lever C) and is absent for ISOs without such a column.
-    This is the ISO-generic analogue of the hardcoded ERCOT maps
-    :data:`CHP_PMIN_CF_BY_PLANT` / :data:`CHP_SECTOR_CLASS_BY_PLANT`; empty
-    when the ISO has no artifact or it predates the CHP columns.
-    """
-    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
-    if not path.exists():
-        return {}
-    df = pd.read_csv(path)
-    if "chp_pmin_cf" not in df.columns:
-        return {}
-    out: dict[int, tuple[float | None, str | None, float | None]] = {}
-    for r in df.itertuples(index=False):
-        pmin = getattr(r, "chp_pmin_cf", None)
-        sector = getattr(r, "chp_sector", None)
-        sector = str(sector) if isinstance(sector, str) and sector else None
-        btm_raw = getattr(r, "chp_btm_pct", None)
-        btm = float(btm_raw) if btm_raw is not None and not pd.isna(btm_raw) else None
-        if pd.isna(pmin) and sector is None:
-            continue
-        out[int(r.plant_code)] = (
-            None if pd.isna(pmin) else float(pmin),
-            sector,
-            btm,
-        )
-    return out
-
-
-# EIA-860 "Sector" numbers that designate a combined-heat-and-power host: IPP
-# CHP (3), Commercial CHP (5), Industrial CHP (7). A coal plant in one of these
-# sectors burns coal to follow a host STEAM contract, not the LMP, so it is
-# routed through the same behind-the-meter / steam-following must-run holdout as
-# the gas cogens rather than dispatched as an economic COAL_BIT/WC tranche. The
-# non-CHP coal sectors -- Electric Utility (1) and IPP Non-CHP (2) -- stay
-# economic grid generators (Seward, Virginia City, the merchant culm fleet, and
-# the Spurlock-class utility coal that EIA-923 also flags chp=Y). The class each
-# maps to sizes the host pull-out via :data:`CHP_BTM_PCT_BY_SECTOR`.
-_EIA860_CHP_SECTORS: dict[int, str] = {3: "merchant", 5: "commercial", 7: "industrial"}
-# EIA-923 monthly class CF -> steam-following floor, mirroring
-# derive_thermal_tranches: the plant's minimum monthly coal-class average MW,
-# divided by the coal bin nameplate at build time and scaled / capped, is the
-# grid floor a steady steam host always holds.
-_COAL_CHP_FLOOR_FACTOR: float = 0.85
-_COAL_CHP_FLOOR_CAP_PCT: float = 75.0
-_DAYS_IN_MONTH_NONLEAP: tuple[int, ...] = (
-    31,
-    28,
-    31,
-    30,
-    31,
-    30,
-    31,
-    31,
-    30,
-    31,
-    30,
-    31,
-)
-
-
-@lru_cache(maxsize=8)
-def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
-    """Return ``{plant_code: (steam_floor_min_avg_mw, sector_class)}`` for an
-    ISO's coal cogens for ``year``.
-
-    A coal cogen is a plant whose EIA-923 combustion net generation is
-    predominantly coal (>= :data:`_COAL_CHP_MIN_SHARE`) and whose EIA-860
-    "Sector" is a CHP host (:data:`_EIA860_CHP_SECTORS`). ``steam_floor_min_avg_mw``
-    is the minimum monthly coal-class average MW over the pooled EIA-923 window
-    (the measured floor the host always holds, the same EIA-923-CF measure
-    derive_thermal_tranches uses for CEMS-invisible cogens); the caller divides
-    it by the coal bin nameplate to get a steam-following grid floor. The sector
-    class sizes the behind-the-meter pull-out via :data:`CHP_BTM_PCT_BY_SECTOR`.
-
-    PJM and CAISO scope: empty for any other ISO. The coal-cogen routing was
-    identified and validated on PJM's CFB / culm / chemical-host coal units;
-    CAISO carries one such plant -- Argus Cogen (code 10684, Searles Valley
-    Minerals' Trona soda-ash host), EIA-860 Sector 7 (Industrial CHP), ~0.21-
-    0.25 TWh/yr predominantly bituminous in EIA-923. CAISO grid coal is retired;
-    this lone behind-the-meter industrial cogen burns coal to follow its host
-    steam load, not the LMP, so it routes through the same BTM steam-following
-    holdout rather than dispatching as an economic grid COAL tranche (CLAUDE.md
-    #11: the accurate EIA-860 representation).
-    """
-    if iso.upper() not in ("PJM", "CAISO"):
-        return {}
-    from market_sim.config.plant_taxonomy import classify_plant
-    from market_sim.data.campd import _COAL_EIA_FUELS, _NON_COMBUSTION_FUELS
-    from market_sim.data.eia923 import load_monthly_generation, monthly_netgen_columns
-    from market_sim.data.zone_assignment import build_zone_lookup
-
-    try:
-        gen = load_monthly_generation()
-    except FileNotFoundError:
-        return {}
-    iso_plants = set(build_zone_lookup(iso))
-    if iso_plants:
-        gen = gen[gen["plant_id"].isin(iso_plants)]
-    if gen.empty:
-        return {}
-
-    # Plant sector from EIA-860; only the CHP-host sectors qualify.
-    sector_num = _eia860_plant_sector()
-    fuels = gen["fuel_type"].astype(str).str.upper()
-    combustion = gen[~fuels.isin(_NON_COMBUSTION_FUELS)].copy()
-    combustion["is_coal"] = (
-        combustion["fuel_type"].astype(str).str.upper().isin(_COAL_EIA_FUELS)
-    )
-    # Any CHP-sector plant that generated coal in ``year`` qualifies: its coal
-    # bin is the COAL_BIT/WC tranche that should follow host steam (the
-    # gas/other bins of a multi-fuel chemical host -- Eastman, Covington -- take
-    # the gas CHP path separately). The non-CHP coal sectors are filtered below.
-    yr = combustion[combustion["year"] == year]
-    coal = yr[yr["is_coal"]].groupby("plant_id")["netgen_annual_mwh"].sum()
-    # Pooled minimum monthly coal-class average MW (the steam floor numerator).
-    mcols = monthly_netgen_columns()
-    coal_rows = combustion[combustion["is_coal"]]
-    coal_rows["klass"] = [
-        classify_plant(f, pm, str(c).upper().startswith("Y"), int(pid))
-        for f, pm, c, pid in zip(
-            coal_rows["fuel_type"],
-            coal_rows["prime_mover"],
-            coal_rows["chp"],
-            coal_rows["plant_id"],
-        )
-    ]
-    monthly = coal_rows.groupby(["plant_id", "year"])[mcols].sum()
-    hours_per_month = np.array(_DAYS_IN_MONTH_NONLEAP, dtype=float) * 24.0
-
-    out: dict[int, tuple[float, str]] = {}
-    for pid in coal.index:
-        pid = int(pid)
-        if float(coal.get(pid, 0.0)) <= 0.0:
-            continue
-        sec = sector_num.get(pid)
-        sector_class = _EIA860_CHP_SECTORS.get(int(sec)) if sec is not None else None
-        if sector_class is None:
-            continue
-        # Minimum monthly average MW across the pooled window (months with no
-        # reported class generation are skipped -- the host stood down, not a
-        # binding floor).
-        min_avg_mw = np.inf
-        for (mpid, _y), row in monthly.iterrows():
-            if int(mpid) != pid:
-                continue
-            avg = row.to_numpy(dtype=float) / hours_per_month
-            avg = avg[avg > 0.0]
-            if avg.size:
-                min_avg_mw = min(min_avg_mw, float(avg.min()))
-        if not np.isfinite(min_avg_mw):
-            min_avg_mw = 0.0
-        out[pid] = (min_avg_mw, sector_class)
-    return out
-
-
 @lru_cache(maxsize=1)
 def _eia860_plant_sector() -> dict[int, int]:
     """Return ``{plant_code: EIA-860 Sector number}`` from the plant table."""
@@ -4756,42 +4213,6 @@ def _eia860_plant_sector() -> dict[int, int]:
     df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
     df = df.dropna(subset=["Plant Code", "Sector"])
     return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
-
-
-def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
-    """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
-
-    Per-plant override from the ISO's derived artifact takes precedence when the
-    ``chp_btm_pct`` column is populated (e.g. CAISO industrial plants whose
-    measured grid delivery is below 30% of nameplate). Falls back to the
-    sector-keyed :data:`CHP_BTM_PCT_BY_SECTOR` default.
-    """
-    _, sector, btm_override = chp_overrides(iso).get(
-        int(plant_code), (None, None, None)
-    )
-    if btm_override is not None:
-        return btm_override
-    if sector is None:
-        sector = CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code))
-    if sector is None:
-        return (
-            CHP_ST_BTM_PCT if group == "ST_CHP" else (CHP_BTM_PCT_BY_SECTOR["merchant"])
-        )
-    if group == "ST_CHP" and iso.upper() == "ERCOT":
-        return CHP_ST_BTM_PCT
-    return CHP_BTM_PCT_BY_SECTOR.get(sector, CHP_BTM_PCT_BY_SECTOR["merchant"])
-
-
-def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
-    """Total must-run CF floor (%) for a CHP plant, or ``None`` for no floor.
-
-    Per-ISO derived artifact first (:func:`chp_overrides`), then the hardcoded
-    ERCOT CAMPD map (:data:`CHP_PMIN_CF_BY_PLANT`).
-    """
-    pmin, *_ = chp_overrides(iso).get(int(plant_code), (None, None, None))
-    if pmin is not None:
-        return pmin
-    return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))
 
 
 # Per-bin forced availability derates by year, for confirmed unit losses
@@ -5389,35 +4810,16 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
-@lru_cache(maxsize=8)
-def coal_sync_online_frac(iso: str) -> dict[int, float]:
-    """Return ``{plant_code: online_frac}`` for an ISO's coal plants.
-
-    The CAMPD-derived plant-level synchronization fraction from
-    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
-    written by ``scripts/derive_thermal_tranches.py`` for COAL): the measured
-    share of the year the plant has any unit synchronized. Empty when the ISO
-    has no artifact or it predates the column. Consumed by :func:`bins_to_fleet`
-    under ``config.coal_sync_srmc_tranche`` to scale the step-3a min-load
-    forcing — a unit synchronized ~all year (~1.0) is held on all 8760 hours; a
-    two-shifting cycler is forced only in the top ``online_frac`` fraction of
-    hours by system load. Plants absent from the map keep the force-all default
-    (1.0).
-    """
-    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
-    if not path.exists():
-        return {}
-    df = pd.read_csv(path)
-    if "online_frac" not in df.columns:
-        return {}
-    out: dict[int, float] = {}
-    for r in df.itertuples(index=False):
-        if str(getattr(r, "status", "ok")) != "ok" or str(r.plant_group) != "COAL":
-            continue
-        if pd.isna(r.online_frac):
-            continue
-        out[int(r.plant_code)] = float(r.online_frac)
-    return out
+from market_sim.data.coal import (  # noqa: E402
+    _COAL_CHP_FLOOR_CAP_PCT,
+    _COAL_CHP_FLOOR_FACTOR,
+    COAL_PLANT_SUPPLY,
+    _coal_class_for,
+    coal_chp_overrides,
+    coal_supply_class,
+    coal_sync_online_frac,
+    coal_takeorpay_share,
+)
 
 
 @lru_cache(maxsize=1)
@@ -5827,88 +5229,6 @@ def cc_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     return frozenset(int(c) for c in cc["plant_code"].dropna())
 
 
-def _offer_curve_for_group(
-    group: str, plant_code: int, config: ScenarioConfig
-) -> dict[str, float] | None:
-    """Return the offer-curve band multipliers for a group, or ``None``.
-
-    Reads ``config.offer_curve_by_group[group]`` (see :class:`ScenarioConfig`).
-    Returns ``None`` — the legacy override / CSV path — when no curve is
-    configured for the group or for an ST_GAS peaker plant (those keep their
-    CSV heat rates, matching the ``gas_st_*_hr_override`` scope). COAL plants
-    resolve to a supply-specific entry by their fuel rank — ERCOT
-    ``COAL_LIGNITE`` / ``COAL_PRB`` and the EIA-923-derived ``COAL_BIT`` /
-    ``COAL_WC`` (bituminous / waste coal; sub-bituminous routes to
-    ``COAL_PRB``) — falling back to the generic ``COAL`` entry.
-
-    When ``config.ct_intermediate_split`` is set, a ``CT_PEAKER`` plant in the
-    measured intermediate-duty cohort (:func:`ct_intermediate_plants`) resolves
-    to the flatter ``CT_INTERMEDIATE`` curve when one is configured, so its
-    always-on energy clears like the intermediate unit it is rather than
-    carrying the true-peaker start-cost hurdle. Likewise, when
-    ``config.cc_intermediate_split`` is set a ``CC_REGULAR`` plant in the
-    measured baseload-duty cohort (:func:`cc_intermediate_plants`) resolves to
-    the flatter ``CC_INTERMEDIATE`` curve, whose econ ramp matches a committed
-    CC's near-flat full-load incremental cost (the duct-burner peak band is
-    unchanged).
-    """
-    curves = getattr(config, "offer_curve_by_group", None) or {}
-    if group == "COAL":
-        key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
-        return (
-            curves.get(key) if key and curves.get(key) else curves.get("COAL")
-        ) or None
-    if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
-        return None
-    if group == "ST_GAS" and getattr(config, "st_gas_intermediate_split", False):
-        iso = str(getattr(config, "iso", "ERCOT"))
-        thr = float(getattr(config, "st_gas_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in st_gas_intermediate_plants(iso, thr):
-            inter = curves.get("ST_GAS_INTERMEDIATE")
-            if inter:
-                return inter
-    if group == "CT_PEAKER" and getattr(config, "ct_intermediate_split", False):
-        iso = str(getattr(config, "iso", "ERCOT"))
-        thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in ct_intermediate_plants(iso, thr):
-            inter = curves.get("CT_INTERMEDIATE")
-            if inter:
-                return inter
-    if group == "CC_REGULAR" and getattr(config, "cc_intermediate_split", False):
-        iso = str(getattr(config, "iso", "ERCOT"))
-        thr = float(getattr(config, "cc_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in cc_intermediate_plants(iso, thr):
-            inter = curves.get("CC_INTERMEDIATE")
-            if inter:
-                return inter
-    return curves.get(group) or None
-
-
-def _econ_split_for_group(
-    group: str, plant_code: int, config: ScenarioConfig
-) -> tuple[float, float, float] | None:
-    """Return ``(split_frac, lo_hr_mult, hi_hr_mult)`` for the econ split, or ``None``.
-
-    Reads ``config.econ_split_by_group[group] = [split_frac, lo_hr_mult,
-    hi_hr_mult]`` (see :class:`ScenarioConfig`). Returns ``None`` — a single
-    economic tranche, the default behavior — when no split is configured for
-    the group or for an ST_GAS peaker plant (those dispatch on CSV heat rates,
-    matching the ``gas_st_*_hr_override`` scope). ``split_frac`` is clamped to
-    ``[0, 1]``.
-    """
-    spec_map = getattr(config, "econ_split_by_group", None) or {}
-    spec = spec_map.get(group)
-    if not spec:
-        return None
-    if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
-        return None
-    frac, lo_mult, hi_mult = float(spec[0]), float(spec[1]), float(spec[2])
-    return max(0.0, min(1.0, frac)), lo_mult, hi_mult
-
-
-# Numeric columns of the per-plant tranche-config override sheet
-# (scripts/export_tranche_config.py). The five ``Pct_*`` are tranche shares of
-# nameplate (must-run + committed + econ-low + econ-high + peaking = 100); the
 # five ``HR_Mult_*`` are per-tranche multipliers on the plant's base HR. Other
 # columns in the sheet (names, group, config, turbine class …) are reference
 # only and ignored by the loader.
@@ -5958,54 +5278,6 @@ def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
             continue
         out[code] = rec
     return out
-
-
-# Every thermal group uses a uniform offer-curve shape: the smooth economic
-# ramp spans ``econ_low -> econ_high`` (its slope set by those two endpoints),
-# and the duct-firing / scarcity peak is kept as a SEPARATE flat tranche that
-# jumps up above the ramp top — its size set by ``pct_peaking`` and its height
-# by the ``peak`` HR multiplier (the per-turbine-class duct-burner multiplier
-# for CC when no explicit ``peak`` is given). Nothing is folded into the ramp.
-
-
-def _econ_curve_steps(
-    base_hr: float,
-    lo_mult: float,
-    pk_mult: float,
-    curve_cap: float,
-    n: int,
-    exp: float,
-    mid: float | None = None,
-) -> list[tuple[str, float, float, float, int, int, float]]:
-    """Slice a rising economic ramp into ``n`` flat sub-tranches.
-
-    Returns ``(suffix, cap, heat_rate, vom_mult, min_run, min_down, startup)``
-    tuples — ``n`` equal-capacity slices whose heat-rate multiplier rises from
-    ``lo_mult`` toward ``pk_mult`` along ``mult(t) = lo + (pk - lo) * t**exp``,
-    ``t = (k + 0.5)/n``. ``exp == 1`` is a straight (linear) ramp matching a
-    thermal unit's gently-rising incremental heat rate; ``exp > 1`` is convex
-    (cheap-bottom). When ``mid`` is given it replaces the power shape with a
-    two-segment piecewise-linear ramp anchored at the capacity midpoint:
-    ``f(0) = 0``, ``f(0.5) = mid``, ``f(1) = 1`` (fraction of the lo->pk
-    rise), so ``mid < 0.5`` keeps the middle of the curve cheap and
-    concentrates the rise in the top slices — an independent shape control
-    the single ``exp`` exponent cannot express. The slices carry no min-run
-    or start cost — they are incremental output of an already-committed
-    unit. Suffixes start with ``econ`` (``econc00`` …) so
-    :func:`apply_commitment_with_coal_pin` couples them to the bin's
-    committed tranche and shuts them down together.
-    """
-    slice_cap = curve_cap / n
-    steps: list[tuple[str, float, float, float, int, int, float]] = []
-    for k in range(n):
-        t = (k + 0.5) / n
-        if mid is not None:
-            f = 2.0 * mid * t if t <= 0.5 else mid + (1.0 - mid) * (2.0 * t - 1.0)
-        else:
-            f = t**exp
-        mult = lo_mult + (pk_mult - lo_mult) * f
-        steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
-    return steps
 
 
 def bins_to_fleet(
@@ -6723,240 +5995,6 @@ def bins_to_fleet(
         year=config.weather_year,
     )
     return fleet, fleet_arrays
-
-
-def _bands_from_shares(
-    raw: list[tuple[str, float, float, bool]], is_coal: bool
-) -> list[dict]:
-    """Stack ``(name, pct_of_nameplate, hr_mult, vom)`` tranches into CF bands.
-
-    Bands accumulate from CF 0 in dispatch fill order, dropping empty ones. The
-    non-coal must-run share is host steam removed from the grid, so it is not
-    shown and does not shift the grid bands (committed still starts at CF 0);
-    the coal must-run band is the in-LP VOM-only floor and is shown from 0.
-    """
-    bands: list[dict] = []
-    cursor = 0.0
-    for name, pct, mult, vom in raw:
-        if name == "must-run" and not is_coal:
-            continue
-        lo, hi = cursor, cursor + pct
-        cursor = hi
-        if pct <= 0.5:
-            continue
-        bands.append(
-            {
-                "name": name,
-                "cf_lo": round(lo, 1),
-                "cf_hi": round(hi, 1),
-                "mult": round(mult, 3),
-                "vom": vom,
-            }
-        )
-    return bands
-
-
-def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[dict]:
-    """Return one plant's offer-curve tranche bands on the capacity-factor axis.
-
-    Mirrors the tranche capacity and per-band heat-rate resolution in
-    :func:`bins_to_fleet` (same offer-curve lookup, per-plant committed %,
-    peaking override, econ split and CC duct-burner peak) and converts the
-    cumulative tranche capacities into capacity-factor edges (percent of
-    nameplate). The bands stack in dispatch fill order — must-run, committed,
-    econ-lo, econ-hi, peak — so the dashboard can mark where each band engages
-    on the CF axis and label the heat-rate multiplier priced there.
-
-    Args:
-        b: One row of the :func:`load_campd_bins` frame (or an equivalent
-            mapping) for a single plant.
-        config: The run's scenario configuration (offer curves, per-plant
-            committed flag, mustrun overrides).
-
-    Returns:
-        A list of ``{"name", "cf_lo", "cf_hi", "mult", "vom"}`` dicts — one per
-        non-empty band, in increasing CF order. ``mult`` is the band heat rate
-        over the plant's base HR; ``vom`` flags the must-run band, which bids
-        VOM-only (its fuel is sunk) rather than at a heat-rate multiplier.
-        Empty when the plant has no nameplate.
-    """
-    group = str(b["Plant_Group"])
-    plant_code = int(b["Plant_Code"])
-    nameplate = float(b["capacity_mw"])
-    if nameplate <= 0.0:
-        return []
-    fuel = BIN_GROUP_TO_FUEL[group]
-
-    # Per-plant tranche-config sheet wins (same precedence as bins_to_fleet):
-    # build the bands straight from the sheet's shares + multipliers so the
-    # dashboard markers track what the user edited.
-    _ov_path = getattr(config, "plant_tranche_config_path", None)
-    if _ov_path:
-        ov = load_plant_tranche_config(_ov_path).get(plant_code)
-        if ov is not None:
-            return _bands_from_shares(
-                [
-                    ("must-run", ov["pct_mr"], ov["hr_mr"], True),
-                    ("committed", ov["pct_mc"], ov["hr_mc"], False),
-                    ("econ-lo", ov["pct_lo"], ov["hr_lo"], False),
-                    ("econ-hi", ov["pct_hi"], ov["hr_hi"], False),
-                    ("peak", ov["pct_pk"], ov["hr_pk"], False),
-                ],
-                is_coal=(fuel == "coal"),
-            )
-
-    # Petra Nova (own classification, see PETRA_NOVA_* constants): one band
-    # forced to PETRA_NOVA_MIN_CF of net capacity whenever available.
-    if (
-        plant_code == PETRA_NOVA_PLANT_CODE
-        and group == "CT_CHP"
-        and getattr(config, "chp_steam_following", False)
-    ):
-        net_pct = 100.0 - PETRA_NOVA_PARASITIC_PCT
-        return [
-            {
-                "name": "ccs must-run",
-                "cf_lo": 0.0,
-                "cf_hi": round(net_pct, 1),
-                "mult": 1.0,
-                "vom": False,
-            }
-        ]
-
-    offer = _offer_curve_for_group(group, plant_code, config)
-
-    # Resolve must-run / committed / peaking percentages exactly as
-    # bins_to_fleet does (coal overrides, CHP host-steam, per-plant committed,
-    # offer peaking override).
-    pct_mr = float(b["pct_mr"])
-    if fuel == "coal":
-        _supply = COAL_PLANT_SUPPLY.get(plant_code, "")
-        if config.coal_mustrun_per_plant and plant_code in COAL_MUSTRUN_BY_PLANT:
-            pct_mr = COAL_MUSTRUN_BY_PLANT[plant_code]
-        elif _supply == "lignite" and config.coal_lignite_mustrun_override is not None:
-            pct_mr = config.coal_lignite_mustrun_override
-        elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
-            pct_mr = config.coal_prb_mustrun_override
-        # PJM bituminous spot-coal: fully dispatchable, no take-or-pay must-run
-        # floor (mirrors bins_to_fleet so the dashboard CF bands match dispatch).
-        if (
-            getattr(config, "coal_bit_dispatchable", False)
-            and coal_supply_class(plant_code) == "bituminous"
-        ):
-            pct_mr = 0.0
-    if group in ("CC_CHP", "CT_CHP", "ST_CHP") and getattr(
-        config, "chp_steam_following", False
-    ):
-        pct_mr = chp_btm_pct(plant_code, group, iso=getattr(config, "iso", "ERCOT"))
-    pct_mc = float(b["pct_mc"])
-    if offer is not None and "pct_committed" in offer:
-        pct_mc = float(offer["pct_committed"])
-    if (
-        group == "CC_REGULAR"
-        and getattr(config, "cc_committed_per_plant", False)
-        and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT
-    ):
-        pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[plant_code]
-    pct_peak = float(b["pct_peak"])
-    if offer is not None and "pct_peaking" in offer:
-        pct_peak = float(offer["pct_peaking"])
-    if group in ("CC_REGULAR", "CC_CHP") and getattr(config, "cc_duct_peaking", False):
-        # Per-plant EIA-860 duct-burner peaking share (see bins_to_fleet).
-        _dpk = cc_duct_peaking_pct().get(plant_code)
-        if _dpk is not None:
-            pct_peak = _dpk
-    if (
-        group == "CC_REGULAR"
-        and getattr(config, "cc_peaking_per_plant", False)
-        and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT
-    ):
-        pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
-
-    if fuel == "coal":
-        mustrun_cap = nameplate * pct_mr / 100.0
-        grid_cap = nameplate - mustrun_cap
-    else:
-        mustrun_cap = 0.0
-        grid_cap = nameplate * (1.0 - pct_mr / 100.0)
-    denom = 100.0 - pct_mr
-    committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
-    peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
-    econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
-
-    # Per-band heat rates, mirroring bins_to_fleet (offer-curve multipliers,
-    # CC duct-burner peak, or the legacy per-class overrides / CSV columns).
-    base_hr = float(b["hr_weighted"])
-    mustrun_hr = float(b["hr_mr"])
-    committed_hr = float(b["hr_mc"])
-    econ_hr = float(b["hr_econ"])
-    peak_hr = float(b["hr_peak"])
-    if offer is not None:
-        committed_hr = base_hr * float(offer["committed"])
-        if "peak" in offer:
-            peak_hr = base_hr * float(offer["peak"])
-        elif group in ("CC_REGULAR", "CC_CHP"):
-            peak_hr = base_hr * cc_duct_burner_peak_mult(b.get("Turbine_Class"))
-        else:
-            peak_hr = base_hr * float(offer["peak"])
-    else:
-        cc_mc = getattr(config, "cc_committed_hr_override", None)
-        if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
-            committed_hr = base_hr * cc_mc
-            econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
-            peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
-        st_mc = getattr(config, "gas_st_committed_hr_override", None)
-        if (
-            group == "ST_GAS"
-            and plant_code not in ST_GAS_PEAKER_PLANTS
-            and st_mc is not None
-        ):
-            committed_hr = base_hr * st_mc
-            econ_hr = base_hr * float(getattr(config, "gas_st_econ_hr_override", 1.0))
-            peak_hr = base_hr * float(getattr(config, "gas_st_peak_hr_override", 1.5))
-        ct_mc = getattr(config, "ct_committed_hr_override", None)
-        if group == "CT_CHP" and ct_mc is not None:
-            committed_hr = base_hr * ct_mc
-            econ_hr = base_hr * float(getattr(config, "ct_econ_hr_override", 1.1))
-            peak_hr = base_hr * float(getattr(config, "ct_peak_hr_override", 1.3))
-
-    if offer is not None:
-        share = float(offer["econ_low_share"])
-        econ_steps = [
-            ("econ-lo", econ_cap * share, base_hr * float(offer["econ_low"])),
-            ("econ-hi", econ_cap * (1.0 - share), base_hr * float(offer["econ_high"])),
-        ]
-    elif (split := _econ_split_for_group(group, plant_code, config)) is not None:
-        split_frac, lo_mult, hi_mult = split
-        econ_steps = [
-            ("econ-lo", econ_cap * split_frac, base_hr * lo_mult),
-            ("econ-hi", econ_cap * (1.0 - split_frac), base_hr * hi_mult),
-        ]
-    else:
-        econ_steps = [("econ", econ_cap, econ_hr)]
-
-    raw = [
-        ("must-run", mustrun_cap, mustrun_hr, True),
-        ("committed", committed_cap, committed_hr, False),
-        *[(name, cap, hr, False) for name, cap, hr in econ_steps],
-        ("peak", peak_cap, peak_hr, False),
-    ]
-    bands: list[dict] = []
-    cursor = 0.0
-    for name, cap, hr, vom_only in raw:
-        lo, hi = cursor, cursor + cap
-        cursor = hi
-        if cap <= 0.5:  # dropped from the LP in bins_to_fleet
-            continue
-        bands.append(
-            {
-                "name": name,
-                "cf_lo": round(lo / nameplate * 100.0, 1),
-                "cf_hi": round(hi / nameplate * 100.0, 1),
-                "mult": round(hr / base_hr, 3) if base_hr > 0.0 else None,
-                "vom": vom_only,
-            }
-        )
-    return bands
 
 
 def load_or_synthesize_bins(

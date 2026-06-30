@@ -34,9 +34,9 @@ rc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rc)
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.data.coal import COAL_PLANT_SUPPLY  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     BIN_GROUP_TO_FUEL,
-    COAL_PLANT_SUPPLY,
     bins_to_fleet,
     load_campd_bins,
 )

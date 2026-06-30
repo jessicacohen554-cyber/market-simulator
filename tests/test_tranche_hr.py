@@ -20,8 +20,8 @@ from market_sim.data.fleet import (
     bins_to_fleet,
     generators_to_fleet_arrays,
     get_emission_rate,
-    split_coal_tranches,
 )
+from market_sim.data.offer_curves import split_coal_tranches
 from market_sim.model.commitment import apply_commitment_with_coal_pin
 from market_sim.model.dispatch import solve_dispatch
 

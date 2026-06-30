@@ -196,8 +196,8 @@ class TestPerYearChp(unittest.TestCase):
     """``_chp_by_plant`` reads the year's own EIA-860 CHP vintage when present."""
 
     def test_year_selects_vintage_falls_back_to_snapshot(self):
-        from market_sim.config.paths import PROCESSED_DIR
-        from market_sim.data.fleet import EIA_860_DIR, _chp_by_plant
+        from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR
+        from market_sim.data.chp import _chp_by_plant
 
         if not (PROCESSED_DIR / "eia860_chp_by_year.parquet").exists():
             self.skipTest("no per-year CHP lookup in this checkout")
