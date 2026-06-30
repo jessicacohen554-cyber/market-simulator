@@ -61,10 +61,12 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | reference | crosswalks / lookups (ISO-agnostic) | n/a |
+| border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
+| zonal-shares | per-ISO via directory partitioning | n/a |
 
 ---
 
@@ -337,3 +339,41 @@ Crosswalk / lookup tables (heterogeneous). Schema:
 | `iso` | `string` | `none` | yes | ISO/RTO code, when applicable. |
 | `zone` | `string` | `none` | yes | Zone, when applicable. |
 | `node` | `string` | `none` | yes | Pricing node / settlement point, when applicable. |
+
+## border-lmp
+
+Measured neighbor-border hourly Day-Ahead LMP. Schema:
+[`schema/border-lmp.schema.yaml`](schema/border-lmp.schema.yaml).
+
+- **Keys:** `year`, `hour`, `hub`
+- **Reconciles:** CAISO OASIS WECC intertie LMP (MALIN, PALOVRDE), PJM hub LMP
+  (CHICAGO GEN / AEP GEN / ATSI GEN equal-weight mean for MISO PJM_WEST) — on
+  the model's fixed non-leap 8760-hour local-year calendar, dense `price` (NaN
+  for gaps).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `year` | `int64` | `none` | no | Calendar year of the price observation. |
+| `hour` | `int64` | `none` | no | Hour-of-year index [0..8759] on the model's fixed non-leap local-time calendar (Pacific for CAISO, Central for MISO). Feb 29 is excluded; DST spring-forward gap interpolated (limit=2). |
+| `hub` | `string` | `none` | no | Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point), PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs). |
+| `price` | `float64` | `usd_per_mwh` | yes | Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector). MISO/PJM: total_lmp_da (energy + congestion + loss). NaN for hours with no data (OASIS retention gap, missing source). |
+
+## zonal-shares
+
+Hourly zonal load share fractions (per ISO, per year). Schema:
+[`schema/zonal-shares.schema.yaml`](schema/zonal-shares.schema.yaml).
+
+- **Keys:** `hour`, `zone`
+- **Reconciles:** PJM metered-load CSV (20 real zones → 8 model zones), ERCOT
+  native-load XLSX (8 weather zones → 6 model zones), CAISO TAC-area CSV (4
+  areas → 3 trading-hub zones), MISO EIA-930 sub-BA CSV (6 sub-BAs → 3 model
+  zones), NYISO pal CSV (11 settlement zones → 5 model zones), NEISO SMD wide
+  CSV (8 load zones → 4 model zones) — into `share` fractions summing to ≈1.0
+  per hour, long format `(hour, zone, share)`. Files are ISO-partitioned by
+  directory path (`data/clean/zonal-shares/<ISO>/`).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `hour` | `int64` | `none` | no | Hour of year on the fixed non-leap 8760-hour clock (0 = first hour of Jan 1, 8759 = last hour of Dec 31, Feb 29 excluded for leap years). |
+| `zone` | `string` | `none` | no | Model zone name matching the ISO's ISOConfig.zone_names. Each ISO-year file contains one row per (hour, zone) pair for every zone in the ISO topology. |
+| `share` | `float64` | `fraction` | no | Fraction of system load allocated to this zone for this hour (0.0–1.0). Shares sum to ≈1.0 across all zones for each hour (tolerance ±1e-9). |
