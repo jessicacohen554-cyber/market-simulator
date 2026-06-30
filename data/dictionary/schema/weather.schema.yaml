@@ -1,0 +1,63 @@
+# Canonical schema: daily weather observations by zone
+#
+# One row per (date, zone) for a single ISO-year. The zone value is a model
+# zone name matching the ISO's ISOConfig.zone_names, or a sentinel:
+#   '_load_weighted' — ISO-level load-weighted temperature aggregate (CAISO,
+#                      NEISO; used by the reliability-floor cold-snap derate).
+#   '_downstate'     — NYISO NYC-metro aggregate (Central Park / LaGuardia /
+#                      JFK; used by the NYISO CT reliability-floor script).
+#
+# Source: per-ISO raw CSV files under data/raw/{iso}-weather/ (NOAA GHCN-Daily
+# TMAX/TMIN, load-weighted over each ISO's load-center stations). Curated by
+# scripts/curate_weather.py.
+#
+# Validation: for every ISO-year file,
+#   tmax_c is non-null (gap-filled via ffill/bfill per zone in curate step)
+#   tmin_c may be null (absent for load-weighted/downstate TMAX-only sources)
+datatype: weather
+schema_version: 1
+title: Daily weather observations by zone
+description: >-
+  Daily maximum and minimum temperature (deg C) by model zone for a single ISO
+  and year. Used by the reliability-floor engine to flag extreme-weather days
+  and by the cold-snap gas-derate to compute temperature-dependent forced-outage
+  fractions. Zones are either model zone names matching ISOConfig.zone_names or
+  sentinels ('_load_weighted', '_downstate') for load-weighted ISO aggregates.
+
+key_columns: [date, zone]
+allow_additional_columns: false
+
+columns:
+  - name: date
+    dtype: datetime64[ns]
+    unit: none
+    nullable: false
+    description: >-
+      Calendar date of the observation (tz-naive local date). One row per zone
+      per calendar day, with Feb 29 included when present in the raw archive.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Model zone name (matching ISOConfig.zone_names) or a sentinel:
+      '_load_weighted' for an ISO-level load-weighted temperature aggregate,
+      '_downstate' for the NYISO NYC-metro (Central Park / LaGuardia / JFK)
+      aggregate.
+  - name: tmax_c
+    dtype: float64
+    unit: deg_c
+    nullable: false
+    description: >-
+      Daily maximum temperature in degrees Celsius (NOAA GHCN-Daily TMAX,
+      load-weighted over the zone's representative stations). Gap-filled via
+      forward-fill then back-fill in the curate step so no null values remain.
+  - name: tmin_c
+    dtype: float64
+    unit: deg_c
+    nullable: true
+    description: >-
+      Daily minimum temperature in degrees Celsius (NOAA GHCN-Daily TMIN).
+      Null for zones curated from TMAX-only source files (CAISO
+      '_load_weighted', NYISO '_downstate', and NYISO per-zone TMAX-only
+      series).
