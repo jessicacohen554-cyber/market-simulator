@@ -18,10 +18,7 @@ import numpy as np
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import solve_dispatch, storage_reserve_mw
-from market_sim.results.scarcity import (
-    ercot_reserve_coopt_inputs,
-    nyiso_rcpf_product_shortfall_steps,
-)
+from market_sim.results.scarcity import nyiso_rcpf_product_shortfall_steps
 
 
 def _fleet(specs, zone_names, hours):
@@ -171,7 +168,7 @@ class TestWiringByteIdentical(unittest.TestCase):
     """The flag leaves the measured/legacy reserve-inputs path untouched."""
 
     def test_measured_credit_guarded_off_under_endogenous(self):
-        # ercot_reserve_coopt_inputs applies the measured storage-AS credit only
+        # get_reserve_design applies the measured storage-AS credit only
         # when storage_as_commitment is on AND endogenous is off. Turning the
         # endogenous flag on must suppress the measured credit (no double path).
         fleet, _mc = _fleet([("gas_cc", 100.0, 20.0)], ["Z0"], 24)
@@ -184,8 +181,15 @@ class TestWiringByteIdentical(unittest.TestCase):
             storage_as_commitment=True,
         )
         endo = base.with_overrides(ercot_storage_as_endogenous=True)
-        req_measured, *_ = ercot_reserve_coopt_inputs(base, fleet, 24)
-        req_endo, *_ = ercot_reserve_coopt_inputs(endo, fleet, 24)
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
+        design_base = get_reserve_design(base, fleet, 24, ["ERCOT"])
+        req_measured = build_reserve_dispatch_kwargs(design_base)["reserve_requirement"]
+        design_endo = get_reserve_design(endo, fleet, 24, ["ERCOT"])
+        req_endo = build_reserve_dispatch_kwargs(design_endo)["reserve_requirement"]
         # With the measured credit active the requirement is pulled DOWN by the
         # measured storage AS; under endogenous it is not (>= the credited one).
         self.assertTrue(np.all(req_endo >= req_measured - 1e-9))

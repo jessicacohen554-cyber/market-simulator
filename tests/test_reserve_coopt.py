@@ -13,14 +13,13 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import PJM_PRIMARY_RESERVE_LSC_FACTOR
+from market_sim.config.reserve_config import PJM_PRIMARY_RESERVE_LSC_FACTOR
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.results.scarcity import (
     largest_single_contingency_mw,
     load_pjm_measured_reserve_requirement,
     pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
-    pjm_reserve_coopt_inputs,
     pjm_reserve_deliverable_supply_cap_mw,
 )
 
@@ -296,14 +295,28 @@ class TestPjmReserveCooptInputs(unittest.TestCase):
     def _config(self, year=2024):
         from types import SimpleNamespace
 
-        return SimpleNamespace(weather_year=year)
+        return SimpleNamespace(iso="PJM", weather_year=year)
+
+    def _zone_names(self, fleet):
+        return [f"z{i}" for i in range(int(np.max(fleet.zone_idx)) + 1)]
 
     def test_measured_year_shapes_and_values(self):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
         if load_pjm_measured_reserve_requirement(2024, 8760) is None:
             self.skipTest("PJM-AS 2024 parquet not present")
-        req, elig, pens, widths = pjm_reserve_coopt_inputs(
-            self._config(2024), self._fleet(), 8760
+        fleet = self._fleet()
+        design = get_reserve_design(
+            self._config(2024), fleet, 8760, self._zone_names(fleet)
         )
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
+        pens = kw["ordc_penalties"]
+        widths = kw["ordc_step_widths"]
         # Balance RHS = measured Primary requirement + 190 MW (Step-2 offset).
         self.assertEqual(req.shape, (8760,))
         self.assertTrue(3000.0 < (req - 190.0).mean() < 3700.0)
@@ -316,13 +329,22 @@ class TestPjmReserveCooptInputs(unittest.TestCase):
         np.testing.assert_array_equal(elig, [True, False])
 
     def test_forecast_fallback_uses_formula(self):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
         # A future year with no measured parquet falls back to 1.5x-MSSC; the
         # requirement is then flat (formula) and strictly positive.
         if load_pjm_measured_reserve_requirement(1999, 24) is not None:
             self.skipTest("1999 parquet unexpectedly present")
-        req, _, pens, _ = pjm_reserve_coopt_inputs(
-            self._config(1999), self._fleet(), 24
+        fleet = self._fleet()
+        design = get_reserve_design(
+            self._config(1999), fleet, 24, self._zone_names(fleet)
         )
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        pens = kw["ordc_penalties"]
         self.assertEqual(req.shape, (24,))
         self.assertTrue((req > 0).all())
         self.assertAlmostEqual(req.std(), 0.0)  # flat formula requirement
@@ -478,20 +500,24 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         return SimpleNamespace(iso="NYISO", weather_year=2023)
 
     def test_shapes_and_family_count(self):
-        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
 
         T = 24
-        (
-            req,
-            elig,
-            pens,
-            widths,
-            mask,
-            counts,
-            fam_class,
-            online_gated,
-            online_rho,
-        ) = nyiso_reserve_coopt_inputs(self._config(), self._fleet(), T, self._ZONES)
+        fleet = self._fleet()
+        design = get_reserve_design(self._config(), fleet, T, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
+        pens = kw["ordc_penalties"]
+        widths = kw["ordc_step_widths"]
+        mask = kw.get("reserve_balance_zone_mask")
+        counts = kw.get("reserve_balance_ordc_counts")
+        fam_class = kw.get("reserve_balance_class")
+        online_gated = design.online_gated
+        online_rho = design.online_rho
         # NYCA(3 products) + East(1) + SENY(1) + NYC(2) = 7 families.
         n_fam = 7
         self.assertEqual(mask.shape, (n_fam, len(self._ZONES)))
@@ -516,22 +542,23 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
     def test_synchronised_reserve_adds_online_gated_class(self):
         from types import SimpleNamespace
 
-        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
 
         cfg = SimpleNamespace(
             iso="NYISO", weather_year=2023, nyiso_synchronised_reserve=True
         )
-        (
-            req,
-            elig,
-            _pens,
-            _widths,
-            mask,
-            _counts,
-            fam_class,
-            online_gated,
-            online_rho,
-        ) = nyiso_reserve_coopt_inputs(cfg, self._fleet(), 24, self._ZONES)
+        fleet = self._fleet()
+        design = get_reserve_design(cfg, fleet, 24, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
+        mask = kw.get("reserve_balance_zone_mask")
+        fam_class = kw.get("reserve_balance_class")
+        online_gated = design.online_gated
+        online_rho = design.online_rho
         # One extra family (NYC spinning) on a new online-gated class (2).
         self.assertEqual(mask.shape[0], 8)
         self.assertEqual(req.shape[0], 8)
@@ -549,11 +576,15 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         np.testing.assert_array_equal(mask[-1], only_nyc)
 
     def test_locational_masks_nest(self):
-        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
-
-        _, _, _, _, mask, _, _, _, _ = nyiso_reserve_coopt_inputs(
-            self._config(), self._fleet(), 24, self._ZONES
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
         )
+
+        fleet = self._fleet()
+        design = get_reserve_design(self._config(), fleet, 24, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        mask = kw["reserve_balance_zone_mask"]
         # The three NYCA families span every zone.
         self.assertTrue(mask[:3].all())
         # The four locational families never include upstate (zone 0).
@@ -796,14 +827,22 @@ class TestMisoReserveCooptInputs(unittest.TestCase):
 
         return SimpleNamespace(iso="MISO", weather_year=2024)
 
+    def _zone_names(self, fleet):
+        return [f"z{i}" for i in range(int(np.max(fleet.zone_idx)) + 1)]
+
     def test_requirement_is_mssc_plus_regulation(self):
-        from market_sim.config.constants import MISO_REGULATING_RESERVE_MW
-        from market_sim.results.scarcity import miso_reserve_coopt_inputs
+        from market_sim.config.reserve_config import (
+            MISO_REGULATING_RESERVE_MW,
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
 
         T = 24
-        req, elig, pens, widths = miso_reserve_coopt_inputs(
-            self._config(), self._fleet(), T
-        )
+        fleet = self._fleet()
+        design = get_reserve_design(self._config(), fleet, T, self._zone_names(fleet))
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
         # MSSC = the largest reserve-eligible plant (1300 MW nuclear); the wind
         # unit is excluded. Requirement = MSSC + regulation, flat across hours.
         self.assertEqual(req.shape, (T,))
@@ -814,15 +853,18 @@ class TestMisoReserveCooptInputs(unittest.TestCase):
         np.testing.assert_array_equal(elig, [True, True, False])
 
     def test_demand_curve_steps_are_well_formed(self):
-        from market_sim.config.constants import (
+        from market_sim.config.reserve_config import (
             MISO_REGULATING_RESERVE_MW,
             MISO_RESERVE_DEMAND_CURVE_MAX,
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
         )
-        from market_sim.results.scarcity import miso_reserve_coopt_inputs
 
-        _, _, pens, widths = miso_reserve_coopt_inputs(
-            self._config(), self._fleet(), 24
-        )
+        fleet = self._fleet()
+        design = get_reserve_design(self._config(), fleet, 24, self._zone_names(fleet))
+        kw = build_reserve_dispatch_kwargs(design)
+        pens = kw["ordc_penalties"]
+        widths = kw["ordc_step_widths"]
         self.assertEqual(len(pens), len(widths))
         # Widths span the full requirement so the balance row stays feasible at
         # zero cleared reserve.
@@ -864,13 +906,21 @@ class TestMisoReserveCooptLP(unittest.TestCase):
         )
 
     def _solve(self, demand_mw):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
         from market_sim.model.dispatch import solve_dispatch
-        from market_sim.results.scarcity import miso_reserve_coopt_inputs
 
         fleet, T = self._fleet()
-        req, elig, pens, widths = miso_reserve_coopt_inputs(
-            type("C", (), {})(), fleet, T
-        )
+        cfg = type("C", (), {"iso": "MISO", "weather_year": 2024})()
+        zone_names = [f"z{i}" for i in range(int(np.max(fleet.zone_idx)) + 1)]
+        design = get_reserve_design(cfg, fleet, T, zone_names)
+        kw = build_reserve_dispatch_kwargs(design)
+        req = kw["reserve_requirement"]
+        elig = kw["reserve_eligible"]
+        pens = kw["ordc_penalties"]
+        widths = kw["ordc_step_widths"]
         return solve_dispatch(
             fleet,
             np.array([[demand_mw] * T]),
