@@ -20,9 +20,9 @@ import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.chp import chp_btm_pct
 from market_sim.data.fleet import (
     bins_to_fleet,
-    chp_btm_pct,
     fleet_to_bins,
     load_fleet_from_csv,
     thermal_tranche_overrides,

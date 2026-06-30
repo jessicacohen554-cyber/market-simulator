@@ -80,8 +80,8 @@ from market_sim.data.fleet import (  # noqa: E402
     OTHER_FOSSIL_CLASS,
     apply_other_fossil_scoring,
     load_campd_bins,
-    plant_tranche_bands,
 )
+from market_sim.data.offer_curves import plant_tranche_bands  # noqa: E402
 from market_sim.results.calibration import (  # noqa: E402
     EIA930_SOURCE,
     actuals_source,
@@ -470,7 +470,7 @@ def _btm_share(plant_id: int, group: str, iso: str = "ERCOT") -> float:
     """
     if group not in ("CC_CHP", "CT_CHP", "ST_CHP"):
         return 0.0
-    from market_sim.data.fleet import chp_btm_pct
+    from market_sim.data.chp import chp_btm_pct
 
     return chp_btm_pct(int(plant_id), group, iso=iso) / 100.0
 
@@ -483,7 +483,8 @@ def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
     non-ERCOT bundles (PJM, etc.) — whose plants are absent from the ERCOT
     CAMPD bin sheet — still get a real capacity and label in the dashboard.
     """
-    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+    from market_sim.config.paths import EIA_860_DIR
+    from market_sim.data.fleet import EIA_860_PARQUET_NAME
 
     path = EIA_860_DIR / EIA_860_PARQUET_NAME
     if not path.exists():

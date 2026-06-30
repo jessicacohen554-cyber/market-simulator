@@ -16,8 +16,8 @@ import unittest
 
 from market_sim.config.paths import CAMPD_BINS_CSV
 from market_sim.config.plant_taxonomy import classify_plant
+from market_sim.data.coal import _coal_class_for
 from market_sim.data.fleet import (
-    _coal_class_for,
     _GAS_BIN_GROUPS,
     eia923_dominant_class_by_plant,
     load_campd_bins,
