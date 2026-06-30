@@ -74,16 +74,16 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   **both** bands hold (mirrors `scripts/probes/_backcast_shell.py:classInTol`, so
   the determination and the dashboard scorecard agree):
   - **Volume:** the grid-delivered miss `|model − actual|` is within
-    **`min(1.0% of ISO annual generation, 5 TWh)`** (`SUM_TOL_GEN_FRAC = 0.01`,
-    `SUM_TOL_GEN_CAP = 5` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
-    EIA-930 nuclear/wind/solar). The percent term scales with system size (≈1 pp
-    of share) but is **capped at an absolute 5 TWh** so the band can't balloon on
-    large ISOs (1% of an ~800 TWh system would be 8 TWh, letting a small steam-gas
-    class drift far on the margin and still pass). Applied uniformly across classes
-    and ISOs — it **supersedes the old ±5% OR ±1 TWh size-tiered bar** (which let
-    large classes drift several TWh) and the prior uncapped **0.5% band** (which
-    gated most classes at ~0.5 pp of share, tighter than the share band itself).
-    Loosened 0.5%→1.0% and capped at 5 TWh on 2026-06-25.
+    **`min(1.0% of ISO total load, 5 TWh)`** (`SUM_TOL_LOAD_FRAC = 0.01`,
+    `SUM_TOL_LOAD_CAP = 5` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
+    EIA-930 nuclear/wind/solar). Total load = generation + net imports, so
+    net-importing ISOs (NEISO, NYISO) get the correct ≈1 pp band; for
+    energy-only ISOs with no interchange, load = gen and the band is unchanged.
+    The percent term scales with system size (≈1 pp of load) but is **capped at
+    an absolute 5 TWh** so the band can't balloon on large ISOs (1% of an
+    ~800 TWh system would be 8 TWh, letting a small steam-gas class drift far on
+    the margin and still pass). Applied uniformly across classes and ISOs.
+    Changed from generation to load basis on 2026-06-30.
   - **Share:** the class's **share of total generation** is within **1.5
     percentage points** of the actual share (`SUM_TOL_SHARE_PP = 1.5`) — so a
     class cannot pass on volume alone while still misrepresenting the mix.
