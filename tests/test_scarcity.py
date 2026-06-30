@@ -342,3 +342,35 @@ def test_scarcity_prices_wrapper_backcast_floor_gating():
     assert adder[0] == pytest.approx(0.0, abs=1e-6)
     assert adder[304 * 24] == pytest.approx(10.0)
     assert set(out) == {"reserves_mw", "reserves_online_mw", "lolp", "scarcity_adder"}
+
+
+def test_scarcity_price_overlay_defaults_false():
+    """The ISO-eligibility gate for the post-solve overlay defaults off.
+
+    ERCOT opts back in via ISOConfig.default_scenario_overrides (see
+    test_iso_config.py); a bare ScenarioConfig() — used for any ISO that has
+    not opted in — must not run the overlay.
+    """
+    assert ScenarioConfig().scarcity_price_overlay is False
+
+
+def test_scarcity_prices_accepts_generic_iso_parameters():
+    """scarcity_prices()/ordc_adder()/reserve_headroom() take config-driven
+    LOLP/ORDC parameters, not ERCOT-hardcoded constants, so any ISO can use
+    them once scarcity_price_overlay is enabled and its own ordc_* fields
+    are calibrated."""
+    cfg = ScenarioConfig(
+        iso="CAISO",
+        scarcity_pricing_enabled=True,
+        scarcity_price_overlay=True,
+        ordc_voll=2000.0,
+        ordc_mcl_mw=500.0,
+        ordc_lolp_mu_mw=10.0,
+        ordc_lolp_sigma_mw=50.0,
+    )
+    t = 24
+    reserves = np.full(t, 100.0)
+    lam = np.full(t, 20.0)
+    out = scarcity_prices(cfg, 2030, reserves, lam)
+    assert np.all(out["scarcity_adder"] >= 0.0)
+    assert np.all(out["scarcity_adder"] <= cfg.ordc_voll - lam)

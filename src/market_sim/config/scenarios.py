@@ -307,10 +307,11 @@ class ScenarioConfig:
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
-    commitment_enabled: bool = False  # default off — opt-in for calibration.
-    # When True, a price-based commitment
-    # filter runs between two LP solves to
-    # approximate integer unit commitment.
+    commitment_enabled: bool = False  # Legacy feature — default off, opt-in
+    # for calibration. When True, a price-based commitment filter runs
+    # between two LP solves to approximate integer unit commitment. Prefer
+    # energy_reserve_coopt for unit commitment pricing going forward; this
+    # path stays for backcast/calibration use, not the primary path.
     commitment_irr_hurdle: float = 0.07  # 7% return required on startup cost.
     # A run must generate margin >= startup_per_mw × (1 + irr) to justify
     # the wear and capital risk of a start. Source: operator interviews,
@@ -333,20 +334,29 @@ class ScenarioConfig:
     # re-dispatch happens around fixed coal. Lets a calibration isolate the
     # gas-internal commitment effect without coal absorbing decommitted gas.
 
-    # Tier 1/2 — ERCOT ORDC scarcity-pricing overlay (post-solve; never an LP
+    # Tier 1/2 — ORDC scarcity-pricing overlay (post-solve; never an LP
     # input). Replicates ERCOT's published real-time on-line reserve price
     # adder (RTORPA): adder = weighted LOLP x (VOLL - system lambda), LOLP
     # from a normal CDF over reserves minus the minimum contingency level.
     # The overlay owns the price tail and scarcity revenue only — dispatch,
     # volumes and emissions are untouched (the LP stays the emissions
-    # engine). See docs/ordc-overlay.md for formula provenance. ERCOT-only:
-    # capacity-market ISOs recover fixed cost through capacity revenue
-    # (capacity_revenue_per_mw_yr), not scarcity adders.
+    # engine). See docs/ordc-overlay.md for formula provenance. Generalized
+    # to any ISO via scarcity_price_overlay below: capacity-market ISOs
+    # default it off because they recover fixed cost through capacity
+    # revenue (capacity_revenue_per_mw_yr), not scarcity adders.
     scarcity_pricing_enabled: bool = False  # Master flag. Backcast: emits the
     # lmp + adder series next to the energy-only LMP (which the volume
     # calibration gates stay on). Forecast: retirement / new-entry / CCS
     # screens see prices + adder, so peaker and storage economics include
     # scarcity revenue instead of bare LP duals (which over-retire).
+    scarcity_price_overlay: bool = False  # ISO eligibility gate for the
+    # post-solve ORDC overlay (replaces the old `iso == "ERCOT"` hard-code).
+    # Default off; ERCOT's ISOConfig.default_scenario_overrides sets this
+    # True so ERCOT's behavior is unchanged. Other ISOs may opt in once
+    # their own ORDC/LOLP parameters (ordc_voll, ordc_mcl_mw, ordc_lolp_*)
+    # are calibrated. Still gated by scarcity_pricing_enabled (the master
+    # on/off switch) and skipped when energy_reserve_coopt prices scarcity
+    # in the LP directly.
     ordc_voll: float = 5000.0  # $/MWh. ORDC VOLL = system-wide offer cap
     # (HCAP), $5,000 since 2022-01-01 (16 TAC 25.509, PUCT Project 52631;
     # was $9,000 pre-Uri — runnable as a scenario).
@@ -2751,6 +2761,7 @@ TIER_TAGS: dict[str, int] = {
     "commitment_storage_in_merit_floor": 2,
     "commitment_screen_coal": 2,
     "scarcity_pricing_enabled": 1,
+    "scarcity_price_overlay": 2,
     "ordc_voll": 1,
     "ordc_mcl_mw": 1,
     "ordc_lolp_sigma_mw": 2,
