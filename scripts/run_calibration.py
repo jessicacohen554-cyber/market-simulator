@@ -1271,7 +1271,7 @@ def _calibration_config(
         #   flag (non-duct CCs still 0) but positions the wall at the real ~92%
         #   duct-firing point. ERCOT uses a flat class pct_peaking (no cap).
         cc_nameplate_summer_derate=(
-            iso.upper() in ("PJM", "NYISO", "NEISO")
+            iso.upper() in ("PJM", "NYISO", "NEISO", "CAISO")
         ),  # CC_REGULAR/CC_CHP carry full EIA-860 nameplate in the LP and are
         #   derated to the measured net-summer rating in summer only (the correct
         #   seasonal shape: full cold-weather capability in winter, ambient-
@@ -2394,8 +2394,14 @@ def run_year(
         config = config.with_overrides(ercot_storage_as_endogenous=True)
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
-    if battery_dispatch_adder:
-        config = config.with_overrides(battery_dispatch_adder=battery_dispatch_adder)
+    # CAISO defaults to $5/MWh when no explicit adder is passed: the 10+ GW
+    # fleet with perfect-foresight LP over-cycles without a throughput cost
+    # proxy for degradation + ancillary-service opportunity cost.
+    _batt_adder = battery_dispatch_adder
+    if not _batt_adder and iso.upper() == "CAISO":
+        _batt_adder = 5.0
+    if _batt_adder:
+        config = config.with_overrides(battery_dispatch_adder=_batt_adder)
     if gas_offer_curve:
         config = config.with_overrides(gas_offer_curve=True)
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
@@ -2425,8 +2431,10 @@ def run_year(
         )
     # Top-of-stack outage allocation for CC_REGULAR (run_calibration_full
     # --cc-derate-from-top): partial outages truncate the expensive end of
-    # the offer curve instead of scaling every tranche pro-rata.
-    if cc_derate_from_top:
+    # the offer curve instead of scaling every tranche pro-rata. CAISO
+    # defaults ON: per-plant peaking bands are narrow (0-4%), so pro-rata
+    # derates crush the committed floor and prevent 0% CF hours.
+    if cc_derate_from_top or iso.upper() == "CAISO":
         config = config.with_overrides(cc_outage_derate_from_top=True)
     # Point the EIA-860 loaders at a year-matched vintage when the scenario asks
     # for one (backcast knob; None resets to the canonical 2025ER snapshot the
