@@ -1,41 +1,40 @@
-iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline
-MISO,MISO-South,ST_GAS,tmax,25.0,0.0,False,0.7459,0.0,0.6769,620,0.2819
-MISO,MISO-South,ST_GAS,tmin,0.0,0.0,False,0.6863,0.0,0.7056,48,0.3822
-MISO,MISO-Central,COAL,tmax,25.0,0.2716,False,0.9246,0.2937,0.5583,334,0.5272
-MISO,MISO-Central,COAL,tmin,0.0,0.2716,False,0.9246,0.2937,0.5989,267,0.5381
-MISO,MISO-Central,CT_PEAKER,tmax,25.0,0.0,False,0.5375,0.0,0.6374,334,0.2516
-MISO,MISO-Central,CT_PEAKER,tmin,0.0,0.0,False,0.2845,0.0,0.4715,267,0.3088
-MISO,MISO-Central,ST_GAS,tmax,25.0,0.0,False,0.4514,0.0,0.4523,334,0.1598
-MISO,MISO-Central,ST_GAS,tmin,0.0,0.0,False,0.38,0.0,0.2115,267,0.1937
-MISO,MISO-Central,CC_REGULAR,tmax,25.0,0.0,False,0.7967,0.0,0.4235,334,0.6502
-MISO,MISO-Central,CC_REGULAR,tmin,0.0,0.0,False,0.7564,0.0,0.2867,267,0.6735
-MISO,MISO-North,CT_PEAKER,tmax,25.0,0.0,False,0.41,0.0,0.4923,386,0.0653
-MISO,MISO-North,CT_PEAKER,tmin,0.0,0.0,False,0.1614,0.0,0.0261,299,0.1102
-MISO,MISO-North,COAL,tmax,25.0,0.223,False,0.865,0.2578,0.4346,389,0.5206
-MISO,MISO-North,COAL,tmin,0.0,0.2128,False,0.8255,0.2578,0.499,311,0.5481
-MISO,MISO-North,ST_CHP,tmax,25.0,0.0327,False,0.0364,0.9,0.1153,25,0.0035
-MISO,MISO-North,ST_CHP,tmin,0.0,0.0327,False,0.0364,0.9,0.4,11,0.0051
-MISO,MISO-North,ST_GAS,tmax,25.0,0.0,False,0.3942,0.0,0.4306,368,0.1173
-MISO,MISO-North,ST_GAS,tmin,0.0,0.0,False,0.3096,0.0,0.0517,310,0.136
-MISO,MISO-South,CT_CHP,tmax,25.0,0.1274,False,0.3639,0.35,-0.3002,620,0.5714
-MISO,MISO-South,CT_CHP,tmin,0.0,0.1274,False,0.3639,0.35,0.1542,48,0.5449
-MISO,MISO-Central,ST_CHP,tmax,25.0,0.2883,False,0.3203,0.9,0.1503,296,0.2859
-MISO,MISO-Central,ST_CHP,tmin,0.0,0.3363,True,0.3737,0.9,0.3329,165,0.2752
-MISO,MISO-South,CC_REGULAR,tmax,25.0,0.0,False,0.9087,0.0,0.7938,620,0.4972
-MISO,MISO-South,CC_REGULAR,tmin,0.0,0.0,False,0.9112,0.0,0.5424,48,0.5566
-MISO,MISO-South,CT_PEAKER,tmax,25.0,0.0,False,0.4987,0.0,0.6134,620,0.3493
-MISO,MISO-South,CT_PEAKER,tmin,0.0,0.0,False,0.4219,0.0,0.5279,48,0.4009
-MISO,MISO-North,CC_REGULAR,tmax,25.0,0.0,False,0.8499,0.0,0.1803,388,0.4461
-MISO,MISO-North,CC_REGULAR,tmin,0.0,0.0,False,0.7579,0.0,-0.0633,307,0.535
-MISO,MISO-South,COAL,tmax,25.0,0.3015,False,0.8595,0.3508,0.7335,620,0.403
-MISO,MISO-South,COAL,tmin,0.0,0.3217,False,0.9169,0.3508,0.7637,48,0.4512
-MISO,MISO-Central,CC_CHP,tmax,25.0,0.2835,False,0.8101,0.35,0.3469,334,0.5514
-MISO,MISO-Central,CC_CHP,tmin,0.0,0.2851,False,0.8145,0.35,0.2369,267,0.5518
-MISO,MISO-South,ST_CHP,tmax,25.0,0.4067,False,0.4519,0.9,,620,1.0
-MISO,MISO-South,ST_CHP,tmin,0.0,0.4067,False,0.4519,0.9,,48,1.0
-MISO,MISO-Central,CT_CHP,tmax,25.0,0.1843,False,0.5265,0.35,0.268,334,0.8439
-MISO,MISO-Central,CT_CHP,tmin,0.0,0.1539,False,0.4398,0.35,0.0446,267,0.8752
-MISO,MISO-South,CC_CHP,tmax,25.0,0.2923,False,0.8351,0.35,0.1168,620,0.7522
-MISO,MISO-South,CC_CHP,tmin,0.0,0.2935,False,0.8385,0.35,0.2759,48,0.7479
-MISO,MISO-North,CC_CHP,tmax,25.0,0.2387,False,0.6819,0.35,0.241,274,0.3937
-MISO,MISO-North,CC_CHP,tmin,0.0,0.2387,False,0.6819,0.35,-0.116,247,0.4017
+iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis
+MISO,MISO-South,ST_GAS,tmax,35.95,0.103,False,0.8579,0.12,0.2654,55,0.3694,0.647,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,ST_GAS,tmin,-6.06,0.1093,False,0.9111,0.12,0.5182,11,0.3808,0.655,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,COAL,tmax,31.3,0.3777,False,0.9443,0.4,0.1465,55,0.5451,0.9059,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,COAL,tmin,-16.07,0.3839,False,0.9598,0.4,0.2636,11,0.5502,0.9073,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,CT_PEAKER,tmax,31.3,0.2758,False,0.7257,0.38,0.0681,55,0.2859,0.3387,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,CT_PEAKER,tmin,-16.07,0.1745,False,0.4592,0.38,0.0818,11,0.2983,0.3571,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,ST_GAS,tmax,31.3,0.0567,False,0.4722,0.12,-0.0218,55,0.18,0.3869,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,ST_GAS,tmin,-16.07,0.0428,False,0.3564,0.12,-0.0091,11,0.1864,0.3915,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,CC_REGULAR,tmax,31.3,0.4282,False,0.8234,0.52,-0.046,55,0.6757,0.736,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,CC_REGULAR,tmin,-16.07,0.3897,False,0.7494,0.52,0.2273,11,0.6825,0.7403,cold: zone p1 tmin (design heating day)
+MISO,MISO-North,CT_PEAKER,tmax,32.19,0.2344,False,0.6169,0.38,0.1244,55,0.0895,0.2354,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,CT_PEAKER,tmin,-19.56,0.06,False,0.158,0.38,0.1091,11,0.0979,0.2562,cold: zone p1 tmin (design heating day)
+MISO,MISO-North,COAL,tmax,32.19,0.3662,False,0.9154,0.4,0.0055,55,0.5497,0.8083,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,COAL,tmin,-19.56,0.3779,False,0.9447,0.4,-0.1,11,0.556,0.8124,cold: zone p1 tmin (design heating day)
+MISO,MISO-North,ST_CHP,tmax,32.19,0.0044,False,0.0364,0.12,-0.3714,6,0.0043,0.0364,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,ST_GAS,tmax,32.19,0.0665,True,0.5541,0.12,0.3475,54,0.1256,0.3284,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,ST_GAS,tmin,-19.56,0.0508,False,0.4233,0.12,0.0818,11,0.1312,0.3389,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,CT_CHP,tmax,35.95,0.1383,False,0.3639,0.38,-0.063,55,0.5496,0.3639,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,CT_CHP,tmin,-6.06,0.1383,False,0.3639,0.38,0.1636,11,0.5473,0.3639,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,ST_CHP,tmax,31.3,0.0411,False,0.3422,0.12,0.0799,55,0.2842,0.338,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,ST_CHP,tmin,-16.07,0.0448,False,0.3737,0.12,0.8337,11,0.2838,0.3378,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,CC_REGULAR,tmax,35.95,0.5147,False,0.9898,0.52,-0.2132,55,0.5502,0.8498,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,CC_REGULAR,tmin,-6.06,0.5,False,0.9615,0.52,0.0,11,0.5579,0.8557,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,CT_PEAKER,tmax,35.95,0.2892,False,0.7611,0.38,0.1182,55,0.3928,0.3615,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,CT_PEAKER,tmin,-6.06,0.2656,False,0.699,0.38,0.7,11,0.4024,0.3783,cold: zone p1 tmin (design heating day)
+MISO,MISO-North,CC_REGULAR,tmax,32.19,0.4784,False,0.9201,0.52,-0.1034,55,0.5085,0.7496,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,CC_REGULAR,tmin,-19.56,0.3909,False,0.7517,0.52,0.2909,11,0.5212,0.7584,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,COAL,tmax,35.95,0.3927,True,0.9818,0.4,0.3307,55,0.4475,0.779,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,COAL,tmin,-6.06,0.3869,False,0.9673,0.4,0.3146,11,0.4592,0.7873,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,CC_CHP,tmax,31.3,0.4275,False,0.8221,0.52,-0.013,55,0.5575,0.8044,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,CC_CHP,tmin,-16.07,0.4232,False,0.8138,0.52,0.0,11,0.5591,0.8052,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,ST_CHP,tmax,35.95,0.0542,False,0.4519,0.12,,55,1.0,0.4519,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,ST_CHP,tmin,-6.06,0.0542,False,0.4519,0.12,,11,1.0,0.4519,cold: zone p1 tmin (design heating day)
+MISO,MISO-Central,CT_CHP,tmax,31.3,0.2075,False,0.546,0.38,-0.14,55,0.8688,0.4695,hot: zone p95 tmax (design cooling day)
+MISO,MISO-Central,CT_CHP,tmin,-16.07,0.1693,False,0.4456,0.38,-0.1619,11,0.8736,0.4737,cold: zone p1 tmin (design heating day)
+MISO,MISO-South,CC_CHP,tmax,35.95,0.4395,False,0.8451,0.52,-0.0855,55,0.7502,0.8318,hot: zone p95 tmax (design cooling day)
+MISO,MISO-South,CC_CHP,tmin,-6.06,0.4279,False,0.8228,0.52,0.2091,11,0.7501,0.8326,cold: zone p1 tmin (design heating day)
+MISO,MISO-North,CC_CHP,tmax,32.19,0.3546,False,0.6819,0.52,0.0261,39,0.3963,0.6819,hot: zone p95 tmax (design cooling day)
+MISO,MISO-North,CC_CHP,tmin,-19.56,0.3546,False,0.6819,0.52,0.2,4,0.3998,0.6819,cold: zone p1 tmin (design heating day)
