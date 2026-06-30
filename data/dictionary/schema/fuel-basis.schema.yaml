@@ -1,0 +1,51 @@
+# Canonical schema: per-ISO monthly gas basis
+#
+# Regional pipeline-hub gas-price basis ($/MMBtu over Henry Hub) by ISO,
+# calendar year and month.  Used by the winter-peak hub-basis overlay
+# (Algonquin Citygate for NEISO, Transco Z6 / Iroquois for NYISO when filled)
+# that replaces the flat delivered-gas series in pipeline-constrained months.
+# Only ISOs whose hub leg has been sourced appear; absent ISO-months fall back
+# to the measured EIA-923 ISO-month delivered cost in the model.
+#
+# Curated by scripts/curate_fuel_prices.py from
+#   data/raw/gas_basis_by_iso_month.csv
+datatype: fuel-basis
+schema_version: 1
+title: Per-ISO monthly gas basis
+description: >-
+  Regional gas-price basis ($/MMBtu over Henry Hub) by ISO, year and calendar
+  month.  Used for the winter-peak hub-basis overlay that replaces the flat
+  delivered-gas series in pipeline-constrained months (e.g. Algonquin
+  Citygate for NEISO, Transco Z6 / Iroquois for NYISO).
+
+key_columns: [iso, year, month, hub]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/market region (ERCOT, CAISO, PJM, MISO, NYISO, NEISO).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: month
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar month (1–12).
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pipeline trading-hub name (e.g. Algonquin Citygate, Transco Z6 NY).
+  - name: basis_usd_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: >-
+      Basis vs Henry Hub in $/MMBtu (positive = above HH, negative = below).
+      Measured from pipeline-hub spot or EIA citygate proxy.
