@@ -648,7 +648,7 @@ def as_adequacy_commit(
     co-opt prices a false VOLL-scale shortage.
 
     The floor is **tier-aware**, mirroring the co-opt's nested shared-headroom rows
-    (:func:`~market_sim.results.scarcity.ercot_multiproduct_reserve_coopt_inputs`):
+    (:func:`~market_sim.config.reserve_config._ercot_multiproduct_design`):
     the *fast* row (RegUp/RRS/ECRS, restricted to the synchronized CC/ST/coal/
     nuclear set) and the *all* row (every product, adding the offline-capable
     quick-start peakers). For each row this commits the cheapest-startup decommitted
