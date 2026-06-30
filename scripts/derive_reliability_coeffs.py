@@ -9,23 +9,35 @@ residual (CLAUDE.md #9/#11):
     floor_pct = commit_frac x min_stable_pct
 
 where
-  * ``min_stable_pct`` = the class's physical min-stable level (Pmin/Pmax),
-    taken from the model bins' ``Pct_Must_Run`` share (the must-run tranche the
-    LP already enforces), and
+  * ``min_stable_pct`` = the class's **physical min-stable level (Pmin/Pmax) of a
+    committed unit**, from ``constants.MIN_STABLE_PCT_PHYSICAL`` (NREL WWSIS-2
+    Table 7) — NOT the offer-curve ``Pct_Must_Run`` share, which is 0 for merchant
+    steam/CT/CC and so zeroed the priority fleet's floor. The temperature gate
+    reliability-commits a merchant unit on an extreme day; once committed it sits
+    at this physical Pmin (see ``reliability-floor-physical-parameter-research.md``
+    §3), and
   * ``commit_frac`` = the share of the class's nameplate that is *online*
     (``grossLoad > 0``) on temperature-flagged days — a commitment count, NOT a
     measured-CF ceiling.
 
 Per (zone, class) two limbs are evaluated: a **hot** limb gated on the zone's
-daily TMAX and a **cold** limb gated on daily TMIN. For each limb we report:
-``threshold`` (the °C onset), ``floor_pct``, ``commit_frac``, ``min_stable_pct``,
-plus diagnostics ``rho`` (Spearman of the temperature drive vs daily CF), ``n``
-(flagged-day count), ``slope`` and ``baseline`` (mild-day mean CF).
+daily TMAX and a **cold** limb gated on daily TMIN. Onsets are physical anchors
+(plan D), not flat priors: the hot onset is the zone's 95th-percentile TMAX
+(design cooling day — no ISO publishes a hot trigger); the cold onset is PJM's
+documented Cold-Weather-Alert −12 °C (−20.5 °C for the CT-mobilization tier) for
+PJM zones, else the zone's 1st-percentile TMIN (design heating day). For each
+limb we report ``threshold`` (the °C onset), ``floor_pct``, ``commit_frac``,
+``min_stable_pct``, plus diagnostics ``rho`` (Spearman of the temperature drive
+vs daily CF), ``n`` (flagged-day count), ``slope``, ``baseline`` (mild-day mean
+CF) and ``baseline_commit`` (mild-day mean online share).
 
-A limb ships ``enabled=True`` ONLY when the response is real:
-``rho >= RHO_MIN`` AND ``n >= N_MIN`` AND ``floor_pct > baseline``. Otherwise it
-ships ``enabled=False`` and is visible (with its weak fit) in the markdown report
-so nothing is invented to plug a residual.
+A limb ships ``enabled=True`` ONLY when the response is real and the commitment
+*rises with temperature*: ``rho >= RHO_MIN`` AND ``n >= N_MIN`` AND
+``commit_frac > baseline_commit`` (the flagged-day online share exceeds the
+mild-day online share — a like-for-like commitment test, replacing the earlier
+``floor_pct > baseline`` clause that compared an instantaneous floor to a daily
+energy average). Otherwise the limb ships ``enabled=False`` and is visible (with
+its weak fit) in the markdown report so nothing is invented to plug a residual.
 
 Outputs:
   * ``data/raw/reference/reliability_floor_coeffs_<ISO>.csv`` — the coefficient
@@ -35,6 +47,7 @@ Outputs:
 
 Usage:
     python scripts/derive_reliability_coeffs.py --iso ERCOT
+    python scripts/derive_reliability_coeffs.py --iso ALL
 """
 
 from __future__ import annotations
@@ -45,19 +58,26 @@ import logging
 import numpy as np
 import pandas as pd
 
+from market_sim.config.constants import MIN_STABLE_PCT_PHYSICAL
 from market_sim.config.paths import RAW_DIR, REFERENCE_DIR
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 log = logging.getLogger("derive_reliability_coeffs")
 
-# --- Enable/disable gate (plan B.3); diagnostics only, never residual-tuned. ---
+# --- Enable/disable gate (plan B.3/C); diagnostics only, never residual-tuned. ---
 RHO_MIN = 0.3  # min Spearman temperature->CF correlation to ship a limb on
 N_MIN = 30  # min flagged-day sample size to trust a limb
-# Default temperature onsets (°C) when not over-ridden per class. Hot = AC-ramp
-# commitment onset; cold = gas-electric cold-snap commitment onset.
-HOT_THRESHOLD_C = 25.0
-COLD_THRESHOLD_C = 0.0
 HOURS_PER_DAY = 24  # CF denominator: nameplate x 24 hours
+
+# --- Temperature onsets (plan D; physical anchors, not flat 25C/0C priors). ---
+# COLD has documented operational triggers for PJM; non-PJM uses a per-zone design
+# heating day. HOT has NO ISO-published trigger, so it is the per-zone design
+# cooling-day percentile — never chosen to improve the backcast (CLAUDE.md #9).
+PJM_COLD_ALERT_C = -12.0  # PJM Manual 13 Rev 97 Cold Weather Alert (tmin ≤ 10 °F)
+PJM_COLD_CT_MOBILIZE_C = -20.5  # PJM Manual 13 extra CT-mobilization tier (≤ -5 °F)
+COLD_PERCENTILE = 1.0  # non-PJM cold onset = 1st-pct zone tmin (design heating day)
+HOT_PERCENTILE = 95.0  # hot onset = 95th-pct zone tmax (design cooling day)
+_CT_CLASSES = frozenset({"CT_PEAKER", "CT_CHP"})
 
 # Fossil classes the engine can floor (plan B.1). Renewables/nuclear/hydro never.
 FOSSIL_CLASSES = (
@@ -177,21 +197,21 @@ def _plant_map(iso: str) -> pd.DataFrame:
 def _pjm_plant_map() -> pd.DataFrame:
     """Build the PJM ``plant_code,zone,plant_class,nameplate_mw,must_run_pct`` map.
 
-    Zone from eGRID/EIA-860 geography (``build_zone_lookup``), class from the
-    canonical :func:`classify_plant`. Nameplate comes from the model's EIA-860
-    fleet loader so the CF denominator matches the LP capacity basis. Falls back
-    to an empty frame (handled gracefully by the caller) if the fleet loader is
-    unavailable.
+    Zone from eGRID/EIA-860 geography (``build_zone_lookup`` — its zone names are
+    the same the per-zone weather series carries). Class and nameplate come from
+    the model's own fleet loader (:func:`load_fleet_from_csv`), so the
+    classification and CF denominator match the LP capacity basis. The ORIS plant
+    code is recovered from each generator's ``unit_id`` (``"{plant_id}_{gen}"``).
+    ``must_run_pct`` is set to 0 — the floor magnitude no longer uses it (it is
+    sourced from ``MIN_STABLE_PCT_PHYSICAL``, plan B).
     """
-    from market_sim.config.plant_taxonomy import classify_plant
+    from market_sim.data.fleet import load_fleet_from_csv
     from market_sim.data.zone_assignment import build_zone_lookup
 
     zone_lookup = build_zone_lookup("PJM")
     try:
-        from market_sim.data.fleet import load_eia860_fleet
-
-        fleet = load_eia860_fleet("PJM")
-    except Exception as exc:  # pragma: no cover - Phase-2 fleet wiring
+        gens = load_fleet_from_csv("PJM")
+    except Exception as exc:  # pragma: no cover - fleet wiring
         log.warning("PJM fleet load unavailable (%s); PJM map empty", exc)
         return pd.DataFrame(
             columns=[
@@ -204,26 +224,28 @@ def _pjm_plant_map() -> pd.DataFrame:
         )
 
     rows = []
-    for rec in fleet.itertuples(index=False):
-        oris = int(getattr(rec, "plant_code", getattr(rec, "Plant_Code", 0)) or 0)
+    for g in gens:
+        token = g.unit_id.split("_", 1)[0]
+        if not token.isdigit():
+            continue
+        oris = int(token)
         if oris not in zone_lookup:
             continue
-        klass = classify_plant(
-            getattr(rec, "fuel", ""),
-            getattr(rec, "prime_mover", ""),
-            bool(getattr(rec, "chp_flag", False)),
-            oris,
-        )
         rows.append(
             {
                 "plant_code": oris,
                 "zone": zone_lookup[oris],
-                "plant_class": klass,
-                "nameplate_mw": float(getattr(rec, "nameplate_mw", 0.0) or 0.0),
-                "must_run_pct": float(getattr(rec, "must_run_pct", 0.0) or 0.0),
+                "plant_class": g.plant_group,
+                "nameplate_mw": float(g.pmax_mw or 0.0),
+                "must_run_pct": 0.0,
             }
         )
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    return df.groupby(["plant_code", "zone", "plant_class"], as_index=False).agg(
+        nameplate_mw=("nameplate_mw", "sum"), must_run_pct=("must_run_pct", "mean")
+    )
 
 
 def _load_campd(iso: str, plant_codes: set[int]) -> pd.DataFrame:
@@ -290,7 +312,9 @@ def _fit_limb(
 
     ``drive`` rises with severity (TMAX above the hot onset, or coldness below the
     cold onset). Flagged days are those past the threshold. ``commit_frac`` is the
-    mean online share on flagged days; ``baseline`` is the mild-day mean CF.
+    mean online share on flagged days; ``baseline`` is the mild-day mean CF;
+    ``baseline_commit`` is the mild-day mean online share (the like-for-like
+    commitment comparand for the enable gate, plan C).
     """
     d = df.join(temp.rename("t"), how="inner").dropna(subset=["cf", "t"])
     if d.empty:
@@ -308,6 +332,7 @@ def _fit_limb(
         return None
     commit_frac = float(flagged["online_frac"].mean())
     baseline = float(mild["cf"].mean()) if len(mild) else 0.0
+    baseline_commit = float(mild["online_frac"].mean()) if len(mild) else 0.0
     slope = float(np.polyfit(drive, flagged["cf"], 1)[0]) if n >= 2 else 0.0
     rho = (
         float(drive.corr(flagged["cf"], method="spearman"))
@@ -317,10 +342,55 @@ def _fit_limb(
     return {
         "commit_frac": commit_frac,
         "baseline": baseline,
+        "baseline_commit": baseline_commit,
         "slope": slope,
         "rho": rho,
         "n": n,
     }
+
+
+def _min_stable_pct(plant_class: str) -> float:
+    """Physical Pmin/Pmax for a class (coal subclasses fall back to COAL).
+
+    Sourced from :data:`constants.MIN_STABLE_PCT_PHYSICAL` (NREL WWSIS-2 Table 7);
+    the offer-curve ``Pct_Must_Run`` share is deliberately NOT used (plan B). An
+    unmapped class returns 0.0 (no physical floor known → no floor).
+    """
+    if plant_class in MIN_STABLE_PCT_PHYSICAL:
+        return MIN_STABLE_PCT_PHYSICAL[plant_class]
+    if plant_class.startswith("COAL"):
+        return MIN_STABLE_PCT_PHYSICAL["COAL"]
+    return 0.0
+
+
+def _limb_threshold(
+    iso: str, klass: str, driver: str, zt: pd.DataFrame
+) -> tuple[float, str]:
+    """Return ``(threshold_c, basis)`` for one limb (plan D; physical anchors).
+
+    Hot (``tmax``): the zone's :data:`HOT_PERCENTILE` TMAX (design cooling day —
+    no ISO publishes a hot trigger). Cold (``tmin``): PJM's documented
+    Cold-Weather-Alert −12 °C (−20.5 °C for CT classes' extra mobilization tier)
+    for the PJM footprint, else the zone's :data:`COLD_PERCENTILE` TMIN (design
+    heating day). The basis string is carried into the CSV ``threshold_basis``
+    column so each onset cites its operational criterion.
+    """
+    if driver == "tmax":
+        thr = float(np.percentile(zt["tmax_c"].dropna(), HOT_PERCENTILE))
+        return thr, f"hot: zone p{int(HOT_PERCENTILE)} tmax (design cooling day)"
+    # cold limb (tmin)
+    if iso == "PJM":
+        if klass in _CT_CLASSES:
+            return (
+                PJM_COLD_CT_MOBILIZE_C,
+                "cold: PJM Manual 13 CT-mobilization tier (tmin<=-5F/-20.5C)",
+            )
+        return (
+            PJM_COLD_ALERT_C,
+            "cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)",
+        )
+    thr = float(np.percentile(zt["tmin_c"].dropna(), COLD_PERCENTILE))
+    return thr, f"cold: zone p{int(COLD_PERCENTILE)} tmin (design heating day)"
 
 
 def derive_iso(iso: str) -> pd.DataFrame:
@@ -342,18 +412,26 @@ def derive_iso(iso: str) -> pd.DataFrame:
             zip(grp["plant_code"].astype(int), grp["nameplate_mw"].astype(float))
         )
         nameplate = float(grp["nameplate_mw"].sum())
-        # min-stable level = the must-run tranche share (Pmin/Pmax proxy), [0,1].
-        min_stable_pct = float(np.clip(grp["must_run_pct"].mean() / 100.0, 0.0, 1.0))
+        # min-stable level = the class's PHYSICAL Pmin/Pmax of a committed unit
+        # (NREL WWSIS-2 Table 7), NOT the offer-curve must-run share (plan B).
+        min_stable_pct = _min_stable_pct(klass)
         cf = _group_daily_cf(campd, plant_npl, nameplate)
         if cf.empty:
             continue
         zt = temps[temps["zone"] == zone].set_index("date")
         if zt.empty:
             continue
-        for driver, threshold, cold in (
-            ("tmax", HOT_THRESHOLD_C, False),
-            ("tmin", COLD_THRESHOLD_C, True),
-        ):
+        for driver, cold in (("tmax", False), ("tmin", True)):
+            # CAISO commits its simple-cycle peakers on the evening net-load ramp
+            # (duck-curve neck), not a temperature gate: emit ONE net-load limb per
+            # CT class (from the tmax fit, relabelled driver=netload) and drop the
+            # cold limb. Net-load is not yet plumbed per-zone, so it ships OFF
+            # (threshold 0.0 placeholder) — see derive_caiso_ct_reliability_floor.py
+            # and commit c6a706a. The magnitude still upgrades to physical Pmin.
+            caiso_ct = iso == "CAISO" and klass in _CT_CLASSES
+            if caiso_ct and cold:
+                continue
+            threshold, basis = _limb_threshold(iso, klass, driver, zt)
             fit = _fit_limb(cf, zt[f"{driver}_c"], threshold, cold)
             if fit is None:
                 continue
@@ -362,8 +440,16 @@ def derive_iso(iso: str) -> pd.DataFrame:
                 (not np.isnan(fit["rho"]))
                 and fit["rho"] >= RHO_MIN
                 and fit["n"] >= N_MIN
-                and floor_pct > fit["baseline"]
+                and fit["commit_frac"] > fit["baseline_commit"]
             )
+            if caiso_ct:
+                driver, threshold, basis = (
+                    "netload",
+                    0.0,
+                    "net-load ramp (duck-curve); per-zone net load not yet "
+                    "plumbed (Phase-2 placeholder)",
+                )
+                enabled = False  # net-load gate unplumbed → ship OFF but visible
             rows.append(
                 {
                     "iso": iso,
@@ -378,6 +464,8 @@ def derive_iso(iso: str) -> pd.DataFrame:
                     "rho": round(fit["rho"], 4) if not np.isnan(fit["rho"]) else "",
                     "n": fit["n"],
                     "baseline": round(fit["baseline"], 4),
+                    "baseline_commit": round(fit["baseline_commit"], 4),
+                    "threshold_basis": basis,
                 }
             )
     return pd.DataFrame(rows)
@@ -394,9 +482,17 @@ def _write_markdown(iso: str, table: pd.DataFrame) -> None:
     header = (
         "# Temperature reliability-floor coefficients\n\n"
         "Derived by `scripts/derive_reliability_coeffs.py`. `floor_pct = "
-        "commit_frac x min_stable_pct` (never residual-tuned, CLAUDE.md #9/#11). "
-        "A limb is `enabled` only when `rho >= 0.3`, `n >= 30`, and `floor_pct > "
-        "baseline`; weak limbs ship OFF but stay visible below.\n"
+        "commit_frac x min_stable_pct`, where `min_stable_pct` is the class's "
+        "PHYSICAL Pmin/Pmax of a committed unit (NREL WWSIS-2 Table 7, "
+        "`constants.MIN_STABLE_PCT_PHYSICAL`), NOT the offer-curve must-run share "
+        "(never residual-tuned, CLAUDE.md #9/#11). A limb is `enabled` only when "
+        "`rho >= 0.3`, `n >= 30`, and `commit_frac > baseline_commit` (the "
+        "flagged-day online share exceeds the mild-day online share — a "
+        "like-for-like commitment test); weak limbs ship OFF but stay visible "
+        "below. Onsets (`threshold`, °C) are physical anchors: hot = per-zone "
+        "p95 tmax (design cooling day); cold = PJM Cold-Weather-Alert "
+        "−12 °C / −20.5 °C (CT tier), else per-zone p1 tmin. See "
+        "`threshold_basis` per row.\n"
     )
     existing = ""
     if md_path.exists():
@@ -427,6 +523,8 @@ def _write_markdown(iso: str, table: pd.DataFrame) -> None:
             "rho",
             "n",
             "baseline",
+            "baseline_commit",
+            "threshold_basis",
         ]
         lines.append("\n| " + " | ".join(cols) + " |\n")
         lines.append("|" + "|".join(["---"] * len(cols)) + "|\n")
@@ -436,13 +534,8 @@ def _write_markdown(iso: str, table: pd.DataFrame) -> None:
     log.info("wrote markdown section -> %s", md_path)
 
 
-def main() -> None:
-    """CLI: derive + write the coefficient CSV and markdown for one ISO."""
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--iso", required=True, help="ISO to derive (e.g. ERCOT).")
-    args = ap.parse_args()
-    iso = args.iso.upper()
-
+def _derive_one(iso: str) -> None:
+    """Derive + write the coefficient CSV and markdown section for one ISO."""
     try:
         table = derive_iso(iso)
     except FileNotFoundError as exc:
@@ -457,6 +550,31 @@ def main() -> None:
         n_on = int(table["enabled"].sum())
         log.info("%s: %d limbs (%d enabled) -> %s", iso, len(table), n_on, out_csv)
     _write_markdown(iso, table)
+
+
+def main() -> None:
+    """CLI: derive the coefficient CSV(s) + markdown for one ISO or ``ALL``."""
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--iso", required=True, help="ISO to derive (e.g. ERCOT), or ALL.")
+    args = ap.parse_args()
+    iso = args.iso.upper()
+
+    if iso == "ALL":
+        # Rebuild the shared markdown from scratch so a full re-run is idempotent
+        # (each ISO section is otherwise only stripped/re-appended in place).
+        md_path = (
+            RAW_DIR.parent.parent
+            / "docs"
+            / "multi-iso"
+            / "reliability-floor-coefficients.md"
+        )
+        if md_path.exists():
+            md_path.unlink()
+        for one in ISO_CAMPD_STATES:
+            _derive_one(one)
+        return
+
+    _derive_one(iso)
 
 
 if __name__ == "__main__":
