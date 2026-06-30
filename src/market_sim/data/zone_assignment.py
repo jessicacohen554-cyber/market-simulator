@@ -385,21 +385,53 @@ def _to_int(value: object) -> int | None:
     return int(result)
 
 
+# Clean ``egrid`` datatype column -> the legacy eGRID short-code name this
+# module's callers (_oris_to_location, build_zone_lookup) read by.
+_EGRID_CLEAN_TO_SHORT: dict[str, str] = {
+    "plant_id": "ORISPL",
+    "lat": "LAT",
+    "lon": "LON",
+    "fips_state": "FIPSST",
+    "fips_county": "FIPSCNTY",
+    "ba_code": "BACODE",
+}
+
+# eGRID vintage this module pins zone assignment to (matches _EGRID_PATH).
+_EGRID_VINTAGE: int = 2023
+
+
 def _plnt23() -> pd.DataFrame:
     """Return the eGRID PLNT23 sheet, parsing and caching it on first call.
 
     The PLNT23 sheet's first row holds long descriptive headers; ``skiprows=1``
     drops it so the short-code header row (ORISPL, LAT, LON, ...) becomes the
     column index.
+
+    When ``MARKET_SIM_USE_CLEAN`` is set (default OFF) and the curated
+    ``data/clean/egrid`` partition for vintage 2023 exists (written by
+    ``scripts/curate_egrid.py``), the sheet is read from there instead of the
+    21 MB workbook, with columns renamed back to the legacy eGRID short codes
+    this module's lookups key on; otherwise it falls back to the raw parse.
     """
     global _PLNT23_CACHE
     if _PLNT23_CACHE is None:
-        _PLNT23_CACHE = pd.read_excel(
-            _EGRID_PATH,
-            sheet_name="PLNT23",
-            skiprows=1,
-            usecols=["ORISPL", "LAT", "LON", "FIPSST", "FIPSCNTY", "BACODE"],
-        )
+        if _use_clean():
+            from scripts.lib.clean_io import clean_exists, read_clean
+
+            if clean_exists("egrid", year=_EGRID_VINTAGE):
+                df = read_clean(
+                    "egrid",
+                    year=_EGRID_VINTAGE,
+                    columns=list(_EGRID_CLEAN_TO_SHORT),
+                )
+                _PLNT23_CACHE = df.rename(columns=_EGRID_CLEAN_TO_SHORT)
+        if _PLNT23_CACHE is None:
+            _PLNT23_CACHE = pd.read_excel(
+                _EGRID_PATH,
+                sheet_name="PLNT23",
+                skiprows=1,
+                usecols=["ORISPL", "LAT", "LON", "FIPSST", "FIPSCNTY", "BACODE"],
+            )
     return _PLNT23_CACHE
 
 
