@@ -210,7 +210,21 @@ def _ercot_config() -> ISOConfig:
     # PUCT also set an administrative VOLL of $35,000 for planning (Aug 2024).
     # This LP uses a single VOLL representing the DA energy-only cap.
     # Source: PUCT §25.505, ERCOT Nodal Protocols §4.4.11 (post-RTC+B).
-    return ISOConfig(name="ERCOT", zones=zones, links=links, voll=5000.0)
+    return ISOConfig(
+        name="ERCOT",
+        zones=zones,
+        links=links,
+        voll=5000.0,
+        # ERCOT is energy-only (no capacity market), so it is the one ISO
+        # whose published ORDC scarcity adder belongs in capacity economics
+        # by default; see scarcity_price_overlay on ScenarioConfig. Still
+        # requires scarcity_pricing_enabled (the master switch) to be set by
+        # the caller — this default only preserves ERCOT's prior
+        # `iso == "ERCOT"` behavior once that switch is on.
+        default_scenario_overrides={
+            "scarcity_price_overlay": True,
+        },
+    )
 
 
 def _caiso_config() -> ISOConfig:
