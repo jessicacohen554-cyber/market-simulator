@@ -1928,6 +1928,7 @@ def run_year(
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     curve_smoothing: dict[str, float | int | None] | None = None,
     cc_derate_from_top: bool = False,
+    cc_nameplate_summer_derate: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -2428,6 +2429,8 @@ def run_year(
     # the offer curve instead of scaling every tranche pro-rata.
     if cc_derate_from_top:
         config = config.with_overrides(cc_outage_derate_from_top=True)
+    if cc_nameplate_summer_derate:
+        config = config.with_overrides(cc_nameplate_summer_derate=True)
     # Point the EIA-860 loaders at a year-matched vintage when the scenario asks
     # for one (backcast knob; None resets to the canonical 2025ER snapshot the
     # COD ramp filters to the solved year). Must precede every fleet / storage /
