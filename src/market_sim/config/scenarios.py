@@ -2593,10 +2593,39 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # (opportunity cost) so it backs out of the over-run when gas is dear. It
     # discounts the BID, not the delivered coal price; gas-keyed and
     # forward-reproducible (rule #12). Recentered from the PJM bituminous curve
-    # for MISO's lower gas (mid 2.85 vs 3.40). First-pass; tune on the 3-year fit.
+    # for MISO's lower gas (mid 2.85 vs 3.40). Retuned run 30: floor 0.60->0.65,
+    # ceil 1.30->1.20. The 5% floor raise tempers the cheap-gas discount so BIT
+    # holds more baseload at cheap gas, and the 10% ceil cut reduces the dear-gas
+    # markup so BIT holds its sticky band instead of backing off at $3.52 gas
+    # (run 29 BIT: -13/-3/-12 TWh vs CAMPD across 2023-25).
     ("MISO", "bituminous"): {
-        "floor": 0.60,
-        "ceil": 1.30,
+        "floor": 0.65,
+        "ceil": 1.20,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
+    # MISO PRB (mine-mouth/rail PRB plants in the MISO footprint). Run 29 had NO
+    # MISO PRB sigmoid — flat 1.0x passthrough — and PRB showed a classic sign
+    # flip: -10.5/-15.8 TWh under at cheap gas (2023/24 $2.54/$2.19) but +15.9
+    # over at dear gas (2025 $3.52). The flat offer can't adapt to the gas-coal
+    # merit crossover. This sigmoid marks the BID gas-keyed: a cheap-gas discount
+    # (floor 0.82, ~18% off) so PRB holds baseload against cheap CCs, and a
+    # dear-gas markup (ceil 1.40) so PRB backs off the 2025 over-run. Midpoint
+    # 2.85 (same as ERCOT/MISO BIT — the MISO gas environment), slope 2.5
+    # (standard). At $2.19: passthrough ~0.91, at $2.54: ~1.00, at $3.52: ~1.31.
+    ("MISO", "prb"): {
+        "floor": 0.82,
+        "ceil": 1.40,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
+    # MISO PRB follower tier (low-must-run cyclers, mustrun_pct <=25%). Deeper
+    # cheap-gas discount (floor 0.72) and shallower dear-gas markup (ceil 1.25)
+    # than the baseload tier — followers cycle, so their effective offer sits
+    # further from bare fuel SRMC. Same pattern as ERCOT prb vs prb_follower.
+    ("MISO", "prb_follower"): {
+        "floor": 0.72,
+        "ceil": 1.25,
         "gas_mid": 2.85,
         "gas_slope": 2.5,
     },
