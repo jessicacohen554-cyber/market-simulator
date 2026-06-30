@@ -12,7 +12,7 @@
     {
       "criterion": "sysvol",
       "year": 2025,
-      "reason": "C2 system volume gas 2025: -6.4%. Inherited from ercot 23 (-6.6%). The CT drag closes the CT_PEAKER under-run from -30.9% to -4.0%/+1.8%/-5.7% but adds only ~0.1% to the ~200 TWh gas family total. The remaining gap is structural: the LP under-dispatches gas relative to the EIA-930 family aggregate due to preliminary EIA-923 data (37% of CT_PEAKER plants, 45% of ST_GAS plants not yet reporting in 2025) and real-time reliability commitments the LP does not represent."
+      "reason": "C2 system volume gas 2025: -3.2% (was -6.4% before CT_CHP inclusion in family sum). The family fallback previously excluded CT_CHP from the model sum while EIA-930 NG:NG includes all gas — an apples-to-oranges gap of ~6.5 TWh/yr. With CT_CHP included, model gas = 193.8 TWh vs EIA-930 = 200.2 TWh. The residual ~6.4 TWh gap is structural: EIA-930 NG:NG captures gas generation outside the model's class taxonomy (small generators, mixed-fuel units) — this same gap exists in 2023 (-3.7%) and 2024 (-2.7%) but is masked by per-class C1 scoring for complete vintages."
     },
     {
       "criterion": "price_shape",
