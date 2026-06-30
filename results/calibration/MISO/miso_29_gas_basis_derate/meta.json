@@ -126,9 +126,9 @@
   "gas_hub_basis_overlay": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-bd516a63f9d7.parquet",
-    "eia923": "../_shared/MISO/eia923-b01e8ca3ca4f.parquet",
-    "campd": "../_shared/MISO/campd-c6badd8f79dc.parquet"
+    "eia930": "../_shared/MISO/eia930-6c10b1281389.parquet",
+    "eia923": "../_shared/MISO/eia923-8375e014891a.parquet",
+    "campd": "../_shared/MISO/campd-58215a4f6e03.parquet"
   },
   "git_sha": "1ffbcac",
   "highspy_version": "1.15.0"
