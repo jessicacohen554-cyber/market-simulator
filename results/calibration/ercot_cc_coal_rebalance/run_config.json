@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-06-30T05:16:15",
+  "timestamp": "2026-06-30T14:22:18",
   "git": {
-    "sha": "a1438a8",
+    "sha": "77a1277",
     "branch": "claude/ercot-cc-coal-rebalance-udtstg",
     "dirty": true,
     "changed_files": [
-      "scripts/run_ercot_21.py"
+      "cripts/run_ercot_21.py"
     ],
-    "diffstat": ""
+    "diffstat": "scripts/run_ercot_21.py | 30 +++++++++++++++++++++++-------\n 1 file changed, 23 insertions(+), 7 deletions(-)"
   },
-  "model_changes_note": "ercot 21 cc-coal-rebalance: CC_REGULAR econ_high delta 0.0, peak delta +0.18, PRB sigmoid floor 0.74",
+  "model_changes_note": "ercot 21 cc-coal-rebalance: run157 base + reliability_floor, CC_REGULAR econ_high delta 0.0, peak delta +0.18, PRB sigmoid floor 0.74",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -116,7 +116,7 @@
     "ercot_dam_as_overlay": true,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "a1438a8"
+    "git_sha": "77a1277"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -310,7 +310,7 @@
     "pjm_reserve_online_rho": 1.0,
     "ercot_as_forward_requirement": false,
     "as_reserve_formula": false,
-    "storage_as_commitment": false,
+    "storage_as_commitment": true,
     "ercot_storage_as_endogenous": false,
     "negative_renewable_offers": false,
     "renewable_keep_running_value": 20.0,
@@ -526,7 +526,7 @@
     },
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
-    "offer_curve_smoothing_mid": null,
+    "offer_curve_smoothing_mid": 0.35,
     "cc_outage_derate_from_top": false,
     "chp_steam_following": true,
     "chp_btm_floor_pct": 40.0,
@@ -545,15 +545,15 @@
     "nyiso_zonal_gas_basis": false,
     "pjm_zonal_gas_basis": false,
     "pjm_congestion": false,
-    "ercot_zonal_gas_basis": false,
+    "ercot_zonal_gas_basis": true,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
-    "oil_primary_bin_fuel": false,
-    "ercot_west_netload_gas_shape": false,
+    "oil_primary_bin_fuel": true,
+    "ercot_west_netload_gas_shape": true,
     "ercot_west_gas_firm_basis": null,
     "ercot_west_gas_collapse_freq": null,
     "ercot_west_gas_endogenous_collapse": false,
-    "ercot_west_gas_delivered_floor": null,
+    "ercot_west_gas_delivered_floor": 0.4,
     "gas_hub_basis_daily": false,
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,
