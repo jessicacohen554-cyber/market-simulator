@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Explorer — Codebase Explorer</title>
+  <meta name="description" content="Drill into any backcast run — generation mix, zonal LMPs, capacity-factor heatmaps, price duration curves. Compare model vs EPA CAMPD / EIA actuals.">
+
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <div class="bc-layout">
+
+    <!-- Sidebar -->
+    <aside class="bc-sidebar">
+      <h3>Market (ISO)</h3>
+      <div class="iso-select-wrap" id="isoWrap">
+        <span class="iso-dot"></span>
+        <select class="iso-select" id="isoSel" aria-label="Market (ISO)"></select>
+      </div>
+      <p class="run-hint" id="isoHint"></p>
+
+      <h3>Run</h3>
+      <div class="run-list" id="runList"></div>
+      <p class="run-hint">Click a run id for its definition. Newest first.</p>
+    </aside>
+
+    <!-- Main content -->
+    <main class="bc-main">
+      <div class="bc-page-header">
+        <h1>Backcast Results</h1>
+        <span id="isoBadge" class="iso-badge"></span>
+      </div>
+      <p class="bc-page-sub" id="pageSub">Model vs EPA CAMPD / EIA actuals</p>
+
+      <div id="diag" class="bc-diag-alert">Loading run data&hellip;</div>
+
+      <!-- Top controls -->
+      <div class="bc-controls" id="bcTop" style="display:none">
+        <div class="ctl">
+          <span class="ctl-label">View</span>
+          <span class="seg-ctrl" id="viewSel">
+            <button data-v="report" class="active">Run report</button>
+            <button data-v="charts">Charts</button>
+            <button data-v="tables">Tables</button>
+          </span>
+        </div>
+        <div class="ctl" id="ctlYear">
+          <span class="ctl-label">Year</span>
+          <span class="seg-ctrl" id="yearSel"></span>
+        </div>
+      </div>
+
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <div class="bc-tooltip" id="bctip"></div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/shared.js"></script>
+
+  <script type="module">
+    import {
+      initBC, loadRun, loadRegistry, loadBench,
+      getMeta, getBenchGz, getCompleteness,
+      isoList, isoZones, isoYears, isoGroups, isoGroupLabels,
+      isoColorVar, inflateGz, pearson, nrmse,
+      fmtPct, fmtNum, fmtDollars,
+      hashState, MONTHS
+    } from './js/bc-data.js';
+
+    import {
+      responsiveChart, addTooltip, fuelColorScale, isoColorScale,
+      formatMW, formatPrice, formatPct, margin as marginFn
+    } from './js/chart-utils.js';
+
+    // ---- State ----
+    let st = {
+      iso: null,
+      runId: null,
+      view: 'report',
+      year: null,
+      runData: null,
+      benchData: null,
+      registryMap: {},
+    };
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s ?? '';
+      return d.innerHTML;
+    }
+
+    // ---- ISO color helper ----
+    function isoColor(iso) {
+      const map = {
+        ERCOT:'#22C55E',CAISO:'#F59E0B',PJM:'#0EA5E9',
+        NYISO:'#E91E63',NEISO:'#9C27B0',MISO:'#F97316',SPP:'#14B8A6'
+      };
+      return map[iso] || '#4A90D9';
+    }
+
+    // ---- Score helpers ----
+    function dcls(v, lo, hi) {
+      if (v == null || isNaN(v)) return '';
+      return Math.abs(v) <= lo ? 'clr-good' : Math.abs(v) <= hi ? 'clr-ok' : 'clr-bad';
+    }
+
+    // ---- Update ISO chrome ----
+    function updateIsoChrome(iso) {
+      const c = isoColor(iso);
+      const wrap = $('#isoWrap');
+      wrap.style.setProperty('--c', c);
+      wrap.querySelector('.iso-dot').style.background = c;
+
+      const badge = $('#isoBadge');
+      badge.style.background = c;
+      badge.innerHTML = `<span class="dot"></span>${esc(iso)}`;
+    }
+
+    // ---- Build run list ----
+    async function buildRunList(iso) {
+      const list = $('#runList');
+      list.innerHTML = '<p class="run-hint">Loading runs&hellip;</p>';
+
+      const meta = getMeta();
+      const allRuns = Object.keys(window.BC.runGz || {});
+      const isoLower = iso.toLowerCase();
+
+      // Find runs matching this ISO from registry
+      const isoRuns = [];
+      for (const id of allRuns) {
+        try {
+          const reg = await loadRegistry(id);
+          if (reg.iso && reg.iso.toUpperCase() === iso.toUpperCase()) {
+            isoRuns.push(reg);
+            st.registryMap[id] = reg;
+          }
+        } catch (e) {
+          // Registry file not found — try to infer ISO from ID
+          const parts = id.toLowerCase();
+          if (parts.includes(isoLower) || parts.includes(isoLower.replace('iso',''))) {
+            isoRuns.push({ id, label: id.replace(/^\d{4}-\d{2}-\d{2}-/, ''), date: id.slice(0,10), iso });
+            st.registryMap[id] = { id, label: id, iso };
+          }
+        }
+      }
+
+      // Sort newest first
+      isoRuns.sort((a, b) => (b.date || b.id || '').localeCompare(a.date || a.id || ''));
+
+      if (!isoRuns.length) {
+        list.innerHTML = '<p class="run-hint">No runs found for this ISO.</p>';
+        return [];
+      }
+
+      list.innerHTML = isoRuns.map((r, i) => {
+        const active = (st.runId === r.id || (!st.runId && i === 0)) ? 'active' : '';
+        return `<label class="run-opt ${active}" data-id="${esc(r.id)}">
+          <input type="radio" name="run" value="${esc(r.id)}" ${active ? 'checked' : ''}>
+          <span class="run-label">${esc(r.label || r.shorthand || r.id)}</span>
+        </label>`;
+      }).join('');
+
+      // Wire events
+      list.querySelectorAll('.run-opt').forEach(opt => {
+        opt.addEventListener('click', () => selectRun(opt.dataset.id));
+      });
+
+      return isoRuns;
+    }
+
+    // ---- Load and display a run ----
+    async function selectRun(runId) {
+      st.runId = runId;
+      hashState.update('run', runId);
+
+      // Update run list highlight
+      $$('.run-opt').forEach(o => {
+        o.classList.toggle('active', o.dataset.id === runId);
+        o.querySelector('input').checked = o.dataset.id === runId;
+      });
+
+      const diag = $('#diag');
+      diag.textContent = 'Loading run data…';
+      diag.style.display = '';
+
+      try {
+        st.runData = await loadRun(runId);
+        st.benchData = await loadBench(st.iso);
+        diag.style.display = 'none';
+        $('#bcTop').style.display = '';
+
+        const meta = getMeta()[st.iso];
+        const years = meta?.years || [];
+        if (!st.year || !years.includes(parseInt(st.year))) {
+          st.year = String(years[0] || 2024);
+        }
+        buildYearSelector(years);
+        render();
+      } catch (err) {
+        diag.textContent = `Error loading run: ${err.message}`;
+        console.error(err);
+      }
+    }
+
+    // ---- Year selector ----
+    function buildYearSelector(years) {
+      const sel = $('#yearSel');
+      sel.innerHTML = years.map(y =>
+        `<button data-y="${y}" class="${String(y) === String(st.year) ? 'active' : ''}">${y}</button>`
+      ).join('');
+
+      sel.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          st.year = btn.dataset.y;
+          hashState.update('year', st.year);
+          sel.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+          render();
+        });
+      });
+    }
+
+    // ---- View selector ----
+    function wireViewSel() {
+      $('#viewSel').querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          st.view = btn.dataset.v;
+          hashState.update('view', st.view);
+          $('#viewSel').querySelectorAll('button').forEach(b =>
+            b.classList.toggle('active', b === btn));
+          render();
+        });
+      });
+    }
+
+    // ---- Main render dispatcher ----
+    function render() {
+      const content = $('#content');
+      if (!st.runData) { content.innerHTML = ''; return; }
+
+      switch (st.view) {
+        case 'report': renderReport(content); break;
+        case 'charts': renderCharts(content); break;
+        case 'tables': renderTables(content); break;
+      }
+    }
+
+    // ========== REPORT VIEW ==========
+    function renderReport(el) {
+      const run = st.runData;
+      const bench = st.benchData;
+      const meta = getMeta()[st.iso];
+      const years = meta?.years || [];
+      const reg = st.registryMap[st.runId] || {};
+
+      let html = '';
+
+      // Narration / definition
+      if (reg.definition) {
+        html += `<div class="bc-panel">
+          <h2>Run Definition</h2>
+          <p class="bc-narration"><span class="ndef">${esc(reg.definition)}</span></p>
+          <p style="margin-top:8px;font-size:0.72rem;color:var(--text-muted)">
+            ID: <span class="run-id-link">${esc(st.runId)}</span>
+            ${reg.date ? ` &middot; ${esc(reg.date)}` : ''}
+            ${reg.bundle ? ` &middot; Bundle: <code>${esc(reg.bundle)}</code>` : ''}
+          </p>
+        </div>`;
+      }
+
+      // Year scorecards
+      html += `<div class="bc-panel"><h2>Year Scorecards</h2>
+        <p class="panel-sub">Model vs benchmark per year</p>
+        <div class="year-grid">`;
+
+      for (const yr of years) {
+        const yd = run[yr] || run[String(yr)];
+        if (!yd) continue;
+
+        const bd = bench?.[yr] || bench?.[String(yr)];
+        html += `<div class="year-card">
+          <div class="year-head"><span>${yr}</span></div>`;
+
+        // System volume
+        if (yd.total_gen_twh != null) {
+          const modelVol = yd.total_gen_twh;
+          const actualVol = bd?.total_gen_twh;
+          if (actualVol) {
+            const pct = ((modelVol - actualVol) / actualVol * 100);
+            html += `<div class="kpi-row"><span class="k">System Vol</span>
+              <span class="v ${dcls(pct, 5, 10)}">${modelVol.toFixed(1)} TWh (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)</span></div>`;
+          } else {
+            html += `<div class="kpi-row"><span class="k">System Vol</span>
+              <span class="v">${modelVol.toFixed(1)} TWh</span></div>`;
+          }
+        }
+
+        // Mean LMP
+        if (yd.mean_lmp != null) {
+          const modelLmp = yd.mean_lmp;
+          const actualLmp = bd?.mean_lmp;
+          if (actualLmp) {
+            const pct = ((modelLmp - actualLmp) / actualLmp * 100);
+            html += `<div class="kpi-row"><span class="k">Mean LMP</span>
+              <span class="v ${dcls(pct, 10, 20)}">${fmtDollars(modelLmp)}/MWh (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)</span></div>`;
+          } else {
+            html += `<div class="kpi-row"><span class="k">Mean LMP</span>
+              <span class="v">${fmtDollars(modelLmp)}/MWh</span></div>`;
+          }
+        }
+
+        // Generation mix summary
+        const groups = meta?.groups || [];
+        const labels = meta?.groupLabel || {};
+        let mixHtml = '';
+        for (const g of groups.slice(0, 5)) {
+          const modelGen = yd.gen?.[g] ?? yd.generation?.[g];
+          if (modelGen != null) {
+            const actualGen = bd?.gen?.[g] ?? bd?.generation?.[g];
+            const label = labels[g] || g;
+            if (actualGen && actualGen > 0) {
+              const pct = ((modelGen - actualGen) / actualGen * 100);
+              mixHtml += `<div class="kpi-row"><span class="k">${esc(label)}</span>
+                <span class="v ${dcls(pct, 10, 25)}">${(modelGen/1e6).toFixed(1)} TWh (${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%)</span></div>`;
+            } else {
+              mixHtml += `<div class="kpi-row"><span class="k">${esc(label)}</span>
+                <span class="v">${(modelGen/1e6).toFixed(1)} TWh</span></div>`;
+            }
+          }
+        }
+        html += mixHtml;
+
+        // CO2
+        if (yd.co2_mt != null) {
+          const modelCo2 = yd.co2_mt;
+          const actualCo2 = bd?.co2_mt;
+          if (actualCo2) {
+            const pct = ((modelCo2 - actualCo2) / actualCo2 * 100);
+            html += `<div class="kpi-row"><span class="k">CO₂</span>
+              <span class="v ${dcls(pct, 7, 15)}">${modelCo2.toFixed(1)} MT (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)</span></div>`;
+          }
+        }
+
+        html += `</div>`;
+      }
+
+      html += `</div></div>`;
+
+      // LMP by zone
+      const zones = meta?.zones || [];
+      if (zones.length > 1) {
+        html += `<div class="bc-panel"><h2>Zonal LMPs</h2>
+          <p class="panel-sub">Model vs benchmark by zone (${st.year})</p>
+          <div class="lmp-grid">`;
+
+        const yd = run[st.year] || run[String(st.year)] || {};
+        const bd = bench?.[st.year] || bench?.[String(st.year)] || {};
+
+        for (const z of zones) {
+          const modelLmp = yd.lmp_zone?.[z] ?? yd.zonal_lmp?.[z];
+          const actualLmp = bd?.lmp_zone?.[z] ?? bd?.zonal_lmp?.[z];
+
+          html += `<div class="year-card">
+            <div class="year-head"><span>${esc(z)}</span></div>`;
+
+          if (modelLmp != null) {
+            if (actualLmp) {
+              const pct = ((modelLmp - actualLmp) / actualLmp * 100);
+              html += `<div class="kpi-row"><span class="k">Model</span>
+                <span class="v">${fmtDollars(modelLmp)}/MWh</span></div>
+                <div class="kpi-row"><span class="k">Actual</span>
+                <span class="v">${fmtDollars(actualLmp)}/MWh</span></div>
+                <div class="kpi-row"><span class="k">Delta</span>
+                <span class="v ${dcls(pct, 10, 20)}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span></div>`;
+            } else {
+              html += `<div class="kpi-row"><span class="k">Model</span>
+                <span class="v">${fmtDollars(modelLmp)}/MWh</span></div>`;
+            }
+          } else {
+            html += `<p class="bc-mute" style="font-size:0.82rem">No LMP data</p>`;
+          }
+
+          html += `</div>`;
+        }
+
+        html += `</div></div>`;
+      }
+
+      el.innerHTML = html;
+    }
+
+    // ========== CHARTS VIEW ==========
+    function renderCharts(el) {
+      const run = st.runData;
+      const bench = st.benchData;
+      const yr = st.year;
+      const yd = run?.[yr] || run?.[String(yr)] || {};
+      const bd = bench?.[yr] || bench?.[String(yr)] || {};
+
+      let html = '';
+
+      // Price duration curve container
+      html += `<div class="bc-panel">
+        <h2>Price Duration Curve</h2>
+        <p class="panel-sub">${yr} — sorted hourly LMPs, model vs benchmark</p>
+        <div class="chart-legend">
+          <span><span class="swatch" style="border-color:${isoColor(st.iso)}"></span>Model</span>
+          <span><span class="swatch" style="border-color:#94A3B8"></span>Benchmark</span>
+        </div>
+        <div id="priceDurChart" style="width:100%;height:320px"></div>
+      </div>`;
+
+      // Monthly LMP bar chart
+      html += `<div class="bc-panel">
+        <h2>Monthly Mean LMP Error</h2>
+        <p class="panel-sub">${yr} — model minus benchmark ($/MWh)</p>
+        <div id="monthlyLmpChart" style="width:100%;height:280px"></div>
+      </div>`;
+
+      // CF Heatmap
+      html += `<div class="bc-panel">
+        <h2>Capacity Factor Heatmaps</h2>
+        <p class="panel-sub">${yr} — model hourly CF by day (365 × 24 canvas)</p>
+        <div id="cfHeatSection"></div>
+      </div>`;
+
+      el.innerHTML = html;
+
+      // Draw price duration
+      drawPriceDuration(yd, bd);
+
+      // Draw monthly LMP error
+      drawMonthlyLmpError(yd, bd);
+
+      // Draw CF heatmaps
+      drawCfHeatmaps(yd, bd);
+    }
+
+    function drawPriceDuration(yd, bd) {
+      const container = document.getElementById('priceDurChart');
+      if (!container) return;
+
+      const modelLmps = yd.lmp_hourly || yd.lmp_sorted || yd.price_duration?.model;
+      const benchLmps = bd?.lmp_hourly || bd?.lmp_sorted || bd?.price_duration?.actual;
+
+      if (!modelLmps) {
+        container.innerHTML = '<p class="bc-mute">No hourly LMP data available.</p>';
+        return;
+      }
+
+      const modelSorted = [...(Array.isArray(modelLmps) ? modelLmps : [])].sort((a, b) => b - a);
+      const benchSorted = benchLmps ? [...benchLmps].sort((a, b) => b - a) : null;
+
+      const w = container.clientWidth;
+      const h = 320;
+      const m = { top: 20, right: 30, bottom: 40, left: 55 };
+
+      const svg = d3.select(container).append('svg')
+        .attr('width', w).attr('height', h)
+        .attr('class', 'chart');
+
+      const n = modelSorted.length;
+      const x = d3.scaleLinear().domain([0, n]).range([m.left, w - m.right]);
+
+      const allVals = [...modelSorted, ...(benchSorted || [])];
+      const yMax = d3.quantile(allVals.sort((a, b) => b - a), 0.005) || d3.max(allVals);
+      const yMin = Math.min(0, d3.min(allVals) || 0);
+      const y = d3.scaleLinear().domain([yMin, Math.min(yMax * 1.1, 500)]).range([h - m.bottom, m.top]);
+
+      // Axes
+      svg.append('g').attr('transform', `translate(0,${h - m.bottom})`)
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d => d >= 1000 ? `${(d/1000).toFixed(0)}k` : d))
+        .call(g => { g.select('.domain').remove(); g.selectAll('.tick line').attr('stroke','#ddd'); });
+
+      svg.append('g').attr('transform', `translate(${m.left},0)`)
+        .call(d3.axisLeft(y).ticks(6).tickFormat(d => `$${d}`))
+        .call(g => { g.select('.domain').remove(); g.selectAll('.tick line').attr('stroke','#ddd'); });
+
+      // Labels
+      svg.append('text').attr('x', w/2).attr('y', h - 4)
+        .attr('text-anchor','middle').attr('font-size','11px').attr('fill','#666')
+        .text('Hours (sorted)');
+
+      const line = d3.line().x((d, i) => x(i)).y(d => y(Math.max(yMin, Math.min(d, yMax * 1.1))));
+
+      // Benchmark line
+      if (benchSorted) {
+        const step = Math.max(1, Math.floor(benchSorted.length / 2000));
+        const sampled = benchSorted.filter((_, i) => i % step === 0);
+        svg.append('path').datum(sampled)
+          .attr('fill', 'none').attr('stroke', '#94A3B8').attr('stroke-width', 1.5)
+          .attr('d', d3.line().x((d, i) => x(i * step)).y(d => y(Math.max(yMin, Math.min(d, yMax * 1.1)))));
+      }
+
+      // Model line
+      const step = Math.max(1, Math.floor(modelSorted.length / 2000));
+      const sampled = modelSorted.filter((_, i) => i % step === 0);
+      svg.append('path').datum(sampled)
+        .attr('fill', 'none').attr('stroke', isoColor(st.iso)).attr('stroke-width', 2)
+        .attr('d', d3.line().x((d, i) => x(i * step)).y(d => y(Math.max(yMin, Math.min(d, yMax * 1.1)))));
+    }
+
+    function drawMonthlyLmpError(yd, bd) {
+      const container = document.getElementById('monthlyLmpChart');
+      if (!container) return;
+
+      const modelMonthly = yd.lmp_monthly || yd.monthly_lmp;
+      const benchMonthly = bd?.lmp_monthly || bd?.monthly_lmp;
+
+      if (!modelMonthly || !benchMonthly) {
+        container.innerHTML = '<p class="bc-mute">No monthly LMP data available.</p>';
+        return;
+      }
+
+      const data = MONTHS.map((m, i) => {
+        const modelVal = Array.isArray(modelMonthly) ? modelMonthly[i] : modelMonthly[m] || modelMonthly[i+1];
+        const benchVal = Array.isArray(benchMonthly) ? benchMonthly[i] : benchMonthly[m] || benchMonthly[i+1];
+        return { month: m, error: (modelVal || 0) - (benchVal || 0) };
+      });
+
+      const w = container.clientWidth;
+      const h = 280;
+      const m = { top: 20, right: 20, bottom: 35, left: 55 };
+
+      const svg = d3.select(container).append('svg')
+        .attr('width', w).attr('height', h).attr('class', 'chart');
+
+      const x = d3.scaleBand().domain(MONTHS).range([m.left, w - m.right]).padding(0.3);
+      const maxAbs = Math.max(1, d3.max(data, d => Math.abs(d.error)));
+      const y = d3.scaleLinear().domain([-maxAbs * 1.2, maxAbs * 1.2]).range([h - m.bottom, m.top]);
+
+      svg.append('g').attr('transform', `translate(0,${h - m.bottom})`)
+        .call(d3.axisBottom(x))
+        .call(g => g.select('.domain').remove());
+
+      svg.append('g').attr('transform', `translate(${m.left},0)`)
+        .call(d3.axisLeft(y).ticks(5).tickFormat(d => `$${d.toFixed(0)}`))
+        .call(g => { g.select('.domain').remove(); g.selectAll('.tick line').attr('stroke','#eee'); });
+
+      // Zero line
+      svg.append('line')
+        .attr('x1', m.left).attr('x2', w - m.right)
+        .attr('y1', y(0)).attr('y2', y(0))
+        .attr('stroke', '#999').attr('stroke-width', 1).attr('stroke-dasharray', '4,3');
+
+      // Bars
+      svg.selectAll('.bar').data(data).join('rect')
+        .attr('x', d => x(d.month))
+        .attr('width', x.bandwidth())
+        .attr('y', d => d.error >= 0 ? y(d.error) : y(0))
+        .attr('height', d => Math.abs(y(d.error) - y(0)))
+        .attr('fill', d => d.error >= 0 ? '#DC2626' : '#0EA5E9')
+        .attr('rx', 2);
+    }
+
+    function drawCfHeatmaps(yd, bd) {
+      const section = document.getElementById('cfHeatSection');
+      if (!section) return;
+
+      const groups = getMeta()[st.iso]?.groups || [];
+      const labels = getMeta()[st.iso]?.groupLabel || {};
+
+      let rendered = false;
+      for (const g of groups) {
+        const cf = yd.cf?.[g] || yd.capacity_factor?.[g];
+        if (!cf || !Array.isArray(cf) || cf.length < 8760) continue;
+
+        rendered = true;
+        const label = labels[g] || g;
+        const div = document.createElement('div');
+        div.style.marginBottom = '16px';
+        div.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">${esc(label)}</p>`;
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'heat';
+        canvas.width = 365;
+        canvas.height = 24;
+        div.appendChild(canvas);
+
+        div.innerHTML += `<div class="heat-axis"><span>Jan</span><span>Jul</span><span>Dec</span></div>`;
+        section.appendChild(div);
+
+        const ctx = canvas.getContext('2d');
+        for (let d = 0; d < 365; d++) {
+          for (let h = 0; h < 24; h++) {
+            const v = cf[d * 24 + h] || 0;
+            ctx.fillStyle = cfColor(v);
+            ctx.fillRect(d, h, 1, 1);
+          }
+        }
+      }
+
+      if (!rendered) {
+        section.innerHTML = '<p class="bc-mute">No capacity factor data available for heatmaps.</p>';
+      } else {
+        const ramp = document.createElement('div');
+        ramp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span class="bc-mute" style="font-size:0.68rem">0%</span><div class="color-ramp"></div><span class="bc-mute" style="font-size:0.68rem">100%</span></div>';
+        section.appendChild(ramp);
+      }
+    }
+
+    function cfColor(v) {
+      const t = Math.max(0, Math.min(1, v));
+      if (t < 0.2) return `rgb(${232 + t*5*40}, ${243 - t*5*30}, ${247 - t*5*50})`;
+      if (t < 0.4) return `rgb(${127 + (t-0.2)*5*(-1)}, ${196 + (t-0.2)*5*5}, ${230 - (t-0.2)*5*87})`;
+      if (t < 0.6) return `rgb(${134 + (t-0.4)*5*108}, ${201 + (t-0.4)*5*13}, ${143 - (t-0.4)*5*51})`;
+      if (t < 0.8) return `rgb(${242 - (t-0.6)*5*3}, ${214 - (t-0.6)*5*71}, ${92 - (t-0.6)*5*32})`;
+      return `rgb(${239 - (t-0.8)*5*47}, ${143 - (t-0.8)*5*86}, ${60 - (t-0.8)*5*17})`;
+    }
+
+    // ========== TABLES VIEW ==========
+    function renderTables(el) {
+      const run = st.runData;
+      const bench = st.benchData;
+      const meta = getMeta()[st.iso];
+      const yr = st.year;
+      const yd = run?.[yr] || run?.[String(yr)] || {};
+      const bd = bench?.[yr] || bench?.[String(yr)] || {};
+      const groups = meta?.groups || [];
+      const labels = meta?.groupLabel || {};
+      const completeness = getCompleteness()?.[yr]?.[st.iso] || {};
+
+      let html = '';
+
+      // Generation mix table
+      html += `<div class="bc-panel"><h2>Generation Mix</h2>
+        <p class="panel-sub">${yr} — model vs benchmark by fuel class (GWh)</p>
+        <div class="bc-table-wrap"><table>
+          <thead><tr><th>Class</th><th>Model GWh</th><th>Actual GWh</th><th>Delta</th><th>Share</th></tr></thead>
+          <tbody>`;
+
+      let totalModel = 0, totalActual = 0;
+      const rows = [];
+
+      for (const g of groups) {
+        const modelGen = yd.gen?.[g] ?? yd.generation?.[g];
+        const actualGen = bd?.gen?.[g] ?? bd?.generation?.[g];
+        const cmpl = completeness[g];
+
+        if (modelGen == null && actualGen == null) continue;
+
+        const mGwh = (modelGen || 0) / 1e3;
+        const aGwh = (actualGen || 0) / 1e3;
+        totalModel += mGwh;
+        totalActual += aGwh;
+
+        let cmplBadge = '';
+        if (cmpl) {
+          if (cmpl.status === 'incomplete') cmplBadge = '<span class="badge-923 inc">incomplete</span>';
+          else if (cmpl.status === 'immaterial') cmplBadge = '<span class="badge-923 imm">immaterial</span>';
+          else if (cmpl.status === 'complete' && cmpl.gate) cmplBadge = '<span class="badge-923 ok">✓</span>';
+        }
+
+        const cmplClass = cmpl?.status === 'incomplete' ? 'cmpl-inc' : (cmpl?.status === 'immaterial' ? 'cmpl-imm' : '');
+
+        rows.push({ g, mGwh, aGwh, cmplBadge, cmplClass });
+      }
+
+      for (const r of rows) {
+        const delta = r.aGwh > 0 ? ((r.mGwh - r.aGwh) / r.aGwh * 100) : null;
+        const share = totalModel > 0 ? (r.mGwh / totalModel * 100) : 0;
+        const label = labels[r.g] || r.g;
+
+        html += `<tr class="${r.cmplClass}">
+          <td>${esc(label)} ${r.cmplBadge}</td>
+          <td class="num">${r.mGwh.toFixed(0)}</td>
+          <td class="num">${r.aGwh > 0 ? r.aGwh.toFixed(0) : '—'}</td>
+          <td class="num ${delta != null ? dcls(delta, 10, 25) : ''}">${delta != null ? `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%` : '—'}</td>
+          <td class="num">${share.toFixed(1)}%</td>
+        </tr>`;
+      }
+
+      // Total row
+      const totalDelta = totalActual > 0 ? ((totalModel - totalActual) / totalActual * 100) : null;
+      html += `<tr class="sub">
+        <td>Total</td>
+        <td class="num">${totalModel.toFixed(0)}</td>
+        <td class="num">${totalActual > 0 ? totalActual.toFixed(0) : '—'}</td>
+        <td class="num ${totalDelta != null ? dcls(totalDelta, 5, 10) : ''}">${totalDelta != null ? `${totalDelta >= 0 ? '+' : ''}${totalDelta.toFixed(1)}%` : '—'}</td>
+        <td class="num">100%</td>
+      </tr>`;
+
+      html += `</tbody></table></div></div>`;
+
+      // CO2 table
+      if (yd.co2_mt != null || yd.co2_by_fuel) {
+        html += `<div class="bc-panel"><h2>CO₂ Emissions</h2>
+          <p class="panel-sub">${yr}</p>
+          <div class="bc-table-wrap"><table>
+            <thead><tr><th>Metric</th><th>Model</th><th>Actual</th><th>Delta</th></tr></thead>
+            <tbody>`;
+
+        if (yd.co2_mt != null) {
+          const actual = bd?.co2_mt;
+          const delta = actual ? ((yd.co2_mt - actual) / actual * 100) : null;
+          html += `<tr>
+            <td>System CO₂ (MT)</td>
+            <td class="num">${yd.co2_mt.toFixed(1)}</td>
+            <td class="num">${actual ? actual.toFixed(1) : '—'}</td>
+            <td class="num ${delta != null ? dcls(delta, 7, 15) : ''}">${delta != null ? `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%` : '—'}</td>
+          </tr>`;
+        }
+
+        html += `</tbody></table></div></div>`;
+      }
+
+      // Zonal LMP table
+      const zones = meta?.zones || [];
+      if (zones.length) {
+        html += `<div class="bc-panel"><h2>Zonal LMPs</h2>
+          <p class="panel-sub">${yr} — $/MWh</p>
+          <div class="bc-table-wrap"><table>
+            <thead><tr><th>Zone</th><th>Model</th><th>Actual</th><th>Delta</th></tr></thead>
+            <tbody>`;
+
+        for (const z of zones) {
+          const mLmp = yd.lmp_zone?.[z] ?? yd.zonal_lmp?.[z];
+          const aLmp = bd?.lmp_zone?.[z] ?? bd?.zonal_lmp?.[z];
+          const delta = (mLmp != null && aLmp) ? ((mLmp - aLmp) / aLmp * 100) : null;
+
+          html += `<tr>
+            <td>${esc(z)}</td>
+            <td class="num">${mLmp != null ? fmtDollars(mLmp) : '—'}</td>
+            <td class="num">${aLmp != null ? fmtDollars(aLmp) : '—'}</td>
+            <td class="num ${delta != null ? dcls(delta, 10, 20) : ''}">${delta != null ? `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%` : '—'}</td>
+          </tr>`;
+        }
+
+        html += `</tbody></table></div></div>`;
+      }
+
+      el.innerHTML = html;
+    }
+
+    // ========== ISO SELECTION ==========
+    async function selectIso(iso) {
+      st.iso = iso;
+      hashState.update('iso', iso);
+      updateIsoChrome(iso);
+
+      const sel = $('#isoSel');
+      sel.value = iso;
+
+      const hint = $('#isoHint');
+      const meta = getMeta()[iso];
+      hint.textContent = `${meta?.zones?.length || 0} zones · ${meta?.years?.length || 0} years`;
+
+      $('#content').innerHTML = '';
+      $('#bcTop').style.display = 'none';
+      $('#diag').textContent = 'Loading runs…';
+      $('#diag').style.display = '';
+
+      const runs = await buildRunList(iso);
+
+      if (runs.length) {
+        const h = hashState.get();
+        const targetRun = (h.run && runs.some(r => r.id === h.run)) ? h.run : runs[0].id;
+        await selectRun(targetRun);
+      } else {
+        $('#diag').textContent = 'No runs available for this ISO.';
+      }
+    }
+
+    // ========== BOOT ==========
+    async function boot() {
+      try {
+        await initBC();
+
+        const meta = getMeta();
+        const isos = Object.keys(meta);
+        const sel = $('#isoSel');
+
+        sel.innerHTML = isos.map(iso =>
+          `<option value="${esc(iso)}">${esc(iso)}</option>`
+        ).join('');
+
+        sel.addEventListener('change', () => selectIso(sel.value));
+
+        wireViewSel();
+
+        // Read hash state
+        const h = hashState.get();
+        const startIso = (h.iso && isos.includes(h.iso)) ? h.iso : isos[0];
+        if (h.view) st.view = h.view;
+        if (h.year) st.year = h.year;
+        if (h.run) st.runId = h.run;
+
+        // Activate correct view button
+        $('#viewSel').querySelectorAll('button').forEach(b => {
+          b.classList.toggle('active', b.dataset.v === st.view);
+        });
+
+        await selectIso(startIso);
+
+      } catch (err) {
+        const diag = $('#diag');
+        diag.textContent = `Error initializing: ${err.message}`;
+        console.error(err);
+      }
+    }
+
+    // Hash change listener
+    window.addEventListener('hashchange', () => {
+      const h = hashState.get();
+      if (h.iso && h.iso !== st.iso) {
+        selectIso(h.iso);
+      }
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+  </script>
+</body>
+</html>
