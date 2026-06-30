@@ -16,7 +16,7 @@ from unittest import mock
 import numpy as np
 
 import market_sim.data.fuel as fuel
-from market_sim.config.constants import IMPORT_ZONE
+from market_sim.config.interchange_config import IMPORT_ZONE
 from market_sim.data.fleet import generators_to_fleet_arrays
 from market_sim.model.transmission import (
     _CAISO_IMPORT_COUPLE_HR,

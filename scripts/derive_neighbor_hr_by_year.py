@@ -41,7 +41,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config import paths
-from market_sim.config.constants import INTERFACE_NEIGHBORS
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 from market_sim.data.neighbor_price import neighbor_gas_price, neighbor_load_shape
 
 # Neighbor name -> the ISO code whose realized-LMP product anchors it. A neighbor

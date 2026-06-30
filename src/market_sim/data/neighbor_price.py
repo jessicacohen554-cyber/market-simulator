@@ -34,7 +34,7 @@ ISO's own price, with a hurdle dead-band and the real interface limit:
     export when ISO_price < neighbor_price - hurdle
     |flow| <= interface_limit_mw
 
-Each neighbor in :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`
+Each neighbor in :data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS`
 prices individually when its EIA-930 load extract (or a proxy) is present;
 neighbors with neither fold into a capacity-weighted aggregate. So the seam
 is neighbor-resolved where the data supports it and gracefully aggregate
@@ -52,15 +52,12 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config import paths
-from market_sim.config.constants import (
-    HENRY_HUB_TRAJECTORIES,
-    INTERFACE_NEIGHBORS,
-    NeighborInterface,
-)
+from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS, NeighborInterface
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 
 if TYPE_CHECKING:
-    from market_sim.config.constants import CaisoHubNeighbor
+    from market_sim.config.interchange_config import CaisoHubNeighbor
 
 
 # Diagnostic env flag for a FORWARD-SKILL validation: force the seam off the
@@ -522,7 +519,7 @@ def interface_reference_prices(
 ) -> InterfacePrices:
     """Return the reference price for every neighbor of ``iso`` in ``year``.
 
-    Iterates :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS` for the
+    Iterates :data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS` for the
     ISO, building each neighbor's individual price where its load shape
     resolves and recording the rest as ``missing``. An ISO absent from the
     registry yields an empty result (byte-identical no-op for un-onboarded
