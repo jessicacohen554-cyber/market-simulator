@@ -531,6 +531,13 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
             )
             continue
         if use_family_fallback:
+            # EIA-930 NG:NG includes ALL gas-fired generation at the grid
+            # meter (CC, CT, ST — including CHP exports), so the model sum
+            # must also include every gas class, not just the C1-scored
+            # subset.  The scored list excludes CT_CHP (a BTM class ungated
+            # in C1), but omitting it here creates an apples-to-oranges gap
+            # of ~6 TWh/yr in ERCOT.
+            m_fam = sum(float(gm.get(c, 0.0)) for c in classes)
             actual = a930
             if fam == "gas" and actual is not None and "other" in e930:
                 actual -= max(
@@ -540,7 +547,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                     - float(e930.get("other", 0.0)),
                 )
             reconciled = bool(actual and a923 < VINTAGE_RECONCILE_FRAC * actual)
-            err = _pct(m, actual) if actual else None
+            err = _pct(m_fam, actual) if actual else None
             ok = err is not None and abs(err) <= SYSVOL_TOL
             out.append(
                 {
@@ -550,7 +557,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                     "status": PASS if ok else (FAIL if err is not None else SKIPPED),
                     "classification": None if ok else MODEL_MISS,
                     "metric": f"{fam} family grid-delivered TWh (preliminary vintage)",
-                    "model": round(m, 2),
+                    "model": round(m_fam, 2),
                     "actual": round(actual, 2) if actual else None,
                     "tol": f"±{SYSVOL_TOL * 100:.1f}% family (no per-class actual)",
                     "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
