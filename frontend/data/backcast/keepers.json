@@ -1,7 +1,7 @@
 {
   "PJM": "2026-06-28-pjm-58-seam-border",
   "keepers": [
-    "2026-06-30-22-cc-coal-rebalance",
+    "2026-06-30-23-stgas-drag-v1",
     "2026-06-30-caiso-41-relfloor-rebuild",
     "2026-06-28-pjm-58-seam-border",
     "2026-06-27-nyiso-34-st-tempfloor",
