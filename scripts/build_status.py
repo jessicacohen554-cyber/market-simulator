@@ -86,8 +86,8 @@ def rubric() -> list[dict]:
             "and a share-of-generation check.",
             "EIA-923 Schedule-5 net generation minus that class's behind-the-meter "
             "CHP host supply (btm.parquet) — grid-delivered TWh by class.",
-            f"volume miss within ±min({cv.FUELMIX_VOL_GEN_FRAC * 100:.1f}% of ISO annual "
-            f"generation, {cv.FUELMIX_VOL_CAP_TWH:g} TWh) AND share of total generation "
+            f"volume miss within ±min({cv.FUELMIX_VOL_LOAD_FRAC * 100:.1f}% of ISO total "
+            f"load, {cv.FUELMIX_VOL_CAP_TWH:g} TWh) AND share of total generation "
             f"within ±{cv.FUELMIX_SHARE_PP:g} pp (the universal class gate — scales with "
             "system size but capped at an absolute 5 TWh, applied uniformly across "
             "classes and ISOs). In a preliminary current-year EIA-923 vintage "
