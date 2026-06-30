@@ -61,12 +61,13 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | reference | crosswalks / lookups (ISO-agnostic) | n/a |
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
+| weather | per-ISO via directory partitioning | n/a |
 
 ---
 
@@ -377,3 +378,23 @@ Hourly zonal load share fractions (per ISO, per year). Schema:
 | `hour` | `int64` | `none` | no | Hour of year on the fixed non-leap 8760-hour clock (0 = first hour of Jan 1, 8759 = last hour of Dec 31, Feb 29 excluded for leap years). |
 | `zone` | `string` | `none` | no | Model zone name matching the ISO's ISOConfig.zone_names. Each ISO-year file contains one row per (hour, zone) pair for every zone in the ISO topology. |
 | `share` | `float64` | `fraction` | no | Fraction of system load allocated to this zone for this hour (0.0–1.0). Shares sum to ≈1.0 across all zones for each hour (tolerance ±1e-9). |
+
+## weather
+
+Daily maximum and minimum temperature by model zone. Schema:
+[`schema/weather.schema.yaml`](schema/weather.schema.yaml).
+
+- **Keys:** `date`, `zone`
+- **Reconciles:** Per-ISO NOAA GHCN-Daily TMAX/TMIN CSVs (zone-level files plus
+  load-weighted ISO aggregates for CAISO and NEISO, NYC-metro aggregate for
+  NYISO) — into one `(date, zone, tmax_c, tmin_c)` row per zone per calendar
+  day. Sentinel zones: `_load_weighted` (CAISO, NEISO ISO-level aggregate),
+  `_downstate` (NYISO NYC-metro). Files are ISO-partitioned by directory path
+  (`data/clean/weather/<ISO>/`).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `date` | `datetime64[ns]` | `none` | no | Calendar date of the observation (tz-naive local date). One row per zone per calendar day, with Feb 29 included when present in the raw archive. |
+| `zone` | `string` | `none` | no | Model zone name (matching ISOConfig.zone_names) or a sentinel: '_load_weighted' for an ISO-level load-weighted temperature aggregate, '_downstate' for the NYISO NYC-metro (Central Park / LaGuardia / JFK) aggregate. |
+| `tmax_c` | `float64` | `deg_c` | no | Daily maximum temperature in degrees Celsius (NOAA GHCN-Daily TMAX, load-weighted over the zone's representative stations). Gap-filled via forward-fill then back-fill in the curate step so no null values remain. |
+| `tmin_c` | `float64` | `deg_c` | yes | Daily minimum temperature in degrees Celsius (NOAA GHCN-Daily TMIN). Null for zones curated from TMAX-only source files (CAISO '_load_weighted', NYISO '_downstate', and NYISO per-zone TMAX-only series). |
