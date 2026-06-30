@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from market_sim.data import campd
 from market_sim.data.eia923 import load_monthly_generation
-from market_sim.data.fleet import coal_supply_class
+from market_sim.data.coal import coal_supply_class
 from market_sim.data.zone_assignment import build_zone_lookup
 
 ISO = "PJM"

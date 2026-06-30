@@ -59,6 +59,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_fossil_gen,
 )
 from market_sim.data.hydro import build_hydro_fleet  # noqa: E402
+from market_sim.data.coal import coal_takeorpay_share  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
@@ -69,15 +70,16 @@ from market_sim.data.fleet import (  # noqa: E402
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
-    coal_takeorpay_share,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
     load_retired_within_window,
+    thermal_tranche_overrides,
+)
+from market_sim.data.offer_curves import (  # noqa: E402
     split_coal_tranches,
     split_gas_tranches,
-    thermal_tranche_overrides,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
