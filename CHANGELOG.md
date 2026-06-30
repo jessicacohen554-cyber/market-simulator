@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-06-30 (Reliability-floor rebuild — docs reconciliation, Phase 4)
+
+**Documentation reconciliation for the per-(zone, class) temperature/net-load
+reliability-floor rebuild** (Phase 4 of the full rebuild). The mechanism is
+fully implemented and merged; all six ISOs (ERCOT, CAISO, PJM, MISO, NYISO,
+NEISO) re-solved with `reliability_floor=True` and registered on the
+dashboard. This entry covers the doc sync only — no model code changes.
+
+**What changed:**
+
+- **`docs/multi-iso/reliability-floor-feature.md`** — full rewrite to
+  describe the shipped engine: per-(zone, class) `ReliabilityFloorSpec`
+  (`zone`, `plant_class`, `driver`, `threshold`, `floor_pct`, `enabled`,
+  `min_event_hours`, `distribution`); CSV-seeded registry
+  (`reliability_floor_coeffs_<ISO>.csv`, 221 limbs, ~30 enabled); full-day
+  step-function day gate (no hour-of-day windows); `floor_pct =
+  commit_frac × min_stable_pct`; per-limb toggles via `reliability_floor`
+  + `reliability_floor_overrides`; steam-gas longer min-run (48h event
+  bridging). All references to the retired slope/cap/base/t0 + hour-of-day
+  window model and the five removed legacy injectors
+  (`inject_caiso_ct/nyiso_ct/nyiso_st/neiso_temp/miso_temp_reliability_floor`)
+  deleted.
+- **`model-methodology-spec.md`** — added §1.8 (Dispatch-Time Reliability
+  Floor) documenting the shipped mechanism: registry, day gate, floor_pct
+  decomposition, coefficient derivation (CAMPD CF-vs-temperature regression,
+  ρ/n enable gate, no p97-CF ceiling, no residual-tuning), steam event
+  bridging, config flags. Updated §1.7 admissibility rule to include
+  reliability-floor coefficients as allowed forward-reproducible inputs and
+  note that `ct_mustrun_per_plant` and `ct_deployment_overlay` are demoted
+  to default-off diagnostic probes.
+- **`docs/backcast-measured-data-audit-2026-06.md`** — added
+  reliability-floor rebuild section recording that `ct_mustrun_per_plant`
+  (EIA-923) and `ct_deployment_overlay` (CEMS) are demoted to default-off
+  probes, the p97-CF ceiling crutch is removed, and all six rebuild keepers
+  have `ct_mustrun_per_plant=False` (no outcome-pinned floor).
+
 ## 2026-06-27 (NYISO ST_GAS temperature reliability floor + ISO-aware solar actuals — new keeper `nyiso 34 st-tempfloor`, CALIBRATED-WITH-CAVEATS)
 
 **Keeper change: NYISO `nyiso 33 ct-tempfloor` → `nyiso 34 st-tempfloor` — the

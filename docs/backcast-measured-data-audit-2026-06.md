@@ -53,6 +53,30 @@ must not be re-enabled in a keeper or quoted as forecast skill.
 
 ---
 
+## Reliability-floor rebuild — measured-data status (2026-06-30)
+
+The **temperature-driven reliability-floor rebuild** (Phase 3/4, merged
+2026-06-30) replaced the five legacy per-ISO injectors and the old windowed
+`ReliabilityFloorSpec` with a single CSV-seeded per-(zone, class, driver) engine.
+The following measured-data probes and crutches are affected:
+
+| Mechanism | Status after rebuild | Compliance |
+|---|---|---|
+| `ct_mustrun_per_plant` (EIA-923 per-plant must-run floor) | **Demoted to default-off diagnostic probe.** All six reliability-floor rebuild keepers have `ct_mustrun_per_plant=False`. | ✓ PASS — no forward analogue (measured per-plant commitment pinned to a specific year's EIA-923 filing) |
+| `ct_deployment_overlay` (CEMS per-plant deployment floor) | **Demoted to default-off diagnostic probe.** All six rebuild keepers have `ct_deployment_overlay=False`. | ✓ PASS — measured outcome, same as above |
+| p97-CF ceiling in old `ReliabilityFloorSpec` (`cap` field) | **Removed entirely.** The new `ReliabilityFloorSpec` has no `cap` field; `floor_pct = commit_frac × min_stable_pct` is a structural commitment share × physical min-stable level, not a measured-CF ceiling. | ✓ PASS — the ceiling was a measured outcome (p97 of CAMPD CF) with no forward analogue |
+
+**Confirmation:** all six reliability-floor rebuild bundles (ERCOT, CAISO,
+PJM, MISO, NYISO, NEISO) have `reliability_floor=True` and
+`ct_mustrun_per_plant=False`. No keeper enables an outcome-pinned floor.
+The reliability-floor coefficients (`reliability_floor_coeffs_<ISO>.csv`)
+are derived from CAMPD CF-vs-temperature regressions with a ρ/n enable
+gate — temperature→commitment coefficients that regenerate for a forward
+year and respond to changed weather. They are **never** tuned to a
+price/volume residual.
+
+---
+
 ## Allowed inputs in run 124 (pass the test — keep)
 
 | Input | Why it passes |

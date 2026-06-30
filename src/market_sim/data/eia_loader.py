@@ -702,16 +702,12 @@ def caiso_load_weighted_tmax(year: int, hours: int) -> np.ndarray | None:
 
     For each hour of the run horizon, the load-weighted CAISO load-center daily
     max temperature (NOAA GHCN-Daily TMAX, ``data/raw/caiso-weather/``) for that
-    hour's calendar day. Drives the CAISO CT_PEAKER local-RA reliability floor
-    (:func:`market_sim.model.transmission.inject_caiso_ct_reliability_floor`):
-    fast-start peakers are held online through the afternoon-evening ramp on hot
-    days for local capacity-area reliability. The daily TMAX is broadcast to all
-    hours of its day; the injector applies the afternoon-evening window and the
-    temperature->commitment curve.
+    hour's calendar day. Used by the generic reliability-floor engine
+    (:func:`market_sim.model.transmission.inject_reliability_floor`) via
+    :func:`iso_zone_tmax`. The daily TMAX is broadcast to all hours of its day.
 
     The series is archived (not solved) so it regenerates for a forward year from
-    a pinned weather year exactly as the load / wind / solar shapes do (see
-    ``scripts/derive_caiso_ct_reliability_floor.py``). Row 0 of the dispatch is
+    a pinned weather year exactly as the load / wind / solar shapes do. Row 0 of the dispatch is
     the first local hour of the year, so a plain local clock reproduces the index
     (the interchange-envelope convention).
 
@@ -746,17 +742,13 @@ def nyiso_downstate_tmax(year: int, hours: int) -> np.ndarray | None:
 
     For each hour of the run horizon, the NYC-metro daily max temperature (NOAA
     GHCN-Daily TMAX averaged over Central Park / LaGuardia / JFK,
-    ``data/raw/nyiso-weather/``) for that hour's calendar day. Drives the NYISO
-    downstate CT_PEAKER local-reliability floor (:func:`market_sim.model.
-    transmission.inject_nyiso_ct_reliability_floor`): in-city / Long-Island
-    fast-start peakers are held online through the hot-day afternoon-evening AC
-    ramp when the UPNY-SENY / Long-Island-cable import limits bind. The daily TMAX
-    is broadcast to all hours of its day; the injector applies the window and the
-    temperature->commitment curve.
+    ``data/raw/nyiso-weather/``) for that hour's calendar day. Used by the
+    generic reliability-floor engine
+    (:func:`market_sim.model.transmission.inject_reliability_floor`) via
+    :func:`iso_zone_tmax`. The daily TMAX is broadcast to all hours of its day.
 
     The series is archived (not solved) so it regenerates for a forward year from
-    a pinned weather year exactly as the load / wind / solar shapes do (see
-    ``scripts/derive_nyiso_ct_reliability_floor.py``). Mirrors
+    a pinned weather year exactly as the load / wind / solar shapes do. Mirrors
     :func:`caiso_load_weighted_tmax`.
 
     Returns ``(hours,)`` deg C, or ``None`` when the archived TMAX file is absent
@@ -787,18 +779,14 @@ def nyiso_zone_tmax(year: int, hours: int, zone: str) -> np.ndarray | None:
 
     For each hour of the run horizon, the zone's NOAA GHCN-Daily TMAX
     (``data/raw/nyiso-weather/nyiso_zone_tmax_daily.csv``, one load-center station
-    per ST_GAS zone — Islip for Long Island, Central Park for NYC, Albany for the
-    Capital region) for that hour's calendar day. Drives the NYISO ST_GAS
-    (gas-steam) local-reliability floor (:func:`market_sim.model.transmission.
-    inject_nyiso_st_reliability_floor`): unlike the CT floor's one pooled NYC-metro
-    series, the steam fleet sits in three distinct weather regimes, so each zone is
-    keyed to its OWN daily max temperature. The daily TMAX is broadcast to all
-    hours of its day; the injector applies the window and temperature->commitment
-    curve.
+    per zone — Islip for Long Island, Central Park for NYC, Albany for the
+    Capital region) for that hour's calendar day. Used by the generic
+    reliability-floor engine
+    (:func:`market_sim.model.transmission.inject_reliability_floor`) via
+    :func:`iso_zone_tmax`. The daily TMAX is broadcast to all hours of its day.
 
     The series is archived (not solved) so it regenerates for a forward year from a
-    pinned weather year exactly as the load / wind / solar shapes do (see
-    ``scripts/derive_nyiso_st_reliability_floor.py``). Mirrors
+    pinned weather year exactly as the load / wind / solar shapes do. Mirrors
     :func:`nyiso_downstate_tmax`.
 
     Returns ``(hours,)`` deg C, or ``None`` when the archived file is absent, the
@@ -833,20 +821,15 @@ def neiso_load_weighted_temp(
     For each hour of the run horizon, the load-weighted ISO-NE load-center daily
     maximum AND minimum temperature (NOAA GHCN-Daily TMAX/TMIN over Boston Logan,
     Providence, Hartford-Bradley, Portland-ME, Concord-NH, Burlington-VT,
-    ``data/raw/neiso-weather/``) for that hour's calendar day. Drives the NEISO
-    weather-correlated reliability floor (:func:`market_sim.model.transmission.
-    inject_neiso_temp_reliability_floor`): unlike the summer-only CAISO/NYISO CT
-    floors, ISO-NE is a **dual-limb** weather system — the simple-cycle peakers
-    (CT_PEAKER) track the summer cooling **hot limb** (TMAX), while the
-    cold-snap reliability units (the lone Merrimack-class COAL unit and the lone
-    steam-gas ST_GAS unit, run during gas-constrained winter cold snaps) track
-    the **cold limb** (TMIN). Both daily series are broadcast to all hours of
-    their day; the injector applies each class's window and temperature curve.
+    ``data/raw/neiso-weather/``) for that hour's calendar day. Used by the generic
+    reliability-floor engine
+    (:func:`market_sim.model.transmission.inject_reliability_floor`) via
+    :func:`iso_zone_tmax`. Both daily series are broadcast to all hours of
+    their day.
 
     The series are archived (not solved) so they regenerate for a forward year
-    from a pinned weather year exactly as the load / wind / solar shapes do (see
-    ``scripts/derive_neiso_temp_reliability_floor.py``). Mirrors
-    :func:`caiso_load_weighted_tmax`.
+    from a pinned weather year exactly as the load / wind / solar shapes do.
+    Mirrors :func:`caiso_load_weighted_tmax`.
 
     Returns ``(tmax, tmin)`` each ``(hours,)`` deg C, or ``None`` when the
     archived file is absent or the year is uncovered (a forecast year with no
@@ -882,21 +865,18 @@ def miso_zone_temp(
     For each hour of the run horizon, the load-weighted MISO-zone load-center
     daily maximum AND minimum temperature (NOAA GHCN-Daily TMAX/TMIN over the
     zone's load-center stations, ``data/raw/miso-weather/miso_zone_temp_daily.csv``)
-    for that hour's calendar day. Drives the MISO dual-limb, **zonal**
-    weather-correlated reliability floor (:func:`market_sim.model.transmission.
-    inject_miso_temp_reliability_floor`): MISO spans two opposite weather
-    regimes — MISO-South (the Entergy footprint) is summer-AC-peaking AND
-    winter-gas-constrained, MISO-North (the upper Midwest) is winter-peaking — so
-    each zone is keyed to its OWN daily TMAX (summer hot limb, CT/ST_GAS) and
-    TMIN (deep-winter cold limb, ST_GAS/coal). Both daily series are broadcast to
-    all hours of their day; the injector applies each class's window and
-    temperature->commitment curve.
+    for that hour's calendar day. Used by the generic reliability-floor engine
+    (:func:`market_sim.model.transmission.inject_reliability_floor`) via
+    :func:`iso_zone_tmax`. MISO spans two opposite weather regimes — MISO-South
+    (the Entergy footprint) is summer-AC-peaking AND winter-gas-constrained,
+    MISO-North (the upper Midwest) is winter-peaking — so each zone is keyed to
+    its OWN daily TMAX and TMIN. Both daily series are broadcast to all hours of
+    their day.
 
     The series are archived (not solved) so they regenerate for a forward year
-    from a pinned weather year exactly as the load / wind / solar shapes do (see
-    ``scripts/derive_miso_temp_reliability_floor.py``). Mirrors
-    :func:`nyiso_zone_tmax` (per-zone) and :func:`neiso_load_weighted_temp`
-    (dual TMAX/TMIN).
+    from a pinned weather year exactly as the load / wind / solar shapes do.
+    Mirrors :func:`nyiso_zone_tmax` (per-zone) and
+    :func:`neiso_load_weighted_temp` (dual TMAX/TMIN).
 
     Returns ``(tmax, tmin)`` each ``(hours,)`` deg C, or ``None`` when the
     archived file is absent, the zone is uncovered, or the year is uncovered (a
