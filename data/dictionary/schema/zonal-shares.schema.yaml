@@ -1,0 +1,48 @@
+# Canonical schema: zonal load share fractions
+#
+# One row per (hour, zone) for a single ISO-year.  The ``share`` value is the
+# fraction of system load assigned to ``zone`` for ``hour``; shares sum to ≈1.0
+# across all zones for each hour.
+#
+# Source: per-ISO raw load files under data/raw/zone-specific-demand/ (PJM
+# metered-load CSV, ERCOT native-load XLSX, CAISO TAC-area CSV, NYISO pal CSV,
+# ISO-NE SMD CSV, MISO EIA-930 sub-BA CSV).  Curated by
+# scripts/curate_zonal_shares.py.
+#
+# Validation: for every ISO-year file,
+#   df.groupby('hour')['share'].sum() ≈ 1.0  (within ±1e-9 per hour)
+datatype: zonal-shares
+schema_version: 1
+title: Zonal load share fractions
+description: >-
+  Hourly fractional load allocations by model zone for a single ISO and year.
+  For each hour (0–8759 on the fixed non-leap 8760-hour clock) the zone shares
+  sum to 1.0 across all model zones. Used by the dispatch model to distribute
+  the EIA-930 ISO system demand to individual zones.
+
+key_columns: [hour, zone]
+allow_additional_columns: false
+
+columns:
+  - name: hour
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Hour of year on the fixed non-leap 8760-hour clock (0 = first hour of
+      Jan 1, 8759 = last hour of Dec 31, Feb 29 excluded for leap years).
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Model zone name matching the ISO's ISOConfig.zone_names.  Each ISO-year
+      file contains one row per (hour, zone) pair for every zone in the ISO
+      topology.
+  - name: share
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      Fraction of system load allocated to this zone for this hour (0.0–1.0).
+      Shares sum to ≈1.0 across all zones for each hour (tolerance ±1e-9).
