@@ -2338,6 +2338,12 @@ def inject_reliability_floor(
     year: int,
     specs: list,
     zone_names: list[str],
+    *,
+    demand: np.ndarray | None = None,
+    wind_cf: np.ndarray | None = None,
+    wind_cap: np.ndarray | None = None,
+    solar_cf: np.ndarray | None = None,
+    solar_cap: np.ndarray | None = None,
 ) -> bool:
     """Apply temperature / net-load reliability-commitment floors from limb specs.
 
@@ -2351,7 +2357,7 @@ def inject_reliability_floor(
     2. Build the full-day gate — no hour-of-day windows:
        ``driver="tmax"`` → flag every hour of a day with ``tmax_c > threshold``;
        ``driver="tmin"`` → ``tmin_c < threshold``;
-       ``driver="netload"`` → ``net_load_mw > threshold`` (see note below).
+       ``driver="netload"`` → day's peak net-load (GW) > threshold.
     3. For steam classes (``min_event_hours > 24``) bridge an isolated flagged
        day to adjacent flagged days so a committed boiler spans a multi-day event.
     4. Set ``frac = floor_pct`` on flagged hours (0 elsewhere) and select rows
@@ -2365,11 +2371,12 @@ def inject_reliability_floor(
     temperature→commitment relationship only and never tuned to a price/volume
     residual (CLAUDE.md #9/#11; plan §B.3).
 
-    .. note::
-       ``driver="netload"`` limbs require a per-zone net-load series, which is not
-       yet plumbed through this signature; such limbs are skipped (no-op) until
-       Phase 2 wires net load in. The registry ships empty, so the foundation
-       engine no-ops byte-identically.
+    For ``driver="netload"`` limbs the per-zone net-load is computed from exogenous
+    scenario drivers — zonal demand MINUS available VRE (wind_cf × wind_cap +
+    solar_cf × solar_cap) — NOT endogenous dispatch (avoids circularity). A day is
+    flagged when its peak net-load (GW) exceeds the limb threshold; on a flagged
+    day the floor binds for all 24 h (same full-day gate as temperature limbs).
+    Net-load limbs are skipped when the exogenous inputs are not supplied.
 
     Modifies *fleet_arrays* in place. Returns ``True`` iff any enabled limb
     floored at least one unit, ``False`` (byte-identical) otherwise.
@@ -2381,6 +2388,19 @@ def inject_reliability_floor(
     groups = np.asarray(fleet_arrays.plant_group)
     hours = int(fleet_arrays.availability.shape[1])
     applied = False
+
+    # Pre-compute per-zone net-load (MW, hourly) for netload limbs if inputs
+    # are available. net_load_by_zone[z_idx] = demand[z] - VRE_avail[z].
+    # System net-load is cached separately for drivers keyed to ISO-wide tightness.
+    _net_load_by_zone: dict[int, np.ndarray] = {}
+    _system_net_load: np.ndarray | None = None
+    _have_netload_inputs = (
+        demand is not None
+        and wind_cf is not None
+        and wind_cap is not None
+        and solar_cf is not None
+        and solar_cap is not None
+    )
 
     for spec in specs:
         if not getattr(spec, "enabled", True):
@@ -2405,8 +2425,28 @@ def inject_reliability_floor(
             else:
                 flagged = series < spec.threshold
         elif driver == "netload":
-            # Phase-2: per-zone net load is not available through this signature.
-            continue
+            if not _have_netload_inputs:
+                continue
+            # System net-load = sum of (zonal demand - zonal VRE) across all
+            # zones. CT commitment is an ISO-level reserve-tightness decision
+            # (the system duck-curve neck), so the threshold (GW) is on the
+            # system scale — matching the derive-script regression against
+            # EIA-930 CISO system demand minus wind minus solar.
+            if _system_net_load is None:
+                _system_net_load = (
+                    demand[:, :hours].sum(axis=0)
+                    - (wind_cap[:, None] * wind_cf[:, :hours]).sum(axis=0)
+                    - (solar_cap[:, None] * solar_cf[:, :hours]).sum(axis=0)
+                )
+            n_days = hours // 24
+            daily_peak_gw = np.array(
+                [
+                    _system_net_load[d * 24 : (d + 1) * 24].max() / 1000.0
+                    for d in range(n_days)
+                ]
+            )
+            day_flagged = daily_peak_gw > spec.threshold
+            flagged = np.repeat(day_flagged, 24)[:hours]
         else:
             continue
 
