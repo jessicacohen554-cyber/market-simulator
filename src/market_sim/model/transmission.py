@@ -25,12 +25,15 @@ import pandas as pd
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
+    CARB_UNSPECIFIED_IMPORT_EF,
+    NYISO_LOCAL_SELFSUPPLY_FRAC,
+)
+from market_sim.config.interchange_config import (
     CAISO_CORRIDOR_ATC_SOLAR_K,
     CAISO_IMPORT_DELIVERY_BASIS,
     CAISO_IMPORT_TRANCHE_HUB,
     CAISO_PER_HUB_IMPORT_ZONES,
     CAISO_PER_HUB_NEIGHBORS,
-    CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
@@ -44,7 +47,6 @@ from market_sim.config.constants import (
     MISO_MANITOBA_FIRM_IMPORT_ZONE,
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_IMPORT_RECON_BAND_FRAC,
-    NYISO_LOCAL_SELFSUPPLY_FRAC,
     resolve_miso_manitoba_firm_import_mw,
 )
 from market_sim.config.iso_configs import (
@@ -942,7 +944,7 @@ def build_reference_price_node(iso: str) -> list[Generator]:
         Import + export pseudo-generators; empty for an ISO with no neighbor
         registry (so an un-onboarded ISO stays byte-identical).
     """
-    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
     from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
     import_zone = IMPORT_ZONE.get(iso)
@@ -1037,8 +1039,8 @@ def inject_reference_price_mc(
     """
     from dataclasses import replace
 
-    from market_sim.config.constants import (
-        CARB_UNSPECIFIED_IMPORT_EF,
+    from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+    from market_sim.config.interchange_config import (
         INTERFACE_NEIGHBORS,
         MISO_PJM_BORDER_HR_BY_YEAR,
     )
@@ -1137,7 +1139,7 @@ def inject_reference_price_firm_export(fleet_arrays, iso: str, year: int) -> boo
         ``True`` if any firm-export floor was applied, else ``False``
         (byte-identical) when no neighbor has a floor for ``year``.
     """
-    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
     from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
@@ -1223,7 +1225,7 @@ def inject_reference_price_firm_import(fleet_arrays, iso: str, year: int) -> boo
         ``True`` if any firm-import floor was applied, else ``False``
         (byte-identical) when no neighbor has a floor for ``year``.
     """
-    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
     if not specs:
@@ -1377,7 +1379,7 @@ def inject_miso_pjm_lmp_import_prices(
     one seam row was repriced, ``False`` when MISO has no measured PJM border
     series (so the run keeps the gas × HR ladder and is byte-identical).
     """
-    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
     from market_sim.data.eia_loader import measured_miso_pjm_border_prices
 
     prices = measured_miso_pjm_border_prices(iso, year, int(mc.shape[1]))
@@ -1820,7 +1822,7 @@ def build_pjm_external_flow_groups(
         One 4-tuple interface group per external link, or an empty list when the
         ISO has no external import zone (so the LP is byte-identical off the lever).
     """
-    from market_sim.config.constants import IMPORT_ZONE
+    from market_sim.config.interchange_config import IMPORT_ZONE
 
     ext_zone = IMPORT_ZONE.get("PJM")
     if ext_zone is None:
