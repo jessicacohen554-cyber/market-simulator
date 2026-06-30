@@ -22,12 +22,11 @@ state carbon price, matching today's energy-only / electrical-island design.
 import pytest
 
 from market_sim.config.constants import (
-    IMPORT_TRANCHES,
-    IMPORT_ZONE,
     NEW_ENTRY_COSTS,
     QUEUE_CAP_PER_TECH_GW,
     STATE_CARBON_PRICE_BY_ISO,
 )
+from market_sim.config.interchange_config import IMPORT_TRANCHES, IMPORT_ZONE
 from market_sim.config.iso_configs import _ISO_BUILDERS, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.capacity import (

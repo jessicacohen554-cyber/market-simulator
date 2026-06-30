@@ -54,7 +54,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.constants import (  # noqa: E402
+from market_sim.config.interchange_config import (  # noqa: E402
     EXPORT_TRANCHES,
     IMPORT_TRANCHES,
 )
