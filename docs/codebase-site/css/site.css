@@ -82,7 +82,12 @@
 }
 
 .section-dark .fig { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.10); }
-.section-dark .fig__caption { border-top-color: rgba(255,255,255,0.10); color: rgba(255,255,255,0.55); }
+.section-dark .fig__header { border-bottom-color: rgba(255,255,255,0.10); }
+.section-dark .fig__title { color: #fff; }
+.section-dark .fig__caption { border-top-color: rgba(255,255,255,0.10); color: rgba(255,255,255,0.60); }
+.section-dark .fig__caption strong { color: rgba(255,255,255,0.85); }
+.section-dark .fig__expand-btn { color: #7DD3FC; }
+.section-dark .fig__expand-btn:hover { background: rgba(14,165,233,0.15); }
 
 /* ---------------------------------------------------------------------------
    2. Figure Controls
@@ -111,6 +116,9 @@
 .fig-controls__value { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; color: var(--hydro-text); min-width: 40px; }
 
 .section-dark .fig-controls { border-bottom-color: rgba(255,255,255,0.10); background: rgba(255,255,255,0.03); }
+.section-dark .fig-controls__label { color: rgba(255,255,255,0.50); }
+.section-dark .fig-controls__slider { color: rgba(255,255,255,0.70); }
+.section-dark .fig-controls__value { color: #7DD3FC; }
 
 /* ---------------------------------------------------------------------------
    3. Equations
@@ -432,6 +440,8 @@
   letter-spacing: 0.07em;
 }
 
+.section-dark .scrubber__label { color: rgba(255,255,255,0.50); }
+
 .scrubber input[type="range"] {
   width: 100%;
   accent-color: var(--hydro);
@@ -492,6 +502,8 @@
   white-space: nowrap;
 }
 
+.section-dark .fig__label { color: rgba(255,255,255,0.50); }
+
 .fig__body {
   width: 100%;
   min-height: 280px;
@@ -519,6 +531,10 @@
 
 .btn:hover { background: var(--border-light); color: var(--text-primary); }
 .btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+.section-dark .btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.65); }
+.section-dark .btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+.section-dark .btn.active { background: rgba(14,165,233,0.25); border-color: rgba(14,165,233,0.50); color: #7DD3FC; }
 
 .em-amber-text { color: var(--amber-text); font-weight: 600; }
 
