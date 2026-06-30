@@ -2,16 +2,16 @@
 
 Status: **canonical, machine-enforced.** This document is the single auditable
 definition of when an ISO backcast may be declared *calibrated*. It replaces the
-ad-hoc, per-run sidecar judgement ("this looks good enough") with a fixed rubric
+ad-hoc, per-run sidecar judgement (“this looks good enough”) with a fixed rubric
 that a scorer reproduces byte-for-byte: `scripts/calibration_verdict.py` reads a
-keeper's committed artifacts and emits a `PASS` / `CAVEAT` / `FAIL` per criterion
+keeper’s committed artifacts and emits a `PASS` / `CAVEAT` / `FAIL` per criterion
 and one overall determination — `CALIBRATED`, `CALIBRATED-WITH-CAVEATS`, or
 `NOT-YET`. Re-running it on the same keeper always yields the same verdict.
 
 This rubric **codifies the governance rule in `claude.md`** (measured/defensible
 over what-fits, rules #1, #11, #12): a run is a keeper because it is the most
 structurally faithful, *not* because it has the lowest error, and a determination
-of "calibrated" is a claim that the model's *mechanisms* reproduce the market —
+of “calibrated” is a claim that the model’s *mechanisms* reproduce the market —
 not that its residuals were tuned to zero. The rubric is therefore built to
 **fail a current keeper**: any out-of-tolerance criterion that is not explicitly
 documented as an accepted measured-input limitation forces `NOT-YET`. If it could
@@ -19,7 +19,7 @@ not return `NOT-YET` for a real keeper, it would be theatre.
 
 Downstream consumer: `docs/forecast-validation-plan.md` Phase 3 (statistical-mode
 dispatch backcast) uses this determination as the gate that backcast tuning has
-"reached an acceptable state" before the forecast-validation program starts. A
+“reached an acceptable state” before the forecast-validation program starts. A
 `NOT-YET` ISO is not yet eligible to seed the forecast-error prior.
 
 ---
@@ -51,7 +51,7 @@ EIA-923 minus the per-class BTM host supply — model-grid vs actual-grid, per
 
 Each criterion below names: **the metric**, **the authoritative actual source**,
 **the per-year tolerance**, and **the failure classification** — `MODEL MISS`
-(the model's mechanism is wrong; do not paper over it) vs `ACCEPTED
+(the model’s mechanism is wrong; do not paper over it) vs `ACCEPTED
 MEASURED-INPUT LIMITATION` (the *actual* is itself partial/zeroed for a
 documented, forward-valid reason, and the miss is not a model defect). A miss is
 `MODEL MISS` **by default**; it is reclassified to `ACCEPTED MEASURED-INPUT
@@ -65,9 +65,9 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
 - **Metric:** annual generation by model plant-class, grid-delivered TWh.
 - **Model:** `gmModel[class]` — the grid LP dispatch summed per class, **no CHP
   add-back** (the behind-the-meter host steam was held out of the LP, so it is
-  not the model's to dispatch).
+  not the model’s to dispatch).
 - **Actual:** `classFull[class]` — EIA-923 Schedule-5 whole-plant net generation
-  **minus** that class's behind-the-meter CHP host supply (`btm.parquet`), i.e.
+  **minus** that class’s behind-the-meter CHP host supply (`btm.parquet`), i.e.
   grid-delivered generation by class. (Solar/wind are *not* in this gate — see
   C-VRE note; they route to EIA-930 per `calibration.actuals_source`.)
 - **Per-year tolerance (the universal class gate).** A class passes iff
@@ -80,11 +80,11 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     net-importing ISOs (NEISO, NYISO) get the correct ≈1 pp band; for
     energy-only ISOs with no interchange, load = gen and the band is unchanged.
     The percent term scales with system size (≈1 pp of load) but is **capped at
-    an absolute 5 TWh** so the band can't balloon on large ISOs (1% of an
+    an absolute 5 TWh** so the band can’t balloon on large ISOs (1% of an
     ~800 TWh system would be 8 TWh, letting a small steam-gas class drift far on
     the margin and still pass). Applied uniformly across classes and ISOs.
     Changed from generation to load basis on 2026-06-30.
-  - **Share:** the class's **share of total generation** is within **1.5
+  - **Share:** the class’s **share of total generation** is within **1.5
     percentage points** of the actual share (`SUM_TOL_SHARE_PP = 1.5`) — so a
     class cannot pass on volume alone while still misrepresenting the mix.
 - **Excluded / again-excluded classes (each justified):**
@@ -106,11 +106,11 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   their monthly reports — at audit time the 2025 release carried only ~43% of the
   plants present in the complete 2024 vintage. Whether a given class is usable is
   **not uniform across ISOs and classes**: a class dominated by large always-on
-  units that file early (e.g. ERCOT's PRB/lignite coal fleet) can be fully
+  units that file early (e.g. ERCOT’s PRB/lignite coal fleet) can be fully
   reported while the peaker-heavy gas classes are not. So instead of a blanket
   per-year skip, a **completeness audit** (`scripts/audit_eia923_completeness.py`)
   measures, per (ISO, class), two vintage-internal signals — **plant-reporting
-  retention** (of the prior complete year's material plants, how many report this
+  retention** (of the prior complete year’s material plants, how many report this
   vintage) and **plant-month coverage** (how many of the 12 monthly cells the
   reporting plants carry). A class is flagged **`gate`** only when it is itself
   complete **and** its whole fossil family reported (so the vintage-reconcile,
@@ -131,7 +131,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   is a merit-order / offer-curve / must-run defect (e.g. CT_PEAKER under-dispatch
   ⇒ peaker offer band too high). Reclassify to `ACCEPTED MEASURED-INPUT
   LIMITATION` (a `CAVEAT`, never silent) where the *actual* is the limitation,
-  e.g. **NEISO's model-zeroed `CT_PEAKER`** (the ISO's oil/gas peakers run a
+  e.g. **NEISO’s model-zeroed `CT_PEAKER`** (the ISO’s oil/gas peakers run a
   handful of scarcity hours the energy-only LP cannot see; the grid-delivered
   actual is itself near the measurement floor). (Preliminary-vintage years are now
   handled upstream by the complete-vintage `SKIPPED` rule above, not by a per-class
@@ -147,11 +147,11 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
 - **Immateriality cut-off:** a family whose actual is **< 10 TWh** is *not*
   gated here — a band on a near-zero family (e.g. NEISO coal ≈ 0.3 TWh)
   is pure noise; its per-class C1 absolute band governs it instead. The criterion
-  is recorded `SKIPPED` ("immaterial, governed by C1") for that family.
+  is recorded `SKIPPED` (“immaterial, governed by C1”) for that family.
 - **Tolerance — folded into the per-class universal gate (2026-06-24).** C2 no
   longer applies a percent-of-family band to complete-vintage years. A
   family-aggregate percent band had two failure modes: it **invented** a fail
-  when a mid-size family's small absolute miss exceeded the band as a percent of
+  when a mid-size family’s small absolute miss exceeded the band as a percent of
   *itself* (ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only +0.3 pp of
   generation and well inside the 1.0%-ISO-gen volume band), and it **masked** a
   real per-class miss when offsetting class errors **netted** across the family (a
@@ -166,7 +166,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     scores these classes as a HARD criterion, so any breach surfaces there; C2
     records `PASS` and echoes any C1-flagged class in its magnitude (no independent
     family pass/fail).
-  - **Preliminary, not-fully-reported family (e.g. every ISO's gas family in 2025):**
+  - **Preliminary, not-fully-reported family (e.g. every ISO’s gas family in 2025):**
     there is **no trustworthy per-class actual** (missing plants under-report;
     EIA-930 carries no per-class split), so the **±2.5% family fallback** against
     the authoritative EIA-930 grid total is retained — the only volume check the
@@ -176,7 +176,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     fully repair. The benchmark applies `_VINTAGE_RECONCILE_FRAC = 0.97`
     (`render_calibration_html.py`): when the grid-delivered 923 family total falls
     **below 0.97 ×** the complete EIA-930 grid series the model is calibrated to,
-    the family's classes are scaled up to the EIA-930 total (inter-class split and
+    the family’s classes are scaled up to the EIA-930 total (inter-class split and
     monthly shape preserved); a complete vintage (≥ 0.97×) is left untouched
     (byte-identical). For the preliminary year the scorer therefore takes the
     **authoritative actual = EIA-930 grid total** (`e930[gas|coal]`) and records
@@ -185,7 +185,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
 - **Failure classification:** `MODEL MISS` by default (the fleet is delivering the
   wrong amount of gas or coal to the grid — fuel-price passthrough, must-run, or
   interchange wedge wrong). `ACCEPTED MEASURED-INPUT LIMITATION` only for the
-  **preliminary-923 vintage** when the residual sits inside the vintage's
+  **preliminary-923 vintage** when the residual sits inside the vintage’s
   reconciliation uncertainty (the 923-vs-930 gap the reconcile repaired) —
   ledgered for that year.
 
@@ -200,7 +200,7 @@ fail.
     across zones by `lmp[zone].d` annual demand).
   - *Actual:* `avgLMP.rt` (real-time), falling back to `avgLMP.da` when RT is
     absent — the derived `actual_lmp.json` hub mean.
-  - *Tolerance:* **±8%.** Chosen inside the playbook's ~5–10% band: tighter than
+  - *Tolerance:* **±8%.** Chosen inside the playbook’s ~5–10% band: tighter than
     10% to stay disciplined, but not 5%, because the **energy-only LP dual
     structurally under-shoots** the actual LMP (which carries reserve, scarcity
     and uplift adders the energy-only price does not model). 8% admits that known
@@ -221,7 +221,7 @@ fail.
     $200/MWh by default; an ISO whose scarcity is set by a different proxy
     overrides it (ERCOT: ORDC reserve-price adder hours, read from the `ordc`
     block; winter-peaking NYISO/NEISO may use a higher city-gate threshold).
-  - *Actual:* the ISO's actual tail-hour count (ERCOT `ordc.hoursGt200.actual`;
+  - *Actual:* the ISO’s actual tail-hour count (ERCOT `ordc.hoursGt200.actual`;
     otherwise the hourly actual-LMP series when committed).
   - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of actual — a
     **collapsed tail (0 hours where the market had scarcity) FAILs**, and an
@@ -235,7 +235,7 @@ fail.
 
 - **Metric:** hourly Pearson **r** and **NRMSE** of the modeled vs EIA-930 hourly
   generation series, for the **gas** and **coal** fleets (`fuelRows[fuel].r`,
-  `.nrmse`). This is the fleet-level "is it running at the right *times*" check;
+  `.nrmse`). This is the fleet-level “is it running at the right *times*” check;
   the per-plant r/NRMSE/capture in the dashboard is the finer-grained companion.
 - **CHP add-back basis (stated):** the per-*plant* r/NRMSE add the behind-the-meter
   CHP host steam back flat (CAMPD measures the whole plant, and a flat add is
@@ -259,9 +259,9 @@ fail.
 
 - **C5a — CO2 vs eGRID.**
   - *Metric:* annual system CO2, model vs eGRID ISO total.
-  - *Actual:* eGRID ISO-year total (the bundle's emissions summary / eGRID
+  - *Actual:* eGRID ISO-year total (the bundle’s emissions summary / eGRID
     reference).
-  - *Tolerance:* **±7%** (mid of the playbook's 5–10%).
+  - *Tolerance:* **±7%** (mid of the playbook’s 5–10%).
   - *Classification:* `MODEL MISS` (emission-rate assignment or gas/coal split —
     note that with C1/C2 in tolerance a CO2 miss localises to the fuel *split*
     within a family or to emission-rate inputs). `SKIPPED` when no emissions
@@ -270,12 +270,25 @@ fail.
   - *Metric:* annual storage (battery + PS) discharge throughput TWh, model vs
     observed (cycling realism, not arbitrage perfection).
   - *Actual:* EIA-923 / ISO battery-report throughput.
-  - *Tolerance:* **±30%** (the playbook's cycling-realism band — the LP will
+  - *Tolerance:* **±30%** (the playbook’s cycling-realism band — the LP will
     over-cycle without a throughput cost; the band catches gross over/under-cycling
     while accepting that exact dispatch timing is not observable).
   - *Classification:* over-cycling ⇒ `MODEL MISS` (needs a throughput adder);
     under-cycling against a *partial* observed series may be `ACCEPTED
     MEASURED-INPUT LIMITATION`. `SKIPPED` when no throughput series is committed.
+- **C5c — Storage dispatch shape.**
+  - *Metric:* Pearson **r** of 12 monthly net-discharge GWh vectors (model vs
+    EIA-930 battery + pumped-storage net generation). Scores whether the model
+    cycles storage in the right months (summer/winter peaking vs shoulder
+    charging), not just the right annual volume (C5b).
+  - *Actual:* EIA-930 monthly net generation for `battery` / `pumped_storage`
+    series (positive = discharge, negative = charge). Same coverage gate as C5b.
+  - *Tolerance:* **r ≥ 0.50.** The floor is looser than fleet dispatch (C4,
+    r ≥ 0.70) because monthly storage net-discharge is a 12-point vector with
+    lower degrees of freedom and substantial noise from AS commitment.
+  - *Classification:* `MODEL MISS` (storage dispatch timing — wrong charge/
+    discharge season). `SKIPPED` when no EIA-930 storage breakout or the model
+    bundle lacks `monthly_net_gwh`.
 
 ### C6 — Governance gate  *(HARD, pass/fail only — never graded, never caveatable)*
 
@@ -397,7 +410,7 @@ an accepted measured-input limitation rather than a model defect.**
 }
 ```
 
-Example accepted limitations (the named cases): NEISO's model-zeroed `CT_PEAKER`;
+Example accepted limitations (the named cases): NEISO’s model-zeroed `CT_PEAKER`;
 the 2025 preliminary-923 vintage system-volume residual. Examples that are **never**
 ledgerable (they are `MODEL MISS` and must be fixed, not excused): a coal/gas split
 error, a collapsed price tail, a fleet-correlation floor breach, an over-cycling
@@ -418,7 +431,7 @@ storage fleet.
 
 ## 5. Tail definition per ISO
 
-The C3c tail proxy and threshold are per-ISO (the scorer's `TAIL` table):
+The C3c tail proxy and threshold are per-ISO (the scorer’s `TAIL` table):
 
 | ISO | Tail proxy | Threshold |
 |---|---|---|
@@ -433,13 +446,13 @@ committed payload, recorded with that reason.
 ## 6. Re-determination trigger
 
 **Any keeper change re-runs the scorer.** The determination is not a one-time
-stamp — it is recomputed whenever the run's committed artifacts change. Concretely:
+stamp — it is recomputed whenever the run’s committed artifacts change. Concretely:
 
 - `scripts/dashboard_add_run.py` calls `calibration_verdict.determine(...)` after
   registering/rendering a run and prints the determination, so **every registered
   run prints its determination** (the calibration-report skill surfaces it in its
-  headline — see the skill's steps).
-- Editing a run's exceptions ledger, re-rendering its payload, or re-registering
+  headline — see the skill’s steps).
+- Editing a run’s exceptions ledger, re-rendering its payload, or re-registering
   the bundle all re-run the scorer; the printed determination reflects the current
   committed state.
 - The verdict JSON (`calibration_verdict.py --json`) is the machine record a CI
