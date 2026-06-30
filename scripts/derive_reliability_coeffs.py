@@ -363,6 +363,90 @@ def _min_stable_pct(plant_class: str) -> float:
     return 0.0
 
 
+def _caiso_system_net_load() -> pd.DataFrame:
+    """Load CAISO system hourly net-load from EIA-930 CISO, return daily peak GW.
+
+    Net-load = Demand − solar − wind (same formula as
+    ``derive_caiso_ct_reliability_floor.ciso_net_load_mw``). Returns a DataFrame
+    with columns ``date`` and ``peak_nl_gw`` (daily peak net-load in GW).
+    """
+    ciso_path = RAW_DIR / "eia-930-hourly" / "CISO hourly.parquet"
+    if not ciso_path.exists():
+        raise FileNotFoundError(f"EIA-930 CISO hourly missing: {ciso_path}")
+    df = pd.read_parquet(ciso_path)
+    utc = pd.to_datetime(df["UTC time"], utc=True)
+    lst = utc.dt.tz_convert(None) - pd.Timedelta(hours=8)
+    df = df.copy()
+    df["lst"] = lst
+    df["date"] = lst.dt.normalize()
+    dem = pd.to_numeric(df["Demand"], errors="coerce")
+    sun = pd.to_numeric(df.get("NG: SUN"), errors="coerce").fillna(0.0)
+    wnd = pd.to_numeric(df.get("NG: WND"), errors="coerce").fillna(0.0)
+    df["nl_mw"] = dem - sun - wnd
+    daily = df.groupby("date")["nl_mw"].max().reset_index()
+    daily.columns = ["date", "peak_nl_gw"]
+    daily["peak_nl_gw"] = daily["peak_nl_gw"] / 1000.0
+    daily["date"] = pd.to_datetime(daily["date"])
+    return daily
+
+
+def _fit_netload_limb(
+    cf_df: pd.DataFrame, daily_nl: pd.DataFrame, threshold_gw: float
+) -> dict | None:
+    """Fit a net-load limb: regress daily class CF on daily peak net-load (GW).
+
+    ``cf_df`` has index=date, columns ``cf`` and ``online_frac``. ``daily_nl`` has
+    columns ``date`` and ``peak_nl_gw``. Days with peak net-load > threshold are
+    flagged; ``commit_frac`` is the flagged-day mean online share, ``baseline`` and
+    ``baseline_commit`` are the below-threshold means. Spearman ρ measures the
+    net-load→CF relationship on flagged days.
+    """
+    nl = daily_nl.set_index("date")["peak_nl_gw"]
+    d = cf_df.join(nl.rename("nl"), how="inner").dropna(subset=["cf", "nl"])
+    if d.empty:
+        return None
+    flagged = d[d["nl"] > threshold_gw]
+    mild = d[d["nl"] <= threshold_gw]
+    n = int(len(flagged))
+    if n < 2:
+        return None
+    commit_frac = float(flagged["online_frac"].mean())
+    baseline = float(mild["cf"].mean()) if len(mild) else 0.0
+    baseline_commit = float(mild["online_frac"].mean()) if len(mild) else 0.0
+    drive = flagged["nl"] - threshold_gw
+    slope = float(np.polyfit(drive, flagged["cf"], 1)[0]) if n >= 2 else 0.0
+    rho = (
+        float(drive.corr(flagged["cf"], method="spearman"))
+        if n >= 2 and drive.nunique() > 1
+        else float("nan")
+    )
+    return {
+        "commit_frac": commit_frac,
+        "baseline": baseline,
+        "baseline_commit": baseline_commit,
+        "slope": slope,
+        "rho": rho,
+        "n": n,
+    }
+
+
+# Net-load threshold percentile for the onset: the daily peak net-load above
+# which the CT fleet begins to mobilise. Analogous to HOT_PERCENTILE (p95 tmax)
+# but on the net-load scale — the tightest ~30% of days see CT commitment rise.
+NETLOAD_ONSET_PERCENTILE = 70.0
+
+
+def _netload_threshold_gw(daily_nl: pd.DataFrame) -> tuple[float, str]:
+    """Return ``(threshold_gw, basis)`` for a net-load limb."""
+    thr = float(
+        np.percentile(daily_nl["peak_nl_gw"].dropna(), NETLOAD_ONSET_PERCENTILE)
+    )
+    return thr, (
+        f"netload: system p{int(NETLOAD_ONSET_PERCENTILE)} daily-peak net-load "
+        f"(demand - VRE) GW"
+    )
+
+
 def _limb_threshold(
     iso: str, klass: str, driver: str, zt: pd.DataFrame
 ) -> tuple[float, str]:
@@ -406,14 +490,20 @@ def derive_iso(iso: str) -> pd.DataFrame:
     all_codes = set(pmap["plant_code"].astype(int))
     campd = _load_campd(iso, all_codes)
 
+    # Pre-load system net-load for CAISO CT classes (netload driver).
+    _daily_nl: pd.DataFrame | None = None
+    if iso == "CAISO":
+        try:
+            _daily_nl = _caiso_system_net_load()
+        except FileNotFoundError:
+            log.warning("CAISO: EIA-930 CISO hourly missing; netload limbs skipped")
+
     rows: list[dict] = []
     for (zone, klass), grp in pmap.groupby(["zone", "plant_class"], sort=False):
         plant_npl = dict(
             zip(grp["plant_code"].astype(int), grp["nameplate_mw"].astype(float))
         )
         nameplate = float(grp["nameplate_mw"].sum())
-        # min-stable level = the class's PHYSICAL Pmin/Pmax of a committed unit
-        # (NREL WWSIS-2 Table 7), NOT the offer-curve must-run share (plan B).
         min_stable_pct = _min_stable_pct(klass)
         cf = _group_daily_cf(campd, plant_npl, nameplate)
         if cf.empty:
@@ -421,16 +511,47 @@ def derive_iso(iso: str) -> pd.DataFrame:
         zt = temps[temps["zone"] == zone].set_index("date")
         if zt.empty:
             continue
-        for driver, cold in (("tmax", False), ("tmin", True)):
-            # CAISO commits its simple-cycle peakers on the evening net-load ramp
-            # (duck-curve neck), not a temperature gate: emit ONE net-load limb per
-            # CT class (from the tmax fit, relabelled driver=netload) and drop the
-            # cold limb. Net-load is not yet plumbed per-zone, so it ships OFF
-            # (threshold 0.0 placeholder) — see derive_caiso_ct_reliability_floor.py
-            # and commit c6a706a. The magnitude still upgrades to physical Pmin.
-            caiso_ct = iso == "CAISO" and klass in _CT_CLASSES
-            if caiso_ct and cold:
+
+        caiso_ct = iso == "CAISO" and klass in _CT_CLASSES
+
+        if caiso_ct:
+            # CAISO CT classes: net-load driver (duck-curve evening ramp), not
+            # temperature. Regress daily class CF on daily peak system net-load
+            # (GW). One limb per (zone, CT class).
+            if _daily_nl is None:
                 continue
+            threshold, basis = _netload_threshold_gw(_daily_nl)
+            fit = _fit_netload_limb(cf, _daily_nl, threshold)
+            if fit is None:
+                continue
+            floor_pct = float(fit["commit_frac"] * min_stable_pct)
+            enabled = bool(
+                (not np.isnan(fit["rho"]))
+                and fit["rho"] >= RHO_MIN
+                and fit["n"] >= N_MIN
+                and fit["commit_frac"] > fit["baseline_commit"]
+            )
+            rows.append(
+                {
+                    "iso": iso,
+                    "zone": zone,
+                    "plant_class": klass,
+                    "driver": "netload",
+                    "threshold": round(threshold, 2),
+                    "floor_pct": round(floor_pct, 4),
+                    "enabled": enabled,
+                    "commit_frac": round(fit["commit_frac"], 4),
+                    "min_stable_pct": round(min_stable_pct, 4),
+                    "rho": round(fit["rho"], 4) if not np.isnan(fit["rho"]) else "",
+                    "n": fit["n"],
+                    "baseline": round(fit["baseline"], 4),
+                    "baseline_commit": round(fit["baseline_commit"], 4),
+                    "threshold_basis": basis,
+                }
+            )
+            continue
+
+        for driver, cold in (("tmax", False), ("tmin", True)):
             threshold, basis = _limb_threshold(iso, klass, driver, zt)
             fit = _fit_limb(cf, zt[f"{driver}_c"], threshold, cold)
             if fit is None:
@@ -442,14 +563,6 @@ def derive_iso(iso: str) -> pd.DataFrame:
                 and fit["n"] >= N_MIN
                 and fit["commit_frac"] > fit["baseline_commit"]
             )
-            if caiso_ct:
-                driver, threshold, basis = (
-                    "netload",
-                    0.0,
-                    "net-load ramp (duck-curve); per-zone net load not yet "
-                    "plumbed (Phase-2 placeholder)",
-                )
-                enabled = False  # net-load gate unplumbed → ship OFF but visible
             rows.append(
                 {
                     "iso": iso,
