@@ -5262,7 +5262,7 @@ def main() -> None:
         "limb specs via the single generic engine "
         "(transmission.inject_reliability_floor). Replaces the per-ISO flags "
         "below. Default (unset) keeps the per-ISO base config value. ON for "
-        "CAISO/NYISO/NEISO/MISO calibration keepers; new ISOs need ONLY this "
+        "ERCOT/CAISO/NYISO/NEISO/MISO calibration keepers; new ISOs need ONLY this "
         "flag + a registry entry + a weather file.",
     )
     parser.add_argument(
