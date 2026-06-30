@@ -295,27 +295,7 @@
     }
 
     .breadcrumb {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
-
-    .breadcrumb a {
-      color: var(--hydro);
-      text-decoration: none;
-    }
-
-    .breadcrumb a:hover {
-      text-decoration: underline;
-    }
-
-    .breadcrumb .disabled {
-      color: var(--text-muted);
-      cursor: not-allowed;
     }
 
     @media (max-width: 768px) {
@@ -346,10 +326,12 @@
 <body>
   <nav id="topNav"></nav>
   <header class="header" data-header-variant="pulse">
-    <div class="header__eyebrow">Reference</div>
-    <h1 class="header__title">Configuration Reference</h1>
-    <p class="header__subtitle">ScenarioConfig fields, ISO topology constants, and physical/economic parameters — every tunable lever in the model with tier, type, default, and citation.</p>
-    <div class="header__accent"></div>
+    <div class="header__inner">
+      <span class="header__eyebrow">Reference</span>
+      <h1 class="header__title">Configuration Reference</h1>
+      <p class="header__subtitle">ScenarioConfig fields, ISO topology constants, and physical/economic parameters — every tunable lever in the model with tier, type, default, and citation.</p>
+      <div class="header-accent" aria-hidden="true"></div>
+    </div>
   </header>
 
   <main>
@@ -623,16 +605,39 @@ classify_plant(                  # Canonical classifier — used identically
   coal_class_resolver=None
 )</code></pre></div>
 
-      <!-- Breadcrumb -->
-      <div class="breadcrumb">
-        <a href="results-calibration.html">← Results & Calibration</a>
-        <span style="color: var(--text-muted);">Configuration Reference</span>
-        <span class="disabled">Overview →</span>
-      </div>
+      <nav class="breadcrumb" aria-label="Page navigation">
+        <a href="results-calibration.html" class="breadcrumb__item breadcrumb__item--prev">
+          <span class="breadcrumb__dir">← Previous</span>
+          <span class="breadcrumb__title">Results &amp; Calibration</span>
+        </a>
+        <a href="index.html" class="breadcrumb__item breadcrumb__item--next">
+          <span class="breadcrumb__dir">Next →</span>
+          <span class="breadcrumb__title">Overview</span>
+        </a>
+      </nav>
     </div>
   </main>
 
   <aside class="toc-rail" role="navigation" aria-label="Page outline"></aside>
+
+  <footer class="page-footer" role="contentinfo">
+    <div class="page-footer__inner">
+      <div class="page-footer__main">
+        <div>
+          <div class="page-footer__brand">Codebase Explorer</div>
+          <p class="page-footer__tagline">An interactive guide to the market-simulator LP-based dispatch model.</p>
+        </div>
+        <nav class="page-footer__links" aria-label="Footer navigation">
+          <a class="page-footer__link" href="index.html">Overview</a>
+          <a class="page-footer__link" href="lp-core.html">LP Core</a>
+          <a class="page-footer__link" href="capacity-evolution.html">Capacity Evolution</a>
+          <a class="page-footer__link" href="config-reference.html">Config Reference</a>
+        </nav>
+      </div>
+      <p class="page-footer__copy">Market Simulator · LP-based electricity market dispatch model · 2026–2050 forecast horizon</p>
+    </div>
+  </footer>
+  <div class="bottom-banner" aria-hidden="true"></div>
 
   <!-- Data: inline JSON for ScenarioConfig fields -->
   <script type="application/json" id="configData">
