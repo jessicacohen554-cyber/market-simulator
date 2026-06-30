@@ -1,6 +1,11 @@
 """Tests for EIA-930 demand loading, including the T&D loss gross-up."""
 
+import sys
+from pathlib import Path
+
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
@@ -9,8 +14,8 @@ from market_sim.data.eia_loader import (
     nyiso_net_interchange,
     pjm_net_interchange,
     pjm_zonal_interchange,
-    pjm_zonal_load_shares,
 )
+from scripts.curate_zonal_shares import parse_pjm_shares as pjm_zonal_load_shares
 
 _TEST_YEAR = 2023
 

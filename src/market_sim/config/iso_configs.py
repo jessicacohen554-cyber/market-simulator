@@ -130,7 +130,7 @@ def _ercot_config() -> ISOConfig:
     ERCOT native-load file is present (``data/raw/zone-specific-demand/
     ERCOT_Native_Load_<year>.xlsx``), :func:`eia_loader.load_demand` gives each
     zone its *own* measured hourly demand shape via
-    :func:`eia_loader.ercot_zonal_load_shares` (zones peak at different hours),
+    :func:`eia_loader.load_zonal_shares` (zones peak at different hours),
     keyed by the same weather-zone → transmission-zone aggregation. The
     annual-average of those hourly shares reproduces the static shares below to
     within ~1 pt, so the levels are unchanged.
@@ -235,7 +235,7 @@ def _caiso_config() -> ISOConfig:
     (derived): the sample is one winter month — summer AC load shifts share
     south, so SP15 is likely understated — refresh when the full 2023–25 U4
     pulls land. Hourly *shapes* come from the same file via
-    ``eia_loader.caiso_zonal_load_shares``; these static shares are its
+    ``eia_loader.load_zonal_shares``; these static shares are its
     fallback.
     """
     zones = [
@@ -329,7 +329,7 @@ def _miso_config() -> ISOConfig:
     so the Central↔South link is the defining MISO constraint.
 
     Load shares are the static fallback used only when the per-zone hourly
-    sub-BA demand file is absent; when present, ``miso_zonal_load_shares``
+    sub-BA demand file is absent; when present, ``load_zonal_shares``
     gives each zone its own measured 8760 shape. The fallback values are the
     measured 2023–2025 energy shares of the sub-BA groups above
     (0.285/0.444/0.271), which fall out of that same file. The Central region
@@ -509,7 +509,7 @@ def _nyiso_config() -> ISOConfig:
     pending upload U3. When ``data/raw/zone-specific-demand/NYISO/
     NYISO_load_actuals_<year>.csv`` is present, :func:`eia_loader.load_demand`
     gives each zone its own measured hourly shape via
-    :func:`eia_loader.nyiso_zonal_load_shares` (zones peak at different hours),
+    :func:`eia_loader.load_zonal_shares` (zones peak at different hours),
     keyed by the A–K → model-zone aggregation. Refresh path: upload NYISO
     OASIS "pal" actual-load CSVs for 2023–2025 (upload manifest U3).
     """
