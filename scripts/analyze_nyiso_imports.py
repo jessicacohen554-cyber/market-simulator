@@ -18,7 +18,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from market_sim.config.constants import IMPORT_TRANCHES, IMPORT_TRANCHES_BY_YEAR
+from market_sim.config.interchange_config import (
+    IMPORT_TRANCHES,
+    IMPORT_TRANCHES_BY_YEAR,
+)
 
 ACTUAL = json.load(open("data/raw/_validation-source/actual_lmp.json"))["NYISO"]
 

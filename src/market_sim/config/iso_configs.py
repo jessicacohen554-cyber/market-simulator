@@ -614,7 +614,7 @@ def _neiso_config() -> ISOConfig:
         # HQ_import is the priced-import node (Hydro-Québec Phase II HVDC plus
         # the Highgate/NB and NYISO ties added below), not a load zone, so it
         # carries no load. It holds NEISO's import tranches + export sinks
-        # (constants.IMPORT_TRANCHES/EXPORT_TRANCHES["NEISO"], P9); the priced
+        # (interchange_config.IMPORT_TRANCHES/EXPORT_TRANCHES["NEISO"], P9); the priced
         # supply curve is exercised under --priced-interchange / forward runs.
         Zone(name="HQ_import", iso="NEISO", load_share=0.0),
     ]

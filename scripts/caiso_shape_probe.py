@@ -60,8 +60,8 @@ Default
     Decompose each class's dispatch into floor-forced vs economic.  Recomputes
     the gas commitment floor target from
     :func:`market_sim.data.eia_loader.measured_gas_floor_profile` and the
-    CT reliability floor target from
-    :func:`market_sim.data.eia_loader.caiso_load_weighted_tmax`, distributes
+    CT reliability floor target from the load-weighted CAISO TMAX
+    (:func:`market_sim.data.eia_loader.load_weather`), distributes
     the fleet-level target to classes cheapest-first (CC absorbs before CT for the gas
     floor), and reports binding hours, floor-forced TWh, and economic TWh.
 
@@ -749,7 +749,7 @@ def run_floor_attribution(
 
     The floor targets are computed from the same source functions used in
     production (:func:`market_sim.data.eia_loader.measured_gas_floor_profile`
-    and :func:`~market_sim.data.eia_loader.caiso_load_weighted_tmax`), so the
+    and :func:`~market_sim.data.eia_loader.load_weather`), so the
     attribution is reproducible without a re-solve.
 
     Args:
@@ -764,9 +764,16 @@ def run_floor_attribution(
         ct_floor_cap: CT floor maximum capacity fraction.
     """
     from market_sim.data.eia_loader import (
-        caiso_load_weighted_tmax,
+        _broadcast_daily_to_hourly,
+        load_weather,
         measured_gas_floor_profile,
     )
+
+    def _caiso_load_weighted_tmax(year: int, hours: int) -> np.ndarray | None:
+        df = load_weather("CAISO", year, zone="_load_weighted")
+        if df is None:
+            return None
+        return _broadcast_daily_to_hourly(df, year, hours, "tmax_c")
 
     for year in years:
         disp = load_dispatch(bundle_dir, year, pass_label)
@@ -787,7 +794,7 @@ def run_floor_attribution(
 
         # CT reliability floor target (fraction of available CT capacity)
         ct_floor_frac_arr = np.zeros(hours, dtype=float)
-        tmax = caiso_load_weighted_tmax(year, hours)
+        tmax = _caiso_load_weighted_tmax(year, hours)
         if tmax is not None:
             frac = np.clip(
                 ct_floor_base

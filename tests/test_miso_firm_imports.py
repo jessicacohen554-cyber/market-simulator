@@ -16,7 +16,7 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import (
+from market_sim.config.interchange_config import (
     MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC,
     MISO_MANITOBA_FIRM_IMPORT_MW,
     MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR,

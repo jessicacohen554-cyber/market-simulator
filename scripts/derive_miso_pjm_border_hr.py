@@ -37,7 +37,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config import paths
-from market_sim.config.constants import INTERFACE_NEIGHBORS
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 
 # The three MISO-facing PJM generator hubs (ComEd / AEP-Ohio / ATSI), matching the
 # PJM-side border zones the MISO-Central seam clears against.
