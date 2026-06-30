@@ -691,13 +691,11 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         # Min-stable-load premium: a CC's part-load $/MWh is ~30-40% above its
         # full-load SRMC (measured CAMPD part-load shape), so the committed
         # (min-load) tranche must price ABOVE the full-load body, not below it.
-        # 0.93x full-load incremental * 1.30 (low end of the premium) = 1.21;
-        # set 1.20, just under the ST_GAS non-inversion ceiling (ST_GAS committed
-        # 0.81*11.27 = 9.13 eff HR -> CC committed <= 9.13/7.44 = 1.227). The
-        # prior 0.92 priced CC min-load (6.84 eff HR) BELOW its own econ_low
-        # (0.95*7.44 = 7.07) -- the inverse of the measured part-load curve, an
-        # unphysical min-load OFFER block. Offer-shape fix only (corrects merit
-        # ORDER); metric-neutral on volumes -- see the grounding comment above.
+        # Held at 1.20 (run 30): the committed tranche is a merit-order lever,
+        # NOT a volume lever — even at 1.38 (tested), the committed band at
+        # ~$26/MWh still clears below $32/MWh system price, so CC volume is
+        # unchanged while the price lift draws excess imports (-17 TWh energy
+        # balance). CC over-dispatch vs CAMPD requires a different mechanism.
         "committed": 1.20,
         "econ_low": 0.95,  # flat baseload incremental (straddles full-load 0.93x)
         "econ_high": 1.08,  # measured near-flat full-load HR, NOT the ERCOT 1.27 ramp
