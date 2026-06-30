@@ -130,6 +130,84 @@ class TestRunScenarioIso(RunnerTestBase):
         self.assertFalse((cache.CACHE_ROOT / "CAISO").exists())
 
 
+class TestP2CommitmentLegacyWarning(RunnerTestBase):
+    """P2 commitment (commitment_enabled=True) is a legacy, opt-in path."""
+
+    def test_commitment_enabled_logs_deprecation_warning(self):
+        config = ScenarioConfig(iso="ERCOT", commitment_enabled=True)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            self.assertLogs(runner.logger, level="WARNING") as logs,
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        self.assertTrue(
+            any(
+                "legacy" in msg and "energy_reserve_coopt" in msg for msg in logs.output
+            )
+        )
+
+    def test_commitment_disabled_logs_no_deprecation_warning(self):
+        config = ScenarioConfig(iso="ERCOT", commitment_enabled=False)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            self.assertNoLogs(runner.logger, level="WARNING"),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+
+class TestScarcityOverlayGeneralization(RunnerTestBase):
+    """The post-solve ORDC scarcity overlay is gated by config, not ISO."""
+
+    def test_ercot_overlay_invoked_when_scarcity_pricing_enabled(self):
+        config = ScenarioConfig(iso="ERCOT", scarcity_pricing_enabled=True)
+        self.assertTrue(config.scarcity_price_overlay is False)  # before ISO defaults
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "scarcity_prices") as mock_scarcity,
+        ):
+            mock_scarcity.return_value = {"scarcity_adder": np.zeros(config.hours)}
+            runner.run_scenario_iso(config, "ERCOT")
+
+        # ERCOT's ISOConfig.default_scenario_overrides turns scarcity_price_overlay
+        # on, so the overlay still runs without the caller setting it explicitly.
+        mock_scarcity.assert_called()
+
+    def test_caiso_overlay_skipped_even_with_master_flag_enabled(self):
+        config = ScenarioConfig(iso="CAISO", scarcity_pricing_enabled=True)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "scarcity_prices") as mock_scarcity,
+        ):
+            runner.run_scenario_iso(config, "CAISO")
+
+        # CAISO has no scarcity_price_overlay default override, so the overlay
+        # is skipped even though the master scarcity_pricing_enabled flag is on.
+        mock_scarcity.assert_not_called()
+
+    def test_overlay_skipped_when_both_flags_off_by_default(self):
+        config = ScenarioConfig(iso="ERCOT")
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "scarcity_prices") as mock_scarcity,
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        # scarcity_pricing_enabled defaults False, so even ERCOT's overlay
+        # default does not fire the overlay on its own.
+        mock_scarcity.assert_not_called()
+
+
 class TestRunSweep(RunnerTestBase):
     """A sweep runs every expanded config and caches each independently."""
 
