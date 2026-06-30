@@ -626,17 +626,34 @@ _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _ALGONQUIN_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 
-# Clean-data ("data/clean/fuel-prices") consumption. The curated dataset carries
-# the delivered fuel-price benchmarks as ``price_usd_per_mmbtu`` keyed by
-# ``(fuel, hub, interval_start_utc)``; the daily Henry Hub spot — the delivered
-# gas price — is its ``(gas, henry_hub)`` series. (Only Henry Hub daily is curated
-# today; see scripts/curate_fuel_prices.py.)
+# Clean-data consumption. Curated Parquet for each fuel-price datatype is read
+# via the frozen ``clean_io.read_clean`` seam when the opt-in flag is set and the
+# clean tree has been populated (``python scripts/curate_fuel_prices.py``). The
+# raw CSV path is always the fallback so existing runs are byte-identical unless
+# the caller explicitly opts in via the MARKET_SIM_USE_CLEAN env flag.
 _FUEL_PRICES_DATATYPE: str = "fuel-prices"
+_FUEL_HUB_MONTHLY_DATATYPE: str = "fuel-hub-monthly"
+_FUEL_BASIS_DATATYPE: str = "fuel-basis"
+_FUEL_ZONAL_HUB_DATATYPE: str = "fuel-zonal-hub"
+_FUEL_ERCOT_EP_GAS_DATATYPE: str = "fuel-ercot-ep-gas"
+_FUEL_TAKEORPAY_DATATYPE: str = "fuel-takeorpay"
+
 _HENRY_HUB_CLEAN_KEY: tuple[str, str] = ("gas", "henry_hub")
 
 # Clean-backed daily series cache, keyed by (fuel, hub) so a multi-year run reads
 # the curated parquet once. Separate from _HH_DAILY_CACHE (raw, keyed by path).
 _HH_DAILY_CLEAN_CACHE: dict[tuple[str, str], dict[int, dict[int, list[float]]]] = {}
+
+# Per-datatype clean-path caches (separate from raw caches to avoid type collision).
+_WINTER_BASIS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
+_HH_MONTHLY_CLEAN_CACHE: dict[tuple[str, str], dict[tuple[int, int], float]] = {}
+_ALGONQUIN_DAILY_CLEAN_CACHE: dict[str, dict[int, dict[int, dict[int, float]]]] = {}
+_NYISO_ZONAL_HUB_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
+_ERCOT_ZONAL_HUB_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
+_ERCOT_EP_GAS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
+_ERCOT_GAS_SPOT_PLANT_CLEAN_CACHE: dict[str, dict[int, float] | None] = {}
+_ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE: dict[str, dict[str, float] | None] = {}
+_ZONAL_HUB_ISO_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 
 
 def _clean_fuel_price_daily(fuel: str, hub: str) -> dict[int, dict[int, list[float]]]:
@@ -671,6 +688,89 @@ def _clean_fuel_price_daily(fuel: str, hub: str) -> dict[int, dict[int, list[flo
     return out
 
 
+def _clean_hub_monthly(fuel: str, hub: str) -> dict[tuple[int, int], float]:
+    """Monthly hub price for one ``(fuel, hub)`` from the clean ``fuel-hub-monthly`` tree.
+
+    Returns the same ``{(year, month): $/MMBtu}`` dict as the raw CSV path.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_HUB_MONTHLY_DATATYPE,
+        validate=False,
+        columns=["fuel", "hub", "year", "month", "price_usd_per_mmbtu"],
+    )
+    sel = df[(df["fuel"] == fuel) & (df["hub"] == hub)]
+    return {
+        (int(r.year), int(r.month)): float(r.price_usd_per_mmbtu)
+        for r in sel.itertuples(index=False)
+    }
+
+
+def _clean_algonquin_daily() -> dict[int, dict[int, dict[int, float]]]:
+    """Algonquin daily prices from the clean ``fuel-prices`` tree.
+
+    Returns the same ``{year: {month: {day-of-month: $/MMBtu}}}`` structure as
+    the raw CSV path in :func:`_algonquin_daily`.  The ``interval_start_utc``
+    day is used as the day-of-month key, matching how the raw path groups the
+    date-column day.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_PRICES_DATATYPE,
+        validate=False,
+        columns=["interval_start_utc", "fuel", "hub", "price_usd_per_mmbtu"],
+    )
+    sel = df[(df["fuel"] == "gas") & (df["hub"] == "algonquin")].sort_values(
+        "interval_start_utc"
+    )
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    for row in sel.itertuples(index=False):
+        ts = row.interval_start_utc
+        out.setdefault(ts.year, {}).setdefault(ts.month, {})[ts.day] = float(
+            row.price_usd_per_mmbtu
+        )
+    return out
+
+
+def _clean_zonal_hub_frame(iso: str) -> pd.DataFrame | None:
+    """Zonal gas-hub frame for ``iso`` from the clean ``fuel-zonal-hub`` tree.
+
+    Returns the same ``pd.DataFrame | None`` contract as the raw CSV loaders.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(_FUEL_ZONAL_HUB_DATATYPE, iso=iso, validate=False)
+    return df if not df.empty else None
+
+
+def _clean_ercot_ep_gas_frame() -> pd.DataFrame | None:
+    """TX electric-power gas price frame from the clean ``fuel-ercot-ep-gas`` tree."""
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(_FUEL_ERCOT_EP_GAS_DATATYPE, validate=False)
+    return df if not df.empty else None
+
+
+def _clean_takeorpay_plant_dict() -> dict[int, float] | None:
+    """Per-plant gas spot share from the clean ``fuel-takeorpay`` tree.
+
+    Returns the same ``{plant_code: spot_share}`` dict as the raw CSV path.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_TAKEORPAY_DATATYPE,
+        validate=False,
+        columns=["plant_code", "spot_share"],
+    )
+    if df.empty:
+        return None
+    result = {int(pc): float(s) for pc, s in zip(df["plant_code"], df["spot_share"])}
+    return result or None
+
+
 def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
     """Return the regional gas-basis frame, or ``None`` when it carries no rows.
 
@@ -679,6 +779,14 @@ def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
     empty or absent file resolves to ``None`` (callers fall back to measured
     923). Cached per path so a multi-year run reads the file once.
     """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists, read_clean
+
+        if clean_exists(_FUEL_BASIS_DATATYPE):
+            if "_clean" not in _WINTER_BASIS_CLEAN_CACHE:
+                df = read_clean(_FUEL_BASIS_DATATYPE, validate=False)
+                _WINTER_BASIS_CLEAN_CACHE["_clean"] = df if not df.empty else None
+            return _WINTER_BASIS_CLEAN_CACHE["_clean"]
     resolved = path or WINTER_GAS_BASIS_PATH
     if resolved in _WINTER_BASIS_CACHE:
         return _WINTER_BASIS_CACHE[resolved]
@@ -731,6 +839,14 @@ def load_winter_gas_basis(
 
 def _henry_hub_monthly(path: Path | None) -> dict[tuple[int, int], float]:
     """Return ``{(year, month): $/MMBtu}`` measured Henry Hub monthly spot."""
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_HUB_MONTHLY_DATATYPE):
+            key = ("gas", "henry_hub")
+            if key not in _HH_MONTHLY_CLEAN_CACHE:
+                _HH_MONTHLY_CLEAN_CACHE[key] = _clean_hub_monthly(*key)
+            return _HH_MONTHLY_CLEAN_CACHE[key]
     resolved = Path(path) if path else HENRY_HUB_MONTHLY_PATH
     if resolved in _HH_MONTHLY_CACHE:
         return _HH_MONTHLY_CACHE[resolved]
@@ -792,6 +908,14 @@ def _transco_z6_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     yield shorter lists, which the mean-preserving shape (normalized to the
     month's own daily mean) handles gracefully. Cached per path.
     """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_PRICES_DATATYPE):
+            key = ("gas", "transco_z6")
+            if key not in _HH_DAILY_CLEAN_CACHE:
+                _HH_DAILY_CLEAN_CACHE[key] = _clean_fuel_price_daily(*key)
+            return _HH_DAILY_CLEAN_CACHE[key]
     resolved = Path(path) if path else TRANSCO_Z6_NY_DAILY_PATH
     if resolved in _TRANSCO_DAILY_CACHE:
         return _TRANSCO_DAILY_CACHE[resolved]
@@ -818,6 +942,13 @@ def _algonquin_daily(path: Path | None) -> dict[int, dict[int, dict[int, float]]
     day and interpolates between them, rather than treating the list as a dense
     trading-day sequence. Cached per path.
     """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_PRICES_DATATYPE):
+            if "_clean" not in _ALGONQUIN_DAILY_CLEAN_CACHE:
+                _ALGONQUIN_DAILY_CLEAN_CACHE["_clean"] = _clean_algonquin_daily()
+            return _ALGONQUIN_DAILY_CLEAN_CACHE["_clean"]
     resolved = Path(path) if path else ALGONQUIN_DAILY_PATH
     if resolved in _ALGONQUIN_DAILY_CACHE:
         return _ALGONQUIN_DAILY_CACHE[resolved]
@@ -1206,6 +1337,13 @@ _NYISO_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 def _load_nyiso_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
     """Load the NYISO per-zone annual gas-hub table, or ``None`` if absent."""
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_ZONAL_HUB_DATATYPE, iso="NYISO"):
+            if "_clean" not in _NYISO_ZONAL_HUB_CLEAN_CACHE:
+                _NYISO_ZONAL_HUB_CLEAN_CACHE["_clean"] = _clean_zonal_hub_frame("NYISO")
+            return _NYISO_ZONAL_HUB_CLEAN_CACHE["_clean"]
     resolved = Path(path) if path else NYISO_ZONAL_GAS_HUB_PATH
     if resolved in _NYISO_ZONAL_HUB_CACHE:
         return _NYISO_ZONAL_HUB_CACHE[resolved]
@@ -1311,6 +1449,13 @@ _ERCOT_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 def _load_ercot_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
     """Load the ERCOT per-zone annual gas-basis table, or ``None`` if absent."""
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_ZONAL_HUB_DATATYPE, iso="ERCOT"):
+            if "_clean" not in _ERCOT_ZONAL_HUB_CLEAN_CACHE:
+                _ERCOT_ZONAL_HUB_CLEAN_CACHE["_clean"] = _clean_zonal_hub_frame("ERCOT")
+            return _ERCOT_ZONAL_HUB_CLEAN_CACHE["_clean"]
     resolved = Path(path) if path else ERCOT_ZONAL_GAS_HUB_PATH
     if resolved in _ERCOT_ZONAL_HUB_CACHE:
         return _ERCOT_ZONAL_HUB_CACHE[resolved]
@@ -1377,6 +1522,13 @@ _ERCOT_EP_GAS_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 def _load_ercot_electric_power_gas(path: Path | None) -> pd.DataFrame | None:
     """Load the measured TX delivered-to-electric-power gas table, or None."""
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_ERCOT_EP_GAS_DATATYPE):
+            if "_clean" not in _ERCOT_EP_GAS_CLEAN_CACHE:
+                _ERCOT_EP_GAS_CLEAN_CACHE["_clean"] = _clean_ercot_ep_gas_frame()
+            return _ERCOT_EP_GAS_CLEAN_CACHE["_clean"]
     resolved = Path(path) if path else ERCOT_ELECTRIC_POWER_GAS_PATH
     if resolved in _ERCOT_EP_GAS_CACHE:
         return _ERCOT_EP_GAS_CACHE[resolved]
@@ -1437,6 +1589,15 @@ def ercot_gas_spot_share_by_plant(
     "no classifiable Purchase Type -> treated as fully spot"). Returns ``None``
     when the receipt table is missing (f923 not extracted, or a forward year).
     """
+    if takeorpay_path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_TAKEORPAY_DATATYPE):
+            if "_clean" not in _ERCOT_GAS_SPOT_PLANT_CLEAN_CACHE:
+                _ERCOT_GAS_SPOT_PLANT_CLEAN_CACHE["_clean"] = (
+                    _clean_takeorpay_plant_dict()
+                )
+            return _ERCOT_GAS_SPOT_PLANT_CLEAN_CACHE["_clean"]
     tp = Path(takeorpay_path) if takeorpay_path else ERCOT_GAS_TAKEORPAY_PATH
     if tp in _ERCOT_GAS_SPOT_PLANT_CACHE:
         return _ERCOT_GAS_SPOT_PLANT_CACHE[tp]
@@ -1468,6 +1629,34 @@ def ercot_gas_spot_share_by_zone(
     table is missing (e.g. f923 not extracted, or a forward year) so the caller
     falls back to the scalar floor / unhaircut behaviour.
     """
+    if takeorpay_path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_TAKEORPAY_DATATYPE):
+            from scripts.lib.clean_io import read_clean
+
+            bp_path = Path(bin_path) if bin_path else ERCOT_BIN_ASSIGNMENTS_PATH
+            cache_key = f"_clean_{bp_path}"
+            if cache_key not in _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE:
+                top = read_clean(_FUEL_TAKEORPAY_DATATYPE, validate=False)
+                result_clean: dict[str, float] | None = None
+                if not top.empty and bp_path.exists():
+                    zmap = pd.read_csv(bp_path)[
+                        ["Plant_Code", "ERCOT_Zone"]
+                    ].drop_duplicates("Plant_Code")
+                    merged = top.merge(
+                        zmap, left_on="plant_code", right_on="Plant_Code", how="inner"
+                    )
+                    if not merged.empty:
+                        w = merged["total_mmbtu"].clip(lower=0.0)
+                        merged = merged.assign(_w=w, _sw=merged["spot_share"] * w)
+                        agg = merged.groupby("ERCOT_Zone")[["_w", "_sw"]].sum()
+                        agg = agg[agg["_w"] > 0]
+                        result_clean = {
+                            str(z): float(r._sw / r._w) for z, r in agg.iterrows()
+                        } or None
+                _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE[cache_key] = result_clean
+            return _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE[cache_key]
     tp = Path(takeorpay_path) if takeorpay_path else ERCOT_GAS_TAKEORPAY_PATH
     bp = Path(bin_path) if bin_path else ERCOT_BIN_ASSIGNMENTS_PATH
     key = (tp, bp)
@@ -1662,6 +1851,18 @@ _ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 def _load_zonal_gas_hub(path: Path) -> pd.DataFrame | None:
     """Load a per-zone annual gas-basis table, or ``None`` if absent."""
+    if _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        iso_key: str | None = None
+        if path == PJM_ZONAL_GAS_HUB_PATH:
+            iso_key = "PJM"
+        elif path == MISO_ZONAL_GAS_HUB_PATH:
+            iso_key = "MISO"
+        if iso_key is not None and clean_exists(_FUEL_ZONAL_HUB_DATATYPE, iso=iso_key):
+            if iso_key not in _ZONAL_HUB_ISO_CLEAN_CACHE:
+                _ZONAL_HUB_ISO_CLEAN_CACHE[iso_key] = _clean_zonal_hub_frame(iso_key)
+            return _ZONAL_HUB_ISO_CLEAN_CACHE[iso_key]
     if path in _ZONAL_HUB_CACHE:
         return _ZONAL_HUB_CACHE[path]
     frame: pd.DataFrame | None = None
