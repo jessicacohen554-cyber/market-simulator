@@ -684,6 +684,9 @@ function totalGen(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return null;
  const aGen=Object.keys(B.classFull).reduce((s,g)=>s+(B.classFull[g]||0),0);
  const mGen=Object.keys(B.classFull).reduce((s,g)=>s+(gm[g]||0),0);
  return (mGen>0&&aGen>0)?{mGen,aGen}:null;}
+function totalLoad(id,yr){const lmp=(MODEL[id].years[yr]||{}).lmp||{};
+ const s=Object.values(lmp).reduce((a,z)=>a+(z.d||0),0);
+ return s>0?s:((totalGen(id,yr)||{}).aGen||0);}
 // Signed share-of-total-generation deviation (pp): a class's share of total
 // MODEL generation minus its share of total ACTUAL generation. mCls/aCls are
 // the system-wide class totals (TWh). null when totals are unavailable (treated
@@ -704,28 +707,28 @@ function classLabel(g){return isNonFos(g)?g[0].toUpperCase()+g.slice(1):mixLabel
 function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
  if(!m||!(m.bench923>0.02))return null;
  const mSys=((MODEL[id].years[yr].gmModel||{})[grp])||0,aSys=((BENCH[yr].classFull||{})[grp])||0;
- return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,annGen:(totalGen(id,yr)||{}).aGen||0,sharePP:sharePP(id,yr,mSys,aSys),r:m.r,nr:m.nr};}
+ return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,annGen:(totalGen(id,yr)||{}).aGen||0,annLoad:totalLoad(id,yr),sharePP:sharePP(id,yr,mSys,aSys),r:m.r,nr:m.nr};}
 // Non-fossil class error (system-wide; EIA-930 actual). Same shape as a fossil
 // classErr so the tolerance test treats every class uniformly; nonfos flags it
 // so the system-error KPI stays fossil-only and labels can mark it system-wide.
 function nonFosErr(id,yr,fuel){const av=((BENCH[yr]||{}).e930||{})[fuel],mv=((MODEL[id].years[yr]||{}).nonfossil||{})[fuel];
  const a=av||0,m=mv||0;if(!(a>0.02))return null;
- return {grp:fuel,nonfos:true,err:100*(m-a)/a,mFull:m,bench923:a,annGen:(totalGen(id,yr)||{}).aGen||0,sharePP:sharePP(id,yr,m,a)};}
+ return {grp:fuel,nonfos:true,err:100*(m-a)/a,mFull:m,bench923:a,annGen:(totalGen(id,yr)||{}).aGen||0,annLoad:totalLoad(id,yr),sharePP:sharePP(id,yr,m,a)};}
 function anyErr(id,yr,g){return isNonFos(g)?nonFosErr(id,yr,g):classErr(id,yr,g);}
 function classErrs(id,yr){const out=[];for(const g of allClasses()){const e=anyErr(id,yr,g);if(e)out.push(e);}return out;}
 // A fossil class passes only when BOTH hold:
 //  (1) volume: the absolute miss |model − actual| is within
-//      min(SUM_TOL_GEN_FRAC of ISO ANNUAL generation, SUM_TOL_GEN_CAP TWh) — the
-//      universal gate: 1.0% ≈ 1 pp of share, capped at an absolute 5 TWh so the
+//      min(SUM_TOL_LOAD_FRAC of ISO total LOAD, SUM_TOL_LOAD_CAP TWh) — the
+//      universal gate: 1.0% ≈ 1 pp of load, capped at an absolute 5 TWh so the
 //      band can't balloon on large ISOs (1% of an 800 TWh system would be 8 TWh,
-//      letting a small class drift far on the margin). Scales with system size,
-//      applied uniformly across classes and ISOs — supersedes the old
-//      ±5% OR ±1 TWh size-tiered bar, and the prior uncapped 0.5% band; and
+//      letting a small class drift far on the margin). Uses total load (= gen +
+//      net imports) so net-importing ISOs get the correct ≈1 pp band. Scales
+//      with system size, applied uniformly across classes and ISOs; and
 //  (2) share: its share of TOTAL generation is within SUM_TOL_SHARE_PP
 //      percentage points of the actual share — so a class can't pass on volume
 //      alone while still misrepresenting the generation mix.
-const SUM_TOL_PCT=5,SUM_TOL_GEN_FRAC=0.01,SUM_TOL_GEN_CAP=5,SUM_TOL_SHARE_PP=1.5;
-function volInTol(e,k){return e.annGen>0&&Math.abs(e.mFull-e.bench923)<=k*Math.min(SUM_TOL_GEN_FRAC*e.annGen,SUM_TOL_GEN_CAP);}
+const SUM_TOL_PCT=5,SUM_TOL_LOAD_FRAC=0.01,SUM_TOL_LOAD_CAP=5,SUM_TOL_SHARE_PP=1.5;
+function volInTol(e,k){return e.annLoad>0&&Math.abs(e.mFull-e.bench923)<=k*Math.min(SUM_TOL_LOAD_FRAC*e.annLoad,SUM_TOL_LOAD_CAP);}
 function shareInTol(e,k){return e.sharePP==null||Math.abs(e.sharePP)<=k*SUM_TOL_SHARE_PP;}
 function classInTol(e){return volInTol(e,1)&&shareInTol(e,1);}
 // Per-class status: good = in tolerance (both bands); ok = within twice both
@@ -1062,7 +1065,7 @@ function diagnosticsHTML(id,years){const fs=diagFindings(id,years);
 function renderReport(){const id=st.run,years=runYears(id);
  if(!years.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>No year data in this run.</p></div>';return;}
  let h='<div class=panel><h2>Run scorecard — '+MODEL[id].label+'</h2>'
-  +'<p class=psub>All testing years at once. A class passes when its volume miss |model − actual| is within min('+(100*SUM_TOL_GEN_FRAC)+'% of ISO annual generation, '+SUM_TOL_GEN_CAP+' TWh) (the universal gate) <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
+  +'<p class=psub>All testing years at once. A class passes when its volume miss |model − actual| is within min('+(100*SUM_TOL_LOAD_FRAC)+'% of ISO total load, '+SUM_TOL_LOAD_CAP+' TWh) (the universal gate) <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
   +'<div class=yeargrid>'+years.map(yr=>yearScoreCard(id,yr)).join("")+'</div></div>';
  h+='<div class=panel><h2>Class tolerance by year <span class=psub>(signed volume error, model vs actual)</span></h2>'
   +'<p class=psub>Red = model over-generates, blue = under, gray = inside the ±'+SUM_TOL_PCT+'% band. Hover a cell for TWh and the pass/fail reason. Fossil classes are zone-aware vs full EIA-923; nuclear/wind/solar are system-wide vs EIA-930.</p>'
