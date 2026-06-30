@@ -54,9 +54,8 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.data.chp import chp_btm_pct, chp_overrides  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
-    chp_btm_pct,
-    chp_overrides,
     fleet_to_bins,
     load_fleet_from_csv,
     thermal_tranche_overrides,
