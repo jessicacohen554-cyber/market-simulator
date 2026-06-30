@@ -10,9 +10,7 @@ import unittest
 from dataclasses import dataclass
 
 from market_sim.config.interchange_config import (
-    IMPORT_TRANCHES,
     IMPORT_ZONE,
-    INTERFACE_NEIGHBORS,
     MISO_MANITOBA_FIRM_IMPORT_MW,
     MISO_MANITOBA_FIRM_IMPORT_NAME,
     MISO_MANITOBA_FIRM_IMPORT_OFFER,
@@ -123,17 +121,6 @@ class TestBuildInterchangeFleet(unittest.TestCase):
     def test_empty_zone_returns_no_gens(self):
         spec = InterchangeSpec(iso="ERCOT", import_zone="")
         self.assertEqual(build_interchange_fleet(spec), [])
-
-
-class TestBackwardCompatReexports(unittest.TestCase):
-    """Constants re-exported from constants.py still resolve."""
-
-    def test_constants_reexports_match(self):
-        from market_sim.config import constants
-
-        self.assertIs(constants.IMPORT_TRANCHES, IMPORT_TRANCHES)
-        self.assertIs(constants.INTERFACE_NEIGHBORS, INTERFACE_NEIGHBORS)
-        self.assertIs(constants.IMPORT_ZONE, IMPORT_ZONE)
 
 
 if __name__ == "__main__":

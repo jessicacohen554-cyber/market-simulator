@@ -752,12 +752,12 @@ class ScenarioConfig:
     # a firm contract reproduces for any forward year and responds to a changed
     # contract). Requires --priced-interchange (served by the priced node). MISO-
     # only; default off here but default-ON for the MISO backcast via
-    # constants.resolve_miso_firm_imports (the firm Manitoba import is the correct
+    # interchange_config.resolve_miso_firm_imports (the firm Manitoba import is the correct
     # structure for MISO, not a probe). ERCOT byte-identical.
     miso_seam_flow_limit: bool = False  # MISO reference-price seam: cap each
     # seam's (PJM/SPP/South) import-band availability at the MEASURED EIA-930
     # BA-to-BA net-import deliverability envelope (per (month × hour-of-day) p90
-    # of the directed flow over the seam's DIBAs; constants.MISO_SEAM_DIBA,
+    # of the directed flow over the seam's DIBAs; interchange_config.MISO_SEAM_DIBA,
     # data.eia_loader.measured_seam_import_envelope, transmission.inject_miso_
     # seam_flow_limit). Fixes the structural over-import: the priced seam imports
     # at the interface limit on ALL THREE borders whenever MISO's LMP exceeds the
@@ -785,8 +785,8 @@ class ScenarioConfig:
     # (byte-identical).
     miso_pjm_border_anchor: bool = False  # MISO eastern PJM seam: re-anchor the
     # PJM neighbor price from PJM's SYSTEM-average realized LMP to its MISO-facing
-    # WESTERN border hubs (ComEd / AEP-Ohio / ATSI; constants.MISO_PJM_BORDER_HR_
-    # BY_YEAR, applied in transmission.inject_reference_price_mc). The import
+    # WESTERN border hubs (ComEd / AEP-Ohio / ATSI; interchange_config.MISO_PJM_
+    # BORDER_HR_BY_YEAR, applied in transmission.inject_reference_price_mc). The import
     # mirror of the pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears
     # against western PJM, which prices below the eastern-load-weighted system
     # average, so the system anchor over-prices the import and MISO under-imports

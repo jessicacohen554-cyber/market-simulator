@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 import market_sim.data.eia_loader as eia_loader
-from market_sim.config.constants import IMPORT_TRANCHE_EF, IMPORT_ZONE
+from market_sim.config.interchange_config import IMPORT_TRANCHE_EF, IMPORT_ZONE
 from market_sim.data.fleet import generators_to_fleet_arrays
 from market_sim.model.transmission import (
     build_import_generators,
@@ -111,10 +111,8 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         self.assertTrue(applied)
         zone = IMPORT_ZONE["CAISO"]
         ef = IMPORT_TRANCHE_EF["CAISO"]
-        from market_sim.config.constants import (
-            CAISO_IMPORT_DELIVERY_BASIS,
-            CARB_UNSPECIFIED_IMPORT_EF,
-        )
+        from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+        from market_sim.config.interchange_config import CAISO_IMPORT_DELIVERY_BASIS
         from market_sim.model.transmission import wecc_border_carbon_adder
 
         # The injector delivers each measured nodal hub price to the CAISO

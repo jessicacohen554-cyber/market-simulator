@@ -17,7 +17,7 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import INTERFACE_NEIGHBORS
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 from market_sim.model.transmission import (
     build_reference_price_node,
