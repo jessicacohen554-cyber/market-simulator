@@ -4,7 +4,8 @@
  * share one API. ES module.
  */
 
-const DATA_ROOT = 'data/backcast';
+let DATA_ROOT = 'data/backcast';
+const DATA_ROOT_FALLBACK = '../../frontend/data/backcast';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -29,6 +30,16 @@ async function _loadScript(url) {
   });
 }
 
+async function _probeDataRoot() {
+  try {
+    await _loadScript(`${DATA_ROOT}/manifest.js`);
+    return;
+  } catch {
+    DATA_ROOT = DATA_ROOT_FALLBACK;
+    await _loadScript(`${DATA_ROOT}/manifest.js`);
+  }
+}
+
 /** Decompress a base64-encoded gzip string → JSON object. */
 function inflateGz(b64) {
   const bin = atob(b64);
@@ -46,7 +57,7 @@ async function initBC() {
   _ensureBC();
   if (_meta) return _meta;
 
-  await _loadScript(`${DATA_ROOT}/manifest.js`);
+  await _probeDataRoot();
   _meta = window.BC.meta;
 
   await Promise.all([
