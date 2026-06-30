@@ -1884,6 +1884,8 @@ def resolve_reference_price_interface(flag: bool, iso: str) -> bool:
     node itself is still gated on the ISO having an ``INTERFACE_NEIGHBORS`` entry
     downstream, so an ISO without neighbors stays byte-identical either way.
     """
+    from market_sim.config.interchange_config import REFERENCE_PRICE_DEFAULT_ISOS
+
     return bool(flag) or iso in REFERENCE_PRICE_DEFAULT_ISOS
 
 
