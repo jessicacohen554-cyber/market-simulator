@@ -74,10 +74,13 @@ from market_sim.model.storage import (
     storage_cap_profiles,
     storage_units_to_arrays,
 )
+from market_sim.config.interchange_config import (
+    INTERFACE_NEIGHBORS,
+    build_interchange_fleet,
+    get_interchange_spec,
+)
 from market_sim.model.transmission import (
     build_incidence_matrix,
-    build_export_sinks,
-    build_import_generators,
     build_interface_groups,
     extend_with_import_node,
     get_ttc_array,
@@ -179,54 +182,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # plus export sinks: pseudo-generators that ride along with the dispatch
     # fleet but never evolve. PJM's external zone is appended to the topology
     # here; CAISO's is baked in. CAISO import tranches carry the CA
-    # cap-and-trade border adjustment on unspecified imports (CARB EF
-    # 0.428 t/MWh x allowance price), priced once at the first simulated
-    # year's carbon price — the tranche VOM is static across the run, so a
-    # rising forecast carbon path is not re-tracked here. The export sink
-    # is exempt (exports carry no CA compliance cost).
     border_carbon = (
         wecc_border_carbon_adder(resolve_carbon_price(config, START_YEAR))
         if iso == "CAISO"
         else 0.0
     )
-    # Forecast-grade reference-price interface (the forward-scenario seam):
-    # replace the static fitted tranche ladder with one import/export
-    # pseudo-gen per neighbor, priced hourly from neighbor gas x heat-rate x
-    # load-shape ± hurdle (the mc rows are overwritten by
-    # inject_reference_price_mc after assembly, per year). A forward-derivable
-    # formula that regenerates for any year and responds to changed gas prices
-    # (CLAUDE.md #1, #12) — NOT the measured neighbor LMP. Gated to ISOs in
-    # INTERFACE_NEIGHBORS. CAISO is excluded here: its reference-price seam also
-    # needs the per-hub corridor split + CARB border carbon, wired separately on
-    # the calibration path (caiso_reference_price_seam); the generic single-node
-    # path would land CAISO's per-corridor tranches with no corridor zones to
-    # host them.
-    if (
-        getattr(config, "reference_price_interface", False)
-        and iso in INTERFACE_NEIGHBORS
-        and iso != "CAISO"
-    ):
-        import_generators = build_reference_price_node(iso)
-    else:
-        # Year-grounded import ladder for backcasts: the priced node's
-        # neighbor-hub blocks are gas-priced, so a backcast pins the ladder to
-        # the simulated (weather) year. Forecasts pass weather_year too, but
-        # un-tabulated years fall back to the static ladder inside
-        # build_import_generators.
-        import_generators = build_import_generators(
-            iso, border_carbon, year=config.weather_year
-        ) + build_export_sinks(iso)
-    # Manitoba Hydro firm-hydro import (MISO only): ~10-15 TWh/yr of firm
-    # contracted hydro into MISO-North, OUTSIDE the gas-margin reference-price
-    # seam. A SEPARATE block priced as firm hydro (low, near-constant offer),
-    # landed directly in MISO-North and ADDED to the seam gens. No-op for
-    # non-MISO ISOs (forecast mode keeps the flat contract midpoint).
-    if getattr(config, "miso_firm_imports", False):
-        from market_sim.model.transmission import build_miso_firm_imports
-
-        import_generators = import_generators + build_miso_firm_imports(
-            iso, year=config.weather_year, mode=config.mode
-        )
+    interchange_spec = get_interchange_spec(config, iso)
+    import_generators = build_interchange_fleet(interchange_spec, border_carbon)
     if import_generators:
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
@@ -760,18 +722,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_coal_tranches(
                 mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
             )
-            # Reference-price seam: overwrite each neighbor pseudo-gen's mc row
-            # with its hourly reference price ± hurdle (gas x heat-rate x
-            # load-shape — the cost is hourly, so it could not ride in the
-            # static vom). Then floor the firm (must-flow) scheduled export on
-            # the cheapest tranches. No-op (byte-identical) unless the reference
-            # node is in the fleet, so non-reference runs are unaffected. CAISO
-            # is priced by its dedicated calibration-path seam.
-            if (
-                getattr(config, "reference_price_interface", False)
-                and iso in INTERFACE_NEIGHBORS
-                and iso != "CAISO"
-            ):
+            if interchange_spec.use_reference_price:
+                from market_sim.model.transmission import (
+                    inject_reference_price_firm_export,
+                    inject_reference_price_mc,
+                )
+
                 if inject_reference_price_mc(
                     fleet_arrays, mc_base, iso, year, config.gas_price_path
                 ):
@@ -790,12 +746,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         iso,
                         year,
                     )
-            # Manitoba firm-hydro import floor (MISO only): the contracted firm
-            # baseload flows into MISO-North every hour regardless of MISO's
-            # hourly price (the firm-schedule pattern). Mirrors the must-flow
-            # floor laid on the build_miso_firm_imports block above. No-op
-            # unless the flag is on and the block is in the fleet.
-            if getattr(config, "miso_firm_imports", False):
+            if interchange_spec.firm_imports:
                 from market_sim.model.transmission import inject_miso_firm_imports
 
                 if inject_miso_firm_imports(fleet_arrays, iso, year):
@@ -814,21 +765,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_mc, solar_mc = apply_negative_renewable_offer_floor(
                     wind_mc, solar_mc, config
                 )
-            # NYISO priced import-node boundary-flow reconciliation (FORECAST
-            # mode): pin the priced node's MONTHLY net interchange to a band
-            # around the neighbor's forward net position
-            # (config.nyiso_forward_net_import_twh, shaped to monthly by the
-            # forecast load), leaving the priced tranches free to set the
-            # marginal price within each month's envelope. Mirrors the
-            # calibration path (run_calibration.py) but with mode="forecast" —
-            # the forecast has no measured EIA-930 schedule to target. No-op
-            # (returns None, no dispatch keys) unless the flag is on, the ISO is
-            # NYISO, the priced import node is in the fleet, and a forward target
-            # is supplied. Must run after fleet_arrays + year_demand are built.
             import_node_recon = None
             if (
-                getattr(config, "nyiso_import_reconciliation", False)
-                and iso == "NYISO"
+                interchange_spec.monthly_reconciliation is not None
                 and import_generators
             ):
                 from market_sim.model.transmission import (
