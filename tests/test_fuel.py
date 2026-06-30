@@ -25,12 +25,14 @@ from market_sim.data.fuel import (
     _prb_monthly_actuals,
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
+    apply_miso_zonal_gas_basis,
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     ercot_west_oversupply_collapse_freq,
     iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
+    miso_zonal_gas_basis_by_zone,
     nyiso_zonal_gas_offsets,
     pjm_zonal_gas_basis_by_zone,
     resolve_annual_gas_price,
@@ -1521,6 +1523,84 @@ def test_pjm_zonal_gas_basis_skips_other_isos():
     config = ScenarioConfig(iso="MISO", hours=hours, pjm_zonal_gas_basis=True)
     prices = base.copy()
     apply_pjm_zonal_gas_basis(prices, fleet, config, 2024)
+    np.testing.assert_array_equal(prices, base)
+
+
+_MISO_ZONES = ["MISO-North", "MISO-Central", "MISO-South"]
+
+
+def _miso_gas_fleet(hours: int = 48):
+    """Three identical gas CCs: one per MISO zone (North, Central, South)."""
+    generators = [
+        Generator(
+            unit_id="GAS_NORTH",
+            name="North CC",
+            zone="MISO-North",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_CENTRAL",
+            name="Central CC",
+            zone="MISO-Central",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_SOUTH",
+            name="South CC",
+            zone="MISO-South",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _MISO_ZONES, hours=hours)
+
+
+def test_miso_zonal_gas_basis_north_below_south():
+    """MISO-North (MidCon/Northern Natural) sits below MISO-South (Gulf Coast)."""
+    basis = miso_zonal_gas_basis_by_zone(2024)
+    assert basis is not None
+    assert basis["MISO-South"] > basis["MISO-Central"]
+
+
+def test_miso_zonal_gas_basis_mean_zero_preserves_level():
+    """With the flag on the cap-weighted mean shift is zero (level preserved)."""
+    hours = 48
+    fleet = _miso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="MISO", hours=hours)
+
+    off_prices = base.copy()
+    apply_miso_zonal_gas_basis(off_prices, fleet, config, 2024)
+    np.testing.assert_array_equal(off_prices, base)  # flag off -> no-op
+
+    on_prices = base.copy()
+    apply_miso_zonal_gas_basis(
+        on_prices, fleet, config.with_overrides(miso_zonal_gas_basis=True), 2024
+    )
+    north = fleet.unit_ids.index("GAS_NORTH")
+    central = fleet.unit_ids.index("GAS_CENTRAL")
+    south = fleet.unit_ids.index("GAS_SOUTH")
+    # South dearer than Central after the shift (Gulf Coast premium).
+    assert on_prices[south, 0] > on_prices[central, 0]
+    # Equal pmax -> the (unweighted) mean of the three shifts equals the base,
+    # i.e. the capacity-weighted-zero anchor preserves the aggregate level.
+    np.testing.assert_allclose(
+        np.mean([on_prices[north, 0], on_prices[central, 0], on_prices[south, 0]]),
+        3.0,
+        atol=1e-9,
+    )
+
+
+def test_miso_zonal_gas_basis_skips_other_isos():
+    """A non-MISO ISO is untouched even with the flag set."""
+    hours = 48
+    fleet = _miso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="PJM", hours=hours, miso_zonal_gas_basis=True)
+    prices = base.copy()
+    apply_miso_zonal_gas_basis(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
 
 
