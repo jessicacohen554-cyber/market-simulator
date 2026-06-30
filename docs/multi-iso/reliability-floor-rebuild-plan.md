@@ -1,6 +1,6 @@
 # Temperature-Driven Reliability Mechanism — Full Rebuild Plan
 
-**Status:** PROPOSED — awaiting review before implementation.
+**Status:** IMPLEMENTED — merged and deployed across all six ISOs (2026-06-30).
 **Branch:** `claude/temp-reliability-mechanism-yo6zgc`
 **Goal:** Replace the narrow, window-gated, partly outcome-pinned "reliability floors"
 with ONE honest, structural, temperature-gated engine covering **every model zone ×
