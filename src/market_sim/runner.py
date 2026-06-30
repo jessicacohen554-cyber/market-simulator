@@ -168,6 +168,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         cache_key,
         asdict(config),
     )
+    if config.commitment_enabled:
+        logger.warning(
+            "P2 commitment is a legacy feature; prefer energy_reserve_coopt "
+            "for unit commitment pricing."
+        )
     # Interconnected ISOs with a configured import node (CAISO's WECC node,
     # PJM's external node) model their neighbors as priced import tranches
     # plus export sinks: pseudo-generators that ride along with the dispatch
@@ -823,6 +828,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
             result = p1_result
 
+            # === LEGACY: P2 Commitment Screen ===
             # P2 (optional): screen CC/CT commitment on P1 clearing prices
             # against base MC, pin coal to its P1 dispatch, and re-solve.
             # Both datasets are kept: the P1 dispatch as year_{year}_p1, the
@@ -907,6 +913,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 result = solve_dispatch(
                     fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
                 )
+            # === END LEGACY: P2 Commitment Screen ===
             save_result(result, config, iso, year, context=context)
             logger.info(
                 "year %d: solved and cached (%.3fs)",
@@ -930,25 +937,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     mr["mr_co2_tons"].sum() / 1000.0,
                 )
 
-        # ORDC scarcity overlay (post-solve, ERCOT energy-only design): the
-        # published reserve-scarcity adder is computed from this year's
-        # solved headroom and added to the prices next year's capacity
-        # economics see — economic retirement, new entry and CCS retrofit
-        # screens (capacity.evolve_fleet) — so peakers and storage earn
-        # scarcity revenue instead of bare LP duals. Raw duals structurally
-        # carry no scarcity rent in a perfect-foresight LP with zero
-        # unserved energy, which over-retires dispatchables and under-
-        # builds; ERCOT's real price is energy + ORDC adder. Dispatch,
-        # volumes, emissions and persisted results are untouched. Other
-        # ISOs recover fixed cost through capacity-market revenue
-        # (capacity_revenue_per_mw_yr) — no adder there.
+        # ORDC scarcity overlay (post-solve; ERCOT's energy-only design,
+        # generalized to any ISO via scarcity_price_overlay): the published
+        # reserve-scarcity adder is computed from this year's solved
+        # headroom and added to the prices next year's capacity economics
+        # see — economic retirement, new entry and CCS retrofit screens
+        # (capacity.evolve_fleet) — so peakers and storage earn scarcity
+        # revenue instead of bare LP duals. Raw duals structurally carry no
+        # scarcity rent in a perfect-foresight LP with zero unserved energy,
+        # which over-retires dispatchables and under-builds. Dispatch,
+        # volumes, emissions and persisted results are untouched.
+        # scarcity_price_overlay defaults True for ERCOT (energy-only; see
+        # ISOConfig.default_scenario_overrides) and False elsewhere —
+        # capacity-market ISOs recover fixed cost through capacity-market
+        # revenue (capacity_revenue_per_mw_yr) instead, no adder there.
         # When co-optimization is on the energy LMP (result.prices) already
         # carries the scarcity lift via the reserve clearing price, so the
         # post-solve adder is skipped to avoid double-counting.
         econ_prices = result.prices
         if (
             config.scarcity_pricing_enabled
-            and iso == "ERCOT"
+            and config.scarcity_price_overlay
             and not getattr(config, "energy_reserve_coopt", False)
         ):
             ren_headroom = (
