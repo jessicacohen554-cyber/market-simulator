@@ -2176,6 +2176,15 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_pjm_zonal_gas_basis.
     pjm_zonal_gas_basis: bool = False
 
+    # MISO per-zone delivered-gas basis spread. MISO's three zones sit on different
+    # pipeline hubs (North on MidCon / Northern Natural, Central on Chicago
+    # Citygate, South on Gulf Coast LA), so flattening to one ISO-wide gas price
+    # mis-prices the north/south gradient. This adds each zone's measured
+    # EIA-delivered basis vs Henry Hub as a mean-zero capacity-weighted spread,
+    # identical to the PJM mechanism. Off by default; the calibration harness
+    # enables it for MISO. See market_sim.data.fuel.apply_miso_zonal_gas_basis.
+    miso_zonal_gas_basis: bool = False
+
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
     # backcast years) because the priced external star node (PJM_external) wires
@@ -2933,6 +2942,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "pjm_zonal_gas_basis": 3,
+    "miso_zonal_gas_basis": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,

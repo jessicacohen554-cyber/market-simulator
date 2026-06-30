@@ -1679,6 +1679,7 @@ def solve_and_persist(
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
+    miso_zonal_gas_basis: bool = False,
     pjm_congestion: bool = False,
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
@@ -1883,6 +1884,7 @@ def solve_and_persist(
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             pjm_zonal_gas_basis=pjm_zonal_gas_basis,
+            miso_zonal_gas_basis=miso_zonal_gas_basis,
             pjm_congestion=pjm_congestion,
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
@@ -2144,6 +2146,7 @@ def solve_and_persist(
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "pjm_zonal_gas_basis": pjm_zonal_gas_basis,
+        "miso_zonal_gas_basis": miso_zonal_gas_basis,
         "pjm_congestion": pjm_congestion,
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
@@ -2307,6 +2310,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
     if pjm_zonal_gas_basis:
         recorded_cfg = recorded_cfg.with_overrides(pjm_zonal_gas_basis=True)
+    if miso_zonal_gas_basis:
+        recorded_cfg = recorded_cfg.with_overrides(miso_zonal_gas_basis=True)
     if pjm_congestion:
         recorded_cfg = recorded_cfg.with_overrides(pjm_congestion=True)
     if curve_smoothing:
