@@ -232,7 +232,24 @@ def _qualifying_plant_codes(bins_path: str) -> frozenset[int]:
 
     Read from the CAMPD bin-assignment CSV (one row per plant). A plant
     qualifies if any of its bins is in :data:`QUALIFYING_PLANT_GROUPS`.
+
+    When ``MARKET_SIM_USE_CLEAN`` is set and ``bins_path`` is the default
+    ERCOT bin-assignment CSV (:data:`BINS_CSV_DEFAULT`), reads the curated
+    ``reference/bin-assignments`` clean table instead (the same source CSV,
+    curated by ``scripts/curate_reference.py``); any other ``bins_path``
+    (e.g. a test fixture) always reads raw.
     """
+    if _use_clean() and bins_path == BINS_CSV_DEFAULT:
+        clean_io = _clean_io()
+        if clean_io.clean_exists("reference", market="bin-assignments"):
+            detail = clean_io.read_clean(
+                "reference",
+                market="bin-assignments",
+                columns=["plant_id", "plant_group"],
+            )
+            coal_cc = detail[detail["plant_group"].isin(QUALIFYING_PLANT_GROUPS)]
+            codes = {int(c) for c in coal_cc["plant_id"].unique()}
+            return frozenset(codes - ST_GAS_PEAKER_PLANTS)
     detail = pd.read_csv(bins_path)
     coal_cc = detail[detail["Plant_Group"].isin(QUALIFYING_PLANT_GROUPS)]
     codes = {int(c) for c in coal_cc["Plant_Code"].unique()}
@@ -486,6 +503,41 @@ def unit_outage_csv_for_iso(iso: str | None) -> Path:
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
 
 
+# Columns unit_outage_derate_factors reads (event-grain; the same columns the
+# raw CAMPD unit-outage CSV and the clean unit-outage-events table both carry).
+_UNIT_OUTAGE_EVENT_COLUMNS: tuple[str, ...] = (
+    "facility_id",
+    "unit_id",
+    "plant_group",
+    "outage_start",
+    "outage_end",
+    "duration_days",
+    "unit_capacity_mw",
+)
+
+
+def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
+    """Return the ISO's unit-outage events, or ``None`` when no source exists.
+
+    Reads the curated ``unit-outage-events`` clean table (written by
+    ``scripts/curate_unit_outage_events.py``) when :func:`_use_clean` is set and
+    the ISO's partition exists; otherwise reads ``csv_path`` (the raw CAMPD
+    unit-outage CSV) directly, returning ``None`` when neither is available.
+    """
+    if _use_clean():
+        clean_io = _clean_io()
+        if clean_io.clean_exists("unit-outage-events", iso=iso):
+            df = clean_io.read_clean(
+                "unit-outage-events",
+                iso=iso,
+                columns=["plant_id", *_UNIT_OUTAGE_EVENT_COLUMNS[1:]],
+            )
+            return df.rename(columns={"plant_id": "facility_id"})
+    if not csv_path.exists():
+        return None
+    return pd.read_csv(csv_path)
+
+
 @lru_cache(maxsize=None)
 def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
@@ -549,7 +601,8 @@ def unit_outage_derate_factors(
     """
     iso = (iso or "ERCOT").upper()
     csv_path = unit_outage_csv_for_iso(iso)
-    if not csv_path.exists():
+    df = _load_unit_outage_events(csv_path, iso)
+    if df is None:
         return {}
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
@@ -566,7 +619,6 @@ def unit_outage_derate_factors(
     else:
         cap = _iso_plant_capacity(iso)
         target_fn = _generic_unit_outage_target
-    df = pd.read_csv(csv_path)
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
@@ -597,14 +649,37 @@ PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 
 @lru_cache(maxsize=None)
 def partial_outage_derate_factors(
-    year: int, hours: int = HOURS_PER_YEAR
+    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
 ) -> dict[int, np.ndarray]:
     """Return ``{plant_code: (hours,) availability multiplier}`` from the
     CAMPD-derived partial-outage windows. 1.0 outside detected ceiling plateaus,
-    the window's derate factor within (deepest wins where they overlap)."""
-    if not PARTIAL_OUTAGE_CSV.exists():
-        return {}
-    df = pd.read_csv(PARTIAL_OUTAGE_CSV)
+    the window's derate factor within (deepest wins where they overlap).
+
+    When ``MARKET_SIM_USE_CLEAN`` is set and the ISO's curated
+    ``partial-outages`` clean partition exists (written by
+    ``scripts/curate_partial_outages.py``), reads from there; otherwise reads
+    :data:`PARTIAL_OUTAGE_CSV` (ERCOT-only) directly.
+    """
+    iso = (iso or "ERCOT").upper()
+    df = None
+    if _use_clean():
+        clean_io = _clean_io()
+        if clean_io.clean_exists("partial-outages", iso=iso):
+            df = clean_io.read_clean(
+                "partial-outages",
+                iso=iso,
+                columns=[
+                    "plant_id",
+                    "year",
+                    "outage_start",
+                    "outage_stop",
+                    "derate_factor",
+                ],
+            ).rename(columns={"plant_id": "oris_code"})
+    if df is None:
+        if not PARTIAL_OUTAGE_CSV.exists():
+            return {}
+        df = pd.read_csv(PARTIAL_OUTAGE_CSV)
     df = df[df["year"] == year]
     out: dict[int, np.ndarray] = {}
     for r in df.itertuples(index=False):

@@ -36,6 +36,7 @@ EIA-860 :class:`Generator` objects fall back to their own ``online_year`` /
 from __future__ import annotations
 
 import logging
+import os
 from functools import lru_cache
 
 import numpy as np
@@ -46,6 +47,45 @@ from market_sim.config.paths import PLANT_REGISTRY_CSV
 logger = logging.getLogger(__name__)
 
 _REGISTRY = PLANT_REGISTRY_CSV
+
+# Opt-in clean-data read path (mirrors market_sim.data.fuel / outages /
+# zone_assignment). When MARKET_SIM_USE_CLEAN is truthy, the registry-only
+# year_built back-fill reads the curated reference/plant-registry table
+# instead of the raw master-plant-registry.csv. OFF by default; falls back to
+# raw when the clean partition is absent.
+_USE_CLEAN_ENV = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUTHY = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether the opt-in clean-data read path is enabled (default ``False``)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
+
+
+def _registry_year_built() -> pd.DataFrame:
+    """Return the plant registry's ``(plant_id, year_built)`` rows, no nulls.
+
+    Reads the curated ``reference/plant-registry`` clean table when
+    :func:`_use_clean` is set and the partition exists (written by
+    ``scripts/curate_reference.py``); otherwise reads ``_REGISTRY`` (the raw
+    ``master-plant-registry.csv``) directly. Returns an empty frame when
+    neither source is available.
+    """
+    if _use_clean():
+        from scripts.lib.clean_io import clean_exists, read_clean
+
+        if clean_exists("reference", market="plant-registry"):
+            df = read_clean(
+                "reference", market="plant-registry", columns=["plant_id", "year_built"]
+            )
+            return df.dropna(subset=["plant_id", "year_built"])
+    if not _REGISTRY.exists():
+        return pd.DataFrame(columns=["plant_id", "year_built"])
+    reg = pd.read_csv(_REGISTRY, usecols=["plantid", "year_built"])
+    reg = reg.rename(columns={"plantid": "plant_id"})
+    return reg.dropna(subset=["plant_id", "year_built"])
+
+
 # The month-precise generator-level EIA-860 operable schedule (Operating Month /
 # Year, Planned Retirement Month / Year per generator) is read from the active
 # vintage directory (paths.active_eia860_dir) inside _load_cod_map, so a
@@ -179,13 +219,11 @@ def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
 
     # Registry-only back-fill (year-only -> mid-year default), never overriding
     # a clean-fleet record — mirrors the raw reducer.
-    if _REGISTRY.exists():
-        reg = pd.read_csv(_REGISTRY, usecols=["plantid", "year_built"])
-        reg = reg.dropna(subset=["plantid", "year_built"])
-        for code, year in zip(reg["plantid"], reg["year_built"]):
-            code = int(code)
-            if code not in cod:
-                cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
+    reg = _registry_year_built()
+    for code, year in zip(reg["plant_id"], reg["year_built"]):
+        code = int(code)
+        if code not in cod:
+            cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
 
     return cod
 
@@ -276,13 +314,11 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
 
     # Registry-only back-fill (year-only -> mid-year default), never overriding
     # the month-precise EIA-860 record.
-    if _REGISTRY.exists():
-        reg = pd.read_csv(_REGISTRY, usecols=["plantid", "year_built"])
-        reg = reg.dropna(subset=["plantid", "year_built"])
-        for code, year in zip(reg["plantid"], reg["year_built"]):
-            code = int(code)
-            if code not in cod:
-                cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
+    reg = _registry_year_built()
+    for code, year in zip(reg["plant_id"], reg["year_built"]):
+        code = int(code)
+        if code not in cod:
+            cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
 
     return cod
 
