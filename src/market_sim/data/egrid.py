@@ -26,6 +26,7 @@ rate is a reproducible physical input that would regenerate for a forward year.
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -34,6 +35,20 @@ from market_sim.config.paths import FLEET_DIR, PROCESSED_DIR
 from market_sim.data.campd import KG_PER_TONNE, SHORT_TON_TO_KG
 
 logger = logging.getLogger(__name__)
+
+# Opt-in clean-data read path. When the ``MARKET_SIM_USE_CLEAN`` environment
+# flag is truthy, the eGRID plant sheet is sourced from the curated
+# ``data/clean/egrid`` tree (written by ``scripts/curate_egrid.py``) instead of
+# parsing the 21 MB workbook. OFF by default; falls back to raw when the clean
+# partition for the vintage is absent.
+_USE_CLEAN_ENV = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUTHY = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether the opt-in clean-data read path is enabled (default ``False``)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
+
 
 # eGRID plant-sheet workbooks by vintage year. The plant sheet (``PLNT<YY>``)
 # carries one row per plant; its first row holds long descriptive headers, so
@@ -83,6 +98,22 @@ def _egrid_path(vintage: int) -> Path:
     return FLEET_DIR / _EGRID_FILES[vintage]
 
 
+def _load_egrid_plant_co2_raw(vintage: int) -> pd.DataFrame:
+    """Parse the eGRID workbook's plant sheet for a vintage (the raw path)."""
+    sheet = f"PLNT{vintage % 100:02d}"
+    raw = pd.read_excel(
+        _egrid_path(vintage), sheet_name=sheet, skiprows=1, usecols=list(_EGRID_COLS)
+    )
+    return pd.DataFrame(
+        {
+            "plant_id": pd.to_numeric(raw["ORISPL"], errors="coerce"),
+            "fuel_cat": raw["PLFUELCT"].astype(str).str.upper(),
+            "net_mwh": pd.to_numeric(raw["PLNGENAN"], errors="coerce"),
+            "co2_tons": pd.to_numeric(raw["PLCO2AN"], errors="coerce"),
+        }
+    )
+
+
 def load_egrid_plant_co2(vintage: int) -> pd.DataFrame:
     """Return the eGRID plant sheet's fossil CO2 columns for a vintage year.
 
@@ -93,20 +124,31 @@ def load_egrid_plant_co2(vintage: int) -> pd.DataFrame:
         One row per fossil plant with positive net generation: ``plant_id``,
         ``fuel_cat`` (eGRID ``PLFUELCT``), ``net_mwh``, ``co2_tons`` (short
         tons) and ``co2_kg_per_mwh_net`` (CO2 kg per net MWh).
+
+    When ``MARKET_SIM_USE_CLEAN`` is set (default OFF) and the curated
+    ``data/clean/egrid`` partition for this vintage exists (written by
+    ``scripts/curate_egrid.py``), the plant sheet is read from there instead
+    of the 21 MB workbook; otherwise it falls back to the raw parse.
     """
-    sheet = f"PLNT{vintage % 100:02d}"
-    raw = pd.read_excel(
-        _egrid_path(vintage), sheet_name=sheet, skiprows=1, usecols=list(_EGRID_COLS)
-    )
-    df = pd.DataFrame(
-        {
-            "plant_id": pd.to_numeric(raw["ORISPL"], errors="coerce"),
-            "fuel_cat": raw["PLFUELCT"].astype(str).str.upper(),
-            "net_mwh": pd.to_numeric(raw["PLNGENAN"], errors="coerce"),
-            "co2_tons": pd.to_numeric(raw["PLCO2AN"], errors="coerce"),
-        }
-    ).dropna(subset=["plant_id"])
+    if _use_clean():
+        from scripts.lib.clean_io import clean_exists, read_clean
+
+        if clean_exists("egrid", year=vintage):
+            df = read_clean(
+                "egrid",
+                year=vintage,
+                columns=["plant_id", "fuel_cat", "net_mwh", "co2_tons"],
+            )
+            return _fossil_co2_from_plant_frame(df)
+    df = _load_egrid_plant_co2_raw(vintage)
+    return _fossil_co2_from_plant_frame(df)
+
+
+def _fossil_co2_from_plant_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Apply the fossil/positive-generation filter shared by both read paths."""
+    df = df.dropna(subset=["plant_id"]).copy()
     df["plant_id"] = df["plant_id"].astype(int)
+    df["fuel_cat"] = df["fuel_cat"].astype(str).str.upper()
     df = df[
         df["fuel_cat"].isin(FOSSIL_FUEL_CATEGORIES)
         & (df["net_mwh"] > 0.0)
