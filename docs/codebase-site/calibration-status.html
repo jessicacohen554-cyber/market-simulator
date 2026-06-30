@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calibration Status — Codebase Explorer</title>
+  <meta name="description" content="Executive summary of backcast calibration across all ISOs — per-ISO determination cards, per-criterion test results, and methodology rubric.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+</head>
+<body>
+  <nav id="topNav"></nav>
+
+  <div class="content-section" style="padding: var(--space-lg);">
+
+    <!-- Page header -->
+    <div class="bc-page-header">
+      <h1>Calibration Status</h1>
+    </div>
+    <p class="bc-page-sub" id="genStamp">Loading calibration data&hellip;</p>
+
+    <!-- Legend -->
+    <div class="cs-legend" id="legend" style="margin-bottom: var(--space-lg);">
+      <span><span class="cs-legend-dot cal"></span> Calibrated</span>
+      <span><span class="cs-legend-dot cav"></span> Calibrated with caveats</span>
+      <span><span class="cs-legend-dot not"></span> Not calibrated</span>
+    </div>
+
+    <!-- ISO Cards Grid -->
+    <div class="cs-grid" id="cardGrid"></div>
+
+    <!-- Selected ISO Detail -->
+    <div id="detailPane" style="margin-top: var(--space-lg);"></div>
+
+    <!-- Methodology Section -->
+    <div id="methodologySection" style="margin-top: var(--space-xl);"></div>
+
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/shared.js"></script>
+
+  <script type="module">
+    import { loadStatus, isoColorVar, hashState, fmtPct, fmtNum } from './js/bc-data.js';
+
+    /* -----------------------------------------------------------------------
+       Helpers
+       ----------------------------------------------------------------------- */
+
+    /** Map determination string to CSS modifier class. */
+    function detClass(det) {
+      if (!det) return 'det-not';
+      const d = det.toUpperCase();
+      if (d === 'CALIBRATED') return 'det-cal';
+      if (d.includes('CAVEAT')) return 'det-cav';
+      return 'det-not';
+    }
+
+    /** Human-readable determination label. */
+    function detLabel(det) {
+      if (!det) return 'NOT CALIBRATED';
+      const d = det.toUpperCase();
+      if (d === 'CALIBRATED') return 'CALIBRATED';
+      if (d.includes('CAVEAT')) return 'WITH CAVEATS';
+      if (d === 'NOT-YET') return 'NOT YET';
+      return 'NOT CALIBRATED';
+    }
+
+    /** Return glyph + color class for criterion status. */
+    function criterionGlyph(status) {
+      if (!status) return { glyph: '—', cls: '' };
+      const s = status.toUpperCase();
+      if (s === 'PASS')    return { glyph: '✓', cls: 'clr-good' };
+      if (s === 'FAIL')    return { glyph: '✗', cls: 'clr-bad' };
+      if (s === 'CAVEAT')  return { glyph: '!',      cls: 'clr-ok' };
+      if (s === 'SKIPPED') return { glyph: '—',  cls: 'bc-mute' };
+      return { glyph: '?', cls: '' };
+    }
+
+    /** Status badge CSS modifier for inline badges. */
+    function statusBadgeClass(status) {
+      if (!status) return 'det-not';
+      const s = status.toUpperCase();
+      if (s === 'PASS')   return 'det-cal';
+      if (s === 'CAVEAT') return 'det-cav';
+      return 'det-not';
+    }
+
+    /** Status badge label. */
+    function statusLabel(status) {
+      if (!status) return 'N/A';
+      const s = status.toUpperCase();
+      if (s === 'SKIPPED') return 'SKIP';
+      return s;
+    }
+
+    /** Canonical criterion display order. */
+    const CRITERIA_ORDER = [
+      'sysvol', 'fuelmix', 'price_mean', 'price_shape', 'price_tail',
+      'dispatch_corr', 'co2', 'storage', 'governance'
+    ];
+
+    /** Ordered criteria entries from a keeper. */
+    function orderedCriteria(criteria) {
+      const entries = [];
+      for (const key of CRITERIA_ORDER) {
+        if (criteria[key]) entries.push([key, criteria[key]]);
+      }
+      // Include any extras not in CRITERIA_ORDER
+      for (const [key, val] of Object.entries(criteria)) {
+        if (!CRITERIA_ORDER.includes(key)) entries.push([key, val]);
+      }
+      return entries;
+    }
+
+    /** Short criterion code for marks display. */
+    function shortCode(key, crit) {
+      const label = crit.label || key;
+      // Extract the C-number pattern like "C1", "C3a", "C5b"
+      const m = label.match(/C\d+[a-z]?/);
+      return m ? m[0] : key.slice(0, 3).toUpperCase();
+    }
+
+    /** Escape HTML entities. */
+    function esc(str) {
+      if (!str) return '';
+      const d = document.createElement('div');
+      d.textContent = String(str);
+      return d.innerHTML;
+    }
+
+    /** Format model/actual values for display. */
+    function fmtVal(v) {
+      if (v === null || v === undefined) return '—';
+      if (typeof v === 'string') return esc(v);
+      return Number(v).toLocaleString('en-US', { maximumFractionDigits: 3 });
+    }
+
+    /* -----------------------------------------------------------------------
+       Render: ISO Card Grid
+       ----------------------------------------------------------------------- */
+
+    function renderCards(keepers) {
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = '';
+
+      keepers.forEach(keeper => {
+        const dc = detClass(keeper.determination);
+        const card = document.createElement('div');
+        card.className = `cs-card ${dc}`;
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${keeper.iso} — ${detLabel(keeper.determination)}`);
+        card.dataset.iso = keeper.iso;
+
+        // Color accent from ISO palette
+        const colorVar = isoColorVar(keeper.iso);
+
+        // Header
+        let html = `
+          <div class="cs-card-header">
+            <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
+            <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+          </div>`;
+
+        // Keeper info
+        if (keeper.run_id) {
+          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
+          html += `
+          <div class="cs-keeper-info">
+            Keeper: <a class="run-id-link" href="${runLink}" title="View in Run Explorer">${esc(keeper.label || keeper.run_id)}</a>
+          </div>`;
+        }
+
+        // Years
+        if (keeper.scorable_years && keeper.scorable_years.length) {
+          html += `<div class="cs-keeper-info">Years: ${keeper.scorable_years.join(', ')}</div>`;
+        }
+
+        // Mini criteria marks
+        const criteria = orderedCriteria(keeper.criteria);
+        html += `<div class="cs-marks">`;
+        for (const [key, crit] of criteria) {
+          const g = criterionGlyph(crit.status);
+          html += `
+            <div class="cs-mark" title="${esc(crit.label)}: ${crit.status || 'N/A'}">
+              <span class="code">${shortCode(key, crit)}</span>
+              <span class="glyph ${g.cls}">${g.glyph}</span>
+            </div>`;
+        }
+        html += `</div>`;
+
+        // View details link
+        html += `<div class="cs-open-link" style="margin-top: 10px;">View details &rarr;</div>`;
+
+        card.innerHTML = html;
+
+        // Click handler
+        card.addEventListener('click', (e) => {
+          // Don't intercept clicks on the run-id link
+          if (e.target.closest('.run-id-link')) return;
+          selectCard(keeper.iso, keepers);
+        });
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectCard(keeper.iso, keepers);
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* -----------------------------------------------------------------------
+       Render: Select Card & Detail
+       ----------------------------------------------------------------------- */
+
+    function selectCard(iso, keepers) {
+      // Update card selection
+      document.querySelectorAll('.cs-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.iso === iso);
+      });
+
+      // Update hash
+      hashState.update('iso', iso);
+
+      // Find keeper
+      const keeper = keepers.find(k => k.iso === iso);
+      if (!keeper) return;
+
+      renderDetail(keeper);
+
+      // Scroll detail into view
+      const pane = document.getElementById('detailPane');
+      setTimeout(() => {
+        pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+
+    /* -----------------------------------------------------------------------
+       Render: Detail Pane
+       ----------------------------------------------------------------------- */
+
+    function renderDetail(keeper) {
+      const pane = document.getElementById('detailPane');
+      const dc = detClass(keeper.determination);
+      const colorVar = isoColorVar(keeper.iso);
+
+      let html = `<div class="bc-panel">`;
+
+      // Header
+      html += `
+        <div class="cs-results-header">
+          <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
+          <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+        </div>`;
+
+      // Keeper run info
+      if (keeper.run_id) {
+        const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
+        html += `
+        <p class="cs-keeper-info">
+          Keeper run: <a class="run-id-link" href="${runLink}">${esc(keeper.run_id)}</a>
+          ${keeper.label ? ` &mdash; ${esc(keeper.label)}` : ''}
+        </p>`;
+      }
+
+      // Reasons
+      if (keeper.reasons && keeper.reasons.length) {
+        html += `<div class="cs-reason" style="margin-top: 8px;">`;
+        keeper.reasons.forEach(r => {
+          html += `<p style="margin: 4px 0;">${esc(r)}</p>`;
+        });
+        html += `</div>`;
+      }
+
+      // Caveats summary
+      if (keeper.caveats) {
+        const c = keeper.caveats;
+        const hardFails = (c.hard && c.hard.length) ? c.hard : [];
+        const softFails = (c.soft && c.soft.length) ? c.soft : [];
+        if (hardFails.length || softFails.length) {
+          html += `<div style="margin: 10px 0 16px; font-size: 0.82rem;">`;
+          if (hardFails.length) {
+            html += `<p><span class="cs-tag tag-miss">HARD FAIL</span> ${hardFails.map(esc).join(', ')}</p>`;
+          }
+          if (softFails.length) {
+            const budget = c.budget || {};
+            html += `<p style="margin-top: 4px;">
+              <span class="cs-tag tag-lim">CAVEAT</span> ${softFails.map(esc).join(', ')}
+              ${budget.soft_max ? ` (budget: ${softFails.length} / ${budget.soft_max} soft max)` : ''}
+            </p>`;
+          }
+          html += `</div>`;
+        }
+      }
+
+      // Expandable criterion sections
+      const criteria = orderedCriteria(keeper.criteria);
+      for (const [key, crit] of criteria) {
+        const g = criterionGlyph(crit.status);
+        const sbClass = statusBadgeClass(crit.status);
+        const gateLabel = crit.hard ? 'HARD GATE' : 'SOFT';
+
+        html += `
+        <details class="cs-detail">
+          <summary>
+            <span>${esc(crit.label || key)}</span>
+            <span class="cs-gate">${gateLabel}</span>
+            <span class="cs-badge ${sbClass}">${statusLabel(crit.status)}</span>
+          </summary>
+          <div style="padding: 14px;">`;
+
+        // Records table
+        if (crit.records && crit.records.length) {
+          html += renderRecordsTable(crit.records);
+        } else {
+          html += `<p class="bc-mute" style="font-size: 0.82rem;">No test records available.</p>`;
+        }
+
+        html += `</div></details>`;
+      }
+
+      // Ledger entries
+      if (keeper.ledger_entries && keeper.ledger_entries.length) {
+        html += `
+        <details class="cs-detail" style="margin-top: 4px;">
+          <summary>
+            <span>Ledger entries</span>
+            <span class="cs-gate">${keeper.ledger_entries.length} entries</span>
+          </summary>
+          <div style="padding: 14px;">`;
+
+        for (const entry of keeper.ledger_entries) {
+          const year = entry.year ? `<b>${entry.year}</b> ` : '';
+          const crit = entry.criterion ? `<span class="cs-tag tag-lim">${esc(entry.criterion)}</span> ` : '';
+          html += `<div class="cs-ledger">${year}${crit}${esc(entry.reason)}</div>`;
+        }
+
+        html += `</div></details>`;
+      }
+
+      // Link to Run Explorer
+      if (keeper.run_id) {
+        const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
+        html += `<p class="cs-open-link" style="margin-top: 16px;"><a href="${runLink}">View full results in Run Explorer &rarr;</a></p>`;
+      }
+
+      html += `</div>`;
+      pane.innerHTML = html;
+    }
+
+    /* -----------------------------------------------------------------------
+       Render: Records Table
+       ----------------------------------------------------------------------- */
+
+    function renderRecordsTable(records) {
+      // Determine which columns have data
+      const hasKey = records.some(r => r.key);
+      const hasModel = records.some(r => r.model !== null && r.model !== undefined);
+      const hasActual = records.some(r => r.actual !== null && r.actual !== undefined);
+
+      let html = `<div class="bc-table-wrap"><table>`;
+
+      // Header
+      html += `<thead><tr>`;
+      html += `<th>Year</th>`;
+      if (hasKey) html += `<th>Key</th>`;
+      html += `<th>Metric</th>`;
+      if (hasModel) html += `<th style="text-align:right">Model</th>`;
+      if (hasActual) html += `<th style="text-align:right">Actual</th>`;
+      html += `<th style="text-align:right">Magnitude</th>`;
+      html += `<th>Tol</th>`;
+      html += `<th style="text-align:center">Status</th>`;
+      html += `</tr></thead>`;
+
+      // Body
+      html += `<tbody>`;
+      for (const r of records) {
+        const g = criterionGlyph(r.status);
+        const rowClass = r.status === 'FAIL' ? ' style="background: #fdecea;"' :
+                         r.status === 'CAVEAT' ? ' style="background: #fef6e7;"' : '';
+        html += `<tr${rowClass}>`;
+        html += `<td class="num">${r.year || '—'}</td>`;
+        if (hasKey) html += `<td>${esc(r.key) || ''}</td>`;
+        html += `<td>${esc(r.metric)}</td>`;
+        if (hasModel) html += `<td class="num">${fmtVal(r.model)}</td>`;
+        if (hasActual) html += `<td class="num">${fmtVal(r.actual)}</td>`;
+        html += `<td class="num">${esc(r.magnitude)}</td>`;
+        html += `<td>${esc(r.tol)}</td>`;
+        html += `<td style="text-align:center"><span class="${g.cls}" style="font-weight:800">${g.glyph}</span></td>`;
+        html += `</tr>`;
+      }
+      html += `</tbody></table></div>`;
+
+      return html;
+    }
+
+    /* -----------------------------------------------------------------------
+       Render: Methodology Section
+       ----------------------------------------------------------------------- */
+
+    function renderMethodology(status) {
+      const section = document.getElementById('methodologySection');
+      let html = `<div class="bc-panel">`;
+      html += `<h2>Calibration Rubric</h2>`;
+      html += `<p class="panel-sub">How each ISO's keeper run is scored against actuals.</p>`;
+
+      // Rubric table
+      if (status.rubric && status.rubric.length) {
+        html += `<div class="bc-table-wrap" style="margin-bottom: var(--space-lg);">
+          <table>
+            <thead><tr>
+              <th>Criterion</th>
+              <th>Gate</th>
+              <th>Measures</th>
+              <th>Tolerance</th>
+              <th>Source</th>
+            </tr></thead>
+            <tbody>`;
+
+        for (const r of status.rubric) {
+          html += `<tr>
+            <td style="white-space:nowrap; font-weight:700;">${esc(r.label || r.id)}</td>
+            <td><span class="cs-gate">${r.hard ? 'HARD' : 'SOFT'}</span></td>
+            <td style="white-space:normal; max-width:300px;">${esc(r.measures)}</td>
+            <td style="white-space:normal; max-width:180px;">${esc(r.tol)}</td>
+            <td style="white-space:normal; max-width:220px; font-size:0.72rem; color:var(--text-muted);">${esc(r.source)}</td>
+          </tr>`;
+        }
+
+        html += `</tbody></table></div>`;
+      }
+
+      // Methodology cards
+      if (status.methodology && status.methodology.length) {
+        html += `<h3 style="font-size: 0.95rem; margin-bottom: var(--space-md);">Methodology Notes</h3>`;
+        html += `<div class="cs-method-grid">`;
+
+        for (const m of status.methodology) {
+          html += `
+          <div class="cs-method-card">
+            <h4>${esc(m.head)}</h4>
+            <p>${esc(m.body)}</p>
+          </div>`;
+        }
+
+        html += `</div>`;
+      }
+
+      // Determination logic summary (always shown)
+      html += `
+        <div style="margin-top: var(--space-lg); border-top: 1px solid var(--border-light); padding-top: var(--space-md);">
+          <h3 style="font-size: 0.95rem; margin-bottom: var(--space-sm);">Determination Logic</h3>
+          <div class="cs-method-grid">
+            <div class="cs-method-card">
+              <h4><span class="cs-legend-dot cal" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated</h4>
+              <p>All hard gates pass, zero soft criteria outside tolerance. The model reproduces the real market's structure and level.</p>
+            </div>
+            <div class="cs-method-card">
+              <h4><span class="cs-legend-dot cav" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated with Caveats</h4>
+              <p>All hard gates pass. Up to the soft caveat budget (typically 3) may miss, each with a documented structural root cause and no fitted workaround applied.</p>
+            </div>
+            <div class="cs-method-card">
+              <h4><span class="cs-legend-dot not" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Not Calibrated</h4>
+              <p>One or more hard gates fail, or soft misses exceed the caveat budget. The ISO has not yet completed its calibration cycle.</p>
+            </div>
+          </div>
+        </div>`;
+
+      html += `</div>`;
+      section.innerHTML = html;
+    }
+
+    /* -----------------------------------------------------------------------
+       Boot
+       ----------------------------------------------------------------------- */
+
+    async function boot() {
+      try {
+        const status = await loadStatus();
+
+        // Generation timestamp
+        document.getElementById('genStamp').textContent =
+          status.generated ? `Generated ${status.generated}` : 'Calibration overview across all ISOs';
+
+        // Build cards
+        const keepers = status.keepers || [];
+        renderCards(keepers);
+
+        // Render methodology
+        renderMethodology(status);
+
+        // Auto-select from hash or first ISO
+        const hash = hashState.get();
+        const targetIso = hash.iso || (keepers.length ? keepers[0].iso : null);
+        if (targetIso) {
+          selectCard(targetIso, keepers);
+        }
+
+        // Listen for hash changes (back/forward)
+        window.addEventListener('hashchange', () => {
+          const h = hashState.get();
+          if (h.iso) selectCard(h.iso, keepers);
+        });
+
+      } catch (err) {
+        console.error('Calibration status load failed:', err);
+        document.getElementById('genStamp').textContent = 'Failed to load calibration data.';
+        document.getElementById('genStamp').classList.add('clr-bad');
+      }
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+  </script>
+</body>
+</html>
