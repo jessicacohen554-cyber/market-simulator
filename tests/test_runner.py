@@ -232,19 +232,27 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         patch.object(runner, "load_demand", side_effect=fake_demand),
         patch.object(runner, "load_renewable_profiles", side_effect=fake_renewables),
         patch.object(runner, "load_planned_additions", return_value=[]),
-        patch.object(runner, "load_fleet_from_csv", return_value=[]),
         patch.object(runner, "build_default_storage", return_value=[]),
-        patch.object(runner, "load_campd_bins", side_effect=fake_load_campd_bins),
-        patch.object(runner, "fleet_to_bins", side_effect=fake_fleet_to_bins),
-        patch.object(runner, "bins_to_fleet", side_effect=fake_bins_to_fleet),
-        patch.object(runner, "aggregate_fleet", side_effect=fake_aggregate_fleet),
-        patch.object(runner, "campd_tranche_fuel_frac", return_value=1.0),
-        patch.object(
-            runner,
-            "split_coal_tranches",
+        # The CAMPD-vs-legacy binning primitives now live in
+        # market_sim.data.fleet, called internally by
+        # load_or_synthesize_bins / build_base_fleet / build_dispatch_fleet
+        # -- patch them there so the fake implementations are observed
+        # regardless of which unified helper invokes them.
+        patch("market_sim.data.fleet.load_fleet_from_csv", return_value=[]),
+        patch(
+            "market_sim.data.fleet.load_campd_bins", side_effect=fake_load_campd_bins
+        ),
+        patch("market_sim.data.fleet.fleet_to_bins", side_effect=fake_fleet_to_bins),
+        patch("market_sim.data.fleet.bins_to_fleet", side_effect=fake_bins_to_fleet),
+        patch(
+            "market_sim.data.fleet.aggregate_fleet", side_effect=fake_aggregate_fleet
+        ),
+        patch("market_sim.data.fleet.campd_tranche_fuel_frac", return_value=1.0),
+        patch(
+            "market_sim.data.fleet.split_coal_tranches",
             side_effect=lambda f, c, *_a, **_k: (list(f), [1.0] * len(f)),
         ),
-        patch.object(runner, "apply_plant_emission_rates"),
+        patch("market_sim.data.fleet.apply_plant_emission_rates"),
         patch.object(
             runner, "generators_to_fleet_arrays", side_effect=fake_fleet_arrays
         ),
