@@ -53,6 +53,8 @@ for the market split.
 | validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
+| unit-outage-events | — | — | — | — | — | — |
+| partial-outages | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -63,7 +65,7 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
@@ -73,6 +75,7 @@ snapshot).
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
+| egrid | national (EPA eGRID, by vintage year) | 2023–2024 |
 
 ---
 
@@ -489,3 +492,73 @@ Daily maximum and minimum temperature by model zone. Schema:
 | `zone` | `string` | `none` | no | Model zone name (matching ISOConfig.zone_names) or a sentinel: '_load_weighted' for an ISO-level load-weighted temperature aggregate, '_downstate' for the NYISO NYC-metro (Central Park / LaGuardia / JFK) aggregate. |
 | `tmax_c` | `float64` | `deg_c` | no | Daily maximum temperature in degrees Celsius (NOAA GHCN-Daily TMAX, load-weighted over the zone's representative stations). Gap-filled via forward-fill then back-fill in the curate step so no null values remain. |
 | `tmin_c` | `float64` | `deg_c` | yes | Daily minimum temperature in degrees Celsius (NOAA GHCN-Daily TMIN). Null for zones curated from TMAX-only source files (CAISO '_load_weighted', NYISO '_downstate', and NYISO per-zone TMAX-only series). |
+
+## egrid
+
+eGRID plant-level extract (location, BA, fuel/CO2 columns). Schema:
+[`schema/egrid.schema.yaml`](schema/egrid.schema.yaml).
+
+- **Keys:** `plant_id`
+- **Reconciles:** EPA eGRID workbook plant sheet (`PLNT<YY>`)
+  `ORISPL/LAT/LON/FIPSST/FIPSCNTY/BACODE/PLFUELCT/PLNGENAN/PLCO2AN` — the union
+  of what `zone_assignment.py` (geography) and `egrid.py` (fossil CO2 rate)
+  each need, unfiltered, one file per eGRID vintage year.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `plant_id` | `int64` | `none` | no | ORIS plant code (eGRID ORISPL). |
+| `lat` | `float64` | `degrees` | yes | Plant latitude (eGRID LAT). |
+| `lon` | `float64` | `degrees` | yes | Plant longitude (eGRID LON). |
+| `fips_state` | `int64` | `none` | yes | FIPS state code (eGRID FIPSST). |
+| `fips_county` | `int64` | `none` | yes | FIPS county code (eGRID FIPSCNTY). |
+| `ba_code` | `string` | `none` | yes | Balancing-authority code (eGRID BACODE). |
+| `fuel_cat` | `string` | `none` | yes | Plant primary fuel category (eGRID PLFUELCT). |
+| `net_mwh` | `float64` | `mwh` | yes | Plant annual net generation (eGRID PLNGENAN). |
+| `co2_tons` | `float64` | `short_tons` | yes | Plant annual CO2 mass, short tons (eGRID PLCO2AN). |
+
+## unit-outage-events
+
+Per-unit CAMPD outage events (one row per detected window). Schema:
+[`schema/unit-outage-events.schema.yaml`](schema/unit-outage-events.schema.yaml).
+
+- **Keys:** `iso`, `plant_id`, `unit_id`, `outage_start`
+- **Reconciles:** `campd-unit-outages.csv` (ERCOT) /
+  `campd-unit-outages-<ISO>.csv` (CAISO/MISO/NEISO/NYISO/PJM) — event grain
+  (not hourly-expanded), `iso` stamped at curation.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the unit is assigned to (stamped at curation). |
+| `plant_id` | `int64` | `none` | no | Plant / facility identifier (CAMPD facility_id). |
+| `unit_id` | `string` | `none` | no | Generating-unit identifier. |
+| `facility_name` | `string` | `none` | yes | Plant / facility name. |
+| `unit_capacity_mw` | `float64` | `mw` | yes | The unit's own capacity, the outage's offline MW basis. |
+| `plant_capacity_mw` | `float64` | `mw` | yes | The plant's total capacity (denominator for the unit's share). |
+| `unit_pct_of_plant` | `float64` | `pct` | yes | unit_capacity_mw as a percent of plant_capacity_mw. |
+| `plant_group` | `string` | `none` | yes | Model dispatch-class / asset-group tag (e.g. COAL, CC_REGULAR). |
+| `capacity_source` | `string` | `none` | yes | Provenance of unit_capacity_mw (e.g. eia_exact, plant_share). |
+| `outage_start` | `datetime64[ns]` | `local_timestamp` | no | Outage window start (tz-naive, CAMPD local reporting clock). |
+| `outage_end` | `datetime64[ns]` | `local_timestamp` | no | Outage window end (tz-naive, CAMPD local reporting clock). |
+| `duration_days` | `float64` | `days` | yes | Detected outage span in days. |
+| `peer_units_online` | `int64` | `none` | yes | Count of the plant's other units still online during the outage. |
+| `total_units_at_plant` | `int64` | `none` | yes | Total unit count at the plant. |
+
+## partial-outages
+
+Per-plant CAMPD CF-ceiling partial-outage derate windows. Schema:
+[`schema/partial-outages.schema.yaml`](schema/partial-outages.schema.yaml).
+
+- **Keys:** `iso`, `plant_id`, `outage_start`
+- **Reconciles:** `campd-partial-outages.csv` (ERCOT) — a multiplicative
+  availability `derate_factor` per detected window, `iso` stamped at curation.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the plant is assigned to (stamped at curation). |
+| `plant_id` | `int64` | `none` | no | Plant identifier (CAMPD oris_code). |
+| `plant_name` | `string` | `none` | yes | Plant name. |
+| `plant_group` | `string` | `none` | yes | Model dispatch-class / asset-group tag. |
+| `year` | `int64` | `none` | no | Calendar year the window was detected in. |
+| `outage_start` | `datetime64[ns]` | `local_timestamp` | no | Derate window start (tz-naive, CAMPD local reporting clock). |
+| `outage_stop` | `datetime64[ns]` | `local_timestamp` | no | Derate window end (tz-naive, CAMPD local reporting clock). |
+| `derate_factor` | `float64` | `frac` | no | Multiplicative availability factor during the window (0-1). |
