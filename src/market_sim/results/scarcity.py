@@ -1743,7 +1743,7 @@ def nyiso_spin_requirement_mw(config) -> float:
     :data:`NYISO_SPIN_FRACTION` (1/2, a published market-design constant) times
     the NYC locational 10-minute total requirement (``nyc_10min_total`` in
     :data:`NYISO_RCPF_LOCATIONAL`, 500 MW) -> 250 MW. The single source of truth
-    shared by the LP spinning family (:func:`nyiso_reserve_coopt_inputs`) and the
+    shared by the LP spinning family (:func:`~market_sim.config.reserve_config._nyiso_design`) and the
     runner's reserve-adequacy commit, so both target the same MEASURED quantity.
 
     Args:
