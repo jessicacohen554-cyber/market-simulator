@@ -1,0 +1,96 @@
+# Canonical schema: per-unit outage EVENTS (one row per outage window)
+#
+# Distinct from the ``outages`` datatype (hourly-expanded availability):
+# ``unit-outage-events`` preserves the raw CAMPD unit-outage detector's
+# event-grain rows (one row per detected outage window, with its measured
+# duration and capacity context) for consumers that need that grain directly
+# rather than an hourly-expanded mask — e.g. the >= N-day unit-outage derate
+# screen in market_sim.data.outages.unit_outage_derate_factors.
+#
+# Source (data/raw): campd-unit-outages.csv (ERCOT) and
+# campd-unit-outages-<ISO>.csv (CAISO / MISO / NEISO / NYISO / PJM), the
+# committed output of scripts/derive_campd_unit_outages.py. iso is stamped at
+# curation time (the raw files carry no iso column).
+#
+# Curated by scripts/curate_unit_outage_events.py.
+datatype: unit-outage-events
+schema_version: 1
+title: Per-unit outage events
+description: >-
+  One row per detected CAMPD unit-outage window: facility/unit identity,
+  capacity context, and the outage window's start/end and duration.
+
+key_columns: [iso, plant_id, unit_id, outage_start]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO the unit is assigned to (stamped at curation).
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant / facility identifier (CAMPD facility_id).
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Generating-unit identifier.
+  - name: facility_name
+    dtype: string
+    unit: none
+    nullable: true
+    description: Plant / facility name.
+  - name: unit_capacity_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: The unit's own capacity, the outage's offline MW basis.
+  - name: plant_capacity_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: The plant's total capacity (denominator for the unit's share).
+  - name: unit_pct_of_plant
+    dtype: float64
+    unit: pct
+    nullable: true
+    description: unit_capacity_mw as a percent of plant_capacity_mw.
+  - name: plant_group
+    dtype: string
+    unit: none
+    nullable: true
+    description: Model dispatch-class / asset-group tag (e.g. COAL, CC_REGULAR).
+  - name: capacity_source
+    dtype: string
+    unit: none
+    nullable: true
+    description: Provenance of unit_capacity_mw (e.g. eia_exact, plant_share).
+  - name: outage_start
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Outage window start (tz-naive, CAMPD local reporting clock).
+  - name: outage_end
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Outage window end (tz-naive, CAMPD local reporting clock).
+  - name: duration_days
+    dtype: float64
+    unit: days
+    nullable: true
+    description: Detected outage span in days.
+  - name: peer_units_online
+    dtype: int64
+    unit: none
+    nullable: true
+    description: Count of the plant's other units still online during the outage.
+  - name: total_units_at_plant
+    dtype: int64
+    unit: none
+    nullable: true
+    description: Total unit count at the plant.

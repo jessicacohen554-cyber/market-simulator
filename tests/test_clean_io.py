@@ -37,6 +37,9 @@ ALL_DATATYPES = [
     "fleet",
     "fuel-prices",
     "reference",
+    "egrid",
+    "unit-outage-events",
+    "partial-outages",
 ]
 
 
