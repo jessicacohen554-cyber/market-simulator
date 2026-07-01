@@ -470,6 +470,59 @@ def resolve_miso_firm_imports(flag: bool | None, iso: str) -> bool:
     return iso in MISO_FIRM_IMPORT_DEFAULT_ISOS
 
 
+# ---------------------------------------------------------------------------
+# Simultaneous Import/Export Limits (SIL/SEC) — per ISO
+# ---------------------------------------------------------------------------
+# These cap the total simultaneous flow across ALL external border links of an
+# ISO's import/export zone, ensuring aggregate import (or export, when
+# bidirectional) does not exceed the receiving (or sending) network's
+# simultaneous transfer capability — which is materially less than the sum of
+# individual path ratings because the paths share upstream/downstream network
+# capacity.  The per-link TTC still binds each individual path; this constraint
+# binds only when several paths would load simultaneously past the aggregate
+# rating.
+#
+# Stored as (name, cap_mw, bidirectional) per ISO.  The link references are
+# built dynamically from IMPORT_NODE_LINKS by
+# :func:`~market_sim.model.transmission.extend_with_import_node`, so they
+# always match the border links actually present in the topology.
+#
+# CAISO's equivalent (``WECC_import_simultaneous``, 7,500 MW) is baked directly
+# into ``_caiso_config`` in iso_configs.py.  NEISO's (``HQ_import_simultaneous``,
+# 3,850 MW) is baked into ``_neiso_config`` because HQ_import is a baked-in zone.
+# ERCOT has no external import zone (DC ties ~1.2 GW embedded in demand).
+EXTERNAL_SIMULTANEOUS_LIMITS: dict[str, tuple[str, float, bool]] = {
+    # PJM Simultaneous Import Limit.  PJM publishes CETL (Capacity Emergency
+    # Transfer Limit) per LDA via the RTEP process and conducts simultaneous-
+    # feasibility studies for the RPM Base Residual Auction.  The system-wide
+    # aggregate simultaneous import capability is ~10,500 MW — well below the
+    # sum of individual seam limits (MISO 7.3 + NYISO 3.9 + Carolinas 2.4 +
+    # TVA 1.6 + LGEE 1.1 = 16.3 GW) and far below the border-link TTC sum
+    # (30.2 GW), because the western interfaces (AP-South, Bedington-BlackOak)
+    # share downstream 500 kV capacity.
+    # Source: PJM RTEP Annual Report (CETL tables); PJM Manual 14B §3.3
+    # (simultaneous feasibility); RPM Base Residual Auction parameters.
+    "PJM": ("PJM_simultaneous_import", 10500.0, True),
+    # MISO Capacity Import Limit (CIL).  MISO publishes CIL/CEL with the annual
+    # Planning Resource Auction (PRA) via the LOLE study.  The system-wide CIL
+    # is ~8,700 MW — below the sum of individual seam limits (PJM 7.3 + SPP 4.0
+    # + South 3.0 = 14.3 GW), because the contract-path RDT bottleneck between
+    # MISO Midwest and MISO South limits how much of each seam can flow
+    # simultaneously.
+    # Source: MISO PRA clearing results; MISO LOLE Study Report; MTEP.
+    "MISO": ("MISO_simultaneous_import", 8700.0, True),
+    # NYISO Simultaneous Import Limit.  NYISO publishes external interface
+    # transfer limits via the Gold Book (Load & Capacity Data Report) and the
+    # IRM/LCR (Installed Reserve Margin / Locational Capacity Requirement) study.
+    # The total simultaneous import capability is ~4,350 MW — below the sum of
+    # border-link TTCs (Upstate_West 3.0 + NYC 1.0 + Long_Island 1.2 = 5.2 GW),
+    # because the downstate import interfaces (Dunwoodie-South 3.9 GW into NYC,
+    # cable-limited 1.65 GW into LI) share upstream transmission.
+    # Source: NYISO Gold Book; IRM/LCR studies; NYISO Reliability Needs
+    # Assessment; NYISO Comprehensive Reliability Plan.
+    "NYISO": ("NYISO_simultaneous_import", 4350.0, True),
+}
+
 # Backwards-compatible aliases for the original CAISO-only WECC names.
 WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = IMPORT_TRANCHES["CAISO"]
 WECC_EXPORT_CAP_MW: float = EXPORT_TRANCHES["CAISO"][0][1]
