@@ -55,13 +55,13 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 
 | Module | Responsibility | Status |
 |---|---|---|
-| `config.py` | `PortfolioConfig` dataclass (all knobs) | done (validation + `from_file`) |
-| `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02a: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse; split LP lands PP-02b) |
-| `intake.py` | load/LMP read → validation → facility/ISO aggregation → growth | done (PP-01: hard missing-hour/dup errors, `prepare_lmp`, `collapse_zonal_lmp` load-weighted zonal→ISO) |
+| `config.py` | `PortfolioConfig` dataclass (all knobs) | done (PP-00: validation + `from_file`) |
+| `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse) |
+| `intake.py` | load/LMP read → validation → facility/ISO aggregation → growth | done (PP-01: hard missing-hour/dup errors, `prepare_lmp`, `collapse_zonal_lmp`, load growth) |
 | `profiles.py` | `(n_res,T)` CF matrix; real per-ISO Parquet + synthetic fallback | done (PP-03: real path keyed by (iso, year), SAMPLE/fallback synthetic) |
-| `lp.py` | portfolio LP build + HiGHS solve | done (both modes; infeasible-safe; split-storage vars + hydro budget + additionality land PP-02b) |
-| `sweep.py` | parametric sweep driver | done |
-| `outputs.py` | Parquet frontier + build-mix, text summary | done (enriched metrics + run metadata; residual CO₂ lands PP-02b) |
+| `lp.py` | portfolio LP build + HiGHS solve | done (PP-04: both modes; split-storage vars + hydro budget + additionality; infeasible-safe) |
+| `sweep.py` | parametric sweep driver | done (PP-05) |
+| `outputs.py` | Parquet frontier + build-mix, text summary | done (PP-06: enriched metrics + residual CO₂ + run metadata) |
 | `cli.py` / `__main__.py` | CLI entry point | done (PP-01: `--config` load_file/lmp_file wiring, clean errors, `--all-isos`) |
 | `vendored/` | copied market-sim logic (CF shapes) | done (PP-03: `renewable_shapes.py`, pinned upstream commit + re-sync header) |
 | `scripts/build_profiles.py` | build per-ISO CF Parquets from the market-sim data tree (no import) | done (PP-03) |
@@ -93,17 +93,17 @@ implements a first cut of PP-00/04/05/06; the packs deepen each to production.
 
 ```bash
 ../.venv/bin/python examples/run_sample_sweep.py     # end-to-end frontier on synthetic data
-../.venv/bin/python -m pytest tests/ -q              # trivial-case-first tests
+../.venv/bin/python -m pytest tests/ -q              # 76 tests: config, intake, LP core, CLI, extensions
 grep -rn "import market_sim" src/ || echo "OK: standalone"   # isolation check
 ```
 
 Expected: sweep prints a matching%-vs-premium table for `{1,2,5,7,10,20}`; matching%
-is non-decreasing in the premium cap; the trivial 1-resource/24-hour test matches a
-hand-computed optimum.
+is non-decreasing in the premium cap; all 76 tests pass (trivial cases first, then
+extensions like split-storage, hydro budget, additionality).
 
 ## 10. Handoff checklist
 
-- [ ] Read this + `docs/00-overview.md` + `docs/01-lp-formulation.md`.
-- [ ] Run the demo and tests (§9).
-- [ ] Work the open planning sessions to record decisions in `docs/decisions/`.
-- [ ] Execute prompt packs in order, updating this table's Status column.
+- [x] Read this + `docs/00-overview.md` + `docs/01-lp-formulation.md`.
+- [x] Run the demo and tests (§9). ✓ 76 tests passing.
+- [x] Work the open planning sessions to record decisions in `docs/decisions/`. ✓ PS-01..08 → ADRs 0004..0011 (2026-07-01).
+- [x] Execute prompt packs in order, updating this table's Status column. ✓ PP-00 through PP-07 (76 tests) complete; PP-09 backlog (gas-CC+CCS).

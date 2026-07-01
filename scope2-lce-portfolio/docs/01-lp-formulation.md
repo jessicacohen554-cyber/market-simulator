@@ -21,17 +21,22 @@ prices). Implementation: `src/lce_portfolio/lp.py`.
 | `fixed[r]` | `resources.py` | annualized fixed cost, $/MW-yr |
 | `vom[r]` | `resources.py` | variable O&M, $/MWh |
 | `capmax[r]`, `capmin[r]` | config / table | build bounds, MW |
-| `dur[s]`, `η[s]` | table | storage duration (h) and one-way efficiency `√rte` |
+| `dur[s]`, `η[s]` | table | storage duration (h) and one-way efficiency `√rte` (fixed-duration only) |
+| `dur_min[s]`, `dur_max[s]` | table | min/max duration hours for split-storage (0 for fixed-duration) |
+| `hydro_budget[s,m]` | table | monthly energy budget (MWh) for budget-hydro resources, or omitted |
 | `δ` | sweep | premium cap (Mode A) or matching target (Mode B) |
 | `f` | `config.excess_sale_fraction` | fraction of LMP received for surplus |
 
 ## Decision variables (flat column vector)
 
 ```
-build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t]
+build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | build_energy[k] | grid_buy[t] | excess[t]
 ```
 
-All ≥ 0. `build_mw[r] ∈ [capmin[r], capmax[r]]`.
+All ≥ 0. `build_mw[r] ∈ [capmin[r], capmax[r]]`. Split-storage resources (LDES, hydrogen) carry
+an additional energy-capacity variable `build_energy[k]` (MWh), costed at `$/MWh-yr` and
+bounded within per-tech `[duration_min_h × build_mw, duration_max_h × build_mw]` (ADR 0006).
+Fixed-duration storage has no such column; its energy sizing is `duration_h × build_mw`.
 
 ## Constraints
 
@@ -49,18 +54,36 @@ gen[r,t] ≤ cf[r,t] · build_mw[r]
 **Storage SOC dynamics** (cyclic, per storage-hour):
 ```
 soc[s,t] = soc[s,t−1] + η[s]·chg[s,t] − dis[s,t]/η[s]     (t−1 wraps 0→8759)
-0 ≤ soc[s,t] ≤ dur[s] · build_mw[s]
+0 ≤ soc[s,t] ≤ dur[s] · build_mw[s]                        (fixed-duration)
+  or
+dur_min[s] · build_mw[s] ≤ soc[s,t] ≤ dur_max[s] · build_mw[s]   (split-storage, energy-bound)
+  or equivalently  soc[s,t] ≤ build_energy[s]               (for split: power and energy chosen separately)
 chg[s,t] ≤ build_mw[s] ,  dis[s,t] ≤ build_mw[s]
 ```
 Round-trip efficiency = `η²`; `η = √rte`.
 
+**Hydro monthly energy budget** (per budget-flagged resource, per month):
+```
+Σ_t∈month gen[r,t] ≤ hydro_budget[r,m]   (for resources with is_budget_hydro=True)
+```
+Calendar months are indexed 0–11 with fixed day counts (Jan 31 days, …, Dec 31);
+aggregated from the 8760 hourly gen columns via vectorized month binning (ADR 0008).
+
 ## Matching & premium
 
-Clean energy serving load in hour `t` is `load[t] − grid_buy[t]` (surplus is sold,
-not counted). So:
+**VOLUMETRIC hourly matching** (ADR 0007): within each hour, clean energy counts
+toward matching only up to that hour's load. Matched energy in hour `t` is
+`min(clean_serving_load_t, load_t) = load_t − grid_buy_t`, and surplus is excluded.
+The score is:
 ```
-annual hourly matching % = 1 − Σ_t grid_buy[t] / Σ_t load[t]
+annual hourly matching % = Σ_t matched_t / Σ_t load_t = 1 − Σ_t grid_buy[t] / Σ_t load[t]
 ```
+This is the **percentage of annual load energy matched at hourly granularity**, *not*
+"% of hours at 100% matching" (strict per-hour variant available via `strict_hourly_matching`
+in Mode B). Storage is charged from the aggregate node; grid purchases are counted unmatched
+at purchase time even if later discharged (conservative, no round-trip laundering).
+**Residual carbon:** grid_buy is attributed at the ISO marginal emission rate (tCO₂/MWh),
+output as `residual_co2_tons` per frontier point (ADR 0007).
 
 Net portfolio cost and premium:
 ```
@@ -81,6 +104,15 @@ The premium row's dual is the marginal $/MWh of buying one more unit of matching
 In the non-saturated regime the premium constraint binds, so the reported
 (achieved) premium equals `δ`; once matching saturates at 100% the returned
 solution's premium is `≤ δ` (still valid — that matching is reachable in budget).
+
+**Additionality accounting** (ADR 0008): With `config.additionality_only=True`, existing
+(PPA) resources no longer count toward matching. The accounting identity becomes:
+```
+matched_t = load_t − grid_buy_t − Σ_{r∈existing} gen[r,t]
+matching_pct = 1 − (Σ_t grid_buy_t + Σ_{r∈existing} Σ_t gen[r,t]) / Σ_t load_t
+```
+In the LP, this is implemented as adding a +1 coefficient to existing gen columns in the
+matching objective (Mode A) or matching constraint RHS (Mode B).
 
 **Mode B — matching_target:**
 ```
