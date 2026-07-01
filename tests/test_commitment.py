@@ -283,6 +283,162 @@ class TestCaisoRaMustofferMinGen(unittest.TestCase):
         np.testing.assert_allclose(floor, np.zeros((1, 24)))
 
 
+class TestCaisoRaStartupBridge(unittest.TestCase):
+    """The startup-cost-aware extension of the RA must-offer bridge (caiso-44).
+
+    Extends :class:`TestCaisoRaMustofferMinGen`: a gap LONGER than min-down is
+    bridged only when the restart is uneconomic per
+    ``startup_per_mw > (MC - LMP_gap) * min_load_frac * gap_hours``.
+    """
+
+    def _cc(self, hours, dispatch, heat_rate=7.0, plant_group="CC_REGULAR"):
+        """One merchant CC, dispatched per ``dispatch`` (length ``hours``)."""
+        gen = Generator(
+            unit_id="CC",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=300.0,
+            pmin_mw=0.0,
+            heat_rate=heat_rate,
+            eford=0.0,
+            plant_group=plant_group,
+        )
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=hours)
+        return [gen], fa, np.asarray(dispatch, dtype=float).reshape(1, hours)
+
+    # f-class CC (hr 7.0): startup 48.6 $/MW, min_down 6h. Run 6-9, idle 10-17
+    # (gap 8h >= 6h min-down), run 18-23. The gap is a legal cold cycle, so the
+    # plain bridge leaves it cold; the startup branch decides on economics.
+    def _long_gap_dispatch(self):
+        disp = np.zeros(24)
+        disp[6:10] = 300.0  # first run, end (exclusive) = 10
+        disp[18:24] = 300.0  # second run, start = 18  ->  gap hours 10..17 = 8h
+        return disp
+
+    def test_uneconomic_long_gap_is_bridged(self):
+        # MC ~ LMP (gas near-marginal): RHS = (30-25)*0.40*8 = 16 < 48.6 startup
+        # -> cheaper to hold at min-load than restart, so the gap IS bridged.
+        gens, fa, p1 = self._cc(24, self._long_gap_dispatch())
+        mc = np.full((1, 24), 30.0)
+        lmp = np.full((1, 24), 25.0)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+        expected = np.zeros(24)
+        expected[10:18] = 0.40 * 300.0  # 120 MW held across the bridged gap
+        np.testing.assert_allclose(floor[0], expected)
+
+    def test_economic_long_gap_is_not_bridged(self):
+        # MC >> LMP (gas deeply out-of-merit midday): RHS = (60-10)*0.40*8 = 160
+        # > 48.6 startup -> cheaper to cycle off and re-pay the start, no floor.
+        gens, fa, p1 = self._cc(24, self._long_gap_dispatch())
+        mc = np.full((1, 24), 60.0)
+        lmp = np.full((1, 24), 10.0)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_off_by_default_leaves_long_gap_cold(self):
+        # startup_bridge off (default) reproduces the physical-only bridge: the
+        # 8h gap >= min-down is never floored regardless of economics.
+        gens, fa, p1 = self._cc(24, self._long_gap_dispatch())
+        floor = caiso_ra_mustoffer_min_gen(p1, fa, gens, min_load_frac=0.40)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_short_gap_still_bridged_with_startup_on(self):
+        # A gap SHORTER than min-down stays a physical bridge even with the
+        # startup branch on and economics that would otherwise skip it.
+        disp = np.zeros(24)
+        disp[6:10] = 300.0
+        disp[13:19] = 300.0  # gap 10..12 = 3h < 6h min-down
+        gens, fa, p1 = self._cc(24, disp)
+        mc = np.full((1, 24), 60.0)  # economics say "cycle", but gap < min-down
+        lmp = np.full((1, 24), 10.0)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+        expected = np.zeros(24)
+        expected[10:13] = 0.40 * 300.0
+        np.testing.assert_allclose(floor[0], expected)
+
+    def test_requires_prices_when_enabled(self):
+        gens, fa, p1 = self._cc(24, self._long_gap_dispatch())
+        with self.assertRaises(ValueError):
+            caiso_ra_mustoffer_min_gen(
+                p1, fa, gens, min_load_frac=0.40, startup_bridge=True
+            )
+
+    def test_binned_fleet_floors_committed_tranche_only(self):
+        # CAISO per-plant CAMPD tranches carry min_run/min_down = 0, so the bridge
+        # must resolve min-down from the class table and floor ONLY the base
+        # (committed, startup>0) tranche at min_load_frac x PLANT pmax — never the
+        # incremental econ tranche (startup=0), which would pad midday gas.
+        def bin_gen(suffix, pmax, startup, hr=7.0):
+            return Generator(
+                unit_id=f"CC_REGULAR_z_p99_{suffix}",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=pmax,
+                pmin_mw=0.0,
+                heat_rate=hr,
+                eford=0.0,
+                plant_group="CC_REGULAR",
+                is_campd_bin=True,
+                startup_cost_per_mw=startup,
+            )
+
+        # One plant: committed (200 MW, startup 50) + econ (300 MW, startup 0).
+        committed = bin_gen("committed", 200.0, 50.0)
+        econ = bin_gen("econc00", 300.0, 0.0)
+        gens = [committed, econ]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=24)
+        # Both tranches run 6-9 and 18-23, cold across the 8h belly 10-17
+        # (> f-class 6h min-down). Uneconomic cycle (MC ~ LMP).
+        disp = np.zeros((2, 24))
+        disp[0, 6:10] = 200.0
+        disp[0, 18:24] = 200.0
+        disp[1, 6:10] = 300.0
+        disp[1, 18:24] = 300.0
+        mc = np.full((2, 24), 35.0)
+        lmp = np.full((1, 24), 33.0)
+        floor = caiso_ra_mustoffer_min_gen(
+            disp,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+        # Committed tranche floored at min_load_frac x PLANT pmax (0.40 x 500 =
+        # 200), clipped to its own 200 MW capacity -> 200 MW across the belly.
+        np.testing.assert_allclose(floor[0, 10:18], 200.0)
+        np.testing.assert_allclose(floor[0, :10], 0.0)
+        # Econ tranche (startup 0) is never floored.
+        np.testing.assert_allclose(floor[1], np.zeros(24))
+
+
 class TestFindRuns(unittest.TestCase):
     """Tests for the consecutive-True segment finder."""
 
