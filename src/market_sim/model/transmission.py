@@ -2068,6 +2068,94 @@ def inject_miso_seam_flow_limit(
     return applied
 
 
+def inject_pjm_seam_flow_limit(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    hours: int,
+    percentile: float | None = None,
+    direction: str = "import",
+) -> bool:
+    """Cap each PJM reference-price seam's import/export bands at the measured envelope.
+
+    The PJM analogue of :func:`inject_miso_seam_flow_limit`. PJM's five
+    reference-price seams (MISO / NYISO / Carolinas / TVA / LGEE, defined in
+    :data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS`) export at
+    full TTC on all five seams simultaneously (~16.3 GW), producing ~38 TWh net
+    export in every year regardless of actuals (2023=40, 2024=33, 2025=18 TWh).
+
+    This caps each neighbor's import/export bands at the measured per-neighbor
+    deliverability envelope built from :func:`~market_sim.data.eia_loader
+    .pjm_zonal_interchange_envelope` (the PJM tie-line file, attributed to
+    border zones then summed to neighbor level via each neighbor's
+    ``border_zones``). The mechanism is identical to the MISO function:
+    import caps scale ``availability``; export caps raise ``min_gen``.
+
+    Returns ``True`` when at least one seam was capped.
+    """
+    if direction not in ("import", "export"):
+        raise ValueError(f"direction must be 'import' or 'export', got {direction!r}")
+    if iso.upper() != "PJM":
+        return False
+    from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+    from market_sim.data.eia_loader import pjm_zonal_interchange_envelope
+
+    pct = PJM_SEAM_FLOW_PERCENTILE if percentile is None else float(percentile)
+    env = pjm_zonal_interchange_envelope(year, zone_names, hours, pct)
+    if env is None:
+        return False
+    import_cap, export_cap = env
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    neighbors = INTERFACE_NEIGHBORS.get("PJM", [])
+    if not neighbors:
+        return False
+
+    mark = _REF_IMPORT_MARK if direction == "import" else _REF_EXPORT_MARK
+    if direction == "export" and fleet_arrays.min_gen is None:
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
+        ).copy()
+
+    applied = False
+    for neighbor in neighbors:
+        rows = [
+            r
+            for r, uid in enumerate(fleet_arrays.unit_ids)
+            if mark in uid and uid.rsplit(mark, 1)[1].partition("#")[0] == neighbor.name
+        ]
+        if not rows:
+            continue
+        # Sum the envelope across the neighbor's border zones.
+        cap_data = export_cap if direction == "export" else import_cap
+        border_rows = [zone_idx[z] for z in neighbor.border_zones if z in zone_idx]
+        if not border_rows:
+            continue
+        cap = np.clip(cap_data[border_rows].sum(axis=0), 0.0, None)
+
+        if direction == "import":
+            total = float(fleet_arrays.pmax[rows].sum())
+            if total <= 0.0:
+                continue
+            frac = np.clip(cap / total, 0.0, 1.0)
+            for r in rows:
+                fleet_arrays.availability[r, :] *= frac
+            applied = True
+        else:
+            total = -float(fleet_arrays.pmin[rows].sum())
+            if total <= 0.0:
+                continue
+            frac = np.clip(cap / total, 0.0, 1.0)
+            for r in rows:
+                capped = float(fleet_arrays.pmin[r]) * frac
+                np.maximum(
+                    fleet_arrays.min_gen[r, :], capped, out=fleet_arrays.min_gen[r, :]
+                )
+            applied = True
+    return applied
+
+
 # Midday solar-glut window (local hour-of-day, ``[start, end)``) over which the
 # CAISO RA must-offer gas floor binds — the duck-curve belly when CAISO is long
 # and exports/curtails its surplus. Outside it the gas fleet dispatches purely

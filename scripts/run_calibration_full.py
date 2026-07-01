@@ -1729,6 +1729,9 @@ def solve_and_persist(
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
+    pjm_seam_flow_limit: bool = False,
+    pjm_seam_flow_percentile: float | None = None,
+    pjm_seam_export_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -1937,6 +1940,9 @@ def solve_and_persist(
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
             miso_pjm_lmp_import_pricing=miso_pjm_lmp_import_pricing,
+            pjm_seam_flow_limit=pjm_seam_flow_limit,
+            pjm_seam_flow_percentile=pjm_seam_flow_percentile,
+            pjm_seam_export_limit=pjm_seam_export_limit,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -2197,6 +2203,9 @@ def solve_and_persist(
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
+        "pjm_seam_flow_limit": pjm_seam_flow_limit,
+        "pjm_seam_flow_percentile": pjm_seam_flow_percentile,
+        "pjm_seam_export_limit": pjm_seam_export_limit,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -2455,6 +2464,14 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
     if miso_pjm_lmp_import_pricing:
         recorded_cfg = recorded_cfg.with_overrides(miso_pjm_lmp_import_pricing=True)
+    if pjm_seam_flow_limit:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_flow_limit=True)
+    if pjm_seam_flow_percentile is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            pjm_seam_flow_percentile=float(pjm_seam_flow_percentile)
+        )
+    if pjm_seam_export_limit:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_export_limit=True)
     if ct_intermediate_split:
         recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
     if ct_intermediate_cf_threshold is not None:
@@ -5645,6 +5662,40 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--pjm-seam-flow-limit",
+        action="store_true",
+        help="PJM reference-price seam deliverability cap: bound each of PJM's "
+        "5 seams' (MISO/NYISO/Carolinas/TVA/LGEE) import-band availability at "
+        "the MEASURED PJM tie-line per-neighbor net-import envelope (border "
+        "zones summed to neighbor level, per (month x hour-of-day) p90). Fixes "
+        "the structural over-export: the model exports ~38 TWh every year at "
+        "full TTC on all 5 seams, but the actual net export drops from 40 to "
+        "18 TWh 2023-2025. A transfer-capability proxy from the measured "
+        "tie-line series, forward-reproducible, NOT fitted to the net-MWh "
+        "residual. Requires --reference-price-interface; PJM-only.",
+    )
+    parser.add_argument(
+        "--pjm-seam-flow-percentile",
+        type=float,
+        default=None,
+        help="Override the per-seam deliverability percentile used by "
+        "--pjm-seam-flow-limit (default keeps p90). Raising it lifts the "
+        "deliverability envelope so the LP clears more flow in tight hours. "
+        "Still a measured-duration-curve ceiling, NOT a flow pinned to the "
+        "net-MWh residual; only bites with --pjm-seam-flow-limit. PJM-only.",
+    )
+    parser.add_argument(
+        "--pjm-seam-export-limit",
+        action="store_true",
+        help="PJM reference-price seam EXPORT cap — the symmetric mirror of "
+        "--pjm-seam-flow-limit. Bound each seam's net EXPORT at the measured "
+        "PJM tie-line per-neighbor net-export envelope. Raises each neighbor's "
+        "export bands' lower bound toward 0 so the LP's deliverable net export "
+        "is capped at the measured per-neighbor capability. Shares "
+        "--pjm-seam-flow-percentile with the import cap. Requires "
+        "--reference-price-interface; PJM-only.",
+    )
+    parser.add_argument(
         "--miso-pjm-border-anchor",
         action="store_true",
         help="Re-anchor the MISO eastern PJM seam from PJM's SYSTEM-average "
@@ -6011,6 +6062,9 @@ def main() -> None:
         miso_firm_import_floor=args.miso_firm_import_floor,
         miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,
         miso_zonal_gas_basis=args.miso_zonal_gas_basis,
+        pjm_seam_flow_limit=args.pjm_seam_flow_limit,
+        pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,
+        pjm_seam_export_limit=args.pjm_seam_export_limit,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
