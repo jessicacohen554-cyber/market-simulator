@@ -24,13 +24,16 @@ the relevant planning session first).
 
 ## Current state
 
-Implemented so far: **PP-00** (config + validation + `from_file` loader),
-**PP-04** (LP core, both modes, infeasible-safe), **PP-05** (sweep + CLI with
-`--config` and `--all-isos` batch, graceful infeasible handling), **PP-06**
-(enriched frontier metrics + run-metadata JSON), and a synthetic **PP-03**.
-Still open / decision-gated: **PP-01** (real intake rules, PS-07/08),
-**PP-02** (real costs, PS-01/03/05/06), **PP-03** (vendor real CF profiles).
-The packs below describe how to take each from "minimal working" to "production".
+Waves 0–1 implemented: **PP-00** (config + validation + `from_file` loader),
+**PP-01** (real intake rules, hard missing-hour/dup errors, load growth, `prepare_lmp` +
+`collapse_zonal_lmp`), **PP-02** (resource catalog ATB 2024 CRF, per-ISO caps/eligibility,
+hydro monthly budgets, split-tech parse; split LP logic lands PP-02b), **PP-03** (real
+per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script),
+**PP-04** (LP core both modes, split-storage vars, hydro budget constraint, additionality
+accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
+graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
+run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-09 (gas-CC+CCS)
+backlog.
 
 ## Rules for every pack
 

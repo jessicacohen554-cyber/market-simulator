@@ -1,4 +1,5 @@
 # PS-08 — LMP Coupling & Scenario Selection
+**DECIDED → [ADR 0011](../decisions/0011-lmp-coupling-scenario-selection.md) (2026-07-01)**
 
 **Goal:** define the contract by which the market-sim BAU LMPs feed this tool, and
 which scenario/vintage to use.
