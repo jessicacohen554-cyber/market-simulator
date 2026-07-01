@@ -8,7 +8,8 @@ the resource-cost table; there are no magic numbers buried in the LP builder.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field, fields, replace
+from pathlib import Path
 
 HOURS_PER_YEAR = 8760  # non-leap; the tool models a single representative year
 
@@ -73,6 +74,60 @@ class PortfolioConfig:
     load_growth_years: int = 0
     """Number of years of ``load_growth_rate`` to compound onto the intake."""
 
+    def __post_init__(self) -> None:
+        """Validate field values (runs on construction; dataclass is frozen)."""
+        if self.mode not in ("premium_cap", "matching_target"):
+            raise ValueError(
+                f"mode must be premium_cap/matching_target, got {self.mode!r}"
+            )
+        if self.lcoe_sensitivity not in ("low", "mid", "high"):
+            raise ValueError(
+                f"lcoe_sensitivity must be low/mid/high, got {self.lcoe_sensitivity!r}"
+            )
+        if not 0.0 <= self.excess_sale_fraction <= 1.0:
+            raise ValueError("excess_sale_fraction must be in [0, 1]")
+        if self.hours <= 0:
+            raise ValueError("hours must be positive")
+        if self.storage_epsilon < 0:
+            raise ValueError("storage_epsilon must be non-negative")
+        if self.load_growth_years < 0:
+            raise ValueError("load_growth_years must be non-negative")
+        if any(d <= 0 for d in self.premium_deltas):
+            raise ValueError("premium_deltas must all be positive")
+        if any(not 0.0 <= t <= 1.0 for t in self.matching_targets):
+            raise ValueError("matching_targets must all be in [0, 1]")
+
     def with_overrides(self, **changes) -> "PortfolioConfig":
         """Return a copy with ``changes`` applied (dataclasses.replace wrapper)."""
         return replace(self, **changes)
+
+    @classmethod
+    def from_file(cls, path: str | Path) -> "PortfolioConfig":
+        """Build a config from a JSON or YAML file (reproducible runs).
+
+        Unknown keys raise; list-valued fields (``premium_deltas``,
+        ``matching_targets``, ``active_resources``) are coerced to tuples. YAML
+        requires ``pyyaml`` to be installed; JSON always works.
+        """
+        import json
+
+        text = Path(path).read_text()
+        if str(path).endswith((".yaml", ".yml")):
+            try:
+                import yaml
+            except ImportError as exc:  # pragma: no cover - optional dep
+                raise ImportError(
+                    "YAML config requires pyyaml; use JSON instead"
+                ) from exc
+            data = yaml.safe_load(text) or {}
+        else:
+            data = json.loads(text)
+
+        known = {f.name for f in fields(cls)}
+        unknown = set(data) - known
+        if unknown:
+            raise ValueError(f"unknown config keys: {sorted(unknown)}")
+        for key in ("premium_deltas", "matching_targets", "active_resources"):
+            if key in data and data[key] is not None:
+                data[key] = tuple(data[key])
+        return cls(**data)
