@@ -424,10 +424,15 @@ def build_and_solve(
         cost, col_lower, col_upper, A, row_lower, row_upper
     )
 
-    # Robustness: an infeasible/failed solve can return an empty (or short)
-    # solution vector, which would crash the reshapes below. Substitute zeros so
-    # the sweep survives; the non-"Optimal" status flags the setpoint downstream.
-    if col_value.size != lay.total:
+    # Robustness: an infeasible/failed solve can return an empty (or short, or
+    # garbage last-iterate) solution vector, which would crash the reshapes below
+    # or corrupt the derived metrics. Substitute zeros so the sweep survives; the
+    # non-"Optimal" status flags the setpoint downstream, and solve_ok gates the
+    # derived metrics so an infeasible point can never masquerade as fully matched
+    # / cheaper-than-BAU (it would otherwise report matching_pct=1.0 from the
+    # zeroed grid_buy and premium = -bau/load from the zeroed cost terms).
+    solve_ok = status == "Optimal" and col_value.size == lay.total
+    if not solve_ok:
         col_value = np.zeros(lay.total)
         row_dual = np.zeros(A.shape[0])
 
@@ -484,6 +489,21 @@ def build_and_solve(
     avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
     residual_co2_tons = float(grid_buy.sum()) * config.marginal_co2_ton_per_mwh
 
+    premium_total_per_year = net_cost - bau_cost
+    pct_over_bau = (net_cost - bau_cost) / bau_cost if bau_cost else 0.0
+
+    if not solve_ok:
+        # A failed solve served no load: report 0% matched and a zero premium
+        # rather than metrics derived from the zeroed arrays. bau_cost stays (it
+        # is an input-side fact); status carries the failure downstream.
+        matching_pct = 0.0
+        net_cost = 0.0
+        premium = 0.0
+        shadow = float("nan")
+        avoided_purchase_cost = 0.0
+        premium_total_per_year = 0.0
+        pct_over_bau = 0.0
+
     return PortfolioResult(
         status=status,
         mode=config.mode,
@@ -507,8 +527,8 @@ def build_and_solve(
         surplus_revenue=surplus_revenue,
         avoided_purchase_cost=avoided_purchase_cost,
         capital_cost=capital_cost,
-        premium_total_per_year=net_cost - bau_cost,
-        pct_over_bau=(net_cost - bau_cost) / bau_cost if bau_cost else 0.0,
+        premium_total_per_year=premium_total_per_year,
+        pct_over_bau=pct_over_bau,
         residual_co2_tons=residual_co2_tons,
         split_names=[resources.names[r] for r in split_res_idx],
         build_energy_mwh=build_energy,
