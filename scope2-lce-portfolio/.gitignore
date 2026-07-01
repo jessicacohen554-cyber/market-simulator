@@ -8,6 +8,12 @@ data/outputs/*
 data/sample/sample_load.csv
 data/sample/sample_lmp.csv
 
+# Real per-ISO CF profiles are built from the market-sim data tree by
+# scripts/build_profiles.py (large, reproducible, disposable). The only
+# committed profile is the tiny data-free fixture under tests/fixtures/.
+data/profiles/*
+!data/profiles/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]
