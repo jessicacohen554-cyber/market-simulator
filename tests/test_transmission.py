@@ -1152,7 +1152,7 @@ class TestCaisoBidirIntertie(unittest.TestCase):
 
 
 class TestInterfaceGroups(unittest.TestCase):
-    """Tests for the CAISO aggregate simultaneous-import interface limit."""
+    """Tests for aggregate simultaneous-import interface limits (SIL/SEC)."""
 
     def test_caiso_config_declares_import_cap(self):
         cfg = get_iso_config("CAISO")
@@ -1180,6 +1180,110 @@ class TestInterfaceGroups(unittest.TestCase):
     def test_no_interface_limits_is_empty(self):
         cfg = get_iso_config("ERCOT")
         self.assertEqual(build_interface_groups(cfg.links, cfg.interface_limits), [])
+
+    # --- NEISO HQ_import_simultaneous (baked into _neiso_config) -----------
+
+    def test_neiso_config_declares_hq_import_cap(self):
+        cfg = get_iso_config("NEISO")
+        cfg.validate_topology()
+        self.assertEqual(len(cfg.interface_limits), 1)
+        limit = cfg.interface_limits[0]
+        self.assertEqual(limit.name, "HQ_import_simultaneous")
+        expected_links = {
+            ("HQ_import", "Boston"),
+            ("HQ_import", "North"),
+            ("HQ_import", "Connecticut"),
+        }
+        self.assertEqual(set(tuple(p) for p in limit.links), expected_links)
+        # Aggregate cap (3,850 MW) is below the sum of individual border
+        # TTCs (2,000 + 900 + 1,500 = 4,400 MW).
+        self.assertLess(limit.cap_mw, 4_400.0)
+        self.assertEqual(limit.cap_mw, 3850.0)
+        self.assertTrue(limit.bidirectional)
+
+    def test_neiso_interface_groups_resolve_link_indices(self):
+        cfg = get_iso_config("NEISO")
+        groups = build_interface_groups(cfg.links, cfg.interface_limits)
+        self.assertEqual(len(groups), 1)
+        idx, cap, bidir = groups[0]
+        # The three HQ_import→* links are at the end of the link list.
+        hq_indices = [
+            i for i, ln in enumerate(cfg.links) if ln.from_zone == "HQ_import"
+        ]
+        np.testing.assert_array_equal(np.sort(idx), np.sort(hq_indices))
+        self.assertEqual(cap, 3850.0)
+        self.assertTrue(bidir)
+
+    # --- PJM/MISO/NYISO SIL via extend_with_import_node -------------------
+
+    def test_pjm_extended_has_simultaneous_import_limit(self):
+        cfg = extend_with_import_node(get_iso_config("PJM"))
+        sil = [il for il in cfg.interface_limits if "simultaneous" in il.name]
+        self.assertEqual(len(sil), 1)
+        limit = sil[0]
+        self.assertEqual(limit.name, "PJM_simultaneous_import")
+        self.assertEqual(limit.cap_mw, 10500.0)
+        self.assertTrue(limit.bidirectional)
+        # All border links from PJM_external must be covered.
+        ext_links = {
+            (ln.from_zone, ln.to_zone)
+            for ln in cfg.links
+            if ln.from_zone == "PJM_external"
+        }
+        self.assertEqual(set(tuple(p) for p in limit.links), ext_links)
+        # Cap is below the sum of individual border TTCs.
+        ttc_sum = sum(ln.ttc_mw for ln in cfg.links if ln.from_zone == "PJM_external")
+        self.assertLess(limit.cap_mw, ttc_sum)
+
+    def test_miso_extended_has_simultaneous_import_limit(self):
+        cfg = extend_with_import_node(get_iso_config("MISO"))
+        sil = [il for il in cfg.interface_limits if "simultaneous" in il.name]
+        self.assertEqual(len(sil), 1)
+        limit = sil[0]
+        self.assertEqual(limit.name, "MISO_simultaneous_import")
+        self.assertEqual(limit.cap_mw, 8700.0)
+        self.assertTrue(limit.bidirectional)
+        ext_links = {
+            (ln.from_zone, ln.to_zone)
+            for ln in cfg.links
+            if ln.from_zone == "MISO_external"
+        }
+        self.assertEqual(set(tuple(p) for p in limit.links), ext_links)
+        ttc_sum = sum(ln.ttc_mw for ln in cfg.links if ln.from_zone == "MISO_external")
+        self.assertLess(limit.cap_mw, ttc_sum)
+
+    def test_nyiso_extended_has_simultaneous_import_limit(self):
+        cfg = extend_with_import_node(get_iso_config("NYISO"))
+        sil = [il for il in cfg.interface_limits if "simultaneous" in il.name]
+        self.assertEqual(len(sil), 1)
+        limit = sil[0]
+        self.assertEqual(limit.name, "NYISO_simultaneous_import")
+        self.assertEqual(limit.cap_mw, 4350.0)
+        self.assertTrue(limit.bidirectional)
+        ext_links = {
+            (ln.from_zone, ln.to_zone)
+            for ln in cfg.links
+            if ln.from_zone == "NYISO_external"
+        }
+        self.assertEqual(set(tuple(p) for p in limit.links), ext_links)
+        ttc_sum = sum(ln.ttc_mw for ln in cfg.links if ln.from_zone == "NYISO_external")
+        self.assertLess(limit.cap_mw, ttc_sum)
+
+    def test_pjm_interface_groups_from_extended_config(self):
+        cfg = extend_with_import_node(get_iso_config("PJM"))
+        groups = build_interface_groups(cfg.links, cfg.interface_limits)
+        self.assertEqual(len(groups), 1)
+        idx, cap, bidir = groups[0]
+        ext_indices = [
+            i for i, ln in enumerate(cfg.links) if ln.from_zone == "PJM_external"
+        ]
+        np.testing.assert_array_equal(np.sort(idx), np.sort(ext_indices))
+        self.assertEqual(cap, 10500.0)
+        self.assertTrue(bidir)
+
+    def test_ercot_no_simultaneous_limit_after_extend(self):
+        cfg = extend_with_import_node(get_iso_config("ERCOT"))
+        self.assertEqual(cfg.interface_limits, [])
 
 
 class TestPjmExternalFlowGroups(unittest.TestCase):
