@@ -40,6 +40,7 @@ ALL_DATATYPES = [
     "egrid",
     "unit-outage-events",
     "partial-outages",
+    "capacity-deliverability",
 ]
 
 
