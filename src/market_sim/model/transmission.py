@@ -1808,6 +1808,56 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     return extended
 
 
+def apply_deliverability_seam_limit(
+    iso_config: ISOConfig, iso: str, seam_import_mw: float | None
+) -> ISOConfig:
+    """Replace the import-node simultaneous cap with the measured seam limit.
+
+    Part A of ``ScenarioConfig.capacity_deliverability_limits``: where the ISO
+    publishes a per-area *seam* import limit (CAISO branch-group Maximum Import
+    Capability summed to the WECC boundary — routed to the import node by
+    :mod:`market_sim.config.capacity_area_crosswalk`), that measured value
+    supersedes the calibrated system-wide scalar (the baked-in CAISO
+    ``WECC_import_simultaneous`` cap, or the
+    :data:`~market_sim.config.interchange_config.EXTERNAL_SIMULTANEOUS_LIMITS`
+    entry appended by :func:`extend_with_import_node`).
+
+    The simultaneous-import :class:`InterfaceLimit` is identified structurally as
+    the one whose every link originates at the import node, so this is
+    ISO-agnostic. A no-op (returns ``iso_config`` unchanged) when
+    ``seam_import_mw`` is ``None``/non-positive, the ISO has no import node, or
+    no matching interface limit exists. Preferring the published limit over the
+    fitted scalar can loosen the cap and move the backcast (repo rule #12); that
+    is expected — the mechanism stays and any residual is a root-cause note.
+
+    Args:
+        iso_config: The (possibly import-node-extended) ISO topology.
+        iso: Model ISO name.
+        seam_import_mw: Summed per-area seam import limit in MW.
+
+    Returns:
+        ``iso_config`` with the simultaneous-import cap replaced, or unchanged.
+    """
+    if seam_import_mw is None or seam_import_mw <= 0.0:
+        return iso_config
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return iso_config
+    new_limits: list[InterfaceLimit] = []
+    replaced = False
+    for lim in iso_config.interface_limits:
+        if lim.links and all(pair[0] == zone for pair in lim.links):
+            new_limits.append(lim.model_copy(update={"cap_mw": float(seam_import_mw)}))
+            replaced = True
+        else:
+            new_limits.append(lim)
+    if not replaced:
+        return iso_config
+    extended = iso_config.model_copy(update={"interface_limits": new_limits})
+    extended.validate_topology()
+    return extended
+
+
 def build_pjm_external_flow_groups(
     links: list[TransferLink],
     import_cap: np.ndarray,

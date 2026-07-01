@@ -66,8 +66,10 @@ from market_sim.config.constants import (
     VOM,
     WRIGHT_REFERENCE_GW,
 )
+from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
 from market_sim.data.hydrogen import compute_h2_fuel_cost
@@ -276,6 +278,105 @@ def capacity_revenue_per_mw_yr(iso: str, eford: float) -> float:
     return design.net_cone_per_kw_yr * 1000.0 * ucap
 
 
+# A zone whose deliverable firm capacity exceeds its locational requirement by
+# more than this fraction is treated as RA-saturated (the marginal capacity
+# payment there collapses). Small positive band so a zone sitting exactly at its
+# requirement still earns the full capacity payment. Structural gate, not a
+# fitted lever — see ScenarioConfig.capacity_deliverability_limits.
+_DELIVERABILITY_LONG_BAND: float = 0.0
+
+
+def deliverability_headroom_by_zone(
+    iso: str,
+    year: int,
+    fleet: list[Generator],
+    config: ScenarioConfig,
+    wind_pool_by_zone: dict[str, float] | None = None,
+    solar_pool_by_zone: dict[str, float] | None = None,
+    storage_firm_by_zone: dict[str, float] | None = None,
+) -> dict[str, float]:
+    """Return ``{zone: deliverable_firm_MW - requirement_MW}`` per model zone.
+
+    The locational adequacy signal behind
+    ``config.capacity_deliverability_limits``. For each model zone that carries a
+    published capacity *requirement* (crosswalked from the ISO's LDA/LRZ/
+    locality/local-area rows), the deliverable firm capacity is the accredited
+    (ELCC/UCAP) capacity physically in the zone plus the crosswalked
+    *import_limit* into it. A positive headroom means the zone is **long** (RA
+    already met, so the next unit's capacity payment should collapse); a negative
+    headroom means the zone is **short** (locational need).
+
+    Returns an empty dict — a total no-op — when the flag is off, the ISO has no
+    clean partition, or no zone carries a requirement, so callers gate cleanly.
+
+    Args:
+        iso: Model ISO name.
+        year: Model calendar year (resolved to the ISO's delivery-year label).
+        fleet: Current generator fleet; each unit's zone and accreditation
+            (``RENEWABLE_CAPACITY_CREDIT`` or ``1 - EFORd``) feed the firm sum.
+        config: Scenario config (the flag lives here).
+        wind_pool_by_zone, solar_pool_by_zone: Zonal renewable pool MW (bounds of
+            the ``W``/``S`` dispatch variables), credited at their capacity
+            credit. Optional.
+        storage_firm_by_zone: Pre-accredited storage ELCC MW per zone. Optional.
+
+    Returns:
+        ``{zone: headroom_MW}`` over the zones that carry a requirement.
+    """
+    if not config.capacity_deliverability_limits:
+        return {}
+    delivery_year = capdel.resolve_delivery_year(iso, year)
+    season = capdel.resolve_season(iso)
+    req_area = capdel.requirement_by_area(iso, delivery_year, season)
+    if not req_area:
+        return {}
+    imp_area = capdel.import_limit_by_area(iso, delivery_year, season)
+    req_types = capdel.area_types_by_area(iso, delivery_year, season, "requirement")
+    imp_types = capdel.area_types_by_area(iso, delivery_year, season, "import_limit")
+
+    req_by_zone, _ = aggregate_by_zone(iso, req_area, req_types)
+    imp_by_zone, _ = aggregate_by_zone(iso, imp_area, imp_types)
+
+    # Accredited firm capacity physically in each zone, from the fleet plus the
+    # zonal renewable pools and any pre-accredited storage ELCC.
+    firm_by_zone: dict[str, float] = {}
+    for g in fleet:
+        credit = RENEWABLE_CAPACITY_CREDIT.get(g.fuel_type)
+        accredited = g.pmax_mw * (
+            credit if credit is not None else 1.0 - float(g.eford)
+        )
+        firm_by_zone[g.zone] = firm_by_zone.get(g.zone, 0.0) + accredited
+    for zone, mw in (wind_pool_by_zone or {}).items():
+        firm_by_zone[zone] = (
+            firm_by_zone.get(zone, 0.0) + mw * RENEWABLE_CAPACITY_CREDIT["wind"]
+        )
+    for zone, mw in (solar_pool_by_zone or {}).items():
+        firm_by_zone[zone] = (
+            firm_by_zone.get(zone, 0.0) + mw * RENEWABLE_CAPACITY_CREDIT["solar"]
+        )
+    for zone, mw in (storage_firm_by_zone or {}).items():
+        firm_by_zone[zone] = firm_by_zone.get(zone, 0.0) + mw
+
+    headroom: dict[str, float] = {}
+    for zone, requirement in req_by_zone.items():
+        deliverable = firm_by_zone.get(zone, 0.0) + imp_by_zone.get(zone, 0.0)
+        headroom[zone] = deliverable - requirement
+    return headroom
+
+
+def _zone_is_long(headroom: dict[str, float] | None, zone: str) -> bool:
+    """Whether ``zone`` is RA-saturated (deliverable clears requirement).
+
+    ``None``/empty headroom (flag off or no data) is never long, so the capacity
+    payment is untouched — the gate is a strict no-op unless the mechanism is on
+    and the zone actually carries a satisfied requirement.
+    """
+    if not headroom or zone not in headroom:
+        return False
+    requirement_scale = abs(headroom[zone]) + 1.0
+    return headroom[zone] > _DELIVERABILITY_LONG_BAND * requirement_scale
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -287,6 +388,7 @@ def apply_economic_retirements(
     rps_shadow_price: float = 0.0,
     mc: np.ndarray | None = None,
     storage_power_mw: float = 0.0,
+    deliverability_headroom: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -394,7 +496,12 @@ def apply_economic_retirements(
         # ISO-NE/CAISO a unit earns a capacity revenue stream that can cover
         # fixed cost even when energy margin is negative, so omitting it
         # over-retires thermal capacity there. Zero in energy-only ERCOT.
-        net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(config.iso, g.eford)
+        # Locational gate: when capacity_deliverability_limits is on, a unit in a
+        # zone already long on deliverable firm capacity vs its requirement earns
+        # NO capacity payment (RA saturated there), so surplus in a long zone
+        # retires as it should while short zones keep their units.
+        if not _zone_is_long(deliverability_headroom, g.zone):
+            net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(config.iso, g.eford)
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
         # income stream the energy-only LP cannot produce. Zero unless
@@ -936,6 +1043,7 @@ def apply_economic_new_entry(
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
     storage_power_mw: float = 0.0,
+    deliverability_headroom: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -1010,6 +1118,11 @@ def apply_economic_new_entry(
     queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
     per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW[iso_config.name]
     zone = max(iso_config.zones, key=lambda z: z.load_share).name
+    # Locational gate: new thermal built into a zone already long on deliverable
+    # firm capacity vs its requirement earns no capacity payment (RA saturated
+    # there), so new entry is not pulled forward where the zone is already
+    # adequate. No-op unless capacity_deliverability_limits is on.
+    build_zone_long = _zone_is_long(deliverability_headroom, zone)
 
     margins: list[tuple[float, str]] = []
     for tech in _new_entry_candidates(year, config, iso_config.name):
@@ -1082,9 +1195,14 @@ def apply_economic_new_entry(
             fixed_cost = (capex_per_kw * crf + costs["fom_per_kw_yr"]) * 1000.0
             # Module M1 capacity payment (0 in ERCOT) + ERCOT AS revenue, the
             # same streams credited in the retirement screen above.
+            capacity_payment = (
+                0.0
+                if build_zone_long
+                else capacity_revenue_per_mw_yr(iso_config.name, EFORD.get(tech, 0.05))
+            )
             effective_revenue = (
                 energy_margin
-                + capacity_revenue_per_mw_yr(iso_config.name, EFORD.get(tech, 0.05))
+                + capacity_payment
                 + as_revenue_per_mw_yr(tech, storage_power_mw, config)
             )
             margin = effective_revenue - fixed_cost
@@ -1502,6 +1620,32 @@ def evolve_fleet(
         fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
     )
 
+    # Locational deliverability headroom per zone (empty no-op unless
+    # capacity_deliverability_limits is on and the ISO has clean data). Prior-
+    # year renewable pools / storage ELCC are ISO totals; distribute them across
+    # zones by load_share so the firm-capacity sum is zonal. Computed once on the
+    # entering fleet and shared by the retirement and new-entry screens.
+    deliverability_headroom: dict[str, float] = {}
+    if config.capacity_deliverability_limits:
+        iso_config = get_iso_config(config.iso)
+        wind_total = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
+        solar_total = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
+        storage_total = float(_prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0)
+        wind_by_zone = {z.name: wind_total * z.load_share for z in iso_config.zones}
+        solar_by_zone = {z.name: solar_total * z.load_share for z in iso_config.zones}
+        storage_by_zone = {
+            z.name: storage_total * z.load_share for z in iso_config.zones
+        }
+        deliverability_headroom = deliverability_headroom_by_zone(
+            config.iso,
+            year,
+            fleet,
+            config,
+            wind_pool_by_zone=wind_by_zone,
+            solar_pool_by_zone=solar_by_zone,
+            storage_firm_by_zone=storage_by_zone,
+        )
+
     # 2. Economic retirements (needs the prior-year dispatch).
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
         fleet, loss_tracker = apply_economic_retirements(
@@ -1515,6 +1659,7 @@ def evolve_fleet(
             rps_shadow_price=rps_shadow_price,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
+            deliverability_headroom=deliverability_headroom,
         )
 
     # 3. Known additions: planned units coming online this year.
@@ -1548,6 +1693,7 @@ def evolve_fleet(
             gas_price_per_mmbtu=gas_price_per_mmbtu,
             carbon_price=carbon_price,
             storage_power_mw=storage_power_mw,
+            deliverability_headroom=deliverability_headroom,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
