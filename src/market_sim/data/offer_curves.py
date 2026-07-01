@@ -8,7 +8,12 @@ visualization for the calibration dashboard.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from market_sim.config.scenarios import ScenarioConfig
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 # ---------------------------------------------------------------------------

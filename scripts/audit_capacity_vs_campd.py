@@ -451,7 +451,6 @@ def run_audit(year: int, iso_filter: str | None = None) -> pd.DataFrame:
         # Classify root causes
         causes = []
         for _, r in over.iterrows():
-            pid = int(r["plant_id"])
             if r["peak_vs_total_nameplate"] > 1.05:
                 # CAMPD grossly exceeds nameplate -> likely CAMPD data issue
                 # or facility ID summing wrong plant
