@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-01T19:14:20",
+  "timestamp": "2026-07-01T19:33:00",
   "iso": "CAISO",
   "years": [
     2023,
@@ -96,7 +96,7 @@
   "caiso_gas_floor_frac": null,
   "caiso_ra_mustoffer": null,
   "caiso_ra_min_load_frac": null,
-  "caiso_ra_startup_bridge": false,
+  "caiso_ra_startup_bridge": true,
   "reliability_floor": null,
   "caiso_solar_deliverability": null,
   "caiso_solar_deliverability_k": null,

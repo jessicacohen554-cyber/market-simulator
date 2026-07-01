@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-01T19:14:20",
+  "timestamp": "2026-07-01T19:33:00",
   "git": {
     "sha": "0c7b44f",
     "branch": "claude/caiso-44-startup-bridge-vbsilo",
@@ -7,7 +7,7 @@
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "CAISO fixed RA bridge, startup off (before)",
+  "model_changes_note": "CAISO startup-cost-aware RA bridge (keeper-eligible midday-length mechanism)",
   "calibration_flags": {
     "iso": "CAISO",
     "years": [
@@ -197,7 +197,7 @@
     "caiso_gas_floor_frac": 0.8,
     "caiso_ra_mustoffer": true,
     "caiso_ra_min_load_frac": 0.26,
-    "caiso_ra_startup_bridge": false,
+    "caiso_ra_startup_bridge": true,
     "neiso_gas_coldsnap_derate": false,
     "neiso_gas_derate_t0_c": -7.0,
     "neiso_gas_derate_slope_per_c": 0.018,
