@@ -114,16 +114,23 @@ def test_split_storage_parsing() -> None:
         assert res.duration_max_h[i] > res.duration_min_h[i]
 
 
-def test_split_storage_lp_guard() -> None:
-    """Activating a split resource makes the LP raise NotImplementedError."""
+def test_split_storage_lp_solves() -> None:
+    """Activating a split resource now solves (PP-02b, ADR 0006) — no longer raises.
+
+    Replaces the former NotImplementedError guard test: split-storage LP support
+    landed in PP-02b, so a split resource must build and solve. Deeper split
+    behavior (interior duration, bound binding, cost arithmetic) is covered in
+    tests/test_lp_extensions.py.
+    """
     res = load_resource_arrays(PortfolioConfig(active_resources=("ldes",)))
     T = 24
     load = np.full(T, 100.0)
     lmp = np.full(T, 40.0)
     cf = np.zeros((res.n_res, T))
     cfg = PortfolioConfig(hours=T, active_resources=("ldes",))
-    with pytest.raises(NotImplementedError):
-        build_and_solve(cfg, res, load, lmp, cf, setpoint=10.0)
+    r = build_and_solve(cfg, res, load, lmp, cf, setpoint=10.0)
+    assert r.status == "Optimal"
+    assert "ldes" in r.split_names
 
 
 # --- per-ISO caps & eligibility (ADR 0009) ---------------------------------
