@@ -13,6 +13,25 @@ def test_valid_defaults() -> None:
     assert cfg.mode == "premium_cap"
 
 
+def test_excess_sale_fraction_default_is_haircut() -> None:
+    """ADR 0005: excess_sale_fraction default is 0.75, not full resale."""
+    assert PortfolioConfig().excess_sale_fraction == 0.75
+
+
+def test_new_fields_defaults_and_validation() -> None:
+    """eac_premium_mwh / additionality_only default empty/False and validate."""
+    cfg = PortfolioConfig()
+    assert cfg.eac_premium_mwh == {}
+    assert cfg.additionality_only is False
+    # a positive premium is accepted; a negative one is rejected.
+    ok = PortfolioConfig(eac_premium_mwh={"nuclear_existing": 5.0})
+    assert ok.eac_premium_mwh["nuclear_existing"] == 5.0
+    import pytest
+
+    with pytest.raises(ValueError):
+        PortfolioConfig(eac_premium_mwh={"nuclear_existing": -1.0})
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [
