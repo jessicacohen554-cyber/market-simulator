@@ -478,12 +478,63 @@ def compute_commitment(
     return committed
 
 
+def _ra_bridge_unit_params(
+    gen: Generator, heat_rate: float
+) -> tuple[float, float] | None:
+    """Return ``(min_down_hours, startup_per_mw)`` for the RA must-offer bridge.
+
+    The bridge needs a unit's PHYSICAL minimum-down time and per-MW startup cost.
+    A legacy per-plant generator gets both from :func:`_commitment_params` (the
+    per-fuel heat-rate table). A CAISO per-plant CAMPD **tranche**, however,
+    carries ``min_run_hours = min_down_hours = 0`` on its bins (the tranche
+    artifact never computed them), so ``_commitment_params`` returns ``None`` and
+    the bridge would be silently inert. For such a bin the min-down is instead
+    read from the same per-fuel class table by heat rate — a class-physical,
+    forward-derivable property, no measured pin — and the startup cost is taken
+    from the bin. Only the base (``committed``) tranche carries a startup cost;
+    the incremental ``econ``/``peak`` tranches have ``startup_per_mw = 0`` and are
+    rejected here (returning ``None``) so the bridge never floors above the
+    plant's minimum stable load (which would pad midday gas). Returns ``None``
+    when the unit has no class commitment params (a non-thermal fuel) or is a
+    binned incremental tranche.
+    """
+    params = _commitment_params(gen, heat_rate)
+    if params is not None and float(params["min_down_hours"]) > 0.0:
+        return float(params["min_down_hours"]), float(params["startup_per_mw"])
+    # Binned tranche (min-down zeroed on the bin): fall back to the per-fuel
+    # class table for the physical min-down.
+    table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
+    if table is None:
+        return None
+    base = None
+    for cutoff, p in table:
+        if heat_rate < cutoff:
+            base = p
+            break
+    if base is None:
+        base = table[-1][1]
+    min_down = float(base["min_down_hours"])
+    if min_down <= 0.0:
+        return None
+    startup = float(getattr(gen, "startup_cost_per_mw", 0.0))
+    # A binned incremental tranche (econ/peak, startup 0) is not a committable
+    # base band — never floor it.
+    if getattr(gen, "is_campd_bin", False) and startup <= 0.0:
+        return None
+    if startup <= 0.0:
+        startup = float(base["startup_per_mw"])
+    return min_down, startup
+
+
 def caiso_ra_mustoffer_min_gen(
     p1_dispatch: np.ndarray,  # (n_gen, T) — the economic P1 dispatch
     fleet_arrays: FleetArrays,
     generators: list[Generator],  # fleet list aligned with p1_dispatch rows
     min_load_frac: float,
     run_threshold_frac: float = 0.05,
+    p1_prices: np.ndarray | None = None,  # (n_zones, T) — the P1 dual (LMP)
+    base_mc: np.ndarray | None = None,  # (n_gen, T) — fuel+VOM+CARB MC, no markup
+    startup_bridge: bool = False,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -514,6 +565,26 @@ def caiso_ra_mustoffer_min_gen(
     committed unit cold; the midday ~$0 price must come from real oversupply
     (solar/imports — Lever D), not from this floor.
 
+    **Startup-restart-economics extension** (``startup_bridge``): the plain bridge
+    above floors only a gap SHORTER than min-down (a physical restart bar). A real
+    unit-commitment keeps a CC online across a gap that is *longer* than min-down
+    too, whenever the startup cost it would re-pay to restart for the evening ramp
+    exceeds the fuel it saves by cycling off. The LP, ramping a continuous
+    variable from zero, pays no startup cost and over-cycles the spring belly. With
+    ``startup_bridge`` on, a gap ``≥ min_down`` is ALSO floored when cycling is
+    uneconomic per the standard restart inequality::
+
+        startup_per_mw  >  (MC − LMP_gap) × min_load_frac × gap_hours
+
+    The RHS is the *net* cost per MW of capacity of holding at min-load through the
+    gap: the min-load energy is not spilled, it displaces the marginal import/gas
+    at the gap-hour LMP, so the net cost is ``(MC − LMP)`` per MWh, not full ``MC``.
+    When gas is near-marginal (``MC ≈ LMP``) the RHS collapses toward zero and even
+    a small startup cost holds the unit online — why real CAISO keeps ~6.8 GW gas
+    committed through the deep spring belly. Both ``MC`` (the unit's own marginal
+    cost) and ``LMP`` (the model's own P1 dual) are forward-derivable — no measured
+    generation enters, so the extension is keeper-eligible (unlike the NG:NG pin).
+
     Args:
         p1_dispatch: The economic P1 dispatch, ``(n_gen, T)``.
         fleet_arrays: The vectorized fleet, for ``pmax``/``availability``/``heat_rate``.
@@ -521,37 +592,88 @@ def caiso_ra_mustoffer_min_gen(
         min_load_frac: Minimum stable load as a fraction of available capacity.
         run_threshold_frac: A unit counts as running when its dispatch exceeds
             this fraction of ``pmax`` (matches the markup run detector).
+        p1_prices: The P1 clearing prices (LMP duals), ``(n_zones, T)``. Required
+            when ``startup_bridge`` is on; used as ``LMP_gap`` in the restart
+            inequality.
+        base_mc: The base marginal cost (fuel + VOM + CARB, NO startup markup),
+            ``(n_gen, T)``. Required when ``startup_bridge`` is on; used as ``MC``
+            in the restart inequality.
+        startup_bridge: When True, also floor a gap ``≥ min_down`` whose cycle is
+            uneconomic per the restart inequality above. Default False reproduces
+            the physical-only bridge byte-identically.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
         ``min_load_frac`` is non-positive.
+
+    Raises:
+        ValueError: If ``startup_bridge`` is True but ``p1_prices`` or ``base_mc``
+            is None (the restart economics cannot be evaluated).
     """
     n_gen, T = p1_dispatch.shape
     floor = np.zeros((n_gen, T), dtype=float)
     if min_load_frac <= 0.0:
         return floor
+    if startup_bridge and (p1_prices is None or base_mc is None):
+        raise ValueError(
+            "caiso_ra_mustoffer_min_gen: startup_bridge requires both p1_prices "
+            "(LMP) and base_mc (MC) to evaluate the restart economics."
+        )
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     avail = np.asarray(fleet_arrays.availability, dtype=float)
+    zone_idx = np.asarray(fleet_arrays.zone_idx)
+    # Plant-total pmax for binned units: the floor is the PLANT's minimum stable
+    # load (min_load_frac × plant_pmax) applied on its base tranche, never a
+    # per-tranche fraction. A plant's tranches share the unit_id prefix (the bin
+    # id), matching apply_commitment_with_coal_pin's committed/econ coupling.
+    plant_pmax: dict[str, float] = {}
+    for g, gen in enumerate(generators):
+        if getattr(gen, "is_campd_bin", False):
+            key = gen.unit_id.rpartition("_")[0]
+            plant_pmax[key] = plant_pmax.get(key, 0.0) + pmax[g]
     for g, gen in enumerate(generators):
         if gen.plant_group not in ("CC_REGULAR", "CT_PEAKER"):
             continue
-        params = _commitment_params(gen, float(fleet_arrays.heat_rate[g]))
-        if params is None:
+        resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
+        if resolved is None:
             continue
-        min_down = float(params["min_down_hours"])
-        if min_down <= 0.0:
-            continue
+        min_down, startup_per_mw = resolved
         threshold = pmax[g] * run_threshold_frac
         runs = find_runs(p1_dispatch[g, :] > threshold)
         if len(runs) < 2:
             continue
-        # Floor every idle gap between two runs shorter than the unit's
-        # minimum-down time: it would have stayed online at min-load there.
+        # The min-load target is the PLANT's minimum stable load; for a binned
+        # base tranche that is min_load_frac × plant_pmax, clipped to the
+        # tranche's own capacity (the LP bound). Legacy per-plant units floor
+        # min_load_frac × their own pmax (the original behaviour, byte-identical).
+        is_bin = getattr(gen, "is_campd_bin", False)
+        floor_pmax = (
+            plant_pmax.get(gen.unit_id.rpartition("_")[0], pmax[g])
+            if is_bin
+            else pmax[g]
+        )
+        target_mw = min(min_load_frac * floor_pmax, pmax[g])
+        zone = int(zone_idx[g])
+        # Floor every idle gap between two committed runs. A gap SHORTER than the
+        # unit's minimum-down time is always bridged (a physical restart bar). A
+        # gap AT/OVER min-down is bridged only under startup_bridge when the
+        # restart is uneconomic (holding at min-load costs less than re-paying the
+        # startup) — the LP-vs-unit-commitment startup-cost gap.
         for (_, end_prev), (start_next, _) in zip(runs[:-1], runs[1:]):
             gap = start_next - end_prev
-            if 0 < gap < min_down:
+            if gap <= 0:
+                continue
+            bridge = gap < min_down
+            if not bridge and startup_bridge and startup_per_mw > 0.0:
+                # Net $/MW-capacity cost of holding at min-load through the gap:
+                # (MC − LMP) × min_load_frac × gap_hours. Averaged over the gap.
+                mc_gap = float(np.mean(base_mc[g, end_prev:start_next]))
+                lmp_gap = float(np.mean(p1_prices[zone, end_prev:start_next]))
+                hold_cost = (mc_gap - lmp_gap) * min_load_frac * gap
+                bridge = startup_per_mw > hold_cost
+            if bridge:
                 floor[g, end_prev:start_next] = (
-                    min_load_frac * pmax[g] * avail[g, end_prev:start_next]
+                    target_mw * avail[g, end_prev:start_next]
                 )
     return floor
 

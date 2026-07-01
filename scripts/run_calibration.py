@@ -1965,6 +1965,7 @@ def run_year(
     caiso_gas_floor_frac: float | None = None,
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
+    caiso_ra_startup_bridge: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     caiso_solar_deliverability: bool | None = None,
@@ -2173,6 +2174,8 @@ def run_year(
         config = config.with_overrides(caiso_ra_mustoffer=caiso_ra_mustoffer)
     if caiso_ra_min_load_frac is not None:
         config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
+    if caiso_ra_startup_bridge is not None:
+        config = config.with_overrides(caiso_ra_startup_bridge=caiso_ra_startup_bridge)
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
     if reliability_floor_overrides is not None:
@@ -4204,11 +4207,19 @@ def _commitment_pass(state: dict, config=None):
 
         from market_sim.model.commitment import caiso_ra_mustoffer_min_gen
 
+        # Startup-cost-aware extension (caiso-44, default off): also bridge a gap
+        # LONGER than min-down when cycling off is uneconomic, using the model's
+        # OWN P1 dual (LMP) and base MC in the restart inequality — no measured
+        # pin. Off => the plain physical (gap < min-down) bridge, byte-identical.
+        startup_bridge = bool(getattr(cfg, "caiso_ra_startup_bridge", False))
         ra_floor = caiso_ra_mustoffer_min_gen(
             p1.dispatch,
             fa,
             fleet,
             float(getattr(cfg, "caiso_ra_min_load_frac", 0.40)),
+            p1_prices=p1.prices if startup_bridge else None,
+            base_mc=state["mc_base"] if startup_bridge else None,
+            startup_bridge=startup_bridge,
         )
         base_min_gen = (
             fa.min_gen
