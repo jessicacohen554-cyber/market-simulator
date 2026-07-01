@@ -44,6 +44,14 @@ DEFAULT_COST_TABLE = _PKG_ROOT / "data" / "lcoe" / "resource_costs.csv"
 DEFAULT_CAPS_TABLE = _PKG_ROOT / "data" / "caps" / "resource_caps.csv"
 DEFAULT_HYDRO_BUDGETS = _PKG_ROOT / "data" / "hydro" / "monthly_budgets.csv"
 
+# Resources whose annual energy is governed by a monthly energy budget rather than
+# a flat CF — existing conventional hydro (ADR 0008, §Hydro). Kept as an explicit
+# set here so the LP can flag budget-constrained resources without a magic string
+# in the matrix builder.
+HYDRO_BUDGET_RESOURCES = ("hydro_existing",)
+
+GWH_TO_MWH = 1000.0  # 1 GWh = 1000 MWh (hydro budgets are stored in GWh)
+
 
 @dataclass(frozen=True)
 class ResourceArrays:
@@ -70,12 +78,16 @@ class ResourceArrays:
     cost_energy_mwhyr: np.ndarray = None  # (n_res,) annualized $/MWh-yr energy capex
     duration_min_h: np.ndarray = None  # (n_res,) min hours (0 if not split)
     duration_max_h: np.ndarray = None  # (n_res,) max hours (0 if not split)
+    # --- existing-resource / additionality flags (ADR 0008) ---------------
+    is_existing: np.ndarray = None  # (n_res,) bool; going-forward PPA (ppa_mwh)
+    is_budget_hydro: np.ndarray = None  # (n_res,) bool; monthly-energy-budget hydro
 
     def __post_init__(self) -> None:
-        """Default the split-storage arrays to zeros/False when omitted.
+        """Default the optional flag arrays to zeros/False when omitted.
 
         Keeps existing callers that build :class:`ResourceArrays` with only the
-        original fields working (the split extensions become all-zero).
+        original fields working (the split-storage and existing-resource
+        extensions become all-zero).
         """
         n = len(self.names)
         if self.is_split is None:
@@ -86,6 +98,10 @@ class ResourceArrays:
             object.__setattr__(self, "duration_min_h", np.zeros(n, dtype=float))
         if self.duration_max_h is None:
             object.__setattr__(self, "duration_max_h", np.zeros(n, dtype=float))
+        if self.is_existing is None:
+            object.__setattr__(self, "is_existing", np.zeros(n, dtype=bool))
+        if self.is_budget_hydro is None:
+            object.__setattr__(self, "is_budget_hydro", np.zeros(n, dtype=bool))
 
     @property
     def n_res(self) -> int:
@@ -180,6 +196,21 @@ def load_hydro_budgets(iso: str, path: Path | None = None) -> np.ndarray:
     return budget
 
 
+def load_hydro_budget_mwh(iso: str, path: Path | None = None) -> np.ndarray | None:
+    """Return the (12,) monthly hydro budget in **MWh** for ``iso``, or ``None``.
+
+    Wraps :func:`load_hydro_budgets` for LP use: converts the stored GWh to MWh
+    (the LP's energy unit) and returns ``None`` — rather than raising — when the
+    ISO has no rows in the budget table. This lets ISOs without a budget entry
+    (e.g. the ``SAMPLE`` ISO) simply skip the hydro-budget constraint (ADR 0008).
+    """
+    src = path or DEFAULT_HYDRO_BUDGETS
+    known_isos = {row["iso"].strip() for row in _read_csv(src)}
+    if iso not in known_isos:
+        return None
+    return load_hydro_budgets(iso, path) * GWH_TO_MWH
+
+
 def _resolve_cap(
     name: str,
     config: PortfolioConfig,
@@ -256,6 +287,7 @@ def load_resource_arrays(
 
     names: list[str] = []
     is_storage, is_split = [], []
+    is_existing, is_budget_hydro = [], []
     fixed_mwyr, vom, cost_energy_mwhyr = [], [], []
     cap_max, cap_min, cf_assumed = [], [], []
     duration_h, duration_min_h, duration_max_h, rte = [], [], [], []
@@ -265,6 +297,8 @@ def load_resource_arrays(
         basis = row["cost_basis"]
         stor = row["category"] in ("storage", "storage_split")
         split = row["cost_basis"] == "split_storage"
+        existing = basis == "ppa_mwh"  # going-forward PPA existing resource
+        budget_hydro = name in HYDRO_BUDGET_RESOURCES
 
         row_fixed = 0.0
         row_vom = _f(row, "vom")
@@ -314,6 +348,8 @@ def load_resource_arrays(
         names.append(name)
         is_storage.append(stor)
         is_split.append(split)
+        is_existing.append(existing)
+        is_budget_hydro.append(budget_hydro)
         fixed_mwyr.append(row_fixed)
         vom.append(row_vom)
         cost_energy_mwhyr.append(row_energy)
@@ -339,4 +375,6 @@ def load_resource_arrays(
         cost_energy_mwhyr=np.array(cost_energy_mwhyr, dtype=float),
         duration_min_h=np.array(duration_min_h, dtype=float),
         duration_max_h=np.array(duration_max_h, dtype=float),
+        is_existing=np.array(is_existing, dtype=bool),
+        is_budget_hydro=np.array(is_budget_hydro, dtype=bool),
     )
