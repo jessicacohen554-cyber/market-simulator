@@ -56,7 +56,7 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 | Module | Responsibility | Status |
 |---|---|---|
 | `config.py` | `PortfolioConfig` dataclass (all knobs) | done (validation + `from_file`) |
-| `resources.py` | resource catalog + LCOE→fixed/vom + caps → `ResourceArrays` | done (seed table) |
+| `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02a: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse; split LP lands PP-02b) |
 | `intake.py` | load read → facility/ISO aggregation → growth | done |
 | `profiles.py` | `(n_res,T)` CF matrix; synthetic now, vendored real later | done (synthetic) |
 | `lp.py` | portfolio LP build + HiGHS solve | done (both modes; infeasible-safe) |
@@ -77,6 +77,9 @@ Run each as a focused session; each ends by writing an ADR to `docs/decisions/`.
 PS-01 pricing/LCOE · PS-02 premium & netting · PS-03 storage costing ·
 PS-04 matching semantics · PS-05 existing-resource treatment · PS-06 caps &
 potential · PS-07 load intake & growth · PS-08 LMP coupling & scenarios.
+**All eight decided 2026-07-01 → ADRs 0004–0011** (see `docs/decisions/`).
+Backlog: PS-09 gas-CC+CCS resource (partial-capture matching credit; not
+gating the current build waves).
 
 ## 8. Prompt packs (build) — `docs/prompt-packs/`
 
