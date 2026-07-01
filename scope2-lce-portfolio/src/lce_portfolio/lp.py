@@ -22,14 +22,20 @@ Two solve modes (see ``docs/01-lp-formulation.md``):
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import highspy
 import numpy as np
 import scipy.sparse as sp
 
-from lce_portfolio.config import PortfolioConfig
-from lce_portfolio.resources import ResourceArrays
+from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
+from lce_portfolio.resources import ResourceArrays, load_hydro_budget_mwh
+
+# Calendar month lengths for a non-leap year (days); Jan..Dec sum to 365. Used to
+# aggregate the 8760 hourly generation columns into 12 monthly sums for the hydro
+# energy-budget constraint (ADR 0008) without any Python loop over hours.
+_MONTH_LEN_DAYS = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
+_HOURS_PER_DAY = 24
 
 
 @dataclass
@@ -61,13 +67,24 @@ class PortfolioResult:
     capital_cost: float = 0.0  # added clean fixed + VOM cost ($/yr)
     premium_total_per_year: float = 0.0  # net_cost − bau_cost ($/yr)
     pct_over_bau: float = 0.0  # premium as a fraction of BAU cost
+    residual_co2_tons: float = 0.0  # grid_buy_mwh × marginal_co2_ton_per_mwh (ADR 0007)
+    # Split-storage (ADR 0006): selected energy capacity (MWh) per split tech, in
+    # storage order restricted to split techs. Empty when no split tech is active.
+    split_names: list[str] = field(default_factory=list)
+    build_energy_mwh: np.ndarray = field(default_factory=lambda: np.zeros(0))
 
 
 class _Layout:
-    """Column offsets for the flat variable vector."""
+    """Column offsets for the flat variable vector.
 
-    def __init__(self, n_res: int, n_sto: int, T: int) -> None:
-        self.n_res, self.n_sto, self.T = n_res, n_sto, T
+    ``build_energy[k]`` (``bev_off``) holds one energy-capacity column per
+    *split* storage tech (``n_split`` of them, ADR 0006); fixed-duration storage
+    has no such column (its energy sizing is ``duration_h × build_mw``). When
+    ``n_split == 0`` the block is empty and the layout is identical to PP-02's.
+    """
+
+    def __init__(self, n_res: int, n_sto: int, T: int, n_split: int = 0) -> None:
+        self.n_res, self.n_sto, self.T, self.n_split = n_res, n_sto, T, n_split
         self.build_off = 0
         self.gen_off = self.build_off + n_res
         self.chg_off = self.gen_off + n_res * T
@@ -75,7 +92,8 @@ class _Layout:
         self.soc_off = self.dis_off + n_sto * T
         self.buy_off = self.soc_off + n_sto * T
         self.exc_off = self.buy_off + T
-        self.total = self.exc_off + T
+        self.bev_off = self.exc_off + T  # split-storage energy-capacity columns
+        self.total = self.bev_off + n_split
 
 
 def _energy_balance(lay: _Layout, storage_idx: np.ndarray):
@@ -123,17 +141,40 @@ def build_and_solve(
     ``setpoint`` is the premium cap ``delta`` ($/MWh) in Mode A, or the matching
     target fraction in Mode B. ``cf`` is the ``(n_res, T)`` capacity-factor
     matrix from :func:`lce_portfolio.profiles.build_cf_matrix`.
-    """
-    # Power/energy-split storage (LDES, hydrogen) needs a separate energy-capacity
-    # decision variable; the PP-02 LP only sizes fixed-duration storage. Split
-    # support lands in PP-02b (ADR 0006).
-    if bool(np.any(resources.is_split)):
-        raise NotImplementedError("split-storage LP support lands in PP-02b")
 
+    **Split-storage sizing (ADR 0006).** LDES and hydrogen carry a separate energy
+    column ``build_energy[k]`` (MWh) costed at ``cost_energy_mwhyr``; the state of
+    charge is bounded by that column (``soc ≤ build_energy``) and the duration is
+    held within ``[duration_min_h, duration_max_h] × build_mw``. Fixed-duration
+    storage keeps ``soc ≤ duration_h × build_mw`` unchanged.
+
+    **Hydro monthly budget (ADR 0008).** Budget-flagged resources (existing hydro)
+    have their generation capped per calendar month at the ISO's monthly energy
+    budget; the constraint is skipped for ISOs without a budget entry.
+
+    **Additionality accounting (ADR 0008).** With ``config.additionality_only`` the
+    generation of *existing* (PPA) resources no longer counts toward hourly
+    matching. The accounting identity is::
+
+        matched_t = load_t − grid_buy_t − Σ_{r∈existing} gen[r,t]
+        matching_pct = Σ_t matched_t / Σ_t load_t
+                     = 1 − (Σ_t grid_buy_t + Σ_{r∈existing} Σ_t gen[r,t]) / Σ_t load_t
+
+    i.e. existing generation is treated exactly like a grid purchase (coefficient
+    +1 alongside ``grid_buy``). Mode A adds that +1 to the matching objective on
+    existing ``gen`` columns; Mode B adds those columns to the matching constraint's
+    buy side. When the toggle is off (default) the term drops and the metric is the
+    PP-02 ``1 − Σ grid_buy / Σ load``.
+    """
     T = config.hours
     n_res, n_sto = resources.n_res, int(resources.is_storage.sum())
     storage_idx = resources.storage_idx  # resource index r for each storage s
-    lay = _Layout(n_res, n_sto, T)
+
+    # --- split-storage bookkeeping (ADR 0006) -------------------------------
+    split_mask_s = resources.is_split[storage_idx]  # (n_sto,) bool over storage s
+    split_res_idx = storage_idx[split_mask_s]  # resource index r per split tech k
+    n_split = int(split_mask_s.sum())
+    lay = _Layout(n_res, n_sto, T, n_split)
 
     if load.shape != (T,) or lmp.shape != (T,) or cf.shape != (n_res, T):
         raise ValueError("load/lmp/cf shapes inconsistent with T and n_res")
@@ -198,13 +239,71 @@ def build_and_solve(
             rupp.append(np.zeros(n_sto * T))
             roff += n_sto * T
 
-        # energy bound: soc[t] - duration*build <= 0
+        # energy bound: soc[t] <= energy capacity.
+        #   fixed-duration storage: soc[t] - duration_h*build_mw <= 0
+        #   split storage (ADR 0006): soc[t] - build_energy[k] <= 0
+        split_pos = np.full(n_sto, -1, dtype=int)  # split-tech column k per storage s
+        split_pos[split_mask_s] = np.arange(n_split)
+        eb_col_s = np.where(
+            split_mask_s,
+            lay.bev_off + np.clip(split_pos, 0, None),
+            lay.build_off + storage_idx,
+        )
+        eb_coef_s = np.where(split_mask_s, -1.0, -resources.duration_h[storage_idx])
         rows += [roff + sidx, roff + sidx]
-        cols += [lay.soc_off + si * T + th, build_cols]
-        data += [np.ones(n_sto * T), -np.repeat(resources.duration_h[storage_idx], T)]
+        cols += [lay.soc_off + si * T + th, np.repeat(eb_col_s, T)]
+        data += [np.ones(n_sto * T), np.repeat(eb_coef_s, T)]
         rlow.append(np.full(n_sto * T, -np.inf))
         rupp.append(np.zeros(n_sto * T))
         roff += n_sto * T
+
+        # duration bounds for split storage (ADR 0006):
+        #   duration_min*build_mw <= build_energy <= duration_max*build_mw
+        if n_split:
+            kk = np.arange(n_split)
+            bev_cols = lay.bev_off + kk
+            bmw_cols = lay.build_off + split_res_idx
+            # min bound: build_energy - duration_min*build_mw >= 0
+            rows += [roff + kk, roff + kk]
+            cols += [bev_cols, bmw_cols]
+            data += [np.ones(n_split), -resources.duration_min_h[split_res_idx]]
+            rlow.append(np.zeros(n_split))
+            rupp.append(np.full(n_split, np.inf))
+            roff += n_split
+            # max bound: build_energy - duration_max*build_mw <= 0
+            rows += [roff + kk, roff + kk]
+            cols += [bev_cols, bmw_cols]
+            data += [np.ones(n_split), -resources.duration_max_h[split_res_idx]]
+            rlow.append(np.full(n_split, -np.inf))
+            rupp.append(np.zeros(n_split))
+            roff += n_split
+
+    # ---- hydro monthly energy budget (ADR 0008) ----
+    # Budget-flagged existing hydro: Σ_{t in month m} gen[r,t] <= budget_mwh[m].
+    # Skipped when the ISO has no budget entry (e.g. SAMPLE) or no budget resource.
+    budget_res_idx = np.flatnonzero(resources.is_budget_hydro)
+    hydro_budget_mwh = (
+        load_hydro_budget_mwh(config.iso) if budget_res_idx.size else None
+    )
+    if budget_res_idx.size and hydro_budget_mwh is not None:
+        if T != HOURS_PER_YEAR:
+            raise ValueError(
+                "hydro monthly-budget constraint requires the full 8760-hour "
+                f"calendar (T={HOURS_PER_YEAR}); got hours={T}"
+            )
+        n_bud = budget_res_idx.size
+        # Month index of each hour from the non-leap calendar (np.repeat, no loop).
+        month_of_hour = np.repeat(np.arange(12), _MONTH_LEN_DAYS * _HOURS_PER_DAY)
+        b = np.repeat(np.arange(n_bud), T)  # budget-resource position 0..n_bud-1
+        res_rep = np.repeat(budget_res_idx, T)  # resource index r
+        t_rep = np.tile(np.arange(T), n_bud)  # hour t
+        month_rep = np.tile(month_of_hour, n_bud)  # month m of each (b, t)
+        rows.append(roff + b * 12 + month_rep)
+        cols.append(lay.gen_off + res_rep * T + t_rep)
+        data.append(np.ones(n_bud * T))
+        rlow.append(np.full(n_bud * 12, -np.inf))
+        rupp.append(np.tile(hydro_budget_mwh, n_bud))
+        roff += n_bud * 12
 
     # ---- premium / matching constraint ----
     sale = config.excess_sale_fraction
@@ -222,16 +321,34 @@ def build_and_solve(
         rows.append(np.full(T, roff))
         cols.append(lay.exc_off + np.arange(T))
         data.append(-sale * lmp)
+        if n_split:  # split-storage energy capex enters the premium budget (ADR 0006)
+            rows.append(np.full(n_split, roff))
+            cols.append(lay.bev_off + np.arange(n_split))
+            data.append(resources.cost_energy_mwhyr[split_res_idx])
         rlow.append(np.array([-np.inf]))
         rupp.append(np.array([setpoint * sum_load + bau_cost]))
         premium_row = roff
         roff += 1
     elif config.mode == "matching_target":
+        # Additionality (ADR 0008): existing-resource generation counts against the
+        # matching budget, i.e. it appears on the constraint's buy side (coef +1).
+        add_existing = config.additionality_only and bool(resources.is_existing.any())
+        ex_idx = (
+            np.flatnonzero(resources.is_existing)
+            if add_existing
+            else np.array([], dtype=int)
+        )
         if config.strict_hourly_matching:
             hours = np.arange(T)
             rows.append(roff + hours)
             cols.append(lay.buy_off + hours)
             data.append(np.ones(T))
+            if add_existing:  # grid_buy[t] + Σ_existing gen[r,t] <= (1-target)*load[t]
+                rows.append(roff + np.tile(hours, ex_idx.size))
+                cols.append(
+                    lay.gen_off + np.repeat(ex_idx, T) * T + np.tile(hours, ex_idx.size)
+                )
+                data.append(np.ones(ex_idx.size * T))
             rlow.append(np.full(T, -np.inf))
             rupp.append((1.0 - setpoint) * load)
             premium_row = roff  # (per-hour; dual not a single scalar)
@@ -240,6 +357,14 @@ def build_and_solve(
             rows.append(np.full(T, roff))
             cols.append(lay.buy_off + np.arange(T))
             data.append(np.ones(T))
+            if add_existing:  # Σ grid_buy + Σ_existing gen <= (1-target)*Σ load
+                rows.append(np.full(ex_idx.size * T, roff))
+                cols.append(
+                    lay.gen_off
+                    + np.repeat(ex_idx, T) * T
+                    + np.tile(np.arange(T), ex_idx.size)
+                )
+                data.append(np.ones(ex_idx.size * T))
             rlow.append(np.array([-np.inf]))
             rupp.append(np.array([(1.0 - setpoint) * sum_load]))
             premium_row = roff
@@ -266,11 +391,25 @@ def build_and_solve(
         # is reachable within budget). A least-cost tiebreak was tried but its
         # tiny mixed-scale coefficients stalled the dual simplex; not worth it.
         cost[lay.buy_off : lay.buy_off + T] = 1.0
+        # Additionality (ADR 0008): existing-resource generation is not matching, so
+        # it is penalized like a grid purchase (coef +1) in the max-matching objective.
+        if config.additionality_only and bool(resources.is_existing.any()):
+            ex_idx = np.flatnonzero(resources.is_existing)
+            ex_gen_cols = (
+                lay.gen_off
+                + np.repeat(ex_idx, T) * T
+                + np.tile(np.arange(T), ex_idx.size)
+            )
+            cost[ex_gen_cols] += 1.0
     else:
         cost[lay.build_off : lay.build_off + n_res] = resources.fixed_mwyr
         cost[lay.gen_off : lay.chg_off] = np.repeat(resources.vom, T)
         cost[lay.buy_off : lay.buy_off + T] = lmp
         cost[lay.exc_off : lay.exc_off + T] = -sale * lmp
+        if n_split:  # split-storage energy capex (ADR 0006)
+            cost[lay.bev_off : lay.bev_off + n_split] = resources.cost_energy_mwhyr[
+                split_res_idx
+            ]
     if n_sto:  # storage throughput tiebreaker (ε = storage_epsilon)
         cost[lay.chg_off : lay.soc_off] += config.storage_epsilon
 
@@ -310,11 +449,22 @@ def build_and_solve(
         else np.zeros((0, T))
     )
     grid_buy = col_value[lay.buy_off : lay.exc_off]
-    excess = col_value[lay.exc_off :]
+    excess = col_value[lay.exc_off : lay.exc_off + T]
+    build_energy = col_value[lay.bev_off : lay.bev_off + n_split]  # (n_split,) MWh
 
-    matching_pct = 1.0 - float(grid_buy.sum()) / sum_load if sum_load else 0.0
+    # Split-storage energy capex ($/yr): cost_energy_mwhyr × built energy MWh.
+    energy_capex = float(resources.cost_energy_mwhyr[split_res_idx] @ build_energy)
+
+    # Matching (ADR 0007/0008): unmatched = grid purchases, plus — under
+    # additionality — existing-resource generation (it does not count as matched).
+    unmatched = float(grid_buy.sum())
+    if config.additionality_only and bool(resources.is_existing.any()):
+        unmatched += float(gen[resources.is_existing].sum())
+    matching_pct = 1.0 - unmatched / sum_load if sum_load else 0.0
+
     net_cost = (
         float(resources.fixed_mwyr @ build_mw)
+        + energy_capex
         + float((resources.vom[:, None] * gen).sum())
         + float(lmp @ grid_buy)
         - sale * float(lmp @ excess)
@@ -325,11 +475,14 @@ def build_and_solve(
     )
 
     # Derived reporting metrics (lmp/load are in scope here).
-    capital_cost = float(resources.fixed_mwyr @ build_mw) + float(
-        (resources.vom[:, None] * gen).sum()
+    capital_cost = (
+        float(resources.fixed_mwyr @ build_mw)
+        + energy_capex
+        + float((resources.vom[:, None] * gen).sum())
     )
     surplus_revenue = sale * float(lmp @ excess)
     avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
+    residual_co2_tons = float(grid_buy.sum()) * config.marginal_co2_ton_per_mwh
 
     return PortfolioResult(
         status=status,
@@ -356,6 +509,9 @@ def build_and_solve(
         capital_cost=capital_cost,
         premium_total_per_year=net_cost - bau_cost,
         pct_over_bau=(net_cost - bau_cost) / bau_cost if bau_cost else 0.0,
+        residual_co2_tons=residual_co2_tons,
+        split_names=[resources.names[r] for r in split_res_idx],
+        build_energy_mwh=build_energy,
     )
 
 

@@ -39,6 +39,7 @@ def frontier_table(sweep: SweepResult) -> pd.DataFrame:
                 "surplus_revenue": r.surplus_revenue,
                 "grid_buy_mwh": r.grid_buy_mwh,
                 "total_load_mwh": r.total_load_mwh,
+                "residual_co2_tons": r.residual_co2_tons,
                 "shadow_price": r.shadow_price,
                 "status": r.status,
             }
@@ -120,19 +121,28 @@ def write_outputs(
 
 
 def summarize(sweep: SweepResult) -> str:
-    """Render a human-readable summary of the sweep frontier and mix."""
+    """Render a human-readable summary of the sweep frontier and mix.
+
+    A residual-carbon column (tCO₂/yr from unmatched grid purchases, ADR 0007) is
+    shown only when the marginal emission rate produced a nonzero residual for at
+    least one sweep point; otherwise the layout matches the pre-carbon summary.
+    """
     setpoint_label = "premium$/MWh" if sweep.mode == "premium_cap" else "target"
+    show_co2 = any(r.residual_co2_tons > 0 for r in sweep.results)
+    co2_head = f" | {'residualCO2(t)':>15}" if show_co2 else ""
     lines = [
         f"LCE portfolio sweep — ISO={sweep.iso} mode={sweep.mode}",
-        f"{'set(' + setpoint_label + ')':>18} | {'matching%':>10} | {'premium$/MWh':>13} | mix (MW)",
-        "-" * 78,
+        f"{'set(' + setpoint_label + ')':>18} | {'matching%':>10} | "
+        f"{'premium$/MWh':>13}{co2_head} | mix (MW)",
+        "-" * (78 + (len(co2_head))),
     ]
     for r in sweep.results:
         mix = ", ".join(
             f"{n}={mw:,.0f}" for n, mw in zip(r.resource_names, r.build_mw) if mw > 1e-3
         )
+        co2_cell = f" | {r.residual_co2_tons:>15,.0f}" if show_co2 else ""
         lines.append(
             f"{r.setpoint:>18.3g} | {r.matching_pct * 100:>9.2f}% | "
-            f"{r.premium:>13.2f} | {mix or '(grid only)'}"
+            f"{r.premium:>13.2f}{co2_cell} | {mix or '(grid only)'}"
         )
     return "\n".join(lines)
