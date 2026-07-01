@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-01-caiso-46-capdel-probe",
+  "label": "caiso 46 capdel probe",
+  "date": "2026-07-01",
+  "shorthand": "caiso-46-capdel-probe",
+  "definition": "(PROBE) capdel A/B vs keeper caiso-42: byte-faithful replay of the keeper meta.json + capacity_deliverability_limits=True as the single delta. Part A live: the calibrated 7,500 MW WECC_import simultaneous-import cap is replaced by the published branch-group MIC sum crosswalked to the WECC_import seam (16,055 / 16,452 / 16,148 MW for 2023/24/25). RESULT: near fit-neutral \u2014 mean LMP \u22120.5 / \u22120.3 / \u22120.1 $/MWh vs keeper (C3a 2023 +48.8%\u2192+47.8%, 2024/25 unchanged), C1/C2/C3b/C5 byte-similar, C4 gas r 0.796\u21920.785 (2023). Live effect concentrates in 2023: net imports exceed the old cap in 744 h (8.5%), peak 11.2 GW, and the model's >$200 tail collapses 107 h\u21920 h (actual 21 h) \u2014 the calibrated cap, not physics, was generating the 2023 scarcity tail. 2024/25 no-op: import tranche capacity (4.3\u20136.1 GW) binds before either cap. Published MIC sum is never approached (slack \u22654.9 GW every hour) \u2014 root-cause note: summed per-branch-group MIC overstates simultaneous capability (parallel WECC paths; rule #12 boundary caveat), so the binding representation lies between the tranche build and the MIC sum. Never a keeper; flag stays default-off.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-01-caiso-46-capdel-probe.js",
+  "bundle": "results/calibration/caiso-capdel-probe"
+}
