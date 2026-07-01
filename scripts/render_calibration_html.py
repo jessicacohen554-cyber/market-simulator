@@ -1223,17 +1223,20 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "series": scar["series"],
                     "reldeployMw": scar["reldeploy"],
                 }
-            # Non-ERCOT scarcity tail (C3c): count hours where the max zonal LMP
+            # Scarcity tail (C3c): count hours where the max zonal LMP
             # exceeds the ISO's threshold (rubric §5 — $200, NYISO/NEISO $300),
             # for the model duals and the actual hub series, stored under the
             # legacy key "hoursGt200" the scorer reads regardless of threshold.
-            # SEPARATE from the ERCOT ORDC path above (which is byte-identical and
-            # untouched). Emitted only when BOTH series are present; left unset
-            # (→ SKIPPED) when the actual file is missing for this ISO-year. The
-            # energy-only LP under-shoots scarcity, so this may score a collapsed
-            # tail (FAIL) — the truthful, expected outcome, not a thing to tune.
+            # For ERCOT with an overlay file the block was set above (with
+            # MAE, overlay tail, provenance); for all other cases — non-ERCOT
+            # ISOs and ERCOT bundles WITHOUT a scarcity overlay file (co-opt
+            # runs where derive_ordc_overlay was never run) — emit the
+            # model-dual + actual tail so C3c scores instead of SKIPPING.
+            # The energy-only LP (or co-opt LP) may under-shoot the actual
+            # scarcity tail — that is the truthful, expected signal, not a
+            # thing to tune.
             iso = meta.get("iso")
-            if iso != "ERCOT":
+            if "ordc" not in run_years[int(year)]:
                 thr = TAIL_THRESHOLD.get(iso, 200.0)
                 actual_hourly = _actual_lmp_hourly(iso, int(year))
                 if actual_hourly is not None and model_price_by_zone:
