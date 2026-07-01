@@ -46,9 +46,15 @@ class PortfolioConfig:
 
     # --- (3) Cost sensitivities --------------------------------------------
     lcoe_sensitivity: str = "mid"
-    """Which cost column to read from the resource table: ``low``/``mid``/``high``."""
+    """Which cost column to read from the resource table: ``low``/``mid``/``high``.
+
+    For ``capex_fixed`` rows this selects the ATB case (low=Advanced,
+    mid=Moderate, high=Conservative capex). For ``ppa_mwh`` existing resources it
+    selects the going-forward energy-cost band."""
     discount_rate: float = 0.07
-    """Reserved for future capital-recovery conversion (see PS-01)."""
+    """Real discount rate ``r`` used in the capital-recovery factor
+    ``CRF = r(1+r)^n / ((1+r)^n - 1)`` that annualizes ATB overnight capex into
+    ``fixed_mwyr`` (ADR 0004). Default 0.07 ≈ NREL ATB real WACC."""
 
     # --- (4) Resource limits & selection -----------------------------------
     active_resources: tuple[str, ...] | None = None
@@ -59,11 +65,25 @@ class PortfolioConfig:
     (the user's 'set a capacity max on nuclear and other resources')."""
     resource_floors_mw: dict[str, float] = field(default_factory=dict)
     """Per-resource existing/committed MW floor (``cap_min``)."""
+    eac_premium_mwh: dict[str, float] = field(default_factory=dict)
+    """Per-resource override ($/MWh) of the ``eac_premium_mwh`` clean-attribute
+    premium column for ``ppa_mwh`` existing resources (ADR 0008). When a resource
+    name is present here its value replaces the table column; absent resources use
+    the table value. Values must be non-negative. Empty ``{}`` = use the table."""
+    additionality_only: bool = False
+    """If True, only *additional* (newly-built) clean supply may count toward
+    hourly matching — existing PPA resources still dispatch but their matched
+    energy is excluded from the CFE accounting (ADR 0008). Parsed and validated
+    now; the matching-accounting behavior it gates lands in PP-02b, so this flag
+    currently has no effect on the LP beyond being carried through the config."""
 
     # --- (5) Premium / netting semantics -----------------------------------
-    excess_sale_fraction: float = 1.0
+    excess_sale_fraction: float = 0.75
     """Fraction of LMP received when selling excess clean generation to the grid.
-    1.0 = full wholesale resale; 0.0 = curtail for free. Finalized in PS-02."""
+    1.0 = full wholesale resale; 0.0 = curtail for free. Default 0.75 applies a
+    basis/cannibalization haircut (ADR 0005, PS-02 provisional): surplus clean
+    output tends to clear when prices are depressed, so it fetches less than the
+    load-weighted LMP."""
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
@@ -96,6 +116,8 @@ class PortfolioConfig:
             raise ValueError("premium_deltas must all be positive")
         if any(not 0.0 <= t <= 1.0 for t in self.matching_targets):
             raise ValueError("matching_targets must all be in [0, 1]")
+        if any(v < 0 for v in self.eac_premium_mwh.values()):
+            raise ValueError("eac_premium_mwh values must be non-negative")
 
     def with_overrides(self, **changes) -> "PortfolioConfig":
         """Return a copy with ``changes`` applied (dataclasses.replace wrapper)."""
