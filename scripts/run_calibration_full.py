@@ -1702,6 +1702,7 @@ def solve_and_persist(
     caiso_ra_min_load_frac: float | None = None,
     caiso_ra_startup_bridge: bool | None = None,
     reliability_floor: bool | None = None,
+    scarcity_price_overlay: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
     caiso_solar_endogenous_spill: bool | None = None,
@@ -1914,6 +1915,7 @@ def solve_and_persist(
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             caiso_ra_startup_bridge=caiso_ra_startup_bridge,
             reliability_floor=reliability_floor,
+            scarcity_price_overlay=scarcity_price_overlay,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
             caiso_solar_endogenous_spill=caiso_solar_endogenous_spill,
@@ -2179,6 +2181,7 @@ def solve_and_persist(
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "caiso_ra_startup_bridge": caiso_ra_startup_bridge,
         "reliability_floor": reliability_floor,
+        "scarcity_price_overlay": scarcity_price_overlay,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
         "caiso_solar_endogenous_spill": caiso_solar_endogenous_spill,
@@ -2373,6 +2376,11 @@ def solve_and_persist(
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
+    if scarcity_price_overlay is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            scarcity_pricing_enabled=scarcity_price_overlay,
+            scarcity_price_overlay=scarcity_price_overlay,
+        )
     if caiso_solar_deliverability is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_solar_deliverability=caiso_solar_deliverability
@@ -5321,6 +5329,21 @@ def main() -> None:
         "flag + a registry entry + a weather file.",
     )
     parser.add_argument(
+        "--scarcity-price-overlay",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Post-solve ORDC scarcity-price overlay: compute a reserve-shortage "
+        "adder from the solved headroom and add it to the prices capacity "
+        "economics see (retirement, new-entry, CCS screens). Sets both "
+        "scarcity_pricing_enabled (master switch) and scarcity_price_overlay "
+        "(ISO eligibility gate) on ScenarioConfig. ORDC/LOLP parameters use "
+        "the per-ISO defaults from ISOConfig.default_scenario_overrides "
+        "(ERCOT: VOLL $5,000, MCL 3,000 MW, sigma 1,400 MW; NEISO: VOLL "
+        "$2,000, MCL 1,200 MW, sigma 900 MW — ISO-NE-grounded). Dispatch, "
+        "volumes and emissions are untouched. Default (unset) keeps the per-ISO "
+        "base config value.",
+    )
+    parser.add_argument(
         "--caiso-solar-deliverability",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6054,6 +6077,7 @@ def main() -> None:
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         caiso_ra_startup_bridge=args.caiso_ra_startup_bridge,
         reliability_floor=args.reliability_floor,
+        scarcity_price_overlay=args.scarcity_price_overlay,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
         caiso_solar_endogenous_spill=args.caiso_solar_endogenous_spill,

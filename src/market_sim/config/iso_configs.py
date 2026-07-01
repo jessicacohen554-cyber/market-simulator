@@ -698,6 +698,29 @@ def _neiso_config() -> ISOConfig:
         links=links,
         interface_limits=interface_limits,
         voll=2000.0,
+        # ISO-NE winter scarcity pricing: the post-solve ORDC overlay
+        # recovers the reserve-shortage price tail the perfect-foresight LP
+        # structurally misses (winter gas-pipeline events drive >$300/MWh
+        # spikes the energy-only dual cannot produce). ISO-NE-grounded params:
+        #   VOLL $2,000 = ISO-NE Tariff §III.1.10.1A energy offer cap
+        #   MCL 1,200 MW ≈ Millstone 3 largest single contingency (1,233 MW
+        #     nameplate; ISO-NE RSP Table 4.1 / NPCC Directory #1)
+        #   sigma 900 MW = ISO-NE Probabilistic Energy Adequacy winter
+        #     reserve-error std dev (load-forecast + forced-outage uncertainty
+        #     in the cold-weather gas-constrained regime; ISO-NE PAF Study
+        #     2022, bounded by the 10-min reserve requirement 1,000-1,200 MW)
+        #   shift 0.0 = no administrative curve shift (ERCOT PUCT orders do
+        #     not apply to ISO-NE)
+        #   multistep_floor False = no OBDRR048 floor (ERCOT-specific)
+        # Still gated by scarcity_pricing_enabled (the master switch).
+        default_scenario_overrides={
+            "scarcity_price_overlay": True,
+            "ordc_voll": 2000.0,
+            "ordc_mcl_mw": 1200.0,
+            "ordc_lolp_sigma_mw": 900.0,
+            "ordc_lolp_shift_sigma": 0.0,
+            "ordc_multistep_floor": False,
+        },
     )
 
 
