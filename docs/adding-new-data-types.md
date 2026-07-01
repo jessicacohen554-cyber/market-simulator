@@ -75,6 +75,14 @@ tree.
 
 ## Wiring into the model (features)
 
+Worked example: `docs/capacity-deliverability-wiring.md` — the 5-ISO
+`capacity-deliverability` datatype's model consumer (`data/capacity_deliverability.py`
+reader, `config/capacity_area_crosswalk.py` per-ISO area→zone resolver
+registry, and the gated `capacity_deliverability_limits` wiring into
+`model/transmission.py`, `model/capacity.py`, `model/storage.py`), including
+how a datatype with mismatched per-ISO granularity gets a documented,
+tested crosswalk instead of a guessed one.
+
 - New behaviour goes behind a **default-OFF** `ScenarioConfig` flag, GATED, so
   keepers are unaffected until the mechanism is validated.
 - Judge a new mechanism on **structural fidelity, not backcast MAE** (rule #1).
