@@ -1700,6 +1700,7 @@ def solve_and_persist(
     caiso_gas_floor_frac: float | None = None,
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
+    caiso_ra_startup_bridge: bool | None = None,
     reliability_floor: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
@@ -1911,6 +1912,7 @@ def solve_and_persist(
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_ra_mustoffer=caiso_ra_mustoffer,
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
+            caiso_ra_startup_bridge=caiso_ra_startup_bridge,
             reliability_floor=reliability_floor,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
@@ -2175,6 +2177,7 @@ def solve_and_persist(
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_ra_mustoffer": caiso_ra_mustoffer,
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
+        "caiso_ra_startup_bridge": caiso_ra_startup_bridge,
         "reliability_floor": reliability_floor,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
@@ -2363,6 +2366,10 @@ def solve_and_persist(
     if caiso_ra_min_load_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ra_min_load_frac=caiso_ra_min_load_frac
+        )
+    if caiso_ra_startup_bridge is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_ra_startup_bridge=caiso_ra_startup_bridge
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
@@ -5289,6 +5296,19 @@ def main() -> None:
         "CC/CT minimum generation). A physical turn-down limit, not a fit.",
     )
     parser.add_argument(
+        "--caiso-ra-startup-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Startup-cost-aware extension of --caiso-ra-mustoffer (caiso-44): "
+        "also hold a merchant CC/CT online at min-load across a midday gap "
+        "LONGER than its min-down time when cycling off is uneconomic, per the "
+        "restart inequality startup_per_mw > (MC - LMP_gap) x min_load_frac x "
+        "gap_hours. MC is the unit's own marginal cost and LMP_gap the model's "
+        "own P1 dual — both forward-derivable, no measured-generation pin, so "
+        "keeper-eligible (unlike the removed NG:NG floor). Requires "
+        "--caiso-ra-mustoffer; CAISO-only; default off (byte-identical).",
+    )
+    parser.add_argument(
         "--reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6032,6 +6052,7 @@ def main() -> None:
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
+        caiso_ra_startup_bridge=args.caiso_ra_startup_bridge,
         reliability_floor=args.reliability_floor,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
