@@ -1,10 +1,10 @@
 {
   "ERCOT": "2026-06-30-24-ct-drag-v1",
-  "PJM": "2026-06-30-pjm-67-relfloor-ccct",
+  "PJM": "2026-07-01-pjm-69-interchange-caps",
   "keepers": [
     "2026-06-30-24-ct-drag-v1",
     "2026-06-30-caiso-41-relfloor-rebuild",
-    "2026-06-30-pjm-67-relfloor-ccct",
+    "2026-07-01-pjm-69-interchange-caps",
     "2026-06-27-nyiso-34-st-tempfloor",
     "2026-06-30-neiso-41-relfloor-rebuild",
     "2026-07-01-miso-31-coal-sigmoid"
