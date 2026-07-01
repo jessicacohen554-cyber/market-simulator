@@ -57,13 +57,14 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 |---|---|---|
 | `config.py` | `PortfolioConfig` dataclass (all knobs) | done (validation + `from_file`) |
 | `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02a: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse; split LP lands PP-02b) |
-| `intake.py` | load read → facility/ISO aggregation → growth | done |
-| `profiles.py` | `(n_res,T)` CF matrix; synthetic now, vendored real later | done (synthetic) |
-| `lp.py` | portfolio LP build + HiGHS solve | done (both modes; infeasible-safe) |
+| `intake.py` | load/LMP read → validation → facility/ISO aggregation → growth | done (PP-01: hard missing-hour/dup errors, `prepare_lmp`, `collapse_zonal_lmp` load-weighted zonal→ISO) |
+| `profiles.py` | `(n_res,T)` CF matrix; real per-ISO Parquet + synthetic fallback | done (PP-03: real path keyed by (iso, year), SAMPLE/fallback synthetic) |
+| `lp.py` | portfolio LP build + HiGHS solve | done (both modes; infeasible-safe; split-storage vars + hydro budget + additionality land PP-02b) |
 | `sweep.py` | parametric sweep driver | done |
-| `outputs.py` | Parquet frontier + build-mix, text summary | done (enriched metrics + run metadata) |
-| `cli.py` / `__main__.py` | CLI entry point | done (`--config`, `--all-isos` batch) |
-| `vendored/` | copied market-sim logic (CF shapes, etc.) | empty (PP-03) |
+| `outputs.py` | Parquet frontier + build-mix, text summary | done (enriched metrics + run metadata; residual CO₂ lands PP-02b) |
+| `cli.py` / `__main__.py` | CLI entry point | done (PP-01: `--config` load_file/lmp_file wiring, clean errors, `--all-isos`) |
+| `vendored/` | copied market-sim logic (CF shapes) | done (PP-03: `renewable_shapes.py`, pinned upstream commit + re-sync header) |
+| `scripts/build_profiles.py` | build per-ISO CF Parquets from the market-sim data tree (no import) | done (PP-03) |
 
 ## 6. Data
 
