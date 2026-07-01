@@ -854,6 +854,39 @@ def _build_new_storage_units(
     return units
 
 
+def _deliverability_capacity_factor(
+    iso_config: ISOConfig,
+    deliverability_headroom: dict[str, float] | None,
+) -> float:
+    """Return the load-share-weighted short-zone fraction for storage RA value.
+
+    Storage new entry distributes across load zones by ``load_share``, so the
+    marginal build's expected capacity value should reflect only the share of it
+    landing in zones still *short* on deliverable firm capacity (headroom < 0).
+    Returns ``1.0`` (no-op) when ``deliverability_headroom`` is empty (flag off /
+    no data) or names no zone; otherwise the sum of ``load_share`` over the
+    short, requirement-carrying zones divided by the total load_share of all
+    zones that carry a requirement. Zones with no requirement are treated as
+    fully creditable (unconstrained), so an ISO with data for only some zones is
+    not penalised on its unmodelled zones.
+    """
+    if not deliverability_headroom:
+        return 1.0
+    priced = 0.0
+    total = 0.0
+    for zone in iso_config.zones:
+        if zone.load_share <= 0.0:
+            continue
+        headroom = deliverability_headroom.get(zone.name)
+        total += zone.load_share
+        # No requirement for this zone → unconstrained, fully creditable.
+        if headroom is None or headroom < 0.0:
+            priced += zone.load_share
+    if total <= 0.0:
+        return 1.0
+    return priced / total
+
+
 def apply_storage_new_entry(
     existing_storage: list[StorageUnit],
     prices: np.ndarray,
@@ -861,6 +894,7 @@ def apply_storage_new_entry(
     config: ScenarioConfig,
     iso: str,
     cumulative: CumulativeDeployment | None = None,
+    deliverability_headroom: dict[str, float] | None = None,
 ) -> list[StorageUnit]:
     """Add storage whose stacked value beats its annualized cost.
 
@@ -885,6 +919,15 @@ def apply_storage_new_entry(
     When ``cumulative`` is supplied, each tech's capex follows a
     Wright's-Law learning curve. Returns the full storage fleet
     (existing + new).
+
+    Locational deliverability gate (``config.capacity_deliverability_limits``):
+    when ``deliverability_headroom`` (``{zone: deliverable_firm - requirement}``)
+    is supplied, each tech's capacity value is scaled by the load-share-weighted
+    fraction of zones that are still *short* (headroom < 0). Storage builds
+    distribute by load_share, so this credits capacity value only for the share
+    of the build landing where the RA requirement is not yet met — the same
+    locational logic as the thermal screens. A no-op (factor 1.0) when the flag
+    is off or no zone is long.
     """
     iso = iso.upper()
     iso_config = get_iso_config(iso)
@@ -897,6 +940,13 @@ def apply_storage_new_entry(
     if budget <= 0.0:
         return fleet
 
+    # Load-share-weighted fraction of the build landing in short (RA-deficient)
+    # zones. 1.0 when the gate is off, no data, or every requirement-carrying
+    # zone is short; < 1.0 when some load-weighted share sits in long zones.
+    deliverability_factor = _deliverability_capacity_factor(
+        iso_config, deliverability_headroom
+    )
+
     margins: list[tuple[float, str]] = []
     for tech_name, tech in STORAGE_TECHS.items():
         revenue = estimate_storage_revenue(
@@ -905,7 +955,10 @@ def apply_storage_new_entry(
             _storage_rte(tech_name, config),
             degradation_cost_per_mwh=_degradation_cost_per_mwh(tech_name, config),
         )
-        capacity_value = estimate_capacity_value(tech_name, existing_mw, config, iso)
+        capacity_value = (
+            estimate_capacity_value(tech_name, existing_mw, config, iso)
+            * deliverability_factor
+        )
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
         # 2023 battery revenue and absent from the energy-arbitrage + capacity
         # value stack above. Saturates on the existing storage fleet, so each
