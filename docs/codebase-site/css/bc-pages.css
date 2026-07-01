@@ -57,6 +57,14 @@
     flex-basis: auto;
     max-height: none;
   }
+  /* Column layout keeps align-items:flex-start, so the main column would size
+     to its widest content (a wide table) and overflow the viewport instead of
+     letting .bc-table-wrap scroll. Pin it to the container width so wide tables
+     scroll inside their own overflow-x wrapper on mobile. */
+  .bc-main {
+    width: 100%;
+    align-self: stretch;
+  }
 }
 
 /* ---------------------------------------------------------------------------
