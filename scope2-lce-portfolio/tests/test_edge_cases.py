@@ -4,7 +4,6 @@ hydro budget so tight it binds in every calendar month.
 
 import numpy as np
 import pandas as pd
-import pytest
 
 from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
 from lce_portfolio.intake import collapse_zonal_lmp
@@ -50,26 +49,21 @@ def test_infeasible_strict_target_with_tiny_caps_zeroes_arrays() -> None:
     assert r.net_cost == 0.0
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: on the infeasible-solve zero-fallback path (lp.py build_and_solve, "
-        "the `if col_value.size != lay.total` branch), matching_pct is computed "
-        "as 1 - grid_buy.sum()/load.sum() from the *zeroed* grid_buy array, so "
-        "an infeasible solve where literally no load was served reports "
-        "matching_pct=1.0 (100%) instead of 0%/NaN. premium/pct_over_bau are "
-        "similarly corrupted (premium=-40, pct_over_bau=-1.0, i.e. it looks "
-        "*cheaper than BAU* and *fully matched* for a scenario that served no "
-        "load at all). A caller that reads matching_pct/premium without first "
-        "checking status=='Optimal' is silently misled into thinking an "
-        "infeasible setpoint is the best result in a sweep."
-    ),
-    strict=True,
-)
 def test_infeasible_solve_reports_zero_matching_not_full_matching() -> None:
+    """A failed solve must not masquerade as fully matched / cheaper-than-BAU.
+
+    (Was an xfail-marked BUG found by PP-07: the zero-fallback arrays flowed
+    into the metric formulas, reporting matching_pct=1.0 and premium=-lmp for a
+    solve that served no load. Fixed by gating the derived metrics on
+    ``solve_ok`` in ``build_and_solve``.)
+    """
     r = _infeasible_tiny_cap_case()
     assert r.status != "Optimal"
     assert r.matching_pct == 0.0
     assert r.premium == 0.0
+    assert r.pct_over_bau == 0.0
+    assert r.premium_total_per_year == 0.0
+    assert r.avoided_purchase_cost == 0.0
 
 
 # --- collapse_zonal_lmp: a zone missing its load row entirely --------------
