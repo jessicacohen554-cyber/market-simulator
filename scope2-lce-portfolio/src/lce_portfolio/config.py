@@ -87,6 +87,11 @@ class PortfolioConfig:
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
+    marginal_co2_ton_per_mwh: float = 0.0
+    """ISO marginal emission rate (tCO₂/MWh) used to attribute residual carbon to
+    unmatched grid purchases (ADR 0007). ``residual_co2_tons = grid_buy_mwh × rate``
+    is reported per sweep point; ``0`` disables residual-carbon reporting. Must be
+    non-negative."""
 
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
@@ -110,6 +115,8 @@ class PortfolioConfig:
             raise ValueError("hours must be positive")
         if self.storage_epsilon < 0:
             raise ValueError("storage_epsilon must be non-negative")
+        if self.marginal_co2_ton_per_mwh < 0:
+            raise ValueError("marginal_co2_ton_per_mwh must be non-negative")
         if self.load_growth_years < 0:
             raise ValueError("load_growth_years must be non-negative")
         if any(d <= 0 for d in self.premium_deltas):
