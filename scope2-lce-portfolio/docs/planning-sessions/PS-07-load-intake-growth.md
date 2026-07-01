@@ -1,4 +1,5 @@
 # PS-07 — Load Intake & Growth
+**DECIDED → [ADR 0010](../decisions/0010-load-intake-growth.md) (2026-07-01)**
 
 **Goal:** finalize the load-intake contract (facility→ISO aggregation) and how
 load growth is applied.

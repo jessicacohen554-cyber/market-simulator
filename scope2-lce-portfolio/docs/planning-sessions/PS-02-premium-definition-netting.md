@@ -1,4 +1,5 @@
 # PS-02 — Premium Definition & Excess-Resale Netting
+**DECIDED → [ADR 0005](../decisions/0005-premium-definition-excess-resale-netting.md) (2026-07-01)**
 
 **Goal:** nail down exactly what "premium above wholesale" means, and how surplus
 clean generation and grid purchases are valued.
