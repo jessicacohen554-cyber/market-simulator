@@ -388,6 +388,56 @@ class TestCaisoRaStartupBridge(unittest.TestCase):
                 p1, fa, gens, min_load_frac=0.40, startup_bridge=True
             )
 
+    def test_binned_fleet_floors_committed_tranche_only(self):
+        # CAISO per-plant CAMPD tranches carry min_run/min_down = 0, so the bridge
+        # must resolve min-down from the class table and floor ONLY the base
+        # (committed, startup>0) tranche at min_load_frac x PLANT pmax — never the
+        # incremental econ tranche (startup=0), which would pad midday gas.
+        def bin_gen(suffix, pmax, startup, hr=7.0):
+            return Generator(
+                unit_id=f"CC_REGULAR_z_p99_{suffix}",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=pmax,
+                pmin_mw=0.0,
+                heat_rate=hr,
+                eford=0.0,
+                plant_group="CC_REGULAR",
+                is_campd_bin=True,
+                startup_cost_per_mw=startup,
+            )
+
+        # One plant: committed (200 MW, startup 50) + econ (300 MW, startup 0).
+        committed = bin_gen("committed", 200.0, 50.0)
+        econ = bin_gen("econc00", 300.0, 0.0)
+        gens = [committed, econ]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=24)
+        # Both tranches run 6-9 and 18-23, cold across the 8h belly 10-17
+        # (> f-class 6h min-down). Uneconomic cycle (MC ~ LMP).
+        disp = np.zeros((2, 24))
+        disp[0, 6:10] = 200.0
+        disp[0, 18:24] = 200.0
+        disp[1, 6:10] = 300.0
+        disp[1, 18:24] = 300.0
+        mc = np.full((2, 24), 35.0)
+        lmp = np.full((1, 24), 33.0)
+        floor = caiso_ra_mustoffer_min_gen(
+            disp,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+        # Committed tranche floored at min_load_frac x PLANT pmax (0.40 x 500 =
+        # 200), clipped to its own 200 MW capacity -> 200 MW across the belly.
+        np.testing.assert_allclose(floor[0, 10:18], 200.0)
+        np.testing.assert_allclose(floor[0, :10], 0.0)
+        # Econ tranche (startup 0) is never floored.
+        np.testing.assert_allclose(floor[1], np.zeros(24))
+
 
 class TestFindRuns(unittest.TestCase):
     """Tests for the consecutive-True segment finder."""
