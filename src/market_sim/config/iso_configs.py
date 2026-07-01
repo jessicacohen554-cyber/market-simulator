@@ -6,7 +6,12 @@ ISO using Pydantic models, plus a factory for retrieving them by name.
 
 from __future__ import annotations
 
+import csv as _csv
+from dataclasses import dataclass
+
 from pydantic import BaseModel, Field
+
+from market_sim.config.paths import REFERENCE_DIR
 
 # Tolerance for the load-share sum check; absorbs floating-point rounding.
 _LOAD_SHARE_TOL = 1e-6
@@ -753,12 +758,6 @@ def get_iso_config(iso_name: str) -> ISOConfig:
     config = builder()
     config.validate_topology()
     return config
-
-
-import csv as _csv
-from dataclasses import dataclass
-
-from market_sim.config.paths import REFERENCE_DIR
 
 
 @dataclass(frozen=True)
