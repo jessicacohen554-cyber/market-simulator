@@ -44,17 +44,18 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
-| lmp | — | — | — | — | — | — |
-| load | — | — | — | — | — | — |
-| ancillary-services | — | — | — | — | — | — |
+| lmp | — | 2023–2025 | 2023–2025 | — | 2023–2025 | 2023–2025 |
+| load | 2015–2026 | 2023–2026 | 2023–2025 | 2023–2025 | 2023–2026 | 2015–2026 |
+| ancillary-services | 2025–2026 | — | 2023–2026 | — | 2023–2026 | — |
 | energy-offers | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — |
-| renewables | — | — | — | — | — | — |
-| validation | — | — | — | — | — | — |
+| generation | 2018–2026 | 2023–2025 | 2022–2026 | 2023–2025 | 2018–2026 | 2018–2026 |
+| renewables | 2023 | 2023–2024 | — | — | — | — |
+| validation | 2021–2025 | 2023–2025 | 2021–2025 | 2023–2025 | 2023–2025 | 2023–2025 |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
 | unit-outage-events | — | — | — | — | — | — |
 | partial-outages | — | — | — | — | — | — |
+| capacity-deliverability | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -64,9 +65,9 @@ snapshot).
 
 | datatype | scope | years |
 |---|---|---|
-| emissions | CAMPD/CEMS, by plant and unit | n/a |
+| emissions | CAMPD/CEMS, by plant and unit | 2023–2025 |
 | outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
-| fleet | EIA-860 / eGRID / master registry | n/a |
+| fleet | EIA-860 / eGRID / master registry | 2023–2025 |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
 | fuel-ercot-ep-gas | ERCOT / TX electric-power consumers | n/a |
@@ -562,3 +563,34 @@ Per-plant CAMPD CF-ceiling partial-outage derate windows. Schema:
 | `outage_start` | `datetime64[ns]` | `local_timestamp` | no | Derate window start (tz-naive, CAMPD local reporting clock). |
 | `outage_stop` | `datetime64[ns]` | `local_timestamp` | no | Derate window end (tz-naive, CAMPD local reporting clock). |
 | `derate_factor` | `float64` | `frac` | no | Multiplicative availability factor during the window (0-1). |
+
+## capacity-deliverability
+
+Per-capacity-area locational capacity requirements and import/export transfer
+limits by delivery period. Schema:
+[`schema/capacity-deliverability.schema.yaml`](schema/capacity-deliverability.schema.yaml).
+
+- **Keys:** `iso`, `area`, `delivery_year`, `season`, `metric`
+- **Reconciles:** PJM CETO/CETL, MISO LRR/LCR/CIL/CEL/ZIA/PRMR, NYISO
+  ICAP-req/LCR%/Bulk-Power-Transmission-Limit/IRM, ISO-NE LSR/MCL/interface
+  import limit/ICR, CAISO LCR `Capacity Needed`/Maximum Import Capability/PRM —
+  onto one canonical metric vocabulary (`requirement`, `import_limit`,
+  `export_limit`, `local_clearing_requirement`, `import_ability`,
+  `system_requirement`), long form keyed by `(iso, area, delivery_year, season,
+  metric)`. ERCOT is excluded (energy-only, no capacity market). See
+  [`docs/capacity-deliverability-wiring.md`](../../docs/capacity-deliverability-wiring.md)
+  for how the model consumes it (area→zone crosswalk, gated
+  `capacity_deliverability_limits`).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO publishing the value (PJM, MISO, NYISO, ISONE, CAISO). |
+| `area` | `string` | `none` | no | Capacity area the value applies to — an LDA (PJM), Local Resource Zone (MISO), locality (NYISO), capacity zone (ISO-NE), local capacity area or intertie/branch group (CAISO), or the system/RTO label for system rows. |
+| `area_type` | `string` | `none` | no | Kind of area: one of lda \| lrz \| locality \| capacity_zone \| local_area \| branch_group \| rto. |
+| `delivery_year` | `string` | `none` | no | Delivery/planning/capability/commitment year the value governs, as a label. Planning-year ISOs use "2025/2026" (June/May, May/April, or June/May per ISO); CAISO uses the calendar study year, e.g. "2025". |
+| `season` | `string` | `none` | no | Season the value applies to: annual \| summer \| fall \| winter \| spring. Only MISO (seasonal since PY2023-24) uses the four seasons; all other ISOs use "annual". |
+| `metric` | `string` | `none` | no | Canonical metric: requirement \| local_clearing_requirement \| import_limit \| export_limit \| import_ability \| system_requirement. (requirement is the CETO analog; import_limit is the CETL analog.) |
+| `value_mw` | `float64` | `mw` | yes | The value in MW. Null when the ISO publishes this metric only as a ratio. |
+| `value_pu` | `float64` | `ratio` | yes | Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a 1.148 LRR per-unit-of-peak). Null for pure-MW metrics. |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
