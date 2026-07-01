@@ -82,6 +82,25 @@ def main() -> None:
         default=None,
         help="solve into this dir instead of the bundle (default: in place)",
     )
+    ap.add_argument(
+        "--set",
+        dest="overrides",
+        action="append",
+        default=[],
+        metavar="KEY=JSON",
+        help="ScenarioConfig override applied on top of the keeper config via "
+        "the generic prb_overrides channel (repeatable), e.g. "
+        "--set capacity_deliverability_limits=true. The value is JSON. Turns "
+        "the byte-faithful replay into a single-delta A/B probe of the keeper "
+        "— pair with --out-dir and --note so the probe never overwrites the "
+        "keeper bundle.",
+    )
+    ap.add_argument(
+        "--note",
+        default=None,
+        help="free-text run note recorded in the new bundle's run_config.json "
+        "(defaults to the BTM-basis replay note)",
+    )
     args = ap.parse_args()
 
     bundle = Path(args.bundle)
@@ -94,6 +113,14 @@ def main() -> None:
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle
+    for spec in args.overrides:
+        key, _, raw = spec.partition("=")
+        if not key or not raw:
+            raise SystemExit(f"--set expects KEY=JSON, got {spec!r}")
+        kwargs.setdefault("prb_overrides", {})
+        kwargs["prb_overrides"][key] = json.loads(raw)
+    if args.note is not None:
+        kwargs["note"] = args.note
     kwargs.setdefault(
         "note",
         "BTM-basis re-solve: byte-faithful replay of the committed keeper "

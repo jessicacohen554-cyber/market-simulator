@@ -210,6 +210,8 @@ results/calibration/*/dispatch/
 results/calibration/*/system.parquet
 # Solve console log — regenerable (the report reproduces via --report DIR); keep bundles slim.
 results/calibration/*/solve.log
+# capdel probe replay-driver console logs (regenerable; the bundle records the config).
+results/calibration/*-capdel-probe.log
 # Storage series and the post-solve RCPF/scarcity overlay outputs (availability
 # reconstruction + scarcity adder) are regenerable from the bundle via
 # scripts/derive_*_rcpf_overlay.py — scratch, never committed.
