@@ -41,6 +41,7 @@ DATATYPES: tuple[str, ...] = (
     "egrid",
     "unit-outage-events",
     "partial-outages",
+    "capacity-deliverability",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
