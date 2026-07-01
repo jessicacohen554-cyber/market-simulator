@@ -1,0 +1,16 @@
+iso,delivery_year,season,area,area_type,metric,value_mw,value_pu,source_doc,source_page
+ISONE,2023/2024,annual,SENE,capacity_zone,requirement,9757,,FCA 14 Info Filing (ER20-___-000),§IV.A.3 p.9 (with Mystic 8&9; without: 9560 MW)
+ISONE,2023/2024,annual,SENE,capacity_zone,import_limit,5700,,FCA 14 Info Filing (ER20-___-000),§IV.A.1 p.8
+ISONE,2023/2024,annual,NNE,capacity_zone,export_limit,8445,,FCA 14 Info Filing (ER20-___-000),§IV.A.3 p.9 (with Mystic 8&9; without: 8375 MW)
+ISONE,2023/2024,annual,Maine,capacity_zone,export_limit,4020,,FCA 14 Info Filing (ER20-___-000),§IV.A.3 p.9 (with Mystic 8&9; without: 3950 MW)
+ISONE,2023/2024,annual,RestOfSystem,rto,system_requirement,32490,,FCA 14 Info Filing (ER20-___-000),p.3 net-ICR (gross ICR 33431 less 941 HQICCs; with Mystic 8&9)
+ISONE,2024/2025,annual,SENE,capacity_zone,requirement,10305,,FCA 15 Info Filing (ER21-___-000),§IV.3 p.9
+ISONE,2024/2025,annual,SENE,capacity_zone,import_limit,5150,,FCA 15 Info Filing (ER21-___-000),§IV.1 p.8-9
+ISONE,2024/2025,annual,NNE,capacity_zone,export_limit,8680,,FCA 15 Info Filing (ER21-___-000),§IV.3 p.9
+ISONE,2024/2025,annual,Maine,capacity_zone,export_limit,4145,,FCA 15 Info Filing (ER21-___-000),§IV.3 p.9
+ISONE,2024/2025,annual,RestOfSystem,rto,system_requirement,33270,,FCA 15 Info Filing (ER21-___-000),p.3 net-ICR (gross ICR 34153 less 883 HQICCs)
+ISONE,2025/2026,annual,SENE,capacity_zone,requirement,9450,,FCA 16 Info Filing (ER22-___-000),§IV.A.3 p.9
+ISONE,2025/2026,annual,SENE,capacity_zone,import_limit,5250,,FCA 16 Info Filing (ER22-___-000),§IV.A.1 p.9
+ISONE,2025/2026,annual,NNE,capacity_zone,export_limit,8555,,FCA 16 Info Filing (ER22-___-000),§IV.A.3 p.9
+ISONE,2025/2026,annual,Maine,capacity_zone,export_limit,4095,,FCA 16 Info Filing (ER22-___-000),§IV.A.3 p.9
+ISONE,2025/2026,annual,RestOfSystem,rto,system_requirement,31645,,FCA 16 Info Filing (ER22-___-000),p.4 net-ICR (gross ICR 32568 less 923 HQICCs)
