@@ -826,9 +826,11 @@ def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
         )
     if len(model_mon) != 12 or len(actual_mon) != 12:
         return _skip("storage_shape", year, "monthly vector length != 12")
-    if any(x is None for x in actual_mon):
+    if any(x is None for x in model_mon) or any(x is None for x in actual_mon):
         return _skip(
-            "storage_shape", year, "actual monthly storage dispatch has missing values"
+            "storage_shape",
+            year,
+            "monthly vector has one or more missing (null) months",
         )
     m = [float(x) for x in model_mon]
     a = [float(x) for x in actual_mon]
