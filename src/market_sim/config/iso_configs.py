@@ -766,12 +766,16 @@ class ReliabilityFloorSpec:
 
     An ISO's floor = a list of limbs in ``RELIABILITY_FLOOR_REGISTRY[iso]``.
     Each limb pins one ``plant_class`` in one ``zone`` at ``floor_pct`` ×
-    available capacity for ALL 24 hours of every day its ``driver`` gate is
-    flagged (no hour-of-day windows). The day gate is:
+    available capacity on every day its ``driver`` gate is flagged. The day
+    gate is:
 
     * ``driver="tmax"`` — hot day ⇔ ``tmax_c > threshold`` (°C)
     * ``driver="tmin"`` — cold day ⇔ ``tmin_c < threshold`` (°C)
     * ``driver="netload"`` — high-stress day ⇔ ``net_load_mw > threshold`` (MW)
+
+    ``start_hour``/``end_hour`` restrict the floor to a sub-daily window
+    (both inclusive, 0-23).  When both are ``None`` the floor binds all 24 h.
+    This models evening-ramp commitment (e.g. NYISO ST_GAS HB14-21 hot-limb).
 
     ``floor_pct = commit_frac × min_stable_pct`` (a structural commitment share
     times the class's physical minimum-stable level — never a measured-CF
@@ -789,6 +793,8 @@ class ReliabilityFloorSpec:
     enabled: bool = True  # toggle this exact (iso, zone, class, driver) limb
     min_event_hours: int = 24  # steam-gas event bridging; 24 = single-day
     distribution: str = "cheapest_first"  # "cheapest_first" or "pro_rata"
+    start_hour: int | None = None  # sub-daily window start (inclusive, 0-23)
+    end_hour: int | None = None  # sub-daily window end (inclusive, 0-23)
 
 
 # Steam classes carry multi-day event bridging by default (a committed boiler
@@ -827,6 +833,8 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                     default_event = (
                         _STEAM_MIN_EVENT_HOURS if cls in _STEAM_CLASSES else 24
                     )
+                    sh_raw = (row.get("start_hour") or "").strip()
+                    eh_raw = (row.get("end_hour") or "").strip()
                     limbs.append(
                         ReliabilityFloorSpec(
                             zone=row["zone"].strip(),
@@ -841,6 +849,8 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                             distribution=(
                                 row.get("distribution") or "cheapest_first"
                             ).strip(),
+                            start_hour=int(sh_raw) if sh_raw else None,
+                            end_hour=int(eh_raw) if eh_raw else None,
                         )
                     )
         registry[iso] = limbs
