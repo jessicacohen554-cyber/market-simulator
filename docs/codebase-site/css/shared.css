@@ -184,7 +184,6 @@ ul, ol {
   height: var(--nav-height);
   background: var(--navy);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
 }
 
 .top-nav__inner {
@@ -195,6 +194,7 @@ ul, ol {
   display: flex;
   align-items: center;
   gap: 0;
+  backdrop-filter: blur(12px);
 }
 
 .top-nav__logo {
