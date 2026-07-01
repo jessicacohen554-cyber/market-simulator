@@ -2479,10 +2479,8 @@ def inject_reliability_floor(
     hours = int(fleet_arrays.availability.shape[1])
     applied = False
 
-    # Pre-compute per-zone net-load (MW, hourly) for netload limbs if inputs
-    # are available. net_load_by_zone[z_idx] = demand[z] - VRE_avail[z].
-    # System net-load is cached separately for drivers keyed to ISO-wide tightness.
-    _net_load_by_zone: dict[int, np.ndarray] = {}
+    # System net-load (demand minus VRE, summed across zones) is computed once
+    # and cached here for "netload" limbs, which key off ISO-wide tightness.
     _system_net_load: np.ndarray | None = None
     _have_netload_inputs = (
         demand is not None
