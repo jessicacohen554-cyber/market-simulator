@@ -2217,6 +2217,42 @@ class ScenarioConfig:
     # market_sim.model.transmission.build_pjm_external_flow_groups.
     pjm_congestion: bool = False
 
+    pjm_seam_flow_limit: bool = False  # PJM reference-price seam: the PJM
+    # analogue of miso_seam_flow_limit. Cap each of PJM's 5 reference-price
+    # seams' (MISO/NYISO/Carolinas/TVA/LGEE) import-band availability at the
+    # MEASURED per-neighbor deliverability envelope from the PJM tie-line file
+    # (border zones summed to neighbor level, per (month × hour-of-day) p90 of
+    # the directed flow; transmission.inject_pjm_seam_flow_limit). Fixes the
+    # structural over-import: the priced seam imports at the interface limit on
+    # every border whenever PJM's LMP exceeds the neighbor's, but in reality
+    # each seam has a bounded deliverable transfer. An ATC/transfer-capability
+    # proxy from the directed-flow series — reproducible for a forward year and
+    # flow-responsive — NOT fitted to the net-MWh residual (rules #1/#12).
+    # Requires --reference-price-interface; PJM-only (no seam map → no-op,
+    # byte-identical for other ISOs). Default off; opt-in per run.
+    pjm_seam_flow_percentile: float | None = None  # Override the per-seam
+    # deliverability percentile used by pjm_seam_flow_limit. None keeps the
+    # constants.PJM_SEAM_FLOW_PERCENTILE default (90). Raising it (e.g. 95)
+    # lifts the deliverability envelope toward the measured upper-tail transfer,
+    # letting the priced seam clear more in tight hours. Still a deliverability
+    # ceiling from the measured directed-flow duration curve, NOT a flow pinned
+    # to the net-MWh residual (rules #1/#12). Used only when pjm_seam_flow_limit
+    # is set; PJM-only; default keeps p90 (byte-identical).
+    pjm_seam_export_limit: bool = False  # PJM reference-price seam: the EXPORT
+    # mirror of pjm_seam_flow_limit. Cap each seam's net EXPORT at the MEASURED
+    # per-neighbor export deliverability envelope (raising the negative-output
+    # export bands' lower bound / min_gen toward 0;
+    # transmission.inject_pjm_seam_flow_limit(direction="export")). Fixes the
+    # structural over-EXPORT: the reference-price interface exports at full TTC
+    # on all 5 seams simultaneously whenever a neighbor's price exceeds PJM's,
+    # producing ~38 TWh net export regardless of actuals, but each seam has a
+    # bounded deliverable export path. An ATC/transfer-capability proxy from the
+    # directed-flow series — reproducible for a forward year and flow-responsive
+    # — NOT fitted to the net-MWh residual (rules #1/#12). Shares the
+    # pjm_seam_flow_percentile knob with the import cap (one p90 envelope, both
+    # directions). Requires --reference-price-interface; PJM-only (no seam map →
+    # no-op, byte-identical). Default off; opt-in.
+
     # Tier 3 (calibration) — ERCOT per-zone gas-hub basis. ERCOT's model zones
     # buy gas off structurally different regional hubs: West/Panhandle on Waha
     # (Permian, a deep takeaway-constrained discount — annual avg ~$0/MMBtu and
@@ -2818,6 +2854,9 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_limit": 1,
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
+    "pjm_seam_flow_limit": 1,
+    "pjm_seam_flow_percentile": 3,
+    "pjm_seam_export_limit": 1,
     "miso_pjm_border_anchor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
