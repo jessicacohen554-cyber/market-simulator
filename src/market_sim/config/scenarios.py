@@ -592,6 +592,22 @@ class ScenarioConfig:
     # minimum generation (one combustion train at minimum; NREL "Power Plant
     # Cycling Costs" 2012; CAISO Master File PMin/PMax). A physical turn-down
     # limit, not a price/volume fit. Only used when caiso_ra_mustoffer is on.
+    caiso_ra_startup_bridge: bool = False  # CAISO RA must-offer STARTUP-COST-AWARE
+    # extension (caiso-44). The plain RA bridge (caiso_ra_mustoffer above) floors a
+    # CC/CT only across a midday idle gap SHORTER than its physical min-down time.
+    # This extends it to ALSO floor a gap LONGER than min-down when cycling off is
+    # uneconomic, per the standard unit-commitment restart inequality:
+    #   startup_per_mw > (MC - LMP_gap) x caiso_ra_min_load_frac x gap_hours
+    # RHS = the NET cost of holding at min-load through the gap: the min-load energy
+    # displaces the marginal import/gas at the gap-hour LMP, so it costs (MC - LMP),
+    # not full MC. When gas is near-marginal (MC ~ LMP) the RHS collapses toward
+    # zero and even a small startup cost holds the unit online — why real CAISO
+    # keeps ~6.8 GW gas committed through the deep spring belly a pure LP over-cycles
+    # (it pays no startup on a continuous ramp). MC is the unit's own marginal cost
+    # and LMP_gap the model's OWN P1 dual — both forward-derivable, NO measured-
+    # generation pin (CLAUDE.md #1/#11), so unlike the removed NG:NG floor this is
+    # keeper-eligible. Default off (byte-identical); requires caiso_ra_mustoffer;
+    # CAISO-only. Toggle with --caiso-ra-startup-bridge.
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -2833,6 +2849,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "caiso_ra_mustoffer": 1,
     "caiso_ra_min_load_frac": 2,
+    "caiso_ra_startup_bridge": 1,
     "reliability_floor": 1,
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
