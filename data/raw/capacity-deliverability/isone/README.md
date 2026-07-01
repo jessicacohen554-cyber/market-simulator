@@ -28,4 +28,6 @@ ICR-Related Values filings restate them.
 
 Required years (backcast): 2023/2024, 2024/2025, 2025/2026.
 
-**DATA NEEDED:** `isone.csv` not yet committed.
+**DATA COMMITTED:** `isone.csv` — 15 rows, 3 CCPs (2023/24–2025/26), sourced from
+FCA 14/15/16 Informational Filings. 2023/24 values are the with-Mystic-8&9
+variant; alternates noted in `source_page`.
