@@ -2026,6 +2026,11 @@ NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
 # deliverability-headroom choice, NOT tuned to the net-MWh target.
 MISO_SEAM_FLOW_PERCENTILE: float = 90.0
 
+# PJM analogue: per-(month × hod) percentile of measured per-neighbor net
+# interchange from the PJM tie-line file (aggregated from border zones to
+# neighbor level via pjm_zonal_interchange_envelope). Same convention as MISO.
+PJM_SEAM_FLOW_PERCENTILE: float = 90.0
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
