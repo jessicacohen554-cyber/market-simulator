@@ -665,11 +665,40 @@ def _neiso_config() -> ISOConfig:
         #     Northport–Norwalk (200 MW) + the NY–NE AC interface (~950).
         TransferLink(from_zone="HQ_import", to_zone="Connecticut", ttc_mw=1500.0),
     ]
+    # Simultaneous Import Limit across all HQ_import border links.
+    # The three border links (HQ_import→Boston 2,000 + HQ_import→North 900 +
+    # HQ_import→Connecticut 1,500 = 4,400 MW sum of individual TTCs) share
+    # upstream Hydro-Québec export capacity and New England import interface
+    # capability. The aggregate simultaneous import is ~3,850 MW — the ICR
+    # (Installed Capacity Requirement) tie-benefit assessment ceiling and the
+    # sustained simultaneous import capability across all external ties.
+    # Source: ISO-NE Capacity, Energy, Loads, and Transmission (CELT) Report;
+    # ISO-NE Installed Capacity Requirement (ICR) / Regional System Plan (RSP)
+    # tie-benefit analysis; ISO-NE Forward Capacity Market qualification rules.
+    # Tier 3 (calibration).
+    interface_limits = [
+        InterfaceLimit(
+            name="HQ_import_simultaneous",
+            links=[
+                ("HQ_import", "Boston"),
+                ("HQ_import", "North"),
+                ("HQ_import", "Connecticut"),
+            ],
+            cap_mw=3850.0,
+            bidirectional=True,
+        ),
+    ]
     # ISO-NE energy offer cap is $2,000/MWh. ISO-NE has a Forward
     # Capacity Market (FCM) providing capacity revenue outside the energy
     # market, so the energy-only VOLL sits below ERCOT's $5,000.
     # Source: ISO-NE Tariff §III.1.10.1A; FERC Order 831.
-    return ISOConfig(name="NEISO", zones=zones, links=links, voll=2000.0)
+    return ISOConfig(
+        name="NEISO",
+        zones=zones,
+        links=links,
+        interface_limits=interface_limits,
+        voll=2000.0,
+    )
 
 
 _ISO_BUILDERS = {

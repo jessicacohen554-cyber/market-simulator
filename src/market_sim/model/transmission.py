@@ -35,6 +35,7 @@ from market_sim.config.interchange_config import (
     CAISO_PER_HUB_IMPORT_ZONES,
     CAISO_PER_HUB_NEIGHBORS,
     EXPORT_TRANCHES,
+    EXTERNAL_SIMULTANEOUS_LIMITS,
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHE_EF,
@@ -1751,6 +1752,16 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     the ISO has no import node configured or the zone is already part of
     the topology (CAISO bakes ``WECC_import`` into ``_caiso_config``).
 
+    When the ISO has an entry in
+    :data:`~market_sim.config.interchange_config.EXTERNAL_SIMULTANEOUS_LIMITS`,
+    the corresponding aggregate :class:`InterfaceLimit` is appended too —
+    capping the total simultaneous flow across ALL border links at the
+    published SIL/SEC (Simultaneous Import Limit / Simultaneous Export
+    Capability), which is materially less than the sum of individual path
+    ratings. The per-link TTCs remain as individual path bounds; the
+    aggregate constraint binds only when several paths would load
+    simultaneously past the network's real simultaneous capability.
+
     PJM's external node is appended here, on demand, rather than baked into
     ``_pjm_config``: an external zone whose links join several border zones
     creates a wheeling path around the internal interfaces (real PJM loop
@@ -1765,6 +1776,21 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
         TransferLink(from_zone=zone, to_zone=border, ttc_mw=ttc)
         for border, ttc in IMPORT_NODE_LINKS.get(iso, [])
     ]
+    # SIL/SEC: aggregate simultaneous import/export limit across all border
+    # links, built dynamically so the link references always match the border
+    # links actually appended.
+    sil_spec = EXTERNAL_SIMULTANEOUS_LIMITS.get(iso)
+    new_interface_limits: list[InterfaceLimit] = []
+    if sil_spec is not None and links:
+        name, cap_mw, bidirectional = sil_spec
+        new_interface_limits.append(
+            InterfaceLimit(
+                name=name,
+                links=[(zone, border) for border, _ in IMPORT_NODE_LINKS[iso]],
+                cap_mw=cap_mw,
+                bidirectional=bidirectional,
+            )
+        )
     extended = iso_config.model_copy(
         update={
             "zones": [
@@ -1772,6 +1798,10 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
                 Zone(name=zone, iso=iso, load_share=0.0),
             ],
             "links": [*iso_config.links, *links],
+            "interface_limits": [
+                *iso_config.interface_limits,
+                *new_interface_limits,
+            ],
         }
     )
     extended.validate_topology()
