@@ -49,7 +49,11 @@ from market_sim.data.renewables import (
     inject_offshore_wind_availability,
     load_renewable_profiles,
 )
-from market_sim.model.capacity import CumulativeDeployment, evolve_fleet
+from market_sim.model.capacity import (
+    CumulativeDeployment,
+    deliverability_headroom_by_zone,
+    evolve_fleet,
+)
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
     compute_commitment,
@@ -187,6 +191,31 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     import_generators = build_interchange_fleet(interchange_spec, border_carbon)
     if import_generators:
         iso_config = extend_with_import_node(iso_config)
+    # Part A of capacity_deliverability_limits: replace the calibrated
+    # simultaneous-import scalar with the ISO's published per-area SEAM import
+    # limit (CAISO branch-group MIC → WECC_import). No-op when the flag is off,
+    # the ISO has no seam import_limit, or the data is absent.
+    if config.capacity_deliverability_limits:
+        from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
+        from market_sim.config.interchange_config import IMPORT_ZONE
+        from market_sim.data import capacity_deliverability as capdel
+        from market_sim.model.transmission import apply_deliverability_seam_limit
+
+        _dy = capdel.resolve_delivery_year(iso, START_YEAR)
+        _season = capdel.resolve_season(iso)
+        _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
+        _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
+        _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
+        _import_zone = IMPORT_ZONE.get(iso)
+        _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
+        if _seam_mw:
+            iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
+            logger.info(
+                "%s: capacity_deliverability_limits — seam import cap set to "
+                "%.0f MW (summed per-area import_limit)",
+                iso,
+                _seam_mw,
+            )
     zone_names = iso_config.zone_names
 
     # Weather-year inputs are fixed across the run; load them once. The CF
@@ -379,6 +408,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # 2027+ screens arbitrage revenue against cost on prior-year prices.
         prior_storage_ids = {u.unit_id for u in storage_units}
         if prior_results is not None:
+            # Locational deliverability headroom for the storage capacity-value
+            # gate (no-op unless capacity_deliverability_limits is on). Uses the
+            # current thermal fleet plus the zonal renewable pools; existing
+            # storage firm is left out so the screen sizes the *marginal* build
+            # against the non-storage deliverable capacity.
+            storage_headroom: dict[str, float] = {}
+            if config.capacity_deliverability_limits:
+                wind_by_zone = {z: float(wind_cap[i]) for i, z in enumerate(zone_names)}
+                solar_by_zone = {
+                    z: float(solar_cap[i]) for i, z in enumerate(zone_names)
+                }
+                storage_headroom = deliverability_headroom_by_zone(
+                    iso,
+                    year,
+                    fleet,
+                    config,
+                    wind_pool_by_zone=wind_by_zone,
+                    solar_pool_by_zone=solar_by_zone,
+                )
             storage_units = apply_storage_new_entry(
                 storage_units,
                 prior_results["prices"],
@@ -386,6 +434,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config,
                 iso,
                 cumulative=cumulative,
+                deliverability_headroom=storage_headroom,
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
 
