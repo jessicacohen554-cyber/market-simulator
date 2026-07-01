@@ -81,7 +81,7 @@
       initBC, loadRun, loadBench,
       getMeta, getCompleteness,
       isoList, isoZones, isoYears, isoGroups, isoGroupLabels,
-      isoColorVar, inflateGz, pearson, nrmse,
+      isoColorVar, inflateGz, pearson,
       fmtPct, fmtNum, fmtDollars,
       hashState, MONTHS
     } from './js/bc-data.js';
@@ -122,15 +122,30 @@
     /* ================================================================
        SCORE / TOLERANCE HELPERS
        ================================================================ */
+    // Δ-vs-actual color bands. Mirrors _backcast_shell.py dcls exactly: <5% good,
+    // <15% ok, else bad. lo/hi kept overridable but default to the shell's 5/15
+    // so every Δ cell colors identically to the deployed dashboard.
     function dcls(v, lo, hi) {
       if (v == null || isNaN(v)) return '';
       const a = Math.abs(v);
-      return a <= (lo ?? SUM_TOL_PCT) ? 'clr-good' : a <= (hi ?? 2 * SUM_TOL_PCT) ? 'clr-ok' : 'clr-bad';
+      return a < (lo ?? SUM_TOL_PCT) ? 'clr-good' : a < (hi ?? 3 * SUM_TOL_PCT) ? 'clr-ok' : 'clr-bad';
     }
+    // Generation-share (pp) color band — matches shell ppcls: <1pp good, <3pp ok.
+    function ppcls(d) { const a = Math.abs(d); return a < 1 ? 'clr-good' : a < 3 ? 'clr-ok' : 'clr-bad'; }
     function rcls(r) {
       if (r == null) return '';
       return r >= R_GOOD ? 'clr-good' : r >= R_OK ? 'clr-ok' : 'clr-bad';
     }
+    // Composite class-capture score (shell capScore): geometric mean of hourly-r,
+    // (1−NRMSE) and (1−|volume dev|), ×100. This is the number the deployed
+    // dashboard shows as "Class capture" — NOT a volume ratio.
+    function capScore(r, nr, dev) { return 100 * Math.cbrt(Math.max(0, r) * Math.max(0, 1 - nr) * Math.max(0, 1 - Math.abs(dev))); }
+    // Mean-normalized NRMSE, matching the shell's nrmse(model, actual): the SSE is
+    // normalized by the MEAN of the actual (second arg), not by its range. Kept
+    // local so it never diverges from the imported (range-normalized) bc-data nrmse.
+    function nrmseM(m, o) { let s = 0, om = 0, n = m.length; for (let i = 0; i < n; i++) { s += (m[i] - o[i]) ** 2; om += o[i]; } om /= n; return om > 0 ? Math.sqrt(s / n) / om : 9.9; }
+    function fmtpp(d) { return (d >= 0 ? '+' : '') + d.toFixed(1); }
+    function mixLabel(g) { return META().groupLabel?.[g] || ({ ST_CHP: 'Steam Gas CHP' }[g]) || g; }
     function fmtPctSigned(v) {
       if (v == null) return '—';
       return (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
@@ -222,21 +237,33 @@
       return (gm != null && mAll > 0) ? gm * (mAzones / mAll) : mAzones;
     }
 
-    /* Class metrics: r, nrmse, volume. */
+    /* Class metrics — mirrors _backcast_shell.py classMetrics exactly:
+       r (Pearson), nr (MEAN-normalized NRMSE, model vs CAMPD), dev (volume
+       deviation), m1 (composite capture score = "Class capture" KPI), m2
+       (npl-weighted mean of per-plant .cap = "Plant capture" KPI), plus the
+       zone-allocated model/EIA-923 class totals. */
     function classMetrics(yr, grp) {
       const ps = plantsOf(yr, grp);
       if (!ps.length) return null;
       const a = aggMW(yr, grp);
-      const r = pearson(a.mm, a.cc), nr = nrmse(a.cc, a.mm);
+      const r = pearson(a.mm, a.cc), nr = nrmseM(a.mm, a.cc), dev = a.cA > 0 ? (a.mA - a.cA) / a.cA : 0;
+      const m1 = a.cc.reduce((s, v) => s + v, 0) > 0 ? capScore(r, nr, dev) : null;
+      const M = RUN(yr), B = BENCH(yr);
+      let ws = 0, cs = 0;
+      for (const c of ps) { const w = B.plants[c].npl, cp = M.plants[c].cap; if (cp != null) { ws += w; cs += w * cp; } }
       return {
-        r, nr, mA: a.mA, cA: a.cA, eA: a.eA,
+        m1, m2: ws > 0 ? cs / ws : null, r, nr, dev,
+        mA: a.mA, cA: a.cA, eA: a.eA,
         mFull: classModelFull(yr, grp, a.mA),
         bench923: classBench923(yr, grp, a.eA),
         n: ps.length
       };
     }
 
-    /* Single-plant or aggregate series for Charts view. */
+    /* Single-plant or aggregate series for Charts view — mirrors the shell
+       singleSeries: a single plant carries the payload's Python-computed
+       r/nrmse/cap (never recomputed in JS); the aggregate carries the class
+       mt.r/mt.nr and grid-delivered mFull/bench923 volume totals. */
     function singleSeries(yr, grp, plantCode) {
       const M = RUN(yr), B = BENCH(yr);
       const ps = plantsOf(yr, grp);
@@ -246,22 +273,21 @@
         const mm = new Float32Array(T), cc = new Float32Array(T);
         if (mp?.m) { const md = dec(mp.m); for (let i = 0; i < T; i++) mm[i] = md[i] * npl / 100; }
         if (b?.campd) { const cd = dec(b.campd); for (let i = 0; i < T; i++) cc[i] = cd[i] * npl / 100; }
-        const nodata = !b.campd || cc.every(v => v === 0);
-        const r_val = nodata ? null : pearson(mm, cc);
-        const nr_val = nodata ? null : nrmse(cc, mm);
+        const nodata = !!b.nodata || !b.campd || cc.every(v => v === 0);
         return {
-          name: b.name || plantCode, agg: false, nodata,
+          name: (b.name || plantCode) + ' · ' + (b.zone || '?'), agg: false, nodata,
           mm, cc, m_ann: mp.m_ann || 0, c_ann: b.c_ann || 0, e_ann: b.e_ann || 0,
-          r: r_val, nr: nr_val
+          r: mp.r ?? null, nr: mp.nrmse ?? null, cap: mp.cap ?? null
         };
       }
       const a = aggMW(yr, grp);
       const mt = classMetrics(yr, grp);
-      const nodata = !a.cc || a.cc.every(v => v === 0);
+      const nodata = a.cA <= 0;
       return {
-        name: `Aggregate (${ps.length} plants)`, agg: true, nodata,
-        mm: a.mm, cc: a.cc, m_ann: mt?.mFull || a.mA, c_ann: a.cA, e_ann: mt?.bench923 || a.eA,
-        r: mt?.r ?? null, nr: mt?.nr ?? null
+        name: (META().groupLabel?.[grp] || grp) + ' (aggregate)', agg: true, nodata,
+        mm: a.mm, cc: a.cc,
+        m_ann: mt ? mt.mFull : a.mA, c_ann: a.cA, e_ann: (mt && mt.bench923 > 0) ? mt.bench923 : a.eA,
+        r: mt ? mt.r : null, nr: mt ? mt.nr : null, cap: mt ? mt.m1 : null
       };
     }
 
@@ -386,7 +412,7 @@
     function shareInTol(e, k) { return e.sharePP == null || Math.abs(e.sharePP) <= k * SUM_TOL_SHARE_PP; }
     function classInTol(e) { return volInTol(e, 1) && shareInTol(e, 1); }
     function clsTol(e) { return classInTol(e) ? 'good' : (volInTol(e, 2) && shareInTol(e, 2)) ? 'ok' : 'bad'; }
-    function tolcls(v) { const a = Math.abs(v); return a <= SUM_TOL_PCT ? 'good' : a <= 2 * SUM_TOL_PCT ? 'ok' : 'bad'; }
+    function tolcls(v) { const a = Math.abs(v); return a <= SUM_TOL_PCT ? 'clr-good' : a <= 2 * SUM_TOL_PCT ? 'clr-ok' : 'clr-bad'; }
 
     function classErrs(yr) {
       const out = [];
@@ -672,7 +698,7 @@
           <div class="kpi-row"><span class="k">Sys vol error</span><span class="v ${H.sysErr == null ? '' : tolcls(H.sysErr)}">${H.sysErr == null ? '—' : fmtPctSigned(H.sysErr)}</span></div>
           <div class="kpi-row"><span class="k">Fleet r</span><span class="v ${rcls(fr)}">${fr == null ? '—' : fr.toFixed(3)}</span></div>
           <div class="kpi-row"><span class="k">Avg LMP${ov ? ' +ORDC' : ''}</span><span class="v" ${ov ? `style="color:${OVERLAY_COLOR}"` : ''}>${mp == null ? '—' : fmtDollars(mp)}</span></div>
-          <div class="kpi-row"><span class="k">LMP vs ${aL ? aLab : 'actual'}</span><span class="v ${pdiff == null ? '' : dcls(pdiff, 10, 20)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
+          <div class="kpi-row"><span class="k">LMP vs ${aL ? aLab : 'actual'}</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
           <div class="kpi-row"><span class="k">Worst class</span><span class="v ${H.worst ? 'clr-' + clsTol(H.worst) : ''}">${H.worst ? classLabel(H.worst.grp) + ' ' + fmtPctSigned(H.worst.err) : '—'}</span></div>
         </div>`;
       }
@@ -690,7 +716,7 @@
         const aP = aL.da != null ? aL.da : aL.rt;
         const pdiff = (ann != null && aP) ? 100 * (ann - aP) / aP : null;
         html += `<div class="year-card">
-          <div class="year-head"><span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${pdiff == null ? '' : dcls(pdiff, 10, 20)}">${pdiff == null ? '' : 'ann ' + fmtPctSigned(pdiff)}</span></div>
+          <div class="year-head"><span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '' : 'ann ' + fmtPctSigned(pdiff)}</span></div>
           <div class="svg-box" data-lmpyr="${yr}"></div>
         </div>`;
       }
@@ -865,9 +891,12 @@
       const ps = plantsOf(yr, grp);
       const mt = classMetrics(yr, grp);
       const d = singleSeries(yr, grp, st.plant);
-      const d923 = d.e_ann > 0 ? 100 * (d.m_ann - d.e_ann) / d.e_ann : null;
-      const classCap = (mt && mt.bench923 > 0) ? 100 * mt.mFull / mt.bench923 : null;
-      const plantCap = (d.c_ann > 0) ? 100 * d.m_ann / d.c_ann : null;
+      const d923 = d.e_ann ? 100 * (d.m_ann - d.e_ann) / d.e_ann : null;
+      // "Class capture" / "Plant capture" match the deployed dashboard exactly:
+      // class = composite capScore (mt.m1); plant = npl-weighted mean capture
+      // (mt.m2). Both are class-level and independent of the selected plant.
+      const classCap = mt && mt.m1 != null ? mt.m1 : null;
+      const plantCap = mt && mt.m2 != null ? mt.m2 : null;
       const lmp = avgLMP(yr);
       let html = '';
 
@@ -1181,117 +1210,107 @@
     /* ================================================================
        TABLES VIEW — single year
        ================================================================ */
+    // Tables view — same table set, order and numbers as the deployed dashboard
+    // (_backcast_shell.py tablesHTML): generation mix (with net-imports/supply/
+    // load reconciliation), fuel totals, fossil classes r/NRMSE, CO2, monthly
+    // LMP, and the per-plant fit table.
     function renderTables(el) {
       const yr = Number(st.year);
-      const meta = META();
-      const groups = meta.groups || [];
-      const labels = meta.groupLabel || {};
-      const completeness = getCompleteness()?.[yr]?.[st.iso] || {};
       let html = '';
-
-      // Generation mix table
-      html += genMixTable(yr, groups, labels, completeness);
-
-      // Fuel totals (fuelRows)
+      html += genMixTable(yr);
       html += fuelTable(yr);
-
-      // CO2 table
+      html += fossilTable(yr);
       html += co2Table(yr);
-
-      // Monthly LMP table
       html += lmpMonthlyTable(yr);
-
-      // Zonal LMP table
-      html += zonalLmpTable(yr);
-
+      html += perPlantTable(yr);
       el.innerHTML = html;
     }
 
-    function genMixTable(yr, groups, labels, completeness) {
-      const M = RUN(yr), B = BENCH(yr);
-      const cf = B.classFull || {};
-      const gm = M.gmModel || {};
+    // System-wide load (TWh): sum of every zone's annual demand in the payload —
+    // the same reconciliation basis as the shell (model gen + net imports == load).
+    function sysDemand(yr) { const L = RUN(yr).lmp || {}; let d = 0; for (const z in L) d += (L[z].d || 0); return d; }
+    // EIA-923 completeness flag for one (year, iso, class) — drives the gen-mix
+    // color code, matching the shell's cmpInfo/cmpBadge.
+    function cmpInfo(yr, iso, g) { const C = getCompleteness()?.[yr]; if (!C) return null; return (C[iso] || {})[g] || { status: 'incomplete', gate: false }; }
+    function cmpBadge(c) {
+      if (!c) return '';
+      if (c.status === 'complete') return ' <span class="badge-923 ok" title="EIA-923 verified complete — gates C1">&#10003; 923</span>';
+      if (c.status === 'immaterial') return ' <span class="badge-923 imm" title="immaterial volume — not gated">&mdash; 923</span>';
+      return ' <span class="badge-923 inc" title="incomplete EIA-923 plant data — not gated this vintage">&#9888; 923</span>';
+    }
 
-      // CHP merge
-      const FG = groups.filter(g => !(g in CHP_MERGE));
-      const cf_d = {}, gm_d = {};
-      FG.forEach(g => { cf_d[g] = cf[g] || 0; gm_d[g] = gm[g] || 0; });
+    // Generation mix + supply/load reconciliation — a faithful port of the shell
+    // genMixPanel. Iterates over EVERY benchmarked class in classFull (fossil +
+    // biomass/hydro/nuclear/oil/solar/wind, CHP folded into parents), so shares
+    // are share of TOTAL generation, and appends the net-imports / total-supply /
+    // load rows so the net-import volume the generation-only rows omit is visible.
+    function genMixTable(yr) {
+      const B = BENCH(yr);
+      if (!B || !B.classFull) return '';
+      const cf = B.classFull, FG = Object.keys(cf), gm = RUN(yr).gmModel || {};
+      const iso = st.iso;
+      const aGen = FG.reduce((s, g) => s + (cf[g] || 0), 0);
+      const mGen = FG.reduce((s, g) => s + (gm[g] || 0), 0);
+      const prelim = !!getCompleteness()?.[yr];
+      // Net imports (import-positive): the fuelRows "interchange" row is net-EXPORT
+      // positive (EIA-930 sign), so flip it. Present only for a priced-interchange
+      // bundle; a measured-schedule bundle nets interchange into demand (no row).
+      const ix = (RUN(yr).fuelRows || []).find(x => x.fuel === 'interchange');
+      const mImp = ix ? -ix.m : null, aImp = (ix && ix.b != null) ? -ix.b : null;
+      const load = sysDemand(yr);
+
+      // CHP → parent merge (grid-delivered values already BTM-subtracted).
+      const FG_disp = FG.filter(g => !(g in CHP_MERGE));
+      const cf_d = Object.fromEntries(FG_disp.map(g => [g, cf[g] || 0]));
+      const gm_d = Object.fromEntries(FG_disp.map(g => [g, gm[g] || 0]));
       for (const [chp, par] of Object.entries(CHP_MERGE)) {
         if (par in cf_d) cf_d[par] = (cf_d[par] || 0) + (cf[chp] || 0);
         if (par in gm_d) gm_d[par] = (gm_d[par] || 0) + (gm[chp] || 0);
       }
 
-      const aGen = FG.reduce((s, g) => s + (cf_d[g] || 0), 0);
-      const mGen = FG.reduce((s, g) => s + (gm_d[g] || 0), 0);
-      const prelim = !!(getCompleteness()?.[yr]);
-
-      let h = `<div class="bc-panel"><h2>Generation Mix</h2>
-        <p class="panel-sub">${yr} — model vs grid-delivered EIA-923 (CHP folded into parent class)</p>`;
-      if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">check</span> classes gate C1.</p>';
+      let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP folded into parent class; BTM excluded — grid-delivered only)</span></h2>`;
+      h += `<p class="panel-sub">${esc(RUN(yr).label || st.runId)} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
+        + (mImp != null ? ` &middot; + net imports ${mImp.toFixed(1)} (actual ${aImp == null ? '—' : aImp.toFixed(1)}) &rarr; supply ${(mGen + mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh` : '') + `</p>`;
+      if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">&#10003; 923</span> classes are verified-complete and gate the C1 fuel-mix test; <span class="badge-923 inc">&#9888; 923</span> (incomplete) and <span class="badge-923 imm">&mdash; 923</span> (immaterial) classes are shown for reference but not gated.</p>';
       h += `<div class="bc-table-wrap"><table>
-        <thead><tr><th>Class</th><th>Model TWh</th><th>Actual TWh</th><th>Model %</th><th>Actual %</th><th>Delta pp</th></tr></thead>
+        <thead><tr><th>class</th><th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th><th>Δpp</th></tr></thead>
         <tbody>`;
 
-      for (const g of FG) {
+      for (const g of FG_disp) {
         const a = cf_d[g] || 0, m = gm_d[g] || 0;
-        const aP = aGen > 0 ? 100 * a / aGen : 0;
-        const mP = mGen > 0 ? 100 * m / mGen : 0;
-        const dpp = mP - aP;
-        const ci = completeness[g];
-        const rowcls = ci ? (ci.status === 'incomplete' ? ' class="cmpl-inc"' : ci.status === 'immaterial' ? ' class="cmpl-imm"' : '') : '';
-        let badge = '';
-        if (ci) {
-          if (ci.status === 'incomplete') badge = '<span class="badge-923 inc">incomplete</span>';
-          else if (ci.status === 'immaterial') badge = '<span class="badge-923 imm">immaterial</span>';
-          else if (ci.gate) badge = '<span class="badge-923 ok">&#10003;</span>';
+        const a_g = aGen > 0 ? 100 * a / aGen : 0, m_g = mGen > 0 ? 100 * m / mGen : 0, dpp = m_g - a_g;
+        const ci = prelim && (g in ((getCompleteness()?.[yr] || {})[iso] || {})) ? cmpInfo(yr, iso, g) : null;
+        const rowcls = ci ? (ci.status === 'incomplete' ? ' class="cmpl-inc"' : (ci.status === 'immaterial' ? ' class="cmpl-imm"' : '')) : '';
+        const dppcls = (ci && !ci.gate) ? '' : ppcls(dpp);
+        h += `<tr${rowcls}><td>${esc(mixLabel(g))}${cmpBadge(ci)}</td><td class="num">${m.toFixed(2)}</td><td class="num">${a.toFixed(2)}</td>`
+          + `<td class="num">${m_g.toFixed(1)}</td><td class="num">${a_g.toFixed(1)}</td>`
+          + `<td class="num ${dppcls}">${fmtpp(dpp)}</td></tr>`;
+      }
+      h += `<tr class="sub"><td>Total generation</td><td class="num">${mGen.toFixed(2)}</td><td class="num">${aGen.toFixed(2)}</td>`
+        + `<td class="num">100.0</td><td class="num">100.0</td><td class="num"></td></tr>`;
+
+      // Reconcile generation + net imports = supply = load.
+      if (mImp != null) {
+        const mSup = mGen + mImp;
+        const aSup = aImp != null ? aGen + aImp : null;
+        h += `<tr><td>net imports</td><td class="num">${mImp.toFixed(2)}</td><td class="num">${aImp == null ? '—' : aImp.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
+        h += `<tr class="sub"><td>Total supply (gen + net imports)</td><td class="num">${mSup.toFixed(2)}</td><td class="num">${aSup == null ? '—' : aSup.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>`;
+        if (load > 0) {
+          const dM = mSup - load, dA = aSup != null ? aSup - load : null;
+          h += `<tr><td>Load (EIA-930 demand)</td><td class="num">${load.toFixed(2)}</td><td class="num">${load.toFixed(2)}</td><td class="num"></td><td class="num"></td><td class="num ${ppcls(100 * dM / load)}">${fmtTWh(dM)}</td></tr>`;
+          if (dA != null && Math.abs(dA) > 2)
+            h += `<tr><td colspan="6" class="panel-sub" style="text-align:left;white-space:normal;padding:6px 0 0">Model supply balances load to ${fmtTWh(dM)} (storage round-trip + dump). The actual column is EIA-923 net generation reconciled to the EIA-930 grid series per fossil family (grid-delivered: CHP behind-the-meter and 923↔930 plant-to-BA assignment removed so each family matches what reached the grid). Any residual ${fmtTWh(dA)} vs load is EIA-930's own net-generation-minus-demand discrepancy (the two series are independently surveyed), not behind-the-meter — both columns are now on the same grid-delivered basis, so the per-class shares and the absolute supply total are directly comparable.</td></tr>`;
         }
-        h += `<tr${rowcls}>
-          <td>${esc(labels[g] || g)} ${badge}</td>
-          <td class="num">${m.toFixed(2)}</td>
-          <td class="num">${a.toFixed(2)}</td>
-          <td class="num">${mP.toFixed(1)}</td>
-          <td class="num">${aP.toFixed(1)}</td>
-          <td class="num ${Math.abs(dpp) <= 1.5 ? 'clr-good' : Math.abs(dpp) <= 3 ? 'clr-ok' : 'clr-bad'}">${dpp >= 0 ? '+' : ''}${dpp.toFixed(1)}</td>
-        </tr>`;
       }
-
-      // Non-fossil rows
-      for (const fuel of NONFOSSIL) {
-        const a = B.e930?.[fuel] || 0;
-        const m = M.nonfossil?.[fuel] || 0;
-        if (a < 0.01 && m < 0.01) continue;
-        const aP = aGen > 0 ? 100 * a / aGen : 0;
-        const mP = mGen > 0 ? 100 * m / mGen : 0;
-        const dpp = mP - aP;
-        h += `<tr>
-          <td>${fuel[0].toUpperCase() + fuel.slice(1)}</td>
-          <td class="num">${m.toFixed(2)}</td>
-          <td class="num">${a.toFixed(2)}</td>
-          <td class="num">${mP.toFixed(1)}</td>
-          <td class="num">${aP.toFixed(1)}</td>
-          <td class="num ${Math.abs(dpp) <= 1.5 ? 'clr-good' : Math.abs(dpp) <= 3 ? 'clr-ok' : 'clr-bad'}">${dpp >= 0 ? '+' : ''}${dpp.toFixed(1)}</td>
-        </tr>`;
-      }
-
-      h += `<tr class="sub">
-        <td>Total</td>
-        <td class="num">${mGen.toFixed(2)}</td>
-        <td class="num">${aGen.toFixed(2)}</td>
-        <td class="num">100.0</td>
-        <td class="num">100.0</td>
-        <td class="num"></td>
-      </tr>`;
-
       return h + '</tbody></table></div></div>';
     }
 
     function fuelTable(yr) {
       const fr = RUN(yr).fuelRows;
       if (!fr || !fr.length) return '';
-      let h = `<div class="bc-panel"><h2>Fuel Totals vs EIA-930</h2>
-        <p class="panel-sub">${yr} — calibrated fuels only</p>
+      let h = `<div class="bc-panel"><h2>Fuel totals vs EIA-930 <span class="panel-sub">(system-wide; 930 not zonal; calibrated fuels only — hydro/oil/other/biomass and the full load reconciliation are in the Generation mix table above)</span></h2>
         <div class="bc-table-wrap"><table>
-        <thead><tr><th>Fuel</th><th>Model TWh</th><th>EIA-930</th><th>Delta</th><th>r</th><th>NRMSE</th></tr></thead>
+        <thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead>
         <tbody>`;
       for (const f of ['gas', 'coal', 'nuclear', 'wind', 'solar']) {
         const r = fr.find(x => x.fuel === f);
@@ -1315,28 +1334,68 @@
       return h + '</tbody></table></div></div>';
     }
 
+    // Fossil classes — model vs full EIA-923 (Δ923), with hourly r and
+    // MEAN-normalized NRMSE vs CAMPD. Mirrors the shell singleFossilTable.
+    function fossilTable(yr) {
+      const groups = META().groups || [], labels = META().groupLabel || {};
+      let h = `<div class="bc-panel"><h2>Fossil classes — model vs EIA-923, r/NRMSE vs CAMPD</h2>
+        <div class="bc-table-wrap"><table>
+        <thead><tr><th>class</th><th>model TWh</th><th>EIA-923</th><th>Δ923</th><th>r</th><th>NRMSE</th></tr></thead>
+        <tbody>`;
+      for (const grp of groups) {
+        const m = classMetrics(yr, grp);
+        if (!m) continue;
+        const dd = m.bench923 > 0.02 ? 100 * (m.mFull - m.bench923) / m.bench923 : null;
+        h += `<tr><td>${esc(labels[grp] || grp)}</td><td class="num">${m.mFull.toFixed(2)}</td><td class="num">${m.bench923.toFixed(2)}</td>`
+          + `<td class="num ${dd == null ? '' : dcls(dd)}">${dd == null ? '—' : fmtPctSigned(dd)}</td>`
+          + `<td class="num ${rcls(m.r)}">${m.r.toFixed(3)}</td><td class="num">${m.nr.toFixed(3)}</td></tr>`;
+      }
+      return h + '</tbody></table></div></div>';
+    }
+
+    // Per-plant fit vs CAMPD / EIA-923, sorted by class then plate capacity.
+    // Mirrors the shell's per-plant table (r, NRMSE, capture%, Δ923%).
+    function perPlantTable(yr) {
+      const B = BENCH(yr), M = RUN(yr), labels = META().groupLabel || {};
+      if (!B?.plants || !M?.plants) return '';
+      let h = `<div class="bc-panel"><h2>Per-plant fit vs CAMPD / EIA-923 — ${yr}</h2>
+        <div class="bc-table-wrap"><table>
+        <thead><tr><th>plant</th><th>class</th><th>zone</th><th>r</th><th>NRMSE</th><th>capture%</th><th>Δ923%</th></tr></thead>
+        <tbody>`;
+      const codes = Object.keys(M.plants).filter(c => B.plants[c] && st.zones.has(B.plants[c].zone))
+        .sort((a, b) => B.plants[a].group.localeCompare(B.plants[b].group) || B.plants[b].npl - B.plants[a].npl);
+      for (const c of codes) {
+        const b = B.plants[c], mp = M.plants[c];
+        const d = b.e_ann > 0.001 ? 100 * (mp.m_ann - b.e_ann) / b.e_ann : null;
+        h += `<tr><td>${esc(b.name)}</td><td>${esc(labels[b.group] || b.group)}</td><td>${esc(b.zone)}</td>`
+          + `<td class="num ${rcls(mp.r)}">${mp.r ?? '—'}</td><td class="num">${mp.nrmse ?? '—'}</td>`
+          + `<td class="num">${mp.cap == null ? '—' : mp.cap.toFixed(0)}</td>`
+          + `<td class="num ${d == null ? '' : dcls(d)}">${d == null ? '—' : d.toFixed(0)}</td></tr>`;
+      }
+      return h + '</tbody></table></div></div>';
+    }
+
+    const CO2_BAND = 7; // ±7% system gate — matches calibration_verdict C5a (CO2_TOL)
     function co2Table(yr) {
       const M = RUN(yr).co2, B = BENCH(yr).co2;
       if (!M || !B) return '';
       const dT = B.egrid > 0 ? 100 * (M.model - B.egrid) / B.egrid : null;
-      let h = `<div class="bc-panel"><h2>Fossil CO2 (Mt)</h2>
-        <p class="panel-sub">${yr} — eGRID + CAMPD plant rates x grid generation</p>
+      let h = `<div class="bc-panel"><h2>Fossil CO2 — model vs actual (Mt) <span class="panel-sub">(eGRID + CAMPD plant rates × grid generation; C5a ±${CO2_BAND}% gate)</span></h2>
         <div class="bc-table-wrap"><table>
-        <thead><tr><th>Class</th><th>Model Mt</th><th>Actual Mt</th><th>Delta</th></tr></thead>
+        <thead><tr><th>class</th><th>model Mt</th><th>actual Mt</th><th>Δ</th></tr></thead>
         <tbody>`;
       const mb = M.byClass || {}, ab = B.byClass || {};
       const classes = [...new Set([...Object.keys(ab), ...Object.keys(mb)])].sort();
       for (const c of classes) {
         const m = mb[c] || 0, a = ab[c] || 0;
-        const d = a > 0 ? 100 * (m - a) / a : null;
-        h += `<tr><td>${esc(META().groupLabel?.[c] || c)}</td><td class="num">${m.toFixed(2)}</td><td class="num">${a.toFixed(2)}</td>
-          <td class="num ${d == null ? '' : dcls(d, 7, 15)}">${d == null ? '—' : fmtPctSigned(d)}</td></tr>`;
+        const dc = a > 0 ? 100 * (m - a) / a : null;
+        h += `<tr><td>${esc((META().groupLabel || {})[c] || c)}</td><td class="num">${m.toFixed(2)}</td><td class="num">${a.toFixed(2)}</td>
+          <td class="num ${dc == null ? '' : dcls(dc)}">${dc == null ? '—' : fmtPctSigned(dc)}</td></tr>`;
       }
-      h += `<tr class="sub"><td>Total</td><td class="num">${M.model.toFixed(1)}</td><td class="num">${B.egrid.toFixed(1)}</td>
-        <td class="num ${dT == null ? '' : dcls(dT, 7, 15)}">${dT == null ? '—' : fmtPctSigned(dT)}</td></tr>`;
-      if (B.covPct) h += `</tbody></table></div><p class="panel-sub" style="margin-top:6px">Actual covers ${B.covPct}% of fossil generation by plant-specific rate.</p></div>`;
-      else h += '</tbody></table></div></div>';
-      return h;
+      const gate = dT == null ? '' : (Math.abs(dT) <= CO2_BAND ? '<span class="cs-badge det-cal">PASS</span>' : '<span class="cs-badge det-not">FAIL</span>');
+      h += `<tr class="sub"><td><b>total</b></td><td class="num"><b>${M.model.toFixed(1)}</b></td><td class="num"><b>${B.egrid.toFixed(1)}</b></td>
+        <td class="num ${dT == null ? '' : dcls(dT)}"><b>${dT == null ? '—' : fmtPctSigned(dT)}</b> ${gate}</td></tr>`;
+      return h + `</tbody></table></div><p class="panel-sub" style="margin-top:6px">Actual CO2 covers ${B.covPct}% of fossil-class EIA-923 generation by a plant-specific rate; the class intensity stands in for the small remainder. Grid-delivered basis (behind-the-meter CHP excluded, matching the model).</p></div>`;
     }
 
     function lmpMonthlyTable(yr) {
@@ -1350,16 +1409,16 @@
       const pair = (m, a) => {
         const d = (m != null && a) ? 100 * (m - a) / a : null;
         return `<td class="num">${a == null ? '—' : '$' + a.toFixed(1)}</td>
-          <td class="num ${d == null ? '' : dcls(d, 10, 20)}">${d == null ? '—' : fmtPctSigned(d)}</td>`;
+          <td class="num ${d == null ? '' : dcls(d)}">${d == null ? '—' : fmtPctSigned(d)}</td>`;
       };
 
-      let h = `<div class="bc-panel"><h2>Monthly LMP</h2>
-        <p class="panel-sub">${yr} — model load-weighted over selected zones vs system hub average</p>
+      const dBasis = ms ? 'model + overlay' : 'model';
+      let h = `<div class="bc-panel"><h2>Monthly LMP — model vs actual <span class="panel-sub">(model load-weighted over selected zones; actual = system hub average; Δ = (${dBasis} − actual)/actual)</span></h2>
         <div class="bc-table-wrap"><table>
-        <thead><tr><th>Month</th><th>Model $/MWh</th>`;
-      if (ms) h += '<th>+Overlay</th>';
-      if (da) h += '<th>Actual DA</th><th>Delta DA</th>';
-      if (rt) h += '<th>Actual RT</th><th>Delta RT</th>';
+        <thead><tr><th>month</th><th>model $/MWh</th>`;
+      if (ms) h += '<th>+ overlay $/MWh</th>';
+      if (da) h += '<th>actual DA</th><th>Δ DA</th>';
+      if (rt) h += '<th>actual RT</th><th>Δ RT</th>';
       h += '</tr></thead><tbody>';
 
       for (let m = 0; m < 12; m++) {
@@ -1378,35 +1437,11 @@
       if (rt) h += pair(annD, aL.rt);
       h += '</tr>';
 
-      return h + '</tbody></table></div></div>';
-    }
-
-    function zonalLmpTable(yr) {
-      const zones = META().zones || [];
-      if (!zones.length) return '';
-      const L = RUN(yr).lmp || {};
-      const aL = actualLMP(yr) || {};
-
-      let h = `<div class="bc-panel"><h2>Zonal LMPs</h2>
-        <p class="panel-sub">${yr} — $/MWh</p>
-        <div class="bc-table-wrap"><table>
-        <thead><tr><th>Zone</th><th>Model</th><th>Demand TWh</th>`;
-      if (aL.da != null) h += '<th>Actual DA</th>';
-      if (aL.rt != null) h += '<th>Actual RT</th>';
-      h += '</tr></thead><tbody>';
-
-      for (const z of zones) {
-        const zd = L[z] || {};
-        const p = zd.p != null ? zd.p : null;
-        h += `<tr>
-          <td>${esc(z)}</td>
-          <td class="num">${p != null ? '$' + p.toFixed(1) : '—'}</td>
-          <td class="num">${zd.d != null ? zd.d.toFixed(1) : '—'}</td>`;
-        if (aL.da != null) h += `<td class="num">${aL.da != null ? '$' + aL.da.toFixed(1) : '—'}</td>`;
-        if (aL.rt != null) h += `<td class="num">${aL.rt != null ? '$' + aL.rt.toFixed(1) : '—'}</td>`;
-        h += '</tr>';
-      }
-      return h + '</tbody></table></div></div>';
+      // Diagnostic footnote (+ ORDC MAE improvement when the run carries an
+      // overlay), matching the shell — LMP level is display-only, never gated.
+      const O = ordcOverlay(yr);
+      const note = O ? ` Δ is taken against the <b style="color:${OVERLAY_COLOR}">model + overlay</b> price (energy LMP + ORDC/reliability-deployment adder), since the actuals include the ORDC reserve adder; the overlay is display-only and never gated. Monthly LMP MAE vs actual RT ${O.maeEnergyOnly.toFixed(1)} → ${O.maeOverlay.toFixed(1)}.` : '';
+      return h + '</tbody></table></div><p class="panel-sub" style="margin-top:6px">Diagnostic only — LMP level is not a calibration target.' + note + '</p></div>';
     }
 
     /* ================================================================

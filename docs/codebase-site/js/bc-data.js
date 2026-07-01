@@ -30,14 +30,20 @@ async function _loadScript(url) {
   });
 }
 
+let _rootProbed = false;
+// Resolve DATA_ROOT once, self-healing to the fallback when the primary data
+// dir isn't present (e.g. a local preview that never ran
+// build_codebase_site_backcast.py). Idempotent so every entry point
+// (initBC / loadStatus / loadKeepers) can call it without re-loading manifest.js.
 async function _probeDataRoot() {
+  if (_rootProbed) return;
   try {
     await _loadScript(`${DATA_ROOT}/manifest.js`);
-    return;
   } catch {
     DATA_ROOT = DATA_ROOT_FALLBACK;
     await _loadScript(`${DATA_ROOT}/manifest.js`);
   }
+  _rootProbed = true;
 }
 
 /** Decompress a base64-encoded gzip string → JSON object. */
@@ -74,6 +80,7 @@ async function initBC() {
 async function loadStatus() {
   _ensureBC();
   if (_status) return _status;
+  await _probeDataRoot();
   await _loadScript(`${DATA_ROOT}/status.js`);
   _status = window.BC.status;
   return _status;
@@ -82,6 +89,7 @@ async function loadStatus() {
 /** Load keepers.json. */
 async function loadKeepers() {
   if (_keepers) return _keepers;
+  await _probeDataRoot();
   const resp = await fetch(`${DATA_ROOT}/keepers.json`);
   _keepers = await resp.json();
   return _keepers;
