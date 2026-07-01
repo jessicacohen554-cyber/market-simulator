@@ -31,4 +31,7 @@ Drop the retrieved unified CSV here as **`caiso.csv`**.
 
 Required years (backcast): 2023, 2024, 2025.
 
-**DATA NEEDED:** `caiso.csv` not yet committed.
+**DATA COMMITTED:** `caiso.csv` — 138 rows covering 2023–2025 LCR (10 local
+areas × 3 yr), MIC (36 branch groups × 3 yr, non-zero only), PRM (3 yr).
+LCR totals: 25,449 / 22,080 / 22,782 MW. MIC totals: 16,055 / 16,452 / 16,148 MW.
+PRM: 16% (2023), 17% (2024–2025) per CPUC D.23-06-029.
