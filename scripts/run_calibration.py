@@ -2570,6 +2570,44 @@ def run_year(
                 iso, year=year, mode=getattr(config, "mode", "forecast")
             )
         iso_config = extend_with_import_node(iso_config)
+        # Part A of capacity_deliverability_limits (backcast mirror of the
+        # runner hook): replace the calibrated simultaneous-import scalar
+        # (CAISO's 7,500 MW WECC_import_simultaneous) with the ISO's published
+        # per-area SEAM import limit (CAISO branch-group MIC summed to the
+        # WECC boundary), resolved for THIS backcast year's delivery year.
+        # Applied before the per-hub corridor split so the structural
+        # identification (every link originates at the import node) matches;
+        # the split then re-homes the replaced cap onto the corridor links.
+        # No-op when the flag is off (default — byte-identical), the ISO has
+        # no seam import_limit (PJM/MISO/NYISO CETL/CIL are internal and feed
+        # Part B, which the backcast never reaches: no capacity evolution), or
+        # the clean data is absent.
+        if getattr(config, "capacity_deliverability_limits", False):
+            from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
+            from market_sim.config.interchange_config import IMPORT_ZONE
+            from market_sim.data import capacity_deliverability as capdel
+            from market_sim.model.transmission import (
+                apply_deliverability_seam_limit,
+            )
+
+            _dy = capdel.resolve_delivery_year(iso, year)
+            _season = capdel.resolve_season(iso)
+            _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
+            _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
+            _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
+            _import_zone = IMPORT_ZONE.get(iso)
+            _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
+            if _seam_mw:
+                iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
+                logger.info(
+                    "%s %d: capacity_deliverability_limits — seam import cap "
+                    "set to %.0f MW (summed per-area import_limit, delivery "
+                    "year %s)",
+                    iso,
+                    year,
+                    _seam_mw,
+                    _dy,
+                )
         if caiso_corridors:
             # Split the single WECC_import node into the two per-hub corridors
             # (WECC_PNW → NP15, WECC_DSW → SP15) and re-home the import links +
