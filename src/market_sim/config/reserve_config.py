@@ -349,7 +349,6 @@ def _ercot_design(
         requirement = np.maximum(requirement - storage_as_mw, float(config.ordc_mcl_mw))
 
     eligible = _reserve_eligible(fleet_arrays)
-    T = int(hours)
     n_zones = int(np.max(fleet_arrays.zone_idx)) + 1
     zone_mask = np.ones(n_zones, dtype=bool)
 

@@ -2682,7 +2682,6 @@ def load_oil_burn_budget(
     monthly_budget_mwh[:, iso_monthly_mmbtu <= 0] = np.inf
 
     n_oil = oil_gen_idx.size
-    total_mwh = monthly_budget_mwh.sum()
     logger.info(
         "oil burn budget (%s %d): %d oil-capable generators "
         "(%.0f MW, %.1f GWh annual budget from EIA-923 petroleum receipts, "
