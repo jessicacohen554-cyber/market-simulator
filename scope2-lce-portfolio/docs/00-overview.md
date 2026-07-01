@@ -41,10 +41,10 @@ out of the LP for free, without any special heuristic.
 ## What's in the portfolio
 
 Clean/low-carbon **generation**: existing & new nuclear (SMR), onshore &
-offshore wind, utility solar, geothermal, existing hydro. **Storage**: 4/8/12-hour
-Li-ion, long-duration (LDES, e.g. iron-air), and hydrogen round-trip. Each
-resource carries a **low/mid/high** cost and a **capacity cap** the user can set
-(e.g. "existing nuclear available up to N MW").
+offshore wind, utility solar, geothermal, existing hydro. **Storage**: 4 & 8-hour
+Li-ion (fixed-duration), long-duration LDES (50–150 h, power/energy split),
+and hydrogen (24–500 h, power/energy split). Each resource carries a **low/mid/high**
+cost and a **capacity cap** the user can set (e.g. "existing nuclear available up to N MW").
 
 ## Relationship to the market simulator
 
