@@ -718,23 +718,17 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 }
 
 
-# NEISO gas offer curve — consolidation of the curve NEISO already runs into one
-# grounded, commented place, at parity with _PJM_OFFER_CURVE / _NYISO_OFFER_CURVE.
-# Until now NEISO carried a single scattered inline override (CC_REGULAR committed
-# 1.27 if iso=="NEISO" else 0.92) and otherwise fell through to the generic
-# non-PJM/non-ERCOT `else` branch of offer_curve_by_group{} below for every gas
-# band — including the ERCOT-derived 13.15x CT_PEAKER peak wall. This dict gathers
-# NEISO's effective gas curve here and is deep-merged on top of that generic
-# branch (so only the named GAS classes change; coal / *_INTERMEDIATE keep the
-# generic defaults, and the per-plant committed/peaking % from NEISO's CAMPD sheet
-# still supersede the class-wide values).
+# NEISO gas offer curve — ISO-NE-grounded gas-class band multipliers, at parity
+# with _PJM_OFFER_CURVE / _NYISO_OFFER_CURVE / _CAISO_OFFER_CURVE / _MISO_OFFER_CURVE.
+# Deep-merged on top of the generic non-PJM/non-ERCOT branch so only the named
+# GAS classes change; coal / *_INTERMEDIATE keep the generic defaults, and the
+# per-plant committed/peaking % from NEISO's CAMPD sheet still supersede the
+# class-wide values.
 #
-# STEP 1 — behavior-preserving consolidation (this dict): every value below is
-# transcribed EXACTLY from NEISO's current effective curve, so a NEISO config
-# build is byte-identical before vs after the refactor (verified against the
-# pre-edit snapshot). The CC_REGULAR committed 1.27 that used to live in the
-# inline ternary now lives here; the other four classes reproduce the generic
-# `else` values they previously inherited:
+# Grounding (band multipliers scale each plant's own measured base heat rate,
+# bin_assignments_NEISO.csv Plant_Avg_HR; cap-weighted class base HRs:
+# CC_REGULAR ~7.2, CC_CHP ~7.0, CT_PEAKER ~12.0, ST_GAS ~10.6 MMBtu/MWh):
+#
 #  - CC_REGULAR: committed 1.27 — NEISO min-stable-load offer anchored to the
 #    measured CAMPD CC heat-rate shape (min-load 40-55% of nameplate runs ~1.30x
 #    the fleet-average HR; raising committed to the full-load offer level (=
@@ -743,17 +737,21 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    shape, a conservative floor, not residual-fitted). econ_low 1.06 / econ_high
 #    1.27 / peak 2.25 (F-class duct-burner mult) carried from the generic curve.
 #  - CC_CHP / CT_CHP / ST_GAS: the generic gas-class values, unchanged.
-#  - CT_PEAKER: the generic ERCOT-derived peaker curve, INCLUDING the 13.15x peak
-#    wall. NOTE this ERCOT-style scarcity wall is far above ISO-NE price formation
-#    (ISO-NE energy offers cap at $1,000 then $2,000 cost-based; reserve/RCPF
-#    scarcity tops near ~$1,500-2,000, NOT ERCOT's $5,000 ORDC) — PJM threw out the
-#    same wall (capped CT peak at 4.0). A grounded NEISO re-level (cap the peak
-#    ~3-4x, shape from NEISO's own CAMPD marginal HR, level vs the ISO-NE IMM /
-#    Potomac EMM State-of-the-Market) is a follow-up; it is deferred here because
-#    NEISO's prices ALREADY PASS C3a/C3b/C2 on this curve (the price level is
-#    pinned by the measured daily gas-hub basis + dual-fuel oil parity, not the
-#    peak band), and a re-level must be at-worst-neutral on those passing metrics
-#    (CLAUDE.md #1/#11) rather than tuned to a residual.
+#  - CT_PEAKER: CAP the peak band at 4.0, down from the inherited 13.15x ERCOT
+#    scarcity wall. ISO-NE's energy offer cap is $1,000 ($2,000 cost-based under
+#    extreme scarcity per Market Rule 1 §III.1.10.1A); the RCPF reserve scarcity
+#    adder tops near $1,500-2,000 (FERC Order 831). That is NOT ERCOT's $5,000
+#    ORDC. A 13.15x peak wall creates CT offers ~$550/MWh (12 HR × 13.15 × $3.50
+#    gas) that NEVER clear in normal operations — effectively parking the entire
+#    CT fleet idle except under extreme scarcity the model can't produce without
+#    reserve co-optimization. Cap to 4.0 (~$168/MWh eff offer at typical gas), the
+#    SAME cap and reasoning PJM/CAISO/MISO adopted ("an ERCOT-style 13x wall is
+#    structurally wrong in a $1,000-2,000 offer-cap market"). The committed hurdle
+#    is lowered from 1.55 (ERCOT startup-cost idle-park) to 1.35 (matching
+#    NYISO/CAISO's grounded start hurdle — ISO-NE CTs serve the evening ramp and
+#    cold-snap reliability, per ISO-NE IMM 2023/2024 SOM). The econ ramp
+#    (1.27 → 1.98) is left at the generic shape (not the ERCOT-specific artifact;
+#    only the $5,000-ORDC peak and idle-park committed are).
 _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 1.27,
@@ -779,10 +777,11 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_low_share": 0.50,
     },
     "CT_PEAKER": {
-        "committed": 1.55,
+        "committed": 1.35,  # NYISO/CAISO-grounded start hurdle (ISO-NE CTs serve
+        #   evening ramp + cold-snap reliability, not ERCOT idle-park)
         "econ_low": 1.27,
         "econ_high": 1.98,
-        "peak": 13.15,
+        "peak": 4.0,  # ISO-NE offer cap $1,000-2,000 (not ERCOT $5,000 ORDC)
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
     },
