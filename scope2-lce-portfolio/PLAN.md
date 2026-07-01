@@ -55,14 +55,14 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 
 | Module | Responsibility | Status |
 |---|---|---|
-| `config.py` | `PortfolioConfig` dataclass (all knobs) | done |
+| `config.py` | `PortfolioConfig` dataclass (all knobs) | done (validation + `from_file`) |
 | `resources.py` | resource catalog + LCOE→fixed/vom + caps → `ResourceArrays` | done (seed table) |
 | `intake.py` | load read → facility/ISO aggregation → growth | done |
 | `profiles.py` | `(n_res,T)` CF matrix; synthetic now, vendored real later | done (synthetic) |
-| `lp.py` | portfolio LP build + HiGHS solve | done (both modes) |
+| `lp.py` | portfolio LP build + HiGHS solve | done (both modes; infeasible-safe) |
 | `sweep.py` | parametric sweep driver | done |
-| `outputs.py` | Parquet frontier + build-mix, text summary | done |
-| `cli.py` / `__main__.py` | CLI entry point | done |
+| `outputs.py` | Parquet frontier + build-mix, text summary | done (enriched metrics + run metadata) |
+| `cli.py` / `__main__.py` | CLI entry point | done (`--config`, `--all-isos` batch) |
 | `vendored/` | copied market-sim logic (CF shapes, etc.) | empty (PP-03) |
 
 ## 6. Data
