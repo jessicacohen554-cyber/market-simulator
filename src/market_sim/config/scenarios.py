@@ -494,6 +494,21 @@ class ScenarioConfig:
     # economic screen still decides the profitable build; this only fills the
     # residual adequacy gap. Default off (byte-identical); recommended on for
     # forecasts. Uses the prior year's peak (build-ahead-of-need).
+    capacity_deliverability_limits: bool = False  # GATED, default-OFF locational
+    # resource-adequacy mechanism. When on, the model reads each ISO's published
+    # capacity-deliverability parameters (PJM CETO/CETL, MISO LRR/CIL, NYISO
+    # LCR/TSL, ISO-NE LSR, CAISO LCR/MIC) from the capacity-deliverability clean
+    # datatype, crosswalks the areas onto model zones (config.
+    # capacity_area_crosswalk), and (a) replaces the system-wide
+    # EXTERNAL_SIMULTANEOUS_LIMITS scalar with the per-area seam import_limit
+    # where available (CAISO MIC → WECC_import), and (b) gates the capacity-value
+    # / economic new-entry / retirement screens by per-zone requirement vs
+    # deliverable accredited capacity: the marginal capacity payment collapses in
+    # a zone whose deliverable firm capacity already clears its locational
+    # requirement (RA saturated), mirroring how a binding LCR prices locational
+    # capacity. This is a structural mechanism (repo rule #1), NOT a backcast-fit
+    # lever — never enabled in a keeper. Default off (byte-identical); no-ops when
+    # the clean partition is absent (ERCOT, or intake not landed).
     planning_reserve_margin: float = 0.1375  # Fallback/override planning
     # reserve margin for the adequacy backstop. The per-ISO registry
     # constants.PLANNING_RESERVE_MARGIN_BY_ISO now LEADS: the backstop resolves
