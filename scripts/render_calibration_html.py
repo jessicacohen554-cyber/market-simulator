@@ -330,11 +330,14 @@ def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
     net = np.zeros(_T, dtype=float)
     for _, row in present.iterrows():
         h = int(row["hour"])
-        if 0 <= h < _T:
-            net[h] += float(row["mw"])
-    if abs(net.sum()) < 1.0:
+        mw = float(row["mw"])
+        if 0 <= h < _T and not np.isnan(mw):
+            net[h] += mw
+    if abs(np.nansum(net)) < 1.0:
         return None
-    return [round(float(net[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
+    return [
+        round(float(np.nansum(net[_CUM[m] : _CUM[m + 1]])) / 1e3, 2) for m in range(12)
+    ]
 
 
 def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -> int:
