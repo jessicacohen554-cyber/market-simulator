@@ -77,6 +77,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "egrid",
     "unit-outage-events",
     "partial-outages",
+    "capacity-deliverability",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -278,6 +279,26 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`campd-partial-outages.csv` (ERCOT) — a multiplicative "
             "availability `derate_factor` per detected window, `iso` stamped "
             "at curation."
+        ),
+    },
+    "capacity-deliverability": {
+        "summary": (
+            "Per-capacity-area locational capacity requirements and "
+            "import/export transfer limits by delivery period."
+        ),
+        "reconciles": (
+            "PJM CETO/CETL, MISO LRR/LCR/CIL/CEL/ZIA/PRMR, NYISO ICAP-req/"
+            "LCR%/Bulk-Power-Transmission-Limit/IRM, ISO-NE LSR/MCL/interface "
+            "import limit/ICR, CAISO LCR `Capacity Needed`/Maximum Import "
+            "Capability/PRM — onto one canonical metric vocabulary "
+            "(`requirement`, `import_limit`, `export_limit`, "
+            "`local_clearing_requirement`, `import_ability`, "
+            "`system_requirement`), long form keyed by "
+            "`(iso, area, delivery_year, season, metric)`. ERCOT is excluded "
+            "(energy-only, no capacity market). See "
+            "[`docs/capacity-deliverability-wiring.md`](../../docs/capacity-deliverability-wiring.md) "
+            "for how the model consumes it (area→zone crosswalk, gated "
+            "`capacity_deliverability_limits`)."
         ),
     },
 }
