@@ -1,7 +1,7 @@
 # MISO Zonal Refinement — Scoping Plan (structure-first, no implementation)
 
-Status: **SCOPING — awaiting decisions on the open questions in §8 before any
-implementation.** Branch `claude/miso-zonal-refine-scope-vs1iao`. Companion data:
+Status: **SCOPING COMPLETE — all §8 decisions resolved 2026-07-01; ready for
+implementation per §10.** Branch `claude/miso-zonal-refine-scope-vs1iao`. Companion data:
 `data/raw/capacity-deliverability/miso/miso.csv` (740 rows, PY2023-24 → PY2025-26
 × 4 seasons × LRZ 1-10: CIL/CEL/ZIA/LRR/LCR/PRMR, sourced from MISO LOLE Study
 Reports and PRA Results PDFs; parser `scripts/lib/capacity_deliverability/miso.py`,
@@ -326,7 +326,23 @@ data is historically allowlist-blocked (403) → likely a manual-upload request,
 same as the PRA/LOLE PDFs were. Gates 1/3/4 need **no new data**, so
 implementation is not blocked on this.
 
-## 8. Open decisions (need your call before implementation)
+## 8. Open decisions — RESOLVED 2026-07-01
+
+All seven decisions were put to the model owner as decision cards and
+resolved as follows. The original option analysis is kept below for the
+record.
+
+| # | Decision | Resolution |
+|---|---|---|
+| D1 | Michigan/Wisconsin split | **Defer — ship 6 zones.** East keeps measured `0027` load; the Michigan pocket is bounded by the Z2+Z7 CIL import group. A 7th zone is a later additive step. |
+| D2 | South split (Z8/Z9/Z10, Amite South/WOTAB) | **Defer to a later phase.** Phase 1 gates on the RDT binding; a split waits for a South load disaggregation and published sub-Z9 flowgate limits. |
+| D3 | RDT attachment zone | **Decide by probe.** Implement on `MISO-Plains` (truest to the SPP/AECI wheel path); at gate 1, if RDT binding produces spurious Plains congestion, swap the attachment to `MISO-Illinois` in a single diagnostic re-solve before proceeding. |
+| D4 | Union-zone caps | **CIL-sum ceiling, documented.** ΣCIL/ΣCEL of members as the cap, with a comment stating it double-counts intra-union help (small for East, larger for Plains). **CIL, not ZIA**, for energy-flow caps; ZIA stays in capacity/RA logic. |
+| D5 | Jan–May 2023 coverage | **Extend the extraction to PY2022-23** — run the existing parser on the PY2022-23 LOLE Study Report so every backcast month has measured seasonal limits. |
+| D6 | Zonal LMP validation data | **Request MISO hub RT/DA LMPs 2023–25 now** (manual upload, blocked source). Runs in parallel; gates 1/3/4 don't wait on it. |
+| D7 | Seasonal vs annual caps | **Per-season caps.** Expand the 4 seasonal scalars per zone/PY into hourly interface-cap vectors (NYISO monthly-TTC shim pattern). |
+
+### Original option analysis (for the record)
 
 - **D1 — Split Michigan (Z7) from Wisconsin (Z2)?** Structurally the best
   Midwest pocket, but no EIA-930 load below `0027`. Options: (a) defer — ship
