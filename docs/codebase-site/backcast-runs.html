@@ -92,7 +92,7 @@
     const T = 8760;
     let st = {
       iso: null, runId: null, view: 'report', year: null,
-      klass: null, zones: new Set(),
+      klass: null, zones: new Set(), plant: 'agg',
       runData: null, benchData: null, runMeta: null,
     };
 
@@ -233,6 +233,35 @@
         mFull: classModelFull(yr, grp, a.mA),
         bench923: classBench923(yr, grp, a.eA),
         n: ps.length
+      };
+    }
+
+    /* Single-plant or aggregate series for Charts view. */
+    function singleSeries(yr, grp, plantCode) {
+      const M = RUN(yr), B = BENCH(yr);
+      const ps = plantsOf(yr, grp);
+      if (plantCode && plantCode !== 'agg' && B.plants?.[plantCode] && M.plants?.[plantCode]) {
+        const b = B.plants[plantCode], mp = M.plants[plantCode];
+        const npl = b.npl || 1;
+        const mm = new Float32Array(T), cc = new Float32Array(T);
+        if (mp?.m) { const md = dec(mp.m); for (let i = 0; i < T; i++) mm[i] = md[i] * npl / 100; }
+        if (b?.campd) { const cd = dec(b.campd); for (let i = 0; i < T; i++) cc[i] = cd[i] * npl / 100; }
+        const nodata = !b.campd || cc.every(v => v === 0);
+        const r_val = nodata ? null : pearson(mm, cc);
+        const nr_val = nodata ? null : nrmse(cc, mm);
+        return {
+          name: b.name || plantCode, agg: false, nodata,
+          mm, cc, m_ann: mp.m_ann || 0, c_ann: b.c_ann || 0, e_ann: b.e_ann || 0,
+          r: r_val, nr: nr_val
+        };
+      }
+      const a = aggMW(yr, grp);
+      const mt = classMetrics(yr, grp);
+      const nodata = !a.cc || a.cc.every(v => v === 0);
+      return {
+        name: `Aggregate (${ps.length} plants)`, agg: true, nodata,
+        mm: a.mm, cc: a.cc, m_ann: mt?.mFull || a.mA, c_ann: a.cA, e_ann: mt?.bench923 || a.eA,
+        r: mt?.r ?? null, nr: mt?.nr ?? null
       };
     }
 
@@ -547,7 +576,7 @@
       if (!st.klass || !groups.includes(st.klass)) st.klass = groups[0] || null;
       sel.innerHTML = groups.map(g => `<option value="${g}">${esc(labels[g] || g)}</option>`).join('');
       sel.value = st.klass;
-      sel.onchange = () => { st.klass = sel.value; clearAggCache(); render(); };
+      sel.onchange = () => { st.klass = sel.value; st.plant = 'agg'; clearAggCache(); render(); };
     }
 
     function buildZoneChips() {
@@ -565,7 +594,7 @@
           const zz = c.dataset.z;
           c.classList.toggle('active', zz === '__all' ? st.zones.size === zones.length : st.zones.has(zz));
         });
-        clearAggCache(); render();
+        st.plant = 'agg'; clearAggCache(); render();
       };
     }
 
@@ -833,12 +862,51 @@
       const yr = Number(st.year);
       const grp = st.klass;
       const labels = META().groupLabel || {};
+      const ps = plantsOf(yr, grp);
+      const mt = classMetrics(yr, grp);
+      const d = singleSeries(yr, grp, st.plant);
+      const d923 = d.e_ann > 0 ? 100 * (d.m_ann - d.e_ann) / d.e_ann : null;
+      const classCap = (mt && mt.bench923 > 0) ? 100 * mt.mFull / mt.bench923 : null;
+      const plantCap = (d.c_ann > 0) ? 100 * d.m_ann / d.c_ann : null;
+      const lmp = avgLMP(yr);
       let html = '';
+
+      // Plant selector + stats cards
+      html += `<div class="bc-panel">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+          <span class="ctl-label">Plant</span>
+          <select id="plantSel" class="iso-select" style="min-width:180px;max-width:400px;padding:8px 12px"></select>
+        </div>`;
+
+      if (d.nodata && st.plant !== 'agg') {
+        html += `<p style="color:#9a6700;font-size:0.82rem;margin-bottom:12px">No CAMPD hourly data for this plant — model shown without an hourly comparison.</p>`;
+      }
+
+      html += `<div class="year-grid" style="margin-bottom:0">
+        <div class="year-card">
+          <div class="year-head"><span>${esc(d.name)}</span></div>
+          <div class="kpi-row"><span class="k">Class capture</span><span class="v">${classCap != null ? classCap.toFixed(0) + '%' : '—'}</span></div>
+          <div class="kpi-row"><span class="k">Plant capture</span><span class="v">${plantCap != null ? plantCap.toFixed(0) + '%' : '—'}</span></div>
+        </div>
+        <div class="year-card">
+          <div class="year-head"><span>Generation${d.agg ? ' <span style="font-size:0.72rem;color:var(--text-muted)">(class total)</span>' : ''}</span></div>
+          <div class="kpi-row"><span class="k">Model</span><span class="v">${d.m_ann.toFixed(2)} TWh</span></div>
+          <div class="kpi-row"><span class="k">CAMPD${d.agg ? ' (CEMS)' : ''}</span><span class="v">${d.c_ann.toFixed(2)} TWh</span></div>
+          <div class="kpi-row"><span class="k">EIA-923${d.agg ? ' (grid)' : ''}</span><span class="v">${d.e_ann.toFixed(2)} TWh</span></div>
+        </div>
+        <div class="year-card">
+          <div class="year-head"><span>Fit</span></div>
+          <div class="kpi-row"><span class="k">Δ vs 923</span><span class="v ${d923 == null ? '' : dcls(d923)}">${d923 == null ? '—' : fmtPctSigned(d923)}</span></div>
+          <div class="kpi-row"><span class="k">Hourly r</span><span class="v ${d.r != null ? rcls(d.r) : ''}">${d.r != null ? d.r.toFixed(3) : '—'}</span></div>
+          <div class="kpi-row"><span class="k">NRMSE</span><span class="v">${d.nr != null ? d.nr.toFixed(3) : '—'}</span></div>
+          <div class="kpi-row"><span class="k">Avg LMP (zones)</span><span class="v">${lmp == null ? '—' : '$' + lmp.toFixed(1) + '/MWh'}</span></div>
+        </div>
+      </div></div>`;
 
       // CF Heatmap for selected class
       html += `<div class="bc-panel">
         <h2>Capacity Factor — ${esc(labels[grp] || grp)}</h2>
-        <p class="panel-sub">${yr} — 365x24 model hourly CF</p>
+        <p class="panel-sub">${yr} — 365x24 hourly CF</p>
         <div id="cfHeatSection"></div>
       </div>`;
 
@@ -850,6 +918,20 @@
       </div>`;
 
       el.innerHTML = html;
+
+      // Wire plant selector
+      const psel = document.getElementById('plantSel');
+      if (psel) {
+        const B = BENCH(yr);
+        psel.innerHTML = `<option value="agg">Aggregate (${ps.length} plants)</option>` +
+          ps.map(c => {
+            const b = B.plants?.[c] || {};
+            const nodata = !b.campd;
+            return `<option value="${esc(c)}">${esc(b.name || c)} · ${esc(b.zone || '?')}${nodata ? ' · no CAMPD' : ''}</option>`;
+          }).join('');
+        psel.value = st.plant;
+        psel.onchange = () => { st.plant = psel.value; clearAggCache(); renderCharts(el); };
+      }
 
       drawCfHeatmap(yr, grp);
       drawCfDistribution(yr, grp);
@@ -962,47 +1044,51 @@
     function drawCfHeatmap(yr, grp) {
       const section = document.getElementById('cfHeatSection');
       if (!section) return;
-      const a = aggMW(yr, grp);
-      if (!a || !a.mm || a.mm.length < T) {
+      const d = singleSeries(yr, grp, st.plant);
+      if (!d || !d.mm || d.mm.length < T) {
         section.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No hourly dispatch data for this class.</p>';
         return;
       }
 
-      // Compute CF from MW: need capacity. Use rough estimate from max dispatch.
-      const maxMW = Math.max(...a.mm);
+      const maxMW = Math.max(...d.mm);
       const cf = new Float32Array(T);
-      if (maxMW > 0) for (let i = 0; i < T; i++) cf[i] = a.mm[i] / maxMW * 100;
+      if (maxMW > 0) for (let i = 0; i < T; i++) cf[i] = d.mm[i] / maxMW * 100;
 
-      // Model heatmap
-      section.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
-      const cv = document.createElement('canvas');
-      cv.className = 'heat'; cv.width = 365; cv.height = 24;
-      section.appendChild(cv);
-      drawHeat(cv, cf);
-      const axis1 = document.createElement('div');
-      axis1.className = 'heat-axis';
-      axis1.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
-      section.appendChild(axis1);
+      let cfC = null;
+      const hasC = !d.nodata && d.cc && d.cc.length >= T;
 
-      // CAMPD heatmap
-      if (a.cc && a.cc.length >= T) {
-        const maxCC = Math.max(...a.cc);
-        const cfC = new Float32Array(T);
-        if (maxCC > 0) for (let i = 0; i < T; i++) cfC[i] = a.cc[i] / maxCC * 100;
+      section.innerHTML = '';
 
-        const div2 = document.createElement('div');
-        div2.style.marginTop = '12px';
-        div2.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">CAMPD Actual</p>';
-        section.appendChild(div2);
-        const cv2 = document.createElement('canvas');
-        cv2.className = 'heat'; cv2.width = 365; cv2.height = 24;
-        div2.appendChild(cv2);
-        drawHeat(cv2, cfC);
-        const axis2 = document.createElement('div');
-        axis2.className = 'heat-axis';
-        axis2.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
-        div2.appendChild(axis2);
+      // CAMPD actual heatmap (on top)
+      if (hasC) {
+        const maxCC = Math.max(...d.cc);
+        cfC = new Float32Array(T);
+        if (maxCC > 0) for (let i = 0; i < T; i++) cfC[i] = d.cc[i] / maxCC * 100;
+
+        section.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">CAMPD Actual</p>';
+        const cv1 = document.createElement('canvas');
+        cv1.className = 'heat'; cv1.width = 365; cv1.height = 24;
+        section.appendChild(cv1);
+        drawHeat(cv1, cfC);
+        const axis1 = document.createElement('div');
+        axis1.className = 'heat-axis';
+        axis1.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+        section.appendChild(axis1);
       }
+
+      // Model heatmap (on bottom)
+      const div2 = document.createElement('div');
+      if (hasC) div2.style.marginTop = '12px';
+      div2.innerHTML = '<p style="font-weight:700;font-size:0.82rem;margin-bottom:4px">Model</p>';
+      section.appendChild(div2);
+      const cv2 = document.createElement('canvas');
+      cv2.className = 'heat'; cv2.width = 365; cv2.height = 24;
+      div2.appendChild(cv2);
+      drawHeat(cv2, cf);
+      const axis2 = document.createElement('div');
+      axis2.className = 'heat-axis';
+      axis2.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+      div2.appendChild(axis2);
 
       // Ramp
       const ramp = document.createElement('div');
@@ -1010,21 +1096,17 @@
       section.appendChild(ramp);
 
       // Hover tip on canvases
-      section.querySelectorAll('canvas.heat').forEach(cv => {
-        const isModel = cv === section.querySelector('canvas.heat');
-        const cfArr = isModel ? cf : (() => {
-          const maxCC = Math.max(...a.cc);
-          const c = new Float32Array(T);
-          if (maxCC > 0) for (let i = 0; i < T; i++) c[i] = a.cc[i] / maxCC * 100;
-          return c;
-        })();
+      const canvases = section.querySelectorAll('canvas.heat');
+      canvases.forEach((cv, idx) => {
+        const isCampd = hasC && idx === 0;
+        const cfArr = isCampd ? cfC : cf;
         cv.addEventListener('mousemove', e => {
           const r = cv.getBoundingClientRect();
           const day = Math.floor((e.clientX - r.left) / r.width * 365);
           const hod = Math.floor((e.clientY - r.top) / r.height * 24);
           if (day < 0 || day > 364 || hod < 0 || hod > 23) { hideTip(); return; }
           const dt = new Date(2023, 0, 1); dt.setDate(day + 1);
-          showTip(`<b>${isModel ? 'Model' : 'CAMPD'}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00 &middot; CF ${Math.round(cfArr[day * 24 + hod])}%`, e.clientX, e.clientY);
+          showTip(`<b>${isCampd ? 'CAMPD' : 'Model'}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00 &middot; CF ${Math.round(cfArr[day * 24 + hod])}%`, e.clientX, e.clientY);
         });
         cv.addEventListener('mouseleave', hideTip);
       });
@@ -1033,11 +1115,12 @@
     function drawCfDistribution(yr, grp) {
       const container = document.getElementById('cfDistChart');
       if (!container) return;
-      const a = aggMW(yr, grp);
-      if (!a || !a.mm || a.mm.length < T) {
+      const d = singleSeries(yr, grp, st.plant);
+      if (!d || !d.mm || d.mm.length < T) {
         container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No data.</p>';
         return;
       }
+      const a = { mm: d.mm, cc: d.cc };
 
       const maxMW = Math.max(...a.mm) || 1;
       const maxCC = Math.max(...a.cc) || 1;
