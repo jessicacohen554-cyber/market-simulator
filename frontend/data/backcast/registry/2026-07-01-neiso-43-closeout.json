@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-01-neiso-43-closeout",
+  "label": "neiso 43 closeout",
+  "date": "2026-07-01",
+  "shorthand": "neiso-43-closeout",
+  "definition": "NEISO close-out: neiso-41 full recipe + ISO-NE scarcity overlay",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-01-neiso-43-closeout.js",
+  "bundle": "results/calibration/neiso_closeout"
+}
