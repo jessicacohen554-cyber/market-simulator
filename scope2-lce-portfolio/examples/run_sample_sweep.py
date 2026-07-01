@@ -78,9 +78,11 @@ def main() -> int:
     cf = build_cf_matrix(resources, ISO, config.year)
 
     sweep = run_sweep(config, resources, load, lmp, cf)
-    paths = write_outputs(sweep, out_dir)
+    paths = write_outputs(sweep, out_dir, config=config)
     print(summarize(sweep))
-    print(f"\nwrote: {paths['frontier']}\n       {paths['build_mix']}")
+    print("\nwrote:")
+    for name, path in paths.items():
+        print(f"  {name}: {path}")
     return 0
 
 

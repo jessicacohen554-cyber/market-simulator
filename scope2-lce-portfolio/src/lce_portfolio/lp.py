@@ -52,6 +52,15 @@ class PortfolioResult:
     net_cost: float  # total portfolio net cost ($)
     bau_cost: float  # cost of buying all load at wholesale ($)
     shadow_price: float  # dual on the premium/matching constraint
+    # --- derived reporting metrics (computed in build_and_solve) --------------
+    total_load_mwh: float = 0.0
+    grid_buy_mwh: float = 0.0  # unmatched energy bought from grid
+    surplus_mwh: float = 0.0  # clean generation sold as excess
+    surplus_revenue: float = 0.0  # $ earned selling excess (× excess_sale_fraction)
+    avoided_purchase_cost: float = 0.0  # $ of grid buys avoided vs BAU
+    capital_cost: float = 0.0  # added clean fixed + VOM cost ($/yr)
+    premium_total_per_year: float = 0.0  # net_cost − bau_cost ($/yr)
+    pct_over_bau: float = 0.0  # premium as a fraction of BAU cost
 
 
 class _Layout:
@@ -270,6 +279,13 @@ def build_and_solve(
         cost, col_lower, col_upper, A, row_lower, row_upper
     )
 
+    # Robustness: an infeasible/failed solve can return an empty (or short)
+    # solution vector, which would crash the reshapes below. Substitute zeros so
+    # the sweep survives; the non-"Optimal" status flags the setpoint downstream.
+    if col_value.size != lay.total:
+        col_value = np.zeros(lay.total)
+        row_dual = np.zeros(A.shape[0])
+
     build_mw = col_value[lay.build_off : lay.gen_off]
     gen = col_value[lay.gen_off : lay.chg_off].reshape(n_res, T)
     chg = (
@@ -302,6 +318,13 @@ def build_and_solve(
         float(row_dual[premium_row]) if premium_row < len(row_dual) else float("nan")
     )
 
+    # Derived reporting metrics (lmp/load are in scope here).
+    capital_cost = float(resources.fixed_mwyr @ build_mw) + float(
+        (resources.vom[:, None] * gen).sum()
+    )
+    surplus_revenue = sale * float(lmp @ excess)
+    avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
+
     return PortfolioResult(
         status=status,
         mode=config.mode,
@@ -319,6 +342,14 @@ def build_and_solve(
         net_cost=net_cost,
         bau_cost=bau_cost,
         shadow_price=shadow,
+        total_load_mwh=sum_load,
+        grid_buy_mwh=float(grid_buy.sum()),
+        surplus_mwh=float(excess.sum()),
+        surplus_revenue=surplus_revenue,
+        avoided_purchase_cost=avoided_purchase_cost,
+        capital_cost=capital_cost,
+        premium_total_per_year=net_cost - bau_cost,
+        pct_over_bau=(net_cost - bau_cost) / bau_cost if bau_cost else 0.0,
     )
 
 
