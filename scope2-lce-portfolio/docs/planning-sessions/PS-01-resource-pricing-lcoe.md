@@ -1,4 +1,5 @@
 # PS-01 — Resource Pricing / LCOE → fixed + VOM
+**DECIDED → [ADR 0004](../decisions/0004-resource-pricing-lcoe-to-fixed-vom.md) (2026-07-01)**
 
 **Goal:** decide how each generation resource's cost enters the LP, and pin the
 low/mid/high numbers to a defensible source.

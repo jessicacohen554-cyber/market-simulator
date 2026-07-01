@@ -1,4 +1,5 @@
 # PS-06 — Resource Caps & Regional Potential
+**DECIDED → [ADR 0009](../decisions/0009-resource-caps-regional-potential.md) (2026-07-01)**
 
 **Goal:** define the per-resource capacity limits and where they come from, per ISO.
 

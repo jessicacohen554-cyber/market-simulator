@@ -64,7 +64,8 @@ examples/             runnable examples
 
 ## Status
 
-Minimal working slice (synthetic data, 3 active resources, Mode A sweep) is
-functional. Full data wiring and resource pricing are staged as prompt packs in
-`docs/prompt-packs/`, gated on decisions captured via `docs/planning-sessions/`.
-Start with `PLAN.md`.
+Waves 0–1 complete (PP-00 through PP-07, 76 tests passing). Full capabilities:
+real data intake (load, LMP), NREL ATB 2024 resource pricing (capex/CRF), split-storage
+(LDES, hydrogen), hydro monthly budgets, additionality accounting, residual CO₂ tracking.
+Decisions: PS-01 through PS-08 → ADRs 0004–0011. Start with `PLAN.md`, then
+`docs/00-overview.md` and `docs/01-lp-formulation.md`.
