@@ -83,6 +83,7 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 - Renewable bounds: 0 ≤ W/S ≤ cf × capacity
 - Storage SOC: SOC[t] = SOC[t-1] + η_chg×Chg[t] - Dis[t]/η_dis, cyclic boundary
 - Transmission: -TTC ≤ Flow ≤ TTC
+- Capacity value is locational when `capacity_deliverability_limits` is on (default off): a zone whose deliverable accredited capacity already clears its published LDA/LRZ/locality/local-area requirement is RA-saturated and the marginal capacity payment there collapses.
 
 ## Capacity Evolution (per year, one-pass)
 
@@ -93,6 +94,8 @@ Economic retirement screens **inframarginal energy margin** — `Σ (price − f
 CCS retrofit (§5.6): gas-CC units with ≥15 yr life left retrofit when simple payback beats remaining life; capped at 3 GW/yr/ISO, gated on `ccs_retrofit_available_year`.
 
 Storage grows via an economics-based **value stack** (not compound growth): duration-sized arbitrage windows (net of cycling degradation) **plus** resource-adequacy capacity value, paid only in capacity markets via the per-ISO `MARKET_DESIGN` registry (energy-only ERCOT pays none; PJM/NYISO/ISO-NE/CAISO pay net-CONE × ELCC × saturation derate). ELCC rises with duration → tilts entry toward long-duration at high penetration. Build budget diversifies across techs (`STORAGE_TECH_BUILD_SHARE_CAP`); base-year fleet from `storage_deployment`, all later growth endogenous, capped per ISO. Toggles: `storage_capacity_value`, `storage_degradation`. (Methodology spec §5.5.)
+
+Locational deliverability gate (`capacity_deliverability_limits`, GATED default off): reads each ISO's published capacity-deliverability parameters (PJM CETO/CETL, MISO LRR/LCR/CIL, NYISO LCR/TSL, ISO-NE LSR/MCL, CAISO LCR/MIC), crosswalks areas onto model zones, and (a) replaces the calibrated simultaneous-import scalar with the measured seam import limit where published (CAISO MIC → WECC_import), and (b) collapses the marginal capacity payment in RA-saturated zones across the retirement, new-entry, and storage-entry screens. Structural mechanism (rule #1) — never enabled in a keeper. (Methodology spec §5.8; worked example `docs/capacity-deliverability-wiring.md`.)
 
 ## Dispatch & Commitment (per year)
 

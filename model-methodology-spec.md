@@ -693,6 +693,61 @@ Beyond *new* `gas_cc_ccs` entry (§1.5.2), existing gas-CC units can be **retrof
 
 Hydro is not a free-running thermal unit. When `hydro_monthly_energy` is supplied, the dispatch LP adds, per hydro generator per month, a two-sided **energy-budget** constraint `hydro_min ≤ Σ_{t∈month} P[g,t] ≤ hydro_max` (plus an optional run-of-river minimum-flow floor). The unit chooses *when* within the month to generate, not *how much* in total — an inter-temporal coupling like storage SOC, but on a monthly horizon.
 
+### 5.8 Locational Capacity Deliverability (gated)
+
+`ScenarioConfig.capacity_deliverability_limits` (GATED, default **off**,
+byte-identical when off) makes the capacity economics locational instead of
+system-wide, mirroring how a real RA market prices a binding LCR/CETO. It
+consumes the `capacity-deliverability` clean datatype — each ISO's published
+locational parameters (PJM CETO/CETL, MISO LRR/LCR/CIL, NYISO LCR/TSL,
+ISO-NE LSR/MCL, CAISO LCR/MIC) — crosswalked from native capacity areas
+(LDA/LRZ/locality/local-area) onto model zones by
+`config/capacity_area_crosswalk.py`'s per-ISO resolver registry. This is a
+**structural mechanism** (repo rule #1): it belongs regardless of backcast
+fit, is never fitted to the residual, and is **never enabled in a keeper** —
+preferring the published limit over a calibrated scalar can move the
+backcast (rule #12), and that is expected, not a reason to revert.
+
+**Part A — seam import override**
+(`model/transmission.apply_deliverability_seam_limit`, called once at run
+setup in `runner.py`). Where an ISO publishes a per-area *seam* import
+limit into its boundary (today: CAISO branch-group Maximum Import
+Capability, summed by the crosswalk to the `WECC_import` node), that
+measured value replaces the calibrated system-wide simultaneous-import
+`InterfaceLimit` cap. The target interface is identified structurally — the
+limit whose every link originates at the import node — so the override is
+ISO-agnostic; it is a no-op wherever no seam-labeled area or import node
+exists (PJM/MISO/NYISO/ISO-NE CETL/CIL are internal transfer limits, not
+seam limits, and feed Part B instead).
+
+**Part B — locational capacity gate**
+(`model/capacity.deliverability_headroom_by_zone` / `_zone_is_long`, wired
+into `apply_economic_retirements`, `apply_economic_new_entry`, and
+`model/storage.apply_storage_new_entry`; headroom is computed once per year
+by `evolve_fleet` and shared across the three screens). For each model zone
+that carries a published requirement, `headroom = deliverable_firm −
+requirement`, where deliverable firm capacity is the zone's accredited
+in-zone capacity (thermal at `1 − EFORd`, renewables and storage at their
+capacity credit) plus the crosswalked import_limit into it. A zone with
+`headroom > 0` is **long** (RA-saturated): the marginal capacity payment
+there collapses, so thermal retires more readily, new entry is not pulled
+forward, and storage's capacity-value term (§5.5) is scaled down by the
+load-share-weighted fraction of the build landing in long zones. A **short**
+zone (`headroom < 0`) is unaffected — the existing system-wide screens
+apply. The gate is a strict no-op (zero headroom entries) when the flag is
+off, the ISO has no clean partition (ERCOT is energy-only), or no zone
+carries a requirement.
+
+Crosswalk granularity is documented, not guessed: nested sub-areas (e.g.
+PJM ATSI-Cleveland ⊂ ATSI) and multi-zone super-areas (PJM MAAC, MISO
+subregional North/South, NYISO G-J, ISO-NE SENE) are excluded from the
+per-zone sum to avoid double-counting, and areas the reduced-zone topology
+cannot resolve (CAISO's Stockton/Kern LCR pockets, which straddle a
+Path-15/26 boundary) are left `unmapped` rather than assigned by guess. See
+`docs/capacity-deliverability-wiring.md` for the full per-ISO mapping table
+and `tests/test_capacity_area_crosswalk.py` /
+`tests/test_capacity_deliverability_wiring.py` for the coverage tests.
+
 -----
 
 ## 6. Parallelism & Performance
