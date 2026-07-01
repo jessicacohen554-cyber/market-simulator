@@ -1,0 +1,73 @@
+iso,month,budget_gwh,notes
+ERCOT,1,120,ERCOT small conventional hydro fleet (~0.6 GW); EIA-923-magnitude monthly energy, winter baseline.
+ERCOT,2,110,ERCOT hydro Feb.
+ERCOT,3,140,ERCOT hydro Mar; spring inflow.
+ERCOT,4,150,ERCOT hydro Apr.
+ERCOT,5,170,ERCOT hydro May; peak inflow.
+ERCOT,6,150,ERCOT hydro Jun.
+ERCOT,7,120,ERCOT hydro Jul; summer drawdown.
+ERCOT,8,110,ERCOT hydro Aug.
+ERCOT,9,110,ERCOT hydro Sep.
+ERCOT,10,120,ERCOT hydro Oct.
+ERCOT,11,120,ERCOT hydro Nov.
+ERCOT,12,120,ERCOT hydro Dec.
+CAISO,1,1400,CAISO large hydro (~10 GW); EIA-923 magnitude; winter/snow storage.
+CAISO,2,1500,CAISO hydro Feb.
+CAISO,3,1900,CAISO hydro Mar; snowmelt onset.
+CAISO,4,2400,CAISO hydro Apr; snowmelt.
+CAISO,5,3200,CAISO hydro May; peak snowmelt runoff.
+CAISO,6,3000,CAISO hydro Jun.
+CAISO,7,2400,CAISO hydro Jul.
+CAISO,8,1900,CAISO hydro Aug; summer drawdown.
+CAISO,9,1500,CAISO hydro Sep.
+CAISO,10,1300,CAISO hydro Oct; low water.
+CAISO,11,1300,CAISO hydro Nov.
+CAISO,12,1400,CAISO hydro Dec.
+PJM,1,700,PJM conventional hydro (~3 GW); EIA-923 magnitude; run-of-river winter.
+PJM,2,700,PJM hydro Feb.
+PJM,3,950,PJM hydro Mar; spring runoff.
+PJM,4,1000,PJM hydro Apr.
+PJM,5,900,PJM hydro May.
+PJM,6,700,PJM hydro Jun.
+PJM,7,550,PJM hydro Jul; summer low flow.
+PJM,8,500,PJM hydro Aug.
+PJM,9,500,PJM hydro Sep.
+PJM,10,600,PJM hydro Oct.
+PJM,11,700,PJM hydro Nov.
+PJM,12,750,PJM hydro Dec.
+MISO,1,500,MISO conventional hydro (~2 GW); EIA-923 magnitude; Upper Midwest run-of-river.
+MISO,2,480,MISO hydro Feb.
+MISO,3,650,MISO hydro Mar; spring melt.
+MISO,4,780,MISO hydro Apr; peak melt.
+MISO,5,720,MISO hydro May.
+MISO,6,600,MISO hydro Jun.
+MISO,7,450,MISO hydro Jul.
+MISO,8,420,MISO hydro Aug; summer low flow.
+MISO,9,420,MISO hydro Sep.
+MISO,10,470,MISO hydro Oct.
+MISO,11,500,MISO hydro Nov.
+MISO,12,500,MISO hydro Dec.
+NYISO,1,1500,NYISO large hydro (Niagara/St. Lawrence ~5 GW); EIA-923 magnitude.
+NYISO,2,1400,NYISO hydro Feb.
+NYISO,3,1600,NYISO hydro Mar.
+NYISO,4,1900,NYISO hydro Apr; spring runoff.
+NYISO,5,1900,NYISO hydro May.
+NYISO,6,1700,NYISO hydro Jun.
+NYISO,7,1500,NYISO hydro Jul.
+NYISO,8,1400,NYISO hydro Aug.
+NYISO,9,1400,NYISO hydro Sep.
+NYISO,10,1500,NYISO hydro Oct.
+NYISO,11,1600,NYISO hydro Nov.
+NYISO,12,1600,NYISO hydro Dec.
+NEISO,1,600,ISO-NE conventional hydro (~2 GW); EIA-923 magnitude.
+NEISO,2,560,ISO-NE hydro Feb.
+NEISO,3,720,ISO-NE hydro Mar.
+NEISO,4,900,ISO-NE hydro Apr; spring runoff.
+NEISO,5,850,ISO-NE hydro May.
+NEISO,6,680,ISO-NE hydro Jun.
+NEISO,7,520,ISO-NE hydro Jul.
+NEISO,8,480,ISO-NE hydro Aug.
+NEISO,9,480,ISO-NE hydro Sep.
+NEISO,10,560,ISO-NE hydro Oct.
+NEISO,11,620,ISO-NE hydro Nov.
+NEISO,12,640,ISO-NE hydro Dec.

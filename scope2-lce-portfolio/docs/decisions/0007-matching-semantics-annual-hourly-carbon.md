@@ -1,6 +1,7 @@
 # 0007 — Matching semantics: annual hourly matching, storage provenance, residual carbon
 
-- **Status:** provisional (stakeholder deferred; default-decisions table applied)
+- **Status:** accepted (matching definition stakeholder-decided 2026-07-01; storage
+  provenance & carbon attribution remain provisional per the default-decisions table)
 - **Date:** 2026-07-01
 - **Session:** PS-04 (Matching Semantics: annual vs strict 24/7; carbon)
 - **Implemented by:** PP-04/PP-06
@@ -22,10 +23,18 @@ must be explicit to avoid round-trip laundering claims.
 
 ## Decision
 
-**Headline metric = annual hourly matching: 1 − Σ_t grid_buy_t / Σ_t load_t**,
-where grid_buy_t is computed per hour and surplus is **excluded** — surplus clean
-generation is sold, never counted as matched (24/7 rule). Mode B's strict-hourly
-variant remains available via `strict_hourly_matching` for validation studies.
+**Headline metric = VOLUMETRIC hourly matching** (stakeholder-specified): within
+each hour, low-carbon energy counts toward the metric only up to that hour's
+load — `matched_t = min(clean_serving_load_t, load_t) = load_t − grid_buy_t` —
+and the score is the load-weighted sum **Σ_t matched_t / Σ_t load_t
+= 1 − Σ_t grid_buy_t / Σ_t load_t**. It is the *percentage of annual load energy
+matched at hourly granularity*, explicitly **not** "% of hours matched at 100%",
+and surplus in one hour never spills into another hour's score. Surplus is
+**excluded** — surplus clean generation is sold, never counted as matched (24/7
+rule); `grid_buy_t ≥ 0` caps per-hour matched at load. Mode B's strict-hourly
+variant (per-hour constraint `grid_buy_t ≤ (1−target)·load_t`) remains available
+via `strict_hourly_matching` for hard-24/7 studies; it is a constraint option,
+not the headline metric.
 **Storage provenance:** energy is not tracked by source; charging draws from the
 aggregate node and energy bought from the grid (grid_buy) is counted unmatched at
 purchase time, even if later discharged to serve load — conservative, no

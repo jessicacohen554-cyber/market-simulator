@@ -124,6 +124,12 @@ def build_and_solve(
     target fraction in Mode B. ``cf`` is the ``(n_res, T)`` capacity-factor
     matrix from :func:`lce_portfolio.profiles.build_cf_matrix`.
     """
+    # Power/energy-split storage (LDES, hydrogen) needs a separate energy-capacity
+    # decision variable; the PP-02 LP only sizes fixed-duration storage. Split
+    # support lands in PP-02b (ADR 0006).
+    if bool(np.any(resources.is_split)):
+        raise NotImplementedError("split-storage LP support lands in PP-02b")
+
     T = config.hours
     n_res, n_sto = resources.n_res, int(resources.is_storage.sum())
     storage_idx = resources.storage_idx  # resource index r for each storage s
