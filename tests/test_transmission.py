@@ -1174,7 +1174,7 @@ class TestInterfaceGroups(unittest.TestCase):
         idx, cap, bidir = groups[0]
         # Path 66 / Path 46 are links 2 and 3 in the CAISO topology.
         np.testing.assert_array_equal(np.sort(idx), np.array([2, 3]))
-        self.assertEqual(cap, 8300.0)
+        self.assertEqual(cap, 7500.0)
         self.assertTrue(bidir)
 
     def test_no_interface_limits_is_empty(self):
