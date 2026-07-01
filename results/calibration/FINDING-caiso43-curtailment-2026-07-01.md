@@ -97,8 +97,33 @@ returns `None` for on any forward year), registered on the dashboard as a probe,
 keeper**. Its purpose is to quantify (a) that the curtailment / negative-price stack fires once
 the model is long, and (b) the gas-inflation cost that makes the pin inadmissible.
 
-*3-yr before/after metrics and dashboard id are appended in the follow-up commit once the run
-completes.*
+Dashboard id `2026-07-01-caiso-43-gasfloor-probe`. `calibration_verdict` → **NOT-YET** (and
+worse than the keeper where it counts). The mechanism fires exactly as designed, but the price
+gain is **bought by padding gas**:
+
+| 2024 | keeper caiso-42 | gasfloor probe | direction |
+|---|---|---|---|
+| spring (Apr–May) midday gas MW | 1,829 | **5,510** (EIA-930 6,834) | model goes long ✓ |
+| LMP min | +1.4 | **−20.0** | negatives appear ✓ |
+| spring LMP p5 | +27.2 | **−20.0** (actual da p5 −10) | floor collapses ✓ |
+| C3a mean LMP | +36.9 % | **+31.0 %** | body better ✓ |
+| C3b shape NRMSE | 0.516 | **0.459** | shape better ✓ |
+| **C1 CC_REGULAR vol** | +9.57 TWh (+3.3pp) | **+12.48 TWh (+4.3pp)** | mix **worse** ✗ |
+| annual gas vs EIA-923 (67.7) | 77.8 (+15 %) | **80.8 (+19 %)** | gas **padded** ✗ |
+| C5a CO2 | ~PASS | **+11.6 %** | **worse** ✗ |
+| C3c scarcity >$200 | 0 h (vs 35) | 0 h | tail unchanged (AS territory) |
+
+All three years show LMP min = **−$20** — the `negative_renewable_offers` tail fires the moment
+the floor makes the model long, and curtailed solar sets the sub-SRMC price. So the whole
+curtailment→negative stack is **structurally correct and only waiting on longness** (the point
+of the probe). But the floor delivers longness by holding ~3.7 GW extra gas at spring midday
+that then **pads the annual mix** (CC_REGULAR over-run and CO2 both rise), on top of being a
+measured-`NG:NG` pin. That is precisely CLAUDE.md rule #1's "reach the right number through a
+mechanism that isn't real" plus rule #11's forbidden measured-outcome pin — so the probe is a
+**diagnostic, not a keeper**, and **caiso-42 remains the keeper**. Export hours stay 0 % even
+here: the surplus is absorbed as *curtailment* (solar spilled at −$20) and reduced imports, not
+net export — the model reaches "long enough to curtail" but not "long enough to net-export,"
+because ~2 GW of $28 PNW-hydro imports stay in the stack midday.
 
 ## 6. Recommendation — the next clean mechanism
 
