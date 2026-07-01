@@ -54,7 +54,7 @@ class TestSplitImportNodePerHub(unittest.TestCase):
         self.assertEqual(link_map[("WECC_DSW", "SP15")], 10623.0)
         self.assertIn(("NP15", "ZP26"), link_map)
         self.assertNotIn(("WECC_import", "NP15"), link_map)
-        # The 8.3 GW simultaneous-import cap survives, now spanning the two
+        # The 7.5 GW simultaneous-import cap survives, now spanning the two
         # corridor links (so the cap semantics are byte-identical).
         self.assertEqual(len(cfg.interface_limits), 1)
         lim = cfg.interface_limits[0]
@@ -62,7 +62,7 @@ class TestSplitImportNodePerHub(unittest.TestCase):
             {tuple(p) for p in lim.links},
             {("WECC_PNW", "NP15"), ("WECC_DSW", "SP15")},
         )
-        self.assertEqual(lim.cap_mw, 8300.0)
+        self.assertEqual(lim.cap_mw, 7500.0)
         cfg.validate_topology()
 
     def test_split_resolves_to_two_flow_columns(self):
@@ -71,7 +71,7 @@ class TestSplitImportNodePerHub(unittest.TestCase):
         self.assertEqual(len(groups), 1)
         idx, cap, bidir = groups[0]
         self.assertEqual(len(idx), 2)
-        self.assertEqual(cap, 8300.0)
+        self.assertEqual(cap, 7500.0)
         self.assertTrue(bidir)
 
     def test_non_caiso_is_noop(self):
