@@ -478,6 +478,54 @@ def compute_commitment(
     return committed
 
 
+def _ra_bridge_unit_params(
+    gen: Generator, heat_rate: float
+) -> tuple[float, float] | None:
+    """Return ``(min_down_hours, startup_per_mw)`` for the RA must-offer bridge.
+
+    The bridge needs a unit's PHYSICAL minimum-down time and per-MW startup cost.
+    A legacy per-plant generator gets both from :func:`_commitment_params` (the
+    per-fuel heat-rate table). A CAISO per-plant CAMPD **tranche**, however,
+    carries ``min_run_hours = min_down_hours = 0`` on its bins (the tranche
+    artifact never computed them), so ``_commitment_params`` returns ``None`` and
+    the bridge would be silently inert. For such a bin the min-down is instead
+    read from the same per-fuel class table by heat rate — a class-physical,
+    forward-derivable property, no measured pin — and the startup cost is taken
+    from the bin. Only the base (``committed``) tranche carries a startup cost;
+    the incremental ``econ``/``peak`` tranches have ``startup_per_mw = 0`` and are
+    rejected here (returning ``None``) so the bridge never floors above the
+    plant's minimum stable load (which would pad midday gas). Returns ``None``
+    when the unit has no class commitment params (a non-thermal fuel) or is a
+    binned incremental tranche.
+    """
+    params = _commitment_params(gen, heat_rate)
+    if params is not None and float(params["min_down_hours"]) > 0.0:
+        return float(params["min_down_hours"]), float(params["startup_per_mw"])
+    # Binned tranche (min-down zeroed on the bin): fall back to the per-fuel
+    # class table for the physical min-down.
+    table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
+    if table is None:
+        return None
+    base = None
+    for cutoff, p in table:
+        if heat_rate < cutoff:
+            base = p
+            break
+    if base is None:
+        base = table[-1][1]
+    min_down = float(base["min_down_hours"])
+    if min_down <= 0.0:
+        return None
+    startup = float(getattr(gen, "startup_cost_per_mw", 0.0))
+    # A binned incremental tranche (econ/peak, startup 0) is not a committable
+    # base band — never floor it.
+    if getattr(gen, "is_campd_bin", False) and startup <= 0.0:
+        return None
+    if startup <= 0.0:
+        startup = float(base["startup_per_mw"])
+    return min_down, startup
+
+
 def caiso_ra_mustoffer_min_gen(
     p1_dispatch: np.ndarray,  # (n_gen, T) — the economic P1 dispatch
     fleet_arrays: FleetArrays,
@@ -574,20 +622,37 @@ def caiso_ra_mustoffer_min_gen(
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     avail = np.asarray(fleet_arrays.availability, dtype=float)
     zone_idx = np.asarray(fleet_arrays.zone_idx)
+    # Plant-total pmax for binned units: the floor is the PLANT's minimum stable
+    # load (min_load_frac × plant_pmax) applied on its base tranche, never a
+    # per-tranche fraction. A plant's tranches share the unit_id prefix (the bin
+    # id), matching apply_commitment_with_coal_pin's committed/econ coupling.
+    plant_pmax: dict[str, float] = {}
+    for g, gen in enumerate(generators):
+        if getattr(gen, "is_campd_bin", False):
+            key = gen.unit_id.rpartition("_")[0]
+            plant_pmax[key] = plant_pmax.get(key, 0.0) + pmax[g]
     for g, gen in enumerate(generators):
         if gen.plant_group not in ("CC_REGULAR", "CT_PEAKER"):
             continue
-        params = _commitment_params(gen, float(fleet_arrays.heat_rate[g]))
-        if params is None:
+        resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
+        if resolved is None:
             continue
-        min_down = float(params["min_down_hours"])
-        if min_down <= 0.0:
-            continue
+        min_down, startup_per_mw = resolved
         threshold = pmax[g] * run_threshold_frac
         runs = find_runs(p1_dispatch[g, :] > threshold)
         if len(runs) < 2:
             continue
-        startup_per_mw = float(params["startup_per_mw"])
+        # The min-load target is the PLANT's minimum stable load; for a binned
+        # base tranche that is min_load_frac × plant_pmax, clipped to the
+        # tranche's own capacity (the LP bound). Legacy per-plant units floor
+        # min_load_frac × their own pmax (the original behaviour, byte-identical).
+        is_bin = getattr(gen, "is_campd_bin", False)
+        floor_pmax = (
+            plant_pmax.get(gen.unit_id.rpartition("_")[0], pmax[g])
+            if is_bin
+            else pmax[g]
+        )
+        target_mw = min(min_load_frac * floor_pmax, pmax[g])
         zone = int(zone_idx[g])
         # Floor every idle gap between two committed runs. A gap SHORTER than the
         # unit's minimum-down time is always bridged (a physical restart bar). A
@@ -608,7 +673,7 @@ def caiso_ra_mustoffer_min_gen(
                 bridge = startup_per_mw > hold_cost
             if bridge:
                 floor[g, end_prev:start_next] = (
-                    min_load_frac * pmax[g] * avail[g, end_prev:start_next]
+                    target_mw * avail[g, end_prev:start_next]
                 )
     return floor
 
