@@ -1,0 +1,62 @@
+iso,resource,cap_mw,basis,notes
+ERCOT,solar_pv,60000,resource-potential,ERCOT abundant west/central solar resource; large deployable potential.
+ERCOT,onshore_wind,60000,resource-potential,ERCOT best US onshore wind resource (west TX/panhandle).
+ERCOT,geothermal,2000,resource-potential,Limited but non-zero: east TX/Gulf Coast sedimentary geothermal + oilfield co-production EGS pilots (justifies small cap).
+ERCOT,nuclear_new,10000,policy-potential,Room for new nuclear/SMR siting in ERCOT.
+ERCOT,nuclear_existing,2400,fleet-share,~50% of ERCOT existing nuclear fleet (~4.9 GW: Comanche Peak + South Texas) procurable.
+ERCOT,hydro_existing,300,fleet-share,ERCOT has minimal conventional hydro (~0.6 GW); ~50% procurable.
+ERCOT,battery_4h,80000,resource-potential,ERCOT leading US battery buildout; large headroom.
+ERCOT,battery_8h,80000,resource-potential,ERCOT longer-duration Li-ion headroom.
+ERCOT,ldes,40000,resource-potential,LDES potential (siting-flexible).
+ERCOT,hydrogen,40000,resource-potential,H2 storage potential (salt caverns on Gulf Coast).
+CAISO,solar_pv,50000,resource-potential,CAISO strong solar resource.
+CAISO,onshore_wind,20000,resource-potential,CAISO more constrained onshore wind siting.
+CAISO,offshore_wind,15000,resource-potential,CA floating offshore wind (Humboldt/Morro Bay lease areas).
+CAISO,geothermal,8000,resource-potential,CAISO best US geothermal (Geysers, Salton Sea) — highest geothermal cap.
+CAISO,nuclear_new,5000,policy-potential,Limited new-nuclear appetite in CA but non-zero.
+CAISO,nuclear_existing,1100,fleet-share,~50% of Diablo Canyon (~2.2 GW) procurable.
+CAISO,hydro_existing,4000,fleet-share,CAISO large conventional hydro fleet (~8-10 GW); ~50% procurable band.
+CAISO,battery_4h,60000,resource-potential,CAISO leading storage market.
+CAISO,battery_8h,60000,resource-potential,CAISO 8h Li-ion headroom.
+CAISO,ldes,30000,resource-potential,CAISO LDES procurement mandate supports large potential.
+CAISO,hydrogen,30000,resource-potential,CA H2 storage potential.
+PJM,solar_pv,50000,resource-potential,PJM large land area, growing solar.
+PJM,onshore_wind,30000,resource-potential,PJM onshore wind (western footprint).
+PJM,offshore_wind,20000,resource-potential,PJM Atlantic offshore wind (NJ/MD/VA lease areas).
+PJM,nuclear_new,15000,policy-potential,PJM large nuclear-friendly footprint.
+PJM,nuclear_existing,16000,fleet-share,~50% of PJM ~32 GW existing nuclear fleet (largest US) procurable.
+PJM,hydro_existing,1500,fleet-share,PJM modest conventional hydro (~3 GW); ~50% procurable.
+PJM,battery_4h,60000,resource-potential,PJM storage headroom.
+PJM,battery_8h,60000,resource-potential,PJM 8h Li-ion headroom.
+PJM,ldes,30000,resource-potential,PJM LDES potential.
+PJM,hydrogen,30000,resource-potential,PJM H2 storage potential (Appalachian salt caverns).
+MISO,solar_pv,60000,resource-potential,MISO large footprint, strong solar potential.
+MISO,onshore_wind,60000,resource-potential,MISO best-in-class onshore wind (Upper Midwest).
+MISO,geothermal,1000,resource-potential,Minimal MISO geothermal; small sedimentary/co-production potential (justifies small cap).
+MISO,nuclear_new,12000,policy-potential,MISO room for new nuclear siting.
+MISO,nuclear_existing,6000,fleet-share,~50% of MISO ~12 GW existing nuclear fleet procurable.
+MISO,hydro_existing,1000,fleet-share,MISO modest conventional hydro; ~50% procurable.
+MISO,battery_4h,60000,resource-potential,MISO storage headroom.
+MISO,battery_8h,60000,resource-potential,MISO 8h Li-ion headroom.
+MISO,ldes,30000,resource-potential,MISO LDES potential.
+MISO,hydrogen,30000,resource-potential,MISO H2 storage potential.
+NYISO,solar_pv,25000,resource-potential,NYISO land-constrained solar potential.
+NYISO,onshore_wind,15000,resource-potential,NYISO onshore wind (upstate).
+NYISO,offshore_wind,20000,resource-potential,NY Bight offshore wind (large state target ~9 GW).
+NYISO,nuclear_new,4000,policy-potential,NY limited new-nuclear appetite.
+NYISO,nuclear_existing,1700,fleet-share,~50% of NYISO ~3.4 GW existing nuclear fleet (upstate) procurable.
+NYISO,hydro_existing,2500,fleet-share,NYISO large conventional hydro (Niagara/St. Lawrence ~5 GW); ~50% procurable.
+NYISO,battery_4h,30000,resource-potential,NYISO storage headroom.
+NYISO,battery_8h,30000,resource-potential,NYISO 8h Li-ion headroom.
+NYISO,ldes,15000,resource-potential,NYISO LDES potential.
+NYISO,hydrogen,15000,resource-potential,NYISO H2 storage potential.
+NEISO,solar_pv,25000,resource-potential,ISO-NE land-constrained solar potential.
+NEISO,onshore_wind,10000,resource-potential,ISO-NE limited onshore wind siting.
+NEISO,offshore_wind,25000,resource-potential,ISO-NE strong offshore wind resource (Vineyard/Revolution lease areas).
+NEISO,nuclear_new,3000,policy-potential,ISO-NE limited new-nuclear appetite.
+NEISO,nuclear_existing,1700,fleet-share,~50% of ISO-NE ~3.3 GW existing nuclear fleet (Millstone/Seabrook) procurable.
+NEISO,hydro_existing,1500,fleet-share,ISO-NE conventional hydro (~2-3 GW incl. imports excluded); ~50% procurable.
+NEISO,battery_4h,20000,resource-potential,ISO-NE storage headroom.
+NEISO,battery_8h,20000,resource-potential,ISO-NE 8h Li-ion headroom.
+NEISO,ldes,12000,resource-potential,ISO-NE LDES potential.
+NEISO,hydrogen,12000,resource-potential,ISO-NE H2 storage potential.
