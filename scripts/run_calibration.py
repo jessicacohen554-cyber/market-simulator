@@ -1996,6 +1996,9 @@ def run_year(
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
+    pjm_seam_flow_limit: bool = False,
+    pjm_seam_flow_percentile: float | None = None,
+    pjm_seam_export_limit: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -2258,6 +2261,14 @@ def run_year(
         )
     if miso_seam_export_limit:
         config = config.with_overrides(miso_seam_export_limit=True)
+    if pjm_seam_flow_limit:
+        config = config.with_overrides(pjm_seam_flow_limit=True)
+    if pjm_seam_flow_percentile is not None:
+        config = config.with_overrides(
+            pjm_seam_flow_percentile=float(pjm_seam_flow_percentile)
+        )
+    if pjm_seam_export_limit:
+        config = config.with_overrides(pjm_seam_export_limit=True)
     if miso_pjm_border_anchor:
         config = config.with_overrides(miso_pjm_border_anchor=True)
     if miso_cc_coal_rebalance and iso.upper() == "MISO":
@@ -3074,6 +3085,57 @@ def run_year(
                 iso,
                 year,
                 MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
+            )
+    # PJM seam import cap: cap each of PJM's 5 reference-price seams' import
+    # bands at the measured per-neighbor deliverability envelope (PJM tie-line
+    # file, aggregated from border zones to neighbor level). Fixes the ~38 TWh
+    # over-export by capping the LP's simultaneous full-TTC export on all 5
+    # seams. No-op off the flag, for non-PJM, or with no measured tie file.
+    if getattr(config, "reference_price_interface", False) and getattr(
+        config, "pjm_seam_flow_limit", False
+    ):
+        from market_sim.model.transmission import inject_pjm_seam_flow_limit
+
+        _pjm_pct = getattr(config, "pjm_seam_flow_percentile", None)
+        if inject_pjm_seam_flow_limit(
+            fleet_arrays, iso, year, zone_names, hours, percentile=_pjm_pct
+        ):
+            from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
+
+            logger.info(
+                "%s %d: reference-price seam import capped at measured PJM "
+                "tie-line deliverability envelope (p%g); each neighbor's "
+                "import bands derated to border-zone summed envelope",
+                iso,
+                year,
+                PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
+            )
+    # PJM seam export cap: symmetric mirror — cap each seam's net export at
+    # the measured per-neighbor export envelope.
+    if getattr(config, "reference_price_interface", False) and getattr(
+        config, "pjm_seam_export_limit", False
+    ):
+        from market_sim.model.transmission import inject_pjm_seam_flow_limit
+
+        _pjm_pct = getattr(config, "pjm_seam_flow_percentile", None)
+        if inject_pjm_seam_flow_limit(
+            fleet_arrays,
+            iso,
+            year,
+            zone_names,
+            hours,
+            percentile=_pjm_pct,
+            direction="export",
+        ):
+            from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
+
+            logger.info(
+                "%s %d: reference-price seam export capped at measured PJM "
+                "tie-line net-export envelope (p%g); each neighbor's export "
+                "bands floored to border-zone summed envelope",
+                iso,
+                year,
+                PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
             )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
