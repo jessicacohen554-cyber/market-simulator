@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-01 (Capacity-deliverability — docs reconciliation, Wave 3)
+
+Wire capacity-deliverability into the capacity screens behind
+`capacity_deliverability_limits` (default off). Consumes the 5-ISO
+(PJM/MISO/NYISO/ISO-NE/CAISO) `capacity-deliverability` clean datatype
+intake (CETO/CETL, LRR/LCR/CIL, LCR/TSL, LSR/MCL, LCR/MIC): Part A replaces
+the calibrated simultaneous-import cap with the published seam import limit
+(CAISO MIC → WECC_import); Part B gates the retirement, new-entry, and
+storage-entry screens by per-zone deliverable-vs-required headroom. Gated,
+default-off structural mechanism (repo rule #1) — never enabled in a
+keeper. See `docs/capacity-deliverability-wiring.md` for the full mapping
+and wiring detail; `model-methodology-spec.md` §5.8 for the mechanism.
+This entry covers docs/dictionary reconciliation only — the model code was
+already merged (#1197).
+
 ## 2026-06-30 (Reliability-floor rebuild — docs reconciliation, Phase 4)
 
 **Documentation reconciliation for the per-(zone, class) temperature/net-load
