@@ -1,0 +1,105 @@
+# Canonical schema: capacity-deliverability (locational capacity requirements
+# and import/export transfer limits per capacity area, per delivery period).
+#
+# ISO-agnostic reconciliation of each market's locational resource-adequacy
+# parameters onto ONE tidy (long) frame. Every ISO publishes a locational
+# *requirement* (how much capacity an area must have / be able to serve) and,
+# in most cases, a *transfer limit* (how much can be imported/exported across
+# the area boundary). PJM's CETO/CETL pair is the reference construct; the
+# other ISOs' native quantities map onto the same canonical metric vocabulary:
+#
+#   PJM    : CETO -> requirement ; CETL -> import_limit                  (per LDA)
+#   MISO   : LRR  -> requirement ; LCR -> local_clearing_requirement ;
+#            CIL  -> import_limit ; CEL -> export_limit ; ZIA -> import_ability ;
+#            PRMR -> system_requirement                    (per LRZ 1-10 x season)
+#   NYISO  : ICAP req (MW) + LCR% -> requirement (value_mw + value_pu) ;
+#            Bulk Power Transmission Limit -> import_limit ; IRM -> system_requirement
+#   ISO-NE : LSR  -> requirement ; MCL -> export_limit ;
+#            interface import limit -> import_limit ; ICR -> system_requirement
+#   CAISO  : LCR "Capacity Needed" -> requirement (per local area) ;
+#            Maximum Import Capability (MIC) -> import_limit (per branch group) ;
+#            PRM -> system_requirement
+#   ERCOT  : (excluded) energy-only, no capacity market / LDAs / analog.
+#
+# One row per (iso, area, delivery_year, season, metric). value_mw carries the
+# MW quantity; value_pu carries ratio-form values (NYISO LCR%, MISO LRR p.u.,
+# reserve-margin %). Provenance (exact PDF + page/table) rides in source_doc /
+# source_page so every number traces to its authoritative filing.
+datatype: capacity-deliverability
+schema_version: 1
+title: Capacity deliverability (locational requirements & transfer limits)
+description: >-
+  Per-capacity-area locational capacity requirements and import/export transfer
+  limits by delivery period (and season, where the ISO publishes seasonally),
+  reconciled across PJM/MISO/NYISO/ISO-NE/CAISO onto one canonical metric set.
+
+key_columns: [iso, area, delivery_year, season, metric]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO publishing the value (PJM, MISO, NYISO, ISONE, CAISO).
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Capacity area the value applies to — an LDA (PJM), Local Resource Zone
+      (MISO), locality (NYISO), capacity zone (ISO-NE), local capacity area or
+      intertie/branch group (CAISO), or the system/RTO label for system rows.
+  - name: area_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Kind of area: one of lda | lrz | locality | capacity_zone | local_area |
+      branch_group | rto.
+  - name: delivery_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Delivery/planning/capability/commitment year the value governs, as a
+      label. Planning-year ISOs use "2025/2026" (June/May, May/April, or
+      June/May per ISO); CAISO uses the calendar study year, e.g. "2025".
+  - name: season
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Season the value applies to: annual | summer | fall | winter | spring.
+      Only MISO (seasonal since PY2023-24) uses the four seasons; all other
+      ISOs use "annual".
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical metric: requirement | local_clearing_requirement | import_limit
+      | export_limit | import_ability | system_requirement. (requirement is the
+      CETO analog; import_limit is the CETL analog.)
+  - name: value_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: The value in MW. Null when the ISO publishes this metric only as a ratio.
+  - name: value_pu
+    dtype: float64
+    unit: ratio
+    nullable: true
+    description: >-
+      Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a
+      1.148 LRR per-unit-of-peak). Null for pure-MW metrics.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table locator within source_doc.
