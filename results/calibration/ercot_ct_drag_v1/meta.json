@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-30T22:17:34",
+  "timestamp": "2026-07-01T21:01:38",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -158,6 +158,7 @@
   "caiso_gas_floor_frac": null,
   "caiso_ra_mustoffer": null,
   "caiso_ra_min_load_frac": null,
+  "caiso_ra_startup_bridge": null,
   "reliability_floor": true,
   "caiso_solar_deliverability": null,
   "caiso_solar_deliverability_k": null,
@@ -186,6 +187,9 @@
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
+  "pjm_seam_flow_limit": false,
+  "pjm_seam_flow_percentile": null,
+  "pjm_seam_export_limit": false,
   "gas_hub_basis_overlay": null,
   "btm_backfill_year": null,
   "shared_inputs": {
@@ -193,6 +197,7 @@
     "eia923": "../_shared/ERCOT/eia923-1baf3fae644b.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "491cc9f",
-  "highspy_version": "1.15.0"
+  "git_sha": "efd689a",
+  "highspy_version": "1.15.0",
+  "note": "ercot 24 ct-drag-v1: ercot 23 base + ct_netload_drag=True (slope 0.00703, intercept -0.1427, cap 0.47, ramp 15-22h) + CC_REGULAR econ_high delta -0.13 (was -0.10)"
 }

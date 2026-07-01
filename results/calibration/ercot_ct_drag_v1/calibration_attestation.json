@@ -33,6 +33,21 @@
       "criterion": "storage_shape",
       "year": 2025,
       "reason": "C5c storage dispatch shape 2025: r=0.000. Model storage dispatch follows energy-arbitrage windows but real ERCOT storage cycles primarily for ancillary services (~85% of battery revenue is AS), producing a different monthly profile. Closable only with in-LP AS dispatch co-optimization — a large structural addition for a soft criterion with zero forward-year benefit. Accepted as structural caveat."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2025,
+      "reason": "C3c price tail 2025: model 6 hours > $200 vs actual 31 (ratio 0.19, threshold [0.5, 2.0]). The model's co-opt ORDC demand curve produces scarcity pricing (max $550) but not enough hours above the threshold. Actual 2025 scarcity was mild (28 of 31 hours in $200-500 range, max $1,570). Root cause is the same LP-dual price-distribution compression driving the C3b NRMSE: duals structurally under-produce the moderate-scarcity tail ($200-500) because they lack startup-cost uplift, bilateral premiums, and intra-hour volatility present in real-time settlement. 2025 is also the loosest year (highest renewables penetration: 117.9 TWh wind + 69.8 TWh solar, lower reserve requirement 8,024 MW vs 9,688 MW in 2023), so fewer hours approach physical scarcity. Closable only with richer scarcity-pricing structure (startup-cost recovery, intra-hour resolution) — not by tuning the ORDC curve to hit the count."
+    },
+    {
+      "criterion": "fuelmix",
+      "year": 2023,
+      "reason": "C1 fuel-mix CC_REGULAR/CC_CHP 2023: CC_REGULAR model 136.7 TWh vs actual 123.3 TWh (+13.4), CC_CHP model 26.3 vs actual 45.5 (-19.2). Combined CC_REGULAR+CC_CHP is 163.0 vs 168.8 TWh — the total CC volume is within 5.8 TWh; the entire miss is the intra-CC classification split. CHP plants have contractual thermal-host must-run obligations the LP does not model (heat supply contracts, behind-the-meter steam loads). The EIA-923 CHP designation captures these plants but the CAMPD-binned fleet classifies them by prime mover without a CHP must-run overlay. This is a data/representation gap, not a dispatch-model miss. Closable by adding a CHP must-run overlay keyed to EIA-923 CHP flags — deferred to a future keeper cycle."
+    },
+    {
+      "criterion": "fuelmix",
+      "year": 2024,
+      "reason": "C1 fuel-mix CC_REGULAR/CC_CHP 2024: CC_REGULAR model 138.9 TWh vs actual 123.1 TWh (+15.8), CC_CHP model 29.4 vs actual 46.6 (-17.2). Same CC_REGULAR/CC_CHP classification split as 2023 — combined CC within 4.7 TWh of actual. Same root cause: CHP contractual must-run not modelled. See 2023 exception."
     }
   ]
 }
