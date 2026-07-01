@@ -2474,10 +2474,11 @@ def inject_reliability_floor(
     1. Load the zone's daily weather via
        :func:`~market_sim.data.eia_loader.iso_zone_tmax` (already broadcast to the
        hourly horizon, constant within each calendar day).
-    2. Build the full-day gate — no hour-of-day windows:
+    2. Build the day gate and optional sub-daily window:
        ``driver="tmax"`` → flag every hour of a day with ``tmax_c > threshold``;
        ``driver="tmin"`` → ``tmin_c < threshold``;
        ``driver="netload"`` → day's peak net-load (GW) > threshold.
+       When ``start_hour``/``end_hour`` are set, only those hours-of-day bind.
     3. For steam classes (``min_event_hours > 24``) bridge an isolated flagged
        day to adjacent flagged days so a committed boiler spans a multi-day event.
     4. Set ``frac = floor_pct`` on flagged hours (0 elsewhere) and select rows
@@ -2575,6 +2576,13 @@ def inject_reliability_floor(
         # event, so extend/merge flagged runs to at least min_event_hours.
         if int(getattr(spec, "min_event_hours", 24)) > 24:
             flagged = _bridge_flagged_runs(flagged, int(spec.min_event_hours))
+
+        # Sub-daily hour-of-day window: restrict the floor to start_hour..end_hour.
+        sh = getattr(spec, "start_hour", None)
+        eh = getattr(spec, "end_hour", None)
+        if sh is not None and eh is not None:
+            hod = np.arange(hours) % 24
+            flagged = flagged & (hod >= sh) & (hod <= eh)
 
         frac = np.where(flagged, float(spec.floor_pct), 0.0)
         if not np.any(frac > 0.0):
