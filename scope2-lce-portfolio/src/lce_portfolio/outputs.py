@@ -8,10 +8,13 @@ one-file-per-result convention. Also renders a plain-text summary for the CLI.
 
 from __future__ import annotations
 
+import json
+from dataclasses import asdict
 from pathlib import Path
 
 import pandas as pd
 
+from lce_portfolio.config import PortfolioConfig
 from lce_portfolio.sweep import SweepResult
 
 
@@ -26,8 +29,16 @@ def frontier_table(sweep: SweepResult) -> pd.DataFrame:
                 "setpoint": r.setpoint,
                 "matching_pct": r.matching_pct,
                 "premium_per_mwh": r.premium,
+                "premium_per_year": r.premium_total_per_year,
+                "pct_over_bau": r.pct_over_bau,
                 "net_cost": r.net_cost,
                 "bau_cost": r.bau_cost,
+                "capital_cost": r.capital_cost,
+                "avoided_purchase_cost": r.avoided_purchase_cost,
+                "surplus_mwh": r.surplus_mwh,
+                "surplus_revenue": r.surplus_revenue,
+                "grid_buy_mwh": r.grid_buy_mwh,
+                "total_load_mwh": r.total_load_mwh,
                 "shadow_price": r.shadow_price,
                 "status": r.status,
             }
@@ -51,10 +62,49 @@ def build_mix_table(sweep: SweepResult) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def write_outputs(sweep: SweepResult, out_dir: str | Path) -> dict[str, Path]:
+def write_run_metadata(
+    sweep: SweepResult,
+    config: PortfolioConfig,
+    out_dir: str | Path,
+) -> Path:
+    """Write a ``<iso>_run_metadata.json`` capturing config + per-setpoint status.
+
+    Provenance for reproducibility: the full config, tool version, and the
+    solver status / headline metrics of each solve.
+    """
+    from lce_portfolio import __version__
+
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    meta = {
+        "tool_version": __version__,
+        "iso": sweep.iso,
+        "mode": sweep.mode,
+        "config": asdict(config),
+        "solves": [
+            {
+                "setpoint": r.setpoint,
+                "status": r.status,
+                "matching_pct": r.matching_pct,
+                "premium_per_mwh": r.premium,
+            }
+            for r in sweep.results
+        ],
+    }
+    path = out_dir / f"{sweep.iso}_run_metadata.json"
+    path.write_text(json.dumps(meta, indent=2))
+    return path
+
+
+def write_outputs(
+    sweep: SweepResult,
+    out_dir: str | Path,
+    config: PortfolioConfig | None = None,
+) -> dict[str, Path]:
     """Write frontier and build-mix Parquet files under ``out_dir``.
 
-    Returns a dict of the written paths keyed by ``"frontier"`` / ``"build_mix"``.
+    If ``config`` is given, also writes a run-metadata JSON. Returns a dict of the
+    written paths keyed by ``"frontier"`` / ``"build_mix"`` / ``"metadata"``.
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -64,6 +114,8 @@ def write_outputs(sweep: SweepResult, out_dir: str | Path) -> dict[str, Path]:
     }
     frontier_table(sweep).to_parquet(paths["frontier"], index=False)
     build_mix_table(sweep).to_parquet(paths["build_mix"], index=False)
+    if config is not None:
+        paths["metadata"] = write_run_metadata(sweep, config, out_dir)
     return paths
 
 

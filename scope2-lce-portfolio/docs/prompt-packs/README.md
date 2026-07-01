@@ -24,9 +24,13 @@ the relevant planning session first).
 
 ## Current state
 
-The minimal slice already ships a first cut of PP-00, PP-04, PP-05, PP-06 and a
-synthetic PP-03. The packs below describe how to take each from "minimal working"
-to "production", and mark what already exists.
+Implemented so far: **PP-00** (config + validation + `from_file` loader),
+**PP-04** (LP core, both modes, infeasible-safe), **PP-05** (sweep + CLI with
+`--config` and `--all-isos` batch, graceful infeasible handling), **PP-06**
+(enriched frontier metrics + run-metadata JSON), and a synthetic **PP-03**.
+Still open / decision-gated: **PP-01** (real intake rules, PS-07/08),
+**PP-02** (real costs, PS-01/03/05/06), **PP-03** (vendor real CF profiles).
+The packs below describe how to take each from "minimal working" to "production".
 
 ## Rules for every pack
 
