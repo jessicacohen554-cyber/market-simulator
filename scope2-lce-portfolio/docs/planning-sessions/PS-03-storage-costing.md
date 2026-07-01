@@ -1,4 +1,5 @@
 # PS-03 — Storage Costing (power/energy split, LDES, hydrogen)
+**DECIDED → [ADR 0006](../decisions/0006-storage-costing-tranches-power-energy-split.md) (2026-07-01)**
 
 **Goal:** decide how storage capital and efficiency are represented, across
 4/8/12-hour batteries, long-duration (LDES), and hydrogen.

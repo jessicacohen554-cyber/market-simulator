@@ -1,4 +1,5 @@
 # PS-05 — Existing-Resource Treatment & Additionality
+**DECIDED → [ADR 0008](../decisions/0008-existing-resource-treatment-eac-premium.md) (2026-07-01)**
 
 **Goal:** decide how already-operating clean resources (existing nuclear, hydro)
 enter the portfolio and whether they count toward matching.
