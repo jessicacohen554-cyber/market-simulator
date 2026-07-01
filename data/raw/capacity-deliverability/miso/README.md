@@ -1,8 +1,8 @@
 # MISO capacity-deliverability (LRR / LCR / CIL / CEL / ZIA by LRZ × season)
 
-Drop the retrieved unified CSV here as **`miso.csv`**. MISO is **seasonal**
-(Summer / Fall / Winter / Spring) since Planning Year 2023-24, so every row
-carries a real `season`.
+The unified CSV lives here as **`miso.csv`** (740 rows, PY2023/2024 through
+PY2025/2026). MISO is **seasonal** (summer / fall / winter / spring) since
+Planning Year 2023-24, so every row carries a real `season`.
 
 - **area_type:** `lrz` (system/subregional PRMR rows use `rto`, area = RTO /
   North / South).
@@ -28,5 +28,3 @@ text-extract (pdfminer.six / pdftotext) — the decks are image-heavy.
 - 2025 PRA Results: https://cdn.misoenergy.org/2025%20PRA%20Results%20Posting%2020250529_Corrections694160.pdf
 
 Required years (backcast): 2023/2024, 2024/2025, 2025/2026.
-
-**DATA NEEDED:** `miso.csv` not yet committed.
