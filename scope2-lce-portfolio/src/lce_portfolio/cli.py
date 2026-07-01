@@ -5,46 +5,36 @@ Usage::
     python -m lce_portfolio --load load.csv --lmp bau_lmp.csv --iso SAMPLE \
         --deltas 1 2 5 7 10 20 --out-dir data/outputs
 
-    # or drive a run from a config file, batching every ISO in the load file:
-    python -m lce_portfolio --config run.json --load load.csv --lmp lmp.csv \
-        --all-isos --out-dir data/outputs
+    # or drive a run entirely from a config file (ADR 0010/0011 load_file /
+    # lmp_file fields), batching every ISO in the load file:
+    python -m lce_portfolio --config run.json --all-isos --out-dir data/outputs
 
 Reads a load-intake file and an LMP file, runs the premium sweep (Mode A by
 default), writes Parquet outputs + run metadata, and prints a summary. Fully
-standalone — no ``market_sim`` import.
+standalone — no ``market_sim`` import. Validation errors (bad schema, missing
+hours, unknown ISO) are reported as a single clean message, not a traceback.
 """
 
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
-
-from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
-from lce_portfolio.intake import load_intake, prepare_load
+from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.intake import load_intake, prepare_lmp, prepare_load
 from lce_portfolio.outputs import summarize, write_outputs
 from lce_portfolio.profiles import build_cf_matrix
 from lce_portfolio.resources import load_resource_arrays
 from lce_portfolio.sweep import run_sweep
 
 
-def load_lmp(path: str | Path, iso: str) -> np.ndarray:
-    """Read a BAU LMP file (columns ``hour``, ``iso``, ``lmp``) for one ISO."""
-    path = Path(path)
-    df = pd.read_parquet(path) if path.suffix == ".parquet" else pd.read_csv(path)
-    df = df[df["iso"] == iso].sort_values("hour")
-    if len(df) != HOURS_PER_YEAR:
-        raise ValueError(f"expected {HOURS_PER_YEAR} LMP rows for {iso}, got {len(df)}")
-    return df["lmp"].to_numpy(dtype=float)
-
-
 def build_config(args: argparse.Namespace) -> PortfolioConfig:
     """Assemble a base :class:`PortfolioConfig` from a file and/or CLI args.
 
-    ``--config`` provides the base; if absent, the sweep-related CLI flags build
-    it. Runtime paths (--load/--lmp/--out-dir) and ISO selection are always CLI.
+    ``--config`` provides the base (including its ``load_file``/``lmp_file``,
+    ADR 0010/0011); if absent, the sweep-related CLI flags build it. ISO
+    selection is always CLI.
     """
     if args.config:
         return PortfolioConfig.from_file(args.config)
@@ -68,7 +58,7 @@ def run_one_iso(
     """Run the full pipeline for a single ISO (``config.iso``) and write outputs."""
     resources = load_resource_arrays(config)
     load = prepare_load(load_path, config.iso, config)
-    lmp = load_lmp(lmp_path, config.iso)
+    lmp = prepare_lmp(lmp_path, config.iso)
     cf = build_cf_matrix(resources, config.iso, config.year)
 
     sweep = run_sweep(config, resources, load, lmp, cf)
@@ -83,10 +73,15 @@ def _isos_in_load(load_path: str | Path) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Parse args, run the sweep for one or all ISOs, write outputs."""
+    """Parse args, run the sweep for one or all ISOs, write outputs.
+
+    The load/LMP file paths come from ``--load``/``--lmp`` if given, else from
+    ``config.load_file``/``config.lmp_file`` (ADR 0010/0011); if neither
+    source supplies them this is a clean CLI error, not a traceback.
+    """
     p = argparse.ArgumentParser(description="Scope 2 hourly LCE portfolio optimizer")
-    p.add_argument("--load", required=True, help="load-intake CSV/Parquet")
-    p.add_argument("--lmp", required=True, help="BAU LMP CSV/Parquet")
+    p.add_argument("--load", default=None, help="load-intake CSV/Parquet")
+    p.add_argument("--lmp", default=None, help="BAU LMP CSV/Parquet")
     p.add_argument("--iso", default=None, help="ISO to run (or use --all-isos)")
     p.add_argument(
         "--all-isos", action="store_true", help="run every ISO in the load file"
@@ -115,10 +110,21 @@ def main(argv: list[str] | None = None) -> int:
     if not args.all_isos and not (args.iso or args.config):
         p.error("specify --iso, --all-isos, or a --config with an iso")
 
-    base = build_config(args)
-    isos = _isos_in_load(args.load) if args.all_isos else [args.iso or base.iso]
-    for iso in isos:
-        run_one_iso(base.with_overrides(iso=iso), args.load, args.lmp, args.out_dir)
+    try:
+        base = build_config(args)
+        load_path = args.load or base.load_file
+        lmp_path = args.lmp or base.lmp_file
+        if not load_path:
+            p.error("specify --load or set load_file in --config")
+        if not lmp_path:
+            p.error("specify --lmp or set lmp_file in --config")
+
+        isos = _isos_in_load(load_path) if args.all_isos else [args.iso or base.iso]
+        for iso in isos:
+            run_one_iso(base.with_overrides(iso=iso), load_path, lmp_path, args.out_dir)
+    except (ValueError, KeyError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     return 0
 
 

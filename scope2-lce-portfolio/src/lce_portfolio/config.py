@@ -93,6 +93,14 @@ class PortfolioConfig:
     """Annual load-growth CAGR applied to the intake profile (optional)."""
     load_growth_years: int = 0
     """Number of years of ``load_growth_rate`` to compound onto the intake."""
+    load_file: str | None = None
+    """Path to the facility load-intake file (ADR 0010). ``None`` = the caller
+    supplies a path directly (e.g. ``--load`` on the CLI); set here for
+    reproducible config-file-driven runs."""
+    lmp_file: str | None = None
+    """Path to the BAU LMP file (ADR 0011): the calibrated market-sim
+    forecast-year export for the modeled year, columns ``(hour, iso, lmp)``.
+    No escalation is applied — the vintage in this file is used as-is."""
 
     def __post_init__(self) -> None:
         """Validate field values (runs on construction; dataclass is frozen)."""
