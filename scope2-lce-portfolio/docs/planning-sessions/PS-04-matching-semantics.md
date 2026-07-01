@@ -1,4 +1,5 @@
 # PS-04 — Matching Semantics
+**DECIDED → [ADR 0007](../decisions/0007-matching-semantics-annual-hourly-carbon.md) (2026-07-01)**
 
 **Goal:** define precisely what "hourly matching" counts, and how residual grid
 purchases are treated for carbon.
