@@ -1,10 +1,16 @@
 """Tests for emissions accounting from dispatch results."""
 
+import importlib.util
 import unittest
+from pathlib import Path
 
 import numpy as np
 
-from market_sim.results.emissions import compute_emissions, compute_nox
+from market_sim.results.emissions import (
+    compute_emissions,
+    compute_fossil_avg_rate,
+    compute_nox,
+)
 
 
 class TestComputeEmissions(unittest.TestCase):
@@ -36,6 +42,88 @@ class TestComputeEmissions(unittest.TestCase):
         result = compute_emissions(dispatch, np.zeros(4))
 
         np.testing.assert_array_equal(result, np.zeros(12))
+
+
+class TestComputeFossilAvgRate(unittest.TestCase):
+    """``compute_fossil_avg_rate`` is the hourly fossil-only average tCO2/MWh."""
+
+    def test_all_fossil_fleet_matches_weighted_average(self):
+        # Two fossil units, hand-computed dispatch-weighted average per hour.
+        dispatch = np.array([[10.0, 20.0, 0.0], [30.0, 20.0, 5.0]])
+        rates = np.array([0.4, 1.0])
+
+        result = compute_fossil_avg_rate(dispatch, rates)
+
+        expected = np.array(
+            [
+                (10.0 * 0.4 + 30.0 * 1.0) / 40.0,
+                (20.0 * 0.4 + 20.0 * 1.0) / 40.0,
+                (0.0 * 0.4 + 5.0 * 1.0) / 5.0,
+            ]
+        )
+        np.testing.assert_allclose(result, expected)
+        self.assertEqual(result.shape, (3,))
+
+    def test_zero_carbon_generation_excluded_from_both_sides(self):
+        # A zero-rate (nuclear-like) unit must not dilute the fossil average:
+        # its MWh stay out of the denominator, its (zero) tons out of the
+        # numerator, so the rate equals the fossil unit's own rate.
+        dispatch = np.array([[50.0, 50.0], [1000.0, 1000.0]])
+        rates = np.array([0.6, 0.0])
+
+        result = compute_fossil_avg_rate(dispatch, rates)
+
+        np.testing.assert_allclose(result, [0.6, 0.6])
+
+    def test_zero_fossil_dispatch_hour_returns_zero_not_nan(self):
+        # Hour 1 has no fossil dispatch at all: documented convention is 0.0
+        # (nothing emitting to attribute), never nan/inf.
+        dispatch = np.array([[100.0, 0.0], [200.0, 500.0]])
+        rates = np.array([0.5, 0.0])  # only generator 0 is fossil
+
+        result = compute_fossil_avg_rate(dispatch, rates)
+
+        np.testing.assert_allclose(result, [0.5, 0.0])
+        self.assertTrue(np.all(np.isfinite(result)))
+
+
+class TestVendoredParityScope2(unittest.TestCase):
+    """The scope2-lce-portfolio vendored copy matches the upstream function.
+
+    The LCE portfolio tool is import-isolated (it never imports
+    ``market_sim``), so the parity check lives here on the market_sim side:
+    the vendored module is pure numpy and is loaded by file path only.
+    """
+
+    VENDORED_PATH = (
+        Path(__file__).resolve().parents[1]
+        / "scope2-lce-portfolio"
+        / "src"
+        / "lce_portfolio"
+        / "vendored"
+        / "fossil_avg_rate.py"
+    )
+
+    def _load_vendored(self):
+        spec = importlib.util.spec_from_file_location(
+            "_vendored_fossil_avg_rate", self.VENDORED_PATH
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_vendored_copy_produces_identical_outputs(self):
+        vendored = self._load_vendored()
+        rng = np.random.default_rng(42)
+        dispatch = rng.uniform(0.0, 500.0, size=(9, 48))
+        dispatch[:, 7] = 0.0  # a zero-dispatch hour exercises the 0.0 branch
+        rates = rng.uniform(0.0, 1.2, size=9)
+        rates[[1, 4, 6]] = 0.0  # zero-carbon units
+
+        np.testing.assert_array_equal(
+            compute_fossil_avg_rate(dispatch, rates),
+            vendored.compute_fossil_avg_rate(dispatch, rates),
+        )
 
 
 class TestComputeNox(unittest.TestCase):

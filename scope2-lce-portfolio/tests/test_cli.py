@@ -109,3 +109,41 @@ def test_cli_requires_load_or_config(capsys) -> None:
         main(["--iso", "SAMPLE", "--lmp", "nonexistent.csv"])
     captured = capsys.readouterr()
     assert "--load" in captured.err
+
+
+def test_cli_emissions_file_threads_residual_co2_to_outputs(tmp_path) -> None:
+    """--emissions wires the hourly rate through to residual_co2_tons (ADR 0013)."""
+    load_path, lmp_path = _write_fixtures(tmp_path)
+    hours = np.arange(HOURS_PER_YEAR)
+    emissions_path = tmp_path / "rates.csv"
+    pd.DataFrame(
+        {
+            "hour": hours,
+            "iso": "SAMPLE",
+            "fossil_avg_co2_rate": np.where(hours % 24 < 12, 0.5, 0.3),
+        }
+    ).to_csv(emissions_path, index=False)
+    out_dir = tmp_path / "out"
+
+    rc = main(
+        [
+            "--load",
+            str(load_path),
+            "--lmp",
+            str(lmp_path),
+            "--emissions",
+            str(emissions_path),
+            "--iso",
+            "SAMPLE",
+            "--deltas",
+            "1",
+            "--out-dir",
+            str(out_dir),
+        ]
+    )
+
+    assert rc == 0
+    frontier = pd.read_parquet(out_dir / "SAMPLE_frontier.parquet")
+    # A $1 cap leaves unmatched hours, so the hourly rate yields a residual > 0.
+    assert (frontier["grid_buy_mwh"] > 0.0).all()
+    assert (frontier["residual_co2_tons"] > 0.0).all()

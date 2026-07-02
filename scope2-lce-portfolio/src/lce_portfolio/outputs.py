@@ -123,9 +123,10 @@ def write_outputs(
 def summarize(sweep: SweepResult) -> str:
     """Render a human-readable summary of the sweep frontier and mix.
 
-    A residual-carbon column (tCO₂/yr from unmatched grid purchases, ADR 0007) is
-    shown only when the marginal emission rate produced a nonzero residual for at
-    least one sweep point; otherwise the layout matches the pre-carbon summary.
+    A residual-carbon column (tCO₂/yr from unmatched grid purchases, ADR 0013) is
+    shown only when the hourly fossil-average emission rate produced a nonzero
+    residual for at least one sweep point; otherwise the layout matches the
+    pre-carbon summary.
     """
     setpoint_label = "premium$/MWh" if sweep.mode == "premium_cap" else "target"
     show_co2 = any(r.residual_co2_tons > 0 for r in sweep.results)
