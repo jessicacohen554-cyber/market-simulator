@@ -2,11 +2,11 @@
   "CAISO": "2026-07-01-caiso-42-atc-hydro",
   "ERCOT": "2026-07-01-24-ct-drag-v1",
   "NEISO": "2026-07-01-neiso-43-closeout",
-  "PJM": "2026-07-01-pjm-71-coal-bit",
+  "PJM": "2026-07-02-pjm-74-cc-ct",
   "keepers": [
     "2026-07-01-24-ct-drag-v1",
     "2026-07-01-caiso-42-atc-hydro",
-    "2026-07-01-pjm-71-coal-bit",
+    "2026-07-02-pjm-74-cc-ct",
     "2026-07-02-nyiso-39-priced-interchange",
     "2026-07-01-neiso-43-closeout",
     "2026-07-02-miso-35-zonal-refinement"

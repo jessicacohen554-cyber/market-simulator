@@ -1,0 +1,13 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "pjm-71 coal-bit-floor 0.65 attestation backfill 2026-07-02 (bundle committed 562e9c7 without one)",
+    "note": "Active levers trace to measured/structural inputs: CAMPD unit-level outage windows (outage_source=historic, exogenous availability), measured monthly delivered gas actuals with the PJM zonal gas-basis overlay, coal PRB/BIT passthrough sigmoids (the market fuel-contract passthrough mechanism; the BIT floor 0.65 is offer-curve level calibration inside the physical passthrough range 0.55-0.75, bracket-chosen between the C1 coal-volume and C3a bands as the sanctioned offer-curve tuning layer, not a price-residual adder), per-plant CAMPD must-run/committed tranches (online-Pmin), retiree CEMS availability envelope (measured availability, not generation pinning), measured EIA-930 monthly hydro with 2024 backfill, EIA-860 BTM with 2024 backfill, priced interchange at measured reference-bus prices with per-seam tie-line p90 flow/export caps, energy+reserve co-optimization on the PJM reserve requirement with measured reserve supply cap, reliability floor. No unit pinned to observed CEMS generation; no adder/haircut applied to the price residual; no input rescaled so model output lands on actuals.",
+    "residuals_note": "Backfilled the same session pjm-74 was produced; determination remains NOT-YET on this run's own numbers: C1 2024 CC_REGULAR +20.94 TWh/+2.1pp and CT_PEAKER -9.72 TWh/-1.2pp (model misses, targeted by the run-74 CC/CT offer rebalance per keeper commit 7da5a12), C2 2025 gas +4.1%/coal +2.6%, C3a 2024 -9.4%/2025 -14.8%, C3b 2025 NRMSE 0.208, C3c 0 tail hours vs 6/18/59 actual (blocked on the per-gen reserve co-opt + commitment tightening thread, docs/multi-iso/pjm-reserve-ordc.md). These are documented model misses, not accepted measured-input limitations, so no exceptions are claimed for them."
+  },
+  "exceptions": []
+}
