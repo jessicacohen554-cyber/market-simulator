@@ -121,26 +121,27 @@ def _pjm_mix(model=None):
 class FuelMixTests(unittest.TestCase):
     def test_big_class_percent_band(self):
         # CC_REGULAR 325 TWh actual in a ~721 TWh ISO: the universal volume band
-        # is min(1.0% of ISO gen, 5 TWh) = 5 TWh (the 5 TWh cap binds). +8 TWh
-        # exceeds it -> FAIL on volume; +3 TWh is inside both the volume and
-        # 1.5pp share bands -> PASS.
-        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        # is min(2.0% of ISO load, 8 TWh) = 8 TWh (the 8 TWh cap binds). +9 TWh
+        # exceeds it -> FAIL on volume; +8 TWh sits exactly on the cap -> PASS
+        # (pins the 2026-07-02 loosening: the old 5 TWh cap failed a +8 miss).
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 334.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
         self.assertEqual(cc["status"], cv.FAIL)
         self.assertEqual(cc["classification"], cv.MODEL_MISS)
-        ypay, ybench = _pjm_mix({"CC_REGULAR": 328.0})
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
         self.assertEqual(cc["status"], cv.PASS)
 
     def test_small_class_absolute_band(self):
-        # Small classes get the SAME universal volume band — min(1.0% of ISO gen,
-        # 5 TWh), here capped at 5 TWh — not the obsolete ±1 TWh size-tiered bar:
-        # ST_GAS 9 TWh actual with a +1.26 TWh miss now PASSES (the old absolute
-        # bar failed it), while a +6 TWh miss exceeds the 5 TWh cap -> FAIL (the
-        # cap stops a small class drifting far on the margin and still passing).
-        ypay, ybench = _pjm_mix({"ST_GAS": 15.0})
+        # Small classes get the SAME universal volume band — min(2.0% of ISO load,
+        # 8 TWh), here capped at 8 TWh — not the obsolete ±1 TWh size-tiered bar:
+        # ST_GAS 9 TWh actual with a +1.26 TWh miss PASSES (small-class TWh noise
+        # is not a structural miss), while a +9 TWh miss exceeds the 8 TWh cap ->
+        # FAIL (the cap stops a small class drifting far on the margin and still
+        # passing).
+        ypay, ybench = _pjm_mix({"ST_GAS": 18.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         sg = [r for r in rows if r["key"] == "ST_GAS"][0]
         self.assertEqual(sg["status"], cv.FAIL)
@@ -158,19 +159,19 @@ class FuelMixTests(unittest.TestCase):
     def test_preliminary_incomplete_class_skipped(self):
         # A preliminary-EIA-923 vintage class whose plant data the completeness
         # audit flags INCOMPLETE has no trustworthy per-class actual to gate
-        # against, so it is SKIPPED regardless of miss size (even a +8 TWh
+        # against, so it is SKIPPED regardless of miss size (even a +9 TWh
         # over-absorption that would FAIL in a complete-vintage year). The raw gap
         # is kept as a report-only annotation that does not gate.
         _completeness(
             {"ERCOT": {"CC_REGULAR": False}}, {"ERCOT": {"gas": False, "coal": False}}
         )
         try:
-            ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 334.0})
             rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
             cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
             self.assertEqual(cc["status"], cv.SKIPPED)
             self.assertIsNone(cc["classification"])
-            self.assertAlmostEqual(cc["vintage_gap_twh"], 8.0, places=3)
+            self.assertAlmostEqual(cc["vintage_gap_twh"], 9.0, places=3)
             self.assertIn("incomplete plant data", cc["magnitude"])
             self.assertEqual(cc["completeness"], "incomplete")
             # A large miss is still SKIPPED, never FAIL.
@@ -184,13 +185,13 @@ class FuelMixTests(unittest.TestCase):
     def test_preliminary_complete_class_gated(self):
         # A preliminary-vintage class the audit flags COMPLETE (its plants all
         # reported AND its family fully reported) gates exactly like a
-        # complete-vintage year: a +8 TWh CC_REGULAR miss FAILs / MODEL MISS, a
+        # complete-vintage year: a +9 TWh CC_REGULAR miss FAILs / MODEL MISS, a
         # +3 TWh miss PASSes. Only the verified-complete classes gate in 2025.
         _completeness(
             {"ERCOT": {"CC_REGULAR": True}}, {"ERCOT": {"gas": True, "coal": False}}
         )
         try:
-            ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})  # +8 TWh
+            ypay, ybench = _pjm_mix({"CC_REGULAR": 334.0})  # +9 TWh
             rows = cv.score_fuelmix(2025, ypay, ybench, "ERCOT")
             cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
             self.assertEqual(cc["status"], cv.FAIL)
@@ -205,10 +206,10 @@ class FuelMixTests(unittest.TestCase):
             _reset_completeness()
 
     def test_complete_vintage_year_still_gated(self):
-        # 2024 is a complete-vintage year (< PRELIM_923_FROM_YEAR): the same +8 TWh
+        # 2024 is a complete-vintage year (< PRELIM_923_FROM_YEAR): the same +9 TWh
         # CC_REGULAR miss is gated normally -> FAIL / MODEL MISS, while a +3 TWh miss
         # stays inside the band -> PASS.
-        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 334.0})
         rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
         self.assertEqual(cc["status"], cv.FAIL)
@@ -326,15 +327,32 @@ class SysVolTests(unittest.TestCase):
 
 class PriceAndDispatchTests(unittest.TestCase):
     def test_mean_lmp_band(self):
-        # -7.2% is within the ±8% band -> PASS.
-        ypay = {"lmp": {"Z": {"p": 27.4, "d": 100.0}}}
+        # -3.8% is within the ±5% band -> PASS; -7.2% (a pass under the old ±8%)
+        # now FAILs — pins the 2026-07-02 tightening.
+        ypay = {"lmp": {"Z": {"p": 28.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
         self.assertEqual(r["status"], cv.PASS)
+        ypay = {"lmp": {"Z": {"p": 27.4, "d": 100.0}}}
+        r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
+        self.assertEqual(r["status"], cv.FAIL)
 
     def test_mean_lmp_fail_when_far(self):
         ypay = {"lmp": {"Z": {"p": 35.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 42.9}})
         self.assertEqual(r["status"], cv.FAIL)  # -17.5%
+
+    def test_price_shape_nrmse_band(self):
+        # Flat monthly vectors: model 31.9 vs actual 29 -> NRMSE = 0.10 <= 0.15
+        # PASS; model 33.93 -> NRMSE = 0.17, a pass under the old 0.20 ceiling,
+        # now FAILs — pins the 2026-07-02 tightening.
+        def ypay(pm):
+            return {"lmp": {"Z": {"pMon": [pm] * 12, "dMon": [8.3] * 12}}}
+
+        bench = {"avgLMP": {"rt_mon": [29.0] * 12}}
+        r = cv.score_price_shape(2024, ypay(31.9), bench)
+        self.assertEqual(r["status"], cv.PASS)
+        r = cv.score_price_shape(2024, ypay(33.93), bench)
+        self.assertEqual(r["status"], cv.FAIL)
 
     def test_tail_skipped_without_ordc(self):
         r = cv.score_price_tail(2024, {"lmp": {}}, "PJM")
@@ -346,7 +364,7 @@ class PriceAndDispatchTests(unittest.TestCase):
         self.assertEqual(r["status"], cv.FAIL)
 
     def test_tail_within_band_passes(self):
-        # model 130h vs actual 100h = 1.30x, inside [0.5x, 2x] -> PASS.
+        # model 130h vs actual 100h = 1.30x, inside [0.7x, 1.5x] -> PASS.
         ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 130}}}
         r = cv.score_price_tail(2024, ypay, "NEISO")
         self.assertEqual(r["status"], cv.PASS)
@@ -354,11 +372,19 @@ class PriceAndDispatchTests(unittest.TestCase):
         self.assertIn("300", r["metric"])
 
     def test_tail_over_fired_fails(self):
-        # model 250h vs actual 100h = 2.5x, above 2x ceiling -> FAIL.
-        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 250}}}
+        # model 160h vs actual 100h = 1.6x, above the 1.5x ceiling -> FAIL
+        # (a pass under the old 2x ceiling — pins the 2026-07-02 tightening).
+        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 160}}}
         r = cv.score_price_tail(2024, ypay, "PJM")
         self.assertEqual(r["status"], cv.FAIL)
         self.assertEqual(r["classification"], cv.MODEL_MISS)
+
+    def test_tail_under_fired_fails(self):
+        # model 60h vs actual 100h = 0.6x, below the 0.7x floor -> FAIL
+        # (a pass under the old 0.5x floor — pins the 2026-07-02 tightening).
+        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 60}}}
+        r = cv.score_price_tail(2024, ypay, "PJM")
+        self.assertEqual(r["status"], cv.FAIL)
 
     def test_tail_quiet_actual_passes_when_model_quiet(self):
         # Actual ~0 scarcity hours: a quiet model tail can't be over/under-shot.
@@ -555,11 +581,11 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["determination"], cv.NOT_YET)
 
     def test_documented_fail_within_budget_is_caveats(self):
-        # ST_GAS (9 TWh actual) overshoots by +5 TWh: this fixture's classfull is
-        # fossil-only (a_gen ≈ 409 TWh), so the 1.0% volume band ≈ 4.1 TWh and the
-        # +5 TWh miss still exceeds it -> the class FAILs C1 on volume (share stays
-        # within 1.5pp), but the gas family stays within ±2.5% (359 vs 354 = +1.4%)
-        # so C2 still PASSes -> a single isolated hard-gate fail, ledgered ->
+        # ST_GAS (9 TWh actual) overshoots by +5 TWh: the fixture's lmp zone demand
+        # is 100 TWh, so the volume band = min(2.0% of load, 8 TWh) = 2.0 TWh and
+        # the +5 TWh miss still exceeds it -> the class FAILs C1 on volume (share
+        # stays within 3.0pp), but C2 defers to C1 for the fully-reported family
+        # so it still PASSes -> a single isolated hard-gate fail, ledgered ->
         # CAVEAT in budget.
         ypay = {
             "gmModel": {
@@ -610,6 +636,35 @@ class DeterminationTests(unittest.TestCase):
         # One hard-gate caveat is within the budget (<=1) -> CALIBRATED-WITH-CAVEATS.
         self.assertEqual(v["criteria"]["fuelmix"]["status"], cv.CAVEAT)
         self.assertEqual(v["criteria"]["sysvol"]["status"], cv.PASS)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+
+    def test_soft_caveat_budget_is_two(self):
+        # Pins MAX_SOFT_CAVEATS = 2 (2026-07-02 re-balance, Option A: C3 stays
+        # SOFT but price can no longer be caveated as freely). Three ledgered
+        # soft caveats (price_mean -10.3%, price_tail 2.0x, storage +50%) exceed
+        # the budget -> NOT-YET; dropping the storage caveat (model back in band)
+        # leaves two -> CALIBRATED-WITH-CAVEATS.
+        def art_with(storage_model):
+            ypay = self._clean_year_payload()
+            ypay["lmp"]["Z"]["p"] = 26.0  # -10.3% vs rt 29.0 -> price_mean FAIL
+            ypay["lmp"]["Z"]["pMon"] = [26] * 12  # NRMSE 0.103 <= 0.15 -> shape PASS
+            ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 200}}  # 2.0x FAIL
+            ypay["storage"] = {"throughput_twh": storage_model}
+            att = _clean_attestation(
+                exceptions=[
+                    {"criterion": "price_mean", "year": 2024, "reason": "documented"},
+                    {"criterion": "price_tail", "year": 2024, "reason": "documented"},
+                    {"criterion": "storage", "year": 2024, "reason": "documented"},
+                ]
+            )
+            art = _artifacts(ypay, attestation=att, **self._clean_bench_args())
+            art["bench"][2024]["storage"] = {"throughput_twh": 1.0}
+            return art
+
+        v = cv.determine_from_artifacts("t", art_with(1.5))  # +50% -> 3rd caveat
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertIn("caveat budget exceeded", v["reasons"][0])
+        v = cv.determine_from_artifacts("t", art_with(1.15))  # +15% in band -> 2
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
 
     def test_data_blocked_year_recorded(self):
