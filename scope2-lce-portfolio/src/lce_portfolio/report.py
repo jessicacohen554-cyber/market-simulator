@@ -54,31 +54,75 @@ SECTION_ANCHORS = {
     "2.7": "sec-2-7-hourly",
 }
 
-# Categorical palette (dataviz reference palette, light mode; fixed slot
-# order, never cycled — the order is the CVD-safety mechanism).
+# Observatory design-system palette (docs/codebase-site/css/shared.css tokens,
+# vendored inline — the report is fully self-contained, ADR 0014 §1).
+# Categorical fallback slots: fixed order, never cycled.
 _SERIES = (
-    "#2a78d6",  # 1 blue
-    "#1baf7a",  # 2 aqua
-    "#eda100",  # 3 yellow
-    "#008300",  # 4 green
-    "#4a3aa7",  # 5 violet
-    "#e34948",  # 6 red
-    "#e87ba4",  # 7 magenta
-    "#eb6834",  # 8 orange
+    "#0EA5E9",  # 1 hydro blue
+    "#22C55E",  # 2 wind green
+    "#F59E0B",  # 3 solar amber
+    "#6366F1",  # 4 nuclear indigo
+    "#E67E22",  # 5 storage orange
+    "#E91E63",  # 6 magenta
+    "#14B8A6",  # 7 teal
+    "#6B7280",  # 8 gas gray
 )
-_OVERFLOW_COLOR = "#898781"  # muted gray for any series past the 8 slots
-_CRITICAL = "#d03b3b"  # status color: non-optimal solve flags only
-_SURFACE = "#fcfcfb"
-_INK = "#0b0b0b"
-_INK_2 = "#52514e"
-_MUTED = "#898781"
-_GRID = "#e1e0d9"
-_BASELINE = "#c3c2b7"
+_OVERFLOW_COLOR = "#9CA3AF"  # muted gray for any series past the 8 slots
+_CRITICAL = "#DC2626"  # --negative: non-optimal solve flags only
+_SURFACE = "#FFFFFF"  # --bg-card
+_INK = "#0F1A2E"  # --navy-dark: net-cost tick
+_INK_2 = "#1E293B"  # --text-secondary
+_MUTED = "#566370"  # --text-muted
+_GRID = "#E5E7EB"  # --border-light
+_BASELINE = "#D4D8E0"  # --border
+
+# Fuel palette rules for resource series (shared.css --solar/--wind/…), matched
+# by first substring hit — order matters: hydrogen before hydro, battery_8h
+# before battery, ccs before gas (gas_cc_ccs must land on the CCS teal).
+_FUEL_COLOR_RULES = (
+    ("hydrogen", "#10B981"),  # --hydrogen
+    ("offshore", "#009688"),  # --offshore
+    ("battery_8h", "#B45309"),  # darker storage shade so the two batteries split
+    ("battery", "#E67E22"),  # --storage
+    ("ldes", "#7C3AED"),  # --purple-text (long-duration storage)
+    ("solar", "#F59E0B"),  # --solar
+    ("wind", "#22C55E"),  # --wind
+    ("geothermal", "#D97706"),  # --geothermal
+    ("nuclear", "#6366F1"),  # --nuclear
+    ("hydro", "#0EA5E9"),  # --hydro
+    ("ccs", "#26A69A"),  # --ccs
+    ("gas", "#6B7280"),  # --fossil-gas
+)
+
+# ISO palette for per-ISO series (shared.css --iso-*).
+_ISO_COLORS = {
+    "CAISO": "#F59E0B",
+    "ERCOT": "#22C55E",
+    "PJM": "#0EA5E9",
+    "NYISO": "#E91E63",
+    "NEISO": "#9C27B0",
+    "MISO": "#F97316",
+    "SPP": "#14B8A6",
+}
 
 
 def _series_color(i: int) -> str:
     """Fixed-order categorical slot color; gray past slot 8 (never cycled)."""
     return _SERIES[i] if i < len(_SERIES) else _OVERFLOW_COLOR
+
+
+def _resource_color(name: str, i: int) -> str:
+    """Fuel-palette color for a resource name; categorical slot fallback."""
+    lowered = name.lower()
+    for key, color in _FUEL_COLOR_RULES:
+        if key in lowered:
+            return color
+    return _series_color(i)
+
+
+def _iso_color(iso: str, i: int) -> str:
+    """Site ISO-palette color for an ISO series; categorical slot fallback."""
+    return _ISO_COLORS.get(iso.upper(), _series_color(i))
 
 
 # --------------------------------------------------------------------------
@@ -474,7 +518,7 @@ def _sec_frontier(payload: dict) -> str:
 
     parts = [_svg_open(W, H), _axis_grid(xs, ys, xticks, yticks, xfmt, yfmt)]
     for i, iso in enumerate(isos):
-        color = _series_color(i)
+        color = _iso_color(iso, i)
         iso_rows = sorted(
             (r for r in rows if r["iso"] == iso), key=lambda r: r["setpoint"]
         )
@@ -502,7 +546,7 @@ def _sec_frontier(payload: dict) -> str:
         f"{_esc(ylabel)}</text></svg>"
     )
     legend = (
-        _legend([(iso, _series_color(i)) for i, iso in enumerate(isos)])
+        _legend([(iso, _iso_color(iso, i)) for i, iso in enumerate(isos)])
         if len(isos) > 1
         else ""
     )
@@ -529,10 +573,11 @@ def _frontier_table_view(rows: list[dict]) -> str:
         for r in rows
     )
     return (
-        "<details><summary>Table view</summary><table><thead><tr>"
+        '<details><summary>Table view</summary><div class="table-wrap">'
+        "<table><thead><tr>"
         "<th>ISO</th><th>setpoint</th><th>matching</th><th>premium $/MWh</th>"
         "<th>premium $/yr</th><th>over BAU</th><th>status</th>"
-        f"</tr></thead><tbody>{body}</tbody></table></details>"
+        f"</tr></thead><tbody>{body}</tbody></table></div></details>"
     )
 
 
@@ -566,7 +611,7 @@ def _sec_build_mix(payload: dict) -> str:
     for r in rows:
         if r["resource"] not in resources:
             resources.append(r["resource"])
-    color_of = {name: _series_color(i) for i, name in enumerate(resources)}
+    color_of = {name: _resource_color(name, i) for i, name in enumerate(resources)}
 
     blocks = []
     for iso in prov["isos"]:
@@ -665,9 +710,10 @@ def _split_energy_table(iso_rows: list[dict]) -> str:
         for r in split_rows
     )
     return (
-        "<h4>Split-tech energy sizing (ADR 0006)</h4><table><thead><tr>"
+        "<h4>Split-tech energy sizing (ADR 0006)</h4>"
+        '<div class="table-wrap"><table><thead><tr>'
         "<th>resource</th><th>setpoint</th><th>power MW</th><th>energy MWh</th>"
-        f"<th>duration</th></tr></thead><tbody>{body}</tbody></table>"
+        f"<th>duration</th></tr></thead><tbody>{body}</tbody></table></div>"
     )
 
 
@@ -681,9 +727,10 @@ def _build_mix_table_view(rows: list[dict]) -> str:
         if r["build_mw"] > 1e-6
     )
     return (
-        "<details><summary>Table view</summary><table><thead><tr>"
+        '<details><summary>Table view</summary><div class="table-wrap">'
+        "<table><thead><tr>"
         "<th>ISO</th><th>setpoint</th><th>resource</th><th>MW</th><th>MWh (split)</th>"
-        f"</tr></thead><tbody>{body}</tbody></table></details>"
+        f"</tr></thead><tbody>{body}</tbody></table></div></details>"
     )
 
 
@@ -694,9 +741,9 @@ def _sec_cost(payload: dict) -> str:
     prov = payload["provenance"]
     rows = payload["frontier"]
     comp_colors = {
-        "capital + VOM": _SERIES[0],
-        "grid purchases": _SERIES[4],
-        "surplus revenue": _SERIES[1],
+        "capital + VOM": "#6366F1",  # --nuclear indigo: the clean build
+        "grid purchases": "#6B7280",  # --fossil-gas gray: residual grid energy
+        "surplus revenue": "#22C55E",  # --wind green: revenue credit
     }
 
     blocks = []
@@ -817,10 +864,11 @@ def _cost_table_view(rows: list[dict]) -> str:
         for r in rows
     )
     return (
-        "<details><summary>Table view</summary><table><thead><tr>"
+        '<details><summary>Table view</summary><div class="table-wrap">'
+        "<table><thead><tr>"
         "<th>ISO</th><th>setpoint</th><th>capital+VOM</th><th>grid purchases</th>"
         "<th>surplus revenue</th><th>net cost</th><th>BAU cost</th>"
-        f"<th>premium $/yr</th></tr></thead><tbody>{body}</tbody></table></details>"
+        f"<th>premium $/yr</th></tr></thead><tbody>{body}</tbody></table></div></details>"
     )
 
 
@@ -870,7 +918,7 @@ def _sec_residual(payload: dict) -> str:
             parts.append(
                 f'<rect x="{x0:.1f}" y="{y_top:.1f}" width="{bar_w:.1f}" '
                 f'height="{max(ys(0) - y_top, 0.5):.1f}" rx="2" '
-                f'fill="{_series_color(i)}"><title>{_esc(title)}</title></rect>'
+                f'fill="{_iso_color(iso, i)}"><title>{_esc(title)}</title></rect>'
                 f'<text x="{cx:.1f}" y="{y_top - 6:.1f}" text-anchor="middle" '
                 f'class="pt-label">{r["matching_pct"] * 100:.1f}%</text>'
                 f'<text x="{cx:.1f}" y="{H - B + 20:.1f}" text-anchor="middle" '
@@ -924,8 +972,9 @@ def _sec_multi_iso(payload: dict) -> str:
         body.append(f"<tr>{''.join(tds)}</tr>")
     return (
         f'<section id="{SECTION_ANCHORS["2.6"]}"><h2>Multi-ISO comparison</h2>'
-        f'<table><thead><tr><th rowspan="2">setpoint</th>{head}</tr>'
-        f"<tr>{sub}</tr></thead><tbody>{''.join(body)}</tbody></table></section>"
+        f'<div class="table-wrap"><table><thead><tr>'
+        f'<th rowspan="2">setpoint</th>{head}</tr>'
+        f"<tr>{sub}</tr></thead><tbody>{''.join(body)}</tbody></table></div></section>"
     )
 
 
@@ -988,65 +1037,142 @@ def _sec_hourly(payload: dict) -> str:
 # static chrome: CSS + inline JS (fully offline, no external fetch — §1)
 # --------------------------------------------------------------------------
 
+# Observatory design system (docs/codebase-site/css/shared.css + bc-pages.css),
+# vendored inline with local/system font fallbacks ONLY — the site's Google
+# Fonts @import is deliberately NOT copied (ADR 0014 §1: no external fetch).
 _CSS = """
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-body { margin: 0; padding: 0; background: #f9f9f7; color: #0b0b0b;
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 860px; margin: 0 auto; padding: 24px 20px 64px; }
-h1 { font-size: 24px; font-weight: 650; margin: 8px 0 2px; }
-h2 { font-size: 18px; font-weight: 650; margin: 0 0 12px; }
-h3 { font-size: 15px; font-weight: 650; margin: 16px 0 6px; color: #52514e; }
-h4 { font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: #52514e; }
-.subtitle { color: #52514e; margin: 0 0 24px; }
-section { background: #fcfcfb; border: 1px solid rgba(11,11,11,0.10);
-  border-radius: 10px; padding: 20px; margin: 0 0 20px; overflow-x: auto; }
-svg { display: block; width: 100%; height: auto; max-width: 720px; }
-svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
-.tick { font-size: 11px; fill: #898781; font-variant-numeric: tabular-nums; }
-.axis-label { font-size: 12px; fill: #52514e; }
-.pt-label { font-size: 10px; fill: #898781; }
-.note { color: #898781; font-size: 13px; margin: 8px 0 0; }
+:root { color-scheme: light;
+  --bg-page: #F8F9FC; --navy: #1A2744; --navy-dark: #0F1A2E;
+  --bg-card: #FFFFFF; --border: #D4D8E0; --border-light: #E5E7EB;
+  --text-primary: #000000; --text-secondary: #1E293B; --text-muted: #566370;
+  --text-on-dark: #FFFFFF; --text-muted-dark: rgba(255,255,255,0.70);
+  --font-heading: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-body: 'DM Sans', 'Plus Jakarta Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --solar: #F59E0B; --wind: #22C55E; --hydro: #0EA5E9; --nuclear: #6366F1;
+  --hydro-text: #0369A1; --negative: #DC2626;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 20px rgba(0,0,0,0.08); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
+body { background: var(--bg-page); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary);
+  line-height: 1.2; }
+.band { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: var(--text-on-dark); padding: 40px 24px 32px; position: relative;
+  overflow: hidden; }
+.band::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 60% 40%, rgba(14,165,233,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.08) 0%, transparent 55%); }
+.band-inner { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+.eyebrow { display: inline-block; font-family: var(--font-heading);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #7DD3FC;
+  border: 1px solid rgba(14,165,233,0.35); border-radius: 100px;
+  padding: 4px 12px; margin-bottom: 14px; }
+.band h1 { color: #fff; font-size: 1.7rem; font-weight: 800;
+  letter-spacing: -0.02em; margin: 0 0 6px; }
+.band .subtitle { color: rgba(255,255,255,0.75); font-size: 0.95rem;
+  margin: 0 0 22px; overflow-wrap: anywhere; }
+.energy-divider { height: 3px; background: linear-gradient(90deg,
+  var(--solar) 0%, var(--wind) 33%, var(--hydro) 66%, var(--nuclear) 100%); }
+main { max-width: 948px; margin: 0 auto; padding: 24px 24px 56px; }
+main section { background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 24px; margin: 0 0 20px;
+  box-shadow: var(--shadow-sm); }
+main h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0 0 14px; }
+h3 { font-size: 0.92rem; font-weight: 700; margin: 16px 0 6px; }
+h4 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted); margin: 16px 0 6px; }
+svg { display: block; width: 100%; height: auto; max-width: 760px; }
+svg text { font-family: var(--font-body); }
+.tick { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+.axis-label { font-size: 12px; font-weight: 600; fill: var(--text-secondary); }
+.pt-label { font-size: 10px; fill: var(--text-muted); }
+.note { color: var(--text-muted); font-size: 0.8rem; margin: 10px 0 0; }
+#sec-2-1-provenance { background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg);
+  padding: 20px; }
+#sec-2-1-provenance h2 { color: rgba(255,255,255,0.85); font-size: 0.72rem;
+  font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+  margin: 0 0 14px; }
+#sec-2-1-provenance h3 { color: #fff; margin-top: 14px; }
 .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px; margin-bottom: 8px; }
-.meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
-  color: #898781; }
-.meta-value { font-weight: 600; overflow-wrap: anywhere; }
-.solves { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
-.solve { font-size: 12px; padding: 2px 10px; border-radius: 999px;
-  background: #f0efec; color: #52514e; }
-.solve-bad { background: #fbeaea; color: #a02c2c; }
-.flag { color: #d03b3b; }
+  gap: 12px 16px; margin-bottom: 6px; }
+.meta-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted-dark); }
+.meta-value { font-weight: 600; font-size: 0.9rem; color: #fff;
+  overflow-wrap: anywhere; }
+.solves { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; }
+.solve { display: inline-block; font-size: 0.75rem; font-weight: 600;
+  padding: 3px 11px; border-radius: 100px;
+  background: rgba(34,197,94,0.16); color: #86EFAC; }
+.solve-bad { background: rgba(220,38,38,0.20); color: #FCA5A5; }
+.flag { color: #FCA5A5; font-weight: 700; }
 details { margin-top: 12px; }
-summary { cursor: pointer; color: #52514e; font-size: 13px; }
-pre { background: #f0efec; padding: 12px; border-radius: 6px; overflow-x: auto;
-  font-size: 12px; }
-table { border-collapse: collapse; font-size: 13px; margin-top: 8px;
+summary { cursor: pointer; color: var(--hydro-text); font-size: 0.8rem;
+  font-weight: 600; }
+#sec-2-1-provenance summary { color: var(--text-muted-dark); }
+pre { font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.55;
+  padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto;
+  margin-top: 8px; background: var(--bg-page);
+  border: 1px solid var(--border-light); }
+#sec-2-1-provenance pre { background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.10); color: #E2E8F0; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); margin-top: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.8rem;
   font-variant-numeric: tabular-nums; }
-th, td { padding: 4px 10px; text-align: right; border-bottom: 1px solid #e1e0d9; }
+th, td { padding: 8px 12px; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-thead th { color: #52514e; font-weight: 600; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px; }
-.key { display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
-  color: #52514e; }
-.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-.sp-select { display: flex; gap: 6px; align-items: center; font-size: 13px;
-  color: #52514e; margin: 8px 0; flex-wrap: wrap; }
-.sp-select button { font: inherit; padding: 3px 12px; border-radius: 999px;
-  border: 1px solid #e1e0d9; background: #fcfcfb; cursor: pointer; }
-.sp-select button.active { background: #2a78d6; border-color: #2a78d6;
+thead th { background: var(--navy); color: rgba(255,255,255,0.90);
+  font-family: var(--font-heading); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; }
+td { border-bottom: 1px solid var(--border-light); color: var(--text-secondary); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) td { background: rgba(0,0,0,0.018); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 0 0 12px; }
+.key { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem;
+  color: var(--text-muted); }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+  flex-shrink: 0; }
+.sp-select { display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin: 8px 0; }
+.sp-select button { font-family: var(--font-body); font-size: 0.75rem;
+  font-weight: 600; padding: 4px 12px; border-radius: 100px;
+  border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text-muted); cursor: pointer; }
+.sp-select button:hover { background: var(--border-light);
+  color: var(--text-primary); }
+.sp-select button.active { background: var(--navy); border-color: var(--navy);
   color: #fff; }
 .heatmap-wrap { position: relative; }
-canvas.heatmap { width: 100%; max-width: 720px; height: 220px;
-  image-rendering: pixelated; border: 1px solid #e1e0d9; border-radius: 4px; }
-.heatmap-scale { display: flex; align-items: center; gap: 8px; font-size: 11px;
-  color: #898781; margin-top: 4px; font-variant-numeric: tabular-nums; }
-.scale-bar { width: 140px; height: 8px; border-radius: 4px;
-  background: linear-gradient(90deg,#fcfcfb,#cde2fb,#86b6ef,#3987e5,#1c5cab,#0d366b); }
-#tooltip { position: fixed; pointer-events: none; background: #0b0b0b;
-  color: #fff; font-size: 12px; padding: 6px 9px; border-radius: 6px;
-  display: none; z-index: 10; white-space: pre; }
-footer { color: #898781; font-size: 12px; text-align: center; }
+canvas.heatmap { width: 100%; max-width: 760px; height: 220px; display: block;
+  image-rendering: pixelated; border: 1px solid var(--border-light);
+  border-radius: 6px; background: var(--bg-card); }
+.heatmap-scale { display: flex; align-items: center; gap: 8px;
+  font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;
+  font-variant-numeric: tabular-nums; }
+.scale-bar { width: 150px; height: 11px; border-radius: 3px;
+  background: linear-gradient(90deg,#E8F3F7,#7FC4E6,#86C98F,#F2D65C,#EF8F3C,#C0392B); }
+#tooltip { position: fixed; pointer-events: none; display: none; z-index: 10;
+  background: rgba(10,18,38,0.96); color: #fff; font-family: var(--font-body);
+  font-size: 0.78rem; line-height: 1.5; padding: 8px 11px;
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+  white-space: pre; }
+footer { color: var(--text-muted); font-size: 0.75rem; text-align: center;
+  padding-top: 8px; }
+@media (max-width: 640px) {
+  .band { padding: 32px 16px 26px; }
+  main { padding: 16px 12px 48px; }
+  main section { padding: 16px; }
+  #sec-2-1-provenance { padding: 16px; }
+}
 """
 
 # Tiny inline renderer for §2.7: reads the embedded hourly block, draws the
@@ -1056,14 +1182,26 @@ footer { color: #898781; font-size: 12px; text-align: center; }
 _JS = """
 (function () {
   var HOURLY = JSON.parse(document.getElementById('report-hourly').textContent);
-  var RAMP = ['#cde2fb','#9ec5f4','#86b6ef','#5598e7','#3987e5','#256abf','#1c5cab','#104281','#0d366b'];
-  var SOC_COLORS = ['#2a78d6','#1baf7a','#eda100','#008300','#4a3aa7','#e34948'];
+  // Observatory heatmap ramp (bc-pages.css .color-ramp), light blue -> red.
+  var RAMP = ['#E8F3F7','#AFD8EA','#7FC4E6','#82C6AF','#86C98F','#BCCF75','#F2D65C','#EF8F3C','#C0392B'];
+  // Fuel-palette fallback slots for storage series (shared.css tokens).
+  var SOC_FALLBACK = ['#0EA5E9','#22C55E','#F59E0B','#6366F1','#E91E63','#14B8A6'];
   var tooltip = document.getElementById('tooltip');
+
+  // Mirrors the renderer's _resource_color fuel mapping for storage techs.
+  function socColor(name, i) {
+    var n = name.toLowerCase();
+    if (n.indexOf('hydrogen') >= 0 || n.indexOf('h2') >= 0) return '#10B981';
+    if (n.indexOf('battery') >= 0) return n.indexOf('8h') >= 0 ? '#B45309' : '#E67E22';
+    if (n.indexOf('ldes') >= 0) return '#7C3AED';
+    if (n.indexOf('hydro') >= 0 || n.indexOf('pumped') >= 0) return '#0EA5E9';
+    return SOC_FALLBACK[i % SOC_FALLBACK.length];
+  }
 
   function fmt(v) { return v.toLocaleString('en-US', {maximumFractionDigits: 1}); }
 
   function cellColor(v, vmax) {
-    if (v <= 0 || vmax <= 0) return '#fcfcfb';
+    if (v <= 0 || vmax <= 0) return '#FFFFFF';
     var i = Math.min(RAMP.length - 1, Math.floor(v / vmax * RAMP.length));
     return RAMP[i];
   }
@@ -1077,7 +1215,7 @@ _JS = """
     var vmax = 0;
     for (var t = 0; t < T; t++) if (buy[t] > vmax) vmax = buy[t];
     var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fcfcfb';
+    ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, days, 24);
     for (t = 0; t < T; t++) {
       ctx.fillStyle = cellColor(buy[t], vmax);
@@ -1116,7 +1254,7 @@ _JS = """
     [0, 0.5, 1].forEach(function (f) {
       var y = (H - B) - f * (H - B - T0);
       svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y +
-        '" stroke="#e1e0d9" stroke-width="1"/>' +
+        '" stroke="#E5E7EB" stroke-width="1"/>' +
         '<text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="tick">' +
         fmt(vmax * f) + '</text>';
     });
@@ -1128,13 +1266,13 @@ _JS = """
         pts.push(x.toFixed(1) + ',' + y.toFixed(1));
       }
       svg += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' +
-        SOC_COLORS[i % SOC_COLORS.length] + '" stroke-width="1.2"/>';
+        socColor(n, i) + '" stroke-width="1.2"/>';
     });
     svg += '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 4) +
       '" text-anchor="middle" class="axis-label">hour of year</text></svg>';
     var legend = '<div class="legend">' + names.map(function (n, i) {
       return '<span class="key"><span class="swatch" style="background:' +
-        SOC_COLORS[i % SOC_COLORS.length] + '"></span>' + n + '</span>';
+        socColor(n, i) + '"></span>' + n + '</span>';
     }).join('') + '</div>';
     wrap.innerHTML = legend + svg;
   }
@@ -1211,12 +1349,15 @@ def render_report(payload: dict) -> str:
         f"<style>{_CSS}</style>\n"
         "</head><body>\n"
         '<div id="tooltip"></div>\n'
-        "<main>\n"
-        f"<h1>Scope 2 LCE portfolio report</h1>\n"
+        '<header class="band"><div class="band-inner">\n'
+        '<p class="eyebrow">Scope 2 hourly LCE portfolio</p>\n'
+        "<h1>Scope 2 LCE portfolio report</h1>\n"
         f'<p class="subtitle">{_esc(run_id)} — '
         f"{_esc(', '.join(prov['isos']))} / {_esc(prov['mode'])}</p>\n"
-        + "\n".join(sections)
-        + "\n<footer>Generated by lce_portfolio "
+        f"{sections[0]}\n"
+        "</div></header>\n"
+        '<div class="energy-divider"></div>\n'
+        "<main>\n" + "\n".join(sections[1:]) + "\n<footer>Generated by lce_portfolio "
         f"{_esc(prov['tool_version'])} — self-contained report "
         "(ADR 0014); data: report.json in this run folder.</footer>\n"
         "</main>\n"
