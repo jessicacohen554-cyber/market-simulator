@@ -177,3 +177,40 @@ The strongest single confirmation remains the still-unrun **statistical-mode
 backcast** (every overlay off — `forecast-validation-plan.md` Phase 3): it would
 convert "the keeper passes the rule" from a config inspection into a measured
 overlay-vs-statistical gap.
+
+## CHP grid-delivered benchmark de-circularized + measured export floor (2026-07-02)
+
+Two paired changes (the C1 CC_REGULAR/CC_CHP caveat work):
+
+1. **Bench-side BTM was circular — FIXED.** The grid-delivered CHP "actual"
+   (`classFull` = EIA-923 class total − `btm.parquet`) previously sized the
+   BTM as `(923 class total − the model's own grid dispatch).clip(0)`
+   (`run_calibration_full._btm_frame` →
+   `results.emissions.compute_must_run_emissions` data-driven mode). Whenever
+   the model under-dispatched a CHP class, the "actual" collapsed onto the
+   model — C1 could never fail for CHP classes (a vacuous pass, the reverse of
+   the no-pinning rule: the *benchmark* was pinned to the model), and the
+   attribution varied ~19 TWh between solves of identical code+data
+   (unversioned solve-container state). The BTM hold-out is now measured-input
+   only: per-(plant, class) EIA-923 net generation × the measured host share
+   (`chp_btm_pct` sector shares / per-plant overrides — the identical share
+   the LP hold-out removes). Two rebuilds are byte-identical from committed
+   code + `data/raw`.
+
+2. **`chp_export_floor_measured` — new backcast overlay (ADMISSIBLE).** The
+   CHP steam-following grid floor (`pmin_cf × (1 − btm share)`) now rides at
+   the plant's measured EIA-923 class CF for the solved year instead of the
+   pooled CAMPD p2 minimum. Test: host steam demand is a physical input
+   exogenous to the power market — a topping-cycle cogen's power train follows
+   its host, not the LMP (measured ERCOT CC_CHP grid delivery ≈ 32 TWh/yr vs
+   ~26 modeled under p2 floors). The same floor regenerates for a forward year
+   from sector-level host demand × the EIA-860 CHP designation, and it
+   responds to changed host conditions. The LP keeps upward freedom (scarcity
+   dispatch above the floor) and outage windows still relax it (min_gen is
+   clipped to pmax × availability). Boundary note: this floors the unit at its
+   host-driven *operating level*, which is stronger than a never-below
+   minimum — it is admissible only because a steam-following export is
+   genuinely price-inelastic, and it must never be extended to merchant
+   classes, where the same construction would be pinning dispatch to observed
+   generation. Off by default; forecast mode always uses the persistent
+   `chp_pmin_cf` floors.
