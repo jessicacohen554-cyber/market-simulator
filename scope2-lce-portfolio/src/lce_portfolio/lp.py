@@ -359,16 +359,19 @@ def build_and_solve(
         n_bud = budget_res_idx.size
         # Month index of each hour from the non-leap calendar (np.repeat, no loop).
         month_of_hour = np.repeat(np.arange(12), _MONTH_LEN_DAYS * _HOURS_PER_DAY)
-        b = np.repeat(np.arange(n_bud), T)  # budget-resource position 0..n_bud-1
         res_rep = np.repeat(budget_res_idx, T)  # resource index r
         t_rep = np.tile(np.arange(T), n_bud)  # hour t
         month_rep = np.tile(month_of_hour, n_bud)  # month m of each (b, t)
-        rows.append(roff + b * 12 + month_rep)
+        # One shared set of 12 rows summing over ALL budget-flagged resources:
+        # the table's budget is the ISO's contractable-fleet total, so it must
+        # bound the fleet, not each resource separately (audit finding LP-3 —
+        # per-resource rows granted each resource the full ISO budget).
+        rows.append(roff + month_rep)
         cols.append(lay.gen_off + res_rep * T + t_rep)
         data.append(np.ones(n_bud * T))
-        rlow.append(np.full(n_bud * 12, -np.inf))
-        rupp.append(np.tile(hydro_budget_mwh, n_bud))
-        roff += n_bud * 12
+        rlow.append(np.full(12, -np.inf))
+        rupp.append(hydro_budget_mwh.astype(float))
+        roff += 12
 
     # ---- existing-attributable excess (additionality, ADR 0008 amended) ----
     # exc_ex[t] <= excess[t] and exc_ex[t] <= Σ_existing gen[r,t]; the
@@ -592,9 +595,19 @@ def build_and_solve(
         - sale * float(lmp @ excess)
     )
     premium = (net_cost - bau_cost) / sum_load if sum_load else 0.0
-    shadow = (
-        float(row_dual[premium_row]) if premium_row < len(row_dual) else float("nan")
-    )
+    if premium_row + n_premium_rows > len(row_dual):
+        shadow = float("nan")
+    elif n_premium_rows == 1:
+        shadow = float(row_dual[premium_row])
+    else:
+        # Strict-hourly Mode B has T matching rows with RHS_t = (1-target)*
+        # load_t; the exact derivative of the objective w.r.t. a uniform
+        # target change is -Σ load_t*dual_t, so report the load-weighted mean
+        # dual — same units/sign as the annual-mode scalar. (Audit finding
+        # LP-4: previously only hour 0's row dual was stored, which is 0
+        # whenever hour 0 happens to be slack.)
+        duals = row_dual[premium_row : premium_row + n_premium_rows]
+        shadow = float(load @ duals / sum_load) if sum_load else float("nan")
 
     # Derived reporting metrics (lmp/load are in scope here).
     capital_cost = (
