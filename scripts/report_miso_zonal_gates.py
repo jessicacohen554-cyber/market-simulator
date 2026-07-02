@@ -7,7 +7,13 @@ on congestion EXISTING, not on the price residual (CLAUDE.md rule #1):
      zone's CIL (import) / CEL (export) deliverability group, and the RDT
      one-way pair (net N→S at 3,000 MW / net S→N at 2,500 MW).
   2. **Prices separate.** Hours with max inter-zone spread > $1/MWh; per-zone
-     mean LMP; the West-discount / South-and-East-premium sign pattern.
+     mean LMP; the model's zone-mean sign pattern. When
+     the measured per-hub actuals are present
+     (``data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet``,
+     scope decision D6 — scripts/derive_miso_hub_lmp.py), the same statistics
+     are printed for the ACTUAL hub prices (zone = member-hub mean;
+     MISO-Plains = MINN+ILLINOIS hub-mean proxy, no LRZ 3/5 hub exists), so
+     spread sign AND magnitude are scored against the market, not eyeballed.
   3. **LCR consistency.** In each zone's top-price (scarcity) hours, is the
      zone importing at its CIL? Illinois should show near-zero local scarcity
      (its LCR collapses to ~452 MW in PY2024-25).
@@ -44,6 +50,33 @@ _BIND_TOL_MW = 1.0
 
 # Scarcity hours per zone-year for gate 3: the top-N hours by that zone's LMP.
 _SCARCITY_TOP_N = 50
+
+# Measured per-hub actuals (D6). Zone actual = simple mean of member hubs;
+# MISO-Plains has no hub -> MINN+ILLINOIS hub-mean proxy (documented in
+# scripts/derive_miso_hub_lmp.py).
+_ZONAL_ACTUALS = (
+    REPO_ROOT / "data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet"
+)
+_PLAINS_PROXY_HUBS = ("MINN.HUB", "ILLINOIS.HUB")
+
+
+def _actual_zone_prices(year: int, market: str) -> pd.DataFrame | None:
+    """Return the actual hourly zone-price pivot for ``year``, or ``None``.
+
+    Columns are the six model zones (Plains via the documented hub proxy),
+    index hour-of-year, values the ``market`` ("rt" or "da") hub-mean LMP.
+    """
+    if not _ZONAL_ACTUALS.is_file():
+        return None
+    df = pd.read_parquet(_ZONAL_ACTUALS)
+    df = df[df["year"] == year]
+    if df.empty:
+        return None
+    pv = df.groupby(["hour", "zone"])[market].mean().unstack()
+    pv["MISO-Plains"] = (
+        df[df["hub"].isin(_PLAINS_PROXY_HUBS)].groupby("hour")[market].mean()
+    )
+    return pv
 
 
 def _zone_groups(links) -> dict[str, tuple[np.ndarray, np.ndarray]]:
@@ -169,9 +202,50 @@ def main() -> None:
         print(f"  max spread: ${spread.max():.2f}")
         means = pv.mean().sort_values(ascending=False)
         print("  zone mean LMP: " + "  ".join(f"{z}={v:.2f}" for z, v in means.items()))
+        # Sign pattern is scored against the MEASURED hub actuals below (the
+        # pairwise agreement line), not a hardcoded expectation: the D6 hub
+        # data shows actual South mean LMP sits BELOW every Midwest zone in
+        # 2023-2025 (cheap Entergy nuclear/gas behind the RDT), so the scope
+        # doc's original "South above West" heuristic was wrong on sign.
         west = pv["MISO-West"].mean()
-        ok_sign = pv["MISO-South"].mean() > west and pv["MISO-East"].mean() > west
-        print(f"  South & East above West: {'PASS' if ok_sign else 'FAIL'}")
+        model_sign = (
+            f"South {'>' if pv['MISO-South'].mean() > west else '<'} West, "
+            f"East {'>' if pv['MISO-East'].mean() > west else '<'} West"
+        )
+        print(f"  model sign pattern: {model_sign}")
+        for market in ("rt", "da"):
+            apv = _actual_zone_prices(int(year), market)
+            if apv is None:
+                if market == "rt":
+                    print("  (no measured hub actuals — run derive_miso_hub_lmp.py)")
+                break
+            aspread = apv.max(axis=1) - apv.min(axis=1)
+            ameans = apv.mean().sort_values(ascending=False)
+            print(f"  ACTUAL ({market}, hub-mean zones; Plains = MINN+ILL proxy)")
+            print(
+                f"    hours spread > $1: {int((aspread > 1.0).sum())}"
+                f"   > $5: {int((aspread > 5.0).sum())}"
+                f"   max: ${aspread.max():.2f}"
+            )
+            print(
+                "    zone mean LMP: "
+                + "  ".join(f"{z}={v:.2f}" for z, v in ameans.items())
+            )
+            # Model-vs-actual sign agreement on every zone pair (share of the
+            # 15 pairwise mean-orderings the model reproduces).
+            zones_both = [z for z in pv.columns if z in apv.columns]
+            agree = total = 0
+            for i, za in enumerate(zones_both):
+                for zb in zones_both[i + 1 :]:
+                    total += 1
+                    if (pv[za].mean() - pv[zb].mean()) * (
+                        apv[za].mean() - apv[zb].mean()
+                    ) > 0:
+                        agree += 1
+            print(
+                f"    pairwise mean-order sign agreement (model vs {market}): "
+                f"{agree}/{total}"
+            )
 
         print(
             "\n[Gate 3] LCR consistency (top %d price hours per zone)" % _SCARCITY_TOP_N

@@ -349,15 +349,26 @@ Gate on congestion existing, not on the residual (rule #1). In order:
    (2023 2024 2025) in one bundle, registered on the dashboard per rules
    #14/#15 — including rejected probes.
 
-**Validation data gap:** `_validation-source/actual_lmp_hourly_MISO.parquet`
-is system-wide only (columns `year,hour,rt,da`). Gate 2's "toward actual"
-needs per-hub actuals: MISO hub RT/DA LMPs (Minnesota, Illinois, Indiana,
-Michigan, Arkansas, Louisiana, Texas, MS hubs) map cleanly onto the six zones
-(Minn→West, Ill→Illinois, Ind→Indiana, Mich→East, Ark/La/Tx/MS→South; Plains
-has no hub — nearest-hub proxy or Iowa-node aggregate, see D6). MISO market
-data is historically allowlist-blocked (403) → likely a manual-upload request,
-same as the PRA/LOLE PDFs were. Gates 1/3/4 need **no new data**, so
-implementation is not blocked on this.
+**Validation data gap — CLOSED (D6 landed 2026-07-02):** the per-hub actuals
+are in: `scripts/fetch_miso_hub_lmp.py` stages the eight named trading hubs'
+RT-final/DA-ex-post rows from MISO's daily market reports (source reachable,
+no 403; compact stagings in `data/raw/lmp-data/MISO/`), and
+`scripts/derive_miso_hub_lmp.py` reduces them to
+`_validation-source/actual_lmp_hourly_zonal_MISO.parquet`
+(`year,hour,hub,zone,rt,da`, model Central-prevailing clock — verified
+hour-for-hour identical to the committed system series, which turns out to
+be the Indiana Hub). Hub→zone: Minn→West, Ill→Illinois, Ind→Indiana,
+Mich→East, Ark/La/Tx/MS→South; **Plains has no hub — documented proxy =
+MINN+ILLINOIS hub mean** (the two hubs bracketing the IA/MO wheel-through).
+`build_miso_lmp_reference.py` adds the per-zone `zones` block to
+`actual_lmp.json`, `curate_validation.py` carries per-zone price rows into
+the clean `validation` datatype, and `report_miso_zonal_gates.py` gate 2 now
+scores spread sign AND magnitude against the actuals. **Measured answer to
+the miso-35 question: actual South mean LMP sits BELOW every Midwest zone in
+all of 2023/2024/2025, both RT and DA** (2023 RT: Ind 31.79 > East 29.96 >
+West 28.75 > Plains 28.48 > Ill 28.20 > South 27.04); the original "South
+above West" heuristic in gate 2 was wrong on sign and the gate now uses
+pairwise mean-order agreement against the measured hubs instead.
 
 ## 8. Open decisions — RESOLVED 2026-07-01
 
@@ -371,8 +382,8 @@ record.
 | D2 | South split (Z8/Z9/Z10, Amite South/WOTAB) | **Defer to a later phase.** Phase 1 gates on the RDT binding; a split waits for a South load disaggregation and published sub-Z9 flowgate limits. |
 | D3 | RDT attachment zone | **Decide by probe.** Implement on `MISO-Plains` (truest to the SPP/AECI wheel path); at gate 1, if RDT binding produces spurious Plains congestion, swap the attachment to `MISO-Illinois` in a single diagnostic re-solve before proceeding. |
 | D4 | Union-zone caps | **CIL-sum ceiling, documented.** ΣCIL/ΣCEL of members as the cap, with a comment stating it double-counts intra-union help (small for East, larger for Plains). **CIL, not ZIA**, for energy-flow caps; ZIA stays in capacity/RA logic. |
-| D5 | Jan–May 2023 coverage | **Extend the extraction to PY2022-23** — run the existing parser on the PY2022-23 LOLE Study Report so every backcast month has measured seasonal limits. |
-| D6 | Zonal LMP validation data | **Request MISO hub RT/DA LMPs 2023–25 now** (manual upload, blocked source). Runs in parallel; gates 1/3/4 don't wait on it. |
+| D5 | Jan–May 2023 coverage | **Extend the extraction to PY2022-23** — run the existing parser on the PY2022-23 LOLE Study Report so every backcast month has measured seasonal limits. **LANDED 2026-07-02** (annual pre-seasonal set, season "annual"; Jan–May 2023 caps now measured). |
+| D6 | Zonal LMP validation data | **Request MISO hub RT/DA LMPs 2023–25 now** (manual upload, blocked source). Runs in parallel; gates 1/3/4 don't wait on it. **LANDED 2026-07-02** (source turned out reachable — fetched directly; see §7). |
 | D7 | Seasonal vs annual caps | **Per-season caps.** Expand the 4 seasonal scalars per zone/PY into hourly interface-cap vectors (NYISO monthly-TTC shim pattern). |
 
 ### Original option analysis (for the record)
