@@ -69,8 +69,9 @@ market-simulator/
 ├── docs/                # Methodology notes, calibration logs, cleanup/reorg plans.
 ├── frontend/            # Static explainer site (HTML/CSS/JS, parameter views) and
 │                        #   backcast-dashboard payloads (frontend/data/backcast/). The
-│                        #   deployable dashboard is backcast-results.html at repo root
-│                        #   (gitignored; auto-built at deploy from those payloads).
+│                        #   deployable dashboard is the codebase-site pages
+│                        #   docs/codebase-site/{backcast-runs,calibration-status}.html
+│                        #   (data auto-built at deploy from those payloads).
 ├── learning-hub/        # Scrollytelling explainers (LP dispatch, storage, zones…).
 ├── tools/               # Desktop launcher UI (tools/launcher.py).
 ├── results/             # Cached run outputs and golden baselines.

@@ -1,12 +1,15 @@
 name: Deploy site to GitHub Pages
 
 # The ONE publish pipeline. Stages the static site (landing page + learning
-# hub + backcast dashboard) and deploys it to GitHub Pages. The dashboard HTML
-# inlines manifest + completeness data (eliminates stale-cache ISO-list desync);
-# benchmark stays external with self-healing fallback. Assembled from committed
-# per-run registry sidecars + per-(ISO, year) bench parts by the stdlib-only
-# scripts/build_manifest.py (seconds, no model deps, no bundles). Concurrent
-# calibration sessions merge conflict-free — each only ADDS its own files
+# hub + codebase site incl. the backcast dashboard pages) and deploys it to
+# GitHub Pages. The backcast dashboard lives on the codebase site
+# (docs/codebase-site/backcast-runs.html + calibration-status.html); its data
+# is assembled from committed per-run registry sidecars + per-(ISO, year)
+# bench parts by the stdlib-only scripts/build_manifest.py, then copied into
+# docs/codebase-site/data/backcast/ by scripts/build_codebase_site_backcast.py
+# (seconds, no model deps, no bundles). The old root backcast-results.html is
+# a committed static redirect stub — never regenerated. Concurrent calibration
+# sessions merge conflict-free — each only ADDS its own files
 # (registry/<id>.json, runs/<id>.js, bench parts).
 #
 # Speed: the checkout is sparse (web roots + scripts only) and blobless, so the
@@ -19,17 +22,14 @@ on:
     branches: [main]
     # Any merge that changes what the site serves, including new calibration
     # runs (their sidecar/payload/bench parts live under frontend/), AND the
-    # build scripts / shell template that produce the generated dashboard files.
-    # Missing the shell template from this list was the root cause of the stale-
-    # HTML "Init error: undefined is not an object (benchGz)" bug — the template
-    # gained ensureData() / guards but the deploy never fired to pick them up.
+    # build scripts that produce the generated dashboard data files.
     paths:
       - "*.html"
       - "frontend/**"
       - "learning-hub/**"
       - "docs/codebase-site/**"
-      - "scripts/probes/_backcast_shell.py"
       - "scripts/build_manifest.py"
+      - "scripts/build_codebase_site_backcast.py"
       - "scripts/build_status.py"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch: {}
@@ -41,8 +41,8 @@ on:
     types: [completed]
 
 # Token scoped for the official Pages deployment flow, plus contents:write so
-# the deploy can commit the refreshed dashboard files (manifest.js / benchmark.js
-# / backcast-results.html) back to main — it is their single writer.
+# the deploy can commit the refreshed dashboard data files (manifest.js /
+# benchmark.js / completeness.js) back to main — it is their single writer.
 permissions:
   contents: write
   pages: write
@@ -98,47 +98,43 @@ jobs:
           # Serve files verbatim (no Jekyll processing of the data JS).
           touch _site/.nojekyll
 
-      - name: Assemble the backcast dashboard
+      - name: Assemble the backcast dashboard data
         # Pure-stdlib reducer over the committed registry sidecars + bench
-        # parts -> writes _site/backcast-results.html and
-        # _site/frontend/data/backcast/{manifest,benchmark}.js.
+        # parts -> writes _site/frontend/data/backcast/{manifest,benchmark}.js
+        # and copies the full data set into
+        # _site/docs/codebase-site/data/backcast/ for the dashboard pages.
         run: |
           set -euo pipefail
           python3 scripts/build_manifest.py --site-dir _site
           python3 scripts/build_codebase_site_backcast.py --site-dir _site
           echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
 
-      - name: Refresh the committed dashboard files on main
-        # The dashboard's shared files are committed so a raw-branch Pages build
-        # serves a real page too (not a 404), but only THIS workflow writes them:
-        # it is the single writer on main, so calibration-run PRs never touch them
-        # and merge conflict-free. Regenerate into the working tree (repo root)
-        # and commit only when the data (manifest/benchmark/completeness) or the
-        # shell template actually changed. The generator is now content-addressed
-        # (build_manifest.py hashes the emitted bytes for the SHELL_VER/DATA_VER
-        # stamps and uses that hash for the cache-busting query strings and the
-        # newest-run date for the page subtitle), so a no-op deploy regenerates
-        # the files byte-identical and the git-diff check below short-circuits —
-        # no more steady drip of "dashboard: refresh generated files" no-op commits.
+      - name: Refresh the committed dashboard data files on main
+        # The dashboard's shared data files are committed so a raw checkout's
+        # local preview (bc-data.js falls back to frontend/data/backcast/)
+        # works too, but only THIS workflow writes them: it is the single
+        # writer on main, so calibration-run PRs never touch them and merge
+        # conflict-free. Regenerate into the working tree (repo root) and
+        # commit only when the data actually changed — the generator is
+        # byte-deterministic, so a no-op deploy regenerates the files
+        # byte-identical and the git-diff check below short-circuits.
         # A push by GITHUB_TOKEN does not re-trigger this workflow (GitHub's
         # recursion guard), so there is no deploy loop.
         run: |
           set -euo pipefail
           python3 scripts/build_manifest.py
-          if git diff --quiet -- backcast-results.html \
-                                 frontend/data/backcast/manifest.js \
+          if git diff --quiet -- frontend/data/backcast/manifest.js \
                                  frontend/data/backcast/benchmark.js \
                                  frontend/data/backcast/completeness.js; then
-            echo "Dashboard files unchanged — nothing to commit."
+            echo "Dashboard data files unchanged — nothing to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add backcast-results.html \
-                  frontend/data/backcast/manifest.js \
+          git add frontend/data/backcast/manifest.js \
                   frontend/data/backcast/benchmark.js \
                   frontend/data/backcast/completeness.js
-          git commit -m "dashboard: refresh generated files [skip ci]"
+          git commit -m "dashboard: refresh generated data files [skip ci]"
           for i in 1 2 3 4; do
             git pull --rebase origin main \
               && git push origin "HEAD:main" && exit 0

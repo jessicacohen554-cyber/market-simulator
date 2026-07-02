@@ -99,7 +99,10 @@ registered on the deployable results dashboard in the same session it is produce
 The committed deliverable is the per-run bundle under
 `results/calibration/<name>/` plus the dashboard sidecar files
 (`frontend/data/backcast/registry/<id>.json`, `runs/<id>.js`, changed `bench/`).
-The HTML (`backcast-results.html`) and `manifest.js` are gitignored and rebuilt at
-deploy. Use the `calibration-report` skill / `scripts/dashboard_add_run.py` then
-`build_manifest.py`. (See `CLAUDE.md` rules #13–#14.)
+The dashboard itself is the codebase-site pages —
+`docs/codebase-site/backcast-runs.html` (run explorer) and
+`docs/codebase-site/calibration-status.html` (all-ISO keeper summary); their
+data (`manifest.js` etc.) is rebuilt at deploy. Use the `calibration-report`
+skill / `scripts/dashboard_add_run.py` then `build_manifest.py`. (See
+`CLAUDE.md` rules #13–#14.)
 </content>

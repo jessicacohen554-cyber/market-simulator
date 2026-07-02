@@ -1,19 +1,18 @@
-"""Assemble the backcast dashboard from committed parts.
+"""Assemble the backcast dashboard DATA files from committed parts.
 
-The dashboard HTML (``backcast-results.html``) INLINES manifest + completeness
-data (~108 KB) directly into the page — these carry the ISO list that boot()
-and selectIso() need. Benchmark data (~7 MB) stays external (too large to
-inline without slowing the initial page load) and is loaded via ``<script src>``
-with cache-busting + robust ``ensureData()`` fallback.
+Reduces the committed per-run registry sidecars + bench/completeness parts to
+the shared data files the codebase-site backcast pages consume
+(``docs/codebase-site/calibration-status.html`` and ``backcast-runs.html``,
+via ``js/bc-data.js``):
 
-This hybrid approach eliminates the recurring “undefined is not an object
-(evaluating ‘window.BC.benchGz[iso]’)” crash: the ISO list is always in the
-same cache entry as the shell JS (no cross-file desync), and any benchmark
-staleness is caught by the self-healing boot logic that re-fetches with
-cache-busting before falling back to a full page reload.
+  * ``frontend/data/backcast/manifest.js``     — ``window.BC.meta`` + ``window.BC.manifest``
+  * ``frontend/data/backcast/benchmark.js``    — ``window.BC.benchGz`` (per-ISO gzip+base64)
+  * ``frontend/data/backcast/completeness.js`` — ``window.BC.completeness``
 
-The standalone ``.js`` files are still written for the deploy staging, for
-``ensureData()`` fallback re-fetches, and for backward compat.
+The old root dashboard shell (``backcast-results.html``) is retired — the file
+at repo root is now a static redirect stub to the codebase-site pages and is
+never regenerated. Run ``scripts/build_codebase_site_backcast.py`` AFTER this
+script to copy the data subset into ``docs/codebase-site/data/backcast/``.
 
 Per-run files committed by calibration sessions (never by this script):
 
@@ -26,8 +25,7 @@ Usage::
     python scripts/build_manifest.py                 # refresh repo-root preview
     python scripts/build_manifest.py --site-dir _site  # deploy staging
 
-Output is byte-deterministic (gzip mtime=0) apart from the page’s generated-at
-stamp.
+Output is byte-deterministic (gzip mtime=0).
 """
 
 from __future__ import annotations
@@ -35,10 +33,8 @@ from __future__ import annotations
 import argparse
 import base64
 import gzip
-import hashlib
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -231,44 +227,16 @@ def main() -> None:
         )
     completeness = _assemble_completeness()
 
-    from scripts.probes._backcast_shell import SHELL
-
-    # Pre-serialize what each data file will carry so the version hash covers the
-    # exact bytes the browser sees, not just the inputs that produced them.
     meta_js = json.dumps(meta_by_iso, sort_keys=True)
     manifest_js = json.dumps(entries, sort_keys=True)
     bench_gz = {i: _gzb64(b) for i, b in bench_by_iso.items()}
     bench_js = json.dumps(bench_gz, sort_keys=True)
     completeness_js = json.dumps(completeness, sort_keys=True)
 
-    # Content-hash version stamp. Embedded in BOTH the shell HTML (SHELL_VER)
-    # and manifest.js (DATA_VER); if they don't match, the shell self-heals
-    # via a one-shot reload (see manifest.js prelude below). Hashing the
-    # actual emitted content + the shell template means the hash is stable
-    # across deploys when nothing changed — so a no-op deploy produces a
-    # byte-identical HTML and stops the steady drip of [skip ci] commits.
-    h = hashlib.sha1()
-    h.update(SHELL.encode())
-    h.update(b"|")
-    h.update(meta_js.encode())
-    h.update(b"|")
-    h.update(manifest_js.encode())
-    h.update(b"|")
-    h.update(bench_js.encode())
-    h.update(b"|")
-    h.update(completeness_js.encode())
-    ver = h.hexdigest()[:16]
-
     out_data = site / "frontend" / "data" / "backcast"
     out_data.mkdir(parents=True, exist_ok=True)
-    # Standalone .js files: still written for deploy staging, ensureData()
-    # fallback, and backward compat. The HTML inlines manifest + completeness
-    # (the ISO-list data that MUST be in sync with the shell) but keeps
-    # benchmark external (7+ MB, loaded on demand with robust fallback).
-    prelude = f'window.BC=window.BC||{{}};window.BC.DATA_VER="{ver}";'
     (out_data / "manifest.js").write_text(
-        prelude
-        + "window.BC.meta="
+        "window.BC=window.BC||{};window.BC.meta="
         + meta_js
         + ";window.BC.manifest="
         + manifest_js
@@ -280,47 +248,8 @@ def main() -> None:
     (out_data / "completeness.js").write_text(
         "window.BC=window.BC||{};window.BC.completeness=" + completeness_js + ";"
     )
-
-    # User-visible “as of” stamp — the newest registered run's date is what
-    # actually changed; that keeps the HTML byte-identical across deploys when
-    # no new run landed, while still telling the reader how fresh the data is.
-    as_of = max(
-        (e.get("date") or "" for e in entries), default=""
-    ) or datetime.now().strftime("%Y-%m-%d")
-    # Inline manifest + completeness (small, ~108KB) directly into the HTML.
-    # These carry the ISO list that boot()/selectIso() need — inlining them
-    # eliminates the root cause of the recurring “benchGz[iso] undefined”
-    # crash: the ISO list and the shell JS are always in the same cache entry.
-    # Benchmark stays external (~7 MB, too large to inline without slowing
-    # initial load): loaded via <script src> with cache-busting, and
-    # ensureData() re-fetches it if missing or stale.
-    _onerr = 'onerror="window.BC._loadErr.push(this.src)"'
-    inline_data = (
-        "<script>"
-        + prelude
-        + "window.BC.meta="
-        + meta_js
-        + ";window.BC.manifest="
-        + manifest_js
-        + ";window.BC.completeness="
-        + completeness_js
-        + ";</script>"
-        f'<script src="frontend/data/backcast/benchmark.js?v={ver}" {_onerr}>'
-        "</script>"
-        f'<script src="frontend/data/backcast/status.js?v={ver}" {_onerr}>'
-        "</script>"
-    )
-    shell = (
-        SHELL.replace(
-            "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
-        )
-        .replace("__DATASCRIPTS__", inline_data)
-        .replace("__SHELL_VER__", ver)
-        .replace("__GEN__", as_of)
-    )
-    (site / "backcast-results.html").write_text(shell)
     print(
-        f"assembled dashboard at {site}: {len(entries)} runs, ISOs "
+        f"assembled backcast data at {out_data}: {len(entries)} runs, ISOs "
         f"{sorted(meta_by_iso)} (years per ISO: "
         f"{ {i: m['years'] for i, m in meta_by_iso.items()} })"
     )
