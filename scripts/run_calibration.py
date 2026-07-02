@@ -1938,6 +1938,7 @@ def run_year(
     as_reserve_withholding: bool = False,
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
+    miso_zonal_reserves: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
@@ -2356,6 +2357,11 @@ def run_year(
     # PJM-gated in _run_dispatch. Replaces the post-solve ORDC overlay.
     if energy_reserve_coopt:
         config = config.with_overrides(energy_reserve_coopt=True)
+    # MISO locational (zonal) reserve families on top of the market-wide RBDC
+    # (run_calibration_full --miso-zonal-reserves): BPM-002 §3.3.2 zonal
+    # minimum requirements priced at the published §5.2.1.2 zonal curve.
+    if miso_zonal_reserves:
+        config = config.with_overrides(miso_zonal_reserves=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_as_aware_commitment:
@@ -4165,6 +4171,51 @@ def run_year(
             int(_elig2d[0].sum()),
             int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
         )
+    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "MISO":
+        # MISO: market-wide energy+reserve co-optimization (RBDC). The
+        # requirement is MSSC + 400 MW regulating and the demand curve ramps
+        # to MISO's $3,500/MWh VOLL anchor (reserve_config._miso_design,
+        # BPM-002 / Schedule 28/28-A) — zone-count-agnostic, unchanged from
+        # the miso3/miso-34 probes. Until now this design was reachable only
+        # from the forecast runner (runner.py); the backcast run_year chain
+        # ended at NEISO, so --energy-reserve-coopt was silently inert for
+        # MISO (miso-34's bundle solved an energy-only LP). This branch
+        # connects the existing design to the backcast path — a wiring fix,
+        # not a redesign (same class as the phase-1 unwired one-way link
+        # floor). Locational sub-regional families are the separate gated
+        # phase-2b step (scope §6).
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
+        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
+        coopt_kw = build_reserve_dispatch_kwargs(design)
+        dispatch_kwargs.update(coopt_kw)
+        coopt_req = coopt_kw["reserve_requirement"]
+        coopt_pen = coopt_kw["ordc_penalties"]
+        coopt_elig = coopt_kw["reserve_eligible"]
+        logger.info(
+            "energy+reserve co-opt (MISO): RBDC market-wide requirement "
+            "%.0f MW (MSSC + regulating), %d ORDC steps ($%.0f-$%.0f), "
+            "%d reserve-eligible units",
+            float(np.atleast_2d(coopt_req)[0, 0]),
+            len(coopt_pen),
+            float(coopt_pen.min()) if len(coopt_pen) else 0.0,
+            float(coopt_pen.max()) if len(coopt_pen) else 0.0,
+            int(np.atleast_2d(coopt_elig)[0].sum()),
+        )
+        for fam in design.families[1:]:
+            logger.info(
+                "  MISO zonal reserve family %s: requirement %.0f MW "
+                "(within-zone MSSC), published zonal curve steps %s",
+                fam.name,
+                float(fam.requirement[0]),
+                [
+                    f"{w:.0f}MW@${p:.0f}"
+                    for w, p in zip(fam.ordc_step_widths, fam.ordc_penalties)
+                ],
+            )
 
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
     # -- and differ only in the objective (P1 = base MC + startup markup). So

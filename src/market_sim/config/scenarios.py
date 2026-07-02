@@ -1104,6 +1104,27 @@ class ScenarioConfig:
     # CHANGE — it alters dispatch volumes (units part-load for reserve), so it is
     # NOT byte-identical and the volume calibration must be re-run before a
     # keeper. Default off. See docs/ordc-overlay.md (energy+reserve co-opt).
+    miso_zonal_reserves: bool = False  # MISO co-opt: add LOCATIONAL (zonal)
+    # operating-reserve families on top of the market-wide RBDC family, per the
+    # NYISO nested-family template. MISO establishes Reserve Zones from the
+    # IROL/RDT/SOL constraint set and enforces a minimum Zonal Operating
+    # Reserve Requirement per zone (BPM-002 §3.3/§3.3.2); the zonal requirement
+    # anchor is the pre-determined largest zonal contingency event (Chen et al.,
+    # IEEE TPWRS, MISO STR design), i.e. the within-zone MSSC — fleet-derived
+    # and forward-responsive, the zonal analogue of the market-wide MSSC basis.
+    # Shortfalls price at the PUBLISHED Zonal Operating Reserve Demand Curve
+    # (BPM-002 §5.2.1.2 / Tariff Schedule 28-A): $200/MWh for the last 20% of
+    # the requirement, $1,100/MWh (energy offer cap $1,000 + contingency-
+    # reserve offer cap $100) from 10-80%, and VOLL minus the zonal regulating
+    # price below 10% (MISO_ZONAL_ORDC_STEPS, reserve_config.py). Default zone
+    # set: MISO-South only (reserves deliverable across the RDT are limited —
+    # scope doc §6); override via miso_zonal_reserve_zones. Zero parameters
+    # fitted to the price residual. Requires energy_reserve_coopt. GATED
+    # CHANGE — alters dispatch volumes; default off per the multi-ISO protocol.
+    miso_zonal_reserve_zones: tuple | None = None  # Optional override of the
+    # zonal reserve family zone set (model zone names). None -> the default
+    # (MISO-South,) per scope §6; e.g. ("MISO-South", "MISO-East") adds the
+    # Michigan-pocket family.
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
@@ -2929,6 +2950,8 @@ TIER_TAGS: dict[str, int] = {
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
+    "miso_zonal_reserves": 1,
+    "miso_zonal_reserve_zones": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
