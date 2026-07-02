@@ -44,3 +44,20 @@ for must-take existing PPAs.
 - Per-ISO cap defaults go into resource_caps.csv (ADR 0009).
 - New data input: monthly hydro energy budget (12 values per existing hydro
   resource, MWh/month). PP-02 specifies the schema.
+
+## Amendment (2026-07-02, audit finding LP-1)
+
+The additionality exclusion applies to existing generation **that serves
+load**, not to exported existing energy. ADR 0007 (ratified) excludes surplus
+from the matching metric entirely; counting exported existing MWh as
+*unmatched load* both mis-stated the metric (matched% + unmatched% ≠ 100% of
+load) and — in Mode B — let the matching constraint cap profitable existing
+exports at the `(1 − target)·Σload` headroom, distorting the solve. The
+accounting is now::
+
+    unmatched_t = grid_buy_t + max(0, Σ_{r∈existing} gen[r,t] − excess_t)
+
+with excess attributed to existing generation **first** (existing-first
+attribution — the only LP-expressible choice; pro-rata needs a nonlinear
+share and new-first needs integer logic). Implemented via the `exc_ex[t]`
+auxiliary columns in `lp.py` (see `docs/01-lp-formulation.md`).
