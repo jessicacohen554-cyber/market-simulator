@@ -63,8 +63,8 @@ COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
 FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 
 # --- tolerances (rubric §1) -------------------------------------------------
-# C1 fuel-mix — the universal class gate (mirrors
-# scripts/probes/_backcast_shell.classInTol, supersedes the old ±5%/±1 TWh
+# C1 fuel-mix — the universal class gate (mirrors classInTol in the run
+# explorer, docs/codebase-site/backcast-runs.html; supersedes the old ±5%/±1 TWh
 # size-tiered band): a class passes iff BOTH (a) its grid-delivered volume miss
 # |model−actual| is within min(1.0% of ISO total load, 5 TWh), AND (b) its
 # share of total generation is within 1.5 percentage points of the actual share.
@@ -79,7 +79,8 @@ FUELMIX_VOL_LOAD_FRAC = 0.01  # volume band = 1.0% of ISO total load ...
 FUELMIX_VOL_CAP_TWH = 5.0  # ... but never more than an absolute 5 TWh
 FUELMIX_SHARE_PP = 1.5  # +/-1.5 share percentage points of total generation
 # Non-fossil fuels whose grid actual comes from EIA-930 (not 923) for the
-# system-total used by the share/volume bands (matches _backcast_shell.totalGen).
+# system-total used by the share/volume bands (matches totalGen in the run
+# explorer, docs/codebase-site/backcast-runs.html).
 NONFOSSIL_FUELS = ("nuclear", "wind", "solar")
 SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered
 SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
@@ -347,7 +348,8 @@ def family_is_complete(iso: str, family: str, year: int) -> bool:
 def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
     """System model/actual TOTAL generation (TWh), grid-delivered.
 
-    Mirrors ``_backcast_shell.totalGen`` exactly so the verdict's C1 bands match
+    Mirrors ``totalGen`` in the run explorer (docs/codebase-site/
+    backcast-runs.html) exactly so the verdict's C1 bands match
     the dashboard scorecard. Each benchmarked class is counted ONCE: ``classFull``
     now carries the grid-delivered actual for every class — fossil (EIA-923 − BTM
     CHP), nuclear (EIA-923) and the variable renewables wind/solar on the EIA-930
@@ -386,7 +388,7 @@ def score_fuelmix(
 
     A class passes iff BOTH its grid-delivered volume miss is within 1.0% of ISO
     total load AND its share of total generation is within 1.5 pp of
-    actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis).
+    actual (the run explorer's ``classInTol`` on the gmModel/classFull basis).
 
     Gating is restricted to (ISO, class) pairs whose EIA-923 actual is VERIFIED
     COMPLETE for the year. A complete-vintage year (no committed completeness part)

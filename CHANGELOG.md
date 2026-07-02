@@ -28,6 +28,26 @@ co-opt LP peaks ~16 GB at 6-zone MISO plant scale — a 12 GB swapfile
 absorbs the transient (`MALLOC_ARENA_MAX=1 MARKET_SIM_HIGHS_THREADS=1`
 still required).
 
+## 2026-07-02 (Backcast dashboard migrated to the codebase site)
+
+The root `backcast-results.html` dashboard is retired: the file is now a
+static redirect stub (committed, never regenerated) pointing to the
+codebase-site pages, which are the results surface —
+`docs/codebase-site/backcast-runs.html` (Run Explorer, deep links
+`#iso=<ISO>&run=<run-id>`) and `docs/codebase-site/calibration-status.html`
+(all-ISO keeper summary, `#iso=<ISO>`). `scripts/build_manifest.py` now
+assembles only the shared data files (`manifest.js`/`benchmark.js`/
+`completeness.js`); the old shell template
+(`scripts/probes/_backcast_shell.py`) is deleted and
+`render_backcast.py`/`dashboard_add_run.py`/`regen_dashboard.py` no longer
+write any HTML. `scripts/build_codebase_site_backcast.py` copies EVERY
+registered run (was keeper + latest 9) into the site's data dir at deploy.
+The deploy workflow stops committing the root HTML; all links (landing page,
+model-updates, results-calibration, launcher) point at the codebase-site
+pages. Docs realigned: calibration-report skill, CLAUDE.md #13 + Git
+section, README, .gitignore, DESIGN_SYSTEM, codebase doc 06.
+
+
 ## 2026-07-02 (MISO zonal refinement — phase 1: 6-zone topology)
 
 MISO's Midwest is split from the 3-zone copperplate to the **six measured
