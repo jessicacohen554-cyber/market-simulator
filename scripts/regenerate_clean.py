@@ -42,6 +42,7 @@ DATATYPES: tuple[str, ...] = (
     "unit-outage-events",
     "partial-outages",
     "capacity-deliverability",
+    "gtc-limits",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
