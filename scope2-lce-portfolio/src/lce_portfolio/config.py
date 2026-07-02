@@ -196,9 +196,14 @@ class PortfolioConfig:
     def from_file(cls, path: str | Path) -> "PortfolioConfig":
         """Build a config from a JSON or YAML file (reproducible runs).
 
-        Unknown keys raise; list-valued fields (``premium_deltas``,
-        ``matching_targets``, ``active_resources``) are coerced to tuples. YAML
-        requires ``pyyaml`` to be installed; JSON always works.
+        Unknown keys raise; every value is type-checked against its field
+        (audit finding CL-5 — wrong-typed values used to surface as raw
+        ``TypeError`` tracebacks or, worse, be silently misread: the string
+        ``"false"`` is truthy, so ``strict_hourly_matching: "false"`` turned
+        strict 24/7 matching ON). List-valued fields (``premium_deltas``,
+        ``matching_targets``, ``active_resources``) are coerced to tuples.
+        Parse errors name the file (CL-6/CL-14). YAML requires ``pyyaml`` to
+        be installed; JSON always works.
         """
         import json
 
@@ -210,15 +215,90 @@ class PortfolioConfig:
                 raise ImportError(
                     "YAML config requires pyyaml; use JSON instead"
                 ) from exc
-            data = yaml.safe_load(text) or {}
+            try:
+                data = yaml.safe_load(text)
+            except yaml.YAMLError as exc:
+                # yaml.YAMLError is not a ValueError, so it previously
+                # escaped the CLI's clean-error handler as a raw traceback.
+                raise ValueError(f"config file {path}: invalid YAML: {exc}") from exc
         else:
-            data = json.loads(text)
+            try:
+                data = json.loads(text)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"config file {path}: invalid JSON: {exc}") from exc
+        if data is None or data == {}:
+            # An empty file is far more likely a mistake than an intentional
+            # request for the all-defaults config (empty YAML used to run a
+            # full SAMPLE solve silently).
+            raise ValueError(f"config file {path} is empty")
+        if not isinstance(data, dict):
+            raise ValueError(
+                f"config file {path} must contain a mapping of config keys, "
+                f"got {type(data).__name__}"
+            )
 
         known = {f.name for f in fields(cls)}
         unknown = set(data) - known
         if unknown:
             raise ValueError(f"unknown config keys: {sorted(unknown)}")
-        for key in ("premium_deltas", "matching_targets", "active_resources"):
-            if key in data and data[key] is not None:
-                data[key] = tuple(data[key])
+        data = {k: cls._coerce_field(path, k, v) for k, v in data.items()}
         return cls(**data)
+
+    # Field groups for from_file type validation (CL-5). bool is checked
+    # before the numeric groups because bool is an int subclass.
+    _TUPLE_FIELDS = ("premium_deltas", "matching_targets", "active_resources")
+    _BOOL_FIELDS = ("strict_hourly_matching", "additionality_only")
+    _FLOAT_FIELDS = (
+        "discount_rate",
+        "gas_price_mmbtu",
+        "ccs_45q_per_ton",
+        "excess_sale_fraction",
+        "storage_epsilon",
+        "load_growth_rate",
+    )
+    _INT_FIELDS = ("year", "hours", "load_growth_years", "profile_shape_year")
+    _DICT_FIELDS = ("resource_caps_mw", "resource_floors_mw", "eac_premium_mwh")
+
+    @classmethod
+    def _coerce_field(cls, path, key: str, val):
+        """Validate/coerce one config-file value against its field type."""
+
+        def err(expected: str):
+            return ValueError(
+                f"config file {path}: field {key!r} must be {expected}, got {val!r}"
+            )
+
+        if val is None:
+            return None
+        if key in cls._TUPLE_FIELDS:
+            if isinstance(val, str) or not isinstance(val, (list, tuple)):
+                raise err("a list")
+            if key != "active_resources" and any(
+                isinstance(v, bool) or not isinstance(v, (int, float)) for v in val
+            ):
+                raise err("a list of numbers")
+            return tuple(val)
+        if key in cls._BOOL_FIELDS:
+            if not isinstance(val, bool):
+                raise err("true or false (a JSON/YAML boolean, not a string)")
+            return val
+        if key in cls._FLOAT_FIELDS:
+            if isinstance(val, bool) or not isinstance(val, (int, float)):
+                raise err("a number")
+            return float(val)
+        if key in cls._INT_FIELDS:
+            if isinstance(val, bool) or not isinstance(val, int):
+                raise err("an integer")
+            return val
+        if key in cls._DICT_FIELDS:
+            if not isinstance(val, dict) or any(
+                isinstance(v, bool) or not isinstance(v, (int, float))
+                for v in val.values()
+            ):
+                raise err("a mapping of resource name to number")
+            return {k: float(v) for k, v in val.items()}
+        # Remaining fields (iso, mode, lcoe_sensitivity, load/lmp/emissions
+        # file paths) are strings.
+        if not isinstance(val, str):
+            raise err("a string")
+        return val
