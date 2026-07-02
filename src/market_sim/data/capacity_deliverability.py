@@ -127,6 +127,24 @@ def available_delivery_years(iso: str) -> set[str]:
     return {str(y) for y in df["delivery_year"].dropna().unique()}
 
 
+def available_seasons(iso: str, delivery_year: str) -> set[str]:
+    """Return the ``season`` labels present for one ISO ``delivery_year``.
+
+    Lets callers detect a pre-seasonal MISO planning year (PY2022-23 and
+    earlier publish one ``"annual"`` CIL/CEL/LRR set; PY2023-24 onward carry
+    the four seasons) and read the annual row instead of a season that does
+    not exist — the exact-season filter in :func:`_metric_by_area` would
+    otherwise fall back to the *latest* delivery year via :func:`_select_year`,
+    silently substituting the wrong planning year. Empty when the partition or
+    the delivery year is unavailable.
+    """
+    df = _read(iso)
+    if df is None or df.empty:
+        return set()
+    sub = df[df["delivery_year"] == delivery_year]
+    return {str(s) for s in sub["season"].dropna().unique()}
+
+
 def _select_year(df: pd.DataFrame, iso: str, delivery_year: str) -> pd.DataFrame:
     """Return the rows for ``delivery_year``, or the latest year when absent.
 
