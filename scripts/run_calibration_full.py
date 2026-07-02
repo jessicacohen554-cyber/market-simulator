@@ -1726,6 +1726,7 @@ def solve_and_persist(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     caiso_ra_startup_bridge: bool | None = None,
+    caiso_ra_bridge_decommit: bool | None = None,
     reliability_floor: bool | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
@@ -1940,6 +1941,7 @@ def solve_and_persist(
             caiso_ra_mustoffer=caiso_ra_mustoffer,
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             caiso_ra_startup_bridge=caiso_ra_startup_bridge,
+            caiso_ra_bridge_decommit=caiso_ra_bridge_decommit,
             reliability_floor=reliability_floor,
             scarcity_price_overlay=scarcity_price_overlay,
             caiso_solar_deliverability=caiso_solar_deliverability,
@@ -2213,6 +2215,7 @@ def solve_and_persist(
         "caiso_ra_mustoffer": caiso_ra_mustoffer,
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "caiso_ra_startup_bridge": caiso_ra_startup_bridge,
+        "caiso_ra_bridge_decommit": caiso_ra_bridge_decommit,
         "reliability_floor": reliability_floor,
         "scarcity_price_overlay": scarcity_price_overlay,
         "caiso_solar_deliverability": caiso_solar_deliverability,
@@ -2406,6 +2409,10 @@ def solve_and_persist(
     if caiso_ra_startup_bridge is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ra_startup_bridge=caiso_ra_startup_bridge
+        )
+    if caiso_ra_bridge_decommit is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
@@ -5350,6 +5357,23 @@ def main() -> None:
         "--caiso-ra-mustoffer; CAISO-only; default off (byte-identical).",
     )
     parser.add_argument(
+        "--caiso-ra-bridge-decommit",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Solar-proportional / seasonal DECOMMITMENT control on "
+        "--caiso-ra-startup-bridge (caiso-48). (1) Day-ahead horizon: only a "
+        "gap <= 24 h (one DAM operating day, CAISO IFM/RUC) can be an "
+        "intra-day min-load hold — longer idles are next-day decommit/"
+        "re-offer decisions, never bridged. (2) Over-generation repricing: "
+        "gap hours where the candidate min-load floors exceed the P1 "
+        "import-dispatch + export-sink absorption reprice the held energy to "
+        "the curtailable-renewable keep-running offer, and uneconomic bridges "
+        "decommit cheapest-startup-first (RUC order). All inputs are the "
+        "model's own P1 solution + physical constants — no residual fit. "
+        "Requires --caiso-ra-startup-bridge; CAISO-only; default off "
+        "(byte-identical caiso-45 bridge).",
+    )
+    parser.add_argument(
         "--reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6109,6 +6133,7 @@ def main() -> None:
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         caiso_ra_startup_bridge=args.caiso_ra_startup_bridge,
+        caiso_ra_bridge_decommit=args.caiso_ra_bridge_decommit,
         reliability_floor=args.reliability_floor,
         scarcity_price_overlay=args.scarcity_price_overlay,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
