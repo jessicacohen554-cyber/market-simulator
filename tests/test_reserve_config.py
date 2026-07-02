@@ -497,3 +497,143 @@ class TestDispatcherRouting(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestErcotEcrsConservativeDeployment(unittest.TestCase):
+    """WS2: the published pre-reform ECRS deployment design on the ECRS family."""
+
+    def _design(self, year, T=24, monkey_req=150.0, reform_hour=None):
+        import unittest.mock as mock
+
+        import market_sim.config.reserve_config as rc
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": monkey_req, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(
+            weather_year=year,
+            ercot_multiproduct_as_coopt=True,
+            ercot_ecrs_conservative_deployment=True,
+            ercot_as_critical_frac=0.0,
+            ercot_as_n_ramp=4,
+        )
+        patches = [
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            )
+        ]
+        if reform_hour is not None:
+            patches.append(
+                mock.patch.object(rc, "ERCOT_ECRS_RELEASE_REFORM_HOUR", reform_hour)
+            )
+        with patches[0]:
+            if reform_hour is not None:
+                with patches[1]:
+                    return get_reserve_design(cfg, _fleet(T=T), T, ["Z0"])
+            return get_reserve_design(cfg, _fleet(T=T), T, ["Z0"])
+
+    def test_2023_rigid_at_cap_all_year(self):
+        design = self._design(2023)
+        names = [f.name for f in design.families]
+        self.assertIn("ECRS_withheld", names)
+        self.assertNotIn("ECRS_released", names)
+        fam = design.families[names.index("ECRS_withheld")]
+        np.testing.assert_array_equal(fam.ordc_penalties, [5000.0])
+        self.assertEqual(fam.ordc_step_widths[0], 150.0)
+        self.assertTrue((fam.requirement == 150.0).all())
+
+    def test_2024_splits_at_reform_hour(self):
+        design = self._design(2024, T=24, reform_hour=12)
+        names = [f.name for f in design.families]
+        self.assertIn("ECRS_withheld", names)
+        self.assertIn("ECRS_released", names)
+        # released family appended LAST so the first 4 keep product identity
+        self.assertEqual(names[-1], "ECRS_released")
+        rigid = design.families[names.index("ECRS_withheld")]
+        rel = design.families[names.index("ECRS_released")]
+        self.assertTrue((rigid.requirement[:12] == 150.0).all())
+        self.assertTrue((rigid.requirement[12:] == 0.0).all())
+        self.assertTrue((rel.requirement[:12] == 0.0).all())
+        self.assertTrue((rel.requirement[12:] == 150.0).all())
+        # both draw on the ECRS reserve class
+        self.assertEqual(rigid.reserve_class, rel.reserve_class)
+        # released window keeps the standing ramp (multi-step, tops at VOLL)
+        self.assertGreater(len(rel.ordc_penalties), 1)
+        self.assertAlmostEqual(float(rel.ordc_penalties[-1]), 5000.0)
+
+    def test_2025_reverts_to_standing_ramp(self):
+        design = self._design(2025)
+        names = [f.name for f in design.families]
+        self.assertIn("ECRS", names)
+        self.assertNotIn("ECRS_withheld", names)
+
+    def test_flag_off_is_unchanged(self):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            return np.full(hours, 100.0)
+
+        cfg = _cfg(weather_year=2023, ercot_multiproduct_as_coopt=True)
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ):
+            design = get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+        self.assertEqual([f.name for f in design.families][2], "ECRS")
+
+
+class TestErcotCommitmentHeadroomOverrides(unittest.TestCase):
+    """WS1: commitment-state-aware headroom re-scope for the P2 solve."""
+
+    def _fleet4(self, T=6):
+        idx = {n: i for i, n in enumerate(FUEL_TYPE_NAMES)}
+        fuels = ["gas_cc", "gas_ct", "oil", "wind"]
+        n = len(fuels)
+        return FleetArrays(
+            pmax=np.array([500.0, 200.0, 100.0, 300.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 10.0, 11.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 1, 1]),
+            fuel_type_idx=np.array([idx[f] for f in fuels]),
+            availability=np.full((n, T), 0.9),
+            unit_ids=["cc", "ct", "oil", "wind"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.arange(1, n + 1),
+        )
+
+    def test_overrides(self):
+        from market_sim.config.reserve_config import (
+            ercot_commitment_headroom_overrides,
+        )
+
+        T = 6
+        fa = self._fleet4(T)
+        # P1-style rows: fast = responsive & ~quick (cc only), all = responsive
+        he_p1 = np.array(
+            [
+                [True, False, False, False],
+                [True, True, True, False],
+            ]
+        )
+        committed = np.ones((4, T), dtype=bool)
+        committed[1, :3] = False  # CT offline first 3 hours
+        committed[2, :] = False  # oil offline all hours
+        ov = ercot_commitment_headroom_overrides(fa, committed, he_p1)
+        he = ov["reserve_headroom_eligible"]
+        extra = ov["reserve_headroom_extra_cap"]
+        # fast row now spans the full responsive set (per-hour gate = P2 avail)
+        np.testing.assert_array_equal(he[0], [True, True, True, False])
+        # offline quick-start capacity lands on the "all" row only, in-zone
+        self.assertEqual(extra.shape, (2, 2, T))
+        self.assertTrue((extra[0] == 0).all())
+        # zone 0: CT (200 * 0.9) offline hours 0-2 only
+        np.testing.assert_allclose(extra[1, 0, :3], 180.0)
+        np.testing.assert_allclose(extra[1, 0, 3:], 0.0)
+        # zone 1: oil (100 * 0.9) offline every hour
+        np.testing.assert_allclose(extra[1, 1, :], 90.0)

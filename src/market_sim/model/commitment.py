@@ -1035,6 +1035,7 @@ def apply_commitment_with_coal_pin(
     generators: list[Generator],  # fleet list aligned with committed rows
     screen_coal: bool = True,
     preserve_min_gen: bool = False,
+    couple_peak: bool = False,
 ) -> FleetArrays:
     """Return new ``FleetArrays`` with the commitment screen applied.
 
@@ -1061,6 +1062,14 @@ def apply_commitment_with_coal_pin(
         generators: The dispatch fleet, aligned with ``committed`` rows.
         screen_coal: When False, CAMPD coal is pinned to its P1 dispatch
             instead of being commitment-screened (it gains no new P2 gen).
+        couple_peak: When True, a bin's ``_peak`` tranche is coupled to its
+            ``_committed`` tranche exactly like the ``_econ`` tranches: the
+            peak (duct-firing / max-pressure) band of a plant whose committed
+            tranche is decommitted is the same COLD physical unit, so it can
+            neither generate nor hold reserve headroom. Off by default (the
+            historical behaviour left idle plants' peak tranches available in
+            P2, a residual phantom-reserve source); enabled by the ERCOT
+            commitment-state-aware reserve headroom (AS-aware P2).
         preserve_min_gen: When True, the P1 ``min_gen`` hard floor is carried
             into the P2 fleet and each floored generator-hour's availability is
             raised to cover it, so a reserve / AS-deployment floor
@@ -1111,10 +1120,12 @@ def apply_commitment_with_coal_pin(
             bin_tranches.setdefault(bin_id, {})["committed"] = g
         elif suffix.startswith("econ"):
             bin_tranches.setdefault(bin_id, {}).setdefault("econ", []).append(g)
+        elif couple_peak and suffix == "peak":
+            bin_tranches.setdefault(bin_id, {}).setdefault("peak", []).append(g)
 
     for pair in bin_tranches.values():
         c_idx = pair.get("committed")
-        e_idxs = pair.get("econ")
+        e_idxs = list(pair.get("econ") or []) + list(pair.get("peak") or [])
         if c_idx is None or not e_idxs:
             continue
         for e_idx in e_idxs:
