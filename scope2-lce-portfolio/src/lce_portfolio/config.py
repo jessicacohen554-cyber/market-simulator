@@ -104,12 +104,13 @@ class PortfolioConfig:
     currently has no effect on the LP beyond being carried through the config."""
 
     # --- (5) Premium / netting semantics -----------------------------------
-    excess_sale_fraction: float = 0.75
+    excess_sale_fraction: float = 1.0
     """Fraction of LMP received when selling excess clean generation to the grid.
-    1.0 = full wholesale resale; 0.0 = curtail for free. Default 0.75 applies a
-    basis/cannibalization haircut (ADR 0005, PS-02 provisional): surplus clean
-    output tends to clear when prices are depressed, so it fetches less than the
-    load-weighted LMP."""
+    1.0 = full wholesale resale; 0.0 = curtail for free. Default 1.0 per ADR 0005
+    as amended & ratified 2026-07-02: surplus is credited at the full hourly
+    ISO-average LMP (the provisional 0.75 basis/cannibalization haircut was
+    removed — the hourly LMP already reflects depressed prices in surplus hours,
+    so a further scalar haircut double-counts the effect)."""
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
