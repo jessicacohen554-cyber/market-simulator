@@ -91,7 +91,15 @@ class PortfolioConfig:
     """ISO marginal emission rate (tCO₂/MWh) used to attribute residual carbon to
     unmatched grid purchases (ADR 0007). ``residual_co2_tons = grid_buy_mwh × rate``
     is reported per sweep point; ``0`` disables residual-carbon reporting. Must be
-    non-negative."""
+    non-negative.
+
+    This field is the scalar the LP reads directly (``lp.py`` never looks up a
+    table); resolving *what* it should be is a config-time concern handled by
+    ``emissions.resolve_marginal_co2_rate``/``apply_marginal_co2``, invoked by
+    ``cli.run_one_iso``. Resolution precedence: an explicitly-set value ``> 0``
+    on this field wins; else the ``data/emissions/marginal_co2.csv`` per-ISO
+    table value for ``iso`` is used; else it stays ``0`` (reporting off — e.g.
+    for the ``SAMPLE`` demo ISO, which has no table entry)."""
 
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
