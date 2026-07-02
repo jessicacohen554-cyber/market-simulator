@@ -30,13 +30,16 @@ prices). Implementation: `src/lce_portfolio/lp.py`.
 ## Decision variables (flat column vector)
 
 ```
-build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | build_energy[k] | grid_buy[t] | excess[t]
+build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t] | build_energy[k] | exc_ex[t]
 ```
 
 All ≥ 0. `build_mw[r] ∈ [capmin[r], capmax[r]]`. Split-storage resources (LDES, hydrogen) carry
 an additional energy-capacity variable `build_energy[k]` (MWh), costed at `$/MWh-yr` and
 bounded within per-tech `[duration_min_h × build_mw, duration_max_h × build_mw]` (ADR 0006).
 Fixed-duration storage has no such column; its energy sizing is `duration_h × build_mw`.
+`exc_ex[t]` (existing-attributable excess) exists only when `additionality_only` is on —
+see Additionality accounting below. (Block order matches `lp.py`'s `_Layout`:
+`build_energy` and `exc_ex` come *after* `excess`.)
 
 ## Constraints
 
@@ -111,26 +114,45 @@ premium  = (net_cost − BAU) / Σ_t load[t]      # $/MWh above wholesale
 minimize   Σ_t grid_buy[t]                         # == maximize matching
 subject to net_cost − BAU ≤ δ · Σ_t load[t]        # premium ≤ δ
 ```
-The premium row's dual is the marginal $/MWh of buying one more unit of matching.
+The stored `shadow_price` is the premium row's dual: **MWh of unmatched load
+removed per $ of premium budget** (negative, since relaxing the budget lowers
+`Σ grid_buy`). The "marginal $/MWh of buying one more unit of matching" is its
+reciprocal with the sign flipped (`1/|dual|`), not the dual itself.
 In the non-saturated regime the premium constraint binds, so the reported
 (achieved) premium equals `δ`; once matching saturates at 100% the returned
 solution's premium is `≤ δ` (still valid — that matching is reachable in budget).
 
-**Additionality accounting** (ADR 0008): With `config.additionality_only=True`, existing
-(PPA) resources no longer count toward matching. The accounting identity becomes:
+**Additionality accounting** (ADR 0008 as amended 2026-07-02, audit LP-1): With
+`config.additionality_only=True`, existing (PPA) resources no longer count toward
+matching — but only the existing energy that *serves load*. Exported existing
+energy is surplus, and per ADR 0007 surplus is excluded from the metric entirely.
+The accounting identity is:
 ```
-matched_t = load_t − grid_buy_t − Σ_{r∈existing} gen[r,t]
-matching_pct = 1 − (Σ_t grid_buy_t + Σ_{r∈existing} Σ_t gen[r,t]) / Σ_t load_t
+unmatched_t = grid_buy_t + max(0, Σ_{r∈existing} gen[r,t] − excess_t)
+matching_pct = 1 − Σ_t unmatched_t / Σ_t load_t
 ```
-In the LP, this is implemented as adding a +1 coefficient to existing gen columns in the
-matching objective (Mode A) or matching constraint RHS (Mode B).
+Excess is attributed to existing generation *first* (the only LP-expressible
+attribution). In the LP this is the auxiliary block `exc_ex[t] ≥ 0` with
+`exc_ex[t] ≤ excess[t]` and `exc_ex[t] ≤ Σ_{r∈existing} gen[r,t]`: Mode A adds
+`+1` on existing gen and `−1` on `exc_ex` to the matching objective; Mode B puts
+the same net term on the matching constraint's buy side. Optimization pressure
+drives `exc_ex[t] → min(excess_t, Σ existing gen_t)`; the reported metric is
+recomputed from the primal `gen`/`excess` values, never from `exc_ex` itself.
 
 **Mode B — matching_target:**
 ```
-minimize   net_cost
+minimize   net_cost + ε·Σ_t excess[t]
 subject to Σ_t grid_buy[t] ≤ (1−δ)·Σ_t load[t]     # annual matching ≥ δ
            [ or  grid_buy[t] ≤ (1−δ)·load[t] ∀t    # strict per-hour 24/7 ]
 ```
+The `ε` on `excess` (audit LP-2; `config.storage_epsilon`) breaks the zero-cost
+simultaneous buy+sell ray that exists at `f = 1.0` (ADR 0005): `+lmp` on
+`grid_buy` exactly cancels `−f·lmp` on `excess`, and the crossover-off IPM
+(ADR 0003) would otherwise return an arbitrary interior point of that fat
+optimal face, corrupting the reported matching %, grid CO₂, and buy/surplus
+MWh. Reported `net_cost`/`premium` are recomputed from `lmp` post-hoc, so the
+ε never leaks into the premium. Mode A is immune (its objective prices each
+buy-MWh at +1).
 
 A storage-throughput tiebreak `ε` (`config.storage_epsilon`, default 0.001 on
 `chg+dis`) removes SOC degeneracy in both modes.
