@@ -141,6 +141,13 @@ class PortfolioConfig:
 
     def __post_init__(self) -> None:
         """Validate field values (runs on construction; dataclass is frozen)."""
+        # Canonicalize the ISO once, at the single seam every loader shares
+        # (audit finding DL-1): a lowercase iso previously matched the
+        # case-normalizing profiles loader but silently missed the exact-match
+        # caps/hydro/gas tables, dropping eligibility limits without warning.
+        object.__setattr__(self, "iso", str(self.iso).strip().upper())
+        if not self.iso:
+            raise ValueError("iso must be a non-empty string")
         if self.mode not in ("premium_cap", "matching_target"):
             raise ValueError(
                 f"mode must be premium_cap/matching_target, got {self.mode!r}"
@@ -169,6 +176,17 @@ class PortfolioConfig:
             raise ValueError("gas_price_mmbtu must be non-negative (0 = use table)")
         if self.ccs_45q_per_ton < 0:
             raise ValueError("ccs_45q_per_ton must be non-negative (0 = disabled)")
+        # bool is an int subclass, so `discount_rate: true` would silently
+        # mean r = 1.0 (100% real WACC); reject it with the range check
+        # (audit findings DL-4/CL-11 — r <= -1 crashed CRF with a raw
+        # ZeroDivisionError, r in (-1, 0) silently zeroed annualized capex).
+        if isinstance(self.discount_rate, bool) or not (
+            0.0 <= self.discount_rate < 1.0
+        ):
+            raise ValueError(
+                f"discount_rate must be a real rate in [0, 1), got "
+                f"{self.discount_rate!r}"
+            )
 
     def with_overrides(self, **changes) -> "PortfolioConfig":
         """Return a copy with ``changes`` applied (dataclasses.replace wrapper)."""

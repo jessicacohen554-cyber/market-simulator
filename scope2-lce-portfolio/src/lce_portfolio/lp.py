@@ -9,7 +9,12 @@ row duals.
 
 Column layout (flat vector, ``T = 8760``)::
 
-    build_mw[r]  | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t]
+    build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] |
+    excess[t] | build_energy[k] | exc_ex[t]
+
+(``build_energy[k]``: one energy-capacity column per split-storage tech,
+ADR 0006; ``exc_ex[t]``: existing-attributable excess, present only when
+``additionality_only`` is on, ADR 0008 as amended.)
 
 Two solve modes (see ``docs/01-lp-formulation.md``):
 
@@ -93,8 +98,11 @@ class _Layout:
     ``n_split == 0`` the block is empty and the layout is identical to PP-02's.
     """
 
-    def __init__(self, n_res: int, n_sto: int, T: int, n_split: int = 0) -> None:
+    def __init__(
+        self, n_res: int, n_sto: int, T: int, n_split: int = 0, n_exq: int = 0
+    ) -> None:
         self.n_res, self.n_sto, self.T, self.n_split = n_res, n_sto, T, n_split
+        self.n_exq = n_exq
         self.build_off = 0
         self.gen_off = self.build_off + n_res
         self.chg_off = self.gen_off + n_res * T
@@ -103,7 +111,11 @@ class _Layout:
         self.buy_off = self.soc_off + n_sto * T
         self.exc_off = self.buy_off + T
         self.bev_off = self.exc_off + T  # split-storage energy-capacity columns
-        self.total = self.bev_off + n_split
+        # exc_ex[t]: existing-attributable excess (T columns, additionality
+        # only; ADR 0008 as amended — exported existing energy is surplus,
+        # not unmatched load).
+        self.exq_off = self.bev_off + n_split
+        self.total = self.exq_off + n_exq
 
 
 def _energy_balance(lay: _Layout, storage_idx: np.ndarray):
@@ -183,19 +195,22 @@ def build_and_solve(
     have their generation capped per calendar month at the ISO's monthly energy
     budget; the constraint is skipped for ISOs without a budget entry.
 
-    **Additionality accounting (ADR 0008).** With ``config.additionality_only`` the
-    generation of *existing* (PPA) resources no longer counts toward hourly
-    matching. The accounting identity is::
+    **Additionality accounting (ADR 0008, amended 2026-07-02).** With
+    ``config.additionality_only`` the generation of *existing* (PPA) resources
+    no longer counts toward hourly matching — but only the existing energy
+    that *serves load*. Exported existing energy is surplus and per ADR 0007
+    surplus is excluded from the metric entirely. The accounting identity is::
 
-        matched_t = load_t − grid_buy_t − Σ_{r∈existing} gen[r,t]
-        matching_pct = Σ_t matched_t / Σ_t load_t
-                     = 1 − (Σ_t grid_buy_t + Σ_{r∈existing} Σ_t gen[r,t]) / Σ_t load_t
+        unmatched_t = grid_buy_t + max(0, Σ_{r∈existing} gen[r,t] − excess_t)
+        matching_pct = 1 − Σ_t unmatched_t / Σ_t load_t
 
-    i.e. existing generation is treated exactly like a grid purchase (coefficient
-    +1 alongside ``grid_buy``). Mode A adds that +1 to the matching objective on
-    existing ``gen`` columns; Mode B adds those columns to the matching constraint's
-    buy side. When the toggle is off (default) the term drops and the metric is the
-    PP-02 ``1 − Σ grid_buy / Σ load``.
+    Excess is attributed to existing generation *first* (the only
+    LP-expressible attribution; ADR 0008 amendment). In the LP this is the
+    auxiliary column block ``exc_ex[t]`` with ``exc_ex ≤ excess`` and
+    ``exc_ex ≤ Σ_existing gen``: Mode A penalizes ``Σ existing gen − Σ exc_ex``
+    in the matching objective; Mode B puts the same net term on the matching
+    constraint's buy side. When the toggle is off (default) the block is empty
+    and the metric is the PP-02 ``1 − Σ grid_buy / Σ load``.
     """
     T = config.hours
     n_res, n_sto = resources.n_res, int(resources.is_storage.sum())
@@ -205,7 +220,17 @@ def build_and_solve(
     split_mask_s = resources.is_split[storage_idx]  # (n_sto,) bool over storage s
     split_res_idx = storage_idx[split_mask_s]  # resource index r per split tech k
     n_split = int(split_mask_s.sum())
-    lay = _Layout(n_res, n_sto, T, n_split)
+
+    # --- additionality bookkeeping (ADR 0008, amended per audit LP-1) --------
+    # exc_ex[t] tracks the excess attributable to existing generation, so
+    # exported existing energy is treated as surplus (excluded from the metric
+    # per ADR 0007) instead of being counted as unmatched load.
+    add_existing = config.additionality_only and bool(resources.is_existing.any())
+    ex_idx = (
+        np.flatnonzero(resources.is_existing) if add_existing else np.array([], int)
+    )
+    n_exq = T if add_existing else 0
+    lay = _Layout(n_res, n_sto, T, n_split, n_exq)
 
     if load.shape != (T,) or lmp.shape != (T,) or cf.shape != (n_res, T):
         raise ValueError("load/lmp/cf shapes inconsistent with T and n_res")
@@ -345,6 +370,32 @@ def build_and_solve(
         rupp.append(np.tile(hydro_budget_mwh, n_bud))
         roff += n_bud * 12
 
+    # ---- existing-attributable excess (additionality, ADR 0008 amended) ----
+    # exc_ex[t] <= excess[t] and exc_ex[t] <= Σ_existing gen[r,t]; the
+    # objective/constraint pressure below pushes exc_ex up to
+    # min(excess_t, existing_gen_t) — existing-first attribution, the only
+    # LP-expressible choice (audit finding LP-1).
+    if add_existing:
+        hours_a = np.arange(T)
+        exq_cols = lay.exq_off + hours_a
+        rows += [roff + hours_a, roff + hours_a]
+        cols += [exq_cols, lay.exc_off + hours_a]
+        data += [np.ones(T), -np.ones(T)]
+        rlow.append(np.full(T, -np.inf))
+        rupp.append(np.zeros(T))
+        roff += T
+        rows.append(roff + hours_a)
+        cols.append(exq_cols)
+        data.append(np.ones(T))
+        rows.append(roff + np.tile(hours_a, ex_idx.size))
+        cols.append(
+            lay.gen_off + np.repeat(ex_idx, T) * T + np.tile(hours_a, ex_idx.size)
+        )
+        data.append(-np.ones(ex_idx.size * T))
+        rlow.append(np.full(T, -np.inf))
+        rupp.append(np.zeros(T))
+        roff += T
+
     # ---- premium / matching constraint ----
     sale = config.excess_sale_fraction
     if config.mode == "premium_cap":
@@ -368,36 +419,40 @@ def build_and_solve(
         rlow.append(np.array([-np.inf]))
         rupp.append(np.array([setpoint * sum_load + bau_cost]))
         premium_row = roff
+        n_premium_rows = 1
         roff += 1
     elif config.mode == "matching_target":
-        # Additionality (ADR 0008): existing-resource generation counts against the
-        # matching budget, i.e. it appears on the constraint's buy side (coef +1).
-        add_existing = config.additionality_only and bool(resources.is_existing.any())
-        ex_idx = (
-            np.flatnonzero(resources.is_existing)
-            if add_existing
-            else np.array([], dtype=int)
-        )
+        # Additionality (ADR 0008 amended): existing-resource generation NET of
+        # its exported surplus counts against the matching budget — coef +1 on
+        # existing gen, -1 on exc_ex (audit finding LP-1: counting gross
+        # existing gen let profitable exports eat the matching headroom and
+        # distorted the solve, not just the metric).
         if config.strict_hourly_matching:
             hours = np.arange(T)
             rows.append(roff + hours)
             cols.append(lay.buy_off + hours)
             data.append(np.ones(T))
-            if add_existing:  # grid_buy[t] + Σ_existing gen[r,t] <= (1-target)*load[t]
+            if add_existing:
+                # grid_buy[t] + Σ_existing gen[r,t] - exc_ex[t] <= (1-target)*load[t]
                 rows.append(roff + np.tile(hours, ex_idx.size))
                 cols.append(
                     lay.gen_off + np.repeat(ex_idx, T) * T + np.tile(hours, ex_idx.size)
                 )
                 data.append(np.ones(ex_idx.size * T))
+                rows.append(roff + hours)
+                cols.append(lay.exq_off + hours)
+                data.append(-np.ones(T))
             rlow.append(np.full(T, -np.inf))
             rupp.append((1.0 - setpoint) * load)
-            premium_row = roff  # (per-hour; dual not a single scalar)
+            premium_row = roff  # first of T rows; see load-weighted dual below
+            n_premium_rows = T
             roff += T
         else:
             rows.append(np.full(T, roff))
             cols.append(lay.buy_off + np.arange(T))
             data.append(np.ones(T))
-            if add_existing:  # Σ grid_buy + Σ_existing gen <= (1-target)*Σ load
+            if add_existing:
+                # Σ grid_buy + Σ_existing gen - Σ exc_ex <= (1-target)*Σ load
                 rows.append(np.full(ex_idx.size * T, roff))
                 cols.append(
                     lay.gen_off
@@ -405,9 +460,13 @@ def build_and_solve(
                     + np.tile(np.arange(T), ex_idx.size)
                 )
                 data.append(np.ones(ex_idx.size * T))
+                rows.append(np.full(T, roff))
+                cols.append(lay.exq_off + np.arange(T))
+                data.append(-np.ones(T))
             rlow.append(np.array([-np.inf]))
             rupp.append(np.array([(1.0 - setpoint) * sum_load]))
             premium_row = roff
+            n_premium_rows = 1
             roff += 1
     else:
         raise ValueError(f"unknown mode {config.mode!r}")
@@ -431,21 +490,34 @@ def build_and_solve(
         # is reachable within budget). A least-cost tiebreak was tried but its
         # tiny mixed-scale coefficients stalled the dual simplex; not worth it.
         cost[lay.buy_off : lay.buy_off + T] = 1.0
-        # Additionality (ADR 0008): existing-resource generation is not matching, so
-        # it is penalized like a grid purchase (coef +1) in the max-matching objective.
-        if config.additionality_only and bool(resources.is_existing.any()):
-            ex_idx = np.flatnonzero(resources.is_existing)
+        # Additionality (ADR 0008 amended): existing-resource generation NET of
+        # its exported surplus is not matching — +1 on existing gen, -1 on
+        # exc_ex, so minimization drives exc_ex to min(excess, existing_gen)
+        # and only load-serving existing energy is penalized (audit LP-1).
+        if add_existing:
             ex_gen_cols = (
                 lay.gen_off
                 + np.repeat(ex_idx, T) * T
                 + np.tile(np.arange(T), ex_idx.size)
             )
             cost[ex_gen_cols] += 1.0
+            cost[lay.exq_off : lay.exq_off + T] = -1.0
     else:
         cost[lay.build_off : lay.build_off + n_res] = resources.fixed_mwyr
         cost[lay.gen_off : lay.chg_off] = np.repeat(resources.vom, T)
         cost[lay.buy_off : lay.buy_off + T] = lmp
-        cost[lay.exc_off : lay.exc_off + T] = -sale * lmp
+        # ε tiebreak on excess (audit finding LP-2): at the ratified
+        # excess_sale_fraction = 1.0 (ADR 0005) the +lmp on grid_buy exactly
+        # cancels the -lmp on excess, so simultaneous buy+sell is a zero-cost
+        # ray and the crossover-off IPM (ADR 0003) returns an arbitrary
+        # interior point of the fat optimal face — matching_pct/grid CO2 were
+        # reported from meaningless buy/excess levels. The epsilon prices the
+        # ray strictly positive (a buy+sell pair now costs +ε) without
+        # materially moving any true optimum, mirroring the storage_epsilon
+        # degeneracy tiebreak. Mode A is immune (its objective is +1 per
+        # buy-MWh) and gets no epsilon. Reported net_cost/premium recompute
+        # from lmp post-hoc, so ε never leaks into the premium.
+        cost[lay.exc_off : lay.exc_off + T] = -sale * lmp + config.storage_epsilon
         if n_split:  # split-storage energy capex (ADR 0006)
             cost[lay.bev_off : lay.bev_off + n_split] = resources.cost_energy_mwhyr[
                 split_res_idx
@@ -500,11 +572,16 @@ def build_and_solve(
     # Split-storage energy capex ($/yr): cost_energy_mwhyr × built energy MWh.
     energy_capex = float(resources.cost_energy_mwhyr[split_res_idx] @ build_energy)
 
-    # Matching (ADR 0007/0008): unmatched = grid purchases, plus — under
-    # additionality — existing-resource generation (it does not count as matched).
+    # Matching (ADR 0007/0008 as amended): unmatched = grid purchases, plus —
+    # under additionality — existing-resource generation NET of the excess
+    # attributable to it (existing-first). Exported existing energy serves no
+    # load, so per ADR 0007 it is surplus, excluded from the metric — not an
+    # unmatched purchase (audit finding LP-1). Computed from the primal
+    # gen/excess values (not the exc_ex columns) so a slack matching
+    # constraint's degenerate exc_ex level can never distort the report.
     unmatched = float(grid_buy.sum())
-    if config.additionality_only and bool(resources.is_existing.any()):
-        unmatched += float(gen[resources.is_existing].sum())
+    if add_existing:
+        unmatched += float(np.clip(gen[ex_idx].sum(axis=0) - excess, 0.0, None).sum())
     matching_pct = 1.0 - unmatched / sum_load if sum_load else 0.0
 
     net_cost = (
