@@ -23,7 +23,7 @@ prices). Implementation: `src/lce_portfolio/lp.py`.
 | `capmax[r]`, `capmin[r]` | config / table | build bounds, MW |
 | `dur[s]`, `η[s]` | table | storage duration (h) and one-way efficiency `√rte` (fixed-duration only) |
 | `dur_min[s]`, `dur_max[s]` | table | min/max duration hours for split-storage (0 for fixed-duration) |
-| `hydro_budget[s,m]` | table | monthly energy budget (MWh) for budget-hydro resources, or omitted |
+| `hydro_budget[m]` | table | ISO monthly hydro energy budget (MWh), fleet total, or omitted |
 | `δ` | sweep | premium cap (Mode A) or matching target (Mode B) |
 | `f` | `config.excess_sale_fraction` | fraction of LMP received for surplus |
 
@@ -65,9 +65,11 @@ chg[s,t] ≤ build_mw[s] ,  dis[s,t] ≤ build_mw[s]
 ```
 Round-trip efficiency = `η²`; `η = √rte`.
 
-**Hydro monthly energy budget** (per budget-flagged resource, per month):
+**Hydro monthly energy budget** (fleet-shared: one row per month, summing every
+budget-flagged resource — the table budget is the ISO contractable-fleet total,
+not a per-resource allowance; audit LP-3):
 ```
-Σ_t∈month gen[r,t] ≤ hydro_budget[r,m]   (for resources with is_budget_hydro=True)
+Σ_{r: is_budget_hydro} Σ_t∈month gen[r,t] ≤ hydro_budget[m]
 ```
 Calendar months are indexed 0–11 with fixed day counts (Jan 31 days, …, Dec 31);
 aggregated from the 8760 hourly gen columns via vectorized month binning (ADR 0008).
