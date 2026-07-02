@@ -490,7 +490,11 @@ class LauncherState:
                 contextlib.redirect_stderr(stderr_buf),
             ):
                 rc = cli.main(argv)
-        except Exception:  # noqa: BLE001 - error discipline: never propagate raw
+        # SystemExit included (review finding LN-9): it is not an Exception,
+        # and an uncaught one (e.g. argparse's parser.error) would kill the
+        # single worker thread silently, leaving every later queued run stuck
+        # at "queued" until the server is restarted.
+        except (Exception, SystemExit):  # noqa: BLE001 - never propagate raw
             traceback.print_exc()
             self._set_state(
                 batch_id,
@@ -915,21 +919,32 @@ def _make_handler(state: LauncherState, page_context: dict):
     class LauncherHandler(BaseHTTPRequestHandler):
         server_version = f"lce-portfolio-launcher/{__version__}"
 
+        def _send_bytes(self, body: bytes, content_type: str, status: int) -> None:
+            try:
+                self.send_response(status)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError):
+                # Client went away mid-response (tab closed, poll aborted):
+                # one console line, not a threading traceback dump (review
+                # finding LN-8; ADR 0016 §5 console discipline).
+                sys.stderr.write(
+                    f"{self.address_string()} - - client disconnected mid-response\n"
+                )
+
         def _send_json(self, obj: dict, status: int = 200) -> None:
-            body = json.dumps(obj).encode("utf-8")
-            self.send_response(status)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(
+                json.dumps(obj).encode("utf-8"),
+                "application/json; charset=utf-8",
+                status,
+            )
 
         def _send_html(self, body_text: str, status: int = 200) -> None:
-            body = body_text.encode("utf-8")
-            self.send_response(status)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(
+                body_text.encode("utf-8"), "text/html; charset=utf-8", status
+            )
 
         def _read_json(self) -> dict:
             """Read the request body as a JSON object, or raise ValueError.
@@ -1079,12 +1094,7 @@ def _make_handler(state: LauncherState, page_context: dict):
                 if filename.endswith(".html")
                 else "application/json; charset=utf-8"
             )
-            body = file_path.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(file_path.read_bytes(), content_type, 200)
 
         def log_message(self, format, *args):  # noqa: A002 - stdlib signature
             # Mirror to the real console (ADR 0016 §5's error-discipline
