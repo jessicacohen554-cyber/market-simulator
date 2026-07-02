@@ -264,3 +264,223 @@ def test_cli_results_rerun_failure_preserves_previous_run(
     assert "error:" in captured.err
     assert (run_dir / "report.json").exists()
     assert (run_dir / "SAMPLE_frontier.parquet").exists()
+
+
+# --- CLI/config audit regressions (CL-1/4/5/6/7/8/9/13/14) --------------------
+
+
+def test_cli_flags_override_config_file(tmp_path) -> None:
+    """Explicit sweep flags override --config values (CL-1).
+
+    Regression: --deltas/--targets/--sensitivity/--load-growth-* were
+    silently discarded whenever --config was given.
+    """
+    from lce_portfolio.cli import build_config
+    import argparse
+
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps({"iso": "SAMPLE", "premium_deltas": [3.0], "lcoe_sensitivity": "mid"})
+    )
+
+    def parse(extra):
+        ns = argparse.Namespace(
+            config=str(config_path),
+            iso=None,
+            deltas=None,
+            targets=None,
+            sensitivity=None,
+            load_growth_rate=None,
+            load_growth_years=None,
+        )
+        ns.__dict__.update(extra)
+        return ns
+
+    # File alone: the file's values stand.
+    cfg = build_config(parse({}))
+    assert cfg.premium_deltas == (3.0,)
+    assert cfg.lcoe_sensitivity == "mid"
+
+    # Explicit flags beat the file.
+    cfg = build_config(parse({"deltas": [50.0], "sensitivity": "high"}))
+    assert cfg.premium_deltas == (50.0,)
+    assert cfg.lcoe_sensitivity == "high"
+
+    # --targets switches the mode even against a premium-cap config file.
+    cfg = build_config(parse({"targets": [0.5]}))
+    assert cfg.mode == "matching_target"
+    assert cfg.matching_targets == (0.5,)
+
+
+def test_cli_all_infeasible_flagged_and_nonzero_exit(tmp_path, capsys) -> None:
+    """A run where every setpoint fails must not exit 0 quietly (CL-4)."""
+    load_path, lmp_path = _write_fixtures(tmp_path)
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "mode": "matching_target",
+                "matching_targets": [1.0],
+                "strict_hourly_matching": True,
+                "active_resources": ["solar_pv"],
+                "resource_caps_mw": {"solar_pv": 0.0},  # guaranteed infeasible
+            }
+        )
+    )
+
+    rc = main(
+        [
+            "--config",
+            str(config_path),
+            "--load",
+            str(load_path),
+            "--lmp",
+            str(lmp_path),
+            "--out-dir",
+            str(tmp_path / "out"),
+            "--no-report",
+        ]
+    )
+
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "no solution" in captured.out  # summarize() row flag
+    assert "no setpoint solved" in captured.err
+
+
+def test_config_from_file_type_validation(tmp_path, capsys) -> None:
+    """Wrong-typed config values are clean, named errors (CL-5/CL-14).
+
+    Regression: "1,2,5" for premium_deltas was a raw TypeError traceback and
+    the string "false" silently enabled strict hourly matching.
+    """
+    from lce_portfolio.config import PortfolioConfig
+
+    cases = [
+        ({"premium_deltas": "1,2,5"}, "must be a list"),
+        ({"premium_deltas": 5}, "must be a list"),
+        ({"discount_rate": "0.07"}, "must be a number"),
+        ({"strict_hourly_matching": "false"}, "boolean"),
+        ({"resource_caps_mw": {"solar_pv": "many"}}, "mapping"),
+    ]
+    for payload, expected in cases:
+        p = tmp_path / "c.json"
+        p.write_text(json.dumps(payload))
+        with pytest.raises(ValueError, match=expected):
+            PortfolioConfig.from_file(p)
+
+    # Parse errors and empty files name the file (CL-14).
+    empty = tmp_path / "empty.json"
+    empty.write_text("")
+    with pytest.raises(ValueError, match="empty.json"):
+        PortfolioConfig.from_file(empty)
+    empty_yaml = tmp_path / "empty.yaml"
+    empty_yaml.write_text("")
+    with pytest.raises(ValueError, match="empty.yaml"):
+        PortfolioConfig.from_file(empty_yaml)
+
+    bad_yaml = tmp_path / "bad.yaml"
+    bad_yaml.write_text("iso: [unclosed")
+    with pytest.raises(ValueError, match="invalid YAML"):
+        PortfolioConfig.from_file(bad_yaml)
+
+    # And through the CLI they are one clean line, not a traceback (CL-6).
+    rc = main(["--config", str(bad_yaml), "--iso", "SAMPLE"])
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "Traceback" not in captured.err
+    assert "invalid YAML" in captured.err
+
+
+def test_cli_all_isos_continues_past_failing_iso(tmp_path, capsys) -> None:
+    """--all-isos solves the good ISOs, reports the bad, exits nonzero (CL-7)."""
+    hours = np.arange(HOURS_PER_YEAR)
+    load = pd.DataFrame(
+        {
+            "hour": np.tile(hours, 2),
+            "iso": ["AAA"] * HOURS_PER_YEAR + ["BBB"] * HOURS_PER_YEAR,
+            "load_mwh": 100.0,
+        }
+    )
+    lmp = pd.DataFrame({"hour": hours, "iso": "AAA", "lmp": 30.0})  # no BBB
+    load_path = tmp_path / "load.csv"
+    lmp_path = tmp_path / "lmp.csv"
+    load.to_csv(load_path, index=False)
+    lmp.to_csv(lmp_path, index=False)
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps({"active_resources": ["solar_pv"], "premium_deltas": [5.0]})
+    )
+    out_dir = tmp_path / "out"
+
+    rc = main(
+        [
+            "--config",
+            str(config_path),
+            "--load",
+            str(load_path),
+            "--lmp",
+            str(lmp_path),
+            "--all-isos",
+            "--out-dir",
+            str(out_dir),
+        ]
+    )
+
+    assert rc == 1  # a failure happened...
+    assert (out_dir / "AAA_frontier.parquet").exists()  # ...but AAA solved
+    assert (out_dir / "report.json").exists()  # and got its report
+    captured = capsys.readouterr()
+    assert "BBB" in captured.err and "FAILED" in captured.err
+    assert "1 of 2 ISO(s) failed" in captured.err
+    # KeyError messages carry no spurious repr quotes (CL-8).
+    assert 'error: "' not in captured.err
+
+
+def test_cli_empty_load_file_is_named_error(tmp_path, capsys) -> None:
+    """A header-only load file errors naming the file — never a silent
+    exit-0 no-op (CL-9)."""
+    load_path = tmp_path / "empty_load.csv"
+    load_path.write_text("hour,iso,load_mwh\n")
+    _, lmp_path = _write_fixtures(tmp_path)
+
+    rc = main(
+        [
+            "--load",
+            str(load_path),
+            "--lmp",
+            str(lmp_path),
+            "--all-isos",
+            "--no-report",
+            "--out-dir",
+            str(tmp_path / "out"),
+        ]
+    )
+
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "no data rows" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_directory_as_load_is_clean_error(tmp_path, capsys) -> None:
+    """--load pointing at a directory is a clean error, not a raw
+    IsADirectoryError traceback (CL-13)."""
+    _, lmp_path = _write_fixtures(tmp_path)
+    rc = main(
+        [
+            "--load",
+            str(tmp_path),
+            "--lmp",
+            str(lmp_path),
+            "--iso",
+            "SAMPLE",
+            "--out-dir",
+            str(tmp_path / "out"),
+        ]
+    )
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "error:" in captured.err
+    assert "Traceback" not in captured.err
