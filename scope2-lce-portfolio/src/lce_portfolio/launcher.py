@@ -59,6 +59,12 @@ LAST_USED_FILENAME = "last_used.json"
 DEFAULT_HOST = "127.0.0.1"
 EPHEMERAL_PORT = 0  # ask the OS for a free port when --port is not given
 
+#: Upper bound on accepted request bodies. A real launch-page submit is a few
+#: KB even with a long queue; anything near this size is malformed or hostile,
+#: and an unchecked Content-Length must never hang the handler or absorb
+#: unbounded memory (review finding LN-2).
+MAX_REQUEST_BYTES = 1_048_576
+
 # --- Exposed parameter domains (ADR 0016 §3) -----------------------------
 
 #: The six ISOs the tool's data tables cover, plus the data-free demo/test ISO.
@@ -230,6 +236,10 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
     ``__post_init__`` validation for range/type rules rather than duplicating
     them, and :func:`lce_portfolio.cli.validate_run_id` for run-id safety.
     """
+    if not isinstance(payload, dict):
+        # A string/number/list entry in the "runs" array reached here before
+        # this guard as a raw AttributeError traceback (review finding LN-1).
+        return None, "each queued run must be a JSON object"
     try:
         iso = str(payload.get("iso", "")).strip()
         if iso not in KNOWN_ISOS:
@@ -843,9 +853,34 @@ def _make_handler(state: LauncherState, page_context: dict):
             self.wfile.write(body)
 
         def _read_json(self) -> dict:
-            length = int(self.headers.get("Content-Length", 0))
+            """Read the request body as a JSON object, or raise ValueError.
+
+            Every malformed shape gets a friendly message instead of a raw
+            traceback or a hung handler (review findings LN-1/LN-2): a
+            non-integer Content-Length raised ValueError uncaught, a negative
+            one blocked in ``rfile.read(-1)`` until the client gave up, an
+            oversized one was absorbed into memory unbounded, and a JSON body
+            whose top level was not an object crashed with AttributeError.
+            """
+            raw_length = self.headers.get("Content-Length", "0")
+            try:
+                length = int(raw_length)
+            except ValueError:
+                raise ValueError(f"invalid Content-Length {raw_length!r}") from None
+            if length < 0:
+                raise ValueError(f"invalid Content-Length {raw_length!r}")
+            if length > MAX_REQUEST_BYTES:
+                raise ValueError(
+                    f"request body too large ({length} bytes; max {MAX_REQUEST_BYTES})"
+                )
             raw = self.rfile.read(length) if length else b"{}"
-            return json.loads(raw)
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError:
+                raise ValueError("malformed JSON body") from None
+            if not isinstance(payload, dict):
+                raise ValueError("request body must be a JSON object")
+            return payload
 
         def do_GET(self):  # noqa: N802 - stdlib naming
             parsed = urllib.parse.urlparse(self.path)
@@ -880,8 +915,8 @@ def _make_handler(state: LauncherState, page_context: dict):
         def _handle_run(self):
             try:
                 payload = self._read_json()
-            except json.JSONDecodeError:
-                self._send_json({"error": "malformed JSON body"}, 400)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, 400)
                 return
             raw_runs = payload.get("runs")
             if not isinstance(raw_runs, list) or not raw_runs:
@@ -908,8 +943,8 @@ def _make_handler(state: LauncherState, page_context: dict):
         def _handle_save_config(self):
             try:
                 payload = self._read_json()
-            except json.JSONDecodeError:
-                self._send_json({"error": "malformed JSON body"}, 400)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, 400)
                 return
             name = str(payload.get("name", "")).strip()
             params = payload.get("params")

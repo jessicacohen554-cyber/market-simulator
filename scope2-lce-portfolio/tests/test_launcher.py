@@ -12,9 +12,11 @@ ISO built entirely from in-test fixtures.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 import time
@@ -249,6 +251,73 @@ def _get_json(url: str) -> dict:
         return json.loads(resp.read())
 
 
+@contextlib.contextmanager
+def _launcher_server(tmp_path: Path):
+    """Start ``python -m lce_portfolio.launcher --no-open`` as a subprocess.
+
+    Yields the bound loopback port; always terminates the server on exit.
+    Scratch ``--results``/``--state-dir``/``--inputs-dir`` all live under
+    ``tmp_path`` so nothing leaks into the repo.
+    """
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(_PORTFOLIO_ROOT / "src")
+    env["PYTHONUNBUFFERED"] = "1"
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "lce_portfolio.launcher",
+            "--no-open",
+            "--port",
+            "0",
+            "--results",
+            str(tmp_path / "results"),
+            "--state-dir",
+            str(tmp_path / "launcher_state"),
+            "--inputs-dir",
+            str(tmp_path),
+        ],
+        cwd=str(_PORTFOLIO_ROOT),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        yield _wait_for_serving_url(proc)
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=10)
+
+
+def _raw_post(port: int, content_length: str, body: bytes = b'{"runs": []}') -> int:
+    """POST /api/run with a hand-rolled Content-Length; return the status.
+
+    Sent as one raw-socket write so a server that (correctly) responds before
+    draining the body can't race the client. A server that hangs instead of
+    responding fails the test via the 10 s socket timeout.
+    """
+    request = (
+        f"POST /api/run HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\n"
+        f"Content-Type: application/json\r\nConnection: close\r\n"
+        f"Content-Length: {content_length}\r\n\r\n"
+    ).encode() + body
+    with socket.create_connection(("127.0.0.1", port), timeout=10) as sock:
+        sock.sendall(request)
+        data = b""
+        while b"\r\n" not in data:
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+    status_line = data.split(b"\r\n", 1)[0].decode(errors="replace")
+    return int(status_line.split()[1])
+
+
 def test_launcher_end_to_end_sample_run(tmp_path: Path) -> None:
     """Start the launcher, submit one SAMPLE run, poll to completion.
 
@@ -260,35 +329,8 @@ def test_launcher_end_to_end_sample_run(tmp_path: Path) -> None:
     """
     load_path, lmp_path = _fixture_paths(tmp_path)
     results_dir = tmp_path / "results"
-    state_dir = tmp_path / "launcher_state"
 
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(_PORTFOLIO_ROOT / "src")
-    env["PYTHONUNBUFFERED"] = "1"
-
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "lce_portfolio.launcher",
-            "--no-open",
-            "--port",
-            "0",
-            "--results",
-            str(results_dir),
-            "--state-dir",
-            str(state_dir),
-            "--inputs-dir",
-            str(tmp_path),
-        ],
-        cwd=str(_PORTFOLIO_ROOT),
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-    try:
-        port = _wait_for_serving_url(proc)
+    with _launcher_server(tmp_path) as port:
         base = f"http://127.0.0.1:{port}"
 
         with urllib.request.urlopen(f"{base}/", timeout=10) as resp:
@@ -337,47 +379,11 @@ def test_launcher_end_to_end_sample_run(tmp_path: Path) -> None:
             f"{base}{final_status['report_url']}", timeout=10
         ) as resp:
             assert resp.status == 200
-    finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.wait(timeout=10)
 
 
 def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
     """A validation failure comes back as a clean 400 JSON payload, no crash."""
-    state_dir = tmp_path / "launcher_state"
-    results_dir = tmp_path / "results"
-
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(_PORTFOLIO_ROOT / "src")
-    env["PYTHONUNBUFFERED"] = "1"
-
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "lce_portfolio.launcher",
-            "--no-open",
-            "--port",
-            "0",
-            "--results",
-            str(results_dir),
-            "--state-dir",
-            str(state_dir),
-            "--inputs-dir",
-            str(tmp_path),
-        ],
-        cwd=str(_PORTFOLIO_ROOT),
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-    try:
-        port = _wait_for_serving_url(proc)
+    with _launcher_server(tmp_path) as port:
         base = f"http://127.0.0.1:{port}"
         status, body = _post_json(
             f"{base}/api/run",
@@ -385,10 +391,46 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         )
         assert status == 400
         assert "unknown iso" in body["error"]
-    finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.wait(timeout=10)
+
+
+# --- Malformed / hostile requests (review findings LN-1/LN-2) --------------
+
+
+def test_validate_run_payload_rejects_non_object_run() -> None:
+    """LN-1: a string entry in "runs" gets a message, not an AttributeError."""
+    kwargs, err = lce_launcher.validate_run_payload("not-an-object")
+    assert kwargs is None
+    assert "JSON object" in err
+
+
+def test_launcher_malformed_requests_over_http(tmp_path: Path) -> None:
+    """LN-1/LN-2: every malformed body/header shape is a prompt 400 JSON
+    response — previously a raw traceback + dropped connection (array body,
+    non-dict run entry, non-integer Content-Length) or a hung handler
+    (negative or huge Content-Length) — and the server stays serviceable."""
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+
+        status, body = _post_json(f"{base}/api/run", [])
+        assert status == 400
+        assert "JSON object" in body["error"]
+
+        status, body = _post_json(f"{base}/api/run", {"runs": ["not-an-object"]})
+        assert status == 400
+        assert "JSON object" in body["error"]
+
+        status, body = _post_json(f"{base}/api/save-config", [])
+        assert status == 400
+        assert "JSON object" in body["error"]
+
+        assert _raw_post(port, "abc") == 400
+        assert _raw_post(port, "-1") == 400
+        assert _raw_post(port, str(lce_launcher.MAX_REQUEST_BYTES + 1)) == 400
+
+        # The server survived all of the above and still validates runs.
+        status, body = _post_json(
+            f"{base}/api/run",
+            {"runs": [{"iso": "NOT_A_REAL_ISO", "load_file": "x", "lmp_file": "y"}]},
+        )
+        assert status == 400
+        assert "unknown iso" in body["error"]
