@@ -16,6 +16,29 @@ stub to real data is dropping the `--dummy` flag once the forecast is blessed.
 A dummy file's provenance sidecar is loudly marked `synthetic-dummy` — never
 present one as a market-sim forecast.
 
+**Selection decided ahead of need (ADR 0015, PS-12, 2026-07-02)** — when the
+hold lifts there are zero new decisions:
+
+- **Years:** five study years, **2030 / 2035 / 2040 / 2045 / 2050**, one
+  export file and one portfolio sweep each (tool `config.year` set to match;
+  2030 first). All five come from the same cached full-horizon (2026→2050)
+  BAU forecast solve per ISO.
+- **Scenario:** the **base `ScenarioConfig()`** — no YAML; `mode="forecast"`,
+  `gas_price_path="mid"`, `carbon_price=0.0`/`carbon_price_path="zero"`,
+  `weather_year=2024`, canonicalized per-ISO by the exporter. The sidecar's
+  canonicalized `cache_key` is the recorded identity.
+- **Readiness gate (per ISO, lifts the PLAN.md §10 hold):** a current
+  calibrated backcast keeper on the dashboard covering all the ISO's
+  scoreable years **and** explicit stakeholder sign-off recorded in
+  PLAN.md §10. Until both hold, that ISO stays on `--dummy` (or
+  `--allow-backcast` for validation studies only).
+- **Rollout:** readiness-driven, first-ready-first — expected ERCOT → PJM →
+  rest, but any ISO passing the gate sooner goes ahead. The export re-runs
+  with the expanded `--iso` list as ISOs join.
+
+The command, per ready ISO set: `python scripts/export_lce_lmp.py --year <Y>
+--iso <ISO> [...]` for each of the five years — defaults carry the rest.
+
 ## The contract (ADR 0011)
 
 - **File**: long-form CSV, columns `(hour, iso, lmp)` — one price per
