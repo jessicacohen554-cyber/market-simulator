@@ -154,3 +154,113 @@ def test_cli_emissions_file_threads_residual_co2_to_outputs(tmp_path) -> None:
     # A $1 cap leaves unmatched hours, so the hourly rate yields a residual > 0.
     assert (frontier["grid_buy_mwh"] > 0.0).all()
     assert (frontier["residual_co2_tons"] > 0.0).all()
+
+
+def test_run_id_validation_rejects_unsafe_ids() -> None:
+    """Unsafe run ids never reach ``RESULTS_ROOT / run_id`` (IO-1/CL-2).
+
+    The results store deletes ``results/<run-id>/`` before rewriting it, so a
+    run id that is not a single safe path component (absolute path, ``..``
+    traversal, separators, whitespace, leading dot) must raise at validation.
+    """
+    from lce_portfolio.cli import validate_run_id
+
+    assert validate_run_id("SAMPLE_premium_cap_20260702-171842") == (
+        "SAMPLE_premium_cap_20260702-171842"
+    )
+    assert validate_run_id("my.run-1_x") == "my.run-1_x"
+    for bad in (
+        "/abs/path/victim",
+        "../escape",
+        "a/b",
+        "a\\b",
+        "..",
+        ".hidden",
+        "has space",
+        "has\nnewline",
+        "",
+    ):
+        with pytest.raises(ValueError, match="invalid --run-id"):
+            validate_run_id(bad)
+
+
+def test_cli_results_traversal_run_id_is_clean_error_and_deletes_nothing(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    """``--results --run-id <absolute path>`` errors cleanly, victim untouched.
+
+    Regression for audit findings IO-1/CL-2: previously the CLI composed
+    ``results / run_id`` (which discards ``results/`` for an absolute id) and
+    ``shutil.rmtree``'d it before any input validation, deleting an arbitrary
+    user-writable directory on a typo'd run id.
+    """
+    monkeypatch.chdir(tmp_path)
+    victim = tmp_path / "victim_dir"
+    victim.mkdir()
+    (victim / "marker.txt").write_text("keep me")
+
+    rc = main(
+        [
+            "--iso",
+            "SAMPLE",
+            "--load",
+            "unused_load.csv",
+            "--lmp",
+            "unused_lmp.csv",
+            "--results",
+            "--run-id",
+            str(victim),
+        ]
+    )
+
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "invalid --run-id" in captured.err
+    assert "Traceback" not in captured.err
+    assert (victim / "marker.txt").exists()
+
+
+def test_cli_results_rerun_failure_preserves_previous_run(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    """A failed ``--results`` re-run leaves the previous run intact (IO-7/CL-3).
+
+    Regression: the CLI used to ``rmtree`` ``results/<run-id>/`` before
+    solving, so a re-run that failed on input validation destroyed the
+    previous good results and left nothing behind. Runs now write to a
+    scratch sibling and swap in only on success.
+    """
+    load_path, lmp_path = _write_fixtures(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "active_resources": ["solar_pv"],
+                "premium_deltas": [5.0],
+            }
+        )
+    )
+    argv = [
+        "--load",
+        str(load_path),
+        "--config",
+        str(config_path),
+        "--results",
+        "--run-id",
+        "keeper",
+    ]
+
+    assert main(argv + ["--lmp", str(lmp_path)]) == 0
+    run_dir = tmp_path / "results" / "keeper"
+    assert (run_dir / "report.json").exists()
+
+    # Second run with a broken LMP path fails cleanly — and must not have
+    # touched the previous run directory.
+    rc = main(argv + ["--lmp", str(tmp_path / "missing_lmp.csv")])
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "error:" in captured.err
+    assert (run_dir / "report.json").exists()
+    assert (run_dir / "SAMPLE_frontier.parquet").exists()
