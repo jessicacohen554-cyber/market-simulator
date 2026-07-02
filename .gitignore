@@ -226,6 +226,8 @@ results/calibration/*/scarcity*.parquet
 # the dashboard payload are committed, never the regenerable parquets/_shared.
 results/calibration/*/*/dispatch/
 results/calibration/*/*/system.parquet
+results/calibration/*/flows.parquet
+results/calibration/*/*/flows.parquet
 results/calibration/*/*/solve.log
 results/calibration/*/*/storage.parquet
 results/calibration/*/*/btm.parquet
