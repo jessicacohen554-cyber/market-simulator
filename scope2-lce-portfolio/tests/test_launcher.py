@@ -393,6 +393,47 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Last-used pre-fill freshness (review finding LN-7) ----------------------
+
+
+def _page_ctx(base: str) -> dict:
+    """Fetch / and parse the embedded CTX JSON blob out of the page script."""
+    with urllib.request.urlopen(f"{base}/", timeout=10) as resp:
+        page = resp.read().decode()
+    match = re.search(r"const CTX = (.*);", page)
+    assert match, "CTX blob not found in launch page"
+    return json.loads(match.group(1))
+
+
+def test_launch_page_prefills_fresh_last_used(tmp_path: Path) -> None:
+    """LN-7: last-used values were merged once at server start, so a page
+    reload never reflected the latest submit. They must be re-read per page
+    load; the run id must never be pre-filled (a stale id would overwrite
+    that run's results on resubmit); and the SYNTHETIC flag must track the
+    pre-filled LMP path, staying visible for a _dummy stub."""
+    state_dir = tmp_path / "launcher_state"
+    state_dir.mkdir()
+    (state_dir / "last_used.json").write_text(
+        json.dumps(
+            {
+                "iso": "CAISO",
+                "run_id": "stale_run",
+                "lmp_file": str(tmp_path / "bau_lmp_2030_dummy.csv"),
+            }
+        )
+    )
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        defaults = _page_ctx(base)["defaults"]
+        assert defaults["iso"] == "CAISO"
+        assert defaults["run_id"] == ""  # never pre-filled
+        assert defaults["lmp_is_synthetic"] is True
+
+        # Updated mid-session (as a submit would) → next page load sees it.
+        (state_dir / "last_used.json").write_text(json.dumps({"iso": "PJM"}))
+        assert _page_ctx(base)["defaults"]["iso"] == "PJM"
+
+
 # --- Launch page: self-containment + injection surface (ADR 0016 §2, LN-6) --
 
 

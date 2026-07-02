@@ -966,6 +966,24 @@ def _make_handler(state: LauncherState, page_context: dict):
             if parsed.path == "/":
                 ctx = dict(page_context)
                 ctx["saved_configs"] = state.config_store.saved_configs()
+                # Pre-fill from the most recent submit, re-read on every page
+                # load (review finding LN-7: it was merged once at server
+                # start, so a reload never showed the last-used values) — but
+                # never the run id: a stale pre-filled id would silently
+                # overwrite that run's results on resubmit, while a blank
+                # field auto-composes a fresh one.
+                defaults = dict(page_context["defaults"])
+                last_used = state.config_store.last_used()
+                last_used.pop("run_id", None)
+                defaults.update(last_used)
+                # Keep the SYNTHETIC provenance flag consistent with whatever
+                # LMP path is actually pre-filled (same stem heuristic as
+                # resolve_default_lmp; the flag must stay visible on stubs).
+                if defaults.get("lmp_file"):
+                    defaults["lmp_is_synthetic"] = str(
+                        Path(defaults["lmp_file"]).stem
+                    ).endswith("_dummy")
+                ctx["defaults"] = defaults
                 self._send_html(render_index(ctx))
             elif parsed.path == "/api/status":
                 qs = urllib.parse.parse_qs(parsed.query)
@@ -1132,10 +1150,9 @@ def run_server(
     state = LauncherState(
         state_dir=state_dir, results_dir=results_dir, open_browser=open_browser
     )
-    last_used = state.config_store.last_used()
+    # last-used values are merged per page load in do_GET (finding LN-7),
+    # not baked in here at startup.
     context = build_page_context(inputs_dir=inputs_dir, reference_load=reference_load)
-    if last_used:
-        context["defaults"].update(last_used)
 
     handler_cls = _make_handler(state, context)
     server = ThreadingHTTPServer((host, port), handler_cls)
