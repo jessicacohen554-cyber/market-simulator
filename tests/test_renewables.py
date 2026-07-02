@@ -313,11 +313,13 @@ def test_redistribute_preserving_total_trivial_24h():
 
 
 def test_miso_wind_zones_have_distinct_shapes():
-    """MISO's three zones get distinct reanalysis wind shapes from the parquet.
+    """MISO's six zones get distinct reanalysis wind shapes from the parquet.
 
-    The North (upper-plains nocturnal jet) must have a measurably different
-    diurnal wind signature than the Central zone — the spatial diversity the
-    single ISO-wide wind profile erased. Built by
+    The upper-plains West (Great-Plains nocturnal jet) must have a measurably
+    different diurnal wind signature than the lower-Midwest East — the spatial
+    diversity the single ISO-wide wind profile erased, and the load-bearing
+    check that the parquet carries a column for EVERY model zone (a missing
+    column silently reverts to one ISO-wide shape). Built by
     scripts/build_miso_wind_shape.py.
     """
     zones = get_iso_config("MISO").zone_names
@@ -325,17 +327,17 @@ def test_miso_wind_zones_have_distinct_shapes():
     assert shapes is not None
     assert shapes.shape == (len(zones), HOURS_PER_YEAR)
 
-    north = zones.index("MISO-North")
-    central = zones.index("MISO-Central")
-    assert not np.allclose(shapes[north], shapes[central])
+    west = zones.index("MISO-West")
+    east = zones.index("MISO-East")
+    assert not np.allclose(shapes[west], shapes[east])
 
     def night_to_afternoon(shape: np.ndarray) -> float:
         diurnal = shape.reshape(365, 24).mean(axis=0)
         return diurnal[0:6].mean() / diurnal[12:18].mean()
 
-    # The plains North is relatively more nocturnal than the lower-Midwest
-    # Central (a higher night-to-afternoon wind ratio).
-    assert night_to_afternoon(shapes[north]) > night_to_afternoon(shapes[central])
+    # The plains West is relatively more nocturnal than the lower-Midwest
+    # East (a higher night-to-afternoon wind ratio).
+    assert night_to_afternoon(shapes[west]) > night_to_afternoon(shapes[east])
 
 
 def test_zone_renewable_shapes_dispatch():
@@ -360,7 +362,7 @@ def test_wind_zone_redistribution_preserves_aggregate():
 
     The capacity-weighted sum of the shaped per-zone wind CFs must equal the
     input ISO-wide ``cf_profile`` every hour, so annual energy and the system
-    wind series are unchanged — only the North-vs-Central split moves.
+    wind series are unchanged — only the inter-zone split moves.
     """
     zones = get_iso_config("MISO").zone_names
     monthly = _eia860_monthly_capacity("MISO", "wind", zones, _CAL_YEAR)
@@ -387,8 +389,8 @@ def test_wind_zone_redistribution_preserves_aggregate():
         atol=1e-9,
     )
     # The shaped split differs from flat in a capacity-bearing wind zone.
-    north = zones.index("MISO-North")
-    assert not np.allclose(shaped[north], flat[north])
+    west = zones.index("MISO-West")
+    assert not np.allclose(shaped[west], flat[west])
 
 
 def test_wind_zone_shapes_noop_for_solar_and_ungated():

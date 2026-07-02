@@ -102,21 +102,44 @@ def get_ttc_array(links: list[TransferLink]) -> np.ndarray:
 
 def build_interface_groups(
     links: list[TransferLink], interface_limits: list[InterfaceLimit]
-) -> list[tuple[np.ndarray, float, bool]]:
+) -> list[tuple]:
     """Resolve aggregate interface limits to LP flow-column groups.
 
     Maps each :class:`~market_sim.config.iso_configs.InterfaceLimit`'s
-    ``(from_zone, to_zone)`` link references to their indices in ``links`` (the
-    flow-block column order), returning one
-    ``(link_idx, cap_mw, bidirectional)`` tuple per limit for
-    :func:`market_sim.model.dispatch.build_constraints`. Returns an empty list
-    when the ISO declares no interface limits (the LP is then identical).
+    ``(from_zone, to_zone)`` pair references onto EVERY link joining that zone
+    pair: a link whose own from→to matches the listed orientation enters with
+    sign ``+1``, a reversed link with ``-1`` — so the group sum reads as the
+    net corridor flow in the listed direction (a one-way link pair such as
+    MISO's RDT contributes ``flow(a→b) − flow(b→a)`` from one listed pair).
+    Returns one ``(link_idx, cap_mw, bidirectional, lower_cap_mw, signs)``
+    tuple per limit for :func:`market_sim.model.dispatch.build_constraints`,
+    where ``lower_cap_mw`` is the limit's ``reverse_cap_mw`` (``None`` keeps
+    the symmetric/one-sided ``bidirectional`` behaviour). Returns an empty
+    list when the ISO declares no interface limits (the LP is then identical).
     """
-    pair_to_idx = {(ln.from_zone, ln.to_zone): i for i, ln in enumerate(links)}
-    groups: list[tuple[np.ndarray, float, bool]] = []
+    groups: list[tuple] = []
     for limit in interface_limits:
-        idx = np.array([pair_to_idx[tuple(pair)] for pair in limit.links], dtype=int)
-        groups.append((idx, float(limit.cap_mw), bool(limit.bidirectional)))
+        idx: list[int] = []
+        signs: list[float] = []
+        for pair in limit.links:
+            a, b = tuple(pair)
+            for i, ln in enumerate(links):
+                if (ln.from_zone, ln.to_zone) == (a, b):
+                    idx.append(i)
+                    signs.append(1.0)
+                elif (ln.from_zone, ln.to_zone) == (b, a):
+                    idx.append(i)
+                    signs.append(-1.0)
+        lower = None if limit.reverse_cap_mw is None else float(limit.reverse_cap_mw)
+        groups.append(
+            (
+                np.array(idx, dtype=int),
+                float(limit.cap_mw),
+                bool(limit.bidirectional),
+                lower,
+                np.array(signs, dtype=float),
+            )
+        )
     return groups
 
 
@@ -569,6 +592,162 @@ def build_caiso_corridor_flow_groups(
             groups.append((idx, import_cap, False, np.asarray(exp, dtype=float)))
         else:
             groups.append((idx, import_cap, False))
+    return groups
+
+
+# Calendar month → MISO planning-year season (PY runs Jun–May: Summer Jun-Aug,
+# Fall Sep-Nov, Winter Dec-Feb, Spring Mar-May). Months 1-5 belong to the PY
+# that *began the prior June*; months 6-12 to the PY beginning this June.
+# Source: MISO LOLE Study Report seasonal construct (PY2023-24 onward).
+_MISO_MONTH_TO_SEASON: dict[int, str] = {
+    1: "winter",
+    2: "winter",
+    3: "spring",
+    4: "spring",
+    5: "spring",
+    6: "summer",
+    7: "summer",
+    8: "summer",
+    9: "fall",
+    10: "fall",
+    11: "fall",
+    12: "winter",
+}
+
+# Non-leap month lengths in hours. The model's fixed 8760-hour clock drops
+# Feb 29 (see eia_loader), so non-leap month boundaries align exactly in
+# every year, including leap years.
+_MONTH_HOURS: tuple[int, ...] = tuple(
+    d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+)
+
+
+def build_miso_deliverability_groups(
+    links: list[TransferLink],
+    year: int,
+    hours: int,
+) -> list[tuple]:
+    """Return per-zone hourly CIL/CEL interface groups for the MISO backcast.
+
+    The seasonal expansion of the static ``MISO_CIL_*`` interface limits in
+    ``_miso_config`` (scope decision D7): for each Midwest zone, one signed
+    interface group spanning all of the zone's incident *internal* links
+    (oriented into the zone) whose hourly upper bound is the zone's seasonal
+    Capacity Import Limit (CIL) and hourly lower bound is ``-CEL`` (Capacity
+    Export Limit), read per planning-year season from the curated
+    ``capacity-deliverability`` data (MISO LOLE Study Reports). Union zones
+    (Plains = LRZ 3+5, East = LRZ 2+7) use the member-LRZ sum — a documented
+    ceiling (scope decision D4). A season in which any member LRZ's CEL is
+    unpublished ("No Limit Found") is export-unconstrained (``-inf``), never 0.
+    MISO-South gets no group (the RDT bilateral limit governs).
+
+    Calendar months map to PY seasons (PY = Jun–May), so a calendar backcast
+    year straddles two PYs. When the earlier PY is absent from the data
+    (PY2022-23 — extraction currently starts at PY2023-24), the affected
+    months are backfilled from the *earliest available* PY's same-season
+    values.
+    TODO(miso-zonal): drop the backfill once the PY2022-23 LOLE Study Report
+    is extracted into data/raw/capacity-deliverability/miso/miso.csv (scope
+    decision D5 — a parallel data-intake session); Jan–May 2023 then reads
+    its true PY2022-23 seasonal limits.
+
+    External-node border links are NOT members: CIL/CEL measure transfer from
+    the rest of MISO (the LOLE island model), while external seams carry
+    their own measured limits (per-seam envelopes + the 8,700 MW simultaneous
+    cap). Returns an empty list when the clean partition is absent, so the
+    caller falls back to the static summer caps (graceful, never silent-zero).
+
+    Args:
+        links: The (possibly import-node-extended) link list, in flow-column
+            order.
+        year: Calendar backcast year.
+        hours: LP horizon (≤ 8760 on the fixed non-leap clock).
+
+    Returns:
+        One ``(link_idx, cil_hourly, False, cel_hourly, signs)`` tuple per
+        Midwest zone with at least one incident internal link.
+    """
+    from market_sim.config.capacity_area_crosswalk import _MISO_LRZ_TO_ZONE
+    from market_sim.data import capacity_deliverability as capdel
+
+    available = capdel.available_delivery_years("MISO")
+    if not available:
+        return []
+
+    def _py_label(py_start: int) -> str:
+        """Resolve a planning-year start to an available delivery-year label."""
+        label = f"{py_start}/{py_start + 1}"
+        if label in available:
+            return label
+        # Earlier than the extraction window → earliest available same-season
+        # values (the PY2022-23 backfill); later → latest available.
+        return min(available) if label < min(available) else max(available)
+
+    # Zone → member LRZ areas (South excluded — RDT governs).
+    members: dict[str, list[str]] = {}
+    for lrz, zone in _MISO_LRZ_TO_ZONE.items():
+        if zone != "MISO-South":
+            members.setdefault(zone, []).append(lrz)
+
+    # Per-month (delivery-year label, season), PY = Jun–May.
+    month_py = [
+        (_py_label(year if m >= 6 else year - 1), _MISO_MONTH_TO_SEASON[m])
+        for m in range(1, 13)
+    ]
+    # Cache the per-(PY, season) CIL/CEL dicts (≤ 5 distinct slots per year).
+    limits: dict[tuple[str, str], tuple[dict[str, float], dict[str, float]]] = {}
+    for py, season in set(month_py):
+        limits[(py, season)] = (
+            capdel.import_limit_by_area("MISO", py, season),
+            capdel.export_limit_by_area("MISO", py, season),
+        )
+    if all(not imp for imp, _ in limits.values()):
+        return []
+
+    # Hour → month index on the fixed non-leap clock (Feb 29 dropped).
+    month_of_hour = np.repeat(np.arange(12), _MONTH_HOURS)[:hours]
+
+    groups: list[tuple] = []
+    for zone, lrzs in members.items():
+        idx: list[int] = []
+        signs: list[float] = []
+        for i, ln in enumerate(links):
+            internal = ln.from_zone.startswith("MISO-") and ln.to_zone.startswith(
+                "MISO-"
+            )
+            if not internal:
+                continue
+            if ln.to_zone == zone:
+                idx.append(i)
+                signs.append(1.0)
+            elif ln.from_zone == zone:
+                idx.append(i)
+                signs.append(-1.0)
+        if not idx:
+            continue
+        # Monthly CIL/CEL (12 values), then expanded hour-by-month. A member
+        # LRZ missing from the import dict makes that season's CIL unusable →
+        # +inf (never bind on a partial sum); a member missing from the export
+        # dict means "No Limit Found" → export-unconstrained (-inf lower).
+        cil_m = np.empty(12, dtype=float)
+        cel_m = np.empty(12, dtype=float)
+        for m in range(12):
+            imp, exp = limits[month_py[m]]
+            cil_m[m] = (
+                sum(imp[a] for a in lrzs) if all(a in imp for a in lrzs) else np.inf
+            )
+            cel_m[m] = (
+                sum(exp[a] for a in lrzs) if all(a in exp for a in lrzs) else np.inf
+            )
+        groups.append(
+            (
+                np.array(idx, dtype=int),
+                cil_m[month_of_hour],
+                False,
+                cel_m[month_of_hour],
+                np.array(signs, dtype=float),
+            )
+        )
     return groups
 
 
@@ -3045,11 +3224,11 @@ def _miso_firm_import_uid() -> str:
 def build_miso_firm_imports(
     iso: str, year: int | None = None, mode: str = "forecast"
 ) -> list[Generator]:
-    """Return Manitoba Hydro's firm-hydro import block for MISO-North.
+    """Return Manitoba Hydro's firm-hydro import block for MISO-West.
 
     Manitoba Hydro is MISO's single largest import source and the structural
     reason MISO is a net IMPORTER: it sells ~10-15 TWh/yr of FIRM contracted
-    hydro into MISO-North over the Manitoba<->US HVDC / 500 kV ties. This import
+    hydro into MISO-West over the Manitoba<->US HVDC / 500 kV ties. This import
     sits OUTSIDE the gas-margin reference-price seam
     (:data:`~market_sim.config.interchange_config.INTERFACE_NEIGHBORS`): firm hydro has no
     gas x heat-rate price analogue, so it is a SEPARATE block priced as firm
@@ -3057,7 +3236,7 @@ def build_miso_firm_imports(
 
     The block is a single ``fuel_type="import"`` pseudo-generator landed directly
     in :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_ZONE`
-    (``MISO-North``, the model zone the ties physically enter), bounded
+    (``MISO-West``, the model zone the ties physically enter), bounded
     ``[0, pmax]`` and offered at
     :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_OFFER`. Because
     its ``fuel_type`` is ``"import"`` it is counted as net interchange (not
@@ -3108,7 +3287,7 @@ def build_miso_firm_imports(
 def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
     """Floor Manitoba Hydro's firm-hydro import block at its contracted baseload.
 
-    The Manitoba contract is firm must-flow energy: it flows into MISO-North
+    The Manitoba contract is firm must-flow energy: it flows into MISO-West
     every hour regardless of MISO's hourly price (the Hydro-Québec firm-import
     pattern, :func:`inject_nyiso_firm_imports`). This sets a constant hourly
     ``min_gen`` floor of

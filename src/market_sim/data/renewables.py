@@ -168,8 +168,11 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     # Eastern-ISO siting zones: Tier 3, the zone holding the bulk of each
     # technology's current fleet / pipeline. PJM wind sits in the western
     # (ComEd, IL/IN belt) zone, PJM solar in Dominion (the VA build wave),
-    # PJM offshore off the NJ coast (EMAAC). MISO wind is the IA/MN belt
-    # (North). NYISO utility wind/solar
+    # PJM offshore off the NJ coast (EMAAC). MISO wind is the MN/Dakotas
+    # belt (West — the EIA-860 split lands 13.8 GW in Plains / 9.7 GW in
+    # West, both wind-belt zones; West per the zonal-refinement scope) and
+    # MISO solar is southern-weighted (South 4.8 GW is the largest EIA-860
+    # zone). NYISO utility wind/solar
     # are upstate-west; offshore is the NY Bight off Long Island. NEISO
     # wind is Maine (North), solar CT, offshore the MA/RI lease areas.
     "PJM": {
@@ -177,7 +180,7 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
         "solar": "PJM_Dominion",
         "offshore_wind": "PJM_EMAAC",
     },
-    "MISO": {"wind": "MISO-North", "solar": "MISO-Central"},
+    "MISO": {"wind": "MISO-West", "solar": "MISO-South"},
     "NYISO": {
         "wind": "Upstate_West",
         "solar": "Upstate_West",
