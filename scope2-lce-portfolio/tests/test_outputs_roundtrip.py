@@ -2,7 +2,7 @@
 
 test_outputs.py already checks the in-memory frontier/build-mix DataFrames and
 a basic write+exists check; these tests read the written Parquet files back
-and check the documented columns (including residual_co2_tons, ADR 0007) and
+and check the documented columns (including residual_co2_tons, ADR 0013) and
 run-metadata JSON keys survive the round trip, and that summarize() toggles
 its CO2 column correctly.
 """
@@ -20,7 +20,9 @@ from lce_portfolio.sweep import run_sweep
 from conftest import daytime_solar_cf, solar_plus_battery
 
 
-def _sweep(marginal_co2: float = 0.0):
+def _sweep(co2_rate: float = 0.0):
+    """Tiny 24h sweep; ``co2_rate`` > 0 threads a flat hourly emission-rate
+    vector (ADR 0013) so residual_co2_tons is exercised end-to-end."""
     res = solar_plus_battery()
     cf = daytime_solar_cf(res.n_res, 24)
     load = np.full(24, 100.0)
@@ -31,13 +33,13 @@ def _sweep(marginal_co2: float = 0.0):
         mode="premium_cap",
         premium_deltas=(5.0, 20.0),
         excess_sale_fraction=0.5,
-        marginal_co2_ton_per_mwh=marginal_co2,
     )
-    return cfg, run_sweep(cfg, res, load, lmp, cf)
+    emission_rate = np.full(24, co2_rate) if co2_rate > 0 else None
+    return cfg, run_sweep(cfg, res, load, lmp, cf, emission_rate=emission_rate)
 
 
 def test_frontier_parquet_round_trip_includes_residual_co2(tmp_path) -> None:
-    cfg, sweep = _sweep(marginal_co2=0.4)
+    cfg, sweep = _sweep(co2_rate=0.4)
     paths = write_outputs(sweep, tmp_path, config=cfg)
     back = pd.read_parquet(paths["frontier"])
 
@@ -80,7 +82,7 @@ def test_build_mix_parquet_round_trip(tmp_path) -> None:
 
 
 def test_run_metadata_json_keys_round_trip(tmp_path) -> None:
-    cfg, sweep = _sweep(marginal_co2=0.4)
+    cfg, sweep = _sweep(co2_rate=0.4)
     paths = write_outputs(sweep, tmp_path, config=cfg)
     meta = json.loads(paths["metadata"].read_text())
 
@@ -95,12 +97,12 @@ def test_run_metadata_json_keys_round_trip(tmp_path) -> None:
 
 
 def test_summarize_renders_co2_column_when_nonzero() -> None:
-    _, sweep = _sweep(marginal_co2=0.4)
+    _, sweep = _sweep(co2_rate=0.4)
     text = summarize(sweep)
     assert "residualCO2(t)" in text
 
 
 def test_summarize_omits_co2_column_when_zero() -> None:
-    _, sweep = _sweep(marginal_co2=0.0)
+    _, sweep = _sweep(co2_rate=0.0)
     text = summarize(sweep)
     assert "residualCO2(t)" not in text

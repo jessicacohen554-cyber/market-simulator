@@ -30,6 +30,57 @@ def compute_emissions(dispatch: np.ndarray, emission_rates: np.ndarray) -> np.nd
     return (dispatch * emission_rates[:, None]).sum(axis=0)
 
 
+def compute_fossil_avg_rate(
+    dispatch: np.ndarray, emission_rates: np.ndarray
+) -> np.ndarray:
+    """Return the hourly fossil-only average CO2 emission rate (tCO2/MWh).
+
+    For each hour ``t``::
+
+        rate[t] = Σ_g dispatch[g, t] × emission_rates[g]   (over fossil g)
+                  ------------------------------------------------------
+                  Σ_g dispatch[g, t]                       (over fossil g)
+
+    i.e. the tCO2 emitted by fossil generation that hour divided by the
+    fossil MWh generated that hour — the average carbon intensity of the
+    *emitting* fleet, not of the whole system (zero-carbon generation is
+    excluded from both numerator and denominator). This is the location-based
+    average emission factor for attributional Scope 2 accounting of unmatched
+    grid purchases (scope2-lce-portfolio ADR 0013), as opposed to a marginal
+    /non-baseload rate, which is a consequential-accounting concept.
+
+    The fossil subset is identified as ``emission_rates > 0``: per
+    ``market_sim.config.constants.FUEL_CO2_FACTOR_PER_MMBTU`` only fossil
+    fuels (gas, coal, oil) carry a nonzero CO2 factor — nuclear, wind, solar,
+    hydro, geothermal, imports, hydrogen, and biomass (biogenic, carbon-
+    neutral under EPA/RGGI accounting) are all zero — so no fuel-type string
+    list is needed.
+
+    Args:
+        dispatch: Thermal generation of shape ``(n_gen, T)`` in MWh/hour.
+        emission_rates: Per-generator CO2 rate of shape ``(n_gen,)`` in
+            tCO2/MWh.
+
+    Returns:
+        Hourly fossil-fleet average CO2 rate of shape ``(T,)`` in tCO2/MWh.
+        Hours with zero fossil dispatch return ``0.0`` (no fossil generation
+        that hour means there is nothing to attribute at the fossil rate),
+        never ``nan``/``inf``.
+    """
+    dispatch = np.asarray(dispatch, dtype=float)
+    emission_rates = np.asarray(emission_rates, dtype=float)
+    fossil = emission_rates > 0.0  # emitting (fossil) generators only
+    fossil_co2 = (dispatch[fossil] * emission_rates[fossil][:, None]).sum(axis=0)
+    fossil_mwh = dispatch[fossil].sum(axis=0)
+    # Zero-fossil hours: no emitting generation to average -> rate 0, not nan.
+    return np.divide(
+        fossil_co2,
+        fossil_mwh,
+        out=np.zeros_like(fossil_co2),
+        where=fossil_mwh > 0.0,
+    )
+
+
 def compute_nox(dispatch: np.ndarray, nox_rates: np.ndarray) -> np.ndarray:
     """Return hourly system NOx emissions from a dispatch schedule.
 

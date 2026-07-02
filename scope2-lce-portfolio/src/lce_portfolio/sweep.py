@@ -37,11 +37,18 @@ def run_sweep(
     load: np.ndarray,
     lmp: np.ndarray,
     cf: np.ndarray,
+    *,
+    emission_rate: np.ndarray | None = None,
 ) -> SweepResult:
     """Run the sweep implied by ``config.mode`` and return a :class:`SweepResult`.
 
     Mode A sweeps ``config.premium_deltas``; Mode B sweeps
     ``config.matching_targets``. Each setpoint is an independent LP solve.
+
+    ``emission_rate`` (keyword-only) is the optional ``(T,)`` hourly
+    fossil-only average grid CO2 rate (tCO2/MWh, ADR 0013) threaded to every
+    :func:`~lce_portfolio.lp.build_and_solve`; ``None`` leaves residual-carbon
+    reporting off.
     """
     setpoints = (
         config.premium_deltas
@@ -49,6 +56,9 @@ def run_sweep(
         else config.matching_targets
     )
     results = [
-        build_and_solve(config, resources, load, lmp, cf, float(sp)) for sp in setpoints
+        build_and_solve(
+            config, resources, load, lmp, cf, float(sp), emission_rate=emission_rate
+        )
+        for sp in setpoints
     ]
     return SweepResult(iso=config.iso, mode=config.mode, results=results)
