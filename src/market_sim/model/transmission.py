@@ -2549,6 +2549,14 @@ def inject_reliability_floor(
     day the floor binds for all 24 h (same full-day gate as temperature limbs).
     Net-load limbs are skipped when the exogenous inputs are not supplied.
 
+    Enabled limbs sharing a non-empty ``ramp_group`` are instead read as the
+    ``(threshold, floor_pct)`` knots of one continuous piecewise-linear
+    commitment curve: the floor is interpolated in the driver temperature between
+    the knots (clamped flat outside their range) and applied every hour in the
+    window, reproducing the legacy ``clip(base + slope×(T−T0), base, cap)`` ramp
+    instead of a single step that over-fires on every warm day. Ramp families
+    support only the ``tmax``/``tmin`` drivers (see :class:`ReliabilityFloorSpec`).
+
     Modifies *fleet_arrays* in place. Returns ``True`` iff any enabled limb
     floored at least one unit, ``False`` (byte-identical) otherwise.
     """
@@ -2559,6 +2567,43 @@ def inject_reliability_floor(
     groups = np.asarray(fleet_arrays.plant_group)
     hours = int(fleet_arrays.availability.shape[1])
     applied = False
+
+    def _zone_index(zone: str) -> int | None:
+        return next((i for i, z in enumerate(zone_names) if z == zone), None)
+
+    def _apply_frac(spec, z_idx: int, frac: np.ndarray) -> bool:
+        """Distribute an hourly ``frac`` floor into ``min_gen`` for one limb.
+
+        Selects the ``(plant_class, zone)`` fleet and composes ``frac × available
+        capacity`` into ``FleetArrays.min_gen`` cheapest-first or pro-rata.
+        Returns ``True`` iff at least one unit was floored.
+        """
+        if not np.any(frac > 0.0):
+            return False
+        sel = (
+            (groups == spec.plant_class)
+            & (fleet_arrays.zone_idx == z_idx)
+            & (fleet_arrays.pmax > 0.0)
+        )
+        rows = np.flatnonzero(sel)
+        if rows.size == 0:
+            return False
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+        if spec.distribution == "cheapest_first":
+            _distribute_group_floor(fleet_arrays, rows, frac, hours)
+        else:  # pro_rata: each unit floored at frac x its own available capacity
+            for r in rows:
+                avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                np.maximum(
+                    fleet_arrays.min_gen[r, :],
+                    frac * avail_r,
+                    out=fleet_arrays.min_gen[r, :],
+                )
+        return True
 
     # System net-load (demand minus VRE, summed across zones) is computed once
     # and cached here for "netload" limbs, which key off ISO-wide tightness.
@@ -2571,11 +2616,52 @@ def inject_reliability_floor(
         and solar_cap is not None
     )
 
+    # Partition enabled limbs into continuous-ramp families (shared, non-empty
+    # ``ramp_group``) and standalone step limbs. A ramp family interpolates its
+    # ``(threshold, floor_pct)`` knots into one piecewise-linear commitment curve
+    # (see ReliabilityFloorSpec) rather than firing each knot as an independent
+    # step; standalone limbs keep the original step-gate semantics below.
+    ramp_families: dict[str, list] = {}
+    standalone: list = []
     for spec in specs:
         if not getattr(spec, "enabled", True):
             continue
+        rg = getattr(spec, "ramp_group", None)
+        if rg:
+            ramp_families.setdefault(rg, []).append(spec)
+        else:
+            standalone.append(spec)
 
-        z_idx = next((i for i, z in enumerate(zone_names) if z == spec.zone), None)
+    for rg, knots in ramp_families.items():
+        head = knots[0]
+        if head.driver not in ("tmax", "tmin"):
+            continue  # ramps are temperature-only
+        z_idx = _zone_index(head.zone)
+        if z_idx is None:
+            continue
+        temp_result = iso_zone_tmax(iso, year, hours, zone=head.zone)
+        if temp_result is None:
+            continue  # no pinned weather (forecast year / unmapped) → no-op
+        tmax, tmin = temp_result
+        series = tmax if head.driver == "tmax" else tmin
+        if series is None:
+            continue
+        series = np.asarray(series, dtype=float)
+        # np.interp needs strictly-increasing thresholds; ys need not be monotone,
+        # so tmin ramps (colder → higher floor) work by encoding descending ys.
+        order = np.argsort([k.threshold for k in knots], kind="stable")
+        xs = np.array([knots[i].threshold for i in order], dtype=float)
+        ys = np.array([knots[i].floor_pct for i in order], dtype=float)
+        floor_series = np.interp(series, xs, ys)  # clamps flat outside [xs0, xs-1]
+        sh, eh = head.start_hour, head.end_hour
+        if sh is not None and eh is not None:
+            hod = np.arange(hours) % 24
+            floor_series = np.where((hod >= sh) & (hod <= eh), floor_series, 0.0)
+        if _apply_frac(head, z_idx, floor_series):
+            applied = True
+
+    for spec in standalone:
+        z_idx = _zone_index(spec.zone)
         if z_idx is None:
             continue
 
@@ -2635,35 +2721,8 @@ def inject_reliability_floor(
             flagged = flagged & (hod >= sh) & (hod <= eh)
 
         frac = np.where(flagged, float(spec.floor_pct), 0.0)
-        if not np.any(frac > 0.0):
-            continue
-
-        sel = (
-            (groups == spec.plant_class)
-            & (fleet_arrays.zone_idx == z_idx)
-            & (fleet_arrays.pmax > 0.0)
-        )
-        rows = np.flatnonzero(sel)
-        if rows.size == 0:
-            continue
-
-        if fleet_arrays.min_gen is None:
-            fleet_arrays.min_gen = np.broadcast_to(
-                fleet_arrays.pmin[:, np.newaxis],
-                (fleet_arrays.pmin.size, hours),
-            ).copy()
-
-        if spec.distribution == "cheapest_first":
-            _distribute_group_floor(fleet_arrays, rows, frac, hours)
-        else:  # pro_rata: each unit floored at frac x its own available capacity
-            for r in rows:
-                avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-                np.maximum(
-                    fleet_arrays.min_gen[r, :],
-                    frac * avail_r,
-                    out=fleet_arrays.min_gen[r, :],
-                )
-        applied = True
+        if _apply_frac(spec, z_idx, frac):
+            applied = True
 
     return applied
 
