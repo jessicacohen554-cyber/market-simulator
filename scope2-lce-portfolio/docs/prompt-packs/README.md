@@ -21,6 +21,21 @@ the relevant planning session first).
 | PP-05 | Sweep driver & CLI | 0002 |
 | PP-06 | Outputs & reporting | PS-02, PS-04 |
 | PP-07 | Tests | all |
+| PP-08 | Gas-CC+CCS resource & intensity-weighted matching (backlog) | 0012 |
+| PP-09 | Reporting deliverable: HTML run report + committed `results/` store (backlog) | 0014 |
+
+## PP-09 — Reporting deliverable (stub)
+
+Decided in PS-11 → **ADR 0014** (cite its § numbers): one **self-contained
+static HTML report per run** (`results/<run_id>/report.html`, §1) rendering the
+§2 views — provenance header, premium-vs-matching frontier, build-mix by
+setpoint, cost breakdown, residual-CO₂, multi-ISO comparison table, hourly
+dispatch heatmap + SOC for a selected setpoint — from a versioned
+`report.json` payload (§3, single-run but comparison-ready §4). Runs persist in
+a **committed `results/<run_id>/` Parquet folder** (§5) that the planned
+desktop port reads. Implementation shape: `report.py` +
+`scripts/render_report.py` + CLI flags `--run-id`/`--results`/`--no-report`/
+`--report-hourly` (§6).
 
 ## Current state
 
@@ -32,8 +47,8 @@ per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script),
 **PP-04** (LP core both modes, split-storage vars, hydro budget constraint, additionality
 accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
 graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
-run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-09 (gas-CC+CCS)
-backlog.
+run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-08
+(gas-CC+CCS, ADR 0012) backlog, PP-09 (reporting, ADR 0014) ready to run.
 
 ## Rules for every pack
 
