@@ -19,7 +19,7 @@ Source — SPP Marketplace public file browser (``portal.spp.org``, the host
     https://portal.spp.org/file-browser-api/download/<fsName>?path=<path>
 
   * System hub = simple mean of ``SPPNORTH_HUB`` and ``SPPSOUTH_HUB`` (the two
-    SPP trading hubs), the price the MISO-North border sees from SPP.
+    SPP trading hubs), the price the MISO-West border sees from SPP.
   * Day-Ahead  (``da``): ``da-lmp-by-settlement-location`` (hourly).
   * Real-Time  (``rt``): ``rtbm-lmp-by-location`` — SPP's own hourly RTBM LMP
     rollup (the monthly file is hourly, not 5-minute).
