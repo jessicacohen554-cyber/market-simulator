@@ -30,9 +30,10 @@ report of the `miso-35-zonal-refinement` dashboard bundle. Implementation
 notes: the one-way link floor (`link_bidirectional`) was found unwired in
 both runners and connected (the RDT pair had been silently symmetric);
 bundles now persist `flows.parquet` for interface-binding diagnostics
-(`scripts/report_miso_zonal_gates.py`). Jan–May 2023 seasonal caps are
-backfilled from PY2023-24 same-season values until the PY2022-23 extraction
-lands (D5). Scoped on branch `claude/miso-zonal-refine-scope-vs1iao`;
+(`scripts/report_miso_zonal_gates.py`). Jan–May 2023 caps read the measured
+PY2022-23 LOLE values (D5 landed 2026-07-02: annual pre-seasonal CIL/CEL set,
+season "annual" in the CSV; the PY2023-24 same-season backfill now applies
+only to backcasts reaching before the extraction window). Scoped on branch `claude/miso-zonal-refine-scope-vs1iao`;
 all §8 decisions resolved 2026-07-01. Companion data:
 `data/raw/capacity-deliverability/miso/miso.csv` (740 rows, PY2023-24 → PY2025-26
 × 4 seasons × LRZ 1-10: CIL/CEL/ZIA/LRR/LCR/PRMR, sourced from MISO LOLE Study
