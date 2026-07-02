@@ -64,9 +64,36 @@ def _read_table(path: str | Path) -> pd.DataFrame:
 
 
 def _validate_hour_range(df: pd.DataFrame) -> None:
-    """Raise if ``hour`` is not an integer in ``[0, 8759]``."""
+    """Raise if ``hour`` is not an integer in ``[0, 8759]``.
+
+    Integer-valued float columns (a common Parquet artifact) are accepted;
+    fractional or non-finite hours raise the documented error instead of the
+    raw ``IndexError`` the load path used to produce (audit finding IO-5).
+    """
+    hours = df["hour"]
+    if not pd.api.types.is_integer_dtype(hours):
+        as_float = hours.to_numpy(dtype=float)
+        if not np.all(np.isfinite(as_float)) or np.any(as_float != np.floor(as_float)):
+            raise ValueError("hour column must be integers in [0, 8759]")
     if df["hour"].min() < 0 or df["hour"].max() >= HOURS_PER_YEAR:
         raise ValueError("hour column must be integers in [0, 8759]")
+
+
+def _require_finite(df: pd.DataFrame, col: str, context: str) -> None:
+    """Raise if ``col`` contains NaN/inf, naming the count (audit IO-2/IO-3).
+
+    A NaN price or rate would flow silently into the LP objective or the
+    residual-carbon attribution, and a NaN load hour would be summed to zero
+    by pandas — exactly the silent understatement the module docstring
+    forbids for missing hours.
+    """
+    values = df[col].to_numpy(dtype=float)
+    bad = ~np.isfinite(values)
+    if bad.any():
+        raise ValueError(
+            f"{context}: {int(bad.sum())} non-finite {col} value(s) (NaN/inf); "
+            "fix the source file — blanks are not zero"
+        )
 
 
 def _check_no_duplicates(df: pd.DataFrame, key_cols: list[str], context: str) -> None:
@@ -108,6 +135,13 @@ def load_intake(path: str | Path) -> pd.DataFrame:
     if missing:
         raise ValueError(f"intake file missing columns: {sorted(missing)}")
     _validate_hour_range(df)
+    _require_finite(df, "load_mwh", context="load intake")
+    if (df["load_mwh"] < 0).any():
+        n_neg = int((df["load_mwh"] < 0).sum())
+        raise ValueError(
+            f"load intake: {n_neg} negative load_mwh value(s); facility load "
+            "is consumption and must be non-negative"
+        )
     return df
 
 
@@ -121,6 +155,11 @@ def aggregate_by_hour_iso(df: pd.DataFrame) -> dict[str, np.ndarray]:
     cover the full ``0..8759`` calendar after aggregation; a missing hour
     raises rather than silently zero-filling.
     """
+    # Re-validate here (not only in load_intake) so the direct-API path gets
+    # the same clean errors: an 8784-hour leap file used to pass the
+    # missing-hour check and overflow the 8760 vector with a raw IndexError
+    # (audit finding IO-6).
+    _validate_hour_range(df)
     key_cols = (
         ["iso", "facility", "hour"] if "facility" in df.columns else ["iso", "hour"]
     )
@@ -133,7 +172,7 @@ def aggregate_by_hour_iso(df: pd.DataFrame) -> dict[str, np.ndarray]:
         present = set(sub["hour"].astype(int))
         _require_full_calendar(present, iso, kind="load intake")
         vec = np.zeros(HOURS_PER_YEAR, dtype=float)
-        vec[sub["hour"].to_numpy()] = sub["load_mwh"].to_numpy()
+        vec[sub["hour"].to_numpy(dtype=int)] = sub["load_mwh"].to_numpy()
         out[iso] = vec
     return out
 
@@ -183,6 +222,8 @@ def lmp_intake(path: str | Path) -> pd.DataFrame:
     if missing:
         raise ValueError(f"LMP file missing columns: {sorted(missing)}")
     _validate_hour_range(df)
+    # Negative LMPs are legitimate market outcomes; only NaN/inf are errors.
+    _require_finite(df, "lmp", context="LMP intake")
     return df
 
 
@@ -224,6 +265,9 @@ def emissions_intake(path: str | Path) -> pd.DataFrame:
     if missing:
         raise ValueError(f"emission-rate file missing columns: {sorted(missing)}")
     _validate_hour_range(df)
+    # NaN < 0 is False, so the sign check alone would let NaN rates through
+    # (audit finding IO-2) — require finiteness first.
+    _require_finite(df, "fossil_avg_co2_rate", context="emission-rate intake")
     if (df["fossil_avg_co2_rate"] < 0).any():
         n_neg = int((df["fossil_avg_co2_rate"] < 0).sum())
         raise ValueError(
@@ -282,6 +326,18 @@ def collapse_zonal_lmp(
     contract, ready for :func:`prepare_lmp` (a zone present in the LMP file
     with no matching load row is excluded from that hour's average).
     """
+    # A NaN zonal price would be dropped from the weighted numerator by
+    # pandas' skipna sum while its load stayed in the denominator, silently
+    # biasing the collapsed price toward zero (audit finding IO-2); negative
+    # zonal load weights would make the weighted average nonsense (IO-4).
+    _require_finite(zonal_lmp_df, "lmp", context="zonal LMP collapse")
+    _require_finite(zonal_load_df, "load_mwh", context="zonal LMP collapse")
+    if (zonal_load_df["load_mwh"] < 0).any():
+        n_neg = int((zonal_load_df["load_mwh"] < 0).sum())
+        raise ValueError(
+            f"zonal LMP collapse: {n_neg} negative load_mwh weight(s); zonal "
+            "load weights must be non-negative"
+        )
     merged = zonal_lmp_df.merge(zonal_load_df, on=["hour", "iso", "zone"], how="inner")
     merged["_weighted"] = merged["lmp"] * merged["load_mwh"]
     grouped = merged.groupby(["iso", "hour"], as_index=False).agg(
