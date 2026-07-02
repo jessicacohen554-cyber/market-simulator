@@ -218,3 +218,49 @@ def test_cli_results_traversal_run_id_is_clean_error_and_deletes_nothing(
     assert "invalid --run-id" in captured.err
     assert "Traceback" not in captured.err
     assert (victim / "marker.txt").exists()
+
+
+def test_cli_results_rerun_failure_preserves_previous_run(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    """A failed ``--results`` re-run leaves the previous run intact (IO-7/CL-3).
+
+    Regression: the CLI used to ``rmtree`` ``results/<run-id>/`` before
+    solving, so a re-run that failed on input validation destroyed the
+    previous good results and left nothing behind. Runs now write to a
+    scratch sibling and swap in only on success.
+    """
+    load_path, lmp_path = _write_fixtures(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "active_resources": ["solar_pv"],
+                "premium_deltas": [5.0],
+            }
+        )
+    )
+    argv = [
+        "--load",
+        str(load_path),
+        "--config",
+        str(config_path),
+        "--results",
+        "--run-id",
+        "keeper",
+    ]
+
+    assert main(argv + ["--lmp", str(lmp_path)]) == 0
+    run_dir = tmp_path / "results" / "keeper"
+    assert (run_dir / "report.json").exists()
+
+    # Second run with a broken LMP path fails cleanly — and must not have
+    # touched the previous run directory.
+    rc = main(argv + ["--lmp", str(tmp_path / "missing_lmp.csv")])
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "error:" in captured.err
+    assert (run_dir / "report.json").exists()
+    assert (run_dir / "SAMPLE_frontier.parquet").exists()
