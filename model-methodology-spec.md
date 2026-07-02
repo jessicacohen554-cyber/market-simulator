@@ -2,7 +2,7 @@
 
 **Purpose:** Methodology specification for the LP-based electricity market dispatch model. This document governs the model’s mathematical formulation, computational patterns, scenario architecture, and performance requirements. It is the primary reference for how the model works; where this document and the code disagree, the **code is the source of truth** — open a `/sync-docs` pass to reconcile.
 
-**Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Six ISOs are registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (3 zones), NYISO (5 zones) and NEISO (4 zones + HQ import node) — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
+**Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Six ISOs are registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (6 zones), NYISO (5 zones) and NEISO (4 zones + HQ import node) — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
 
 **Forecast vs. backcast.** The model is fundamentally a **forecasting** tool (2026→2050). A *backcast* mode reruns a historical weather year against actuals (EIA-930, CAMPD, eGRID, EIA-923) to calibrate parameters. The switch is the explicit **`ScenarioConfig.mode`** field (`"forecast"` default / `"backcast"`, Tier 0) — never inferred from other parameters (it used to ride on `gas_price_override`, which wrongly flipped any pinned-gas forecast sensitivity into backcast behavior). Several mechanisms — historic outage overlays, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration devices only**; forecast runs use the statistical/parametric models. This distinction is called out throughout; do not conflate the two.
 
@@ -114,15 +114,32 @@ For this model, the pragmatic path is (1) as a guard once durations lengthen, es
 **Transmission:**
 
 ```
--TTC[l] ≤ Flow[l,t] ≤ TTC[l]    # bidirectional; or use two non-negative variables
+-TTC[l] ≤ Flow[l,t] ≤ TTC[l]    # bidirectional (the default)
+0 ≤ Flow[l,t] ≤ TTC[l]          # one-way link (TransferLink.is_bidirectional=False);
+                                # a pair of opposite one-way links encodes an
+                                # asymmetric interface rating (MISO's RDT 3,000
+                                # N→S / 2,500 S→N). Wired via
+                                # transmission.get_link_bidirectional_array →
+                                # dispatch link_bidirectional in both runners.
 ```
+
+**Aggregate interface groups** (`InterfaceLimit`, `iso_configs.py`): one row
+per group per hour caps the **signed sum** of member-link flows. Each listed
+``(from, to)`` pair pulls in EVERY link joining that zone pair — matching
+orientation with sign +1, reversed with −1 — so the sum reads as the net
+corridor flow in the listed direction, and an opposing one-way pair (the RDT)
+contributes ``flow(a→b) − flow(b→a)`` from one listed pair. ``cap_mw`` bounds
+the positive direction; the optional ``reverse_cap_mw`` sets an asymmetric
+reverse bound (import CIL vs export CEL); caps may be scalars or hourly
+``(T,)`` vectors (seasonal envelopes). Implemented in
+`transmission.build_interface_groups` → `dispatch._build_interface_rows`.
 
 The topology (zones, load shares, links, TTCs) is per-ISO data in `config/iso_configs.py`; the LP itself is ISO-agnostic and reads `n_zones`, `n_links`, the node–link `incidence` matrix, and per-link `ttc`. Current topologies:
 
 - **ERCOT** — 7 zones (West, Panhandle, North, Northeast, Houston, South_Central, South; Panhandle carries 0 load), 9 links, with cited inter-zone TTCs. The reference calibration.
 - **CAISO** — 3 in-state zones (NP15, ZP26, SP15) split on Path 15 / Path 26, **plus** a WECC import/export node (see below); 4 links + 1 interface limit.
 - **PJM** — 8 aggregated zones (`PJM_ComEd`, `PJM_AEP_Ohio`, `PJM_ATSI`, `PJM_West_APS`, `PJM_Central_PA`, `PJM_Dominion`, `PJM_EMAAC`, `PJM_SWMAAC`), 11 links, rolling up PJM's 20+ transmission zones onto the chronic west→Mid-Atlantic congestion corridors.
-- **MISO** — 3 zones (North, Central, South) with the MISO-South contract-path constraint.
+- **MISO** — 6 zones drawn as whole EIA-930 sub-BA (LRZ-union) partitions — `MISO-West` (LRZ 1), `MISO-Plains` (LRZ 3+5), `MISO-Illinois` (LRZ 4), `MISO-Indiana` (LRZ 6), `MISO-East` (LRZ 2+7), `MISO-South` (LRZ 8+9+10) — 8 links: 6 deliberately non-binding internal pipes plus the RDT one-way contract-path pair (3,000 MW N→S / 2,500 MW S→N) attached to `MISO-Plains`. Internal congestion is carried by per-zone directional CIL/CEL `InterfaceLimit` groups from the MISO LOLE Study Reports (static PY2025-26 summer caps in config; backcasts replace them with per-season hourly vectors via `transmission.build_miso_deliverability_groups`). See `docs/multi-iso/miso-zonal-refinement-scope.md`.
 - **NYISO** — 5 zones (Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island) with nested downstate import cutsets.
 - **NEISO** — 4 load zones (North, Central, Boston, Connecticut) **plus** an HQ import node; 7 links.
 
