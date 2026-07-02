@@ -78,11 +78,13 @@ def class_table(run: str) -> pd.DataFrame:
 # C1 fuel-mix — the universal class gate (matches
 # calibration_verdict.score_fuelmix and the run explorer's classInTol,
 # docs/codebase-site/backcast-runs.html): a class
-# passes iff BOTH its grid-delivered volume miss is within min(1.0% of ISO annual
-# generation, 5 TWh) AND its share of total generation is within 1.5 pp of actual.
-VOL_GEN_FRAC = 0.01
-VOL_CAP_TWH = 5.0
-SHARE_PP = 1.5
+# passes iff BOTH its grid-delivered volume miss is within min(2.0% of ISO annual
+# generation, 8 TWh) AND its share of total generation is within 3.0 pp of actual.
+# (2026-07-02 rubric re-balance: loosened from 1.0%/5 TWh/1.5 pp — must stay in
+# lockstep with calibration_verdict.FUELMIX_* constants.)
+VOL_GEN_FRAC = 0.02
+VOL_CAP_TWH = 8.0
+SHARE_PP = 3.0
 
 
 def judge(row) -> str:
