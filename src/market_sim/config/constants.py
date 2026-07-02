@@ -93,6 +93,17 @@ ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
     (99.0, 75.0),  # older subcritical
 ]
 
+# Day-ahead unit-commitment horizon (hours). CAISO's day-ahead market (IFM +
+# residual unit commitment) commits ONE 24-hour operating day at a time (CAISO
+# Fifth Replacement FERC Electric Tariff §31.3; BPM for Market Operations,
+# day-ahead timeline) — the same one-operating-day horizon every US ISO's DAM
+# uses. A committed unit is therefore only ever HELD online at min-load across
+# an idle gap that fits inside one DA commitment cycle; a longer gap is a
+# next-day decommit/re-offer decision, not an intra-day hold, and the unit
+# shuts down. Bounds the startup-cost-aware RA bridge when
+# ScenarioConfig.caiso_ra_bridge_decommit is on.
+DA_COMMITMENT_HORIZON_HOURS: int = 24
+
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
 
