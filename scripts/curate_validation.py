@@ -209,41 +209,52 @@ def _henry_hub_rows(iso: str, year: int, block: dict) -> list[dict]:
 def _price_rows(iso: str, year: int, lmp_block: dict) -> list[dict]:
     """avg_price_usd_per_mwh rows from the historical day-ahead LMP benchmark.
 
-    Annual mean (``da``) at month=0 plus the monthly means (``da_mon``). Some
-    ISO-years carry only real-time prices (no ``da``); those contribute nothing.
+    Annual mean (``da``) at month=0 plus the monthly means (``da_mon``) — for
+    the SYSTEM row and, when the ISO's block carries the per-model-zone
+    ``zones`` sub-dict (NYISO/NEISO constituent-zone means; MISO named-hub
+    means per scope decision D6, whose ``zones_src`` documents the
+    MISO-Plains hub proxy), one row set per zone. Some ISO-years carry only
+    real-time prices (no ``da``); those contribute nothing.
     """
     src = lmp_block.get("src", "actual LMP")
+    zone_src = lmp_block.get("zones_src", src)
     rows: list[dict] = []
-    da = lmp_block.get("da")
-    if not _is_missing(da):
-        rows.append(
-            _row(
-                iso,
-                _SYSTEM,
-                year,
-                0,
-                _ALL,
-                "avg_price_usd_per_mwh",
-                da,
-                "usd_per_mwh",
-                src,
-            )
-        )
-    for i, v in enumerate(lmp_block.get("da_mon") or [], start=1):
-        if not _is_missing(v):
+
+    def _emit(zone: str, block: dict, source: str) -> None:
+        da = block.get("da")
+        if not _is_missing(da):
             rows.append(
                 _row(
                     iso,
-                    _SYSTEM,
+                    zone,
                     year,
-                    i,
+                    0,
                     _ALL,
                     "avg_price_usd_per_mwh",
-                    v,
+                    da,
                     "usd_per_mwh",
-                    src,
+                    source,
                 )
             )
+        for i, v in enumerate(block.get("da_mon") or [], start=1):
+            if not _is_missing(v):
+                rows.append(
+                    _row(
+                        iso,
+                        zone,
+                        year,
+                        i,
+                        _ALL,
+                        "avg_price_usd_per_mwh",
+                        v,
+                        "usd_per_mwh",
+                        source,
+                    )
+                )
+
+    _emit(_SYSTEM, lmp_block, src)
+    for zone, zblock in (lmp_block.get("zones") or {}).items():
+        _emit(zone, zblock, zone_src)
     return rows
 
 
