@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-02-miso-36-coopt-flag",
+ "label": "miso 36 coopt flag",
+ "date": "2026-07-02",
+ "shorthand": "miso-36-coopt-flag",
+ "definition": "MISO 36 (PROBE, wiring-bug evidence): miso-35 keeper flags + --energy-reserve-coopt, run BEFORE the run_year wiring fix. Demonstrates the flag was SILENTLY INERT for MISO on the backcast path: the co-opt dispatch-kwargs chain in run_calibration.run_year ended at NEISO, so the RBDC design (reserve_config._miso_design) was reachable only from the forecast runner. Results replicate miso-35 (energy-only LP; no reserve family, no reserve_price). Implication: miso-34's registered '+2/+3/+4 $/MWh reserve lift' was main-branch drift, not the co-opt \u2014 verified at miso-34's recorded clean sha 6712bdb (no MISO branch). Superseded by miso-37 (wired).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-02-miso-36-coopt-flag.js",
+ "bundle": "results/calibration/MISO/miso_36_coopt_flag_inert"
+}

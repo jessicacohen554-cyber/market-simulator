@@ -1680,6 +1680,7 @@ def solve_and_persist(
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
+    miso_zonal_reserves: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
@@ -1897,6 +1898,7 @@ def solve_and_persist(
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
+            miso_zonal_reserves=miso_zonal_reserves,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
@@ -2169,6 +2171,7 @@ def solve_and_persist(
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
+        "miso_zonal_reserves": miso_zonal_reserves,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
@@ -2314,6 +2317,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
+    if miso_zonal_reserves:
+        recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
     if pjm_reserve_supply_cap:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_online_gated:
@@ -4871,6 +4876,17 @@ def main() -> None:
         "for the phantom-headroom fix. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--miso-zonal-reserves",
+        action="store_true",
+        help="MISO locational reserve families on top of the market-wide RBDC "
+        "co-opt: one zonal operating-reserve family per zone (default "
+        "MISO-South), requirement = within-zone MSSC (BPM-002 3.3.2 zonal "
+        "minimum, the pre-determined largest zonal event), priced at the "
+        "published Zonal Operating Reserve Demand Curve (BPM-002 5.2.1.2 / "
+        "Schedule 28-A: $200 / $1,100 / VOLL-minus-zonal-reg steps). "
+        "Requires --energy-reserve-coopt. MISO-only; default off.",
+    )
+    parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
         help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
@@ -6083,6 +6099,7 @@ def main() -> None:
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
+        miso_zonal_reserves=args.miso_zonal_reserves,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
