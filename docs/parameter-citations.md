@@ -855,7 +855,7 @@ inline comment and still need a dated primary source — search the table for
 | `global_annual_deployment_gw.li_ion` | 50.0 | 2 | was 30. BNEF 2025. | 2025 | auto-generated |
 | `global_annual_deployment_gw.solar` | 400.0 | 2 | was 350. IRENA 2025. | 2025 | auto-generated |
 | `global_annual_deployment_gw.wind` | 130.0 | 2 | was 120. IRENA 2025. | 2025 | auto-generated |
-| `import_node_links.MISO` | [["MISO-Central", 7300.0], ["MISO-Nor… | 2 | Links joining an appended external zone to its border zones: (borde… | 2023-24 | auto-generated |
+| `import_node_links.MISO` | [["MISO-Illinois", 3300.0], ["MISO-In… | 2 | Links joining an appended external zone to its border zones: (borde… | 2023-24 | auto-generated |
 | `import_node_links.NYISO` | [["Upstate_West", 3000.0], ["NYC", 10… | 2 | Links joining an appended external zone to its border zones: (borde… | 2023-24 | auto-generated |
 | `import_node_links.PJM` | [["PJM_ComEd", 7500.0], ["PJM_AEP_Ohi… | 2 | Links joining an appended external zone to its border zones: (borde… | 2023-24 | auto-generated |
 | `inflation_rate` | 0.022 | 2 | Assumed long-run inflation rate for nominal-to-real conversion. Use… |  | auto-generated, needs-citation |

@@ -107,20 +107,32 @@ refinement.
 
 ## MISO
 
-**Start:** absent — build from scratch.
-**Target topology:** 3 regions — **MISO-North**, **MISO-Central**,
-**MISO-South** — reflecting MISO's real sub-regional structure and Local
-Resource Zones.
+**Start:** absent — built from scratch; refined to six zones 2026-07-02.
+**As-built topology (6 zones, whole EIA-930 sub-BA / LRZ unions):**
+**MISO-West** (LRZ 1), **MISO-Plains** (LRZ 3+5), **MISO-Illinois** (LRZ 4),
+**MISO-Indiana** (LRZ 6), **MISO-East** (LRZ 2+7), **MISO-South**
+(LRZ 8+9+10) — the finest partition with fully measured hourly load
+(`docs/multi-iso/miso-zonal-refinement-scope.md`). The original 3-region
+build (North/Central/South) was a copperplate and was retired; the old zone
+names must not be reused (stale-parquet collision hazard).
 
-**Congestion corridors / links:**
-- **MISO-South ↔ MISO-Midwest (North+Central)** — the defining constraint:
-  the two MISO footprints connect only through a **contract path across SPP**
-  with a **Regional Directional Transfer (RDT) limit** (~north–south ≈ 3000 MW,
-  south–north ≈ 2500 MW). Model this as the binding link.
-- **North ↔ Central** — wind-export corridor from the wind-rich north.
+**Congestion corridors / links (as built):**
+- **RDT contract path (Plains ↔ South)** — the defining constraint: the two
+  MISO footprints connect only through a **contract path across SPP** with the
+  **Regional Directional Transfer limit**, encoded verbatim as a one-way link
+  pair (3,000 MW N→S / 2,500 MW S→N, one-way bounds enforced via
+  `link_bidirectional`).
+- **Six internal Midwest pipes** (West↔Plains, West↔East, Plains↔Illinois,
+  Illinois↔Indiana, Illinois↔East, Indiana↔East) carry deliberately
+  NON-binding placeholder TTCs; all internal congestion is carried by
+  **per-zone directional CIL/CEL interface groups** — the exact island-model
+  quantity MISO's LOLE transfer analysis publishes — expanded to per-season
+  hourly caps in backcasts (`transmission.build_miso_deliverability_groups`).
+  MISO-South carries no CIL group (the RDT is far tighter).
 
-**TTC source:** MISO OASIS; MISO Transmission Expansion Plan (MTEP); the RDT
-limit is published in MISO/SPP settlement agreements and seams documents.
+**Limit source:** MISO LOLE Study Reports (PY2023-24 → PY2025-26 CIL/CEL per
+LRZ per season, `data/raw/capacity-deliverability/miso/miso.csv`); the RDT
+limit is published in the MISO/SPP Joint Operating Agreement.
 
 **Special:** MISO capacity construct is **seasonal** (4 seasons) — see Pack D /
 module M8. Large wind (North) + coal (Central) fleet.
