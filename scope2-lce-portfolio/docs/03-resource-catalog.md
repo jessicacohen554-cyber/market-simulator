@@ -17,6 +17,8 @@ Hydrogen Program (LDES, hydrogen). This doc explains *what* each resource is and
 | `nuclear_new` | firm | new SMR/large reactor; ATB 2024 FOAK; capex ~$6000–9000/kW; life 40 yr |
 | `nuclear_existing` | firm | procure existing output at going-forward cost (~$25–30/MWh) plus EAC premium (~$4/MWh); capped per ISO (ADR 0008) |
 | `hydro_existing` | flexible | existing hydro; going-forward cost (~$22–32/MWh) plus EAC premium (~$3/MWh); monthly energy budget per ISO (ADR 0008); capped per ISO |
+| `gas_cc_ccs_new` | firm, fuel-burning | new gas CC + 95% CCS (ATB 2024 class); capex ~$2300–3300/kW, HR 7.9 MMBtu/MWh, life 30; inactive by default (ADR 0012) |
+| `gas_cc_ccs_retrofit` | firm, fuel-burning | CCS capture retrofit on an existing CC — prices only the decarbonization increment (~$850–1300/kW, NPC/NETL retrofit class), HR 8.1, life 20; inactive by default (ADR 0012) |
 
 Cost basis: overnight capex ($/kW) annualized with CRF = `r(1+r)^n / ((1+r)^n - 1)` where
 `r = config.discount_rate` and `n = life_yr` (default life_yr=30 for generation, 40 for nuclear).
@@ -46,6 +48,49 @@ Split-storage carries separate power ($/kW-yr) and energy ($/kWh-yr) annualized 
 the LP chooses `build_mw` (power) and `build_energy_mwh` (energy capacity) independently
 within per-tech duration bounds. Efficiency is modeled as `η = √rte` split evenly across
 charge/discharge; life 25 yr (ADR 0006).
+
+## Fuel-burning low-carbon resources (gas CC + CCS, ADR 0012)
+
+Three catalog columns exist for partially-clean, fuel-burning resources (blank/0
+for every other row):
+
+| column | meaning |
+|---|---|
+| `heat_rate_mmbtu_mwh` | delivered-fuel burn per MWh, **including** the CCS parasitic load; > 0 marks the row as fuel-burning |
+| `capture_rate` | fraction of combustion CO₂ captured and stored (0.95 for both tranches) |
+| `emission_rate_ton_mwh` | residual stack intensity = `(1 − capture_rate) × 0.0531 tCO₂/MMBtu × heat_rate` (EPA GHG Emission Factors Hub / 40 CFR 98 Table C-1: 53.06 kg CO₂/MMBtu pipeline gas) |
+
+**Matching credit is threshold-full (ADR 0012):** a resource counts *fully*
+toward hourly matching iff `capture_rate > 0.90` **and**
+`emission_rate_ton_mwh < 0.050`; a row failing either bright line is rejected at
+load time (never intensity-discounted). Residual emissions are still *reported*:
+`resource_co2_tons = Σ gen × emission_rate` joins the grid-purchase residual in
+`residual_co2_tons` (see `01-lp-formulation.md`).
+
+**Effective VOM** is assembled at load time (`resources.py`):
+
+```
+vom = vom_table                              # capture solvent + CO₂ T&S + base O&M
+    + heat_rate × delivered_gas_price        # data/fuel/gas_prices.csv or config.gas_price_mmbtu
+    − capture_rate × 0.0531 × heat_rate × ccs_45q_per_ton   # IRA §45Q, default 85 $/tCO₂
+```
+
+clamped at ≥ 0 (the credit must not turn generation into a money pump). The
+per-ISO delivered gas prices in `data/fuel/gas_prices.csv` mirror the market
+simulator's forward-mode fuel fidelity: AEO2025 Reference Henry Hub for ~2030
+($3.50/MMBtu) plus each ISO's basis differential (Waha discount for ERCOT,
+Algonquin winter-constrained premium for NEISO, …). A fuel-burning resource with
+no resolvable gas price is a **hard error** — it must never dispatch at zero
+fuel cost. `config.gas_price_mmbtu > 0` overrides the table;
+`config.ccs_45q_per_ton = 0` disables the credit.
+
+The retrofit tranche is `capex_fixed`, not `ppa_mwh`, so it is **not** an
+"existing" resource for additionality (ADR 0008): the capture plant is new,
+additional decarbonization capacity even though the host CC exists. Its per-ISO
+cap mirrors the `nuclear_existing` contractable-fleet-share logic (~50% of the
+ISO's existing gas-CC fleet, geology-derated where CO₂ storage is thin —
+NYISO/NEISO); new-build caps track CO₂ storage/pipeline geology (generous in
+ERCOT/MISO Gulf/Illinois basins, thin in the Northeast).
 
 ## Per-resource capacity caps
 

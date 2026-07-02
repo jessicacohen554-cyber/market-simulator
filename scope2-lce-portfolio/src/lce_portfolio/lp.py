@@ -67,9 +67,13 @@ class PortfolioResult:
     capital_cost: float = 0.0  # added clean fixed + VOM cost ($/yr)
     premium_total_per_year: float = 0.0  # net_cost − bau_cost ($/yr)
     pct_over_bau: float = 0.0  # premium as a fraction of BAU cost
-    residual_co2_tons: float = (
-        0.0  # Σ_t grid_buy[t] × fossil_avg_co2_rate[t] (ADR 0013)
-    )
+    # Residual carbon (ADR 0013 grid attribution + ADR 0012 resource residual):
+    #   residual_co2_tons = grid_co2_tons + resource_co2_tons
+    # with the two components also reported separately so outputs can show the
+    # unmatched-grid vs partial-capture-resource split.
+    residual_co2_tons: float = 0.0
+    grid_co2_tons: float = 0.0  # Σ_t grid_buy[t] × fossil_avg_co2_rate[t]
+    resource_co2_tons: float = 0.0  # Σ_r Σ_t gen[r,t] × emission_rate_ton_mwh[r]
     # Split-storage (ADR 0006): selected energy capacity (MWh) per split tech, in
     # storage order restricted to split techs. Empty when no split tech is active.
     split_names: list[str] = field(default_factory=list)
@@ -149,9 +153,21 @@ def build_and_solve(
     ``emission_rate`` (keyword-only) is the ``(T,)`` hourly fossil-only average
     grid CO2 rate (tCO2/MWh) from :func:`lce_portfolio.intake.prepare_emission_rate`
     (ADR 0013). Residual carbon is attributed to unmatched purchases hour by
-    hour: ``residual_co2_tons = Σ_t grid_buy[t] × emission_rate[t]``. ``None``
-    (the default) means residual-carbon reporting is off and is treated as an
-    all-zero vector, so ``residual_co2_tons == 0``.
+    hour, plus — since ADR 0012 — the residual emissions of partial-capture
+    resources (gas CC + CCS) at their per-resource
+    ``emission_rate_ton_mwh``::
+
+        residual_co2_tons = Σ_t grid_buy[t] × emission_rate[t]        # grid_co2_tons
+                          + Σ_r Σ_t gen[r,t] × emission_rate_ton_mwh[r]  # resource_co2_tons
+
+    The two components are reported separately as ``grid_co2_tons`` and
+    ``resource_co2_tons``. Reporting only — the matching metric and LP matching
+    sums are unchanged: qualifying CCS output (past the ADR 0012 load-time
+    threshold) counts *fully* toward hourly matching, with no
+    intensity-weighted discount. ``emission_rate=None`` (the default) means
+    grid residual-carbon reporting is off (all-zero vector), so
+    ``grid_co2_tons == 0``; ``resource_co2_tons`` still accrues if a
+    partial-capture resource generates.
 
     **Split-storage sizing (ADR 0006).** LDES and hydrogen carry a separate energy
     column ``build_energy[k]`` (MWh) costed at ``cost_energy_mwhyr``; the state of
@@ -507,9 +523,14 @@ def build_and_solve(
     )
     surplus_revenue = sale * float(lmp @ excess)
     avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
-    # Residual carbon (ADR 0013): hourly dot product against the fossil-only
-    # average rate — hour-varying by design, never a flat annual scalar.
-    residual_co2_tons = float(grid_buy @ emission_rate)
+    # Residual carbon: unmatched grid purchases at the hourly fossil-only
+    # average rate (ADR 0013 — hour-varying by design, never a flat annual
+    # scalar) PLUS the residual emissions of partial-capture resources at their
+    # per-resource rate (ADR 0012). Matching credit is unaffected — qualifying
+    # CCS output counts fully toward matching; only the carbon report sees it.
+    grid_co2_tons = float(grid_buy @ emission_rate)
+    resource_co2_tons = float(resources.emission_rate_ton_mwh @ gen.sum(axis=1))
+    residual_co2_tons = grid_co2_tons + resource_co2_tons
 
     premium_total_per_year = net_cost - bau_cost
     pct_over_bau = (net_cost - bau_cost) / bau_cost if bau_cost else 0.0
@@ -552,6 +573,8 @@ def build_and_solve(
         premium_total_per_year=premium_total_per_year,
         pct_over_bau=pct_over_bau,
         residual_co2_tons=residual_co2_tons,
+        grid_co2_tons=grid_co2_tons,
+        resource_co2_tons=resource_co2_tons,
         split_names=[resources.names[r] for r in split_res_idx],
         build_energy_mwh=build_energy,
     )
