@@ -165,3 +165,85 @@ def test_additionality_serving_load_still_counts_unmatched() -> None:
     assert r.status == "Optimal"
     assert r.gen[0].sum() > 2000.0  # PPA actually serves the load
     assert r.matching_pct < 0.001
+
+
+def test_hydro_budget_is_fleet_shared() -> None:
+    """LP-3: the ISO monthly budget bounds the budget-hydro FLEET, not each
+    resource.
+
+    Regression: with two budget-flagged resources the LP granted each the
+    full ISO budget, so fleet monthly generation reached exactly 2x the
+    table value.
+    """
+    from lce_portfolio.config import HOURS_PER_YEAR
+    from lce_portfolio.lp import _HOURS_PER_DAY, _MONTH_LEN_DAYS
+    from lce_portfolio.resources import load_hydro_budget_mwh
+
+    T = HOURS_PER_YEAR
+    res = ResourceArrays(
+        names=["hydro_a", "hydro_b"],
+        is_storage=np.array([False, False]),
+        fixed_mwyr=np.array([0.0, 0.0]),
+        vom=np.array([1.0, 1.0]),
+        cap_max_mw=np.array([1e6, 1e6]),
+        cap_min_mw=np.array([0.0, 0.0]),
+        cf_assumed=np.array([1.0, 1.0]),
+        duration_h=np.array([0.0, 0.0]),
+        rte=np.array([1.0, 1.0]),
+        is_budget_hydro=np.array([True, True]),
+    )
+    cf = np.ones((2, T))
+    load = np.full(T, 100.0)
+    lmp = np.full(T, 50.0)
+    cfg = PortfolioConfig(iso="ERCOT", hours=T, mode="premium_cap")
+
+    r = build_and_solve(cfg, res, load, lmp, cf, setpoint=1e6)
+
+    assert r.status == "Optimal"
+    budget = load_hydro_budget_mwh("ERCOT")
+    month_of_hour = np.repeat(np.arange(12), _MONTH_LEN_DAYS * _HOURS_PER_DAY)
+    fleet_gen = r.gen.sum(axis=0)
+    monthly = np.array([fleet_gen[month_of_hour == m].sum() for m in range(12)])
+    # Fleet total respects the ISO budget in every month (small IPM slack).
+    assert (monthly <= budget * 1.001).all()
+    # And the budget actually binds (hydro is far cheaper than the grid).
+    assert monthly.sum() > 0.9 * budget.sum()
+
+
+def test_strict_hourly_shadow_price_not_hour0_dual() -> None:
+    """LP-4: strict-hourly shadow_price is the load-weighted mean dual.
+
+    Regression: only hour 0's row dual was stored, so a solve whose binding
+    hours are 1..23 (hour 0 slack) reported shadow_price = 0.0 while T-1
+    informative duals were dropped.
+    """
+    T = 24
+    res = ResourceArrays(
+        names=["wind_hour0", "firm_dear"],
+        is_storage=np.array([False, False]),
+        fixed_mwyr=np.array([1.0, 0.0]),
+        vom=np.array([0.0, 80.0]),  # firm dearer than the $50 grid
+        cap_max_mw=np.array([200.0, 1e6]),
+        cap_min_mw=np.array([0.0, 0.0]),
+        cf_assumed=np.array([1.0, 1.0]),
+        duration_h=np.array([0.0, 0.0]),
+        rte=np.array([1.0, 1.0]),
+    )
+    cf = np.zeros((2, T))
+    cf[0, 0] = 1.0  # wind exists only in hour 0 -> hour 0's row is slack
+    cf[1, :] = 1.0
+    load = np.full(T, 100.0)
+    lmp = np.full(T, 50.0)
+    cfg = PortfolioConfig(
+        hours=T,
+        mode="matching_target",
+        excess_sale_fraction=0.0,
+        strict_hourly_matching=True,
+    )
+
+    r = build_and_solve(cfg, res, load, lmp, cf, setpoint=0.9)
+
+    assert r.status == "Optimal"
+    # Binding hours 1..23 price matching at -(80-50) = -30 $/MWh; hour 0 is
+    # slack at 0. Load-weighted mean ~ -30 * 23/24 ~ -28.75.
+    assert r.shadow_price < -20.0
