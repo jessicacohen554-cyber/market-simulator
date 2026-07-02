@@ -120,22 +120,28 @@ Run in order once their upstream ADRs land: PP-00 scaffold/config → PP-01 inta
 PP-02 catalog → PP-03 CF profiles (first vendoring) → PP-04 LP core →
 PP-05 sweep/CLI → PP-06 outputs/reporting → PP-07 tests → PP-08 gas CC + CCS
 resource (ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
-low-carbon threshold, grid/resource residual-CO₂ split). **PP-00 through PP-08 complete**
-(build waves of 2026-07-01; PP-08 implemented by 2026-07-02); next open work is PP-09
-(reporting deliverable, ADR 0014, in flight) and the on-hold real-LMP validation path
+low-carbon threshold, grid/resource residual-CO₂ split) → PP-09 reporting
+deliverable (ADR 0014: report.py payload + HTML, results/ store, SAMPLE run) →
+PP-11 report restyle (codebase-site Observatory design system) → PP-12
+adversarial audit (4-lens fresh-eyes bug hunt, every finding independently
+verified; fixes across lp/intake/resources/config/cli/profiles/report + ADR
+0008 amendment and ADR 0012 clamp note). **PP-00 through PP-09 and PP-11/PP-12
+complete** (2026-07-01/02); open work is PP-10 (desktop launcher, ADR 0016, in
+flight in a parallel session) and the on-hold real-LMP validation path
 (ADR 0015, stakeholder decision 2026-07-02).
 
 ## 9. Verification
 
 ```bash
 ../.venv/bin/python examples/run_sample_sweep.py     # end-to-end frontier on synthetic data
-../.venv/bin/python -m pytest tests/ -q              # 147 tests: config, intake, LP core, CLI, extensions, cross-feature
-grep -rn "import market_sim" src/ || echo "OK: standalone"   # isolation check
+../.venv/bin/python -m pytest tests/ -q              # 207 tests: config, intake, LP core, CLI, extensions, cross-feature, report, audit regressions
+grep -rnE "^\\s*(import market_sim|from market_sim)" src/ scripts/ tests/ ; echo OK-standalone  # isolation check
 ```
 
 Expected: sweep prints a matching%-vs-premium table for `{1,2,5,7,10,20}`; matching%
-is non-decreasing in the premium cap; all 147 tests pass (trivial cases first, then
-extensions like split-storage, hydro budget, additionality, CCS threshold logic, cross-feature interplay).
+is non-decreasing in the premium cap; all 207 tests pass (trivial cases first, then
+extensions like split-storage, hydro budget, additionality, CCS threshold logic,
+cross-feature interplay, and the PP-12 audit regression suite).
 
 ## 10. Handoff checklist
 
@@ -145,7 +151,9 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
 - [x] Execute prompt packs PP-00 through PP-08 in order, updating docs/PLAN.md status. ✓ PP-00..08 complete (PP-08 gas-CC+CCS, ADR 0012, implemented 2026-07-02).
 - [x] ADR ratification (PS-10, 2026-07-02): ADRs 0005/0007/0009/0010 amended & ratified (0005: f=1.0, excess credited at full LMP).
 - [x] Fossil-avg CO₂-rate export wiring (ADR 0013): `scripts/build_fossil_avg_co2_rate.py` available; hourly rate file contract wired into intake & LP.
-- [ ] Execute prompt pack PP-09 (reporting deliverable, ADR 0014) — self-contained HTML run report + committed results store.
+- [x] Execute prompt pack PP-09 (reporting deliverable, ADR 0014) — self-contained HTML run report + committed results store. ✓ report.py + results/ store + SAMPLE run (2026-07-02); restyled by PP-11.
+- [x] PP-12 adversarial audit (2026-07-02): 4 blind auditors + independent verification; 24 verified defects fixed with regression tests (run-id traversal, ADR 0012 gate bypass, Mode B buy/sell degeneracy, additionality export accounting, intake/loader/CLI hardening), ADR 0008 amended, ADR 0012 clamp documented.
+- [ ] Execute prompt pack PP-10 (desktop launcher, ADR 0016) — in flight in a parallel session.
 - [ ] Export a forecast-year BAU LMP file from the market sim (ADR 0011 contract) and
   build `data/profiles/` for all six ISOs, then run the first real per-ISO sweep.
   **ON HOLD (stakeholder, 2026-07-02): do NOT run market-sim forecasts for this —
