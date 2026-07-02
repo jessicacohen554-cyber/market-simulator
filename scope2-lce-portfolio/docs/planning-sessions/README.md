@@ -33,6 +33,10 @@ PS-NN prompt  →  discussion/decision  →  ADR (decisions/)  →  PP-NN build 
 | PS-06 | Resource caps & regional potential | PP-02 |
 | PS-07 | Load intake & growth | PP-01 |
 | PS-08 | LMP coupling & scenario selection | PP-01 |
+| PS-09 | Gas CC + CCS resource | PP-08 |
+| PS-10 | Stakeholder ratification of provisional ADRs 0005/0007/0009/0010 | DECISIONS.md index |
+| PS-11 | End-user reporting deliverable | PP-09 |
+| PS-12 | Forecast LMP selection (years, scenario, readiness, rollout) | ADR 0015 → the real export |
 
 Run them in any order, but PS-01/PS-02 unblock the most. Nothing here should
 require editing `src/market_sim` — this tool stays standalone.

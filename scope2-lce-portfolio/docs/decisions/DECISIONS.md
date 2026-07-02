@@ -27,6 +27,7 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0012 | Gas CC + CCS resource; low-carbon threshold credit (<50 kg/MWh, >90% capture) | accepted | PS-09 | PP-08 |
 | 0013 | Residual carbon: hourly fossil-only average rate (attributional) | accepted | (stakeholder correction of 0007) | `intake.py`/`lp.py`/`scripts/build_fossil_avg_co2_rate.py` |
 | 0014 | Reporting deliverable: self-contained HTML run report + committed `results/` store | accepted | PS-11 | PP-09 |
+| 0015 | Forecast LMP selection: years 2030–2050, base-BAU scenario, readiness gate, rollout | accepted (execution on hold, PLAN.md §10) | PS-12 | none — pins `export_lce_lmp.py` args |
 
 ---
 
