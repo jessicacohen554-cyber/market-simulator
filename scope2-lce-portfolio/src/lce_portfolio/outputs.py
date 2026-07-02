@@ -75,11 +75,14 @@ def write_run_metadata(
     sweep: SweepResult,
     config: PortfolioConfig,
     out_dir: str | Path,
+    extra: dict | None = None,
 ) -> Path:
     """Write a ``<iso>_run_metadata.json`` capturing config + per-setpoint status.
 
     Provenance for reproducibility: the full config, tool version, and the
-    solver status / headline metrics of each solve.
+    solver status / headline metrics of each solve. ``extra`` merges
+    additional provenance blocks in verbatim (e.g. the ``profile_source``
+    real-vs-synthetic label, audit finding DL-8).
     """
     from lce_portfolio import __version__
 
@@ -90,6 +93,7 @@ def write_run_metadata(
         "iso": sweep.iso,
         "mode": sweep.mode,
         "config": asdict(config),
+        **(extra or {}),
         "solves": [
             {
                 "setpoint": r.setpoint,
@@ -147,6 +151,7 @@ def write_outputs(
     report: bool = True,
     run_id: str | None = None,
     report_hourly: str = "selected",
+    metadata_extra: dict | None = None,
 ) -> dict[str, Path]:
     """Write frontier and build-mix Parquet files under ``out_dir``.
 
@@ -167,7 +172,9 @@ def write_outputs(
     frontier_table(sweep).to_parquet(paths["frontier"], index=False)
     build_mix_table(sweep).to_parquet(paths["build_mix"], index=False)
     if config is not None:
-        paths["metadata"] = write_run_metadata(sweep, config, out_dir)
+        paths["metadata"] = write_run_metadata(
+            sweep, config, out_dir, extra=metadata_extra
+        )
         if report:
             paths.update(
                 write_report(
