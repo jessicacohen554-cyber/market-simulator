@@ -113,6 +113,20 @@ def _read(iso: str) -> pd.DataFrame | None:
         return None
 
 
+def available_delivery_years(iso: str) -> set[str]:
+    """Return the ``delivery_year`` labels present in the ISO's clean partition.
+
+    Lets callers that need an *exact* year (e.g. the MISO seasonal interface
+    caps, whose backcast months straddle two planning years) decide their own
+    fallback instead of inheriting :func:`_select_year`'s latest-year fallback.
+    Empty when the partition is unavailable.
+    """
+    df = _read(iso)
+    if df is None or df.empty:
+        return set()
+    return {str(y) for y in df["delivery_year"].dropna().unique()}
+
+
 def _select_year(df: pd.DataFrame, iso: str, delivery_year: str) -> pd.DataFrame:
     """Return the rows for ``delivery_year``, or the latest year when absent.
 

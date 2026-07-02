@@ -25,9 +25,11 @@ Hub -> model-zone mapping: MISO publishes several hub prices (Indiana,
 Michigan, Minnesota, Arkansas, Louisiana, Texas). The committed parquet
 carries only a single system/representative RT+DA series, so this produces the
 system (hub-level) block only — the same top-level fields PJM carries, with no
-``zones`` sub-dict. The three model zones (MISO-North / MISO-Central /
-MISO-South) therefore share the system price for scoring; a zonal block can be
-added later if per-hub series are staged into the parquet.
+``zones`` sub-dict. The six model zones (MISO-West / MISO-Plains /
+MISO-Illinois / MISO-Indiana / MISO-East / MISO-South) therefore share the
+system price for scoring; a zonal block is the scope decision D6 upload
+(per-hub RT/DA LMPs) and can be added when the per-hub series are staged
+into the parquet.
 
 Usage:
     python scripts/build_miso_lmp_reference.py [--years 2023 2024 2025]

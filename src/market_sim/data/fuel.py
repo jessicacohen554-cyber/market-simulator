@@ -542,10 +542,12 @@ ERCOT_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
 # :func:`apply_pjm_zonal_gas_basis`.
 PJM_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "pjm_zonal_gas_hub.csv"
 
-# MISO per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. MISO's three
-# zones sit on different pipeline hubs: MISO-North on MidCon / Northern Natural
-# (IA proxy, EIA N3045IA3), MISO-Central on Chicago Citygate (IL, N3045IL3),
-# MISO-South on the Gulf Coast (LA, N3045LA3). Like PJM (and unlike NYISO) this
+# MISO per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. MISO's six
+# zones sit on three pipeline-hub regions: MISO-West/MISO-Plains on MidCon /
+# Northern Natural (IA proxy, EIA N3045IA3), MISO-Illinois/MISO-Indiana/
+# MISO-East on Chicago Citygate (IL, N3045IL3 — per-state IN/MichCon series
+# are a pending refinement, see the CSV source notes), MISO-South on the
+# Gulf Coast (LA, N3045LA3). Like PJM (and unlike NYISO) this
 # is anchored to a gas-capacity-weighted mean of zero in
 # :func:`apply_miso_zonal_gas_basis`, so the calibrated MISO fleet-aggregate gas
 # level is preserved and ONLY the cross-zonal spread opens. Consumed by
@@ -2013,8 +2015,9 @@ def apply_miso_zonal_gas_basis(
     """Shift each MISO gas unit's price by its zone's measured regional gas basis.
 
     Delegates to :func:`_apply_meanzero_zonal_gas_basis` — the same
-    capacity-weighted mean-zero core used by PJM. MISO-North sits on
-    MidCon / Northern Natural (IA), MISO-Central on Chicago Citygate (IL),
+    capacity-weighted mean-zero core used by PJM. MISO-West/MISO-Plains sit
+    on MidCon / Northern Natural (IA), the eastern Midwest zones (Illinois/
+    Indiana/East) on Chicago Citygate (IL),
     and MISO-South on Gulf Coast (LA); the spread opens while the
     fleet-aggregate gas level is preserved.
 

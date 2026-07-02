@@ -196,9 +196,20 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
         ("NYC", 1000.0),
         ("Long_Island", 1200.0),
     ],
+    # MISO border links re-pointed at the six-zone refinement: the 7,300 MW
+    # eastern (PJM/IESO) seam envelope splits across its three physical border
+    # zones — Illinois (ComEd-facing, the heaviest tie set), Indiana
+    # (AEP-facing) and East (Michigan↔Ontario, ~2 GW interconnection) — a
+    # reconciled split of the same measured 7,300 MW total (rule #12: the
+    # seam envelope is measured at BA level, not per model zone; the split
+    # follows the physical tie distribution and the per-seam band caps still
+    # bound the seam total). West carries the SPP/Manitoba 4,000 MW seam;
+    # South keeps its 3,000 MW southern (SOCO/TVA/AECI) seam unchanged.
     "MISO": [
-        ("MISO-Central", 7300.0),
-        ("MISO-North", 4000.0),
+        ("MISO-Illinois", 3300.0),
+        ("MISO-Indiana", 2000.0),
+        ("MISO-East", 2000.0),
+        ("MISO-West", 4000.0),
         ("MISO-South", 3000.0),
     ],
 }
@@ -317,7 +328,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             marginal_heat_rate=12.3,
             hurdle=2.0,
             interface_limit_mw=7300.0,
-            border_zones=("MISO-Central",),
+            border_zones=("MISO-Illinois", "MISO-Indiana", "MISO-East"),
             load_shape_exponent=1.0,
             hr_by_year={2023: 11.2, 2024: 13.49, 2025: 12.18},
             firm_import_floor_by_year={2023: 2615.0, 2024: 1710.0, 2025: 1135.0},
@@ -329,7 +340,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             marginal_heat_rate=10.0,
             hurdle=2.0,
             interface_limit_mw=4000.0,
-            border_zones=("MISO-North",),
+            border_zones=("MISO-West",),
             load_shape_exponent=1.0,
             hr_by_year={2023: 9.24, 2024: 10.65, 2025: 7.7},
         ),
@@ -444,7 +455,8 @@ NYISO_IMPORT_RECON_BAND_FRAC: float = 0.02
 MISO_MANITOBA_FIRM_IMPORT_MW: float = 1400.0
 MISO_MANITOBA_FIRM_IMPORT_OFFER: float = 8.0
 MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC: float = 1.0
-MISO_MANITOBA_FIRM_IMPORT_ZONE: str = "MISO-North"
+# The Manitoba↔US HVDC / 500 kV ties land in Minnesota (LRZ 1) = MISO-West.
+MISO_MANITOBA_FIRM_IMPORT_ZONE: str = "MISO-West"
 MISO_MANITOBA_FIRM_IMPORT_NAME: str = "Manitoba_firmhydro"
 
 MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR: dict[int, float] = {
@@ -561,7 +573,7 @@ class Corridor:
 
 @dataclass
 class FirmImport:
-    """A must-flow firm import block (e.g. Manitoba hydro into MISO-North).
+    """A must-flow firm import block (e.g. Manitoba hydro into MISO-West).
 
     Attributes:
         name: Block name.

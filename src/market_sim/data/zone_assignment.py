@@ -77,9 +77,12 @@ _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_AEP_Ohio",
     "CAISO": "SP15",
-    # MISO-Central is the largest-load-share zone (0.46) and holds the
-    # lower-Midwest load centers, so unlocated MISO plants land there.
-    "MISO": "MISO-Central",
+    # MISO is pinned to MISO-Illinois, NOT its largest-load-share zone: at six
+    # zones the largest share flips to MISO-South (0.2711), an unacceptable
+    # default for the overwhelmingly Midwest unlocated cohort. Illinois is the
+    # central wheel-through zone adjacent to every Midwest neighbor, so a
+    # mis-defaulted plant distorts the topology least (scope doc §3).
+    "MISO": "MISO-Illinois",
     "NYISO": "Upstate_West",
     # Central (WCMA/SEMA/RI) is ISO-NE's largest-load-share zone (0.30) and
     # holds central/coastal Massachusetts, so unlocated NEISO plants land there.
@@ -199,43 +202,41 @@ _PJM_PA_WEST_LON: float = -79.0
 # DC, plus the eastern-shore DPL) is SWMAAC.
 _PJM_MD_WEST_LON: float = -78.5
 
-# MISO model region by FIPS state code. The three model zones are drawn as
-# whole EIA-930 sub-BA (LRZ) unions so the fleet and load partitions share
-# identical boundaries (see eia_loader._MISO_SUBBA_ZONE_GROUPS): North = LRZ 1
-# (MN/ND/SD/MT) + LRZ 3+5 (IA/MO) — the wind-rich upper Midwest; Central = LRZ
-# 2+7 (WI/MI) + LRZ 4 (IL) + LRZ 6 (IN/KY) — the lower-Midwest load centers;
-# South = LRZ 8+9+10 (the Entergy footprint). WI sits with MI in the Central
-# sub-BA group and MO sits with IA in the North group, so they are assigned
-# accordingly (the wind belt MN/IA/ND/SD stays in North). eGRID carries a FIPS
-# state for every MISO plant, so the state map is authoritative; the latitude
-# fallback below only handles the rare coords-only caller.
+# MISO model zone by FIPS state code. The six model zones are drawn as whole
+# EIA-930 sub-BA (LRZ) unions so the fleet and load partitions share identical
+# boundaries (see eia_loader._MISO_SUBBA_ZONE_GROUPS): West = LRZ 1
+# (MN/ND/SD/MT), Plains = LRZ 3+5 (IA/MO), Illinois = LRZ 4 (IL), Indiana =
+# LRZ 6 (IN/KY), East = LRZ 2+7 (WI/MI), South = LRZ 8+9+10 (the Entergy
+# footprint AR/LA/MS/East TX). Every zone is an exact union of whole states,
+# and eGRID carries a FIPS state for every MISO plant, so the state map is
+# authoritative; the latitude fallback below only handles the rare coords-only
+# caller. See docs/multi-iso/miso-zonal-refinement-scope.md §3.
 _MISO_STATE_ZONES: dict[int, str] = {
-    27: "MISO-North",  # MN (LRZ 1)
-    19: "MISO-North",  # IA (LRZ 3)
-    38: "MISO-North",  # ND (LRZ 1)
-    46: "MISO-North",  # SD (LRZ 1)
-    30: "MISO-North",  # MT (LRZ 1)
-    29: "MISO-North",  # MO (LRZ 5, bundled with IA in sub-BA 0035)
-    55: "MISO-Central",  # WI (LRZ 2, bundled with MI in sub-BA 0027)
-    17: "MISO-Central",  # IL (LRZ 4)
-    18: "MISO-Central",  # IN (LRZ 6)
-    26: "MISO-Central",  # MI (LRZ 7)
-    21: "MISO-Central",  # KY (LRZ 6)
+    27: "MISO-West",  # MN (LRZ 1)
+    38: "MISO-West",  # ND (LRZ 1)
+    46: "MISO-West",  # SD (LRZ 1)
+    30: "MISO-West",  # MT (LRZ 1)
+    19: "MISO-Plains",  # IA (LRZ 3, bundled with MO in sub-BA 0035)
+    29: "MISO-Plains",  # MO (LRZ 5)
+    17: "MISO-Illinois",  # IL (LRZ 4, Ameren)
+    18: "MISO-Indiana",  # IN (LRZ 6)
+    21: "MISO-Indiana",  # KY (LRZ 6)
+    55: "MISO-East",  # WI (LRZ 2, bundled with MI in sub-BA 0027)
+    26: "MISO-East",  # MI (LRZ 7)
     5: "MISO-South",  # AR
     22: "MISO-South",  # LA
     28: "MISO-South",  # MS
     48: "MISO-South",  # TX (MISO East Texas / Entergy, not ERCOT)
 }
 
-# Latitude bands for the coords-only MISO fallback (no FIPS state). The
-# Entergy South footprint sits below ~lat 36 (AR/LA/MS/East TX); the upper-
-# Midwest North sits above ~lat 43 (MN/ND/SD); the lower-Midwest Central load
-# centers fall between. This is coarse — it cannot resolve the sub-BA-aligned
-# WI↔MO boundary (WI is Central, MO is North), so FIPS state is strongly
-# preferred and this only triggers when a caller supplies coordinates without
-# a state code.
+# Latitude threshold for the coords-only MISO fallback (no FIPS state). The
+# Entergy South footprint sits below ~lat 36 (AR/LA/MS/East TX). At six
+# Midwest-split zones a latitude band can no longer resolve the zone (the
+# W↔E boundaries are longitudinal), so the fallback degrades to South vs a
+# single pinned Midwest default (MISO-Illinois — the central wheel-through
+# zone, see _LARGEST_ZONE). FIPS state is strongly preferred; this only
+# triggers when a caller supplies coordinates without a state code.
 _MISO_SOUTH_LAT: float = 36.0
-_MISO_NORTH_LAT: float = 43.0
 
 # FIPS state code for New York. NYISO's eleven load zones (A–K) follow
 # county lines closely enough that county FIPS carries the assignment, with
@@ -648,23 +649,20 @@ def _pjm_zone(
 
 
 def _miso_zone(lat: float | None, fips_state: int | None) -> str:
-    """Return the MISO model region for a plant location.
+    """Return the MISO model zone for a plant location.
 
-    FIPS state carries the assignment — North (upper Midwest), Central
-    (lower-Midwest load centers), South (Entergy) — since MISO's three
-    sub-regions follow state lines and eGRID has a state for every plant.
-    A plant whose state is outside the MISO map (a stray cross-seam
-    attribution) falls back to a coarse latitude band when coordinates are
-    available, and otherwise to the largest-load-share zone (Central).
+    FIPS state carries the assignment — the six model zones are exact unions
+    of whole states (see :data:`_MISO_STATE_ZONES`) and eGRID has a state for
+    every plant. A plant whose state is outside the MISO map (a stray
+    cross-seam attribution) falls back to South vs the pinned Midwest default
+    when coordinates are available (latitude cannot resolve the six-zone
+    Midwest split), and otherwise to the pinned Midwest default
+    (MISO-Illinois).
     """
     if fips_state in _MISO_STATE_ZONES:
         return _MISO_STATE_ZONES[fips_state]
-    if lat is not None:
-        if lat < _MISO_SOUTH_LAT:
-            return "MISO-South"
-        if lat >= _MISO_NORTH_LAT:
-            return "MISO-North"
-        return "MISO-Central"
+    if lat is not None and lat < _MISO_SOUTH_LAT:
+        return "MISO-South"
     return _LARGEST_ZONE["MISO"]
 
 
@@ -779,9 +777,12 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # storage), CAISO second (2024-2025 greenfield solar, ~4.8 GW absent from
 # eGRID 2023), NYISO third (2024+ downstate battery fleet), NEISO fourth
 # (2022-2024 MA batteries: 29 plants / ~44 MW absent from eGRID 2023, rising
-# to 346 MW with the 2025 Cranberry Point and Cross Town BESS additions).
+# to 346 MW with the 2025 Cranberry Point and Cross Town BESS additions),
+# MISO fifth (post-eGRID-2023 plants — 28 of 1,975 at the six-zone refinement
+# — previously landed in the fallback zone; the EIA-860 lat/lon supplement
+# resolves most of them, see docs/multi-iso/miso-zonal-refinement-scope.md §3).
 _EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "NYISO", "NEISO"}
+    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO"}
 )
 
 

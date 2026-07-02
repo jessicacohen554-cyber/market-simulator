@@ -125,6 +125,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_interface_groups,
     build_reference_price_node,
     extend_with_import_node,
+    get_link_bidirectional_array,
     get_ttc_array,
     inject_reference_price_firm_export,
     inject_reference_price_mc,
@@ -2683,6 +2684,44 @@ def run_year(
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # MISO per-zone seasonal CIL/CEL deliverability groups: replace the static
+    # summer ``MISO_CIL_*`` fallbacks baked into _miso_config with per-season
+    # hourly caps from the LOLE Study Report data (scope decision D7 — the
+    # NYISO monthly-TTC pattern, fed from data/capacity_deliverability instead
+    # of a constants table). Always on for MISO: the measured seasonal limits
+    # ARE the internal congestion structure (rule #10-admissible — they
+    # regenerate every planning year from forward drivers). Falls back to the
+    # static summer caps when the clean partition is absent (never silent-zero).
+    if iso == "MISO":
+        from market_sim.model.transmission import build_miso_deliverability_groups
+
+        seasonal_groups = build_miso_deliverability_groups(
+            iso_config.links, year, demand.shape[1]
+        )
+        if seasonal_groups:
+            static_limits = [
+                lim
+                for lim in iso_config.interface_limits
+                if not lim.name.startswith("MISO_CIL_")
+            ]
+            interface_groups = (
+                build_interface_groups(iso_config.links, static_limits)
+                + seasonal_groups
+            )
+            logger.info(
+                "MISO %d: seasonal CIL/CEL interface caps on %d zone group(s) "
+                "(per-season hourly vectors from the LOLE deliverability data; "
+                "static summer fallbacks replaced)",
+                year,
+                len(seasonal_groups),
+            )
+        else:
+            logger.warning(
+                "MISO %d: capacity-deliverability clean partition absent — "
+                "falling back to static PY2025-26 summer CIL/CEL caps; run "
+                "scripts/curate_capacity_deliverability.py",
+                year,
+            )
     # Measured WECC corridor deliverability envelope (CAISO per-hub only): cap
     # each corridor link's import-direction flow at the per-(month × hour-of-day)
     # p95 measured net import (an ATC proxy that tightens midday), so the LP can
@@ -3820,6 +3859,12 @@ def run_year(
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
         interface_groups=interface_groups or None,
+        # One-way links (MISO's RDT 3,000/2,500 MW directional pair) floor
+        # their flow at 0 instead of -ttc. Every other ISO's links are
+        # bidirectional (all-True array -> byte-identical bounds). This was
+        # built in dispatch but never wired here, so the RDT asymmetry was
+        # silently symmetric (+/-ttc per leg) before the six-zone refinement.
+        link_bidirectional=get_link_bidirectional_array(iso_config.links),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
@@ -4195,6 +4240,11 @@ def run_year(
         "context": context,
         "storage_units": storage_units,
         "dual_fuel_oil_mask": dual_fuel_oil_mask,
+        # Link list in flow-column order (the possibly import-node-extended /
+        # per-hub-split topology actually solved), so the bundle can persist
+        # per-link flows for interface-binding diagnostics (the MISO zonal
+        # gates report binding-hour counts per CIL/CEL group and the RDT).
+        "links": iso_config.links,
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
