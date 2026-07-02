@@ -24,6 +24,7 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0009 | Resource caps & regional potential | provisional | PS-06 | PP-02 |
 | 0010 | Load intake & growth application | provisional | PS-07 | PP-01 |
 | 0011 | LMP coupling & scenario selection | accepted | PS-08 | PP-01 |
+| 0012 | Gas CC + CCS resource; low-carbon threshold credit (<50 kg/MWh, >90% capture) | accepted | PS-09 | PP-08 |
 
 ---
 
