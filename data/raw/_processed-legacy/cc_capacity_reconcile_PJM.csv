@@ -1,0 +1,18 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+10751,Camden Plant Holding LLC,265.6,139.2,144.7,139.2,-47.6,campd_demonstrated_peak,cap
+60302,Key,1341.3,774.1,777.7,774.1,-42.3,campd_demonstrated_peak,cap
+3096,Brunot Island,339.9,215.2,284.4,215.2,-36.7,campd_demonstrated_peak,cap
+55297,New Covert Generating Facility,1586.3,1192.4,1790.8,1192.4,-24.8,campd_demonstrated_peak,cap
+10308,Sayreville Cogeneration Facility,430.2,324.4,333.1,324.4,-24.6,campd_demonstrated_peak,cap
+55193,Ontelaunee Energy Center,728.0,589.6,590.8,589.6,-19.0,campd_demonstrated_peak,cap
+54844,Gordonsville Energy LP,300.4,247.7,240.0,247.7,-17.6,campd_demonstrated_peak,cap
+59764,Oregon Clean Energy Center,1060.0,892.1,897.1,892.1,-15.8,campd_demonstrated_peak,cap
+2398,Bergen Generating Station,1400.8,1202.2,1255.0,1202.2,-14.2,campd_demonstrated_peak,cap
+57349,Garrison Energy Center LLC,361.0,310.1,323.0,310.1,-14.1,campd_demonstrated_peak,cap
+3176,Hunlock Power Station,145.9,126.8,128.9,126.8,-13.1,campd_demonstrated_peak,cap
+62949,Guernsey Power Station,2055.0,1803.8,1875.0,1803.8,-12.2,campd_demonstrated_peak,cap
+59773,Carroll County Energy,832.3,731.2,760.4,731.2,-12.1,campd_demonstrated_peak,cap
+55690,Bethlehem Power Plant,1153.0,1017.9,1136.0,1017.9,-11.7,campd_demonstrated_peak,cap
+55188,Cordova Energy,611.2,540.1,601.2,540.1,-11.6,campd_demonstrated_peak,cap
+7153,Hay Road,1128.0,1002.7,1128.0,1002.7,-11.1,campd_demonstrated_peak,cap
+2411,Sewaren,609.5,552.8,541.0,552.8,-9.3,campd_demonstrated_peak,cap
