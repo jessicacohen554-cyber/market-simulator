@@ -31,6 +31,17 @@ class PortfolioConfig:
     year: int = 2030
     """Modeled year; drives CF-profile selection and (future) LMP vintage."""
     hours: int = HOURS_PER_YEAR
+    profile_shape_year: int | None = None
+    """CF-profile shape vintage, decoupled from the modeled ``year`` (real
+    profile files are built by ``scripts/build_profiles.py`` for specific
+    weather years, e.g. 2024, while ``year`` is typically a future study year
+    like 2030). ``None`` (default) keeps the prior implicit behavior:
+    ``profiles.build_cf_matrix`` is called with ``year`` and missing files
+    warn-and-fall-back to synthetic shapes. When set, the profile file for
+    that exact year is REQUIRED — a missing file is a hard
+    ``FileNotFoundError``, never a silent synthetic substitution, so a real
+    run can't accidentally price a portfolio against the wrong (or absent)
+    shape data (reproducibility spirit of ADR 0011)."""
 
     # --- (2) Optimization framing ------------------------------------------
     mode: str = "premium_cap"
@@ -141,6 +152,8 @@ class PortfolioConfig:
             raise ValueError("excess_sale_fraction must be in [0, 1]")
         if self.hours <= 0:
             raise ValueError("hours must be positive")
+        if self.profile_shape_year is not None and self.profile_shape_year <= 0:
+            raise ValueError("profile_shape_year must be positive when set")
         if self.storage_epsilon < 0:
             raise ValueError("storage_epsilon must be non-negative")
         if self.load_growth_years < 0:
