@@ -1788,25 +1788,44 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
         return None
     pivot = df.pivot(index="hour", columns="zone", values="share")
     pivot = pivot.reindex(columns=zone_names, fill_value=0.0)
-    return pivot.to_numpy(dtype=float).T
+    shares = pivot.to_numpy(dtype=float).T
+    # Stale-parquet guard: the reindex fills a missing zone column with 0.0,
+    # so a renamed zone silently gets ZERO load from a parquet curated under
+    # the old names (the exact hazard of the MISO 3→6-zone rename). A zone
+    # that legitimately carries no load (ERCOT Panhandle, import nodes) has
+    # static load_share == 0; any zone with a positive static share must have
+    # a live column, so an all-zero row there is a hard error, never a silent
+    # degradation.
+    from market_sim.config.iso_configs import get_iso_config
+
+    static_share = {z.name: z.load_share for z in get_iso_config(iso).zones}
+    dead = [
+        z
+        for i, z in enumerate(zone_names)
+        if static_share.get(z, 0.0) > 0.0 and not np.any(shares[i])
+    ]
+    if dead:
+        raise ValueError(
+            f"zonal-shares parquet for {iso} {year} has all-zero shares for "
+            f"load-carrying zone(s) {dead} — stale parquet curated under old "
+            "zone names? Re-run scripts/curate_zonal_shares.py."
+        )
+    return shares
 
 
-# EIA-930 MISO sub-BA -> model zone. The six sub-BAs are LRZ groupings, and the
-# three model bubbles are drawn as whole-sub-BA unions so the metered load data
-# drops in cleanly AND every pipe sits on a real LRZ/transmission interface
-# (pipe-and-bubble). North/West carries the wind belt (LRZ 1 = MN/Dakotas,
-# LRZ 3+5 = IA/MO); Central/East the lower-Midwest load centers (LRZ 2+7 =
-# WI/MI, LRZ 4 = IL, LRZ 6 = IN/KY); South the RDT-separated Entergy footprint
-# (LRZ 8+9+10). Iowa (LRZ 3) is kept in North to match the fleet's wind-rich-
-# North definition (zone_assignment._MISO_STATE_ZONES), so the load and fleet
-# partitions share identical boundaries. Source: EIA-930 region-sub-ba-data,
-# parent=MISO; crosswalk per docs/multi-iso/miso-data-audit.md Item 2.
+# EIA-930 MISO sub-BA -> model zone. EIA-930 reports MISO sub-BA hourly demand
+# at exactly six LRZ-group partitions, and the six model zones are drawn as
+# exactly those groups — a 1:1 map, the finest partition with fully measured
+# hourly load (docs/multi-iso/miso-zonal-refinement-scope.md §1). The fleet
+# partition (zone_assignment._MISO_STATE_ZONES) shares identical whole-state
+# sub-BA-union boundaries. Source: EIA-930 region-sub-ba-data, parent=MISO;
+# crosswalk per docs/multi-iso/miso-data-audit.md Item 2.
 _MISO_SUBBA_ZONE_GROUPS: dict[str, str] = {
-    "0001": "MISO-North",  # LRZ 1: MN, ND, SD, MT
-    "0035": "MISO-North",  # LRZ 3+5: IA, MO (Iowa wind belt)
-    "0027": "MISO-Central",  # LRZ 2+7: WI, MI
-    "0004": "MISO-Central",  # LRZ 4: IL
-    "0006": "MISO-Central",  # LRZ 6: IN, KY
+    "0001": "MISO-West",  # LRZ 1: MN, ND, SD, MT (wind belt)
+    "0035": "MISO-Plains",  # LRZ 3+5: IA, MO (Iowa wind-export corridor)
+    "0004": "MISO-Illinois",  # LRZ 4: IL (Ameren wheel-through zone)
+    "0006": "MISO-Indiana",  # LRZ 6: IN, KY (load-east anchor)
+    "0027": "MISO-East",  # LRZ 2+7: WI, MI (Michigan import pocket + WUMS)
     "8910": "MISO-South",  # LRZ 8+9+10: AR, LA, MS, E. TX (RDT-separated)
 }
 

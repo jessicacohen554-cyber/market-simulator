@@ -1273,6 +1273,103 @@ class TestReserveCoOptimization(unittest.TestCase):
         self.assertIsNone(coopt_off.reserve_price)
 
 
+class TestSignedInterfaceGroup(unittest.TestCase):
+    """Signed-member interface groups (MISO per-zone CIL/CEL), trivial cases.
+
+    Trivial-first per CLAUDE.md: 2 zones, short horizons. Covers the 5-tuple
+    ``(link_idx, cap, two_way, lower_cap, signs)`` group format — a net
+    corridor cap over an opposing one-way link pair (the RDT shape) — and an
+    hourly cap vector (the seasonal CIL expansion).
+    """
+
+    def _two_zone(self, T: int):
+        """Cheap Z0 / expensive Z1 with an RDT-style opposing one-way pair."""
+        zone_names = ["Z0", "Z1"]
+        fleet = _make_fleet(
+            ["Z0", "Z1"], zone_names, hours=T, pmax=10000.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(T, 10.0), np.full(T, 90.0)])
+        demand = np.array([np.zeros(T), np.full(T, 5000.0)])
+        links = [
+            TransferLink(
+                from_zone="Z0", to_zone="Z1", ttc_mw=6000.0, is_bidirectional=False
+            ),
+            TransferLink(
+                from_zone="Z1", to_zone="Z0", ttc_mw=6000.0, is_bidirectional=False
+            ),
+        ]
+        incidence = build_incidence_matrix(links, zone_names)
+        ttc = get_ttc_array(links)
+        kwargs = dict(
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+        )
+        return fleet, mc, demand, incidence, ttc, kwargs
+
+    def test_signed_net_flow_cap_binds_on_one_way_pair(self):
+        # Net import into Z1 = flow(Z0->Z1) - flow(Z1->Z0), capped at 3000 MW
+        # even though each one-way link's own TTC (6000) is slack.
+        T = 4
+        fleet, mc, demand, incidence, ttc, kwargs = self._two_zone(T)
+        groups = [(np.array([0, 1]), 3000.0, False, None, np.array([1.0, -1.0]))]
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
+            interface_groups=groups,
+            **kwargs,
+        )
+        net_import = res.flows[0] - res.flows[1]
+        np.testing.assert_allclose(net_import, np.full(T, 3000.0), atol=1e-6)
+
+    def test_hourly_cap_vector_tracks_seasonal_envelope(self):
+        # 24-hour horizon with a per-hour cap that steps 2000 -> 4000 at noon
+        # (the seasonal CIL expansion shape): the bound must track hour by hour.
+        T = 24
+        fleet, mc, demand, incidence, ttc, kwargs = self._two_zone(T)
+        cap = np.where(np.arange(T) < 12, 2000.0, 4000.0)
+        groups = [(np.array([0, 1]), cap, False, None, np.array([1.0, -1.0]))]
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
+            interface_groups=groups,
+            **kwargs,
+        )
+        net_import = res.flows[0] - res.flows[1]
+        np.testing.assert_allclose(net_import, cap, atol=1e-6)
+
+    def test_asymmetric_export_floor_with_signs(self):
+        # CEL side: cheap Z1 wants to export back to Z0; the signed group's
+        # lower bound (-CEL = -1500) must floor the net flow while the import
+        # cap stays slack.
+        T = 4
+        fleet, _, _, incidence, ttc, kwargs = self._two_zone(T)
+        mc = np.vstack([np.full(T, 90.0), np.full(T, 10.0)])
+        demand = np.array([np.full(T, 5000.0), np.zeros(T)])
+        groups = [(np.array([0, 1]), 6000.0, False, 1500.0, np.array([1.0, -1.0]))]
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
+            interface_groups=groups,
+            **kwargs,
+        )
+        net_import_z1 = res.flows[0] - res.flows[1]
+        np.testing.assert_allclose(net_import_z1, np.full(T, -1500.0), atol=1e-6)
+
+
 class TestInterfaceGroupLimit(unittest.TestCase):
     """Tests for the aggregate interface-limit rows (CAISO simultaneous import)."""
 

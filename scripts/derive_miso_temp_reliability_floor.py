@@ -10,11 +10,12 @@ spans two OPPOSITE weather regimes within one ISO:
     hot summer afternoons (hot limb, TMAX) for local reliability, and again in
     deep-winter cold snaps (cold limb, TMIN) when the gas-electric constraint
     prices oil/gas-steam into merit.
-  * **MISO-North (MN/ND/SD/IA/MO).** Winter-peaking: the steam/CT fleet runs in
-    the cold-snap morning/evening peaks (cold limb, TMIN), with a weak summer
-    hot limb.
-  * **MISO-Central (IL/IN/MI/WI).** Mixed; the steam fleet carries a modest
-    hot-limb (summer) plus cold-limb (winter) signal.
+  * **MISO-West/MISO-Plains (MN/ND/SD/MT + IA/MO).** Winter-peaking: the
+    steam/CT fleet runs in the cold-snap morning/evening peaks (cold limb,
+    TMIN), with a weak summer hot limb.
+  * **MISO-Illinois/MISO-Indiana/MISO-East (IL + IN/KY + WI/MI).** Mixed; the
+    steam fleet carries a modest hot-limb (summer) plus cold-limb (winter)
+    signal.
 
 So each zone is keyed to its OWN load-weighted daily TMAX/TMIN, and BOTH limbs
 are fit per zone, exactly mirroring the NEISO dual-limb and NYISO per-zone
@@ -55,20 +56,27 @@ import pandas as pd
 from market_sim.config.paths import RAW_DIR
 
 # NOAA GHCN-Daily load-center stations per MISO zone, weighted ~ load share
-# within the zone (major-metro airports). Fargo USW00014914 returns no data so
-# the Dakotas (small load) drop out of MISO-North; MSP carries the deep-winter
-# cold signal.
+# within the zone (major-metro airports; mirrors
+# data/raw/reference/iso_zone_weather_stations.csv). Fargo USW00014914 returns
+# no data so the Dakotas (small load) drop out of MISO-West; MSP carries the
+# deep-winter cold signal.
 MISO_ZONE_STATIONS: dict[str, dict[str, float]] = {
-    "MISO-North": {
-        "USW00014922": 0.45,  # Minneapolis-St Paul (MN) — biggest North load
-        "USW00014933": 0.25,  # Des Moines (IA)
-        "USW00013994": 0.30,  # St Louis Lambert (MO)
+    "MISO-West": {
+        "USW00014922": 1.0,  # Minneapolis-St Paul (MN) — biggest West load
     },
-    "MISO-Central": {
-        "USW00094846": 0.35,  # Chicago O'Hare (IL)
-        "USW00093819": 0.25,  # Indianapolis (IN)
-        "USW00094847": 0.25,  # Detroit Metro (MI)
-        "USW00014839": 0.15,  # Milwaukee (WI)
+    "MISO-Plains": {
+        "USW00014933": 0.5,  # Des Moines (IA)
+        "USW00013994": 0.5,  # St Louis Lambert (MO)
+    },
+    "MISO-Illinois": {
+        "USW00094846": 1.0,  # Chicago O'Hare (IL)
+    },
+    "MISO-Indiana": {
+        "USW00093819": 1.0,  # Indianapolis (IN)
+    },
+    "MISO-East": {
+        "USW00094847": 0.6,  # Detroit Metro (MI)
+        "USW00014839": 0.4,  # Milwaukee (WI)
     },
     "MISO-South": {
         "USW00012916": 0.35,  # New Orleans (LA) — Entergy core
@@ -110,8 +118,11 @@ COLD_HOURS = (6, 7, 8, 9, 17, 18, 19, 20)  # winter morning + evening peaks
 # Per-zone cold-limb zero-crossing (deg C): South hardens later (mild winters,
 # T0=5), North/Central earlier (T0=10) where the deep-cold gas constraint binds.
 COLD_T0_C: dict[str, float] = {
-    "MISO-North": 10.0,
-    "MISO-Central": 10.0,
+    "MISO-West": 10.0,
+    "MISO-Plains": 10.0,
+    "MISO-Illinois": 10.0,
+    "MISO-Indiana": 10.0,
+    "MISO-East": 10.0,
     "MISO-South": 5.0,
 }
 # Classes carrying a weather floor and which limbs they track per zone.

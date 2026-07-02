@@ -455,6 +455,31 @@ def _dispatch_frame(
     return df
 
 
+def _flows_frame(year: int, pass_label: str, result, links) -> "pd.DataFrame | None":
+    """Per-link hourly flow frame for the bundle (``flows.parquet``).
+
+    One row per (link, hour) with the LP's signed flow (positive = from->to).
+    Persisted so interface-binding diagnostics — the MISO zonal-refinement
+    structural gates report binding-hour counts per CIL/CEL zone group and
+    the RDT — can be computed from the bundle without re-solving. Returns
+    ``None`` when the solve carried no flows (single-zone ISO).
+    """
+    flows = getattr(result, "flows", None)
+    if flows is None or links is None or len(links) == 0:
+        return None
+    n_links, hours = flows.shape
+    return pd.DataFrame(
+        {
+            "year": np.full(n_links * hours, year, dtype="int32"),
+            "pass": pass_label,
+            "from_zone": np.repeat([ln.from_zone for ln in links], hours),
+            "to_zone": np.repeat([ln.to_zone for ln in links], hours),
+            "hour": np.tile(np.arange(hours, dtype="int32"), n_links),
+            "mw": flows.reshape(-1),
+        }
+    )
+
+
 def _system_frame(
     year: int,
     pass_label: str,
@@ -1786,6 +1811,7 @@ def solve_and_persist(
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     storage_frames: list[pd.DataFrame] = []
+    flows_frames: list[pd.DataFrame] = []
     storage_as_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
     passes_seen: set[str] = set()
@@ -2003,6 +2029,9 @@ def solve_and_persist(
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
+            flows_frame = _flows_frame(year, label, res, p2_state.get("links"))
+            if flows_frame is not None:
+                flows_frames.append(flows_frame)
             # G5 validation: the modeled-vs-measured battery AS-vs-energy split
             # (ERCOT endogenous storage AS). Off otherwise (no extra frame).
             if ercot_storage_as_endogenous and iso == "ERCOT":
@@ -2059,6 +2088,10 @@ def solve_and_persist(
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
     )
+    if flows_frames:
+        pd.concat(flows_frames, ignore_index=True).to_parquet(
+            run_dir / "flows.parquet", index=False
+        )
     # campd / eia930 / eia923 are deterministic input/benchmark frames shared
     # across an ISO's runs — write them once to the content-addressed shared
     # store and reference them from meta.json instead of duplicating ~6 MB into
