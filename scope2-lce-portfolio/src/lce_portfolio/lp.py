@@ -78,6 +78,10 @@ class PortfolioResult:
     # storage order restricted to split techs. Empty when no split tech is active.
     split_names: list[str] = field(default_factory=list)
     build_energy_mwh: np.ndarray = field(default_factory=lambda: np.zeros(0))
+    # Resource names in storage order s (parallel to the storage_* arrays), so
+    # reporting (ADR 0014 §2.7 SOC trace) can label each row without the
+    # ResourceArrays object.
+    storage_names: list[str] = field(default_factory=list)
 
 
 class _Layout:
@@ -577,6 +581,7 @@ def build_and_solve(
         resource_co2_tons=resource_co2_tons,
         split_names=[resources.names[r] for r in split_res_idx],
         build_energy_mwh=build_energy,
+        storage_names=[resources.names[r] for r in storage_idx],
     )
 
 
