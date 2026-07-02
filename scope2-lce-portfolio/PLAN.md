@@ -121,5 +121,10 @@ extensions like split-storage, hydro budget, additionality, cross-feature interp
 - [x] Execute prompt packs in order, updating this table's Status column. ✓ PP-00 through PP-07 complete; PS-09 backlog (gas-CC+CCS).
 - [ ] Export a forecast-year BAU LMP file from the market sim (ADR 0011 contract) and
   build `data/profiles/` for all six ISOs, then run the first real per-ISO sweep.
+  **ON HOLD (stakeholder, 2026-07-02): do NOT run market-sim forecasts for this —
+  the forecast side is not production-ready yet. Until it is, the tool runs on the
+  exporter's `--dummy` synthetic LMP (always labeled SYNTHETIC in outputs/sidecar);
+  a calibrated backcast-year export is the approved interim validation path if
+  needed (ADR 0011 permits backcast for validation studies only).**
 - [ ] Ratify the provisional ADRs (0005, 0009 values, 0007 carbon part, 0010) against
   the first real runs; source per-ISO marginal CO₂ rates.
