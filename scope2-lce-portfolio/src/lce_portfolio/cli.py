@@ -9,16 +9,25 @@ Usage::
     # lmp_file fields), batching every ISO in the load file:
     python -m lce_portfolio --config run.json --all-isos --out-dir data/outputs
 
+    # persist a run into the committed results store (ADR 0014 §5):
+    python -m lce_portfolio --config run.json --results --run-id my_run
+
 Reads a load-intake file and an LMP file, runs the premium sweep (Mode A by
-default), writes Parquet outputs + run metadata, and prints a summary. Fully
-standalone — no ``market_sim`` import. Validation errors (bad schema, missing
-hours, unknown ISO) are reported as a single clean message, not a traceback.
+default), writes Parquet outputs + run metadata, and prints a summary. Every
+run also emits the ADR 0014 report (``report.json`` + ``report.html``; opt
+out with ``--no-report``, size-tune with ``--report-hourly``); ``--results``
+persists the whole run under ``results/<run-id>/`` instead of the gitignored
+``--out-dir`` default. Fully standalone — no ``market_sim`` import.
+Validation errors (bad schema, missing hours, unknown ISO) are reported as a
+single clean message, not a traceback.
 """
 
 from __future__ import annotations
 
 import argparse
+import shutil
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from lce_portfolio.config import PortfolioConfig
@@ -28,10 +37,23 @@ from lce_portfolio.intake import (
     prepare_lmp,
     prepare_load,
 )
-from lce_portfolio.outputs import summarize, write_outputs
+from lce_portfolio.outputs import summarize, write_outputs, write_report
 from lce_portfolio.profiles import build_cf_matrix
 from lce_portfolio.resources import load_resource_arrays
 from lce_portfolio.sweep import run_sweep
+
+#: Root of the committed per-run results store (ADR 0014 §5), relative to the
+#: working directory (the tool is run from ``scope2-lce-portfolio/``).
+#: ``data/outputs/`` stays the gitignored ad-hoc default.
+RESULTS_ROOT = Path("results")
+
+
+def compose_run_id(isos: list[str], mode: str, now: datetime | None = None) -> str:
+    """Compose the default run id ``<iso|multi>_<mode>_<YYYYMMDD-HHMMSS>``
+    (ADR 0014 §5); multi-ISO batches use the literal ``multi``."""
+    stamp = (now or datetime.now()).strftime("%Y%m%d-%H%M%S")
+    iso_part = isos[0] if len(isos) == 1 else "multi"
+    return f"{iso_part}_{mode}_{stamp}"
 
 
 def build_config(args: argparse.Namespace) -> PortfolioConfig:
@@ -60,13 +82,25 @@ def run_one_iso(
     lmp_path: str | Path,
     out_dir: str | Path,
     emissions_path: str | Path | None = None,
-) -> None:
+    *,
+    report: bool = True,
+    run_id: str | None = None,
+    report_hourly: str = "selected",
+):
     """Run the full pipeline for a single ISO (``config.iso``) and write outputs.
 
     ``emissions_path`` is the optional hourly fossil-average CO2-rate file
     (ADR 0013, ``(hour, iso, fossil_avg_co2_rate)``); when absent,
     residual-carbon reporting is off (``residual_co2_tons == 0``), mirroring
     the pre-carbon SAMPLE behavior.
+
+    ``report``/``run_id``/``report_hourly`` thread through to
+    :func:`~lce_portfolio.outputs.write_outputs` (ADR 0014 §6): by default a
+    single-ISO call also emits ``report.json`` + ``report.html``; the CLI's
+    batch path passes ``report=False`` here and writes one combined report for
+    the whole run instead. Returns the solved
+    :class:`~lce_portfolio.sweep.SweepResult` so callers can assemble that
+    batch report.
     """
     resources = load_resource_arrays(config)
     load = prepare_load(load_path, config.iso, config)
@@ -90,9 +124,17 @@ def run_one_iso(
     )
 
     sweep = run_sweep(config, resources, load, lmp, cf, emission_rate=emission_rate)
-    paths = write_outputs(sweep, out_dir, config=config)
+    paths = write_outputs(
+        sweep,
+        out_dir,
+        config=config,
+        report=report,
+        run_id=run_id,
+        report_hourly=report_hourly,
+    )
     print(summarize(sweep))
     print("wrote: " + "  ".join(str(v) for v in paths.values()) + "\n")
+    return sweep
 
 
 def _isos_in_load(load_path: str | Path) -> list[str]:
@@ -140,6 +182,30 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--load-growth-rate", type=float, default=0.0)
     p.add_argument("--load-growth-years", type=int, default=0)
     p.add_argument("--out-dir", default="data/outputs")
+    p.add_argument(
+        "--no-report",
+        action="store_true",
+        help="suppress report.json + report.html (emitted by default, ADR 0014 §6)",
+    )
+    p.add_argument(
+        "--run-id",
+        default=None,
+        help="run id for the report/results folder; default composes "
+        "<iso|multi>_<mode>_<YYYYMMDD-HHMMSS> (ADR 0014 §5)",
+    )
+    p.add_argument(
+        "--results",
+        action="store_true",
+        help="persist into the committed results/<run-id>/ store instead of "
+        "--out-dir; re-using a run id overwrites its directory (ADR 0014 §5)",
+    )
+    p.add_argument(
+        "--report-hourly",
+        choices=["selected", "all"],
+        default="selected",
+        help="which setpoints get §2.7 hourly series in the report payload "
+        "(ADR 0014 §3 size discipline)",
+    )
     args = p.parse_args(argv)
 
     if not args.all_isos and not (args.iso or args.config):
@@ -158,14 +224,42 @@ def main(argv: list[str] | None = None) -> int:
             p.error("specify --lmp or set lmp_file in --config")
 
         isos = _isos_in_load(load_path) if args.all_isos else [args.iso or base.iso]
+
+        # Resolve the run directory + id (ADR 0014 §5): --results composes
+        # results/<run-id>/ (committed store; re-using an id overwrites its
+        # directory), while --out-dir stays the gitignored ad-hoc default.
+        run_id = args.run_id or compose_run_id(isos, base.mode)
+        if args.results:
+            out_dir = RESULTS_ROOT / run_id
+            if out_dir.exists():
+                shutil.rmtree(out_dir)
+        else:
+            out_dir = Path(args.out_dir)
+
+        # Per-ISO Parquet + metadata are written inside the loop; the report
+        # is one per run (single or batch — §2.6), written after it.
+        sweeps, configs = [], []
         for iso in isos:
-            run_one_iso(
-                base.with_overrides(iso=iso),
+            config = base.with_overrides(iso=iso)
+            sweep = run_one_iso(
+                config,
                 load_path,
                 lmp_path,
-                args.out_dir,
+                out_dir,
                 emissions_path=emissions_path,
+                report=False,
             )
+            sweeps.append(sweep)
+            configs.append(config)
+        if not args.no_report:
+            paths = write_report(
+                sweeps,
+                configs,
+                out_dir,
+                run_id=run_id,
+                report_hourly=args.report_hourly,
+            )
+            print("report: " + "  ".join(str(v) for v in paths.values()))
     except (ValueError, KeyError, FileNotFoundError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
