@@ -134,6 +134,8 @@ def load_intake(path: str | Path) -> pd.DataFrame:
     missing = required - set(df.columns)
     if missing:
         raise ValueError(f"intake file missing columns: {sorted(missing)}")
+    if df.empty:
+        raise ValueError(f"load intake: {path} has no data rows (header only?)")
     _validate_hour_range(df)
     _require_finite(df, "load_mwh", context="load intake")
     if (df["load_mwh"] < 0).any():
@@ -221,6 +223,8 @@ def lmp_intake(path: str | Path) -> pd.DataFrame:
     missing = required - set(df.columns)
     if missing:
         raise ValueError(f"LMP file missing columns: {sorted(missing)}")
+    if df.empty:
+        raise ValueError(f"LMP intake: {path} has no data rows (header only?)")
     _validate_hour_range(df)
     # Negative LMPs are legitimate market outcomes; only NaN/inf are errors.
     _require_finite(df, "lmp", context="LMP intake")
@@ -264,6 +268,10 @@ def emissions_intake(path: str | Path) -> pd.DataFrame:
     missing = required - set(df.columns)
     if missing:
         raise ValueError(f"emission-rate file missing columns: {sorted(missing)}")
+    if df.empty:
+        raise ValueError(
+            f"emission-rate intake: {path} has no data rows (header only?)"
+        )
     _validate_hour_range(df)
     # NaN < 0 is False, so the sign check alone would let NaN rates through
     # (audit finding IO-2) — require finiteness first.

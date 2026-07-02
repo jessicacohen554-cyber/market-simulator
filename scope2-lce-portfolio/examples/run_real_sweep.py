@@ -75,8 +75,12 @@ def resolve_lmp_path(
 
     Order: explicit ``--lmp`` path (any filename) > newest real (i.e. not
     ``*_dummy.csv``) ``bau_lmp_*.csv`` under ``inputs_dir`` > newest existing
-    ``bau_lmp_*_dummy.csv`` under ``inputs_dir`` > nothing found (``path`` is
-    ``None``; the caller generates a dummy file).
+    dummy that covers ``iso`` (``bau_lmp_{iso}_*_dummy.csv``, or a legacy
+    un-keyed ``bau_lmp_*_dummy.csv`` whose ``iso`` column contains it) >
+    nothing found (``path`` is ``None``; the caller generates a dummy file).
+    Dummy files are ISO-keyed (audit finding CL-12): the documented
+    run-ERCOT-then-PJM workflow used to reuse ERCOT's un-keyed dummy for PJM
+    and crash in intake.
 
     Returns ``(path, info)``. ``info`` always carries ``source`` (one of
     ``explicit`` / ``real`` / ``dummy_existing`` / ``none``) and
@@ -98,7 +102,9 @@ def resolve_lmp_path(
         newest = max(real, key=lambda p: p.stat().st_mtime)
         return newest, {"source": "real", "is_synthetic": False, "path": str(newest)}
 
-    dummy = [p for p in candidates if p.stem.endswith("_dummy")]
+    dummy = [
+        p for p in candidates if p.stem.endswith("_dummy") and _dummy_covers_iso(p, iso)
+    ]
     if dummy:
         newest = max(dummy, key=lambda p: p.stat().st_mtime)
         return newest, {
@@ -110,6 +116,24 @@ def resolve_lmp_path(
     return None, {"source": "none", "is_synthetic": True, "path": None}
 
 
+def _dummy_covers_iso(path: Path, iso: str) -> bool:
+    """True if a dummy LMP file is keyed to (or actually contains) ``iso``.
+
+    ISO-keyed filenames (``bau_lmp_{iso}_...``) are matched by name; legacy
+    un-keyed files are peeked (header + iso column) so another ISO's dummy is
+    never silently reused (audit finding CL-12).
+    """
+    if f"_{iso}_".lower() in path.stem.lower():
+        return True
+    try:
+        import pandas as pd
+
+        isos = pd.read_csv(path, usecols=["iso"])["iso"].unique()
+        return iso in set(isos)
+    except Exception:
+        return False
+
+
 def generate_dummy_lmp(iso: str, year: int, out_dir: Path) -> Path:
     """Invoke the market-sim exporter's ``--dummy`` stub for one ISO.
 
@@ -118,7 +142,7 @@ def generate_dummy_lmp(iso: str, year: int, out_dir: Path) -> Path:
     CSV path.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"bau_lmp_{year}_dummy.csv"
+    out_path = out_dir / f"bau_lmp_{iso}_{year}_dummy.csv"
     cmd = [
         sys.executable,
         str(EXPORTER),
@@ -171,6 +195,18 @@ def main(argv: list[str] | None = None) -> int:
 
     iso = args.iso.upper()
     inputs_dir = Path(args.inputs_dir)
+    try:
+        return _run(args, iso, inputs_dir)
+    except (ValueError, KeyError, OSError, subprocess.CalledProcessError) as exc:
+        # Same clean-error contract as lce_portfolio.cli (audit CL-12): a bad
+        # ISO/LMP pairing is a one-line message, not a traceback.
+        msg = exc.args[0] if isinstance(exc, KeyError) and exc.args else exc
+        print(f"error: {msg}", file=sys.stderr)
+        return 1
+
+
+def _run(args: argparse.Namespace, iso: str, inputs_dir: Path) -> int:
+    """Resolve inputs and run the sweep (split from main for clean errors)."""
     load_path = ensure_reference_load(Path(args.load))
 
     lmp_path, lmp_info = resolve_lmp_path(iso, args.lmp, inputs_dir, args.year)
