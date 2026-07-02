@@ -17,10 +17,16 @@ from conftest import cross_feature_system
 
 
 def _matching_identity(resources, load, r, additionality_only: bool) -> float:
-    """Recompute matching_pct straight from ADR 0007/0008's definition."""
+    """Recompute matching_pct straight from ADR 0007/0008's definition.
+
+    Under additionality (ADR 0008 as amended per audit LP-1), existing
+    generation counts as unmatched only NET of the excess attributable to it
+    (existing-first): exported existing energy is surplus, excluded entirely.
+    """
     unmatched = float(r.grid_buy.sum())
     if additionality_only:
-        unmatched += float(r.gen[resources.is_existing].sum())
+        existing_gen_t = r.gen[resources.is_existing].sum(axis=0)
+        unmatched += float(np.clip(existing_gen_t - r.excess, 0.0, None).sum())
     return 1.0 - unmatched / float(load.sum())
 
 
