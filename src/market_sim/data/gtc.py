@@ -11,14 +11,14 @@ its static rating.
 Hourly cap construction (per GTC, all quantities measured):
 
 * an hour where the constraint was in SCED's active set takes the
-  **time-average of its per-interval caps** — the hour's transfer energy
-  cannot exceed the mean of the 5-minute limits — with the intervals where
-  SCED was *not* enforcing the constraint standing in at the constraint's
-  measured **envelope** (its year-max mean limit; the real limit those
-  intervals was at least the flow, and the envelope is the largest limit
-  ERCOT itself published that year);
-* an hour with no row (SCED never enforced the constraint) rides the
-  envelope.
+  **time-average of its per-interval limits** — the hour's transfer energy
+  cannot exceed the mean of the 5-minute limits SCED enforced;
+* an hour with no row (SCED never enforced the constraint) reverts to the
+  link's **static derived limit-at-bind** (the calibrated ``ttc_mw``), NOT a
+  year-max envelope — the GTC still physically exists those hours, and its
+  flows are simply below the (roughly static) limit, so filling with the
+  static rating neither relaxes nor tightens the ~85% of hours SCED does not
+  report the constraint.
 
 This reconstruction is formulaic over the published series — nothing is
 scaled to the reported curtailment totals (the validation target). Callers
@@ -36,7 +36,6 @@ import pandas as pd
 
 from market_sim.config.constants import (
     ERCOT_GTC_LINK_MAP,
-    ERCOT_SCED_INTERVALS_PER_HOUR,
 )
 
 logger = logging.getLogger(__name__)
@@ -67,22 +66,24 @@ def load_gtc_hourly(iso: str, year: int) -> pd.DataFrame | None:
         return None
 
 
-def _gtc_cap_series(sub: pd.DataFrame, hours: int) -> np.ndarray:
-    """Return one GTC's ``(hours,)`` cap series from its sparse hourly rows.
+def _gtc_measured_series(sub: pd.DataFrame, hours: int) -> np.ndarray:
+    """Return a GTC's ``(hours,)`` measured hourly limit, NaN where unobserved.
 
-    ``cap[h] = (limit_mean*n + envelope*(cadence-n)) / cadence`` for hours
-    with ``n = min(n_active, cadence)`` active intervals, ``envelope``
-    elsewhere. Vectorized — no loop over hours.
+    ``cap[h]`` is the mean enforced limit over hour ``h``'s active SCED
+    intervals; hours where the constraint was never in SCED's active set are
+    ``NaN`` so the caller can fill them with the static derived rating rather
+    than an inflated year-max envelope. Vectorized — no loop over hours.
+
+    Using the measured mean only where SCED actually reported the constraint
+    keeps this a pure "real data where we have it" input (rule #12): the
+    reduced network's export cap follows the published hourly stability limit
+    on the hours it was enforced, and reverts to the calibrated static
+    limit-at-bind otherwise.
     """
-    cadence = float(ERCOT_SCED_INTERVALS_PER_HOUR)
-    envelope = float(sub["limit_mean_mw"].max())
-    cap = np.full(hours, envelope, dtype=float)
+    cap = np.full(hours, np.nan, dtype=float)
     idx = sub["hour"].to_numpy(dtype=int)
     keep = idx < hours
-    idx = idx[keep]
-    n = np.minimum(sub["n_active"].to_numpy(dtype=float)[keep], cadence)
-    mean = sub["limit_mean_mw"].to_numpy(dtype=float)[keep]
-    cap[idx] = (mean * n + envelope * (cadence - n)) / cadence
+    cap[idx[keep]] = sub["limit_mean_mw"].to_numpy(dtype=float)[keep]
     return cap
 
 
@@ -126,7 +127,8 @@ def ercot_gtc_ttc_hourly(
     assigned: set[int] = set()
     for name in sorted(mapped):
         sub = frame[frame["gtc"] == name]
-        cap = _gtc_cap_series(sub, hours)
+        measured = _gtc_measured_series(sub, hours)
+        active = ~np.isnan(measured)
         for zones, share in ERCOT_GTC_LINK_MAP[name]:
             i = link_idx.get(zones)
             if i is None:
@@ -137,27 +139,29 @@ def ercot_gtc_ttc_hourly(
                     zones[1],
                 )
                 continue
-            # The measured series REPLACES the static rating on its link —
-            # the static ttc_mw is a binding-hour mean of the same GTC, so
-            # min-combining against it would clip the measured envelope back
-            # to an estimate (rule #15). Two GTCs mapping onto one link (not
-            # the case today) combine conservatively via the minimum.
+            # Measured hourly limit where SCED reported the constraint; the
+            # static derived limit-at-bind (ttc[i]) on unobserved hours — never
+            # a year-max envelope, which would relax the network below its
+            # calibrated rating for the ~85% of hours the GTC is not in SCED's
+            # active set. Two GTCs mapping onto one link (not the case today)
+            # combine conservatively via the elementwise minimum.
+            link_cap = np.where(active, measured * share, ttc[i])
             if i in assigned:
-                ttc_hourly[:, i] = np.minimum(ttc_hourly[:, i], cap * share)
+                ttc_hourly[:, i] = np.minimum(ttc_hourly[:, i], link_cap)
             else:
-                ttc_hourly[:, i] = cap * share
+                ttc_hourly[:, i] = link_cap
                 assigned.add(i)
             logger.info(
-                "gtc-limits %d: %s -> %s->%s x %.3f (export cap %0.0f-%0.0f "
-                "MW over %d active hours; static %0.0f)",
+                "gtc-limits %d: %s -> %s->%s x %.3f (measured export cap "
+                "%0.0f-%0.0f MW over %d active hours; static fill %0.0f)",
                 year,
                 name,
                 zones[0],
                 zones[1],
                 share,
-                (cap * share).min(),
-                (cap * share).max(),
-                int(sub["hour"].nunique()),
+                float(np.nanmin(measured) * share),
+                float(np.nanmax(measured) * share),
+                int(active.sum()),
                 ttc[i],
             )
     if not mapped:
