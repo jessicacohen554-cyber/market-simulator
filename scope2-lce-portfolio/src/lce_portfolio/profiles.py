@@ -40,6 +40,12 @@ DEFAULT_PROFILES_DIR = _PKG_ROOT / "data" / "profiles"
 # ISO attempts the real-data path and falls back to synthetic with a warning.
 SAMPLE_ISO = "SAMPLE"
 
+# Variable renewables whose hourly shape IS the modeling content: a flat
+# fallback for one of these (e.g. flat wind at its annual CF) grossly
+# overstates achievable hourly matching, so their absence from a real profile
+# file is a hard error, never a silent flat row (audit finding DL-7).
+VARIABLE_SHAPE_RESOURCES = ("solar_pv", "onshore_wind", "offshore_wind")
+
 # Deterministic synthetic shapes: no Date.now / RNG seeding surprises, so runs
 # and tests are reproducible. Keyed by resource name; anything not listed and
 # non-storage falls back to a flat profile at its assumed capacity factor.
@@ -123,15 +129,62 @@ def _load_real_profiles(path: Path) -> dict[str, np.ndarray]:
 
     df = pd.read_parquet(path)
     out: dict[str, np.ndarray] = {}
+    expected_hours = np.arange(HOURS_PER_YEAR)
     for name, grp in df.groupby("resource"):
-        series = grp.sort_values("hour")["cf"].to_numpy(dtype=float)
-        if series.shape[0] != HOURS_PER_YEAR:
+        grp = grp.sort_values("hour")
+        hours = grp["hour"].to_numpy(dtype=float)
+        # Exact-calendar check (audit finding DL-7): a duplicated hour plus a
+        # dropped one still totals 8760 rows, so a bare row count is not
+        # enough — the hour index must be exactly 0..8759, each once.
+        if hours.shape[0] != HOURS_PER_YEAR or not np.array_equal(
+            hours, expected_hours
+        ):
             raise ValueError(
-                f"profile {path.name}: resource {name!r} has {series.shape[0]} "
-                f"hours, expected {HOURS_PER_YEAR}"
+                f"profile {path.name}: resource {name!r} must carry exactly "
+                f"hours 0..{HOURS_PER_YEAR - 1}, each once "
+                f"({hours.shape[0]} rows found)"
+            )
+        series = grp["cf"].to_numpy(dtype=float)
+        if not np.isfinite(series).all():
+            # np.clip keeps NaN, which would flow into the LP gen bounds.
+            n_bad = int((~np.isfinite(series)).sum())
+            raise ValueError(
+                f"profile {path.name}: resource {name!r} has {n_bad} "
+                "non-finite cf value(s) (NaN/inf)"
             )
         out[str(name)] = np.clip(series, 0.0, 1.0)
     return out
+
+
+def profile_source(iso: str, year: int, profiles_dir: Path | None = None) -> dict:
+    """Describe which shape source :func:`build_cf_matrix` will use.
+
+    Returns ``{"source": "real"|"synthetic", "path": str|None,
+    "shape_year": int, "reason": str}`` for the run-metadata sidecar (audit
+    finding DL-8: a metadata consumer previously could not tell real from
+    synthetic shapes). Pure lookup — no file is read.
+    """
+    if iso == SAMPLE_ISO:
+        return {
+            "source": "synthetic",
+            "path": None,
+            "shape_year": year,
+            "reason": "SAMPLE iso always uses synthetic shapes",
+        }
+    path = profile_path(iso, year, profiles_dir)
+    if path.exists():
+        return {
+            "source": "real",
+            "path": str(path),
+            "shape_year": year,
+            "reason": "per-ISO profile file present",
+        }
+    return {
+        "source": "synthetic",
+        "path": None,
+        "shape_year": year,
+        "reason": f"no profile file at {path} (warn-and-fallback)",
+    }
 
 
 def build_cf_matrix(
@@ -192,6 +245,13 @@ def build_cf_matrix(
             continue  # storage: zero CF row
         if name in real:
             cf[r] = real[name]
+        elif name in VARIABLE_SHAPE_RESOURCES:
+            raise ValueError(
+                f"profile {path.name}: variable renewable {name!r} is absent "
+                "from the real profile file — a flat fallback would grossly "
+                "overstate hourly matching (audit DL-7); rebuild the file "
+                "with scripts/build_profiles.py or deactivate the resource"
+            )
         else:
             # Firm clean (nuclear, geothermal, hydro) carries no measured wind/
             # solar shape -> flat at its assumed capacity factor, matching the
