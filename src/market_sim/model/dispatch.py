@@ -1687,6 +1687,7 @@ def build_variable_bounds(
     ordc_step_widths: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     reserve_pergen_ramp10: np.ndarray | None = None,
+    ttc_import: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -1718,6 +1719,12 @@ def build_variable_bounds(
             ``(n_storage, T)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``
             (static) or ``(T, n_links)`` (per-hour seasonal limit).
+        ttc_import: Optional reverse-direction (to->from) capability, same
+            accepted shapes as ``ttc``. When given, the flow lower bound is
+            ``-ttc_import`` instead of ``-ttc`` — used when an export-side
+            stability limit (an ERCOT GTC) caps the forward direction while
+            the import direction keeps its thermal rating. ``None`` keeps
+            the symmetric ``-ttc`` bound (byte-identical prior behaviour).
 
     Returns:
         Tuple ``(col_lower, col_upper)`` of length ``layout.total_columns``.
@@ -1772,7 +1779,16 @@ def build_variable_bounds(
         ttc_arr = np.asarray(ttc, dtype=float)
         if ttc_arr.ndim == 1:
             ttc_arr = ttc_arr[np.newaxis, :]
-        lower_arr = -ttc_arr
+        if ttc_import is not None:
+            # Asymmetric interface: the import (to->from) direction keeps its
+            # own rating rather than mirroring the export cap (ERCOT measured
+            # GTC overlay — a stability limit on exports only).
+            imp_arr = np.asarray(ttc_import, dtype=float)
+            if imp_arr.ndim == 1:
+                imp_arr = imp_arr[np.newaxis, :]
+            lower_arr = -imp_arr
+        else:
+            lower_arr = -ttc_arr
         if link_bidirectional is not None:
             # One-way links carry power only from->to: floor their flow at 0
             # (so a pair of opposite one-way links gives an asymmetric rating).
@@ -1967,6 +1983,7 @@ class DispatchModel:
         voll: float = 5000,
         incidence: "np.ndarray | sp.spmatrix | None" = None,
         ttc: np.ndarray | None = None,
+        ttc_import: np.ndarray | None = None,
         storage_power_cap: np.ndarray | None = None,
         storage_energy_cap: np.ndarray | None = None,
         storage_zone_idx: np.ndarray | None = None,
@@ -2152,6 +2169,7 @@ class DispatchModel:
             ordc_step_widths=ordc_step_widths,
             link_bidirectional=link_bidirectional,
             reserve_pergen_ramp10=reserve_pergen_ramp10,
+            ttc_import=ttc_import,
         )
 
         _mem_debug = os.environ.get("MARKET_SIM_MEM_DEBUG") == "1"
@@ -2655,6 +2673,7 @@ def solve_dispatch(
     voll: float = 5000,  # default matches ScenarioConfig.voll for ERCOT
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
+    ttc_import: np.ndarray | None = None,
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
     storage_zone_idx: np.ndarray | None = None,
@@ -2723,6 +2742,10 @@ def solve_dispatch(
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``
             (static) or ``(T, n_links)`` (per-hour seasonal limit).
+        ttc_import: Optional reverse-direction (to->from) capability, same
+            accepted shapes; when given, flow lower bounds are
+            ``-ttc_import`` (asymmetric interface — ERCOT measured GTC
+            export caps). ``None`` keeps the symmetric ``-ttc``.
         storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``
             or hour-varying ``(n_storage, T)`` (COD intra-year ramp; see
             ``storage.storage_cap_profiles``).
@@ -2772,6 +2795,7 @@ def solve_dispatch(
         voll=voll,
         incidence=incidence,
         ttc=ttc,
+        ttc_import=ttc_import,
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage_zone_idx,
