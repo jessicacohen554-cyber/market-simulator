@@ -326,6 +326,16 @@ def _fmt_num(v: float, digits: int = 0) -> str:
     return f"{v:,.{digits}f}"
 
 
+def _pct(v, digits: int = 2) -> str:
+    """Format a fraction as a percent, tolerating null (audit finding IO-8).
+
+    ``_sanitize`` maps NaN/inf to None in the payload; a hand-fed or older
+    ``report.json`` may therefore carry a null ``matching_pct``, which must
+    degrade to an em dash — not crash the whole render with a TypeError.
+    """
+    return "\u2014" if v is None else f"{v * 100:.{digits}f}%"
+
+
 def _fmt_money(v: float) -> str:
     """Compact SI dollars ($176.3M, $100M) for axis ticks and cost labels."""
     a = abs(v)
@@ -475,7 +485,7 @@ def _frontier_title(row: dict) -> str:
     shadow = row["shadow_price"]
     return (
         f"setpoint {_setpoint_key(row['setpoint'])} [{row['status']}]\n"
-        f"matching: {row['matching_pct'] * 100:.2f}%\n"
+        f"matching: {_pct(row['matching_pct'])}\n"
         f"premium: ${row['premium_per_mwh']:.2f}/MWh\n"
         f"premium/yr: {_fmt_money(row['premium_per_year'])}\n"
         f"over BAU: {row['pct_over_bau'] * 100:.2f}%\n"
@@ -497,9 +507,11 @@ def _sec_frontier(payload: dict) -> str:
     W, H, L, R, T, B = 680, 320, 64, 20, 16, 44
 
     def xy(row):
+        # None (sanitized NaN) plots at 0; the hover/table show an em dash.
+        pct = (row["matching_pct"] or 0.0) * 100
         if mode == "premium_cap":
-            return row["premium_per_mwh"], row["matching_pct"] * 100
-        return row["matching_pct"] * 100, row["premium_per_mwh"]
+            return row["premium_per_mwh"] or 0.0, pct
+        return pct, row["premium_per_mwh"] or 0.0
 
     pts = [xy(r) for r in rows]
     xvals = [p[0] for p in pts] or [0.0]
@@ -565,7 +577,7 @@ def _frontier_table_view(rows: list[dict]) -> str:
     """Collapsible table twin of the frontier chart (accessibility fallback)."""
     body = "".join(
         f"<tr><td>{_esc(r['iso'])}</td><td>{_esc(_setpoint_key(r['setpoint']))}</td>"
-        f"<td>{r['matching_pct'] * 100:.2f}%</td>"
+        f"<td>{_pct(r['matching_pct'])}</td>"
         f"<td>{r['premium_per_mwh']:.2f}</td>"
         f"<td>{_fmt_money(r['premium_per_year'])}</td>"
         f"<td>{r['pct_over_bau'] * 100:.2f}%</td>"
@@ -913,14 +925,14 @@ def _sec_residual(payload: dict) -> str:
                 f"residual: {_fmt_num(r['residual_co2_tons'])} tCO2/yr\n"
                 f"grid: {_fmt_num(r['grid_co2_tons'])} t / resource: "
                 f"{_fmt_num(r['resource_co2_tons'])} t\n"
-                f"matching: {r['matching_pct'] * 100:.2f}%"
+                f"matching: {_pct(r['matching_pct'])}"
             )
             parts.append(
                 f'<rect x="{x0:.1f}" y="{y_top:.1f}" width="{bar_w:.1f}" '
                 f'height="{max(ys(0) - y_top, 0.5):.1f}" rx="2" '
                 f'fill="{_iso_color(iso, i)}"><title>{_esc(title)}</title></rect>'
                 f'<text x="{cx:.1f}" y="{y_top - 6:.1f}" text-anchor="middle" '
-                f'class="pt-label">{r["matching_pct"] * 100:.1f}%</text>'
+                f'class="pt-label">{_pct(r["matching_pct"], 1)}</text>'
                 f'<text x="{cx:.1f}" y="{H - B + 20:.1f}" text-anchor="middle" '
                 f'class="tick">{_esc(_setpoint_key(r["setpoint"]))}</text>'
             )
@@ -966,7 +978,7 @@ def _sec_multi_iso(payload: dict) -> str:
             else:
                 flag = "" if _is_optimal(r["status"]) else " ⚠"
                 tds.append(
-                    f"<td>{r['matching_pct'] * 100:.2f}%{flag}</td>"
+                    f"<td>{_pct(r['matching_pct'])}{flag}</td>"
                     f"<td>{r['premium_per_mwh']:.2f}</td>"
                 )
         body.append(f"<tr>{''.join(tds)}</tr>")

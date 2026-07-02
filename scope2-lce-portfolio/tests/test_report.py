@@ -361,3 +361,28 @@ def test_render_report_script_refuses_unknown_version(tmp_path) -> None:
     assert proc.returncode == 1
     assert "payload_version" in proc.stderr
     assert not (work / "report.html").exists()
+
+
+def test_render_tolerates_null_matching_pct() -> None:
+    """A null matching_pct in a hand-fed payload degrades, not crashes (IO-8).
+
+    Regression: _sanitize maps NaN to None, and every frontier/table/chart
+    renderer did bare `matching_pct * 100`, so scripts/render_report.py
+    crashed with a TypeError on such a payload while the provenance section
+    handled it. Not reachable from a normal solve (lp.py writes 0.0 on
+    failure) but reachable through the §6 re-render path.
+    """
+    import copy
+    import json as _json
+    from pathlib import Path
+
+    sample = Path(__file__).resolve().parents[1] / (
+        "results/SAMPLE_premium_cap_20260702-171842/report.json"
+    )
+    payload = _json.loads(sample.read_text())
+    broken = copy.deepcopy(payload)
+    broken["frontier"][0]["matching_pct"] = None
+
+    html = render_report(broken)
+    assert "<!doctype html>" in html
+    assert "—" in html  # the null renders as an em dash somewhere

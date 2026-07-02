@@ -55,3 +55,17 @@ forces a matching-credit rule the binary clean/not-clean framing didn't have.
 - Residual-CO₂ reporting extends to resource emissions (outputs + lp result).
 - Deferred: hour-varying gas prices; upstream methane in the intensity number;
   45Q vintage/duration limits (flat credit for now, noted in citations).
+
+## Amendment note (2026-07-02, audit finding DL-12)
+
+The 45Q credit is netted into variable cost with a **floor at $0/MWh net
+VOM** (`resources.py`): at delivered gas below ~$2.26/MMBtu the credit would
+exceed fuel + VOM, and a negative net variable cost would pay the LP to
+generate into the excess path to farm the credit — the real credit is
+bounded by actually-stored tonnage, and modeling sub-zero variable cost is
+out of scope. Consequences: below that breakeven the resource's dispatch
+cost is flat at $0 (gas-price sensitivity is deliberately erased in a region
+none of the shipped delivered prices enter), degenerate with true-zero-VOM
+resources up to the solver's tiebreaks. This documents the clamp already
+implemented at load time; audit verification confirmed it never binds with
+the shipped gas-price table.

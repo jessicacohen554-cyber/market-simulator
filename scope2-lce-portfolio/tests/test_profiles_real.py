@@ -173,3 +173,109 @@ def test_derive_offshore_wind_profile_properties() -> None:
     # Smoothing reduces variability: normalize both to the same mean and compare.
     onshore_norm = onshore * (0.45 / onshore.mean())
     assert off.std() < onshore_norm.std()
+
+
+# --- profile-file validation & provenance (audit DL-7 / DL-8) ----------------
+
+
+def _write_profile(tmp_path, resources_hours_cf) -> Path:
+    """Write a minimal long-form profile parquet and return its directory."""
+    import pandas as pd
+
+    rows = []
+    for resource, hours, cfs in resources_hours_cf:
+        rows.extend(
+            {"hour": h, "resource": resource, "cf": c} for h, c in zip(hours, cfs)
+        )
+    (tmp_path / "profiles").mkdir(exist_ok=True)
+    pd.DataFrame(rows).to_parquet(tmp_path / "profiles" / "TESTISO_2024.parquet")
+    return tmp_path / "profiles"
+
+
+def test_profile_nan_cf_rejected(tmp_path) -> None:
+    """NaN CF values must not pass np.clip into the LP gen bounds (DL-7)."""
+    hours = np.arange(HOURS_PER_YEAR)
+    cfs = np.full(HOURS_PER_YEAR, 0.3)
+    cfs[10] = np.nan
+    pdir = _write_profile(tmp_path, [("solar_pv", hours, cfs)])
+    res = _resources_with_storage()
+    with pytest.raises(ValueError, match="non-finite cf"):
+        build_cf_matrix(res, "TESTISO", 2024, profiles_dir=pdir)
+
+
+def test_profile_duplicated_plus_missing_hour_rejected(tmp_path) -> None:
+    """A dup+dropped hour pair still totals 8760 rows — must be caught (DL-7)."""
+    hours = np.arange(HOURS_PER_YEAR)
+    hours[5000] = 0  # hour 0 duplicated, hour 5000 missing; count still 8760
+    cfs = np.full(HOURS_PER_YEAR, 0.3)
+    pdir = _write_profile(tmp_path, [("solar_pv", hours, cfs)])
+    res = _resources_with_storage()
+    with pytest.raises(ValueError, match="exactly.*hours 0"):
+        build_cf_matrix(res, "TESTISO", 2024, profiles_dir=pdir)
+
+
+def test_variable_renewable_absent_from_file_is_hard_error(tmp_path) -> None:
+    """A wind/solar resource missing from a real file must not silently get
+    a flat profile — flat wind grossly overstates matching (DL-7)."""
+    hours = np.arange(HOURS_PER_YEAR)
+    cfs = np.full(HOURS_PER_YEAR, 0.3)
+    pdir = _write_profile(tmp_path, [("solar_pv", hours, cfs)])  # no wind rows
+    res = _resources_with_storage()
+    with pytest.raises(ValueError, match="onshore_wind.*absent"):
+        build_cf_matrix(res, "TESTISO", 2024, profiles_dir=pdir)
+
+
+def test_profile_source_provenance() -> None:
+    """profile_source labels real vs synthetic shapes for run metadata (DL-8)."""
+    from lce_portfolio.profiles import profile_source
+
+    src = profile_source("SAMPLE", 2030)
+    assert src["source"] == "synthetic"
+
+    src = profile_source("ERCOT", 2024, profiles_dir=FIXTURE_DIR)
+    assert src["source"] == "real"
+    assert src["path"] is not None and "ERCOT_2024" in src["path"]
+
+    src = profile_source("NOWHERE", 2024, profiles_dir=FIXTURE_DIR)
+    assert src["source"] == "synthetic"
+    assert "no profile file" in src["reason"]
+
+
+def test_run_metadata_carries_profile_source(tmp_path) -> None:
+    """The metadata sidecar records the shape provenance end-to-end (DL-8)."""
+    import json
+
+    import pandas as pd
+
+    from lce_portfolio.cli import main as cli_main
+
+    hours = np.arange(HOURS_PER_YEAR)
+    load = pd.DataFrame({"hour": hours, "iso": "SAMPLE", "load_mwh": 100.0})
+    lmp = pd.DataFrame({"hour": hours, "iso": "SAMPLE", "lmp": 30.0})
+    load_path, lmp_path = tmp_path / "load.csv", tmp_path / "lmp.csv"
+    load.to_csv(load_path, index=False)
+    lmp.to_csv(lmp_path, index=False)
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        '{"iso": "SAMPLE", "active_resources": ["solar_pv"], "premium_deltas": [5.0]}'
+    )
+    out_dir = tmp_path / "out"
+
+    rc = cli_main(
+        [
+            "--config",
+            str(config_path),
+            "--load",
+            str(load_path),
+            "--lmp",
+            str(lmp_path),
+            "--out-dir",
+            str(out_dir),
+            "--no-report",
+        ]
+    )
+
+    assert rc == 0
+    meta = json.loads((out_dir / "SAMPLE_run_metadata.json").read_text())
+    assert meta["profile_source"]["source"] == "synthetic"
+    assert "SAMPLE" in meta["profile_source"]["reason"]
