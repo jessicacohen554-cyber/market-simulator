@@ -124,7 +124,10 @@ low-carbon threshold, grid/resource residual-CO₂ split). **PP-00 through PP-08
 (reporting deliverable, ADR 0014, in flight) and the on-hold real-LMP validation path
 (ADR 0015, stakeholder decision 2026-07-02). **PP-10 (desktop launcher, ADR 0016)
 complete** (2026-07-02): `launcher/run_lce.sh`/`run_lce.bat` twins + `src/lce_portfolio/launcher.py`
-(stdlib HTTP server, self-contained launch page, run queue, saved configs).
+(stdlib HTTP server, self-contained launch page, run queue, saved configs);
+post-merge adversarial review **PP-13** (2026-07-02) fixed 11 findings
+(request-body hardening, batch run-id collisions, loopback-only enforcement,
+error-message purity — see `docs/prompt-packs/PP-13-launcher-review.md`).
 
 ## 9. Verification
 
