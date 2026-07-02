@@ -125,6 +125,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_interface_groups,
     build_reference_price_node,
     extend_with_import_node,
+    get_link_bidirectional_array,
     get_ttc_array,
     inject_reference_price_firm_export,
     inject_reference_price_mc,
@@ -3858,6 +3859,12 @@ def run_year(
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
         interface_groups=interface_groups or None,
+        # One-way links (MISO's RDT 3,000/2,500 MW directional pair) floor
+        # their flow at 0 instead of -ttc. Every other ISO's links are
+        # bidirectional (all-True array -> byte-identical bounds). This was
+        # built in dispatch but never wired here, so the RDT asymmetry was
+        # silently symmetric (+/-ttc per leg) before the six-zone refinement.
+        link_bidirectional=get_link_bidirectional_array(iso_config.links),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
@@ -4233,6 +4240,11 @@ def run_year(
         "context": context,
         "storage_units": storage_units,
         "dual_fuel_oil_mask": dual_fuel_oil_mask,
+        # Link list in flow-column order (the possibly import-node-extended /
+        # per-hub-split topology actually solved), so the bundle can persist
+        # per-link flows for interface-binding diagnostics (the MISO zonal
+        # gates report binding-hour counts per CIL/CEL group and the RDT).
+        "links": iso_config.links,
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
