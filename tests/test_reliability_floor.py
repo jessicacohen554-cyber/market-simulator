@@ -343,6 +343,109 @@ class TestReliabilityFloorEngine(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[st, 72:120], 0.0)
 
 
+class TestReliabilityFloorRamp(unittest.TestCase):
+    """Continuous temperature-ramp families interpolate ``(threshold, floor_pct)``
+    knots instead of firing each knot as an independent step."""
+
+    def _ramp_knots(self, **overrides):
+        # Legacy NYISO downstate CT ramp: base 0.132 at T0=25C, cap 0.679 at
+        # 35.22C, evening-only (HB14-21), pro-rata. Two knots, one family.
+        base = dict(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="tmax",
+            distribution="pro_rata",
+            start_hour=14,
+            end_hour=21,
+            ramp_group="Z_CT_ev",
+        )
+        base.update(overrides)
+        return [
+            ReliabilityFloorSpec(threshold=25.0, floor_pct=0.132, **base),
+            ReliabilityFloorSpec(threshold=35.22, floor_pct=0.679, **base),
+        ]
+
+    def test_ramp_interpolates_between_knots_in_window(self):
+        # A 30C day sits mid-ramp: floor = 0.132 + (30-25)/(35.22-25)*(0.679-0.132)
+        # = 0.132 + 0.4892*0.547 = 0.3996. Applied only in the HB14-21 window.
+        H = 24
+        fa, rows = _build_fleet(H)
+        loader = _weather_from_daily([30.0], [20.0], H)
+        with mock.patch(_LOADER, loader):
+            applied = T.inject_reliability_floor(
+                fa, "TEST", 2024, self._ramp_knots(), ["Z"]
+            )
+        self.assertTrue(applied)
+        ct = rows["CT_PEAKER"]
+        pmax = fa.pmax[ct]
+        avail = fa.availability[ct, :]
+        interp_pct = np.interp(30.0, [25.0, 35.22], [0.132, 0.679])
+        # Evening window HB14-21 floored at the interpolated pct; else pmin (0).
+        np.testing.assert_allclose(
+            fa.min_gen[ct, 14:22], interp_pct * pmax * avail[14:22]
+        )
+        np.testing.assert_allclose(fa.min_gen[ct, 0:14], 0.0)
+        np.testing.assert_allclose(fa.min_gen[ct, 22:24], 0.0)
+
+    def test_ramp_clamps_flat_below_and_above_end_knots(self):
+        # Cool day (18C) clamps to the base knot 0.132 (persistent evening base);
+        # extreme day (40C) clamps to the cap knot 0.679 — never over/undershoots.
+        H = 48
+        fa, rows = _build_fleet(H)
+        loader = _weather_from_daily([18.0, 40.0], [10.0, 25.0], H)
+        with mock.patch(_LOADER, loader):
+            T.inject_reliability_floor(fa, "TEST", 2024, self._ramp_knots(), ["Z"])
+        ct = rows["CT_PEAKER"]
+        pmax, avail = fa.pmax[ct], fa.availability[ct, :]
+        # Day 0 cool → base 0.132 in the evening window.
+        np.testing.assert_allclose(fa.min_gen[ct, 14:22], 0.132 * pmax * avail[14:22])
+        # Day 1 extreme → cap 0.679 in the evening window.
+        np.testing.assert_allclose(fa.min_gen[ct, 38:46], 0.679 * pmax * avail[38:46])
+
+    def test_ramp_binds_every_day_no_threshold_gate(self):
+        # Unlike a step limb, the ramp's base knot floors EVERY evening (its base
+        # is the persistent floor), so even a mild day carries the base floor.
+        H = 24
+        fa, rows = _build_fleet(H)
+        loader = _weather_from_daily([10.0], [2.0], H)  # cold, well below base knot
+        with mock.patch(_LOADER, loader):
+            applied = T.inject_reliability_floor(
+                fa, "TEST", 2024, self._ramp_knots(), ["Z"]
+            )
+        self.assertTrue(applied)
+        ct = rows["CT_PEAKER"]
+        np.testing.assert_allclose(
+            fa.min_gen[ct, 14:22], 0.132 * fa.pmax[ct] * fa.availability[ct, 14:22]
+        )
+
+    def test_disabled_ramp_knot_dropped_from_family(self):
+        # A disabled knot is excluded; with only the base knot left the ramp is a
+        # flat base floor (np.interp of a single point returns that point).
+        H = 24
+        fa, rows = _build_fleet(H)
+        loader = _weather_from_daily([40.0], [25.0], H)
+        knots = self._ramp_knots()
+        knots[1] = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="tmax",
+            distribution="pro_rata",
+            start_hour=14,
+            end_hour=21,
+            ramp_group="Z_CT_ev",
+            threshold=35.22,
+            floor_pct=0.679,
+            enabled=False,
+        )
+        with mock.patch(_LOADER, loader):
+            T.inject_reliability_floor(fa, "TEST", 2024, knots, ["Z"])
+        ct = rows["CT_PEAKER"]
+        # Only the base knot survives → flat 0.132 even on a 40C day.
+        np.testing.assert_allclose(
+            fa.min_gen[ct, 14:22], 0.132 * fa.pmax[ct] * fa.availability[ct, 14:22]
+        )
+
+
 class TestPhysicalFloorMagnitude(unittest.TestCase):
     """The floor magnitude is the physical Pmin/Pmax, not the must-run share."""
 

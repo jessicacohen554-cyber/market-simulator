@@ -783,6 +783,19 @@ class ReliabilityFloorSpec:
     ``min_event_hours`` (≥ 24) bridges an isolated flagged day to adjacent
     flagged days for steam classes so a committed boiler spans a multi-day
     heat-wave / cold-snap rather than a single calendar day.
+
+    ``ramp_group`` labels a **continuous temperature-ramp family**: two or more
+    limbs sharing the same non-empty ``ramp_group`` are read as ``(threshold,
+    floor_pct)`` knots of one piecewise-linear ramp rather than independent
+    step gates. For each hour the engine interpolates ``floor_pct`` linearly in
+    the driver temperature between the knots (clamped flat to the end knots
+    outside their range), reproducing the legacy ``clip(base + slope×(T−T0),
+    base, cap)`` commitment curve exactly instead of a single over-firing step.
+    All limbs in a family must share ``zone``/``plant_class``/``driver``/
+    ``distribution``/``start_hour``/``end_hour`` and differ only in ``threshold``
+    and ``floor_pct``; the ramp binds every hour in the window (its base knot is
+    the persistent floor), so a ramp family needs no separate always-on base
+    limb. Ramp families support only the ``tmax``/``tmin`` drivers.
     """
 
     zone: str  # model zone name
@@ -795,6 +808,7 @@ class ReliabilityFloorSpec:
     distribution: str = "cheapest_first"  # "cheapest_first" or "pro_rata"
     start_hour: int | None = None  # sub-daily window start (inclusive, 0-23)
     end_hour: int | None = None  # sub-daily window end (inclusive, 0-23)
+    ramp_group: str | None = None  # continuous-ramp family label (see below)
 
 
 # Steam classes carry multi-day event bridging by default (a committed boiler
@@ -818,7 +832,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
     registry is empty until ``scripts/derive_reliability_coeffs.py`` populates
     the coefficients (Phase 2). Required columns: ``zone, plant_class, driver,
     threshold, floor_pct, enabled``; optional: ``min_event_hours``,
-    ``distribution``.
+    ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``.
     """
     registry: dict[str, list[ReliabilityFloorSpec]] = {}
     for iso in _ISO_BUILDERS:
@@ -835,6 +849,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                     )
                     sh_raw = (row.get("start_hour") or "").strip()
                     eh_raw = (row.get("end_hour") or "").strip()
+                    rg_raw = (row.get("ramp_group") or "").strip()
                     limbs.append(
                         ReliabilityFloorSpec(
                             zone=row["zone"].strip(),
@@ -851,6 +866,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                             ).strip(),
                             start_hour=int(sh_raw) if sh_raw else None,
                             end_hour=int(eh_raw) if eh_raw else None,
+                            ramp_group=rg_raw or None,
                         )
                     )
         registry[iso] = limbs
