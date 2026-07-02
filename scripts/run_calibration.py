@@ -1939,6 +1939,7 @@ def run_year(
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
+    miso_reserve_pergen: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_as_aware_commitment: bool = False,
@@ -2376,6 +2377,13 @@ def run_year(
     # minimum requirements priced at the published §5.2.1.2 zonal curve.
     if miso_zonal_reserves:
         config = config.with_overrides(miso_zonal_reserves=True)
+    # MISO per-asset (zone x fuel-class pooled) 10-min-ramp-bounded reserve
+    # columns (run_calibration_full --miso-reserve-pergen): reserve competes
+    # with energy on the marginal pool and cleared reserve is capped at the
+    # deliverable 10-minute ramp, so the RBDC / zonal ORDC families can run
+    # short (reserve_config._miso_design pergen branch).
+    if miso_reserve_pergen:
+        config = config.with_overrides(miso_reserve_pergen=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
@@ -4302,6 +4310,18 @@ def run_year(
                     f"{w:.0f}MW@${p:.0f}"
                     for w, p in zip(fam.ordc_step_widths, fam.ordc_penalties)
                 ],
+            )
+        if design.pergen_gen_idx is not None:
+            _r10 = np.atleast_2d(design.pergen_ramp10)
+            logger.info(
+                "  MISO PER-ASSET reserve columns (miso_reserve_pergen): "
+                "%d members pooled into %d (zone, fuel-class) R columns, "
+                "availability-scaled 10-min deliverable ramp cap "
+                "mean %.0f / min %.0f MW",
+                int(design.pergen_gen_idx.size),
+                _r10.shape[0],
+                float(_r10.sum(axis=0).mean()),
+                float(_r10.sum(axis=0).min()),
             )
 
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
