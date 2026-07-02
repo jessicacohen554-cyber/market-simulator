@@ -1,9 +1,9 @@
-"""Generate the deployable, JSON-driven backcast comparison dashboard.
+"""Render backcast run DATA files for the codebase-site dashboard pages.
 
-Unlike the standalone embedded report, this writes a static shell
-(``backcast-results.html``) plus separate gzip+base64 data files so the page
-can be deployed on GitHub Pages and a new run is picked up automatically once
-its data file + manifest entry are written:
+Unlike the standalone embedded report, this writes the gzip+base64 data files
+that the codebase-site backcast pages (``docs/codebase-site/backcast-runs.html``
+and ``calibration-status.html``, via ``js/bc-data.js``) consume, so a new run
+is picked up automatically once its data file + manifest entry are written:
 
   * ``frontend/data/backcast/manifest.js`` — ``window.BC.meta`` (groups, zones,
     years, group labels) and ``window.BC.manifest`` (one entry per run: id,
@@ -17,25 +17,24 @@ its data file + manifest entry are written:
     the COMMITTED source for the shared benchmark: each run rewrites only the
     parts for its own ISO/years ("newest bundle covering the year wins", the
     same rule ``build_payload`` applies), and ``scripts/build_manifest.py``
-    assembles ``benchmark.js``/``manifest.js``/the shell from parts + registry
-    sidecars at deploy time. ``manifest.js``, ``benchmark.js`` and
-    ``backcast-results.html`` themselves are GENERATED files — gitignored,
-    never committed — so concurrent runs can never conflict on them.
+    assembles ``benchmark.js``/``manifest.js`` from parts + registry sidecars
+    at deploy time. ``manifest.js`` and ``benchmark.js`` themselves are
+    GENERATED files, refreshed only by the deploy workflow — never hand-commit
+    them, so concurrent runs can never conflict on them.
 
-The shell loads the manifest + benchmark, then lazy-loads the selected runs via
-injected <script> tags and inflates them with DecompressionStream — which works
-both over http (Pages) and from a local file (no fetch/CORS trap).
+The pages load the manifest + benchmark, then lazy-load the selected runs via
+injected <script> tags and inflate them with DecompressionStream.
 
 All gzip output uses ``mtime=0`` so re-rendering unchanged data is byte-stable
 (identical bytes -> no spurious git churn, and concurrent same-ISO runs that
 produce the same benchmark merge cleanly).
 
 Run id = ``<YYYY-MM-DD>-<shorthand>``; the shorthand and 1-3 sentence
-definition are auto-derived from the bundle's run_config note (editable in
-manifest.js afterward). Clicking a run id anywhere shows its definition.
+definition are auto-derived from the bundle's run_config note (editable in the
+registry sidecar afterward). Clicking a run id anywhere shows its definition.
 
 Usage:
-    python scripts/render_backcast.py [ID=]BUNDLE ... [--out backcast-results.html]
+    python scripts/render_backcast.py [ID=]BUNDLE ...
     # each BUNDLE is one run/config (may hold several years)
 """
 
@@ -148,17 +147,15 @@ def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict) -> Path
 
 def generate(
     runs: list[tuple[str, Path]],
-    out: Path,
-    standalone: Path | None = None,
     years: set[int] | None = None,
 ) -> None:
-    """Write the data files + the static shell for the given runs.
+    """Write the deployable data files for the given runs.
 
-    Always writes the deployable split files (data under
-    ``frontend/data/backcast/``) and the Pages shell at ``out``. When
-    ``standalone`` is given, also writes a single self-contained HTML there
-    with the manifest / benchmark / every run inlined (no separate files,
-    no fetch) — suitable for sending or opening anywhere.
+    Writes the split files under ``frontend/data/backcast/`` (per-run
+    ``runs/<id>.js`` + bench parts, plus a local-preview ``manifest.js`` /
+    ``benchmark.js``). View them through the codebase-site pages
+    (``docs/codebase-site/backcast-runs.html``), whose data loader falls back
+    to ``frontend/data/backcast/`` when the deploy-built copy is absent.
     """
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     # Group runs by ISO (from each bundle's meta.json) so the dashboard's ISO
@@ -171,7 +168,7 @@ def generate(
 
     meta_by_iso: dict[str, dict] = {}
     bench_by_iso: dict[str, str] = {}  # iso -> gzip+base64 benchmark
-    manifest, run_js = [], []
+    manifest = []
     for iso, iso_runs in by_iso.items():
         D = rch.build_payload(iso_runs, years=years)
         meta_by_iso[iso] = {
@@ -196,7 +193,6 @@ def generate(
                 f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model)) + ";"
             )
             (RUNS_DIR / f"{rid}.js").write_text(js)
-            run_js.append(js)
             rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
             manifest.append(rm)
 
@@ -214,57 +210,16 @@ def generate(
     )
     (DATA_DIR / "manifest.js").write_text(manifest_js)
 
-    gen = datetime.now().strftime("%Y-%m-%d %H:%M")
-    link_css = '<link rel=stylesheet href="frontend/css/style.css">'
-    # Deployable shell: load data via <script src> (Pages auto-pickup); the
-    # repo stylesheet is linked (it sits at frontend/css/style.css).
-    src_tags = (
-        '<script src="frontend/data/backcast/manifest.js"></script>'
-        '<script src="frontend/data/backcast/benchmark.js"></script>'
-    )
-    out.write_text(
-        SHELL.replace("__SITECSS__", link_css)
-        .replace("__DATASCRIPTS__", src_tags)
-        .replace("__GEN__", gen)
-    )
     sz = sum(f.stat().st_size for f in DATA_DIR.rglob("*.js")) / 1e6
     print(
-        f"wrote {out} + {len(manifest)} run data files "
+        f"wrote {len(manifest)} run data files under {DATA_DIR} "
         f"({sz:.1f} MB data, ids: {[m['id'] for m in manifest]})"
     )
-
-    if standalone is not None:
-        # Self-contained: inline the repo stylesheet (so the design tokens
-        # resolve with no external file) and the data.
-        css_path = REPO / "frontend" / "css" / "style.css"
-        site_css = (
-            "<style>" + css_path.read_text() + "</style>"
-            if css_path.exists()
-            else link_css
-        )
-        inline = "".join(
-            f"<script>{s}</script>" for s in [manifest_js, bench_js, *run_js]
-        )
-        standalone.write_text(
-            SHELL.replace("__SITECSS__", site_css)
-            .replace("__DATASCRIPTS__", inline)
-            .replace("__GEN__", gen)
-        )
-        print(
-            f"wrote standalone {standalone} ({standalone.stat().st_size / 1e6:.1f} MB)"
-        )
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundles", nargs="+", help="[LABEL=]BUNDLE_DIR per run")
-    ap.add_argument("--out", default=str(REPO / "backcast-results.html"))
-    ap.add_argument(
-        "--standalone",
-        default=None,
-        help="Also write a single self-contained HTML (data "
-        "inlined) at this path, for sending/offline viewing.",
-    )
     ap.add_argument(
         "--years",
         nargs="+",
@@ -282,17 +237,8 @@ def main() -> None:
             d = spec
             lab = Path(spec).name
         runs.append((lab, Path(d)))
-    generate(
-        runs,
-        Path(args.out),
-        Path(args.standalone) if args.standalone else None,
-        years=set(args.years) if args.years else None,
-    )
+    generate(runs, years=set(args.years) if args.years else None)
 
-
-# The static shell HTML/JS is defined in the companion module to keep this file
-# focused on data generation; imported lazily so `--help` stays fast.
-from scripts.probes._backcast_shell import SHELL  # noqa: E402
 
 if __name__ == "__main__":
     main()
