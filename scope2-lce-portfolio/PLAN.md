@@ -126,5 +126,7 @@ extensions like split-storage, hydro budget, additionality, cross-feature interp
   exporter's `--dummy` synthetic LMP (always labeled SYNTHETIC in outputs/sidecar);
   a calibrated backcast-year export is the approved interim validation path if
   needed (ADR 0011 permits backcast for validation studies only).**
-- [ ] Ratify the provisional ADRs (0005, 0009 values, 0007 carbon part, 0010) against
-  the first real runs; source per-ISO marginal CO₂ rates.
+- [ ] Ratify the provisional ADRs (0005, 0009 values, 0010) against the first real
+  runs. (The 0007 carbon part is settled: ADR 0013 replaced the marginal-rate idea
+  with the market sim's hourly fossil-only average rate — export it per ISO-year via
+  `scripts/build_fossil_avg_co2_rate.py` alongside the LMP file.)

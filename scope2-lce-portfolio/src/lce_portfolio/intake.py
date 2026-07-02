@@ -1,20 +1,23 @@
-"""Load and LMP intake: ingestion, aggregation, growth, and zonal reconciliation.
+"""Load, LMP, and emission-rate intake: ingestion, aggregation, growth, reconciliation.
 
 The tool accepts an 8760 load dataset that may be facility-level and/or
 multi-ISO. This module collapses it to one hourly vector per ISO (summing
 facilities within an hour and ISO), then optionally applies a compound
 load-growth factor. It also reads the BAU LMP file the portfolio LP prices
-against. The aggregation rule, growth application, and LMP contract are
-decided in ``docs/decisions/0010-load-intake-growth.md`` (ADR 0010) and
-``docs/decisions/0011-lmp-coupling-scenario-selection.md`` (ADR 0011); this
-module is their implementation.
+against, and the hourly fossil-average CO2-rate file residual carbon is
+attributed with. The aggregation rule, growth application, LMP contract, and
+emission-rate contract are decided in
+``docs/decisions/0010-load-intake-growth.md`` (ADR 0010),
+``docs/decisions/0011-lmp-coupling-scenario-selection.md`` (ADR 0011), and
+``docs/decisions/0013-residual-carbon-hourly-fossil-average-rate.md``
+(ADR 0013); this module is their implementation.
 
 Calendar convention (ADR 0010): every hourly vector is indexed ``0..8759``,
 local standard time, non-leap year (a single representative year — no DST,
-no leap day). Load and LMP files must share this convention; both are
-validated for full coverage of the 8760-hour calendar. **Missing hours are a
-hard error**, not a zero-fill — a silently zero-filled hour would understate
-load/price without warning.
+no leap day). Load, LMP, and emission-rate files must share this convention;
+all are validated for full coverage of the 8760-hour calendar. **Missing
+hours are a hard error**, not a zero-fill — a silently zero-filled hour
+would understate load/price/carbon without warning.
 
 Accepted load-intake schema (CSV or Parquet), long form:
     hour     : int in [0, 8759]
@@ -27,11 +30,19 @@ Accepted LMP schema (CSV or Parquet), long form (ADR 0011 export contract):
     iso  : str
     lmp  : float ($/MWh)
 
+Accepted emission-rate schema (CSV or Parquet), long form (ADR 0013 export
+contract, mirroring the LMP contract shape):
+    hour                : int in [0, 8759]
+    iso                 : str
+    fossil_avg_co2_rate : float (tCO2/MWh, >= 0)
+
 The LMP file is expected to be the calibrated market-sim **forecast-year**
-BAU export for the modeled year (ADR 0011); this module never applies price
-escalation and never reads market-sim files directly — it only consumes the
-DataFrames/file paths handed to it, so the tool stays a price-taker with no
-``market_sim`` module coupling.
+BAU export for the modeled year (ADR 0011), and the emission-rate file the
+matching dispatch export from ``scripts/build_fossil_avg_co2_rate.py``
+(ADR 0013); this module never applies price escalation and never reads
+market-sim files directly — it only consumes the DataFrames/file paths
+handed to it, so the tool stays a price-taker with no ``market_sim`` module
+coupling.
 """
 
 from __future__ import annotations
@@ -195,6 +206,55 @@ def prepare_lmp(path: str | Path, iso: str) -> np.ndarray:
     present = set(sub["hour"].astype(int))
     _require_full_calendar(present, iso, kind="LMP intake")
     return sub.sort_values("hour")["lmp"].to_numpy(dtype=float)
+
+
+def emissions_intake(path: str | Path) -> pd.DataFrame:
+    """Read an hourly fossil-average CO2-rate file into a long DataFrame.
+
+    Requires columns ``hour``, ``iso``, ``fossil_avg_co2_rate`` (ADR 0013
+    export contract: one rate per ISO-hour, tCO2/MWh, from
+    ``scripts/build_fossil_avg_co2_rate.py``). A negative rate is a data
+    error and raises — the fossil-only average is nonnegative by
+    construction.
+    """
+    df = _read_table(path)
+
+    required = {"hour", "iso", "fossil_avg_co2_rate"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"emission-rate file missing columns: {sorted(missing)}")
+    _validate_hour_range(df)
+    if (df["fossil_avg_co2_rate"] < 0).any():
+        n_neg = int((df["fossil_avg_co2_rate"] < 0).sum())
+        raise ValueError(
+            f"emission-rate intake: {n_neg} negative fossil_avg_co2_rate value(s); "
+            "rates are tCO2/MWh and must be non-negative"
+        )
+    return df
+
+
+def prepare_emission_rate(path: str | Path, iso: str) -> np.ndarray:
+    """End-to-end emission-rate intake for one ISO: read, validate, 8760 vector.
+
+    Mirrors :func:`prepare_lmp` exactly (ADR 0013 follows the ADR 0011 LMP
+    contract shape): a duplicated ``(iso, hour)`` row and a missing hour both
+    raise (naming the ISO, the count, and an example) rather than being
+    silently resolved. Returns the hourly fossil-only average CO2 rate
+    (tCO2/MWh) used to attribute residual carbon to unmatched grid purchases:
+    ``residual_co2_tons = Σ_t grid_buy[t] × rate[t]``.
+    """
+    df = emissions_intake(path)
+    sub = df[df["iso"] == iso]
+    if sub.empty:
+        raise KeyError(
+            f"ISO {iso!r} not present in emission-rate file; "
+            f"have {sorted(df['iso'].unique())}"
+        )
+
+    _check_no_duplicates(sub, ["iso", "hour"], context="emission-rate intake")
+    present = set(sub["hour"].astype(int))
+    _require_full_calendar(present, iso, kind="emission-rate intake")
+    return sub.sort_values("hour")["fossil_avg_co2_rate"].to_numpy(dtype=float)
 
 
 def collapse_zonal_lmp(

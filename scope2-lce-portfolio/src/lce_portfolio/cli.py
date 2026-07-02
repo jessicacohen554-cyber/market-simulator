@@ -22,8 +22,12 @@ import sys
 from pathlib import Path
 
 from lce_portfolio.config import PortfolioConfig
-from lce_portfolio.emissions import apply_marginal_co2
-from lce_portfolio.intake import load_intake, prepare_lmp, prepare_load
+from lce_portfolio.intake import (
+    load_intake,
+    prepare_emission_rate,
+    prepare_lmp,
+    prepare_load,
+)
 from lce_portfolio.outputs import summarize, write_outputs
 from lce_portfolio.profiles import build_cf_matrix
 from lce_portfolio.resources import load_resource_arrays
@@ -55,15 +59,24 @@ def run_one_iso(
     load_path: str | Path,
     lmp_path: str | Path,
     out_dir: str | Path,
+    emissions_path: str | Path | None = None,
 ) -> None:
-    """Run the full pipeline for a single ISO (``config.iso``) and write outputs."""
-    config = apply_marginal_co2(config)
+    """Run the full pipeline for a single ISO (``config.iso``) and write outputs.
+
+    ``emissions_path`` is the optional hourly fossil-average CO2-rate file
+    (ADR 0013, ``(hour, iso, fossil_avg_co2_rate)``); when absent,
+    residual-carbon reporting is off (``residual_co2_tons == 0``), mirroring
+    the pre-carbon SAMPLE behavior.
+    """
     resources = load_resource_arrays(config)
     load = prepare_load(load_path, config.iso, config)
     lmp = prepare_lmp(lmp_path, config.iso)
+    emission_rate = (
+        prepare_emission_rate(emissions_path, config.iso) if emissions_path else None
+    )
     cf = build_cf_matrix(resources, config.iso, config.year)
 
-    sweep = run_sweep(config, resources, load, lmp, cf)
+    sweep = run_sweep(config, resources, load, lmp, cf, emission_rate=emission_rate)
     paths = write_outputs(sweep, out_dir, config=config)
     print(summarize(sweep))
     print("wrote: " + "  ".join(str(v) for v in paths.values()) + "\n")
@@ -77,13 +90,20 @@ def _isos_in_load(load_path: str | Path) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     """Parse args, run the sweep for one or all ISOs, write outputs.
 
-    The load/LMP file paths come from ``--load``/``--lmp`` if given, else from
-    ``config.load_file``/``config.lmp_file`` (ADR 0010/0011); if neither
-    source supplies them this is a clean CLI error, not a traceback.
+    The load/LMP/emissions file paths come from ``--load``/``--lmp``/
+    ``--emissions`` if given, else from ``config.load_file``/``config.lmp_file``/
+    ``config.emissions_file`` (ADR 0010/0011/0012); a missing load or LMP path
+    is a clean CLI error, not a traceback, while a missing emissions path just
+    leaves residual-carbon reporting off.
     """
     p = argparse.ArgumentParser(description="Scope 2 hourly LCE portfolio optimizer")
     p.add_argument("--load", default=None, help="load-intake CSV/Parquet")
     p.add_argument("--lmp", default=None, help="BAU LMP CSV/Parquet")
+    p.add_argument(
+        "--emissions",
+        default=None,
+        help="hourly fossil-average CO2-rate CSV/Parquet (ADR 0013, optional)",
+    )
     p.add_argument("--iso", default=None, help="ISO to run (or use --all-isos)")
     p.add_argument(
         "--all-isos", action="store_true", help="run every ISO in the load file"
@@ -116,6 +136,9 @@ def main(argv: list[str] | None = None) -> int:
         base = build_config(args)
         load_path = args.load or base.load_file
         lmp_path = args.lmp or base.lmp_file
+        # Optional (ADR 0013): no emissions file means residual-carbon
+        # reporting stays off, so this is never a CLI error.
+        emissions_path = args.emissions or base.emissions_file
         if not load_path:
             p.error("specify --load or set load_file in --config")
         if not lmp_path:
@@ -123,7 +146,13 @@ def main(argv: list[str] | None = None) -> int:
 
         isos = _isos_in_load(load_path) if args.all_isos else [args.iso or base.iso]
         for iso in isos:
-            run_one_iso(base.with_overrides(iso=iso), load_path, lmp_path, args.out_dir)
+            run_one_iso(
+                base.with_overrides(iso=iso),
+                load_path,
+                lmp_path,
+                args.out_dir,
+                emissions_path=emissions_path,
+            )
     except (ValueError, KeyError, FileNotFoundError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
