@@ -112,7 +112,16 @@ def test_cli_requires_load_or_config(capsys) -> None:
 
 
 def test_cli_emissions_file_threads_residual_co2_to_outputs(tmp_path) -> None:
-    """--emissions wires the hourly rate through to residual_co2_tons (ADR 0013)."""
+    """--emissions wires the hourly rate through to residual_co2_tons (ADR 0013).
+
+    Restricted to a single active resource (via --config, mirroring
+    test_cli_config_load_lmp_end_to_end) instead of the CLI default
+    active_minimal resource set: the intake path still hard-requires the full
+    8760-hour calendar (ADR 0010), but a 1-resource LP solves in a fraction of
+    the time of the multi-resource default and exercises the same emissions
+    wiring (grid_buy_mwh/residual_co2_tons come from the LP dual/reporting
+    layer, not from resource count).
+    """
     load_path, lmp_path = _write_fixtures(tmp_path)
     hours = np.arange(HOURS_PER_YEAR)
     emissions_path = tmp_path / "rates.csv"
@@ -124,23 +133,21 @@ def test_cli_emissions_file_threads_residual_co2_to_outputs(tmp_path) -> None:
         }
     ).to_csv(emissions_path, index=False)
     out_dir = tmp_path / "out"
-
-    rc = main(
-        [
-            "--load",
-            str(load_path),
-            "--lmp",
-            str(lmp_path),
-            "--emissions",
-            str(emissions_path),
-            "--iso",
-            "SAMPLE",
-            "--deltas",
-            "1",
-            "--out-dir",
-            str(out_dir),
-        ]
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "load_file": str(load_path),
+                "lmp_file": str(lmp_path),
+                "emissions_file": str(emissions_path),
+                "active_resources": ["solar_pv"],
+                "premium_deltas": [1.0],
+            }
+        )
     )
+
+    rc = main(["--config", str(config_path), "--out-dir", str(out_dir)])
 
     assert rc == 0
     frontier = pd.read_parquet(out_dir / "SAMPLE_frontier.parquet")
