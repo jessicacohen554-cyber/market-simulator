@@ -128,11 +128,12 @@ def test_nonsplit_storage_unchanged_by_split_code() -> None:
 def test_hydro_monthly_budget_caps_january() -> None:
     """January hydro generation is capped at ERCOT's budget; February is free.
 
-    Full 8760 solve. ERCOT's real budget (Jan 120 GWh, Feb 110 GWh) is loaded
-    from data/hydro/monthly_budgets.csv. January load (1000 MW flat = 744 GWh)
-    far exceeds the 120 GWh budget, so the January constraint binds at exactly
-    120,000 MWh. February load (50 MW flat = 33.6 GWh) is below its budget, so
-    February hydro serves all of it, unconstrained by the 110 GWh cap.
+    Full 8760 solve. ERCOT's real budget (Jan 8.8 GWh, Feb 17.4 GWh — 50% of
+    EIA-923 ERCO conventional-hydro 2023-24 avg, data hardening 2026-07) is
+    loaded from data/hydro/monthly_budgets.csv. January load (1000 MW flat =
+    744 GWh) far exceeds the 8.8 GWh budget, so the January constraint binds at
+    exactly 8,800 MWh. February load (20 MW flat = 13.44 GWh) is below its
+    budget, so February hydro serves all of it, unconstrained by the 17.4 GWh cap.
     """
     T = HOURS_PER_YEAR
     res = ResourceArrays(
@@ -152,8 +153,8 @@ def test_hydro_monthly_budget_caps_january() -> None:
     load = np.zeros(T)
     jan = slice(0, 31 * 24)  # 0..743
     feb = slice(31 * 24, (31 + 28) * 24)  # 744..1415
-    load[jan] = 1000.0  # 744 GWh >> 120 GWh budget -> budget binds
-    load[feb] = 50.0  # 33.6 GWh < 110 GWh budget -> unconstrained
+    load[jan] = 1000.0  # 744 GWh >> 8.8 GWh budget -> budget binds
+    load[feb] = 20.0  # 13.44 GWh < 17.4 GWh budget -> unconstrained
     lmp = np.full(T, 40.0)
     # Mode B (least cost) so hydro (vom 25 < lmp 40) serves load but never
     # over-generates: February gen is pinned to load, not smeared up to its budget.
@@ -164,9 +165,10 @@ def test_hydro_monthly_budget_caps_january() -> None:
     assert r.status == "Optimal"
     jan_gen = r.gen[0, jan].sum()
     feb_gen = r.gen[0, feb].sum()
-    assert np.isclose(jan_gen, 120_000.0, rtol=1e-3)  # capped at January budget
-    assert np.isclose(feb_gen, 33_600.0, rtol=1e-3)  # = all Feb load, below cap
-    assert feb_gen < 110_000.0  # February budget not binding
+    # Budgets per EIA-923 ERCO 2023-24 avg x 50% contractable share (2026-07).
+    assert np.isclose(jan_gen, 8_800.0, rtol=1e-3)  # capped at January budget
+    assert np.isclose(feb_gen, 13_440.0, rtol=1e-3)  # = all Feb load, below cap
+    assert feb_gen < 17_400.0  # February budget not binding
 
 
 def test_hydro_budget_skipped_for_sample_iso() -> None:
