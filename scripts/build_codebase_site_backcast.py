@@ -1,10 +1,12 @@
-"""Copy a backcast data subset into the codebase-site directory.
+"""Copy the backcast data into the codebase-site directory.
 
-Selects keeper + most-recent-9 runs per ISO from the assembled manifest,
-copies their payloads/registry/bench into ``docs/codebase-site/data/backcast/``
-(or the equivalent path under a staging directory) so the codebase explorer
-pages serve self-contained backcast data without reaching into
-``../../frontend/data/backcast/``.
+Copies EVERY registered run from the assembled manifest — the codebase-site
+pages (``backcast-runs.html`` / ``calibration-status.html``) are THE results
+dashboard, so all runs on the registry flow through (the top-15-per-ISO
+retention rule is enforced at registration, not here). Payloads/registry/bench
+land in ``docs/codebase-site/data/backcast/`` (or the equivalent path under a
+staging directory) so the codebase explorer pages serve self-contained
+backcast data without reaching into ``../../frontend/data/backcast/``.
 
 Run AFTER ``build_manifest.py`` so the manifest/benchmark files are fresh.
 
@@ -26,7 +28,6 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-RUNS_PER_ISO = 9
 
 
 def _parse_manifest_js(path: Path) -> tuple[dict, list[dict]]:
@@ -37,24 +38,6 @@ def _parse_manifest_js(path: Path) -> tuple[dict, list[dict]]:
     if not m_meta or not m_manifest:
         sys.exit(f"Cannot parse manifest from {path}")
     return json.loads(m_meta.group(1)), json.loads(m_manifest.group(1))
-
-
-def _select_runs(entries: list[dict], keepers: set[str]) -> list[dict]:
-    """Return keeper + most-recent RUNS_PER_ISO entries per ISO."""
-    by_iso: dict[str, list[dict]] = {}
-    for e in entries:
-        by_iso.setdefault(e["iso"], []).append(e)
-
-    selected_ids: set[str] = set()
-    for iso in sorted(by_iso):
-        runs = by_iso[iso]
-        for r in runs:
-            if r["id"] in keepers:
-                selected_ids.add(r["id"])
-        for r in runs[-RUNS_PER_ISO:]:
-            selected_ids.add(r["id"])
-
-    return [e for e in entries if e["id"] in selected_ids]
 
 
 def main() -> None:
@@ -78,14 +61,10 @@ def main() -> None:
             f"manifest.js not found at {manifest_js} — run build_manifest.py first"
         )
 
-    keepers_path = src_data / "keepers.json"
-    keeper_ids: set[str] = set()
-    if keepers_path.exists():
-        kj = json.loads(keepers_path.read_text())
-        keeper_ids = set(kj.get("keepers", []))
-
     meta, entries = _parse_manifest_js(manifest_js)
-    selected = _select_runs(entries, keeper_ids)
+    # Every registered run flows through — registration enforces the
+    # top-15-per-ISO retention, so the manifest is already the curated set.
+    selected = entries
     selected_ids = {e["id"] for e in selected}
 
     # Create output directories
@@ -127,8 +106,8 @@ def main() -> None:
 
     isos = sorted({e["iso"] for e in selected})
     print(
-        f"codebase-site backcast: {copied_runs} runs across {isos} "
-        f"({len(selected_ids)} selected from {len(entries)} total)"
+        f"codebase-site backcast: {copied_runs} run payloads copied across {isos} "
+        f"({len(entries)} registered runs)"
     )
 
 

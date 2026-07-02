@@ -852,7 +852,8 @@ PAGE STRUCTURE
   Explain the four ordered checks: generation mix, price-duration curve,
   average price, capacity factors.
 - Section 5: "The Dashboard" — explain that every completed run goes on the
-  backcast results dashboard. Link to /backcast-results.html. Screenshot or
+  backcast results dashboard. Link to backcast-runs.html (run explorer) and
+  calibration-status.html (all-ISO keeper summary). Screenshot or
   diagram of the dashboard layout (optional — can be a simple description).
   Explain keeper vs. probe distinction.
 - Breadcrumb: ← Policy & Scarcity | Config Reference →
