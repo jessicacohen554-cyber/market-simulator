@@ -64,8 +64,10 @@ examples/             runnable examples
 
 ## Status
 
-Waves 0–1 complete (PP-00 through PP-07, 76 tests passing). Full capabilities:
-real data intake (load, LMP), NREL ATB 2024 resource pricing (capex/CRF), split-storage
-(LDES, hydrogen), hydro monthly budgets, additionality accounting, residual CO₂ tracking.
-Decisions: PS-01 through PS-08 → ADRs 0004–0011. Start with `PLAN.md`, then
+Waves 0–2 complete (PP-00 through PP-08, 147 tests passing). Full capabilities:
+real data intake (load, LMP, fossil-avg CO₂ rate), NREL ATB 2024 resource pricing (capex/CRF),
+split-storage (LDES, hydrogen), hydro monthly budgets, additionality accounting, gas CC+CCS
+resources with CCS threshold matching credit and 45Q net VOM, residual CO₂ tracking (grid +
+resource). Decisions: PS-01 through PS-12 → ADRs 0004–0015 (ratified 2026-07-02).
+Next: PP-09 (reporting deliverable, in flight). Start with `PLAN.md`, then
 `docs/00-overview.md` and `docs/01-lp-formulation.md`.
