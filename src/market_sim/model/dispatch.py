@@ -1814,15 +1814,24 @@ def build_variable_bounds(
     # given): 0 <= R[j] <= ramp10[g_j] — the unit's 10-minute deliverable ramp
     # (FleetArrays.ramp10) caps what it can hold as upward reserve; the joint
     # P+R row (_build_reserve_rows_pergen) enforces availability/headroom.
+    # A static ``(n_r,)`` cap applies every hour (PJM); an hourly ``(n_r, T)``
+    # cap carries availability-scaled deliverable ramp (MISO: an on-outage
+    # unit contributes no 10-minute ramp, so the pool's cap thins with the
+    # outage overlay).
     if layout.n_reserve > 0:
         if reserve_pergen_ramp10 is not None:
             ramp10 = np.asarray(reserve_pergen_ramp10, dtype=float)
-            if ramp10.shape != (layout.n_reserve,):
+            if ramp10.shape == (layout.n_reserve,):
+                col_upper[:, layout._reserve_off : layout._ordc_off] = ramp10[
+                    np.newaxis, :
+                ]
+            elif ramp10.shape == (layout.n_reserve, layout.T):
+                col_upper[:, layout._reserve_off : layout._ordc_off] = ramp10.T
+            else:
                 raise ValueError(
                     f"reserve_pergen_ramp10 shape {ramp10.shape} != "
-                    f"({layout.n_reserve},)"
+                    f"({layout.n_reserve},) or ({layout.n_reserve}, {layout.T})"
                 )
-            col_upper[:, layout._reserve_off : layout._ordc_off] = ramp10[np.newaxis, :]
         else:
             col_upper[:, layout._reserve_off : layout._ordc_off] = np.inf
 
