@@ -87,20 +87,6 @@ class PortfolioConfig:
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
-    marginal_co2_ton_per_mwh: float = 0.0
-    """ISO marginal emission rate (tCO₂/MWh) used to attribute residual carbon to
-    unmatched grid purchases (ADR 0007). ``residual_co2_tons = grid_buy_mwh × rate``
-    is reported per sweep point; ``0`` disables residual-carbon reporting. Must be
-    non-negative.
-
-    This field is the scalar the LP reads directly (``lp.py`` never looks up a
-    table); resolving *what* it should be is a config-time concern handled by
-    ``emissions.resolve_marginal_co2_rate``/``apply_marginal_co2``, invoked by
-    ``cli.run_one_iso``. Resolution precedence: an explicitly-set value ``> 0``
-    on this field wins; else the ``data/emissions/marginal_co2.csv`` per-ISO
-    table value for ``iso`` is used; else it stays ``0`` (reporting off — e.g.
-    for the ``SAMPLE`` demo ISO, which has no table entry)."""
-
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
     """Annual load-growth CAGR applied to the intake profile (optional)."""
@@ -114,6 +100,17 @@ class PortfolioConfig:
     """Path to the BAU LMP file (ADR 0011): the calibrated market-sim
     forecast-year export for the modeled year, columns ``(hour, iso, lmp)``.
     No escalation is applied — the vintage in this file is used as-is."""
+    emissions_file: str | None = None
+    """Path to the hourly grid CO₂-intensity file (ADR 0013): the market-sim
+    dispatch export of the **fossil-only average** emission rate for the modeled
+    ISO/year, columns ``(hour, iso, fossil_avg_co2_rate)`` in tCO₂/MWh, produced
+    by ``scripts/build_fossil_avg_co2_rate.py``. Residual carbon is attributed
+    to unmatched grid purchases hour-by-hour:
+    ``residual_co2_tons = Σ_t grid_buy[t] × rate[t]`` (attributional / GHG
+    Protocol location-based accounting — an *average* factor, never a
+    marginal/non-baseload one; ADR 0013 supersedes ADR 0007's marginal-rate
+    attribution). ``None`` disables residual-carbon reporting (the rate is
+    treated as an all-zero vector), e.g. for the ``SAMPLE`` demo ISO."""
 
     def __post_init__(self) -> None:
         """Validate field values (runs on construction; dataclass is frozen)."""
@@ -131,8 +128,6 @@ class PortfolioConfig:
             raise ValueError("hours must be positive")
         if self.storage_epsilon < 0:
             raise ValueError("storage_epsilon must be non-negative")
-        if self.marginal_co2_ton_per_mwh < 0:
-            raise ValueError("marginal_co2_ton_per_mwh must be non-negative")
         if self.load_growth_years < 0:
             raise ValueError("load_growth_years must be non-negative")
         if any(d <= 0 for d in self.premium_deltas):
