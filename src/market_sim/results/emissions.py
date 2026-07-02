@@ -102,7 +102,7 @@ def compute_must_run_emissions(
     year: int,
     must_run_cf: float = 0.85,
     total_gen_by_plant: dict[int, float] | None = None,
-    grid_gen_by_plant: dict[int, float] | None = None,
+    btm_share_by_plant: dict[int, float] | None = None,
 ) -> pd.DataFrame:
     """Reconstruct CHP must-run (behind-the-meter) generation and emissions.
 
@@ -115,19 +115,25 @@ def compute_must_run_emissions(
 
     Two sizing modes:
 
-    * **Data-driven (preferred for backcasts).** When ``total_gen_by_plant``
+    * **Measured-share (preferred for backcasts).** When ``total_gen_by_plant``
       is given — the plant's measured net generation *for the bin's class*,
       e.g. EIA-923 Page 1 keyed per ``(plant, class)`` — the behind-the-meter
-      generation is that total minus the grid-delivered portion the LP already
-      dispatched (``grid_gen_by_plant``, summed by plant code). This reconciles
-      reported total CHP generation to the measured figure: EIA-923 is
+      generation is that total times the plant's host self-supply share
+      (``btm_share_by_plant``, a 0-1 fraction; the sector-keyed
+      :func:`market_sim.data.chp.chp_btm_pct` shares / per-plant overrides,
+      the same share the LP hold-out uses). EIA-923 is
       gross-minus-station-service and so *includes* the host's on-site
       electricity, while the LP only dispatches the grid-delivered slice
-      (which EIA-930 sees). The difference is the behind-the-meter must-run.
-      Keying off the per-class total (rather than whole-plant netgen) keeps a
-      plant that splits across classes from inflating one class with another's
-      output, and the floor at zero keeps an over-dispatched plant from
-      contributing a spurious negative.
+      (which EIA-930 sees). Both factors are measured inputs, so the
+      resulting BTM — and any benchmark derived from it — is reproducible
+      and independent of the model's own dispatch (CLAUDE.md rule #13:
+      sizing the BTM off ``total − model grid dispatch`` made the
+      grid-delivered "actual" equal the model whenever the model
+      under-dispatched, so the fuel-mix gate could never fail — a circular,
+      vacuous pass — and the attribution varied with unversioned solve
+      state). Keying off the per-class total (rather than whole-plant
+      netgen) keeps a plant that splits across classes from inflating one
+      class with another's output.
     * **Flat-CF fallback (forecasts).** Without measured totals, the
       legacy estimate ``nameplate × pct_mr × 8760 × must_run_cf`` is used.
 
@@ -140,11 +146,10 @@ def compute_must_run_emissions(
         must_run_cf: Capacity factor for the flat-CF fallback.
         total_gen_by_plant: Optional ``{plant_code: annual MWh}`` of measured
             net generation for the plant's bin class (e.g. EIA-923 keyed per
-            ``(plant, class)``). Triggers the data-driven mode.
-        grid_gen_by_plant: Optional ``{plant_code: annual MWh}`` of the LP's
-            grid-delivered dispatch per plant, subtracted from the total to
-            isolate the behind-the-meter portion. Treated as zero for any
-            plant absent from the mapping.
+            ``(plant, class)``). Triggers the measured-share mode.
+        btm_share_by_plant: Optional ``{plant_code: fraction}`` host
+            self-supply share of the plant's generation. A plant absent from
+            the mapping falls back to its bin ``pct_mr`` share.
 
     Returns:
         One row per non-coal must-run plant with ``mr_mw``, ``mr_gen_mwh``
@@ -158,10 +163,10 @@ def compute_must_run_emissions(
 
     mr["year"] = year
     if total_gen_by_plant is not None:
-        grid = grid_gen_by_plant or {}
+        shares = btm_share_by_plant or {}
         total = mr["Plant_Code"].map(total_gen_by_plant).fillna(0.0)
-        grid_gen = mr["Plant_Code"].map(grid).fillna(0.0)
-        mr["mr_gen_mwh"] = (total - grid_gen).clip(lower=0.0)
+        share = mr["Plant_Code"].map(shares).fillna(mr["pct_mr"] / 100.0)
+        mr["mr_gen_mwh"] = (total * share).clip(lower=0.0)
         mr["mr_mw"] = mr["mr_gen_mwh"] / 8760.0
     else:
         mr["mr_mw"] = mr["capacity_mw"] * mr["pct_mr"] / 100.0
