@@ -642,14 +642,13 @@ def build_miso_deliverability_groups(
     MISO-South gets no group (the RDT bilateral limit governs).
 
     Calendar months map to PY seasons (PY = Jun–May), so a calendar backcast
-    year straddles two PYs. When the earlier PY is absent from the data
-    (PY2022-23 — extraction currently starts at PY2023-24), the affected
-    months are backfilled from the *earliest available* PY's same-season
-    values.
-    TODO(miso-zonal): drop the backfill once the PY2022-23 LOLE Study Report
-    is extracted into data/raw/capacity-deliverability/miso/miso.csv (scope
-    decision D5 — a parallel data-intake session); Jan–May 2023 then reads
-    its true PY2022-23 seasonal limits.
+    year straddles two PYs. Jan–May 2023 reads its true PY2022-23 limits
+    (scope decision D5): PY2022-23 predates MISO's seasonal construct, so its
+    LOLE report publishes ONE annual CIL/CEL set per LRZ — stored with season
+    "annual" and read here for every month that lands in that PY. Only when a
+    PY is entirely absent from the data (a backcast reaching before the
+    extraction window) are its months backfilled from the *earliest
+    available* PY's same-season values.
 
     External-node border links are NOT members: CIL/CEL measure transfer from
     the rest of MISO (the LOLE island model), while external seams carry
@@ -689,10 +688,20 @@ def build_miso_deliverability_groups(
         if zone != "MISO-South":
             members.setdefault(zone, []).append(lrz)
 
-    # Per-month (delivery-year label, season), PY = Jun–May.
+    # Per-month (delivery-year label, season), PY = Jun–May. A pre-seasonal PY
+    # (PY2022-23 and earlier: one annual CIL/CEL set) resolves every season to
+    # its "annual" row — asking _metric_by_area for a season the PY never
+    # published would silently fall back to the latest PY's row instead.
     month_py = [
         (_py_label(year if m >= 6 else year - 1), _MISO_MONTH_TO_SEASON[m])
         for m in range(1, 13)
+    ]
+    seasons_by_py = {
+        py: capdel.available_seasons("MISO", py) for py in {py for py, _ in month_py}
+    }
+    month_py = [
+        (py, season if season in seasons_by_py[py] else "annual")
+        for py, season in month_py
     ]
     # Cache the per-(PY, season) CIL/CEL dicts (≤ 5 distinct slots per year).
     limits: dict[tuple[str, str], tuple[dict[str, float], dict[str, float]]] = {}
