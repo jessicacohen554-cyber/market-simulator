@@ -205,7 +205,21 @@ def load_resource_caps(
     caps: dict[str, dict[str, float]] = {}
     for row in _read_csv(path):
         iso = row["iso"].strip()
-        caps.setdefault(iso, {})[row["resource"].strip()] = _f(row, "cap_mw")
+        resource = row["resource"].strip()
+        if resource in caps.get(iso, {}):
+            # Silent last-wins on a copy-paste duplicate hid a real data
+            # error (audit finding DL-6; intake.py's dup=hard-error is the
+            # house standard).
+            raise ValueError(
+                f"caps table {path}: duplicate row for ({iso!r}, {resource!r})"
+            )
+        cap = _f(row, "cap_mw")
+        if np.isnan(cap) or cap < 0:
+            raise ValueError(
+                f"caps table {path}: cap_mw for ({iso!r}, {resource!r}) must "
+                f"be a non-negative number, got {row.get('cap_mw')!r}"
+            )
+        caps.setdefault(iso, {})[resource] = cap
     return caps
 
 
@@ -224,7 +238,25 @@ def load_hydro_budgets(iso: str, path: Path | None = None) -> np.ndarray:
         month = int(row["month"])
         if not 1 <= month <= 12:
             raise ValueError(f"hydro budget month out of range: {month}")
-        budget[month - 1] = _f(row, "budget_gwh")
+        if not np.isnan(budget[month - 1]):
+            raise ValueError(
+                f"hydro budget table {src}: duplicate month {month} for iso "
+                f"{iso!r} (audit finding DL-10)"
+            )
+        raw = row.get("budget_gwh")
+        if raw is None or str(raw).strip() == "":
+            # _f's 0.0 default would silently zero a whole month of hydro.
+            raise ValueError(
+                f"hydro budget table {src}: blank budget_gwh for iso {iso!r} "
+                f"month {month} — a blank cell is a data error, not zero"
+            )
+        val = float(raw)
+        if val < 0:
+            raise ValueError(
+                f"hydro budget table {src}: negative budget_gwh ({val}) for "
+                f"iso {iso!r} month {month}"
+            )
+        budget[month - 1] = val
     if np.isnan(budget).any():
         raise ValueError(f"no complete hydro monthly budget for iso {iso!r}")
     return budget
@@ -258,16 +290,20 @@ def load_gas_price(iso: str, path: Path | None = None) -> float | None:
     table price is a data error and raises.
     """
     src = path or DEFAULT_GAS_PRICES
+    price: float | None = None
     for row in _read_csv(src):
         if row["iso"].strip() != iso:
             continue
+        if price is not None:
+            # First-match-wins silently masked a conflicting duplicate row
+            # (audit finding DL-6).
+            raise ValueError(f"gas price table {src}: duplicate row for iso {iso!r}")
         price = _f(row, "price_mmbtu")
         if price <= 0:
             raise ValueError(
                 f"gas price table {src}: non-positive price_mmbtu for iso {iso!r}"
             )
-        return price
-    return None
+    return price
 
 
 def _resolve_gas_price(config: PortfolioConfig, gas_table: Path | None) -> float | None:
@@ -336,9 +372,41 @@ def load_resource_arrays(
     path = cost_table or DEFAULT_COST_TABLE
     rows = _read_csv(path)
 
+    # Key-cell hygiene (audit finding DL-11): strip categorical cells so a
+    # stray space (e.g. " storage") cannot silently declassify a row, and
+    # fail with the file named when a required column is absent (DL-13).
+    required_cols = ("resource", "category", "cost_basis")
+    for col in required_cols:
+        if rows and col not in rows[0]:
+            raise ValueError(f"cost table {path}: missing required column {col!r}")
+    for r in rows:
+        for col in required_cols:
+            r[col] = (r[col] or "").strip()
+
+    seen_names: set[str] = set()
+    for r in rows:
+        if r["resource"] in seen_names:
+            # A duplicated resource row would instantiate the resource twice,
+            # silently doubling its buildable capacity (audit finding DL-6).
+            raise ValueError(
+                f"cost table {path}: duplicate resource row {r['resource']!r}"
+            )
+        seen_names.add(r["resource"])
+
     sens = config.lcoe_sensitivity
     if sens not in ("low", "mid", "high"):
         raise ValueError(f"lcoe_sensitivity must be low/mid/high, got {sens!r}")
+
+    # Config eac_premium_mwh overrides apply only to ppa_mwh existing
+    # resources (documented in config.py); a key that matches nothing would
+    # silently no-op (audit finding DL-9), so validate against the catalog.
+    ppa_names = {r["resource"] for r in rows if r["cost_basis"] == "ppa_mwh"}
+    bad_overrides = set(config.eac_premium_mwh) - ppa_names
+    if bad_overrides:
+        raise ValueError(
+            f"eac_premium_mwh overrides {sorted(bad_overrides)} do not match "
+            f"any ppa_mwh resource in {path}; have {sorted(ppa_names)}"
+        )
 
     # --- select the candidate rows (explicit list or active_minimal flag) ---
     if config.active_resources is not None:
@@ -348,6 +416,11 @@ def load_resource_arrays(
         if missing:
             raise ValueError(f"unknown resources requested: {sorted(missing)}")
     else:
+        if rows and "active_minimal" not in rows[0]:
+            raise ValueError(
+                f"cost table {path}: missing required column 'active_minimal' "
+                "(needed when config.active_resources is unset)"
+            )
         rows = [r for r in rows if r["active_minimal"].strip() == "1"]
 
     # --- per-ISO eligibility filter (ADR 0009) ------------------------------
@@ -480,6 +553,14 @@ def load_resource_arrays(
             # Going-forward per-MWh cost + clean-attribute premium; no fixed cost.
             cost = _req(row, f"cost_{sens}", name)
             premium = config.eac_premium_mwh.get(name, _f(row, "eac_premium_mwh"))
+            if premium < 0:
+                # config overrides are validated in PortfolioConfig; this
+                # catches a negative TABLE value, which would drive vom
+                # negative and pay the LP to dispatch (audit finding DL-9).
+                raise ValueError(
+                    f"resource {name!r}: eac_premium_mwh must be non-negative, "
+                    f"got {premium}"
+                )
             row_fixed = 0.0
             row_vom = cost + premium
         else:
@@ -515,7 +596,32 @@ def load_resource_arrays(
             # scope (ADR 0012), so the floor keeps the LP honest.
             row_vom = max(0.0, row_vom)
 
+        # Storage rows must state their physics explicitly (audit DL-11):
+        # a blank duration_h would build a 0-hour dead battery and a blank
+        # rte would default to lossless round-trip, both silently.
+        if stor and not split:
+            if row_dur <= 0:
+                raise ValueError(
+                    f"resource {name!r}: storage rows require duration_h > 0, "
+                    f"got {row_dur}"
+                )
+        row_rte = 1.0
+        if stor:
+            row_rte = _req(row, "rte", name)
+            if not 0.0 < row_rte <= 1.0:
+                raise ValueError(
+                    f"resource {name!r}: rte must be in (0, 1], got {row_rte}"
+                )
+
         cap = _resolve_cap(name, config, iso_caps, _f(row, "cap_max_default_mw"))
+        if np.isnan(cap) or cap < 0:
+            # A NaN default cell would flow straight into the LP column
+            # bounds (audit finding DL-5).
+            raise ValueError(
+                f"resource {name!r}: resolved cap_max is not a non-negative "
+                f"number ({cap}); check cap_max_default_mw / caps table / "
+                "resource_caps_mw"
+            )
         floor = config.resource_floors_mw.get(name, 0.0)
         if floor > cap:
             raise ValueError(
@@ -537,7 +643,7 @@ def load_resource_arrays(
         duration_h.append(row_dur)
         duration_min_h.append(row_dmin)
         duration_max_h.append(row_dmax)
-        rte.append(_f(row, "rte", 1.0) if stor else 1.0)
+        rte.append(row_rte)
         emission_rate.append(row_emission)
 
     return ResourceArrays(
