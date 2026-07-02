@@ -39,7 +39,7 @@ from lce_portfolio.intake import (
     prepare_load,
 )
 from lce_portfolio.outputs import summarize, write_outputs, write_report
-from lce_portfolio.profiles import build_cf_matrix
+from lce_portfolio.profiles import build_cf_matrix, profile_source
 from lce_portfolio.resources import load_resource_arrays
 from lce_portfolio.sweep import run_sweep
 
@@ -174,6 +174,10 @@ def run_one_iso(
         shape_year,
         required=config.profile_shape_year is not None,
     )
+    # Real-vs-synthetic shape provenance for the metadata sidecar (audit
+    # finding DL-8): a synthetic-shaped run must be identifiable from its
+    # outputs, not just a transient stderr warning.
+    shape_source = profile_source(config.iso, shape_year)
 
     sweep = run_sweep(config, resources, load, lmp, cf, emission_rate=emission_rate)
     paths = write_outputs(
@@ -183,6 +187,7 @@ def run_one_iso(
         report=report,
         run_id=run_id,
         report_hourly=report_hourly,
+        metadata_extra={"profile_source": shape_source},
     )
     print(summarize(sweep))
     print("wrote: " + "  ".join(str(v) for v in paths.values()) + "\n")
