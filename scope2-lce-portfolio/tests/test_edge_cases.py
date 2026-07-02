@@ -117,8 +117,9 @@ def test_hydro_budget_binds_every_calendar_month() -> None:
         is_budget_hydro=np.array([True]),
     )
     cf = np.ones((1, T))
-    # 5000 MW flat load: even the largest monthly ERCOT budget (May, 170 GWh
-    # over 744 h) implies < 230 MW average, so every month's cap binds.
+    # 5000 MW flat load: even the largest monthly ERCOT budget (Jun, 28.6 GWh —
+    # EIA-923 ERCO 2023-24 avg x 50% share) implies < 40 MW average, so every
+    # month's cap binds.
     load = np.full(T, 5000.0)
     lmp = np.full(T, 40.0)
     cfg = PortfolioConfig(
