@@ -393,6 +393,45 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Worker-thread error discipline (review finding LN-9) --------------------
+
+
+def test_execute_survives_system_exit(tmp_path: Path, monkeypatch) -> None:
+    """LN-9: SystemExit is not an Exception — uncaught, it killed the single
+    worker thread silently and every later queued run hung at 'queued'.
+    _execute must absorb it into a friendly error status instead."""
+
+    def _exiting_main(argv):
+        raise SystemExit(2)
+
+    monkeypatch.setattr(lce_launcher.cli, "main", _exiting_main)
+    state = lce_launcher.LauncherState(
+        state_dir=tmp_path / "state",
+        results_dir=tmp_path / "results",
+        open_browser=False,
+    )
+    run_kwargs = {
+        "iso": "SAMPLE",
+        "mode": "premium_cap",
+        "premium_deltas": (5.0,),
+        "matching_targets": (0.9,),
+        "lcoe_sensitivity": "mid",
+        "load_file": "load.csv",
+        "lmp_file": "lmp.csv",
+        "run_id": "sysexit_run",
+        "open_report_when_done": False,
+    }
+    # Register the batch directly (bypassing the queue) so the idle worker
+    # thread can't race this synchronous _execute call.
+    state.batches["b1"] = [
+        lce_launcher.RunStatus(run_id="sysexit_run", iso="SAMPLE", mode="premium_cap")
+    ]
+    state._execute("b1", 0, run_kwargs)  # must not raise
+    status = state.batch_status("b1")[0]
+    assert status["state"] == "error"
+    assert "internal error" in status["message"]
+
+
 # --- Last-used pre-fill freshness (review finding LN-7) ----------------------
 
 
