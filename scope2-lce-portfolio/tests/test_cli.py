@@ -280,7 +280,9 @@ def test_cli_flags_override_config_file(tmp_path) -> None:
 
     config_path = tmp_path / "run.json"
     config_path.write_text(
-        json.dumps({"iso": "SAMPLE", "premium_deltas": [3.0], "lcoe_sensitivity": "mid"})
+        json.dumps(
+            {"iso": "SAMPLE", "premium_deltas": [3.0], "lcoe_sensitivity": "mid"}
+        )
     )
 
     def parse(extra):
