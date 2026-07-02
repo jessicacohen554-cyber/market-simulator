@@ -254,10 +254,16 @@ def main(argv: list[str] | None = None) -> int:
         # directory), while --out-dir stays the gitignored ad-hoc default.
         run_id = validate_run_id(args.run_id or compose_run_id(isos, base.mode))
         if args.results:
-            out_dir = RESULTS_ROOT / run_id
+            # Write into a scratch sibling and swap only on success (audit
+            # findings IO-7/CL-3): deleting results/<run-id>/ up front meant a
+            # failed re-run destroyed the previous good results and could
+            # leave a partial directory behind.
+            final_dir = RESULTS_ROOT / run_id
+            out_dir = RESULTS_ROOT / f"{run_id}.tmp"
             if out_dir.exists():
                 shutil.rmtree(out_dir)
         else:
+            final_dir = None
             out_dir = Path(args.out_dir)
 
         # Per-ISO Parquet + metadata are written inside the loop; the report
@@ -284,6 +290,13 @@ def main(argv: list[str] | None = None) -> int:
                 report_hourly=args.report_hourly,
             )
             print("report: " + "  ".join(str(v) for v in paths.values()))
+        if final_dir is not None:
+            # Atomic-ish publish: the previous run directory is replaced only
+            # after the whole new run (all ISOs + report) has been written.
+            if final_dir.exists():
+                shutil.rmtree(final_dir)
+            out_dir.rename(final_dir)
+            print(f"results: {final_dir}")
     except (ValueError, KeyError, FileNotFoundError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
