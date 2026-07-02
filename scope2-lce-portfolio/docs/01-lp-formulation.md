@@ -83,9 +83,18 @@ This is the **percentage of annual load energy matched at hourly granularity**, 
 in Mode B). Storage is charged from the aggregate node; grid purchases are counted unmatched
 at purchase time even if later discharged (conservative, no round-trip laundering).
 **Residual carbon:** grid_buy is attributed hour-by-hour at the market simulator's
-fossil-only **average** emission rate (tCO₂/MWh, attributional/location-based accounting):
-`residual_co2_tons = Σ_t grid_buy[t] × fossil_avg_co2_rate[t]`, output per frontier point
-(ADR 0013, superseding ADR 0007's marginal-rate attribution).
+fossil-only **average** emission rate (tCO₂/MWh, attributional/location-based accounting;
+ADR 0013, superseding ADR 0007's marginal-rate attribution), plus — since ADR 0012 — the
+residual stack emissions of partial-capture resources (gas CC + CCS) at their per-resource
+rate:
+```
+residual_co2_tons = Σ_t grid_buy[t] × fossil_avg_co2_rate[t]          # grid_co2_tons
+                  + Σ_r Σ_t gen[r,t] × emission_rate_ton_mwh[r]       # resource_co2_tons
+```
+Both components are reported separately (`grid_co2_tons`, `resource_co2_tons`) per frontier
+point. Reporting only — the matching metric and matching sums are unchanged: a resource that
+clears the ADR 0012 threshold (capture > 0.90, residual < 0.050 tCO₂/MWh, enforced at
+catalog load) counts **fully** toward hourly matching, with no intensity-weighted discount.
 
 Net portfolio cost and premium:
 ```
