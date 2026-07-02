@@ -1,7 +1,8 @@
 # 0010 — Load intake & growth application
 
-- **Status:** provisional (stakeholder deferred; default-decisions table applied)
-- **Date:** 2026-07-01
+- **Status:** accepted (ratified at stakeholder session 2026-07-02) — see
+  Ratification note below.
+- **Date:** 2026-07-01 (ratified 2026-07-02)
 - **Session:** PS-07 (Load Intake & Growth)
 - **Implemented by:** PP-01
 
@@ -40,3 +41,15 @@ with clear messages.
 - Load growth applied uniformly at load-aggregation time (no per-facility rates yet).
 - `config.load_growth_rate` and `config.growth_years` control scaling; defaults
   are 0 (no growth) and 0 (modeled year is input year).
+
+## Ratification note (stakeholder session, 2026-07-02)
+
+Ratified as-is. Stakeholder direction (paraphrased): assume **no load growth**
+by default, but keep a growth percentage available that scales the **same load
+shape** — which is exactly the implemented design: `load_growth_rate` /
+`load_growth_years` default to 0 and, when set, apply a single uniform
+shape-preserving multiplier `(1+rate)^years` (`intake.apply_load_growth`).
+Shaped / per-facility growth remains deferred to v2. The
+error-on-missing-hours, duplicate-row, required-column, and non-leap
+local-standard-time calendar rules were verified implemented in `intake.py`
+and are ratified unchanged.
