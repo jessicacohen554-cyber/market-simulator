@@ -1,4 +1,6 @@
-# PS-09 — Gas CC + CCS as a Portfolio Resource (backlog)
+# PS-09 — Gas CC + CCS as a Portfolio Resource
+
+**DECIDED → ADR 0012 (2026-07-02).**
 
 **Goal:** add carbon-capture-retrofitted (or new-build) gas combined-cycle as a
 procurable firm low-carbon resource in the catalog.
