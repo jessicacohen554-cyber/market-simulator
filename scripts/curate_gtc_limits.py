@@ -85,20 +85,38 @@ def _iter_csv_bytes(path: Path):
         yield from _walk(zf)
 
 
+def _gtc_only(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep the GTC rows (empty ``FromStation``) and drop the column.
+
+    ``FromStation`` may be a true NaN (CSV) or the empty string / whitespace
+    (some parquet exports keep it as an object column), so both are treated as
+    "no monitored element" — the GTC signature.
+    """
+    fs = df["FromStation"]
+    is_gtc = fs.isna() | (fs.astype("string").str.strip() == "")
+    return df[is_gtc].drop(columns=["FromStation"])
+
+
 def _read_gtc_rows(path: Path) -> pd.DataFrame:
     """Return every GTC row (empty ``FromStation``) in one archive file.
 
-    Off-schema or unreadable member CSVs are skipped rather than aborting the
-    archive (a few daily NP6-86 files carry a stray header); latin-1 decodes
-    every byte so encoding never fails the read.
+    Accepts a ``.parquet`` export of the NP6-86 rows (the columnar bundle the
+    Data Portal history is delivered as) or the zip/CSV archive layout. For
+    zip/CSV, off-schema or unreadable member CSVs are skipped rather than
+    aborting the archive (a few daily NP6-86 files carry a stray header) and
+    latin-1 decodes every byte so encoding never fails the read.
     """
+    if path.suffix.lower() == ".parquet":
+        df = pd.read_parquet(path, columns=_USECOLS)
+        return _gtc_only(df)
+
     frames: list[pd.DataFrame] = []
     for payload in _iter_csv_bytes(path):
         try:
             df = pd.read_csv(io.BytesIO(payload), usecols=_USECOLS, encoding="latin-1")
         except (ValueError, UnicodeDecodeError):
             continue
-        gtc = df[df["FromStation"].isna()].drop(columns=["FromStation"])
+        gtc = _gtc_only(df)
         if not gtc.empty:
             frames.append(gtc)
     if not frames:
@@ -211,6 +229,11 @@ def curate(raw_root: Path | None = None, isos: list[str] | None = None) -> list[
     if rows.empty:
         print("archives contained no GTC (empty-FromStation) rows")
         return []
+    # Drop fully-identical rows so overlapping bundles (a main year file plus
+    # its DST extra-hour / retry supplements, or a re-uploaded archive) are not
+    # double-counted. Genuinely distinct SCED runs differ in SCEDTimeStamp or
+    # value and survive.
+    rows = rows.drop_duplicates(ignore_index=True)
     years = (
         pd.to_datetime(rows["SCEDTimeStamp"], format="%m/%d/%Y %H:%M:%S")
         .dt.year.unique()

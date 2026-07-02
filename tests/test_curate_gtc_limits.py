@@ -6,9 +6,9 @@ tmp raw root with CLEAN_DIR redirected (as in tests/test_clean_io.py), and
 asserts the written Parquet is schema-valid and the hourly aggregation
 (GTC-row filter, active/binding counts, DST-safe clock mapping) is correct.
 Then exercises the consumer: :func:`market_sim.data.gtc.ercot_gtc_ttc_hourly`
-must map PNHNDL/WESTEX onto the ERCOT links with the measured-mean /
-envelope-fill formula, keep unmapped links static, and return the static
-array as the import-direction bound.
+must map PNHNDL/WESTEX onto the ERCOT links with the measured hourly mean on
+active hours and the static derived rating on unobserved hours, keep unmapped
+links static, and return the static array as the import-direction bound.
 """
 
 import io
@@ -20,7 +20,6 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import ERCOT_SCED_INTERVALS_PER_HOUR
 from market_sim.config.iso_configs import get_iso_config
 from scripts import curate_gtc_limits
 from scripts.lib import clean_io
@@ -136,23 +135,22 @@ class CurateGtcLimitsTest(unittest.TestCase):
         self.assertEqual(ttc_hourly.shape, (hours, len(links)))
         np.testing.assert_array_equal(ttc_import, static)
 
-        cadence = float(ERCOT_SCED_INTERVALS_PER_HOUR)
         i_pn = links.index(("Panhandle", "North"))
-        env_pn = 3000.0  # PNHNDL year-max limit_mean
-        # Hour 5: 2 active intervals at mean 2500, 10 envelope stand-ins.
-        want_h5 = (2500.0 * 2 + env_pn * (cadence - 2)) / cadence
-        self.assertAlmostEqual(ttc_hourly[5, i_pn], want_h5)
-        # Hour 6: 1 active at 3000 == envelope.
-        self.assertAlmostEqual(ttc_hourly[6, i_pn], env_pn)
-        # Non-active hours ride the envelope (NOT the static 2,680).
-        self.assertAlmostEqual(ttc_hourly[0, i_pn], env_pn)
+        static_pn = static[i_pn]  # 2,680 MW derived limit-at-bind
+        # Active hours ride the measured hourly mean; unobserved hours the
+        # static limit (never a year-max envelope).
+        self.assertAlmostEqual(ttc_hourly[5, i_pn], 2500.0)  # 2 intervals, mean 2500
+        self.assertAlmostEqual(ttc_hourly[6, i_pn], 3000.0)  # 1 interval at 3000
+        self.assertAlmostEqual(ttc_hourly[0, i_pn], static_pn)  # unobserved -> static
 
         i_wn = links.index(("West", "North"))
         i_wsc = links.index(("West", "South_Central"))
-        env_wx = 9000.0
-        want_wx_h5 = (9000.0 * 1 + env_wx * (cadence - 1)) / cadence
-        self.assertAlmostEqual(ttc_hourly[5, i_wn], want_wx_h5 * 8.0 / 11.0)
-        self.assertAlmostEqual(ttc_hourly[5, i_wsc], want_wx_h5 * 3.0 / 11.0)
+        # WESTEX active hour 5: measured 9000 split 8:3 across the two links.
+        self.assertAlmostEqual(ttc_hourly[5, i_wn], 9000.0 * 8.0 / 11.0)
+        self.assertAlmostEqual(ttc_hourly[5, i_wsc], 9000.0 * 3.0 / 11.0)
+        # Unobserved WESTEX hours revert to each link's static rating.
+        self.assertAlmostEqual(ttc_hourly[0, i_wn], static[i_wn])
+        self.assertAlmostEqual(ttc_hourly[0, i_wsc], static[i_wsc])
 
         # Unmapped links keep the static rating in every hour.
         i_nh = links.index(("North", "Houston"))
