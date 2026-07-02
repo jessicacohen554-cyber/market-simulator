@@ -38,15 +38,16 @@ data/raw/_processed-legacy/*.parquet
 # cogens with that year's CHP designation instead of the latest snapshot's.
 !data/raw/_processed-legacy/eia860_chp_by_year.parquet
 
-# Generated backcast dashboard files (backcast-results.html, manifest.js,
-# benchmark.js) — assembled from the committed registry sidecars + bench parts by
-# scripts/build_manifest.py. These ARE committed (so GitHub Pages serves the
-# dashboard even on a raw-branch build, not just the Actions deploy), but only
+# Generated backcast dashboard data files (frontend/data/backcast/manifest.js,
+# benchmark.js, completeness.js) — assembled from the committed registry
+# sidecars + bench parts by scripts/build_manifest.py. These ARE committed (so
+# a raw checkout's local preview works via the bc-data.js fallback), but only
 # the "Deploy site to GitHub Pages" workflow ever refreshes them on main — it is
 # the single writer, pushing with GITHUB_TOKEN. Calibration runs still commit
 # ONLY their own namespace files (registry/<id>.json, runs/<id>.js, bench parts)
 # and must never hand-commit these shared files, which is what keeps concurrent
-# sessions merging without conflicts.
+# sessions merging without conflicts. The root backcast-results.html is a
+# static redirect stub to docs/codebase-site/ — committed, never regenerated.
 
 # Codebase-site backcast data subset — generated at deploy time by
 # scripts/build_codebase_site_backcast.py from frontend/data/backcast/.
