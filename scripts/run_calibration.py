@@ -2012,6 +2012,7 @@ def run_year(
     ct_netload_drag: bool = False,
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
+    ercot_gtc_limits_measured: bool = False,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -2088,6 +2089,11 @@ def run_year(
         # grid floor rides at the year's measured EIA-923 class CF x the
         # sector grid-delivery share instead of the pooled CAMPD p2 minimum.
         config = config.with_overrides(chp_export_floor_measured=True)
+    if ercot_gtc_limits_measured:
+        # Measured ERCOT GTC transfer limits (backcast overlay): the GTC-
+        # carrying links' export capability follows the hourly NP6-86 series
+        # (gtc-limits clean datatype) instead of the static ttc_mw.
+        config = config.with_overrides(ercot_gtc_limits_measured=True)
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -2698,6 +2704,39 @@ def run_year(
     # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
     # for ISOs/years without one.
     ttc = _apply_iso_monthly_ttc(ttc, iso_config, iso, year, demand.shape[1])
+    # Measured ERCOT GTC export limits (backcast overlay, ScenarioConfig.
+    # ercot_gtc_limits_measured): the GTC-carrying links' export direction
+    # follows the hourly NP6-86 measured limit series so West/Panhandle
+    # curtailment emerges endogenously from the binding published limits.
+    # Applied only when the year ALSO has measured HSL renewable potential —
+    # without it the renewable upper bound is the delivered actuals
+    # (EIA-930-as-CF) and any binding export cap would double-curtail wind
+    # below what really flowed. The import direction keeps the static rating
+    # (a GTC is an export stability limit).
+    ttc_import = None
+    if getattr(config, "ercot_gtc_limits_measured", False) and iso == "ERCOT":
+        from market_sim.data.gtc import ercot_gtc_ttc_hourly
+
+        if load_hsl_hourly(iso, year) is None:
+            logger.warning(
+                "ercot_gtc_limits_measured: %d has no measured HSL potential "
+                "(renewables ride delivered-as-CF) — measured GTC limits "
+                "skipped for this year to avoid double-curtailment",
+                year,
+            )
+        else:
+            gtc_out = ercot_gtc_ttc_hourly(
+                np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+            )
+            if gtc_out is None:
+                logger.warning(
+                    "ercot_gtc_limits_measured: no gtc-limits clean partition "
+                    "for %d — static TTC kept (supply the NP6-86 archives and "
+                    "run scripts/curate_gtc_limits.py)",
+                    year,
+                )
+            else:
+                ttc, ttc_import = gtc_out
     # Aggregate interface limits (CAISO's simultaneous WECC import cap): resolve
     # the configured link groups to flow-column indices for the LP. Empty (no
     # extra rows) for ISOs without an interface_limits entry.
@@ -3867,6 +3906,9 @@ def run_year(
         voll=iso_config.voll,
         incidence=incidence,
         ttc=ttc,
+        # Import-direction bound when the measured ERCOT GTC overlay made the
+        # export caps hourly/asymmetric; None keeps the symmetric -ttc.
+        ttc_import=ttc_import,
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage.zone_idx,

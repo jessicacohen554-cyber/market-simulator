@@ -327,6 +327,60 @@ class TestTransmissionDispatch(unittest.TestCase):
         self.assertTrue(np.all(np.abs(result.flows) <= ttc[:, None] + 1e-6))
 
 
+class TestAsymmetricHourlyTtc(unittest.TestCase):
+    """Hourly export caps with a static import bound (``ttc_import``).
+
+    The ERCOT measured-GTC overlay caps the EXPORT direction of a link with
+    an hourly ``(T, n_links)`` series while the import direction keeps its
+    static thermal rating — a GTC is an export stability limit, not an
+    import rating.
+    """
+
+    def test_export_capped_hourly_import_keeps_static(self):
+        zone_names = ["A", "B"]
+        # All thermal lives in B; A is a wind pocket that flips to importing.
+        fleet = _fleet([("B", 500.0)], zone_names)
+        mc = np.full((1, T), 50.0)
+        demand = np.vstack([np.full(T, 100.0), np.full(T, 300.0)])
+
+        # Wind 500 MW in A for hours 0-11 (A exports its 400 MW surplus),
+        # zero after (A imports its 100 MW load).
+        wind_cap = np.array([500.0, 0.0])
+        cf = np.zeros(T)
+        cf[:12] = 1.0
+        wind_cf = np.vstack([cf, np.zeros(T)])
+
+        links = [TransferLink(from_zone="A", to_zone="B", ttc_mw=200.0)]
+        incidence = build_incidence_matrix(links, zone_names)
+        static = get_ttc_array(links)
+        # Hourly export cap: 150 MW while the wind blows, 50 MW after —
+        # below the 100 MW import A then needs, so a symmetric bound would
+        # strand load in A.
+        ttc_hourly = np.full((T, 1), 150.0)
+        ttc_hourly[12:, 0] = 50.0
+
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc_hourly,
+            ttc_import=static,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+        )
+
+        # Export hours saturate the hourly cap (surplus 400 > cap 150).
+        np.testing.assert_allclose(result.flows[0, :12], 150.0, atol=1e-6)
+        # Import hours are bounded by the STATIC rating, not the 50 MW
+        # export cap: A's 100 MW load imports in full, no slack.
+        np.testing.assert_allclose(result.flows[0, 12:], -100.0, atol=1e-6)
+        self.assertLessEqual(float(result.slack.max()), 1e-6)
+
+
 # Availability factor of the WECC import tranches (1 - eford).
 _IMPORT_AVAIL = 1.0 - WECC_IMPORT_EFORD
 

@@ -44,13 +44,13 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
-| lmp | — | 2023–2025 | 2023–2025 | — | 2023–2025 | 2023–2025 |
-| load | 2015–2026 | 2023–2026 | 2023–2025 | 2023–2025 | 2023–2026 | 2015–2026 |
-| ancillary-services | 2025–2026 | — | 2023–2026 | — | 2023–2026 | — |
+| lmp | — | — | — | — | — | — |
+| load | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
-| generation | 2018–2026 | 2023–2025 | 2022–2026 | 2023–2025 | 2018–2026 | 2018–2026 |
-| renewables | 2023 | 2023–2024 | — | — | — | — |
-| validation | 2021–2025 | 2023–2025 | 2021–2025 | 2023–2025 | 2023–2025 | 2023–2025 |
+| generation | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
 | unit-outage-events | — | — | — | — | — | — |
@@ -65,9 +65,9 @@ snapshot).
 
 | datatype | scope | years |
 |---|---|---|
-| emissions | CAMPD/CEMS, by plant and unit | 2023–2025 |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2023–2026 |
-| fleet | EIA-860 / eGRID / master registry | 2023–2025 |
+| emissions | CAMPD/CEMS, by plant and unit | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
 | fuel-ercot-ep-gas | ERCOT / TX electric-power consumers | n/a |
@@ -76,7 +76,7 @@ snapshot).
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | 2023–2024 |
+| egrid | national (EPA eGRID, by vintage year) | n/a |
 
 ---
 
