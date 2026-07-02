@@ -1,0 +1,20 @@
+# PROVISIONAL (ADR 0007): these are a first-pass marginal-emission proxy for
+# residual-carbon reporting, not a calibrated/reviewed input. Source: EPA
+# eGRID2022 (data year 2022; released 2024-01-30) Table 1 "Non-Baseload CO2
+# Output Emission Rate" by eGRID subregion, Greenhouse Gas Equivalencies
+# Calculator methodology page (epa.gov/energy/greenhouse-gas-equivalencies-
+# calculator-calculations-and-references). Non-baseload (not total-output) is
+# used because it approximates the marginal/peaking resource mix an
+# incremental grid purchase draws on, matching this tool's residual-carbon use
+# case. Values converted lb CO2/MWh -> metric tons CO2/MWh via 1 short ton-mass
+# lb/metric-ton = 2204.62 lb (rate_ton_per_mwh = lb_per_mwh / 2204.62).
+# ISOs spanning multiple eGRID subregions (PJM, MISO, NYISO) use an unweighted
+# average of their constituent subregions' non-baseload rates (documented per
+# row); a load-weighted blend is a future refinement, not yet computed.
+iso,rate_ton_per_mwh,basis,notes
+ERCOT,0.542,eGRID2022 non-baseload output emission rate,"Subregion ERCT (ERCOT All), single-subregion mapping. 1194.9 lb/MWh eGRID2022 non-baseload CO2 output emission rate (EPA GHG Equivalencies Calculator methodology page, Table 1) / 2204.62 lb per metric ton = 0.542 t/MWh."
+CAISO,0.4785,eGRID2022 non-baseload output emission rate,"Subregion CAMX (WECC California), single-subregion mapping. 1055.0 lb/MWh eGRID2022 non-baseload CO2 output emission rate (EPA GHG Equivalencies Calculator methodology page, Table 1) / 2204.62 = 0.4785 t/MWh. Excludes the WECC_import node; import-mix carbon content is out of scope for this table."
+PJM,0.6836,eGRID2022 non-baseload output emission rate,"Unweighted average of the four eGRID subregions PJM spans: RFCE 1278.7, RFCW 1843.6, RFCM 1597.3, SRVC 1308.8 lb/MWh (eGRID2022 non-baseload, EPA GHG Equivalencies Calculator methodology page, Table 1); mean = 1507.1 lb/MWh / 2204.62 = 0.6836 t/MWh. Not generation-weighted across subregions -- provisional per ADR 0007."
+MISO,0.7294,eGRID2022 non-baseload output emission rate,"Unweighted average of three eGRID subregions covering MISO North/Central/South: MROW 1794.7, SRMW 1808.6, SRMV 1220.7 lb/MWh (eGRID2022 non-baseload, EPA GHG Equivalencies Calculator methodology page, Table 1); mean = 1608.0 lb/MWh / 2204.62 = 0.7294 t/MWh. Not generation-weighted across subregions -- provisional per ADR 0007."
+NYISO,0.4851,eGRID2022 non-baseload output emission rate,"Unweighted average of the three eGRID subregions covering NYISO upstate/downstate: NYUP 920.1, NYCW 971.8, NYLI 1316.7 lb/MWh (eGRID2022 non-baseload, EPA GHG Equivalencies Calculator methodology page, Table 1); mean = 1069.53 lb/MWh / 2204.62 = 0.4851 t/MWh. Not generation-weighted across subregions -- provisional per ADR 0007."
+NEISO,0.4188,eGRID2022 non-baseload output emission rate,"Subregion NEWE (NPCC New England), single-subregion mapping. 923.3 lb/MWh eGRID2022 non-baseload CO2 output emission rate (EPA GHG Equivalencies Calculator methodology page, Table 1) / 2204.62 = 0.4188 t/MWh."
