@@ -183,6 +183,40 @@ def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
     return CHP_BTM_PCT_BY_SECTOR.get(sector, CHP_BTM_PCT_BY_SECTOR["merchant"])
 
 
+@lru_cache(maxsize=8)
+def chp_class_netgen_mwh(year: int) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_id, klass): annual net MWh}`` from EIA-923 for ``year``.
+
+    Per-(plant, class) EIA-923 Page-1 net generation, bucketed by the canonical
+    :func:`market_sim.config.plant_taxonomy.classify_plant` (the same taxonomy
+    the fleet and the calibration benchmark use). Feeds the measured
+    steam-following export floor
+    (``ScenarioConfig.chp_export_floor_measured``): a cogen's total measured
+    class CF for the year — its host-steam-driven operating level — times its
+    grid-delivery share (1 − :func:`chp_btm_pct`) is the grid export the steam
+    contract sustains. Keyed per class so a plant that splits across classes
+    (a merchant CC block plus a CHP train) cannot lend one class's output to
+    another. Empty for a year absent from the EIA-923 artifact.
+    """
+    from market_sim.config.plant_taxonomy import classify_plant
+    from market_sim.data.eia923 import load_monthly_generation
+
+    gen = load_monthly_generation()
+    gen = gen[gen["year"] == int(year)]
+    if gen.empty:
+        return {}
+    klass = [
+        classify_plant(f, pm, str(c).upper().startswith("Y"), int(pid))
+        for f, pm, c, pid in zip(
+            gen["fuel_type"], gen["prime_mover"], gen["chp"], gen["plant_id"]
+        )
+    ]
+    totals = gen.groupby(
+        [gen["plant_id"].astype(int), pd.Series(klass, index=gen.index)]
+    )["netgen_annual_mwh"].sum()
+    return {(int(pid), str(k)): float(v) for (pid, k), v in totals.items() if v > 0.0}
+
+
 def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
     """Total must-run CF floor (%) for a CHP plant, or ``None`` for no floor.
 
