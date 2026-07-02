@@ -938,8 +938,6 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
                 for s in e930["series"].unique()
             }
-            _CHP = tuple(c for c in classes_for_fuel930("gas") if c.endswith("_CHP"))
-            chp_flat = sum(mh.get(c, np.zeros(_T)).sum() for c in _CHP) / _T
             fuel_rows = []
             # Each EIA-930 fuel row sums the model classes that roll up to it
             # (market_sim.config.plant_taxonomy) — so any class is counted once,
@@ -950,34 +948,31 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             ]
             cfull = bench[int(year)]["classFull"]
             for fuel, classes, ob, is_gas in specs:
+                # Grid-delivered model vs the RAW EIA-930 grid series, for every
+                # fuel (user directive 2026-07-02): the model sum includes EVERY
+                # class of the fuel — the CHP classes' grid dispatch too, since
+                # EIA-930 meters CHP grid exports while the behind-the-meter host
+                # supply is held out of the LP on the model side and invisible to
+                # the BA meter on the actual side. (The old gas row dropped the
+                # CHP classes from the model and releveled the "930" benchmark to
+                # the EIA-923 classFull basis — a 923 subtotal mislabeled 930 that
+                # double-showed the CC_REGULAR/CC_CHP classification split already
+                # scored per class by C1.)
                 ms = sum((mh.get(c, np.zeros(_T)) for c in classes), np.zeros(_T))
-                # gas: compare the non-CHP model grid to (930 gas - model CHP).
-                if is_gas:
-                    ms = sum(
-                        (
-                            mh.get(c, np.zeros(_T))
-                            for c in ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
-                        ),
-                        np.zeros(_T),
+                if is_gas and ob is not None and "other" in e:
+                    # Gas fold-in correction, identical to the C2 verdict
+                    # (calibration_verdict.score_sysvol): some BAs (MISO) fold
+                    # biomass/process gas into the EIA-930 NG series while the
+                    # model books them in its own biomass/OTHER rows; subtract
+                    # that excess as a flat baseload (biomass/process gas run
+                    # ~flat, so pearson r is preserved).
+                    fold = max(
+                        0.0,
+                        float(cfull.get("OTHER", 0.0))
+                        + float(cfull.get("biomass", 0.0))
+                        - float(e["other"].sum()) / 1e6,
                     )
-                    if ob is not None:
-                        ob = ob - chp_flat
-                        # Re-level the gas benchmark to the grid-delivered EIA-923
-                        # basis the gate (classFull) scores on. EIA-930 carries no
-                        # separate biomass/'other' series — for some ISOs (MISO) it
-                        # folds them into the NG series (~13 TWh in 2024), which the
-                        # model books in its own biomass/OTHER rows, so the raw 930
-                        # gas over-states the benchmark and the headline gas row
-                        # reads ~6 pts more under than the verdict. Subtract that
-                        # excess as a flat baseload (biomass/process gas run ~flat)
-                        # so the displayed total + nrmse match classFull; the hourly
-                        # shape (pearson r, shift-invariant) is preserved.
-                        clean = sum(
-                            cfull.get(c, 0.0)
-                            for c in ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
-                        )
-                        if clean > 0.0:
-                            ob = ob - max(0.0, ob.sum() / 1e6 - clean) * 1e6 / _T
+                    ob = ob - fold * 1e6 / _T
                 m_twh = float(ms.sum()) / 1e6
                 b_twh = float(ob.sum()) / 1e6 if ob is not None else None
                 r2 = (
