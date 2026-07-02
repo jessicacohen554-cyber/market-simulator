@@ -47,6 +47,9 @@ per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script, 
 **PP-04** (LP core both modes, split-storage vars, hydro budget constraint, additionality
 accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
 graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
+run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-08
+(gas-CC+CCS, ADR 0012) backlog.
+**PP-09** implemented (ADR 0014 §1–§6): `report.py` payload+HTML renderer, `results/` committed store with a SAMPLE worked example, CLI `--run-id`/`--results`/`--no-report`/`--report-hourly`, `scripts/render_report.py`.
 run metadata), **PP-07** (147 tests: config, intake, LP core, CLI, extensions, cross-feature).
 **PP-08** (gas-CC+CCS, ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
 low-carbon threshold, grid/resource residual-CO₂ split) complete. Open: PP-09
