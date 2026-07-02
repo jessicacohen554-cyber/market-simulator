@@ -4,8 +4,8 @@ NYISO,Capital_Hudson,ST_GAS,tmin,-14.9,0.0807,False,0.6729,0.12,0.4545,11,0.142,
 NYISO,Capital_Hudson,CT_PEAKER,tmax,31.1,0.1957,False,0.515,0.38,0.0459,11,0.0193,0.447,hot: zone p95 tmax (design cooling day),,,,
 NYISO,Capital_Hudson,CT_PEAKER,tmin,-14.9,0.2794,False,0.7353,0.38,-1.0,2,0.0224,0.4481,cold: zone p1 tmin (design heating day),,,,
 NYISO,NYC,ST_GAS,tmax,-50.0,0.391,True,0.996,0.12,0.3305,65,0.1839,0.8694,persistent 24h base: legacy base_24h (when-available cool-day CF p25),pro_rata,,,
-NYISO,NYC,ST_GAS,tmax,-50.0,0.432,True,,,0.3305,65,,,evening base: legacy base_ev (when-available cool-day evening CF p25),pro_rata,14,21,
-NYISO,NYC,ST_GAS,tmax,25.0,0.589,True,,,,,,,hot evening limb: base_ev + slope×(median_hot_tmax-T0) (CAMPD 2023-25),pro_rata,14,21,
+NYISO,NYC,ST_GAS,tmax,25.0,0.432,True,,,0.3305,65,,,ramp base knot @ T0=25C: legacy evening base_ev (avail cool-day evening p25); continuous limb,pro_rata,14,21,NYC_ST_ev
+NYISO,NYC,ST_GAS,tmax,38.0,0.943,True,,,,,,,ramp cap knot: legacy base_ev+slope 0.0393/C to feasible clamp @38C (>NYC max 37.2); replaces 0.589 step,pro_rata,14,21,NYC_ST_ev
 NYISO,NYC,ST_GAS,tmin,-7.72,0.106,False,0.8833,0.12,0.0335,11,0.207,0.8769,cold: zone p1 tmin (design heating day),,,,
 NYISO,NYC,CT_CHP,tmax,31.7,0.3303,False,0.8693,0.38,0.3064,65,0.6873,0.8693,hot: zone p95 tmax (design cooling day),,,,
 NYISO,NYC,CT_CHP,tmin,-7.72,0.3303,False,0.8693,0.38,-0.2635,11,0.6897,0.8693,cold: zone p1 tmin (design heating day),,,,
@@ -22,8 +22,8 @@ NYISO,Long_Island,CT_PEAKER,tmax,35.22,0.679,True,,,,,,,ramp cap knot: legacy ba
 NYISO,Long_Island,CT_PEAKER,tmax,30.0,0.3443,False,0.9061,0.38,0.2536,66,0.3619,0.6852,hot: zone p95 tmax (design cooling day),,,,
 NYISO,Long_Island,CT_PEAKER,tmin,-8.8,0.2574,False,0.6773,0.38,0.2283,11,0.3873,0.6987,cold: zone p1 tmin (design heating day),,,,
 NYISO,Long_Island,ST_GAS,tmax,-50.0,0.289,True,1.0,0.12,0.3498,66,0.2381,0.9227,persistent 24h base: legacy base_24h (when-available cool-day CF p25),pro_rata,,,
-NYISO,Long_Island,ST_GAS,tmax,-50.0,0.383,True,,,0.479,66,,,evening base: legacy base_ev (when-available cool-day evening CF p25),pro_rata,14,21,
-NYISO,Long_Island,ST_GAS,tmax,25.0,0.505,True,,,,,,,hot evening limb: base_ev + slope×(median_hot_tmax-T0) (CAMPD 2023-25),pro_rata,14,21,
+NYISO,Long_Island,ST_GAS,tmax,25.0,0.383,True,,,0.479,66,,,ramp base knot @ T0=25C: legacy evening base_ev (avail cool-day evening p25); continuous limb,pro_rata,14,21,LI_ST_ev
+NYISO,Long_Island,ST_GAS,tmax,37.51,0.891,True,,,,,,,ramp cap knot: legacy base_ev+slope 0.0406/C to p97 cap 0.891 @37.51C (LI clamps above); replaces 0.505 step,pro_rata,14,21,LI_ST_ev
 NYISO,Long_Island,ST_GAS,tmin,-8.8,0.1182,False,0.9851,0.12,0.7397,11,0.257,0.9268,cold: zone p1 tmin (design heating day),,,,
 NYISO,Upstate_West,ST_GAS,tmax,30.0,0.1013,False,0.8445,0.12,0.2227,62,0.5687,0.7461,hot: zone p95 tmax (design cooling day),,,,
 NYISO,Upstate_West,ST_GAS,tmin,-13.8,0.1067,False,0.8889,0.12,0.2773,9,0.57,0.7504,cold: zone p1 tmin (design heating day),,,,
@@ -43,3 +43,5 @@ NYISO,NYC,CC_CHP,tmax,31.7,0.1634,False,0.3141,0.52,0.1684,65,0.1943,0.2775,hot:
 NYISO,NYC,CC_CHP,tmin,-7.72,0.1445,False,0.2778,0.52,-0.345,11,0.1953,0.2797,cold: zone p1 tmin (design heating day),,,,
 NYISO,Long_Island,CT_CHP,tmax,30.0,0.3553,False,0.9349,0.38,0.032,65,0.9843,0.9349,hot: zone p95 tmax (design cooling day),,,,
 NYISO,Long_Island,CT_CHP,tmin,-8.8,0.3553,False,0.9349,0.38,0.1481,11,0.9837,0.9349,cold: zone p1 tmin (design heating day),,,,
+NYISO,Capital_Hudson,ST_GAS,tmax,25.0,0.0,True,,,,,,,"ramp base knot @ T0=25C: legacy CH weak hot-limb, base_ev=0 (no persistent base per CH data)",pro_rata,14,21,CH_ST_ev
+NYISO,Capital_Hudson,ST_GAS,tmax,38.0,0.32,True,,,,,,,ramp cap knot: legacy CH slope 0.0246/C hot-limb to clamp @38C (>CH max 35.6); measured hot-day CF regression,pro_rata,14,21,CH_ST_ev
