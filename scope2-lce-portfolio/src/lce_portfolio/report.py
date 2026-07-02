@@ -580,7 +580,6 @@ def _sec_build_mix(payload: dict) -> str:
         ymax = max(list(totals.values()) + [1.0])
         yticks = _nice_ticks(0, ymax)
         ys = _LinScale(0, yticks[-1], H - B, T)
-        xs = _LinScale(0, 1, L, W - R)  # band positions computed directly
         band = (W - R - L) / max(len(setpoints), 1)
         bar_w = min(24.0, band * 0.6)
 
