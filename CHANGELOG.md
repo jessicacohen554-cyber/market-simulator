@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-02 (MISO zonal refinement — phase 1: 6-zone topology)
+
+MISO's Midwest is split from the 3-zone copperplate to the **six measured
+EIA-930 sub-BA (LRZ-union) zones** — West (LRZ 1), Plains (3+5), Illinois
+(4), Indiana (6), East (2+7), South (8+9+10, unchanged) — per
+`docs/multi-iso/miso-zonal-refinement-scope.md` (decisions D1–D7). Internal
+congestion is carried by per-zone directional **CIL/CEL interface groups**
+from the MISO LOLE Study Reports, expanded to per-season hourly caps in
+backcasts (`transmission.build_miso_deliverability_groups`; Jan–May 2023
+backfilled from PY2023-24 pending the PY2022-23 extraction); the six
+internal bilateral links are deliberately non-binding placeholders and the
+RDT one-way pair (3,000/2,500 MW) attaches to MISO-Plains (D3 probe: no
+spurious Plains congestion, kept). `InterfaceLimit` gains `reverse_cap_mw`
+and net-corridor orientation (signed member links). **Bug fix:** one-way
+link bounds (`link_bidirectional`) existed in dispatch but were never wired
+into either runner — the RDT had been silently symmetric; now enforced
+(byte-identical for all other ISOs). Bundles persist `flows.parquet`;
+structural gates report via `scripts/report_miso_zonal_gates.py`. Full
+touchpoint remap (zone assignment, sub-BA load map + stale-parquet guard,
+LRZ crosswalk, border seams, gas hubs, weather stations, 6-column wind
+shapes, reliability floor re-derived at 6-zone granularity). Backcast
+2023–2025 registered as `2026-07-02-miso-35-zonal-refinement` (new MISO
+keeper — most structurally faithful; level metrics ~unchanged, scarcity
+tail awaits phase-2 reserve co-opt). Docs realigned: methodology spec §1.3
+(transmission/interface groups + MISO topology), CLAUDE.md,
+`docs/multi-iso/04-transmission-zones-and-congestion.md`, MISO data audit
+(superseded banner), parameter citations, zonal-refinement scope status.
+
+
 ## 2026-07-01 (Capacity-deliverability — docs reconciliation, Wave 3)
 
 Wire capacity-deliverability into the capacity screens behind
