@@ -255,14 +255,15 @@ def test_additionality_excludes_existing_from_matching() -> None:
     assert np.isclose(r_on.gen[0].sum(), existing_gen, rtol=1e-3)
 
 
-# --- residual carbon reporting (ADR 0007) ----------------------------------
+# --- residual carbon reporting (ADR 0013) ----------------------------------
 
 
 def test_residual_co2_reporting() -> None:
-    """residual_co2_tons = grid_buy_mwh × marginal rate (0.4 tCO₂/MWh here).
+    """residual_co2_tons = Σ_t grid_buy[t] × rate[t] (flat 0.4 tCO₂/MWh here).
 
     Solar available only 8/24 hours with flat 100 MW load leaves 16 h × 100 MWh =
-    1600 MWh bought from the grid; at 0.4 tCO₂/MWh that is 640 tCO₂.
+    1600 MWh bought from the grid; at a flat 0.4 tCO₂/MWh hourly fossil-average
+    rate that is 640 tCO₂ (hour-varying rates are covered in test_emissions.py).
     """
     T = 24
     res = ResourceArrays(
@@ -284,9 +285,10 @@ def test_residual_co2_reporting() -> None:
         hours=T,
         mode="premium_cap",
         excess_sale_fraction=1.0,
-        marginal_co2_ton_per_mwh=0.4,
     )
-    r = build_and_solve(cfg, res, load, lmp, cf, setpoint=1e6)
+    r = build_and_solve(
+        cfg, res, load, lmp, cf, setpoint=1e6, emission_rate=np.full(T, 0.4)
+    )
     assert r.status == "Optimal"
     assert np.isclose(r.grid_buy_mwh, 1600.0, atol=1.0)
     assert np.isclose(r.residual_co2_tons, r.grid_buy_mwh * 0.4, rtol=1e-9)
@@ -294,7 +296,7 @@ def test_residual_co2_reporting() -> None:
 
 
 def test_residual_co2_zero_by_default() -> None:
-    """Default marginal rate 0 -> residual_co2_tons is exactly 0 (feature off)."""
+    """No emission_rate (default None) -> residual_co2_tons is exactly 0."""
     T = 24
     res = ResourceArrays(
         names=["solar"],
