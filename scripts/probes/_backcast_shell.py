@@ -601,10 +601,27 @@ function cfBarChart(model,campd,bands,w,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw
  svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));svg.addEventListener("mouseleave",hideTip);bindTouchTip(svg,at);return svg;}
 // ---- reference tables (Tables page) ----
 function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
- let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal; calibrated fuels only — hydro/oil/other/biomass and the full load reconciliation are in the Generation mix table above)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
+ // Gas/coal totals recomputed from committed gmModel + bench e930 on the
+ // grid-delivered vs raw-EIA-930 basis (user directive 2026-07-02): model =
+ // EVERY class's grid LP dispatch (BTM CHP host supply is never in the LP);
+ // benchmark = the raw EIA-930 grid series, gas deflated by the
+ // biomass/'other' fold-in exactly like calibration_verdict.score_sysvol.
+ // Older payloads baked a gas row that dropped the CHP classes and releveled
+ // the "930" bench to the EIA-923 classFull basis — a mislabeled 923 subtotal.
+ // r/NRMSE stay the payload values (the C4 hourly-shape stats the verdict
+ // gates on — a flat level shift does not change r).
+ const gm=(MODEL[id].years[yr]||{}).gmModel||{},B=BENCH[yr]||{};
+ const e930=B.e930||{},cf=B.classFull||{},hasGm=Object.keys(gm).length>0;
+ let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal; grid-delivered model vs raw EIA-930 grid series; calibrated fuels only — hydro/oil/other/biomass and the full load reconciliation are in the Generation mix table above)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
  for(const f of ["gas","coal","nuclear","wind","solar"]){const r=fr.find(x=>x.fuel===f);if(!r)continue;
-  const d=r.b!=null?100*(r.m-r.b)/r.b:null;
-  h+=`<tr><td>${f}</td><td class=num>${r.m.toFixed(1)}</td><td class=num>${r.b==null?"—":r.b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${r.r==null?"—":r.r.toFixed(3)}</td><td class=num>${r.nrmse==null?"—":r.nrmse.toFixed(3)}</td></tr>`;}
+  let m=r.m,b=r.b;
+  if(hasGm&&(f==="gas"||f==="coal")){
+   const cls=f==="gas"?GAS_CLASSES:COAL_CLASSES;
+   m=cls.reduce((s,c)=>s+(gm[c]||0),0);
+   if(e930[f]!=null){b=e930[f];
+    if(f==="gas"&&e930.other!=null)b-=Math.max(0,(cf.OTHER||0)+(cf.biomass||0)-(e930.other||0));}}
+  const d=(b!=null&&b!==0)?100*(m-b)/b:null;
+  h+=`<tr><td>${f}</td><td class=num>${m.toFixed(1)}</td><td class=num>${b==null?"—":b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${r.r==null?"—":r.r.toFixed(3)}</td><td class=num>${r.nrmse==null?"—":r.nrmse.toFixed(3)}</td></tr>`;}
  // Net imports as their own category, when the run solved with the priced
  // import/export node (fuelRows carries it as "interchange", net-export +).
  // Flip the sign to import-positive so the row reads as load-serving import
@@ -612,7 +629,7 @@ function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
  const ix=fr.find(x=>x.fuel==="interchange");
  if(ix){const m=-ix.m,b=ix.b==null?null:-ix.b;const d=(b!=null&&b!=0)?100*(m-b)/b:null;
   h+=`<tr><td>net imports</td><td class=num>${m.toFixed(1)}</td><td class=num>${b==null?"—":b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${ix.r==null?"—":ix.r.toFixed(3)}</td><td class=num>${ix.nrmse==null?"—":Math.abs(ix.nrmse).toFixed(3)}</td></tr>`;}
- return h+'</tbody></table></div></div>';}
+ return h+'</tbody></table></div><p class=psub style="margin-top:6px">Model gas/coal sum every class\'s grid LP dispatch (behind-the-meter CHP host supply is held out of the LP, so both columns are grid-delivered); EIA-930 gas is deflated by the biomass/‘other’ fold-in where the BA folds those fuels into its NG series — the same construction the C2 verdict uses. The per-class split against grid-delivered EIA-923 lives in the Generation mix table.</p></div>';}
 function singleFossilTable(id,yr){let h='<div class=panel><h2>Fossil classes — model vs EIA-923, r/NRMSE vs CAMPD</h2><div class=tablewrap><table><thead><tr><th>class</th><th>model TWh</th><th>EIA-923</th><th>Δ923</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
  for(const grp of META.groups){const m=classMetrics(id,yr,grp);if(!m)continue;
   const dd=m.bench923>0.02?100*(m.mFull-m.bench923)/m.bench923:null;
@@ -700,13 +717,35 @@ function sharePP(id,yr,mCls,aCls){const T=totalGen(id,yr);if(!T)return null;
 const NONFOSSIL_FUELS=["nuclear","wind","solar"];
 function isNonFos(g){return NONFOSSIL_FUELS.includes(g);}
 function allClasses(){return META.groups.concat(NONFOSSIL_FUELS);}
+// C1 gate membership — mirrors calibration_verdict.GAS_CLASSES / COAL_CLASSES /
+// FUELMIX_EXCLUDED exactly, so "Classes in tolerance" counts the SAME classes
+// the Calibration Status verdict gates: gas+coal only; CT_CHP (a BTM peaker the
+// grid LP zeroes by construction) and OTHER/OTHER_FOSSIL (reconciliation
+// buckets) excluded; nuclear/wind/solar advisory (report-only) like the verdict.
+const GAS_CLASSES=["CC_REGULAR","CC_CHP","CT_PEAKER","CT_CHP","ST_GAS","ST_CHP"];
+const COAL_CLASSES=["COAL_PRB","COAL_LIGNITE","COAL_BIT","COAL_WC","COAL"];
+const FUELMIX_EXCLUDED=new Set(["CT_CHP","OTHER","OTHER_FOSSIL"]);
+// Whether a class GATES in C1 for this run-year — family membership, not
+// excluded, and (preliminary-EIA-923 vintage) verified complete by the
+// committed completeness audit (calibration_verdict.class_is_gated).
+function classIsGated(id,yr,g){
+ if(!GAS_CLASSES.includes(g)&&!COAL_CLASSES.includes(g))return false;
+ if(FUELMIX_EXCLUDED.has(g))return false;
+ const ci=cmpInfo(yr,(META_RUN(id)||{}).iso||"ERCOT",g);
+ return !ci||!!ci.gate;} // no completeness part = complete vintage -> gates
 function classLabel(g){return isNonFos(g)?g[0].toUpperCase()+g.slice(1):mixLabel(g);}
 // Fossil class error: zone-aware volume (model-full vs full EIA-923) + the
 // system-wide generation-share deviation (full system class totals gmModel /
 // classFull, not the zone-allocated mFull/bench923).
 function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
- if(!m||!(m.bench923>0.02))return null;
  const mSys=((MODEL[id].years[yr].gmModel||{})[grp])||0,aSys=((BENCH[yr].classFull||{})[grp])||0;
+ if(!m){
+  // No CAMPD-matched plants for this class (e.g. ERCOT ST_CHP) — fall back to
+  // the system-wide gmModel/classFull totals the verdict gates on, so the C1
+  // count spans the same classes as the Calibration Status page.
+  if(!(aSys>0.02))return null;
+  return {grp,err:100*(mSys-aSys)/aSys,mFull:mSys,bench923:aSys,annGen:(totalGen(id,yr)||{}).aGen||0,annLoad:totalLoad(id,yr),sharePP:sharePP(id,yr,mSys,aSys),r:null,nr:null};}
+ if(!(m.bench923>0.02))return null;
  return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,annGen:(totalGen(id,yr)||{}).aGen||0,annLoad:totalLoad(id,yr),sharePP:sharePP(id,yr,mSys,aSys),r:m.r,nr:m.nr};}
 // Non-fossil class error (system-wide; EIA-930 actual). Same shape as a fossil
 // classErr so the tolerance test treats every class uniformly; nonfos flags it
@@ -738,11 +777,25 @@ function classInTol(e){return volInTol(e,1)&&shareInTol(e,1);}
 function clsTol(e){return classInTol(e)?"good":(volInTol(e,2)&&shareInTol(e,2))?"ok":"bad";}
 function tolcls(v){const a=Math.abs(v);return a<=SUM_TOL_PCT?"good":a<=2*SUM_TOL_PCT?"ok":"bad";}
 function summaryHeadline(id,yr){const es=classErrs(id,yr);
- // System volume error stays fossil-only (Σ model vs Σ full EIA-923); the
- // in-tolerance count and worst class span every class incl. non-fossil.
+ // System volume error stays fossil-only (Σ model vs Σ full EIA-923). The
+ // in-tolerance count and worst class span ONLY the C1-gated classes — the
+ // same set the Calibration Status verdict scores; completeness-skipped
+ // gas/coal classes are counted separately, excluded/non-fossil never enter.
+ const gated=es.filter(e=>classIsGated(id,yr,e.grp));
+ const skipped=es.filter(e=>!FUELMIX_EXCLUDED.has(e.grp)&&!isNonFos(e.grp)
+  &&(GAS_CLASSES.includes(e.grp)||COAL_CLASSES.includes(e.grp))
+  &&!classIsGated(id,yr,e.grp)).length;
  let sm=0,sa=0,worst=null;
- es.forEach(e=>{if(!e.nonfos){sm+=e.mFull;sa+=e.bench923;}if(!worst||Math.abs(e.err)>Math.abs(worst.err))worst=e;});
- return {n:es.length,inTol:es.filter(classInTol).length,
+ es.forEach(e=>{if(!e.nonfos){sm+=e.mFull;sa+=e.bench923;}});
+ // Worst = out-of-tolerance first, then largest absolute TWh miss (the C1
+ // gate's own magnitude) — a tiny in-tolerance class with a big % error must
+ // not outrank a multi-TWh miss.
+ gated.forEach(e=>{
+  if(!worst){worst=e;return;}
+  const eOut=!classInTol(e),wOut=!classInTol(worst);
+  if(eOut!==wOut){if(eOut)worst=e;return;}
+  if(Math.abs(e.mFull-e.bench923)>Math.abs(worst.mFull-worst.bench923))worst=e;});
+ return {n:gated.length,inTol:gated.filter(classInTol).length,skipped,
   sysErr:sa>0?100*(sm-sa)/sa:null,worst,price:avgLMP(id,yr),priceScar:avgLMPScar(id,yr)};}
 // Actual historical avg LMP ($/MWh) for the selected year (system hub-average),
 // from the benchmark payload; absent for an ISO-year with no price file.
@@ -816,8 +869,8 @@ function yearScoreCard(id,yr){const H=summaryHeadline(id,yr),fr=fleetR(id,yr);
  // reconcile, tinting the overlay variant.
  const ov=H.priceScar!=null,mp=ov?H.priceScar:H.price;
  const pdiff=(mp!=null&&aP)?100*(mp-aP)/aP:null;
- return `<div class=ycard><div class=yhead>${yr}<span class=ysub>${H.inTol===H.n?"all classes pass":""}</span></div>
-  <div class=kpirow><span class=k>Classes in tolerance</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div>
+ return `<div class=ycard><div class=yhead>${yr}<span class=ysub>${H.n&&H.inTol===H.n?"all classes pass":""}</span></div>
+  <div class=kpirow><span class=k title="C1 fuel-mix gate — gas+coal classes only, the same set the Calibration Status verdict scores">Classes in tolerance (C1)</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}${H.skipped?` <span style="font-weight:600;color:var(--muted,#7b8794)">· ${H.skipped} skipped</span>`:''}</span></div>
   <div class=kpirow><span class=k>System volume error</span><span class="v ${H.sysErr==null?'':tolcls(H.sysErr)}">${H.sysErr==null?"—":fmtPct(H.sysErr)}</span></div>
   <div class=kpirow><span class=k>Fleet dispatch r</span><span class="v ${rcls(fr)}">${fr==null?"—":fr.toFixed(3)}</span></div>
   <div class=kpirow><span class=k>Avg LMP (${ov?"model + ORDC":"model"})</span><span class=v style="${ov?'color:'+OVERLAY_COLOR:''}">${mp==null?"—":"$"+mp.toFixed(1)}</span></div>
@@ -992,6 +1045,8 @@ function volFinding(id,years,g){
   if(tp.length&&Math.abs(tp[0].miss)>0.4&&Math.abs(tp[0].miss)/Math.max(0.01,Math.abs(worst.e.mFull-worst.e.bench923))>0.5)
    txt+=` Half or more of the class miss is one plant: ${tp[0].name} (${tp[0].zone}, ${fmtTWh(tp[0].miss)})${worst.yr===2025?" — note 2025 EIA-923 may be partial":""} — check that plant's outage overlay / capacity before touching the class.`;}
  }
+ if(!failing.some(x=>classIsGated(id,x.yr,g)))
+  txt+=" Report-only: this class does not gate the C1 fuel-mix test (excluded class, advisory non-fossil, or completeness-skipped vintage).";
  return {cat:"vol",sev,title:classLabel(g),tag:yrs,txt,score:Math.abs(worst.e.err)};}
 // Shape findings: classes whose hourly correlation is weak. If the volume is
 // fine the problem is timing (tranche ordering/widths); the hour-of-day bias
