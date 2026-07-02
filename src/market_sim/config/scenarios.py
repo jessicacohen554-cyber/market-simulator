@@ -623,6 +623,30 @@ class ScenarioConfig:
     # generation pin (CLAUDE.md #1/#11), so unlike the removed NG:NG floor this is
     # keeper-eligible. Default off (byte-identical); requires caiso_ra_mustoffer;
     # CAISO-only. Toggle with --caiso-ra-startup-bridge.
+    caiso_ra_bridge_decommit: bool = False  # Solar-proportional / seasonal
+    # DECOMMITMENT control on the startup bridge above (caiso-48). The plain
+    # startup bridge over-commits in high-solar years: the P1 LMP it prices the
+    # gap at is biased HIGH midday (P1, with no floors, is never long), so
+    # MC − LMP ≈ 0 and every gap bridges, in every season, at any length —
+    # caiso-45 tripped the EIA-923 gas guardrail (+34.4% in 2025). Two pieces of
+    # real unit-commitment physics bound it (model.commitment
+    # ._apply_economic_bridges): (1) DAY-AHEAD HORIZON — the DAM (CAISO IFM/RUC)
+    # commits one 24-hour operating day, so only a gap ≤ DA_COMMITMENT_HORIZON_
+    # HOURS can be an intra-day min-load hold; longer idles are next-day
+    # decommit/re-offer decisions (the seasonal decommitment). (2) OVER-
+    # GENERATION REPRICING + RUC-ORDER DECOMMIT — held min-load energy is worth
+    # the gap LMP only while it displaces dispatchable supply (P1 import
+    # dispatch backs down, export-sink headroom absorbs); once the candidate
+    # floors exceed that hourly absorption the marginal displaced MWh is a
+    # curtailable renewable at the negative keep-running offer, so surplus gap
+    # hours reprice to -renewable_keep_running_value and uneconomic bridges
+    # decommit cheapest-startup-first (the RUC de-commitment order), each
+    # removal shrinking the surplus (monotone, no iteration). Deeper solar →
+    # less absorption → more decommitment: the solar-proportional ramp. All
+    # inputs are the model's own P1 solution + physical constants — nothing fits
+    # a gas/price residual (CLAUDE.md #1/#11), keeper-eligible. Default off
+    # (byte-identical caiso-45 bridge); requires caiso_ra_startup_bridge;
+    # CAISO-only. Toggle with --caiso-ra-bridge-decommit.
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -2865,6 +2889,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_mustoffer": 1,
     "caiso_ra_min_load_frac": 2,
     "caiso_ra_startup_bridge": 1,
+    "caiso_ra_bridge_decommit": 1,
     "reliability_floor": 1,
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
