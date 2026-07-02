@@ -85,15 +85,35 @@ def test_newest_real_file_chosen_when_multiple(tmp_path) -> None:
 
 
 def test_falls_back_to_dummy_when_no_real_file(tmp_path) -> None:
-    """No real file present: the newest existing dummy file is used, flagged synthetic."""
+    """No real file: the newest dummy COVERING the ISO is used (CL-12).
+
+    Regression: dummy files were not ISO-keyed and resolve_lmp_path ignored
+    its ``iso`` argument, so the documented run-ERCOT-then-PJM workflow
+    reused ERCOT's dummy for PJM and crashed in intake. An ISO-keyed dummy
+    matches by filename; a legacy un-keyed dummy is peeked and reused only
+    if its ``iso`` column contains the requested ISO.
+    """
     inputs_dir = tmp_path / "inputs"
     inputs_dir.mkdir()
-    dummy = _touch(inputs_dir / "bau_lmp_2030_dummy.csv")
+    keyed = _touch(inputs_dir / "bau_lmp_ERCOT_2030_dummy.csv")
 
     path, info = resolve_lmp_path("ERCOT", None, inputs_dir, 2030)
-    assert path == dummy
+    assert path == keyed
     assert info["source"] == "dummy_existing"
     assert info["is_synthetic"] is True
+
+    # Another ISO must NOT silently reuse ERCOT's dummy.
+    path, info = resolve_lmp_path("PJM", None, inputs_dir, 2030)
+    assert path is None
+    assert info["source"] == "none"
+
+    # A legacy un-keyed dummy is reused only when its iso column covers the
+    # requested ISO.
+    legacy = inputs_dir / "bau_lmp_2030_dummy.csv"
+    legacy.write_text("hour,iso,lmp\n0,PJM,25.0\n")
+    path, info = resolve_lmp_path("PJM", None, inputs_dir, 2030)
+    assert path == legacy
+    assert info["source"] == "dummy_existing"
 
 
 def test_no_files_returns_none_for_caller_to_generate(tmp_path) -> None:

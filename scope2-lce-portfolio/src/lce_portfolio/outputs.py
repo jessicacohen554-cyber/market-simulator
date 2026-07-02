@@ -204,8 +204,11 @@ def summarize(sweep: SweepResult) -> str:
             f"{n}={mw:,.0f}" for n, mw in zip(r.resource_names, r.build_mw) if mw > 1e-3
         )
         co2_cell = f" | {r.residual_co2_tons:>15,.0f}" if show_co2 else ""
+        # A failed setpoint must not read like a solved "0% at $0" row
+        # (audit finding CL-4): flag the solver status inline.
+        flag = "" if r.status == "Optimal" else f"  << {r.status.upper()} — no solution"
         lines.append(
             f"{r.setpoint:>18.3g} | {r.matching_pct * 100:>9.2f}% | "
-            f"{r.premium:>13.2f}{co2_cell} | {mix or '(grid only)'}"
+            f"{r.premium:>13.2f}{co2_cell} | {mix or '(grid only)'}{flag}"
         )
     return "\n".join(lines)
