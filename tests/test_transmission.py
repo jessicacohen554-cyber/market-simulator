@@ -1171,7 +1171,7 @@ class TestInterfaceGroups(unittest.TestCase):
         cfg = get_iso_config("CAISO")
         groups = build_interface_groups(cfg.links, cfg.interface_limits)
         self.assertEqual(len(groups), 1)
-        idx, cap, bidir = groups[0]
+        idx, cap, bidir, lower, signs = groups[0]
         # Path 66 / Path 46 are links 2 and 3 in the CAISO topology.
         np.testing.assert_array_equal(np.sort(idx), np.array([2, 3]))
         self.assertEqual(cap, 7500.0)
@@ -1180,6 +1180,46 @@ class TestInterfaceGroups(unittest.TestCase):
     def test_no_interface_limits_is_empty(self):
         cfg = get_iso_config("ERCOT")
         self.assertEqual(build_interface_groups(cfg.links, cfg.interface_limits), [])
+
+    # --- MISO per-zone signed CIL/CEL groups (baked into _miso_config) -----
+
+    def test_miso_signed_groups_orient_into_each_zone(self):
+        """Every MISO CIL group's members are signed into its zone.
+
+        The listed pair orientation defines the positive (import) direction:
+        a link whose to_zone is the group's zone enters with +1, a link whose
+        from_zone is the zone with -1 — including BOTH RDT one-way links from
+        the single listed (South, Plains) pair.
+        """
+        cfg = get_iso_config("MISO")
+        groups = build_interface_groups(cfg.links, cfg.interface_limits)
+        self.assertEqual(len(groups), len(cfg.interface_limits))
+        for lim, (idx, cap, bidir, lower, signs) in zip(cfg.interface_limits, groups):
+            zone = "MISO-" + lim.name.removeprefix("MISO_CIL_")
+            self.assertEqual(cap, lim.cap_mw)
+            self.assertEqual(lower, lim.reverse_cap_mw)
+            for i, sign in zip(idx, signs):
+                ln = cfg.links[i]
+                if sign > 0:
+                    self.assertEqual(ln.to_zone, zone)
+                else:
+                    self.assertEqual(ln.from_zone, zone)
+        # The Plains group carries all four incident corridors including both
+        # RDT one-way links (net South->Plains flow from one listed pair).
+        names = [lim.name for lim in cfg.interface_limits]
+        plains = groups[names.index("MISO_CIL_Plains")]
+        rdt_pairs = {
+            (cfg.links[i].from_zone, cfg.links[i].to_zone, s)
+            for i, s in zip(plains[0], plains[4])
+            if "MISO-South" in (cfg.links[i].from_zone, cfg.links[i].to_zone)
+        }
+        self.assertEqual(
+            rdt_pairs,
+            {
+                ("MISO-South", "MISO-Plains", 1.0),
+                ("MISO-Plains", "MISO-South", -1.0),
+            },
+        )
 
     # --- NEISO HQ_import_simultaneous (baked into _neiso_config) -----------
 
@@ -1205,7 +1245,7 @@ class TestInterfaceGroups(unittest.TestCase):
         cfg = get_iso_config("NEISO")
         groups = build_interface_groups(cfg.links, cfg.interface_limits)
         self.assertEqual(len(groups), 1)
-        idx, cap, bidir = groups[0]
+        idx, cap, bidir, lower, signs = groups[0]
         # The three HQ_import→* links are at the end of the link list.
         hq_indices = [
             i for i, ln in enumerate(cfg.links) if ln.from_zone == "HQ_import"
@@ -1273,7 +1313,7 @@ class TestInterfaceGroups(unittest.TestCase):
         cfg = extend_with_import_node(get_iso_config("PJM"))
         groups = build_interface_groups(cfg.links, cfg.interface_limits)
         self.assertEqual(len(groups), 1)
-        idx, cap, bidir = groups[0]
+        idx, cap, bidir, lower, signs = groups[0]
         ext_indices = [
             i for i, ln in enumerate(cfg.links) if ln.from_zone == "PJM_external"
         ]

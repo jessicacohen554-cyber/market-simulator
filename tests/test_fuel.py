@@ -1526,23 +1526,32 @@ def test_pjm_zonal_gas_basis_skips_other_isos():
     np.testing.assert_array_equal(prices, base)
 
 
-_MISO_ZONES = ["MISO-North", "MISO-Central", "MISO-South"]
+# Must mirror the real six-zone config order: _apply_meanzero_zonal_gas_basis
+# maps zone basis through get_iso_config("MISO").zone_names positions.
+_MISO_ZONES = [
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East",
+    "MISO-South",
+]
 
 
 def _miso_gas_fleet(hours: int = 48):
-    """Three identical gas CCs: one per MISO zone (North, Central, South)."""
+    """Three identical gas CCs, one per hub region (West, Illinois, South)."""
     generators = [
         Generator(
-            unit_id="GAS_NORTH",
-            name="North CC",
-            zone="MISO-North",
+            unit_id="GAS_WEST",
+            name="West CC",
+            zone="MISO-West",
             fuel_type="gas_cc",
             pmax_mw=400.0,
         ),
         Generator(
-            unit_id="GAS_CENTRAL",
-            name="Central CC",
-            zone="MISO-Central",
+            unit_id="GAS_ILLINOIS",
+            name="Illinois CC",
+            zone="MISO-Illinois",
             fuel_type="gas_cc",
             pmax_mw=400.0,
         ),
@@ -1557,11 +1566,19 @@ def _miso_gas_fleet(hours: int = 48):
     return generators_to_fleet_arrays(generators, _MISO_ZONES, hours=hours)
 
 
-def test_miso_zonal_gas_basis_north_below_south():
-    """MISO-North (MidCon/Northern Natural) sits below MISO-South (Gulf Coast)."""
+def test_miso_zonal_gas_basis_south_premium():
+    """MISO-South (Gulf Coast) carries a premium over Illinois (Chicago) in 2024."""
     basis = miso_zonal_gas_basis_by_zone(2024)
     assert basis is not None
-    assert basis["MISO-South"] > basis["MISO-Central"]
+    assert set(basis) == {
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South",
+    }
+    assert basis["MISO-South"] > basis["MISO-Illinois"]
 
 
 def test_miso_zonal_gas_basis_mean_zero_preserves_level():
@@ -1579,15 +1596,15 @@ def test_miso_zonal_gas_basis_mean_zero_preserves_level():
     apply_miso_zonal_gas_basis(
         on_prices, fleet, config.with_overrides(miso_zonal_gas_basis=True), 2024
     )
-    north = fleet.unit_ids.index("GAS_NORTH")
-    central = fleet.unit_ids.index("GAS_CENTRAL")
+    west = fleet.unit_ids.index("GAS_WEST")
+    illinois = fleet.unit_ids.index("GAS_ILLINOIS")
     south = fleet.unit_ids.index("GAS_SOUTH")
-    # South dearer than Central after the shift (Gulf Coast premium).
-    assert on_prices[south, 0] > on_prices[central, 0]
+    # South dearer than Illinois after the shift (Gulf Coast premium, 2024).
+    assert on_prices[south, 0] > on_prices[illinois, 0]
     # Equal pmax -> the (unweighted) mean of the three shifts equals the base,
     # i.e. the capacity-weighted-zero anchor preserves the aggregate level.
     np.testing.assert_allclose(
-        np.mean([on_prices[north, 0], on_prices[central, 0], on_prices[south, 0]]),
+        np.mean([on_prices[west, 0], on_prices[illinois, 0], on_prices[south, 0]]),
         3.0,
         atol=1e-9,
     )

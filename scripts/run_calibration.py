@@ -2683,6 +2683,44 @@ def run_year(
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # MISO per-zone seasonal CIL/CEL deliverability groups: replace the static
+    # summer ``MISO_CIL_*`` fallbacks baked into _miso_config with per-season
+    # hourly caps from the LOLE Study Report data (scope decision D7 — the
+    # NYISO monthly-TTC pattern, fed from data/capacity_deliverability instead
+    # of a constants table). Always on for MISO: the measured seasonal limits
+    # ARE the internal congestion structure (rule #10-admissible — they
+    # regenerate every planning year from forward drivers). Falls back to the
+    # static summer caps when the clean partition is absent (never silent-zero).
+    if iso == "MISO":
+        from market_sim.model.transmission import build_miso_deliverability_groups
+
+        seasonal_groups = build_miso_deliverability_groups(
+            iso_config.links, year, demand.shape[1]
+        )
+        if seasonal_groups:
+            static_limits = [
+                lim
+                for lim in iso_config.interface_limits
+                if not lim.name.startswith("MISO_CIL_")
+            ]
+            interface_groups = (
+                build_interface_groups(iso_config.links, static_limits)
+                + seasonal_groups
+            )
+            logger.info(
+                "MISO %d: seasonal CIL/CEL interface caps on %d zone group(s) "
+                "(per-season hourly vectors from the LOLE deliverability data; "
+                "static summer fallbacks replaced)",
+                year,
+                len(seasonal_groups),
+            )
+        else:
+            logger.warning(
+                "MISO %d: capacity-deliverability clean partition absent — "
+                "falling back to static PY2025-26 summer CIL/CEL caps; run "
+                "scripts/curate_capacity_deliverability.py",
+                year,
+            )
     # Measured WECC corridor deliverability envelope (CAISO per-hub only): cap
     # each corridor link's import-direction flow at the per-(month × hour-of-day)
     # p95 measured net import (an ATC proxy that tightens midday), so the LP can

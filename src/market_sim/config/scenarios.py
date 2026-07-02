@@ -766,14 +766,14 @@ class ScenarioConfig:
     # In a backcast (mode="backcast") this is ignored and the band targets the
     # measured EIA-930 schedule (the realization). NYISO-only.
     miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
-    # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
+    # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-West
     # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
     # source and the structural reason MISO is a net IMPORTER (EIA-930 net
     # interchange -37.9/-23.1/-19.0 TWh, 2023-25). This import sits OUTSIDE the
     # gas-margin reference-price seam (INTERFACE_NEIGHBORS["MISO"], PJM/SPP/SERC):
     # firm hydro has no gas x heat-rate price analogue, so it is a SEPARATE block
     # priced as firm hydro (a low, near-constant energy offer reflecting the
-    # contract, MISO_MANITOBA_FIRM_IMPORT_OFFER), landing directly in MISO-North
+    # contract, MISO_MANITOBA_FIRM_IMPORT_OFFER), landing directly in MISO-West
     # (the model zone the ties physically enter) and counted as net interchange
     # via its fuel_type="import". The block (transmission.build_miso_firm_imports)
     # is floored as must-flow firm baseload (transmission.inject_miso_firm_imports,
@@ -818,7 +818,7 @@ class ScenarioConfig:
     # PJM neighbor price from PJM's SYSTEM-average realized LMP to its MISO-facing
     # WESTERN border hubs (ComEd / AEP-Ohio / ATSI; interchange_config.MISO_PJM_
     # BORDER_HR_BY_YEAR, applied in transmission.inject_reference_price_mc). The import
-    # mirror of the pjm58 NYISO-WEST re-anchor: the MISO-Central seam clears
+    # mirror of the pjm58 NYISO-WEST re-anchor: the MISO eastern (PJM) seam clears
     # against western PJM, which prices below the eastern-load-weighted system
     # average, so the system anchor over-prices the import and MISO under-imports
     # over its largest seam (2024 -15 vs measured -23, 2025 -3 vs -19 TWh). The

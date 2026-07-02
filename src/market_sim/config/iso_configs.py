@@ -48,17 +48,27 @@ class InterfaceLimit(BaseModel):
     interface -- while each component link keeps its own per-link TTC. With
     ``bidirectional`` the reverse direction is floored at ``-cap_mw`` too.
 
-    ``links`` lists ``(from_zone, to_zone)`` pairs that must each match an
-    existing :class:`TransferLink` (validated in
-    :meth:`ISOConfig.validate_topology`); the flows are summed with the links'
-    own from→to sign, so links must share an orientation for the sum to read as
-    a net interface flow.
+    ``links`` lists ``(from_zone, to_zone)`` pairs; each pair must connect two
+    zones joined by at least one :class:`TransferLink` in either orientation
+    (validated in :meth:`ISOConfig.validate_topology`). The *listed* orientation
+    defines the group's positive flow direction: every link between the pair's
+    zones is summed with sign ``+1`` when its own from→to matches the listed
+    orientation and ``-1`` when reversed, so the sum always reads as the net
+    corridor flow in the listed direction (a one-way link pair such as MISO's
+    RDT contributes ``flow(a→b) − flow(b→a)`` from a single listed pair).
+
+    ``reverse_cap_mw`` sets an *asymmetric* reverse-direction cap: the signed
+    sum is bounded in ``[-reverse_cap_mw, cap_mw]`` (overriding
+    ``bidirectional``). Used for per-zone directional deliverability groups
+    whose import limit (MISO CIL) and export limit (CEL) differ; ``None``
+    (default) keeps the symmetric/one-sided ``bidirectional`` behaviour.
     """
 
     name: str
     links: list[tuple[str, str]]
     cap_mw: float = Field(gt=0.0)
     bidirectional: bool = True
+    reverse_cap_mw: float | None = Field(default=None, gt=0.0)
 
 
 class ISOConfig(BaseModel):
@@ -102,11 +112,14 @@ class ISOConfig(BaseModel):
             if link.to_zone not in valid_zones:
                 raise ValueError(f"Link references unknown to_zone '{link.to_zone}'")
 
-        # Aggregate interface limits must reference existing links.
+        # Aggregate interface limits must reference connected zone pairs (a
+        # pair is valid when at least one TransferLink joins its two zones in
+        # either orientation; the listed orientation only fixes the flow sign).
         link_pairs = {(link.from_zone, link.to_zone) for link in self.links}
         for limit in self.interface_limits:
             for pair in limit.links:
-                if tuple(pair) not in link_pairs:
+                a, b = tuple(pair)
+                if (a, b) not in link_pairs and (b, a) not in link_pairs:
                     raise ValueError(
                         f"Interface limit '{limit.name}' references unknown link "
                         f"{tuple(pair)}"
@@ -337,80 +350,192 @@ def _caiso_config() -> ISOConfig:
 def _miso_config() -> ISOConfig:
     """Build the MISO topology configuration.
 
-    Three regions along MISO's real sub-regional structure, drawn as whole
-    EIA-930 sub-BA (LRZ) unions so the load and transmission partitions
-    coincide (pipe-and-bubble) — **MISO-North** (the wind-rich upper Midwest:
-    LRZ 1 = MN/ND/SD/MT plus LRZ 3+5 = IA/MO), **MISO-Central** (the
-    lower-Midwest load centers: LRZ 2+7 = WI/MI, LRZ 4 = IL, LRZ 6 = IN/KY),
-    and **MISO-South** (the Entergy footprint AR/LA/MS and East Texas, LRZ
-    8+9+10). MISO Midwest (North+Central) and MISO South are two electrically
-    separate footprints that connect only through a contract path across SPP,
-    so the Central↔South link is the defining MISO constraint.
+    **Six zones**, drawn as whole EIA-930 sub-BA (LRZ) unions — the finest
+    partition with fully measured hourly load — so the fleet and load
+    partitions share identical boundaries (pipe-and-bubble; see
+    docs/multi-iso/miso-zonal-refinement-scope.md §1):
+
+    - **MISO-West** (LRZ 1 / sub-BA ``0001``: MN, ND, SD, MT) — the wind belt
+      behind the MN/ND export interfaces; heavily import-constrained at peak.
+    - **MISO-Plains** (LRZ 3+5 / ``0035``: IA, MO) — the Iowa wind-export
+      corridor into the eastern load centers.
+    - **MISO-Illinois** (LRZ 4 / ``0004``: IL, Ameren) — the W→E wheel-through
+      zone; Illinois Hub is MISO's price reference.
+    - **MISO-Indiana** (LRZ 6 / ``0006``: IN, KY) — the load-east anchor
+      hosting Michigan's import path.
+    - **MISO-East** (LRZ 2+7 / ``0027``: WI, MI) — the Michigan import pocket
+      + WUMS, the strongest import-constrained pocket in MISO Midwest.
+    - **MISO-South** (LRZ 8+9+10 / ``8910``: AR, LA, MS, East TX) — the
+      Entergy footprint, unchanged; electrically separate from Midwest and
+      connected only over the RDT contract path across SPP.
+
+    The former 3-zone build (MISO-North/MISO-Central/MISO-South) was a
+    copperplate — all three zones priced identically in all 8,760 hours — so
+    the Midwest was split to the six measured sub-BA groups. The retired
+    names ``MISO-North``/``MISO-Central`` must NOT be reused (stale-parquet /
+    stale-CSV zero-fill hazard; scope doc §5).
 
     Load shares are the static fallback used only when the per-zone hourly
-    sub-BA demand file is absent; when present, ``load_zonal_shares``
+    sub-BA demand parquet is absent; when present, ``load_zonal_shares``
     gives each zone its own measured 8760 shape. The fallback values are the
-    measured 2023–2025 energy shares of the sub-BA groups above
-    (0.285/0.444/0.271), which fall out of that same file. The Central region
-    carries the populous lower-Midwest load, North the wind belt, and South
-    roughly a quarter of the footprint. Source: EIA-930 region-sub-ba-data
-    (parent=MISO); see docs/multi-iso/miso-data-audit.md Item 2.
+    measured 2023–2025 energy shares of the six sub-BA groups. Source:
+    EIA-930 region-sub-ba-data (parent=MISO); docs/multi-iso/
+    miso-data-audit.md Item 2.
+
+    Congestion structure (scope doc §2): the six internal bilateral links
+    carry deliberately *non-binding* placeholder TTCs; all internal Midwest
+    congestion is carried by the per-zone directional CIL/CEL interface
+    groups below plus the RDT one-way pair. Decomposing a zone's CIL into
+    per-link bilateral TTCs would be an invented apportionment, so the
+    published per-zone limits are applied as exactly the quantity the LOLE
+    transfer analysis measures — a cap on the zone's total simultaneous
+    import (CIL) and export (CEL).
     """
     zones = [
-        # Static fallback = measured 2023–2025 sub-BA energy shares (audit Item 2).
-        Zone(name="MISO-North", iso="MISO", load_share=0.285),
-        Zone(name="MISO-Central", iso="MISO", load_share=0.444),
-        Zone(name="MISO-South", iso="MISO", load_share=0.271),
+        # Static fallback = measured 2023–2025 sub-BA energy shares
+        # (EIA-930 region-sub-ba-data; scope doc §1, sum = 1.0000).
+        Zone(name="MISO-West", iso="MISO", load_share=0.1466),
+        Zone(name="MISO-Plains", iso="MISO", load_share=0.1385),
+        Zone(name="MISO-Illinois", iso="MISO", load_share=0.0676),
+        Zone(name="MISO-Indiana", iso="MISO", load_share=0.1340),
+        Zone(name="MISO-East", iso="MISO", load_share=0.2422),
+        Zone(name="MISO-South", iso="MISO", load_share=0.2711),
     ]
-    # MISO transfer links seeded from the MISO/SPP seams agreement and MTEP.
-    #
-    # The MISO-Central ↔ MISO-South interface is the Regional Directional
-    # Transfer (RDT) contract path: MISO's northern (Midwest) and southern
-    # footprints are not directly interconnected and exchange power only over a
-    # contract path that wheels across SPP, governed by the RDT limits in the
-    # MISO/SPP Joint Operating Agreement. Those limits are explicitly
-    # *directional and asymmetric* — 3,000 MW north→south vs 2,500 MW
-    # south→north — so the interface is encoded as a PAIR of one-way links
-    # (``is_bidirectional=False``, flow in [0, ttc]): Central→South at 3,000 MW
-    # and South→Central at 2,500 MW. The LP's net Central↔South interchange is
-    # then the difference of the two link flows, reproducing the RDT asymmetry
-    # exactly (the old single symmetric 3,000 MW link over-stated south→north
-    # transfer by 500 MW). Source: MISO/SPP Joint Operating Agreement, Attach.
-    # A — Regional Directional Transfer (RDT) limits (3,000 MW N→S / 2,500 MW
-    # S→N); MISO/SPP Coordinated System Plan.
-    #
-    # The MISO-North ↔ MISO-Central link is the internal Midwest wind-export
-    # corridor that moves the wind-rich north's output to the Central load
-    # centers. Unlike the RDT seam there is no single posted TTC for this
-    # interface: the model's pipe collapses the many parallel 345 kV ties
-    # between the upper Midwest (LRZ 1/3/5) and the lower-Midwest load centers
-    # (LRZ 2/4/6/7) into one link, whereas MISO posts limits at the flowgate
-    # level. Per CLAUDE.md rule #12 the boundary misalignment is documented
-    # rather than buried in a false-precision number: the value below is a
-    # reconciled aggregate estimate (order-of-magnitude of the summed parallel
-    # 345 kV interface, comfortably above North's ~16 GW coincident peak so the
-    # north's wind surplus can clear south into Central). DATA NEEDED: the
-    # posted MTEP/OASIS firm transfer capability for this interface is an
-    # allowlist-blocked pull (misoenergy.org → HTTP 403; see
-    # docs/multi-iso/miso-data-audit.md Item 5); replace the estimate with the
-    # posted number when the OASIS/MTEP pull is available.
-    #
-    # Tier 3 (calibration) — verify binding frequency against MISO
-    # market/congestion data, but never tune either limit to a price residual.
+    # Internal Midwest bilateral links (L1–L6, scope doc §2.2): a light mesh
+    # following the physical 345 kV tie structure. Each ``ttc_mw`` is a
+    # deliberately GENEROUS, non-binding placeholder — about 2× the largest
+    # max-seasonal member-CIL sum in the footprint (MISO-Plains fall PY2023-24,
+    # LRZ 3+5 ≈ 19.8 GW) — because no single posted bilateral TTC exists at
+    # these boundaries (MISO posts flowgate-level limits). All congestion is
+    # instead carried by the cited per-zone CIL/CEL interface groups below
+    # (rule #10 admissibility: LOLE CIL/CEL regenerate every planning year
+    # from forward drivers). This retires the old reconciled 12,000 MW
+    # North→Central estimate in favour of the measured per-zone limits
+    # (rule #11). Never tune these placeholders to a price residual.
+    _placeholder_ttc = 40000.0
     links = [
-        TransferLink(from_zone="MISO-North", to_zone="MISO-Central", ttc_mw=12000.0),
-        # RDT directional asymmetry: a one-way link per direction.
+        # L1: MN–IA 345 kV ties (wind-belt export path).
         TransferLink(
-            from_zone="MISO-Central",
+            from_zone="MISO-West", to_zone="MISO-Plains", ttc_mw=_placeholder_ttc
+        ),
+        # L2: MN–WI corridor (MWEX).
+        TransferLink(
+            from_zone="MISO-West", to_zone="MISO-East", ttc_mw=_placeholder_ttc
+        ),
+        # L3: IA/MO–IL (Ameren) ties.
+        TransferLink(
+            from_zone="MISO-Plains", to_zone="MISO-Illinois", ttc_mw=_placeholder_ttc
+        ),
+        # L4: IL–IN ties.
+        TransferLink(
+            from_zone="MISO-Illinois", to_zone="MISO-Indiana", ttc_mw=_placeholder_ttc
+        ),
+        # L5: IL–WI ties.
+        TransferLink(
+            from_zone="MISO-Illinois", to_zone="MISO-East", ttc_mw=_placeholder_ttc
+        ),
+        # L6: IN–MI interface (Michigan's import path).
+        TransferLink(
+            from_zone="MISO-Indiana", to_zone="MISO-East", ttc_mw=_placeholder_ttc
+        ),
+        # L7: the Regional Directional Transfer (RDT) contract path. MISO's
+        # Midwest and South footprints are not directly interconnected and
+        # exchange power only over a contract path that wheels across SPP,
+        # governed by the RDT limits in the MISO/SPP Joint Operating
+        # Agreement — explicitly *directional and asymmetric* (3,000 MW N→S /
+        # 2,500 MW S→N), encoded verbatim as a PAIR of one-way links
+        # (``is_bidirectional=False``, flow in [0, ttc]). On the Midwest side
+        # the pair attaches to MISO-Plains (the MO/AECI side of the wheel
+        # path; scope decision D3 — decide-by-probe, swap to MISO-Illinois in
+        # a single diagnostic re-solve if RDT binding produces spurious
+        # Plains congestion). Source: MISO/SPP Joint Operating Agreement,
+        # Attach. A — RDT limits; MISO/SPP Coordinated System Plan.
+        TransferLink(
+            from_zone="MISO-Plains",
             to_zone="MISO-South",
             ttc_mw=3000.0,
             is_bidirectional=False,
         ),
         TransferLink(
             from_zone="MISO-South",
-            to_zone="MISO-Central",
+            to_zone="MISO-Plains",
             ttc_mw=2500.0,
             is_bidirectional=False,
+        ),
+    ]
+    # Per-zone directional deliverability groups: one InterfaceLimit per
+    # Midwest zone spanning ALL of the zone's incident internal links,
+    # oriented into the zone, with cap = the zone's Capacity Import Limit
+    # (CIL) and reverse cap = its Capacity Export Limit (CEL) — the exact
+    # island-model quantities MISO's LOLE transfer analysis publishes (CIL,
+    # not ZIA, per scope decision D4: ZIA is a capacity-accounting quantity).
+    # For the union zones (Plains = LRZ 3+5, East = LRZ 2+7) the member-CIL/
+    # CEL SUM is a documented CEILING: each member's island CIL counts help
+    # arriving from the other member, which is internal after aggregation
+    # (small overstatement for East — the direct Z2↔Z7 ties across the
+    # Straits of Mackinac are weak; larger for Plains, where IA↔MO ties are
+    # real). MISO-South gets NO group: the RDT (far tighter than the Z8+9+10
+    # CIL sum) governs, so a South group could never bind first.
+    #
+    # These static values are the PY2025-26 SUMMER limits — the forecast-mode
+    # fallback. Backcasts replace them with per-season hourly caps from the
+    # full seasonal CSV via transmission.build_miso_deliverability_groups
+    # (scope decision D7), matched by the "MISO_CIL_" name prefix.
+    # Source: MISO PY2025-26 LOLE Study Report (data/raw/
+    # capacity-deliverability/miso/miso.csv; parser scripts/lib/
+    # capacity_deliverability/miso.py).
+    interface_limits = [
+        # West (LRZ 1): CIL 6,025 / CEL 3,991 MW.
+        InterfaceLimit(
+            name="MISO_CIL_West",
+            links=[("MISO-Plains", "MISO-West"), ("MISO-East", "MISO-West")],
+            cap_mw=6025.0,
+            reverse_cap_mw=3991.0,
+        ),
+        # Plains (LRZ 3+5, member sums — ceiling): CIL 9,635 / CEL 8,594 MW.
+        # The RDT pair is incident to Plains, so the (South→Plains) net
+        # corridor term is a member (one-way pair sums as L7b − L7a).
+        InterfaceLimit(
+            name="MISO_CIL_Plains",
+            links=[
+                ("MISO-West", "MISO-Plains"),
+                ("MISO-Illinois", "MISO-Plains"),
+                ("MISO-South", "MISO-Plains"),
+            ],
+            cap_mw=9635.0,
+            reverse_cap_mw=8594.0,
+        ),
+        # Illinois (LRZ 4): CIL 8,649 / CEL 4,460 MW.
+        InterfaceLimit(
+            name="MISO_CIL_Illinois",
+            links=[
+                ("MISO-Plains", "MISO-Illinois"),
+                ("MISO-Indiana", "MISO-Illinois"),
+                ("MISO-East", "MISO-Illinois"),
+            ],
+            cap_mw=8649.0,
+            reverse_cap_mw=4460.0,
+        ),
+        # Indiana (LRZ 6): CIL 8,650 / CEL 6,881 MW.
+        InterfaceLimit(
+            name="MISO_CIL_Indiana",
+            links=[
+                ("MISO-Illinois", "MISO-Indiana"),
+                ("MISO-East", "MISO-Indiana"),
+            ],
+            cap_mw=8650.0,
+            reverse_cap_mw=6881.0,
+        ),
+        # East (LRZ 2+7, member sums — ceiling): CIL 7,949 / CEL 10,330 MW.
+        InterfaceLimit(
+            name="MISO_CIL_East",
+            links=[
+                ("MISO-West", "MISO-East"),
+                ("MISO-Illinois", "MISO-East"),
+                ("MISO-Indiana", "MISO-East"),
+            ],
+            cap_mw=7949.0,
+            reverse_cap_mw=10330.0,
         ),
     ]
     # MISO energy offer cap is $2,000/MWh: FERC Order 831 sets a $2,000/MWh
@@ -420,7 +545,13 @@ def _miso_config() -> ISOConfig:
     # the energy market, so the energy-only VOLL sits below ERCOT's $5,000.
     # No distinct cited MISO VOLL is used here.
     # Source: FERC Order 831; MISO Tariff (energy offer cap).
-    return ISOConfig(name="MISO", zones=zones, links=links, voll=2000.0)
+    return ISOConfig(
+        name="MISO",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+        interface_limits=interface_limits,
+    )
 
 
 def _pjm_config() -> ISOConfig:

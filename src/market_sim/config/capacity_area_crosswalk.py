@@ -142,21 +142,23 @@ _PJM: dict[str, AreaMapping] = {
 
 
 # ---------------------------------------------------------------------------
-# MISO — 10 LRZs → 3 model zones (iso_configs `_miso_config`). The LRZ→region
-# split follows iso_configs and the raw README: North = LRZ 1/3/5, Central =
-# LRZ 2/4/6/7, South = LRZ 8/9/10. Each LRZ is a `component` summed into its
-# region. MISO's own subregional "North" (LRZ 1-7 Midwest) and "South" (LRZ
-# 8-10) PRMR rows are supersets of the LRZ rows, so they are excluded to avoid
+# MISO — 10 LRZs → 6 model zones (iso_configs `_miso_config`, the whole-sub-BA
+# LRZ-union partition of the zonal refinement): West = LRZ 1, Plains = LRZ
+# 3+5, Illinois = LRZ 4, Indiana = LRZ 6, East = LRZ 2+7, South = LRZ 8+9+10.
+# Each LRZ is a `component` summed into its zone (strictly finer than the old
+# {1,3,5}/{2,4,6,7}/{8,9,10} split and exactly aligned to the LOLE/PRA data).
+# MISO's own subregional "North" (LRZ 1-7 Midwest) and "South" (LRZ 8-10) PRMR
+# rows are supersets of the LRZ rows, so they are excluded to avoid
 # double-counting; "RTO" is the system row.
 # ---------------------------------------------------------------------------
 _MISO_LRZ_TO_ZONE: dict[str, str] = {
-    "LRZ 1": "MISO-North",
-    "LRZ 3": "MISO-North",
-    "LRZ 5": "MISO-North",
-    "LRZ 2": "MISO-Central",
-    "LRZ 4": "MISO-Central",
-    "LRZ 6": "MISO-Central",
-    "LRZ 7": "MISO-Central",
+    "LRZ 1": "MISO-West",
+    "LRZ 3": "MISO-Plains",
+    "LRZ 5": "MISO-Plains",
+    "LRZ 4": "MISO-Illinois",
+    "LRZ 6": "MISO-Indiana",
+    "LRZ 2": "MISO-East",
+    "LRZ 7": "MISO-East",
     "LRZ 8": "MISO-South",
     "LRZ 9": "MISO-South",
     "LRZ 10": "MISO-South",
@@ -172,10 +174,16 @@ _MISO: dict[str, AreaMapping] = {
 }
 _MISO.update(
     {
-        # MISO "North" subregion = LRZ 1-7 = MISO-North + MISO-Central (Midwest).
+        # MISO "North" subregion = LRZ 1-7 = the five Midwest model zones.
         "North": AreaMapping(
             "North",
-            ("MISO-North", "MISO-Central"),
+            (
+                "MISO-West",
+                "MISO-Plains",
+                "MISO-Illinois",
+                "MISO-Indiana",
+                "MISO-East",
+            ),
             "aggregate",
             "MISO Midwest subregion (LRZ 1-7) — superset of the LRZ rows, excluded",
         ),
