@@ -34,3 +34,8 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ipynb_checkpoints/
+
+# Desktop launcher (ADR 0016): saved configs + last-used values persist
+# server-side as JSON under launcher/ — user/machine-specific, not versioned.
+launcher/saved_configs.json
+launcher/last_used.json
