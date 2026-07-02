@@ -67,7 +67,9 @@ class PortfolioResult:
     capital_cost: float = 0.0  # added clean fixed + VOM cost ($/yr)
     premium_total_per_year: float = 0.0  # net_cost − bau_cost ($/yr)
     pct_over_bau: float = 0.0  # premium as a fraction of BAU cost
-    residual_co2_tons: float = 0.0  # grid_buy_mwh × marginal_co2_ton_per_mwh (ADR 0007)
+    residual_co2_tons: float = (
+        0.0  # Σ_t grid_buy[t] × fossil_avg_co2_rate[t] (ADR 0013)
+    )
     # Split-storage (ADR 0006): selected energy capacity (MWh) per split tech, in
     # storage order restricted to split techs. Empty when no split tech is active.
     split_names: list[str] = field(default_factory=list)
@@ -135,12 +137,21 @@ def build_and_solve(
     lmp: np.ndarray,
     cf: np.ndarray,
     setpoint: float,
+    *,
+    emission_rate: np.ndarray | None = None,
 ) -> PortfolioResult:
     """Build and solve one portfolio LP.
 
     ``setpoint`` is the premium cap ``delta`` ($/MWh) in Mode A, or the matching
     target fraction in Mode B. ``cf`` is the ``(n_res, T)`` capacity-factor
     matrix from :func:`lce_portfolio.profiles.build_cf_matrix`.
+
+    ``emission_rate`` (keyword-only) is the ``(T,)`` hourly fossil-only average
+    grid CO2 rate (tCO2/MWh) from :func:`lce_portfolio.intake.prepare_emission_rate`
+    (ADR 0013). Residual carbon is attributed to unmatched purchases hour by
+    hour: ``residual_co2_tons = Σ_t grid_buy[t] × emission_rate[t]``. ``None``
+    (the default) means residual-carbon reporting is off and is treated as an
+    all-zero vector, so ``residual_co2_tons == 0``.
 
     **Split-storage sizing (ADR 0006).** LDES and hydrogen carry a separate energy
     column ``build_energy[k]`` (MWh) costed at ``cost_energy_mwhyr``; the state of
@@ -178,6 +189,15 @@ def build_and_solve(
 
     if load.shape != (T,) or lmp.shape != (T,) or cf.shape != (n_res, T):
         raise ValueError("load/lmp/cf shapes inconsistent with T and n_res")
+    # Residual-carbon rate (ADR 0013): None -> all-zero (T,) vector, reporting off.
+    if emission_rate is None:
+        emission_rate = np.zeros(T)
+    else:
+        emission_rate = np.asarray(emission_rate, dtype=float)
+        if emission_rate.shape != (T,):
+            raise ValueError(
+                f"emission_rate must have shape ({T},), got {emission_rate.shape}"
+            )
 
     sum_load = float(load.sum())
     bau_cost = float(lmp @ load)
@@ -487,7 +507,9 @@ def build_and_solve(
     )
     surplus_revenue = sale * float(lmp @ excess)
     avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
-    residual_co2_tons = float(grid_buy.sum()) * config.marginal_co2_ton_per_mwh
+    # Residual carbon (ADR 0013): hourly dot product against the fossil-only
+    # average rate — hour-varying by design, never a flat annual scalar.
+    residual_co2_tons = float(grid_buy @ emission_rate)
 
     premium_total_per_year = net_cost - bau_cost
     pct_over_bau = (net_cost - bau_cost) / bau_cost if bau_cost else 0.0
