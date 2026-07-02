@@ -48,7 +48,8 @@ per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script),
 accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
 graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
 run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-08
-(gas-CC+CCS, ADR 0012) backlog, PP-09 (reporting, ADR 0014) ready to run.
+(gas-CC+CCS, ADR 0012) backlog.
+**PP-09** implemented (ADR 0014 §1–§6): `report.py` payload+HTML renderer, `results/` committed store with a SAMPLE worked example, CLI `--run-id`/`--results`/`--no-report`/`--report-hourly`, `scripts/render_report.py`.
 
 ## Rules for every pack
 
