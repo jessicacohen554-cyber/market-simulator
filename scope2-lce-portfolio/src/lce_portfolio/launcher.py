@@ -786,21 +786,46 @@ let pollTimer = null;
 function renderStatus() {{
   const body = $('status-body');
   body.innerHTML = '';
+  // Built via textContent, never innerHTML: the error detail echoes solver
+  // stderr, which can carry text from user-supplied input files.
   Object.values(statuses).flat().forEach((s) => {{
     const tr = document.createElement('tr');
-    const detail = s.state === 'done'
-      ? (s.report_url ? `<a href="${{s.report_url}}" target="_blank">report</a>` : 'done')
-      : (s.message || '');
-    tr.innerHTML = `<td>${{s.run_id}}</td><td>${{s.iso}}</td>` +
-      `<td class="state-${{s.state}}">${{s.state}}</td><td>${{detail}}</td>`;
+    const cells = [s.run_id, s.iso];
+    cells.forEach((text) => {{
+      const td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    }});
+    const tdState = document.createElement('td');
+    tdState.className = 'state-' + s.state;
+    tdState.textContent = s.state;
+    tr.appendChild(tdState);
+    const tdDetail = document.createElement('td');
+    if (s.state === 'done' && s.report_url) {{
+      const a = document.createElement('a');
+      a.href = s.report_url;
+      a.target = '_blank';
+      a.textContent = 'report';
+      tdDetail.appendChild(a);
+    }} else {{
+      tdDetail.textContent = s.state === 'done' ? 'done' : (s.message || '');
+    }}
+    tr.appendChild(tdDetail);
     body.appendChild(tr);
   }});
 }}
 
 async function pollBatch(batchId) {{
-  const resp = await fetch(`/api/status?batch=${{encodeURIComponent(batchId)}}`);
-  if (!resp.ok) return;
-  const data = await resp.json();
+  let data;
+  try {{
+    const resp = await fetch(`/api/status?batch=${{encodeURIComponent(batchId)}}`);
+    if (!resp.ok) return;
+    data = await resp.json();
+  }} catch (err) {{
+    if (pollTimer) {{ clearInterval(pollTimer); pollTimer = null; }}
+    showError('lost contact with the launcher server — is it still running?');
+    return;
+  }}
   statuses[batchId] = data.runs;
   renderStatus();
   const pending = data.runs.some((r) => r.state === 'queued' || r.state === 'running');
@@ -818,11 +843,17 @@ $('btn-add-queue').addEventListener('click', () => {{
 $('btn-submit-queue').addEventListener('click', async () => {{
   showError(null);
   if (queue.length === 0) {{ queue.push(currentForm()); }}
-  const resp = await fetch('/api/run', {{
-    method: 'POST', headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{runs: queue}}),
-  }});
-  const data = await resp.json();
+  let resp, data;
+  try {{
+    resp = await fetch('/api/run', {{
+      method: 'POST', headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{runs: queue}}),
+    }});
+    data = await resp.json();
+  }} catch (err) {{
+    showError('could not reach the launcher server — is it still running?');
+    return;
+  }}
   if (!resp.ok) {{
     showError(data.error || 'submission failed');
     return;
@@ -839,11 +870,17 @@ $('btn-save-config').addEventListener('click', async () => {{
   showError(null);
   const name = $('f-save-name').value.trim();
   if (!name) {{ showError('enter a name to save this configuration'); return; }}
-  const resp = await fetch('/api/save-config', {{
-    method: 'POST', headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{name, params: currentForm()}}),
-  }});
-  const data = await resp.json();
+  let resp, data;
+  try {{
+    resp = await fetch('/api/save-config', {{
+      method: 'POST', headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{name, params: currentForm()}}),
+    }});
+    data = await resp.json();
+  }} catch (err) {{
+    showError('could not reach the launcher server — is it still running?');
+    return;
+  }}
   if (!resp.ok) {{ showError(data.error || 'save failed'); return; }}
   renderSaved(data.saved_configs);
 }});
