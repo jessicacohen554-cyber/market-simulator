@@ -370,6 +370,21 @@ West 28.75 > Plains 28.48 > Ill 28.20 > South 27.04); the original "South
 above West" heuristic in gate 2 was wrong on sign and the gate now uses
 pairwise mean-order agreement against the measured hubs instead.
 
+**GATE 2 SCORED 2026-07-02** (`docs/multi-iso/miso-zonal-gate2.md`, keeper
+miso-38 re-scored against the D6 hubs): the model's South sign is right and
+the RDT S→N binding hours have real timing skill (lift 1.5–2.4× vs actual
+South-cheapest hours), but the five Midwest zone means are identical to the
+cent (pairwise agreement 10/5/5 of 15 — only the South pairs survive),
+spread-duration is 1–2 orders under actual on every tier even vs DA, the
+high-wind West discount is absent (model West CEL binds 0 h; median model
+West net flow is an import), and the non-RDT CIL/CEL groups mostly bind
+degenerately (at cap with $0 shadow price). Diagnosis: the LOLE island
+envelopes are adequacy-scale limits, an order of magnitude above where real
+Midwest flowgates (MWEX/NDEX, IN→MI, WUMS) price; the placeholder bilateral
+TTCs leave the interior copperplate-by-construction. Next levers: published
+flowgate/IROL limits for L1–L6 (MISO daily binding-constraints data — a
+D6-style fetch), the D1 Michigan split, marginal-loss factors on links.
+
 ## 8. Open decisions — RESOLVED 2026-07-01
 
 All seven decisions were put to the model owner as decision cards and
