@@ -837,6 +837,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     logger.info(
                         "PJM reserve online-gating ON: ρ=%.2f", design.online_rho
                     )
+                if iso == "PJM" and design.pergen_gen_idx is not None:
+                    logger.info(
+                        "PJM PER-GEN reserve co-opt ON: %d R columns / %d "
+                        "member units (eligible, ramp10>0; Σ ramp10 %.1f GW), "
+                        "%d balance families (%s)",
+                        int(design.pergen_ramp10.size),
+                        int(design.pergen_gen_idx.size),
+                        float(design.pergen_ramp10.sum()) / 1e3,
+                        len(design.families),
+                        ", ".join(f.name for f in design.families),
+                    )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
             # markup). Build the model once and warm-start P1 from P0's optimal
