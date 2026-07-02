@@ -86,6 +86,30 @@ MISO_REGULATING_RESERVE_MW: float = 400.0
 MISO_RESERVE_DEMAND_CURVE_MAX: float = 3500.0
 MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW: float = 0.0
 
+# MISO Zonal Operating Reserve Demand Curve (config.miso_zonal_reserves):
+# the PUBLISHED stepped curve, BPM-002 §5.2.1.2 / Tariff Schedule 28-A —
+# (width as a fraction of the zonal requirement, penalty $/MWh), cheapest
+# band (smallest shortfall) first, the ordering model.dispatch consumes:
+#   * 80-100% of the zonal requirement cleared -> $200/MWh;
+#   * 10-80%  -> $1,100/MWh (Energy Offer Price Cap $1,000 + Contingency
+#     Reserve Offer Price Cap $100);
+#   * 0-10%   -> VOLL ($3,500, Schedule 28) minus the Zonal Regulating
+#     Reserve Demand Curve price (the monthly average peaker proxy, Schedule
+#     28 §IV — posted monthly values run ~$156-$222 across 2025-26, so $200
+#     Tier-3 -> a $3,300 top step; the top band prices only the last 10% of
+#     the requirement, so the proxy's month-to-month wiggle is immaterial).
+# Zone set and requirement basis are in _miso_design.
+MISO_ZONAL_ORDC_STEPS: tuple[tuple[float, float], ...] = (
+    (0.20, 200.0),
+    (0.70, 1100.0),
+    (0.10, 3300.0),
+)
+# Default zonal reserve family set (config.miso_zonal_reserve_zones override):
+# MISO-South only — the sub-region whose reserves are separated from the
+# Midwest pool by the RDT contract-path limit (scope doc §6). MISO-East
+# (Michigan pocket) is the optional second family.
+MISO_ZONAL_RESERVE_DEFAULT_ZONES: tuple[str, ...] = ("MISO-South",)
+
 # --- NYISO RCPF products ---------------------------------------------------
 NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_30min_total", 2620.0, 1965.0, 750.0),
@@ -194,7 +218,7 @@ def get_reserve_design(
     if iso == "PJM":
         return _pjm_design(config, fleet_arrays, hours)
     if iso == "MISO":
-        return _miso_design(config, fleet_arrays, hours)
+        return _miso_design(config, fleet_arrays, hours, zone_names)
     if iso == "NYISO":
         return _nyiso_design(config, fleet_arrays, hours, zone_names)
     if iso == "NEISO":
@@ -556,9 +580,32 @@ def _pjm_design(config, fleet_arrays: FleetArrays, hours: int) -> ReserveDesign:
 
 
 def _miso_design(
-    config, fleet_arrays: FleetArrays, hours: int, n_ramp: int = 8
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str] | None = None,
+    n_ramp: int = 8,
 ) -> ReserveDesign:
-    """MISO market-wide energy+reserve co-optimization (RBDC)."""
+    """MISO energy+reserve co-optimization: market-wide RBDC, optional zonal.
+
+    Always builds the market-wide RBDC family (requirement = MSSC +
+    regulating, demand curve ramping to the $3,500/MWh VOLL anchor — MISO
+    BPM-002 / Schedule 28/28-A, unchanged from the miso3/miso-34 probes).
+
+    When ``config.miso_zonal_reserves`` is on (GATED, default off) it appends
+    one LOCATIONAL operating-reserve family per zone in
+    ``config.miso_zonal_reserve_zones`` (default
+    :data:`MISO_ZONAL_RESERVE_DEFAULT_ZONES` = MISO-South), the NYISO
+    nested-family template: MISO enforces a minimum Zonal Operating Reserve
+    Requirement per Reserve Zone (BPM-002 §3.3/§3.3.2), anchored to the
+    pre-determined largest zonal contingency event — modeled as the
+    within-zone MSSC (fleet-derived, forward-responsive) — and shortfalls
+    price at the published Zonal Operating Reserve Demand Curve
+    (:data:`MISO_ZONAL_ORDC_STEPS`, BPM-002 §5.2.1.2). The zonal family
+    shares the market-wide family's reserve class, so a South reserve MW
+    counts toward both constraints (nested, like NYISO East ⊂ NYCA). Zero
+    parameters fitted to the price residual.
+    """
     from market_sim.results.scarcity import (
         largest_single_contingency_mw,
         nyiso_rcpf_product_shortfall_steps,
@@ -583,16 +630,70 @@ def _miso_design(
     zone_mask = np.ones(n_zones, dtype=bool)
     requirement = np.full(T, req, dtype=float)
 
-    fam = ReserveFamily(
-        name="miso_rbdc",
-        requirement=requirement,
-        zone_mask=zone_mask,
-        ordc_penalties=penalties.astype(float),
-        ordc_step_widths=widths.astype(float),
-        reserve_class=0,
-    )
+    families = [
+        ReserveFamily(
+            name="miso_rbdc",
+            requirement=requirement,
+            zone_mask=zone_mask,
+            ordc_penalties=penalties.astype(float),
+            ordc_step_widths=widths.astype(float),
+            reserve_class=0,
+        )
+    ]
+
+    if getattr(config, "miso_zonal_reserves", False):
+        if not zone_names:
+            raise ValueError(
+                "miso_zonal_reserves requires zone_names to map zonal reserve "
+                "families onto model zones"
+            )
+        zone_index = {name: i for i, name in enumerate(zone_names)}
+        zonal_zones = tuple(
+            getattr(config, "miso_zonal_reserve_zones", None)
+            or MISO_ZONAL_RESERVE_DEFAULT_ZONES
+        )
+        for zname in zonal_zones:
+            if zname not in zone_index:
+                raise ValueError(
+                    f"miso_zonal_reserve_zones entry {zname!r} is not a model "
+                    f"zone (zones: {list(zone_names)})"
+                )
+            z = zone_index[zname]
+            in_zone = np.asarray(fleet_arrays.zone_idx, dtype=int) == z
+            # Zonal requirement = the largest zonal contingency event: the
+            # within-zone MSSC over reserve-eligible units (plant-aggregated
+            # common-mode, availability-aware) — BPM-002 §3.3.2's minimum
+            # zonal requirement basis, per the MISO STR design's
+            # "pre-determined largest zonal events".
+            zonal_req = float(
+                largest_single_contingency_mw(
+                    fleet_arrays.pmax,
+                    availability=fleet_arrays.availability,
+                    reserve_mask=eligible & in_zone,
+                    plant_code=fleet_arrays.plant_code,
+                )
+            )
+            if zonal_req <= 0.0:
+                continue
+            zmask = np.zeros(n_zones, dtype=bool)
+            zmask[z] = True
+            zonal_pen = np.array([p for _, p in MISO_ZONAL_ORDC_STEPS])
+            zonal_wid = np.array(
+                [frac * zonal_req for frac, _ in MISO_ZONAL_ORDC_STEPS]
+            )
+            families.append(
+                ReserveFamily(
+                    name=f"miso_zonal_or_{zname.lower().replace('-', '_')}",
+                    requirement=np.full(T, zonal_req, dtype=float),
+                    zone_mask=zmask,
+                    ordc_penalties=zonal_pen,
+                    ordc_step_widths=zonal_wid,
+                    reserve_class=0,
+                )
+            )
+
     return ReserveDesign(
-        families=[fam],
+        families=families,
         eligible=eligible.reshape(1, -1),
         storage_eligible=False,
     )
