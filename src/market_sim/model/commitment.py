@@ -36,6 +36,7 @@ from market_sim.config.constants import (
     CC_STARTUP_PARAMS,
     CT_COMMITMENT_PARAMS,
     CT_STARTUP_PARAMS,
+    DA_COMMITMENT_HORIZON_HOURS,
     ST_GAS_COMMITMENT_PARAMS,
     ST_GAS_STARTUP_PARAMS,
 )
@@ -526,6 +527,92 @@ def _ra_bridge_unit_params(
     return min_down, startup
 
 
+def _apply_economic_bridges(
+    floor: np.ndarray,  # (n_gen, T) — physical bridges already written; mutated
+    economic_bridges: list[tuple[int, int, int, float, float, int, float]],
+    p1_dispatch: np.ndarray,  # (n_gen, T)
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],
+    min_load_frac: float,
+    avail: np.ndarray,  # (n_gen, T)
+    pmax: np.ndarray,  # (n_gen,)
+    p1_prices: np.ndarray | None,  # (n_zones, T)
+    bridge_decommit: bool,
+    surplus_floor_value: float,
+) -> None:
+    """Write the ≥min-down economic bridge floors, decommitting under surplus.
+
+    With ``bridge_decommit`` off every candidate is floored as-is (the caiso-45
+    startup bridge, byte-identical). With it on, the over-generation screen of
+    :func:`caiso_ra_mustoffer_min_gen` runs first: gap hours where the candidate
+    min-load floors exceed the system's dispatchable absorption (P1 import
+    dispatch that can back down + unused export-sink capacity, both from the
+    model's own P1 solution) reprice the held energy to ``surplus_floor_value``
+    (the curtailable-renewable keep-running offer), and bridges whose repriced
+    hold cost exceeds the startup they save are decommitted cheapest-startup
+    first — the RUC de-commitment order. Each removal shrinks the surplus, so
+    the screen is monotone and terminates in one ordered pass.
+    """
+    if not economic_bridges:
+        return
+    keep = economic_bridges
+    if bridge_decommit:
+        n_gen, T = p1_dispatch.shape
+        # Hourly dispatchable absorption from the model's own P1 solution:
+        # import-tranche dispatch backs down one-for-one, and the export sinks'
+        # unused capacity absorbs (both priced-interchange Generator rows,
+        # fuel_type "import": imports have pmax>0, export sinks pmin<0 and
+        # dispatch ≤ 0). Storage-charge headroom is deliberately EXCLUDED: extra
+        # charging midday is energy-capacity-limited (the fleet already fills by
+        # the belly in P1), so counting power headroom would overstate
+        # absorption; in a real deep-solar spring the marginal surplus MWh is
+        # curtailed, not stored.
+        fa_pmin = np.asarray(fleet_arrays.pmin, dtype=float)
+        is_import = np.array(
+            [gen.fuel_type == "import" for gen in generators], dtype=bool
+        )
+        absorb = np.zeros(T, dtype=float)
+        imp_rows = np.flatnonzero(is_import & (pmax > 0.0))
+        if imp_rows.size:
+            absorb += np.clip(p1_dispatch[imp_rows, :], 0.0, None).sum(axis=0)
+        exp_rows = np.flatnonzero(is_import & (fa_pmin < 0.0))
+        if exp_rows.size:
+            # headroom = capacity − current export = −pmin + dispatch (≤ 0).
+            absorb += np.clip(
+                -fa_pmin[exp_rows, None] + p1_dispatch[exp_rows, :], 0.0, None
+            ).sum(axis=0)
+        # Candidate min-load energy per hour: the physical floors already in
+        # ``floor`` plus every economic candidate's contribution.
+        contrib: list[np.ndarray] = [
+            target_mw * avail[g, s:e] for g, s, e, target_mw, *_ in economic_bridges
+        ]
+        floor_total = floor.sum(axis=0)
+        for (g, s, e, *_), c in zip(economic_bridges, contrib):
+            floor_total[s:e] += c
+        # RUC de-commitment order: the cheapest-to-restart bridges cycle off
+        # first (cheapest to bring back next day). Monotone: every decommit
+        # shrinks floor_total, which only RAISES the surplus-repriced value the
+        # remaining bridges see, so survivors never need re-checking.
+        order = sorted(
+            range(len(economic_bridges)), key=lambda i: economic_bridges[i][4]
+        )
+        kept_idx: set[int] = set()
+        for i in order:
+            g, s, e, target_mw, startup_per_mw, zone, mc_gap = economic_bridges[i]
+            gap = e - s
+            lmp = p1_prices[zone, s:e]
+            over = floor_total[s:e] > absorb[s:e]
+            lmp_eff = np.where(over, np.minimum(lmp, surplus_floor_value), lmp)
+            hold_cost = (mc_gap - float(np.mean(lmp_eff))) * min_load_frac * gap
+            if startup_per_mw > hold_cost:
+                kept_idx.add(i)
+            else:
+                floor_total[s:e] -= contrib[i]
+        keep = [economic_bridges[i] for i in sorted(kept_idx)]
+    for g, s, e, target_mw, *_ in keep:
+        floor[g, s:e] = target_mw * avail[g, s:e]
+
+
 def caiso_ra_mustoffer_min_gen(
     p1_dispatch: np.ndarray,  # (n_gen, T) — the economic P1 dispatch
     fleet_arrays: FleetArrays,
@@ -535,6 +622,8 @@ def caiso_ra_mustoffer_min_gen(
     p1_prices: np.ndarray | None = None,  # (n_zones, T) — the P1 dual (LMP)
     base_mc: np.ndarray | None = None,  # (n_gen, T) — fuel+VOM+CARB MC, no markup
     startup_bridge: bool = False,
+    bridge_decommit: bool = False,
+    surplus_floor_value: float = 0.0,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -585,6 +674,43 @@ def caiso_ra_mustoffer_min_gen(
     cost) and ``LMP`` (the model's own P1 dual) are forward-derivable — no measured
     generation enters, so the extension is keeper-eligible (unlike the NG:NG pin).
 
+    **Solar-proportional / seasonal decommitment** (``bridge_decommit``, caiso-48):
+    the plain startup bridge over-commits in high-solar years because the P1 LMP
+    it prices the gap at is biased HIGH midday — P1 (no floors) is never long, so
+    ``MC − LMP ≈ 0`` and *every* gap bridges, in every season, for gaps of any
+    length. Two pieces of real unit-commitment physics correct this, both applied
+    only to the ≥min-down *economic* bridges (a physical ``gap < min_down`` bridge
+    is a restart bar and always holds):
+
+    1. **Day-ahead horizon** — a DAM (IFM/RUC) commits one 24-hour operating day;
+       a unit is never held at min-load across a gap longer than one DA cycle
+       (``DA_COMMITMENT_HORIZON_HOURS``). A multi-day idle spell is a next-day
+       decommit/re-offer decision, so those gaps never bridge. This is the
+       *seasonal* decommitment: off-season multi-day idles stop padding gas.
+    2. **Over-generation (surplus) repricing + RUC-order decommitment** — the
+       restart inequality credits held min-load energy at the gap LMP, which is
+       only right while that energy displaces *dispatchable* supply (imports back
+       down, the export sink absorbs). Once the candidate floors themselves
+       exceed that hourly absorption — ``Σ floors_t > imports_t +
+       export_headroom_t``, both from the model's own P1 solution — the marginal
+       displaced megawatt-hour is a *curtailable renewable* whose value is the
+       negative keep-running offer (``surplus_floor_value``), not the LMP. Gap
+       hours in surplus are repriced to that floor and the inequality re-checked;
+       uneconomic bridges are decommitted cheapest-startup-first (the RUC
+       de-commitment order — cheapest to bring back tomorrow cycles off first),
+       each removal shrinking the surplus, until every surviving bridge is
+       economic at the surplus-consistent value. The screen is monotone (surplus
+       only shrinks, values only rise), so it terminates without iteration to a
+       fixed point. This is the *solar-proportional* ramp: deeper solar → less
+       import/export absorption headroom → more of the marginal bridged fleet
+       decommits, while the spring belly keeps the committed core the system can
+       actually absorb.
+
+    Every input is the model's own P1 solution plus physical constants
+    (startup cost, min-down, DA horizon, the renewable keep-running offer already
+    in the config) — nothing is fitted to a gas or price residual (CLAUDE.md
+    #1/#11).
+
     Args:
         p1_dispatch: The economic P1 dispatch, ``(n_gen, T)``.
         fleet_arrays: The vectorized fleet, for ``pmax``/``availability``/``heat_rate``.
@@ -601,6 +727,16 @@ def caiso_ra_mustoffer_min_gen(
         startup_bridge: When True, also floor a gap ``≥ min_down`` whose cycle is
             uneconomic per the restart inequality above. Default False reproduces
             the physical-only bridge byte-identically.
+        bridge_decommit: When True (requires ``startup_bridge``), bound economic
+            bridges to the day-ahead commitment horizon and decommit them in
+            RUC order when the gap's surplus-repriced hold cost exceeds the
+            startup saved (see above). Default False reproduces the caiso-45
+            startup bridge byte-identically.
+        surplus_floor_value: $/MWh value of the marginal displaced energy in a
+            surplus (over-generation) hour — the curtailable-renewable
+            keep-running offer, ``-config.renewable_keep_running_value`` when
+            negative renewable offers are on, else 0. Only used when
+            ``bridge_decommit`` is on.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -631,6 +767,10 @@ def caiso_ra_mustoffer_min_gen(
         if getattr(gen, "is_campd_bin", False):
             key = gen.unit_id.rpartition("_")[0]
             plant_pmax[key] = plant_pmax.get(key, 0.0) + pmax[g]
+    # ≥min-down bridges held on restart ECONOMICS (startup_bridge), as
+    # (g, start, end, target_mw, startup_per_mw, zone, mc_gap) records — floored
+    # after the scan so the bridge_decommit surplus screen sees them all at once.
+    economic_bridges: list[tuple[int, int, int, float, float, int, float]] = []
     for g, gen in enumerate(generators):
         if gen.plant_group not in ("CC_REGULAR", "CT_PEAKER"):
             continue
@@ -658,23 +798,47 @@ def caiso_ra_mustoffer_min_gen(
         # unit's minimum-down time is always bridged (a physical restart bar). A
         # gap AT/OVER min-down is bridged only under startup_bridge when the
         # restart is uneconomic (holding at min-load costs less than re-paying the
-        # startup) — the LP-vs-unit-commitment startup-cost gap.
+        # startup) — the LP-vs-unit-commitment startup-cost gap. Economic bridges
+        # are recorded as candidates so the bridge_decommit screen below can
+        # reprice and decommit them; physical bridges are floored unconditionally.
         for (_, end_prev), (start_next, _) in zip(runs[:-1], runs[1:]):
             gap = start_next - end_prev
             if gap <= 0:
                 continue
-            bridge = gap < min_down
-            if not bridge and startup_bridge and startup_per_mw > 0.0:
-                # Net $/MW-capacity cost of holding at min-load through the gap:
-                # (MC − LMP) × min_load_frac × gap_hours. Averaged over the gap.
-                mc_gap = float(np.mean(base_mc[g, end_prev:start_next]))
-                lmp_gap = float(np.mean(p1_prices[zone, end_prev:start_next]))
-                hold_cost = (mc_gap - lmp_gap) * min_load_frac * gap
-                bridge = startup_per_mw > hold_cost
-            if bridge:
+            if gap < min_down:
                 floor[g, end_prev:start_next] = (
                     target_mw * avail[g, end_prev:start_next]
                 )
+                continue
+            if not (startup_bridge and startup_per_mw > 0.0):
+                continue
+            # Day-ahead horizon (bridge_decommit): a DAM commits one 24-hour
+            # operating day, so a gap longer than one DA cycle is a next-day
+            # decommit/re-offer, never an intra-day min-load hold.
+            if bridge_decommit and gap > DA_COMMITMENT_HORIZON_HOURS:
+                continue
+            # Net $/MW-capacity cost of holding at min-load through the gap:
+            # (MC − LMP) × min_load_frac × gap_hours. Averaged over the gap.
+            mc_gap = float(np.mean(base_mc[g, end_prev:start_next]))
+            lmp_gap = float(np.mean(p1_prices[zone, end_prev:start_next]))
+            hold_cost = (mc_gap - lmp_gap) * min_load_frac * gap
+            if startup_per_mw > hold_cost:
+                economic_bridges.append(
+                    (g, end_prev, start_next, target_mw, startup_per_mw, zone, mc_gap)
+                )
+    _apply_economic_bridges(
+        floor,
+        economic_bridges,
+        p1_dispatch,
+        fleet_arrays,
+        generators,
+        min_load_frac,
+        avail,
+        pmax,
+        p1_prices,
+        bridge_decommit,
+        surplus_floor_value,
+    )
     return floor
 
 
