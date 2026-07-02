@@ -103,7 +103,9 @@
     /* ================================================================
        CONSTANTS — calibration tolerance bands
        ================================================================ */
-    const SUM_TOL_LOAD_FRAC = 0.01, SUM_TOL_LOAD_CAP = 5, SUM_TOL_SHARE_PP = 1.5;
+    // 2026-07-02 rubric re-balance — mirrors calibration_verdict.FUELMIX_*
+    // (loosened from 0.01 / 5 / 1.5): green = within 1× the C1 band, amber = 2×.
+    const SUM_TOL_LOAD_FRAC = 0.02, SUM_TOL_LOAD_CAP = 8, SUM_TOL_SHARE_PP = 3.0;
     const SUM_TOL_PCT = 5;
     const R_GOOD = 0.85, R_OK = 0.70;
     const NONFOSSIL = ['nuclear', 'wind', 'solar'];
