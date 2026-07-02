@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-02-miso-38-zonal-reserves",
+ "label": "miso 38 zonal reserves",
+ "date": "2026-07-02",
+ "shorthand": "miso-38-zonal-reserves",
+ "definition": "MISO 38 (KEEPER): miso-37 + LOCATIONAL reserve family per scope \u00a76 (--miso-zonal-reserves): MISO-South zonal operating-reserve family, requirement = within-zone MSSC 3,953 MW (BPM-002 \u00a73.3.2 zonal minimum, the 'pre-determined largest zonal event'), priced at the PUBLISHED Zonal Operating Reserve Demand Curve (BPM-002 \u00a75.2.1.2 / Schedule 28-A: 20% @ $200, 70% @ $1,100, 10% @ $3,300 = VOLL - zonal reg proxy). Zero residual-fitted parameters. Gate 4 PARTIAL: the zonal family FIRES (reserve dual nonzero 266/287/875 h in 2023/24/25 \u2014 right year ordering, 2025-concentrated) but prices at re-dispatch opportunity cost ($8-21/MWh max), never at the curve steps: the LP always clears the requirement by re-dispatch, so the >$200 scarcity tail stays 0 h vs actual 30/37/88 and CT_PEAKER (5.0/8.4/8.8 TWh) / 2025 coal (212 TWh) are unchanged. Fit is unchanged vs miso-35 (mean LMP 28.65/26.06/34.74; duration-curve max lifts 54.5/62.0/70.4); keeper because strictly more structurally faithful (real co-opt + real zonal curve). Residual root cause is NOT missing reserve structure \u2014 perfect-foresight headroom; next levers: sub-shortage opportunity-cost band (per-gen ramp rows, memory-infeasible at plant scale) or the D6 per-hub LMP scoring once uploaded.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-02-miso-38-zonal-reserves.js",
+ "bundle": "results/calibration/MISO/miso_38_zonal_reserves"
+}
