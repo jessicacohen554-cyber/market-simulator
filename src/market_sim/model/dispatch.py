@@ -1046,6 +1046,173 @@ def _build_reserve_rows(
     return block, row_lower, row_upper
 
 
+def _build_reserve_rows_pergen(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    reserve_requirement: np.ndarray,
+    pergen_gen_idx: np.ndarray,
+    pergen_col: np.ndarray | None = None,
+    balance_zone_mask: np.ndarray | None = None,
+    balance_ordc_counts: np.ndarray | None = None,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Build the PER-GENERATOR energy+reserve co-optimization rows.
+
+    The per-unit alternative to :func:`_build_reserve_rows`: one reserve
+    variable ``R[r,t]`` per reserve-providing *asset* instead of one per
+    zone-class, so reserve competes with energy **on the same marginal unit**
+    — the structure that prices the sub-shortage opportunity-cost reserve
+    band (docs/multi-iso/pjm-reserve-ordc.md Phase 2). An asset is one
+    generator by default (``pergen_col`` omitted: R column ``j`` pairs with
+    ``pergen_gen_idx[j]``), or a group of generators sharing an R column
+    (``pergen_col[j]`` maps member ``j`` to its column) — the tranche-binned
+    fleets aggregate per (plant, class): a plant's tranches dispatch
+    bang-bang, so headroom and the 10-minute ramp are plant properties
+    (the ``pjm_online_reserve`` doctrine), and the aggregation cuts the
+    per-gen LP's row/column count ~4x on a 15 GB box without changing the
+    physics (``sum ramp10[tranches] == RAMP10_FRAC[class] x plant pmax``).
+    Two families of rows, both vectorized (no hour loop):
+
+    * **Joint headroom** — for each R column ``r`` and hour ``t``:
+      ``sum_{members j of r} P[g_j,t] + R[r,t] <= sum_j cap[g_j,t]``
+      (``cap = pmax x availability``; one P term for the default 1:1
+      mapping). A MW held as reserve cannot also be dispatched as energy, so
+      on a fully-loaded marginal asset the row's dual is the forgone energy
+      margin — the opportunity cost that lifts the reserve clearing price
+      above $0 without any shortfall. The 10-minute deliverability cap
+      ``R[r] <= ramp10[r]`` is a *variable bound*
+      (:func:`build_variable_bounds`), not a row.
+    * **Reserve balance** — one row per reserve family ``f`` and hour ``t``:
+      ``sum_{r: zone[r] in family f} R[r,t] + sum_{k in f} ORDC_k[t] >=
+      requirement[f,t]``. Families follow the zone-mask convention of
+      :func:`_build_reserve_rows` (PJM: the RTO Reserve Zone over every model
+      zone, plus the nested Mid-Atlantic/Dominion Reserve Subzone — a MAD
+      reserve MW counts toward both, Manual 11 sec 4.2). The binding family's
+      dual is that family's reserve clearing price; the joint-headroom rows
+      transfer it into the member zones' energy LMPs.
+
+    Storage does not back reserve here (the per-gen build is currently used by
+    PJM, whose design sets ``storage_eligible=False``); extend with per-unit
+    storage reserve columns before reusing it for a storage-backed ISO.
+
+    Args:
+        layout: Variable layout with ``n_reserve == n_r`` (R-column count) and
+            ``n_reserve_classes == 1``.
+        fleet: Fleet arrays supplying ``pmax``, ``(n_gen, T)`` availability and
+            per-generator ``zone_idx``.
+        reserve_requirement: ``(T,)`` (single family) or ``(n_families, T)``
+            hourly requirement in MW.
+        pergen_gen_idx: ``(n_members,)`` int — the fleet index of every member
+            generator backing an R column.
+        pergen_col: ``(n_members,)`` int — the R column of each member
+            (``0..n_r-1``; every column must have at least one member and all
+            of a column's members must share a zone). ``None`` is the 1:1
+            identity (``n_members == n_r``).
+        balance_zone_mask: ``(n_families, n_zones)`` boolean member-zone mask;
+            ``None`` builds a single system-wide family.
+        balance_ordc_counts: ``(n_families,)`` ORDC steps owned by each family
+            (family-major partition of the ORDC block); ``None`` assigns every
+            step to the single family.
+
+    Returns:
+        ``(block, row_lower, row_upper)``: joint-headroom rows (``<=``,
+        hour-major then R-column order) stacked over balance rows (``>=``,
+        hour-major then family order — the final ``n_families * T`` rows, the
+        position the ``DispatchModel`` dual extraction relies on).
+    """
+    T = layout.T
+    n_zones = layout.n_zones
+    gidx = np.asarray(pergen_gen_idx, dtype=int)
+    col = (
+        np.arange(gidx.size)
+        if pergen_col is None
+        else np.asarray(pergen_col, dtype=int)
+    )
+    if col.shape != gidx.shape:
+        raise ValueError(
+            f"pergen_col shape {col.shape} != pergen_gen_idx shape {gidx.shape}"
+        )
+    n_r = layout.n_reserve
+    if col.size == 0 or int(col.max()) + 1 != n_r or np.unique(col).size != n_r:
+        raise ValueError(
+            "pergen_col must cover every R column 0..n_reserve-1 "
+            f"(n_reserve={n_r}, columns covered={np.unique(col).size})"
+        )
+    cap = fleet.pmax[:, np.newaxis] * fleet.availability  # (n_gen, T)
+    zone_idx = np.asarray(fleet.zone_idx, dtype=int)
+    # Member -> R-column incidence, for the summed-capacity RHS and the
+    # per-column zone below.
+    member_map = sp.csr_matrix(
+        (np.ones(gidx.size), (col, np.arange(gidx.size))),
+        shape=(n_r, gidx.size),
+    )
+    # All of a column's members must share a zone (a plant is in one zone) —
+    # the balance families select R columns by zone.
+    r_zone = np.zeros(n_r, dtype=int)
+    r_zone[col] = zone_idx[gidx]
+    if np.any(member_map @ (zone_idx[gidx] != r_zone[col]).astype(float) > 0):
+        raise ValueError("pergen_col groups generators from different zones")
+
+    # --- Joint-headroom per-hour block, (n_r, vph): row r reads
+    # sum_{members j} P[g_j] + R[r] <= sum_j cap[g_j].
+    joint_per_hour = sp.coo_matrix(
+        (
+            np.ones(gidx.size + n_r),
+            (
+                np.concatenate([col, np.arange(n_r)]),
+                np.concatenate(
+                    [layout._p_off + gidx, layout._reserve_off + np.arange(n_r)]
+                ),
+            ),
+        ),
+        shape=(n_r, layout.vars_per_hour),
+    ).tocsr()
+    joint = sp.kron(sp.eye(T, format="csr"), joint_per_hour, format="csr")
+    # RHS hour-major (row t*n_r + r): member caps summed per column, (n_r, T).
+    joint_upper = (member_map @ cap[gidx]).T.ravel()
+    joint_lower = np.full(n_r * T, -np.inf)
+
+    # --- Reserve-balance per-hour block, (n_families, vph): family f sums the
+    # R columns of its member zones' generators plus its ORDC-step slice.
+    if balance_zone_mask is None:
+        zmask = np.ones((1, n_zones), dtype=bool)
+        req2d = np.asarray(reserve_requirement, dtype=float).reshape(1, T)
+        ordc_counts = np.array([layout.n_ordc_steps], dtype=int)
+    else:
+        zmask = np.asarray(balance_zone_mask, dtype=bool)
+        req2d = np.asarray(reserve_requirement, dtype=float).reshape(zmask.shape[0], T)
+        ordc_counts = np.asarray(balance_ordc_counts, dtype=int)
+    n_fam = zmask.shape[0]
+    brows: list[np.ndarray] = []
+    bcols: list[np.ndarray] = []
+    bvals: list[np.ndarray] = []
+    for f in range(n_fam):
+        sel = np.flatnonzero(zmask[f][r_zone])
+        brows.append(np.full(sel.size, f))
+        bcols.append(layout._reserve_off + sel)
+        bvals.append(np.ones(sel.size))
+    off = 0
+    for f in range(n_fam):
+        k = int(ordc_counts[f])
+        if k:
+            idx = np.arange(off, off + k)
+            brows.append(np.full(k, f))
+            bcols.append(layout._ordc_off + idx)
+            bvals.append(np.ones(k))
+            off += k
+    bal_per_hour = sp.coo_matrix(
+        (np.concatenate(bvals), (np.concatenate(brows), np.concatenate(bcols))),
+        shape=(n_fam, layout.vars_per_hour),
+    ).tocsr()
+    balance = sp.kron(sp.eye(T, format="csr"), bal_per_hour, format="csr")
+    bal_lower = req2d.T.ravel()
+    bal_upper = np.full(n_fam * T, np.inf)
+
+    block = sp.vstack([joint, balance], format="csr")
+    row_lower = np.concatenate([joint_lower, bal_lower])
+    row_upper = np.concatenate([joint_upper, bal_upper])
+    return block, row_lower, row_upper
+
+
 def storage_reserve_mw(
     reserve_dispatch: np.ndarray,
     storage_charge: np.ndarray,
@@ -1149,6 +1316,8 @@ def build_constraints(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_pergen_gen_idx: np.ndarray | None = None,
+    reserve_pergen_col: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1457,6 +1626,25 @@ def build_constraints(
     # balance). Appended last so the reserve-balance dual is recoverable by row
     # index. Omitted (identical LP) unless the layout carries reserve columns.
     if layout.n_reserve > 0 and reserve_requirement is not None:
+        if reserve_pergen_gen_idx is not None:
+            # Per-generator reserve columns (R[j,t] per reserve-providing
+            # unit): joint P+R headroom per unit-hour + per-family balance.
+            # Mutually exclusive with the zone-aggregate spec's scoping
+            # mechanisms (supply cap / online gating / additive headroom) —
+            # the per-unit ramp10 variable bound supersedes them all.
+            res_block, res_lower, res_upper = _build_reserve_rows_pergen(
+                layout,
+                fleet,
+                reserve_requirement,
+                reserve_pergen_gen_idx,
+                pergen_col=reserve_pergen_col,
+                balance_zone_mask=reserve_balance_zone_mask,
+                balance_ordc_counts=reserve_balance_ordc_counts,
+            )
+            A = sp.vstack([A, res_block], format="csr")
+            row_lower = np.concatenate([row_lower, res_lower])
+            row_upper = np.concatenate([row_upper, res_upper])
+            return A, row_lower, row_upper
         elig = (
             np.ones(layout.n_gen, dtype=bool)
             if reserve_eligible is None
@@ -1498,6 +1686,7 @@ def build_variable_bounds(
     ttc: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
+    reserve_pergen_ramp10: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -1602,11 +1791,24 @@ def build_variable_bounds(
     col_upper[:, layout._dump_off : layout._reserve_off] = np.inf
 
     # Energy+reserve co-optimization bounds (co-opt only).
-    # Per-zone reserve R_z[z,t]: 0 <= R_z <= inf; the per-zone shared-headroom
-    # constraint (build_constraints: sum_{eligible g in z} P + R_z <= zone cap)
-    # is what bounds it, transferring the reserve price into that zone's LMP.
+    # Zone-aggregate spec: per-zone reserve R_z[z,t]: 0 <= R_z <= inf; the
+    # per-zone shared-headroom constraint (build_constraints: sum_{eligible g
+    # in z} P + R_z <= zone cap) is what bounds it, transferring the reserve
+    # price into that zone's LMP. Per-gen spec (``reserve_pergen_ramp10``
+    # given): 0 <= R[j] <= ramp10[g_j] — the unit's 10-minute deliverable ramp
+    # (FleetArrays.ramp10) caps what it can hold as upward reserve; the joint
+    # P+R row (_build_reserve_rows_pergen) enforces availability/headroom.
     if layout.n_reserve > 0:
-        col_upper[:, layout._reserve_off : layout._ordc_off] = np.inf
+        if reserve_pergen_ramp10 is not None:
+            ramp10 = np.asarray(reserve_pergen_ramp10, dtype=float)
+            if ramp10.shape != (layout.n_reserve,):
+                raise ValueError(
+                    f"reserve_pergen_ramp10 shape {ramp10.shape} != "
+                    f"({layout.n_reserve},)"
+                )
+            col_upper[:, layout._reserve_off : layout._ordc_off] = ramp10[np.newaxis, :]
+        else:
+            col_upper[:, layout._reserve_off : layout._ordc_off] = np.inf
 
     # ORDC shortfall steps S_k[t]: 0 <= S_k <= step width (MW). Each step's
     # width is the MW span the published demand curve prices at that penalty.
@@ -1802,6 +2004,9 @@ class DispatchModel:
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
         reserve_supply_cap: np.ndarray | None = None,
+        reserve_pergen_gen_idx: np.ndarray | None = None,
+        reserve_pergen_col: np.ndarray | None = None,
+        reserve_pergen_ramp10: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -1824,12 +2029,49 @@ class DispatchModel:
         # (n_classes, n_gen) stack is multi-class (NYISO 30-min full fleet vs
         # 10-min quick-start subset).
         coopt = reserve_requirement is not None
+        # Per-generator reserve columns (R[j,t] per reserve-providing unit,
+        # _build_reserve_rows_pergen) supersede the zone-aggregate layout AND
+        # its scoping mechanisms — the per-unit ramp10 bound replaces the
+        # system-wide supply cap / online gate / additive headroom spec, so
+        # passing both is a wiring error, not a combinable option.
+        pergen = coopt and reserve_pergen_gen_idx is not None
+        if pergen:
+            if (
+                reserve_supply_cap is not None
+                or reserve_online_gated is not None
+                or reserve_headroom_products is not None
+            ):
+                raise ValueError(
+                    "reserve_pergen_gen_idx is mutually exclusive with "
+                    "reserve_supply_cap / reserve_online_gated / "
+                    "reserve_headroom_products (per-gen ramp10 bounds "
+                    "supersede the zone-aggregate scoping mechanisms)"
+                )
+            if reserve_pergen_ramp10 is None:
+                raise ValueError(
+                    "reserve_pergen_gen_idx requires reserve_pergen_ramp10 "
+                    "(the per-column 10-min deliverable cap)"
+                )
         n_reserve_classes = (
             1
-            if not coopt or reserve_eligible is None
+            if not coopt or pergen or reserve_eligible is None
             else int(np.atleast_2d(np.asarray(reserve_eligible)).shape[0])
         )
-        n_reserve = n_reserve_classes * n_zones if coopt else 0
+        n_reserve = (
+            0
+            if not coopt
+            # R-column count: grouped members share a column
+            # (reserve_pergen_col maps member -> column), 1:1 otherwise.
+            else (
+                (
+                    int(np.asarray(reserve_pergen_col).max()) + 1
+                    if reserve_pergen_col is not None
+                    else int(np.asarray(reserve_pergen_gen_idx).size)
+                )
+                if pergen
+                else n_reserve_classes * n_zones
+            )
+        )
         n_ordc_steps = 0 if not coopt or ordc_penalties is None else len(ordc_penalties)
         # Reserve families: one system-wide balance row (ERCOT/PJM) by default,
         # or n locational families when a per-family zone mask is supplied
@@ -1894,6 +2136,8 @@ class DispatchModel:
             reserve_headroom_products=reserve_headroom_products,
             reserve_headroom_extra_cap=reserve_headroom_extra_cap,
             reserve_supply_cap=reserve_supply_cap,
+            reserve_pergen_gen_idx=reserve_pergen_gen_idx,
+            reserve_pergen_col=reserve_pergen_col,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1907,19 +2151,39 @@ class DispatchModel:
             ttc=ttc,
             ordc_step_widths=ordc_step_widths,
             link_bidirectional=link_bidirectional,
+            reserve_pergen_ramp10=reserve_pergen_ramp10,
         )
 
+        _mem_debug = os.environ.get("MARKET_SIM_MEM_DEBUG") == "1"
+
+        def _rss(label: str) -> None:
+            # Peak-memory checkpoint (MARKET_SIM_MEM_DEBUG=1): the plant-level
+            # ISO-year LPs run within ~1 GB of the calibration box's ceiling,
+            # so locating WHICH build stage spikes is routine debugging here.
+            if _mem_debug:
+                with open("/proc/self/status") as f:
+                    for line in f:
+                        if line.startswith(("VmRSS", "VmHWM")):
+                            logger.info("MEM %s: %s", label, line.split(":")[1].strip())
+
+        _rss("after build_constraints")
+
         # build_constraints returns CSR -- the row-wise layout HiGHS addRows
-        # consumes directly, so no format conversion is needed here.
-        starts = A.indptr[:-1].astype(np.int32)
-        indices = A.indices.astype(np.int32)
-        values = A.data.astype(np.float64)
+        # consumes directly, so no format conversion is needed here. asarray
+        # (not astype) so an already-int32/float64 buffer is passed through
+        # without a copy — at ~150M nnz the astype copies alone were ~1.8 GB
+        # of avoidable transient at the exact peak of the build.
+        starts = np.asarray(A.indptr[:-1], dtype=np.int32)
+        indices = np.asarray(A.indices, dtype=np.int32)
+        values = np.asarray(A.data, dtype=np.float64)
 
         inf = highspy.kHighsInf
-        col_upper = np.where(np.isinf(col_upper), inf, col_upper)
-        col_lower = np.where(np.isinf(col_lower), -inf, col_lower)
-        row_upper = np.where(np.isinf(row_upper), inf, row_upper)
-        row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
+        # In-place inf replacement (np.where would copy each bounds array).
+        col_upper[np.isinf(col_upper)] = inf
+        col_lower[np.isinf(col_lower)] = -inf
+        row_upper[np.isinf(row_upper)] = inf
+        row_lower[np.isinf(row_lower)] = -inf
+        _rss("after casts/bounds")
 
         h = highspy.Highs()
         h.setOptionValue("output_flag", False)
@@ -1950,15 +2214,30 @@ class DispatchModel:
             np.array([], dtype=np.int32),
             np.array([], dtype=np.float64),
         )
+        _rss("after addCols")
+        n_rows_A = A.shape[0]
+        nnz_A = A.nnz
+        if _mem_debug:
+            logger.info(
+                "MEM LP size: %d rows x %d cols, %d nnz (indices %s)",
+                n_rows_A,
+                layout.total_columns,
+                nnz_A,
+                indices.dtype,
+            )
+        # HiGHS copies the matrix internally; drop the scipy CSR shell first so
+        # the peak holds one shared buffer set (starts/indices/values), not two.
+        del A
         h.addRows(
-            A.shape[0],
+            n_rows_A,
             row_lower,
             row_upper,
-            A.nnz,
+            nnz_A,
             starts,
             indices,
             values,
         )
+        _rss("after addRows")
 
         self._h = h
         self.fleet = fleet
@@ -1989,11 +2268,34 @@ class DispatchModel:
         n_supply_cap_rows = (
             n_headroom_rows * T if (coopt and reserve_supply_cap is not None) else 0
         )
-        self._n_reserve_rows = (
-            (n_headroom_rows * n_zones * T + n_supply_cap_rows + n_families * T)
-            if coopt
-            else 0
-        )
+        # Per-gen spec: joint P+R rows (n_reserve*T) + balance rows
+        # (n_families*T); the balance rows stay the final n_families*T either
+        # way, so the dual extraction below is layout-independent.
+        if pergen:
+            self._n_reserve_rows = n_reserve * T + n_families * T
+        else:
+            self._n_reserve_rows = (
+                (n_headroom_rows * n_zones * T + n_supply_cap_rows + n_families * T)
+                if coopt
+                else 0
+            )
+        # Zone-incidence map for aggregating per-gen reserve columns back to
+        # (n_zones, T) in solve() — every downstream consumer of
+        # reserve_dispatch reads the zonal block shape.
+        self._pergen = pergen
+        if pergen:
+            gidx = np.asarray(reserve_pergen_gen_idx, dtype=int)
+            col = (
+                np.arange(gidx.size)
+                if reserve_pergen_col is None
+                else np.asarray(reserve_pergen_col, dtype=int)
+            )
+            r_zone = np.zeros(n_reserve, dtype=int)
+            r_zone[col] = np.asarray(fleet.zone_idx, dtype=int)[gidx]
+            self._pergen_zone_map = sp.csr_matrix(
+                (np.ones(n_reserve), (r_zone, np.arange(n_reserve))),
+                shape=(n_zones, n_reserve),
+            )
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
         # year_basis). Generator add/retire changes only columns -- capacity is a
@@ -2001,7 +2303,7 @@ class DispatchModel:
         # not new rows -- so the energy-balance rows (n_zones*T, hour-major) and
         # the storage SOC rows (n_storage*T, unit-major) are the two dimensionally
         # well-defined blocks a prior year's basis maps onto.
-        self._n_rows = A.shape[0]
+        self._n_rows = n_rows_A
         self._n_energy_rows = n_zones * T
         self._n_storage_rows = n_storage * T
         self.build_time = time.perf_counter() - build_start
@@ -2125,6 +2427,10 @@ class DispatchModel:
         reserve_dispatch = reserve_price = reserve_price_by_family = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
+            if self._pergen:
+                # Aggregate the per-gen R columns to the zonal block shape
+                # every downstream consumer expects ((n_zones, T)).
+                reserve_dispatch = self._pergen_zone_map @ reserve_dispatch
             # Balance rows are the final n_families*T, family-major per hour.
             # Report the per-hour SUM across families as the (T,) reserve price:
             # for a single system family this is exactly the legacy balance dual;
@@ -2386,6 +2692,9 @@ def solve_dispatch(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_pergen_gen_idx: np.ndarray | None = None,
+    reserve_pergen_col: np.ndarray | None = None,
+    reserve_pergen_ramp10: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -2500,6 +2809,9 @@ def solve_dispatch(
         reserve_headroom_products=reserve_headroom_products,
         reserve_headroom_extra_cap=reserve_headroom_extra_cap,
         reserve_supply_cap=reserve_supply_cap,
+        reserve_pergen_gen_idx=reserve_pergen_gen_idx,
+        reserve_pergen_col=reserve_pergen_col,
+        reserve_pergen_ramp10=reserve_pergen_ramp10,
         link_bidirectional=link_bidirectional,
         T=T,
     )

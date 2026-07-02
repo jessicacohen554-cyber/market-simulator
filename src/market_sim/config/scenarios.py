@@ -1284,6 +1284,26 @@ class ScenarioConfig:
     pjm_reserve_online_rho: float = 1.0  # online-headroom multiplier for the gated
     # PJM reserve class (~ fleet (pmax−pmin)/pmin near min load). Default 1.0 (the
     # dispatch._build_reserve_rows documented default); not fitted to a residual.
+    pjm_reserve_pergen: bool = False  # PJM: PER-GENERATOR reserve co-optimization
+    # (dispatch._build_reserve_rows_pergen) — one R[r,t] column per reserve-
+    # providing asset (memory-tiered: per (plant, fuel-class) inside the MAD
+    # subzone, per (zone, fuel-class) outside it; members are the reserve-
+    # eligible tranches with nonzero 10-min ramp), joint Σ P + R ≤ Σ pmax·
+    # availability per asset-hour, R[r] ≤ Σ FleetArrays.ramp10
+    # (RAMP10_FRAC_BY_GROUP × pmax, NREL/TP-5500-55588 class ramp rates) as a
+    # variable bound, and TWO measured balance families per Manual 11 sec 4.2:
+    # the RTO Reserve Zone (measured pr_req_mw) and the nested Mid-Atlantic/
+    # Dominion Reserve Subzone (measured mad_pr_req_mw), each priced by the
+    # published two-step ORDC ($850/$300/+190 MW, pjm_ordc_curve.csv). Reserve
+    # competes with energy ON THE SAME MARGINAL ASSET, so the balance dual
+    # carries the sub-shortage opportunity cost into the LMP endogenously — no
+    # overlay, no haircut, no fitted params (docs/multi-iso/pjm-reserve-ordc.md
+    # Phase 2; granularity tiers are the documented 15 GB memory scope-down,
+    # never a breakpoint/penalty change). Supersedes (mutually exclusive with)
+    # pjm_reserve_supply_cap / pjm_reserve_online_gated, whose zone-aggregate
+    # scoping the per-asset ramp10 bound replaces. Requires
+    # energy_reserve_coopt + PJM; default off; GATED. Profile memory before
+    # multi-year runs (CLAUDE.md #45).
     ercot_as_forward_requirement: bool = False  # ERCOT: set each multi-product AS
     # requirement (RegUp/RRS/ECRS/NonSpin) from a FORWARD formula of forecast
     # drivers — req_product(t) = f(net-load, ramp, VRE-share, net-load
@@ -2990,6 +3010,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
+    "pjm_reserve_pergen": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
     "ercot_storage_as_endogenous": 1,

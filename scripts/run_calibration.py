@@ -1946,6 +1946,7 @@ def run_year(
     pjm_reserve_supply_cap: bool = False,
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
+    pjm_reserve_pergen: bool = False,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
@@ -2384,6 +2385,8 @@ def run_year(
             pjm_reserve_online_gated=True,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
         )
+    if pjm_reserve_pergen:
+        config = config.with_overrides(pjm_reserve_pergen=True)
     if ercot_as_forward_requirement:
         config = config.with_overrides(ercot_as_forward_requirement=True)
     # ERCOT load-resource reserve credit (run_calibration_full
@@ -3993,6 +3996,36 @@ def run_year(
                     for r in range(coopt_supply_cap.shape[0])
                 ],
             )
+    elif (
+        getattr(config, "energy_reserve_coopt", False)
+        and config.iso == "PJM"
+        and getattr(config, "pjm_reserve_pergen", False)
+    ):
+        # PJM PER-GEN reserve co-opt (pjm_reserve_pergen): delegate to the
+        # unified reserve_config design (the NYISO pattern below) — one R
+        # column per reserve-eligible unit with nonzero ramp10, joint P+R
+        # headroom per unit-hour, and the nested measured RTO + Mid-Atlantic/
+        # Dominion Primary balance families. Supersedes the hand-built
+        # zone-aggregate block below (and its supply-cap/online-gate
+        # re-scopes — the per-unit ramp10 bound replaces them).
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
+        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
+        dispatch_kwargs.update(build_reserve_dispatch_kwargs(design))
+        logger.info(
+            "PJM PER-GEN reserve co-opt ON: %d R columns / %d member units "
+            "(eligible, ramp10>0; Σ ramp10 %.1f GW), %d balance families "
+            "(%s), req means %s MW",
+            int(design.pergen_ramp10.size),
+            int(design.pergen_gen_idx.size),
+            float(design.pergen_ramp10.sum()) / 1e3,
+            len(design.families),
+            ", ".join(f.name for f in design.families),
+            [int(f.requirement.mean()) for f in design.families],
+        )
     elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
         from market_sim.config.reserve_config import PJM_ORDC_CURVE_PATH
         from market_sim.data.fleet import FUEL_TYPE_NAMES
