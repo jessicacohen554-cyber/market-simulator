@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 
 from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.emissions import apply_marginal_co2
 from lce_portfolio.intake import load_intake, prepare_lmp, prepare_load
 from lce_portfolio.outputs import summarize, write_outputs
 from lce_portfolio.profiles import build_cf_matrix
@@ -56,6 +57,7 @@ def run_one_iso(
     out_dir: str | Path,
 ) -> None:
     """Run the full pipeline for a single ISO (``config.iso``) and write outputs."""
+    config = apply_marginal_co2(config)
     resources = load_resource_arrays(config)
     load = prepare_load(load_path, config.iso, config)
     lmp = prepare_lmp(lmp_path, config.iso)
