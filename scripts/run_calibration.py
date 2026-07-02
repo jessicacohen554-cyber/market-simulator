@@ -1967,6 +1967,7 @@ def run_year(
     caiso_ra_mustoffer: bool | None = None,
     caiso_ra_min_load_frac: float | None = None,
     caiso_ra_startup_bridge: bool | None = None,
+    caiso_ra_bridge_decommit: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
@@ -2178,6 +2179,10 @@ def run_year(
         config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
     if caiso_ra_startup_bridge is not None:
         config = config.with_overrides(caiso_ra_startup_bridge=caiso_ra_startup_bridge)
+    if caiso_ra_bridge_decommit is not None:
+        config = config.with_overrides(
+            caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
+        )
     if reliability_floor is not None:
         config = config.with_overrides(reliability_floor=reliability_floor)
     if reliability_floor_overrides is not None:
@@ -4306,6 +4311,20 @@ def _commitment_pass(state: dict, config=None):
         # OWN P1 dual (LMP) and base MC in the restart inequality — no measured
         # pin. Off => the plain physical (gap < min-down) bridge, byte-identical.
         startup_bridge = bool(getattr(cfg, "caiso_ra_startup_bridge", False))
+        # Solar-proportional / seasonal decommitment (caiso-48, default off):
+        # bound economic bridges to the day-ahead commitment horizon and
+        # decommit them RUC-order where the candidate floors exceed the P1
+        # import/export absorption — the surplus hours reprice to the
+        # curtailable-renewable keep-running offer, the same floor the
+        # negative_renewable_offers dispatch offers use (no new constant).
+        bridge_decommit = startup_bridge and bool(
+            getattr(cfg, "caiso_ra_bridge_decommit", False)
+        )
+        surplus_floor_value = (
+            -float(getattr(cfg, "renewable_keep_running_value", 20.0))
+            if getattr(cfg, "negative_renewable_offers", False)
+            else 0.0
+        )
         ra_floor = caiso_ra_mustoffer_min_gen(
             p1.dispatch,
             fa,
@@ -4314,6 +4333,8 @@ def _commitment_pass(state: dict, config=None):
             p1_prices=p1.prices if startup_bridge else None,
             base_mc=state["mc_base"] if startup_bridge else None,
             startup_bridge=startup_bridge,
+            bridge_decommit=bridge_decommit,
+            surplus_floor_value=surplus_floor_value,
         )
         base_min_gen = (
             fa.min_gen
