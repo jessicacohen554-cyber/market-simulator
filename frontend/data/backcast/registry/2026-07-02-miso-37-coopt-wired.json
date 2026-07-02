@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-02-miso-37-coopt-wired",
+ "label": "miso 37 coopt wired",
+ "date": "2026-07-02",
+ "shorthand": "miso-37-coopt-wired",
+ "definition": "MISO 37 (PROBE): market-wide RBDC energy+reserve co-opt genuinely IN the backcast LP for the first time (new run_year MISO branch -> unchanged _miso_design; requirement MSSC+400 MW = 4,353 MW, 8 ORDC steps $437-$3,500). Honest finding at 6-zone granularity: reserve clearing price EXACTLY $0 in all 26,280 hours \u2014 the ~4.4 GW market-wide requirement never binds against tens of GW of idle eligible headroom, and congestion does not change the market-wide sum (same result as the 3-zone miso3 probe and the PJM ORDC campaign). Dispatch differs from miso-36 only by degenerate-tie reshuffling (max LMP delta $0.29). Gates 1-3 unchanged from miso-35. Requirement NOT inflated, penalty NOT raised (rules #1/#11); structure retained. Tail lever moves to the zonal families (miso-38).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-02-miso-37-coopt-wired.js",
+ "bundle": "results/calibration/MISO/miso_37_coopt_wired"
+}

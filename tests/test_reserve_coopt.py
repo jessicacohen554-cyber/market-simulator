@@ -953,5 +953,114 @@ class TestMisoReserveCooptLP(unittest.TestCase):
         )
 
 
+class TestMisoZonalReserveLP(unittest.TestCase):
+    """MISO zonal reserve family in the LP (miso_zonal_reserves): a South
+    zone whose local headroom cannot cover its within-zone MSSC prices the
+    published zonal curve and lifts the SOUTH LMP above the West LMP, even
+    when the market-wide requirement is slack. Trivial case: 2 zones, 24 h,
+    one link."""
+
+    _T = 24
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        n = 3
+        # West: two 2,000 MW CCs (deep headroom). South: one 800 MW CC —
+        # the within-zone MSSC equals the whole South fleet, so any South
+        # load leaves the zonal requirement unmeetable locally.
+        return FleetArrays(
+            pmax=np.array([2000.0, 2000.0, 800.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 7.0, 7.5]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 1]),
+            fuel_type_idx=np.array([cc_idx, cc_idx, cc_idx]),
+            availability=np.ones((n, self._T)),
+            unit_ids=["cc_w0", "cc_w1", "cc_s0"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([1, 2, 3]),
+        )
+
+    def _solve(self, zonal: bool):
+        import scipy.sparse as sp
+
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet = self._fleet()
+        cfg = type(
+            "C",
+            (),
+            {
+                "iso": "MISO",
+                "weather_year": 2024,
+                "miso_zonal_reserves": zonal,
+                "miso_zonal_reserve_zones": ("South",),
+            },
+        )()
+        design = get_reserve_design(cfg, fleet, self._T, ["West", "South"])
+        kw = build_reserve_dispatch_kwargs(design)
+        demand = np.vstack(
+            [
+                np.full(self._T, 500.0),  # West: deeply slack
+                np.full(self._T, 600.0),  # South: local headroom 200 < MSSC 800
+            ]
+        )
+        # One West->South link, 400 MW (the RDT analogue): imports serve South
+        # energy but imported MW are not South reserve.
+        incidence = sp.csr_matrix(np.array([[1.0], [-1.0]]))
+        extra = (
+            dict(
+                reserve_balance_zone_mask=kw["reserve_balance_zone_mask"],
+                reserve_balance_ordc_counts=kw["reserve_balance_ordc_counts"],
+                reserve_balance_class=kw["reserve_balance_class"],
+            )
+            if zonal
+            else {}
+        )
+        return solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=np.zeros((2, self._T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, self._T)),
+            solar_cap=np.zeros(2),
+            fuel_prices=np.ones((3, self._T)),
+            voll=2000.0,
+            incidence=incidence,
+            ttc=np.array([400.0]),
+            reserve_requirement=kw["reserve_requirement"],
+            reserve_eligible=kw["reserve_eligible"],
+            ordc_penalties=kw["ordc_penalties"],
+            ordc_step_widths=kw["ordc_step_widths"],
+            **extra,
+        )
+
+    def test_zonal_family_prices_south_scarcity(self):
+        base = self._solve(zonal=False)
+        zonal = self._solve(zonal=True)
+        self.assertEqual(base.status, "Optimal")
+        self.assertEqual(zonal.status, "Optimal")
+        # Market-wide requirement (MSSC 2000 + 400 reg) is met by West's
+        # headroom in both runs; without the zonal family South prices at
+        # its energy marginal cost only.
+        south_base = float(np.asarray(base.prices)[1].mean())
+        south_zonal = float(np.asarray(zonal.prices)[1].mean())
+        west_zonal = float(np.asarray(zonal.prices)[0].mean())
+        # The South zonal family (req = 800, local headroom 200) is short:
+        # its shortfall prices on the published curve and lifts the South
+        # LMP above both the no-family South LMP and the West LMP.
+        self.assertGreater(south_zonal, south_base + 1.0)
+        self.assertGreater(south_zonal, west_zonal + 1.0)
+
+
 if __name__ == "__main__":
     unittest.main()
