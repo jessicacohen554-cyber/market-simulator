@@ -916,6 +916,14 @@ if (CTX.defaults.lmp_is_synthetic) {{
 def _make_handler(state: LauncherState, page_context: dict):
     """Build a request-handler class bound to this server's ``state``."""
 
+    # ``contextlib.redirect_stderr`` in ``LauncherState._execute`` swaps
+    # ``sys.stderr`` process-wide while a solve runs, so a handler thread
+    # logging a request mid-solve wrote into the run's captured stderr —
+    # access-log lines ended up glued onto the run's error message (review
+    # finding LN-11). Grab the real console handle once, before any run can
+    # redirect it.
+    console_stderr = sys.stderr
+
     class LauncherHandler(BaseHTTPRequestHandler):
         server_version = f"lce-portfolio-launcher/{__version__}"
 
@@ -930,7 +938,7 @@ def _make_handler(state: LauncherState, page_context: dict):
                 # Client went away mid-response (tab closed, poll aborted):
                 # one console line, not a threading traceback dump (review
                 # finding LN-8; ADR 0016 §5 console discipline).
-                sys.stderr.write(
+                console_stderr.write(
                     f"{self.address_string()} - - client disconnected mid-response\n"
                 )
 
@@ -1098,8 +1106,10 @@ def _make_handler(state: LauncherState, page_context: dict):
 
         def log_message(self, format, *args):  # noqa: A002 - stdlib signature
             # Mirror to the real console (ADR 0016 §5's error-discipline
-            # "mirrored to console"), not to whichever run's captured stdout.
-            sys.stderr.write(
+            # "mirrored to console") via the pre-redirect handle — writing to
+            # sys.stderr here lands inside a running solve's captured stderr
+            # and pollutes its error message (finding LN-11).
+            console_stderr.write(
                 "%s - - [%s] %s\n"
                 % (self.address_string(), self.log_date_time_string(), format % args)
             )
