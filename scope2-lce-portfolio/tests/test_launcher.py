@@ -393,6 +393,30 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Non-finite / empty numeric lists (review finding LN-4) -----------------
+
+
+@pytest.mark.parametrize("bad", ["nan", "inf", "-inf", "", "5, nan", ", ,"])
+def test_validate_run_payload_rejects_non_finite_or_empty_deltas(
+    tmp_path: Path, bad: str
+) -> None:
+    """LN-4: nan slips through PortfolioConfig's d <= 0 check (nan comparisons
+    are all False) and would reach the LP; empty lists fail late and
+    confusingly. Both must be clean validation errors."""
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "mode": "premium_cap",
+            "premium_deltas": bad,
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+        }
+    )
+    assert kwargs is None
+    assert "premium_deltas" in err
+
+
 # --- Batch run-id collisions (review finding LN-3) --------------------------
 
 
