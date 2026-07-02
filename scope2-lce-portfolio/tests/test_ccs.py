@@ -327,3 +327,53 @@ def test_sweep_with_ccs_active_stays_monotone() -> None:
     ccs_i = last.resource_names.index("gas_cc_ccs_new")
     if last.build_mw[ccs_i] > 1e-3:
         assert last.resource_co2_tons > 0.0
+
+
+# --- ADR 0012 gate hardening (audit findings DL-2 / DL-3) ---------------------
+
+
+def test_fuel_row_blank_capture_and_emission_rejected(tmp_path) -> None:
+    """A fuel-burning row must state capture/emission explicitly (DL-2).
+
+    Regression: blank cells defaulted to 0.0, which silently passed the
+    emission test and skipped the capture test — unabated gas entered the
+    catalog as a fully-matching zero-emission resource.
+    """
+    row = "gas_cc_unabated,generation,capex_fixed,1100,30,30,0.9,2,0,0,10000,0,6.9,,,t"
+    table = _write_cost_table(tmp_path, [row])
+    cfg = PortfolioConfig(active_resources=("gas_cc_unabated",), gas_price_mmbtu=4.0)
+    with pytest.raises(ValueError, match="capture_rate.*missing or blank"):
+        load_resource_arrays(cfg, cost_table=table)
+
+
+def test_fuel_row_capture_above_one_rejected(tmp_path) -> None:
+    """capture_rate > 1 must not oversize the 45Q credit (DL-3)."""
+    row = "ccs,generation,capex_fixed,2000,50,30,0.9,16,0,0,10000,0,8.0,1.5,0.0,t"
+    table = _write_cost_table(tmp_path, [row])
+    cfg = PortfolioConfig(active_resources=("ccs",), gas_price_mmbtu=4.0)
+    with pytest.raises(ValueError, match=r"must be in \(0, 1\]"):
+        load_resource_arrays(cfg, cost_table=table)
+
+
+def test_fuel_row_understated_emission_rate_rejected(tmp_path) -> None:
+    """The stated residual rate must match (1-capture)×0.0531×HR (DL-3).
+
+    A row claiming a near-zero residual while its capture/heat-rate imply
+    0.0378 tCO2/MWh must fail the cross-check rather than slip under the
+    ADR 0012 threshold.
+    """
+    row = "ccs,generation,capex_fixed,2000,50,30,0.9,16,0,0,10000,0,7.9,0.91,0.001,t"
+    table = _write_cost_table(tmp_path, [row])
+    cfg = PortfolioConfig(active_resources=("ccs",), gas_price_mmbtu=4.0)
+    with pytest.raises(ValueError, match="inconsistent with"):
+        load_resource_arrays(cfg, cost_table=table)
+
+
+def test_fuel_row_consistent_within_rounding_tolerance(tmp_path) -> None:
+    """4-decimal CSV rounding of the residual rate passes the cross-check."""
+    # implied = 0.05 × 0.0531 × 7.9 = 0.0209745; stated 0.0210 (rounded).
+    row = "ccs,generation,capex_fixed,2000,50,30,0.9,16,0,0,10000,0,7.9,0.95,0.0210,t"
+    table = _write_cost_table(tmp_path, [row])
+    cfg = PortfolioConfig(active_resources=("ccs",), gas_price_mmbtu=4.0)
+    ra = load_resource_arrays(cfg, cost_table=table)
+    assert ra.emission_rate_ton_mwh[0] == pytest.approx(0.0210)
