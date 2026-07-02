@@ -6,34 +6,43 @@ description: Register new backcast calibration runs on the deployable results da
 # Backcast results dashboard
 
 Register calibration runs on the JSON-driven backcast results dashboard. The
-page is a static shell (`backcast-results.html`) that loads run data from
-`frontend/data/backcast/` and is served by GitHub Pages. Full generator:
-`scripts/render_backcast.py` (data + shell) and `scripts/probes/_backcast_shell.py`
-(the UI). The standalone embedded report (`scripts/render_calibration_html.py`)
-is retained only for one-off self-contained sends; the dashboard is the
-standard format.
+dashboard is the pair of codebase-site pages served by GitHub Pages:
 
-The shell shows **one run at a time** (the old multi-run comparison mode was
-retired) in three views: **Run report** (default — per-year scorecard, class-
-tolerance and dispatch-correlation heatmaps across all testing years, monthly
-LMP vs actuals, and auto-generated diagnostics that localize each miss by
-season/zone/plant), **Charts** (per-year deep-dive incl. commitment heatmaps
-and the month/zone volume-miss bars), and **Tables** (generation mix and
-reference tables). The diagnostics are computed client-side from the run
-payload, so they appear automatically for every newly pushed bundle.
+* `docs/codebase-site/backcast-runs.html` — the **Run Explorer** (per-run
+  detail; deep-linkable via `#iso=<ISO>&run=<run-id>`).
+* `docs/codebase-site/calibration-status.html` — the **Calibration Status**
+  all-ISO keeper summary (deep-linkable via `#iso=<ISO>`).
+
+Both load run data from `data/backcast/` (deploy-built copy) with a fallback
+to `frontend/data/backcast/` via `docs/codebase-site/js/bc-data.js`. Data
+generator: `scripts/render_backcast.py` (per-run payloads + bench parts). The
+old root `backcast-results.html` is a static redirect stub to these pages —
+never regenerate or edit it. The standalone embedded report
+(`scripts/render_calibration_html.py`) is retained only for one-off
+self-contained sends; the dashboard is the standard format.
+
+The Run Explorer shows **one run at a time** in three views: **Run report**
+(default — per-year scorecard, class-tolerance and dispatch-correlation
+heatmaps across all testing years, monthly LMP vs actuals, and auto-generated
+diagnostics that localize each miss by season/zone/plant), **Charts**
+(per-year deep-dive incl. commitment heatmaps and the month/zone volume-miss
+bars), and **Tables** (generation mix and reference tables). The diagnostics
+are computed client-side from the run payload, so they appear automatically
+for every newly pushed bundle.
 
 ## How publishing works (conflict-free by construction)
 
-The shared dashboard files — `backcast-results.html`,
-`frontend/data/backcast/manifest.js`, `benchmark.js` — are assembled from the
-committed per-run files by the stdlib-only `scripts/build_manifest.py`. They ARE
-committed (so a raw-branch GitHub Pages build serves the dashboard too, not just
-the Actions deploy — that is what fixed the recurring 404), **but you must never
-hand-commit them.** The "Deploy site to GitHub Pages" workflow is their single
-writer: on every merge to main it regenerates them and commits them back (with
-`GITHUB_TOKEN`, which does not re-trigger the deploy). Run
+The shared dashboard data files — `frontend/data/backcast/manifest.js`,
+`benchmark.js`, `completeness.js` — are assembled from the committed per-run
+files by the stdlib-only `scripts/build_manifest.py`. They ARE committed (so a
+raw checkout's local preview works via the bc-data.js fallback), **but you
+must never hand-commit them.** The "Deploy site to GitHub Pages" workflow is
+their single writer: on every merge to main it regenerates them, commits them
+back (with `GITHUB_TOKEN`, which does not re-trigger the deploy), and copies
+the full data set into `docs/codebase-site/data/backcast/` (gitignored,
+deploy-staging only) via `scripts/build_codebase_site_backcast.py`. Run
 `scripts/build_manifest.py` locally only to *preview* — leave the resulting
-changes to those three files uncommitted; the deploy reconciles them.
+changes to those files uncommitted; the deploy reconciles them.
 
 Each run commits ONLY files in its own namespace, so any number of parallel
 sessions — same ISO or different ISOs — merge to main without conflicts or
@@ -100,15 +109,17 @@ keeps its `runNN` scheme.
    `calibration_attestation.json` exceptions ledger (governance attestation +
    per-caveat metric/year/magnitude/reason) before it can become a `CAVEAT`.
 
-3. **Preview locally** (assembles the full dashboard from ALL registered runs,
-   instant, no bundle access):
+3. **Preview locally** (assembles the full dashboard data from ALL registered
+   runs, instant, no bundle access):
    ```bash
    python scripts/build_manifest.py
    ```
-   Then sanity-check the shell parses (the JS is non-trivial):
+   Then open the Run Explorer over a local server (bc-data.js falls back to
+   `frontend/data/backcast/` when the deploy-built copy is absent; `file://`
+   won't work because keepers.json is fetched):
    ```bash
-   python -c "import re;open('/tmp/s.js','w').write(re.findall(r'<script>([\s\S]*?)</script>',open('backcast-results.html').read())[-1])"
-   node --check /tmp/s.js && echo SYNTAX_OK
+   python -m http.server 8000  # then open
+   # http://localhost:8000/docs/codebase-site/backcast-runs.html#iso=<ISO>&run=<RUN_ID>
    ```
 
 4. **Commit + push** the per-run files only:
@@ -136,12 +147,12 @@ and bench parts.
 
 ## Calibration Status page (all-ISO summary)
 
-The dashboard's top-level **Calibration Status** view (the 4th View tab) is a
+**Calibration Status** (`docs/codebase-site/calibration-status.html`) is a
 one-page, every-ISO summary of each market's current keeper: the headline
 determination, the C1–C6 status matrix with per-year magnitudes and the
 MODEL-MISS vs ACCEPTED-LIMITATION classification, the tests conducted, and the
-best-practice justification. It renders client-side from
-`frontend/data/backcast/status.js` (`window.BC.status`).
+best-practice justification, with a deep link into each keeper's Run Explorer
+report. It renders client-side from `status.js` (`window.BC.status`).
 
 Unlike manifest.js/benchmark.js, **status.js is a committed file** (built where
 the bundles live, not at deploy time): the C6 governance verdict reads each
@@ -169,17 +180,16 @@ checkout does not fetch. So when a keeper changes:
    `python scripts/build_status.py --check` fails (exit 1) if status.js is stale
    vs the current verdicts — a cheap CI/pre-commit guard.
 
-`build_manifest.py` only wires the committed status.js into the shell; it never
-regenerates it. Leave backcast-results.html uncommitted as always.
+`build_manifest.py` never regenerates status.js — the deploy just copies the
+committed file to the pages' data dir.
 
 ## Notes
 
-- The dashboard fetches data via `<script src>` + `DecompressionStream`, which
-  works on GitHub Pages **and** when opened locally — but needs a current
-  browser. Opening `backcast-results.html` by double-click works because data
-  is loaded by script tag (not `fetch`), so there is no `file://` CORS trap.
-  (Locally, run `python scripts/build_manifest.py` first if the gitignored
-  shell/manifest/benchmark aren't present in your checkout yet.)
+- The dashboard pages load run data via `<script src>` +
+  `DecompressionStream`, which needs a current browser. Serve locally over
+  HTTP (`python -m http.server`) — `keepers.json` is fetched, so plain
+  `file://` opening hits the CORS trap. Run `python scripts/build_manifest.py`
+  first if `manifest.js`/`benchmark.js` aren't fresh in your checkout.
 - Avoid editing shared, append-style files (e.g. `docs/calibration-log.md`)
   from parallel sessions — that is the one remaining way two sessions can
   conflict. Put per-run findings in the run's sidecar definition or a

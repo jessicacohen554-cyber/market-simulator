@@ -794,7 +794,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # NYIS), matching actuals_source (nuclear -> eia923). This is the single
             # BTM-removal point; downstream system totals then count each class
             # exactly once (no separate EIA-930 add-on -- see calibration_verdict
-            # ._gen_totals and _backcast_shell.totalGen).
+            # ._gen_totals and the run explorer's totalGen).
             #
             # ISO override (NYISO solar). NYISO grid solar is structurally 0 in
             # EIA-930 — NYISO solar is overwhelmingly behind-the-meter / net-metered
