@@ -2009,6 +2009,7 @@ def run_year(
     st_gas_intermediate_cf_threshold: float | None = None,
     ct_netload_drag: bool = False,
     ct_drag_overrides: dict[str, float] | None = None,
+    chp_export_floor_measured: bool = False,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -2080,6 +2081,11 @@ def run_year(
         config = config.with_overrides(
             ct_netload_drag=True, **(ct_drag_overrides or {})
         )
+    if chp_export_floor_measured:
+        # Measured steam-following export floor (backcast overlay): CHP bins'
+        # grid floor rides at the year's measured EIA-923 class CF x the
+        # sector grid-delivery share instead of the pooled CAMPD p2 minimum.
+        config = config.with_overrides(chp_export_floor_measured=True)
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:

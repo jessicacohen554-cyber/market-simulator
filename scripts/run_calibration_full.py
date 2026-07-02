@@ -1291,8 +1291,6 @@ def _benchmark_eia923_frame(
 def _btm_frame(
     year: int,
     pass_label: str,
-    result,
-    context,
     generation: pd.DataFrame,
     btm_backfill_year: int | None = None,
     campd_active: set[int] | None = None,
@@ -1300,6 +1298,20 @@ def _btm_frame(
     group_by_code: dict[int, str] | None = None,
 ) -> pd.DataFrame:
     """Return behind-the-meter CHP must-run by class for one year-pass.
+
+    Measured-input sizing (CLAUDE.md rule #13): each plant's BTM host
+    self-supply is its per-(plant, class) EIA-923 net generation times its
+    measured host-share — :func:`market_sim.data.chp.chp_btm_pct` (sector
+    shares / per-plant overrides, the identical share the LP hold-out uses)
+    for the CHP groups, the curated bin sheet's ``pct_mr`` for the few
+    non-CHP cogen bins (e.g. San Jacinto). The model's dispatch never enters:
+    the earlier sizing (923 class total minus the model's own grid dispatch,
+    clipped at zero) made the bench-side grid-delivered "actual"
+    (``923 − btm``) equal the model whenever the model under-dispatched a
+    CHP class — the C1 gate could not fail (a vacuous pass) — and the
+    attribution varied between solves of identical code+data. This frame is
+    now a pure function of committed inputs, so two rebuilds are
+    byte-identical and the same sizing regenerates for a forward year.
 
     ``btm_backfill_year``: the BTM add-back is keyed off the plant's EIA-923
     class net generation for ``year``; the most recent 923 vintage is a
@@ -1324,6 +1336,7 @@ def _btm_frame(
     flat-CF / CO2 estimates, never ``btm_twh``.
     """
     from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.chp import chp_btm_pct
     from market_sim.data.coal import coal_chp_overrides
     from market_sim.data.fleet import (
         CHP_BTM_PCT_BY_SECTOR,
@@ -1333,18 +1346,6 @@ def _btm_frame(
     from market_sim.results.emissions import compute_must_run_emissions
 
     is_ercot = iso == "ERCOT"
-    dispatch = np.asarray(result.dispatch)
-    # Non-ERCOT unit ids name the plant code as the leading numeric token
-    # (``{code}_{gen}``); ERCOT carries a ``p{code}`` token — match the
-    # dispatch frame's own parsing so grid dispatch attributes per plant.
-    plant_codes = _plant_codes_from_unit_ids(
-        list(context.unit_ids), numeric_head=not is_ercot
-    )
-    grid_by_plant: dict[int, float] = {}
-    for g in range(dispatch.shape[0]):
-        pc = int(plant_codes[g])
-        if pc > 0:
-            grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(dispatch[g].sum())
     # The EIA-923 bins carry the 923-dominant class for the year, so the bin's
     # class is what the plant actually burned (no curated drift). ERCOT reads
     # the curated sheet; every other ISO builds the equivalent one-row-per-plant
@@ -1413,11 +1414,27 @@ def _btm_frame(
                     carried,
                     year,
                 )
+    # Measured host-share per plant: chp_btm_pct (sector shares / per-plant
+    # overrides — the identical share the LP hold-out removes) for the CHP
+    # groups; the curated sheet's pct_mr for the few non-CHP cogen bins the
+    # sheet holds out (Lost Pines self-supply, San Jacinto). Coal rows are
+    # filtered inside compute_must_run_emissions and are booked below instead.
+    share_by_plant = {
+        int(code): (
+            chp_btm_pct(int(code), str(grp), iso=iso) / 100.0
+            if str(grp) in ("CC_CHP", "CT_CHP", "ST_CHP")
+            else float(pct) / 100.0
+        )
+        for code, grp, pct in zip(
+            bins["Plant_Code"], bins["Plant_Group"], bins["pct_mr"]
+        )
+        if float(pct) > 0.0
+    }
     mr = compute_must_run_emissions(
         bins,
         year,
         total_gen_by_plant=total_by_plant,
-        grid_gen_by_plant=grid_by_plant,
+        btm_share_by_plant=share_by_plant,
     )
     btm_by_class: dict[str, float] = {}
     if not mr.empty:
@@ -1765,6 +1782,7 @@ def solve_and_persist(
     gas_st_drag_overrides: dict | None = None,
     ct_netload_drag: bool = False,
     ct_drag_overrides: dict | None = None,
+    chp_export_floor_measured: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1980,6 +1998,7 @@ def solve_and_persist(
             gas_st_drag_overrides=gas_st_drag_overrides,
             ct_netload_drag=ct_netload_drag,
             ct_drag_overrides=ct_drag_overrides,
+            chp_export_floor_measured=chp_export_floor_measured,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -2047,12 +2066,13 @@ def solve_and_persist(
             # subtracts it from EIA-923 to score the model on the same
             # grid-delivered basis. The bin source is ISO-specific inside
             # _btm_frame (curated sheet for ERCOT, EIA-860 fleet otherwise).
+            # Sized from measured inputs only (923 class totals × measured
+            # host shares), never from this pass's dispatch — the frame is
+            # identical across passes and re-solves (rule #13).
             btm_frames.append(
                 _btm_frame(
                     year,
                     label,
-                    res,
-                    context,
                     generation,
                     btm_backfill_year=btm_backfill_year,
                     campd_active=campd_active,
@@ -2249,6 +2269,7 @@ def solve_and_persist(
         "pjm_seam_flow_percentile": pjm_seam_flow_percentile,
         "pjm_seam_export_limit": pjm_seam_export_limit,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
+        "chp_export_floor_measured": chp_export_floor_measured,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
@@ -2416,6 +2437,8 @@ def solve_and_persist(
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
+    if chp_export_floor_measured:
+        recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
     if scarcity_price_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             scarcity_pricing_enabled=scarcity_price_overlay,
@@ -3252,7 +3275,7 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             must_run=must_run,
         ).to_parquet(bundle / "dispatch" / f"{year}_P2.parquet", index=False)
         system_p2.append(_system_frame(year, "P2", result, state["demand"], zone_names))
-        btm_p2.append(_btm_frame(year, "P2", result, ctx, generation))
+        btm_p2.append(_btm_frame(year, "P2", generation, iso=meta["iso"]))
         # Older p2_state pickles predate the storage frame; skip them.
         storage_frame = _storage_frame(year, "P2", result, state.get("storage_units"))
         if storage_frame is not None:

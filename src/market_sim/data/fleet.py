@@ -25,6 +25,7 @@ from market_sim.config.constants import (
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
+    HOURS_PER_YEAR,
     MAINTENANCE_MONTHLY_SHAPE,
     NOX_RATES,
     NUCLEAR_DORMANT_UNTIL,
@@ -3099,6 +3100,7 @@ from market_sim.data.chp import (  # noqa: E402
     _chp_by_plant,
     _correct_caiso_chp_steam_credit_hr,
     chp_btm_pct,
+    chp_class_netgen_mwh,
     chp_pmin_cf,
 )
 
@@ -5394,6 +5396,23 @@ def bins_to_fleet(
         else {}
     )
 
+    # Measured steam-following export level (backcast overlay,
+    # config.chp_export_floor_measured): the year's per-(plant, class) EIA-923
+    # net generation, which replaces the pooled CAMPD p2 minimum as the CHP
+    # total must-run CF below — see the ScenarioConfig field for the physics
+    # and the rule-#13 admissibility argument. Empty (no override) in forecast
+    # mode or when the flag is off.
+    chp_measured_netgen: dict[tuple[int, str], float] = {}
+    if (
+        getattr(config, "chp_steam_following", False)
+        and getattr(config, "chp_export_floor_measured", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and int(getattr(config, "weather_year", 0) or 0) > 0
+    ):
+        chp_measured_netgen = chp_class_netgen_mwh(
+            int(getattr(config, "weather_year", 0) or 0)
+        )
+
     for _, b in bins.iterrows():
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
@@ -5713,6 +5732,17 @@ def bins_to_fleet(
         pmin_cf = None
         if chp_following:
             pmin_cf = chp_pmin_cf(plant_code, iso=getattr(config, "iso", "ERCOT"))
+            # Measured steam-following level (chp_export_floor_measured): the
+            # plant's EIA-923 class CF for the solved year supersedes the
+            # pooled CAMPD p2 minimum — the host-driven operating level the
+            # steam contract sustains, not the never-below floor. The grid
+            # floor formula below is unchanged (x (1 - btm share)), so the
+            # forced export is exactly the measured total times the measured
+            # sector grid-delivery share. Plants missing from the year's
+            # 923 vintage keep the p2/artifact floor from above.
+            _mtot = chp_measured_netgen.get((plant_code, group))
+            if _mtot is not None and nameplate > 0.0:
+                pmin_cf = min(100.0, 100.0 * _mtot / (nameplate * HOURS_PER_YEAR))
         elif coal_chp_sector is not None and coal_chp_floor_mw and nameplate > 0.0:
             # Coal cogen: the measured min-month average MW as a % of the coal
             # bin nameplate, scaled and capped the same way derive_thermal_tranches
