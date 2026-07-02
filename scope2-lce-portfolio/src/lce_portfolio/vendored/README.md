@@ -18,7 +18,13 @@ anywhere in this project.
 
 ## Current contents
 
-- *(none yet)* — the first planned vendoring is the renewable capacity-factor
-  shape logic from `src/market_sim/data/renewables.py`, added in
-  `docs/prompt-packs/PP-03-cf-profiles.md`. Until then, `profiles.py` uses
-  synthetic shapes.
+- `renewable_shapes.py` — renewable capacity-factor shape logic
+  (`derive_cf_profile`, `derive_offshore_wind_profile`) from
+  `src/market_sim/data/renewables.py`, plus the original single-node
+  `capacity_weighted_collapse` reconciliation primitive (ADR 0011).
+- `fossil_avg_rate.py` — `compute_fossil_avg_rate` from
+  `src/market_sim/results/emissions.py`: the hourly fossil-only average CO2
+  rate used to attribute residual carbon to unmatched grid purchases
+  (ADR 0013). Parity with upstream is enforced by
+  `tests/test_emissions.py::TestVendoredParityScope2` in the *market_sim*
+  test tree (that test imports market_sim, so it cannot live here).

@@ -14,6 +14,12 @@ data/sample/sample_lmp.csv
 data/profiles/*
 !data/profiles/.gitkeep
 
+# Real per-ISO-year hourly fossil-average CO2-rate exports are built from
+# cached market-sim dispatch results by scripts/build_fossil_avg_co2_rate.py
+# (ADR 0013; reproducible, disposable). Tests use synthetic in-test fixtures.
+data/emissions/*
+!data/emissions/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]
