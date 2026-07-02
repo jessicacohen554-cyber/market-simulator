@@ -26,6 +26,7 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0011 | LMP coupling & scenario selection | accepted | PS-08 | PP-01 |
 | 0012 | Gas CC + CCS resource; low-carbon threshold credit (<50 kg/MWh, >90% capture) | accepted | PS-09 | PP-08 |
 | 0013 | Residual carbon: hourly fossil-only average rate (attributional) | accepted | (stakeholder correction of 0007) | `intake.py`/`lp.py`/`scripts/build_fossil_avg_co2_rate.py` |
+| 0014 | Reporting deliverable: self-contained HTML run report + committed `results/` store | accepted | PS-11 | PP-09 |
 
 ---
 
