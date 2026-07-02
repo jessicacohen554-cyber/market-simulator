@@ -394,6 +394,56 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Run-failure error message purity (review finding LN-11) -----------------
+
+
+def test_run_failure_message_is_clean_of_access_log(tmp_path: Path) -> None:
+    """LN-11: contextlib.redirect_stderr swaps sys.stderr process-wide during
+    a solve, so handler threads logging requests mid-solve wrote into the
+    run's captured stderr — HTTP access-log lines ended up glued onto the
+    friendly error message. The failure message must carry only the run's
+    own error text; the log must go to the real console."""
+    bad_load = tmp_path / "bad_load.csv"  # exists (passes validation), but
+    bad_load.write_text("hour,iso,load_mwh\n0,SAMPLE,100\n")  # misses 8759 hours
+    lmp = tmp_path / "lmp.csv"
+    lmp.write_text("hour,iso,lmp\n0,SAMPLE,25\n")
+
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {
+                "runs": [
+                    {
+                        "iso": "SAMPLE",
+                        "mode": "premium_cap",
+                        "premium_deltas": "5",
+                        "load_file": str(bad_load),
+                        "lmp_file": str(lmp),
+                        "run_id": "failing_run",
+                        "open_report_when_done": False,
+                    }
+                ]
+            },
+        )
+        assert status == 200, body
+        batch_id = body["batch_id"]
+
+        final = None
+        deadline = time.time() + 60.0
+        while time.time() < deadline:
+            run = _get_json(f"{base}/api/status?batch={batch_id}")["runs"][0]
+            if run["state"] in ("done", "error"):
+                final = run
+                break
+            time.sleep(0.2)
+        assert final is not None and final["state"] == "error"
+        # Friendly single error, no traceback, no access-log pollution.
+        assert "load intake" in final["message"]
+        assert "Traceback" not in final["message"]
+        assert "HTTP/1.1" not in final["message"]
+
+
 # --- run_lce.sh end-to-end (ADR 0016 §1; review finding LN-10) ---------------
 
 
