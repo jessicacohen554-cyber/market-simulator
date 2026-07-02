@@ -48,7 +48,8 @@ build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t
 - **Matching (ADR 0007, volumetric):** per hour, clean energy counts only up to load —
   `matched_t = load_t − grid_buy_t`, surplus excluded; annual % = `Σ matched / Σ load
   = 1 − Σbuy/Σload` (NOT "% of hours at 100%"). Additionality toggle moves existing-resource
-  gen to the unmatched side (ADR 0008). Gas CC+CCS counts fully toward matching if it
+  gen **net of its exported surplus** to the unmatched side (existing-first excess
+  attribution; ADR 0008 as amended 2026-07-02 — exports are surplus, never unmatched load). Gas CC+CCS counts fully toward matching if it
   clears the ADR 0012 threshold (capture > 0.90, residual < 0.050 tCO₂/MWh); its residual
   stack emissions are tracked separately (ADR 0012).
 - **Residual carbon:** grid purchases attributed at the market simulator's **hourly fossil-only
