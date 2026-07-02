@@ -34,6 +34,41 @@ escalation.
 The tool reads exactly 8760 rows for the requested ISO; missing hours are a hard error,
 not a zero-fill. Every ISO must cover the full `0..8759` calendar.
 
+## Fossil-average CO₂ rate (residual carbon accounting)
+
+CSV or Parquet, one row per (iso, hour). This is the **market-sim dispatch export** of
+the hourly fossil-only average CO₂ intensity (tCO₂/MWh, attributional/location-based
+accounting per ADR 0013), produced by `scripts/build_fossil_avg_co2_rate.py`. Residual
+carbon in grid purchases is attributed at this rate; residual emissions from partial-capture
+resources (gas CC+CCS) are tracked separately via per-resource intensity columns.
+
+| column | type | required | notes |
+|---|---|---|---|
+| `hour` | int 0–8759 | yes | hour index within the year (local standard time) |
+| `iso` | str | yes | ISO the row belongs to |
+| `fossil_avg_co2_rate` | float (tCO₂/MWh) | yes | hourly fossil-only average rate (≥ 0) |
+
+The tool reads exactly 8760 rows for the requested ISO; missing hours are a hard error.
+Every ISO must cover the full `0..8759` calendar. Negative rates raise an error (the
+fossil-only average is nonnegative by definition).
+
+## Natural gas prices (gas CC+CCS fuel cost, ADR 0012)
+
+CSV reference table, one row per ISO. Delivered natural gas prices ($/MMBtu) and basis
+differential notes, matching the market simulator's forward-year fuel representation
+(AEO reference Henry Hub plus ISO-specific basis — Waha discount for ERCOT, Algonquin
+winter premium for NEISO, etc.). Used to compute fuel VOM for gas CC+CCS resources.
+
+| column | type | required | notes |
+|---|---|---|---|
+| `iso` | str | yes | ISO identifier |
+| `price_mmbtu` | float ($/MMBtu) | yes | delivered gas price |
+| `basis` | str | no | basis differential description (Waha, Algonquin, etc.) |
+| `notes` | str | no | vintage, source, caveats |
+
+Example: ERCOT 2030 forward basis = Henry Hub ~$3.50/MMBtu − Waha discount ~$0.30
+= ~$3.20/MMBtu delivered. `config.gas_price_mmbtu > 0` overrides this table per run.
+
 ## Capacity-factor profiles
 
 Real per-ISO Parquet files under `data/profiles/<ISO>_<year>.parquet` (long form:
