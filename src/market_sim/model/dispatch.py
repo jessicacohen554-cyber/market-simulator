@@ -633,13 +633,20 @@ def _build_interface_rows(
     Args:
         layout: Variable layout describing the column structure.
         interface_groups: list of ``(link_idx, cap_mw, bidirectional)`` — or
-            ``(link_idx, cap_mw, bidirectional, lower_cap_mw)`` — where
+            ``(link_idx, cap_mw, bidirectional, lower_cap_mw)`` or
+            ``(link_idx, cap_mw, bidirectional, lower_cap_mw, signs)`` — where
             ``link_idx`` is the array of member link indices (into the flow
             block), ``cap_mw`` the aggregate upper limit in MW (scalar or
             ``(T,)``), ``bidirectional`` whether to also floor the signed sum at
-            ``-cap_mw``, and the optional ``lower_cap_mw`` (scalar or ``(T,)``)
+            ``-cap_mw``, the optional ``lower_cap_mw`` (scalar or ``(T,)``)
             an explicit reverse-direction floor ``-lower_cap_mw`` that overrides
-            ``bidirectional`` (for an asymmetric import/export corridor cap).
+            ``bidirectional`` (for an asymmetric import/export corridor cap;
+            ``None`` inside a 4/5-tuple falls back to ``bidirectional``), and
+            the optional ``signs`` a ``(len(link_idx),)`` array of ±1
+            coefficients orienting each member link into the group's positive
+            flow direction (absent → all ``+1``, the legacy shared-orientation
+            behaviour; used by the per-zone MISO CIL/CEL groups, whose member
+            links do not share an orientation).
 
     Returns:
         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
@@ -666,10 +673,14 @@ def _build_interface_rows(
         # or ``-inf``), so existing 3-tuple groups are byte-identical.
         link_idx, cap, two_way = group[0], group[1], group[2]
         lower_cap = group[3] if len(group) > 3 else None
+        signs = group[4] if len(group) > 4 else None
         idx = np.asarray(link_idx, dtype=int)
         rows.extend([gi] * idx.size)
         cols.extend((layout._flow_off + idx).tolist())
-        data.extend([1.0] * idx.size)
+        if signs is None:
+            data.extend([1.0] * idx.size)
+        else:
+            data.extend(np.asarray(signs, dtype=float).tolist())
         cap_arr = np.broadcast_to(np.asarray(cap, dtype=float), (T,))
         upper_2d[:, gi] = cap_arr
         if lower_cap is not None:

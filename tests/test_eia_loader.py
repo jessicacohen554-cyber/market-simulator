@@ -200,10 +200,11 @@ class TestEIALoader(unittest.TestCase):
         """
         zone_names = get_iso_config("MISO").zone_names
         shares = miso_zonal_load_shares(_MISO_TEST_YEAR, zone_names)
-        north = shares[zone_names.index("MISO-North")]
-        self.assertGreater(north.std(), 1e-3)
-        # Every zone stays in a physical band all 8760 hours (gap-repaired).
-        self.assertTrue(np.all(shares > 0.05))
+        west = shares[zone_names.index("MISO-West")]
+        self.assertGreater(west.std(), 1e-3)
+        # Every zone stays in a physical band all 8760 hours (gap-repaired);
+        # the smallest zone (Illinois, ~0.068 energy share) sets the floor.
+        self.assertTrue(np.all(shares > 0.02))
         self.assertTrue(np.all(shares < 0.60))
 
     def test_miso_zonal_shares_match_measured_energy_split(self):
@@ -211,7 +212,12 @@ class TestEIALoader(unittest.TestCase):
         zone_names = get_iso_config("MISO").zone_names
         shares = miso_zonal_load_shares(_MISO_TEST_YEAR, zone_names)
         mean = shares.mean(axis=1)
-        np.testing.assert_allclose(mean, [0.283, 0.446, 0.271], atol=0.01)
+        # Measured 2023-25 sub-BA energy shares of the six LRZ-union zones
+        # (West/Plains/Illinois/Indiana/East/South) — the same split as the
+        # static fallback in _miso_config.
+        np.testing.assert_allclose(
+            mean, [0.1466, 0.1385, 0.0676, 0.1340, 0.2422, 0.2711], atol=0.01
+        )
 
     def test_miso_zonal_shares_fall_back_without_file(self):
         """A year with no sub-BA file falls back to the static split."""

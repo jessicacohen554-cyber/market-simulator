@@ -163,10 +163,10 @@ def main() -> None:
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     iso = args.iso.upper()
+    from market_sim.config.paths import PROCESSED_DIR
+
     out_path = (
-        Path(args.out)
-        if args.out
-        else (REPO / "inputs" / "processed" / f"bin_assignments_{iso}.csv")
+        Path(args.out) if args.out else PROCESSED_DIR / f"bin_assignments_{iso}.csv"
     )
 
     out = build_bin_assignments(iso)

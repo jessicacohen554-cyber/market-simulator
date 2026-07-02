@@ -72,14 +72,30 @@ class TestISOConfig(unittest.TestCase):
         wecc = next(z for z in caiso.zones if z.name == "WECC_import")
         self.assertEqual(wecc.load_share, 0.0)
 
-    def test_miso_has_three_zones(self):
-        """MISO defines three sub-regional load zones."""
+    def test_miso_has_six_zones(self):
+        """MISO defines the six whole-sub-BA (LRZ-union) load zones."""
         miso = get_iso_config("MISO")
-        self.assertEqual(miso.n_zones, 3)
+        self.assertEqual(miso.n_zones, 6)
         self.assertEqual(
             set(miso.zone_names),
-            {"MISO-North", "MISO-Central", "MISO-South"},
+            {
+                "MISO-West",
+                "MISO-Plains",
+                "MISO-Illinois",
+                "MISO-Indiana",
+                "MISO-East",
+                "MISO-South",
+            },
         )
+
+    def test_miso_retired_zone_names_absent(self):
+        """The retired MISO-North/MISO-Central names must never reappear.
+
+        Reusing them would silently collide with stale parquets/CSVs keyed on
+        the old 3-zone names (the zonal-refinement scope's zero-fill hazard).
+        """
+        miso = get_iso_config("MISO")
+        self.assertFalse({"MISO-North", "MISO-Central"} & set(miso.zone_names))
 
     def test_miso_validates(self):
         """MISO topology passes the consistency check."""
@@ -94,38 +110,67 @@ class TestISOConfig(unittest.TestCase):
         self.assertAlmostEqual(total, 1.0)
 
     def test_miso_rdt_contract_path_present(self):
-        """The MISO-Central <-> MISO-South RDT path is an asymmetric link pair.
+        """The Midwest <-> MISO-South RDT path is an asymmetric link pair.
 
         MISO's Midwest and South footprints connect only through the
         Regional Directional Transfer contract path, whose JOA limits are
-        directional: 3,000 MW Central->South and 2,500 MW South->Central. The
-        topology must carry both as opposing one-way links.
+        directional: 3,000 MW N->S and 2,500 MW S->N. The topology must carry
+        both as opposing one-way links, attached to MISO-Plains on the
+        Midwest side (scope decision D3).
         """
         miso = get_iso_config("MISO")
         rdt = [
             link
             for link in miso.links
-            if {link.from_zone, link.to_zone} == {"MISO-Central", "MISO-South"}
+            if "MISO-South" in (link.from_zone, link.to_zone)
         ]
         self.assertEqual(len(rdt), 2)
         by_dir = {(link.from_zone, link.to_zone): link for link in rdt}
-        n_to_s = by_dir[("MISO-Central", "MISO-South")]
-        s_to_n = by_dir[("MISO-South", "MISO-Central")]
+        n_to_s = by_dir[("MISO-Plains", "MISO-South")]
+        s_to_n = by_dir[("MISO-South", "MISO-Plains")]
         self.assertEqual(n_to_s.ttc_mw, 3000.0)
         self.assertEqual(s_to_n.ttc_mw, 2500.0)
         # Both one-way so the net interface flow is the asymmetric RDT limit.
         self.assertFalse(n_to_s.is_bidirectional)
         self.assertFalse(s_to_n.is_bidirectional)
 
-    def test_miso_wind_export_corridor_present(self):
-        """The MISO-North <-> MISO-Central wind-export corridor is present."""
+    def test_miso_internal_links_are_generous_placeholders(self):
+        """Internal Midwest bilateral links are deliberately non-binding.
+
+        Congestion is carried by the per-zone CIL/CEL interface groups, so
+        every internal bilateral link must sit far above any zone's max
+        seasonal CIL sum (~19.8 GW) — never a fitted bilateral number.
+        """
         miso = get_iso_config("MISO")
-        corridor = [
-            link
-            for link in miso.links
-            if {link.from_zone, link.to_zone} == {"MISO-North", "MISO-Central"}
-        ]
-        self.assertEqual(len(corridor), 1)
+        south_links = {"MISO-South"}
+        for link in miso.links:
+            if south_links & {link.from_zone, link.to_zone}:
+                continue  # the RDT pair carries the published bilateral limit
+            self.assertGreaterEqual(link.ttc_mw, 2.0 * 19755.0)
+
+    def test_miso_cil_interface_groups(self):
+        """Each Midwest zone carries a directional CIL/CEL interface group.
+
+        MISO-South is deliberately absent (the RDT bilateral pair governs);
+        each group's import cap (CIL) and export cap (CEL) are positive and
+        the member pairs are oriented into the zone.
+        """
+        miso = get_iso_config("MISO")
+        by_name = {lim.name: lim for lim in miso.interface_limits}
+        expected = {
+            "MISO_CIL_West",
+            "MISO_CIL_Plains",
+            "MISO_CIL_Illinois",
+            "MISO_CIL_Indiana",
+            "MISO_CIL_East",
+        }
+        self.assertEqual(set(by_name), expected)
+        for name, lim in by_name.items():
+            zone = "MISO-" + name.removeprefix("MISO_CIL_")
+            self.assertGreater(lim.cap_mw, 0.0)
+            self.assertGreater(lim.reverse_cap_mw, 0.0)
+            for pair in lim.links:
+                self.assertEqual(pair[1], zone)
 
     def test_miso_voll_is_2000(self):
         """MISO uses a VOLL of $2,000/MWh (FERC Order 831 offer cap)."""
@@ -135,10 +180,11 @@ class TestISOConfig(unittest.TestCase):
     def test_miso_import_node_extends_topology(self):
         """The MISO external import node + per-seam border links append cleanly.
 
-        MISO is a structural net importer; the reference-price seam lives in the
-        ``MISO_external`` zone with one cited border link per neighbor (PJM →
-        Central, SPP → North, SERC/South → South). The extended topology must
-        still validate.
+        MISO is a structural net importer; the reference-price seam lives in
+        the ``MISO_external`` zone with cited border links per neighbor: the
+        7,300 MW eastern (PJM/IESO) seam split across its three physical
+        border zones (Illinois/Indiana/East), SPP/Manitoba → West, the
+        southern seam → South. The extended topology must still validate.
         """
         from market_sim.model.transmission import extend_with_import_node
 
@@ -148,7 +194,6 @@ class TestISOConfig(unittest.TestCase):
         # The external zone carries no load.
         external = next(z for z in ext.zones if z.name == "MISO_external")
         self.assertEqual(external.load_share, 0.0)
-        # One border link into each of the three trading zones.
         border = {
             link.to_zone: link.ttc_mw
             for link in ext.links
@@ -156,7 +201,18 @@ class TestISOConfig(unittest.TestCase):
         }
         self.assertEqual(
             border,
-            {"MISO-Central": 7300.0, "MISO-North": 4000.0, "MISO-South": 3000.0},
+            {
+                "MISO-Illinois": 3300.0,
+                "MISO-Indiana": 2000.0,
+                "MISO-East": 2000.0,
+                "MISO-West": 4000.0,
+                "MISO-South": 3000.0,
+            },
+        )
+        # The eastern (PJM/IESO) seam split preserves the measured 7,300 MW.
+        self.assertAlmostEqual(
+            border["MISO-Illinois"] + border["MISO-Indiana"] + border["MISO-East"],
+            7300.0,
         )
         ext.validate_topology()
 

@@ -2884,8 +2884,15 @@ def _assign_zones(
 
     # Defensive fallback for plants whose ORIS code is absent from eGRID
     # (e.g. units commissioned after the eGRID 2023 vintage): the ISO's
-    # largest-load-share zone.
-    if iso_config is not None and iso_config.zones:
+    # pinned default zone (zone_assignment._LARGEST_ZONE — for MISO the
+    # pinned Midwest default, NOT the literal largest share, which flipped
+    # to MISO-South at the six-zone refinement), falling back to the
+    # largest-load-share zone for ISOs without a pin.
+    from market_sim.data.zone_assignment import _LARGEST_ZONE
+
+    if iso in _LARGEST_ZONE:
+        fallback_zone = _LARGEST_ZONE[iso]
+    elif iso_config is not None and iso_config.zones:
         fallback_zone = max(iso_config.zones, key=lambda z: z.load_share).name
     else:
         fallback_zone = iso
