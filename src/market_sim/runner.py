@@ -77,6 +77,7 @@ from market_sim.config.interchange_config import (
 from market_sim.model.transmission import (
     build_incidence_matrix,
     build_interface_groups,
+    get_link_bidirectional_array,
     extend_with_import_node,
     get_ttc_array,
     wecc_border_carbon_adder,
@@ -755,6 +756,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 incidence=incidence,
                 ttc=ttc,
                 interface_groups=interface_groups or None,
+                # One-way links (MISO's RDT directional pair) floor their flow
+                # at 0; all-True for every other ISO (byte-identical bounds).
+                link_bidirectional=get_link_bidirectional_array(iso_config.links),
                 storage_power_cap=storage.power_cap,
                 storage_energy_cap=storage.energy_cap,
                 storage_zone_idx=storage.zone_idx,
