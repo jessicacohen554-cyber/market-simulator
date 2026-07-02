@@ -3,10 +3,10 @@
 This is the heavy, LOCAL full rebuild: it globs every registry sidecar and
 re-renders the whole curated set in one pass via ``render_backcast.generate``
 — rewriting every ``runs/<id>.js``, every ``bench/<ISO>/<year>.json.gz`` part
-and the local (gitignored) ``manifest.js``/``benchmark.js``/
-``backcast-results.html`` preview. It needs every bundle present plus the
-model package, so it is for full refreshes after deleting/relabelling bundles
-or changing the payload schema.
+and the local preview ``manifest.js``/``benchmark.js``. It needs every bundle
+present plus the model package, so it is for full refreshes after
+deleting/relabelling bundles or changing the payload schema. View the result
+through ``docs/codebase-site/backcast-runs.html``.
 
 CI never runs it: the Pages deploy assembles the shared files from the
 committed sidecars + bench parts with the stdlib-only
@@ -72,7 +72,6 @@ def _load_registry(registry_dir: Path) -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--registry-dir", default=str(REGISTRY_DIR))
-    ap.add_argument("--out", default=str(REPO / "backcast-results.html"))
     ap.add_argument(
         "--years",
         nargs="+",
@@ -94,7 +93,7 @@ def main() -> None:
     print(f"regenerating dashboard from {len(runs)} registry entries:")
     for e in entries:
         print(f"  - {e['label']!r} <- {e['bundle']}")
-    rb.generate(runs, Path(args.out), years=set(args.years) if args.years else None)
+    rb.generate(runs, years=set(args.years) if args.years else None)
 
 
 if __name__ == "__main__":

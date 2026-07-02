@@ -9,12 +9,13 @@
 > stale too — none of those files exist.
 >
 > The **live** design system is `frontend/css/style.css` (Plotly/d3), used by the
-> landing page, the `frontend/` results dashboard, `model-updates.html`,
-> `offer-curve-grounding.html`, and the generated `backcast-results.html` shell.
+> landing page, the `frontend/` results dashboard and `model-updates.html`;
+> the codebase-site backcast pages use `docs/codebase-site/css/shared.css`.
 > The learning hub has its own (`learning-hub/shared/scrollytell.css`).
 >
 > **This file is retained as the canonical hex record only.** The deployed
-> `backcast-results.html` (and its generator `scripts/probes/_backcast_shell.py`)
+> backcast dashboard pages (`docs/codebase-site/backcast-runs.html` /
+> `calibration-status.html`, via `--iso-*` vars in `docs/codebase-site/css/shared.css`)
 > color-code the ISO toggle and header badge from the **ISO palette** below and
 > cite this file as their source — so the ISO table is load-bearing. The resource
 > and semantic palettes are the sole written record of the colors that lived in
@@ -23,7 +24,7 @@
 > `--nuclear #9B59B6`); the resource palette here is the Chart.js library's, not
 > the live one.
 
-## ISO palette — live (used by `backcast-results.html`)
+## ISO palette — live (used by the codebase-site backcast pages)
 
 | ISO | CSS Variable | Hex |
 |-----|-------------|-----|
