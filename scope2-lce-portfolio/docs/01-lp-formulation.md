@@ -82,8 +82,10 @@ This is the **percentage of annual load energy matched at hourly granularity**, 
 "% of hours at 100% matching" (strict per-hour variant available via `strict_hourly_matching`
 in Mode B). Storage is charged from the aggregate node; grid purchases are counted unmatched
 at purchase time even if later discharged (conservative, no round-trip laundering).
-**Residual carbon:** grid_buy is attributed at the ISO marginal emission rate (tCO₂/MWh),
-output as `residual_co2_tons` per frontier point (ADR 0007).
+**Residual carbon:** grid_buy is attributed hour-by-hour at the market simulator's
+fossil-only **average** emission rate (tCO₂/MWh, attributional/location-based accounting):
+`residual_co2_tons = Σ_t grid_buy[t] × fossil_avg_co2_rate[t]`, output per frontier point
+(ADR 0013, superseding ADR 0007's marginal-rate attribution).
 
 Net portfolio cost and premium:
 ```

@@ -125,7 +125,8 @@ DEFAULT-DECISIONS TABLE (used only when STAKEHOLDER defers; record as provisiona
 • PS-03 storage: keep fixed-duration tranches; refine all-in $/MW-yr from ATB/LDES/DOE;
   no extra degradation adder beyond storage_epsilon.
 • PS-04 matching: headline = annual hourly matching; surplus excluded; report residual
-  grid_buy CO₂ at ISO marginal rate.
+  grid_buy CO₂ at the hourly fossil-only average rate (ADR 0013; the original marginal-rate
+  default was corrected — marginal is consequential accounting, this tool is attributional).
 • PS-05 existing: nuclear/hydro at going-forward cost; per-ISO caps ≈ contractable fleet
   share; existing counts toward matching (additionality_only toggle default off).
 • PS-06 caps: per-(ISO,resource) table, MW basis; offshore only in coastal ISOs.

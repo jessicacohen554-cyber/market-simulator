@@ -1,7 +1,13 @@
 # 0007 — Matching semantics: annual hourly matching, storage provenance, residual carbon
 
 - **Status:** accepted (matching definition stakeholder-decided 2026-07-01; storage
-  provenance & carbon attribution remain provisional per the default-decisions table)
+  provenance & carbon attribution remain provisional per the default-decisions table).
+  **Residual-carbon attribution superseded by ADR 0013** (2026-07-02): the ISO
+  *marginal* emission rate below was a consequential-accounting method misapplied
+  to attributional Scope 2 reporting; unmatched grid purchases are now attributed
+  at the market simulator's *hourly fossil-only average* rate — see
+  `0013-residual-carbon-hourly-fossil-average-rate.md`. The matching-semantics
+  and storage-provenance decisions here stand.
 - **Date:** 2026-07-01
 - **Session:** PS-04 (Matching Semantics: annual vs strict 24/7; carbon)
 - **Implemented by:** PP-04/PP-06

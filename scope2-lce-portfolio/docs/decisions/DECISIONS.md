@@ -19,12 +19,13 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0004 | Resource pricing: pay-for-capacity from NREL ATB | accepted | PS-01 | PP-02 |
 | 0005 | Premium definition & excess-resale netting | provisional | PS-02 | PP-04/PP-06 |
 | 0006 | Storage costing: tranches for Li-ion, power/energy split for LDES & H₂ | accepted | PS-03 | PP-02/PP-04 |
-| 0007 | Matching semantics: volumetric hourly matching, storage provenance, residual carbon | accepted (carbon attribution provisional) | PS-04 | PP-04/PP-06 |
+| 0007 | Matching semantics: volumetric hourly matching, storage provenance, residual carbon | accepted (carbon attribution superseded by 0013) | PS-04 | PP-04/PP-06 |
 | 0008 | Existing-resource treatment: going-forward cost + EAC premium | accepted | PS-05 | PP-02 |
 | 0009 | Resource caps & regional potential | provisional | PS-06 | PP-02 |
 | 0010 | Load intake & growth application | provisional | PS-07 | PP-01 |
 | 0011 | LMP coupling & scenario selection | accepted | PS-08 | PP-01 |
 | 0012 | Gas CC + CCS resource; low-carbon threshold credit (<50 kg/MWh, >90% capture) | accepted | PS-09 | PP-08 |
+| 0013 | Residual carbon: hourly fossil-only average rate (attributional) | accepted | (stakeholder correction of 0007) | `intake.py`/`lp.py`/`scripts/build_fossil_avg_co2_rate.py` |
 
 ---
 
