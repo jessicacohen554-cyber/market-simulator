@@ -39,16 +39,18 @@ desktop port reads. Implementation shape: `report.py` +
 
 ## Current state
 
-Waves 0–1 implemented: **PP-00** (config + validation + `from_file` loader),
+Waves 0–2 implemented: **PP-00** (config + validation + `from_file` loader),
 **PP-01** (real intake rules, hard missing-hour/dup errors, load growth, `prepare_lmp` +
-`collapse_zonal_lmp`), **PP-02** (resource catalog ATB 2024 CRF, per-ISO caps/eligibility,
-hydro monthly budgets, split-tech parse; split LP logic lands PP-02b), **PP-03** (real
-per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script),
+`collapse_zonal_lmp`, `emissions_intake`), **PP-02** (resource catalog ATB 2024 CRF, per-ISO caps/eligibility,
+hydro monthly budgets, split-tech parse; split LP logic), **PP-03** (real
+per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script, `profile_shape_year`),
 **PP-04** (LP core both modes, split-storage vars, hydro budget constraint, additionality
 accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
 graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
-run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-08
-(gas-CC+CCS, ADR 0012) backlog, PP-09 (reporting, ADR 0014) ready to run.
+run metadata), **PP-07** (147 tests: config, intake, LP core, CLI, extensions, cross-feature).
+**PP-08** (gas-CC+CCS, ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
+low-carbon threshold, grid/resource residual-CO₂ split) complete. Open: PP-09
+(reporting, ADR 0014) in flight.
 
 ## Rules for every pack
 
