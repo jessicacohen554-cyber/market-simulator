@@ -132,6 +132,13 @@ guessed number; do not silently keep `0.28` to compensate.
 
 ### Integration outcome (resolved 2026-06-23)
 
+> **SUPERSEDED 2026-07-02 — six-zone refinement.** The 3-zone mapping below
+> is the historical record of the original wiring. The model now uses the
+> 1:1 sub-BA partition — `0001`→MISO-West, `0035`→MISO-Plains,
+> `0004`→MISO-Illinois, `0006`→MISO-Indiana, `0027`→MISO-East,
+> `8910`→MISO-South (shares 0.1466/0.1385/0.0676/0.1340/0.2422/0.2711) —
+> per `docs/multi-iso/miso-zonal-refinement-scope.md`.
+
 Wired into the model. The zone-definition caveat was resolved by drawing the
 three model bubbles as **whole EIA-930 sub-BA (LRZ) unions** so the load and
 transmission partitions coincide (pipe-and-bubble) and the load file drops in
