@@ -62,10 +62,10 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 | Module | Responsibility | Status |
 |---|---|---|
 | `config.py` | `PortfolioConfig` dataclass (all knobs) | done (PP-00: validation + `from_file`) |
-| `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse) |
+| `resources.py` | resource catalog + ATB capex/CRF costs + caps → `ResourceArrays` | done (PP-02: ATB 2024 CRF catalog, per-ISO caps/eligibility, hydro budgets, split-tech parse; PP-08: gas CC+CCS tranches, delivered-gas + 45Q net VOM, ADR 0012 threshold) |
 | `intake.py` | load/LMP read → validation → facility/ISO aggregation → growth | done (PP-01: hard missing-hour/dup errors, `prepare_lmp`, `collapse_zonal_lmp`, load growth) |
 | `profiles.py` | `(n_res,T)` CF matrix; real per-ISO Parquet + synthetic fallback | done (PP-03: real path keyed by (iso, year), SAMPLE/fallback synthetic) |
-| `lp.py` | portfolio LP build + HiGHS solve | done (PP-04: both modes; split-storage vars + hydro budget + additionality; infeasible-safe) |
+| `lp.py` | portfolio LP build + HiGHS solve | done (PP-04: both modes; split-storage vars + hydro budget + additionality; infeasible-safe; PP-08: grid/resource residual-CO₂ split) |
 | `sweep.py` | parametric sweep driver | done (PP-05) |
 | `outputs.py` | Parquet frontier + build-mix, text summary | done (PP-06: enriched metrics + residual CO₂ + run metadata) |
 | `cli.py` / `__main__.py` | CLI entry point | done (PP-01: `--config` load_file/lmp_file wiring, clean errors, `--all-isos`) |
@@ -90,16 +90,18 @@ PS-01 pricing/LCOE · PS-02 premium & netting · PS-03 storage costing ·
 PS-04 matching semantics · PS-05 existing-resource treatment · PS-06 caps &
 potential · PS-07 load intake & growth · PS-08 LMP coupling & scenarios.
 **All eight decided 2026-07-01 → ADRs 0004–0011** (see `docs/decisions/`).
-Backlog: PS-09 gas-CC+CCS resource (partial-capture matching credit; not
-gating the current build waves).
+PS-09 gas-CC+CCS resource (partial-capture matching credit) decided
+2026-07-02 → ADR 0012, implemented by PP-08.
 
 ## 8. Prompt packs (build) — `docs/prompt-packs/`
 
 Run in order once their upstream ADRs land: PP-00 scaffold/config → PP-01 intake →
 PP-02 catalog → PP-03 CF profiles (first vendoring) → PP-04 LP core →
-PP-05 sweep/CLI → PP-06 outputs/reporting → PP-07 tests. **All packs complete**
-(build waves of 2026-07-01); next open work is the LMP exporter + real-run
-validation (see §10) and the PS-09 backlog.
+PP-05 sweep/CLI → PP-06 outputs/reporting → PP-07 tests → PP-08 gas CC + CCS
+resource (ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
+low-carbon threshold, grid/resource residual-CO₂ split). **All packs complete**
+(build waves of 2026-07-01; PP-08 2026-07-02); next open work is the LMP
+exporter + real-run validation (see §10).
 
 ## 9. Verification
 
