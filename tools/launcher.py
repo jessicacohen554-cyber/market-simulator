@@ -4,8 +4,10 @@ Serves a small UI on localhost where you pick a per-plant tranche-config CSV
 (the editable sheet from scripts/export_tranche_config.py), choose the years,
 and click Run. It shells out to scripts/run_calibration_full.py with
 ``--plant-tranche-config`` so the chosen sheet drives every plant's tranche
-shares + heat-rate multipliers, then regenerates the comparison dashboard
-(backcast-results.html) against the run10 baseline and links you to it.
+shares + heat-rate multipliers, then regenerates the backcast data files
+(frontend/data/backcast/) against the run10 baseline and links you to the
+codebase-site run explorer (docs/codebase-site/backcast-runs.html), which
+this server serves locally.
 
 stdlib only (http.server + threads), so the bootstrap needs nothing beyond the
 model's own dependencies. Launched by run-simulator.bat (Windows) /
@@ -108,8 +110,6 @@ def _run_job(csv_rel: str, years: list[int], label: str) -> None:
             f"{label}={out_dir}",
             "--years",
             *yrs,
-            "--out",
-            str(REPO / "backcast-results.html"),
         ]
         _log("")
         _log(f"$ {' '.join(render_cmd)}")
@@ -254,7 +254,7 @@ a.btn{display:inline-block;text-decoration:none;margin-top:12px}
  <div style="margin-top:18px;display:flex;align-items:center;gap:14px">
   <button id=run>Run backcast</button>
   <span id=state class="state s-idle">idle</span>
-  <a id=view class="btn hide" href="/backcast-results.html" target=_blank><button>View results ↗</button></a>
+  <a id=view class="btn hide" href="/docs/codebase-site/backcast-runs.html#iso=ERCOT" target=_blank><button>View results ↗</button></a>
  </div>
  <div class=hint id=warn style="color:#c01c28;margin-top:10px"></div>
 </div>

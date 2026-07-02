@@ -15,9 +15,11 @@ any number of runs landing at once, across any mix of ISOs, never conflict:
     it; unchanged content re-renders to identical bytes, so these only appear
     in the diff when the benchmark genuinely changed).
 
-The shared ``manifest.js`` / ``benchmark.js`` / ``backcast-results.html`` are
-GENERATED (gitignored) — rebuilt from sidecars + parts by
-``scripts/build_manifest.py`` locally and at deploy time. Never commit them.
+The shared ``manifest.js`` / ``benchmark.js`` are GENERATED — rebuilt from
+sidecars + parts by ``scripts/build_manifest.py`` locally and at deploy time
+(the deploy workflow is their single writer). Never hand-commit them. The
+results surface is the codebase site: ``docs/codebase-site/backcast-runs.html``
+(run explorer) and ``calibration-status.html`` (all-ISO keeper summary).
 
 Commit: the bundle dir, the sidecar, ``runs/<id>.js``, and anything changed
 under ``bench/``. Prints ``RUN_ID=<id>`` on stdout so callers can stage by id.
@@ -79,10 +81,10 @@ def main() -> None:
     sidecar.write_text(json.dumps({**entry, "bundle": rel_bundle}, indent=2) + "\n")
 
     # Render this single run: writes its runs/<id>.js + the bench/<ISO>/<year>
-    # parts for its years, and refreshes the LOCAL (gitignored) preview shell +
-    # manifest/benchmark. Commit the bundle, the sidecar, runs/<id>.js and any
-    # changed bench parts — the gitignored files cannot be committed.
-    rb.generate([(args.label, bundle)], REPO / "backcast-results.html")
+    # parts for its years, and refreshes the LOCAL preview manifest/benchmark.
+    # Commit the bundle, the sidecar, runs/<id>.js and any changed bench parts
+    # — never the shared manifest.js/benchmark.js (deploy-workflow-owned).
+    rb.generate([(args.label, bundle)])
 
     print(f"registered {rid!r} (iso={iso}, bundle={rel_bundle})")
     print(f"RUN_ID={rid}")

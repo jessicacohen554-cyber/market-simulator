@@ -22,7 +22,7 @@ EVERY run on the dashboard, results live there not in chat), #14 (all 3 years â€
 2023/2024/2025 â€” in ONE bundle, never a single-year keeper). Honor the "Git &
 Pushing (avoid the 413 loop)" section: rebase fresh onto the LATEST origin/main
 BEFORE pushing, small commits, never hand-commit the deploy-generated dashboard
-files (backcast-results.html / manifest.js / benchmark.js).
+data files (manifest.js / benchmark.js / completeness.js).
 
 Read first:
   - docs/nyiso-dispatch-validation-2026-06.md  (the "Gas offer curves grounded in
