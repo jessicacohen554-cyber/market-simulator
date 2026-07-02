@@ -25,6 +25,7 @@ single clean message, not a traceback.
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import sys
 from datetime import datetime
@@ -46,6 +47,29 @@ from lce_portfolio.sweep import run_sweep
 #: working directory (the tool is run from ``scope2-lce-portfolio/``).
 #: ``data/outputs/`` stays the gitignored ad-hoc default.
 RESULTS_ROOT = Path("results")
+
+#: Safe results-store run ids (ADR 0014 §5): one path component, starting with
+#: an alphanumeric — no separators, no leading dot, no whitespace. Anything
+#: else could make ``RESULTS_ROOT / run_id`` escape the store (an absolute or
+#: ``../`` id resolves outside ``results/``), which is then ``rmtree``'d.
+_RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+
+
+def validate_run_id(run_id: str) -> str:
+    """Return ``run_id`` if it is a single safe path component, else raise.
+
+    Guards the ``--results`` store: ``results/<run-id>/`` is deleted before
+    being rewritten, so a run id containing a path separator, ``..``, an
+    absolute path, or whitespace must never reach that composition
+    (audit findings IO-1/CL-2).
+    """
+    if not _RUN_ID_RE.fullmatch(run_id):
+        raise ValueError(
+            f"invalid --run-id {run_id!r}: must be a single path component "
+            "of letters, digits, '.', '_' or '-', starting with a letter or "
+            "digit (no separators, spaces, or leading dot)"
+        )
+    return run_id
 
 
 def compose_run_id(isos: list[str], mode: str, now: datetime | None = None) -> str:
@@ -228,7 +252,7 @@ def main(argv: list[str] | None = None) -> int:
         # Resolve the run directory + id (ADR 0014 §5): --results composes
         # results/<run-id>/ (committed store; re-using an id overwrites its
         # directory), while --out-dir stays the gitignored ad-hoc default.
-        run_id = args.run_id or compose_run_id(isos, base.mode)
+        run_id = validate_run_id(args.run_id or compose_run_id(isos, base.mode))
         if args.results:
             out_dir = RESULTS_ROOT / run_id
             if out_dir.exists():

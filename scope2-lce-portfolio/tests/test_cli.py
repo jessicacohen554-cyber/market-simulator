@@ -154,3 +154,67 @@ def test_cli_emissions_file_threads_residual_co2_to_outputs(tmp_path) -> None:
     # A $1 cap leaves unmatched hours, so the hourly rate yields a residual > 0.
     assert (frontier["grid_buy_mwh"] > 0.0).all()
     assert (frontier["residual_co2_tons"] > 0.0).all()
+
+
+def test_run_id_validation_rejects_unsafe_ids() -> None:
+    """Unsafe run ids never reach ``RESULTS_ROOT / run_id`` (IO-1/CL-2).
+
+    The results store deletes ``results/<run-id>/`` before rewriting it, so a
+    run id that is not a single safe path component (absolute path, ``..``
+    traversal, separators, whitespace, leading dot) must raise at validation.
+    """
+    from lce_portfolio.cli import validate_run_id
+
+    assert validate_run_id("SAMPLE_premium_cap_20260702-171842") == (
+        "SAMPLE_premium_cap_20260702-171842"
+    )
+    assert validate_run_id("my.run-1_x") == "my.run-1_x"
+    for bad in (
+        "/abs/path/victim",
+        "../escape",
+        "a/b",
+        "a\\b",
+        "..",
+        ".hidden",
+        "has space",
+        "has\nnewline",
+        "",
+    ):
+        with pytest.raises(ValueError, match="invalid --run-id"):
+            validate_run_id(bad)
+
+
+def test_cli_results_traversal_run_id_is_clean_error_and_deletes_nothing(
+    tmp_path, monkeypatch, capsys
+) -> None:
+    """``--results --run-id <absolute path>`` errors cleanly, victim untouched.
+
+    Regression for audit findings IO-1/CL-2: previously the CLI composed
+    ``results / run_id`` (which discards ``results/`` for an absolute id) and
+    ``shutil.rmtree``'d it before any input validation, deleting an arbitrary
+    user-writable directory on a typo'd run id.
+    """
+    monkeypatch.chdir(tmp_path)
+    victim = tmp_path / "victim_dir"
+    victim.mkdir()
+    (victim / "marker.txt").write_text("keep me")
+
+    rc = main(
+        [
+            "--iso",
+            "SAMPLE",
+            "--load",
+            "unused_load.csv",
+            "--lmp",
+            "unused_lmp.csv",
+            "--results",
+            "--run-id",
+            str(victim),
+        ]
+    )
+
+    assert rc == 1
+    captured = capsys.readouterr()
+    assert "invalid --run-id" in captured.err
+    assert "Traceback" not in captured.err
+    assert (victim / "marker.txt").exists()
