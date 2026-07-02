@@ -393,7 +393,42 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
-# --- Loopback-only binding (review finding LN-5) ----------------------------
+# --- Launch page: self-containment + injection surface (ADR 0016 §2, LN-6) --
+
+
+def _rendered_page() -> str:
+    ctx = lce_launcher.build_page_context(
+        inputs_dir=lce_launcher.DEFAULT_INPUTS_DIR,
+        reference_load=lce_launcher.DEFAULT_REFERENCE_LOAD,
+    )
+    ctx["saved_configs"] = {}
+    return lce_launcher.render_index(ctx)
+
+
+def test_launch_page_is_self_contained() -> None:
+    """ADR 0016 §2: inline CSS/JS only — no CDN, no external fetch. Only
+    data: URIs and #anchors are allowed as URL-ish content."""
+    page = _rendered_page()
+    assert not re.search(r"https?://", page)
+    assert "@import" not in page
+    assert "//fonts" not in page
+    assert not re.search(r"<link\b", page)
+    assert not re.search(r"""\bsrc\s*=\s*["'](?!data:|#)""", page)
+
+
+def test_launch_page_status_table_avoids_html_injection() -> None:
+    """LN-6: the status table's run-id/state/detail cells were assembled with
+    innerHTML template literals, so solver stderr (which can echo text from
+    user-supplied input files) could inject markup. Cells must be built via
+    textContent; only container resets may touch innerHTML."""
+    page = _rendered_page()
+    assert "tr.innerHTML" not in page
+    assert "textContent" in page
+    for line in page.splitlines():
+        if "innerHTML" in line:
+            # container resets ('') and static literals are fine; any
+            # interpolation of runtime data into innerHTML is not.
+            assert "${" not in line, line
 
 
 def test_launcher_cli_has_no_host_flag() -> None:
