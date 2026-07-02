@@ -28,6 +28,7 @@ import contextlib
 import html
 import io
 import json
+import math
 import re
 import sys
 import threading
@@ -103,6 +104,11 @@ def parse_float_list(raw, field_name: str) -> tuple[float, ...]:
 
     Raises :class:`ValueError` with a message naming ``field_name`` on any
     non-numeric entry — never lets a ``TypeError`` escape as a raw traceback.
+    Empty lists and non-finite values (``nan``/``inf``) are rejected too
+    (review finding LN-4): ``nan`` passes ``PortfolioConfig``'s ``d <= 0``
+    range check (all nan comparisons are False) and would reach the LP as a
+    nan premium budget, and an empty setpoint list makes the whole run fail
+    with a misleading "no setpoint solved" message.
     """
     if isinstance(raw, str):
         parts = [p.strip() for p in raw.split(",") if p.strip()]
@@ -110,10 +116,15 @@ def parse_float_list(raw, field_name: str) -> tuple[float, ...]:
         parts = list(raw)
     else:
         raise ValueError(f"{field_name} must be a comma-separated string or list")
+    if not parts:
+        raise ValueError(f"{field_name} must contain at least one value")
     try:
-        return tuple(float(p) for p in parts)
+        values = tuple(float(p) for p in parts)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{field_name} must be numeric, got {raw!r}") from exc
+    if not all(math.isfinite(v) for v in values):
+        raise ValueError(f"{field_name} must be finite numbers, got {raw!r}")
+    return values
 
 
 def resolve_default_lmp(inputs_dir: Path) -> dict:
