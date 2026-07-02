@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-07-02 (MISO zonal refinement — phase 2: reserve co-opt at 6 zones)
+
+**Wiring bug found & fixed:** `--energy-reserve-coopt` had been silently
+inert for MISO on the backcast path — the co-opt chain in
+`run_calibration.run_year` ended at NEISO, so `_miso_design` (the RBDC) was
+reachable only from the forecast runner, and every prior MISO "co-opt"
+dashboard run (incl. probe miso-34) solved an energy-only LP. A new
+`run_year` MISO branch routes to the **unchanged** design. Wired, the
+market-wide RBDC is structurally inert at 6 zones (reserve dual $0 in all
+26,280 h — probe `miso-37`; congestion cannot make a market-wide sum bind).
+Phase-2b per scope §6 adds gated **locational reserve families**
+(`miso_zonal_reserves` / `--miso-zonal-reserves`, default off; default
+MISO-South): requirement = within-zone MSSC (BPM-002 §3.3.2
+largest-zonal-event basis; 3,953 MW South), priced at the **published**
+Zonal Operating Reserve Demand Curve (BPM-002 §5.2.1.2 / Schedule 28-A —
+20% @ $200, 70% @ $1,100, 10% @ $3,300; `MISO_ZONAL_ORDC_STEPS`). Gate 4
+partial on keeper `2026-07-02-miso-38-zonal-reserves`: the zonal family
+fires (dual nonzero 266/287/875 h, 2025-concentrated) at re-dispatch
+opportunity cost ($8–21/MWh max), but the >$200 tail stays 0 h vs actual
+30/37/88 — the residual root cause is not missing reserve structure.
+Keeper flipped miso-35 → miso-38 (strictly more structurally faithful, fit
+unchanged). Docs realigned: `docs/multi-iso/miso-reserve-coopt.md`
+(rewritten), scope doc status, methodology-spec §"resolved limitations"
+bullet, `frontend/data/parameters.json` (+2 gated fields). Memory note: the
+co-opt LP peaks ~16 GB at 6-zone MISO plant scale — a 12 GB swapfile
+absorbs the transient (`MALLOC_ARENA_MAX=1 MARKET_SIM_HIGHS_THREADS=1`
+still required).
+
 ## 2026-07-02 (MISO zonal refinement — phase 1: 6-zone topology)
 
 MISO's Midwest is split from the 3-zone copperplate to the **six measured
