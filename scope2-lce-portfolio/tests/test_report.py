@@ -84,6 +84,16 @@ def test_payload_schema_round_trip_and_render_smoke(small_run) -> None:
     assert "http" not in html_direct.replace("http://www.w3.org", "")
 
 
+def test_report_html_has_no_external_references(small_run) -> None:
+    """§1/§6 hard constraint: the emitted HTML never links, fetches, or
+    @imports anything external — no CDN, no font fetch, no absolute URL.
+    (data: URIs and #anchors are fine; none of these needles match them.)"""
+    cfg, sweep = small_run
+    html = render_report(build_report_payload([sweep], [cfg], run_id="sc"))
+    for needle in ("http://", "https://", "@import", "//fonts."):
+        assert needle not in html, f"external reference {needle!r} in report HTML"
+
+
 def test_render_refuses_unknown_payload_version(small_run) -> None:
     """payload_version=99 (and a missing version) raise ValueError (§3)."""
     cfg, sweep = small_run

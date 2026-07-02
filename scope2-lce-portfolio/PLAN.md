@@ -75,6 +75,7 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 | `lp.py` | portfolio LP build + HiGHS solve | done (PP-04: both modes; split-storage vars + hydro budget + additionality; infeasible-safe; PP-08: grid/resource residual-CO₂ split) |
 | `sweep.py` | parametric sweep driver | done (PP-05) |
 | `outputs.py` | Parquet frontier + build-mix, text summary | done (PP-06: enriched metrics + residual CO₂ + run metadata) |
+| `report.py` | report payload (ADR 0014 §3) + self-contained HTML run report (§2 views) | done (PP-09: payload contract, §2.1–§2.7 renderer, results store seam; PP-11: restyled onto the codebase-site Observatory design system, self-containment smoke test) |
 | `cli.py` / `__main__.py` | CLI entry point | done (PP-01: `--config` load_file/lmp_file wiring, clean errors, `--all-isos`) |
 | `vendored/` | copied market-sim logic (CF shapes) | done (PP-03: `renewable_shapes.py`, pinned upstream commit + re-sync header) |
 | `scripts/build_profiles.py` | build per-ISO CF Parquets from the market-sim data tree (no import) | done (PP-03) |

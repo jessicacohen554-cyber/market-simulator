@@ -3,68 +3,143 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LCE portfolio report — SAMPLE_premium_cap_20260702-171842</title>
 <style>
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-body { margin: 0; padding: 0; background: #f9f9f7; color: #0b0b0b;
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 860px; margin: 0 auto; padding: 24px 20px 64px; }
-h1 { font-size: 24px; font-weight: 650; margin: 8px 0 2px; }
-h2 { font-size: 18px; font-weight: 650; margin: 0 0 12px; }
-h3 { font-size: 15px; font-weight: 650; margin: 16px 0 6px; color: #52514e; }
-h4 { font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: #52514e; }
-.subtitle { color: #52514e; margin: 0 0 24px; }
-section { background: #fcfcfb; border: 1px solid rgba(11,11,11,0.10);
-  border-radius: 10px; padding: 20px; margin: 0 0 20px; overflow-x: auto; }
-svg { display: block; width: 100%; height: auto; max-width: 720px; }
-svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
-.tick { font-size: 11px; fill: #898781; font-variant-numeric: tabular-nums; }
-.axis-label { font-size: 12px; fill: #52514e; }
-.pt-label { font-size: 10px; fill: #898781; }
-.note { color: #898781; font-size: 13px; margin: 8px 0 0; }
+:root { color-scheme: light;
+  --bg-page: #F8F9FC; --navy: #1A2744; --navy-dark: #0F1A2E;
+  --bg-card: #FFFFFF; --border: #D4D8E0; --border-light: #E5E7EB;
+  --text-primary: #000000; --text-secondary: #1E293B; --text-muted: #566370;
+  --text-on-dark: #FFFFFF; --text-muted-dark: rgba(255,255,255,0.70);
+  --font-heading: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-body: 'DM Sans', 'Plus Jakarta Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --solar: #F59E0B; --wind: #22C55E; --hydro: #0EA5E9; --nuclear: #6366F1;
+  --hydro-text: #0369A1; --negative: #DC2626;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 20px rgba(0,0,0,0.08); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
+body { background: var(--bg-page); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary);
+  line-height: 1.2; }
+.band { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: var(--text-on-dark); padding: 40px 24px 32px; position: relative;
+  overflow: hidden; }
+.band::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 60% 40%, rgba(14,165,233,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.08) 0%, transparent 55%); }
+.band-inner { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+.eyebrow { display: inline-block; font-family: var(--font-heading);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #7DD3FC;
+  border: 1px solid rgba(14,165,233,0.35); border-radius: 100px;
+  padding: 4px 12px; margin-bottom: 14px; }
+.band h1 { color: #fff; font-size: 1.7rem; font-weight: 800;
+  letter-spacing: -0.02em; margin: 0 0 6px; }
+.band .subtitle { color: rgba(255,255,255,0.75); font-size: 0.95rem;
+  margin: 0 0 22px; overflow-wrap: anywhere; }
+.energy-divider { height: 3px; background: linear-gradient(90deg,
+  var(--solar) 0%, var(--wind) 33%, var(--hydro) 66%, var(--nuclear) 100%); }
+main { max-width: 948px; margin: 0 auto; padding: 24px 24px 56px; }
+main section { background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 24px; margin: 0 0 20px;
+  box-shadow: var(--shadow-sm); }
+main h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0 0 14px; }
+h3 { font-size: 0.92rem; font-weight: 700; margin: 16px 0 6px; }
+h4 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted); margin: 16px 0 6px; }
+svg { display: block; width: 100%; height: auto; max-width: 760px; }
+svg text { font-family: var(--font-body); }
+.tick { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+.axis-label { font-size: 12px; font-weight: 600; fill: var(--text-secondary); }
+.pt-label { font-size: 10px; fill: var(--text-muted); }
+.note { color: var(--text-muted); font-size: 0.8rem; margin: 10px 0 0; }
+#sec-2-1-provenance { background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg);
+  padding: 20px; }
+#sec-2-1-provenance h2 { color: rgba(255,255,255,0.85); font-size: 0.72rem;
+  font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+  margin: 0 0 14px; }
+#sec-2-1-provenance h3 { color: #fff; margin-top: 14px; }
 .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px; margin-bottom: 8px; }
-.meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
-  color: #898781; }
-.meta-value { font-weight: 600; overflow-wrap: anywhere; }
-.solves { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
-.solve { font-size: 12px; padding: 2px 10px; border-radius: 999px;
-  background: #f0efec; color: #52514e; }
-.solve-bad { background: #fbeaea; color: #a02c2c; }
-.flag { color: #d03b3b; }
+  gap: 12px 16px; margin-bottom: 6px; }
+.meta-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted-dark); }
+.meta-value { font-weight: 600; font-size: 0.9rem; color: #fff;
+  overflow-wrap: anywhere; }
+.solves { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; }
+.solve { display: inline-block; font-size: 0.75rem; font-weight: 600;
+  padding: 3px 11px; border-radius: 100px;
+  background: rgba(34,197,94,0.16); color: #86EFAC; }
+.solve-bad { background: rgba(220,38,38,0.20); color: #FCA5A5; }
+.flag { color: #FCA5A5; font-weight: 700; }
 details { margin-top: 12px; }
-summary { cursor: pointer; color: #52514e; font-size: 13px; }
-pre { background: #f0efec; padding: 12px; border-radius: 6px; overflow-x: auto;
-  font-size: 12px; }
-table { border-collapse: collapse; font-size: 13px; margin-top: 8px;
+summary { cursor: pointer; color: var(--hydro-text); font-size: 0.8rem;
+  font-weight: 600; }
+#sec-2-1-provenance summary { color: var(--text-muted-dark); }
+pre { font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.55;
+  padding: 12px 14px; border-radius: var(--radius-sm); overflow-x: auto;
+  margin-top: 8px; background: var(--bg-page);
+  border: 1px solid var(--border-light); }
+#sec-2-1-provenance pre { background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.10); color: #E2E8F0; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); margin-top: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.8rem;
   font-variant-numeric: tabular-nums; }
-th, td { padding: 4px 10px; text-align: right; border-bottom: 1px solid #e1e0d9; }
+th, td { padding: 8px 12px; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-thead th { color: #52514e; font-weight: 600; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px; }
-.key { display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
-  color: #52514e; }
-.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-.sp-select { display: flex; gap: 6px; align-items: center; font-size: 13px;
-  color: #52514e; margin: 8px 0; flex-wrap: wrap; }
-.sp-select button { font: inherit; padding: 3px 12px; border-radius: 999px;
-  border: 1px solid #e1e0d9; background: #fcfcfb; cursor: pointer; }
-.sp-select button.active { background: #2a78d6; border-color: #2a78d6;
+thead th { background: var(--navy); color: rgba(255,255,255,0.90);
+  font-family: var(--font-heading); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; }
+td { border-bottom: 1px solid var(--border-light); color: var(--text-secondary); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) td { background: rgba(0,0,0,0.018); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 0 0 12px; }
+.key { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem;
+  color: var(--text-muted); }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+  flex-shrink: 0; }
+.sp-select { display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin: 8px 0; }
+.sp-select button { font-family: var(--font-body); font-size: 0.75rem;
+  font-weight: 600; padding: 4px 12px; border-radius: 100px;
+  border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text-muted); cursor: pointer; }
+.sp-select button:hover { background: var(--border-light);
+  color: var(--text-primary); }
+.sp-select button.active { background: var(--navy); border-color: var(--navy);
   color: #fff; }
 .heatmap-wrap { position: relative; }
-canvas.heatmap { width: 100%; max-width: 720px; height: 220px;
-  image-rendering: pixelated; border: 1px solid #e1e0d9; border-radius: 4px; }
-.heatmap-scale { display: flex; align-items: center; gap: 8px; font-size: 11px;
-  color: #898781; margin-top: 4px; font-variant-numeric: tabular-nums; }
-.scale-bar { width: 140px; height: 8px; border-radius: 4px;
-  background: linear-gradient(90deg,#fcfcfb,#cde2fb,#86b6ef,#3987e5,#1c5cab,#0d366b); }
-#tooltip { position: fixed; pointer-events: none; background: #0b0b0b;
-  color: #fff; font-size: 12px; padding: 6px 9px; border-radius: 6px;
-  display: none; z-index: 10; white-space: pre; }
-footer { color: #898781; font-size: 12px; text-align: center; }
+canvas.heatmap { width: 100%; max-width: 760px; height: 220px; display: block;
+  image-rendering: pixelated; border: 1px solid var(--border-light);
+  border-radius: 6px; background: var(--bg-card); }
+.heatmap-scale { display: flex; align-items: center; gap: 8px;
+  font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;
+  font-variant-numeric: tabular-nums; }
+.scale-bar { width: 150px; height: 11px; border-radius: 3px;
+  background: linear-gradient(90deg,#E8F3F7,#7FC4E6,#86C98F,#F2D65C,#EF8F3C,#C0392B); }
+#tooltip { position: fixed; pointer-events: none; display: none; z-index: 10;
+  background: rgba(10,18,38,0.96); color: #fff; font-family: var(--font-body);
+  font-size: 0.78rem; line-height: 1.5; padding: 8px 11px;
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+  white-space: pre; }
+footer { color: var(--text-muted); font-size: 0.75rem; text-align: center;
+  padding-top: 8px; }
+@media (max-width: 640px) {
+  .band { padding: 32px 16px 26px; }
+  main { padding: 16px 12px 48px; }
+  main section { padding: 16px; }
+  #sec-2-1-provenance { padding: 16px; }
+}
 </style>
 </head><body>
 <div id="tooltip"></div>
-<main>
+<header class="band"><div class="band-inner">
+<p class="eyebrow">Scope 2 hourly LCE portfolio</p>
 <h1>Scope 2 LCE portfolio report</h1>
 <p class="subtitle">SAMPLE_premium_cap_20260702-171842 — SAMPLE / premium_cap</p>
 <section id="sec-2-1-provenance"><h2>Run provenance</h2><div class="meta-grid"><div class="meta-item"><div class="meta-label">Run id</div><div class="meta-value">SAMPLE_premium_cap_20260702-171842</div></div><div class="meta-item"><div class="meta-label">ISO(s)</div><div class="meta-value">SAMPLE</div></div><div class="meta-item"><div class="meta-label">Mode</div><div class="meta-value">premium_cap</div></div><div class="meta-item"><div class="meta-label">Sensitivity</div><div class="meta-value">mid</div></div><div class="meta-item"><div class="meta-label">Additionality only</div><div class="meta-value">False</div></div><div class="meta-item"><div class="meta-label">Tool version</div><div class="meta-value">0.1.0</div></div><div class="meta-item"><div class="meta-label">Payload version</div><div class="meta-value">1</div></div></div><div class="iso-solves"><h3>SAMPLE</h3><div class="solves"><span class="solve">set 1: 47.9% matched</span><span class="solve">set 2: 51.2% matched</span><span class="solve">set 5: 59.0% matched</span><span class="solve">set 7: 62.0% matched</span><span class="solve">set 10: 65.0% matched</span><span class="solve">set 20: 73.4% matched</span></div><details><summary>Config echo</summary><pre>{
@@ -105,126 +180,129 @@ footer { color: #898781; font-size: 12px; text-align: center; }
   &quot;lmp_file&quot;: &quot;data/sample/sample_lmp.csv&quot;,
   &quot;emissions_file&quot;: null
 }</pre></details></div></section>
-<section id="sec-2-2-frontier"><h2>Frontier — matching vs premium</h2><svg viewBox="0 0 680 320" role="img" preserveAspectRatio="xMidYMid meet"><line x1="64.0" x2="660.0" y1="276.0" y2="276.0" stroke="#e1e0d9" stroke-width="1"/><text x="56.0" y="280.0" text-anchor="end" class="tick">0%</text><line x1="64.0" x2="660.0" y1="211.0" y2="211.0" stroke="#e1e0d9" stroke-width="1"/><text x="56.0" y="215.0" text-anchor="end" class="tick">20%</text><line x1="64.0" x2="660.0" y1="146.0" y2="146.0" stroke="#e1e0d9" stroke-width="1"/><text x="56.0" y="150.0" text-anchor="end" class="tick">40%</text><line x1="64.0" x2="660.0" y1="81.0" y2="81.0" stroke="#e1e0d9" stroke-width="1"/><text x="56.0" y="85.0" text-anchor="end" class="tick">60%</text><line x1="64.0" x2="660.0" y1="16.0" y2="16.0" stroke="#e1e0d9" stroke-width="1"/><text x="56.0" y="20.0" text-anchor="end" class="tick">80%</text><text x="64.0" y="296.0" text-anchor="middle" class="tick">0</text><text x="183.2" y="296.0" text-anchor="middle" class="tick">5</text><text x="302.4" y="296.0" text-anchor="middle" class="tick">10</text><text x="421.6" y="296.0" text-anchor="middle" class="tick">15</text><text x="540.8" y="296.0" text-anchor="middle" class="tick">20</text><text x="660.0" y="296.0" text-anchor="middle" class="tick">25</text><line x1="64.0" x2="660.0" y1="276.0" y2="276.0" stroke="#c3c2b7" stroke-width="1"/><polyline points="87.8,120.4 111.7,109.6 183.2,84.3 230.9,74.5 302.4,64.6 540.8,37.5" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="87.8" cy="120.4" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 1 [Optimal]
+</div></header>
+<div class="energy-divider"></div>
+<main>
+<section id="sec-2-2-frontier"><h2>Frontier — matching vs premium</h2><svg viewBox="0 0 680 320" role="img" preserveAspectRatio="xMidYMid meet"><line x1="64.0" x2="660.0" y1="276.0" y2="276.0" stroke="#E5E7EB" stroke-width="1"/><text x="56.0" y="280.0" text-anchor="end" class="tick">0%</text><line x1="64.0" x2="660.0" y1="211.0" y2="211.0" stroke="#E5E7EB" stroke-width="1"/><text x="56.0" y="215.0" text-anchor="end" class="tick">20%</text><line x1="64.0" x2="660.0" y1="146.0" y2="146.0" stroke="#E5E7EB" stroke-width="1"/><text x="56.0" y="150.0" text-anchor="end" class="tick">40%</text><line x1="64.0" x2="660.0" y1="81.0" y2="81.0" stroke="#E5E7EB" stroke-width="1"/><text x="56.0" y="85.0" text-anchor="end" class="tick">60%</text><line x1="64.0" x2="660.0" y1="16.0" y2="16.0" stroke="#E5E7EB" stroke-width="1"/><text x="56.0" y="20.0" text-anchor="end" class="tick">80%</text><text x="64.0" y="296.0" text-anchor="middle" class="tick">0</text><text x="183.2" y="296.0" text-anchor="middle" class="tick">5</text><text x="302.4" y="296.0" text-anchor="middle" class="tick">10</text><text x="421.6" y="296.0" text-anchor="middle" class="tick">15</text><text x="540.8" y="296.0" text-anchor="middle" class="tick">20</text><text x="660.0" y="296.0" text-anchor="middle" class="tick">25</text><line x1="64.0" x2="660.0" y1="276.0" y2="276.0" stroke="#D4D8E0" stroke-width="1"/><polyline points="87.8,120.4 111.7,109.6 183.2,84.3 230.9,74.5 302.4,64.6 540.8,37.5" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="87.8" cy="120.4" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 1 [Optimal]
 matching: 47.87%
 premium: $1.00/MWh
 premium/yr: $4.38M
 over BAU: 2.48%
-shadow price: -0.0357</title></circle><text x="87.8" y="111.4" text-anchor="middle" class="pt-label">1</text><circle cx="111.7" cy="109.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 2 [Optimal]
+shadow price: -0.0357</title></circle><text x="87.8" y="111.4" text-anchor="middle" class="pt-label">1</text><circle cx="111.7" cy="109.6" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 2 [Optimal]
 matching: 51.20%
 premium: $2.00/MWh
 premium/yr: $8.76M
 over BAU: 4.97%
-shadow price: -0.0313</title></circle><text x="111.7" y="100.6" text-anchor="middle" class="pt-label">2</text><circle cx="183.2" cy="84.3" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 5 [Optimal]
+shadow price: -0.0313</title></circle><text x="111.7" y="100.6" text-anchor="middle" class="pt-label">2</text><circle cx="183.2" cy="84.3" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 5 [Optimal]
 matching: 58.98%
 premium: $5.00/MWh
 premium/yr: $21.9M
 over BAU: 12.42%
-shadow price: -0.0189</title></circle><text x="183.2" y="75.3" text-anchor="middle" class="pt-label">5</text><circle cx="230.9" cy="74.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 7 [Optimal]
+shadow price: -0.0189</title></circle><text x="183.2" y="75.3" text-anchor="middle" class="pt-label">5</text><circle cx="230.9" cy="74.5" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 7 [Optimal]
 matching: 61.99%
 premium: $7.00/MWh
 premium/yr: $30.66M
 over BAU: 17.39%
-shadow price: -0.0117</title></circle><text x="230.9" y="65.5" text-anchor="middle" class="pt-label">7</text><circle cx="302.4" cy="64.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 10 [Optimal]
+shadow price: -0.0117</title></circle><text x="230.9" y="65.5" text-anchor="middle" class="pt-label">7</text><circle cx="302.4" cy="64.6" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 10 [Optimal]
 matching: 65.04%
 premium: $10.00/MWh
 premium/yr: $43.8M
 over BAU: 24.84%
-shadow price: -0.0094</title></circle><text x="302.4" y="55.6" text-anchor="middle" class="pt-label">10</text><circle cx="540.8" cy="37.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>SAMPLE — setpoint 20 [Optimal]
+shadow price: -0.0094</title></circle><text x="302.4" y="55.6" text-anchor="middle" class="pt-label">10</text><circle cx="540.8" cy="37.5" r="4.5" fill="#0EA5E9" stroke="#FFFFFF" stroke-width="2"><title>SAMPLE — setpoint 20 [Optimal]
 matching: 73.38%
 premium: $20.00/MWh
 premium/yr: $87.6M
 over BAU: 49.69%
-shadow price: -0.0074</title></circle><text x="540.8" y="28.5" text-anchor="middle" class="pt-label">20</text><text x="362" y="314" text-anchor="middle" class="axis-label">premium $/MWh</text><text x="14" y="146" text-anchor="middle" class="axis-label" transform="rotate(-90 14 146)">matching %</text></svg><p class="note">Point labels are setpoints; red points are non-optimal solves (flagged in the provenance header).</p><details><summary>Table view</summary><table><thead><tr><th>ISO</th><th>setpoint</th><th>matching</th><th>premium $/MWh</th><th>premium $/yr</th><th>over BAU</th><th>status</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>47.87%</td><td>1.00</td><td>$4.38M</td><td>2.48%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>2</td><td>51.20%</td><td>2.00</td><td>$8.76M</td><td>4.97%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>5</td><td>58.98%</td><td>5.00</td><td>$21.9M</td><td>12.42%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>7</td><td>61.99%</td><td>7.00</td><td>$30.66M</td><td>17.39%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>10</td><td>65.04%</td><td>10.00</td><td>$43.8M</td><td>24.84%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>20</td><td>73.38%</td><td>20.00</td><td>$87.6M</td><td>49.69%</td><td>Optimal</td></tr></tbody></table></details></section>
-<section id="sec-2-3-build-mix"><h2>Build mix by setpoint</h2><div class="legend"><span class="key"><span class="swatch" style="background:#2a78d6"></span>solar_pv</span><span class="key"><span class="swatch" style="background:#1baf7a"></span>onshore_wind</span><span class="key"><span class="swatch" style="background:#eda100"></span>battery_4h</span></div><svg viewBox="0 0 680 300" role="img" preserveAspectRatio="xMidYMid meet"><line x1="64" x2="660" y1="256.0" y2="256.0" stroke="#e1e0d9" stroke-width="1"/><text x="56" y="260.0" text-anchor="end" class="tick">0</text><line x1="64" x2="660" y1="196.0" y2="196.0" stroke="#e1e0d9" stroke-width="1"/><text x="56" y="200.0" text-anchor="end" class="tick">500</text><line x1="64" x2="660" y1="136.0" y2="136.0" stroke="#e1e0d9" stroke-width="1"/><text x="56" y="140.0" text-anchor="end" class="tick">1,000</text><line x1="64" x2="660" y1="76.0" y2="76.0" stroke="#e1e0d9" stroke-width="1"/><text x="56" y="80.0" text-anchor="end" class="tick">1,500</text><line x1="64" x2="660" y1="16.0" y2="16.0" stroke="#e1e0d9" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" class="tick">2,000</text><rect x="101.7" y="150.2" width="24.0" height="103.8" rx="2" fill="#2a78d6"><title>solar_pv: 882 MW
-setpoint 1</title></rect><rect x="101.7" y="138.9" width="24.0" height="9.3" rx="2" fill="#1baf7a"><title>onshore_wind: 94 MW
-setpoint 1</title></rect><text x="113.7" y="276.0" text-anchor="middle" class="tick">1</text><rect x="201.0" y="152.8" width="24.0" height="101.2" rx="2" fill="#2a78d6"><title>solar_pv: 860 MW
-setpoint 2</title></rect><rect x="201.0" y="132.0" width="24.0" height="18.7" rx="2" fill="#1baf7a"><title>onshore_wind: 173 MW
-setpoint 2</title></rect><text x="213.0" y="276.0" text-anchor="middle" class="tick">2</text><rect x="300.3" y="145.9" width="24.0" height="108.1" rx="2" fill="#2a78d6"><title>solar_pv: 917 MW
-setpoint 5</title></rect><rect x="300.3" y="106.6" width="24.0" height="37.3" rx="2" fill="#1baf7a"><title>onshore_wind: 328 MW
-setpoint 5</title></rect><text x="312.3" y="276.0" text-anchor="middle" class="tick">5</text><rect x="399.7" y="136.3" width="24.0" height="117.7" rx="2" fill="#2a78d6"><title>solar_pv: 997 MW
-setpoint 7</title></rect><rect x="399.7" y="89.6" width="24.0" height="44.8" rx="2" fill="#1baf7a"><title>onshore_wind: 390 MW
-setpoint 7</title></rect><rect x="399.7" y="89.6" width="24.0" height="0.5" rx="2" fill="#eda100"><title>battery_4h: 0 MW
-setpoint 7</title></rect><text x="411.7" y="276.0" text-anchor="middle" class="tick">7</text><rect x="499.0" y="127.0" width="24.0" height="127.0" rx="2" fill="#2a78d6"><title>solar_pv: 1,075 MW
-setpoint 10</title></rect><rect x="499.0" y="77.9" width="24.0" height="47.1" rx="2" fill="#1baf7a"><title>onshore_wind: 409 MW
-setpoint 10</title></rect><rect x="499.0" y="71.0" width="24.0" height="4.8" rx="2" fill="#eda100"><title>battery_4h: 57 MW
-setpoint 10</title></rect><text x="511.0" y="276.0" text-anchor="middle" class="tick">10</text><rect x="598.3" y="103.1" width="24.0" height="150.9" rx="2" fill="#2a78d6"><title>solar_pv: 1,274 MW
-setpoint 20</title></rect><rect x="598.3" y="50.8" width="24.0" height="50.3" rx="2" fill="#1baf7a"><title>onshore_wind: 436 MW
-setpoint 20</title></rect><rect x="598.3" y="18.7" width="24.0" height="30.1" rx="2" fill="#eda100"><title>battery_4h: 268 MW
-setpoint 20</title></rect><text x="610.3" y="276.0" text-anchor="middle" class="tick">20</text><line x1="64" x2="660" y1="256.0" y2="256.0" stroke="#c3c2b7" stroke-width="1"/><text x="362" y="294" text-anchor="middle" class="axis-label">setpoint</text><text x="14" y="136" text-anchor="middle" class="axis-label" transform="rotate(-90 14 136)">build MW</text></svg><details><summary>Table view</summary><table><thead><tr><th>ISO</th><th>setpoint</th><th>resource</th><th>MW</th><th>MWh (split)</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>solar_pv</td><td>881.6</td><td>—</td></tr><tr><td>SAMPLE</td><td>1</td><td>onshore_wind</td><td>94.2</td><td>—</td></tr><tr><td>SAMPLE</td><td>2</td><td>solar_pv</td><td>860.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>2</td><td>onshore_wind</td><td>172.9</td><td>—</td></tr><tr><td>SAMPLE</td><td>5</td><td>solar_pv</td><td>917.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>5</td><td>onshore_wind</td><td>327.8</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>solar_pv</td><td>997.3</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>onshore_wind</td><td>389.6</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>battery_4h</td><td>0.0</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>solar_pv</td><td>1,075.3</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>onshore_wind</td><td>409.0</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>battery_4h</td><td>57.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>solar_pv</td><td>1,274.5</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>onshore_wind</td><td>435.8</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>battery_4h</td><td>267.6</td><td>—</td></tr></tbody></table></details></section>
-<section id="sec-2-4-cost"><h2>Cost breakdown by setpoint</h2><div class="legend"><span class="key"><span class="swatch" style="background:#2a78d6"></span>capital + VOM</span><span class="key"><span class="swatch" style="background:#4a3aa7"></span>grid purchases</span><span class="key"><span class="swatch" style="background:#1baf7a"></span>surplus revenue</span><span class="key"><span class="swatch" style="background:#0b0b0b"></span>net cost (tick)</span></div><svg viewBox="0 0 680 320" role="img" preserveAspectRatio="xMidYMid meet"><line x1="76" x2="660" y1="276.0" y2="276.0" stroke="#e1e0d9" stroke-width="1"/><text x="68" y="280.0" text-anchor="end" class="tick">$-100M</text><line x1="76" x2="660" y1="211.0" y2="211.0" stroke="#e1e0d9" stroke-width="1"/><text x="68" y="215.0" text-anchor="end" class="tick">$0</text><line x1="76" x2="660" y1="146.0" y2="146.0" stroke="#e1e0d9" stroke-width="1"/><text x="68" y="150.0" text-anchor="end" class="tick">$100M</text><line x1="76" x2="660" y1="81.0" y2="81.0" stroke="#e1e0d9" stroke-width="1"/><text x="68" y="85.0" text-anchor="end" class="tick">$200M</text><line x1="76" x2="660" y1="16.0" y2="16.0" stroke="#e1e0d9" stroke-width="1"/><text x="68" y="20.0" text-anchor="end" class="tick">$300M</text><line x1="76" x2="660" y1="96.4" y2="96.4" stroke="#898781" stroke-width="1"><title>BAU cost: $176.3M</title></line><text x="68" y="100.4" text-anchor="end" class="pt-label">BAU</text><rect x="112.7" y="160.2" width="24.0" height="48.8" rx="2" fill="#4a3aa7"><title>grid purchases: $78.11M
+shadow price: -0.0074</title></circle><text x="540.8" y="28.5" text-anchor="middle" class="pt-label">20</text><text x="362" y="314" text-anchor="middle" class="axis-label">premium $/MWh</text><text x="14" y="146" text-anchor="middle" class="axis-label" transform="rotate(-90 14 146)">matching %</text></svg><p class="note">Point labels are setpoints; red points are non-optimal solves (flagged in the provenance header).</p><details><summary>Table view</summary><div class="table-wrap"><table><thead><tr><th>ISO</th><th>setpoint</th><th>matching</th><th>premium $/MWh</th><th>premium $/yr</th><th>over BAU</th><th>status</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>47.87%</td><td>1.00</td><td>$4.38M</td><td>2.48%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>2</td><td>51.20%</td><td>2.00</td><td>$8.76M</td><td>4.97%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>5</td><td>58.98%</td><td>5.00</td><td>$21.9M</td><td>12.42%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>7</td><td>61.99%</td><td>7.00</td><td>$30.66M</td><td>17.39%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>10</td><td>65.04%</td><td>10.00</td><td>$43.8M</td><td>24.84%</td><td>Optimal</td></tr><tr><td>SAMPLE</td><td>20</td><td>73.38%</td><td>20.00</td><td>$87.6M</td><td>49.69%</td><td>Optimal</td></tr></tbody></table></div></details></section>
+<section id="sec-2-3-build-mix"><h2>Build mix by setpoint</h2><div class="legend"><span class="key"><span class="swatch" style="background:#F59E0B"></span>solar_pv</span><span class="key"><span class="swatch" style="background:#22C55E"></span>onshore_wind</span><span class="key"><span class="swatch" style="background:#E67E22"></span>battery_4h</span></div><svg viewBox="0 0 680 300" role="img" preserveAspectRatio="xMidYMid meet"><line x1="64" x2="660" y1="256.0" y2="256.0" stroke="#E5E7EB" stroke-width="1"/><text x="56" y="260.0" text-anchor="end" class="tick">0</text><line x1="64" x2="660" y1="196.0" y2="196.0" stroke="#E5E7EB" stroke-width="1"/><text x="56" y="200.0" text-anchor="end" class="tick">500</text><line x1="64" x2="660" y1="136.0" y2="136.0" stroke="#E5E7EB" stroke-width="1"/><text x="56" y="140.0" text-anchor="end" class="tick">1,000</text><line x1="64" x2="660" y1="76.0" y2="76.0" stroke="#E5E7EB" stroke-width="1"/><text x="56" y="80.0" text-anchor="end" class="tick">1,500</text><line x1="64" x2="660" y1="16.0" y2="16.0" stroke="#E5E7EB" stroke-width="1"/><text x="56" y="20.0" text-anchor="end" class="tick">2,000</text><rect x="101.7" y="150.2" width="24.0" height="103.8" rx="2" fill="#F59E0B"><title>solar_pv: 882 MW
+setpoint 1</title></rect><rect x="101.7" y="138.9" width="24.0" height="9.3" rx="2" fill="#22C55E"><title>onshore_wind: 94 MW
+setpoint 1</title></rect><text x="113.7" y="276.0" text-anchor="middle" class="tick">1</text><rect x="201.0" y="152.8" width="24.0" height="101.2" rx="2" fill="#F59E0B"><title>solar_pv: 860 MW
+setpoint 2</title></rect><rect x="201.0" y="132.0" width="24.0" height="18.7" rx="2" fill="#22C55E"><title>onshore_wind: 173 MW
+setpoint 2</title></rect><text x="213.0" y="276.0" text-anchor="middle" class="tick">2</text><rect x="300.3" y="145.9" width="24.0" height="108.1" rx="2" fill="#F59E0B"><title>solar_pv: 917 MW
+setpoint 5</title></rect><rect x="300.3" y="106.6" width="24.0" height="37.3" rx="2" fill="#22C55E"><title>onshore_wind: 328 MW
+setpoint 5</title></rect><text x="312.3" y="276.0" text-anchor="middle" class="tick">5</text><rect x="399.7" y="136.3" width="24.0" height="117.7" rx="2" fill="#F59E0B"><title>solar_pv: 997 MW
+setpoint 7</title></rect><rect x="399.7" y="89.6" width="24.0" height="44.8" rx="2" fill="#22C55E"><title>onshore_wind: 390 MW
+setpoint 7</title></rect><rect x="399.7" y="89.6" width="24.0" height="0.5" rx="2" fill="#E67E22"><title>battery_4h: 0 MW
+setpoint 7</title></rect><text x="411.7" y="276.0" text-anchor="middle" class="tick">7</text><rect x="499.0" y="127.0" width="24.0" height="127.0" rx="2" fill="#F59E0B"><title>solar_pv: 1,075 MW
+setpoint 10</title></rect><rect x="499.0" y="77.9" width="24.0" height="47.1" rx="2" fill="#22C55E"><title>onshore_wind: 409 MW
+setpoint 10</title></rect><rect x="499.0" y="71.0" width="24.0" height="4.8" rx="2" fill="#E67E22"><title>battery_4h: 57 MW
+setpoint 10</title></rect><text x="511.0" y="276.0" text-anchor="middle" class="tick">10</text><rect x="598.3" y="103.1" width="24.0" height="150.9" rx="2" fill="#F59E0B"><title>solar_pv: 1,274 MW
+setpoint 20</title></rect><rect x="598.3" y="50.8" width="24.0" height="50.3" rx="2" fill="#22C55E"><title>onshore_wind: 436 MW
+setpoint 20</title></rect><rect x="598.3" y="18.7" width="24.0" height="30.1" rx="2" fill="#E67E22"><title>battery_4h: 268 MW
+setpoint 20</title></rect><text x="610.3" y="276.0" text-anchor="middle" class="tick">20</text><line x1="64" x2="660" y1="256.0" y2="256.0" stroke="#D4D8E0" stroke-width="1"/><text x="362" y="294" text-anchor="middle" class="axis-label">setpoint</text><text x="14" y="136" text-anchor="middle" class="axis-label" transform="rotate(-90 14 136)">build MW</text></svg><details><summary>Table view</summary><div class="table-wrap"><table><thead><tr><th>ISO</th><th>setpoint</th><th>resource</th><th>MW</th><th>MWh (split)</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>solar_pv</td><td>881.6</td><td>—</td></tr><tr><td>SAMPLE</td><td>1</td><td>onshore_wind</td><td>94.2</td><td>—</td></tr><tr><td>SAMPLE</td><td>2</td><td>solar_pv</td><td>860.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>2</td><td>onshore_wind</td><td>172.9</td><td>—</td></tr><tr><td>SAMPLE</td><td>5</td><td>solar_pv</td><td>917.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>5</td><td>onshore_wind</td><td>327.8</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>solar_pv</td><td>997.3</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>onshore_wind</td><td>389.6</td><td>—</td></tr><tr><td>SAMPLE</td><td>7</td><td>battery_4h</td><td>0.0</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>solar_pv</td><td>1,075.3</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>onshore_wind</td><td>409.0</td><td>—</td></tr><tr><td>SAMPLE</td><td>10</td><td>battery_4h</td><td>57.1</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>solar_pv</td><td>1,274.5</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>onshore_wind</td><td>435.8</td><td>—</td></tr><tr><td>SAMPLE</td><td>20</td><td>battery_4h</td><td>267.6</td><td>—</td></tr></tbody></table></div></details></section>
+<section id="sec-2-4-cost"><h2>Cost breakdown by setpoint</h2><div class="legend"><span class="key"><span class="swatch" style="background:#6366F1"></span>capital + VOM</span><span class="key"><span class="swatch" style="background:#6B7280"></span>grid purchases</span><span class="key"><span class="swatch" style="background:#22C55E"></span>surplus revenue</span><span class="key"><span class="swatch" style="background:#0F1A2E"></span>net cost (tick)</span></div><svg viewBox="0 0 680 320" role="img" preserveAspectRatio="xMidYMid meet"><line x1="76" x2="660" y1="276.0" y2="276.0" stroke="#E5E7EB" stroke-width="1"/><text x="68" y="280.0" text-anchor="end" class="tick">$-100M</text><line x1="76" x2="660" y1="211.0" y2="211.0" stroke="#E5E7EB" stroke-width="1"/><text x="68" y="215.0" text-anchor="end" class="tick">$0</text><line x1="76" x2="660" y1="146.0" y2="146.0" stroke="#E5E7EB" stroke-width="1"/><text x="68" y="150.0" text-anchor="end" class="tick">$100M</text><line x1="76" x2="660" y1="81.0" y2="81.0" stroke="#E5E7EB" stroke-width="1"/><text x="68" y="85.0" text-anchor="end" class="tick">$200M</text><line x1="76" x2="660" y1="16.0" y2="16.0" stroke="#E5E7EB" stroke-width="1"/><text x="68" y="20.0" text-anchor="end" class="tick">$300M</text><line x1="76" x2="660" y1="96.4" y2="96.4" stroke="#566370" stroke-width="1"><title>BAU cost: $176.3M</title></line><text x="68" y="100.4" text-anchor="end" class="pt-label">BAU</text><rect x="112.7" y="160.2" width="24.0" height="48.8" rx="2" fill="#6B7280"><title>grid purchases: $78.11M
 setpoint 1
 net cost: $180.7M
 premium/yr: $4.38M
-over BAU: 2.48%</title></rect><rect x="112.7" y="91.9" width="24.0" height="66.3" rx="2" fill="#2a78d6"><title>capital + VOM: $105.1M
+over BAU: 2.48%</title></rect><rect x="112.7" y="91.9" width="24.0" height="66.3" rx="2" fill="#6366F1"><title>capital + VOM: $105.1M
 setpoint 1
 net cost: $180.7M
 premium/yr: $4.38M
-over BAU: 2.48%</title></rect><rect x="112.7" y="212.0" width="24.0" height="0.7" rx="2" fill="#1baf7a"><title>surplus revenue: -$2.567M
+over BAU: 2.48%</title></rect><rect x="112.7" y="212.0" width="24.0" height="0.7" rx="2" fill="#22C55E"><title>surplus revenue: -$2.567M
 setpoint 1
 net cost: $180.7M
 premium/yr: $4.38M
-over BAU: 2.48%</title></rect><line x1="108.7" x2="140.7" y1="93.6" y2="93.6" stroke="#0b0b0b" stroke-width="2"><title>net cost: $180.7M</title></line><text x="124.7" y="296.0" text-anchor="middle" class="tick">1</text><rect x="210.0" y="162.6" width="24.0" height="46.4" rx="2" fill="#4a3aa7"><title>grid purchases: $74.42M
+over BAU: 2.48%</title></rect><line x1="108.7" x2="140.7" y1="93.6" y2="93.6" stroke="#0F1A2E" stroke-width="2"><title>net cost: $180.7M</title></line><text x="124.7" y="296.0" text-anchor="middle" class="tick">1</text><rect x="210.0" y="162.6" width="24.0" height="46.4" rx="2" fill="#6B7280"><title>grid purchases: $74.42M
 setpoint 2
 net cost: $185.1M
 premium/yr: $8.76M
-over BAU: 4.97%</title></rect><rect x="210.0" y="88.8" width="24.0" height="71.9" rx="2" fill="#2a78d6"><title>capital + VOM: $113.7M
+over BAU: 4.97%</title></rect><rect x="210.0" y="88.8" width="24.0" height="71.9" rx="2" fill="#6366F1"><title>capital + VOM: $113.7M
 setpoint 2
 net cost: $185.1M
 premium/yr: $8.76M
-over BAU: 4.97%</title></rect><rect x="210.0" y="212.0" width="24.0" height="1.0" rx="2" fill="#1baf7a"><title>surplus revenue: -$3.006M
+over BAU: 4.97%</title></rect><rect x="210.0" y="212.0" width="24.0" height="1.0" rx="2" fill="#22C55E"><title>surplus revenue: -$3.006M
 setpoint 2
 net cost: $185.1M
 premium/yr: $8.76M
-over BAU: 4.97%</title></rect><line x1="206.0" x2="238.0" y1="90.7" y2="90.7" stroke="#0b0b0b" stroke-width="2"><title>net cost: $185.1M</title></line><text x="222.0" y="296.0" text-anchor="middle" class="tick">2</text><rect x="307.3" y="169.7" width="24.0" height="39.3" rx="2" fill="#4a3aa7"><title>grid purchases: $63.47M
+over BAU: 4.97%</title></rect><line x1="206.0" x2="238.0" y1="90.7" y2="90.7" stroke="#0F1A2E" stroke-width="2"><title>net cost: $185.1M</title></line><text x="222.0" y="296.0" text-anchor="middle" class="tick">2</text><rect x="307.3" y="169.7" width="24.0" height="39.3" rx="2" fill="#6B7280"><title>grid purchases: $63.47M
 setpoint 5
 net cost: $198.2M
 premium/yr: $21.9M
-over BAU: 12.42%</title></rect><rect x="307.3" y="78.2" width="24.0" height="89.5" rx="2" fill="#2a78d6"><title>capital + VOM: $140.8M
+over BAU: 12.42%</title></rect><rect x="307.3" y="78.2" width="24.0" height="89.5" rx="2" fill="#6366F1"><title>capital + VOM: $140.8M
 setpoint 5
 net cost: $198.2M
 premium/yr: $21.9M
-over BAU: 12.42%</title></rect><rect x="307.3" y="212.0" width="24.0" height="2.9" rx="2" fill="#1baf7a"><title>surplus revenue: -$6.071M
+over BAU: 12.42%</title></rect><rect x="307.3" y="212.0" width="24.0" height="2.9" rx="2" fill="#22C55E"><title>surplus revenue: -$6.071M
 setpoint 5
 net cost: $198.2M
 premium/yr: $21.9M
-over BAU: 12.42%</title></rect><line x1="303.3" x2="335.3" y1="82.2" y2="82.2" stroke="#0b0b0b" stroke-width="2"><title>net cost: $198.2M</title></line><text x="319.3" y="296.0" text-anchor="middle" class="tick">5</text><rect x="404.7" y="173.1" width="24.0" height="35.9" rx="2" fill="#4a3aa7"><title>grid purchases: $58.26M
+over BAU: 12.42%</title></rect><line x1="303.3" x2="335.3" y1="82.2" y2="82.2" stroke="#0F1A2E" stroke-width="2"><title>net cost: $198.2M</title></line><text x="319.3" y="296.0" text-anchor="middle" class="tick">5</text><rect x="404.7" y="173.1" width="24.0" height="35.9" rx="2" fill="#6B7280"><title>grid purchases: $58.26M
 setpoint 7
 net cost: $207M
 premium/yr: $30.66M
-over BAU: 17.39%</title></rect><rect x="404.7" y="70.7" width="24.0" height="100.5" rx="2" fill="#2a78d6"><title>capital + VOM: $157.7M
+over BAU: 17.39%</title></rect><rect x="404.7" y="70.7" width="24.0" height="100.5" rx="2" fill="#6366F1"><title>capital + VOM: $157.7M
 setpoint 7
 net cost: $207M
 premium/yr: $30.66M
-over BAU: 17.39%</title></rect><rect x="404.7" y="212.0" width="24.0" height="4.8" rx="2" fill="#1baf7a"><title>surplus revenue: -$8.953M
+over BAU: 17.39%</title></rect><rect x="404.7" y="212.0" width="24.0" height="4.8" rx="2" fill="#22C55E"><title>surplus revenue: -$8.953M
 setpoint 7
 net cost: $207M
 premium/yr: $30.66M
-over BAU: 17.39%</title></rect><line x1="400.7" x2="432.7" y1="76.5" y2="76.5" stroke="#0b0b0b" stroke-width="2"><title>net cost: $207M</title></line><text x="416.7" y="296.0" text-anchor="middle" class="tick">7</text><rect x="502.0" y="177.8" width="24.0" height="31.2" rx="2" fill="#4a3aa7"><title>grid purchases: $51.14M
+over BAU: 17.39%</title></rect><line x1="400.7" x2="432.7" y1="76.5" y2="76.5" stroke="#0F1A2E" stroke-width="2"><title>net cost: $207M</title></line><text x="416.7" y="296.0" text-anchor="middle" class="tick">7</text><rect x="502.0" y="177.8" width="24.0" height="31.2" rx="2" fill="#6B7280"><title>grid purchases: $51.14M
 setpoint 10
 net cost: $220.1M
 premium/yr: $43.8M
-over BAU: 24.84%</title></rect><rect x="502.0" y="61.1" width="24.0" height="114.6" rx="2" fill="#2a78d6"><title>capital + VOM: $179.4M
+over BAU: 24.84%</title></rect><rect x="502.0" y="61.1" width="24.0" height="114.6" rx="2" fill="#6366F1"><title>capital + VOM: $179.4M
 setpoint 10
 net cost: $220.1M
 premium/yr: $43.8M
-over BAU: 24.84%</title></rect><rect x="502.0" y="212.0" width="24.0" height="5.8" rx="2" fill="#1baf7a"><title>surplus revenue: -$10.44M
+over BAU: 24.84%</title></rect><rect x="502.0" y="212.0" width="24.0" height="5.8" rx="2" fill="#22C55E"><title>surplus revenue: -$10.44M
 setpoint 10
 net cost: $220.1M
 premium/yr: $43.8M
-over BAU: 24.84%</title></rect><line x1="498.0" x2="530.0" y1="67.9" y2="67.9" stroke="#0b0b0b" stroke-width="2"><title>net cost: $220.1M</title></line><text x="514.0" y="296.0" text-anchor="middle" class="tick">10</text><rect x="599.3" y="189.6" width="24.0" height="19.4" rx="2" fill="#4a3aa7"><title>grid purchases: $32.93M
+over BAU: 24.84%</title></rect><line x1="498.0" x2="530.0" y1="67.9" y2="67.9" stroke="#0F1A2E" stroke-width="2"><title>net cost: $220.1M</title></line><text x="514.0" y="296.0" text-anchor="middle" class="tick">10</text><rect x="599.3" y="189.6" width="24.0" height="19.4" rx="2" fill="#6B7280"><title>grid purchases: $32.93M
 setpoint 20
 net cost: $263.9M
 premium/yr: $87.6M
-over BAU: 49.69%</title></rect><rect x="599.3" y="30.8" width="24.0" height="156.8" rx="2" fill="#2a78d6"><title>capital + VOM: $244.3M
+over BAU: 49.69%</title></rect><rect x="599.3" y="30.8" width="24.0" height="156.8" rx="2" fill="#6366F1"><title>capital + VOM: $244.3M
 setpoint 20
 net cost: $263.9M
 premium/yr: $87.6M
-over BAU: 49.69%</title></rect><rect x="599.3" y="212.0" width="24.0" height="7.7" rx="2" fill="#1baf7a"><title>surplus revenue: -$13.32M
+over BAU: 49.69%</title></rect><rect x="599.3" y="212.0" width="24.0" height="7.7" rx="2" fill="#22C55E"><title>surplus revenue: -$13.32M
 setpoint 20
 net cost: $263.9M
 premium/yr: $87.6M
-over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" stroke="#0b0b0b" stroke-width="2"><title>net cost: $263.9M</title></line><text x="611.3" y="296.0" text-anchor="middle" class="tick">20</text><line x1="76" x2="660" y1="211.0" y2="211.0" stroke="#c3c2b7" stroke-width="1"/><text x="368" y="314" text-anchor="middle" class="axis-label">setpoint</text></svg><p class="note">Revenues are negative in the stack (ADR 0005 netting); the black tick is net cost, the gray line is BAU cost.</p><details><summary>Table view</summary><table><thead><tr><th>ISO</th><th>setpoint</th><th>capital+VOM</th><th>grid purchases</th><th>surplus revenue</th><th>net cost</th><th>BAU cost</th><th>premium $/yr</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>$105.1M</td><td>$78.11M</td><td>-$2.567M</td><td>$180.7M</td><td>$176.3M</td><td>$4.38M</td></tr><tr><td>SAMPLE</td><td>2</td><td>$113.7M</td><td>$74.42M</td><td>-$3.006M</td><td>$185.1M</td><td>$176.3M</td><td>$8.76M</td></tr><tr><td>SAMPLE</td><td>5</td><td>$140.8M</td><td>$63.47M</td><td>-$6.071M</td><td>$198.2M</td><td>$176.3M</td><td>$21.9M</td></tr><tr><td>SAMPLE</td><td>7</td><td>$157.7M</td><td>$58.26M</td><td>-$8.953M</td><td>$207M</td><td>$176.3M</td><td>$30.66M</td></tr><tr><td>SAMPLE</td><td>10</td><td>$179.4M</td><td>$51.14M</td><td>-$10.44M</td><td>$220.1M</td><td>$176.3M</td><td>$43.8M</td></tr><tr><td>SAMPLE</td><td>20</td><td>$244.3M</td><td>$32.93M</td><td>-$13.32M</td><td>$263.9M</td><td>$176.3M</td><td>$87.6M</td></tr></tbody></table></details></section>
+over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" stroke="#0F1A2E" stroke-width="2"><title>net cost: $263.9M</title></line><text x="611.3" y="296.0" text-anchor="middle" class="tick">20</text><line x1="76" x2="660" y1="211.0" y2="211.0" stroke="#D4D8E0" stroke-width="1"/><text x="368" y="314" text-anchor="middle" class="axis-label">setpoint</text></svg><p class="note">Revenues are negative in the stack (ADR 0005 netting); the black tick is net cost, the gray line is BAU cost.</p><details><summary>Table view</summary><div class="table-wrap"><table><thead><tr><th>ISO</th><th>setpoint</th><th>capital+VOM</th><th>grid purchases</th><th>surplus revenue</th><th>net cost</th><th>BAU cost</th><th>premium $/yr</th></tr></thead><tbody><tr><td>SAMPLE</td><td>1</td><td>$105.1M</td><td>$78.11M</td><td>-$2.567M</td><td>$180.7M</td><td>$176.3M</td><td>$4.38M</td></tr><tr><td>SAMPLE</td><td>2</td><td>$113.7M</td><td>$74.42M</td><td>-$3.006M</td><td>$185.1M</td><td>$176.3M</td><td>$8.76M</td></tr><tr><td>SAMPLE</td><td>5</td><td>$140.8M</td><td>$63.47M</td><td>-$6.071M</td><td>$198.2M</td><td>$176.3M</td><td>$21.9M</td></tr><tr><td>SAMPLE</td><td>7</td><td>$157.7M</td><td>$58.26M</td><td>-$8.953M</td><td>$207M</td><td>$176.3M</td><td>$30.66M</td></tr><tr><td>SAMPLE</td><td>10</td><td>$179.4M</td><td>$51.14M</td><td>-$10.44M</td><td>$220.1M</td><td>$176.3M</td><td>$43.8M</td></tr><tr><td>SAMPLE</td><td>20</td><td>$244.3M</td><td>$32.93M</td><td>-$13.32M</td><td>$263.9M</td><td>$176.3M</td><td>$87.6M</td></tr></tbody></table></div></details></section>
 <section id="sec-2-7-hourly"><h2>Hourly dispatch — selected setpoint</h2><p class="note">The heatmap shows when matching fails: darker cells are hours with more unmatched grid purchases at the selected setpoint. Hover any cell for its value.</p><div class="hourly-block" data-iso="SAMPLE" data-selected="20"><h4>Unmatched grid purchases (MWh), hour-of-day × day</h4><div class="heatmap-wrap"><canvas class="heatmap" height="24"></canvas><div class="heatmap-scale"><span>0</span><span class="scale-bar"></span><span class="scale-max"></span></div></div><h4>Storage state of charge (MWh)</h4><div class="soc-wrap"></div></div></section>
 <footer>Generated by lce_portfolio 0.1.0 — self-contained report (ADR 0014); data: report.json in this run folder.</footer>
 </main>
@@ -232,14 +310,26 @@ over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" s
 <script>
 (function () {
   var HOURLY = JSON.parse(document.getElementById('report-hourly').textContent);
-  var RAMP = ['#cde2fb','#9ec5f4','#86b6ef','#5598e7','#3987e5','#256abf','#1c5cab','#104281','#0d366b'];
-  var SOC_COLORS = ['#2a78d6','#1baf7a','#eda100','#008300','#4a3aa7','#e34948'];
+  // Observatory heatmap ramp (bc-pages.css .color-ramp), light blue -> red.
+  var RAMP = ['#E8F3F7','#AFD8EA','#7FC4E6','#82C6AF','#86C98F','#BCCF75','#F2D65C','#EF8F3C','#C0392B'];
+  // Fuel-palette fallback slots for storage series (shared.css tokens).
+  var SOC_FALLBACK = ['#0EA5E9','#22C55E','#F59E0B','#6366F1','#E91E63','#14B8A6'];
   var tooltip = document.getElementById('tooltip');
+
+  // Mirrors the renderer's _resource_color fuel mapping for storage techs.
+  function socColor(name, i) {
+    var n = name.toLowerCase();
+    if (n.indexOf('hydrogen') >= 0 || n.indexOf('h2') >= 0) return '#10B981';
+    if (n.indexOf('battery') >= 0) return n.indexOf('8h') >= 0 ? '#B45309' : '#E67E22';
+    if (n.indexOf('ldes') >= 0) return '#7C3AED';
+    if (n.indexOf('hydro') >= 0 || n.indexOf('pumped') >= 0) return '#0EA5E9';
+    return SOC_FALLBACK[i % SOC_FALLBACK.length];
+  }
 
   function fmt(v) { return v.toLocaleString('en-US', {maximumFractionDigits: 1}); }
 
   function cellColor(v, vmax) {
-    if (v <= 0 || vmax <= 0) return '#fcfcfb';
+    if (v <= 0 || vmax <= 0) return '#FFFFFF';
     var i = Math.min(RAMP.length - 1, Math.floor(v / vmax * RAMP.length));
     return RAMP[i];
   }
@@ -253,7 +343,7 @@ over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" s
     var vmax = 0;
     for (var t = 0; t < T; t++) if (buy[t] > vmax) vmax = buy[t];
     var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fcfcfb';
+    ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, days, 24);
     for (t = 0; t < T; t++) {
       ctx.fillStyle = cellColor(buy[t], vmax);
@@ -292,7 +382,7 @@ over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" s
     [0, 0.5, 1].forEach(function (f) {
       var y = (H - B) - f * (H - B - T0);
       svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y +
-        '" stroke="#e1e0d9" stroke-width="1"/>' +
+        '" stroke="#E5E7EB" stroke-width="1"/>' +
         '<text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="tick">' +
         fmt(vmax * f) + '</text>';
     });
@@ -304,13 +394,13 @@ over BAU: 49.69%</title></rect><line x1="595.3" x2="627.3" y1="39.5" y2="39.5" s
         pts.push(x.toFixed(1) + ',' + y.toFixed(1));
       }
       svg += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' +
-        SOC_COLORS[i % SOC_COLORS.length] + '" stroke-width="1.2"/>';
+        socColor(n, i) + '" stroke-width="1.2"/>';
     });
     svg += '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 4) +
       '" text-anchor="middle" class="axis-label">hour of year</text></svg>';
     var legend = '<div class="legend">' + names.map(function (n, i) {
       return '<span class="key"><span class="swatch" style="background:' +
-        SOC_COLORS[i % SOC_COLORS.length] + '"></span>' + n + '</span>';
+        socColor(n, i) + '"></span>' + n + '</span>';
     }).join('') + '</div>';
     wrap.innerHTML = legend + svg;
   }
