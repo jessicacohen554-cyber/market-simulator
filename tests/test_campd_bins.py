@@ -453,6 +453,73 @@ class TestMustRunEmissions(unittest.TestCase):
         mr = compute_must_run_emissions(non_chp, year=2026)
         self.assertTrue(mr.empty)
 
+    def test_chp_export_floor_measured_sets_grid_floor(self):
+        # chp_export_floor_measured (backcast overlay): a CHP bin's grid
+        # steam-following floor is its measured EIA-923 class CF for the year
+        # times the sector grid-delivery share, superseding the pooled CAMPD
+        # p2 minimum. Off (default) keeps the p2/artifact floor.
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.chp import chp_btm_pct, chp_class_netgen_mwh
+
+        year = 2023
+        netgen = chp_class_netgen_mwh(year)
+        bins = load_campd_bins(BINS_CSV, year=year)
+        cc_chp = bins[bins["Plant_Group"] == "CC_CHP"]
+        code = next(
+            int(c)
+            for c in cc_chp["Plant_Code"]
+            if netgen.get((int(c), "CC_CHP"), 0.0) > 0.0
+        )
+        row = cc_chp[cc_chp["Plant_Code"] == code]
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=year,
+            chp_steam_following=True,
+            chp_export_floor_measured=True,
+        )
+        fleet, _ = bins_to_fleet(row, ZONE_NAMES, cfg)
+        floor = sum(getattr(g, "chp_grid_pmin_mw", 0.0) for g in fleet)
+        nameplate = float(row["capacity_mw"].iloc[0])
+        total_cf = min(1.0, netgen[(code, "CC_CHP")] / (nameplate * 8760.0))
+        btm = chp_btm_pct(code, "CC_CHP") / 100.0
+        expected = total_cf * (1.0 - btm) * nameplate
+        # min(floor, econ_cap) can clamp the floor below the measured level;
+        # it must never exceed it.
+        self.assertLessEqual(floor, expected + 1e-6)
+        self.assertGreater(floor, 0.0)
+        # Off by default: the same build without the flag keeps the p2 floor
+        # (different unless the plant's p2 happens to equal its annual CF).
+        cfg_off = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=year,
+            chp_steam_following=True,
+        )
+        fleet_off, _ = bins_to_fleet(row, ZONE_NAMES, cfg_off)
+        floor_off = sum(getattr(g, "chp_grid_pmin_mw", 0.0) for g in fleet_off)
+        self.assertNotAlmostEqual(floor, floor_off, places=1)
+
+    def test_measured_share_mode_is_total_times_share(self):
+        # Measured-share mode (rule #13): BTM = 923 class total x host share,
+        # never a function of the model's own dispatch. Plants absent from the
+        # share map fall back to their bin pct_mr share.
+        bins = load_campd_bins(BINS_CSV)
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        first = int(chp["Plant_Code"].iloc[0])
+        totals = {int(c): 1_000_000.0 for c in chp["Plant_Code"]}
+        mr = compute_must_run_emissions(
+            bins,
+            year=2023,
+            total_gen_by_plant=totals,
+            btm_share_by_plant={first: 0.35},
+        )
+        by_code = dict(zip(mr["Plant_Code"].astype(int), mr["mr_gen_mwh"]))
+        self.assertAlmostEqual(by_code[first], 350_000.0, places=3)
+        second = int(chp["Plant_Code"].iloc[1])
+        expected = 1_000_000.0 * float(chp["pct_mr"].iloc[1]) / 100.0
+        self.assertAlmostEqual(by_code[second], expected, places=3)
+
 
 class TestFuelHelpers(unittest.TestCase):
     """Tests for the fuel-attribute helper functions."""
