@@ -1,13 +1,35 @@
 # MISO Zonal Refinement — Scoping Plan (structure-first, no implementation)
 
-Status: **PHASE 1 IMPLEMENTED 2026-07-02** (branch
-`claude/miso-zonal-impl-y7luam`): 6-zone topology + seasonal CIL/CEL
-interface caps + full touchpoint remap + data rebuilds landed per §5/§10;
-backcast gates per §7 reported in the run report of the
-`miso-35-zonal-refinement` dashboard bundle. Implementation notes: the
-one-way link floor (`link_bidirectional`) was found unwired in both runners
-and connected (the RDT pair had been silently symmetric); bundles now
-persist `flows.parquet` for interface-binding diagnostics
+Status: **PHASE 2 IMPLEMENTED 2026-07-02** (branch
+`claude/miso-zonal-coopt-phase2-6bj3it`; keeper
+`2026-07-02-miso-38-zonal-reserves`): reserve co-opt re-enabled per §6 and
+gate 4 (§7) evaluated. Wiring discovery: `--energy-reserve-coopt` had been
+**silently inert for MISO on the backcast path** (the `run_year` co-opt
+chain ended at NEISO; `_miso_design` was reachable only from the forecast
+runner) — every prior MISO "co-opt" dashboard run, incl. probe miso-34,
+solved an energy-only LP. Fixed with a `run_year` MISO branch routing to
+the UNCHANGED `_miso_design`. Results: market-wide RBDC in-LP is
+structurally inert at 6 zones (reserve dual $0 all 26,280 h — probe
+miso-37), so phase-2b locational families were added per §6
+(`--miso-zonal-reserves`, gated default off): MISO-South family,
+requirement = within-zone MSSC 3,953 MW (BPM-002 §3.3.2 largest-zonal-event
+basis), priced at the published Zonal ORDC (BPM-002 §5.2.1.2 / Schedule
+28-A: $200/$1,100/$3,300 steps). **Gate 4 PARTIAL:** the zonal family
+fires (dual nonzero 266/287/875 h, 2025-concentrated) but at re-dispatch
+opportunity cost ($8–21/MWh max) — the >$200 tail stays 0 h vs actual
+30/37/88 and CT_PEAKER/coal are unchanged; the residual root cause is not
+missing reserve structure (perfect-foresight headroom; next levers:
+per-gen ramp sub-shortage band — memory-infeasible at plant scale — or D6
+per-hub LMP scoring). Gates 1–3 still pass. See
+`docs/multi-iso/miso-reserve-coopt.md`.
+
+Phase-1 status (2026-07-02, branch `claude/miso-zonal-impl-y7luam`):
+6-zone topology + seasonal CIL/CEL interface caps + full touchpoint remap +
+data rebuilds landed per §5/§10; backcast gates per §7 reported in the run
+report of the `miso-35-zonal-refinement` dashboard bundle. Implementation
+notes: the one-way link floor (`link_bidirectional`) was found unwired in
+both runners and connected (the RDT pair had been silently symmetric);
+bundles now persist `flows.parquet` for interface-binding diagnostics
 (`scripts/report_miso_zonal_gates.py`). Jan–May 2023 seasonal caps are
 backfilled from PY2023-24 same-season values until the PY2022-23 extraction
 lands (D5). Scoped on branch `claude/miso-zonal-refine-scope-vs1iao`;
