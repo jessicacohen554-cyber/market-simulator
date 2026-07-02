@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-02-ercot26-gtc-limits",
+  "label": "ercot26 gtc limits",
+  "date": "2026-07-02",
+  "shorthand": "ercot26-gtc-limits",
+  "definition": "ercot 26 gtc-limits-v1: ercot 25 chp-floor-v1 base + measured hourly NP6-86 GTC export limits on the PNHNDL/WESTEX/NE_LOB links (ercot_gtc_limits_measured). Keeper on structural faithfulness (rule #1) but NEUTRAL on the backcast: 2023 curtailment 2.45->2.46 TWh, CC_REGULAR 133.18->133.19 — the West/Panhandle export interfaces carry ~3 GW vs ~10 GW capacity and saturate <1% of hours, so the C1 CC_REGULAR 2023 residual is confirmed nodal/intra-zone (VALEXP/McCamey/138 kV), not at the zonal interface. Determination NOT-YET (hard 2/1: C1 CC_REGULAR 2023 + C2 gas 2025, both attested; soft 3/3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-02-ercot26-gtc-limits.js",
+  "bundle": "results/calibration/ercot_gtc_limits_v1"
+}
