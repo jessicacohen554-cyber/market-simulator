@@ -1,7 +1,9 @@
 # 0007 — Matching semantics: annual hourly matching, storage provenance, residual carbon
 
-- **Status:** accepted (matching definition stakeholder-decided 2026-07-01; storage
-  provenance & carbon attribution remain provisional per the default-decisions table).
+- **Status:** accepted (matching definition stakeholder-decided 2026-07-01;
+  **storage provenance ratified** at the stakeholder session 2026-07-02, which
+  also confirmed the ADR 0013 supersession of the carbon half — nothing in this
+  ADR remains provisional).
   **Residual-carbon attribution superseded by ADR 0013** (2026-07-02): the ISO
   *marginal* emission rate below was a consequential-accounting method misapplied
   to attributional Scope 2 reporting; unmatched grid purchases are now attributed
@@ -54,3 +56,15 @@ column per sweep point. **Denominator** = gross load (not net of on-site clean).
 - A new input: ISO marginal emission rate (tCO₂/MWh), sourced per ISO.
 - PP-06 reports both matching % and residual carbon per frontier point.
 - No per-facility tracking needed; aggregate-level matching and carbon suffice.
+
+## Ratification note (stakeholder session, 2026-07-02)
+
+The **storage-provenance** rule (grid energy counted unmatched at purchase
+time, even if later discharged to serve load — no round-trip laundering) was
+ratified as-is. The stakeholder also confirmed the **ADR 0013 supersession**
+of this ADR's residual-carbon attribution stands: session research corroborated
+that eGRID non-baseload rates are a consequential-accounting metric that EPA
+notes overstate Scope 2 for general consumption, that the GHG Protocol Scope 2
+location-based method uses *average* factors, and that NREL Cambium LRMER is
+likewise consequential — so 0013's hourly fossil-only average rate is the
+correct attributional choice and no amendment is warranted.
