@@ -2074,6 +2074,28 @@ class ScenarioConfig:
     chp_steam_following: bool = False
     chp_btm_floor_pct: float = 40.0
 
+    # Measured steam-following export floor (backcast/calibration overlay,
+    # composes with chp_steam_following). When True in backcast mode, each
+    # CHP bin's total must-run CF (the ``pmin_cf`` feeding the grid floor
+    # ``pmin_cf x (1 - btm_share)``) is the plant's measured EIA-923 class
+    # CF for the solved year (data.chp.chp_class_netgen_mwh / nameplate-hours)
+    # instead of the pooled CAMPD p2 minimum. A topping-cycle cogen's power
+    # train follows its host's steam demand, not the LMP — its grid export
+    # rides at the host-driven operating level (ERCOT CC_CHP fleet: ~50-70%
+    # annual CF) all year, while the p2 percentile only captures the
+    # never-below minimum (~20-35%), leaving the LP to idle the steam-following
+    # base whenever the cogen's offer sits above the margin. Rule #13
+    # admissibility: host steam demand is a physical input exogenous to the
+    # power market; the same floor regenerates for a forward year from
+    # sector-level host demand x the EIA-860 CHP designation, and it responds
+    # to changed host conditions (a shrinking host shrinks the floor). The LP
+    # keeps upward freedom (scarcity dispatch above the floor) and outage
+    # windows still relax it (min_gen is clipped to pmax x availability).
+    # Plants absent from the year's EIA-923 vintage keep the p2/artifact floor.
+    # Off by default — forecast mode always uses the persistent
+    # chp_pmin_cf floors.
+    chp_export_floor_measured: bool = False
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -3052,6 +3074,7 @@ TIER_TAGS: dict[str, int] = {
     "ct_peak_hr_override": 3,
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
+    "chp_export_floor_measured": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,
