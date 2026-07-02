@@ -41,10 +41,12 @@ def _net_cost_identity(resources, lmp, r, sale: float) -> float:
     return fixed + energy_capex + vom + buys - sales
 
 
-def _solve(additionality_only: bool):
-    res, cf, load, lmp = cross_feature_system()
+def _solve(additionality_only: bool, *, iso: str = "ERCOT", T: int | None = None):
+    res, cf, load, lmp = (
+        cross_feature_system() if T is None else cross_feature_system(T)
+    )
     cfg = PortfolioConfig(
-        iso="ERCOT",
+        iso=iso,
         hours=cf.shape[1],
         mode="premium_cap",
         excess_sale_fraction=0.5,
@@ -58,7 +60,11 @@ def test_cross_feature_matching_and_cost_identities_additionality_off() -> None:
     """All 5 features active at once (additionality off): identities hold exactly.
 
     Existing (nuclear/hydro) generation counts toward matching here, so it
-    should actually be dispatched.
+    should actually be dispatched. Kept at the full 8760-hour calendar (ERCOT,
+    which has a real hydro-budget entry) as the one canonical full-year solve
+    exercising all 5 composed features together, including the monthly hydro
+    budget (ADR 0008) — lp.py requires T == HOURS_PER_YEAR whenever a
+    budget-flagged resource is active for a known-budget ISO.
     """
     cfg, res, load, lmp, r = _solve(additionality_only=False)
     assert r.status == "Optimal"
@@ -80,9 +86,15 @@ def test_cross_feature_matching_and_cost_identities_additionality_on() -> None:
 
     The dispatch is re-optimized (existing generation now costs matching
     rather than helping it), so the numeric matching level need not match the
-    off case — only the accounting identity is asserted here.
+    off case — only the accounting identity is asserted here (both identities
+    are generic accounting formulas, not budget-specific values). Uses a
+    240-hour (10-day) horizon on the SAMPLE ISO (no hydro-budget table entry,
+    so ADR 0008's monthly budget constraint is skipped and lp.py's
+    T == HOURS_PER_YEAR requirement doesn't apply) rather than the full 8760 —
+    the additionality_off test above already covers the full-year,
+    budget-active combination once.
     """
-    cfg, res, load, lmp, r = _solve(additionality_only=True)
+    cfg, res, load, lmp, r = _solve(additionality_only=True, iso="SAMPLE", T=240)
     assert r.status == "Optimal"
 
     expected_matching = _matching_identity(res, load, r, additionality_only=True)
