@@ -282,10 +282,11 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
             raise ValueError(f"LMP file not found: {lmp_file}")
 
         run_id_raw = str(payload.get("run_id") or "").strip()
+        run_id_auto = not run_id_raw
         run_id = (
-            cli.validate_run_id(run_id_raw)
-            if run_id_raw
-            else cli.compose_run_id([iso], mode)
+            cli.compose_run_id([iso], mode)
+            if run_id_auto
+            else cli.validate_run_id(run_id_raw)
         )
 
         open_report_when_done = bool(
@@ -317,10 +318,40 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
             "load_file": load_file,
             "lmp_file": lmp_file,
             "run_id": run_id,
+            "run_id_auto": run_id_auto,
             "open_report_when_done": open_report_when_done,
         },
         None,
     )
+
+
+def dedupe_run_ids(validated: list[dict]) -> str | None:
+    """Give every run in one submitted batch a distinct results directory.
+
+    ``compose_run_id`` stamps to whole seconds, so two blank-run-id runs of
+    the same ISO/mode queued in one submit collide — and ``results/<run-id>/``
+    is overwritten on re-use, so the later run silently destroyed the earlier
+    one's results mid-batch (review finding LN-3). Auto-composed duplicates
+    get a ``-2``/``-3`` suffix; explicitly-typed duplicates are a user mistake
+    and return a friendly error message instead. Mutates ``validated`` in
+    place; returns ``None`` when all ids are (made) unique.
+    """
+    seen: set[str] = set()
+    for kwargs in validated:
+        run_id = kwargs["run_id"]
+        if run_id in seen:
+            if not kwargs["run_id_auto"]:
+                return (
+                    f"duplicate run id {run_id!r}: give each queued run a "
+                    "distinct run id (or leave the field blank)"
+                )
+            n = 2
+            while f"{run_id}-{n}" in seen:
+                n += 1
+            run_id = f"{run_id}-{n}"
+            kwargs["run_id"] = run_id
+        seen.add(run_id)
+    return None
 
 
 def build_argv(run_kwargs: dict) -> list[str]:
@@ -930,6 +961,15 @@ def _make_handler(state: LauncherState, page_context: dict):
                     self._send_json({"error": f"run {i + 1}: {error}"}, 400)
                     return
                 validated.append(kwargs)
+
+            error = dedupe_run_ids(validated)
+            if error is not None:
+                self._send_json({"error": error}, 400)
+                return
+            # run_id_auto is validation-internal — keep it out of the queue,
+            # the status payload, and the persisted last-used values.
+            for kwargs in validated:
+                kwargs.pop("run_id_auto", None)
 
             batch_id = state.enqueue_batch(validated)
             state.config_store.record_last_used(validated[-1])

@@ -393,6 +393,58 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Batch run-id collisions (review finding LN-3) --------------------------
+
+
+def _validated_run(run_id: str, auto: bool) -> dict:
+    return {
+        "iso": "SAMPLE",
+        "mode": "premium_cap",
+        "run_id": run_id,
+        "run_id_auto": auto,
+    }
+
+
+def test_dedupe_run_ids_suffixes_auto_collisions() -> None:
+    """LN-3: blank-run-id runs composed in the same second must not share a
+    results directory — the later run overwrote the earlier one's results."""
+    runs = [
+        _validated_run("SAMPLE_premium_cap_20260702-120000", True),
+        _validated_run("SAMPLE_premium_cap_20260702-120000", True),
+        _validated_run("SAMPLE_premium_cap_20260702-120000", True),
+    ]
+    assert lce_launcher.dedupe_run_ids(runs) is None
+    ids = [r["run_id"] for r in runs]
+    assert len(set(ids)) == 3
+    assert ids[1].endswith("-2") and ids[2].endswith("-3")
+
+
+def test_dedupe_run_ids_rejects_explicit_duplicates() -> None:
+    """LN-3: two runs explicitly given the same run id are a user error."""
+    runs = [_validated_run("my_run", False), _validated_run("my_run", False)]
+    error = lce_launcher.dedupe_run_ids(runs)
+    assert error is not None and "duplicate run id" in error
+
+
+def test_launcher_rejects_explicit_duplicate_run_ids_over_http(tmp_path: Path) -> None:
+    """LN-3 over HTTP: an explicit duplicate is a 400, nothing is enqueued."""
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    run = {
+        "iso": "SAMPLE",
+        "mode": "premium_cap",
+        "premium_deltas": "5",
+        "load_file": str(load_path),
+        "lmp_file": str(lmp_path),
+        "run_id": "dup_run",
+    }
+    with _launcher_server(tmp_path) as port:
+        status, body = _post_json(
+            f"http://127.0.0.1:{port}/api/run", {"runs": [run, dict(run)]}
+        )
+        assert status == 400
+        assert "duplicate run id" in body["error"]
+
+
 # --- Malformed / hostile requests (review findings LN-1/LN-2) --------------
 
 
