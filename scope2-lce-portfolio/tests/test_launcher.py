@@ -1,0 +1,394 @@
+"""Tests for the desktop launcher (ADR 0016): saved-config persistence,
+request validation, and an end-to-end subprocess run against SAMPLE fixtures.
+
+No browser, no network beyond loopback: the end-to-end test starts the
+launcher's HTTP server via subprocess with ``--no-open`` and scratch
+``--results``/``--state-dir`` directories, submits one SAMPLE run (mirroring
+``examples/run_sample_sweep.py``'s synthetic inputs), and polls
+``/api/status`` to completion. This never touches ``market_sim`` or triggers
+any market-sim solve (stakeholder hard hold) — SAMPLE is a data-free demo
+ISO built entirely from in-test fixtures.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from lce_portfolio import launcher as lce_launcher
+from lce_portfolio.config import HOURS_PER_YEAR
+
+_PORTFOLIO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _fixture_paths(tmp_path: Path) -> tuple[Path, Path]:
+    """Minimal SAMPLE-ISO 8760 load + LMP fixtures (mirrors test_cli.py)."""
+    hours = np.arange(HOURS_PER_YEAR)
+    hod = hours % 24
+    load = 100.0 + 20.0 * np.clip(np.sin((hod - 8) / 24.0 * 2 * np.pi), 0, None)
+    lmp = 25.0 + 10.0 * np.clip(np.sin((hod - 9) / 24.0 * 2 * np.pi), 0, None)
+    load_path = tmp_path / "load.csv"
+    lmp_path = tmp_path / "lmp.csv"
+    pd.DataFrame({"hour": hours, "iso": "SAMPLE", "load_mwh": load}).to_csv(
+        load_path, index=False
+    )
+    pd.DataFrame({"hour": hours, "iso": "SAMPLE", "lmp": lmp}).to_csv(
+        lmp_path, index=False
+    )
+    return load_path, lmp_path
+
+
+# --- Saved-config / last-used persistence ---------------------------------
+
+
+def test_config_store_round_trip(tmp_path: Path) -> None:
+    """Saved configs persist across process boundaries (new ConfigStore, same dir)."""
+    store = lce_launcher.ConfigStore(tmp_path)
+    assert store.saved_configs() == {}
+
+    store.save_config("baseline", {"iso": "SAMPLE", "mode": "premium_cap"})
+    assert store.saved_configs() == {
+        "baseline": {"iso": "SAMPLE", "mode": "premium_cap"}
+    }
+
+    reopened = lce_launcher.ConfigStore(tmp_path)
+    assert reopened.saved_configs()["baseline"]["mode"] == "premium_cap"
+
+    reopened.delete_config("baseline")
+    assert reopened.saved_configs() == {}
+
+
+def test_config_store_rejects_unsafe_names(tmp_path: Path) -> None:
+    """Unsafe config names (path separators, traversal, etc.) raise, not write."""
+    store = lce_launcher.ConfigStore(tmp_path)
+    for bad in ("../escape", "a/b", "", ".hidden", "has space"):
+        with pytest.raises(ValueError):
+            store.save_config(bad, {})
+    assert store.saved_configs() == {}
+
+
+def test_config_store_last_used_round_trip(tmp_path: Path) -> None:
+    """The last-submitted run's params persist and are readable back."""
+    store = lce_launcher.ConfigStore(tmp_path)
+    assert store.last_used() == {}
+    store.record_last_used({"iso": "ERCOT", "mode": "matching_target"})
+    assert store.last_used() == {"iso": "ERCOT", "mode": "matching_target"}
+
+
+# --- Request / parameter validation ---------------------------------------
+
+
+def test_validate_run_payload_accepts_good_request(tmp_path: Path) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "mode": "premium_cap",
+            "premium_deltas": "5, 10",
+            "lcoe_sensitivity": "mid",
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+            "run_id": "my_run",
+        }
+    )
+    assert err is None
+    assert kwargs["run_id"] == "my_run"
+    assert kwargs["premium_deltas"] == (5.0, 10.0)
+    assert kwargs["matching_targets"] == lce_launcher.DEFAULT_MATCHING_TARGETS
+
+
+def test_validate_run_payload_rejects_unknown_iso(tmp_path: Path) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "NOT_A_REAL_ISO",
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+        }
+    )
+    assert kwargs is None
+    assert "unknown iso" in err
+
+
+def test_validate_run_payload_rejects_unknown_mode(tmp_path: Path) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "mode": "bogus_mode",
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+        }
+    )
+    assert kwargs is None
+    assert "unknown mode" in err
+
+
+def test_validate_run_payload_rejects_missing_load_file(tmp_path: Path) -> None:
+    _, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "load_file": str(tmp_path / "does_not_exist.csv"),
+            "lmp_file": str(lmp_path),
+        }
+    )
+    assert kwargs is None
+    assert "load file not found" in err
+
+
+def test_validate_run_payload_rejects_missing_lmp_file(tmp_path: Path) -> None:
+    load_path, _ = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "load_file": str(load_path),
+            "lmp_file": str(tmp_path / "does_not_exist.csv"),
+        }
+    )
+    assert kwargs is None
+    assert "LMP file not found" in err
+
+
+def test_validate_run_payload_rejects_unsafe_run_id(tmp_path: Path) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+            "run_id": "../escape",
+        }
+    )
+    assert kwargs is None
+    assert "invalid --run-id" in err
+
+
+def test_validate_run_payload_rejects_non_numeric_premium_deltas(
+    tmp_path: Path,
+) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    kwargs, err = lce_launcher.validate_run_payload(
+        {
+            "iso": "SAMPLE",
+            "load_file": str(load_path),
+            "lmp_file": str(lmp_path),
+            "premium_deltas": "not_a_number",
+        }
+    )
+    assert kwargs is None
+    assert "premium_deltas" in err
+
+
+def test_build_argv_premium_cap_vs_matching_target() -> None:
+    """The composed CLI argv sweeps whichever setpoint list matches the mode."""
+    base = {
+        "iso": "SAMPLE",
+        "load_file": "load.csv",
+        "lmp_file": "lmp.csv",
+        "lcoe_sensitivity": "mid",
+        "run_id": "r1",
+        "premium_deltas": (5.0,),
+        "matching_targets": (0.9,),
+    }
+    premium_argv = lce_launcher.build_argv({**base, "mode": "premium_cap"})
+    assert "--deltas" in premium_argv and "5.0" in premium_argv
+    assert "--targets" not in premium_argv
+
+    target_argv = lce_launcher.build_argv({**base, "mode": "matching_target"})
+    assert "--targets" in target_argv and "0.9" in target_argv
+    assert "--deltas" not in target_argv
+
+
+# --- End-to-end: subprocess server + one SAMPLE run -----------------------
+
+
+def _wait_for_serving_url(proc: subprocess.Popen, timeout: float = 15.0) -> int:
+    """Read the launcher's stdout until it reports its bound port."""
+    pattern = re.compile(r"http://127\.0\.0\.1:(\d+)/")
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        line = proc.stdout.readline()
+        if not line:
+            if proc.poll() is not None:
+                raise RuntimeError(
+                    f"launcher process exited (rc={proc.returncode}) before serving"
+                )
+            continue
+        match = pattern.search(line)
+        if match:
+            return int(match.group(1))
+    raise TimeoutError("launcher did not report a serving URL in time")
+
+
+def _post_json(url: str, payload: dict) -> tuple[int, dict]:
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status, json.loads(resp.read())
+    except urllib.error.HTTPError as exc:
+        return exc.code, json.loads(exc.read())
+
+
+def _get_json(url: str) -> dict:
+    with urllib.request.urlopen(url, timeout=10) as resp:
+        return json.loads(resp.read())
+
+
+def test_launcher_end_to_end_sample_run(tmp_path: Path) -> None:
+    """Start the launcher, submit one SAMPLE run, poll to completion.
+
+    Smallest/fastest launcher-exposed config that solves: SAMPLE ISO (data-free
+    demo), premium_cap mode, a single premium delta — the library-default
+    active-resource set (mirrors ``examples/run_sample_sweep.py`` and the
+    committed ``results/SAMPLE_premium_cap_*/`` bundle; ``active_resources``
+    itself is config-file-only, not a launch-page field, ADR 0016 §3).
+    """
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    results_dir = tmp_path / "results"
+    state_dir = tmp_path / "launcher_state"
+
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(_PORTFOLIO_ROOT / "src")
+    env["PYTHONUNBUFFERED"] = "1"
+
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "lce_portfolio.launcher",
+            "--no-open",
+            "--port",
+            "0",
+            "--results",
+            str(results_dir),
+            "--state-dir",
+            str(state_dir),
+            "--inputs-dir",
+            str(tmp_path),
+        ],
+        cwd=str(_PORTFOLIO_ROOT),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        port = _wait_for_serving_url(proc)
+        base = f"http://127.0.0.1:{port}"
+
+        with urllib.request.urlopen(f"{base}/", timeout=10) as resp:
+            assert resp.status == 200
+            assert "text/html" in resp.headers.get("Content-Type", "")
+
+        run_id = "launcher_e2e_sample"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {
+                "runs": [
+                    {
+                        "iso": "SAMPLE",
+                        "mode": "premium_cap",
+                        "premium_deltas": "5",
+                        "lcoe_sensitivity": "mid",
+                        "load_file": str(load_path),
+                        "lmp_file": str(lmp_path),
+                        "run_id": run_id,
+                        "open_report_when_done": False,
+                    }
+                ]
+            },
+        )
+        assert status == 200, body
+        batch_id = body["batch_id"]
+        assert body["runs"][0]["run_id"] == run_id
+
+        deadline = time.time() + 120.0
+        final_status = None
+        while time.time() < deadline:
+            data = _get_json(f"{base}/api/status?batch={batch_id}")
+            state = data["runs"][0]["state"]
+            if state in ("done", "error"):
+                final_status = data["runs"][0]
+                break
+            time.sleep(1.0)
+        assert final_status is not None, "run did not finish within the timeout"
+        assert final_status["state"] == "done", final_status["message"]
+
+        report_path = results_dir / run_id / "report.html"
+        assert report_path.exists()
+
+        # The report is also servable straight from the launcher.
+        with urllib.request.urlopen(
+            f"{base}{final_status['report_url']}", timeout=10
+        ) as resp:
+            assert resp.status == 200
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=10)
+
+
+def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
+    """A validation failure comes back as a clean 400 JSON payload, no crash."""
+    state_dir = tmp_path / "launcher_state"
+    results_dir = tmp_path / "results"
+
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(_PORTFOLIO_ROOT / "src")
+    env["PYTHONUNBUFFERED"] = "1"
+
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "lce_portfolio.launcher",
+            "--no-open",
+            "--port",
+            "0",
+            "--results",
+            str(results_dir),
+            "--state-dir",
+            str(state_dir),
+            "--inputs-dir",
+            str(tmp_path),
+        ],
+        cwd=str(_PORTFOLIO_ROOT),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        port = _wait_for_serving_url(proc)
+        base = f"http://127.0.0.1:{port}"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {"runs": [{"iso": "NOT_A_REAL_ISO", "load_file": "x", "lmp_file": "y"}]},
+        )
+        assert status == 400
+        assert "unknown iso" in body["error"]
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=10)
