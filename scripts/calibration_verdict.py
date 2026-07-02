@@ -632,29 +632,81 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
 
 
 def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
-    """C3a — system load-weighted mean LMP vs actual RT (fallback DA)."""
+    """C3a — system load-weighted mean LMP vs actual RT (fallback DA).
+
+    The gated benchmark is named in the record's ``metric`` (``vs RT`` /
+    ``vs DA``): the model is structurally a real-time analogue (a
+    perfect-foresight dispatch LP prices RT physics, not day-ahead risk
+    premia), so RT is the honest benchmark and DA is only a fallback when no
+    RT actual is committed. The DA comparison is surfaced separately as a
+    non-gated diagnostic (:func:`score_price_mean_da_diagnostic`).
+    """
     lmp = ypay.get("lmp", {})
     pairs = [
         (z.get("p"), z.get("d", 0.0)) for z in lmp.values() if z.get("p") is not None
     ]
     model = _wmean(pairs) if pairs else None
     avg = ybench.get("avgLMP") or {}
+    bench_kind = "RT" if avg.get("rt") is not None else "DA"
     actual = avg.get("rt", avg.get("da"))
     if model is None or actual is None:
         return _skip("price_mean", year, "no model or actual mean LMP")
     err = _pct(model, actual)
     ok = err is not None and abs(err) <= PRICE_MEAN_TOL
+    label = "vs RT" if bench_kind == "RT" else "vs DA — no RT actual committed"
     return {
         "criterion": "price_mean",
         "key": None,
         "year": year,
         "status": PASS if ok else FAIL,
         "classification": None if ok else MODEL_MISS,
-        "metric": "system load-weighted mean LMP $/MWh",
+        "metric": f"system load-weighted mean LMP $/MWh ({label})",
+        "benchmark": bench_kind,
         "model": round(model, 2),
         "actual": round(actual, 2),
         "tol": f"±{PRICE_MEAN_TOL * 100:.0f}%",
         "magnitude": f"{err * 100:+.1f}%",
+    }
+
+
+def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict | None:
+    """C3a DA diagnostic — model mean LMP vs the DA actual, never gated.
+
+    A perfect-foresight dispatch LP is a real-time analogue: the DA−RT spread
+    (the DART risk premium — e.g. 2023 ERCOT DA $55.94 vs RT $48.36) is a
+    forward risk premium the LP has no mechanism to price, and modeling it
+    with offers/adders is forbidden (a fit to the price residual). C3a
+    therefore gates on RT; this record makes the DA gap *visible* instead of
+    hidden, as a SKIPPED (never PASS/FAIL) diagnostic row. Returns ``None``
+    when the DA actual is absent or DA is already the gated fallback
+    benchmark (no second series to diagnose).
+    """
+    avg = ybench.get("avgLMP") or {}
+    rt, da = avg.get("rt"), avg.get("da")
+    if rt is None or da is None:
+        return None  # DA absent, or DA is already the gated benchmark
+    lmp = ypay.get("lmp", {})
+    pairs = [
+        (z.get("p"), z.get("d", 0.0)) for z in lmp.values() if z.get("p") is not None
+    ]
+    model = _wmean(pairs) if pairs else None
+    if model is None:
+        return None
+    err = _pct(model, da)
+    return {
+        "criterion": "price_mean",
+        "key": "da_diagnostic",
+        "year": year,
+        "status": SKIPPED,
+        "classification": None,
+        "metric": "mean LMP vs DA (diagnostic — DART premium, not gated)",
+        "benchmark": "DA",
+        "model": round(model, 2),
+        "actual": round(float(da), 2),
+        "tol": "not gated",
+        "magnitude": (
+            f"{err * 100:+.1f}% vs DA (DA−RT premium ${float(da) - float(rt):+.2f})"
+        ),
     }
 
 
@@ -987,6 +1039,9 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records += score_fuelmix(year, ypay, ybench, iso)
         records += score_sysvol(year, ypay, ybench, iso)
         records.append(score_price_mean(year, ypay, ybench))
+        da_diag = score_price_mean_da_diagnostic(year, ypay, ybench)
+        if da_diag is not None:
+            records.append(da_diag)
         records.append(score_price_shape(year, ypay, ybench))
         records.append(score_price_tail(year, ypay, iso))
         records += score_dispatch_corr(year, ypay)

@@ -37,10 +37,15 @@ def _is_year_keyed(value: dict) -> bool:
 def _flatten(prefix: str, value: object):
     """Yield leaf ``param_id`` strings for a constant.
 
-    String-keyed dicts recurse with dotted paths; year-keyed dicts, lists and
-    scalars are treated as single leaves.
+    String-keyed dicts recurse with dotted paths; year-keyed dicts, dicts with
+    non-string keys (e.g. tuple-keyed interface tables, which a dotted path
+    cannot address), lists and scalars are treated as single leaves.
     """
-    if isinstance(value, dict) and not _is_year_keyed(value):
+    if (
+        isinstance(value, dict)
+        and not _is_year_keyed(value)
+        and all(isinstance(k, str) for k in value)
+    ):
         for key, sub in value.items():
             yield from _flatten(f"{prefix}.{key}", sub)
     else:
