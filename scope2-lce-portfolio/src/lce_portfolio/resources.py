@@ -67,6 +67,13 @@ NG_CO2_TON_PER_MMBTU = 0.0531
 CCS_MIN_CAPTURE_RATE = 0.90
 CCS_MAX_EMISSION_RATE_TON_MWH = 0.050
 
+# Tolerance for the ADR 0012 residual-emission cross-check on fuel-burning
+# rows: emission_rate_ton_mwh must equal (1 - capture_rate) ×
+# NG_CO2_TON_PER_MMBTU × heat_rate up to CSV rounding (shipped rows state the
+# rate to 4 decimals, so honest rounding error is ≤ 5e-5; 1e-3 leaves margin
+# without letting a materially understated rate through).
+CCS_EMISSION_CROSSCHECK_TOL_TON_MWH = 1e-3
+
 # Resources whose annual energy is governed by a monthly energy budget rather than
 # a flat CF — existing conventional hydro (ADR 0008, §Hydro). Kept as an explicit
 # set here so the LP can flag budget-constrained resources without a magic string
@@ -399,8 +406,23 @@ def load_resource_arrays(
 
         # --- ADR 0012: partial-capture fossil resource columns --------------
         row_heat_rate = _f(row, "heat_rate_mmbtu_mwh")  # MMBtu/MWh; 0 = no fuel
-        row_capture = _f(row, "capture_rate")  # fraction; 0/blank = not set
-        row_emission = _f(row, "emission_rate_ton_mwh")  # residual tCO2/MWh
+        if row_heat_rate > 0.0:
+            # Fuel-burning rows must state capture and residual emissions
+            # explicitly: a blank cell would default to 0.0, silently passing
+            # the emission test and skipping the capture test — letting
+            # unabated gas into the catalog as a fully-matching zero-emission
+            # resource (audit finding DL-2).
+            row_capture = _req(row, "capture_rate", name)
+            row_emission = _req(row, "emission_rate_ton_mwh", name)
+            if not 0.0 < row_capture <= 1.0:
+                raise ValueError(
+                    f"resource {name!r}: capture_rate={row_capture} must be in "
+                    "(0, 1] — a rate above 1 would size the 45Q credit beyond "
+                    "the fuel's CO2 content (audit finding DL-3)"
+                )
+        else:
+            row_capture = _f(row, "capture_rate")  # fraction; 0/blank = not set
+            row_emission = _f(row, "emission_rate_ton_mwh")  # residual tCO2/MWh
 
         # Low-carbon admissibility threshold (ADR 0012), enforced at load time:
         # matching credit is all-or-nothing, so a fossil row that fails either
@@ -417,6 +439,21 @@ def load_resource_arrays(
                 f"low-carbon threshold (must be > {CCS_MIN_CAPTURE_RATE} to count "
                 "toward matching)"
             )
+        if row_heat_rate > 0.0:
+            # Residual-emission cross-check (promised by the
+            # NG_CO2_TON_PER_MMBTU docstring, audit finding DL-3): the stated
+            # residual rate must be consistent with the stated capture rate
+            # and heat rate, so a row cannot understate its emissions to slip
+            # under the threshold.
+            implied = (1.0 - row_capture) * NG_CO2_TON_PER_MMBTU * row_heat_rate
+            if abs(row_emission - implied) > CCS_EMISSION_CROSSCHECK_TOL_TON_MWH:
+                raise ValueError(
+                    f"resource {name!r}: emission_rate_ton_mwh={row_emission} is "
+                    f"inconsistent with (1 - capture_rate) × "
+                    f"{NG_CO2_TON_PER_MMBTU} tCO2/MMBtu × heat_rate = "
+                    f"{implied:.5f} tCO2/MWh (ADR 0012 cross-check, tolerance "
+                    f"{CCS_EMISSION_CROSSCHECK_TOL_TON_MWH})"
+                )
 
         if basis == "capex_fixed":
             # ATB overnight capex ($/kW) -> $/MW-yr via CRF, plus FOM ($/kW-yr).
