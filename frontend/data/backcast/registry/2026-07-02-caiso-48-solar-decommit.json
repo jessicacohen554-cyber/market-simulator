@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-02-caiso-48-solar-decommit",
+ "label": "caiso 48 solar-decommit bridge",
+ "date": "2026-07-02",
+ "shorthand": "caiso-48-solar-decommit",
+ "definition": "(PROBE \u2014 not promoted; caiso-42 keeper stands) caiso 48 solar-decommit bridge: caiso-45 (startup bridge + bidir-intertie export sink) plus the caiso_ra_bridge_decommit control \u2014 (1) economic bridges bounded to the 24-h day-ahead commitment horizon (CAISO IFM/RUC commit one operating day; multi-day idles are next-day decommit/re-offer decisions), and (2) gap hours where the candidate min-load floors exceed the P1 import-dispatch + export-sink absorption reprice to the curtailable-renewable keep-running offer, with uneconomic bridges decommitted cheapest-startup-first (RUC order). UC physics only; nothing fitted to a residual. KEY FINDING: refutes the caiso-45 open item \u2014 the bridge adds only +0.58/-0.88/+0.14 TWh of annual gas (P2\u2212P1, 2023/24/25); the '2025 +34.4% over EIA-923' guardrail trip was the P1 BASELINE against the raw preliminary 2025 vintage (55.2 TWh, ~71% reporting); on the repaired C2 basis 2025 gas is +7.9% (improved from caiso-42's +12.3%, still a HARD FAIL). Negatives/curtailment now appear (25/148/32 negative-price hours; 2024's 148 exist already at P1 via the export sink + negative offers). NOT promoted: C1 2024 CC_REGULAR widened to +11.10 TWh (caiso-42 +9.21) \u2014 the bidir baseline raises CC infra-marginality \u2014 and 2023 >$200 tail grew to 161h vs 21h (the WECC_import 7.5 GW simultaneous-cap thread). Next levers: P1 merit order (import tranche prices / CC offers), reconciled WECC seam limit (rule #12).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-02-caiso-48-solar-decommit.js",
+ "bundle": "results/calibration/caiso48_solar_decommit_bridge"
+}
