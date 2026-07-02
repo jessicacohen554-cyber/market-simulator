@@ -290,9 +290,21 @@ def test_ccs_caps_present_for_all_isos() -> None:
 
 
 def test_sweep_with_ccs_active_stays_monotone() -> None:
-    """A SAMPLE sweep with gas_cc_ccs_new active keeps matching% non-decreasing."""
+    """A SAMPLE sweep with gas_cc_ccs_new active keeps matching% non-decreasing.
+
+    Uses a 10-day (240h) horizon instead of the full 8760: this test has no
+    hydro-budget resource active (SAMPLE has no budget entry regardless), so
+    nothing depends on the full calendar. The real-ATB-scale coefficients on
+    gas_cc_ccs_new + battery_4h are what make full-8760 solves here slow
+    (~49s each per PP-08 timing note in conftest.py's cross_feature_system
+    docstring); a short multi-day window still exercises diurnal solar/battery
+    dispatch, the premium-cap sweep, CCS build economics, and the monotonicity
+    invariant under test.
+    """
+    T = 240
     cfg = PortfolioConfig(
         iso="SAMPLE",
+        hours=T,
         active_resources=("solar_pv", "battery_4h", "gas_cc_ccs_new"),
         gas_price_mmbtu=3.80,
         premium_deltas=(2.0, 10.0, 30.0),
@@ -301,11 +313,10 @@ def test_sweep_with_ccs_active_stays_monotone() -> None:
     from lce_portfolio.profiles import build_cf_matrix
 
     ra = load_resource_arrays(cfg)
-    T = cfg.hours
     hours = np.arange(T)
     load = 500.0 + 100.0 * np.sin(hours / 24.0 * 2 * np.pi)
     lmp = np.clip(30.0 + 20.0 * np.sin((hours % 24 - 9) / 24.0 * 2 * np.pi), 5, None)
-    cf = build_cf_matrix(ra, "SAMPLE", cfg.year)
+    cf = build_cf_matrix(ra, "SAMPLE", cfg.year)[:, :T]
     sweep = run_sweep(cfg, ra, load, lmp, cf)
     pcts = [r.matching_pct for r in sweep.results]
     assert all(r.status == "Optimal" for r in sweep.results)

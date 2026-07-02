@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-02-25-chp-floor-v1",
+  "label": "25 chp floor v1",
+  "date": "2026-07-02",
+  "shorthand": "25-chp-floor-v1",
+  "definition": "ercot 25 chp-floor-v1 (KEEPER): ercot 24 ct-drag-v1 base + chp_export_floor_measured (CHP steam-following grid floor = measured EIA-923 class CF x sector grid-delivery share, superseding the pooled CAMPD p2 minimum) + the rule-#13 benchmark fix (bench-side BTM now measured-input: 923 class total x chp_btm_pct, never the model's own dispatch \u2014 the old circular bench could never fail C1 for CHP classes and drifted ~19 TWh between identical solves). CC_CHP passes C1 every year (2023 -1.22 / 2024 +0.81 / 2025 +0.07 TWh); NOT-YET at hard 2/1: C1 CC_REGULAR 2023 -8.56 TWh (root cause quantified: ~4.1 TWh missing nodal/GTC curtailment + ~3.7 TWh 923-vs-930 gas basis inconsistency landing on the marginal class) and C2 gas 2025 -2.8% (preliminary-923 vintage gap, improved from -3.2%). C3b 2024 newly passes (NRMSE 0.199).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-02-25-chp-floor-v1.js",
+  "bundle": "results/calibration/ercot_chp_floor_v1"
+}
