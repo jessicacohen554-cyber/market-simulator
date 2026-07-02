@@ -1,0 +1,81 @@
+{
+  "tool_version": "0.1.0",
+  "iso": "SAMPLE",
+  "mode": "premium_cap",
+  "config": {
+    "iso": "SAMPLE",
+    "year": 2030,
+    "hours": 8760,
+    "profile_shape_year": null,
+    "mode": "premium_cap",
+    "premium_deltas": [
+      1.0,
+      2.0,
+      5.0,
+      7.0,
+      10.0,
+      20.0
+    ],
+    "matching_targets": [
+      0.8,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "strict_hourly_matching": false,
+    "lcoe_sensitivity": "mid",
+    "discount_rate": 0.07,
+    "active_resources": null,
+    "resource_caps_mw": {},
+    "resource_floors_mw": {},
+    "eac_premium_mwh": {},
+    "gas_price_mmbtu": 0.0,
+    "ccs_45q_per_ton": 85.0,
+    "additionality_only": false,
+    "excess_sale_fraction": 0.3,
+    "storage_epsilon": 0.001,
+    "load_growth_rate": 0.0,
+    "load_growth_years": 0,
+    "load_file": "data/sample/sample_load.csv",
+    "lmp_file": "data/sample/sample_lmp.csv",
+    "emissions_file": null
+  },
+  "solves": [
+    {
+      "setpoint": 1.0,
+      "status": "Optimal",
+      "matching_pct": 0.4787219591288582,
+      "premium_per_mwh": 1.0000000000000613
+    },
+    {
+      "setpoint": 2.0,
+      "status": "Optimal",
+      "matching_pct": 0.5119756911509584,
+      "premium_per_mwh": 2.0000000000000475
+    },
+    {
+      "setpoint": 5.0,
+      "status": "Optimal",
+      "matching_pct": 0.5897924118677562,
+      "premium_per_mwh": 4.999999999999857
+    },
+    {
+      "setpoint": 7.0,
+      "status": "Optimal",
+      "matching_pct": 0.6199174486051,
+      "premium_per_mwh": 6.999999999998394
+    },
+    {
+      "setpoint": 10.0,
+      "status": "Optimal",
+      "matching_pct": 0.6504283709174306,
+      "premium_per_mwh": 9.999999999999531
+    },
+    {
+      "setpoint": 20.0,
+      "status": "Optimal",
+      "matching_pct": 0.733799960094663,
+      "premium_per_mwh": 20.000000000000014
+    }
+  ]
+}

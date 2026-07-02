@@ -4,6 +4,12 @@ Writes two artifacts per sweep: a compact ``frontier`` table (one row per
 setpoint: matching%, premium, shadow price) and a ``build_mix`` table (build MW
 per resource per setpoint), both as Parquet — mirroring the market-sim
 one-file-per-result convention. Also renders a plain-text summary for the CLI.
+
+Since PP-09 (ADR 0014 §6) this is also the payload-assembly seam: the
+``write_outputs`` chain emits ``report.json`` + ``report.html`` **by default**
+(callers opt out with ``report=False`` / the CLI's ``--no-report``), and
+:func:`write_report` writes one report for a whole run — single-ISO or an
+``--all-isos`` batch (which is what makes the §2.6 multi-ISO table possible).
 """
 
 from __future__ import annotations
@@ -99,15 +105,58 @@ def write_run_metadata(
     return path
 
 
+def write_report(
+    sweeps: list[SweepResult],
+    configs: list[PortfolioConfig],
+    out_dir: str | Path,
+    *,
+    run_id: str | None = None,
+    report_hourly: str = "selected",
+) -> dict[str, Path]:
+    """Write ``report.json`` + ``report.html`` for one run (ADR 0014 §1/§3/§6).
+
+    One report per run: a single-ISO run passes one sweep/config pair, an
+    ``--all-isos`` batch passes one per ISO (yielding the §2.6 multi-ISO
+    table). ``report_hourly`` selects which setpoints carry §2.7 hourly series
+    (``"selected"``/``"all"``, §3 size discipline). Returns the written paths
+    keyed by ``"report_json"`` / ``"report_html"``.
+    """
+    # Local import: report.py imports frontier_table from this module, so the
+    # emission seam must not create an import cycle at module load.
+    from lce_portfolio.report import build_report_payload, render_report
+
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    payload = build_report_payload(
+        sweeps, configs, run_id=run_id, report_hourly=report_hourly
+    )
+    paths = {
+        "report_json": out_dir / "report.json",
+        "report_html": out_dir / "report.html",
+    }
+    paths["report_json"].write_text(json.dumps(payload, separators=(",", ":")))
+    paths["report_html"].write_text(render_report(payload))
+    return paths
+
+
 def write_outputs(
     sweep: SweepResult,
     out_dir: str | Path,
     config: PortfolioConfig | None = None,
+    *,
+    report: bool = True,
+    run_id: str | None = None,
+    report_hourly: str = "selected",
 ) -> dict[str, Path]:
     """Write frontier and build-mix Parquet files under ``out_dir``.
 
-    If ``config`` is given, also writes a run-metadata JSON. Returns a dict of the
-    written paths keyed by ``"frontier"`` / ``"build_mix"`` / ``"metadata"``.
+    If ``config`` is given, also writes a run-metadata JSON and — by default
+    (ADR 0014 §6) — the single-ISO ``report.json`` + ``report.html`` via
+    :func:`write_report`; pass ``report=False`` to suppress the report (the
+    CLI's ``--no-report``, and what the CLI batch path does per-ISO before
+    writing one combined report). Returns a dict of the written paths keyed by
+    ``"frontier"`` / ``"build_mix"`` / ``"metadata"`` / ``"report_json"`` /
+    ``"report_html"``.
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -119,6 +168,16 @@ def write_outputs(
     build_mix_table(sweep).to_parquet(paths["build_mix"], index=False)
     if config is not None:
         paths["metadata"] = write_run_metadata(sweep, config, out_dir)
+        if report:
+            paths.update(
+                write_report(
+                    [sweep],
+                    [config],
+                    out_dir,
+                    run_id=run_id,
+                    report_hourly=report_hourly,
+                )
+            )
     return paths
 
 
