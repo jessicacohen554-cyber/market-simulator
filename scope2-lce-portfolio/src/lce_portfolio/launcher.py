@@ -1112,8 +1112,11 @@ def main(argv: list[str] | None = None) -> int:
     and every per-run report auto-open — tests and CI never spawn a browser.
     """
     parser = argparse.ArgumentParser(description=__doc__)
+    # No --host flag on purpose (review finding LN-5): ADR 0016 defers any
+    # remote/network use of the launch page — "loopback binding is deliberate
+    # and stays" — and the un-authenticated server must never be reachable
+    # from another machine.
     parser.add_argument("--port", type=int, default=EPHEMERAL_PORT)
-    parser.add_argument("--host", default=DEFAULT_HOST)
     parser.add_argument("--no-open", action="store_true", help="never open a browser")
     parser.add_argument(
         "--state-dir",
@@ -1136,7 +1139,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     server = run_server(
-        host=args.host,
+        host=DEFAULT_HOST,
         port=args.port,
         state_dir=args.state_dir,
         results_dir=args.results,
