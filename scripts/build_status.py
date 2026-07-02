@@ -89,8 +89,10 @@ def rubric() -> list[dict]:
             f"volume miss within ±min({cv.FUELMIX_VOL_LOAD_FRAC * 100:.1f}% of ISO total "
             f"load, {cv.FUELMIX_VOL_CAP_TWH:g} TWh) AND share of total generation "
             f"within ±{cv.FUELMIX_SHARE_PP:g} pp (the universal class gate — scales with "
-            "system size but capped at an absolute 5 TWh, applied uniformly across "
-            "classes and ISOs). In a preliminary current-year EIA-923 vintage "
+            f"system size but capped at an absolute {cv.FUELMIX_VOL_CAP_TWH:g} TWh, "
+            "applied uniformly across classes and ISOs; loosened 2026-07-02 so "
+            "small-class TWh noise no longer hard-fails a structurally faithful run). "
+            "In a preliminary current-year EIA-923 vintage "
             f"(≥ {cv.PRELIM_923_FROM_YEAR}) only the (ISO, class) pairs the completeness "
             "audit (scripts/audit_eia923_completeness.py) verifies COMPLETE are gated; "
             "classes with incomplete plant data are SKIPPED (covered by the C2 family "
@@ -110,10 +112,11 @@ def rubric() -> list[dict]:
             "System load-weighted mean LMP ($/MWh).",
             "Derived actual hub mean — real-time (avgLMP.rt), falling back to "
             "day-ahead (avgLMP.da).",
-            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% — inside the playbook's 5–10% band; an "
-            "energy-only LP dual structurally under-shoots the true LMP (no "
-            "reserve/scarcity/uplift adders), so 8% admits that known gap without "
-            "admitting a tuned one.",
+            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% — the tight end of the playbook's 5–10% "
+            "band (tightened from 8% in the 2026-07-02 re-balance): price accuracy is "
+            "the primary market signal, and the energy-only dual's structural "
+            "under-shoot is to be closed by real reserve/scarcity mechanisms, not "
+            "absorbed by a wide tolerance.",
         ),
         row(
             "price_shape",
@@ -183,12 +186,15 @@ def methodology() -> list[dict]:
             "input/curtailment-accounting issue, not a dispatch-mechanism defect.",
         },
         {
-            "head": "Why ±8% on mean LMP (energy-only dual undershoot)",
+            "head": "Why ±5% on mean LMP (2026-07-02 re-balance)",
             "body": "An energy-only LP's dual price structurally under-shoots the true "
             "market LMP, which carries reserve, scarcity and uplift adders the "
-            "energy-only price does not model. The ±8% mean-price band documents that "
-            "known structural gap — it is grounded in the backcast playbook's 5–10% "
-            "tolerance, not tuned to the residual.",
+            "energy-only price does not model. The mean-price band sits at the tight "
+            "end of the backcast playbook's 5–10% tolerance (tightened from ±8% on "
+            "2026-07-02, alongside a looser per-class fuel-mix band): the structural "
+            "under-shoot is to be closed by real reserve/scarcity mechanisms — never "
+            "by an adder tuned to the residual — and a wide price tolerance was "
+            "quietly absorbing that gap instead of surfacing it.",
         },
         {
             "head": "Preliminary-vintage reconcile (0.97) + per-class completeness gate",

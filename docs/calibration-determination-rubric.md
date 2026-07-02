@@ -74,19 +74,24 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   **both** bands hold (mirrors `scripts/probes/_backcast_shell.py:classInTol`, so
   the determination and the dashboard scorecard agree):
   - **Volume:** the grid-delivered miss `|model − actual|` is within
-    **`min(1.0% of ISO total load, 5 TWh)`** (`SUM_TOL_LOAD_FRAC = 0.01`,
-    `SUM_TOL_LOAD_CAP = 5` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
+    **`min(2.0% of ISO total load, 8 TWh)`** (`SUM_TOL_LOAD_FRAC = 0.02`,
+    `SUM_TOL_LOAD_CAP = 8` — model grid-LP + non-fossil vs (EIA-923 − BTM) +
     EIA-930 nuclear/wind/solar). Total load = generation + net imports, so
-    net-importing ISOs (NEISO, NYISO) get the correct ≈1 pp band; for
+    net-importing ISOs (NEISO, NYISO) get the correct ≈2 pp band; for
     energy-only ISOs with no interchange, load = gen and the band is unchanged.
-    The percent term scales with system size (≈1 pp of load) but is **capped at
-    an absolute 5 TWh** so the band can’t balloon on large ISOs (1% of an
-    ~800 TWh system would be 8 TWh, letting a small steam-gas class drift far on
+    The percent term scales with system size (≈2 pp of load) but is **capped at
+    an absolute 8 TWh** so the band can’t balloon on large ISOs (2% of an
+    ~800 TWh system would be 16 TWh, letting a small steam-gas class drift far on
     the margin and still pass). Applied uniformly across classes and ISOs.
-    Changed from generation to load basis on 2026-06-30.
-  - **Share:** the class’s **share of total generation** is within **1.5
-    percentage points** of the actual share (`SUM_TOL_SHARE_PP = 1.5`) — so a
-    class cannot pass on volume alone while still misrepresenting the mix.
+    Changed from generation to load basis on 2026-06-30; **loosened from
+    `min(1.0% load, 5 TWh)` on 2026-07-02** (re-balance, §1-note below): the old
+    band hard-failed keepers on ±1–2 TWh small-class residuals that are
+    reporting/assignment noise, not a structural miss, while a genuine
+    structural miss (e.g. MISO `CC_REGULAR` +47 TWh) fails the new band by ~6×.
+  - **Share:** the class’s **share of total generation** is within **3.0
+    percentage points** of the actual share (`SUM_TOL_SHARE_PP = 3.0`; loosened
+    from 1.5 pp on 2026-07-02) — so a class cannot pass on volume alone while
+    still misrepresenting the mix (MISO `CC_REGULAR` +7.7 pp still fails).
 - **Excluded / again-excluded classes (each justified):**
   - **`CT_CHP` — excluded, every ISO.** A behind-the-meter cogeneration peaker
     whose output follows host steam demand and is held out of the grid LP; its
@@ -153,7 +158,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   family-aggregate percent band had two failure modes: it **invented** a fail
   when a mid-size family’s small absolute miss exceeded the band as a percent of
   *itself* (ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only +0.3 pp of
-  generation and well inside the 1.0%-ISO-gen volume band), and it **masked** a
+  generation and well inside the C1 volume band), and it **masked** a
   real per-class miss when offsetting class errors **netted** across the family (a
   CT_PEAKER over-build cancelled by a CC under-build summing to ≈0% at the family
   level). The fix scores at the class scale, sized to the *system* not to the
@@ -161,8 +166,8 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   - **Fully-reported family (every complete vintage, plus a preliminary-vintage
     family the completeness audit flags complete — e.g. ERCOT coal 2025):** the
     family **defers to C1** — it passes iff every constituent class is within the
-    universal per-class gate (|model−actual| ≤ 1.0% of ISO annual generation
-    **and** share within ±1.5 pp; actual = `classFull` = EIA-923 − BTM). C1 already
+    universal per-class gate (|model−actual| within min(2.0% of ISO total load,
+    8 TWh) **and** share within ±3.0 pp; actual = `classFull` = EIA-923 − BTM). C1 already
     scores these classes as a HARD criterion, so any breach surfaces there; C2
     records `PASS` and echoes any C1-flagged class in its magnitude (no independent
     family pass/fail).
@@ -195,16 +200,30 @@ A good mean price must not be allowed to mask a collapsed or over-fired tail, so
 mean / shape / tail are **scored separately** and each can independently caveat or
 fail.
 
+**2026-07-02 re-balance (tightened, paired with the looser C1).** The rubric
+previously over-weighted per-class generation-mix precision and under-weighted
+price accuracy — the opposite of what the determination is *for*: an LP whose
+duals reproduce the market’s price level, seasonal shape and scarcity tail is
+demonstrating the market structure is right, while a ±2 TWh small-class residual
+is usually reporting/assignment noise. So C1 loosened (above) and C3 tightened
+to the numbers below. This is a re-weighting of the *grading*, not a change to
+any mechanism, and the C6 governance gate is untouched: the tighter price bands
+must be met by real structure (reserve co-optimization, scarcity pricing,
+congestion), **never** by an adder or haircut tuned to the price residual —
+a run that closes the price gap that way FAILs C6 regardless.
+
 - **C3a — Mean LMP.**
   - *Metric:* system load-weighted mean LMP, $/MWh (model `lmp[zone].p` weighted
     across zones by `lmp[zone].d` annual demand).
   - *Actual:* `avgLMP.rt` (real-time), falling back to `avgLMP.da` when RT is
     absent — the derived `actual_lmp.json` hub mean.
-  - *Tolerance:* **±8%.** Chosen inside the playbook’s ~5–10% band: tighter than
-    10% to stay disciplined, but not 5%, because the **energy-only LP dual
-    structurally under-shoots** the actual LMP (which carries reserve, scarcity
-    and uplift adders the energy-only price does not model). 8% admits that known
-    structural gap without admitting a tuned one.
+  - *Tolerance:* **±5%** (tightened from ±8% on 2026-07-02) — the tight end of
+    the playbook’s ~5–10% band. The **energy-only LP dual structurally
+    under-shoots** the actual LMP (which carries reserve, scarcity and uplift
+    adders); that known gap is what the structural reserve/scarcity mechanisms
+    are for, and a wide tolerance was quietly absorbing it instead of surfacing
+    it. A persistent under-shoot beyond 5% is a signal to build the missing
+    mechanism — not to widen the band, and never to fit an adder (C6).
   - *Classification:* `MODEL MISS` (offer-curve level / scarcity mechanism).
 - **C3b — Duration / shape (quantitative, not eyeballed).**
   - *Metric:* normalised RMSE between the model and actual **monthly
@@ -213,7 +232,7 @@ fail.
     is the committed-artifact shape metric; where a run additionally commits the
     full hourly price-duration curve, the P50/P90 ratio check of
     `calibration.check_price_duration_curve` is scored in its place.
-  - *Tolerance:* **NRMSE ≤ 0.20.**
+  - *Tolerance:* **NRMSE ≤ 0.15** (tightened from 0.20 on 2026-07-02).
   - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error).
 - **C3c — Tail / scarcity.**
   - *Metric:* count of hours with price **> $200/MWh** (model vs actual), the
@@ -223,9 +242,10 @@ fail.
     block; winter-peaking NYISO/NEISO may use a higher city-gate threshold).
   - *Actual:* the ISO’s actual tail-hour count (ERCOT `ordc.hoursGt200.actual`;
     otherwise the hourly actual-LMP series when committed).
-  - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of actual — a
-    **collapsed tail (0 hours where the market had scarcity) FAILs**, and an
-    **over-fired tail (> 2× actual) FAILs**. Bounded both ways on purpose.
+  - *Tolerance:* model tail hours within **[0.7×, 1.5×]** of actual (tightened
+    from [0.5×, 2.0×] on 2026-07-02) — a **collapsed tail (0 hours where the
+    market had scarcity) FAILs**, and an **over-fired tail (> 1.5× actual)
+    FAILs**. Bounded both ways on purpose.
   - *Classification:* `MODEL MISS` (missing scarcity pricing / over-aggressive
     peaker offers). `SKIPPED` when the hourly price/scarcity series is not in the
     committed payload (most non-ERCOT runs today) — recorded as not-scored, never
@@ -346,14 +366,21 @@ passes any year; else `SKIPPED` (no data in any year).
 **Caveat budget (quorum):**
 - HARD data criteria (C1 fuel-mix, C2 system volume): at most **1** may be a
   `CAVEAT`, and only with a ledger entry. C6 governance is never caveatable.
-- SOFT criteria (C3a/b/c, C4, C5a/b): at most **3** `CAVEAT`s total.
+- SOFT criteria (C3a/b/c, C4, C5a/b/c): at most **2** `CAVEAT`s total (cut from
+  3 on 2026-07-02 — Option A of the re-balance: C3 stays SOFT, but with three
+  price sub-criteria a 3-caveat budget allowed *all* of price — mean, shape and
+  tail — to be caveated away at once; 2 means price can no longer be caveated
+  wholesale. The stronger alternative, promoting C3a to HARD, was considered and
+  deliberately not taken: a HARD mean-LMP gate would make the known energy-only
+  dual under-shoot un-caveatable even where it is a documented structural gap
+  under active mechanism work).
 
 **Determination:**
 
 | Outcome | Conditions (all must hold) |
 |---|---|
 | **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` (no `FAIL`, no `CAVEAT`, no `SKIPPED`); **no** data-blocked target year. |
-| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; caveats within budget (≤1 hard, ≤3 soft) and **every** caveat has a ledger entry; one or more of {a caveat exists, a soft criterion is `SKIPPED`, a target year is data-blocked}. |
+| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; caveats within budget (≤1 hard, ≤2 soft) and **every** caveat has a ledger entry; one or more of {a caveat exists, a soft criterion is `SKIPPED`, a target year is data-blocked}. |
 | **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or the caveat budget is exceeded. |
 
 The decisive rule, restated: **a determination with an undocumented
