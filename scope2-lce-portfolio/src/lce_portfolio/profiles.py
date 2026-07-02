@@ -140,17 +140,25 @@ def build_cf_matrix(
     year: int,
     *,
     profiles_dir: Path | None = None,
+    required: bool = False,
 ) -> np.ndarray:
     """Return the ``(n_res, T)`` hourly CF matrix for ``resources``.
 
     Selection of the shape source is keyed by ``iso``:
 
-    * ``iso == "SAMPLE"`` -> synthetic shapes (the data-free demo/test default).
+    * ``iso == "SAMPLE"`` -> synthetic shapes (the data-free demo/test default),
+      always, regardless of ``required``.
     * any other ISO -> load ``data/profiles/<ISO>_<year>.parquet`` (real
       market-sim-derived shapes). Resources present in the file take their real
       series; firm-clean resources not in the file stay flat at ``cf_assumed``;
-      storage rows are zero. If the file is missing, warn and fall back to the
-      full synthetic matrix (never crash).
+      storage rows are zero. If the file is missing: warn and fall back to the
+      full synthetic matrix when ``required=False`` (never crash); raise
+      ``FileNotFoundError`` when ``required=True``.
+
+    ``required`` defaults to ``False`` (the historical warn-and-fallback
+    behavior). Callers that pinned an explicit shape vintage
+    (``PortfolioConfig.profile_shape_year``) should pass ``required=True`` so a
+    real run never silently substitutes synthetic shapes for a missing file.
 
     ``profiles_dir`` overrides the default profile directory (used by tests to
     point at committed fixtures, keeping CI data-free).
@@ -162,6 +170,13 @@ def build_cf_matrix(
 
     path = profile_path(iso, year, profiles_dir)
     if not path.exists():
+        if required:
+            raise FileNotFoundError(
+                f"required CF profile missing at {path} for ISO={iso!r} "
+                f"year={year} (profile_shape_year was set explicitly; build it "
+                "with scripts/build_profiles.py, or unset profile_shape_year "
+                "to allow the synthetic fallback)"
+            )
         warnings.warn(
             f"no real CF profile at {path} for ISO={iso!r} year={year}; "
             "falling back to synthetic shapes",
