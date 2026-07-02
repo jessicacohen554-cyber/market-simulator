@@ -439,6 +439,206 @@ class TestCaisoRaStartupBridge(unittest.TestCase):
         np.testing.assert_allclose(floor[1], np.zeros(24))
 
 
+class TestCaisoRaBridgeDecommit(unittest.TestCase):
+    """The solar-proportional / seasonal decommitment control (caiso-48).
+
+    Extends :class:`TestCaisoRaStartupBridge`: with ``bridge_decommit`` on,
+    (1) an economic bridge is bounded to the 24-h day-ahead commitment horizon,
+    and (2) gap hours where the candidate floors exceed the P1 import/export
+    absorption reprice to ``surplus_floor_value`` and uneconomic bridges
+    decommit cheapest-startup-first (RUC order).
+    """
+
+    def _fleet(self, hours, import_mw=0.0, export_cap=0.0):
+        """Two merchant CCs (f-class + h-class) plus optional intertie rows.
+
+        Returns ``(gens, fa, p1)`` with both CCs running 6-9 and 18-23, cold
+        across the 8-h belly 10-17 (>= min-down, <= the 24-h DA horizon). The
+        import row dispatches ``import_mw`` flat; the export sink (capacity
+        ``export_cap``) sits unused, so its full capacity is absorption
+        headroom.
+        """
+        gens = [
+            Generator(
+                unit_id="CC_F",
+                name="CC_F",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,  # f-class: startup 48.6 $/MW, min_down 6h
+                eford=0.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="CC_H",
+                name="CC_H",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                heat_rate=6.4,  # h-class: startup 63.8 $/MW, min_down 8h
+                eford=0.0,
+                plant_group="CC_REGULAR",
+            ),
+            Generator(
+                unit_id="ext_import",
+                name="ext_import",
+                zone="z",
+                fuel_type="import",
+                pmax_mw=1000.0,
+                pmin_mw=0.0,
+                heat_rate=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="ext_export",
+                name="ext_export",
+                zone="z",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-export_cap if export_cap else 0.0,
+                heat_rate=0.0,
+                eford=0.0,
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=hours)
+        p1 = np.zeros((4, hours))
+        for g in (0, 1):
+            p1[g, 6:10] = 300.0
+            p1[g, 18:24] = 300.0
+        p1[2, :] = import_mw
+        return gens, fa, p1
+
+    # MC 30 vs LMP 25 (gas near-marginal): plain hold cost (30-25)*0.40*8 = 16
+    # < both startups, so WITHOUT the surplus screen both 8-h belly gaps bridge.
+    def _mc_lmp(self, hours, n_gen=4):
+        return np.full((n_gen, hours), 30.0), np.full((1, hours), 25.0)
+
+    def test_off_reproduces_startup_bridge(self):
+        # bridge_decommit off: both CCs bridge the belly even with ZERO
+        # absorption (the caiso-45 behaviour, byte-identical).
+        gens, fa, p1 = self._fleet(24)
+        mc, lmp = self._mc_lmp(24)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1, fa, gens, 0.40, p1_prices=lmp, base_mc=mc, startup_bridge=True
+        )
+        np.testing.assert_allclose(floor[0, 10:18], 120.0)
+        np.testing.assert_allclose(floor[1, 10:18], 120.0)
+
+    def test_surplus_decommits_ruc_order(self):
+        # Absorption 200 MW (imports that can back down) < candidate floors
+        # 240 MW -> surplus. RUC order: the cheap-start f-class (48.6) is
+        # checked first at full surplus — repriced hold (30-(-20))*0.40*8 =
+        # 160 > 48.6 -> decommitted. Its removal drops the floors to 120 <=
+        # 200, so the dear-start h-class sees NO surplus and holds (16 < 63.8).
+        gens, fa, p1 = self._fleet(24, import_mw=200.0)
+        mc, lmp = self._mc_lmp(24)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            bridge_decommit=True,
+            surplus_floor_value=-20.0,
+        )
+        np.testing.assert_allclose(floor[0], np.zeros(24))  # f-class cycled off
+        np.testing.assert_allclose(floor[1, 10:18], 120.0)  # h-class holds
+
+    def test_deep_surplus_decommits_all(self):
+        # Zero absorption: even after the f-class decommits the h-class floors
+        # still exceed absorption, the gap stays repriced at the renewable
+        # keep-running offer, and 160 > 63.8 cycles it off too.
+        gens, fa, p1 = self._fleet(24)
+        mc, lmp = self._mc_lmp(24)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            bridge_decommit=True,
+            surplus_floor_value=-20.0,
+        )
+        np.testing.assert_allclose(floor, np.zeros((4, 24)))
+
+    def test_export_headroom_is_absorption(self):
+        # An unused 300-MW export sink absorbs the full 240 MW of candidate
+        # floors -> no surplus, both bridges hold at the plain-LMP economics.
+        gens, fa, p1 = self._fleet(24, export_cap=300.0)
+        mc, lmp = self._mc_lmp(24)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            bridge_decommit=True,
+            surplus_floor_value=-20.0,
+        )
+        np.testing.assert_allclose(floor[0, 10:18], 120.0)
+        np.testing.assert_allclose(floor[1, 10:18], 120.0)
+
+    def test_da_horizon_caps_economic_bridge(self):
+        # A 30-h idle spell (> one 24-h DAM operating day) is a next-day
+        # decommit/re-offer decision: never bridged with the control on, even
+        # with abundant absorption — the SEASONAL decommitment. With the
+        # control off the plain restart inequality bridges it (16*30/8 = 60 vs
+        # ... (30-25)*0.40*30 = 60 -> use a slightly cheaper hold: LMP 26 ->
+        # (30-26)*0.40*30 = 48 < 48.6, bridged).
+        hours = 60
+        gens, fa, p1 = self._fleet(hours, import_mw=2000.0)
+        p1[:2, :] = 0.0
+        p1[0, 6:10] = 300.0
+        p1[0, 40:46] = 300.0  # gap 10..39 = 30 h
+        mc = np.full((4, hours), 30.0)
+        lmp = np.full((1, hours), 26.0)
+        floor_off = caiso_ra_mustoffer_min_gen(
+            p1, fa, gens, 0.40, p1_prices=lmp, base_mc=mc, startup_bridge=True
+        )
+        np.testing.assert_allclose(floor_off[0, 10:40], 120.0)  # padded 30 h
+        floor_on = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            bridge_decommit=True,
+            surplus_floor_value=-20.0,
+        )
+        np.testing.assert_allclose(floor_on[0], np.zeros(hours))
+
+    def test_physical_bridge_survives_decommit(self):
+        # A gap SHORTER than min-down is a physical restart bar — it holds
+        # through the surplus screen regardless of economics.
+        gens, fa, p1 = self._fleet(24)
+        p1[:2, :] = 0.0
+        p1[0, 6:10] = 300.0
+        p1[0, 13:19] = 300.0  # gap 10..12 = 3 h < 6 h f-class min-down
+        mc, lmp = self._mc_lmp(24)
+        floor = caiso_ra_mustoffer_min_gen(
+            p1,
+            fa,
+            gens,
+            0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            bridge_decommit=True,
+            surplus_floor_value=-20.0,
+        )
+        np.testing.assert_allclose(floor[0, 10:13], 120.0)
+
+
 class TestFindRuns(unittest.TestCase):
     """Tests for the consecutive-True segment finder."""
 
