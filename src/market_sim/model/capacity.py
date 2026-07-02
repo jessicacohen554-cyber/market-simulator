@@ -133,6 +133,23 @@ _FOM_MULTIPLIER: dict[str, str] = {
 # Source: NREL ATB 2024 -- typical gas combined-cycle book life.
 _THERMAL_PLANT_LIFE_YEARS: int = 40
 
+# Zone that hosts economic new entry and the adequacy backstop, per ISO.
+# The default is the ISO's largest-load-share zone; MISO is pinned because at
+# the six-zone refinement the largest share flipped to MISO-South (0.2711) —
+# an unacceptable default for what is overwhelmingly a Midwest build pipeline.
+# MISO-Illinois is the central Midwest wheel-through zone, so a default-sited
+# build distorts the congestion topology least (scope doc §5 item 12).
+_NEW_ENTRY_DEFAULT_ZONE: dict[str, str] = {"MISO": "MISO-Illinois"}
+
+
+def _default_build_zone(iso_config) -> str:
+    """Return the default zone for new entry / adequacy-backstop builds."""
+    pinned = _NEW_ENTRY_DEFAULT_ZONE.get(iso_config.name)
+    if pinned is not None:
+        return pinned
+    return max(iso_config.zones, key=lambda z: z.load_share).name
+
+
 # Placeholder capacity factor for screening CCS retrofit economics -- a
 # representative mid-merit combined-cycle duty cycle.
 # TODO: use each unit's actual prior-year capacity factor once per-generator
@@ -1117,7 +1134,7 @@ def apply_economic_new_entry(
         )
     queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
     per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW[iso_config.name]
-    zone = max(iso_config.zones, key=lambda z: z.load_share).name
+    zone = _default_build_zone(iso_config)
     # Locational gate: new thermal built into a zone already long on deliverable
     # firm capacity vs its requirement earns no capacity payment (RA saturated
     # there), so new entry is not pulled forward where the zone is already
@@ -1337,7 +1354,7 @@ def apply_reserve_margin_build(
     if build_mw <= 0.0:
         return fleet, 0.0
 
-    zone = max(iso_config.zones, key=lambda z: z.load_share).name
+    zone = _default_build_zone(iso_config)
     unit = _make_new_generator(
         "gas_ct", build_mw, zone, year, 0, config, iso_config.name
     )
