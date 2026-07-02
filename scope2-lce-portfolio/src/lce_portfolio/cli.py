@@ -74,7 +74,20 @@ def run_one_iso(
     emission_rate = (
         prepare_emission_rate(emissions_path, config.iso) if emissions_path else None
     )
-    cf = build_cf_matrix(resources, config.iso, config.year)
+    # profile_shape_year decouples the CF-profile vintage from the modeled
+    # `year` (config.py docstring); when set, a missing file is a hard error
+    # instead of the default warn-and-synthetic-fallback.
+    shape_year = (
+        config.profile_shape_year
+        if config.profile_shape_year is not None
+        else config.year
+    )
+    cf = build_cf_matrix(
+        resources,
+        config.iso,
+        shape_year,
+        required=config.profile_shape_year is not None,
+    )
 
     sweep = run_sweep(config, resources, load, lmp, cf, emission_rate=emission_rate)
     paths = write_outputs(sweep, out_dir, config=config)

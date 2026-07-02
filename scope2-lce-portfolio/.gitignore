@@ -20,6 +20,14 @@ data/profiles/*
 data/emissions/*
 !data/emissions/.gitkeep
 
+# Stylized reference load (ADR-ratification facility), built deterministically
+# by scripts/make_reference_load.py. At ~2 MB (52560 rows: 6 ISOs x 8760h) it
+# is over the repo's small-file commit guideline, so it's regenerated on
+# demand (examples/run_real_sweep.py does this automatically) rather than
+# committed; the generator is the source of truth.
+data/reference/*
+!data/reference/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]
