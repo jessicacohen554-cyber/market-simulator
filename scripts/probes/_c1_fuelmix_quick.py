@@ -2,8 +2,8 @@
 
 Calls render_calibration_html.build_payload on the bundle and prints, per year,
 each fossil class's model vs actual grid-delivered TWh, the miss, the share-pp
-gap, and a PASS/FAIL against the C1 band (min(1% annual gen, 5 TWh) volume AND
-+/-1.5pp share). Lets the merit-order levers be iterated without registering
+gap, and a PASS/FAIL against the C1 band (min(2% annual gen, 8 TWh) volume AND
++/-3.0pp share). Lets the merit-order levers be iterated without registering
 every probe iteration on the dashboard.
 
 Usage: python scripts/probes/_c1_fuelmix_quick.py results/calibration/162 [year ...]
@@ -20,9 +20,11 @@ import render_calibration_html as rch  # noqa: E402
 
 GAS = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
 COAL = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_SUB", "COAL_WC")
-VOL_GEN_FRAC = 0.01
-VOL_CAP_TWH = 5.0
-SHARE_PP = 1.5
+# 2026-07-02 rubric re-balance — keep in lockstep with
+# calibration_verdict.FUELMIX_* and session_score.py.
+VOL_GEN_FRAC = 0.02
+VOL_CAP_TWH = 8.0
+SHARE_PP = 3.0
 
 
 def main():

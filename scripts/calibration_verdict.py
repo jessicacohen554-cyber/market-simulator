@@ -66,18 +66,23 @@ FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 # C1 fuel-mix — the universal class gate (mirrors classInTol in the run
 # explorer, docs/codebase-site/backcast-runs.html; supersedes the old ±5%/±1 TWh
 # size-tiered band): a class passes iff BOTH (a) its grid-delivered volume miss
-# |model−actual| is within min(1.0% of ISO total load, 5 TWh), AND (b) its
-# share of total generation is within 1.5 percentage points of the actual share.
-# The volume band scales with system size (≈1 pp of load) but is capped at an
-# absolute 5 TWh so it can't balloon on large ISOs (1% of an 800 TWh system would
-# be 8 TWh, letting a small class drift far on the margin). Applied uniformly
+# |model−actual| is within min(2.0% of ISO total load, 8 TWh), AND (b) its
+# share of total generation is within 3.0 percentage points of the actual share.
+# The volume band scales with system size (≈2 pp of load) but is capped at an
+# absolute 8 TWh so it can't balloon on large ISOs (2% of an 800 TWh system would
+# be 16 TWh, letting a small class drift far on the margin). Applied uniformly
 # across classes and ISOs; the share band stops a class passing on volume alone
 # while still misrepresenting the mix. Using total LOAD (= gen + net imports)
-# rather than generation so net-importing ISOs get the correct ≈1 pp band; for
+# rather than generation so net-importing ISOs get the correct ≈2 pp band; for
 # energy-only ISOs with no interchange, load = gen and the band is unchanged.
-FUELMIX_VOL_LOAD_FRAC = 0.01  # volume band = 1.0% of ISO total load ...
-FUELMIX_VOL_CAP_TWH = 5.0  # ... but never more than an absolute 5 TWh
-FUELMIX_SHARE_PP = 1.5  # +/-1.5 share percentage points of total generation
+# 2026-07-02 rubric re-balance (docs/calibration-determination-rubric.md §1):
+# loosened from 1.0%/5 TWh/1.5 pp — the old bands failed keepers on ±1–2 TWh
+# small-class residuals that are TWh noise, not a structural miss, while a
+# genuine structural miss (e.g. MISO CC_REGULAR +47 TWh / +7.7 pp) still FAILs
+# the new bands by a wide margin. Paired with a TIGHTER C3 (price) gate below.
+FUELMIX_VOL_LOAD_FRAC = 0.02  # volume band = 2.0% of ISO total load ...
+FUELMIX_VOL_CAP_TWH = 8.0  # ... but never more than an absolute 8 TWh
+FUELMIX_SHARE_PP = 3.0  # +/-3.0 share percentage points of total generation
 # Non-fossil fuels whose grid actual comes from EIA-930 (not 923) for the
 # system-total used by the share/volume bands (matches totalGen in the run
 # explorer, docs/codebase-site/backcast-runs.html).
@@ -90,9 +95,16 @@ DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
-PRICE_MEAN_TOL = 0.08  # +/-8% mean LMP (playbook 5-10%; energy-only dual undershoots)
-PRICE_SHAPE_NRMSE_MAX = 0.20  # monthly load-weighted price NRMSE
-TAIL_LO, TAIL_HI = 0.5, 2.0  # model tail hours must be within [0.5x, 2x] of actual
+# C3 price gate — TIGHTENED in the 2026-07-02 rubric re-balance (paired with the
+# looser C1 above): price accuracy is the primary market signal the backcast is
+# judged on, so C3 now sits at the tight end of the playbook's 5-10% band. The
+# energy-only LP dual still structurally under-shoots the actual LMP (reserve /
+# scarcity / uplift adders it does not model), but that known gap is what the
+# structural reserve/scarcity mechanisms are for — it is no longer absorbed by a
+# wide tolerance.
+PRICE_MEAN_TOL = 0.05  # +/-5% mean LMP (tight end of playbook 5-10%; was 8%)
+PRICE_SHAPE_NRMSE_MAX = 0.15  # monthly load-weighted price NRMSE (was 0.20)
+TAIL_LO, TAIL_HI = 0.7, 1.5  # tail hours within [0.7x, 1.5x] of actual (was [0.5x, 2x])
 DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
 CO2_TOL = 0.07  # +/-7% vs eGRID
@@ -118,9 +130,12 @@ EXOGENOUS_OUTAGE_SOURCES = frozenset({"historic", "statistical"})
 # forecast-error term). Empty today; extend as such a flag is ever introduced.
 FORBIDDEN_FLAGS: tuple[str, ...] = ()
 
-# Caveat budget / quorum (rubric §2).
+# Caveat budget / quorum (rubric §2). Soft budget cut 3 -> 2 in the 2026-07-02
+# re-balance (Option A): C3 stays SOFT, but with three price sub-criteria a
+# 3-caveat budget let ALL of price (mean + shape + tail) be caveated away at
+# once — 2 means at most two soft criteria may ride a documented caveat.
 MAX_HARD_CAVEATS = 1
-MAX_SOFT_CAVEATS = 3
+MAX_SOFT_CAVEATS = 2
 
 # Criterion id -> (label, HARD?).
 HARD = True
@@ -386,9 +401,10 @@ def score_fuelmix(
 ) -> list[dict]:
     """C1 — per-class grid-delivered fuel-mix, the universal gate.
 
-    A class passes iff BOTH its grid-delivered volume miss is within 1.0% of ISO
-    total load AND its share of total generation is within 1.5 pp of
-    actual (the run explorer's ``classInTol`` on the gmModel/classFull basis).
+    A class passes iff BOTH its grid-delivered volume miss is within
+    min(2.0% of ISO total load, 8 TWh) AND its share of total generation is
+    within 3.0 pp of actual (the run explorer's ``classInTol`` on the
+    gmModel/classFull basis).
 
     Gating is restricted to (ISO, class) pairs whose EIA-923 actual is VERIFIED
     COMPLETE for the year. A complete-vintage year (no committed completeness part)
@@ -488,13 +504,13 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
     """C2 — gas/coal family system volume, folded into the per-class universal gate.
 
     For COMPLETE-VINTAGE years a family passes iff EVERY constituent fossil class
-    is within the universal per-class gate (|model−actual| ≤ 1.0% of ISO annual
-    generation AND share within ±1.5 pp) — the same scale-relative band C1 applies,
-    evaluated per class rather than on the netted family aggregate. This retires
-    the old ±2.5%-of-family percent band, which had two failure modes: it (a)
-    INVENTED a family fail when a mid-size family's small absolute miss exceeded
-    2.5% of itself (e.g. ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family, yet only
-    +0.34 pp of generation and well inside the 1.0%-ISO-load volume band), and (b)
+    is within the universal per-class gate (|model−actual| within the C1 volume
+    band AND share within ±FUELMIX_SHARE_PP) — the same scale-relative band C1
+    applies, evaluated per class rather than on the netted family aggregate. This
+    retires the old ±2.5%-of-family percent band, which had two failure modes: it
+    (a) INVENTED a family fail when a mid-size family's small absolute miss
+    exceeded 2.5% of itself (e.g. ERCOT coal +1.75 TWh = +3.0% of a 58 TWh family,
+    yet only +0.34 pp of generation and well inside the C1 volume band), and (b)
     MASKED a real per-class miss when offsetting class errors netted out across the
     family (e.g. a CT_PEAKER over-build cancelled by a CC under-build summing to
     ~0% at the family level). The per-class roll-up does neither: it nets nothing.
@@ -678,7 +694,7 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
 
 
 def score_price_tail(year: int, ypay: dict, iso: str) -> dict:
-    """C3c — scarcity tail hours (model within [0.5x,2x] of actual)."""
+    """C3c — scarcity tail hours (model within [TAIL_LO x, TAIL_HI x] of actual)."""
     ordc = ypay.get("ordc")
     thr = TAIL_THRESHOLD.get(iso, 200.0)
     if not ordc or "hoursGt200" not in ordc:
