@@ -311,6 +311,95 @@ class TestMisoDesign(unittest.TestCase):
         self.assertTrue(np.allclose(req, 1000.0 + MISO_REGULATING_RESERVE_MW))
 
 
+class TestMisoZonalDesign(unittest.TestCase):
+    """MISO locational (zonal) reserve families (miso_zonal_reserves)."""
+
+    _ZONES = ["MISO-West", "MISO-South"]
+
+    def _south_fleet(self, T=24):
+        """2-zone fleet: 1,000 MW CC in West (zone 0), 800 MW CC in South."""
+        from market_sim.data.fleet import FUEL_TYPE_NAMES
+
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        return FleetArrays(
+            pmax=np.array([1000.0, 800.0]),
+            pmin=np.array([200.0, 150.0]),
+            heat_rate=np.array([7.0, 7.5]),
+            vom=np.zeros(2),
+            emission_rate=np.zeros(2),
+            nox_rate=np.zeros(2),
+            so2_rate=np.zeros(2),
+            zone_idx=np.array([0, 1]),
+            fuel_type_idx=np.array([cc, cc]),
+            availability=np.ones((2, T)),
+            unit_ids=["cc_west", "cc_south"],
+            efficiency_bin=np.zeros(2),
+            plant_code=np.array([100, 300]),
+        )
+
+    def test_default_off_single_family(self):
+        cfg = _cfg(iso="MISO")
+        design = get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+        self.assertEqual(len(design.families), 1)
+
+    def test_south_family_added(self):
+        cfg = _cfg(iso="MISO", miso_zonal_reserves=True)
+        design = get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+        self.assertEqual(len(design.families), 2)
+        fam = design.families[1]
+        self.assertEqual(fam.name, "miso_zonal_or_miso_south")
+        np.testing.assert_array_equal(fam.zone_mask, [False, True])
+        # Requirement = within-zone MSSC = the 800 MW South CC.
+        self.assertTrue(np.allclose(fam.requirement, 800.0))
+
+    def test_zonal_curve_is_published_steps(self):
+        from market_sim.config.reserve_config import MISO_ZONAL_ORDC_STEPS
+
+        cfg = _cfg(iso="MISO", miso_zonal_reserves=True)
+        design = get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+        fam = design.families[1]
+        np.testing.assert_allclose(
+            fam.ordc_penalties, [p for _, p in MISO_ZONAL_ORDC_STEPS]
+        )
+        np.testing.assert_allclose(
+            fam.ordc_step_widths,
+            [frac * 800.0 for frac, _ in MISO_ZONAL_ORDC_STEPS],
+        )
+        # Step widths span the full requirement (balance row stays feasible
+        # at zero cleared zonal reserve).
+        self.assertAlmostEqual(float(fam.ordc_step_widths.sum()), 800.0)
+
+    def test_zone_override(self):
+        cfg = _cfg(
+            iso="MISO",
+            miso_zonal_reserves=True,
+            miso_zonal_reserve_zones=("MISO-West",),
+        )
+        design = get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+        fam = design.families[1]
+        self.assertEqual(fam.name, "miso_zonal_or_miso_west")
+        self.assertTrue(np.allclose(fam.requirement, 1000.0))
+
+    def test_unknown_zone_raises(self):
+        cfg = _cfg(
+            iso="MISO",
+            miso_zonal_reserves=True,
+            miso_zonal_reserve_zones=("MISO-Narnia",),
+        )
+        with self.assertRaises(ValueError):
+            get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+
+    def test_multi_family_kwargs(self):
+        cfg = _cfg(iso="MISO", miso_zonal_reserves=True)
+        design = get_reserve_design(cfg, self._south_fleet(), 24, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertEqual(kw["reserve_requirement"].shape, (2, 24))
+        np.testing.assert_array_equal(
+            kw["reserve_balance_zone_mask"], [[True, True], [False, True]]
+        )
+        np.testing.assert_array_equal(kw["reserve_balance_class"], [0, 0])
+
+
 class TestNyisoDesign(unittest.TestCase):
     """NYISO locational reserve design."""
 
