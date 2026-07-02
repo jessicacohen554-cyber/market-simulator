@@ -393,6 +393,16 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         assert "unknown iso" in body["error"]
 
 
+# --- Loopback-only binding (review finding LN-5) ----------------------------
+
+
+def test_launcher_cli_has_no_host_flag() -> None:
+    """LN-5: ADR 0016 defers remote use — the un-authenticated server binds
+    loopback only, and no CLI flag may rebind it to another interface."""
+    with pytest.raises(SystemExit):
+        lce_launcher.main(["--host", "0.0.0.0", "--no-open"])
+
+
 # --- Non-finite / empty numeric lists (review finding LN-4) -----------------
 
 
