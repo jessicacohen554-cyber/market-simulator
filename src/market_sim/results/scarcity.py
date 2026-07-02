@@ -1564,6 +1564,49 @@ def load_pjm_measured_reserve_requirement(
     return np.resize(req, hours)
 
 
+def load_pjm_measured_mad_reserve_requirement(
+    year: int,
+    hours: int = 8760,
+    data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Return the measured MAD-subzone Primary Reserve requirement (MW), hourly.
+
+    The Mid-Atlantic/Dominion Reserve Subzone requirement (Manual 11 sec 4.2:
+    the RTO Reserve Zone's one Reserve Subzone) — column ``mad_pr_req_mw`` in
+    ``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet``, built by
+    ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner RT reserve
+    market results (``locale == "MAD"``, ``service == "PR"``). Like the RTO
+    series it is a measured *reliability* quantity (the subzone's contingency
+    + deliverability need), not a price actual — admissible per CLAUDE.md #12.
+    The per-gen reserve co-optimization uses it as the locational balance
+    family's RHS (docs/multi-iso/pjm-reserve-ordc.md Phase 2).
+
+    Returns ``None`` when the parquet is absent or predates the MAD column
+    (caller then builds the RTO family only).
+    """
+    path = Path(data_dir) / f"pjm_{year}_as_up_mw.parquet"
+    if not path.exists():
+        return None
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    if "mad_pr_req_mw" not in df.columns:
+        return None
+    req = df["mad_pr_req_mw"].to_numpy(dtype=float)
+    # Same defensive fill as the RTO loader: holes read as 0; forward/back-fill
+    # so the requirement is never spuriously zero.
+    if (req <= 0.0).any():
+        good = req > 0.0
+        if good.any():
+            idx = np.where(good, np.arange(len(req)), -1)
+            np.maximum.accumulate(idx, out=idx)
+            idx[idx < 0] = np.flatnonzero(good)[0]
+            req = req[idx]
+    if len(req) >= hours:
+        return req[:hours]
+    return np.resize(req, hours)
+
+
 def pjm_primary_reserve_requirement(
     lsc_mw: float,
     hours: int,

@@ -68,12 +68,17 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AS_DIR = REPO_ROOT / "inputs" / "raw-data" / "PJM-AS"
+# W1 collapsed inputs/raw-data into data/raw (CLAUDE.md directory map); the
+# source and output parquets both live under data/raw/PJM-AS.
+AS_DIR = REPO_ROOT / "data" / "raw" / "PJM-AS"
 
 DEFAULT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
 
-# RTO-wide reserve zone and the binding upward product (nests Synchronized).
+# Reserve zones (Manual 11 sec 4.2: the RTO Reserve Zone and its one Reserve
+# Subzone, Mid-Atlantic/Dominion) and the binding upward product (Primary,
+# which nests Synchronized — Manual 11 sec 4.4.1).
 _LOCALE = "PJM_RTO"
+_LOCALE_MAD = "MAD"  # Mid-Atlantic/Dominion reserve subzone
 _PRIMARY = "PR"
 _SYNCHRONIZED = "SR"  # carried as a reference column only
 
@@ -92,14 +97,17 @@ _FULL_INDEX = pd.MultiIndex.from_arrays(
 )
 
 
-def _hourly_requirement(year: int, service: str) -> tuple[np.ndarray, int]:
-    """Hourly PJM_RTO ``as_req_mw`` for ``service`` on the non-leap clock.
+def _hourly_requirement(
+    year: int, service: str, locale: str = _LOCALE
+) -> tuple[np.ndarray, int]:
+    """Hourly ``as_req_mw`` for ``service`` in ``locale`` on the non-leap clock.
 
-    Reads the RT 5-minute reserve-market parquet, filters to the RTO reserve
-    zone and ``service``, and averages each clock hour's twelve 5-minute
-    intervals. Feb-29 is dropped; the result is reindexed onto the fixed
-    non-leap calendar and interpolated across the DST spring-forward gap and the
-    one ~24-hour data hole (the requirement is never legitimately zero).
+    Reads the RT 5-minute reserve-market parquet, filters to the reserve
+    zone (``locale``: RTO-wide ``PJM_RTO`` or the Mid-Atlantic/Dominion
+    subzone ``MAD``) and ``service``, and averages each clock hour's twelve
+    5-minute intervals. Feb-29 is dropped; the result is reindexed onto the
+    fixed non-leap calendar and interpolated across the DST spring-forward gap
+    and the one ~24-hour data hole (the requirement is never legitimately zero).
 
     Returns ``(series, n_missing)`` where ``n_missing`` is the count of clock
     hours that had no source data and were interpolated.
@@ -108,7 +116,7 @@ def _hourly_requirement(year: int, service: str) -> tuple[np.ndarray, int]:
     df = pd.read_parquet(
         path, columns=["datetime_beginning_ept", "locale", "service", "as_req_mw"]
     )
-    df = df[(df["locale"] == _LOCALE) & (df["service"] == service)].copy()
+    df = df[(df["locale"] == locale) & (df["service"] == service)].copy()
     dt = pd.to_datetime(
         df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
     )
@@ -153,6 +161,12 @@ def build_year(year: int) -> bool:
 
     pr_req, pr_missing = _hourly_requirement(year, _PRIMARY)
     sr_req, _ = _hourly_requirement(year, _SYNCHRONIZED)
+    # Mid-Atlantic/Dominion subzone requirements (Manual 11 sec 4.2) — the
+    # locational RHS of the per-gen reserve co-opt's MAD balance family
+    # (docs/multi-iso/pjm-reserve-ordc.md Phase 2). Same measured source,
+    # same clock; reference-only until the pergen build consumes them.
+    mad_pr_req, mad_missing = _hourly_requirement(year, _PRIMARY, _LOCALE_MAD)
+    mad_sr_req, _ = _hourly_requirement(year, _SYNCHRONIZED, _LOCALE_MAD)
     as_up = pr_req  # Primary requirement = the withheld upward quantity.
 
     print(
@@ -162,6 +176,10 @@ def build_year(year: int) -> bool:
         f"({pr_missing} h interpolated)"
     )
     print(f"  Synchronized req (ref): mean {sr_req.mean() / 1000:5.2f} GW")
+    print(
+        f"  MAD Primary req (subzone): mean {mad_pr_req.mean() / 1000:5.2f} GW   "
+        f"({mad_missing} h interpolated)"
+    )
 
     frame = pd.DataFrame(
         {
@@ -169,6 +187,8 @@ def build_year(year: int) -> bool:
             "sr_req_mw": sr_req,
             "pr_req_mw": pr_req,
             "as_up_mw": as_up,
+            "mad_sr_req_mw": mad_sr_req,
+            "mad_pr_req_mw": mad_pr_req,
         }
     )
 
@@ -186,7 +206,10 @@ def build_year(year: int) -> bool:
             "5-min aggregated to the non-leap 8760-hour PJM-local "
             "clock. sr_req_mw (Synchronized requirement) carried "
             "for reference only; as_up_mw == pr_req_mw is the "
-            "withheld series.",
+            "withheld series. mad_pr_req_mw / mad_sr_req_mw are the "
+            "Mid-Atlantic/Dominion reserve-subzone requirements "
+            "(locale MAD, Manual 11 sec 4.2) for the per-gen "
+            "reserve co-opt's locational balance family.",
             "units": "MW (cleared reserve requirement per hour)",
             "year": str(year),
         }
