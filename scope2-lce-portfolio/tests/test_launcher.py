@@ -16,6 +16,7 @@ import contextlib
 import json
 import os
 import re
+import shutil
 import socket
 import subprocess
 import sys
@@ -391,6 +392,53 @@ def test_launcher_rejects_bad_run_over_http(tmp_path: Path) -> None:
         )
         assert status == 400
         assert "unknown iso" in body["error"]
+
+
+# --- run_lce.sh end-to-end (ADR 0016 §1; review finding LN-10) ---------------
+
+
+@pytest.mark.skipif(shutil.which("bash") is None, reason="bash not available")
+def test_run_lce_sh_starts_and_serves(tmp_path: Path) -> None:
+    """LN-10: ADR 0016 §1 says CI exercises the .sh path end-to-end, but the
+    tests only ever invoked `python -m lce_portfolio.launcher` directly —
+    the script's Python resolution (../.venv → PATH fallback with the
+    3.11+/import gate) and PYTHONPATH wiring were untested. Run the actual
+    script and confirm it resolves a Python, binds loopback, and serves."""
+    script = _PORTFOLIO_ROOT / "launcher" / "run_lce.sh"
+    assert script.exists() and os.access(script, os.X_OK)
+
+    proc = subprocess.Popen(
+        [
+            "bash",
+            str(script),
+            "--no-open",
+            "--port",
+            "0",
+            "--results",
+            str(tmp_path / "results"),
+            "--state-dir",
+            str(tmp_path / "launcher_state"),
+            "--inputs-dir",
+            str(tmp_path),
+        ],
+        cwd=str(_PORTFOLIO_ROOT),
+        env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        port = _wait_for_serving_url(proc)
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=10) as resp:
+            assert resp.status == 200
+            assert "text/html" in resp.headers.get("Content-Type", "")
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=10)
 
 
 # --- Worker-thread error discipline (review finding LN-9) --------------------
