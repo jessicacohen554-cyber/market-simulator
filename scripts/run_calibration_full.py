@@ -1699,6 +1699,7 @@ def solve_and_persist(
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
+    ercot_ecrs_conservative_deployment: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
@@ -1920,6 +1921,7 @@ def solve_and_persist(
             energy_reserve_coopt=energy_reserve_coopt,
             miso_zonal_reserves=miso_zonal_reserves,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
+            ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
@@ -2197,6 +2199,7 @@ def solve_and_persist(
         "energy_reserve_coopt": energy_reserve_coopt,
         "miso_zonal_reserves": miso_zonal_reserves,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
+        "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
         "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
@@ -2357,6 +2360,10 @@ def solve_and_persist(
         )
     if ercot_multiproduct_as_coopt:
         recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
+    if ercot_ecrs_conservative_deployment:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_ecrs_conservative_deployment=True
+        )
     if ercot_as_aware_commitment:
         recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
     if ercot_reserve_supply_cap:
@@ -4920,6 +4927,21 @@ def main() -> None:
         "Requires --energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--ercot-ecrs-conservative-deployment",
+        action="store_true",
+        help="ERCOT: represent the PUBLISHED pre-reform ECRS deployment design "
+        "on the multi-product co-opt's ECRS demand curve — from ECRS go-live "
+        "(2023-06-10, data-carried) through 2024-07-31 ECRS had NO price-based "
+        "release to SCED (manual reliability deployment only; IMM 2023 SOM: "
+        "'artificial shortage pricing … doubled average energy prices' Jun-Dec "
+        "2023, >$12B), so the ECRS family prices as a single step AT THE OFFER "
+        "CAP; from 2024-08-01 (operating-procedure release trigger; PUCT "
+        "rejected NPRR1224's $750 floor 2024-07-25) it reverts to the standing "
+        "VOLL-anchored ramp. Published market-design dates, no fitted "
+        "parameter. Requires --energy-reserve-coopt + "
+        "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
         help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
@@ -6154,6 +6176,7 @@ def main() -> None:
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         ercot_storage_as_endogenous=args.ercot_storage_as_endogenous,
+        ercot_ecrs_conservative_deployment=args.ercot_ecrs_conservative_deployment,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,

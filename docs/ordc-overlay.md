@@ -94,6 +94,18 @@ surface. The flat 0/1,400 ScenarioConfig default is retained for
 continuity; a forecast scenario wanting the published curve points
 `ordc_lolp_params_path` at the CSV with `ordc_lolp_shift_sigma = 0`.
 
+**2023-vintage retry (2026-07-02) — still blocked.** A fresh fetch attempt
+for the table in force during calendar 2023 failed on every host: ercot.com
+and mis.ercot.com (report 13233 listing) return HTTP 403 both through the
+egress proxy and the external fetcher; the 2022/2024 Biennial ORDC report
+PDFs (ercot.com and the PUCT Interchange mirror, Project 55999 item 75 /
+Project 52933) and web.archive.org are equally denied. NP6-576-ER was
+decommissioned at the RTC+B go-live (PR447-03), so pre-2025 postings exist
+only in the MIS archive — a manual fetch (as done for the 2025 postings) is
+the only remaining route. Per the no-tuning rule the flat 0/1,400 fallback
+stays for keepers; σ is documented as within 5% of the published 2025
+vintage and not the 2023 residual driver.
+
 ## Model mapping
 
 ### Reserves
