@@ -1062,5 +1062,200 @@ class TestMisoZonalReserveLP(unittest.TestCase):
         self.assertGreater(south_zonal, west_zonal + 1.0)
 
 
+class TestPerGenReserveCoopt(unittest.TestCase):
+    """Per-generator reserve columns (R[j] ≤ ramp10, joint P+R ≤ cap).
+
+    The Phase-2 PJM build (docs/multi-iso/pjm-reserve-ordc.md): reserve
+    competes with energy on the same marginal unit, so the balance dual
+    carries the sub-shortage OPPORTUNITY COST (the offer-curve spread), not
+    just the shortfall penalty — the structure the zone-aggregate co-opt
+    cannot price (it honestly clears $0 off pooled headroom).
+    """
+
+    def _fleet(self, pmax, mc_hr, zone_idx=None):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_ct")
+        n, T = len(pmax), 4
+        return (
+            FleetArrays(
+                pmax=np.asarray(pmax, dtype=float),
+                pmin=np.zeros(n),
+                heat_rate=np.asarray(mc_hr, dtype=float),
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=(
+                    np.zeros(n, dtype=int)
+                    if zone_idx is None
+                    else np.asarray(zone_idx, dtype=int)
+                ),
+                fuel_type_idx=np.full(n, gas_idx),
+                availability=np.ones((n, T)),
+                unit_ids=[f"g{i}" for i in range(n)],
+                efficiency_bin=np.zeros(n),
+                plant_code=np.arange(1, n + 1),
+            ),
+            T,
+        )
+
+    def _solve_one_zone(self, req_mw, gen_idx, ramp10, demand_mw=1000.0):
+        # Gen 0: cheap ($10), 1,100 MW. Gen 1: expensive ($50), 500 MW.
+        # PJM-style two-step shortfall curve: 190 MW at $300, rest at $850.
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([1100.0, 500.0], [10.0, 50.0])
+        return solve_dispatch(
+            fleet,
+            np.full((1, T), demand_mw),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),  # MC = heat_rate
+            voll=2000.0,
+            reserve_requirement=np.full(T, float(req_mw)),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, float(req_mw)]),
+            reserve_pergen_gen_idx=np.asarray(gen_idx, dtype=int),
+            reserve_pergen_ramp10=np.asarray(ramp10, dtype=float),
+        )
+
+    def test_slack_headroom_clears_at_zero(self):
+        # Demand 500 on the 1,100 MW cheap unit: 200 MW reserve rides free
+        # headroom (ramp10 300) — reserve price $0, LMP stays at $10.
+        r = self._solve_one_zone(200.0, [0], [300.0], demand_mw=500.0)
+        self.assertEqual(r.status, "Optimal")
+        self.assertTrue(np.allclose(r.reserve_price, 0.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.prices, 10.0, atol=1e-6))
+
+    def test_opportunity_cost_prices_reserve_below_penalty(self):
+        # THE per-gen mechanism: demand 1,000, cheap cap 1,100, requirement
+        # 200 held ONLY on the cheap unit -> it backs down to 900, the $50
+        # unit serves 100, LMP = $50, and the balance dual = the FORGONE
+        # MARGIN $50 - $10 = $40 — an opportunity-cost reserve price strictly
+        # below the cheapest $300 shortfall step. The zone-aggregate layout
+        # prices this hour $0 (pooled headroom 1,100 + 500 - 1,000 >= 200).
+        r = self._solve_one_zone(200.0, [0], [300.0])
+        self.assertEqual(r.status, "Optimal")
+        self.assertTrue(np.allclose(r.prices, 50.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.reserve_price, 40.0, atol=1e-6))
+        # dispatch backed down: cheap unit 900, expensive 100
+        self.assertTrue(np.allclose(r.dispatch[0], 900.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.dispatch[1], 100.0, atol=1e-6))
+        # zonal reserve block carries the held 200 MW
+        self.assertTrue(np.allclose(r.reserve_dispatch.sum(axis=0), 200.0))
+
+    def test_ramp10_exhausted_prices_shortfall_step(self):
+        # Requirement 600 > sum ramp10 500 (300 + 200): 100 MW shortfall on
+        # the cheapest $300 band sets the reserve price at the published
+        # penalty; the second unit's spare headroom can't help past ramp10.
+        r = self._solve_one_zone(600.0, [0, 1], [300.0, 200.0])
+        self.assertEqual(r.status, "Optimal")
+        self.assertTrue(np.allclose(r.reserve_price, 300.0, atol=1e-6))
+
+    def test_nested_mad_family_binds_locationally(self):
+        # Two zones, unconstrained interchange for energy; family 0 (RTO) spans
+        # both, family 1 (subzone, zone 1 only) requires 150 MW that must come
+        # from zone 1's single 200 MW unit (ramp10 200). Zone 1 serves 100 MW
+        # of local demand... with P+R <= 200 and R >= 150, P <= 50, so 50+ MW
+        # imports and the subzone family binds on zone-1 columns only.
+        import scipy.sparse as sp
+
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([2000.0, 200.0], [10.0, 30.0], zone_idx=[0, 1])
+        incidence = sp.csr_matrix(np.array([[1.0], [-1.0]]))
+        r = solve_dispatch(
+            fleet,
+            np.array([[800.0] * T, [100.0] * T]),
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            incidence=incidence,
+            ttc=np.array([1000.0]),
+            reserve_requirement=np.vstack([np.full(T, 300.0), np.full(T, 150.0)]),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0, 300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 300.0, 190.0, 150.0]),
+            reserve_balance_zone_mask=np.array([[True, True], [False, True]]),
+            reserve_balance_ordc_counts=np.array([2, 2]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_ramp10=np.array([500.0, 200.0]),
+        )
+        self.assertEqual(r.status, "Optimal")
+        # Zone 1 holds at least its 150 MW subzone requirement locally.
+        self.assertTrue(np.all(r.reserve_dispatch[1] >= 150.0 - 1e-6))
+        # RTO family met (zone sums >= 300).
+        self.assertTrue(np.all(r.reserve_dispatch.sum(axis=0) >= 300.0 - 1e-6))
+
+    def test_plant_aggregated_column_shares_headroom(self):
+        # Two tranches of ONE plant (cheap $10 600 MW + expensive $50 500 MW)
+        # share an R column via pergen_col=[0,0]: the joint row sums BOTH
+        # tranches' P against the summed cap, so the plant can back its
+        # reserve with the idle expensive tranche's headroom. Demand 600
+        # loads the cheap tranche fully; holding 200 MW costs nothing (500 MW
+        # idle headroom, ramp10 300) -> reserve price $0. The per-tranche
+        # layout (identity mapping, ramp10 split pro-rata) would price the
+        # cheap tranche's backdown instead.
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([600.0, 500.0], [10.0, 50.0])
+        r = solve_dispatch(
+            fleet,
+            np.full((1, T), 600.0),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            reserve_requirement=np.full(T, 200.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 200.0]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_col=np.array([0, 0]),
+            reserve_pergen_ramp10=np.array([300.0]),
+        )
+        self.assertEqual(r.status, "Optimal")
+        self.assertTrue(np.allclose(r.reserve_price, 0.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.prices, 10.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.reserve_dispatch.sum(axis=0), 200.0))
+
+    def test_pergen_rejects_zone_aggregate_scoping(self):
+        # supply-cap / online-gating are zone-aggregate mechanisms the per-gen
+        # ramp10 bound supersedes; combining them is a wiring error.
+        with self.assertRaises(ValueError):
+            self._solve_and_cap()
+
+    def _solve_and_cap(self):
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([1100.0, 500.0], [10.0, 50.0])
+        return solve_dispatch(
+            fleet,
+            np.full((1, T), 1000.0),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            reserve_requirement=np.full(T, 200.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 200.0]),
+            reserve_pergen_gen_idx=np.array([0]),
+            reserve_pergen_ramp10=np.array([300.0]),
+            reserve_supply_cap=np.full((1, T), 500.0),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
