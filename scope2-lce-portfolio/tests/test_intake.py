@@ -146,3 +146,133 @@ def test_collapse_zonal_lmp_load_weighted_with_zero_load_hour() -> None:
     assert collapsed.loc[0, "lmp"] == pytest.approx(40.0)
     # hour 1: zero total load -> simple mean of 20 and 40
     assert collapsed.loc[1, "lmp"] == pytest.approx(30.0)
+
+
+# --- intake validation hardening (audit findings IO-2/IO-3/IO-5/IO-6) --------
+
+
+def _full_lmp_df(**overrides) -> pd.DataFrame:
+    """One ISO, full 8760 calendar, constant price unless overridden."""
+    df = pd.DataFrame(
+        {
+            "hour": np.arange(HOURS_PER_YEAR),
+            "iso": "A",
+            "lmp": np.full(HOURS_PER_YEAR, 30.0),
+        }
+    )
+    for col, val in overrides.items():
+        df.loc[0, col] = val
+    return df
+
+
+def test_nan_lmp_rejected(tmp_path) -> None:
+    """A NaN price must not flow into the LP objective (IO-2)."""
+    path = tmp_path / "lmp.csv"
+    _full_lmp_df(lmp=np.nan).to_csv(path, index=False)
+    with pytest.raises(ValueError, match="non-finite lmp"):
+        prepare_lmp(path, "A")
+
+
+def test_nan_emission_rate_rejected(tmp_path) -> None:
+    """NaN passes a `< 0` sign check, so finiteness is checked first (IO-2)."""
+    from lce_portfolio.intake import prepare_emission_rate
+
+    df = pd.DataFrame(
+        {
+            "hour": np.arange(HOURS_PER_YEAR),
+            "iso": "A",
+            "fossil_avg_co2_rate": np.full(HOURS_PER_YEAR, 0.4),
+        }
+    )
+    df.loc[10, "fossil_avg_co2_rate"] = np.nan
+    path = tmp_path / "rates.csv"
+    df.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="non-finite fossil_avg_co2_rate"):
+        prepare_emission_rate(path, "A")
+
+
+def test_nan_and_negative_load_rejected(tmp_path) -> None:
+    """A NaN load hour was silently summed to 0 MWh; negatives accepted (IO-3)."""
+    base = _long_df()
+    cfg = PortfolioConfig()
+
+    nan_df = base.copy()
+    nan_df.loc[0, "load_mwh"] = np.nan
+    path = tmp_path / "load_nan.csv"
+    nan_df.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="non-finite load_mwh"):
+        prepare_load(path, "A", cfg)
+
+    neg_df = base.copy()
+    neg_df.loc[0, "load_mwh"] = -50.0
+    path = tmp_path / "load_neg.csv"
+    neg_df.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="negative load_mwh"):
+        prepare_load(path, "A", cfg)
+
+
+def test_float_hour_column_consistent_across_intakes(tmp_path) -> None:
+    """Integer-valued float hours load identically in load and LMP paths (IO-5).
+
+    Regression: a float64 hour column raised a raw IndexError in the load
+    aggregation while the LMP path accepted the same file.
+    """
+    float_load = _long_df()
+    float_load["hour"] = float_load["hour"].astype(float)
+    agg = aggregate_by_hour_iso(float_load)
+    assert np.allclose(agg["A"], 15.0)
+
+    frac = _long_df()
+    frac["hour"] = frac["hour"].astype(float)
+    frac.loc[0, "hour"] = 0.5
+    with pytest.raises(ValueError, match=r"integers in \[0, 8759\]"):
+        aggregate_by_hour_iso(frac)
+
+
+def test_leap_length_file_clean_error_in_direct_api() -> None:
+    """An 8784-hour frame errors cleanly in aggregate_by_hour_iso (IO-6).
+
+    Regression: hours 8760..8783 passed the missing-hour check (0..8759 all
+    present) and overflowed the 8760 vector with a raw IndexError.
+    """
+    df = pd.DataFrame(
+        {
+            "hour": np.arange(HOURS_PER_YEAR + 24),
+            "iso": "A",
+            "load_mwh": 1.0,
+        }
+    )
+    with pytest.raises(ValueError, match=r"integers in \[0, 8759\]"):
+        aggregate_by_hour_iso(df)
+
+
+def test_collapse_zonal_lmp_rejects_nan_price_and_negative_weight() -> None:
+    """NaN zonal prices and negative load weights are errors (IO-2/IO-4).
+
+    Regression: pandas' skipna sum dropped a NaN price from the weighted
+    numerator while its load stayed in the denominator, biasing the collapsed
+    price toward zero with no warning.
+    """
+    lmp = pd.DataFrame(
+        {
+            "hour": [0, 0],
+            "iso": ["A", "A"],
+            "zone": ["z1", "z2"],
+            "lmp": [np.nan, 100.0],
+        }
+    )
+    load = pd.DataFrame(
+        {
+            "hour": [0, 0],
+            "iso": ["A", "A"],
+            "zone": ["z1", "z2"],
+            "load_mwh": [50.0, 50.0],
+        }
+    )
+    with pytest.raises(ValueError, match="non-finite lmp"):
+        collapse_zonal_lmp(lmp, load)
+
+    lmp["lmp"] = [10.0, 100.0]
+    load["load_mwh"] = [300.0, -200.0]
+    with pytest.raises(ValueError, match="negative load_mwh weight"):
+        collapse_zonal_lmp(lmp, load)
