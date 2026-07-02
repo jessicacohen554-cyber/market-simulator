@@ -13,9 +13,10 @@ def test_valid_defaults() -> None:
     assert cfg.mode == "premium_cap"
 
 
-def test_excess_sale_fraction_default_is_haircut() -> None:
-    """ADR 0005: excess_sale_fraction default is 0.75, not full resale."""
-    assert PortfolioConfig().excess_sale_fraction == 0.75
+def test_excess_sale_fraction_default_is_full_resale() -> None:
+    """ADR 0005 (amended & ratified 2026-07-02): surplus credited at full
+    hourly ISO-average LMP — excess_sale_fraction defaults to 1.0."""
+    assert PortfolioConfig().excess_sale_fraction == 1.0
 
 
 def test_new_fields_defaults_and_validation() -> None:
