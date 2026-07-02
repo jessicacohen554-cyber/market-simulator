@@ -26,6 +26,13 @@ Per-ISO caps come from ``data/caps/resource_caps.csv`` (ADR 0009): an ISO with a
 rows there restricts eligibility to the resources it lists (cap_mw>0); an ISO
 absent from the table falls back to the table's ``cap_max_default_mw``. The
 override precedence is ``config.resource_caps_mw`` > caps table > default.
+
+Fuel-burning low-carbon rows (gas CC + CCS, ADR 0012) stay ``capex_fixed`` but
+additionally carry ``heat_rate_mmbtu_mwh``/``capture_rate``/
+``emission_rate_ton_mwh``: their effective VOM adds delivered gas fuel cost
+(``data/fuel/gas_prices.csv`` or ``config.gas_price_mmbtu``) net of the IRA
+§45Q credit, and the ADR 0012 admissibility threshold (capture > 0.90, residual
+< 0.050 tCO2/MWh) is enforced at load time.
 """
 
 from __future__ import annotations
@@ -43,6 +50,22 @@ _PKG_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_COST_TABLE = _PKG_ROOT / "data" / "lcoe" / "resource_costs.csv"
 DEFAULT_CAPS_TABLE = _PKG_ROOT / "data" / "caps" / "resource_caps.csv"
 DEFAULT_HYDRO_BUDGETS = _PKG_ROOT / "data" / "hydro" / "monthly_budgets.csv"
+DEFAULT_GAS_PRICES = _PKG_ROOT / "data" / "fuel" / "gas_prices.csv"
+
+# Pre-capture CO2 intensity of pipeline natural gas (tCO2/MMBtu burned).
+# Source: EPA GHG Emission Factors Hub / 40 CFR Part 98 Table C-1: 53.06 kg
+# CO2/MMBtu for pipeline natural gas (EIA carbon coefficient 52.91 kg/MMBtu
+# agrees to <0.3%). Upstream methane is deliberately excluded (ADR 0012,
+# deferred). Used both for the residual emission rate cross-check and to size
+# the per-MWh 45Q credit: captured tCO2/MWh = capture_rate × this × heat_rate.
+NG_CO2_TON_PER_MMBTU = 0.0531
+
+# ADR 0012 low-carbon admissibility threshold for fossil matching resources: a
+# resource counts fully toward hourly matching iff capture_rate > 0.90 (strict)
+# AND residual emission rate < 0.050 tCO2/MWh (strict). A row failing either
+# test is not admissible to the catalog at all — enforced at load time.
+CCS_MIN_CAPTURE_RATE = 0.90
+CCS_MAX_EMISSION_RATE_TON_MWH = 0.050
 
 # Resources whose annual energy is governed by a monthly energy budget rather than
 # a flat CF — existing conventional hydro (ADR 0008, §Hydro). Kept as an explicit
@@ -81,6 +104,8 @@ class ResourceArrays:
     # --- existing-resource / additionality flags (ADR 0008) ---------------
     is_existing: np.ndarray = None  # (n_res,) bool; going-forward PPA (ppa_mwh)
     is_budget_hydro: np.ndarray = None  # (n_res,) bool; monthly-energy-budget hydro
+    # --- residual emissions (ADR 0012) -------------------------------------
+    emission_rate_ton_mwh: np.ndarray = None  # (n_res,) residual tCO2/MWh generated
 
     def __post_init__(self) -> None:
         """Default the optional flag arrays to zeros/False when omitted.
@@ -102,6 +127,8 @@ class ResourceArrays:
             object.__setattr__(self, "is_existing", np.zeros(n, dtype=bool))
         if self.is_budget_hydro is None:
             object.__setattr__(self, "is_budget_hydro", np.zeros(n, dtype=bool))
+        if self.emission_rate_ton_mwh is None:
+            object.__setattr__(self, "emission_rate_ton_mwh", np.zeros(n, dtype=float))
 
     @property
     def n_res(self) -> int:
@@ -211,6 +238,43 @@ def load_hydro_budget_mwh(iso: str, path: Path | None = None) -> np.ndarray | No
     return load_hydro_budgets(iso, path) * GWH_TO_MWH
 
 
+def load_gas_price(iso: str, path: Path | None = None) -> float | None:
+    """Return the delivered natural-gas price ($/MMBtu) for ``iso``, or ``None``.
+
+    Reads ``data/fuel/gas_prices.csv`` (ADR 0012): per-ISO delivered prices for
+    the ~2030 modeled year at the market simulator's forward-mode fidelity
+    (AEO2025 Reference Henry Hub + per-ISO basis differential; see the table's
+    ``basis``/``notes`` columns for citations). Mirrors the
+    :func:`load_hydro_budget_mwh` pattern: an ISO with no row returns ``None``
+    rather than raising, so the caller decides whether a missing price matters
+    (it is fatal only when a fuel-burning resource is active). A non-positive
+    table price is a data error and raises.
+    """
+    src = path or DEFAULT_GAS_PRICES
+    for row in _read_csv(src):
+        if row["iso"].strip() != iso:
+            continue
+        price = _f(row, "price_mmbtu")
+        if price <= 0:
+            raise ValueError(
+                f"gas price table {src}: non-positive price_mmbtu for iso {iso!r}"
+            )
+        return price
+    return None
+
+
+def _resolve_gas_price(config: PortfolioConfig, gas_table: Path | None) -> float | None:
+    """Resolve the delivered gas price with precedence config > table > None.
+
+    A ``config.gas_price_mmbtu > 0`` explicit override wins; otherwise the
+    per-ISO table value; otherwise ``None`` (the caller raises if a
+    fuel-burning resource actually needs it — ADR 0012).
+    """
+    if config.gas_price_mmbtu > 0:
+        return config.gas_price_mmbtu
+    return load_gas_price(config.iso, gas_table)
+
+
 def _resolve_cap(
     name: str,
     config: PortfolioConfig,
@@ -229,6 +293,7 @@ def load_resource_arrays(
     config: PortfolioConfig,
     cost_table: Path | None = None,
     caps_table: Path | None = None,
+    gas_table: Path | None = None,
 ) -> ResourceArrays:
     """Build :class:`ResourceArrays` for the resources active under ``config``.
 
@@ -241,6 +306,25 @@ def load_resource_arrays(
     Costs are resolved per ``cost_basis`` at the ``config.lcoe_sensitivity``
     column (see the module docstring), and caps follow the precedence
     ``config.resource_caps_mw`` > caps table > ``cap_max_default_mw``.
+
+    **Fuel-burning low-carbon resources (ADR 0012).** A row with
+    ``heat_rate_mmbtu_mwh > 0`` (gas CC + CCS) gets its fuel cost and IRA §45Q
+    credit folded into its effective VOM at load time::
+
+        vom = vom_table + heat_rate × delivered_gas_price
+              − capture_rate × (0.0531 tCO2/MMBtu × heat_rate) × ccs_45q_per_ton
+
+    clamped at ≥ 0. The delivered gas price resolves as
+    ``config.gas_price_mmbtu`` (> 0 wins) > per-ISO ``data/fuel/gas_prices.csv``
+    (``gas_table`` overrides the path) > hard error — a fuel-burning resource
+    must never dispatch at zero fuel cost. The ADR 0012 admissibility threshold
+    (``capture_rate > 0.90`` and ``emission_rate_ton_mwh < 0.050``) is enforced
+    here for every row: qualifying output counts *fully* toward matching (no
+    intensity-weighted discount), and its residual CO2 is reported via
+    ``emission_rate_ton_mwh``. Additionality (ADR 0008) deliberately does NOT
+    sweep CCS in: ``is_existing`` stays keyed to ``cost_basis == "ppa_mwh"``
+    only, so the ``gas_cc_ccs_retrofit`` tranche — capex-basis new capture
+    capacity bolted onto an existing plant — counts as new/additional supply.
     """
     path = cost_table or DEFAULT_COST_TABLE
     rows = _read_csv(path)
@@ -285,12 +369,18 @@ def load_resource_arrays(
             crf_cache[life] = capital_recovery_factor(config.discount_rate, life)
         return crf_cache[life]
 
+    # Delivered gas price is resolved lazily: only a fuel-burning row forces the
+    # lookup, so runs without CCS never touch the fuel table (ADR 0012).
+    gas_price_resolved = False
+    gas_price: float | None = None
+
     names: list[str] = []
     is_storage, is_split = [], []
     is_existing, is_budget_hydro = [], []
     fixed_mwyr, vom, cost_energy_mwhyr = [], [], []
     cap_max, cap_min, cf_assumed = [], [], []
     duration_h, duration_min_h, duration_max_h, rte = [], [], [], []
+    emission_rate = []
 
     for row in rows:
         name = row["resource"]
@@ -306,6 +396,27 @@ def load_resource_arrays(
         row_dur = _f(row, "duration_h")
         row_dmin = _f(row, "duration_min_h")
         row_dmax = _f(row, "duration_max_h")
+
+        # --- ADR 0012: partial-capture fossil resource columns --------------
+        row_heat_rate = _f(row, "heat_rate_mmbtu_mwh")  # MMBtu/MWh; 0 = no fuel
+        row_capture = _f(row, "capture_rate")  # fraction; 0/blank = not set
+        row_emission = _f(row, "emission_rate_ton_mwh")  # residual tCO2/MWh
+
+        # Low-carbon admissibility threshold (ADR 0012), enforced at load time:
+        # matching credit is all-or-nothing, so a fossil row that fails either
+        # bright-line test must never enter the catalog at all.
+        if row_emission >= CCS_MAX_EMISSION_RATE_TON_MWH:
+            raise ValueError(
+                f"resource {name!r}: emission_rate_ton_mwh={row_emission} fails the "
+                f"ADR 0012 low-carbon threshold (must be < "
+                f"{CCS_MAX_EMISSION_RATE_TON_MWH} tCO2/MWh to count toward matching)"
+            )
+        if row_capture > 0.0 and row_capture <= CCS_MIN_CAPTURE_RATE:
+            raise ValueError(
+                f"resource {name!r}: capture_rate={row_capture} fails the ADR 0012 "
+                f"low-carbon threshold (must be > {CCS_MIN_CAPTURE_RATE} to count "
+                "toward matching)"
+            )
 
         if basis == "capex_fixed":
             # ATB overnight capex ($/kW) -> $/MW-yr via CRF, plus FOM ($/kW-yr).
@@ -337,6 +448,36 @@ def load_resource_arrays(
         else:
             raise ValueError(f"unknown cost_basis {basis!r} for {name}")
 
+        # --- fuel cost + 45Q for fuel-burning rows (ADR 0012) ----------------
+        if row_heat_rate > 0.0:
+            if not gas_price_resolved:
+                gas_price = _resolve_gas_price(config, gas_table)
+                gas_price_resolved = True
+            if gas_price is None:
+                raise ValueError(
+                    f"resource {name!r} burns gas (heat_rate_mmbtu_mwh="
+                    f"{row_heat_rate}) but no delivered gas price is available "
+                    f"for iso {config.iso!r}: set config.gas_price_mmbtu (> 0) "
+                    "or add a row to data/fuel/gas_prices.csv — a fuel-burning "
+                    "resource must not dispatch at zero fuel cost (ADR 0012)"
+                )
+            # Net variable cost (ADR 0012): capture/fixed-O&M VOM component from
+            # the table, plus fuel, minus the 45Q credit on captured CO2:
+            #   vom = vom_table + heat_rate × delivered_gas
+            #         − capture_rate × (NG_CO2_TON_PER_MMBTU × heat_rate) × 45Q
+            captured_ton_mwh = row_capture * NG_CO2_TON_PER_MMBTU * row_heat_rate
+            row_vom = (
+                row_vom
+                + row_heat_rate * gas_price
+                - captured_ton_mwh * config.ccs_45q_per_ton
+            )
+            # Clamp at zero: at low gas prices a $85/t 45Q can exceed fuel+VOM,
+            # and a negative net VOM would pay the LP to generate into the
+            # excess/dump path to farm the credit. The real credit is bounded by
+            # actually-stored tonnage; modeling sub-zero variable cost is out of
+            # scope (ADR 0012), so the floor keeps the LP honest.
+            row_vom = max(0.0, row_vom)
+
         cap = _resolve_cap(name, config, iso_caps, _f(row, "cap_max_default_mw"))
         floor = config.resource_floors_mw.get(name, 0.0)
         if floor > cap:
@@ -360,6 +501,7 @@ def load_resource_arrays(
         duration_min_h.append(row_dmin)
         duration_max_h.append(row_dmax)
         rte.append(_f(row, "rte", 1.0) if stor else 1.0)
+        emission_rate.append(row_emission)
 
     return ResourceArrays(
         names=names,
@@ -377,4 +519,5 @@ def load_resource_arrays(
         duration_max_h=np.array(duration_max_h, dtype=float),
         is_existing=np.array(is_existing, dtype=bool),
         is_budget_hydro=np.array(is_budget_hydro, dtype=bool),
+        emission_rate_ton_mwh=np.array(emission_rate, dtype=float),
     )
