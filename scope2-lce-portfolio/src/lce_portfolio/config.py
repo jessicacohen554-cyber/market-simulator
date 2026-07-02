@@ -70,6 +70,21 @@ class PortfolioConfig:
     premium column for ``ppa_mwh`` existing resources (ADR 0008). When a resource
     name is present here its value replaces the table column; absent resources use
     the table value. Values must be non-negative. Empty ``{}`` = use the table."""
+    gas_price_mmbtu: float = 0.0
+    """Delivered natural-gas price override ($/MMBtu) for fuel-burning resources
+    (ADR 0012). Resolution precedence: a value > 0 here wins; else the per-ISO
+    delivered price from ``data/fuel/gas_prices.csv`` (Henry Hub AEO2025
+    Reference ~2030 + the market sim's per-ISO basis differential); else — if a
+    fuel-burning resource is active — resource loading raises (a CCS resource
+    must never dispatch at zero fuel cost). 0.0 (default) = use the table."""
+    ccs_45q_per_ton: float = 85.0
+    """IRA §45Q carbon-sequestration credit ($/tCO₂ captured and geologically
+    stored), netted off the variable cost of capture-equipped resources as
+    ``capture_rate × pre-capture intensity × ccs_45q_per_ton`` (ADR 0012).
+    Default 85.0 = 26 U.S.C. §45Q as amended by the IRA 2022 for saline
+    geologic storage (cross-checked vs market_sim ``policy/ira.py``
+    ``CCUS_45Q_CREDIT_PER_TON = 85.0``). Set 0 to disable the credit. Flat —
+    45Q vintage/duration limits deferred per ADR 0012."""
     additionality_only: bool = False
     """If True, only *additional* (newly-built) clean supply may count toward
     hourly matching — existing PPA resources still dispatch but their matched
@@ -136,6 +151,10 @@ class PortfolioConfig:
             raise ValueError("matching_targets must all be in [0, 1]")
         if any(v < 0 for v in self.eac_premium_mwh.values()):
             raise ValueError("eac_premium_mwh values must be non-negative")
+        if self.gas_price_mmbtu < 0:
+            raise ValueError("gas_price_mmbtu must be non-negative (0 = use table)")
+        if self.ccs_45q_per_ton < 0:
+            raise ValueError("ccs_45q_per_ton must be non-negative (0 = disabled)")
 
     def with_overrides(self, **changes) -> "PortfolioConfig":
         """Return a copy with ``changes`` applied (dataclasses.replace wrapper)."""

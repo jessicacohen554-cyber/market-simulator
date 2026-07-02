@@ -40,6 +40,8 @@ def frontier_table(sweep: SweepResult) -> pd.DataFrame:
                 "grid_buy_mwh": r.grid_buy_mwh,
                 "total_load_mwh": r.total_load_mwh,
                 "residual_co2_tons": r.residual_co2_tons,
+                "grid_co2_tons": r.grid_co2_tons,
+                "resource_co2_tons": r.resource_co2_tons,
                 "shadow_price": r.shadow_price,
                 "status": r.status,
             }
@@ -123,10 +125,11 @@ def write_outputs(
 def summarize(sweep: SweepResult) -> str:
     """Render a human-readable summary of the sweep frontier and mix.
 
-    A residual-carbon column (tCO₂/yr from unmatched grid purchases, ADR 0013) is
-    shown only when the hourly fossil-average emission rate produced a nonzero
-    residual for at least one sweep point; otherwise the layout matches the
-    pre-carbon summary.
+    A residual-carbon column (tCO₂/yr = unmatched grid purchases at the hourly
+    fossil-average rate, ADR 0013, plus partial-capture resource residuals,
+    ADR 0012; the grid/resource split lives in the frontier Parquet) is shown
+    only when at least one sweep point has a nonzero residual; otherwise the
+    layout matches the pre-carbon summary.
     """
     setpoint_label = "premium$/MWh" if sweep.mode == "premium_cap" else "target"
     show_co2 = any(r.residual_co2_tons > 0 for r in sweep.results)
