@@ -390,6 +390,53 @@ def main() -> None:
     # use). Without this every non-ERCOT facility missed the bin sheet, fell
     # through QUALIFYING_PLANT_GROUPS, and produced zero unit-outage windows.
     name_by_code: dict[int, str] = {}
+    # ALL model plant groups at a plant code (a mixed coal/CC facility like
+    # Chesterfield 3797 carries several) — the per-unit group resolver below
+    # routes each CAMPD unit's outage to the bin matching the UNIT's own
+    # class, not whichever group the last fleet row happened to carry.
+    groups_by_code: dict[int, set[str]] = {}
+
+    def _resolve_unit_group(
+        is_coal: bool,
+        unit_type: str,
+        fac_groups: set[str],
+        fac_group: str | None,
+    ) -> str:
+        """Route a CAMPD unit's outage row to the model bin matching the UNIT.
+
+        ``group_by_code`` keeps ONE group per plant code, so at a mixed
+        facility every unit's window landed on that single bin — Chesterfield
+        (3797): 1,036 MW of coal units 5/6, out Apr-Dec 2023 for their
+        retirement, were tagged CC_REGULAR and blocked the surviving 386 MW
+        gas-CC plant for most of 2023 (the pjm-75 2023 CC under-run
+        root-cause finding, ~2.35 TWh). Resolution: a solid-fuel unit is
+        always COAL; a non-coal unit at a facility whose primary group is
+        COAL (or non-qualifying) is routed by its CAMPD ``unitType`` to the
+        facility's matching gas bin; otherwise the facility group stands
+        (single-group gas facilities are byte-identical). A row routed to a
+        ``(plant_code, group)`` bin absent from the model fleet is skipped by
+        the overlay (outages.unit_outage_derate_factors) — correct: a retired
+        coal unit's window must not derate the surviving gas plant.
+        """
+        if is_coal:
+            return "COAL"
+        if fac_group in QUALIFYING_PLANT_GROUPS and fac_group != "COAL":
+            return str(fac_group)
+        ut = str(unit_type).strip().lower()
+        if "combined cycle" in ut:
+            for g in ("CC_REGULAR", "CC_CHP"):
+                if g in fac_groups:
+                    return g
+            return "CC_REGULAR"
+        if "combustion turbine" in ut:
+            if "CT_CHP" in fac_groups:
+                return "CT_CHP"
+            return "CT_PEAKER"  # excluded downstream: peakers carry no overlay
+        for g in ("ST_GAS", "ST_CHP"):
+            if g in fac_groups:
+                return g
+        return str(fac_group or "")
+
     if iso == "ERCOT":
         bins = pd.read_csv(args.bins)
         group_by_code = {
@@ -414,6 +461,7 @@ def main() -> None:
             if int(g.plant_code) > 0 and g.plant_group:
                 group_by_code[int(g.plant_code)] = g.plant_group
                 name_by_code[int(g.plant_code)] = g.name
+                groups_by_code.setdefault(int(g.plant_code), set()).add(g.plant_group)
     # Facility names for units re-keyed by the CEMS->EIA split-plant remap
     # (their CAMPD facilityName is the legacy plant's).
     remap_names = {
@@ -457,10 +505,17 @@ def main() -> None:
             ]
             for fac_id, fac in df.groupby("facilityId", observed=True):
                 group = group_by_code.get(int(fac_id))
+                fac_groups = groups_by_code.get(
+                    int(fac_id), {group} if group else set()
+                )
                 # Only the coal/CC/gas-steam fleet carries an outage overlay;
                 # peakers (CT and the listed ST_GAS peakers) dispatch
-                # economically and are skipped, matching the overlay.
-                if group not in QUALIFYING_PLANT_GROUPS:
+                # economically and are skipped, matching the overlay. A
+                # facility qualifies when ANY of its model bins does — a
+                # mixed plant whose primary lookup lands on CT_PEAKER can
+                # still carry derivable coal/CC units (per-unit resolution
+                # below routes and skips unit-by-unit).
+                if not (fac_groups & QUALIFYING_PLANT_GROUPS):
                     continue
                 if int(fac_id) in ST_GAS_PEAKER_PLANTS:
                     continue
@@ -477,6 +532,10 @@ def main() -> None:
                 unit_is_coal = {
                     uid: str(u["primaryFuelInfo"].iloc[0]).strip().lower()
                     in ("coal", "coal refuse")
+                    for uid, u in fac.groupby("unitId", observed=True)
+                }
+                unit_type = {
+                    uid: str(u["unitType"].iloc[0])
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
                 # Per-unit (detect_mw, derate_mw, source) — the detector's CF
@@ -533,6 +592,21 @@ def main() -> None:
                     # distinguish a real full-year outage from a unit monitored
                     # under another id, and have no capacity basis for it.
                     if peaks[uid] <= 0.0 or derate_cap <= 0.0:
+                        continue
+                    # Route this unit's window to ITS model bin (non-ERCOT;
+                    # ERCOT keeps the bin-sheet group verbatim and reroutes
+                    # its split plants downstream in _unit_outage_target).
+                    ugroup = (
+                        group
+                        if iso == "ERCOT"
+                        else _resolve_unit_group(
+                            unit_is_coal[uid],
+                            unit_type.get(uid, ""),
+                            fac_groups,
+                            group,
+                        )
+                    )
+                    if ugroup not in QUALIFYING_PLANT_GROUPS:
                         continue
                     # Coal (baseload): a sustained low-output gap is an outage.
                     # Everything else (load-following CC / gas-steam): only a
@@ -602,7 +676,7 @@ def main() -> None:
                                     if fac_cap
                                     else None
                                 ),
-                                "plant_group": group,
+                                "plant_group": ugroup,
                                 "capacity_source": cap_src,
                                 "outage_start": start.strftime("%Y-%m-%d"),
                                 "outage_end": last.strftime("%Y-%m-%d"),
@@ -617,7 +691,7 @@ def main() -> None:
                                 int(fac_id),
                                 fac_name,
                                 uid,
-                                group,
+                                ugroup,
                                 year,
                                 len(windows),
                                 out_days,

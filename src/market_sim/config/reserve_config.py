@@ -81,6 +81,22 @@ from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
 PJM_ORDC_CURVE_PATH: str = str(CALIBRATION_DIR / "pjm_ordc_curve.csv")
 
+# Model zones inside PJM's Mid-Atlantic/Dominion (MAD) Reserve Subzone
+# (Manual 11 sec 4.2: the MAAC transmission zones plus Dominion). Crosswalk
+# onto the 8-zone model topology (iso_configs._pjm_config): PJM_EMAAC (PSEG,
+# JCPL, PECO, DPL, AECO, RECO), PJM_SWMAAC (BGE, PEPCO), PJM_Central_PA (PPL,
+# PENELEC, METED — all MAAC) and PJM_Dominion (DOM). Known misalignment
+# (CLAUDE.md #13 reconciliation): PJM_Central_PA also rolls up EKPC (eastern
+# Kentucky, NOT in MAD), a small co-op (~2% of PJM load) our reduced topology
+# cannot split out — including Central_PA whole errs by that sliver rather
+# than dropping the PPL/PENELEC/METED bulk of the subzone.
+PJM_MAD_ZONES: tuple[str, ...] = (
+    "PJM_Central_PA",
+    "PJM_Dominion",
+    "PJM_EMAAC",
+    "PJM_SWMAAC",
+)
+
 # --- MISO ------------------------------------------------------------------
 MISO_REGULATING_RESERVE_MW: float = 400.0
 MISO_RESERVE_DEMAND_CURVE_MAX: float = 3500.0
@@ -179,6 +195,16 @@ class ReserveDesign:
     headroom_extra_cap: Optional[np.ndarray] = None
     online_gated: Optional[np.ndarray] = None  # (n_classes,) bool
     online_rho: float = 1.0
+    # Per-generator reserve spec (dispatch._build_reserve_rows_pergen): one
+    # R column per reserve-providing asset, bounded by its 10-min deliverable
+    # ramp. ``pergen_gen_idx`` lists every member generator; ``pergen_col``
+    # maps each member to its R column (plant-level aggregation — tranches of
+    # one plant share a column; ``None`` = one column per member). When set,
+    # the zone-aggregate scoping fields above (supply_cap/online_gated/
+    # headroom_*) must be None — the per-unit bound supersedes them.
+    pergen_gen_idx: Optional[np.ndarray] = None  # (n_members,) fleet indices
+    pergen_col: Optional[np.ndarray] = None  # (n_members,) R column per member
+    pergen_ramp10: Optional[np.ndarray] = None  # (n_r,) MW ramp10 caps
 
 
 # ---------------------------------------------------------------------------
@@ -216,7 +242,7 @@ def get_reserve_design(
             )
         return _ercot_design(config, fleet_arrays, hours, sim_year=sim_year)
     if iso == "PJM":
-        return _pjm_design(config, fleet_arrays, hours)
+        return _pjm_design(config, fleet_arrays, hours, zone_names)
     if iso == "MISO":
         return _miso_design(config, fleet_arrays, hours, zone_names)
     if iso == "NYISO":
@@ -300,6 +326,13 @@ def build_reserve_dispatch_kwargs(
     # Supply cap (ERCOT RTOLCAP, PJM deliverable ramp)
     if design.supply_cap is not None:
         kw["reserve_supply_cap"] = design.supply_cap
+
+    # Per-generator reserve columns (PJM pjm_reserve_pergen)
+    if design.pergen_gen_idx is not None:
+        kw["reserve_pergen_gen_idx"] = design.pergen_gen_idx
+        kw["reserve_pergen_ramp10"] = design.pergen_ramp10
+        if design.pergen_col is not None:
+            kw["reserve_pergen_col"] = design.pergen_col
 
     return kw
 
@@ -510,10 +543,37 @@ def _ercot_multiproduct_design(
 # ---- PJM ------------------------------------------------------------------
 
 
-def _pjm_design(config, fleet_arrays: FleetArrays, hours: int) -> ReserveDesign:
-    """PJM energy+reserve co-optimization (measured Primary requirement + published ORDC)."""
+def _pjm_design(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str] | None = None,
+) -> ReserveDesign:
+    """PJM energy+reserve co-optimization (measured Primary requirement + published ORDC).
+
+    Two layouts, both on the measured Primary requirement and the published
+    two-step ORDC:
+
+    * Zone-aggregate (default): the legacy single RTO family drawing on total
+      eligible zone headroom, optionally re-scoped by the deliverable supply
+      cap (``pjm_reserve_supply_cap``) and/or online gating
+      (``pjm_reserve_online_gated``).
+    * Per-generator (``pjm_reserve_pergen``): one R column per reserve-eligible
+      unit with nonzero 10-min ramp (``R[j] ≤ FleetArrays.ramp10``), joint
+      ``P+R ≤ cap`` per unit-hour, and TWO nested measured balance families per
+      Manual 11 sec 4.2 — the RTO Reserve Zone (``pr_req_mw``) and the
+      Mid-Atlantic/Dominion Reserve Subzone (``mad_pr_req_mw``, zones
+      :data:`PJM_MAD_ZONES`; a MAD MW counts toward both, the NYISO nesting
+      template). Reserve then competes with energy on the same marginal unit,
+      which is what prices the sub-shortage opportunity-cost band
+      (docs/multi-iso/pjm-reserve-ordc.md Phase 2). The zone-aggregate scoping
+      flags are ignored in this mode (the per-unit ramp10 bound supersedes
+      them). The forecast path (no measured series) falls back to the
+      1.5×MSSC formula for the RTO family and omits the MAD family.
+    """
     from market_sim.results.scarcity import (
         largest_single_contingency_mw,
+        load_pjm_measured_mad_reserve_requirement,
         load_pjm_measured_reserve_requirement,
         load_pjm_ordc_curve,
         pjm_ordc_shortfall_steps,
@@ -534,7 +594,8 @@ def _pjm_design(config, fleet_arrays: FleetArrays, hours: int) -> ReserveDesign:
         req = pjm_primary_reserve_requirement(lsc, hours)
     req = np.asarray(req, dtype=float)
 
-    steps = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
+    curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)
+    steps = curve[("Primary", "RTO")]
     outer_offset = float(max(o for o, _ in steps))
     _req_total_nom, penalties, widths = pjm_ordc_shortfall_steps(
         steps, float(np.mean(req))
@@ -556,6 +617,91 @@ def _pjm_design(config, fleet_arrays: FleetArrays, hours: int) -> ReserveDesign:
         ordc_step_widths=widths.astype(float),
         reserve_class=0,
     )
+
+    if getattr(config, "pjm_reserve_pergen", False):
+        families = [fam]
+        # Nested MAD subzone family — measured backcast series only; a
+        # forecast year (no series) runs the RTO family alone.
+        mad_req = load_pjm_measured_mad_reserve_requirement(year, hours)
+        if mad_req is not None and zone_names:
+            mad_steps = curve[("Primary", "MAD")]
+            mad_offset = float(max(o for o, _ in mad_steps))
+            mad_req = np.asarray(mad_req, dtype=float)
+            _mad_total, mad_pen, mad_wid = pjm_ordc_shortfall_steps(
+                mad_steps, float(np.mean(mad_req))
+            )
+            mad_wid = np.asarray(mad_wid, dtype=float).copy()
+            mad_wid[-1] = float(np.max(mad_req))
+            mad_mask = np.array([z in PJM_MAD_ZONES for z in zone_names], dtype=bool)
+            if mad_mask.any():
+                families.append(
+                    ReserveFamily(
+                        name="pjm_primary_mad",
+                        requirement=mad_req + mad_offset,
+                        zone_mask=mad_mask,
+                        ordc_penalties=mad_pen.astype(float),
+                        ordc_step_widths=mad_wid.astype(float),
+                        reserve_class=0,
+                    )
+                )
+        ramp10 = np.asarray(
+            getattr(fleet_arrays, "ramp10", np.zeros(eligible.size)), dtype=float
+        )
+        # Members: eligible units that can deliver within 10 min (ramp10 > 0)
+        # — an exact reduction: a zero-ramp column would be fixed at 0.
+        pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
+        # R-column granularity is memory-tiered to what the 15 GB calibration
+        # box fits (docs/multi-iso/pjm-reserve-ordc.md Phase 2 memtests: the
+        # per-tranche build OOM'd at ~15.9 GB, plant-level everywhere at
+        # ~15.1 — the HiGHS workspace scales with the joint-row count):
+        #
+        # * INSIDE the MAD subzone (where the binding locational requirement
+        #   lives): one column per (plant, fuel-class, zone) asset. Not
+        #   per-tranche: a plant's must-run/committed/economic/peaking
+        #   tranches dispatch bang-bang, so headroom and the 10-minute ramp
+        #   are PLANT properties (the pjm_online_reserve doctrine), and
+        #   sum(tranche ramp10) == RAMP10_FRAC[class] x plant pmax — the
+        #   column's cap is the same physics. Units without a positive plant
+        #   code stay singleton columns.
+        # * OUTSIDE MAD: one column per (zone, fuel-class). Coarser headroom
+        #   pooling on the side where no locational requirement binds — the
+        #   RTO-wide family still draws on every column, bounded by the same
+        #   summed ramp10, and reserve still competes with the zone-class's
+        #   energy at its margin. Never a breakpoint/penalty change (rule
+        #   #11); the granularity tier is documented, not fitted.
+        plant = np.asarray(fleet_arrays.plant_code, dtype=int)[pergen_gen_idx]
+        fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
+        zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
+        if zone_names:
+            in_mad = np.array(
+                [zone_names[z] in PJM_MAD_ZONES for z in zone], dtype=bool
+            )
+        else:
+            in_mad = np.ones(zone.size, dtype=bool)
+        singleton = np.where(plant > 0, -1, np.arange(pergen_gen_idx.size))
+        # Non-MAD members collapse to their (zone, fuel) key (plant/singleton
+        # masked out); MAD members keep the (plant, fuel, zone) asset key.
+        keys = np.stack(
+            [
+                np.where(in_mad, plant, -1),
+                fuel,
+                zone,
+                np.where(in_mad, singleton, -1),
+            ],
+            axis=1,
+        )
+        _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
+        n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
+        col_ramp10 = np.zeros(n_r, dtype=float)
+        np.add.at(col_ramp10, pergen_col, ramp10[pergen_gen_idx])
+        return ReserveDesign(
+            families=families,
+            eligible=eligible.reshape(1, -1),
+            storage_eligible=False,
+            pergen_gen_idx=pergen_gen_idx,
+            pergen_col=pergen_col.astype(int),
+            pergen_ramp10=col_ramp10,
+        )
 
     supply_cap = pjm_reserve_deliverable_supply_cap_mw(config, fleet_arrays, T)
 
