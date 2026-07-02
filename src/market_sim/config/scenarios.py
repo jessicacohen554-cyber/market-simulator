@@ -1125,6 +1125,27 @@ class ScenarioConfig:
     # zonal reserve family zone set (model zone names). None -> the default
     # (MISO-South,) per scope §6; e.g. ("MISO-South", "MISO-East") adds the
     # Michigan-pocket family.
+    miso_reserve_pergen: bool = False  # MISO: PER-ASSET reserve co-optimization
+    # (dispatch._build_reserve_rows_pergen), the MISO analogue of
+    # pjm_reserve_pergen — one R[r,t] column per (zone, fuel-class) pool of
+    # reserve-eligible units with nonzero 10-min ramp, joint Σ P + R ≤
+    # Σ pmax·availability per pool-hour, and R[r] ≤ Σ FleetArrays.ramp10
+    # (RAMP10_FRAC_BY_GROUP × pmax, NREL/TP-5500-55588 App. H class ramp
+    # rates) as a variable bound. Reserve then competes with energy on the
+    # same marginal pool AND cleared reserve is capped at what the fleet can
+    # physically deliver inside MISO's 10-minute contingency-reserve window
+    # (BPM-002 §2.2: Spin + Supplemental must convert to energy in 10 min;
+    # quick-start CT/oil count at full capacity, coal/CC/gas-ST at their
+    # class ramp) — the deliverability structure that lets the market-wide
+    # RBDC and the zonal §5.2.1.2 curve families genuinely run short instead
+    # of always re-dispatching around the requirement (the miso-38 gate-4
+    # perfect-foresight-headroom diagnosis). Class-level pooling everywhere
+    # is the documented 15 GB memory tier (per-plant/per-tranche R columns
+    # are memory-infeasible at MISO plant scale, miso-reserve-coopt.md);
+    # same ramp physics at every tier, never a breakpoint/penalty change.
+    # Zero parameters fitted to the price residual. Requires
+    # energy_reserve_coopt + MISO; default off; GATED CHANGE (alters
+    # dispatch volumes).
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
@@ -3042,6 +3063,7 @@ TIER_TAGS: dict[str, int] = {
     "energy_reserve_coopt": 1,
     "miso_zonal_reserves": 1,
     "miso_zonal_reserve_zones": 1,
+    "miso_reserve_pergen": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
