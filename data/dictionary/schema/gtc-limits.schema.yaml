@@ -1,0 +1,100 @@
+# Canonical schema: gtc-limits (measured Generic Transmission Constraint
+# limits on the hourly model clock).
+#
+# Source: ERCOT NP6-86-CD "SCED Shadow Prices and Binding Transmission
+# Constraints" — one CSV per ~5-minute SCED execution listing every
+# transmission constraint in SCED's active set with its enforced Limit (MW),
+# flow Value (MW) and ShadowPrice ($/MWh). Generic Transmission Constraints
+# (GTCs) — the aggregate stability-limited export interfaces (PNHNDL, WESTEX,
+# NE_LOB, VALEXP, ...) — are the rows with an empty FromStation (a GTC caps a
+# weighted flow sum, not a single monitored element).
+#
+# Curation (scripts/curate_gtc_limits.py) keeps only the GTC rows and
+# aggregates the ~5-minute intervals to the fixed non-leap 8760-hour
+# ERCOT-local clock (Feb 29 dropped, DST fall-back merged by the clock-hour
+# group-by — the convention shared with data/raw/ercot HSL and ORDC series).
+# The frame is SPARSE: a (gtc, hour) row exists only when the constraint
+# appeared in SCED's active set at least once that hour. Hours with no row
+# mean SCED was not enforcing the constraint — consumers stand those hours in
+# at the constraint's measured envelope (its year-max limit), never at the
+# binding-hour mean.
+#
+# Rule #14/#13 admissibility: a GTC limit is ERCOT's published physical
+# stability transfer limit — a reproducible market/physical INPUT that
+# regenerates every year and responds to changed grid conditions. The
+# reported HSL curtailment totals are the model's VALIDATION target and are
+# never used to build or scale this series.
+datatype: gtc-limits
+schema_version: 1
+title: Measured GTC (Generic Transmission Constraint) hourly limits
+description: >-
+  Hourly aggregation of ERCOT's ~5-minute SCED Generic Transmission
+  Constraint limits (NP6-86): per constraint and local clock hour, the mean
+  and minimum enforced limit over the hour's active SCED intervals, how many
+  intervals were active and binding, and the mean positive shadow price.
+  Sparse — only (gtc, hour) pairs where the constraint was in SCED's active
+  set carry a row.
+
+key_columns: [iso, gtc, hour]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (currently ERCOT).
+  - name: gtc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Constraint name exactly as published in the NP6-86 ConstraintName field
+      (e.g. PNHNDL, WESTEX, NE_LOB, VALEXP). Names follow ERCOT's own GTC
+      vocabulary for the archive's era; the model-side link crosswalk
+      (constants.ERCOT_GTC_LINK_MAP) maps the representable ones.
+  - name: hour
+    dtype: int64
+    unit: hour_index
+    nullable: false
+    description: >-
+      Index 0-8759 on the fixed non-leap 8760-hour ERCOT-local clock (Feb 29
+      dropped) — the model's dispatch clock.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Wall-clock local start of the hour (naive, ERCOT local).
+  - name: limit_mean_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Mean enforced Limit (MW) over the hour's active SCED intervals.
+  - name: limit_min_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Minimum enforced Limit (MW) over the hour's active intervals.
+  - name: n_active
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Number of distinct SCED executions in the hour where the constraint was
+      in the active set (nominal cadence 12/hour; the DST fall-back clock
+      hour can carry up to 24).
+  - name: n_binding
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Number of those executions where the constraint was binding
+      (ShadowPrice > 0).
+  - name: shadow_price_mean
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Mean ShadowPrice over the hour's binding intervals; null when the
+      constraint was active but never binding that hour.

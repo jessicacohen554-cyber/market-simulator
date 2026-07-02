@@ -1785,6 +1785,7 @@ def solve_and_persist(
     ct_netload_drag: bool = False,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
+    ercot_gtc_limits_measured: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -2003,6 +2004,7 @@ def solve_and_persist(
             ct_netload_drag=ct_netload_drag,
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
+            ercot_gtc_limits_measured=ercot_gtc_limits_measured,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -2276,6 +2278,7 @@ def solve_and_persist(
         "pjm_seam_export_limit": pjm_seam_export_limit,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "chp_export_floor_measured": chp_export_floor_measured,
+        "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
@@ -2449,6 +2452,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
     if chp_export_floor_measured:
         recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
+    if ercot_gtc_limits_measured:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
     if scarcity_price_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             scarcity_pricing_enabled=scarcity_price_overlay,

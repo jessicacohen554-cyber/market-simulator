@@ -2029,6 +2029,40 @@ NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
     },
 }
 
+# ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Nodal
+# Protocols §6.5.7.1), i.e. 12 intervals per clock hour. Used to time-average
+# the per-interval measured GTC limits (gtc-limits clean datatype) onto the
+# hourly LP clock: an hour's transfer-energy cap is the mean of its
+# per-interval caps, with intervals where the constraint was not in SCED's
+# active set standing in at the constraint's measured envelope.
+ERCOT_SCED_INTERVALS_PER_HOUR: int = 12
+
+# Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the
+# stability-limited export interfaces reported in NP6-86 "SCED Shadow Prices
+# and Binding Transmission Constraints") onto the reduced 7-zone topology's
+# transfer links. Each GTC maps to one or more (from_zone, to_zone) links with
+# a share of the GTC limit. Shares follow iso_configs._ercot_config: the single
+# aggregate WESTEX (West Texas export) GTC is one boundary that the reduced
+# network splits into two parallel links, apportioned in the same ~8:3 ratio
+# as the static ttc_mw values (7,300 / 2,700 of the ~10,000 MW measured
+# limit-at-bind) — a rule-#14 misalignment reconciliation, documented there.
+# PNHNDL (Panhandle export) and NE_LOB (Northeast Texas export lobe) map 1:1.
+# N_TO_H is deliberately ABSENT: the single N_TO_H GTC is one of several
+# parallel 345 kV North->Houston paths this reduction collapses into one link,
+# so its limit alone would understate the interface (see iso_configs).
+# Intra-zone GTCs (VALEXP, EASTEX, TRDWEL, MCCAMY, ...) have no representable
+# link in this topology and are ignored by the crosswalk.
+# Source: ERCOT NP6-86-CD archives via scripts/derive_ttc_limits.py; ERCOT
+# "The Use of GTCs in ERCOT" (July 2020) for the GTC definitions.
+ERCOT_GTC_LINK_MAP: dict[str, list[tuple[tuple[str, str], float]]] = {
+    "PNHNDL": [(("Panhandle", "North"), 1.0)],
+    "WESTEX": [
+        (("West", "North"), 8.0 / 11.0),
+        (("West", "South_Central"), 3.0 / 11.0),
+    ],
+    "NE_LOB": [(("Northeast", "North"), 1.0)],
+}
+
 # Percentile of the per-(month × hour-of-day) measured net-import distribution
 # used as each seam's deliverability ceiling. 90 = the upper envelope minus the
 # top ~10% transient/loop-flow hours (matching measured_interchange_envelope's

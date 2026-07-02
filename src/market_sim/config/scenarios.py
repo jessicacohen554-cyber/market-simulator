@@ -2137,6 +2137,31 @@ class ScenarioConfig:
     # chp_pmin_cf floors.
     chp_export_floor_measured: bool = False
 
+    # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
+    # True in backcast mode, the export-direction capability of the transfer
+    # links that carry ERCOT's published Generic Transmission Constraints
+    # (PNHNDL -> Panhandle->North, WESTEX -> the two West export links,
+    # NE_LOB -> Northeast->North; constants.ERCOT_GTC_LINK_MAP) follows the
+    # measured hourly GTC limit series curated from the NP6-86 "SCED Shadow
+    # Prices and Binding Transmission Constraints" archive (gtc-limits clean
+    # datatype) instead of the single static ttc_mw. Hours where a constraint
+    # was in SCED's active set take the time-average of its per-interval
+    # measured limits; other hours ride the constraint's measured year
+    # envelope. The import direction keeps the static thermal capability
+    # (a GTC is an export stability limit, not an import rating). Renewable
+    # curtailment then emerges endogenously wherever the measured limits
+    # bottle the West/Panhandle pockets — never from a quota or haircut.
+    # Rule #14 admissibility: a GTC limit is a published physical/market
+    # input (a voltage/WSCR stability transfer limit) that regenerates for
+    # any year ERCOT publishes and responds to changed grid conditions; the
+    # reported HSL curtailment totals remain the VALIDATION target and are
+    # never read by this overlay. Applied per year only when BOTH the year's
+    # gtc-limits clean partition AND its measured HSL renewable-potential
+    # data exist (without real potential, delivered-as-CF renewables would be
+    # double-curtailed below actuals). Off by default; forecast mode always
+    # uses the static (or scenario-built) link ratings.
+    ercot_gtc_limits_measured: bool = False
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -3119,6 +3144,7 @@ TIER_TAGS: dict[str, int] = {
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
     "chp_export_floor_measured": 3,
+    "ercot_gtc_limits_measured": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,

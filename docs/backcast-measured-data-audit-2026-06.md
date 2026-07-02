@@ -214,3 +214,50 @@ Two paired changes (the C1 CC_REGULAR/CC_CHP caveat work):
    classes, where the same construction would be pinning dispatch to observed
    generation. Off by default; forecast mode always uses the persistent
    `chp_pmin_cf` floors.
+
+---
+
+## `ercot_gtc_limits_measured` — measured hourly GTC export limits (2026-07-02)
+
+New backcast overlay (ADMISSIBLE, rule #14's explicit case): the export
+capability of the transfer links that carry ERCOT's published Generic
+Transmission Constraints follows the **measured hourly GTC limit series**
+(NP6-86 "SCED Shadow Prices and Binding Transmission Constraints" →
+`scripts/curate_gtc_limits.py` → `gtc-limits` clean datatype →
+`market_sim.data.gtc.ercot_gtc_ttc_hourly`) instead of the single static
+`ttc_mw`. Test: a GTC limit is ERCOT's published voltage/WSCR **stability
+transfer limit** — a physical/market input that regenerates for any year
+ERCOT publishes and responds to changed grid conditions (new synchronous
+units or transmission raise it). West/Panhandle renewable curtailment then
+emerges **endogenously** wherever the measured limits bottle the pockets;
+the ISO-reported HSL curtailment totals (the [3e] validation target) are
+never read by the overlay. Mechanism check: with the `gtc-limits` partition
+absent (or the crosswalk emptied) the dispatch reverts byte-identically to
+the static ratings.
+
+Reconstruction formula (all measured): an hour where the constraint was in
+SCED's active set takes the time-average of its per-interval limits, with
+non-enforced intervals standing in at the constraint's measured year-max
+envelope; hours never enforced ride the envelope. The import direction keeps
+the static thermal rating (`ttc_import` — a GTC caps exports, not imports).
+
+Crosswalk / reconciliation boundary (rule #14's misalignment exception,
+documented in `constants.ERCOT_GTC_LINK_MAP`): the single aggregate WESTEX
+GTC is one published boundary the reduced network splits across two links
+(8:3, the static ratio); PNHNDL and NE_LOB map 1:1; **N_TO_H is deliberately
+not applied** (one of several parallel 345 kV paths the reduction collapses —
+using it literally would understate the interface); intra-zone GTCs (VALEXP,
+EASTEX, TRDWEL, MCCAMY) are unrepresentable and ignored. Per-year gating:
+the overlay applies only when the year has BOTH the `gtc-limits` partition
+and measured HSL renewable potential — without real potential
+(EIA-930-delivered-as-CF years) a binding export cap would double-curtail
+wind below what actually flowed, so those years keep the static limits with
+a logged warning.
+
+Data status: the NP6-86 monthly archives (`*SCEDBTCNP686*.zip`,
+2023–2025) are **not present in this environment** and cannot be fetched
+anonymously (7-day MIS retention; the Data Portal requires a sign-in) — see
+the `DATA NEEDED` note in `data/raw/iso-specific-transmission/README.md`.
+The full pipeline is validated end-to-end on the live 7-day MIS window
+(10 GTCs recovered, PNHNDL/WESTEX/NE_LOB limits consistent with the 2023-24
+derived statics).
