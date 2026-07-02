@@ -282,6 +282,7 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
             "grossLoad",
             "opTime",
             "primaryFuelInfo",
+            "unitType",
         ],
     )
     df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
