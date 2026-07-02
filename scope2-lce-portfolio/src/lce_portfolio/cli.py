@@ -80,23 +80,51 @@ def compose_run_id(isos: list[str], mode: str, now: datetime | None = None) -> s
     return f"{iso_part}_{mode}_{stamp}"
 
 
+#: Default Mode A premium caps when neither --deltas nor a config file sets
+#: them ($/MWh; the sample-sweep ladder).
+DEFAULT_DELTAS = (1.0, 2.0, 5.0, 7.0, 10.0, 20.0)
+#: Default Mode B matching targets when --targets is given with no values via
+#: config (fractions of annual load).
+DEFAULT_TARGETS = (0.8, 0.9, 1.0)
+
+
 def build_config(args: argparse.Namespace) -> PortfolioConfig:
     """Assemble a base :class:`PortfolioConfig` from a file and/or CLI args.
 
     ``--config`` provides the base (including its ``load_file``/``lmp_file``,
-    ADR 0010/0011); if absent, the sweep-related CLI flags build it. ISO
-    selection is always CLI.
+    ADR 0010/0011); explicitly-given sweep flags (``--deltas``/``--targets``/
+    ``--sensitivity``/``--load-growth-*``) then override the file values
+    (audit finding CL-1 — they were previously discarded silently; the
+    argparse defaults are ``None`` sentinels so "explicitly given" is
+    detectable). ISO selection is always CLI. Without ``--config`` the flags
+    (or their documented defaults) build the whole config.
     """
+    overrides: dict = {}
+    if args.targets is not None:
+        overrides["mode"] = "matching_target"
+        overrides["matching_targets"] = tuple(args.targets)
+    elif args.deltas is not None:
+        overrides["mode"] = "premium_cap"
+    if args.deltas is not None:
+        overrides["premium_deltas"] = tuple(args.deltas)
+    if args.sensitivity is not None:
+        overrides["lcoe_sensitivity"] = args.sensitivity
+    if args.load_growth_rate is not None:
+        overrides["load_growth_rate"] = args.load_growth_rate
+    if args.load_growth_years is not None:
+        overrides["load_growth_years"] = args.load_growth_years
+
     if args.config:
-        return PortfolioConfig.from_file(args.config)
+        base = PortfolioConfig.from_file(args.config)
+        return base.with_overrides(**overrides) if overrides else base
     return PortfolioConfig(
         iso=args.iso or "SAMPLE",
-        mode="matching_target" if args.targets else "premium_cap",
-        premium_deltas=tuple(args.deltas),
-        matching_targets=tuple(args.targets) if args.targets else (0.8, 0.9, 1.0),
-        lcoe_sensitivity=args.sensitivity,
-        load_growth_rate=args.load_growth_rate,
-        load_growth_years=args.load_growth_years,
+        mode=overrides.get("mode", "premium_cap"),
+        premium_deltas=overrides.get("premium_deltas", DEFAULT_DELTAS),
+        matching_targets=overrides.get("matching_targets", DEFAULT_TARGETS),
+        lcoe_sensitivity=overrides.get("lcoe_sensitivity", "mid"),
+        load_growth_rate=overrides.get("load_growth_rate", 0.0),
+        load_growth_years=overrides.get("load_growth_years", 0),
     )
 
 
@@ -166,6 +194,17 @@ def _isos_in_load(load_path: str | Path) -> list[str]:
     return sorted(load_intake(load_path)["iso"].unique().tolist())
 
 
+def _errmsg(exc: BaseException) -> str:
+    """Render an exception for the CLI without str(KeyError)'s repr quotes.
+
+    ``str(KeyError("msg"))`` is ``'"msg"'`` — spurious double quotes around an
+    otherwise good message (audit finding CL-8).
+    """
+    if isinstance(exc, KeyError) and exc.args:
+        return str(exc.args[0])
+    return str(exc)
+
+
 def main(argv: list[str] | None = None) -> int:
     """Parse args, run the sweep for one or all ISOs, write outputs.
 
@@ -192,19 +231,25 @@ def main(argv: list[str] | None = None) -> int:
         "--deltas",
         type=float,
         nargs="+",
-        default=[1, 2, 5, 7, 10, 20],
-        help="premium caps $/MWh (Mode A)",
+        default=None,
+        help="premium caps $/MWh (Mode A; default 1 2 5 7 10 20). Sweep flags "
+        "override --config values when both are given.",
     )
     p.add_argument(
         "--targets",
         type=float,
         nargs="+",
         default=None,
-        help="matching targets (switches to Mode B)",
+        help="matching targets (switches to Mode B; overrides --config)",
     )
-    p.add_argument("--sensitivity", choices=["low", "mid", "high"], default="mid")
-    p.add_argument("--load-growth-rate", type=float, default=0.0)
-    p.add_argument("--load-growth-years", type=int, default=0)
+    p.add_argument(
+        "--sensitivity",
+        choices=["low", "mid", "high"],
+        default=None,
+        help="LCOE sensitivity column (default mid; overrides --config)",
+    )
+    p.add_argument("--load-growth-rate", type=float, default=None)
+    p.add_argument("--load-growth-years", type=int, default=None)
     p.add_argument("--out-dir", default="data/outputs")
     p.add_argument(
         "--no-report",
@@ -248,6 +293,10 @@ def main(argv: list[str] | None = None) -> int:
             p.error("specify --lmp or set lmp_file in --config")
 
         isos = _isos_in_load(load_path) if args.all_isos else [args.iso or base.iso]
+        if not isos:
+            # Backstop for CL-9: a header-only load file must not become a
+            # silent exit-0 no-op (load_intake also rejects it upstream).
+            raise ValueError(f"load file {load_path} contains no data rows")
 
         # Resolve the run directory + id (ADR 0014 §5): --results composes
         # results/<run-id>/ (committed store; re-using an id overwrites its
@@ -267,21 +316,31 @@ def main(argv: list[str] | None = None) -> int:
             out_dir = Path(args.out_dir)
 
         # Per-ISO Parquet + metadata are written inside the loop; the report
-        # is one per run (single or batch — §2.6), written after it.
-        sweeps, configs = [], []
+        # is one per run (single or batch — §2.6), written after it. In an
+        # --all-isos batch a failing ISO no longer aborts the run (audit
+        # finding CL-7): it is recorded, the others still solve, and the
+        # combined report covers the successes.
+        sweeps, configs, failures = [], [], []
         for iso in isos:
             config = base.with_overrides(iso=iso)
-            sweep = run_one_iso(
-                config,
-                load_path,
-                lmp_path,
-                out_dir,
-                emissions_path=emissions_path,
-                report=False,
-            )
+            try:
+                sweep = run_one_iso(
+                    config,
+                    load_path,
+                    lmp_path,
+                    out_dir,
+                    emissions_path=emissions_path,
+                    report=False,
+                )
+            except (ValueError, KeyError, OSError) as exc:
+                if not args.all_isos:
+                    raise
+                failures.append(iso)
+                print(f"ISO {iso}: FAILED — {_errmsg(exc)}", file=sys.stderr)
+                continue
             sweeps.append(sweep)
             configs.append(config)
-        if not args.no_report:
+        if not args.no_report and sweeps:
             paths = write_report(
                 sweeps,
                 configs,
@@ -290,15 +349,35 @@ def main(argv: list[str] | None = None) -> int:
                 report_hourly=args.report_hourly,
             )
             print("report: " + "  ".join(str(v) for v in paths.values()))
-        if final_dir is not None:
+        if final_dir is not None and sweeps:
             # Atomic-ish publish: the previous run directory is replaced only
             # after the whole new run (all ISOs + report) has been written.
             if final_dir.exists():
                 shutil.rmtree(final_dir)
             out_dir.rename(final_dir)
             print(f"results: {final_dir}")
-    except (ValueError, KeyError, FileNotFoundError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        if failures:
+            print(
+                f"{len(failures)} of {len(isos)} ISO(s) failed: " + ", ".join(failures),
+                file=sys.stderr,
+            )
+            return 1
+        if not sweeps:
+            print("error: no ISO produced results", file=sys.stderr)
+            return 1
+        # Every setpoint infeasible/failed is a run failure, not a quiet
+        # success (audit finding CL-4) — the rows are flagged in summarize().
+        if all(r.status != "Optimal" for s in sweeps for r in s.results):
+            print(
+                "error: no setpoint solved to optimality (all infeasible or "
+                "failed — see the flagged rows above)",
+                file=sys.stderr,
+            )
+            return 1
+    except (ValueError, KeyError, OSError) as exc:
+        # OSError covers FileNotFoundError plus e.g. IsADirectoryError from a
+        # directory passed as --load/--lmp (audit finding CL-13).
+        print(f"error: {_errmsg(exc)}", file=sys.stderr)
         return 1
     return 0
 
