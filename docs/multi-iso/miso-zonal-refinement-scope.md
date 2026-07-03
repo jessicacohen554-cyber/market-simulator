@@ -1,6 +1,21 @@
 # MISO Zonal Refinement — Scoping Plan (structure-first, no implementation)
 
-Status: **PHASE 2 IMPLEMENTED 2026-07-02** (branch
+Status: **PHASE 2 COMPLETE — GATE 4 CLOSED-NEGATIVE 2026-07-03** (branch
+`claude/miso-scarcity-tail-8q5k84`; keeper
+`2026-07-03-miso-39-reserve-pergen`): the gate-4 scarcity-tail root cause is
+resolved by measurement, not by a fix. miso-39 adds the 10-minute reserve
+DELIVERABILITY structure (`--miso-reserve-pergen`: (zone, fuel-class)-pooled
+per-asset reserve columns, joint P+R ≤ cap, R ≤ availability-scaled class
+ramp10) — real market structure, kept as keeper — and the >$200 tail still
+stays 0 h: the perfect-foresight LP relieves every deliverability shortfall
+by re-dispatch/re-timing at ≤ $23/MWh, below the $200 first step. The actual
+tail decomposes into RT sub-hourly transients (100% of 2023's, out of
+representation), a commitment-posture gap (the measured relief channel), and
+a missing Midwest locational family (Winter Storm Heather 2024). Full
+anatomy, bind-gate tables, and next-lever data needs:
+`docs/multi-iso/miso-scarcity-tail-diagnosis.md`.
+
+Phase-2 history (2026-07-02, branch
 `claude/miso-zonal-coopt-phase2-6bj3it`; keeper
 `2026-07-02-miso-38-zonal-reserves`): reserve co-opt re-enabled per §6 and
 gate 4 (§7) evaluated. Wiring discovery: `--energy-reserve-coopt` had been
