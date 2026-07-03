@@ -42,6 +42,43 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-03 — CAISO — S2 CT-floor scrub (caiso 52): PROBE, forcing removed (keeper stays caiso 51)
+
+**Goal.** Execute the legitimacy-audit S2 scrub (`docs/model-legitimacy-audit-2026-07.md` §1-§2,
+owner's complaint): dismantle the three stacked CAISO CT forcing engines — the all-24h netload
+reliability-floor limbs, their overlap with the evening net-load drag, and the RA startup bridge's
+hard-coded CT eligibility — with structural fidelity over backcast fit (rule #1).
+
+**Fixes** (branch `claude/caiso-ct-floor-bridge-jfgit3`):
+1. **CT limbs windowed, then retired.** `reliability_floor_coeffs_CAISO.csv` CT_PEAKER/CT_CHP
+   netload limbs got `start_hour/end_hour` 15-21 (the drag doc's own evidence: overnight CT CF ≈ 0
+   even at high net load). A 2024 A/B (windowed limbs+drag vs limbs-disabled+drag, caiso-51 flags)
+   showed the windowed limbs redundant with `ct_netload_drag` — same driver, hours, class:
+   arm W (limbs+drag) D-1 r .878/CV 2.55, D-2 87.8% via TWO mechanisms; arm X (drag only) D-1
+   r .847/CV 2.59, D-2 75.6% via ONE. One mechanism per phenomenon (rule 18) → limbs
+   `enabled=False` (windows kept for provenance); the drag is the single evening CT commitment.
+2. **RA bridge eligibility by physics** (`commitment.py`): the `("CC_REGULAR", "CT_PEAKER")`
+   tuple replaced by a `min_down_hours >= RA_BRIDGE_ECON_MIN_DOWN_HOURS` (4 h) gate on the
+   ECONOMIC startup bridge (audit rule 17) — fast-start CTs (min-down 1 h) are never held
+   overnight on restart economics; the physical gap<min-down bridge is unchanged; cogens/steam
+   keep their own mechanisms. Tests added.
+
+**Result — caiso 52 ct scrub (PROBE, `results/calibration/caiso52_ct_scrub`, 2023-25, caiso-51
+keeper flags).** The audit's flat-floor signature is gone: **D-1** CT_PEAKER off-peak CV ratio
+0.030 → 2.6-3.3 (r .886/.847/.681; 2025 r < 0.8 remains, small noisy fleet), **D-4** off-window
+binding 65% → **0%**, **D-2** CT forced energy is now a single windowed mechanism (drag; RA-bridge
+CT share < 1%, down from the overnight-bridge era). Disclosed regressions (rule #1 — NOT to be won
+back by a floor): CT_PEAKER 1.97/1.56/1.15 vs measured 3.08/3.30/1.65 TWh, CC_REGULAR +6.24/+11.85
+TWh (absorbs the freed evening energy), C3a +21.1/+36.5/+43.9% (51: +19.6/+34.9/+41.6), C3b
+.292/.468/.460, 2023 tail 114 h vs actual 21 h (the removed all-24h CT commitment was suppressing
+evening scarcity the model now prices). D-2 still FAILS (66-78% forced) — with the floors gone,
+almost none of the remaining CT energy clears on merit.
+
+**Open root-cause item (next lever, unchanged from caiso-48/51 threads):** evening CT merit
+dispatch — the P1 merit order prices CTs out of the ramp (import tranche prices / CC offers), so
+commitment mechanisms carry the class. Also out of scope here: ST_GAS D-1 shape fail (pre-existing
+in the keeper), the w2-caiso-ra-p2 forecast-parity wiring gap (D-5), 2025 CT r.
+
 ### 2026-07-03 — CAISO — measured-hub WECC seam decomposition (caiso 49/50/51): caiso 51 promoted KEEPER
 
 **Goal.** Root-cause the C3a +37–49% over-price (CAISO the furthest ISO from calibrated,
