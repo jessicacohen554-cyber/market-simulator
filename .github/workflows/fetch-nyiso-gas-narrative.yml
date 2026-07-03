@@ -4,7 +4,7 @@
 # holiday-week Transco Z6 NY prints the compact-table scrape missed (the
 # Dec-2024 late-month hole), harvests any Iroquois Zone 2 narrative prints, and
 # recomputes the NYISO monthly hub levels from the completed daily series.
-# On-demand only (the archive is static history).
+# On-demand only (the archive is static history). rev2: ngpf.asp + dashboard recon.
 name: Fetch NYISO gas narrative prints
 
 on:
