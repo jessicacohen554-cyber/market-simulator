@@ -94,9 +94,12 @@ solve_and_persist(
         "ercot_load_resource_reserve_from_year", 2023
     ),
     ercot_storage_as_reserve=cf.get("ercot_storage_as_reserve", True),
-    ercot_storage_as_reserve_from_year=cf.get(
-        "ercot_storage_as_reserve_from_year", 2024
-    ),
+    # Net every year the award is reserved out of the cap — internal
+    # consistency: reserving the measured battery award from the storage cap
+    # without netting the requirements over-withholds thermal by exactly the
+    # awarded MW (the ercot30 2023 blow-up). The 2023 series is the
+    # cross-source-calibrated measured award (build_ercot_as_2023.py).
+    ercot_storage_as_reserve_from_year=2023,
     reliability_floor=True,
     gas_st_netload_drag=True,
     ct_netload_drag=True,
