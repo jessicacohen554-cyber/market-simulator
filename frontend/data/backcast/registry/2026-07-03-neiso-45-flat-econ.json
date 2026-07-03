@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-neiso-45-flat-econ",
+  "label": "neiso 45 flat econ",
+  "date": "2026-07-03",
+  "shorthand": "neiso-45-flat-econ",
+  "definition": "Calibration run from bundle neiso45_flat.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-neiso-45-flat-econ.js",
+  "bundle": "results/calibration/neiso45_flat"
+}
