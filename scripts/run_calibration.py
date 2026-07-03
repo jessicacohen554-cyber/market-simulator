@@ -2005,6 +2005,7 @@ def run_year(
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
+    caiso_perhub_firm_base: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
@@ -2275,6 +2276,8 @@ def run_year(
         config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
     if caiso_per_hub_intertie is not None:
         config = config.with_overrides(caiso_per_hub_intertie=caiso_per_hub_intertie)
+    if caiso_perhub_firm_base is not None:
+        config = config.with_overrides(caiso_perhub_firm_base=caiso_perhub_firm_base)
     if caiso_corridor_flow_limit is not None:
         config = config.with_overrides(
             caiso_corridor_flow_limit=caiso_corridor_flow_limit
@@ -3778,15 +3781,26 @@ def run_year(
         )
 
         if inject_caiso_per_hub_intertie_prices(
-            fleet_arrays, mc_base, iso, year, carbon_price
+            fleet_arrays,
+            mc_base,
+            iso,
+            year,
+            carbon_price,
+            firm_base=getattr(config, "caiso_perhub_firm_base", False),
         ):
             logger.info(
                 "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "
                 "→ NP15, Palo Verde/Path-46 → SP15), each priced at its OWN "
                 "measured hub (per-hub basis + per-hub netting, arbitrage-free, "
-                "one direction per hour per corridor)",
+                "one direction per hour per corridor)%s",
                 iso,
                 year,
+                (
+                    " — firm/contracted tranches held at contract cost "
+                    "(caiso_perhub_firm_base)"
+                    if getattr(config, "caiso_perhub_firm_base", False)
+                    else ""
+                ),
             )
     bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
     if not per_hub_intertie and bidir_intertie:
