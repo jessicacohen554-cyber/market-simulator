@@ -54,7 +54,9 @@ deltas["CC_REGULAR"]["peak"] = 0.25
 YEARS = [int(y) for y in (sys.argv[1:] or [2023, 2024, 2025])]
 HOURS = int(os.environ.get("ERCOT30_HOURS", "8760"))
 run_dir = Path(
-    os.environ.get("ERCOT30_OUT", str(REPO / "results/calibration/ercot_ordc_total_measstor_v1"))
+    os.environ.get(
+        "ERCOT30_OUT", str(REPO / "results/calibration/ercot_ordc_total_measstor_v1")
+    )
 )
 run_dir.mkdir(parents=True, exist_ok=True)
 
