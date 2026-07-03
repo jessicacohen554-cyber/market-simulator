@@ -28,6 +28,7 @@ import contextlib
 import html
 import io
 import json
+import math
 import re
 import sys
 import threading
@@ -58,6 +59,12 @@ LAST_USED_FILENAME = "last_used.json"
 
 DEFAULT_HOST = "127.0.0.1"
 EPHEMERAL_PORT = 0  # ask the OS for a free port when --port is not given
+
+#: Upper bound on accepted request bodies. A real launch-page submit is a few
+#: KB even with a long queue; anything near this size is malformed or hostile,
+#: and an unchecked Content-Length must never hang the handler or absorb
+#: unbounded memory (review finding LN-2).
+MAX_REQUEST_BYTES = 1_048_576
 
 # --- Exposed parameter domains (ADR 0016 §3) -----------------------------
 
@@ -97,6 +104,11 @@ def parse_float_list(raw, field_name: str) -> tuple[float, ...]:
 
     Raises :class:`ValueError` with a message naming ``field_name`` on any
     non-numeric entry — never lets a ``TypeError`` escape as a raw traceback.
+    Empty lists and non-finite values (``nan``/``inf``) are rejected too
+    (review finding LN-4): ``nan`` passes ``PortfolioConfig``'s ``d <= 0``
+    range check (all nan comparisons are False) and would reach the LP as a
+    nan premium budget, and an empty setpoint list makes the whole run fail
+    with a misleading "no setpoint solved" message.
     """
     if isinstance(raw, str):
         parts = [p.strip() for p in raw.split(",") if p.strip()]
@@ -104,10 +116,15 @@ def parse_float_list(raw, field_name: str) -> tuple[float, ...]:
         parts = list(raw)
     else:
         raise ValueError(f"{field_name} must be a comma-separated string or list")
+    if not parts:
+        raise ValueError(f"{field_name} must contain at least one value")
     try:
-        return tuple(float(p) for p in parts)
+        values = tuple(float(p) for p in parts)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{field_name} must be numeric, got {raw!r}") from exc
+    if not all(math.isfinite(v) for v in values):
+        raise ValueError(f"{field_name} must be finite numbers, got {raw!r}")
+    return values
 
 
 def resolve_default_lmp(inputs_dir: Path) -> dict:
@@ -230,6 +247,10 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
     ``__post_init__`` validation for range/type rules rather than duplicating
     them, and :func:`lce_portfolio.cli.validate_run_id` for run-id safety.
     """
+    if not isinstance(payload, dict):
+        # A string/number/list entry in the "runs" array reached here before
+        # this guard as a raw AttributeError traceback (review finding LN-1).
+        return None, "each queued run must be a JSON object"
     try:
         iso = str(payload.get("iso", "")).strip()
         if iso not in KNOWN_ISOS:
@@ -272,10 +293,11 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
             raise ValueError(f"LMP file not found: {lmp_file}")
 
         run_id_raw = str(payload.get("run_id") or "").strip()
+        run_id_auto = not run_id_raw
         run_id = (
-            cli.validate_run_id(run_id_raw)
-            if run_id_raw
-            else cli.compose_run_id([iso], mode)
+            cli.compose_run_id([iso], mode)
+            if run_id_auto
+            else cli.validate_run_id(run_id_raw)
         )
 
         open_report_when_done = bool(
@@ -307,10 +329,40 @@ def validate_run_payload(payload: dict) -> tuple[dict | None, str | None]:
             "load_file": load_file,
             "lmp_file": lmp_file,
             "run_id": run_id,
+            "run_id_auto": run_id_auto,
             "open_report_when_done": open_report_when_done,
         },
         None,
     )
+
+
+def dedupe_run_ids(validated: list[dict]) -> str | None:
+    """Give every run in one submitted batch a distinct results directory.
+
+    ``compose_run_id`` stamps to whole seconds, so two blank-run-id runs of
+    the same ISO/mode queued in one submit collide — and ``results/<run-id>/``
+    is overwritten on re-use, so the later run silently destroyed the earlier
+    one's results mid-batch (review finding LN-3). Auto-composed duplicates
+    get a ``-2``/``-3`` suffix; explicitly-typed duplicates are a user mistake
+    and return a friendly error message instead. Mutates ``validated`` in
+    place; returns ``None`` when all ids are (made) unique.
+    """
+    seen: set[str] = set()
+    for kwargs in validated:
+        run_id = kwargs["run_id"]
+        if run_id in seen:
+            if not kwargs["run_id_auto"]:
+                return (
+                    f"duplicate run id {run_id!r}: give each queued run a "
+                    "distinct run id (or leave the field blank)"
+                )
+            n = 2
+            while f"{run_id}-{n}" in seen:
+                n += 1
+            run_id = f"{run_id}-{n}"
+            kwargs["run_id"] = run_id
+        seen.add(run_id)
+    return None
 
 
 def build_argv(run_kwargs: dict) -> list[str]:
@@ -438,7 +490,11 @@ class LauncherState:
                 contextlib.redirect_stderr(stderr_buf),
             ):
                 rc = cli.main(argv)
-        except Exception:  # noqa: BLE001 - error discipline: never propagate raw
+        # SystemExit included (review finding LN-9): it is not an Exception,
+        # and an uncaught one (e.g. argparse's parser.error) would kill the
+        # single worker thread silently, leaving every later queued run stuck
+        # at "queued" until the server is restarted.
+        except (Exception, SystemExit):  # noqa: BLE001 - never propagate raw
             traceback.print_exc()
             self._set_state(
                 batch_id,
@@ -734,21 +790,46 @@ let pollTimer = null;
 function renderStatus() {{
   const body = $('status-body');
   body.innerHTML = '';
+  // Built via textContent, never innerHTML: the error detail echoes solver
+  // stderr, which can carry text from user-supplied input files.
   Object.values(statuses).flat().forEach((s) => {{
     const tr = document.createElement('tr');
-    const detail = s.state === 'done'
-      ? (s.report_url ? `<a href="${{s.report_url}}" target="_blank">report</a>` : 'done')
-      : (s.message || '');
-    tr.innerHTML = `<td>${{s.run_id}}</td><td>${{s.iso}}</td>` +
-      `<td class="state-${{s.state}}">${{s.state}}</td><td>${{detail}}</td>`;
+    const cells = [s.run_id, s.iso];
+    cells.forEach((text) => {{
+      const td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    }});
+    const tdState = document.createElement('td');
+    tdState.className = 'state-' + s.state;
+    tdState.textContent = s.state;
+    tr.appendChild(tdState);
+    const tdDetail = document.createElement('td');
+    if (s.state === 'done' && s.report_url) {{
+      const a = document.createElement('a');
+      a.href = s.report_url;
+      a.target = '_blank';
+      a.textContent = 'report';
+      tdDetail.appendChild(a);
+    }} else {{
+      tdDetail.textContent = s.state === 'done' ? 'done' : (s.message || '');
+    }}
+    tr.appendChild(tdDetail);
     body.appendChild(tr);
   }});
 }}
 
 async function pollBatch(batchId) {{
-  const resp = await fetch(`/api/status?batch=${{encodeURIComponent(batchId)}}`);
-  if (!resp.ok) return;
-  const data = await resp.json();
+  let data;
+  try {{
+    const resp = await fetch(`/api/status?batch=${{encodeURIComponent(batchId)}}`);
+    if (!resp.ok) return;
+    data = await resp.json();
+  }} catch (err) {{
+    if (pollTimer) {{ clearInterval(pollTimer); pollTimer = null; }}
+    showError('lost contact with the launcher server — is it still running?');
+    return;
+  }}
   statuses[batchId] = data.runs;
   renderStatus();
   const pending = data.runs.some((r) => r.state === 'queued' || r.state === 'running');
@@ -766,11 +847,17 @@ $('btn-add-queue').addEventListener('click', () => {{
 $('btn-submit-queue').addEventListener('click', async () => {{
   showError(null);
   if (queue.length === 0) {{ queue.push(currentForm()); }}
-  const resp = await fetch('/api/run', {{
-    method: 'POST', headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{runs: queue}}),
-  }});
-  const data = await resp.json();
+  let resp, data;
+  try {{
+    resp = await fetch('/api/run', {{
+      method: 'POST', headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{runs: queue}}),
+    }});
+    data = await resp.json();
+  }} catch (err) {{
+    showError('could not reach the launcher server — is it still running?');
+    return;
+  }}
   if (!resp.ok) {{
     showError(data.error || 'submission failed');
     return;
@@ -787,11 +874,17 @@ $('btn-save-config').addEventListener('click', async () => {{
   showError(null);
   const name = $('f-save-name').value.trim();
   if (!name) {{ showError('enter a name to save this configuration'); return; }}
-  const resp = await fetch('/api/save-config', {{
-    method: 'POST', headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{name, params: currentForm()}}),
-  }});
-  const data = await resp.json();
+  let resp, data;
+  try {{
+    resp = await fetch('/api/save-config', {{
+      method: 'POST', headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{name, params: currentForm()}}),
+    }});
+    data = await resp.json();
+  }} catch (err) {{
+    showError('could not reach the launcher server — is it still running?');
+    return;
+  }}
   if (!resp.ok) {{ showError(data.error || 'save failed'); return; }}
   renderSaved(data.saved_configs);
 }});
@@ -823,35 +916,97 @@ if (CTX.defaults.lmp_is_synthetic) {{
 def _make_handler(state: LauncherState, page_context: dict):
     """Build a request-handler class bound to this server's ``state``."""
 
+    # ``contextlib.redirect_stderr`` in ``LauncherState._execute`` swaps
+    # ``sys.stderr`` process-wide while a solve runs, so a handler thread
+    # logging a request mid-solve wrote into the run's captured stderr —
+    # access-log lines ended up glued onto the run's error message (review
+    # finding LN-11). Grab the real console handle once, before any run can
+    # redirect it.
+    console_stderr = sys.stderr
+
     class LauncherHandler(BaseHTTPRequestHandler):
         server_version = f"lce-portfolio-launcher/{__version__}"
 
+        def _send_bytes(self, body: bytes, content_type: str, status: int) -> None:
+            try:
+                self.send_response(status)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError):
+                # Client went away mid-response (tab closed, poll aborted):
+                # one console line, not a threading traceback dump (review
+                # finding LN-8; ADR 0016 §5 console discipline).
+                console_stderr.write(
+                    f"{self.address_string()} - - client disconnected mid-response\n"
+                )
+
         def _send_json(self, obj: dict, status: int = 200) -> None:
-            body = json.dumps(obj).encode("utf-8")
-            self.send_response(status)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(
+                json.dumps(obj).encode("utf-8"),
+                "application/json; charset=utf-8",
+                status,
+            )
 
         def _send_html(self, body_text: str, status: int = 200) -> None:
-            body = body_text.encode("utf-8")
-            self.send_response(status)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(
+                body_text.encode("utf-8"), "text/html; charset=utf-8", status
+            )
 
         def _read_json(self) -> dict:
-            length = int(self.headers.get("Content-Length", 0))
+            """Read the request body as a JSON object, or raise ValueError.
+
+            Every malformed shape gets a friendly message instead of a raw
+            traceback or a hung handler (review findings LN-1/LN-2): a
+            non-integer Content-Length raised ValueError uncaught, a negative
+            one blocked in ``rfile.read(-1)`` until the client gave up, an
+            oversized one was absorbed into memory unbounded, and a JSON body
+            whose top level was not an object crashed with AttributeError.
+            """
+            raw_length = self.headers.get("Content-Length", "0")
+            try:
+                length = int(raw_length)
+            except ValueError:
+                raise ValueError(f"invalid Content-Length {raw_length!r}") from None
+            if length < 0:
+                raise ValueError(f"invalid Content-Length {raw_length!r}")
+            if length > MAX_REQUEST_BYTES:
+                raise ValueError(
+                    f"request body too large ({length} bytes; max {MAX_REQUEST_BYTES})"
+                )
             raw = self.rfile.read(length) if length else b"{}"
-            return json.loads(raw)
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError:
+                raise ValueError("malformed JSON body") from None
+            if not isinstance(payload, dict):
+                raise ValueError("request body must be a JSON object")
+            return payload
 
         def do_GET(self):  # noqa: N802 - stdlib naming
             parsed = urllib.parse.urlparse(self.path)
             if parsed.path == "/":
                 ctx = dict(page_context)
                 ctx["saved_configs"] = state.config_store.saved_configs()
+                # Pre-fill from the most recent submit, re-read on every page
+                # load (review finding LN-7: it was merged once at server
+                # start, so a reload never showed the last-used values) — but
+                # never the run id: a stale pre-filled id would silently
+                # overwrite that run's results on resubmit, while a blank
+                # field auto-composes a fresh one.
+                defaults = dict(page_context["defaults"])
+                last_used = state.config_store.last_used()
+                last_used.pop("run_id", None)
+                defaults.update(last_used)
+                # Keep the SYNTHETIC provenance flag consistent with whatever
+                # LMP path is actually pre-filled (same stem heuristic as
+                # resolve_default_lmp; the flag must stay visible on stubs).
+                if defaults.get("lmp_file"):
+                    defaults["lmp_is_synthetic"] = str(
+                        Path(defaults["lmp_file"]).stem
+                    ).endswith("_dummy")
+                ctx["defaults"] = defaults
                 self._send_html(render_index(ctx))
             elif parsed.path == "/api/status":
                 qs = urllib.parse.parse_qs(parsed.query)
@@ -880,8 +1035,8 @@ def _make_handler(state: LauncherState, page_context: dict):
         def _handle_run(self):
             try:
                 payload = self._read_json()
-            except json.JSONDecodeError:
-                self._send_json({"error": "malformed JSON body"}, 400)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, 400)
                 return
             raw_runs = payload.get("runs")
             if not isinstance(raw_runs, list) or not raw_runs:
@@ -896,6 +1051,15 @@ def _make_handler(state: LauncherState, page_context: dict):
                     return
                 validated.append(kwargs)
 
+            error = dedupe_run_ids(validated)
+            if error is not None:
+                self._send_json({"error": error}, 400)
+                return
+            # run_id_auto is validation-internal — keep it out of the queue,
+            # the status payload, and the persisted last-used values.
+            for kwargs in validated:
+                kwargs.pop("run_id_auto", None)
+
             batch_id = state.enqueue_batch(validated)
             state.config_store.record_last_used(validated[-1])
             self._send_json(
@@ -908,8 +1072,8 @@ def _make_handler(state: LauncherState, page_context: dict):
         def _handle_save_config(self):
             try:
                 payload = self._read_json()
-            except json.JSONDecodeError:
-                self._send_json({"error": "malformed JSON body"}, 400)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, 400)
                 return
             name = str(payload.get("name", "")).strip()
             params = payload.get("params")
@@ -938,17 +1102,14 @@ def _make_handler(state: LauncherState, page_context: dict):
                 if filename.endswith(".html")
                 else "application/json; charset=utf-8"
             )
-            body = file_path.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
+            self._send_bytes(file_path.read_bytes(), content_type, 200)
 
         def log_message(self, format, *args):  # noqa: A002 - stdlib signature
             # Mirror to the real console (ADR 0016 §5's error-discipline
-            # "mirrored to console"), not to whichever run's captured stdout.
-            sys.stderr.write(
+            # "mirrored to console") via the pre-redirect handle — writing to
+            # sys.stderr here lands inside a running solve's captured stderr
+            # and pollutes its error message (finding LN-11).
+            console_stderr.write(
                 "%s - - [%s] %s\n"
                 % (self.address_string(), self.log_date_time_string(), format % args)
             )
@@ -1009,10 +1170,9 @@ def run_server(
     state = LauncherState(
         state_dir=state_dir, results_dir=results_dir, open_browser=open_browser
     )
-    last_used = state.config_store.last_used()
+    # last-used values are merged per page load in do_GET (finding LN-7),
+    # not baked in here at startup.
     context = build_page_context(inputs_dir=inputs_dir, reference_load=reference_load)
-    if last_used:
-        context["defaults"].update(last_used)
 
     handler_cls = _make_handler(state, context)
     server = ThreadingHTTPServer((host, port), handler_cls)
@@ -1026,8 +1186,11 @@ def main(argv: list[str] | None = None) -> int:
     and every per-run report auto-open — tests and CI never spawn a browser.
     """
     parser = argparse.ArgumentParser(description=__doc__)
+    # No --host flag on purpose (review finding LN-5): ADR 0016 defers any
+    # remote/network use of the launch page — "loopback binding is deliberate
+    # and stays" — and the un-authenticated server must never be reachable
+    # from another machine.
     parser.add_argument("--port", type=int, default=EPHEMERAL_PORT)
-    parser.add_argument("--host", default=DEFAULT_HOST)
     parser.add_argument("--no-open", action="store_true", help="never open a browser")
     parser.add_argument(
         "--state-dir",
@@ -1050,7 +1213,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     server = run_server(
-        host=args.host,
+        host=DEFAULT_HOST,
         port=args.port,
         state_dir=args.state_dir,
         results_dir=args.results,
