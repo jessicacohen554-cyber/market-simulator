@@ -22,6 +22,7 @@ from pydantic import BaseModel
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
     CO2_RATES,
+    COAL_MAX_CF_BY_PLANT,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -517,22 +518,13 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
 
-# Per-plant coal maximum capacity-factor ceilings (fraction of capacity_mw):
-# the sustained output each unit cannot exceed even running hard (derates,
-# heat-rate / boiler limits), capping the dispatch so coal does not over-run.
-# Applied as an availability ceiling year-round.
-COAL_MAX_CF_BY_PLANT: dict[int, float] = {
-    6180: 0.90,  # Oak Grove
-    298: 0.80,  # Limestone
-    6178: 0.99,  # Coleto Creek
-    6183: 0.90,  # San Miguel
-    6179: 0.89,  # Fayette (Sam Seymour)
-    7097: 0.80,  # J K Spruce
-}
-# Year-specific ceiling overrides (e.g. confirmed unit-outage years).
-COAL_MAX_CF_OVERRIDE: dict[tuple[int, int], float] = {
-    (6179, 2025): 0.78,  # Fayette unit issues held it to ~78% in 2025
-}
+# Per-plant coal sustained-output ceilings now live in
+# constants.COAL_MAX_CF_BY_PLANT (re-derived from CAMPD outage-adjusted
+# availability physics, not observed output — see
+# scripts/derive_coal_max_cf.py). The year-specific (6179, 2025) override that
+# used to sit here was deleted outright: a single confirmed-unit-outage year
+# has no forward analogue, and the historic-outage overlay already zeros the
+# actual outage hours for backcast runs.
 # Summer-only (Jun-Sep) ceilings: an ambient/derate cap that only binds in the
 # heat (the unit runs higher the rest of the year).
 COAL_SUMMER_MAX_CF: dict[int, float] = {
@@ -1280,9 +1272,7 @@ def generators_to_fleet_arrays(
             # cannot dispatch above its sustained operating limit.
             if gen.plant_group == "COAL":
                 _pc = int(gen.plant_code)
-                cap = COAL_MAX_CF_OVERRIDE.get(
-                    (_pc, run_year), COAL_MAX_CF_BY_PLANT.get(_pc)
-                )
+                cap = COAL_MAX_CF_BY_PLANT.get(_pc)
                 if cap is not None:
                     np.minimum(availability[g_idx, :], cap, out=availability[g_idx, :])
                 scap = COAL_SUMMER_MAX_CF.get(_pc)
