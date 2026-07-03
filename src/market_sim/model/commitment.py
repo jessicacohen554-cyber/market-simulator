@@ -1159,8 +1159,10 @@ def apply_commitment_with_coal_pin(
     # infeasible — raise availability to at least ``min_gen / pmax`` for those
     # floored generator-hours so the floor stays feasible and forces the unit on.
     p2_min_gen = None
+    p2_min_gen_mech = None
     if preserve_min_gen and fleet_arrays.min_gen is not None:
         p2_min_gen = fleet_arrays.min_gen
+        p2_min_gen_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
         pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
         floored = p2_min_gen > 0.0
         if floored.any():
@@ -1182,4 +1184,5 @@ def apply_commitment_with_coal_pin(
         efficiency_bin=fleet_arrays.efficiency_bin,
         plant_code=fleet_arrays.plant_code,
         min_gen=p2_min_gen,
+        min_gen_mechanism=p2_min_gen_mech,
     )
