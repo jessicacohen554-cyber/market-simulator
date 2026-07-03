@@ -93,3 +93,57 @@ def test_single_print_never_relevels_a_month(cfg, tmp_path, monkeypatch):
     out = _nyiso_hub_daily_gas_prices(cfg, 2024, transco_path=transco)
     dec = out.reshape(365, 24)[334:, 0]
     assert dec.mean() == pytest.approx(3.16, rel=1e-9)
+
+
+def test_reconciled_winter_spread_preserves_measured_annual():
+    """Rule #13 reconciliation: annual mean == the committed (SOM) annual."""
+    import pandas as pd
+
+    from market_sim.data.fuel import nyiso_reconciled_reference_monthly
+
+    hub = pd.read_csv("data/raw/gas-prices/transco_z6_iroquois_monthly.csv")
+    for year in (2023, 2024, 2025):
+        rec = nyiso_reconciled_reference_monthly(year)
+        assert rec is not None
+        iq, tz = rec
+        committed = hub[hub.date.str.startswith(f"{year}-")]
+        assert iq.mean() == pytest.approx(
+            committed.iroquois_z2_usd_mmbtu.mean(), rel=1e-9
+        )
+        # Winter-concentration: the constrained months carry more premium than
+        # the flat construction, unconstrained months less.
+        spread = iq - tz
+        assert spread.min() >= -1e-9  # premium never negative
+        assert spread.max() > spread.mean() * 2  # concentrated, not flat
+
+
+def test_reconciled_dec_2024_lifts_toward_complex():
+    from market_sim.data.fuel import nyiso_reconciled_reference_monthly
+
+    iq, _tz = nyiso_reconciled_reference_monthly(2024)
+    assert 6.0 < iq[11] < 9.0  # flat construction read 3.16; complex ~9
+
+
+def test_zonal_monthly_ratios(cfg):
+    from market_sim.data.fuel import nyiso_zonal_gas_ratios_monthly
+
+    off = nyiso_zonal_gas_ratios_monthly(
+        cfg.with_overrides(
+            nyiso_iroquois_winter_spread=True, nyiso_zonal_gas_basis=True
+        ),
+        2024,
+    )
+    assert off is not None
+    # Reference zones ride the reference untouched.
+    np.testing.assert_allclose(off["Capital_Hudson"], 1.0)
+    np.testing.assert_allclose(off["Long_Island"], 1.0)
+    # NYC resolves to its own measured hub monthly: ratio < 1 in premium months.
+    assert off["NYC"][11] < 0.6  # Dec-2024: Transco 3.30 / Iroquois 7.41
+    assert off["NYC"][4] == pytest.approx(1.0, abs=0.15)  # May: no premium
+    # Flag off -> None (byte-identical legacy path).
+    assert (
+        nyiso_zonal_gas_ratios_monthly(
+            cfg.with_overrides(nyiso_zonal_gas_basis=True), 2024
+        )
+        is None
+    )
