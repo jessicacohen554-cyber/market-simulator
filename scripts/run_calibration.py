@@ -1981,6 +1981,7 @@ def run_year(
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
     ordc_lolp_params_path: str | None = None,
+    ercot_storage_as_product_credit: bool = False,
     gas_hh_monthly_shape: bool = False,
     storage_as_commitment: bool = False,
     ercot_storage_as_endogenous: bool = False,
@@ -2444,6 +2445,10 @@ def run_year(
     # see ScenarioConfig.ercot_ordc_total_reserve / reserve_config.
     if ercot_ordc_total_reserve:
         config = config.with_overrides(ercot_ordc_total_reserve=True)
+    # Measured battery AS award netted off the fast products' requirements
+    # (multi-product measured-storage path): reserve_config.
+    if ercot_storage_as_product_credit:
+        config = config.with_overrides(ercot_storage_as_product_credit=True)
     # Measured HH monthly gas shape (level-preserving): fuel.gas_seasonal_shape.
     if gas_hh_monthly_shape:
         config = config.with_overrides(gas_hh_monthly_shape=True)

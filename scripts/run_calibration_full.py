@@ -1744,6 +1744,7 @@ def solve_and_persist(
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
+    ercot_storage_as_product_credit: bool = False,
     gas_hh_monthly_shape: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
@@ -1974,6 +1975,7 @@ def solve_and_persist(
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_ordc_total_reserve=ercot_ordc_total_reserve,
+            ercot_storage_as_product_credit=ercot_storage_as_product_credit,
             gas_hh_monthly_shape=gas_hh_monthly_shape,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
@@ -2262,6 +2264,7 @@ def solve_and_persist(
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
+        "ercot_storage_as_product_credit": ercot_storage_as_product_credit,
         "gas_hh_monthly_shape": gas_hh_monthly_shape,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
@@ -2435,6 +2438,10 @@ def solve_and_persist(
         )
     if ercot_ordc_total_reserve:
         recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
+    if ercot_storage_as_product_credit:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_storage_as_product_credit=True
+        )
     if gas_hh_monthly_shape:
         recorded_cfg = recorded_cfg.with_overrides(gas_hh_monthly_shape=True)
     if ercot_as_aware_commitment:
@@ -5055,6 +5062,17 @@ def main() -> None:
         "ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--ercot-storage-as-product-credit",
+        action="store_true",
+        help="ERCOT multi-product co-opt, measured storage path: net the "
+        "measured hourly battery AS award (60-Day DAM per-resource-type "
+        "series) pro-rata off the fast products' (RegUp/RRS/ECRS) "
+        "requirements, so the products do not pull the batteries' awarded "
+        "MW from thermal headroom. The multi-product analogue of "
+        "--ercot-storage-as-reserve's requirement netting; same from-year "
+        "gate. No-op under --ercot-storage-as-endogenous. Off (default).",
+    )
+    parser.add_argument(
         "--gas-hh-monthly-shape",
         action="store_true",
         help="Replace the generic climatological monthly gas SHAPE with the "
@@ -6361,6 +6379,7 @@ def main() -> None:
         miso_reserve_pergen=args.miso_reserve_pergen,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
+        ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         gas_hh_monthly_shape=args.gas_hh_monthly_shape,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
