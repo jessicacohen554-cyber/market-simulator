@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-caiso-49-perhub-seam",
+  "label": "caiso 49 perhub seam",
+  "date": "2026-07-03",
+  "shorthand": "caiso-49-perhub-seam",
+  "definition": "caiso-49: measured-hub per-hub WECC seam (2023 gap-filled by forward reference formula) + measured p95 corridor envelopes both directions + published MIC seam import limit replacing the calibrated 7500 MW scalar; all caiso-42 keeper levers carried",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-caiso-49-perhub-seam.js",
+  "bundle": "results/calibration/caiso49_perhub_seam"
+}
