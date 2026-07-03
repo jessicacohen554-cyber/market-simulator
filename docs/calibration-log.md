@@ -3904,3 +3904,45 @@ structural dispatch refinement or magic numbers needed for the backcast. Before 
 fixed measured schedule today; a forecast has none) and, when U4 daily-AGT lands,
 the *derived* winter-oil convexity. Full writeup:
 `results/calibration/DIAGNOSIS-neiso-ccsteam-2026-06-19.md`.
+
+## 2026-07-03 — NYISO 40/41: measured-neighbor import pricing + gas-data fidelity (keeper → nyiso 41)
+
+Session goal: recover NYISO's CALIBRATED-WITH-CAVEATS after the 2026-07-02
+rubric re-balance (soft caveat budget 3 → 2) by converting ≥1 of the three
+ledgered price caveats into a PASS via real structure. Monthly decomposition
+located the misses in the scarcity months (Dec-2024 −48%, Feb-2025 −28%,
+Jun/Jul-2025 −29/−26%, Jul-2024 −32%) and the diagnosis split three ways:
+
+1. **Static fitted import ladder** — `IMPORT_TRANCHES_BY_YEAR` capped the seam
+   at its per-year constants (model Dec-2024 mean $35.3 ≈ the $35.4 PJM_west
+   tranche while measured NEISO averaged $84.5). Built
+   `nyiso_import_hub_prices` (`inject_nyiso_import_hub_prices`): PJM_west /
+   ISONE_tie at the measured hourly PJM / ISO-NE DA system LMP ± $1 hurdle,
+   scarcity block at the hourly max, export sink at the hourly min (wash-free).
+   The NYISO analogue of `miso_pjm_lmp_import_pricing` / `caiso_import_hub_prices`.
+2. **Gas-data fidelity** — daily hub quotes were spread evenly over calendar
+   days (Jan-2024's $23.90 print landed on the 12th, not the 16th) and the
+   monthly file's Dec-2024 level ($2.45) disagreed with its own daily series
+   ($3.30, holiday-week under-sampling). Fixed: `_transco_z6_daily_dated`
+   true-date placement + `fetch_nyiso_gas_narrative.py` (open-egress workflow)
+   recomputing the NYISO monthly levels from the completed daily series
+   (Dec-2024 basis +0.16 → +1.00).
+3. **Eastern-NY (Iroquois Z2) winter hub level — DATA-BLOCKED, now verified.**
+   The workflow scanned all 146 NGWU weekly pages 2023–25 (compact table,
+   `ngpf.asp` printer table, narrative): zero Iroquois prints; NGI/ICE
+   paywalled. The reconstruction reads ~$4.0/MMBtu for Dec-2024 vs the ~$9 NE
+   complex — worth ≈ −$25/−$19/−$24 of Dec-24/Jan-25/Feb-25 monthly LMP, the
+   bulk of the residual C3 miss. Open data ask: licensed Iroquois Z2 series or
+   NYISO SOM monthly per-hub data.
+
+Runs (both registered): `nyiso 40 truedate gas` (control, data fixes only) —
+C3a 2024 −19.2 → −16.3%; `nyiso 41 hub prices` (data fixes + the seam
+mechanism, **new keeper**) — C3a −13.3/−13.4/−9.5%, C3b NRMSE
+0.209/0.236/0.172, C3c 7h in 2025 (first NYISO model >$300 hours). C1/C2/C4/C6
+PASS unchanged; C5a CO2 2024 slips to −7.1% (±7 band), exposed by the corrected
+gas data with root cause in the ledgered steam under-run. Determination
+**NOT-YET** (4 ledgered soft caveats > budget 2): the goal criterion-conversion
+is blocked on the Iroquois data ask (C3a/C3b) and the reserve-scarcity frontier
+(C3c) — both documented in the run-41 attestation, neither closable with
+grounded inputs today (rules #11/#12). nyiso-25-scarcity-merit and
+nyiso-30-fwd-band pruned to hold the top-15 retention.
