@@ -635,6 +635,13 @@ ALGONQUIN_DAILY_PATH: Path = GAS_PRICES_DIR / "algonquin_citygate_daily.csv"
 # locally supersede the reconstruction (rule #13: measured over estimate).
 IROQUOIS_Z2_DAILY_PATH: Path = GAS_PRICES_DIR / "iroquois_z2_daily.csv"
 
+# Measured Transco Z6 NY monthly (mean of daily quotes) + the committed Iroquois
+# Z2 monthly reconstruction (Transco monthly + the NYISO SOM *annual*
+# Iroquois-Transco spread). Consumed by nyiso_reconciled_reference_monthly,
+# which re-allocates that measured annual spread across months by the measured
+# Algonquin scarcity signal (rule #13 reconciliation; see its docstring).
+TRANSCO_IROQUOIS_MONTHLY_PATH: Path = GAS_PRICES_DIR / "transco_z6_iroquois_monthly.csv"
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
@@ -1094,6 +1101,14 @@ def iso_hub_monthly_gas_prices(
     ``None`` when the CSV, the ISO or the year is absent entirely (forward
     years, ISOs with no sourced hub series).
     """
+    # NYISO reconciled winter spread (rule #13): the measured annual
+    # Iroquois-Transco spread re-allocated across months by the measured
+    # Algonquin scarcity signal, replacing the flat committed construction.
+    # Falls through (byte-identical) when off or when a series is incomplete.
+    if config.iso == "NYISO" and getattr(config, "nyiso_iroquois_winter_spread", False):
+        rec = nyiso_reconciled_reference_monthly(year, basis_path=basis_path)
+        if rec is not None:
+            return rec[0]
     basis = load_winter_gas_basis(config, year, path=basis_path)
     if basis is None:
         return None
@@ -1470,6 +1485,145 @@ def nyiso_zonal_gas_offsets(
     return {z: price - ref for z, price in hub.items()}
 
 
+def nyiso_reconciled_reference_monthly(
+    year: int,
+    hub_path: Path | None = None,
+    basis_path: Path | None = None,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Reconciled Iroquois Z2 monthly hub price, winter-weighted from measured data.
+
+    The committed reference construction (``transco_z6_iroquois_monthly.csv``)
+    distributes the **measured annual** NYISO-SOM Iroquois−Transco spread FLAT
+    across months, which mis-states the winter physics: Iroquois Z2 is a
+    Connecticut trading point inside the New England pipeline complex, and its
+    premium over Transco Z6 NY concentrates in exactly the constrained winter
+    months when Algonquin blows out (Dec-2024: flat construction $3.16/MMBtu vs
+    the ~$9 complex it physically trades in). No free Iroquois series exists to
+    replace it (verified: zero prints in 146 NGWU weekly pages 2023–25; NGI/ICE
+    paywalled), so per rule #13 this is the documented **reconciled version of
+    the real data** rather than a guess:
+
+      ``iroquois_m = transco_m + annual_spread × 12 × w_m``
+      ``w_m = max(agt_basis_m, 0) / Σ max(agt_basis_m, 0)``
+
+    - ``transco_m`` — the measured Transco Z6 NY monthly (mean of daily quotes);
+    - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread,
+      preserved EXACTLY (the reconciled annual mean equals the committed one);
+    - ``w_m`` — the **measured Algonquin (MA-citygate) monthly basis**, the New
+      England pipeline-scarcity signal that physically causes the Iroquois
+      premium; unconstrained months (basis ≤ 0) carry zero premium (summer Z2
+      trades at Transco backhaul parity).
+
+    No fitted constant, nothing reads a model output or price residual; a
+    forecast year regenerates it from the forward basis seasonality and it
+    responds to changed conditions (a mild winter ⇒ low AGT basis ⇒ low
+    premium). Returns ``(iroquois_m, transco_m)`` as two ``(12,)`` arrays, or
+    ``None`` when any input series is incomplete for ``year`` (the caller then
+    keeps the flat committed construction, byte-identical).
+    """
+    resolved = Path(hub_path) if hub_path else TRANSCO_IROQUOIS_MONTHLY_PATH
+    if not resolved.exists():
+        return None
+    frame = pd.read_csv(resolved)
+    sub = frame[frame["date"].astype(str).str.startswith(f"{year}-")]
+    transco = np.full(12, np.nan)
+    iroq = np.full(12, np.nan)
+    for r in sub.itertuples():
+        m = int(str(r.date)[5:7]) - 1
+        if 0 <= m < 12:
+            transco[m] = float(r.transco_z6_ny_usd_mmbtu)
+            iroq[m] = float(r.iroquois_z2_usd_mmbtu)
+    if np.isnan(transco).any() or np.isnan(iroq).any():
+        return None
+    annual_spread = float((iroq - transco).mean())
+    bframe = _load_winter_basis_frame(basis_path)
+    if bframe is None:
+        return None
+    agt_rows = bframe[(bframe["iso"] == "NEISO") & (bframe["year"] == year)]
+    agt = np.full(12, np.nan)
+    for _, row in agt_rows.iterrows():
+        m = int(row["month"]) - 1
+        if 0 <= m < 12:
+            agt[m] = float(row["basis_usd_mmbtu"])
+    if np.isnan(agt).any():
+        return None
+    w = np.clip(agt, 0.0, None)
+    total = float(w.sum())
+    if total <= 0.0:
+        return None
+    spread_m = annual_spread * 12.0 * w / total
+    return transco + spread_m, transco
+
+
+def nyiso_zonal_gas_ratios_monthly(
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+    basis_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+) -> dict[str, np.ndarray] | None:
+    """Return ``{zone: (12,) monthly ratio}`` vs the reconciled reference hub.
+
+    The month-varying companion of :func:`nyiso_zonal_gas_offsets`, active only
+    under ``config.nyiso_iroquois_winter_spread``. With the reference
+    (Iroquois Z2) carrying its winter-concentrated premium, the flat annual
+    ADDITIVE offsets would (a) wrongly drag the non-Iroquois zones up with the
+    winter premium and (b) leave NYC's daily spikes amplified by the reference
+    level, so each zone instead prices at the reference hourly series times its
+    OWN measured hub-to-reference monthly ratio — preserving the zone's
+    measured monthly mean exactly and scaling the within-month daily swing to
+    the zone's own level:
+
+    - **NYC** (Transco Z6 NY): ``transco_m / iroquois_m`` — the city resolves
+      to its own measured hub monthly exactly.
+    - **Iroquois-mapped zones** (Capital_Hudson / Lower_Hudson / Long_Island,
+      annual level equal to the reference): ratio 1 — they ARE the reference.
+    - **Upstate_West** (Tenn Z4 200L, a Marcellus supply point with no New
+      England scarcity premium): its measured SOM annual level riding the
+      Henry Hub within-year shape, over the reference —
+      ``(annual + hh_m − mean(hh_m)) / iroquois_m`` — so its annual mean stays
+      the measured SOM value.
+
+    Every input is a measured series; no fitted constant. Returns ``None``
+    when the flag is off or any series is incomplete (caller falls back to the
+    annual additive offsets, byte-identical).
+    """
+    if config.iso != "NYISO" or not getattr(
+        config, "nyiso_iroquois_winter_spread", False
+    ):
+        return None
+    rec = nyiso_reconciled_reference_monthly(year, basis_path=basis_path)
+    if rec is None:
+        return None
+    iroq_m, transco_m = rec
+    if (iroq_m <= 0).any():
+        return None
+    frame = _load_nyiso_zonal_gas_hub(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    hub = {str(r.zone): float(r.hub_usd_mmbtu) for r in sub.itertuples()}
+    ref_ann = hub.get(NYISO_GAS_HUB_REFERENCE_ZONE)
+    if ref_ann is None:
+        return None
+    hh = _henry_hub_monthly(henry_hub_path)
+    hh_m = np.array([hh.get((year, m + 1), np.nan) for m in range(12)])
+    if np.isnan(hh_m).any():
+        return None
+    hh_shape = hh_m - float(hh_m.mean())
+    ratios: dict[str, np.ndarray] = {}
+    for z, price_ann in hub.items():
+        if z == "NYC":
+            ratios[z] = transco_m / iroq_m
+        elif abs(price_ann - ref_ann) < 1e-9:
+            ratios[z] = np.ones(12)
+        else:
+            ratios[z] = np.maximum(price_ann + hh_shape, _GAS_PRICE_FLOOR) / iroq_m
+    return ratios
+
+
 def apply_nyiso_zonal_gas_basis(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -1502,14 +1656,38 @@ def apply_nyiso_zonal_gas_basis(
         return
     if config.iso != "NYISO":
         return
-    offsets = nyiso_zonal_gas_offsets(year, path)
-    if offsets is None:
-        return
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = get_iso_config(config.iso).zone_names
     gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
     if gas_rows.size == 0:
+        return
+    # Month-varying ratios under the reconciled winter spread (each zone
+    # prices at the reference hourly series times its own measured
+    # hub-to-reference monthly ratio; see nyiso_zonal_gas_ratios_monthly).
+    monthly_ratios = nyiso_zonal_gas_ratios_monthly(config, year, path)
+    if monthly_ratios is not None:
+        month_of_hour = _month_index(fuel_prices.shape[1])
+        ratio_matrix = np.array(
+            [monthly_ratios.get(name, np.ones(12)) for name in zone_names],
+            dtype=float,
+        )
+        gen_ratio = ratio_matrix[fleet.zone_idx[gas_rows]][:, month_of_hour]
+        fuel_prices[gas_rows, :] = np.maximum(
+            fuel_prices[gas_rows, :] * gen_ratio, _GAS_PRICE_FLOOR
+        )
+        logger.info(
+            "NYISO zonal gas basis (%d, monthly reconciled): %d gas units "
+            "scaled by zone-month hub ratio (min %.2f, max %.2f vs %s)",
+            year,
+            gas_rows.size,
+            float(gen_ratio.min()),
+            float(gen_ratio.max()),
+            NYISO_GAS_HUB_REFERENCE_ZONE,
+        )
+        return
+    offsets = nyiso_zonal_gas_offsets(year, path)
+    if offsets is None:
         return
     # Per-generator additive offset from its zone (0.0 for the reference zone
     # and any zone absent from the table — e.g. the priced external node).
