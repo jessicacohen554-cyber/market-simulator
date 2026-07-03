@@ -74,27 +74,27 @@ def score_year(
             price = price - ov
             removed = removed + ov[:, 0]
     m = (price * dem).sum(1) / dem.sum(1)
-    d = dem.sum(1)
+    dsum = dem.sum(1)
     n = min(len(m), len(actual))
-    m, a, d = m[:n], actual[:n], d[:n]
+    m, a, dsum = m[:n], actual[:n], dsum[:n]
     fin = np.isfinite(a)
-    # C3a: demand-weighted annual means
-    mean_m = float((m[fin] * d[fin]).sum() / d[fin].sum())
-    mean_a = float((a[fin] * d[fin]).sum() / d[fin].sum())
+    # Dashboard-payload basis (render_calibration_html.build_payload): the
+    # MODEL side is fully demand-weighted (across zones per hour and across
+    # hours within the month/year via pMon/dMon), the ACTUAL side is the
+    # simple time-mean of the hub RT series (avgLMP.rt / rt_mon). Mirroring
+    # the asymmetry keeps these numbers comparable to the keeper ledger.
+    mean_m = float((m * dsum).sum() / dsum.sum())
+    mean_a = float(np.nanmean(a[fin]))
     c3a = mean_m / mean_a - 1.0
-    # C3b: demand-weighted monthly vectors
-    mm = np.array(
-        [
-            (m[s] * d[s])[fin[s]].sum() / d[s][fin[s]].sum() if fin[s].any() else np.nan
-            for s in (slice(EDGES[k], min(EDGES[k + 1], n)) for k in range(12))
-        ]
-    )
-    am = np.array(
-        [
-            (a[s] * d[s])[fin[s]].sum() / d[s][fin[s]].sum() if fin[s].any() else np.nan
-            for s in (slice(EDGES[k], min(EDGES[k + 1], n)) for k in range(12))
-        ]
-    )
+    mm = np.array([
+        float((m[s2] * dsum[s2]).sum() / dsum[s2].sum())
+        if len(m[s2]) else np.nan
+        for s2 in (slice(EDGES[k], min(EDGES[k + 1], n)) for k in range(12))
+    ])
+    am = np.array([
+        float(np.nanmean(a[s2])) if fin[s2].any() else np.nan
+        for s2 in (slice(EDGES[k], min(EDGES[k + 1], n)) for k in range(12))
+    ])
     ok = np.isfinite(am)
     nrmse = float(np.sqrt(np.nanmean((mm[ok] - am[ok]) ** 2)) / np.nanmean(am[ok]))
     # C3c
