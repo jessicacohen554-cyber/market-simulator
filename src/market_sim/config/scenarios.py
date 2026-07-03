@@ -1032,6 +1032,18 @@ class ScenarioConfig:
     # transmission.build_caiso_per_hub_intertie +
     # transmission.inject_caiso_per_hub_intertie_prices. Default off
     # (byte-identical); CAISO-only; 2023 falls back to the static ladder.
+    caiso_perhub_firm_base: bool = False  # Keep the firm/contracted import
+    # tranches (transmission.CAISO_FIRM_IMPORT_TRANCHES: PNW_hydro_base = BPA
+    # firm hydro over COI, DSW_solar_PV = desert-SW solar PPAs over Path-46) at
+    # their static contract-cost estimates while caiso_per_hub_intertie prices
+    # the spot-traded tranches (Mid-C economy, DSW thermal, scarcity) and both
+    # export legs at the measured hourly hub. The real market schedules the
+    # specified/contracted majority of CAISO's imports at contract cost — they
+    # are INFRAMARGINAL, so CAISO clears domestic while the tie still flows
+    # (2023/24 summers: CAISO $50-54 with Palo Verde spot at $69-74 and 3-4 GW
+    # importing). Pricing every tranche at spot transplants the hub spike into
+    # CAISO whenever the tie is marginal. Requires caiso_per_hub_intertie.
+    # Default off (byte-identical).
     caiso_corridor_flow_limit: bool = False  # Cap each CAISO per-hub corridor's
     # import-direction flow at the MEASURED diurnal deliverability envelope (an
     # ATC proxy): the per-(month × hour-of-day) p95 net import on COI/Path-66 and

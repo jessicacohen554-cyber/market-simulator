@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-caiso-51-firm-base",
+ "label": "caiso 51 firm base",
+ "date": "2026-07-03",
+ "shorthand": "caiso-51-firm-base",
+ "definition": "KEEPER caiso 51 firm base: the structurally complete WECC seam decomposition \u2014 firm/contracted tranches (BPA firm hydro over COI, desert-SW solar PPAs over Path-46) held at documented contract-cost estimates (inframarginal, as the real market schedules its specified-import majority), spot tranches (Mid-C economy, DSW thermal, scarcity) and both export legs at the measured hourly Malin/Palo Verde hub, measured p95 deliverability envelopes both directions, published MIC seam import limit (16.0/16.5/16.1 GW) replacing the fitted 7,500 MW cap, UC startup bridge/decommit, EIA-930 monthly hydro budgets, and every caiso-42 lever. Fair-calendar verdict NOT-YET, best CAISO to date: C3a +19.6/+34.9/+41.6% (keeper caiso-42: +16.9/+36.9/+47.1), C3b NRMSE 0.285/0.459/0.436 (best), C4 2023 gas passes (r/NRMSE in band, first time), C2 2025 gas +8.1% (was +12.3%), C5a 2025 +8.7% (was +12.7%). Standing misses: C1 CC_REGULAR +4.91/+10.86 TWh (fall/winter under-import: 2024 net import 25.8 vs 32.4 TWh actual \u2014 the specified-import VOLUME is under-represented; needs CEC/CARB specified-imports data intake), spring-midday floor ~$34-38 vs actual ~$11-14 (model short where reality is RUC-long and exporting), C3c tail honest-collapsed 0h (the old 107h tail was a fitted-cap artifact, caiso-46/47). Promoted on structure (rules #1/#14): removes the fitted flat import ladder and the fitted 7,500 MW cap from the binding path.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-caiso-51-firm-base.js",
+ "bundle": "results/calibration/caiso51_firm_base"
+}
