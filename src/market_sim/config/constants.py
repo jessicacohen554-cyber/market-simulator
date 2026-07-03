@@ -174,6 +174,21 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
     (99.0, 19.0),  # older
 ]
 
+# Per-plant ERCOT CC_REGULAR peaking-tranche % (top slice of nameplate priced
+# at the duct-burner peak multiplier), used in place of the generic offer
+# curve's pct_peaking when ScenarioConfig.cc_peaking_per_plant is set — moves
+# the peaking band earlier on the CF axis (15% => peaking starts at 85% of
+# nameplate). Residual-identified, forecast-risk: applied to exactly the four
+# F-class(late) 2x1 CCs the model over-ran in the 80-90% CF range (not a
+# published or physically-measured turbine limit) — open root-cause item for
+# the DOF ledger (S5).
+CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
+    58001: 15.0,  # Temple Power Station
+    58005: 15.0,  # Rayburn Energy Station LLC
+    59812: 15.0,  # Wolf Hollow II
+    60122: 15.0,  # Colorado Bend II
+}
+
 # Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_passthrough).
 # Coal plants hold take-or-pay fuel contracts, so the contracted volume bids at
 # VOM only (fuel sunk) while volume above the contract bids at progressively
@@ -363,8 +378,10 @@ HYDRO_YEAR_MULTIPLIER: dict[str, float] = {
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
-    "ERCOT": 0.85,  # was 0.83. NERC GADS 2019-2023, ERCOT fleet.
-    "CAISO": 0.89,  # was 0.88. NERC GADS 2019-2023, CAISO fleet.
+    "ERCOT": 0.85,  # residual-identified, forecast-risk: nudged from the
+    # NERC GADS 2019-2023 ERCOT-fleet baseline (0.83) during calibration.
+    "CAISO": 0.89,  # residual-identified, forecast-risk: nudged from the
+    # NERC GADS 2019-2023 CAISO-fleet baseline (0.88) during calibration.
     "PJM": 0.87,  # NERC GADS 2019-2023, PJM fleet. TODO: verify
     "NYISO": 0.86,  # NERC GADS 2019-2023, NYISO fleet. TODO: verify
     "NEISO": 0.85,  # NERC GADS 2019-2023, ISO-NE fleet. TODO: verify
@@ -879,6 +896,31 @@ COAL_PRICE_BASE: dict[str, float] = {
 # domestic demand reducing economies of scale.
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
+
+# --- ERCOT lignite / PRB delivered coal cost, 2023-2025 -----------------------
+# ERCOT's two coal supply classes are genuinely different costs: mine-mouth
+# lignite (no transport, take-or-pay contract) vs PRB-by-rail (commodity +
+# rail freight). Both are measured delivered-fuel-cost inputs — a physical/
+# market input admissible under CLAUDE.md rule #13 (forward-reproducible,
+# responds to changed conditions), not a fitted/residual value, despite the
+# unhelpful "calibration" naming these constants used to carry.
+#
+# Mine-mouth lignite: held flat 2023-2025 (no transport cost to escalate),
+# then compounds at COAL_PRICE_ESCALATION from 2026. Source: operator/EIA cost
+# data.
+LIGNITE_PRICE_2023_25: float = 1.45
+# PRB-by-rail: measured delivered cost, 2023-2025 (EIA-923 Schedule-5 receipts
+# / operator cost data). From 2026 the forward curve decomposes the 2023-2025
+# average into commodity (42%), diesel-driven rail freight (12%, held flat —
+# the model carries no forward diesel price curve) and non-diesel rail
+# freight (46%, escalates at COAL_PRICE_ESCALATION); the commodity component
+# holds flat through 2030 then declines 1.5%/yr as coal demand falls.
+PRB_PRICE_BY_YEAR: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
+PRB_COMMODITY_SHARE: float = 0.42
+PRB_RAIL_DIESEL_SHARE: float = 0.12
+PRB_RAIL_NONDIESEL_SHARE: float = 0.46
+PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
+PRB_COMMODITY_FLAT_THROUGH: int = 2030
 
 # Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam units.
 # Distillate (No. 2) fuel oil dominates the NYISO/ISO-NE oil peaker fleet;
@@ -1919,6 +1961,21 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "NEISO": {"wind": 1400.0, "solar": 2700.0},
 }
 
+# CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
+# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with
+# fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC
+# boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit
+# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
+# southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
+# has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
+# a direct Path-15 sub-TAC load measurement becomes available.
+CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
+    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    "SCE-TAC": {"SP15": 1.0},
+    "SDGE-TAC": {"SP15": 1.0},
+    "VEA-TAC": {"SP15": 1.0},
+}
+
 # NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
 # gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
 # zone, the fraction of that zone's hourly load that must be met by IN-ZONE
@@ -1930,10 +1987,12 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # 2023 realized LI self-supply share (8.52 TWh gen / ~17.6 TWh load = 0.48),
 # which is what the LMIC requirement enforces — a load-scaling, forward-
 # reproducible rule, NOT a pin to measured generation (CLAUDE.md rule #12). Set
-# a touch below the realized share so the floor never over-forces. NYC (zone J)
-# is deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh
-# (it cannot import enough, so it self-supplies) — its idle peakers are a
-# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# a touch below the realized share so the floor never over-forces — residual-
+# identified, forecast-risk (the magnitude tracks the 2023 outcome; open
+# root-cause item for the DOF ledger, S5). NYC (zone J) is deliberately ABSENT:
+# the diagnostic shows NYC OVER-generates by +11 TWh (it cannot import enough,
+# so it self-supplies) — its idle peakers are a reserve-scarcity gap (RCPF /
+# mechanism B), not an energy must-run. Tier 3.
 # Source: NYISO Locational Installed Capacity Requirements (Gold Book); EIA-923
 # zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
 NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
