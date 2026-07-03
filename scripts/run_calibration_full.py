@@ -1813,6 +1813,7 @@ def solve_and_persist(
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
+    nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
@@ -2038,6 +2039,7 @@ def solve_and_persist(
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
             nyiso_import_hub_prices=nyiso_import_hub_prices,
+            nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             miso_firm_imports=miso_firm_imports,
@@ -2325,6 +2327,7 @@ def solve_and_persist(
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "nyiso_import_hub_prices": nyiso_import_hub_prices,
+        "nyiso_iroquois_winter_spread": nyiso_iroquois_winter_spread,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "miso_firm_imports": miso_firm_imports,
@@ -2601,6 +2604,10 @@ def solve_and_persist(
     if nyiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_import_hub_prices=nyiso_import_hub_prices
+        )
+    if nyiso_iroquois_winter_spread is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
         )
     if nyiso_synchronised_reserve is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5889,6 +5896,21 @@ def main() -> None:
         "(off).",
     )
     parser.add_argument(
+        "--nyiso-iroquois-winter-spread",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO eastern (Iroquois Z2) winter gas premium reconciled from "
+        "measured data (rule #13): keep the measured SOM ANNUAL Iroquois-"
+        "Transco spread exactly but allocate it across months in proportion "
+        "to the measured Algonquin (MA-citygate) monthly basis (the New "
+        "England scarcity signal that physically causes the premium; zero in "
+        "unconstrained months). Zonal offsets become monthly hub ratios (NYC "
+        "resolves to its own measured Transco Z6 NY monthly; Upstate to its "
+        "SOM annual level on the Henry Hub shape). No fitted constant. "
+        "Requires the NYISO zonal basis + hub overlay; NYISO-only. Default "
+        "(unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-synchronised-reserve",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6374,6 +6396,7 @@ def main() -> None:
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         nyiso_import_hub_prices=args.nyiso_import_hub_prices,
+        nyiso_iroquois_winter_spread=args.nyiso_iroquois_winter_spread,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         miso_firm_imports=miso_firm_imports,

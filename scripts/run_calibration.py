@@ -2015,6 +2015,7 @@ def run_year(
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
+    nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
@@ -2308,6 +2309,10 @@ def run_year(
         )
     if nyiso_import_hub_prices is not None:
         config = config.with_overrides(nyiso_import_hub_prices=nyiso_import_hub_prices)
+    if nyiso_iroquois_winter_spread is not None:
+        config = config.with_overrides(
+            nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
+        )
     if nyiso_synchronised_reserve is not None:
         config = config.with_overrides(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve
