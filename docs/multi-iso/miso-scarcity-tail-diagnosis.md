@@ -144,8 +144,56 @@ marginal pool.
   the depth of actual RT spikes reflects 5-minute dynamics; only the $200–1,100
   band is structurally reachable at hourly resolution.
 
-## 5. Result — miso-39 (`--miso-reserve-pergen` probe)
+## 5. Result — miso-39 (`--miso-reserve-pergen`, 2023–25): gate 4 CLOSED-NEGATIVE
 
-*(filled after the 3-year solve; bundle
-`results/calibration/MISO/miso_39_reserve_pergen`, registered on the dashboard
-either way per rules #14/#15.)*
+Bundle `results/calibration/MISO/miso_39_reserve_pergen`, dashboard
+`2026-07-03-miso-39-reserve-pergen` (**new MISO keeper** — strictly more
+structurally faithful than miso-38: a real market rule added, nothing removed,
+nothing tuned; determination NOT-YET, unchanged).
+
+**The >$200 tail stays 0 h in all three years.** The deliverability structure
+works exactly as built — the zonal family fires MORE often (reserve dual
+nonzero 59/64/207 h vs 37/41/125 in miso-38) and slightly higher (max
+$11/$11/$23 vs $8/$11/$21) — but the LP clears the requirement in every hour;
+the $200 step never engages. Fit and volumes are byte-comparable to miso-38
+(mean LMP 28.62/26.04/34.74; CT_PEAKER 4.96/8.43/8.79 TWh; every class delta
+< 0.05 TWh), so gates 1–3 are untouched.
+
+**Why the bind gate over-predicted — the relief channel, measured.** The
+bind-gate's "re-dispatch max" held each hour's South thermal energy fixed at
+the baseline dispatch. The pergen LP relieves the shortage by *re-timing*
+that energy: in 2025's 207 reserve-active hours it trims South thermal by
+~100 MW mean (plus small export trims) — repacking energy from ramp-tight
+pools onto ramp-rich ones — which is enough because the re-dispatch-max
+shortfalls were tens-of-MW scale (the deep 700 MW shortfalls existed only in
+the as-dispatched measure). The marginal cost of this relief is the observed
+$4–23/MWh reserve price — always cheaper than the $200 first step, so a
+perfect-foresight LP will always pay it.
+
+**Conclusion (the honest structural boundary).** Under deterministic
+perfect-foresight hourly dispatch, MISO's published reserve demand curves
+cannot reach their shortage steps through ANY admissible supply-side reserve
+structure: market-wide deliverable reserve never falls near the requirement
+(≥11 GW vs 4.4 GW), and the South zonal requirement is always clearable at
+≤ ~$23/MWh of re-dispatch. The remaining residual decomposes as:
+
+1. **RT sub-hourly transients** — all of 2023's tail, ~95% of 2024's RT tail:
+   outside the representation (would need forecast error / 5-min dynamics).
+2. **Commitment posture** — the LP's freedom to part-load and re-time any
+   unit at zero commitment cost is the relief channel measured above; the
+   real market pays start/min-run costs and holds a coarser posture. This is
+   the PJM "Phase 1 commitment tightening" analogue and is the next real
+   lever for the DA-visible tail (1/24/38 h).
+3. **Midwest locational structure** — the 2024 Winter Storm Heather DA block
+   needs a Midwest reserve zone (published sub-regional requirement) plus #2;
+   the South family correctly does not fire there.
+
+What data would decide #2/#3: MISO's historical cleared reserve MW + reserve
+MCPs by zone (to gate a commitment-posture build against measured online
+reserve, the PJM honesty-gate pattern), and a published Midwest zonal
+operating-reserve requirement basis (BPM-002 zone definitions are quarterly
+IROL-based; a measured 2023–25 zonal requirement series would make a Midwest
+family admissible).
+
+Per rule #1, miso-39 stays the keeper even though the residual did not move:
+the mechanism is real market structure; the fit is not the objective.
