@@ -227,7 +227,8 @@ class ReserveDesign:
     # headroom_*) must be None — the per-unit bound supersedes them.
     pergen_gen_idx: Optional[np.ndarray] = None  # (n_members,) fleet indices
     pergen_col: Optional[np.ndarray] = None  # (n_members,) R column per member
-    pergen_ramp10: Optional[np.ndarray] = None  # (n_r,) MW ramp10 caps
+    pergen_ramp10: Optional[np.ndarray] = None  # (n_r,) static or (n_r, T)
+    # hourly (availability-scaled) MW ramp10 caps
 
 
 # ---------------------------------------------------------------------------
@@ -988,6 +989,63 @@ def _miso_design(
                     reserve_class=0,
                 )
             )
+
+    if getattr(config, "miso_reserve_pergen", False):
+        # PER-ASSET reserve columns (dispatch._build_reserve_rows_pergen), the
+        # MISO analogue of PJM's pjm_reserve_pergen: reserve competes with
+        # energy on the same marginal asset (joint sum P + R <= sum cap per
+        # column-hour) and cleared reserve is bounded by the 10-minute
+        # deliverable ramp (R[r] <= sum FleetArrays.ramp10 =
+        # RAMP10_FRAC_BY_GROUP x pmax, NREL/TP-5500-55588 App. H class ramp
+        # rates — capacity- and class-derived, so it regenerates for a
+        # forecast fleet). This is what lets the RBDC / zonal ORDC families
+        # actually run short: without a deliverability bound the perfect-
+        # foresight LP always clears the requirement from slow-unit headroom
+        # by re-dispatch (miso-38 gate 4: reserve prices at the $8-21
+        # opportunity cost, never at the published curve steps).
+        #
+        # R-column granularity: one column per (zone, fuel-class) EVERYWHERE
+        # — the class-level aggregate tier (columns scale with zones x
+        # classes, ~30-40/hour at 7 zones), NOT per plant. The per-plant and
+        # per-tranche tiers are documented memory-infeasible at MISO plant
+        # scale on the 15 GB calibration box (miso-reserve-coopt.md memory
+        # note; the 6-zone zone-aggregate co-opt already peaks ~13 GB with a
+        # ~16 GB transient). Same physics at every tier (sum ramp10[members]
+        # == sum RAMP10_FRAC x pmax); the tier is a documented memory
+        # scope-down, never a breakpoint/penalty change (CLAUDE.md #1/#10).
+        ramp10 = getattr(fleet_arrays, "ramp10", None)
+        if ramp10 is None:
+            raise ValueError(
+                "miso_reserve_pergen requires FleetArrays.ramp10 (the 10-min "
+                "deliverable ramp, fleet._ramp10_capability)"
+            )
+        ramp10 = np.asarray(ramp10, dtype=float)
+        # Members: reserve-eligible units deliverable within 10 min
+        # (ramp10 > 0 — nuclear runs baseload and carries no upward reserve).
+        # Exact reduction: a zero-ramp column would be fixed at 0.
+        pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
+        fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
+        zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
+        keys = np.stack([zone, fuel], axis=1)
+        _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
+        n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
+        # Hourly availability-scaled deliverable ramp per column, (n_r, T):
+        # a unit on outage (or derated) contributes proportionally less
+        # 10-minute ramp — the CAMPD outage overlay (backcast) / forecast
+        # availability thins the pool's deliverable cap in exactly the hours
+        # capacity is out. Physical input, not a fitted parameter.
+        avail = np.asarray(fleet_arrays.availability, dtype=float)[pergen_gen_idx]
+        member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
+        col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
+        np.add.at(col_ramp10, pergen_col, member_ramp_t)
+        return ReserveDesign(
+            families=families,
+            eligible=eligible.reshape(1, -1),
+            storage_eligible=False,
+            pergen_gen_idx=pergen_gen_idx,
+            pergen_col=pergen_col.astype(int),
+            pergen_ramp10=col_ramp10,
+        )
 
     return ReserveDesign(
         families=families,

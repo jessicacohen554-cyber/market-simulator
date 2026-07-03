@@ -1698,6 +1698,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
+    miso_reserve_pergen: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_as_aware_commitment: bool = False,
@@ -1920,6 +1921,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             miso_zonal_reserves=miso_zonal_reserves,
+            miso_reserve_pergen=miso_reserve_pergen,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
@@ -2198,6 +2200,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "miso_zonal_reserves": miso_zonal_reserves,
+        "miso_reserve_pergen": miso_reserve_pergen,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
@@ -2349,6 +2352,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if miso_zonal_reserves:
         recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
+    if miso_reserve_pergen:
+        recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
     if pjm_reserve_supply_cap:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
@@ -4942,6 +4947,19 @@ def main() -> None:
         "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--miso-reserve-pergen",
+        action="store_true",
+        help="MISO PER-ASSET reserve co-optimization: one R column per "
+        "(zone, fuel-class) pool of reserve-eligible units, joint P+R <= cap "
+        "per pool-hour, R bounded by the 10-min deliverable class ramp "
+        "(FleetArrays.ramp10, NREL/TP-5500-55588). Reserve competes with "
+        "energy on the marginal pool and cleared reserve is capped at what "
+        "converts to energy in MISO's 10-minute contingency window, so the "
+        "RBDC / zonal ORDC families can genuinely run short. Class-level "
+        "pooling is the documented 15 GB memory tier. Requires "
+        "--energy-reserve-coopt. MISO-only; default off.",
+    )
+    parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
         help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
@@ -6155,6 +6173,7 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         miso_zonal_reserves=args.miso_zonal_reserves,
+        miso_reserve_pergen=args.miso_reserve_pergen,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
