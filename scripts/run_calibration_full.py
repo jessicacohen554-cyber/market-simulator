@@ -1765,6 +1765,7 @@ def solve_and_persist(
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
+    capacity_deliverability_limits: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1986,6 +1987,7 @@ def solve_and_persist(
             caiso_intertie_reference_price=caiso_intertie_reference_price,
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
             caiso_reference_price_seam=caiso_reference_price_seam,
+            capacity_deliverability_limits=capacity_deliverability_limits,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
@@ -2267,6 +2269,7 @@ def solve_and_persist(
         "caiso_intertie_reference_price": caiso_intertie_reference_price,
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
         "caiso_reference_price_seam": caiso_reference_price_seam,
+        "capacity_deliverability_limits": capacity_deliverability_limits,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
@@ -5724,6 +5727,22 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--capacity-deliverability-limits",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Enable the published capacity-deliverability parameter set "
+        "(ScenarioConfig.capacity_deliverability_limits). In a backcast only "
+        "Part A fires: the calibrated simultaneous-import scalar (CAISO's "
+        "7,500 MW WECC_import_simultaneous) is replaced by the ISO's published "
+        "per-area SEAM import limit (CAISO branch-group MIC summed to the WECC "
+        "boundary), resolved per delivery year from the curated "
+        "capacity-deliverability data. Part B (locational capacity-payment "
+        "collapse) lives in capacity evolution, which the backcast never "
+        "reaches. Measured limit over calibrated scalar (CLAUDE.md #14); "
+        "validated by the caiso-46/47 A/B probes. Default (unset) keeps the "
+        "base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6243,6 +6262,7 @@ def main() -> None:
         caiso_intertie_reference_price=args.caiso_intertie_reference_price,
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
         caiso_reference_price_seam=args.caiso_reference_price_seam,
+        capacity_deliverability_limits=args.capacity_deliverability_limits,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
