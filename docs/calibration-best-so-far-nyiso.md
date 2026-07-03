@@ -1,6 +1,57 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-06-27): `nyiso 34 st-tempfloor` — CALIBRATED-WITH-CAVEATS**
+> **KEEPER (2026-07-03): `nyiso 41 hub prices` — NOT-YET (re-balanced rubric)**
+> (`2026-07-03-nyiso-41-hub-prices`, bundle
+> `results/calibration/nyiso41_hubprices`, all 3 years). The nyiso-39 config on
+> corrected measured gas data plus **measured-neighbor import pricing**
+> (`--nyiso-import-hub-prices`, `transmission.inject_nyiso_import_hub_prices`):
+> the priced node's `PJM_west` / `ISONE_tie` tranches reprice at the **measured
+> hourly PJM / ISO-NE Day-Ahead system LMP** ± the $1 wheeling hurdle
+> (`import_scarcity` = hourly max, `export_surplus` = hourly min − hurdle,
+> wash-free), replacing the static per-year `IMPORT_TRANCHES_BY_YEAR` ladder —
+> which `neighbor_price`'s own docstring calls "a backcast fit … blind to
+> neighbor fundamentals" and whose flat 2024 top ($79.7) capped the modeled seam
+> exactly when the real seam repriced with the neighbors (model Dec-2024 mean
+> $35.3 ≈ the $35.4 PJM_west constant vs NEISO's measured $84.5 month). Exact
+> NYISO analogue of the accepted `miso_pjm_lmp_import_pricing` /
+> `caiso_import_hub_prices` (rule #12 measured neighbor price-formation input,
+> rule #11 blind to NYISO's own flow). Recon band / HQ firm floor / SIL / offer
+> curves unchanged. **Also carries two measured-gas fidelity fixes** (isolated
+> by the `nyiso 40 truedate gas` control probe): true-date placement of the
+> Transco Z6 NY daily quotes (`_transco_z6_daily_dated`; the Jan-2024 $23.90
+> print now lands on the 16th, not the 12th) and NYISO monthly hub levels
+> recomputed from the completed daily print series (Dec-2024 basis +0.16 →
+> +1.00 $/MMBtu; `scripts/fetch_nyiso_gas_narrative.py` + the
+> fetch-nyiso-gas-narrative workflow).
+>
+> **Effect — every price criterion moves toward actual with no tuned constant:**
+> C3a −15.6/−19.2/−13.2 → **−13.3/−13.4/−9.5%**; C3b NRMSE 0.211/0.304/0.203 →
+> **0.209/0.236/0.172**; C3c 0h → **7h** (2025, the first NYISO model >$300
+> hours ever). C1/C2/C4/C6 PASS unchanged. C5a CO2 2024 slips to −7.1% (band
+> ±7) — exposed by the corrected Dec-2024 hub level; root cause is the ledgered
+> in-city steam under-run (see the run-41 attestation). Determination
+> **NOT-YET** (soft caveats 4 > budget 2 under the 2026-07-02 re-balance), all
+> ledgered.
+>
+> **The two remaining open items:** (1) the **eastern-NY (Iroquois Z2) winter
+> hub level is DATA-BLOCKED — now verified**: the fetch workflow scanned all
+> 146 NGWU weekly pages 2023–2025 (compact table, printer-friendly `ngpf.asp`
+> table, and narrative) and found **zero** Iroquois prints; NGI/ICE are
+> paywalled; the reconstruction (Transco monthly + SOM *annual* spread) reads
+> ~$4.0/MMBtu for Dec-2024 vs the ~$9 New England complex the Z2 segment (a CT
+> trading point) trades in — worth ≈ −$25/−$19/−$24 of Dec-24/Jan-25/Feb-25
+> monthly LMP, the bulk of the residual C3a/C3b miss. Open data ask: a licensed
+> Iroquois Z2 series or NYISO SOM monthly per-hub data. (2) the **ledgered
+> reserve-scarcity / RT-adder frontier** (idle-capacity headroom credit,
+> nyiso-29/31) for the >$300 tail and the broad dual undershoot. Superseded
+> keeper below.
+
+> **PRIOR KEEPER (2026-07-02): `nyiso 39 priced interchange` — NOT-YET after
+> the 2026-07-02 rubric re-balance** (soft caveat budget 3 → 2 while NYISO
+> rode exactly three ledgered price caveats; every hard gate PASSed). See
+> `results/calibration/nyiso39_priced_interchange`.
+
+> **PRIOR KEEPER (2026-06-27): `nyiso 34 st-tempfloor` — CALIBRATED-WITH-CAVEATS**
 > (`2026-06-27-nyiso-34-st-tempfloor`, bundle
 > `results/calibration/nyiso_34_st_tempfloor`, all 3 years). **The first NYISO
 > keeper to clear the determination gate** (every prior keeper was NOT-YET). Adds a

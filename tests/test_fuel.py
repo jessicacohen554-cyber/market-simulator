@@ -1242,11 +1242,12 @@ def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "market_sim.data.fuel._henry_hub_monthly", lambda path: {(2024, 1): 3.0}
     )
-    # Synthetic daily Transco: flat $2 with one cold-day spike to $8 on day 15.
-    daily_quotes = [2.0] * 31
-    daily_quotes[14] = 8.0
+    # Synthetic daily Transco: flat $2 with one cold-day spike to $8 on day 15
+    # (true-date keyed: quotes carry their actual calendar day).
+    daily_quotes = {d: 2.0 for d in range(1, 32)}
+    daily_quotes[15] = 8.0
     monkeypatch.setattr(
-        "market_sim.data.fuel._transco_z6_daily",
+        "market_sim.data.fuel._transco_z6_daily_dated",
         lambda path: {2024: {1: daily_quotes}},
     )
     fleet = _sample_fleet(hours=hours)
@@ -1277,7 +1278,7 @@ def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
     assert daily[14] > 13.0
 
     # No daily Transco quotes -> the month keeps the flat monthly hub level.
-    monkeypatch.setattr("market_sim.data.fuel._transco_z6_daily", lambda path: {})
+    monkeypatch.setattr("market_sim.data.fuel._transco_z6_daily_dated", lambda path: {})
     flat = np.full((fleet.n_gen, hours), 4.0)
     apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
     np.testing.assert_allclose(flat[gas_rows], 13.0)
