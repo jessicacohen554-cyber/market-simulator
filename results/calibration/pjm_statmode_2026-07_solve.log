@@ -14,3 +14,175 @@ INFO: Loaded PJM fleet from EIA-860 parquet (1922 generators)
 INFO: Binned fleet cache for PJM is up to date — loaded from pjm_fleet_binned.parquet
 INFO: CC capacity reconcile: raised 0 / capped 17 plant(s) to demonstrated peak (-2686 MW total) from cc_capacity_reconcile_PJM.csv
 INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2023): 278 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: PJM 2023 hydro budget: backfilled 1 non-reporting plants (0.3 GWh) from 2024
+INFO: PJM 2023 hydro budget pinned to monthly target total 15449.4 GWh (was 8976.6 GWh)
+INFO: Loaded PJM 2023 hydro budget: 73 plants, 15449.4 GWh annual, 3304 MW nameplate
+INFO: PJM 2023: 73 hydro plants in LP (3303 MW, 15.45 TWh monthly budget)
+INFO: PJM 2023: priced import/export node — 40 import tranches (16300 MW), 40 export sinks (16300 MW)
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2023): 780 unit-months masked offline (mid-year COD / retirement), 2 unit(s) fully not-yet-built/retired
+INFO: PJM 2023: reference-price seam import capped at measured PJM tie-line deliverability envelope (p90); each neighbor's import bands derated to border-zone summed envelope
+INFO: PJM 2023: reference-price seam export capped at measured PJM tie-line net-export envelope (p90); each neighbor's export bands floored to border-zone summed envelope
+INFO: PJM 2023: reliability floor — 10 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 223 generators priced from their own plant, 1059 gap-filled from nearby (state/zone) plants
+INFO: PJM zonal gas basis (2023): 1769 gas units; cap-weighted mean -0.11 removed, zonal spread -0.47..0.87 $/MMBtu
+INFO: EIA-860 multifuel: 577 (plant, group) dual-fuel gas keys flagged
+INFO: dual-fuel switching (PJM 2023): 577 gas tranches (26217 MW) capped at the delivered oil price
+INFO: PJM 2023: reference-price interface — 5 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh)
+INFO: PJM 2023: firm scheduled-export floor applied (must-flow seam base)
+INFO: PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap 55683 MW (vs ~157217 MW total eligible headroom)
+INFO: energy+reserve co-opt (PJM): MSSC 2822 MW (formula req 4233), using measured PJM pr_req req mean 3094 MW (+190 ORDC shoulder), 2645 reserve-eligible units
+INFO: Matrix build: 9.054s, Solve: 444.242s (cold)
+INFO: Matrix build: 9.054s, Solve: 106.092s (warm)
+INFO: CAMPD 2023: heat-input MWh proxy applied to 9 grossLoad-blank coal plant(s): [3130, 6250, 10113, 10151, 50776, 50835, 50974, 54634, 56808]
+INFO: EIA-923 2023: CAMPD-backfilled 3 under-reported plants (3 replaced, 0 added)
+INFO: EIA-923 2023 hydro 6.45 TWh under-counts EIA-930 15.50 TWh; using EIA-930 grid total
+WARNING: 14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded PJM fleet from EIA-860 parquet (1922 generators)
+INFO: Binned fleet cache for PJM is up to date — loaded from pjm_fleet_binned.parquet
+INFO: solving PJM 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: PJM congestion: internal TTC PJM_ComEd->PJM_AEP_Ohio 6000 -> 2900 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_AEP_Ohio->PJM_Dominion 4069 -> 4050 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_West_APS->PJM_Central_PA 1947 -> 1850 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_West_APS->PJM_SWMAAC 4453 -> 3900 MW (measured transfer-limit posting)
+INFO: PJM 2024: external-node deliverability cap (p95) on 5 link(s) — AEP_Ohio imp 0.0/exp 2.8 GW; ATSI imp 2.3/exp 1.1 GW; ComEd imp 0.4/exp 3.3 GW; Dominion imp 2.6/exp 0.0 GW; EMAAC imp 0.0/exp 3.1 GW
+INFO: loaded 181 within-window retiree units for PJM (6431 MW, plants [384, 874, 2379, 2866, 3122, 3809, 8008, 10678, 50456, 50722, 50799, 52021, 54766, 54998, 55156, 55281, 56279, 56363, 56692, 56693, 56863, 56869, 56911, 64983])
+WARNING: 14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded PJM fleet from EIA-860 parquet (1922 generators)
+INFO: Binned fleet cache for PJM is up to date — loaded from pjm_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 17 plant(s) to demonstrated peak (-2686 MW total) from cc_capacity_reconcile_PJM.csv
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2024): 843 unit-months masked offline (mid-year COD / retirement), 48 unit(s) fully not-yet-built/retired
+INFO: PJM 2024 hydro budget pinned to monthly target total 15818.2 GWh (was 8863.9 GWh)
+INFO: Loaded PJM 2024 hydro budget: 72 plants, 15818.2 GWh annual, 3301 MW nameplate
+INFO: PJM 2024: 72 hydro plants in LP (3301 MW, 15.82 TWh monthly budget)
+INFO: PJM 2024: priced import/export node — 40 import tranches (16300 MW), 40 export sinks (16300 MW)
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2024): 1756 unit-months masked offline (mid-year COD / retirement), 123 unit(s) fully not-yet-built/retired
+INFO: PJM 2024: reference-price seam import capped at measured PJM tie-line deliverability envelope (p90); each neighbor's import bands derated to border-zone summed envelope
+INFO: PJM 2024: reference-price seam export capped at measured PJM tie-line net-export envelope (p90); each neighbor's export bands floored to border-zone summed envelope
+INFO: PJM 2024: reliability floor — 10 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2024: 215 generators priced from their own plant, 922 gap-filled from nearby (state/zone) plants
+INFO: PJM zonal gas basis (2024): 1780 gas units; cap-weighted mean +0.17 removed, zonal spread -0.31..0.78 $/MMBtu
+INFO: dual-fuel switching (PJM 2024): 577 gas tranches (26217 MW) capped at the delivered oil price
+INFO: PJM 2024: reference-price interface — 5 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh)
+INFO: PJM 2024: firm scheduled-export floor applied (must-flow seam base)
+INFO: PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap 55282 MW (vs ~154584 MW total eligible headroom)
+INFO: energy+reserve co-opt (PJM): MSSC 2822 MW (formula req 4233), using measured PJM pr_req req mean 3422 MW (+190 ORDC shoulder), 2656 reserve-eligible units
+INFO: Matrix build: 8.980s, Solve: 433.796s (cold)
+INFO: Matrix build: 8.980s, Solve: 88.333s (warm)
+INFO: CAMPD 2024: heat-input MWh proxy applied to 10 grossLoad-blank coal plant(s): [3130, 6250, 10113, 10151, 10865, 50776, 50835, 50974, 54634, 56808]
+INFO: EIA-923 2024: CAMPD-backfilled 6 under-reported plants (5 replaced, 1 added)
+INFO: EIA-923 2024 hydro 6.19 TWh under-counts EIA-930 15.86 TWh; using EIA-930 grid total
+WARNING: 14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded PJM fleet from EIA-860 parquet (1922 generators)
+INFO: Binned fleet cache for PJM is up to date — loaded from pjm_fleet_binned.parquet
+INFO: solving PJM 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: PJM congestion: internal TTC PJM_ComEd->PJM_AEP_Ohio 6000 -> 2900 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_AEP_Ohio->PJM_Dominion 4069 -> 4050 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_West_APS->PJM_Central_PA 1947 -> 1850 MW (measured transfer-limit posting)
+INFO: PJM congestion: internal TTC PJM_West_APS->PJM_SWMAAC 4453 -> 3900 MW (measured transfer-limit posting)
+INFO: PJM 2025: external-node deliverability cap (p95) on 5 link(s) — AEP_Ohio imp 0.0/exp 2.8 GW; ATSI imp 2.4/exp 0.9 GW; ComEd imp 0.3/exp 3.5 GW; Dominion imp 2.2/exp 0.4 GW; EMAAC imp 0.0/exp 3.1 GW
+INFO: loaded 181 within-window retiree units for PJM (6431 MW, plants [384, 874, 2379, 2866, 3122, 3809, 8008, 10678, 50456, 50722, 50799, 52021, 54766, 54998, 55156, 55281, 56279, 56363, 56692, 56693, 56863, 56869, 56911, 64983])
+WARNING: 14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded PJM fleet from EIA-860 parquet (1922 generators)
+INFO: Binned fleet cache for PJM is up to date — loaded from pjm_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 17 plant(s) to demonstrated peak (-2686 MW total) from cc_capacity_reconcile_PJM.csv
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2025): 1224 unit-months masked offline (mid-year COD / retirement), 102 unit(s) fully not-yet-built/retired
+INFO: PJM 2025 hydro budget: backfilled 62 non-reporting plants (6177.0 GWh) from 2024
+INFO: PJM 2025 hydro budget pinned to monthly target total 15495.4 GWh (was 8466.7 GWh)
+INFO: Loaded PJM 2025 hydro budget: 72 plants, 15495.4 GWh annual, 3301 MW nameplate
+INFO: PJM 2025: 72 hydro plants in LP (3301 MW, 15.50 TWh monthly budget)
+INFO: PJM 2025: priced import/export node — 40 import tranches (16300 MW), 40 export sinks (16300 MW)
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 70 plant(s)
+INFO: COD ramp (PJM 2025): 2184 unit-months masked offline (mid-year COD / retirement), 182 unit(s) fully not-yet-built/retired
+INFO: PJM 2025: reference-price seam import capped at measured PJM tie-line deliverability envelope (p90); each neighbor's import bands derated to border-zone summed envelope
+INFO: PJM 2025: reference-price seam export capped at measured PJM tie-line net-export envelope (p90); each neighbor's export bands floored to border-zone summed envelope
+INFO: PJM 2025: reliability floor — 10 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2025: 124 generators priced from their own plant, 932 gap-filled from nearby (state/zone) plants
+INFO: PJM zonal gas basis (2025): 1780 gas units; cap-weighted mean +0.24 removed, zonal spread -0.50..1.94 $/MMBtu
+INFO: dual-fuel switching (PJM 2025): 577 gas tranches (26217 MW) capped at the delivered oil price
+INFO: PJM 2025: reference-price interface — 5 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh)
+INFO: PJM 2025: firm scheduled-export floor applied (must-flow seam base)
+INFO: PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap 55058 MW (vs ~153707 MW total eligible headroom)
+INFO: energy+reserve co-opt (PJM): MSSC 2822 MW (formula req 4233), using measured PJM pr_req req mean 3348 MW (+190 ORDC shoulder), 2659 reserve-eligible units
+INFO: Matrix build: 7.913s, Solve: 400.023s (cold)
+INFO: Matrix build: 7.913s, Solve: 93.072s (warm)
+INFO: CAMPD 2025: heat-input MWh proxy applied to 5 grossLoad-blank coal plant(s): [3130, 6250, 50835, 54634, 56808]
+INFO: BTM 923 backfill 2025: plant 593 ST_GAS carries 2024 class netgen 314711 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 1353 ST_GAS carries 2024 class netgen 1101669 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2393 CT_PEAKER carries 2024 class netgen 18610 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2399 CT_PEAKER carries 2024 class netgen 49794 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2404 CT_PEAKER carries 2024 class netgen 141061 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2831 CT_PEAKER carries 2024 class netgen 8651 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2847 CT_PEAKER carries 2024 class netgen 1332147 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2848 CT_PEAKER carries 2024 class netgen 397 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2869 CT_PEAKER carries 2024 class netgen 1699869 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 2880 CT_PEAKER carries 2024 class netgen 327320 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 3096 CC_REGULAR carries 2024 class netgen 54240 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 3132 CT_PEAKER carries 2024 class netgen 15009 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 3138 ST_GAS carries 2024 class netgen 695890 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 3161 ST_GAS carries 2024 class netgen 49569 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 3176 CC_REGULAR carries 2024 class netgen 630875 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 5083 CT_PEAKER carries 2024 class netgen 59509 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7032 CT_PEAKER carries 2024 class netgen 103566 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7138 CT_PEAKER carries 2024 class netgen 3374 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7212 CT_PEAKER carries 2024 class netgen 127507 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7288 CT_PEAKER carries 2024 class netgen 23179 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7318 CT_PEAKER carries 2024 class netgen 1254 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7335 CT_PEAKER carries 2024 class netgen 68517 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7336 CT_PEAKER carries 2024 class netgen 990751 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7782 CT_PEAKER carries 2024 class netgen 2488 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7783 CT_PEAKER carries 2024 class netgen 2372 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7835 CT_PEAKER carries 2024 class netgen 178967 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7836 CT_PEAKER carries 2024 class netgen 382317 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7837 CT_PEAKER carries 2024 class netgen 516182 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7838 CT_PEAKER carries 2024 class netgen 846263 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 7872 CT_PEAKER carries 2024 class netgen 308829 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 10308 CC_REGULAR carries 2024 class netgen 534828 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 10751 CC_REGULAR carries 2024 class netgen 104531 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 10805 CC_CHP carries 2024 class netgen 163529 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 50463 CT_CHP carries 2024 class netgen 606617 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 50561 CC_REGULAR carries 2024 class netgen 173753 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 52149 CT_CHP carries 2024 class netgen 271984 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 54785 CT_CHP carries 2024 class netgen 866423 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 54844 CC_REGULAR carries 2024 class netgen 1384433 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55109 CT_PEAKER carries 2024 class netgen 12350 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55110 CT_PEAKER carries 2024 class netgen 1045263 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55164 CT_PEAKER carries 2024 class netgen 112126 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55183 CC_REGULAR carries 2024 class netgen 3204154 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55188 CC_REGULAR carries 2024 class netgen 1150277 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55196 CT_PEAKER carries 2024 class netgen 130913 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55222 CT_PEAKER carries 2024 class netgen 9469 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55228 CT_PEAKER carries 2024 class netgen 104543 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55233 CT_PEAKER carries 2024 class netgen 84235 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55236 CT_PEAKER carries 2024 class netgen 116779 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55238 CT_PEAKER carries 2024 class netgen 80309 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55247 CT_PEAKER carries 2024 class netgen 507094 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55250 CT_PEAKER carries 2024 class netgen 70044 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55253 CT_PEAKER carries 2024 class netgen 43559 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55262 CT_PEAKER carries 2024 class netgen 3060 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55263 CT_PEAKER carries 2024 class netgen 2833 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55264 CT_PEAKER carries 2024 class netgen 2800 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55284 CT_PEAKER carries 2024 class netgen 285310 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55285 CT_PEAKER carries 2024 class netgen 177816 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55296 CT_PEAKER carries 2024 class netgen 5139 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55348 CT_PEAKER carries 2024 class netgen 986169 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55377 CT_PEAKER carries 2024 class netgen 147155 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55392 CT_PEAKER carries 2024 class netgen 362693 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55401 CT_PEAKER carries 2024 class netgen 2201875 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55438 CT_PEAKER carries 2024 class netgen 62189 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55640 CT_PEAKER carries 2024 class netgen 123674 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55654 CT_PEAKER carries 2024 class netgen 193833 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55936 CT_PEAKER carries 2024 class netgen 64603 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 55938 CT_PEAKER carries 2024 class netgen 188179 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 56397 CT_PEAKER carries 2024 class netgen 26230 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: BTM 923 backfill 2025: plant 58235 CT_PEAKER carries 2024 class netgen 62421 MWh (missing from the 2025 vintage, CAMPD active)
+INFO: EIA-923 2025: CAMPD-backfilled 52 under-reported plants (1 replaced, 51 added)
+INFO: EIA-923 2025 wind 20.46 TWh under-counts EIA-930 32.10 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 13.36 TWh under-counts EIA-930 24.69 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro -0.37 TWh under-counts EIA-930 15.51 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to results/calibration/pjm_statmode_2026-07
+solved into results/calibration/pjm_statmode_2026-07
