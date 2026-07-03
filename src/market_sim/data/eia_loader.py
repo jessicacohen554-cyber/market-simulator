@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.constants import CAISO_TAC_ZONE_WEIGHTS, HOURS_PER_YEAR
 from market_sim.config.interchange_config import CAISO_IMPORT_TRANCHE_HUB
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
@@ -62,19 +62,10 @@ _ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
 }
 
 # CAISO TAC-area actual hourly load (upload U4: OASIS SLD_FCST with
-# market_run_id=ACTUAL, monthly pulls) -> model zone weights. PG&E's TAC
-# straddles Path 15, so it is split between NP15 and ZP26 with fixed weights
-# that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists
-# at Path 15 to measure the split; Tier 3 — calibration). SCE and SDG&E sit
-# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
-# southern-Nevada pocket). The "CA ISO-TAC" system-total rows are dropped and
-# shares are normalized over the component TACs.
-_CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
-    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
-    "SCE-TAC": {"SP15": 1.0},
-    "SDGE-TAC": {"SP15": 1.0},
-    "VEA-TAC": {"SP15": 1.0},
-}
+# market_run_id=ACTUAL, monthly pulls) -> model zone weights. The "CA ISO-TAC"
+# system-total rows are dropped and shares are normalized over the component
+# TACs. Weights themselves now live in constants.CAISO_TAC_ZONE_WEIGHTS.
+_CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = CAISO_TAC_ZONE_WEIGHTS
 
 # NYISO settlement zone (OASIS "pal" actual-load zone names) -> model
 # transmission zone. Maps the eleven NYISO load zones (A–K) onto the five
