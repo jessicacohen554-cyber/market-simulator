@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-neiso-statmode-d-7",
+  "label": "neiso statmode d 7",
+  "date": "2026-07-03",
+  "shorthand": "neiso-statmode-d-7",
+  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper neiso_closeout (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-neiso-statmode-d-7.js",
+  "bundle": "results/calibration/neiso_statmode_2026-07"
+}
