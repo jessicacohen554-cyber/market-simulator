@@ -1993,6 +1993,7 @@ def run_year(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
+    nyiso_import_hub_prices: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
@@ -2270,6 +2271,8 @@ def run_year(
         config = config.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation
         )
+    if nyiso_import_hub_prices is not None:
+        config = config.with_overrides(nyiso_import_hub_prices=nyiso_import_hub_prices)
     if nyiso_synchronised_reserve is not None:
         config = config.with_overrides(
             nyiso_synchronised_reserve=nyiso_synchronised_reserve
@@ -3795,6 +3798,31 @@ def run_year(
             logger.info(
                 "%s %d: neighbor-export sink repriced to the measured WECC "
                 "intertie hub LMP — intertie can reverse to export",
+                iso,
+                year,
+            )
+
+    # NYISO measured-neighbor import pricing: reprice the priced node's
+    # PJM_west / ISONE_tie / import_scarcity tranches (and the export_surplus
+    # sink) at the measured hourly PJM / ISO-NE Day-Ahead system LMP ± the
+    # wheeling hurdle, replacing the static per-year fitted ladder
+    # (transmission.inject_nyiso_import_hub_prices — the NYISO analogue of
+    # caiso_import_hub_prices / miso_pjm_lmp_import_pricing). The monthly
+    # EIA-930 reconciliation band, HQ firm floor and SIL cap are unchanged.
+    # No-op unless nyiso_import_hub_prices is on AND the measured neighbor
+    # LMP parquets are present (forecast years keep the ladder).
+    if (
+        iso == "NYISO"
+        and priced_interchange
+        and getattr(config, "nyiso_import_hub_prices", False)
+    ):
+        from market_sim.model.transmission import inject_nyiso_import_hub_prices
+
+        if inject_nyiso_import_hub_prices(fleet_arrays, mc_base, iso, year):
+            logger.info(
+                "%s %d: import tranches repriced to measured neighbor hourly "
+                "DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, "
+                "export sink→hourly min) — static ladder bypassed",
                 iso,
                 year,
             )
