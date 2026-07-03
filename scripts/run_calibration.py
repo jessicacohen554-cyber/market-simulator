@@ -284,6 +284,47 @@ def _apply_offer_curve_deltas(
     return merged
 
 
+# The core gas classes whose generic band multipliers are ERCOT-lineage and must
+# NOT silently cross ISO boundaries (audit C-11/C-13, rule #24). The
+# ``*_INTERMEDIATE`` classes are a measured-duty-shape mechanism (not
+# ERCOT-residual-fitted) and coal classes route by EIA-923 fuel rank, so both are
+# left generic — only these five gas classes are neutralized.
+_GENERIC_NEUTRAL_GAS_CLASSES: tuple[str, ...] = (
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_CHP",
+    "CT_PEAKER",
+    "ST_GAS",
+)
+
+
+def _neutralize_generic_gas_bands(
+    base: dict[str, dict[str, float]],
+) -> dict[str, dict[str, float]]:
+    """Return ``base`` with the generic gas band MULTIPLIERS set to neutral 1.0.
+
+    Rule #24 / audit C-11/C-13: the generic (non-ERCOT/non-PJM) offer-curve
+    fallback must carry neutral bands, so an ISO without an explicit grounded
+    value inherits ``1.0`` (offer at the plant's own base heat rate) rather than
+    a value fitted on ERCOT's residual. Only the four heat-rate MULTIPLIER bands
+    (``committed``, ``econ_low``, ``econ_high``, ``peak``) of the five core gas
+    classes are reset; the STRUCTURAL tranche shares (``econ_low_share``,
+    ``pct_peaking``) and every other class (coal, ``*_INTERMEDIATE``) are kept.
+    Each non-ERCOT/non-PJM ISO then deep-merges its own grounded per-ISO curve on
+    top; any band it does not restore stays neutral (a legible, non-inherited
+    default), which is the de-leaked state.
+    """
+    out = {cls: dict(bands) for cls, bands in base.items()}
+    for cls in _GENERIC_NEUTRAL_GAS_CLASSES:
+        bands = out.get(cls)
+        if not bands:
+            continue
+        for band in ("committed", "econ_low", "econ_high", "peak"):
+            if band in bands:
+                bands[band] = 1.0
+    return out
+
+
 # Calibrated PJM thermal offer curve (per-class band heat-rate multipliers on
 # AHR x delivered fuel price). Price-calibrated multipliers, not literal heat
 # rates. COAL_LIGNITE / COAL_PRB are carried for completeness but unused by
@@ -481,26 +522,57 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 0.90,
         "econ_low": 0.95,
-        "econ_high": 1.21,  # run 27: 1.12 -> 1.21, CAMPD CC marginal-HR SRMC reach (ERCOT-grounded)
-        "peak": 2.25,
+        # OPEN ROOT CAUSE (rule #1, audit C-13): econ_high 1.21 is a CAMPD CC
+        # marginal-HR reach value grounded on ERCOT's CC analysis and shared to
+        # NYISO/CAISO — flagged as residual-identified/cross-borrowed. It is NOT
+        # the generic-fallback inheritance this scrub targets (the else-arm value
+        # is 1.27), and removing it is documented to crater C3a −24%, so it is
+        # left for the later NYISO-grounded calibration phase, not re-tuned here.
+        "econ_high": 1.21,
+        "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
     "CC_CHP": {
+        # NYISO's own run-27 CHP curve (+0.03 over CC_REGULAR to trim CHP
+        # over-run) — NYISO-identified, not the generic ERCOT fallback (else-arm
+        # CC_CHP is 0.92/0.96/1.12). Left as-is; the residual-fit +0.03 is a DOF
+        # item for the later NYISO calibration phase.
         "committed": 0.90,
         "econ_low": 0.98,
-        "econ_high": 1.24,  # run 27: 1.15 -> 1.24, +0.03 over CC_REGULAR (trim CHP over-run)
-        "peak": 2.25,
+        "econ_high": 1.24,
+        "peak": 2.25,  # physical F-class duct-burner ratio
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
     "CT_PEAKER": {
-        "committed": 1.35,
-        "econ_low": 1.27,
-        "econ_high": 1.98,
-        "peak": 13.15,
+        "committed": 1.35,  # NYISO/CAISO-grounded evening-ramp start hurdle
+        #   (NYISO/ISO-NE CTs serve the ramp, not the ERCOT 1.55 idle-park).
+        # econ bands DE-LEAKED from the ERCOT generic fallback (was econ_low 1.27
+        # / econ_high 1.98) to neutral 1.0 (offer at the CT's own base heat rate):
+        # NYISO carries no independent CT part-load heat-rate spread yet. OPEN
+        # ROOT CAUSE (rule #1): a NYISO-grounded CT econ ramp (CAMPD CT heat-rate
+        # spread) is a later disciplined-calibration item — NOT re-tuned here.
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        # peak DE-LEAKED from the inherited ERCOT 13.15x $5,000-ORDC scarcity wall
+        # (audit C-13) to 4.0 — NYISO's energy offer cap is $1,000 ($2,000
+        # cost-based under scarcity), NOT ERCOT's $5,000 ORDC. This promotes the
+        # NEISO-42 precedent (capped 13.15 -> 4.0 but never promoted). Same cap
+        # and reasoning as PJM/CAISO/MISO/NEISO.
+        "peak": 4.0,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+    },
+    # CT_CHP: DE-LEAKED from the generic ERCOT-lineage `else` branch (was
+    # 1.10/1.20/1.20/1.40) to neutral 1.0 — NYISO carries no independent CT_CHP
+    # heat-rate spread yet (later disciplined-calibration item, rule #1).
+    "CT_CHP": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "econ_low_share": 0.50,
     },
     "ST_GAS": {
         # run 32: re-levelled from the ERCOT-shaped rising ramp (0.97/1.10/1.45)
@@ -604,6 +676,38 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         #   the ERCOT $5,000-ORDC 13.15x wall (PJM's reasoning/value).
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+    },
+    # CC_CHP / CT_CHP / ST_GAS below are PINNED to the values CAISO previously
+    # inherited from the generic ERCOT-lineage `else` branch. They are NOT
+    # CAISO-grounded — they are preserved verbatim ONLY so the neutral generic
+    # fallback (rule #24, added by the 2026-07 cross-ISO-bands scrub) does not
+    # silently change the caiso-51 keeper, which this scrub does not re-solve
+    # (scope: MISO/NEISO/NYISO). Re-grounding these on CAISO's own DMM/CAMPD data
+    # is a separate, out-of-scope CAISO item (audit §5.1 lists CAISO's tuned
+    # surface elsewhere). Making the inheritance explicit here is what lets the
+    # shared fallback go neutral without touching CAISO's dispatch.
+    "CC_CHP": {
+        "committed": 0.92,
+        "econ_low": 0.96,
+        "econ_high": 1.12,
+        "peak": 2.25,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_CHP": {
+        "committed": 1.10,
+        "econ_low": 1.20,
+        "econ_high": 1.20,
+        "peak": 1.40,
+        "econ_low_share": 0.50,
+    },
+    "ST_GAS": {
+        "committed": 0.81,
+        "econ_low": 1.05,
+        "econ_high": 1.40,
+        "peak": 4.20,
+        "econ_low_share": 0.50,
+        "pct_peaking": 15.0,
     },
 }
 
@@ -709,12 +813,50 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 8.0,
     },
     "CT_PEAKER": {
-        "committed": 1.55,  # generic start-cost hurdle (not the ERCOT artifact)
-        "econ_low": 1.27,
-        "econ_high": 1.98,
-        "peak": 4.00,  # MISO offer cap ~$1-2k/MWh -> cap the 13.15x ERCOT-ORDC wall
+        # committed / econ bands DE-LEAKED from the ERCOT generic fallback (was
+        # committed 1.55 / econ_low 1.27 / econ_high 1.98 — the "generic shape"
+        # prior comments retained is exactly the ERCOT else-arm) to neutral 1.0:
+        # MISO carries no independent CT part-load heat-rate spread yet. OPEN ROOT
+        # CAUSE (rule #1): a MISO-grounded CT committed hurdle + econ ramp (CAMPD
+        # CT heat-rate spread, base HR ~12.37) is a later disciplined-calibration
+        # item — NOT re-tuned here. Expect CT over-run vs the prior 1.55 hurdle.
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 4.00,  # MISO offer cap ~$1-2k/MWh -> caps the 13.15x ERCOT-ORDC wall
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
+    },
+    # CC_CHP / CT_CHP / ST_GAS: DE-LEAKED from the generic ERCOT-lineage `else`
+    # branch to neutral 1.0 multipliers (offer at each unit's own base heat rate),
+    # keeping structural tranche shares and the physical F-class CC duct-burner
+    # peak (2.25). MISO carries no independent per-class heat-rate spread for
+    # these yet; grounding them on MISO CAMPD spreads (CC_CHP base HR ~6.76,
+    # ST_GAS ~11.27) is a later disciplined-calibration item (rule #1), not
+    # re-tuned here. Base ST_GAS prices only true-peaker steam (baseload steam
+    # routes to ST_GAS_INTERMEDIATE, untouched).
+    "CC_CHP": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_CHP": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "econ_low_share": 0.50,
+    },
+    "ST_GAS": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "econ_low_share": 0.50,
+        "pct_peaking": 15.0,
     },
 }
 
@@ -784,35 +926,45 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
+    # CC_CHP / CT_CHP / ST_GAS: DE-LEAKED from the generic ERCOT-lineage `else`
+    # branch to neutral 1.0 multipliers (offer at each unit's own base heat rate),
+    # keeping structural tranche shares and the physical F-class CC duct-burner
+    # peak (2.25). NEISO carries no independent per-class heat-rate spread for
+    # these yet; grounding them on NEISO CAMPD spreads (CC_CHP base HR ~7.0,
+    # ST_GAS ~10.6) is a later disciplined-calibration item (rule #1), not
+    # re-tuned here.
     "CC_CHP": {
-        "committed": 0.92,
-        "econ_low": 0.96,
-        "econ_high": 1.12,
-        "peak": 2.25,
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
     "CT_CHP": {
-        "committed": 1.10,
-        "econ_low": 1.20,
-        "econ_high": 1.20,
-        "peak": 1.40,
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
         "econ_low_share": 0.50,
     },
     "CT_PEAKER": {
         "committed": 1.35,  # NYISO/CAISO-grounded start hurdle (ISO-NE CTs serve
         #   evening ramp + cold-snap reliability, not ERCOT idle-park)
-        "econ_low": 1.27,
-        "econ_high": 1.98,
+        # econ bands DE-LEAKED from the ERCOT generic fallback (was econ_low 1.27
+        # / econ_high 1.98) to neutral 1.0 — NEISO carries no independent CT
+        # part-load heat-rate spread yet. OPEN ROOT CAUSE (rule #1), not re-tuned.
+        "econ_low": 1.0,
+        "econ_high": 1.0,
         "peak": 4.0,  # ISO-NE offer cap $1,000-2,000 (not ERCOT $5,000 ORDC)
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
     },
     "ST_GAS": {
-        "committed": 0.81,
-        "econ_low": 1.05,
-        "econ_high": 1.40,
-        "peak": 4.20,
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
         "econ_low_share": 0.500,
         "pct_peaking": 15.0,
     },
@@ -1614,6 +1766,19 @@ def _calibration_config(
     if iso.upper() == "PJM":
         config = config.with_overrides(
             offer_curve_by_group={k: dict(v) for k, v in _PJM_OFFER_CURVE.items()}
+        )
+    # Neutralize the generic gas band multipliers for every non-ERCOT/non-PJM ISO
+    # BEFORE its grounded per-ISO curve is deep-merged on top (rule #24, audit
+    # C-11/C-13): the shared fallback carries 1.0 multipliers, so a band an ISO
+    # does not explicitly ground resolves to its own base heat rate instead of a
+    # silently-inherited ERCOT-fitted value. ERCOT keeps the calibrated base; PJM
+    # is fully replaced above. CAISO/MISO/NEISO/NYISO each restore their grounded
+    # bands via the per-ISO curves below.
+    elif iso.upper() not in ("ERCOT",):
+        config = config.with_overrides(
+            offer_curve_by_group=_neutralize_generic_gas_bands(
+                config.offer_curve_by_group
+            )
         )
     # NYISO gas offer curves (SOM-grounded; see _NYISO_OFFER_CURVE). Merged on
     # top of the generic non-PJM/non-ERCOT branch so only the gas classes change
