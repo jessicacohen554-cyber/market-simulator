@@ -3986,3 +3986,20 @@ is blocked on the Iroquois data ask (C3a/C3b) and the reserve-scarcity frontier
 (C3c) — both documented in the run-41 attestation, neither closable with
 grounded inputs today (rules #11/#12). nyiso-25-scarcity-merit and
 nyiso-30-fwd-band pruned to hold the top-15 retention.
+
+## 2026-07-03 (later) — NYISO 42: reconciled Iroquois winter spread (registered probe, keeper stays 41)
+
+`nyiso 42 iroquois spread` = the nyiso-41 keeper config +
+`--nyiso-iroquois-winter-spread` (rule-#13 reconciliation: the measured SOM
+ANNUAL Iroquois−Transco spread preserved exactly, re-allocated across months by
+the measured Algonquin monthly basis; zonal monthly hub ratios, NYC resolving
+to its own measured Transco Z6 NY monthly). **Winter physics validate**
+(Dec-2024 residual −$25 → −$10, Feb-2023 −$14 → +$4, Jan/Feb-2025 −$12/−$14;
+C3b 2024 0.236 → 0.190) but the probe **exposes the two compensations the flat
+spread was providing**: the eastern zones were over-priced ~$1.3/MMBtu in every
+unconstrained month (removing it deepens the shoulder undershoot, 2023 C3a
+−13.3 → −15.8%) and the dearer winters suppress 2025 in-state gas through the
+HARD C2 band (−2.5% → FAIL), so the run is NOT promoted. Mechanism kept in
+source (default-off); next root causes now cleanly isolated: the shoulder
+reserve/uplift frontier, the C2-2025 gas-volume interaction, and the
+Dec-2025/Jan-2024 winter overshoots of the AGT-weight allocation.

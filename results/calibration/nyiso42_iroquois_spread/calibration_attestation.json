@@ -1,0 +1,12 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-42 iroquois-spread probe 2026-07-03 (registered probe, NOT promoted)",
+        "note": "The nyiso-41 keeper config plus nyiso_iroquois_winter_spread: the measured SOM ANNUAL Iroquois-Transco spread preserved exactly and re-allocated across months in proportion to the measured Algonquin (MA-citygate) monthly basis (rule #13 reconciliation of the eastern winter hub; fuel.nyiso_reconciled_reference_monthly), with zonal companions switched to monthly hub RATIOS (NYC resolves to its own measured Transco Z6 NY monthly exactly; Upstate to its measured SOM annual on the Henry Hub shape). No fitted constant; nothing reads a model output. RESULT - the winter-month physics validate: Dec-2024 monthly LMP residual -25 -> -10 $/MWh, Feb-2023 -14 -> +4, Jan/Feb-2025 -19/-24 -> -12/-14, C3b 2024 NRMSE 0.236 -> 0.190. But the mechanism EXPOSES two compensations the flat spread was providing: (1) the flat construction over-priced the eastern zones ~$1.3/MMBtu in every UNCONSTRAINED month, propping up shoulder LMPs - with the correct near-zero shoulder premium the model's broad energy-only undershoot deepens (2023 C3a -13.3 -> -15.8%); (2) the dearer winter eastern gas suppresses in-state gas burn enough to breach the HARD C2 2025 gas family band (-2.5% vs EIA-930). Per rules #1/#13 the measured reconciliation is kept in source (default-off flag) and the probe is registered, but the run is NOT promoted: a HARD-gate fail cannot keep; the exposed shoulder/volume misses are the next root-cause targets (reserve/uplift frontier; eastern offer levels calibrated against the flat-gas world), not reasons to re-bury the winter premium. Minor winter overshoots to check on re-probe: Jan-2024 +6, Dec-2025 +16 (the AGT-weight allocation may over-concentrate December-2025)."
+    },
+    "exceptions": []
+}
