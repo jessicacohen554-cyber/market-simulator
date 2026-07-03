@@ -100,7 +100,48 @@ forward-derivable; scored as its own arm so the seam fix and the commitment fix 
 correction stays deferred until the seam fix lands and its CC-volume effect is re-measured);
 hydro; the CT drag / reliability floor / RA min-load levers (carried as-is).
 
-## 3. Results
+## 3. Results (fair-calendar verdicts; C3a 2023 uses the 2026-07-03 coverage-masking fix)
 
-(filled in after the 3-year solves; see the dashboard entries `caiso 49 perhub seam` /
-`caiso 50 perhub bridge` and the verdicts below)
+A third arm emerged from Arm A's evidence: pricing EVERY tranche at spot transplants hub
+spikes into CAISO whenever the tie is marginal (2023/24 summers: CAISO cleared $50–54 with
+Palo Verde at $69–74 and 3–4 GW still importing — the contracted majority of real imports is
+inframarginal). **Arm C (caiso-51, promoted keeper)** = Arm B + `caiso_perhub_firm_base`:
+the firm/contracted tranches (BPA firm hydro, desert-SW solar PPAs) keep documented
+contract-cost estimates; spot tranches and both export legs stay at the measured hub.
+
+| criterion (2023/2024/2025) | keeper caiso-42 | caiso-49 (A) | caiso-50 (B) | **caiso-51 (C, new keeper)** |
+|---|---|---|---|---|
+| C3a mean LMP | +16.9 / +36.9 / +47.1% | +26.7 / +38.5 / +43.6% | +24.9 / +35.9 / +42.4% | **+19.6 / +34.9 / +41.6%** |
+| C3b monthly NRMSE | .321 / .516 / .536 | .325 / .479 / .454 | .305 / .446 / .442 | **.285 / .459 / .436** |
+| C3c tail (>$200) | 107h (5.1×, fitted-cap artifact) / 0 / 0 | 88h / 0 / 0 | **11h (0.52×)** / 0 / 0 | 0h / 0 / 0 (honest collapse) |
+| C1 CC_REGULAR | pass / +9.21 | +6.27 / +9.78 | +7.15 / +10.87 | +4.91 / **+10.86** |
+| C2 2025 gas | +12.3% | +7.3% | +8.5% | +8.1% |
+| C4 gas r (’23/’24/’25) | .796✗ / .721 / .416 | ✓ / .788 / .533 | ✓ / .805 / .565 | **✓** / .771 / .546 |
+| C5a CO2 (’24/’25) | +7.3 / +12.7% | +7.8 / +8.0% | +9.1 / +9.2% | +8.5 / +8.7% |
+| net import TWh (’23/’24/’25; actual 28.9/32.4/36.2) | — | 29.7 / 26.4 / — | — | 32.0 / 25.8 / 32.3 |
+
+**Determination: NOT-YET** for all arms; caiso-51 promoted on structure (rules #1/#14) —
+it removes the fitted flat import ladder and the fitted 7,500 MW cap from the binding path,
+prices the seam from measured data, and carries the UC bridge physics, while improving the
+majority of scored criteria. Two prior fitted scalars (audit items C-5 and C-6/L8) are gone
+from the keeper.
+
+## 4. Standing residuals (named, with next levers)
+
+1. **Fall/winter under-import → C1 CC_REGULAR +10.9 TWh (2024) and ~⅔ of the remaining
+   C3a body.** 2024 net import 25.8 vs 32.4 TWh actual; the CC over-run concentrates
+   Sep–Jan (+2.8–3.8 GW) exactly where reality imports 4–6 GW of contracted supply. The
+   model's firm/specified import capacity (2.6 GW of tranches) under-represents the real
+   specified share, and DSW_solar_PV's $48 contract-cost estimate sits above fall CC SRMC.
+   **Next lever (data intake):** CEC Total System Electric Generation / CARB MRR
+   specified-vs-unspecified import volumes → measured firm-block capacities (and honest
+   contract-cost anchors) per year.
+2. **Spring-midday floor** ~$34–38 vs actual ~$11–14: the model is short midday where
+   reality is RUC-long and exporting (the caiso-43 diagnosis). The UC bridge holds only
+   ~+0.6 GW; the missing piece is day-block RUC commitment sizing (real CAISO commits for
+   the full operating day against forecast net load). Mechanism sketch in caiso-43 §6.
+3. **C3c honest collapse** (0h vs 21/35/8): with the fake fitted-cap tail gone, CAISO has
+   no scarcity-pricing mechanism — the RA/AS-award scarcity thread
+   (`_caiso_asformula_compare.py`) is the open workstream.
+4. **2023 C3a note:** the actual series is Mar–Dec only; the scorer now masks the model to
+   the covered months (2026-07-03 comparability fix — keeper 2023 was +16.9%, not +48.8%).

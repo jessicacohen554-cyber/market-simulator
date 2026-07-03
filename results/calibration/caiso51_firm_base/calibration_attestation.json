@@ -1,0 +1,12 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "caiso-51 session 2026-07-03",
+  "note": "Levers: measured WECC intertie hub LMPs (Malin/Palo Verde OASIS scheduling-point prices \u2014 a neighbor boundary price, the seam analogue of F923 delivered fuel; forward analogue = the per-hub reference-price formula), measured p95 corridor deliverability envelopes both directions (EIA-930 CISO-DIBA), published branch-group MIC seam import limit (16,055/16,452/16,148 MW) replacing the calibrated 7,500 MW scalar, measured SoCal/PG&E citygate gas basis, EIA-930 monthly hydro budgets, CAMPD historic unit-outage windows, CAMPD-measured RA min-load 0.26. The 2023 Jan-Feb hub-series gap (OASIS retention) is filled by the forward reference formula \u2014 a formulaic gap-fill, not an outcome pin; the filled hours are absent from the actual-LMP benchmark. No adder, haircut, or rescale tuned to any residual. This run REMOVES two fitted scalars from the binding path (the flat import price ladder and the 7,500 MW cap). Adds the UC restart-economics RA bridge (caiso-44/48; startup cost vs net hold cost, DA-horizon-bounded, RUC-order decommit) and the firm-contract seam decomposition (caiso_perhub_firm_base): the two firm/contracted tranches (BPA firm hydro, desert-SW solar PPAs) keep documented contract-cost ESTIMATES (Tier-3, kept where the accurate spot price is misaligned to the contracted quantity it would price \u2014 CLAUDE.md #14 exception, documented at transmission.CAISO_FIRM_IMPORT_TRANCHES); the spot tranches and both export legs are priced at the measured hourly hub. No adder, haircut, or rescale tuned to any residual."
+ },
+ "exceptions": []
+}
