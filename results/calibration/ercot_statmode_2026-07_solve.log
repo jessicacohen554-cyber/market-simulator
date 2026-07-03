@@ -10,7 +10,7 @@ INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifte
 INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
 INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
 INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
-INFO: Rebuilt binned fleet cache for ERCOT — 1450 plants → ercot_fleet_binned.parquet
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
 INFO: Loaded ERCOT 2023 hydro budget: 14 plants, 349.6 GWh annual, 552 MW nameplate
 INFO: ERCOT 2023: 14 hydro plants in LP (552 MW, 0.35 TWh monthly budget)
 INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
