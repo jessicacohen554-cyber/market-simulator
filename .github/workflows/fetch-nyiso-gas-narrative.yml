@@ -18,6 +18,12 @@ on:
         description: "Latest year to harvest"
         default: "2025"
         type: string
+  # The Claude remote env's GitHub integration cannot POST workflow dispatches
+  # (403), so pushing an edit to THIS file is the trigger: path-scoped to the
+  # workflow itself, the runner's own data commit can never re-fire it.
+  push:
+    paths:
+      - ".github/workflows/fetch-nyiso-gas-narrative.yml"
 
 permissions:
   contents: write
