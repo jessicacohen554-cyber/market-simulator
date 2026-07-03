@@ -104,6 +104,21 @@ ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
 # ScenarioConfig.caiso_ra_bridge_decommit is on.
 DA_COMMITMENT_HORIZON_HOURS: int = 24
 
+# Fast-start exclusion for the ECONOMIC (startup-cost) leg of the RA
+# must-offer bridge. Holding a unit at min-load across a gap LONGER than its
+# min-down is only ever the economic choice when the restart it avoids is
+# genuinely slow and expensive — combined-cycle physics (min-down 4-8 h,
+# $24-64/MW starts, CC_COMMITMENT_PARAMS above). A fast-start simple-cycle CT
+# (min-down 1 h, $12-25/MW starts, CT_COMMITMENT_PARAMS) restarts within the
+# hour, so the real market cycles it off overnight; economically bridging one
+# forces exactly the units that DO cycle off (model-legitimacy audit §1.2c,
+# rule 17: eligibility by unit physics, never a class-name tuple). The
+# threshold sits at the CC table's own floor (the "older" CC class, 4 h) —
+# every CC row qualifies, every CT row (1 h) is excluded. The PHYSICAL
+# gap < min-down bridge is not gated by this: it is a restart bar, and for a
+# 1 h min-down unit it can never fire anyway.
+RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
+
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
 
