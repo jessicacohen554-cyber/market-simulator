@@ -770,6 +770,26 @@ class ScenarioConfig:
     # monthly EIA-930 reconciliation band, HQ firm floor and SIL cap are
     # unchanged. Requires --priced-interchange. Default off (byte-identical);
     # NYISO-only; no-op without the measured parquets.
+    nyiso_iroquois_winter_spread: bool = False  # NYISO eastern (Iroquois Z2)
+    # winter gas premium, reconciled from measured data (rule #13). The
+    # committed reference construction distributes the MEASURED annual
+    # NYISO-SOM Iroquois-Transco spread FLAT across months, under-reading the
+    # constrained winter months (Dec-2024 $3.16/MMBtu modeled vs the ~$9 New
+    # England complex the Z2 segment - a Connecticut trading point - trades
+    # in). No free Iroquois series exists (verified: zero prints in 146 NGWU
+    # weekly pages 2023-25; NGI/ICE paywalled), so the measured ANNUAL spread
+    # is preserved exactly and re-allocated across months in proportion to the
+    # measured Algonquin (MA-citygate) monthly basis - the New England
+    # pipeline-scarcity signal that physically causes the Iroquois premium;
+    # unconstrained months carry zero premium (summer Z2 trades at Transco
+    # backhaul parity). Zonal companions switch from flat annual offsets to
+    # monthly hub ratios so NYC resolves to its own measured Transco Z6 NY
+    # monthly and Upstate to its measured SOM annual level riding the Henry
+    # Hub shape (fuel.nyiso_reconciled_reference_monthly /
+    # nyiso_zonal_gas_ratios_monthly). No fitted constant, nothing reads a
+    # model output; forward years regenerate it from the forward basis
+    # seasonality. Requires nyiso_zonal_gas_basis + gas_hub_basis_overlay.
+    # Default off (byte-identical); NYISO-only.
     nyiso_synchronised_reserve: bool = False  # NYISO online-gated SPINNING
     # reserve (path A of the downstate-reserve frontier, docs/handoffs/
     # nyiso-downstate-reserve-incidence-2026-06.md). Adds a NYC locational
@@ -3094,6 +3114,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
     "nyiso_import_hub_prices": 1,
+    "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
