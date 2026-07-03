@@ -10,10 +10,30 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from market_sim.config.constants import (
+    CC_ECON_HR_OVERRIDE_DEFAULT,
+    CC_PEAK_HR_OVERRIDE_DEFAULT,
+    CT_ECON_HR_OVERRIDE_DEFAULT,
+    CT_PEAK_HR_OVERRIDE_DEFAULT,
+    GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
+    GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
+)
 from market_sim.config.scenarios import ScenarioConfig
 
 if TYPE_CHECKING:
     import pandas as pd
+
+
+def _hr_override(value: float | None, default: float) -> float:
+    """Return the configured heat-rate-override multiplier, or its named default.
+
+    The ``{cc,gas_st,ct}_*_hr_override`` fields default to ``None``; when a
+    caller sets the ``*_committed_hr_override`` band but leaves the econ/peak
+    bands unset, those bands fall back to the ERCOT-lineage default constant
+    (``constants.*_HR_OVERRIDE_DEFAULT``) rather than an inline literal
+    (audit rule #23 — no fallback literals in the offer path).
+    """
+    return default if value is None else float(value)
 
 
 # ---------------------------------------------------------------------------
@@ -127,12 +147,18 @@ _GAS_OFFER_FUELS: frozenset[str] = frozenset(
     {"gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"}
 )
 
-# Gas offer-curve tranche shares (committed / economic / peaking) of nameplate
-# by group, for the generic (non-CAMPD) offer curve. CTs are peakers with no
-# part-load committed band; CC/ST split a part-load committed band off the
-# efficient economic band, plus a small duct-fired peaking top slice. Mirrors
-# the bands ERCOT's CAMPD sheet encodes, as class defaults. Tier 3 — tune per
-# ISO against the CEMS load-duration shape.
+# Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate
+# by group, for the generic (non-CAMPD) offer curve. These are STRUCTURAL
+# capacity splits — how a unit's nameplate divides into offer bands — not tuned
+# heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24:
+# generic fallbacks carry neutral bands + structural shares). CTs are peakers
+# with no part-load committed band; CC/ST split a part-load committed band off
+# the efficient economic band, plus a small duct-fired peaking top slice. The
+# per-band heat-rate MULTIPLIERS in :func:`split_gas_tranches` come from the
+# ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage
+# defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO
+# from reaching this path without carrying its own ``offer_curve_by_group``
+# bands, so no cross-ISO leakage of those multipliers occurs.
 _GAS_TRANCHE_SHARES: dict[str, tuple[float, float, float]] = {
     "CC_REGULAR": (0.30, 0.60, 0.10),
     "CC_CHP": (0.30, 0.60, 0.10),
@@ -529,25 +555,37 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
         else:
             peak_hr = base_hr * float(offer["peak"])
     else:
-        cc_mc = getattr(config, "cc_committed_hr_override", None)
+        cc_mc = config.cc_committed_hr_override
         if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
             committed_hr = base_hr * cc_mc
-            econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
-            peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
-        st_mc = getattr(config, "gas_st_committed_hr_override", None)
+            econ_hr = base_hr * _hr_override(
+                config.cc_econ_hr_override, CC_ECON_HR_OVERRIDE_DEFAULT
+            )
+            peak_hr = base_hr * _hr_override(
+                config.cc_peak_hr_override, CC_PEAK_HR_OVERRIDE_DEFAULT
+            )
+        st_mc = config.gas_st_committed_hr_override
         if (
             group == "ST_GAS"
             and plant_code not in ST_GAS_PEAKER_PLANTS
             and st_mc is not None
         ):
             committed_hr = base_hr * st_mc
-            econ_hr = base_hr * float(getattr(config, "gas_st_econ_hr_override", 1.0))
-            peak_hr = base_hr * float(getattr(config, "gas_st_peak_hr_override", 1.5))
-        ct_mc = getattr(config, "ct_committed_hr_override", None)
+            econ_hr = base_hr * _hr_override(
+                config.gas_st_econ_hr_override, GAS_ST_ECON_HR_OVERRIDE_DEFAULT
+            )
+            peak_hr = base_hr * _hr_override(
+                config.gas_st_peak_hr_override, GAS_ST_PEAK_HR_OVERRIDE_DEFAULT
+            )
+        ct_mc = config.ct_committed_hr_override
         if group == "CT_CHP" and ct_mc is not None:
             committed_hr = base_hr * ct_mc
-            econ_hr = base_hr * float(getattr(config, "ct_econ_hr_override", 1.1))
-            peak_hr = base_hr * float(getattr(config, "ct_peak_hr_override", 1.3))
+            econ_hr = base_hr * _hr_override(
+                config.ct_econ_hr_override, CT_ECON_HR_OVERRIDE_DEFAULT
+            )
+            peak_hr = base_hr * _hr_override(
+                config.ct_peak_hr_override, CT_PEAK_HR_OVERRIDE_DEFAULT
+            )
 
     if offer is not None:
         share = float(offer["econ_low_share"])

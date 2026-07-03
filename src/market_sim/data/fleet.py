@@ -21,13 +21,19 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
+    CC_ECON_HR_OVERRIDE_DEFAULT,
+    CC_PEAK_HR_OVERRIDE_DEFAULT,
     CC_REGULAR_PEAKING_PCT_BY_PLANT,
     CHP_BTM_PCT_BY_SECTOR,
     CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
     COAL_MAX_CF_BY_PLANT,
+    CT_ECON_HR_OVERRIDE_DEFAULT,
+    CT_PEAK_HR_OVERRIDE_DEFAULT,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
+    GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
+    GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     MAINTENANCE_MONTHLY_SHAPE,
@@ -2483,6 +2489,7 @@ def assemble_mc(
 from market_sim.data.offer_curves import (  # noqa: E402
     _econ_curve_steps,
     _econ_split_for_group,
+    _hr_override,
     _offer_curve_for_group,
     split_coal_tranches,
     split_gas_tranches,
@@ -5740,29 +5747,37 @@ def bins_to_fleet(
             # Legacy per-class supply-curve overrides (relative to base HR),
             # used when no offer curve covers the group: CC committed/econ/peak,
             # reliability ST_GAS (peakers keep CSV heat rates), and CT_CHP.
-            cc_mc = getattr(config, "cc_committed_hr_override", None)
+            cc_mc = config.cc_committed_hr_override
             if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
                 committed_hr = base_hr * cc_mc
-                econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
-                peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
-            st_mc = getattr(config, "gas_st_committed_hr_override", None)
+                econ_hr = base_hr * _hr_override(
+                    config.cc_econ_hr_override, CC_ECON_HR_OVERRIDE_DEFAULT
+                )
+                peak_hr = base_hr * _hr_override(
+                    config.cc_peak_hr_override, CC_PEAK_HR_OVERRIDE_DEFAULT
+                )
+            st_mc = config.gas_st_committed_hr_override
             if (
                 group == "ST_GAS"
                 and plant_code not in ST_GAS_PEAKER_PLANTS
                 and st_mc is not None
             ):
                 committed_hr = base_hr * st_mc
-                econ_hr = base_hr * float(
-                    getattr(config, "gas_st_econ_hr_override", 1.0)
+                econ_hr = base_hr * _hr_override(
+                    config.gas_st_econ_hr_override, GAS_ST_ECON_HR_OVERRIDE_DEFAULT
                 )
-                peak_hr = base_hr * float(
-                    getattr(config, "gas_st_peak_hr_override", 1.5)
+                peak_hr = base_hr * _hr_override(
+                    config.gas_st_peak_hr_override, GAS_ST_PEAK_HR_OVERRIDE_DEFAULT
                 )
-            ct_mc = getattr(config, "ct_committed_hr_override", None)
+            ct_mc = config.ct_committed_hr_override
             if group == "CT_CHP" and ct_mc is not None:
                 committed_hr = base_hr * ct_mc
-                econ_hr = base_hr * float(getattr(config, "ct_econ_hr_override", 1.1))
-                peak_hr = base_hr * float(getattr(config, "ct_peak_hr_override", 1.3))
+                econ_hr = base_hr * _hr_override(
+                    config.ct_econ_hr_override, CT_ECON_HR_OVERRIDE_DEFAULT
+                )
+                peak_hr = base_hr * _hr_override(
+                    config.ct_peak_hr_override, CT_PEAK_HR_OVERRIDE_DEFAULT
+                )
         if ov is not None:
             # Per-plant sheet wins: all band heat rates are base_HR x the sheet's
             # multipliers (econ-low/-high set in the econ split below).
