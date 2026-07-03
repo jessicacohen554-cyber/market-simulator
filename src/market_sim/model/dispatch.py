@@ -2219,6 +2219,8 @@ class DispatchModel:
         # 8760-hour model it costs ~17s of pure overhead. Skipping it lets the
         # dual simplex solve the model directly in a few seconds.
         h.setOptionValue("presolve", "off")
+        if os.environ.get("MARKET_SIM_HIGHS_LEAN") == "1":
+            h.setOptionValue("simplex_scale_strategy", 0)
         # Columns are added with a placeholder zero objective; the real cost
         # vector is installed per-pass in solve() via changeColsCost, which is
         # what lets a second pass warm-start from the first pass's basis.

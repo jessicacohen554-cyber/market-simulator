@@ -2,11 +2,11 @@
   "CAISO": "2026-07-01-caiso-42-atc-hydro",
   "ERCOT": "2026-07-02-ercot26-gtc-limits",
   "NEISO": "2026-07-01-neiso-43-closeout",
-  "PJM": "2026-07-02-pjm-75-ct-drag",
+  "PJM": "2026-07-03-pjm-76-outage-fix",
   "keepers": [
     "2026-07-02-ercot26-gtc-limits",
     "2026-07-01-caiso-42-atc-hydro",
-    "2026-07-02-pjm-75-ct-drag",
+    "2026-07-03-pjm-76-outage-fix",
     "2026-07-02-nyiso-39-priced-interchange",
     "2026-07-01-neiso-43-closeout",
     "2026-07-02-miso-38-zonal-reserves"

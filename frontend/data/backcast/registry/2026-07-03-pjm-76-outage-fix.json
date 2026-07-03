@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-pjm-76-outage-fix",
+  "label": "pjm 76 outage fix",
+  "date": "2026-07-03",
+  "shorthand": "pjm-76-outage-fix",
+  "definition": "PJM 76 Chesterfield outage fix: pjm-75 recipe verbatim on regenerated campd-unit-outages-PJM.csv (d815a3c). Chesterfield 3797 coal units 5/6 now carry COAL outage windows (skipped by gas overlay) instead of blocking the 386 MW surviving gas-CC. Corrects ~2.35 TWh of the pjm-75 2023 CC under-run. Also fixes Brunner Island, Chalk Point, Gilbert, Linden, Doswell outage routing. Per-gen reserve co-opt NOT included (memory-infeasible on 15 GB box; see pjm-reserve-ordc.md). All else pjm-75 verbatim (CT drag, CC cap, M15 offers, coal_bit 0.65, zone-agg reserve co-opt, commitment=False).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-03-pjm-76-outage-fix.js",
+  "bundle": "results/calibration/pjm76_outage_fix"
+}
