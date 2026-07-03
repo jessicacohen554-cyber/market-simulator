@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-ercot30-ordc-total-measstor",
+ "label": "ercot30 ordc total measstor",
+ "date": "2026-07-03",
+ "shorthand": "ercot30-ordc-total-measstor",
+ "definition": "ercot 30 ordc-total-measstor-v1 (REJECTED PROBE, P1-ONLY - the measured decomposition step). ercot 28 with the measured battery AS power reservation (storage_as_commitment) in place of the endogenous split, but WITHOUT requirement netting in 2023 and WITHOUT the product credit: reserving the award out of the storage cap while the product families still demand the full published plan over-withholds thermal by exactly the awarded MW. 2023 blows up (+87.1% C3a, Aug +159.3, tail 1.35x over), 2024 +36.8%, 2025 +22.9% - the quantified internal-consistency requirement. Superseded by ercot31/32's consistent netting; registered per rule #15 (every run on the dashboard). Determination NOT-YET.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-03-ercot30-ordc-total-measstor.js",
+ "bundle": "results/calibration/ercot_ordc_total_measstor_v1"
+}

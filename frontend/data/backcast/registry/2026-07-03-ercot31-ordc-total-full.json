@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-ercot31-ordc-total-full",
+ "label": "ercot31 ordc total full",
+ "date": "2026-07-03",
+ "shorthand": "ercot31-ordc-total-full",
+ "definition": "ercot 31 ordc-total-full-v1 (PROBE, P1-ONLY, not promoted). The full measured stack: ercot 28's combined product-withholding + lumped-ORDC-total structure with the measured battery AS power reservation and CONSISTENT netting (requirements netted every year the cap is reduced, from_year 2023) + the measured award netted pro-rata off the fast products (ercot_storage_as_product_credit) + the measured HH monthly gas shape. VERDICT: lands within $2-4/mo of the endogenous split everywhere (2023 Aug -71.9 vs ercot28 -76.4; C3a -9.6 vs -11.0) - the storage channel was NOT the Aug-2023 root cause; the remaining miss is the reserve-SUPPLY definition (full-fleet phantom headroom vs measured online capability), closed in ercot32. 2024 ex-DAM-AS Jan lands -2.1 (near-perfect with truthful gas). C5c 2024 storage shape r -0.306 -> +0.331. Determination NOT-YET.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-03-ercot31-ordc-total-full.js",
+ "bundle": "results/calibration/ercot_ordc_total_full_v1"
+}

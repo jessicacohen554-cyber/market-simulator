@@ -1,10 +1,10 @@
 {
  "CAISO": "2026-07-03-caiso-51-firm-base",
- "ERCOT": "2026-07-02-ercot26-gtc-limits",
+ "ERCOT": "2026-07-03-ercot32-ordc-total-rtolcap",
  "NEISO": "2026-07-01-neiso-43-closeout",
  "PJM": "2026-07-03-pjm-76-outage-fix",
  "keepers": [
-  "2026-07-02-ercot26-gtc-limits",
+  "2026-07-03-ercot32-ordc-total-rtolcap",
   "2026-07-03-caiso-51-firm-base",
   "2026-07-03-pjm-76-outage-fix",
   "2026-07-03-nyiso-41-hub-prices",
