@@ -257,6 +257,25 @@ def _vol_err(model_twh: float, actual_twh: float) -> float | None:
     return round(e, 4) if np.isfinite(e) else None
 
 
+
+def _primary_pass(df: "pd.DataFrame") -> "pd.DataFrame":
+    """Filter a per-pass frame to the bundle's PRIMARY dispatch pass.
+
+    A commitment bundle persists BOTH passes (P1 = pre-commitment pricing
+    solve, P2 = the commitment re-solve run_calibration labels as the primary
+    result). The dashboard scores the primary market solve — P2 when present,
+    else P1 — so a commitment mechanism's prices/volumes are what the run
+    actually proposes, not the pre-commitment solve. P1-only bundles (every
+    legacy keeper) are byte-identical under this rule.
+    """
+    if "pass" not in df.columns:
+        return df
+    for label in ("P2", "P1"):
+        sel = df["pass"] == label
+        if sel.any():
+            return df[sel]
+    return df
+
 def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | None:
     """Return the model's annual storage discharge throughput (TWh) for a year.
 
@@ -268,9 +287,7 @@ def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | N
     """
     if storage_all is None:
         return None
-    sy = storage_all[storage_all["year"] == year]
-    if "pass" in sy.columns and (sy["pass"] == "P1").any():
-        sy = sy[sy["pass"] == "P1"]
+    sy = _primary_pass(storage_all[storage_all["year"] == year])
     if sy.empty:
         return None
     return round(float(sy["discharge_mw"].to_numpy(float).sum()) / 1e6, 4)
@@ -282,9 +299,7 @@ def _model_storage_monthly(
     """Return 12 monthly net-discharge GWh from the model's storage.parquet P1."""
     if storage_all is None:
         return None
-    sy = storage_all[storage_all["year"] == year]
-    if "pass" in sy.columns and (sy["pass"] == "P1").any():
-        sy = sy[sy["pass"] == "P1"]
+    sy = _primary_pass(storage_all[storage_all["year"] == year])
     if sy.empty:
         return None
     net = np.zeros(_T, dtype=float)
@@ -655,8 +670,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # both the model and the EIA-923 side, so a coin-flip plant scores in
             # the same bucket on both and stops distorting the clean classes
             # (a scoring transform — dispatch itself is unchanged).
+            # Primary-pass dispatch: the commitment re-solve (P2) when the
+            # bundle ran one, else P1 (see _primary_pass).
+            _disp_path = bdir / "dispatch" / f"{year}_P2.parquet"
+            if not _disp_path.exists():
+                _disp_path = bdir / "dispatch" / f"{year}_P1.parquet"
             disp = apply_other_fossil_scoring(
-                pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet"),
+                pd.read_parquet(_disp_path),
                 year,
                 plant_col="plant_code",
             )
@@ -752,7 +772,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # ISOs without a btm.parquet (no CHP split) keep full 923.
             btm_cls = {}
             if btm_all is not None:
-                _by = btm_all[(btm_all["year"] == year) & (btm_all["pass"] == "P1")]
+                _by = _primary_pass(btm_all[btm_all["year"] == year])
                 btm_cls = dict(zip(_by["klass"], _by["btm_twh"]))
             # Every actual class is kept (not just the hardcoded MIX_GROUPS)
             # so the model's real plant classification — e.g. EIA-923-derived
@@ -1022,14 +1042,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     }
                 )
             # Per-zone average LMP (load-weighted) from the system duals, for
-            # the dashboard's average-LMP KPI. P1 pass; the shell averages over
+            # the dashboard's average-LMP KPI. Primary pass (P2 when the bundle
+            # ran commitment, else P1); the shell averages over
             # the selected zones, weighting by demand. ``pMon``/``dMon`` carry
             # the same load-weighted price + demand-weight per month (Jan-Dec)
             # so the summary page can build a model-vs-actual monthly LMP table;
             # the shell re-weights pMon across the selected zones by dMon.
-            sy = sys_all[sys_all["year"] == year]
-            if "pass" in sy.columns and (sy["pass"] == "P1").any():
-                sy = sy[sy["pass"] == "P1"]
+            sy = _primary_pass(sys_all[sys_all["year"] == year])
             # Post-solve ORDC scarcity overlay (ERCOT only, display-only): the
             # SECOND LMP series shown next to the energy-only duals. The
             # energy-only ``lmp`` block below stays the GATED calibration metric
