@@ -609,8 +609,79 @@ def _ercot_multiproduct_design(
 
     supply_cap = ercot_rtolcap_supply_cap_mw(config, T)
 
+    # Lumped ORDC TOTAL-reserve family (config.ercot_ordc_total_reserve): the
+    # published RTORPA mechanism of the pre-RTC+B regime, layered ON TOP of the
+    # per-product AS families — the faithful 2023-25 stack is both together.
+    # RTSPP = SCED energy price + ORDC(total online reserves): the ORDC values
+    # the AGGREGATE reserve level, and every product's held MW counts toward it
+    # (as RTOLCAP counts online batteries and AS responsibility alike). So the
+    # family is ALL-CLASS (reserve_class -1): its balance row sums every
+    # product's R over all zones, adding NO new reserve columns and NO new
+    # headroom — capacity is never double-procured, only the total level is
+    # additionally demanded/priced by the LOLP×VOLL curve (the same
+    # ercot_ordc_demand_steps the single-product co-opt uses, incl. the
+    # OBDRR048 floors). Reserve held beyond the AS plans up to the ORDC span
+    # (~10.7 GW at the default μ/σ) is thereby valued — the structural form of
+    # the measured ~2× RTOLCAP-vs-AS-plan coverage. The two supply credits the
+    # single-product family applies carry over unchanged in meaning:
+    # * Load-Resource RRS-UFR (measured NP3-911 / forward enrollment, G4) is
+    #   load-side reserve the LP has no generator columns for; it counts toward
+    #   RTORPA's total online reserves, so it nets off this family's RHS
+    #   (floored at MCL) exactly as it nets off the RRS product family's.
+    # * The measured storage-AS credit applies only when storage is NOT an
+    #   endogenous reserve supplier (ercot_storage_as_endogenous off): when
+    #   endogenous, cleared storage AS is inside the R sum already.
+    # NOT applied here: ercot_ecrs_requirement (the ECRS plan add-on belongs to
+    # the single-product family, where no ECRS product exists; here the ECRS
+    # family carries it) — adding it would double-count the ECRS demand.
+    # Appended LAST so the first n_prod family columns keep their product
+    # identity for every downstream consumer (as-aware value, MCPC audit).
+    total_families: list[ReserveFamily] = []
+    if getattr(config, "ercot_ordc_total_reserve", False):
+        from market_sim.results.scarcity import (
+            ercot_ordc_demand_steps,
+            ercot_storage_as_reserve_mw,
+            resolve_lolp_params,
+        )
+
+        mu, sigma = resolve_lolp_params(config, T)
+        mu_s = float(np.mean(mu))
+        sigma_s = float(np.mean(sigma))
+        req_total, total_pens, total_wids = ercot_ordc_demand_steps(
+            voll=config.ordc_voll,
+            mcl_mw=config.ordc_mcl_mw,
+            mu_mw=mu_s,
+            sigma_mw=sigma_s,
+            shift_sigma=config.ordc_lolp_shift_sigma,
+            multistep_floor=config.ordc_multistep_floor,
+        )
+        total_req = np.full(T, req_total, dtype=float)
+        if getattr(config, "ercot_load_resource_reserve", False) and year >= int(
+            getattr(config, "ercot_load_resource_reserve_from_year", 2023)
+        ):
+            lr_mw = ercot_load_resource_reserve_credit_mw(config, T, year=sim_year)
+            total_req = np.maximum(total_req - lr_mw, float(config.ordc_mcl_mw))
+        if (
+            getattr(config, "ercot_storage_as_reserve", False)
+            and getattr(config, "storage_as_commitment", False)
+            and not getattr(config, "ercot_storage_as_endogenous", False)
+            and year >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
+        ):
+            storage_as_mw = ercot_storage_as_reserve_mw(year, T)
+            total_req = np.maximum(total_req - storage_as_mw, float(config.ordc_mcl_mw))
+        total_families.append(
+            ReserveFamily(
+                name="ercot_ordc_total",
+                requirement=total_req,
+                zone_mask=zone_mask_all.copy(),
+                ordc_penalties=total_pens,
+                ordc_step_widths=total_wids,
+                reserve_class=-1,  # all-class: sums every product's reserve
+            )
+        )
+
     return ReserveDesign(
-        families=families + released_ecrs_families,
+        families=families + released_ecrs_families + total_families,
         eligible=reserve_eligible,
         storage_eligible=True,
         headroom_eligible=headroom_eligible,

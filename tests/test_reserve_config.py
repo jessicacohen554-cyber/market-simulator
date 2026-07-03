@@ -730,3 +730,69 @@ class TestErcotCommitmentHeadroomOverrides(unittest.TestCase):
         np.testing.assert_allclose(extra[1, 0, 3:], 0.0)
         # zone 1: oil (100 * 0.9) offline every hour
         np.testing.assert_allclose(extra[1, 1, :], 90.0)
+
+
+class TestErcotOrdcTotalReserve(unittest.TestCase):
+    """The lumped ORDC total-reserve family layered on the multi-product stack."""
+
+    def _design(self, **cfg_kw):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(ercot_multiproduct_as_coopt=True, **cfg_kw)
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ):
+            return get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+
+    def test_flag_off_no_extra_family(self):
+        design = self._design()
+        self.assertEqual(len(design.families), 4)
+        self.assertNotIn("ercot_ordc_total", [f.name for f in design.families])
+
+    def test_total_family_appended_last_all_class(self):
+        design = self._design(ercot_ordc_total_reserve=True)
+        names = [f.name for f in design.families]
+        # first 4 keep their product identity for downstream consumers
+        self.assertEqual(len(names), 5)
+        self.assertEqual(names[-1], "ercot_ordc_total")
+        total = design.families[-1]
+        self.assertEqual(total.reserve_class, -1)
+        # requirement = the ORDC curve span (mcl + mu_eff + 5 sigma), flat
+        expected_top = 3000.0 + 0.5 * 1400.0 + 5.0 * 1400.0
+        np.testing.assert_allclose(total.requirement, expected_top)
+        # widths span the full curve; penalties ascend toward VOLL
+        self.assertAlmostEqual(float(total.ordc_step_widths.sum()), expected_top)
+        self.assertTrue(np.all(np.diff(total.ordc_penalties) >= -1e-9))
+        self.assertLessEqual(float(total.ordc_penalties.max()), 5000.0)
+
+    def test_kwargs_carry_all_class_sentinel(self):
+        design = self._design(ercot_ordc_total_reserve=True)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertEqual(kw["reserve_requirement"].shape, (5, 24))
+        self.assertEqual(int(kw["reserve_balance_class"][-1]), -1)
+        # the family-major ORDC block partitions exactly
+        self.assertEqual(
+            int(kw["reserve_balance_ordc_counts"].sum()), len(kw["ordc_penalties"])
+        )
+
+    def test_load_resource_credit_nets_off_total(self):
+        import unittest.mock as mock
+
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_load_resource_reserve_credit_mw",
+            return_value=np.full(24, 800.0),
+        ):
+            design = self._design(
+                ercot_ordc_total_reserve=True,
+                ercot_load_resource_reserve=True,
+                ercot_load_resource_reserve_from_year=2023,
+                mode="backcast",
+            )
+        total = design.families[-1]
+        expected_top = 3000.0 + 0.5 * 1400.0 + 5.0 * 1400.0
+        np.testing.assert_allclose(total.requirement, expected_top - 800.0)

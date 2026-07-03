@@ -2005,3 +2005,42 @@ def test_west_netload_shape_uses_endogenous_freq_when_flag_on():
     assert not np.isclose(deep, firm)  # two distinct regimes
     collapse_frac = float(np.isclose(row, deep).mean())
     assert collapse_frac == pytest.approx(0.10, abs=0.02)
+
+
+class TestGasHhMonthlyShape:
+    """Measured HH monthly gas shape (gas_hh_monthly_shape, level-preserving)."""
+
+    def _cfg(self, on: bool):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(gas_hh_monthly_shape=on)
+
+    def test_off_is_generic(self):
+        import numpy as np
+
+        from market_sim.data.fuel import _seasonal_factors, gas_seasonal_shape
+
+        np.testing.assert_array_equal(
+            gas_seasonal_shape(self._cfg(False), 2024, 8760),
+            _seasonal_factors(8760),
+        )
+
+    def test_measured_year_level_preserved(self):
+
+        from market_sim.data.fuel import gas_seasonal_shape
+
+        f = gas_seasonal_shape(self._cfg(True), 2024, 8760)
+        assert abs(float(f.mean()) - 1.0) < 1e-9  # hour-weighted mean exactly 1
+        # Feb-2024 (post-Heather collapse) must sit well below the generic 1.10
+        feb = f[31 * 24 + 12]
+        assert feb < 0.9
+
+    def test_forward_year_falls_back(self):
+        import numpy as np
+
+        from market_sim.data.fuel import _seasonal_factors, gas_seasonal_shape
+
+        np.testing.assert_array_equal(
+            gas_seasonal_shape(self._cfg(True), 2035, 8760),
+            _seasonal_factors(8760),
+        )
