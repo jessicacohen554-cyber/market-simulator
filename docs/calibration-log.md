@@ -42,6 +42,72 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-03 — ERCOT — ORDC-era 2023 price formation (ercot 27): PROBE, root-caused (keeper stays ercot 26)
+
+**Goal.** Close the 2023 price-structure gap *structurally* (rules #1/#11/#13/#14):
+the keeper passes 2023 mean LMP by compensation (scarcity months under, shoulders
+over). Build the mechanisms that actually operated: (WS1) commitment-state-aware
+reserve headroom; (WS2) the published ECRS conservative-deployment design; plus the
+endogenous storage energy-vs-AS split (G5). Zero offer-curve retuning, zero fitted
+parameters. Bundle `results/calibration/ercot_ordc_structure_v1`, dashboard run
+`2026-07-02-ercot27-ordc-structure`.
+
+**Research corrections (WS2, cited in parameter-citations).** The handoff's recalled
+"$2,000/MWh ECRS proxy floor" does **not** exist in any primary source: in 2023 ECRS
+was *not releasable to SCED at any price* (manual reliability deployment only —
+frequency < 59.91 Hz or 10-min projected net-load insufficiency; ERCOT AS Study white
+paper, Sept 2024), which the IMM found "led to artificial shortage pricing … doubled
+average energy prices between June and December 2023" (>$12B; 2023 SOM §II.G).
+NPRR1224's $750 floor was **rejected** by the PUCT (2024-07-25); the actual reform
+(effective 2024-08-01, operating procedures) is a 40 MW/10-min undergen release
+trigger at resources' own offers. Modeled as an at-cap ECRS demand step
+2023-06-10→2024-07-31, standing VOLL ramp after (`ercot_ecrs_conservative_deployment`,
+`ERCOT_ECRS_RELEASE_REFORM_YEAR/HOUR`).
+
+**Mechanisms (stay in the codebase, default off).** AS-aware P2 commitment now fully
+re-scopes reserve supply by the solve's own commitment state: `couple_peak` (a cold
+plant's peak/duct tranche leaves the headroom RHS), online CTs join the synchronized
+pool per-hour via P2 availability, offline quick-start capacity backs Non-Spin only
+via a reserve-only extra cap (`ercot_commitment_headroom_overrides`); the runner
+gains the AS-adequacy floor + overrides for forecast parity. The dashboard renderer
+now scores a bundle's **primary pass** (P2 when commitment ran) instead of always P1,
+so a commitment run's registered numbers are the market solve it proposes.
+
+**Result — NOT-YET probe; both misses root-caused, not tuned around.** The intended
+2023 signal is real: Jun residual −$23.5 → **−$12.9**, Jul −$10.1 → **−$9.1**,
+Oct/Nov ≈ 0. But (a) the exact-coverage AS-adequacy floor (committed ≈ energy + AS)
+leaves ~1.0× online-reserve coverage where measured RTOLCAP shows ~2×, so the
+shared-headroom dual elevates *every* month — Feb-2023 +$42.5 **with ECRS not yet
+live** isolates the artifact to the floor, not the ECRS design; C3a +7.9% / +13.4% /
++8.9% (2023/24/25). And (b) the multi-product swap **drops the lumped ORDC
+total-reserve curve — the published RTORPA mechanism of 2023-25** — so the deep tail
+collapses (Aug-2023 model $101.5 vs keeper $145.6 vs actual $191.7; >$1,000 hours 28
+vs 61) while rigid withholding lengthens the moderate tail (281 h >$200 vs 181,
+1.55×; 2025 0.26×). C1/C2/C4/C5a unchanged from the keeper (CC_REGULAR 2023
+−8.52 TWh, gas 2025 −2.8%).
+
+**One event, one channel (audit result).** With the endogenous co-opt scarcity
+active, overlap with the measured overlays is trivial — RTORDPA∧reserve-dual
+min-overlap ≈ $0.2k (3 shared hours, 2023), DAM-AS ≈ $3.9k (5 hours, 2024) — so no
+double-counting channel is live; 2024's tail is carried almost entirely by the
+DAM-AS overlay (dual-only tail 10 h vs 73 h with it), i.e. the co-opt still cannot
+form the 2024 acute days endogenously (run-163's discretionary-uplift finding
+stands).
+
+**Keeper decision (structural, not MAE).** NOT promoted — not because the fit
+worsened, but because the probe's own machinery is structurally incomplete in a
+now-understood way: the faithful pre-RTC+B stack is *both* product withholding
+(WS2's rigid families) *and* the ORDC total-reserve demand curve, on a commitment
+state with realistic (~2×) online surplus rather than an exactly-binding adequacy
+floor. That combination is the follow-up work stream; WS1/WS2 as built are its
+correct components. Keeper remains `2026-07-02-ercot26-gtc-limits`.
+
+**WS3/WS4.** NP6-576-ER 2023-vintage re-fetch still egress-blocked (all hosts 403;
+report decommissioned post-RTC+B) — flat 0/1,400 fallback retained, attempt
+documented in docs/ordc-overlay.md. C3a records now name their benchmark (vs RT /
+vs DA fallback) and carry a non-gated DA diagnostic row (the DART premium made
+visible; 2023: model −6.7% vs DA with DA−RT premium +$7.58).
+
 ### 2026-06-17 — ERCOT — nodal sub-zonal pockets (run124): MEASURED NO-GO (the over-run is not pocket-reachable)
 
 **Goal.** Close the CC_REGULAR North over-run (run124: +5.60 / +3.12 TWh
