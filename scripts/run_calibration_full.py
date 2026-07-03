@@ -1803,6 +1803,7 @@ def solve_and_persist(
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
+    caiso_perhub_firm_base: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
@@ -2027,6 +2028,7 @@ def solve_and_persist(
             caiso_import_solar_shape=caiso_import_solar_shape,
             caiso_bidir_intertie=caiso_bidir_intertie,
             caiso_per_hub_intertie=caiso_per_hub_intertie,
+            caiso_perhub_firm_base=caiso_perhub_firm_base,
             caiso_corridor_flow_limit=caiso_corridor_flow_limit,
             caiso_intertie_reference_price=caiso_intertie_reference_price,
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
@@ -2313,6 +2315,7 @@ def solve_and_persist(
         "caiso_import_solar_shape": caiso_import_solar_shape,
         "caiso_bidir_intertie": caiso_bidir_intertie,
         "caiso_per_hub_intertie": caiso_per_hub_intertie,
+        "caiso_perhub_firm_base": caiso_perhub_firm_base,
         "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
         "caiso_intertie_reference_price": caiso_intertie_reference_price,
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
@@ -5727,6 +5730,21 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--caiso-perhub-firm-base",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="With --caiso-per-hub-intertie: keep the firm/contracted import "
+        "tranches (PNW_hydro_base = BPA firm hydro, DSW_solar_PV = desert-SW "
+        "solar PPAs) at their static contract-cost estimates instead of the "
+        "measured hourly spot hub. The real market schedules the specified/"
+        "contracted majority of CAISO imports at contract cost (inframarginal), "
+        "so CAISO clears domestic while the tie flows; pricing every tranche at "
+        "spot transplants hub spikes into CAISO whenever the tie is marginal. "
+        "Spot tranches (Mid-C economy, DSW thermal, scarcity) and both export "
+        "legs stay at the measured hub. Default (unset) keeps the base config "
+        "value (off).",
+    )
+    parser.add_argument(
         "--caiso-corridor-flow-limit",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6346,6 +6364,7 @@ def main() -> None:
         caiso_import_solar_shape=args.caiso_import_solar_shape,
         caiso_bidir_intertie=args.caiso_bidir_intertie,
         caiso_per_hub_intertie=args.caiso_per_hub_intertie,
+        caiso_perhub_firm_base=args.caiso_perhub_firm_base,
         caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,
         caiso_intertie_reference_price=args.caiso_intertie_reference_price,
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,

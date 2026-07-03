@@ -819,12 +819,34 @@ def split_caiso_import_node_per_hub(iso_config: ISOConfig) -> ISOConfig:
     )
 
 
+# Firm/contracted CAISO import tranches (``caiso_perhub_firm_base``): the
+# blocks that proxy long-term specified-source contracts and out-of-state
+# ownership shares (BPA firm hydro over COI; desert-SW solar PPAs over
+# Path-46), which in the real market are scheduled at contract cost and flow
+# largely independent of the hourly spot spread — they are INFRAMARGINAL, so
+# CAISO's clearing price stays domestic even while 3-6 GW imports flow (the
+# 2023/24 summer evidence: CAISO cleared $50-54 while Palo Verde spot sat at
+# $69-74 and real imports still ran 3-4 GW). Pricing these blocks at the
+# hourly spot hub (the plain per-hub injector) mis-structures the seam: any
+# hour the tie is marginal transplants the spot spike into CAISO. With the
+# flag on, these tranches keep their static contract-cost estimates from
+# IMPORT_TRANCHES (documented Tier-3 contract-cost proxies — a reconciled
+# estimate kept where the accurate spot price is misaligned to the contracted
+# quantity it would price, CLAUDE.md #14 exception), while the genuinely
+# spot-traded tranches (Mid-C economy, desert-SW thermal, scarcity) and both
+# export legs stay at the measured hourly hub.
+CAISO_FIRM_IMPORT_TRANCHES: frozenset[str] = frozenset(
+    {"PNW_hydro_base", "DSW_solar_PV"}
+)
+
+
 def inject_caiso_per_hub_intertie_prices(
     fleet_arrays,
     mc: np.ndarray,
     iso: str,
     year: int,
     carbon_price: float,
+    firm_base: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -889,6 +911,9 @@ def inject_caiso_per_hub_intertie_prices(
                 mc[row, :] = hub_series - eps  # export earns the hub, no CA carbon
                 applied = True
         elif name in import_names:
+            if firm_base and name in CAISO_FIRM_IMPORT_TRANCHES:
+                continue  # firm/contracted block: inframarginal contract cost,
+                # keeps its static ladder price (see CAISO_FIRM_IMPORT_TRANCHES)
             hub_series = prices.get(name)
             if hub_series is None:
                 continue  # tranche with no measured hub stays on the ladder
