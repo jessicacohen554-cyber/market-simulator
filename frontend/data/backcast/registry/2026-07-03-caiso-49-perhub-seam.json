@@ -1,15 +1,15 @@
 {
-  "id": "2026-07-03-caiso-49-perhub-seam",
-  "label": "caiso 49 perhub seam",
-  "date": "2026-07-03",
-  "shorthand": "caiso-49-perhub-seam",
-  "definition": "caiso-49: measured-hub per-hub WECC seam (2023 gap-filled by forward reference formula) + measured p95 corridor envelopes both directions + published MIC seam import limit replacing the calibrated 7500 MW scalar; all caiso-42 keeper levers carried",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "CAISO",
-  "file": "frontend/data/backcast/runs/2026-07-03-caiso-49-perhub-seam.js",
-  "bundle": "results/calibration/caiso49_perhub_seam"
+ "id": "2026-07-03-caiso-49-perhub-seam",
+ "label": "caiso 49 perhub seam",
+ "date": "2026-07-03",
+ "shorthand": "caiso-49-perhub-seam",
+ "definition": "(PROBE) caiso 49 perhub seam: measured-hub WECC seam \u2014 per-hub signed corridors (Malin->NP15, Palo Verde->SP15) each priced at its own measured OASIS intertie LMP (import = hub + OATT wheel + per-tranche CARB border carbon; export = hub), measured p95 corridor deliverability envelopes BOTH directions, published branch-group MIC seam import limit (16,055/16,452/16,148 MW) replacing the audit-flagged fitted 7,500 MW scalar, 2023 Jan-Feb OASIS gap reference-formula-filled. All caiso-42 keeper levers carried. Fair-calendar verdict: C3b 0.325/0.479/0.454 (keeper 0.321/0.516/0.536), C2 2025 gas +7.3% (was +12.3%), C4 2025 gas r 0.533 (was 0.416), C3c 2023 88h (was 107h fitted-cap artifact) \u2014 but C3a 2023/24 worsened (+26.7/+38.5% vs +16.9/+36.9%): pricing EVERY tranche at spot transplants hub spikes into CAISO whenever the tie is marginal, while the real market's contracted import majority is inframarginal. Superseded by caiso-51.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-caiso-49-perhub-seam.js",
+ "bundle": "results/calibration/caiso49_perhub_seam"
 }
