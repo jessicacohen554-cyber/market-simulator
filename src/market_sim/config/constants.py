@@ -915,6 +915,30 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
 }
 
+# Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw):
+# the demonstrated physical maximum a unit's CEMS record shows it can sustain
+# (boiler/turbine derates below nameplate), applied as an availability ceiling
+# year-round on top of the age-based THERMAL_AVAILABILITY model.
+#
+# Source: scripts/derive_coal_max_cf.py — the pooled 99th percentile of each
+# plant's daily-max capacity factor (gross_mw / capacity_mw) on days it ran
+# (daily-mean CF > 0.06), across all CAMPD hourly extract years on record
+# (2023-2025, data/raw/campd-facility-level/TX_*.parquet). A near-maximum
+# rather than the true max: robust to a single-hour telemetry spike, not
+# softened by economic part-load (which compresses the mean, not the top
+# tail). Re-run the script and update this table when a new CAMPD year lands;
+# never hand-tune an entry to a backcast residual (CLAUDE.md rule #22).
+#
+# Plants whose demonstrated ceiling reached or exceeded nameplate (Oak Grove
+# 6180 p99=1.02, Coleto Creek 6178 p99=1.10, San Miguel 6183 p99=1.07) carry no
+# entry: their own CEMS record shows no sub-nameplate physical limit, so the
+# generic age-based availability model governs them unconstrained.
+COAL_MAX_CF_BY_PLANT: dict[int, float] = {
+    298: 0.95,  # Limestone
+    6179: 0.99,  # Fayette (Sam Seymour)
+    7097: 0.95,  # J K Spruce
+}
+
 # Forecast-mode monthly planned-maintenance shape (12 weights, Jan..Dec) per
 # plant group. Replaces the flat shoulder-POF heuristic (POF smeared uniformly
 # across _CC_SHOULDER_MONTHS = {3,4,5,10,11}) with the historically-derived
