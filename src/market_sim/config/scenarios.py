@@ -1363,6 +1363,19 @@ class ScenarioConfig:
     # (ercot27 probe: Aug-2023 −$88.7 vs keeper −$46, >$1000 hours 28 vs 61).
     # Published market design, zero fitted parameters. Default off; requires
     # energy_reserve_coopt + ercot_multiproduct_as_coopt. GATED.
+    ercot_storage_as_product_credit: bool = False  # ERCOT multi-product co-opt,
+    # measured storage path only: net the measured hourly battery AS award
+    # (RegUp/RRS/ECRS cleared by batteries, the 60-Day DAM per-resource-type
+    # series — the same measured input storage_as_commitment reserves out of
+    # the storage power cap) pro-rata OFF the fast products' requirements.
+    # Without it the products pull the batteries' awarded ~1.2-2.8 GW from
+    # thermal headroom instead — capacity the real market never withheld from
+    # SCED (the batteries carried it). The multi-product analogue of the
+    # single-product ercot_storage_as_reserve requirement netting; same
+    # from-year gate (ercot_storage_as_reserve_from_year), same measured
+    # procurement quantity (never a price), penalty curves untouched. No-op
+    # under the endogenous split (the battery is inside the co-opt there).
+    # Default off; ERCOT multi-product co-opt only. GATED.
     ercot_as_critical_frac: float = 0.0  # Reserve level (as a fraction of each AS
     # product's peak requirement) at/below which its VOLL-anchored demand curve
     # hits the full AS offer cap. 0 (default) ramps the curve linearly from $0 at
@@ -3224,6 +3237,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_multiproduct_as_coopt": 1,
     "ercot_ecrs_conservative_deployment": 1,
     "ercot_ordc_total_reserve": 1,
+    "ercot_storage_as_product_credit": 1,
     "ercot_as_critical_frac": 1,
     "ercot_as_n_ramp": 1,
     "ercot_as_aware_commitment": 1,

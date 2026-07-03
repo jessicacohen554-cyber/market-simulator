@@ -796,3 +796,56 @@ class TestErcotOrdcTotalReserve(unittest.TestCase):
         total = design.families[-1]
         expected_top = 3000.0 + 0.5 * 1400.0 + 5.0 * 1400.0
         np.testing.assert_allclose(total.requirement, expected_top - 800.0)
+
+
+class TestErcotStorageAsProductCredit(unittest.TestCase):
+    """Measured battery AS award netted pro-rata off the fast products."""
+
+    def _design(self, **cfg_kw):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 100.0, "RRS": 300.0, "ECRS": 200.0, "NSPIN": 400.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(
+            ercot_multiproduct_as_coopt=True,
+            storage_as_commitment=True,
+            ercot_storage_as_reserve_from_year=2024,
+            weather_year=2024,
+            **cfg_kw,
+        )
+        with (
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_storage_as_reserve_mw",
+                return_value=np.full(24, 300.0),
+            ),
+        ):
+            return get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+
+    def test_credit_nets_fast_products_pro_rata(self):
+        design = self._design(ercot_storage_as_product_credit=True)
+        by_name = {f.name: f for f in design.families}
+        # fast total 600, credit 300 -> each fast product halves; NSPIN intact
+        self.assertAlmostEqual(float(by_name["RegUp"].requirement[0]), 50.0)
+        self.assertAlmostEqual(float(by_name["RRS"].requirement[0]), 150.0)
+        self.assertAlmostEqual(float(by_name["ECRS"].requirement[0]), 100.0)
+        self.assertAlmostEqual(float(by_name["NonSpin"].requirement[0]), 400.0)
+        # penalty curves untouched (still sized to the published plan)
+        self.assertGreater(len(by_name["RRS"].ordc_penalties), 1)
+
+    def test_flag_off_unchanged(self):
+        design = self._design()
+        by_name = {f.name: f for f in design.families}
+        self.assertAlmostEqual(float(by_name["RRS"].requirement[0]), 300.0)
+
+    def test_noop_under_endogenous(self):
+        design = self._design(
+            ercot_storage_as_product_credit=True, ercot_storage_as_endogenous=True
+        )
+        by_name = {f.name: f for f in design.families}
+        self.assertAlmostEqual(float(by_name["RRS"].requirement[0]), 300.0)
