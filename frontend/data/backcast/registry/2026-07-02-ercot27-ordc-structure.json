@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-02-ercot27-ordc-structure",
+ "label": "ercot27 ordc structure",
+ "date": "2026-07-02",
+ "shorthand": "ercot27-ordc-structure",
+ "definition": "ercot 27 ordc-structure-v1 (PROBE, not promoted \u2014 keeper stays ercot26 gtc-limits): ercot 26 base + the ORDC-era 2023 price-formation structure, zero fitted parameters. (1) Multi-product AS co-opt + COMMITMENT-STATE-AWARE reserve headroom (AS-aware P2: couple_peak zeroes cold plants' peak tranches out of the headroom RHS, online CTs join the synchronized pool per-hour, offline quick-start backs Non-Spin only). (2) Published pre-reform ECRS deployment design (ercot_ecrs_conservative_deployment): no price-based ECRS release 2023-06-10\u21922024-07-31 (at-cap demand step; IMM 2023 SOM 'artificial shortage pricing \u2026 doubled average energy prices' Jun\u2013Dec 2023, >$12B), standing VOLL ramp from 2024-08-01 (PUCT rejected NPRR1224's $750 floor 2024-07-25 \u2014 the handoff's recalled $2,000 proxy floor does not exist in any primary source). (3) Endogenous storage energy-vs-AS (G5). RESULT: 2023's scarcity months move toward actual exactly as intended (Jun residual \u221223.5\u2192\u221212.9, Jul \u221210.1\u2192\u22129.1, Oct/Nov \u22480) and the overlay-overlap audit is clean (RTORDPA/DAM-AS vs endogenous scarcity min-overlap \u2248$0.2k/$3.9k \u2014 one event one channel holds), but two ROOT-CAUSED structural defects dominate: (a) the exact-coverage AS-adequacy floor leaves ~1.0\u00d7 online-reserve coverage where measured RTOLCAP shows ~2\u00d7, so the shared-headroom dual elevates ALL months (Feb-2023 +$42.5 with ECRS not yet live isolates it to the floor; C3a +7.9/+13.4/+8.9%); (b) the multi-product swap drops the lumped ORDC total-reserve curve \u2014 the actual published RTORPA mechanism of 2023-25 \u2014 so the deep tail collapses (Aug-2023 $101.5 vs actual $191.7; >$1000 28h vs 61) while withholding lengthens the moderate tail (281h vs 181, 1.55\u00d7). Follow-up: product withholding AND the ORDC total-reserve family together, with a commitment representation carrying realistic (~2\u00d7) online surplus. Determination NOT-YET (C1 CC_REGULAR 2023 and C2 gas 2025 inherited from the keeper lineage; C3 fails are this probe's own artifacts, classified MODEL MISS deliberately).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-02-ercot27-ordc-structure.js",
+ "bundle": "results/calibration/ercot_ordc_structure_v1"
+}

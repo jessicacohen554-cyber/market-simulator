@@ -75,6 +75,29 @@ ORDC_FLOOR_STEPS: tuple[tuple[float, float], ...] = (
 )
 ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 
+# --- ERCOT ECRS deployment design (pre-RTC+B), date gates -------------------
+# From ECRS go-live (Operating Day 2023-06-10, ERCOT market notice
+# M-D050523-01; the onset itself is carried by the ASPLANNP433 data, which has
+# no ECRS rows before it) through 2024-07-31, ERCOT had NO price-based ECRS
+# release to SCED: awarded ECRS was telemetered as AS Responsibility, carved
+# out of the SCED-dispatchable range (HASL), and released only by
+# manual/automatic reliability deployment (frequency < 59.91 Hz, or 10-minute
+# projected net-load capacity insufficiency — ERCOT Ancillary Services Study,
+# Final White Paper, Sept 2024). The IMM found this "led to artificial
+# shortage pricing … which we estimate doubled average energy prices between
+# June and December 2023," raising real-time costs by more than $12B (Potomac
+# Economics, 2023 State of the Market Report, §II.G / recommendation 2023-3).
+# ERCOT changed the release design via operating procedures effective
+# 2024-08-01: ECRS is released to SCED on a sustained power-balance violation
+# (>= 40 MW under-generation for 10 consecutive minutes) and dispatched at the
+# resources' own energy offers — the PUCT rejected NPRR1224's $750/MWh offer
+# floor at its 2024-07-25 open meeting, so there is NO administrative release
+# price. Non-leap fleet clock: Jan-Jul = 212 days -> 2024-08-01 00:00 is hour
+# 212*24 = 5088. Published market-design dates, never fitted to a price
+# residual (docs/parameter-citations.md "ERCOT ECRS deployment design").
+ERCOT_ECRS_RELEASE_REFORM_YEAR: int = 2024
+ERCOT_ECRS_RELEASE_REFORM_HOUR: int = 212 * 24  # 2024-08-01 00:00
+
 # --- PJM -------------------------------------------------------------------
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
@@ -468,6 +491,7 @@ def _ercot_multiproduct_design(
 
     requirement = np.zeros((n_prod, T), dtype=float)
     families: list[ReserveFamily] = []
+    released_ecrs_families: list[ReserveFamily] = []
     zone_mask_all = np.ones(n_zones, dtype=bool)
 
     for p, (_name, code, _tier) in enumerate(products):
@@ -484,6 +508,60 @@ def _ercot_multiproduct_design(
             pens, wids = nyiso_rcpf_product_shortfall_steps(
                 req_peak, crit, voll, n_ramp=n_ramp
             )
+        # ECRS conservative-deployment design (pre-2024-08-01, published): no
+        # price-based release to SCED, so the ECRS demand is a single step AT
+        # THE OFFER CAP for the full requirement — the withheld ~2 GW raises
+        # the energy dual endogenously in tight hours (the IMM-documented 2023
+        # "artificial shortage pricing"). From the 2024-08-01 operating-
+        # procedure reform the family reverts to the standing VOLL-anchored
+        # ramp (a releasable reserve). A year straddling the reform is split
+        # into two disjoint-window families sharing the ECRS reserve class
+        # (requirement zeroed outside each window) — penalty steps are static
+        # per family, so the date gate lives in the requirement mask. See the
+        # ERCOT_ECRS_RELEASE_REFORM_* citation block above.
+        if (
+            getattr(config, "ercot_ecrs_conservative_deployment", False)
+            and code == "ECRS"
+            and req_peak > 0.0
+        ):
+            if year < ERCOT_ECRS_RELEASE_REFORM_YEAR:
+                rigid_end = T  # whole year (ECRS onset carried by the data)
+            elif year == ERCOT_ECRS_RELEASE_REFORM_YEAR:
+                rigid_end = min(ERCOT_ECRS_RELEASE_REFORM_HOUR, T)
+            else:
+                rigid_end = 0  # post-reform years: standing curve only
+            if rigid_end > 0:
+                req_rigid = req_t.copy()
+                req_rigid[rigid_end:] = 0.0
+                families.append(
+                    ReserveFamily(
+                        name=f"{_name}_withheld",
+                        requirement=req_rigid,
+                        zone_mask=zone_mask_all.copy(),
+                        ordc_penalties=np.array([voll], dtype=float),
+                        ordc_step_widths=np.array(
+                            [float(req_rigid.max())], dtype=float
+                        ),
+                        reserve_class=p,
+                    )
+                )
+                if rigid_end < T and float(req_t[rigid_end:].max()) > 0.0:
+                    req_rel = req_t.copy()
+                    req_rel[:rigid_end] = 0.0
+                    # Appended AFTER the four product families so the first
+                    # n_prod family columns keep their product identity for
+                    # every downstream consumer (as-aware value, MCPC audit).
+                    released_ecrs_families.append(
+                        ReserveFamily(
+                            name=f"{_name}_released",
+                            requirement=req_rel,
+                            zone_mask=zone_mask_all.copy(),
+                            ordc_penalties=pens,
+                            ordc_step_widths=wids,
+                            reserve_class=p,
+                        )
+                    )
+                continue
         families.append(
             ReserveFamily(
                 name=_name,
@@ -531,13 +609,86 @@ def _ercot_multiproduct_design(
     supply_cap = ercot_rtolcap_supply_cap_mw(config, T)
 
     return ReserveDesign(
-        families=families,
+        families=families + released_ecrs_families,
         eligible=reserve_eligible,
         storage_eligible=True,
         headroom_eligible=headroom_eligible,
         headroom_products=headroom_products,
         supply_cap=supply_cap,
     )
+
+
+def ercot_commitment_headroom_overrides(
+    fleet_arrays: FleetArrays,
+    committed: np.ndarray,
+    headroom_eligible: np.ndarray,
+) -> dict:
+    """Commitment-state-aware reserve-headroom overrides for the ERCOT P2 solve.
+
+    The P1 multi-product co-opt draws reserve on ALL-online availability — a
+    perfect-foresight fiction that leaves ~8-9 GW of phantom headroom exactly
+    where 2023's scarcity lived. The AS-aware P2 solve already zeroes
+    decommitted units' availability out of the shared-headroom RHS; this
+    completes the commitment-state re-scope with the two pieces the static
+    eligibility masks cannot express (ERCOT's published RTOLCAP/RTOFFCAP
+    online/offline reserve split, made endogenous):
+
+    * **fast row = the full responsive set** (quick-start included). Membership
+      in the online (synchronized) reserve pool is decided PER HOUR by the
+      commitment state through the P2 availability — an online CT is
+      synchronized and backs RegUp/RRS-PFR/ECRS exactly like an online CC,
+      while a decommitted (offline) unit's zeroed availability contributes
+      nothing. The static "slow-start classes only" fast row was the
+      no-commitment-state approximation.
+    * **offline quick-start capacity → Non-Spin only**: a decommitted gas-CT /
+      oil peaker can synchronize within ERCOT's 30-minute Non-Spin window, so
+      its (original, outage-derated) capacity enters the "all" headroom row's
+      RHS as ``reserve_headroom_extra_cap`` — reserve-only, no energy term
+      (the unit is offline) — and never the fast row. A cold slow-start unit
+      still backs neither tier.
+
+    Both re-scopes are the solve's own commitment state applied to physical
+    start-capability classes — forward-regenerable, no measured series and no
+    fitted parameter (CLAUDE.md #1/#11).
+
+    Args:
+        fleet_arrays: The ORIGINAL (pre-commitment) fleet — its availability
+            prices the offline quick-start capacity; the P2 fleet's zeroed
+            hours would erase exactly the capacity this credits.
+        committed: ``(n_gen, T)`` commitment mask from the AS-aware screen
+            (adequacy floor applied).
+        headroom_eligible: The P1 design's ``(n_hr, n_gen)`` row eligibility
+            (fast, all).
+
+    Returns:
+        Dict of dispatch-kwargs overrides: ``reserve_headroom_eligible`` and
+        ``reserve_headroom_extra_cap`` (``(n_hr, n_zones, T)``).
+    """
+    he = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool)).copy()
+    if he.shape[0] != 2:
+        raise ValueError(
+            "ercot_commitment_headroom_overrides expects the 2-row "
+            f"(fast, all) ERCOT headroom spec, got {he.shape[0]} rows"
+        )
+    responsive = _reserve_eligible(fleet_arrays)
+    quick = _quick_start_eligible(fleet_arrays)
+    # Fast (synchronized) row: full responsive set; the P2 availability carries
+    # the per-hour online/offline distinction.
+    he[0] = responsive
+    cap = fleet_arrays.pmax[:, None] * np.asarray(
+        fleet_arrays.availability, dtype=float
+    )
+    offline_quick = (quick & responsive)[:, None] & ~np.asarray(committed, dtype=bool)
+    off_cap = np.where(offline_quick, cap, 0.0)  # (n_gen, T)
+    zone_idx = np.asarray(fleet_arrays.zone_idx, dtype=int)
+    n_zones = int(zone_idx.max()) + 1
+    T = cap.shape[1]
+    extra = np.zeros((he.shape[0], n_zones, T), dtype=float)
+    np.add.at(extra[1], zone_idx, off_cap)  # "all" row only — Non-Spin tier
+    return {
+        "reserve_headroom_eligible": he,
+        "reserve_headroom_extra_cap": extra,
+    }
 
 
 # ---- PJM ------------------------------------------------------------------

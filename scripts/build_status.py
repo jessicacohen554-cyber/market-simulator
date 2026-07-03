@@ -109,9 +109,14 @@ def rubric() -> list[dict]:
         ),
         row(
             "price_mean",
-            "System load-weighted mean LMP ($/MWh).",
+            "System load-weighted mean LMP ($/MWh). The gated benchmark is named "
+            "in each record (vs RT / vs DA): the model is a real-time analogue "
+            "(perfect-foresight dispatch prices RT physics, not day-ahead risk "
+            "premia), so RT gates and the DA comparison appears as a separate "
+            "non-gated diagnostic row (the DART premium made visible, never "
+            "modeled with offers/adders).",
             "Derived actual hub mean — real-time (avgLMP.rt), falling back to "
-            "day-ahead (avgLMP.da).",
+            "day-ahead (avgLMP.da) only when no RT actual is committed.",
             f"±{cv.PRICE_MEAN_TOL * 100:.0f}% — the tight end of the playbook's 5–10% "
             "band (tightened from 8% in the 2026-07-02 re-balance): price accuracy is "
             "the primary market signal, and the energy-only dual's structural "
