@@ -1730,6 +1730,7 @@ def solve_and_persist(
     ct_intermediate_cf_threshold: float | None = None,
     cc_intermediate_split: bool = False,
     cc_intermediate_cf_threshold: float | None = None,
+    tranche_startup_amortization: bool = False,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
@@ -1955,6 +1956,7 @@ def solve_and_persist(
             ct_intermediate_cf_threshold=ct_intermediate_cf_threshold,
             cc_intermediate_split=cc_intermediate_split,
             cc_intermediate_cf_threshold=cc_intermediate_cf_threshold,
+            tranche_startup_amortization=tranche_startup_amortization,
             st_gas_intermediate=st_gas_intermediate,
             st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
@@ -2225,6 +2227,7 @@ def solve_and_persist(
         "ct_intermediate_cf_threshold": ct_intermediate_cf_threshold,
         "cc_intermediate_split": cc_intermediate_split,
         "cc_intermediate_cf_threshold": cc_intermediate_cf_threshold,
+        "tranche_startup_amortization": tranche_startup_amortization,
         "st_gas_intermediate": st_gas_intermediate,
         "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
@@ -2642,6 +2645,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
+    if tranche_startup_amortization:
+        recorded_cfg = recorded_cfg.with_overrides(tranche_startup_amortization=True)
     if st_gas_intermediate:
         recorded_cfg = recorded_cfg.with_overrides(
             st_gas_intermediate_split=True,
@@ -4612,6 +4617,20 @@ def main() -> None:
         "capacity factor are treated as baseload-duty.",
     )
     parser.add_argument(
+        "--tranche-startup-amortization",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Fast-start tranche pricing (ISO-NE Order 825 analogue): the gas "
+        "CAMPD bins' econ and peak tranches carry the same NREL start cost "
+        "(fleet.BIN_STARTUP_COST_PER_MW) as the committed anchor, so the P1 "
+        "markup amortizes each tranche's own P0 run lengths into its bid. "
+        "Prices the fuel-price-invariant commitment-cost component of the "
+        "real offer stack (a peak block run 4 evening hours bids "
+        "+startup/4 per MWh; a block marginal around the clock bids ~+0), "
+        "which the heat-rate-multiplier curve cannot express. Default OFF -> "
+        "prior keepers byte-identical.",
+    )
+    parser.add_argument(
         "--st-gas-intermediate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -6243,6 +6262,7 @@ def main() -> None:
         ct_intermediate_split=args.ct_intermediate_split,
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
         cc_intermediate_split=args.cc_intermediate_split,
+        tranche_startup_amortization=args.tranche_startup_amortization,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,

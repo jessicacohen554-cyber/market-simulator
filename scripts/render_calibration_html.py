@@ -299,7 +299,14 @@ def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | N
 def _model_storage_monthly(
     storage_all: pd.DataFrame | None, year: int
 ) -> list[float] | None:
-    """Return 12 monthly net-discharge GWh from the model's storage.parquet P1."""
+    """Return 12 monthly DISCHARGE GWh from the model's storage frame.
+
+    Discharge basis to match ``_actual_storage_monthly`` (see its docstring):
+    the EIA-930 actual is gross discharge for the BAs that report storage at
+    all, so C5c scores whether the model DISCHARGES in the right months. The
+    prior net basis (discharge − charge) is ≤ 0 over any month by round-trip
+    losses and could never correlate with a discharge-only actual.
+    """
     if storage_all is None:
         return None
     sy = _primary_pass(storage_all[storage_all["year"] == year])
@@ -309,9 +316,7 @@ def _model_storage_monthly(
     for _, row in sy.iterrows():
         h = int(row["hour"])
         if 0 <= h < _T:
-            net[h] += float(row.get("discharge_mw", 0.0)) - float(
-                row.get("charge_mw", 0.0)
-            )
+            net[h] += float(row.get("discharge_mw", 0.0))
     return [round(float(net[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
 
 
@@ -341,7 +346,17 @@ def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
 
 
 def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
-    """Return 12 monthly net-discharge GWh from EIA-930 storage series, or None."""
+    """Return 12 monthly DISCHARGE GWh from EIA-930 storage series, or None.
+
+    Discharge basis (positive half only), matching C5b's throughput basis —
+    and the only basis the actual supports everywhere: several BAs report a
+    discharge-only storage series (NEISO ``NG: PS`` — pumping shows up as
+    load, never as a negative storage value; ERCOT's ``battery_discharge`` is
+    pre-split positive). Summing those series signed silently yields gross
+    discharge, while the model side used to report net (discharge − charge,
+    ≤ 0 over a month by round-trip losses) — an apples-to-oranges C5c that a
+    perfectly-cycling model could never pass. Both sides are now discharge.
+    """
     present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
     if present.empty:
         return None
@@ -350,7 +365,7 @@ def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
         h = int(row["hour"])
         mw = float(row["mw"])
         if 0 <= h < _T and not np.isnan(mw):
-            net[h] += mw
+            net[h] += max(mw, 0.0)
     if abs(np.nansum(net)) < 1.0:
         return None
     return [
