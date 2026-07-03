@@ -21,6 +21,8 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
+    CHP_BTM_PCT_BY_SECTOR,
+    CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
     COAL_MAX_CF_BY_PLANT,
     EFORD,
@@ -4137,17 +4139,9 @@ CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
     62762: "merchant",
     66992: "merchant",
 }
-# Shares trimmed (merchant 40->35, industrial/commercial 60->50) after the
-# Run-61..65 backcasts showed the CHP fleet's CAMPD aggregate CF reaching
-# 90-94% while the grid-facing capacity ceiling capped the model near 78%:
-# the pull-out left too little dispatchable capacity for the fleet's observed
-# high-load excursions, and the flat report add-back cannot carry shape.
-CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
-    "merchant": 35.0,
-    "industrial": 50.0,
-    "commercial": 50.0,
-}
-CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
+# CHP_BTM_PCT_BY_SECTOR and CHP_ST_BTM_PCT now live in constants.py (re-derived
+# from EIA-923 Schedule-8 CHP sector data rather than the Run-61..65 residual
+# — see the citation there).
 
 # Per-plant total must-run floor: the p2 CAMPD gross CF (non-outage, pooled
 # 2023-2025). The grid-delivered steam-following floor applied as min-gen is

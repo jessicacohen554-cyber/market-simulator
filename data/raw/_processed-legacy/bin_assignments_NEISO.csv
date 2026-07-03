@@ -1,11 +1,11 @@
 Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_Must_Run,Pct_Committed,Pct_Economic,Pct_Peaking,Must_Run_Source,Committed_Source,Peaking_Source,Mixed_Facility
-1595,Kendall Square Station,CC_CHP,Boston,206.0,5.738,35.0,65.0,0.0,0.0,chp_campd_p2,campd,campd,
-10567,Algonquin Windsor Locks,CC_CHP,Connecticut,64.0,7.338,35.0,25.0,31.7,8.3,chp_campd_p2,campd,campd,
-50002,Pittsfield Generating LP,CC_CHP,Central,157.7,8.695,35.0,19.0,39.2,6.8,chp_campd_p2,campd,campd,
-52061,Hartford Hospital Cogeneration,CC_CHP,Connecticut,8.6,5.006,50.0,45.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CC+CT
-57666,Foxwoods CoGen,CC_CHP,Connecticut,14.5,5.546,50.0,45.0,0.0,5.0,chp_eia923_cf,class_default,class_default,
-58084,"Kimberly Clark-Unit 1,2,3",CC_CHP,Connecticut,18.6,5.314,50.0,45.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CC+CT
-58159,UCONN Cogen Facility,CC_CHP,Connecticut,24.6,5.826,50.0,45.0,0.0,5.0,chp_eia923_cf,class_default,class_default,
+1595,Kendall Square Station,CC_CHP,Boston,206.0,5.738,35.0,65.0,0.0,0.0,chp_sector_default,campd,campd,
+10567,Algonquin Windsor Locks,CC_CHP,Connecticut,64.0,7.338,35.0,25.0,31.7,8.3,chp_sector_default,campd,campd,
+50002,Pittsfield Generating LP,CC_CHP,Central,157.7,8.695,35.0,19.0,39.2,6.8,chp_sector_default,campd,campd,
+52061,Hartford Hospital Cogeneration,CC_CHP,Connecticut,8.6,5.006,65.0,35.0,0.0,0.0,chp_sector_default,class_default,class_default,CC+CT
+57666,Foxwoods CoGen,CC_CHP,Connecticut,14.5,5.546,65.0,35.0,0.0,0.0,chp_sector_default,class_default,class_default,
+58084,"Kimberly Clark-Unit 1,2,3",CC_CHP,Connecticut,18.6,5.314,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CC+CT
+58159,UCONN Cogen Facility,CC_CHP,Connecticut,24.6,5.826,65.0,35.0,0.0,0.0,chp_sector_default,class_default,class_default,
 568,Bridgeport Station,CC_REGULAR,Connecticut,496.2,6.689,0.0,53.2,45.0,1.8,none,campd,campd,
 1682,Cleary Flood Hybrid,CC_REGULAR,Central,103.0,11.291,0.0,7.8,89.4,2.8,none,campd,campd,
 3236,Manchester Street,CC_REGULAR,Central,471.0,8.724,0.0,40.3,55.2,4.5,none,campd,campd,
@@ -36,39 +36,39 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 56798,Kleen Energy Systems,CC_REGULAR,Connecticut,622.0,7.112,0.0,63.8,35.7,0.5,none,campd,campd,
 60903,Salem Harbor Power Development LP,CC_REGULAR,Boston,1156.4,7.377,0.0,11.7,83.2,5.1,none,campd,campd,
 2364,Merrimack,COAL,North,108.0,11.337,0.0,70.0,28.0,2.0,campd,campd,class_default,
-10108,Hampton Facility,CT_CHP,North,3.8,6.07,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-10408,Clark University,CT_CHP,Central,2.0,5.861,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-10883,Medical Area Total Energy Plant,CT_CHP,Boston,38.5,5.357,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-50087,Univ of Massachusetts Medical Center,CT_CHP,Central,6.0,6.44,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-50621,Central Power Plant,CT_CHP,Central,7.6,4.119,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-52061,Hartford Hospital Cogeneration,CT_CHP,Connecticut,1.4,5.006,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CC+CT
-54225,Gillette SBMC,CT_CHP,Boston,7.2,4.935,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-54228,Erving Paper Mills,CT_CHP,Central,5.5,5.228,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-54236,Pfizer Groton Plant,CT_CHP,Connecticut,9.5,5.422,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-54605,Pratt & Whitney,CT_CHP,Connecticut,28.0,5.354,50.0,50.0,0.0,0.0,chp_campd_p2,campd,class_default,
-54907,Mass Inst Tech Cntrl Utilities/Cogen Plt,CT_CHP,Boston,35.4,5.262,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-54937,Wellesley College Central Utility Plant,CT_CHP,Boston,4.0,6.594,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-56928,Fairfield University CHP Plant,CT_CHP,Connecticut,4.5,6.385,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-57179,HSCo CHP,CT_CHP,Connecticut,3.5,5.322,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58084,"Kimberly Clark-Unit 1,2,3",CT_CHP,Connecticut,14.5,5.314,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CC+CT
-58152,Danbury Hospital Cogen Plant,CT_CHP,Connecticut,3.6,5.327,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58153,Eastern Maine Medical Center,CT_CHP,North,3.8,5.299,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58158,Wesleyan University Cogen 1,CT_CHP,Connecticut,2.3,7.055,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58166,Smith College Central Heating Plant,CT_CHP,Central,2.7,5.166,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58184,Rand Whitney CHP Plant,CT_CHP,Connecticut,16.5,5.139,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-58185,Amherst College Co Gen,CT_CHP,Central,1.2,5.121,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
+10108,Hampton Facility,CT_CHP,North,3.8,6.07,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
+10408,Clark University,CT_CHP,Central,2.0,5.861,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+10883,Medical Area Total Energy Plant,CT_CHP,Boston,38.5,5.357,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
+50087,Univ of Massachusetts Medical Center,CT_CHP,Central,6.0,6.44,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
+50621,Central Power Plant,CT_CHP,Central,7.6,4.119,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+52061,Hartford Hospital Cogeneration,CT_CHP,Connecticut,1.4,5.006,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CC+CT
+54225,Gillette SBMC,CT_CHP,Boston,7.2,4.935,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+54228,Erving Paper Mills,CT_CHP,Central,5.5,5.228,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+54236,Pfizer Groton Plant,CT_CHP,Connecticut,9.5,5.422,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+54605,Pratt & Whitney,CT_CHP,Connecticut,28.0,5.354,70.0,30.0,0.0,0.0,chp_sector_default,campd,class_default,
+54907,Mass Inst Tech Cntrl Utilities/Cogen Plt,CT_CHP,Boston,35.4,5.262,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+54937,Wellesley College Central Utility Plant,CT_CHP,Boston,4.0,6.594,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+56928,Fairfield University CHP Plant,CT_CHP,Connecticut,4.5,6.385,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+57179,HSCo CHP,CT_CHP,Connecticut,3.5,5.322,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+58084,"Kimberly Clark-Unit 1,2,3",CT_CHP,Connecticut,14.5,5.314,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CC+CT
+58152,Danbury Hospital Cogen Plant,CT_CHP,Connecticut,3.6,5.327,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+58153,Eastern Maine Medical Center,CT_CHP,North,3.8,5.299,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+58158,Wesleyan University Cogen 1,CT_CHP,Connecticut,2.3,7.055,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+58166,Smith College Central Heating Plant,CT_CHP,Central,2.7,5.166,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+58184,Rand Whitney CHP Plant,CT_CHP,Connecticut,16.5,5.139,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
+58185,Amherst College Co Gen,CT_CHP,Central,1.2,5.121,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
 58237,CCSU Fuel Cell Project,CT_CHP,Connecticut,1.4,9.0,35.0,30.0,28.0,7.0,chp_sector_default,class_default,class_default,
-58327,Bradley Energy Center,CT_CHP,Connecticut,5.8,6.447,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
+58327,Bradley Energy Center,CT_CHP,Connecticut,5.8,6.447,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
 59967,Pepperidge Farm Bloomfield,CT_CHP,Connecticut,2.1,9.571,35.0,30.0,28.0,7.0,chp_sector_default,class_default,class_default,
-60276,West Groton CHP,CT_CHP,Boston,3.3,5.584,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
+60276,West Groton CHP,CT_CHP,Boston,3.3,5.584,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
 60392,Pfizer Groton Fuel Cell,CT_CHP,Connecticut,5.6,9.0,35.0,30.0,28.0,7.0,chp_sector_default,class_default,class_default,
-61186,Boston Medical Center CHP Plant,CT_CHP,Boston,2.0,11.435,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-61703,Sikorsky Aircraft CHP,CT_CHP,Connecticut,10.3,9.54,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
-61857,Toray Plastic America's CHP Plant,CT_CHP,Central,19.3,9.684,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-62757,Bridgewater Complex Co-Generation Plant,CT_CHP,Central,1.5,8.518,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
+61186,Boston Medical Center CHP Plant,CT_CHP,Boston,2.0,11.435,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+61703,Sikorsky Aircraft CHP,CT_CHP,Connecticut,10.3,9.54,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+61857,Toray Plastic America's CHP Plant,CT_CHP,Central,19.3,9.684,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
+62757,Bridgewater Complex Co-Generation Plant,CT_CHP,Central,1.5,8.518,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
 63438,UB Fuel Cell,CT_CHP,Connecticut,1.4,9.0,35.0,30.0,28.0,7.0,chp_sector_default,class_default,class_default,
-66018,Norton Powerhouse 2,CT_CHP,Central,3.3,10.286,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,
-68493,Central Heating Plant,CT_CHP,Central,10.0,10.5,50.0,30.0,13.0,7.0,chp_eia923_cf,class_default,class_default,CT+ST
+66018,Norton Powerhouse 2,CT_CHP,Central,3.3,10.286,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
+68493,Central Heating Plant,CT_CHP,Central,10.0,10.5,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
 1660,Potter Station 2,CT_PEAKER,Boston,105.2,10.012,0.0,23.8,69.2,7.0,none,campd,class_default,
 1670,High Street Station,CT_PEAKER,Boston,8.6,11.5,0.0,0.0,93.0,7.0,none,class_default,class_default,
 1678,Waters River,CT_PEAKER,Boston,46.0,12.693,0.0,22.8,70.2,7.0,none,campd,class_default,
@@ -106,14 +106,14 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 66152,Connecticut College,CT_PEAKER,Connecticut,1.2,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
 66455,Yale New Haven - New London,CT_PEAKER,Connecticut,1.8,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
 68586,Stamford Health Tully Health Center,CT_PEAKER,Connecticut,0.7,9.0,0.0,0.0,93.0,7.0,none,class_default,class_default,
-10417,Indian Orchard Plant 1,ST_CHP,Central,3.2,11.5,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,
-10883,Medical Area Total Energy Plant,ST_CHP,Boston,22.0,5.357,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-50087,Univ of Massachusetts Medical Center,ST_CHP,Central,6.0,6.44,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-52024,Rhode Island Hospital,ST_CHP,Central,10.4,5.646,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,
-54225,Gillette SBMC,ST_CHP,Boston,5.0,4.935,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-54228,Erving Paper Mills,ST_CHP,Central,0.6,5.228,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-54236,Pfizer Groton Plant,ST_CHP,Connecticut,22.5,5.422,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-58160,Williams College - Campus CHP,ST_CHP,Central,3.0,5.695,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,
-61703,Sikorsky Aircraft CHP,ST_CHP,Connecticut,0.6,9.54,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
-68493,Central Heating Plant,ST_CHP,Central,6.1,9.984,50.0,30.0,5.0,15.0,chp_eia923_cf,class_default,class_default,CT+ST
+10417,Indian Orchard Plant 1,ST_CHP,Central,3.2,11.5,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
+10883,Medical Area Total Energy Plant,ST_CHP,Boston,22.0,5.357,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
+50087,Univ of Massachusetts Medical Center,ST_CHP,Central,6.0,6.44,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
+52024,Rhode Island Hospital,ST_CHP,Central,10.4,5.646,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+54225,Gillette SBMC,ST_CHP,Boston,5.0,4.935,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+54228,Erving Paper Mills,ST_CHP,Central,0.6,5.228,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+54236,Pfizer Groton Plant,ST_CHP,Connecticut,22.5,5.422,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+58160,Williams College - Campus CHP,ST_CHP,Central,3.0,5.695,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
+61703,Sikorsky Aircraft CHP,ST_CHP,Connecticut,0.6,9.54,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,CT+ST
+68493,Central Heating Plant,ST_CHP,Central,6.1,9.984,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,CT+ST
 546,Montville Station,ST_GAS,Connecticut,81.0,12.755,0.0,70.0,15.0,15.0,none,campd,class_default,

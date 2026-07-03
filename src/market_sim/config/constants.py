@@ -129,6 +129,36 @@ MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
     "oil": 0.12,  # oil / oil-steam — steam physics (taxonomy lumps oil into one)
 }
 
+# Sector-based behind-the-meter (BTM) share of nameplate pulled out of the grid
+# LP as CHP host self-supply (fleet.CHP_SECTOR_CLASS_BY_PLANT assigns each
+# plant to "industrial"/"commercial"/"merchant" from its EIA-923 Schedule-8
+# sector classification).
+#
+# "industrial"/"commercial": re-derived from EIA-923 Schedule-8 CHP fuel
+# allocation (independent of this model's own dispatch/backcast) — EIA's
+# published CHP-sector analysis reports industrial-sector CHP plants
+# allocating ~70% of fuel consumption to useful thermal output and
+# commercial-sector plants ~65% (EIA Today in Energy, "Combined heat and
+# power technology fills an important energy niche",
+# https://www.eia.gov/todayinenergy/detail.php?id=8250, itself sourced from
+# Schedule-8 CHP fuel-consumption/thermal-output reporting). A plant whose
+# design dedicates most of its fuel to the host's thermal load is host-
+# dominated in its electric output too, so the fuel-allocation share stands in
+# for the BTM electric share. Replaces the prior values (60/60), which were
+# hand-trimmed to 50/50 to close a Run-61..65 backcast residual (CLAUDE.md
+# rule #22 — a derive input must not move because a residual moved).
+#
+# "merchant": no independent EIA sector-level split exists for merchant/IPP
+# (NAICS-22) CHP hosts at this granularity — retained at its prior fitted
+# value. Residual-identified, forecast-risk (open item for the DOF ledger,
+# S5): replace when an independent merchant-CHP host-load source is found.
+CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
+    "merchant": 35.0,  # residual-identified, forecast-risk — no independent source yet
+    "industrial": 70.0,  # EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output
+    "commercial": 65.0,  # EIA-923 Schedule-8: ~65% of CHP fuel to useful thermal output
+}
+CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
+
 # CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
 # Used to amortize startup cost into the monthly bid markup: a generator bids
 # above marginal cost to recover startup_cost / expected_run_length.
