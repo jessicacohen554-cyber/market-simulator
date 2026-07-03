@@ -290,6 +290,112 @@ def _recompute_monthlies(start_year: int, end_year: int) -> None:
         print(f"  basis: {n_basis} NYISO rows recomputed")
 
 
+def _parse_ngpf_table_row(
+    html: str, cols: list["dt.date"], row_re: re.Pattern[str]
+) -> list[tuple["dt.date", float]]:
+    """Return ``[(date, price)]`` from a printer-friendly full spot-table row.
+
+    The archive's printer version (``ngpf.asp``) historically carries the FULL
+    NGI spot table (many hubs, incl. Iroquois Zone 2) instead of the compact
+    4-row table. Each row is ``<td>Hub name</td>`` followed by five daily
+    price cells matching the report-week column dates.
+    """
+    if not cols:
+        return []
+    # Work row-wise: split on <tr>, strip tags per row.
+    out: list[tuple[dt.date, float]] = []
+    for row_html in re.split(r"<tr[^>]*>", html):
+        cells = [
+            re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip()
+            for c in re.findall(r"<td[^>]*>(.*?)</td>", row_html, flags=re.S)
+        ]
+        if not cells or not row_re.search(cells[0]):
+            continue
+        prices = []
+        for c in cells[1:]:
+            m = re.match(r"^\$?([0-9]+\.[0-9]+)$", c.replace(",", ""))
+            prices.append(float(m.group(1)) if m else None)
+        # Align the trailing price cells onto the report-week dates.
+        vals = [p for p in prices if p is not None]
+        if len(vals) == len(cols):
+            out.extend((d, v) for d, v in zip(cols, vals))
+        break
+    return out
+
+
+def harvest_ngpf_iroquois(
+    pages: list[tuple[int, int, int]],
+    start_year: int,
+    end_year: int,
+    sleep: float,
+) -> dict["dt.date", float]:
+    """Harvest daily Iroquois Zone 2 prints from the printer-friendly pages.
+
+    Probes the first few pages for an Iroquois row; if the modern printer
+    version carries only the compact table (no Iroquois anywhere), bails out
+    after the probe window so the run stays fast. Returns ``{date: price}``.
+    """
+    row_re = re.compile(r"Iroquois", flags=re.I)
+    found: dict[dt.date, float] = {}
+    probed = hits = 0
+    for y, m, d in pages:
+        url = PAGE_TMPL.format(y=y, m=m, d=d) + "ngpf.asp"
+        try:
+            html = _fetch(url)
+        except (HTTPError, URLError):
+            probed += 1
+            if probed >= 6 and hits == 0:
+                break
+            continue
+        cols = column_dates(html, y, m)
+        prints = _parse_ngpf_table_row(html, cols, row_re)
+        probed += 1
+        if prints:
+            hits += 1
+            for date, price in prints:
+                if start_year <= date.year <= end_year:
+                    found[date] = price
+        if probed >= 6 and hits == 0:
+            print("ngpf.asp probe: no Iroquois row in the modern printer table")
+            break
+        time.sleep(sleep)
+    if hits:
+        print(f"ngpf.asp: Iroquois row found on {hits}/{probed} pages")
+    return found
+
+
+def probe_ne_dashboard() -> None:
+    """Reconnaissance: dump any JSON/CSV data endpoints behind the EIA New
+    England natural-gas dashboard that mention Iroquois, for a future harvest.
+    Prints findings to the workflow log; writes nothing."""
+    try:
+        html = _fetch("https://www.eia.gov/dashboard/newengland/naturalgas")
+    except (HTTPError, URLError) as exc:
+        print(f"NE dashboard probe: fetch failed ({exc})")
+        return
+    candidates = sorted(
+        set(
+            re.findall(
+                r'["\'](/(?:dashboard|api|opendata)[^"\']*?(?:json|csv|data)[^"\']*)["\']',
+                html,
+            )
+        )
+    )[:12]
+    print(f"NE dashboard probe: {len(candidates)} candidate data URLs")
+    for c in candidates:
+        url = "https://www.eia.gov" + c
+        try:
+            body = _fetch(url)[:4000]
+        except (HTTPError, URLError) as exc:
+            print(f"  {c}: fetch failed ({exc})")
+            continue
+        has_iq = "iroquois" in body.lower()
+        print(
+            f"  {c}: {'IROQUOIS PRESENT' if has_iq else 'no iroquois'} "
+            f"(first bytes: {body[:120]!r})"
+        )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--start-year", type=int, default=2023)
@@ -353,6 +459,14 @@ def main() -> None:
             w.writeheader()
             w.writerows([existing[k] for k in sorted(existing)])
     print(f"transco: +{added} narrative rows -> {len(existing)} total")
+
+    # Printer-friendly full spot table (structured, dense where present):
+    # a table print wins over a narrative print on the same date.
+    for date, price in harvest_ngpf_iroquois(
+        pages, args.start_year, args.end_year, args.sleep
+    ).items():
+        iq_prints[date] = (price, "ngpf_table", "zone2")
+    probe_ne_dashboard()
 
     if iq_prints:
         with IROQUOIS_PATH.open("w", newline="") as fh:

@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-nyiso-40-truedate-gas",
+  "label": "nyiso 40 truedate gas",
+  "date": "2026-07-03",
+  "shorthand": "nyiso-40-truedate-gas",
+  "definition": "Calibration run from bundle nyiso40_truedate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-nyiso-40-truedate-gas.js",
+  "bundle": "results/calibration/nyiso40_truedate"
+}
