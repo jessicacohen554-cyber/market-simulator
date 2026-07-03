@@ -57,6 +57,13 @@ from market_sim.config.iso_configs import (
     Zone,
 )
 from market_sim.data.fleet import Generator
+from market_sim.data.floor_mechanisms import (
+    MECH_CAISO_GAS_COMMITMENT_FLOOR,
+    MECH_FIRM_IMPORT,
+    MECH_NYISO_SELFSUPPLY,
+    MECH_RELIABILITY_FLOOR,
+    ensure_mechanism,
+)
 
 
 def build_incidence_matrix(
@@ -1449,9 +1456,11 @@ def inject_reference_price_firm_import(fleet_arrays, iso: str, year: int) -> boo
             r = rows[k]
             avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
             forced = np.minimum(remaining, avail_r)
+            raised = fleet_arrays.min_gen[r, :] < forced
             np.maximum(
                 fleet_arrays.min_gen[r, :], forced, out=fleet_arrays.min_gen[r, :]
             )
+            ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
             # Reduce the remaining floor by the band's minimum forced capacity so
             # the next band covers any shortfall (use the min across hours so the
             # floor is met even in the band's tightest-availability hour).
@@ -2520,12 +2529,15 @@ def inject_caiso_gas_commitment_floor(
     # unit capped at its available capacity — the convention the CT/reliability
     # deployment overlays use (data/fleet.py). ``maximum`` composes the floor
     # with any CHP/ST/export floor already in min_gen rather than clobbering it.
+    mech = ensure_mechanism(fleet_arrays)
     order = gas_rows[np.argsort(fleet_arrays.heat_rate[gas_rows], kind="stable")]
     remaining = target.copy()
     for r in order:
         cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
         take = np.minimum(remaining, cap)
+        raised = fleet_arrays.min_gen[r, :] < take
         np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+        mech[r, raised] = MECH_CAISO_GAS_COMMITMENT_FLOOR
         remaining = remaining - take
     return True
 
@@ -2536,14 +2548,21 @@ def inject_caiso_gas_commitment_floor(
 NEISO_COLDSNAP_FLOOR_HOURS: tuple[int, ...] = (6, 7, 8, 9, 17, 18, 19, 20)
 
 
-def _distribute_group_floor(fleet_arrays, rows, frac: np.ndarray, hours: int) -> None:
+def _distribute_group_floor(
+    fleet_arrays,
+    rows,
+    frac: np.ndarray,
+    hours: int,
+    mech_id: int = MECH_RELIABILITY_FLOOR,
+) -> None:
     """Floor a plant-group fleet at ``frac`` x available capacity, cheapest-first.
 
     Shared kernel for :func:`inject_reliability_floor`: sizes the hourly group
     target as ``frac`` x the group's available capacity and distributes it over
     the group's units cheapest-first (by heat rate), each capped at its available
     capacity, composing with any existing ``FleetArrays.min_gen`` floor via
-    ``maximum``.
+    ``maximum``. ``mech_id`` tags the raised unit-hours for the D-2
+    forced-energy attribution (data.floor_mechanisms).
     """
     avail_cap = fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
     target = frac * avail_cap.sum(axis=0)
@@ -2551,12 +2570,15 @@ def _distribute_group_floor(fleet_arrays, rows, frac: np.ndarray, hours: int) ->
         fleet_arrays.min_gen = np.broadcast_to(
             fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
         ).copy()
+    mech = ensure_mechanism(fleet_arrays)
     order = rows[np.argsort(fleet_arrays.heat_rate[rows], kind="stable")]
     remaining = target.copy()
     for r in order:
         cap_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
         take = np.minimum(remaining, cap_r)
+        raised = fleet_arrays.min_gen[r, :] < take
         np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+        mech[r, raised] = mech_id
         remaining = remaining - take
 
 
@@ -2782,15 +2804,21 @@ def inject_reliability_floor(
                 (fleet_arrays.pmin.size, hours),
             ).copy()
         if spec.distribution == "cheapest_first":
-            _distribute_group_floor(fleet_arrays, rows, frac, hours)
+            _distribute_group_floor(
+                fleet_arrays, rows, frac, hours, mech_id=MECH_RELIABILITY_FLOOR
+            )
         else:  # pro_rata: each unit floored at frac x its own available capacity
+            mech = ensure_mechanism(fleet_arrays)
             for r in rows:
                 avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                target = frac * avail_r
+                raised = fleet_arrays.min_gen[r, :] < target
                 np.maximum(
                     fleet_arrays.min_gen[r, :],
-                    frac * avail_r,
+                    target,
                     out=fleet_arrays.min_gen[r, :],
                 )
+                mech[r, raised] = MECH_RELIABILITY_FLOOR
         return True
 
     # System net-load (demand minus VRE, summed across zones) is computed once
@@ -3029,10 +3057,13 @@ def inject_nyiso_local_selfsupply(
         is_oil = (fleet_arrays.fuel_type_idx[rows] == oil_code).astype(int)
         order = rows[np.lexsort((fleet_arrays.heat_rate[rows], is_oil))]
         remaining = target.copy()
+        mech = ensure_mechanism(fleet_arrays)
         for r in order:
             cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
             take = np.minimum(remaining, cap)
+            raised = fleet_arrays.min_gen[r, :] < take
             np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+            mech[r, raised] = MECH_NYISO_SELFSUPPLY
             remaining = remaining - take
         applied = True
     return applied
@@ -3087,9 +3118,11 @@ def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
                     fleet_arrays.pmin[:, np.newaxis],
                     (fleet_arrays.pmin.size, hours),
                 ).copy()
+            raised = fleet_arrays.min_gen[r, :] < floor
             np.maximum(
                 fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :]
             )
+            ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
             applied = True
     return applied
 
@@ -3339,6 +3372,8 @@ def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
                 fleet_arrays.pmin[:, np.newaxis],
                 (fleet_arrays.pmin.size, hours),
             ).copy()
+        raised = fleet_arrays.min_gen[r, :] < floor
         np.maximum(fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :])
+        ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
         applied = True
     return applied
