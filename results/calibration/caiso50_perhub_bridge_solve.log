@@ -84,3 +84,215 @@ INFO: CAISO 2025: reliability floor — 6 enabled limb spec(s) applied from RELI
 INFO: F923 fuel costs for 2025: 48 generators priced from their own plant, 914 gap-filled from nearby (state/zone) plants
 INFO: hub-basis overlay (CAISO 2025, monthly): 1105 gas generators repriced at the measured hub spot in 9/12 months (winter max 6.38 $/MMBtu)
 INFO: CAISO 2025: per-hub WECC intertie — two signed corridors (Malin/COI → NP15, Palo Verde/Path-46 → SP15), each priced at its OWN measured hub (per-hub basis + per-hub netting, arbitrage-free, one direction per hour per corridor)
+INFO: Matrix build: 1.825s, Solve: 95.968s (cold)
+INFO: Matrix build: 1.825s, Solve: 14.581s (warm)
+INFO: Matrix build: 1.912s, Solve: 97.002s (cold)
+INFO: EIA-923 2025: CAMPD-backfilled 3 under-reported plants (1 replaced, 2 added)
+INFO: EIA-923 2025 wind 4.24 TWh under-counts EIA-930 19.82 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 39.76 TWh under-counts EIA-930 49.85 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 12.42 TWh under-counts EIA-930 21.35 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 biomass 1.23 TWh incomplete (vintage 73%); carrying 2024 biomass 4.41 TWh x completeness -> 3.23 TWh
+INFO: wrote calibration bundle to results/calibration/caiso50_perhub_bridge
+
+================================================================================
+  CALIBRATION REPORT  (CAISO; run 2026-07-03T18:23:07; git 6494096)
+  bundle: results/calibration/caiso50_perhub_bridge
+================================================================================
+
+================================================================================
+  CAISO 2023 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.18   0.1    0.01   0.0    0.21   0.1
+    gas         78.51  41.2   88.01  47.8   76.04  50.8
+    nuclear     17.63   9.2   17.75   9.6   17.72  11.8
+    wind        16.55   8.7   16.40   8.9       —     —
+    solar       39.79  20.9   37.17  20.2       —     —
+    hydro       24.19  12.7   24.42  13.3       —     —
+    oil          0.00   0.0    0.54   0.3       —     —
+    biomass      4.48   2.3    4.48   2.4       —     —
+    other        9.26   4.9   -0.05  -0.0       —     —
+    TOTAL      190.59 100.0  184.02 100.0  149.75 100.0
+    import      29.09  13.2   28.87  13.6       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  190.59 − EIA-930 net gen  184.02 =  +6.56 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: CAISO 2023 energy-balance drift: model gen 190.59 vs EIA-930 net gen 184.02 (+6.56 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (88.0) folds in geothermal+biomass (~13.7 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [1b] Renewable curtailment — 2023 (model re-curtailment vs ISO-reported; potential = uncurtailed HSL)
+     fuel  potential TWh  model TWh  model curt  model %  reported curt  reported %
+     wind          16.55      16.55       0.000     0.00          0.151        0.91
+    solar          39.79      39.79       0.002     0.01          2.509        6.31
+
+    Monthly curtailment (GWh):
+    month  wind mdl  wind rep  solar mdl  solar rep
+      Jan       0.0       3.6        0.0       49.6
+      Feb       0.0      10.6        0.0      193.4
+      Mar       0.0      34.6        0.0      571.6
+      Apr       0.0      30.9        2.0      672.0
+      May       0.0      31.7        0.0      348.1
+      Jun       0.0      22.0        0.0      192.0
+      Jul       0.0       2.2        0.0       55.7
+      Aug       0.0       0.9        0.0       48.4
+      Sep       0.0       2.6        0.0       73.4
+      Oct       0.0       6.8        0.0      204.6
+      Nov       0.0       1.9        0.0       68.9
+      Dec       0.0       2.9        0.0       31.3
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -28.87 TWh (-3295 MW avg)
+    priced-node fit  : duration RMSE 568 MW (offline tranche fit, optimal placement; P9)
+    model            : -29.09 TWh (-3321 MW avg; priced import/export node)
+    duration curve   : RMSE 851 MW; p01/p10/p50/p90/p99 model -8324/-7206/-3254/+0/+0 vs actual -8437/-6500/-3774/+661/+3574
+    import hours     : model 81.6% vs actual 85.9%
+    diurnal shape    : corr +0.09; model peak->trough 2099 MW vs actual 5236 MW
+
+  [2b] Battery cycling — 2023 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   4.47        —
+                            charge TWh   5.26        —
+    evening (h17-22) discharge share %   94.0        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 2.82 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              64.15       22
+    SP15              69.12       22
+    WECC_DSW          54.00       55
+    WECC_PNW          45.62      102
+    ZP26              64.15       22
+
+  [3] System price duration ($/MWh)
+    avg    59.41   max   256.48   p90   79.22   p50   54.20   p10   32.57   min   -20.00
+    negative-price hours: 38
+
+================================================================================
+  CAISO 2024 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.15   0.1   -0.00  -0.0    0.25   0.2
+    gas         78.51  39.3   85.37  44.8   67.68  43.4
+    nuclear     18.20   9.1   18.35   9.6   18.38  11.8
+    wind        20.29  10.2   20.06  10.5       —     —
+    solar       47.85  24.0   44.64  23.4       —     —
+    hydro       22.29  11.2   22.73  11.9       —     —
+    oil          0.00     —    0.52   0.3       —     —
+    biomass      4.41   2.2    4.41   2.3       —     —
+    other        8.08   4.0   -1.10  -0.6       —     —
+    TOTAL      199.77 100.0  190.56 100.0  155.83 100.0
+    import      25.86  11.5   32.38  14.5       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  199.77 − EIA-930 net gen  190.56 =  +9.21 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: CAISO 2024 energy-balance drift: model gen 199.77 vs EIA-930 net gen 190.56 (+9.21 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (85.4) folds in geothermal+biomass (~12.5 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [1b] Renewable curtailment — 2024 (model re-curtailment vs ISO-reported; potential = uncurtailed HSL)
+     fuel  potential TWh  model TWh  model curt  model %  reported curt  reported %
+     wind          20.29      20.29       0.000     0.00          0.229        1.13
+    solar          47.91      47.85       0.059     0.12          3.170        6.62
+
+    Monthly curtailment (GWh):
+    month  wind mdl  wind rep  solar mdl  solar rep
+      Jan       0.0       5.5        0.0       95.5
+      Feb       0.0      13.6        0.0      191.0
+      Mar       0.0      54.7        7.0      675.6
+      Apr       0.0      41.8       34.5      797.8
+      May       0.0      57.2       17.0      638.1
+      Jun       0.0      27.4        0.0      219.2
+      Jul       0.0       5.1        0.0       62.5
+      Aug       0.0       0.8        0.0       70.8
+      Sep       0.0       2.3        0.0      118.4
+      Oct       0.0       9.5        0.0      142.4
+      Nov       0.0       5.3        0.0      141.7
+      Dec       0.0       5.8        0.0       16.6
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -32.38 TWh (-3696 MW avg)
+    priced-node fit  : duration RMSE 560 MW (offline tranche fit, optimal placement; P9)
+    model            : -25.86 TWh (-2952 MW avg; priced import/export node)
+    duration curve   : RMSE 1258 MW; p01/p10/p50/p90/p99 model -7725/-5291/-3055/+0/+0 vs actual -8302/-6750/-4183/+152/+3538
+    import hours     : model 84.7% vs actual 89.0%
+    diurnal shape    : corr -0.34; model peak->trough 3559 MW vs actual 4596 MW
+
+  [2b] Battery cycling — 2024 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   6.87        —
+                            charge TWh   8.08        —
+    evening (h17-22) discharge share %   85.6        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 3.17 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              42.45      140
+    SP15              45.37      146
+    WECC_DSW          41.58      535
+    WECC_PNW          38.37      278
+    ZP26              42.43      146
+
+  [3] System price duration ($/MWh)
+    avg    42.04   max    74.72   p90   57.91   p50   43.91   p10   24.67   min   -22.40
+    negative-price hours: 181
+
+================================================================================
+  CAISO 2025 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal         0.18   0.1   -0.00  -0.0    0.23   0.2
+    gas         74.35  38.3   79.03  42.4   55.18  41.6
+    nuclear     17.49   9.0   17.61   9.4   17.56  13.2
+    wind        20.04  10.3   19.82  10.6       —     —
+    solar       53.35  27.5   49.70  26.7       —     —
+    hydro       19.73  10.2   21.34  11.5       —     —
+    oil          0.00     —    0.35   0.2       —     —
+    biomass      3.23   1.7    3.23   1.7       —     —
+    other        5.92   3.0   -1.76  -0.9       —     —
+    TOTAL      194.29 100.0  186.37 100.0  132.55 100.0
+    import      32.21  14.2   36.16  16.2       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  194.29 − EIA-930 net gen  186.37 =  +7.92 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: CAISO 2025 energy-balance drift: model gen 194.29 vs EIA-930 net gen 186.37 (+7.92 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (79.0) folds in geothermal+biomass (~9.2 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [1b] Renewable curtailment — 2025: no CAISO HSL parquet; build with scripts/build_caiso_hsl.py (ERCOT 2024+ needs the NP6 report uploads under data/raw/ercot-hsl/np6/)
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -36.16 TWh (-4127 MW avg)
+    priced-node fit  : duration RMSE 556 MW (offline tranche fit, optimal placement; P9)
+    model            : -32.21 TWh (-3677 MW avg; priced import/export node)
+    duration curve   : RMSE 950 MW; p01/p10/p50/p90/p99 model -9903/-6536/-3621/+0/+0 vs actual -9335/-7194/-4670/-128/+2736
+    import hours     : model 87.8% vs actual 90.9%
+    diurnal shape    : corr -0.25; model peak->trough 4338 MW vs actual 4973 MW
+
+  [2b] Battery cycling — 2025 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   8.18        —
+                            charge TWh   9.62        —
+    evening (h17-22) discharge share %   66.6        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 4.04 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    NP15              46.92        0
+    SP15              48.17        0
+    WECC_DSW          43.20      206
+    WECC_PNW          41.39      219
+    ZP26              46.92        0
+
+  [3] System price duration ($/MWh)
+    avg    45.32   max    79.93   p90   59.79   p50   46.65   p10   28.54   min    -3.27
+    negative-price hours: 5
