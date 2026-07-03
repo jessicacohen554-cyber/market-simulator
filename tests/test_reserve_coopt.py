@@ -1366,3 +1366,103 @@ class TestPerGenReserveCoopt(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAllClassBalanceFamily(unittest.TestCase):
+    """A reserve_class -1 family draws on EVERY class's reserve (the ERCOT
+    lumped ORDC total-reserve curve layered on the product families).
+
+    Trivial case: 1 zone, 24 h, one 1,000 MW CC. Two product families
+    (class 0 req 100, class 1 req 150) plus the all-class total family
+    (req 400), on the ADDITIVE shared-headroom spec the ERCOT multi-product
+    design uses (one row bounding P + every product's R against capacity —
+    the legacy per-class spec would double-count headroom across classes).
+    """
+
+    _T = 24
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        T = self._T
+        return FleetArrays(
+            pmax=np.array([1000.0]),
+            pmin=np.zeros(1),
+            heat_rate=np.array([7.0]),
+            vom=np.zeros(1),
+            emission_rate=np.zeros(1),
+            nox_rate=np.zeros(1),
+            so2_rate=np.zeros(1),
+            zone_idx=np.array([0]),
+            fuel_type_idx=np.array([cc_idx]),
+            availability=np.ones((1, T)),
+            unit_ids=["cc"],
+            efficiency_bin=np.zeros(1),
+            plant_code=np.array([1]),
+        )
+
+    def _solve(self, demand_mw, with_total, total_penalty=200.0):
+        from market_sim.model.dispatch import solve_dispatch
+
+        T = self._T
+        demand = np.array([[float(demand_mw)] * T])
+        # product families: class 0 (req 100), class 1 (req 150); both
+        # price shortfall at VOLL-scale so they always hold when feasible.
+        req = [np.full(T, 100.0), np.full(T, 150.0)]
+        pens = [np.array([2000.0]), np.array([2000.0])]
+        wids = [np.array([100.0]), np.array([150.0])]
+        classes = [0, 1]
+        if with_total:
+            req.append(np.full(T, 400.0))
+            pens.append(np.array([total_penalty]))
+            wids.append(np.array([400.0]))
+            classes.append(-1)
+        eligible = np.array([[True], [True]])  # both classes: the CC
+        return solve_dispatch(
+            self._fleet(),
+            demand,
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((1, T)),
+            voll=5000.0,
+            reserve_requirement=np.vstack(req),
+            reserve_eligible=eligible,
+            ordc_penalties=np.concatenate(pens),
+            ordc_step_widths=np.concatenate(wids),
+            reserve_balance_zone_mask=np.ones((len(req), 1), dtype=bool),
+            reserve_balance_ordc_counts=np.array([len(p) for p in pens]),
+            reserve_balance_class=np.array(classes),
+            reserve_headroom_eligible=np.array([[True]]),
+            reserve_headroom_products=np.array([[True, True]]),
+        )
+
+    def test_products_count_toward_total(self):
+        # Slack system (demand 400 -> headroom 600 >= 400): the total family
+        # is met by holding 400 total across the two classes — products'
+        # 250 count toward it (all-class sum), only 150 extra is held.
+        res = self._solve(400.0, with_total=True)
+        self.assertEqual(res.status, "Optimal")
+        held = float(np.asarray(res.reserve_dispatch).sum(axis=0).mean())
+        self.assertAlmostEqual(held, 400.0, places=3)
+        # nothing short -> total family adds no price
+        self.assertAlmostEqual(float(np.asarray(res.reserve_price).mean()), 0.0)
+
+    def test_total_shortfall_prices_and_lifts_lmp(self):
+        # Tight system (demand 700 -> headroom 300): products hold their 250,
+        # the total family is 100 short (300 < 400) and prices at its step;
+        # the shared headroom passes the total dual into the energy LMP.
+        base = self._solve(700.0, with_total=False)
+        tot = self._solve(700.0, with_total=True)
+        self.assertEqual(tot.status, "Optimal")
+        held_base = float(np.asarray(base.reserve_dispatch).sum(axis=0).mean())
+        held_tot = float(np.asarray(tot.reserve_dispatch).sum(axis=0).mean())
+        self.assertAlmostEqual(held_base, 250.0, places=3)
+        self.assertAlmostEqual(held_tot, 300.0, places=3)  # all headroom held
+        price_base = float(np.asarray(base.prices).mean())
+        price_tot = float(np.asarray(tot.prices).mean())
+        self.assertAlmostEqual(price_base, 7.0, places=3)  # energy MC only
+        # marginal MW now trades off against the $200 total-reserve step
+        self.assertAlmostEqual(price_tot, 207.0, places=2)
