@@ -393,6 +393,38 @@ asserted — one is **falsified**, the other **confirmed**:
    deliverable-cap data, AND the 15 GB box are all ready — the remaining blocker
    is the per-gen build's memory (untested) plus commitment posture, not the box.
 
+**Phase 2 per-gen memtest (2026-07-02, pjm-pergen-reserve-memory branch).**
+The per-gen co-opt code is merged (PR #1251, commit 48cc0bd,
+`pjm_reserve_pergen`, `ScenarioConfig` field default `False`) and produces the
+correct LP: 257 R columns (one per eligible unit per balance family), 2,624
+member units, 2 balance families (RTO + MAD), yielding a PJM-2024 LP of
+**2,506,224 rows × 27,655,320 columns, 56M nnz** — roughly 3× the zone-aggregate
+LP in each dimension. Memtest results on the 16.86 GB calibration box:
+
+- **2024 single-year (P0):** solved successfully, VmHWM **~15.10 GB**. After
+  `addRows` the working set was ~6.0 GB; P0 simplex grew it to ~15.1 GB.
+- **2024 single-year (P1 warm-start):** **OOM-killed** at RSS ~14.6 GB. The P1
+  re-solve on the warm-started basis pushed past the available headroom (~15.7 GB
+  after OS/other processes on the 16.86 GB box) and the kernel OOM-reaper killed
+  the process. The P1 solve's memory profile is not monotonic — RSS oscillates
+  between ~14–15 GB during basis updates — so the OOM fires on a transient spike,
+  not a sustained climb.
+- **HiGHS LEAN mode** (`MARKET_SIM_HIGHS_LEAN=1`, `simplex_scale_strategy=0`):
+  saves **~10 MB** — negligible. The solve workspace is dominated by basis
+  factorization, not the scaling vectors LEAN removes.
+- **Dantzig pricing** (`simplex_dual_edge_weight_strategy=0`): tested and
+  **rejected**. On this degenerate LP (reserve vars mostly at zero), Dantzig does
+  fewer operations per iteration but needs dramatically more iterations. P1
+  warm-start took 10+ minutes without completing (vs ~3-4 min with default DSE).
+  Removed from the LEAN path.
+
+Conclusion: the per-gen co-opt is **memory-infeasible on the 16.86 GB box** (the
+P0 fits but P1 does not — both passes are required for bid-cost pricing). The
+merged code stays gated `default off`. Phase 2 requires either a larger box
+(≥20 GB to provide safe headroom) or an LP-size reduction (e.g. tier the 257
+R columns by unit size, dropping small units that never bind). The pjm-76 keeper
+runs the zone-aggregate co-opt only.
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 
