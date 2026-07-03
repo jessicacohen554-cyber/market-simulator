@@ -314,6 +314,18 @@ def _caiso_config() -> ISOConfig:
     # Source: CAISO published Maximum Import Capability (11,665 MW non-peak);
     # CAISO RA 5,500 MW summer peak; EIA-930 CISO net-interchange 2023-25.
     # Tier 3 (calibration).
+    #
+    # NOTE (audit item C-5, resolved in the caiso-51 keeper — 2026-07-03;
+    # docs/caiso-c5-wecc-cap-closeout-2026-07-03.md): this 7,500 MW value is a
+    # fitted scalar. It is SUPERSEDED in the caiso-51 backcast keeper, where
+    # `capacity_deliverability_limits` replaces it with the published branch-group
+    # MIC seam limit (16,055/16,452/16,148 MW for 2023/24/25) and measured p95
+    # corridor deliverability envelopes (`caiso_corridor_flow_limit`) bind tighter.
+    # It is retained here (not deleted) because it remains the default cap for runs
+    # with `capacity_deliverability_limits` OFF (forecast mode; the flag is GATED
+    # default-off) and is preserved/re-homed by `split_caiso_import_node_per_hub`.
+    # Re-grounding the forecast-path default on the published MIC/SIL is open item
+    # O-1 (forecast/backcast parity). Do not re-tune this value to the residual.
     interface_limits = [
         InterfaceLimit(
             name="WECC_import_simultaneous",
