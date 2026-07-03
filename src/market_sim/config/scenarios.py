@@ -745,6 +745,31 @@ class ScenarioConfig:
     # mechanism (in a forecast the constraint is sourced from the neighbor's
     # forecast net position or relaxed). Requires --priced-interchange. Default
     # off (byte-identical); NYISO-only.
+    nyiso_import_hub_prices: bool = False  # NYISO priced import-node tranches
+    # repriced at the MEASURED hourly neighbor system LMP: PJM_west takes the
+    # PJM hourly Day-Ahead hub mean, ISONE_tie the ISO-NE hourly DA hub mean
+    # (data/raw/_validation-source/actual_lmp_hourly_{PJM,NEISO}.parquet via
+    # neighbor_price.neighbor_lmp_hourly, rt fallback), the residual
+    # import_scarcity block the hourly MAX of the two (the deep non-firm MW
+    # beyond the direct-tie blocks cannot be cheaper than every real adjacent
+    # market), each + the inter-control-area wheeling hurdle; the export_surplus
+    # sink is repriced at the same max − hurdle (sell to the best-paying
+    # neighbor), making the seam arbitrage-free. Replaces the static per-year
+    # IMPORT_TRANCHES_BY_YEAR ladder, which the neighbor_price module documents
+    # as "a backcast fit — re-fitted per year, blind to neighbor fundamentals":
+    # the flat $13.5-79.7 (2024) ladder caps NYISO's winter/heat-wave price
+    # exactly when the real seam repriced with the neighbors (Dec-2024 NEISO
+    # $84.5/mo mean vs the $44.9 ISONE_tie constant; Jun-2025 heat-wave DA
+    # spikes). The NYISO analogue of miso_pjm_lmp_import_pricing (measured PJM
+    # border DA LMP) and caiso_import_hub_prices (measured WECC intertie LMP) —
+    # a measured neighbor price-formation input (rule #12), blind to NYISO's own
+    # flow (rule #11); in a forecast year the same tranches price off the
+    # modeled neighbor / reference-price formula, so the mechanism regenerates
+    # from forward drivers. HQ_hydro / IESO_Ontario keep their firm-contract
+    # ladder values (no organized-market LMP series; HQ is firm-floored). The
+    # monthly EIA-930 reconciliation band, HQ firm floor and SIL cap are
+    # unchanged. Requires --priced-interchange. Default off (byte-identical);
+    # NYISO-only; no-op without the measured parquets.
     nyiso_synchronised_reserve: bool = False  # NYISO online-gated SPINNING
     # reserve (path A of the downstate-reserve frontier, docs/handoffs/
     # nyiso-downstate-reserve-incidence-2026-06.md). Adds a NYC locational
@@ -3036,6 +3061,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
+    "nyiso_import_hub_prices": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_forward_net_import_twh": 2,
     "nyiso_spin_headroom_frac": 2,
