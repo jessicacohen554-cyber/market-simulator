@@ -400,6 +400,99 @@ class TestMisoZonalDesign(unittest.TestCase):
         np.testing.assert_array_equal(kw["reserve_balance_class"], [0, 0])
 
 
+class TestMisoPergenDesign(unittest.TestCase):
+    """MISO per-asset reserve columns (miso_reserve_pergen): (zone, fuel-class)
+    pooled R columns bounded by the summed 10-min deliverable ramp."""
+
+    _ZONES = ["MISO-West", "MISO-South"]
+
+    def _fleet(self, T=24, with_ramp10=True):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        ct = FUEL_TYPE_NAMES.index("gas_ct")
+        nuc = FUEL_TYPE_NAMES.index("nuclear")
+        n = 4
+        # West: 1,000 MW CC + 1,000 MW nuclear. South: 800 MW CC + 500 MW CT.
+        return FleetArrays(
+            pmax=np.array([1000.0, 1000.0, 800.0, 500.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 10.0, 7.5, 11.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 1, 1]),
+            fuel_type_idx=np.array([cc, nuc, cc, ct]),
+            availability=np.ones((n, T)),
+            unit_ids=["cc_w", "nuc_w", "cc_s", "ct_s"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 200, 300, 400]),
+            # RAMP10_FRAC analogue: CC 0.40, nuclear 0 (no upward reserve),
+            # CT 1.00.
+            ramp10=(np.array([400.0, 0.0, 320.0, 500.0]) if with_ramp10 else None),
+        )
+
+    def test_default_off_no_pergen_fields(self):
+        cfg = _cfg(iso="MISO")
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertIsNone(design.pergen_gen_idx)
+        self.assertIsNone(design.pergen_ramp10)
+
+    def test_pergen_pools_by_zone_and_class(self):
+        cfg = _cfg(iso="MISO", miso_reserve_pergen=True)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        # Members: reserve-eligible units with ramp10 > 0 — the nuclear unit
+        # (ramp10 = 0, baseload) drops out.
+        np.testing.assert_array_equal(design.pergen_gen_idx, [0, 2, 3])
+        # Columns: (West, gas_cc), (South, gas_cc), (South, gas_ct) — three
+        # pools; each column's cap is its members' summed availability-scaled
+        # hourly ramp10, (n_r, T).
+        self.assertEqual(design.pergen_ramp10.shape, (3, 24))
+        self.assertAlmostEqual(float(design.pergen_ramp10[:, 0].sum()), 1220.0)
+
+    def test_pergen_ramp_cap_scales_with_availability(self):
+        cfg = _cfg(iso="MISO", miso_reserve_pergen=True)
+        fleet = self._fleet()
+        # Outage the South CT (gen 3) in hour 5: its pool's deliverable
+        # 10-min ramp must drop to zero in that hour only.
+        fleet.availability[3, 5] = 0.0
+        design = get_reserve_design(cfg, fleet, 24, self._ZONES)
+        col = np.asarray(design.pergen_col)
+        ct_col = int(col[np.asarray(design.pergen_gen_idx) == 3][0])
+        self.assertAlmostEqual(float(design.pergen_ramp10[ct_col, 5]), 0.0)
+        self.assertAlmostEqual(float(design.pergen_ramp10[ct_col, 4]), 500.0)
+        col = np.asarray(design.pergen_col)
+        # Same-zone same-class members share a column; cross-zone never do.
+        self.assertEqual(np.unique(col).size, 3)
+        by_col = {
+            int(c): sorted(int(g) for g in design.pergen_gen_idx[col == c])
+            for c in np.unique(col)
+        }
+        self.assertIn([0], by_col.values())  # West CC alone
+        self.assertIn([2], by_col.values())  # South CC alone
+        self.assertIn([3], by_col.values())  # South CT alone
+
+    def test_pergen_kwargs_propagate(self):
+        cfg = _cfg(iso="MISO", miso_reserve_pergen=True)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertIn("reserve_pergen_gen_idx", kw)
+        self.assertIn("reserve_pergen_ramp10", kw)
+        self.assertIn("reserve_pergen_col", kw)
+
+    def test_pergen_composes_with_zonal_families(self):
+        cfg = _cfg(iso="MISO", miso_reserve_pergen=True, miso_zonal_reserves=True)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertEqual(len(design.families), 2)
+        self.assertIsNotNone(design.pergen_gen_idx)
+
+    def test_missing_ramp10_raises(self):
+        cfg = _cfg(iso="MISO", miso_reserve_pergen=True)
+        with self.assertRaises(ValueError):
+            get_reserve_design(cfg, self._fleet(with_ramp10=False), 24, self._ZONES)
+
+
 class TestNyisoDesign(unittest.TestCase):
     """NYISO locational reserve design."""
 

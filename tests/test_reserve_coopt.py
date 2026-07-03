@@ -1062,6 +1062,113 @@ class TestMisoZonalReserveLP(unittest.TestCase):
         self.assertGreater(south_zonal, west_zonal + 1.0)
 
 
+class TestMisoPergenReserveLP(unittest.TestCase):
+    """MISO per-asset reserve columns end-to-end (miso_reserve_pergen):
+    the 10-min deliverable ramp caps cleared reserve, so a fleet whose
+    HEADROOM covers the requirement but whose RAMP cannot deliver it inside
+    the contingency window prices the shortfall — the deliverability
+    structure the zone-aggregate co-opt cannot see (it clears $0 off pooled
+    headroom). Trivial case: 1 zone, 3 gens, 4 hours."""
+
+    _T = 4
+
+    def _fleet(self, ramp10):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        n = 3
+        # MSSC = 2,000 (g0, plant-aggregated) -> market-wide req = 2,400.
+        return FleetArrays(
+            pmax=np.array([2000.0, 1000.0, 1000.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 7.5, 8.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.zeros(n, dtype=int),
+            fuel_type_idx=np.full(n, cc_idx),
+            availability=np.ones((n, self._T)),
+            unit_ids=["cc0", "cc1", "cc2"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([1, 2, 3]),
+            ramp10=np.asarray(ramp10, dtype=float),
+        )
+
+    def _solve(self, ramp10, pergen: bool, demand_mw=200.0):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet = self._fleet(ramp10)
+        cfg = type(
+            "C",
+            (),
+            {"iso": "MISO", "weather_year": 2024, "miso_reserve_pergen": pergen},
+        )()
+        design = get_reserve_design(cfg, fleet, self._T, ["z0"])
+        kw = build_reserve_dispatch_kwargs(design)
+        extra = {
+            k: kw[k]
+            for k in (
+                "reserve_pergen_gen_idx",
+                "reserve_pergen_col",
+                "reserve_pergen_ramp10",
+            )
+            if k in kw
+        }
+        return solve_dispatch(
+            fleet,
+            np.full((1, self._T), demand_mw),
+            wind_cf=np.zeros((1, self._T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self._T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((3, self._T)),
+            voll=5000.0,
+            reserve_requirement=kw["reserve_requirement"],
+            reserve_eligible=kw["reserve_eligible"],
+            ordc_penalties=kw["ordc_penalties"],
+            ordc_step_widths=kw["ordc_step_widths"],
+            **extra,
+        )
+
+    def test_ramp_deliverability_shortage_prices_curve(self):
+        # Headroom at demand 200 is 3,800 >= req 2,400 in BOTH runs. Ramp
+        # sum 200+1000+1000 = 2,200 < 2,400: the aggregate co-opt clears $0
+        # (headroom covers the requirement), the per-asset build is 200 MW
+        # short of DELIVERABLE reserve and prices the demand curve.
+        agg = self._solve([200.0, 1000.0, 1000.0], pergen=False)
+        per = self._solve([200.0, 1000.0, 1000.0], pergen=True)
+        self.assertEqual(agg.status, "Optimal")
+        self.assertEqual(per.status, "Optimal")
+        self.assertAlmostEqual(float(np.asarray(agg.reserve_price).mean()), 0.0)
+        self.assertGreater(float(np.asarray(per.reserve_price).mean()), 1.0)
+
+    def test_ample_ramp_clears_zero(self):
+        # Ramp sum 4,000 >= req 2,400 and headroom is deep: the per-asset
+        # build must NOT manufacture phantom scarcity.
+        per = self._solve([2000.0, 1000.0, 1000.0], pergen=True)
+        self.assertEqual(per.status, "Optimal")
+        self.assertAlmostEqual(float(np.asarray(per.reserve_price).mean()), 0.0)
+
+    def test_energy_competes_with_reserve_on_marginal_pool(self):
+        # Tight energy (demand 3,200 of 4,000): serving the requirement now
+        # forces reserve to be held on capacity that would otherwise clear
+        # as energy, so the reserve price carries the opportunity cost and
+        # the LMP rises vs the aggregate build at the same demand.
+        agg = self._solve([2000.0, 1000.0, 1000.0], pergen=False, demand_mw=3200.0)
+        per = self._solve([2000.0, 1000.0, 1000.0], pergen=True, demand_mw=3200.0)
+        self.assertEqual(per.status, "Optimal")
+        self.assertGreaterEqual(
+            float(np.asarray(per.prices).mean()),
+            float(np.asarray(agg.prices).mean()) - 1e-6,
+        )
+        self.assertGreater(float(np.asarray(per.reserve_price).mean()), 0.0)
+
+
 class TestPerGenReserveCoopt(unittest.TestCase):
     """Per-generator reserve columns (R[j] ≤ ramp10, joint P+R ≤ cap).
 

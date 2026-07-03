@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-miso-39-reserve-pergen",
+ "label": "miso 39 reserve pergen",
+ "date": "2026-07-03",
+ "shorthand": "miso-39-reserve-pergen",
+ "definition": "MISO 39 (KEEPER): miso-38 + 10-MINUTE RESERVE DELIVERABILITY (--miso-reserve-pergen): per-asset reserve columns at (zone, fuel-class) pooling (30 R columns/h; the documented 15 GB memory tier \u2014 per-plant is memory-infeasible at MISO scale), joint sum P + R <= sum pmax*availability per pool-hour, R capped at the availability-scaled 10-min class ramp (FleetArrays.ramp10 = NREL/TP-5500-55588 ramp rates x pmax: coal 0.15, CC 0.40, CT/oil 1.00, ST-gas 0.20; hourly, so CAMPD-outaged units contribute no ramp). Reserve now competes with energy on the marginal pool AND cleared reserve is bounded by what converts to energy inside MISO's 10-minute contingency window (BPM-002) \u2014 the deliverability structure the miso-38 gate-4 diagnosis named. Zero residual-fitted parameters. RESULT (gate 4 CLOSED-NEGATIVE, empirical): the >$200 tail stays 0 h vs actual 30/37/88 \u2014 the bind-gate predicted South deliverable-reserve shortfalls in 59/63/207 h (hitting 28/38 of 2025's actual DA-tail hours), but the perfect-foresight LP relieves every one by re-dispatch/import re-timing at <= $23/MWh (South thermal trim ~100 MW mean in the 207 reserve-active 2025 h); the zonal family fires MORE (59/64/207 h nonzero vs 37/41/125, max $11/$11/$23 vs $8/$11/$21) but never reaches the $200 step. Fit/volumes byte-comparable to miso-38 (mean LMP 28.62/26.04/34.74; CT_PEAKER 4.96/8.43/8.79 TWh; all deltas <0.05 TWh). KEEPER because strictly more structurally faithful (real deliverability rule added, nothing removed, nothing tuned). CONCLUSION for the tail residual (docs/multi-iso/miso-scarcity-tail-diagnosis.md): 2023's tail is 100% single-hour RT transients (DA median $40 in those hours, DA tail 1 h) \u2014 out of hourly-deterministic representation; the DA-visible part (1/24/38 h) needs the commitment-posture workstream (perfect-foresight re-timing is the binding relief channel) and/or a Midwest locational family for the 2024 Winter Storm Heather block; no admissible supply-side reserve structure can price it at this resolution. Determination NOT-YET (C1 2024 CC/CT, C2 2025 coal +10.4%, C3 price level -8.5/-13.6/-16.9% \u2014 all pre-existing, unchanged vs miso-38).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-miso-39-reserve-pergen.js",
+ "bundle": "results/calibration/MISO/miso_39_reserve_pergen"
+}
