@@ -1209,6 +1209,29 @@ class ScenarioConfig:
     # (the multi-product builder is the ERCOT co-opt's multi-product mode) and is
     # paired with commitment_enabled for the phantom-headroom fix. Default off;
     # the forward analogue of ercot_dam_as_overlay (Finding 1 / G1). GATED.
+    ercot_ecrs_conservative_deployment: bool = False  # ERCOT multi-product co-opt:
+    # represent the PUBLISHED pre-reform ECRS deployment design as the ECRS demand
+    # curve, year/date-keyed like the OBDRR048 floor. From ECRS go-live
+    # (2023-06-10, market notice M-D050523-01; onset carried by the ASPLANNP433
+    # data) through 2024-07-31, ERCOT had NO price-based ECRS release to SCED:
+    # awarded ECRS was carved out of the SCED-dispatchable range (HASL) and
+    # released only by manual/automatic reliability deployment (frequency
+    # < 59.91 Hz, or 10-minute projected net-load insufficiency — ERCOT Ancillary
+    # Services Study white paper, Sept 2024), which the IMM found "led to
+    # artificial shortage pricing … doubled average energy prices between June and
+    # December 2023" (>$12B; 2023 State of the Market Report §II.G,
+    # recommendation 2023-3). Economically that is a reserve demand step AT THE
+    # SYSTEM-WIDE OFFER CAP for the full requirement (withheld at any price below
+    # the cap), so the ECRS family's shortfall steps become a single ordc_voll
+    # step and the withheld supply raises the ENERGY dual endogenously in tight
+    # hours. From 2024-08-01 (ERCOT operating-procedure change after the PUCT
+    # rejected NPRR1224's $750 offer floor on 2024-07-25: release on a sustained
+    # 40 MW/10-min power-balance violation, dispatched at the resources' own
+    # offers — no administrative floor) the ECRS family reverts to the standing
+    # VOLL-anchored ramp (the model's releasable-reserve representation). All
+    # dates/values are published market design (docs/parameter-citations.md), no
+    # parameter is fitted to a price residual. Default off; ERCOT multi-product
+    # co-opt only. GATED.
     ercot_as_critical_frac: float = 0.0  # Reserve level (as a fraction of each AS
     # product's peak requirement) at/below which its VOLL-anchored demand curve
     # hits the full AS offer cap. 0 (default) ramps the curve linearly from $0 at
@@ -3026,6 +3049,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ecrs_requirement": 1,
     "ercot_ecrs_requirement_from_year": 1,
     "ercot_multiproduct_as_coopt": 1,
+    "ercot_ecrs_conservative_deployment": 1,
     "ercot_as_critical_frac": 1,
     "ercot_as_n_ramp": 1,
     "ercot_as_aware_commitment": 1,

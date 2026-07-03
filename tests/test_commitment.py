@@ -1171,3 +1171,49 @@ class TestCoalPinnedInPass2(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCouplePeakTranche(unittest.TestCase):
+    """couple_peak: a cold plant's peak tranche shuts with its committed tranche."""
+
+    def _bin_gens(self):
+        def bin_gen(suffix, pmax, startup, min_run=4.0):
+            return Generator(
+                unit_id=f"CC_REGULAR_z_p77_{suffix}",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=pmax,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                eford=0.0,
+                plant_group="CC_REGULAR",
+                is_campd_bin=True,
+                startup_cost_per_mw=startup,
+            )
+
+        return [
+            bin_gen("committed", 200.0, 50.0),
+            bin_gen("econc00", 300.0, 0.0),
+            bin_gen("peak", 50.0, 0.0),
+        ]
+
+    def test_peak_coupled_when_enabled(self):
+        gens = self._bin_gens()
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=8)
+        committed = np.ones((3, 8), dtype=bool)
+        committed[0, 2:5] = False  # committed tranche decommitted hours 2-4
+        p1 = np.zeros((3, 8))
+        out = apply_commitment_with_coal_pin(fa, committed, p1, gens, couple_peak=True)
+        self.assertTrue((out.availability[1, 2:5] == 0.0).all())  # econ coupled
+        self.assertTrue((out.availability[2, 2:5] == 0.0).all())  # peak coupled
+        self.assertTrue((out.availability[2, :2] > 0.0).all())
+
+    def test_peak_untouched_by_default(self):
+        gens = self._bin_gens()
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=8)
+        committed = np.ones((3, 8), dtype=bool)
+        committed[0, 2:5] = False
+        p1 = np.zeros((3, 8))
+        out = apply_commitment_with_coal_pin(fa, committed, p1, gens)
+        self.assertTrue((out.availability[2] > 0.0).all())  # legacy behaviour
