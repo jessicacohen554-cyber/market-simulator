@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-caiso-50-perhub-bridge",
+  "label": "caiso 50 perhub bridge",
+  "date": "2026-07-03",
+  "shorthand": "caiso-50-perhub-bridge",
+  "definition": "caiso-50: caiso-49 measured-hub per-hub seam + MIC seam limit + startup-cost-aware RA bridge with DA-horizon decommit (UC restart economics, caiso-44/48 mechanism)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-caiso-50-perhub-bridge.js",
+  "bundle": "results/calibration/caiso50_perhub_bridge"
+}
