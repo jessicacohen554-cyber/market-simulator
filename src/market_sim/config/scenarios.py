@@ -1772,23 +1772,26 @@ class ScenarioConfig:
     gas_st_startup_cost: bool = False
 
     # Fast-start tranche pricing (ISO-NE Order 825 analogue): when set, the
-    # ECON and PEAK tranches of the gas CAMPD bins carry the bin's NREL
+    # FAST-START-capable tranches of the gas CAMPD bins carry the bin's NREL
     # startup cost (fleet.BIN_STARTUP_COST_PER_MW, NREL/SR-5500-55433) exactly
     # as the committed tranche already does, so compute_monthly_markup
-    # amortizes each tranche's own P0 run lengths into its P1 bid. Physics: a
-    # 2x1 CC's upper blocks are the second GT / duct burners — dispatching
-    # them after an overnight 1x1 turndown IS a start, and ISO-NE fast-start
-    # pricing folds exactly that commitment cost into the LMP-setting offer
-    # (Market Rule 1 / FERC Order 825). The resulting offer component is
-    # fuel-price-INVARIANT ($/MWh from $/MW-start over run hours), which the
-    # heat-rate-multiplier parameterization cannot express: a mult-only curve
-    # over-prices high-gas winter months and under-prices cheap-gas summer
-    # evening peaks simultaneously (the NEISO 2024 C3b Jan/Feb +$9-10 vs
-    # Jul/Aug -$10-11 signature). Dynamics-correct: a peak block run 4 evening
-    # hours bids +startup/4 per MWh; a block marginal around the clock in a
-    # cold month bids +startup/run≈0. No new constants — reuses the cited NREL
-    # startup table and the existing P0 run-length machinery. Default off →
-    # every prior keeper stays byte-identical.
+    # amortizes each tranche's own P0 run lengths into its P1 bid. Scope
+    # follows ISO-NE fast-start pricing eligibility (start + notification
+    # <= ~30 min): CT_PEAKER/CT_CHP econ+peak tranches (a peaker's upper
+    # blocks are additional quick-start units) and the CC_REGULAR/CC_CHP
+    # duct-burner/quick-response PEAK band only. A big CC's econ blocks are
+    # deliberately excluded — block-loading a committed CC is not a fast
+    # start, and its start costs settle as NCPC uplift, not in the LMP. The
+    # resulting offer component is fuel-price-INVARIANT ($/MWh from
+    # $/MW-start over run hours), which the heat-rate-multiplier
+    # parameterization cannot express: a mult-only curve over-prices high-gas
+    # winter months and under-prices cheap-gas summer evening peaks
+    # simultaneously (the NEISO 2024 C3b Jan/Feb +$9-10 vs Jul/Aug -$10-11
+    # signature). Dynamics-correct: a peak block run 4 evening hours bids
+    # +startup/4 per MWh; a block marginal around the clock in a cold month
+    # bids +startup/run≈0. No new constants — reuses the cited NREL startup
+    # table and the existing P0 run-length machinery. Default off → every
+    # prior keeper stays byte-identical.
     tranche_startup_amortization: bool = False
 
     # ISO-gated gas-steam forced-outage base override. The global ST_GAS WEFOR
