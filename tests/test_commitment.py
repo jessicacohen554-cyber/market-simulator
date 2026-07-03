@@ -439,6 +439,106 @@ class TestCaisoRaStartupBridge(unittest.TestCase):
         np.testing.assert_allclose(floor[1], np.zeros(24))
 
 
+class TestRaBridgeFastStartExclusion(unittest.TestCase):
+    """Economic-bridge eligibility is unit physics, not a class tuple (rule 17).
+
+    A fast-start CT (min-down 1 h < RA_BRIDGE_ECON_MIN_DOWN_HOURS) restarts
+    within the hour, so it is NEVER held at min-load across a gap on restart
+    economics — the legitimacy-audit §1.2c fix (the overnight CT floor). The
+    physical ``gap < min-down`` bridge is untouched (it cannot fire at 1 h).
+    """
+
+    @staticmethod
+    def _gen(fuel_type, plant_group, heat_rate, pmax=200.0):
+        return Generator(
+            unit_id=plant_group,
+            name=plant_group,
+            zone="z",
+            fuel_type=fuel_type,
+            pmax_mw=pmax,
+            pmin_mw=0.0,
+            heat_rate=heat_rate,
+            eford=0.0,
+            plant_group=plant_group,
+        )
+
+    # Overnight-shaped pattern: evening run, long idle gap, next-evening run —
+    # the exact shape the audit found bridged for CAISO CTs (gap 8 h, MC ~ LMP
+    # so hold_cost ~ 0 and ANY positive startup cost "wins" the inequality).
+    @staticmethod
+    def _overnight(hours=24, on=200.0):
+        disp = np.zeros(hours)
+        disp[6:10] = on
+        disp[18:24] = on
+        return disp
+
+    def _floor(self, gens, fa, disp, mc_val=30.0, lmp_val=29.0):
+        n = len(gens)
+        mc = np.full((n, disp.shape[1]), mc_val)
+        lmp = np.full((1, disp.shape[1]), lmp_val)
+        return caiso_ra_mustoffer_min_gen(
+            disp,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+        )
+
+    def test_fast_start_ct_never_economically_bridged(self):
+        # Frame CT (hr 10.5): min_down 1 h, startup 24.5 $/MW. Hold cost over
+        # the 8 h gap = (30-29)*0.40*8 = 3.2 < 24.5 — the OLD class-tuple code
+        # bridged this gap; the physics gate must leave it cold.
+        gen = self._gen("gas_ct", "CT_PEAKER", heat_rate=10.5)
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = self._overnight().reshape(1, 24)
+        floor = self._floor([gen], fa, disp)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_slow_start_cc_still_bridged_same_economics(self):
+        # f-class CC (hr 7.0): min_down 6 h >= the 4 h gate, startup 48.6 —
+        # identical gap/economics as above stays bridged (CC physics intact).
+        gen = self._gen("gas_cc", "CC_REGULAR", heat_rate=7.0, pmax=300.0)
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = self._overnight(on=300.0).reshape(1, 24)
+        floor = self._floor([gen], fa, disp)
+        expected = np.zeros(24)
+        expected[10:18] = 0.40 * 300.0
+        np.testing.assert_allclose(floor[0], expected)
+
+    def test_gate_is_physics_not_class_name(self):
+        # The same CT physics excluded whatever the class label says: a
+        # gas_ct unit labelled CC_REGULAR still resolves min_down = 1 h from
+        # its fuel's commitment params and is never economically bridged.
+        gen = self._gen("gas_ct", "CC_REGULAR", heat_rate=10.5)
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = self._overnight().reshape(1, 24)
+        floor = self._floor([gen], fa, disp)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_gas_steam_stays_out_of_scope(self):
+        # Merchant gas steam has long min-down but its thermal inertia is
+        # modelled by its own drag/startup mechanisms (one mechanism per
+        # phenomenon) — the RA bridge must not floor it.
+        gen = self._gen("gas_st", "ST_GAS", heat_rate=10.5)
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = self._overnight().reshape(1, 24)
+        floor = self._floor([gen], fa, disp)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+    def test_ct_physical_bridge_unchanged(self):
+        # gap < min-down can never fire at 1 h min-down: byte-identical no-op
+        # with the startup branch on (the physical bridge is not gated).
+        gen = self._gen("gas_ct", "CT_PEAKER", heat_rate=10.5)
+        fa = generators_to_fleet_arrays([gen], ["z"], hours=24)
+        disp = np.zeros((1, 24))
+        disp[0, 6:9] = 200.0
+        disp[0, 11:15] = 200.0
+        floor = self._floor([gen], fa, disp)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+
+
 class TestCaisoRaBridgeDecommit(unittest.TestCase):
     """The solar-proportional / seasonal decommitment control (caiso-48).
 
