@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-ercot29-ordc-total-gasshape",
+ "label": "ercot29 ordc total gasshape",
+ "date": "2026-07-03",
+ "shorthand": "ercot29-ordc-total-gasshape",
+ "definition": "ercot 29 ordc-total-gasshape-v1 (PROBE, P1-ONLY, not promoted). ercot 28 + the measured Henry Hub monthly gas SHAPE, level-preserving (gas_hh_monthly_shape - the Run-77 reconciled variant; the generic climatological shape held Feb/Mar-2024 ~$0.7/MMBtu too dear, Jan-2024 $0.66 too cheap). VERDICT: every month moves toward gas-cost truth (Feb-2024 +6.6 -> +3.2, Mar/Apr/Jun/Dec-2024 tighten; 2025 C3a +2.7 -> +1.6) and rule #14 keeps it; it EXPOSES two non-gas over-pricings: Jan-2024 +14.1 -> +18.1 (truthful dearer Jan gas stacking on the DAM-AS overlay's DA-boundary premium) and Feb/Mar-2025 +3 -> +5/+6 (open root-cause thread). Same endogenous-storage artifact as ercot28 (2023 Aug -74.6). Determination NOT-YET.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-03-ercot29-ordc-total-gasshape.js",
+ "bundle": "results/calibration/ercot_ordc_total_gasshape_v1"
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot32 ordc-total-rtolcap-v1 (P1-only), session 2026-07-03",
+    "note": "Levers, all published/measured, none fitted: multi-product AS co-opt on the measured ASPLANNP433 requirements; published pre-reform ECRS deployment design (no price-based release 2023-06-10..2024-07-31 per IMM 2023 SOM / NPRR1224 rejection); the lumped ORDC total-reserve family (RTORPA, NPRR568/OBDRR048 - published curve, default flat-sigma fallback documented, NP6-576-ER re-fetch egress-blocked); measured NP3-911 Load-Resource RRS-UFR credit; measured F923 coal pricing, CAMPD outage overlay, measured GTC limits, measured CHP export floors. Storage: measured battery AS power reservation, consistent netting + product credit (as ercot31) + measured HH monthly gas shape. Plus the MEASURED RTOLCAP/RTOFFCAP reserve-supply cap (G1): cleared reserve bounded by the measured online-responsive capability, so the lumped total family prices the MEASURED reserve level on the published ORDC curve, and its balance dual is added post-solve as the additive RTORPA - ERCOT's actual pre-RTC+B price formation (RTSPP = SCED energy + ORDC(online reserves); product duals are MCPCs, never added to the energy price). The measured RTORDPA overlay (deployments) and the DAM-AS overlay (2024+ DA-priced acute days the RT-scored co-opt cannot form: ex-overlay 2024 tail 10/53) remain, per-column persisted for the one-event-one-channel audit. Remaining C3 misses are MODEL MISS with named root causes: 2023 Aug -62 (flat ORDC sigma fallback vs the blocked NP6-576-ER seasonal params; sub-2-day forced outages outside the >=2-day CAMPD detector), 2024 Jan/May over (the DAM-AS overlay's DA-boundary premium vs the RT benchmark: overlay hours realized DA ~$599/$511 vs RT ~$205/$316), Feb/Mar-2025 (+5/+6 exposed by truthful gas, open thread). No adder/haircut tuned to any residual."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2023,
+      "magnitude": "-8.5 TWh (share -1.6pp)",
+      "reason": "Inherited from the ercot26 keeper unchanged (this stack's reserve carve-outs are volume-neutral on the class: -8.53 vs keeper -8.55 TWh): the model under-curtails 2023 renewables by ~4.1 TWh (model 2.46 vs ISO-reported 6.96 TWh) because ERCOT's real curtailment is nodal/intra-zone (VALEXP/McCamey/138 kV) - constraints the 7-zone reduction cannot represent (CONFIRMED by the ercot26 measured-GTC probe: the zonal interfaces saturate <1% of hours) - plus the ~3.7 TWh 923-vs-930 gas-actuals basis inconsistency. The honest fix is a sub-zonal/nodal topology (separate work stream); closing it with an offer retune or renewable haircut fitted to the residual is forbidden."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "magnitude": "-3.0% vs EIA-930 grid",
+      "reason": "2025 preliminary EIA-923 vintage (9/41 CC_REGULAR, 24/38 CT_PEAKER plants missing): no trustworthy per-class actual, family falls back to the EIA-930 aggregate; the residual is dominated by the 930-vs-preliminary-923 vintage difference. Re-score when the final 923 vintage lands. Inherited from the ercot26 keeper (-2.8% there; the -0.2pp move is the reserve carve-outs' marginal dispatch shift, inside the vintage uncertainty)."
+    },
+    {
+      "criterion": "storage_shape",
+      "year": 2024,
+      "magnitude": "r=0.331 (floor 0.50)",
+      "reason": "EIA-930 battery series coverage is only ~19% of 2024 hours - insufficient for a stable 12-point shape correlation. MATERIALLY IMPROVED vs the ercot26 keeper (r=-0.306 -> +0.331) by the measured battery AS power reservation (storage_as_commitment + requirement netting), which moves the modeled cycling toward the real AS-dominated pattern; the remaining gap is the intra-day AS deployment shape the energy LP does not dispatch. Accepted measured-input limitation on 19%-coverage data."
+    }
+  ]
+}
