@@ -76,6 +76,9 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/calibration/_cg_ovl_*
 # Throwaway single-year diagnostic probes (rule #14): never registered keepers.
 /results/calibration/_diag_*
+# MISO scarcity-tail session: keeper-repro diagnostic bundle + console log
+# (regenerable from the miso-38 recorded flags; bind-gate reads it in place).
+/results/calibration/MISO/_diag_*
 # run159 measured-AS-requirement re-solve: the baseline for the forward-AS
 # requirement (run162) acute/tail comparison; throwaway (the dashboard keeper is
 # 162, compared against the committed run159).
