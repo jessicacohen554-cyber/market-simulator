@@ -1,22 +1,36 @@
-# MISO energy + operating-reserve co-optimization (market-wide + zonal)
+# MISO energy + operating-reserve co-optimization (market-wide + zonal + deliverability)
 
 **Status:** market-wide RBDC **wired into the backcast path 2026-07-02** and
 confirmed structurally inert at 6-zone granularity (miso-37); locational
 (zonal) reserve families added per scope §6 (`--miso-zonal-reserves`,
-default off; miso-38). MISO. The in-LP MISO analogue of the ERCOT ORDC /
-PJM Primary-Reserve / NYISO RCPF co-optimization. **Zero parameters fitted
-to the price residual.**
+default off; miso-38); **10-minute reserve deliverability added 2026-07-03**
+(`--miso-reserve-pergen`, default off; miso-39, the current keeper) — and
+the gate-4 scarcity-tail question **closed negative**: even with reserve
+supply capped at the availability-scaled 10-min class ramp, the
+perfect-foresight LP clears every requirement at ≤ $23/MWh re-dispatch cost
+and the published curve steps never fire (full diagnosis:
+`docs/multi-iso/miso-scarcity-tail-diagnosis.md`). MISO. The in-LP MISO
+analogue of the ERCOT ORDC / PJM Primary-Reserve / NYISO RCPF
+co-optimization. **Zero parameters fitted to the price residual.**
 **Code:** `config/reserve_config.py` (`_miso_design`, `MISO_ZONAL_ORDC_STEPS`,
-`MISO_ZONAL_RESERVE_DEFAULT_ZONES`), `scripts/run_calibration.py` (MISO
+`MISO_ZONAL_RESERVE_DEFAULT_ZONES`; pergen branch pooling (zone, fuel-class)
+R columns bounded by hourly `Σ ramp10 × availability`),
+`model/dispatch.py` (`_build_reserve_rows_pergen`; `build_variable_bounds`
+accepts `(n_r, T)` hourly pergen caps), `scripts/run_calibration.py` (MISO
 branch of the `run_year` co-opt chain), `runner.py` (forecast path),
 constants `MISO_REGULATING_RESERVE_MW` / `MISO_RESERVE_DEMAND_CURVE_MAX` /
-`MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW`.
+`MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW`; probes
+`scripts/probes/_miso_scarcity_bindgate.py` (deliverable-reserve bind gate
+vs actual event hours, no LP re-solve) and
+`scripts/probes/_miso39_tail_gate.py` (tail/timing/class-drift scorer).
 **Tests:** `tests/test_reserve_config.py` (`TestMisoDesign`,
-`TestMisoZonalDesign`), `tests/test_reserve_coopt.py`
-(`TestMisoReserveCooptLP`, `TestMisoZonalReserveLP`).
+`TestMisoZonalDesign`, `TestMisoPergenDesign`), `tests/test_reserve_coopt.py`
+(`TestMisoReserveCooptLP`, `TestMisoZonalReserveLP`,
+`TestMisoPergenReserveLP`).
 **Bundles:** `results/calibration/MISO/miso_36_coopt_flag_inert` (flag-inert
 evidence probe), `miso_37_coopt_wired` (market-wide, in-LP, non-binding),
-`miso_38_zonal_reserves` (zonal families).
+`miso_38_zonal_reserves` (zonal families), `miso_39_reserve_pergen`
+(deliverability; keeper).
 
 ## The 2026-07-02 wiring discovery (honesty note)
 
@@ -108,6 +122,21 @@ reliability quantities and both curves are the cited market design.
   structure is retained as the baseline.
 - **miso-38 (+ MISO-South zonal family):** see the dashboard run report —
   the structural gate is whether South scarcity hours price the zonal curve.
+  Outcome: fires 266/287/875 h but only at re-dispatch opportunity cost
+  ($8–21 max); the >$200 tail stays 0 h.
+- **miso-39 (+ 10-min deliverability, `--miso-reserve-pergen`; KEEPER):**
+  reserve supply per (zone, fuel-class) pool capped at the
+  availability-scaled 10-minute class ramp, with joint P+R ≤ cap per
+  pool-hour so reserve competes with energy at the pool margin. The zonal
+  family fires more (59/64/207 h; max $11/$11/$23) and the bind-gate probe
+  had predicted deliverable-reserve shortfalls coinciding with 28/38 of
+  2025's actual DA-tail hours — but the LP relieves every one by re-timing
+  ~100 MW of South thermal/exports, always cheaper than the $200 first step.
+  Tail 0 h, volumes/fit byte-comparable to miso-38. **Empirical closure:**
+  no admissible supply-side reserve structure can price MISO's curve steps
+  under deterministic perfect-foresight hourly dispatch; the residual is
+  commitment posture + RT sub-hourly transients + the missing Midwest
+  locational family (`docs/multi-iso/miso-scarcity-tail-diagnosis.md`).
 
 ## Memory note
 
@@ -124,5 +153,6 @@ MISO plant scale).
 MALLOC_ARENA_MAX=1 MARKET_SIM_HIGHS_THREADS=1 PYTHONPATH=.:src \
   .venv/bin/python scripts/run_calibration_full.py --iso MISO \
   --year 2023 2024 2025 --out-dir results/calibration/MISO/<name> \
-  <miso-35 keeper flags> --energy-reserve-coopt [--miso-zonal-reserves]
+  <miso-35 keeper flags> --energy-reserve-coopt [--miso-zonal-reserves] \
+  [--miso-reserve-pergen]
 ```
