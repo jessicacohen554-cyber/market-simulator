@@ -507,8 +507,13 @@ class ScenarioConfig:
     # a zone whose deliverable firm capacity already clears its locational
     # requirement (RA saturated), mirroring how a binding LCR prices locational
     # capacity. This is a structural mechanism (repo rule #1), NOT a backcast-fit
-    # lever — never enabled in a keeper. Default off (byte-identical); no-ops when
-    # the clean partition is absent (ERCOT, or intake not landed).
+    # lever. Part (a) IS enabled in the caiso-51 CAISO keeper backcast
+    # (--capacity-deliverability-limits), where the published MIC seam limit
+    # supersedes the fitted 7,500 MW WECC cap (audit item C-5;
+    # docs/caiso-c5-wecc-cap-closeout-2026-07-03.md); Part (b), the capacity-
+    # payment collapse, remains unvalidated in any keeper. Default off
+    # (byte-identical); no-ops when the clean partition is absent (ERCOT, or
+    # intake not landed).
     planning_reserve_margin: float = 0.1375  # Fallback/override planning
     # reserve margin for the adequacy backstop. The per-ISO registry
     # constants.PLANNING_RESERVE_MARGIN_BY_ISO now LEADS: the backstop resolves
