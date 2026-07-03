@@ -1,1 +1,9 @@
 statmode-replaying results/calibration/nyiso41_hubprices (NYISO [2023, 2024, 2025]) -> results/calibration/nyiso_statmode_2026-07
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: solving NYISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: NYISO 2023 interface TTC: Upstate_West->Capital_Hudson 2850 -> 1750 MW (AC Transmission year-varying limit)
+INFO: NYISO 2023 Upstate_West->Capital_Hudson monthly TTC envelope: 1450-2725 MW (measured Central-East DAM postings)
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
