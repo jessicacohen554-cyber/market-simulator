@@ -56,6 +56,7 @@ from market_sim.model.capacity import (
 )
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
+    as_adequacy_commit,
     compute_commitment,
     compute_monthly_markup,
     reserve_adequacy_commit,
@@ -967,15 +968,62 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         requirement_mw=nyiso_spin_requirement_mw(config),
                         headroom_frac=config.nyiso_spin_headroom_frac,
                     )
+                # AS-adequacy floor + commitment-state-aware reserve headroom
+                # (ERCOT AS-aware only) — mirror of the calibration path
+                # (scripts/run_calibration._commitment_pass): re-commit the
+                # cheapest eligible units until committed online headroom
+                # covers the procured AS, then re-scope the P2 headroom rows
+                # (online CTs join the fast pool via P2 availability; offline
+                # quick-start capacity backs Non-Spin only via the extra cap).
+                dispatch_kwargs_p2 = dispatch_kwargs
+                if as_aware and "reserve_headroom_eligible" in dispatch_kwargs:
+                    from market_sim.config.reserve_config import (
+                        ercot_commitment_headroom_overrides,
+                    )
+
+                    dk = dispatch_kwargs
+                    req_fam = np.atleast_2d(
+                        np.asarray(dk["reserve_requirement"], dtype=float)
+                    )
+                    hp = np.atleast_2d(
+                        np.asarray(dk["reserve_headroom_products"], dtype=bool)
+                    )
+                    fam_class = np.asarray(
+                        dk.get("reserve_balance_class", np.arange(req_fam.shape[0])),
+                        dtype=int,
+                    )
+                    req_by_class = np.zeros(
+                        (hp.shape[1], req_fam.shape[1]), dtype=float
+                    )
+                    np.add.at(req_by_class, fam_class, req_fam)
+                    committed = as_adequacy_commit(
+                        committed,
+                        fleet_arrays,
+                        dispatch_fleet,
+                        dk["reserve_headroom_eligible"],
+                        dk["reserve_headroom_products"],
+                        req_by_class,
+                        p1_result.dispatch,
+                        headroom_frac=float(
+                            getattr(config, "ercot_as_adequacy_frac", 1.0)
+                        ),
+                    )
+                    dispatch_kwargs_p2 = {
+                        **dk,
+                        **ercot_commitment_headroom_overrides(
+                            fleet_arrays, committed, dk["reserve_headroom_eligible"]
+                        ),
+                    }
                 fleet_arrays_p2 = apply_commitment_with_coal_pin(
                     fleet_arrays,
                     committed,
                     p1_result.dispatch,
                     dispatch_fleet,
                     screen_coal=config.commitment_screen_coal,
+                    couple_peak=as_aware,
                 )
                 result = solve_dispatch(
-                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
+                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs_p2
                 )
             # === END LEGACY: P2 Commitment Screen ===
             save_result(result, config, iso, year, context=context)

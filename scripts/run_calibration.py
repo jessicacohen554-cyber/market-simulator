@@ -1940,6 +1940,7 @@ def run_year(
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
+    ercot_ecrs_conservative_deployment: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
@@ -2377,6 +2378,11 @@ def run_year(
         config = config.with_overrides(miso_zonal_reserves=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
+    # Published pre-reform ECRS deployment design (no price-based release
+    # through 2024-07-31 -> at-cap demand step; standing ramp after): see
+    # reserve_config.ERCOT_ECRS_RELEASE_REFORM_* citations.
+    if ercot_ecrs_conservative_deployment:
+        config = config.with_overrides(ercot_ecrs_conservative_deployment=True)
     if ercot_as_aware_commitment:
         config = config.with_overrides(ercot_as_aware_commitment=True)
     if ercot_reserve_supply_cap:
@@ -4523,13 +4529,26 @@ def _commitment_pass(state: dict, config=None):
     # acute hours still price the VOLL curve. Requirement = sum of the per-product
     # ASPLANNP433 quantities already in dispatch_kwargs.
     if as_value is not None:
+        # Aggregate the per-FAMILY requirement onto per-PRODUCT (reserve-class)
+        # rows for the tier-aware adequacy floor: the ECRS conservative-
+        # deployment split runs one product as two disjoint-window families
+        # sharing a class (reserve_balance_class maps family -> product), so
+        # summing families per class recovers the product requirement exactly
+        # (identity when families == products).
+        req_fam = np.atleast_2d(np.asarray(dk["reserve_requirement"], dtype=float))
+        hp = np.atleast_2d(np.asarray(dk["reserve_headroom_products"], dtype=bool))
+        fam_class = np.asarray(
+            dk.get("reserve_balance_class", np.arange(req_fam.shape[0])), dtype=int
+        )
+        req_by_class = np.zeros((hp.shape[1], req_fam.shape[1]), dtype=float)
+        np.add.at(req_by_class, fam_class, req_fam)
         committed = as_adequacy_commit(
             committed,
             fa,
             fleet,
             dk["reserve_headroom_eligible"],
             dk["reserve_headroom_products"],
-            np.asarray(dk["reserve_requirement"], dtype=float),
+            req_by_class,
             p1.dispatch,
             headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
         )
@@ -4554,8 +4573,28 @@ def _commitment_pass(state: dict, config=None):
         fleet,
         screen_coal=cfg.commitment_screen_coal,
         preserve_min_gen=preserve_min_gen,
+        # WS1 (commitment-state-aware reserve headroom): a cold plant's peak
+        # (duct-firing) tranche can neither generate nor hold reserve — couple
+        # it to the committed tranche so it leaves the P2 headroom RHS too.
+        couple_peak=as_value is not None,
     )
-    return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
+    dk_p2 = dk
+    if as_value is not None:
+        # Commitment-state-aware reserve headroom (WS1): online CTs join the
+        # synchronized (fast) pool via the P2 availability, offline quick-start
+        # capacity backs Non-Spin only via the extra-cap RHS. Overrides only
+        # the two headroom kwargs; everything else in dk is shared with P1.
+        from market_sim.config.reserve_config import (
+            ercot_commitment_headroom_overrides,
+        )
+
+        dk_p2 = {
+            **dk,
+            **ercot_commitment_headroom_overrides(
+                fa, committed, dk["reserve_headroom_eligible"]
+            ),
+        }
+    return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk_p2)
 
 
 def _generation_twh(result, context: FleetContext) -> dict[str, float]:
