@@ -297,12 +297,19 @@ a run that closes the price gap that way FAILs C6 regardless.
     under-cycling against a *partial* observed series may be `ACCEPTED
     MEASURED-INPUT LIMITATION`. `SKIPPED` when no throughput series is committed.
 - **C5c — Storage dispatch shape.**
-  - *Metric:* Pearson **r** of 12 monthly net-discharge GWh vectors (model vs
-    EIA-930 battery + pumped-storage net generation). Scores whether the model
-    cycles storage in the right months (summer/winter peaking vs shoulder
-    charging), not just the right annual volume (C5b).
-  - *Actual:* EIA-930 monthly net generation for `battery` / `pumped_storage`
-    series (positive = discharge, negative = charge). Same coverage gate as C5b.
+  - *Metric:* Pearson **r** of 12 monthly **discharge** GWh vectors (model vs
+    EIA-930 battery + pumped-storage, positive half). Scores whether the model
+    discharges storage in the right months, not just the right annual volume
+    (C5b). **Discharge basis on both sides (2026-07-03 alignment fix):**
+    several BAs report a discharge-only storage series (NEISO `NG: PS` —
+    pumping appears as load, never as a negative value; ERCOT
+    `battery_discharge` is pre-split positive), so a signed "net" sum of the
+    actual is silently gross discharge, while a model-side net
+    (discharge − charge) is ≤ 0 over any month by round-trip losses — a
+    basis mismatch a perfectly-cycling model could never pass. Both sides now
+    use the positive (discharge) half, the same basis C5b already scores.
+  - *Actual:* EIA-930 monthly discharge for `battery` / `pumped_storage`
+    series. Same coverage gate as C5b.
   - *Tolerance:* **r ≥ 0.50.** The floor is looser than fleet dispatch (C4,
     r ≥ 0.70) because monthly storage net-discharge is a 12-point vector with
     lower degrees of freedom and substantial noise from AS commitment.
