@@ -1339,6 +1339,30 @@ class ScenarioConfig:
     # dates/values are published market design (docs/parameter-citations.md), no
     # parameter is fitted to a price residual. Default off; ERCOT multi-product
     # co-opt only. GATED.
+    ercot_ordc_total_reserve: bool = False  # ERCOT multi-product co-opt: ALSO
+    # enforce the lumped ORDC TOTAL-reserve demand curve (the published RTORPA
+    # mechanism of the 2014-2025 ORDC regime, NPRR568 / PUCT project 37897 +
+    # OBDRR048 floors) alongside the per-product AS families. Pre-RTC+B, ERCOT's
+    # real-time scarcity price was set by the Operating Reserve Demand Curve on
+    # TOTAL online reserves — RTSPP = SCED energy price + RTORPA(total reserves)
+    # — while the DAM AS products (RegUp/RRS/ECRS/NonSpin) withheld their awarded
+    # capacity from the SCED-dispatchable range (HASL). The faithful pre-RTC+B
+    # stack is therefore BOTH: product-level withholding (the per-product
+    # families, incl. the ECRS conservative-deployment step) AND the lumped
+    # LOLP×VOLL total-reserve curve pricing the aggregate reserve level. This
+    # flag appends one extra reserve-balance family (scarcity.
+    # ercot_ordc_demand_steps — the same curve the single-product co-opt uses)
+    # that draws on the SUM of every product's cleared reserve (reserve_class
+    # -1 = all classes in dispatch._build_reserve_rows): an RRS/ECRS MW counts
+    # toward the total exactly as RTOLCAP counts it, no capacity is
+    # double-procured (the shared-headroom rows still bound P + ΣR ≤ cap), and
+    # reserve held beyond the AS plans up to the ORDC span is valued at the
+    # curve — the measured ~2× RTOLCAP-vs-AS-plan coverage the products alone
+    # cannot express. Without it the multi-product swap silently DROPS the
+    # published total-reserve mechanism and the deep scarcity tail collapses
+    # (ercot27 probe: Aug-2023 −$88.7 vs keeper −$46, >$1000 hours 28 vs 61).
+    # Published market design, zero fitted parameters. Default off; requires
+    # energy_reserve_coopt + ercot_multiproduct_as_coopt. GATED.
     ercot_as_critical_frac: float = 0.0  # Reserve level (as a fraction of each AS
     # product's peak requirement) at/below which its VOLL-anchored demand curve
     # hits the full AS offer cap. 0 (default) ramps the curve linearly from $0 at
@@ -2417,6 +2441,21 @@ class ScenarioConfig:
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
 
+    # Tier 3 (calibration) — replace the generic climatological monthly gas
+    # SHAPE (GAS_MONTHLY_SEASONALITY) with the MEASURED Henry Hub monthly
+    # shape for the year, hour-weight-normalized so the annual mean stays
+    # exactly the trusted annual level (fuel.gas_seasonal_shape). The
+    # reconciled variant the Run-77 postmortem named: the raw EIA-923
+    # receipt LEVEL swap was rejected for ERCOT (the ~20%-coverage reporter
+    # sample runs ~+$1/MMBtu above the merchant hub), but the measured
+    # month-to-month shape is real — the generic shape holds Feb/Mar-2024
+    # ~$0.7/MMBtu too dear (post-Heather gas collapsed to $1.49-1.72 vs the
+    # shaped $2.23-2.41) and Jan-2024 $0.66 too cheap. Measured commodity
+    # price input (delivered fuel prices, rule #12): forward years have no
+    # HH rows and keep the generic shape (the futures-shape analogue), and
+    # the shape responds to conditions. Off by default (byte-identical).
+    gas_hh_monthly_shape: bool = False
+
     # Inject the measured Henry Hub *daily* within-month shape onto the gas
     # series (fuel.gas_daily_shape_factors): the monthly delivered level is
     # unchanged (factors normalize to 1.0 per month), but the merit order sees
@@ -3184,6 +3223,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ecrs_requirement_from_year": 1,
     "ercot_multiproduct_as_coopt": 1,
     "ercot_ecrs_conservative_deployment": 1,
+    "ercot_ordc_total_reserve": 1,
     "ercot_as_critical_frac": 1,
     "ercot_as_n_ramp": 1,
     "ercot_as_aware_commitment": 1,
@@ -3312,6 +3352,7 @@ TIER_TAGS: dict[str, int] = {
     "pumped_storage_dispatch_adder": 3,
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
+    "gas_hh_monthly_shape": 3,
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "pjm_zonal_gas_basis": 3,
