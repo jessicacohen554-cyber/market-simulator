@@ -50,6 +50,18 @@ from market_sim.config.plant_taxonomy import (
     classify_plant,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.floor_mechanisms import (
+    MECH_CHP_STEAM,
+    MECH_COAL_MUSTRUN,
+    MECH_CT_DEPLOYMENT_OVERLAY,
+    MECH_CT_MUSTRUN_PER_PLANT,
+    MECH_CT_NETLOAD_DRAG,
+    MECH_NUCLEAR,
+    MECH_RELIABILITY_DEPLOYMENT_OVERLAY,
+    MECH_ST_NETLOAD_DRAG,
+    clear_where_unfloored,
+    ensure_mechanism,
+)
 from market_sim.data.cod_ramp import (
     class_cod_coverage,
     effective_cod,
@@ -334,6 +346,13 @@ class FleetArrays:
     # dispatch LP — used for the seasonal ST_GAS reliability must-run. ``None``
     # falls back to ``pmin`` broadcast across all hours.
     min_gen: np.ndarray | None = None
+
+    # Optional ``(n_gen, T)`` int8 mechanism-id array parallel to ``min_gen``
+    # (see data.floor_mechanisms): which injector supplied the *binding*
+    # floor at each unit-hour, maximum-composition (the largest floor keeps
+    # its id). Diagnostic metadata for the D-2 forced-energy attribution
+    # (scripts/legitimacy_diagnostics.py); never read by the LP build.
+    min_gen_mechanism: np.ndarray | None = None
 
     # Optional ``(n_gen,)`` object array of USPS state codes per generator,
     # for the fuel-cost resolver's state-level "nearby plant" fallback.
@@ -1495,6 +1514,7 @@ def generators_to_fleet_arrays(
     # now handled by the generic reliability-floor engine
     # (transmission.inject_reliability_floor), not a calendar-month seasonal floor.
     min_gen = None
+    min_gen_mech = None
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
     coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
     # Nuclear runs flat as must-run baseload — it physically cannot load-follow
@@ -1518,6 +1538,9 @@ def generators_to_fleet_arrays(
         or coal_sync_any
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
+        # Parallel mechanism-id array (D-2 forced-energy attribution): each
+        # block below tags the unit-hours whose binding floor it supplied.
+        min_gen_mech = np.zeros((n_gen, hours), dtype=np.int8)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
         # (build_variable_bounds), so export sinks (pmin < 0, absorption
         # modeled as negative generation) must keep their range — a zero
@@ -1532,6 +1555,7 @@ def generators_to_fleet_arrays(
             for g_idx, gen in enumerate(generators):
                 if gen.fuel_type == "nuclear":
                     min_gen[g_idx, :] = availability[g_idx, :] * pmax[g_idx]
+                    min_gen_mech[g_idx, min_gen[g_idx, :] > 0.0] = MECH_NUCLEAR
         # CHP grid-delivered steam-following floor: the cogen's steady export
         # is forced on flat all year (the dispatchable surplus rides above it
         # via the load-following tranches).
@@ -1539,6 +1563,7 @@ def generators_to_fleet_arrays(
             pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
             if pmin_mw > 0.0:
                 min_gen[g_idx, :] = pmin_mw
+                min_gen_mech[g_idx, :] = MECH_CHP_STEAM
         # Coal synchronization floor (rebuild step 3a,
         # config.coal_sync_srmc_tranche): the _mustrun (contracted, fuel-free)
         # and _sync (spot, SRMC) coal min-load tranches are held on at the
@@ -1569,7 +1594,9 @@ def generators_to_fleet_arrays(
                     continue
                 frac = float(getattr(gen, "coal_sync_online_frac", 1.0))
                 if frac >= _COAL_SYNC_FORCE_ALL or load_rank is None:
+                    raised = min_gen[g_idx, :] < pmin_mw
                     np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
                 else:
                     k = int(round(frac * hours))
                     if k <= 0:
@@ -1577,7 +1604,9 @@ def generators_to_fleet_arrays(
                     hrs = load_rank[:k]
                     # Fancy indexing returns a copy, so out= cannot target it;
                     # compute the max then assign back via the fancy index.
+                    raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
+                    min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -1664,6 +1693,9 @@ def generators_to_fleet_arrays(
                         cap_mw = float((pmax[g_idx] * availability[g_idx, hmask]).min())
                         take = np.minimum(remaining, cap_mw)
                         min_gen[g_idx, hmask] = take
+                        mech_row = min_gen_mech[g_idx, hmask]
+                        mech_row[take > 0.0] = MECH_CT_MUSTRUN_PER_PLANT
+                        min_gen_mech[g_idx, hmask] = mech_row
                         remaining = remaining - take
         # Per-plant CT_PEAKER AS/RUC-deployment hourly floor: in each plant's
         # measured out-of-merit hours, force its observed net output as a
@@ -1689,7 +1721,9 @@ def generators_to_fleet_arrays(
                 for g_idx in idxs:
                     cap = pmax[g_idx] * availability[g_idx, :]
                     take = np.minimum(remaining, cap)
+                    raised = min_gen[g_idx, :] < take
                     np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_CT_DEPLOYMENT_OVERLAY
                     remaining = remaining - take
             logger.info(
                 "CT deployment overlay (%s %s): floored %d peaker(s), "
@@ -1723,7 +1757,9 @@ def generators_to_fleet_arrays(
                 for g_idx in idxs:
                     cap = pmax[g_idx] * availability[g_idx, :]
                     take = np.minimum(remaining, cap)
+                    raised = min_gen[g_idx, :] < take
                     np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_RELIABILITY_DEPLOYMENT_OVERLAY
                     remaining = remaining - take
             logger.info(
                 "reliability deployment overlay (%s %s): floored %d "
@@ -1736,6 +1772,8 @@ def generators_to_fleet_arrays(
             )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
+        # An outage hour that collapsed the floor is no longer forced.
+        clear_where_unfloored(min_gen_mech, min_gen)
 
     # Ancillary-service reserve withholding (backcast). Capacity the market
     # holds out of energy as upward reserve is withdrawn from the gas/flexible-
@@ -1926,6 +1964,8 @@ def generators_to_fleet_arrays(
             availability *= ramp
             if min_gen is not None:
                 min_gen *= ramp
+                # Offline months carry no floor, hence no forcing mechanism.
+                clear_where_unfloored(min_gen_mech, min_gen)
             dropped = int((online_mask.max(axis=1) < 1.0).sum())
             offline = int((online_mask < 1.0).sum())
             logger.info(
@@ -1955,6 +1995,7 @@ def generators_to_fleet_arrays(
         state=np.array([g.state for g in generators], dtype=object),
         plant_group=np.array([g.plant_group for g in generators], dtype=object),
         min_gen=min_gen,
+        min_gen_mechanism=min_gen_mech,
         ramp10=_ramp10_capability(generators, pmax),
     )
 
@@ -1983,6 +2024,7 @@ def apply_netload_reliability_floor(
     cap: float,
     ramp_window: tuple[int, int] | None = None,
     exclude_plant_codes: frozenset[int] = frozenset(),
+    mech_id: int = MECH_CT_NETLOAD_DRAG,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -2040,13 +2082,16 @@ def apply_netload_reliability_floor(
             fleet_arrays.pmin[:, np.newaxis], (fleet_arrays.pmin.size, hours)
         ).copy()
 
+    mech = ensure_mechanism(fleet_arrays)
     pmax = fleet_arrays.pmax
     avail = fleet_arrays.availability
     for g in rows:
         # Never floor above the hour's available capacity, so the LP stays
         # feasible (the drag can never manufacture unmet demand).
         target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
+        raised = fleet_arrays.min_gen[g, :] < target
         fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
+        mech[g, raised] = mech_id
     return True
 
 
@@ -2111,6 +2156,7 @@ def apply_gas_st_netload_drag_floor(
         cap=config.gas_st_drag_cap,
         ramp_window=None,
         exclude_plant_codes=ST_GAS_PEAKER_PLANTS,
+        mech_id=MECH_ST_NETLOAD_DRAG,
     )
 
 
@@ -2173,6 +2219,7 @@ def apply_ct_netload_drag_floor(
         intercept=config.ct_drag_intercept,
         cap=config.ct_drag_cap,
         ramp_window=(config.ct_drag_ramp_start, config.ct_drag_ramp_end),
+        mech_id=MECH_CT_NETLOAD_DRAG,
     )
 
 
