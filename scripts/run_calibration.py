@@ -756,8 +756,26 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 1.27,
-        "econ_low": 1.06,
-        "econ_high": 1.27,
+        # econ band re-anchored to CC part-load physics (2026-07-03, neiso-46).
+        # The generic 1.06->1.27 band was inherited from the ERCOT-shaped curve
+        # and expresses the above-SRMC offer component as a HEAT-RATE MULTIPLIER,
+        # i.e. proportional to the fuel price. The month/hour decomposition of
+        # the 2024 C3b failure showed the signature that parameterization forces:
+        # a flat all-hours winter over-shoot (Jan/Feb 2024 +$9-10 at $3.5-7.7
+        # AGT hub gas; model marginal implied HR ~10.5 vs the actual mild-winter
+        # margin at efficient-CC ~8.2) alongside a summer-evening under-shoot
+        # (Jul/Aug 2024 -$10-11 at $1.8 gas, when the same multipliers collapse
+        # the whole stack to ~$33). Physics: the econ band is the incremental
+        # output of an already-committed CC (second GT / upper dispatch range),
+        # whose INCREMENTAL heat rate sits at or slightly below the
+        # plant-average HR (the average is dragged up by min-load hours the
+        # committed 1.27/1.30x anchor already prices) and rises only gently
+        # toward the duct margin: 0.95 -> 1.05. The fuel-price-INVARIANT part
+        # of the real offer component (start/no-load amortization, ISO-NE
+        # fast-start pricing) is priced by --tranche-startup-amortization from
+        # the NREL start-cost table, not by inflating the HR band.
+        "econ_low": 0.95,
+        "econ_high": 1.05,
         "peak": 2.25,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
@@ -1917,6 +1935,7 @@ def run_year(
     ct_intermediate_cf_threshold: float | None = None,
     cc_intermediate_split: bool = False,
     cc_intermediate_cf_threshold: float | None = None,
+    tranche_startup_amortization: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -2141,6 +2160,14 @@ def run_year(
         config = config.with_overrides(
             cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
         )
+    if tranche_startup_amortization:
+        # Fast-start tranche pricing (ISO-NE Order 825 analogue): the gas
+        # bins' econ/peak tranches carry the same NREL start cost as the
+        # committed anchor, so the P1 markup amortizes each tranche's own P0
+        # run lengths into its bid — the fuel-price-invariant commitment-cost
+        # component of the real offer stack the HR-multiplier curve cannot
+        # express (winter over- / summer-evening under-pricing signature).
+        config = config.with_overrides(tranche_startup_amortization=True)
     if st_gas_intermediate:
         # MISO intermediate gas-steam structure (one consolidated lever, default
         # OFF → prior keepers / other ISOs byte-identical). The legacy gas-steam
