@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
+    CC_REGULAR_PEAKING_PCT_BY_PLANT,
     CHP_BTM_PCT_BY_SECTOR,
     CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
@@ -4230,18 +4231,8 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-# Per-plant CC_REGULAR peaking-tranche % (top slice of nameplate priced at the
-# duct-burner peak multiplier), keyed by EIA plant code. Used in place of the
-# offer curve's ``pct_peaking`` when config.cc_peaking_per_plant is set, so the
-# expensive peak band starts earlier on the CF axis (15% => peaking starts at
-# 85% of nameplate). Applies to the four F-class(late) 2x1 CCs the model
-# over-runs in the 80-90% CF range; the economic tranche absorbs the change.
-CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
-    58001: 15.0,  # Temple Power Station
-    58005: 15.0,  # Rayburn Energy Station LLC
-    59812: 15.0,  # Wolf Hollow II
-    60122: 15.0,  # Colorado Bend II
-}
+# CC_REGULAR_PEAKING_PCT_BY_PLANT now lives in constants.py (residual-
+# identified, forecast-risk — see the citation there).
 
 
 @lru_cache(maxsize=1)
