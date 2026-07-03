@@ -1,15 +1,15 @@
 {
-  "id": "2026-07-03-nyiso-40-truedate-gas",
-  "label": "nyiso 40 truedate gas",
-  "date": "2026-07-03",
-  "shorthand": "nyiso-40-truedate-gas",
-  "definition": "Calibration run from bundle nyiso40_truedate.",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "NYISO",
-  "file": "frontend/data/backcast/runs/2026-07-03-nyiso-40-truedate-gas.js",
-  "bundle": "results/calibration/nyiso40_truedate"
+ "id": "2026-07-03-nyiso-40-truedate-gas",
+ "label": "nyiso 40 truedate gas",
+ "date": "2026-07-03",
+ "shorthand": "nyiso-40-truedate-gas",
+ "definition": "Control probe for nyiso-41: the nyiso-39 keeper config re-solved on the corrected measured gas data only, no new mechanism \u2014 true-date placement of the Transco Z6 NY daily hub quotes (the Jan-2024 $23.90 print lands on the 16th, not the 12th) plus the NYISO monthly hub levels recomputed from the completed daily print series (Dec-2024 basis +0.16 -> +1.00 $/MMBtu). Isolates the gas-data share of nyiso-41's price gains: C3a 2024 -19.2 -> -16.3%, C3b 2024 NRMSE 0.304 -> 0.248; C3c unchanged 0h. C5a CO2 2024 -7.2% (band +/-7) appears here too, showing the marginal breach comes from the corrected data, not the import mechanism. NOT-YET; the keeper is nyiso-41.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-nyiso-40-truedate-gas.js",
+ "bundle": "results/calibration/nyiso40_truedate"
 }
