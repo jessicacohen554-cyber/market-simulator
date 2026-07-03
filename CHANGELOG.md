@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-03 (MISO scarcity tail — 10-min reserve deliverability; gate 4 closed-negative)
+
+**New gated mechanism:** `ScenarioConfig.miso_reserve_pergen` /
+`--miso-reserve-pergen` — MISO per-asset reserve co-optimization at
+(zone, fuel-class) pooling (`reserve_config._miso_design` pergen branch →
+the shared `dispatch._build_reserve_rows_pergen`): joint `Σ P + R ≤
+Σ pmax·availability` per pool-hour and `R ≤ Σ ramp10 × availability` (the
+10-minute deliverable class ramp, `fleet.RAMP10_FRAC_BY_GROUP` ×
+capacity, NREL/TP-5500-55588 App. H; hourly, so outaged units contribute
+no ramp — `dispatch.build_variable_bounds` now accepts `(n_r, T)` pergen
+caps). Class-level pooling is the documented 15 GB memory tier. Zero
+residual-fitted parameters. **Empirical result (keeper
+`2026-07-03-miso-39-reserve-pergen`):** the >$200 tail stays 0 h vs actual
+30/37/88 — the perfect-foresight LP relieves every deliverability shortfall
+by re-timing ~100 MW of South thermal/exports at ≤ $23/MWh, below the $200
+first curve step; the zonal family fires more (59/64/207 h) but never
+reaches the steps. Root-cause decomposition (RT sub-hourly transients /
+commitment posture / missing Midwest locational family), the actual-event
+anatomy (2023's tail is 100% single-hour RT spikes with DA ≈ $40), and the
+bind-gate method: `docs/multi-iso/miso-scarcity-tail-diagnosis.md`. New
+probes `scripts/probes/_miso_scarcity_bindgate.py` /
+`_miso39_tail_gate.py`. Docs realigned: methodology spec §851 reserve
+bullet (per-asset deliverability layout), `docs/multi-iso/miso-reserve-coopt.md`,
+`miso-zonal-refinement-scope.md` status, the new diagnosis doc.
+
 ## 2026-07-02 (MISO zonal refinement — phase 2: reserve co-opt at 6 zones)
 
 **Wiring bug found & fixed:** `--energy-reserve-coopt` had been silently
