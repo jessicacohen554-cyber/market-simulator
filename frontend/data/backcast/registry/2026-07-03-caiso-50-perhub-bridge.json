@@ -1,15 +1,15 @@
 {
-  "id": "2026-07-03-caiso-50-perhub-bridge",
-  "label": "caiso 50 perhub bridge",
-  "date": "2026-07-03",
-  "shorthand": "caiso-50-perhub-bridge",
-  "definition": "caiso-50: caiso-49 measured-hub per-hub seam + MIC seam limit + startup-cost-aware RA bridge with DA-horizon decommit (UC restart economics, caiso-44/48 mechanism)",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "CAISO",
-  "file": "frontend/data/backcast/runs/2026-07-03-caiso-50-perhub-bridge.js",
-  "bundle": "results/calibration/caiso50_perhub_bridge"
+ "id": "2026-07-03-caiso-50-perhub-bridge",
+ "label": "caiso 50 perhub bridge",
+ "date": "2026-07-03",
+ "shorthand": "caiso-50-perhub-bridge",
+ "definition": "(PROBE) caiso 50 perhub bridge: caiso-49 measured-hub seam + the caiso-44/48 startup-cost-aware RA bridge with DA-horizon decommit (UC restart economics \u2014 hold a committed CC at min-load when startup cost exceeds the net hold cost). Improves caiso-49 on every price criterion (C3a +24.9/+35.9/+42.4; C3b 0.305/0.446/0.442; C4 gas r 0.805/0.565) and collapses the 2023 fitted-cap tail 88h -> 11h (0.52x of actual 21h \u2014 the committed fleet stops leaning on hub-spiked spot imports at tight hours). C1 2024 CC_REGULAR +10.87 TWh is the standing hard-gate miss (fall/winter under-import). Superseded by caiso-51 (adds the firm-contract seam decomposition).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-caiso-50-perhub-bridge.js",
+ "bundle": "results/calibration/caiso50_perhub_bridge"
 }

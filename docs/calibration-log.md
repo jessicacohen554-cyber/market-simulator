@@ -42,6 +42,46 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-03 — CAISO — measured-hub WECC seam decomposition (caiso 49/50/51): caiso 51 promoted KEEPER
+
+**Goal.** Root-cause the C3a +37–49% over-price (CAISO the furthest ISO from calibrated,
+7 criteria FAIL) with an import-supply-curve decomposition before touching offer curves.
+
+**Root cause.** The caiso-42 keeper priced the WECC seam (~30% of supply) with the
+audit-flagged **fitted flat ladder** ($28–$180, constant all 8760 h) + fitted 7,500 MW
+simultaneous cap, while the measured Malin/Palo Verde intertie prices track the actual
+CAISO price nearly hour-for-hour (2024 PV mean $33.3 vs actual RT $32.4; midday $8 vs $12,
+swings −$58…$636). The keeper's registered "corridor ATC forward envelope" was **inert**
+(its gate needs the per-hub split the keeper never built). Also found and fixed a scorer
+comparability bug: C3a compared a full-year model mean against CAISO 2023's Mar–Dec-only
+actual (Jan–Feb aged out of OASIS) — masked to common months, keeper 2023 was **+16.9%,
+not +48.8%**.
+
+**Arms** (each registered; full detail
+`results/calibration/FINDING-caiso49-import-seam-2026-07-03.md`):
+- **caiso 49 perhub seam** (PROBE): per-hub corridors at measured hubs + measured p95
+  envelopes both directions + published MIC (16.0/16.5/16.1 GW) replacing the 7,500 MW cap
+  + 2023 gap-fill. Shape/volumes improve; C3a 2023/24 worsen — all-spot pricing
+  transplants hub spikes whenever the tie is marginal, but the real contracted import
+  majority is inframarginal (2023/24 summers: CAISO $50–54, PV spot $69–74, 3–4 GW flowing).
+- **caiso 50 perhub bridge** (PROBE): + UC startup bridge/decommit (caiso-44/48). Best C4
+  (gas r .805); 2023 fitted-cap tail 107h→11h (0.52×).
+- **caiso 51 firm base** (**KEEPER**): + `caiso_perhub_firm_base` — firm/contracted
+  tranches at documented contract-cost estimates (inframarginal), spot tranches + export
+  legs at the measured hub. C3a +19.6/+34.9/+41.6 (42: +16.9/+36.9/+47.1), C3b
+  .285/.459/.436 (best), C4 2023 gas passes first time, C2 2025 +8.1% (was +12.3%), C5a
+  2025 +8.7% (was +12.7%). Determination **NOT-YET**; promoted on structure (#1/#14): the
+  fitted ladder and the fitted 7,500 cap are out of the binding path (audit items C-5,
+  C-6/L8 closed).
+
+**Standing residuals (next levers, in order):** (1) fall/winter under-import (2024 net
+import 25.8 vs 32.4 TWh; CC_REGULAR +10.9 TWh concentrates Sep–Jan) — the specified-import
+VOLUME is under-represented: intake CEC/CARB specified-vs-unspecified import data for
+measured firm-block capacities; (2) spring-midday floor $34–38 vs $11–14 — model short
+where reality is RUC-long and exporting: day-block RUC commitment sizing (caiso-43 §6);
+(3) C3c honest collapse 0h — CAISO scarcity-pricing mechanism (AS-award thread). Hydro
+audited clean (EIA-930 monthly budgets, LP opportunity cost).
+
 ### 2026-07-03 — ERCOT — ORDC-era 2023 price formation (ercot 27): PROBE, root-caused (keeper stays ercot 26)
 
 **Goal.** Close the 2023 price-structure gap *structurally* (rules #1/#11/#13/#14):
