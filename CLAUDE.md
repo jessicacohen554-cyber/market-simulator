@@ -99,7 +99,7 @@ Locational deliverability gate (`capacity_deliverability_limits`, GATED default 
 
 ## Dispatch & Commitment (per year)
 
-Three LP solves (`runner.py`, `model/commitment.py`): **P0** base-cost (discover run lengths) → **P1** bid-cost (base + amortized startup markup, sets clearing prices) → **P2** optional commitment screen (`commitment_enabled`, default off) that decommits unprofitable CC/CT runs via an IRR hurdle + min-run/min-down + storage-weighted margin discount, with an adequacy backstop. Still pure LP — no MIP.
+Three LP solves (`runner.py`, `model/commitment.py`): **P0** base-cost (discover run lengths) → **P1** bid-cost (base + amortized startup markup, sets clearing prices) → **P2** optional commitment screen (`commitment_enabled`, default off) that decommits unprofitable CC/CT runs via an IRR hurdle + min-run/min-down + storage-weighted margin discount, with an adequacy backstop. Still pure LP — no MIP. **P1 — the no-commitment solve — is THE main run**: the production/forecast path and what every keeper is scored on. P2 is an opt-in diagnostic layer that never runs unless explicitly enabled (`commitment_enabled`, `ercot_as_aware_commitment`, or `caiso_ra_mustoffer`); it is not part of any default or recommended configuration (the ercot27 probe showed the AS-aware P2 adds broad price elevation and no scarcity-month signal — see the 2026-07-03 calibration-log entry).
 
 ## Fleet Representation
 

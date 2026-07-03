@@ -257,16 +257,18 @@ def _vol_err(model_twh: float, actual_twh: float) -> float | None:
     return round(e, 4) if np.isfinite(e) else None
 
 
-
 def _primary_pass(df: "pd.DataFrame") -> "pd.DataFrame":
     """Filter a per-pass frame to the bundle's PRIMARY dispatch pass.
 
-    A commitment bundle persists BOTH passes (P1 = pre-commitment pricing
-    solve, P2 = the commitment re-solve run_calibration labels as the primary
-    result). The dashboard scores the primary market solve — P2 when present,
-    else P1 — so a commitment mechanism's prices/volumes are what the run
-    actually proposes, not the pre-commitment solve. P1-only bundles (every
-    legacy keeper) are byte-identical under this rule.
+    P1 — the no-commitment solve — is the model's MAIN run; every normal
+    bundle is P1-only and scores byte-identically under this rule. A bundle
+    carries a P2 frame only when the run explicitly opted into the commitment
+    screen (``commitment_enabled`` / ``ercot_as_aware_commitment`` /
+    ``caiso_ra_mustoffer``, all default off); for those opt-in bundles the
+    solver labels P2 the primary result, so the dashboard scores P2 there —
+    the mechanism the run actually proposes — rather than silently reporting
+    the pre-commitment P1. This does NOT make P2 a default anywhere: it only
+    reports what a bundle chose to run.
     """
     if "pass" not in df.columns:
         return df
@@ -275,6 +277,7 @@ def _primary_pass(df: "pd.DataFrame") -> "pd.DataFrame":
         if sel.any():
             return df[sel]
     return df
+
 
 def _model_storage_twh(storage_all: pd.DataFrame | None, year: int) -> float | None:
     """Return the model's annual storage discharge throughput (TWh) for a year.

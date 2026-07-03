@@ -73,18 +73,33 @@ gains the AS-adequacy floor + overrides for forecast parity. The dashboard rende
 now scores a bundle's **primary pass** (P2 when commitment ran) instead of always P1,
 so a commitment run's registered numbers are the market solve it proposes.
 
-**Result — NOT-YET probe; both misses root-caused, not tuned around.** The intended
-2023 signal is real: Jun residual −$23.5 → **−$12.9**, Jul −$10.1 → **−$9.1**,
-Oct/Nov ≈ 0. But (a) the exact-coverage AS-adequacy floor (committed ≈ energy + AS)
-leaves ~1.0× online-reserve coverage where measured RTOLCAP shows ~2×, so the
-shared-headroom dual elevates *every* month — Feb-2023 +$42.5 **with ECRS not yet
-live** isolates the artifact to the floor, not the ECRS design; C3a +7.9% / +13.4% /
-+8.9% (2023/24/25). And (b) the multi-product swap **drops the lumped ORDC
-total-reserve curve — the published RTORPA mechanism of 2023-25** — so the deep tail
-collapses (Aug-2023 model $101.5 vs keeper $145.6 vs actual $191.7; >$1,000 hours 28
-vs 61) while rigid withholding lengthens the moderate tail (281 h >$200 vs 181,
-1.55×; 2025 0.26×). C1/C2/C4/C5a unchanged from the keeper (CC_REGULAR 2023
-−8.52 TWh, gas 2025 −2.8%).
+**Result — NOT-YET probe; both misses root-caused, not tuned around.** The
+within-bundle P1-vs-P2 comparison settles the attribution (annual dw model vs RT
+$48.36 / $26.83 / $32.49; Jun/Jul/Aug 2023 residuals):
+
+| year | pass | annual | C3a | Jun | Jul | Aug |
+|---|---|---|---|---|---|---|
+| 2023 | **P1 (no commitment — the main run)** | 40.73 | −15.8% | −13.9 | −9.7 | −88.7 |
+| 2023 | P2 (opt-in AS-aware commitment) | 52.20 | +7.9% | −12.9 | −9.1 | −90.2 |
+| 2024 | P1 / P2 | 28.75 / 30.43 | +7.2% / +13.4% | | | |
+| 2025 | P1 / P2 | 33.35 / 35.39 | +2.6% / +8.9% | | | |
+
+The 2023 scarcity-month improvement (Jun −$23.5 → **−$13.9**, Jul −$10.1 →
+**−$9.7**, Oct/Nov ≈ 0) is **already present in P1** — it comes from the P1-level
+structure (the ECRS no-release demand step + multi-product AS carve-outs in the LP),
+NOT from the commitment pass. **The AS-aware P2 pass added no scarcity-month signal
+(Jun −13.9→−12.9, Aug actually −88.7→−90.2) and only a broad all-month elevation
+(+$11.5/yr 2023, +$1.7 2024, +$2.0 2025)** — the exact-coverage AS-adequacy floor
+(committed ≈ energy + AS) leaves ~1.0× online-reserve coverage where measured
+RTOLCAP shows ~2×, so the shared-headroom dual elevates every month (Feb-2023 +$42.5
+with ECRS not yet live isolates the artifact to the floor). WS1's
+commitment-state-aware headroom in its current form therefore does **not** help and
+is not part of any recommended configuration. Independently, (b) the multi-product
+swap **drops the lumped ORDC total-reserve curve — the published RTORPA mechanism of
+2023-25** — so even P1's deep tail collapses (Aug-2023 P1 −$88.7 vs keeper −$46;
+>$1,000 hours 28 vs 61) while rigid withholding lengthens the moderate tail (P2
+281 h >$200 vs 181, 1.55×; 2025 0.26×). C1/C2/C4/C5a unchanged from the keeper
+(CC_REGULAR 2023 −8.52 TWh, gas 2025 −2.8%).
 
 **One event, one channel (audit result).** With the endogenous co-opt scarcity
 active, overlap with the measured overlays is trivial — RTORDPA∧reserve-dual
@@ -94,13 +109,13 @@ DAM-AS overlay (dual-only tail 10 h vs 73 h with it), i.e. the co-opt still cann
 form the 2024 acute days endogenously (run-163's discretionary-uplift finding
 stands).
 
-**Keeper decision (structural, not MAE).** NOT promoted — not because the fit
-worsened, but because the probe's own machinery is structurally incomplete in a
-now-understood way: the faithful pre-RTC+B stack is *both* product withholding
-(WS2's rigid families) *and* the ORDC total-reserve demand curve, on a commitment
-state with realistic (~2×) online surplus rather than an exactly-binding adequacy
-floor. That combination is the follow-up work stream; WS1/WS2 as built are its
-correct components. Keeper remains `2026-07-02-ercot26-gtc-limits`.
+**Keeper decision (structural, not MAE).** NOT promoted. The follow-up direction is
+**P1-level** (the main, no-commitment run): keep WS2's product withholding AND
+restore the lumped ORDC total-reserve demand curve alongside it — the faithful
+pre-RTC+B stack is both together, in the P1 LP. The P2/AS-aware commitment route is
+shelved: its adequacy-floor tightness is an artifact, and the P1↔P2 comparison shows
+it contributes nothing to the scarcity months it was aimed at. Keeper remains
+`2026-07-02-ercot26-gtc-limits`.
 
 **WS3/WS4.** NP6-576-ER 2023-vintage re-fetch still egress-blocked (all hosts 403;
 report decommissioned post-RTC+B) — flat 0/1,400 fallback retained, attempt
