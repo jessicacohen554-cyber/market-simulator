@@ -643,18 +643,39 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     non-gated diagnostic (:func:`score_price_mean_da_diagnostic`).
     """
     lmp = ypay.get("lmp", {})
-    pairs = [
-        (z.get("p"), z.get("d", 0.0)) for z in lmp.values() if z.get("p") is not None
-    ]
-    model = _wmean(pairs) if pairs else None
     avg = ybench.get("avgLMP") or {}
     bench_kind = "RT" if avg.get("rt") is not None else "DA"
     actual = avg.get("rt", avg.get("da"))
+    # Like-for-like calendar coverage: when the actual series is partial (its
+    # monthly vector has empty months — e.g. CAISO 2023, whose Jan–Feb aged
+    # out of OASIS retention), the committed actual mean only averages the
+    # covered months, so the model side must be masked to the SAME months.
+    # Comparing a full-year model mean (which correctly carries the $190
+    # gas-crisis January) against a Mar–Dec actual is a coverage artifact,
+    # not a price error. Full-coverage years are byte-identical.
+    actual_mon = avg.get("rt_mon") if bench_kind == "RT" else avg.get("da_mon")
+    covered = [i for i, v in enumerate(actual_mon or []) if v is not None]
+    masked = bool(actual_mon) and 0 < len(covered) < 12
+    if masked:
+        pairs = []
+        for z in lmp.values():
+            p_mon = z.get("pMon") or [None] * 12
+            d_mon = z.get("dMon") or [0.0] * 12
+            pairs.extend((p_mon[i], d_mon[i]) for i in covered if p_mon[i] is not None)
+    else:
+        pairs = [
+            (z.get("p"), z.get("d", 0.0))
+            for z in lmp.values()
+            if z.get("p") is not None
+        ]
+    model = _wmean(pairs) if pairs else None
     if model is None or actual is None:
         return _skip("price_mean", year, "no model or actual mean LMP")
     err = _pct(model, actual)
     ok = err is not None and abs(err) <= PRICE_MEAN_TOL
     label = "vs RT" if bench_kind == "RT" else "vs DA — no RT actual committed"
+    if masked:
+        label += f" (model masked to actual's {len(covered)}-month coverage)"
     return {
         "criterion": "price_mean",
         "key": None,
@@ -687,9 +708,22 @@ def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict 
     if rt is None or da is None:
         return None  # DA absent, or DA is already the gated benchmark
     lmp = ypay.get("lmp", {})
-    pairs = [
-        (z.get("p"), z.get("d", 0.0)) for z in lmp.values() if z.get("p") is not None
-    ]
+    # Mirror score_price_mean's partial-coverage masking (same calendar on
+    # both sides when the DA actual has empty months).
+    da_mon = avg.get("da_mon")
+    covered = [i for i, v in enumerate(da_mon or []) if v is not None]
+    if da_mon and 0 < len(covered) < 12:
+        pairs = []
+        for z in lmp.values():
+            p_mon = z.get("pMon") or [None] * 12
+            d_mon = z.get("dMon") or [0.0] * 12
+            pairs.extend((p_mon[i], d_mon[i]) for i in covered if p_mon[i] is not None)
+    else:
+        pairs = [
+            (z.get("p"), z.get("d", 0.0))
+            for z in lmp.values()
+            if z.get("p") is not None
+        ]
     model = _wmean(pairs) if pairs else None
     if model is None:
         return None
