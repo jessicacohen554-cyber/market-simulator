@@ -1,0 +1,22 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "pjm-76 outage-fix 2026-07-03",
+        "note": "pjm-75 recipe verbatim, re-run on the regenerated campd-unit-outages-PJM.csv (commit d815a3c, merged via PR #1257). The outage resolver now correctly distinguishes coal-retirement windows from gas-fleet unavailability at dual-unit plants: Chesterfield 3797 coal units 5/6 carry COAL outage windows (skipped by the gas overlay) instead of blocking the surviving 386 MW gas-CC. Also fixes Brunner Island, Chalk Point, Gilbert, Linden, Doswell outage routing (118 rows removed / 284 added). No fitted parameters changed from pjm-75. All structural levers identical: CT net-load deployment drag (CAMPD-regressed clip(0.01108*netGW - 0.9987, 0, 0.46) in ramp h[15,22)), CC demonstrated-peak cap (17 plants, -2686 MW from CAMPD p99.9), Manual-15 CC econ_low 1.00 / CT econ_high 1.27 offer moves, CAMPD historic unit-outage windows, measured monthly delivered gas + PJM zonal basis, coal PRB/BIT passthrough sigmoids with BIT floor 0.65, per-plant CAMPD must-run/committed tranches, retiree CEMS availability envelope, measured EIA-930 monthly hydro + 2024 backfill, EIA-860 BTM + 2024 backfill, priced interchange at measured reference-bus prices with per-seam p90 tie caps, energy+reserve co-opt on the measured PJM reserve requirement (zone-aggregate; per-gen memory-infeasible, see pjm-reserve-ordc.md Phase 2), reliability floor, commitment=False. Per-gen reserve co-opt (pjm_reserve_pergen) NOT included — P1 warm-start OOM-killed at RSS ~14.6 GB on a 16.86 GB box; code stays merged but gated default-off (PR #1251). This is a structural improvement (CLAUDE.md #1/#11): the outage resolver correctness fix is an exogenous measured-data improvement with no parameter tuning.",
+        "residuals_note": "Compared to pjm-75: the Chesterfield outage fix frees ~386 MW of gas-CC capacity that was incorrectly blocked by coal outage windows. 2023 CC_REGULAR -14.56 -> -19.71 TWh (worse — the freed capacity does not close the 2023 CC gap; root cause is elsewhere per the pjm-75 attestation). 2024 CC_REGULAR +8.84 -> +5.47 TWh (improved — closer to zero). 2025 CC_REGULAR -7.15 -> -7.49 (marginal change). The 2023 CC worsening is accepted per rule #1/#11: the outage data is now correct (measured, exogenous), and the prior 'better' fit was leaning on an incorrect outage mask that artificially suppressed CC availability. The remaining CC redistribution points at commitment tightening / per-gen reserve structure (blocked by memory, see Phase 2). Coal: 2023 +1.42/2024 -0.26/2025 +5.80 TWh vs EIA-930 — the 2025 coal over-run vs an incomplete EIA-923 vintage is not a model miss (complete EIA-930 shows +3.97%). Price tail (0 hours >$200 vs actual 6/18/59): absence of scarcity pricing from zone-aggregate reserve co-opt — per-gen is the structural fix, memory-blocked.",
+        "ct_drag_coefficients": {
+            "ct_drag_slope_per_gw": 0.01108,
+            "ct_drag_intercept": -0.9987,
+            "ct_drag_cap": 0.46,
+            "ct_drag_ramp_start": 15,
+            "ct_drag_ramp_end": 22,
+            "derivation": "scripts/derive_pjm_ct_netload_drag.py (CAMPD pure-play CT CF vs EIA-930 PJM net-load, UTC-5 aligned, 2023-2025 pooled, hinge fit)"
+        },
+        "cc_cap_artifact": "data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv (17 plants, -2686 MW; scripts/derive_cc_capacity_reconcile.py --iso PJM --mode cap)"
+    },
+    "exceptions": []
+}
