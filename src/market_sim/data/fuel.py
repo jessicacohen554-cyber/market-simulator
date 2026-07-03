@@ -622,11 +622,26 @@ TRANSCO_Z6_NY_DAILY_PATH: Path = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
 # sparse (<2 print) covered months; both are EIA Weekly archive series.
 ALGONQUIN_DAILY_PATH: Path = GAS_PRICES_DIR / "algonquin_citygate_daily.csv"
 
+# Measured Iroquois Zone 2 *daily* spot prints, harvested from the prose of the
+# EIA Natural Gas Weekly Update archive by scripts/fetch_iroquois_daily_spot.py
+# (the Iroquois analogue of ALGONQUIN_DAILY_PATH — EIA's compact spot table has
+# no Iroquois row, but the narrative quotes the hub in the cold weeks that set
+# the eastern-NY winter price). Iroquois Z2 is the measured hub of the NYISO
+# reference zone (Capital_Hudson) and the Lower_Hudson / Long_Island zones; the
+# committed monthly reconstruction (Transco Z6 NY monthly + the SOM *annual*
+# Iroquois-Transco spread) demonstrably under-reads constrained winter months
+# (e.g. Dec-2024 reconstruction $3.16/MMBtu vs the New England complex the Z2
+# segment physically trades in at ~$9), so where these real prints exist they
+# locally supersede the reconstruction (rule #13: measured over estimate).
+IROQUOIS_Z2_DAILY_PATH: Path = GAS_PRICES_DIR / "iroquois_z2_daily.csv"
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
+_TRANSCO_DAILY_DATED_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 _ALGONQUIN_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
+_IROQUOIS_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 
 # Clean-data consumption. Curated Parquet for each fuel-price datatype is read
 # via the frozen ``clean_io.read_clean`` seam when the opt-in flag is set and the
@@ -965,6 +980,61 @@ def _algonquin_daily(path: Path | None) -> dict[int, dict[int, dict[int, float]]
     return out
 
 
+def _transco_z6_daily_dated(
+    path: Path | None,
+) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/MMBtu}}}`` Transco Z6 NY spot.
+
+    The **true-date** view of the same measured series :func:`_transco_z6_daily`
+    reads: each trading-day quote keyed by its actual calendar day, so the daily
+    overlay can place each print where it really occurred and interpolate the
+    non-trading gaps, instead of spreading the month's quote list evenly across
+    calendar days (which shifted the Jan-2024 $23.90 cold-snap print from the
+    16th onto the 12th and smeared its peak). Cached per path.
+    """
+    resolved = Path(path) if path else TRANSCO_Z6_NY_DAILY_PATH
+    if resolved in _TRANSCO_DAILY_DATED_CACHE:
+        return _TRANSCO_DAILY_DATED_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.transco_z6_ny_usd_mmbtu)
+            )
+    _TRANSCO_DAILY_DATED_CACHE[resolved] = out
+    return out
+
+
+def _iroquois_z2_daily(path: Path | None) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/MMBtu}}}`` measured Iroquois Z2 prints.
+
+    The eastern-NY analogue of :func:`_algonquin_daily`, reading the sparse real
+    Iroquois Zone 2 spot prints harvested from the EIA NG Weekly Update narrative
+    (:data:`IROQUOIS_Z2_DAILY_PATH`, by ``scripts/fetch_iroquois_daily_spot.py``).
+    Prints are keyed by true calendar day; an absent file yields an empty map so
+    every consumer degrades to the existing reconstruction (byte-identical until
+    the fetch workflow lands the data). Cached per path.
+    """
+    resolved = Path(path) if path else IROQUOIS_Z2_DAILY_PATH
+    if resolved in _IROQUOIS_DAILY_CACHE:
+        return _IROQUOIS_DAILY_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        if "location" in frame.columns:
+            # Only Zone 2 prints price the Iroquois-mapped NYISO zones; the
+            # upstream Waddington border point (TransCanada supply, no New
+            # England-complex premium) is provenance only.
+            frame = frame[frame["location"] == "zone2"]
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.iroquois_z2_usd_mmbtu)
+            )
+    _IROQUOIS_DAILY_CACHE[resolved] = out
+    return out
+
+
 def gas_daily_shape_factors(
     year: int, hours: int, path: Path | None = None
 ) -> np.ndarray:
@@ -1048,35 +1118,44 @@ def _nyiso_hub_daily_gas_prices(
     """NYISO daily-resolved reference-hub gas price ($/MMBtu), ``(hours,)``.
 
     The NYISO leg of :func:`iso_hub_daily_gas_prices`. The monthly reference-zone
-    (Iroquois Z2) hub level is correct (:func:`iso_hub_monthly_gas_prices`,
-    measured Henry Hub month + the Transco/Iroquois basis row); this multiplies in
-    the **measured Transco Z6 NY daily within-month shape** (:func:`_transco_z6_daily`)
-    so each month's flat plateau is replaced by the real day-to-day swing —
-    cheap shoulder days and the cold-snap spike — **mean-preserving** (the daily
-    factors normalize to each month's own daily mean), so the monthly hub level,
-    annual gas burn and fuel mix are unchanged. Unlike the NEISO leg this needs
-    no demand-convexity proxy: NYISO's marginal hub is itself a measured daily
-    series. The per-zone annual offsets (:func:`apply_nyiso_zonal_gas_basis`) are
-    layered on top by the caller exactly as in the monthly path, so the NYC zone
-    still resolves to the measured Transco level and the Iroquois-priced zones to
-    the same daily shape plus their annual spread.
+    (Iroquois Z2) hub level comes from :func:`iso_hub_monthly_gas_prices`
+    (measured Henry Hub month + the Transco/Iroquois basis row); the within-month
+    day-to-day swing comes from the **measured Transco Z6 NY daily quotes placed
+    on their true calendar days** (:func:`_transco_z6_daily_dated`) — cheap
+    shoulder days and the cold-snap spike land where they actually occurred, with
+    non-trading gaps linearly interpolated — **mean-preserving** (the daily
+    factors renormalize to 1.0 within each month), so the monthly hub level,
+    annual gas burn and fuel mix are unchanged. (The prior even-spread placement
+    shifted the Jan-2024 $23.90 print from the 16th to the 12th and attenuated
+    every peak between trading-day quotes.) The per-zone offsets
+    (:func:`apply_nyiso_zonal_gas_basis`) are layered on top by the caller
+    exactly as in the monthly path.
 
-    Iroquois Z2 has no public daily series (EIA's free table carries Transco Z6
-    NY but not Iroquois), so the Transco daily *shape* is applied to the Iroquois
-    monthly level — within a month the two hubs' day-to-day swing is effectively
-    the same (the Iroquois-Transco spread is a slow, winter-concentrated basis,
-    not a daily commodity signal). Months without a basis row, a Henry Hub quote,
-    or any Transco daily quotes keep the flat monthly value (``NaN`` here for the
-    overlay to fall back on), so a holiday-week archive gap never biases a month.
+    Where the **measured Iroquois Z2 daily prints** exist for a month
+    (:func:`_iroquois_z2_daily`, harvested from the EIA NG Weekly narrative by
+    ``scripts/fetch_iroquois_daily_spot.py``; ≥2 prints required so a lone quote
+    never re-levels a month), they supersede the reconstruction for the days they
+    bracket: prints are placed on their true days and interpolated between, and
+    outside the bracketed span the series falls back to the Transco-shaped
+    reconstruction. This month is deliberately **not** re-normalized to the
+    reconstructed monthly level: the reconstruction (Transco monthly + the SOM
+    *annual* Iroquois-Transco spread) demonstrably under-reads constrained winter
+    months (Dec-2024 reconstruction $3.16 vs the measured New England complex the
+    Z2 segment physically trades in at ~$9), and the measured prints are the
+    better data (rule #13) — the monthly mean moves exactly by what the measured
+    prints say, no fitted constant.
 
-    Returns ``None`` when the monthly hub series is unavailable (forward years,
-    no basis rows), so :func:`apply_hub_basis_overlay` falls back to the flat
-    monthly overlay.
+    Months without a basis row, a Henry Hub quote, or any daily quotes keep the
+    flat monthly value (``NaN`` here for the overlay to fall back on), so a
+    holiday-week archive gap never biases a month. Returns ``None`` when the
+    monthly hub series is unavailable (forward years, no basis rows), so
+    :func:`apply_hub_basis_overlay` falls back to the flat monthly overlay.
     """
     monthly = iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
     if monthly is None:
         return None
-    transco_daily = _transco_z6_daily(transco_path).get(year, {})
+    transco_dated = _transco_z6_daily_dated(transco_path).get(year, {})
+    iroquois_prints = _iroquois_z2_daily(None).get(year, {})
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
@@ -1085,21 +1164,18 @@ def _nyiso_hub_daily_gas_prices(
         month_hours = n_days * 24
         hub_m = monthly[m]
         if not np.isnan(hub_m) and hour < T:
-            quotes = transco_daily.get(m + 1)
-            if quotes:
-                arr = np.asarray(quotes, dtype=float)
-                mean = float(arr.mean())
+            dated = transco_dated.get(m + 1, {})
+            if dated:
+                days = np.array(sorted(dated), dtype=float)
+                vals = np.array([dated[int(d)] for d in days], dtype=float)
+                mean = float(vals.mean())
                 if mean > 0:
-                    # Spread the month's trading-day quotes across its calendar
-                    # days, then renormalize so the calendar-day factors average
-                    # to exactly 1.0 — so scaling the correct monthly hub level by
-                    # them is exactly mean-preserving (annual burn unchanged) even
-                    # when a holiday week leaves the quotes unevenly spaced.
-                    day_factor = np.interp(
-                        np.linspace(0.0, 1.0, n_days),
-                        np.linspace(0.0, 1.0, len(arr)),
-                        arr / mean,
-                    )
+                    # Place each trading-day quote on its true calendar day and
+                    # interpolate the gaps (weekends/holiday weeks inherit the
+                    # bracketing trading values), then renormalize so the
+                    # calendar-day factors average to exactly 1.0 — scaling the
+                    # monthly hub level by them stays exactly mean-preserving.
+                    day_factor = np.interp(np.arange(n_days), days - 1.0, vals / mean)
                     fbar = float(day_factor.mean())
                     if fbar > 0:
                         day_factor = day_factor / fbar
@@ -1109,6 +1185,16 @@ def _nyiso_hub_daily_gas_prices(
             else:
                 # No daily quotes this month: keep the flat monthly hub level.
                 day_hub = np.full(n_days, hub_m)
+            # Measured Iroquois Z2 prints (≥2) locally supersede the
+            # reconstruction across the day span they bracket (rule #13).
+            iq = iroquois_prints.get(m + 1, {})
+            if len(iq) >= 2:
+                iq_days = np.array(sorted(iq), dtype=float)
+                iq_vals = np.array([iq[int(d)] for d in iq_days], dtype=float)
+                lo, hi = int(iq_days[0]) - 1, int(iq_days[-1]) - 1
+                span = np.arange(lo, hi + 1, dtype=float)
+                day_hub = day_hub.copy()
+                day_hub[lo : hi + 1] = np.interp(span, iq_days - 1.0, iq_vals)
             shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
             out[hour : hour + len(shaped)] = shaped
         hour += month_hours
