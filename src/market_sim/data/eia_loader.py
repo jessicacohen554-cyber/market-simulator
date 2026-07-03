@@ -953,17 +953,48 @@ def measured_import_hub_prices(
         # Interpolate the isolated DST spring-forward gap (1 interior NaN on the
         # fixed non-leap calendar that every hourly series carries); ``limit=2``
         # leaves a genuine multi-week gap (2023 Jan-Feb, aged out of OASIS
-        # retention) NaN so that year still falls back to the static ladder.
+        # retention) NaN for the reference-formula fill below.
         price = (
             pd.to_numeric(series["price"], errors="coerce")
             .interpolate(limit=2)
             .to_numpy(dtype=float)
         )
-        if price.shape[0] < hours or not np.all(np.isfinite(price[:hours])):
+        if price.shape[0] < hours:
             continue  # incomplete hub series — leave its tranches on the ladder
+        price = price[:hours].copy()
+        gap = ~np.isfinite(price)
+        if gap.any():
+            # Hybrid gap-fill for a bulk retention gap (2023 Jan-Feb: ~1.4k
+            # hours aged out of OASIS before the fetch): fill the missing hours
+            # with the corridor's FORWARD reference price ((HH + basis) × HR ×
+            # neighbor load-shape) — the sanctioned forward-native analogue of
+            # this measured series (rule #14: a reconciled fill of real data
+            # over discarding ten measured months). Bounded to ≤25% of the
+            # year so a mostly-missing series still falls back to the ladder;
+            # the filled hours are the same hours absent from the actual-LMP
+            # benchmark, so C3 price scoring never reads the filled values.
+            if gap.mean() > 0.25:
+                continue
+            from market_sim.config.interchange_config import (
+                CAISO_PER_HUB_NEIGHBORS,
+            )
+            from market_sim.data.neighbor_price import caiso_hub_reference_price
+
+            spec = next(
+                (s for s in CAISO_PER_HUB_NEIGHBORS.values() if s.hub == hub),
+                None,
+            )
+            ref = (
+                caiso_hub_reference_price(spec, year, hours)
+                if spec is not None
+                else None
+            )
+            if ref is None or not np.all(np.isfinite(ref[gap])):
+                continue  # no forward fill available — leave on the ladder
+            price[gap] = ref[gap]
         for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
             if mapped_hub == hub:
-                out[tranche] = price[:hours]
+                out[tranche] = price
     return out or None
 
 
