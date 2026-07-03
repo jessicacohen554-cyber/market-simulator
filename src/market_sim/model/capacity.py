@@ -727,7 +727,7 @@ def _emerging_lcoe(
         residual = base_co2 * (1.0 - config.ccs_capture_rate)
         variable = (
             base_hr * ccs["heat_rate_penalty"] * gas_price_per_mmbtu
-            + VOM.get("gas_cc", 0.0)
+            + VOM["gas_cc"]
             + ccs["vom_adder"]
             + captured * config.co2_transport_storage_cost
             + residual * carbon_price
@@ -989,7 +989,7 @@ def _make_new_generator(
         kwargs["efficiency_bin"] = best_bin
         kwargs["heat_rate"] = bins[best_bin]
         kwargs["emission_rate_co2"] = CO2_RATES[tech_type][best_bin]
-        kwargs["vom"] = VOM.get(tech_type, 0.0)
+        kwargs["vom"] = VOM[tech_type]
 
     # Nuclear carries no fuel cost (fuel is embedded in FOM) and runs as a
     # must-run baseload unit; it has no heat-rate bin to assign above. The
@@ -999,8 +999,8 @@ def _make_new_generator(
     if tech_type in ("nuclear_smr", "nuclear_large"):
         kwargs["fuel_type"] = "nuclear"
         kwargs["is_must_run"] = True
-        kwargs["vom"] = VOM.get("nuclear", 2.5)
-        kwargs["eford"] = EFORD.get("nuclear", 0.03)
+        kwargs["vom"] = VOM["nuclear"]
+        kwargs["eford"] = EFORD["nuclear"]
 
     if tech_type in ("hydrogen_ct", "hydrogen_ccgt"):
         key = "h2_ct" if tech_type == "hydrogen_ct" else "h2_ccgt"
@@ -1022,12 +1022,12 @@ def _make_new_generator(
         # The captured-CO2 transport+storage cost is a constant $/MWh, so it
         # folds into VOM; the residual emissions still pay the carbon price.
         kwargs["vom"] = (
-            VOM.get("gas_cc", 0.0)
+            VOM["gas_cc"]
             + ccs["vom_adder"]
             + captured * config.co2_transport_storage_cost
         )
         kwargs["nox_rate"] = NOX_RATES.get("gas_cc", 0.0)
-        kwargs["eford"] = EFORD.get("gas_cc", 0.05)
+        kwargs["eford"] = EFORD["gas_cc"]
 
     elif tech_type == "geothermal":
         egs = GEOTHERMAL_PARAMS["egs"]
@@ -1187,9 +1187,7 @@ def apply_economic_new_entry(
             co2_bins = CO2_RATES.get(tech, {})
             best_co2 = min(co2_bins.values()) if co2_bins else 0.0
             var_cost = (
-                best_hr * gas_price_per_mmbtu
-                + VOM.get(tech, 0.0)
-                + best_co2 * carbon_price
+                best_hr * gas_price_per_mmbtu + VOM[tech] + best_co2 * carbon_price
             )
             price_hourly = (
                 np.asarray(prices, dtype=float).mean(axis=0)
@@ -1215,7 +1213,7 @@ def apply_economic_new_entry(
             capacity_payment = (
                 0.0
                 if build_zone_long
-                else capacity_revenue_per_mw_yr(iso_config.name, EFORD.get(tech, 0.05))
+                else capacity_revenue_per_mw_yr(iso_config.name, EFORD[tech])
             )
             effective_revenue = (
                 energy_margin
@@ -1344,7 +1342,7 @@ def apply_reserve_margin_build(
     if firm_gap <= 0.0:
         return fleet, 0.0
 
-    credit = 1.0 - EFORD.get("gas_ct", 0.06)
+    credit = 1.0 - EFORD["gas_ct"]
     nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
     iso_config = get_iso_config(iso)
     queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0
