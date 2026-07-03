@@ -217,6 +217,15 @@ a run that closes the price gap that way FAILs C6 regardless.
     across zones by `lmp[zone].d` annual demand).
   - *Actual:* `avgLMP.rt` (real-time), falling back to `avgLMP.da` when RT is
     absent — the derived `actual_lmp.json` hub mean.
+  - *Coverage masking (2026-07-03):* when the actual series is **partial** (its
+    committed monthly vector has empty months — e.g. CAISO 2023, whose Jan–Feb
+    aged out of OASIS retention), the model mean is computed over the **same
+    covered months** (pMon/dMon masked to the actual's non-null months), since
+    the committed actual mean only averages the covered months. Comparing a
+    full-year model mean (which correctly prices the Feb-2023 gas blowout)
+    against a Mar–Dec actual is a calendar artifact, not a price error; the
+    masking is recorded in the verdict record's metric label. Full-coverage
+    years are unchanged.
   - *Tolerance:* **±5%** (tightened from ±8% on 2026-07-02) — the tight end of
     the playbook’s ~5–10% band. The **energy-only LP dual structurally
     under-shoots** the actual LMP (which carries reserve, scarcity and uplift
