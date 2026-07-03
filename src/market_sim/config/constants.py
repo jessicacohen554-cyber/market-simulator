@@ -284,6 +284,12 @@ VOM: dict[str, float] = {
     "oil": 4.5,  # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
     "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
     "hydro": 1.4,  # NREL ATB 2024 — conventional hydropower
+    # The base-fuel-class VOM component is 0 for the CCS retrofit tech: the
+    # incremental solvent/amine-handling O&M is priced separately as
+    # CCUS_PARAMS["gas_cc_ccs_90"]["vom_adder"] in the tech's own cost build,
+    # so this entry only supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.0)`` fallback).
+    "gas_cc_ccs": 0.0,
 }
 
 # Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage
@@ -543,6 +549,11 @@ EFORD: dict[str, float] = {
     "nuclear": 0.03,  # NERC GADS — nuclear
     "oil": 0.10,  # NERC GADS — oil peakers (infrequent run, higher EFOR)
     "biomass": 0.08,  # NERC GADS — biomass steam
+    # CCS retrofit reuses the underlying gas_cc unit's forced-outage rate (the
+    # amine/compression train adds parasitic load, not forced-outage risk, in
+    # this model); supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.05)`` fallback).
+    "gas_cc_ccs": 0.05,
 }
 
 # Annual demand growth rates by ISO, scenario path, and era.
