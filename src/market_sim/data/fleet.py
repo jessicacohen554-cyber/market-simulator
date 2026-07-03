@@ -6006,12 +6006,33 @@ def bins_to_fleet(
         sync_tranches = (
             [("sync", sync_cap, mustrun_hr, 1.0, 0, 0, 0.0)] if sync_cap > 0.5 else []
         )
+        # Fast-start tranche pricing (Order 825 analogue,
+        # ScenarioConfig.tranche_startup_amortization): the gas bins' ECON and
+        # PEAK tranches carry the same NREL start cost as the committed anchor,
+        # so compute_monthly_markup amortizes each tranche's own P0 run lengths
+        # into its P1 bid — the fuel-price-invariant commitment-cost component
+        # of the real offer stack (a 2x1 CC's upper blocks are the second GT /
+        # duct burners; dispatching them after an overnight turndown is a
+        # start). Min-run/min-down stay 0 (bid markup only, no new UC coupling).
+        _fsp_startup = (
+            startup
+            if (
+                getattr(config, "tranche_startup_amortization", False)
+                and group in _GAS_BIN_GROUPS
+            )
+            else 0.0
+        )
+        if _fsp_startup > 0.0:
+            econ_steps = [
+                (sfx, cap_, hr_, vm_, mr_, md_, _fsp_startup)
+                for sfx, cap_, hr_, vm_, mr_, md_, _su in econ_steps
+            ]
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             *sync_tranches,
             *committed_tranches,
             *econ_steps,
-            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
+            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_startup),
         ]
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:

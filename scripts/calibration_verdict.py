@@ -109,7 +109,8 @@ DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
 CO2_TOL = 0.07  # +/-7% vs eGRID
 STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
-STORAGE_SHAPE_R_FLOOR = 0.50  # monthly net-discharge pearson r floor
+STORAGE_SHAPE_R_FLOOR = 0.50  # monthly discharge pearson r floor (both sides
+# on the positive/discharge basis — see rubric §C5c 2026-07-03 alignment fix)
 VRE_TOL = 0.10  # +/-10% advisory band for solar/wind (report-only)
 
 # Per-ISO scarcity-tail definition (rubric §5): (threshold $/MWh).
@@ -918,7 +919,7 @@ def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
         "year": year,
         "status": PASS if ok else FAIL,
         "classification": None if ok else MODEL_MISS,
-        "metric": "monthly net-discharge pearson r",
+        "metric": "monthly discharge pearson r",
         "model": round(r, 3),
         "actual": None,
         "tol": f"r ≥ {STORAGE_SHAPE_R_FLOOR}",
