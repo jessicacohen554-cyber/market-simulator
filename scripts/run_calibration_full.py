@@ -326,6 +326,47 @@ def _print_table(rows: list[tuple]) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _save_floor_arrays(run_dir: Path, year: int, p2_state: dict, has_p2: bool) -> None:
+    """Persist each pass's min-gen floor + mechanism ids to ``floors/``.
+
+    Writes ``floors/<year>_<pass>.npz`` per solved pass with the ``(n_gen, T)``
+    ``min_gen`` lower bound the LP actually saw, the parallel int8 mechanism-id
+    array (``data.floor_mechanisms``), and the unit alignment metadata
+    (``unit_ids`` / ``plant_code`` / ``plant_group``). This is the D-2/D-4
+    forced-energy attribution input for ``scripts/legitimacy_diagnostics.py``
+    — a bundle solved after this change carries its floors; older bundles are
+    reconstructed via ``run_year(fleet_only=True)``. No-op for a fleet with no
+    floor matrix (min_gen is None → the LP bound is the scalar pmin).
+    """
+    fa_p1 = p2_state["fleet_arrays"]
+    passes = {"P1": fa_p1}
+    if has_p2:
+        # _commitment_pass stashes the exact P2 bounds (incl. the RA
+        # must-offer floor) back into the state dict.
+        passes["P2"] = p2_state.get("fleet_arrays_p2", fa_p1)
+    groups = (
+        fa_p1.plant_group
+        if fa_p1.plant_group is not None
+        else np.array([""] * len(fa_p1.unit_ids), dtype=object)
+    )
+    for label, fa in passes.items():
+        if fa is None or fa.min_gen is None:
+            continue
+        mech = getattr(fa, "min_gen_mechanism", None)
+        if mech is None:
+            mech = np.zeros(fa.min_gen.shape, dtype=np.int8)
+        floors_dir = run_dir / "floors"
+        floors_dir.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(
+            floors_dir / f"{year}_{label}.npz",
+            min_gen=fa.min_gen.astype(np.float32),
+            mechanism=mech.astype(np.int8),
+            unit_ids=np.array(list(fa_p1.unit_ids), dtype=str),
+            plant_code=np.asarray(fa_p1.plant_code, dtype=np.int64),
+            plant_group=np.array([str(g) for g in groups], dtype=str),
+        )
+
+
 def _dispatch_frame(
     year: int,
     pass_label: str,
@@ -2015,6 +2056,8 @@ def solve_and_persist(
         labelled = [("P2" if result_p1 is not None else "P1", result)]
         if result_p1 is not None:
             labelled.insert(0, ("P1", result_p1))
+        # Per-pass min-gen floors + mechanism ids (D-2/D-4 attribution).
+        _save_floor_arrays(run_dir, year, p2_state, result_p1 is not None)
 
         # CAMPD hourly is built before the per-pass frames so the BTM 923
         # backfill can gate on "did the plant actually run this year" —

@@ -4500,7 +4500,23 @@ def _commitment_pass(state: dict, config=None):
             else np.broadcast_to(fa.pmin[:, None], ra_floor.shape)
         )
         new_min_gen = np.maximum(base_min_gen, ra_floor)
-        fa_ra = dataclasses.replace(fa, min_gen=new_min_gen, pmin=fa.pmin.copy())
+        # D-2 attribution: the RA bridge wins wherever it strictly raised the
+        # composed floor (maximum-composition, data.floor_mechanisms).
+        from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
+
+        base_mech = getattr(fa, "min_gen_mechanism", None)
+        new_mech = (
+            base_mech.copy()
+            if base_mech is not None
+            else np.zeros(ra_floor.shape, dtype=np.int8)
+        )
+        new_mech[ra_floor > base_min_gen] = MECH_RA_MUSTOFFER
+        fa_ra = dataclasses.replace(
+            fa,
+            min_gen=new_min_gen,
+            min_gen_mechanism=new_mech,
+            pmin=fa.pmin.copy(),
+        )
         # All-committed mask: no decommit. preserve_min_gen carries the RA
         # min-load floor into P2 and raises availability to keep it feasible.
         committed = np.ones(ra_floor.shape, dtype=bool)
@@ -4512,6 +4528,9 @@ def _commitment_pass(state: dict, config=None):
             screen_coal=False,
             preserve_min_gen=True,
         )
+        # Expose the P2 bounds (incl. the RA floor + mechanism ids) so the
+        # bundle writer can persist the floors the P2 dispatch actually saw.
+        state["fleet_arrays_p2"] = fa_p2
         return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
     # AS-aware (ERCOT multi-product co-opt): value a unit's AS revenue (the P1
     # per-product reserve dual x its reserve-eligible headroom) in the screen, so
@@ -4614,6 +4633,9 @@ def _commitment_pass(state: dict, config=None):
                 fa, committed, dk["reserve_headroom_eligible"]
             ),
         }
+    # Expose the P2 bounds so the bundle writer can persist the floors the
+    # P2 dispatch actually saw (D-2 forced-energy attribution).
+    state["fleet_arrays_p2"] = fa_p2
     return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk_p2)
 
 
