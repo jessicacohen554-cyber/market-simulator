@@ -7,3 +7,77 @@ INFO: NYISO 2023 Upstate_West->Capital_Hudson monthly TTC envelope: 1450-2725 MW
 INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
 INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
 INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: COD ramp (NYISO 2023): 85 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: Loaded NYISO 2023 hydro budget: 154 plants, 28403.3 GWh annual, 4647 MW nameplate
+INFO: NYISO 2023: 154 hydro plants in LP (4648 MW, 28.40 TWh monthly budget)
+INFO: NYISO 2023: priced import/export node — 5 import tranches (5900 MW), 1 export sinks (600 MW)
+INFO: COD ramp (NYISO 2023): 85 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: NYISO 2023: reliability floor — 14 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2023: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2023: priced import node reconciled to measured EIA-930 net interchange — 6 node rows, annual band [22.98, 23.92] TWh
+INFO: NYISO 2023: local self-supply floor applied to downstate pocket(s) (LMIC / cable-islanded local reliability)
+INFO: F923 fuel costs for 2023: 58 generators priced from their own plant, 380 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2023, daily): 658 gas generators repriced at the measured hub spot in 12/12 months (winter max 44.53 $/MMBtu)
+INFO: NYISO zonal gas basis (2023): 658 gas units shifted by zone hub offset (min -1.46, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: EIA-860 multifuel: 577 (plant, group) dual-fuel gas keys flagged
+INFO: dual-fuel switching (NYISO 2023): 377 gas tranches (16688 MW) capped at the delivered oil price
+INFO: NYISO 2023: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: energy+reserve co-opt (NYISO): 7 locational reserve families (3 10-min/quick-start), 57 ORDC steps ($62-$775), 721 full-fleet / 333 quick-start reserve-eligible units
+INFO: Matrix build: 3.053s, Solve: 133.463s (cold)
+INFO: Matrix build: 3.053s, Solve: 44.956s (warm)
+INFO: EIA-923 2023: CAMPD-backfilled 1 under-reported plants (1 replaced, 0 added)
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: solving NYISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: NYISO 2024 Upstate_West->Capital_Hudson monthly TTC envelope: 2525-3075 MW (measured Central-East DAM postings)
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: COD ramp (NYISO 2024): 138 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: Loaded NYISO 2024 hydro budget: 147 plants, 27875.0 GWh annual, 4587 MW nameplate
+INFO: NYISO 2024: 147 hydro plants in LP (4587 MW, 27.88 TWh monthly budget)
+INFO: NYISO 2024: priced import/export node — 5 import tranches (5900 MW), 1 export sinks (600 MW)
+INFO: COD ramp (NYISO 2024): 147 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: NYISO 2024: reliability floor — 14 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2024: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2024: priced import node reconciled to measured EIA-930 net interchange — 6 node rows, annual band [19.94, 20.75] TWh
+INFO: NYISO 2024: local self-supply floor applied to downstate pocket(s) (LMIC / cable-islanded local reliability)
+INFO: F923 fuel costs for 2024: 57 generators priced from their own plant, 386 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2024, daily): 667 gas generators repriced at the measured hub spot in 12/12 months (winter max 22.84 $/MMBtu)
+INFO: NYISO zonal gas basis (2024): 667 gas units shifted by zone hub offset (min -1.07, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: dual-fuel switching (NYISO 2024): 385 gas tranches (16699 MW) capped at the delivered oil price
+INFO: NYISO 2024: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: energy+reserve co-opt (NYISO): 7 locational reserve families (3 10-min/quick-start), 57 ORDC steps ($62-$775), 730 full-fleet / 336 quick-start reserve-eligible units
+INFO: Matrix build: 3.078s, Solve: 161.728s (cold)
+INFO: Matrix build: 3.078s, Solve: 77.281s (warm)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plants (2 replaced, 0 added)
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: solving NYISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: NYISO 2025 Upstate_West->Capital_Hudson monthly TTC envelope: 2500-3175 MW (measured Central-East DAM postings)
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: COD ramp (NYISO 2025): 84 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: Loaded NYISO 2025 hydro budget: 3 plants, 21048.2 GWh annual, 3343 MW nameplate
+INFO: NYISO 2025: 3 hydro plants in LP (3343 MW, 21.05 TWh monthly budget)
+INFO: NYISO 2025: priced import/export node — 5 import tranches (5900 MW), 1 export sinks (600 MW)
+INFO: COD ramp (NYISO 2025): 96 unit-months masked offline (mid-year COD / retirement), 8 unit(s) fully not-yet-built/retired
+INFO: NYISO 2025: reliability floor — 14 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2025: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2025: priced import node reconciled to measured EIA-930 net interchange — 6 node rows, annual band [18.70, 19.47] TWh
+INFO: NYISO 2025: local self-supply floor applied to downstate pocket(s) (LMIC / cable-islanded local reliability)
+INFO: F923 fuel costs for 2025: 55 generators priced from their own plant, 397 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2025, daily): 667 gas generators repriced at the measured hub spot in 12/12 months (winter max 84.97 $/MMBtu)
+INFO: NYISO zonal gas basis (2025): 667 gas units shifted by zone hub offset (min -3.08, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: dual-fuel switching (NYISO 2025): 385 gas tranches (16699 MW) capped at the delivered oil price
+INFO: NYISO 2025: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: energy+reserve co-opt (NYISO): 7 locational reserve families (3 10-min/quick-start), 57 ORDC steps ($62-$775), 730 full-fleet / 336 quick-start reserve-eligible units
+INFO: Matrix build: 2.649s, Solve: 113.259s (cold)
+INFO: Matrix build: 2.649s, Solve: 32.100s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 22 under-reported plants (0 replaced, 22 added)
+INFO: EIA-923 2025 wind 4.46 TWh under-counts EIA-930 7.05 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 20.56 TWh under-counts EIA-930 24.10 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 biomass 0.13 TWh incomplete (vintage 89%); carrying 2024 biomass 0.76 TWh x completeness -> 0.67 TWh
+INFO: wrote calibration bundle to results/calibration/nyiso_statmode_2026-07
+solved into results/calibration/nyiso_statmode_2026-07

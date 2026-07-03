@@ -1,0 +1,9 @@
+statmode-replaying results/calibration/neiso_closeout (NEISO [2023, 2024, 2025]) -> results/calibration/neiso_statmode_2026-07
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Rebuilt binned fleet cache for NEISO — 431 plants → neiso_fleet_binned.parquet
+INFO: NEISO net interchange applied for 2023: -1728 MW avg (export-positive, measured EIA-930)
+INFO: solving NEISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=True)
+INFO: NEISO net interchange applied for 2023: -1728 MW avg (export-positive, measured EIA-930)
+INFO: loaded 23 within-window retiree units for NEISO (1746 MW, plants [563, 581, 1588, 50955, 54085, 54586, 56891, 57103, 58365, 59801])
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
