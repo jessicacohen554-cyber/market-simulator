@@ -1598,6 +1598,110 @@ def inject_miso_pjm_lmp_import_prices(
     return applied
 
 
+# NYISO priced-node tranche → the modeled neighbor whose measured hourly system
+# LMP prices it (nyiso_import_hub_prices). HQ_hydro and IESO_Ontario are absent
+# on purpose: neither carries an organized-market LMP series in-repo (HQ is a
+# firm-contract flow, firm-floored by inject_nyiso_firm_imports; IESO's HOEP is
+# not uploaded), so they keep their static contract-ladder values.
+_NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR: dict[str, str] = {
+    "PJM_west": "PJM",
+    "ISONE_tie": "NEISO",
+}
+# The residual deep non-firm block spans the remaining tie depth across the
+# eastern interfaces; its marginal MW cannot be cheaper than every real
+# adjacent market, so it prices at the hourly max of the measured neighbors.
+_NYISO_HUB_SCARCITY_TRANCHE: str = "import_scarcity"
+_NYISO_HUB_EXPORT_TRANCHE: str = "export_surplus"
+# Inter-control-area wheeling hurdle ($/MWh) on the NYISO seam — the same $1
+# dead-band the PJM↔NYISO NeighborInterface spec carries (INTERFACE_NEIGHBORS
+# ["PJM"]["NYISO"].hurdle), applied symmetrically: import at neighbor + hurdle,
+# export at neighbor − hurdle, so a same-hour round trip is strictly
+# cost-positive (arbitrage-free).
+NYISO_IMPORT_HUB_HURDLE: float = 1.0
+
+
+def inject_nyiso_import_hub_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+) -> bool:
+    """Reprice NYISO's non-firm import tranches at measured neighbor hourly LMPs.
+
+    The NYISO analogue of :func:`inject_caiso_import_hub_prices` (measured WECC
+    intertie LMP) and :func:`inject_miso_pjm_lmp_import_prices` (measured PJM
+    border DA LMP): the priced import node's ``PJM_west`` / ``ISONE_tie`` rows
+    take the **measured hourly Day-Ahead system LMP** of the neighbor they proxy
+    (:func:`market_sim.data.neighbor_price.neighbor_lmp_hourly`, ``rt``
+    fallback) plus the wheeling hurdle; the residual ``import_scarcity`` block
+    takes the hourly **max** of the two priced neighbors + hurdle (the deep
+    non-firm MW beyond the direct-tie blocks cannot undercut every real
+    adjacent market); the ``export_surplus`` sink takes the hourly **min** of
+    the two − hurdle. The min (not max) on the destination-blind single sink is
+    deliberate: pricing it at the dearer neighbor would open a phantom
+    wheel-through arbitrage against the cheap static Canadian import tranches
+    (buy IESO at its $22-37 contract constant, "sell" at the NE winter price
+    inside the external node) that permanently occupies the sink's 600 MW and
+    blocks genuine export hours; the min is the wash-free lower envelope of the
+    neighbors' willingness-to-pay. ``HQ_hydro`` / ``IESO_Ontario`` keep their
+    static firm-contract ladder values (no organized-market series; the HQ
+    block is firm-floored anyway).
+
+    Why: the static ``IMPORT_TRANCHES_BY_YEAR`` ladder is a per-year constant
+    fit, blind to neighbor fundamentals — it caps the modeled seam price at its
+    top constant exactly when the real seam repriced with the neighbors (the
+    Dec-2024 New-England-complex month, the Jun-2025 heat wave), and its cheap
+    constants soften off-peak prices the real seam never saw. The measured
+    neighbor LMP is the real delivered opportunity cost of the imported energy
+    (rule #12: regenerates for a forward year from the modeled neighbor /
+    reference-price formula, responds to changed conditions), read blind to
+    NYISO's own flow (rule #11). The monthly EIA-930 reconciliation band, HQ
+    firm floor and simultaneous-import limit are untouched.
+
+    Returns ``True`` when at least one row was repriced, ``False`` (byte-
+    identical static ladder) for non-NYISO ISOs, a missing import node, or
+    missing measured neighbor series (e.g. forecast years).
+    """
+    from market_sim.data.neighbor_price import neighbor_lmp_hourly
+
+    if iso.upper() != "NYISO":
+        return False
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return False
+    hours = int(mc.shape[1])
+    series: dict[str, np.ndarray] = {}
+    for neighbor in sorted(set(_NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR.values())):
+        lmp = neighbor_lmp_hourly(neighbor, year, "da")
+        if lmp is None:
+            lmp = neighbor_lmp_hourly(neighbor, year, "rt")
+        if lmp is None or lmp.shape[0] < hours:
+            continue
+        series[neighbor] = np.asarray(lmp[:hours], dtype=float)
+    if not series:
+        return False
+    # Hourly max (deep-import ceiling) / min (wash-free export willingness-to-
+    # pay) over the priced neighbors.
+    deep_import = np.maximum.reduce(list(series.values()))
+    export_wtp = np.minimum.reduce(list(series.values()))
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if not uid.startswith(f"{zone}_"):
+            continue
+        tranche = uid[len(zone) + 1 :]
+        neighbor = _NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR.get(tranche)
+        if neighbor is not None and neighbor in series:
+            mc[row, :] = series[neighbor] + NYISO_IMPORT_HUB_HURDLE
+            applied = True
+        elif tranche == _NYISO_HUB_SCARCITY_TRANCHE:
+            mc[row, :] = deep_import + NYISO_IMPORT_HUB_HURDLE
+            applied = True
+        elif tranche == _NYISO_HUB_EXPORT_TRANCHE:
+            mc[row, :] = export_wtp - NYISO_IMPORT_HUB_HURDLE
+            applied = True
+    return applied
+
+
 # CAISO export sink(s) repriced to the measured neighbor hub — the blocks that
 # carry the neighbors' willingness-to-pay (sold to WECC), NOT the deep in-state
 # curtailment floor (export_curtail stays at its $0 value as the beyond-tie
