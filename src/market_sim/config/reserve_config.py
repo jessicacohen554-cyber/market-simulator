@@ -593,6 +593,72 @@ def _ercot_multiproduct_design(
                 reserve_class=families[rrs_idx].reserve_class,
             )
 
+    # Measured battery AS-award supply credit on the PRODUCT requirements
+    # (config.ercot_storage_as_product_credit; the multi-product analogue of
+    # the single-product design's ercot_storage_as_reserve netting). Under the
+    # measured storage path (storage_as_commitment, not endogenous) the
+    # battery capacity that actually cleared RegUp/RRS/ECRS is reserved OUT of
+    # the storage power cap, so the co-opt's residual fleet can no longer
+    # supply those product MW — without a credit the products pull the
+    # batteries' ~1.2-2.8 GW of awarded AS from THERMAL headroom instead,
+    # over-withholding energy capacity the real market never withheld from
+    # SCED. The credit nets the measured per-hour battery AS award
+    # (60-Day DAM awards, scarcity.ercot_storage_as_reserve_mw — a measured
+    # procurement quantity, never a price) pro-rata across the FAST products'
+    # requirements (batteries cleared RegUp/RRS/ECRS; Non-Spin is untouched),
+    # after the LR credit and WITHOUT touching the families' penalty curves
+    # (same convention as the LR credit: steps stay sized to the published
+    # plan). No-op when the endogenous split is on (the battery is then inside
+    # the co-opt and needs no netting) or before the measured-series
+    # from-year. Windowed ECRS families (conservative deployment) keep their
+    # date windows via their own requirement masks.
+    if (
+        getattr(config, "ercot_storage_as_product_credit", False)
+        and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and year >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
+    ):
+        from market_sim.results.scarcity import ercot_storage_as_reserve_mw
+
+        storage_award = ercot_storage_as_reserve_mw(year, T)  # (T,)
+        fast_idx = [p for p, (_n, _c, tier) in enumerate(products) if tier == "fast"]
+        fast_total = requirement[fast_idx, :].sum(axis=0)  # (T,)
+        if storage_award.max() > 0.0 and fast_total.max() > 0.0:
+            with np.errstate(invalid="ignore", divide="ignore"):
+                share = np.where(
+                    fast_total > 0.0, requirement[fast_idx, :] / fast_total, 0.0
+                )  # (n_fast, T)
+            credited = np.maximum(requirement[fast_idx, :] - share * storage_award, 0.0)
+            requirement[fast_idx, :] = credited
+            for f, fam in enumerate(families):
+                p = int(fam.reserve_class)
+                if p not in fast_idx:
+                    continue
+                # Apply the credited product requirement inside the family's
+                # own active window (zero outside it — the ECRS split).
+                new_req = np.where(fam.requirement > 0.0, requirement[p, :], 0.0)
+                families[f] = ReserveFamily(
+                    name=fam.name,
+                    requirement=new_req,
+                    zone_mask=fam.zone_mask,
+                    ordc_penalties=fam.ordc_penalties,
+                    ordc_step_widths=fam.ordc_step_widths,
+                    reserve_class=fam.reserve_class,
+                )
+            for f, fam in enumerate(released_ecrs_families):
+                p = int(fam.reserve_class)
+                if p not in fast_idx:
+                    continue
+                new_req = np.where(fam.requirement > 0.0, requirement[p, :], 0.0)
+                released_ecrs_families[f] = ReserveFamily(
+                    name=fam.name,
+                    requirement=new_req,
+                    zone_mask=fam.zone_mask,
+                    ordc_penalties=fam.ordc_penalties,
+                    ordc_step_widths=fam.ordc_step_widths,
+                    reserve_class=fam.reserve_class,
+                )
+
     full_elig = _reserve_eligible(fleet_arrays)
     reserve_eligible = np.tile(full_elig, (n_prod, 1))
 
