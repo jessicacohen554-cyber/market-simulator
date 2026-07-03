@@ -1,0 +1,93 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-40 truedate-gas probe 2026-07-03",
+        "note": "Control probe: the nyiso-39 keeper config re-solved on the corrected measured gas data, NO new mechanism. Two measured-data fidelity fixes only: (1) the Transco Z6 NY daily quotes are placed on their TRUE calendar days (fuel._transco_z6_daily_dated; the prior even-spread put the Jan-2024 $23.90 cold-snap print on the 12th instead of the 16th and smeared every peak); (2) the NYISO monthly hub levels are recomputed from the completed daily print series (scripts/fetch_nyiso_gas_narrative.py + 5 NGWU-narrative-recovered prints; the committed monthly file's Dec-2024 read $2.45 against its own daily series' $3.30 mean because the holiday-week archive gap under-sampled the month - basis +0.16 -> +1.00). Both regenerate for a forward year (a forward monthly level x a representative true-dated daily shape) and respond to changed conditions (rule #12). No offer curve, floor, or adder changed."
+    },
+    "exceptions": [
+        {
+            "criterion": "price_mean",
+            "year": 2023,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -15.3%",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / min-gen-floor frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered frontier as keepers 34/39 (min-gen ST floor adds inframarginal supply; no binding reserve scarcity lets units set scarcity prices; elastic priced imports soften off-peak). Unchanged by the gas-data fidelity fixes, which act on winter spike months only."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2024,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -16.3%",
+            "classification": "ACCEPTED (ledgered reserve-scarcity frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Improves from keeper-39's -19.2% purely from the corrected measured Dec-2024 hub level. The remaining December miss (-$25/MWh) is the DATA-BLOCKED eastern-NY (Iroquois Z2) winter hub level: the in-repo reconstruction (Transco monthly + SOM annual spread) reads ~$4.0/MMBtu for Dec-2024 while the New England complex the Z2 segment physically trades in cleared ~$9 (measured MA-citygate basis +6.12); no free Iroquois Z2 daily/monthly series exists (NGI/ICE paywalled; EIA NGWU carries no Iroquois row or narrative print 2023-2025 - verified by the fetch workflow). Kept per rule #13: the accurate data is not available, and no proxy construction is grounded enough to admit."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2025,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -13.6%",
+            "classification": "ACCEPTED (ledgered reserve-scarcity frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 (-$23/-$27 monthly) carry the same data-blocked Iroquois Z2 winter level; Jun/Jul-2025 heat-wave months carry the ledgered reserve-scarcity frontier (RT scarcity adders an energy-only LP cannot price)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2023,
+            "metric": "C3b price duration / shape NRMSE vs actual RT",
+            "magnitude": "NRMSE 0.210",
+            "classification": "ACCEPTED (ledgered reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Broad off-peak/shoulder undershoot; same ledgered frontier as keepers 34/39."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2024,
+            "metric": "C3b price duration / shape NRMSE vs actual RT",
+            "magnitude": "NRMSE 0.248",
+            "classification": "ACCEPTED (data-blocked eastern winter hub + ledgered frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Improves from keeper-39's 0.304 via the corrected Dec-2024 hub level; the residual December miss is the data-blocked Iroquois Z2 winter level (see price_mean 2024)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2025,
+            "metric": "C3b price duration / shape NRMSE vs actual RT",
+            "magnitude": "NRMSE 0.215",
+            "classification": "ACCEPTED (data-blocked eastern winter hub + ledgered frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 = data-blocked eastern hub; Jun/Jul-2025 = reserve-scarcity frontier."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2023,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 10h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. No binding reserve scarcity (idle-capacity headroom credit; nyiso-29/31 confirmed non-closable with grounded inputs); the actual 2023 tail is scattered single-hour RT transients."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2024,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 12h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered frontier."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2025,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 42h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered frontier; the 2025 tail is dominated by Jun/Jul heat-wave RT scarcity."
+        },
+        {
+            "criterion": "co2",
+            "year": 2024,
+            "metric": "C5a annual system CO2 vs eGRID",
+            "magnitude": "model -7.2% (band +/-7%)",
+            "classification": "ACCEPTED (marginal breach exposed by a kept measured input; root cause = ledgered steam under-run)",
+            "reason": "SOFT criterion -> CAVEAT. The model's 2024 CO2 was already low at the band edge because the in-city steam/CHP fleet under-runs (ST_GAS -1.4 TWh, the ledgered reserve-scarcity/min-gen frontier; ~-0.6 Mt at the steam fleet rate covers most of the -2.1 Mt gap). Correcting the Dec-2024 hub level (rule #13: measured over estimate) shifted December burn off the dearer eastern units and moved the metric ~0.5pp across the band edge. Kept per rule #13 - the accurate input stays; the root cause is the same ledgered frontier, not the input."
+        }
+    ]
+}

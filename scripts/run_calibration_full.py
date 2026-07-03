@@ -1810,6 +1810,7 @@ def solve_and_persist(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
+    nyiso_import_hub_prices: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
     miso_firm_imports: bool | None = None,
@@ -2032,6 +2033,7 @@ def solve_and_persist(
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
+            nyiso_import_hub_prices=nyiso_import_hub_prices,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
             miso_firm_imports=miso_firm_imports,
@@ -2316,6 +2318,7 @@ def solve_and_persist(
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
+        "nyiso_import_hub_prices": nyiso_import_hub_prices,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
         "miso_firm_imports": miso_firm_imports,
@@ -2588,6 +2591,10 @@ def solve_and_persist(
     if nyiso_import_reconciliation is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation
+        )
+    if nyiso_import_hub_prices is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_import_hub_prices=nyiso_import_hub_prices
         )
     if nyiso_synchronised_reserve is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5827,6 +5834,24 @@ def main() -> None:
         "value (off).",
     )
     parser.add_argument(
+        "--nyiso-import-hub-prices",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO measured-neighbor import pricing: reprice the priced node's "
+        "PJM_west / ISONE_tie tranches at the MEASURED hourly PJM / ISO-NE "
+        "Day-Ahead system LMP (+$1 wheeling hurdle), the residual "
+        "import_scarcity block at the hourly max of the two, and the "
+        "export_surplus sink at the hourly min − hurdle, replacing the static "
+        "per-year fitted IMPORT_TRANCHES_BY_YEAR ladder (a backcast fit, blind "
+        "to neighbor fundamentals) with a measured neighbor price-formation "
+        "input (rule #12). The NYISO analogue of --caiso-import-hub-prices / "
+        "--miso-pjm-lmp-import-pricing. HQ/IESO contract tranches, the monthly "
+        "EIA-930 reconciliation band, HQ firm floor and SIL cap are unchanged. "
+        "Requires --priced-interchange; NYISO-only; no-op without the measured "
+        "neighbor LMP parquets. Default (unset) keeps the base config value "
+        "(off).",
+    )
+    parser.add_argument(
         "--nyiso-synchronised-reserve",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6309,6 +6334,7 @@ def main() -> None:
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
+        nyiso_import_hub_prices=args.nyiso_import_hub_prices,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
         miso_firm_imports=miso_firm_imports,
