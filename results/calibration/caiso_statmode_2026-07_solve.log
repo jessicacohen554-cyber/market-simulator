@@ -1,0 +1,25 @@
+statmode-replaying results/calibration/caiso51_firm_base (CAISO [2023, 2024, 2025]) -> results/calibration/caiso_statmode_2026-07
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Rebuilt binned fleet cache for CAISO — 782 plants → caiso_fleet_binned.parquet
+INFO: solving CAISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+WARNING: capacity-deliverability: clean partition for CAISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+WARNING: capacity-deliverability: clean partition for CAISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+INFO: CAISO 2023: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: CAISO 2023: WECC corridor deliverability cap on 2 link(s) — measured p95 ATC proxy; median import DSW 5.2 GW / PNW 1.3 GW; midday tighter; export-direction cap on (evening net-export ~0 → no wheel-out): median export DSW 0.0 GW / PNW 1.4 GW
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 87 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: CAISO 2023 hydro budget pinned to monthly target total 24401.6 GWh (was 23901.9 GWh)
+INFO: Loaded CAISO 2023 hydro budget: 166 plants, 24401.6 GWh annual, 6433 MW nameplate
+INFO: CAISO 2023: 166 hydro plants in LP (6433 MW, 24.40 TWh monthly budget)
+INFO: CAISO 2023: priced import/export node — 6 import tranches (11400 MW), 2 export sinks (15423 MW)
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 98 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: CAISO 2023: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00901*netGW -0.1124, 0, 0.36) in ramp 15h-22h)
+INFO: CAISO 2023: reliability floor — 6 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 64 generators priced from their own plant, 908 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2023, monthly): 1099 gas generators repriced at the measured hub spot in 12/12 months (winter max 28.08 $/MMBtu)
+INFO: CAISO 2023: per-hub WECC intertie — two signed corridors (Malin/COI → NP15, Palo Verde/Path-46 → SP15), each priced at its OWN measured hub (per-hub basis + per-hub netting, arbitrage-free, one direction per hour per corridor) — firm/contracted tranches held at contract cost (caiso_perhub_firm_base)
+INFO: Matrix build: 8.933s, Solve: 200.525s (cold)

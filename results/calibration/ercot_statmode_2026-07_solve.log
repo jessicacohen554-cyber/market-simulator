@@ -1,0 +1,19 @@
+statmode-replaying results/calibration/ercot_gtc_limits_v1 (ERCOT [2023, 2024, 2025]) -> results/calibration/ercot_statmode_2026-07
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: solving ERCOT 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: gtc-limits: no clean partition for ERCOT 2023 (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for 2023 — static TTC kept (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2023: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2023: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Rebuilt binned fleet cache for ERCOT — 1450 plants → ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2023 hydro budget: 14 plants, 349.6 GWh annual, 552 MW nameplate
+INFO: ERCOT 2023: 14 hydro plants in LP (552 MW, 0.35 TWh monthly budget)
+INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2023: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 2 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, req top 9688 MW, 40 steps ($0-$5000), 1498 reserve-eligible units
