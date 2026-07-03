@@ -1990,6 +1990,7 @@ def run_year(
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
+    capacity_deliverability_limits: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -2261,6 +2262,10 @@ def run_year(
     if caiso_reference_price_seam is not None:
         config = config.with_overrides(
             caiso_reference_price_seam=caiso_reference_price_seam
+        )
+    if capacity_deliverability_limits is not None:
+        config = config.with_overrides(
+            capacity_deliverability_limits=capacity_deliverability_limits
         )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
