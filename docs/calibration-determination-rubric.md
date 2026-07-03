@@ -320,8 +320,16 @@ a run that closes the price gap that way FAILs C6 regardless.
   - *Actual:* EIA-930 monthly discharge for `battery` / `pumped_storage`
     series. Same coverage gate as C5b.
   - *Tolerance:* **r ≥ 0.50.** The floor is looser than fleet dispatch (C4,
-    r ≥ 0.70) because monthly storage net-discharge is a 12-point vector with
+    r ≥ 0.70) because monthly storage discharge is a 12-point vector with
     lower degrees of freedom and substantial noise from AS commitment.
+  - *Degeneracy guard (2026-07-03, mirrors C4's <5 TWh rule):* when the
+    **actual** monthly-discharge coefficient of variation is **< 0.25** the
+    year is `SKIPPED` — a near-uniform actual (e.g. NEISO 2025 PS, CV ≈ 0.14:
+    Northfield cycles near-daily year-round on reserves/regulation) has no
+    seasonal shape to correlate, the 12-point Pearson is set by reporting
+    noise, and a perfectly **flat (true) model would score r = 0 and FAIL** —
+    a metric the truth itself cannot pass is degenerate. The under/over-cycling
+    volume stays fully scored by C5b (never a silent pass).
   - *Classification:* `MODEL MISS` (storage dispatch timing — wrong charge/
     discharge season). `SKIPPED` when no EIA-930 storage breakout or the model
     bundle lacks `monthly_net_gwh`.
