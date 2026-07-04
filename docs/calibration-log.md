@@ -4122,3 +4122,79 @@ HARD C2 band (−2.5% → FAIL), so the run is NOT promoted. Mechanism kept in
 source (default-off); next root causes now cleanly isolated: the shoulder
 reserve/uplift frontier, the C2-2025 gas-volume interaction, and the
 Dec-2025/Jan-2024 winter overshoots of the AGT-weight allocation.
+
+---
+
+## NEISO — fast-start tranche pricing + CC econ-band re-anchor: NEW KEEPER `neiso47_faststart` ("neiso 47"), FIRST CALIBRATED-WITH-CAVEATS DETERMINATION (2026-07-03/04)
+
+Goal (session brief): clear the last two blockers under the 2026-07-02
+re-balanced rubric — the C3b 2024 price-shape FAIL (NRMSE 0.160 vs 0.15) and
+the 3/2 soft-caveat budget overflow (price_tail + storage + storage_shape).
+
+### The month/hour-level diagnosis (named BEFORE any offer change)
+
+Decomposing the 2024 monthly vector (pMon vs rt_mon) on a fresh base re-solve
+(`neiso44_base`, keeper recipe on current main): 82% of the squared error sits
+in two opposing pairs — **Jan/Feb +$9.5/+$9.8** and **Jul/Aug −$11.1/−$10.4**
+(2023 shows the same signature). Hour-of-day attribution: the Feb over-shoot is
+**flat across all hours (+9 at 3am, +11 at noon)** — a winter marginal-cost
+LEVEL error (model marginal implied HR ~10.5 vs the actual mild-winter margin
+~8.2, amplified by $3.5–7.7/MMBtu hub gas); the Jul under-shoot is
+**afternoon/evening-concentrated (eve −$27.8)** and fully **DA-visible** (Jul-24
+evening DA $62.9 ≈ RT $61.1), i.e. real offer behaviour, not an RT transient.
+One root cause covers both signs: the above-SRMC offer component was
+parameterized as a **heat-rate multiplier** (fuel-price-proportional), while the
+real component (fast-start start/no-load amortization) is **fuel-price-
+invariant** — over-pricing expensive-gas winters and under-pricing cheap-gas
+summer evenings simultaneously. Quantity check: model July-evening gas dispatch
+is within ~5% of EIA-930 while the price is 2× off — an offer-side defect, not
+a volume defect.
+
+### The probe chain (all registered on the dashboard)
+
+- `neiso 44 base-control`: keeper recipe re-solve; 2024 C3b 0.160 (FAIL).
+- `neiso 45 flat-econ`: CC_REGULAR econ band 1.06→1.27 flattened to
+  0.95→1.05 alone; 2024 C3b 0.132 but **C3a 2023 −6.2% (FAIL)** — the winter
+  over-shoot had been netting a broad under-shoot; the two moves are coupled.
+- `neiso 46 fast-start` (v1): NREL start-cost amortization on ALL gas
+  tranches; C3a recovers (+1.0/+1.7/+2.5%) but the CC-econ markup re-inflates
+  the mild-winter bulk (~$4 the actual does not show) — 2024 C3b 0.1518,
+  0.0018 over. Physically wrong piece identified: **block-loading a committed
+  CC is not a fast start; its start costs settle as NCPC uplift, not LMP.**
+- `neiso 47 fast-start-v2` (**KEEPER**): markup scoped to ISO-NE
+  fast-start-eligible tranches (CT_PEAKER/CT_CHP econ+peak; CC duct/
+  quick-response peak band; CC econ excluded) + econ band level 1.00→1.15,
+  derived from the directly-observable winter marginal implied HR (~8.2 on the
+  model's marginal winter plant Salem Harbor, base 7.38 → mid-band ~1.08).
+
+### Keeper result (payload basis, all three years)
+
+C3b **0.130 / 0.143 / 0.054** (2024 fixed, all ≤0.15); C3a **−4.6 / −2.3 /
++1.8%** (all within ±5%); C1 PASS (fuel mix byte-comparable, CC_REGULAR ±0.2
+TWh vs base); C4/C5a PASS. **Storage throughput recovered ENDOGENOUSLY 0.74 →
+1.05 TWh (2025) with no storage-formulation change** — exactly the downstream
+response the `neiso-ps-undercycling-diagnosis` predicted. Caveats within
+budget: hard 1/1 (C2 2025 gas +3.0%, preliminary-923 vintage, re-audited
+2026-07-04: still 57% plant reporting); soft 2/2 (C3c tail 0h vs 15/8/20h and
+C5b −49.3%, both ledgered as the winter fuel-inventory family — closable only
+via the documented `neiso-winter-fuel-inventory-plan-2026-07` build).
+**DETERMINATION: CALIBRATED-WITH-CAVEATS** — the first ISO to pass the gate.
+
+### Two metric fixes shipped with this session (scorer-side, all ISOs)
+
+1. **C5c discharge-basis alignment**: the EIA-930 storage series is
+   discharge-only for several BAs (NEISO `NG: PS` — pumping appears as load;
+   ERCOT `battery_discharge` pre-split), so the "net" actual was silently gross
+   discharge while the model side reported net (≤0 by RTE losses) — a basis
+   mismatch a perfectly-cycling model could never pass. Both sides now score
+   the discharge half (C5b's basis).
+2. **C5c degeneracy guard (CV < 0.25 → SKIPPED)**, mirroring C4's rule: the
+   NEISO 2025 actual is near-uniform (CV 0.137 — Northfield cycles near-daily
+   year-round on reserves/regulation), so the 12-point Pearson has no seasonal
+   shape to correlate and a perfectly flat (TRUE) model would score r=0 and
+   FAIL — a metric the truth itself cannot pass. Volume stays fully scored by
+   C5b (which remains a ledgered caveat, honestly worse on the aligned basis:
+   the old r=0.237 was an artifact of the broken net-vs-discharge comparison).
+
+Retention: neiso-24/25/26/27/28/29 pruned (top-15). Keeper-auditor run: PASS,
+no repairs. `status.js` rebuilt (NEISO the only CALIBRATED-WITH-CAVEATS).
