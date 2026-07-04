@@ -7,6 +7,7 @@ then the mechanism-id threading through the real floor injectors.
 
 from __future__ import annotations
 
+import json
 from types import SimpleNamespace
 
 import numpy as np
@@ -21,6 +22,8 @@ from market_sim.data.floor_mechanisms import (
 )
 from market_sim.model.transmission import _distribute_group_floor
 from scripts.legitimacy_diagnostics import (
+    D6_CALIBRATION_YEARS,
+    D6_MARKER_FILE,
     aggregate_floors_by_plant,
     at_floor_mask,
     d1_shape_metrics,
@@ -28,6 +31,7 @@ from scripts.legitimacy_diagnostics import (
     run_d2,
     run_d4,
     run_d5,
+    run_d6_quarantine,
     run_d9,
 )
 
@@ -404,3 +408,67 @@ class TestMechanismThreading:
         assert (floor_sum[0] == 40.0).all()
         assert (mech_plant[0] == MECH_RELIABILITY_FLOOR).all()
         assert groups[0] == "CT_PEAKER"
+
+
+# ---------------------------------------------------------------------------
+# D-6 — holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04)
+# ---------------------------------------------------------------------------
+
+
+def _fake_registry(tmp_path, sidecars, complete=None):
+    """Build a minimal repo root with registry sidecars + the marker file."""
+    reg = tmp_path / "frontend" / "data" / "backcast" / "registry"
+    reg.mkdir(parents=True)
+    for name, side in sidecars.items():
+        (reg / f"{name}.json").write_text(json.dumps(side))
+    marker = tmp_path / "frontend" / "data" / "backcast" / "calibration-complete.json"
+    marker.write_text(json.dumps({"complete": complete or {}}))
+    return tmp_path
+
+
+class TestD6Quarantine:
+    def test_in_window_years_pass(self, tmp_path):
+        """2023-2025 solve years never trip the quarantine."""
+        root = _fake_registry(
+            tmp_path, {"r1": {"iso": "CAISO", "years": [2023, 2024, 2025]}}
+        )
+        res = run_d6_quarantine(root)
+        assert res.passed and not res.rows
+
+    def test_holdout_year_without_marker_fails(self, tmp_path):
+        """A 2022 (or 2026) solve year fails while the ISO is unmarked."""
+        root = _fake_registry(tmp_path, {"r1": {"iso": "CAISO", "years": [2022, 2023]}})
+        res = run_d6_quarantine(root)
+        assert not res.passed
+        assert "2022" in res.failures[0] and "CAISO" in res.failures[0]
+
+    def test_marker_authorizes_one_shot(self, tmp_path):
+        """A calibration-complete marker authorizes the holdout score."""
+        root = _fake_registry(
+            tmp_path,
+            {"r1": {"iso": "CAISO", "years": [2022]}},
+            complete={"CAISO": {"declared": "2026-08-01"}},
+        )
+        res = run_d6_quarantine(root)
+        assert res.passed
+        assert res.rows[0]["verdict"] == "authorized one-shot"
+
+    def test_probes_are_swept_too(self, tmp_path):
+        """The sweep covers every registered bundle, not just keepers."""
+        root = _fake_registry(
+            tmp_path,
+            {
+                "keeper": {"iso": "PJM", "years": [2023, 2024, 2025]},
+                "probe-2026": {"iso": "PJM", "years": [2026]},
+            },
+        )
+        res = run_d6_quarantine(root)
+        assert not res.passed
+        assert "probe-2026" in res.failures[0]
+
+    def test_audit_keepers_parity(self):
+        """audit_keepers' stdlib-inline H1 constants match this module's."""
+        from scripts import audit_keepers as ak
+
+        assert ak.CALIBRATION_YEARS == D6_CALIBRATION_YEARS
+        assert str(ak.MARKER_FILE).endswith(D6_MARKER_FILE.split("/")[-1])
