@@ -157,7 +157,21 @@ CAISO's WECC import/export node is modeled as **pseudo-generators on a stepped s
 
 Some policy parameters are **cost adders** (change the objective vector): carbon price, NOx price, SO2 price. These are handled by the marginal cost assembly — no structural change to the LP.
 
-Some policy parameters are **constraints** (add rows to the LP): NOx emission caps, RPS minimums (minimum % clean generation), potentially others.
+Some policy parameters are **constraints** (add rows to the LP): CO2/NOx emission mass caps, RPS minimums (minimum % clean generation), potentially others.
+
+**Carbon: one channel, two price sources.** Every carbon path routes through the same `emission_rate[g] · m[g] · p_allowance` channel, where `m[g] ∈ [0,1]` is a per-generator membership weight (`m_zone[zone_idx[g]]`, the share of the generator's zone inside the program's member states; import/external nodes = 0). The unified resolver `policy/cap_and_trade.py::resolve_carbon_program` returns the membership plus **exactly one** price source: the exogenous **adder** (`p_allowance` known ex-ante — measured backcast auction price, or projected forecast program price) folded into MC, or a **mass-cap row** whose LP dual *is* `p_allowance`. This is deliberate (see §5's carbon note and `docs/handoffs/emissions-mass-cap-plan-2026-07.md`): RGGI/CARB clear in a banked, multi-sector market this power model does not contain, so their faithful representation is the *adder*; the endogenous row dual is a **power-sector, no-bank scenario** allowance price (EPA 111(d)/CSAPR or a user cap), never fitted to the observed $/ton. The registry `CAP_AND_TRADE_PROGRAMS` sets CAISO→CARB, NYISO→RGGI(NY), NEISO→RGGI(6 NE states) with `m_zone≡1` on load zones; PJM→RGGI with a fractional membership shipped OFF pending the EIA-860→state crosswalk; ERCOT/MISO have no program. Forecast RGGI/CARB now carries the *projected* program price (the last realized clearing price escalated at the published CARB 5%+CPI / RGGI CCR 7%/yr floor-band rate) instead of zero — the EM-6 seam fix.
+
+**CO2 mass cap (active, GATED default off).** When `mass_cap_enabled` and a power-sector tonnage budget is configured, `_build_mass_cap_rows` appends one inequality per cap:
+
+```
+# CO2 mass cap (annual)
+Σ_{g∈members} Σ_t  m[g] × emission_rate[g] × P[g,t]  ≤  cap_tons
+
+Dual on this constraint = endogenous allowance price ($/tCO2),
+reported as DispatchResult.co2_cap_price = −λ.
+```
+
+Import-node and inter-zone flow columns get a zero coefficient (in-region emissions only), so the leakage channel — a binding cap lifts the in-region price and pulls in uncapped imports up to the transmission limit — is *represented*, not suppressed. The block is appended after the import-node rows and immediately before the RPS row (end-anchored dual layout `[ … | mass_cap | rps | reserve ]`). No banking/borrowing across years: each year's cap binds independently (the sequential one-pass year loop forbids the multi-year coupling a true bank needs), so the dual is an upper bound on a banked price in a tight year and ~0 in a loose year. Budget schedules land via the `rggi-co2-budgets` / `carb-cap-schedule` intake datatypes; the row stays inert until a budget is supplied.
 
 **Build rule:** Every policy parameter in the config is tagged `kind: "adder"` or `kind: "constraint"`. The LP builder checks for active constraint-type policies and appends rows.
 
@@ -175,11 +189,11 @@ the economic new entry screen as additional clean energy revenue.
 The constraint creates a shadow price that raises clean revenue and compresses thermal margins, so clean additions and thermal retirements are driven entirely through the economic screens — no force-build in capacity evolution.
 
 ```
-# Example: NOx cap (extension point, not yet defined)
+# NOx cap (same builder as the CO2 mass cap, nox_rate coefficient)
 Σ_g Σ_t nox_rate[g] × P[g,t] ≤ nox_limit                              # annual
 ```
 
-Other constraint-type policies (NOx caps, etc.) are not yet defined; the extension point in the builder keeps the door open for them.
+The CO2 mass cap above is the first realized constraint of this family; a NOx mass cap is the same `_build_mass_cap_rows` builder with `nox_rate` in place of `emission_rate` and is a trivial follow-on (out of the current scope). `policy/constraints.py::get_active_policy_constraints` is the wiring point that surfaces these specs to the dispatch builder.
 
 ### 1.5 Emerging Technologies
 

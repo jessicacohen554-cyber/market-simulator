@@ -40,17 +40,27 @@ def state_carbon_price(config: ScenarioConfig, year: int) -> float | None:
 
 
 def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
-    """Resolve the carbon price for a given year.
+    """Resolve the scalar carbon price ($/tCO2) for a given year.
 
-    If ``config.carbon_price`` is nonzero, return it directly (flat
-    trajectory). If ``config.carbon_price`` is 0, the ISO's state
-    carbon program is checked next (:func:`state_carbon_price` — CA
-    cap-and-trade for CAISO backcast years). Otherwise, if
-    ``config.carbon_price_path`` names a carbon path in
-    :data:`CARBON_PRICE_PATHS`, interpolate from that path: the trajectory
-    is defined at a few knot years, intermediate years are linearly
-    interpolated, and years outside the knot range take the nearest
-    endpoint value. Otherwise return ``0.0``.
+    Thin, backward-compatible wrapper over the unified carbon-program resolver
+    (:func:`market_sim.policy.cap_and_trade.resolve_carbon_program`); returns
+    the resolution's ``.price_adder`` (the exogenous allowance-price channel).
+    Precedence:
+
+    1. A nonzero ``config.carbon_price`` scenario override is returned directly
+       (flat trajectory), unchanged.
+    2. The ISO's cap-and-trade program adder: the **measured** CARB/RGGI
+       auction average in backcast years, or the **projected** program price in
+       forecast years (the EM-6 seam fix — forecast carbon is no longer zero
+       for a program ISO). CAISO/NYISO/NEISO carry a program; ERCOT/MISO do not.
+    3. Fall through to ``config.carbon_price_path`` in
+       :data:`CARBON_PRICE_PATHS` (linear-interpolated across knot years,
+       nearest-endpoint clamp outside the range) when no program adder applies.
+
+    The scalar returned here is the ISO-wide allowance price used by the
+    capacity-evolution screen and the CARB border adder; the fractional-
+    membership weighting for a partial-footprint program (PJM) is applied at the
+    marginal-cost assembly seam (``data/fleet.py::assemble_mc``), not here.
 
     Args:
         config: Scenario config supplying the flat carbon price and the
@@ -63,9 +73,13 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
     if config.carbon_price != 0:
         return float(config.carbon_price)
 
-    state_price = state_carbon_price(config, year)
-    if state_price is not None:
-        return state_price
+    # Program adder (measured backcast / projected forecast). Import here to
+    # avoid a circular import at module load (cap_and_trade imports scenarios).
+    from market_sim.policy.cap_and_trade import resolve_carbon_program
+
+    resolution = resolve_carbon_program(config, year)
+    if resolution is not None and resolution.price_adder:
+        return float(resolution.price_adder)
 
     path = CARBON_PRICE_PATHS.get(config.carbon_price_path)
     if path is None:

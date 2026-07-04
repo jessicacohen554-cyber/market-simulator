@@ -1,0 +1,65 @@
+# Canonical schema: carb-cap-schedule (California Air Resources Board
+# cap-and-trade annual allowance budget and Auction Reserve floor-price
+# schedule, per budget year).
+#
+# CARB is the source of two quantities this model uses:
+#
+#   1. The annual allowance BUDGET (MMT CO2e/yr), declining per the Scoping Plan
+#      / post-2030 cap-decline amendment — the tonnage a power-sector-only
+#      mass-cap row would bind against for CAISO. This is a scenario/analytic
+#      instrument (power-sector, no-bank; docs/handoffs/emissions-mass-cap-plan-
+#      2026-07.md §2, §8), NOT the CARB market clearing price (which is set by a
+#      banked, multi-sector market and enters as the measured/projected adder).
+#   2. The Auction Reserve (floor) price ($/tonne) with its statutory 5% + CPI
+#      annual escalation — the natural projected forecast allowance price for
+#      CAISO, whose prices have hugged the floor+premium band (plan §7).
+#
+# One row per (budget_year, metric). Provenance rides in source_doc /
+# source_page (CARB Cap-and-Trade Regulation §95870-95911 and the annual
+# auction-reserve-price notice). NEVER intake 2022 or H1-2026 rows (holdout
+# quarantine, CLAUDE.md rule 22).
+datatype: carb-cap-schedule
+schema_version: 1
+title: CARB cap-and-trade allowance budget and floor-price schedule
+description: >-
+  California cap-and-trade annual allowance budget (MMT CO2e) and Auction
+  Reserve (floor) price ($/tonne) by budget year. The budget feeds the optional
+  power-sector mass-cap row; the floor-price escalator feeds the projected
+  forecast allowance price for CAISO.
+
+key_columns: [budget_year, metric]
+allow_additional_columns: false
+
+columns:
+  - name: budget_year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Budget calendar year the value applies to.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: One of allowance_budget | auction_reserve_price.
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: >-
+      The quantity — MMT CO2e for allowance_budget, $/tonne for
+      auction_reserve_price (see the unit column).
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: Unit of value — mmt_co2e or usd_per_tonne.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Authoritative CARB document the value is drawn from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Section/table/page reference within source_doc.

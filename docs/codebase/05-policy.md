@@ -27,18 +27,43 @@ step — it is an annual LP constraint (`_build_rps_row` in `dispatch.py`):
 price** (`DispatchResult.rps_shadow_price`), which competes with exogenous EACs in
 capacity economics (`max(eac_exogenous, rps_shadow_price)` — no stacking).
 
-## 5.3 Carbon pricing (`carbon.py`)
+## 5.3 Carbon pricing (`carbon.py`, `cap_and_trade.py`)
 
-`resolve_carbon_price(config, year)` resolves a `$/tCO2` price by priority:
+All carbon paths route through one `emission_rate · membership` channel, resolved
+by `cap_and_trade.py::resolve_carbon_program(config, year)`. It returns a per-zone
+membership `m_zone` plus **exactly one** price source (invariant-asserted):
+- **adder path** — an exogenous `$/tCO2` price folded into MC (price known
+  ex-ante), or
+- **row path** — a `MassCapSpec` whose LP dual is the endogenous allowance price
+  (see §5.8).
+
+The two-source split is deliberate: RGGI/CARB are banked, multi-sector markets
+this power model does not contain, so their faithful representation is the
+exogenous adder; the endogenous row dual is a **power-sector, no-bank scenario**
+price (EPA 111(d)/CSAPR or a user cap), never fitted to the observed $/ton.
+
+`CAP_AND_TRADE_PROGRAMS` (`constants.py`, cited) maps ISO→program: CAISO→CARB,
+NYISO→RGGI(NY), NEISO→RGGI(6 NE states) with `m_zone≡1` on load zones (import
+nodes = 0); PJM→RGGI with a fractional `PJM_RGGI_ZONE_SHARE` (empty → adder ships
+OFF pending the EIA-860→state crosswalk); ERCOT/MISO have no program.
+
+`resolve_carbon_price(config, year)` is a thin scalar wrapper over the resolver's
+`.price_adder`, resolving by priority:
 1. flat `config.carbon_price` if non-zero;
-2. else `state_carbon_price` (measured CA cap-and-trade / RGGI auction settlements,
-   2023–2025, gated on `config.state_carbon_pricing`);
+2. else the program adder — **measured** CARB/RGGI auction settlements (2023–2025)
+   in backcast, or the **projected** program price in forecast (last realized
+   clearing price escalated at the published CARB 5%+CPI / RGGI CCR 7%/yr
+   floor-band rate; `CARB_FLOOR_ESCALATION` / `RGGI_RESERVE_ESCALATION`). This
+   closes the EM-6 seam — forecast carbon is no longer zero for a program ISO. An
+   explicit non-default `config.carbon_price_path` still wins.
 3. else interpolate the named `config.carbon_price_path` trajectory;
 4. else 0.
 
-It enters the dispatch objective as `carbon_price · emission_rate · generation`
-added to each thermal unit's MC — no constraint row. CAISO unspecified imports
-carry a border-carbon adjustment (`CARB_UNSPECIFIED_IMPORT_EF = 0.428 tCO2e/MWh`).
+The adder enters the dispatch objective as `carbon_price · emission_rate ·
+generation` added to each thermal unit's MC (`assemble_mc`, which also accepts a
+membership-weighted per-generator adder for a fractional-footprint program). CAISO
+unspecified imports carry a border-carbon adjustment (`CARB_UNSPECIFIED_IMPORT_EF
+= 0.428 tCO2e/MWh`).
 
 ## 5.4 Environmental attribute credits (`eac.py`)
 
@@ -114,8 +139,41 @@ curves where penalties **stack** as reserves fall deeper into shortage.
 
 ## 5.7 Policy constraint extension point (`constraints.py`)
 
-`get_active_policy_constraints(config, year)` returns a list of LP constraint rows
-for active policies. It is currently a placeholder (returns empty) — the wiring
-point for future NOx caps and similar system-wide constraints. The RPS constraint
-is wired directly in `dispatch.py` rather than here.
+`get_active_policy_constraints(config, year)` returns the active constraint-type
+policy specs. It now surfaces the emissions **mass-cap** spec (§5.8) from the
+carbon resolver — `[cap_spec]` when `mass_cap_enabled` and a power-sector budget
+is configured, else `[]`. Still the wiring point for future NOx caps and similar
+system-wide constraints. The RPS constraint is wired directly in `dispatch.py`
+rather than here.
+
+## 5.8 Emissions mass-cap / cap-and-trade row (`dispatch.py`)
+
+`_build_mass_cap_rows` (GATED, `mass_cap_enabled` default OFF) adds one inequality
+row per active power-sector cap:
+
+```
+Σ_{g ∈ members} Σ_t  m[g] · emission_rate[g] · P[g,t]  ≤  cap_tons
+```
+
+Vectorized (COO block cloned from the RPS row — no hour loop, rule 2). Import-node
+and inter-zone flow columns get a **zero** coefficient — the cap is on in-region
+emissions, so imported energy's emissions occur outside the capped region; the
+leakage channel (a cap raises in-region price → pulls in uncapped imports up to
+the transmission limit) is thereby represented, not suppressed.
+
+The row block is appended after the import-node rows and immediately **before** the
+RPS row, so the end-anchored dual layout is `[ … | mass_cap (k) | rps (0/1) |
+reserve (n) ]` and RPS's distance from the end is unchanged. The mass-cap dual is
+recovered end-anchored and reported as `DispatchResult.co2_cap_price = −λ` (one per
+cap). This dual is the endogenous allowance price — a **power-sector, no-bank
+scenario** price (an upper bound on a banked price in a tight year, ~0 in a loose
+year), never a point forecast of the RGGI/CARB market price. No banking/borrowing
+across years (each year's cap is enforced independently; the runner's sequential
+one-pass year loop and rule 9 forbid the multi-year coupling a true bank needs).
+
+The runner builds the per-generator coefficient `m_zone[zone_idx]·emission_rate`
+from each `MassCapSpec` and threads it into the dispatch builder alongside
+`rps_target`. Budget schedules land via the `rggi-co2-budgets` /
+`carb-cap-schedule` intake datatypes; until a budget is supplied the row stays
+inert. Design: `docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
 </content>

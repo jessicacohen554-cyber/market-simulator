@@ -1,5 +1,58 @@
 # Changelog
 
+## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
+
+**Model.** Unified every carbon path through one `emission_rate × membership`
+channel behind a new resolver, `policy/cap_and_trade.py::resolve_carbon_program`,
+and added the optional endogenous mass-cap row (PP-2.1 IPM parity). The resolver
+returns a per-zone membership `m_zone` plus **exactly one** price source
+(invariant-asserted): the exogenous allowance-price *adder* (measured backcast /
+projected forecast) or a *mass-cap spec* whose LP dual is the endogenous
+allowance price. The two-source split is deliberate (plan §2): RGGI/CARB clear in
+a banked, multi-sector market this power model does not contain, so their faithful
+representation is the adder — the endogenous dual is a **power-sector, no-bank
+scenario** price (EPA 111(d)/CSAPR or a user cap), never fitted to the observed
+$/ton. No banking/borrowing in v1 (plan §8).
+
+- **EM-6 seam closed.** `resolve_carbon_price` is now a thin wrapper over the
+  resolver; forecast RGGI/CARB carries the *projected* program price (last
+  realized clearing price escalated at the published CARB 5%+CPI / RGGI CCR 7%/yr
+  floor-band rate) instead of zero. An explicit non-default RFF `carbon_price_path`
+  still wins. Backcast measured prices unchanged (bit-for-bit).
+- **`CAP_AND_TRADE_PROGRAMS` registry** (`constants.py`, all values cited):
+  CAISO→CARB, NYISO→RGGI(NY), NEISO→RGGI(6 NE states) with `m_zone≡1` on load
+  zones (import nodes = 0); PJM→RGGI with a fractional `PJM_RGGI_ZONE_SHARE`
+  (empty → adder ships OFF pending the EIA-860→state crosswalk). ERCOT/MISO: no
+  program.
+- **`_build_mass_cap_rows`** (`dispatch.py`, vectorized, no hour loop): coefficient
+  `m[g]·emission_rate[g]` on member `P[g,t]` columns, `≤ cap`; import/flow columns
+  get zero coefficient (in-region emissions only — leakage represented, not
+  suppressed). Appended after import-node rows, immediately before RPS; the dual
+  is reported as `DispatchResult.co2_cap_price` (= −λ). `get_active_policy_constraints`
+  returns the cap spec; the runner threads it into the dispatch builder.
+- **New `ScenarioConfig` fields** (registered, in `run_config.json`, default OFF):
+  `mass_cap_enabled`, `mass_cap_program`, `mass_cap_tons`, `carbon_program_price_path`.
+  `assemble_mc` now accepts a membership-weighted per-generator carbon adder
+  (uniform membership reproduces the scalar path bit-for-bit).
+
+**Data.** New schema-first intake datatypes `rggi-co2-budgets` and
+`carb-cap-schedule` (schemas + `curate_*.py` + orchestrator registration + data
+dictionary), landing the RGGI/CARB budget & floor-price schedules that feed the
+row/projection once published tables arrive. Both curators skip cleanly until
+their raw CSV lands (the row stays inert) and reject 2022/H1-2026 rows (rule 22).
+
+**Tests.** `tests/test_cap_and_trade.py` (resolver invariant, membership,
+measured/projected adder, cap path, membership-weighted MC),
+`tests/test_dispatch.py::TestMassCapConstraint` (trivial binding-cap dual =
+switching price, simultaneous RPS+reserve+cap dual index, membership zeroing,
+no-hour-loop), `tests/test_curate_{rggi_co2_budgets,carb_cap_schedule}.py`.
+Two pre-EM-6 forecast-zero assertions in `test_fuel.py` / `test_capacity.py`
+updated to the projected-adder behaviour.
+
+**Docs.** `docs/handoffs/emissions-mass-cap-plan-2026-07.md` is the design;
+`model-methodology-spec.md` (emissions/policy) and `docs/codebase/05-policy.md`
+synced.
+
 ## 2026-07-04 (forecast-mode storage AS withholding — endogenous, no double-count)
 
 **Model.** The forecast analogue of the measured backcast storage-AS reservation

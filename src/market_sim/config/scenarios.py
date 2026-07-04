@@ -56,6 +56,19 @@ class ScenarioConfig:
     # See market_sim.policy.carbon.resolve_carbon_price.
     nox_price: float = 0.0  # $/ton NOx
     so2_price: float = 0.0  # $/ton SO2
+    # Emissions mass-cap / cap-and-trade LP row (PP-2.1 IPM parity). GATED,
+    # default OFF — cap-off reproduces today's dispatch exactly. When on and a
+    # power-sector tonnage budget is supplied (mass_cap_tons, or the published
+    # RGGI/CARB schedule once landed), the ISO's fossil emissions are bounded by
+    # an inequality row whose dual is the endogenous allowance price
+    # (DispatchResult.co2_cap_price). This is a power-sector, no-bank SCENARIO
+    # price (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2, §8) — NOT the
+    # banked multi-sector RGGI/CARB market price, which enters as the measured/
+    # projected adder via resolve_carbon_price. See policy/cap_and_trade.py.
+    mass_cap_enabled: bool = False
+    mass_cap_program: str | None = None  # pollutant/program label for the row
+    mass_cap_tons: float | None = None  # explicit annual budget (tons CO2)
+    carbon_program_price_path: str | None = None  # named projected forecast path
     demand_growth_rate: float = (
         0.01  # flat override used only when no structured rates exist
     )
@@ -3214,6 +3227,10 @@ TIER_TAGS: dict[str, int] = {
     "state_carbon_pricing": 1,
     "nox_price": 1,
     "so2_price": 1,
+    "mass_cap_enabled": 1,
+    "mass_cap_program": 1,
+    "mass_cap_tons": 1,
+    "carbon_program_price_path": 1,
     "demand_growth_rate": 1,
     "demand_growth_path": 1,
     "renewable_buildout_pace": 1,
