@@ -895,6 +895,7 @@ def apply_storage_new_entry(
     iso: str,
     cumulative: CumulativeDeployment | None = None,
     deliverability_headroom: dict[str, float] | None = None,
+    endogenous_as_revenue_per_mw_yr: float | None = None,
 ) -> list[StorageUnit]:
     """Add storage whose stacked value beats its annualized cost.
 
@@ -928,6 +929,21 @@ def apply_storage_new_entry(
     of the build landing where the RA requirement is not yet met — the same
     locational logic as the thermal screens. A no-op (factor 1.0) when the flag
     is off or no zone is long.
+
+    Storage AS credit (one mechanism per phenomenon, CLAUDE.md rule 19).
+    ~85% of 2023 ERCOT battery revenue was ancillary services, absent from the
+    energy-arbitrage + capacity stack above. Exactly one mechanism supplies it:
+
+    * ``config.ercot_storage_as_endogenous`` **on** → the AS duty is priced
+      inside the dispatch reserve co-optimization (storage headroom backs
+      upward reserve and the AS-widened spreads flow into the arbitrage term).
+      The AS credit is then the value **derived from that solved co-opt's own
+      reserve duals**, passed as ``endogenous_as_revenue_per_mw_yr``
+      (``ancillary.realized_storage_as_revenue_per_mw_yr``); the exogenous
+      saturation rate is **not** added — that would double-count.
+    * endogenous **off** → the legacy/backcast-validation path: the calibrated
+      exogenous ``ancillary.as_revenue_per_mw_yr("storage", …)`` is the sole AS
+      credit.
     """
     iso = iso.upper()
     iso_config = get_iso_config(iso)
@@ -961,9 +977,15 @@ def apply_storage_new_entry(
         )
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
         # 2023 battery revenue and absent from the energy-arbitrage + capacity
-        # value stack above. Saturates on the existing storage fleet, so each
-        # year's marginal build sees the AS rate at the current penetration.
-        as_revenue = as_revenue_per_mw_yr("storage", existing_mw, config)
+        # value stack above. Under the endogenous co-opt the AS duty is already
+        # priced in dispatch, so the credit is DERIVED from that solve's reserve
+        # duals (mutually exclusive with the exogenous rate, rule 19); otherwise
+        # it is the exogenous rate, saturating on the existing storage fleet so
+        # each year's marginal build sees the AS rate at the current penetration.
+        if getattr(config, "ercot_storage_as_endogenous", False):
+            as_revenue = float(endogenous_as_revenue_per_mw_yr or 0.0)
+        else:
+            as_revenue = as_revenue_per_mw_yr("storage", existing_mw, config)
         ref_key = "li_ion" if "li_ion" in tech_name else tech_name
         cum_gw = cumulative.get(ref_key) if cumulative else None
         cost = compute_storage_annual_cost(

@@ -69,7 +69,7 @@ Wright's-Law learning with IRA ITC phaseout.
 |---|---|---|
 | Linear SOC with one-way efficiencies, no simultaneous chg/dis via ε or binaries | η=√rte split, ε tiebreak | ✅ standard LP treatment; ε matches HiGHS-era practice; binaries rightly avoided |
 | Horizon boundary condition on SOC (cyclic or fixed terminal) | cyclic annual | ✅ cyclic is the cleanest artifact-free choice for a full-year LP |
-| Limit perfect-foresight over-cycling (rolling horizon, AS deduction, cycle limits) | measured AS reservation + optional daily anchor + throughput adder | ✅ structurally sound; the *measured* AS series is backcast-only — a forecast analogue (AS requirement × storage share) exists via `as_revenue` saturation but not as an hourly power reservation. Worth a follow-up. |
+| Limit perfect-foresight over-cycling (rolling horizon, AS deduction, cycle limits) | measured AS reservation (backcast) + **endogenous reserve co-opt (forecast)** + optional daily anchor + throughput adder | ✅ structurally sound; the *measured* AS series stays backcast-only, and the forecast analogue is the endogenous reserve co-optimization (storage headroom `cap − Dis + Chg` backs upward AS, priced by a forward-driven requirement) — **resolved, see follow-up below.** |
 | Duration-dependent ELCC with marginal saturation (NREL/E3, PJM class ratings) | interpolated breakpoint table + `(1−pen)^1.5` derate | ✅ matches the published shape; breakpoints cited |
 | Degradation as $/MWh throughput from cycle life (NREL ATB augmentation) | energy-capex slice / rated cycles × 0.25 replacement fraction | ✅ reasonable; the 0.25 fraction is a documented, tunable simplification |
 | Storage as price-taker in investment screens vs price-maker reality | prior-year prices, one cycle per window | ⚠️ known optimism at high penetration (no self-cannibalization of spreads within the screen year); partially offset by the saturation derates. Acceptable for a one-pass evolution (rule #10). |
@@ -78,7 +78,48 @@ Wright's-Law learning with IRA ITC phaseout.
 **Verdict:** the market-sim storage model is methodologically sound for its
 purpose (wholesale dispatch + entry). Arbitrage behavior is *supposed* to be
 there. No violations of the repo's non-negotiable rules found; one follow-up
-(forecast-mode hourly AS power reservation) noted.
+(forecast-mode hourly AS power reservation) noted — **now resolved (below).**
+
+#### Follow-up (resolved 2026-07): forecast-mode storage AS withholding
+
+The forecast analogue of the measured backcast AS reservation is the
+**endogenous reserve co-optimization**, not a new exogenous "storage AS share"
+haircut — one mechanism per phenomenon (rule 19). Full mechanism attribution
+(what already withholds/prices storage AS, per mode) is in
+`docs/storage-as-withholding-attribution-2026-07.md`. What changed:
+
+- **Dispatch (no new LP structure).** Storage headroom `cap − Dis + Chg` already
+  backs upward reserve in the shared-headroom rows (`model/dispatch.py`), and the
+  ERCOT reserve design sets `storage_eligible=True`, so once
+  `energy_reserve_coopt` is on in the forecast runner the battery chooses
+  energy-vs-AS on its own power cap, priced by the AS demand curves. The AS
+  *requirement* regenerates from forward load/VRE drivers when
+  `ercot_as_forward_requirement` is on (`reserve_config.py` constants) — no
+  measured award in the forward path (rule 13). A 7-day tight-capacity slice:
+  battery discharge in the top 15% of hours falls ~37% and the hours it dumps
+  >4 GW into the peak drop from 19→0 (it stops over-flattening spreads) while
+  holding the AS requirement.
+- **`ercot_storage_as_endogenous` is now meaningful in forecast.** It was a no-op
+  there (it only suppressed a measured overlay forecast never applies). It now
+  (a) is validated to require `energy_reserve_coopt` (and, in forecast with the
+  multi-product AS co-opt, `ercot_as_forward_requirement`, closing the
+  silent-zero-requirement footgun), and (b) switches the entry AS credit source.
+- **Entry double-count closed (rule 19).** The storage new-entry screen
+  (`apply_storage_new_entry`) added the exogenous `as_revenue_per_mw_yr` on top
+  of an arbitrage figure that, under the co-opt, already embeds the AS-vs-energy
+  choice. Under `ercot_storage_as_endogenous` the exogenous credit is now
+  suppressed and replaced by one **derived from the solved co-opt's own reserve
+  duals** (`ancillary.realized_storage_as_revenue_per_mw_yr` = Σ held-reserve MW
+  × binding AS price / fleet MW), threaded from the prior year via
+  `runner.prior_results`. Exactly one mechanism prices storage AS.
+- **Scope / seams.** The same M5-vs-co-opt double-count exists for *thermal* AS
+  (`capacity.py` retirement/new-entry); `ercot_storage_as_endogenous` is
+  storage-specific, so thermal is a labelled follow-up, not silently changed.
+  PJM synchronized-reserve storage duty (the
+  `PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO` note) remains a documented seam — no PJM
+  measured storage-reserve series is intaken here. Backcast keepers and the
+  measured overlay are bit-unchanged by default (the gate keys on
+  `ercot_storage_as_endogenous`, off in those configs).
 
 ---
 
