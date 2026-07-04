@@ -143,12 +143,20 @@ this intake):**
     `--waha-neg-day-freq-source` so the West-zone negative-pricing input
     (a live measured input, `fuel.py`) is written with its citation in the
     same reproducible pass.
-- **F2 — PJM native DataMiner `gen_by_fuel` 2026: STILL BLOCKED (re-checked
-  2026-07-04).** `PJM_2022…2025_gen_by_fuel.csv` exist; 2026 needs a
-  registered DataMiner subscription key — `.env` carries only `EIA_API_KEY`,
-  no `Ocp-Apim-Subscription-Key`. Affects only the clean `generation/PJM`
-  datatype (`is_renewable` flag); the EIA-930 PJM fuel-mix — the actual
-  scoring bench — is landed through June.
+- **F2 — PJM native DataMiner `gen_by_fuel` 2026: CLOSED 2026-07-04** (no API
+  key was ever added; the owner exported the report from the DataMiner 2 UI —
+  `dataminer2.pjm.com/feed/gen_by_fuel` — and supplied the CSVs directly).
+  `PJM_2026_gen_by_fuel.csv` landed with the committed files' exact schema
+  and newest-first ordering, clipped at the local Jun-30 boundary (the export
+  ran to Jul 4; H1 window only): 43,410 rows, 4,341 EPT hours — the 3 absent
+  hours are the DST spring-forward hour plus two feed gaps, the same
+  signature as the committed 2025 file. The owner also supplied full-year
+  **2020 and 2021** exports (96,624 / 96,305 rows, DST fall-back dupes
+  disambiguated by the UTC column exactly as in the committed 2022 file) —
+  back-history outside the F-list, landed alongside. The clean
+  `generation/PJM` partitions now span 2020–2026; the 2023–2025 partitions
+  are row-identical to the pre-intake build, and 2022 gained 45 UTC-boundary
+  hours supplied by the neighbouring 2021 file. Retrieved 2026-07-04.
 **Verification of the 2026-07-04 follow-up pass (no LP, loader dry-run only):**
 `python scripts/verify_holdout_intake.py` re-run after the F1/F5/F6 landings —
 ERCOT/PJM 2022 and H1-2026 all load; the ERCOT zonal hub now reports **7
@@ -417,10 +425,11 @@ usual `calibration-report` flow.
 1. **Intake 2022 + H1-2026 bench + fleet data** (EIA-930 fuel-mix, CAMPD
    unit-level, delivered gas) so D-6 becomes scorable. ~~Un-scorable today.~~
    **DONE for ERCOT + PJM 2026-07-04 (§1.1)** — follow-ups F1/F5/F6 closed in
-   the same-day second pass; remaining gaps are the unpublished months (CAMPD
-   Q2-2026, delivered gas May-2026+, 2026 parasitic deferral), F2 (blocked on
-   a PJM DataMiner key) and the deliberately-deferred F3/F4 (built at one-shot
-   validation time); still open for CAISO / MISO / NYISO / NEISO.
+   the same-day second pass and F2 closed the same day via owner-supplied
+   DataMiner UI exports; remaining gaps are the unpublished months (CAMPD
+   Q2-2026, delivered gas May-2026+, 2026 parasitic deferral) and the
+   deliberately-deferred F3/F4 (built at one-shot validation time); still
+   open for CAISO / MISO / NYISO / NEISO.
 2. **Temperature limbs with ρ sign flips — PJM ComEd CC_REGULAR and both CAISO
    SP15 limbs (ST_GAS, CC_REGULAR).** Unidentified out-of-training; re-examine
    whether these tmax limbs should ship for those zone/classes at all.
