@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-04 (forecast-mode storage AS withholding — endogenous, no double-count)
+
+**Model.** The forecast analogue of the measured backcast storage-AS reservation
+is the endogenous reserve co-optimization, not a new exogenous haircut (rule 19).
+No new LP structure — storage headroom `cap − Dis + Chg` already backs upward AS
+and the ERCOT design marks storage `storage_eligible`, so with `energy_reserve_coopt`
+on the forecast battery trades energy vs AS on its own cap (7-day slice: top-15%-hour
+discharge −37%, hours dumping >4 GW into the peak 19→0). `ercot_storage_as_endogenous`
+is now meaningful in forecast: it (a) is validated to require `energy_reserve_coopt`
+(and, in forecast multi-product, `ercot_as_forward_requirement` — closing the
+silent-zero-requirement footgun), and (b) switches the storage new-entry AS credit
+from the exogenous `as_revenue_per_mw_yr` to one **derived from the solved co-opt's
+own reserve duals** (`ancillary.realized_storage_as_revenue_per_mw_yr`, threaded via
+`runner.prior_results`) — exactly one mechanism prices storage AS. The measured
+`reserve_storage_as_power` overlay stays backcast-only; backcast keepers are
+bit-unchanged (the gate keys on `ercot_storage_as_endogenous`, off there).
+
+**Docs.** New `docs/storage-as-withholding-attribution-2026-07.md` (per-mode
+mechanism map). Realigned `model-methodology-spec.md` §5.5 (AS value-stack slice +
+endogenous reconciliation) and the reserve-subsystem note (forecast runner wiring);
+`docs/storage-modeling-audit-2026-07.md` §1.3 follow-up marked resolved. Tests:
+`tests/test_forecast_storage_as_entry.py` (derived credit, entry-credit gate,
+forward-requirement load-scaling, config guards).
+
 ## 2026-07-04 (S5 governance closeout — protective rules, C7/C8 rubric criteria, DOF ledger, holdout quarantine CI)
 
 **Governance (audit §8 → CLAUDE.md rules 17–26, audit-numbered 16–25):** the
