@@ -1164,8 +1164,15 @@ def score_governance(config: dict | None, attestation: dict | None) -> dict:
         "no_pinning_to_actuals",
         "outage_filter_exogenous_net_load",
     ]
-    if attestation is None:
-        status, detail = "UNATTESTED", "no calibration_attestation.json in bundle"
+    if attestation is None or not attestation.get("governance"):
+        # A bundle whose attestation carries no governance block (e.g. only a
+        # free_parameters DOF ledger) is exactly as unattested as one with no
+        # file: nobody has asserted the four governance claims.
+        status, detail = (
+            "UNATTESTED",
+            "no governance attestation in bundle"
+            + ("" if attestation is None else " (attestation has no governance block)"),
+        )
     else:
         gov = attestation.get("governance", {})
         false_asserts = [a for a in assertions if not gov.get(a, False)]
