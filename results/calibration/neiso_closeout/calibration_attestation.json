@@ -1,90 +1,271 @@
 {
- "schema": "calibration-attestation/v1",
- "governance": {
-  "levers_trace_to_measured_input": true,
-  "no_fit_to_price_residuals": true,
-  "no_pinning_to_actuals": true,
-  "outage_filter_exogenous_net_load": true,
-  "attested_by": "neiso-43 closeout 2026-07-01 (neiso-41 full recipe + ISO-NE scarcity-price overlay)",
-  "note": "neiso-43 = the neiso-41 keeper recipe (measured Algonquin/EIA-MA-citygate DAILY gas-hub basis overlay + dual-fuel oil re-attribution + EIA-930-pinned hydro budget with 2024 plant-capacity backfill + biomass/OTHER measured must-run + historic CAMPD outage overlay + the dual-limb temperature-correlated reliability floor + floor-class outage exemption) PLUS the post-solve ORDC scarcity-price overlay with ISO-NE-grounded parameters (VOLL $2000 = ISO-NE Tariff III.1.10.1A offer cap, MCL 1200 MW ~ Millstone 3 largest single contingency, sigma 900 MW = ISO-NE PAF Study 2022). The overlay computes a reserve-shortage adder from solved headroom and adds it to econ_prices for capacity economics; dispatch/volumes/emissions untouched. Every lever anchors to a measured physical input or market-design parameter; no adder/haircut/sigmoid is tuned to a price error or volume residual; the LP is not pinned to observed CEMS generation or any measured outcome; outage availability derives from historic CAMPD unit-level forced-outage windows (exogenous to net-load calibration).",
-  "validation_note": "Reproducible from the committed bundle: scripts/run_calibration_full.py --iso NEISO --year 2023 2024 2025 --commitment --reliability-floor --hydro-backfill-year 2024 --hydro-eia930-monthly --gas-hub-basis-daily --scarcity-price-overlay --out-dir results/calibration/neiso_closeout. The reliability floor fires via the generic RELIABILITY_FLOOR_REGISTRY with 3 enabled limbs (Boston:CT_PEAKER:tmax, Central:CC_REGULAR:tmax, Connecticut:CT_PEAKER:tmax). ORDC params applied at runtime via NEISO default_scenario_overrides (ordc_voll=2000, ordc_mcl_mw=1200, ordc_lolp_sigma_mw=900, ordc_lolp_shift_sigma=0, ordc_multistep_floor=false). Floor-class outage exemption (COAL, ST_GAS) is automatic in fleet.py when reliability_floor=True and iso=NEISO."
- },
- "exceptions": [
-  {
-   "criterion": "fuelmix",
-   "klass": "CC_REGULAR",
-   "year": 2023,
-   "metric": "C1 CC_REGULAR grid-delivered volume/share (gas-vs-OTHER categorization)",
-   "magnitude": "model 51.61 vs deflated EIA-930 grid actual 50.63 TWh (+0.98 TWh, +0.7pp); gas FAMILY 53.39 vs 52.75 (+1.2%, within the C2 +/-2.5% band)",
-   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (gas-vs-EIA-930-OTHER fold-in categorization, not a model miss)",
-   "reason": "The gas FAMILY is within tolerance (C2 PASS, +1.2%); the per-class C1 gate flags CC_REGULAR because the small family-level surplus concentrates in the marginal combined-cycle unit AND the per-class actual is deflated by the geothermal+biomass that NEISO folds into the EIA-930 'Natural Gas' cell. Closable only by reconciling the OTHER/NG-fold-in categorization on both sides, NEVER by injecting the residual or scaling CC to the deflated benchmark."
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "neiso-43 closeout 2026-07-01 (neiso-41 full recipe + ISO-NE scarcity-price overlay)",
+    "note": "neiso-43 = the neiso-41 keeper recipe (measured Algonquin/EIA-MA-citygate DAILY gas-hub basis overlay + dual-fuel oil re-attribution + EIA-930-pinned hydro budget with 2024 plant-capacity backfill + biomass/OTHER measured must-run + historic CAMPD outage overlay + the dual-limb temperature-correlated reliability floor + floor-class outage exemption) PLUS the post-solve ORDC scarcity-price overlay with ISO-NE-grounded parameters (VOLL $2000 = ISO-NE Tariff III.1.10.1A offer cap, MCL 1200 MW ~ Millstone 3 largest single contingency, sigma 900 MW = ISO-NE PAF Study 2022). The overlay computes a reserve-shortage adder from solved headroom and adds it to econ_prices for capacity economics; dispatch/volumes/emissions untouched. Every lever anchors to a measured physical input or market-design parameter; no adder/haircut/sigmoid is tuned to a price error or volume residual; the LP is not pinned to observed CEMS generation or any measured outcome; outage availability derives from historic CAMPD unit-level forced-outage windows (exogenous to net-load calibration).",
+    "validation_note": "Reproducible from the committed bundle: scripts/run_calibration_full.py --iso NEISO --year 2023 2024 2025 --commitment --reliability-floor --hydro-backfill-year 2024 --hydro-eia930-monthly --gas-hub-basis-daily --scarcity-price-overlay --out-dir results/calibration/neiso_closeout. The reliability floor fires via the generic RELIABILITY_FLOOR_REGISTRY with 3 enabled limbs (Boston:CT_PEAKER:tmax, Central:CC_REGULAR:tmax, Connecticut:CT_PEAKER:tmax). ORDC params applied at runtime via NEISO default_scenario_overrides (ordc_voll=2000, ordc_mcl_mw=1200, ordc_lolp_sigma_mw=900, ordc_lolp_shift_sigma=0, ordc_multistep_floor=false). Floor-class outage exemption (COAL, ST_GAS) is automatic in fleet.py when reliability_floor=True and iso=NEISO."
   },
-  {
-   "criterion": "fuelmix",
-   "klass": "CC_REGULAR",
-   "year": 2024,
-   "metric": "C1 CC_REGULAR grid-delivered volume/share (gas-vs-OTHER categorization)",
-   "magnitude": "model 56.13 vs deflated EIA-930 grid actual 54.66 TWh (+1.47 TWh, +1.2pp); gas FAMILY 57.89 vs 56.91 (+1.7%, within the C2 +/-2.5% band)",
-   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (gas-vs-EIA-930-OTHER fold-in categorization, not a model miss)",
-   "reason": "Same gas-vs-EIA-930 fold-in categorization as 2023: gas family within C2 band (+1.7%), per-class CC_REGULAR deflated by ~1.6 TWh of geothermal+biomass folded into the NG cell. Not a dispatch error; closable only by reconciling categorization."
-  },
-  {
-   "criterion": "fuelmix",
-   "klass": "COAL_BIT/ST_GAS",
-   "year": 2023,
-   "metric": "C1 coal + steam-gas grid-delivered energy under-run (winter reliability/fuel-security runner)",
-   "magnitude": "COAL_BIT model 0.058/0.113/0.234 vs actual 0.181/0.238/0.271 TWh (2023/24/25); each per-class miss is WITHIN the C1 per-class absolute band",
-   "classification": "MODEL MISS (structural; same winter fuel-inventory / reliability-commitment family as the C3c price-tail and C5b storage items)",
-   "reason": "Residual under-run after the availability fix: the energy-only LP runs coal only at the temperature-floor commitment plus the few hours delivered gas is dear enough. The REAL units ran more on a winter fuel-security / local-reliability commitment. Closable only via the documented future build (fuel-inventory / seasonal-reliability constraint), NEVER by cranking the floor slope/cap or by an offer adder."
-  },
-  {
-   "criterion": "price_tail",
-   "year": 2023,
-   "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
-   "magnitude": "model 0h vs actual 15h (system max ~231 $/MWh)",
-   "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
-   "reason": "The energy-only LP caps the cold-hour price at the dual-fuel oil-parity (~$258/MWh). The post-solve ORDC scarcity overlay (ISO-NE-grounded LOLP curve: VOLL $2000, MCL 1200 MW, sigma 900 MW) is the structurally-correct lever: it prices the reserve tightness the perfect-foresight LP misses. The overlay fires in this run (scarcity_price_overlay=True) and modifies econ_prices for capacity economics but does not change the persisted LP prices. The overlay params are grounded in ISO-NE's largest contingency (Millstone 3) and winter reserve uncertainty (PAF Study), NOT fitted to hit the 15h target."
-  },
-  {
-   "criterion": "price_tail",
-   "year": 2024,
-   "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
-   "magnitude": "model 0h vs actual 8h (system max ~215 $/MWh)",
-   "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
-   "reason": "Same structural item as 2023. Post-solve ORDC overlay fires and modifies econ_prices."
-  },
-  {
-   "criterion": "price_tail",
-   "year": 2025,
-   "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
-   "magnitude": "model 0h vs actual 20h (system max ~258 $/MWh)",
-   "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
-   "reason": "Same structural item as 2023/2024. Post-solve ORDC overlay fires and modifies econ_prices."
-  },
-  {
-   "criterion": "storage",
-   "year": 2025,
-   "metric": "C5b storage throughput (pumped-storage + battery discharge)",
-   "magnitude": "model 0.72 vs actual 2.08 TWh (-65.5%)",
-   "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
-   "reason": "Storage arbitrage throughput tracks the peak-to-trough price spread, which is compressed because the LP caps the cold-hour tail at the dual-fuel oil-parity. Closes only when the winter fuel-inventory scarcity rent is recovered."
-  },
-  {
-   "criterion": "sysvol",
-   "family": "gas",
-   "year": 2025,
-   "metric": "C2 gas family grid-delivered TWh (preliminary 2025 vintage)",
-   "magnitude": "model 61.41 vs corrected EIA-930 59.76 TWh (+2.8%, outside +/-2.5% band)",
-   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-930 gas-vs-OTHER fold-in + preliminary-vintage incompleteness)",
-   "reason": "2025 is a preliminary EIA-923 vintage — per-class actuals are incomplete (EIA-923 reports only 52.36 TWh gas vs model 61.41 TWh). The scorer falls back to the EIA-930 grid gas cell, which INCLUDES geothermal+biomass (~5.2 TWh). The correction formula (subtract cf[OTHER]+cf[biomass]-e930[other]) under-corrects because the preliminary vintage's per-class cells are incomplete. This is the SAME categorization issue documented in the C1 CC_REGULAR exceptions (gas FAMILY within band for complete vintages 2023/2024). When the full 2025 vintage reconciles, the per-class gate replaces this family fallback. NOT closable by adjusting model dispatch."
-  },
-  {
-   "criterion": "storage_shape",
-   "year": 2025,
-   "metric": "C5c monthly storage dispatch shape (pearson r)",
-   "magnitude": "model r=0.237 vs threshold r>=0.5",
-   "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
-   "reason": "Monthly storage dispatch shape is driven by the monthly pattern of price spreads. The LP's structural missing scarcity rent compresses winter price peaks (the same root cause as C3c price-tail and C5b storage throughput), which distorts the seasonal pattern of storage arbitrage. Closes only when the winter fuel-inventory scarcity rent is recovered — the ORDC overlay modifies econ_prices for capacity economics but does not change the LP dispatch that drives the monthly shape."
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2023,
+      "metric": "C1 CC_REGULAR grid-delivered volume/share (gas-vs-OTHER categorization)",
+      "magnitude": "model 51.61 vs deflated EIA-930 grid actual 50.63 TWh (+0.98 TWh, +0.7pp); gas FAMILY 53.39 vs 52.75 (+1.2%, within the C2 +/-2.5% band)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (gas-vs-EIA-930-OTHER fold-in categorization, not a model miss)",
+      "reason": "The gas FAMILY is within tolerance (C2 PASS, +1.2%); the per-class C1 gate flags CC_REGULAR because the small family-level surplus concentrates in the marginal combined-cycle unit AND the per-class actual is deflated by the geothermal+biomass that NEISO folds into the EIA-930 'Natural Gas' cell. Closable only by reconciling the OTHER/NG-fold-in categorization on both sides, NEVER by injecting the residual or scaling CC to the deflated benchmark."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2024,
+      "metric": "C1 CC_REGULAR grid-delivered volume/share (gas-vs-OTHER categorization)",
+      "magnitude": "model 56.13 vs deflated EIA-930 grid actual 54.66 TWh (+1.47 TWh, +1.2pp); gas FAMILY 57.89 vs 56.91 (+1.7%, within the C2 +/-2.5% band)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (gas-vs-EIA-930-OTHER fold-in categorization, not a model miss)",
+      "reason": "Same gas-vs-EIA-930 fold-in categorization as 2023: gas family within C2 band (+1.7%), per-class CC_REGULAR deflated by ~1.6 TWh of geothermal+biomass folded into the NG cell. Not a dispatch error; closable only by reconciling categorization."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "COAL_BIT/ST_GAS",
+      "year": 2023,
+      "metric": "C1 coal + steam-gas grid-delivered energy under-run (winter reliability/fuel-security runner)",
+      "magnitude": "COAL_BIT model 0.058/0.113/0.234 vs actual 0.181/0.238/0.271 TWh (2023/24/25); each per-class miss is WITHIN the C1 per-class absolute band",
+      "classification": "MODEL MISS (structural; same winter fuel-inventory / reliability-commitment family as the C3c price-tail and C5b storage items)",
+      "reason": "Residual under-run after the availability fix: the energy-only LP runs coal only at the temperature-floor commitment plus the few hours delivered gas is dear enough. The REAL units ran more on a winter fuel-security / local-reliability commitment. Closable only via the documented future build (fuel-inventory / seasonal-reliability constraint), NEVER by cranking the floor slope/cap or by an offer adder."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2023,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 15h (system max ~231 $/MWh)",
+      "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
+      "reason": "The energy-only LP caps the cold-hour price at the dual-fuel oil-parity (~$258/MWh). The post-solve ORDC scarcity overlay (ISO-NE-grounded LOLP curve: VOLL $2000, MCL 1200 MW, sigma 900 MW) is the structurally-correct lever: it prices the reserve tightness the perfect-foresight LP misses. The overlay fires in this run (scarcity_price_overlay=True) and modifies econ_prices for capacity economics but does not change the persisted LP prices. The overlay params are grounded in ISO-NE's largest contingency (Millstone 3) and winter reserve uncertainty (PAF Study), NOT fitted to hit the 15h target."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2024,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 8h (system max ~215 $/MWh)",
+      "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
+      "reason": "Same structural item as 2023. Post-solve ORDC overlay fires and modifies econ_prices."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2025,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 20h (system max ~258 $/MWh)",
+      "classification": "MODEL MISS (winter fuel-inventory scarcity rent / reserve scarcity)",
+      "reason": "Same structural item as 2023/2024. Post-solve ORDC overlay fires and modifies econ_prices."
+    },
+    {
+      "criterion": "storage",
+      "year": 2025,
+      "metric": "C5b storage throughput (pumped-storage + battery discharge)",
+      "magnitude": "model 0.72 vs actual 2.08 TWh (-65.5%)",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "Storage arbitrage throughput tracks the peak-to-trough price spread, which is compressed because the LP caps the cold-hour tail at the dual-fuel oil-parity. Closes only when the winter fuel-inventory scarcity rent is recovered."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "metric": "C2 gas family grid-delivered TWh (preliminary 2025 vintage)",
+      "magnitude": "model 61.41 vs corrected EIA-930 59.76 TWh (+2.8%, outside +/-2.5% band)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-930 gas-vs-OTHER fold-in + preliminary-vintage incompleteness)",
+      "reason": "2025 is a preliminary EIA-923 vintage \u2014 per-class actuals are incomplete (EIA-923 reports only 52.36 TWh gas vs model 61.41 TWh). The scorer falls back to the EIA-930 grid gas cell, which INCLUDES geothermal+biomass (~5.2 TWh). The correction formula (subtract cf[OTHER]+cf[biomass]-e930[other]) under-corrects because the preliminary vintage's per-class cells are incomplete. This is the SAME categorization issue documented in the C1 CC_REGULAR exceptions (gas FAMILY within band for complete vintages 2023/2024). When the full 2025 vintage reconciles, the per-class gate replaces this family fallback. NOT closable by adjusting model dispatch."
+    },
+    {
+      "criterion": "storage_shape",
+      "year": 2025,
+      "metric": "C5c monthly storage dispatch shape (pearson r)",
+      "magnitude": "model r=0.237 vs threshold r>=0.5",
+      "classification": "MODEL MISS (downstream of the price_tail / reserve-scarcity item)",
+      "reason": "Monthly storage dispatch shape is driven by the monthly pattern of price spreads. The LP's structural missing scarcity rent compresses winter price peaks (the same root cause as C3c price-tail and C5b storage throughput), which distorts the seasonal pattern of storage arbitrage. Closes only when the winter fuel-inventory scarcity rent is recovered \u2014 the ORDC overlay modifies econ_prices for capacity economics but does not change the LP dispatch that drives the monthly shape."
+    }
+  ],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 8,
+    "n_residual": 6,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[NEISO]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "n_scalars": 4,
+        "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "GAS_AVAILABILITY_FACTOR[NEISO]",
+        "where": "constants.py GAS_AVAILABILITY_FACTOR",
+        "identification": "published",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": 0.85,
+        "source": "NERC GADS 2019-2023 (unverified)"
+      },
+      {
+        "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
+        "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "n_scalars": 4,
+        "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
+        "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_NEISO.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script)",
+        "note": "D-8: coefficient levels mostly stable but several limbs drift >11% and three flip Spearman-rho sign out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC \u2014 docs/out-of-sample-results-2026-07.md \u00a72B); re-derive only on source-data updates (rule 23)"
+      },
+      {
+        "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+        "where": "interchange_config.py per-ISO seam supply-curve ladders",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
+        "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      }
+    ]
   }
- ]
 }
