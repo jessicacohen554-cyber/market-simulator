@@ -153,8 +153,14 @@ columns (`hr_mc = Plant_Avg_HR × HR_Mult_Committed`, etc.) set the band
 heat rates. Under the ERCOT calibration they are dormant — do not read the
 CSV `HR_Mult_*` values as the dispatched band heat rates.
 
-Emission rates are derived directly from the heat rate:
-`emission_rate = heat_rate * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`.
+Emission rates are derived directly from the plant's **physical** heat rate
+(`base_hr` = `Plant_Avg_HR`), **not** the bid-tranche heat rate:
+`emission_rate = base_hr * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`, uniform across a
+plant's tranches. The offer-curve `HR_Mult_*` pricing multipliers (peak
+×2.0–2.5, committed ×0.92) shape the bid stack only — a plant's CO2/MWh does
+not change because a block is offered at a scarcity price (R2/EM-4). Where a
+CEMS plant rate (or the forward v2 estimator) covers the plant, it overrides
+this default per `model-methodology-spec.md` §Fleet.
 
 Plants whose `Plant_Avg_HR_MMBtu_MWh` is blank in the CSV (a handful of
 tiny unmetered CTs in CT_unassigned) fall back to a per-group default

@@ -1,0 +1,117 @@
+# Canonical schema: annual unit-level CAMPD emissions + operations
+#
+# The annual roll-up of the hourly unit-level CAMPD/CEMS extracts under
+# ``data/raw/campd-unit-level`` — one row per (plant, unit, year). It is the
+# small, queryable product the forward CO2-rate estimator consumes: per-unit
+# annual generation, heat input, the three pollutant masses, operating hours,
+# start counts, and provenance flags for the CO2 backfill and gross-MW basis.
+#
+# Grain: CEMS **unit** (``facilityId`` -> ``plant_id``, ``unitId`` -> ``unit_id``).
+# States whose extract carries no unit identity get facility-grain rows keyed
+# ``unit_id = "ALL"``. Masses standardized to kilograms; heat input in MMBtu.
+# Quarantined years (2022, H1-2026) are never rolled up here (CLAUDE.md rule 22).
+datatype: emissions-unit-annual
+schema_version: 1
+title: Annual unit-level emissions + operations (CEMS / CAMPD)
+description: >-
+  Per (plant, unit, year) annual gross generation, heat input, CO2/NOx/SO2
+  masses (kg), operating hours, start counts, and backfill/basis provenance,
+  derived from the hourly unit-level CAMPD extracts. Feeds the forward
+  per-plant CO2-rate estimator (docs/handoffs/emissions-co2-rate-plan-2026-07.md).
+
+key_columns: [plant_id, unit_id, year]
+allow_additional_columns: false
+
+columns:
+  - name: state
+    dtype: string
+    unit: none
+    nullable: false
+    description: CAMPD stateCode of the facility.
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant / facility identifier (CAMPD facilityId).
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Generating-unit identifier (CAMPD unitId). "ALL" for facility-grain rows
+      so the key stays non-null.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year of the roll-up.
+  - name: primary_fuel
+    dtype: string
+    unit: none
+    nullable: true
+    description: CAMPD primaryFuelInfo (primary fuel type), where reported.
+  - name: unit_type
+    dtype: string
+    unit: none
+    nullable: true
+    description: CAMPD unitType (boiler / combustion turbine / …), where reported.
+  - name: gross_mwh
+    dtype: float64
+    unit: mwh
+    nullable: false
+    description: Annual sum of hourly gross load (MWh gross).
+  - name: steam_load_klbh_sum
+    dtype: float64
+    unit: klb
+    nullable: true
+    description: >-
+      Annual sum of hourly steam load (1000 lb/hr) — CHP host process steam,
+      a proxy for cogeneration heat export.
+  - name: co2_kg
+    dtype: float64
+    unit: kg
+    nullable: false
+    description: >-
+      Annual CO2 mass (kg), backfilled for unmonitored hours per co2_source.
+  - name: nox_kg
+    dtype: float64
+    unit: kg
+    nullable: true
+    description: Annual NOx mass (kg).
+  - name: so2_kg
+    dtype: float64
+    unit: kg
+    nullable: true
+    description: Annual SO2 mass (kg).
+  - name: heat_mmbtu
+    dtype: float64
+    unit: mmbtu
+    nullable: false
+    description: Annual heat input (MMBtu).
+  - name: op_hours
+    dtype: int64
+    unit: hours
+    nullable: false
+    description: Hours with gross load > 0 (operating hours).
+  - name: starts
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Count of off->on transitions (gross_mw crossing 1 MW, campd._ONLINE_MW /
+      _startup_factors convention) on a gap-filled hourly clock.
+  - name: co2_source
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      CO2 provenance: "measured" (CO2 reported for ~all heat), "partial_backfill"
+      (scaled up to full heat at the unit's own measured intensity), or
+      "heat_backfilled" (no CO2 reported; EPA gas default factor on heat).
+  - name: mw_source
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Gross-MW provenance: "measured" (real gross-load readings present) or
+      "heat_proxy" (unit reported heat but no gross load — CHP/steam host).

@@ -279,6 +279,16 @@ class ScenarioConfig:
     use_plant_emission_rates: bool = True
     plant_emission_rates_path: str = str(PROCESSED_DIR / "plant_emission_rates.parquet")
 
+    # v2 mode-aware CO2-rate source (docs/handoffs/emissions-co2-rate-plan-2026-07.md):
+    # when True, CO2 rates come from the per-(iso, plant, unit, year) v2 artifact
+    # via the composition mask — a backcast year books its own measured rate, a
+    # forecast year the gen-weighted trailing-average estimator base. Default OFF
+    # keeps the legacy pooled-artifact path until the 7-year history lands.
+    use_plant_emission_rates_v2: bool = False
+    plant_emission_rates_v2_path: str = str(
+        PROCESSED_DIR / "plant_emission_rates_v2.parquet"
+    )
+
     # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
     # The top (Peaking) slice of a bin is a separate LP generator whose
     # heat rate is the bin HR scaled by these duct-firing / peaking-increment
@@ -3280,6 +3290,8 @@ TIER_TAGS: dict[str, int] = {
     "plant_registry_path": 2,
     "use_plant_emission_rates": 2,
     "plant_emission_rates_path": 2,
+    "use_plant_emission_rates_v2": 2,
+    "plant_emission_rates_v2_path": 2,
     "unknown_zone_default": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,

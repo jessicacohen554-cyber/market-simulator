@@ -255,6 +255,61 @@ backcast, estimator-generated analogue in forecast.
   existing ERCOT keeper bundle only. The 2022/2026 rows in the committed artifact and the
   holdout-intake files on disk were not read by any analysis here.
 
+## 9. Implementation results (2026-07-04)
+
+The plan is implemented on branch `claude/co2-emissions-plan-2026`. Deliverables:
+`scripts/fetch_campd_unit_level.py` quarantine guard; `emissions-unit-annual`
+datatype (schema + `scripts/curate_emissions_unit_annual.py` + register + test);
+`src/market_sim/data/emission_rates.py` estimator (`forward_plant_co2_rate` a/b/c/d
++ `class_median_rates`) with `CO2_RATE_*` constants; `scripts/loyo_co2_rates.py`
+harness; fixes R2/R3/R7; governance.
+
+**LOYO reproduction (committed harness, ERCOT, 3-year history 2023–2025, keeper
+`ercot_ordc_total_rtolcap_v1`, 131 plants / 388 plant-years).** Pooled
+gen-weighted |rate error| % (mean over target years):
+
+| frozen (leaky) | a_gw | a_sm | a_rw | b_nn_oracle | b_nn_sim | b_reg |
+|---|---|---|---|---|---|---|
+| 1.66 | **2.10** | 2.16 | 2.29 | 2.25 | 2.31 | 2.37 |
+
+The **qualitative §3 ranking reproduces**: `a_gw` (gen-weighted average) is the
+strong base; simple-mean, recency and the class delta-regression `b_reg` are all
+worse (b_reg *degrades*, as §2.3 predicted); `frozen` is best only because it is
+in-sample/leaky for 2023–2024. Exact digits differ from the §3 scratchpad table
+(a_gw 2.10 vs 2.20, etc.) because this committed harness assembles history from
+the `emissions-unit-annual` roll-up (unit-summed to plant, per-plant-year
+parasitic net conversion) and reads CF-band shapes from the keeper bundle — a
+different, reproducible construction. The `b_nn_*` columns here run the NN
+**always on** (gate = 0), which the plan flags is *not* the shipped config: naked
+NN is no free win (2.31 ≥ 2.10), exactly the evidence motivating the envelope
+gate.
+
+**Gate decision (acceptance).** On the 3-year history every plant's operating
+points are near-duplicate, so the envelope-gated conditioner (`CO2_RATE_*`
+constants) fires almost never and collapses to `a_gw`; the always-on NN does not
+beat `a_gw`. Per the plan's escape hatch, **the estimator ships as pure `a_gw`**
+— `constants.CO2_RATE_CONDITIONING_ENABLED = False`. The 7-year held-in re-run
+(after the 2018–2021 intake lands) is the test that may open the gate; until it
+demonstrably beats `a_gw`, the gate stays closed. Constants
+(`CO2_RATE_TRAILING_WINDOW_YEARS = 0` → all years won at 3 years;
+`CO2_RATE_ENVELOPE_GATE_L1 = 0.5`; class median percentile 50) are frozen against
+backcast residuals and re-derive only on a CAMPD data update (rule 23).
+
+**Intake status.** The 2018–2021 34-state hourly unit-level fetch runs via the
+committed `scripts/fetch_campd_unit_level.py` (DEMO_KEY rate-limits to ~25/hr, so
+it is paced in the background). The `emissions-unit-annual` datatype and the
+committed `plant_emission_rates_v2` artifact are re-derived over whatever history
+has landed; the 7-year held-in LOYO re-run and the gate re-evaluation happen once
+2018–2021 are complete. The raw ~0.5 GB of binary parquet is **not** force-pushed
+(push_files is text-only; a single git pack that size 413s) — it is landed and
+regenerable from the fetcher; the consumed derived artifacts carry the rates. See
+`data/raw/campd-unit-level/README.md`.
+
+**Remaining follow-ups (explicitly deferred, "if time permits" per §8):** R4
+(carbon-price forward trajectory, EM-6), R5 (CHP measured-rate consistency + BTM
+share, EM-7), R6 (default-off startup-CO2 reporting adder — now unblocked by the
+persisted `model_starts`).
+
 ## 8. Implementation prompt
 
 ```
