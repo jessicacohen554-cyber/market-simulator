@@ -764,7 +764,20 @@ launches in priority order. Commit the register update and push. Do not start an
 work yourself.
 ```
 
-## Coordinator status board — updated 2026-07-04 (PM-1 run 2)
+## Coordinator status board — updated 2026-07-04 (PM-1 run 3)
+
+**Since run 2:** the CO2-rate emissions track (owner priority) moved plan → **implemented**
+(PRs #1326/#1327/#1329): new `src/market_sim/data/emission_rates.py`, forward estimator +
+LOYO harness (D3/D4), v2 per-plant rate artifact (ERCOT+5 ISOs), **R2** physical-HR CO2 basis
+(EM-4 fix), **R7** NOx unit-contract fix (EM-2), R3 gross/net assertion, CAMPD 2018/2020
+historical intake with quarantine guard, scope2 excess-headroom validation. Emissions
+leftovers: **R4** carbon-seam (EM-6), **R5** CHP (EM-7), **R6** startup-CO2 (EM-5), full
+NOx/SO2 export+verdict+dashboard wiring. **NEW top-priority consequence:** R2 changed every
+unit's CO2 rate on a basis that feeds the merit order where carbon is priced → the six keepers'
+CO2 verdicts are now on a superseded basis and must be re-scored (re-solved for CAISO/NYISO/
+NEISO) under the new estimator (rules 15/16). W0-P2/P4/P5 plans and all of W1 remain OPEN.
+
+## Coordinator status board — 2026-07-04 (PM-1 run 2)
 
 Live status of every workstream against `origin/main` (all PRs #1307–#1325 merged; **no open
 PRs**). Evidence in the Notes column is commit/PR refs.
