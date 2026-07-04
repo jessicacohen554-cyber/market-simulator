@@ -28,7 +28,7 @@ keeper years solved sequentially within it:
 
 | ISO | Keeper bundle (flags source) | Years | Statmode bundle | Dashboard run id |
 |---|---|---|---|---|
-| ERCOT | `results/calibration/ercot_gtc_limits_v1` (ercot26-gtc-limits) | 2023–2025 | `results/calibration/ercot_statmode_2026-07` | `2026-07-03-statmode-d-7-probe` |
+| ERCOT | `results/calibration/ercot_ordc_total_rtolcap_v1` (ercot32-ordc-total-rtolcap) | 2023–2025 | `results/calibration/ercot32_statmode_2026-07` | `2026-07-04-statmode-d7-probe-ercot32` |
 | CAISO | `results/calibration/caiso51_firm_base` (caiso-51-firm-base) | 2023–2025 | `results/calibration/caiso_statmode_2026-07` | `2026-07-03-caiso-statmode-d-7` |
 | PJM | `results/calibration/pjm76_outage_fix` (pjm-76-outage-fix) | 2023–2025 | `results/calibration/pjm_statmode_2026-07` | `2026-07-03-pjm-statmode-d-7` |
 | NYISO | `results/calibration/nyiso41_hubprices` (nyiso-41-hub-prices) | 2023–2025 | `results/calibration/nyiso_statmode_2026-07` | `2026-07-03-nyiso-statmode-d-7` |
@@ -39,6 +39,23 @@ All six are registered on the dashboard as **probes**, next to their keeper,
 per CLAUDE.md #15. **No offer curve, sigmoid, or floor was tuned in response
 to any result below** (CLAUDE.md #1) — this session is measurement only.
 
+**2026-07-04 update — ERCOT re-gated to the current keeper.** The ERCOT leg
+above was originally run against `ercot_gtc_limits_v1` (ercot26-gtc-limits),
+which the ERCOT keeper has since superseded twice over (ercot27 → … →
+ercot32-ordc-total-rtolcap, `frontend/data/backcast/keepers.json`). This
+session re-ran the ERCOT leg **only**, byte-faithful against the current
+`ercot_ordc_total_rtolcap_v1` keeper bundle, same method
+(`scripts/run_statmode_probe.py`), same solo/sequential year discipline. The
+ERCOT section and cross-ISO summary row below are now on the ercot32 basis;
+the CAISO/PJM/NYISO/NEISO/MISO sections are untouched from 2026-07-03. The
+rubric also gained two HARD criteria since the original run — **C7 diurnal
+shape (D-1)** and **C8 forced-energy share (D-2)**, added 2026-07-04 — so
+ERCOT below is scored C1–C8 (11 scored criteria, C6 governance still
+excluded per the probe-is-unattested rule); the other five ISOs' rows still
+reflect the original 9-criterion (C1–C5c) scoring from 2026-07-03 and have
+not been re-scored under the extended rubric. See the superseded note at the
+end of the ERCOT section for the original ercot26-basis numbers.
+
 **Environment note (not a config change).** This box has 15 GB RAM / 4 cores.
 Three solves run concurrently (ERCOT + 2 per-plant-multi-zone ISOs, per rule
 #12's "cap ~2") OOM-killed both ERCOT and PJM; the queue was switched to
@@ -47,24 +64,38 @@ per-generator reserve co-optimization (`miso_reserve_pergen`: 3,151 units
 pooled into 30 zone×fuel-class columns) which alone peaked past 15 GB anon-RSS
 and was OOM-killed running **solo** — a 12 GB swap file (removed after) let it
 complete unmodified. No calibration flag was changed to work around this.
+The 2026-07-04 ERCOT re-gate ran solo (no concurrent solves) on the same
+15 GB box per this session's instructions and completed cleanly, ~4-5 min/
+year (cold + warm solve), peak ~6.2 GB anon-RSS — no swap needed.
 
 ---
 
 ## Cross-ISO summary
 
-Criterion-status mix across the 9 scored criteria (C1–C5c; **C6 governance
-excluded** — every probe bundle is intentionally unattested, since it isn't a
-keeper, so C6 reads UNATTESTED by construction and is not a comparable
-signal):
+Criterion-status mix across the scored criteria (**C6 governance excluded** —
+every probe bundle is intentionally unattested, since it isn't a keeper, so
+C6 reads UNATTESTED by construction and is not a comparable signal). **ERCOT
+is scored on 11 criteria (C1–C5c + C7 + C8, current ercot32 keeper basis,
+2026-07-04); CAISO/PJM/NYISO/NEISO/MISO are still on the original 9-criterion
+(C1–C5c) scoring from 2026-07-03** — the row counts are not on the same
+denominator, see the caveats below:
 
 | ISO | keeper PASS/CAVEAT/FAIL/SKIP | statmode PASS/CAVEAT/FAIL/SKIP | fail count Δ |
 |---|---|---|---|
-| ERCOT | 3 / 3 / **2** / 1 | 2 / 0 / **6** / 1 | **2 → 6** (+4, 3×) |
+| ERCOT † | 3 / 3 / **4** / 1 | 3 / 0 / **7** / 1 | **4 → 7** (+3, of 11 scored) |
 | CAISO | 0 / 0 / **7** / 2 | 0 / 0 / **7** / 2 | **7 → 7** (+0; magnitudes shift, see below) |
 | PJM | 2 / 0 / **5** / 2 | 0 / 0 / **7** / 2 | **5 → 7** (+2) |
 | NYISO | 3 / 4 / **0** / 2 | 3 / 0 / **4** / 2 | **0 → 4** (+4; all from caveat→fail) |
 | NEISO | 4 / 4 / **1** / 0 | 3 / 0 / **6** / 0 | **1 → 6** (+5) |
 | MISO | 2 / 0 / **7** / 0 | 0 / 0 / **9** / 0 | **7 → 9** (+2; fails everything scored) |
+
+† ERCOT counts are the 2026-07-04 ercot32-basis, 11-criterion re-score (adds
+C7 diurnal shape, C8 forced-energy share). The original 2026-07-03
+ercot26-basis, 9-criterion count was **2 → 6** (+4, 3×) — see the superseded
+note in the ERCOT section. The two are not directly comparable (different
+keeper, different criterion count); both replicate the same qualitative
+finding (overlay-carried price/fuel-mix skill, CT_PEAKER forced-share
+collapse).
 
 **The gap is real and, except at CAISO/MISO (already failing almost
 everything in-sample), large** — consistent with the one prior ERCOT
@@ -77,7 +108,50 @@ fails rather than new categories of error.
 
 ---
 
-## ERCOT — 2 → 6 fails
+## ERCOT — 4 → 7 fails (ercot32-ordc-total-rtolcap basis, 2026-07-04)
+
+| criterion | keeper | statmode | note |
+|---|---|---|---|
+| C1 fuel-mix | CAVEAT | **FAIL** | 2024 CC_REGULAR +14.72 TWh/+3.1pp (was PASS −3.33 TWh); 2024 ST_GAS −9.42 TWh/−2.0pp (was PASS −1.77 TWh); 2025 COAL_PRB +10.19 TWh/+2.1pp (was PASS +0.16 TWh) |
+| C2 sysvol | CAVEAT | **FAIL** | 2025 gas −10.7% (was CAVEAT −3.0%) |
+| C3a mean LMP | FAIL | FAIL | already failing on 2/3 years; magnitudes worsen sharply: 2023 −5.4%→**−50.0%**, 2024 +9.1%→**−14.8%**; 2025 (the one PASS year) +3.6%→**−12.7%** (flips to FAIL) |
+| C3b price shape | FAIL | FAIL | unchanged (already failing); NRMSE roughly doubles or more each year (2023 0.393→**0.962**, 2024 0.234→0.302, 2025 0.087→0.175) |
+| C3c price tail | FAIL | FAIL | already failing 2/3 years; 2023 model 77h→**16h** vs actual 181h (gets worse); 2024 stays PASS both sides (72h→64h vs actual 53h); 2025 model 10h→5h vs actual 31h (already failing, gets worse) |
+| C4 dispatch corr | PASS | PASS | unchanged; coal r softens slightly (2025 0.801→0.760) but stays well above the 0.7 gate |
+| C5a CO2 | PASS | PASS | unchanged (2025 flips sign −0.9%→+2.4% but stays in tolerance) |
+| C5b storage | SKIPPED | SKIPPED | no EIA-930 storage breakout, both sides |
+| C5c storage shape | CAVEAT | **FAIL** | 2024 monthly discharge r 0.331→**−0.069** |
+| C7 diurnal shape (D-1) | PASS | PASS | unchanged — CT_PEAKER/ST_GAS hour-of-day profile r stays ≥0.94 both sides; the class-volume band still can't see this because the *level* miss below is a volume/floor problem, not a shape one |
+| C8 forced-energy share (D-2) | **FAIL** | **FAIL** | 2023 CT_PEAKER jumps from 11.1% forced (already the fail) to **33.3%** forced (0.90 of 2.72 TWh); 2024 1.0%→7.3% and 2025 1.0%→9.2% both worsen sharply but stay under the 10% peaker gate |
+
+**CT_PEAKER's forced-floor share nearly triples in the fail year and the
+class-volume band still doesn't catch the underlying shape problem** — C7
+(diurnal shape) passes on both sides because the *hour-of-day profile*
+tracks CAMPD fine; it's the *volume* dispatched at a binding reliability
+floor (C8) that blows out from 11% to 33% once the historic-outage overlay
+stops padding CT_PEAKER's economic dispatch. This is the same
+annual-volume-hides-a-class-collapse finding as the original ercot26 run,
+now directly visible through C8 rather than inferred from the band being too
+wide — the rubric extension (C7/C8, merged 2026-07-04) closes exactly the
+gap the original ERCOT statmode report flagged as open S1/S5 follow-on work.
+
+**Verdict:** the finding replicates on the current (ercot32) keeper and the
+extended rubric — ERCOT's mean-LMP miss (C3a), already failing 2 of 3 years
+in-sample, roughly triples in magnitude with overlays off and the one
+passing year (2025) flips to FAIL; CT_PEAKER's forced-energy share (C8)
+nearly triples into a starker breach of its own 10% gate. The
+historic-outage overlay is still doing the heaviest lifting on both price
+level and CT_PEAKER dispatch (consistent with the prior D2 ablation showing
+it as the dominant, largely-defensible lever).
+
+<details>
+<summary><strong>Superseded — 2026-07-03 ercot26-gtc-limits basis (pre-C7/C8, 9 criteria)</strong></summary>
+
+This is the original ERCOT D-7 result from the same session that produced
+the CAISO/PJM/NYISO/NEISO/MISO sections below. It was run against
+`ercot_gtc_limits_v1` (ercot26-gtc-limits), which the ERCOT keeper has since
+superseded (→ ercot27 → … → ercot32-ordc-total-rtolcap). Kept for the record
+only — **do not cite this as current**; use the ercot32-basis table above.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -102,11 +176,14 @@ does not yet carry the D-1 diurnal-shape criterion from the audit's §7 suite
 shape failure that the AS/RUC-deployment floor is covering for stays
 invisible at the family/class-volume granularity scored here.
 
-**Verdict:** the 2026-06-16 finding replicates on the current keeper and
-rubric — ERCOT's headline mean-LMP pass (C3a, PASS on all 3 years) is
-entirely overlay-carried, flipping to a 12–49% miss with overlays off; the
-historic-outage overlay is still doing the heaviest lifting (consistent with
-the prior D2 ablation showing it as the dominant, largely-defensible lever).
+**Verdict (superseded):** the 2026-06-16 finding replicates on the
+then-current keeper and rubric — ERCOT's headline mean-LMP pass (C3a, PASS
+on all 3 years) is entirely overlay-carried, flipping to a 12–49% miss with
+overlays off; the historic-outage overlay is still doing the heaviest
+lifting (consistent with the prior D2 ablation showing it as the dominant,
+largely-defensible lever).
+
+</details>
 
 ## CAISO — 7 → 7 fails (flat count, mixed magnitudes)
 
@@ -261,3 +338,38 @@ in-sample fit currently generalizes as a forecast-machinery prior.
 - **This is D-7 only.** D-6 (2022/H1-2026 holdout scoring) and D-8
   (coefficient stability) from the S4 prompt pack are not run in this
   session.
+- **ERCOT rubric vintage differs from the other five ISOs (2026-07-04
+  update).** ERCOT above is scored C1–C8 (adds C7 diurnal shape / D-1 and C8
+  forced-energy share / D-2, merged into `calibration_verdict.py` and
+  `docs/calibration-determination-rubric.md` on 2026-07-04, after the
+  original 2026-07-03 session that produced this document). CAISO, PJM,
+  NYISO, NEISO, and MISO below are **not** re-scored under the extended
+  rubric — their tables still reflect the original 9-criterion (C1–C5c)
+  scoring. Re-running those five under C1–C8 is out of scope for this
+  update (ERCOT-only re-gate).
+- **ERCOT keeper basis changed mid-series.** The ERCOT numbers above are
+  against `ercot_ordc_total_rtolcap_v1` (ercot32-ordc-total-rtolcap, the
+  keeper as of 2026-07-04); the original run used `ercot_gtc_limits_v1`
+  (ercot26-gtc-limits, superseded). The dashboard probe registration was
+  replaced in place (`2026-07-03-statmode-d-7-probe` →
+  `2026-07-04-statmode-d7-probe-ercot32`) rather than kept alongside it, to
+  avoid a stale-keeper probe sitting on the Run Explorer next to the
+  current keeper.
+- **Shared "actual" bench data must stay pinned to the keeper's basis.**
+  Registering the ercot32-basis probe (`scripts/dashboard_add_run.py`)
+  initially rewrote the committed `frontend/data/backcast/bench/ERCOT/*`
+  parts, because the probe's own `btm.parquet` (behind-the-meter CHP host
+  steam held out of the LP) came out ~3.4 TWh different on CC_CHP and ~1.9
+  TWh different on CT_CHP from whatever last supplied those parts — i.e.
+  the held-out CHP plants' grid dispatch is *not* solve-invariant under
+  statistical mode the way `replay_keeper.py`'s docstring assumes it is for
+  a byte-faithful replay. Left alone, that would have silently moved the
+  "actual" denominator both the keeper's and the probe's C1/C2 scores are
+  measured against. The bench parts, `manifest.js`, and `benchmark.js` were
+  reverted to their pre-registration (keeper-supplied) state before scoring
+  above, so keeper and probe are scored against the identical actual/bench
+  basis — only the model side varies, as the method requires. This
+  BTM-under-statistical-mode drift is itself a small legitimacy finding
+  (not investigated further here, per "measurement only") worth a follow-up
+  look at why held-out CHP dispatch moves when the historic-outage overlay
+  is forced off.
