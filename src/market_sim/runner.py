@@ -995,7 +995,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     req_by_class = np.zeros(
                         (hp.shape[1], req_fam.shape[1]), dtype=float
                     )
-                    np.add.at(req_by_class, fam_class, req_fam)
+                    # All-class families (reserve_class -1, the ERCOT lumped
+                    # ORDC total-reserve curve) are a demand on the aggregate,
+                    # not one product's procurement — exclude them from the
+                    # per-product adequacy requirement (a -1 would otherwise
+                    # silently index the last product).
+                    prod_fam = fam_class >= 0
+                    np.add.at(req_by_class, fam_class[prod_fam], req_fam[prod_fam])
                     committed = as_adequacy_commit(
                         committed,
                         fleet_arrays,
