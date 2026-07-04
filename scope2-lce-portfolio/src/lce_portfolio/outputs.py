@@ -44,6 +44,7 @@ def frontier_table(sweep: SweepResult) -> pd.DataFrame:
                 "surplus_mwh": r.surplus_mwh,
                 "surplus_revenue": r.surplus_revenue,
                 "grid_buy_mwh": r.grid_buy_mwh,
+                "divert_backfill_mwh": r.divert_backfill_mwh,
                 "total_load_mwh": r.total_load_mwh,
                 "residual_co2_tons": r.residual_co2_tons,
                 "grid_co2_tons": r.grid_co2_tons,

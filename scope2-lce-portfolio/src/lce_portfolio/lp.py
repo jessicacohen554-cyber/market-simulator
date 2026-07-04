@@ -24,11 +24,21 @@ Two solve modes (see ``docs/01-lp-formulation.md``):
   matching ≥ ``target`` (annual, or strict per-hour for hard 24/7).
 
 Storage grid interaction is governed by ``config.storage_charge_policy``
-(ADR 0017): ``"arbitrage"`` (default) lets storage charge from the aggregate
-node — grid purchases included — and export discharge as ``excess``;
+(ADR 0017/0018): ``"arbitrage"`` (default) lets storage charge from the
+aggregate node — grid purchases included — and export discharge as ``excess``;
 ``"excess_clean_only"`` adds the per-hour provenance rows
 ``Σ chg + excess ≤ Σ gen`` so storage charges only on the portfolio's excess
-contracted clean generation and never trades with the grid.
+contracted clean generation and never trades with the grid; and
+``"excess_headroom_only"`` (ADR 0018) keeps those same rows but drives an
+iterative cut loop (see :func:`solve_with_charge_policy`) that additionally
+eliminates the "divert-and-backfill" residual — charging from clean generation
+in an hour where the grid still serves load — which the static ADR 0017 rows
+permit because the strict per-hour excess bound is nonconvex.
+
+Every solve reports ``divert_backfill_mwh`` (ADR 0018 diagnostic), the
+``Σ_t min(Σ_s chg[s,t], grid_buy[t])`` energy that charged storage in the same
+hours the grid bought power; zero means charging never coincided with a grid
+purchase.
 """
 
 from __future__ import annotations
@@ -48,6 +58,17 @@ from lce_portfolio.resources import ResourceArrays, load_hydro_budget_mwh
 # energy-budget constraint (ADR 0008) without any Python loop over hours.
 _MONTH_LEN_DAYS = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
 _HOURS_PER_DAY = 24
+
+# Divert-and-backfill cut tolerance (MWh) for the "excess_headroom_only" policy
+# (ADR 0018). An hour is "offending" — storage charging while the grid also
+# serves load in that same hour — only when BOTH Σ_s chg[s,t] and grid_buy[t]
+# exceed this threshold, at which point the cut loop pins that hour's charge
+# columns to zero and re-solves. The house solver is the crossover-off HiGHS IPM
+# (ADR 0003), whose interior solutions carry ~1e-6 MWh numerical noise; the
+# tolerance must sit well ABOVE that noise floor (so noise never triggers a
+# spurious cut) yet well BELOW any physically meaningful energy quantity (so a
+# real divert is never missed). 1e-3 MWh (1 kWh) satisfies both bounds.
+EXCESS_HEADROOM_TOL_MWH = 1e-3
 
 
 @dataclass
@@ -73,6 +94,13 @@ class PortfolioResult:
     # --- derived reporting metrics (computed in build_and_solve) --------------
     total_load_mwh: float = 0.0
     grid_buy_mwh: float = 0.0  # unmatched energy bought from grid
+    # Divert-and-backfill diagnostic (ADR 0018), reported for EVERY policy:
+    #   divert_backfill_mwh = Σ_t min(Σ_s chg[s,t], grid_buy[t])
+    # the energy that charged storage in the same hours the grid bought power.
+    # Zero means charging never coincided with a grid purchase. Under the static
+    # "excess_clean_only" rows this can be > 0 (the accepted ADR 0017 residual);
+    # "excess_headroom_only" drives it to ~0 via the cut loop.
+    divert_backfill_mwh: float = 0.0
     surplus_mwh: float = 0.0  # clean generation sold as excess
     surplus_revenue: float = 0.0  # $ earned selling excess (× excess_sale_fraction)
     avoided_purchase_cost: float = 0.0  # $ of grid buys avoided vs BAU
@@ -166,6 +194,7 @@ def build_and_solve(
     setpoint: float,
     *,
     emission_rate: np.ndarray | None = None,
+    pinned_charge_hours: np.ndarray | None = None,
 ) -> PortfolioResult:
     """Build and solve one portfolio LP.
 
@@ -202,13 +231,24 @@ def build_and_solve(
     have their generation capped per calendar month at the ISO's monthly energy
     budget; the constraint is skipped for ISOs without a budget entry.
 
-    **Storage charge provenance (ADR 0017).** With
-    ``config.storage_charge_policy == "excess_clean_only"``, ``T`` extra rows
-    enforce ``Σ_s chg[s,t] + excess[t] ≤ Σ_r gen[r,t]``: storage charges only
-    from contracted clean generation in excess of exports, exports come only
-    from clean generation, and (via the energy balance) grid purchases and
-    discharge serve load only. The default ``"arbitrage"`` adds no rows and
-    reproduces the historical behavior exactly.
+    **Storage charge provenance (ADR 0017/0018).** With
+    ``config.storage_charge_policy`` in ``("excess_clean_only",
+    "excess_headroom_only")``, ``T`` extra rows enforce
+    ``Σ_s chg[s,t] + excess[t] ≤ Σ_r gen[r,t]``: storage charges only from
+    contracted clean generation in excess of exports, exports come only from
+    clean generation, and (via the energy balance) grid purchases and discharge
+    serve load only. The default ``"arbitrage"`` adds no rows and reproduces the
+    historical behavior exactly. ``pinned_charge_hours`` (keyword-only) is the
+    optional ``(T,)`` boolean mask driven by the ADR 0018 cut loop in
+    :func:`solve_with_charge_policy`: every storage charge column in a masked
+    hour is fixed to zero (upper bound 0), which is how ``excess_headroom_only``
+    removes divert-and-backfill hours one solve at a time. ``build_and_solve``
+    itself never sets this mask — a lone call reproduces the static ADR 0017
+    behavior regardless of the policy string.
+
+    Every solve reports ``divert_backfill_mwh = Σ_t min(Σ_s chg[s,t],
+    grid_buy[t])`` (ADR 0018 diagnostic), the charging energy that coincided
+    with a grid purchase in the same hour; zero means it never did.
 
     **Additionality accounting (ADR 0008, amended 2026-07-02).** With
     ``config.additionality_only`` the generation of *existing* (PPA) resources
@@ -427,7 +467,10 @@ def build_and_solve(
     # columns are pinned to 0 by cf = 0, so summing over all r is exact.
     # With n_sto == 0 the row degenerates to excess ≤ gen (no re-sold buys),
     # keeping the policy's "no grid trading" semantics storage-independent.
-    if config.storage_charge_policy == "excess_clean_only":
+    # "excess_headroom_only" (ADR 0018) uses the identical rows; its extra
+    # divert-and-backfill elimination is layered on top by the cut loop in
+    # solve_with_charge_policy (via pinned_charge_hours), not by new rows here.
+    if config.storage_charge_policy in ("excess_clean_only", "excess_headroom_only"):
         hours_p = np.arange(T)
         if n_sto:
             rows.append(roff + np.tile(hours_p, n_sto))
@@ -578,6 +621,25 @@ def build_and_solve(
     col_lower[lay.build_off : lay.gen_off] = resources.cap_min_mw
     col_upper[lay.build_off : lay.gen_off] = resources.cap_max_mw
 
+    # Divert-and-backfill cut (ADR 0018): pin every storage charge column in a
+    # flagged hour to zero. Applied only by solve_with_charge_policy's cut loop;
+    # a bare build_and_solve call leaves pinned_charge_hours=None untouched.
+    if pinned_charge_hours is not None and n_sto:
+        pinned = np.asarray(pinned_charge_hours, dtype=bool)
+        if pinned.shape != (T,):
+            raise ValueError(
+                f"pinned_charge_hours must have shape ({T},), got {pinned.shape}"
+            )
+        pinned_hours = np.flatnonzero(pinned)
+        if pinned_hours.size:
+            # chg column for storage s at hour t is chg_off + s*T + t; pin all s.
+            pin_cols = (
+                lay.chg_off
+                + np.repeat(np.arange(n_sto), pinned_hours.size) * T
+                + np.tile(pinned_hours, n_sto)
+            )
+            col_upper[pin_cols] = 0.0
+
     # ------------------------------------------------------------- solve
     col_value, row_dual, status = _solve_highs(
         cost, col_lower, col_upper, A, row_lower, row_upper
@@ -615,6 +677,13 @@ def build_and_solve(
     grid_buy = col_value[lay.buy_off : lay.exc_off]
     excess = col_value[lay.exc_off : lay.exc_off + T]
     build_energy = col_value[lay.bev_off : lay.bev_off + n_split]  # (n_split,) MWh
+
+    # Divert-and-backfill diagnostic (ADR 0018), computed for every policy:
+    # per hour, the smaller of total storage charging and grid purchases is the
+    # energy that charged storage while the grid also served load that hour.
+    # chg.sum(axis=0) is a (T,) vector of zeros when n_sto == 0 (empty reduction),
+    # and both arrays are zeroed on a failed solve, so this is always 0 then.
+    divert_backfill_mwh = float(np.minimum(chg.sum(axis=0), grid_buy).sum())
 
     # Split-storage energy capex ($/yr): cost_energy_mwhyr × built energy MWh.
     energy_capex = float(resources.cost_energy_mwhyr[split_res_idx] @ build_energy)
@@ -704,6 +773,7 @@ def build_and_solve(
         shadow_price=shadow,
         total_load_mwh=sum_load,
         grid_buy_mwh=float(grid_buy.sum()),
+        divert_backfill_mwh=divert_backfill_mwh,
         surplus_mwh=float(excess.sum()),
         surplus_revenue=surplus_revenue,
         avoided_purchase_cost=avoided_purchase_cost,
@@ -717,6 +787,85 @@ def build_and_solve(
         build_energy_mwh=build_energy,
         storage_names=[resources.names[r] for r in storage_idx],
     )
+
+
+def solve_with_charge_policy(
+    config: PortfolioConfig,
+    resources: ResourceArrays,
+    load: np.ndarray,
+    lmp: np.ndarray,
+    cf: np.ndarray,
+    setpoint: float,
+    *,
+    emission_rate: np.ndarray | None = None,
+) -> PortfolioResult:
+    """Solve one portfolio LP, honoring ``config.storage_charge_policy``.
+
+    For ``"arbitrage"`` and ``"excess_clean_only"`` this is a single
+    :func:`build_and_solve` call — identical behavior to calling it directly.
+
+    For ``"excess_headroom_only"`` (ADR 0018) it runs the iterative cut loop
+    that turns the nonconvex "charge only from same-hour clean headroom"
+    requirement into a sequence of pure LPs: solve; find every hour where both
+    storage charging and grid purchases exceed :data:`EXCESS_HEADROOM_TOL_MWH`
+    (a divert-and-backfill hour); pin those hours' charge columns to zero; and
+    re-solve. Because a pinned hour can never re-offend (its charging is fixed
+    at zero), each hour is cut at most once, so the loop terminates in at most
+    ``T`` iterations (in practice ≤ 3). Every iteration is a pure LP — no MIP,
+    no binaries (ADR 0003).
+
+    This is a **conservative** restriction of the true (nonconvex) excess-
+    headroom-only set: pinning a whole hour's charging removes any *legitimate*
+    same-hour surplus charging that hour might also have carried, so the result
+    can under-use storage relative to the true optimum. It never overstates
+    matching — the returned portfolio always satisfies the strict "no charging
+    while the grid serves load" requirement (up to the tolerance).
+    """
+    if config.storage_charge_policy != "excess_headroom_only":
+        return build_and_solve(
+            config, resources, load, lmp, cf, setpoint, emission_rate=emission_rate
+        )
+
+    T = config.hours
+    pinned = np.zeros(T, dtype=bool)
+    tol = EXCESS_HEADROOM_TOL_MWH
+    # Each pass cuts >= 1 new hour or exits, and a cut hour never re-offends, so
+    # T + 1 passes is a hard upper bound (the +1 covers the final clean solve).
+    result = build_and_solve(
+        config,
+        resources,
+        load,
+        lmp,
+        cf,
+        setpoint,
+        emission_rate=emission_rate,
+        pinned_charge_hours=pinned,
+    )
+    for _ in range(T):
+        if result.status != "Optimal":
+            # A non-optimal solve can't be diagnosed for offending hours; return
+            # it as-is so the sweep surfaces the status (mirrors build_and_solve).
+            return result
+        chg_by_hour = (
+            result.storage_charge.sum(axis=0)
+            if result.storage_charge.size
+            else np.zeros(T)
+        )
+        offending = (chg_by_hour > tol) & (result.grid_buy > tol) & ~pinned
+        if not offending.any():
+            return result
+        pinned = pinned | offending
+        result = build_and_solve(
+            config,
+            resources,
+            load,
+            lmp,
+            cf,
+            setpoint,
+            emission_rate=emission_rate,
+            pinned_charge_hours=pinned,
+        )
+    return result
 
 
 def _solve_highs(cost, col_lower, col_upper, A, row_lower, row_upper):

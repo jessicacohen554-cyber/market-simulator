@@ -115,7 +115,7 @@ class PortfolioConfig:
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
     storage_charge_policy: str = "arbitrage"
-    """How storage may interact with the grid (ADR 0017):
+    """How storage may interact with the grid (ADR 0017/0018):
 
     * ``"arbitrage"`` (default, the historical behavior): storage charges from
       the aggregate node — including grid purchases — and its discharge may be
@@ -126,7 +126,16 @@ class PortfolioConfig:
       clean generation in excess of what is exported, grid purchases can never
       be stored or re-sold, and discharge serves load only. Storage becomes a
       pure clean-energy-shifting device consistent with granular-certificate /
-      24/7 CFE charging-provenance conventions."""
+      24/7 CFE charging-provenance conventions. Accepted residual: storage may
+      still charge from clean generation in an hour where the grid also serves
+      load ("divert-and-backfill"), because the strict per-hour excess bound is
+      nonconvex; every result reports ``divert_backfill_mwh`` to make it visible.
+    * ``"excess_headroom_only"`` (ADR 0018): the ``excess_clean_only`` rows PLUS
+      an iterative cut loop (:func:`lce_portfolio.lp.solve_with_charge_policy`)
+      that eliminates the divert-and-backfill residual — no hour charges storage
+      while the grid buys power in that same hour. It is a *conservative*
+      restriction: it can under-use storage relative to the true optimum but
+      never overstates matching. Each iteration stays a pure LP."""
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
     """Annual load-growth CAGR applied to the intake profile (optional)."""
@@ -165,10 +174,14 @@ class PortfolioConfig:
             raise ValueError(
                 f"mode must be premium_cap/matching_target, got {self.mode!r}"
             )
-        if self.storage_charge_policy not in ("arbitrage", "excess_clean_only"):
+        if self.storage_charge_policy not in (
+            "arbitrage",
+            "excess_clean_only",
+            "excess_headroom_only",
+        ):
             raise ValueError(
-                "storage_charge_policy must be arbitrage/excess_clean_only, "
-                f"got {self.storage_charge_policy!r}"
+                "storage_charge_policy must be arbitrage/excess_clean_only/"
+                f"excess_headroom_only, got {self.storage_charge_policy!r}"
             )
         if self.lcoe_sensitivity not in ("low", "mid", "high"):
             raise ValueError(

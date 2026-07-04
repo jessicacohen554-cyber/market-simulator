@@ -165,6 +165,22 @@ grid charging; policy eliminates it; clean-surplus shifting is preserved;
 degenerate no-generation fleet idles; both policies agree when no arbitrage
 rent exists; config validation).
 
+**Divert-and-backfill closure (ADR 0018, 2026-07-04).** The accepted residual
+above is now (a) *visible* everywhere — every solve reports
+`divert_backfill_mwh = Σ_t min(Σ_s chg[s,t], grid_buy[t])` on `PortfolioResult`,
+in the frontier parquet, and per setpoint in the ADR 0014 report (zero means
+charging never coincided with a grid purchase) — and (b) *closable* on demand
+via a third policy `"excess_headroom_only"`. That policy keeps the ADR 0017 rows
+and adds an iterative LP cut loop (`lp.solve_with_charge_policy`): solve, pin the
+charge columns of any hour that both charged storage and bought from the grid
+(tolerance `EXCESS_HEADROOM_TOL_MWH = 1e-3` MWh, above IPM interior noise),
+re-solve, repeat until none remain (≤ `T` iterations, ≤ 3 in practice; each
+solve a pure LP — no MIP). It is a conservative restriction: it can under-use
+storage relative to the true (nonconvex) optimum but never overstates matching.
+The static alternative `chg_t − Σ gen_t ≤ −load_t` (forces gen ≥ load every
+hour) and binaries were both rejected — see ADR 0018. Tests:
+`tests/test_excess_headroom_policy.py`.
+
 ---
 
 ## 3. Boundary check
