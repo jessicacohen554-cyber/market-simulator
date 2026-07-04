@@ -42,6 +42,42 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-04 — NYISO — CT offer grounding: measured-run fast-start v3 + oil screen + DEC 227-3 (nyiso 45/46): PROBES, keeper stays nyiso 41
+
+**Goal.** Ground the NYISO CT offer level — the repo-level blocker left by commit 0c6c833
+("Kill cross-ISO leakage of ERCOT-fitted gas offer bands", open root cause "a NYISO-grounded
+CT econ ramp") — with independently measured mechanisms only; no residual input.
+
+**Mechanisms (all default-off, NYISO via CLI).** (1) *Fast-start amortization v3*
+(`--tranche-startup-measured-runs`): simple-cycle CT tranches amortize the NREL start cost
+over the CAMPD-measured median start-to-stop run length
+(`scripts/derive_campd_ct_run_lengths.py`, pooled 2023–25; per-plant medians 2–9 h, class
+fallback 4 h) as the horizon ceiling — P0 runs may only shorten it. Kills the v2 circularity
+(too-cheap offers → long P0 blocks → ≈0 markup → self-disabling, the nyiso-44 finding).
+(2) *Generator-level EIA-860 oil-primary screen* (`--oil-primary-bin-fuel` for non-ERCOT):
+verified clean — every NYISO gas-CT bin is NG-primary at the generator level (KER/DFO units
+already load as raw oil units), so kerosene mispricing is NOT the over-run; ERCOT keeps its
+registry screen byte-identical. (3) *NYSDEC 227-3 peaker-rule availability overlay*
+(`--nysdec-peaker-rule`, nyiso-46): curated unit-level ozone-season compliance windows from
+the on-disk Gold Book IV-3..IV-6 tables (per-unit citations); availability only, never
+offer/price; STAR-designated Gowanus/Narrows barges documented, never restricted.
+
+**Result.** CT_PEAKER 2024 4.75 → 4.54 TWh (actual 2.13); **C1-2024 ST_GAS −3.35 → −3.31 TWh
+— still the HARD FAIL** (the CT reduction cleared to CC/imports, not steam). C3a
+−14.4/−14.2/−12.4% and C3b 0.199/0.194/0.191 — best NYISO price scores to date, from honest
+commitment content. C2-2025/C5a/C4/C6 PASS. The residual CT over-run
+(Bayonne/Equus/Edgewood/Glenwood-Landing LM6000s on Transco Z6 hub gas) is the ledgered
+**LI/NYC LDC citygate / interruptible delivered-gas premium** data ask. **NEW:** first NYISO
+bundles scoring C7/C8 (committed `legitimacy_diagnostics.json`): the nyiso-33/34 temperature
+reliability floors force 22.6–28.4% of CT_PEAKER (cap 10%) and 34.0/41.5% of 2024/25 ST_GAS
+energy (cap 30%) and flatten the 2024 CT off-peak shape (CV 0.424) — MODEL MISS (rule #20),
+now first-class open root causes.
+
+**Registered:** `2026-07-04-nyiso-45-measuredruns` and `2026-07-04-nyiso-46-decpeaker`
+(both NOT-YET: C1-2024 + C7 + C8; C3a/b/c ledgered). Best probe: nyiso-46 (most structurally
+faithful). Keeper **unchanged**: `2026-07-03-nyiso-41-hub-prices`. Retention: pruned
+nyiso-31/nyiso-32 registrations (top-15).
+
 ### 2026-07-04 — NYISO — winter-spread promotion blocked by CT de-leak (nyiso 43/44): PROBES, keeper stays nyiso 41
 
 **Goal.** Promote the nyiso-42 reconciled Iroquois winter spread by root-causing its two

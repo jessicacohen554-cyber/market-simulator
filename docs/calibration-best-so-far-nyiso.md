@@ -1,49 +1,52 @@
 # NYISO calibration — best config so far
 
-> **SESSION 2026-07-04 (probes `nyiso 43 ceiling oilbasis` + `nyiso 44
-> faststart`, both registered NOT-YET; keeper unchanged): the run-42
-> winter-spread blockers are ROOT-CAUSED AND FIXED, but promotion is blocked
-> by a new repo-level regression.** The three carried items closed measured:
-> **(E2)** the run-42 C2-2025 gas −2.5% FAIL was a *scoring-basis artifact* —
-> the harness had silently enabled `dual_fuel_oil_reattribution` (spec'd
-> NEISO-only) for every ISO passing `--gas-hub-basis-daily`, relabelling
-> 0.8–1.5 TWh of parity-switched winter gas as oil while the measured NYIS
-> EIA-930 feed attributes those hours to `NG: NG` (Jan-2025: 0.80 TWh
-> relabelled vs 0.031 measured OIL; 2023: 2.17 TWh NYIS OIL vs a 0.42 TWh
-> EIA-923 oil class — static plant-primary attribution). Gate restored to
-> NEISO-only → C2-2025 **−0.1% PASS**, and C5a CO2 lands **in band all three
-> years** (−2.3/−5.3/−3.7%; the 41 keeper's 2024 −7.1% breach was the same
-> relabel exporting switch-hour CO2). **(E3)** the Feb-2023/Jan-2024/Jan-2025
-> reconstructions exceeded the measured Algonquin-Citygate ceiling of the NE
-> complex Z2 trades inside (13.21 vs 8.13; 8.60 vs 7.68; 18.60 vs 16.92) —
-> the reconciled reference now caps each month at the measured ALG monthly
-> and water-fills the shaved scarcity excess as a year-round base so the
-> measured SOM annual spread is preserved exactly (three measured series, no
-> constant; Jan-2024 overshoot +6 → +1.6). **(E1)** decomposed: east level =
-> the ledgered offer-markup/reserve frontier (AS data on disk is *prices*,
-> not condition-varying requirements → stays data-blocked); plus an upstate
-> shoulder collapse (Upstate_West at the $1.4 wind margin ~75% of Apr-2023
-> hours behind the measured 1,450 MW CE TTC while the recon band pushes
-> ~830 MW of measured net imports through the upstate link; real upstate held
-> ~$22-25 via gross two-way tie flows a single external node cannot see —
-> per-interface flows/ratings are the new data ask). **THE BLOCKER:** commit
-> `0c6c833` (2026-07-03, "Kill cross-ISO leakage of ERCOT-fitted gas offer
-> bands") de-leaked the NYISO CT_PEAKER/CT_CHP econ bands to neutral 1.0 with
-> "a NYISO-grounded CT econ ramp" as its documented open root cause — the
-> LI/NYC peakers now over-run ~2.5× actual (CT 4.9 vs 2.13 TWh) and displace
-> steam through the HARD C1 band (**2024 ST_GAS −3.4 TWh FAIL**). Every NYISO
-> solve on current main fails this — verified including a re-solve of the
-> keeper-41 config itself (CT 4.69/ST 7.65). `nyiso 44` shows the ISO-NE-style
-> fast-start amortization (`--tranche-startup-amortization`, real structure,
-> worth keeping) moves CT only 4.90 → 4.75: it cannot substitute for the
-> missing offer-level grounding. Closure candidates (none on disk): LI/NYC
-> peaker delivered-fuel basis (LDC citygate/interruptible; kerosene frames),
-> a SOM-groundable markup (the 2024 SOM confirms offers sit above bid-based
-> reference levels but publishes no per-class number), DEC Peaker-Rule
-> run-hour limits. CEMS marginal HR is ruled out (run-28: 0.66–0.85× base).
-> Best NYISO probe state: `nyiso 44` — C2/C5a/C1-2023/C6 PASS, C3a
-> −15.4/−14.9/−13.0, C3b 0.207/0.201/0.195, C3c 0/0/7h (3 ledgered soft
-> caveats; NOT-YET solely on C1-2024).
+> **SESSION 2026-07-04b (probes `nyiso 45 measuredruns` + `nyiso 46
+> decpeaker`, both registered NOT-YET; keeper unchanged): the CT offer level
+> is now PARTIALLY grounded by three measured mechanisms — the residual
+> over-run is the ledgered LI/NYC delivered-fuel basis, and the new C7/C8
+> HARD criteria expose the reliability floors' forced share as a first-class
+> open root cause.** (1) **Fast-start amortization v3**
+> (`--tranche-startup-measured-runs`): the simple-cycle CT tranches amortize
+> the NREL start cost over the CAMPD-measured median start-to-stop run
+> length (`scripts/derive_campd_ct_run_lengths.py` →
+> `campd_ct_run_lengths_NYISO.csv`, pooled 2023–25, per-plant medians 2–9 h,
+> class fallback 4 h) as the horizon CEILING — P0 runs may only shorten it —
+> removing the v2 circularity (too-cheap offers → long P0 blocks → ≈0
+> markup) nyiso-44 documented. $2–10/MWh of fuel-invariant commitment
+> content: CT_PEAKER 2024 4.75 → 4.54 TWh (actual 2.13), C3a
+> −15.4/−14.9/−13.0 → **−14.4/−14.2/−12.4%**, C3b 0.207/0.201/0.195 →
+> **0.199/0.194/0.191** (best NYISO price scores to date). (2)
+> **Generator-level EIA-860 oil-primary screen** (`--oil-primary-bin-fuel`,
+> non-ERCOT resolves from the raw generator sheet's Energy-Source-1 capacity
+> majority): VERIFIED CLEAN — every NYISO gas-CT bin is NG-primary at the
+> generator level (the per-plant fleet path already routes KER/DFO units to
+> raw oil units: Holtsville, Wading River, Glenwood 2514, Shoreham …), so
+> the screen flips zero NYISO bins; kerosene mispricing is NOT the CT
+> over-run. (3) **NYSDEC 227-3 peaker-rule availability overlay**
+> (`--nysdec-peaker-rule`, nyiso-46): curated unit-level ozone-season
+> compliance windows from the Gold Book IV-3..IV-6 tables (2023: Coxsackie /
+> South Cairo / Northport GT / Port Jeff GT1 / Shoreham 1&2 / Glenwood GT03
+> / 74th St; 2025: Astoria GT01 / Arthur Kill GT1 / 59th St; STAR-designated
+> Gowanus 2&3 / Narrows barges documented, never restricted). Availability
+> only; dispatch delta ~nil by construction (the over-runners are
+> 227-3-compliant 2001–04 LM6000s) — kept as real regulatory structure.
+> **C1-2024 ST_GAS −3.35 → −3.31 TWh: still the HARD FAIL.** The remaining
+> CT over-run (Bayonne/Equus/Edgewood/Glenwood-Landing LM6000s near-baseload
+> on Transco Z6 hub gas) is the ledgered **LI/NYC LDC citygate /
+> interruptible delivered-gas premium** — the open data ask; do NOT restore
+> the ERCOT-fitted bands, no CF-derived caps. **NEW (first NYISO bundle
+> scoring C7/C8):** the nyiso-33/34 CT/ST temperature reliability floors
+> dispatch 22.6–28.4% of CT_PEAKER (cap 10%) and 34.0–41.5% of 2024/25
+> ST_GAS energy (cap 30%) at binding floors and flatten the 2024 CT
+> off-peak shape (CV ratio 0.424 < 0.5) — MODEL MISS by construction (rule
+> #20), not ledgerable: once the delivered-fuel basis lands, re-derive the
+> floor coefficients from source data (rule #23) and re-measure. Best NYISO
+> probe state: `nyiso 46 decpeaker` (most structurally faithful; scores
+> identical to 45). Prior-session findings (43/44: oil-reattribution basis
+> fix restored to NEISO-only, Algonquin ceiling water-fill, E1
+> decomposition) stand — see
+> `results/calibration/nyiso43_ceiling_oilbasis/SUMMARY.md` and
+> `results/calibration/nyiso44_faststart/SUMMARY.md`.**
 
 > **KEEPER (2026-07-03): `nyiso 41 hub prices` — NOT-YET (re-balanced rubric;
 > 2026-07-04 note: no longer reproducible on current main — see the 0c6c833
