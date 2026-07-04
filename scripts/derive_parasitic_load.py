@@ -37,8 +37,10 @@ from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_parasitic_load")
 
-PROCESSED_DIR = REPO / "inputs" / "processed"
-REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
+# W1 collapsed the old inputs/ tree into data/raw/ — these are the live
+# locations the model reads (config/paths.py PROCESSED_DIR, REFERENCE_DIR).
+PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
+REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 
 
 def _registry_plant_groups() -> dict[int, str]:

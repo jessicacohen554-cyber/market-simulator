@@ -45,8 +45,10 @@ _MIXED_COAL_SHARE_HI: float = 0.90
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_plant_emissions")
 
-PROCESSED_DIR = REPO / "inputs" / "processed"
-REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
+# W1 collapsed the old inputs/ tree into data/raw/ — these are the live
+# locations the model reads (config/paths.py PROCESSED_DIR, REFERENCE_DIR).
+PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
+REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 PARASITIC_PATH = PROCESSED_DIR / "parasitic_load_factors.parquet"
 
 # Per-MWh-net rate columns mirrored into the registry.
