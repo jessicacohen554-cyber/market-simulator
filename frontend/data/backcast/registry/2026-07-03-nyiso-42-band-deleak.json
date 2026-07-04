@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-nyiso-42-band-deleak",
+  "label": "nyiso 42 band deleak",
+  "date": "2026-07-03",
+  "shorthand": "nyiso-42-band-deleak",
+  "definition": "(PROBE) Cross-ISO band de-leakage (audit C-11/C-13, rule #24): NYISO's CT_PEAKER econ ramp (was ERCOT-fitted 1.27/1.98) and inherited CT_CHP bands are neutralized to 1.0, and the uncited ERCOT 13.15x $5,000-ORDC CT peak wall is killed -> 4.0 (NYISO offer cap; promotes the NEISO-42 precedent). NYISO-grounded CC/ST_GAS curves kept. EXPECTED REGRESSIONS vs keeper nyiso-41 (not re-tuned back, rule #1): C3a mean LMP falls to -16.9/-16.2/-13.8% (was -13.3/-13.4/-9.5%) and C1 2024 ST_GAS -3.43 TWh as the neutral (cheaper) CT econ bids lower the merit order and displace steam. OPEN ROOT CAUSE: the price level the ERCOT bands were propping up needs NYISO-grounded CT heat-rate spreads + reserve-scarcity pricing, not a re-borrowed ERCOT ramp.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-nyiso-42-band-deleak.js",
+  "bundle": "results/calibration/nyiso_deleak_bands"
+}
