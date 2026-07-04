@@ -295,6 +295,21 @@ demonstrably beats `a_gw`, the gate stays closed. Constants
 `CO2_RATE_ENVELOPE_GATE_L1 = 0.5`; class median percentile 50) are frozen against
 backcast residuals and re-derive only on a CAMPD data update (rule 23).
 
+**Intake status.** The 2018–2021 34-state hourly unit-level fetch runs via the
+committed `scripts/fetch_campd_unit_level.py` (DEMO_KEY rate-limits to ~25/hr, so
+it is paced in the background). The `emissions-unit-annual` datatype and the
+committed `plant_emission_rates_v2` artifact are re-derived over whatever history
+has landed; the 7-year held-in LOYO re-run and the gate re-evaluation happen once
+2018–2021 are complete. The raw ~0.5 GB of binary parquet is **not** force-pushed
+(push_files is text-only; a single git pack that size 413s) — it is landed and
+regenerable from the fetcher; the consumed derived artifacts carry the rates. See
+`data/raw/campd-unit-level/README.md`.
+
+**Remaining follow-ups (explicitly deferred, "if time permits" per §8):** R4
+(carbon-price forward trajectory, EM-6), R5 (CHP measured-rate consistency + BTM
+share, EM-7), R6 (default-off startup-CO2 reporting adder — now unblocked by the
+persisted `model_starts`).
+
 ## 8. Implementation prompt
 
 ```
