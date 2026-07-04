@@ -69,11 +69,52 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
 }
 
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
+#
+# CAISO firm-block volumes (LEVER B, 2026-07-04, FINDING-caiso-evening-merit):
+# the two firm/contracted tranches (PNW_hydro_base, DSW_solar_PV — see
+# transmission.CAISO_FIRM_IMPORT_TRANCHES) proxy CAISO's resource-adequacy
+# import contracts: capacity-backed, must-offer supply that is self-scheduled
+# or bid at/below $0/MWh during the availability assessment hours (CPUC
+# D.20-06-028), i.e. price-taking firm blocks at the CAISO BAA boundary.
+# Their volumes are grounded on two published primary sources:
+#   1. TOTAL = DMM Annual Report on Market Issues & Performance, average
+#      system RA capacity table, "Imports" row (excl. "Imports-MSS", which are
+#      internal metered subsystems, not boundary imports):
+#        2023: 2,323 MW (2023 report, Jul 2024, RA chapter capacity table)
+#        2024: 3,371 MW (2024 report, Aug 2025, Table 15.6)
+#        2025: not yet published (annual report due ~Aug 2026) → carry the
+#              latest measured year (2024, 3,371 MW). OPEN DATA GAP: replace
+#              when the DMM 2025 annual report lands; the 2025 quarterlies
+#              publish only mixed YoY bid-volume changes (+256/-6/-28/-37%)
+#              off unpublished monthly bases, insufficient for an annual MW.
+#   2. SPLIT PNW vs DSW = published Maximum Import Capability (MIC) per
+#      branch group (data/raw/capacity-deliverability/caiso/caiso.csv, CAISO
+#      "Maximum RA Import Capability for year YYYY" docs). RA imports require
+#      MIC on the source intertie, so the corridor split follows the MIC share
+#      north vs south of Path 15 (north = Malin 500, COTP, NOB [PDCI — PNW
+#      source, CISO–BPAT interchange], Cascade, Summit, Round Mountain 230,
+#      Cottonwood 230, Northwest 230, Marble, and the BANC/TIDC-area ties
+#      [Tracy 230/500, Tracy-TEA, Westley-*, Standiford, Oakdale, New Melones,
+#      Rancho Seco/Lake], matching CAISO_CORRIDOR_DIBA geography):
+#        2023: north 7,411 / 16,055 = 46.2% → PNW 1,072, DSW 1,251
+#        2024: north 7,603 / 16,452 = 46.2% → PNW 1,558, DSW 1,813
+#        2025: north 7,500 / 16,148 = 46.4% → PNW 1,566, DSW 1,805
+#      ("Merchant", 387–516 MW, is unmappable from the MIC doc alone and is
+#      kept south; moving it north would shift the split by ~3%.)
+# Boundary caveats (rule #14): CEC Total System Electric Generation NW/SW
+# imports are all-California (LADWP/IID/BANC included) and CARB's specified
+# split is the jurisdictional-importer boundary — both rejected as misaligned.
+# EIA-930 net corridor flows cannot size a gross firm block (their low
+# percentiles are negative: midday solar exports net against firm imports).
+# Prices are unchanged Tier-3 contract-cost proxies (see
+# CAISO_FIRM_IMPORT_TRANCHES). The static entry below carries the latest
+# grounded (2025) volumes as the forward story — RA import contracting is a
+# persistent market structure; backcast years use IMPORT_TRANCHES_BY_YEAR.
 IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     "CAISO": [
-        ("PNW_hydro_base", 800.0, 28.0),
+        ("PNW_hydro_base", 1566.0, 28.0),
         ("PNW_midC", 1800.0, 36.0),
-        ("DSW_solar_PV", 1800.0, 48.0),
+        ("DSW_solar_PV", 1805.0, 48.0),
         ("DSW_CCGT", 1800.0, 68.0),
         ("DSW_CT", 2200.0, 110.0),
         ("WECC_scarcity", 3000.0, 180.0),
@@ -99,6 +140,37 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 }
 
 IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = {
+    # CAISO: only the two firm-block capacities vary by year (DMM RA import
+    # capacity × MIC corridor share — full derivation in the IMPORT_TRANCHES
+    # comment above). Spot tranches and all prices are identical to the static
+    # ladder. 2025 firm total carries the 2024 DMM measurement (open data gap
+    # until the DMM 2025 annual report publishes).
+    "CAISO": {
+        2023: [
+            ("PNW_hydro_base", 1072.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 1251.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
+        2024: [
+            ("PNW_hydro_base", 1558.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 1813.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
+        2025: [
+            ("PNW_hydro_base", 1566.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 1805.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
+    },
     "NYISO": {
         2023: [
             ("HQ_hydro", 900.0, 13.0),
