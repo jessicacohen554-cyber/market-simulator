@@ -1,0 +1,27 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot28 ordc-total-v1 (P1-only), session 2026-07-03",
+    "note": "Levers, all published/measured, none fitted: multi-product AS co-opt on the measured ASPLANNP433 requirements; published pre-reform ECRS deployment design (no price-based release 2023-06-10..2024-07-31 per IMM 2023 SOM / NPRR1224 rejection); the lumped ORDC total-reserve family (RTORPA, NPRR568/OBDRR048 - published curve, default flat-sigma fallback documented, NP6-576-ER re-fetch egress-blocked); measured NP3-911 Load-Resource RRS-UFR credit; measured F923 coal pricing, CAMPD outage overlay, measured GTC limits, measured CHP export floors. Storage: G5 endogenous energy-vs-AS split (full battery power cap in the co-opt). PROBE FINDING (root-caused, not tuned): the endogenous split holds 2.1-2.4x the measured battery AS award in every year (2023 mean 2,625 vs 1,249 MW) because it lacks the published per-product duration requirements (ECRS 2-h / Non-Spin 4-h sustained); the surplus reserve floods the total-ORDC family and collapses the 2023 scarcity months (Aug -76.4 vs keeper -46.1). C3 fails are the probe's own artifacts, deliberately MODEL MISS - no adder applied."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2023,
+      "magnitude": "-8.5 TWh (share -1.6pp)",
+      "reason": "Inherited from the ercot26 keeper unchanged (this stack's reserve carve-outs are volume-neutral on the class: -8.53 vs keeper -8.55 TWh): the model under-curtails 2023 renewables by ~4.1 TWh (model 2.46 vs ISO-reported 6.96 TWh) because ERCOT's real curtailment is nodal/intra-zone (VALEXP/McCamey/138 kV) - constraints the 7-zone reduction cannot represent (CONFIRMED by the ercot26 measured-GTC probe: the zonal interfaces saturate <1% of hours) - plus the ~3.7 TWh 923-vs-930 gas-actuals basis inconsistency. The honest fix is a sub-zonal/nodal topology (separate work stream); closing it with an offer retune or renewable haircut fitted to the residual is forbidden."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "magnitude": "-3.0% vs EIA-930 grid",
+      "reason": "2025 preliminary EIA-923 vintage (9/41 CC_REGULAR, 24/38 CT_PEAKER plants missing): no trustworthy per-class actual, family falls back to the EIA-930 aggregate; the residual is dominated by the 930-vs-preliminary-923 vintage difference. Re-score when the final 923 vintage lands. Inherited from the ercot26 keeper (-2.8% there; the -0.2pp move is the reserve carve-outs' marginal dispatch shift, inside the vintage uncertainty)."
+    }
+  ]
+}

@@ -778,7 +778,12 @@ def _build_reserve_rows(
             to the single system-wide family.
         balance_reserve_class: ``(n_families,)`` int — the reserve class index
             each family draws on. ``None`` (or all-zero) puts every family on
-            class 0 (the single-class default).
+            class 0 (the single-class default). A ``-1`` entry marks an
+            ALL-CLASS family: its balance row sums the reserve of **every**
+            class over its member zones (``sum_c sum_{z in f} R[c,z]``) — the
+            ERCOT lumped ORDC total-reserve curve (RTORPA), which prices the
+            aggregate reserve level that every AS product's held MW counts
+            toward, layered on top of the per-product families.
         online_gated: ``(n_classes,)`` boolean — classes whose headroom is
             online-gated (synchronised/spinning reserve). For a gated class the
             shared-headroom row is ``R[c,z] - online_rho * sum_g P[g] <= 0``
@@ -978,12 +983,19 @@ def _build_reserve_rows(
     bvals: list[np.ndarray] = []
     # reserve columns, family-by-family (vectorized within each family): each
     # family draws on R[c_f, z] for its member zones z, so its reserve columns
-    # are offset into its class block (c_f * n_zones).
+    # are offset into its class block (c_f * n_zones). fam_class[f] == -1 is
+    # the ALL-CLASS family (ERCOT lumped ORDC total-reserve): it draws on every
+    # class's R over its member zones, so each product's held reserve counts
+    # toward the total-reserve requirement exactly once.
     for f in range(n_fam):
         zsel = np.flatnonzero(zmask[f])
-        brows.append(np.full(zsel.size, f))
-        bcols.append(layout._reserve_off + int(fam_class[f]) * n_zones + zsel)
-        bvals.append(np.ones(zsel.size))
+        fam_classes = (
+            range(n_classes) if int(fam_class[f]) < 0 else (int(fam_class[f]),)
+        )
+        for c in fam_classes:
+            brows.append(np.full(zsel.size, f))
+            bcols.append(layout._reserve_off + int(c) * n_zones + zsel)
+            bvals.append(np.ones(zsel.size))
     # ORDC columns: family-major block, family f owns the next ordc_counts[f]
     off = 0
     for f in range(n_fam):

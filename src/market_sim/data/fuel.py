@@ -194,6 +194,41 @@ def _seasonal_factors(hours: int) -> np.ndarray:
     return np.tile(full_year, reps)[:hours]
 
 
+def gas_seasonal_shape(config, year: int, hours: int) -> np.ndarray:
+    """Return the ``(hours,)`` monthly gas-shape factors the merit order uses.
+
+    Default: the generic climatological :data:`GAS_MONTHLY_SEASONALITY`
+    (:func:`_seasonal_factors`). When ``config.gas_hh_monthly_shape`` is set
+    and the year has a complete measured Henry Hub monthly series
+    (:func:`_henry_hub_monthly`), the MEASURED monthly shape replaces it:
+    ``factor_m = HH_m / mean_hours(HH_year)`` — hour-weighted so the shaped
+    hourly series' annual mean equals the trusted annual level exactly. The
+    LEVEL stays the annual override/trajectory (never the receipt-biased
+    EIA-923 sample the Run-77 ERCOT backport rejected); only the month-to-month
+    SHAPE is measured — the reconciled variant that postmortem named. A
+    measured commodity-price input in the admissible class (delivered fuel
+    prices, CLAUDE.md #12): it regenerates for a forward year (futures-curve /
+    seasonal-normal shape via the generic fallback) and responds to changed
+    conditions (a mild winter's cheap Feb reaches the merit order). Years
+    without 12 measured months fall back to the generic shape unchanged.
+    """
+    if getattr(config, "gas_hh_monthly_shape", False):
+        hh = _henry_hub_monthly(None)
+        monthly = np.array(
+            [hh.get((int(year), m), np.nan) for m in range(1, 13)], dtype=float
+        )
+        if not np.isnan(monthly).any():
+            month_hours = np.array(_DAYS_IN_MONTH, dtype=float) * 24.0
+            level = float((monthly * month_hours).sum() / month_hours.sum())
+            if level > 0:
+                factors = np.repeat(monthly / level, (month_hours).astype(int))
+                if hours <= HOURS_PER_YEAR:
+                    return factors[:hours]
+                reps = -(-hours // HOURS_PER_YEAR)
+                return np.tile(factors, reps)[:hours]
+    return _seasonal_factors(hours)
+
+
 # Coal supply tag (coal_supply_class / COAL_PLANT_SUPPLY vocabulary) -> the
 # ScenarioConfig field stem of its sigmoid params. "prb_follower" is the
 # ERCOT tiered low-must-run tier of the prb curve, not a supply tag.
@@ -320,7 +355,7 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
     """
     gas = resolve_annual_gas_price(config, year)
     if config.gas_seasonality:
-        series = gas * _seasonal_factors(hours)
+        series = gas * gas_seasonal_shape(config, year, hours)
     else:
         series = np.full(hours, gas, dtype=float)
     if getattr(config, "gas_monthly_actuals", False):
@@ -2621,7 +2656,7 @@ def resolve_fuel_prices(
     T = config.hours
     delivered_annual = resolve_annual_gas_price(config, year)
     if config.gas_seasonality:
-        gas_price_hourly = delivered_annual * _seasonal_factors(T)
+        gas_price_hourly = delivered_annual * gas_seasonal_shape(config, year, T)
     else:
         gas_price_hourly = np.full(T, delivered_annual)
     # Backcast: measured ISO-month delivered gas (EIA-923 volume-weighted)

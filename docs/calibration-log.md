@@ -79,6 +79,88 @@ dispatch — the P1 merit order prices CTs out of the ramp (import tranche price
 commitment mechanisms carry the class. Also out of scope here: ST_GAS D-1 shape fail (pre-existing
 in the keeper), the w2-caiso-ra-p2 forecast-parity wiring gap (D-5), 2025 CT r.
 
+### 2026-07-03 — ERCOT — P1-only ORDC-era stack, RTORPA restored (ercot 28-32): KEEPER ercot 32
+
+**Goal (P1-ONLY, per the C3 handoff).** Close the C3 gates with the main
+no-commitment solve only — no P2 of any kind (`commitment_enabled` /
+`ercot_as_aware_commitment` off everywhere; the P2 route is shelved per the
+ercot27 verdict). Adopt the probe-proven P1 structure and make the product-level
+withholding AND the lumped ORDC total-reserve family work TOGETHER (in ercot27
+they were alternatives). Zero offer-curve retuning, zero fitted parameters.
+
+**Mechanisms added (all published/measured, cited in parameter-citations).**
+
+* **`ercot_ordc_total_reserve`** — the lumped ORDC total-reserve family
+  (RTORPA, NPRR568/OBDRR048) as an ALL-CLASS reserve-balance family
+  (`dispatch._build_reserve_rows` reserve_class −1) drawing on every AS
+  product's cleared reserve: product withholding and the total-reserve
+  LOLP×VOLL curve price together — the faithful pre-RTC+B stack. No new
+  columns, no new headroom, nothing double-procured.
+* **`ercot_storage_as_product_credit`** — the measured battery AS award
+  (60-Day DAM per-resource-type) netted pro-rata off the fast products'
+  requirements, the multi-product analogue of `ercot_storage_as_reserve`;
+  netted every year the award is reserved out of the storage cap
+  (internal consistency — see ercot30).
+* **`gas_hh_monthly_shape`** — measured Henry Hub monthly gas SHAPE,
+  hour-weight-normalized to the trusted annual level (the Run-77 reconciled
+  variant; the generic shape held Feb/Mar-2024 ~$0.7/MMBtu too dear).
+* **`ercot_reserve_supply_cap` paired with the total family** — cleared
+  reserve bounded by measured RTOLCAP/RTOFFCAP; the total family's balance
+  dual is added post-solve as the additive RTORPA, scoped to the TOTAL
+  family only (product duals are MCPCs, never in the energy price) —
+  ERCOT's actual pre-RTC+B settlement equation, RTSPP = SCED energy +
+  ORDC(online reserves).
+
+**Probe ladder (all registered; dashboard basis, RT benchmark).**
+
+| run | storage | 2023 C3a / Aug | 2024 C3a / shape | 2025 shape / tail |
+|---|---|---|---|---|
+| keeper ercot26 | measured cap-dock, no netting | −1.7% / −46.1 | +4.7% / 0.199 | 0.072 / 0.19× |
+| ercot28 (+total family) | endogenous (G5) | −11.0 / −76.4 | +7.5 / 0.209 | 0.066 / 0.26× |
+| ercot29 (+gas shape) | endogenous | −10.4 / −74.6 | +8.3 / 0.234 | 0.085 / 0.26× |
+| ercot30 (measured, inconsistent) | cap-dock, no netting | **+87.1 / +159** | +36.8 / 0.509 | 0.305 / 1.65× |
+| ercot31 (consistent netting) | cap-dock + netting + credit | −9.6 / −71.9 | +8.8 / 0.234 | 0.087 / 0.32× |
+| **ercot32 (+RTOLCAP cap)** | as ercot31 | **−5.4 / −62.4** | +9.1 / 0.235 | 0.087 / 0.32× |
+
+**Root causes settled (measured, not tuned).** (1) The G5 endogenous storage
+split holds **2.1–2.4× the measured battery AS award** (2023: 2,625 vs 1,249
+MW mean) because it lacks the published per-product duration requirements
+(ECRS 2-h / Non-Spin 4-h sustained) — G5 follow-up: add the duration gate.
+(2) Reserving the measured award from the cap **without** netting the
+requirements over-withholds thermal by the awarded MW — the ercot30 blow-up
+quantifies the internal-consistency requirement. (3) With consistent storage
+either way, Aug-2023 sits ≈ −72: the miss is the reserve-SUPPLY definition —
+the RTOLCAP cap (ercot32) recovers Aug −72 → −62 and Sep −13 → −4.5, and the
+>$500 deep tail reaches 68/104. Remaining Aug residual: the flat ORDC σ
+fallback (NP6-576-ER seasonal params egress-blocked, WS3) + sub-2-day forced
+outages outside the ≥2-day CAMPD detector. (4) The 2024 shape FAIL decomposes:
+Jan +12.5 and May +7.8 are the **DAM-AS overlay's DA-boundary premium on an
+RT-scored benchmark** (overlay hours realized DA ≈ $599/$511 vs RT ≈ $205/$316;
+ex-overlay Jan-2024 = −2.1 with truthful gas); Feb +6.2 was the generic gas
+shape (measured shape → +3.2). The overlay **stays**: ex-overlay the 2024 tail
+collapses to 10/53 = 0.19× — the RT-scored co-opt cannot form the DA-priced
+acute days even with measured supply (one event, one channel holds; the
+DA-boundary premium is documented MODEL MISS, not excused).
+
+**Keeper decision (structural, rule #1).** ercot 32 PROMOTED over ercot 26:
+strictly more real market structure (product withholding, published ECRS
+design, RTORPA price formation with measured supply, consistent measured
+storage treatment, measured gas shape), every mechanism published or measured.
+The C1/C2 hard-caveat pair is inherited unchanged (CC_REGULAR 2023 −8.53 TWh
+nodal/intra-zone; gas 2025 −3.0% preliminary vintage) and C5c 2024 storage
+shape improves r −0.306 → +0.331. Determination **NOT-YET** (C1+C2 exceed the
+hard budget; C3 misses are MODEL MISS with named root causes). ercot26's
+better 2023/2024 C3a came from documented compensation (scarcity months under,
+shoulders over) and an internally-inconsistent storage treatment.
+
+**Follow-ups.** (a) G5 duration-gated endogenous storage AS (published ECRS
+2-h / NSPIN 4-h rules) to retire the measured reservation forward; (b) the
+NP6-576-ER seasonal/TOD ORDC μ/σ re-fetch (egress-blocked) for the Aug-2023
+deep band; (c) Feb/Mar-2025 +5/+6 exposed by truthful gas (open thread);
+(d) sub-2-day forced-outage representation for heat events; (e) the C1
+sub-zonal/nodal topology work stream (unchanged).
+
+
 ### 2026-07-03 — CAISO — measured-hub WECC seam decomposition (caiso 49/50/51): caiso 51 promoted KEEPER
 
 **Goal.** Root-cause the C3a +37–49% over-price (CAISO the furthest ISO from calibrated,
