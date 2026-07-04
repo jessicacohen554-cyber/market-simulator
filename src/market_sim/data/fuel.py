@@ -48,7 +48,14 @@ from market_sim.config.constants import (
     HENRY_HUB_TRAJECTORIES,
     HOURS_PER_YEAR,
     INFLATION_RATE,
+    LIGNITE_PRICE_2023_25,
     OIL_PRICE_PER_MMBTU,
+    PRB_COMMODITY_DECLINE,
+    PRB_COMMODITY_FLAT_THROUGH,
+    PRB_COMMODITY_SHARE,
+    PRB_PRICE_BY_YEAR,
+    PRB_RAIL_DIESEL_SHARE,
+    PRB_RAIL_NONDIESEL_SHARE,
     START_YEAR,
 )
 from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR
@@ -3182,21 +3189,10 @@ def _fuel_name(fuel_idx: int) -> str:
 
 
 # --- CAMPD coal delivered fuel cost ($/MMBtu), by year and supply type ------
-# Mine-mouth lignite: $1.45 flat across 2023-2025, then escalates at general
-# inflation through the modeling window. PRB-by-rail: measured delivered cost
-# for 2023-2025; from 2026 a forward curve decomposes the 2023-2025 average
-# into commodity (42%), diesel-driven rail freight (12%) and non-diesel rail
-# freight (46%). The commodity component holds flat through 2030 then declines
-# 1.5%/yr as coal demand falls; non-diesel rail escalates at inflation; the
-# diesel-rail component is held at its 2025 level (the model carries no
-# forward diesel price curve). Source: operator/EIA cost data, user calibration.
-_LIGNITE_PRICE_2023_25: float = 1.45
-_PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
-_PRB_COMMODITY_SHARE: float = 0.42
-_PRB_RAIL_DIESEL_SHARE: float = 0.12
-_PRB_RAIL_NONDIESEL_SHARE: float = 0.46
-_PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
-_PRB_COMMODITY_FLAT_THROUGH: int = 2030
+# Mine-mouth lignite / PRB-by-rail base levels and trajectory shares now live
+# in constants.py (LIGNITE_PRICE_2023_25, PRB_PRICE_BY_YEAR, PRB_*_SHARE,
+# PRB_COMMODITY_DECLINE, PRB_COMMODITY_FLAT_THROUGH) — measured delivered-fuel-
+# cost inputs (CLAUDE.md rule #13), not a fitted/residual value.
 
 
 def _build_coal_price_trajectories() -> tuple[dict[int, float], dict[int, float]]:
@@ -3204,20 +3200,20 @@ def _build_coal_price_trajectories() -> tuple[dict[int, float], dict[int, float]
     lignite: dict[int, float] = {}
     prb: dict[int, float] = {}
     for y in (2023, 2024, 2025):
-        lignite[y] = _LIGNITE_PRICE_2023_25
-        prb[y] = _PRB_PRICE_CALIBRATION[y]
+        lignite[y] = LIGNITE_PRICE_2023_25
+        prb[y] = PRB_PRICE_BY_YEAR[y]
 
-    avg_prb = sum(_PRB_PRICE_CALIBRATION.values()) / 3.0
-    commodity_base = _PRB_COMMODITY_SHARE * avg_prb
-    rail_diesel = _PRB_RAIL_DIESEL_SHARE * avg_prb  # held flat forward
-    rail_nondiesel_base = _PRB_RAIL_NONDIESEL_SHARE * avg_prb
+    avg_prb = sum(PRB_PRICE_BY_YEAR.values()) / 3.0
+    commodity_base = PRB_COMMODITY_SHARE * avg_prb
+    rail_diesel = PRB_RAIL_DIESEL_SHARE * avg_prb  # held flat forward
+    rail_nondiesel_base = PRB_RAIL_NONDIESEL_SHARE * avg_prb
     for y in range(2026, END_YEAR + 1):
-        lignite[y] = _LIGNITE_PRICE_2023_25 * (1.0 + INFLATION_RATE) ** (y - 2025)
-        if y <= _PRB_COMMODITY_FLAT_THROUGH:
+        lignite[y] = LIGNITE_PRICE_2023_25 * (1.0 + INFLATION_RATE) ** (y - 2025)
+        if y <= PRB_COMMODITY_FLAT_THROUGH:
             commodity = commodity_base
         else:
-            commodity = commodity_base * (1.0 - _PRB_COMMODITY_DECLINE) ** (
-                y - _PRB_COMMODITY_FLAT_THROUGH
+            commodity = commodity_base * (1.0 - PRB_COMMODITY_DECLINE) ** (
+                y - PRB_COMMODITY_FLAT_THROUGH
             )
         rail_nondiesel = rail_nondiesel_base * (1.0 + INFLATION_RATE) ** (y - 2026)
         prb[y] = commodity + rail_diesel + rail_nondiesel
