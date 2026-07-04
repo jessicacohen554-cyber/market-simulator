@@ -130,7 +130,19 @@ build, not a floor (rule #1).
 
 ## Files
 - `results/calibration/caiso_rampLCR_probe/` — registered probe bundle (slim);
-  dashboard id `2026-07-04-caiso-ramplcr-probe-rejected`.
+  dashboard id `2026-07-04-caiso-ramplcr-probe-rejected` (payload generated
+  locally; not pushed due to the git-relay size limit).
 - `scripts/derive_campd_ramp_envelopes.py`, `scripts/derive_lcr_membership.py`,
   `src/market_sim/data/local_capacity.py`, `model/dispatch._build_ramp_rows` /
   `_build_local_capacity_rows`, `data/fleet.build_ramp_groups`.
+
+## Handoff note (branch push state)
+
+The git relay 413s on every push (even empty commits); `mcp__github__push_files`
+is the only working path. This branch carries the finding, `local_capacity.py`
+and `derive_campd_ramp_envelopes.py`. The remaining phase-1 code (the LP rows in
+`dispatch.py`, `fleet.build_ramp_groups`, the two `ScenarioConfig` flags, the
+runner/run_calibration/run_calibration_full wiring, the `--ct-netload-drag`
+toggle, and the two test files) is fully specified by the design doc
+(`docs/ramp-locational-design-2026-07.md`, in main) plus this finding and
+`local_capacity.py`; a follow-on session re-applies them via `push_files`.
