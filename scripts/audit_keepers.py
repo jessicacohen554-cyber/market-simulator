@@ -32,6 +32,11 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
       a newer same-ISO sidecar means the keeper may be stale.
   S1  ``status.js`` is in sync with the current verdicts
       (``build_status.py --check``).
+  H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
+      NO registered bundle — keeper or probe — declares a solve year outside
+      the 2023–2025 calibration window unless its ISO has a
+      calibration-complete marker in
+      ``frontend/data/backcast/calibration-complete.json``.
 
 Usage:
     python scripts/audit_keepers.py                  # audit every keeper
@@ -67,8 +72,39 @@ _PLACEHOLDER_RE = re.compile(r"^\s*calibration run from bundle\b", re.IGNORECASE
 # the substring "CALIBRATED".
 _DET_TOKENS = ("CALIBRATED-WITH-CAVEATS", "NOT-YET", "CALIBRATED")
 
-# ISOs that must always carry the full backcast year span (claude.md #13).
+# ISOs that must always carry the full backcast year span (claude.md #16).
 _MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO"}
+
+# H1 holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04).
+# Kept stdlib-inline (this module must run without numpy/model imports); a
+# parity test asserts these match legitimacy_diagnostics.D6_CALIBRATION_YEARS
+# / D6_MARKER_FILE — the same gate run by `legitimacy_diagnostics --keepers`.
+CALIBRATION_YEARS = frozenset({2023, 2024, 2025})
+MARKER_FILE = DATA / "calibration-complete.json"
+
+
+def holdout_quarantine_failures() -> list[str]:
+    """Return H1 failure strings: registered bundles breaching the holdout.
+
+    A registry sidecar (keeper OR probe) declaring a solve year outside
+    ``CALIBRATION_YEARS`` fails unless its ISO carries a calibration-complete
+    marker in ``calibration-complete.json`` (which authorizes the one-shot
+    frozen-config holdout score of 2022 / H1-2026).
+    """
+    complete = (_load_json(MARKER_FILE) or {}).get("complete", {})
+    fails = []
+    for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
+        side = _load_json(path) or {}
+        iso = side.get("iso", "?")
+        breach = sorted({int(y) for y in side.get("years", [])} - CALIBRATION_YEARS)
+        if breach and iso not in complete:
+            fails.append(
+                f"{path.stem}: solve year(s) {breach} outside the calibration "
+                f"window {sorted(CALIBRATION_YEARS)} with no {iso} "
+                f"calibration-complete marker in {MARKER_FILE.name} — holdout "
+                "quarantine breach (CLAUDE.md rule 22)"
+            )
+    return fails
 
 
 def _load_json(path: Path) -> dict | None:
@@ -291,6 +327,18 @@ def audit(isos: list[str] | None) -> Report:
         if want and iso.upper() not in want:
             continue
         audit_keeper(run_id, rep, newest_by_iso)
+
+    # H1: holdout quarantine across EVERY registered bundle (keeper or probe).
+    for msg in holdout_quarantine_failures():
+        rep.fail("holdout", "-", "H1", msg)
+    if not any(f["code"] == "H1" for f in rep.findings):
+        rep.ok(
+            "holdout",
+            "-",
+            "H1",
+            f"no registered bundle breaches the {sorted(CALIBRATION_YEARS)} "
+            "holdout quarantine",
+        )
 
     # S1: global status.js sync check.
     proc = subprocess.run(
