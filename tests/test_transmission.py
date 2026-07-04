@@ -433,17 +433,20 @@ class TestWeccImportModel(unittest.TestCase):
 
     def test_high_demand_dispatches_all_tranches_in_merit_order(self):
         # CAISO demand (10000 MW) needs every tranche but not the full
-        # 11400 MW * 0.98 = 11172 MW of available import capacity.
+        # available import capacity (ladder total * 0.98 availability). Caps
+        # are read from the ladder so the test tracks the grounded firm-block
+        # volumes (DMM RA-import capacity x MIC corridor share).
         generators = build_wecc_import_generators()
         result, _ = self._solve_caiso(generators, caiso_demand=10000.0)
 
         # The five cheaper tranches load to their available maxima.
-        for i, cap in enumerate((800.0, 1800.0, 1800.0, 1800.0, 2200.0)):
+        cheaper_caps = [cap for _, cap, _ in IMPORT_TRANCHES["CAISO"][:5]]
+        for i, cap in enumerate(cheaper_caps):
             np.testing.assert_allclose(
                 result.dispatch[i], cap * _IMPORT_AVAIL, atol=1e-6
             )
         # The $180 WECC_scarcity tranche is marginal and only partly loaded.
-        served_by_cheaper = (800.0 + 1800.0 + 1800.0 + 1800.0 + 2200.0) * _IMPORT_AVAIL
+        served_by_cheaper = sum(cheaper_caps) * _IMPORT_AVAIL
         np.testing.assert_allclose(
             result.dispatch[5], 10000.0 - served_by_cheaper, atol=1e-6
         )
