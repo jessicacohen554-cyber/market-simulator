@@ -846,10 +846,13 @@ def test_neiso_backcast_gas_mc_includes_rggi():
     uplift_2023 = get_emission_rate("gas_cc", 7.0) * expected_by_year[2023]
     assert 5.0 < uplift_2023 < 7.0
 
-    # Forward years have no measured RGGI price: fall through to the
-    # (zero) carbon path rather than extrapolating the auction series.
+    # Forward years carry the PROJECTED RGGI program price (EM-6 seam fix):
+    # the last measured clearing price (2025, $24.35/t) escalated at the RGGI
+    # CCR-band rate (7%/yr). No longer zero — forecast carbon now flows through
+    # the same channel as backcast. Source: cap_and_trade.projected_price.
     forward = ScenarioConfig(iso="NEISO", gas_seasonality=False, hours=hours)
-    assert resolve_carbon_price(forward, 2026) == 0.0
+    assert resolve_carbon_price(forward, 2026) == pytest.approx(24.35 * 1.07)
+    assert resolve_carbon_price(forward, 2026) > resolve_carbon_price(forward, 2025)
 
     # ERCOT/PJM stay at zero; the CAISO CARB series is untouched.
     for iso in ("ERCOT", "PJM"):

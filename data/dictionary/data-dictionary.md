@@ -45,10 +45,10 @@ for the market split.
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
-| load | 2015–2026 | 2023–2026 | 2022–2026 | 2023–2025 | 2023–2026 | 2015–2026 |
+| load | — | — | — | — | — | — |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
-| generation | 2018–2026 | 2023–2025 | 2022–2026 | 2023–2025 | 2018–2026 | 2018–2026 |
+| generation | — | — | — | — | — | — |
 | renewables | — | — | — | — | — | — |
 | validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
@@ -68,7 +68,7 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| emissions-unit-annual | annual unit-level CAMPD roll-up | n/a |
+| emissions-unit-annual | — | n/a |
 | outages | derived (CAMPD downtime + curated ERCOT lists) | 2022–2026 |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
@@ -79,7 +79,9 @@ snapshot).
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | n/a |
+| egrid | national (EPA eGRID, by vintage year) | 2023 |
+| rggi-co2-budgets | — | n/a |
+| carb-cap-schedule | — | n/a |
 
 ---
 
@@ -253,36 +255,35 @@ Hourly CEMS/CAMPD emissions by plant/unit. Schema:
 
 ## emissions-unit-annual
 
-Annual roll-up of the hourly **unit-level** CAMPD extracts — one row per
-`(plant_id, unit_id, year)`, the queryable product the forward per-plant CO2-rate
-estimator consumes (`docs/handoffs/emissions-co2-rate-plan-2026-07.md`). Schema:
+Annual unit-level CAMPD roll-up (one row per plant/unit/year) — the forward
+per-plant CO2-rate estimator's input. Schema:
 [`schema/emissions-unit-annual.schema.yaml`](schema/emissions-unit-annual.schema.yaml).
-Curated by `scripts/curate_emissions_unit_annual.py` (reads only
-`data/raw/campd-unit-level`; hard-skips the quarantined 2022/H1-2026 years).
 
 - **Keys:** `plant_id`, `unit_id`, `year`
-- **Derives:** annual `gross_mwh`, `heat_mmbtu`, `co2/nox/so2_kg` (kg), `op_hours`,
-  `starts` (gross>1 MW off→on transitions), and `co2_source` / `mw_source`
-  provenance flags.
+- **Reconciles:** The hourly unit-level CAMPD extracts
+  (`data/raw/campd-unit-level`) rolled up to annual `gross_mwh`, `heat_mmbtu`,
+  `co2/nox/so2_kg` (kg), `op_hours`, `starts`, plus `co2_source` / `mw_source`
+  provenance flags. Curated by `curate_emissions_unit_annual.py`; the
+  quarantined 2022/H1-2026 years are hard-skipped (rule 22).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
-| `state` | `string` | `none` | no | CAMPD stateCode. |
+| `state` | `string` | `none` | no | CAMPD stateCode of the facility. |
 | `plant_id` | `int64` | `none` | no | Plant / facility identifier (CAMPD facilityId). |
-| `unit_id` | `string` | `none` | no | Unit identifier (CAMPD unitId); "ALL" at facility grain. |
-| `year` | `int64` | `none` | no | Calendar year. |
-| `primary_fuel` | `string` | `none` | yes | CAMPD primaryFuelInfo. |
-| `unit_type` | `string` | `none` | yes | CAMPD unitType. |
-| `gross_mwh` | `float64` | `mwh` | no | Annual sum of hourly gross load. |
-| `steam_load_klbh_sum` | `float64` | `klb` | yes | Annual sum of hourly steam load (CHP host steam). |
-| `co2_kg` | `float64` | `kg` | no | Annual CO2 (kg), backfilled per `co2_source`. |
-| `nox_kg` | `float64` | `kg` | yes | Annual NOx (kg). |
-| `so2_kg` | `float64` | `kg` | yes | Annual SO2 (kg). |
-| `heat_mmbtu` | `float64` | `mmbtu` | no | Annual heat input. |
-| `op_hours` | `int64` | `hours` | no | Hours with gross load > 0. |
-| `starts` | `int64` | `none` | no | Off→on transitions (gross>1 MW) on a gap-filled clock. |
-| `co2_source` | `string` | `none` | no | `measured` / `partial_backfill` / `heat_backfilled`. |
-| `mw_source` | `string` | `none` | no | `measured` / `heat_proxy`. |
+| `unit_id` | `string` | `none` | no | Generating-unit identifier (CAMPD unitId). "ALL" for facility-grain rows so the key stays non-null. |
+| `year` | `int64` | `none` | no | Calendar year of the roll-up. |
+| `primary_fuel` | `string` | `none` | yes | CAMPD primaryFuelInfo (primary fuel type), where reported. |
+| `unit_type` | `string` | `none` | yes | CAMPD unitType (boiler / combustion turbine / …), where reported. |
+| `gross_mwh` | `float64` | `mwh` | no | Annual sum of hourly gross load (MWh gross). |
+| `steam_load_klbh_sum` | `float64` | `klb` | yes | Annual sum of hourly steam load (1000 lb/hr) — CHP host process steam, a proxy for cogeneration heat export. |
+| `co2_kg` | `float64` | `kg` | no | Annual CO2 mass (kg), backfilled for unmonitored hours per co2_source. |
+| `nox_kg` | `float64` | `kg` | yes | Annual NOx mass (kg). |
+| `so2_kg` | `float64` | `kg` | yes | Annual SO2 mass (kg). |
+| `heat_mmbtu` | `float64` | `mmbtu` | no | Annual heat input (MMBtu). |
+| `op_hours` | `int64` | `hours` | no | Hours with gross load > 0 (operating hours). |
+| `starts` | `int64` | `none` | no | Count of off->on transitions (gross_mw crossing 1 MW, campd._ONLINE_MW / _startup_factors convention) on a gap-filled hourly clock. |
+| `co2_source` | `string` | `none` | no | CO2 provenance: "measured" (CO2 reported for ~all heat), "partial_backfill" (scaled up to full heat at the unit's own measured intensity), or "heat_backfilled" (no CO2 reported; EPA gas default factor on heat). |
+| `mw_source` | `string` | `none` | no | Gross-MW provenance: "measured" (real gross-load readings present) or "heat_proxy" (unit reported heat but no gross load — CHP/steam host). |
 
 ## outages
 
@@ -687,3 +688,52 @@ Forward-derivable oil-burn budget drivers for the winter fuel-constrained fleet
 | `fuel_kind` | `string` | `none` | yes | Oil grade / fuel the row refers to when relevant: distillate (No. 2) \| residual (No. 6) \| oil (unspecified/blended) \| lng \| dual_fuel. Null for fuel-agnostic rows (season_days, program membership). |
 | `source_doc` | `string` | `none` | yes | Authoritative source: EIA-860 table + vintage for per-plant rows; the ISO-NE study title/URL for fleet/system rows; the program filing for program rows. |
 | `source_page` | `string` | `none` | yes | Page / table / figure locator within source_doc. |
+
+## rggi-co2-budgets
+
+RGGI regional/per-state CO2 allowance budgets and the price-control-band
+trigger-price schedule. Schema:
+[`schema/rggi-co2-budgets.schema.yaml`](schema/rggi-co2-budgets.schema.yaml).
+
+- **Keys:** `state`, `budget_year`, `metric`
+- **Reconciles:** RGGI, Inc. Allowance Distribution tables (regional +
+  per-member-state annual budgets, short tons) and the 2017 Model Rule Cost
+  Containment Reserve / Emissions Containment Reserve / minimum-reserve trigger
+  prices onto one tidy `(state, budget_year, metric, value, unit)` frame. The
+  budget feeds the optional power-sector mass-cap row (a scenario, no-bank
+  instrument — NOT the RGGI market price); the trigger prices feed the
+  projected forecast allowance-price band. Never intake 2022/H1-2026 (rule 22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `state` | `string` | `none` | no | Two-letter postal code of the RGGI member state (e.g. NY, CT, MA, ME, NH, RI, VT, MD, DE, NJ, VA), or the literal RGGI for the regional aggregate. |
+| `budget_year` | `int64` | `year` | no | Allowance control-period calendar year the value applies to. |
+| `metric` | `string` | `none` | no | One of allowance_budget \| ccr_trigger_price \| ecr_trigger_price \| minimum_reserve_price. |
+| `value` | `float64` | `mixed` | no | The quantity — short tons for allowance_budget, $/short ton for the three price metrics (see the unit column). |
+| `unit` | `string` | `none` | no | Unit of value — short_tons or usd_per_short_ton. |
+| `source_doc` | `string` | `none` | no | Authoritative RGGI, Inc. document the value is drawn from. |
+| `source_page` | `string` | `none` | yes | Table/section/page reference within source_doc. |
+
+## carb-cap-schedule
+
+CARB cap-and-trade annual allowance budget and Auction Reserve floor-price
+schedule. Schema:
+[`schema/carb-cap-schedule.schema.yaml`](schema/carb-cap-schedule.schema.yaml).
+
+- **Keys:** `budget_year`, `metric`
+- **Reconciles:** CARB Cap-and-Trade Regulation §95841 annual allowance budgets
+  (MMT CO2e) and the §95911(c) Auction Reserve (floor) price with its 5% + CPI
+  escalation onto one tidy `(budget_year, metric, value, unit)` frame. The
+  budget feeds the optional power-sector mass-cap row (a scenario, no-bank
+  instrument — NOT the CARB market price); the floor escalator feeds the
+  projected forecast allowance price for CAISO. Never intake 2022/H1-2026 (rule
+  22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `budget_year` | `int64` | `year` | no | Budget calendar year the value applies to. |
+| `metric` | `string` | `none` | no | One of allowance_budget \| auction_reserve_price. |
+| `value` | `float64` | `mixed` | no | The quantity — MMT CO2e for allowance_budget, $/tonne for auction_reserve_price (see the unit column). |
+| `unit` | `string` | `none` | no | Unit of value — mmt_co2e or usd_per_tonne. |
+| `source_doc` | `string` | `none` | no | Authoritative CARB document the value is drawn from. |
+| `source_page` | `string` | `none` | yes | Section/table/page reference within source_doc. |

@@ -1,0 +1,77 @@
+# Canonical schema: rggi-co2-budgets (Regional Greenhouse Gas Initiative CO2
+# allowance budgets and price-control-band trigger prices, per state/region,
+# per allowance-control-period year).
+#
+# The RGGI program is the source of two distinct quantities this model uses:
+#
+#   1. The annual CO2 allowance BUDGET (short tons/yr) — regional and per member
+#      state — which is the tonnage a power-sector-only mass-cap row would bind
+#      against for a RGGI ISO (NYISO = NY; NEISO = the six New England states).
+#      This is a scenario/analytic instrument (power-sector, no-bank; see
+#      docs/handoffs/emissions-mass-cap-plan-2026-07.md §2, §8), NOT the RGGI
+#      market clearing price.
+#   2. The price-control-band trigger prices — Cost Containment Reserve (CCR),
+#      Emissions Containment Reserve (ECR) and the minimum reserve (floor) price
+#      — which escalate on a published schedule and define the projected
+#      forecast allowance-price band (the adder path, plan §7).
+#
+# One row per (state, budget_year, metric). ``state`` is a two-letter postal
+# code for a member state or the literal ``RGGI`` for the regional total.
+# Provenance (exact document + table) rides in source_doc / source_page so every
+# number traces to its authoritative RGGI, Inc. filing (rule 5). NEVER intake
+# 2022 or H1-2026 rows (holdout quarantine, CLAUDE.md rule 22).
+datatype: rggi-co2-budgets
+schema_version: 1
+title: RGGI CO2 allowance budgets and price-band trigger schedule
+description: >-
+  RGGI regional and per-member-state annual CO2 allowance budgets (short tons)
+  and the Cost Containment Reserve / Emissions Containment Reserve / minimum
+  reserve trigger-price schedule ($/short ton), by allowance-control-period
+  year. The budget feeds the optional power-sector mass-cap row; the trigger
+  prices feed the projected forecast allowance-price band.
+
+key_columns: [state, budget_year, metric]
+allow_additional_columns: false
+
+columns:
+  - name: state
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Two-letter postal code of the RGGI member state (e.g. NY, CT, MA, ME, NH,
+      RI, VT, MD, DE, NJ, VA), or the literal RGGI for the regional aggregate.
+  - name: budget_year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Allowance control-period calendar year the value applies to.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      One of allowance_budget | ccr_trigger_price | ecr_trigger_price |
+      minimum_reserve_price.
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: >-
+      The quantity — short tons for allowance_budget, $/short ton for the three
+      price metrics (see the unit column).
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: Unit of value — short_tons or usd_per_short_ton.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Authoritative RGGI, Inc. document the value is drawn from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Table/section/page reference within source_doc.

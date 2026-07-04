@@ -45,6 +45,8 @@ DATATYPES: tuple[str, ...] = (
     "capacity-deliverability",
     "gtc-limits",
     "winter-fuel-inventory",
+    "rggi-co2-budgets",
+    "carb-cap-schedule",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
