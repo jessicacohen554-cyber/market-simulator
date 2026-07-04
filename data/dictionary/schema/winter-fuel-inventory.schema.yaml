@@ -1,0 +1,142 @@
+# Canonical schema: winter-fuel-inventory (seasonal oil-burn budget drivers for
+# the fuel-constrained winter fleet — forward-derivable capacity/logistics
+# quantities ONLY, never measured burn/delivery outcomes).
+#
+# Backs component A of the NEISO winter fuel-inventory build
+# (docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md). A winter-season
+# oil-burn energy budget needs, per fuel-constrained plant (or fleet/program
+# group): how much oil can be stored on site, how full the tanks start the
+# season, how fast oil is re-supplied, and how fast a unit can physically burn
+# it. The budget the LP consumes is
+#
+#     budget_mmbtu = start_fill + delivery_rate x season_days
+#
+# and the row's shadow price is the endogenous winter scarcity rent. Every
+# quantity here is a rule-#13-admissible INPUT: a physical/logistics capacity
+# that regenerates for a forward year from forward drivers (tank size, contract
+# delivery rate, boiler firing rate, fleet roster) and responds to changed
+# weather/fleet. It is NOT a measured outcome — the rejected F923 petroleum
+# *receipts* (deliveries-to-tank, 1-2 plants reporting) are deliberately absent
+# and inadmissible as a budget driver (see the audit doc + CLAUDE.md #11/#13).
+#
+# Tidy (long) frame: one row per (iso, entity, entity_type, season,
+# delivery_year, metric). ISOs and sources publish these quantities at
+# different granularities — per-plant (EIA-860), fleet-wide (ISO-NE studies),
+# per-program (winter-reliability / retention unit lists) — so the entity +
+# entity_type pair carries whichever level a source is defined on, and the
+# controlled metric+unit vocabulary absorbs the heterogeneity into one schema
+# for every ISO. Provenance (EIA-860 vintage/table, ISO-NE study PDF + page)
+# rides in source_doc / source_page so every number traces to its origin.
+datatype: winter-fuel-inventory
+schema_version: 1
+title: Winter fuel inventory (seasonal oil-burn budget drivers)
+description: >-
+  Per-plant / per-fleet / per-program forward-derivable capacity and logistics
+  quantities that size a winter-season (Nov-Mar) oil-burn energy budget for the
+  fuel-constrained fleet: on-site oil tank capacity, start-of-season fill,
+  re-supply delivery rate, dual-fuel oil-limb MW, boiler petroleum firing rate,
+  season length, and winter-reliability/retention program membership.
+  Admissible physical/market INPUTS only (CLAUDE.md #13) — never measured
+  burn/delivery outcomes.
+
+key_columns: [iso, entity, entity_type, season, delivery_year, metric]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO the row applies to (e.g. ISONE).
+  - name: entity
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Identifier the value is defined on: an EIA-860 plant code (as a string)
+      for per-plant rows, a program name (e.g. "Mystic_COS", "WRP_2017_18") for
+      program rows, a fuel-class label (e.g. "OIL_STEAM", "DUAL_FUEL_GAS") for
+      fleet-class rows, or an ISO/system label for system-wide study rows.
+  - name: entity_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Granularity of entity: one of plant | fleet | fuel_class | program |
+      system.
+  - name: plant_code
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      EIA-860 plant code when entity_type=plant (also parseable from entity);
+      null for fleet/program/system rows.
+  - name: season
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Season the value governs: winter (the Nov-Mar fuel-security horizon) or
+      annual (year-round physical attributes such as tank capacity / firing
+      rate that are not season-specific).
+  - name: delivery_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Vintage / study / winter label the value governs, as a label: an EIA-860
+      data vintage ("2023"), a winter season ("2017/2018"), or a study year
+      ("2018" for the OFSA). System/study assumptions that are not year-keyed
+      use the source's publication year.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical metric. Physical/logistics vocabulary:
+      tank_capacity (on-site oil storage capacity, in bbl/mmbtu or days of
+      autonomy), start_fill (assumed start-of-season oil inventory),
+      delivery_rate (oil re-supply cap in bbl/mmbtu per day or tank fills per
+      winter, or LNG injection in bcf per day),
+      annual_run_limit (permit/environmental annual oil-run cap, days/yr),
+      firing_rate (max physical petroleum burn rate, EIA-860 boiler),
+      oil_limb_capacity (dual-fuel unit's net capacity when burning oil, EIA-860
+      multifuel), oil_fleet_capacity (fleet/class oil-capable MW from a study),
+      winter_program_capacity (MW retained under a winter-reliability /
+      retention program), season_days (length of the budget horizon),
+      winter_program_member (membership flag in a winter-reliability / retention
+      program; value=1.0, unit=flag).
+  - name: value
+    dtype: float64
+    unit: none
+    nullable: false
+    description: The numeric value, in the units named by the unit column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Physical unit of value: one of mw | bbl | bbl_per_hr | bbl_per_day |
+      mmbtu | mmbtu_per_day | fills_per_season | bcf_per_day | days | flag. The
+      metric<->unit pairing is checked by the curation tidy-validator.
+  - name: fuel_kind
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Oil grade / fuel the row refers to when relevant: distillate (No. 2) |
+      residual (No. 6) | oil (unspecified/blended) | lng | dual_fuel. Null for
+      fuel-agnostic rows (season_days, program membership).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Authoritative source: EIA-860 table + vintage for per-plant rows; the
+      ISO-NE study title/URL for fleet/system rows; the program filing for
+      program rows.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table / figure locator within source_doc.
