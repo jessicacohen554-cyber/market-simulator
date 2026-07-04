@@ -878,6 +878,22 @@ def _solve_highs(cost, col_lower, col_upper, A, row_lower, row_upper):
     LP in seconds and still returns the row duals we need. Crossover is left off
     for speed; a near-optimal interior point is fine for reporting matching%,
     premium, and build MW. Infinities are mapped to ``kHighsInf``.
+
+    **Crossover fallback (robustness).** On a *degenerate / high-dimensional
+    optimal face* — common in loose Mode-B sweeps where over-cheap renewables
+    make ~100% matching achievable many equivalent ways — crossover-off IPM can
+    stop at an interior point it cannot certify and report model status
+    ``Unknown`` (kHighsModelStatusUnknown) instead of ``Optimal``, even though a
+    genuine optimum exists. That non-Optimal status makes ``build_and_solve``
+    zero the solution (``solve_ok`` gate), silently dropping an achievable
+    frontier point to 0% matched. So when the fast path returns anything other
+    than ``Optimal`` we re-solve **once** with ``run_crossover=on``: crossover
+    walks the interior point to an adjacent vertex and certifies optimality,
+    recovering these points. The retry only fires on the (rare) non-Optimal
+    path, so the happy-path speed ADR 0003 chose is unchanged; a truly
+    infeasible/unbounded model still returns its non-Optimal status after the
+    retry. (Discovered by the ADR 0018 excess-headroom ERCOT validation,
+    ``docs/excess-headroom-validation-2026-07.md``.)
     """
     inf = highspy.kHighsInf
     col_upper = np.where(np.isinf(col_upper), inf, col_upper)
@@ -885,37 +901,44 @@ def _solve_highs(cost, col_lower, col_upper, A, row_lower, row_upper):
     row_upper = np.where(np.isinf(row_upper), inf, row_upper)
     row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
 
-    h = highspy.Highs()
-    h.setOptionValue("output_flag", False)
-    h.setOptionValue("solver", "ipm")
-    h.setOptionValue("run_crossover", "off")
-    _threads = os.environ.get("LCE_PORTFOLIO_HIGHS_THREADS")
-    if _threads:
-        h.setOptionValue("threads", int(_threads))
-    h.addCols(
-        A.shape[1],
-        cost.astype(np.float64),
-        col_lower.astype(np.float64),
-        col_upper.astype(np.float64),
-        0,
-        np.array([], dtype=np.int32),
-        np.array([], dtype=np.int32),
-        np.array([], dtype=np.float64),
-    )
-    h.addRows(
-        A.shape[0],
-        row_lower.astype(np.float64),
-        row_upper.astype(np.float64),
-        A.nnz,
-        A.indptr[:-1].astype(np.int32),
-        A.indices.astype(np.int32),
-        A.data.astype(np.float64),
-    )
-    h.run()
-    status = h.modelStatusToString(h.getModelStatus())
-    sol = h.getSolution()
-    return (
-        np.asarray(sol.col_value, dtype=float),
-        np.asarray(sol.row_dual, dtype=float),
-        status,
-    )
+    def _run(crossover: str):
+        """Build a fresh HiGHS model and solve it with the given crossover mode."""
+        h = highspy.Highs()
+        h.setOptionValue("output_flag", False)
+        h.setOptionValue("solver", "ipm")
+        h.setOptionValue("run_crossover", crossover)
+        _threads = os.environ.get("LCE_PORTFOLIO_HIGHS_THREADS")
+        if _threads:
+            h.setOptionValue("threads", int(_threads))
+        h.addCols(
+            A.shape[1],
+            cost.astype(np.float64),
+            col_lower.astype(np.float64),
+            col_upper.astype(np.float64),
+            0,
+            np.array([], dtype=np.int32),
+            np.array([], dtype=np.int32),
+            np.array([], dtype=np.float64),
+        )
+        h.addRows(
+            A.shape[0],
+            row_lower.astype(np.float64),
+            row_upper.astype(np.float64),
+            A.nnz,
+            A.indptr[:-1].astype(np.int32),
+            A.indices.astype(np.int32),
+            A.data.astype(np.float64),
+        )
+        h.run()
+        status = h.modelStatusToString(h.getModelStatus())
+        sol = h.getSolution()
+        return (
+            np.asarray(sol.col_value, dtype=float),
+            np.asarray(sol.row_dual, dtype=float),
+            status,
+        )
+
+    col_value, row_dual, status = _run("off")
+    if status != "Optimal":
+        col_value, row_dual, status = _run("on")
+    return col_value, row_dual, status
