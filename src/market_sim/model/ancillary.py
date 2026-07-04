@@ -21,9 +21,25 @@ saturation a forecast would over-build storage forever on a static AS rate.
 Gated on ``ScenarioConfig.as_revenue_enabled`` and ERCOT only; returns 0
 otherwise, so the default (off) is byte-identical and capacity-market ISOs
 are untouched.
+
+**Endogenous alternative (one mechanism per phenomenon, CLAUDE.md rule 19).**
+This exogenous credit and the endogenous reserve co-optimization
+(``ercot_storage_as_endogenous``) are two pricings of the *same* storage AS
+duty and must never both apply to a resource. When the co-opt prices storage
+AS, the storage new-entry screen credits the AS value **derived from the
+solved co-opt's own reserve duals** — :func:`realized_storage_as_revenue_per_mw_yr`
+below — and the exogenous :func:`as_revenue_per_mw_yr` is suppressed for
+storage (see ``model.storage.apply_storage_new_entry``). The exogenous rate
+remains the sole storage AS credit only when the endogenous flag is off (the
+legacy/backcast-validation path). Thermal AS still uses the exogenous rate in
+both regimes (the storage-scoped ``ercot_storage_as_endogenous`` does not
+govern thermal; the thermal double-count under the co-opt is a labelled seam
+in ``docs/storage-as-withholding-attribution-2026-07.md``).
 """
 
 from __future__ import annotations
+
+import numpy as np
 
 from market_sim.config.constants import (
     ERCOT_AS_REVENUE_PER_KW_YR,
@@ -80,3 +96,85 @@ def as_revenue_per_mw_yr(
         * as_saturation_factor(storage_power_mw)
     )
     return per_kw * 1000.0
+
+
+def realized_storage_as_revenue_per_mw_yr(
+    reserve_price_by_family: np.ndarray | None,
+    reserve_dispatch: np.ndarray | None,
+    storage_charge: np.ndarray | None,
+    storage_discharge: np.ndarray | None,
+    storage_power_cap: np.ndarray | float,
+    storage_zone_idx: np.ndarray,
+    n_zones: int,
+) -> float:
+    """Storage AS revenue in $/MW-yr recovered from a solved reserve co-opt.
+
+    The endogenous analogue of :func:`as_revenue_per_mw_yr`: instead of a
+    calibrated exogenous rate, this reads the battery's AS income straight off
+    the co-optimization's own LP duals, so under
+    ``ercot_storage_as_endogenous`` exactly one mechanism prices storage AS
+    (CLAUDE.md rule 19). It is a *forward* quantity — it responds to the fleet,
+    the AS requirement and the energy spreads of the year that was solved, and
+    it goes to zero as the fleet grows and the AS price collapses, with no
+    measured award anywhere in the path (rule 13).
+
+    Realized revenue = ``Σ_t (storage cleared reserve MW)_t × (binding AS
+    price)_t``, annualized per MW of storage power:
+
+    * cleared reserve attributed to storage via
+      :func:`market_sim.model.dispatch.storage_reserve_mw` (the storage-first
+      opportunity-cost attribution, an upper bound when storage is not the
+      marginal fast-AS provider — see that helper's docstring);
+    * priced at the per-hour binding AS clearing price, the max across reserve
+      families of ``reserve_price_by_family`` (each ERCOT AS product is a
+      family; a battery clears the dearest product it is eligible for).
+
+    Fully vectorized (no hour loop). Returns 0.0 when the co-opt did not run
+    (``reserve_price_by_family``/``reserve_dispatch`` is ``None``) or the fleet
+    has no power — so a config that names the endogenous flag but never priced
+    reserve simply credits no storage AS (and the caller's footgun guard warns).
+
+    Args:
+        reserve_price_by_family: ``(T, n_families)`` per-product reserve
+            clearing price (``DispatchResult.reserve_price_by_family``).
+        reserve_dispatch: ``(n_reserve_cols, T)`` cleared reserve, zone-minor
+            (``DispatchResult.reserve_dispatch``).
+        storage_charge: ``(n_storage, T)`` cleared charge MW.
+        storage_discharge: ``(n_storage, T)`` cleared discharge MW.
+        storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` power cap MW.
+        storage_zone_idx: ``(n_storage,)`` zone index of each storage unit.
+        n_zones: Number of model zones (the reserve block is zone-minor over
+            these, so ``n_reserve_classes = n_reserve_cols // n_zones``).
+
+    Returns:
+        Storage AS revenue in $/MW-yr (0.0 if unpriced or empty fleet).
+    """
+    if reserve_price_by_family is None or reserve_dispatch is None:
+        return 0.0
+    from market_sim.model.dispatch import storage_reserve_mw
+
+    rd = np.asarray(reserve_dispatch, dtype=float)
+    rp = np.asarray(reserve_price_by_family, dtype=float)
+    if rd.ndim != 2 or rp.ndim != 2 or n_zones <= 0:
+        return 0.0
+    n_reserve_cols = rd.shape[0]
+    if n_reserve_cols % int(n_zones) != 0:
+        return 0.0
+    n_reserve_classes = n_reserve_cols // int(n_zones)
+    cap = np.asarray(storage_power_cap, dtype=float)
+    total_mw = float(cap.sum()) if cap.ndim == 1 else float(cap.sum(axis=0).max())
+    if total_mw <= 0.0:
+        return 0.0
+    # Storage's share of the cleared reserve, (n_zones, T), summed over zones.
+    s_res = storage_reserve_mw(
+        rd,
+        storage_charge,
+        storage_discharge,
+        storage_power_cap,
+        storage_zone_idx,
+        n_reserve_classes,
+    ).sum(axis=0)  # (T,)
+    # Per-hour binding AS price (dearest product the battery can clear).
+    price_t = rp.max(axis=1) if rp.shape[1] else np.zeros(rp.shape[0])
+    annual_rev = float(np.dot(s_res, price_t))  # $ over the solved year
+    return annual_rev / total_mw
