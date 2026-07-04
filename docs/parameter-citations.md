@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**963 parameters registered** (553 flagged `needs-citation`).
+**959 parameters registered** (552 flagged `needs-citation`).
 
 
 ## Calibration
@@ -69,7 +69,6 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.renewable_buildout_pace` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_aggressiveness` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_consecutive_years` | 2 | 2 | Market simulator model design decision | 2026-05 | modeled |
-| `scenario.sigmoid_midpoint` | 0.5 | 2 | Market simulator model design decision | 2026-05 | modeled |
 | `scenario.sigmoid_steepness` | 12.0 | 2 | Market simulator model design decision | 2026-05 | modeled |
 | `wright_reference_gw.li_ion` | 130.0 | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 |  |
 | `wright_reference_gw.solar` | 1800.0 | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 |  |
@@ -560,7 +559,6 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_storage.low` | 0.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.mid` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `ercot_as_revenue_per_kw_yr.storage` | 169.0 | 2 | ERCOT ancillary-service market revenue ($/kW-yr) credited in the ca… | 2023 | auto-generated |
-| `pumped_storage_dispatch_adder_by_iso.PJM` | 10.0 | 2 | Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduc… | 2026-06 | auto-generated |
 | `pumped_storage_duration_hours` | 10.0 | 2 | Pumped-storage hydro fleet parameters (EIA-860 PS units enter the s… | 2023 | auto-generated |
 | `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
@@ -771,7 +769,6 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ordc_lolp_sigma_mw` | 1400.0 | 2 | PROVISIONAL flat fallback, bounded from the OBDRR048 floor breakpoi… | 2023-11 |  |
 | `scenario.ordc_mcl_mw` | 3000.0 | 1 | OBDRR038 (Minimum Contingency Level Updates to Align with PUCT Orde… | 2022-01 |  |
 | `scenario.ordc_multistep_floor` | True | 2 | OBDRR048 multi-step RTORPA price floor, PUCT-approved 2023-10-12, e… | 2023-11 |  |
-| `scenario.ordc_reliability_deployment_mw` | 0.0 | 2 | DEPRECATED reliability- |  | auto-generated, needs-citation |
 | `scenario.pjm_congestion` | False | 3 | PJM transmission-congestion lever (break the copper-plate). PJM cle… |  | auto-generated, needs-citation |
 | `scenario.pjm_seam_export_limit` | False | 1 | PJM reference-price seam: the EXPORT |  | auto-generated, needs-citation |
 | `scenario.pjm_seam_flow_limit` | False | 1 | PJM reference-price seam: the PJM |  | auto-generated, needs-citation |
@@ -949,7 +946,6 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
-| `agt_daily_basis_convexity` | 7.0 | 2 | Convexity exponent of the Algonquin Citygate (AGT) *daily* gas-basi… | 2023 | auto-generated |
 | `caiso_tac_zone_weights.PGE-TAC.NP15` | 0.86 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.PGE-TAC.ZP26` | 0.14 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.SCE-TAC.SP15` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
