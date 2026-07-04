@@ -21,7 +21,11 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
+    CC_REGULAR_PEAKING_PCT_BY_PLANT,
+    CHP_BTM_PCT_BY_SECTOR,
+    CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
+    COAL_MAX_CF_BY_PLANT,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -517,22 +521,13 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
 
-# Per-plant coal maximum capacity-factor ceilings (fraction of capacity_mw):
-# the sustained output each unit cannot exceed even running hard (derates,
-# heat-rate / boiler limits), capping the dispatch so coal does not over-run.
-# Applied as an availability ceiling year-round.
-COAL_MAX_CF_BY_PLANT: dict[int, float] = {
-    6180: 0.90,  # Oak Grove
-    298: 0.80,  # Limestone
-    6178: 0.99,  # Coleto Creek
-    6183: 0.90,  # San Miguel
-    6179: 0.89,  # Fayette (Sam Seymour)
-    7097: 0.80,  # J K Spruce
-}
-# Year-specific ceiling overrides (e.g. confirmed unit-outage years).
-COAL_MAX_CF_OVERRIDE: dict[tuple[int, int], float] = {
-    (6179, 2025): 0.78,  # Fayette unit issues held it to ~78% in 2025
-}
+# Per-plant coal sustained-output ceilings now live in
+# constants.COAL_MAX_CF_BY_PLANT (re-derived from CAMPD outage-adjusted
+# availability physics, not observed output — see
+# scripts/derive_coal_max_cf.py). The year-specific (6179, 2025) override that
+# used to sit here was deleted outright: a single confirmed-unit-outage year
+# has no forward analogue, and the historic-outage overlay already zeros the
+# actual outage hours for backcast runs.
 # Summer-only (Jun-Sep) ceilings: an ambient/derate cap that only binds in the
 # heat (the unit runs higher the rest of the year).
 COAL_SUMMER_MAX_CF: dict[int, float] = {
@@ -1280,9 +1275,7 @@ def generators_to_fleet_arrays(
             # cannot dispatch above its sustained operating limit.
             if gen.plant_group == "COAL":
                 _pc = int(gen.plant_code)
-                cap = COAL_MAX_CF_OVERRIDE.get(
-                    (_pc, run_year), COAL_MAX_CF_BY_PLANT.get(_pc)
-                )
+                cap = COAL_MAX_CF_BY_PLANT.get(_pc)
                 if cap is not None:
                     np.minimum(availability[g_idx, :], cap, out=availability[g_idx, :])
                 scap = COAL_SUMMER_MAX_CF.get(_pc)
@@ -4147,17 +4140,9 @@ CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
     62762: "merchant",
     66992: "merchant",
 }
-# Shares trimmed (merchant 40->35, industrial/commercial 60->50) after the
-# Run-61..65 backcasts showed the CHP fleet's CAMPD aggregate CF reaching
-# 90-94% while the grid-facing capacity ceiling capped the model near 78%:
-# the pull-out left too little dispatchable capacity for the fleet's observed
-# high-load excursions, and the flat report add-back cannot carry shape.
-CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
-    "merchant": 35.0,
-    "industrial": 50.0,
-    "commercial": 50.0,
-}
-CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
+# CHP_BTM_PCT_BY_SECTOR and CHP_ST_BTM_PCT now live in constants.py (re-derived
+# from EIA-923 Schedule-8 CHP sector data rather than the Run-61..65 residual
+# — see the citation there).
 
 # Per-plant total must-run floor: the p2 CAMPD gross CF (non-outage, pooled
 # 2023-2025). The grid-delivered steam-following floor applied as min-gen is
@@ -4246,18 +4231,8 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-# Per-plant CC_REGULAR peaking-tranche % (top slice of nameplate priced at the
-# duct-burner peak multiplier), keyed by EIA plant code. Used in place of the
-# offer curve's ``pct_peaking`` when config.cc_peaking_per_plant is set, so the
-# expensive peak band starts earlier on the CF axis (15% => peaking starts at
-# 85% of nameplate). Applies to the four F-class(late) 2x1 CCs the model
-# over-runs in the 80-90% CF range; the economic tranche absorbs the change.
-CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
-    58001: 15.0,  # Temple Power Station
-    58005: 15.0,  # Rayburn Energy Station LLC
-    59812: 15.0,  # Wolf Hollow II
-    60122: 15.0,  # Colorado Bend II
-}
+# CC_REGULAR_PEAKING_PCT_BY_PLANT now lives in constants.py (residual-
+# identified, forecast-risk — see the citation there).
 
 
 @lru_cache(maxsize=1)
