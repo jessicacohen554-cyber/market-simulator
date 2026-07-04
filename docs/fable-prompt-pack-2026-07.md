@@ -602,6 +602,47 @@ it — do not tune the tool to pass.
 
 ---
 
+## Appendix — Status of pre-existing plans: unfinished prompts still valid (flagged 2026-07-04)
+
+Registered against repo intent (LP-only hybrid, ±10% asset-level emissions; scope2 = hourly
+CFE matching). Verdicts: **FLAG** = still valid, not covered by any active wave or this
+pack — needs an owner scheduling decision; **ABSORBED** = folded into a prompt above (don't
+run separately); **IN-FLIGHT** = actively being worked on main; **STALE** = superseded,
+archive.
+
+### FLAG — still valid, owned by nothing
+
+| Source plan | Item | Why still valid |
+|---|---|---|
+| `model-audit-prompt-pack-2026-06.md` | **PP-1.1/1.2/1.3** scenario matrix + LHS/copula multivariate sampler + structural-error prior | The probability-bounds machinery for the emissions forecast; `ensemble.py` is still weather-only (verified 2026-07-04). Without it "±10%" has no confidence statement. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-2.1** emissions mass-cap LP constraint (RGGI/cap-and-trade as constraint, allowance-price dual) | `policy/constraints.py:get_active_policy_constraints` still returns `[]`. Interacts with the EM-6 carbon-seam fix (W0-P1) — sequence after it. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-3.1** sensitivity tornado; **PP-3.4** one-time MIP cross-benchmark | Tornado feeds the DOF ledger cheaply. MIP benchmark is a *diagnostic* (LP-only production rule intact) quantifying the LP-relaxation commitment bias — pairs with DP-1. |
+| `forecast-methodology-gaps-prompts-2026-06.md` | **P1/P1b** ERCOT multi-product AS co-optimization (+ **P5a** AS requirement-setting, **P5c** load-resource RRS forward rule; **P4** HSL 2024/25 completion) | The flagship forward-analogue gap (audit §J-T6): the largest backcast lever (DAM-AS overlay) still has no forecast-mode counterpart. |
+| `legitimacy-scrub-prompts-2026-07.md` | **S3** Class-C fitted-scalar remediation (~230 scalars, C-1…C-18) | Mostly untouched; D-8 showed coal sigmoid params pinned by single years and SP15 temp-limbs with sign-flipping ρ. Rules 20-21 make keepers carrying these an open liability. |
+| `legitimacy-scrub-prompts-2026-07.md` | **D-3 ablation twins; D-10…D-14 diagnostics** | Rule 21 requires a zero-forcing ablation twin per keeper; not yet built for current keepers. |
+| `docs/multi-iso/` (57 files) | Own triage pass never done; also verify MISO backcast-year coverage (rule 16 lists CAISO/PJM/NEISO/NYISO as multi-year — MISO's absence is unexplained) | Flagged as an open question by the docs audit; cheap Sonnet session. |
+| CLAUDE.md rule 22 wording | Reconcile the "no data intake for holdout years" text with the owner-driven 2022/H1-2026 intake merged 2026-07-03/04 (PRs #1298/#1300/#1304) | Either the one-shot validation is now imminent (intake was step 1) or the rule text needs the owner's amended policy — as written, CI-gate semantics and practice diverge. |
+
+### ABSORBED into this pack (do not run the old prompt)
+
+- `model-audit-prompt-pack-2026-06.md` PP-0.3 capacity hindcast, PP-0.1 statmode → **W0-P4/W2-P5/W3-P1**; PP-2.2/2.3 NPV entry-exit + revenue signal → partially landed in code (audit §C scorecard) + **W0-P5**; PP-2.4 startup emissions → **W0-P1/W2-P1**; PP-3.3 load-shape → the DC-block part of **W0-P5** (end-use reshaping remains a documented limitation).
+- `forecast-validation-plan.md` Phases 1-5 → **W0-P4/W2-P5** (the plan doc should be marked superseded by the W0-P4 handoff when it exists).
+- `legitimacy-scrub-prompts-2026-07.md` S2 CAISO CT scrub → **W3-P2** (and the in-flight caiso-evening-merit thread); S4 statmode → **W3-P1**.
+- `code-docs-cleanup-plan.md` root/scripts hygiene + docs reorg → **W1-P3/W3-P3**; its C2 (python hygiene) and data-reorg W3-W5 remainders are minor — fold into W1-P3's session if time allows.
+- scope2 `PLAN.md` §10 open items → **W0-P6/W3-P4**.
+
+### IN-FLIGHT on main (2026-07-03/04 — no action, don't duplicate)
+
+- `docs/audit-wiring-iso-gaps/fix-plan.md` waves (the active "market simulator audit"): note its June inventory predates the post-June drift overlays (MISO firm imports, NEISO coldsnap, CAISO bidir intertie/solar-shape/gas-coupling) — add them to the current wave's checklist or leave them for W0-P3's unified-pipeline stages.
+- CAISO evening CT/CC merit thread: levers A (CC min-load SRMC floor) and B (DMM RA-import grounding) merged; ramp-envelope + LCR locational design awaiting owner review (PR #1306).
+- Holdout-intake follow-ups F1/F5/F6 (`docs/out-of-sample-results-2026-07.md`); remaining: bench/fleet data for CAISO/MISO/NYISO/NEISO holdout years.
+
+### STALE (verify-and-archive via W3-P3)
+
+- Dated `*-session-prompt.md` / `*-handoff*.md` files under docs/ tied to keepers that have since been superseded (dam-offer-curve-tuning, ercot-2025-overshoot, ercot-lmp-cooling, ercot-offer-curve-merit-order, cross-year-warmstart-handoff) — confirm each thread's closing keeper/CHANGELOG entry, then move to `docs/sessions/`.
+
+---
+
 ## Session hygiene reminders (apply to every prompt above)
 
 - Read CLAUDE.md before anything; the non-negotiables override convenience.
