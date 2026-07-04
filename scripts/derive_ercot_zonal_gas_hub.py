@@ -179,7 +179,13 @@ def validate(f923: Path) -> int:
     return bad
 
 
-def extend(year: int, f923: Path, waha: float | None, waha_source: str) -> None:
+def extend(
+    year: int,
+    f923: Path,
+    waha: float | None,
+    waha_source: str,
+    waha_neg: tuple[str, str] = ("", ""),
+) -> None:
     """Append the new year's zone rows (existing rows never modified)."""
     with HUB_PATH.open() as fh:
         reader = csv.DictReader(fh)
@@ -247,7 +253,8 @@ def extend(year: int, f923: Path, waha: float | None, waha_source: str) -> None:
                 if zone == "West"
                 else f"proxy->Waha (Permian; carries 0.0 modeled load){partial}"
             )
-            add(zone, waha - hh_mean, src)
+            neg_src = waha_neg[1] if zone == "West" else f"proxy->Waha West {year}"
+            add(zone, waha - hh_mean, src, neg=(waha_neg[0], neg_src))
     else:
         print(
             f"  West/Panhandle {year}: SKIPPED — pass --waha-annual-avg "
@@ -289,12 +296,28 @@ def main() -> None:
         default="NGI/EIA NG Weekly",
         help="citation for --waha-annual-avg",
     )
+    ap.add_argument(
+        "--waha-neg-day-freq",
+        default="",
+        help="measured Waha negative-day frequency for the year (optional)",
+    )
+    ap.add_argument(
+        "--waha-neg-day-freq-source",
+        default="",
+        help="citation for --waha-neg-day-freq",
+    )
     args = ap.parse_args()
     if args.validate:
         sys.exit(1 if validate(args.f923) else 0)
     if args.year is None:
         sys.exit("--year is required unless --validate")
-    extend(args.year, args.f923, args.waha_annual_avg, args.waha_source)
+    extend(
+        args.year,
+        args.f923,
+        args.waha_annual_avg,
+        args.waha_source,
+        waha_neg=(args.waha_neg_day_freq, args.waha_neg_day_freq_source),
+    )
 
 
 if __name__ == "__main__":
