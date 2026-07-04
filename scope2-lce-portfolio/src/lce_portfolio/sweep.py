@@ -13,7 +13,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from lce_portfolio.config import PortfolioConfig
-from lce_portfolio.lp import PortfolioResult, build_and_solve
+from lce_portfolio.lp import PortfolioResult, solve_with_charge_policy
 from lce_portfolio.resources import ResourceArrays
 
 
@@ -45,10 +45,13 @@ def run_sweep(
     Mode A sweeps ``config.premium_deltas``; Mode B sweeps
     ``config.matching_targets``. Each setpoint is an independent LP solve.
 
+    Every solve goes through :func:`~lce_portfolio.lp.solve_with_charge_policy`,
+    so the ADR 0018 ``excess_headroom_only`` cut loop is applied transparently
+    (all other policies pass straight through to a single ``build_and_solve``).
+
     ``emission_rate`` (keyword-only) is the optional ``(T,)`` hourly
     fossil-only average grid CO2 rate (tCO2/MWh, ADR 0013) threaded to every
-    :func:`~lce_portfolio.lp.build_and_solve`; ``None`` leaves residual-carbon
-    reporting off.
+    solve; ``None`` leaves residual-carbon reporting off.
     """
     setpoints = (
         config.premium_deltas
@@ -56,7 +59,7 @@ def run_sweep(
         else config.matching_targets
     )
     results = [
-        build_and_solve(
+        solve_with_charge_policy(
             config, resources, load, lmp, cf, float(sp), emission_rate=emission_rate
         )
         for sp in setpoints
