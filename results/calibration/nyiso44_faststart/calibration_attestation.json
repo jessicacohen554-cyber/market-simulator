@@ -1,0 +1,86 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-44 faststart registered probe 2026-07-04 (NOT promoted)",
+        "note": "nyiso-43 (winter spread + Algonquin ceiling + oil-attribution basis fix) PLUS tranche_startup_amortization - the ISO-NE Order-825 fast-start pricing analogue already in the codebase (v2 scope: fast-start-capable CT_PEAKER/CT_CHP econ tranches + CT/CC quick-response peak bands carry the NREL start cost, amortized into P1 bids by each tranche's own P0 run lengths). NYISO's real market runs the same structure (GT hybrid / fast-start pricing lets peaker commitment costs set LBMP), so the lever is real structure with a measured cost basis and no residual input. PROBE FINDING: it moves CT_PEAKER only 4.90 -> 4.75 TWh (2024; actual 2.13) because with the de-leaked neutral econ bands the P0 base-cost pass runs the CTs in long blocks, so the per-MWh amortized start cost is small - the lever is worth keeping but CANNOT substitute for the missing NYISO CT offer-level grounding (the 0c6c833 de-leak's documented open root cause). C1-2024 ST_GAS -3.35 TWh therefore still FAILs (MODEL MISS - not ledgerable: the actual is sound; the model lacks the CT commitment/offer-level structure). C2-2025 gas -0.1%, C5a -2.6/-5.4/-3.8% all PASS as in nyiso-43; C3a -15.4/-14.9/-13.0 and C3b 0.207/0.201/0.195 improve slightly on 43 (the amortized commitment cost is honest price content)."
+    },
+    "_open_items": "(0) BLOCKING, repo-level: the NYISO CT_PEAKER/CT_CHP offer-level grounding left open by commit 0c6c833 (Kill cross-ISO leakage of ERCOT-fitted gas offer bands). With neutral 1.0 econ bands the LI/NYC peakers (Bayonne, Barrett GTs, Glenwood, Equus, Edgewood, Freeport) over-run ~2.5x actual and displace ST_GAS below the C1 band - EVERY NYISO solve on current main fails C1-2024, including a re-solve of the keeper-41 config itself (verified: CT 4.69/ST 7.65). Grounded closure candidates, none satisfiable from data on disk today: (a) LI/NYC peaker delivered-fuel basis (LDC citygate / interruptible service premium; kerosene for the dual-listed frames) - no measured series on disk; (b) a NYISO-specific offer markup - the 2024 SOM confirms offers sit ABOVE bid-based reference levels ('output gap ... due to low reference levels rather than inappropriately high offers') but publishes no per-class markup; (c) DEC Peaker Rule NOx run-hour limits (regulatory, forward-valid) - not on disk; (d) fast-start amortization (this probe) - real but insufficient alone. The CEMS marginal-HR route is ruled out (run-28 lesson: CT marginal HR is 0.66-0.85x base, BELOW neutral). (1) DATA-BLOCKED eastern-NY winter hub level (licensed Iroquois Z2 series ask; Dec-2024/Dec-2025 winter levels are allocation-funded only). (2) The ledgered reserve-scarcity / offer-markup frontier (AS data on disk is prices, not condition-varying requirements). (3) Upstate shoulder collapse behind the measured CE TTC: per-interface external flows/ratings data ask (see nyiso-43 SUMMARY E1 decomposition).",
+    "exceptions": [
+        {
+            "criterion": "price_mean",
+            "year": 2023,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -15.4%",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / offer-markup frontier; compensation removed)",
+            "reason": "SOFT criterion -> CAVEAT. See nyiso-43: the flat-spread shoulder compensation is removed, so the undershoot shows the frontier's true size; the fast-start commitment cost claws back ~$0.2/MWh honestly."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2024,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -14.9%",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan-2024 within +2 of actual (measured ceiling); Dec-2024 remains the data-blocked Iroquois Z2 winter level; broad residual = ledgered frontier."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2025,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -13.0%",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 at the measured ceiling; residual = RT scarcity-adder content (ledgered frontier)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2023,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.207",
+            "classification": "ACCEPTED (ledgered reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Broad shoulder undershoot; winter anchored by the measured ceiling. Same ledgered frontier as keepers 34/39/41."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2024,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.201",
+            "classification": "ACCEPTED (data-blocked eastern winter hub + ledgered frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Improves on keeper-41's 0.236; dominant residuals Dec-2024 (data-blocked winter hub) and Jul-2024 (RT scarcity content)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2025,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.195",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 RT scarcity content above the measured-ceiling gas level; Dec +6-ish allocation-funded winter level (no measured monthly anchor)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2023,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 10h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. No binding reserve scarcity (idle-capacity headroom credit; nyiso-29/31)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2024,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 12h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered frontier."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2025,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 7h vs actual 42h (0.17x)",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Import-marginal neighbor heat-wave hours only; the remaining tail is RT reserve-scarcity adders (ledgered frontier)."
+        }
+    ]
+}
