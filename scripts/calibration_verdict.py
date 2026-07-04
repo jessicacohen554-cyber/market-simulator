@@ -111,6 +111,10 @@ CO2_TOL = 0.07  # +/-7% vs eGRID
 STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
 STORAGE_SHAPE_R_FLOOR = 0.50  # monthly discharge pearson r floor (both sides
 # on the positive/discharge basis — see rubric §C5c 2026-07-03 alignment fix)
+STORAGE_SHAPE_MIN_CV = 0.25  # C5c degeneracy guard: actual monthly-discharge
+# coefficient of variation below this leaves no seasonal shape to correlate
+# (a flat TRUE model would score r=0 and fail); the year is SKIPPED and C5b
+# scores the volume. Mirrors C4's degenerate-correlation rule.
 VRE_TOL = 0.10  # +/-10% advisory band for solar/wind (report-only)
 
 # Per-ISO scarcity-tail definition (rubric §5): (threshold $/MWh).
@@ -945,6 +949,23 @@ def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
     cov = sum((m[i] - m_mean) * (a[i] - a_mean) for i in range(n)) / n
     m_std = (sum((x - m_mean) ** 2 for x in m) / n) ** 0.5
     a_std = (sum((x - a_mean) ** 2 for x in a) / n) ** 0.5
+    # Degeneracy guard (mirrors C4's <5 TWh rule): when the ACTUAL monthly
+    # discharge is near-uniform (CV below the floor — e.g. NEISO 2025 PS,
+    # CV≈0.14: Northfield cycles near-daily year-round on reserves/regulation),
+    # there is no seasonal shape to correlate — the 12-point Pearson is set by
+    # reporting noise, and a perfectly flat (i.e. TRUE) model would score
+    # r = 0 and FAIL. A metric the truth itself cannot pass is degenerate, so
+    # the year is SKIPPED (never a silent pass); the under/over-cycling volume
+    # stays fully scored by C5b.
+    if a_mean != 0.0 and a_std / abs(a_mean) < STORAGE_SHAPE_MIN_CV:
+        return _skip(
+            "storage_shape",
+            year,
+            f"actual monthly storage shape degenerate (CV="
+            f"{a_std / abs(a_mean):.3f} < {STORAGE_SHAPE_MIN_CV}): near-uniform "
+            "year-round cycling leaves no seasonal shape to correlate; volume "
+            "is scored by C5b",
+        )
     r = cov / (m_std * a_std) if m_std > 0 and a_std > 0 else 0.0
     ok = r >= STORAGE_SHAPE_R_FLOOR
     return {
