@@ -226,6 +226,67 @@ def forward_plant_co2_rate(
     return RateResult(base, "trailing_avg", n_years)
 
 
+def fuel_class(label: str) -> str:
+    """Map a CAMPD ``primary_fuel`` or a model ``fuel_type`` to a coarse class.
+
+    The composition mask matches CEMS units to dispatch bins by this coarse
+    class — so a Parish-style coal+gas facility's coal units feed its coal bin
+    and its gas units feed its gas bin, giving separate measured rates.
+    """
+    s = str(label).lower()
+    if "coal" in s or "lignite" in s or "pet" in s and "coke" in s:
+        return "coal"
+    if "gas" in s or "lng" in s:
+        return "gas"
+    if "oil" in s or "diesel" in s or "petroleum" in s or "distillate" in s:
+        return "oil"
+    if "wood" in s or "biomass" in s:
+        return "biomass"
+    return "other"
+
+
+def measured_plant_rates(
+    v2: pd.DataFrame,
+    iso: str,
+    target_year: int,
+    mode: str,
+    *,
+    window: int | None = None,
+) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_id, fuel_class): co2_rate_tonnes_per_mwh_net}``.
+
+    Mode-aware source (resolves EM-3): a **backcast** year consumes that year's
+    own measured rate; a **forecast** year consumes the estimator base — the
+    gen-weighted trailing average over the available measured history. Rates are
+    aggregated over CEMS units of the same coarse fuel class (the composition
+    mask), so retiring or splitting a unit moves the rate. Built from the v2
+    artifact (``derive_plant_emissions_v2.py``); returns tonnes/MWh net.
+    """
+    window = constants.CO2_RATE_TRAILING_WINDOW_YEARS if window is None else window
+    df = v2[v2["iso"].astype(str) == str(iso)].copy()
+    if df.empty:
+        return {}
+    if str(mode).lower() == "backcast":
+        df = df[df["year"] == int(target_year)]
+    else:
+        years = sorted(df["year"].unique())
+        if window and window > 0:
+            years = years[-window:]
+        df = df[df["year"].isin(years)]
+    if df.empty:
+        return {}
+    df["fuel_class"] = df["primary_fuel"].map(fuel_class)
+    out: dict[tuple[int, str], float] = {}
+    grouped = df.groupby(["plant_id", "fuel_class"], observed=True)[
+        ["co2_kg", "net_mwh"]
+    ]
+    for (plant_id, fc), agg in grouped.sum().iterrows():
+        net = float(agg["net_mwh"])
+        if net > 0:
+            out[(int(plant_id), str(fc))] = float(agg["co2_kg"]) / net / 1000.0
+    return out
+
+
 def class_median_rates(
     annual: pd.DataFrame,
     *,
