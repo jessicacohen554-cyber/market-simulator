@@ -44,6 +44,8 @@ ALL_DATATYPES = [
     "capacity-deliverability",
     "gtc-limits",
     "winter-fuel-inventory",
+    "rggi-co2-budgets",
+    "carb-cap-schedule",
 ]
 
 
