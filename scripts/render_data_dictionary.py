@@ -61,6 +61,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "generation",
     "renewables",
     "emissions",
+    "emissions-unit-annual",
     "outages",
     "validation",
     "fleet",
@@ -80,6 +81,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-deliverability",
     "gtc-limits",
     "winter-fuel-inventory",
+    "rggi-co2-budgets",
+    "carb-cap-schedule",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -144,6 +147,37 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "delivery outcomes (F923 receipts are excluded by design)."
         ),
     },
+    "rggi-co2-budgets": {
+        "summary": (
+            "RGGI regional/per-state CO2 allowance budgets and the "
+            "price-control-band trigger-price schedule."
+        ),
+        "reconciles": (
+            "RGGI, Inc. Allowance Distribution tables (regional + per-member-"
+            "state annual budgets, short tons) and the 2017 Model Rule Cost "
+            "Containment Reserve / Emissions Containment Reserve / minimum-"
+            "reserve trigger prices onto one tidy `(state, budget_year, metric, "
+            "value, unit)` frame. The budget feeds the optional power-sector "
+            "mass-cap row (a scenario, no-bank instrument — NOT the RGGI market "
+            "price); the trigger prices feed the projected forecast "
+            "allowance-price band. Never intake 2022/H1-2026 (rule 22)."
+        ),
+    },
+    "carb-cap-schedule": {
+        "summary": (
+            "CARB cap-and-trade annual allowance budget and Auction Reserve "
+            "floor-price schedule."
+        ),
+        "reconciles": (
+            "CARB Cap-and-Trade Regulation §95841 annual allowance budgets (MMT "
+            "CO2e) and the §95911(c) Auction Reserve (floor) price with its 5% + "
+            "CPI escalation onto one tidy `(budget_year, metric, value, unit)` "
+            "frame. The budget feeds the optional power-sector mass-cap row (a "
+            "scenario, no-bank instrument — NOT the CARB market price); the "
+            "floor escalator feeds the projected forecast allowance price for "
+            "CAISO. Never intake 2022/H1-2026 (rule 22)."
+        ),
+    },
     "energy-offers": {
         "summary": "PJM Real-Time effective energy offer curves (long step form).",
         "reconciles": (
@@ -176,6 +210,19 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "CAMPD facility- and unit-level "
             "`co2Mass/noxMass/so2Mass/heatInput/grossLoad` — masses "
             "standardized to `*_kg`, heat input to MMBtu."
+        ),
+    },
+    "emissions-unit-annual": {
+        "summary": (
+            "Annual unit-level CAMPD roll-up (one row per plant/unit/year) — "
+            "the forward per-plant CO2-rate estimator's input."
+        ),
+        "reconciles": (
+            "The hourly unit-level CAMPD extracts (`data/raw/campd-unit-level`) "
+            "rolled up to annual `gross_mwh`, `heat_mmbtu`, `co2/nox/so2_kg` "
+            "(kg), `op_hours`, `starts`, plus `co2_source` / `mw_source` "
+            "provenance flags. Curated by `curate_emissions_unit_annual.py`; the "
+            "quarantined 2022/H1-2026 years are hard-skipped (rule 22)."
         ),
     },
     "outages": {

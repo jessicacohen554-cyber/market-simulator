@@ -32,6 +32,7 @@ ALL_DATATYPES = [
     "generation",
     "renewables",
     "emissions",
+    "emissions-unit-annual",
     "outages",
     "validation",
     "fleet",

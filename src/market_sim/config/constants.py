@@ -1309,6 +1309,129 @@ STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
 #   default emission factor for unspecified power, 0.428 MT CO2e/MWh.
 CARB_UNSPECIFIED_IMPORT_EF: float = 0.428
 
+
+# ---------------------------------------------------------------------------
+# Cap-and-trade / mass-cap program registry
+# ---------------------------------------------------------------------------
+# The economy-wide, multi-sector, banked allowance markets (CARB, RGGI) enter
+# dispatch as an *exogenous allowance-price adder* — measured in backcast,
+# projected forward — not as an endogenous power-only cap, because their real
+# clearing price is set by a banked multi-sector market this power model does
+# not contain (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2). The
+# optional endogenous mass-cap *row* (dual = allowance price) faithfully
+# represents a power-sector-specific budget (EPA 111(d)/CSAPR or a user
+# scenario), NOT the RGGI/CARB market price. Both route carbon through the same
+# emission_rate x membership channel; the resolver (policy/cap_and_trade.py)
+# picks exactly one source per (program, ISO, year, solve).
+
+# Forward-year allowance-price escalation rates (nominal, per year). The
+# projected forecast adder anchors on the last realized clearing price
+# (STATE_CARBON_PRICE_BY_ISO) and escalates at the program's published
+# price-containment-band rate. This is an explicitly-labelled scenario
+# trajectory (a floor-band escalator), NOT a market-price forecast, and it is
+# never tuned to a residual (plan §7, §8; CLAUDE.md rule 1).
+#
+# CARB Auction Reserve (floor) price rises 5% + CPI annually (CA Cap-and-Trade
+# Regulation, 17 CCR §95911(c)(1)); ~2%/yr CPI-U → ~7%/yr nominal. CA prices
+# have hugged the floor+premium band, so the floor escalator is the natural
+# forecast trajectory for CAISO.
+CARB_FLOOR_ESCALATION: float = 0.07
+# RGGI Cost Containment Reserve (CCR) trigger price rises 7%/yr nominal
+# (RGGI 2017 Model Rule §5.3(c)); used as the forward escalation of the last
+# realized RGGI clearing price for NYISO/NEISO.
+RGGI_RESERVE_ESCALATION: float = 0.07
+
+
+@dataclass(frozen=True)
+class CapAndTradeProgram:
+    """One ISO's cap-and-trade program definition (registry value).
+
+    Attributes:
+        name: Program label ("CARB" or "RGGI").
+        member_states: Postal codes of the program's member states whose
+            in-state fossil fleet surrenders allowances. Documentary /
+            crosswalk reference; membership is resolved per zone below.
+        price_key: Key into :data:`STATE_CARBON_PRICE_BY_ISO` for the
+            measured backcast allowance price, and the anchor for the
+            forecast projection. ``None`` for a program with no measured
+            series in-repo (PJM).
+        escalation_rate: Nominal per-year forward escalation applied to the
+            last measured price to build the projected forecast adder.
+        external_nodes: Zone names that are priced import/external nodes,
+            not in-region load — excluded from membership (m_zone = 0).
+        zone_share: Optional per-zone RGGI-member fraction (0..1) overriding
+            the uniform-membership default, for multi-state roll-up zones
+            (PJM). ``None`` → uniform membership (1.0 on every load zone).
+    """
+
+    name: str
+    member_states: tuple[str, ...]
+    price_key: str | None
+    escalation_rate: float
+    external_nodes: tuple[str, ...] = ()
+    zone_share: "dict[str, float] | None" = None
+
+
+# PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through
+# 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA),
+# and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible
+# (plan §5). The RGGI-member share of each zone's fossil capacity must come
+# from an EIA-860 plant-coordinate → state → RGGI-membership-by-year crosswalk
+# (a data-intake step, not yet landed). Until that crosswalk exists this map is
+# empty, so PJM membership resolves to all-zeros and the PJM RGGI adder is a
+# no-op (ships OFF, plan §5, §11). Populate per zone once the crosswalk lands.
+PJM_RGGI_ZONE_SHARE: dict[str, float] = {}
+
+# ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).
+CAP_AND_TRADE_PROGRAMS: dict[str, CapAndTradeProgram] = {
+    # CAISO ≈ California: whole-ISO CARB membership; WECC_import is external.
+    "CAISO": CapAndTradeProgram(
+        name="CARB",
+        member_states=("CA",),
+        price_key="CAISO",
+        escalation_rate=CARB_FLOOR_ESCALATION,
+        external_nodes=("WECC_import",),
+    ),
+    # NYISO ≡ New York, a RGGI state: whole-ISO membership.
+    "NYISO": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("NY",),
+        price_key="NYISO",
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+    ),
+    # NEISO ≡ the six New England states, all RGGI members: whole-ISO
+    # membership; HQ_import (Hydro-Québec) is an external priced node.
+    "NEISO": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("CT", "ME", "MA", "NH", "RI", "VT"),
+        price_key="NEISO",
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+        external_nodes=("HQ_import",),
+    ),
+    # PJM: partial RGGI membership via fractional per-zone share (ships OFF
+    # until the EIA-860→state crosswalk lands; PJM_RGGI_ZONE_SHARE empty).
+    "PJM": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("MD", "DE", "NJ"),
+        price_key=None,
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+        zone_share=PJM_RGGI_ZONE_SHARE,
+    ),
+}
+
+# Power-sector CO2 mass-cap budgets (short tons/yr) for the OPTIONAL endogenous
+# mass-cap row (mass_cap_enabled, default OFF). These are placeholders seeded
+# for the code path and the trivial binding-cap test; the authoritative annual
+# schedules land via the data-intake step (data/raw/policy/rggi-co2-budgets,
+# carb-cap-schedule). A row built from these is a power-sector, no-bank scenario
+# instrument (plan §2, §8) — NOT the RGGI/CARB market price. Empty until a run
+# supplies a cap via ScenarioConfig; see policy/cap_and_trade.py.
+RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {}
+CARB_ALLOWANCE_BUDGET: dict[int, float] = {}
+# CARB Auction Reserve (floor) price by year ($/tonne). Populated by the
+# carb-cap-schedule intake; empty until then.
+CARB_FLOOR_PRICE: dict[int, float] = {}
+
 # Storage technology parameters.
 # Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).
 STORAGE_TECHS: dict[str, dict[str, float]] = {
