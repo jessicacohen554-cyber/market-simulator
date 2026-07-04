@@ -10,9 +10,11 @@ clean-surplus shifting or the two pre-existing policies.
 
 import numpy as np
 import pytest
+import scipy.sparse as sp
 
+import lce_portfolio.lp as lp
 from lce_portfolio.config import PortfolioConfig
-from lce_portfolio.lp import build_and_solve, solve_with_charge_policy
+from lce_portfolio.lp import _solve_highs, build_and_solve, solve_with_charge_policy
 from lce_portfolio.resources import ResourceArrays
 
 from conftest import daytime_solar_cf, solar_plus_battery
@@ -159,3 +161,100 @@ def test_wrapper_unchanged_for_other_policies(policy: str) -> None:
         direct.divert_backfill_mwh, wrapped.divert_backfill_mwh, atol=1e-9
     )
     assert np.allclose(direct.build_mw, wrapped.build_mw, atol=1e-6)
+
+
+class _FakeSolution:
+    """Minimal stand-in for highspy's solution object."""
+
+    def __init__(self, n_cols: int, n_rows: int) -> None:
+        self.col_value = np.zeros(n_cols)
+        self.row_dual = np.zeros(n_rows)
+
+
+class _FakeHighs:
+    """Fake HiGHS whose status depends on the ``run_crossover`` option.
+
+    Returns ``Unknown`` while crossover is off (mimicking the crossover-off IPM
+    stalling on a degenerate optimal face) and ``Optimal`` once crossover is
+    turned on — the exact behavior the :func:`_solve_highs` fallback is built
+    to recover. Records every constructed instance so the test can assert the
+    fallback re-solved with crossover on.
+    """
+
+    instances: list["_FakeHighs"] = []
+
+    def __init__(self) -> None:
+        self.crossover = "off"
+        self.n_cols = 0
+        self.n_rows = 0
+        _FakeHighs.instances.append(self)
+
+    def setOptionValue(self, name, value):
+        if name == "run_crossover":
+            self.crossover = value
+
+    def addCols(self, n, *args):
+        self.n_cols = n
+
+    def addRows(self, n, *args):
+        self.n_rows = n
+
+    def run(self):
+        pass
+
+    def getModelStatus(self):
+        return self.crossover  # carried through modelStatusToString below
+
+    def modelStatusToString(self, status):
+        return "Optimal" if status == "on" else "Unknown"
+
+    def getSolution(self):
+        return _FakeSolution(self.n_cols, self.n_rows)
+
+
+def test_solve_highs_crossover_fallback(monkeypatch) -> None:
+    """(g) A non-Optimal crossover-off IPM solve is retried with crossover on.
+
+    Guards the ADR 0018-validation robustness fix: on a degenerate optimal face
+    the crossover-off IPM can report ``Unknown`` instead of ``Optimal``, which
+    would zero an achievable frontier point. ``_solve_highs`` must re-solve once
+    with ``run_crossover=on`` and return that certified ``Optimal`` result.
+    """
+    _FakeHighs.instances = []
+    monkeypatch.setattr(lp.highspy, "Highs", _FakeHighs)
+
+    cost = np.zeros(2)
+    lower = np.zeros(2)
+    upper = np.ones(2)
+    A = sp.csr_matrix(np.array([[1.0, 1.0]]))
+    row_lower = np.array([1.0])
+    row_upper = np.array([1.0])
+
+    _col, _dual, status = _solve_highs(cost, lower, upper, A, row_lower, row_upper)
+
+    assert status == "Optimal"
+    # Exactly two solves: the crossover-off attempt, then the crossover-on retry.
+    assert [h.crossover for h in _FakeHighs.instances] == ["off", "on"]
+
+
+def test_solve_highs_no_retry_when_optimal(monkeypatch) -> None:
+    """(h) An Optimal crossover-off solve is NOT retried (happy-path speed).
+
+    The fallback must fire only on the rare non-Optimal path, or every solve
+    would pay for a crossover ADR 0003 deliberately left off.
+    """
+    _FakeHighs.instances = []
+
+    class _AlwaysOptimal(_FakeHighs):
+        def modelStatusToString(self, status):
+            return "Optimal"
+
+    monkeypatch.setattr(lp.highspy, "Highs", _AlwaysOptimal)
+
+    A = sp.csr_matrix(np.array([[1.0, 1.0]]))
+    _col, _dual, status = _solve_highs(
+        np.zeros(2), np.zeros(2), np.ones(2), A, np.array([1.0]), np.array([1.0])
+    )
+
+    assert status == "Optimal"
+    assert len(_FakeHighs.instances) == 1  # no crossover retry
