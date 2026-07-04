@@ -1,0 +1,31 @@
+# ISO-NE winter fuel-security study & program figures (hand-curated, cited).
+# Forward-derivable capacity/logistics INPUTS only (CLAUDE.md #13). Measured
+# burn/delivery OUTCOMES (F923 receipts; the 31.6 Bcf actually-injected 2014/15
+# figure; historical max-observed injection) are deliberately EXCLUDED.
+# `#` lines are comments; blank cells become null. See README.md + the audit doc.
+iso,entity,entity_type,plant_code,season,delivery_year,metric,value,unit,fuel_kind,source_doc,source_page
+#
+# --- OFSA 2018 (ISO New England, Operational Fuel-Security Analysis, Jan 17 2018) ---
+# https://www.iso-ne.com/static-assets/documents/2018/01/20180117_operational_fuel-security_analysis.pdf
+ISONE,DUAL_FUEL,fuel_class,,annual,2018,oil_fleet_capacity,8750,mw,dual_fuel,ISO-NE OFSA 2018,p.12 fn3 (dual-fuel capable fleet)
+ISONE,OIL_ONLY,fuel_class,,annual,2018,oil_fleet_capacity,2200,mw,oil,ISO-NE OFSA 2018,p.12 fn3 (older oil-only plants that rarely run on gas)
+ISONE,OIL_DUAL_FUEL,fleet,,winter,2018,tank_capacity,10,days,oil,ISO-NE OFSA 2018,p.34 (most tanks hold ~10 days' worth of oil)
+ISONE,OIL_DUAL_FUEL,fleet,,winter,2018,delivery_rate,2,fills_per_season,oil,ISO-NE OFSA 2018,p.34 & Table 3 (reference 2 oil-tank fills/winter; range 1-3)
+ISONE,OIL_DUAL_FUEL,fleet,,annual,2018,annual_run_limit,30,days,oil,ISO-NE OFSA 2018,p.34 (most units capped ~30 days/yr on oil by air permits)
+ISONE,ISONE,system,,winter,2018,season_days,90,days,,ISO-NE OFSA 2018,p.35 Table 3 (90-day winter study horizon Dec 1-Feb 28)
+ISONE,LNG_SYSTEM,system,,winter,2018,delivery_rate,1.0,bcf_per_day,lng,ISO-NE OFSA 2018,p.34 & Table 3 (reference-case LNG cap; range 0.75-1.5)
+ISONE,LNG_MAX_INJECTION,system,,winter,2018,delivery_rate,2.04,bcf_per_day,lng,ISO-NE OFSA 2018,p.30 (max regasified LNG injectable into NE pipeline)
+ISONE,Everett_Distrigas,system,,winter,2018,delivery_rate,0.435,bcf_per_day,lng,ISO-NE OFSA 2018,p.30 (Distrigas/Everett max injection; sole fuel for Mystic 8&9)
+#
+# --- Winter Reliability Program (ISO-NE/NEPOOL, winter 2014/2015, FERC ER14-2407) ---
+# https://isonewswire.com/2014/07/14/iso-ne-and-nepool-file-proposal-with-ferc-...-winter-2014-2015/
+# Aggregate oil-inventory target published as a 2.8-3.8 M-bbl RANGE; both bounds
+# recorded verbatim (no midpoint invented) for the downstream derivation to pick.
+ISONE,OIL_WRP_target_low,fleet,,winter,2014/2015,start_fill,2800000,bbl,oil,ISO-NE/NEPOOL Winter Reliability Program 2014/15 (FERC ER14-2407),aggregate oil-inventory target (low bound)
+ISONE,OIL_WRP_target_high,fleet,,winter,2014/2015,start_fill,3800000,bbl,oil,ISO-NE/NEPOOL Winter Reliability Program 2014/15 (FERC ER14-2407),aggregate oil-inventory target (high bound)
+#
+# --- Mystic cost-of-service retention (ISO-NE Petition for Waiver, May 2018) ---
+# https://www.iso-ne.com/static-assets/documents/2018/05/iso_petition_for_waiver_of_tariff_provisions.pdf
+# Mystic 8 & 9 (CC, Everett-LNG-fed), retained 2022/23-2023/24 CCPs; retired Jun 1 2024.
+ISONE,Mystic_COS,program,,winter,2022/2024,winter_program_capacity,1700,mw,lng,ISO-NE Mystic Petition May 2018,p.5 (Mystic 8&9 combined winter capacity ~1700 MW)
+ISONE,1588,plant,1588,winter,2022/2024,winter_program_member,1,flag,lng,ISO-NE Mystic Petition May 2018,pp.3-5 (Mystic Generating Station; EIA plant 1588)
