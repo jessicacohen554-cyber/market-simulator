@@ -45,10 +45,10 @@ for the market split.
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
-| load | — | — | — | — | — | — |
+| load | 2015–2026 | 2023–2026 | 2022–2026 | 2023–2025 | 2023–2026 | 2015–2026 |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — |
+| generation | 2018–2026 | 2023–2025 | 2022–2026 | 2023–2025 | 2018–2026 | 2018–2026 |
 | renewables | — | — | — | — | — | — |
 | validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
@@ -68,7 +68,7 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | 2022–2026 |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
