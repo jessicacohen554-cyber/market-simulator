@@ -197,12 +197,19 @@ D6_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
 
 @dataclass
 class GateResult:
-    """One diagnostic's verdict: rows for the report plus failure strings."""
+    """One diagnostic's verdict: rows for the report plus failure strings.
+
+    ``summary`` carries per-(year, class) aggregate rows where the detail
+    ``rows`` are finer-grained (D-2's rows are class × mechanism; its summary
+    is the per-class total forced share the rule-19 gate and the rubric's C8
+    criterion consume).
+    """
 
     name: str
     rows: list[dict] = field(default_factory=list)
     failures: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    summary: list[dict] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
@@ -360,6 +367,18 @@ def run_d2(
             D2_PEAKER_MAX_SHARE
             if str(k) in D2_PEAKER_CLASSES
             else D2_MERCHANT_MAX_SHARE
+        )
+        res.summary.append(
+            {
+                "year": year,
+                "class": str(k),
+                "forced_twh": round(forced_gated[k] / 1e6, 4),
+                "class_total_twh": round(total_by_class[k] / 1e6, 4),
+                "forced_share": round(share, 4),
+                "limit": limit,
+                "lower_bound": bool(ra_floor_missing),
+                "verdict": "FAIL" if share > limit else "pass",
+            }
         )
         if share > limit:
             res.failures.append(
@@ -1037,6 +1056,61 @@ def _md_table(rows: list[dict]) -> str:
     return "\n".join(out) + "\n"
 
 
+# Short ids for the machine artifact / rubric wiring: GateResult.name prefix
+# -> key. The rubric's C7 reads D1; C8 reads D2's per-class summary.
+_JSON_KEYS = {
+    "D-1": "D1",
+    "D-2": "D2",
+    "D-4": "D4",
+    "D-5": "D5",
+    "D-9": "D9",
+    "D-6": "D6",
+}
+
+
+def build_json_report(
+    results: list[GateResult], bundle: str, iso: str, years: list[int]
+) -> dict:
+    """Assemble the machine-readable diagnostics artifact for a bundle.
+
+    This is the committed contract the calibration rubric's C7 (diurnal
+    shape, D-1) and C8 (forced-energy share, D-2) criteria score from:
+    ``scripts/calibration_verdict.py`` reads ``<bundle>/
+    legitimacy_diagnostics.json`` — it never recomputes the diagnostics, so
+    the S1 suite stays the single implementation. Gate thresholds are
+    embedded so the verdict re-states, never re-types, them.
+    """
+    diagnostics = {}
+    for res in results:
+        key = next(
+            (v for k, v in _JSON_KEYS.items() if res.name.startswith(k)), res.name
+        )
+        diagnostics[key] = {
+            "name": res.name,
+            "passed": res.passed,
+            "rows": res.rows,
+            "summary": res.summary,
+            "failures": res.failures,
+            "notes": res.notes,
+        }
+    return {
+        "schema": "legitimacy-diagnostics/v1",
+        "bundle": bundle,
+        "iso": iso,
+        "years": [int(y) for y in years],
+        "gates": {
+            "d1_min_profile_r": D1_MIN_PROFILE_R,
+            "d1_min_cv_ratio": D1_MIN_CV_RATIO,
+            "d1_offpeak_last_hour": D1_OFFPEAK_LAST_HOUR,
+            "d1_gated_classes": list(D1_GATED_CLASSES),
+            "d2_peaker_max_share": D2_PEAKER_MAX_SHARE,
+            "d2_merchant_max_share": D2_MERCHANT_MAX_SHARE,
+            "d2_exempt_classes": list(D2_EXEMPT_CLASSES),
+            "d4_max_offwindow_share": D4_MAX_OFFWINDOW_SHARE,
+        },
+    }
+
+
 def render_report(
     results: list[GateResult], bundle: str, iso: str, years: list[int]
 ) -> str:
@@ -1062,6 +1136,10 @@ def render_report(
         if res.notes:
             lines.extend(f"_{n}_" for n in res.notes)
             lines.append("")
+        if res.summary:
+            lines.append("**Per-class gate summary:**")
+            lines.append("")
+            lines.append(_md_table(res.summary))
         lines.append(_md_table(res.rows))
     return "\n".join(lines)
 
@@ -1191,6 +1269,7 @@ def diagnose_bundle(
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)
                 d2.notes.extend(sub_res.notes)
+                d2.summary.extend(sub_res.summary)
             if "D4" in only:
                 sub_res = run_d4(disp, floors, mechs, klass, year=year, npl=npl)
                 d4.rows.extend(sub_res.rows)
@@ -1235,6 +1314,12 @@ def main(argv: list[str] | None = None) -> int:
         help="run the D-9 quarantine across every keeper bundle (CI mode)",
     )
     parser.add_argument("--report", type=Path, help="write a markdown report")
+    parser.add_argument(
+        "--json-out",
+        type=Path,
+        help="write the machine-readable diagnostics artifact (the committed "
+        "rubric contract for C7/C8 is <bundle>/legitimacy_diagnostics.json)",
+    )
     args = parser.parse_args(argv)
 
     results: list[GateResult] = []
@@ -1270,6 +1355,13 @@ def main(argv: list[str] | None = None) -> int:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(report)
         logger.info("report written to %s", args.report)
+    if args.json_out:
+        args.json_out.parent.mkdir(parents=True, exist_ok=True)
+        args.json_out.write_text(
+            json.dumps(build_json_report(results, bundle_label, iso, years), indent=1)
+            + "\n"
+        )
+        logger.info("machine artifact written to %s", args.json_out)
     return 0 if all(r.passed for r in results) else 1
 
 
