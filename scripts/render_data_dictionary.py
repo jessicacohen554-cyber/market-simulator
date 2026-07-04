@@ -78,6 +78,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "unit-outage-events",
     "partial-outages",
     "capacity-deliverability",
+    "gtc-limits",
+    "winter-fuel-inventory",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -109,6 +111,37 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`ancillary_service/value`, ERCOT `REGUP/REGDN/RRS/ECRS/NSPIN`, "
             "CAISO `RU/RD/SR/NR` — onto a common product taxonomy (reg up/down, "
             "spin, nonspin, 30-min supplemental), prices in `$/MW`."
+        ),
+    },
+    "gtc-limits": {
+        "summary": (
+            "Measured ERCOT Generic Transmission Constraint hourly limits "
+            "(stability-limited export interfaces)."
+        ),
+        "reconciles": (
+            "ERCOT NP6-86-CD SCED shadow-price / binding-constraint CSVs "
+            "(~5-min) — filtered to GTC rows (empty `FromStation`) and "
+            "aggregated to the fixed non-leap 8760-hour ERCOT-local clock as "
+            "per-(gtc, hour) mean/min enforced limit, active/binding interval "
+            "counts, and mean positive shadow price. Sparse: a row exists only "
+            "for hours the constraint was in SCED's active set. ERCOT-only "
+            "(published physical transfer limits, rule #13/#14 admissible)."
+        ),
+    },
+    "winter-fuel-inventory": {
+        "summary": (
+            "Forward-derivable oil-burn budget drivers for the winter "
+            "fuel-constrained fleet (Nov–Mar seasonal scarcity)."
+        ),
+        "reconciles": (
+            "EIA-860 per-plant `Net Winter Capacity with Oil (MW)` (multifuel) "
+            "and `Firing Rate Using Petroleum` (boiler design) — derived "
+            "programmatically — unioned with hand-curated ISO-NE study/program "
+            "figures (OFSA 2018 tank autonomy / fill rate / LNG caps; Winter "
+            "Reliability Program oil-inventory targets; Mystic retention) onto "
+            "one tidy `(entity, entity_type, season, metric, value, unit)` "
+            "frame. Physical/logistics INPUTS only — never measured burn/"
+            "delivery outcomes (F923 receipts are excluded by design)."
         ),
     },
     "energy-offers": {
