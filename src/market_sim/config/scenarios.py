@@ -1016,6 +1016,30 @@ class ScenarioConfig:
     # fitted price level). Carried via a post-assembly mc shift
     # (transmission.inject_caiso_import_solar_shape); applies on top of the gas
     # coupling. Default off (byte-identical); CAISO-only.
+    caiso_solar_shape_nl_hi_pct: float = 30.0  # Net-load percentile (of the
+    # dispatch year's own net-load series) above which the solar-shape offer
+    # collapse (above) does not fire at all, and below which it ramps in. Net
+    # load is CAISO's own duck-curve diagnostic: load minus utility-scale wind/
+    # solar, at its annual minimum in the spring midday "belly" when solar
+    # output is largest relative to (still-low, pre-summer) load. CAISO's
+    # published duck-curve analyses (e.g. the original 2013 "duck chart") and
+    # its own net-load duration curve show the belly spanning roughly the
+    # bottom quartile-to-third of hours in a year — the choice of a percentile
+    # BAND (not a fixed MW level) is what makes the gate forward-reproducible:
+    # it re-centers on whatever net-load distribution the dispatched year (or a
+    # future forecast year with more solar) actually produces, rather than
+    # freezing today's belly depth in MW. 30% marks the outer edge of that
+    # band, where the ramp begins tapering back to the flat gas-coupled offer.
+    # (Historically this pair was checked post-hoc against realized negative-
+    # price hours as a sanity diagnostic — see
+    # transmission.inject_caiso_import_solar_shape's docstring — but that
+    # check is not the anchor: the band is set from the net-load shape itself.)
+    caiso_solar_shape_nl_lo_pct: float = 10.0  # Net-load percentile at/below
+    # which the collapse is total (s=1, offer floors at
+    # -renewable_keep_running_value): the deepest ~tenth of net-load hours,
+    # the trough of the duck-curve belly where the regional WECC solar/hydro
+    # glut is most acute. Same net-load-percentile grounding as the HI
+    # threshold above.
     caiso_bidir_intertie: bool = False  # Model CAISO's WECC tie as a SINGLE
     # signed flow instead of two independent one-way mechanisms. The legacy node
     # carries priced import tranches AND separate export sinks on the same
