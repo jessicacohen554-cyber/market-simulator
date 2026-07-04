@@ -1990,14 +1990,16 @@ def inject_caiso_import_gas_coupling(
 # import block is shaped; the desert-SW gas blocks (DSW_CCGT/DSW_CT) keep their
 # positive gas SRMC.
 
-# Net-load band over which the offer collapses. Full collapse (s=1) at/below the
-# LO percentile, none above HI. The LO percentile is anchored to the observed
-# CAISO negative-price prevalence (~9% of hours, 2024 DA/RT) so the deepest
-# net-load belly hours — the regional glut — price negative; HI sets the ramp
-# above it. Validated against actual hourly LMP (precision ~100% — every modeled
-# negative hour is a real negative hour). Overridable via env for sweeps.
-_CAISO_SOLAR_SHAPE_NL_HI_PCT = float(_os.environ.get("CAISO_SS_NL_HI", "30.0"))
-_CAISO_SOLAR_SHAPE_NL_LO_PCT = float(_os.environ.get("CAISO_SS_NL_LO", "10.0"))
+# Net-load band over which the offer collapses (full collapse, s=1, at/below
+# the LO percentile; none above HI) now lives in ScenarioConfig as
+# caiso_solar_shape_nl_lo_pct / caiso_solar_shape_nl_hi_pct, grounded on the
+# duck-curve net-load belly definition rather than an env-overridable tuning
+# channel — see the citation there. As a POST-HOC diagnostic only (not the
+# band's anchor), the resulting collapse window has historically lined up
+# with observed CAISO negative-price hours (~9% of hours, 2024 DA/RT,
+# precision ~100% — every modeled negative hour was a real negative hour);
+# that check is informative but must never be used to re-tune the percentiles
+# (CLAUDE.md rule #23 — no off-registry tuning channels).
 # Marginal CAISO import blocks set by *long WECC neighbors* in the midday belly:
 # the desert-SW solar/Palo Verde hub and the Mid-C (Pacific NW) hub, both of
 # which print sub-$0 in the regional spring solar/hydro glut. The firm baseload
@@ -2034,8 +2036,8 @@ def inject_caiso_import_solar_shape(
         s(t) = clip((nl_hi - net_load[t]) / (nl_hi - nl_lo), 0, 1)
         mc[DSW_solar_PV, t] = base(t) * (1 - s(t)) + floor * s(t)
 
-    with ``nl_hi`` / ``nl_lo`` the :data:`_CAISO_SOLAR_SHAPE_NL_HI_PCT` /
-    ``_LO_PCT`` percentiles of the year's net load and ``floor =
+    with ``nl_hi`` / ``nl_lo`` the ``config.caiso_solar_shape_nl_hi_pct`` /
+    ``_nl_lo_pct`` percentiles of the year's net load and ``floor =
     -renewable_keep_running_value``. Net-load-gated so the negative offer fires
     in the deep (spring-midday) belly and stays at the gas-coupled level off the
     belly (nights, summer peak). Applies on top of the gas coupling (so ``base``
@@ -2052,8 +2054,10 @@ def inject_caiso_import_solar_shape(
     nl = np.asarray(net_load, dtype=float).reshape(-1)
     if nl.size != mc.shape[1]:
         return False
-    nl_hi = float(np.percentile(nl, _CAISO_SOLAR_SHAPE_NL_HI_PCT))
-    nl_lo = float(np.percentile(nl, _CAISO_SOLAR_SHAPE_NL_LO_PCT))
+    nl_hi_pct = float(getattr(config, "caiso_solar_shape_nl_hi_pct", 30.0))
+    nl_lo_pct = float(getattr(config, "caiso_solar_shape_nl_lo_pct", 10.0))
+    nl_hi = float(np.percentile(nl, nl_hi_pct))
+    nl_lo = float(np.percentile(nl, nl_lo_pct))
     if not (nl_hi > nl_lo):
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)

@@ -153,7 +153,10 @@ class TestCaisoFleetBuild(unittest.TestCase):
 
     def test_synthetic_bins_load(self):
         self.assertGreater(len(self.synth), 200)
-        self.assertGreater(len(self.fleet), 500)
+        # Threshold tracks CHP_BTM_PCT_BY_SECTOR: a higher industrial/commercial
+        # BTM share leaves less grid capacity per plant, so some economic/peaking
+        # tranches round to zero MW and are dropped as separate LP rows.
+        self.assertGreater(len(self.fleet), 475)
 
     def test_chp_btm_removed_from_lp_capacity(self):
         """Every CHP plant's LP capacity excludes its BTM host share."""

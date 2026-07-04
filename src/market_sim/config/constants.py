@@ -144,6 +144,36 @@ MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
     "oil": 0.12,  # oil / oil-steam — steam physics (taxonomy lumps oil into one)
 }
 
+# Sector-based behind-the-meter (BTM) share of nameplate pulled out of the grid
+# LP as CHP host self-supply (fleet.CHP_SECTOR_CLASS_BY_PLANT assigns each
+# plant to "industrial"/"commercial"/"merchant" from its EIA-923 Schedule-8
+# sector classification).
+#
+# "industrial"/"commercial": re-derived from EIA-923 Schedule-8 CHP fuel
+# allocation (independent of this model's own dispatch/backcast) — EIA's
+# published CHP-sector analysis reports industrial-sector CHP plants
+# allocating ~70% of fuel consumption to useful thermal output and
+# commercial-sector plants ~65% (EIA Today in Energy, "Combined heat and
+# power technology fills an important energy niche",
+# https://www.eia.gov/todayinenergy/detail.php?id=8250, itself sourced from
+# Schedule-8 CHP fuel-consumption/thermal-output reporting). A plant whose
+# design dedicates most of its fuel to the host's thermal load is host-
+# dominated in its electric output too, so the fuel-allocation share stands in
+# for the BTM electric share. Replaces the prior values (60/60), which were
+# hand-trimmed to 50/50 to close a Run-61..65 backcast residual (CLAUDE.md
+# rule #22 — a derive input must not move because a residual moved).
+#
+# "merchant": no independent EIA sector-level split exists for merchant/IPP
+# (NAICS-22) CHP hosts at this granularity — retained at its prior fitted
+# value. Residual-identified, forecast-risk (open item for the DOF ledger,
+# S5): replace when an independent merchant-CHP host-load source is found.
+CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
+    "merchant": 35.0,  # residual-identified, forecast-risk — no independent source yet
+    "industrial": 70.0,  # EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output
+    "commercial": 65.0,  # EIA-923 Schedule-8: ~65% of CHP fuel to useful thermal output
+}
+CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
+
 # CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
 # Used to amortize startup cost into the monthly bid markup: a generator bids
 # above marginal cost to recover startup_cost / expected_run_length.
@@ -158,6 +188,21 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
     (11.0, 24.5),  # frame
     (99.0, 19.0),  # older
 ]
+
+# Per-plant ERCOT CC_REGULAR peaking-tranche % (top slice of nameplate priced
+# at the duct-burner peak multiplier), used in place of the generic offer
+# curve's pct_peaking when ScenarioConfig.cc_peaking_per_plant is set — moves
+# the peaking band earlier on the CF axis (15% => peaking starts at 85% of
+# nameplate). Residual-identified, forecast-risk: applied to exactly the four
+# F-class(late) 2x1 CCs the model over-ran in the 80-90% CF range (not a
+# published or physically-measured turbine limit) — open root-cause item for
+# the DOF ledger (S5).
+CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
+    58001: 15.0,  # Temple Power Station
+    58005: 15.0,  # Rayburn Energy Station LLC
+    59812: 15.0,  # Wolf Hollow II
+    60122: 15.0,  # Colorado Bend II
+}
 
 # Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_passthrough).
 # Coal plants hold take-or-pay fuel contracts, so the contracted volume bids at
@@ -254,6 +299,12 @@ VOM: dict[str, float] = {
     "oil": 4.5,  # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
     "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
     "hydro": 1.4,  # NREL ATB 2024 — conventional hydropower
+    # The base-fuel-class VOM component is 0 for the CCS retrofit tech: the
+    # incremental solvent/amine-handling O&M is priced separately as
+    # CCUS_PARAMS["gas_cc_ccs_90"]["vom_adder"] in the tech's own cost build,
+    # so this entry only supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.0)`` fallback).
+    "gas_cc_ccs": 0.0,
 }
 
 # Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage
@@ -348,8 +399,10 @@ HYDRO_YEAR_MULTIPLIER: dict[str, float] = {
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
-    "ERCOT": 0.85,  # was 0.83. NERC GADS 2019-2023, ERCOT fleet.
-    "CAISO": 0.89,  # was 0.88. NERC GADS 2019-2023, CAISO fleet.
+    "ERCOT": 0.85,  # residual-identified, forecast-risk: nudged from the
+    # NERC GADS 2019-2023 ERCOT-fleet baseline (0.83) during calibration.
+    "CAISO": 0.89,  # residual-identified, forecast-risk: nudged from the
+    # NERC GADS 2019-2023 CAISO-fleet baseline (0.88) during calibration.
     "PJM": 0.87,  # NERC GADS 2019-2023, PJM fleet. TODO: verify
     "NYISO": 0.86,  # NERC GADS 2019-2023, NYISO fleet. TODO: verify
     "NEISO": 0.85,  # NERC GADS 2019-2023, ISO-NE fleet. TODO: verify
@@ -511,6 +564,11 @@ EFORD: dict[str, float] = {
     "nuclear": 0.03,  # NERC GADS — nuclear
     "oil": 0.10,  # NERC GADS — oil peakers (infrequent run, higher EFOR)
     "biomass": 0.08,  # NERC GADS — biomass steam
+    # CCS retrofit reuses the underlying gas_cc unit's forced-outage rate (the
+    # amine/compression train adds parasitic load, not forced-outage risk, in
+    # this model); supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.05)`` fallback).
+    "gas_cc_ccs": 0.05,
 }
 
 # Annual demand growth rates by ISO, scenario path, and era.
@@ -865,6 +923,31 @@ COAL_PRICE_BASE: dict[str, float] = {
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
 
+# --- ERCOT lignite / PRB delivered coal cost, 2023-2025 -----------------------
+# ERCOT's two coal supply classes are genuinely different costs: mine-mouth
+# lignite (no transport, take-or-pay contract) vs PRB-by-rail (commodity +
+# rail freight). Both are measured delivered-fuel-cost inputs — a physical/
+# market input admissible under CLAUDE.md rule #13 (forward-reproducible,
+# responds to changed conditions), not a fitted/residual value, despite the
+# unhelpful "calibration" naming these constants used to carry.
+#
+# Mine-mouth lignite: held flat 2023-2025 (no transport cost to escalate),
+# then compounds at COAL_PRICE_ESCALATION from 2026. Source: operator/EIA cost
+# data.
+LIGNITE_PRICE_2023_25: float = 1.45
+# PRB-by-rail: measured delivered cost, 2023-2025 (EIA-923 Schedule-5 receipts
+# / operator cost data). From 2026 the forward curve decomposes the 2023-2025
+# average into commodity (42%), diesel-driven rail freight (12%, held flat —
+# the model carries no forward diesel price curve) and non-diesel rail
+# freight (46%, escalates at COAL_PRICE_ESCALATION); the commodity component
+# holds flat through 2030 then declines 1.5%/yr as coal demand falls.
+PRB_PRICE_BY_YEAR: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
+PRB_COMMODITY_SHARE: float = 0.42
+PRB_RAIL_DIESEL_SHARE: float = 0.12
+PRB_RAIL_NONDIESEL_SHARE: float = 0.46
+PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
+PRB_COMMODITY_FLAT_THROUGH: int = 2030
+
 # Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam units.
 # Distillate (No. 2) fuel oil dominates the NYISO/ISO-NE oil peaker fleet;
 # residual (No. 6) is the legacy oil-steam fuel. The blended delivered cost
@@ -928,6 +1011,30 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     # flat 1 - EFORD derate. Source: NERC GADS by unit type and age.
     "OIL": (0.06, 0.10, 0.003, 30, 0.04, 0.002, 30),
     "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
+}
+
+# Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw):
+# the demonstrated physical maximum a unit's CEMS record shows it can sustain
+# (boiler/turbine derates below nameplate), applied as an availability ceiling
+# year-round on top of the age-based THERMAL_AVAILABILITY model.
+#
+# Source: scripts/derive_coal_max_cf.py — the pooled 99th percentile of each
+# plant's daily-max capacity factor (gross_mw / capacity_mw) on days it ran
+# (daily-mean CF > 0.06), across all CAMPD hourly extract years on record
+# (2023-2025, data/raw/campd-facility-level/TX_*.parquet). A near-maximum
+# rather than the true max: robust to a single-hour telemetry spike, not
+# softened by economic part-load (which compresses the mean, not the top
+# tail). Re-run the script and update this table when a new CAMPD year lands;
+# never hand-tune an entry to a backcast residual (CLAUDE.md rule #22).
+#
+# Plants whose demonstrated ceiling reached or exceeded nameplate (Oak Grove
+# 6180 p99=1.02, Coleto Creek 6178 p99=1.10, San Miguel 6183 p99=1.07) carry no
+# entry: their own CEMS record shows no sub-nameplate physical limit, so the
+# generic age-based availability model governs them unconstrained.
+COAL_MAX_CF_BY_PLANT: dict[int, float] = {
+    298: 0.95,  # Limestone
+    6179: 0.99,  # Fayette (Sam Seymour)
+    7097: 0.95,  # J K Spruce
 }
 
 # Forecast-mode monthly planned-maintenance shape (12 weights, Jan..Dec) per
@@ -1880,6 +1987,21 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "NEISO": {"wind": 1400.0, "solar": 2700.0},
 }
 
+# CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
+# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with
+# fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC
+# boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit
+# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
+# southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
+# has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
+# a direct Path-15 sub-TAC load measurement becomes available.
+CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
+    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    "SCE-TAC": {"SP15": 1.0},
+    "SDGE-TAC": {"SP15": 1.0},
+    "VEA-TAC": {"SP15": 1.0},
+}
+
 # NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
 # gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
 # zone, the fraction of that zone's hourly load that must be met by IN-ZONE
@@ -1891,10 +2013,12 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # 2023 realized LI self-supply share (8.52 TWh gen / ~17.6 TWh load = 0.48),
 # which is what the LMIC requirement enforces — a load-scaling, forward-
 # reproducible rule, NOT a pin to measured generation (CLAUDE.md rule #12). Set
-# a touch below the realized share so the floor never over-forces. NYC (zone J)
-# is deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh
-# (it cannot import enough, so it self-supplies) — its idle peakers are a
-# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# a touch below the realized share so the floor never over-forces — residual-
+# identified, forecast-risk (the magnitude tracks the 2023 outcome; open
+# root-cause item for the DOF ledger, S5). NYC (zone J) is deliberately ABSENT:
+# the diagnostic shows NYC OVER-generates by +11 TWh (it cannot import enough,
+# so it self-supplies) — its idle peakers are a reserve-scarcity gap (RCPF /
+# mechanism B), not an energy must-run. Tier 3.
 # Source: NYISO Locational Installed Capacity Requirements (Gold Book); EIA-923
 # zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
 NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
