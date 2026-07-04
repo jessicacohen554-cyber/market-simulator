@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**965 parameters registered** (554 flagged `needs-citation`).
+**971 parameters registered** (558 flagged `needs-citation`).
 
 
 ## Calibration
@@ -198,6 +198,10 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `carb_unspecified_import_ef` | 0.428 | 2 | CARB Mandatory GHG Reporting Regulation (MRR), 17 CCR §95111(b) — d… | 2018-12 |  |
+| `co2_rate_class_median_percentile` | 50.0 | 2 | Percentile of the per-class (plant_group × fuel) CAMPD rate distrib… |  | auto-generated, needs-citation |
+| `co2_rate_conditioning_enabled` | False | 2 | Whether the operation-conditioned refinement ships enabled. Per the… |  | auto-generated, needs-citation |
+| `co2_rate_envelope_gate_l1` | 0.5 | 2 | Envelope-gate threshold: the operation-conditioned nearest-neighbor… | 2023 | auto-generated |
+| `co2_rate_trailing_window_years` | 0 | 2 | Trailing-window length (years) for the gen-weighted base rate. 0 = … |  | auto-generated, needs-citation |
 | `co2_rates.biomass.default` | 0.0 | 2 | EPA eGRID 2022 — petroleum-fired units | 2022 | auto-generated |
 | `co2_rates.coal.older` | 1.08 | 2 | EPA eGRID2022 | 2024-01 |  |
 | `co2_rates.coal.subcritical` | 1.0 | 2 | EPA eGRID2022 | 2024-01 |  |
@@ -229,9 +233,11 @@ inline comment and still need a dated primary source — search the table for
 | `nox_rates.oil` | 0.0004 | 2 | EPA CEMS 2023 — oil-fired peakers/steam, mostly non-SCR. | 2023 | auto-generated |
 | `scenario.carbon_price_path` | zero | 1 | "zero", "low", "mid", "high"; used when carbon_price is 0.0 |  | auto-generated, needs-citation |
 | `scenario.plant_emission_rates_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.plant_emission_rates_v2_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.so2_price` | 0.0 | 1 | $/ton SO2 |  | auto-generated, needs-citation |
 | `scenario.state_carbon_pricing` | True | 1 | Toggle: charge the ISO's state carbon-program allowance cost (CA ca… | 2026-06 |  |
 | `scenario.use_plant_emission_rates` | True | 2 | When True, generators pinned to a single plant take that plant's CA… |  | auto-generated, needs-citation |
+| `scenario.use_plant_emission_rates_v2` | False | 2 | v2 mode-aware CO2-rate source (docs/handoffs/emissions-co2-rate-pla… | 2026-07 | auto-generated |
 | `state_carbon_price_by_iso.CAISO` | {"2023": 33.03, "2024": 35.23, "2025"… | 2 | CARB / CA-Quebec joint auction current-vintage settlement prices, a… | 2025-11 |  |
 | `state_carbon_price_by_iso.NEISO` | {"2023": 14.87, "2024": 22.83, "2025"… | 2 | RGGI, Inc. quarterly auction results press releases ("CO2 Allowance… | 2025-12 |  |
 | `state_carbon_price_by_iso.NYISO` | {"2023": 13.49, "2024": 20.71, "2025"… | 2 | RGGI quarterly CO2-allowance auction clearing prices, annual simple… | 2025-12 |  |

@@ -3638,6 +3638,81 @@
       ]
     },
     {
+      "param_id": "co2_rate_class_median_percentile",
+      "display_name": "Co2 Rate Class Median Percentile",
+      "value": 50.0,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "Percentile of the per-class (plant_group × fuel) CAMPD rate distribution used for CEMS-uncovered plants and new entrants (plan §2.1 step 4). 50 = gen-weighted class median.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "co2_rate_conditioning_enabled",
+      "display_name": "Co2 Rate Conditioning Enabled",
+      "value": false,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "Whether the operation-conditioned refinement ships enabled. Per the plan's acceptance gate it stays OFF (estimator == pure gen-weighted a_gw) unless the 7-year held-in LOYO shows the envelope-gated conditioner beats plain a_gw.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "co2_rate_envelope_gate_l1",
+      "display_name": "Co2 Rate Envelope Gate L1",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "Envelope-gate threshold: the operation-conditioned nearest-neighbor refinement (plan §2.1 step 2) fires ONLY when the target-year simulated operating point falls outside the plant's historical envelope by more than this L1 distance on the normalized (annual gen, starts, CF-band) descriptor. Inside the envelope the gen-weighted base is kept — near-duplicate history years make a single-year NN pick lose to the average (plan §3: oracle NN loses on 2023/2024 targets). Chosen once from the LOYO harness; see the plan doc for the sweep.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "co2_rate_trailing_window_years",
+      "display_name": "Co2 Rate Trailing Window Years",
+      "value": 0,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "Trailing-window length (years) for the gen-weighted base rate. 0 = use ALL available history. LOYO (plan §2.2): with a 3-year history the all-years gen-weighted average won (wMAPE 2.20% vs 2.28% simple / 2.46% recency); re-validated against the 7-year history before any narrower window is adopted.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "co2_rates.biomass.default",
       "display_name": "Co2 Rates / Biomass / Default",
       "value": 0.0,
@@ -16498,6 +16573,25 @@
       ]
     },
     {
+      "param_id": "scenario.plant_emission_rates_v2_path",
+      "display_name": "Plant Emission Rates V2 Path",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.plant_level_fleet",
       "display_name": "Plant Level Fleet",
       "value": false,
@@ -17290,6 +17384,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.use_plant_emission_rates_v2",
+      "display_name": "Use Plant Emission Rates V2",
+      "value": false,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "v2 mode-aware CO2-rate source (docs/handoffs/emissions-co2-rate-plan-2026-07.md): when True, CO2 rates come from the per-(iso, plant, unit, year) v2 artifact via the composition mask — a backcast year books its own measured rate, a forecast year the gen-weighted trailing-average estimator base. Default OFF keeps the legacy pooled-artifact path until the 7-year history lands.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
