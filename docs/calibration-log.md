@@ -42,6 +42,48 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-04 — NYISO — winter-spread promotion blocked by CT de-leak (nyiso 43/44): PROBES, keeper stays nyiso 41
+
+**Goal.** Promote the nyiso-42 reconciled Iroquois winter spread by root-causing its two
+blockers (E1 shoulder undershoot exposure, E2 C2-2025 gas FAIL) plus the Jan-2024/Dec-2025
+winter overshoots, per the 2026-07-03 carry-forward.
+
+**All three carried items closed measured.** (E2) The C2-2025 −2.5% FAIL was a scoring-basis
+artifact: the `run_calibration_full` daily-basis override channel silently enabled
+`dual_fuel_oil_reattribution` (spec'd NEISO-only) for every ISO, relabelling parity-switched
+winter gas→oil while the measured NYIS EIA-930 feed keeps those hours in `NG: NG` (Jan-2025:
+0.80 TWh relabelled vs 0.031 measured OIL; 2023: 2.17 TWh NYIS OIL vs 0.42 TWh EIA-923 oil
+class). Gate restored to spec → C2-2025 −0.1% PASS, C5a in band all years (−2.3/−5.3/−3.7% —
+keeper-41's 2024 −7.1% breach was the same relabel exporting switch-hour CO2). (E3) The
+Feb-2023/Jan-2024/Jan-2025 reconstructions out-priced the measured Algonquin-Citygate ceiling
+of the complex Z2 trades inside; `fuel.nyiso_reconciled_reference_monthly` now caps each month
+at the measured ALG monthly (HH + the measured NEISO basis row) and water-fills the shaved
+scarcity excess as a year-round base, preserving the measured SOM annual spread exactly
+(three measured series, no fitted constant; Jan-2024 +6 → +1.6). (E1) Decomposed: east level
+= the ledgered offer-markup/reserve frontier (NYISO-AS data is measured *prices*, not a
+condition-varying requirement — stays data-blocked); upstate shoulder collapse = Upstate_West
+at the wind margin behind the measured 1,450 MW CE TTC while the recon band pushes ~830 MW of
+measured net imports through the upstate link (real upstate held ~$22-25 via gross two-way tie
+flows; per-interface flows/ratings = new data ask).
+
+**Promotion blocked by a repo-level regression:** commit `0c6c833` (post-run-42) de-leaked the
+NYISO CT_PEAKER/CT_CHP econ bands to neutral 1.0 (its own documented open root cause: "a
+NYISO-grounded CT econ ramp"). LI/NYC peakers over-run ~2.5× actual (CT 4.9 vs 2.13 TWh 2024)
+and displace steam through the HARD C1 band (2024 ST_GAS −3.4 TWh FAIL). Verified the
+keeper-41 config itself reproduces the FAIL on current main (CT 4.69/ST 7.65) — every NYISO
+solve is blocked until the CT offer level is grounded. `nyiso 44` (+`--tranche-startup-
+amortization`, the ISO-NE Order-825 fast-start analogue — real structure, worth keeping)
+moves CT only 4.90 → 4.75: P0 base-cost run-lengths are long under neutral bands, so the
+amortized start cost is small. Closure candidates (none on disk): LI/NYC delivered-fuel basis
+(LDC citygate/interruptible, kerosene frames), a SOM-grounded markup (SOM 2024 confirms offers
+sit above bid-based reference levels, no per-class number published), DEC Peaker-Rule run-hour
+limits. CEMS marginal HR ruled out (run-28; CT marg 0.66–0.85× base).
+
+**Registered:** `2026-07-04-nyiso-43-ceiling-oilbasis` (NOT-YET: C1-2024 + 3 ledgered soft),
+`2026-07-04-nyiso-44-faststart` (NOT-YET: C1-2024; best probe state — C2/C5a/C6 PASS, C3a
+−15.4/−14.9/−13.0, C3b 0.207/0.201/0.195, C3c 0/0/7h). Keeper stays
+`2026-07-03-nyiso-41-hub-prices` (committed artifacts stand; non-reproducible on main).
+
 ### 2026-07-03 — CAISO — S2 CT-floor scrub (caiso 52): PROBE, forcing removed (keeper stays caiso 51)
 
 **Goal.** Execute the legitimacy-audit S2 scrub (`docs/model-legitimacy-audit-2026-07.md` §1-§2,
