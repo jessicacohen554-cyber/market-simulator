@@ -49,7 +49,7 @@ two holdout windows:
 | Demand (model profiles) | `eia-930/eia_demand_profiles{,_meta}.parquet` | ✅ 2021–2025 | ❌ no 2026 (full-8760 contract; partial year unbuildable) | driver |
 | Gas — Henry Hub | `gas-prices/henry_hub_{daily,monthly}.csv` | ✅ 1997–2026 | ✅ through 2026-06 | driver |
 | Gas — delivered-to-EP (EIA N3045) | `ercot_electric_power_gas_price.csv`, `pjm_zonal_gas_hub.csv`, `gas_basis_by_iso_month.csv` | ✅ | ⚠️ Jan–Apr only (EIA lag) | driver (backcast) |
-| Gas — ERCOT zonal hub (F923 Sch5 / Waha) | `ercot_zonal_gas_hub.csv` | ❌ 2023–2025 only | ❌ | driver (backcast; ercot32 keeper enables it — **follow-up F1**) |
+| Gas — ERCOT zonal hub (F923 Sch5 / Waha) | `ercot_zonal_gas_hub.csv` | ✅ all 7 zones | ⚠️ all 7 zones, Jan–Apr PARTIAL | driver (backcast; ercot32 keeper enables it — F1 **CLOSED 2026-07-04**) |
 | **Fleet — CAMPD unit-level (binning)** | `campd-unit-level/{ST}_{YEAR}.parquet` | ✅ TX + 14 PJM states | ⚠️ Q1 only (Q2 unposted) | fleet build |
 | Outages (CAMPD unit overlay) | `campd-unit-outages.csv`, `campd-unit-outages-PJM.csv` | ✅ | ⚠️ windows through 2026-03-31 | overlay (backcast) |
 | **Bench — EIA-930 fuel-mix actuals** | `eia-930/{BA}_fueltype_{YEAR}.parquet`, `eia-930/*BALANCE*`, wide extracts | ✅ | ✅ through 2026-06-30 | **scoring target** |
@@ -117,22 +117,51 @@ through June 30.
 **Follow-ups (needed before a 2022 / H1-2026 solve is *scorable*, not part of
 this intake):**
 
-- **F1 — `ercot_zonal_gas_hub.csv` 2022/2026 rows: MOSTLY DONE 2026-07-04.**
-  `scripts/derive_ercot_zonal_gas_hub.py` reproduces the committed Sch5
-  methodology (validated on 2023: identical plant coverage — North 5
-  plants/61M MMBtu, South_Central 12/175M, South 3/9M — basis within ±$0.03,
-  workbook-revision noise) and landed the 2022 rows (F923 2022 Final
-  Revision) plus PARTIAL 2026 rows (F923 M04 early release, Jan–Apr
-  receipts, flagged winter-weighted). **Remaining: West/Panhandle (Waha)** —
-  the Waha annual average has no reproducible in-repo/API source; when a
-  sourced number is available run
-  `derive_ercot_zonal_gas_hub.py --year 2022 --waha-annual-avg <usd>
-  --waha-source "<citation>"` (absent zones degrade to a 0 spread in
-  `apply_ercot_zonal_gas_basis` meanwhile).
-- **F2 — PJM native DataMiner `gen_by_fuel` 2026.** `PJM_2022…2025_gen_by_fuel.csv`
-  exist; 2026 needs a registered DataMiner subscription key (none in repo).
-  Affects only the clean `generation/PJM` datatype (`is_renewable` flag); the
-  EIA-930 PJM fuel-mix — the actual scoring bench — is landed through June.
+- **F1 — `ercot_zonal_gas_hub.csv` 2022/2026 rows: CLOSED 2026-07-04.**
+  The Sch5 zones landed earlier the same day (validated on 2023: identical
+  plant coverage, basis within ±$0.03 workbook-revision noise); the remaining
+  West/Panhandle (Waha) rows are now sourced and landed:
+  - **2022**: Waha annual avg **$5.19/MMBtu** from EIA Today in Energy
+    id=55119 (HH 2022 avg $6.45; "The spot price at the Waha Hub in West
+    Texas averaged $1.26/MMBtu below the Henry Hub in 2022"; retrieved
+    2026-07-04) → basis **−1.23** vs the on-disk monthly-HH mean $6.42
+    (−1.26 vs EIA's daily mean — monthly-vs-daily averaging noise).
+    `neg_day_freq = 0.0` (Reuters' by-year negative-day enumeration, via BOE
+    Report 2026-04-07, skips 2021–2022: zero sub-zero Waha days).
+  - **2026 (PARTIAL, Jan–Apr)**: Waha avg **−$2.29/MMBtu** — Reuters via BOE
+    Report 2026-05-11, "Waha prices have averaged a negative $2.29 per mmBtu
+    so far in 2026" (Jan 1–~May 8). Documented window misalignment vs the
+    F923 Jan–Apr receipt window (~1 week of May included; late Apr / early
+    May both deeply negative), accepted as the closest citable figure per
+    the rule-14 reconciled-real-data-over-guess convention → basis **−6.58**
+    vs HH Jan–Apr mean $4.29. `neg_day_freq = 0.62` (51 negative days YTD
+    through Apr 7 + the unbroken negative streak covering Apr 8–30, Reuters
+    via BOE Report 2026-04-07 / 2026-05-11 → ~74 of 120 calendar days).
+    Re-derive when EIA publishes the rest of 2026 (full-year Waha averages
+    will then be quotable directly).
+  - `derive_ercot_zonal_gas_hub.py` gained `--waha-neg-day-freq` /
+    `--waha-neg-day-freq-source` so the West-zone negative-pricing input
+    (a live measured input, `fuel.py`) is written with its citation in the
+    same reproducible pass.
+- **F2 — PJM native DataMiner `gen_by_fuel` 2026: STILL BLOCKED (re-checked
+  2026-07-04).** `PJM_2022…2025_gen_by_fuel.csv` exist; 2026 needs a
+  registered DataMiner subscription key — `.env` carries only `EIA_API_KEY`,
+  no `Ocp-Apim-Subscription-Key`. Affects only the clean `generation/PJM`
+  datatype (`is_renewable` flag); the EIA-930 PJM fuel-mix — the actual
+  scoring bench — is landed through June.
+**Verification of the 2026-07-04 follow-up pass (no LP, loader dry-run only):**
+`python scripts/verify_holdout_intake.py` re-run after the F1/F5/F6 landings —
+ERCOT/PJM 2022 and H1-2026 all load; the ERCOT zonal hub now reports **7
+zones** for both holdout years. Touched curations regenerated
+(`regenerate_clean.py fuel-prices outages partial-outages egrid emissions`;
+`egrid` gained the 2022 partition, `outages`/`emissions` now emit 2022/2026).
+`pytest tests/test_curate_*.py -q`: 88 passed.
+`tests/test_fuel.py::test_coal_supply_pricing_forward_year_uses_trajectory`
+was updated from 2026 to 2027 — its premise is "forward year with **no**
+F923 receipts on disk", which the 2026 intake made false for 2026.
+(`tests/test_eia923_fuel.py::…test_pjm_subbit_resolves_from_table_not_prb`
+fails identically on a clean pre-intake tree — pre-existing, unrelated.)
+
 - **F3 — `eia_demand_profiles{,_meta}.parquet` 2026 rows.** Full-8760 contract
   (`load_demand` asserts 8760); a partial year is unbuildable by design. Build
   at one-shot validation time once the H1-2026 scoring window handling is
@@ -140,12 +169,72 @@ this intake):**
 - **F4 — scoring-path year registration.** `scripts/build_calibration_reference.py`
   `CALIBRATION_YEARS` has no 2026 and `HENRY_HUB_ACTUAL` lacks 2026 (KeyError
   if asked); extend at validation time, not before.
-- **F5 — per-plant monthly coal pricing and fossil CO2 rates for 2022/2026**
-  (F923 fuel receipts; CEMS-derived plant emission rates) — the remaining
-  backcast fuel overlays; non-trivial derivations, deferred.
-- **F6 — facility-level CAMPD outage extracts** (`campd-facility-level/`,
-  `campd-outages*.csv`) still 2023–2025; the unit-level overlay above is the
-  one the ERCOT/PJM keepers consume.
+- **F5 — per-plant monthly coal pricing and fossil CO2 rates for 2022/2026:
+  CLOSED 2026-07-04.** All four `_processed-legacy` overlays extended, with a
+  validate-first rebuild and 2023–2025 rows asserted frozen (holdout-year
+  data must not shift the in-sample overlays):
+  - `eia923_monthly_fuel_costs.parquet` + `eia923_monthly_generation.parquet`
+    (`scripts/process_f923_fuel_costs.py`): the 2023-only rebuild from
+    `f923_2023.zip` reproduced every committed 2023 row **exactly** (8,203
+    cost rows; deep-compare on the generation table too). Added **2022**
+    (8,472 cost / 16,453 generation rows, 1,869 coal plant-months; F923 2022
+    Final Revision) and **2026 Jan–Apr** (1,994 / 7,798 rows, 483 coal
+    plant-months; F923 M04 early release, 18JUN2026 vintage). Source:
+    `eia.gov/electricity/data/eia923` `f923_2022.zip` (archive) +
+    `f923_2026.zip`, retrieved 2026-07-04 (zips cited, not committed — same
+    convention as the Sch5 gas-hub intake).
+  - `parasitic_load_factors.parquet` (`derive_parasitic_load.py`): +**2022**
+    (564 TX+PJM plant rows, 367 measured). **2026 deferred**: CAMPD gross is
+    Q1-only while F923 net runs Jan–Apr — a window-mismatched net/gross
+    ratio is a biased measured input; re-derive when CAMPD Q2–Q4 and the
+    full-year F923 land. Pooled `year == 0` rows untouched (2023–25 pool).
+  - `plant_emission_rates.parquet` (`derive_plant_emissions.py`): the 2023
+    TX rebuild matched every committed rate column exactly (only
+    `coal_share` moves ≤0.021, a pool-span artifact). Added **2022** (130 TX
+    plants) and **2026 Q1** (128; Q1-weighted starts/rates — PARTIAL). Pooled
+    `year == 0` override rows (what `egrid._campd_rate_map` consumes) stay
+    the 2023–24 pool, byte-identical.
+  - `fossil_co2_rates.parquet` (`derive_fossil_co2_rates.py`): 2023–25
+    rebuild **byte-identical** to committed. Added **2022 on the true
+    eGRID2022 vintage** — `egrid2022_data.xlsx` fetched from epa.gov
+    (retrieved 2026-07-04, new raw file under `data/raw/fleet-egrid/`,
+    vintage registered in `egrid.py` + `curate_egrid.py`; before this, 2022
+    would have silently ridden the 2024 stand-in) → 2,666 fossil plants —
+    and **2026** on the latest (2024) stand-in vintage per the existing
+    forward-year convention (2,500 plants).
+  - Path fixes: `derive_parasitic_load.py` / `derive_plant_emissions.py`
+    still wrote to the pre-W1 `inputs/processed` tree (nonexistent — output
+    landed where the model never reads); constants now point at
+    `data/raw/_processed-legacy` + `data/raw/reference/`.
+  - **Discovered drift (open item, PJM calibration owner):** the committed
+    2023 parasitic rows for 27 PJM plants carry `class_default`/zero-net
+    values — they were built against the old ERCO-only generation table, and
+    a rebuild against today's all-BA table finds their measured net (e.g.
+    plant 55358: factor 0.970 default → 0.975 measured). Left frozen per
+    rule 23 (re-derivation is a calibration-owner decision, keeper-adjacent).
+- **F6 — facility-level CAMPD outage extracts: RESOLVED 2026-07-04 (consumption
+  audited; consumed CSVs extended; no facility-level fetch needed).**
+  Consumption audit of the current keepers: the **ERCOT** keeper
+  (`historic_outage_overlay=True`) actively consumes `campd-outages.csv`
+  (primary facility overlay, `fleet.py`/`outages.py`) and
+  `campd-partial-outages.csv` (ERCOT-only derate); the **PJM** facility
+  overlay `campd-outages-PJM.csv` is dead for the keeper
+  (`historic_outage_overlay=False`, superseded by the unit-level
+  `campd-unit-outages-PJM.csv`) and was not extended. The
+  `campd-facility-level/` parquets are derive-time inputs only, and no new
+  ones are needed: a TX-2023 parity check showed the unit-level extracts sum
+  to the facility series **bit-for-bit** on every physical column (gross,
+  CO2/NOx/SO2, heat) — so the already-landed `campd-unit-level/TX_2022/2026`
+  files are the source via `campd._read_one`'s documented fallback. Both
+  derives re-validated first (2023–25 re-derivation **byte-identical** to
+  the committed CSVs), then extended: `campd-outages.csv` +190 windows
+  (2022) / +79 (2026, clipped at the Q1 publication horizon 2026-03-31 —
+  both facility derives gained the same horizon clipping the unit-level
+  derive already had, so unpublished Q2–Q4 no longer reads as a phantom
+  Apr–Dec outage), `campd-partial-outages.csv` +62 (2022) / +16 (2026 Q1).
+  `derive_partial_outages.py` also had its default `--out` moved off the
+  dead pre-W1 `inputs/raw-data/` path to the consumed
+  `data/raw/campd-partial-outages.csv`.
 
 ---
 
@@ -327,9 +416,11 @@ usual `calibration-report` flow.
 
 1. **Intake 2022 + H1-2026 bench + fleet data** (EIA-930 fuel-mix, CAMPD
    unit-level, delivered gas) so D-6 becomes scorable. ~~Un-scorable today.~~
-   **DONE for ERCOT + PJM 2026-07-04 (§1.1)** — remaining gaps are the
-   unpublished months (CAMPD Q2-2026, delivered gas May-2026+) and the §1.1
-   follow-ups F1–F6; still open for CAISO / MISO / NYISO / NEISO.
+   **DONE for ERCOT + PJM 2026-07-04 (§1.1)** — follow-ups F1/F5/F6 closed in
+   the same-day second pass; remaining gaps are the unpublished months (CAMPD
+   Q2-2026, delivered gas May-2026+, 2026 parasitic deferral), F2 (blocked on
+   a PJM DataMiner key) and the deliberately-deferred F3/F4 (built at one-shot
+   validation time); still open for CAISO / MISO / NYISO / NEISO.
 2. **Temperature limbs with ρ sign flips — PJM ComEd CC_REGULAR and both CAISO
    SP15 limbs (ST_GAS, CC_REGULAR).** Unidentified out-of-training; re-examine
    whether these tmax limbs should ship for those zone/classes at all.
