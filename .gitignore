@@ -89,6 +89,9 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/calibration/caiso_probe2_*/
 /results/calibration/caiso_tune*/
 /results/calibration/caiso_hydro*/
+# Evening CT-vs-CC merit diagnosis (2026-07-04): single-year throwaway probe,
+# regenerable from FINDING-caiso-evening-merit-2026-07-04.md; not a keeper.
+/results/calibration/caiso_diag_*/
 # NYISO scratch backcasts: Step-1 measured-zonal-load re-runs for the
 # locational-reserve / interface diagnostics (regenerable; keepers stay
 # nyiso_cal_* until the structure is green and keepers are regenerated last).
