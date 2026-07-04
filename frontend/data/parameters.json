@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-02",
+  "generated": "2026-07-04",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -3132,6 +3132,101 @@
       ]
     },
     {
+      "param_id": "caiso_tac_zone_weights.PGE-TAC.NP15",
+      "display_name": "Caiso Tac Zone Weights / Pge-Tac / Np15",
+      "value": 0.86,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.PGE-TAC.ZP26",
+      "display_name": "Caiso Tac Zone Weights / Pge-Tac / Zp26",
+      "value": 0.14,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.SCE-TAC.SP15",
+      "display_name": "Caiso Tac Zone Weights / Sce-Tac / Sp15",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.SDGE-TAC.SP15",
+      "display_name": "Caiso Tac Zone Weights / Sdge-Tac / Sp15",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.VEA-TAC.SP15",
+      "display_name": "Caiso Tac Zone Weights / Vea-Tac / Sp15",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "cc_commitment_params",
       "display_name": "Cc Commitment Params",
       "value": [
@@ -3164,6 +3259,68 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cc_econ_hr_override_default",
+      "display_name": "Cc Econ Hr Override Default",
+      "value": 1.2,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "CC economic band ≈ 1.2× base HR",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cc_peak_hr_override_default",
+      "display_name": "Cc Peak Hr Override Default",
+      "value": 1.8,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "CC duct-firing peak ≈ 1.8× base HR",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cc_regular_peaking_pct_by_plant",
+      "display_name": "Cc Regular Peaking Pct By Plant",
+      "value": {
+        "58001": 15.0,
+        "58005": 15.0,
+        "59812": 15.0,
+        "60122": 15.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-plant ERCOT CC_REGULAR peaking-tranche % (top slice of nameplate priced at the duct-burner peak multiplier), used in place of the generic offer curve's pct_peaking when ScenarioConfig.cc_peaking_per_plant is set — moves the peaking band earlier on the CF axis (15% => peaking starts at 85% of nameplate). Residual-identified, forecast-risk: applied to exactly the four F-class(late) 2x1 CCs the model over-ran in the 80-90% CF range (not a published or physically-measured turbine limit) — open root-cause item for the DOF ledger (S5).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -3409,6 +3566,82 @@
       ]
     },
     {
+      "param_id": "chp_btm_pct_by_sector.commercial",
+      "display_name": "Chp Btm Pct By Sector / Commercial",
+      "value": 65.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "EIA-923 Schedule-8: ~65% of CHP fuel to useful thermal output",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "chp_btm_pct_by_sector.industrial",
+      "display_name": "Chp Btm Pct By Sector / Industrial",
+      "value": 70.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "chp_btm_pct_by_sector.merchant",
+      "display_name": "Chp Btm Pct By Sector / Merchant",
+      "value": 35.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "residual-identified, forecast-risk — no independent source yet",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "chp_st_btm_pct",
+      "display_name": "Chp St Btm Pct",
+      "value": 90.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ST_CHP group (tiny chemical host-steam): near-full BTM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "co2_rates.biomass.default",
       "display_name": "Co2 Rates / Biomass / Default",
       "value": 0.0,
@@ -3435,6 +3668,28 @@
       "tier": 2,
       "source": "EPA eGRID 2022 — petroleum-fired units",
       "source_date": "2022",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_max_cf_by_plant",
+      "display_name": "Coal Max Cf By Plant",
+      "value": {
+        "298": 0.95,
+        "6179": 0.99,
+        "7097": 0.95
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw): the demonstrated physical maximum a unit's CEMS record shows it can sustain (boiler/turbine derates below nameplate), applied as an availability ceiling year-round on top of the age-based THERMAL_AVAILABILITY model.  Source: scripts/derive_coal_max_cf.py — the pooled 99th percentile of each plant's daily-max capacity factor (gross_mw / capacity_mw) on days it ran (daily-mean CF > 0.06), across all CAMPD hourly extract years on record (2023-2025, data/raw/campd-facility-level/TX_*.parquet). A near-maximum rather than the true max: robust to a single-hour telemetry spike, not softened by economic part-load (which compresses the mean, not the top tail). Re-run the script and update this table when a new CAMPD year lands; never hand-tune an entry to a backcast residual (CLAUDE.md rule #22).  Plants whose demonstrated ceiling reached or exceeded nameplate (Oak Grove 6180 p99=1.02, Coleto Creek 6178 p99=1.10, San Miguel 6183 p99=1.07) carry no entry: their own CEMS record shows no sub-nameplate physical limit, so the generic age-based availability model governs them unconstrained.",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -3600,6 +3855,44 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ct_econ_hr_override_default",
+      "display_name": "Ct Econ Hr Override Default",
+      "value": 1.1,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "CT_CHP economic band ≈ 1.1× base HR",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ct_peak_hr_override_default",
+      "display_name": "Ct Peak Hr Override Default",
+      "value": 1.3,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "CT_CHP peak band ≈ 1.3× base HR",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -4639,6 +4932,25 @@
       ]
     },
     {
+      "param_id": "eford.gas_cc_ccs",
+      "display_name": "Eford / Gas Cc Ccs",
+      "value": 0.05,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Equivalent forced outage rate (demand) by technology class. Source: NERC GADS.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "eford.gas_st",
       "display_name": "Eford / Gas St",
       "value": 0.07,
@@ -5401,6 +5713,44 @@
       "domain": "Fuel Prices",
       "tier": 2,
       "source": "TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "gas_st_econ_hr_override_default",
+      "display_name": "Gas St Econ Hr Override Default",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "gas-steam econ ≈ flat full-load HR",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "gas_st_peak_hr_override_default",
+      "display_name": "Gas St Peak Hr Override Default",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "gas-steam peak ≈ 1.5× base HR",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -7137,6 +7487,24 @@
       "tier": 2,
       "source": "Per-ISO neighbor registry for the reference-price interface. ISO-agnostic machinery, parameterized here per ISO + data. PJM is the validated ISO; other ISOs adopt the same construction once their neighbor specs are filled in (so they stay byte-identical until then). Tier 3 (calibration) — interface limits and gas bases carry \"verify against published ratings / EIA-923\" caveats.  PJM seams (PJM is a structural net exporter): MISO to the west, NYISO to the north/east, and the Carolinas/Southeast to the south. PJM exports because its resource mix (coal retirements + efficient new CCs, generation near load) sets an LMP *below* its neighbors' — confirmed in the field (PJM 2024 State of the Market §9; ACORE/PJM-MISO joint studies) and in the price levels: MISO RT LMP averaged ~$36/MWh in 2023 and ~$31 in 2024 (Potomac Economics MISO IMM SOM) vs PJM's ~$28/$30, and the measured net export shrinks with the spread (+40 -> +33 -> +18 TWh, 2023-25).  Effective marginal heat rate per neighbor is calibrated so gas x HR reproduces the neighbor's OWN realized annual LMP (rule #11: anchor to the neighbor's measured price formation, never to PJM's flow); the year-to-year level then rides on the Henry Hub trajectory, so it is forecast-native. - MISO (basis ~0, Chicago Citygate ~flat to HH): HR 12.9, anchored to MISO's OWN realized Indiana-Hub RT LMP / Henry Hub. This REPLACES the prior 14.2 ESTIMATE (rule #12: measured data over an estimate). 14.2 came from the IMM State-of-the-Market ~$36 all-MISO-footprint average; the seam actually clears against the PJM-border INDIANA.HUB, whose measured RT LMP is $31.8/$30.8/$42.85 (2023-25, the fetched docs.misoenergy.org ex-post extract), i.e. LMP/HH = 12.5/14.1/12.2, mean 12.9. The old 14.2 over-priced the border hub by +13% (2023) / +17% (2025), inflating the PJM->MISO spread and over-exporting; 12.9 is the like-for-like measured ratio. Regenerate with scripts/derive_neighbor_convexity.py (reports the implied HR). - NYISO (basis +0.55, EIA-923 delivered): HR 13.1, anchored to the actual NYISO RT LMP $36 (2024) / delivered gas $2.74. CAVEAT: NYISO downstate is congestion/scarcity-dominated, so its implied ratio is NOT stable (9.8 in 2023, 13.1 in 2024, 17.7 in 2025); 13.1 is the mid-year anchor and will understate NY's tight years. NYISO is the smallest PJM seam (EMAAC only). - Carolinas (basis ~0): HR 13.5, an ESTIMATE pending a Duke (DUK) LMP/extract — the Southeast is not an organized market, so this is anchored to a ~$30/MWh SERC bilateral level / Henry Hub, priced on the SOCO load shape. Hurdle $2/MWh is the inter-RTO wheeling/transaction adder production-cost models use (OMS-RSC seams interface-pricing study); PJM exports at thin spreads (the 2024 PJM-MISO mean spread is only ~$1.5), so the hurdle must stay small.  Interface limits are the firm continuous transfer capability of each seam, derived from PJM's OWN published per-tie interchange (the Data Miner import_export_act_sch_interchange extract): each external tie is mapped to its seam, the per-tie hourly actual flow is summed to the *simultaneous* seam transfer, and the limit is the p99.5 of |seam flow| pooled over 2023-25 — the duration curve's upper envelope minus the top ~0.5% transient/loop-flow hours. This is a reproducible physical rating (regenerable for a forward year, responsive to changed flows), NOT a value tuned to the net-MWh target (rule #11): the envelope is computed from the flow series before any LP runs. The prior 10/3/3.5 GW were envelopes of the widest *single-tie* maxima, which over-stated the simultaneous MISO seam (ties don't all peak at once) and under-stated the multi-line NYISO seam. Re-derive / verify with scripts/derive_interface_limits.py (--check asserts these still match): MISO      7,300 MW (was 10,000; simultaneous export p99.5 7,290, max 8,789) NYISO     3,900 MW (was  3,000; export p99.5 3,866, max 4,204 — cross-checks the published facility ratings: Neptune 660 + Hudson HTP 660 + Linden VFT 330 + PJM-NY AC ties ~2,000 ~= 3,650 MW) Carolinas 2,400 MW (was  3,500; |flow| p99.5 2,418 on the Duke/Progress ties — note PJM net-*imports* over this seam, exporting only ~17% of hours, so the limit binds mostly on the import side) TVA/LGEE (the south-west ties PJM net-imports over, ~8 TWh/yr) have no neighbor in this three-seam PJM build yet — a future seam (the generalize open item).  load_shape_exponent (price-vs-load convexity): the flow-responsive seam (neighbor_price.seam_tranche_prices) prices each export band at the neighbor's price read at its load *reduced* by the band's flow, so the neighbor's willingness-to-pay slides down its own gas x HR x (load/mean)**exp supply curve as PJM exports into it. With exp=1.0 (linear) the slope is too gentle — a <=7.3 GW seam flow against a ~75 GW neighbor barely moves its price, so the seam pins at the interface cap and the model over-exports (the pjm_30/pjm_31 +78-89 TWh residual vs measured +40/+33/+18). A real marginal supply curve is convex, so exp>1. The exponent is recovered as a MEASURED market quantity (scripts/derive_neighbor_convexity.py, rule #11 — never tuned to PJM's net export): regress log(neighbor realized RT LMP) on log(neighbor load/mean) in log-log space; the slope IS the exponent. It is dimensionless, regenerable for a forward year and load-responsive, so it stays forecast-native. - NYISO: 1.63, SELF-DERIVED from NYISO's own realized RT LMP vs its EIA-930 load (gross-load regressor — the series the model multiplies), pooled 2023-24, R2 0.36, stable by year (1.64/1.63). This is the model-consistent anchor. - MISO: 1.60, SELF-DERIVED from MISO's own realized Indiana-Hub RT LMP (the fetched docs.misoenergy.org extract) vs its EIA-930 load, pooled 2023-25, R2 0.24, by year 1.42/1.80/1.60. This REPLACES the borrowed 1.63 with the measured value (rule #12) — and confirms the borrow was sound (MISO's own convexity ~= NYISO's), so it is NOT what drove the pjm_32 over-export; the MISO-level (heat-rate) re-anchor above is. - Carolinas: 1.60, still borrowed (no organized-market LMP — Duke FERC-714 hourly-lambda reshape is a verified follow-up) but now set to the MEASURED thermal-neighbor value: MISO 1.60 and NYISO 1.63 self-derive to the same ~1.6, cross-validated by NEISO 2.04 / ERCOT-net 1.47. Carolinas is the smallest seam and a net IMPORT path (PJM exports over it ~17% of hours), so its exponent barely moves the result. Not a PJM-flow fit: the value comes from the neighbors' own LMP-vs-load elasticity, blind to PJM's net export. (CAISO's gross exponent collapses to 0.47 under heavy solar, which is exactly why gross-load convexity is used ONLY for these low-solar thermal neighbors; CAISO net-load holds at 1.00.)",
       "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "lignite_price_2023_25",
+      "display_name": "Lignite Price 2023 25",
+      "value": 1.45,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "--- ERCOT lignite / PRB delivered coal cost, 2023-2025 ----------------------- ERCOT's two coal supply classes are genuinely different costs: mine-mouth lignite (no transport, take-or-pay contract) vs PRB-by-rail (commodity + rail freight). Both are measured delivered-fuel-cost inputs — a physical/ market input admissible under CLAUDE.md rule #13 (forward-reproducible, responds to changed conditions), not a fitted/residual value, despite the unhelpful \"calibration\" naming these constants used to carry.  Mine-mouth lignite: held flat 2023-2025 (no transport cost to escalate), then compounds at COAL_PRICE_ESCALATION from 2026. Source: operator/EIA cost data.",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -9238,6 +9606,122 @@
       ]
     },
     {
+      "param_id": "prb_commodity_decline",
+      "display_name": "Prb Commodity Decline",
+      "value": 0.015,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "annual, from 2031 as demand falls",
+      "source_date": "2031",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "prb_commodity_flat_through",
+      "display_name": "Prb Commodity Flat Through",
+      "value": 2030,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "prb_commodity_share",
+      "display_name": "Prb Commodity Share",
+      "value": 0.42,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "prb_price_by_year",
+      "display_name": "Prb Price By Year",
+      "value": {
+        "2023": 2.15,
+        "2024": 2.0,
+        "2025": 2.0
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "PRB-by-rail: measured delivered cost, 2023-2025 (EIA-923 Schedule-5 receipts / operator cost data). From 2026 the forward curve decomposes the 2023-2025 average into commodity (42%), diesel-driven rail freight (12%, held flat — the model carries no forward diesel price curve) and non-diesel rail freight (46%, escalates at COAL_PRICE_ESCALATION); the commodity component holds flat through 2030 then declines 1.5%/yr as coal demand falls.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "prb_rail_diesel_share",
+      "display_name": "Prb Rail Diesel Share",
+      "value": 0.12,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "prb_rail_nondiesel_share",
+      "display_name": "Prb Rail Nondiesel Share",
+      "value": 0.46,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "pumped_storage_dispatch_adder_by_iso.PJM",
       "display_name": "Pumped Storage Dispatch Adder By Iso / Pjm",
       "value": 10.0,
@@ -10167,6 +10651,25 @@
       ]
     },
     {
+      "param_id": "ra_bridge_econ_min_down_hours",
+      "display_name": "Ra Bridge Econ Min Down Hours",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Fast-start exclusion for the ECONOMIC (startup-cost) leg of the RA must-offer bridge. Holding a unit at min-load across a gap LONGER than its min-down is only ever the economic choice when the restart it avoids is genuinely slow and expensive — combined-cycle physics (min-down 4-8 h, $24-64/MW starts, CC_COMMITMENT_PARAMS above). A fast-start simple-cycle CT (min-down 1 h, $12-25/MW starts, CT_COMMITMENT_PARAMS) restarts within the hour, so the real market cycles it off overnight; economically bridging one forces exactly the units that DO cycle off (model-legitimacy audit §1.2c, rule 17: eligibility by unit physics, never a class-name tuple). The threshold sits at the CC table's own floor (the \"older\" CC class, 4 h) — every CC row qualifies, every CT row (1 h) is excluded. The PHYSICAL gap < min-down bridge is not gated by this: it is a restart bar, and for a 1 h min-down unit it can never fire anyway.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "real_dollar_base_year",
       "display_name": "Real Dollar Base Year",
       "value": 2026,
@@ -10960,6 +11463,25 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_perhub_firm_base",
+      "display_name": "Caiso Perhub Firm Base",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Keep the firm/contracted import",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_ra_bridge_decommit",
       "display_name": "Caiso Ra Bridge Decommit",
       "value": false,
@@ -11138,6 +11660,44 @@
       "domain": "Structural",
       "tier": 1,
       "source": "CAISO midday price fix: give the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_solar_shape_nl_hi_pct",
+      "display_name": "Caiso Solar Shape Nl Hi Pct",
+      "value": 30.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Net-load percentile (of the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_solar_shape_nl_lo_pct",
+      "display_name": "Caiso Solar Shape Nl Lo Pct",
+      "value": 10.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Net-load percentile at/below",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13955,6 +14515,25 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_ordc_total_reserve",
+      "display_name": "Ercot Ordc Total Reserve",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "ERCOT multi-product co-opt: ALSO",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_reserve_supply_cap",
       "display_name": "Ercot Reserve Supply Cap",
       "value": false,
@@ -14000,6 +14579,25 @@
       "domain": "Storage",
       "tier": 1,
       "source": "ERCOT forward (G5): make the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_storage_as_product_credit",
+      "display_name": "Ercot Storage As Product Credit",
+      "value": false,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 1,
+      "source": "ERCOT multi-product co-opt,",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -14273,6 +14871,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gas_hh_monthly_shape",
+      "display_name": "Gas Hh Monthly Shape",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — replace the generic climatological monthly gas SHAPE (GAS_MONTHLY_SEASONALITY) with the MEASURED Henry Hub monthly shape for the year, hour-weight-normalized so the annual mean stays exactly the trusted annual level (fuel.gas_seasonal_shape). The reconciled variant the Run-77 postmortem named: the raw EIA-923 receipt LEVEL swap was rejected for ERCOT (the ~20%-coverage reporter sample runs ~+$1/MMBtu above the merchant hub), but the measured month-to-month shape is real — the generic shape holds Feb/Mar-2024 ~$0.7/MMBtu too dear (post-Heather gas collapsed to $1.49-1.72 vs the shaped $2.23-2.41) and Jan-2024 $0.66 too cheap. Measured commodity price input (delivered fuel prices, rule #12): forward years have no HH rows and keep the generic shape (the futures-shape analogue), and the shape responds to conditions. Off by default (byte-identical).",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -14953,6 +15569,25 @@
       ]
     },
     {
+      "param_id": "scenario.miso_reserve_pergen",
+      "display_name": "Miso Reserve Pergen",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "MISO: PER-ASSET reserve co-optimization",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.miso_seam_export_limit",
       "display_name": "Miso Seam Export Limit",
       "value": false,
@@ -15314,6 +15949,25 @@
       ]
     },
     {
+      "param_id": "scenario.nyiso_import_hub_prices",
+      "display_name": "Nyiso Import Hub Prices",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "NYISO priced import-node tranches",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_import_reconciliation",
       "display_name": "Nyiso Import Reconciliation",
       "value": false,
@@ -15321,6 +15975,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "NYISO priced import-node",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_iroquois_winter_spread",
+      "display_name": "Nyiso Iroquois Winter Spread",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "NYISO eastern (Iroquois Z2)",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -16509,6 +17182,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.tranche_startup_amortization",
+      "display_name": "Tranche Startup Amortization",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "Fast-start tranche pricing (ISO-NE Order 825 analogue): when set, the FAST-START-capable tranches of the gas CAMPD bins carry the bin's NREL startup cost (fleet.BIN_STARTUP_COST_PER_MW, NREL/SR-5500-55433) exactly as the committed tranche already does, so compute_monthly_markup amortizes each tranche's own P0 run lengths into its P1 bid. Scope follows ISO-NE fast-start pricing eligibility (start + notification <= ~30 min): CT_PEAKER/CT_CHP econ+peak tranches (a peaker's upper blocks are additional quick-start units) and the CC_REGULAR/CC_CHP duct-burner/quick-response PEAK band only. A big CC's econ blocks are deliberately excluded — block-loading a committed CC is not a fast start, and its start costs settle as NCPC uplift, not in the LMP. The resulting offer component is fuel-price-INVARIANT ($/MWh from $/MW-start over run hours), which the heat-rate-multiplier parameterization cannot express: a mult-only curve over-prices high-gas winter months and under-prices cheap-gas summer evening peaks simultaneously (the NEISO 2024 C3b Jan/Feb +$9-10 vs Jul/Aug -$10-11 signature). Dynamics-correct: a peak block run 4 evening hours bids +startup/4 per MWh; a block marginal around the clock in a cold month bids +startup/run≈0. No new constants — reuses the cited NREL startup table and the existing P0 run-length machinery. Default off → every prior keeper stays byte-identical.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -18036,6 +18727,24 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "NREL ATB 2024 — biomass (fuel handling raises O&M)",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "vom.gas_cc_ccs",
+      "display_name": "Vom / Gas Cc Ccs",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Variable O&M ($/MWh) by fuel type. Source: NREL ATB 2024.",
       "source_date": "2024",
       "page_or_table": "",
       "url": "",
