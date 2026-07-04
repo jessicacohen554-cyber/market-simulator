@@ -2130,6 +2130,7 @@ def run_year(
     miso_reserve_pergen: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
+    ercot_ordc_total_reserve: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
@@ -2145,6 +2146,8 @@ def run_year(
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
     ordc_lolp_params_path: str | None = None,
+    ercot_storage_as_product_credit: bool = False,
+    gas_hh_monthly_shape: bool = False,
     storage_as_commitment: bool = False,
     ercot_storage_as_endogenous: bool = False,
     hydro_eia930_monthly: bool = False,
@@ -2603,6 +2606,17 @@ def run_year(
     # reserve_config.ERCOT_ECRS_RELEASE_REFORM_* citations.
     if ercot_ecrs_conservative_deployment:
         config = config.with_overrides(ercot_ecrs_conservative_deployment=True)
+    # Lumped ORDC total-reserve family (RTORPA) layered on the product stack:
+    # see ScenarioConfig.ercot_ordc_total_reserve / reserve_config.
+    if ercot_ordc_total_reserve:
+        config = config.with_overrides(ercot_ordc_total_reserve=True)
+    # Measured battery AS award netted off the fast products' requirements
+    # (multi-product measured-storage path): reserve_config.
+    if ercot_storage_as_product_credit:
+        config = config.with_overrides(ercot_storage_as_product_credit=True)
+    # Measured HH monthly gas shape (level-preserving): fuel.gas_seasonal_shape.
+    if gas_hh_monthly_shape:
+        config = config.with_overrides(gas_hh_monthly_shape=True)
     if ercot_as_aware_commitment:
         config = config.with_overrides(ercot_as_aware_commitment=True)
     if ercot_reserve_supply_cap:

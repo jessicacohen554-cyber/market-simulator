@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-ercot32-ordc-total-rtolcap",
+ "label": "ercot32 ordc total rtolcap",
+ "date": "2026-07-03",
+ "shorthand": "ercot32-ordc-total-rtolcap",
+ "definition": "ercot 32 ordc-total-rtolcap-v1 (KEEPER, P1-ONLY). The faithful pre-RTC+B price-formation stack, all published/measured, zero fitted parameters: multi-product AS co-opt (measured ASPLANNP433) + published ECRS conservative-deployment design (no-release at-cap step 2023-06-10..2024-07-31, standing ramp after) + the lumped ORDC total-reserve family (RTORPA, NPRR568/OBDRR048) drawing on every product's reserve + the MEASURED RTOLCAP/RTOFFCAP reserve-supply cap (G1) so the total family prices the MEASURED reserve level, its dual added post-solve as the additive RTORPA (RTSPP = SCED energy + ORDC(online reserves); product duals are MCPCs, never in the energy price) + measured battery AS reservation with consistent netting + product credit + measured HH monthly gas shape + measured RTORDPA and DAM-AS overlays (per-column persisted; ex-overlay 2024 tail 10/53 proves the DA-priced acute days still need the overlay channel). C3 vs keeper ercot26: 2023 Jun -23.5->-13.5, Sep +5.6->-4.5, Aug -46.1->-62.4 (deep tail >$500 68/104; the residual is the flat ORDC sigma fallback vs the egress-blocked NP6-576-ER seasonal params + sub-2-day forced outages outside the >=2-day CAMPD detector); 2024 Feb +6.2->+3.2 (measured gas), Jan +12.5->+18.2 (the DAM-AS overlay's DA-boundary premium vs the RT benchmark: overlay hours realized DA ~$599 vs RT ~$205 - documented boundary misalignment, MODEL MISS not excused); 2025 tail 0.19x->0.32x, C5c storage shape r -0.306->+0.331. C1/C2 hard-caveat pair inherited unchanged (CC_REGULAR 2023 -8.53 TWh nodal/intra-zone; gas 2025 -3.0% preliminary vintage). Keeper on structural faithfulness (rule #1): strictly more real market structure than ercot26, every mechanism published or measured. Determination NOT-YET (C1+C2 exceed the hard budget; C3a/b/c MODEL MISS with named root causes).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-03-ercot32-ordc-total-rtolcap.js",
+ "bundle": "results/calibration/ercot_ordc_total_rtolcap_v1"
+}
