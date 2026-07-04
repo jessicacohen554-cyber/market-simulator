@@ -3175,6 +3175,22 @@ def _chp_btm_mw_map() -> dict[int, float]:
     return out
 
 
+def _run_length_starts(series: np.ndarray, online_mw: float = 1.0) -> int:
+    """Count off->on transitions in an hourly MW series (vectorized).
+
+    A start is the series crossing ``online_mw`` from at-or-below to above — the
+    ``campd._startup_factors`` / ``_ONLINE_MW`` convention (1 MW), applied to the
+    in-memory model dispatch so the calibration bundle can persist simulated
+    ``model_starts`` for the forward CO2-rate estimator's sim-conditioning. No
+    Python loop over hours: a single boolean shift.
+    """
+    online = np.asarray(series, dtype=float) > online_mw
+    if online.size == 0:
+        return 0
+    prev = np.concatenate([[False], online[:-1]])
+    return int((online & ~prev).sum())
+
+
 def _plant_hourly_fit(
     year: int,
     dispatch: pd.DataFrame,
@@ -3256,6 +3272,12 @@ def _plant_hourly_fit(
                 "model_gwh": round(float(m.sum()) / 1e3, 1),
                 "campd_gwh": round(float(o.sum()) / 1e3, 1),
                 "campd_op_hours": int((o > 0).sum()),
+                # Simulated operation for the forward CO2-rate estimator's
+                # sim-conditioning (docs/handoffs/emissions-co2-rate-plan-2026-07.md
+                # §4.5). Run-length analysis of the in-memory dispatch, vectorized
+                # (no hour loop); starts use campd._ONLINE_MW (1 MW) off->on.
+                "model_op_hours": int((m > 0.0).sum()),
+                "model_starts": _run_length_starts(m),
                 "cf_band_overlap": occ["band_overlap"] if occ else float("nan"),
                 "cf_emd": occ["cf_emd"] if occ else float("nan"),
                 "cap_mw": occ["capacity_mw"] if occ else float("nan"),

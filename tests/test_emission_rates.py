@@ -11,6 +11,8 @@ from market_sim.data.emission_rates import (
     PlantHistory,
     class_median_rates,
     forward_plant_co2_rate,
+    fuel_class,
+    measured_plant_rates,
 )
 
 
@@ -132,6 +134,59 @@ class TestEnvelopeGatedConditioning(unittest.TestCase):
         sim = OperatingPoint(50000.0, 20.0, _flat_cf())
         r = forward_plant_co2_rate(h, sim, None, conditioning_enabled=False)
         self.assertEqual(r.method, "trailing_avg")
+
+
+def _v2_parish() -> pd.DataFrame:
+    """A Parish-style coal+gas facility (plant 3470) over two years, one ISO."""
+    rows = []
+    for year in (2023, 2024):
+        rows += [
+            ("ERCOT", 3470, "WAP5", year, "Coal", 1000.0, 1_000_000.0),
+            ("ERCOT", 3470, "WAP1", year, "Pipeline Natural Gas", 1000.0, 400_000.0),
+            ("ERCOT", 100, "1", year, "Pipeline Natural Gas", 1000.0, 350_000.0),
+        ]
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "iso",
+            "plant_id",
+            "unit_id",
+            "year",
+            "primary_fuel",
+            "net_mwh",
+            "co2_kg",
+        ],
+    )
+
+
+class TestMeasuredPlantRates(unittest.TestCase):
+    def test_fuel_class_mapping(self):
+        self.assertEqual(fuel_class("Coal"), "coal")
+        self.assertEqual(fuel_class("Lignite Coal"), "coal")
+        self.assertEqual(fuel_class("Pipeline Natural Gas"), "gas")
+        self.assertEqual(fuel_class("gas_st"), "gas")
+        self.assertEqual(fuel_class("coal"), "coal")
+
+    def test_parish_split_coal_and_gas(self):
+        v2 = _v2_parish()
+        rates = measured_plant_rates(v2, "ERCOT", 2024, "backcast")
+        # Coal units 1000 kg/MWh -> 1.0 t; gas units 400 -> 0.4 t.
+        self.assertAlmostEqual(rates[(3470, "coal")], 1.0)
+        self.assertAlmostEqual(rates[(3470, "gas")], 0.4)
+
+    def test_backcast_uses_target_year_only(self):
+        v2 = _v2_parish().copy()
+        # Make 2023 coal cheaper; backcast 2024 must ignore it.
+        v2.loc[(v2.year == 2023) & (v2.unit_id == "WAP5"), "co2_kg"] = 500_000.0
+        bk = measured_plant_rates(v2, "ERCOT", 2024, "backcast")
+        self.assertAlmostEqual(bk[(3470, "coal")], 1.0)  # 2024 only
+        fc = measured_plant_rates(v2, "ERCOT", 2024, "forecast")
+        # forecast pools both years: (1.0e6 + 0.5e6) / 2000 / 1000 = 0.75 t.
+        self.assertAlmostEqual(fc[(3470, "coal")], 0.75)
+
+    def test_other_iso_excluded(self):
+        v2 = _v2_parish()
+        self.assertEqual(measured_plant_rates(v2, "PJM", 2024, "backcast"), {})
 
 
 if __name__ == "__main__":
