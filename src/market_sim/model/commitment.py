@@ -230,10 +230,23 @@ def compute_monthly_markup(
     s_lo, s_hi = _GAS_ST_SEASON
     s_lo, s_hi = max(0, s_lo), min(T, s_hi)
 
-    def _amortized(g, h_start, h_end, startup, threshold):
-        """Startup / mean run length over ``[h_start, h_end)`` for gen ``g``."""
+    def _amortized(g, h_start, h_end, startup, threshold, measured_run=0.0):
+        """Startup / mean run length over ``[h_start, h_end)`` for gen ``g``.
+
+        ``measured_run`` > 0 is the fast-start v3 basis
+        (``Generator.fast_start_run_hours``, the CAMPD-measured median
+        start-to-stop run length): it is the amortization-horizon CEILING —
+        the endogenous P0 run length may only shorten the horizon (a unit the
+        model itself starts for 2 h genuinely pays its start over 2 h), never
+        lengthen it beyond the measured basis, and a month with no P0 runs
+        amortizes over the measured horizon outright. This removes the v2
+        circularity where too-cheap offers → long P0 blocks → ≈0 markup →
+        the lever self-disables (nyiso-44 probe finding).
+        """
         runs = find_runs(dispatch[g, h_start:h_end] > threshold)
         avg_run = float(np.mean([end - start for start, end in runs])) if runs else 0.0
+        if measured_run > 0.0:
+            avg_run = min(avg_run, measured_run) if avg_run > 0.0 else measured_run
         return startup / max(avg_run, 1.0)
 
     for g, gen in enumerate(generators):
@@ -276,12 +289,15 @@ def compute_monthly_markup(
         # seasonal start), so the per-month markup is replaced by a single
         # season-long run length there; other months stay per-month.
         st_spread = gas_st_season_spread and gen.plant_group == "ST_GAS"
+        measured_run = float(getattr(gen, "fast_start_run_hours", 0.0) or 0.0)
         if st_spread and s_hi > s_lo:
             markup[g, s_lo:s_hi] = _amortized(g, s_lo, s_hi, startup, threshold)
         for h_start, h_end in month_bounds:
             if st_spread and h_start >= s_lo and h_end <= s_hi:
                 continue  # inside the season window, already handled
-            markup[g, h_start:h_end] = _amortized(g, h_start, h_end, startup, threshold)
+            markup[g, h_start:h_end] = _amortized(
+                g, h_start, h_end, startup, threshold, measured_run
+            )
     return markup
 
 

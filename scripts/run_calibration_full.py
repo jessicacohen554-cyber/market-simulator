@@ -1742,6 +1742,9 @@ def solve_and_persist(
     cc_intermediate_split: bool = False,
     cc_intermediate_cf_threshold: float | None = None,
     tranche_startup_amortization: bool = False,
+    tranche_startup_measured_runs: bool = False,
+    nysdec_peaker_rule_availability: bool = False,
+    oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     plant_tranche_config: str | None = None,
@@ -1973,6 +1976,9 @@ def solve_and_persist(
             cc_intermediate_split=cc_intermediate_split,
             cc_intermediate_cf_threshold=cc_intermediate_cf_threshold,
             tranche_startup_amortization=tranche_startup_amortization,
+            tranche_startup_measured_runs=tranche_startup_measured_runs,
+            nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
+            oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
             st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
             plant_tranche_config=plant_tranche_config,
@@ -2250,6 +2256,9 @@ def solve_and_persist(
         "cc_intermediate_split": cc_intermediate_split,
         "cc_intermediate_cf_threshold": cc_intermediate_cf_threshold,
         "tranche_startup_amortization": tranche_startup_amortization,
+        "tranche_startup_measured_runs": tranche_startup_measured_runs,
+        "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
+        "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
         "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
@@ -2684,6 +2693,12 @@ def solve_and_persist(
         )
     if tranche_startup_amortization:
         recorded_cfg = recorded_cfg.with_overrides(tranche_startup_amortization=True)
+    if tranche_startup_measured_runs:
+        recorded_cfg = recorded_cfg.with_overrides(tranche_startup_measured_runs=True)
+    if nysdec_peaker_rule_availability:
+        recorded_cfg = recorded_cfg.with_overrides(nysdec_peaker_rule_availability=True)
+    if oil_primary_bin_fuel:
+        recorded_cfg = recorded_cfg.with_overrides(oil_primary_bin_fuel=True)
     if st_gas_intermediate:
         recorded_cfg = recorded_cfg.with_overrides(
             st_gas_intermediate_split=True,
@@ -4671,6 +4686,45 @@ def main() -> None:
         "byte-identical.",
     )
     parser.add_argument(
+        "--tranche-startup-measured-runs",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Fast-start amortization v3 (requires "
+        "--tranche-startup-amortization): the simple-cycle CT tranches "
+        "amortize the NREL start cost over the unit's CAMPD-MEASURED median "
+        "start-to-stop run length (scripts/derive_campd_ct_run_lengths.py "
+        "artifact, pooled 2023-2025, ISO-class fallback) as the horizon "
+        "ceiling - the endogenous P0 run may only SHORTEN it. Removes the v2 "
+        "circularity where too-cheap offers -> long P0 blocks -> ~0 markup "
+        "-> the lever self-disables (nyiso-44 probe finding). CC peak bands "
+        "keep the v2 P0 basis. Default OFF.",
+    )
+    parser.add_argument(
+        "--nysdec-peaker-rule",
+        dest="nysdec_peaker_rule_availability",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="NYSDEC 6 NYCRR Subpart 227-3 peaker-rule availability overlay "
+        "(NYISO): the curated unit-level compliance schedule "
+        "(data/raw/reference/nysdec-227-3-peaker-compliance.csv, NYISO Gold "
+        "Book Tables IV-3..IV-6 2023-2025) zeroes/derates each restricted "
+        "unit's availability inside its effective ozone-season (May 1-Sep 30) "
+        "windows. Availability ONLY, never an offer/price change (rule-#12 "
+        "class of the CAMPD outage windows). STAR-designated barges "
+        "(Gowanus 2&3 / Narrows 1&2) are documented but never restricted. "
+        "Default OFF.",
+    )
+    parser.add_argument(
+        "--oil-primary-bin-fuel",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Measured EIA-860 oil-primary fuel correction: gas-CT bins of "
+        "plants whose plant-registry primary fuel OR generator-level EIA-860 "
+        "Energy Source 1 majority (DFO/RFO/KER/JF, GT/IC prime movers) is "
+        "oil/kerosene are repriced on distillate. CLI-explicit counterpart "
+        "of the legacy ERCOT_OIL_PRIMARY env gate. Default OFF.",
+    )
+    parser.add_argument(
         "--st-gas-intermediate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -6382,6 +6436,9 @@ def main() -> None:
         ct_intermediate_cf_threshold=args.ct_intermediate_cf_threshold,
         cc_intermediate_split=args.cc_intermediate_split,
         tranche_startup_amortization=args.tranche_startup_amortization,
+        tranche_startup_measured_runs=args.tranche_startup_measured_runs,
+        nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
+        oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,

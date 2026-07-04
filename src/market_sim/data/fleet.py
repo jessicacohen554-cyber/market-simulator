@@ -323,6 +323,13 @@ class Generator(BaseModel):
     #                                 the floor all 8760 h; a cycler is forced
     #                                 only in its top online_frac fraction of
     #                                 hours by system load (the rest stay Pmin=0).
+    fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
+    #                                 length (h) for fast-start CT tranches under
+    #                                 config.tranche_startup_measured_runs (v3):
+    #                                 compute_monthly_markup caps the startup-
+    #                                 amortization horizon at this measured value
+    #                                 (P0 runs may only shorten it). 0 = v2
+    #                                 behaviour (P0 run lengths only).
 
 
 @dataclass
@@ -1471,6 +1478,59 @@ def generators_to_fleet_arrays(
                     config.weather_year,
                     applied_p,
                 )
+
+    # NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay
+    # (config.nysdec_peaker_rule_availability, NYISO): units whose curated
+    # compliance-schedule row is an ozone-season shutdown / reliability-only
+    # restriction are unavailable to the energy market inside their effective
+    # May 1 - Sep 30 windows. An exogenous regulatory availability event
+    # (rule #12 class of the CAMPD outage windows) — availability only, never
+    # an offer/price change — so it applies regardless of outage_source and in
+    # any mode (the schedule is the regulation's, forward-valid). ``oil``
+    # scope zeroes the plant's raw oil units (matched per generator id when
+    # the row names units); ``gas_ct`` scope derates the plant's CT-class
+    # tranches by restricted_mw / class capacity (full zero when the row
+    # restricts the whole class).
+    if config is not None and getattr(config, "nysdec_peaker_rule_availability", False):
+        from market_sim.data.outages import nysdec_peaker_restrictions
+
+        applied_dec = 0
+        for r in nysdec_peaker_restrictions(config.weather_year, hours):
+            code, scope = r["plant_code"], r["scope"]
+            h_lo, h_hi = r["h_lo"], r["h_hi"]
+            if scope == "oil":
+                for g_idx, gen in enumerate(generators):
+                    if int(gen.plant_code) != code or gen.fuel_type != "oil":
+                        continue
+                    if r["unit_ids"] and not any(
+                        str(gen.unit_id).endswith(f"_{u}") for u in r["unit_ids"]
+                    ):
+                        continue
+                    availability[g_idx, h_lo:h_hi] = 0.0
+                    applied_dec += 1
+            else:  # gas_ct: the plant's simple-cycle CT-class tranches
+                idxs = [
+                    g_idx
+                    for g_idx, gen in enumerate(generators)
+                    if int(gen.plant_code) == code
+                    and gen.plant_group in ("CT_PEAKER", "CT_CHP")
+                ]
+                if not idxs:
+                    continue
+                class_mw = float(sum(pmax[i] for i in idxs))
+                mw = r["restricted_mw"]
+                frac = 1.0 if mw is None else min(1.0, mw / max(class_mw, 1e-9))
+                for g_idx in idxs:
+                    availability[g_idx, h_lo:h_hi] *= 1.0 - frac
+                applied_dec += len(idxs)
+        if applied_dec:
+            logger.info(
+                "NYSDEC 227-3 peaker-rule overlay (%s %d): %d unit/tranche "
+                "availability window(s) restricted",
+                _iso or "?",
+                config.weather_year,
+                applied_dec,
+            )
 
     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
     # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
@@ -4380,6 +4440,110 @@ def oil_primary_bin_plants(registry_path: str | Path) -> frozenset[int]:
     return _oil_primary_bin_plants(str(registry_path))
 
 
+# Generator-level EIA-860 energy-source codes that mark an oil/kerosene-primary
+# unit (Energy Source 1). Adds kerosene / jet fuel to the plant-registry DFO/RFO
+# codes — the LI/NYC legacy frames are KER-listed at the generator level.
+_OIL_PRIMARY_UNIT_FUEL_CODES: frozenset[str] = frozenset({"DFO", "RFO", "KER", "JF"})
+
+# Simple-cycle prime movers for the generator-level oil-primary screen (GT/IC;
+# EIA "CT" is a combined-cycle turbine part, never a simple-cycle peaker).
+_OIL_PRIMARY_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
+
+
+@lru_cache(maxsize=8)
+def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
+    """Return plant codes whose *generator-level* EIA-860 CT fleet is oil-primary.
+
+    The generator-level companion to :func:`oil_primary_bin_plants`, which keys
+    on the (ERCOT-only) master plant registry's PLANT primary fuel and so
+    catches zero plants for the per-plant non-ERCOT ISOs. This reads the raw
+    EIA-860 operable generator sheet directly: a plant is oil-primary when the
+    majority (by nameplate capacity) of its operating simple-cycle units
+    (GT/IC) carry an oil / kerosene Energy Source 1
+    (:data:`_OIL_PRIMARY_UNIT_FUEL_CODES`), restricted to the ISO's balancing
+    authority. Same measured-attribute admissibility as the registry screen
+    (rule #12): the EIA-860 field regenerates for any forward vintage.
+
+    Verification note (NYISO, 2026-07-04 session): the per-plant non-ERCOT
+    fleet path already maps each unit's own EIA-860 energy source
+    (:func:`_map_fuel_type`), so KER/DFO-primary units (Holtsville, Wading
+    River, Glenwood 2514, Shoreham 2518, ...) load as raw ``oil`` units and
+    never enter a gas CT bin — every NYISO gas-CT bin was confirmed
+    NG-primary at the generator level. This screen therefore catches plants
+    only where a minority NG unit creates a gas bin at a majority-oil plant,
+    and its NYISO yield is empty; it is kept because it grounds the flag's
+    semantics in the generator-level record for every ISO.
+    """
+    path = EIA_860_DIR / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Prime Mover",
+            "Energy Source 1",
+            "Nameplate Capacity (MW)",
+            "Status",
+        ],
+    )
+    ba_map = pd.read_parquet(
+        EIA_860_DIR / "eia860_generators.parquet",
+        columns=["plant_id", "balancing_authority_code"],
+    ).drop_duplicates("plant_id")
+    ba_code = ISO_TO_BA_CODE.get(iso.upper())
+    if ba_code:
+        keep = set(
+            ba_map.loc[
+                ba_map["balancing_authority_code"].astype(str).str.strip() == ba_code,
+                "plant_id",
+            ].astype(int)
+        )
+        df = df[df["Plant Code"].astype("Int64").isin(keep)]
+    df = df[
+        (df["Status"].astype(str).str.strip().str.upper() == "OP")
+        & df["Prime Mover"].astype(str).str.strip().isin(_OIL_PRIMARY_PRIME_MOVERS)
+    ]
+    if df.empty:
+        return frozenset()
+    df = df.assign(
+        _oil=df["Energy Source 1"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+        .isin(_OIL_PRIMARY_UNIT_FUEL_CODES),
+        _mw=pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce").fillna(0.0),
+    )
+    by_plant = df.groupby(df["Plant Code"].astype(int)).apply(
+        lambda g: float(g.loc[g["_oil"], "_mw"].sum()) > 0.5 * float(g["_mw"].sum()),
+        include_groups=False,
+    )
+    return frozenset(int(p) for p, is_oil in by_plant.items() if is_oil)
+
+
+@lru_cache(maxsize=8)
+def campd_ct_run_lengths(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: median CT run hours}`` for an ISO, ``0`` = fallback.
+
+    Reads the committed CAMPD-measured simple-cycle CT run-length artifact
+    (``scripts/derive_campd_ct_run_lengths.py`` →
+    ``data/raw/_processed-legacy/campd_ct_run_lengths_<ISO>.csv``): per-plant
+    median start-to-stop run lengths pooled 2023-2025, with the ISO-class
+    pooled median under key ``0`` for CT plants without CEMS coverage. Empty
+    dict when the ISO has no artifact (the v3 amortization then leaves every
+    tranche on the v2 P0 basis — never a silent hand number, rule #23).
+    """
+    path = PROCESSED_DIR / f"campd_ct_run_lengths_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "median_run_hours"])
+    return {
+        int(r.plant_code): float(r.median_run_hours)
+        for r in df.itertuples(index=False)
+        if float(r.median_run_hours) > 0.0
+    }
+
+
 # Default location of the CAMPD-derived per-plant emission-rate artifact
 # (scripts/derive_plant_emissions.py), resolved relative to the repo root.
 PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
@@ -5420,10 +5584,34 @@ def bins_to_fleet(
     # is overridden to ``oil`` (priced at OIL_PRICE_PER_MMBTU) — a measured
     # EIA-860 correction, not a residual adder. Restricted to gas_ct so legacy
     # gas steam/CC bins are never reclassified. See oil_primary_bin_plants.
+    # Two measured EIA-860 layers: ERCOT keeps its curated master-registry
+    # plant-primary screen exactly (its keepers were solved on it — a silent
+    # set change here would break their reproducibility, the 0c6c833 failure
+    # mode); the per-plant non-ERCOT ISOs, which the registry cannot cover,
+    # use the generator-level Energy-Source-1 majority screen
+    # (oil_primary_ct_plants_from_eia860) instead.
+    _oil_primary_iso = getattr(config, "iso", "ERCOT") or "ERCOT"
     _oil_primary = (
-        oil_primary_bin_plants(config.plant_registry_path)
+        (
+            oil_primary_bin_plants(config.plant_registry_path)
+            if _oil_primary_iso == "ERCOT"
+            else oil_primary_ct_plants_from_eia860(_oil_primary_iso)
+        )
         if getattr(config, "oil_primary_bin_fuel", False)
         else frozenset()
+    )
+
+    # Fast-start amortization v3 (tranche_startup_measured_runs): per-plant
+    # CAMPD-measured median CT start-to-stop run lengths, the measured
+    # amortization-horizon ceiling for the fast-start CT tranches. Empty when
+    # the flag is off or the ISO has no committed artifact (v2 P0 basis).
+    _fsp_run_lengths: dict[int, float] = (
+        campd_ct_run_lengths(getattr(config, "iso", "ERCOT"))
+        if (
+            getattr(config, "tranche_startup_amortization", False)
+            and getattr(config, "tranche_startup_measured_runs", False)
+        )
+        else {}
     )
 
     # Optional per-plant tranche-config override sheet: when set, each listed
@@ -6069,6 +6257,17 @@ def bins_to_fleet(
                 (sfx, cap_, hr_, vm_, mr_, md_, _fsp_econ)
                 for sfx, cap_, hr_, vm_, mr_, md_, _su in econ_steps
             ]
+        # v3 measured-run-length basis (tranche_startup_measured_runs): the
+        # simple-cycle CT tranches carry the plant's CAMPD-measured median
+        # start-to-stop run length (ISO-class fallback under key 0), which
+        # compute_monthly_markup uses as the amortization-horizon ceiling —
+        # P0 runs may only shorten it. CC peak (duct) bands keep the v2 P0
+        # basis: a duct burner's run is not a CEMS start-to-stop block.
+        _fsp_measured_h = (
+            _fsp_run_lengths.get(plant_code, _fsp_run_lengths.get(0, 0.0))
+            if (_fsp_econ > 0.0 and _fsp_run_lengths)
+            else 0.0
+        )
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             *sync_tranches,
@@ -6114,6 +6313,14 @@ def bins_to_fleet(
                     coal_sync_pmin_mw=sync_floor,
                     coal_sync_online_frac=(
                         sync_online_frac if sync_floor > 0.0 else 1.0
+                    ),
+                    # Measured amortization horizon only on the fast-start CT
+                    # tranches that carry the fsp startup cost (econ + peak of
+                    # CT groups); the committed anchor keeps the P0 basis.
+                    fast_start_run_hours=(
+                        _fsp_measured_h
+                        if (tr_startup > 0.0 and suffix.startswith(("econ", "peak")))
+                        else 0.0
                     ),
                 )
             )

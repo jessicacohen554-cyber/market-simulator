@@ -1880,6 +1880,55 @@ class ScenarioConfig:
     # prior keeper stays byte-identical.
     tranche_startup_amortization: bool = False
 
+    # Fast-start amortization v3 — MEASURED run-length basis (requires
+    # ``tranche_startup_amortization``). v2 amortizes each fast-start tranche's
+    # NREL start cost over the tranche's own P0 run lengths, which is circular
+    # when the offer level itself is wrong: offers too cheap -> P0 runs the CTs
+    # in long blocks -> per-MWh amortized start cost ~0 -> the lever
+    # self-disables (the nyiso-44 probe finding: CT_PEAKER moved only
+    # 4.90 -> 4.75 TWh vs 2.13 actual). When set, the simple-cycle CT tranches
+    # (CT_PEAKER / CT_CHP) instead amortize over the unit's CAMPD-MEASURED
+    # median start-to-stop run length (scripts/derive_campd_ct_run_lengths.py:
+    # consecutive grossLoad-online hours from the unit-level CAMPD extracts,
+    # pooled 2023-2025, ISO-class median fallback for plants without CEMS).
+    # Basis choice (documented per the derivation): the measured median is the
+    # EX-ANTE expected-run horizon real GT offers amortize start recovery over
+    # (the NYISO/ISO-NE fast-start pricing convention); the endogenous P0 run
+    # length may only SHORTEN the horizon (a unit the model itself starts for
+    # 2 h genuinely pays its start over 2 h), never lengthen it beyond the
+    # measured basis — markup = startup / max(1, min(P0_month_avg_run,
+    # measured_median)), a month with no P0 runs uses the measured median
+    # outright. This removes the self-disabling circularity while keeping the
+    # month-resolved dynamics. CC peak (duct-burner) bands keep the v2 P0
+    # basis — a duct burner's "run" is not a CEMS start-to-stop block, so the
+    # measured statistic does not describe it. The measured run length is a
+    # rule-#12-admissible measured market-behaviour parameter (same class as
+    # the CAMPD committed shares / min-stable loads): it regenerates from the
+    # CAMPD pipeline for any new vintage and re-derives only when its source
+    # data updates (rule #23), never from a residual. Default off -> every
+    # prior keeper stays byte-identical.
+    tranche_startup_measured_runs: bool = False
+
+    # NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay
+    # (NYISO). The regulation caps ozone-season (May 1 - Sep 30) NOx from
+    # simple-cycle turbines in two phases (2023-05-01 / 2025-05-01); units
+    # whose compliance plan is ozone-season shutdown or reliability-only
+    # operation are unavailable to the energy market inside the window. When
+    # set, the curated unit-level compliance schedule
+    # (data/raw/reference/nysdec-227-3-peaker-compliance.csv — NYISO Gold Book
+    # Tables IV-3..IV-6, 2023-2025 vintages, per-unit citations in the CSV)
+    # zeroes/derates each restricted unit's availability inside its effective
+    # ozone windows. AVAILABILITY ONLY, never an offer or price change — the
+    # same rule-#12 admissibility class as the CAMPD unit-outage windows: an
+    # exogenous regulatory availability event with a forward story (the
+    # schedule extends through the 2030 NYPA phase-out) that regenerates from
+    # the regulation, not from observed CF. Units the NYISO STAR process
+    # designated to remain in operation past the compliance date (Gowanus 2&3
+    # / Narrows 1&2 barges, to May 2027) are carried in the CSV but NOT
+    # restricted — the designation is part of the same regulatory record.
+    # Default off.
+    nysdec_peaker_rule_availability: bool = False
+
     # ISO-gated gas-steam forced-outage base override. The global ST_GAS WEFOR
     # base (constants.THERMAL_AVAILABILITY["ST_GAS"] = 0.21) is fitted to ERCOT's
     # once-through 1950s-60s steamers and is >2x every other thermal class — an
@@ -3227,6 +3276,8 @@ TIER_TAGS: dict[str, int] = {
     "cc_intermediate_cf_threshold": 3,
     "gas_st_startup_cost": 3,
     "tranche_startup_amortization": 1,
+    "tranche_startup_measured_runs": 1,
+    "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
