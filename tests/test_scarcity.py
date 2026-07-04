@@ -38,16 +38,16 @@ def test_market_regime_explicit_override():
         ercot_market_regime(2030, ScenarioConfig(ercot_market_design="bogus"))
 
 
-def test_reliability_offset_contained_to_ordc_regime():
-    # The 2023-calibrated RTORDPA offset applies in the ORDC era (backcast)
-    # but NOT in the RTC+B forecast era, unless the forward knob is set.
-    c = ScenarioConfig(ordc_reliability_deployment_mw=2500.0)
-    assert effective_reliability_deployment_mw(2023, c) == 2500.0
-    assert effective_reliability_deployment_mw(2030, c) == 0.0  # not carried forward
-    recur = ScenarioConfig(
-        ordc_reliability_deployment_mw=2500.0,
-        rtcb_reliability_deployment_mw=1500.0,
-    )
+def test_reliability_offset_contained_to_rtcb_regime():
+    # The fitted ORDC-era RTORDPA offset was DELETED (2026-07-04, CLAUDE.md
+    # rule 26): the ORDC regime carries no offset, and the deleted knob no
+    # longer parses — a zeroed deprecated knob is a re-armable answer key.
+    assert effective_reliability_deployment_mw(2023, ScenarioConfig()) == 0.0
+    with pytest.raises(TypeError):
+        ScenarioConfig(ordc_reliability_deployment_mw=2500.0)
+    # The forward RTC+B scenario knob remains, and only fires under RTC+B.
+    recur = ScenarioConfig(rtcb_reliability_deployment_mw=1500.0)
+    assert effective_reliability_deployment_mw(2023, recur) == 0.0
     assert effective_reliability_deployment_mw(2030, recur) == 1500.0
 
 
