@@ -84,6 +84,16 @@ Orientation: for zero-carbon-price ISOs the CO₂ rate is a pure reporting multi
 dispatch driver), so emissions error decomposes cleanly into MWh error × rate error, and rate
 error passes through 1:1. The rate path is the dominant lever.
 
+**Owner direction (2026-07-04):** CO₂ takes priority over NOx/SO₂. For existing units,
+forecast CO₂ rates should be tied to historic measured CAMPD performance — intake annual
+unit-level rates back to ~2018 (excluding quarantined 2022/H1-2026) and predict forward
+rates either as a multi-year forecast average or conditioned on the unit's model-simulated
+operation (starts/stops + total generation matched to the statistically closest historical
+year). This resolves EM-3's provenance question in favor of measured-CAMPD-with-conditioning
+(admissible under rule 13: regenerates from forward drivers, responds to changed operation);
+prompt W0-P1 of the companion pack owns the design. EM-1/EM-2 (NOx/SO₂) are demoted to the
+cheap unit-contract bug fix now, full wiring later.
+
 | ID | Sev | Finding | Evidence |
 |---|---|---|---|
 | EM-1 | HIGH | NOx/SO₂ tons unwired in results; CO₂-only export; nothing scores NOx/SO₂ on the dashboard | `results/emissions.py:84` (no caller), `results/export.py:121`, grep `so2_tons` empty |
