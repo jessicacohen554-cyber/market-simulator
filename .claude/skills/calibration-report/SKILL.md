@@ -149,8 +149,13 @@ and bench parts.
 
 **Calibration Status** (`docs/codebase-site/calibration-status.html`) is a
 one-page, every-ISO summary of each market's current keeper: the headline
-determination, the C1–C6 status matrix with per-year magnitudes and the
-MODEL-MISS vs ACCEPTED-LIMITATION classification, the tests conducted, and the
+determination, the C1–C8 status matrix with per-year magnitudes and the
+MODEL-MISS vs ACCEPTED-LIMITATION classification (C7 diurnal shape and C8
+forced-energy share read the bundle's committed `legitimacy_diagnostics.json`
+— generate it with `scripts/legitimacy_diagnostics.py --bundle <dir> --iso
+<ISO> --json-out <dir>/legitimacy_diagnostics.json` when registering a run,
+or those two HARD criteria show SKIPPED and cap the determination), the D-7
+statistical-mode gap as a REPORTED line, the tests conducted, and the
 best-practice justification, with a deep link into each keeper's Run Explorer
 report. It renders client-side from `status.js` (`window.BC.status`).
 

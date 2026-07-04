@@ -631,14 +631,16 @@ def ercot_market_regime(year: int, config) -> str:
 def effective_reliability_deployment_mw(year: int, config) -> float:
     """Return the reliability-deployment reserve offset (MW) for the regime.
 
-    The RTORDPA analogue applies under the ORDC regime
-    (``ordc_reliability_deployment_mw`` — calibrated to the 2023 stress year);
-    under RTC+B the conservatism was reformed, so the forward offset is
+    The ORDC regime carries **no** offset: the fitted RTORDPA analogue
+    (``ordc_reliability_deployment_mw``, calibrated to the 2023 stress-year
+    LMP residual) was deleted 2026-07-04 (CLAUDE.md rule 26 — deleted means
+    deleted; the formulaic online/offline reserve split + measured AS-plan
+    netting supersede it). Under RTC+B the forward scenario offset is
     ``rtcb_reliability_deployment_mw`` (default 0 — price to fundamentals),
     which a scenario can raise to model 2023-style conservatism recurring.
     """
     if ercot_market_regime(year, config) == "ordc":
-        return float(getattr(config, "ordc_reliability_deployment_mw", 0.0))
+        return 0.0
     return float(getattr(config, "rtcb_reliability_deployment_mw", 0.0))
 
 

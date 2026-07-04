@@ -40,6 +40,10 @@ from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path ins
 DATA = REPO / "frontend" / "data" / "backcast"
 KEEPERS_FILE = DATA / "keepers.json"
 STATUS_FILE = DATA / "status.js"
+# D-7 statistical-mode fail-count gaps (REPORTED next to each keeper, never
+# gating): committed data seeded from docs/statistical-mode-results-2026-07.md,
+# refreshed whenever a statmode probe re-measures a keeper.
+STATMODE_D7_FILE = DATA / "statmode_d7.json"
 
 # Display order for the ISO card grid (others fall in alphabetically after these).
 ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO")
@@ -167,6 +171,37 @@ def rubric() -> list[dict]:
             "(four assertions, all required true).",
             "pass/fail — never graded, never caveatable; an unattested run is NOT-YET.",
         ),
+        row(
+            "shape",
+            "Per-class hour-of-day mean dispatch profile, model vs CAMPD, for the "
+            "peaker/intermediate duty classes (CT_PEAKER, ST_GAS) — the diurnal-shape "
+            "check a flat forced floor cannot pass (audit D-1; the caiso-42 signature "
+            "was model off-peak CV 0.000 vs actual 0.35–0.45). Added 2026-07-04: the "
+            "statistical-mode study showed the C1 volume band absorbed a >6× ERCOT "
+            "CT_PEAKER miss — annual volume bands cannot see class-shape failure.",
+            "The bundle's committed legitimacy_diagnostics.json (written by "
+            "scripts/legitimacy_diagnostics.py --json-out; model payload vs the "
+            "committed CAMPD bench series). SKIPPED — capping the determination — "
+            "when the artifact is absent.",
+            "profile r ≥ 0.8 AND off-peak (h0–14) CV ratio ≥ 0.5, per gated class "
+            "(thresholds live in scripts/legitimacy_diagnostics.py D1_*, embedded in "
+            "the artifact's gates block — re-stated here, never re-typed by the "
+            "scorer).",
+        ),
+        row(
+            "forced_share",
+            "Share of each class's annual energy dispatched AT a binding min_gen "
+            "floor (per-mechanism attribution via the FleetArrays mechanism-id "
+            "array) — floors are commitment scaffolding, not the dispatch model "
+            "(audit D-2 / CLAUDE.md rule 20). Nuclear, CHP-steam and coal "
+            "take-or-pay mechanisms are exempt (structural must-run physics).",
+            "The bundle's committed legitimacy_diagnostics.json D-2 per-class "
+            "summary (floors from the bundle's floors/*.npz or the "
+            "run_year(fleet_only=True) rebuild; rebuilt shares exclude the "
+            "P1-dependent RA bridge and are flagged lower-bound).",
+            "forced share < 10% for peaker classes, < 30% for any merchant class "
+            "(scripts/legitimacy_diagnostics.py D2_*).",
+        ),
     ]
 
 
@@ -238,12 +273,27 @@ def build() -> dict:
     if not KEEPERS_FILE.exists():
         raise SystemExit(f"no keeper list at {KEEPERS_FILE} — cannot build status.")
     spec = json.loads(KEEPERS_FILE.read_text())
+    statmode = (
+        json.loads(STATMODE_D7_FILE.read_text()) if STATMODE_D7_FILE.exists() else {}
+    )
     keepers = []
     for run_id in spec.get("keepers", []):
         if not (cv.REGISTRY_DIR / f"{run_id}.json").exists():
             print(f"  skip {run_id}: no registry sidecar", file=sys.stderr)
             continue
-        keepers.append(cv.determine(run_id))
+        verdict = cv.determine(run_id)
+        d7 = statmode.get("isos", {}).get(verdict["iso"])
+        if d7:
+            # REPORTED line, never gating: the overlay-vs-statistical fail
+            # gap (audit D-7). ``stale`` marks a gap measured against a
+            # since-replaced keeper — re-measure with run_statmode_probe.py.
+            verdict["statmode_d7"] = {
+                **d7,
+                "measured": statmode.get("measured"),
+                "source": statmode.get("source"),
+                "stale": d7.get("measured_against") != run_id,
+            }
+        keepers.append(verdict)
     keepers.sort(key=lambda v: _iso_sort_key(v["iso"]))
     if not keepers:
         raise SystemExit(

@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-07-04 (S5 governance closeout — protective rules, C7/C8 rubric criteria, DOF ledger, holdout quarantine CI)
+
+**Governance (audit §8 → CLAUDE.md rules 17–26, audit-numbered 16–25):** the
+legitimacy audit's protective rules land verbatim, with rule 22 (holdouts)
+amended to the owner's strict quarantine — 2022 and H1-2026 see **no solves,
+no scoring, no data intake** until an ISO's marker lands in
+`frontend/data/backcast/calibration-complete.json`, then are scored **exactly
+once** with frozen keeper configs (data intake happens at that moment). CI
+enforces it: `legitimacy_diagnostics.run_d6_quarantine` (in `--keepers` mode)
+and `audit_keepers` H1 fail any registered bundle with a solve year outside
+2023–2025 pre-marker. **Rubric:** two first-class HARD criteria in
+`calibration_verdict.py` — **C7 diurnal shape** (D-1: per-class profile r ≥
+0.8, off-peak CV ratio ≥ 0.5) and **C8 forced-energy share** (D-2: < 10 %
+peaker / < 30 % merchant; nuclear/CHP-steam/coal-ToP exempt) — scored from
+the bundle's committed `legitimacy_diagnostics.json`
+(`legitimacy_diagnostics.py --json-out`; absent artifact = SKIPPED, which now
+caps the determination). Motivation recorded in the rubric doc: the loosened
+C1 band absorbed a >6× ERCOT CT_PEAKER miss and every ISO's CAVEATs collapse
+to ~0 in statistical mode. The **D-7 stat-mode fail-count gap** is a REPORTED
+(non-gating) line per keeper on Calibration Status (`statmode_d7.json`).
+**Re-gate:** all six keepers re-scored — all remain NOT-YET; caiso-51 FAILS
+C7+C8 on CT (flat-floor signature, 27–33 % forced; successor probe caiso-52
+named as the open scrub thread), NEISO fails C7+C8, NYISO fails C8, ERCOT
+fails C8 (2023 CT 11.1 %), PJM/MISO pass both. **DOF ledger:** every keeper
+attestation gains `free_parameters` (`build_dof_ledger.py`; audit_keepers E8
+fails residual-sourced parameters without a root-cause ref); ercot32's "none
+fitted" claim corrected (~90 inherited residual-identified scalars itemized).
+**Deleted means deleted:** `ordc_reliability_deployment_mw` removed outright
+(ScenarioConfig field, scarcity ORDC path hard-0, derive CLI channel); stale
+retired-knob docs purged (scenarios.py PS-adder text; registry rows for the
+ORDC offset, `sigmoid_midpoint`, AGT convexity, the PJM PS $10 adder). Docs
+realigned: `CLAUDE.md`, `docs/model-legitimacy-audit-2026-07.md` (D-6/rule
+21 amendment), `docs/calibration-determination-rubric.md` (C7/C8/D-7),
+`docs/ordc-overlay.md`, `docs/backcast-measured-data-audit-2026-06.md`,
+methodology spec admissibility note, calibration-report skill,
+`docs/parameter-citations.md` (re-rendered).
+
 ## 2026-07-03 (MISO scarcity tail — 10-min reserve deliverability; gate 4 closed-negative)
 
 **New gated mechanism:** `ScenarioConfig.miso_reserve_pergen` /

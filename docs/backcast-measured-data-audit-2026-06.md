@@ -42,7 +42,7 @@ The three mechanisms the 2026-06-15 audit flagged as feeding the answer in are a
 |---|---|---|
 | `ct_deployment_overlay` — floors each peaker to its **observed CEMS net output** in out-of-merit hours | **FAIL** (measured outcome, no forward analogue) | **OFF** ✓ |
 | `reliability_deployment_overlay` — floors pocket CC/coal/ST to **observed CEMS net** in congestion hours | **FAIL** (same) | **OFF** ✓ |
-| `ordc_reliability_deployment_mw` — flat non-physical MW offset **tuned to the 2023 price residual** | **FAIL** (residual-fitted adder) | **0.0** ✓ |
+| `ordc_reliability_deployment_mw` — flat non-physical MW offset **tuned to the 2023 price residual** | **FAIL** (residual-fitted adder) | **DELETED 2026-07-04** (rule 26 — the field no longer parses) ✓ |
 
 These remain in the codebase as **default-off diagnostic probes**, gated to
 backcast mode and no-op in forecast (no artifact ⇒ no-op). That placement is
@@ -148,7 +148,8 @@ input — has been replaced with a real-data coverage reconciliation; see above.
 ## ORDC scarcity pricing made formulaic — RESOLVED (2026-06-17)
 
 The fitted scarcity offset (`ordc_reliability_deployment_mw`, ~2,500 MW tuned to
-the 2023 LMP residual) is **deprecated and out of the default reserve path**,
+the 2023 LMP residual) is **DELETED outright (2026-07-04; it was first deprecated
+out of the default reserve path, then re-swept after deprecation — rule 26)**,
 replaced by a market-design-grounded **on-line/off-line reserve split**
 (`results.scarcity.reserve_headroom` / `ordc_adder`): only responsive capacity
 backs the ORDC curve — a cold slow-start unit the perfect-foresight LP left idle

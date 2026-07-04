@@ -2,8 +2,11 @@
 
 Implements ``docs/calibration-determination-rubric.md``: reads a run's COMMITTED
 artifacts only — the registry sidecar, the run payload, the per-(ISO, year)
-benchmark parts, the bundle config, and the bundle's calibration attestation —
-and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per criterion plus one overall
+benchmark parts, the bundle config, the bundle's calibration attestation, and
+the bundle's legitimacy-diagnostics artifact (``legitimacy_diagnostics.json``,
+written by ``scripts/legitimacy_diagnostics.py --json-out``, scored as C7
+diurnal shape and C8 forced-energy share) — and emits a ``PASS`` /
+``CAVEAT`` / ``FAIL`` per criterion plus one overall
 determination in ``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. It never
 re-solves the LP and never touches the gitignored ``dispatch``/``system``
 parquets, so re-running it on any keeper reproduces the verdict byte-for-byte.
@@ -156,6 +159,8 @@ CRITERIA = {
     "storage": ("C5b storage throughput", SOFT),
     "storage_shape": ("C5c storage dispatch shape", SOFT),
     "governance": ("C6 governance gate", HARD),
+    "shape": ("C7 diurnal shape (D-1)", HARD),
+    "forced_share": ("C8 forced-energy share (D-2)", HARD),
 }
 
 
@@ -233,12 +238,18 @@ def load_artifacts(run_id: str) -> dict:
         att = bundle_dir / "calibration_attestation.json"
         if att.exists():
             attestation = json.loads(att.read_text())
+    legitimacy = None
+    if bundle_dir and bundle_dir.exists():
+        legit_path = bundle_dir / "legitimacy_diagnostics.json"
+        if legit_path.exists():
+            legitimacy = json.loads(legit_path.read_text())
     return {
         "sidecar": sidecar,
         "payload": payload,
         "bench": bench,
         "config": config,
         "attestation": attestation,
+        "legitimacy": legitimacy,
     }
 
 
@@ -982,6 +993,135 @@ def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
     }
 
 
+_LEGIT_HOWTO = (
+    "run scripts/legitimacy_diagnostics.py --bundle <dir> --iso <ISO> "
+    "--json-out <dir>/legitimacy_diagnostics.json and commit it"
+)
+
+
+def score_shape(year: int, legit: dict | None) -> list[dict]:
+    """C7 — diurnal shape (audit D-1), from the bundle's committed artifact.
+
+    Reads ``<bundle>/legitimacy_diagnostics.json`` (written by
+    ``scripts/legitimacy_diagnostics.py --json-out``) — the verdict never
+    recomputes the diagnostic, so the S1 suite stays the single
+    implementation. A gated peaker/intermediate class (per the artifact's
+    ``d1_gated_classes``) FAILs the year when its hour-of-day profile
+    correlation or off-peak CV ratio breaches the artifact's D-1 gates — the
+    caiso-42 flat-floor signature (model CV 0.000 vs actual 0.35-0.45) that
+    annual-volume bands cannot see. SKIPPED (never a silent pass) when the
+    artifact or the year is absent.
+    """
+    if legit is None:
+        return [
+            _skip(
+                "shape",
+                year,
+                f"no legitimacy_diagnostics.json in bundle — {_LEGIT_HOWTO}",
+            )
+        ]
+    gates = legit.get("gates", {})
+    rows = [
+        r
+        for r in legit.get("diagnostics", {}).get("D1", {}).get("rows", [])
+        if int(r.get("year", -1)) == int(year) and r.get("gated")
+    ]
+    if not rows:
+        return [
+            _skip(
+                "shape",
+                year,
+                "no gated-class D-1 rows for this year in legitimacy_diagnostics.json",
+            )
+        ]
+    tol = (
+        f"profile r ≥ {gates.get('d1_min_profile_r')} & off-peak CV ratio ≥ "
+        f"{gates.get('d1_min_cv_ratio')} (h0-{gates.get('d1_offpeak_last_hour')})"
+    )
+    out = []
+    for r in rows:
+        ok = r.get("verdict") != "FAIL"
+        out.append(
+            {
+                "criterion": "shape",
+                "key": r.get("class"),
+                "year": year,
+                "status": PASS if ok else FAIL,
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"{r.get('class')} hour-of-day profile vs CAMPD (D-1)",
+                "model": f"r={r.get('profile_r')} cv={r.get('model_offpeak_cv')}",
+                "actual": f"cv={r.get('actual_offpeak_cv')}",
+                "tol": tol,
+                "magnitude": (
+                    f"profile r {r.get('profile_r')}, off-peak CV ratio "
+                    f"{r.get('cv_ratio')}"
+                ),
+            }
+        )
+    return out
+
+
+def score_forced_share(year: int, legit: dict | None) -> list[dict]:
+    """C8 — forced-energy share (audit D-2 / CLAUDE.md rule 20).
+
+    Reads the D-2 per-class summary from the bundle's committed
+    ``legitimacy_diagnostics.json``: the share of a class's energy dispatched
+    AT a binding non-exempt ``min_gen`` floor (nuclear / CHP-steam /
+    coal-take-or-pay mechanisms exempt). Gates: < 10 % for peaker classes,
+    < 30 % for any merchant class — floors are commitment scaffolding, not
+    the dispatch model. Rebuilt-floor shares (``lower_bound``) are flagged in
+    the record: a PASS there is a lower bound, never an upper one. SKIPPED
+    when the artifact or the year is absent.
+    """
+    if legit is None:
+        return [
+            _skip(
+                "forced_share",
+                year,
+                f"no legitimacy_diagnostics.json in bundle — {_LEGIT_HOWTO}",
+            )
+        ]
+    rows = [
+        r
+        for r in legit.get("diagnostics", {}).get("D2", {}).get("summary", [])
+        if int(r.get("year", -1)) == int(year)
+    ]
+    if not rows:
+        return [
+            _skip(
+                "forced_share",
+                year,
+                "no D-2 per-class summary for this year in legitimacy_diagnostics.json",
+            )
+        ]
+    out = []
+    for r in rows:
+        ok = r.get("verdict") != "FAIL"
+        lb = (
+            " (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)"
+            if r.get("lower_bound")
+            else ""
+        )
+        out.append(
+            {
+                "criterion": "forced_share",
+                "key": r.get("class"),
+                "year": year,
+                "status": PASS if ok else FAIL,
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"{r.get('class')} energy at binding non-exempt floors (D-2)",
+                "model": r.get("forced_share"),
+                "actual": None,
+                "tol": f"< {float(r.get('limit', 0)) * 100:.0f}% of class energy",
+                "magnitude": (
+                    f"{float(r.get('forced_share', 0)) * 100:.1f}% forced "
+                    f"({r.get('forced_twh')} of {r.get('class_total_twh')} TWh)" + lb
+                ),
+            }
+        )
+    return out
+
+
 def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dict:
     """Build a SKIPPED record (recorded as not-scored, never a silent pass)."""
     return {
@@ -1024,8 +1164,15 @@ def score_governance(config: dict | None, attestation: dict | None) -> dict:
         "no_pinning_to_actuals",
         "outage_filter_exogenous_net_load",
     ]
-    if attestation is None:
-        status, detail = "UNATTESTED", "no calibration_attestation.json in bundle"
+    if attestation is None or not attestation.get("governance"):
+        # A bundle whose attestation carries no governance block (e.g. only a
+        # free_parameters DOF ledger) is exactly as unattested as one with no
+        # file: nobody has asserted the four governance claims.
+        status, detail = (
+            "UNATTESTED",
+            "no governance attestation in bundle"
+            + ("" if attestation is None else " (attestation has no governance block)"),
+        )
     else:
         gov = attestation.get("governance", {})
         false_asserts = [a for a in assertions if not gov.get(a, False)]
@@ -1104,6 +1251,8 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records.append(score_co2(year, ypay, ybench))
         records.append(score_storage(year, ypay, ybench))
         records.append(score_storage_shape(year, ypay, ybench))
+        records += score_shape(year, art.get("legitimacy"))
+        records += score_forced_share(year, art.get("legitimacy"))
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
     for r in records:
@@ -1145,6 +1294,15 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         for cid, c in per_criterion.items()
         if not c["hard"] and c["status"] == SKIPPED
     ]
+    # An unscored HARD criterion (e.g. C7/C8 when the bundle carries no
+    # legitimacy_diagnostics.json) can never be a silent pass: it caps the
+    # determination at CALIBRATED-WITH-CAVEATS, exactly like a skipped soft
+    # criterion, and is named in the reasons.
+    skipped_hard = [
+        cid
+        for cid, c in per_criterion.items()
+        if c["hard"] and cid != "governance" and c["status"] == SKIPPED
+    ]
 
     # Determination (rubric §2).
     reasons: list[str] = []
@@ -1164,12 +1322,19 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         )
     else:
         n_caveats = len(hard_caveats) + len(soft_caveats)
-        if n_caveats == 0 and not skipped_soft and not data_blocked:
+        if (
+            n_caveats == 0
+            and not skipped_soft
+            and not skipped_hard
+            and not data_blocked
+        ):
             determination = CALIBRATED
         else:
             determination = CALIBRATED_CAVEATS
             if n_caveats:
                 reasons.append(f"{n_caveats} documented caveat(s)")
+            if skipped_hard:
+                reasons.append("unscored HARD criteria: " + ", ".join(skipped_hard))
             if skipped_soft:
                 reasons.append("unscored soft criteria: " + ", ".join(skipped_soft))
             if data_blocked:

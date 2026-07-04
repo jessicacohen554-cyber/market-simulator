@@ -1,0 +1,49 @@
+{
+ "note": "D-7 statistical-mode A/B fail-count gap per ISO (audit §7 D-7), REPORTED next to each keeper on the Calibration Status page — never gating. Counts are criterion FAILs across the 9 scored criteria (C1-C5c; C6 governance excluded — probes are unattested by construction), keeper overlays vs --statistical-mode (all per-hour/per-year answer-injection overlays off), scored on the rubric current at measurement. Source: docs/statistical-mode-results-2026-07.md (session 2026-07-03). Re-measure whenever a keeper changes: run scripts/run_statmode_probe.py against the new keeper, register the probe, and update this file.",
+ "measured": "2026-07-03",
+ "source": "docs/statistical-mode-results-2026-07.md",
+ "isos": {
+  "ERCOT": {
+   "keeper_fails": 2,
+   "statmode_fails": 6,
+   "probe_run_id": "2026-07-03-statmode-d-7-probe",
+   "measured_against": "2026-07-01-ercot26-gtc-limits",
+   "note": "3× the fails with overlays off; mean-LMP PASS flips to −49/−17/−12% — the C3a headline is overlay-carried (historic-outage overlay dominant). CT_PEAKER miss grows >6× yet stays inside the C1 band (the C7/C8 motivation). Gap measured against the ercot26 keeper; the current ercot32 keeper post-dates it — re-measure."
+  },
+  "CAISO": {
+   "keeper_fails": 7,
+   "statmode_fails": 7,
+   "probe_run_id": "2026-07-03-caiso-statmode-d-7",
+   "measured_against": "2026-07-03-caiso-51-firm-base",
+   "note": "Count flat (already failing 7/9 in-sample) but double-edged: fuel-mix/CO2/dispatch-shape worsen, while mean price IMPROVES with overlays off — the one ISO where the overlays are not propping up the price level."
+  },
+  "PJM": {
+   "keeper_fails": 5,
+   "statmode_fails": 7,
+   "probe_run_id": "2026-07-03-pjm-statmode-d-7",
+   "measured_against": "2026-07-03-pjm-76-outage-fix",
+   "note": "Coal balloons +99 TWh and CO2 jumps ~25pp on statistical outages — the coal/gas split is substantially historic-outage-overlay carried."
+  },
+  "NYISO": {
+   "keeper_fails": 0,
+   "statmode_fails": 4,
+   "probe_run_id": "2026-07-03-nyiso-statmode-d-7",
+   "measured_against": "2026-07-03-nyiso-41-hub-prices",
+   "note": "All four soft caveats convert to clean FAILs with overlays off — the caveats were overlay-narrowed near-misses. CO2 is the exception and improves."
+  },
+  "NEISO": {
+   "keeper_fails": 1,
+   "statmode_fails": 6,
+   "probe_run_id": "2026-07-03-neiso-statmode-d-7",
+   "measured_against": "2026-07-01-neiso-43-closeout",
+   "note": "Fuel-mix and dispatch correlation hold structurally; price level/tail and storage move caveat→FAIL — overlays prop up price and storage fit specifically."
+  },
+  "MISO": {
+   "keeper_fails": 7,
+   "statmode_fails": 9,
+   "probe_run_id": "2026-07-03-miso-statmode-d-7",
+   "measured_against": "2026-07-03-miso-39-reserve-pergen",
+   "note": "Fails every scored criterion with overlays off — none of MISO's in-sample fit currently generalizes as a forecast-machinery prior."
+  }
+ }
+}

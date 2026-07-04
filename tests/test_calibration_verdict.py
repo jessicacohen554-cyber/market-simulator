@@ -461,6 +461,15 @@ class GovernanceTests(unittest.TestCase):
         )
         self.assertEqual(g["status"], "UNATTESTED")
 
+    def test_ledger_only_attestation_is_unattested(self):
+        # A DOF-ledger-only attestation (free_parameters, no governance block)
+        # is exactly as unattested as no file: nobody asserted the claims.
+        g = cv.score_governance(
+            {"scenario_config": {"outage_source": "historic"}},
+            {"free_parameters": {"entries": []}},
+        )
+        self.assertEqual(g["status"], "UNATTESTED")
+
     def test_pass(self):
         g = cv.score_governance(
             {"scenario_config": {"outage_source": "historic"}}, _clean_attestation()
@@ -677,6 +686,120 @@ class DeterminationTests(unittest.TestCase):
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["data_blocked_years"], [2023])
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+
+
+def _legit_artifact(year=2024, r=0.92, cv_ratio=1.1, share=0.05, klass="CT_PEAKER"):
+    """Synthetic legitimacy_diagnostics.json content (schema v1) for C7/C8."""
+    fail_d1 = r < 0.8 or cv_ratio < 0.5
+    fail_d2 = share > (0.10 if klass == "CT_PEAKER" else 0.30)
+    return {
+        "schema": "legitimacy-diagnostics/v1",
+        "iso": "PJM",
+        "years": [year],
+        "gates": {
+            "d1_min_profile_r": 0.8,
+            "d1_min_cv_ratio": 0.5,
+            "d1_offpeak_last_hour": 14,
+            "d1_gated_classes": ["CT_PEAKER", "ST_GAS"],
+            "d2_peaker_max_share": 0.10,
+            "d2_merchant_max_share": 0.30,
+        },
+        "diagnostics": {
+            "D1": {
+                "rows": [
+                    {
+                        "year": year,
+                        "class": klass,
+                        "profile_r": r,
+                        "model_offpeak_cv": 0.2,
+                        "actual_offpeak_cv": 0.2 / cv_ratio if cv_ratio else 1,
+                        "cv_ratio": cv_ratio,
+                        "gated": True,
+                        "verdict": "FAIL" if fail_d1 else "pass",
+                    }
+                ]
+            },
+            "D2": {
+                "summary": [
+                    {
+                        "year": year,
+                        "class": klass,
+                        "forced_twh": 1.0,
+                        "class_total_twh": 1.0 / share if share else 1.0,
+                        "forced_share": share,
+                        "limit": 0.10 if klass == "CT_PEAKER" else 0.30,
+                        "lower_bound": False,
+                        "verdict": "FAIL" if fail_d2 else "pass",
+                    }
+                ]
+            },
+        },
+    }
+
+
+class ShapeForcedShareTests(unittest.TestCase):
+    """C7 (D-1 diurnal shape) and C8 (D-2 forced share) from the artifact."""
+
+    def test_shape_skipped_without_artifact(self):
+        recs = cv.score_shape(2024, None)
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+        self.assertIn("legitimacy_diagnostics.json", recs[0]["magnitude"])
+
+    def test_shape_flat_floor_fails(self):
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02)  # the caiso-42 signature
+        recs = cv.score_shape(2024, legit)
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertEqual(recs[0]["classification"], cv.MODEL_MISS)
+
+    def test_shape_good_profile_passes(self):
+        recs = cv.score_shape(2024, _legit_artifact(r=0.92, cv_ratio=1.1))
+        self.assertEqual(recs[0]["status"], cv.PASS)
+
+    def test_shape_year_missing_is_skipped(self):
+        recs = cv.score_shape(2023, _legit_artifact(year=2024))
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+
+    def test_forced_share_peaker_gate(self):
+        recs = cv.score_forced_share(2024, _legit_artifact(share=0.55))
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        recs = cv.score_forced_share(2024, _legit_artifact(share=0.05))
+        self.assertEqual(recs[0]["status"], cv.PASS)
+
+    def test_forced_share_lower_bound_flagged(self):
+        legit = _legit_artifact(share=0.05)
+        legit["diagnostics"]["D2"]["summary"][0]["lower_bound"] = True
+        recs = cv.score_forced_share(2024, legit)
+        self.assertIn("lower bound", recs[0]["magnitude"])
+
+    def test_missing_artifact_caps_determination(self):
+        """SKIPPED HARD C7/C8 (no artifact) can never yield clean CALIBRATED."""
+        d = DeterminationTests()
+        art = _artifacts(
+            d._clean_year_payload(),
+            attestation=_clean_attestation(),
+            **d._clean_bench_args(),
+        )
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertTrue(
+            any("unscored HARD criteria" in r for r in v["reasons"]),
+            v["reasons"],
+        )
+        self.assertEqual(v["criteria"]["shape"]["status"], cv.SKIPPED)
+
+    def test_flat_floor_forces_not_yet(self):
+        """A flat-floor keeper FAILs C7/C8 -> NOT-YET, whatever C1 says."""
+        d = DeterminationTests()
+        art = _artifacts(
+            d._clean_year_payload(),
+            attestation=_clean_attestation(),
+            **d._clean_bench_args(),
+        )
+        art["legitimacy"] = _legit_artifact(r=0.9, cv_ratio=0.0, share=0.55)
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertEqual(v["criteria"]["shape"]["status"], cv.FAIL)
+        self.assertEqual(v["criteria"]["forced_share"]["status"], cv.FAIL)
 
 
 if __name__ == "__main__":
