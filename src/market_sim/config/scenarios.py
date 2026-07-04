@@ -396,23 +396,16 @@ class ScenarioConfig:
     # TOD-block LOLP parameters (columns: season, tod_block, mu_mw,
     # sigma_mw — ERCOT NP6-576-ER layout). When set, overrides the flat
     # ordc_lolp_mu_mw / ordc_lolp_sigma_mw fallbacks per hour.
-    ordc_reliability_deployment_mw: float = 0.0  # DEPRECATED reliability-
-    # deployment / reserve-tightness offset (MW), subtracted from reserves
-    # before the ORDC curve. This was the fitted RTORDPA analogue — a flat,
-    # NON-physical offset calibrated to the 2023 stress year's LMP residual
-    # (~2,500 MW). It is **superseded** by the formulaic reserve accounting in
-    # results.scarcity: (1) the online/offline reserve split (cold slow-start
-    # capacity no longer counts as responsive reserve — the real cause of the
-    # perfect-commitment headroom overstatement this offset papered over), and
-    # (2) AS-plan netting from the measured cleared-DAM up-AS series (or the
-    # ercot_operating_reserve_mw formula in forecast / 2023). Both are
-    # market-design-grounded and renewable-responsive, so the keeper needs no
-    # fitted offset. Per claude.md (no pinning the backcast to actuals) this is
-    # kept only as a default-0, explicitly-labelled diagnostic probe — never a
-    # keeper — and is still added on top of the AS netting when set, so a
-    # scenario can model extra discretionary conservatism. The runner no longer
-    # depends on it for the baseline. See docs/backcast-measured-data-audit-
-    # 2026-06.md and docs/ordc-overlay.md.
+    # NOTE — ordc_reliability_deployment_mw was DELETED 2026-07-04 (CLAUDE.md
+    # rule 26: deleted means deleted; audit L10). It was the fitted RTORDPA
+    # analogue — a flat, NON-physical reserve offset calibrated to the 2023
+    # stress year's LMP residual (~2,500 MW), superseded by the formulaic
+    # reserve accounting in results.scarcity (online/offline reserve split +
+    # measured AS-plan netting). It had been deprecated-at-0 and was re-swept
+    # AFTER deprecation (calibration-log:185) — a zeroed knob that still
+    # parses is a re-armable answer key, so the field is gone: setting it now
+    # raises. The forward RTC+B scenario knob rtcb_reliability_deployment_mw
+    # (below) is unrelated and remains.
     as_revenue_enabled: bool = False  # Credit ERCOT ancillary-service market
     # revenue (Reg/RRS/ECRS/Non-Spin) in the capacity economics — the
     # retirement, new-entry and storage-entry screens. Default off (energy +
@@ -438,8 +431,9 @@ class ScenarioConfig:
     #           does NOT carry forward unless rtcb_reliability_deployment_mw is set.
     # "auto"  — year-gated: ORDC for years <= 2025, RTC+B for >= 2026.
     # This is what separates the (erroneous) 2023 backcast design from the
-    # forward design: ordc_reliability_deployment_mw applies only in the ORDC
-    # regime; the RTC+B regime uses rtcb_reliability_deployment_mw (default 0).
+    # forward design: the ORDC regime carries no reliability-deployment offset
+    # (the fitted ordc_reliability_deployment_mw knob was deleted 2026-07-04);
+    # the RTC+B regime uses rtcb_reliability_deployment_mw (default 0).
     rtcb_reliability_deployment_mw: float = 0.0  # Reliability-deployment offset
     # under the RTC+B regime (forecast). Default 0 — RTC+B reformed the ECRS
     # conservatism, so forward scarcity prices to fundamentals. Set > 0 to model
@@ -2418,18 +2412,18 @@ class ScenarioConfig:
     # _GAS_TRANCHE_SHARES. ERCOT's offer curve comes from its CAMPD bins.
     gas_offer_curve: bool = False
 
-    # Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure O&M
-    # is < $1/MWh, but the fleet (e.g. Bath County) reserves much of its duty
-    # for regulation/reserves and follows pumping schedules the energy-only LP
-    # does not see; with no adder the LP arbitrages PS every day the spread
-    # clears RTE losses and generates ~2-3x the observed PS energy, shaving
-    # exactly the peaks the CT fleet actually served. This is the reduced-form
-    # opportunity cost of that reserve duty. ``None`` (default) resolves per
-    # ISO from constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO — PJM $10,
-    # calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr (EIA-923 PS
-    # gross generation); ISOs without a calibrated entry (e.g. CAISO) get
-    # 0.0 until their own calibration says otherwise. A number overrides the
-    # per-ISO default for every ISO in the scenario.
+    # Tier 3 — pumped-storage dispatch adder ($/MWh discharged), the
+    # reduced-form opportunity cost of PS reserve/regulation duty the
+    # energy-only LP does not see. ``None`` (default) resolves per ISO from
+    # constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO, which is now EMPTY —
+    # the fitted PJM $10 entry ("calibrated so PJM PS lands near its observed
+    # ~3.5-4 TWh/yr") was retired as a mis-measured-residual fit (see the
+    # retirement note at that constant): PJM PS arbitrages on its physical
+    # RTE like every other storage resource, and the forward-valid
+    # replacement, if PS ever over-cycles again, is a measured
+    # synchronized-reserve power reservation, not a throughput tune. A number
+    # here overrides the per-ISO default for every ISO in the scenario
+    # (scenario lever, not a calibration fit).
     pumped_storage_dispatch_adder: float | None = None
 
     # Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), the
@@ -3182,7 +3176,6 @@ TIER_TAGS: dict[str, int] = {
     "ordc_multistep_floor": 2,
     "ordc_as_plan_mw": 2,
     "ordc_lolp_params_path": 2,
-    "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
     "interchange_shaping_export_only": 1,
