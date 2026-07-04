@@ -461,6 +461,15 @@ class GovernanceTests(unittest.TestCase):
         )
         self.assertEqual(g["status"], "UNATTESTED")
 
+    def test_ledger_only_attestation_is_unattested(self):
+        # A DOF-ledger-only attestation (free_parameters, no governance block)
+        # is exactly as unattested as no file: nobody asserted the claims.
+        g = cv.score_governance(
+            {"scenario_config": {"outage_source": "historic"}},
+            {"free_parameters": {"entries": []}},
+        )
+        self.assertEqual(g["status"], "UNATTESTED")
+
     def test_pass(self):
         g = cv.score_governance(
             {"scenario_config": {"outage_source": "historic"}}, _clean_attestation()
