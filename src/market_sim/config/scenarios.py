@@ -783,11 +783,16 @@ class ScenarioConfig:
     # England complex the Z2 segment - a Connecticut trading point - trades
     # in). No free Iroquois series exists (verified: zero prints in 146 NGWU
     # weekly pages 2023-25; NGI/ICE paywalled), so the measured ANNUAL spread
-    # is preserved exactly and re-allocated across months in proportion to the
-    # measured Algonquin (MA-citygate) monthly basis - the New England
-    # pipeline-scarcity signal that physically causes the Iroquois premium;
-    # unconstrained months carry zero premium (summer Z2 trades at Transco
-    # backhaul parity). Zonal companions switch from flat annual offsets to
+    # is re-allocated across months in proportion to the measured Algonquin
+    # (MA-citygate) monthly basis - the New England pipeline-scarcity signal
+    # that physically causes the Iroquois premium - then CAPPED month-by-month
+    # at the measured Algonquin Citygate monthly level (rule #14: Z2 delivers
+    # INTO the New England market area, so it cannot out-price the citygate
+    # ceiling of the complex; the cap floors at the committed flat
+    # construction so it only shaves scarcity-month excess, and the shaved
+    # excess is not re-allocated - worst case the annual spread under-delivers
+    # the SOM annual by ~$0.5/MMBtu in 2023). Unconstrained months carry zero
+    # premium (summer Z2 trades at Transco backhaul parity). Zonal companions switch from flat annual offsets to
     # monthly hub ratios so NYC resolves to its own measured Transco Z6 NY
     # monthly and Upstate to its measured SOM annual level riding the Henry
     # Hub shape (fuel.nyiso_reconciled_reference_monthly /
@@ -2816,6 +2821,13 @@ class ScenarioConfig:
     # OFF for PJM/NYISO so their keepers stay byte-identical until their oil
     # re-attribution is separately validated (their dual-fuel units do switch
     # on their own winter gas, so enabling it would move their gas/oil split).
+    # NYISO validated NEGATIVE (2026-07-04): the NYIS EIA-930 feed does NOT
+    # move dual-fuel switch-hours out of ``NG: NG`` (Jan-2025 parity switching
+    # would relabel 0.80 TWh while the measured NYIS ``NG: OIL`` carried
+    # 0.031 TWh; conversely 2023 shows 2.17 TWh OIL against a 0.42 TWh
+    # EIA-923 oil class — a static plant-primary attribution parity hours
+    # cannot reproduce), so relabelling scores a basis mismatch against the
+    # C2 gas family, not a dispatch error. Keep OFF for NYISO.
     dual_fuel_oil_reattribution: bool = False
 
     # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
