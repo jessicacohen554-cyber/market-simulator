@@ -1549,9 +1549,10 @@ def nyiso_reconciled_reference_monthly(
       ``w_m = max(agt_basis_m, 0) / Σ max(agt_basis_m, 0)``
 
     - ``transco_m`` — the measured Transco Z6 NY monthly (mean of daily quotes);
-    - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread
-      (preserved up to the measured Algonquin-Citygate monthly ceiling below —
-      capped months shave the annual mean by ≤ ~$0.2/MMBtu);
+    - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread,
+      preserved EXACTLY (scarcity-shaped up to the measured Algonquin-Citygate
+      monthly ceiling below; the ceiling-shaved remainder re-enters as a
+      year-round base differential water-filled into months with headroom);
     - ``w_m`` — the **measured Algonquin (MA-citygate) monthly basis**, the New
       England pipeline-scarcity signal that physically causes the Iroquois
       premium; unconstrained months (basis ≤ 0) carry zero premium (summer Z2
@@ -1608,14 +1609,11 @@ def nyiso_reconciled_reference_monthly(
     # month at the measured Algonquin Citygate monthly (Henry Hub month +
     # the same measured NEISO basis row the weights come from — the series
     # the NEISO keeper itself prices on), floored at Transco so the cap can
-    # never invert the hubs. The shaved excess is NOT re-allocated: every
-    # other month has either no scarcity signal (AGT basis <= 0) or no
-    # ceiling headroom, so re-spreading it would manufacture premium the
-    # measured complex does not show. The annual mean then under-delivers
-    # the SOM annual spread by <= ~$0.5/MMBtu (2023, whose Feb carried the
-    # bulk of the re-allocation; <= ~$0.15 in 2024/2025) — the residual of
-    # reconciling two measured series, resolved in favour of the physical
-    # ceiling where it binds.
+    # never invert the hubs. The shaved excess is not left as scarcity
+    # premium — it re-enters as a year-round base differential water-filled
+    # across the months with ceiling headroom (see below), so the measured
+    # SOM ANNUAL spread is preserved exactly while no month out-prices the
+    # ceiling.
     hh = _henry_hub_monthly(None)
     hh_m = np.array([hh.get((year, m + 1), np.nan) for m in range(12)])
     if not np.isnan(hh_m).any():
@@ -1627,7 +1625,32 @@ def nyiso_reconciled_reference_monthly(
         # within transport noise and the flat level is the better-measured
         # datum — the cap must only shave scarcity-month excess, never push a
         # month below the committed annually-exact construction.
-        iroq_rec = np.minimum(iroq_rec, np.maximum(alg_m, transco + annual_spread))
+        ceil_m = np.maximum(alg_m, transco + annual_spread)
+        capped = np.minimum(iroq_rec, ceil_m)
+        # Preserve the measured SOM ANNUAL spread (rule #13 — the annual
+        # total is a measured datum, not disposable): the scarcity months
+        # could not hold the full AGT-shaped re-allocation under the measured
+        # Algonquin ceiling, so the shaved remainder is by construction a
+        # year-round (non-scarcity) base differential — Z2 is a premium point
+        # over Transco outside blowout months too (Waddington/TransCanada
+        # supply pricing), which is why the measured SOM annual exceeds what
+        # the scarcity months alone can carry. Water-fill it uniformly across
+        # the months with ceiling headroom (the minimal-assumption
+        # allocation), never above the ceiling; any residual that the whole
+        # ceiling cannot hold is dropped and the annual under-delivers (no
+        # 2023-25 year does).
+        excess = float((iroq_rec - capped).sum())
+        for _ in range(12):
+            if excess <= 1e-9:
+                break
+            room = ceil_m - capped
+            open_m = room > 1e-9
+            if not open_m.any():
+                break
+            step = np.minimum(np.full(12, excess / open_m.sum()) * open_m, room)
+            capped = capped + step
+            excess -= float(step.sum())
+        iroq_rec = capped
     return iroq_rec, transco
 
 

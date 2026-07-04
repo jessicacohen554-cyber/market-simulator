@@ -789,10 +789,11 @@ class ScenarioConfig:
     # at the measured Algonquin Citygate monthly level (rule #14: Z2 delivers
     # INTO the New England market area, so it cannot out-price the citygate
     # ceiling of the complex; the cap floors at the committed flat
-    # construction so it only shaves scarcity-month excess, and the shaved
-    # excess is not re-allocated - worst case the annual spread under-delivers
-    # the SOM annual by ~$0.5/MMBtu in 2023). Unconstrained months carry zero
-    # premium (summer Z2 trades at Transco backhaul parity). Zonal companions switch from flat annual offsets to
+    # construction so it only shaves scarcity-month excess). The shaved
+    # excess re-enters as a year-round base differential water-filled into
+    # months with ceiling headroom, preserving the measured SOM ANNUAL spread
+    # exactly - the reconciliation of three measured series (SOM annual +
+    # AGT scarcity shape + Algonquin ceiling), no fitted constant. Zonal companions switch from flat annual offsets to
     # monthly hub ratios so NYC resolves to its own measured Transco Z6 NY
     # monthly and Upstate to its measured SOM annual level riding the Henry
     # Hub shape (fuel.nyiso_reconciled_reference_monthly /
