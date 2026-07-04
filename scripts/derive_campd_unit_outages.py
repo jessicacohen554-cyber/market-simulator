@@ -250,18 +250,28 @@ def unit_capacity_mw(
     return observed_peak, observed_peak, "observed_peak"
 
 
-def _unit_year_grid(sub: pd.DataFrame, year: int, col: str = "grossLoad") -> np.ndarray:
-    """Return one unit-year's hourly gross on the full calendar-year clock.
+def _unit_year_grid(
+    sub: pd.DataFrame,
+    year: int,
+    col: str = "grossLoad",
+    end: pd.Timestamp | None = None,
+) -> np.ndarray:
+    """Return one unit-year's hourly gross on the calendar-year clock.
 
     CAMPD omits non-operating hours, so the unit's reported hours are placed on
-    a gap-free hourly index spanning the whole year and missing hours are
-    zero-filled (missing = no activity = offline), matching the facility
-    detector. Returns the gross-MW array (length = hours in the year).
+    a gap-free hourly index spanning the year and missing hours are zero-filled
+    (missing = no activity = offline), matching the facility detector.
+
+    ``end`` clips the clock at the year's CAMPD publication horizon (the last
+    published date, 23:00): for an in-progress year (e.g. 2026 with only Q1
+    posted) the unpublished remainder must NOT be zero-filled, or every unit
+    grows a phantom outage from the horizon to Dec 31. Returns the gross-MW
+    array (length = hours through ``end``, or the whole year).
     """
     ts = sub["date"] + pd.to_timedelta(sub["hour"], unit="h")
     series = pd.Series(sub[col].to_numpy(dtype=float), index=ts)
     series = series.groupby(level=0).sum().sort_index()
-    full = pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00:00", freq="h")
+    full = pd.date_range(f"{year}-01-01", end or f"{year}-12-31 23:00:00", freq="h")
     return series.reindex(full).fillna(0.0).to_numpy(dtype=float)
 
 
@@ -477,8 +487,8 @@ def main() -> None:
     states = campd.states_for_iso(iso)
     rows: list[dict] = []
     summary: list[tuple] = []
-    # year -> in-merit (system-tight) hour mask, built once per year.
-    inmerit_cache: dict[int, np.ndarray | None] = {}
+    # (year, clock length) -> in-merit (system-tight) hour mask.
+    inmerit_cache: dict[tuple[int, int], np.ndarray | None] = {}
     # (facility, year) -> any non-null CAMPD grossLoad seen; feeds the
     # net-zero-to-grid rule below (mirrors the benchmark's CAMPD backfill).
     campd_gross_seen: set[tuple[int, int]] = set()
@@ -487,6 +497,11 @@ def main() -> None:
             df = _load_unit_year(state, year)
             if df.empty:
                 continue
+            # Publication horizon: last date this state-year extract covers.
+            # A completed year runs to Dec 31 (clock unchanged); an
+            # in-progress year (CAMPD posts quarterly) is clipped here so the
+            # unpublished remainder is never scanned as a phantom outage.
+            horizon_end = df["date"].max() + pd.Timedelta(hours=23)
             for fac_id, has in (
                 df.groupby("facilityId", observed=True)["grossLoad"]
                 .apply(lambda s: s.notna().any())
@@ -524,7 +539,7 @@ def main() -> None:
                     int(fac_id), str(fac["facilityName"].iloc[0])
                 )
                 units = {
-                    uid: _unit_year_grid(u, year)
+                    uid: _unit_year_grid(u, year, end=horizon_end)
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
                 # A unit is coal (baseload) when its primary fuel is solid;
@@ -578,7 +593,10 @@ def main() -> None:
                         share = npl / len(ot_units)
                         units = {
                             uid: np.where(
-                                _unit_year_grid(u, year, col="opTime") > 0.0, share, 0.0
+                                _unit_year_grid(u, year, col="opTime", end=horizon_end)
+                                > 0.0,
+                                share,
+                                0.0,
                             )
                             for uid, u in ot_units.items()
                         }
@@ -624,9 +642,7 @@ def main() -> None:
                         )
                     if not windows:
                         continue
-                    clock = pd.date_range(
-                        f"{year}-01-01", f"{year}-12-31 23:00:00", freq="h"
-                    )
+                    clock = pd.date_range(f"{year}-01-01", horizon_end, freq="h")
                     # Revealed-availability filter: drop down spans that never
                     # overlap an in-merit (system-tight) hour — those are
                     # economic idling, not mechanical outages, so the unit is
@@ -634,15 +650,18 @@ def main() -> None:
                     # reserve pool). Real outages coincide with tight hours and
                     # survive. No-op when --no-inmerit-filter or no price file.
                     if not args.no_inmerit_filter:
-                        if year not in inmerit_cache:
-                            inmerit_cache[year] = high_load_mask(
+                        # Keyed on (year, clock length): an in-progress year's
+                        # clipped clock must not reuse a full-year mask.
+                        mkey = (year, len(clock))
+                        if mkey not in inmerit_cache:
+                            inmerit_cache[mkey] = high_load_mask(
                                 iso,
                                 year,
                                 len(clock),
                                 args.high_load_pctl,
                                 args.high_load_window_days,
                             )
-                        mask = inmerit_cache[year]
+                        mask = inmerit_cache[mkey]
                         cf = (
                             gross / detect_cap
                             if detect_cap > 0
