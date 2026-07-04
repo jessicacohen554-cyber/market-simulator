@@ -95,21 +95,42 @@ def test_single_print_never_relevels_a_month(cfg, tmp_path, monkeypatch):
     assert dec.mean() == pytest.approx(3.16, rel=1e-9)
 
 
-def test_reconciled_winter_spread_preserves_measured_annual():
-    """Rule #13 reconciliation: annual mean == the committed (SOM) annual."""
+def test_reconciled_winter_spread_tracks_measured_annual_under_ceiling():
+    """Rule #13/#14 reconciliation: annual mean == the committed (SOM) annual
+    exactly, while no month out-prices the measured Algonquin-Citygate ceiling
+    of the New England complex Z2 physically trades inside (the ceiling-shaved
+    scarcity excess re-enters as a water-filled year-round base)."""
     import pandas as pd
 
-    from market_sim.data.fuel import nyiso_reconciled_reference_monthly
+    from market_sim.data.fuel import (
+        _henry_hub_monthly,
+        _load_winter_basis_frame,
+        nyiso_reconciled_reference_monthly,
+    )
 
     hub = pd.read_csv("data/raw/gas-prices/transco_z6_iroquois_monthly.csv")
+    hh = _henry_hub_monthly(None)
+    bf = _load_winter_basis_frame(None)
     for year in (2023, 2024, 2025):
         rec = nyiso_reconciled_reference_monthly(year)
         assert rec is not None
         iq, tz = rec
         committed = hub[hub.date.str.startswith(f"{year}-")]
-        assert iq.mean() == pytest.approx(
-            committed.iroquois_z2_usd_mmbtu.mean(), rel=1e-9
-        )
+        som_annual = committed.iroquois_z2_usd_mmbtu.mean()
+        som_spread = (
+            committed.iroquois_z2_usd_mmbtu - committed.transco_z6_ny_usd_mmbtu
+        ).mean()
+        # Measured SOM annual preserved exactly (water-fill re-allocates the
+        # ceiling-shaved excess; 2023-25 all have ample shoulder headroom).
+        assert iq.mean() == pytest.approx(som_annual, abs=1e-6)
+        # Ceiling property: never above max(Algonquin citygate, the committed
+        # flat construction transco + SOM annual spread).
+        agt_rows = bf[(bf["iso"] == "NEISO") & (bf["year"] == year)]
+        agt = np.full(12, np.nan)
+        for _, row in agt_rows.iterrows():
+            agt[int(row["month"]) - 1] = float(row["basis_usd_mmbtu"])
+        alg = np.array([hh[(year, m + 1)] for m in range(12)]) + agt
+        assert (iq <= np.maximum(alg, tz + som_spread) + 1e-9).all()
         # Winter-concentration: the constrained months carry more premium than
         # the flat construction, unconstrained months less.
         spread = iq - tz

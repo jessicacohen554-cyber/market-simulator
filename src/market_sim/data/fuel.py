@@ -1550,7 +1550,9 @@ def nyiso_reconciled_reference_monthly(
 
     - ``transco_m`` — the measured Transco Z6 NY monthly (mean of daily quotes);
     - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread,
-      preserved EXACTLY (the reconciled annual mean equals the committed one);
+      preserved EXACTLY (scarcity-shaped up to the measured Algonquin-Citygate
+      monthly ceiling below; the ceiling-shaved remainder re-enters as a
+      year-round base differential water-filled into months with headroom);
     - ``w_m`` — the **measured Algonquin (MA-citygate) monthly basis**, the New
       England pipeline-scarcity signal that physically causes the Iroquois
       premium; unconstrained months (basis ≤ 0) carry zero premium (summer Z2
@@ -1594,7 +1596,62 @@ def nyiso_reconciled_reference_monthly(
     if total <= 0.0:
         return None
     spread_m = annual_spread * 12.0 * w / total
-    return transco + spread_m, transco
+    iroq_rec = transco + spread_m
+    # Measured-ceiling reconciliation (rule #14): Iroquois Z2 is a Connecticut
+    # trading point delivering INTO the New England market area, so its
+    # monthly level cannot exceed the Algonquin Citygate — the demand ceiling
+    # of the complex it feeds (Z2 gas flows on toward the citygate; a CT
+    # buyer never pays more at Z2 than at the citygate it can buy instead).
+    # Re-allocating 12x the SOM annual spread onto the few positive-basis
+    # months has no per-month magnitude anchor and can breach that ceiling in
+    # the most-constrained months (Feb-2023 reconstruction $13.21 vs the
+    # measured $8.13 Algonquin month; Jan-2024 $8.60 vs $7.68). Cap each
+    # month at the measured Algonquin Citygate monthly (Henry Hub month +
+    # the same measured NEISO basis row the weights come from — the series
+    # the NEISO keeper itself prices on), floored at Transco so the cap can
+    # never invert the hubs. The shaved excess is not left as scarcity
+    # premium — it re-enters as a year-round base differential water-filled
+    # across the months with ceiling headroom (see below), so the measured
+    # SOM ANNUAL spread is preserved exactly while no month out-prices the
+    # ceiling.
+    hh = _henry_hub_monthly(None)
+    hh_m = np.array([hh.get((year, m + 1), np.nan) for m in range(12)])
+    if not np.isnan(hh_m).any():
+        alg_m = hh_m + agt
+        # Floor the ceiling at the committed FLAT construction level
+        # (transco + annual spread): the Z2<=citygate ordering is firm in the
+        # constrained winter months the re-allocation loads (citygate blowouts
+        # far exceed Z2), but inside unconstrained months the two hubs trade
+        # within transport noise and the flat level is the better-measured
+        # datum — the cap must only shave scarcity-month excess, never push a
+        # month below the committed annually-exact construction.
+        ceil_m = np.maximum(alg_m, transco + annual_spread)
+        capped = np.minimum(iroq_rec, ceil_m)
+        # Preserve the measured SOM ANNUAL spread (rule #13 — the annual
+        # total is a measured datum, not disposable): the scarcity months
+        # could not hold the full AGT-shaped re-allocation under the measured
+        # Algonquin ceiling, so the shaved remainder is by construction a
+        # year-round (non-scarcity) base differential — Z2 is a premium point
+        # over Transco outside blowout months too (Waddington/TransCanada
+        # supply pricing), which is why the measured SOM annual exceeds what
+        # the scarcity months alone can carry. Water-fill it uniformly across
+        # the months with ceiling headroom (the minimal-assumption
+        # allocation), never above the ceiling; any residual that the whole
+        # ceiling cannot hold is dropped and the annual under-delivers (no
+        # 2023-25 year does).
+        excess = float((iroq_rec - capped).sum())
+        for _ in range(12):
+            if excess <= 1e-9:
+                break
+            room = ceil_m - capped
+            open_m = room > 1e-9
+            if not open_m.any():
+                break
+            step = np.minimum(np.full(12, excess / open_m.sum()) * open_m, room)
+            capped = capped + step
+            excess -= float(step.sum())
+        iroq_rec = capped
+    return iroq_rec, transco
 
 
 def nyiso_zonal_gas_ratios_monthly(

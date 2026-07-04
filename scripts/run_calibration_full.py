@@ -2451,9 +2451,7 @@ def solve_and_persist(
     if ercot_ordc_total_reserve:
         recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
     if ercot_storage_as_product_credit:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_storage_as_product_credit=True
-        )
+        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_product_credit=True)
     if gas_hh_monthly_shape:
         recorded_cfg = recorded_cfg.with_overrides(gas_hh_monthly_shape=True)
     if ercot_as_aware_commitment:
@@ -6315,7 +6313,20 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "gas_hub_basis_daily": True if args.gas_hub_basis_daily else None,
-            "dual_fuel_oil_reattribution": (True if args.gas_hub_basis_daily else None),
+            # NEISO-only per the ScenarioConfig spec: the re-attribution
+            # relabels switched generator-hours gas->oil so the model matches
+            # the benchmark feed's fuel attribution, and only ISNE's EIA-930
+            # feed tracks dual-fuel switching that way. NYIS demonstrably does
+            # not (Jan-2025: parity switching relabelled 0.80 TWh while the
+            # measured NYIS ``NG: OIL`` carried 0.031 TWh; 2023 the feed shows
+            # 2.17 TWh OIL against a 0.42 TWh EIA-923 oil class - a static
+            # plant-primary attribution parity hours cannot reproduce), so
+            # enabling it for NYISO scored a basis mismatch, not a dispatch
+            # error. The daily-basis override channel previously switched it
+            # on for every ISO, contradicting the documented NEISO-only spec.
+            "dual_fuel_oil_reattribution": (
+                True if (args.gas_hub_basis_daily and iso == "NEISO") else None
+            ),
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
