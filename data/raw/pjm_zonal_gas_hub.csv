@@ -1,25 +1,41 @@
 zone,year,basis_vs_hh_usd_mmbtu,hub,source
+PJM_ComEd,2022,-0.27,Chicago Citygate (IL),Chicago Citygate / IL (EIA N3045IL3 delivered-to-electric-power)
 PJM_ComEd,2023,-0.108,Chicago Citygate (IL),Chicago Citygate / IL (EIA N3045IL3 delivered-to-electric-power)
 PJM_ComEd,2024,0.12,Chicago Citygate (IL),Chicago Citygate / IL (EIA N3045IL3 delivered-to-electric-power)
 PJM_ComEd,2025,0.018,Chicago Citygate (IL),Chicago Citygate / IL (EIA N3045IL3 delivered-to-electric-power)
+PJM_ComEd,2026,2.204,Chicago Citygate (IL),Chicago Citygate / IL (EIA N3045IL3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_AEP_Ohio,2022,-0.284,Appalachian (OH),Appalachian/Dominion South / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_AEP_Ohio,2023,-0.246,Appalachian (OH),Appalachian/Dominion South / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_AEP_Ohio,2024,0.056,Appalachian (OH),Appalachian/Dominion South / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_AEP_Ohio,2025,-0.192,Appalachian (OH),Appalachian/Dominion South / OH (EIA N3045OH3 delivered-to-electric-power)
+PJM_AEP_Ohio,2026,0.208,Appalachian (OH),Appalachian/Dominion South / OH (EIA N3045OH3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_ATSI,2022,-0.284,Appalachian (OH),Appalachian/TETCO M2 / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_ATSI,2023,-0.246,Appalachian (OH),Appalachian/TETCO M2 / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_ATSI,2024,0.056,Appalachian (OH),Appalachian/TETCO M2 / OH (EIA N3045OH3 delivered-to-electric-power)
 PJM_ATSI,2025,-0.192,Appalachian (OH),Appalachian/TETCO M2 / OH (EIA N3045OH3 delivered-to-electric-power)
+PJM_ATSI,2026,0.208,Appalachian (OH),Appalachian/TETCO M2 / OH (EIA N3045OH3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_West_APS,2022,0.014,Appalachian (WV),Appalachian/Dominion South / WV (EIA N3045WV3 delivered-to-electric-power)
 PJM_West_APS,2023,-0.573,Appalachian (WV),Appalachian/Dominion South / WV (EIA N3045WV3 delivered-to-electric-power)
 PJM_West_APS,2024,-0.095,Appalachian (WV),Appalachian/Dominion South / WV (EIA N3045WV3 delivered-to-electric-power)
 PJM_West_APS,2025,-0.226,Appalachian (WV),"WV 2025 11/12 months EIA-withheld (only Jan, winter spike); proxied to OH+PA Appalachian delivered-to-EP mean = -0.226"
+PJM_West_APS,2026,0.855,Appalachian (WV),WV 2026 11/12 months EIA-withheld; proxied to OH+PA Appalachian delivered-to-EP mean = 0.855; PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_Central_PA,2022,-0.378,TETCO M3 (PA),TETCO M3/Transco Z6 / PA (EIA N3045PA3 delivered-to-electric-power)
 PJM_Central_PA,2023,-0.432,TETCO M3 (PA),TETCO M3/Transco Z6 / PA (EIA N3045PA3 delivered-to-electric-power)
 PJM_Central_PA,2024,-0.137,TETCO M3 (PA),TETCO M3/Transco Z6 / PA (EIA N3045PA3 delivered-to-electric-power)
 PJM_Central_PA,2025,-0.261,TETCO M3 (PA),TETCO M3/Transco Z6 / PA (EIA N3045PA3 delivered-to-electric-power)
+PJM_Central_PA,2026,1.501,TETCO M3 (PA),TETCO M3/Transco Z6 / PA (EIA N3045PA3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_Dominion,2022,0.565,Transco Z6 (VA),Transco Z6/TETCO M3 / VA (EIA N3045VA3 delivered-to-electric-power)
 PJM_Dominion,2023,0.761,Transco Z6 (VA),Transco Z6/TETCO M3 / VA (EIA N3045VA3 delivered-to-electric-power)
 PJM_Dominion,2024,0.634,Transco Z6 (VA),Transco Z6/TETCO M3 / VA (EIA N3045VA3 delivered-to-electric-power)
 PJM_Dominion,2025,0.502,Transco Z6 (VA),Transco Z6/TETCO M3 / VA (EIA N3045VA3 delivered-to-electric-power)
+PJM_Dominion,2026,1.466,Transco Z6 (VA),Transco Z6/TETCO M3 / VA (EIA N3045VA3 delivered-to-electric-power); PARTIAL YEAR: Feb-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_EMAAC,2022,0.464,Transco Z6 non-NY (NJ),Transco Z6 non-NY/TETCO M3 / NJ (EIA N3045NJ3 delivered-to-electric-power)
 PJM_EMAAC,2023,-0.32,Transco Z6 non-NY (NJ),Transco Z6 non-NY/TETCO M3 / NJ (EIA N3045NJ3 delivered-to-electric-power)
 PJM_EMAAC,2024,0.125,Transco Z6 non-NY (NJ),Transco Z6 non-NY/TETCO M3 / NJ (EIA N3045NJ3 delivered-to-electric-power)
 PJM_EMAAC,2025,0.922,Transco Z6 non-NY (NJ),Transco Z6 non-NY/TETCO M3 / NJ (EIA N3045NJ3 delivered-to-electric-power)
+PJM_EMAAC,2026,4.371,Transco Z6 non-NY (NJ),Transco Z6 non-NY/TETCO M3 / NJ (EIA N3045NJ3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
+PJM_SWMAAC,2022,1.865,Transco Z6 (MD),Transco Z6/TETCO M3 / MD (EIA N3045MD3 delivered-to-electric-power)
 PJM_SWMAAC,2023,0.424,Transco Z6 (MD),Transco Z6/TETCO M3 / MD (EIA N3045MD3 delivered-to-electric-power)
 PJM_SWMAAC,2024,0.949,Transco Z6 (MD),Transco Z6/TETCO M3 / MD (EIA N3045MD3 delivered-to-electric-power)
 PJM_SWMAAC,2025,2.183,Transco Z6 (MD),Transco Z6/TETCO M3 / MD (EIA N3045MD3 delivered-to-electric-power)
+PJM_SWMAAC,2026,10.748,Transco Z6 (MD),Transco Z6/TETCO M3 / MD (EIA N3045MD3 delivered-to-electric-power); PARTIAL YEAR: Jan-Apr 2026 published months only (winter-weighted); re-extend when EIA publishes the rest
