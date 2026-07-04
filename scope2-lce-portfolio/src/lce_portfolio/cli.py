@@ -93,7 +93,8 @@ def build_config(args: argparse.Namespace) -> PortfolioConfig:
 
     ``--config`` provides the base (including its ``load_file``/``lmp_file``,
     ADR 0010/0011); explicitly-given sweep flags (``--deltas``/``--targets``/
-    ``--sensitivity``/``--load-growth-*``) then override the file values
+    ``--sensitivity``/``--load-growth-*``/``--storage-charge-policy``) then
+    override the file values
     (audit finding CL-1 — they were previously discarded silently; the
     argparse defaults are ``None`` sentinels so "explicitly given" is
     detectable). ISO selection is always CLI. Without ``--config`` the flags
@@ -113,6 +114,8 @@ def build_config(args: argparse.Namespace) -> PortfolioConfig:
         overrides["load_growth_rate"] = args.load_growth_rate
     if args.load_growth_years is not None:
         overrides["load_growth_years"] = args.load_growth_years
+    if args.storage_charge_policy is not None:
+        overrides["storage_charge_policy"] = args.storage_charge_policy
 
     if args.config:
         base = PortfolioConfig.from_file(args.config)
@@ -125,6 +128,7 @@ def build_config(args: argparse.Namespace) -> PortfolioConfig:
         lcoe_sensitivity=overrides.get("lcoe_sensitivity", "mid"),
         load_growth_rate=overrides.get("load_growth_rate", 0.0),
         load_growth_years=overrides.get("load_growth_years", 0),
+        storage_charge_policy=overrides.get("storage_charge_policy", "arbitrage"),
     )
 
 
@@ -255,6 +259,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--load-growth-rate", type=float, default=None)
     p.add_argument("--load-growth-years", type=int, default=None)
+    p.add_argument(
+        "--storage-charge-policy",
+        choices=["arbitrage", "excess_clean_only"],
+        default=None,
+        help="storage grid interaction (ADR 0017): arbitrage (default) lets "
+        "storage charge from the grid and export discharge at LMP; "
+        "excess_clean_only restricts charging to the portfolio's excess "
+        "contracted clean generation (no grid trading; overrides --config)",
+    )
     p.add_argument("--out-dir", default="data/outputs")
     p.add_argument(
         "--no-report",
