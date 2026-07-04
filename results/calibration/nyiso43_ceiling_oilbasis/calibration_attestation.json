@@ -1,0 +1,86 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "nyiso-43 ceiling-oilbasis registered probe 2026-07-04 (NOT promoted: C1-2024 ST_GAS FAIL from the 0c6c833 CT offer de-leak on main - the keeper-41 config itself reproduces the same FAIL on today's main; carried to nyiso-44 = this config + tranche_startup_amortization, the fast-start commitment-cost structure the de-leaked bands were proxying)",
+        "note": "The nyiso-41 keeper config PLUS the nyiso-42 reconciled Iroquois winter spread, promoted after fixing its two blocking root causes at source. (1) The reconciled reference gains a measured Algonquin-Citygate monthly CEILING (rule #14): the AGT-weighted re-allocation of the SOM annual Iroquois-Transco spread out-priced the NE complex Z2 physically delivers into (Feb-2023 $13.21 vs measured $8.13; Jan-2024 $8.60 vs $7.68; Jan-2025 $18.60 vs $16.92); each month caps at Henry Hub + the measured NEISO basis row (the series the NEISO keeper itself prices on), floored at the committed flat construction, and the shaved scarcity excess re-enters as a year-round base differential water-filled into months with ceiling headroom so the measured SOM ANNUAL spread is preserved exactly - a reconciliation of three measured series, no fitted constant, forward-regenerable from forward basis seasonality. (2) dual_fuel_oil_reattribution restored to its documented NEISO-only spec (a harness wiring bug had enabled the gas->oil scoring relabel for every ISO passing --gas-hub-basis-daily): the relabel exists to match ISNE's EIA-930 fuel attribution, and the NYIS feed demonstrably does not attribute that way (Jan-2025 parity switching would relabel 0.80 TWh vs 0.031 TWh measured NYIS NG:OIL; 2023 shows 2.17 TWh NYIS OIL vs a 0.42 TWh EIA-923 oil class - static plant-primary attribution parity hours cannot reproduce in either direction), so the relabel scored a basis mismatch against the HARD C2 gas family - it WAS the run-42 C2-2025 -2.5% FAIL (the winter gas never left the dispatch). Dual-fuel PRICING physics (min(gas, oil) cap) unchanged. EFFECT: C2-2025 gas -0.1% PASS (42: -2.5% FAIL); C5a CO2 -2.3/-5.3/-3.7% all years PASS (41: 2024 -7.1% breach - the switch-hours' CO2 stays in the model total); Jan-2024 winter overshoot +6 -> +1.6; Feb-2023 and Jan-2025 respect the measured ceiling. C3a widens to -16.2/-15.4/-13.5% (41: -13.3/-13.4/-9.5) because the flat construction's year-round eastern premium was propping shoulder LMPs (the run-42 E1 finding) - a removed compensation, not a regression to chase (rule #1); the residual is the ledgered frontier below. C1/C4/C6 PASS unchanged; outage overlay historic/exogenous."
+    },
+    "_open_items": "(1) DATA-BLOCKED eastern-NY winter hub level (carried from run-41, verified: zero free Iroquois Z2 prints anywhere; NGI/ICE paywalled) - Dec-2024 (-14.4 monthly residual) and Dec-2025 (+6.3) winter levels are funded only by the SOM-annual re-allocation, not a measured monthly print; the open ask is a licensed Iroquois Z2 daily/monthly series or NYISO SOM per-hub monthly data. (2) The ledgered reserve-scarcity / competitive-offer-markup frontier (nyiso-28/29/31): east zones clear ~$20 vs actual ~$26 in shoulder months (implied marginal HR ~11 vs ~15); the static published reserve requirements (NYCA 2620/1310/655, East 1200, SENY 1100, NYC 1000/500 MW) never bind against idle-capacity headroom credit, and data/raw/NYISO-AS carries measured AS PRICES, not a measured condition-varying requirement - still data-blocked. (3) NEW (run-43 E1 decomposition): Upstate_West collapses to the wind margin (~$1.4, ~75% of Apr-2023 hours) behind the measured 1,450 MW Central-East TTC while the EIA-930 monthly reconciliation band pushes ~830 MW of the measured net imports through the upstate link (NYC/LI node links 1,000+1,200 MW cannot carry the measured net alone); real upstate held ~$22-25 via gross two-way tie flows (IESO/PJM arbitrage) a single external node cannot represent - per-interface measured flows/ratings (NYISO ATC_TTC external-interface postings or EIA-930 per-DIBA NYIS interchange) are the documented data ask; zonal load split and in-state volumes verified against measured (UW April share model 0.365 vs measured 0.356).",
+    "exceptions": [
+        {
+            "criterion": "price_mean",
+            "year": 2023,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -16.2%",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / offer-markup frontier; compensation removed)",
+            "reason": "SOFT criterion -> CAVEAT. Wider than keeper-41's -13.3% because 41's flat Iroquois construction over-priced eastern zones ~$1.3/MMBtu in every unconstrained month (the run-42 E1 finding) - a compensation, not structure; with the measured winter-concentrated + ceiling-capped + annual-preserving reference the shoulder undershoot shows its true size. Residual = the ledgered frontier: min-gen floors add inframarginal supply, no reserve scarcity binds (static requirements vs idle-capacity headroom), and the competitive offer markup is unmeasurable without offer disclosure (run-28/29)."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2024,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -15.4%",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan-2024 overshoot fixed by the measured Algonquin ceiling (+6 -> +1.6); Dec-2024 (-14.4) is the data-blocked Iroquois Z2 winter level (the SOM-annual re-allocation cannot fund the ~$9 complex level 2024's small annual spread implies); the broad residual is the ledgered reserve-scarcity/markup frontier."
+        },
+        {
+            "criterion": "price_mean",
+            "year": 2025,
+            "metric": "C3a system load-weighted mean LMP vs actual RT",
+            "magnitude": "model -13.5%",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 (-20/-20.5 monthly) sit at the measured ceiling (Iroquois capped at ALG $16.92/$10.97) - the residual there is RT scarcity-adder content the DA-scheduled seam and energy-only dual cannot see; Jun/Jul heat-wave residual likewise (ledgered frontier)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2023,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.214",
+            "classification": "ACCEPTED (ledgered reserve-scarcity frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Broad shoulder undershoot (-4..-10 Apr-Oct); winter months now anchored by the measured ceiling (Feb-2023 residual -9.4 from the removed +4 overshoot state). Same ledgered frontier as keepers 34/39/41."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2024,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.206",
+            "classification": "ACCEPTED (data-blocked eastern winter hub + ledgered frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Improves from keeper-41's 0.236 (winter spread + ceiling); the dominant residuals are Dec-2024 (-14.4, data-blocked winter hub) and Jul-2024 (-12.8, RT scarcity content)."
+        },
+        {
+            "criterion": "price_shape",
+            "year": 2025,
+            "metric": "C3b price duration / shape NRMSE vs actual RT (monthly)",
+            "magnitude": "NRMSE 0.200",
+            "classification": "ACCEPTED (ledgered frontier + data-blocked eastern winter hub)",
+            "reason": "SOFT criterion -> CAVEAT. Jan/Feb-2025 -20/-20.5 (RT scarcity content above the measured-ceiling gas level), Jun/Jul -14.9/-14.3 (heat-wave RT adders), Dec +6.3 (allocation-funded winter level, no measured monthly anchor). vs keeper-41's 0.172: 41 priced winter on the flat construction whose year-round premium propped the same months elsewhere - removed compensation (rule #1)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2023,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 10h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Scattered single-hour RT transients; no binding reserve scarcity (idle-capacity headroom credit, nyiso-29/31 non-closable with grounded inputs)."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2024,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 0h vs actual 12h",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. Same ledgered frontier."
+        },
+        {
+            "criterion": "price_tail",
+            "year": 2025,
+            "metric": "C3c hours above $300/MWh vs actual RT",
+            "magnitude": "model 7h vs actual 42h (0.17x)",
+            "classification": "ACCEPTED (ledgered reserve-scarcity / ORDC frontier)",
+            "reason": "SOFT criterion -> CAVEAT. The measured-LMP seam supplies the 7 import-marginal tail hours (neighbor heat-wave DA prices); the remaining tail is RT reserve-scarcity adders the DA-scheduled seam and the energy-only dual cannot see (ledgered frontier)."
+        }
+    ]
+}
