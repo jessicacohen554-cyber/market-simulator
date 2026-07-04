@@ -70,7 +70,9 @@ split-storage (LDES, hydrogen), hydro monthly budgets, additionality accounting,
 resources with CCS threshold matching credit and 45Q net VOM, residual CO₂ tracking (grid +
 resource), optional storage charge-provenance policy (`--storage-charge-policy
 excess_clean_only`: charge only on excess contracted clean generation, no grid arbitrage;
-ADR 0017). Decisions: PS-01 through PS-12 → ADRs 0004–0015 (ratified 2026-07-02); ADR 0017
-(storage audit, 2026-07-04).
+ADR 0017) — with an always-on `divert_backfill_mwh` diagnostic and a stricter
+`excess_headroom_only` variant whose iterative LP cut loop eliminates
+divert-and-backfill (ADR 0018). Decisions: PS-01 through PS-12 → ADRs 0004–0015
+(ratified 2026-07-02); ADRs 0017–0018 (storage audit, 2026-07-04).
 Next: PP-09 (reporting deliverable, in flight). Start with `PLAN.md`, then
 `docs/00-overview.md` and `docs/01-lp-formulation.md`.
