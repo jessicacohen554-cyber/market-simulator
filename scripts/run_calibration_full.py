@@ -534,6 +534,7 @@ def _system_frame(
     ercot_dam_as_scarcity_threshold: float = 150.0,
     ercot_reserve_supply_cap: bool = False,
     ercot_storage_as_endogenous: bool = False,
+    ercot_ordc_total_reserve: bool = False,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -608,7 +609,17 @@ def _system_frame(
             # measured RTOLCAP online capability — while the LMP stays the co-opt's
             # own price, so the acute/tail incidence holds vs the uncapped co-opt.
             # Measured supply + published-rule curve, no price fit.
-            ordc_adder = rp.copy()
+            # Under the multi-product stack with the lumped ORDC total-reserve
+            # family (ercot_ordc_total_reserve), the adder is the TOTAL
+            # family's balance dual only — RTORPA is the ORDC on total online
+            # reserves; the per-product duals are MCPCs paid to AS providers,
+            # never added to the energy price. The total family is appended
+            # LAST by reserve_config, so it is the final dual column.
+            rpf = getattr(result, "reserve_price_by_family", None)
+            if ercot_ordc_total_reserve and rpf is not None:
+                ordc_adder = np.asarray(rpf, dtype=float)[:T, -1].copy()
+            else:
+                ordc_adder = rp.copy()
     total_overlay = np.zeros(T, dtype=float)
     if overlay is not None:
         total_overlay = total_overlay + overlay
@@ -1743,6 +1754,9 @@ def solve_and_persist(
     miso_reserve_pergen: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
+    ercot_ordc_total_reserve: bool = False,
+    ercot_storage_as_product_credit: bool = False,
+    gas_hh_monthly_shape: bool = False,
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
@@ -1971,6 +1985,9 @@ def solve_and_persist(
             miso_reserve_pergen=miso_reserve_pergen,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
+            ercot_ordc_total_reserve=ercot_ordc_total_reserve,
+            ercot_storage_as_product_credit=ercot_storage_as_product_credit,
+            gas_hh_monthly_shape=gas_hh_monthly_shape,
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
@@ -2108,6 +2125,7 @@ def solve_and_persist(
                     ercot_dam_as_scarcity_threshold=ercot_dam_as_scarcity_threshold,
                     ercot_reserve_supply_cap=ercot_reserve_supply_cap,
                     ercot_storage_as_endogenous=ercot_storage_as_endogenous,
+                    ercot_ordc_total_reserve=ercot_ordc_total_reserve,
                 )
             )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
@@ -2257,6 +2275,9 @@ def solve_and_persist(
         "miso_reserve_pergen": miso_reserve_pergen,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
+        "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
+        "ercot_storage_as_product_credit": ercot_storage_as_product_credit,
+        "gas_hh_monthly_shape": gas_hh_monthly_shape,
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
         "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
@@ -2427,6 +2448,14 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_ecrs_conservative_deployment=True
         )
+    if ercot_ordc_total_reserve:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
+    if ercot_storage_as_product_credit:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_storage_as_product_credit=True
+        )
+    if gas_hh_monthly_shape:
+        recorded_cfg = recorded_cfg.with_overrides(gas_hh_monthly_shape=True)
     if ercot_as_aware_commitment:
         recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
     if ercot_reserve_supply_cap:
@@ -5032,6 +5061,42 @@ def main() -> None:
         "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
     )
     parser.add_argument(
+        "--ercot-ordc-total-reserve",
+        action="store_true",
+        help="ERCOT: layer the lumped ORDC TOTAL-reserve demand curve (the "
+        "published RTORPA mechanism, NPRR568/OBDRR048) on top of the "
+        "multi-product AS families — one extra all-class reserve-balance "
+        "family drawing on the SUM of every product's cleared reserve, so "
+        "product withholding AND the total-reserve LOLPxVOLL curve price "
+        "together (the faithful pre-RTC+B stack). No new reserve columns, "
+        "no new headroom; published market design, zero fitted parameters. "
+        "Requires --energy-reserve-coopt + --ercot-multiproduct-as-coopt. "
+        "ERCOT-only. Off (default).",
+    )
+    parser.add_argument(
+        "--ercot-storage-as-product-credit",
+        action="store_true",
+        help="ERCOT multi-product co-opt, measured storage path: net the "
+        "measured hourly battery AS award (60-Day DAM per-resource-type "
+        "series) pro-rata off the fast products' (RegUp/RRS/ECRS) "
+        "requirements, so the products do not pull the batteries' awarded "
+        "MW from thermal headroom. The multi-product analogue of "
+        "--ercot-storage-as-reserve's requirement netting; same from-year "
+        "gate. No-op under --ercot-storage-as-endogenous. Off (default).",
+    )
+    parser.add_argument(
+        "--gas-hh-monthly-shape",
+        action="store_true",
+        help="Replace the generic climatological monthly gas SHAPE with the "
+        "measured Henry Hub monthly shape for the year, hour-weight-"
+        "normalized so the annual mean stays exactly the trusted annual "
+        "level (fuel.gas_seasonal_shape). Measured commodity-price shape "
+        "(rule #12 delivered fuel prices) — the reconciled variant the "
+        "Run-77 postmortem named; the raw EIA-923 receipt LEVEL swap "
+        "remains rejected for ERCOT. Forward years keep the generic shape. "
+        "Off (default).",
+    )
+    parser.add_argument(
         "--miso-reserve-pergen",
         action="store_true",
         help="MISO PER-ASSET reserve co-optimization: one R column per "
@@ -6325,6 +6390,9 @@ def main() -> None:
         miso_zonal_reserves=args.miso_zonal_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
+        ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
+        ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
+        gas_hh_monthly_shape=args.gas_hh_monthly_shape,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
         ercot_reserve_supply_cap_from_year=args.ercot_reserve_supply_cap_from_year,
