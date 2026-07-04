@@ -756,26 +756,30 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 1.27,
-        # econ band re-anchored to CC part-load physics (2026-07-03, neiso-46).
-        # The generic 1.06->1.27 band was inherited from the ERCOT-shaped curve
-        # and expresses the above-SRMC offer component as a HEAT-RATE MULTIPLIER,
+        # econ band re-anchored (2026-07-03, neiso-45/46/47 probe chain). The
+        # generic 1.06->1.27 band was inherited from the ERCOT-shaped curve and
+        # expresses the above-SRMC offer component as a HEAT-RATE MULTIPLIER,
         # i.e. proportional to the fuel price. The month/hour decomposition of
-        # the 2024 C3b failure showed the signature that parameterization forces:
-        # a flat all-hours winter over-shoot (Jan/Feb 2024 +$9-10 at $3.5-7.7
-        # AGT hub gas; model marginal implied HR ~10.5 vs the actual mild-winter
-        # margin at efficient-CC ~8.2) alongside a summer-evening under-shoot
+        # the 2024 C3b failure showed the signature that parameterization
+        # forces: a flat all-hours winter over-shoot (Jan/Feb 2024 +$9-10 at
+        # $3.5-7.7 AGT hub gas; model marginal implied HR ~10.5 vs the actual
+        # mild-winter margin ~8.2) alongside a summer-evening under-shoot
         # (Jul/Aug 2024 -$10-11 at $1.8 gas, when the same multipliers collapse
-        # the whole stack to ~$33). Physics: the econ band is the incremental
-        # output of an already-committed CC (second GT / upper dispatch range),
-        # whose INCREMENTAL heat rate sits at or slightly below the
-        # plant-average HR (the average is dragged up by min-load hours the
-        # committed 1.27/1.30x anchor already prices) and rises only gently
-        # toward the duct margin: 0.95 -> 1.05. The fuel-price-INVARIANT part
-        # of the real offer component (start/no-load amortization, ISO-NE
-        # fast-start pricing) is priced by --tranche-startup-amortization from
-        # the NREL start-cost table, not by inflating the HR band.
-        "econ_low": 0.95,
-        "econ_high": 1.05,
+        # the whole stack to ~$33). Physics bound: the econ band is the
+        # incremental output of an already-committed CC, whose incremental heat
+        # rate sits near the plant-average and rises gently toward the duct
+        # margin. Level calibration (rule #1 second step — offer-curve tuning
+        # AFTER the structure is right): the high-gas winter months make the
+        # marginal implied HR directly observable — the actual mild-winter
+        # margin ~8.2 MMBtu/MWh lands on the model's marginal winter plant
+        # (Salem Harbor, base HR 7.38) at a mid-band of ~1.08x, so the ramp is
+        # 1.00 -> 1.15 (the 0.95->1.05 probe, neiso-45, left the winter floor
+        # low across the board: C3a 2023 -6.2%). The fuel-price-INVARIANT part
+        # of the real offer component (fast-start start/no-load amortization)
+        # is priced by --tranche-startup-amortization on the fast-start-capable
+        # tranches, not by inflating the HR band.
+        "econ_low": 1.00,
+        "econ_high": 1.15,
         "peak": 2.25,
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,

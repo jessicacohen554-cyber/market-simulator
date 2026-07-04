@@ -6054,24 +6054,29 @@ def bins_to_fleet(
             [("sync", sync_cap, mustrun_hr, 1.0, 0, 0, 0.0)] if sync_cap > 0.5 else []
         )
         # Fast-start tranche pricing (Order 825 analogue,
-        # ScenarioConfig.tranche_startup_amortization): the gas bins' ECON and
-        # PEAK tranches carry the same NREL start cost as the committed anchor,
-        # so compute_monthly_markup amortizes each tranche's own P0 run lengths
+        # ScenarioConfig.tranche_startup_amortization): the FAST-START-capable
+        # tranches carry the same NREL start cost as the committed anchor, so
+        # compute_monthly_markup amortizes each tranche's own P0 run lengths
         # into its P1 bid — the fuel-price-invariant commitment-cost component
-        # of the real offer stack (a 2x1 CC's upper blocks are the second GT /
-        # duct burners; dispatching them after an overnight turndown is a
-        # start). Min-run/min-down stay 0 (bid markup only, no new UC coupling).
-        _fsp_startup = (
+        # of the real offer stack. Scope follows ISO-NE's fast-start pricing
+        # eligibility (start + notification <= ~30 min): simple-cycle CT
+        # tranches (a peaker's econ blocks ARE additional quick-start units)
+        # and the CC duct-burner/quick-response PEAK band. A big CC's econ
+        # blocks are deliberately EXCLUDED — block-loading a committed CC is
+        # not a fast start, and its start costs settle as NCPC uplift, not in
+        # the LMP (v1 of this lever marked up CC econ slices and inflated the
+        # mild-winter bulk price ~$4 the actual does not show). Min-run /
+        # min-down stay 0 (bid markup only, no new UC coupling).
+        _fsp_on = getattr(config, "tranche_startup_amortization", False)
+        _fsp_econ = startup if (_fsp_on and group in ("CT_PEAKER", "CT_CHP")) else 0.0
+        _fsp_peak = (
             startup
-            if (
-                getattr(config, "tranche_startup_amortization", False)
-                and group in _GAS_BIN_GROUPS
-            )
+            if (_fsp_on and group in ("CT_PEAKER", "CT_CHP", "CC_REGULAR", "CC_CHP"))
             else 0.0
         )
-        if _fsp_startup > 0.0:
+        if _fsp_econ > 0.0:
             econ_steps = [
-                (sfx, cap_, hr_, vm_, mr_, md_, _fsp_startup)
+                (sfx, cap_, hr_, vm_, mr_, md_, _fsp_econ)
                 for sfx, cap_, hr_, vm_, mr_, md_, _su in econ_steps
             ]
         tranches = [
@@ -6079,7 +6084,7 @@ def bins_to_fleet(
             *sync_tranches,
             *committed_tranches,
             *econ_steps,
-            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_startup),
+            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_peak),
         ]
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
