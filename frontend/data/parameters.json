@@ -15870,6 +15870,44 @@
       ]
     },
     {
+      "param_id": "scenario.neiso_winter_fuel_inventory",
+      "display_name": "Neiso Winter Fuel Inventory",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "NEISO winter (Nov-Mar) oil-burn",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_winter_fuel_start_fill_bbl",
+      "display_name": "Neiso Winter Fuel Start Fill Bbl",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "Start-of-winter",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nominal_discount_rate",
       "display_name": "Nominal Discount Rate",
       "value": 0.08,
@@ -16057,6 +16095,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nysdec_peaker_rule_availability",
+      "display_name": "Nysdec Peaker Rule Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "NYSDEC 6 NYCRR Subpart 227-3 \"peaker rule\" availability overlay (NYISO). The regulation caps ozone-season (May 1 - Sep 30) NOx from simple-cycle turbines in two phases (2023-05-01 / 2025-05-01); units whose compliance plan is ozone-season shutdown or reliability-only operation are unavailable to the energy market inside the window. When set, the curated unit-level compliance schedule (data/raw/reference/nysdec-227-3-peaker-compliance.csv — NYISO Gold Book Tables IV-3..IV-6, 2023-2025 vintages, per-unit citations in the CSV) zeroes/derates each restricted unit's availability inside its effective ozone windows. AVAILABILITY ONLY, never an offer or price change — the same rule-#12 admissibility class as the CAMPD unit-outage windows: an exogenous regulatory availability event with a forward story (the schedule extends through the 2030 NYPA phase-out) that regenerates from the regulation, not from observed CF. Units the NYISO STAR process designated to remain in operation past the compliance date (Gowanus 2&3 / Narrows 1&2 barges, to May 2027) are carried in the CSV but NOT restricted — the designation is part of the same regulatory record. Default off.",
+      "source_date": "2023-05",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -17152,6 +17208,24 @@
       "tier": 1,
       "source": "Fast-start tranche pricing (ISO-NE Order 825 analogue): when set, the FAST-START-capable tranches of the gas CAMPD bins carry the bin's NREL startup cost (fleet.BIN_STARTUP_COST_PER_MW, NREL/SR-5500-55433) exactly as the committed tranche already does, so compute_monthly_markup amortizes each tranche's own P0 run lengths into its P1 bid. Scope follows ISO-NE fast-start pricing eligibility (start + notification <= ~30 min): CT_PEAKER/CT_CHP econ+peak tranches (a peaker's upper blocks are additional quick-start units) and the CC_REGULAR/CC_CHP duct-burner/quick-response PEAK band only. A big CC's econ blocks are deliberately excluded — block-loading a committed CC is not a fast start, and its start costs settle as NCPC uplift, not in the LMP. The resulting offer component is fuel-price-INVARIANT ($/MWh from $/MW-start over run hours), which the heat-rate-multiplier parameterization cannot express: a mult-only curve over-prices high-gas winter months and under-prices cheap-gas summer evening peaks simultaneously (the NEISO 2024 C3b Jan/Feb +$9-10 vs Jul/Aug -$10-11 signature). Dynamics-correct: a peak block run 4 evening hours bids +startup/4 per MWh; a block marginal around the clock in a cold month bids +startup/run≈0. No new constants — reuses the cited NREL startup table and the existing P0 run-length machinery. Default off → every prior keeper stays byte-identical.",
       "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.tranche_startup_measured_runs",
+      "display_name": "Tranche Startup Measured Runs",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "Fast-start amortization v3 — MEASURED run-length basis (requires ``tranche_startup_amortization``). v2 amortizes each fast-start tranche's NREL start cost over the tranche's own P0 run lengths, which is circular when the offer level itself is wrong: offers too cheap -> P0 runs the CTs in long blocks -> per-MWh amortized start cost ~0 -> the lever self-disables (the nyiso-44 probe finding: CT_PEAKER moved only 4.90 -> 4.75 TWh vs 2.13 actual). When set, the simple-cycle CT tranches (CT_PEAKER / CT_CHP) instead amortize over the unit's CAMPD-MEASURED median start-to-stop run length (scripts/derive_campd_ct_run_lengths.py: consecutive grossLoad-online hours from the unit-level CAMPD extracts, pooled 2023-2025, ISO-class median fallback for plants without CEMS). Basis choice (documented per the derivation): the measured median is the EX-ANTE expected-run horizon real GT offers amortize start recovery over (the NYISO/ISO-NE fast-start pricing convention); the endogenous P0 run length may only SHORTEN the horizon (a unit the model itself starts for 2 h genuinely pays its start over 2 h), never lengthen it beyond the measured basis — markup = startup / max(1, min(P0_month_avg_run, measured_median)), a month with no P0 runs uses the measured median outright. This removes the self-disabling circularity while keeping the month-resolved dynamics. CC peak (duct-burner) bands keep the v2 P0 basis — a duct burner's \"run\" is not a CEMS start-to-stop block, so the measured statistic does not describe it. The measured run length is a rule-#12-admissible measured market-behaviour parameter (same class as the CAMPD committed shares / min-stable loads): it regenerates from the CAMPD pipeline for any new vintage and re-derives only when its source data updates (rule #23), never from a residual. Default off -> every prior keeper stays byte-identical.",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
