@@ -98,7 +98,8 @@
     /** Canonical criterion display order. */
     const CRITERIA_ORDER = [
       'sysvol', 'fuelmix', 'price_mean', 'price_shape', 'price_tail',
-      'dispatch_corr', 'co2', 'storage', 'governance'
+      'dispatch_corr', 'co2', 'storage', 'storage_shape',
+      'shape', 'forced_share', 'governance'
     ];
 
     /** Ordered criteria entries from a keeper. */
@@ -176,6 +177,11 @@
         // Years
         if (keeper.scorable_years && keeper.scorable_years.length) {
           html += `<div class="cs-keeper-info">Years: ${keeper.scorable_years.join(', ')}</div>`;
+        }
+
+        if (keeper.statmode_d7) {
+          const s = keeper.statmode_d7;
+          html += `<div class="cs-keeper-info">D-7 stat-mode gap: ${esc(String(s.keeper_fails))} &rarr; ${esc(String(s.statmode_fails))} fails <span style="opacity:.7">(reported)</span></div>`;
         }
 
         // Mini criteria marks
@@ -265,6 +271,27 @@
           Keeper run: <a class="run-id-link" href="${runLink}">${esc(keeper.run_id)}</a>
           ${keeper.label ? ` &mdash; ${esc(keeper.label)}` : ''}
         </p>`;
+      }
+
+      // D-7 statistical-mode fail-count gap — REPORTED, never gating
+      // (audit §7 D-7; data: frontend/data/backcast/statmode_d7.json).
+      if (keeper.statmode_d7) {
+        const s = keeper.statmode_d7;
+        const probeLink = s.probe_run_id
+          ? `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(s.probe_run_id)}`
+          : null;
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">D-7 REPORTED</span>
+            Statistical-mode gap: <strong>${esc(String(s.keeper_fails))} fails (overlays on)
+            &rarr; ${esc(String(s.statmode_fails))} fails (overlays off)</strong>
+            — non-gating; measures overlay-carried in-sample skill.
+            ${probeLink ? `<a class="run-id-link" href="${probeLink}">probe</a>` : ''}
+            ${s.stale ? ' <em>(measured against a prior keeper — re-measure)</em>' : ''}
+          </p>
+          ${s.note ? `<p style="margin: 4px 0; font-size: 0.8rem;">${esc(s.note)}</p>` : ''}
+        </div>`;
       }
 
       // Reasons
