@@ -44,12 +44,53 @@ python scripts/run_sensitivity_tornado.py --iso ERCOT \
     --start-year 2026 --end-year 2028 --workers 2 --out docs/handoffs
 ```
 
-### Results
+### Results (ERCOT 2026–2028, 31 forward solves, ~56 min wall)
 
-The ERCOT 2026–2028 tornado run and its ranked report
-(`sensitivity-tornado-ercot-2026-07-04.md`, `.json`) are added in a follow-up
-commit on this branch once the ~30 forward solves complete; the runner,
-registry, and tests land here first. Re-run the command above to regenerate.
+Base case: 173.9 Mt CO₂ (2028), 494.1 Mt horizon total, $23.09/MWh, 0 GW
+retired. Full ranked tables in `sensitivity-tornado-ercot-2026-07-04.md`.
+
+**CO₂ final-year leverage (|high − low|):**
+
+| Rank | Parameter | Cat. | Swing (Mt) | Low → High |
+|---:|---|---|---:|---|
+| 1 | Demand growth path | forecast | **56.1** | 154.4 → 210.5 |
+| 2 | Henry Hub gas price level | forecast | 10.5 | 166.7 → 177.3 |
+| 3 | Carbon price path | forecast | 9.7 | 173.9 → 164.2 |
+| 4 | Renewable CF scalar | dispatch | 9.4 | 179.0 → 169.6 |
+| 5 | Battery dispatch adder | dispatch | 0.7 | 173.9 → 174.6 |
+| 6 | Storage deployment pace | forecast | 0.3 | 174.1 → 173.8 |
+| 7–15 | all retirement-screen knobs¹ | forecast | **0.0** | — |
+
+¹ coal FOM multiplier, reliability floor, coal/gas-CC/gas-CT FOM bars, gas-CC &
+coal consecutive-loss years, renewable buildout pace, VOLL.
+
+Price leverage ranks gas ($5.7) > carbon ($3.5) > demand ($1.7); the retirement
+knobs move price $0 too.
+
+### The finding
+
+Two clean results feed the DOF ledger:
+
+1. **Demand growth is the dominant emissions DOF** by ~5×, then a tight cluster
+   of gas / carbon / renewable-CF (~10 Mt each). These four are where a keeper's
+   emissions band is actually made or lost — they need the strongest
+   identification sources in the attestation (rule 21). Notably the emissions
+   band is set by **input drivers**, not by the calibrated retirement/FOM knobs.
+
+2. **Every retirement-screen knob has *zero* near-term leverage, and 0 GW
+   retires in any variant** (including ±band coal FOM, reliability floor, FOM
+   bars, consecutive-loss years). Over a 3-year ERCOT horizon with ~5 %/yr load
+   growth, no economic thermal retirement fires — so the whole retirement-DOF
+   block is inert here. This corroborates **CX-2** (one-pass myopia: the fleet
+   lags the load ramp and incumbent fossil fills the gap) and the audit's
+   "retirements are floor- not economics-driven" note. Their leverage is a
+   longer-horizon phenomenon; a tornado run out to ~2035 is required to exercise
+   them (much longer runtime — the retirement DOFs cannot be gated on this
+   near-term window alone).
+
+**Reproduce/extend.** Re-run with `--end-year 2035` (and optionally
+`--campd-bins`) to surface retirement-DOF leverage once the horizon is long
+enough for economic exits to fire.
 
 ---
 

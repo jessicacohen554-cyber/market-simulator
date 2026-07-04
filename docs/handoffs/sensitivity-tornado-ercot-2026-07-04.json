@@ -1,0 +1,2430 @@
+{
+  "iso": "ERCOT",
+  "start_year": 2026,
+  "end_year": 2028,
+  "base_overrides": {
+    "use_campd_bins": false
+  },
+  "elapsed_s": 3361.7,
+  "results": {
+    "base": {
+      "variant_id": "base",
+      "param_key": "base",
+      "direction": "base",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "gas_price:low": {
+      "variant_id": "gas_price:low",
+      "param_key": "gas_price",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 166.7273,
+      "co2_mt_total": 471.59450000000004,
+      "avg_price": 18.343333333333334,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 149.9432,
+          "avg_price": 17.65,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 154.924,
+          "avg_price": 17.71,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 166.7273,
+          "avg_price": 19.67,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "demand_growth:low": {
+      "variant_id": "demand_growth:low",
+      "param_key": "demand_growth",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 154.4308,
+      "co2_mt_total": 451.7178,
+      "avg_price": 22.650000000000002,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 150.3832,
+          "avg_price": 22.79,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 146.9038,
+          "avg_price": 21.42,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 154.4308,
+          "avg_price": 23.74,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "gas_price:high": {
+      "variant_id": "gas_price:high",
+      "param_key": "gas_price",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 177.2514,
+      "co2_mt_total": 502.1957,
+      "avg_price": 24.0,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 160.0945,
+          "avg_price": 23.23,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 164.8498,
+          "avg_price": 23.32,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 177.2514,
+          "avg_price": 25.45,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "carbon_price:low": {
+      "variant_id": "carbon_price:low",
+      "param_key": "carbon_price",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "carbon_price:high": {
+      "variant_id": "carbon_price:high",
+      "param_key": "carbon_price",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 164.247,
+      "co2_mt_total": 478.5933,
+      "avg_price": 26.563333333333333,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 155.0802,
+          "avg_price": 25.31,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 164.247,
+          "avg_price": 31.47,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "demand_growth:high": {
+      "variant_id": "demand_growth:high",
+      "param_key": "demand_growth",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 210.4929,
+      "co2_mt_total": 569.4435,
+      "avg_price": 24.349999999999998,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 174.1661,
+          "avg_price": 23.46,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 184.7845,
+          "avg_price": 23.03,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 210.4929,
+          "avg_price": 26.56,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "coal_fom_multiplier:low": {
+      "variant_id": "coal_fom_multiplier:low",
+      "param_key": "coal_fom_multiplier",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "coal_fom_multiplier:high": {
+      "variant_id": "coal_fom_multiplier:high",
+      "param_key": "coal_fom_multiplier",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "reserve_margin:low": {
+      "variant_id": "reserve_margin:low",
+      "param_key": "reserve_margin",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "reserve_margin:high": {
+      "variant_id": "reserve_margin:high",
+      "param_key": "reserve_margin",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "retire_years_gas_cc:low": {
+      "variant_id": "retire_years_gas_cc:low",
+      "param_key": "retire_years_gas_cc",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "retire_years_gas_cc:high": {
+      "variant_id": "retire_years_gas_cc:high",
+      "param_key": "retire_years_gas_cc",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_coal:low": {
+      "variant_id": "fixed_om_coal:low",
+      "param_key": "fixed_om_coal",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_coal:high": {
+      "variant_id": "fixed_om_coal:high",
+      "param_key": "fixed_om_coal",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_gas_cc:low": {
+      "variant_id": "fixed_om_gas_cc:low",
+      "param_key": "fixed_om_gas_cc",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_gas_cc:high": {
+      "variant_id": "fixed_om_gas_cc:high",
+      "param_key": "fixed_om_gas_cc",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_gas_ct:low": {
+      "variant_id": "fixed_om_gas_ct:low",
+      "param_key": "fixed_om_gas_ct",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "fixed_om_gas_ct:high": {
+      "variant_id": "fixed_om_gas_ct:high",
+      "param_key": "fixed_om_gas_ct",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "renewable_buildout:low": {
+      "variant_id": "renewable_buildout:low",
+      "param_key": "renewable_buildout",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "renewable_buildout:high": {
+      "variant_id": "renewable_buildout:high",
+      "param_key": "renewable_buildout",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "renewable_cf:low": {
+      "variant_id": "renewable_cf:low",
+      "param_key": "renewable_cf",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 179.0148,
+      "co2_mt_total": 507.92470000000003,
+      "avg_price": 23.47666666666667,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 163.8382,
+          "avg_price": 23.29,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 165.0717,
+          "avg_price": 22.28,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 179.0148,
+          "avg_price": 24.86,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "renewable_cf:high": {
+      "variant_id": "renewable_cf:high",
+      "param_key": "renewable_cf",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 169.6224,
+      "co2_mt_total": 480.93129999999996,
+      "avg_price": 22.72333333333333,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 155.0771,
+          "avg_price": 22.62,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 156.2318,
+          "avg_price": 21.4,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 169.6224,
+          "avg_price": 24.15,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "storage_deployment:low": {
+      "variant_id": "storage_deployment:low",
+      "param_key": "storage_deployment",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 174.0769,
+      "co2_mt_total": 494.34069999999997,
+      "avg_price": 23.073333333333334,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2463,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 161.0175,
+          "avg_price": 21.81,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 174.0769,
+          "avg_price": 24.5,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "battery_adder:low": {
+      "variant_id": "battery_adder:low",
+      "param_key": "battery_adder",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "storage_deployment:high": {
+      "variant_id": "storage_deployment:high",
+      "param_key": "storage_deployment",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.7869,
+      "co2_mt_total": 493.5405,
+      "avg_price": 23.116666666666664,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2844,
+          "avg_price": 22.95,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.4692,
+          "avg_price": 21.87,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.7869,
+          "avg_price": 24.53,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "battery_adder:high": {
+      "variant_id": "battery_adder:high",
+      "param_key": "battery_adder",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 174.6217,
+      "co2_mt_total": 495.71720000000005,
+      "avg_price": 23.223333333333333,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.4747,
+          "avg_price": 23.02,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 161.6208,
+          "avg_price": 21.95,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 174.6217,
+          "avg_price": 24.7,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "voll:low": {
+      "variant_id": "voll:low",
+      "param_key": "voll",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "retire_years_coal:low": {
+      "variant_id": "retire_years_coal:low",
+      "param_key": "retire_years_coal",
+      "direction": "low",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "voll:high": {
+      "variant_id": "voll:high",
+      "param_key": "voll",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    },
+    "retire_years_coal:high": {
+      "variant_id": "retire_years_coal:high",
+      "param_key": "retire_years_coal",
+      "direction": "high",
+      "status": "ok",
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0,
+      "retired_by_fuel": {},
+      "per_year": [
+        {
+          "year": 2026,
+          "co2_mt": 159.2661,
+          "avg_price": 22.91,
+          "capacity_gw": {
+            "gas_ct": 21.043,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "hydro": 0.01,
+            "wind": 42.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2027,
+          "co2_mt": 160.8548,
+          "avg_price": 21.84,
+          "capacity_gw": {
+            "gas_ct": 21.923,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 38.73,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        },
+        {
+          "year": 2028,
+          "co2_mt": 173.9424,
+          "avg_price": 24.52,
+          "capacity_gw": {
+            "gas_ct": 22.334,
+            "nuclear": 4.98,
+            "coal": 12.678,
+            "biomass": 0.123,
+            "gas_cc": 39.404,
+            "oil": 0.671,
+            "wind": 47.0,
+            "solar": 38.0
+          }
+        }
+      ],
+      "error": null
+    }
+  },
+  "ranking": {
+    "base": {
+      "co2_mt_final": 173.9424,
+      "co2_mt_total": 494.0633,
+      "avg_price": 23.09,
+      "retired_thermal_gw": 0.0
+    },
+    "ranked": {
+      "co2_mt_final": [
+        {
+          "key": "demand_growth",
+          "label": "Demand growth path",
+          "category": "forecast",
+          "low": 154.4308,
+          "high": 210.4929,
+          "delta": 56.0621,
+          "abs_delta": 56.0621
+        },
+        {
+          "key": "gas_price",
+          "label": "Henry Hub gas price level",
+          "category": "forecast",
+          "low": 166.7273,
+          "high": 177.2514,
+          "delta": 10.5241,
+          "abs_delta": 10.5241
+        },
+        {
+          "key": "carbon_price",
+          "label": "Carbon price path",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 164.247,
+          "delta": -9.6954,
+          "abs_delta": 9.6954
+        },
+        {
+          "key": "renewable_cf",
+          "label": "Renewable capacity-factor scalar",
+          "category": "dispatch",
+          "low": 179.0148,
+          "high": 169.6224,
+          "delta": -9.3924,
+          "abs_delta": 9.3924
+        },
+        {
+          "key": "battery_adder",
+          "label": "Battery dispatch adder",
+          "category": "dispatch",
+          "low": 173.9424,
+          "high": 174.6217,
+          "delta": 0.6793,
+          "abs_delta": 0.6793
+        },
+        {
+          "key": "storage_deployment",
+          "label": "Storage deployment pace",
+          "category": "forecast",
+          "low": 174.0769,
+          "high": 173.7869,
+          "delta": -0.29,
+          "abs_delta": 0.29
+        },
+        {
+          "key": "coal_fom_multiplier",
+          "label": "Coal FOM multiplier (retirement)",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "reserve_margin",
+          "label": "Retirement reliability floor",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_gas_cc",
+          "label": "Gas-CC consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_coal",
+          "label": "Coal going-forward FOM bar",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_cc",
+          "label": "Gas-CC going-forward FOM bar",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_ct",
+          "label": "Gas-CT going-forward FOM bar",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "renewable_buildout",
+          "label": "Renewable buildout pace",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "voll",
+          "label": "Value of lost load (price cap)",
+          "category": "dispatch",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_coal",
+          "label": "Coal consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 173.9424,
+          "high": 173.9424,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        }
+      ],
+      "co2_mt_total": [
+        {
+          "key": "demand_growth",
+          "label": "Demand growth path",
+          "category": "forecast",
+          "low": 451.7178,
+          "high": 569.4435,
+          "delta": 117.7257,
+          "abs_delta": 117.7257
+        },
+        {
+          "key": "gas_price",
+          "label": "Henry Hub gas price level",
+          "category": "forecast",
+          "low": 471.59450000000004,
+          "high": 502.1957,
+          "delta": 30.6012,
+          "abs_delta": 30.6012
+        },
+        {
+          "key": "renewable_cf",
+          "label": "Renewable capacity-factor scalar",
+          "category": "dispatch",
+          "low": 507.92470000000003,
+          "high": 480.93129999999996,
+          "delta": -26.9934,
+          "abs_delta": 26.9934
+        },
+        {
+          "key": "carbon_price",
+          "label": "Carbon price path",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 478.5933,
+          "delta": -15.47,
+          "abs_delta": 15.47
+        },
+        {
+          "key": "battery_adder",
+          "label": "Battery dispatch adder",
+          "category": "dispatch",
+          "low": 494.0633,
+          "high": 495.71720000000005,
+          "delta": 1.6539,
+          "abs_delta": 1.6539
+        },
+        {
+          "key": "storage_deployment",
+          "label": "Storage deployment pace",
+          "category": "forecast",
+          "low": 494.34069999999997,
+          "high": 493.5405,
+          "delta": -0.8002,
+          "abs_delta": 0.8002
+        },
+        {
+          "key": "coal_fom_multiplier",
+          "label": "Coal FOM multiplier (retirement)",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "reserve_margin",
+          "label": "Retirement reliability floor",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_gas_cc",
+          "label": "Gas-CC consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_coal",
+          "label": "Coal going-forward FOM bar",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_cc",
+          "label": "Gas-CC going-forward FOM bar",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_ct",
+          "label": "Gas-CT going-forward FOM bar",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "renewable_buildout",
+          "label": "Renewable buildout pace",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "voll",
+          "label": "Value of lost load (price cap)",
+          "category": "dispatch",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_coal",
+          "label": "Coal consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 494.0633,
+          "high": 494.0633,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        }
+      ],
+      "avg_price": [
+        {
+          "key": "gas_price",
+          "label": "Henry Hub gas price level",
+          "category": "forecast",
+          "low": 18.343333333333334,
+          "high": 24.0,
+          "delta": 5.6567,
+          "abs_delta": 5.6567
+        },
+        {
+          "key": "carbon_price",
+          "label": "Carbon price path",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 26.563333333333333,
+          "delta": 3.4733,
+          "abs_delta": 3.4733
+        },
+        {
+          "key": "demand_growth",
+          "label": "Demand growth path",
+          "category": "forecast",
+          "low": 22.650000000000002,
+          "high": 24.349999999999998,
+          "delta": 1.7,
+          "abs_delta": 1.7
+        },
+        {
+          "key": "renewable_cf",
+          "label": "Renewable capacity-factor scalar",
+          "category": "dispatch",
+          "low": 23.47666666666667,
+          "high": 22.72333333333333,
+          "delta": -0.7533,
+          "abs_delta": 0.7533
+        },
+        {
+          "key": "battery_adder",
+          "label": "Battery dispatch adder",
+          "category": "dispatch",
+          "low": 23.09,
+          "high": 23.223333333333333,
+          "delta": 0.1333,
+          "abs_delta": 0.1333
+        },
+        {
+          "key": "storage_deployment",
+          "label": "Storage deployment pace",
+          "category": "forecast",
+          "low": 23.073333333333334,
+          "high": 23.116666666666664,
+          "delta": 0.0433,
+          "abs_delta": 0.0433
+        },
+        {
+          "key": "coal_fom_multiplier",
+          "label": "Coal FOM multiplier (retirement)",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "reserve_margin",
+          "label": "Retirement reliability floor",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_gas_cc",
+          "label": "Gas-CC consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_coal",
+          "label": "Coal going-forward FOM bar",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_cc",
+          "label": "Gas-CC going-forward FOM bar",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_ct",
+          "label": "Gas-CT going-forward FOM bar",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "renewable_buildout",
+          "label": "Renewable buildout pace",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "voll",
+          "label": "Value of lost load (price cap)",
+          "category": "dispatch",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_coal",
+          "label": "Coal consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 23.09,
+          "high": 23.09,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        }
+      ],
+      "retired_thermal_gw": [
+        {
+          "key": "gas_price",
+          "label": "Henry Hub gas price level",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "demand_growth",
+          "label": "Demand growth path",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "carbon_price",
+          "label": "Carbon price path",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "coal_fom_multiplier",
+          "label": "Coal FOM multiplier (retirement)",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "reserve_margin",
+          "label": "Retirement reliability floor",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_gas_cc",
+          "label": "Gas-CC consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_coal",
+          "label": "Coal going-forward FOM bar",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_cc",
+          "label": "Gas-CC going-forward FOM bar",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "fixed_om_gas_ct",
+          "label": "Gas-CT going-forward FOM bar",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "renewable_buildout",
+          "label": "Renewable buildout pace",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "renewable_cf",
+          "label": "Renewable capacity-factor scalar",
+          "category": "dispatch",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "storage_deployment",
+          "label": "Storage deployment pace",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "battery_adder",
+          "label": "Battery dispatch adder",
+          "category": "dispatch",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "voll",
+          "label": "Value of lost load (price cap)",
+          "category": "dispatch",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        },
+        {
+          "key": "retire_years_coal",
+          "label": "Coal consecutive-loss retirement years",
+          "category": "forecast",
+          "low": 0.0,
+          "high": 0.0,
+          "delta": 0.0,
+          "abs_delta": 0.0
+        }
+      ]
+    },
+    "failed": []
+  }
+}
