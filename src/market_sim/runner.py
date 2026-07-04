@@ -62,6 +62,7 @@ from market_sim.model.commitment import (
     reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
+from market_sim.model.ancillary import realized_storage_as_revenue_per_mw_yr
 from market_sim.model.storage import (
     _elcc_for_duration,
     apply_storage_new_entry,
@@ -437,6 +438,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 iso,
                 cumulative=cumulative,
                 deliverability_headroom=storage_headroom,
+                endogenous_as_revenue_per_mw_yr=prior_results.get(
+                    "storage_as_revenue_per_mw_yr"
+                ),
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
 
@@ -1134,6 +1138,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "storage_power_mw": float(sum(storage.power_cap))
             if storage.power_cap.ndim == 1
             else float(storage.power_cap.sum(axis=0).max()),
+            # Storage AS revenue DERIVED from this year's co-opt reserve duals
+            # (the endogenous analogue of the exogenous as_revenue rate) — fed
+            # to next year's storage entry screen so exactly one mechanism
+            # prices storage AS under ercot_storage_as_endogenous (rule 19).
+            # 0.0 when the co-opt did not price reserve this year.
+            "storage_as_revenue_per_mw_yr": realized_storage_as_revenue_per_mw_yr(
+                result.reserve_price_by_family,
+                result.reserve_dispatch,
+                result.storage_charge,
+                result.storage_discharge,
+                storage.power_cap,
+                storage.zone_idx,
+                len(zone_names),
+            )
+            if getattr(config, "ercot_storage_as_endogenous", False)
+            else 0.0,
             # Renewable-pool and accredited-storage-firm capacity for next
             # year's reserve-margin adequacy backstop.
             "wind_cap_mw": float(np.sum(wind_cap)),
