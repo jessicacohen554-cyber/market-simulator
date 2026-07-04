@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-03-neiso-44-band-deleak",
+  "label": "neiso 44 band deleak",
+  "date": "2026-07-03",
+  "shorthand": "neiso-44-band-deleak",
+  "definition": "(PROBE) Cross-ISO band de-leakage (audit C-11/C-13, rule #24): NEISO's inherited ERCOT gas bands (CC_CHP, CT_CHP, CT_PEAKER econ 1.27/1.98, ST_GAS 0.81/1.05/1.40/4.20) are neutralized to 1.0; NEISO-grounded CC_REGULAR (neiso-46) and CT start-hurdle 1.35 / offer-cap peak 4.0 / physical F-class CC duct-burner 2.25 kept. EXPECTED REGRESSIONS vs keeper neiso-43 (not re-tuned back, rule #1): C3a mean LMP regresses to -6.6% (2023, was PASS) and C2 2025 gas +3.2% as the neutral gas bids lower the stack; C3b price-shape actually improves (2024 NRMSE fail clears). OPEN ROOT CAUSE: NEISO-grounded per-class CT/gas heat-rate spreads + the ISO-NE reserve-scarcity overlay carry the price level, not the removed ERCOT ramp.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-03-neiso-44-band-deleak.js",
+  "bundle": "results/calibration/neiso_deleak_bands"
+}

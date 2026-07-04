@@ -217,6 +217,26 @@ COAL_TRANCHES: list[tuple[float, float]] = [
     (0.45, 1.00),  # T3: economic dispatch — full fuel cost (~$24-27/MWh)
 ]
 
+# Legacy per-class heat-rate-override band defaults (econ/peak multipliers on the
+# plant's base heat rate) for the CC / gas-steam / CT_CHP supply-curve override
+# triples (``{cc,gas_st,ct}_*_hr_override`` in :class:`ScenarioConfig`). These
+# fire ONLY when the corresponding ``*_committed_hr_override`` is explicitly set
+# AND no ``offer_curve_by_group`` entry covers the group — i.e. the legacy
+# non-``offer_curve`` path used by the original ERCOT calibration before the
+# per-group offer curves existed. They are NOT ISO-generic fallbacks: no
+# non-ERCOT keeper reaches them (every ISO carries a per-group offer curve), and
+# rule #24 forbids their use as a cross-ISO fallback. Named here (rather than
+# buried as ``getattr(config, ..., <literal>)`` defaults in ``data/fleet.py`` /
+# ``data/offer_curves.py``) per audit rule #23 (no fallback literals in the offer
+# path). Source: ERCOT DAM offer-shape grounding, docs/ercot-dam-offer-hrmults-
+# 2026-06.md (part-load/duct-firing heat-rate spreads); ERCOT-lineage only.
+CC_ECON_HR_OVERRIDE_DEFAULT: float = 1.2  # CC economic band ≈ 1.2× base HR
+CC_PEAK_HR_OVERRIDE_DEFAULT: float = 1.8  # CC duct-firing peak ≈ 1.8× base HR
+GAS_ST_ECON_HR_OVERRIDE_DEFAULT: float = 1.0  # gas-steam econ ≈ flat full-load HR
+GAS_ST_PEAK_HR_OVERRIDE_DEFAULT: float = 1.5  # gas-steam peak ≈ 1.5× base HR
+CT_ECON_HR_OVERRIDE_DEFAULT: float = 1.1  # CT_CHP economic band ≈ 1.1× base HR
+CT_PEAK_HR_OVERRIDE_DEFAULT: float = 1.3  # CT_CHP peak band ≈ 1.3× base HR
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.
