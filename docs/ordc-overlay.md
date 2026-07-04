@@ -64,7 +64,7 @@ minimum contingency level X, where the adder pins to VOLL - lambda.
 | Multi-step RTORPA floor | `ordc_multistep_floor` + `constants.ORDC_FLOOR_STEPS` | $20 at R<=6,500 MW; $10 at 6,500-7,000 MW | OBDRR048, PUCT-approved 2023-10-12, effective 2023-11-01 (market notice M-A101623-01); date-gated in backcasts |
 | Reserve-error mu, sigma | `ordc_lolp_mu_mw` / `ordc_lolp_sigma_mw` / `ordc_lolp_params_path` | 0 / 1,400 MW flat (provisional — see below) | ERCOT NP6-576-ER "LOLP Distribution by Season and TOD Block" (report 13233): 4 seasons x 6 four-hour TOD blocks, refit quarterly on reserve-error history since nodal go-live |
 | AS plan netting | `ordc_as_plan_mw` | 0 (see "AS netting") | IMM 2023 State of the Market Report: 2023 average total AS 8,100 MW |
-| Reliability-deployment offset | `ordc_reliability_deployment_mw` | 0 (recommended ERCOT ~2,500; see "Reliability-deployment overlay") | NOT a published ORDC parameter — the RTORDPA analogue, calibrated to the 2023 stress year |
+| Reliability-deployment offset | ~~`ordc_reliability_deployment_mw`~~ **DELETED 2026-07-04** | — (the field no longer parses) | NOT a published ORDC parameter — was the RTORDPA analogue fitted to the 2023 LMP residual; deleted per CLAUDE.md rule 26 (see "Reliability-deployment overlay — DELETED") |
 
 **The mu/sigma table — RESOLVED (2026-06-13).** ERCOT publishes the
 seasonal/TOD-block reserve-error statistics in NP6-576-ER (ercot.com is
@@ -379,16 +379,20 @@ Per-class energy revenue, run92_kiamichi backcast, energy-only -> with adder
 Direction sanity holds: peakers and storage move most (in relative terms), and
 the adder revenue vanishes in the comfortable 2025 reserve year.
 
-## Reliability-deployment overlay (RTORDPA analogue) — DEPRECATED
+## Reliability-deployment overlay (RTORDPA analogue) — DELETED
 
-**Status (2026-06-17): SUPERSEDED by the on-line/off-line reserve split above.**
-`ScenarioConfig.ordc_reliability_deployment_mw` was a flat, non-physical offset
-**fitted to the 2023 LMP residual** (~2,500 MW). Per claude.md (no pinning the
-backcast to actuals) it is no longer part of the default reserve computation;
-it is retained only as a default-0, explicitly-labelled diagnostic probe that
-still subtracts from the online reserve when set. The grounded mechanism (the
-on-line/off-line split) now plays its role. The history below is kept for
-context.
+**Status (2026-07-04): DELETED — the field no longer exists and setting it
+raises** (CLAUDE.md rule 26, "deleted means deleted"; audit L10). It had been
+superseded 2026-06-17 by the on-line/off-line reserve split above and
+deprecated at default-0 — and was then **re-swept after deprecation**
+(calibration-log:185), demonstrating that a zeroed knob that still parses is a
+re-armable answer key. `ScenarioConfig.ordc_reliability_deployment_mw` was a
+flat, non-physical offset **fitted to the 2023 LMP residual** (~2,500 MW);
+per claude.md (no pinning the backcast to actuals) it could never be part of a
+keeper, and the grounded mechanism (the on-line/off-line split + measured
+AS-plan netting) now plays its role. The history below is kept for context —
+the mechanism it approximated (ERCOT's discretionary RTORDPA deployments) is
+real market history; the fitted knob is not the way to represent it.
 
 **Why it exists.** The published ORDC overlay above is parameter-honest and
 therefore recovers only ~7% of the 2023 summer scarcity gap (2023 monthly LMP
@@ -465,9 +469,11 @@ into a forecast. `ScenarioConfig.ercot_market_design` (`"auto"` / `"ordc"` /
 `"rtcb"`) selects the regime, and `scarcity.ercot_market_regime(year, config)`
 / `effective_reliability_deployment_mw(year, config)` apply it:
 
-- **ORDC regime** (auto: years ≤ 2025): the RTORDPA offset is
-  `ordc_reliability_deployment_mw` — so the 2023 backcast is reproduced under
-  its own design (MAE 32.5 → 12.3).
+- **ORDC regime** (auto: years ≤ 2025): **no reliability-deployment offset**
+  — the fitted `ordc_reliability_deployment_mw` knob was deleted 2026-07-04
+  (`effective_reliability_deployment_mw` returns a hard 0.0 here); the
+  measured RTORDPA overlay and the formulaic reserve accounting carry the
+  2023 scarcity representation instead.
 - **RTC+B regime** (auto: years ≥ 2026, the forecast): the offset is
   `rtcb_reliability_deployment_mw`, **default 0** — forward scarcity prices to
   fundamentals under the reformed design. A scenario can raise it to model
