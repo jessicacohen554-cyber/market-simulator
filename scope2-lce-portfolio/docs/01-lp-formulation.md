@@ -74,9 +74,9 @@ not a per-resource allowance; audit LP-3):
 Calendar months are indexed 0–11 with fixed day counts (Jan 31 days, …, Dec 31);
 aggregated from the 8760 hourly gen columns via vectorized month binning (ADR 0008).
 
-**Storage charge provenance** (optional, ADR 0017 — only when
-`config.storage_charge_policy = "excess_clean_only"`; the default `"arbitrage"`
-adds no rows):
+**Storage charge provenance** (optional, ADR 0017/0018 — added when
+`config.storage_charge_policy` is `"excess_clean_only"` *or*
+`"excess_headroom_only"`; the default `"arbitrage"` adds no rows):
 ```
 Σ_s chg[s,t] + excess[t] ≤ Σ_r gen[r,t]        ∀t
 ```
@@ -88,9 +88,27 @@ grid purchases and discharge serve load only, closing the merchant
 buy-low/sell-high channel so storage acts purely as a clean-shifting matching
 device. (The strict per-hour bound `chg_t ≤ max(0, Σgen_t − load_t)` is
 nonconvex and would need integers; the linear rows above are the tightest
-LP-expressible form — see ADR 0017 for the accepted divert-and-backfill
+*static* LP-expressible form — see ADR 0017 for the accepted divert-and-backfill
 residual, which the matching metric and residual-carbon accounting still
 penalize honestly.)
+
+**Divert-and-backfill diagnostic** (all policies, always on, ADR 0018): every
+solve reports `divert_backfill_mwh = Σ_t min(Σ_s chg[s,t], grid_buy[t])` — the
+energy that charged storage in the same hours the grid bought power. Zero means
+charging never coincided with a grid purchase. It appears on `PortfolioResult`,
+in the frontier parquet, and per setpoint in the ADR 0014 report.
+
+**Excess-headroom-only cut loop** (ADR 0018 — `storage_charge_policy =
+"excess_headroom_only"`): the divert-and-backfill residual above is nonconvex,
+so it is closed *outside* the matrix by `lp.solve_with_charge_policy`, an
+iterative wrapper around the `excess_clean_only` LP. Solve; find hours where
+both `Σ_s chg[s,t]` and `grid_buy[t]` exceed `EXCESS_HEADROOM_TOL_MWH = 1e-3`
+MWh (a threshold above IPM interior noise, below any meaningful MWh); pin those
+hours' charge columns to zero (a column upper bound) and re-solve; repeat until
+none remain. Each hour is cut at most once, so it terminates in ≤ `T` iterations
+(≤ 3 in practice) and every iteration stays a pure LP. This is a *conservative*
+restriction of the true nonconvex set — it can under-use storage but never
+overstates matching.
 
 ## Matching & premium
 
@@ -105,7 +123,8 @@ This is the **percentage of annual load energy matched at hourly granularity**, 
 "% of hours at 100% matching" (strict per-hour variant available via `strict_hourly_matching`
 in Mode B). Storage is charged from the aggregate node; grid purchases are counted unmatched
 at purchase time even if later discharged (conservative, no round-trip laundering). With
-`storage_charge_policy = "excess_clean_only"` (ADR 0017) grid charging is forbidden outright —
+`storage_charge_policy = "excess_clean_only"` (ADR 0017) — or `"excess_headroom_only"` (ADR 0018,
+which additionally eliminates divert-and-backfill) — grid charging is forbidden outright —
 see the storage-charge-provenance constraint above.
 **Residual carbon:** grid_buy is attributed hour-by-hour at the market simulator's
 fossil-only **average** emission rate (tCO₂/MWh, attributional/location-based accounting;
