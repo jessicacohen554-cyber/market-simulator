@@ -74,6 +74,24 @@ not a per-resource allowance; audit LP-3):
 Calendar months are indexed 0–11 with fixed day counts (Jan 31 days, …, Dec 31);
 aggregated from the 8760 hourly gen columns via vectorized month binning (ADR 0008).
 
+**Storage charge provenance** (optional, ADR 0017 — only when
+`config.storage_charge_policy = "excess_clean_only"`; the default `"arbitrage"`
+adds no rows):
+```
+Σ_s chg[s,t] + excess[t] ≤ Σ_r gen[r,t]        ∀t
+```
+Storage charges only on the portfolio's contracted clean generation net of
+exports, and exports come only from clean generation — never re-sold grid
+purchases or storage discharge. Combined with the energy balance this pins
+`grid_buy[t] ≤ load[t] − Σ dis[s,t]` and `Σ dis[s,t] ≤ load[t] − grid_buy[t]`:
+grid purchases and discharge serve load only, closing the merchant
+buy-low/sell-high channel so storage acts purely as a clean-shifting matching
+device. (The strict per-hour bound `chg_t ≤ max(0, Σgen_t − load_t)` is
+nonconvex and would need integers; the linear rows above are the tightest
+LP-expressible form — see ADR 0017 for the accepted divert-and-backfill
+residual, which the matching metric and residual-carbon accounting still
+penalize honestly.)
+
 ## Matching & premium
 
 **VOLUMETRIC hourly matching** (ADR 0007): within each hour, clean energy counts
@@ -86,7 +104,9 @@ annual hourly matching % = Σ_t matched_t / Σ_t load_t = 1 − Σ_t grid_buy[t]
 This is the **percentage of annual load energy matched at hourly granularity**, *not*
 "% of hours at 100% matching" (strict per-hour variant available via `strict_hourly_matching`
 in Mode B). Storage is charged from the aggregate node; grid purchases are counted unmatched
-at purchase time even if later discharged (conservative, no round-trip laundering).
+at purchase time even if later discharged (conservative, no round-trip laundering). With
+`storage_charge_policy = "excess_clean_only"` (ADR 0017) grid charging is forbidden outright —
+see the storage-charge-provenance constraint above.
 **Residual carbon:** grid_buy is attributed hour-by-hour at the market simulator's
 fossil-only **average** emission rate (tCO₂/MWh, attributional/location-based accounting;
 ADR 0013, superseding ADR 0007's marginal-rate attribution), plus — since ADR 0012 — the
