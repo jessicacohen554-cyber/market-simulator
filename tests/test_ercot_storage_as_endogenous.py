@@ -176,6 +176,10 @@ class TestWiringByteIdentical(unittest.TestCase):
             iso="ERCOT",
             weather_year=2025,
             hours=24,
+            # energy_reserve_coopt is required by the endogenous flag (the split
+            # is priced by the co-opt); the single-product ORDC path is used here
+            # (no multiproduct flag), so no forward-requirement gate applies.
+            energy_reserve_coopt=True,
             ercot_storage_as_reserve=True,
             ercot_storage_as_reserve_from_year=2025,
             storage_as_commitment=True,
