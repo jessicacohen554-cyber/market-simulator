@@ -32,6 +32,12 @@ directory plus the committed dashboard payloads:
   ``getattr`` heat-rate-multiplier literals) — neutral/per-ISO bands only.
   ``--keepers`` sweeps every keeper bundle registered in
   ``frontend/data/backcast/keepers.json`` (the CI quarantine mode).
+* **D-6 holdout quarantine (CI, in ``--keepers`` mode)** — assert NO
+  registered bundle (keeper or probe) declares a solve year outside the
+  2023-2025 calibration window unless its ISO carries a calibration-complete
+  marker in ``frontend/data/backcast/calibration-complete.json`` (which
+  authorizes the one-shot frozen-config holdout score of 2022 / H1-2026 —
+  CLAUDE.md rule 22, amended 2026-07-04).
 
 Model dispatch source: ``<bundle>/dispatch/<year>_P2.parquet`` (falling back
 to ``_P1``) when present; otherwise the committed dashboard run payload
@@ -173,6 +179,15 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
     "CT_PEAKER",
     "CT_CHP",
 )
+
+# D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04): the in-sample
+# calibration window. Any registered bundle carrying a solve year OUTSIDE this
+# window is a holdout breach unless its ISO has a calibration-complete marker
+# in frontend/data/backcast/calibration-complete.json (which authorizes the
+# one-shot frozen-config holdout score). Extend only when a new year is
+# formally promoted from holdout to in-sample with a new designated holdout.
+D6_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
+D6_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
 
 
 # ---------------------------------------------------------------------------
@@ -753,6 +768,59 @@ def run_d9_keepers(repo_root: Path) -> GateResult:
     return res
 
 
+def load_calibration_complete(repo_root: Path) -> dict[str, dict]:
+    """Return the per-ISO calibration-complete marker map (may be empty)."""
+    path = repo_root / D6_MARKER_FILE
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text()).get("complete", {})
+
+
+def run_d6_quarantine(repo_root: Path) -> GateResult:
+    """D-6 holdout quarantine across EVERY registered bundle (CI mode).
+
+    CLAUDE.md rule 22 (audit D-6, amended 2026-07-04): 2022 and H1-2026 are
+    fully quarantined — no solves, no scoring, no data intake — until an ISO's
+    calibration-complete marker exists in ``calibration-complete.json``. Any
+    registry sidecar declaring a solve year outside ``D6_CALIBRATION_YEARS``
+    for an unmarked ISO FAILs. Sweeps all registered runs (keepers AND
+    probes): a quarantine breach is a breach wherever it is registered.
+    """
+    res = GateResult("D-6 holdout quarantine (all registered bundles)")
+    complete = load_calibration_complete(repo_root)
+    reg_dir = repo_root / "frontend/data/backcast/registry"
+    for path in sorted(reg_dir.glob("*.json")):
+        side = json.loads(path.read_text())
+        iso = side.get("iso", "?")
+        years = [int(y) for y in side.get("years", [])]
+        breach = sorted(set(years) - D6_CALIBRATION_YEARS)
+        if not breach:
+            continue
+        marked = iso in complete
+        res.rows.append(
+            {
+                "run": path.stem,
+                "iso": iso,
+                "holdout_years": breach,
+                "calibration_complete": marked,
+                "verdict": "authorized one-shot" if marked else "FAIL",
+            }
+        )
+        if not marked:
+            res.failures.append(
+                f"{path.stem}: solve year(s) {breach} outside the calibration "
+                f"window {sorted(D6_CALIBRATION_YEARS)} with no {iso} "
+                f"calibration-complete marker in {D6_MARKER_FILE} — holdout "
+                "quarantine breach (CLAUDE.md rule 22)"
+            )
+    if not res.rows:
+        res.notes.append(
+            "no registered bundle carries a year outside "
+            f"{sorted(D6_CALIBRATION_YEARS)} — quarantine intact."
+        )
+    return res
+
+
 # ---------------------------------------------------------------------------
 # Bundle / bench / payload data access
 # ---------------------------------------------------------------------------
@@ -1173,6 +1241,7 @@ def main(argv: list[str] | None = None) -> int:
     bundle_label, iso, years = "-", args.iso or "-", args.years or []
     if args.keepers:
         results.append(run_d9_keepers(REPO_ROOT))
+        results.append(run_d6_quarantine(REPO_ROOT))
         bundle_label = "all keepers"
     if args.bundle:
         if not args.iso:

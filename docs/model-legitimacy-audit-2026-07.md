@@ -330,7 +330,7 @@ implementation: `scripts/legitimacy_diagnostics.py`, with D1–D5 + D-9 wired in
 | **D-3** | **Zero-forcing ablation twin**: reference solve with all merchant floors/bridges off (keep nuclear + CHP steam + coal ToP), registered beside every keeper | Keeper-vs-ablation delta per class explained by a market story, not a residual story | Quantifies what each floor buys |
 | **D-4** | **Off-window binding test**: % of floored MWh outside each floor's driver-justified hours | < 5 % off-window | All-24h day gates on evening mechanisms |
 | **D-5** | **Forecast/backcast parity**: diff mechanism sets active in the two modes (excluding declared backcast-only overlays) | Empty diff or on the declared list | The w2-caiso-ra-p2 wiring gap |
-| **D-6** | **Score the designated holdouts**: 2022 + H1-2026, frozen keeper configs, scored once, no re-touch afterward; plus leave-2025-out refit (retune on 2023-24, score 2025 frozen) | Held-out degradation < 1.5× in-sample on C2/C3b/C4 | Lineage-scale overfitting invisible to in-sample gates |
+| **D-6** | **Score the designated holdouts — under strict quarantine** *(amended 2026-07-04, owner's directive)*: 2022 + H1-2026 are fully quarantined (no solves, no scoring, no data intake) until an ISO's calibration is declared complete (`frontend/data/backcast/calibration-complete.json` marker); then scored EXACTLY ONCE with frozen keeper configs — the holdout data intake happens at that moment as step 1 of the one-shot validation (`docs/out-of-sample-results-2026-07.md` §1) — results recorded whatever they are, no re-touch (a calibration response requires designating a new never-touched holdout); plus leave-2025-out refit (retune on 2023-24, score 2025 frozen) | Held-out degradation < 1.5× in-sample on C2/C3b/C4; CI: no registered bundle carries a solve year outside 2023–2025 pre-marker | Lineage-scale overfitting invisible to in-sample gates |
 | **D-7** | **Statistical-mode A/B per ISO**: all overlay/answer-adjacent inputs off, all six current keepers; publish the fail-count gap on the dashboard next to each keeper | Gap documented; shrinking release-over-release | Overlay-carried skill (the ERCOT D1 result, measured everywhere) |
 | **D-8** | **Frozen-coefficient stability**: refit drag hinges / temp-CF coeffs / offer bands on 2023-24 only, predict 2025 | Coefficients stable within physical uncertainty; sign flips = unidentified | Regression floors absorbing residual |
 | **D-9** | **Overlay quarantine CI**: assert every keeper `run_config.json` has `ct_deployment_overlay=False`, `reliability_deployment_overlay=False`, `ct_mustrun_per_plant=False`, `ordc_reliability_deployment_mw=0`, `caiso_gas_commitment_floor=False`; assert non-ERCOT ISOs resolve no ERCOT-fitted offer band via the generic fallback | CI red on violation | Re-arming answer keys; silent cross-ISO leakage |
@@ -363,10 +363,19 @@ first-class C-criteria so a flat floor can never again *improve* a keeper's scor
 20. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
-21. **Hold out data, and score it.** The designated holdouts (2022, H1-2026) are scored with
-    frozen configs before any ISO is described as "calibrated"; structural mechanism changes are
-    scored leave-one-year-out before promotion. In-sample improvement with held-out degradation is
-    overfitting, not skill.
+21. **Hold out data, and score it exactly once.** *(Amended 2026-07-04 to the owner's strict
+    quarantine — supersedes the original wording; see D-6.)* The designated holdouts — 2022 and
+    H1-2026 — are under **full quarantine: no solves, no scoring, no data intake for those
+    years** — until an ISO's calibration is declared complete (the per-ISO marker in
+    `frontend/data/backcast/calibration-complete.json`). They are then scored **exactly once**
+    with frozen keeper configs; the required holdout data intake (the coverage gap itemized in
+    `docs/out-of-sample-results-2026-07.md` §1) happens at that moment, as step 1 of the one-shot
+    validation. Results are recorded whatever they are; no calibration change may respond to them
+    without designating a new never-touched holdout. Structural mechanism changes are scored
+    leave-one-year-out within 2023–2025 before promotion. In-sample improvement with held-out
+    degradation is overfitting, not skill. CI-enforced: `legitimacy_diagnostics --keepers` /
+    `audit_keepers` fail any registered bundle with a solve year outside 2023–2025 before the
+    ISO's calibration-complete marker exists.
 22. **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.

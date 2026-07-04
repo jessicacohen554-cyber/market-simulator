@@ -63,6 +63,53 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
 1. **Prefer accurate/measured data over estimates whenever it's available — never revert to an estimate just because it fits the backcast better.** If swapping a hand estimate for real data (a measured TTC/GTC limit, metered load, actual outages, real fuel prices, etc.) makes the backcast *worse*, that is a signal that **something else in the model is miscalibrated** and the estimate was silently compensating for it. Treat the worse fit as a discovered bug: keep the accurate input, find and fix the real root cause (offer curves, must-run, passthrough sigmoids, fleet/zone assignment, etc.). Do **not** bury the error back inside an inaccurate input. The *only* exceptions — where an estimate may be kept — are when the accurate data is genuinely **misaligned to our representation** so that using it literally would make overall results *less* reflective of reality, e.g.: the data is defined on a different boundary than our zones (a single GTC that is one of several parallel paths our reduced network collapses into one link), a different time/area aggregation, or units/sign conventions that don't map. In those cases, document the misalignment explicitly in a comment and prefer a *reconciled* version of the real data over a pure guess. When in doubt, use the real data and open the root-cause investigation.
 1. **Every completed backcast run goes on the dashboard — results live there, not in chat.** The moment a calibration run finishes (keeper *or* rejected probe), register it on the backcast results dashboard and commit+push it **in the same session it was produced** — use the `calibration-report` skill / `scripts/dashboard_add_run.py`, then `build_manifest.py`. The dashboard is the codebase-site pages — `docs/codebase-site/backcast-runs.html` (run explorer, `#iso=<ISO>&run=<id>`) and `docs/codebase-site/calibration-status.html` (all-ISO keeper summary, `#iso=<ISO>`); the old root `backcast-results.html` is a static redirect stub, never regenerated. The committed per-run files (`results/calibration/<name>/` bundle + `frontend/data/backcast/registry/<id>.json` + `runs/<id>.js` + changed `bench/`) are the deliverable; `manifest.js`/`benchmark.js` are deploy-workflow-owned and auto-refreshed at deploy. A run is **not "done" until its bundle and dashboard files are committed and pushed** — do not just narrate metrics in chat and move on. Honour the top-15-per-ISO retention (PJM labels `pjm N <keyword>`). Lead with the dashboard result; keep the prose minimal.
 1. **Always solve and register ALL available backcast years in one bundle — never a single-year keeper.** Every multi-year ISO's calibration run covers every year the ISO can score, in a single `--year` invocation and a single bundle: **CAISO / PJM / NEISO / NYISO → `--year 2023 2024 2025`** (add new years as they land). A one-year solve (e.g. 2024-only) is permitted *only* as a throwaway diagnostic probe to isolate a single-year effect — it must **never** be registered on the dashboard as a keeper, and any 2024-only bundle found on the dashboard should be re-solved across all years or pruned. When re-gating or re-solving a keeper, reproduce its full year span, not just the year you happen to be studying.
+1. **No floor without a window, a driver, and a forward story.** Every min-gen/commitment floor
+    states (a) its external driver, (b) the hours it may bind and why, (c) how it regenerates in a
+    forecast year. A floor binding in hours its own driver evidence says the class is offline
+    (CT overnight CF ≈ 0) is a bug by definition, whatever it does to the residual.
+1. **Commitment physics by parameters, not class names.** Bridge/commit eligibility gates on unit
+    physics (`min_down_hours`, startup cost) — never a hard-coded class tuple. Fast-start units
+    (min-down ≤ 2 h, startup < $30/MW) are never economically bridged beyond their min-down.
+1. **One mechanism per phenomenon.** Before adding a floor/bridge, enumerate what already floors
+    the same class (D-2 attribution) and replace or reconcile — never stack a new floor on the
+    unexplained residual of an old one.
+1. **Forced energy is budgeted.** A keeper fails if any merchant class dispatches > 30 %
+    (peakers: > 10 %) of its energy at binding floors. Floors are commitment scaffolding, not the
+    dispatch model.
+1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
+    parameter with its identification source; a zero-forcing ablation run is registered alongside.
+    A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
+1. **Hold out data, and score it exactly once.** The designated holdouts — **2022 and H1-2026 —
+    are under FULL quarantine: no solves, no scoring, and no data intake for those years**, until
+    an ISO's calibration is declared complete (its marker in
+    `frontend/data/backcast/calibration-complete.json`). At that moment the holdouts are scored
+    **EXACTLY ONCE** with the frozen keeper configs — the required 2022/H1-2026 data intake
+    (bench actuals, CAMPD unit-level, delivered fuel; the coverage gap is itemized in
+    `docs/out-of-sample-results-2026-07.md` §1) happens *at that moment*, as step 1 of the
+    one-shot validation, never before. The results are recorded whatever they are, and **no
+    calibration change may respond to them** without designating a new never-touched holdout.
+    Structural mechanism changes are still scored leave-one-year-out *within 2023–2025* before
+    promotion. In-sample improvement with held-out degradation is overfitting, not skill. CI
+    enforces the quarantine: `scripts/legitimacy_diagnostics.py --keepers` and
+    `scripts/audit_keepers.py` FAIL if any registered bundle contains a solve year outside
+    2023–2025 before that ISO's calibration-complete marker exists.
+1. **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
+    loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
+    updates — never because a residual moved. Re-derivation commits must cite the data change.
+1. **No off-registry tuning channels.** Every tunable that can change a solve appears in
+    `ScenarioConfig`/`constants.py` and the run's `run_config.json` — no env-var knobs, no
+    hardcoded per-plant dicts in `data/` modules, no `getattr` fallback literals in the offer path.
+1. **Tuned curves never cross ISO boundaries.** A multiplier fitted on one ISO's residual is that
+    ISO's; generic fallbacks carry neutral (1.0) bands. (Makes the existing informal rule
+    CI-enforced; see D-9.)
+1. **Deleted means deleted.** Deprecated fitted knobs are removed, not zeroed — a deprecated
+    parameter that still parses is a re-armable answer key (the ORDC offset was re-swept *after*
+    deprecation).
+
+Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8 (numbered
+**16–25 there** — this file gained rule 16, all-years-one-bundle, after the audit was written; a
+doc reference to "audit rule N" maps to rule N+1 here). Rule 22 (holdouts) carries the owner's
+strict-quarantine amendment, superseding the audit's original D-6/rule-21 wording.
 
 ## LP Variable Layout (per ISO-year)
 
