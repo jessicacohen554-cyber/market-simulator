@@ -114,6 +114,19 @@ class PortfolioConfig:
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
     (mirrors the market-sim storage epsilon rule)."""
+    storage_charge_policy: str = "arbitrage"
+    """How storage may interact with the grid (ADR 0017):
+
+    * ``"arbitrage"`` (default, the historical behavior): storage charges from
+      the aggregate node — including grid purchases — and its discharge may be
+      exported as ``excess`` at LMP, so the optimizer can operate storage as a
+      merchant price-arbitrage asset in addition to a matching device.
+    * ``"excess_clean_only"``: per hour, ``Σ_s chg[s,t] + excess[t] ≤
+      Σ_r gen[r,t]`` — storage charges only from the portfolio's contracted
+      clean generation in excess of what is exported, grid purchases can never
+      be stored or re-sold, and discharge serves load only. Storage becomes a
+      pure clean-energy-shifting device consistent with granular-certificate /
+      24/7 CFE charging-provenance conventions."""
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
     """Annual load-growth CAGR applied to the intake profile (optional)."""
@@ -151,6 +164,11 @@ class PortfolioConfig:
         if self.mode not in ("premium_cap", "matching_target"):
             raise ValueError(
                 f"mode must be premium_cap/matching_target, got {self.mode!r}"
+            )
+        if self.storage_charge_policy not in ("arbitrage", "excess_clean_only"):
+            raise ValueError(
+                "storage_charge_policy must be arbitrage/excess_clean_only, "
+                f"got {self.storage_charge_policy!r}"
             )
         if self.lcoe_sensitivity not in ("low", "mid", "high"):
             raise ValueError(

@@ -22,6 +22,13 @@ Two solve modes (see ``docs/01-lp-formulation.md``):
   (``min Σ grid_buy``) subject to portfolio premium ≤ ``delta`` $/MWh.
 * **Mode B — matching_target:** minimize net portfolio cost subject to hourly
   matching ≥ ``target`` (annual, or strict per-hour for hard 24/7).
+
+Storage grid interaction is governed by ``config.storage_charge_policy``
+(ADR 0017): ``"arbitrage"`` (default) lets storage charge from the aggregate
+node — grid purchases included — and export discharge as ``excess``;
+``"excess_clean_only"`` adds the per-hour provenance rows
+``Σ chg + excess ≤ Σ gen`` so storage charges only on the portfolio's excess
+contracted clean generation and never trades with the grid.
 """
 
 from __future__ import annotations
@@ -194,6 +201,14 @@ def build_and_solve(
     **Hydro monthly budget (ADR 0008).** Budget-flagged resources (existing hydro)
     have their generation capped per calendar month at the ISO's monthly energy
     budget; the constraint is skipped for ISOs without a budget entry.
+
+    **Storage charge provenance (ADR 0017).** With
+    ``config.storage_charge_policy == "excess_clean_only"``, ``T`` extra rows
+    enforce ``Σ_s chg[s,t] + excess[t] ≤ Σ_r gen[r,t]``: storage charges only
+    from contracted clean generation in excess of exports, exports come only
+    from clean generation, and (via the energy balance) grid purchases and
+    discharge serve load only. The default ``"arbitrage"`` adds no rows and
+    reproduces the historical behavior exactly.
 
     **Additionality accounting (ADR 0008, amended 2026-07-02).** With
     ``config.additionality_only`` the generation of *existing* (PPA) resources
@@ -395,6 +410,35 @@ def build_and_solve(
             lay.gen_off + np.repeat(ex_idx, T) * T + np.tile(hours_a, ex_idx.size)
         )
         data.append(-np.ones(ex_idx.size * T))
+        rlow.append(np.full(T, -np.inf))
+        rupp.append(np.zeros(T))
+        roff += T
+
+    # ---- storage charge provenance (ADR 0017) ----
+    # storage_charge_policy == "excess_clean_only": per hour,
+    #     Σ_s chg[s,t] + excess[t] − Σ_r gen[r,t] ≤ 0
+    # Charging draws only on the portfolio's contracted clean generation net
+    # of exports, and exports come only from clean generation — never re-sold
+    # grid purchases or storage discharge. Combined with the energy balance
+    # this also pins grid purchases and discharge to load service
+    # (buy_t ≤ load_t − dis_t, dis_t ≤ load_t − buy_t), closing the merchant
+    # buy-low/sell-high arbitrage channel so storage acts purely as a
+    # clean-energy-shifting matching device. Storage resources' own gen
+    # columns are pinned to 0 by cf = 0, so summing over all r is exact.
+    # With n_sto == 0 the row degenerates to excess ≤ gen (no re-sold buys),
+    # keeping the policy's "no grid trading" semantics storage-independent.
+    if config.storage_charge_policy == "excess_clean_only":
+        hours_p = np.arange(T)
+        if n_sto:
+            rows.append(roff + np.tile(hours_p, n_sto))
+            cols.append(lay.chg_off + np.arange(n_sto * T))
+            data.append(np.ones(n_sto * T))
+        rows.append(roff + hours_p)
+        cols.append(lay.exc_off + hours_p)
+        data.append(np.ones(T))
+        rows.append(roff + np.tile(hours_p, n_res))
+        cols.append(lay.gen_off + np.arange(n_res * T))
+        data.append(-np.ones(n_res * T))
         rlow.append(np.full(T, -np.inf))
         rupp.append(np.zeros(T))
         roff += T
