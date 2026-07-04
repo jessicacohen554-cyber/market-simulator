@@ -261,12 +261,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--load-growth-years", type=int, default=None)
     p.add_argument(
         "--storage-charge-policy",
-        choices=["arbitrage", "excess_clean_only"],
+        choices=["arbitrage", "excess_clean_only", "excess_headroom_only"],
         default=None,
-        help="storage grid interaction (ADR 0017): arbitrage (default) lets "
-        "storage charge from the grid and export discharge at LMP; "
+        help="storage grid interaction (ADR 0017/0018): arbitrage (default) "
+        "lets storage charge from the grid and export discharge at LMP; "
         "excess_clean_only restricts charging to the portfolio's excess "
-        "contracted clean generation (no grid trading; overrides --config)",
+        "contracted clean generation (no grid trading); excess_headroom_only "
+        "additionally eliminates divert-and-backfill via the ADR 0018 cut loop "
+        "(overrides --config)",
     )
     p.add_argument("--out-dir", default="data/outputs")
     p.add_argument(
