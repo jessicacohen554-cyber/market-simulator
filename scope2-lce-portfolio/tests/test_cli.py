@@ -294,6 +294,7 @@ def test_cli_flags_override_config_file(tmp_path) -> None:
             sensitivity=None,
             load_growth_rate=None,
             load_growth_years=None,
+            storage_charge_policy=None,
         )
         ns.__dict__.update(extra)
         return ns
@@ -312,6 +313,10 @@ def test_cli_flags_override_config_file(tmp_path) -> None:
     cfg = build_config(parse({"targets": [0.5]}))
     assert cfg.mode == "matching_target"
     assert cfg.matching_targets == (0.5,)
+
+    # --storage-charge-policy overrides the file default too (ADR 0017).
+    cfg = build_config(parse({"storage_charge_policy": "excess_clean_only"}))
+    assert cfg.storage_charge_policy == "excess_clean_only"
 
 
 def test_cli_all_infeasible_flagged_and_nonzero_exit(tmp_path, capsys) -> None:

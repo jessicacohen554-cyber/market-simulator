@@ -29,6 +29,7 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0014 | Reporting deliverable: self-contained HTML run report + committed `results/` store | accepted | PS-11 | PP-09 |
 | 0015 | Forecast LMP selection: years 2030–2050, base-BAU scenario, readiness gate, rollout | accepted (execution on hold, PLAN.md §10) | PS-12 | none — pins `export_lce_lmp.py` args |
 | 0016 | Desktop launcher: `.bat`/`.sh` twins → local HTML launch page (stdlib server, run queue + saved configs) → report | accepted | PS-13 | PP-10 |
+| 0017 | Storage charge policy: optional `excess_clean_only` provenance rows (`Σchg + excess ≤ Σgen`) | accepted | storage audit 2026-07 | `config.py`/`lp.py`/`cli.py` |
 
 ---
 
