@@ -77,3 +77,26 @@ no-charging-while-grid-serves-load (up to tolerance).
   rather than the whole hour — would recover some of the conservative loss but
   needs a per-hour partial-charge bound the current column-pin mechanism can't
   express. Add only if a use case demands the extra storage utilization.
+
+## Validation (2026-07-04)
+
+`docs/excess-headroom-validation-2026-07.md` (driver
+`examples/validate_excess_headroom.py`, raw
+`docs/excess-headroom-validation-2026-07.json`) ran the three policies over one
+Mode-B ERCOT sweep on real 2024 CF shapes:
+
+- **On unstressed inputs** (flat reference load, modest-spread synthetic LMP)
+  cheap renewables dominate, grid buys → 0, and divert-and-backfill never fires
+  (≤0.06 MWh) — all three policies coincide, so the strict variant is free. It is
+  best understood as a **scarcity-regime** safeguard, not an always-on cost.
+- **Under a synthetic ERCOT-scale scarcity overlay** the cut loop works at full
+  8760-hour scale, all solves Optimal: it removes the `excess_clean_only`
+  residual (35–66 MWh → ~0.1 MWh, the tolerance floor) at a consistent **~+27
+  $/MWh premium and ≤0.4 pp matching**. The cost is dominated by **forced grid
+  backfill from the whole-hour column pin** (grid_buy jumps 161 → 3,490 MWh at
+  target 0.80) — direct empirical motivation for the deferred partial-charge cut
+  above.
+- The validation also surfaced (and fixed) a pre-existing ADR 0017-era solver
+  bug: crossover-off IPM returned `Unknown` on degenerate loose-target faces,
+  zeroing achievable frontier points. `_solve_highs` now retries once with
+  crossover on (see `docs/01-lp-formulation.md` Solver notes).
