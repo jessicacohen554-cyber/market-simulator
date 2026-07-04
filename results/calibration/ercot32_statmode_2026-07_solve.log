@@ -18,3 +18,52 @@ INFO: ERCOT 2023: reliability floor — 5 enabled limb spec(s) applied from RELI
 INFO: F923 fuel costs for 2023: 2 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
 INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [241, 1262, 741, 3348, 8567] MW, 77 steps total, 2 headroom tiers
 INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [13484, 18676] (measured RTOLCAP[/+RTOFFCAP])
+INFO: Matrix build: 16.480s, Solve: 148.829s (cold)
+INFO: Matrix build: 16.480s, Solve: 60.305s (warm)
+INFO: EIA-923 2023: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2023: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2023: CAMPD-backfilled 3 under-reported plants (3 replaced, 0 added)
+INFO: EIA-923 2023 solar 28.04 TWh under-counts EIA-930 31.87 TWh; using EIA-930 grid total
+INFO: solving ERCOT 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+WARNING: ercot_gtc_limits_measured: 2024 has no measured HSL potential (renewables ride delivered-as-CF) — measured GTC limits skipped for this year to avoid double-curtailment
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2024: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: COD ramp (ERCOT 2024): 58 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+INFO: ERCOT 2024: 12 hydro plants in LP (546 MW, 0.46 TWh monthly budget)
+INFO: COD ramp (ERCOT 2024): 58 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2024: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2024: 2 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [190, 908, 484, 2683, 347, 7750] MW, 89 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [16679, 21812] (measured RTOLCAP[/+RTOFFCAP])
+INFO: Matrix build: 3.241s, Solve: 134.667s (cold)
+INFO: Matrix build: 3.241s, Solve: 56.683s (warm)
+INFO: EIA-923 2024: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plants (2 replaced, 0 added)
+INFO: EIA-923 2024 solar 40.08 TWh under-counts EIA-930 47.68 TWh; using EIA-930 grid total
+INFO: solving ERCOT 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+WARNING: ercot_gtc_limits_measured: 2025 has no measured HSL potential (renewables ride delivered-as-CF) — measured GTC limits skipped for this year to avoid double-curtailment
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2025 hydro budget: 1 plants, 16.9 GWh annual, 10 MW nameplate
+INFO: ERCOT 2025: 1 hydro plants in LP (10 MW, 0.02 TWh monthly budget)
+INFO: COD ramp (ERCOT 2025): 12 unit-months masked offline (mid-year COD / retirement), 1 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2025: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [111, 567, 336, 2885, 7088] MW, 88 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [73990312, 73995392] (measured RTOLCAP[/+RTOFFCAP])
+INFO: Matrix build: 3.179s, Solve: 171.700s (cold)
+INFO: Matrix build: 3.179s, Solve: 68.411s (warm)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2025: CAMPD-backfilled 27 under-reported plants (0 replaced, 27 added)
+INFO: EIA-923 2025 wind 91.31 TWh under-counts EIA-930 115.12 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 55.79 TWh under-counts EIA-930 67.39 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to results/calibration/ercot32_statmode_2026-07
+solved into results/calibration/ercot32_statmode_2026-07
