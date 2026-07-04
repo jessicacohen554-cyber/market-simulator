@@ -700,7 +700,40 @@ the mechanism that tilts new entry toward longer durations as storage
 saturates. The stack is toggleable via `config.storage_capacity_value` and
 `config.storage_degradation`.
 
-Profitable techs are ranked by total margin (energy + capacity − cost) and
+**3. Ancillary-service (AS) value** (ERCOT), the third value-stack slice —
+~85% of 2023 ERCOT battery revenue and absent from the arbitrage + capacity
+terms. **Exactly one mechanism supplies it (rule 19), keyed on
+`ercot_storage_as_endogenous`:**
+
+- **off (default / legacy / backcast-validation):** the calibrated *exogenous*
+  rate `ancillary.as_revenue_per_mw_yr("storage", …)` — a per-kW $/kW-yr credit
+  with a penetration-saturation decline (`ERCOT_AS_SATURATION_*`), gated on
+  `as_revenue_enabled`.
+- **on (forecast endogenous):** the AS duty is priced *inside the dispatch
+  reserve co-optimization* (§below), so the exogenous rate is **suppressed** to
+  avoid double-counting; the entry credit is instead **derived from the solved
+  co-opt's own reserve duals** — `ancillary.realized_storage_as_revenue_per_mw_yr`
+  = Σ_t (storage cleared reserve MW)_t × (binding AS price)_t / fleet MW,
+  threaded from the prior year via `runner.prior_results`. It is forward-valid
+  (responds to fleet growth, AS requirement and spreads; zero when the co-opt
+  did not price reserve — no measured award anywhere). `ercot_storage_as_endogenous`
+  requires `energy_reserve_coopt`; in forecast with the multi-product AS co-opt
+  it also requires `ercot_as_forward_requirement` (else the AS requirement is
+  the silent-zero measured-plan fallback). See
+  `docs/storage-as-withholding-attribution-2026-07.md`.
+
+The *withholding* itself is not a new LP structure: storage headroom
+`cap − Dis + Chg` already backs upward reserve in the co-opt's shared-headroom
+rows (`_build_reserve_rows`), and the ERCOT reserve design marks storage
+`storage_eligible=True`, so once `energy_reserve_coopt` is on in the forecast
+runner the battery trades energy against AS on its own power cap and cannot
+dump its full cap into the top arbitrage hours it must back AS in. The measured
+per-hour storage AS reservation (`storage.reserve_storage_as_power`) stays
+**backcast/calibration-only** (rule 13). Thermal AS still uses the exogenous
+rate in both regimes (a labelled seam — `ercot_storage_as_endogenous` is
+storage-scoped).
+
+Profitable techs are ranked by total margin (energy + capacity + AS − cost) and
 built in merit order, but no single tech may take more than
 `STORAGE_TECH_BUILD_SHARE_CAP` of one year's budget, so the build diversifies
 across durations rather than the top-margin tech monopolizing it. Builds are
@@ -856,4 +889,4 @@ Originally listed here but **since built** (kept as LP, no MIP):
 
 - ~~No unit commitment~~ → opt-in three-solve commitment heuristic, §1.6 (default off).
 - ~~No stochastic outages, deterministic derate only~~ → forecast still uses statistical/deterministic derate; backcast adds a *historic* CAMPD outage overlay for calibration, §1.7 (forecast runs do not use it).
-- ~~No ORDC / operating reserve demand curve — scarcity shows up via VOLL~~ → a full multi-ISO scarcity + energy–reserve co-optimization subsystem is now built (all default-**off**, gated by config flags): ERCOT ORDC (`results/scarcity.py`: `lolp`, `ordc_adder`, `scarcity_prices`, driven by `ScenarioConfig.ordc_voll`), NYISO RCPF (`results/rcpf.py`, gated by `nyiso_rcpf_enabled`), and PJM/MISO/NEISO stepped reserve-demand curves (`results/scarcity.py`). In-LP co-optimization appends reserve and ORDC-shortfall columns in `model/dispatch.py` (`_build_reserve_rows`), gated by `energy_reserve_coopt`; the per-ISO reserve designs live in `config/reserve_config.py` (`get_reserve_design`), and the backcast path (`scripts/run_calibration.py` `run_year`) wires ERCOT, PJM, NYISO, NEISO and — since 2026-07-02 — MISO (the MISO branch had been missing, so the flag was silently inert for MISO backcasts; see `docs/multi-iso/miso-reserve-coopt.md`). MISO additionally supports gated locational reserve families (`miso_zonal_reserves`, default off; default zone set MISO-South): requirement = within-zone MSSC (MISO BPM-002 §3.3.2's largest-zonal-event basis), shortfalls priced at the published Zonal Operating Reserve Demand Curve (`MISO_ZONAL_ORDC_STEPS`, BPM-002 §5.2.1.2 / Schedule 28-A), nested with the market-wide family like NYISO East ⊂ NYCA. A per-asset **deliverability** layout (`dispatch._build_reserve_rows_pergen`) supersedes the zone-aggregate headroom rows when enabled — one reserve column per asset pool with a joint `Σ P + R ≤ Σ pmax·availability` row per pool-hour and `R` bounded by the pool's 10-minute deliverable ramp (`FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax`, NREL/TP-5500-55588 App. H class ramp rates; static `(n_r,)` or hourly availability-scaled `(n_r, T)` caps) — so reserve competes with energy on the marginal asset and cleared reserve cannot exceed what physically converts to energy in the 10-minute window. Wired for PJM (`pjm_reserve_pergen`: plant-level inside the MAD subzone, (zone, fuel-class) outside) and MISO (`miso_reserve_pergen`: (zone, fuel-class) everywhere, the 15 GB memory tier; empirical gate-4 outcome in `docs/multi-iso/miso-scarcity-tail-diagnosis.md` — under perfect foresight the published curve steps still never fire). VOLL×Slack remains the backstop scarcity term in the base objective.
+- ~~No ORDC / operating reserve demand curve — scarcity shows up via VOLL~~ → a full multi-ISO scarcity + energy–reserve co-optimization subsystem is now built (all default-**off**, gated by config flags): ERCOT ORDC (`results/scarcity.py`: `lolp`, `ordc_adder`, `scarcity_prices`, driven by `ScenarioConfig.ordc_voll`), NYISO RCPF (`results/rcpf.py`, gated by `nyiso_rcpf_enabled`), and PJM/MISO/NEISO stepped reserve-demand curves (`results/scarcity.py`). In-LP co-optimization appends reserve and ORDC-shortfall columns in `model/dispatch.py` (`_build_reserve_rows`), gated by `energy_reserve_coopt`; the per-ISO reserve designs live in `config/reserve_config.py` (`get_reserve_design`), and the backcast path (`scripts/run_calibration.py` `run_year`) wires ERCOT, PJM, NYISO, NEISO and — since 2026-07-02 — MISO (the MISO branch had been missing, so the flag was silently inert for MISO backcasts; see `docs/multi-iso/miso-reserve-coopt.md`). The **forecast** runner (`runner.py`, all ISOs except CAISO) wires the same `get_reserve_design`/`build_reserve_dispatch_kwargs` behind `energy_reserve_coopt`, and storage is `storage_eligible` in the ERCOT design, so the forecast battery's endogenous energy-vs-AS withholding rides on this same subsystem (§5.5, `docs/storage-as-withholding-attribution-2026-07.md`). MISO additionally supports gated locational reserve families (`miso_zonal_reserves`, default off; default zone set MISO-South): requirement = within-zone MSSC (MISO BPM-002 §3.3.2's largest-zonal-event basis), shortfalls priced at the published Zonal Operating Reserve Demand Curve (`MISO_ZONAL_ORDC_STEPS`, BPM-002 §5.2.1.2 / Schedule 28-A), nested with the market-wide family like NYISO East ⊂ NYCA. A per-asset **deliverability** layout (`dispatch._build_reserve_rows_pergen`) supersedes the zone-aggregate headroom rows when enabled — one reserve column per asset pool with a joint `Σ P + R ≤ Σ pmax·availability` row per pool-hour and `R` bounded by the pool's 10-minute deliverable ramp (`FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax`, NREL/TP-5500-55588 App. H class ramp rates; static `(n_r,)` or hourly availability-scaled `(n_r, T)` caps) — so reserve competes with energy on the marginal asset and cleared reserve cannot exceed what physically converts to energy in the 10-minute window. Wired for PJM (`pjm_reserve_pergen`: plant-level inside the MAD subzone, (zone, fuel-class) outside) and MISO (`miso_reserve_pergen`: (zone, fuel-class) everywhere, the 15 GB memory tier; empirical gate-4 outcome in `docs/multi-iso/miso-scarcity-tail-diagnosis.md` — under perfect foresight the published curve steps still never fire). VOLL×Slack remains the backstop scarcity term in the base objective.
