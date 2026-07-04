@@ -84,9 +84,40 @@ neither touches an offer curve or reads a residual:
   measured; hydro/nuclear monthly within ±0.15 TWh where the 930 series is
   intact), so the undershoot is price-formation, not energy balance.
 
-## Result (vs keeper 41 / probe 42 → this run)
+## Result (vs keeper 41 / probe 42 → this run) — REGISTERED PROBE, not promoted
 
-<!-- FILLED AFTER SCORING -->
+- **C2-2025 gas: −0.1% PASS** (42: −2.5% FAIL — confirmed to be the
+  re-attribution relabel, not real displacement).
+- **C5a CO2: −2.3 / −5.3 / −3.7%, all years PASS** (41: 2024 −7.1% breach —
+  the un-relabelled switch-hours' CO2 stays in the model total).
+- **C3a:** −16.2 / −15.4 / −13.5% (41: −13.3/−13.4/−9.5) — the widening is the
+  removed flat-spread shoulder compensation showing the frontier's true size
+  (rule #1). Jan-2024 +6 → +1.6; Feb-2023 +4 → −9.4 (both now at/below the
+  measured ceiling).
+- **C3b:** 0.214 / 0.206 / 0.200 (41: 0.209/0.236/0.172).
+- **C3c:** 0/0/7h vs 10/12/42h — unchanged, ledgered frontier.
+- **C1-2024 ST_GAS −3.41 TWh FAIL (NEW, main-branch drift, NOT this run's
+  mechanisms):** commit 0c6c833 ("Kill cross-ISO leakage of ERCOT-fitted gas
+  offer bands", merged after run-42 solved) de-leaked the NYISO CT_PEAKER /
+  CT_CHP econ bands to neutral 1.0 and capped peak 13.15→4.0, leaving "a
+  NYISO-grounded CT econ ramp" as its documented open root cause. With no
+  commitment-cost content in the CT offers, CT_PEAKER over-runs (4.90 TWh vs
+  actual 2.13) and displaces steam (ST_GAS 7.67 vs 11.07). A 2024-only
+  diagnostic re-solve of the **keeper-41 config on today's main reproduces
+  the same failure** (CT 4.69 / ST 7.65) — keeper-41 is no longer
+  reproducible on main; every NYISO solve fails C1-2024 until the CT
+  commitment-cost structure is grounded. The measured CEMS route
+  (`derive_campd_marginal_hr.py`: CT marginal HR ~0.66-0.85× base) cannot
+  close it — the run-28 lesson: the bare marginal HR omits the commitment
+  cost the borrowed bands were proxying. **Carried to nyiso-44:** this config
+  + `--tranche-startup-amortization` (the ISO-NE Order-825 fast-start
+  pricing analogue already in the codebase, v2-scoped to fast-start-capable
+  CT tranches; NYISO's own GT hybrid/fast-start pricing is the same real
+  market structure) — NREL-cited start costs amortized by the model's own P0
+  run lengths, no residual input.
+
+Determination: **NOT-YET** (C1-2024 FAIL as above; soft caveats C3a/C3b/C3c
+= 3 > budget 2, all ledgered). Keeper unchanged until nyiso-44 scores.
 
 ## Reproduce
 
