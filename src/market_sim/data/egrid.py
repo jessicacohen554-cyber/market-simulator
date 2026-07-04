@@ -54,6 +54,9 @@ def _use_clean() -> bool:
 # carries one row per plant; its first row holds long descriptive headers, so
 # ``skiprows=1`` promotes the short-code header row (ORISPL, PLCO2AN, ...).
 _EGRID_FILES: dict[int, str] = {
+    # eGRID2022: epa.gov/egrid published workbook, retrieved 2026-07-04 for
+    # the 2022 holdout-year intake (before it, 2022 rode the latest vintage).
+    2022: "egrid2022_data.xlsx",
     2023: "egrid2023_data_rev2 2.xlsx",
     2024: "egrid2024_data.xlsx",
 }
@@ -87,8 +90,9 @@ _CAMPD_RATE_CACHE: dict[int, float] | None = None
 def egrid_vintage_for_year(year: int) -> int:
     """Return the eGRID vintage that anchors ``year``.
 
-    2023 maps to itself; any later year maps to the latest released vintage
-    (currently 2024), whose intensities stand in until the next eGRID lands.
+    A year with its own released workbook (2022-2024) maps to itself; any
+    later year maps to the latest released vintage (currently 2024), whose
+    intensities stand in until the next eGRID lands.
     """
     return int(year) if int(year) in _EGRID_FILES else _LATEST_EGRID_VINTAGE
 
@@ -118,7 +122,8 @@ def load_egrid_plant_co2(vintage: int) -> pd.DataFrame:
     """Return the eGRID plant sheet's fossil CO2 columns for a vintage year.
 
     Args:
-        vintage: An eGRID vintage present in :data:`_EGRID_FILES` (2023 / 2024).
+        vintage: An eGRID vintage present in :data:`_EGRID_FILES`
+            (2022 / 2023 / 2024).
 
     Returns:
         One row per fossil plant with positive net generation: ``plant_id``,

@@ -311,14 +311,19 @@ def test_coal_supply_pricing_uses_year_trajectory():
 
 
 def test_coal_supply_pricing_forward_year_uses_trajectory():
-    """A forward year with no F923 reports prices PRB at the annual curve."""
+    """A forward year with no F923 reports prices PRB at the annual curve.
+
+    2027 is the first year with no F923 receipts on disk — the 2022/H1-2026
+    holdout intake landed measured receipts through Apr 2026, so 2026 now
+    resolves from measured data rather than the trajectory.
+    """
     config = ScenarioConfig()
     gens = [_coal_gen("prb")]
     fp = np.full((1, 24), 2.0)
-    apply_coal_supply_pricing(fp, gens, config, 2026)
+    apply_coal_supply_pricing(fp, gens, config, 2027)
     assert np.allclose(
         fp[0],
-        COAL_PRICE_PRB_BY_YEAR[2026] * config.coal_prb_contract_passthrough,
+        COAL_PRICE_PRB_BY_YEAR[2027] * config.coal_prb_contract_passthrough,
     )
 
 
