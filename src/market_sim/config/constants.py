@@ -295,6 +295,41 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
     "biomass": 0.0,  # biogenic CO2 carbon-neutral under EPA/RGGI accounting
 }
 
+# ---------------------------------------------------------------------------
+# Forward per-plant CO2-rate estimator (market_sim.data.emission_rates).
+# The forecast-year CO2 rate for an existing unit is derived from its multi-year
+# measured CAMPD history (rule-13-admissible measured input; see
+# docs/handoffs/emissions-co2-rate-plan-2026-07.md). These tunables are the
+# estimator's free parameters — CHOSEN ONCE from the committed leave-one-year-out
+# harness (scripts/loyo_co2_rates.py) and frozen against backcast residuals
+# (CLAUDE.md rules 23/24): they re-derive only when the CAMPD source data update.
+# ---------------------------------------------------------------------------
+
+# Trailing-window length (years) for the gen-weighted base rate. 0 = use ALL
+# available history. LOYO (plan §2.2): with a 3-year history the all-years
+# gen-weighted average won (wMAPE 2.20% vs 2.28% simple / 2.46% recency);
+# re-validated against the 7-year history before any narrower window is adopted.
+CO2_RATE_TRAILING_WINDOW_YEARS: int = 0
+
+# Envelope-gate threshold: the operation-conditioned nearest-neighbor refinement
+# (plan §2.1 step 2) fires ONLY when the target-year simulated operating point
+# falls outside the plant's historical envelope by more than this L1 distance on
+# the normalized (annual gen, starts, CF-band) descriptor. Inside the envelope
+# the gen-weighted base is kept — near-duplicate history years make a single-year
+# NN pick lose to the average (plan §3: oracle NN loses on 2023/2024 targets).
+# Chosen once from the LOYO harness; see the plan doc for the sweep.
+CO2_RATE_ENVELOPE_GATE_L1: float = 0.5
+
+# Percentile of the per-class (plant_group × fuel) CAMPD rate distribution used
+# for CEMS-uncovered plants and new entrants (plan §2.1 step 4). 50 = gen-weighted
+# class median.
+CO2_RATE_CLASS_MEDIAN_PERCENTILE: float = 50.0
+
+# Whether the operation-conditioned refinement ships enabled. Per the plan's
+# acceptance gate it stays OFF (estimator == pure gen-weighted a_gw) unless the
+# 7-year held-in LOYO shows the envelope-gated conditioner beats plain a_gw.
+CO2_RATE_CONDITIONING_ENABLED: bool = False
+
 # All monetary values in this model are in constant 2026 real USD.
 # Anchor date: January 1, 2026. No inflation adjustment is applied
 # within the model. Nominal conversions are post-processing only
