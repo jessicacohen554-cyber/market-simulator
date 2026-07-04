@@ -6295,7 +6295,16 @@ def bins_to_fleet(
                     pmin_mw=0.0,
                     heat_rate=tr_hr,
                     vom=get_vom(fuel) * vom_mult,
-                    emission_rate_co2=get_emission_rate(fuel, tr_hr),
+                    # R2/EM-4: book CO2 at the plant's PHYSICAL heat rate
+                    # (``base_hr``), never the bid-tranche heat rate ``tr_hr``.
+                    # ``tr_hr`` carries the offer-curve pricing multipliers
+                    # (peak ×2.0-2.5, committed ×0.92 — docs/binning-methodology.md
+                    # §pricing) that shape the bid stack; a plant's CO2/MWh does
+                    # not change because a block is offered at a scarcity price.
+                    # CEMS-covered plants get their measured rate later via
+                    # apply_plant_emission_rates; this base_hr value is the
+                    # physical default for uncovered plants and entrants.
+                    emission_rate_co2=get_emission_rate(fuel, base_hr),
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
                     online_year=commission_year,

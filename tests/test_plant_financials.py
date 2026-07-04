@@ -26,7 +26,7 @@ def _plant(
     vom_per_mwh: float = 2.0,
     fom_per_kw_yr: float = 12.0,
     emission_rate_tco2_mwh: float = 0.36,
-    nox_rate_lb_mwh: float = 0.1,
+    nox_rate_tonnes_mwh: float = 0.0001,
 ) -> PlantBinAssignment:
     """Return a :class:`PlantBinAssignment` with test-friendly defaults."""
     return PlantBinAssignment(
@@ -41,7 +41,7 @@ def _plant(
         vom_per_mwh=vom_per_mwh,
         fom_per_kw_yr=fom_per_kw_yr,
         emission_rate_tco2_mwh=emission_rate_tco2_mwh,
-        nox_rate_lb_mwh=nox_rate_lb_mwh,
+        nox_rate_tonnes_mwh=nox_rate_tonnes_mwh,
     )
 
 
@@ -172,6 +172,22 @@ class TestHourlyFinancials(unittest.TestCase):
         )
         # 100 MWh × 0.36 tCO2/MWh × 20 $/t = 720.
         self.assertAlmostEqual(hourly.iloc[0]["carbon_cost"], 720.0)
+
+    def test_nox_cost_converts_tonnes_rate_to_lb(self):
+        # R7/EM-2: the plant rate is canonical tonnes/MWh; the NOx price is
+        # $/lb. A known coal-like unit: 0.001 tonnes/MWh NOx = 2.2046 lb/MWh.
+        from market_sim.results.plant_financials import LB_PER_TONNE
+
+        plant = _plant(1, nox_rate_tonnes_mwh=0.001)
+        pd_, zp, fp, pm = self._inputs(np.array([100.0]), plant=plant)
+        hourly = compute_plant_hourly_financials(
+            pd_, zp, fp, carbon_price=0.0, nox_price=2.0, plant_map=pm
+        )
+        row = hourly.iloc[0]
+        # nox_cost = 100 MWh × (0.001 × LB_PER_TONNE) lb/MWh × 2 $/lb.
+        self.assertAlmostEqual(row["nox_cost"], 100.0 * 0.001 * LB_PER_TONNE * 2.0)
+        # emissions in lb, not the ~2205× low tonnes-as-lb figure.
+        self.assertAlmostEqual(row["nox_emissions_lbs"], 100.0 * 0.001 * LB_PER_TONNE)
 
 
 class TestHeatRateMatters(unittest.TestCase):
