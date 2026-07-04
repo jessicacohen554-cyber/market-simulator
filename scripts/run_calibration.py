@@ -657,10 +657,28 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    CC duct-fire + startup tranches to set the evening price.
 _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
-        "committed": 0.90,  # min-stable-load tranche offered near incremental
-        #   cost (NYISO-aligned); generic ERCOT-fit was 0.92.
-        "econ_low": 0.95,  # CAMPD CC flat body marginal HR ~0.95x avg
-        #   (generic ERCOT-fit 1.06 over-priced the midday body).
+        # LEVER A (2026-07-04, FINDING-caiso-evening-merit): raised 0.90 -> 1.00.
+        #   The committed band is the min-STABLE-load (at/below-LSL) tranche
+        #   (derive_campd_marginal_hr.py: "committed" = at/below LSL min-gen),
+        #   whose true incremental heat rate is ABOVE the plant average (min-load
+        #   is thermally inefficient). Multipliers scale Plant_Avg_HR, so 0.90x
+        #   avg priced the min-load block ~$1.2/MWh BELOW true marginal cost AND
+        #   below econ_low (0.95) — an INVERTED merit order (min-load block
+        #   cheaper than the efficient incremental band). This borrowed
+        #   (NYISO-aligned, not CAISO-measured) sub-cost offer emulated
+        #   commitment and flooded cheap CC around the clock (+3.2 GW overnight
+        #   over-run, LMP pinned ~$42, physically-backwards evening EXPORT to
+        #   Malin/Palo Verde). 1.00x avg HR restores committed >= econ_low
+        #   ordering and is still CONSERVATIVE vs the true (>avg) min-load HR; any
+        #   avoided-startup credit belongs in an explicit UC layer, not the P1
+        #   offer (rule #1; DOF ledger E8). econ_low is NOT raised — it is the
+        #   measured CAMPD marginal SRMC (below), and lifting it would over-price
+        #   incremental energy above marginal cost (reintroducing the caiso-36
+        #   midday over-price).
+        "committed": 1.00,
+        "econ_low": 0.95,  # CAMPD CC flat body marginal HR ~0.95x avg = true
+        #   incremental SRMC (generic ERCOT-fit 1.06 over-priced the midday body;
+        #   held here — raising to 1.0 would over-price the incremental band).
         "econ_high": 1.21,  # CAMPD CC marginal-HR SRMC reach (ERCOT/NYISO fit;
         #   generic 1.27).
         "peak": 2.25,  # physical F-class duct-burner band, unchanged.
@@ -687,7 +705,12 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     # surface elsewhere). Making the inheritance explicit here is what lets the
     # shared fallback go neutral without touching CAISO's dispatch.
     "CC_CHP": {
-        "committed": 0.92,
+        # LEVER A (2026-07-04): committed 0.92 -> 1.00, same min-load-block
+        #   physics as CC_REGULAR above (the borrowed sub-cost committed offer
+        #   inverted committed<econ_low and flooded cheap CC). econ_low/econ_high
+        #   held (marginal-SRMC / duct band); the steam-host floor
+        #   (chp_steam_following) still governs the price-inelastic min-gen.
+        "committed": 1.00,
         "econ_low": 0.96,
         "econ_high": 1.12,
         "peak": 2.25,
