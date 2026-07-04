@@ -36,6 +36,12 @@ BTU_KWH_PER_MMBTU_MWH: float = 1000.0
 # 1 MMBtu = 1e6 BTU, so MWh·(BTU/kWh) = 1000·BTU = 1e-3 MMBtu.
 MMBTU_PER_MWH_BTU_KWH: float = 1000.0
 
+# Pounds per metric tonne (1 tonne = 1000 kg; 1 lb = 0.45359237 kg). R7/EM-2:
+# the model's canonical NOx rate unit is tonnes/MWh (as written by
+# fleet.apply_plant_emission_rates), while the NOx price arrives in $/lb; the
+# rate is converted to lb/MWh at this boundary before costing.
+LB_PER_TONNE: float = 1000.0 / 0.45359237
+
 
 @dataclass
 class PlantBinAssignment:
@@ -55,7 +61,9 @@ class PlantBinAssignment:
         vom_per_mwh: Variable O&M, in $/MWh.
         fom_per_kw_yr: Fixed O&M, in $/kW-year.
         emission_rate_tco2_mwh: CO2 emission rate, in tCO2/MWh.
-        nox_rate_lb_mwh: NOx emission rate, in lb/MWh.
+        nox_rate_tonnes_mwh: NOx emission rate, in **tonnes/MWh** — the model's
+            canonical unit (``Generator.nox_rate``). Converted to lb/MWh at the
+            costing boundary via :data:`LB_PER_TONNE` (R7/EM-2 unit-contract fix).
     """
 
     plant_code: int
@@ -69,7 +77,7 @@ class PlantBinAssignment:
     vom_per_mwh: float
     fom_per_kw_yr: float
     emission_rate_tco2_mwh: float
-    nox_rate_lb_mwh: float
+    nox_rate_tonnes_mwh: float
 
 
 def _plant_map_frame(plant_map: list[PlantBinAssignment]) -> pd.DataFrame:
@@ -159,7 +167,10 @@ def build_plant_bin_map(
                 vom_per_mwh=float(data.get("vom") or 0.0),
                 fom_per_kw_yr=float(data.get("fom_per_kw_yr") or 0.0),
                 emission_rate_tco2_mwh=float(data.get("emission_rate_co2") or 0.0),
-                nox_rate_lb_mwh=float(data.get("nox_rate") or 0.0),
+                # Generator.nox_rate is tonnes/MWh (fleet.apply_plant_emission_rates
+                # writes kg/MWh ÷ 1000); carried canonical and converted to lb at
+                # the costing boundary (R7/EM-2).
+                nox_rate_tonnes_mwh=float(data.get("nox_rate") or 0.0),
             )
         )
     logger.info("Built plant-bin map for %d generators", len(assignments))
@@ -348,7 +359,7 @@ def compute_plant_hourly_financials(
         "heat_rate_btu_kwh",
         "vom_per_mwh",
         "emission_rate_tco2_mwh",
-        "nox_rate_lb_mwh",
+        "nox_rate_tonnes_mwh",
     ]
     attrs = _plant_map_frame(plant_map)[attr_cols]
 
@@ -367,6 +378,10 @@ def compute_plant_hourly_financials(
     df["fuel_cost"] = df["fuel_mmbtu"] * df["price_per_mmbtu"]
     df["vom_cost"] = df["generation_mwh"] * df["vom_per_mwh"]
     df["carbon_cost"] = df["generation_mwh"] * df["emission_rate_tco2_mwh"] * carbon
+    # R7/EM-2: convert the canonical tonnes/MWh NOx rate to lb/MWh before
+    # applying the $/lb NOx price (previously multiplied tonnes/MWh by $/lb — a
+    # ~2205× under-count).
+    df["nox_rate_lb_mwh"] = df["nox_rate_tonnes_mwh"] * LB_PER_TONNE
     df["nox_cost"] = df["generation_mwh"] * df["nox_rate_lb_mwh"] * nox
     df["total_variable_cost"] = (
         df["fuel_cost"] + df["vom_cost"] + df["carbon_cost"] + df["nox_cost"]
