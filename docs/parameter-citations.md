@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**961 parameters registered** (552 flagged `needs-citation`).
+**965 parameters registered** (554 flagged `needs-citation`).
 
 
 ## Calibration
@@ -409,6 +409,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.neiso_gas_derate_cap` | 0.2 | 2 | Max incremental gas-fired forced-out |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_slope_per_c` | 0.018 | 3 | Incremental gas forced-out |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_t0_c` | -7.0 | 1 | Cold-limb zero-crossing (~20 degF): above |  | auto-generated, needs-citation |
+| `scenario.neiso_winter_fuel_inventory` | False | 1 | NEISO winter (Nov-Mar) oil-burn |  | auto-generated, needs-citation |
+| `scenario.neiso_winter_fuel_start_fill_bbl` | None | 1 | Start-of-winter |  | auto-generated, needs-citation |
 | `scenario.nyiso_import_hub_prices` | False | 1 | NYISO priced import-node tranches |  | auto-generated, needs-citation |
 | `scenario.nyiso_zonal_gas_basis` | False | 3 | Tier 3 (calibration) — NYISO per-zone gas-hub basis. NYISO's region… |  | auto-generated, needs-citation |
 | `scenario.oil_primary_bin_fuel` | False | 3 | Tier 3 (calibration) — MEASURED per-unit fuel correction. A handful… |  | auto-generated, needs-citation |
@@ -522,6 +524,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_zonal_reserve_zones` | None | 1 | Optional override of the zonal reserve family zone set; None -> (MI… | 2026-07-01 |  |
 | `scenario.miso_zonal_reserves` | False | 1 | MISO BPM-002 §3.3/§3.3.2 (minimum Zonal Operating Reserve Requireme… | 2022-09-30 |  |
 | `scenario.nyiso_synchronised_reserve` | False | 1 | NYISO online-gated SPINNING |  | auto-generated, needs-citation |
+| `scenario.nysdec_peaker_rule_availability` | False | 1 | NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay (NY… | 2023-05 | auto-generated |
 | `scenario.ordc_voll` | 5000.0 | 1 | PUCT Project 52631 (Review of the ERCOT Scarcity Pricing Mechanism)… | 2022-01 |  |
 | `scenario.outage_source` | statistical | 3 | Tier 3 (calibration) — thermal availability source. "statistical" (… |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_online_gated` | False | 1 | PJM: gate co-opt reserve to ONLINE |  | auto-generated, needs-citation |
@@ -930,6 +933,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_years_gas_cc_ccs` | 3 | 2 | CCS-equipped CC, like a modern CC |  | auto-generated, needs-citation |
 | `scenario.storage_as_commitment` | False | 1 | ERCOT backcast: reserve the measured |  | auto-generated, needs-citation |
 | `scenario.tranche_startup_amortization` | False | 1 | Fast-start tranche pricing (ISO-NE Order 825 analogue): when set, t… | 2024 | auto-generated |
+| `scenario.tranche_startup_measured_runs` | False | 1 | Fast-start amortization v3 — MEASURED run-length basis (requires ``… | 2023 | auto-generated |
 | `st_gas_commitment_params` | [[10.0, {"startup_per_mw": 55.0, "min… | 2 | Gas steam (legacy oil/gas boilers): high thermal inertia — slow to … | 2012 | auto-generated |
 | `st_gas_startup_params` | [[10.0, 55.0], [99.0, 75.0]] | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `vom.biomass` | 5.0 | 2 | NREL ATB 2024 — biomass (fuel handling raises O&M) | 2024 | auto-generated |
