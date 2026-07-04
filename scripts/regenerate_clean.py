@@ -33,6 +33,7 @@ DATATYPES: tuple[str, ...] = (
     "generation",
     "renewables",
     "emissions",
+    "emissions-unit-annual",
     "outages",
     "validation",
     "fleet",

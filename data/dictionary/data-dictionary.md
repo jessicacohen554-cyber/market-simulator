@@ -68,6 +68,7 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
+| emissions-unit-annual | annual unit-level CAMPD roll-up | n/a |
 | outages | derived (CAMPD downtime + curated ERCOT lists) | 2022–2026 |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
@@ -249,6 +250,39 @@ Hourly CEMS/CAMPD emissions by plant/unit. Schema:
 | `co2_kg` | `float64` | `kg` | yes | CO2 mass emitted over the hour (CAMPD co2Mass, converted to kg). |
 | `nox_kg` | `float64` | `kg` | yes | NOx mass emitted over the hour (CAMPD noxMass, converted to kg). |
 | `so2_kg` | `float64` | `kg` | yes | SO2 mass emitted over the hour (CAMPD so2Mass, converted to kg). |
+
+## emissions-unit-annual
+
+Annual roll-up of the hourly **unit-level** CAMPD extracts — one row per
+`(plant_id, unit_id, year)`, the queryable product the forward per-plant CO2-rate
+estimator consumes (`docs/handoffs/emissions-co2-rate-plan-2026-07.md`). Schema:
+[`schema/emissions-unit-annual.schema.yaml`](schema/emissions-unit-annual.schema.yaml).
+Curated by `scripts/curate_emissions_unit_annual.py` (reads only
+`data/raw/campd-unit-level`; hard-skips the quarantined 2022/H1-2026 years).
+
+- **Keys:** `plant_id`, `unit_id`, `year`
+- **Derives:** annual `gross_mwh`, `heat_mmbtu`, `co2/nox/so2_kg` (kg), `op_hours`,
+  `starts` (gross>1 MW off→on transitions), and `co2_source` / `mw_source`
+  provenance flags.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `state` | `string` | `none` | no | CAMPD stateCode. |
+| `plant_id` | `int64` | `none` | no | Plant / facility identifier (CAMPD facilityId). |
+| `unit_id` | `string` | `none` | no | Unit identifier (CAMPD unitId); "ALL" at facility grain. |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `primary_fuel` | `string` | `none` | yes | CAMPD primaryFuelInfo. |
+| `unit_type` | `string` | `none` | yes | CAMPD unitType. |
+| `gross_mwh` | `float64` | `mwh` | no | Annual sum of hourly gross load. |
+| `steam_load_klbh_sum` | `float64` | `klb` | yes | Annual sum of hourly steam load (CHP host steam). |
+| `co2_kg` | `float64` | `kg` | no | Annual CO2 (kg), backfilled per `co2_source`. |
+| `nox_kg` | `float64` | `kg` | yes | Annual NOx (kg). |
+| `so2_kg` | `float64` | `kg` | yes | Annual SO2 (kg). |
+| `heat_mmbtu` | `float64` | `mmbtu` | no | Annual heat input. |
+| `op_hours` | `int64` | `hours` | no | Hours with gross load > 0. |
+| `starts` | `int64` | `none` | no | Off→on transitions (gross>1 MW) on a gap-filled clock. |
+| `co2_source` | `string` | `none` | no | `measured` / `partial_backfill` / `heat_backfilled`. |
+| `mw_source` | `string` | `none` | no | `measured` / `heat_proxy`. |
 
 ## outages
 
