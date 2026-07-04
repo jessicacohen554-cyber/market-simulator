@@ -1,6 +1,53 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-07-03): `nyiso 41 hub prices` — NOT-YET (re-balanced rubric)**
+> **SESSION 2026-07-04 (probes `nyiso 43 ceiling oilbasis` + `nyiso 44
+> faststart`, both registered NOT-YET; keeper unchanged): the run-42
+> winter-spread blockers are ROOT-CAUSED AND FIXED, but promotion is blocked
+> by a new repo-level regression.** The three carried items closed measured:
+> **(E2)** the run-42 C2-2025 gas −2.5% FAIL was a *scoring-basis artifact* —
+> the harness had silently enabled `dual_fuel_oil_reattribution` (spec'd
+> NEISO-only) for every ISO passing `--gas-hub-basis-daily`, relabelling
+> 0.8–1.5 TWh of parity-switched winter gas as oil while the measured NYIS
+> EIA-930 feed attributes those hours to `NG: NG` (Jan-2025: 0.80 TWh
+> relabelled vs 0.031 measured OIL; 2023: 2.17 TWh NYIS OIL vs a 0.42 TWh
+> EIA-923 oil class — static plant-primary attribution). Gate restored to
+> NEISO-only → C2-2025 **−0.1% PASS**, and C5a CO2 lands **in band all three
+> years** (−2.3/−5.3/−3.7%; the 41 keeper's 2024 −7.1% breach was the same
+> relabel exporting switch-hour CO2). **(E3)** the Feb-2023/Jan-2024/Jan-2025
+> reconstructions exceeded the measured Algonquin-Citygate ceiling of the NE
+> complex Z2 trades inside (13.21 vs 8.13; 8.60 vs 7.68; 18.60 vs 16.92) —
+> the reconciled reference now caps each month at the measured ALG monthly
+> and water-fills the shaved scarcity excess as a year-round base so the
+> measured SOM annual spread is preserved exactly (three measured series, no
+> constant; Jan-2024 overshoot +6 → +1.6). **(E1)** decomposed: east level =
+> the ledgered offer-markup/reserve frontier (AS data on disk is *prices*,
+> not condition-varying requirements → stays data-blocked); plus an upstate
+> shoulder collapse (Upstate_West at the $1.4 wind margin ~75% of Apr-2023
+> hours behind the measured 1,450 MW CE TTC while the recon band pushes
+> ~830 MW of measured net imports through the upstate link; real upstate held
+> ~$22-25 via gross two-way tie flows a single external node cannot see —
+> per-interface flows/ratings are the new data ask). **THE BLOCKER:** commit
+> `0c6c833` (2026-07-03, "Kill cross-ISO leakage of ERCOT-fitted gas offer
+> bands") de-leaked the NYISO CT_PEAKER/CT_CHP econ bands to neutral 1.0 with
+> "a NYISO-grounded CT econ ramp" as its documented open root cause — the
+> LI/NYC peakers now over-run ~2.5× actual (CT 4.9 vs 2.13 TWh) and displace
+> steam through the HARD C1 band (**2024 ST_GAS −3.4 TWh FAIL**). Every NYISO
+> solve on current main fails this — verified including a re-solve of the
+> keeper-41 config itself (CT 4.69/ST 7.65). `nyiso 44` shows the ISO-NE-style
+> fast-start amortization (`--tranche-startup-amortization`, real structure,
+> worth keeping) moves CT only 4.90 → 4.75: it cannot substitute for the
+> missing offer-level grounding. Closure candidates (none on disk): LI/NYC
+> peaker delivered-fuel basis (LDC citygate/interruptible; kerosene frames),
+> a SOM-groundable markup (the 2024 SOM confirms offers sit above bid-based
+> reference levels but publishes no per-class number), DEC Peaker-Rule
+> run-hour limits. CEMS marginal HR is ruled out (run-28: 0.66–0.85× base).
+> Best NYISO probe state: `nyiso 44` — C2/C5a/C1-2023/C6 PASS, C3a
+> −15.4/−14.9/−13.0, C3b 0.207/0.201/0.195, C3c 0/0/7h (3 ledgered soft
+> caveats; NOT-YET solely on C1-2024).
+
+> **KEEPER (2026-07-03): `nyiso 41 hub prices` — NOT-YET (re-balanced rubric;
+> 2026-07-04 note: no longer reproducible on current main — see the 0c6c833
+> CT de-leak blocker above; its committed artifacts stand)**
 > (`2026-07-03-nyiso-41-hub-prices`, bundle
 > `results/calibration/nyiso41_hubprices`, all 3 years). The nyiso-39 config on
 > corrected measured gas data plus **measured-neighbor import pricing**
