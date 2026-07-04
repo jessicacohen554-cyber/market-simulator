@@ -1556,6 +1556,14 @@ class ScenarioConfig:
     # multi-product co-opt only. Mutually exclusive with storage_as_commitment
     # (the measured path); endogenous takes precedence and forces the measured
     # path off when both are set.
+    # ENTRY RECONCILIATION (rule 19): when on, the storage new-entry screen
+    # (model.storage.apply_storage_new_entry) credits the AS value DERIVED from
+    # this solve's own reserve duals (ancillary.realized_storage_as_revenue_per_mw_yr)
+    # and the exogenous as_revenue_per_mw_yr("storage") is suppressed — exactly
+    # one mechanism prices storage AS. Requires energy_reserve_coopt (validated);
+    # in forecast with ercot_multiproduct_as_coopt it also requires
+    # ercot_as_forward_requirement (else the AS requirement is the zero
+    # measured-plan fallback). See docs/storage-as-withholding-attribution-2026-07.md.
     negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
     # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
     # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
@@ -2950,6 +2958,37 @@ class ScenarioConfig:
             raise ValueError(
                 f"ScenarioConfig.hydro_year must be one of "
                 f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
+            )
+
+        # Endogenous storage energy-vs-AS competition is priced *inside* the
+        # reserve co-optimization: without it the flag would silently no-op
+        # (and, worse, still suppress the exogenous storage AS credit in the
+        # entry screen — rule 19 — leaving storage with zero AS value). Require
+        # the co-opt so the mechanism it names is actually present.
+        if self.ercot_storage_as_endogenous and not self.energy_reserve_coopt:
+            raise ValueError(
+                "ercot_storage_as_endogenous requires energy_reserve_coopt: the "
+                "endogenous storage energy-vs-AS split is priced by the reserve "
+                "co-optimization, which is off. Enable energy_reserve_coopt "
+                "(ERCOT multi-product) or clear ercot_storage_as_endogenous."
+            )
+        # Forecast multi-product AS requirement must regenerate from forward
+        # drivers: the measured-plan fallback (ASPLANNP433) returns an all-zero
+        # requirement for any year with no file, so a forecast co-opt without
+        # ercot_as_forward_requirement would demand zero AS and withhold
+        # nothing. (The single-product ORDC path is LOLP×VOLL, forward-safe, so
+        # this is scoped to the multi-product AS co-opt.)
+        if (
+            self.mode == "forecast"
+            and self.ercot_storage_as_endogenous
+            and self.ercot_multiproduct_as_coopt
+            and not self.ercot_as_forward_requirement
+        ):
+            raise ValueError(
+                "forecast ercot_storage_as_endogenous with "
+                "ercot_multiproduct_as_coopt requires ercot_as_forward_requirement "
+                "so the AS requirement regenerates from forward load/VRE drivers; "
+                "the measured-plan fallback is zero for forecast years."
             )
 
     @property
