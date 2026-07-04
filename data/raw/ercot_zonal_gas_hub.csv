@@ -1,0 +1,36 @@
+zone,year,basis_vs_hh_usd_mmbtu,hub,source,neg_day_freq,neg_day_freq_source
+West,2022,-1.23,Waha,"Waha annual avg $5.19 (EIA Today in Energy id=55119: HH 2022 avg $6.45, Waha avg $1.26/MMBtu below HH -> $5.19; retrieved 2026-07-04) minus HH $6.42 (on-disk henry_hub_monthly)",0.0,Reuters (via BOE Report 2026-04-07) negative-day enumeration by year skips 2021-2022: zero sub-zero Waha days in 2022
+West,2023,-0.72,Waha,Waha annual avg $1.82 (NGI/EIA NG Weekly) minus Henry Hub $2.54 (on-disk henry_hub_monthly),0.03,Waha spot negative ~9 trading days in 2023 (Reuters/NGI) over ~252 trading days; mild collapse year
+West,2024,-2.19,Waha,Waha annual avg ~$0.00 (record low; NGI/EIA - negative 42% of days) minus HH $2.19,0.42,EIA Today-in-Energy id=64445: Waha spot traded below zero on 42% of trading days in 2024 (record)
+West,2025,-2.38,Waha,Waha annual avg $1.15 (NGI/EIA) minus HH $3.53,0.11,Waha 39 negative pricing days in 2025 (NGI/Reuters) over 365; settlement-close basis (lower bound vs EIA any-negative)
+West,2026,-6.58,Waha,Waha annual avg $-2.29 (Reuters via BOE Report 2026-05-11: Waha averaged -$2.29/MMBtu YTD 2026 through ~May 8; closest citable avg for the Jan-Apr F923 window (includes ~1 wk of May; late-Apr/early-May both deeply negative); retrieved 2026-07-04) minus HH $4.29 (on-disk henry_hub_monthly); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,0.62,"Reuters via BOE Report: 51 negative Waha days YTD through 2026-04-07 + unbroken negative streak covering Apr 8-30 (42-day streak on Apr 7, still negative on May 11) -> ~74 of 120 calendar days Jan-Apr"
+Panhandle,2022,-1.23,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.0,proxy->Waha West 2022
+Panhandle,2023,-0.72,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.03,proxy->Waha West 2023
+Panhandle,2024,-2.19,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.42,proxy->Waha West 2024
+Panhandle,2025,-2.38,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.11,proxy->Waha West 2025
+Panhandle,2026,-6.58,Waha,proxy->Waha (Permian; carries 0.0 modeled load); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,0.62,proxy->Waha West 2026
+North,2022,0.41,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 60M MMBtu),,
+North,2023,0.13,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 60M MMBtu),,
+North,2024,0.21,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 66M MMBtu),,
+North,2025,0.43,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 60M MMBtu),,
+North,2026,-1.42,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 5M MMBtu); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,,
+Northeast,2022,0.41,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2023,0.13,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2024,0.21,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2025,0.43,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2026,-1.42,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,,
+Houston,2022,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2023,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2024,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2025,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2026,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+South_Central,2022,0.36,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (13 plants 161M MMBtu),,
+South_Central,2023,0.56,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 172M MMBtu),,
+South_Central,2024,0.45,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 182M MMBtu),,
+South_Central,2025,-0.12,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (7 plants 120M MMBtu),,
+South_Central,2026,-1.31,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (7 plants 34M MMBtu); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,,
+South,2022,1.2,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 11M MMBtu),,
+South,2023,1.23,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 9M MMBtu),,
+South,2024,0.63,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 33M MMBtu),,
+South,2025,0.59,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 29M MMBtu),,
+South,2026,3.42,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 4M MMBtu); PARTIAL YEAR: Jan-Apr 2026 published receipts only (winter-weighted); re-derive when EIA publishes the rest,,
