@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-03-neiso-47-fast-start",
+ "label": "neiso 47 fast start",
+ "date": "2026-07-03",
+ "shorthand": "neiso-47-fast-start",
+ "definition": "neiso-47 (KEEPER, CALIBRATED-WITH-CAVEATS \u2014 the first ISO to reach a passing determination under the 2026-07-02 re-balanced rubric): the neiso-43 closeout recipe (measured daily AGT/MA-citygate gas-hub basis + dual-fuel oil re-attribution + EIA-930-pinned hydro budget with 2024 backfill + biomass/OTHER measured must-run + historic CAMPD outage overlay + dual-limb temperature reliability floor + floor-class outage exemption + ISO-NE-grounded post-solve ORDC overlay) PLUS two coupled offer-side changes derived from the named month/hour C3b-2024 causes (Jan/Feb flat all-hours winter over-shoot +$9-10: marginal implied HR ~10.5 vs actual ~8.2 at $3.5-7.7 hub gas; Jul/Aug afternoon/evening DA-visible under-shoot -$10-11: the HR-multiplier stack collapses to ~$33 at $1.8 gas while the real fast-start margin offers $60-100): (1) --tranche-startup-amortization, fast-start tranche pricing (ISO-NE Market Rule 1 / Order 825 analogue) \u2014 the fast-start-eligible tranches (CT econ+peak; CC duct/quick-response peak band) carry the existing NREL start cost amortized over their own P0 run lengths, the fuel-price-INVARIANT offer component the multiplier curve cannot express; CC econ blocks excluded (their starts are NCPC uplift, not LMP); (2) CC_REGULAR econ band re-anchored 1.06->1.27 generic to 1.00->1.15, level from the directly-observable winter marginal implied HR (~8.2 on Salem Harbor base 7.38 -> mid-band ~1.08). Probe chain registered: neiso-44 base control (2024 C3b 0.160 FAIL), neiso-45 flatten-only (C3b 0.132 but C3a 2023 -6.2%), neiso-46 v1 all-tranche markup (CC-econ markup re-inflates mild winter, C3b 0.1518). RESULT: C3b 0.130/0.143/0.054 and C3a -4.6/-2.3/+1.8% all PASS; C1 PASS; fuel mix byte-comparable (CC_REGULAR +/-0.2 TWh vs base); storage throughput recovers ENDOGENOUSLY 0.74 -> 1.05 TWh 2025 with no storage knob (C5b -49.3%, ledgered caveat, downstream of the winter fuel-inventory item); C3c tail 0h vs 15/8/20h ledgered (closable only via the documented winter fuel-inventory build); C2 2025 gas +3.0% preliminary-vintage hard caveat (1/1); C5c SKIPPED (actual monthly PS discharge near-uniform, CV 0.137 \u2014 degeneracy guard, volume scored by C5b). Verdict: caveats 2/2 soft + 1/1 hard, every caveat ledgered in calibration_attestation.json.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-07-03-neiso-47-fast-start.js",
+ "bundle": "results/calibration/neiso47_faststart"
+}
