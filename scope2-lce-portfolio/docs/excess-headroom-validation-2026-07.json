@@ -1,0 +1,348 @@
+{
+  "title": "ADR 0018 excess_headroom_only validation \u2014 ERCOT, Mode B, three policies",
+  "date": "2026-07-04",
+  "iso": "ERCOT",
+  "caveat": "Premiums are NOT priced results: the LMP is the synthetic ISO-keyed dummy (bau_lmp_2026_dummy.csv) because the market-sim BAU forecast is on hold (PLAN.md Sec.10); the stress scenario further overlays a synthetic ERCOT-scale scarcity price. All three policies see IDENTICAL inputs within a scenario, so the cross-policy comparison (divert-and-backfill removed, matching/premium delta) is a valid controlled contrast even though the absolute premium level is synthetic.",
+  "profile_source": {
+    "source": "real",
+    "path": "/home/user/market-simulator/scope2-lce-portfolio/data/profiles/ERCOT_2024.parquet",
+    "shape_year": 2024,
+    "reason": "per-ISO profile file present"
+  },
+  "scenarios": {
+    "base_dummy_lmp": {
+      "lmp_source": {
+        "source": "dummy_existing",
+        "is_synthetic": true,
+        "path": "/home/user/market-simulator/scope2-lce-portfolio/data/inputs/bau_lmp_2026_dummy.csv"
+      },
+      "scarcity_overlay": null,
+      "comparison": [
+        {
+          "target": 0.8,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.9996627664363075,
+              "premium": -580.227444034059,
+              "divert_backfill_mwh": 0.05854026011262915,
+              "grid_buy_mwh": 295.416601794699,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 1.0,
+              "premium": -580.227448445789,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 1.0,
+              "premium": -580.227448445789,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": -4.411730060382979e-06,
+            "matching_delta": 0.00033723356369252944,
+            "divert_removed_mwh": 0.05854026011262915
+          }
+        },
+        {
+          "target": 0.9,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.9999061119041153,
+              "premium": -580.2274450684864,
+              "divert_backfill_mwh": 0.04461766425730866,
+              "grid_buy_mwh": 82.24597199506862,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 1.0,
+              "premium": -580.227448445789,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 1.0,
+              "premium": -580.227448445789,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": -3.3773026189010125e-06,
+            "matching_delta": 9.388809588473102e-05,
+            "divert_removed_mwh": 0.04461766425730866
+          }
+        },
+        {
+          "target": 0.95,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.9998842783153444,
+              "premium": -580.2274458292594,
+              "divert_backfill_mwh": 0.02894642599328178,
+              "grid_buy_mwh": 101.37219575830281,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 0.9998577011016386,
+              "premium": -580.2274470755898,
+              "divert_backfill_mwh": 0.01886969965351138,
+              "grid_buy_mwh": 124.65383496456919,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 0.9998577011016386,
+              "premium": -580.2274470755898,
+              "divert_backfill_mwh": 0.01886969965351138,
+              "grid_buy_mwh": 124.65383496456919,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": -1.2463303846743656e-06,
+            "matching_delta": -2.6577213705802905e-05,
+            "divert_removed_mwh": 0.0100767263397704
+          }
+        },
+        {
+          "target": 0.99,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.9996892936603884,
+              "premium": -580.2274439310469,
+              "divert_backfill_mwh": 0.05493827364236973,
+              "grid_buy_mwh": 272.1787534997645,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 0.9998862502839179,
+              "premium": -580.2274471925064,
+              "divert_backfill_mwh": 0.016692984519755497,
+              "grid_buy_mwh": 99.64475128796383,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 0.9998862502839179,
+              "premium": -580.2274471925064,
+              "divert_backfill_mwh": 0.016692984519755497,
+              "grid_buy_mwh": 99.64475128796383,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": -3.2614594829283305e-06,
+            "matching_delta": 0.00019695662352947618,
+            "divert_removed_mwh": 0.03824528912261423
+          }
+        },
+        {
+          "target": 1.0,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 1.0,
+              "premium": -580.2274484423858,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 1.0,
+              "premium": -580.2274484391068,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 1.0,
+              "premium": -580.2274484391068,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 3.279069460404571e-09,
+            "matching_delta": 0.0,
+            "divert_removed_mwh": 0.0
+          }
+        }
+      ]
+    },
+    "scarcity_stress": {
+      "lmp_source": {
+        "source": "dummy_existing",
+        "is_synthetic": true,
+        "path": "/home/user/market-simulator/scope2-lce-portfolio/data/inputs/bau_lmp_2026_dummy.csv"
+      },
+      "scarcity_overlay": {
+        "hours": 200,
+        "price_usd_mwh": 2500.0,
+        "placement": "top-N tightest residual-load hours"
+      },
+      "comparison": [
+        {
+          "target": 0.8,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.8,
+              "premium": -24320.925582386335,
+              "divert_backfill_mwh": 175200.0,
+              "grid_buy_mwh": 175200.0,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 0.9998164110966901,
+              "premium": -3463.5010399708262,
+              "divert_backfill_mwh": 59.89314431052063,
+              "grid_buy_mwh": 160.82387929948726,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 0.9960157328656152,
+              "premium": -3436.106570464985,
+              "divert_backfill_mwh": 0.11619394259521526,
+              "grid_buy_mwh": 3490.218009721115,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 20884.81901192135,
+            "matching_delta": 0.19601573286561513,
+            "divert_removed_mwh": 175199.8838060574
+          }
+        },
+        {
+          "target": 0.9,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.9,
+              "premium": -24109.60118227549,
+              "divert_backfill_mwh": 87599.99999999999,
+              "grid_buy_mwh": 87599.99999999999,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 1.0,
+              "premium": -3463.501040955656,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 1.0,
+              "premium": -3463.501040955656,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 20646.100141319836,
+            "matching_delta": 0.09999999999999998,
+            "divert_removed_mwh": 87599.99999999999
+          }
+        },
+        {
+          "target": 0.95,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.95,
+              "premium": -24003.830566797216,
+              "divert_backfill_mwh": 43800.00000000004,
+              "grid_buy_mwh": 43800.00000000004,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 0.9998065506233466,
+              "premium": -3463.5010400733636,
+              "divert_backfill_mwh": 66.33683163789485,
+              "grid_buy_mwh": 169.4616539484298,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 0.9978764352673045,
+              "premium": -3436.10657529069,
+              "divert_backfill_mwh": 0.08408570142748512,
+              "grid_buy_mwh": 1860.2427058412727,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 20567.723991506526,
+            "matching_delta": 0.04787643526730456,
+            "divert_removed_mwh": 43799.91591429861
+          }
+        },
+        {
+          "target": 0.99,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 0.99,
+              "premium": -23919.20274679722,
+              "divert_backfill_mwh": 8760.000000000007,
+              "grid_buy_mwh": 8760.000000000007,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 0.9998886463150726,
+              "premium": -3463.5010400857027,
+              "divert_backfill_mwh": 35.0698593744588,
+              "grid_buy_mwh": 97.54582799639691,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 0.9997122802420705,
+              "premium": -3436.106566561631,
+              "divert_backfill_mwh": 0.11066834698073785,
+              "grid_buy_mwh": 252.04250794622476,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 20483.09618023559,
+            "matching_delta": 0.009712280242070492,
+            "divert_removed_mwh": 8759.889331653027
+          }
+        },
+        {
+          "target": 1.0,
+          "policies": {
+            "arbitrage": {
+              "matching_pct": 1.0,
+              "premium": -23898.045791797216,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_clean_only": {
+              "matching_pct": 1.0,
+              "premium": -3463.5010299847436,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            },
+            "excess_headroom_only": {
+              "matching_pct": 1.0,
+              "premium": -3463.5010299847436,
+              "divert_backfill_mwh": 0.0,
+              "grid_buy_mwh": 0.0,
+              "status": "Optimal"
+            }
+          },
+          "headroom_vs_arbitrage": {
+            "premium_delta": 20434.544761812474,
+            "matching_delta": 0.0,
+            "divert_removed_mwh": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

@@ -207,6 +207,18 @@ stall for minutes under heavy storage use); IPM solves it in seconds and returns
 the row duals we need. Construction is fully vectorized (`scipy.sparse`,
 `np.tile`/`np.repeat`) — no Python loop over hours.
 
+**Crossover fallback.** On a degenerate / high-dimensional optimal face — e.g. a
+loose Mode-B matching target where over-cheap renewables make ~100% matching
+achievable many equivalent ways — crossover-off IPM can stop at an interior
+point it cannot certify and report model status `Unknown` instead of `Optimal`,
+which the `solve_ok` gate then zeroes into a spurious 0%-matched frontier point.
+So `_solve_highs` re-solves **once with `run_crossover=on`** whenever the fast
+path returns anything but `Optimal`; crossover walks the interior point to an
+adjacent vertex and certifies it. The retry fires only on the rare non-Optimal
+path, so happy-path speed is unchanged, and a truly infeasible/unbounded model
+still surfaces its status. (Found by the ADR 0018 ERCOT validation,
+`docs/excess-headroom-validation-2026-07.md`.)
+
 ## Why this yields the intended behavior
 
 Because `grid_buy` and `excess` settle at `lmp[t]`, the premium budget is spent
