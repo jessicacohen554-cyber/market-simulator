@@ -4276,3 +4276,50 @@ via the documented `neiso-winter-fuel-inventory-plan-2026-07` build).
 
 Retention: neiso-24/25/26/27/28/29 pruned (top-15). Keeper-auditor run: PASS,
 no repairs. `status.js` rebuilt (NEISO the only CALIBRATED-WITH-CAVEATS).
+
+## 2026-07-04 — CAISO 53 lever-ab: the FINDING-caiso-evening-merit levers (PROBE; caiso-51 stays keeper)
+
+Session executes the two levers adjudicated by
+`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md` on the full
+caiso-51 recipe (run `2026-07-04-caiso-53-lever-ab`, bundle
+`results/calibration/caiso53_lever_ab`):
+
+- **Lever A (offer physics, commit 1ada584):** `_CAISO_OFFER_CURVE`
+  CC_REGULAR/CC_CHP `committed` 0.90/0.92 → **1.00×** plant-avg HR — the
+  min-stable-load block's SRMC floor; restores `committed ≥ econ_low`
+  (econ_low HELD at the CAMPD-measured 0.95/0.96). DOF ledger:
+  `cc_committed_hr_mult_floor`, measured-physical.
+- **Lever B (measured market input, commit 3ac6f19):** firm import-tranche
+  VOLUMES grounded on **DMM Annual Report RA-import capacity** (CAISO BAA
+  boundary, excl Imports-MSS: 2,323 MW 2023 / 3,371 MW 2024 / 2025 carries
+  2024 — open gap until the DMM 2025 annual report, ~Aug 2026), split
+  PNW/DSW by the **published MIC branch-group share** north/south of Path 15
+  (46.2/46.2/46.4%): per-year `IMPORT_TRANCHES_BY_YEAR["CAISO"]` firm blocks
+  1072/1251, 1558/1813, 1566/1805 MW (was uncited 800/1800). Rejected
+  boundaries documented per rule #14 (CEC all-CA, CARB jurisdictional,
+  EIA-930 net-flow floors — negative, cannot size a gross firm block). DOF
+  ledger: `caiso_firm_import_volumes`, measured-market; `n_residual` 8 → 7.
+
+**Result vs keeper caiso-51:** the targeted CC/import complex improves —
+C1 2023 CC_REGULAR PASSES (was +4.91 TWh), 2024 +9.43 (was +10.86); net
+import 2024 30.0 vs 32.4 TWh actual (was 25.8); evening corridors net-import
+(DSW +1213 / PNW +543 MW, the evening-export artifact gone); C5a 2024
+passes; **C7 CT diurnal largely fixed** (2023+2024 CT pass; flat-floor CV
+signature 0.03–0.06 → 2.6–3.1). The flagged price tension lands as
+predicted: C3a +22.3/+37.9/+48.9%, C3b 0.303/0.488/0.502, C2 2025 gas
++10.5%. **New root-cause items (logged, not chased):** (1) 2023 C3c tail
+454h >$200 vs 21h actual, Jan-concentrated — the measured $28/MMBtu citygate
+spike × the repriced committed CC (~$213) crosses $200 where actual held
+below (monthly-average gas overlay too blunt in spike months / missing
+demand response); (2) C8 CT forced share 65–76% (was 29–33% lower-bound):
+forced TWh flat (~all `ct_netload_drag`) but MERIT CT energy collapsed
+2.3 → 0.6 TWh as grounded imports displace marginal CT — the drag floor now
+IS the CT class, confirming the FINDING's structural ramp/local gap (its own
+session; no floor may close it, rules #1/17–20).
+
+**Determination NOT-YET; NOT promoted** (C7 better, C8 gated share worse —
+does not beat caiso-51 on C7/C8 jointly). Both levers are grounded inputs
+and stay in code (rule #15). Retention: caiso-39/40 pruned (top-15).
+Follow-up filed: issue #1302 (per-ISO sub-SRMC committed-band diagnosis;
+ST_GAS 0.81 remnant included). Pre-existing unrelated test failure noted on
+main: `test_caiso_per_hub_intertie::test_split_resolves_to_two_flow_columns`.
