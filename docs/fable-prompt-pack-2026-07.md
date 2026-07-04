@@ -51,38 +51,59 @@ Wave 1, **W1-P1/W1-P2 first** (they protect every number the other waves produce
 
 ## Wave 0 — Fable planning sessions (run all in parallel, one session each)
 
-### W0-P1 `[FABLE]` — Emissions-integrity diagnosis and fix plan
+### W0-P1 `[FABLE]` — CO2-rate model design (CAMPD-history-conditioned) + emissions fix plan
+
+*Owner direction 2026-07-04: CO2 is the priority pollutant (NOx/SO2 secondary). Forecast
+emission rates for EXISTING units must be tied to historic measured CAMPD performance —
+intake annual unit-level rates back to ~2018 and predict forward rates either as a
+multi-year forecast average or conditioned on how the unit operates (starts/stops, total
+generation) in the model year.*
 
 ```
-Read CLAUDE.md, then docs/fable-repo-audit-2026-07.md §A (findings EM-1…EM-8). This model's
-sole objective is asset-level emissions forecasting within ±10%, and the audit found the
-emissions-rate path is its weakest link: NOx/SO2 tons are unwired (results/emissions.py:84
-has no caller; results/export.py:121 exports CO2 only; SO2 computed nowhere), a likely
-~2204x NOx unit bug (tonnes/MWh written at fleet.py:4577,4620, consumed as lb/MWh at
-plant_financials.py:71-72,376), forecast rates frozen at pooled 2023-25 CEMS with no
-mode-gating (scenarios.py:279, contradicting CLAUDE.md L21) and no retrofit/degradation
-path to 2050, tranche price-wall multipliers contaminating CO2 for CEMS-uncovered plants
-and all new entrants (fleet.py:6298 vs binning-methodology.md:148,196-200), startup
-emissions unmodeled, a carbon-price backcast/forecast seam (policy/carbon.py:23,66-84),
-CHP rate inconsistency (emissions.py:172-175), and a possible gross/net MWh-basis mismatch.
+Read CLAUDE.md (especially rules 1, 13, 14, 22), then docs/fable-repo-audit-2026-07.md §A
+(EM-1…EM-8). Owner direction: CO2 accuracy is the objective; NOx/SO2 are secondary. For
+existing units, forecast CO2 rates must be grounded in historic measured CAMPD plant
+performance, not frozen pooled values and not generic heat-rate constants.
 
 Your tasks:
-1. Execute the audit's 9-step emissions-bias checklist empirically where cheap: (a) run one
-   ERCOT keeper year with use_plant_emission_rates True vs False and diff annual CO2 by
-   class (quantifies EM-3 reliance and EM-4 contamination); (b) unit-assert the NOx contract
-   end-to-end on a known coal unit (~1.5 lb/MWh vs ~0.0007 t/MWh decides EM-2); (c) count
-   starts x nominal per-start MMBtu from an existing P1 bundle to bound EM-5 materiality;
-   (d) reconcile one coal plant's model CO2 vs CAMPD, decomposed into MWh error x rate
-   error, to test EM-8. Use existing bundles/diagnostic probes — do NOT launch new
-   multi-year calibration solves.
-2. Decide (with justification against rules 1/13/14) the intended forecast emission-rate
-   provenance: frozen measured CEMS vs heat-rate-derived vs measured-with-evolution hooks.
-   Resolve the CLAUDE.md L21 vs rule-11 contradiction in writing.
-3. Produce docs/handoffs/emissions-integrity-plan-2026-07.md: ranked fixes, each with
-   mechanism design, files touched, test plan, and expected emissions impact; plus a
-   complete implementation prompt for W2-P1 (single fenced block).
-Deliverable: the plan doc + prompt, committed and pushed on a feature branch. Do not
-implement the fixes themselves.
+1. DATA: inventory what data/raw/campd-unit-level and campd-facility-level already cover
+   (years, columns — emissions, heat input, gross gen, op hours, start counts). Design the
+   intake extension to annual unit-level CAMPD emissions + operations back to 2018
+   (scripts/fetch_campd_unit_level.py is the existing fetcher; follow the data-intake skill
+   conventions). HARD CONSTRAINT (rule 22): 2022 and H1-2026 are under FULL quarantine
+   including data intake — the history is 2018-2021 + 2023-2025.
+2. RATE MODEL: design and empirically compare, per unit, two forward-rate estimators:
+   (a) a multi-year forecast average of annual CAMPD net CO2 intensity (choose and justify
+   the weighting — gen-weighted vs recency-weighted), and
+   (b) an operation-conditioned predictor: build per-unit annual observations
+   (year, starts, total gen, CF, capacity-normalized op profile -> annual CO2 rate), then
+   in a forecast year map the unit's MODEL-simulated operation (starts from run-length
+   analysis of the dispatch solution, total gen, CF) to a predicted rate — nearest-neighbor
+   on the statistically closest historical year (closest starts + closest total gen), or a
+   simple per-unit (fallback per-class) regression rate = f(starts, CF). Option (b) is
+   structurally preferred under rule 13 (regenerates from forward drivers AND responds to
+   changed operating conditions — a unit the model cycles harder gets a worse rate);
+   validate whether the data supports it per-unit or only per-class.
+3. VALIDATE: leave-one-year-out within 2023-2025 — predict each backcast year's unit rates
+   from the other years' history + that year's simulated operation, score vs actual CEMS,
+   and compare both estimators against the current frozen pooled rate
+   (use_plant_emission_rates, fleet.py:4555-4623). Use existing keeper bundles for the
+   simulated-operation inputs; do NOT launch new multi-year calibration solves.
+4. FOLD IN the remaining §A items, re-ranked for CO2-first: the tranche price-wall
+   contamination fix (EM-4: emissions at physical heat rate, offers at bid heat rate —
+   fleet.py:6298; still required since it hits CEMS-uncovered plants and ALL new entrants,
+   whose class-default rates should now come from CAMPD class distributions rather than
+   generic constants), the gross/net MWh basis check (EM-8), startup CO2 (EM-5 — bound
+   materiality from an existing bundle's start counts), the carbon-price seam (EM-6), and
+   CHP consistency (EM-7). NOx/SO2 (EM-1/EM-2): plan the cheap unit-contract bug fix and
+   defer full wiring to a later wave — say so explicitly.
+5. Resolve in writing the CLAUDE.md L21 vs rule-13 contradiction: measured CAMPD rates
+   used this way are a reproducible physical input, admissible in forecast — update the
+   CLAUDE.md wording proposal accordingly.
+Produce docs/handoffs/emissions-co2-rate-plan-2026-07.md: the chosen rate-model design
+with LOYO evidence, data-intake spec, ranked fixes with files/tests/expected impact, plus
+a complete W2-P1 implementation prompt (single fenced block). Commit and push on a feature
+branch. Do not implement the fixes themselves.
 ```
 
 ### W0-P2 `[FABLE]` — Confirmed-vs-announced retirement channel design
@@ -145,7 +166,18 @@ Your tasks:
    be provably dispatch-neutral stage by stage.
 4. Produce docs/handoffs/orchestrator-unification-plan-2026-07.md with the stage sequence
    sized for separate sessions, + a complete W2-P4 implementation prompt for stage 1.
-Do not implement. Reconcile with docs/iso-model-unification-plan.md if it overlaps.
+IMPORTANT — reconcile with the two EXISTING workstreams instead of duplicating them:
+(a) docs/audit-wiring-iso-gaps/ (gap-inventory + fix-plan + w1-w3 prompt pack, 2026-06-29)
+patches parity gaps one mechanism at a time — determine which of its items already landed,
+absorb the unfinished ones into your unified-pipeline stages (do NOT double-fix), and note
+that the overlays drifted in AFTER its inventory (MISO firm imports, NEISO coldsnap, CAISO
+bidir intertie/solar-shape/gas-coupling) prove per-mechanism patching doesn't converge —
+your plan's value is eliminating the drift channel by construction. (b)
+docs/iso-model-unification-plan.md targets a different axis (ISO-specific branching within
+src/ — reserve co-opt functions, interchange, load shares); it never touches the
+scripts-vs-package orchestrator split. Define the boundary and ordering between your
+migration and that plan so the two refactors compose rather than collide.
+Do not implement.
 ```
 
 ### W0-P4 `[FABLE]` — Forecast validation program design (hindcast, invariants, statmode sequencing)
@@ -393,20 +425,24 @@ Run the scope2 test suite green (cd scope2-lce-portfolio && pytest tests/ -q). C
 
 ## Wave 2 — Implementation (Opus, parallel; each gated on its Wave-0 plan doc)
 
-### W2-P1 `[OPUS]` — Implement the emissions-integrity fixes
+### W2-P1 `[OPUS]` — Implement the CO2-rate model + emissions fixes
 
 ```
-Prerequisite: docs/handoffs/emissions-integrity-plan-2026-07.md exists (from W0-P1) — read
+Prerequisite: docs/handoffs/emissions-co2-rate-plan-2026-07.md exists (from W0-P1) — read
 it first, then CLAUDE.md and docs/fable-repo-audit-2026-07.md §A. Implement the plan's
-ranked fixes. Expected scope (defer to the plan where it differs): wire NOx/SO2 tons
-through results/emissions.py -> export.py with a single unit contract (write the unit into
-the column name), fix the tonnes-vs-lb bug wherever the plan located it, apply the decided
-forecast rate provenance with explicit mode-gating and a documented evolution hook, stop
-tranche pricing multipliers from contaminating emission rates (emissions at physical heat
-rate, offers at bid heat rate — separate arrays), book startup emissions if the plan's
-materiality probe justified it, and close the carbon-price seam per the plan's decision.
-Every fix ships with behavioral tests (1-gen trivial cases first per CLAUDE.md), and the
-NOx unit contract gets an end-to-end assertion test. After landing, re-solve ONE keeper
+ranked fixes, CO2 first. Expected scope (defer to the plan where it differs): the CAMPD
+2018+ annual unit-level emissions/operations intake (data-intake skill conventions;
+rule-22 quarantine — no 2022/H1-2026 data); the plan's chosen forward CO2-rate estimator
+(multi-year average or operation-conditioned predictor keyed on model-simulated
+starts/gen) replacing the frozen pooled rate for existing units, with explicit
+mode-gating; CAMPD-class-derived default rates for uncovered plants and new entrants;
+separation of emission rates from offer heat rates so tranche pricing multipliers stop
+contaminating CO2 (emissions at physical heat rate, offers at bid heat rate — separate
+arrays); the tonnes-vs-lb NOx unit-contract bug fix; startup CO2 and the carbon-price
+seam per the plan's decisions. Every fix ships with behavioral tests (1-gen trivial cases
+first per CLAUDE.md), the rate estimator ships with the plan's leave-one-year-out
+validation reproduced as a test or committed report, and the NOx unit contract gets an
+end-to-end assertion test. After landing, re-solve ONE keeper
 year per affected ISO as a diagnostic probe (not a keeper) and report the CO2/NOx/SO2
 deltas by class — expected and explained deltas only; do not retune anything to preserve
 the old fit (rule 1: a structurally-correct fix stays in even if the backcast residual
@@ -563,6 +599,47 @@ closes, and write a short validation memo in scope2-lce-portfolio/docs/. If a ga
 diagnose whether the cause is tool-side or input-side (market-sim LMP quality) and record
 it — do not tune the tool to pass.
 ```
+
+---
+
+## Appendix — Status of pre-existing plans: unfinished prompts still valid (flagged 2026-07-04)
+
+Registered against repo intent (LP-only hybrid, ±10% asset-level emissions; scope2 = hourly
+CFE matching). Verdicts: **FLAG** = still valid, not covered by any active wave or this
+pack — needs an owner scheduling decision; **ABSORBED** = folded into a prompt above (don't
+run separately); **IN-FLIGHT** = actively being worked on main; **STALE** = superseded,
+archive.
+
+### FLAG — still valid, owned by nothing
+
+| Source plan | Item | Why still valid |
+|---|---|---|
+| `model-audit-prompt-pack-2026-06.md` | **PP-1.1/1.2/1.3** scenario matrix + LHS/copula multivariate sampler + structural-error prior | The probability-bounds machinery for the emissions forecast; `ensemble.py` is still weather-only (verified 2026-07-04). Without it "±10%" has no confidence statement. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-2.1** emissions mass-cap LP constraint (RGGI/cap-and-trade as constraint, allowance-price dual) | `policy/constraints.py:get_active_policy_constraints` still returns `[]`. Interacts with the EM-6 carbon-seam fix (W0-P1) — sequence after it. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-3.1** sensitivity tornado; **PP-3.4** one-time MIP cross-benchmark | Tornado feeds the DOF ledger cheaply. MIP benchmark is a *diagnostic* (LP-only production rule intact) quantifying the LP-relaxation commitment bias — pairs with DP-1. |
+| `forecast-methodology-gaps-prompts-2026-06.md` | **P1/P1b** ERCOT multi-product AS co-optimization (+ **P5a** AS requirement-setting, **P5c** load-resource RRS forward rule; **P4** HSL 2024/25 completion) | The flagship forward-analogue gap (audit §J-T6): the largest backcast lever (DAM-AS overlay) still has no forecast-mode counterpart. |
+| `legitimacy-scrub-prompts-2026-07.md` | **S3** Class-C fitted-scalar remediation (~230 scalars, C-1…C-18) | Mostly untouched; D-8 showed coal sigmoid params pinned by single years and SP15 temp-limbs with sign-flipping ρ. Rules 20-21 make keepers carrying these an open liability. |
+| `legitimacy-scrub-prompts-2026-07.md` | **D-3 ablation twins; D-10…D-14 diagnostics** | Rule 21 requires a zero-forcing ablation twin per keeper; not yet built for current keepers. |
+| `docs/multi-iso/` (57 files) | Own triage pass never done; also verify MISO backcast-year coverage (rule 16 lists CAISO/PJM/NEISO/NYISO as multi-year — MISO's absence is unexplained) | Flagged as an open question by the docs audit; cheap Sonnet session. |
+| CLAUDE.md rule 22 wording | Reconcile the "no data intake for holdout years" text with the owner-driven 2022/H1-2026 intake merged 2026-07-03/04 (PRs #1298/#1300/#1304) | Either the one-shot validation is now imminent (intake was step 1) or the rule text needs the owner's amended policy — as written, CI-gate semantics and practice diverge. |
+
+### ABSORBED into this pack (do not run the old prompt)
+
+- `model-audit-prompt-pack-2026-06.md` PP-0.3 capacity hindcast, PP-0.1 statmode → **W0-P4/W2-P5/W3-P1**; PP-2.2/2.3 NPV entry-exit + revenue signal → partially landed in code (audit §C scorecard) + **W0-P5**; PP-2.4 startup emissions → **W0-P1/W2-P1**; PP-3.3 load-shape → the DC-block part of **W0-P5** (end-use reshaping remains a documented limitation).
+- `forecast-validation-plan.md` Phases 1-5 → **W0-P4/W2-P5** (the plan doc should be marked superseded by the W0-P4 handoff when it exists).
+- `legitimacy-scrub-prompts-2026-07.md` S2 CAISO CT scrub → **W3-P2** (and the in-flight caiso-evening-merit thread); S4 statmode → **W3-P1**.
+- `code-docs-cleanup-plan.md` root/scripts hygiene + docs reorg → **W1-P3/W3-P3**; its C2 (python hygiene) and data-reorg W3-W5 remainders are minor — fold into W1-P3's session if time allows.
+- scope2 `PLAN.md` §10 open items → **W0-P6/W3-P4**.
+
+### IN-FLIGHT on main (2026-07-03/04 — no action, don't duplicate)
+
+- `docs/audit-wiring-iso-gaps/fix-plan.md` waves (the active "market simulator audit"): note its June inventory predates the post-June drift overlays (MISO firm imports, NEISO coldsnap, CAISO bidir intertie/solar-shape/gas-coupling) — add them to the current wave's checklist or leave them for W0-P3's unified-pipeline stages.
+- CAISO evening CT/CC merit thread: levers A (CC min-load SRMC floor) and B (DMM RA-import grounding) merged; ramp-envelope + LCR locational design awaiting owner review (PR #1306).
+- Holdout-intake follow-ups F1/F5/F6 (`docs/out-of-sample-results-2026-07.md`); remaining: bench/fleet data for CAISO/MISO/NYISO/NEISO holdout years.
+
+### STALE (verify-and-archive via W3-P3)
+
+- Dated `*-session-prompt.md` / `*-handoff*.md` files under docs/ tied to keepers that have since been superseded (dam-offer-curve-tuning, ercot-2025-overshoot, ercot-lmp-cooling, ercot-offer-curve-merit-order, cross-year-warmstart-handoff) — confirm each thread's closing keeper/CHANGELOG entry, then move to `docs/sessions/`.
 
 ---
 
