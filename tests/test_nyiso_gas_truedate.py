@@ -96,10 +96,10 @@ def test_single_print_never_relevels_a_month(cfg, tmp_path, monkeypatch):
 
 
 def test_reconciled_winter_spread_tracks_measured_annual_under_ceiling():
-    """Rule #13/#14 reconciliation: annual mean == the committed (SOM) annual,
-    less only what the measured Algonquin-Citygate monthly ceiling shaves
-    (<= ~$0.25/MMBtu) in months where the AGT-weighted re-allocation would
-    out-price the New England complex Z2 physically trades inside."""
+    """Rule #13/#14 reconciliation: annual mean == the committed (SOM) annual
+    exactly, while no month out-prices the measured Algonquin-Citygate ceiling
+    of the New England complex Z2 physically trades inside (the ceiling-shaved
+    scarcity excess re-enters as a water-filled year-round base)."""
     import pandas as pd
 
     from market_sim.data.fuel import (
@@ -120,10 +120,9 @@ def test_reconciled_winter_spread_tracks_measured_annual_under_ceiling():
         som_spread = (
             committed.iroquois_z2_usd_mmbtu - committed.transco_z6_ny_usd_mmbtu
         ).mean()
-        # Ceiling only ever shaves; the shave is bounded (2023's Feb carried
-        # the bulk of the re-allocation, worst case ~$0.5/MMBtu annual).
-        assert iq.mean() <= som_annual + 1e-9
-        assert iq.mean() >= som_annual - 0.55
+        # Measured SOM annual preserved exactly (water-fill re-allocates the
+        # ceiling-shaved excess; 2023-25 all have ample shoulder headroom).
+        assert iq.mean() == pytest.approx(som_annual, abs=1e-6)
         # Ceiling property: never above max(Algonquin citygate, the committed
         # flat construction transco + SOM annual spread).
         agt_rows = bf[(bf["iso"] == "NEISO") & (bf["year"] == year)]
