@@ -447,32 +447,58 @@ def _build_oil_budget_rows(
     oil_gen_idx: np.ndarray,
     oil_monthly_budget: np.ndarray,
     oil_month_index: np.ndarray,
+    gen_hour_coeff: np.ndarray | None = None,
+    group_index: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Return oil-burn monthly inventory budget rows and bound vectors.
 
     Structurally identical to :func:`_build_hydro_rows`: one row per
-    ``(oil-capable generator, month)`` enforcing::
+    ``(row group, month)`` enforcing::
 
-        0 <= sum_{t in month m} P[g, t] <= oil_monthly_budget[g, m]
+        0 <= sum_{g in group, t in month m} coeff[g, t] * P[g, t]
+             <= oil_monthly_budget[group, m]
 
     When the budget binds in a cold-snap month, the constraint's dual
     (shadow price) IS the scarcity rent — the LP endogenously prices the
     marginal oil MWh at SRMC + shadow price, lifting the cleared LMP
     above the flat dual-fuel oil-parity cap (~$258) and producing >$300
-    hours. Budget derived from EIA-923 petroleum receipts (MWh).
+    hours.
+
+    Two callers share this builder:
+
+    - The F923 monthly path (``fuel.py:load_oil_burn_budget``, oil-primary
+      only): default ``gen_hour_coeff=None`` (coefficient 1, constrains
+      dispatched MWh) and ``group_index=None`` (one row per generator).
+    - The winter-fuel-inventory path
+      (``winter_fuel_inventory.py:build_winter_fuel_budget``, Component A):
+      ``gen_hour_coeff = heat_rate[g] * oil_switch_mask[g, t]`` so the row
+      constrains oil energy INPUT (MMBtu) and, for dual-fuel units, only
+      their exogenous oil-switch hours (gas-fired hours carry coeff 0 and
+      are dropped); ``group_index`` pools the fleet into one shared-stock
+      row per month.
 
     Args:
         layout: Variable layout describing the column structure.
         oil_gen_idx: Thermal-block indices of oil-capable generators,
             shape ``(n_oil,)``.
-        oil_monthly_budget: Monthly energy cap in MWh, shape
-            ``(n_oil, n_months)``.
+        oil_monthly_budget: Monthly budget cap, shape
+            ``(n_groups, n_months)``, in MWh (coeff=1) or MMBtu
+            (heat-rate-weighted coeff). ``np.inf`` leaves a month
+            unconstrained.
         oil_month_index: Month index (``0 <= m < n_months``) of each
             hour, shape ``(T,)``.
+        gen_hour_coeff: Optional per-generator (``(n_oil,)``) or
+            per-generator-hour (``(n_oil, T)``) constraint coefficient.
+            ``None`` uses 1.0 (dispatched MWh). Zero entries are dropped so
+            the matrix stays sparse.
+        group_index: Optional per-generator row-group index, shape
+            ``(n_oil,)``. ``None`` gives one row per generator (backward
+            compatible); a constant maps every generator into one pooled
+            fleet row.
 
     Returns:
         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR
-        matrix of shape ``(n_oil * n_months, layout.total_columns)``.
+        matrix of shape ``(n_groups * n_months, layout.total_columns)``.
     """
     T = layout.T
     vph = layout.vars_per_hour
@@ -482,19 +508,35 @@ def _build_oil_budget_rows(
     n_oil = gen_idx.size
     n_months = budget.shape[1]
 
-    hours = np.arange(T)
-    g = np.arange(n_oil)
+    # Row group per constrained generator: one row per generator by default
+    # (F923 per-plant caller), or a shared group that pools the fleet stock.
+    if group_index is None:
+        group = np.arange(n_oil)
+    else:
+        group = np.asarray(group_index, dtype=int)
+    n_groups = int(group.max()) + 1 if group.size else 0
 
-    rows = (g[:, None] * n_months + month_index[None, :]).ravel()
+    hours = np.arange(T)
+    rows = (group[:, None] * n_months + month_index[None, :]).ravel()
     cols = (hours[None, :] * vph + layout._p_off + gen_idx[:, None]).ravel()
-    data = np.ones(n_oil * T, dtype=float)
+    if gen_hour_coeff is None:
+        data = np.ones(n_oil * T, dtype=float)
+    else:
+        coeff = np.asarray(gen_hour_coeff, dtype=float)
+        if coeff.ndim == 1:
+            coeff = np.broadcast_to(coeff[:, None], (n_oil, T))
+        data = np.ascontiguousarray(coeff).ravel()
+        # Drop zero-coefficient entries (dual-fuel gas-fired hours) so the
+        # constraint matrix does not carry ~n_oil*T explicit zeros.
+        nz = data != 0.0
+        rows, cols, data = rows[nz], cols[nz], data[nz]
     block = sp.coo_matrix(
         (data, (rows, cols)),
-        shape=(n_oil * n_months, layout.total_columns),
+        shape=(n_groups * n_months, layout.total_columns),
     ).tocsr()
 
     row_upper = budget.ravel()
-    row_lower = np.zeros(n_oil * n_months, dtype=float)
+    row_lower = np.zeros(n_groups * n_months, dtype=float)
     return block, row_lower, row_upper
 
 
@@ -1310,6 +1352,8 @@ def build_constraints(
     oil_monthly_budget: np.ndarray | None = None,
     oil_gen_idx: np.ndarray | None = None,
     oil_month_index: np.ndarray | None = None,
+    oil_gen_hour_coeff: np.ndarray | None = None,
+    oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     import_node_gen_idx: np.ndarray | None = None,
@@ -1598,6 +1642,8 @@ def build_constraints(
                 oil_gen_idx_arr,
                 oil_monthly_budget,
                 oil_month_index,
+                gen_hour_coeff=oil_gen_hour_coeff,
+                group_index=oil_group_index,
             )
             A = sp.vstack([A, oil_block], format="csr")
             row_lower = np.concatenate([row_lower, oil_lower])
@@ -2022,6 +2068,8 @@ class DispatchModel:
         oil_monthly_budget: np.ndarray | None = None,
         oil_gen_idx: np.ndarray | None = None,
         oil_month_index: np.ndarray | None = None,
+        oil_gen_hour_coeff: np.ndarray | None = None,
+        oil_group_index: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
         interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
         import_node_gen_idx: np.ndarray | None = None,
@@ -2156,6 +2204,8 @@ class DispatchModel:
             oil_monthly_budget=oil_monthly_budget,
             oil_gen_idx=oil_gen_idx,
             oil_month_index=oil_month_index,
+            oil_gen_hour_coeff=oil_gen_hour_coeff,
+            oil_group_index=oil_group_index,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             interface_groups=interface_groups,
             import_node_gen_idx=import_node_gen_idx,
@@ -2714,6 +2764,8 @@ def solve_dispatch(
     oil_monthly_budget: np.ndarray | None = None,
     oil_gen_idx: np.ndarray | None = None,
     oil_month_index: np.ndarray | None = None,
+    oil_gen_hour_coeff: np.ndarray | None = None,
+    oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
     import_node_gen_idx: np.ndarray | None = None,
@@ -2836,6 +2888,8 @@ def solve_dispatch(
         oil_monthly_budget=oil_monthly_budget,
         oil_gen_idx=oil_gen_idx,
         oil_month_index=oil_month_index,
+        oil_gen_hour_coeff=oil_gen_hour_coeff,
+        oil_group_index=oil_group_index,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
         interface_groups=interface_groups,
         import_node_gen_idx=import_node_gen_idx,

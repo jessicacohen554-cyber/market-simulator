@@ -1815,6 +1815,8 @@ def solve_and_persist(
     caiso_solar_cap_at_delivered: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
+    neiso_winter_fuel_inventory: bool | None = None,
+    neiso_winter_fuel_start_fill_bbl: float | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -2047,6 +2049,8 @@ def solve_and_persist(
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered,
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
             neiso_oil_burn_budget=neiso_oil_burn_budget,
+            neiso_winter_fuel_inventory=neiso_winter_fuel_inventory,
+            neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2342,6 +2346,8 @@ def solve_and_persist(
         "caiso_solar_cap_at_delivered": caiso_solar_cap_at_delivered,
         "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
         "neiso_oil_burn_budget": neiso_oil_burn_budget,
+        "neiso_winter_fuel_inventory": neiso_winter_fuel_inventory,
+        "neiso_winter_fuel_start_fill_bbl": neiso_winter_fuel_start_fill_bbl,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2588,6 +2594,14 @@ def solve_and_persist(
     if neiso_oil_burn_budget is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             neiso_oil_burn_budget=neiso_oil_burn_budget
+        )
+    if neiso_winter_fuel_inventory is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
+        )
+    if neiso_winter_fuel_start_fill_bbl is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -5768,6 +5782,32 @@ def main() -> None:
         "--no-neiso-oil-burn-budget disables it for the no-budget A/B probe.",
     )
     parser.add_argument(
+        "--neiso-winter-fuel-inventory",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO winter (Nov-Mar) oil-burn inventory budget (Component A). "
+        "Same LP mechanism as --neiso-oil-burn-budget, but the budget is "
+        "DERIVED from forward-regenerable capacity/logistics quantities "
+        "(tank start-fill + re-supply delivery rate + boiler firing rate, "
+        "from the winter-fuel-inventory clean datatype / ISO-NE OFSA + WRP "
+        "studies), NOT from measured EIA-923 receipts (a rule-#13-inadmissible "
+        "OUTCOME). Scope is the oil-primary fleet PLUS the dual-fuel oil limb, "
+        "the limb gated to its exogenous oil-switch hours so gas generation is "
+        "never capped. One pooled fleet row per winter month; the binding dual "
+        "is the endogenous winter scarcity rent in the persisted P1 prices. "
+        "Takes precedence over --neiso-oil-burn-budget. NEISO-only, default off.",
+    )
+    parser.add_argument(
+        "--neiso-winter-fuel-start-fill-bbl",
+        type=float,
+        default=None,
+        help="Start-of-winter fleet oil inventory (barrels) sizing the "
+        "--neiso-winter-fuel-inventory budget. Default (None) uses the WRP "
+        "2014/15 low target (2.8M bbl); the sensitivity pair also solves the "
+        "high target (3.8M bbl). A program-design logistics target "
+        "(CLAUDE.md #13), NOT tuned to the price/volume residual.",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6520,6 +6560,8 @@ def main() -> None:
         caiso_solar_cap_at_delivered=args.caiso_solar_cap_at_delivered,
         neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
         neiso_oil_burn_budget=args.neiso_oil_burn_budget,
+        neiso_winter_fuel_inventory=args.neiso_winter_fuel_inventory,
+        neiso_winter_fuel_start_fill_bbl=args.neiso_winter_fuel_start_fill_bbl,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
