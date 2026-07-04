@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-04-neiso-dailybasis-oil-underrun",
+  "label": "neiso dailybasis oil underrun",
+  "date": "2026-07-04",
+  "shorthand": "neiso-dailybasis-oil-underrun",
+  "definition": "(PROBE) Measured daily Algonquin-Citygate gas basis (gas_hub_basis_daily) ON, mean-preserving; winter oil-inventory budget OFF. Closes the winter oil under-run endogenously: model oil 0.35/0.23/1.47 TWh (2023/24/25) vs EIA-930 0.32/0.37/1.24 (was ~0/~0/0.04 on the monthly-basis keeper), annual gas unchanged. Admissible measured delivered-fuel input (rule #13), NOT in the current keeper. Price still caps at oil parity ($258); 0 h >$300 (the tail is a scarcity-pricing question, not fuel). Also the Component-A ablation twin (inventory off).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-04-neiso-dailybasis-oil-underrun.js",
+  "bundle": "results/calibration/neiso-daily-basis-a-off"
+}
