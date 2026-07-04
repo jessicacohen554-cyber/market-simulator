@@ -693,6 +693,38 @@ class ScenarioConfig:
     # input (CLAUDE.md #10: could be produced for a forward year from a
     # seasonal oil-deliverability assumption). NEISO-only, backcast-only,
     # default off (byte-identical). See data/fuel.py:load_oil_burn_budget.
+    #
+    # SUPERSEDED for NEISO by neiso_winter_fuel_inventory below: load_oil_burn_
+    # budget derives the budget from EIA-923 petroleum RECEIPTS (a measured
+    # deliveries-to-tank OUTCOME, 1-2 plants reporting) — inadmissible as a
+    # budget driver under CLAUDE.md #13 (no forward analogue; the dispatch
+    # validated is not the dispatch forecast). Kept only for reference; not a
+    # keeper path.
+    neiso_winter_fuel_inventory: bool = False  # NEISO winter (Nov-Mar) oil-burn
+    # inventory budget, Component A of the fuel-inventory / seasonal-reliability
+    # build (docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md). Same
+    # LP mechanism as neiso_oil_burn_budget (dispatch.py:_build_oil_budget_rows,
+    # structurally identical to the hydro monthly-energy budget) but the budget
+    # is DERIVED from forward-regenerable capacity/logistics quantities — tank
+    # start-fill + re-supply delivery rate + boiler firing rate — from the
+    # winter-fuel-inventory clean datatype (ISO-NE OFSA / Winter Reliability
+    # Program studies + EIA-860), NOT from measured burn/receipts. Rule-#13
+    # admissible: could be produced for a forward year and responds to changed
+    # weather/fleet. Scope is the oil-capable fleet — oil-primary units PLUS the
+    # dual-fuel gas units' oil limb (the coverage hole that killed the F923
+    # neiso-40 probe), the latter budgeted only over their exogenous oil-switch
+    # hours so gas generation is never capped. One pooled fleet row per winter
+    # month; the binding dual is the endogenous winter scarcity rent, lifting
+    # the persisted P1 LMP above the flat dual-fuel oil-parity cap (~$258).
+    # NEISO-only, backcast-only, default off (byte-identical). See
+    # data/winter_fuel_inventory.py:build_winter_fuel_budget.
+    neiso_winter_fuel_start_fill_bbl: float | None = None  # Start-of-winter
+    # fleet oil inventory (barrels) sizing the neiso_winter_fuel_inventory
+    # budget. None -> the reader's default (WRP 2014/15 low target, 2.8M bbl).
+    # The Winter Reliability Program (FERC ER14-2407) published a 2.8M (low) /
+    # 3.8M (high) bbl fleet oil-inventory target; the sensitivity pair solves
+    # both. A program-design logistics target (admissible, CLAUDE.md #13), NOT
+    # tuned to the price/volume residual.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -3249,6 +3281,8 @@ TIER_TAGS: dict[str, int] = {
     "neiso_gas_derate_slope_per_c": 3,
     "neiso_gas_derate_cap": 2,
     "neiso_oil_burn_budget": 1,
+    "neiso_winter_fuel_inventory": 1,
+    "neiso_winter_fuel_start_fill_bbl": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

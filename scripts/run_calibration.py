@@ -2198,6 +2198,8 @@ def run_year(
     caiso_solar_cap_at_delivered: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
+    neiso_winter_fuel_inventory: bool | None = None,
+    neiso_winter_fuel_start_fill_bbl: float | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -2479,6 +2481,14 @@ def run_year(
         )
     if neiso_oil_burn_budget is not None:
         config = config.with_overrides(neiso_oil_burn_budget=neiso_oil_burn_budget)
+    if neiso_winter_fuel_inventory is not None:
+        config = config.with_overrides(
+            neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
+        )
+    if neiso_winter_fuel_start_fill_bbl is not None:
+        config = config.with_overrides(
+            neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
+        )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
     if caiso_import_gas_coupling is not None:
@@ -3836,9 +3846,15 @@ def run_year(
     # switch itself is objective-only; this is a reporting re-attribution).
     # Gated on dual_fuel_oil_reattribution (NEISO-only) so PJM/NYISO — whose
     # dual-fuel units also switch on their own winter gas — stay byte-identical.
+    # Also computed for the winter fuel-inventory budget (Component A), which
+    # gates each dual-fuel unit's oil-burn budget to exactly these oil hours so
+    # the seasonal stock constraint never caps its gas generation.
     dual_fuel_oil_mask = (
         dual_fuel_switch_mask(fuel_prices, fleet_arrays, config, year)
-        if getattr(config, "dual_fuel_oil_reattribution", False)
+        if (
+            getattr(config, "dual_fuel_oil_reattribution", False)
+            or getattr(config, "neiso_winter_fuel_inventory", False)
+        )
         else None
     )
     # Dual-fuel switching last, so the oil-parity min sees the final delivered
@@ -4197,12 +4213,62 @@ def run_year(
             "demand": demand,
         }
 
-    # Oil-burn inventory budget (NEISO-gated): load measured EIA-923 petroleum
-    # receipts and build per-generator monthly MWh caps. When the budget binds
-    # in a cold-snap month, the LP shadow price lifts the LMP above oil parity.
+    # Oil-burn inventory budget (NEISO-gated). When the budget binds in a
+    # cold-snap month, its dual is the scarcity rent that lifts the persisted P1
+    # LMP above the flat dual-fuel oil-parity cap (~$258).
+    #
+    # Two derivations of the same LP mechanism (dispatch._build_oil_budget_rows):
+    #   - neiso_winter_fuel_inventory (Component A, keeper path): forward-
+    #     derivable capacity/logistics budget (tank fill + re-supply) over the
+    #     oil-primary + dual-fuel oil-limb fleet, the limb gated to its exogenous
+    #     oil-switch hours (dual_fuel_oil_mask) so gas generation is never
+    #     capped. One pooled fleet row per winter month, MMBtu-weighted.
+    #   - neiso_oil_burn_budget (superseded): EIA-923 petroleum RECEIPTS, a
+    #     measured deliveries-to-tank OUTCOME inadmissible under CLAUDE.md #13.
+    #     Kept only as a reference path; never a keeper.
     oil_monthly_budget = None
     oil_budget_gen_idx = None
-    if getattr(config, "neiso_oil_burn_budget", False):
+    oil_budget_month_index = None
+    oil_budget_gen_hour_coeff = None
+    oil_budget_group_index = None
+    if getattr(config, "neiso_winter_fuel_inventory", False):
+        from market_sim.data.winter_fuel_inventory import build_winter_fuel_budget
+
+        _wf = build_winter_fuel_budget(
+            iso,
+            fleet_arrays,
+            dual_fuel_oil_mask,
+            start_fill_bbl=getattr(config, "neiso_winter_fuel_start_fill_bbl", None),
+            hours=config.hours,
+        )
+        if _wf is not None:
+            (
+                oil_budget_gen_idx,
+                oil_monthly_budget,
+                oil_budget_month_index,
+                oil_budget_gen_hour_coeff,
+                oil_budget_group_index,
+            ) = _wf
+            _fin = np.isfinite(oil_monthly_budget)
+            logger.info(
+                "winter fuel-inventory budget (%s %d): %d oil-capable gens, "
+                "start_fill=%s bbl, %d winter month(s) constrained, "
+                "monthly cap %.2f M MMBtu (~%.2f TWh @HR10.8)",
+                iso,
+                year,
+                oil_budget_gen_idx.size,
+                (
+                    f"{getattr(config, 'neiso_winter_fuel_start_fill_bbl', None):.0f}"
+                    if getattr(config, "neiso_winter_fuel_start_fill_bbl", None)
+                    else "2.8M(default)"
+                ),
+                int(_fin.sum()),
+                float(oil_monthly_budget[_fin].max()) / 1e6 if _fin.any() else 0.0,
+                float(oil_monthly_budget[_fin].max()) / 10.8 / 1e6
+                if _fin.any()
+                else 0.0,
+            )
+    elif getattr(config, "neiso_oil_burn_budget", False):
         from market_sim.data.fuel import load_oil_burn_budget
 
         _oil_result = load_oil_burn_budget(
@@ -4251,6 +4317,9 @@ def run_year(
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
         oil_gen_idx=oil_budget_gen_idx,
+        oil_month_index=oil_budget_month_index,
+        oil_gen_hour_coeff=oil_budget_gen_hour_coeff,
+        oil_group_index=oil_budget_group_index,
         T=config.hours,
     )
     # Priced import-node monthly net-interchange band (NYISO boundary-flow
