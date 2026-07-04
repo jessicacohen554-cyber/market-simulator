@@ -3060,6 +3060,38 @@
       "flags": []
     },
     {
+      "param_id": "mmbtu_per_bbl_distillate",
+      "display_name": "Mmbtu Per Bbl Distillate",
+      "value": 5.825,
+      "unit": "MMBtu/bbl",
+      "domain": "Fuel",
+      "tier": 2,
+      "source": "EIA Monthly Energy Review, Appendix A, Table A1 (Approximate Heat Content of Petroleum and Biofuels)",
+      "source_date": "2026-06",
+      "page_or_table": "Table A1, p.228",
+      "url": "https://www.eia.gov/totalenergy/data/monthly/pdf/sec12_2.pdf",
+      "notes": "No. 2 distillate fuel oil heat content; bbl<->MMBtu conversion for the NEISO winter oil-inventory budget (winter-fuel-inventory datatype).",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": []
+    },
+    {
+      "param_id": "mmbtu_per_bbl_residual",
+      "display_name": "Mmbtu Per Bbl Residual",
+      "value": 6.287,
+      "unit": "MMBtu/bbl",
+      "domain": "Fuel",
+      "tier": 2,
+      "source": "EIA Monthly Energy Review, Appendix A, Table A1 (Approximate Heat Content of Petroleum and Biofuels)",
+      "source_date": "2026-06",
+      "page_or_table": "Table A1, p.228",
+      "url": "https://www.eia.gov/totalenergy/data/monthly/pdf/sec12_2.pdf",
+      "notes": "No. 6 residual fuel oil heat content; bbl<->MMBtu conversion for the NEISO winter oil-inventory budget (winter-fuel-inventory datatype).",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
