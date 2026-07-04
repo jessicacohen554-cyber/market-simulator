@@ -4630,15 +4630,18 @@ def main() -> None:
         "--tranche-startup-amortization",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Fast-start tranche pricing (ISO-NE Order 825 analogue): the gas "
-        "CAMPD bins' econ and peak tranches carry the same NREL start cost "
+        help="Fast-start tranche pricing (ISO-NE Order 825 analogue): the "
+        "fast-start-capable tranches (CT_PEAKER/CT_CHP econ+peak; the CC "
+        "duct/quick-response peak band) carry the same NREL start cost "
         "(fleet.BIN_STARTUP_COST_PER_MW) as the committed anchor, so the P1 "
         "markup amortizes each tranche's own P0 run lengths into its bid. "
         "Prices the fuel-price-invariant commitment-cost component of the "
         "real offer stack (a peak block run 4 evening hours bids "
         "+startup/4 per MWh; a block marginal around the clock bids ~+0), "
-        "which the heat-rate-multiplier curve cannot express. Default OFF -> "
-        "prior keepers byte-identical.",
+        "which the heat-rate-multiplier curve cannot express. CC econ blocks "
+        "are excluded: block-loading a committed CC is not a fast start; its "
+        "start costs are NCPC uplift, not LMP. Default OFF -> prior keepers "
+        "byte-identical.",
     )
     parser.add_argument(
         "--st-gas-intermediate",
