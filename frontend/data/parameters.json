@@ -2071,24 +2071,6 @@
       ]
     },
     {
-      "param_id": "scenario.sigmoid_midpoint",
-      "display_name": "ScenarioConfig.sigmoid_midpoint",
-      "value": 0.5,
-      "unit": "fraction",
-      "domain": "Capacity Expansion",
-      "tier": 2,
-      "source": "Market simulator model design decision",
-      "source_date": "2026-05",
-      "page_or_table": "model-methodology-spec.md / market-sim-build-plan.md",
-      "url": "",
-      "notes": "Midpoint of the retirement sigmoid; modeling assumption.",
-      "old_repo_location": "step2_3_de_pathway_tf.py:1837-1890",
-      "last_verified": "2026-05-16",
-      "flags": [
-        "modeled"
-      ]
-    },
-    {
       "param_id": "scenario.sigmoid_steepness",
       "display_name": "ScenarioConfig.sigmoid_steepness",
       "value": 12.0,
@@ -3076,24 +3058,6 @@
       "old_repo_location": "",
       "last_verified": "2026-07-02",
       "flags": []
-    },
-    {
-      "param_id": "agt_daily_basis_convexity",
-      "display_name": "Agt Daily Basis Convexity",
-      "value": 7.0,
-      "unit": "",
-      "domain": "Transmission",
-      "tier": 2,
-      "source": "Convexity exponent of the Algonquin Citygate (AGT) *daily* gas-basis scarcity premium in within-month NEISO demand (doc-08 NEISO design decision 1, the daily-basis refinement of upload U4). ISO-NE is pipeline-constrained: the AGT citygate basis is a flat, near-zero shoulder most days, then blows out convexly on the coldest days when gas-for-heating crowds the marginal gas-for-power off the pipe. The measured *monthly* basis (data/raw/gas_basis_by_iso_month.csv) is the right level but a flat monthly plateau never reaches distillate parity (~$18/MMBtu), so the dual-fuel gas->oil switch and the oil-steam fleet never trip and the modeled winter price tail stays flat. The true daily AGT spot series (ICE/Platts) is paywalled and network-blocked in this environment (upload U4 unfilled), so the daily basis is reconstructed mean-preservingly: each winter month's measured mean basis is redistributed across its days proportional to that day's mean NEISO demand raised to this exponent (the highest-demand = coldest days carry the blowout), leaving the monthly mean — and hence the annual gas burn and fuel mix — unchanged. Set to 7.0 (a moderate convexity) so the resulting gas->oil switching exposure tracks the cross-year ordering of the measured EIA-930 ``NG: OIL`` winter burn (0.32/0.37/1.24 TWh, 2023/24/25 — 2025 >> 2023 ~ 2024) and lifts the winter LMP >$200/MWh hour counts toward the measured ~44/11/160 with one constant value held across all three years; within each winter month the coldest-day demand peaks line up with the days oil actually ran (Feb 3-4 2023 Arctic outbreak, Jan 20-22 2025 polar vortex; demand-oil daily corr 0.5-0.72). The residual oil-TWh shortfall is not a convexity issue but the objective-only dual-fuel switch counting switched MWh as gas (see docs/multi-iso/neiso-data-audit.md §2c). Used by market_sim.data.fuel.iso_hub_daily_gas_prices, gated on ScenarioConfig.gas_hub_basis_daily (NEISO calibration only). It is a flagged proxy for the unavailable daily AGT series — see docs/multi-iso/neiso-data-audit.md - and falls back to the flat monthly overlay when the demand series is unavailable.",
-      "source_date": "2023",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
     },
     {
       "param_id": "biomass_price_per_mmbtu",
@@ -9722,24 +9686,6 @@
       ]
     },
     {
-      "param_id": "pumped_storage_dispatch_adder_by_iso.PJM",
-      "display_name": "Pumped Storage Dispatch Adder By Iso / Pjm",
-      "value": 10.0,
-      "unit": "",
-      "domain": "Storage",
-      "tier": 2,
-      "source": "Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form opportunity cost of the regulation/reserve duty the energy-only LP does not see (PSH pure O&M is < $1/MWh; with no adder the LP arbitrages PS every day the spread clears RTE losses and overshoots observed PS energy ~2-3x). PJM: $10 calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr of EIA-923 gross generation (calibration-log 2026-06-10, \"pjm 3 ps-adder\"). ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays off until a CAISO calibration pass measures Helms' reserve duty.",
-      "source_date": "2026-06",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
-    },
-    {
       "param_id": "pumped_storage_duration_hours",
       "display_name": "Pumped Storage Duration Hours",
       "value": 10.0,
@@ -16224,25 +16170,6 @@
       "domain": "Fuel Prices",
       "tier": 3,
       "source": "Tier 3 (calibration) — MEASURED per-unit fuel correction. A handful of CAMPD-binned combustion-turbine peakers are EIA-860 *Petroleum-Liquids* (distillate/DFO) units that the bin sheet routes through the gas CT_PEAKER class, so the LP prices them on cheap Waha gas and runs them baseload — most visibly Morgan Creek (3492), an EIA-860 DFO GT the model floats at ~92% CF against its real 1.6%. When set, every gas-CT bin whose EIA-860 technology is \"Petroleum Liquids\" is repriced on distillate (OIL_PRICE_PER_MMBTU) instead of gas — the same oil-primary treatment the legacy fleet already gives these units (see fleet.dual_fuel_plant_groups, which excludes oil-primary switchers because \"they are already modeled as oil units\"). This is a structural data-correctness fix keyed on the measured EIA-860 energy source, NOT a residual adder: it regenerates for any forward year from the same EIA-860 field and tracks the oil-price trajectory (admissibility test #11/#12). The plant_group (CT_PEAKER) is untouched, so reserve/must-run/offer-curve logic is unchanged — only the fuel the unit burns changes. See market_sim.data.fleet.bins_to_fleet and oil_primary_bin_plants.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
-      "param_id": "scenario.ordc_reliability_deployment_mw",
-      "display_name": "Ordc Reliability Deployment Mw",
-      "value": 0.0,
-      "unit": "",
-      "domain": "Structural",
-      "tier": 2,
-      "source": "DEPRECATED reliability-",
       "source_date": "",
       "page_or_table": "",
       "url": "",
