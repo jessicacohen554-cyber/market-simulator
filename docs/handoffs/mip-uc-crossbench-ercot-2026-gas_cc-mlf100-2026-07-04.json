@@ -1,0 +1,42 @@
+{
+  "iso": "ERCOT",
+  "year": 2026,
+  "hours": 744,
+  "fuels": [
+    "gas_cc"
+  ],
+  "min_load_frac": 1.0,
+  "n_committed": 40,
+  "mip_cols": 628680,
+  "mip_rows": 196550,
+  "mip_status": "HighsModelStatus.kOptimal",
+  "mip_gap": 8.168971280505306e-07,
+  "elapsed_s": 151.5,
+  "comparison": {
+    "P1-LP": {
+      "committed_energy_mwh": 2960907.0,
+      "committed_starts": 664,
+      "system_co2_t": 17399054.6
+    },
+    "LP-relax": {
+      "committed_energy_mwh": 3984130.1,
+      "committed_starts": 85,
+      "system_co2_t": 17386510.2
+    },
+    "MIP-UC": {
+      "committed_energy_mwh": 3977021.1,
+      "committed_starts": 85,
+      "system_co2_t": 17389768.4
+    },
+    "deltas_MIP_vs_LPrelax": {
+      "committed_energy_mwh": -7109.0,
+      "committed_starts": 0,
+      "system_co2_t": 3258.2
+    },
+    "deltas_MIP_vs_P1": {
+      "committed_energy_mwh": 1016114.1,
+      "committed_starts": -579,
+      "system_co2_t": -9286.2
+    }
+  }
+}
