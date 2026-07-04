@@ -430,6 +430,16 @@ def main() -> None:
     states = campd.states_for_iso(iso)
     df = campd.load_campd_hourly(states, args.years)
 
+    # Publication horizon per year: the last date the year's CAMPD extracts
+    # cover. An in-progress year (CAMPD posts quarterly; e.g. 2026 with only
+    # Q1 published) must have its clock clipped here — zero-filling the
+    # unpublished remainder would grow a phantom outage from the horizon to
+    # Dec 31 on every plant (same fix as derive_campd_unit_outages.py).
+    horizon_end: dict[int, pd.Timestamp] = {
+        int(yr): sub["date"].max() + pd.Timedelta(hours=23)
+        for yr, sub in df.groupby("year")
+    }
+
     rows = []
     summary = []
     for code in sorted(nameplate):
@@ -445,7 +455,7 @@ def main() -> None:
             # activity = offline — so the shutdown is caught for every group.
             full = pd.date_range(
                 f"{yr}-01-01",
-                f"{yr}-12-31 23:00:00",
+                min(pd.Timestamp(f"{yr}-12-31 23:00:00"), horizon_end[yr]),
                 freq="h",
                 tz=grid.index.tz,
             )

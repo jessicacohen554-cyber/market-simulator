@@ -87,7 +87,10 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
-        "--out", default=str(REPO / "inputs" / "raw-data" / "campd-partial-outages.csv")
+        # W1 collapsed inputs/raw-data into data/raw — this is the location
+        # the historic-outage overlay actually reads (outages.py).
+        "--out",
+        default=str(REPO / "data" / "raw" / "campd-partial-outages.csv"),
     )
     args = ap.parse_args()
 
@@ -100,7 +103,16 @@ def main() -> None:
     rows = []
     for yr in args.years:
         df = campd.load_campd_hourly(campd.states_for_iso(args.iso), [yr])
-        full = pd.date_range(f"{yr}-01-01", f"{yr}-12-31 23:00", freq="h")
+        if df.empty:
+            continue
+        # Clip an in-progress year's clock at the CAMPD publication horizon so
+        # unpublished months are not zero-filled into a phantom full outage
+        # (same fix as derive_campd_unit_outages.py / derive_campd_outages.py).
+        end = min(
+            pd.Timestamp(f"{yr}-12-31 23:00"),
+            df["date"].max() + pd.Timedelta(hours=23),
+        )
+        full = pd.date_range(f"{yr}-01-01", end, freq="h")
         for code in candidates:
             g = campd.plant_hourly_grid(df, code, yr)
             if g.empty or cap[code] <= 0:
