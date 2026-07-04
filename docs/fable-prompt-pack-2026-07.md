@@ -764,31 +764,123 @@ launches in priority order. Commit the register update and push. Do not start an
 work yourself.
 ```
 
+## Coordinator status board — updated 2026-07-04 (PM-1 run 2)
+
+Live status of every workstream against `origin/main` (all PRs #1307–#1325 merged; **no open
+PRs**). Evidence in the Notes column is commit/PR refs.
+
+**Headline: the planning layer is essentially DONE; the execution layer has barely started.**
+All of Wave 0-B and most of Wave 0 produced merged plan docs, but Wave 1 (the CI/test/hygiene
+guardrails that protect every number the plans will produce) is almost entirely untouched, and
+three core Wave-0 plans were never written. Recommended next launches are at the bottom.
+
+### Wave 0 — core planning (Fable)
+
+| Item | Status | Notes |
+|---|---|---|
+| W0-P1 CO2-rate emissions plan | ✅ PLAN DONE | `emissions-co2-rate-plan-2026-07.md`; CAMPD intake landed (PR #1320). **Rate model NOT yet in src** (no `emission_rates` module) → W2-P1 open. |
+| W0-P2 confirmed-retirement channel | ⛔ NOT STARTED | No plan doc on main. **Highest-value unstarted planning item** (owner's original data-intent question). |
+| W0-P3 orchestrator unification | ✅ PLAN DONE | `orchestrator-unification-plan-2026-07.md` (PR #1324). Ready for W2-P4 stage-1. |
+| W0-P4 forecast-validation program | ⛔ NOT STARTED | No plan doc. Blocks capacity hindcast + invariants (audit §J-T1, the biggest untouched program). |
+| W0-P5 capacity-economics recalibration | ⛔ NOT STARTED | No plan doc. FOM/foresight/floor/DC-load (audit §C) unplanned. |
+| W0-P6 scope2 roadmap | 🟡 PARTIAL/ADJACENT | No `roadmap-2026-07.md`, but scope2 storage-modeling audit + ADR 0017/0018 landed independently (PRs #1309/#1313). Roadmap doc still owed. |
+
+### Wave 0-B — flagged items (all complete)
+
+| Item | Status | Notes |
+|---|---|---|
+| F-1 probability-bounds plan | ✅ DONE | `probability-bounds-plan-2026-07.md` + prompts (PR #1319). |
+| F-2 emissions mass-cap plan | ✅ DONE | `emissions-mass-cap-plan-2026-07.md` (PR #1321). |
+| F-3 ERCOT AS co-opt plan | ✅ DONE | `ercot-as-coopt-plan-2026-07.md` + prompts (PR #1318). |
+| F-4 scalar-remediation plan | ✅ DONE | `scalar-remediation-plan-2026-07.md` + prompts (PR #1317). |
+| F-5 tornado + MIP diagnostic | ✅ **IMPLEMENTED** | Went past plan: `scripts/run_sensitivity_tornado.py` + ERCOT tornado report + MIP-UC crossbench artifacts (PR #1322). |
+| F-6 multi-iso triage | ✅ DONE | `multi-iso-triage-2026-07.md` (PR #1314). |
+| F-7 holdout-policy memo | ✅ DONE | `holdout-policy-memo-2026-07.md` (PR #1315) — **awaiting owner policy decision** (see FLAG). |
+
+### Wave 1 — execution guardrails (almost entirely OPEN — the current gap)
+
+| Item | Status | Notes |
+|---|---|---|
+| W1-P1 CI: pytest + gates on PR | ⛔ NOT STARTED | Only `lint.yml` triggers on `pull_request`; `audit_keepers`/`legitimacy_diagnostics` still in no workflow. Rule-22 CI claim still false. |
+| W1-P2 scoring-integrity tests | ⛔ NOT STARTED | No `test_audit_keepers.py`; `score_co2` still untested. |
+| W1-P3 hygiene sweep | ⛔ NOT STARTED | `_szprobe.txt`, `configs_nyiso_jacobian/`, `configs_run20/`, `scratchpad_diag_evening.py` all still present. |
+| W1-P4 rule-24 literal migration | ⛔ NOT STARTED | — |
+| W1-P5 LP solver hardening | ⛔ NOT STARTED | — |
+| W1-P6 scope2 docs sync | 🟡 UNKNOWN | scope2 saw activity (PRs #1309/#1313); docstring reconciliation not confirmed. |
+
+### Wave 2/3 — implementation & validation
+
+| Item | Status | Notes |
+|---|---|---|
+| W2-P1 emissions CO2 impl | 🟡 PARTIAL | CAMPD intake done; forward rate model + NOx unit fix + tranche-decontamination not in src. |
+| W2-P5 invariants + hindcast | 🟡 PARTIAL | Tornado delivered via F-5; **no `check_forecast_invariants.py`, no `run_capacity_hindcast.py`**. |
+| W3-P1 statmode ×5 ISOs | 🟡 STARTED | MISO D-7 statmode probe landed (`2026-07-03-miso-statmode-d-7`); CAISO/PJM/NYISO/NEISO pending. |
+| W3-P2 CAISO CT scrub | 🟡 IN-FLIGHT | See in-flight thread. |
+| W2-P2/P3/P4, W3-P3/P4 | ⛔ NOT STARTED | Gated on W0-P2/P5/P3 plans + W1 guardrails. |
+
+### In-flight threads (your active work — no coordinator action)
+
+- **CAISO evening-merit (W3-P2 / legitimacy S2):** Levers A+B scored as PROBE, caiso-51 stays
+  keeper (commit 1308b20); **ramp+LCR phase-1 REJECTED** — "ramp inert, drag D-2 FAIL"
+  (b95369d), design merged awaiting owner review (PR #1323). The CT floor scrub is therefore
+  still open — the rejection means the root cause isn't the ramp envelope.
+- **NEISO winter fuel-inventory model** merged (PRs #1310/#1325), seasonal oil-burn budget.
+- **Holdout-intake follow-ups** F1/F2/F5/F6 closed (PJM DataMiner 2026 + back-history, 25ea0fb).
+
+### ⚠ Collisions / de-dup notes
+
+1. **F-5 vs W2-P5 tornado** — F-5 already shipped the sensitivity tornado; **W2-P5 must drop the
+   tornado and scope to invariants + capacity hindcast only.** (Register: absorbed.)
+2. **F-4 scalar remediation vs CAISO evening-merit** — both touch CAISO drag/floor scalars; the
+   ramp/LCR rejection (D-2 FAIL on drag) overlaps F-4's D-8 red-flag list. Sequence F-4's CAISO
+   batch *after* the evening-merit thread settles a keeper, or they'll fight over the same limbs.
+3. **F-2 mass-cap vs W0-P1 carbon-seam** — F-2 plan depends on the W0-P1 EM-6 decision; confirm
+   the mass-cap plan references the CO2-rate plan's carbon-seam resolution before implementing.
+
+### ▶ Recommended next launches (priority order)
+
+1. **W0-P2 confirmed-retirement plan** `[FABLE]` — highest-value unstarted planning item; it's
+   the owner's original data-intent question and nothing else covers it.
+2. **W1-P1 + W1-P2 guardrails** `[SONNET ×2, parallel]` — every plan now queued will produce
+   numbers that currently flow through untested scoring with no PR gate. Land these before the
+   Wave-2 implementations, not after.
+3. **W0-P4 forecast-validation program** `[FABLE]` — unblocks the capacity hindcast (the single
+   biggest untouched validation program) and W2-P5.
+4. **W0-P5 capacity-economics plan** `[FABLE]` — the §C material emissions-bias items (FOM,
+   foresight, floor, DC-load) are unplanned.
+5. **W1-P3 hygiene sweep** `[SONNET]` — cheap; clears the root clutter still on main.
+
+Owner decision still pending: **F-7 holdout-quarantine policy** (strict re-quarantine vs amended
+rule-22 text) — blocks the eventual one-shot validation gating.
+
+---
+
 ## Appendix — Status of pre-existing plans: unfinished prompts still valid (flagged 2026-07-04)
 
 Registered against repo intent (LP-only hybrid, ±10% asset-level emissions; scope2 = hourly
 CFE matching). Verdicts: **FLAG** = still valid, not covered by any active wave or this
 pack — needs an owner scheduling decision; **ABSORBED** = folded into a prompt above (don't
 run separately); **IN-FLIGHT** = actively being worked on main; **STALE** = superseded,
-archive.
+archive. *(Update 2026-07-04 run 2: most FLAG items now have merged Wave 0-B plan docs and
+moved to PLANNED — see the status board above; the table below is annotated in place.)*
 
-### FLAG — still valid, owned by nothing
+### FLAG → mostly cleared by Wave 0-B (annotated)
 
-| Source plan | Item | Why still valid |
+| Source plan | Item | Current status |
 |---|---|---|
-| `model-audit-prompt-pack-2026-06.md` | **PP-1.1/1.2/1.3** scenario matrix + LHS/copula multivariate sampler + structural-error prior | The probability-bounds machinery for the emissions forecast; `ensemble.py` is still weather-only (verified 2026-07-04). Without it "±10%" has no confidence statement. |
-| `model-audit-prompt-pack-2026-06.md` | **PP-2.1** emissions mass-cap LP constraint (RGGI/cap-and-trade as constraint, allowance-price dual) | `policy/constraints.py:get_active_policy_constraints` still returns `[]`. Interacts with the EM-6 carbon-seam fix (W0-P1) — sequence after it. |
-| `model-audit-prompt-pack-2026-06.md` | **PP-3.1** sensitivity tornado; **PP-3.4** one-time MIP cross-benchmark | Tornado feeds the DOF ledger cheaply. MIP benchmark is a *diagnostic* (LP-only production rule intact) quantifying the LP-relaxation commitment bias — pairs with DP-1. |
-| `forecast-methodology-gaps-prompts-2026-06.md` | **P1/P1b** ERCOT multi-product AS co-optimization (+ **P5a** AS requirement-setting, **P5c** load-resource RRS forward rule; **P4** HSL 2024/25 completion) | The flagship forward-analogue gap (audit §J-T6): the largest backcast lever (DAM-AS overlay) still has no forecast-mode counterpart. |
-| `legitimacy-scrub-prompts-2026-07.md` | **S3** Class-C fitted-scalar remediation (~230 scalars, C-1…C-18) | Mostly untouched; D-8 showed coal sigmoid params pinned by single years and SP15 temp-limbs with sign-flipping ρ. Rules 20-21 make keepers carrying these an open liability. |
-| `legitimacy-scrub-prompts-2026-07.md` | **D-3 ablation twins; D-10…D-14 diagnostics** | Rule 21 requires a zero-forcing ablation twin per keeper; not yet built for current keepers. |
-| `docs/multi-iso/` (57 files) | Own triage pass never done; also verify MISO backcast-year coverage (rule 16 lists CAISO/PJM/NEISO/NYISO as multi-year — MISO's absence is unexplained) | Flagged as an open question by the docs audit; cheap Sonnet session. |
-| CLAUDE.md rule 22 wording | Reconcile the "no data intake for holdout years" text with the owner-driven 2022/H1-2026 intake merged 2026-07-03/04 (PRs #1298/#1300/#1304) | Either the one-shot validation is now imminent (intake was step 1) or the rule text needs the owner's amended policy — as written, CI-gate semantics and practice diverge. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-1.1/1.2/1.3** scenario matrix + LHS/copula sampler + structural-error prior | ✅ PLANNED — F-1 `probability-bounds-plan-2026-07.md` (PR #1319). Implementation open; `ensemble.py` still weather-only. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-2.1** emissions mass-cap LP constraint | ✅ PLANNED — F-2 `emissions-mass-cap-plan-2026-07.md` (PR #1321). `get_active_policy_constraints` still `[]`; sequence after W0-P1 carbon-seam. |
+| `model-audit-prompt-pack-2026-06.md` | **PP-3.1** tornado; **PP-3.4** MIP cross-benchmark | ✅ **DONE/IMPLEMENTED** — F-5 (PR #1322). Remove from open list. |
+| `forecast-methodology-gaps-prompts-2026-06.md` | **P1/P1b/P5a/P5c/P4** ERCOT multi-product AS co-opt | ✅ PLANNED — F-3 `ercot-as-coopt-plan-2026-07.md` + prompts (PR #1318). Implementation open. |
+| `legitimacy-scrub-prompts-2026-07.md` | **S3** Class-C ~230-scalar remediation | ✅ PLANNED — F-4 `scalar-remediation-plan-2026-07.md` + prompts (PR #1317). ⚠ collides with CAISO evening-merit limbs — sequence carefully. |
+| `legitimacy-scrub-prompts-2026-07.md` | **D-3 ablation twins; D-10…D-14** | ✅ PLANNED — covered by F-4's diagnostics section. Implementation open. |
+| `docs/multi-iso/` triage + MISO rule-16 gap | — | ✅ DONE — F-6 `multi-iso-triage-2026-07.md` (PR #1314). MISO coverage answered there. |
+| CLAUDE.md rule 22 wording | Holdout intake-vs-text drift | 🟡 MEMO DONE, **owner decision pending** — F-7 `holdout-policy-memo-2026-07.md` (PR #1315). |
 
 ### ABSORBED into this pack (do not run the old prompt)
 
 - `model-audit-prompt-pack-2026-06.md` PP-0.3 capacity hindcast, PP-0.1 statmode → **W0-P4/W2-P5/W3-P1**; PP-2.2/2.3 NPV entry-exit + revenue signal → partially landed in code (audit §C scorecard) + **W0-P5**; PP-2.4 startup emissions → **W0-P1/W2-P1**; PP-3.3 load-shape → the DC-block part of **W0-P5** (end-use reshaping remains a documented limitation).
-- `forecast-validation-plan.md` Phases 1-5 → **W0-P4/W2-P5** (the plan doc should be marked superseded by the W0-P4 handoff when it exists).
+- `forecast-validation-plan.md` Phases 1-5 → **W0-P4/W2-P5** (the plan doc should be marked superseded by the W0-P4 handoff when it exists). **Update:** the tornado/MIP part of W2-P5 is already delivered by F-5 (PR #1322) — W2-P5 now scopes to `check_forecast_invariants.py` + `run_capacity_hindcast.py` only.
 - `legitimacy-scrub-prompts-2026-07.md` S2 CAISO CT scrub → **W3-P2** (and the in-flight caiso-evening-merit thread); S4 statmode → **W3-P1**.
 - `code-docs-cleanup-plan.md` root/scripts hygiene + docs reorg → **W1-P3/W3-P3**; its C2 (python hygiene) and data-reorg W3-W5 remainders are minor — fold into W1-P3's session if time allows.
 - scope2 `PLAN.md` §10 open items → **W0-P6/W3-P4**.
