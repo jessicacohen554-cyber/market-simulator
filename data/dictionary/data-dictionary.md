@@ -56,6 +56,8 @@ for the market split.
 | unit-outage-events | — | — | — | — | — | — |
 | partial-outages | — | — | — | — | — | — |
 | capacity-deliverability | — | — | — | — | — | — |
+| gtc-limits | — | — | — | — | — | — |
+| winter-fuel-inventory | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -594,3 +596,60 @@ limits by delivery period. Schema:
 | `value_pu` | `float64` | `ratio` | yes | Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a 1.148 LRR per-unit-of-peak). Null for pure-MW metrics. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
+
+## gtc-limits
+
+Measured ERCOT Generic Transmission Constraint hourly limits (stability-limited
+export interfaces). Schema:
+[`schema/gtc-limits.schema.yaml`](schema/gtc-limits.schema.yaml).
+
+- **Keys:** `iso`, `gtc`, `hour`
+- **Reconciles:** ERCOT NP6-86-CD SCED shadow-price / binding-constraint CSVs
+  (~5-min) — filtered to GTC rows (empty `FromStation`) and aggregated to the
+  fixed non-leap 8760-hour ERCOT-local clock as per-(gtc, hour) mean/min
+  enforced limit, active/binding interval counts, and mean positive shadow
+  price. Sparse: a row exists only for hours the constraint was in SCED's
+  active set. ERCOT-only (published physical transfer limits, rule #13/#14
+  admissible).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (currently ERCOT). |
+| `gtc` | `string` | `none` | no | Constraint name exactly as published in the NP6-86 ConstraintName field (e.g. PNHNDL, WESTEX, NE_LOB, VALEXP). Names follow ERCOT's own GTC vocabulary for the archive's era; the model-side link crosswalk (constants.ERCOT_GTC_LINK_MAP) maps the representable ones. |
+| `hour` | `int64` | `hour_index` | no | Index 0-8759 on the fixed non-leap 8760-hour ERCOT-local clock (Feb 29 dropped) — the model's dispatch clock. |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock local start of the hour (naive, ERCOT local). |
+| `limit_mean_mw` | `float64` | `mw` | no | Mean enforced Limit (MW) over the hour's active SCED intervals. |
+| `limit_min_mw` | `float64` | `mw` | no | Minimum enforced Limit (MW) over the hour's active intervals. |
+| `n_active` | `int64` | `count` | no | Number of distinct SCED executions in the hour where the constraint was in the active set (nominal cadence 12/hour; the DST fall-back clock hour can carry up to 24). |
+| `n_binding` | `int64` | `count` | no | Number of those executions where the constraint was binding (ShadowPrice > 0). |
+| `shadow_price_mean` | `float64` | `usd_per_mwh` | yes | Mean ShadowPrice over the hour's binding intervals; null when the constraint was active but never binding that hour. |
+
+## winter-fuel-inventory
+
+Forward-derivable oil-burn budget drivers for the winter fuel-constrained fleet
+(Nov–Mar seasonal scarcity). Schema:
+[`schema/winter-fuel-inventory.schema.yaml`](schema/winter-fuel-inventory.schema.yaml).
+
+- **Keys:** `iso`, `entity`, `entity_type`, `season`, `delivery_year`, `metric`
+- **Reconciles:** EIA-860 per-plant `Net Winter Capacity with Oil (MW)`
+  (multifuel) and `Firing Rate Using Petroleum` (boiler design) — derived
+  programmatically — unioned with hand-curated ISO-NE study/program figures
+  (OFSA 2018 tank autonomy / fill rate / LNG caps; Winter Reliability Program
+  oil-inventory targets; Mystic retention) onto one tidy `(entity, entity_type,
+  season, metric, value, unit)` frame. Physical/logistics INPUTS only — never
+  measured burn/delivery outcomes (F923 receipts are excluded by design).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the row applies to (e.g. ISONE). |
+| `entity` | `string` | `none` | no | Identifier the value is defined on: an EIA-860 plant code (as a string) for per-plant rows, a program name (e.g. "Mystic_COS", "WRP_2017_18") for program rows, a fuel-class label (e.g. "OIL_STEAM", "DUAL_FUEL_GAS") for fleet-class rows, or an ISO/system label for system-wide study rows. |
+| `entity_type` | `string` | `none` | no | Granularity of entity: one of plant \| fleet \| fuel_class \| program \| system. |
+| `plant_code` | `int64` | `none` | yes | EIA-860 plant code when entity_type=plant (also parseable from entity); null for fleet/program/system rows. |
+| `season` | `string` | `none` | no | Season the value governs: winter (the Nov-Mar fuel-security horizon) or annual (year-round physical attributes such as tank capacity / firing rate that are not season-specific). |
+| `delivery_year` | `string` | `none` | no | Vintage / study / winter label the value governs, as a label: an EIA-860 data vintage ("2023"), a winter season ("2017/2018"), or a study year ("2018" for the OFSA). System/study assumptions that are not year-keyed use the source's publication year. |
+| `metric` | `string` | `none` | no | Canonical metric. Physical/logistics vocabulary: tank_capacity (on-site oil storage capacity, in bbl/mmbtu or days of autonomy), start_fill (assumed start-of-season oil inventory), delivery_rate (oil re-supply cap in bbl/mmbtu per day or tank fills per winter, or LNG injection in bcf per day), annual_run_limit (permit/environmental annual oil-run cap, days/yr), firing_rate (max physical petroleum burn rate, EIA-860 boiler), oil_limb_capacity (dual-fuel unit's net capacity when burning oil, EIA-860 multifuel), oil_fleet_capacity (fleet/class oil-capable MW from a study), winter_program_capacity (MW retained under a winter-reliability / retention program), season_days (length of the budget horizon), winter_program_member (membership flag in a winter-reliability / retention program; value=1.0, unit=flag). |
+| `value` | `float64` | `none` | no | The numeric value, in the units named by the unit column. |
+| `unit` | `string` | `none` | no | Physical unit of value: one of mw \| bbl \| bbl_per_hr \| bbl_per_day \| mmbtu \| mmbtu_per_day \| fills_per_season \| bcf_per_day \| days \| flag. The metric<->unit pairing is checked by the curation tidy-validator. |
+| `fuel_kind` | `string` | `none` | yes | Oil grade / fuel the row refers to when relevant: distillate (No. 2) \| residual (No. 6) \| oil (unspecified/blended) \| lng \| dual_fuel. Null for fuel-agnostic rows (season_days, program membership). |
+| `source_doc` | `string` | `none` | yes | Authoritative source: EIA-860 table + vintage for per-plant rows; the ISO-NE study title/URL for fleet/system rows; the program filing for program rows. |
+| `source_page` | `string` | `none` | yes | Page / table / figure locator within source_doc. |

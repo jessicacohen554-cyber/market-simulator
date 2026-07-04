@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**959 parameters registered** (552 flagged `needs-citation`).
+**961 parameters registered** (552 flagged `needs-citation`).
 
 
 ## Calibration
@@ -235,6 +235,13 @@ inline comment and still need a dated primary source — search the table for
 | `state_carbon_price_by_iso.CAISO` | {"2023": 33.03, "2024": 35.23, "2025"… | 2 | CARB / CA-Quebec joint auction current-vintage settlement prices, a… | 2025-11 |  |
 | `state_carbon_price_by_iso.NEISO` | {"2023": 14.87, "2024": 22.83, "2025"… | 2 | RGGI, Inc. quarterly auction results press releases ("CO2 Allowance… | 2025-12 |  |
 | `state_carbon_price_by_iso.NYISO` | {"2023": 13.49, "2024": 20.71, "2025"… | 2 | RGGI quarterly CO2-allowance auction clearing prices, annual simple… | 2025-12 |  |
+
+## Fuel
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `mmbtu_per_bbl_distillate` | 5.825 | 2 | EIA Monthly Energy Review, Appendix A, Table A1 (Approximate Heat C… | 2026-06 |  |
+| `mmbtu_per_bbl_residual` | 6.287 | 2 | EIA Monthly Energy Review, Appendix A, Table A1 (Approximate Heat C… | 2026-06 |  |
 
 ## Fuel Prices
 

@@ -1854,6 +1854,16 @@ ELECTROLYZER_PARAMS: dict[str, dict[str, float]] = {
 # hydrogen electricity cost ($/MWh) into a fuel cost ($/MMBtu).
 MMBTU_PER_MWH: float = 3.412
 
+# Approximate heat content of fuel oil, MMBtu per barrel — the bbl<->MMBtu
+# conversion for the winter oil-inventory budget (component A of
+# docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md), where the
+# winter-fuel-inventory datatype records tank/inventory quantities in barrels
+# but the LP budget row is in MMBtu (then MWh via heat rate).
+# Source: EIA Monthly Energy Review, June 2026, Appendix A, Table A1
+# ("Approximate Heat Content of Petroleum and Biofuels"), p.228.
+MMBTU_PER_BBL_DISTILLATE: float = 5.825  # No. 2 distillate fuel oil
+MMBTU_PER_BBL_RESIDUAL: float = 6.287  # No. 6 residual fuel oil
+
 # Carbon capture, utilization and storage parameters. CCUS is a variant of
 # the base gas CC plant: higher heat rate (parasitic capture load), higher
 # VOM (solvent costs), reduced emission rate, plus a transport+storage cost
