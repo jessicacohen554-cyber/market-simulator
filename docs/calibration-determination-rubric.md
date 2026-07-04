@@ -37,6 +37,7 @@ never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
 | `frontend/data/backcast/bench/<ISO>/<year>.json.gz` | benchmark part | authoritative actuals: `classFull` (grid-delivered EIA-923−BTM TWh by class, vintage-reconciled), `e930` (EIA-930 grid totals by fuel), `avgLMP` (actual DA/RT mean + monthly) |
 | `results/calibration/<name>/run_config.json`, `meta.json` | bundle | governance config (outage source, lever flags), gas vintage |
 | `results/calibration/<name>/calibration_attestation.json` | bundle (this rubric) | governance attestation + the exceptions ledger |
+| `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — D-1 diurnal-shape rows and the D-2 per-class forced-share summary that C7/C8 score; the verdict never recomputes the diagnostics |
 
 The model payload and benchmark parts are the **same numbers the dashboard
 renders** (`scripts/render_calibration_html.py:build_payload`), so the verdict
@@ -364,6 +365,75 @@ FAILS regardless of every score above.** Four assertions, all required:
   **`UNATTESTED`** (⇒ `NOT-YET`) if no attestation file exists — you cannot certify
   a run you have not attested.
 
+### C7 — Diurnal shape, gated classes  *(HARD, added 2026-07-04, audit D-1)*
+
+- **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
+  **profile correlation r** and the **off-peak (h0–14) CV ratio**
+  (model CV / actual CV). Gated classes are the peaker/intermediate duty
+  classes (`CT_PEAKER`, `ST_GAS`); every class is still reported.
+- **Source:** the bundle's committed `legitimacy_diagnostics.json`, written by
+  `scripts/legitimacy_diagnostics.py --json-out` (the S1 suite is the single
+  implementation; this scorer only reads its rows). Model side is the run
+  payload's per-plant hourly dispatch; actual side is the committed CAMPD
+  bench series.
+- **Tolerance:** profile **r ≥ 0.8** AND off-peak **CV ratio ≥ 0.5** (the
+  thresholds are read from the artifact's `gates` block, set in
+  `scripts/legitimacy_diagnostics.py` `D1_*`). A flat line — the caiso-42
+  signature, model off-peak CV 0.000 vs actual 0.35–0.45 — fails both.
+- **Why first-class (motivating evidence):** annual volume bands cannot see
+  class-shape failure. The D-7 statistical-mode study
+  (`docs/statistical-mode-results-2026-07.md`) showed the 2026-07-02-loosened
+  C1 class band (`min(2% load, 8 TWh)`) **absorbed a >6× growth in the ERCOT
+  CT_PEAKER miss** (2024: +0.04 → −6.27 TWh, still PASS), and **every ISO's
+  CAVEAT count collapses to ~0 with the overlays off** — the soft-caveat band
+  was absorbing overlay-narrowed near-misses, not model tolerance. A flat
+  floor *helped* C1 while destroying the diurnal shape nothing scored
+  (audit §5.4-1); C7 closes that hole so a flat floor can never again improve
+  a keeper's score.
+- **Failure classification:** `MODEL MISS` (a forced floor or missing
+  merit-order shape — commitment/offer structure, per audit §1). Essentially
+  never ledgerable: a flat profile is a mechanism defect by construction.
+  `SKIPPED` (never a silent pass — and it caps the determination, §2) when
+  the bundle carries no `legitimacy_diagnostics.json`.
+
+### C8 — Forced-energy share  *(HARD, added 2026-07-04, audit D-2 / CLAUDE.md rule 20)*
+
+- **Metric:** the share of a class's annual energy dispatched **AT a binding
+  `min_gen` floor**, by class, attributed per mechanism via the int8
+  mechanism-id array threaded through `FleetArrays`.
+- **Source:** the D-2 per-class summary in the bundle's committed
+  `legitimacy_diagnostics.json`. Floors come from the bundle's persisted
+  `floors/<year>_<pass>.npz` or the `run_year(fleet_only=True)` rebuild; a
+  rebuilt-floor share excludes the P1-dependent RA bridge and is recorded as
+  a **lower bound** in the verdict record.
+- **Tolerance:** forced share **< 10 %** for peaker classes (`CT_PEAKER`),
+  **< 30 %** for any merchant class. **Exempt:** nuclear, CHP-steam classes
+  and the coal take-or-pay/mine-mouth must-run mechanisms — structural,
+  owner-accepted must-run physics (audit §2). Thresholds read from the
+  artifact's `gates` block (`D2_*`).
+- **Why first-class:** floors are commitment scaffolding, not the dispatch
+  model — ~50–55 % of modeled CAISO CT energy sat at the caiso-42 floor while
+  the volume gates rewarded it (audit §1.1). Same statistical-mode evidence
+  as C7: the class-volume band is structurally unable to distinguish
+  merit-order dispatch from forced energy.
+- **Failure classification:** `MODEL MISS` (stacked-floor creep / a floor
+  fitting the class). Essentially never ledgerable. `SKIPPED` when the
+  artifact or the year's floor data is absent — recorded, capping the
+  determination.
+
+### D-7 statistical-mode gap  *(REPORTED, never gating)*
+
+Each keeper's Calibration Status entry carries the **statistical-mode
+fail-count gap** — in-sample criterion fails with the keeper's overlays vs
+fails with `--statistical-mode` (all per-hour/per-year answer-injection
+overlays off), from the registered D-7 probes
+(`docs/statistical-mode-results-2026-07.md`; data:
+`frontend/data/backcast/statmode_d7.json`). It is a **reported line, not a
+criterion**: it measures how much of the in-sample fit the backcast-only
+overlays carry (the forecast-machinery skill prior), which is out-of-sample
+*evidence*, not an in-sample gate. The gap should shrink release-over-release
+(audit §7 D-7); re-measure it whenever a keeper changes.
+
 ### C-VRE note (solar / wind)
 
 Solar and wind volumes are benchmarked against **EIA-930** (not 923) per
@@ -388,8 +458,10 @@ fails any scorable year; else `CAVEAT` if it caveats any year; else `PASS` if it
 passes any year; else `SKIPPED` (no data in any year).
 
 **Caveat budget (quorum):**
-- HARD data criteria (C1 fuel-mix, C2 system volume): at most **1** may be a
-  `CAVEAT`, and only with a ledger entry. C6 governance is never caveatable.
+- HARD data criteria (C1 fuel-mix, C2 system volume, C7 diurnal shape, C8
+  forced-energy share): at most **1** may be a `CAVEAT`, and only with a
+  ledger entry (C7/C8 are essentially never ledgerable — see their sections).
+  C6 governance is never caveatable.
 - SOFT criteria (C3a/b/c, C4, C5a/b/c): at most **2** `CAVEAT`s total (cut from
   3 on 2026-07-02 — Option A of the re-balance: C3 stays SOFT, but with three
   price sub-criteria a 3-caveat budget allowed *all* of price — mean, shape and
@@ -404,7 +476,7 @@ passes any year; else `SKIPPED` (no data in any year).
 | Outcome | Conditions (all must hold) |
 |---|---|
 | **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` (no `FAIL`, no `CAVEAT`, no `SKIPPED`); **no** data-blocked target year. |
-| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; caveats within budget (≤1 hard, ≤2 soft) and **every** caveat has a ledger entry; one or more of {a caveat exists, a soft criterion is `SKIPPED`, a target year is data-blocked}. |
+| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; caveats within budget (≤1 hard, ≤2 soft) and **every** caveat has a ledger entry; one or more of {a caveat exists, a soft criterion is `SKIPPED`, a **hard** criterion is `SKIPPED` (e.g. C7/C8 with no committed `legitimacy_diagnostics.json`), a target year is data-blocked}. |
 | **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or the caveat budget is exceeded. |
 
 The decisive rule, restated: **a determination with an undocumented

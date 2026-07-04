@@ -214,6 +214,7 @@ results/calibration/*/dispatch/
 # per-pass min-gen floors + mechanism ids (legitimacy diagnostics D-2/D-4) —
 # large regenerable intermediates, rebuilt via run_year(fleet_only=True).
 results/calibration/*/floors/
+results/calibration/*/*/floors/
 results/calibration/*/system.parquet
 # Solve console log — regenerable (the report reproduces via --report DIR); keep bundles slim.
 results/calibration/*/solve.log
