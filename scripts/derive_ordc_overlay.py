@@ -378,14 +378,6 @@ def main() -> None:
         "--as-plan", type=float, default=None, help="override ordc_as_plan_mw (MW)"
     )
     ap.add_argument(
-        "--reliability-deployment",
-        type=float,
-        default=None,
-        help="ordc_reliability_deployment_mw (MW): RTORDPA / "
-        "reserve-tightness offset netted from reserves "
-        "(stress-year scarcity calibration; ~2500 for ERCOT)",
-    )
-    ap.add_argument(
         "--no-floor", action="store_true", help="disable the OBDRR048 multi-step floor"
     )
     ap.add_argument(
@@ -430,8 +422,6 @@ def main() -> None:
         overrides["ordc_lolp_shift_sigma"] = args.shift
     if args.as_plan is not None:
         overrides["ordc_as_plan_mw"] = args.as_plan
-    if args.reliability_deployment is not None:
-        overrides["ordc_reliability_deployment_mw"] = args.reliability_deployment
     if args.no_floor:
         overrides["ordc_multistep_floor"] = False
     if args.lolp_params is not None:
