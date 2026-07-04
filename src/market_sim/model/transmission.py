@@ -774,8 +774,12 @@ def split_caiso_import_node_per_hub(iso_config: ISOConfig) -> ISOConfig:
     zone is replaced by ``WECC_PNW`` (COI/Path-66 → NP15) and ``WECC_DSW``
     (Path-46/WOR → SP15), the two ``WECC_import`` import links are re-homed onto
     those zones, and the ``WECC_import_simultaneous`` interface limit is rewritten
-    to span the two corridor links (so the 8.3 GW simultaneous-import cap is
-    preserved). Internal CAISO links (Path 15/26) and every other field are
+    to span the two corridor links (so the baked 7,500 MW simultaneous-import cap
+    is preserved and re-homed — note this is the fitted audit item C-5 scalar,
+    superseded in the caiso-51 keeper by the published MIC seam limit when
+    ``capacity_deliverability_limits`` is on; see
+    docs/caiso-c5-wecc-cap-closeout-2026-07-03.md). Internal CAISO links (Path
+    15/26) and every other field are
     unchanged. A no-op (the same config) for a non-CAISO ISO or one without a
     ``WECC_import`` node, so the build path stays byte-identical off the flag.
 
