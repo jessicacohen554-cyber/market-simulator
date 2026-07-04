@@ -927,3 +927,115 @@ def reliability_deployment_floor_for_year(
         arr[hoy[valid]] = sub["floor_mw"].to_numpy(dtype=float)[valid]
         out[int(code)] = arr
     return out
+
+
+# ---------------------------------------------------------------------------
+# NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay (NYISO)
+# ---------------------------------------------------------------------------
+# The regulation caps ozone-season (May 1 - Sep 30) NOx from simple-cycle
+# turbines in two phases (2023-05-01 / 2025-05-01). Units whose compliance
+# plan is ozone-season shutdown or reliability-only operation are unavailable
+# to the energy market inside the window — an exogenous regulatory
+# availability event in the same rule-#12 admissibility class as the CAMPD
+# unit-outage windows (availability only, never an offer/price change; the
+# schedule regenerates from the regulation, not from observed CF). Curated
+# unit schedule: data/raw/reference/nysdec-227-3-peaker-compliance.csv
+# (NYISO Gold Book Tables IV-3..IV-6, 2023/2024/2025 vintages; per-unit
+# citations in the CSV rows).
+NYSDEC_PEAKER_CSV: Path = (
+    RAW_DATA_DIR / "reference" / "nysdec-227-3-peaker-compliance.csv"
+)
+
+# Ozone-season bounds on the model's fixed non-leap 8760 clock: May 1 00:00 is
+# hour 2880, Sep 30 24:00 is hour 6552 (same span as the ST_GAS seasonal
+# amortization window in model/commitment.py).
+OZONE_SEASON_HOURS: tuple[int, int] = (2880, 6552)
+
+# Restriction kinds the overlay APPLIES. Designated / record-only kinds
+# (ozone_season_oos_star_designated, statutory_phaseout_2030, retired,
+# none_documented) are carried in the CSV for the audit record but never
+# restrict availability: the STAR designation kept the Gowanus/Narrows barges
+# in operation, retirements are the fleet vintage's job, and the NYPA statute
+# binds after 2030.
+_NYSDEC_APPLIED_KINDS: frozenset[str] = frozenset({"ozone_season_oos"})
+
+
+@lru_cache(maxsize=8)
+def _nysdec_peaker_rows(csv_path: str) -> tuple:
+    """Parse the curated 227-3 schedule into applicable restriction rows."""
+    path = Path(csv_path)
+    if not path.exists():
+        return ()
+    df = pd.read_csv(path)
+    rows = []
+    for r in df.itertuples(index=False):
+        if str(r.restriction).strip() not in _NYSDEC_APPLIED_KINDS:
+            continue
+        eff = pd.to_datetime(r.effective_date)
+        end = pd.to_datetime(r.end_date) if pd.notna(r.end_date) else None
+        unit_ids = (
+            tuple(u.strip() for u in str(r.unit_ids).split(";") if u.strip())
+            if pd.notna(r.unit_ids)
+            else ()
+        )
+        mw = float(r.restricted_mw) if pd.notna(r.restricted_mw) else None
+        rows.append(
+            (
+                int(r.plant_code),
+                str(r.scope).strip(),
+                unit_ids,
+                eff,
+                end,
+                mw,
+            )
+        )
+    return tuple(rows)
+
+
+def nysdec_peaker_restrictions(
+    year: int, hours: int, csv_path: Path | None = None
+) -> list[dict]:
+    """Return the 227-3 restrictions active in ``year`` as hour windows.
+
+    Each item: ``{"plant_code", "scope", "unit_ids", "restricted_mw",
+    "h_lo", "h_hi"}`` — the ozone-window slice of the model year during which
+    the row's units are out of the energy market. A row whose effective date
+    falls inside the year's ozone window starts there (the 227-3 compliance
+    dates are May 1, which is the window start); one that ends mid-window
+    (e.g. a retirement) stops there.
+    """
+    o_lo, o_hi = OZONE_SEASON_HOURS
+    o_hi = min(o_hi, hours)
+
+    def _doy_nonleap(ts: pd.Timestamp) -> int:
+        """Day-of-year on the model's fixed non-leap 8760 clock (Feb 29 -> 28)."""
+        day = min(ts.day, 28) if ts.month == 2 else ts.day
+        return int(pd.Timestamp(2023, ts.month, day).dayofyear)
+
+    out: list[dict] = []
+    for code, scope, unit_ids, eff, end, mw in _nysdec_peaker_rows(
+        str(csv_path or NYSDEC_PEAKER_CSV)
+    ):
+        if eff.year > year:
+            continue
+        if end is not None and end.year < year:
+            continue
+        h_lo = o_lo
+        if eff.year == year:
+            h_lo = max(o_lo, min((_doy_nonleap(eff) - 1) * 24, hours))
+        h_hi = o_hi
+        if end is not None and end.year == year:
+            h_hi = min(o_hi, max((_doy_nonleap(end) - 1) * 24, 0))
+        if h_hi <= h_lo:
+            continue
+        out.append(
+            {
+                "plant_code": code,
+                "scope": scope,
+                "unit_ids": unit_ids,
+                "restricted_mw": mw,
+                "h_lo": h_lo,
+                "h_hi": h_hi,
+            }
+        )
+    return out

@@ -2105,6 +2105,9 @@ def run_year(
     cc_intermediate_split: bool = False,
     cc_intermediate_cf_threshold: float | None = None,
     tranche_startup_amortization: bool = False,
+    tranche_startup_measured_runs: bool = False,
+    nysdec_peaker_rule_availability: bool = False,
+    oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
@@ -2344,6 +2347,24 @@ def run_year(
         # component of the real offer stack the HR-multiplier curve cannot
         # express (winter over- / summer-evening under-pricing signature).
         config = config.with_overrides(tranche_startup_amortization=True)
+    if tranche_startup_measured_runs:
+        # v3 measured-run-length basis: the simple-cycle CT tranches amortize
+        # over the CAMPD-measured median start-to-stop run length
+        # (derive_campd_ct_run_lengths.py artifact) as the horizon ceiling —
+        # P0 runs may only shorten it — removing the v2 circularity where
+        # too-cheap offers → long P0 blocks → ≈0 markup (nyiso-44 finding).
+        config = config.with_overrides(tranche_startup_measured_runs=True)
+    if nysdec_peaker_rule_availability:
+        # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated
+        # unit-level ozone-season compliance windows (Gold Book IV-3..IV-6),
+        # availability only, never an offer/price change (rule #12 class of
+        # the CAMPD outage windows).
+        config = config.with_overrides(nysdec_peaker_rule_availability=True)
+    if oil_primary_bin_fuel:
+        # Measured EIA-860 oil-primary fuel correction (plant-registry screen
+        # unioned with the generator-level Energy-Source-1 majority screen);
+        # CLI-explicit counterpart of the legacy ERCOT_OIL_PRIMARY env gate.
+        config = config.with_overrides(oil_primary_bin_fuel=True)
     if st_gas_intermediate:
         # MISO intermediate gas-steam structure (one consolidated lever, default
         # OFF → prior keepers / other ISOs byte-identical). The legacy gas-steam
