@@ -1,19 +1,19 @@
-iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis
-CAISO,NP15,CT_PEAKER,netload,27.57,0.1389,True,0.3656,0.38,0.5146,324,0.0496,0.2126,netload: system p70 daily-peak net-load (demand - VRE) GW
-CAISO,NP15,CC_REGULAR,tmax,32.66,0.499,False,0.9596,0.52,0.1276,55,0.4276,0.7274,hot: zone p95 tmax (design cooling day)
-CAISO,NP15,CC_REGULAR,tmin,1.75,0.4382,False,0.8426,0.52,-0.2069,11,0.4392,0.738,cold: zone p1 tmin (design heating day)
-CAISO,SP15,ST_GAS,tmax,26.7,0.0711,False,0.5924,0.12,0.2121,56,0.2196,0.4681,hot: zone p95 tmax (design cooling day)
-CAISO,SP15,ST_GAS,tmin,5.66,0.0627,False,0.5227,0.12,-0.0122,10,0.2268,0.4746,cold: zone p1 tmin (design heating day)
-CAISO,SP15,CT_PEAKER,netload,27.57,0.1626,True,0.4278,0.38,0.6653,322,0.0208,0.2373,netload: system p70 daily-peak net-load (demand - VRE) GW
-CAISO,SP15,CC_REGULAR,tmax,26.7,0.3171,True,0.6098,0.52,0.3211,56,0.2373,0.4751,hot: zone p95 tmax (design cooling day)
-CAISO,SP15,CC_REGULAR,tmin,5.66,0.3292,False,0.6331,0.52,0.0061,10,0.2447,0.4806,cold: zone p1 tmin (design heating day)
-CAISO,NP15,CC_CHP,tmax,32.66,0.2683,False,0.5159,0.52,0.0033,55,0.2994,0.4188,hot: zone p95 tmax (design cooling day)
-CAISO,NP15,CC_CHP,tmin,1.75,0.2369,False,0.4556,0.52,-0.3357,11,0.3033,0.4238,cold: zone p1 tmin (design heating day)
-CAISO,ZP26,CT_PEAKER,netload,27.57,0.1231,True,0.3239,0.38,0.3181,140,0.0179,0.2374,netload: system p70 daily-peak net-load (demand - VRE) GW
-CAISO,NP15,CT_CHP,netload,27.57,0.0863,True,0.2271,0.38,0.4269,326,0.1112,0.1759,netload: system p70 daily-peak net-load (demand - VRE) GW
-CAISO,SP15,CC_CHP,tmax,26.7,0.0331,False,0.0637,0.52,0.4531,22,0.0183,0.0637,hot: zone p95 tmax (design cooling day)
-CAISO,ZP26,CT_CHP,netload,27.57,0.0273,True,0.0718,0.38,0.4918,248,0.0151,0.0509,netload: system p70 daily-peak net-load (demand - VRE) GW
-CAISO,ZP26,CC_REGULAR,tmax,40.6,0.52,False,1.0,0.52,0.2568,59,0.3228,0.7967,hot: zone p95 tmax (design cooling day)
-CAISO,ZP26,CC_REGULAR,tmin,1.1,0.52,False,1.0,0.52,-0.3354,5,0.3399,0.8068,cold: zone p1 tmin (design heating day)
-CAISO,ZP26,CC_CHP,tmax,40.6,0.52,False,1.0,0.52,0.038,46,0.7509,1.0,hot: zone p95 tmax (design cooling day)
-CAISO,ZP26,CC_CHP,tmin,1.1,0.52,False,1.0,0.52,-0.2236,5,0.7545,1.0,cold: zone p1 tmin (design heating day)
+iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis,start_hour,end_hour
+CAISO,NP15,CT_PEAKER,netload,27.57,0.1389,False,0.3656,0.38,0.5146,324,0.0496,0.2126,netload: system p70 daily-peak net-load (demand - VRE) GW,15,21
+CAISO,NP15,CC_REGULAR,tmax,32.66,0.499,False,0.9596,0.52,0.1276,55,0.4276,0.7274,hot: zone p95 tmax (design cooling day),,
+CAISO,NP15,CC_REGULAR,tmin,1.75,0.4382,False,0.8426,0.52,-0.2069,11,0.4392,0.738,cold: zone p1 tmin (design heating day),,
+CAISO,SP15,ST_GAS,tmax,26.7,0.0711,False,0.5924,0.12,0.2121,56,0.2196,0.4681,hot: zone p95 tmax (design cooling day),,
+CAISO,SP15,ST_GAS,tmin,5.66,0.0627,False,0.5227,0.12,-0.0122,10,0.2268,0.4746,cold: zone p1 tmin (design heating day),,
+CAISO,SP15,CT_PEAKER,netload,27.57,0.1626,False,0.4278,0.38,0.6653,322,0.0208,0.2373,netload: system p70 daily-peak net-load (demand - VRE) GW,15,21
+CAISO,SP15,CC_REGULAR,tmax,26.7,0.3171,True,0.6098,0.52,0.3211,56,0.2373,0.4751,hot: zone p95 tmax (design cooling day),,
+CAISO,SP15,CC_REGULAR,tmin,5.66,0.3292,False,0.6331,0.52,0.0061,10,0.2447,0.4806,cold: zone p1 tmin (design heating day),,
+CAISO,NP15,CC_CHP,tmax,32.66,0.2683,False,0.5159,0.52,0.0033,55,0.2994,0.4188,hot: zone p95 tmax (design cooling day),,
+CAISO,NP15,CC_CHP,tmin,1.75,0.2369,False,0.4556,0.52,-0.3357,11,0.3033,0.4238,cold: zone p1 tmin (design heating day),,
+CAISO,ZP26,CT_PEAKER,netload,27.57,0.1231,False,0.3239,0.38,0.3181,140,0.0179,0.2374,netload: system p70 daily-peak net-load (demand - VRE) GW,15,21
+CAISO,NP15,CT_CHP,netload,27.57,0.0863,False,0.2271,0.38,0.4269,326,0.1112,0.1759,netload: system p70 daily-peak net-load (demand - VRE) GW,15,21
+CAISO,SP15,CC_CHP,tmax,26.7,0.0331,False,0.0637,0.52,0.4531,22,0.0183,0.0637,hot: zone p95 tmax (design cooling day),,
+CAISO,ZP26,CT_CHP,netload,27.57,0.0273,False,0.0718,0.38,0.4918,248,0.0151,0.0509,netload: system p70 daily-peak net-load (demand - VRE) GW,15,21
+CAISO,ZP26,CC_REGULAR,tmax,40.6,0.52,False,1.0,0.52,0.2568,59,0.3228,0.7967,hot: zone p95 tmax (design cooling day),,
+CAISO,ZP26,CC_REGULAR,tmin,1.1,0.52,False,1.0,0.52,-0.3354,5,0.3399,0.8068,cold: zone p1 tmin (design heating day),,
+CAISO,ZP26,CC_CHP,tmax,40.6,0.52,False,1.0,0.52,0.038,46,0.7509,1.0,hot: zone p95 tmax (design cooling day),,
+CAISO,ZP26,CC_CHP,tmin,1.1,0.52,False,1.0,0.52,-0.2236,5,0.7545,1.0,cold: zone p1 tmin (design heating day),,

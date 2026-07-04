@@ -1,0 +1,12 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "caiso-52 S2 CT-floor scrub session 2026-07-03",
+    "note": "Carries every caiso-51 keeper lever unchanged (measured WECC per-hub seam decomposition with firm/contracted tranches at documented contract costs, measured p95 corridor envelopes, published MIC seam limit, citygate gas basis, EIA-930 monthly hydro budgets, CAMPD historic outage windows, RA min-load 0.26, UC startup bridge/decommit). This run REMOVES forcing rather than adding levers (legitimacy audit S2): (1) the CAISO CT_PEAKER/CT_CHP netload reliability-floor registry limbs are retired — an A/B against hour-windowed limbs showed them redundant with the net-load drag on the same driver, hours and class (one mechanism per phenomenon, audit rule 18) — leaving ct_netload_drag (h15-21, net-load-proportional, forward-derivable) as the single evening CT commitment mechanism; (2) RA must-offer bridge eligibility is gated on unit physics (min_down_hours >= 4) instead of the hard-coded (CC_REGULAR, CT_PEAKER) class tuple, so fast-start CTs are never economically bridged overnight (audit §1.2c, rule 17). No adder, haircut, or rescale tuned to any residual; the C1/C3 regressions vs caiso-51 are the disclosed cost of removing the flat CT floor (rule #1) — open root-cause item: evening CT merit dispatch (P1 merit order: import tranche prices / CC offers, caiso-48 next-levers thread)."
+  },
+  "exceptions": []
+}
