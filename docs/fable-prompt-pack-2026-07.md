@@ -602,6 +602,168 @@ it — do not tune the tool to pass.
 
 ---
 
+## Wave 0-B — Flagged-item planning prompts (parallel; from the Appendix FLAG list)
+
+Run each as its own session, in parallel with each other and with Wave 0. F-1/F-3/F-4 are
+Fable-grade; the rest run fine on Opus/Sonnet. None collide with the in-flight
+wiring-gaps waves or the CAISO evening-merit thread.
+
+### F-1 `[FABLE]` — Probability-bounds program plan
+
+```
+Read CLAUDE.md, docs/fable-repo-audit-2026-07.md §J-T4, docs/model-audit-2026-06.md
+(§ on probabilistic machinery), and docs/model-audit-prompt-pack-2026-06.md PP-1.1/1.2/1.3.
+Goal: give the emissions forecast a defensible probability band. Today
+src/market_sim/ensemble.py varies weather only (n=3); no fuel/load/cost/policy
+uncertainty and no structural-error term, so the +/-10% target carries no confidence
+statement. Design, do not implement:
+1. The scenario matrix (PP-1.1): which drivers (gas price path, load growth incl. the
+   data-center block from W0-P5, capex/learning, policy path) at which discrete levels,
+   sized for LP-only runtimes (rule 12 memory limits: sequential years, ~2 concurrent
+   invocations).
+2. The multivariate sampler (PP-1.2): LHS over correlated continuous drivers (copula or
+   rank-correlation — cite the evidence source for gas-load coupling), how many draws are
+   affordable, what is sampled vs scenario-switched, and where it hooks into ensemble.py.
+3. The structural-error prior (PP-1.3): backcast residual distributions (later: hindcast
+   skill from W2-P5) as an additive error term so reported band = parametric spread
+   combined with structural error. State the assumptions honestly.
+4. Output surface: how bands are computed, stored (parquet per scenario-year), displayed.
+Produce docs/handoffs/probability-bounds-plan-2026-07.md + a model-assigned implementation
+prompt pack. No solves touching 2022/H1-2026. Commit and push on a feature branch.
+```
+
+### F-2 `[OPUS, FABLE if spare]` — Emissions mass-cap LP constraint plan
+
+```
+Read CLAUDE.md, src/market_sim/policy/constraints.py (get_active_policy_constraints
+returns [] — a stub), policy/carbon.py, docs/model-audit-prompt-pack-2026-06.md PP-2.1,
+and docs/fable-repo-audit-2026-07.md EM-6. Design cap-and-trade as an LP constraint:
+annual (or compliance-period) CO2 mass-cap rows over member fleets (RGGI states within
+NYISO/NEISO/PJM zone membership, CA cap-and-trade for CAISO) whose dual is the endogenous
+allowance price, replacing/augmenting the exogenous carbon_price_path where a real cap
+binds. Decide: interaction with the W0-P1 carbon-seam fix so backcast (measured price)
+and forecast (endogenous dual or projected price) use ONE structure; zone-to-state
+membership mapping; banking/borrowing simplification (LP-only — likely no banking,
+document it); cap-trajectory data intake (RGGI/CARB published schedules — forecast-
+reproducible per rule 13); leakage treatment (imports). Vectorized rows only (rule 2).
+Produce docs/handoffs/emissions-mass-cap-plan-2026-07.md + implementation prompt.
+Do not implement.
+```
+
+### F-3 `[FABLE]` — ERCOT multi-product AS co-optimization forward analogue plan
+
+```
+Read CLAUDE.md, docs/forecast-methodology-gaps-2026-06.md (G1/G3/G4),
+docs/forecast-methodology-gaps-prompts-2026-06.md (P1/P1b/P5a/P5c/P4),
+docs/ercot-multiproduct-as-coopt-2026-06.md, docs/ercot-as-forward-requirement-2026-06.md,
+src/market_sim/model/ancillary.py, the reserve rows in model/dispatch.py, and the
+2026-07-03 calibration-log entry on the REJECTED AS-aware P2 probe (ercot27: broad price
+elevation, no scarcity-month signal). Goal: the forward analogue for ERCOT's measured
+DAM-AS overlay — the flagship gap (audit §J-T6). Design:
+1. Multi-product AS co-optimization (RegUp/RegDown/RRS/ECRS/NonSpin) inside the P1 LP,
+   vectorized, no per-hour Python loops.
+2. Requirement-setting rules that regenerate for forecast years (G3): requirements as
+   citable functions of load/net-load/wind per ERCOT methodology documents.
+3. Load-resource RRS participation (G4) and the HSL completion remainder (P4).
+4. FIRST diagnose why ercot27 failed and design against that failure mode explicitly.
+5. Validation protocol: backcast 2023-2025 with co-opt REPLACING the measured overlay,
+   scored on the same benchmarks; keeper decision per rule 1 (structure stays even if the
+   fit dips — root-cause the dip, never revert the mechanism for the residual).
+Produce docs/handoffs/ercot-as-coopt-plan-2026-07.md + staged implementation prompts.
+Do not implement.
+```
+
+### F-4 `[FABLE]` — Fitted-scalar remediation + ablation/diagnostics program plan
+
+```
+Read CLAUDE.md rules 19-26, docs/model-legitimacy-audit-2026-07.md §3 (Class-C register
+C-1…C-18) and §7 (D-3, D-10…D-14), docs/legitimacy-scrub-prompts-2026-07.md S3, and
+docs/out-of-sample-results-2026-07.md §2B (D-8: coal sigmoid params pinned by single
+years; CAISO SP15 and PJM ComEd temp-limbs with sign-flipping rho out-of-training).
+Design the remediation program for the ~230 residual-identified scalars:
+1. A written decision rule, then triage every C-item into: re-derive from source data /
+   replace with a structural mechanism / neutralize / document-and-keep with a DOF-ledger
+   entry and open root-cause issue.
+2. Prioritize the D-8 red flags (sign-flip limbs, single-year-pinned sigmoids) and any
+   remaining cross-ISO band leakage (rule 25).
+3. Design the unbuilt diagnostics: D-3 zero-forcing ablation twin as a standard
+   calibration-report step for every keeper (rule 21), and D-10…D-14 per audit §7.
+4. Sequence so every re-derivation cites a source-data change (rule 23), never a residual.
+Produce docs/handoffs/scalar-remediation-plan-2026-07.md + a prompt pack batched by
+ISO/mechanism with model assignments. Do NOT retune or change any value in this session.
+```
+
+### F-5 `[OPUS]` — Sensitivity tornado + one-time MIP diagnostic benchmark
+
+```
+Read CLAUDE.md (rules 2/5/12 and the LP-only stack rule), docs/model-audit-prompt-pack-
+2026-06.md PP-3.1/PP-3.4, and docs/fable-repo-audit-2026-07.md DP-1. Two diagnostics —
+plan AND implement if runtime allows, else land the tornado and leave the MIP design:
+1. Sensitivity tornado (PP-3.1): scripts/run_sensitivity_tornado.py — one-at-a-time
+   +/- band runs of the top ~15 parameters (gas price, load growth, FOM thresholds, ORDC
+   params, sigmoid anchors, carbon path) on one small ISO-year; outputs a committed report
+   (annual CO2 / avg price / retirements sensitivity, ranked). Feeds the DOF ledger.
+   Respect rule 12 (sequential years; max ~2 concurrent solves).
+2. MIP cross-benchmark (PP-3.4): a ONE-TIME diagnostic script (production stays pure LP)
+   using highspy integrality on the existing constraint matrix for one month x one ISO
+   with unit commitment binaries on the committed tranches — quantify the LP-relaxation
+   commitment bias: min-load energy, start counts, CO2 delta vs the P1 LP. Clearly label
+   diagnostic-only; no production code path may import it.
+Deliver reports under docs/handoffs/, tests for the tornado runner. Commit and push.
+```
+
+### F-6 `[SONNET]` — multi-iso docs triage + MISO coverage question
+
+```
+Read CLAUDE.md rule 16, then docs/multi-iso/ (57 files). Tasks:
+1. Triage every file: living protocol/reference vs dated superseded status notes; output
+   a file-by-file table (keep-in-place / move-to-sessions-archive) that the docs-reorg
+   session (W3-P3 of docs/fable-prompt-pack-2026-07.md) can execute — do not move files.
+2. Answer why MISO is absent from rule 16's multi-year keeper list (CAISO/PJM/NEISO/NYISO
+   -> 2023-2025): check MISO bench coverage (data/raw, frontend/data/backcast/bench),
+   registered MISO runs/keepers (frontend/data/backcast/registry, keepers.json), and
+   whether 2023-2025 is currently solvable for MISO. Conclude: needs data intake, needs a
+   calibration push, or needs a rule-16 amendment — with evidence.
+3. List any multi-iso protocol steps the newer ISOs skipped.
+Deliver docs/handoffs/multi-iso-triage-2026-07.md. Read-only otherwise. Commit and push.
+```
+
+### F-7 `[SONNET]` — Holdout-quarantine policy reconciliation memo (owner decision)
+
+```
+Read CLAUDE.md rule 22, docs/out-of-sample-results-2026-07.md, and the 2026-07-03/04
+holdout-intake merges (PRs #1298/#1300/#1304 — inspect via git log and the PR diffs).
+Rule 22's text ("FULL quarantine: no solves, no scoring, and no data intake" for 2022 and
+H1-2026 until calibration-complete) now diverges from practice: 2022+2026 Waha rows,
+coal/CO2 overlays, ERCOT outage windows, and zonal gas data have been intaken. Write a
+one-page decision memo:
+(a) inventory exactly what holdout-year data now exists in-repo and what remains missing
+    per ISO for the one-shot validation;
+(b) contamination-risk assessment: grep/trace whether any calibration code path can read
+    those years outside explicit holdout scoring (loader year filters, bench builders);
+(c) two policy options for the owner: strict re-quarantine (holdout files behind an
+    explicit gate CI blocks) vs amended rule text (intake allowed; solves/scoring still
+    forbidden) — each with its CI-enforcement sketch;
+(d) recommend one, but end with the explicit owner decision required.
+Deliver docs/handoffs/holdout-policy-memo-2026-07.md. Do NOT solve or score anything with
+holdout years. Commit and push.
+```
+
+### PM-1 `[SONNET]` — Program coordinator (repeatable status session)
+
+```
+You are the program coordinator for the market-simulator improvement program. Read
+docs/fable-prompt-pack-2026-07.md end to end (waves, Wave 0-B, Appendix register), then
+determine live status: git log/branch list/open PRs for each workstream (Wave 0/0-B plan
+sessions -> docs/handoffs/*-plan-2026-07.md existence; Waves 1-3 items; the in-flight
+wiring-gaps waves and CAISO evening-merit thread). Update the Appendix register statuses
+in place (FLAG -> IN-FLIGHT -> ABSORBED/done) with evidence (commit/PR refs), flag any
+collisions (two branches touching the same files, duplicated fixes), and report: a short
+status table, blocked items with their blockers, and the recommended next 3-5 session
+launches in priority order. Commit the register update and push. Do not start any of the
+work yourself.
+```
+
 ## Appendix — Status of pre-existing plans: unfinished prompts still valid (flagged 2026-07-04)
 
 Registered against repo intent (LP-only hybrid, ±10% asset-level emissions; scope2 = hourly
