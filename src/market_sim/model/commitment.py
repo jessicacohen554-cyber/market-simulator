@@ -37,6 +37,7 @@ from market_sim.config.constants import (
     CT_COMMITMENT_PARAMS,
     CT_STARTUP_PARAMS,
     DA_COMMITMENT_HORIZON_HOURS,
+    RA_BRIDGE_ECON_MIN_DOWN_HOURS,
     ST_GAS_COMMITMENT_PARAMS,
     ST_GAS_STARTUP_PARAMS,
 )
@@ -641,11 +642,16 @@ def caiso_ra_mustoffer_min_gen(
     the unit's physical minimum-down time (``CC_COMMITMENT_PARAMS`` /
     ``CT_COMMITMENT_PARAMS`` via :func:`_commitment_params`), both
     forward-derivable and condition-responsive — no measured generation enters
-    (CLAUDE.md #1/#11). CTs (min-down 1 h) never bridge a multi-hour solar glut,
-    so in practice the floor lands on the combined-cycle fleet (``CC_REGULAR``) —
-    the class an energy-only LP over-cycles midday. Only merchant CC/CT classes
-    (``CC_REGULAR`` / ``CT_PEAKER``) are floored: cogens (``*_CHP``) carry their
-    own steam-host must-run, and coal/nuclear/non-thermal are never RA-bridged.
+    (CLAUDE.md #1/#11). Eligibility is gated on unit PHYSICS, never a class-name
+    tuple (audit rule 17): merchant gas CC/CT units (cogens carry their own
+    steam-host must-run; gas steamers' thermal inertia is modelled by their own
+    drag/startup mechanisms; coal/nuclear/non-thermal are never RA-bridged), and
+    the ECONOMIC startup bridge additionally requires ``min_down_hours ≥
+    RA_BRIDGE_ECON_MIN_DOWN_HOURS`` (4 h — the CC table's own floor). A
+    fast-start CT (min-down 1 h) restarts within the hour, so it is never held
+    across a gap longer than its min-down; in practice the floor lands on the
+    combined-cycle fleet (``CC_REGULAR``) — the class an energy-only LP
+    over-cycles midday.
 
     The floor replaces the removed measured-NG:NG ``inject_caiso_gas_commitment_
     floor`` slab: instead of pinning the fleet to 0.80 × its measured output, it
@@ -772,12 +778,30 @@ def caiso_ra_mustoffer_min_gen(
     # after the scan so the bridge_decommit surplus screen sees them all at once.
     economic_bridges: list[tuple[int, int, int, float, float, int, float]] = []
     for g, gen in enumerate(generators):
-        if gen.plant_group not in ("CC_REGULAR", "CT_PEAKER"):
+        # Merchant-gas scope by unit physics, not class names (audit rule 17):
+        # cogens (*_CHP) follow their steam host's own floor and are never
+        # RA-bridged; gas steamers' multi-day thermal inertia is carried by
+        # their own drag/startup mechanisms (one mechanism per phenomenon);
+        # coal/nuclear/non-thermal have no gas commitment params.
+        if gen.plant_group.endswith("_CHP") or gen.fuel_type not in (
+            "gas_cc",
+            "gas_ct",
+        ):
             continue
         resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
         if resolved is None:
             continue
         min_down, startup_per_mw = resolved
+        # ECONOMIC bridging (holding across a gap ≥ min-down on restart
+        # economics) requires slow-restart physics: min-down at/above the CC
+        # table floor. A fast-start CT (min-down 1 h, cheap start) is never
+        # economically bridged — the real market cycles it off overnight
+        # (RA_BRIDGE_ECON_MIN_DOWN_HOURS; audit §1.2c, rule 17).
+        econ_eligible = (
+            startup_bridge
+            and startup_per_mw > 0.0
+            and min_down >= RA_BRIDGE_ECON_MIN_DOWN_HOURS
+        )
         threshold = pmax[g] * run_threshold_frac
         runs = find_runs(p1_dispatch[g, :] > threshold)
         if len(runs) < 2:
@@ -810,7 +834,7 @@ def caiso_ra_mustoffer_min_gen(
                     target_mw * avail[g, end_prev:start_next]
                 )
                 continue
-            if not (startup_bridge and startup_per_mw > 0.0):
+            if not econ_eligible:
                 continue
             # Day-ahead horizon (bridge_decommit): a DAM commits one 24-hour
             # operating day, so a gap longer than one DA cycle is a next-day
