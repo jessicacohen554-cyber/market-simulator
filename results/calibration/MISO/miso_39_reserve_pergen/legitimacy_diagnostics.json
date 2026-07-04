@@ -1,0 +1,814 @@
+{
+ "schema": "legitimacy-diagnostics/v1",
+ "bundle": "/home/user/market-simulator/results/calibration/MISO/miso_39_reserve_pergen",
+ "iso": "MISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "diagnostics": {
+  "D1": {
+   "name": "D-1 diurnal shape",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2023,
+     "class": "CC_CHP",
+     "profile_r": 0.991,
+     "model_offpeak_cv": 0.013,
+     "actual_offpeak_cv": 0.065,
+     "cv_ratio": 0.2,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "profile_r": 0.99,
+     "model_offpeak_cv": 0.065,
+     "actual_offpeak_cv": 0.077,
+     "cv_ratio": 0.844,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL_BIT",
+     "profile_r": 0.937,
+     "model_offpeak_cv": 0.109,
+     "actual_offpeak_cv": 0.041,
+     "cv_ratio": 2.632,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL_LIGNITE",
+     "profile_r": 0.935,
+     "model_offpeak_cv": 0.18,
+     "actual_offpeak_cv": 0.034,
+     "cv_ratio": 5.296,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL_PRB",
+     "profile_r": 0.994,
+     "model_offpeak_cv": 0.105,
+     "actual_offpeak_cv": 0.157,
+     "cv_ratio": 0.668,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_CHP",
+     "profile_r": 0.955,
+     "model_offpeak_cv": 0.025,
+     "actual_offpeak_cv": 0.041,
+     "cv_ratio": 0.618,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "profile_r": 0.988,
+     "model_offpeak_cv": 0.881,
+     "actual_offpeak_cv": 0.227,
+     "cv_ratio": 3.88,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.99,
+     "model_offpeak_cv": 0.835,
+     "actual_offpeak_cv": 0.192,
+     "cv_ratio": 4.351,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "ST_CHP",
+     "profile_r": 0.488,
+     "model_offpeak_cv": 0.0,
+     "actual_offpeak_cv": 0.042,
+     "cv_ratio": 0.004,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "profile_r": 0.934,
+     "model_offpeak_cv": 1.004,
+     "actual_offpeak_cv": 0.239,
+     "cv_ratio": 4.207,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CC_CHP",
+     "profile_r": 0.977,
+     "model_offpeak_cv": 0.011,
+     "actual_offpeak_cv": 0.034,
+     "cv_ratio": 0.337,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CC_REGULAR",
+     "profile_r": 0.992,
+     "model_offpeak_cv": 0.038,
+     "actual_offpeak_cv": 0.06,
+     "cv_ratio": 0.642,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "COAL_BIT",
+     "profile_r": 0.917,
+     "model_offpeak_cv": 0.096,
+     "actual_offpeak_cv": 0.039,
+     "cv_ratio": 2.437,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "COAL_LIGNITE",
+     "profile_r": 0.927,
+     "model_offpeak_cv": 0.106,
+     "actual_offpeak_cv": 0.043,
+     "cv_ratio": 2.437,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "COAL_PRB",
+     "profile_r": 0.98,
+     "model_offpeak_cv": 0.098,
+     "actual_offpeak_cv": 0.122,
+     "cv_ratio": 0.797,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CT_CHP",
+     "profile_r": 0.608,
+     "model_offpeak_cv": 0.018,
+     "actual_offpeak_cv": 0.013,
+     "cv_ratio": 1.457,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CT_PEAKER",
+     "profile_r": 0.996,
+     "model_offpeak_cv": 0.613,
+     "actual_offpeak_cv": 0.196,
+     "cv_ratio": 3.129,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.985,
+     "model_offpeak_cv": 0.709,
+     "actual_offpeak_cv": 0.167,
+     "cv_ratio": 4.252,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "ST_CHP",
+     "profile_r": 0.643,
+     "model_offpeak_cv": 0.0,
+     "actual_offpeak_cv": 0.026,
+     "cv_ratio": 0.004,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "ST_GAS",
+     "profile_r": 0.962,
+     "model_offpeak_cv": 0.854,
+     "actual_offpeak_cv": 0.225,
+     "cv_ratio": 3.799,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CC_CHP",
+     "profile_r": 0.893,
+     "model_offpeak_cv": 0.012,
+     "actual_offpeak_cv": 0.027,
+     "cv_ratio": 0.456,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CC_REGULAR",
+     "profile_r": 0.903,
+     "model_offpeak_cv": 0.031,
+     "actual_offpeak_cv": 0.033,
+     "cv_ratio": 0.928,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "COAL_BIT",
+     "profile_r": 0.983,
+     "model_offpeak_cv": 0.058,
+     "actual_offpeak_cv": 0.027,
+     "cv_ratio": 2.182,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "COAL_LIGNITE",
+     "profile_r": 0.854,
+     "model_offpeak_cv": 0.076,
+     "actual_offpeak_cv": 0.03,
+     "cv_ratio": 2.523,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "COAL_PRB",
+     "profile_r": 0.961,
+     "model_offpeak_cv": 0.044,
+     "actual_offpeak_cv": 0.075,
+     "cv_ratio": 0.583,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CT_CHP",
+     "profile_r": 0.812,
+     "model_offpeak_cv": 0.018,
+     "actual_offpeak_cv": 0.011,
+     "cv_ratio": 1.615,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CT_PEAKER",
+     "profile_r": 0.964,
+     "model_offpeak_cv": 0.589,
+     "actual_offpeak_cv": 0.19,
+     "cv_ratio": 3.1,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.94,
+     "model_offpeak_cv": 0.856,
+     "actual_offpeak_cv": 0.133,
+     "cv_ratio": 6.415,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "ST_CHP",
+     "profile_r": 0.642,
+     "model_offpeak_cv": 0.0,
+     "actual_offpeak_cv": 0.015,
+     "cv_ratio": 0.027,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "ST_GAS",
+     "profile_r": 0.984,
+     "model_offpeak_cv": 0.835,
+     "actual_offpeak_cv": 0.185,
+     "cv_ratio": 4.51,
+     "gated": true,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D2": {
+   "name": "D-2 forced-energy attribution",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2023,
+     "class": "",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.144,
+     "class_total_twh": 15.6286,
+     "share_of_class": 0.0092
+    },
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0772,
+     "class_total_twh": 161.6017,
+     "share_of_class": 0.0005
+    },
+    {
+     "year": 2023,
+     "class": "COAL",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.4226,
+     "class_total_twh": 142.3287,
+     "share_of_class": 0.003
+    },
+    {
+     "year": 2023,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0138,
+     "class_total_twh": 12.8785,
+     "share_of_class": 0.0011
+    },
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.012,
+     "class_total_twh": 4.713,
+     "share_of_class": 0.0025
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0064,
+     "class_total_twh": 6.3039,
+     "share_of_class": 0.001
+    },
+    {
+     "year": 2024,
+     "class": "",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0368,
+     "class_total_twh": 18.5163,
+     "share_of_class": 0.002
+    },
+    {
+     "year": 2024,
+     "class": "CC_REGULAR",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.1738,
+     "class_total_twh": 168.4231,
+     "share_of_class": 0.001
+    },
+    {
+     "year": 2024,
+     "class": "COAL",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.2068,
+     "class_total_twh": 131.1573,
+     "share_of_class": 0.0016
+    },
+    {
+     "year": 2024,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0119,
+     "class_total_twh": 12.4743,
+     "share_of_class": 0.001
+    },
+    {
+     "year": 2024,
+     "class": "CT_PEAKER",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0305,
+     "class_total_twh": 8.0641,
+     "share_of_class": 0.0038
+    },
+    {
+     "year": 2024,
+     "class": "ST_GAS",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0078,
+     "class_total_twh": 6.5063,
+     "share_of_class": 0.0012
+    },
+    {
+     "year": 2025,
+     "class": "",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0447,
+     "class_total_twh": 29.339,
+     "share_of_class": 0.0015
+    },
+    {
+     "year": 2025,
+     "class": "",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0507,
+     "class_total_twh": 29.339,
+     "share_of_class": 0.0017
+    },
+    {
+     "year": 2025,
+     "class": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0047,
+     "class_total_twh": 45.9411,
+     "share_of_class": 0.0001
+    },
+    {
+     "year": 2025,
+     "class": "CC_REGULAR",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.2694,
+     "class_total_twh": 151.2864,
+     "share_of_class": 0.0018
+    },
+    {
+     "year": 2025,
+     "class": "COAL",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.1616,
+     "class_total_twh": 166.246,
+     "share_of_class": 0.001
+    },
+    {
+     "year": 2025,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.6318,
+     "class_total_twh": 9.3673,
+     "share_of_class": 0.0674
+    },
+    {
+     "year": 2025,
+     "class": "CT_PEAKER",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0408,
+     "class_total_twh": 8.2445,
+     "share_of_class": 0.0049
+    },
+    {
+     "year": 2025,
+     "class": "ST_GAS",
+     "mechanism": "reliability_floor",
+     "forced_twh": 0.0037,
+     "class_total_twh": 6.2019,
+     "share_of_class": 0.0006
+    }
+   ],
+   "summary": [
+    {
+     "year": 2023,
+     "class": "",
+     "forced_twh": 0.144,
+     "class_total_twh": 15.6286,
+     "forced_share": 0.0092,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "forced_twh": 0.0772,
+     "class_total_twh": 161.6017,
+     "forced_share": 0.0005,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL",
+     "forced_twh": 0.4226,
+     "class_total_twh": 142.3287,
+     "forced_share": 0.003,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.012,
+     "class_total_twh": 4.713,
+     "forced_share": 0.0025,
+     "limit": 0.1,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "forced_twh": 0.0064,
+     "class_total_twh": 6.3039,
+     "forced_share": 0.001,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "",
+     "forced_twh": 0.0368,
+     "class_total_twh": 18.5163,
+     "forced_share": 0.002,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CC_REGULAR",
+     "forced_twh": 0.1738,
+     "class_total_twh": 168.4231,
+     "forced_share": 0.001,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "COAL",
+     "forced_twh": 0.2068,
+     "class_total_twh": 131.1573,
+     "forced_share": 0.0016,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0305,
+     "class_total_twh": 8.0641,
+     "forced_share": 0.0038,
+     "limit": 0.1,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "ST_GAS",
+     "forced_twh": 0.0078,
+     "class_total_twh": 6.5063,
+     "forced_share": 0.0012,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "",
+     "forced_twh": 0.0507,
+     "class_total_twh": 29.339,
+     "forced_share": 0.0017,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CC_REGULAR",
+     "forced_twh": 0.2694,
+     "class_total_twh": 151.2864,
+     "forced_share": 0.0018,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "COAL",
+     "forced_twh": 0.1616,
+     "class_total_twh": 166.246,
+     "forced_share": 0.001,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0408,
+     "class_total_twh": 8.2445,
+     "forced_share": 0.0049,
+     "limit": 0.1,
+     "lower_bound": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "ST_GAS",
+     "forced_twh": 0.0037,
+     "class_total_twh": 6.2019,
+     "forced_share": 0.0006,
+     "limit": 0.3,
+     "lower_bound": true,
+     "verdict": "pass"
+    }
+   ],
+   "failures": [],
+   "notes": [
+    "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+   ]
+  },
+  "D4": {
+   "name": "D-4 off-window binding",
+   "passed": false,
+   "rows": [
+    {
+     "year": 2023,
+     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "window": "h15-21",
+     "floored_twh": 0.012,
+     "offwindow_twh": 0.0083,
+     "offwindow_share": 0.6949,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2024,
+     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "window": "h15-21",
+     "floored_twh": 0.0305,
+     "offwindow_twh": 0.0209,
+     "offwindow_share": 0.6844,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2025,
+     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "window": "h15-21",
+     "floored_twh": 0.0408,
+     "offwindow_twh": 0.0284,
+     "offwindow_share": 0.6965,
+     "verdict": "FAIL"
+    }
+   ],
+   "summary": [],
+   "failures": [
+    "2023 reliability_floor \u00d7 CT_PEAKER: 69.5% of floored MWh outside its justified window h15-21 (> 5%)",
+    "2024 reliability_floor \u00d7 CT_PEAKER: 68.4% of floored MWh outside its justified window h15-21 (> 5%)",
+    "2025 reliability_floor \u00d7 CT_PEAKER: 69.6% of floored MWh outside its justified window h15-21 (> 5%)"
+   ],
+   "notes": []
+  },
+  "D5": {
+   "name": "D-5 forecast/backcast parity",
+   "passed": true,
+   "rows": [
+    {
+     "mechanism": "historic_outage_overlay",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "CAMPD outage windows (physical availability events)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "eia860_vintage_snapshot",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "historical fleet vintage pin (runner.py:239 mode gate)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "retired_within_window_fleet",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "within-window plant exits injected into the base fleet",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "planned_additions_pipeline",
+     "difference": "forecast-only",
+     "declared_overlay": true,
+     "note": "EIA-860 construction-committed pipeline \u2014 the declared forecast complement of the backcast fleet boundary",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "renewable_cf_measured",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "delivered EIA-930/HSL renewable CF upper bound (leakage L1)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "nuclear_flat_mustrun",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "measured monthly nuclear CF + flat must-run floor (L3)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "ordc_floor_active_mask",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "ERCOT scarcity-floor measured active-hours mask",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "coal_plant_monthly_pricing",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "F923 per-plant delivered coal cost",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "reliability_floor",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration",
+     "verdict": "declared"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D9": {
+   "name": "D-9 overlay quarantine",
+   "passed": true,
+   "rows": [
+    {
+     "bundle": "miso_39_reserve_pergen",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "miso_39_reserve_pergen",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "miso_39_reserve_pergen",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "miso_39_reserve_pergen",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "miso_39_reserve_pergen",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  }
+ },
+ "gates": {
+  "d1_min_profile_r": 0.8,
+  "d1_min_cv_ratio": 0.5,
+  "d1_offpeak_last_hour": 14,
+  "d1_gated_classes": [
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "d2_peaker_max_share": 0.1,
+  "d2_merchant_max_share": 0.3,
+  "d2_exempt_classes": [
+   "CC_CHP",
+   "CT_CHP",
+   "ST_CHP",
+   "nuclear"
+  ],
+  "d4_max_offwindow_share": 0.05
+ }
+}

@@ -32,6 +32,12 @@ directory plus the committed dashboard payloads:
   ``getattr`` heat-rate-multiplier literals) — neutral/per-ISO bands only.
   ``--keepers`` sweeps every keeper bundle registered in
   ``frontend/data/backcast/keepers.json`` (the CI quarantine mode).
+* **D-6 holdout quarantine (CI, in ``--keepers`` mode)** — assert NO
+  registered bundle (keeper or probe) declares a solve year outside the
+  2023-2025 calibration window unless its ISO carries a calibration-complete
+  marker in ``frontend/data/backcast/calibration-complete.json`` (which
+  authorizes the one-shot frozen-config holdout score of 2022 / H1-2026 —
+  CLAUDE.md rule 22, amended 2026-07-04).
 
 Model dispatch source: ``<bundle>/dispatch/<year>_P2.parquet`` (falling back
 to ``_P1``) when present; otherwise the committed dashboard run payload
@@ -174,6 +180,15 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
     "CT_CHP",
 )
 
+# D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04): the in-sample
+# calibration window. Any registered bundle carrying a solve year OUTSIDE this
+# window is a holdout breach unless its ISO has a calibration-complete marker
+# in frontend/data/backcast/calibration-complete.json (which authorizes the
+# one-shot frozen-config holdout score). Extend only when a new year is
+# formally promoted from holdout to in-sample with a new designated holdout.
+D6_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
+D6_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
+
 
 # ---------------------------------------------------------------------------
 # Result containers
@@ -182,12 +197,19 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
 
 @dataclass
 class GateResult:
-    """One diagnostic's verdict: rows for the report plus failure strings."""
+    """One diagnostic's verdict: rows for the report plus failure strings.
+
+    ``summary`` carries per-(year, class) aggregate rows where the detail
+    ``rows`` are finer-grained (D-2's rows are class × mechanism; its summary
+    is the per-class total forced share the rule-19 gate and the rubric's C8
+    criterion consume).
+    """
 
     name: str
     rows: list[dict] = field(default_factory=list)
     failures: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    summary: list[dict] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
@@ -345,6 +367,18 @@ def run_d2(
             D2_PEAKER_MAX_SHARE
             if str(k) in D2_PEAKER_CLASSES
             else D2_MERCHANT_MAX_SHARE
+        )
+        res.summary.append(
+            {
+                "year": year,
+                "class": str(k),
+                "forced_twh": round(forced_gated[k] / 1e6, 4),
+                "class_total_twh": round(total_by_class[k] / 1e6, 4),
+                "forced_share": round(share, 4),
+                "limit": limit,
+                "lower_bound": bool(ra_floor_missing),
+                "verdict": "FAIL" if share > limit else "pass",
+            }
         )
         if share > limit:
             res.failures.append(
@@ -753,6 +787,59 @@ def run_d9_keepers(repo_root: Path) -> GateResult:
     return res
 
 
+def load_calibration_complete(repo_root: Path) -> dict[str, dict]:
+    """Return the per-ISO calibration-complete marker map (may be empty)."""
+    path = repo_root / D6_MARKER_FILE
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text()).get("complete", {})
+
+
+def run_d6_quarantine(repo_root: Path) -> GateResult:
+    """D-6 holdout quarantine across EVERY registered bundle (CI mode).
+
+    CLAUDE.md rule 22 (audit D-6, amended 2026-07-04): 2022 and H1-2026 are
+    fully quarantined — no solves, no scoring, no data intake — until an ISO's
+    calibration-complete marker exists in ``calibration-complete.json``. Any
+    registry sidecar declaring a solve year outside ``D6_CALIBRATION_YEARS``
+    for an unmarked ISO FAILs. Sweeps all registered runs (keepers AND
+    probes): a quarantine breach is a breach wherever it is registered.
+    """
+    res = GateResult("D-6 holdout quarantine (all registered bundles)")
+    complete = load_calibration_complete(repo_root)
+    reg_dir = repo_root / "frontend/data/backcast/registry"
+    for path in sorted(reg_dir.glob("*.json")):
+        side = json.loads(path.read_text())
+        iso = side.get("iso", "?")
+        years = [int(y) for y in side.get("years", [])]
+        breach = sorted(set(years) - D6_CALIBRATION_YEARS)
+        if not breach:
+            continue
+        marked = iso in complete
+        res.rows.append(
+            {
+                "run": path.stem,
+                "iso": iso,
+                "holdout_years": breach,
+                "calibration_complete": marked,
+                "verdict": "authorized one-shot" if marked else "FAIL",
+            }
+        )
+        if not marked:
+            res.failures.append(
+                f"{path.stem}: solve year(s) {breach} outside the calibration "
+                f"window {sorted(D6_CALIBRATION_YEARS)} with no {iso} "
+                f"calibration-complete marker in {D6_MARKER_FILE} — holdout "
+                "quarantine breach (CLAUDE.md rule 22)"
+            )
+    if not res.rows:
+        res.notes.append(
+            "no registered bundle carries a year outside "
+            f"{sorted(D6_CALIBRATION_YEARS)} — quarantine intact."
+        )
+    return res
+
+
 # ---------------------------------------------------------------------------
 # Bundle / bench / payload data access
 # ---------------------------------------------------------------------------
@@ -969,6 +1056,62 @@ def _md_table(rows: list[dict]) -> str:
     return "\n".join(out) + "\n"
 
 
+# Short ids for the machine artifact / rubric wiring: GateResult.name prefix
+# -> key. The rubric's C7 reads D1; C8 reads D2's per-class summary.
+_JSON_KEYS = {
+    "D-1": "D1",
+    "D-2": "D2",
+    "D-4": "D4",
+    "D-5": "D5",
+    "D-9": "D9",
+    "D-6": "D6",
+}
+
+
+def build_json_report(
+    results: list[GateResult], bundle: str, iso: str, years: list[int]
+) -> dict:
+    """Assemble the machine-readable diagnostics artifact for a bundle.
+
+    This is the committed contract the calibration rubric's C7 (diurnal
+    shape, D-1) and C8 (forced-energy share, D-2) criteria score from:
+    ``scripts/calibration_verdict.py`` reads ``<bundle>/
+    legitimacy_diagnostics.json`` — it never recomputes the diagnostics, so
+    the S1 suite stays the single implementation. Gate thresholds are
+    embedded so the verdict re-states, never re-types, them.
+    """
+    diagnostics = {}
+    for res in results:
+        key = next(
+            (v for k, v in _JSON_KEYS.items() if res.name.startswith(k)), res.name
+        )
+        diagnostics[key] = {
+            "name": res.name,
+            "passed": res.passed,
+            "rows": res.rows,
+            "summary": res.summary,
+            "failures": res.failures,
+            "notes": res.notes,
+        }
+    return {
+        "schema": "legitimacy-diagnostics/v1",
+        "bundle": bundle,
+        "iso": iso,
+        "years": [int(y) for y in years],
+        "diagnostics": diagnostics,
+        "gates": {
+            "d1_min_profile_r": D1_MIN_PROFILE_R,
+            "d1_min_cv_ratio": D1_MIN_CV_RATIO,
+            "d1_offpeak_last_hour": D1_OFFPEAK_LAST_HOUR,
+            "d1_gated_classes": list(D1_GATED_CLASSES),
+            "d2_peaker_max_share": D2_PEAKER_MAX_SHARE,
+            "d2_merchant_max_share": D2_MERCHANT_MAX_SHARE,
+            "d2_exempt_classes": list(D2_EXEMPT_CLASSES),
+            "d4_max_offwindow_share": D4_MAX_OFFWINDOW_SHARE,
+        },
+    }
+
+
 def render_report(
     results: list[GateResult], bundle: str, iso: str, years: list[int]
 ) -> str:
@@ -994,6 +1137,10 @@ def render_report(
         if res.notes:
             lines.extend(f"_{n}_" for n in res.notes)
             lines.append("")
+        if res.summary:
+            lines.append("**Per-class gate summary:**")
+            lines.append("")
+            lines.append(_md_table(res.summary))
         lines.append(_md_table(res.rows))
     return "\n".join(lines)
 
@@ -1123,6 +1270,7 @@ def diagnose_bundle(
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)
                 d2.notes.extend(sub_res.notes)
+                d2.summary.extend(sub_res.summary)
             if "D4" in only:
                 sub_res = run_d4(disp, floors, mechs, klass, year=year, npl=npl)
                 d4.rows.extend(sub_res.rows)
@@ -1167,12 +1315,19 @@ def main(argv: list[str] | None = None) -> int:
         help="run the D-9 quarantine across every keeper bundle (CI mode)",
     )
     parser.add_argument("--report", type=Path, help="write a markdown report")
+    parser.add_argument(
+        "--json-out",
+        type=Path,
+        help="write the machine-readable diagnostics artifact (the committed "
+        "rubric contract for C7/C8 is <bundle>/legitimacy_diagnostics.json)",
+    )
     args = parser.parse_args(argv)
 
     results: list[GateResult] = []
     bundle_label, iso, years = "-", args.iso or "-", args.years or []
     if args.keepers:
         results.append(run_d9_keepers(REPO_ROOT))
+        results.append(run_d6_quarantine(REPO_ROOT))
         bundle_label = "all keepers"
     if args.bundle:
         if not args.iso:
@@ -1201,6 +1356,13 @@ def main(argv: list[str] | None = None) -> int:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(report)
         logger.info("report written to %s", args.report)
+    if args.json_out:
+        args.json_out.parent.mkdir(parents=True, exist_ok=True)
+        args.json_out.write_text(
+            json.dumps(build_json_report(results, bundle_label, iso, years), indent=1)
+            + "\n"
+        )
+        logger.info("machine artifact written to %s", args.json_out)
     return 0 if all(r.passed for r in results) else 1
 
 
