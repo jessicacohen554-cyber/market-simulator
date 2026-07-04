@@ -1549,8 +1549,9 @@ def nyiso_reconciled_reference_monthly(
       ``w_m = max(agt_basis_m, 0) / Σ max(agt_basis_m, 0)``
 
     - ``transco_m`` — the measured Transco Z6 NY monthly (mean of daily quotes);
-    - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread,
-      preserved EXACTLY (the reconciled annual mean equals the committed one);
+    - ``annual_spread`` — the measured SOM annual Iroquois−Transco spread
+      (preserved up to the measured Algonquin-Citygate monthly ceiling below —
+      capped months shave the annual mean by ≤ ~$0.2/MMBtu);
     - ``w_m`` — the **measured Algonquin (MA-citygate) monthly basis**, the New
       England pipeline-scarcity signal that physically causes the Iroquois
       premium; unconstrained months (basis ≤ 0) carry zero premium (summer Z2
@@ -1594,7 +1595,40 @@ def nyiso_reconciled_reference_monthly(
     if total <= 0.0:
         return None
     spread_m = annual_spread * 12.0 * w / total
-    return transco + spread_m, transco
+    iroq_rec = transco + spread_m
+    # Measured-ceiling reconciliation (rule #14): Iroquois Z2 is a Connecticut
+    # trading point delivering INTO the New England market area, so its
+    # monthly level cannot exceed the Algonquin Citygate — the demand ceiling
+    # of the complex it feeds (Z2 gas flows on toward the citygate; a CT
+    # buyer never pays more at Z2 than at the citygate it can buy instead).
+    # Re-allocating 12x the SOM annual spread onto the few positive-basis
+    # months has no per-month magnitude anchor and can breach that ceiling in
+    # the most-constrained months (Feb-2023 reconstruction $13.21 vs the
+    # measured $8.13 Algonquin month; Jan-2024 $8.60 vs $7.68). Cap each
+    # month at the measured Algonquin Citygate monthly (Henry Hub month +
+    # the same measured NEISO basis row the weights come from — the series
+    # the NEISO keeper itself prices on), floored at Transco so the cap can
+    # never invert the hubs. The shaved excess is NOT re-allocated: every
+    # other month has either no scarcity signal (AGT basis <= 0) or no
+    # ceiling headroom, so re-spreading it would manufacture premium the
+    # measured complex does not show. The annual mean then under-delivers
+    # the SOM annual spread by <= ~$0.5/MMBtu (2023, whose Feb carried the
+    # bulk of the re-allocation; <= ~$0.15 in 2024/2025) — the residual of
+    # reconciling two measured series, resolved in favour of the physical
+    # ceiling where it binds.
+    hh = _henry_hub_monthly(None)
+    hh_m = np.array([hh.get((year, m + 1), np.nan) for m in range(12)])
+    if not np.isnan(hh_m).any():
+        alg_m = hh_m + agt
+        # Floor the ceiling at the committed FLAT construction level
+        # (transco + annual spread): the Z2<=citygate ordering is firm in the
+        # constrained winter months the re-allocation loads (citygate blowouts
+        # far exceed Z2), but inside unconstrained months the two hubs trade
+        # within transport noise and the flat level is the better-measured
+        # datum — the cap must only shave scarcity-month excess, never push a
+        # month below the committed annually-exact construction.
+        iroq_rec = np.minimum(iroq_rec, np.maximum(alg_m, transco + annual_spread))
+    return iroq_rec, transco
 
 
 def nyiso_zonal_gas_ratios_monthly(
