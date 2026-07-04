@@ -117,15 +117,18 @@ through June 30.
 **Follow-ups (needed before a 2022 / H1-2026 solve is *scorable*, not part of
 this intake):**
 
-- **F1 — `ercot_zonal_gas_hub.csv` 2022/2026 rows.** The ercot32 keeper
-  enables `ercot_zonal_gas_basis`; the loader falls back to the
-  scalar-anchored mean-zero behaviour for uncovered years. The 2023–2025 rows
-  were hand-derived from EIA-923 Schedule-5 quantity-weighted plant receipts
-  (North/South/South_Central) and NGI/EIA Waha annual averages
-  (West/Panhandle) — reproducing them for 2022 needs the F923 Sch5 workbook
-  (published, `www.eia.gov` reachable) and a Waha annual source; 2026 needs
-  months not yet published. Not mechanically derivable from the API alone, so
-  deferred rather than approximated.
+- **F1 — `ercot_zonal_gas_hub.csv` 2022/2026 rows: MOSTLY DONE 2026-07-04.**
+  `scripts/derive_ercot_zonal_gas_hub.py` reproduces the committed Sch5
+  methodology (validated on 2023: identical plant coverage — North 5
+  plants/61M MMBtu, South_Central 12/175M, South 3/9M — basis within ±$0.03,
+  workbook-revision noise) and landed the 2022 rows (F923 2022 Final
+  Revision) plus PARTIAL 2026 rows (F923 M04 early release, Jan–Apr
+  receipts, flagged winter-weighted). **Remaining: West/Panhandle (Waha)** —
+  the Waha annual average has no reproducible in-repo/API source; when a
+  sourced number is available run
+  `derive_ercot_zonal_gas_hub.py --year 2022 --waha-annual-avg <usd>
+  --waha-source "<citation>"` (absent zones degrade to a 0 spread in
+  `apply_ercot_zonal_gas_basis` meanwhile).
 - **F2 — PJM native DataMiner `gen_by_fuel` 2026.** `PJM_2022…2025_gen_by_fuel.csv`
   exist; 2026 needs a registered DataMiner subscription key (none in repo).
   Affects only the clean `generation/PJM` datatype (`is_renewable` flag); the
