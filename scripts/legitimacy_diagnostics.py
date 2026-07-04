@@ -1098,6 +1098,7 @@ def build_json_report(
         "bundle": bundle,
         "iso": iso,
         "years": [int(y) for y in years],
+        "diagnostics": diagnostics,
         "gates": {
             "d1_min_profile_r": D1_MIN_PROFILE_R,
             "d1_min_cv_ratio": D1_MIN_CV_RATIO,
