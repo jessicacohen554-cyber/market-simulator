@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-04-nyiso-43-ceiling-oilbasis",
+  "label": "nyiso 43 ceiling oilbasis",
+  "date": "2026-07-04",
+  "shorthand": "nyiso-43-ceiling-oilbasis",
+  "definition": "Calibration run from bundle nyiso43_ceiling_oilbasis.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-04-nyiso-43-ceiling-oilbasis.js",
+  "bundle": "results/calibration/nyiso43_ceiling_oilbasis"
+}
