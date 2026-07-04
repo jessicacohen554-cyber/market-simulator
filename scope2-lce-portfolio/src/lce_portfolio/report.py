@@ -489,6 +489,7 @@ def _frontier_title(row: dict) -> str:
         f"premium: ${row['premium_per_mwh']:.2f}/MWh\n"
         f"premium/yr: {_fmt_money(row['premium_per_year'])}\n"
         f"over BAU: {row['pct_over_bau'] * 100:.2f}%\n"
+        f"divert-and-backfill: {_fmt_num(row.get('divert_backfill_mwh', 0.0))} MWh\n"
         f"shadow price: " + (f"{shadow:.4f}" if shadow is not None else "n/a")
     )
 
@@ -581,6 +582,7 @@ def _frontier_table_view(rows: list[dict]) -> str:
         f"<td>{r['premium_per_mwh']:.2f}</td>"
         f"<td>{_fmt_money(r['premium_per_year'])}</td>"
         f"<td>{r['pct_over_bau'] * 100:.2f}%</td>"
+        f"<td>{_fmt_num(r.get('divert_backfill_mwh', 0.0))}</td>"
         f"<td>{_esc(r['status'])}</td></tr>"
         for r in rows
     )
@@ -588,7 +590,7 @@ def _frontier_table_view(rows: list[dict]) -> str:
         '<details><summary>Table view</summary><div class="table-wrap">'
         "<table><thead><tr>"
         "<th>ISO</th><th>setpoint</th><th>matching</th><th>premium $/MWh</th>"
-        "<th>premium $/yr</th><th>over BAU</th><th>status</th>"
+        "<th>premium $/yr</th><th>over BAU</th><th>divert MWh</th><th>status</th>"
         f"</tr></thead><tbody>{body}</tbody></table></div></details>"
     )
 
