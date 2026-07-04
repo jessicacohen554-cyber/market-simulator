@@ -190,6 +190,28 @@ class TestBinsToFleet(unittest.TestCase):
         self.assertAlmostEqual(econ.heat_rate, 6.4, places=6)
         self.assertAlmostEqual(peak.heat_rate, 10.2, places=6)
 
+    def test_co2_rate_uses_physical_hr_not_tranche_pricing_hr(self):
+        # R2/EM-4: emission_rate_co2 must be booked at the plant's physical heat
+        # rate (hr_weighted), NOT the bid-tranche heat rate — so the offer-curve
+        # pricing multipliers (a peak HR of 10.2 vs a physical 6.6) never inflate
+        # CO2. Every tranche of the plant shares one physical CO2 rate.
+        b = _synthetic_bin(hr_weighted=6.6, hr_mc=7.5, hr_econ=6.4, hr_peak=10.2)
+        fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
+        plant = [g for g in fleet if g.plant_code == 1]
+        self.assertGreater(len(plant), 1)
+        physical = get_emission_rate("gas_cc", 6.6)
+        for g in plant:
+            self.assertAlmostEqual(g.emission_rate_co2, physical, places=9)
+        # The peak tranche prices at the inflated HR but does NOT emit at it.
+        peak = next(g for g in plant if g.unit_id.endswith("_peak"))
+        self.assertAlmostEqual(peak.heat_rate, 10.2, places=6)
+        self.assertLess(peak.emission_rate_co2, get_emission_rate("gas_cc", 10.2))
+        # No generator's CO2 rate embeds a >1.0 pricing multiplier over physical.
+        for g in fleet:
+            self.assertLessEqual(
+                g.emission_rate_co2, get_emission_rate(g.fuel_type, 6.6) + 1e-9
+            )
+
     def test_tranche_hr_defaults_to_plant_hr_when_mult_blank(self):
         # When a CSV HR_Mult_<tranche> column is blank (a zero-capacity
         # tranche), the per-plant HR loader applies the group-default
@@ -225,12 +247,28 @@ class TestBinsToFleet(unittest.TestCase):
             self.assertEqual(g.fuel_type, "gas_st")
         self.assertIn("gas_st", FUEL_TYPE_MAP)
 
-    def test_emission_rate_derived_from_heat_rate(self):
+    def test_emission_rate_uses_physical_hr_uniform_across_tranches(self):
+        # R2/EM-4: CO2 is booked at the plant's PHYSICAL heat rate, not the
+        # bid-tranche heat rate, so every tranche of one plant/group shares a
+        # single physical CO2 rate — even where the peak tranche's pricing HR is
+        # inflated. (Before R2 each tranche emitted at its own bid HR.)
+        by_plant: dict[tuple, list] = {}
         for g in self.fleet:
-            self.assertAlmostEqual(
-                g.emission_rate_co2,
-                get_emission_rate(g.fuel_type, g.heat_rate),
-                places=6,
+            by_plant.setdefault((g.plant_code, g.plant_group, g.fuel_type), []).append(
+                g
+            )
+        for (plant_code, _group, fuel), gens in by_plant.items():
+            if plant_code <= 0:
+                continue  # multi-plant / legacy aggregate bins
+            rates = {round(g.emission_rate_co2, 9) for g in gens}
+            self.assertEqual(
+                len(rates), 1, f"plant {plant_code} has non-uniform CO2 rates {rates}"
+            )
+            # And the shared rate never exceeds the CO2 implied by the plant's
+            # highest bid-tranche HR (it is derived from the lower physical HR).
+            max_hr = max(g.heat_rate for g in gens)
+            self.assertLessEqual(
+                next(iter(rates)), get_emission_rate(fuel, max_hr) + 1e-9
             )
 
 

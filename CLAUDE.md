@@ -18,7 +18,7 @@ re-send the entire updated artifact in one block, not a diff or an addendum.
 
 LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: six ISOs registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load; the calibrated reference), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (6 zones), NYISO (5 zones), NEISO (4 zones + HQ import node) — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
 
-**Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology.
+**Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, **same-year plant-specific CEMS emission rates**, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology. (Forecast-year emission rates for existing units are *derived from* multi-year CAMPD history conditioned on model-simulated operation — a rule-13-admissible measured input, not an overlay; see `docs/handoffs/emissions-co2-rate-plan-2026-07.md`.)
 
 ## Stack
 

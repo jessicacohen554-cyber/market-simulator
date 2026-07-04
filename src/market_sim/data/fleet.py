@@ -4580,6 +4580,50 @@ def _plant_emission_rate_map(
     return out
 
 
+@lru_cache(maxsize=8)
+def _measured_plant_rate_map_v2(
+    path: str, iso: str, year: int, mode: str
+) -> dict[tuple[int, str], float]:
+    """Cache the mode-aware ``{(plant_id, fuel_class): tCO2/MWh}`` v2 map."""
+    from market_sim.data.emission_rates import measured_plant_rates
+
+    df = pd.read_parquet(path)
+    return measured_plant_rates(df, iso, year, mode)
+
+
+def apply_plant_emission_rates_v2(
+    generators: list[Generator],
+    path: str | Path,
+    *,
+    iso: str,
+    year: int,
+    mode: str,
+) -> int:
+    """Override per-generator CO2 rates from the v2 artifact (mode-aware).
+
+    Uses :func:`market_sim.data.emission_rates.measured_plant_rates`: a backcast
+    year books each plant's own measured rate, a forecast year books the
+    gen-weighted trailing-average estimator base. Rates are matched to each
+    generator by ``(plant_code, coarse fuel class)`` — the composition mask — so
+    a Parish-style coal+gas facility's coal and gas bins get separate measured
+    rates (this replaces the old ``mixed`` exclusion). Returns the override count.
+    NOx/SO2 are left to the legacy artifact (out of scope this wave, R7 note).
+    """
+    from market_sim.data.emission_rates import fuel_class
+
+    resolved = Path(path)
+    if not resolved.exists():
+        return 0
+    rates = _measured_plant_rate_map_v2(str(resolved), str(iso), int(year), str(mode))
+    n = 0
+    for gen in generators:
+        co2 = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
+        if co2 is not None and co2 > 0.0:
+            gen.emission_rate_co2 = co2
+            n += 1
+    return n
+
+
 def apply_plant_emission_rates(
     generators: list[Generator],
     path: str | Path | None = None,
@@ -6295,7 +6339,16 @@ def bins_to_fleet(
                     pmin_mw=0.0,
                     heat_rate=tr_hr,
                     vom=get_vom(fuel) * vom_mult,
-                    emission_rate_co2=get_emission_rate(fuel, tr_hr),
+                    # R2/EM-4: book CO2 at the plant's PHYSICAL heat rate
+                    # (``base_hr``), never the bid-tranche heat rate ``tr_hr``.
+                    # ``tr_hr`` carries the offer-curve pricing multipliers
+                    # (peak ×2.0-2.5, committed ×0.92 — docs/binning-methodology.md
+                    # §pricing) that shape the bid stack; a plant's CO2/MWh does
+                    # not change because a block is offered at a scarcity price.
+                    # CEMS-covered plants get their measured rate later via
+                    # apply_plant_emission_rates; this base_hr value is the
+                    # physical default for uncovered plants and entrants.
+                    emission_rate_co2=get_emission_rate(fuel, base_hr),
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
                     online_year=commission_year,
@@ -6568,7 +6621,17 @@ def build_dispatch_fleet(
     # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific ones
     # for generators pinned to a single plant, so emission prices bite at
     # each plant's measured per-MWh-net intensity.
-    if config.use_plant_emission_rates:
+    if getattr(config, "use_plant_emission_rates_v2", False):
+        # Mode-aware v2 source: backcast books the target year's measured rate,
+        # forecast the estimator base; composition mask splits Parish coal/gas.
+        apply_plant_emission_rates_v2(
+            dispatch_fleet,
+            config.plant_emission_rates_v2_path,
+            iso=iso,
+            year=int(year),
+            mode=str(getattr(config, "mode", "forecast")),
+        )
+    elif config.use_plant_emission_rates:
         apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
 
     return dispatch_fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy
