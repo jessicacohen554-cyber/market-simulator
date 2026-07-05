@@ -328,6 +328,55 @@ class TestD9:
 
 
 # ---------------------------------------------------------------------------
+# D-10 — free-class-only rescore (renewable-bound provenance)
+# ---------------------------------------------------------------------------
+
+
+class TestD10:
+    def test_pinned_rows_fail_nothing_but_are_flagged(self, monkeypatch):
+        """A delivered-pinned ISO (e.g. MISO) never gates — but every row
+        is flagged PINNED so it can't be quoted as skill (audit §4 L1)."""
+        import scripts.legitimacy_diagnostics as ld
+
+        monkeypatch.setattr(
+            "market_sim.data.renewables.renewable_bound_provenance",
+            lambda iso, year, fuel: "delivered_pinned",
+        )
+        res = ld.run_d10("MISO", [2023, 2024], fuels=("wind", "solar"))
+        assert res.passed  # report-only: never fails the gate
+        assert len(res.rows) == 4
+        assert all(r["pinned"] for r in res.rows)
+        assert "4/4" in res.notes[0]
+
+    def test_measured_potential_rows_are_not_pinned(self, monkeypatch):
+        """A real HSL-covered ISO-year (e.g. CAISO 2023-2025) reports free."""
+        import scripts.legitimacy_diagnostics as ld
+
+        monkeypatch.setattr(
+            "market_sim.data.renewables.renewable_bound_provenance",
+            lambda iso, year, fuel: "measured_potential",
+        )
+        res = ld.run_d10("CAISO", [2023], fuels=("wind", "solar"))
+        assert res.passed
+        assert not any(r["pinned"] for r in res.rows)
+        assert "0/2" in res.notes[0]
+
+    def test_forecast_uncurtailed_is_not_pinned_but_distinct(self, monkeypatch):
+        """ERCOT 2024/25's grossed-up fallback is real headroom, not the raw
+        delivered bound — flagged distinctly, still excluded from PINNED."""
+        import scripts.legitimacy_diagnostics as ld
+
+        monkeypatch.setattr(
+            "market_sim.data.renewables.renewable_bound_provenance",
+            lambda iso, year, fuel: "forecast_uncurtailed",
+        )
+        res = ld.run_d10("ERCOT", [2024], fuels=("wind", "solar"))
+        assert res.passed
+        assert all(not r["pinned"] for r in res.rows)
+        assert all(r["provenance"] == "forecast_uncurtailed" for r in res.rows)
+
+
+# ---------------------------------------------------------------------------
 # Mechanism-id threading through the real injectors
 # ---------------------------------------------------------------------------
 

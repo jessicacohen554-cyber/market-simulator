@@ -38,6 +38,12 @@ directory plus the committed dashboard payloads:
   marker in ``frontend/data/backcast/calibration-complete.json`` (which
   authorizes the one-shot frozen-config holdout score of 2022 / H1-2026 —
   CLAUDE.md rule 22, amended 2026-07-04).
+* **D-10 free-class-only rescore** — per (year, fuel) wind/solar renewable-
+  bound provenance (``market_sim.data.renewables.renewable_bound_provenance``):
+  flags rows riding the L1 delivered-outcome bound (§4) as ``PINNED`` so a
+  C1-style pass on them is never quoted as forecast skill. Report-only —
+  wind/solar are already advisory-only in ``calibration_verdict.py`` and
+  never gate a keeper verdict.
 
 Model dispatch source: ``<bundle>/dispatch/<year>_P2.parquet`` (falling back
 to ``_P1``) when present; otherwise the committed dashboard run payload
@@ -787,6 +793,56 @@ def run_d9_keepers(repo_root: Path) -> GateResult:
     return res
 
 
+# ---------------------------------------------------------------------------
+# D-10 — free-class-only rescore (renewable-bound provenance)
+# ---------------------------------------------------------------------------
+
+
+def run_d10(
+    iso: str, years: list[int], fuels: tuple[str, ...] = ("wind", "solar")
+) -> GateResult:
+    """D-10 free-class-only rescore: flag wind/solar rows pinned by L1.
+
+    Report-only (wind/solar never gate a keeper verdict — they are advisory
+    in ``calibration_verdict.py``), so this diagnostic never fails; it
+    exists to make the L1 finding (docs/model-legitimacy-audit-2026-07.md
+    §4: delivered EIA-930 output used as the renewable CF upper bound
+    wherever no HSL/potential series exists) visible per bundle, per year,
+    per fuel, so a C1-style pass on a "delivered_pinned" row is never quoted
+    as forecast skill. Uses
+    :func:`market_sim.data.renewables.renewable_bound_provenance` — the same
+    logic the dispatch build consumes — never re-derives it.
+    """
+    from market_sim.data.renewables import (  # noqa: PLC0415 (optional heavy import)
+        RENEWABLE_BOUND_DELIVERED_PINNED,
+        renewable_bound_provenance,
+    )
+
+    res = GateResult("D-10 free-class-only rescore (renewable-bound provenance)")
+    for year in years:
+        for fuel in fuels:
+            provenance = renewable_bound_provenance(iso, year, fuel)
+            pinned = provenance == RENEWABLE_BOUND_DELIVERED_PINNED
+            res.rows.append(
+                {
+                    "year": year,
+                    "fuel": fuel,
+                    "provenance": provenance,
+                    "pinned": pinned,
+                    "verdict": "PINNED (advisory-only, excluded from skill claims)"
+                    if pinned
+                    else "free",
+                }
+            )
+    n_pinned = sum(1 for r in res.rows if r["pinned"])
+    res.notes.append(
+        f"{iso}: {n_pinned}/{len(res.rows)} wind/solar (year, fuel) rows ride "
+        "the L1 delivered-outcome bound; their advisory-only C1 rows measure "
+        "plumbing, not model skill (never gate the keeper verdict)."
+    )
+    return res
+
+
 def load_calibration_complete(repo_root: Path) -> dict[str, dict]:
     """Return the per-ISO calibration-complete marker map (may be empty)."""
     path = repo_root / D6_MARKER_FILE
@@ -1059,6 +1115,7 @@ def _md_table(rows: list[dict]) -> str:
 # Short ids for the machine artifact / rubric wiring: GateResult.name prefix
 # -> key. The rubric's C7 reads D1; C8 reads D2's per-class summary.
 _JSON_KEYS = {
+    "D-10": "D10",  # checked before "D-1" (a prefix of "D-10") below
     "D-1": "D1",
     "D-2": "D2",
     "D-4": "D4",
@@ -1165,7 +1222,7 @@ def diagnose_bundle(
         years = meta.get("years") or run_config.get("calibration_flags", {}).get(
             "years", []
         )
-    only = only or {"D1", "D2", "D4", "D5", "D9"}
+    only = only or {"D1", "D2", "D4", "D5", "D9", "D10"}
     sidecar = find_registry_sidecar(repo_root, bundle)
     results: list[GateResult] = []
 
@@ -1288,6 +1345,8 @@ def diagnose_bundle(
         results.append(run_d5(cfg, iso, backcast_src, forecast_src))
     if "D9" in only:
         results.append(run_d9(run_config, iso, label=bundle.name))
+    if "D10" in only and years:
+        results.append(run_d10(iso, list(years)))
     return results
 
 
@@ -1300,7 +1359,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--only",
         nargs="*",
-        choices=["D1", "D2", "D4", "D5", "D9"],
+        choices=["D1", "D2", "D4", "D5", "D9", "D10"],
         default=None,
         help="run a subset of the diagnostics",
     )
