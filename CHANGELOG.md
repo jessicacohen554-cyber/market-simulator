@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-05 (CI wiring — W2-P5 forecast invariants)
+
+Wired the W2-P5 forecast-invariant checks into CI (docs/handoffs/forecast-validation-program-2026-07.md §6): the fast invariant-logic tests already run in `ci.yml`'s per-PR tier (no change needed, documented explicitly), and a new scheduled `.github/workflows/forecast-invariants.yml` runs the slow real-LP e2e test plus the P1-P3 paired-run invariants weekly. No checker/test logic changed.
+
 ## 2026-07-05 (Stage 5 — interchange unification onto the shared InterchangeSpec)
 
 **Refactor, dispatch-neutral (builder-swap gate §7.2).** `run_calibration.py`'s
