@@ -87,18 +87,27 @@ def test_getitem_missing_raises_keyerror():
         _ = pr["nope"]
 
 
-def test_all_fifteen_keys_present():
+def test_all_twenty_keys_present():
     """The typed object carries one field per current ``prior_results`` key.
 
     ``price_signal`` is the capacity-screen price signal added by the
-    capacity-economics EWMA/lookahead mechanism (plan §2.2-§2.3); it is a real
-    cross-year field, so the exact-key-set contract includes it.
+    capacity-economics EWMA/lookahead mechanism (plan §2.2-§2.3);
+    ``reserve_price_signal``/``reserve_price_signal_slow`` are the Stage-2
+    hourly reserve-price signals for the screens' co-optimized valuation
+    (plan §5 step 2), and ``zone_names``/``wind_cf``/``solar_cf`` carry the
+    shape-aware VRE entry inputs (plan §6 CX-6c). All are real cross-year
+    fields, so the exact-key-set contract includes them.
     """
     expected = {
         "fleet_arrays",
         "dispatch_result",
         "prices",
         "price_signal",
+        "reserve_price_signal",
+        "reserve_price_signal_slow",
+        "zone_names",
+        "wind_cf",
+        "solar_cf",
         "peak_demand",
         "planned_additions",
         "mc_cost",

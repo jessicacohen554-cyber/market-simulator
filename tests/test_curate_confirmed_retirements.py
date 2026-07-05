@@ -129,6 +129,47 @@ class TestCurateConfirmedRetirements(unittest.TestCase):
         )
         self.assertEqual(written, [])
 
+    def test_superseded_pre_window_exit_year_allowed(self) -> None:
+        # A REVERSAL row's original exit date is historical by construction
+        # (the counter-instrument cancelled it — Byron/Dresden's 2021 dates
+        # reversed by IL CEJA), so the window check applies to live rows only.
+        ok = _ERCOT_CSV.replace(",2026,,consent_decree", ",2021,,consent_decree")
+        self._write(ok)
+        written = curate_cr.curate(
+            raw_root=self.raw_root, isos=["ERCOT"], spine_path=self.spine_path
+        )
+        self.assertEqual(len(written), 1)
+
+    def test_load_announced_reversal_plants(self) -> None:
+        # Plant 222: every row superseded -> reversal set. Plant 111 carries a
+        # live row (its exit was replaced, not reversed) -> excluded.
+        csv = _ERCOT_CSV + (
+            "ERCOT,222,1,Beta 1,50.0,2021,9,rto_deactivation,deact-beta-1,"
+            "Deactivation notice,2020-08-27,true,State statute reversed the exit,"
+            "https://ercot.example/3,posting,2026-07-05,reversal row\n"
+        )
+        spine = pd.concat(
+            [
+                _SPINE,
+                pd.DataFrame(
+                    {
+                        "plant_id": [222],
+                        "generator_id": ["1"],
+                        "nameplate_capacity_mw": [50.0],
+                    }
+                ),
+            ]
+        )
+        spine_path = Path(self._tmp.name) / "spine2.parquet"
+        spine.to_parquet(spine_path, index=False)
+        self._write(csv)
+        curate_cr.curate(raw_root=self.raw_root, isos=["ERCOT"], spine_path=spine_path)
+        from market_sim.data.confirmed_retirements import (
+            load_announced_reversal_plants,
+        )
+
+        self.assertEqual(load_announced_reversal_plants("ERCOT"), frozenset({222}))
+
 
 if __name__ == "__main__":
     unittest.main()

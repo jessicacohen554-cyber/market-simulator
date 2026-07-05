@@ -129,3 +129,54 @@ def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
         "confirmed-retirements: loaded %d confirmed exit(s) for %s", len(exits), iso
     )
     return exits
+
+
+def load_announced_reversal_plants(iso: str) -> frozenset[int]:
+    """Return plant codes whose announced retirement was REVERSED outright.
+
+    The retirement-reversal supersession channel (confirmed-retirement plan
+    §2.2 counter-instruments; capacity-economics Stage 2): a plant whose every
+    registry row is ``superseded`` — a counter-instrument (statute, RMR, DOE
+    202(c), withdrawal) cancelled the exit and nothing re-confirmed it — must
+    not have its stale EIA-860 announced date executed by
+    :func:`market_sim.model.capacity.apply_announced_retirements`. The worked
+    case is Byron/Dresden: the 2020-vintage EIA-860 carries their 2021 planned
+    dates (Exelon's PJM deactivation requests), reversed by Illinois CEJA
+    (P.A. 102-0662, 2021-09-15), so the non-fossil announced channel
+    false-retires ~4.1 GW of nuclear in any run seeded from that vintage.
+
+    A plant with **any live (non-superseded) row is excluded**: its exit was
+    replaced by a different confirmed instrument (e.g. Diablo Canyon's SB 846
+    schedule superseding the 2016 settlement), so its announced date still
+    stands and the confirmed channel governs.
+
+    Data-driven and independent of ``confirmed_exits_enabled`` — honoring a
+    documented reversal is an announced-channel data correction, not an
+    exogenous exit injection. Returns ``frozenset()`` when the clean partition
+    is absent. Limitation (documented, not gated): reversal rows carry no
+    superseding-instrument date column, so the suppression is not date-gated
+    within a hindcast window — every seeded reversal predates the earliest
+    evolution step that could consume it (CEJA 2021-09 vs the 2022 bridge).
+    """
+    try:
+        from scripts.lib.clean_io import read_clean
+    except ModuleNotFoundError:
+        return frozenset()
+    try:
+        df = read_clean(DATATYPE, iso=iso.upper())
+    except FileNotFoundError:
+        return frozenset()
+    if df.empty:
+        return frozenset()
+    superseded = df["superseded"].astype(bool)
+    all_superseded = superseded.groupby(df["plant_id"]).all()
+    plants = frozenset(int(p) for p, flag in all_superseded.items() if flag)
+    if plants:
+        logger.info(
+            "confirmed-retirements: %d plant(s) with fully-superseded "
+            "(reversed) retirements for %s: %s",
+            len(plants),
+            iso,
+            sorted(plants),
+        )
+    return plants

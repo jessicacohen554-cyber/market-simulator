@@ -23,12 +23,15 @@ simulation years:
   honored only if the unit is in the confirmed registry, so speculative
   end-of-life placeholders stop force-retiring (the horizon gate activates with
   the confirmed channel).
-* **Economic retirements** -- thermal units whose energy revenue fails to
-  cover their going-forward fixed cost for a fuel-type-specific number of
-  consecutive years are retired, least efficient first within each fuel
-  class. Coal faces a shorter loss window and a higher effective fixed
-  cost than gas, and a system-wide reliability floor prevents thermal
-  capacity from being stripped below the reserve margin.
+* **Economic retirements** -- thermal units whose attainable (pro-forma)
+  inframarginal margin -- per-hour ``max(0, price - mc, reserve price)`` on
+  available capacity, the same construction as the Potomac SOM net-revenue
+  tables -- fails to cover their going-forward fixed cost for a
+  fuel-type-specific number of consecutive years are retired, least
+  efficient first within each fuel class. Coal faces a shorter loss window
+  and a higher effective fixed cost than gas, and a system-wide reliability
+  floor prevents thermal capacity from being stripped below the reserve
+  margin.
 
 Part 2: capacity additions. New generators enter the fleet via two
 mechanisms, costed with Wright's-Law learning curves and IRA credits:
@@ -82,6 +85,10 @@ from market_sim.config.constants import (
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
 from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.reserve_config import (
+    QUICK_START_FUEL_TYPES,
+    RESERVE_FUEL_TYPES,
+)
 from market_sim.config.scenarios import ScenarioConfig, resolve_new_entry_costs
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
@@ -385,6 +392,7 @@ def apply_announced_retirements(
     vintage: int = EIA860_OPERABLE_VINTAGE,
     horizon_years: int | None = None,
     confirmed_plant_codes: frozenset[int] = frozenset(),
+    reversed_plant_codes: frozenset[int] = frozenset(),
 ) -> list[Generator]:
     """Return the fleet with ANNOUNCED (EIA-860 date) retirements applied.
 
@@ -425,6 +433,15 @@ def apply_announced_retirements(
         confirmed_plant_codes: Plant codes carrying a binding instrument in the
             confirmed registry — a beyond-horizon non-fossil date is honored only
             for these.
+        reversed_plant_codes: Plant codes whose announced retirement was
+            **reversed** by a public counter-instrument (every registry row
+            superseded, none live —
+            :func:`market_sim.data.confirmed_retirements.load_announced_reversal_plants`).
+            Their announced dates are ignored, any fuel: the date the vintage
+            EIA-860 carries records a cancelled plan (Byron/Dresden's 2021
+            dates reversed by IL CEJA), so executing it false-retires a
+            running plant. The unit stays with the economic screen (and the
+            confirmed channel, should a new instrument land).
 
     Returns:
         A new list excluding generators whose announced retirement is honored
@@ -434,6 +451,13 @@ def apply_announced_retirements(
     for g in fleet:
         r = g.retirement_year
         if r is None or r > year:
+            keep.append(g)
+            continue
+        if int(g.plant_code) in reversed_plant_codes:
+            # Retirement-reversal supersession: a counter-instrument (statute,
+            # RMR, 202(c), withdrawal) cancelled this plant's announced exit —
+            # the date is stale vintage data, not a plan. Economic screen
+            # governs.
             keep.append(g)
             continue
         is_fossil = g.fuel_type in _FOSSIL_FUELS
@@ -735,22 +759,38 @@ def apply_economic_retirements(
     storage_firm_mw: float = 0.0,
     year: int | None = None,
     event_sink: dict | None = None,
+    reserve_price_signal: np.ndarray | None = None,
+    reserve_price_signal_slow: np.ndarray | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
-    For each thermal generator the annual inframarginal energy margin is
-    compared with its going-forward fixed cost::
+    For each thermal generator the annual **attainable** (pro-forma)
+    inframarginal margin is compared with its going-forward fixed cost
+    (capacity-economics plan 2026-07 §5 step 2)::
 
-        net_revenue        = sum_t (price[zone, t] - mc[g, t]) * dispatch[g, t]
+        net_revenue        = sum_t max(0, price[zone, t] - mc[g, t], r[g, t])
+                             * pmax[g] * availability[g, t]
         going_forward_cost = fixed_om_per_kw_yr * fom_multiplier
                              * pmax_mw * 1000
+
+    where ``r[g, t]`` is the unit's reserve-price signal (0 when absent).
+    The margin is the unit's optimal response to the screen's own price
+    signal — the price-duration pro-forma the Potomac SOM net-revenue
+    tables are built from, and the same basis the thermal new-entry screen
+    already uses — rather than the prior LP's realized dispatch. The two
+    diverge exactly where the screens' scarcity revenue lives: the
+    post-solve ORDC adder lifts ``prices`` in hours the pre-adder LP left
+    an out-of-merit peaker idle, so a realized-dispatch margin credits a
+    peaker none of the scarcity rent the signal carries. Structural fix,
+    zero fitted parameters; SOM is the external validity check, never a
+    target (rule 1).
 
     ``mc`` is the unit's *full* variable cost (fuel + VOM + emission
     prices), not its bid: take-or-pay coal tranches bid below fuel cost in
     dispatch because the fuel is sunk within the contract year, but on a
     retirement horizon the contract lapses, so fuel is avoidable and counts
-    against the margin. When ``mc`` is ``None`` the screen degrades to
-    comparing gross energy revenue against fixed cost, which overstates
+    against the margin. When ``mc`` is ``None`` the screen degrades to the
+    legacy gross-energy-revenue-on-dispatch comparison, which overstates
     margins and under-retires -- callers should always supply ``mc``.
 
     A year in which ``net_revenue < going_forward_cost`` increments the
@@ -818,6 +858,20 @@ def apply_economic_retirements(
             economic screen wanted out but the reliability floor kept online).
             Each entry is ``{"unit_id","fuel","mw"}``. ``None`` records
             nothing. Does not affect the retirement decision.
+        reserve_price_signal: Hourly ``(T,)`` reserve price in $/MWh for
+            synchronized reserve-eligible units — the co-opt's own binding
+            reserve dual (under ``ercot_thermal_as_endogenous``) or the
+            post-solve ORDC scarcity adder (RTORPA/RTOFFPA: ERCOT pays
+            real-time reserves the same ORDC price, Nodal Protocols
+            §6.5.7.5). Each reserve-eligible unit's hourly value becomes
+            ``max(0, price - mc, r)`` — energy or reserve, never both on
+            the same MW. When supplied it is the SOLE thermal AS pricing
+            (rule 19): both the annual endogenous per-fuel rate and the
+            exogenous flat rate are suppressed. ``None`` (default) keeps
+            the legacy annual AS credits. Requires ``mc``.
+        reserve_price_signal_slow: Hourly ``(T,)`` reserve price for the
+            offline-capable quick-start tier (gas_ct/oil — Non-Spin only,
+            mirroring the co-opt's headroom cascade).
 
     Returns:
         Tuple ``(survivors, loss_years, floor_retention_log)`` -- the fleet
@@ -834,6 +888,15 @@ def apply_economic_retirements(
         )
     else:
         mc = np.asarray(mc, dtype=float)
+    # Availability-derated capacity per row, (n_gen, T) — the MW the pro-forma
+    # margin can sell in each hour. Falls back to flat pmax when the arrays
+    # carry no availability (older callers).
+    availability = getattr(fleet_arrays, "availability", None)
+    if availability is None:
+        availability = np.ones_like(dispatch)
+    cap_mw = np.asarray(fleet_arrays.pmax, dtype=float)[:, None] * np.asarray(
+        availability, dtype=float
+    )
     idx_of = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
     loss_years = dict(consecutive_loss_years)
 
@@ -855,15 +918,41 @@ def apply_economic_retirements(
             continue
 
         zone = int(fleet_arrays.zone_idx[rows[0]])
-        # Inframarginal energy margin: (price - variable cost) x dispatch.
-        # Gross revenue alone would let a unit "cover" fixed cost with
-        # money it spent on fuel.
+        # Reserve tier for this unit (plan §5 step 2): synchronized units see
+        # the all-products signal; offline-capable quick-starts (gas_ct/oil)
+        # only the Non-Spin tier; non-reserve fuels none. Requires mc — the
+        # legacy gross-revenue fallback has no cost basis to arbitrage
+        # against, so it keeps the legacy path wholesale.
+        r_row: np.ndarray | None = None
+        if (
+            mc is not None
+            and reserve_price_signal is not None
+            and g.fuel_type in RESERVE_FUEL_TYPES
+        ):
+            r_row = (
+                reserve_price_signal_slow
+                if g.fuel_type in QUICK_START_FUEL_TYPES
+                else reserve_price_signal
+            )
+            if r_row is None:
+                r_row = np.zeros_like(reserve_price_signal)
+        # Attainable (pro-forma) inframarginal margin: the unit's per-hour
+        # best use against the screen's own price signal —
+        # max(0, price - mc, reserve price) x available capacity. Realized
+        # LP dispatch is NOT the basis: the signal includes the post-solve
+        # ORDC adder the dispatch never saw, so a realized-dispatch margin
+        # structurally misses the scarcity rent (the Potomac SOM net-revenue
+        # construction is this same pro-forma). Gross revenue alone would
+        # let a unit "cover" fixed cost with money it spent on fuel.
         if mc is None:
             net_revenue = float(sum(np.dot(prices[zone], dispatch[i]) for i in rows))
         else:
-            net_revenue = float(
-                sum(np.dot(prices[zone] - mc[i], dispatch[i]) for i in rows)
-            )
+            net_revenue = 0.0
+            for i in rows:
+                hourly_value = np.maximum(prices[zone] - mc[i], 0.0)
+                if r_row is not None:
+                    hourly_value = np.maximum(hourly_value, r_row)
+                net_revenue += float(np.dot(hourly_value, cap_mw[i]))
 
         # The attribute payment -- the higher of the exogenous EAC and the
         # endogenous RPS shadow price, never their sum -- adds revenue
@@ -889,14 +978,20 @@ def apply_economic_retirements(
             net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(config.iso, g.eford)
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
-        # income stream the energy-only LP cannot produce. Zero unless
-        # config.as_revenue_enabled (ERCOT only); saturates on the storage
-        # fleet. Omitting it makes tail thermal under-earn and over-retire.
-        # Exactly one mechanism prices it (rule 19): under
-        # ercot_thermal_as_endogenous the co-opt duals supply a per-fuel derived
-        # rate (thermal_as_revenue_per_mw_yr) and the exogenous flat rate is
-        # suppressed; otherwise the exogenous rate is the sole credit.
-        if thermal_as_revenue_per_mw_yr is not None:
+        # income stream the energy-only LP cannot produce. Exactly one
+        # mechanism prices it (rule 19), in precedence order:
+        #  1. the hourly reserve-price signal (screen_reserve_value_enabled)
+        #     — already folded into the pro-forma margin above as
+        #     max(energy, reserve) per hour, so NO annual credit stacks on
+        #     top of it;
+        #  2. else under ercot_thermal_as_endogenous the co-opt duals supply
+        #     an annual per-fuel derived rate (thermal_as_revenue_per_mw_yr)
+        #     and the exogenous flat rate is suppressed;
+        #  3. else the exogenous flat rate (as_revenue_enabled, ERCOT only,
+        #     saturating on the storage fleet) is the sole credit.
+        if mc is not None and reserve_price_signal is not None:
+            pass  # hourly max(energy, reserve) above is the sole AS pricing
+        elif thermal_as_revenue_per_mw_yr is not None:
             net_revenue += g.pmax_mw * thermal_as_revenue_per_mw_yr.get(
                 g.fuel_type, 0.0
             )
@@ -1486,6 +1581,11 @@ def apply_economic_new_entry(
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
     thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
+    reserve_price_signal: np.ndarray | None = None,
+    reserve_price_signal_slow: np.ndarray | None = None,
+    zone_names: list[str] | None = None,
+    wind_cf: np.ndarray | None = None,
+    solar_cf: np.ndarray | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -1545,6 +1645,24 @@ def apply_economic_new_entry(
             REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal
             candidates. ``None`` (the default, flag off) keeps the exogenous
             flat rate.
+        reserve_price_signal: Hourly ``(T,)`` reserve price for synchronized
+            reserve-eligible candidates (plan §5 step 2). A thermal
+            candidate's hourly value becomes ``max(0, price - vc, r)`` —
+            energy or reserve, never both on the same MW — and it is then
+            the SOLE thermal AS pricing (rule 19: the annual endogenous and
+            exogenous credits are suppressed). ``None`` keeps the legacy
+            price-duration integral + annual AS credit.
+        reserve_price_signal_slow: Hourly ``(T,)`` reserve price for the
+            offline-capable quick-start tier (gas_ct — Non-Spin only).
+        zone_names: Model zone ordering of the rows of ``prices`` /
+            ``wind_cf`` / ``solar_cf``, so a VRE candidate's build zone can
+            be indexed.
+        wind_cf, solar_cf: Zonal hourly CF profiles ``(n_zones, T)``. When
+            available, a wind/solar candidate's expected revenue is its
+            build zone's hourly CF dotted against that zone's prices — the
+            candidate's actual capture shape, including its share of
+            scarcity-priced hours — instead of the shape-blind flat mean
+            (plan §6 CX-6c). ``None`` keeps the scalar base-CF screen.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -1629,7 +1747,24 @@ def apply_economic_new_entry(
                 if np.asarray(prices).ndim > 1
                 else np.asarray(prices, dtype=float)
             )
-            energy_margin = float(np.maximum(price_hourly - var_cost, 0.0).sum())
+            # Reserve tier (plan §5 step 2): a candidate's hourly value is its
+            # best use — energy margin or the reserve price, never both on
+            # the same MW. A new CT is an offline-capable quick-start
+            # (Non-Spin tier); a new CC is synchronized (all products).
+            r_tech: np.ndarray | None = None
+            if reserve_price_signal is not None and tech in RESERVE_FUEL_TYPES:
+                r_tech = (
+                    reserve_price_signal_slow
+                    if tech in QUICK_START_FUEL_TYPES
+                    else reserve_price_signal
+                )
+                if r_tech is None:
+                    r_tech = np.zeros_like(reserve_price_signal)
+            hourly_value = np.maximum(price_hourly - var_cost, 0.0)
+            if r_tech is not None:
+                n = min(hourly_value.size, r_tech.size)
+                hourly_value = np.maximum(hourly_value[:n], r_tech[:n])
+            energy_margin = float(hourly_value.sum())
             # Annualized fixed cost ($/MW-yr): Wright-adjusted capex annuity +
             # FOM. Thermal carries no IRA ITC/PTC, so this is the clean CONE.
             costs = resolve_new_entry_costs(config)[tech]
@@ -1650,10 +1785,14 @@ def apply_economic_new_entry(
                 if build_zone_long
                 else capacity_revenue_per_mw_yr(iso_config.name, EFORD[tech])
             )
-            # AS credit: derived per-fuel co-opt rate under
-            # ercot_thermal_as_endogenous (rule 19), else the exogenous flat rate.
-            # Exactly one prices thermal AS.
-            if thermal_as_revenue_per_mw_yr is not None:
+            # AS credit — exactly one mechanism prices thermal AS (rule 19):
+            # the hourly reserve signal (already folded into energy_margin as
+            # max(energy, reserve)) suppresses both annual credits; else the
+            # per-fuel co-opt rate under ercot_thermal_as_endogenous; else
+            # the exogenous flat rate.
+            if r_tech is not None:
+                as_credit = 0.0  # hourly max above is the sole AS pricing
+            elif thermal_as_revenue_per_mw_yr is not None:
                 as_credit = thermal_as_revenue_per_mw_yr.get(tech, 0.0)
             else:
                 as_credit = as_revenue_per_mw_yr(tech, storage_power_mw, config)
@@ -1668,13 +1807,51 @@ def apply_economic_new_entry(
         # levelized cost; clean attributes (EAC or RPS shadow price, the
         # higher, never stacked) lift RPS-eligible renewables.
         lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
-        effective_revenue = estimate_expected_revenue(prices, base_cf)
+        # Shape-aware VRE revenue (plan §6 CX-6c): value the candidate's
+        # build zone's hourly CF against THAT zone's prices, so solar sees
+        # its own value cannibalization and wind its diurnal/seasonal
+        # capture rate — including each one's actual share of the
+        # scarcity-priced hours the flat mean smears across the year. Falls
+        # back to the scalar base-CF screen when profiles/zone ordering are
+        # unavailable (older callers) or the build zone has no resource.
+        cf_profile: np.ndarray | None = None
+        prices_for_rev: np.ndarray = prices
+        if tech in _RENEWABLE_NEW_FUELS and zone_names:
+            cf_zonal = wind_cf if tech == "wind" else solar_cf
+            target_zone = get_renewable_zone(iso_config.name, tech)
+            prices_arr = np.asarray(prices, dtype=float)
+            if (
+                cf_zonal is not None
+                and target_zone in zone_names
+                and prices_arr.ndim == 2
+            ):
+                zi = zone_names.index(target_zone)
+                cf_arr = np.asarray(cf_zonal, dtype=float)
+                if (
+                    cf_arr.ndim == 2
+                    and zi < cf_arr.shape[0]
+                    and zi < prices_arr.shape[0]
+                    and float(cf_arr[zi].max()) > 0.0
+                ):
+                    cf_profile = cf_arr[zi]
+                    prices_for_rev = prices_arr[zi]
+        if cf_profile is not None:
+            effective_revenue = estimate_expected_revenue(prices_for_rev, cf_profile)
+            cf_expected = float(cf_profile.mean())
+        else:
+            effective_revenue = estimate_expected_revenue(prices, base_cf)
+            cf_expected = base_cf
         rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
         effective_attribute_price = max(
             get_eac_price_for_new_entry(tech, config), rps_for_tech
         )
         if effective_attribute_price > 0.0:
-            effective_revenue += effective_attribute_price * base_cf * HOURS_PER_YEAR
+            effective_revenue += (
+                effective_attribute_price * cf_expected * HOURS_PER_YEAR
+            )
+        # lcoe uses base_cf internally, so lcoe x hours x base_cf is the
+        # CF-independent annualized fixed cost in $/MW-yr — it stays on
+        # base_cf even when the revenue side uses the zonal profile.
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
         margin = effective_revenue - annual_cost
         if margin > 0.0:
@@ -1992,6 +2169,7 @@ def evolve_fleet(
     events: dict | None = None,
     confirmed_exits: list[ConfirmedExit] | None = None,
     peak_demand_next: float | None = None,
+    announced_reversal_plants: frozenset[int] = frozenset(),
 ) -> tuple[
     list[Generator],
     dict[str, int],
@@ -2065,6 +2243,12 @@ def evolve_fleet(
             peak-anchored adequacy mechanisms (the retirement reliability
             floor and the reserve-margin backstop), deleting their one-year
             bookkeeping lag. ``None`` keeps the prior-year peak.
+        announced_reversal_plants: Plant codes whose announced retirement
+            was reversed by a public counter-instrument (registry rows all
+            superseded) — step 1 ignores their stale EIA-860 dates
+            (:func:`apply_announced_retirements`'s ``reversed_plant_codes``).
+            Independent of ``confirmed_exits_enabled``: honoring a documented
+            reversal is a data correction, not an exit injection.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
@@ -2132,6 +2316,22 @@ def evolve_fleet(
         if getattr(config, "ercot_thermal_as_endogenous", False)
         else None
     )
+    # Hourly reserve-price signal (plan §5 step 2, screen_reserve_value_enabled):
+    # the retirement and thermal new-entry screens value each reserve-eligible
+    # unit's per-hour best use max(energy margin, reserve price). When present
+    # it is the sole thermal AS pricing (rule 19) — see the screens' docstrings.
+    reserve_price_signal = None
+    reserve_price_signal_slow = None
+    if getattr(config, "screen_reserve_value_enabled", True):
+        reserve_price_signal = _prior_attr(prior_results, "reserve_price_signal", None)
+        reserve_price_signal_slow = _prior_attr(
+            prior_results, "reserve_price_signal_slow", None
+        )
+    # Zonal hourly CF profiles + zone ordering for the shape-aware VRE
+    # new-entry revenue (plan §6 CX-6c); None falls back to the scalar screen.
+    screen_zone_names = _prior_attr(prior_results, "zone_names", None)
+    screen_wind_cf = _prior_attr(prior_results, "wind_cf", None)
+    screen_solar_cf = _prior_attr(prior_results, "solar_cf", None)
 
     # Snapshot the entering fleet so the events recorder can attribute every
     # unit removed by the confirmed (step 0) and announced (step 1) channels.
@@ -2178,6 +2378,7 @@ def evolve_fleet(
         fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
         horizon_years=horizon_years,
         confirmed_plant_codes=confirmed_plant_codes,
+        reversed_plant_codes=announced_reversal_plants,
     )
     if _rec:
         _survived = {g.unit_id for g in fleet}
@@ -2239,6 +2440,8 @@ def evolve_fleet(
             storage_firm_mw=storage_firm_mw,
             year=year,
             event_sink=_econ_sink,
+            reserve_price_signal=reserve_price_signal,
+            reserve_price_signal_slow=reserve_price_signal_slow,
         )
         if _rec:
             events["retirements"].extend(
@@ -2320,6 +2523,11 @@ def evolve_fleet(
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
             thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
+            reserve_price_signal=reserve_price_signal,
+            reserve_price_signal_slow=reserve_price_signal_slow,
+            zone_names=screen_zone_names,
+            wind_cf=screen_wind_cf,
+            solar_cf=screen_solar_cf,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
     if _rec:

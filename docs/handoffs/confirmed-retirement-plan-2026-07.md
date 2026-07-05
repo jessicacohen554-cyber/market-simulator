@@ -484,6 +484,33 @@ Trivial cases first (1 gen / 1 zone / 24 h per CLAUDE.md):
 6. Default-off — `confirmed_exits_enabled=False` byte-identical fleet evolution to
    today (golden comparison on a small synthetic fleet).
 
+### 4.3.2 Reversal supersession honored by the announced channel (2026-07-05, W2-P3 Stage 2)
+
+The PJM capacity hindcast (docs/hindcast-reports/pjm-2021-2025-realized-2026-07-05.md)
+exposed the missing half of the §2.2 counter-instrument design: `superseded`
+rows kept the *confirmed* channel from firing, but the *announced* channel
+still executed the stale EIA-860 planned date — the 2020 vintage carries
+Byron/Dresden's 2021 dates (Exelon's reversed 2020 deactivations), so the
+hindcast false-retired 4.1 GW of running nuclear, 100 % of its modelled
+retirement GW. Landed: `apply_announced_retirements` now ignores announced
+dates for plants whose registry rows are **all** superseded (reversed
+outright; a plant with any live row — Diablo Canyon's SB 846 schedule — is
+excluded, since its exit was *replaced*, not reversed), via
+`data.confirmed_retirements.load_announced_reversal_plants`, loaded in every
+forecast run **independently of `confirmed_exits_enabled`** (honoring a
+documented reversal is a data correction on the announced channel, not an
+exit injection; the injector gate is unchanged and stays default-off).
+Byron 1–2 / Dresden 2–3 reversal rows seeded (Exelon deactivations announced
+2020-08-27, reversed by IL CEJA P.A. 102-0662 signed 2021-09-15, CMC award);
+the curation window check (`exit_year >= RETIREMENT_WINDOW_START`) now
+applies to live rows only — a reversal row's original date is historical by
+construction. Known limitation: the schema carries no superseding-instrument
+date column, so the suppression is not date-gated within a hindcast window;
+every seeded reversal predates the earliest evolution step that could consume
+it (CEJA 2021-09 vs the 2022 bridge). Adding
+`superseding_instrument_date` is the schema-v2 follow-up if a
+mid-window reversal ever lands.
+
 ## 7. Open items / follow-ups (not W2-P2)
 
 * **Flip `confirmed_exits_enabled` default to on** — DONE 2026-07-05. As of the
