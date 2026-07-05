@@ -301,6 +301,63 @@ before the row is committed (post-Jan-2026 developments must be re-checked):
 * **NYISO/NEISO:** deactivation notices / cleared permanent de-list bids
   (Mystic-class exits are already historical; forward list is short).
 
+#### 4.3.1 Second intake pass — status update (2026-07-05)
+
+The five ISOs left `DATA NEEDED` after W2-P2 (ERCOT, MISO, NYISO, NEISO,
+CAISO) were researched and, where an enforceable instrument actually cleared
+the admissibility bar, seeded. PJM's original rows were also re-verified
+against current postings/dockets and corrected. All rows below pass
+`curate_confirmed_retirements.py`'s EIA-860 spine cross-check.
+
+* **PJM** (corrected, not re-seeded): Rockport's two units turned out to be
+  governed by two separate instruments — Unit 1 by the federal NSR consent
+  decree, Unit 2 by a distinct Indiana IURC Cause No. 45546 settlement order —
+  split from the single citation the first pass used for both. Eddystone's
+  `exit_year` was corrected 2026→2025 (the PJM-approved date the DOE 202(c)
+  order actually supersedes was 2025-05-31). Brandon Shores/Wagner's
+  `instrument_date` was corrected to the actual FERC RMR-settlement approval
+  date (2025-05-01); a further extension to 2031-05 is pending FERC approval,
+  not yet applied.
+* **ERCOT** — seeded: V H Braunig 1–2 (binding NSO, effective 2025-03-31).
+  Independently cross-validated against `fleet.py`'s existing
+  `BIN_FORCED_DERATE_BY_YEAR["SC_STGAS3"]` hardcoded 2025-only derate comment,
+  which cites the identical 225 MW/252 MW split — these registry rows are the
+  general, forward-projecting data that hardcoded derate is a placeholder for
+  (rule 24); wiring the injector to consume it in place of the hardcode is a
+  follow-up, not done here. Unit 3 stays out (RMR-bound, i.e. being kept
+  *in* service, through 2027-03). Spruce/Sommers remain announced-grade.
+* **MISO** — seeded: DTE Monroe 1–4 (Michigan PSC Case No. U-21193 — Units
+  3–4 by 2028, Units 1–2 by 2032). This is the only candidate in the ~13.5 GW
+  EIA-860-flagged 2026–2028 coal cluster that cleared the admissibility bar;
+  MISO's own Attachment Y posting could not be fetched directly (TLS/access
+  failures) — a follow-up direct pull is still needed to confirm no other
+  approved retirements exist in that posting.
+* **NYISO** — still `DATA NEEDED`, honestly: every forward-looking completed
+  deactivation notice found (Far Rockaway, Gowanus/Narrows, Pinelawn) has
+  since been reversed by a NYISO reliability determination (returned to
+  service or withdrawn). Zero qualifying rows is the correct, researched
+  outcome, not an unresearched gap.
+* **NEISO** — seeded: Merrimack Station 1–2 (2024 Clean Water Act consent
+  decree, 2028-06 — the plant fully ceased operating 2025-09-12, ahead of the
+  decree deadline). The ISO-NE de-list-bid tracker's other candidates could
+  not be matched to a current EIA-860 identity and were excluded rather than
+  seeded on an unverified match (the tracker file itself is flagged stale,
+  last updated 2024-02-28).
+* **CAISO** — seeded: AES Alamitos 3–5 / AES Huntington Beach 2 / Ormond
+  Beach 1–2 (SWRCB Resolution 2023-0025, 2026-12-31) and Diablo Canyon 1–2
+  (SB 846 + CPUC D.23-12-036, 2029/2030) with two `superseded` rows carrying
+  the plant's earlier 2016-settlement dates — the worked `superseded`
+  audit-trail example the schema was designed around.
+
+**Net effect: the default-flip decision (§7) is now unblocked on data
+grounds for all six ISOs** (five seeded, NYISO's zero is itself a completed,
+researched result) — flipping `confirmed_exits_enabled`'s default remains an
+explicit owner decision, not taken in this pass. A few rows carry an
+in-CSV caveat where a specific docket/decision number could not be
+independently confirmed (Rockport 1's civil action number; Diablo Canyon's
+CPUC decision number) — worth a primary-document confirmation pass before
+the flip.
+
 ### 4.4 EIA-860 intake extension (RC-2 fix, same commit)
 
 `scripts/process_eia860.py`: add `"Planned Retirement Month"` to
@@ -430,7 +487,11 @@ Trivial cases first (1 gen / 1 zone / 24 h per CLAUDE.md):
 ## 7. Open items / follow-ups (not W2-P2)
 
 * **Flip `confirmed_exits_enabled` default to on** after the seeded registry passes
-  review — owner decision, recorded here as the intended end state.
+  review — owner decision, recorded here as the intended end state. As of the
+  2026-07-05 second intake pass (§4.3.1), all six ISOs have been researched
+  and either seeded (PJM, ERCOT, MISO, NEISO, CAISO) or returned an honest,
+  researched zero (NYISO) — the flip is unblocked on data-completeness
+  grounds; it remains an explicit owner sign-off, not taken here.
 * Month-precise forecast exits by un-gating the COD ramp for forecast years (also
   fixes the comment/code drift at `fleet.py:1983-1992`, whose comment already
   claims forecast support the gate denies).

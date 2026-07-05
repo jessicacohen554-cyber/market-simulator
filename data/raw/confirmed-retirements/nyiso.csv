@@ -1,0 +1,44 @@
+# NYISO confirmed-retirement registry — DATA NEEDED (zero qualifying rows).
+# Source of truth: NYISO "Posting of Completed Generator Deactivation Notice"
+# postings (individual PDFs under nyiso.com/documents/20142/1403511/...) per
+# the OATT section 38 (Attachment FF) deactivation process, Technical Bulletin
+# TB-185; NYSDEC/PSC orders; Gold Book retirement table (announced-grade
+# cross-check only, not itself an admissible instrument).
+#
+# Researched 2026-07-05. Every forward-looking generator that reached a
+# completed deactivation notice has since been REVERSED — either returned to
+# market service or had its retirement notice formally withdrawn, following a
+# NYISO reliability determination. None currently point to a still-binding
+# forward exit:
+#   - Far Rockaway Peakers (Bayswater 53.5 MW + Jamaica Bay 55.4 MW, MPH
+#     Rockaway Peakers, Zone K): completed deactivation 2025-06-02; NYISO's
+#     Q3 2025 STAR found a reliability need; formally RETURNED TO MARKET
+#     SERVICE effective 2026-05-01 (NYPSC filing 2026-05-14) — retirement
+#     rescinded.
+#   - Gowanus 2 & 3 / Narrows 1 & 2 (AlphaGen, Zone J): completed deactivation
+#     notices filed June 2025; NYISO's Q3 2025 STAR found a reliability need
+#     through 2027-05-01 (extendable to 2029-05-01); AlphaGen formally
+#     WITHDREW the retirement notices 2026-04-16, citing the reliability
+#     finding — continuing merchant operation.
+#   - Pinelawn Power 1 (82 MW, Zone K): completed deactivation notice; NYISO's
+#     Q3 2025 STAR found a Long Island capacity deficiency beginning summer
+#     2027 driven partly by this unit; directed into an Interim Service
+#     Provider arrangement (regulated rate) from 2025-12-25. No return-to-
+#     service notice found yet, but same deferred/must-run pattern as Far
+#     Rockaway — status unresolved, not a confirmed forward exit.
+#   - Danskammer (Hudson Valley): NYISO determined it must remain operational
+#     through at least August 2026 for reliability; owner filed Chapter 11
+#     bankruptcy June 2026, but no dated closure order exists — financial
+#     distress is not a binding retirement instrument.
+#   - Already-historical completed deactivations (Allegheny Cogen, Sithe
+#     Sterling, Gowanus 1 & 4, Nassau Energy/Trigen, Cayuga 1 & 2, West
+#     Babylon 4): all executed 2020-2022, predate this forward registry's
+#     practical value (already gone from the base fleet); not seeded.
+#   - No NYSDEC air-permit order, PSC order, or CLCPA-derived order binding a
+#     specific plant to a dated forward closure was found. NYPSC Case
+#     05-E-0889 is a generic procedural order (industry-wide notice
+#     requirements), not a plant-specific closure mandate.
+#
+# Revisit if/when NYISO posts a new completed deactivation notice that is NOT
+# followed by a return-to-service or withdrawal filing.
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
