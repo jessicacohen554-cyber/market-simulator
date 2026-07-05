@@ -74,6 +74,15 @@ _ISSUE_C8_CORE_STEPS = (
 _ISSUE_COMMITTED_BELOW_085 = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1302"
 )
+# Root-cause issues opened during the 2026-07 scalar-remediation B-NYI-1 batch
+# (NYISO de-leak C-13 + LI floor C-17). Same E8 contract: the residual entries
+# these are attached to keep citing an open issue.
+_ISSUE_NYISO_C3A_CC_DELEAK = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+)
+_ISSUE_NYISO_LI_LCR_MISMATCH = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
+)
 
 # Committed-tranche multiplier floor (audit §2 flag; plan §2.1 exception): a
 # group whose committed HR multiplier sits below this without a written
@@ -143,7 +152,16 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 value={g: sorted(v) for g, v in curves.items()},
                 source="per-group HR-band multipliers — the rule-#1-sanctioned "
                 "offer-curve tuning surface (audit C-8/C-11/C-13)",
-                root_cause=_HOLDOUT_ROOT_CAUSE,
+                root_cause=_HOLDOUT_ROOT_CAUSE
+                + (
+                    " · NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked "
+                    "1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the "
+                    "exposed C3a hole is missing NYISO reserve/scarcity price "
+                    "formation, not a CC markup — open: "
+                    + _ISSUE_NYISO_C3A_CC_DELEAK
+                    if iso == "NYISO"
+                    else ""
+                ),
             )
         )
         below_floor = {
@@ -441,8 +459,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="LI self-supply floor set 'a touch below' the 2023 "
                 "realized share ~0.48 (audit C-17; W1d marker) — the LMIC rule "
                 "is market design but the fraction is outcome-anchored",
-                root_cause="audit C-17: re-ground on the published LMIC "
-                "requirement itself, not the realized share",
+                root_cause="audit C-17 / B-NYI-1: the published Zone-K LCR is "
+                "now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, "
+                "value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, "
+                "while this is an all-hours energy self-supply fraction — a "
+                "rule-14 boundary mismatch: substituting the LCR% (~1.05) or the "
+                "TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI "
+                "generation, and any scalar reproducing ~0.45 requires a "
+                "load-duration haircut tuned to the realized share (rule-12 pin). "
+                "The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar "
+                "re-ground; 0.45 left in place — open: "
+                + _ISSUE_NYISO_LI_LCR_MISMATCH,
             )
         )
     if iso in ("NYISO", "NEISO", "PJM", "MISO", "CAISO"):
