@@ -56,10 +56,15 @@ GROWTH_PATHS = ("high", "mid")
 
 # Legacy bins for runtime (tornado fidelity trade, documented in the report);
 # the adequacy backstop is ON so its forced-build MW — the myopia tell — is
-# observable ("recommended on for forecasts", scenarios.py).
+# observable ("recommended on for forecasts", scenarios.py); scarcity pricing
+# is ON so the screens run on ERCOT's default capacity-economics footing (the
+# post-solve ORDC overlay — plan §5's "today's default" cell; without it the
+# perfect-foresight duals carry zero scarcity rent, plan §1.3) and the
+# lookahead arm's ORDC tail is live.
 BASE_OVERRIDES: dict = {
     "use_campd_bins": False,
     "reserve_margin_build_enabled": True,
+    "scarcity_pricing_enabled": True,
 }
 
 WINDOW = (2030, 2040)  # metrics window (plan §2.4)
