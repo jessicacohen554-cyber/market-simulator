@@ -64,6 +64,31 @@ block (§4) remain for later stages. Implementation prompt in §9.
 >    code before its metrics are quoted or any arm is promoted (plan §2.4 decision rule).
 >    Re-running is a multi-year forecast solve — deferred, not blocking the landing.
 
+> ### Stage-2 status note (2026-07-05, W2-P3 Stage 2)
+>
+> The §5-step-2 **revenue-side fix landed**: the retirement screen's margin basis is now
+> the attainable pro-forma `max(0, price − mc, reserve price) × pmax × availability`
+> (the Potomac-SOM net-revenue construction, matching the entry screen's existing basis),
+> and an hourly reserve-price signal (`screen_reserve_value_enabled`, default on — co-opt
+> duals under `ercot_thermal_as_endogenous`, else the ORDC adder per RTORPA/RTOFFPA,
+> Nodal Protocols §6.5.7.5) is the sole thermal AS pricing when present (rule 19). VRE
+> entry is shape-aware (§6 CX-6c: build zone hourly CF × zonal prices). First-screen-year
+> ERCOT CT revenue moved 1.5→17.2 $/kW-yr against the SOM ≈68 upper anchor — no
+> multiplier closes the rest (rules 1/14/26). The §5.4 grid was re-run against the
+> accredited floor (`fom-scarcity-grid-2026-07-05-stage2.json`): **FOM is STILL inert —
+> the defaults were again NOT flipped.** The masking is no longer the Stage-1 ledger bug
+> but genuine mid-growth adequacy shortage: the accredited floor correctly un-retires
+> every eligible unit and the harness-enabled backstop floods CT (15.2 GW in the first
+> three years), collapsing scarcity below every bar. Gates fail (pace 0 GW/yr, backstop
+> ≫ 0). Tornado FOM re-centring + `fom_and_scarcity` perturbation remain deferred with
+> the flip. The foresight A/B re-run (§2.4) remains the open next step — its lookahead
+> arm is one of the three unblocking paths recorded in the Stage-2 report §3. Also
+> landed: the announced-channel **retirement-reversal supersession** (Byron/Dresden CEJA
+> rows seeded; see `confirmed-retirement-plan-2026-07.md` §4.3.2) and the ERCOT realized
+> capacity-hindcast re-run registered as the before/after diagnostic on the
+> forecast-validation dashboard. Full report:
+> `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`.
+
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
 `docs/forecast-methodology-gaps-2026-06.md` (scarcity/AS revenue understatement),
