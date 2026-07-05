@@ -19,8 +19,17 @@
 #          driver, so a base run is solved once and reused across all three
 #          pairings (4 solves total, ~205s each per the plan doc's measured
 #          runtime for this exact config).
+#       3. The golden-scenario band regression (plan §2.3): a pinned ERCOT
+#          reference forecast, 2026-2032 (7 LP years), re-solved fresh and
+#          checked against the golden values in
+#          tests/golden/ercot_2026_2032.json (annual CO2, end-year capacity
+#          by fuel, annual load-weighted price, system cost, cumulative
+#          builds by tech). scripts/golden_forecast_bands.py seeded that
+#          golden once; regeneration is a deliberate, cited, committed act
+#          (see that script's REGEN_POLICY) — this job never regenerates,
+#          it only checks and fails loudly on a band exit.
 #
-# Both are too heavy for a per-PR gate (CLAUDE.md rule 12: minutes per
+# All three are too heavy for a per-PR gate (CLAUDE.md rule 12: minutes per
 # year-solve) so they run weekly + on manual dispatch, never on push/PR.
 # All solves stay sequential (rule 12: years sequential within an
 # invocation; the four paired-run solves here are also run one-at-a-time
@@ -172,4 +181,34 @@ jobs:
         with:
           name: forecast-invariants-paired
           path: /tmp/forecast_paired/paired_invariant_findings.json
+          retention-days: 14
+
+  golden-band-regression:
+    name: Golden-scenario band regression (plan §2.3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Re-solve the pinned ERCOT reference forecast and check bands
+        env:
+          RUN_GOLDEN_FORECAST: "1"
+        run: |
+          uv run python -m pytest tests/test_golden_forecast_bands.py -m slow \
+            --strict-markers -v --junitxml=/tmp/golden_band_junit.xml
+
+      - name: Upload golden-band results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-band-regression
+          path: /tmp/golden_band_junit.xml
           retention-days: 14
