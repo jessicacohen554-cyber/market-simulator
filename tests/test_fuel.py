@@ -5,6 +5,7 @@ import pytest
 
 from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
+    CAISO_CITYGATE_TRANSPORT_ADDER,
     COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
@@ -1290,6 +1291,72 @@ def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
     flat = np.full((fleet.n_gen, hours), 4.0)
     apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
     np.testing.assert_allclose(flat[gas_rows], 13.0)
+
+
+def test_caiso_hub_basis_daily_uses_real_citygate_shape(tmp_path, monkeypatch):
+    """CAISO's daily overlay takes its within-month shape from the measured
+    California Composite Average citygate daily spot, mean-preserving on the
+    monthly SoCal/PG&E citygate hub.
+
+    Mirrors ``test_nyiso_hub_basis_daily_uses_real_transco_shape``: the flat
+    monthly hub (HH $3 + basis $10 = $13, + the citygate transport adder) is
+    replaced by a daily series whose mean over the month is still exactly $13
+    (annual burn unchanged) while the cold day carrying the high citygate quote
+    is repriced above it. Guards against the (would-be) NEISO-narrative AGT
+    branch ever firing for CAISO — a real bug this daily leg replaces.
+    """
+    basis_csv = tmp_path / "basis.csv"
+    basis_csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\n"
+        "CAISO,2024,1,SoCal/PG&E Citygate,10.0,test\n"
+    )
+    hours = 31 * 24  # January 2024 only
+    monkeypatch.setattr(
+        "market_sim.data.fuel._henry_hub_monthly", lambda path: {(2024, 1): 3.0}
+    )
+    # Synthetic daily CA Composite: flat $2 with one cold-day spike to $8 on day
+    # 15 (true-date keyed: quotes carry their actual calendar day).
+    daily_quotes = {d: 2.0 for d in range(1, 32)}
+    daily_quotes[15] = 8.0
+    monkeypatch.setattr(
+        "market_sim.data.fuel._caiso_citygate_daily_dated",
+        lambda path: {2024: {1: daily_quotes}},
+    )
+    fleet = _sample_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="CAISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
+        gas_hub_basis_overlay=True,
+        gas_hub_basis_daily=True,
+    )
+    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
+
+    gas_rows = np.isin(
+        fleet.fuel_type_idx,
+        (FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]),
+    )
+    gas_jan = fuel_prices[gas_rows]
+    adder = CAISO_CITYGATE_TRANSPORT_ADDER
+    # Mean over the month is exactly the flat monthly hub + transport adder.
+    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.0 + 10.0 + adder, rtol=1e-6)
+    # Daily resolution: not flat, and the cold day (day 15, the citygate spike)
+    # is the most expensive day, repriced above the $13(+adder) monthly mean.
+    daily = gas_jan[0].reshape(31, 24).mean(axis=1)
+    assert daily.std() > 0.5
+    assert daily[14] == daily.max()
+    assert daily[14] > 13.0 + adder
+
+    # No daily citygate quotes -> the month keeps the flat monthly hub level.
+    monkeypatch.setattr(
+        "market_sim.data.fuel._caiso_citygate_daily_dated", lambda path: {}
+    )
+    flat = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
+    np.testing.assert_allclose(flat[gas_rows], 13.0 + adder)
 
 
 def test_hub_basis_overlay_off_by_default_for_other_isos():
