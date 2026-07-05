@@ -58,6 +58,7 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
+| chp-btm-share | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -623,10 +624,10 @@ limits by delivery period. Schema:
 |---|---|---|---|---|
 | `iso` | `string` | `none` | no | ISO/RTO publishing the value (PJM, MISO, NYISO, ISONE, CAISO). |
 | `area` | `string` | `none` | no | Capacity area the value applies to — an LDA (PJM), Local Resource Zone (MISO), locality (NYISO), capacity zone (ISO-NE), local capacity area or intertie/branch group (CAISO), or the system/RTO label for system rows. |
-| `area_type` | `string` | `none` | no | Kind of area: one of lda \| lrz \| locality \| capacity_zone \| local_area \| branch_group \| rto. |
+| `area_type` | `string` | `none` | no | Kind of area: one of lda \| lrz \| locality \| capacity_zone \| local_area \| branch_group \| rto \| zone (a model/transmission-zone aggregate row, e.g. the CAISO SP26 zonal peak_load that denominates the local-capacity area load share). |
 | `delivery_year` | `string` | `none` | no | Delivery/planning/capability/commitment year the value governs, as a label. Planning-year ISOs use "2025/2026" (June/May, May/April, or June/May per ISO); CAISO uses the calendar study year, e.g. "2025". |
 | `season` | `string` | `none` | no | Season the value applies to: annual \| summer \| fall \| winter \| spring. Only MISO (seasonal since PY2023-24) uses the four seasons; all other ISOs use "annual". |
-| `metric` | `string` | `none` | no | Canonical metric: requirement \| local_clearing_requirement \| import_limit \| export_limit \| import_ability \| system_requirement. (requirement is the CETO analog; import_limit is the CETL analog.) |
+| `metric` | `string` | `none` | no | Canonical metric: requirement \| local_clearing_requirement \| import_limit \| export_limit \| import_ability \| system_requirement \| peak_load. (requirement is the CETO analog; import_limit is the CETL analog; peak_load is the area/zone peak-demand forecast published in the same study as the requirement — CAISO LCT "Load+Losses+Pumps" and Table 3.2-1 — pairing with requirement so import_cap = peak_load - requirement sits on one consistent boundary.) |
 | `value_mw` | `float64` | `mw` | yes | The value in MW. Null when the ISO publishes this metric only as a ratio. |
 | `value_pu` | `float64` | `ratio` | yes | Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a 1.148 LRR per-unit-of-peak). Null for pure-MW metrics. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
@@ -737,3 +738,32 @@ schedule. Schema:
 | `unit` | `string` | `none` | no | Unit of value — mmt_co2e or usd_per_tonne. |
 | `source_doc` | `string` | `none` | no | Authoritative CARB document the value is drawn from. |
 | `source_page` | `string` | `none` | yes | Section/table/page reference within source_doc. |
+
+## chp-btm-share
+
+Measured per-plant CHP behind-the-meter host self-supply share (replaces the
+sector-keyed chp_btm_pct default for forecast years). Schema:
+[`schema/chp-btm-share.schema.yaml`](schema/chp-btm-share.schema.yaml).
+
+- **Keys:** `iso`, `plant_id`, `plant_group`
+- **Reconciles:** The committed `plant_emission_rates_v2` (CAMPD CEMS grid-net
+  generation, steam-reporting units only) and `eia923_monthly_generation`
+  (EIA-923 Page-1 net class generation) processed-legacy artifacts — into one
+  `btm_share = (eia923_net_mwh - campd_net_mwh) / eia923_net_mwh` per (iso,
+  plant, CHP class), pooled across every available non-quarantined year.
+  Consumed by `market_sim.data.chp.measured_btm_share_by_plant` for
+  forecast-year CHP must-run sizing only; the backcast `_btm_frame` path is
+  untouched. Never intake 2022/H1-2026 (rule 22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the plant is assigned to (a border-state plant may appear under more than one). |
+| `plant_id` | `int64` | `none` | no | EIA plant code (CAMPD facilityId / EIA-923 Plant Id). |
+| `plant_group` | `string` | `none` | no | Model CHP class — CC_CHP, CT_CHP or ST_CHP. |
+| `eia923_net_mwh` | `float64` | `mwh` | no | Summed EIA-923 Page-1 net generation for this plant/class across every year pooled into the share (gross minus station service; includes host self-consumption). |
+| `campd_net_mwh` | `float64` | `mwh` | no | Summed CAMPD CEMS grid-net generation for this plant/class across the same pooled years, restricted to steam-reporting units (net of parasitic/station-service load via the v2 emission-rate artifact). |
+| `btm_share` | `float64` | `ratio` | no | (eia923_net_mwh - campd_net_mwh) / eia923_net_mwh, clipped to [0, 1]. |
+| `steam_load_klbh_sum` | `float64` | `klb` | no | Summed CAMPD steam load (1000 lb/hr) across the plant/class's steam-reporting units and pooled years — the CHP signature evidencing the plant is a genuine cogen, kept for audit. |
+| `n_years` | `int64` | `none` | no | Count of distinct years pooled into this row's totals. |
+| `first_year` | `int64` | `none` | no | Earliest calendar year contributing to this row. |
+| `last_year` | `int64` | `none` | no | Latest calendar year contributing to this row. |

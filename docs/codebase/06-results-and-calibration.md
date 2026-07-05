@@ -42,10 +42,17 @@ result (reconstruction uses zero-copy numpy buffers).
   `(dispatch · rates[:,None]).sum(axis=0)`.
 - `compute_nox(dispatch, nox_rates)` → same for NOx.
 - `compute_must_run_emissions(...)` reconstructs CHP behind-the-meter generation
-  (removed from the LP before solve). Backcast: `total (EIA-923 per class) − grid
-  dispatched (LP)`. Forecast: `nameplate × pct_mr × 8760 × must_run_cf`. Keying off
-  per-class totals avoids over-attributing one class's generation to another at
-  multi-class plants.
+  (removed from the LP before solve). Backcast (measured-share mode):
+  `total_gen_by_plant (EIA-923 per class) × btm_share_by_plant`. Forecast
+  (measured-CF fallback): `nameplate × btm_share_by_plant × 8760 ×
+  class_cf_by_group`. `btm_share_by_plant` prefers a measured per-plant host
+  share — `chp_btm_pct` (backcast) or the measured `chp-btm-share` clean
+  datatype via `data.chp.measured_btm_share_by_plant` (forecast) — falling
+  back to the bin's own `pct_mr` share when a plant is uncovered;
+  `class_cf_by_group` is `measured_class_cf` (gen-weighted op-hours
+  utilization), falling back to the flat `must_run_cf` (default 0.85). Keying
+  off per-class totals avoids over-attributing one class's generation to
+  another at multi-class plants.
 
 ## 6.4 Plant financials (`plant_financials.py`)
 

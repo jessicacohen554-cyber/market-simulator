@@ -113,13 +113,15 @@ logger = logging.getLogger(__name__)
 
 def _chp_measured_co2_inputs(
     config: ScenarioConfig, iso: str, year: int
-) -> tuple[dict[int, float], dict[str, float]]:
-    """Return ``(measured_rate_by_plant, class_cf_by_group)`` for CHP must-run.
+) -> tuple[dict[int, float], dict[str, float], dict[int, float]]:
+    """Return ``(measured_rate_by_plant, class_cf_by_group, btm_share_by_plant)``.
 
     Resolves the EM-7 (plan §5 R5) consistency inputs so the behind-the-meter
     must-run reconstruction books CO2 at the **same measured rate its grid
-    tranches use** and sizes the forecast fallback with a measured CHP class
-    capacity factor instead of the flat 0.85. The rate source mirrors the grid's
+    tranches use**, sizes the forecast fallback with a measured CHP class
+    capacity factor instead of the flat 0.85, and sizes the forecast host
+    pull-out from a measured per-plant BTM share instead of the sector-keyed
+    default. The rate source mirrors the grid's
     (``fleet.apply_plant_emission_rates*``): the mode-aware v2 artifact when
     ``use_plant_emission_rates_v2`` is on, else the legacy pooled artifact when
     ``use_plant_emission_rates`` is on, else empty (caller keeps the fuel-class
@@ -127,15 +129,29 @@ def _chp_measured_co2_inputs(
     from the v2 steam-load history independently of the rate source (empty until
     the v2 artifact carries ``steam_load_klbh_sum``), so the caller falls back to
     the flat ``must_run_cf`` when it is unavailable.
+
+    ``btm_share_by_plant`` is the measured ``chp-btm-share`` artifact
+    (:func:`market_sim.data.chp.measured_btm_share_by_plant`), resolved only
+    for **forecast** years — a backcast year keeps its existing
+    ``run_calibration_full.py::_btm_frame`` sizing (sector-keyed
+    :func:`market_sim.data.chp.chp_btm_pct`), unchanged by this function.
+    Empty when the mode is backcast, no clean partition exists for the ISO, or
+    the artifact covers no plant, so the caller falls back to the bin's own
+    ``pct_mr`` share for every plant.
     """
     from pathlib import Path
 
     import pandas as pd
 
+    from market_sim.data.chp import measured_btm_share_by_plant
     from market_sim.data.emission_rates import fuel_class, measured_plant_rates
 
     by_plant: dict[int, float] = {}
     class_cf: dict[str, float] = {}
+    btm_share: dict[int, float] = {}
+
+    if str(getattr(config, "mode", "forecast")) == "forecast":
+        btm_share = measured_btm_share_by_plant(iso)
 
     if getattr(config, "use_plant_emission_rates_v2", False):
         path = Path(config.plant_emission_rates_v2_path)
@@ -174,7 +190,7 @@ def _chp_measured_co2_inputs(
             if not v2.empty:
                 class_cf = measured_class_cf(v2)
 
-    return by_plant, class_cf
+    return by_plant, class_cf, btm_share
 
 
 def _get_growth_rate(config: ScenarioConfig, year: int) -> float:
@@ -1203,11 +1219,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # EM-7 (plan §5 R5): book BTM CO2 at the plant's measured v2 rate
             # (matching its grid tranches) and size the fallback with a measured
             # CHP class CF instead of the flat must_run_cf.
-            mr_rates, mr_class_cf = _chp_measured_co2_inputs(config, iso, year)
+            mr_rates, mr_class_cf, mr_btm_share = _chp_measured_co2_inputs(
+                config, iso, year
+            )
             mr = compute_must_run_emissions(
                 campd_bins,
                 year,
                 config.must_run_cf,
+                btm_share_by_plant=mr_btm_share,
                 measured_rate_by_plant=mr_rates,
                 class_cf_by_group=mr_class_cf,
             )
