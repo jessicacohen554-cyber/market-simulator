@@ -410,6 +410,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
 | `scenario.eac_price_solar` | 0.0 | 1 | $/MWh |  | auto-generated, needs-citation |
 | `scenario.eac_price_wind` | 0.0 | 1 | $/MWh, onshore wind REC |  | auto-generated, needs-citation |
+| `scenario.entry_lookahead_reprice` | False | 1 | Model design lever, zero fitted parameters (capacity-economics plan… | 2026-07 |  |
+| `scenario.entry_price_signal_alpha` | 1.0 | 2 | Model design lever, zero fitted parameters (capacity-economics plan… | 2026-07 |  |
 | `scenario.ercot_gas_contract_haircut` | False | 3 | Tier 3 (calibration) — MEASURED re-grounding of the West/Waha floor… |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_delivered_floor_basis` | None | 3 | Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis… | 2024 | auto-generated |
 | `scenario.ercot_west_gas_collapse_freq` | None | 3 | Optional override of the measured Waha negative-price-day frequency… | 2024 | auto-generated |
