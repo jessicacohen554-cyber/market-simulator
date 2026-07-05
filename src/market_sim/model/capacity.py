@@ -407,6 +407,7 @@ def apply_economic_retirements(
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
     thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
+    event_sink: dict | None = None,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -471,6 +472,12 @@ def apply_economic_retirements(
             REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal —
             exactly one mechanism prices thermal AS. ``None`` (the default,
             flag off) keeps the exogenous flat rate.
+        event_sink: Optional dict populated in place with the retirement
+            attribution the evolution ledger needs (CX-3): ``"retired"`` (the
+            units actually retired) and ``"floor_retained"`` (units the
+            economic screen wanted out but the reliability floor kept online).
+            Each entry is ``{"unit_id","fuel","mw"}``. ``None`` records
+            nothing. Does not affect the retirement decision.
 
     Returns:
         Tuple ``(survivors, loss_years)`` -- the fleet with retired units
@@ -629,6 +636,22 @@ def apply_economic_retirements(
     survivors = [g for g in fleet if g.unit_id not in retired]
     for uid in retired:
         loss_years.pop(uid, None)
+
+    # Ledger attribution: the units actually retired, and the units the
+    # economic screen flagged (``eligible``) but the reliability floor kept
+    # online (CX-3). ``eligible`` minus ``retired`` is exactly the floor set.
+    if event_sink is not None:
+        event_sink["retired"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in eligible
+            if g.unit_id in retired
+        ]
+        event_sink["floor_retained"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in eligible
+            if g.unit_id not in retired
+        ]
+
     return survivors, loss_years
 
 
@@ -1626,6 +1649,7 @@ def evolve_fleet(
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
     eac_price_ccs: float = 0.0,
+    events: dict | None = None,
 ) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]]:
     """Advance the fleet by one simulation year.
 
@@ -1677,6 +1701,13 @@ def evolve_fleet(
             CCS retrofit screen.
         eac_price_ccs: EAC price for CCS resources in $/MWh, passed to the
             CCS retrofit screen as additional per-MWh revenue.
+        events: Optional dict (see
+            :func:`market_sim.results.evolution_ledger.new_events`) populated
+            in place with the per-year capacity events — retirements
+            (known/economic), reliability-floor-retained units, thermal
+            additions (planned/economic/reserve_backstop), CCS retrofits,
+            renewable additions, and the fleet-by-fuel totals before/after.
+            ``None`` records nothing and leaves the solve path byte-identical.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log)``
@@ -1689,6 +1720,15 @@ def evolve_fleet(
     """
     loss_tracker = dict(loss_tracker)
     renewable_additions: dict[str, dict[str, float]] = {}
+
+    # Ledger bookkeeping: snapshot the entering fleet so each mechanism's
+    # additions/retirements can be attributed by a before/after diff. No-op
+    # (and zero cost beyond a dict build) when ``events`` is None.
+    _rec = events is not None
+    if _rec:
+        from market_sim.results.evolution_ledger import fleet_totals_by_fuel
+
+        events["fleet_by_fuel_before"] = fleet_totals_by_fuel(fleet)
 
     fleet_arrays = _prior_attr(prior_results, "fleet_arrays")
     dispatch_result = _prior_attr(prior_results, "dispatch_result")
@@ -1712,11 +1752,24 @@ def evolve_fleet(
     # 1. Known retirements. Fossil units are exempt by default (their phaseout is
     #    economic, step 2); non-fossil units retire on their announced EIA-860
     #    date. config.forecast_fossil_retirement_economic toggles this.
+    _pre_known = {g.unit_id: g for g in fleet} if _rec else None
     fleet = apply_known_retirements(
         fleet,
         year,
         fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
     )
+    if _rec:
+        _survived = {g.unit_id for g in fleet}
+        events["retirements"].extend(
+            {
+                "unit_id": g.unit_id,
+                "fuel": g.fuel_type,
+                "mw": float(g.pmax_mw),
+                "reason": "known",
+            }
+            for uid, g in _pre_known.items()
+            if uid not in _survived
+        )
 
     # Locational deliverability headroom per zone (empty no-op unless
     # capacity_deliverability_limits is on and the ISO has clean data). Prior-
@@ -1746,6 +1799,7 @@ def evolve_fleet(
 
     # 2. Economic retirements (needs the prior-year dispatch).
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
+        _econ_sink: dict = {} if _rec else None
         fleet, loss_tracker = apply_economic_retirements(
             fleet,
             fleet_arrays,
@@ -1759,13 +1813,36 @@ def evolve_fleet(
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
             thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
+            event_sink=_econ_sink,
         )
+        if _rec:
+            events["retirements"].extend(
+                {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
+            )
+            events["floor_retained"].extend(_econ_sink.get("floor_retained", []))
 
     # 3. Known additions: planned units coming online this year.
-    fleet = fleet + [g for g in planned if g.online_year == year]
+    _planned_now = [g for g in planned if g.online_year == year]
+    fleet = fleet + _planned_now
+    if _rec:
+        events["thermal_additions"].extend(
+            {
+                "unit_id": g.unit_id,
+                "fuel": g.fuel_type,
+                "mw": float(g.pmax_mw),
+                "zone": g.zone,
+                "source": "planned",
+                # Planned units come from the EIA-860 pipeline; their unit_id
+                # encodes the source plant (``planned_<plant>_<gen>``), so it is
+                # the traceable id when the plant_id field is unset.
+                "eia860_id": getattr(g, "plant_id", None) or g.unit_id,
+            }
+            for g in _planned_now
+        )
 
     # 4. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
     # before new entry so retrofits displace some new-build CCS demand.
+    _pre_ccs = {g.unit_id: g.fuel_type for g in fleet} if _rec else None
     fleet, retrofit_log = apply_ccs_retrofit(
         fleet,
         prices,
@@ -1777,9 +1854,24 @@ def evolve_fleet(
         eac_price_ccs=eac_price_ccs,
         cumulative=cumulative,
     )
+    if _rec:
+        # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
+        # unit_id, not a new column. Detect by comparing fuel_type before/after.
+        _post_ccs = {g.unit_id: g for g in fleet}
+        events["ccs_retrofits"].extend(
+            {
+                "unit_id": uid,
+                "mw": float(_post_ccs[uid].pmax_mw),
+                "from_fuel": _pre_ccs[uid],
+                "to_fuel": _post_ccs[uid].fuel_type,
+            }
+            for uid in _pre_ccs
+            if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]
+        )
 
     # 5. Economic new entry (needs a price signal). Clean technologies see
     # the prior year's RPS shadow price as additional expected revenue.
+    _pre_entry_ids = {g.unit_id for g in fleet} if _rec else None
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
             fleet,
@@ -1796,6 +1888,20 @@ def evolve_fleet(
             thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
+    if _rec:
+        _new_ids = {g.unit_id for g in fleet} - _pre_entry_ids
+        events["thermal_additions"].extend(
+            {
+                "unit_id": g.unit_id,
+                "fuel": g.fuel_type,
+                "mw": float(g.pmax_mw),
+                "zone": g.zone,
+                "source": "economic",
+                "eia860_id": None,
+            }
+            for g in fleet
+            if g.unit_id in _new_ids
+        )
 
     # 6. Reserve-margin adequacy backstop: force-build firm capacity if the
     # economic screen left the system below its planning reserve margin
@@ -1811,9 +1917,23 @@ def evolve_fleet(
         firm_mw = accredited_firm_capacity_mw(
             fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw
         )
+        _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         fleet, adequacy_mw = apply_reserve_margin_build(
             fleet, firm_mw, peak_demand, year, config, config.iso
         )
+        if _rec and adequacy_mw > 0.0:
+            events["thermal_additions"].extend(
+                {
+                    "unit_id": g.unit_id,
+                    "fuel": g.fuel_type,
+                    "mw": float(g.pmax_mw),
+                    "zone": g.zone,
+                    "source": "reserve_backstop",
+                    "eia860_id": None,
+                }
+                for g in fleet
+                if g.unit_id not in _pre_backstop_ids
+            )
         if adequacy_mw > 0.0:
             # Same per-ISO resolution as apply_reserve_margin_build so the
             # logged margin reflects the value actually used.
@@ -1829,6 +1949,19 @@ def evolve_fleet(
                 peak_demand,
                 1.0 + resolved_margin,
             )
+
+    if _rec:
+        # Fleet totals BEFORE aggregation: aggregate_fleet rebins into
+        # representative units but conserves MW per fuel, so the capacity
+        # accounting is identical either way; record the physical fleet.
+        events["fleet_by_fuel_after"] = fleet_totals_by_fuel(fleet)
+        # Renewable pool builds (flattened from the {zone: {tech: mw}} dict).
+        events["renewable_additions"] = [
+            {"zone": zone, "tech": tech, "mw": float(mw)}
+            for zone, techs in renewable_additions.items()
+            for tech, mw in techs.items()
+            if mw
+        ]
 
     # Retirements, retrofits and new entry have reshaped the fleet;
     # re-collapse it into efficiency-bin representatives so the next LP solve
