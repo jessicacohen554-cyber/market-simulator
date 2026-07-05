@@ -355,12 +355,11 @@ uncovered years (a slowly-varying station-service fraction — the physically ri
 prior), so the 2018–2021 rates are well-founded; refining them needs the EIA-923
 intake (recipe in `data/raw/campd-unit-level/README.md`).
 
-**Gate decision (D3).** The 7-year held-in LOYO re-run for ERCOT + PJM is run once
-the 2019–2021 intake completes; until then the estimator ships as pure `a_gw`
-(`CO2_RATE_CONDITIONING_ENABLED = False`), per the §9 escape hatch. The gate opens
-only if the envelope-conditioner demonstrably beats `a_gw` on that held-in LOYO;
-the constants re-derive only on a CAMPD data update (rule 23), never on a keeper's
-CO2 fit.
+**Gate decision (D3) — RESOLVED 2026-07-05, see §9.5.** The 7-year held-in LOYO
+ran for ERCOT + PJM once the intake completed: the conditioning gate stays
+**CLOSED** (pure `a_gw` base) and the trailing window is set to **2 years** from
+the forward-chained sweep. Full tables and reasoning in §9.5; the constants
+re-derive only on a CAMPD data update (rule 23), never on a keeper's CO2 fit.
 
 ## 9.2 Wave-3 results (2026-07-05, branch `claude/chp-btm-share-measured-oo8dye`)
 
@@ -471,6 +470,65 @@ in `src/`, `compute_nox` still has no production caller, and `export_scenario_js
 payload the interactive dashboard actually reads) still exports CO2 only
 (`emissions_mt`). EM-1 is updated to **PARTIALLY RESOLVED** in the audit doc to reflect
 this, not closed.
+
+## 9.5 7-year LOYO gate + window decision (2026-07-05, wave-3 E1 close-out)
+
+The 2018–2021 intake completed (136/136 state-years; zero fetch failures) and the
+v2 artifact re-derived over all six ISOs × 7 years (29,435 unit-year rows, 1,141
+plants; 2018–2021 net conversion on each plant's pooled parasitic factor — the
+EIA-923 gap and fallback are documented in §9.1 and the campd README). The
+committed harness gained three rule-23 sweep capabilities (`--forward-chain`,
+`--window-sweep`, `--gate-sweep`); the constants below were chosen ONCE from it.
+
+**Symmetric LOYO, pooled gen-weighted wMAPE % (ERCOT, keeper sim-op; 889
+plant-years / 140 plants):**
+
+| a_gw | a_gw_w2 | a_gw_w3 | a_gw_w4 | a_gw_w5 | a_rw | a_sm | b_nn_oracle | b_nn_sim | b_gated_sim g0.1/0.25/0.5/1 | b_reg | frozen (leaky) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **2.89** | 3.35 | 3.17 | 2.96 | 2.91 | 3.09 | 3.15 | 2.84 | 2.96 | 2.93 / 2.93 / 2.89 / 2.89 | 2.94 | 2.43 |
+
+**Forward-chained (targets predicted from strictly-prior years — the production
+direction), per-target wMAPE %:**
+
+| Target | ERCOT a_gw | ERCOT a_gw_w2 | PJM a_gw | PJM a_gw_w2 |
+|---|---|---|---|---|
+| 2021 | 3.22 | **3.16** | 3.07 | **2.67** |
+| 2023 | 2.86 | **2.45** | 5.27 | **4.20** |
+| 2024 | 2.68 | **2.24** | 4.67 | **3.78** |
+| 2025 | 2.74 | **2.50** | 4.34 | **2.75** |
+
+**Decisions (constants set once, frozen against residuals — rule 23):**
+
+1. **Conditioning gate stays CLOSED** (`CO2_RATE_CONDITIONING_ENABLED = False`).
+   The envelope-gated **sim**-conditioned estimator never beats plain `a_gw` on
+   ERCOT — the only ISO whose keeper persists simulated operation — at any swept
+   gate (2.89–2.93 vs 2.89). PJM's 0.03 pp gated edge (3.48 vs 3.51) is
+   **oracle**-operation (no PJM bundle persists `plant_hourly_fit`, so its "sim"
+   column degrades to actual-op) and is not a demonstrable sim-conditioned win.
+   Per the §8/§9 escape hatch the estimator ships as the pure trailing
+   gen-weighted average. The oracle ceiling (2.84 vs 2.89 symmetric) bounds what
+   better sim-op persistence could recover — small.
+2. **Trailing window set to 2 years** (`CO2_RATE_TRAILING_WINDOW_YEARS: 0 → 2`).
+   This is the §2.2-mandated 7-year re-examination. In the forward-chained
+   direction — the only direction whose "trailing" semantics match production
+   use — w2 wins **8/8** per-target wMAPE comparisons across ERCOT+PJM (pooled
+   ERCOT 2.59 vs 2.88; PJM 3.35 vs 4.34), monotone in window length
+   (w2<w3<w4<w5<all), and improves fleet-tons bias on 7/8 targets (e.g. PJM 2025
+   1.21 % vs 2.07 %): measured plant rates drift with age/retrofits, so recent
+   years are more predictive. The symmetric LOYO prefers all-years only because
+   a "trailing" window for an early target selects the years *furthest* from it
+   — a backward-prediction artifact, not evidence against the window.
+3. `CO2_RATE_ENVELOPE_GATE_L1` stays 0.5 (documented sweep value; inert while
+   the gate is closed). The 2018–2021 history remains fully load-bearing for the
+   drift measurement, the class-median fallback distributions, the NOx/SO2
+   rates, and any future gate re-examination — the w2 base simply weights the
+   most recent two years.
+
+**PJM sim-op caveat (honest limitation):** no PJM calibration bundle on disk
+persists `plant_hourly_fit.parquet`, so PJM contributed history-based and
+oracle-op evidence only; the sim-conditioning verdict rests on ERCOT. If a
+future PJM keeper persists sim-op, the gate re-examination may be re-run — as a
+CAMPD/bundle *data* update under rule 23, never against a keeper's CO2 fit.
 
 ## 8. Implementation prompt
 
