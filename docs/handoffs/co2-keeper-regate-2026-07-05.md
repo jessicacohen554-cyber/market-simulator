@@ -135,6 +135,52 @@ de-leaked scalars (rule #26); `nyiso 49` is diagnostic-only.
 
 ---
 
+## Demand-repair re-gate (2026-07-05, PR #1426 merge 2a8b222) — no keeper moves
+
+Separate re-gate under rule #14: PR #1426 repaired 15 corrupted `(iso, year)`
+series in `data/raw/eia-930/eia_demand_profiles.parquet` (zero-sentinel runs +
+spikes) and wired a repaired `demand-profile` clean datatype into
+`eia_loader.load_demand`. The keepers predate the merge, so each was re-checked
+against the accurate data. Full write-up + attribution table: `docs/calibration-log.md`
+(2026-07-05 "Backcast keeper re-gate under the repaired demand data").
+
+**Affected-keeper matrix — only PJM reads the corrupted file for scored years.**
+Each ISO with a dedicated per-BA `<BA> hourly` extract reads that extract for
+2023–2025 and never touches the legacy `eia_demand_profiles` file; **PJM has no
+per-BA demand extract**, so it alone reads the legacy file (all years).
+
+| ISO (keeper) | scored-year demand source | corrupt at solve? |
+|---|---|---|
+| ERCOT (ercot-32) | `ERCO hourly` dedicated | No |
+| CAISO (caiso-51) | `CISO hourly` dedicated | No (2023 legacy flagged, but read via extract) |
+| MISO (miso-41) | `MISO hourly` dedicated | No (2024 legacy flagged, but read via extract) |
+| NYISO (nyiso-41) | `NYIS hourly` dedicated | No (2024/25 legacy flagged, but read via extract) — untouched, already STALE-VS-HEAD |
+| NEISO (neiso-48) | `ISNE hourly` dedicated | No (2024 legacy flagged, but read via extract) |
+| **PJM (pjm-77)** | **legacy `eia_demand_profiles` (no per-BA extract)** | **YES — 2023 & 2024** (23 h / 22 h zero-runs) |
+
+**PJM re-gate result — keeper stays, verified demand-robust.** Two byte-faithful
+`replay_keeper.py` twins at HEAD (all years): Twin A `pjm-78` (repaired demand) +
+Twin B on-disk control (corrupted demand, isolated `MARKET_SIM_DATA_ROOT`).
+- `B − keeper = EXACTLY 0.000` on every value → pjm-77 is **fully HEAD-reproducible**
+  (no offer/code confound, unlike NYISO). This is the clean-D-2 half that lets `A − B`
+  isolate the demand repair.
+- `A − B` (demand repair, isolated) = the entire movement: +~0.5 TWh/yr gas+coal and
+  +0.26–0.34 Mt CO2 on 2023/2024 only, **0.000 on 2025** (clean control), mean LMP
+  ≤0.03 $/MWh. **Every scored criterion verdict is unchanged** (C6 PASS→UNATTESTED on
+  the twins is a missing-attestation replay artifact, not a gate move).
+- **Decision:** keep `2026-07-05-pjm-77-ct-relfloor` (rule #14 — accurate data stays,
+  but here it is *immaterial*, not adverse, so no root-cause branch fires). Do NOT swap
+  to `pjm-78` (identical verdict; a swap would drop the keeper's attestation +
+  zero-forcing ablation twin for nothing). `keepers.json` unchanged. Nothing tuned.
+
+**Per-ISO outcome:** ERCOT/CAISO/MISO/NEISO — no re-gate needed (dedicated extracts,
+never read the corrupted file). NYISO — untouched (dedicated extract + already
+STALE-VS-HEAD). PJM — re-gated, keeper stays, verified demand-robust. Holdouts
+2022 / H1-2026 stay quarantined (rule #22; corrupted 2022 rows repaired as *data*
+only, unsolved/unscored).
+
+---
+
 ## Peaker-pricing structural fix built (2026-07-05, follow-up) — delivered-fuel basis lands, keeper still stale
 
 The peaker-pricing fix this handoff scoped is now built and gated. Full write-up:
