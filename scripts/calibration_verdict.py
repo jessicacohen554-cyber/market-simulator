@@ -90,6 +90,31 @@ FUELMIX_SHARE_PP = 3.0  # +/-3.0 share percentage points of total generation
 # system-total used by the share/volume bands (matches totalGen in the run
 # explorer, docs/codebase-site/backcast-runs.html).
 NONFOSSIL_FUELS = ("nuclear", "wind", "solar")
+
+# D-10 free-class rescore (audit §7 D-10 / §4 L-rows): the per-ISO set of C1
+# classes whose actual is a MEASURED REALIZATION the model is pinned to — so a C1
+# pass there scores plumbing, not skill. Declared from the audit L-rows, not
+# inferred (mirrors the D-5 overlay registry pattern):
+#   L1 wind/solar (delivered-CF upper bound), L3 nuclear (measured monthly CF),
+#   L6 hydro (monthly budgets) + MISO Manitoba firm imports, L4 CHP (measured
+#   export floor), L2 NYISO net imports (measured reconciliation band).
+# C1 only scores the fossil gas/coal families, so in practice the free-class
+# rescore drops the CHP subclasses (CC_CHP / ST_CHP; CT_CHP is already
+# C1-excluded); wind/solar/nuclear/hydro/imports are declared for provenance and
+# excluded harmlessly (they are never C1 rows). No gate — the number itself is
+# the deliverable (the audit's "pinned-class gate inflation" made visible).
+_PINNED_CLASSES_COMMON = frozenset(
+    {"wind", "solar", "nuclear", "hydro", "CC_CHP", "CT_CHP", "ST_CHP"}
+)
+PINNED_CLASSES_BY_ISO: dict[str, frozenset[str]] = {
+    "ERCOT": _PINNED_CLASSES_COMMON,
+    "CAISO": _PINNED_CLASSES_COMMON,
+    "PJM": _PINNED_CLASSES_COMMON,
+    "MISO": _PINNED_CLASSES_COMMON | {"imports"},  # L6 Manitoba firm-hydro block
+    "NYISO": _PINNED_CLASSES_COMMON | {"imports"},  # L2 net-interchange band
+    "NEISO": _PINNED_CLASSES_COMMON,
+}
+
 SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered
 SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # absolute band governs it, so the ±2.5% system-volume gate is N/A (e.g. NEISO
@@ -1215,6 +1240,48 @@ def _agg_status(records: list[dict]) -> str:
     return SKIPPED
 
 
+def free_class_score(iso: str, records: list[dict]) -> dict:
+    """D-10 — recompute the C1 pass rate with the pinned classes excluded.
+
+    ``records`` are the already-scored per-criterion records; this reads the C1
+    (``fuelmix``) rows only. Returns both the all-class C1 pass rate and the
+    "free-class" rate that excludes the ISO's pinned classes
+    (:data:`PINNED_CLASSES_BY_ISO`) — the classes the audit L-rows show are
+    pinned to a measured realization (wind/solar/nuclear/hydro/CHP/imports), so a
+    pass there is plumbing. Pass = clean in-tolerance (``PASS``); the denominator
+    is the gated (scored, non-``SKIPPED``) C1 rows. No gate — the number is the
+    deliverable ("pinned-class gate inflation" made visible; audit §7 D-10).
+    """
+    pinned = PINNED_CLASSES_BY_ISO.get(iso.upper(), _PINNED_CLASSES_COMMON)
+    scored = [
+        r
+        for r in records
+        if r["criterion"] == "fuelmix" and r["status"] in (PASS, FAIL, CAVEAT)
+    ]
+    free = [r for r in scored if r.get("key") not in pinned]
+
+    def _rate(rows: list[dict]) -> dict:
+        return {
+            "pass": sum(1 for r in rows if r["status"] == PASS),
+            "total": len(rows),
+        }
+
+    all_rate, free_rate = _rate(scored), _rate(free)
+    return {
+        "iso": iso,
+        "pinned_classes": sorted(pinned),
+        "excluded_from_free": sorted(
+            {r.get("key") for r in scored if r.get("key") in pinned}
+        ),
+        "all": all_rate,
+        "free": free_rate,
+        "headline": (
+            f"C1 all {all_rate['pass']}/{all_rate['total']} · "
+            f"free {free_rate['pass']}/{free_rate['total']}"
+        ),
+    }
+
+
 def determine(run_id: str) -> dict:
     """Score one run from its committed artifacts (rubric §2)."""
     return determine_from_artifacts(run_id, load_artifacts(run_id))
@@ -1352,6 +1419,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         "determination": determination,
         "reasons": reasons,
         "criteria": per_criterion,
+        "free_class_score": free_class_score(iso, records),
         "caveats": {
             "hard": [c["label"] for c in hard_caveats],
             "soft": [c["label"] for c in soft_caveats],
@@ -1395,6 +1463,13 @@ def render_text(v: dict) -> str:
             if r.get("ledger_reason"):
                 lines.append(f"          ledger: {r['ledger_reason']}")
     lines.append("-" * 72)
+    fcs = v.get("free_class_score")
+    if fcs:
+        lines.append(f"D-10 free-class C1: {fcs['headline']}")
+        if fcs.get("excluded_from_free"):
+            lines.append(
+                "  pinned (excluded from free): " + ", ".join(fcs["excluded_from_free"])
+            )
     if v["reasons"]:
         lines.append("determination basis:")
         for rsn in v["reasons"]:

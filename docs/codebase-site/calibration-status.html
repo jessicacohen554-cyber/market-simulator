@@ -273,6 +273,25 @@
         </p>`;
       }
 
+      // D-10 free-class C1 rescore — REPORTED, never gating (audit §7 D-10).
+      // The all-class vs free-class C1 pass rate: "free" excludes the classes
+      // pinned to a measured realization (wind/solar/nuclear/hydro/CHP/imports),
+      // exposing pinned-class gate inflation.
+      if (keeper.free_class_score) {
+        const f = keeper.free_class_score;
+        const excl = (f.excluded_from_free && f.excluded_from_free.length)
+          ? ` <span style="font-size:0.8rem;">(pinned excluded: ${f.excluded_from_free.map(esc).join(', ')})</span>`
+          : '';
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">D-10 REPORTED</span>
+            Free-class C1: <strong>${esc(f.headline)}</strong>${excl}
+            — non-gating; "free" drops classes pinned to a measured realization.
+          </p>
+        </div>`;
+      }
+
       // D-7 statistical-mode fail-count gap — REPORTED, never gating
       // (audit §7 D-7; data: frontend/data/backcast/statmode_d7.json).
       if (keeper.statmode_d7) {

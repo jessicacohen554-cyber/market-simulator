@@ -74,6 +74,31 @@ _ISSUE_C8_CORE_STEPS = (
 _ISSUE_COMMITTED_BELOW_085 = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1302"
 )
+# Root-cause issues opened during the 2026-07 scalar-remediation B-NYI-1 batch
+# (NYISO de-leak C-13 + LI floor C-17). Same E8 contract: the residual entries
+# these are attached to keep citing an open issue.
+_ISSUE_NYISO_C3A_CC_DELEAK = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+)
+_ISSUE_NYISO_LI_LCR_MISMATCH = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
+)
+_ISSUE_C18_GAS_AVAILABILITY_DEAD_CODE = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+)
+
+# scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): NERC's public GADS
+# Generating Unit Statistical Brochure 3 (2019-2023) is NERC-wide, with no
+# per-ISO/region EFORd breakdown — see
+# data/raw/reference/nerc-gads-eford-2019-2023/. "FOSSIL Gas Primary, All
+# Sizes" (EFORd=13.44%, availability 1-0.1344=0.8656) is the closest published
+# match to this constant's single "gas-fired generation availability" concept
+# and now applies uniformly to every ISO (constants.py GAS_AVAILABILITY_FACTOR).
+_GAS_AF_SOURCE = (
+    "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 "
+    "(NERC-wide — no per-ISO breakdown exists), 'FOSSIL Gas Primary, All "
+    "Sizes', EFORd=13.44%"
+)
 
 # Committed-tranche multiplier floor (audit §2 flag; plan §2.1 exception): a
 # group whose committed HR multiplier sits below this without a written
@@ -143,7 +168,15 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 value={g: sorted(v) for g, v in curves.items()},
                 source="per-group HR-band multipliers — the rule-#1-sanctioned "
                 "offer-curve tuning surface (audit C-8/C-11/C-13)",
-                root_cause=_HOLDOUT_ROOT_CAUSE,
+                root_cause=_HOLDOUT_ROOT_CAUSE
+                + (
+                    " · NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked "
+                    "1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the "
+                    "exposed C3a hole is missing NYISO reserve/scarcity price "
+                    "formation, not a CC markup — open: " + _ISSUE_NYISO_C3A_CC_DELEAK
+                    if iso == "NYISO"
+                    else ""
+                ),
             )
         )
         below_floor = {
@@ -296,26 +329,21 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     """Audit §3 C-table / W1d-marker entries, keyed on engaging flags."""
     out = []
     gas_af = {
-        "ERCOT": (
-            "residual",
-            0.85,
-            "nudged from the NERC GADS 2019-2023 fleet "
-            "baseline 0.83 during calibration (audit C-18; W1d marker)",
-        ),
-        "CAISO": (
-            "residual",
-            0.89,
-            "nudged from the NERC GADS 2019-2023 fleet "
-            "baseline 0.88 during calibration (audit C-18; W1d marker)",
-        ),
-        "PJM": (
-            "published",
-            0.87,
-            "NERC GADS 2019-2023 (audit C-18: 'TODO "
-            "verify' — unverified transcription)",
-        ),
-        "NYISO": ("published", 0.86, "NERC GADS 2019-2023 (unverified)"),
-        "NEISO": ("published", 0.85, "NERC GADS 2019-2023 (unverified)"),
+        # scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified
+        # against the actual NERC GADS Generating Unit Statistical Brochure 3
+        # (2019-2023, "Units Reporting Events") — see
+        # data/raw/reference/nerc-gads-eford-2019-2023/. The brochure is
+        # NERC-wide (no ISO/region breakdown exists in NERC's public GADS
+        # product), so the same verified value ("FOSSIL Gas Primary, All
+        # Sizes", EFORd=13.44% -> availability 0.8656) applies to every ISO;
+        # the old per-ISO nudge-trail/TODO values are gone (rule 26). All
+        # five are now genuinely "published" — no residual/nudge component
+        # remains.
+        "ERCOT": ("published", 0.866, _GAS_AF_SOURCE),
+        "CAISO": ("published", 0.866, _GAS_AF_SOURCE),
+        "PJM": ("published", 0.866, _GAS_AF_SOURCE),
+        "NYISO": ("published", 0.866, _GAS_AF_SOURCE),
+        "NEISO": ("published", 0.866, _GAS_AF_SOURCE),
     }
     if iso in gas_af:
         ident, val, src = gas_af[iso]
@@ -328,12 +356,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 value=val,
                 source=src,
                 root_cause=(
-                    "audit C-18: re-ground on the GADS baseline or a frozen "
-                    "derive from CAMPD availability; the nudge is compensating "
-                    "for an unmodeled availability effect"
-                )
-                if ident == "residual"
-                else "",
+                    "open R2-vs-R5 disposition (not a residual on this "
+                    "value): GAS_AVAILABILITY_FACTOR is not read anywhere in "
+                    "src/market_sim (dead/orphaned, confirmed by grep "
+                    "2026-07-05), so this verified value has zero materiality "
+                    "today. Either wire it in with a fleet-mix-weighted "
+                    "reconciliation against the ISO's own CT/CC/ST capacity "
+                    "shares (replacing, never stacking with, the existing "
+                    "per-unit EFORD-derived availability) or delete it as "
+                    "dead code (rule 26) — tracked in "
+                    f"{_ISSUE_C18_GAS_AVAILABILITY_DEAD_CODE}"
+                ),
             )
         )
     if sc.get("cc_peaking_per_plant"):
@@ -422,12 +455,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "measured-physical",
                 iso,
                 source="temperature/net-load day-gated commitment floors, "
-                "CAMPD-derived (frozen derive script)",
-                root_cause="D-8: coefficient levels mostly stable but several "
-                "limbs drift >11% and three flip Spearman-rho sign "
-                "out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC — "
-                "docs/out-of-sample-results-2026-07.md §2B); re-derive only on "
-                "source-data updates (rule 23)",
+                "CAMPD-derived (frozen derive script); the three Spearman-rho "
+                "sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+                root_cause="D-8 §2B: the three sign-flip limbs (PJM ComEd/"
+                "CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were "
+                "UNIDENTIFIED out-of-training and are now permanently disabled "
+                "under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining "
+                "R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston "
+                "CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI "
+                "rho-decay limbs — kept enabled with this caveat; re-derive "
+                "trigger is the 2026 CAMPD publication (a source-data change), "
+                "never a residual (rule 23)",
             )
         )
     if sc.get("nyiso_local_selfsupply"):
@@ -441,8 +479,16 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="LI self-supply floor set 'a touch below' the 2023 "
                 "realized share ~0.48 (audit C-17; W1d marker) — the LMIC rule "
                 "is market design but the fraction is outcome-anchored",
-                root_cause="audit C-17: re-ground on the published LMIC "
-                "requirement itself, not the realized share",
+                root_cause="audit C-17 / B-NYI-1: the published Zone-K LCR is "
+                "now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, "
+                "value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, "
+                "while this is an all-hours energy self-supply fraction — a "
+                "rule-14 boundary mismatch: substituting the LCR% (~1.05) or the "
+                "TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI "
+                "generation, and any scalar reproducing ~0.45 requires a "
+                "load-duration haircut tuned to the realized share (rule-12 pin). "
+                "The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar "
+                "re-ground; 0.45 left in place — open: " + _ISSUE_NYISO_LI_LCR_MISMATCH,
             )
         )
     if iso in ("NYISO", "NEISO", "PJM", "MISO", "CAISO"):
