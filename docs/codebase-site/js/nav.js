@@ -44,6 +44,12 @@
       ],
     },
     {
+      label: 'Forecast',
+      dropdown: [
+        { label: 'Forecast Bands', href: 'forecast-bands.html', num: '&#8767;' },
+      ],
+    },
+    {
       label: 'Reference',
       href: 'config-reference.html',
     },
