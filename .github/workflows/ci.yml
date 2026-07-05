@@ -28,6 +28,15 @@
 # the reason and is strict (removing the underlying bug without removing the
 # marker fails the build, so the marker can't rot). See the commit that added
 # this workflow for the full list.
+#
+# tests/test_forecast_invariants.py (W2-P5 forecast-invariant checker,
+# docs/handoffs/forecast-validation-program-2026-07.md §2.4/§6): its 34 fast
+# invariant-logic cases carry no `slow`/`integration` marker, so the fast
+# tier below already collects and runs them — no separate step needed. Its
+# one `@pytest.mark.slow` real-LP e2e case (`RUN_SLOW_FORECAST=1`, ~205s) and
+# the P1-P3 paired-run invariants (each needs two real multi-minute forecast
+# solves) are deliberately NOT here; see the scheduled
+# .github/workflows/forecast-invariants.yml instead.
 name: CI
 
 on:
