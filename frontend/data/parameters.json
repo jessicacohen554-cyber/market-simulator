@@ -14949,6 +14949,22 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_storage_as_duration_gate",
+      "display_name": "Ercot Storage As Duration Gate",
+      "value": false,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 1,
+      "source": "ERCOT endogenous storage AS duration gate: adds the published per-product ESR State-of-Charge durations (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h; ERCOT_AS_PRODUCT_DURATION_H) as an LP-linear gate sum_c dur_c*RS[c,z] <= sum SOC, so a short-duration battery cannot sell long-duration AS on its full power.",
+      "source_date": "2022-12",
+      "page_or_table": "ERCOT Nodal Protocols §3.17.3 (ESR State of Charge Requirements) & §8.1 (AS definitions); ESR SOC methodology (BPM Dec 2022; ERCOT Ancillary Services Study Final White Paper, Sept 2024)",
+      "url": "https://www.ercot.com/mktrules/nprotocols/library",
+      "notes": "Published SOC deployment durations, not fitted. Requires ercot_storage_as_endogenous. See docs/handoffs/ercot-storage-as-duration-gate-2026-07.md.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "scenario.ercot_storage_as_endogenous",
       "display_name": "Ercot Storage As Endogenous",
       "value": false,

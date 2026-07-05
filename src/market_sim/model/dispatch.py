@@ -60,6 +60,16 @@ class VariableLayout:
     n_reserve: int = 0
     n_reserve_classes: int = 1
     n_ordc_steps: int = 0
+    # Explicit per-zone storage-reserve columns RS[c, z, t] for the ERCOT
+    # endogenous-storage DURATION GATE (config.ercot_storage_as_duration_gate).
+    # When active, storage's upward AS is a distinct decision variable per
+    # reserve class c and zone z (``n_storage_reserve == n_reserve_classes *
+    # n_zones``, class-major at ``_storage_reserve_off + c*n_zones + z``) instead
+    # of being pooled into the thermal shared-headroom rows, so the LP-linear
+    # duration gate ``Σ_c dur_c·RS[c,z] ≤ Σ_{s∈z} SOC[s]`` can bound it by stored
+    # energy. Appended AFTER the ORDC block so every existing offset is
+    # unchanged; 0 (default) leaves the layout byte-identical.
+    n_storage_reserve: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -71,6 +81,7 @@ class VariableLayout:
             + self.n_links
             + self.n_reserve
             + self.n_ordc_steps
+            + self.n_storage_reserve
         )
 
     @property
@@ -139,6 +150,11 @@ class VariableLayout:
         """Per-hour offset of the ORDC shortfall block (co-opt only)."""
         return self._reserve_off + self.n_reserve
 
+    @property
+    def _storage_reserve_off(self) -> int:
+        """Per-hour offset of the storage-reserve block (duration gate only)."""
+        return self._ordc_off + self.n_ordc_steps
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -182,6 +198,10 @@ class VariableLayout:
     def ordc_col(self, k: int, t: int) -> int:
         """Return the column index of ORDC shortfall step ``k`` in hour ``t``."""
         return t * self.vars_per_hour + self._ordc_off + k
+
+    def sr_col(self, c: int, z: int, t: int) -> int:
+        """Return the storage-reserve column of class ``c``, zone ``z``, hour ``t``."""
+        return t * self.vars_per_hour + self._storage_reserve_off + c * self.n_zones + z
 
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
@@ -300,6 +320,16 @@ def build_cost_vector(
                 f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)"
             )
         block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
+
+    # Storage-reserve columns RS[c,z,t] (duration gate): NO direct cost, exactly
+    # like the thermal reserve R[c,z] above. Storage and thermal reserve must
+    # compete on their true opportunity cost alone (storage's = forgone energy
+    # arbitrage via the power-competition row + the SOC duration gate; thermal's
+    # = forgone energy via the shared headroom). A positive ε here would make the
+    # zero-cost thermal reserve STRICTLY undercut storage wherever idle thermal
+    # headroom is available, collapsing the storage AS split to ~0 — the opposite
+    # of the endogenous intent. Degeneracy on storage's own power is already
+    # broken by the Chg/Dis ε.
 
     return cost
 
@@ -954,6 +984,7 @@ def _build_reserve_rows(
     headroom_products: np.ndarray | None = None,
     headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    storage_duration_h: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -1069,6 +1100,26 @@ def _build_reserve_rows(
             RTOFFCAP) instead of the full-fleet headroom in the headroom RHS, so
             modeled reserve tightens into the band the ORDC demand curve prices.
             ``None`` (and the legacy per-class spec) adds no cap rows.
+        storage_duration_h: ``(n_reserve_classes,)`` per-product sustained-delivery
+            duration in hours (ERCOT ``ERCOT_AS_PRODUCT_DURATION_H``: RegUp/RRS 1 h,
+            ECRS 2 h, Non-Spin 4 h). When supplied (and storage is present), the
+            ERCOT endogenous-storage DURATION GATE is active: storage is REMOVED
+            from the thermal shared-headroom rows and given its own explicit
+            per-zone reserve columns ``RS[c,z]`` (``layout._storage_reserve_off``),
+            with three additions — (a) a per-zone storage power-competition row
+            ``sum_c RS[c,z] + sum_{s in z}(Dis[s]-Chg[s]) <= sum_{s in z} cap[s]``
+            (the same power split that was implicit in the shared headroom, now
+            explicit); (b) a per-zone LP-linear duration gate
+            ``sum_c dur_c*RS[c,z] - sum_{s in z} SOC[s] <= 0`` linking cleared
+            storage AS to state of charge, so a 1-h battery cannot sell 4-h
+            Non-Spin on its full power; and (c) the ``RS[c,z]`` reserve joins the
+            balance rows (and the supply-cap rows, so cleared storage AS still
+            counts under RTOLCAP) alongside the thermal ``R[c,z]``. Both new row
+            families are per-zone-hour and fully vectorized (``sp.kron`` over
+            hours, no hour loop). The gate uses the zone-aggregate SOC
+            (``sum_{s in z} SOC[s]``), a small relaxation when a zone mixes battery
+            durations. ``None`` (default) keeps storage pooled in the shared
+            headroom (byte-identical to the pre-gate co-opt).
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
@@ -1094,6 +1145,15 @@ def _build_reserve_rows(
     use_storage = (
         n_storage > 0 and storage_zone_idx is not None and storage_power_cap is not None
     )
+    # Duration gate (ERCOT endogenous storage AS): when per-product durations are
+    # supplied and storage is present, storage is pulled OUT of the thermal
+    # shared-headroom rows and given its own RS[c,z] columns + power/duration
+    # rows (built after the headroom/supply-cap blocks below). ``gate`` guards
+    # the two behaviours: (1) skip the storage terms in the thermal headroom
+    # (else storage power is double-counted), (2) emit the RS row families.
+    gate = use_storage and storage_duration_h is not None
+    if gate:
+        dur = np.asarray(storage_duration_h, dtype=float).reshape(n_classes)
     if use_storage:
         s_zone = np.asarray(storage_zone_idx, dtype=int)
         s_idx = np.arange(n_storage)
@@ -1178,7 +1238,10 @@ def _build_reserve_rows(
             shape=(n_zones, layout.n_gen),
         )
         zc = zone_gen_elig @ cap  # (n_zones, T)
-        if use_storage:
+        if use_storage and not gate:
+            # Pooled storage in the thermal headroom (pre-duration-gate co-opt).
+            # Under the duration gate storage has its own RS columns and power
+            # row instead, so it must NOT also add its room here (double count).
             rows.append(base + s_zone)
             cols.append(layout._dis_off + s_idx)
             vals.append(np.ones(n_storage))  # +Dis
@@ -1239,6 +1302,14 @@ def _build_reserve_rows(
             brows.append(np.full(zsel.size, f))
             bcols.append(layout._reserve_off + int(c) * n_zones + zsel)
             bvals.append(np.ones(zsel.size))
+            if gate:
+                # Storage's duration-gated reserve RS[c,z] backs the same family
+                # as the thermal R[c,z] of its class (the all-class total family,
+                # fam_class -1, sums every class's RS too — cleared storage AS
+                # counts toward the lumped total exactly once).
+                brows.append(np.full(zsel.size, f))
+                bcols.append(layout._storage_reserve_off + int(c) * n_zones + zsel)
+                bvals.append(np.ones(zsel.size))
     # ORDC columns: family-major block, family f owns the next ordc_counts[f]
     off = 0
     for f in range(n_fam):
@@ -1282,6 +1353,13 @@ def _build_reserve_rows(
                 crows.append(np.full(n_zones, h))
                 ccols.append(layout._reserve_off + int(p) * n_zones + z_all)
                 cvals.append(np.ones(n_zones))
+                if gate:
+                    # Duration-gated storage AS counts under the same supply cap
+                    # (RTOLCAP includes online batteries), so its RS[p,z] joins
+                    # each tier's cap row exactly as the thermal R[p,z] does.
+                    crows.append(np.full(n_zones, h))
+                    ccols.append(layout._storage_reserve_off + int(p) * n_zones + z_all)
+                    cvals.append(np.ones(n_zones))
         cap_per_hour = sp.coo_matrix(
             (np.concatenate(cvals), (np.concatenate(crows), np.concatenate(ccols))),
             shape=(n_hr, layout.vars_per_hour),
@@ -1291,6 +1369,73 @@ def _build_reserve_rows(
         blocks.append(cap_block)
         lowers.append(np.full(n_hr * T, -np.inf))
         uppers.append(cap.T.ravel())
+
+    # --- Storage duration-gate blocks (ERCOT endogenous storage AS). Two
+    # per-zone-hour row families, inserted BEFORE the balance rows so the balance
+    # dual stays the final n_fam*T. Both fully vectorized (sp.kron over hours).
+    #  1. Power competition (n_zones per hour): the storage power split, now
+    #     explicit since storage left the thermal headroom —
+    #       sum_c RS[c,z] + sum_{s in z}(Dis[s] - Chg[s]) <= sum_{s in z} cap[s].
+    #  2. Duration gate (n_zones per hour): the ESR State-of-Charge rule —
+    #       sum_c dur_c * RS[c,z] - sum_{s in z} SOC[s] <= 0,
+    #     so the stored energy (zone-aggregate SOC) must cover each product's
+    #     award for its full deployment duration. Gating on the same-hour SOC[t]
+    #     column is exact for held (undeployed) reserve — the power row keeps that
+    #     MW from also discharging, so the SOC is not drawn down.
+    if gate:
+        # Power-competition per-hour matrix, (n_zones, vph).
+        pw_rows: list[np.ndarray] = []
+        pw_cols: list[np.ndarray] = []
+        pw_vals: list[np.ndarray] = []
+        for c in range(n_classes):
+            pw_rows.append(z_all)
+            pw_cols.append(layout._storage_reserve_off + c * n_zones + z_all)
+            pw_vals.append(np.ones(n_zones))  # +RS[c,z]
+        pw_rows.append(s_zone)
+        pw_cols.append(layout._dis_off + s_idx)
+        pw_vals.append(np.ones(n_storage))  # +Dis
+        pw_rows.append(s_zone)
+        pw_cols.append(layout._chg_off + s_idx)
+        pw_vals.append(-np.ones(n_storage))  # -Chg
+        pw_per_hour = sp.coo_matrix(
+            (
+                np.concatenate(pw_vals),
+                (np.concatenate(pw_rows), np.concatenate(pw_cols)),
+            ),
+            shape=(n_zones, layout.vars_per_hour),
+        ).tocsr()
+        pw_block = sp.kron(sp.eye(T, format="csr"), pw_per_hour, format="csr")
+        # RHS: zone-summed storage power cap, (n_zones, T) hour-major.
+        if spc.ndim == 2:
+            zcap = zone_storage @ spc  # (n_zones, T)
+        else:
+            zcap = np.broadcast_to((zone_storage @ spc)[:, None], (n_zones, T))
+        blocks.append(pw_block)
+        lowers.append(np.full(n_zones * T, -np.inf))
+        uppers.append(np.ascontiguousarray(zcap).T.ravel())
+
+        # Duration-gate per-hour matrix, (n_zones, vph).
+        du_rows: list[np.ndarray] = []
+        du_cols: list[np.ndarray] = []
+        du_vals: list[np.ndarray] = []
+        for c in range(n_classes):
+            du_rows.append(z_all)
+            du_cols.append(layout._storage_reserve_off + c * n_zones + z_all)
+            du_vals.append(np.full(n_zones, float(dur[c])))  # +dur_c * RS[c,z]
+        du_rows.append(s_zone)
+        du_cols.append(layout._soc_off + s_idx)
+        du_vals.append(-np.ones(n_storage))  # -SOC[s]
+        du_per_hour = sp.coo_matrix(
+            (
+                np.concatenate(du_vals),
+                (np.concatenate(du_rows), np.concatenate(du_cols)),
+            ),
+            shape=(n_zones, layout.vars_per_hour),
+        ).tocsr()
+        du_block = sp.kron(sp.eye(T, format="csr"), du_per_hour, format="csr")
+        blocks.append(du_block)
+        lowers.append(np.full(n_zones * T, -np.inf))
+        uppers.append(np.zeros(n_zones * T))
 
     blocks.append(balance)
     lowers.append(bal_lower)
@@ -1582,6 +1727,7 @@ def build_constraints(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_storage_duration_h: np.ndarray | None = None,
     reserve_pergen_gen_idx: np.ndarray | None = None,
     reserve_pergen_col: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
@@ -1691,10 +1837,12 @@ def build_constraints(
             flow_block,  # transmission flow
             eye_z,  # load slack (+)
             -eye_z,  # overgeneration dump (-)
-            # Co-opt reserve/ORDC columns do not appear in the energy balance
-            # (zero blocks); empty when off, keeping per_hour width == vph.
+            # Co-opt reserve/ORDC/storage-reserve columns do not appear in the
+            # energy balance (zero blocks); empty when off, keeping per_hour
+            # width == vph.
             sp.csr_matrix((n_zones, layout.n_reserve)),
             sp.csr_matrix((n_zones, layout.n_ordc_steps)),
+            sp.csr_matrix((n_zones, layout.n_storage_reserve)),
         ],
         format="csr",
     )
@@ -1983,6 +2131,7 @@ def build_constraints(
             headroom_products=reserve_headroom_products,
             headroom_extra_cap=reserve_headroom_extra_cap,
             reserve_supply_cap=reserve_supply_cap,
+            storage_duration_h=reserve_storage_duration_h,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -2152,6 +2301,14 @@ def build_variable_bounds(
         else:
             col_upper[:, layout._reserve_off : layout._ordc_off] = np.inf
 
+    # Storage-reserve columns RS[c,z,t] (duration gate): 0 <= RS <= inf; the
+    # storage power-competition row and the SOC duration-gate row (both in
+    # _build_reserve_rows) are what bound them. col_upper defaults to 0 (fixed),
+    # so this MUST set them free when the gate is active.
+    if layout.n_storage_reserve > 0:
+        sr0 = layout._storage_reserve_off
+        col_upper[:, sr0 : sr0 + layout.n_storage_reserve] = np.inf
+
     # ORDC shortfall steps S_k[t]: 0 <= S_k <= step width (MW). Each step's
     # width is the MW span the published demand curve prices at that penalty.
     if layout.n_ordc_steps > 0:
@@ -2237,6 +2394,11 @@ class DispatchResult:
     # (T, n_families) per-family balance-row dual — the per-product AS clearing
     # price for ERCOT's multi-product co-opt; the per-hour max is the binding MCPC.
     reserve_price_by_family: np.ndarray | None = None
+    # (n_zones, T) cleared storage AS from the duration-gate mechanism
+    # (ercot_storage_as_duration_gate) — the EXACT storage energy-vs-AS split
+    # (sum over AS products of the RS[c,z] columns), not the min() attribution
+    # upper bound. None unless the duration gate is active.
+    storage_reserve_dispatch: np.ndarray | None = None
 
 
 # HiGHS basis-status integer codes (HighsBasisStatus enum), captured once so the
@@ -2367,6 +2529,7 @@ class DispatchModel:
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
         reserve_supply_cap: np.ndarray | None = None,
+        reserve_storage_duration_h: np.ndarray | None = None,
         reserve_pergen_gen_idx: np.ndarray | None = None,
         reserve_pergen_col: np.ndarray | None = None,
         reserve_pergen_ramp10: np.ndarray | None = None,
@@ -2453,6 +2616,19 @@ class DispatchModel:
             if not coopt or reserve_headroom_products is None
             else int(np.atleast_2d(np.asarray(reserve_headroom_products)).shape[0])
         )
+        # Duration-gated endogenous storage AS (ERCOT): storage gets its own
+        # per-zone RS[c,z] reserve columns (n_reserve_classes * n_zones) plus a
+        # power-competition row and a SOC duration-gate row per zone-hour. Active
+        # only when durations are supplied, storage is present, reserve_storage is
+        # on, and we are on the zone-aggregate (non-pergen) co-opt.
+        storage_gate = (
+            coopt
+            and not pergen
+            and reserve_storage
+            and reserve_storage_duration_h is not None
+            and n_storage > 0
+        )
+        n_storage_reserve = n_reserve_classes * n_zones if storage_gate else 0
 
         layout = VariableLayout(
             n_gen=n_gen,
@@ -2463,6 +2639,7 @@ class DispatchModel:
             n_reserve=n_reserve,
             n_reserve_classes=n_reserve_classes,
             n_ordc_steps=n_ordc_steps,
+            n_storage_reserve=n_storage_reserve,
         )
 
         A, row_lower, row_upper = build_constraints(
@@ -2508,6 +2685,9 @@ class DispatchModel:
             reserve_headroom_products=reserve_headroom_products,
             reserve_headroom_extra_cap=reserve_headroom_extra_cap,
             reserve_supply_cap=reserve_supply_cap,
+            reserve_storage_duration_h=(
+                reserve_storage_duration_h if storage_gate else None
+            ),
             reserve_pergen_gen_idx=reserve_pergen_gen_idx,
             reserve_pergen_col=reserve_pergen_col,
         )
@@ -2651,6 +2831,10 @@ class DispatchModel:
         n_supply_cap_rows = (
             n_headroom_rows * T if (coopt and reserve_supply_cap is not None) else 0
         )
+        # Storage duration-gate rows: a per-zone power-competition row + a
+        # per-zone SOC duration-gate row per hour (2 * n_zones * T), inserted
+        # between the supply-cap and balance blocks (balance stays final).
+        n_storage_gate_rows = 2 * n_zones * T if storage_gate else 0
         # Per-gen spec: joint P+R rows (n_reserve*T) + balance rows
         # (n_families*T); the balance rows stay the final n_families*T either
         # way, so the dual extraction below is layout-independent.
@@ -2658,7 +2842,12 @@ class DispatchModel:
             self._n_reserve_rows = n_reserve * T + n_families * T
         else:
             self._n_reserve_rows = (
-                (n_headroom_rows * n_zones * T + n_supply_cap_rows + n_families * T)
+                (
+                    n_headroom_rows * n_zones * T
+                    + n_supply_cap_rows
+                    + n_storage_gate_rows
+                    + n_families * T
+                )
                 if coopt
                 else 0
             )
@@ -2845,6 +3034,19 @@ class DispatchModel:
             # never an exogenous adder.
             reserve_price_by_family = balance_duals
 
+        # Duration-gated storage AS (ercot_storage_as_duration_gate): the RS[c,z]
+        # columns (after the ORDC block) summed across AS products -> (n_zones, T)
+        # cleared storage AS. This is the EXACT split (storage's own reserve
+        # variable), unlike the storage_reserve_mw min() attribution used when
+        # storage is pooled in the shared headroom.
+        storage_reserve_dispatch = None
+        if self._coopt and layout.n_storage_reserve > 0:
+            sr0 = layout._storage_reserve_off
+            sr = block[:, sr0 : sr0 + layout.n_storage_reserve].T  # (n_sr, T)
+            storage_reserve_dispatch = sr.reshape(
+                layout.n_reserve_classes, n_zones, T
+            ).sum(axis=0)
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -2861,6 +3063,7 @@ class DispatchModel:
             reserve_dispatch=reserve_dispatch,
             reserve_price=reserve_price,
             reserve_price_by_family=reserve_price_by_family,
+            storage_reserve_dispatch=storage_reserve_dispatch,
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
@@ -3104,6 +3307,7 @@ def solve_dispatch(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_storage_duration_h: np.ndarray | None = None,
     reserve_pergen_gen_idx: np.ndarray | None = None,
     reserve_pergen_col: np.ndarray | None = None,
     reserve_pergen_ramp10: np.ndarray | None = None,
@@ -3243,6 +3447,7 @@ def solve_dispatch(
         reserve_headroom_products=reserve_headroom_products,
         reserve_headroom_extra_cap=reserve_headroom_extra_cap,
         reserve_supply_cap=reserve_supply_cap,
+        reserve_storage_duration_h=reserve_storage_duration_h,
         reserve_pergen_gen_idx=reserve_pergen_gen_idx,
         reserve_pergen_col=reserve_pergen_col,
         reserve_pergen_ramp10=reserve_pergen_ramp10,
