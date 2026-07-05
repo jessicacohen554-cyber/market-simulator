@@ -132,3 +132,39 @@ as the keeper, **STALE-VS-HEAD** (not reproducible on HEAD; committed bundle
 stands). NYISO **calibration-complete item 1 is BLOCKED** on the peaker-pricing
 structural fix (LI/NYC delivered-fuel basis and/or #1344). Do NOT re-arm the
 de-leaked scalars (rule #26); `nyiso 49` is diagnostic-only.
+
+---
+
+## Peaker-pricing structural fix built (2026-07-05, follow-up) — delivered-fuel basis lands, keeper still stale
+
+The peaker-pricing fix this handoff scoped is now built and gated. Full write-up:
+`docs/calibration-log.md` (2026-07-05 "NYISO — downstate CT delivered-fuel
+(city-gate) basis"). Dashboard: `nyiso 50 downstate ctgas` (PROBE).
+
+**Candidate (a) — LI/NYC delivered-fuel basis: IMPLEMENTED** as the rule-13
+measured input `nyiso_downstate_ct_gas_basis`
+(`data.fuel.apply_nyiso_downstate_ct_gas_basis`;
+`scripts/fetch_nyiso_downstate_gas_basis.py` →
+`nyiso_downstate_ct_gas_basis_monthly.csv`). Each downstate `CT_PEAKER` LM6000's
+delivered gas is lifted from the Transco Z6 NY hub to its LDC city-gate index by
+the measured monthly `EIA N3050NY3 − Transco Z6 NY` premium (positive year-round,
+summer-peaked). This **recovers the CT_PEAKER C1 regression** (FAIL→PASS,
+4.46/4.51/4.73 → 3.26/4.20/4.03 TWh) but does **not** recover C7 (2024 CT_PEAKER
+cv_ratio 0.454→0.418) or C3a (−17/−18/−15%).
+
+**Candidate (b) — reserve/RCPF: EVALUATED, not the closable lever.** The
+published-tariff RCPF locational families are already in the LP and cited; they
+stay non-binding with grounded static requirements (nyiso-29/30/31), and the
+dearer downstate gas does not make them bind.
+
+**Root cause of the residual (the two structures the de-leaked wall proxied,
+now decomposed):** (1) **fuel-delivery physics** — CLOSED by candidate (a); (2)
+the LI CT over-run's residual is **floor-forced** (LI local self-supply + CT
+temperature reliability floors force flat in-pocket LM6000 baseload, which no
+fuel premium can reduce), and the C3a gap is the **missing #1344 peaker-scarcity /
+reserve price structure**. Next steps for the eventual keeper: **re-derive the
+CT/ST reliability-floor coefficients from source** now that the delivered-fuel
+basis has landed (rule #23; the floors over-force LI volume and flatten the
+diurnal shape) and the #1344 measured condition-varying downstate reserve
+requirement. Keeper stays `nyiso-41` STALE-VS-HEAD; the delivered-fuel basis is
+kept default-off. Did NOT re-arm the de-leaked scalars (rule #26).
