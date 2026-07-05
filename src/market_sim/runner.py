@@ -119,7 +119,12 @@ from market_sim.results.evolution_ledger import (
     write_ledger,
 )
 from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
-from market_sim.pipeline import PriorYearResults
+from market_sim.pipeline import (
+    DispatchSpec,
+    PriorYearResults,
+    apply_reserve_coopt,
+    build_base_dispatch_kwargs,
+)
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
@@ -1133,7 +1138,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     "dual when curtailed",
                     year,
                 )
-            dispatch_kwargs = dict(
+            # Base dispatch kwargs + priced import-node band: the shared
+            # pipeline assembly (orchestrator-unification Stage 2) — the same
+            # key set the inline dict carried, byte-identical values.
+            dispatch_spec = DispatchSpec(
                 wind_cf=wind_cf,
                 wind_cap=wind_cap,
                 solar_cf=year_solar_cf,
@@ -1174,17 +1182,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 hydro_monthly_energy=hydro_monthly_energy,
                 T=config.hours,
             )
-            # Priced import-node monthly net-interchange band (NYISO forecast
-            # reconciliation, built above). Part of the LP feasible region (same
-            # for P0/P1), so it warm-starts cleanly. No keys (identical LP)
-            # unless the reconciliation was built above.
-            if import_node_recon is not None:
-                node_idx, recon_lo, recon_hi = import_node_recon
-                dispatch_kwargs.update(
-                    import_node_gen_idx=node_idx,
-                    import_node_monthly_lo=recon_lo,
-                    import_node_monthly_hi=recon_hi,
-                )
+            dispatch_kwargs = build_base_dispatch_kwargs(
+                dispatch_spec, import_node_recon=import_node_recon
+            )
             # Emissions mass-cap rows (policy constraint path, gated). When
             # mass_cap_enabled and a power-sector CO2 budget is configured for
             # the ISO's program/year, bound in-region fossil emissions; each
@@ -1269,57 +1269,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Energy + operating-reserve co-optimization (multi-ISO, gated):
             # the ISO's reserve demand curve enters the LP as reserve balance
             # rows so the reserve clearing price lifts the energy LMP
-            # endogenously. Config-driven: see reserve_config.py.
-            if getattr(config, "energy_reserve_coopt", False) and iso != "CAISO":
-                from market_sim.config.reserve_config import (
-                    build_reserve_dispatch_kwargs,
-                    get_reserve_design,
-                )
-
-                design = get_reserve_design(
-                    config,
-                    fleet_arrays,
-                    config.hours,
-                    zone_names,
-                    system_load=year_demand.sum(axis=0),
-                    wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
-                    solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
-                    sim_year=year,
-                )
-                dispatch_kwargs.update(build_reserve_dispatch_kwargs(design))
-                if iso == "PJM" and design.supply_cap is not None:
-                    elig_1d = (
-                        design.eligible[0]
-                        if design.eligible.ndim == 2
-                        else design.eligible
-                    )
-                    logger.info(
-                        "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
-                        "%d MW (vs ~%d MW total eligible headroom)",
-                        int(design.supply_cap.mean()),
-                        int(
-                            (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[
-                                elig_1d
-                            ]
-                            .sum(axis=0)
-                            .mean()
-                        ),
-                    )
-                if iso == "PJM" and design.online_gated is not None:
-                    logger.info(
-                        "PJM reserve online-gating ON: ρ=%.2f", design.online_rho
-                    )
-                if iso == "PJM" and design.pergen_gen_idx is not None:
-                    logger.info(
-                        "PJM PER-GEN reserve co-opt ON: %d R columns / %d "
-                        "member units (eligible, ramp10>0; Σ ramp10 %.1f GW), "
-                        "%d balance families (%s)",
-                        int(design.pergen_ramp10.size),
-                        int(design.pergen_gen_idx.size),
-                        float(design.pergen_ramp10.sum()) / 1e3,
-                        len(design.families),
-                        ", ".join(f.name for f in design.families),
-                    )
+            # endogenously. Config-driven (reserve_config.py); the gate, driver
+            # threading, merge, and logging live in the shared pipeline wrapper
+            # (orchestrator-unification Stage 2).
+            apply_reserve_coopt(
+                dispatch_kwargs,
+                config,
+                fleet_arrays,
+                config.hours,
+                zone_names,
+                system_load=year_demand.sum(axis=0),
+                wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+                solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
+                sim_year=year,
+            )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
             # markup). Build the model once and warm-start P1 from P0's optimal
