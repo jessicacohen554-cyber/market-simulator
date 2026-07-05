@@ -352,7 +352,7 @@ ordered safe-scaffolding-first, drift-closing-unification-later, so the risky st
 | **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) |
 | **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical |
 | **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | — | byte-identical |
-| **5** | **Interchange unification**: migrate `run_calibration` onto `interchange_config.get_interchange_spec`/`build_interchange_fleet`; fold CAISO bidir/solar-shape/gas-coupling into the spec | `run_calibration.py`, `interchange_config.py` | **high** | CAISO bidir + solar-shape + gas-coupling | tolerance-bounded (CAISO keeper canary) |
+| **5** | **Interchange unification**: migrate `run_calibration` onto `interchange_config.get_interchange_spec`/`build_interchange_fleet`; fold CAISO bidir/solar-shape/gas-coupling into the spec | `run_calibration.py`, `interchange_config.py`, `transmission.py`, `runner.py` | **high** | CAISO bidir + solar-shape + gas-coupling | tolerance-bounded (CAISO keeper canary) — **DELIVERED (2026-07-05), see §7.3.3** |
 | **6** | **Fleet unification**: migrate `run_calibration` onto `fleet.build_dispatch_fleet`; route NEISO coldsnap + netload-drag through shared path; coldsnap coeffs → fields | `run_calibration.py`, `fleet.py` | med-high | NEISO coldsnap | tolerance-bounded (all-ISO keepers) |
 | **7** | Move `_calibration_config`→`pipeline/backcast_config.py`; `run_calibration_full` imports from `pipeline`; getattr→field fold (fix `caiso_ra_min_load_frac`, delete `0.40`); env-knob flag | `run_calibration.py`, `run_calibration_full.py`, `pipeline/`, `scenarios.py` | low-med | rule-24 latent trap | byte-identical |
 
@@ -583,6 +583,106 @@ backcast path, so MISO risk is nil, but six-ISO coverage is *not* claimed — a
 reports 0 failures, so no `build_status.py` refresh was needed). Headline gate
 result (`regression_gate --mode byte`, every column Δ = 0) is recorded in the
 follow-up commit on this branch once the serial re-solve completes.
+
+### 7.3.3 Stage 5 — DELIVERED (2026-07-05)
+
+Branch `claude/stage5-interchange-unification-pwkln3` off `origin/main`
+(`85a0dd7`). No dependency on Stages 2-4 was taken: the base
+`dispatch_kwargs` assembly, the reserve co-opt block, and the P0/P1/P2 solve
+loop are untouched in both orchestrators (parallel-wave coordination with the
+Stage-2 session).
+
+**What was built**
+
+- `get_interchange_spec(config, iso, year=None)` now resolves the backcast's
+  full builder ladder from the existing `ScenarioConfig` gates (no new
+  field, no new tuning channel): `caiso_reference_price_seam` ≻
+  `caiso_per_hub_intertie` ≻ `caiso_bidir_intertie` ≻ static year-grounded
+  tranches; new `caiso_mode` field; `use_corridors` now means "per-hub
+  corridor topology" (true for per-hub AND the CAISO reference seam, the
+  backcast's `caiso_corridors`); the generic `reference_price_interface`
+  path now explicitly never applies to CAISO (matching the backcast — the
+  old spec would have routed it to a topology-less corridor build). The
+  optional explicit `year` grounds `IMPORT_TRANCHES_BY_YEAR` and the
+  measured Manitoba capacity; backcast passes the solve year, forecast keeps
+  the `weather_year` fallback (identical values today).
+- `build_interchange_fleet` now **delegates to the canonical
+  `transmission.py` builders** (`build_reference_price_node`,
+  `build_caiso_per_hub_intertie`, `build_caiso_bidir_intertie`, static
+  ladder ≡ `build_import_generators`+`build_export_sinks`, firm block ≡
+  `build_miso_firm_imports`) — parametrized, not reimplemented (§3 design
+  rule). The spec module's parallel `_build_reference_price_gens` /
+  `_build_corridor_gens` copies are **deleted** (rule 26): the reference
+  copy was value-identical; the corridor copy was a latent divergence
+  (corridor-grouped ordering + year-laddered tranches vs the keeper's
+  static builder) that no working path exercised — the forecast never split
+  the import node, so per-hub gens landed in nonexistent zones.
+- `apply_interchange_topology` (interchange_config): the one
+  extend-node → capacity-deliverability-Part-A seam cap → per-hub split
+  sequence, called by **both** orchestrators. The runner previously never
+  called `split_caiso_import_node_per_hub`, so every CAISO seam mode beyond
+  the pooled ladder was structurally unreachable from the forecast.
+- `transmission.apply_interchange_injections`: the single shared
+  post-assembly injection sequence (both orchestrators call it): generic
+  reference-price seam mc (+`miso_pjm_border_anchor`) + firm export floor +
+  `miso_firm_import_floor` mirror → CAISO reference-seam mc / per-hub
+  FORWARD reference prices → Manitoba + NYISO firm must-flow floors →
+  `measured_overlay` callback → gas-coupling → solar-shape. The
+  backcast-only measured-price overlays stay in `run_calibration.py`,
+  consolidated into one labelled closure
+  (`_backcast_measured_interchange_prices`) threaded in at the documented
+  seam point — the exact interleaving the inline code always had (forward
+  base prices → measured overwrites → couplings). The forecast passes
+  `measured_overlay=None`, so no measured overlay is reachable from it.
+- `transmission.forward_corridor_interface_groups`: the forward-ATC
+  corridor cap wrapper, now wired (default-off gate) in the runner too; the
+  measured-p95 corridor envelope stays a labelled backcast overlay.
+- `tests/test_interchange_parity.py`: frozen pre-Stage-5 inline copies
+  (builder ladder + topology sequence at `85a0dd7`) vs the new spec path —
+  39 cases across all five priced-interchange ISOs, CAISO in all three seam
+  modes plus the mutual-exclusion ladder, year-grounded NYISO ladders, the
+  Manitoba backcast capacity, and the per-hub topology split.
+
+**Per-overlay bucket decisions** (vs the plan's §3 classification; "shared"
+= inside `apply_interchange_injections` / the spec, reachable from both
+orchestrators behind its existing default-off gate):
+
+| Overlay | Gate | Bucket | Where now | vs §3 |
+|---------|------|--------|-----------|-------|
+| CAISO bidir intertie STRUCTURE | `caiso_bidir_intertie` | forward-native | spec (`caiso_mode="bidir"`), both | agrees (§3.2, drift closed) |
+| CAISO bidir measured-hub pricing | `caiso_bidir_intertie` | **BOD** | backcast closure | refines §2.2: the *structure* is forward-native; its measured-hub leg pricing has no forward series, so a forecast bidir tie keeps ladder prices. Not silently reclassified — the drift row named the mechanism, and the mechanism (structure) is now forecast-reachable |
+| CAISO import solar-shape | `caiso_import_solar_shape` | forward-native | shared (net-load keyed, formulaic) | agrees (§3.2, drift closed) |
+| CAISO import gas-coupling | `caiso_import_gas_coupling` | forward-native | shared (gas-basis formulaic; self-no-ops when the measured monthly gas series are absent, i.e. forecast years) | agrees (§3.2, drift closed) |
+| CAISO corridor ATC-forward | `caiso_corridor_atc_forward` | forward-native | shared helper, wired in runner | agrees (§3.2) |
+| CAISO per-hub FORWARD reference prices | `caiso_intertie_reference_price` | forward-native | shared | agrees |
+| Generic reference-price seam + firm export floor | `reference_price_interface` | forward-native | shared (was duplicated in both) | agrees (A7 landed) |
+| MISO firm import floor (seam mirror) | `miso_firm_import_floor` | forward-native | shared | not in §3 tables; classified by the firm_export precedent (by-year measured firm schedule as input, contract structure) |
+| MISO Manitoba firm block + floor | `miso_firm_imports` | forward-native (backcast overlays measured per-year MW via the builder, §3.1-consistent) | spec + shared | agrees (already-shared) |
+| NYISO firm imports (HQ/Ontario floor) | `nyiso_firm_imports` | forward-native | shared (was cal-only — a fourth accidental-drift overlay §2.2 did not list; constant contract floor fractions, rule-12 admissible) | reclassified WITH reasoning: contract structure like Manitoba, not a measured overlay |
+| MISO PJM border-hub measured LMP | `miso_pjm_lmp_import_pricing` | **BOD** | backcast closure | agrees (§3.1) |
+| CAISO per-hub measured hub LMP (+`caiso_perhub_firm_base`) | `caiso_import_hub_prices`/`caiso_perhub_firm_base` | **BOD** | backcast closure | agrees (§3.1, keeper caiso-51 headline) |
+| CAISO legacy pooled hub pricing (import+export) | `caiso_import_hub_prices` | **BOD** | backcast closure | agrees |
+| NYISO measured neighbor DA LMP | `nyiso_import_hub_prices` | **BOD** | backcast closure | agrees (§3.1) |
+| EIA-930 interchange shaping | `interchange_shaping` | **BOD** | labelled backcast availability block | agrees (§3.1) |
+| MISO/PJM seam flow/export caps (EIA-930/tie-line) | `*_seam_flow/export_limit` | **BOD** | labelled backcast availability block | agrees (§3.1) |
+| NYISO reconciliation band | `nyiso_import_reconciliation` | **BOD** (mode-aware builder; forecast targets `nyiso_forward_net_import_twh` — A11) | labelled, call site unchanged (feeds dispatch kwargs — Stage-2 turf) | agrees |
+| Measured corridor p95 envelopes | `caiso_corridor_flow_limit` | **BOD** | labelled backcast branch | agrees (§3.1) |
+| CARB border carbon on imports | (CAISO priced block) | forward-native input | unchanged — vom adder in the builders, both paths | agrees |
+
+Two pre-existing inconsistencies observed and deliberately NOT changed
+(byte-identity first): (a) the per-hub/bidir builders use the **static**
+`IMPORT_TRANCHES` ladder while the pooled path is year-grounded — the
+caiso-51 keeper was solved on the static capacities, so the spec reproduces
+that; the year table's firm-block capacities exist precisely for those
+blocks (open root-cause note, rule 14). (b) `get_interchange_spec` resolves
+the tranche year from `weather_year` in the forecast — a forecast pinned to
+a tabulated weather year rides that year's ladder (pre-existing spec
+behavior, now documented).
+
+**Gate (builder-swap standard, §7.2)**
+
+<!-- STAGE5_GATE_RESULT -->
+(to be filled by the gate run in this session)
 
 ---
 
