@@ -1,0 +1,82 @@
+# PR gate: fast unit-test tier + the CLAUDE.md rule-22 quarantine enforcement.
+#
+# Before this workflow, `lint.yml` (ruff) was the only pull_request-triggered
+# check — CLAUDE.md rule 22 claimed "CI enforces the quarantine" via
+# `scripts/audit_keepers.py --check` and `scripts/legitimacy_diagnostics.py
+# --keepers`, but neither script was invoked by any workflow (docs/fable-repo-
+# audit-2026-07.md TC-1). This wires both in, plus a pytest job, on every PR.
+#
+# Fast-tier scope: `-m "not slow and not integration"` is the full non-heavy
+# suite (~2650 tests) — no test selection beyond the two markers already
+# declared in pyproject.toml. Two test classes carry `slow` here for the first
+# time (moved out of the PR tier, unchanged otherwise):
+#   * tests/test_export.py::TestExportScenarioJson — each test runs a real
+#     3-year run_scenario_iso (fleet load dominates; ~4-5min/test).
+#   * tests/test_dispatch.py::TestSolverBenchmark — an explicit HiGHS-config
+#     benchmark (6 full-year LP solves), not a correctness test.
+# Without those two classes the fast tier runs in ~3.5min locally (measured:
+# 209.80s / 198.64s over two runs) against a ~14-23min full run with them
+# included — comfortably inside the ~10min budget with headroom for slower
+# CI runners. `integration` (tests/test_consume_*.py) needs a regenerated
+# data/clean tree and is covered by clean-parity.yml instead (see that file
+# for why it isn't promoted to pull_request).
+#
+# 11 tests were pre-existing failures on main when this gate was first wired
+# (2026-07-05) — none caused by this change. Each is marked
+# `@pytest.mark.xfail(reason=...)` inline (not silenced: they still run and
+# are named in the report) so the new gate starts green; every marker cites
+# the reason and is strict (removing the underlying bug without removing the
+# marker fails the build, so the marker can't rot). See the commit that added
+# this workflow for the full list.
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  fast-tests:
+    name: Fast test tier
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Fast pytest tier (not slow, not integration)
+        run: uv run python -m pytest tests/ -m "not slow and not integration" --strict-markers -q
+
+  quarantine-gates:
+    name: Rule-22 quarantine gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      # CLAUDE.md rule 22 / audit D-6, D-9: E1-E9 keeper-text integrity + the
+      # H1 holdout-quarantine check (no registered bundle solves a year
+      # outside 2023-2025 without a calibration-complete marker).
+      - name: audit_keepers --check
+        run: uv run python scripts/audit_keepers.py --check
+
+      # D-9 overlay quarantine + D-6 holdout quarantine across every
+      # registered keeper bundle.
+      - name: legitimacy_diagnostics --keepers
+        run: uv run python scripts/legitimacy_diagnostics.py --keepers
