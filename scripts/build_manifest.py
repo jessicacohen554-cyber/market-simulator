@@ -58,6 +58,11 @@ ENTRY_FIELDS = (
     "file",
 )
 
+# Optional fields passed through to the manifest entry when a sidecar carries
+# them (never required, so old sidecars are unaffected). The D-3 ablation-twin
+# link + its market story (CLAUDE.md rule 20) and the twin's own back-reference.
+OPTIONAL_ENTRY_FIELDS = ("ablation_twin", "market_story", "ablation_of")
+
 
 def _gzb64(obj) -> str:
     """gzip+base64 a JSON-serializable object, byte-deterministically."""
@@ -90,7 +95,9 @@ def _load_entries() -> list[dict]:
         if not (RUNS_DIR / f"{rec['id']}.js").exists():
             print(f"  skip {path.name}: runs/{rec['id']}.js missing", file=sys.stderr)
             continue
-        entries.append({k: rec[k] for k in ENTRY_FIELDS})
+        entry = {k: rec[k] for k in ENTRY_FIELDS}
+        entry.update({k: rec[k] for k in OPTIONAL_ENTRY_FIELDS if k in rec})
+        entries.append(entry)
     entries.sort(key=lambda e: (e["id"], e["label"]))
     return entries
 

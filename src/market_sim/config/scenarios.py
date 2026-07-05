@@ -3197,6 +3197,39 @@ class ScenarioConfig:
         data = yaml.safe_load(Path(path).read_text()) or {}
         return cls(**data)
 
+    @classmethod
+    def as_zero_forcing_ablation(cls, cfg: "ScenarioConfig") -> "ScenarioConfig":
+        """Return a copy of ``cfg`` with every MERCHANT floor/bridge neutralized.
+
+        The zero-forcing ablation twin (audit §7 D-3 / CLAUDE.md rule 20): a
+        reference solve with all merchant reliability/commitment floors, drags,
+        bridges and availability haircuts OFF, KEEPING only the structural
+        must-run set (nuclear must-run, CHP steam-following, coal take-or-pay).
+        The keeper-vs-twin per-class delta quantifies what each floor buys — a
+        delta explainable only as "the floor buys the residual" is an open
+        root-cause item, not a calibrated parameter.
+
+        The off-list is DERIVED from the D-2 mechanism registry
+        (:func:`market_sim.data.floor_mechanisms.zero_forcing_field_overrides`),
+        not hand-maintained here, so a newly added merchant floor mechanism is
+        ablated by default. Only the fields that registry names are changed;
+        every other knob (offer curves, fuel, fleet, interchange) is carried
+        through unchanged so the twin isolates the floors. Applying this AFTER
+        all per-ISO defaults and ``with_overrides`` forces the floors off
+        regardless of how they were set — the CAISO ``ct_netload_drag`` /
+        ``caiso_ra_mustoffer`` defaults are config-level, so only a config
+        transform (not a False kwarg) can neutralize them.
+        """
+        from market_sim.data.floor_mechanisms import zero_forcing_field_overrides
+
+        field_names = {f.name for f in fields(cls)}
+        overrides = {
+            k: v
+            for k, v in zero_forcing_field_overrides().items()
+            if k in field_names
+        }
+        return replace(cfg, **overrides)
+
 
 # --- PB-1 uncertainty-lever resolvers -------------------------------------
 # Pure, config-build-time resolvers for the probability-bounds levers
