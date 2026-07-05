@@ -5,12 +5,30 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.results.emissions import (
     compute_emissions,
     compute_fossil_avg_rate,
     compute_nox,
+    startup_co2_tons,
 )
+
+
+class TestStartupCo2Tons(unittest.TestCase):
+    """R6 reporting-only startup CO2: model_starts x measured per-start kg."""
+
+    def test_startup_co2_matches_manual(self):
+        fit = pd.DataFrame({"plant_code": [100, 200, 300], "model_starts": [10, 4, 7]})
+        kg = {100: 5000.0, 200: 2000.0}  # 300 uncovered -> zero
+        out = startup_co2_tons(fit, kg)
+        self.assertAlmostEqual(out.loc[100], 10 * 5000.0 / 1000.0)  # 50 t
+        self.assertAlmostEqual(out.loc[200], 4 * 2000.0 / 1000.0)  # 8 t
+        self.assertAlmostEqual(out.loc[300], 0.0)  # uncovered plant
+
+    def test_empty_when_no_starts_column(self):
+        fit = pd.DataFrame({"plant_code": [1], "model_gwh": [1.0]})
+        self.assertTrue(startup_co2_tons(fit, {1: 100.0}).empty)
 
 
 class TestComputeEmissions(unittest.TestCase):

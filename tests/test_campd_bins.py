@@ -558,6 +558,63 @@ class TestMustRunEmissions(unittest.TestCase):
         expected = 1_000_000.0 * float(chp["pct_mr"].iloc[1]) / 100.0
         self.assertAlmostEqual(by_code[second], expected, places=3)
 
+    def test_covered_chp_books_measured_grid_rate(self):
+        # EM-7 / plan §5 R5: a covered CHP plant's behind-the-meter CO2 intensity
+        # equals its measured (v2) grid rate, not the fuel-class default.
+        bins = load_campd_bins(BINS_CSV)
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        code = int(chp["Plant_Code"].iloc[0])
+        grid_rate = 0.371  # tCO2/MWh net, the same rate the plant's grid bins use
+        mr = compute_must_run_emissions(
+            bins,
+            year=2026,
+            must_run_cf=0.85,
+            measured_rate_by_plant={code: grid_rate},
+        )
+        row = mr[mr["Plant_Code"].astype(int) == code].iloc[0]
+        btm_rate = row["mr_co2_tons"] / row["mr_gen_mwh"]
+        self.assertAlmostEqual(btm_rate, grid_rate, places=6)
+        # An uncovered CHP bin keeps its fuel-class default (rate != grid_rate).
+        other = mr[mr["Plant_Code"].astype(int) != code].iloc[0]
+        other_rate = other["mr_co2_tons"] / other["mr_gen_mwh"]
+        self.assertNotAlmostEqual(other_rate, grid_rate, places=6)
+
+    def test_class_cf_replaces_flat_fallback(self):
+        # R5b: the forecast fallback sizes BTM with a measured CHP class CF,
+        # not the flat must_run_cf, when class_cf_by_group covers the group.
+        bins = load_campd_bins(BINS_CSV)
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        grp = str(chp["Plant_Group"].iloc[0])
+        mr = compute_must_run_emissions(
+            bins,
+            year=2026,
+            must_run_cf=0.85,
+            class_cf_by_group={grp: 0.5},
+        )
+        row = mr[mr["Plant_Group"].astype(str) == grp].iloc[0]
+        expected = row["mr_mw"] * 8760.0 * 0.5
+        self.assertAlmostEqual(row["mr_gen_mwh"], expected, places=3)
+
+    def test_measured_class_cf_from_steam_units(self):
+        # measured_class_cf keys CHP off measured steam output and CAMPD
+        # unit_type, returning a gen-weighted op-hours utilization per group.
+        import pandas as pd
+
+        from market_sim.results.emissions import measured_class_cf
+
+        annual = pd.DataFrame(
+            {
+                "unit_type": ["Combined cycle", "Combustion turbine", "Boiler"],
+                "steam_load_klbh_sum": [100.0, 50.0, 0.0],  # last: not CHP
+                "gross_mwh": [1_000_000.0, 200_000.0, 500_000.0],
+                "op_hours": [8000, 4000, 8760],
+            }
+        )
+        cf = measured_class_cf(annual)
+        self.assertAlmostEqual(cf["CC_CHP"], 8000 / 8760.0, places=6)
+        self.assertAlmostEqual(cf["CT_CHP"], 4000 / 8760.0, places=6)
+        self.assertNotIn("ST_CHP", cf)  # zero-steam boiler is excluded
+
 
 class TestFuelHelpers(unittest.TestCase):
     """Tests for the fuel-attribute helper functions."""

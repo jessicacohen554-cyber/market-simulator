@@ -104,7 +104,10 @@ def score_year(
     t200_m, t200_a = int((m > 200).sum()), int((a[fin] > 200).sum())
     t500_m, t500_a = int((m > 500).sum()), int((a[fin] > 500).sum())
     ratio = t200_m / t200_a if t200_a else float("inf")
-    g = lambda cond: "PASS" if cond else "FAIL"
+
+    def g(cond: bool) -> str:
+        return "PASS" if cond else "FAIL"
+
     print(
         f"  {year} {label:18s} C3a {mean_m:6.2f}/{mean_a:6.2f} {c3a * 100:+5.1f}% "
         f"{g(abs(c3a) <= 0.05)} | C3b NRMSE {nrmse:.3f} {g(nrmse <= 0.15)} | "
