@@ -486,12 +486,21 @@ Trivial cases first (1 gen / 1 zone / 24 h per CLAUDE.md):
 
 ## 7. Open items / follow-ups (not W2-P2)
 
-* **Flip `confirmed_exits_enabled` default to on** after the seeded registry passes
-  review — owner decision, recorded here as the intended end state. As of the
-  2026-07-05 second intake pass (§4.3.1), all six ISOs have been researched
+* **Flip `confirmed_exits_enabled` default to on** — DONE 2026-07-05. As of the
+  2026-07-05 second intake pass (§4.3.1), all six ISOs had been researched
   and either seeded (PJM, ERCOT, MISO, NEISO, CAISO) or returned an honest,
-  researched zero (NYISO) — the flip is unblocked on data-completeness
-  grounds; it remains an explicit owner sign-off, not taken here.
+  researched zero (NYISO), unblocking the flip on data-completeness grounds.
+  A primary-document confirmation pass the same day resolved the two
+  remaining in-CSV caveats (Rockport 1's S.D. Ohio civil action number —
+  confirmed as Consolidated Cases C2-99-1182/C2-99-1250 against the filed
+  Fifth Joint Modification, Case 2:99-cv-01250-EAS-KAJ Doc #438; Diablo
+  Canyon's CPUC decision number — confirmed as D.23-12-036 against a CPUC
+  decision in R.23-01-007 that quotes it verbatim). With both caveats
+  cleared, the owner sign-off was given and `ScenarioConfig.confirmed_exits_enabled`
+  now defaults to `True` (`src/market_sim/config/scenarios.py`). This also
+  activates the non-fossil announced-horizon gate (§5.2), coupled to the same
+  flag in `capacity.evolve_fleet`. Backcast mode is unaffected (the channel is
+  forecast-mode only, verified byte-identical).
 * Month-precise forecast exits by un-gating the COD ramp for forecast years (also
   fixes the comment/code drift at `fleet.py:1983-1992`, whose comment already
   claims forecast support the gate denies).

@@ -3,7 +3,9 @@
 Covers ``data.confirmed_retirements.load_confirmed_exits`` (superseded filter,
 earliest-instrument-per-unit) against a tmp CLEAN_DIR fixture, the first-year
 ``build_base_fleet`` exclusion (closing the "a 2026 exit can never happen in
-2026" hole), and the default-off byte-identical guard.
+2026" hole), the flag-off byte-identical guard, the post-2026-07-05 default-on
+canary, and the forecast-mode-only gate that keeps a backcast run a hard
+no-op regardless of the flag's default (``runner._confirmed_exits_active``).
 """
 
 import unittest
@@ -21,6 +23,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data import fleet as fleet_mod
 from market_sim.data.confirmed_retirements import ConfirmedExit, load_confirmed_exits
 from market_sim.data.fleet import Generator, build_base_fleet
+from market_sim.runner import _confirmed_exits_active
 
 # Two live rows for one unit (earliest wins) + a superseded row for another.
 _CSV = """iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
@@ -114,9 +117,32 @@ class TestBuildBaseFleetFirstYear(unittest.TestCase):
     def test_confirmed_first_year_unit_excluded(self) -> None:
         self.assertEqual(self._run(enabled=True), ["222_2"])
 
-    def test_default_off_keeps_confirmed_unit(self) -> None:
+    def test_flag_off_keeps_confirmed_unit(self) -> None:
         # Flag off: the confirmed exit is ignored, both units present.
         self.assertEqual(self._run(enabled=False), ["111_1", "222_2"])
+
+
+class TestConfirmedExitsDefaultAndBackcastGate(unittest.TestCase):
+    """Post-2026-07-05 default flip + the forecast-mode-only gate that makes
+    a backcast run byte-identical regardless of the flag's default."""
+
+    def test_default_is_enabled(self) -> None:
+        self.assertTrue(ScenarioConfig().confirmed_exits_enabled)
+
+    def test_forecast_mode_active_by_default(self) -> None:
+        config = ScenarioConfig(mode="forecast")
+        self.assertTrue(_confirmed_exits_active(config))
+
+    def test_backcast_mode_is_noop_even_with_flag_on(self) -> None:
+        config = ScenarioConfig(mode="backcast")
+        # The flag's value is unaffected by mode -- it's the forecast-only
+        # gate in runner._confirmed_exits_active that must suppress it.
+        self.assertTrue(config.confirmed_exits_enabled)
+        self.assertFalse(_confirmed_exits_active(config))
+
+    def test_flag_off_disables_even_in_forecast(self) -> None:
+        config = ScenarioConfig(mode="forecast", confirmed_exits_enabled=False)
+        self.assertFalse(_confirmed_exits_active(config))
 
 
 if __name__ == "__main__":
