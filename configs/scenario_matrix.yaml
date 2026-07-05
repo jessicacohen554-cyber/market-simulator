@@ -1,0 +1,64 @@
+# AEO/IPM-style deterministic scenario matrix (PB-0 / PB-1.1).
+#
+# docs/handoffs/probability-bounds-plan-2026-07.md §1.2 -- 13 named cases, not
+# the full 3^5=243 factorial cross. REF is the all-mid reference case; every
+# other case moves exactly one axis off REF except the two coherent corners
+# (CORNER-HI-EMIT / CORNER-LO-EMIT), which move every axis together toward the
+# emissions ceiling / floor.
+#
+# THIS IS A DETERMINISTIC SCENARIO RANGE, NOT A PROBABILITY BAND (plan §1.3,
+# §4.2 label rules) -- no likelihoods attach to these 13 points; they are named
+# what-if cases, read the way AEO/IPM side cases are read (attribution via the
+# one-at-a-time cases, envelope via the two corners).
+#
+# Axes and levels (plan §1.1): G=gas_price_path, L=demand_growth_path,
+# P=policy_bundle, T=tech_cost_path, R=retirement_aggressiveness.
+# retirement_aggressiveness's own labels are "slow"/"mid"/"aggressive" (not
+# "low"/"high"); low-R (RET-SLOW) -> "slow", high-R (RET-FAST) -> "aggressive".
+mode: cases
+
+cases:
+  REF: {}
+
+  GAS-LO:
+    gas_price_path: low
+  GAS-HI:
+    gas_price_path: high
+
+  LOAD-LO:
+    demand_growth_path: low
+  LOAD-HI:
+    demand_growth_path: high
+
+  POL-TIGHT:
+    policy_bundle: tight
+  POL-ROLLBACK:
+    policy_bundle: rollback
+
+  TECH-LO:
+    tech_cost_path: low
+  TECH-HI:
+    tech_cost_path: high
+
+  RET-FAST:
+    retirement_aggressiveness: aggressive
+  RET-SLOW:
+    retirement_aggressiveness: slow
+
+  # Coherent emissions ceiling: cheap gas + DC-boom load + no carbon policy +
+  # expensive clean tech + sticky (slow-retiring) fossil fleet.
+  CORNER-HI-EMIT:
+    gas_price_path: low
+    demand_growth_path: high
+    policy_bundle: rollback
+    tech_cost_path: high
+    retirement_aggressiveness: slow
+
+  # Coherent emissions floor: expensive gas + low load + tight carbon policy +
+  # cheap clean tech + aggressive fossil retirement.
+  CORNER-LO-EMIT:
+    gas_price_path: high
+    demand_growth_path: low
+    policy_bundle: tight
+    tech_cost_path: low
+    retirement_aggressiveness: aggressive
