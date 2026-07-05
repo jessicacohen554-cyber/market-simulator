@@ -439,12 +439,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "measured-physical",
                 iso,
                 source="temperature/net-load day-gated commitment floors, "
-                "CAMPD-derived (frozen derive script)",
-                root_cause="D-8: coefficient levels mostly stable but several "
-                "limbs drift >11% and three flip Spearman-rho sign "
-                "out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC — "
-                "docs/out-of-sample-results-2026-07.md §2B); re-derive only on "
-                "source-data updates (rule 23)",
+                "CAMPD-derived (frozen derive script); the three Spearman-rho "
+                "sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+                root_cause="D-8 §2B: the three sign-flip limbs (PJM ComEd/"
+                "CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were "
+                "UNIDENTIFIED out-of-training and are now permanently disabled "
+                "under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining "
+                "R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston "
+                "CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI "
+                "rho-decay limbs — kept enabled with this caveat; re-derive "
+                "trigger is the 2026 CAMPD publication (a source-data change), "
+                "never a residual (rule 23)",
             )
         )
     if sc.get("nyiso_local_selfsupply"):
