@@ -2527,14 +2527,10 @@ class ScenarioConfig:
     # Tier 3 — pumped-storage dispatch adder ($/MWh discharged), the
     # reduced-form opportunity cost of PS reserve/regulation duty the
     # energy-only LP does not see. ``None`` (default) resolves per ISO from
-    # constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO, which is now EMPTY —
-    # the fitted PJM $10 entry ("calibrated so PJM PS lands near its observed
-    # ~3.5-4 TWh/yr") was retired as a mis-measured-residual fit (see the
-    # retirement note at that constant): PJM PS arbitrages on its physical
-    # RTE like every other storage resource, and the forward-valid
-    # replacement, if PS ever over-cycles again, is a measured
-    # synchronized-reserve power reservation, not a throughput tune. A number
-    # here overrides the per-ISO default for every ISO in the scenario
+    # constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO, which is empty for every
+    # ISO — PS arbitrages on its physical RTE like every other storage
+    # resource (see that constant for the per-ISO retirement history). A
+    # number here overrides the per-ISO default for every ISO in the scenario
     # (scenario lever, not a calibration fit).
     pumped_storage_dispatch_adder: float | None = None
 
