@@ -33,6 +33,13 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
       ablation twins (``*-ablation`` ids, rule 20 / D-3) are excluded from the
       comparison: a twin is a diagnostic shadow of its parent, never a keeper
       candidate, so registering a keeper's own twin must not flag it stale.
+      Sidecars carrying ``"keeper_candidate": false`` are excluded the same
+      way: a diagnostic probe (e.g. a D-7 statistical-mode A/B run, see
+      docs/handoffs/forecast-validation-program-2026-07.md) is never a keeper
+      candidate by design (CLAUDE.md rule 15/#1), so a probe landing after the
+      keeper must not read as "keeper may be stale" — the probe stays on the
+      dashboard (rule 15: mark, don't prune), it just doesn't compete for
+      newest-run staleness.
   E8  the bundle attestation carries a ``free_parameters`` DOF ledger and every
       residual-sourced entry references an open root cause (CLAUDE.md rule 20).
   E9  the keeper carries a registered zero-forcing ablation twin
@@ -231,6 +238,13 @@ def _registry_dates_by_iso() -> dict[str, list[tuple[str, str]]]:
     convention enforced by ``run_calibration_full.py --zero-forcing-ablation``)
     are skipped: a twin is by definition never a keeper candidate (rule 20), so
     it must not make its own keeper — or any other run — look stale under E7.
+
+    Sidecars explicitly marked ``"keeper_candidate": false`` are skipped for
+    the same reason: a diagnostic probe (D-7 statistical-mode A/B runs, CO2
+    re-basis probes, etc. — CLAUDE.md rule 15/#1) is never a keeper candidate
+    regardless of how it's named, so it must not make a same-ISO keeper look
+    stale under E7. Absence of the field (the default for every pre-existing
+    sidecar) means "is a keeper candidate" — this is opt-in, not opt-out.
     """
     by_iso: dict[str, list[tuple[str, str]]] = {}
     for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
@@ -238,6 +252,8 @@ def _registry_dates_by_iso() -> dict[str, list[tuple[str, str]]]:
             continue
         side = _load_json(path)
         if not side:
+            continue
+        if side.get("keeper_candidate") is False:
             continue
         iso = side.get("iso")
         date = side.get("date") or path.stem[:10]

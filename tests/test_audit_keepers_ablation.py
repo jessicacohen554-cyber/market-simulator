@@ -99,6 +99,28 @@ class TestStalenessIgnoresAblationTwins(unittest.TestCase):
         newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
         self.assertEqual(newest["PJM"], ("2026-07-06", "2026-07-06-y-probe"))
 
+    def test_keeper_candidate_false_probe_does_not_flag_keeper_stale(self):
+        # A D-7 statmode (or other diagnostic) probe registered AFTER the
+        # keeper, marked "keeper_candidate": false, must not make the keeper
+        # read as stale under E7 — mirrors the "-ablation" twin exclusion.
+        self._write("2026-07-05-x-keeper", {"iso": "NEISO", "date": "2026-07-05"})
+        self._write(
+            "2026-07-05-x-statmode-d7-r2",
+            {"iso": "NEISO", "date": "2026-07-05", "keeper_candidate": False},
+        )
+        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
+        self.assertEqual(newest["NEISO"], ("2026-07-05", "2026-07-05-x-keeper"))
+
+    def test_keeper_candidate_true_or_absent_still_flags(self):
+        # The field is opt-in: a probe that does NOT set keeper_candidate:
+        # false must still compete for "newest" and flag a genuinely stale
+        # keeper (this is the case E9 already exercises for MISO/PJM -- E7
+        # must not be silently defeated by a missing field).
+        self._write("2026-07-05-x-keeper", {"iso": "NYISO", "date": "2026-07-05"})
+        self._write("2026-07-06-y-newer", {"iso": "NYISO", "date": "2026-07-06"})
+        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
+        self.assertEqual(newest["NYISO"], ("2026-07-06", "2026-07-06-y-newer"))
+
 
 class TestGrandfatherRollout(unittest.TestCase):
     @pytest.mark.xfail(
