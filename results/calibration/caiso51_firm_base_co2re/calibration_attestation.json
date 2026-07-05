@@ -1,0 +1,214 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "caiso-51 session 2026-07-03",
+    "note": "Levers: measured WECC intertie hub LMPs (Malin/Palo Verde OASIS scheduling-point prices \u2014 a neighbor boundary price, the seam analogue of F923 delivered fuel; forward analogue = the per-hub reference-price formula), measured p95 corridor deliverability envelopes both directions (EIA-930 CISO-DIBA), published branch-group MIC seam import limit (16,055/16,452/16,148 MW) replacing the calibrated 7,500 MW scalar, measured SoCal/PG&E citygate gas basis, EIA-930 monthly hydro budgets, CAMPD historic unit-outage windows, CAMPD-measured RA min-load 0.26. The 2023 Jan-Feb hub-series gap (OASIS retention) is filled by the forward reference formula \u2014 a formulaic gap-fill, not an outcome pin; the filled hours are absent from the actual-LMP benchmark. No adder, haircut, or rescale tuned to any residual. This run REMOVES two fitted scalars from the binding path (the flat import price ladder and the 7,500 MW cap). Adds the UC restart-economics RA bridge (caiso-44/48; startup cost vs net hold cost, DA-horizon-bounded, RUC-order decommit) and the firm-contract seam decomposition (caiso_perhub_firm_base): the two firm/contracted tranches (BPA firm hydro, desert-SW solar PPAs) keep documented contract-cost ESTIMATES (Tier-3, kept where the accurate spot price is misaligned to the contracted quantity it would price \u2014 CLAUDE.md #14 exception, documented at transmission.CAISO_FIRM_IMPORT_TRANCHES); the spot tranches and both export legs are priced at the measured hourly hub. No adder, haircut, or rescale tuned to any residual."
+  },
+  "exceptions": [],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 10,
+    "n_residual": 8,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[CAISO]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "n_scalars": 4,
+        "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "GAS_AVAILABILITY_FACTOR[CAISO]",
+        "where": "constants.py GAS_AVAILABILITY_FACTOR",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": 0.89,
+        "source": "nudged from the NERC GADS 2019-2023 fleet baseline 0.88 during calibration (audit C-18; W1d marker)",
+        "root_cause": "audit C-18: re-ground on the GADS baseline or a frozen derive from CAMPD availability; the nudge is compensating for an unmodeled availability effect"
+      },
+      {
+        "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
+        "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "n_scalars": 4,
+        "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
+        "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
+      },
+      {
+        "name": "CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']",
+        "where": "constants.py CAISO_TAC_ZONE_WEIGHTS",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": {
+          "NP15": 0.86,
+          "ZP26": 0.14
+        },
+        "source": "PG&E TAC load split across Path 15 \u2014 preserves a prior ratio of unverified provenance (audit C-16; W1d marker)",
+        "root_cause": "audit C-16: refine when a direct Path-15 sub-TAC load measurement becomes available"
+      },
+      {
+        "name": "ct_netload_drag hinge coefficients",
+        "where": "ScenarioConfig drag defaults (CAMPD-regressed hinge)",
+        "identification": "measured-physical",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "source": "net-load->CT commitment hinge regressed from CAMPD (the template mechanism, audit \u00a72)",
+        "note": "D-8 flags weak identification for CAISO: slope drifts +18% leave-2025-out and the floor ~= measured CT energy (docs/out-of-sample-results-2026-07.md \u00a72A) \u2014 re-derive only on source-data updates (rule 23)"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_CAISO.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script)",
+        "note": "D-8: coefficient levels mostly stable but several limbs drift >11% and three flip Spearman-rho sign out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC \u2014 docs/out-of-sample-results-2026-07.md \u00a72B); re-derive only on source-data updates (rule 23)"
+      },
+      {
+        "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]",
+        "where": "interchange_config.py per-ISO seam supply-curve ladders",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
+        "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      }
+    ]
+  }
+}
