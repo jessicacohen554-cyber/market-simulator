@@ -213,8 +213,21 @@ def build_history(
 # ---------------------------------------------------------------------------
 # Estimators (each returns predicted net rate for target year Y, or NaN)
 # ---------------------------------------------------------------------------
-def _hist_for(df: pd.DataFrame, plant: int, exclude_year: int) -> pd.DataFrame:
-    return df[(df["plant_id"] == plant) & (df["year"] != exclude_year)]
+def _hist_for(
+    df: pd.DataFrame, plant: int, exclude_year: int, forward: bool = False
+) -> pd.DataFrame:
+    """Return the plant's history rows available for predicting ``exclude_year``.
+
+    Leave-one-out by default (every other year, both sides). ``forward=True``
+    restricts to years strictly BEFORE the target — the forward-chained variant
+    that mirrors the real forecast task (predict Y from Y's past only), the
+    honest direction for judging the trailing window / recency choice (plan
+    §2.2's 7-year re-examination).
+    """
+    sub = df[df["plant_id"] == plant]
+    if forward:
+        return sub[sub["year"] < exclude_year]
+    return sub[sub["year"] != exclude_year]
 
 
 def _plant_history_obj(sub: pd.DataFrame, use_model_op: bool) -> PlantHistory:
@@ -237,9 +250,21 @@ def predict(
     estimator: str,
     frozen: dict[int, float],
     class_slopes: dict[str, float] | None = None,
+    forward: bool = False,
 ) -> float:
-    """Return the predicted net CO2 rate for ``plant`` in ``year``."""
-    hist = _hist_for(df, plant, year)
+    """Return the predicted net CO2 rate for ``plant`` in ``year``.
+
+    Besides the named plan-§3 estimators, two parameterized families support
+    the one-time constant sweeps (rule 23 — chosen ONCE from this harness,
+    never from a keeper's fit):
+
+    * ``a_gw_w<N>`` — gen-weighted average over the trailing ``N`` years of the
+      available history (``a_gw`` is the ``N=all`` case);
+    * ``b_gated_sim_g<G>`` / ``b_gated_oracle_g<G>`` — the SHIPPED composition:
+      envelope-gated NN conditioning with gate ``G`` on top of the full-window
+      gen-weighted base (inside the envelope -> base; outside -> NN year).
+    """
+    hist = _hist_for(df, plant, year, forward=forward)
     if estimator == "frozen":
         return frozen.get(int(plant), np.nan)
     if hist.empty:
@@ -250,13 +275,26 @@ def predict(
 
     if estimator == "a_gw":
         return float((rates * gens).sum() / gens.sum()) if gens.sum() > 0 else np.nan
+    if estimator.startswith("a_gw_w"):
+        n = int(estimator[len("a_gw_w") :])
+        keep = np.argsort(yrs)[-n:]
+        r, g = rates[keep], gens[keep]
+        return float((r * g).sum() / g.sum()) if g.sum() > 0 else np.nan
     if estimator == "a_sm":
         return float(rates.mean())
     if estimator == "a_rw":
         w = (yrs - yrs.min() + 1).astype(float)
         return float((rates * w).sum() / w.sum())
-    if estimator in ("b_nn_oracle", "b_nn_sim"):
-        use_model = estimator == "b_nn_sim"
+    if estimator in ("b_nn_oracle", "b_nn_sim") or estimator.startswith("b_gated_"):
+        if estimator.startswith("b_gated_"):
+            kind, g_str = estimator[len("b_gated_") :].split("_g")
+            use_model = kind == "sim"
+            gate = float(g_str)
+        else:
+            use_model = estimator == "b_nn_sim"
+            # Ceiling variant: conditioning always exercised (gate 0), NOT the
+            # shipped gated config — that is the b_gated_* family above.
+            gate = 0.0
         obj = _plant_history_obj(hist, use_model_op=use_model)
         if use_model and not np.isnan(target_row["model_gwh"]):
             sim_gen = float(target_row["model_gwh"]) * 1000.0  # GWh -> MWh
@@ -269,10 +307,8 @@ def predict(
                 float(target_row["starts"]),
                 target_row["campd_cf"],
             )
-        # Force conditioning ON with a low gate so the NN is always exercised
-        # (this harness measures the conditioner's ceiling, not the shipped gate).
         res = forward_plant_co2_rate(
-            obj, sim, None, conditioning_enabled=True, envelope_gate_l1=0.0
+            obj, sim, None, conditioning_enabled=True, envelope_gate_l1=gate
         )
         return res.rate_kg_per_mwh_net
     if estimator == "b_reg":
@@ -323,19 +359,53 @@ def _class_slopes(df: pd.DataFrame) -> dict[str, float]:
     return slopes
 
 
-def run(df: pd.DataFrame, years: list[int], frozen: dict[int, float]) -> pd.DataFrame:
-    """Run every estimator over every leave-one-out target year; return a table."""
-    estimators = ["frozen", "a_gw", "a_sm", "a_rw", "b_nn_oracle", "b_nn_sim", "b_reg"]
+DEFAULT_ESTIMATORS = [
+    "frozen",
+    "a_gw",
+    "a_sm",
+    "a_rw",
+    "b_nn_oracle",
+    "b_nn_sim",
+    "b_reg",
+]
+
+
+def run(
+    df: pd.DataFrame,
+    years: list[int],
+    frozen: dict[int, float],
+    estimators: list[str] | None = None,
+    forward: bool = False,
+) -> pd.DataFrame:
+    """Run every estimator over every target year; return a long table.
+
+    ``forward=True`` scores the forward-chained variant: each target year is
+    predicted from strictly-prior history only, and targets without at least
+    three prior years are skipped (an estimator needs a real history).
+    """
+    estimators = estimators or DEFAULT_ESTIMATORS
     class_slopes = _class_slopes(df)
+    targets = years
+    if forward:
+        targets = [y for y in years if sum(1 for h in years if h < y) >= 3]
     rows = []
     for est in estimators:
-        for target in years:
+        for target in targets:
             tgt = df[df["year"] == target]
             preds, actual, gen = [], [], []
             for r in tgt.itertuples(index=False):
                 row = pd.Series(r._asdict())
                 preds.append(
-                    predict(df, int(r.plant_id), target, row, est, frozen, class_slopes)
+                    predict(
+                        df,
+                        int(r.plant_id),
+                        target,
+                        row,
+                        est,
+                        frozen,
+                        class_slopes,
+                        forward=forward,
+                    )
                 )
                 actual.append(float(r.net_rate))
                 gen.append(float(r.net_mwh))
@@ -356,6 +426,29 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--history-years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--keeper", type=Path, default=None, help="keeper bundle dir")
+    ap.add_argument(
+        "--forward-chain",
+        action="store_true",
+        help="predict each target from strictly-prior years only (the honest "
+        "forward direction for the window/recency choice, plan §2.2)",
+    )
+    ap.add_argument(
+        "--window-sweep",
+        type=int,
+        nargs="*",
+        default=None,
+        metavar="N",
+        help="add a_gw_w<N> trailing-window estimators (rule-23 one-time sweep)",
+    )
+    ap.add_argument(
+        "--gate-sweep",
+        type=float,
+        nargs="*",
+        default=None,
+        metavar="G",
+        help="add b_gated_{sim,oracle}_g<G> envelope-gated estimators "
+        "(the shipped composition; rule-23 one-time sweep)",
+    )
     args = ap.parse_args(argv)
 
     bad = [y for y in args.history_years if y in QUARANTINED_YEARS]
@@ -384,7 +477,15 @@ def main(argv: list[str] | None = None) -> int:
         len(df),
         df["plant_id"].nunique(),
     )
-    table = run(df, args.history_years, frozen)
+    estimators = list(DEFAULT_ESTIMATORS)
+    for n in args.window_sweep or []:
+        estimators.append(f"a_gw_w{n}")
+    for g in args.gate_sweep or []:
+        estimators.append(f"b_gated_sim_g{g:g}")
+        estimators.append(f"b_gated_oracle_g{g:g}")
+    if args.forward_chain:
+        logger.info("forward-chained mode: targets need >=3 strictly-prior years")
+    table = run(df, args.history_years, frozen, estimators, forward=args.forward_chain)
     pivot = table.pivot(index="target", columns="estimator", values="wmape_pct")
     print("\n=== gen-weighted |rate error| % by target year ===")
     print(pivot.round(2).to_string())
