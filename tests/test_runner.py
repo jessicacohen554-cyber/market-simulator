@@ -560,12 +560,47 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
         kw = _CapturingDispatchModel.captured_kwargs[0]
         sdc = kw.get("storage_discharge_cost")
         self.assertIsNotNone(sdc, "storage_discharge_cost missing from dispatch kwargs")
-        import numpy as np
 
         self.assertTrue(
             np.allclose(np.asarray(sdc), 0.0),
             "default adder=0 should yield all-zero storage_discharge_cost",
         )
+
+
+class TestMassCapPerUnitMembershipWiring(RunnerTestBase):
+    """The mass-cap row's per-generator coefficients use per-unit membership.
+
+    End-to-end (real PJM fleet + EIA-860 plant-state lookup, mocked dispatch
+    solve) check that runner.py's cap_coeffs computation
+    (per_generator_membership, not the raw zone broadcast) runs cleanly and
+    produces a coefficient vector with the expected shape/sign.
+    """
+
+    def setUp(self):
+        super().setUp()
+        _CapturingDispatchModel.captured_kwargs = []
+        _CapturingDispatchModel.n_solves = 0
+
+    def test_pjm_cap_coeffs_reach_dispatch_kwargs(self):
+        config = ScenarioConfig(iso="PJM", mass_cap_enabled=True, mass_cap_tons=1.0e6)
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+        ):
+            runner.run_scenario_iso(config, "PJM")
+
+        self.assertTrue(_CapturingDispatchModel.captured_kwargs)
+        kw = _CapturingDispatchModel.captured_kwargs[0]
+        coeffs = kw.get("mass_cap_coeffs")
+        self.assertIsNotNone(coeffs, "mass_cap_coeffs missing from dispatch kwargs")
+        coeffs = np.asarray(coeffs)
+        self.assertEqual(coeffs.ndim, 2)
+        self.assertEqual(coeffs.shape[0], 1)
+        # Every coefficient is non-negative (membership in [0,1] times a
+        # non-negative emission rate).
+        self.assertTrue((coeffs >= 0.0).all())
+        self.assertEqual(kw.get("mass_cap_rhs").tolist(), [1.0e6])
 
 
 class TestChpMeasuredCo2Inputs(unittest.TestCase):

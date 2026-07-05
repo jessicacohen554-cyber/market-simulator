@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-05 (Emissions mass-cap follow-ons — PJM per-unit membership, per-state RGGI budgets)
+
+Completes the two deferred follow-ons from `docs/handoffs/emissions-mass-cap-plan-2026-07.md`
+(mechanism itself default-off, unchanged):
+
+- **PJM fractional RGGI membership** is now populated (`PJM_RGGI_ZONE_SHARE`, per zone per year),
+  derived by the new `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860
+  plant/generator tables and the model's own PJM zone assignment; Virginia's 1 Jan 2024 RGGI exit
+  shows up directly (`PJM_Dominion` 0.9881 → 0.0). Membership is now per-unit where the fleet
+  representation allows it: `policy/cap_and_trade.py::per_generator_membership` (new) tests any
+  generator with a real `plant_code` against its own plant's state exactly
+  (`data/zone_assignment.py::plant_state_lookup`, new), falling back to the zone-level fractional
+  share only for synthetic/aggregate units. Wired at `runner.py`'s `mass_caps` cap_coeffs call site.
+  Found and fixed a latent bug in the process: `resolve_carbon_program`'s membership vector was
+  sized to the static ISO zone list, not the runtime-extended one (PJM's dynamically-appended
+  external interchange zone) — `resolve_carbon_program`/`get_active_policy_constraints` now accept
+  an explicit `zone_names` override, and `runner.py` passes its already-extended list.
+- **Per-state RGGI budgets**: `RGGI_STATE_CO2_BUDGET` now carries each member state's own CO2
+  Allowance Base Budget for 2023-2025 (exact figures from RGGI, Inc.'s official per-state
+  distribution spreadsheets, also correcting the regional total from an ICAP-derived estimate to
+  the exact published sum). A RGGI ISO's power-sector cap row now sums its own member states
+  instead of the region-wide over-bound.
+- New tests: `tests/test_cap_and_trade.py` (PJM per-unit membership, per-state budget sums, Virginia
+  exit year-gating) and `tests/test_runner.py::TestMassCapPerUnitMembershipWiring` (end-to-end PJM
+  wiring check with a mocked dispatch solve).
+- The optional diagnostic backcast probe (endogenous dual vs. observed RGGI auction price) was not
+  run: the backcast calibration harness (`scripts/run_calibration.py`/`run_calibration_full.py`) has
+  its own independent dispatch pipeline that never threads `get_active_policy_constraints`, so
+  `mass_cap_enabled` is inert there today — a scoped follow-on, documented in the plan doc rather
+  than half-wired in this pass.
+
 ## 2026-07-05 (CI wiring — W2-P5 forecast invariants)
 
 Wired the W2-P5 forecast-invariant checks into CI (docs/handoffs/forecast-validation-program-2026-07.md §6): the fast invariant-logic tests already run in `ci.yml`'s per-PR tier (no change needed, documented explicitly), and a new scheduled `.github/workflows/forecast-invariants.yml` runs the slow real-LP e2e test plus the P1-P3 paired-run invariants weekly. No checker/test logic changed.

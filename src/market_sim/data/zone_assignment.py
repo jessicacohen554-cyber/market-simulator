@@ -818,6 +818,38 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
     return out
 
 
+def plant_state_lookup(iso: str) -> dict[int, str]:
+    """Return ``{plant_code: state}`` (2-letter postal code) for the ISO's plants.
+
+    The EIA-860 plant file already carries the plant's ``State`` directly (no
+    FIPS/lat-lon decoding needed, unlike zone assignment) — this is the raw
+    fact a per-generator program-membership test (e.g. RGGI) resolves exactly
+    against, for any generator whose ``plant_code`` names a real physical
+    plant (see ``policy.cap_and_trade.per_generator_membership``). Filters to
+    the current EIA-860 snapshot's balancing-authority column, mirroring
+    :func:`_eia860_ba_zones`. Returns an empty dict when the plant file is
+    unavailable or the ISO has no balancing-authority code registered.
+    """
+    iso = iso.upper()
+    ba_code = _ISO_TO_BA_CODE.get(iso)
+    if ba_code is None or not _EIA860_PLANT_PATH.exists():
+        return {}
+    df = pd.read_parquet(
+        _EIA860_PLANT_PATH,
+        columns=["Plant Code", "State", "Balancing Authority Code"],
+    )
+    ba = df["Balancing Authority Code"].astype(str).str.strip()
+    df = df[ba == ba_code]
+
+    out: dict[int, str] = {}
+    for code, state in zip(df["Plant Code"], df["State"]):
+        oris = _to_int(code)
+        if oris is None or state is None or state != state:  # None / NaN state
+            continue
+        out[oris] = str(state).strip().upper()
+    return out
+
+
 # Reference crosswalk: the curated ERCOT plant -> model-zone map. Its raw
 # source is ``data/raw/reference/custom-bin-assignments.csv`` (``Plant_Code`` /
 # ``ERCOT_Zone``), curated to ``data/clean/reference/bin-assignments`` through
