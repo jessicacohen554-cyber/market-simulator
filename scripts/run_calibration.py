@@ -522,13 +522,17 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 0.90,
         "econ_low": 0.95,
-        # OPEN ROOT CAUSE (rule #1, audit C-13): econ_high 1.21 is a CAMPD CC
-        # marginal-HR reach value grounded on ERCOT's CC analysis and shared to
-        # NYISO/CAISO — flagged as residual-identified/cross-borrowed. It is NOT
-        # the generic-fallback inheritance this scrub targets (the else-arm value
-        # is 1.27), and removing it is documented to crater C3a −24%, so it is
-        # left for the later NYISO-grounded calibration phase, not re-tuned here.
-        "econ_high": 1.21,
+        # DE-LEAKED (audit C-13, rule #25, B-NYI-1): econ_high was 1.21 — a CAMPD
+        # CC marginal-HR reach value grounded on ERCOT's CC analysis and
+        # cross-borrowed to NYISO, i.e. a rule-25 cross-ISO leak. It was retained
+        # only because removing it craters C3a ≈ −24%, which is a residual
+        # justification, not a NYISO-identified value — so it neutralizes to the
+        # neutral 1.0 band (CC offers at its own econ heat rate, no borrowed
+        # markup). The C3a hole this exposes is an OPEN ROOT CAUSE (rule #1):
+        # the real missing mechanism is NYISO scarcity/reserve (RCPF/AS) price
+        # formation, NOT a CC energy markup — see GitHub issue #1344. Do NOT
+        # re-arm this markup to close C3a (rule #26, rule #1).
+        "econ_high": 1.0,
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
@@ -2241,6 +2245,7 @@ def run_year(
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    zero_forcing_ablation: bool = False,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -2262,6 +2267,11 @@ def run_year(
         commitment_enabled: When True, run the P2 unit-commitment pass after
             P1 and return the P1 result for comparison.
         commitment_screen_coal: When False, coal is exempt from the P2 screen.
+        zero_forcing_ablation: When True, neutralize every merchant floor/
+            bridge (keeping only nuclear must-run, CHP steam-following and coal
+            take-or-pay) via ``ScenarioConfig.as_zero_forcing_ablation`` after
+            all config resolution — the D-3 ablation twin (audit §7 /
+            CLAUDE.md rule 20).
         fleet_only: When True, stop after the fleet/storage arrays are built
             and return a state dict instead of solving any LP. Lets a
             post-processor (e.g. the ORDC scarcity overlay,
@@ -2796,6 +2806,17 @@ def run_year(
         config = config.with_overrides(cc_outage_derate_from_top=True)
     if cc_nameplate_summer_derate:
         config = config.with_overrides(cc_nameplate_summer_derate=True)
+    if zero_forcing_ablation:
+        # D-3 zero-forcing ablation twin (audit §7 / CLAUDE.md rule 20): drop
+        # every MERCHANT floor/bridge, keeping only the structural must-run set
+        # (nuclear / CHP-steam / coal take-or-pay). Applied AFTER every per-ISO
+        # default and with_overrides so the floors go off regardless of how they
+        # were set — the CAISO ct_netload_drag / caiso_ra_mustoffer defaults are
+        # config-level (not kwargs), so only a config transform can neutralize
+        # them. The off-list is derived from the D-2 mechanism registry, so a
+        # new floor is ablated by default (see ScenarioConfig.as_zero_forcing_
+        # ablation / data.floor_mechanisms.zero_forcing_field_overrides).
+        config = ScenarioConfig.as_zero_forcing_ablation(config)
     # Point the EIA-860 loaders at a year-matched vintage when the scenario asks
     # for one (backcast knob; None resets to the canonical 2025ER snapshot the
     # COD ramp filters to the solved year). Must precede every fleet / storage /
