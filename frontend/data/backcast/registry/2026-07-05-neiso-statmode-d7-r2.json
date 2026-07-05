@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-neiso-statmode-d7-r2",
+  "label": "neiso statmode d7 r2",
+  "date": "2026-07-05",
+  "shorthand": "neiso-statmode-d7-r2",
+  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper neiso_ctscrub (the 2026-07-05 neiso-48-ct-floor keeper, meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. RE-SOLVED at HEAD (2026-07-05) superseding the 2026-07-03 probe (which replayed the prior neiso-47 keeper): the R2 physical-HR CO2 basis (fff2c34) moves NEISO's merit order (carbon-priced ISO) so the prior solve was stale; C5a CO2 vs eGRID still PASSes (R2 effect on this ISO's CO2 verdict is near-zero, per docs/handoffs/co2-keeper-regate-2026-07-05.md). Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-05-neiso-statmode-d7-r2.js",
+  "bundle": "results/calibration/neiso_statmode_2026-07_r2"
+}
