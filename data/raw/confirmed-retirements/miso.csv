@@ -1,0 +1,54 @@
+# MISO confirmed-retirement registry.
+# Source of truth: MISO's OASIS-posted "Approved Generator Retirements"
+# listing (Attachment Y approvals; https://www.oasis.oati.com/woa/docs/MISO/
+# MISOdocs/, filenames dated e.g. 2025-09-30) + state PUC-approved settlement
+# orders + federal consent decrees. Direct fetch of MISO's own posting failed
+# in this research pass (TLS/access errors on oasis.oati.com and
+# misoenergy.org) — a human with browser access should pull the current
+# edition directly and cross-check the seeded row below against it.
+#
+# Researched 2026-07-05. Only ONE candidate cleared the enforceable-instrument
+# bar out of a ~13.5 GW EIA-860-flagged 2026-2028 coal cluster investigated:
+#   - DTE Monroe Units 1-4 (plant 1733): CONFIRMED — see rows below. Michigan
+#     PSC Case No. U-21193 settlement order.
+#
+# Evaluated and held OUT (announced/IRP-stage/contested, no approved
+# Attachment Y or PUC order with a binding date found):
+#   - AES Indiana Petersburg Units 3 & 4 (plant 994): IURC-approved, but this
+#     is a coal-to-GAS REPOWERING (completing ~2026), not a retirement — per
+#     the schema, a fuel conversion is not a retirement row for the plant
+#     (only a coal-unit identity exiting would be); the generating units
+#     continue operating on gas. Do NOT add.
+#   - Consumers Energy J.H. Campbell (MI): planned 2025-05-30 retirement is
+#     currently OVERRIDDEN by three successive DOE FPA §202(c) emergency
+#     orders (most recent through 2026-02-17), under litigation. No binding
+#     retirement date currently exists — the opposite of confirmed.
+#   - We Energies Oak Creek Units 7 & 8 (WI): PSC has approved replacement gas
+#     capacity, not a binding coal-exit order; the company's own target date
+#     has moved repeatedly (2024->2025->2026->2027). Announced/unstable only.
+#   - Vistra Baldwin (IL, 1,185 MW): originally 2025, extended to 2027 by the
+#     company citing MISO reliability risk — no Attachment Y approval or
+#     consent decree found. Company operating decision, not an instrument.
+#   - Duke Energy Indiana Gibson Units 3 & 4, Cayuga Station coal units:
+#     IRP-stage / IURC-approved gas-conversion settlements that leave the
+#     existing coal units' exit date open (third-party sale option, no fixed
+#     shutdown date). Ambiguous; do not add.
+#   - NIPSCO Schahfer/Michigan City: IURC order found but exact per-unit dates
+#     could not be extracted from the (binary/unreadable) order PDF in this
+#     pass; needs a follow-up direct read of the IURC docket before seeding.
+#   - Ameren Missouri Sioux/Labadie, IL CEJA-generic (P.A. 102-0662, statute
+#     does not name specific plants — resolved per-unit via IL EPA CAAPP
+#     compliance schedules, not extracted in this pass): IRP-stated targets
+#     only, no PSC order or Attachment Y approval found.
+#   - Ameren Missouri Rush Island: ALREADY RETIRED 2024-10-15 under a federal
+#     Clean Air Act court injunction (E.D. Mo., upheld 8th Cir. 2021) —
+#     historical, predates this forward registry's practical value (already
+#     gone from the base fleet); not seeded.
+#   - Sibley, Iatan (Evergy, SPP footprint) and Waukegan (ComEd, PJM
+#     footprint, already retired 2022): confirmed NOT MISO-footprint;
+#     excluded regardless of retirement status.
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
+MISO,1733,3,Monroe 3,822.6,2028,12,regulatory_order,mipsc-u21193-monroe-3,"Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 3 & 4 no later than 2028-12-31 and Units 1 & 2 no later than 2032-12-31",2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-07-05,"EIA-860 self-reported planned_retirement_year/month (2028-12) matches this order's date exactly."
+MISO,1733,4,Monroe 4,817.2,2028,12,regulatory_order,mipsc-u21193-monroe-4,"Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 3 & 4 no later than 2028-12-31 and Units 1 & 2 no later than 2032-12-31",2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-07-05,"See Monroe 3's note (same order)."
+MISO,1733,1,Monroe 1,817.2,2032,12,regulatory_order,mipsc-u21193-monroe-1,"Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 1 & 2 no later than 2032-12-31 (Units 3 & 4 no later than 2028-12-31)",2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-07-05,"EIA-860 self-reported planned_retirement_year/month (2032-12) matches this order's date exactly. Outside the near-term 2026-2029 window investigated but same binding order as Units 3/4."
+MISO,1733,2,Monroe 2,822.6,2032,12,regulatory_order,mipsc-u21193-monroe-2,"Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 1 & 2 no later than 2032-12-31 (Units 3 & 4 no later than 2028-12-31)",2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-07-05,"See Monroe 1's note (same order)."
