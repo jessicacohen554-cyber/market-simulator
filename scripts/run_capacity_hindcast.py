@@ -82,7 +82,28 @@ def _validate_window(start_year: int, end_year: int) -> None:
 def build_config(
     iso: str, start_year: int, end_year: int, variant: str
 ) -> ScenarioConfig:
-    """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init)."""
+    """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
+
+    The hindcast must exercise the capacity screens under the **same price
+    formation the forecast uses** for the ISO — otherwise it validates a
+    dispatch/margin signal the production path never sees. The ``s2`` run
+    (`docs/hindcast-reports/ercot-2021-2025-realized-s2-2026-07-05.md` root
+    cause 1) left ``scarcity_pricing_enabled`` at its ``False`` model default,
+    so the ERCOT screens priced against bare perfect-foresight LP duals
+    (mean ~$25/MWh, no ORDC overlay, no reserve-price signal) — the exact
+    revenue understatement the Stage-2 revenue-side fix targets was switched
+    off in the harness, producing a 9.7 GW over-retirement (94 % false). We
+    adopt each ISO's production scarcity footing here as the harness default:
+    setting the master switch ``scarcity_pricing_enabled=True`` engages every
+    ISO's ``ISOConfig.default_scenario_overrides`` scarcity footing in
+    ``run_scenario_iso`` — for ERCOT the published ORDC overlay
+    (``scarcity_price_overlay=True``, the forecast's default cell), for PJM
+    the capacity-market footing (no ORDC overlay; RPM net-CONE × UCAP already
+    enters the screens via ``capacity_revenue_per_mw_yr``, so the master flag
+    is a harmless no-op there). This is a **harness-config** choice, not a
+    model-default change — the ScenarioConfig default stays ``False`` (rule 1:
+    fix the price signal the screens see, do not tune the screens).
+    """
     return ScenarioConfig(
         iso=iso,
         mode="forecast",
@@ -92,6 +113,9 @@ def build_config(
         eia860_vintage_year=VINTAGE_YEAR,
         hindcast_fuel_variant=variant,
         gas_price_path=FUEL_VARIANT_GAS_PATH[variant],
+        # Production scarcity footing (see docstring): ERCOT → ORDC overlay,
+        # PJM → capacity-market (no-op). Harness default, not a model default.
+        scarcity_pricing_enabled=True,
     )
 
 
