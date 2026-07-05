@@ -1,0 +1,101 @@
+# ERCOT forecast-uncertainty sampler spec (PB-2, reference).
+#
+# The committed, cited specification consumed by `market-sim ensemble --sampler`
+# (market_sim.uncertainty.UncertaintySpec.from_yaml). Every number here is a
+# disclosed judgment or a cited external source (CLAUDE.md rules 3/5); the whole
+# block is echoed verbatim into ensemble_meta.json. Design source:
+# docs/handoffs/probability-bounds-plan-2026-07.md §2.1-§2.4.
+#
+# What is sampled (§2.1): three continuous dims through a Gaussian copula (gas
+# price level, load growth, tech cost) and three discrete dims through weighted
+# bins (weather year, hydro year, policy bundle). Each maps onto an existing
+# PB-1 ScenarioConfig lever, neutral at its default.
+
+# Draw count (§2.4): default 64 LHS draws (configurable 50-100). Overridable at
+# the CLI with --draws; the published quantiles carry a bootstrap CI so the
+# sampling noise at this n is visible rather than assumed away.
+n: 64
+
+# Fixed default seed (§2.3): the sampler is deterministic in this seed, so a
+# spec + seed reproduces bit-identical draws. Overridable at the CLI with --seed.
+seed: 7
+
+# --- Gas price level marginal (§2.2) -----------------------------------------
+# gas_price_factor = exp(sigma_ref * z), one standard-normal z per draw (a
+# persistent path shock, assumption A-7). sigma_ref is the horizon max of a
+# two-anchor schedule, floored at the AEO-case spread so the band never narrows
+# below the deterministic scenario range.
+gas:
+  # Front (2026-2028) sigma from near-term Henry Hub implied volatility. EIA
+  # STEO's "Market Prices and Uncertainty Report" derives its Henry Hub
+  # confidence intervals from NYMEX futures-options implied vol; the ~+/-40%
+  # one-year 95% band implies an annualised sigma near 0.35. Source: EIA STEO
+  # July 2025 vintage, Market Prices and Uncertainty Report methodology.
+  sigma_front: 0.35
+  front_year_start: 2026
+  front_year_end: 2028
+  # Back (2050) sigma: AEO2025 low/high Henry Hub cases treated as the 2050
+  # P10/P90 (assumption A-1). ln(8.70/4.80)/1.2816 = 0.46 upside,
+  # ln(4.80/3.05)/1.2816 = 0.35 downside; the single-sigma simplification the
+  # plan prefers is ~0.41. Source: constants.HENRY_HUB_TRAJECTORIES (AEO2025
+  # High/Reference/Low Oil-and-Gas-Supply cases, 2050 entries).
+  sigma_back: 0.41
+  back_year: 2050
+  # Floor each year at the AEO-case-implied spread (§2.2): guarantees the
+  # parametric band is never tighter than the deterministic scenario range. With
+  # this floor sigma_ref resolves to ~0.464 (the 2050 AEO upside spread), which
+  # dominates the interpolated schedule.
+  floor_to_aeo: true
+  low_path: low
+  mid_path: mid
+  high_path: high
+
+# --- Spearman rank-correlation matrix over the continuous dims (§2.3) ---------
+# Converted to Pearson for the Gaussian copula via r_P = 2*sin(pi*rho_S/6).
+# Order: gas, load, tech.
+spearman:
+  gas:
+    gas: 1.0
+    # gas <-> load = +0.3 (assumption A-2): demand-side coupling -- incremental
+    # load (data centers) is served substantially by gas, raising gas burn and
+    # price. Structured judgment anchored to AEO2025's cross-case ordering (its
+    # High Economic Growth case carries both higher demand and a higher Henry
+    # Hub path than Reference), NOT an estimated statistic; sensitivity-swept at
+    # 0 and +0.6. Source: EIA STEO 2025 data-center narrative; AEO2025 cases.
+    load: 0.3
+    # gas <-> tech = 0: no defensible cited source for a sign; independence
+    # disclosed (§2.3).
+    tech: 0.0
+  load:
+    gas: 0.3
+    load: 1.0
+    # load <-> tech = 0 (§2.3): independence disclosed.
+    tech: 0.0
+  tech:
+    gas: 0.0
+    load: 0.0
+    tech: 1.0
+
+# --- Discrete-dimension probability weights (§2.1) ---------------------------
+discrete_weights:
+  # Weather year: uniform over WEATHER_YEAR_POOL (2023/2024/2025). The pool is
+  # thin (n=3); 2022 joins only after the rule-22 holdout quarantine lifts.
+  # Source: constants.WEATHER_YEAR_POOL.
+  weather:
+    2023: 0.3333333333
+    2024: 0.3333333333
+    2025: 0.3333333333
+  # Hydro year: dry 0.25 / normal 0.50 / wet 0.25 -- the climatology behind
+  # constants.HYDRO_YEAR_MULTIPLIER (material for CAISO; near-neutral for ERCOT,
+  # which has little conventional hydro). Source: HYDRO_YEAR_MULTIPLIER.
+  hydro:
+    dry: 0.25
+    normal: 0.5
+    wet: 0.25
+  # Policy bundle: current 0.50 / tight 0.25 / rollback 0.25. A DISCLOSED
+  # judgment input (assumption A-8), client-adjustable in this file, never
+  # hardcoded. Bundles resolve via scenarios.resolve_policy_bundle (§1.2).
+  policy:
+    current: 0.5
+    tight: 0.25
+    rollback: 0.25
