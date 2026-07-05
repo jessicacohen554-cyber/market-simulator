@@ -136,6 +136,23 @@ class PortfolioConfig:
       while the grid buys power in that same hour. It is a *conservative*
       restriction: it can under-use storage relative to the true optimum but
       never overstates matching. Each iteration stays a pure LP."""
+    build_tiebreak_epsilon: float = 1e-6
+    """Mode A (premium_cap) only (ADR 0019): flat per-MW tiebreak added to
+    ``build_mw`` (and split-storage ``build_energy``) in the objective. Mode A's
+    objective is a pure ``min Σ grid_buy`` with zero weight on capacity — once
+    matching saturates (``grid_buy`` floors at 0) *before* a resource's cap
+    binds, every build level between "just enough" and the cap ties on the
+    objective and the premium constraint's slack absorbs the rest, so the
+    solver may return an arbitrary point on that face, including a near-cap
+    corner (the CAISO onshore-wind degenerate-saturation finding, ADR 0019
+    context). This epsilon breaks the tie toward the smallest capacity that
+    still attains the primary optimum — it never changes a build level the LP
+    otherwise pins for a real matching/premium reason, because the flat weight
+    (default 1e-6) stays orders of magnitude below any real objective/premium
+    movement (ADR 0019 sizing rationale). Reported net_cost/premium are
+    recomputed post-hoc from ``lmp``, so the epsilon never leaks into them
+    (same pattern as the Mode B ``storage_epsilon`` ray tiebreak). 0.0 disables
+    it, reproducing the pre-ADR-0019 behavior exactly."""
     # --- Load intake / growth ----------------------------------------------
     load_growth_rate: float = 0.0
     """Annual load-growth CAGR applied to the intake profile (optional)."""
@@ -195,6 +212,8 @@ class PortfolioConfig:
             raise ValueError("profile_shape_year must be positive when set")
         if self.storage_epsilon < 0:
             raise ValueError("storage_epsilon must be non-negative")
+        if self.build_tiebreak_epsilon < 0:
+            raise ValueError("build_tiebreak_epsilon must be non-negative")
         if self.load_growth_years < 0:
             raise ValueError("load_growth_years must be non-negative")
         if any(d <= 0 for d in self.premium_deltas):
@@ -285,6 +304,7 @@ class PortfolioConfig:
         "ccs_45q_per_ton",
         "excess_sale_fraction",
         "storage_epsilon",
+        "build_tiebreak_epsilon",
         "load_growth_rate",
     )
     _INT_FIELDS = ("year", "hours", "load_growth_years", "profile_shape_year")

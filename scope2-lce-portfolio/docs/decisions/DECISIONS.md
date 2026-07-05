@@ -31,6 +31,7 @@ they implement. Keep entries short; link to the session prompt and any analysis.
 | 0016 | Desktop launcher: `.bat`/`.sh` twins → local HTML launch page (stdlib server, run queue + saved configs) → report | accepted | PS-13 | PP-10 |
 | 0017 | Storage charge policy: optional `excess_clean_only` provenance rows (`Σchg + excess ≤ Σgen`) | accepted | storage audit 2026-07 | `config.py`/`lp.py`/`cli.py` |
 | 0018 | Divert-and-backfill diagnostic (`divert_backfill_mwh`, always on) + `excess_headroom_only` policy (ADR 0017 rows + iterative charge-pinning cut loop) | accepted | storage audit 2026-07 §2.4 | `lp.py`/`config.py`/`cli.py`/`outputs.py`/`report.py` |
+| 0019 | Mode A build-size tiebreak (`build_tiebreak_epsilon`, flat per-MW, fixes the CAISO onshore-wind saturate-to-cap degeneracy) | accepted | CAISO Mode-A tiebreak follow-up 2026-07-05 | `config.py`/`lp.py` |
 
 ---
 
