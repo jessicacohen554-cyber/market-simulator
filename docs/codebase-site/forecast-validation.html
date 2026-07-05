@@ -29,7 +29,7 @@
     <div class="bc-page-header"><h1>Forecast Validation</h1></div>
     <p class="bc-page-sub">Capacity-hindcast scorecards &amp; forecast-invariant status — the
     forecast-side sibling of Calibration Status. A missed band is a root-cause
-    investigation (rules&nbsp;1/11/14), never widened. Generated 2026-07-05 18:19 UTC.</p>
+    investigation (rules&nbsp;1/11/14), never widened. Generated 2026-07-05 20:04 UTC.</p>
     <div id="cards"></div>
   </div>
 
@@ -553,6 +553,536 @@
       }
     ],
     "registered_utc": "2026-07-05T18:10:38Z"
+  },
+  {
+    "run_id": "pjm-2021-2025-asknown",
+    "meta": {
+      "iso": "PJM",
+      "variant": "asknown",
+      "gas_price_path": "hindcast_asknown_aeo2021",
+      "vintage_year": 2020,
+      "start_year": 2021,
+      "end_year": 2025,
+      "cache_key": "6b60c9df15e71589",
+      "bundle": "results/hindcast/pjm-2021-2025-asknown/PJM/6b60c9df15e71589",
+      "solved_years": [
+        2021,
+        2023,
+        2024,
+        2025
+      ],
+      "bridged_years": [
+        2022
+      ],
+      "leakage_violations": [],
+      "started_utc": "2026-07-05T19:47:31Z"
+    },
+    "score": {
+      "iso": "PJM",
+      "variant": "asknown",
+      "scored_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "retirements": {
+        "total_gw": {
+          "actual": 11.121,
+          "model": 4.106,
+          "err_frac": -0.631,
+          "band": "FAIL"
+        },
+        "per_fuel": {
+          "biomass": {
+            "actual_gw": 0.189,
+            "model_gw": 0.009,
+            "err_frac": -0.95
+          },
+          "coal": {
+            "actual_gw": 6.885,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          },
+          "gas_ct": {
+            "actual_gw": 3.491,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          },
+          "nuclear": {
+            "actual_gw": 0.0,
+            "model_gw": 4.097,
+            "err_frac": null
+          },
+          "oil": {
+            "actual_gw": 0.555,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          }
+        },
+        "unit_recall_gt300": {
+          "n_big_actual": 17,
+          "matched": 0,
+          "recall": 0.0,
+          "band": "FAIL"
+        },
+        "false_retire": {
+          "false_gw": 4.097,
+          "frac_of_model": 0.998,
+          "band": "FAIL"
+        }
+      },
+      "additions": {
+        "by_tech": {
+          "wind": {
+            "actual_gw": 1.619,
+            "model_gw": 6.0,
+            "err_frac": 2.706,
+            "band": "FAIL"
+          },
+          "solar": {
+            "actual_gw": 13.066,
+            "model_gw": 18.0,
+            "err_frac": 0.378,
+            "band": "FAIL"
+          },
+          "gas_cc": {
+            "actual_gw": 8.525,
+            "model_gw": 16.0,
+            "err_frac": 0.877,
+            "band": "FAIL"
+          },
+          "gas_ct": {
+            "actual_gw": 0.447,
+            "model_gw": 0.0,
+            "err_frac": -1.0,
+            "band": "FAIL"
+          },
+          "storage": {
+            "actual_gw": 0.283,
+            "model_gw": 0.0,
+            "err_frac": -1.0,
+            "band": "FAIL"
+          }
+        },
+        "shares": {
+          "wind": {
+            "actual_share": 0.067,
+            "model_share": 0.15,
+            "delta_pp": 0.083,
+            "band": "FAIL"
+          },
+          "solar": {
+            "actual_share": 0.542,
+            "model_share": 0.45,
+            "delta_pp": -0.092,
+            "band": "FAIL"
+          },
+          "gas_cc": {
+            "actual_share": 0.354,
+            "model_share": 0.4,
+            "delta_pp": 0.046,
+            "band": "PASS"
+          },
+          "gas_ct": {
+            "actual_share": 0.019,
+            "model_share": 0.0,
+            "delta_pp": -0.019,
+            "band": "PASS"
+          },
+          "storage": {
+            "actual_share": 0.012,
+            "model_share": 0.0,
+            "delta_pp": -0.012,
+            "band": "PASS"
+          }
+        },
+        "actual_total_gw": 24.092,
+        "model_total_gw": 40.0
+      },
+      "co2": {
+        "model": {
+          "2023": 285466494.7548288,
+          "2024": 287776501.8858145,
+          "2025": 298482521.55845094
+        },
+        "actual": {
+          "2023": 407135714.37786365,
+          "2024": 420607523.9953725,
+          "2025": 448666172.50825304
+        }
+      },
+      "baselines": {
+        "announced": {
+          "retire_gw": 65.381,
+          "add_gw": 147.445,
+          "note": "2020-vintage planned schedule"
+        }
+      },
+      "bands": {
+        "thermal_gw_retired_total_frac": 0.1,
+        "thermal_gw_retired_perfuel_frac": 0.2,
+        "retire_recall_min": 0.7,
+        "false_retire_frac_max": 0.15,
+        "retire_timing_years_max": 1.5,
+        "add_gw_frac_default": 0.15,
+        "add_gw_frac_storage": 0.25,
+        "techmix_share_pp_max": 0.05,
+        "co2_2025_frac": 0.1
+      },
+      "generated_utc": "2026-07-05T20:02:09Z"
+    },
+    "invariants": [
+      {
+        "ident": "I1",
+        "name": "energy balance",
+        "status": "PASS",
+        "detail": "max |supply\u2212demand| = 2.384e-07 MW (year 2021); tol 1.0"
+      },
+      {
+        "ident": "I2",
+        "name": "no NaN/inf",
+        "status": "PASS",
+        "detail": "clean"
+      },
+      {
+        "ident": "I3",
+        "name": "unserved/dump",
+        "status": "FAIL",
+        "detail": "2021: slack 83.75% of load"
+      },
+      {
+        "ident": "I4",
+        "name": "capacity accounting",
+        "status": "PASS",
+        "detail": "closes"
+      },
+      {
+        "ident": "I5",
+        "name": "no retire-and-reenter",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I6",
+        "name": "econ-retirement sanity",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I7",
+        "name": "reliability floor",
+        "status": "FAIL",
+        "detail": "2021: thermal 170918 < floor 2469602000 MW; 2025: thermal 182821 < floor 184644 MW"
+      },
+      {
+        "ident": "I8",
+        "name": "planned-additions gating",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I9",
+        "name": "storage integrity",
+        "status": "FAIL",
+        "detail": "2023: simultaneous chg+dis 3.59% of throughput; 2024: simultaneous chg+dis 3.44% of throughput"
+      },
+      {
+        "ident": "I10",
+        "name": "RPS dual sign+stability",
+        "status": "PASS",
+        "detail": "\u22650, stable"
+      },
+      {
+        "ident": "I11",
+        "name": "one-pass",
+        "status": "PASS",
+        "detail": "single pass"
+      },
+      {
+        "ident": "I12",
+        "name": "reserve-margin band",
+        "status": "WARN",
+        "detail": "band [13.8%, 28.7%]; out: 2021:-100.0%"
+      },
+      {
+        "ident": "I13",
+        "name": "cobweb detector",
+        "status": "PASS",
+        "detail": "smooth"
+      },
+      {
+        "ident": "I14",
+        "name": "price sanity",
+        "status": "WARN",
+        "detail": "2021: LW $1680.4 outside [0.5\u00d7,3.0\u00d7] CC MC $26.2"
+      }
+    ],
+    "registered_utc": "2026-07-05T20:04:42Z"
+  },
+  {
+    "run_id": "pjm-2021-2025-realized",
+    "meta": {
+      "iso": "PJM",
+      "variant": "realized",
+      "gas_price_path": "hindcast_realized",
+      "vintage_year": 2020,
+      "start_year": 2021,
+      "end_year": 2025,
+      "cache_key": "60504103a1c4cc02",
+      "bundle": "results/hindcast/pjm-2021-2025-realized/PJM/60504103a1c4cc02",
+      "solved_years": [
+        2021,
+        2023,
+        2024,
+        2025
+      ],
+      "bridged_years": [
+        2022
+      ],
+      "leakage_violations": [],
+      "started_utc": "2026-07-05T19:47:31Z"
+    },
+    "score": {
+      "iso": "PJM",
+      "variant": "realized",
+      "scored_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "retirements": {
+        "total_gw": {
+          "actual": 11.121,
+          "model": 4.106,
+          "err_frac": -0.631,
+          "band": "FAIL"
+        },
+        "per_fuel": {
+          "biomass": {
+            "actual_gw": 0.189,
+            "model_gw": 0.009,
+            "err_frac": -0.95
+          },
+          "coal": {
+            "actual_gw": 6.885,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          },
+          "gas_ct": {
+            "actual_gw": 3.491,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          },
+          "nuclear": {
+            "actual_gw": 0.0,
+            "model_gw": 4.097,
+            "err_frac": null
+          },
+          "oil": {
+            "actual_gw": 0.555,
+            "model_gw": 0.0,
+            "err_frac": -1.0
+          }
+        },
+        "unit_recall_gt300": {
+          "n_big_actual": 17,
+          "matched": 0,
+          "recall": 0.0,
+          "band": "FAIL"
+        },
+        "false_retire": {
+          "false_gw": 4.097,
+          "frac_of_model": 0.998,
+          "band": "FAIL"
+        }
+      },
+      "additions": {
+        "by_tech": {
+          "wind": {
+            "actual_gw": 1.619,
+            "model_gw": 6.0,
+            "err_frac": 2.706,
+            "band": "FAIL"
+          },
+          "solar": {
+            "actual_gw": 13.066,
+            "model_gw": 17.5,
+            "err_frac": 0.339,
+            "band": "FAIL"
+          },
+          "gas_cc": {
+            "actual_gw": 8.525,
+            "model_gw": 12.0,
+            "err_frac": 0.408,
+            "band": "FAIL"
+          },
+          "gas_ct": {
+            "actual_gw": 0.447,
+            "model_gw": 2.0,
+            "err_frac": 3.471,
+            "band": "FAIL"
+          },
+          "storage": {
+            "actual_gw": 0.283,
+            "model_gw": 0.0,
+            "err_frac": -1.0,
+            "band": "FAIL"
+          }
+        },
+        "shares": {
+          "wind": {
+            "actual_share": 0.067,
+            "model_share": 0.16,
+            "delta_pp": 0.093,
+            "band": "FAIL"
+          },
+          "solar": {
+            "actual_share": 0.542,
+            "model_share": 0.467,
+            "delta_pp": -0.076,
+            "band": "FAIL"
+          },
+          "gas_cc": {
+            "actual_share": 0.354,
+            "model_share": 0.32,
+            "delta_pp": -0.034,
+            "band": "PASS"
+          },
+          "gas_ct": {
+            "actual_share": 0.019,
+            "model_share": 0.053,
+            "delta_pp": 0.035,
+            "band": "PASS"
+          },
+          "storage": {
+            "actual_share": 0.012,
+            "model_share": 0.0,
+            "delta_pp": -0.012,
+            "band": "PASS"
+          }
+        },
+        "actual_total_gw": 24.092,
+        "model_total_gw": 37.5
+      },
+      "co2": {
+        "model": {
+          "2023": 243646342.99713472,
+          "2024": 215929773.4638534,
+          "2025": 398591096.0719434
+        },
+        "actual": {
+          "2023": 407135714.37786365,
+          "2024": 420607523.9953725,
+          "2025": 448666172.50825304
+        }
+      },
+      "baselines": {
+        "announced": {
+          "retire_gw": 65.381,
+          "add_gw": 147.445,
+          "note": "2020-vintage planned schedule"
+        }
+      },
+      "bands": {
+        "thermal_gw_retired_total_frac": 0.1,
+        "thermal_gw_retired_perfuel_frac": 0.2,
+        "retire_recall_min": 0.7,
+        "false_retire_frac_max": 0.15,
+        "retire_timing_years_max": 1.5,
+        "add_gw_frac_default": 0.15,
+        "add_gw_frac_storage": 0.25,
+        "techmix_share_pp_max": 0.05,
+        "co2_2025_frac": 0.1
+      },
+      "generated_utc": "2026-07-05T20:02:58Z"
+    },
+    "invariants": [
+      {
+        "ident": "I1",
+        "name": "energy balance",
+        "status": "PASS",
+        "detail": "max |supply\u2212demand| = 2.384e-07 MW (year 2021); tol 1.0"
+      },
+      {
+        "ident": "I2",
+        "name": "no NaN/inf",
+        "status": "PASS",
+        "detail": "clean"
+      },
+      {
+        "ident": "I3",
+        "name": "unserved/dump",
+        "status": "FAIL",
+        "detail": "2021: slack 83.75% of load"
+      },
+      {
+        "ident": "I4",
+        "name": "capacity accounting",
+        "status": "PASS",
+        "detail": "closes"
+      },
+      {
+        "ident": "I5",
+        "name": "no retire-and-reenter",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I6",
+        "name": "econ-retirement sanity",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I7",
+        "name": "reliability floor",
+        "status": "FAIL",
+        "detail": "2021: thermal 170918 < floor 2469602000 MW; 2025: thermal 180821 < floor 184644 MW"
+      },
+      {
+        "ident": "I8",
+        "name": "planned-additions gating",
+        "status": "PASS",
+        "detail": "ok"
+      },
+      {
+        "ident": "I9",
+        "name": "storage integrity",
+        "status": "FAIL",
+        "detail": "2023: simultaneous chg+dis 6.09% of throughput; 2024: simultaneous chg+dis 1.32% of throughput"
+      },
+      {
+        "ident": "I10",
+        "name": "RPS dual sign+stability",
+        "status": "PASS",
+        "detail": "\u22650, stable"
+      },
+      {
+        "ident": "I11",
+        "name": "one-pass",
+        "status": "PASS",
+        "detail": "single pass"
+      },
+      {
+        "ident": "I12",
+        "name": "reserve-margin band",
+        "status": "WARN",
+        "detail": "band [13.8%, 28.7%]; out: 2021:-100.0%"
+      },
+      {
+        "ident": "I13",
+        "name": "cobweb detector",
+        "status": "PASS",
+        "detail": "smooth"
+      },
+      {
+        "ident": "I14",
+        "name": "price sanity",
+        "status": "WARN",
+        "detail": "2021: LW $1681.3 outside [0.5\u00d7,3.0\u00d7] CC MC $32.1"
+      }
+    ],
+    "registered_utc": "2026-07-05T20:04:40Z"
   }
 ]</script>
   <script src="js/nav.js"></script>
