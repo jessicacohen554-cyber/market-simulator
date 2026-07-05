@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1095 parameters registered** (613 flagged `needs-citation`).
+**1095 parameters registered** (612 flagged `needs-citation`).
 
 
 ## Calibration
@@ -772,7 +772,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.chp_steam_following` | False | 3 | CHP cogeneration treatment. When chp_steam_following is True, each … |  | auto-generated, needs-citation |
 | `scenario.cod_ramp_enabled` | True | 3 | Commercial-operation-date (COD) vintage ramp (market_sim.data.cod_r… |  | auto-generated, needs-citation |
 | `scenario.committed_ramp_spread` | 0.0 | 2 | Render the per-plant committed band as an n-slice rising ramp (span… |  | auto-generated, needs-citation |
-| `scenario.confirmed_exits_enabled` | False | 2 | GATED, default-OFF. When True and |  | auto-generated, needs-citation |
+| `scenario.confirmed_exits_enabled` | True | 2 | GATED, default-ON (flipped 2026-07-05). Owner sign-off once the con… | 2026-07-05 | curated |
 | `scenario.control_retrofit_forward` | False | 2 | Forward emission-control retrofit channel (Tier 2; default OFF). do… | 2026-07 | auto-generated |
 | `scenario.control_retrofit_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_mult` | 1.28 | 3 | CT part-load penalty ~28% |  | auto-generated, needs-citation |
