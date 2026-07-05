@@ -682,7 +682,50 @@ behavior, now documented).
 **Gate (builder-swap standard, §7.2)**
 
 <!-- STAGE5_GATE_RESULT -->
-(to be filled by the gate run in this session)
+**PASS (2026-07-05, run after merge).** CAISO keeper canary
+(`2026-07-03-caiso-51-firm-base`, all three years 2023-2025), re-solved from
+its frozen bundle's recorded flags at `git_sha=fb44295` (last commit before
+this stage's `3fb6282`) vs `git_sha=8d46b90` (this stage merged into main),
+both cold, `MARKET_SIM_HIGHS_THREADS=1` / `MARKET_SIM_WARMSTART=1` /
+`MARKET_SIM_WARMSTART_XYEAR=0` pinned:
+
+- `python scripts/regression_gate.py --before <fb44295 golden> --after
+  <8d46b90 golden> --mode builder` (atol=rtol=1e-9):
+  - **[1] Golden bundle diff — PASS.** All 9 result files (`dispatch/{2023,
+    2024,2025}_{P1,P2}.parquet`, `system.parquet`, `flows.parquet`,
+    `storage.parquet`), 43 numeric columns, **every column within
+    tolerance** — in fact the 2023 bundle files are byte-identical
+    (`2023_P1.parquet`/`2023_P2.parquet` file sizes match exactly), so the
+    diff exceeds the 1e-9 builder-swap standard and meets **exact
+    byte-identity** for this keeper — the CAISO reference-price/per-hub
+    seam path the keeper exercises (`caiso_perhub_firm_base`) was
+    value-identical before/after the delegation to the canonical
+    `transmission.py` builders, as §7.3.3's per-overlay table predicted
+    (no *new* mechanism reachable for this specific keeper config, only a
+    reachability change for gates it doesn't set).
+  - **[2] Reshuffle localization (informational) — 0.000% every year.**
+    `Σ|hourly Δ|` = 0.0 GWh for 2023/2024/2025 (total annual gen
+    219,562.8 / 225,294.5 / 226,191.6 GWh, Δ = +0.0000 GWh each year) — no
+    marginal-tie reshuffle at all, i.e. the observed diff is *inside* the
+    "float reassociation only" allowance §7.2 permits, not at its edge.
+  - **[3] Trivial-case smoke — PASS.** `tests/test_regression_smoke.py`,
+    24/24 passed.
+  - **[4] Quarantine + registry gates — legitimacy PASS, audit_keepers
+    FAIL, but pre-existing and unrelated.** `legitimacy_diagnostics.py
+    --keepers`: PASS (no registered bundle outside 2023-2025; holdout
+    quarantine intact). `audit_keepers.py`: **FAIL**, but the two failures
+    (PJM `2026-07-05-pjm-77-ct-relfloor` and MISO
+    `2026-07-05-miso-41-ct-evening` each missing a registered
+    zero-forcing-ablation twin, D-3/rule-20) are **PJM/MISO keeper
+    bookkeeping, untouched by this stage** — verified by running the same
+    `audit_keepers.py` at the pre-stage baseline (`fb44295`, in a worktree):
+    identical 2 failures / 6 warnings, byte-for-byte the same finding set.
+    Not a Stage-5 regression; out of scope for this docs-only gate task.
+- Conclusion: **CAISO keeper canary is dispatch-neutral under the
+  builder-swap standard (§7.2) — PASS.** The interchange unification did
+  not move a single solved number for the keeper's configuration.
+
+
 
 ---
 
