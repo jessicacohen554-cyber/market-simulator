@@ -2864,6 +2864,31 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
     nyiso_zonal_gas_basis: bool = False
 
+    # ---- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
+    # ---- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
+    #
+    # Tier 3 (calibration) — NYISO downstate interruptible city-gate gas premium
+    # for CT peakers. NYISO's downstate combustion-turbine peakers (NYC zone J +
+    # Long Island zone K, the CT_PEAKER LM6000 fleet) run only a few hundred
+    # hours a year, so they hold no firm interstate pipeline capacity and take
+    # gas off the local LDC (Con Edison / National Grid / KeySpan) city gate on
+    # interruptible service. Their delivered fuel index is the LDC city gate, not
+    # the interstate pipeline hub the model prices downstate gas at (Transco Z6
+    # NY via gas_monthly_actuals + the hub-basis overlay). Pricing the peakers at
+    # the pipeline hub lets an HR~9-10 LM6000 undercut the HR~11-12 downstate
+    # steam fleet and run near-baseload year-round (dominated by the Long Island
+    # gas-island peakers) — the CT_PEAKER over-run the B-NYI-1 offer de-leak
+    # exposes. When set, each downstate CT_PEAKER unit's delivered gas is lifted
+    # from the pipeline hub to its LDC-delivered index by the MEASURED monthly
+    # premium (EIA NG NY city-gate N3050NY3 minus the measured Transco Z6 NY hub,
+    # floored 0; positive year-round, widening in summer; a delivered fuel price,
+    # rule #13's canonical admissible input — regenerates for a forward year and
+    # responds to changed conditions). Off by default so other ISOs and all
+    # forecasts are byte-identical; the calibration harness enables it for NYISO.
+    # Backcast+forecast reproducible. See
+    # market_sim.data.fuel.apply_nyiso_downstate_ct_gas_basis.
+    nyiso_downstate_ct_gas_basis: bool = False
+
     # Tier 3 (calibration) — PJM per-zone gas basis. PJM is priced off a single
     # ISO-wide delivered-gas series, so every gas-CC carries the same marginal
     # cost, all 8 zones clear at one LMP (0.000 zonal spread in every hour), no
@@ -4069,6 +4094,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hh_monthly_shape": 3,
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
+    "nyiso_downstate_ct_gas_basis": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
     "pjm_congestion": 3,
