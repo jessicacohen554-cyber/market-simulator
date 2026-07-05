@@ -522,13 +522,17 @@ _NYISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 0.90,
         "econ_low": 0.95,
-        # OPEN ROOT CAUSE (rule #1, audit C-13): econ_high 1.21 is a CAMPD CC
-        # marginal-HR reach value grounded on ERCOT's CC analysis and shared to
-        # NYISO/CAISO — flagged as residual-identified/cross-borrowed. It is NOT
-        # the generic-fallback inheritance this scrub targets (the else-arm value
-        # is 1.27), and removing it is documented to crater C3a −24%, so it is
-        # left for the later NYISO-grounded calibration phase, not re-tuned here.
-        "econ_high": 1.21,
+        # DE-LEAKED (audit C-13, rule #25, B-NYI-1): econ_high was 1.21 — a CAMPD
+        # CC marginal-HR reach value grounded on ERCOT's CC analysis and
+        # cross-borrowed to NYISO, i.e. a rule-25 cross-ISO leak. It was retained
+        # only because removing it craters C3a ≈ −24%, which is a residual
+        # justification, not a NYISO-identified value — so it neutralizes to the
+        # neutral 1.0 band (CC offers at its own econ heat rate, no borrowed
+        # markup). The C3a hole this exposes is an OPEN ROOT CAUSE (rule #1):
+        # the real missing mechanism is NYISO scarcity/reserve (RCPF/AS) price
+        # formation, NOT a CC energy markup — see GitHub issue #1344. Do NOT
+        # re-arm this markup to close C3a (rule #26, rule #1).
+        "econ_high": 1.0,
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,

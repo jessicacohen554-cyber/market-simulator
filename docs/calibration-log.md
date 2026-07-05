@@ -4509,3 +4509,60 @@ lever ships default-off, ERCOT-gated; it becomes the forecast-path supply
 definition automatically in forecast mode (where forecast years were uncapped
 before). No off-registry tuning (#24: flag + coefficients in
 `ScenarioConfig`/`constants.py` + `run_config.json`).
+---
+
+## 2026-07-05 — NYISO B-NYI-1: C-13 CC econ_high de-leak + C-17 LI-floor re-ground attempt (PROBE `nyiso 47 ccdeleak` + D-3 ablation twin; keeper stays 41)
+
+Wave-2 scalar remediation (`docs/handoffs/scalar-remediation-plan-2026-07.md`
+§2.2). Two rule-25/rule-12 items on the nyiso-41 keeper config; keeper unchanged.
+
+**C-13 (done here).** `_NYISO_OFFER_CURVE["CC_REGULAR"]["econ_high"]` 1.21 → **1.0**.
+The 1.21 was a CAMPD CC marginal-HR reach value grounded on **ERCOT's** CC
+analysis and cross-borrowed (rule-25), retained only because removing it craters
+C3a — a residual justification, so it neutralizes. The CT_PEAKER 13.15× ORDC
+wall was **already** de-leaked to 4.0 in source (commit `0c6c833` /
+probe `nyiso-42-band-deleak`); not re-touched here.
+
+**C-17 (attempted; scalar left in place, rule-14).** The published NYISO Zone-K
+LCR is already on disk (`data/raw/capacity-deliverability/nyiso/nyiso.csv`,
+intake PR #1261): LI `value_pu` 1.052/1.053/1.065, import/TSL limit 325/275/275
+MW. That LCR is a **peak-capacity ratio**, while `NYISO_LOCAL_SELFSUPPLY_FRAC`
+is an **all-hours energy self-supply fraction** — a rule-14 boundary mismatch.
+Substituting the LCR% (~1.05) or the TSL-implied ~0.94 peak fraction over-forces
+~2× the physical LI generation; any scalar reproducing ~0.45 needs a
+load-duration haircut tuned to the realized share (a rule-12 pin). The faithful
+fix is a peak-capacity/TSL **mechanism**, not a scalar swap — so **0.45 is left
+unchanged**, the constants.py comment now documents the mismatch, and issue
+**#1345** tracks the mechanism rebuild. No dispatch change from C-17.
+
+**Probe result (`2026-07-05-nyiso-47-ccdeleak`, bundle
+`results/calibration/nyiso_deleak_ccecon`, 2023/24/25) vs keeper nyiso-41 —
+EXPECTED regression, recorded not chased (rule #1):**
+
+| Metric | nyiso-41 | nyiso-47 (probe) |
+|---|---|---|
+| C3a mean LMP 2023 | −13.3% (CAVEAT) | **−18.9% (FAIL)** |
+| C3a mean LMP 2024 | −13.4% (CAVEAT) | **−18.4% (FAIL)** |
+| C3a mean LMP 2025 | −9.5% (CAVEAT) | **−16.1% (FAIL)** |
+| C3b shape | CAVEAT | FAIL |
+| C3c tail | fail (no scarcity tail) | fail (unchanged) |
+| C2 system volume | PASS | PASS |
+| C1 fuelmix | pass | ST_GAS 2024 −3.49 TWh out of band |
+| C4 hourly corr | r 0.916/0.87/0.818 | r 0.914/0.871/0.825 (≈flat) |
+
+Removing the CC markup lowers CC offers → prices fall further below actual and
+cheaper CC displaces steam (C1 ST_GAS). The C3a hole is **not** a CC-markup
+deficit: it is missing NYISO reserve/scarcity price formation (RCPF/AS) — open
+root cause **#1344**. Do NOT re-arm the markup (rules #1/#26).
+
+**D-3 ablation twin** `2026-07-05-nyiso-47-ccdeleak-ablation` solved + registered +
+linked (20 class deltas). Ablating the one NYISO merchant floor
+(`nyiso_local_selfsupply`) removes the LI floor while keeping structural floors
+(firm HQ/Ontario imports, nuclear, CHP steam, coal take-or-pay) — verified: LI
+self-supply floor applied 3× in the probe, 0× in the twin; firm-import floor 3×
+in both.
+
+DOF ledger rebuilt (offer_curve_by_group cites #1344; Long_Island cites #1345).
+`audit_keepers.py` PASS (12 pre-existing grandfathered E7/E9 warns);
+`legitimacy_diagnostics.py --keepers` PASS (holdout quarantine intact, all years
+2023–2025). Keeper unchanged (`keepers.json` untouched).
