@@ -18,8 +18,6 @@ the same machinery now serves PJM (and is data-driven, so NYISO/NEISO only
 need constants entries).
 """
 
-import os as _os
-
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
@@ -2286,6 +2284,8 @@ def inject_interchange_shape(
     year: int,
     percentile: float = 90.0,
     export_only: bool = False,
+    import_percentile: float | None = None,
+    export_percentile: float | None = None,
 ) -> bool:
     """Shape the priced import/export node by the measured diurnal interchange.
 
@@ -2320,6 +2320,14 @@ def inject_interchange_shape(
     mean LMP. Export-only keeps the part that helps (the midday export cap, so
     surplus beyond the measured export curtails and prices negative) and drops
     the part that regresses the mix.
+
+    ``import_percentile`` / ``export_percentile`` override ``percentile`` per
+    direction (the caller sources these from ``config.interchange_shape_
+    import_pct`` / ``_export_pct`` — see :class:`~market_sim.config.scenarios
+    .ScenarioConfig` — rather than an environment variable, so the value that
+    ran is visible in the persisted ``run_config.json``). Each defaults to
+    ``percentile`` when not given, so a caller that only ever passed the
+    positional ``percentile`` gets byte-identical behavior.
     """
     from market_sim.data.eia_loader import measured_interchange_envelope
     from market_sim.data.fleet import FUEL_TYPE_MAP
@@ -2329,10 +2337,11 @@ def inject_interchange_shape(
     # net-import envelope IS the deliverable import, so the import cap can ride a
     # higher percentile (fatter overnight tail) without re-admitting the midday
     # imports the (near-zero) midday envelope already excludes. Overridable per
-    # direction for the bidir sweep; defaults to the passed ``percentile`` so the
-    # legacy export-only path is byte-identical.
-    import_pct = float(_os.environ.get("INTERCHANGE_SHAPE_IMPORT_PCT", percentile))
-    export_pct = float(_os.environ.get("INTERCHANGE_SHAPE_EXPORT_PCT", percentile))
+    # direction for the bidir sweep via import_percentile/export_percentile;
+    # each defaults to the passed ``percentile`` so the legacy export-only path
+    # is byte-identical.
+    import_pct = float(percentile if import_percentile is None else import_percentile)
+    export_pct = float(percentile if export_percentile is None else export_percentile)
     import_code = FUEL_TYPE_MAP["import"]
     is_node = fleet_arrays.fuel_type_idx == import_code
     imp_rows = np.flatnonzero(is_node & (fleet_arrays.pmax > 0.0))
