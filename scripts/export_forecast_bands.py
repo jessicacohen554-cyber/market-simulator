@@ -409,7 +409,10 @@ def write_markdown_table(payload: dict, out_path, metric: str | None = None) -> 
         p10 = q.get("0.1", {}).get("value")
         p50 = q.get("0.5", {}).get("value")
         p90 = q.get("0.9", {}).get("value")
-        fmt = lambda v: f"{v:.2f}" if v is not None else "—"
+
+        def fmt(v):
+            return f"{v:.2f}" if v is not None else "—"
+
         lines.append(f"| {year} | {fmt(p10)} | {fmt(p50)} | {fmt(p90)} |")
 
     out_path = Path(out_path)
