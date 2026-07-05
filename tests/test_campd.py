@@ -338,6 +338,77 @@ class TestApplyPlantEmissionRates(unittest.TestCase):
         self.assertEqual(n, 0)
 
 
+class TestApplyPlantEmissionRatesV2NoxSo2(unittest.TestCase):
+    """The v2 override now books CO2, NOx and SO2 at the measured plant rate."""
+
+    def _v2(self) -> pd.DataFrame:
+        # A coal + gas unit sharing plant 3470 (Parish-style); gas SO2 == 0.
+        rows = []
+        for year in (2023, 2024):
+            rows += [
+                ("ERCOT", 3470, "WAP5", year, "Coal", 1000.0, 1e6, 800.0, 900.0),
+                ("ERCOT", 3470, "WAP1", year, "Gas", 1000.0, 4e5, 200.0, 0.0),
+            ]
+        return pd.DataFrame(
+            rows,
+            columns=[
+                "iso",
+                "plant_id",
+                "unit_id",
+                "year",
+                "primary_fuel",
+                "net_mwh",
+                "co2_kg",
+                "nox_kg",
+                "so2_kg",
+            ],
+        )
+
+    def test_books_measured_nox_and_so2(self):
+        from market_sim.data.fleet import (
+            _measured_plant_rate_map_v2,
+            apply_plant_emission_rates_v2,
+        )
+
+        _measured_plant_rate_map_v2.cache_clear()
+        coal = Generator(
+            unit_id="coal_p3470",
+            name="coal",
+            zone="Z",
+            fuel_type="coal",
+            pmax_mw=100.0,
+            emission_rate_co2=1.05,
+            nox_rate=0.001,
+            so2_rate=0.001,
+            plant_code=3470,
+        )
+        gas = Generator(
+            unit_id="gas_p3470",
+            name="gas",
+            zone="Z",
+            fuel_type="gas_cc",
+            pmax_mw=50.0,
+            emission_rate_co2=0.4,
+            nox_rate=0.0002,
+            so2_rate=0.0002,
+            plant_code=3470,
+        )
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "v2.parquet"
+            self._v2().to_parquet(p)
+            apply_plant_emission_rates_v2(
+                [coal, gas], p, iso="ERCOT", year=2024, mode="backcast"
+            )
+        # Coal unit books its measured coal-class rates (tonnes/MWh net).
+        self.assertAlmostEqual(coal.emission_rate_co2, 1.0)  # 1e6 kg / 1000 -> 1 t
+        self.assertAlmostEqual(coal.nox_rate, 0.0008)
+        self.assertAlmostEqual(coal.so2_rate, 0.0009)
+        # Gas unit books the gas-class rates; its measured SO2 is a genuine 0.
+        self.assertAlmostEqual(gas.emission_rate_co2, 0.4)
+        self.assertAlmostEqual(gas.nox_rate, 0.0002)
+        self.assertAlmostEqual(gas.so2_rate, 0.0)
+
+
 def _heat_only_hourly(plant_id: int, year: int) -> pd.DataFrame:
     """A grossLoad-blank coal unit: one full year of hourly heat, no gross.
 

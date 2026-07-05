@@ -245,6 +245,17 @@ def fuel_class(label: str) -> str:
     return "other"
 
 
+# Measured pollutant mass columns in the v2 artifact, keyed by pollutant name.
+# The rate for each is Σ mass_kg / Σ net_mwh over the composition-masked units,
+# converted kg/MWh → tonnes/MWh at the boundary (the model's canonical unit for
+# every emission rate — CO2, NOx, SO2 alike).
+_POLLUTANT_MASS_COL: dict[str, str] = {
+    "co2": "co2_kg",
+    "nox": "nox_kg",
+    "so2": "so2_kg",
+}
+
+
 def measured_plant_rates(
     v2: pd.DataFrame,
     iso: str,
@@ -252,8 +263,9 @@ def measured_plant_rates(
     mode: str,
     *,
     window: int | None = None,
+    pollutant: str = "co2",
 ) -> dict[tuple[int, str], float]:
-    """Return ``{(plant_id, fuel_class): co2_rate_tonnes_per_mwh_net}``.
+    """Return ``{(plant_id, fuel_class): rate_tonnes_per_mwh_net}`` for a pollutant.
 
     Mode-aware source (resolves EM-3): a **backcast** year consumes that year's
     own measured rate; a **forecast** year consumes the estimator base — the
@@ -261,10 +273,16 @@ def measured_plant_rates(
     aggregated over CEMS units of the same coarse fuel class (the composition
     mask), so retiring or splitting a unit moves the rate. Built from the v2
     artifact (``derive_plant_emissions_v2.py``); returns tonnes/MWh net.
+
+    ``pollutant`` selects the mass column (``"co2"`` / ``"nox"`` / ``"so2"``);
+    the mode/window/composition-mask policy is identical for all three (NOx/SO2
+    ride the same path as CO2 — plan §5 R7 / §7). A pollutant whose mass column
+    is absent (e.g. a legacy CO2-only v2) yields ``{}``.
     """
+    mass_col = _POLLUTANT_MASS_COL[str(pollutant).lower()]
     window = constants.CO2_RATE_TRAILING_WINDOW_YEARS if window is None else window
     df = v2[v2["iso"].astype(str) == str(iso)].copy()
-    if df.empty:
+    if df.empty or mass_col not in df.columns:
         return {}
     if str(mode).lower() == "backcast":
         df = df[df["year"] == int(target_year)]
@@ -278,12 +296,12 @@ def measured_plant_rates(
     df["fuel_class"] = df["primary_fuel"].map(fuel_class)
     out: dict[tuple[int, str], float] = {}
     grouped = df.groupby(["plant_id", "fuel_class"], observed=True)[
-        ["co2_kg", "net_mwh"]
+        [mass_col, "net_mwh"]
     ]
     for (plant_id, fc), agg in grouped.sum().iterrows():
         net = float(agg["net_mwh"])
         if net > 0:
-            out[(int(plant_id), str(fc))] = float(agg["co2_kg"]) / net / 1000.0
+            out[(int(plant_id), str(fc))] = float(agg[mass_col]) / net / 1000.0
     return out
 
 
@@ -291,23 +309,30 @@ def class_median_rates(
     annual: pd.DataFrame,
     *,
     percentile: float | None = None,
+    pollutant: str = "co2",
 ) -> dict[tuple[str, str], float]:
     """Return ``{(group, fuel): rate_kg_per_mwh_net}`` class-distribution rates.
 
     Built from the same per-plant-year CAMPD observations the estimator uses:
-    each plant-year contributes its net CO2 intensity, weighted by net MWh, and
-    the class rate is the (default gen-weighted median) percentile of that
-    distribution. Feeds the entrant / uncovered-plant fallback (plan §2.1 step 4),
-    replacing generic ``heat_rate × FUEL_CO2_FACTOR`` constants.
+    each plant-year contributes its net pollutant intensity, weighted by net
+    MWh, and the class rate is the (default gen-weighted median) percentile of
+    that distribution. Feeds the entrant / uncovered-plant fallback (plan §2.1
+    step 4), replacing generic ``heat_rate × FUEL_*_FACTOR`` constants — never a
+    generic heat-rate constant (CLAUDE.md rule 3/13).
 
-    ``annual`` needs columns ``group, fuel, net_mwh, co2_kg`` (one row per
-    plant-year). Years/rows with no net generation are dropped.
+    ``pollutant`` selects the mass column (``"co2"`` / ``"nox"`` / ``"so2"``);
+    the gen-weighted-median policy and the shared
+    ``CO2_RATE_CLASS_MEDIAN_PERCENTILE`` are identical across pollutants (NOx/SO2
+    mirror CO2 — plan §5 R7). ``annual`` needs columns ``group, fuel, net_mwh``
+    and the selected ``<pollutant>_kg`` (one row per plant-year). Years/rows with
+    no net generation are dropped.
     """
+    mass_col = _POLLUTANT_MASS_COL[str(pollutant).lower()]
     pct = (
         constants.CO2_RATE_CLASS_MEDIAN_PERCENTILE if percentile is None else percentile
     )
     df = annual[annual["net_mwh"] > 0.0].copy()
-    df["rate"] = df["co2_kg"] / df["net_mwh"]
+    df["rate"] = df[mass_col] / df["net_mwh"]
     out: dict[tuple[str, str], float] = {}
     for (group, fuel), sub in df.groupby(["group", "fuel"], observed=True):
         out[(str(group), str(fuel))] = _weighted_percentile(

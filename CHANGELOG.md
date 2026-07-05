@@ -24,6 +24,26 @@ CHP must-run post-processing section corrected to the current two-branch
 formula; `docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9.2 records the
 wave.
 
+## 2026-07-05 (NOx/SO2 full wiring — plan §5 R7 / §7)
+
+**Model.** NOx and SO2 now ride the identical measured-rate v2 path as CO2
+(previously CO2-only; NOx/SO2 were left to the legacy pooled artifact). The v2
+artifact (`plant_emission_rates_v2.parquet`) carries `nox_kg`/`so2_kg` masses
+and their net-basis intensities alongside CO2; `emission_rates.measured_plant_rates`
+and `class_median_rates` gained a `pollutant` selector; `fleet.apply_plant_emission_rates_v2`
+books all three pollutants at the plant's measured tonnes/MWh-net rate under the
+same mode/composition-mask policy (backcast = target-year measured, forecast =
+gen-weighted trailing estimator base). CO2/NOx override only when the measured
+rate is positive; SO2 is always set (zero is a legitimate gas value). **No CO2
+rate, no merit order, no dispatch changes** — the v2 CO2 columns are byte-identical
+after the re-derive; NOx/SO2 are secondary. `scripts/score_backcast_shape_emissions.py`
+now scores model-vs-CAMPD NOx and SO2 masses beside CO2 (the SO2 coal/gas split is
+the sharpest independent dispatch-mix check) and reads intensities from the v2
+artifact via `config/paths` (fixing its stale `inputs/` paths). No new tunable —
+the class-median percentile is the shared `CO2_RATE_CLASS_MEDIAN_PERCENTILE`.
+**Docs.** `model-methodology-spec.md` per-plant-emission-rate override section
+gained the NOx/SO2-ride-the-v2-path paragraph.
+
 ## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
 
 **Model.** Unified every carbon path through one `emission_rate × membership`

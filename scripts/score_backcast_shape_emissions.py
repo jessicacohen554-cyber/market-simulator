@@ -8,12 +8,16 @@ recommended in `docs/ercot-backcast-audit-2026-06.md` §D3, computed from a
 bundle's committed `plant_hourly_fit.parquet` + the per-plant CEMS emission
 intensities, so no LP re-solve is needed:
 
-1. **Carbon-weighted CO2** — per-class, per-fuel (coal/gas) and system-total
-   CO2, model vs CAMPD-actual, re-weighting each plant's volume error by its
-   measured CO2 intensity. Absolute gates: system total +/-5%, per class
-   +/-7%. This is the independent check on the coal/gas split: swapping coal
-   MWh for gas MWh (compensation that passes the volume gate) moves total CO2
-   because coal is ~2x the intensity of gas.
+1. **Carbon-weighted CO2** (plus **NOx** and **SO2**) — per-class, per-fuel
+   (coal/gas) and system-total mass, model vs CAMPD-actual, re-weighting each
+   plant's volume error by its measured pollutant intensity. Absolute gates:
+   system total +/-5%, per class +/-7%. This is the independent check on the
+   coal/gas split: swapping coal MWh for gas MWh (compensation that passes the
+   volume gate) moves total CO2 because coal is ~2x the intensity of gas — and
+   moves SO2 far more (coal SO2 intensity dwarfs gas), so the SO2 table is the
+   sharpest split check. NOx/SO2 are secondary reporting gates (plan §5 R7);
+   they never gate a keeper and their intensities come from the same v2 artifact
+   as CO2, so the CO2 verdict is unchanged.
 2. **Operating-shape `cf_emd`** — generation-weighted earth-mover distance
    between the model and CAMPD per-plant CF distributions, per class. Run as a
    **regression gate** against a `--baseline` bundle (the keeper): a class
@@ -21,13 +25,13 @@ intensities, so no LP re-solve is needed:
 3. **Hourly `pearson_r`** — generation-weighted per-class correlation, also a
    regression gate vs baseline (fail if r drops by more than `--r-margin`).
 
-The actual-CO2 side uses the plant's measured `co2_kg_per_mwh_net`
-(`data/raw/_processed-legacy/plant_emission_rates.parquet`, itself derived from CAMPD
-co2/gen) applied to the CEMS net generation, so it reconstructs the measured
-CAMPD CO2; the model side applies the same per-plant intensity to the model's
-dispatched generation. Per plant the CO2 error therefore equals the volume
-error; the *new* information is in the carbon-weighted aggregation across
-fuels of differing intensity.
+The actual side uses the plant's measured `<pollutant>_kg_per_mwh_net`
+(`data/raw/_processed-legacy/plant_emission_rates_v2.parquet`, itself derived
+from CAMPD mass/gen) applied to the CEMS net generation, so it reconstructs the
+measured CAMPD mass; the model side applies the same per-plant intensity to the
+model's dispatched generation. Per plant the mass error therefore equals the
+volume error; the *new* information is in the intensity-weighted aggregation
+across fuels of differing intensity.
 
 Usage:
     uv run python scripts/score_backcast_shape_emissions.py \
@@ -50,18 +54,26 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-# Absolute CO2 gates (audit §D3 / peer-review §D.3).
+from market_sim.config import paths  # noqa: E402
+
+# Absolute CO2 gates (audit §D3 / peer-review §D.3). NOx/SO2 reuse the same
+# band shape — they are secondary reporting gates (plan §5 R7), never keeper
+# gates; coal's SO2 intensity so dwarfs gas that the SO2 table is the sharpest
+# independent check on the coal/gas dispatch split.
 CO2_TOTAL_BAND = 0.05  # system fossil total
 CO2_CLASS_BAND = 0.07  # per fuel class
+# The three pollutants scored, each with its v2 per-net-MWh intensity column.
+POLLUTANTS = ("co2", "nox", "so2")
+_INTENSITY_COL = {p: f"{p}_kg_per_mwh_net" for p in POLLUTANTS}
 # Regression-gate margins for the shape metrics (seeded at the baseline's
 # best-achieved value; a small slack absorbs solver noise).
 DEFAULT_EMD_MARGIN = 0.02  # cf_emd may rise at most this much vs baseline
 DEFAULT_R_MARGIN = 0.02  # pearson_r may fall at most this much vs baseline
 
-_BIN_SHEET = REPO / "inputs" / "custom-bin-assignments.csv"
-_RATES = REPO / "inputs" / "processed" / "plant_emission_rates.parquet"
+_BIN_SHEET = paths.RAW_DATA_DIR / "reference" / "custom-bin-assignments.csv"
+_RATES = paths.PROCESSED_DIR / "plant_emission_rates_v2.parquet"
 
-# Plant_Group -> coarse fuel for the coal/gas CO2 split.
+# Plant_Group -> coarse fuel for the coal/gas split.
 _COAL_GROUPS = {"COAL"}
 
 
@@ -71,16 +83,20 @@ def _class_map() -> dict[int, str]:
     return dict(zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str)))
 
 
-def _intensity_map() -> dict[int, float]:
-    """Plant_id -> measured CO2 intensity (tonnes/MWh net), CEMS-derived.
+def _intensity_map(pollutant: str, iso: str = "ERCOT") -> dict[int, float]:
+    """Plant_id -> measured pollutant intensity (tonnes/MWh net), CEMS-derived.
 
-    The emission-rate table is keyed (plant_id, year); the intensity is stable
-    across the backcast years, so collapse to one value per plant (prefer the
-    non-zero-gen rows, mean of what remains). kg/MWh -> tonnes/MWh by /1000.
+    The v2 artifact is keyed (iso, plant_id, unit_id, year); the intensity is
+    stable across the backcast years, so aggregate to one value per plant on the
+    gen-weighted net basis (Σ mass_kg / Σ net_mwh over that ISO's rows), then
+    kg/MWh -> tonnes/MWh by /1000. NOx/SO2 mirror CO2 (plan §5 R7).
     """
     r = pd.read_parquet(_RATES)
-    r = r[r["co2_kg_per_mwh_net"].notna() & (r["co2_kg_per_mwh_net"] > 0)]
-    by_plant = r.groupby("plant_id")["co2_kg_per_mwh_net"].mean() / 1000.0
+    r = r[r["iso"].astype(str) == str(iso)]
+    mass_col = f"{pollutant}_kg"
+    agg = r.groupby("plant_id")[[mass_col, "net_mwh"]].sum()
+    agg = agg[agg["net_mwh"] > 0]
+    by_plant = (agg[mass_col] / agg["net_mwh"]) / 1000.0
     return by_plant.to_dict()
 
 
@@ -89,42 +105,45 @@ def _fuel(group: str) -> str:
 
 
 def load_fit(bundle: Path) -> pd.DataFrame:
-    """Per-plant fit frame enriched with class, fuel and CO2 intensity."""
+    """Per-plant fit frame enriched with class, fuel and per-pollutant intensity."""
     df = pd.read_parquet(bundle / "plant_hourly_fit.parquet").copy()
-    cmap, imap = _class_map(), _intensity_map()
+    cmap = _class_map()
     df["group"] = df["plant_code"].astype(int).map(cmap)
     df = df[df["group"].notna()].copy()
     df["fuel"] = df["group"].map(_fuel)
-    df["intensity"] = df["plant_code"].astype(int).map(imap)
-    # Plants with no CEMS intensity (a handful of tiny CTs) carry no CO2 — drop
-    # them from the CO2 aggregation only; they stay in the shape metrics.
+    for p in POLLUTANTS:
+        df[f"intensity_{p}"] = df["plant_code"].astype(int).map(_intensity_map(p))
+    # Plants with no CEMS intensity (a handful of tiny CTs) carry no mass — drop
+    # them from the mass aggregation only; they stay in the shape metrics.
     return df
 
 
-def co2_table(df: pd.DataFrame) -> pd.DataFrame:
-    """Model vs actual CO2 (kilotonnes) by year x {fuel, total} with err% + gate."""
-    c = df[df["intensity"].notna()].copy()
-    # CO2 (tonnes) = generation (GWh) * intensity (tonnes/MWh) * 1000 MWh/GWh,
+def pollutant_table(df: pd.DataFrame, pollutant: str) -> pd.DataFrame:
+    """Model vs actual pollutant mass (kilotonnes) by year x {fuel,total} + gate."""
+    icol = f"intensity_{pollutant}"
+    c = df[df[icol].notna()].copy()
+    # mass (tonnes) = generation (GWh) * intensity (tonnes/MWh) * 1000 MWh/GWh,
     # reported in kilotonnes (/1000) -> GWh * intensity.
-    c["model_co2_kt"] = c["model_gwh"] * c["intensity"]
-    c["actual_co2_kt"] = c["campd_gwh"] * c["intensity"]
+    c["model_kt"] = c["model_gwh"] * c[icol]
+    c["actual_kt"] = c["campd_gwh"] * c[icol]
     rows = []
     for year, g in c.groupby("year"):
         for fuel in ("coal", "gas"):
             gf = g[g["fuel"] == fuel]
-            rows.append(_co2_row(year, fuel, gf, CO2_CLASS_BAND))
-        rows.append(_co2_row(year, "TOTAL", g, CO2_TOTAL_BAND))
+            rows.append(_mass_row(pollutant, year, fuel, gf, CO2_CLASS_BAND))
+        rows.append(_mass_row(pollutant, year, "TOTAL", g, CO2_TOTAL_BAND))
     return pd.DataFrame(rows)
 
 
-def _co2_row(year, label, g, band):
-    m, a = g["model_co2_kt"].sum(), g["actual_co2_kt"].sum()
+def _mass_row(pollutant, year, label, g, band):
+    m, a = g["model_kt"].sum(), g["actual_kt"].sum()
     err = (m - a) / a if a else float("nan")
+    unit = f"kt{pollutant.upper()}"
     return {
         "year": year,
         "fuel": label,
-        "model_ktCO2": round(m, 1),
-        "actual_ktCO2": round(a, 1),
+        f"model_{unit}": round(m, 1),
+        f"actual_{unit}": round(a, 1),
         "err_pct": round(100 * err, 1),
         "band_pct": round(100 * band, 1),
         "gate": "PASS" if abs(err) <= band else "FAIL",
@@ -186,14 +205,19 @@ def main() -> None:
     base = load_fit(args.baseline) if args.baseline else None
 
     print(f"\n=== Bundle: {args.bundle} ===")
-    co2 = co2_table(df)
-    print("\n[CO2] carbon-weighted fossil CO2 (kilotonnes), model vs CAMPD-actual")
-    print(co2.to_string(index=False))
-    n_fail = (co2["gate"] == "FAIL").sum()
-    print(
-        f"CO2 gates: {len(co2) - n_fail}/{len(co2)} PASS "
-        f"(total +/-{int(CO2_TOTAL_BAND * 100)}%, class +/-{int(CO2_CLASS_BAND * 100)}%)"
-    )
+    for pollutant in POLLUTANTS:
+        tbl = pollutant_table(df, pollutant)
+        tag = pollutant.upper()
+        kind = "carbon-weighted fossil" if pollutant == "co2" else "intensity-weighted"
+        note = "" if pollutant == "co2" else "  [secondary/reporting — R7]"
+        print(f"\n[{tag}] {kind} {tag} mass (kilotonnes), model vs CAMPD-actual{note}")
+        print(tbl.to_string(index=False))
+        n_fail = (tbl["gate"] == "FAIL").sum()
+        print(
+            f"{tag} gates: {len(tbl) - n_fail}/{len(tbl)} PASS "
+            f"(total +/-{int(CO2_TOTAL_BAND * 100)}%, "
+            f"class +/-{int(CO2_CLASS_BAND * 100)}%)"
+        )
 
     shape = shape_table(df, base, args.emd_margin, args.r_margin)
     print(
