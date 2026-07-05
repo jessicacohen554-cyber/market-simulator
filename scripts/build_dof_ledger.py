@@ -157,8 +157,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                     " · NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked "
                     "1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the "
                     "exposed C3a hole is missing NYISO reserve/scarcity price "
-                    "formation, not a CC markup — open: "
-                    + _ISSUE_NYISO_C3A_CC_DELEAK
+                    "formation, not a CC markup — open: " + _ISSUE_NYISO_C3A_CC_DELEAK
                     if iso == "NYISO"
                     else ""
                 ),
@@ -468,8 +467,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "generation, and any scalar reproducing ~0.45 requires a "
                 "load-duration haircut tuned to the realized share (rule-12 pin). "
                 "The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar "
-                "re-ground; 0.45 left in place — open: "
-                + _ISSUE_NYISO_LI_LCR_MISMATCH,
+                "re-ground; 0.45 left in place — open: " + _ISSUE_NYISO_LI_LCR_MISMATCH,
             )
         )
     if iso in ("NYISO", "NEISO", "PJM", "MISO", "CAISO"):
