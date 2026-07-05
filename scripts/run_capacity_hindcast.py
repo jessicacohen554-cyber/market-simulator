@@ -36,6 +36,15 @@ from pathlib import Path
 _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+# Invoking this file directly (``python scripts/run_capacity_hindcast.py``) puts
+# its own directory on sys.path[0], not the repo root, so the model's
+# ``scripts.lib.clean_io`` clean-data seam (e.g. eia_loader's repaired
+# demand-profile fallback) silently disables itself and falls back to raw data
+# — see the PJM demand-defect investigation, 2026-07-05. Add the repo root so
+# it resolves, matching scripts/regenerate_clean.py's subprocess bootstrap.
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402

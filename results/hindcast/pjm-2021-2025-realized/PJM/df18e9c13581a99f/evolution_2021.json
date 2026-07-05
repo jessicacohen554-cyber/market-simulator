@@ -24,9 +24,9 @@
   "hindcast": true,
   "iso": "PJM",
   "mode": "forecast",
-  "peak_demand_mw": 2147480000.0,
+  "peak_demand_mw": 149590.0,
   "renewable_additions": [],
-  "reserve_margin": -0.999918,
+  "reserve_margin": 0.171671,
   "retirements": [],
   "rps_dual": 0.0,
   "solve_counts": {
