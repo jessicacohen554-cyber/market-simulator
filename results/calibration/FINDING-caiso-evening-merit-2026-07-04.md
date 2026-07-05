@@ -11,7 +11,7 @@ evening; (C) CT startup/min-run amortization making CT offers too dear in P1.
 2024 as a single-year diagnostic (`results/calibration/caiso_diag_evening_2024`,
 `--year 2024`, per rule 15 a throwaway diagnostic — NOT dashboard-registered). Extracted P1
 per-class hourly dispatch, per-tranche import flows, and zonal LMP
-(`scratchpad_diag_evening.py`), and reconstructed the class SRMC ladder from the loaded fleet
+(`scripts/diagnostics/scratchpad_diag_evening.py`), and reconstructed the class SRMC ladder from the loaded fleet
 heat rates + measured 2024 SoCal gas + CARB $35.23/tCO₂.
 
 ## The evening ramp, 2024, model P1 vs CAMPD actual (mean MW, h15–21)
@@ -121,4 +121,4 @@ the import-volume target are in tension under an energy-only LP.
 ## Files
 - `results/calibration/caiso_diag_evening_2024/` — single-year diagnostic bundle (P1/P2
   dispatch, flows, system). NOT dashboard-registered (single-year, rule 15).
-- `scratchpad_diag_evening.py` — extraction/diagnosis script.
+- `scripts/diagnostics/scratchpad_diag_evening.py` — extraction/diagnosis script.
