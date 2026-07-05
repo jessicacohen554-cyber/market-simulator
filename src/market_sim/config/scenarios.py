@@ -3224,9 +3224,7 @@ class ScenarioConfig:
 
         field_names = {f.name for f in fields(cls)}
         overrides = {
-            k: v
-            for k, v in zero_forcing_field_overrides().items()
-            if k in field_names
+            k: v for k, v in zero_forcing_field_overrides().items() if k in field_names
         }
         return replace(cfg, **overrides)
 

@@ -4988,9 +4988,9 @@ def main() -> None:
         "ScenarioConfig.as_zero_forcing_ablation. The bundle lands in "
         "<out-dir>-ablation (or the default path with an '-ablation' suffix), "
         "covers the SAME full year span as the keeper, and records "
-        "\"ablation_of\": <base bundle> in run_config.json. Register it beside "
+        '"ablation_of": <base bundle> in run_config.json. Register it beside '
         "its keeper (registry/<id>-ablation.json, linked from the keeper "
-        "sidecar's \"ablation_twin\"); audit_keepers E9 requires it. Solve as a "
+        'sidecar\'s "ablation_twin"); audit_keepers E9 requires it. Solve as a '
         "concurrent separate invocation from the keeper (rule 12).",
     )
     parser.add_argument(
