@@ -10,6 +10,7 @@ prior wider than the plug-in normal, P50 point path not shifted, convolution
 recovers the input spread when eps=0, and asymmetry when the bias is non-zero.
 """
 
+import json
 import math
 import unittest
 
@@ -17,9 +18,11 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm, t
 
+from market_sim.config import paths
 from market_sim.config.constants import (
     START_YEAR,
     STATMODE_PROBE_RUNS,
+    STRUCTURAL_PRIOR_CARBON_PRICED_ISOS,
     STRUCTURAL_PRIOR_FIT_YEARS,
 )
 from market_sim.ensemble import bands_from_metrics, compute_bands
@@ -31,6 +34,8 @@ from market_sim.structural_prior import (
     default_prior,
     fit_prior,
     load_statmode_residuals,
+    rescore_carbon_zero,
+    write_prior_artifact,
 )
 
 YEARS = STRUCTURAL_PRIOR_FIT_YEARS
@@ -241,6 +246,115 @@ class CommittedSourceTests(unittest.TestCase):
         self.assertEqual(sorted(statmode["ERCOT"]), list(YEARS))
         self.assertEqual(sorted(actual["ERCOT"]), list(YEARS))
         self.assertEqual(run_ids["ERCOT"], STATMODE_PROBE_RUNS["ERCOT"])
+
+
+class BasisStalenessTests(unittest.TestCase):
+    """Emissions-basis handling: carbon-zero re-score, W3-P1 stale flags.
+
+    The D-7 probes predate the R2 measured-rate CO2 basis (PR #1371). Per the
+    W0-P4 split, carbon-zero ISOs re-score with no solve; carbon-priced ISOs
+    are solve-stale and must be flagged through the prior, its artifact, and
+    its label until the W3-P1 re-solves swap them out.
+    """
+
+    def test_default_prior_flags_carbon_priced_isos_stale(self):
+        prior = default_prior()
+        self.assertEqual(
+            prior.stale_isos(), tuple(sorted(STRUCTURAL_PRIOR_CARBON_PRICED_ISOS))
+        )
+        for iso in STRUCTURAL_PRIOR_CARBON_PRICED_ISOS:
+            self.assertTrue(prior.per_iso[iso].basis_stale)
+            self.assertEqual(prior.per_iso[iso].rescore, "stale-registration-basis")
+        for iso in set(STATMODE_PROBE_RUNS) - set(STRUCTURAL_PRIOR_CARBON_PRICED_ISOS):
+            self.assertFalse(prior.per_iso[iso].basis_stale)
+            self.assertEqual(prior.per_iso[iso].rescore, "verified-identical")
+
+    def test_staleness_surfaces_in_label_and_artifact_dict(self):
+        prior = default_prior()
+        self.assertIn("BASIS-STALE", prior.label())
+        self.assertIn("W3-P1", prior.label())
+        d = prior.as_dict()
+        self.assertEqual(
+            d["stale_isos_pending_w3p1"],
+            sorted(STRUCTURAL_PRIOR_CARBON_PRICED_ISOS),
+        )
+        self.assertTrue(d["emissions_basis"]["fossil_co2_rates_sha256"])
+        self.assertIn("R2", d["emissions_basis"]["label"])
+        json.dumps(d)  # still JSON-serialisable with the new blocks
+
+    def test_synthetic_prior_carries_no_stale_flags(self):
+        # Priors fitted from synthetic inputs (no staleness info) stay clean:
+        # no stale caveat may leak onto a label the fit inputs don't justify.
+        prior = _flat_prior({"ERCOT": 0.0, "PJM": 0.2}, sd=0.05)
+        self.assertEqual(prior.stale_isos(), ())
+        self.assertNotIn("BASIS-STALE", prior.label())
+
+    def test_carbon_zero_rescore_verifies_committed_artifacts(self):
+        runs_dir = paths.FRONTEND_BACKCAST_DIR / "runs"
+        bench_dir = paths.FRONTEND_BACKCAST_DIR / "bench"
+        for iso in sorted(
+            set(STATMODE_PROBE_RUNS) - set(STRUCTURAL_PRIOR_CARBON_PRICED_ISOS)
+        ):
+            note = rescore_carbon_zero(
+                iso, STATMODE_PROBE_RUNS[iso], YEARS, runs_dir, bench_dir
+            )
+            self.assertEqual(note, "verified-identical")
+
+    def test_rescore_mismatch_refuses(self):
+        """A committed model CO2 inconsistent with gmModel x intensity raises."""
+        import base64
+        import gzip
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            runs_dir = tmp / "runs"
+            bench_dir = tmp / "bench" / "TESTISO"
+            runs_dir.mkdir(parents=True)
+            bench_dir.mkdir(parents=True)
+            years_payload = {}
+            for y in YEARS:
+                # model 40.0 Mt at intensity 0.4 needs gmModel 100 TWh; commit
+                # a corrupted 45.0 so the re-score cannot reproduce it.
+                years_payload[str(y)] = {
+                    "co2": {"model": 45.0},
+                    "gmModel": {"CC_REGULAR": 100.0},
+                }
+                (bench_dir / f"{y}.json.gz").write_bytes(
+                    gzip.compress(
+                        json.dumps(
+                            {
+                                "bench": {
+                                    "classFull": {"CC_REGULAR": 110.0},
+                                    "co2": {
+                                        "egrid": 44.0,
+                                        "intensity": {"CC_REGULAR": 0.4},
+                                    },
+                                }
+                            }
+                        ).encode()
+                    )
+                )
+            b64 = base64.b64encode(
+                gzip.compress(json.dumps({"years": years_payload}).encode())
+            ).decode()
+            (runs_dir / "bad-run.js").write_text(f'window.BC.runGz["bad-run"]="{b64}";')
+            with self.assertRaisesRegex(ValueError, "re-score"):
+                rescore_carbon_zero(
+                    "TESTISO", "bad-run", YEARS, runs_dir, tmp / "bench"
+                )
+
+    def test_write_prior_artifact_round_trip(self):
+        import tempfile
+        from pathlib import Path
+
+        prior = default_prior()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = write_prior_artifact(prior, Path(tmp) / "prior.json")
+            d = json.loads(path.read_text())
+            self.assertEqual(d, prior.as_dict())
+            self.assertEqual(d["version"], prior.version)
 
 
 if __name__ == "__main__":
