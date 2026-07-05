@@ -1,6 +1,31 @@
 # Capacity-Economics Recalibration Plan — 2026-07 (W0-P5)
 
-**Status:** design complete, NOT implemented. Implementation is W2-P3 (prompt in §9).
+**Status:** design complete. **W2-P3 Stage 1 (FOM + joint protocol) EXECUTED 2026-07-05 —
+see the Stage-1 status note below.** Foresight (§2), floor accreditation (§3), and the DC-load
+block (§4) remain for later stages. Implementation prompt in §9.
+
+> ### Stage-1 status note (2026-07-05, W2-P3)
+>
+> The joint FOM+scarcity protocol (§5) ran the full 2×3 ERCOT + 2-cell PJM probe matrix
+> (`scripts/run_fom_scarcity_grid.py`; report `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05.md`
+> + `fom-scarcity-grid-2026-07-05.json`). **Decision: the ATB FOM defaults were NOT flipped.**
+> The grid showed the going-forward FOM level is currently **inert** in the ERCOT forecast — the
+> nameplate reliability floor retains 100 % of thermal (floor ≈100 GW > ~72 GW fleet) and the
+> adequacy backstop backfills the rest, so CT 8→21 / CC 12→30 / coal 40→45 moves **zero MW and
+> zero CO₂** (capacity trajectory byte-identical across the FOM axis). The revenue side is also
+> understated vs the Potomac ERCOT SOM observable (fleet CT ≈1.5 vs SOM ≈68 $/kW-yr). Per rule 1
+> ("judge by structure, not residual") the recalibration is **blocked behind two prerequisites,
+> both later stages**: **(A) the §3 floor-accreditation redesign** (so the floor stops masking the
+> economic screen — the dominant blocker) and **(B) the §5-step-2 revenue-side fix** (published
+> ORDC params / endogenous co-opt). The ATB values (21/30/45) are recorded as the frozen,
+> externally-identified targets (DOF ledger in the report); the current mis-citation in
+> `parameters.json` ("NREL ATB 2024" for values that are actually sub-ATB avoidable estimates) was
+> corrected. **Landed this session:** the pure-diagnostic screen-revenue log in
+> `apply_economic_retirements`, `run_fom_scarcity_grid.py`, the `TestFomThresholdFlip` behavioural
+> test, the protocol report + grid JSON, and the citation correction. **Deferred with the flip:**
+> the tornado FOM-band re-centring + `fom_and_scarcity` paired perturbation (re-centring bands on
+> defaults that have not moved would misreport the base case). No CAISO change (collision with the
+> live scalar remediation). No 2022/H1-2026 solve.
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
 `docs/forecast-methodology-gaps-2026-06.md` (scarcity/AS revenue understatement),
