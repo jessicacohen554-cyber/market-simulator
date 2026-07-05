@@ -3,6 +3,19 @@
 **Date:** 2026-06-29  
 **Companion:** `gap-inventory.md` (gap definitions), `prompt-pack/` (execution prompts)
 
+**Status 2026-07 — 15/16 items LANDED.** Verified against current `runner.py` /
+`run_calibration.py` by `docs/handoffs/orchestrator-unification-plan-2026-07.md` §2.1;
+see that table for per-item proof. **Do not re-fix any landed item below.** The one
+remaining open item, **A5 (ERCOT single-product reserve supply cap)**, is absorbed into
+the unification plan's **Stage 2** (`reserve_config._ercot_design`) — do **not** execute
+`prompt-pack/w2-ercot-supply-cap.md` as written; it targets `runner.py` directly, which
+is superseded by the shared-`reserve_config` fix. The **CAISO bidirectional
+intertie/solar-shape/gas-coupling** and **NEISO cold-snap derate** overlays flagged as
+post-inventory drift (unification plan §2.2) are owned by unification **Stages 5/6**
+(interchange and fleet unification, respectively) — **per-mechanism patching of them is
+retired**; do not open a new prompt for any of the four. See the unification plan for
+the current staged migration and its regression-gate status.
+
 ## Sequencing Principles
 
 1. **Structure before tuning** — wire the LP mechanism first; calibrate coefficients later.
