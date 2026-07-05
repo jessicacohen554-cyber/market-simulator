@@ -87,12 +87,18 @@ def test_getitem_missing_raises_keyerror():
         _ = pr["nope"]
 
 
-def test_all_fourteen_keys_present():
-    """The typed object carries one field per current ``prior_results`` key."""
+def test_all_fifteen_keys_present():
+    """The typed object carries one field per current ``prior_results`` key.
+
+    ``price_signal`` is the capacity-screen price signal added by the
+    capacity-economics EWMA/lookahead mechanism (plan §2.2-§2.3); it is a real
+    cross-year field, so the exact-key-set contract includes it.
+    """
     expected = {
         "fleet_arrays",
         "dispatch_result",
         "prices",
+        "price_signal",
         "peak_demand",
         "planned_additions",
         "mc_cost",

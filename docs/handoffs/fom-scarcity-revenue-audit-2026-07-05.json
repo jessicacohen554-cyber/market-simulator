@@ -1,0 +1,108 @@
+{
+ "som_net_revenue_kw_yr": {
+  "2023": {
+   "gas_ct": [
+    224.0,
+    257.0
+   ],
+   "gas_cc": [
+    228.0,
+    272.0
+   ]
+  },
+  "2024": {
+   "gas_ct": [
+    68.0,
+    68.0
+   ],
+   "gas_cc": [
+    89.0,
+    89.0
+   ]
+  },
+  "2025": {
+   "gas_ct": [
+    52.59,
+    52.59
+   ],
+   "gas_cc": [
+    82.96,
+    82.96
+   ]
+  }
+ },
+ "som_assumptions": {
+  "gas_ct": {
+   "heat_rate": 10.5,
+   "vom": 4.0
+  },
+  "gas_cc": {
+   "heat_rate": 7.0,
+   "vom": 4.0
+  }
+ },
+ "outage_rate": 0.1,
+ "rows": [
+  {
+   "year": 2023,
+   "class": "gas_ct",
+   "som_published_kw_yr": [
+    224.0,
+    257.0
+   ],
+   "replica_measured_prices_kw_yr": 216.41,
+   "replica_over_som_mid": 0.9
+  },
+  {
+   "year": 2023,
+   "class": "gas_cc",
+   "som_published_kw_yr": [
+    228.0,
+    272.0
+   ],
+   "replica_measured_prices_kw_yr": 239.96,
+   "replica_over_som_mid": 0.96
+  },
+  {
+   "year": 2024,
+   "class": "gas_ct",
+   "som_published_kw_yr": [
+    68.0,
+    68.0
+   ],
+   "replica_measured_prices_kw_yr": 65.58,
+   "replica_over_som_mid": 0.964
+  },
+  {
+   "year": 2024,
+   "class": "gas_cc",
+   "som_published_kw_yr": [
+    89.0,
+    89.0
+   ],
+   "replica_measured_prices_kw_yr": 86.67,
+   "replica_over_som_mid": 0.974
+  },
+  {
+   "year": 2025,
+   "class": "gas_ct",
+   "som_published_kw_yr": [
+    52.59,
+    52.59
+   ],
+   "replica_measured_prices_kw_yr": 46.99,
+   "replica_over_som_mid": 0.893
+  },
+  {
+   "year": 2025,
+   "class": "gas_cc",
+   "som_published_kw_yr": [
+    82.96,
+    82.96
+   ],
+   "replica_measured_prices_kw_yr": 76.42,
+   "replica_over_som_mid": 0.921
+  }
+ ],
+ "notes": "Replica uses ERCOT hub RT hourly prices (data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet) and daily Henry Hub ($/MMBtu, no basis adjustment); SOM uses generation-weighted settlement point prices and includes AS sales, so the replica is expected to sit modestly below SOM in AS-rich years."
+}
