@@ -138,7 +138,7 @@ then, miss #2 is attacked by Ranks 3–5, which are tractable now.
 
 ### Rank 3 — LEVEL (cheapest, measured): raise PJM `committed`/`econ_high` toward ERCOT SRMC
 **Lever:** PJM `CC_REGULAR` offer curve `committed 0.6624 → ~0.85`, `econ_high
-1.1428 → ~1.21` (`configs_run20/pjm_keeper_offer_curve.json`). ERCOT's
+1.1428 → ~1.21` (`results/calibration/_configs/pjm_run20/pjm_keeper_offer_curve.json`). ERCOT's
 structurally-validated keeper (`run124`/`run_config.json`) holds its CCs at the
 right level **with commitment and reserves OFF** using exactly the richer curve:
 `committed 0.87, econ_low 0.92, econ_high 1.21`. PJM's 0.66 committed is ~24 %

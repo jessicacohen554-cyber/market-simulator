@@ -92,6 +92,22 @@ tested crosswalk instead of a guessed one.
   LP builder touches arrays and scalars only, and never loops over hours.
 - Every module and public function gets a docstring; no magic numbers.
 
+## Consolidated derive-owned datatypes (sanctioned exception)
+
+Six datatypes deviate from the 1:1 `curate_<datatype>.py` file convention
+above and are sanctioned as-is: `fuel-basis`, `fuel-ercot-ep-gas`,
+`fuel-hub-monthly`, `fuel-takeorpay`, and `fuel-zonal-hub` are curated
+together by one consolidated `scripts/curate_fuel_prices.py` (each still
+writes through `write_clean` against its own schema, so the contract per
+datatype is unaffected — only the file grouping differs), and `border-lmp`
+is produced by `scripts/build_pjm_border_lmp_miso.py` /
+`scripts/derive_miso_pjm_border_hr.py` directly into
+`data/raw/_validation-source/` rather than through the `write_clean` seam,
+since it is a derived measured-input artifact consumed like raw validation
+data rather than a modeled clean datatype. Do not split these into
+per-datatype scripts or add redundant `curate_<datatype>.py` shims solely
+for naming-convention conformance.
+
 ## Definition of done
 
 Schema committed; raw README with sources + `DATA NEEDED` gaps; per-ISO modules
