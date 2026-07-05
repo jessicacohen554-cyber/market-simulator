@@ -29,8 +29,7 @@ KY LA MA MD ME MI MN MO MS MT NC ND NH NJ NY OH PA RI SD TN TX VA VT WI WV.
 | Years | Status |
 |---|---|
 | 2023–2025 | complete (34 states each) — the calibration window |
-| 2018 | complete (34 states) — wave-2 intake |
-| 2019–2021 | intake in progress (wave-2), completing the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4). Re-fetch any missing `<ST>_<YEAR>.parquet` with the command above. |
+| 2018–2021 | **complete** (34 states each, 2026-07-05) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
 | 2022, H1-2026 | **QUARANTINED** (CLAUDE.md rule 22) — do not intake until the ISO is calibration-complete. |
 
 **DATA NEEDED — EIA-923 2018–2021 (parasitic net conversion).** The v2 rate
@@ -46,10 +45,8 @@ the right prior. To refine: fetch `f923_2018.zip … f923_2021.zip`, re-run
 `scripts/process_f923_fuel_costs.py`, then `derive_parasitic_load.py --years
 2018 2019 2020 2021` and re-derive v2.
 
-**Note on the 2018–2021 push:** these ~136 files (~0.5 GB) are large binary
-parquets. `mcp__github__push_files` is text-only (would corrupt binary) and a
-single git pack of this size 413s on this remote (CLAUDE.md Git section), so the
-raw files are landed and **regenerated on demand** from the committed fetcher
-rather than all force-pushed at once. The *consumed* products — the
-`emissions-unit-annual` clean datatype and the committed
-`plant_emission_rates_v2` artifact — carry the derived per-year rates.
+**Note on the 2018–2021 push:** these 136 files are large binary parquets, so
+they were committed and pushed in small per-batch `git push` commits (each pack
+tens of MB, base = latest main) — a single pack of the full ~0.5 GB 413s on this
+remote and `mcp__github__push_files` is text-only (CLAUDE.md Git section). All
+batches are on main; any missing file regenerates from the committed fetcher.
