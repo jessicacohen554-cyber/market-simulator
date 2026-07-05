@@ -83,6 +83,22 @@ _ISSUE_NYISO_C3A_CC_DELEAK = (
 _ISSUE_NYISO_LI_LCR_MISMATCH = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
 )
+_ISSUE_C18_GAS_AVAILABILITY_DEAD_CODE = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+)
+
+# scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): NERC's public GADS
+# Generating Unit Statistical Brochure 3 (2019-2023) is NERC-wide, with no
+# per-ISO/region EFORd breakdown — see
+# data/raw/reference/nerc-gads-eford-2019-2023/. "FOSSIL Gas Primary, All
+# Sizes" (EFORd=13.44%, availability 1-0.1344=0.8656) is the closest published
+# match to this constant's single "gas-fired generation availability" concept
+# and now applies uniformly to every ISO (constants.py GAS_AVAILABILITY_FACTOR).
+_GAS_AF_SOURCE = (
+    "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 "
+    "(NERC-wide — no per-ISO breakdown exists), 'FOSSIL Gas Primary, All "
+    "Sizes', EFORd=13.44%"
+)
 
 # Committed-tranche multiplier floor (audit §2 flag; plan §2.1 exception): a
 # group whose committed HR multiplier sits below this without a written
@@ -313,26 +329,21 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     """Audit §3 C-table / W1d-marker entries, keyed on engaging flags."""
     out = []
     gas_af = {
-        "ERCOT": (
-            "residual",
-            0.85,
-            "nudged from the NERC GADS 2019-2023 fleet "
-            "baseline 0.83 during calibration (audit C-18; W1d marker)",
-        ),
-        "CAISO": (
-            "residual",
-            0.89,
-            "nudged from the NERC GADS 2019-2023 fleet "
-            "baseline 0.88 during calibration (audit C-18; W1d marker)",
-        ),
-        "PJM": (
-            "published",
-            0.87,
-            "NERC GADS 2019-2023 (audit C-18: 'TODO "
-            "verify' — unverified transcription)",
-        ),
-        "NYISO": ("published", 0.86, "NERC GADS 2019-2023 (unverified)"),
-        "NEISO": ("published", 0.85, "NERC GADS 2019-2023 (unverified)"),
+        # scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified
+        # against the actual NERC GADS Generating Unit Statistical Brochure 3
+        # (2019-2023, "Units Reporting Events") — see
+        # data/raw/reference/nerc-gads-eford-2019-2023/. The brochure is
+        # NERC-wide (no ISO/region breakdown exists in NERC's public GADS
+        # product), so the same verified value ("FOSSIL Gas Primary, All
+        # Sizes", EFORd=13.44% -> availability 0.8656) applies to every ISO;
+        # the old per-ISO nudge-trail/TODO values are gone (rule 26). All
+        # five are now genuinely "published" — no residual/nudge component
+        # remains.
+        "ERCOT": ("published", 0.866, _GAS_AF_SOURCE),
+        "CAISO": ("published", 0.866, _GAS_AF_SOURCE),
+        "PJM": ("published", 0.866, _GAS_AF_SOURCE),
+        "NYISO": ("published", 0.866, _GAS_AF_SOURCE),
+        "NEISO": ("published", 0.866, _GAS_AF_SOURCE),
     }
     if iso in gas_af:
         ident, val, src = gas_af[iso]
@@ -345,12 +356,17 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 value=val,
                 source=src,
                 root_cause=(
-                    "audit C-18: re-ground on the GADS baseline or a frozen "
-                    "derive from CAMPD availability; the nudge is compensating "
-                    "for an unmodeled availability effect"
-                )
-                if ident == "residual"
-                else "",
+                    "open R2-vs-R5 disposition (not a residual on this "
+                    "value): GAS_AVAILABILITY_FACTOR is not read anywhere in "
+                    "src/market_sim (dead/orphaned, confirmed by grep "
+                    "2026-07-05), so this verified value has zero materiality "
+                    "today. Either wire it in with a fleet-mix-weighted "
+                    "reconciliation against the ISO's own CT/CC/ST capacity "
+                    "shares (replacing, never stacking with, the existing "
+                    "per-unit EFORD-derived availability) or delete it as "
+                    "dead code (rule 26) — tracked in "
+                    f"{_ISSUE_C18_GAS_AVAILABILITY_DEAD_CODE}"
+                ),
             )
         )
     if sc.get("cc_peaking_per_plant"):
