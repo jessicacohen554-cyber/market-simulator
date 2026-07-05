@@ -613,5 +613,70 @@ class TestWeatherPoolWidening(unittest.TestCase):
             load_demand("CAISO", 2019)
 
 
+class TestDemandProfileCleanSeam(unittest.TestCase):
+    """The repaired ``demand-profile`` clean seam (PJM's only demand source).
+
+    PJM has no dedicated per-BA hourly loader, so ``load_demand`` always falls
+    back to ``eia_demand_profiles.parquet`` (or, once regenerated, the repaired
+    ``demand-profile`` clean partition -- see
+    ``scripts/curate_demand_profile.py``). This exercises that fallback with a
+    synthetic clean partition instead of the real (multi-MB) data tree.
+    """
+
+    def setUp(self):
+        from tempfile import TemporaryDirectory
+
+        from scripts.lib import clean_io
+
+        self._tmp = TemporaryDirectory()
+        self._orig_clean_dir = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = Path(self._tmp.name) / "clean"
+
+    def tearDown(self):
+        from scripts.lib import clean_io
+
+        clean_io.paths.CLEAN_DIR = self._orig_clean_dir
+        self._tmp.cleanup()
+
+    def _write_clean_partition(self, iso: str, year: int, mw: np.ndarray) -> None:
+        import pandas as pd
+        from scripts.lib.clean_io import write_clean
+
+        df = pd.DataFrame(
+            {
+                "iso": iso,
+                "year": year,
+                "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
+                "raw_mw": mw,
+                "normalized": mw / mw.sum(),
+                "repaired": False,
+            }
+        )
+        write_clean(df, "demand-profile", iso=iso, year=year, source="test fixture")
+
+    def test_returns_none_when_partition_absent(self):
+        from market_sim.data.eia_loader import _demand_profile_clean
+
+        self.assertIsNone(_demand_profile_clean("PJM", 2021))
+
+    def test_reads_repaired_series_when_present(self):
+        from market_sim.data.eia_loader import _demand_profile_clean
+
+        mw = np.full(HOURS_PER_YEAR, 90_000.0)
+        self._write_clean_partition("PJM", 2021, mw)
+        out = _demand_profile_clean("PJM", 2021)
+        self.assertIsNotNone(out)
+        np.testing.assert_allclose(out, mw)
+
+    def test_load_demand_uses_repaired_partition_over_raw_spike(self):
+        # A repaired series with no billion-MW spike must flow all the way
+        # through load_demand's PJM path (which has no dedicated loader and
+        # would otherwise fall back straight to the raw, uncorrected parquet).
+        mw = np.full(HOURS_PER_YEAR, 90_000.0)
+        self._write_clean_partition("PJM", 2021, mw)
+        demand = load_demand("PJM", 2021, include_interchange=False)
+        self.assertLess(demand.sum(axis=0).max(), 200_000.0)
+
+
 if __name__ == "__main__":
     unittest.main()

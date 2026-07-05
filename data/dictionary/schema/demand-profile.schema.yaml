@@ -1,0 +1,67 @@
+# Canonical schema: demand-profile (repaired EIA-930 system-total demand)
+#
+# Curates `data/raw/eia-930/eia_demand_profiles.parquet` — a legacy, per-ISO
+# SYSTEM-TOTAL hourly demand extract (iso, year, hour-of-year 0..8759,
+# raw_mw, normalized) with no per-zone breakdown and no UTC timestamp column,
+# so it does not fit the zonal `load` schema's grain (interval_start_utc +
+# zone). It is the sole demand source `eia_loader.load_demand` falls back to
+# whenever an ISO has no dedicated per-BA hourly extract for that year (all
+# years for PJM; 2021-2022 for CAISO and MISO, whose native per-BA hourly
+# extracts only start in 2023 — see eia_loader._load_caiso_hourly_demand /
+# _load_miso_hourly_demand).
+#
+# The 2026-07-05 PJM capacity-hindcast investigation found the raw file itself
+# carries physically-impossible hourly values across multiple (iso, year)
+# series (PJM 2021 hour 6983-6985: raw_mw of 4.3e8-2.1e9 MW against a
+# ~90,000 MW backdrop; several ISO-years also carry 0.0 MW "missing data"
+# sentinel hours, itself impossible for whole-BA system demand). raw/ is
+# immutable (CLAUDE.md), so `scripts/curate_demand_profile.py` repairs these
+# at this curation seam: a physical-bounds screen (value <= 0, or value more
+# than 5x the (iso, year) series median) flags a hour as invalid, then linear
+# interpolation across the flagged run fills it from the nearest valid hours.
+# The `repaired` column marks exactly which hours were touched (never a silent
+# overwrite) and `normalized` is recomputed from the repaired `raw_mw` so the
+# two columns stay internally consistent.
+datatype: demand-profile
+schema_version: 1
+title: Repaired EIA-930 system-total demand profile
+description: >-
+  Per-ISO, per-year hourly system-total demand (MW), repaired from the raw
+  eia_demand_profiles.parquet extract via a physical-bounds screen +
+  interpolation. Hour is the ISO's own 0..8759 hour-of-year index (matching
+  the raw source and the model's HOURS_PER_YEAR clock), not a UTC timestamp.
+
+key_columns: [iso, year, hour]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (as carried by the raw extract; includes SPP, not a modeled ISO).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: hour
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Hour-of-year index, 0..8759 (the raw source's own clock).
+  - name: raw_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: System-total demand for the hour, MW; repaired where physically impossible.
+  - name: normalized
+    dtype: float64
+    unit: none
+    nullable: true
+    description: raw_mw as a fraction of the (iso, year) annual total, recomputed from the repaired series.
+  - name: repaired
+    dtype: bool
+    unit: none
+    nullable: false
+    description: True when this hour failed the physical-bounds screen and was interpolated.

@@ -56,6 +56,7 @@ ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
 DATATYPE_ORDER: tuple[str, ...] = (
     "lmp",
     "load",
+    "demand-profile",
     "ancillary-services",
     "energy-offers",
     "generation",
@@ -107,6 +108,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "CAISO TAC-area `mw`, NYISO `Load`, EIA-930 `Demand` / "
             "`Demand forecast` — into `load_mw`, `load_forecast_mw`, optional "
             "`net_load_mw`."
+        ),
+    },
+    "demand-profile": {
+        "summary": (
+            "Repaired legacy EIA-930 per-ISO system-total hourly demand "
+            "(hour-of-year clock, no zone breakdown)."
+        ),
+        "reconciles": (
+            "The raw `eia_demand_profiles.parquet` extract's `raw_mw` / "
+            "`normalized`, repaired via a physical-bounds screen (value <= 0, "
+            "or > 5x the (iso, year) series median) plus linear interpolation "
+            "-- the sole demand source `eia_loader.load_demand` falls back to "
+            "for any (iso, year) with no dedicated per-BA hourly extract "
+            "(every PJM year; CAISO/MISO 2021-2022). `repaired` flags the "
+            "corrected hours."
         ),
     },
     "ancillary-services": {
