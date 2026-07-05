@@ -583,6 +583,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.pjm_reserve_pergen` | False | 1 | PJM: PER-GENERATOR reserve co-optimization |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_supply_cap` | False | 1 | PJM analogue of ercot_reserve_supply_cap: |  | auto-generated, needs-citation |
 | `scenario.planning_reserve_margin` | 0.1375 | 2 | Fallback/override planning |  | auto-generated, needs-citation |
+| `scenario.planning_reserve_margin_override` | None | 2 | Sensitivity lever (default None = per-ISO PLANNING_RESERVE_MARGIN_B… | 2022 |  |
 | `scenario.reserve_margin_build_enabled` | False | 1 | Adequacy backstop: after the |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_coal` | 1.3 | 2 | coal faces higher effective FOM |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -590,7 +591,6 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_fom_multiplier_gas_st` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_nuclear` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_oil` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.retirement_reserve_margin` | 0.15 | 2 | 15% reserve margin over peak net demand |  | auto-generated, needs-citation |
 | `scenario.retirement_years_coal` | 1 | 2 | coal retires after 1 unprofitable year |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |
