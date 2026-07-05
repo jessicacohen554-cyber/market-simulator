@@ -11,5 +11,6 @@
   ],
   "iso": "NEISO",
   "file": "frontend/data/backcast/runs/2026-07-05-neiso-statmode-d7-r2.js",
-  "bundle": "results/calibration/neiso_statmode_2026-07_r2"
+  "bundle": "results/calibration/neiso_statmode_2026-07_r2",
+  "keeper_candidate": false
 }
