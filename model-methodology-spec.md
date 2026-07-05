@@ -665,14 +665,17 @@ A unit retires if its **net revenue < going-forward cost** for N consecutive yea
 
 Revenue and cost definitions:
 
-- Net revenue = **inframarginal energy margin** `Σ_t (price[z,t] − mc[g,t]) × dispatch[g,t]` plus attribute payments (`max(exogenous EAC, prior-year RPS/REC shadow price) × annual_gen`) and any capacity-market revenue, from the prior year's LP results. `mc` is the unit's *full* variable cost (fuel + VOM + emission prices) — not its bid: take-or-pay coal bids below fuel cost in dispatch because the fuel is sunk within the contract year, but on a retirement horizon the contract lapses, so fuel is avoidable and counts against the margin. (An earlier formulation compared *gross* energy revenue against fixed cost, which let units "cover" FOM with money already spent on fuel and systematically under-retired the thermal fleet.) A profitable year resets the unit's consecutive-loss counter to zero.
+- Net revenue = the **attainable (pro-forma) inframarginal margin** `Σ_t max(0, price[z,t] − mc[g,t], r[g,t]) × pmax[g] × availability[g,t]` plus attribute payments (`max(exogenous EAC, prior-year RPS/REC shadow price) × annual_gen`) and any capacity-market revenue, evaluated against the prior year's capacity-screen price signal. This is the unit's optimal per-hour response to the screen's own signal — the same price-duration pro-forma the Potomac SOM net-revenue tables are built from and the same basis the new-entry screen uses — **not** the prior LP's realized dispatch: the post-solve ORDC scarcity adder lifts the screen's prices in hours the pre-adder LP left an out-of-merit peaker idle, so a realized-dispatch margin structurally misses exactly the scarcity rent a peaker lives on (capacity-economics plan 2026-07 §5 step 2). `r[g,t]` is the hourly reserve-price signal (below); `mc` is the unit's *full* variable cost (fuel + VOM + emission prices) — not its bid: take-or-pay coal bids below fuel cost in dispatch because the fuel is sunk within the contract year, but on a retirement horizon the contract lapses, so fuel is avoidable and counts against the margin. (Two earlier formulations are superseded: *gross* energy revenue vs fixed cost let units "cover" FOM with money already spent on fuel; realized-dispatch margin under-collected scarcity ~40× on the SOM CT observable.) A profitable year resets the unit's consecutive-loss counter to zero.
+- Reserve/AS valuation (`screen_reserve_value_enabled`, default on): each reserve-eligible unit's hourly value is its **best use** — energy margin or the reserve price, never both on the same MW (the co-optimization arbitrage condition). The signal is the reserve co-opt's own duals under `ercot_thermal_as_endogenous` (all-products tier for synchronized units, Non-Spin tier for offline-capable quick-starts, mirroring the co-opt's headroom cascade), else the post-solve ORDC scarcity adder — ERCOT pays real-time on-line/off-line reserves the same ORDC price the energy adder carries (RTORPA/RTOFFPA, Nodal Protocols §6.5.7.5). When the hourly signal is present it is the SOLE thermal AS pricing (rule 19); otherwise the screens fall back to the annual endogenous per-fuel rate or the calibrated exogenous flat rate, as before. Zero fitted parameters; the SOM CT/CC net-revenue tables are the external validity check, never a target.
 - Going-forward cost = fixed O&M × FOM multiplier (not capital — sunk cost)
 - FOM multipliers: coal = 1.3× (captures regulatory risk, carbon liability, ESG pressure), gas = 1.0×
 - Retirement ordering: within each fuel class, least efficient (highest heat rate) retires first
 
-These thresholds and multipliers are no longer hardcoded — they are `ScenarioConfig` fields (`retirement_years_{coal,gas_ct,gas_cc}` = 1/2/3, `retirement_fom_multiplier_{coal,gas_ct,gas_cc}` = 1.3/1.0/1.0, `retirement_reserve_margin` = 0.15), so retirement aggressiveness is a Tier-1 sensitivity lever. The defaults above are the as-built values.
+These thresholds and multipliers are no longer hardcoded — they are `ScenarioConfig` fields (`retirement_years_{coal,gas_ct,gas_cc}` = 1/2/3, `retirement_fom_multiplier_{coal,gas_ct,gas_cc}` = 1.3/1.0/1.0), so retirement aggressiveness is a Tier-1 sensitivity lever. The defaults above are the as-built values. (`retirement_reserve_margin` was DELETED with the floor-accreditation rebuild — the floor and the build backstop now share `PLANNING_RESERVE_MARGIN_BY_ISO`.)
 
-**Reliability floor:** Thermal capacity cannot fall below `(peak_demand - firm_clean) × (1 + reserve_margin)`, where `reserve_margin` defaults to 15% (Tier 2 parameter) and `firm_clean = hydro capacity` (`_FIRM_CLEAN_FUELS = ("hydro",)` in `model/capacity.py`; nuclear is **excluded** by design — it is in the economic-retirement-eligible thermal set, not the firm-clean floor). If economic retirements would breach the floor, the most efficient units are retained.
+**Reliability floor (accredited basis):** the surviving fleet's `accredited_firm_capacity_mw` (thermal at UCAP = 1 − EFORd, wind/solar pools at `RENEWABLE_CAPACITY_CREDIT`, storage at duration-ELCC) cannot fall below `peak_demand × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)` — the same requirement the step-6 build backstop tests (one requirement, two verbs). If economic retirements would breach it, eligible units are un-retired cheapest-firm-adequacy-first ($/firm-MW-yr ascending, CO₂-rate tie-break), and every retention is recorded in the `floor_retention_log` persisted per year (`floor_retentions.json`).
+
+**Announced-retirement reversal supersession:** a plant whose confirmed-retirements registry rows are ALL `superseded` (a public counter-instrument reversed the exit outright — e.g. Byron/Dresden's 2021 announced dates reversed by IL CEJA, P.A. 102-0662) has its stale EIA-860 announced date ignored by step 2, any fuel; the unit stays with the economic screen. Data-driven and independent of `confirmed_exits_enabled` — honoring a documented reversal is a data correction on the announced channel, not an exit injection (`data.confirmed_retirements.load_announced_reversal_plants`).
 
 **Design note:** Sigmoid retirement was considered and rejected in favor of fully economic retirement with fuel-type-aware thresholds. The economic approach is more transparent — every retirement is traceable to a revenue shortfall — and avoids the arbitrary sigmoid midpoint parameter. The coal FOM multiplier (1.3×) captures the non-economic pressures (regulatory risk, ESG) that the sigmoid was designed to model.
 
@@ -680,7 +683,7 @@ These thresholds and multipliers are no longer hardcoded — they are `ScenarioC
 
 Screen by technology: if `expected_revenue > LCOE`, the technology is economic for entry.
 
-- Expected revenue estimated from prior year’s price duration curve
+- Expected revenue estimated from prior year’s price duration curve. Dispatchable thermal candidates use the price-duration integral `Σ_t max(0, price_t − var_cost, r_t)` — with the same hourly reserve-price signal the retirement screen sees (`screen_reserve_value_enabled`; a new CT is a Non-Spin-tier quick-start, a new CC synchronized), which then supersedes the annual AS credits (rule 19). Wind/solar candidates value their **build zone's hourly CF profile against that zone's prices** (shape-aware capture, incl. each tech's actual share of scarcity-priced hours — plan §6 CX-6c), falling back to the scalar base-CF screen when profiles are unavailable.
 - LCOE from technology cost assumptions with learning curves (Tier 2 parameters)
 - IRA credits reduce LCOE (PTC for wind, ITC for solar/storage — Tier 1 parameters)
 - Annual build rate capped per technology (e.g., ERCOT ~12 GW/yr queue throughput)
@@ -765,20 +768,24 @@ per-hour storage AS reservation (`storage.reserve_storage_as_power`) stays
 **Thermal AS** carries the identical reconciliation under
 `ercot_thermal_as_endogenous` (the thermal analogue of the storage flag). When
 on, the thermal retirement and new-entry screens
-(`capacity.apply_economic_retirements` / `apply_economic_new_entry`) credit the
-per-fuel AS value **derived from the co-opt's own reserve duals**
-(`ancillary.realized_thermal_as_revenue_per_mw_yr_by_fuel`, built on
-`scarcity.ercot_as_aware_unit_value`) and the exogenous flat rate is suppressed
-for thermal — exactly one mechanism prices thermal AS. Chosen over simply gating
+(`capacity.apply_economic_retirements` / `apply_economic_new_entry`) see the
+**hourly binding reserve price derived from the co-opt's own reserve duals**
+(`reserve_price_signal` / `reserve_price_signal_slow`, threaded via
+`PriorYearResults`) and value each unit's per-hour best use
+`max(0, price − mc, r)` — energy or reserve, never both on the same MW —
+superseding both the annual per-fuel rate
+(`ancillary.realized_thermal_as_revenue_per_mw_yr_by_fuel`, retained as the
+fallback for callers without the hourly arrays) and the exogenous flat rate:
+exactly one mechanism prices thermal AS. Chosen over simply gating
 the exogenous credit off because the co-opt lifts the energy price (already in the
 screens' energy margin) but *not* the direct reserve payment on a unit's held
-headroom; deriving restores that real income where gate-off would strip it and
-over-retire tail thermal. The derived per-fuel rate is an upper bound on realized
-AS income (it prices full reserve-eligible headroom, the same attribution the
-storage helper uses). Forecast-only (capacity evolution never runs in backcast)
-and default off, so keepers are byte-identical; same `energy_reserve_coopt` /
-`ercot_as_forward_requirement` guards as the storage flag. See
-`docs/storage-as-withholding-attribution-2026-07.md`.
+headroom; the hourly max restores that real income without the double-count the
+old annual headroom rate carried against the pro-forma energy margin. When the
+co-opt is not running, the same hourly-max valuation runs off the post-solve
+ORDC scarcity adder (`screen_reserve_value_enabled`, §5.2). Forecast-only
+(capacity evolution never runs in backcast); keepers are byte-identical; same
+`energy_reserve_coopt` / `ercot_as_forward_requirement` guards as the storage
+flag. See `docs/storage-as-withholding-attribution-2026-07.md`.
 
 Profitable techs are ranked by total margin (energy + capacity + AS − cost) and
 built in merit order, but no single tech may take more than
