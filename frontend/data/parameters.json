@@ -2737,6 +2737,22 @@
       "flags": []
     },
     {
+      "param_id": "scenario.screen_reserve_value_enabled",
+      "display_name": "Capacity-Screen Reserve Value Enabled",
+      "value": true,
+      "unit": "bool",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "Model design decision — the retirement/new-entry screens value each reserve-eligible unit's hourly best use max(0, price − mc, reserve price), the co-optimization arbitrage condition, against the reserve co-opt's own duals (under ercot_thermal_as_endogenous) or the post-solve ORDC scarcity adder. Market-design grounding for the ORDC leg: ERCOT pays real-time on-line/off-line reserves the same ORDC price the energy adder carries (RTORPA/RTOFFPA), ERCOT Nodal Protocols §6.5.7.5 and the NPRR568 ORDC methodology.",
+      "source_date": "2014-06",
+      "page_or_table": "Nodal Protocols §6.5.7.5",
+      "url": "https://www.ercot.com/files/docs/2015/08/04/2.2_Other_Binding_Document_Methodology_Implementing_ORDC.pdf",
+      "notes": "Capacity-economics plan 2026-07 §5 step 2 revenue-side fix (W2-P3 Stage 2). Zero fitted parameters: the signal is the already-registered ORDC curve / the LP's own reserve duals. When present it is the SOLE thermal AS pricing (rule 19) — the annual endogenous per-fuel rate and the exogenous flat AS rate are superseded. Off = ablation (legacy annual AS credits). Forecast-only surface (capacity evolution never runs in backcast). See docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "scenario.scarcity_pricing_enabled",
       "display_name": "Scarcity Pricing Enabled",
       "value": false,
