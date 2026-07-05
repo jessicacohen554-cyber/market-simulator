@@ -56,7 +56,9 @@ columns:
     nullable: false
     description: >-
       Kind of area: one of lda | lrz | locality | capacity_zone | local_area |
-      branch_group | rto.
+      branch_group | rto | zone (a model/transmission-zone aggregate row, e.g.
+      the CAISO SP26 zonal peak_load that denominates the local-capacity area
+      load share).
   - name: delivery_year
     dtype: string
     unit: none
@@ -79,8 +81,12 @@ columns:
     nullable: false
     description: >-
       Canonical metric: requirement | local_clearing_requirement | import_limit
-      | export_limit | import_ability | system_requirement. (requirement is the
-      CETO analog; import_limit is the CETL analog.)
+      | export_limit | import_ability | system_requirement | peak_load.
+      (requirement is the CETO analog; import_limit is the CETL analog;
+      peak_load is the area/zone peak-demand forecast published in the same
+      study as the requirement — CAISO LCT "Load+Losses+Pumps" and Table 3.2-1
+      — pairing with requirement so import_cap = peak_load - requirement sits
+      on one consistent boundary.)
   - name: value_mw
     dtype: float64
     unit: mw
