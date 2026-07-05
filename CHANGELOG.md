@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-05 (Stage 5 — interchange unification onto the shared InterchangeSpec)
+
+**Refactor, dispatch-neutral (builder-swap gate §7.2).** `run_calibration.py`'s
+inline priced-interchange construction now rides the SAME
+`config/interchange_config.get_interchange_spec` → `build_interchange_fleet` →
+`apply_interchange_topology` path the forecast runner uses; the spec resolves
+the full backcast builder ladder (CAISO reference seam ≻ per-hub ≻ bidir ≻
+static year-grounded tranches + Manitoba firm block) from the existing
+`ScenarioConfig` gates, and `build_interchange_fleet` delegates to the
+canonical `transmission.py` builders (the spec module's parallel private
+copies are deleted). New shared `transmission.apply_interchange_injections`
+runs the forward-native post-assembly sequence for BOTH orchestrators
+(reference-price seams, firm import/export floors, CAISO gas-coupling +
+solar-shape couplings); the backcast's measured-price overlays are
+consolidated into one labelled closure threaded in at the documented seam
+point, each naming its measured source and forecast substitute — none is
+reachable from the forecast. Closes the §2.2 CAISO drift trio (bidir
+intertie, import solar-shape, import gas-coupling — plus the unlisted NYISO
+firm-import floor) by construction: each is now forecast-reachable behind its
+default-off gate, with no bespoke per-mechanism runner wiring.
+`tests/test_interchange_parity.py` pins old-inline vs new-spec parity for all
+five priced-interchange ISOs and all three CAISO seam modes. Details:
+`docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.3.
+
 ## 2026-07-05 (CO2-rate 7-year gate decision — wave-3 E1 close-out)
 
 - Completed the 2018–2021 CAMPD hourly unit-level intake (136/136 state-years)
@@ -14,6 +38,7 @@
   per-target comparisons across ERCOT+PJM). Docs realigned:
   `model-methodology-spec.md` forward-mode source, `docs/parameter-citations.md`
   (regenerated), plan `§9.5` (full tables + PJM sim-op caveat).
+
 ## 2026-07-05 (confirmed-vs-announced retirement channel — implementation, W2-P2)
 
 **Model.** Implemented the confirmed-vs-announced retirement channel from the
