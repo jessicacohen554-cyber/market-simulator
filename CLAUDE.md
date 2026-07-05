@@ -90,9 +90,10 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
     calibration change may respond to them** without designating a new never-touched holdout.
     Structural mechanism changes are still scored leave-one-year-out *within 2023–2025* before
     promotion. In-sample improvement with held-out degradation is overfitting, not skill. CI
-    enforces the quarantine: `scripts/legitimacy_diagnostics.py --keepers` and
-    `scripts/audit_keepers.py` FAIL if any registered bundle contains a solve year outside
-    2023–2025 before that ISO's calibration-complete marker exists.
+    enforces the quarantine on every pull request (`.github/workflows/ci.yml`, `quarantine-gates`
+    job): `scripts/legitimacy_diagnostics.py --keepers` and `scripts/audit_keepers.py --check` FAIL
+    the PR if any registered bundle contains a solve year outside 2023–2025 before that ISO's
+    calibration-complete marker exists.
 1. **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.

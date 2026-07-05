@@ -5,6 +5,7 @@ import unittest
 
 import highspy
 import numpy as np
+import pytest
 import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR
@@ -1336,6 +1337,7 @@ def _make_4zone_storage_problem():
     )
 
 
+@pytest.mark.slow  # benchmark-only: 6 full-year LP solves comparing solver configs
 class TestSolverBenchmark(unittest.TestCase):
     """Benchmarks HiGHS solver configurations on the full-year dispatch LP.
 

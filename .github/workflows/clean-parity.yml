@@ -8,6 +8,17 @@
 # Manual + weekly (not a per-PR gate): a full regenerate is heavy and depends on
 # the raw inputs being present in the checkout. Promote to pull_request once the
 # regenerate is known-stable in CI.
+#
+# Not promotable yet (checked 2026-07-05, W1-P1): `data/raw` is a ~2.4GB,
+# largely git-tracked checkout (861 tracked files feeding 20 datatypes) and this
+# job carries a 45min timeout — an order of magnitude past a PR-gate budget
+# (the new ci.yml fast tier targets ~10min) and it has never actually run to
+# completion gating a merge, so "known-stable" isn't established. Promoting it
+# as-is would make every PR pay a 2.4GB checkout plus a ~45min regenerate for
+# datatypes the PR's diff usually doesn't touch. A future promotion should
+# scope to the datatype(s) a given PR's diff actually changed (regenerate_clean
+# already accepts a datatype subset — see the `datatypes` input above) rather
+# than lifting the full weekly job verbatim.
 name: Clean-data contract + parity
 
 on:
