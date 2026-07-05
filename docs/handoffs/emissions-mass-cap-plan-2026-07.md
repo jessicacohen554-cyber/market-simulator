@@ -5,10 +5,55 @@ PP-2.1). **Companion findings:** `docs/fable-repo-audit-2026-07.md` EM-6 (carbon
 `docs/model-audit-2026-06.md` §"No CO₂/NOx mass cap". **Extension point:**
 `policy/constraints.py::get_active_policy_constraints` returns `[]`.
 
-**Status: design only — nothing implemented.** This doc decides the structure; the implementation
-prompt at the end is the hand-off. Read it against CLAUDE.md rules 1 (structure first, don't fake
-the number), 2 (no hour loops), 5 (cite every number), 13/14 (measured data must be
-forward-reproducible), 9 (one-pass), 22 (holdout quarantine).
+**Status: implemented, default-off (2026-07-05).** The design below shipped in full across
+PRs #1328 / #1353 / #1386; this doc is retained as the design record. See the
+**Implementation status** ledger immediately below for what landed where and the (non-blocking)
+follow-ons that remain. Read against CLAUDE.md rules 1 (structure first, don't fake the number),
+2 (no hour loops), 5 (cite every number), 13/14 (measured data must be forward-reproducible),
+9 (one-pass), 22 (holdout quarantine).
+
+---
+
+## Implementation status (2026-07-05)
+
+Everything in this plan is implemented and merged; the mechanism is **default-off** (rule 24) and
+cap-off backcast is bit-for-bit today's behaviour (§9.2 gate). Ledger by design section:
+
+| Design section | Landed in | Where |
+|---|---|---|
+| §3 unified `emission_rate × membership` channel; §6 resolver | ✅ | `policy/cap_and_trade.py` (`resolve_carbon_program`, `CarbonProgramResolution`, `MassCapSpec`, `measured_price`/`projected_price`, `_membership`, `_power_sector_cap`, `_published_power_sector_budget`) |
+| §6 `resolve_carbon_price` → thin `.price_adder` wrapper (EM-6 seam) | ✅ | `policy/carbon.py` |
+| §6 `get_active_policy_constraints` returns `[cap_spec]` | ✅ | `policy/constraints.py` |
+| §4 vectorized `_build_mass_cap_rows` (rule 2, no hour loop); end-anchored block before RPS; `_n_masscap_rows`; `co2_cap_price = -λ` on `DispatchResult` | ✅ | `model/dispatch.py` |
+| §6 gated `ScenarioConfig` fields (`mass_cap_enabled`/`mass_cap_program`/`mass_cap_tons`/`carbon_program_price_path`), default off, in sweep-param dict + `run_config.json` | ✅ | `config/scenarios.py` |
+| §5/§7 registry constants, all cited: `CAP_AND_TRADE_PROGRAMS`, `CARB_ALLOWANCE_BUDGET`, `CARB_FLOOR_PRICE`, `RGGI_STATE_CO2_BUDGET`, `SHORT_TON_TO_METRIC_TONNE`, `PJM_RGGI_ZONE_SHARE` | ✅ | `config/constants.py` |
+| §5 membership-weighted (per-gen) carbon adder | ✅ | `data/fleet.py::assemble_mc` (accepts `ndarray`) |
+| §7 data intake (schema + curate + cited raw CSV) | ✅ | `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`, `data/dictionary/schema/*.schema.yaml`, `scripts/curate_{carb_cap_schedule,rggi_co2_budgets}.py` |
+| §10 call-site threading `get_active_policy_constraints(config, year)` → dispatch builder | ✅ | `runner.py` |
+| §9.1–§9.6 tests incl. trivial binding-cap dual = `(mc_clean−mc_dirty)/(rate_dirty−rate_clean)`, cap-off regression, simultaneous RPS+reserve+cap dual-index, membership vectorization, no-hour-loop assertion | ✅ | `tests/test_cap_and_trade.py`, `tests/test_dispatch.py::TestMassCapConstraint` |
+
+**Dispatch wiring is NOT blocked / NOT missing.** The one open question this plan flagged for the
+policy-side implementer — whether `dispatch.py` consumes policy constraint rows — is resolved:
+`dispatch.py` fully consumes the mass-cap block (`mass_cap_coeffs`/`mass_cap_rhs`/`mass_cap_labels`
+args → `_build_mass_cap_rows` → end-anchored dual → `co2_cap_price`), threaded from `runner.py`.
+No dispatch-side wiring remains.
+
+**Non-blocking follow-ons (as designed, deferred — not gaps):**
+
+- **PJM fractional membership ships OFF** (§5, §11): `PJM_RGGI_ZONE_SHARE = {}`, so PJM membership
+  resolves all-zeros and the PJM RGGI adder is a no-op. Populating it needs the EIA-860 plant-
+  coordinate → state → RGGI-membership-by-year crosswalk intake (§7) — a data step, not a code gap.
+- **Per-state RGGI budgets** (§7): only the regional `RGGI` total is landed; a RGGI ISO's row uses
+  the region-wide over-bound (correctly slack) until the per-state allowance-distribution table is
+  intaken.
+- **Forecast adder uses an escalator on the last measured price**, not the `CARB_FLOOR_PRICE`
+  series directly (`projected_price`, `escalation_rate`); `CARB_FLOOR_PRICE` is landed as the cited
+  floor-band artifact. A future refinement could floor the projection at that band.
+- **No banking/borrowing** (§8, by design): the endogenous dual is the power-sector, no-bank,
+  single-year scenario allowance price — an upper bound in a tight year, ~0 in a loose one — never a
+  point forecast of the banked RGGI/CARB market price. A cross-year bank remains explicitly out of
+  scope (breaks rule-9 one-pass year independence).
+- **NOx/SO₂ mass cap** (§10): out of scope; the same builder with `nox_rate` is a trivial follow-on.
 
 ---
 
