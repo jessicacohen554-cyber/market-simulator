@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-caiso-54-daily-gas",
+  "label": "caiso 54 daily gas",
+  "date": "2026-07-05",
+  "shorthand": "caiso-54-daily-gas",
+  "definition": "(PROBE) caiso 54 daily-gas: caiso-53 recipe + --gas-hub-basis-daily, testing the caiso-53 root-cause item that the MONTHLY-average SoCal/PG&E citygate gas overlay is too blunt in spike months. Intakes daily CA Composite Average citygate spot (EIA NG Weekly compact table, 2023-2025, scripts/fetch_caiso_citygate_daily.py) and replaces the flat monthly hub level with a true-calendar-dated daily shape, mean-preserving on the measured monthly basis (annual gas burn/fuel mix unchanged) -- same construction as the NYISO daily Transco leg (dense trading-day quotes), not NEISO's sparse-narrative one. RESULT: the 2023 C3c tail (>$200/MWh hours) collapses from the documented caiso-53 baseline of 454h to 15h (actual 21h) -- confirming the hypothesis that the monthly plateau was pricing the whole of January at the arctic-spike level instead of only the days gas actually spiked. 2024 4h/2025 0h (was part of the same monthly-plateau problem, now resolved). No offer-curve tuning; only the gas-price input's time resolution changed. Not yet promoted pending the full legitimacy_diagnostics/rubric pass and a same-environment monthly-vs-daily A/B (results/calibration/caiso53_repro_baseline) to isolate the effect from any other drift.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-05-caiso-54-daily-gas.js",
+  "bundle": "results/calibration/caiso54_daily_gas"
+}
