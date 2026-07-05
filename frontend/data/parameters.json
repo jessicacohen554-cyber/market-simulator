@@ -3951,7 +3951,7 @@
     {
       "param_id": "co2_rate_trailing_window_years",
       "display_name": "Co2 Rate Trailing Window Years",
-      "value": 0,
+      "value": 2,
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -4146,6 +4146,156 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_history_end_year",
+      "display_name": "Control Retrofit History End Year",
+      "value": 2025,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--------------------------------------------------------------------------- Forward emission-control retrofit channel (docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md).  The trailing-window CO2/NOx/SO2 estimator only picks up REALIZED emission-rate drift once a control shows in the measured history. It has no forward channel for an ANNOUNCED control install (SCR, scrubber/FGD, DSI, carbon-capture) that will step a covered unit's forward rate in a future year. This channel injects that step ahead of realized history, sourced from EIA-860's committed environmental-control pipeline (a forward driver — an install *date*, not a residual). Forecast-only, config-gated, default OFF (rule 13; see the handoff).  The measured-history window feeding the estimator ends in this year: an environmental control already OPERATING by here is already reflected in the measured rate, so only controls with an Inservice Year AFTER it are forward steps the estimator has not yet absorbed. 2025 is the last non-quarantined CAMPD actual year (2022/H1-2026 are under holdout quarantine, CLAUDE.md rule 22). Re-derives only when the CAMPD/EIA-860 source window advances (rule 23).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.CD",
+      "display_name": "Control Retrofit Type Map / Cd",
+      "value": [
+        "so2",
+        0.95
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Circulating dry scrubber",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.DSI",
+      "display_name": "Control Retrofit Type Map / Dsi",
+      "value": [
+        "so2",
+        0.5
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Dry sorbent injection",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.JB",
+      "display_name": "Control Retrofit Type Map / Jb",
+      "value": [
+        "so2",
+        0.95
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Jet-bubbling reactor (wet FGD)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.SD",
+      "display_name": "Control Retrofit Type Map / Sd",
+      "value": [
+        "so2",
+        0.95
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Spray-dryer / dry FGD",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.SN",
+      "display_name": "Control Retrofit Type Map / Sn",
+      "value": [
+        "nox",
+        0.35
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Selective non-catalytic reduction (SNCR)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "control_retrofit_type_map.SR",
+      "display_name": "Control Retrofit Type Map / Sr",
+      "value": [
+        "nox",
+        0.9
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Selective catalytic reduction (SCR)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -14728,6 +14878,43 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Render the per-plant committed band as an n-slice rising ramp (spanning the committed HR multiplier +/- this fraction) instead of one flat block, so a CAMPD bin clears its committed capacity progressively with price rather than snapping 0 -> full committed share in one hour (the under-populated mid-capacity-factor-band artifact of the commitment-free LP). 0.0 (default) keeps the flat block. The mean committed bid is unchanged, so class volume is ~preserved; only the dispatch level distribution smooths. Slice count = offer_curve_smoothing_n.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.control_retrofit_forward",
+      "display_name": "Control Retrofit Forward",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Forward emission-control retrofit channel (Tier 2; default OFF). docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md When True AND in forecast mode, an ANNOUNCED EIA-860 environmental-control install (SCR / SNCR / FGD scrubber / DSI) steps the covered unit's forward emission rate down at its committed Inservice Year — the forward step the trailing-window estimator cannot supply ahead of realized history. The install date is a forward driver, not a residual, so the channel is rule-13-admissible (see the handoff). OFF is byte-identical to the base estimator. Backcast years never consult it (measured rates already carry any operating control). Carbon-capture/CO2 is intentionally excluded here — it is owned by the CCS retrofit screen (rule 15).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.control_retrofit_path",
+      "display_name": "Control Retrofit Path",
+      "value": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
       "source_date": "",
       "page_or_table": "",
       "url": "",
