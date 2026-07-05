@@ -631,6 +631,60 @@ class TestMustRunEmissions(unittest.TestCase):
         expected = row["mr_mw"] * 8760.0 * 0.5
         self.assertAlmostEqual(row["mr_gen_mwh"], expected, places=3)
 
+    def test_measured_btm_share_sizes_fallback_mr_mw(self):
+        # Wave 3: the forecast measured-CF fallback (no total_gen_by_plant)
+        # sizes mr_mw from the measured per-plant BTM share when covered,
+        # in place of the bin's own pct_mr share.
+        bins = load_campd_bins(BINS_CSV)
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        covered = int(chp["Plant_Code"].iloc[0])
+        uncovered = int(chp["Plant_Code"].iloc[1])
+        measured_share = 0.42
+        mr = compute_must_run_emissions(
+            bins,
+            year=2030,
+            must_run_cf=0.85,
+            btm_share_by_plant={covered: measured_share},
+        )
+        covered_row = mr[mr["Plant_Code"].astype(int) == covered].iloc[0]
+        covered_bin = chp[chp["Plant_Code"] == covered].iloc[0]
+        self.assertAlmostEqual(
+            covered_row["mr_mw"], covered_bin["capacity_mw"] * measured_share, places=6
+        )
+        # Uncovered plant: falls back to its bin's own pct_mr share, unchanged.
+        uncovered_row = mr[mr["Plant_Code"].astype(int) == uncovered].iloc[0]
+        uncovered_bin = chp[chp["Plant_Code"] == uncovered].iloc[0]
+        self.assertAlmostEqual(
+            uncovered_row["mr_mw"],
+            uncovered_bin["capacity_mw"] * uncovered_bin["pct_mr"] / 100.0,
+            places=6,
+        )
+
+    def test_measured_btm_share_times_class_cf_is_plausible(self):
+        # measured share x measured class CF x nameplate should land the BTM
+        # capacity factor in [0, 1] and scale linearly with the share -- a
+        # sanity check on the composed forecast sizing (acceptance criterion).
+        bins = load_campd_bins(BINS_CSV)
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        code = int(chp["Plant_Code"].iloc[0])
+        grp = str(chp[chp["Plant_Code"] == code]["Plant_Group"].iloc[0])
+        share = 0.3
+        cf = 0.6
+        mr = compute_must_run_emissions(
+            bins,
+            year=2030,
+            must_run_cf=0.85,
+            btm_share_by_plant={code: share},
+            class_cf_by_group={grp: cf},
+        )
+        row = mr[mr["Plant_Code"].astype(int) == code].iloc[0]
+        nameplate = float(chp[chp["Plant_Code"] == code]["capacity_mw"].iloc[0])
+        expected = nameplate * share * 8760.0 * cf
+        self.assertAlmostEqual(row["mr_gen_mwh"], expected, places=3)
+        implied_cf = row["mr_gen_mwh"] / (nameplate * 8760.0)
+        self.assertGreaterEqual(implied_cf, 0.0)
+        self.assertLessEqual(implied_cf, 1.0)
+
     def test_measured_class_cf_from_steam_units(self):
         # measured_class_cf keys CHP off measured steam output and CAMPD
         # unit_type, returning a gen-weighted op-hours utilization per group.

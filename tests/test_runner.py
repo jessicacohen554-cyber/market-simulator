@@ -513,7 +513,7 @@ class TestChpMeasuredCo2Inputs(unittest.TestCase):
         # use_plant_emission_rates (default) -> BTM books the legacy pooled rate,
         # the same rate the grid tranches use.
         config = ScenarioConfig(iso="ERCOT", mode="backcast")
-        rates, _cf = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
+        rates, _cf, _btm_share = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
         self.assertTrue(rates, "legacy pooled artifact should yield a rate map")
         self.assertTrue(all(v > 0 for v in rates.values()))
 
@@ -523,9 +523,20 @@ class TestChpMeasuredCo2Inputs(unittest.TestCase):
         config = ScenarioConfig(
             iso="ERCOT", mode="backcast", use_plant_emission_rates=False
         )
-        rates, cf = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
+        rates, cf, btm_share = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
         self.assertEqual(rates, {})
         self.assertEqual(cf, {})
+        self.assertEqual(
+            btm_share, {}, "backcast mode must not source measured BTM share"
+        )
+
+    def test_forecast_mode_sources_measured_btm_share(self):
+        # Forecast mode resolves the measured chp-btm-share artifact when
+        # present; with no clean partition on disk it degrades to empty (the
+        # caller's pct_mr fallback), never raising.
+        config = ScenarioConfig(iso="ERCOT", mode="forecast")
+        _rates, _cf, btm_share = runner._chp_measured_co2_inputs(config, "ERCOT", 2030)
+        self.assertIsInstance(btm_share, dict)
 
 
 if __name__ == "__main__":

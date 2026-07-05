@@ -237,9 +237,14 @@ def compute_must_run_emissions(
       netgen) keeps a plant that splits across classes from inflating one
       class with another's output.
     * **Measured-CF fallback (forecasts).** Without measured totals, the
-      estimate is ``nameplate × pct_mr × 8760 × cf`` where ``cf`` is the
-      plant's class measured capacity factor (``class_cf_by_group``, from
-      :func:`measured_class_cf`) when available, else the flat ``must_run_cf``.
+      estimate is ``nameplate × share × 8760 × cf`` where ``share`` is the
+      plant's measured host self-supply share (``btm_share_by_plant``, from
+      :func:`market_sim.data.chp.measured_btm_share_by_plant`) when the plant
+      is covered, else the bin's own ``pct_mr`` (which already bakes the
+      sector-keyed :func:`market_sim.data.chp.chp_btm_pct` default), and
+      ``cf`` is the plant's class measured capacity factor
+      (``class_cf_by_group``, from :func:`measured_class_cf`) when available,
+      else the flat ``must_run_cf``.
 
     CO2 is booked at the plant's **measured** rate (``measured_rate_by_plant``,
     the same v2 ``(plant, fuel-class)`` rate its grid tranches use) when the
@@ -259,8 +264,12 @@ def compute_must_run_emissions(
             net generation for the plant's bin class (e.g. EIA-923 keyed per
             ``(plant, class)``). Triggers the measured-share mode.
         btm_share_by_plant: Optional ``{plant_code: fraction}`` host
-            self-supply share of the plant's generation. A plant absent from
-            the mapping falls back to its bin ``pct_mr`` share.
+            self-supply share of the plant's generation. In the measured-share
+            mode it sizes the host pull-out from ``total_gen_by_plant``; in
+            the measured-CF fallback (no ``total_gen_by_plant``) it instead
+            sizes ``mr_mw`` directly, in place of the bin's own ``pct_mr``
+            share. Either way a plant absent from the mapping falls back to
+            its bin ``pct_mr`` share.
         measured_rate_by_plant: Optional ``{plant_code: tCO2/MWh net}`` measured
             CO2 rate for the plant's must-run fuel class — the same v2 rate the
             grid tranches book. Used when positive; else the fuel-class default.
@@ -285,7 +294,9 @@ def compute_must_run_emissions(
         mr["mr_gen_mwh"] = (total * share).clip(lower=0.0)
         mr["mr_mw"] = mr["mr_gen_mwh"] / 8760.0
     else:
-        mr["mr_mw"] = mr["capacity_mw"] * mr["pct_mr"] / 100.0
+        shares = btm_share_by_plant or {}
+        share = mr["Plant_Code"].map(shares).fillna(mr["pct_mr"] / 100.0)
+        mr["mr_mw"] = mr["capacity_mw"] * share
         class_cf = class_cf_by_group or {}
         if "Plant_Group" in mr.columns and class_cf:
             cf = mr["Plant_Group"].astype(str).map(class_cf).fillna(must_run_cf)
