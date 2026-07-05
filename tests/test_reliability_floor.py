@@ -9,6 +9,7 @@ loader module's attribute takes effect).
 """
 
 import importlib.util
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -586,6 +587,69 @@ class TestNetloadDerivation(unittest.TestCase):
         daily_nl = pd.DataFrame({"date": idx, "peak_nl_gw": [20.0] * n})
         fit = drc._fit_netload_limb(cf_df, daily_nl, threshold_gw=25.0)
         self.assertIsNone(fit)
+
+
+class DropDragOwnedSpecsTest(unittest.TestCase):
+    """Rule 19: a net-load drag owns its class's reliability-floor commitment."""
+
+    @staticmethod
+    def _specs():
+        from market_sim.config.iso_configs import ReliabilityFloorSpec
+
+        return [
+            ReliabilityFloorSpec(
+                zone="PJM_EMAAC",
+                plant_class="CT_PEAKER",
+                driver="tmax",
+                threshold=33.3,
+                floor_pct=0.28,
+            ),
+            ReliabilityFloorSpec(
+                zone="PJM_West_APS",
+                plant_class="CT_PEAKER",
+                driver="tmax",
+                threshold=31.7,
+                floor_pct=0.32,
+            ),
+            ReliabilityFloorSpec(
+                zone="PJM_ComEd",
+                plant_class="COAL",
+                driver="tmax",
+                threshold=32.8,
+                floor_pct=0.38,
+            ),
+            ReliabilityFloorSpec(
+                zone="PJM_EMAAC",
+                plant_class="ST_GAS",
+                driver="tmax",
+                threshold=33.3,
+                floor_pct=0.09,
+            ),
+        ]
+
+    def test_ct_drag_drops_only_ct_peaker_limbs(self):
+        from market_sim.config.iso_configs import drop_drag_owned_reliability_specs
+
+        cfg = types.SimpleNamespace(ct_netload_drag=True, gas_st_netload_drag=False)
+        out = drop_drag_owned_reliability_specs(self._specs(), cfg)
+        classes = sorted(s.plant_class for s in out)
+        self.assertEqual(classes, ["COAL", "ST_GAS"])  # CT_PEAKER limbs dropped
+        self.assertEqual(len(out), 2)
+
+    def test_no_drag_is_byte_identical(self):
+        from market_sim.config.iso_configs import drop_drag_owned_reliability_specs
+
+        cfg = types.SimpleNamespace(ct_netload_drag=False, gas_st_netload_drag=False)
+        specs = self._specs()
+        out = drop_drag_owned_reliability_specs(specs, cfg)
+        self.assertIs(out, specs)  # same object, no-op
+
+    def test_gas_st_drag_drops_st_gas(self):
+        from market_sim.config.iso_configs import drop_drag_owned_reliability_specs
+
+        cfg = types.SimpleNamespace(ct_netload_drag=True, gas_st_netload_drag=True)
+        out = drop_drag_owned_reliability_specs(self._specs(), cfg)
+        self.assertEqual(sorted(s.plant_class for s in out), ["COAL"])
 
 
 if __name__ == "__main__":
