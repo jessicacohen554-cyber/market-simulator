@@ -15,6 +15,8 @@ off — so every existing reader is unaffected by the extra P1 file.
 
 from pathlib import Path
 
+import numpy as np
+
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results.outputs import FleetContext, read_fleet_context
