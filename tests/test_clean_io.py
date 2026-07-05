@@ -42,6 +42,7 @@ ALL_DATATYPES = [
     "unit-outage-events",
     "partial-outages",
     "capacity-deliverability",
+    "confirmed-retirements",
     "gtc-limits",
     "winter-fuel-inventory",
     "rggi-co2-budgets",

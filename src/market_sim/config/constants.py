@@ -1874,6 +1874,20 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     "NEISO": 0.157,
 }
 
+# Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
+# date deterministically. A self-reported planned-retirement year is credible
+# only at the same near-term grain the additions pipeline trusts its U/V/TS
+# statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon
+# an announced non-fossil date is honored ONLY if the unit carries a binding
+# instrument in the confirmed-retirements registry; otherwise it is ignored, so
+# the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and
+# far-dated nuclear announcements fall to the economic screen (+ registry). Set
+# to 5 per the methodology spec's "after the data horizon (~2030) the model is
+# fully economics-driven" line (§1.7 / §5); symmetric with the additions
+# pipeline's near-term-only firm-status window. Consumed by
+# model.capacity.apply_announced_retirements.
+NONFOSSIL_ANNOUNCED_HORIZON_YEARS: int = 5
+
 # ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
 # economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
 # capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).

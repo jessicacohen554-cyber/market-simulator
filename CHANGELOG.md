@@ -1,5 +1,64 @@
 # Changelog
 
+## 2026-07-05 (confirmed-vs-announced retirement channel — implementation, W2-P2)
+
+**Model.** Implemented the confirmed-vs-announced retirement channel from the
+W0-P2 plan (`docs/handoffs/confirmed-retirement-plan-2026-07.md`). Only
+**confirmed** exits — units bound by an enforceable public instrument (RTO
+deactivation acceptance, consent decree, statute, regulatory order, RMR end) —
+are exogenous; **announced** EIA-860 dates stay with the economic screen.
+
+- **New `confirmed-retirements` datatype** (schema-first, per-ISO registry
+  modules, `write_clean` seam): `data/dictionary/schema/confirmed-retirements.schema.yaml`
+  (closed `confirmation_class` vocabulary), `scripts/lib/confirmed_retirements/`
+  (`IsoSpec` + register + generic CSV parser, one module per ISO — no if-iso
+  ladders), `scripts/curate_confirmed_retirements.py` (EIA-860 spine validation:
+  plant/generator exists, MW within 5 %, `exit_year >= 2023`), registered in
+  `regenerate_clean.py` + the data dictionary. Seeded PJM (Rockport consent
+  decree, Kincaid IL CEJA statute, Brandon Shores/Wagner `rmr_end`, Eddystone
+  `superseded` by DOE 202(c)) and ERCOT (Braunig `rmr_end`); other ISOs land as
+  DATA NEEDED. **All seeded instruments require re-verification before the flag
+  is defaulted on** (open item).
+- **Confirmed-exit injector** (`model.capacity.apply_confirmed_exits`, step 0 of
+  `evolve_fleet` + first-year `build_base_fleet`): plant-code join, unit-grain
+  drop or plant-binned MW derate, `exit_month<=6 → exit_year else exit_year+1`,
+  bypasses the reliability floor, composes as `min(economic, confirmed_date)`.
+  Consumption seam `data.confirmed_retirements.load_confirmed_exits` (drops
+  superseded, earliest instrument per unit). GATED new `confirmed_exits_enabled`
+  (default OFF); forecast-mode only. Default-off is byte-identical to before.
+- **`apply_known_retirements` → `apply_announced_retirements` rename** (RC-3, no
+  alias). The fossil default no-op is now explicit in code, CLAUDE.md, and the
+  methodology spec §5.1.
+- **Non-fossil data-horizon gate** (RC-5,
+  `constants.NONFOSSIL_ANNOUNCED_HORIZON_YEARS = 5`): announced non-fossil dates
+  beyond `EIA860_OPERABLE_VINTAGE + 5` are honored only if the unit is in the
+  confirmed registry (the gate activates with the confirmed channel).
+  **Behaviour change** (with the channel on): the 2040-2072 hydro-relicense /
+  solar-EOL placeholders stop force-retiring, and of the 3 announced nuclear
+  units (1,871 MW, 2030-2034) the 2030 exit stays deterministic (within horizon)
+  while 2033/2034 become economic unless confirmed.
+- **EIA-860 intake (RC-2):** carry `Planned Retirement Month` into
+  `eia860_generators.parquet` (`process_eia860._GENERATOR_COLUMN_MAP` +
+  `EIA_860_CSV_COLUMNS`); the loader already consumed `retirement_month` when
+  present (338 operable units now carry it). Loader `OP` filter unchanged.
+- **Tests:** `tests/test_capacity.py` (announced rename + horizon gate + confirmed
+  injector: unit drop, bin derate math, RC-1 confirmed-fossil-vs-announced-twin,
+  month convention, floor bypass), `tests/test_curate_confirmed_retirements.py`
+  (schema/spine/vocabulary guards), `tests/test_confirmed_retirements.py` (loader
+  earliest-instrument/superseded, first-year `build_base_fleet`, default-off).
+- **Verification probe** (`scripts/probes/confirmed_retirement_probe.py`, injector
+  ON, forecast ERCOT + PJM 2026-2029): see the commit message. Not a keeper.
+- **Known limitation (follow-up):** a plant-binned coal/gas confirmed exit
+  effective 2+ years into a CAMPD forecast is not matched, because
+  `evolve_fleet`'s end-of-year `aggregate_fleet` merges per-plant coal/gas bins
+  into vintage efficiency bins and erases `plant_code` after the base year (a
+  pre-existing model behaviour). The injector fires for first-year exits and for
+  unit-grain units that pass through aggregation carrying an announced date
+  (e.g. Wagner's oil units). Preserving a registry plant's identity through
+  aggregation requires the dispatch/economic-screen pipeline to accept
+  un-aggregated coal tranches (attempted here via a `keep_plant_codes`
+  pass-through, reverted because it desynced the economic screen's dispatch
+  mapping) — deferred.
 ## 2026-07-05 (PB-3 follow-up — emissions-basis staleness handling + committed prior artifact)
 
 **Post-processing only — no solves.** Extends the landed PB-3 structural prior
