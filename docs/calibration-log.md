@@ -4351,3 +4351,52 @@ and stay in code (rule #15). Retention: caiso-39/40 pruned (top-15).
 Follow-up filed: issue #1302 (per-ISO sub-SRMC committed-band diagnosis;
 ST_GAS 0.81 remnant included). Pre-existing unrelated test failure noted on
 main: `test_caiso_per_hub_intertie::test_split_resolves_to_two_flow_columns`.
+
+## 2026-07-05 — CAISO 54: daily gas-basis probe on the caiso-53 C3c root cause (PROBE; caiso-51 stays keeper)
+
+Follow-up on caiso-53's root-cause item 1 (2023 C3c tail 454h >$200 vs 21h
+actual, Jan-concentrated): intakes the daily California Composite Average
+citygate spot (EIA NG Weekly compact "Spot Prices" table, the same page
+Transco Z6 NY is scraped from, `scripts/fetch_caiso_citygate_daily.py`,
+2023-2025 only per the holdout quarantine) and adds a CAISO leg to
+`iso_hub_daily_gas_prices` (`_caiso_hub_daily_gas_prices`) that replaces the
+flat monthly SoCal/PG&E citygate hub level with a true-calendar-dated daily
+shape, mean-preserving on the measured monthly basis — structurally the
+NYISO dense-true-dated-Transco pattern, not NEISO's sparse-narrative one
+(this also fixes a latent bug: `--gas-hub-basis-daily` had no CAISO branch
+before and would have silently applied Algonquin/Boston narrative data to
+CAISO if the two flags were ever combined).
+
+Run `2026-07-05-caiso-54-daily-gas` (bundle `results/calibration/
+caiso54_daily_gas`), the full caiso-53 recipe plus `--gas-hub-basis-daily`,
+3-year CAISO backcast (2023-2025). **Result vs the committed caiso-53
+payload (official C3c, `ordc.hoursGt200`):** 2023 454h (monthly) → 455h
+(daily) vs 21h actual — essentially **unchanged**, not the collapse the
+root-cause hypothesis predicted. Day-level attribution (own P1 recompute)
+explains why: the daily series correctly **redistributes** the tail rather
+than shrinking it — the measured citygate spot genuinely collapsed only in
+the *last week* of Jan-2023 ($7.80-11.50/MMBtu), and those days now
+correctly drop from 9-19 tail-hours/day to zero; but days 2-18 (measured
+$16-24/MMBtu) sit *above* the monthly average once that cheap week is
+excluded from it, so they gain tail-hours instead (max zonal LMP
+$219.9→up to $282.9). Net January effect ≈505→489h, a real but marginal
+~3% reduction. **Conclusion:** the monthly-average blunting is a real,
+now-fixed defect (the last week was wrongly priced high before), but it is
+**not** the primary driver of the ~450h/21h over-prediction — most of
+January 2023 was persistently elevated in the real citygate market, not
+spike-concentrated in the way a monthly average would blunt. **New
+root-cause item (logged, not chased):** the dominant driver of the residual
+gap is something else — CT_PEAKER's `ct_netload_drag` floor (forced share
+40-62% per this bundle's D-2) and `ra_mustoffer_bridge` are the leading
+candidates, or a genuine actual-side effect (demand response / oil-switching
+/ imports) the model lacks; investigate separately, no floor forcing (rule
+#1). The daily-basis input stays in code on its own physical merits (correct
+day-to-day delivered fuel cost, rule #13) independent of whether it moves
+C3c — a real, more-accurate input is not reverted because the residual
+didn't move (rules #1/#12).
+
+**Determination NOT-YET; not promoted** — no offer-curve tuning, only the
+gas-price input's time resolution changed; caiso-51/caiso-53 remain keeper.
+`legitimacy_diagnostics.json` attached (D-5's `caiso_ra_mustoffer` gap is
+the same pre-existing, already-documented gap carried on caiso-53 — not
+introduced by this change).
