@@ -2093,6 +2093,14 @@ def evolve_fleet(
     fleet_arrays = _prior_attr(prior_results, "fleet_arrays")
     dispatch_result = _prior_attr(prior_results, "dispatch_result")
     prices = _prior_attr(prior_results, "prices")
+    # Capacity-screen price signal (plan §2.2-§2.3): the EWMA-blended and/or
+    # lookahead-repriced series replaces raw prices in the retirement,
+    # CCS-retrofit and new-entry screens. At the runner defaults it IS the
+    # same econ_prices array (byte-identical); bare-dict callers without the
+    # key fall back to prices.
+    price_signal = _prior_attr(prior_results, "price_signal", None)
+    if price_signal is not None:
+        prices = price_signal
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
     # Peak used by the peak-anchored adequacy mechanisms (floor + backstop):
     # the entering year's known peak when the runner supplies it (plan §2.3

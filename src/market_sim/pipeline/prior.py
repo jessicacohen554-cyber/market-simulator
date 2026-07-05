@@ -54,6 +54,13 @@ class PriorYearResults:
     wind_cap_mw: float
     solar_cap_mw: float
     storage_firm_mw: float
+    # Price signal the capacity screens (retirement / new entry / storage
+    # entry) consume in place of raw ``prices`` — the EWMA-blended and/or
+    # lookahead-repriced series (capacity-economics plan 2026-07 §2.2-§2.3).
+    # At the defaults (alpha=1.0, lookahead off) the runner passes the same
+    # ``econ_prices`` array object, so behaviour is byte-identical. ``None``
+    # (e.g. older tests building bare dicts) falls back to ``prices``.
+    price_signal: "np.ndarray | None" = None
 
     def get(self, key: str, default: Any = None) -> Any:
         """Dict-style read with ``dict.get`` semantics.
