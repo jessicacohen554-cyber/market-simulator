@@ -13,7 +13,7 @@ from market_sim.policy.cap_and_trade import MassCapSpec, resolve_carbon_program
 
 
 def get_active_policy_constraints(
-    config: ScenarioConfig, year: int
+    config: ScenarioConfig, year: int, zone_names: list[str] | None = None
 ) -> list[MassCapSpec]:
     """Return LP constraint-row specs for active constraint-type policies.
 
@@ -27,12 +27,17 @@ def get_active_policy_constraints(
     Args:
         config: Scenario config supplying the active policy levers.
         year: Simulation year.
+        zone_names: Optional runtime zone list (see
+            :func:`market_sim.policy.cap_and_trade.resolve_carbon_program`);
+            the caller MUST pass its already-interchange-extended zone list
+            here so the cap row's membership vector matches
+            ``fleet_arrays.zone_idx``.
 
     Returns:
         A list of :class:`MassCapSpec` (one per active mass cap); empty when no
         constraint-type policy binds.
     """
-    resolution = resolve_carbon_program(config, year)
+    resolution = resolve_carbon_program(config, year, zone_names=zone_names)
     if resolution is not None and resolution.cap_spec is not None:
         return [resolution.cap_spec]
     return []

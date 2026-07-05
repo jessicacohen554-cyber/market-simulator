@@ -12,6 +12,10 @@ follow-ons that remain. Read against CLAUDE.md rules 1 (structure first, don't f
 2 (no hour loops), 5 (cite every number), 13/14 (measured data must be forward-reproducible),
 9 (one-pass), 22 (holdout quarantine).
 
+**Update (2026-07-05, follow-on pass):** the two deferred items flagged below — PJM fractional
+membership and per-state RGGI budgets — are now landed. See the updated ledger and the new
+"Follow-ons landed" section below the original list.
+
 ---
 
 ## Implementation status (2026-07-05)
@@ -21,16 +25,17 @@ cap-off backcast is bit-for-bit today's behaviour (§9.2 gate). Ledger by design
 
 | Design section | Landed in | Where |
 |---|---|---|
-| §3 unified `emission_rate × membership` channel; §6 resolver | ✅ | `policy/cap_and_trade.py` (`resolve_carbon_program`, `CarbonProgramResolution`, `MassCapSpec`, `measured_price`/`projected_price`, `_membership`, `_power_sector_cap`, `_published_power_sector_budget`) |
+| §3 unified `emission_rate × membership` channel; §6 resolver | ✅ | `policy/cap_and_trade.py` (`resolve_carbon_program`, `CarbonProgramResolution`, `MassCapSpec`, `measured_price`/`projected_price`, `_membership`, `_power_sector_cap`, `_published_power_sector_budget`, `per_generator_membership`) |
 | §6 `resolve_carbon_price` → thin `.price_adder` wrapper (EM-6 seam) | ✅ | `policy/carbon.py` |
 | §6 `get_active_policy_constraints` returns `[cap_spec]` | ✅ | `policy/constraints.py` |
 | §4 vectorized `_build_mass_cap_rows` (rule 2, no hour loop); end-anchored block before RPS; `_n_masscap_rows`; `co2_cap_price = -λ` on `DispatchResult` | ✅ | `model/dispatch.py` |
 | §6 gated `ScenarioConfig` fields (`mass_cap_enabled`/`mass_cap_program`/`mass_cap_tons`/`carbon_program_price_path`), default off, in sweep-param dict + `run_config.json` | ✅ | `config/scenarios.py` |
-| §5/§7 registry constants, all cited: `CAP_AND_TRADE_PROGRAMS`, `CARB_ALLOWANCE_BUDGET`, `CARB_FLOOR_PRICE`, `RGGI_STATE_CO2_BUDGET`, `SHORT_TON_TO_METRIC_TONNE`, `PJM_RGGI_ZONE_SHARE` | ✅ | `config/constants.py` |
+| §5/§7 registry constants, all cited: `CAP_AND_TRADE_PROGRAMS`, `CARB_ALLOWANCE_BUDGET`, `CARB_FLOOR_PRICE`, `RGGI_STATE_CO2_BUDGET` (regional + per-state), `RGGI_MEMBER_STATES_BY_YEAR`, `SHORT_TON_TO_METRIC_TONNE`, `PJM_RGGI_ZONE_SHARE` (populated, per-zone-per-year) | ✅ | `config/constants.py` |
 | §5 membership-weighted (per-gen) carbon adder | ✅ | `data/fleet.py::assemble_mc` (accepts `ndarray`) |
-| §7 data intake (schema + curate + cited raw CSV) | ✅ | `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`, `data/dictionary/schema/*.schema.yaml`, `scripts/curate_{carb_cap_schedule,rggi_co2_budgets}.py` |
-| §10 call-site threading `get_active_policy_constraints(config, year)` → dispatch builder | ✅ | `runner.py` |
-| §9.1–§9.6 tests incl. trivial binding-cap dual = `(mc_clean−mc_dirty)/(rate_dirty−rate_clean)`, cap-off regression, simultaneous RPS+reserve+cap dual-index, membership vectorization, no-hour-loop assertion | ✅ | `tests/test_cap_and_trade.py`, `tests/test_dispatch.py::TestMassCapConstraint` |
+| §5 PJM per-unit membership: EIA-860 plant→state crosswalk + per-generator exact test | ✅ | `data/zone_assignment.py::plant_state_lookup`, `policy/cap_and_trade.py::per_generator_membership`, wired at `runner.py`'s `mass_caps` call site |
+| §7 data intake (schema + curate + cited raw CSV, incl. per-state RGGI budgets) | ✅ | `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`, `data/dictionary/schema/*.schema.yaml`, `scripts/curate_{carb_cap_schedule,rggi_co2_budgets}.py`, `scripts/derive_pjm_rggi_zone_share.py` |
+| §10 call-site threading `get_active_policy_constraints(config, year, zone_names=...)` → dispatch builder | ✅ | `runner.py` |
+| §9.1–§9.6 tests incl. trivial binding-cap dual = `(mc_clean−mc_dirty)/(rate_dirty−rate_clean)`, cap-off regression, simultaneous RPS+reserve+cap dual-index, membership vectorization, no-hour-loop assertion, PJM per-unit membership, per-state RGGI budget sums | ✅ | `tests/test_cap_and_trade.py`, `tests/test_dispatch.py::TestMassCapConstraint`, `tests/test_runner.py::TestMassCapPerUnitMembershipWiring` |
 
 **Dispatch wiring is NOT blocked / NOT missing.** The one open question this plan flagged for the
 policy-side implementer — whether `dispatch.py` consumes policy constraint rows — is resolved:
@@ -38,14 +43,45 @@ policy-side implementer — whether `dispatch.py` consumes policy constraint row
 args → `_build_mass_cap_rows` → end-anchored dual → `co2_cap_price`), threaded from `runner.py`.
 No dispatch-side wiring remains.
 
-**Non-blocking follow-ons (as designed, deferred — not gaps):**
+**Follow-ons landed (2026-07-05, this pass):**
 
-- **PJM fractional membership ships OFF** (§5, §11): `PJM_RGGI_ZONE_SHARE = {}`, so PJM membership
-  resolves all-zeros and the PJM RGGI adder is a no-op. Populating it needs the EIA-860 plant-
-  coordinate → state → RGGI-membership-by-year crosswalk intake (§7) — a data step, not a code gap.
-- **Per-state RGGI budgets** (§7): only the regional `RGGI` total is landed; a RGGI ISO's row uses
-  the region-wide over-bound (correctly slack) until the per-state allowance-distribution table is
-  intaken.
+- **PJM fractional membership** (§5, §11): `PJM_RGGI_ZONE_SHARE` is now populated per zone per year
+  (2023/2024/2025), derived by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched
+  EIA-860 plant/generator tables (state + operating fossil capacity) and the same PJM zone
+  assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup`). Virginia's 1 Jan
+  2024 RGGI exit is directly visible in the derived numbers: `PJM_Dominion` (VA+NC) goes from
+  0.9881 (2023) to 0.0 (2024/2025). Membership is now **per-unit where the fleet representation
+  allows it**: `policy/cap_and_trade.py::per_generator_membership` tests any generator with a real,
+  resolvable `plant_code` against its own plant's state exactly (via the new
+  `data.zone_assignment.plant_state_lookup`, reading EIA-860's `State` column directly), falling
+  back to the zone-level fractional share only for synthetic/aggregate units (legacy equal-width
+  heat-rate bins, `plant_code <= 0`) that have no single-site identity. Wired at `runner.py`'s
+  `mass_caps` cap_coeffs call site (adder path is unaffected and stays $0 for PJM — no measured
+  price series — so this ships numerically inert by default, same as before).
+  - **Bug found and fixed in the same pass:** `resolve_carbon_program`'s membership vector was
+    sized to the *static* `get_iso_config(iso).zone_names` topology, but `fleet_arrays.zone_idx`
+    can index into a *runtime-extended* topology (PJM's external interchange zone, appended by
+    `runner.py::apply_interchange_topology`) — an index-out-of-bounds the moment PJM's mass-cap row
+    was ever actually exercised end-to-end (never was, until this pass's new runner-level test).
+    Fixed by threading an optional `zone_names` override through `resolve_carbon_program` →
+    `get_active_policy_constraints`, with `runner.py` passing its already-extended list. Pre-existing
+    latent gap, not introduced by this pass; all other ISOs' cap-row paths were equally unexercised
+    end-to-end before this fix (their static and runtime zone lists happen to already agree, or they
+    have no external-node zone at all in `CAP_AND_TRADE_PROGRAMS`, so the bug was silent).
+- **Per-state RGGI budgets** (§7): `RGGI_STATE_CO2_BUDGET` now carries each member state's own
+  "CO2 Allowance Base Budget" for 2023-2025 (short tons), sourced directly from RGGI, Inc.'s
+  official "Distribution of VYyyyy CO2 Allowances By State" spreadsheets (exact, not an
+  ICAP-derived estimate — the regional `"RGGI"` total was also corrected to the exact published sum,
+  112,457,784 / 84,162,784 / 81,347,784, up from the prior ~93.0M/69.0M/67.0M approximation).
+  `policy/cap_and_trade.py::_published_power_sector_budget` now sums a RGGI ISO's own member
+  states (`RGGI_MEMBER_STATES_BY_YEAR` ∩ `program.member_states`) instead of the region-wide
+  over-bound — e.g. NYISO's row uses NY's ~$25-27M-ton budget, not the ~10x-larger regional total;
+  PJM's row correctly drops Virginia's ~$25.5M-ton contribution after 2023. The regional total
+  remains the fallback for years with no per-state breakdown (the 2027-2030 projections, which RGGI,
+  Inc. does not publish per-state).
+
+**Non-blocking follow-ons (as designed, still deferred — not gaps):**
+
 - **Forecast adder uses an escalator on the last measured price**, not the `CARB_FLOOR_PRICE`
   series directly (`projected_price`, `escalation_rate`); `CARB_FLOOR_PRICE` is landed as the cited
   floor-band artifact. A future refinement could floor the projection at that band.
@@ -54,6 +90,22 @@ No dispatch-side wiring remains.
   point forecast of the banked RGGI/CARB market price. A cross-year bank remains explicitly out of
   scope (breaks rule-9 one-pass year independence).
 - **NOx/SO₂ mass cap** (§10): out of scope; the same builder with `nox_rate` is a trivial follow-on.
+- **The mass-cap row is not reachable from the backcast calibration harness.** `runner.py::
+  run_scenario_iso` (forecast/backcast orchestration) fully threads `get_active_policy_constraints`
+  into the dispatch builder (confirmed by `tests/test_runner.py::TestMassCapPerUnitMembershipWiring`,
+  new this pass) — but the separate backcast **calibration** scripts
+  (`scripts/run_calibration.py::run_year`, `scripts/run_calibration_full.py::solve_and_persist`) build
+  their own `ScenarioConfig`/`dispatch_kwargs` pipeline directly and never call
+  `get_active_policy_constraints`, so `mass_cap_enabled` is currently inert there. This means the
+  optional diagnostic probe this pass considered (a RGGI-ISO backcast year with the row enabled,
+  comparing the endogenous dual to the observed RGGI auction price) **could not be run**: the
+  calibration harness has no path to exercise the row at all today. Wiring it in is a real, scoped
+  follow-on (mirroring `runner.py`'s `mass_caps` block: compute `cap_coeffs` via
+  `get_active_policy_constraints(config, year, zone_names=...)` +
+  `per_generator_membership(...)` and thread into `run_year`'s `dispatch_kwargs`) — deliberately not
+  attempted in this pass since it touches the calibration harness's core dispatch construction, which
+  CI's quarantine/legitimacy gates (`scripts/audit_keepers.py`, `scripts/legitimacy_diagnostics.py`)
+  scrutinize closely, and deserves its own reviewed change rather than a same-pass addition.
 
 ---
 
