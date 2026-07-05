@@ -109,12 +109,17 @@ def _chp_measured_co2_inputs(
 ) -> tuple[dict[int, float], dict[str, float]]:
     """Return ``(measured_rate_by_plant, class_cf_by_group)`` for CHP must-run.
 
-    Resolves the EM-7 (plan §5 R5) consistency inputs from the committed v2
-    emission-rate artifact so the behind-the-meter must-run reconstruction books
-    CO2 at the same measured rate its grid tranches use, and sizes the forecast
-    fallback with a measured CHP class capacity factor instead of the flat 0.85.
-    Returns empty maps (caller keeps the fuel-class default rate and the flat
-    ``must_run_cf``) when the v2 artifact is absent or the ISO has no rows.
+    Resolves the EM-7 (plan §5 R5) consistency inputs so the behind-the-meter
+    must-run reconstruction books CO2 at the **same measured rate its grid
+    tranches use** and sizes the forecast fallback with a measured CHP class
+    capacity factor instead of the flat 0.85. The rate source mirrors the grid's
+    (``fleet.apply_plant_emission_rates*``): the mode-aware v2 artifact when
+    ``use_plant_emission_rates_v2`` is on, else the legacy pooled artifact when
+    ``use_plant_emission_rates`` is on, else empty (caller keeps the fuel-class
+    default) — so BTM and grid CO2 intensity always agree. The class CF is drawn
+    from the v2 steam-load history independently of the rate source (empty until
+    the v2 artifact carries ``steam_load_klbh_sum``), so the caller falls back to
+    the flat ``must_run_cf`` when it is unavailable.
     """
     from pathlib import Path
 
@@ -122,23 +127,46 @@ def _chp_measured_co2_inputs(
 
     from market_sim.data.emission_rates import fuel_class, measured_plant_rates
 
-    path = Path(config.plant_emission_rates_v2_path)
-    if not path.exists():
-        return {}, {}
-    v2 = pd.read_parquet(path)
-    v2 = v2[v2["iso"].astype(str) == str(iso)]
-    if v2.empty:
-        return {}, {}
-    # Same mode-aware (plant, fuel-class) rate the grid tranches book, collapsed
-    # to a per-plant lookup keyed by the plant's own fuel class.
-    rate_map = measured_plant_rates(v2, iso, int(year), str(config.mode))
-    by_plant = {int(pid): rate for (pid, _fc), rate in rate_map.items()}
-    # For a plant whose CEMS units span classes, the must-run tranche is gas —
-    # prefer the gas-class rate when present so the BTM books the CHP rate.
-    for (pid, fc), rate in rate_map.items():
-        if fc == fuel_class("gas"):
-            by_plant[int(pid)] = rate
-    class_cf = measured_class_cf(v2)
+    by_plant: dict[int, float] = {}
+    class_cf: dict[str, float] = {}
+
+    if getattr(config, "use_plant_emission_rates_v2", False):
+        path = Path(config.plant_emission_rates_v2_path)
+        if path.exists():
+            v2 = pd.read_parquet(path)
+            v2 = v2[v2["iso"].astype(str) == str(iso)]
+            if not v2.empty:
+                # Same mode-aware (plant, fuel-class) rate the grid tranches book.
+                rate_map = measured_plant_rates(v2, iso, int(year), str(config.mode))
+                by_plant = {int(pid): rate for (pid, _fc), rate in rate_map.items()}
+                # A plant whose CEMS units span classes: the must-run tranche is
+                # gas, so prefer the gas-class rate when present.
+                for (pid, fc), rate in rate_map.items():
+                    if fc == fuel_class("gas"):
+                        by_plant[int(pid)] = rate
+                class_cf = measured_class_cf(v2)
+    elif getattr(config, "use_plant_emission_rates", False):
+        from market_sim.data.fleet import _plant_emission_rate_map
+
+        path = Path(config.plant_emission_rates_path)
+        if path.exists():
+            # Legacy pooled artifact books the same (co2, nox, so2) tonnes/MWh the
+            # grid tranches use; mixed plants are excluded from it (Parish), so
+            # they fall through to the fuel-class default on both sides.
+            by_plant = {
+                int(pid): co2
+                for pid, (co2, _nox, _so2) in _plant_emission_rate_map(
+                    str(path)
+                ).items()
+            }
+        # Class CF still comes from v2 history when the artifact carries it.
+        v2_path = Path(config.plant_emission_rates_v2_path)
+        if v2_path.exists():
+            v2 = pd.read_parquet(v2_path)
+            v2 = v2[v2["iso"].astype(str) == str(iso)]
+            if not v2.empty:
+                class_cf = measured_class_cf(v2)
+
     return by_plant, class_cf
 
 
