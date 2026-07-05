@@ -2376,6 +2376,14 @@ def solve_and_persist(
         "caiso_ra_startup_bridge": caiso_ra_startup_bridge,
         "caiso_ra_bridge_decommit": caiso_ra_bridge_decommit,
         "reliability_floor": reliability_floor,
+        # Net-load deployment drags — persisted so the legitimacy-diagnostics
+        # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
+        # the SAME drag the solve did. Omitting them silently dropped the drag
+        # from D-2/D-4 reconstruction, under-counting CT_PEAKER forced energy for
+        # every drag keeper (docs/FINDING-pjm-burndown-2026-07.md).
+        "ct_netload_drag": ct_netload_drag,
+        "gas_st_netload_drag": gas_st_netload_drag,
+        "ct_drag_overrides": ct_drag_overrides or {},
         "scarcity_price_overlay": scarcity_price_overlay,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
