@@ -242,8 +242,9 @@
         "where": "constants.py GAS_AVAILABILITY_FACTOR",
         "identification": "published",
         "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
-        "value": 0.86,
-        "source": "NERC GADS 2019-2023 (unverified)"
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
       },
       {
         "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",

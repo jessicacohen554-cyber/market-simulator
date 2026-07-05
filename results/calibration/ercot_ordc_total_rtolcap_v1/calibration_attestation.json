@@ -34,7 +34,7 @@
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
     "n_entries": 10,
-    "n_residual": 9,
+    "n_residual": 8,
     "entries": [
       {
         "name": "offer_curve_by_group",
@@ -198,11 +198,11 @@
       {
         "name": "GAS_AVAILABILITY_FACTOR[ERCOT]",
         "where": "constants.py GAS_AVAILABILITY_FACTOR",
-        "identification": "residual",
+        "identification": "published",
         "lineage_solves": ">=165 solves (audit \u00a75.1)",
-        "value": 0.85,
-        "source": "nudged from the NERC GADS 2019-2023 fleet baseline 0.83 during calibration (audit C-18; W1d marker)",
-        "root_cause": "audit C-18: re-ground on the GADS baseline or a frozen derive from CAMPD availability; the nudge is compensating for an unmodeled availability effect"
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
       },
       {
         "name": "coal_take_or_pay_tranches",
