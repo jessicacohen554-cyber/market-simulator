@@ -61,6 +61,26 @@ _HOLDOUT_ROOT_CAUSE = (
     "statistical-mode gap reported on the Calibration Status page"
 )
 
+# Root-cause GitHub issues opened during the 2026-07 scalar-remediation B-GOV-1
+# ledger sweep (docs/handoffs/scalar-remediation-prompts-2026-07.md) — every
+# residual entry these constants are attached to MUST keep citing an open
+# issue (audit_keepers E8).
+_ISSUE_C4_MERCHANT_CHP = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+)
+_ISSUE_C8_CORE_STEPS = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
+)
+_ISSUE_COMMITTED_BELOW_085 = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1302"
+)
+
+# Committed-tranche multiplier floor (audit §2 flag; plan §2.1 exception): a
+# group whose committed HR multiplier sits below this without a written
+# physical rationale in ``offer_curve_by_group`` is pulled out of the R6 bulk
+# population and gets its own ledger row citing the open issue.
+_COMMITTED_MULT_FLOOR = 0.85
+
 
 def _count_scalars(obj) -> int:
     """Count numeric leaves in a nested dict/list (tuned-scalar census)."""
@@ -126,6 +146,32 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 root_cause=_HOLDOUT_ROOT_CAUSE,
             )
         )
+        below_floor = {
+            g: b["committed"]
+            for g, b in curves.items()
+            if b.get("committed") is not None and b["committed"] < _COMMITTED_MULT_FLOOR
+        }
+        if below_floor:
+            out.append(
+                _entry(
+                    f"offer_curve_committed_below_floor[{iso}]",
+                    "run_config.scenario_config.offer_curve_by_group[*].committed",
+                    "residual",
+                    iso,
+                    value=below_floor,
+                    n_scalars=len(below_floor),
+                    source="committed-tranche multiplier(s) below the audit §2 "
+                    "0.85 physical-floor flag with no written rationale in the "
+                    "config — pulled out of the R6 bulk offer-curve population "
+                    "per plan §2.1 (docs/handoffs/scalar-remediation-plan-"
+                    "2026-07.md)",
+                    root_cause="open: "
+                    + _ISSUE_COMMITTED_BELOW_085
+                    + " (per-ISO evening-merit-style diagnosis before any "
+                    "value is touched — rules #1/#18/#19/#26 apply, no "
+                    "blanket fix)",
+                )
+            )
     smoothing = {
         k: sc[k]
         for k in (
@@ -320,7 +366,8 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "'Tier 3 (calibration)'; sanctioned mechanism, undisciplined "
                 "values",
                 root_cause="audit C-8: ground on contract-structure data "
-                "(EIA-923 fuel-cost dispersion) or freeze via rule 23",
+                "(EIA-923 fuel-cost dispersion) or freeze via rule 23; open: "
+                + _ISSUE_C8_CORE_STEPS,
             )
         )
         out.append(
@@ -334,7 +381,8 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "commercial re-derived from EIA-923 Schedule-8 (S3), merchant "
                 "retained at its prior fitted value (audit C-4; W1d marker)",
                 root_cause="no independent merchant-CHP host-load source found "
-                "yet — replace when one exists (constants.py comment)",
+                "yet — replace when one exists (constants.py comment); open: "
+                + _ISSUE_C4_MERCHANT_CHP,
             )
         )
     if iso == "CAISO":
