@@ -7,11 +7,14 @@ import pandas as pd
 
 from market_sim.data.emission_rates import (
     CF_BANDS,
+    AnnouncedControl,
     OperatingPoint,
     PlantHistory,
+    apply_control_retrofits,
     class_median_rates,
     forward_plant_co2_rate,
     fuel_class,
+    load_announced_controls,
     measured_plant_rates,
 )
 
@@ -261,6 +264,113 @@ class TestMeasuredNoxSo2Rates(unittest.TestCase):
         # pulled below the 0.35 simple mean of {0.5, 0.2}.
         self.assertLess(med[("CC_REGULAR", "gas_cc")], 0.35)
         self.assertAlmostEqual(med[("COAL", "coal")], 1.0)  # 5000/5000
+
+
+class TestControlRetrofitForward(unittest.TestCase):
+    """The announced-control forward channel steps a covered unit's rate."""
+
+    def test_announced_scrubber_steps_so2_rate_at_install_year(self):
+        # A plant with an announced 2030 SO2 scrubber (95% removal); a second
+        # plant with no announced control. Base rate 5.0 t/MWh (trailing avg).
+        base = {(100, "coal"): 5.0, (200, "coal"): 5.0}
+        controls = [
+            AnnouncedControl(
+                plant_id=100,
+                pollutant="so2",
+                install_year=2030,
+                removal_fraction=0.95,
+            )
+        ]
+        # Before the install year: both plants keep the trailing-average rate.
+        before = apply_control_retrofits(base, controls, 2029, "so2")
+        self.assertEqual(before, base)
+        # From the install year on: plant 100 steps to 5% of base, plant 200
+        # (no announced control) is unchanged.
+        after = apply_control_retrofits(base, controls, 2030, "so2")
+        self.assertAlmostEqual(after[(100, "coal")], 5.0 * 0.05)
+        self.assertAlmostEqual(after[(200, "coal")], 5.0)
+        # And it stays stepped in later years.
+        later = apply_control_retrofits(base, controls, 2035, "so2")
+        self.assertAlmostEqual(later[(100, "coal")], 5.0 * 0.05)
+
+    def test_input_map_not_mutated(self):
+        base = {(100, "coal"): 5.0}
+        controls = [AnnouncedControl(100, "so2", 2030, 0.95)]
+        apply_control_retrofits(base, controls, 2031, "so2")
+        self.assertEqual(base[(100, "coal")], 5.0)  # original untouched
+
+    def test_pollutant_mismatch_is_noop(self):
+        base = {(100, "coal"): 5.0}
+        controls = [AnnouncedControl(100, "so2", 2030, 0.95)]
+        # Applying the SO2 control against the CO2 map does nothing.
+        self.assertEqual(apply_control_retrofits(base, controls, 2031, "co2"), base)
+
+    def test_fuel_class_narrowing(self):
+        base = {(100, "coal"): 5.0, (100, "gas"): 1.0}
+        controls = [
+            AnnouncedControl(100, "so2", 2030, 0.95, fuel_class="coal"),
+        ]
+        out = apply_control_retrofits(base, controls, 2030, "so2")
+        self.assertAlmostEqual(out[(100, "coal")], 5.0 * 0.05)
+        self.assertAlmostEqual(out[(100, "gas")], 1.0)  # gas bin untouched
+
+    def test_stacked_controls_compound(self):
+        base = {(100, "so2"): 4.0}  # key fuel_class label is arbitrary here
+        controls = [
+            AnnouncedControl(100, "so2", 2028, 0.5),
+            AnnouncedControl(100, "so2", 2030, 0.5),
+        ]
+        # 2028: one control (0.5) -> 2.0; 2030: both compound -> 1.0.
+        self.assertAlmostEqual(
+            apply_control_retrofits(base, controls, 2028, "so2")[(100, "so2")], 2.0
+        )
+        self.assertAlmostEqual(
+            apply_control_retrofits(base, controls, 2030, "so2")[(100, "so2")], 1.0
+        )
+
+    def test_empty_controls_returns_equal_map(self):
+        base = {(100, "coal"): 5.0}
+        self.assertEqual(apply_control_retrofits(base, [], 2030, "so2"), base)
+
+
+class TestLoadAnnouncedControls(unittest.TestCase):
+    """The EIA-860 loader turns the committed-control pipeline into steps."""
+
+    def _write(self, tmp, rows):
+        cols = ["Plant Code", "Equipment Type", "Status", "Inservice Year"]
+        df = pd.DataFrame(rows, columns=cols)
+        path = tmp / "controls.parquet"
+        df.to_parquet(path)
+        return path
+
+    def test_filters_status_type_and_year(self):
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            path = self._write(
+                tmp,
+                [
+                    (60206, "SR", "PL", 2027),  # announced SCR NOx -> kept
+                    (100, "SR", "OP", 2015),  # already operating -> dropped (status)
+                    (200, "SR", "PL", 2024),  # in-history year -> dropped (< floor)
+                    (300, "EH", "PL", 2028),  # PM control -> dropped (unmapped type)
+                    (400, "DSI", "CO", 2029),  # announced DSI SO2 -> kept
+                ],
+            )
+            ctrls = load_announced_controls(path, min_install_year=2026)
+            by_plant = {c.plant_id: c for c in ctrls}
+            self.assertEqual(set(by_plant), {60206, 400})
+            self.assertEqual(by_plant[60206].pollutant, "nox")
+            self.assertAlmostEqual(by_plant[60206].removal_fraction, 0.90)
+            self.assertEqual(by_plant[400].pollutant, "so2")
+            self.assertAlmostEqual(by_plant[400].removal_fraction, 0.50)
+
+    def test_missing_file_returns_empty(self):
+        self.assertEqual(
+            load_announced_controls("/no/such/file.parquet", min_install_year=2026), []
+        )
 
 
 if __name__ == "__main__":
