@@ -28,16 +28,26 @@ parameterized constraints. Findings are ranked by threat to those two objectives
    caller in `results/`; SO₂ tons are computed nowhere. `apply_plant_emission_rates` writes NOx
    in tonnes/MWh (`fleet.py:4577,4620`) while `plant_financials.py:71-72,376` consumes the field
    as lb/MWh. Two of the three target pollutants have no validated system output.
+   *Update 2026-07-05:* the unit bug (EM-2) is **fixed** (`fff2c34`); the rate/pricing side of
+   NOx/SO₂ is now wired too (plan §9.3), but the specific EM-1 finding stands — `compute_so2`
+   still doesn't exist, `compute_nox` still has no caller, and the dashboard export is still
+   CO2-only — see §A, W3-E2.
 2. **EM-3: Forecast emission-rate provenance is frozen and self-contradictory.**
    `use_plant_emission_rates=True` (`scenarios.py:279`) is not mode-gated, so forecast years to
    2050 use pooled 2023-25 CEMS intensities forever (no SCR/scrubber retrofits, no degradation) —
    while CLAUDE.md L21 lists plant-specific CEMS rates as backcast-only. The doc and the code
    disagree; a provenance decision is needed.
+   *Update 2026-07-05:* **resolved** — the mode-aware `use_plant_emission_rates_v2` path
+   (default off) and the reworded CLAUDE.md L21 landed (`d3077a4`, `6ca7247`); see §A. The
+   retrofit/degradation tail is still open (W3-E5).
 3. **EM-4: Tranche "price-wall" heat-rate multipliers contaminate CO₂ rates.**
    `bins_to_fleet` books emissions at the tranche heat rate (`fleet.py:6298`), including the
    ×2.0–2.5 peak-pricing multiplier that `docs/binning-methodology.md:148,196-200` explicitly
    calls a pricing construct — biting every plant absent from the CEMS artifact, the legacy-bin
    fleet, and **all forecast new entrants**.
+   *Update 2026-07-05:* **resolved** for CEMS-uncovered/legacy-bin plants — CO₂ now books at
+   the physical heat rate (`fleet.py:6520-6529`, `fff2c34`). The new-entrant half is not fully
+   closed (still the static `CO2_RATES[tech][bin]` table, not the CAMPD class median); see §A.
 4. **RC-1: Retirement exogeneity is a fuel-type proxy, not the confirmed-vs-announced
    distinction the owner specified.** Fossil units ignore all EIA-860 announced dates by default
    (`capacity.py:196-235`, correct in spirit — announced retirements stay economic), but there is
@@ -63,6 +73,8 @@ parameterized constraints. Findings are ranked by threat to those two objectives
    in the merit order; forecasts get 0 unless `carbon_price_path` is set
    (`policy/carbon.py:23,66-84`). The model is calibrated with a carbon-shifted merit order it
    does not forecast with.
+   *Update 2026-07-05:* **resolved** — forecast RGGI/CARB now carries the projected program
+   price (`policy/cap_and_trade.py::projected_price`, `050d728`); see §A.
 9. **CX-2: One-pass myopia vs steep load growth.** Entry/exit key off prior-year prices only
    (`runner.py:379-385,1123-1130`); with ERCOT near-term growth ~5%/yr the fleet chronically lags
    the ramp and incumbent fossil fills the gap. Cheap partial-foresight fixes exist (EWMA price
@@ -94,16 +106,37 @@ year). This resolves EM-3's provenance question in favor of measured-CAMPD-with-
 prompt W0-P1 of the companion pack owns the design. EM-1/EM-2 (NOx/SO₂) are demoted to the
 cheap unit-contract bug fix now, full wiring later.
 
-| ID | Sev | Finding | Evidence |
+**Status (2026-07-05, updated this sweep, twice-rebased same-day onto two further landings):**
+EM-2, EM-4, EM-5, EM-6, EM-7 and EM-8 are **RESOLVED** and shipped, per
+`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9/§9.1 (R1-R7). EM-3 is **RESOLVED for
+provenance** (the mode-aware v2 path exists and CLAUDE.md L21 has been reworded) but its
+retrofit/degradation tail is explicitly deferred. EM-1 is **PARTIALLY RESOLVED** — a same-day
+follow-on wave (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9.3, branch
+`claude/nox-so2-wiring-2026-wave3`) wired NOx/SO2 through the measured-rate v2 artifact (the
+same path CO2 uses) and added a standalone diagnostic scorer, but the specific EM-1 finding —
+`results/export.py`'s scenario JSON exports CO2 only and `compute_nox`/`compute_so2` in
+`results/emissions.py` have no production caller — is still true; see the updated W3-E2 note.
+See the "Wave-3 in-flight" list below for the items still open after this sweep (NOx/SO₂
+export/verdict-scoring/dashboard wiring, mass-cap validation, retrofit drift).
+
+| ID | Sev | Finding | Evidence | Status |
+|---|---|---|---|---|
+| EM-1 | HIGH | NOx/SO₂ tons unwired in results; CO₂-only export; nothing scores NOx/SO₂ on the dashboard | `results/emissions.py:84` (`compute_nox`, no caller), `results/export.py:121`, no `compute_so2` anywhere in `src/` | **PARTIALLY RESOLVED** — the measured-rate/LP-pricing side is now wired (`fleet.apply_plant_emission_rates_v2` books NOx/SO2 alongside CO2; `scripts/score_backcast_shape_emissions.py` scores model-vs-CAMPD NOx/SO2 masses), landed via the parallel `claude/nox-so2-wiring-2026-wave3` branch, plan §9.3. `results/export.py`/`results/emissions.py` are untouched by that wave — `compute_so2` still doesn't exist, `compute_nox` still has no production caller, and the interactive dashboard payload still carries CO2 only; see W3-E2 |
+| EM-2 | HIGH | NOx unit inconsistency, possible ~2204× error (tonnes/MWh written, lb/MWh consumed) | was `fleet.py:4577,4620` vs `plant_financials.py:71-72,376` | **RESOLVED** — canonical unit is tonnes/MWh end-to-end; `plant_financials.py` converts to lb/MWh only at the costing boundary (`nox_rate_tonnes_mwh` field, `LB_PER_TONNE` conversion, `plant_financials.py:43,80,384`). Landed `fff2c34` (R7), test `tests/test_plant_financials.py::test_nox_cost_converts_tonnes_rate_to_lb` |
+| EM-3 | MED-HIGH | Forecast rates = frozen pooled 2023-25 CEMS; not mode-gated; contradicts CLAUDE.md L21; no retrofit/degradation path to 2050 | was `scenarios.py:279`, `fleet.py:4555-4623,6571-6572` | **RESOLVED (provenance)** — `use_plant_emission_rates_v2` (`scenarios.py:336`, default **off**) routes backcast years to the target year's own measured rate and forecast years to the gen-weighted-trailing-average estimator (`src/market_sim/data/emission_rates.py::measured_plant_rates`, wired via `fleet.py::apply_plant_emission_rates_v2`, `fleet.py:4739-4769,6802-6813`). CLAUDE.md L21 reworded per plan §6. Landed `d3077a4`, `6ca7247`. **Retrofit/degradation tail remains unbuilt** — see W3-E5 |
+| EM-4 | MED | Tranche pricing multipliers (×2.0–2.5 peak, ×0.92 committed) contaminate CO₂ rates for CEMS-uncovered plants, legacy bins, and all new entrants | was `fleet.py:6298` | **RESOLVED (R2)** — CO₂ is booked at the plant's physical heat rate (`base_hr`), never the bid-tranche HR (`tr_hr`); now at `fleet.py:6520-6529` (`emission_rate_co2=get_emission_rate(fuel, base_hr)`). Landed `fff2c34`. Test `tests/test_campd_bins.py::TestBinsToFleet::test_co2_rate_uses_physical_hr_not_tranche_pricing_hr`. **Caveat:** the class-distribution fallback for CEMS-uncovered plants and new entrants (plan §5 R2's other half) is *not* wired to `emission_rates.class_median_rates` in production — uncovered plants still take `get_emission_rate(fuel, base_hr)` and new entrants take the static `constants.CO2_RATES[tech][bin]` vintage table; `class_median_rates` is implemented and unit-tested but has no production caller |
+| EM-5 | MED | Startup emissions entirely unmodeled (startup cost is amortized into bids; startup fuel/CO₂/NOx never booked) | was `results/emissions.py:30`, `commitment.py:200-301` | **RESOLVED (R6, default-off reporting)** — `results/emissions.py::startup_co2_tons` (100-136) books `model_starts × measured startup_co2_kg`, gated by `ScenarioConfig.startup_co2_reporting` (default `False`, Tier 3, `scenarios.py:372`). Measured materiality: 0.015-0.018% of annual CO₂, ≤0.2% even at 10× cycling error (plan §3). Landed `036bd3e`. Test `tests/test_emissions.py::TestStartupCo2Tons` |
+| EM-6 | MED | Carbon-price backcast/forecast seam (CARB/RGGI in calibration merit order, zero in forecast) | was `policy/carbon.py:23,66-84` | **RESOLVED** — closed by the parallel `docs/handoffs/emissions-mass-cap-plan-2026-07.md` work, not the CO2-rate plan: `policy/cap_and_trade.py::resolve_carbon_program`/`projected_price` (118-136) anchors on the last measured CARB/RGGI clearing price and escalates at `CARB_FLOOR_ESCALATION`/`RGGI_RESERVE_ESCALATION` (both 0.07, `constants.py:1395,1399`) unless an explicit non-`zero` `carbon_price_path` wins. Landed `050d728`. Tests `tests/test_cap_and_trade.py::test_forecast_carries_projected_nonzero`, `::test_explicit_rff_path_wins_in_forecast`, `::test_projected_escalates_from_last_measured` |
+| EM-7 | MED | CHP must-run emissions use heat-rate-derived rate while grid tranches of the same plant use measured; forecast fallback fabricates BTM energy (`must_run_cf=0.85`) | was `results/emissions.py:172-175` | **RESOLVED (R5, two landings)** — `compute_must_run_emissions` books BTM CO₂ at the plant's measured v2 rate when covered (`emissions.py:296-304`), matching its grid tranches; the flat `0.85` forecast fallback CF is replaced by `measured_class_cf` (`emissions.py:157-197`), a gen-weighted op-hours utilization per CHP class keyed off the CEMS steam-load signature (landed `036bd3e`). A second landing (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9.2, branch `claude/chp-btm-share-measured-oo8dye`) closed the remaining half: the forecast BTM-share *sizing itself* (`mr_mw`) now comes from the measured `chp-btm-share` datatype (`data.chp.measured_btm_share_by_plant`) instead of the sector-keyed `chp_btm_pct` default, in both the measured-share and measured-CF-fallback branches. Tests `tests/test_campd_bins.py::TestMustRunEmissions::test_covered_chp_books_measured_grid_rate`, `::test_class_cf_replaces_flat_fallback`, `::test_measured_class_cf_from_steam_units`, `tests/test_chp_btm_share.py`, `tests/test_curate_chp_btm_share.py` |
+| EM-8 | LOW-MED | Gross/net basis: measured rates are per net MWh, bins derive from CAMPD gross; station-service bias ~2-4% gas / 7-10% coal if bases mismatch | was `fleet.py:4576`, `egrid.py:66`, `binning-methodology.md:18` | **RESOLVED (R3, regression guard)** — assertion that rate × model net MWh reproduces CAMPD `co2_kg` within backfill tolerance. Landed `968cead`. Test `tests/test_emission_rate_basis.py::TestGrossNetBasis::test_rate_times_net_reproduces_measured_co2` |
+
+### Wave-3 in-flight (still open after this sweep)
+
+| ID | Item | Status | Pointer |
 |---|---|---|---|
-| EM-1 | HIGH | NOx/SO₂ tons unwired in results; CO₂-only export; nothing scores NOx/SO₂ on the dashboard | `results/emissions.py:84` (no caller), `results/export.py:121`, grep `so2_tons` empty |
-| EM-2 | HIGH | NOx unit inconsistency, possible ~2204× error (tonnes/MWh written, lb/MWh consumed) | `fleet.py:4577,4620` vs `plant_financials.py:71-72,376` |
-| EM-3 | MED-HIGH | Forecast rates = frozen pooled 2023-25 CEMS; not mode-gated; contradicts CLAUDE.md L21; no retrofit/degradation path to 2050 | `scenarios.py:279`, `fleet.py:4555-4623,6571-6572` |
-| EM-4 | MED | Tranche pricing multipliers (×2.0–2.5 peak, ×0.92 committed) contaminate CO₂ rates for CEMS-uncovered plants, legacy bins, and all new entrants | `fleet.py:6298`, `docs/binning-methodology.md:148,196-200` |
-| EM-5 | MED | Startup emissions entirely unmodeled (startup cost is amortized into bids; startup fuel/CO₂/NOx never booked) | `results/emissions.py:30`, `commitment.py:200-301` |
-| EM-6 | MED | Carbon-price backcast/forecast seam (CARB/RGGI in calibration merit order, zero in forecast) | `policy/carbon.py:23,66-84` |
-| EM-7 | MED | CHP must-run emissions use heat-rate-derived rate while grid tranches of the same plant use measured; forecast fallback fabricates BTM energy (`must_run_cf=0.85`) | `results/emissions.py:172-175` |
-| EM-8 | LOW-MED | Gross/net basis: measured rates are per net MWh, bins derive from CAMPD gross; station-service bias ~2-4% gas / 7-10% coal if bases mismatch | `fleet.py:4576`, `egrid.py:66`, `binning-methodology.md:18` |
+| W3-E2 | NOx/SO₂ export / verdict-scoring / dashboard-column wiring | The rate/pricing side is now wired (plan §9.3), but `results/emissions.py::compute_nox` still has no production caller, `compute_so2` still does not exist anywhere in `src/`, and `results/export.py::export_scenario_json` (the interactive dashboard's payload) still exports CO2 only (`emissions_mt`). The standalone `scripts/score_backcast_shape_emissions.py` diagnostic scores NOx/SO2 separately from that export path | `docs/handoffs/emissions-co2-rate-plan-2026-07.md` §5 R7, §7, §9.3-§9.4 |
+| W3-E3 | Emissions mass-cap validation | **Narrowed by a same-day follow-on** (`claude/mass-cap-validation-2026-wave3`): `RGGI_STATE_CO2_BUDGET`/`CARB_ALLOWANCE_BUDGET` (`constants.py:1507,1534`) are no longer empty — populated with the published CARB (17 CCR §95841 Table 6-2) and RGGI regional-cap schedules, and `_power_sector_cap` sources `cap_tons` from them (unit-converted) when no explicit `config.mass_cap_tons` is set; the endogenous dual is validated on a dispatch fixture (non-negative, monotone as the cap tightens, re-orders coal→gas merit). Still ships `mass_cap_enabled=False` by default — these region-/economy-wide budgets vastly exceed any single ISO's power-sector emissions, so the row is slack (dual ≈ 0) on every real ISO by design; no keeper enables it and `scripts/audit_keepers.py`/`legitimacy_diagnostics.py` still do not gate it | `docs/handoffs/emissions-mass-cap-plan-2026-07.md` |
+| W3-E5 | SCR/scrubber retrofit and emission-rate degradation trajectories to 2050 (EM-3's tail) | Confirmed unbuilt — no "SCR"/"scrubber"/rate-degradation code anywhere in `emission_rates.py`, `fleet.py`, or `results/emissions.py`. The trailing-window average will pick up realized drift as history grows, but a policy-driven retrofit channel is a separate, undesigned mechanism | `docs/handoffs/emissions-co2-rate-plan-2026-07.md` §7 |
 
 A 9-step executable "forecast-mode emissions-bias checklist" (rate-source ablation, new-entrant
 rate audit, unit assertions, startup materiality, carbon-seam A/B, floor-share repricing, CHP
@@ -227,8 +260,11 @@ tests) is exemplary; LP is vectorized HiGHS IPM with documented ε-tiebreaks.
   limb live (`transmission.py:2896`); SP15 temp-limb ρ sign-flips unresolved.
 - **T3 Fitted-scalar remediation:** ~230 Class-C scalars mostly untouched; diagnostics
   D-3/D-10…D-14 unbuilt.
-- **T4 Probability machinery:** `ensemble.py` weather-only (no LHS/copula);
-  `get_active_policy_constraints` returns `[]` (mass-cap unbuilt).
+- **T4 Probability machinery:** `ensemble.py` weather-only (no LHS/copula); mass-cap is no
+  longer unbuilt — `get_active_policy_constraints` now returns a `MassCapSpec` when
+  `mass_cap_enabled` (`050d728`) — and now carries real published CARB/RGGI budgets with the
+  endogenous dual validated on a dispatch fixture (see W3-E3), though it still ships off by
+  default with no keeper enabling it.
 - **T5 Capacity fidelity:** below-ATB FOM (=CX-1); NPV/hysteresis entry-exit open.
 - **T6 Forward analogues:** ERCOT flagship multi-product AS co-opt (G1/P1), AS
   requirement-setting (G3), load-resource RRS (G4), MISO neighbor-HR elasticity (G11).
