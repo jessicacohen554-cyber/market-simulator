@@ -443,6 +443,19 @@ CAISO models ~0% curtailment in every year (incl. the unchanged HSL years),
 absorbing surplus via negative offers + priced WECC export rather than curtailing
 — a separate investigation (G8 territory), not blocked by this wiring.
 
+**ERCOT 2024/25 NP6 intake — attempted, blocked (2026-07-05).** The P4
+remainder (below) was worked: ERCOT's legacy MIS report list now redirects
+every report, including "Public"-classified NP4-732-CD, to a SiteMinder
+market-participant login, and the replacement Data Access Portal
+(`data.ercot.com`/`api.ercot.com`) — reachable, not egress-blocked — gates
+every call behind a subscription key obtained only via an interactive
+ERCOT API Explorer account registration this session cannot complete. The
+UMass `nodal-curtailment-analysis` GitHub dataset (the 2023 fallback source)
+has no 2024/2025 extension upstream either. Full attempt log:
+`docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`. The reference-rate
+gross-up fallback is unchanged and remains forward-admissible; this is a
+fidelity upgrade still pending credentials, not a blocker.
+
 ### G8 CAISO intertie reference-pricing + corridor deliverability — **BUILT (2026-06-25)**
 
 **Forward analogue (now implemented).** CAISO used to price its WECC ties at
@@ -582,7 +595,7 @@ first.
 | **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
 | ~~**P2**~~ | ~~**CAISO intertie reference-pricing + corridor ATC (G8)**~~ **DONE 2026-06-25** | CAISO is import-dominated; both levers went fully inert in forecast. **Built**: `caiso_intertie_reference_price` + `caiso_corridor_atc_forward`; keeper `caiso_intertie_forward_3yr`. | M×2 | Med-High (CAISO price formation) |
 | ~~**P3**~~ | ~~**Storage energy-vs-AS opportunity-cost co-opt (G5)**~~ **DONE 2026-06-27** | Completes the AS stack; matters more each year as the battery fleet grows. **Built**: `ercot_storage_as_endogenous`; run `164`. | L | Med (rising) |
-| **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. | M-L | Med |
+| **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. **ERCOT NP6 2024/25 intake attempted 2026-07-05, blocked on ERCOT account credentials — G7 gross-up fallback stands.** | M-L | Med |
 | **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11)** ~~NYISO import-recon forward (G10)~~ ✅ **G10 done 2026-06-25** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
 | **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12 — ✅ done 2026-06-25), weather-year ensemble (G13 — ✅ done 2026-06)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
 
