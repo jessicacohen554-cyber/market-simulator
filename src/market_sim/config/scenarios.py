@@ -1629,6 +1629,23 @@ class ScenarioConfig:
     # in forecast with ercot_multiproduct_as_coopt it also requires
     # ercot_as_forward_requirement (else the AS requirement is the zero
     # measured-plan fallback). See docs/storage-as-withholding-attribution-2026-07.md.
+    ercot_thermal_as_endogenous: bool = False  # ERCOT forward: the thermal
+    # analogue of ercot_storage_as_endogenous (rule 19). Under the reserve co-opt,
+    # thermal AS is priced endogenously (reserve duals + the scarcity-lifted energy
+    # margin the capacity screens already read off `prices`), so adding the
+    # exogenous flat as_revenue_per_mw_yr in the retirement/new-entry screens
+    # double-counts. When on, those screens instead credit the per-fuel AS value
+    # DERIVED from this year's co-opt reserve duals
+    # (ancillary.realized_thermal_as_revenue_per_mw_yr_by_fuel, built on
+    # scarcity.ercot_as_aware_unit_value) and the exogenous rate is suppressed for
+    # thermal — exactly one mechanism prices thermal AS. FORWARD RESPONSE: the
+    # derived rate falls as the AS-eligible fleet grows and the reserve price
+    # collapses; no measured award in the path (rule 13). Forecast-only (capacity
+    # evolution never runs in backcast) and default off, so keepers are
+    # byte-identical. Requires energy_reserve_coopt (validated); in forecast with
+    # ercot_multiproduct_as_coopt it also requires ercot_as_forward_requirement
+    # (else the AS requirement is the zero measured-plan fallback), same footguns
+    # as the storage flag. See docs/storage-as-withholding-attribution-2026-07.md.
     negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
     # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
     # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
@@ -3062,6 +3079,30 @@ class ScenarioConfig:
                 "the measured-plan fallback is zero for forecast years."
             )
 
+        # Thermal AS reconciliation mirrors the storage one: the derived per-fuel
+        # credit is read off the co-opt's reserve duals, so the co-opt must be on
+        # (otherwise the flag would silently suppress the exogenous thermal credit
+        # and leave thermal with zero AS value — rule 19).
+        if self.ercot_thermal_as_endogenous and not self.energy_reserve_coopt:
+            raise ValueError(
+                "ercot_thermal_as_endogenous requires energy_reserve_coopt: the "
+                "endogenous thermal AS credit is derived from the reserve "
+                "co-optimization's duals, which is off. Enable energy_reserve_coopt "
+                "(ERCOT multi-product) or clear ercot_thermal_as_endogenous."
+            )
+        if (
+            self.mode == "forecast"
+            and self.ercot_thermal_as_endogenous
+            and self.ercot_multiproduct_as_coopt
+            and not self.ercot_as_forward_requirement
+        ):
+            raise ValueError(
+                "forecast ercot_thermal_as_endogenous with "
+                "ercot_multiproduct_as_coopt requires ercot_as_forward_requirement "
+                "so the AS requirement regenerates from forward load/VRE drivers; "
+                "the measured-plan fallback is zero for forecast years."
+            )
+
     @property
     def real_discount_rate(self) -> float:
         """Real discount rate via Fisher equation: (1+nominal)/(1+inflation) - 1."""
@@ -3660,6 +3701,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
     "ercot_storage_as_endogenous": 1,
+    "ercot_thermal_as_endogenous": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
     "as_revenue_multiplier": 2,
