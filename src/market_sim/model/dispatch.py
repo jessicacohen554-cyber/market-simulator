@@ -779,6 +779,165 @@ def _build_interface_rows(
     return block, lower_2d.ravel(), upper_2d.ravel()
 
 
+def _build_ramp_rows(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    ramp_gen_idx: np.ndarray,
+    ramp_group_col: np.ndarray,
+    ramp_up_mw: np.ndarray,
+    ramp_dn_mw: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Two-sided plant-group hourly ramp-envelope rows (``ramp_limits``).
+
+    One row per ramp-constrained plant group per hour transition
+    ``t = 1..T-1`` (no cyclic wrap — the Dec-31→Jan-1 seam carries no
+    physics worth a coupling row) enforcing::
+
+        -RD_eff[p,t] <= sum_{g in p} P[g,t] - sum_{g in p} P[g,t-1]
+                     <= RU_eff[p,t]
+
+    The envelope is a *plant* property, not a tranche property — tranches
+    dispatch bang-bang within a plant while the trajectory belongs to the
+    machine (same aggregation precedent as the per-gen reserve
+    ``pergen_col`` grouping). ``RU``/``RD`` are the CAMPD-measured max
+    observed 1-h deltas (``fleet.build_ramp_groups``), a physical-capability
+    input in the same admissibility class as the measured min-stable loads
+    (design doc §1.3).
+
+    Availability-edge widening (feasibility guard): an outage onset forces
+    ``dP = -P[t-1]`` regardless of any envelope, and a return/COD restores
+    capacity in one hour. With ``cap[p,t] = sum_g pmax[g]*availability[g,t]``
+    the bounds widen by exactly the capacity discontinuity the model itself
+    imposes::
+
+        RU_eff[p,t] = RU[p] + max(0, cap[p,t] - cap[p,t-1])
+        RD_eff[p,t] = RD[p] + max(0, cap[p,t-1] - cap[p,t])
+
+    Rows are hour-major (group-minor within an hour transition); the whole
+    block is a single ``coo_matrix`` — no Python loop over hours (rule #2).
+
+    Args:
+        layout: Variable layout describing the column structure.
+        ramp_gen_idx: Member thermal column indices, shape ``(n_members,)``.
+        ramp_group_col: Group index of each member, shape ``(n_members,)``.
+        ramp_up_mw: Per-group up-envelope in MW, shape ``(n_groups,)``.
+        ramp_dn_mw: Per-group down-envelope in MW, shape ``(n_groups,)``.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix
+        of shape ``(n_groups * (T-1), total_columns)``.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    gen_idx = np.asarray(ramp_gen_idx, dtype=int)
+    group_col = np.asarray(ramp_group_col, dtype=int)
+    ru = np.asarray(ramp_up_mw, dtype=float)
+    rd = np.asarray(ramp_dn_mw, dtype=float)
+    n_groups = ru.size
+
+    # Coefficients: row r = (t-1)*n_groups + p holds +1 on each member's P
+    # column at hour t and -1 at hour t-1. t runs 1..T-1; everything below is
+    # (n_members, T-1) broadcast arithmetic raveled member-major then stacked.
+    ts = np.arange(1, T)  # t: hour transitions 1..T-1
+    row_block = (ts - 1)[None, :] * n_groups + group_col[:, None]  # (n_members, T-1)
+    col_t = ts[None, :] * vph + layout._p_off + gen_idx[:, None]
+    col_tm1 = (ts - 1)[None, :] * vph + layout._p_off + gen_idx[:, None]
+    n_m = gen_idx.size
+    rows = np.concatenate([row_block.ravel(), row_block.ravel()])
+    cols = np.concatenate([col_t.ravel(), col_tm1.ravel()])
+    data = np.concatenate([np.ones(n_m * (T - 1)), -np.ones(n_m * (T - 1))])
+    block = sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_groups * (T - 1), layout.total_columns),
+    ).tocsr()
+
+    # Availability-edge widening: cap[p,t] via a (n_groups, n_gen) member map.
+    member_map = sp.coo_matrix(
+        (np.ones(n_m), (group_col, gen_idx)),
+        shape=(n_groups, layout.n_gen),
+    ).tocsr()
+    cap = member_map @ (
+        np.asarray(fleet.pmax, dtype=float)[:, None]
+        * np.asarray(fleet.availability, dtype=float)[:, :T]
+    )  # (n_groups, T)
+    dcap = np.diff(cap, axis=1)  # (n_groups, T-1)
+    ru_eff = ru[:, None] + np.maximum(0.0, dcap)
+    rd_eff = rd[:, None] + np.maximum(0.0, -dcap)
+    # Hour-major ravel to match row r = (t-1)*n_groups + p.
+    return block, -rd_eff.T.ravel(), ru_eff.T.ravel()
+
+
+def _build_local_capacity_rows(
+    layout: VariableLayout,
+    local_capacity_specs: list[tuple[np.ndarray, np.ndarray, float, np.ndarray]],
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Local-capacity (LCR-area) minimum-generation rows (``>=``, per hour).
+
+    One row per covered LCR area per hour enforcing::
+
+        sum_{g in area} P[g,t]
+          + storage_frac * sum_{s in zone} (Dis[s,t] - Chg[s,t])
+          >= rhs[t]
+
+    the exact LP relaxation of a sub-zonal load-pocket split: the pocket's
+    energy balance with its boundary import at the published study limit,
+    minus the LMP separation (design doc §3). The RHS —
+    ``max(0, share*zone_load[t] - import_cap)`` capped at 99.9% of in-area
+    *thermal* capacity — is assembled by
+    :func:`market_sim.data.local_capacity.build_local_capacity_specs` from
+    published LCR study values only. The row's dual subsidizes in-area
+    units' reduced costs without entering the zonal energy-balance dual —
+    out-of-market (uplift-like) commitment, so the hub LMP benchmark is
+    untouched.
+
+    The per-hour pattern is identical across hours, so the block is one
+    ``kron`` over an ``(n_areas, vars_per_hour)`` coefficient block — no
+    Python loop over hours (rule #2). Rows are hour-major, area-minor.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        local_capacity_specs: Per-area ``(gen_idx, storage_idx, storage_frac,
+            rhs_T)`` tuples; ``rhs_T`` has shape ``(T,)``.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix
+        of shape ``(n_areas * T, total_columns)``; upper bounds are ``+inf``.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    n_areas = len(local_capacity_specs)
+
+    rows: list[np.ndarray] = []
+    cols: list[np.ndarray] = []
+    data: list[np.ndarray] = []
+    rhs_2d = np.empty((T, n_areas), dtype=float)  # hour-major ravel order
+    for ai, (gen_idx, storage_idx, storage_frac, rhs_t) in enumerate(
+        local_capacity_specs
+    ):
+        g_idx = np.asarray(gen_idx, dtype=int)
+        rows.append(np.full(g_idx.size, ai))
+        cols.append(layout._p_off + g_idx)
+        data.append(np.ones(g_idx.size))
+        s_idx = np.asarray(storage_idx, dtype=int)
+        frac = float(storage_frac)
+        if s_idx.size and frac > 0.0:
+            # In-area share of the zone-aggregated storage: discharge helps
+            # the pocket, charge deepens its need.
+            rows.append(np.full(2 * s_idx.size, ai))
+            cols.append(layout._dis_off + s_idx)
+            cols.append(layout._chg_off + s_idx)
+            data.append(np.full(s_idx.size, frac))
+            data.append(np.full(s_idx.size, -frac))
+        rhs_2d[:, ai] = np.asarray(rhs_t, dtype=float)[:T]
+
+    per_hour = sp.coo_matrix(
+        (np.concatenate(data), (np.concatenate(rows), np.concatenate(cols))),
+        shape=(n_areas, vph),
+    ).tocsr()
+    block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    return block, rhs_2d.ravel(), np.full(n_areas * T, np.inf)
+
+
 def _build_reserve_rows(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -1398,6 +1557,13 @@ def build_constraints(
     oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+    ramp_gen_idx: np.ndarray | None = None,
+    ramp_group_col: np.ndarray | None = None,
+    ramp_up_mw: np.ndarray | None = None,
+    ramp_dn_mw: np.ndarray | None = None,
+    local_capacity_specs: (
+        list[tuple[np.ndarray, np.ndarray, float, np.ndarray]] | None
+    ) = None,
     import_node_gen_idx: np.ndarray | None = None,
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
@@ -1648,6 +1814,41 @@ def build_constraints(
             A = sp.vstack([A, iface_block], format="csr")
             row_lower = np.concatenate([row_lower, iface_lower])
             row_upper = np.concatenate([row_upper, iface_upper])
+
+    # Optional plant-group hourly ramp-envelope rows (config.ramp_limits,
+    # GATED default off): CAMPD-measured two-sided trajectory bounds per
+    # plant group per hour transition. Appended after the interface rows and
+    # before hydro/oil/RPS/reserve, so the front-anchored energy-balance
+    # duals and the end-anchored RPS/reserve duals keep their positions. No
+    # rows (identical LP) when the inputs are absent.
+    if ramp_gen_idx is not None and ramp_up_mw is not None:
+        ramp_gen_idx = np.asarray(ramp_gen_idx, dtype=int)
+        if ramp_gen_idx.size:
+            ramp_block, ramp_lower, ramp_upper = _build_ramp_rows(
+                layout,
+                fleet,
+                ramp_gen_idx,
+                ramp_group_col,
+                ramp_up_mw,
+                ramp_dn_mw,
+            )
+            A = sp.vstack([A, ramp_block], format="csr")
+            row_lower = np.concatenate([row_lower, ramp_lower])
+            row_upper = np.concatenate([row_upper, ramp_upper])
+
+    # Optional local-capacity (LCR-area) minimum-generation rows
+    # (config.local_capacity_constraints, GATED default off): one >= row per
+    # covered area per hour, RHS from the published LCR study parameters.
+    # Same placement convention as the ramp rows above. No rows (identical
+    # LP) when no specs are supplied.
+    if local_capacity_specs:
+        lcr_block, lcr_lower, lcr_upper = _build_local_capacity_rows(
+            layout, local_capacity_specs
+        )
+        if lcr_block.shape[0]:
+            A = sp.vstack([A, lcr_block], format="csr")
+            row_lower = np.concatenate([row_lower, lcr_lower])
+            row_upper = np.concatenate([row_upper, lcr_upper])
 
     # Optional hydro monthly energy budgets: one two-sided row per hydro
     # generator and month. Appended before the RPS row so the RPS dual stays
@@ -2138,6 +2339,13 @@ class DispatchModel:
         oil_group_index: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
         interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+        ramp_gen_idx: np.ndarray | None = None,
+        ramp_group_col: np.ndarray | None = None,
+        ramp_up_mw: np.ndarray | None = None,
+        ramp_dn_mw: np.ndarray | None = None,
+        local_capacity_specs: (
+            "list[tuple[np.ndarray, np.ndarray, float, np.ndarray]] | None"
+        ) = None,
         import_node_gen_idx: np.ndarray | None = None,
         import_node_monthly_lo: np.ndarray | None = None,
         import_node_monthly_hi: np.ndarray | None = None,
@@ -2277,6 +2485,11 @@ class DispatchModel:
             oil_group_index=oil_group_index,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             interface_groups=interface_groups,
+            ramp_gen_idx=ramp_gen_idx,
+            ramp_group_col=ramp_group_col,
+            ramp_up_mw=ramp_up_mw,
+            ramp_dn_mw=ramp_dn_mw,
+            local_capacity_specs=local_capacity_specs,
             import_node_gen_idx=import_node_gen_idx,
             import_node_monthly_lo=import_node_monthly_lo,
             import_node_monthly_hi=import_node_monthly_hi,
@@ -2863,6 +3076,13 @@ def solve_dispatch(
     oil_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     interface_groups: list[tuple[np.ndarray, float, bool]] | None = None,
+    ramp_gen_idx: np.ndarray | None = None,
+    ramp_group_col: np.ndarray | None = None,
+    ramp_up_mw: np.ndarray | None = None,
+    ramp_dn_mw: np.ndarray | None = None,
+    local_capacity_specs: (
+        list[tuple[np.ndarray, np.ndarray, float, np.ndarray]] | None
+    ) = None,
     import_node_gen_idx: np.ndarray | None = None,
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
@@ -2997,6 +3217,11 @@ def solve_dispatch(
         oil_group_index=oil_group_index,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
         interface_groups=interface_groups,
+        ramp_gen_idx=ramp_gen_idx,
+        ramp_group_col=ramp_group_col,
+        ramp_up_mw=ramp_up_mw,
+        ramp_dn_mw=ramp_dn_mw,
+        local_capacity_specs=local_capacity_specs,
         import_node_gen_idx=import_node_gen_idx,
         import_node_monthly_lo=import_node_monthly_lo,
         import_node_monthly_hi=import_node_monthly_hi,
