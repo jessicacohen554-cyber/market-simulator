@@ -17,6 +17,7 @@ from market_sim.config.constants import (
     CT_PEAK_HR_OVERRIDE_DEFAULT,
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
+    GAS_TRANCHE_SHARES_BY_GROUP,
 )
 from market_sim.config.scenarios import ScenarioConfig
 
@@ -148,25 +149,12 @@ _GAS_OFFER_FUELS: frozenset[str] = frozenset(
 )
 
 # Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate
-# by group, for the generic (non-CAMPD) offer curve. These are STRUCTURAL
-# capacity splits — how a unit's nameplate divides into offer bands — not tuned
-# heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24:
-# generic fallbacks carry neutral bands + structural shares). CTs are peakers
-# with no part-load committed band; CC/ST split a part-load committed band off
-# the efficient economic band, plus a small duct-fired peaking top slice. The
-# per-band heat-rate MULTIPLIERS in :func:`split_gas_tranches` come from the
-# ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage
-# defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO
-# from reaching this path without carrying its own ``offer_curve_by_group``
-# bands, so no cross-ISO leakage of those multipliers occurs.
-_GAS_TRANCHE_SHARES: dict[str, tuple[float, float, float]] = {
-    "CC_REGULAR": (0.30, 0.60, 0.10),
-    "CC_CHP": (0.30, 0.60, 0.10),
-    "ST_GAS": (0.40, 0.50, 0.10),
-    "ST_CHP": (0.40, 0.50, 0.10),
-    "CT_PEAKER": (0.0, 0.88, 0.12),
-    "CT_CHP": (0.0, 0.88, 0.12),
-}
+# by group, for the generic (non-CAMPD) offer curve. Moved to
+# constants.GAS_TRANCHE_SHARES_BY_GROUP (2026-07 scalar-remediation sweep,
+# B-GOV-1, rule #24 — no hardcoded per-group dicts in ``data/`` modules; value
+# unchanged) — see that constant's docstring-comment for the structural-share
+# rationale and the D-9 cross-ISO-leakage guard.
+_GAS_TRANCHE_SHARES = GAS_TRANCHE_SHARES_BY_GROUP
 
 
 def split_gas_tranches(
