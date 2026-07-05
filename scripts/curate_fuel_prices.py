@@ -9,8 +9,8 @@ inputs.
 Datatypes curated
 -----------------
 ``fuel-prices`` (extended)
-    Henry Hub daily + Transco Z6 NY daily + Algonquin Citygate daily hub
-    prices, combined into one file:
+    Henry Hub daily + Transco Z6 NY daily + Algonquin Citygate daily + CA
+    Composite Average citygate daily hub prices, combined into one file:
     ``data/clean/fuel-prices/fuel-prices.parquet``
 
 ``fuel-hub-monthly``
@@ -93,6 +93,12 @@ BENCHMARKS: tuple[Benchmark, ...] = (
         fuel="gas",
         hub="algonquin",
         price_col="algonquin_citygate_usd_mmbtu",
+    ),
+    Benchmark(
+        filename="caiso_citygate_daily.csv",
+        fuel="gas",
+        hub="ca_composite",
+        price_col="ca_composite_usd_mmbtu",
     ),
 )
 
