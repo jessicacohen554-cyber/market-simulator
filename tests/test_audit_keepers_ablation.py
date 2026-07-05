@@ -67,6 +67,39 @@ class TestAblationTwinFinding(unittest.TestCase):
         self.assertIn("no", msg.lower())
 
 
+class TestStalenessIgnoresAblationTwins(unittest.TestCase):
+    """E7 must not count ``*-ablation`` twins as newer candidate runs."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.reg = Path(self._tmp.name)
+        self._real = ak.cv.REGISTRY_DIR
+        ak.cv.REGISTRY_DIR = self.reg
+
+    def tearDown(self):
+        ak.cv.REGISTRY_DIR = self._real
+        self._tmp.cleanup()
+
+    def _write(self, run_id, obj):
+        (self.reg / f"{run_id}.json").write_text(json.dumps(obj))
+
+    def test_own_twin_does_not_make_keeper_stale(self):
+        self._write("2026-07-05-x-keeper", {"iso": "PJM", "date": "2026-07-05"})
+        # Same date, "-ablation" suffix sorts lexically after the keeper id —
+        # without the exclusion this would be the ISO's "newest" run.
+        self._write(
+            "2026-07-05-x-keeper-ablation", {"iso": "PJM", "date": "2026-07-05"}
+        )
+        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
+        self.assertEqual(newest["PJM"], ("2026-07-05", "2026-07-05-x-keeper"))
+
+    def test_non_ablation_newer_run_still_flags(self):
+        self._write("2026-07-05-x-keeper", {"iso": "PJM", "date": "2026-07-05"})
+        self._write("2026-07-06-y-probe", {"iso": "PJM", "date": "2026-07-06"})
+        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
+        self.assertEqual(newest["PJM"], ("2026-07-06", "2026-07-06-y-probe"))
+
+
 class TestGrandfatherRollout(unittest.TestCase):
     @pytest.mark.xfail(
         strict=True,
