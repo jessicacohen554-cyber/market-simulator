@@ -42,6 +42,63 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-05 — ERCOT — C3b/C3c price-shape attribution + measured offer-wall ladder (ercot 33): PROBE rejected, keeper stays ercot 32
+
+**Goal.** Decompose the standing C3b (shape) / C3c (tail) fails by month×hour and
+mechanism — attribute, don't guess — then fix only what the attribution indicts
+(published/measured grounding only; ORDC params tariff-cited and untouched per
+rule 26). Full write-up: `docs/FINDING-ercot-priceshape-2026-07.md`.
+
+**Attribution (the actual 2023 >$200 hour list vs the model in the SAME hours,
+DST-aware).** (a) ORDC/reserve underpricing EXONERATED: the actual tail is
+energy-offer-carried (SCED lambda > $200 in 175/181 h; adder-carried ≤ 6 h/yr all
+three years; PRC 4.7–6.2 GW, above the knee — the co-opt's ORDC-on-measured-supply
+already matches the small actual adders). (b) congestion EXONERATED at the hub
+level (~3 h; zonal spread rides on top of a systemwide >$200 lambda). (c) is
+real but is *online-capability* tightness, quantified: in the 105 missed hours
+the model holds ~10.9 GW of thermal headroom vs measured RTOLCAP 7.7 GW /
+PRC 5.7 GW — ~3.2 GW of phantom sub-$200 spare (P1 perfect commitment +
+sub-2-day forced outages), so its dual sits at $43–51 where SCED sat at $600+.
+(d) INDICTED as the fixable piece: the peak band prices at the class p50 of the
+measured 60d-DAM top-of-curve distribution, deleting the measured scarcity wall
+(p70/p90 = $266–$2,800+; the model's stack tops at ~$84–150). C3b-2023 IS
+C3c-2023 (Aug −62 carries the NRMSE); C3b-2024 is the separate documented DAM-AS
+overlay DA-boundary premium (Jan +18.2 / May +9.4).
+
+**Probe (ercot 33 offer wall, `2026-07-05-ercot33-offer-wall`, single delta vs
+keeper).** Measured peak-band quantile ladder (capacity-weighted p10/30/50/70/90
+per gas class, rungs p50-clamped from below, top rung HCAP-clamped;
+`derive_dam_offer_hrmults.py --peak-ladder`, opt-in artifact
+`offer_curve_dam_hrmults_ladder.json`; fleet splits each peak tranche into 5
+rungs). Result: the scarcity year improves exactly as attributed — 2023 C3a
+flips to PASS (−2.9%), C3b 0.375→0.336 (in-container basis), >$500 deep tail
+64→75 h (actual 104), C8 forced-energy flips to PASS — but the >$200 count
+barely moves (the wall deepens hours the co-opt already priced; the 105 missed
+mid-merit hours stay missed), mild years lift broadly (2025 C3a flips to FAIL
++7.7%), and the P0→P1 startup-amortization CT↔ST coupling flips ~8 TWh of
+COMMITTED/econ energy off the measured allocation (CT_PEAKER 10.4 vs
+CAMPD-measured ~6.4 TWh; ST_GAS 6.3 vs ~16.8) → C1/C2/C5c worsen. An unclamped
+first arm (same session, superseded, deleted) additionally proved the sub-p50
+rungs are wrong: no tail gain, same CT↔ST crater.
+
+**Verdict (rule #1 both directions).** The wall mechanism is real market
+structure the keeper lacks, but the *static* ladder misstates its measured
+conditionality (~240 MW ≥$200 in an average hour vs 1.3–2.7 GW in
+anticipated-tight hours) and moves measured volumes; a run that improves price
+residuals by moving 8 TWh off the measured dispatch is NOT structurally
+superior. REJECTED; keeper stays `2026-07-03-ercot32-ordc-total-rtolcap`.
+
+**Filed (the honest C3 structural conclusion).** (1) condition-responsive
+measured offer surface (derive the ladder per anticipated-tightness day-state;
+model selects by its own net-load state — forward-derivable, rule-13-admissible;
+the ladder machinery from this session is the substrate, inert by default);
+(2) online-capability structure — commitment thinness (shelved P2 family) and/or
+weather-correlated sub-2-day outages for the 3.2 GW phantom-spare wedge;
+(3) CT↔ST startup-amortization fragility → D-8 thread (also observed: the
+ercot32 keeper is not container-reproducible on current main — byte-faithful
+replay lands CC_REGULAR 145.4 vs committed 133.2 TWh, 2024 C3a +2.3% vs
+committed +9.1%; measured-GTC presence ruled out in-container).
+
 ### 2026-07-05 — ERCOT — NP6 HSL 2024/25 intake attempt: BLOCKED (data-needed, not a keeper/probe)
 
 **Goal.** WS-E of `docs/handoffs/ercot-as-coopt-plan-2026-07.md` / G7's P4

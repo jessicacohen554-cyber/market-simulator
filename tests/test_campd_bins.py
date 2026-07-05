@@ -370,6 +370,42 @@ class TestUnifiedOfferCurve(unittest.TestCase):
         # Monotone rising slices (a valid offer curve).
         self.assertEqual(mid, sorted(mid))
 
+    def test_peak_ladder_splits_band_into_quantile_rungs(self):
+        # A measured ``peak_ladder`` replaces the single flat peak tranche
+        # with equal-capacity rungs at the ladder multipliers; total peak
+        # capacity is conserved and each rung prices base_hr x its multiplier
+        # (docs/FINDING-ercot-priceshape-2026-07.md §4).
+        ladder = [[0.2, 1.6], [0.2, 2.6], [0.2, 4.3], [0.2, 43.9], [0.2, 144.2]]
+        offer = {
+            "committed": 0.9,
+            "econ_low": 1.0,
+            "econ_high": 1.3,
+            "peak": 4.3,
+            "peak_ladder": ladder,
+            "econ_low_share": 0.5,
+            "pct_peaking": 10.0,
+        }
+        fleet = self._build("CC_REGULAR", offer)
+        flat = self._build(
+            "CC_REGULAR", {k: v for k, v in offer.items() if k != "peak_ladder"}
+        )
+        rungs = [g for g in fleet if g.unit_id.rpartition("_")[2].startswith("peak")]
+        flat_peak = [g for g in flat if g.unit_id.rpartition("_")[2].startswith("peak")]
+        self.assertEqual(len(rungs), 5)
+        self.assertEqual(len(flat_peak), 1)
+        # capacity conserved vs the single flat band
+        self.assertAlmostEqual(
+            sum(g.pmax_mw for g in rungs), flat_peak[0].pmax_mw, places=6
+        )
+        # every rung is 20% of the band, priced at base_hr x mult, rising
+        hrs = sorted(g.heat_rate for g in rungs)
+        for hr, (share, mult) in zip(hrs, ladder):
+            self.assertAlmostEqual(hr, self.BASE_HR * mult, places=6)
+        for g in rungs:
+            self.assertAlmostEqual(g.pmax_mw, flat_peak[0].pmax_mw * 0.2, places=6)
+        # CO2 rate stays the physical rate — identical across rungs (R2/EM-4)
+        self.assertEqual(len({round(g.emission_rate_co2, 9) for g in rungs}), 1)
+
 
 class TestCommitmentParams(unittest.TestCase):
     """Per-bin commitment parameters flow through to the screen."""
