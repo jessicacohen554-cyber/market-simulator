@@ -1,0 +1,282 @@
+[
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p298_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 462.45,
+  "ucap_mw": 425.454,
+  "going_forward_cost": 24047399.999999996,
+  "co2_rate": 1.067264176,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p298_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 462.45,
+  "ucap_mw": 425.454,
+  "going_forward_cost": 24047399.999999996,
+  "co2_rate": 1.067264176,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_p6178_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 311.19999999999993,
+  "ucap_mw": 286.304,
+  "going_forward_cost": 16182399.999999996,
+  "co2_rate": 1.048217473,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_p6178_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 31.12,
+  "ucap_mw": 28.6304,
+  "going_forward_cost": 1618240.0,
+  "co2_rate": 1.048217473,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_p6178_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 124.48,
+  "ucap_mw": 114.5216,
+  "going_forward_cost": 6472960.0,
+  "co2_rate": 1.048217473,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Houston_p3470_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 122.15,
+  "ucap_mw": 112.37800000000001,
+  "going_forward_cost": 6351800.0,
+  "co2_rate": 1.076,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Houston_p3470_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 488.6,
+  "ucap_mw": 449.51200000000006,
+  "going_forward_cost": 25407200.0,
+  "co2_rate": 1.076,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p7097_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 372.125,
+  "ucap_mw": 342.355,
+  "going_forward_cost": 19350500.0,
+  "co2_rate": 1.076487566,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p7097_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 744.25,
+  "ucap_mw": 684.71,
+  "going_forward_cost": 38701000.0,
+  "co2_rate": 1.076487566,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p7097_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 74.425,
+  "ucap_mw": 68.471,
+  "going_forward_cost": 3870100.0,
+  "co2_rate": 1.076487566,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p7097_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 297.7,
+  "ucap_mw": 273.884,
+  "going_forward_cost": 15480400.0,
+  "co2_rate": 1.076487566,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p6179_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 84.5,
+  "ucap_mw": 77.74000000000001,
+  "going_forward_cost": 4394000.0,
+  "co2_rate": 1.093537031,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p6179_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 338.0,
+  "ucap_mw": 310.96000000000004,
+  "going_forward_cost": 17576000.0,
+  "co2_rate": 1.093537031,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_p6183_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 184.5,
+  "ucap_mw": 169.74,
+  "going_forward_cost": 9594000.0,
+  "co2_rate": 1.258500161,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p6180_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 718.16,
+  "ucap_mw": 660.7072,
+  "going_forward_cost": 37344320.0,
+  "co2_rate": 1.014192526,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p6180_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 807.9300000000003,
+  "ucap_mw": 743.2956000000003,
+  "going_forward_cost": 42012360.000000015,
+  "co2_rate": 1.014192526,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p56611_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 234.0,
+  "ucap_mw": 215.28,
+  "going_forward_cost": 12168000.0,
+  "co2_rate": 1.050142379,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p56611_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 467.99999999999994,
+  "ucap_mw": 430.55999999999995,
+  "going_forward_cost": 24335999.999999996,
+  "co2_rate": 1.050142379,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p56611_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 46.8,
+  "ucap_mw": 43.056,
+  "going_forward_cost": 2433600.0,
+  "co2_rate": 1.050142379,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p56611_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 187.2,
+  "ucap_mw": 172.224,
+  "going_forward_cost": 9734400.0,
+  "co2_rate": 1.050142379,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p298_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 832.4099999999999,
+  "ucap_mw": 765.8171999999998,
+  "going_forward_cost": 43285319.99999999,
+  "co2_rate": 1.067264176,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_North_p298_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 92.49,
+  "ucap_mw": 85.0908,
+  "going_forward_cost": 4809480.0,
+  "co2_rate": 1.067264176,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Houston_p3470_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 610.75,
+  "ucap_mw": 561.89,
+  "going_forward_cost": 31759000.0,
+  "co2_rate": 1.076,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Houston_p3470_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1221.5,
+  "ucap_mw": 1123.78,
+  "going_forward_cost": 63518000.0,
+  "co2_rate": 1.076,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p6179_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 422.5,
+  "ucap_mw": 388.7,
+  "going_forward_cost": 21970000.0,
+  "co2_rate": 1.093537031,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_South_Central_p6179_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 845.0,
+  "ucap_mw": 777.4,
+  "going_forward_cost": 43940000.0,
+  "co2_rate": 1.093537031,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Northeast_p6146_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 594.9,
+  "ucap_mw": 547.308,
+  "going_forward_cost": 30934800.0,
+  "co2_rate": 1.100524011,
+  "loss_years": 1
+ },
+ {
+  "year": 2022,
+  "unit_id": "COAL_Northeast_p6146_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1070.82,
+  "ucap_mw": 985.1544,
+  "going_forward_cost": 55682640.0,
+  "co2_rate": 1.100524011,
+  "loss_years": 1
+ }
+]
