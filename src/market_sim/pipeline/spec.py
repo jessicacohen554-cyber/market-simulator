@@ -26,6 +26,25 @@ if TYPE_CHECKING:
     import numpy as np
 
 
+class _Unset:
+    """Sentinel for DispatchSpec keys the caller did not assemble at all.
+
+    ``DispatchSpec.to_dispatch_kwargs()`` OMITS a field left at ``UNSET`` —
+    distinct from an explicit ``None``, which is emitted as a ``None``-valued
+    key. The distinction preserves each orchestrator's exact pre-refactor key
+    set: the forecast assembly never carried ``ttc_import``/``oil_*`` keys,
+    while the backcast assembly always carries them (``None``-valued when the
+    overlay is off). Key-for-key fidelity is the Stage-2 acceptance contract
+    (plan §7.1 item 2).
+    """
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging nicety
+        return "<UNSET>"
+
+
+UNSET: Any = _Unset()
+
+
 @dataclass(frozen=True)
 class DispatchSpec:
     """Frozen bundle of the base ``dispatch_kwargs`` for the LP builder.
@@ -73,15 +92,33 @@ class DispatchSpec:
     hydro_monthly_energy: Any
     # Horizon (config.hours).
     T: int
+    # ---- Keys only the backcast assembly carries (Stage 2). Left at UNSET
+    #      they are OMITTED from to_dispatch_kwargs(), so the forecast dict's
+    #      key set is unchanged; the backcast passes them explicitly (possibly
+    #      None), reproducing its always-present keys. ----
+    # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
+    # symmetric -ttc.
+    ttc_import: Any = UNSET
+    # NEISO oil-burn / winter-fuel-inventory budget rows.
+    oil_monthly_budget: Any = UNSET
+    oil_gen_idx: Any = UNSET
+    oil_month_index: Any = UNSET
+    oil_gen_hour_coeff: Any = UNSET
+    oil_group_index: Any = UNSET
 
     def to_dispatch_kwargs(self) -> dict:
         """Return the base ``dispatch_kwargs`` dict, key-for-key.
 
         The keys and values are exactly those the inline assembly builds, so the
-        LP receives an identical mapping. This is the whole point of the
+        LP receives an identical mapping (fields left at ``UNSET`` are omitted
+        outright — see :class:`_Unset`). This is the whole point of the
         container: byte-identical assembly, typed at the seam.
         """
-        return {f.name: getattr(self, f.name) for f in fields(self)}
+        return {
+            f.name: getattr(self, f.name)
+            for f in fields(self)
+            if getattr(self, f.name) is not UNSET
+        }
 
 
 @dataclass(frozen=True)
