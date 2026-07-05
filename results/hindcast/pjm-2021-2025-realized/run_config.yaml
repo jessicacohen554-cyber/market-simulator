@@ -164,6 +164,8 @@ electrolyzer_efficiency_override: null
 electrolyzer_type: pem
 end_year: 2025
 energy_reserve_coopt: false
+entry_lookahead_reprice: false
+entry_price_signal_alpha: 1.0
 ercot_as_adequacy_frac: 1.0
 ercot_as_aware_commitment: false
 ercot_as_critical_frac: 0.0
@@ -320,6 +322,7 @@ pjm_seam_flow_limit: false
 pjm_seam_flow_percentile: null
 pjm_zonal_gas_basis: false
 planning_reserve_margin: 0.1375
+planning_reserve_margin_override: null
 plant_emission_rates_path: /home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet
 plant_emission_rates_v2_path: /home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet
 plant_level_fleet: false
@@ -347,7 +350,6 @@ retirement_fom_multiplier_gas_ct: 1.0
 retirement_fom_multiplier_gas_st: 1.0
 retirement_fom_multiplier_nuclear: 1.0
 retirement_fom_multiplier_oil: 1.0
-retirement_reserve_margin: 0.15
 retirement_years_coal: 1
 retirement_years_gas_cc: 3
 retirement_years_gas_cc_ccs: 3
