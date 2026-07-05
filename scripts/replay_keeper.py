@@ -101,6 +101,15 @@ def main() -> None:
         help="free-text run note recorded in the new bundle's run_config.json "
         "(defaults to the BTM-basis replay note)",
     )
+    ap.add_argument(
+        "--offer-curve-json",
+        default=None,
+        metavar="JSON_OR_PATH",
+        help="replace the keeper's offer_curve_overrides with this "
+        "class->band mapping (inline JSON or a path, same shape/validation "
+        "as run_calibration_full --offer-curve-json). Single-delta offer-"
+        "surface probe of the keeper — pair with --out-dir and --note.",
+    )
     args = ap.parse_args()
 
     bundle = Path(args.bundle)
@@ -119,6 +128,10 @@ def main() -> None:
             raise SystemExit(f"--set expects KEY=JSON, got {spec!r}")
         kwargs.setdefault("prb_overrides", {})
         kwargs["prb_overrides"][key] = json.loads(raw)
+    if args.offer_curve_json is not None:
+        kwargs["offer_curve_overrides"] = rcf._parse_offer_curve_json(
+            args.offer_curve_json, flag="--offer-curve-json"
+        )
     if args.note is not None:
         kwargs["note"] = args.note
     kwargs.setdefault(
@@ -133,8 +146,10 @@ def main() -> None:
     print(f"solved into {run_dir}")
 
     # Preserve the original run id: restore the meta.json timestamp date so the
-    # dashboard id (<date>-<shorthand>) is unchanged.
-    if orig_ts:
+    # dashboard id (<date>-<shorthand>) is unchanged. Only for byte-faithful
+    # replays — an overridden run (--set / --offer-curve-json) is a NEW probe,
+    # not the keeper fixed in place, and must mint its own dated id.
+    if orig_ts and not args.overrides and args.offer_curve_json is None:
         new_meta = json.loads((run_dir / "meta.json").read_text())
         new_ts = new_meta.get("timestamp", "")
         new_meta["timestamp"] = orig_ts[:10] + new_ts[10:] if new_ts else orig_ts
