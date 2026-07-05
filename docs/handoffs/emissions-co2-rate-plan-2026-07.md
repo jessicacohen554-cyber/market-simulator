@@ -439,6 +439,39 @@ change — NOx/SO2 are secondary.
   scorer, the natural CO2-parallel path. Dashboard columns follow from that
   scorer's output.
 
+## 9.4 Production-wiring gap found during docs sweep (2026-07-05)
+
+A doc/code reconciliation pass found that `emission_rates.forward_plant_co2_rate` — the
+full a/b/c/d estimator described in §2.1 — is called only from `scripts/loyo_co2_rates.py`
+and its tests. The production path (`fleet.py::apply_plant_emission_rates_v2` →
+`emission_rates.measured_plant_rates`) implements only pieces **(a)** the gen-weighted
+trailing average and **(c)** the unit-composition mask. Piece **(b)**, the envelope-gated
+NN conditioning, is doubly inert in production — `CO2_RATE_CONDITIONING_ENABLED` is `False`
+(per the §9 gate decision) *and* the code path that would consult it is never invoked.
+Piece **(d)**, the class-distribution fallback (`class_median_rates`), has no production
+caller at all: CEMS-uncovered plants still fall back to the generic
+`get_emission_rate(fuel, base_hr)` heat-rate default (the pre-plan mechanism), and new
+entrants still take the static per-vintage `constants.CO2_RATES[tech][bin]` table — plan
+§5 R2's claim that "entrant/uncovered class defaults [come] from CAMPD class distributions"
+is accurate for the *design* but not yet for the *shipped* wiring. `class_median_rates` is
+implemented and unit-tested (`tests/test_emission_rates.py`) and ready to wire in; doing so
+is a small, well-scoped follow-on (swap the two fallback call sites in `fleet.py` /
+`model/capacity.py::_make_new_generator` to consult it) that has not yet been scheduled to
+a wave. No source change made here — this section documents the gap `model-methodology-spec.md`
+§3.3 now also states explicitly. This holds unchanged after the §9.3 NOx/SO2-wiring wave,
+which extended `measured_plant_rates`/`class_median_rates` with a `pollutant` selector but
+did not add any new production caller of `class_median_rates` or `forward_plant_co2_rate`.
+
+Separately, §9.3's own NOx/SO2 wiring is a different scope than `docs/fable-repo-audit-2026-07.md`
+EM-1 (full NOx/SO2 wiring: export, verdict scoring, dashboard columns). §9.3 wires the
+measured-rate artifact into the LP's marginal cost (mirroring CO2) and a standalone
+diagnostic scorer (`scripts/score_backcast_shape_emissions.py`); it does not touch
+`results/emissions.py` or `results/export.py` — `compute_so2` still does not exist anywhere
+in `src/`, `compute_nox` still has no production caller, and `export_scenario_json` (the
+payload the interactive dashboard actually reads) still exports CO2 only
+(`emissions_mt`). EM-1 is updated to **PARTIALLY RESOLVED** in the audit doc to reflect
+this, not closed.
+
 ## 8. Implementation prompt
 
 ```
