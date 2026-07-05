@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-05 (CHP behind-the-meter host share, measured)
+
+**Model.** Closed the deferred half of Wave-2 R5 (EM-7): the forecast CHP
+must-run BTM sizing now uses a **measured** per-plant host self-supply share
+instead of the sector-keyed `chp_btm_pct` default. New `chp-btm-share` clean
+datatype (`scripts/curate_chp_btm_share.py`,
+`data/dictionary/schema/chp-btm-share.schema.yaml`): per (iso, plant, CHP
+class), `btm_share = (eia923_net_mwh − campd_net_mwh) / eia923_net_mwh`, pooled
+across every available non-quarantined year from the committed
+`plant_emission_rates_v2` (CAMPD, steam-reporting units only) and
+`eia923_monthly_generation` (EIA-923) artifacts — both measured, reproducible
+inputs independent of the model's own dispatch (rule 13).
+
+`data.chp.measured_btm_share_by_plant` reads it through the `clean_io` seam;
+`runner._chp_measured_co2_inputs` resolves it for **forecast** years only and
+`results/emissions.compute_must_run_emissions` now consumes
+`btm_share_by_plant` in its measured-CF-fallback branch too (previously only
+the measured-share/`total_gen_by_plant` branch did), falling back to the bin's
+own `pct_mr` for an uncovered plant. The backcast `_btm_frame` path
+(`run_calibration_full.py`) is unchanged. Docs: `docs/binning-methodology.md`
+CHP must-run post-processing section corrected to the current two-branch
+formula; `docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9.2 records the
+wave.
+
 ## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
 
 **Model.** Unified every carbon path through one `emission_rate × membership`

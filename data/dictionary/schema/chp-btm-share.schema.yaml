@@ -1,0 +1,96 @@
+# Canonical schema: chp-btm-share (measured behind-the-meter host-share per CHP plant)
+#
+# A CHP plant's steam-host self-supply share is normally sized off the
+# sector-keyed default (CHP_BTM_PCT_BY_SECTOR / chp_btm_pct) — a class average,
+# not a per-plant measurement. This datatype replaces that default, per plant,
+# with a directly measured share: the fraction of the plant's EIA-923-reported
+# net class generation that never reaches CAMPD's CEMS-metered grid-net total.
+#
+# btm_share = (eia923_net_mwh - campd_net_mwh) / eia923_net_mwh, pooled across
+# every available non-quarantined year (CLAUDE.md rule 22) for stability, and
+# restricted to CEMS units that report steam load (steam_load_klbh_sum > 0 —
+# the CHP signature :func:`market_sim.results.emissions.measured_class_cf`
+# also keys off). Both sides are measured, reproducible quantities (CLAUDE.md
+# rule 13): eia923_net_mwh is the plant-class's filed net generation
+# (gross minus station service, so it includes host self-consumption);
+# campd_net_mwh is the same plant-class's CEMS grid-net generation (already
+# net of parasitic load) summed over its steam-reporting units only. Neither
+# side depends on the model's own dispatch, so the derived share regenerates
+# identically for a forward year and responds to changed unit composition.
+#
+# Source: scripts/curate_chp_btm_share.py, from the committed
+# ``plant_emission_rates_v2`` (CAMPD, per-unit annual net_mwh) and
+# ``eia923_monthly_generation`` (EIA-923 Page 1, per-plant-class annual netgen)
+# processed-legacy artifacts.
+datatype: chp-btm-share
+schema_version: 1
+title: Measured CHP behind-the-meter host-share, per plant and class
+description: >-
+  Per-(iso, plant, CHP class) measured behind-the-meter host self-supply share,
+  pooled across all available non-quarantined years from EIA-923 net class
+  generation and CAMPD CEMS grid-net generation (steam-reporting units only).
+
+key_columns: [iso, plant_id, plant_group]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO the plant is assigned to (a border-state plant may appear under more than one).
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: EIA plant code (CAMPD facilityId / EIA-923 Plant Id).
+  - name: plant_group
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model CHP class — CC_CHP, CT_CHP or ST_CHP.
+  - name: eia923_net_mwh
+    dtype: float64
+    unit: mwh
+    nullable: false
+    description: >-
+      Summed EIA-923 Page-1 net generation for this plant/class across every
+      year pooled into the share (gross minus station service; includes host
+      self-consumption).
+  - name: campd_net_mwh
+    dtype: float64
+    unit: mwh
+    nullable: false
+    description: >-
+      Summed CAMPD CEMS grid-net generation for this plant/class across the
+      same pooled years, restricted to steam-reporting units (net of
+      parasitic/station-service load via the v2 emission-rate artifact).
+  - name: btm_share
+    dtype: float64
+    unit: ratio
+    nullable: false
+    description: >-
+      (eia923_net_mwh - campd_net_mwh) / eia923_net_mwh, clipped to [0, 1].
+  - name: steam_load_klbh_sum
+    dtype: float64
+    unit: klb
+    nullable: false
+    description: >-
+      Summed CAMPD steam load (1000 lb/hr) across the plant/class's
+      steam-reporting units and pooled years — the CHP signature evidencing
+      the plant is a genuine cogen, kept for audit.
+  - name: n_years
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Count of distinct years pooled into this row's totals.
+  - name: first_year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Earliest calendar year contributing to this row.
+  - name: last_year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Latest calendar year contributing to this row.
