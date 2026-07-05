@@ -328,6 +328,12 @@ class ScenarioConfig:
     coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
     coal_econ_hr_mult: float = 0.97  # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
+    # EM-5 / plan §5 R6: when True, the calibration bundle adds a reporting-only
+    # startup-CO2 column (model_starts x measured campd startup_co2_kg). Measured
+    # bound is 0.015-0.018% of annual CO2, <0.2% even at 10x cycling error
+    # (docs/handoffs/emissions-co2-rate-plan-2026-07.md §3), so it is never in the
+    # dispatch LP and defaults OFF (no dispatch/level change).
+    startup_co2_reporting: bool = False
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # Legacy feature — default off, opt-in
@@ -3430,6 +3436,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_hr_mult": 3,
     "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
+    "startup_co2_reporting": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "wefor_multiplier": 3,

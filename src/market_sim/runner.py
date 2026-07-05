@@ -90,7 +90,7 @@ from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
-from market_sim.results.emissions import compute_must_run_emissions
+from market_sim.results.emissions import compute_must_run_emissions, measured_class_cf
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
@@ -102,6 +102,44 @@ from market_sim.results.scarcity import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _chp_measured_co2_inputs(
+    config: ScenarioConfig, iso: str, year: int
+) -> tuple[dict[int, float], dict[str, float]]:
+    """Return ``(measured_rate_by_plant, class_cf_by_group)`` for CHP must-run.
+
+    Resolves the EM-7 (plan §5 R5) consistency inputs from the committed v2
+    emission-rate artifact so the behind-the-meter must-run reconstruction books
+    CO2 at the same measured rate its grid tranches use, and sizes the forecast
+    fallback with a measured CHP class capacity factor instead of the flat 0.85.
+    Returns empty maps (caller keeps the fuel-class default rate and the flat
+    ``must_run_cf``) when the v2 artifact is absent or the ISO has no rows.
+    """
+    from pathlib import Path
+
+    import pandas as pd
+
+    from market_sim.data.emission_rates import fuel_class, measured_plant_rates
+
+    path = Path(config.plant_emission_rates_v2_path)
+    if not path.exists():
+        return {}, {}
+    v2 = pd.read_parquet(path)
+    v2 = v2[v2["iso"].astype(str) == str(iso)]
+    if v2.empty:
+        return {}, {}
+    # Same mode-aware (plant, fuel-class) rate the grid tranches book, collapsed
+    # to a per-plant lookup keyed by the plant's own fuel class.
+    rate_map = measured_plant_rates(v2, iso, int(year), str(config.mode))
+    by_plant = {int(pid): rate for (pid, _fc), rate in rate_map.items()}
+    # For a plant whose CEMS units span classes, the must-run tranche is gas —
+    # prefer the gas-class rate when present so the BTM books the CHP rate.
+    for (pid, fc), rate in rate_map.items():
+        if fc == fuel_class("gas"):
+            by_plant[int(pid)] = rate
+    class_cf = measured_class_cf(v2)
+    return by_plant, class_cf
 
 
 def _get_growth_rate(config: ScenarioConfig, year: int) -> float:
@@ -1072,7 +1110,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # not the grid), so add its generation and emissions back here
         # for asset-level emissions trajectories.
         if campd_bins is not None:
-            mr = compute_must_run_emissions(campd_bins, year, config.must_run_cf)
+            # EM-7 (plan §5 R5): book BTM CO2 at the plant's measured v2 rate
+            # (matching its grid tranches) and size the fallback with a measured
+            # CHP class CF instead of the flat must_run_cf.
+            mr_rates, mr_class_cf = _chp_measured_co2_inputs(config, iso, year)
+            mr = compute_must_run_emissions(
+                campd_bins,
+                year,
+                config.must_run_cf,
+                measured_rate_by_plant=mr_rates,
+                class_cf_by_group=mr_class_cf,
+            )
             if not mr.empty:
                 logger.info(
                     "year %d: CHP must-run post-processing -- %d bins, "
