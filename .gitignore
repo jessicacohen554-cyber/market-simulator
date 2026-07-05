@@ -334,3 +334,6 @@ data/raw/*-weather/_ghcn_cache/
 # stays tracked as the committed deliverable.
 /results/regression-goldens/*/*/
 scratch_hindcast/
+
+# Capacity-hindcast raw dispatch parquets are reproducible; commit ledgers+score only.
+results/hindcast/*/*/*/year_*.parquet

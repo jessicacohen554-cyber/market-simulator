@@ -255,15 +255,31 @@ def score_additions(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
 
 
 def model_co2_by_year(bundle: Path) -> dict[int, float]:
-    """Total modelled CO2 (metric tonnes) per scored year, from the parquets."""
+    """Total modelled CO2 (metric tonnes) per scored year.
+
+    The LP result does not carry an ``emissions`` array in the forecast path,
+    so CO2 is reconstructed from the persisted dispatch × the fleet context's
+    per-generator emission rate (tCO2/MWh) — the same quantity the emissions
+    module computes, but self-contained here.
+    """
+    from market_sim.results.outputs import from_parquet, read_fleet_context
+
     out = {}
     for year in SCORED_YEARS:
         p = bundle / f"year_{year}.parquet"
         if not p.exists():
             continue
-        res = DispatchResult.from_parquet(p)
+        res = from_parquet(DispatchResult, p)
         if res.emissions is not None:
             out[year] = float(np.asarray(res.emissions).sum())
+            continue
+        try:
+            ctx = read_fleet_context(p)
+        except ValueError:
+            continue
+        rate = np.asarray(ctx.emission_rate, dtype=float)  # tCO2/MWh per gen
+        gen_mwh = np.asarray(res.dispatch, dtype=float).sum(axis=1)
+        out[year] = float((gen_mwh * rate).sum())
     return out
 
 
