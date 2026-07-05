@@ -4747,6 +4747,45 @@ def _measured_plant_rate_map_v2(
     return {k: (co2.get(k, 0.0), nox.get(k, 0.0), so2.get(k, 0.0)) for k in keys}
 
 
+def _apply_forward_control_retrofits(
+    rates: dict[tuple[int, str], tuple[float, float, float]],
+    config: object,
+    year: int,
+) -> dict[tuple[int, str], tuple[float, float, float]]:
+    """Step measured ``(co2, nox, so2)`` rates for announced EIA-860 controls.
+
+    The forward control-retrofit channel
+    (``docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md``):
+    splits the triple map into per-pollutant float maps, applies
+    :func:`market_sim.data.emission_rates.apply_control_retrofits` to each with
+    the forecast-year announced-control schedule (a control online by ``year``
+    steps the covered plant's rate down), and recombines. Returns the input map
+    unchanged when no control is announced. Forecast-only; the caller gates on
+    the mode and the ``control_retrofit_forward`` flag.
+    """
+    from market_sim.config import constants
+    from market_sim.data.emission_rates import (
+        apply_control_retrofits,
+        load_announced_controls,
+    )
+
+    controls = load_announced_controls(
+        getattr(config, "control_retrofit_path", ""),
+        min_install_year=constants.CONTROL_RETROFIT_HISTORY_END_YEAR + 1,
+    )
+    if not controls:
+        return rates
+    # One stepped float map per pollutant (index 0=co2, 1=nox, 2=so2), then zip
+    # back into triples. Fresh dicts throughout — the cached input is untouched.
+    stepped = [
+        apply_control_retrofits(
+            {k: v[i] for k, v in rates.items()}, controls, year, pollutant
+        )
+        for i, pollutant in enumerate(("co2", "nox", "so2"))
+    ]
+    return {k: (stepped[0][k], stepped[1][k], stepped[2][k]) for k in rates}
+
+
 def apply_plant_emission_rates_v2(
     generators: list[Generator],
     path: str | Path,
@@ -4754,6 +4793,7 @@ def apply_plant_emission_rates_v2(
     iso: str,
     year: int,
     mode: str,
+    config: object | None = None,
 ) -> int:
     """Override per-generator CO2 rates from the v2 artifact (mode-aware).
 
@@ -4770,6 +4810,15 @@ def apply_plant_emission_rates_v2(
     SO2 is always set, mirroring :func:`apply_plant_emission_rates`, because zero
     is a legitimate SO2 value for gas units. NOx/SO2 are secondary: this changes
     no CO2 rate and no merit order.
+
+    When ``config.control_retrofit_forward`` is set and this is a **forecast**
+    year, each pollutant's measured map is stepped by any announced EIA-860
+    control online by ``year`` (SCR/SNCR → NOx, FGD/DSI → SO2, from the
+    committed-install pipeline; CO2 carries no default control — carbon capture
+    is owned by the CCS retrofit screen, rule 15), via
+    :func:`_apply_forward_control_retrofits`. OFF or backcast leaves the maps
+    byte-identical.
+    docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
     """
     from market_sim.data.emission_rates import fuel_class
 
@@ -4777,6 +4826,12 @@ def apply_plant_emission_rates_v2(
     if not resolved.exists():
         return 0
     rates = _measured_plant_rate_map_v2(str(resolved), str(iso), int(year), str(mode))
+    if (
+        str(mode).lower() != "backcast"
+        and config is not None
+        and getattr(config, "control_retrofit_forward", False)
+    ):
+        rates = _apply_forward_control_retrofits(rates, config, int(year))
     n = 0
     for gen in generators:
         triple = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
@@ -6835,6 +6890,7 @@ def build_dispatch_fleet(
             iso=iso,
             year=int(year),
             mode=str(getattr(config, "mode", "forecast")),
+            config=config,
         )
     elif config.use_plant_emission_rates:
         apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
