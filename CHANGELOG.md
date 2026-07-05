@@ -154,6 +154,34 @@ changed.
   `scenario.startup_co2_reporting`) were already registered from a prior run and are
   unchanged. `scripts/validate_parameters.py` and `ruff check .` both pass.
 
+## 2026-07-05 (forward emission-control retrofit channel)
+
+**Model.** Added a forecast-only, default-OFF channel that steps a covered
+unit's forward emission rate at an **announced** control install year — closing
+the gap flagged in the CO2-rate plan §7 (the trailing-window estimator only
+picks up *realized* drift, never an announced SCR/scrubber). Sourced from
+EIA-860's committed environmental-control pipeline
+(`eia860_enviro_assoc_emissions_control_equipment.parquet`): a control in a
+committed status (`PL`/`CO`/`TS`/`OZ`) with a future Inservice Year steps the
+unit's rate by a class-typical removal fraction (`post = pre × (1 − removal)`),
+mirroring the CCS retrofit screen's form. The install *date* is a forward driver,
+not a residual, so the step is rule-13-admissible. New
+`data/emission_rates.apply_control_retrofits` (pure override) +
+`load_announced_controls` (EIA-860 loader). With the NOx/SO2 v2 wiring now
+landed (same-day R7), the channel steps **all three** pollutants: the default
+EIA-860 control map targets NOx (SCR/SNCR) and SO2 (FGD/DSI); CO2 carries no
+default control (carbon capture is owned by the CCS retrofit screen, rule 15).
+Applied per-pollutant over the measured `(co2, nox, so2)` map in
+`fleet.apply_plant_emission_rates_v2` (`_apply_forward_control_retrofits`)
+behind `ScenarioConfig.control_retrofit_forward` (default `False` →
+byte-identical). Constants: `CONTROL_RETROFIT_HISTORY_END_YEAR`,
+`_ANNOUNCED_STATUSES`, `_TYPE_MAP`. No keeper change, no calibration solve.
+
+**Docs.** New design handoff
+`docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md`; methodology
+spec forward-emission-rate section gained the sibling-channel paragraph; tests in
+`tests/test_emission_rates.py`.
+
 ## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
 
 **Model.** Unified every carbon path through one `emission_rate × membership`
