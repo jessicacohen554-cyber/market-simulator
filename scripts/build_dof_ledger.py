@@ -86,6 +86,14 @@ _ISSUE_NYISO_LI_LCR_MISMATCH = (
 _ISSUE_C18_GAS_AVAILABILITY_DEAD_CODE = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
 )
+# Root-cause issues opened during the 2026-07 scalar-remediation B-CAI-1 batch
+# (CAISO C-16 PGE-TAC Path-15 split; C-5/C-14 WECC seam forecast-path fallbacks).
+_ISSUE_C16_PGE_TAC_SPLIT = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1372"
+)
+_ISSUE_C5_C14_SEAM_FALLBACKS = (
+    "https://github.com/jessicacohen554-cyber/market-simulator/issues/1373"
+)
 
 # scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): NERC's public GADS
 # Generating Unit Statistical Brochure 3 (2019-2023) is NERC-wide, with no
@@ -427,9 +435,67 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 iso,
                 value={"NP15": 0.86, "ZP26": 0.14},
                 source="PG&E TAC load split across Path 15 — preserves a prior "
-                "ratio of unverified provenance (audit C-16; W1d marker)",
-                root_cause="audit C-16: refine when a direct Path-15 sub-TAC "
-                "load measurement becomes available",
+                "ratio of unverified provenance (audit C-16; W1d marker). "
+                "B-CAI-1 intake attempt (2026-07-05): FERC-714 unreachable "
+                "(403/502 via proxy); CEC reachable but planning-area geography "
+                "(PG&E Bay Area / PG&E Valley) is boundary-mismatched to Path 15 "
+                "(rule-14); the direct NP15/ZP26 zonal load lives in CAISO OASIS "
+                "(unreachable — needs fetch-caiso-oasis.yml). No refit (no source).",
+                root_cause="audit C-16: refine when NP15/ZP26 zonal load lands "
+                "via the OASIS fetch workflow (rule-23 trigger); open: "
+                + _ISSUE_C16_PGE_TAC_SPLIT,
+            )
+        )
+        # C-5 (audit): the 7,500 MW WECC_import_simultaneous cap. Superseded in
+        # the caiso-51 keeper (published MIC sum + measured p95 corridor
+        # envelopes), retained ONLY as the capacity_deliverability_limits-off
+        # (forecast-path) fallback. Fallback-only ledger row so it cannot
+        # silently re-become the binding import limit.
+        out.append(
+            _entry(
+                "WECC_import_simultaneous.cap_mw",
+                "iso_configs.py CAISO interface_limits (fallback; "
+                "capacity_deliverability_limits OFF only)",
+                "residual",
+                iso,
+                value=7500.0,
+                source="fitted aggregate WECC import cap — SUPERSEDED in the "
+                "caiso-51 keeper by the published branch-group MIC sum "
+                "(16,055/16,452/16,148 MW 2023/24/25) + measured p95 corridor "
+                "envelopes (docs/caiso-c5-wecc-cap-closeout-2026-07-03.md). "
+                "Not in the keeper binding path; governs the forecast / "
+                "non-deliverability path only.",
+                root_cause="O-1 forecast/backcast parity: the fitted 7,500 still "
+                "caps forecast-mode imports — re-ground the default on the "
+                "published MIC/SIL or enable deliverability part-A in forecast; "
+                "open: " + _ISSUE_C5_C14_SEAM_FALLBACKS,
+            )
+        )
+        # C-14 (audit): the aggregate WECC export cap. Re-derived in B-CAI-1
+        # from the SAME measured EIA-930 CISO net-interchange series the per-hub
+        # export envelopes use (scripts/derive_caiso_export_cap.py): 3,500 (fitted
+        # "typical peak", ~p99) -> 4,361 MW (peak-bucket p95, measured capability).
+        # Used ONLY by the superseded caiso_bidir_intertie; the keeper's
+        # caiso_per_hub_intertie bounds exports by physical TTC + measured
+        # envelope, so this scalar is not in any keeper solve (fallback-only).
+        out.append(
+            _entry(
+                "CAISO_BIDIR_EXPORT_CAP_MW",
+                "transmission.py (fallback; caiso_bidir_intertie only)",
+                "measured-physical",
+                iso,
+                value=4361.0,
+                source="aggregate WECC export-direction capability ceiling, "
+                "re-derived from EIA-930 CISO net-interchange (the realized ATC "
+                "proxy; OASIS unreachable) at the corridor mechanism's own p95 "
+                "peak-bucket convention, 2023-2025 (2026 holdout excluded, "
+                "rule 22); frozen scripts/derive_caiso_export_cap.py. rule-23 "
+                "source-data change: the caiso-51 keeper measured export "
+                "envelopes.",
+                root_cause="fallback-only (superseded by caiso_per_hub_intertie); "
+                "refresh against a true OASIS export-ATC pull, or R5-delete the "
+                "caiso_bidir_intertie mechanism (rule 26); tracked in "
+                + _ISSUE_C5_C14_SEAM_FALLBACKS,
             )
         )
         if sc.get("ct_netload_drag"):

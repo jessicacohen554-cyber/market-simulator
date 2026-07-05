@@ -325,7 +325,10 @@ def _caiso_config() -> ISOConfig:
     # with `capacity_deliverability_limits` OFF (forecast mode; the flag is GATED
     # default-off) and is preserved/re-homed by `split_caiso_import_node_per_hub`.
     # Re-grounding the forecast-path default on the published MIC/SIL is open item
-    # O-1 (forecast/backcast parity). Do not re-tune this value to the residual.
+    # O-1 (forecast/backcast parity), tracked in issue #1373 and carried as a
+    # fallback-only DOF-ledger row (scalar-remediation B-CAI-1, 2026-07-05) so
+    # this fallback cannot silently re-become the binding import limit.
+    # Do not re-tune this value to the residual.
     interface_limits = [
         InterfaceLimit(
             name="WECC_import_simultaneous",
