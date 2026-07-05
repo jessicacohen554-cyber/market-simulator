@@ -130,6 +130,68 @@ class TestRunScenarioIso(RunnerTestBase):
         self.assertFalse((cache.CACHE_ROOT / "CAISO").exists())
 
 
+class TestKnownYearPeakForesight(RunnerTestBase):
+    """Capacity screens test the entering year's known peak (plan §2.3.1)."""
+
+    def test_evolve_fleet_receives_entering_year_peak(self):
+        from market_sim.config.scenarios import resolve_demand_growth_rate
+
+        captured = {}
+        original = runner.evolve_fleet
+
+        def spy(fleet, prior_results, year, config, loss_tracker, **kw):
+            captured[year] = {
+                "peak_demand_next": kw.get("peak_demand_next"),
+                "prior_peak": prior_results["peak_demand"],
+            }
+            return original(fleet, prior_results, year, config, loss_tracker, **kw)
+
+        config = ScenarioConfig(iso="ERCOT")
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "evolve_fleet", side_effect=spy),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        # The 2027 evolution sees 2027's deterministic peak, one compound
+        # growth step ahead of the prior (2026) peak it used to lag on —
+        # i.e. peak_demand_next == _scale_demand(base, config, 2027).max
+        # while prior_results carried _scale_demand(..., 2026).max.
+        self.assertIn(2027, captured)
+        got = captured[2027]
+        expected = got["prior_peak"] * (1.0 + resolve_demand_growth_rate(config, 2026))
+        self.assertAlmostEqual(got["peak_demand_next"], expected, places=6)
+
+
+class TestPriceSignalByteIdentity(RunnerTestBase):
+    """Defaults (alpha=1.0, lookahead off) pass econ_prices through unchanged."""
+
+    def test_price_signal_is_econ_prices_object_at_defaults(self):
+        captured = []
+        original = runner.PriorYearResults
+
+        def spy(**kwargs):
+            captured.append(kwargs)
+            return original(**kwargs)
+
+        config = ScenarioConfig(iso="ERCOT")
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "PriorYearResults", side_effect=spy),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        self.assertGreaterEqual(len(captured), 2)
+        for kwargs in captured:
+            # Byte-identical: the signal IS the prices array object (plan
+            # §8.2 — hash of price_signal vs econ_prices).
+            self.assertIs(kwargs["price_signal"], kwargs["prices"])
+
+
 class TestP2CommitmentLegacyWarning(RunnerTestBase):
     """P2 commitment (commitment_enabled=True) is a legacy, opt-in path."""
 

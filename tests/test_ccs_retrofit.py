@@ -345,7 +345,7 @@ class TestRetrofitOrderingInEvolveFleet(unittest.TestCase):
             online_year=2020,
         )
 
-        fleet, _tracker, _additions, retrofit_log = evolve_fleet(
+        fleet, _tracker, _additions, retrofit_log, _ = evolve_fleet(
             [retired, survivor],
             None,
             2030,
@@ -443,7 +443,7 @@ class TestRetrofitsAddToCumulative(unittest.TestCase):
             _gas_cc(f"G{i}", heat_rate=6.9, online_year=2020, pmax=500.0)
             for i in range(4)
         ]
-        fleet, _tracker, _additions, retrofit_log = evolve_fleet(
+        fleet, _tracker, _additions, retrofit_log, _ = evolve_fleet(
             fleet,
             None,
             2030,

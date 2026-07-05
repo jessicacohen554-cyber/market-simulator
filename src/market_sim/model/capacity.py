@@ -119,11 +119,12 @@ _THERMAL_FOM: dict[str, str] = {
 # Fuel classes that count toward the clean-energy share.
 _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
 
-# Fuel classes whose firm capacity backs the reliability floor as
-# always-present (not retirement-screened) baseload. Nuclear is NOT here: it
-# is now an economically-retirement-eligible thermal resource (_THERMAL_FOM),
-# so it is counted in the retained-thermal sum the floor protects rather than
-# pre-subtracted from peak. Only hydro (never screened) backs the floor.
+# Firm clean (non-VRE) capacity fuels. The reliability floor no longer nets
+# these out at nameplate — its accreditation rebuild routes every resource
+# (hydro included) through accredited_firm_capacity_mw at its UCAP/capacity-
+# credit value (capacity-economics plan 2026-07 §3.2). The constant is retained
+# only as the evolution ledger's ``firm_clean_mw`` reporting basis
+# (runner.py); it no longer participates in any retirement/adequacy decision.
 _FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
 # Per-fuel ScenarioConfig field names for the consecutive-loss threshold.
@@ -608,6 +609,114 @@ def _zone_is_long(headroom: dict[str, float] | None, zone: str) -> bool:
     return headroom[zone] > _DELIVERABILITY_LONG_BAND * requirement_scale
 
 
+def resolve_planning_reserve_margin(config: ScenarioConfig, iso: str) -> float:
+    """Return the planning reserve margin shared by the floor and the backstop.
+
+    One requirement, two verbs (capacity-economics plan 2026-07 §3.2): the
+    retirement reliability floor ("don't retire below") and the reserve-margin
+    build backstop ("build up to") test the same published adequacy target.
+    ``config.planning_reserve_margin_override`` (a registered sensitivity
+    lever) takes precedence; otherwise the ISO's published PRM from
+    :data:`PLANNING_RESERVE_MARGIN_BY_ISO`, falling back to the
+    ``config.planning_reserve_margin`` scalar for ISOs absent from the
+    registry.
+    """
+    if config.planning_reserve_margin_override is not None:
+        return float(config.planning_reserve_margin_override)
+    return PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)
+
+
+def _floor_retention_merit(
+    config: ScenarioConfig, g: Generator
+) -> tuple[float, float, float]:
+    """Return the reliability-floor retention sort key for one eligible unit.
+
+    Cheapest firm adequacy first: annual going-forward cost per firm (UCAP)
+    MW, tie-broken by CO2 emission rate ascending so equal-cost adequacy is
+    bought from the cleaner unit (the heat-rate key this replaces retained
+    coal over gas), then by heat rate ascending so a within-fuel tie (per-fuel
+    FOM and CO2 rates make same-fuel units identical on the first two keys)
+    deterministically retains the most efficient unit. All three keys are
+    physical unit attributes — no tunables (plan §3.2).
+    """
+    fom_field = _THERMAL_FOM[g.fuel_type]
+    multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
+    going_forward_cost = getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
+    ucap_mw = g.pmax_mw * (1.0 - float(g.eford))
+    cost_per_firm_mw = going_forward_cost / ucap_mw if ucap_mw > 0.0 else math.inf
+    return (cost_per_firm_mw, float(g.emission_rate_co2), float(g.heat_rate))
+
+
+def _apply_reliability_floor(
+    fleet: list[Generator],
+    eligible: list[Generator],
+    retired: set[str],
+    loss_years: dict[str, int],
+    config: ScenarioConfig,
+    peak_demand: float,
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    storage_firm_mw: float,
+    deliverability_headroom: dict[str, float] | None,
+    year: int | None,
+) -> list[dict]:
+    """Un-retire eligible units until accredited firm capacity clears the PRM.
+
+    The retirement-side verb of the shared adequacy requirement (plan §3.2):
+    ``requirement = peak_demand × (1 + PRM_iso)`` tested against
+    :func:`accredited_firm_capacity_mw` of the surviving fleet plus the zonal
+    renewable pools and pre-accredited storage ELCC — the same ledger the
+    step-6 build backstop uses, replacing the old raw-nameplate /
+    hydro-netting test. Only *un-retires* (mutates ``retired`` in place); it
+    never retires anything. Retention order is
+    :func:`_floor_retention_merit` ($/firm-MW-yr ascending, CO2 tie-break).
+    Units in RA-saturated zones (``deliverability_headroom`` long — only
+    populated under ``capacity_deliverability_limits``) are exempt from
+    retention: a zone already clearing its locational requirement does not
+    buy adequacy there.
+
+    Returns the floor-retention attribution log (rule 20 analogue): one dict
+    per retained unit with the unit's identity, firm value, cost and CO2 rate,
+    so floor-retained MW is measurable per run instead of argued.
+    """
+    if peak_demand <= 0.0:
+        return []
+    requirement_mw = peak_demand * (
+        1.0 + resolve_planning_reserve_margin(config, config.iso)
+    )
+    survivors = [g for g in fleet if g.unit_id not in retired]
+    accredited_mw = accredited_firm_capacity_mw(
+        survivors, wind_pool_mw, solar_pool_mw, storage_firm_mw
+    )
+    retention_log: list[dict] = []
+    if accredited_mw >= requirement_mw:
+        return retention_log
+    for g in sorted(eligible, key=lambda g: _floor_retention_merit(config, g)):
+        if accredited_mw >= requirement_mw:
+            break
+        if g.unit_id not in retired:
+            continue
+        if _zone_is_long(deliverability_headroom, g.zone):
+            continue  # RA-saturated zone: no adequacy value in retaining here
+        retired.discard(g.unit_id)
+        ucap_mw = g.pmax_mw * (1.0 - float(g.eford))
+        accredited_mw += ucap_mw
+        cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g)
+        retention_log.append(
+            {
+                "year": year,
+                "unit_id": g.unit_id,
+                "fuel_type": g.fuel_type,
+                "pmax_mw": float(g.pmax_mw),
+                "ucap_mw": float(ucap_mw),
+                "going_forward_cost": float(cost_per_firm_mw * ucap_mw),
+                "co2_rate": float(co2_rate),
+                "loss_years": int(loss_years.get(g.unit_id, 0)),
+            }
+        )
+    return retention_log
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -621,8 +730,12 @@ def apply_economic_retirements(
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
     thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
+    wind_pool_mw: float = 0.0,
+    solar_pool_mw: float = 0.0,
+    storage_firm_mw: float = 0.0,
+    year: int | None = None,
     event_sink: dict | None = None,
-) -> tuple[list[Generator], dict[str, int]]:
+) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
     For each thermal generator the annual inframarginal energy margin is
@@ -652,10 +765,15 @@ def apply_economic_retirements(
 
     When multiple units in the same fuel class retire, the highest
     heat-rate (least efficient) units go first. A system-wide reliability
-    floor then caps total retirements: if retiring every eligible unit
-    would leave thermal capacity below ``(peak_demand - firm_clean) *
-    (1 + retirement_reserve_margin)``, the most efficient eligible units
-    are kept online until the floor is satisfied.
+    floor then caps total retirements on the accredited (UCAP/ELCC) basis:
+    if retiring every eligible unit would leave
+    :func:`accredited_firm_capacity_mw` (surviving fleet at ``1 - EFORd`` /
+    capacity credit, plus the wind/solar pools and pre-accredited storage
+    ELCC) below ``peak_demand × (1 + PRM_iso)`` — the same
+    :data:`PLANNING_RESERVE_MARGIN_BY_ISO` requirement the build backstop
+    tests — eligible units are un-retired cheapest-firm-adequacy-first
+    ($/firm-MW-yr, CO2 tie-break) until the requirement clears. Every floor
+    retention is recorded in the returned attribution log.
 
     Args:
         fleet: The current generator fleet.
@@ -686,6 +804,14 @@ def apply_economic_retirements(
             REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal —
             exactly one mechanism prices thermal AS. ``None`` (the default,
             flag off) keeps the exogenous flat rate.
+        wind_pool_mw, solar_pool_mw: Zonal renewable-pool nameplate MW
+            (bounds of the ``W``/``S`` dispatch variables), credited at
+            :data:`RENEWABLE_CAPACITY_CREDIT` in the reliability floor's
+            accredited sum. Default 0.0 keeps a conservative
+            (thermal-and-fleet-only) floor.
+        storage_firm_mw: Pre-accredited storage ELCC MW counted toward the
+            floor requirement. Default 0.0 (conservative).
+        year: Simulation year stamped on floor-retention log rows.
         event_sink: Optional dict populated in place with the retirement
             attribution the evolution ledger needs (CX-3): ``"retired"`` (the
             units actually retired) and ``"floor_retained"`` (units the
@@ -694,8 +820,10 @@ def apply_economic_retirements(
             nothing. Does not affect the retirement decision.
 
     Returns:
-        Tuple ``(survivors, loss_years)`` -- the fleet with retired units
-        removed, and the updated loss-counter dict (retired units dropped).
+        Tuple ``(survivors, loss_years, floor_retention_log)`` -- the fleet
+        with retired units removed, the updated loss-counter dict (retired
+        units dropped), and one attribution dict per unit the reliability
+        floor un-retired this year.
     """
     prices = np.asarray(prices, dtype=float)
     dispatch = np.asarray(dispatch_result.dispatch, dtype=float)
@@ -829,23 +957,21 @@ def apply_economic_retirements(
     eligible.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
     retired = {g.unit_id for g in eligible}
 
-    # Reliability floor: never strip thermal capacity below the reserve
-    # margin over peak net demand, net of firm clean (nuclear/hydro).
-    firm_clean = sum(g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS)
-    floor = (peak_demand - firm_clean) * (1.0 + config.retirement_reserve_margin)
-    thermal_after = sum(
-        g.pmax_mw
-        for g in fleet
-        if g.fuel_type in _THERMAL_FOM and g.unit_id not in retired
+    # Reliability floor (accredited basis, plan §3.2): never strip the
+    # system's accredited firm capacity below the shared PRM requirement.
+    floor_retention_log = _apply_reliability_floor(
+        fleet,
+        eligible,
+        retired,
+        loss_years,
+        config,
+        peak_demand,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        deliverability_headroom,
+        year,
     )
-    if thermal_after < floor:
-        # Keep the most efficient eligible units (lowest heat rate) online
-        # until thermal capacity clears the floor.
-        for g in sorted(eligible, key=lambda g: g.heat_rate):
-            if thermal_after >= floor:
-                break
-            retired.discard(g.unit_id)
-            thermal_after += g.pmax_mw
 
     survivors = [g for g in fleet if g.unit_id not in retired]
     for uid in retired:
@@ -853,7 +979,9 @@ def apply_economic_retirements(
 
     # Ledger attribution: the units actually retired, and the units the
     # economic screen flagged (``eligible``) but the reliability floor kept
-    # online (CX-3). ``eligible`` minus ``retired`` is exactly the floor set.
+    # online (CX-3). ``eligible`` minus ``retired`` is exactly the floor set
+    # (``_apply_reliability_floor`` discards un-retained units from ``retired``
+    # in place), so this stays consistent with ``floor_retention_log``.
     if event_sink is not None:
         event_sink["retired"] = [
             {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
@@ -866,7 +994,7 @@ def apply_economic_retirements(
             if g.unit_id not in retired
         ]
 
-    return survivors, loss_years
+    return survivors, loss_years, floor_retention_log
 
 
 # --- Part 2: capacity additions -------------------------------------------
@@ -1642,11 +1770,9 @@ def apply_reserve_margin_build(
     """
     if not config.reserve_margin_build_enabled or peak_demand_mw <= 0.0:
         return fleet, 0.0
-    # Per-ISO target leads; an explicit ScenarioConfig.planning_reserve_margin
-    # still overrides it for ISOs absent from the registry (fallback scalar).
-    reserve_margin = PLANNING_RESERVE_MARGIN_BY_ISO.get(
-        iso, config.planning_reserve_margin
-    )
+    # Shared PRM resolution (one requirement, two verbs — plan §3.2): the
+    # same resolver the retirement reliability floor uses.
+    reserve_margin = resolve_planning_reserve_margin(config, iso)
     required = peak_demand_mw * (1.0 + reserve_margin)
     firm_gap = required - firm_capacity_mw
     if firm_gap <= 0.0:
@@ -1865,7 +1991,14 @@ def evolve_fleet(
     eac_price_ccs: float = 0.0,
     events: dict | None = None,
     confirmed_exits: list[ConfirmedExit] | None = None,
-) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]]:
+    peak_demand_next: float | None = None,
+) -> tuple[
+    list[Generator],
+    dict[str, int],
+    dict[str, dict[str, float]],
+    list[dict],
+    list[dict],
+]:
     """Advance the fleet by one simulation year.
 
     The capacity mechanisms are applied in a fixed order:
@@ -1926,18 +2059,28 @@ def evolve_fleet(
             additions (planned/economic/reserve_backstop), CCS retrofits,
             renewable additions, and the fleet-by-fuel totals before/after.
             ``None`` records nothing and leaves the solve path byte-identical.
+        peak_demand_next: The ENTERING year's known peak demand in MW
+            (deterministic from the demand path — plan §2.3 component 1).
+            When supplied it replaces the prior-year ``peak_demand`` in the
+            peak-anchored adequacy mechanisms (the retirement reliability
+            floor and the reserve-margin backstop), deleting their one-year
+            bookkeeping lag. ``None`` keeps the prior-year peak.
 
     Returns:
-        Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log)``
-        after all mechanisms are applied. ``renewable_additions`` is a
-        ``{zone: {"wind": mw, "solar": mw}}`` dict of new wind/solar capacity
-        built this year; the caller folds it into the zonal ``wind_cap`` /
-        ``solar_cap`` pools that bound the ``W[z,t]`` / ``S[z,t]`` dispatch
-        variables. ``retrofit_log`` is the list of CCS retrofit decision
-        dicts recorded this year.
+        Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
+        floor_retention_log)`` after all mechanisms are applied.
+        ``renewable_additions`` is a ``{zone: {"wind": mw, "solar": mw}}``
+        dict of new wind/solar capacity built this year; the caller folds it
+        into the zonal ``wind_cap`` / ``solar_cap`` pools that bound the
+        ``W[z,t]`` / ``S[z,t]`` dispatch variables. ``retrofit_log`` is the
+        list of CCS retrofit decision dicts recorded this year.
+        ``floor_retention_log`` is the retirement reliability floor's
+        attribution log — one dict per unit the floor un-retired this year
+        (persisted per-year by the runner as ``floor_retentions``).
     """
     loss_tracker = dict(loss_tracker)
     renewable_additions: dict[str, dict[str, float]] = {}
+    floor_retention_log: list[dict] = []
 
     # Ledger bookkeeping: snapshot the entering fleet so each mechanism's
     # additions/retirements can be attributed by a before/after diff. No-op
@@ -1951,11 +2094,34 @@ def evolve_fleet(
     fleet_arrays = _prior_attr(prior_results, "fleet_arrays")
     dispatch_result = _prior_attr(prior_results, "dispatch_result")
     prices = _prior_attr(prior_results, "prices")
+    # Capacity-screen price signal (plan §2.2-§2.3): the EWMA-blended and/or
+    # lookahead-repriced series replaces raw prices in the retirement,
+    # CCS-retrofit and new-entry screens. At the runner defaults it IS the
+    # same econ_prices array (byte-identical); bare-dict callers without the
+    # key fall back to prices.
+    price_signal = _prior_attr(prior_results, "price_signal", None)
+    if price_signal is not None:
+        prices = price_signal
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
+    # Peak used by the peak-anchored adequacy mechanisms (floor + backstop):
+    # the entering year's known peak when the runner supplies it (plan §2.3
+    # component 1 — deletes a pure one-year bookkeeping lag), else the
+    # prior-year peak (legacy behaviour, e.g. older callers/tests).
+    peak_demand_used = (
+        float(peak_demand_next)
+        if peak_demand_next is not None and peak_demand_next > 0.0
+        else peak_demand
+    )
     planned = _prior_attr(prior_results, "planned_additions", []) or []
     mc_cost = _prior_attr(prior_results, "mc_cost")
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
     storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
+    # Prior-year renewable pools and accredited storage ELCC: the reliability
+    # floor (step 2) and the adequacy backstop (step 6) test the same
+    # accredited-firm-capacity ledger (plan §3.2), so both read these.
+    wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
+    solar_pool_mw = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
+    storage_firm_mw = float(_prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0)
     # Per-fuel thermal AS credit DERIVED from the prior-year co-opt reserve duals,
     # populated by the runner only under ercot_thermal_as_endogenous. When present
     # the retirement/new-entry screens use it in place of the exogenous flat AS
@@ -2055,19 +2221,23 @@ def evolve_fleet(
     # 2. Economic retirements (needs the prior-year dispatch).
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
         _econ_sink: dict = {} if _rec else None
-        fleet, loss_tracker = apply_economic_retirements(
+        fleet, loss_tracker, floor_retention_log = apply_economic_retirements(
             fleet,
             fleet_arrays,
             dispatch_result,
             prices,
             config,
             loss_tracker,
-            peak_demand,
+            peak_demand_used,
             rps_shadow_price=rps_shadow_price,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
             thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
+            wind_pool_mw=wind_pool_mw,
+            solar_pool_mw=solar_pool_mw,
+            storage_firm_mw=storage_firm_mw,
+            year=year,
             event_sink=_econ_sink,
         )
         if _rec:
@@ -2075,6 +2245,15 @@ def evolve_fleet(
                 {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
             )
             events["floor_retained"].extend(_econ_sink.get("floor_retained", []))
+        if floor_retention_log:
+            logger.info(
+                "year %d: reliability floor retained %d unit(s), %.0f MW "
+                "(%.0f MW UCAP) against the PRM requirement",
+                year,
+                len(floor_retention_log),
+                sum(r["pmax_mw"] for r in floor_retention_log),
+                sum(r["ucap_mw"] for r in floor_retention_log),
+            )
 
     # 3. Known additions: planned units coming online this year.
     _planned_now = [g for g in planned if g.online_year == year]
@@ -2160,21 +2339,17 @@ def evolve_fleet(
 
     # 6. Reserve-margin adequacy backstop: force-build firm capacity if the
     # economic screen left the system below its planning reserve margin
-    # against the (prior-year, build-ahead-of-need) peak. Firm capacity nets
-    # the thermal fleet (UCAP) and the prior-year renewable pools / storage
-    # (threaded via prior_results). No-op unless reserve_margin_build_enabled.
-    if config.reserve_margin_build_enabled and peak_demand > 0.0:
-        wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
-        solar_pool_mw = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
-        storage_firm_mw = float(
-            _prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0
-        )
+    # against the entering year's known peak (prior-year peak when the runner
+    # did not supply it). Firm capacity nets the thermal fleet (UCAP) and the
+    # prior-year renewable pools / storage (threaded via prior_results).
+    # No-op unless reserve_margin_build_enabled.
+    if config.reserve_margin_build_enabled and peak_demand_used > 0.0:
         firm_mw = accredited_firm_capacity_mw(
             fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw
         )
         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         fleet, adequacy_mw = apply_reserve_margin_build(
-            fleet, firm_mw, peak_demand, year, config, config.iso
+            fleet, firm_mw, peak_demand_used, year, config, config.iso
         )
         if _rec and adequacy_mw > 0.0:
             events["thermal_additions"].extend(
@@ -2192,16 +2367,14 @@ def evolve_fleet(
         if adequacy_mw > 0.0:
             # Same per-ISO resolution as apply_reserve_margin_build so the
             # logged margin reflects the value actually used.
-            resolved_margin = PLANNING_RESERVE_MARGIN_BY_ISO.get(
-                config.iso, config.planning_reserve_margin
-            )
+            resolved_margin = resolve_planning_reserve_margin(config, config.iso)
             logger.info(
                 "year %d: reserve-margin backstop built %.0f MW gas_ct "
                 "(firm %.0f MW vs peak %.0f MW x %.3f margin)",
                 year,
                 adequacy_mw,
                 firm_mw,
-                peak_demand,
+                peak_demand_used,
                 1.0 + resolved_margin,
             )
 
@@ -2223,4 +2396,4 @@ def evolve_fleet(
     # gets ~36 thermal columns rather than one per physical unit.
     fleet = aggregate_fleet(fleet, n_bins=config.heat_rate_bin_count)
 
-    return fleet, loss_tracker, renewable_additions, retrofit_log
+    return fleet, loss_tracker, renewable_additions, retrofit_log, floor_retention_log
