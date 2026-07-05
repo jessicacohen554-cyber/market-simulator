@@ -3140,6 +3140,22 @@
       "flags": []
     },
     {
+      "param_id": "scenario.ercot_storage_as_duration_gate",
+      "display_name": "Ercot Storage As Duration Gate",
+      "value": false,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 1,
+      "source": "ERCOT endogenous storage AS duration gate: adds the published per-product ESR State-of-Charge durations (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h; ERCOT_AS_PRODUCT_DURATION_H) as an LP-linear gate sum_c dur_c*RS[c,z] <= sum SOC, so a short-duration battery cannot sell long-duration AS on its full power.",
+      "source_date": "2022-12",
+      "page_or_table": "ERCOT Nodal Protocols §3.17.3 (ESR State of Charge Requirements) & §8.1 (AS definitions); ESR SOC methodology (BPM Dec 2022; ERCOT Ancillary Services Study Final White Paper, Sept 2024)",
+      "url": "https://www.ercot.com/mktrules/nprotocols/library",
+      "notes": "Published SOC deployment durations, not fitted. Requires ercot_storage_as_endogenous. See docs/handoffs/ercot-storage-as-duration-gate-2026-07.md.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -3394,6 +3410,33 @@
       ]
     },
     {
+      "param_id": "carb_allowance_budget",
+      "display_name": "Carb Allowance Budget",
+      "value": {
+        "2023": 294.1,
+        "2024": 280.7,
+        "2025": 267.4,
+        "2027": 240.6,
+        "2028": 227.3,
+        "2029": 213.9,
+        "2030": 200.5,
+        "2031": 193.8
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "California GHG annual allowance budget (MMT CO2e/yr; 1 CA GHG allowance = 1 metric tonne CO2e). Declines per the Scoping Plan trajectory. This is the whole-economy CARB cap (electricity + industry + fuels), so a CAISO power-sector row against it is deeply slack. Source: CARB Cap-and-Trade Regulation, 17 CCR §95841 Table 6-2 (annual allowance budgets 2021-2031). 2022 and 2026 omitted (holdout quarantine).",
+      "source_date": "2021",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "carb_floor_escalation",
       "display_name": "Carb Floor Escalation",
       "value": 0.07,
@@ -3410,6 +3453,28 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "carb_floor_price",
+      "display_name": "Carb Floor Price",
+      "value": {
+        "2023": 22.21,
+        "2024": 24.04,
+        "2025": 25.94
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + CPI per §95911(c). Landed as the cited floor-band artifact; the CAISO forecast adder escalator lives in CARB_FLOOR_ESCALATION above. Source: CARB Annual Auction Reserve Price Notices, 2023-2025.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -5618,6 +5683,711 @@
       "tier": 2,
       "source": "Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the stability-limited export interfaces reported in NP6-86 \"SCED Shadow Prices and Binding Transmission Constraints\") onto the reduced 7-zone topology's transfer links. Each GTC maps to one or more (from_zone, to_zone) links with a share of the GTC limit. Shares follow iso_configs._ercot_config: the single aggregate WESTEX (West Texas export) GTC is one boundary that the reduced network splits into two parallel links, apportioned in the same ~8:3 ratio as the static ttc_mw values (7,300 / 2,700 of the ~10,000 MW measured limit-at-bind) — a rule-#14 misalignment reconciliation, documented there. PNHNDL (Panhandle export) and NE_LOB (Northeast Texas export lobe) map 1:1. N_TO_H is deliberately ABSENT: the single N_TO_H GTC is one of several parallel 345 kV North->Houston paths this reduction collapses into one link, so its limit alone would understate the interface (see iso_configs). Intra-zone GTCs (VALEXP, EASTEX, TRDWEL, MCCAMY, ...) have no representable link in this topology and are ignored by the crosswalk. Source: ERCOT NP6-86-CD archives via scripts/derive_ttc_limits.py; ERCOT \"The Use of GTCs in ERCOT\" (July 2020) for the GTC definitions.",
       "source_date": "2020",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_deliv_coef",
+      "display_name": "Ercot Rtolcap Fwd Deliv Coef",
+      "value": 0.8899,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Deliverability coefficient: fit to the measured RTOLCAP MW quantity (pooled 2023-2025 LS), centering the forward level (like G3 ASPLANNP433). Not a price.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_n_decile",
+      "display_name": "Ercot Rtolcap Fwd N Decile",
+      "value": 10,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_n_season",
+      "display_name": "Ercot Rtolcap Fwd N Season",
+      "value": 4,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--------------------------------------------------------------------------- ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A) --------------------------------------------------------------------------- Forward analogue of the measured ERCOT on-line responsive reserve-supply cap (scarcity.ercot_rtolcap_supply_cap_mw, which returns None for years with no measured ercot_<year>_ordc_reserves_hourly.parquet -> forecast years ran UNCAPPED). Derived by scripts/derive_ercot_rtolcap_forward.py from the committed CAMPD unit extracts + the measured RTOLCAP/RTOFFCAP MW QUANTITY series (never a price; honesty gate). RE-DERIVE ONLY on a source-data update (rule #23), never a residual. online_share_c = median over CAMPD of the class on-line headroom- realization fraction Sigma_online(eff_cap-gross)/installed_cap, conditioned on (season, net-load percentile decile); offline_share_c the OFF-line startable quick-start analogue for RTOFFCAP. Season 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); inner tuples are the 10 net-load deciles (low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_offline_deliv_coef",
+      "display_name": "Ercot Rtolcap Fwd Offline Deliv Coef",
+      "value": 0.7748,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Off-line deliverability coefficient: fit to the measured RTOFFCAP MW quantity (off-line startable quick-start capacity clears a smaller reserve fraction than the on-line fit). Not a price.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_offline_share.CT_CHP",
+      "display_name": "Ercot Rtolcap Fwd Offline Share / Ct Chp",
+      "value": [
+        [
+          0.6759,
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6302,
+          0.6302
+        ],
+        [
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6759,
+          0.6497,
+          0.6497
+        ],
+        [
+          0.5685,
+          0.5685,
+          0.5685,
+          0.5756,
+          0.5756,
+          0.5756,
+          0.5756,
+          0.5756,
+          0.5756,
+          0.5514
+        ],
+        [
+          0.6578,
+          0.6578,
+          0.6578,
+          0.6497,
+          0.6302,
+          0.6302,
+          0.6011,
+          0.5831,
+          0.5756,
+          0.5514
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_offline_share.CT_PEAKER",
+      "display_name": "Ercot Rtolcap Fwd Offline Share / Ct Peaker",
+      "value": [
+        [
+          0.9493,
+          0.9493,
+          0.9307,
+          0.9303,
+          0.9055,
+          0.8759,
+          0.8433,
+          0.7684,
+          0.6426,
+          0.5343
+        ],
+        [
+          0.9266,
+          0.9031,
+          0.8815,
+          0.8522,
+          0.7953,
+          0.7392,
+          0.6,
+          0.5641,
+          0.4546,
+          0.2869
+        ],
+        [
+          0.81,
+          0.7923,
+          0.8132,
+          0.8307,
+          0.8076,
+          0.7923,
+          0.7923,
+          0.7569,
+          0.64,
+          0.3676
+        ],
+        [
+          0.9256,
+          0.9031,
+          0.9031,
+          0.857,
+          0.8307,
+          0.7903,
+          0.7713,
+          0.7688,
+          0.6208,
+          0.3611
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.CC_CHP",
+      "display_name": "Ercot Rtolcap Fwd Online Share / Cc Chp",
+      "value": [
+        [
+          0.3,
+          0.2435,
+          0.2043,
+          0.1719,
+          0.148,
+          0.1311,
+          0.1148,
+          0.0979,
+          0.0906,
+          0.0675
+        ],
+        [
+          0.2817,
+          0.2435,
+          0.2173,
+          0.1989,
+          0.1814,
+          0.1728,
+          0.1592,
+          0.1553,
+          0.1364,
+          0.1069
+        ],
+        [
+          0.186,
+          0.172,
+          0.1482,
+          0.125,
+          0.1199,
+          0.107,
+          0.0963,
+          0.0774,
+          0.068,
+          0.0609
+        ],
+        [
+          0.2869,
+          0.2554,
+          0.2352,
+          0.2055,
+          0.1772,
+          0.1588,
+          0.1382,
+          0.0967,
+          0.0719,
+          0.0622
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.CC_REGULAR",
+      "display_name": "Ercot Rtolcap Fwd Online Share / Cc Regular",
+      "value": [
+        [
+          0.2377,
+          0.2455,
+          0.2395,
+          0.2318,
+          0.2118,
+          0.1871,
+          0.1612,
+          0.1444,
+          0.1366,
+          0.108
+        ],
+        [
+          0.2207,
+          0.2677,
+          0.2644,
+          0.2462,
+          0.2254,
+          0.2142,
+          0.2028,
+          0.1946,
+          0.1819,
+          0.1392
+        ],
+        [
+          0.2674,
+          0.297,
+          0.2736,
+          0.2266,
+          0.1972,
+          0.171,
+          0.141,
+          0.1168,
+          0.0941,
+          0.0716
+        ],
+        [
+          0.2526,
+          0.2568,
+          0.2544,
+          0.2342,
+          0.2041,
+          0.1846,
+          0.1654,
+          0.1436,
+          0.1106,
+          0.0758
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.COAL",
+      "display_name": "Ercot Rtolcap Fwd Online Share / Coal",
+      "value": [
+        [
+          0.6087,
+          0.5673,
+          0.5217,
+          0.4914,
+          0.4492,
+          0.3962,
+          0.3451,
+          0.2969,
+          0.2672,
+          0.1623
+        ],
+        [
+          0.59,
+          0.5421,
+          0.5146,
+          0.4685,
+          0.4163,
+          0.3816,
+          0.3569,
+          0.3401,
+          0.2811,
+          0.2345
+        ],
+        [
+          0.6055,
+          0.5418,
+          0.5257,
+          0.5132,
+          0.5045,
+          0.4611,
+          0.4092,
+          0.346,
+          0.2533,
+          0.1859
+        ],
+        [
+          0.5879,
+          0.5189,
+          0.5099,
+          0.4622,
+          0.4179,
+          0.3796,
+          0.3352,
+          0.2844,
+          0.2257,
+          0.157
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.CT_CHP",
+      "display_name": "Ercot Rtolcap Fwd Online Share / Ct Chp",
+      "value": [
+        [
+          0.0445,
+          0.0347,
+          0.033,
+          0.0263,
+          0.0247,
+          0.0205,
+          0.0233,
+          0.0171,
+          0.0162,
+          0.0392
+        ],
+        [
+          0.0506,
+          0.0537,
+          0.0695,
+          0.0755,
+          0.0731,
+          0.0795,
+          0.0837,
+          0.0823,
+          0.0815,
+          0.0628
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0108
+        ],
+        [
+          0.0328,
+          0.0352,
+          0.0445,
+          0.039,
+          0.0268,
+          0.0238,
+          0.0205,
+          0.02,
+          0.0187,
+          0.0152
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.CT_PEAKER",
+      "display_name": "Ercot Rtolcap Fwd Online Share / Ct Peaker",
+      "value": [
+        [
+          0.0137,
+          0.0141,
+          0.0217,
+          0.0204,
+          0.0315,
+          0.0419,
+          0.065,
+          0.1139,
+          0.1351,
+          0.147
+        ],
+        [
+          0.0327,
+          0.0447,
+          0.0504,
+          0.0616,
+          0.0971,
+          0.1063,
+          0.1549,
+          0.185,
+          0.24,
+          0.239
+        ],
+        [
+          0.0269,
+          0.0304,
+          0.0242,
+          0.0108,
+          0.0148,
+          0.017,
+          0.0222,
+          0.0345,
+          0.091,
+          0.1078
+        ],
+        [
+          0.0358,
+          0.0387,
+          0.0408,
+          0.0426,
+          0.0429,
+          0.051,
+          0.0479,
+          0.0444,
+          0.1172,
+          0.1291
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.ST_CHP",
+      "display_name": "Ercot Rtolcap Fwd Online Share / St Chp",
+      "value": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_online_share.ST_GAS",
+      "display_name": "Ercot Rtolcap Fwd Online Share / St Gas",
+      "value": [
+        [
+          0.0211,
+          0.0211,
+          0.0472,
+          0.0851,
+          0.1002,
+          0.1045,
+          0.1192,
+          0.1786,
+          0.2943,
+          0.3536
+        ],
+        [
+          0.1291,
+          0.1828,
+          0.2495,
+          0.2772,
+          0.3017,
+          0.3298,
+          0.3312,
+          0.3591,
+          0.3656,
+          0.3174
+        ],
+        [
+          0.1456,
+          0.2235,
+          0.3094,
+          0.3514,
+          0.4091,
+          0.4522,
+          0.4999,
+          0.5172,
+          0.448,
+          0.3125
+        ],
+        [
+          0.2351,
+          0.2659,
+          0.2879,
+          0.2967,
+          0.3575,
+          0.3883,
+          0.4042,
+          0.4458,
+          0.4345,
+          0.3385
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_rtolcap_fwd_storage_reserve_frac",
+      "display_name": "Ercot Rtolcap Fwd Storage Reserve Frac",
+      "value": 0.35,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Forward on-line storage responsive-reserve fraction of installed storage power (ERCOT observed AS-award / installed-storage ~0.35 across 2023-2025). FORECAST only; in backcast the storage term reads the measured storage-AS series (mode-aware, like the G4 load-resource credit).",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -11536,6 +12306,32 @@
       ]
     },
     {
+      "param_id": "rggi_state_co2_budget.RGGI",
+      "display_name": "Rggi State Co2 Budget / Rggi",
+      "value": {
+        "2023": 93000000.0,
+        "2024": 69000000.0,
+        "2025": 67000000.0,
+        "2027": 63200000.0,
+        "2028": 61400000.0,
+        "2029": 59600000.0,
+        "2030": 57900000.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI regional CO2 allowance budget (short tons/yr). Keyed by \"RGGI\" for the regional total; per-state budgets can be added under their postal codes once the RGGI per-state allowance-distribution table is intaken (until then a RGGI ISO's power-sector row uses the regional cap — an even looser over-bound, so still slack). 2023-2025 are the published regional cap; 2027-2030 project the 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured). Source: RGGI, Inc. regional cap trajectory (ICAP ETS profile); the 2023->2024 step reflects Virginia's 1 Jan 2024 exit. 2022/2026 omitted (quarantine).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.as_reserve_formula",
       "display_name": "As Reserve Formula",
       "value": false,
@@ -12051,7 +12847,7 @@
     {
       "param_id": "scenario.campd_bins_path",
       "display_name": "Campd Bins Path",
-      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/reference/custom-bin-assignments.csv",
+      "value": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -12146,7 +12942,7 @@
     {
       "param_id": "scenario.cc_capacity_reconcile_path",
       "display_name": "Cc Capacity Reconcile Path",
-      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -14949,20 +15745,23 @@
       ]
     },
     {
-      "param_id": "scenario.ercot_storage_as_duration_gate",
-      "display_name": "Ercot Storage As Duration Gate",
+      "param_id": "scenario.ercot_reserve_supply_forward",
+      "display_name": "Ercot Reserve Supply Forward",
       "value": false,
       "unit": "",
-      "domain": "Storage",
+      "domain": "Reliability",
       "tier": 1,
-      "source": "ERCOT endogenous storage AS duration gate: adds the published per-product ESR State-of-Charge durations (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h; ERCOT_AS_PRODUCT_DURATION_H) as an LP-linear gate sum_c dur_c*RS[c,z] <= sum SOC, so a short-duration battery cannot sell long-duration AS on its full power.",
-      "source_date": "2022-12",
-      "page_or_table": "ERCOT Nodal Protocols §3.17.3 (ESR State of Charge Requirements) & §8.1 (AS definitions); ESR SOC methodology (BPM Dec 2022; ERCOT Ancillary Services Study Final White Paper, Sept 2024)",
-      "url": "https://www.ercot.com/mktrules/nprotocols/library",
-      "notes": "Published SOC deployment durations, not fitted. Requires ercot_storage_as_endogenous. See docs/handoffs/ercot-storage-as-duration-gate-2026-07.md.",
+      "source": "ERCOT: source the RTOLCAP /",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
       "old_repo_location": "",
-      "last_verified": "2026-07-05",
-      "flags": []
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
     },
     {
       "param_id": "scenario.ercot_storage_as_endogenous",
@@ -15029,6 +15828,25 @@
       "domain": "Storage",
       "tier": 1,
       "source": "First weather year the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_thermal_as_endogenous",
+      "display_name": "Ercot Thermal As Endogenous",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT forward: the thermal",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -15738,6 +16556,44 @@
       ]
     },
     {
+      "param_id": "scenario.interchange_shape_export_pct",
+      "display_name": "Interchange Shape Export Pct",
+      "value": 90.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Percentile of the measured",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.interchange_shape_import_pct",
+      "display_name": "Interchange Shape Import Pct",
+      "value": 90.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Percentile of the measured",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.interchange_shaping",
       "display_name": "Interchange Shaping",
       "value": false,
@@ -15864,6 +16720,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.local_capacity_constraints",
+      "display_name": "Local Capacity Constraints",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "GATED, default-OFF local-",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -16971,7 +17846,7 @@
     {
       "param_id": "scenario.plant_emission_rates_path",
       "display_name": "Plant Emission Rates Path",
-      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/plant_emission_rates.parquet",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -16990,7 +17865,7 @@
     {
       "param_id": "scenario.plant_emission_rates_v2_path",
       "display_name": "Plant Emission Rates V2 Path",
-      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -17028,7 +17903,7 @@
     {
       "param_id": "scenario.plant_registry_path",
       "display_name": "Plant Registry Path",
-      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/reference/master-plant-registry.csv",
+      "value": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -17090,6 +17965,25 @@
       "domain": "Storage",
       "tier": 3,
       "source": "Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure O&M is < $1/MWh, but the fleet (e.g. Bath County) reserves much of its duty for regulation/reserves and follows pumping schedules the energy-only LP does not see; with no adder the LP arbitrages PS every day the spread clears RTE losses and generates ~2-3x the observed PS energy, shaving exactly the peaks the CT fleet actually served. This is the reduced-form opportunity cost of that reserve duty, calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ramp_limits",
+      "display_name": "Ramp Limits",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "GATED, default-OFF plant-group hourly ramp",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17947,6 +18841,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "short_ton_to_metric_tonne",
+      "display_name": "Short Ton To Metric Tonne",
+      "value": 0.90718474,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Short ton -> metric tonne. RGGI allowances are denominated in SHORT tons of CO2 (1 allowance = 1 short ton), but the model's internal emission-rate mass unit is the metric tonne (data/fleet.py: \"the model's internal emission-rate mass unit\"), so a RGGI budget must be converted before it becomes a mass-cap row RHS. 1 short ton = 907.18474 kg (NIST HB 44).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
