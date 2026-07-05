@@ -590,11 +590,26 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
     else:
         econ_steps = [("econ", econ_cap, econ_hr)]
 
+    # Peak band: mirrors bins_to_fleet — the measured ``peak_ladder`` splits
+    # the band into equal-capacity quantile rungs; otherwise one flat tranche.
+    ladder = offer.get("peak_ladder") if offer is not None else None
+    if ladder:
+        peak_steps = [
+            (
+                ("peak" if i == 0 else f"peak{i + 1}"),
+                peak_cap * float(share),
+                base_hr * float(mult),
+                False,
+            )
+            for i, (share, mult) in enumerate(ladder)
+        ]
+    else:
+        peak_steps = [("peak", peak_cap, peak_hr, False)]
     raw = [
         ("must-run", mustrun_cap, mustrun_hr, True),
         ("committed", committed_cap, committed_hr, False),
         *[(name, cap, hr, False) for name, cap, hr in econ_steps],
-        ("peak", peak_cap, peak_hr, False),
+        *peak_steps,
     ]
     bands: list[dict] = []
     cursor = 0.0
