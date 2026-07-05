@@ -345,18 +345,33 @@ dispatch, `compute_must_run_emissions()` reconstructs that generation and
 its CO2 for asset-level emissions trajectories:
 
 ```
-# Primary path — when metered generation is supplied:
-mr_gen_mwh  = max(0, total_gen_by_plant - grid_gen_by_plant)   # behind-the-meter portion
+# Measured-share mode (backcast) — when a metered class total is supplied:
+share       = btm_share_by_plant.get(plant, MR% / 100)   # measured host share, else bin MR%
+mr_gen_mwh  = max(0, total_gen_by_plant[plant] * share)
 mr_mw       = mr_gen_mwh / 8760
 
-# Fallback — only when no metered total is available:
-mr_mw       = nameplate * MR% / 100
-mr_gen_mwh  = mr_mw * 8760 * must_run_cf                        # must_run_cf default 0.85
+# Measured-CF fallback (forecast) — no metered total available:
+share       = btm_share_by_plant.get(plant, MR% / 100)   # measured chp-btm-share artifact, else bin MR%
+mr_mw       = nameplate * share
+cf          = class_cf_by_group.get(plant_group, must_run_cf)  # measured_class_cf, else 0.85
+mr_gen_mwh  = mr_mw * 8760 * cf
 
-mr_co2_tons = mr_gen_mwh * emission_rate
+mr_co2_tons = mr_gen_mwh * emission_rate    # measured_rate_by_plant when covered, else fuel-class default
 ```
 
-This applies to both `CC_CHP` and `CT_CHP` (non-coal must-run plants).
+Both modes prefer a measured input over a flat constant, falling back only
+when the plant is uncovered (`results/emissions.py::compute_must_run_emissions`):
+`btm_share_by_plant` is the per-plant host self-supply share — the backcast
+caller (`run_calibration_full.py::_btm_frame`) sizes it from
+`data.chp.chp_btm_pct` (sector-keyed default / per-plant override); the
+forecast caller (`runner.py::_chp_measured_co2_inputs`) instead sizes it from
+the measured `chp-btm-share` clean datatype
+(`data.chp.measured_btm_share_by_plant`,
+`(EIA-923 net class gen − CAMPD grid-net gen) / EIA-923 net`, pooled across
+history). `class_cf_by_group` is `measured_class_cf` — a gen-weighted
+op-hours utilization keyed off the CEMS steam-load signature
+(`steam_load_klbh_sum > 0`). This applies to `CC_CHP`, `CT_CHP` and `ST_CHP`
+(non-coal must-run plants).
 
 ## What this replaces
 
