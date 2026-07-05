@@ -1,25 +1,32 @@
-"""Weather-year forecast ensemble: many weather draws, one distribution.
+"""Forecast ensemble: many input draws, one probability distribution.
 
-A forecast pins a single representative historical weather year for its load
-and VRE capacity-factor shapes (``ScenarioConfig.weather_year``;
-``runner.run_scenario_iso`` loads demand and renewable profiles for that year
-and then evolves the fleet across 2026-2050). Pinning one shape understates the
-weather risk in any forecast headline number: a hot-summer draw and a
-mild-summer draw produce materially different prices, emissions and curtailment
-even with an identical fleet and fuel path.
+Two member axes share one runner. The **weather-year ensemble** (the original)
+runs the *same* forecast scenario once per historical weather year, varying only
+``ScenarioConfig.weather_year`` over :data:`WEATHER_YEAR_POOL`, to expose the
+weather risk a single pinned shape hides. The **multivariate uncertainty
+sampler** (PB-2, ``docs/handoffs/probability-bounds-plan-2026-07.md`` §2)
+generalises that member axis: each member is a correlated draw over gas price,
+load growth, tech cost, weather year, hydro year and policy bundle
+(:mod:`market_sim.uncertainty`), so the ensemble reports a genuine *parametric
+probability band* rather than a three-point weather range.
 
-This module runs the *same* forecast scenario once per weather draw — varying
-only ``weather_year`` over :data:`WEATHER_YEAR_POOL` — and reports the
-distribution of each annual metric across the draws. A weather draw is an
-admissible forecast input (it would regenerate for a forward year and responds
-to changed conditions), not a measured outcome fed back to the model, so this
-is methodological robustness, not a CLAUDE.md #10 violation. See
-``docs/forecast-methodology-gaps-2026-06.md`` G13.
+Every draw is an admissible forecast input -- it regenerates for a forward year
+and responds to changed conditions -- not a measured outcome fed back to the
+model, so this is methodological robustness, not a CLAUDE.md rule-11/13
+violation. See ``docs/forecast-methodology-gaps-2026-06.md`` G13.
 
 The members are independent solves with no cross-dependency, so they run in
-parallel (CLAUDE.md #16). Each member caches under its own ``cache_key`` (the
-config hash includes ``weather_year``), so re-running an ensemble re-uses any
-member already on disk.
+parallel (CLAUDE.md rule 16) across worker processes -- capped by default at
+``min(2, cpu_count - 1)`` because a forecast member on a per-plant ISO uses
+several GB (rule 12): more than two concurrent 25-year forecast solves OOMs.
+Each member caches under its own ``cache_key`` (the config hash includes every
+sampled field), so re-running an ensemble re-uses any member already on disk and
+an interrupted batch resumes for free.
+
+The bands (§4.1 ``bands.parquet``) use numpy's Hyndman-Fan type-7 quantile with
+a bootstrap CI and the member count attached to every published quantile
+(§2.4), replacing the legacy three-point ``ddof=0`` distribution -- which is
+kept only for the backwards-compatible weather-year JSON path.
 """
 
 from __future__ import annotations
@@ -32,22 +39,38 @@ from multiprocessing import cpu_count
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import END_YEAR, START_YEAR, WEATHER_YEAR_POOL
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
 from market_sim.results.export import _summarize_year
+from market_sim.uncertainty import (
+    DrawSet,
+    UncertaintySpec,
+    draw_to_config,
+    sample_draws,
+)
 
 logger = logging.getLogger(__name__)
 
 # Scalar per-year metrics from ``_summarize_year`` to build a distribution over.
+# ``emissions_mt`` leads: it is the headline the probability band wraps (§4.1).
 _SCALAR_METRICS: tuple[str, ...] = (
+    "emissions_mt",
     "avg_price",
     "peak_price",
-    "emissions_mt",
     "curtailment_twh",
     "storage_cycles",
 )
+
+# Published band quantiles (§2.4). PB-2 emits the parametric layer only; the
+# structural prior (parametric_plus_structural) and scenario envelope are
+# PB-3/PB-0.
+_BAND_QUANTILES: tuple[float, ...] = (0.1, 0.5, 0.9)
+_PARAMETRIC_LAYER: str = "parametric"
+# Default worker cap for forecast members (rule 12); see the module docstring.
+_MAX_FORECAST_WORKERS: int = 2
 
 
 def weather_ensemble_configs(
@@ -88,44 +111,49 @@ def weather_ensemble_configs(
     return {y: base_config.with_overrides(weather_year=y) for y in sorted(years)}
 
 
-def run_weather_ensemble(
-    base_config: ScenarioConfig,
-    iso: str | None = None,
-    weather_years: list[int] | None = None,
-    workers: int | None = None,
-) -> dict[int, str]:
-    """Run one forecast per weather draw and return each member's cache key.
+def _default_workers(workers: int | None) -> int:
+    """Resolve the worker count, capping the default at two (rule 12).
 
-    The members are independent and run in parallel across worker processes
-    (CLAUDE.md #16). A member whose result is already cached is loaded inside
+    A forecast member is a 25-year sequential solve using several GB on a
+    per-plant ISO, so the ensemble default is ``min(2, cpu_count - 1)`` (never
+    below 1) -- more than two concurrent members OOMs. An explicit ``workers``
+    is honoured as given (the caller owns that risk).
+    """
+    if workers is not None:
+        return workers
+    return max(1, min(_MAX_FORECAST_WORKERS, cpu_count() - 1))
+
+
+def _run_configs(configs: dict, iso: str, workers: int | None) -> dict:
+    """Run every ``(config, iso)`` member and return ``{member_id: cache_key}``.
+
+    Shared core of the weather-year and sampler ensembles: members are
+    independent and run in parallel across worker processes (rule 16), or
+    in-process when ``workers == 1``. A member already cached is loaded inside
     ``run_scenario_iso`` and not re-solved.
 
     Args:
-        base_config: The forecast scenario to run under every weather draw.
-        iso: ISO identifier; defaults to ``base_config.iso``.
-        weather_years: Weather years to draw over (see
-            :func:`weather_ensemble_configs`).
-        workers: Worker processes. Defaults to ``cpu_count - 1``; ``1`` runs
-            the members in-process with no subprocess overhead.
+        configs: Map of member id (weather-year int or draw-id str) to its
+            :class:`ScenarioConfig`.
+        iso: ISO identifier all members run for.
+        workers: Worker processes; see :func:`_default_workers` for the default.
 
     Returns:
-        A dict mapping each weather year to the ``cache_key`` of its run.
+        A dict mapping each member id to the ``cache_key`` of its run, in the
+        input order.
     """
     # Local import avoids a module-load cycle: runner imports this module for
     # its CLI subcommand, and this calls back into runner only at run time.
     from market_sim.runner import _run_pair
 
-    iso = (iso or base_config.iso).upper()
-    configs = weather_ensemble_configs(base_config, weather_years)
-    pairs = [(config, iso) for config in configs.values()]
-
-    if workers is None:
-        workers = max(1, cpu_count() - 1)
+    workers = _default_workers(workers)
+    member_ids = list(configs)
+    pairs = [(configs[m], iso) for m in member_ids]
 
     logger.info(
-        "run_weather_ensemble start: iso=%s weather_years=%s workers=%d",
+        "ensemble run start: iso=%s members=%d workers=%d",
         iso,
-        list(configs),
+        len(pairs),
         workers,
     )
 
@@ -135,7 +163,90 @@ def run_weather_ensemble(
         with ProcessPoolExecutor(max_workers=workers) as executor:
             keys = list(executor.map(_run_pair, pairs))
 
-    return dict(zip(configs.keys(), keys))
+    return dict(zip(member_ids, keys))
+
+
+def run_weather_ensemble(
+    base_config: ScenarioConfig,
+    iso: str | None = None,
+    weather_years: list[int] | None = None,
+    workers: int | None = None,
+) -> dict[int, str]:
+    """Run one forecast per weather draw and return each member's cache key.
+
+    A thin backwards-compatible wrapper over :func:`_run_configs`: the member
+    axis is the weather year and the returned keys are keyed by weather-year int
+    (the sampler path, :func:`run_ensemble`, keys by draw-id string instead).
+
+    Args:
+        base_config: The forecast scenario to run under every weather draw.
+        iso: ISO identifier; defaults to ``base_config.iso``.
+        weather_years: Weather years to draw over (see
+            :func:`weather_ensemble_configs`).
+        workers: Worker processes. Defaults to ``min(2, cpu_count - 1)`` (rule
+            12); ``1`` runs the members in-process with no subprocess overhead.
+
+    Returns:
+        A dict mapping each weather year to the ``cache_key`` of its run.
+    """
+    iso = (iso or base_config.iso).upper()
+    configs = weather_ensemble_configs(base_config, weather_years)
+    return _run_configs(configs, iso, workers)
+
+
+def sample_ensemble_configs(
+    base_config: ScenarioConfig, spec: UncertaintySpec
+) -> tuple[dict[str, ScenarioConfig], DrawSet]:
+    """Expand a base forecast config into one config per sampled draw (§2.5).
+
+    Draws ``spec.n`` correlated members (:func:`sample_draws`) and maps each to a
+    :class:`ScenarioConfig` via the PB-1 levers (:func:`draw_to_config`). The
+    :class:`DrawSet` is returned alongside so its sampler metadata (seed, LHS
+    matrix, correlation matrices) can be written to ``ensemble_meta.json``.
+
+    Args:
+        base_config: The forecast scenario every draw perturbs.
+        spec: The uncertainty specification.
+
+    Returns:
+        A ``(configs, drawset)`` pair, where ``configs`` maps each draw-id to
+        its config in draw order.
+
+    Raises:
+        ValueError: When ``base_config`` is not in forecast mode (raised by
+            :func:`draw_to_config`).
+    """
+    drawset = sample_draws(spec)
+    configs = {d.draw_id: draw_to_config(base_config, d) for d in drawset}
+    return configs, drawset
+
+
+def run_ensemble(
+    configs: dict[str, ScenarioConfig],
+    iso: str | None = None,
+    workers: int | None = None,
+) -> dict[str, str]:
+    """Run every sampled member and return each draw's cache key (§2.5).
+
+    The sampler counterpart of :func:`run_weather_ensemble`: members are keyed
+    by draw-id string and run through the shared :func:`_run_configs` core.
+
+    Args:
+        configs: Map of draw-id to its :class:`ScenarioConfig` (from
+            :func:`sample_ensemble_configs`).
+        iso: ISO identifier; defaults to the first config's ISO.
+        workers: Worker processes. Defaults to ``min(2, cpu_count - 1)``.
+
+    Returns:
+        A dict mapping each draw-id to the ``cache_key`` of its run.
+
+    Raises:
+        ValueError: When ``configs`` is empty.
+    """
+    if not configs:
+        raise ValueError("configs must be non-empty")
+    iso = (iso or next(iter(configs.values())).iso).upper()
+    return _run_configs(configs, iso, workers)
 
 
 def _distribution(values: list[float]) -> dict[str, float]:
@@ -279,3 +390,324 @@ def export_ensemble_json(
         out_path,
     )
     return out_path
+
+
+# ---------------------------------------------------------------------------
+# Multivariate-sampler ensemble (PB-2): metrics, bands, and output surface.
+# The §4.1 output schema is the contract PB-3 (structural prior) and PB-4
+# (fan-chart page) build against, so the column sets below are frozen.
+# ---------------------------------------------------------------------------
+
+_FUEL_METRIC_PREFIX: str = "generation_twh:"
+
+
+def _member_metric_values(
+    members: dict[str, str], iso: str
+) -> dict[int, dict[str, list[float]]]:
+    """Load every sampled member and index metric values by year then metric.
+
+    Args:
+        members: Map of draw-id to ``cache_key`` (from :func:`run_ensemble`).
+        iso: ISO identifier the members were run for.
+
+    Returns:
+        ``values[year][metric]`` = list of that metric's value across members,
+        in ``members`` iteration (draw) order. Metrics are the scalar
+        :data:`_SCALAR_METRICS` plus one ``generation_twh:<fuel>`` per fuel; a
+        fuel absent from a member contributes 0.0 TWh for that draw.
+
+    Raises:
+        FileNotFoundError: When a member's cached result is missing.
+    """
+    # Per (draw, year) summary, then transpose to year -> metric -> [values].
+    summaries: dict[str, dict[int, dict]] = {}
+    fuels: set[str] = set()
+    for draw_id, key in members.items():
+        by_year: dict[int, dict] = {}
+        for year in range(START_YEAR, END_YEAR + 1):
+            result = cache.load_result(iso, key, year)
+            context = cache.load_fleet_context(iso, key, year)
+            summary = _summarize_year(result, context)
+            by_year[year] = summary
+            fuels.update(summary.get("generation_twh", {}))
+        summaries[draw_id] = by_year
+
+    metrics = list(_SCALAR_METRICS) + [
+        f"{_FUEL_METRIC_PREFIX}{fuel}" for fuel in sorted(fuels)
+    ]
+    values: dict[int, dict[str, list[float]]] = {}
+    for year in range(START_YEAR, END_YEAR + 1):
+        per_metric: dict[str, list[float]] = {m: [] for m in metrics}
+        for draw_id in members:
+            summary = summaries[draw_id][year]
+            for metric in _SCALAR_METRICS:
+                per_metric[metric].append(float(summary.get(metric, 0.0)))
+            gen = summary.get("generation_twh", {})
+            for fuel in sorted(fuels):
+                per_metric[f"{_FUEL_METRIC_PREFIX}{fuel}"].append(
+                    float(gen.get(fuel, 0.0))
+                )
+        values[year] = per_metric
+    return values
+
+
+def _hf7_quantile(values: np.ndarray, q: float) -> float:
+    """Return the ``q`` quantile via numpy's Hyndman-Fan type-7 estimator.
+
+    Type 7 is ``numpy.quantile``'s default (``method="linear"``): linear
+    interpolation between the two order statistics bracketing ``q``. This is the
+    estimator the audit prescribed to replace the old three-point/``ddof=0``
+    percentile logic (plan §2.4); ``n`` is always reported alongside so the
+    sampling noise in the estimate is visible.
+    """
+    return float(np.quantile(values, q, method="linear"))
+
+
+def _bootstrap_ci(
+    values: np.ndarray, q: float, rng: np.random.Generator, n_boot: int, ci: float
+) -> tuple[float, float]:
+    """Return a bootstrap confidence interval for the ``q`` quantile.
+
+    Resamples the members with replacement ``n_boot`` times, recomputes the
+    type-7 quantile on each resample, and returns the central ``ci`` interval of
+    that bootstrap distribution -- the sampling-noise band §2.4 attaches to every
+    published quantile. Degenerate (n < 2) collapses to the point estimate.
+
+    Args:
+        values: Member values for one (year, metric).
+        q: Quantile in ``[0, 1]``.
+        rng: Seeded generator (deterministic given the spec seed).
+        n_boot: Bootstrap resample count.
+        ci: Central interval width, e.g. 0.9 for a 90% CI.
+
+    Returns:
+        The ``(lo, hi)`` bounds of the CI.
+    """
+    if values.size < 2:
+        point = _hf7_quantile(values, q) if values.size else float("nan")
+        return point, point
+    idx = rng.integers(0, values.size, size=(n_boot, values.size))
+    boot = np.quantile(values[idx], q, method="linear", axis=1)
+    tail = (1.0 - ci) / 2.0
+    return float(np.quantile(boot, tail)), float(np.quantile(boot, 1.0 - tail))
+
+
+def compute_bands(
+    values: dict[int, dict[str, list[float]]],
+    seed: int,
+    quantiles: tuple[float, ...] = _BAND_QUANTILES,
+    n_boot: int = 1000,
+    ci: float = 0.9,
+) -> list[dict]:
+    """Compute the parametric-layer band rows from per-member metric values.
+
+    For every (year, metric) and every quantile in ``quantiles`` produces one
+    row with the type-7 point estimate, the member count ``n``, and a bootstrap
+    CI (§2.4/§4.1). Only the ``parametric`` layer is produced here; the
+    ``scenario_envelope`` (PB-0) and ``parametric_plus_structural`` (PB-3)
+    layers are added by their own stages against this same schema.
+
+    Args:
+        values: ``values[year][metric]`` -> member values (from
+            :func:`_member_metric_values`).
+        seed: Bootstrap seed; deterministic given the sampler spec's seed.
+        quantiles: Quantiles to publish.
+        n_boot: Bootstrap resample count per quantile.
+        ci: Bootstrap CI width.
+
+    Returns:
+        Band rows with keys ``year, metric, layer, quantile, value, n,
+        bootstrap_lo, bootstrap_hi`` -- in a deterministic (year, metric,
+        quantile) order so the bootstrap draws are reproducible.
+    """
+    rng = np.random.default_rng(seed)
+    rows: list[dict] = []
+    for year in sorted(values):
+        for metric in values[year]:
+            arr = np.asarray(values[year][metric], dtype=float)
+            for q in quantiles:
+                lo, hi = _bootstrap_ci(arr, q, rng, n_boot, ci)
+                rows.append(
+                    {
+                        "year": year,
+                        "metric": metric,
+                        "layer": _PARAMETRIC_LAYER,
+                        "quantile": q,
+                        "value": _hf7_quantile(arr, q),
+                        "n": int(arr.size),
+                        "bootstrap_lo": lo,
+                        "bootstrap_hi": hi,
+                    }
+                )
+    return rows
+
+
+def _draw_rows(
+    drawset: DrawSet,
+    configs: dict[str, ScenarioConfig],
+    members: dict[str, str],
+) -> list[dict]:
+    """Build the ``draws.parquet`` rows: sampled inputs + cache key + config hash.
+
+    ``config_hash`` is the draw config's own hash (pre policy-bundle resolution);
+    ``cache_key`` is the member's actual key returned by the runner (post
+    resolution and ISO defaults) -- the two can differ, so both are recorded
+    (§4.1).
+    """
+    rows: list[dict] = []
+    for draw in drawset:
+        rows.append(
+            {
+                "draw_id": draw.draw_id,
+                "gas_price_factor": draw.gas_price_factor,
+                "demand_growth_percentile": draw.demand_growth_percentile,
+                "tech_cost_percentile": draw.tech_cost_percentile,
+                "weather_year": draw.weather_year,
+                "hydro_year": draw.hydro_year,
+                "policy_bundle": draw.policy_bundle,
+                "gas_z": draw.gas_z,
+                "cache_key": members[draw.draw_id],
+                "config_hash": configs[draw.draw_id].cache_key(),
+            }
+        )
+    return rows
+
+
+def _metric_rows(
+    values: dict[int, dict[str, list[float]]], members: dict[str, str]
+) -> list[dict]:
+    """Build the long ``metrics.parquet`` rows (draw_id, year, metric, value).
+
+    Emits ``emissions_mt`` first for each (draw, year) -- it is the headline the
+    band wraps (§4.1) -- then the remaining scalars and per-fuel generation.
+    """
+    draw_ids = list(members)
+    rows: list[dict] = []
+    for year in sorted(values):
+        per_metric = values[year]
+        for pos, draw_id in enumerate(draw_ids):
+            for metric in per_metric:  # insertion order: emissions_mt leads
+                rows.append(
+                    {
+                        "draw_id": draw_id,
+                        "year": year,
+                        "metric": metric,
+                        "value": per_metric[metric][pos],
+                    }
+                )
+    return rows
+
+
+def export_sampler_ensemble(
+    base_config: ScenarioConfig,
+    spec: UncertaintySpec,
+    iso: str,
+    members: dict[str, str],
+    drawset: DrawSet,
+    configs: dict[str, ScenarioConfig],
+    out_dir,
+) -> dict[str, Path]:
+    """Write the §4.1 output surface for a sampler ensemble.
+
+    Emits, into ``out_dir``: ``draws.parquet`` (one row per draw: sampled
+    inputs, cache key, config hash), ``metrics.parquet`` (long: draw_id, year,
+    metric, value), ``bands.parquet`` (parametric-layer quantiles with n and
+    bootstrap CI), and ``ensemble_meta.json`` (the spec, sampler metadata,
+    member map, estimator note and dispatch-conditional label). The parquet
+    schemas are the frozen PB-3/PB-4 contract.
+
+    Args:
+        base_config: The shared forecast base the draws perturb.
+        spec: The uncertainty specification.
+        iso: ISO identifier.
+        members: Map of draw-id to ``cache_key`` (from :func:`run_ensemble`).
+        drawset: The draws (carrying sampler metadata).
+        configs: Map of draw-id to its :class:`ScenarioConfig`.
+        out_dir: Directory to write the four files into; created if absent.
+
+    Returns:
+        A dict mapping each artifact name to its written path.
+    """
+    iso = iso.upper()
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    values = _member_metric_values(members, iso)
+    draws_path = out_dir / "draws.parquet"
+    metrics_path = out_dir / "metrics.parquet"
+    bands_path = out_dir / "bands.parquet"
+    meta_path = out_dir / "ensemble_meta.json"
+
+    pd.DataFrame(_draw_rows(drawset, configs, members)).to_parquet(
+        draws_path, index=False
+    )
+    pd.DataFrame(_metric_rows(values, members)).to_parquet(metrics_path, index=False)
+    pd.DataFrame(compute_bands(values, seed=spec.seed)).to_parquet(
+        bands_path, index=False
+    )
+
+    meta = {
+        "iso": iso,
+        "base_config": asdict(base_config),
+        "spec": spec._canonical(),
+        "sampler": drawset.meta.as_dict(),
+        "members": dict(members),
+        "band_quantiles": list(_BAND_QUANTILES),
+        "layers_present": [_PARAMETRIC_LAYER],
+        "quantile_estimator": (
+            "numpy Hyndman-Fan type 7 (method='linear'); n reported per quantile; "
+            "bootstrap 90% CI, 1000 resamples (plan §2.4)"
+        ),
+        "label": (
+            "parametric probability band (PB-2); dispatch-conditional -- excludes "
+            "the structural-error prior (PB-3) and the deterministic scenario "
+            "envelope (PB-0), and excludes fleet-path structural error until PP-0.3"
+        ),
+    }
+    meta_path.write_text(json.dumps(meta, separators=(",", ":"), default=str))
+
+    logger.info(
+        "exported sampler ensemble for %s (%d draws) to %s",
+        iso,
+        len(members),
+        out_dir,
+    )
+    return {
+        "draws": draws_path,
+        "metrics": metrics_path,
+        "bands": bands_path,
+        "meta": meta_path,
+    }
+
+
+def run_sampler_ensemble(
+    base_config: ScenarioConfig,
+    spec: UncertaintySpec,
+    iso: str | None = None,
+    workers: int | None = None,
+    out_dir=None,
+) -> dict[str, str]:
+    """Sample, solve and export a multivariate-uncertainty ensemble (§2.5).
+
+    End-to-end driver: expand ``spec`` into per-draw configs, run every member
+    (cached members are re-used), and -- when ``out_dir`` is given -- write the
+    §4.1 output surface.
+
+    Args:
+        base_config: The forecast scenario every draw perturbs.
+        spec: The uncertainty specification.
+        iso: ISO identifier; defaults to ``base_config.iso``.
+        workers: Worker processes. Defaults to ``min(2, cpu_count - 1)``.
+        out_dir: Directory for the output surface; skipped when ``None``.
+
+    Returns:
+        A dict mapping each draw-id to the ``cache_key`` of its run.
+    """
+    iso = (iso or base_config.iso).upper()
+    configs, drawset = sample_ensemble_configs(base_config, spec)
+    members = run_ensemble(configs, iso, workers)
+    if out_dir is not None:
+        export_sampler_ensemble(
+            base_config, spec, iso, members, drawset, configs, out_dir
+        )
+    return members
