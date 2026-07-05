@@ -637,7 +637,8 @@ For year in 2026..2050:
     1b. Apply CONFIRMED exits (binding public instruments — consent decree,
         statute, RTO deactivation acceptance, regulatory order, RMR end; any
         fuel; bypasses the reliability floor). GATED `confirmed_exits_enabled`
-        (default off), forecast-mode only. The ONLY exogenous fossil exit channel.
+        (default on, flipped 2026-07-05 — docs/handoffs/confirmed-retirement-plan-2026-07.md
+        §7), forecast-mode only. The ONLY exogenous fossil exit channel.
     2. Apply ANNOUNCED retirements (EIA-860 planned date) — fossil is a default
        no-op (deferred to the economic screen, step 3); NON-FOSSIL
        (nuclear/hydro/renewables/storage) honored only within the EIA-860 data
