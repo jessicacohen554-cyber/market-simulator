@@ -2707,6 +2707,61 @@ WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
 
 
 # ---------------------------------------------------------------------------
+# Structural-error prior (PB-3, probability-bounds program)
+# ---------------------------------------------------------------------------
+# The published emissions band convolves the parametric input band (PB-2) with a
+# prior over the model's own dispatch-skill error, fit from the committed D-7
+# statistical-mode probes (docs/statistical-mode-results-2026-07.md;
+# docs/handoffs/probability-bounds-plan-2026-07.md §3). Statistical mode strips
+# every measured backcast overlay but keeps realized annual gas/load/weather, so
+# its emissions error is *model error given true inputs* -- exactly the term that
+# convolves with the input uncertainty without double-counting. These are
+# post-processing parameters (they touch no solve), fit only on the backcast
+# years below and echoed into ensemble_meta.json (rule 5, rule 24).
+
+# Backcast years the structural prior is fit on. 2022 and H1-2026 stay under full
+# quarantine (CLAUDE.md rule 22) -- the prior is re-fit against them exactly once,
+# at the sanctioned out-of-time scoring moment, never before.
+STRUCTURAL_PRIOR_FIT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+# Student-t degrees of freedom for the per-ISO structural-error distribution
+# (plan §3.2). nu=2 gives fat tails that, together with the small-sample scale
+# inflation below, keep the prior *wider* than the plug-in normal -- the honest
+# reading when each ISO's bias and noise are estimated from only three years.
+STRUCTURAL_PRIOR_STUDENT_T_NU: float = 2.0
+
+# Structural draws per parametric draw in the log-space Monte-Carlo product
+# (plan §3.3): each of the n parametric members is paired with K independent
+# epsilon draws to build the n*K published-quantile sample.
+STRUCTURAL_PRIOR_CONVOLUTION_K: int = 25
+
+# Horizon-widening variance multiplier lambda(h), growing with years-out to cover
+# fleet-evolution (capacity-path) error. UNMEASURED until the PP-0.3 capacity
+# hindcast supplies a number (plan §3.4 item 1); pinned to 0.0, which makes every
+# published band "dispatch-conditional -- excludes fleet-path structural error".
+# This is a placeholder awaiting measurement, never a tuned value (rule 1).
+STRUCTURAL_PRIOR_HORIZON_LAMBDA: float = 0.0
+
+# Version tag stamped into every fitted prior artifact / ensemble_meta.json so a
+# band's structural layer is traceable to the fit that produced it (rule 24).
+STRUCTURAL_PRIOR_VERSION: str = "pb3-statmode-d7-2026-07"
+
+# Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids
+# (frontend/data/backcast/runs/<id>.js supply the per-year model CO2;
+# frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen
+# here so the measured, reproducible source of the prior is auditable and
+# re-derives only when those probes update (rule 23), never against a residual.
+STATMODE_PROBE_RUNS: dict[str, str] = {
+    "ERCOT": "2026-07-04-statmode-d7-probe-ercot32",
+    "CAISO": "2026-07-03-caiso-statmode-d-7",
+    "PJM": "2026-07-03-pjm-statmode-d-7",
+    "NYISO": "2026-07-03-nyiso-statmode-d-7",
+    "NEISO": "2026-07-03-neiso-statmode-d-7",
+    "MISO": "2026-07-03-miso-statmode-d-7",
+}
+
+
+# ---------------------------------------------------------------------------
 # ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A)
 # ---------------------------------------------------------------------------
 # Forward analogue of the measured ERCOT on-line responsive reserve-supply cap

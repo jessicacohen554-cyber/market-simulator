@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-05 (PB-3 — structural-error prior + published emissions band)
+
+**Post-processing only — no solves, no keeper/registry changes.** Landed on
+`claude/pb3-structural-prior-2026-wave5` per
+`docs/handoffs/probability-bounds-prompts-2026-07.md` PB-3 / plan §3. New
+`src/market_sim/structural_prior.py` folds the model's own dispatch-skill error
+into the emissions band: `fit_prior` reads `eps = ln(model/actual)` CO2 for
+2023–2025 straight off the committed D-7 statistical-mode probes
+(`STATMODE_PROBE_RUNS`; model from `frontend/data/backcast/runs/<id>.js`, actual
+from `frontend/data/backcast/bench/<ISO>/<y>.json.gz`) — a measured, reproducible
+source, never tuned to a residual (rules 1/13/24). Per-ISO bias `b_i`, noise
+pooled across ISOs, carried as `Student-t(nu=2)` with the `(1 + 1/n)` small-sample
+inflation so the prior is strictly wider than the plug-in normal. `convolve`
+builds the `parametric_plus_structural` band (log-space `emissions·exp(eps)`,
+K=25, P5–P95); the parametric P50 point forecast is never recentered (the
+structural layer is written alongside, not over, it). Horizon term `lambda(h)=0`
+(UNMEASURED) keeps every band labelled **dispatch-conditional** until PP-0.3.
+`ensemble.export_sampler_ensemble(..., prior=…)` / `bands_from_metrics` and
+`market-sim ensemble --structural-prior` wire it in; only 2023–2025 are ever read
+(rule 22). New constants (`STRUCTURAL_PRIOR_*`), `paths.FRONTEND_BACKCAST_DIR`,
+and methodology note `docs/probabilistic-emissions-methodology.md` (assumptions
+A-1…A-8 + the §3.4 coverage gaps).
+
 ## 2026-07-05 (orchestrator-unification Stage 1 — pipeline typing scaffold)
 
 **Typing/scaffolding only — no solved number changes.** Landed on
