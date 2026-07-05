@@ -2,11 +2,13 @@
 
 CAISO has no RTO deactivation regime, so the binding instruments are state
 orders: SWRCB once-through-cooling (OTC) compliance dates and CPUC/CEC decisions
-(``statute`` / ``regulatory_order``), e.g. SB 846's Diablo Canyon schedule. The
-OTC amendment history is the worked ``superseded`` example (a compliance date
-extended by a later board action). Public source to re-query: the SWRCB OTC
-compliance-schedule table and CPUC/CEC dockets. The registry CSV lands as DATA
-NEEDED until the OTC/Diablo rows are itemized and verified against current dates.
+(``statute`` / ``regulatory_order``), e.g. SB 846's Diablo Canyon schedule.
+Diablo Canyon's SB 846 supersession of its earlier 2016-settlement retirement
+date is the worked ``superseded`` example (a compliance date extended by a
+later legislative/regulatory action). Public source to re-query: the SWRCB OTC
+compliance-schedule table and CPUC/CEC dockets. Seeded 2026-07-05: AES
+Alamitos 3-5, AES Huntington Beach 2, Ormond Beach 1-2 (OTC), Diablo Canyon 1-2
+(SB 846) — see ``data/raw/confirmed-retirements/caiso.csv``.
 """
 
 from __future__ import annotations
