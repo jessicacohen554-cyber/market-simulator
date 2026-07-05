@@ -10,6 +10,7 @@ and runs them in parallel.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import time
@@ -573,7 +574,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # capacity evolution aligned with hourly dispatch fuel costs.
             gas_price_year = resolve_annual_gas_price(config, driver_year)
             carbon_price_year = resolve_carbon_price(config, driver_year)
-            fleet, loss_tracker, renewable_additions, retrofit_log = evolve_fleet(
+            (
+                fleet,
+                loss_tracker,
+                renewable_additions,
+                retrofit_log,
+                floor_retention_log,
+            ) = evolve_fleet(
                 fleet,
                 prior_results,
                 year,
@@ -587,6 +594,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 events=evo_events,
                 confirmed_exits=confirmed_exits,
             )
+            # Persist the reliability floor's attribution log next to the
+            # per-year results parquet (rule 20 analogue: floor-retained MW
+            # must be measurable per run, not argued). Written every evolved
+            # year — an empty list is the affirmative "floor did not bind".
+            floor_log_path = (
+                get_cache_path(iso, cache_key, year).parent
+                / f"year_{year}_floor_retentions.json"
+            )
+            floor_log_path.parent.mkdir(parents=True, exist_ok=True)
+            floor_log_path.write_text(json.dumps(floor_retention_log, indent=1))
             if retrofit_log:
                 avg_savings = sum(
                     r["annual_net_savings_per_mw"] for r in retrofit_log

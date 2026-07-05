@@ -232,8 +232,11 @@ class ScenarioConfig:
     retirement_fom_multiplier_oil: float = 1.0
     retirement_fom_multiplier_gas_cc_ccs: float = 1.0
     retirement_fom_multiplier_nuclear: float = 1.0
-    retirement_reserve_margin: float = 0.15  # 15% reserve margin over peak net demand
-    # Don't retire thermal below (peak_demand - firm_clean) * (1 + reserve_margin)
+    # (retirement_reserve_margin was DELETED, not zeroed — rule 26. The
+    # retirement reliability floor now shares the adequacy backstop's margin:
+    # constants.PLANNING_RESERVE_MARGIN_BY_ISO, overridable only through
+    # planning_reserve_margin_override below. One requirement, two verbs —
+    # capacity-economics plan 2026-07 §3.2.)
     fixed_om_gas_cc: float = 12.0  # $/kW-yr
     fixed_om_gas_ct: float = 8.0
     fixed_om_gas_st: float = 35.0  # legacy gas steam (boiler/ST) going-forward fixed
@@ -671,6 +674,15 @@ class ScenarioConfig:
     # registry. 13.75% is ERCOT's economically-optimal reserve margin
     # (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO uses its
     # own installed-reserve-margin target from the registry.
+    planning_reserve_margin_override: float | None = None  # Sensitivity lever:
+    # when set, replaces the per-ISO PLANNING_RESERVE_MARGIN_BY_ISO registry
+    # value in BOTH consumers of the planning reserve margin — the retirement
+    # reliability floor and the reserve-margin build backstop (one requirement,
+    # two verbs; capacity-economics plan 2026-07 §3.2). None (default) resolves
+    # the ISO's published PRM from constants.py (Brattle/Astrape ERCOT 2022,
+    # CPUC RA 15%, PJM IRM, MISO PRMR, NYSRC IRM, ISO-NE ICR-derived — see the
+    # registry's per-ISO citations). Registered tornado channel for the
+    # reserve-margin band (rule 24); never fitted to a residual.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -3769,7 +3781,6 @@ TIER_TAGS: dict[str, int] = {
     "retirement_fom_multiplier_oil": 2,
     "retirement_fom_multiplier_gas_cc_ccs": 2,
     "retirement_fom_multiplier_nuclear": 2,
-    "retirement_reserve_margin": 2,
     "fixed_om_gas_cc": 2,
     "fixed_om_gas_ct": 2,
     "fixed_om_gas_st": 2,
@@ -3925,6 +3936,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
+    "planning_reserve_margin_override": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
