@@ -2276,17 +2276,33 @@ CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
 # carries NYISO locational-minimum-installed-capacity (LMIC) / local-reliability
 # rules that keep its own gas-steam + peaker fleet running rather than importing
 # the full cable rating of cheap NYC gas. The economic LP under-runs the LI
-# fleet (model 3.7 vs EIA-923 8.52 TWh, 2023). The fraction is anchored on the
-# 2023 realized LI self-supply share (8.52 TWh gen / ~17.6 TWh load = 0.48),
-# which is what the LMIC requirement enforces — a load-scaling, forward-
-# reproducible rule, NOT a pin to measured generation (CLAUDE.md rule #12). Set
-# a touch below the realized share so the floor never over-forces — residual-
-# identified, forecast-risk (the magnitude tracks the 2023 outcome; open
-# root-cause item for the DOF ledger, S5). NYC (zone J) is deliberately ABSENT:
-# the diagnostic shows NYC OVER-generates by +11 TWh (it cannot import enough,
-# so it self-supplies) — its idle peakers are a reserve-scarcity gap (RCPF /
-# mechanism B), not an energy must-run. Tier 3.
-# Source: NYISO Locational Installed Capacity Requirements (Gold Book); EIA-923
+# fleet (model 3.7 vs EIA-923 8.52 TWh, 2023).
+#
+# RULE-14 BOUNDARY MISMATCH (audit C-17, B-NYI-1, open root-cause issue #1345):
+# the published Zone-K requirement is now committed on disk
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261): LI LCR%
+# (value_pu) 1.052 / 1.053 / 1.065 for 2023/24–2025/26 with a Bulk Power
+# Transmission (import) limit of only 325 / 275 / 275 MW. That LCR is a
+# PEAK-HOUR installed-capacity ratio (local ICAP >= ~105% of LI peak); THIS
+# parameter is an ALL-HOURS energy self-supply fraction (frac x hourly demand).
+# The two live on different boundaries: substituting the LCR% (~1.05) or the
+# TSL-implied peak local fraction ((peak-import)/peak ~= 0.94) into an all-hours
+# energy floor would force ~16 TWh/yr of LI generation vs the ~8.5 TWh that is
+# physically real (LI imports off-peak, self-supplies near peak) — LESS
+# reflective of reality, so a direct scalar re-ground is INADMISSIBLE (rule #14).
+# The only scalar that reproduces the realized annual share would need a
+# load-duration haircut tuned to the 2023 outcome — the very rule-12 pin C-17
+# means to remove. The faithful fix is a MECHANISM change (a peak-capacity / TSL
+# constraint from the committed LCR table), tracked in issue #1345; until then
+# the value is LEFT at 0.45 (residual-identified, forecast-risk; DOF ledger S5)
+# rather than replaced by a knowingly-wrong LCR substitution. The 0.45 magnitude
+# still approximates the 2023 realized LI self-supply share (~0.48) — it is NOT
+# a validated forward driver and MUST NOT be quoted as one. NYC (zone J) is
+# deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh (it
+# cannot import enough, so it self-supplies) — its idle peakers are a
+# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# Source: NYISO Locational Minimum ICAP Requirements / LCR reports
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261); EIA-923
 # zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
 NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
     "Long_Island": 0.45,
