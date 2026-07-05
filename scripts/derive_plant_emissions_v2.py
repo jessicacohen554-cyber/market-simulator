@@ -19,8 +19,14 @@ pooled factor, then 1.0.
 
 Columns: iso, plant_id, unit_id, year, primary_fuel, unit_type, gross_mwh,
 net_mwh, parasitic_factor, heat_mmbtu, co2_kg, co2_kg_per_mwh_net, co2_source,
-starts, op_hours, steam_load_klbh_sum (the CEMS steam-output signature the CHP
-class-CF helper keys off — EM-7 / plan §5 R5).
+nox_kg, nox_kg_per_mwh_net, so2_kg, so2_kg_per_mwh_net, starts, op_hours,
+steam_load_klbh_sum (the CEMS steam-output signature the CHP class-CF helper
+keys off — EM-7 / plan §5 R5).
+
+NOx/SO2 masses come straight from the annual datatype (``nox_kg`` / ``so2_kg``)
+and their per-net-MWh intensities are derived on the same net basis as CO2 (the
+NOx/SO2 full-wiring wave, plan §5 R7 / §7). NOx/SO2 are *secondary* to CO2 — the
+CO2 columns and their derivation are unchanged here.
 
 Usage:
     python scripts/derive_plant_emissions_v2.py                 # all ISOs, all years
@@ -69,6 +75,10 @@ _OUT_COLUMNS = [
     "co2_kg",
     "co2_kg_per_mwh_net",
     "co2_source",
+    "nox_kg",
+    "nox_kg_per_mwh_net",
+    "so2_kg",
+    "so2_kg_per_mwh_net",
     "starts",
     "op_hours",
     "steam_load_klbh_sum",
@@ -133,10 +143,17 @@ def derive(years: list[int], isos: list[str]) -> pd.DataFrame:
         _factor(p, y) for p, y in zip(annual["plant_id"], annual["year"])
     ]
     annual["net_mwh"] = annual["gross_mwh"].astype(float) * annual["parasitic_factor"]
-    annual["co2_kg_per_mwh_net"] = [
-        (float(c) / float(n)) if n > 0 else 0.0
-        for c, n in zip(annual["co2_kg"], annual["net_mwh"])
-    ]
+    # NOx/SO2 masses are nullable in the annual datatype (a unit reporting no
+    # pollutant monitor); treat missing as zero so the net-basis intensity is
+    # well-defined and gas units keep their legitimate ~0 SO2.
+    annual["nox_kg"] = annual["nox_kg"].fillna(0.0).astype(float)
+    annual["so2_kg"] = annual["so2_kg"].fillna(0.0).astype(float)
+    for mass in ("co2_kg", "nox_kg", "so2_kg"):
+        rate = mass.replace("_kg", "_kg_per_mwh_net")
+        annual[rate] = [
+            (float(m) / float(n)) if n > 0 else 0.0
+            for m, n in zip(annual[mass], annual["net_mwh"])
+        ]
 
     # Fan out to one row per (iso, plant_id, unit_id, year): a plant in a state
     # shared by two ISOs appears under both; downstream each ISO's fleet build
@@ -161,6 +178,10 @@ def derive(years: list[int], isos: list[str]) -> pd.DataFrame:
                     "co2_kg": round(float(r.co2_kg), 3),
                     "co2_kg_per_mwh_net": round(float(r.co2_kg_per_mwh_net), 6),
                     "co2_source": str(r.co2_source),
+                    "nox_kg": round(float(r.nox_kg), 3),
+                    "nox_kg_per_mwh_net": round(float(r.nox_kg_per_mwh_net), 6),
+                    "so2_kg": round(float(r.so2_kg), 3),
+                    "so2_kg_per_mwh_net": round(float(r.so2_kg_per_mwh_net), 6),
                     "starts": int(r.starts),
                     "op_hours": int(r.op_hours),
                     "steam_load_klbh_sum": round(float(r.steam_load_klbh_sum), 3),

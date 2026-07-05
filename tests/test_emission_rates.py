@@ -137,13 +137,39 @@ class TestEnvelopeGatedConditioning(unittest.TestCase):
 
 
 def _v2_parish() -> pd.DataFrame:
-    """A Parish-style coal+gas facility (plant 3470) over two years, one ISO."""
+    """A Parish-style coal+gas facility (plant 3470) over two years, one ISO.
+
+    Rows carry all three pollutant masses so the NOx/SO2 path (plan §5 R7) is
+    exercised on the same fixture as CO2. Coal units emit NOx/SO2; the gas
+    units carry NOx but ~0 SO2 (a legitimate gas value).
+    """
     rows = []
     for year in (2023, 2024):
+        # (iso, plant, unit, year, fuel, net_mwh, co2_kg, nox_kg, so2_kg)
         rows += [
-            ("ERCOT", 3470, "WAP5", year, "Coal", 1000.0, 1_000_000.0),
-            ("ERCOT", 3470, "WAP1", year, "Pipeline Natural Gas", 1000.0, 400_000.0),
-            ("ERCOT", 100, "1", year, "Pipeline Natural Gas", 1000.0, 350_000.0),
+            ("ERCOT", 3470, "WAP5", year, "Coal", 1000.0, 1_000_000.0, 800.0, 900.0),
+            (
+                "ERCOT",
+                3470,
+                "WAP1",
+                year,
+                "Pipeline Natural Gas",
+                1000.0,
+                400_000.0,
+                200.0,
+                0.0,
+            ),
+            (
+                "ERCOT",
+                100,
+                "1",
+                year,
+                "Pipeline Natural Gas",
+                1000.0,
+                350_000.0,
+                150.0,
+                0.0,
+            ),
         ]
     return pd.DataFrame(
         rows,
@@ -155,6 +181,8 @@ def _v2_parish() -> pd.DataFrame:
             "primary_fuel",
             "net_mwh",
             "co2_kg",
+            "nox_kg",
+            "so2_kg",
         ],
     )
 
@@ -187,6 +215,52 @@ class TestMeasuredPlantRates(unittest.TestCase):
     def test_other_iso_excluded(self):
         v2 = _v2_parish()
         self.assertEqual(measured_plant_rates(v2, "PJM", 2024, "backcast"), {})
+
+
+class TestMeasuredNoxSo2Rates(unittest.TestCase):
+    """NOx/SO2 ride the identical mode/composition-mask path as CO2 (plan §5 R7)."""
+
+    def test_nox_rate_reproduces_campd_mass(self):
+        # The core R7 acceptance: measured NOx rate x net MWh == CAMPD nox_kg.
+        v2 = _v2_parish()
+        rates = measured_plant_rates(v2, "ERCOT", 2024, "backcast", pollutant="nox")
+        # Coal unit: 800 kg NOx / 1000 MWh = 0.8 kg/MWh -> 0.0008 t/MWh.
+        self.assertAlmostEqual(rates[(3470, "coal")], 0.0008)
+        # Round-trip: rate (t/MWh) x net MWh x 1000 kg/t == the measured mass.
+        self.assertAlmostEqual(rates[(3470, "coal")] * 1000.0 * 1000.0, 800.0)
+        # Gas units: 200 kg / 1000 MWh -> 0.0002 t/MWh.
+        self.assertAlmostEqual(rates[(3470, "gas")], 0.0002)
+
+    def test_so2_zero_for_gas_positive_for_coal(self):
+        v2 = _v2_parish()
+        rates = measured_plant_rates(v2, "ERCOT", 2024, "backcast", pollutant="so2")
+        self.assertAlmostEqual(rates[(3470, "coal")], 0.0009)  # 900 kg / 1e6
+        self.assertAlmostEqual(rates[(3470, "gas")], 0.0)  # legitimate gas zero
+
+    def test_nox_mode_policy_matches_co2(self):
+        v2 = _v2_parish().copy()
+        v2.loc[(v2.year == 2023) & (v2.unit_id == "WAP5"), "nox_kg"] = 400.0
+        bk = measured_plant_rates(v2, "ERCOT", 2024, "backcast", pollutant="nox")
+        self.assertAlmostEqual(bk[(3470, "coal")], 0.0008)  # 2024 only
+        fc = measured_plant_rates(v2, "ERCOT", 2024, "forecast", pollutant="nox")
+        # forecast pools both years: (800 + 400) / 2000 MWh -> 0.0006 t/MWh.
+        self.assertAlmostEqual(fc[(3470, "coal")], 0.0006)
+
+    def test_entrant_nox_rate_equals_class_median(self):
+        # A new entrant / uncovered plant gets the gen-weighted class median NOx.
+        annual = pd.DataFrame(
+            {
+                "group": ["CC_REGULAR", "CC_REGULAR", "COAL"],
+                "fuel": ["gas_cc", "gas_cc", "coal"],
+                "net_mwh": [1000.0, 9000.0, 5000.0],
+                "nox_kg": [500.0, 1800.0, 5000.0],
+            }
+        )
+        med = class_median_rates(annual, pollutant="nox")
+        # The 9 GWh gas plant at 0.2 kg/MWh dominates -> gen-weighted median
+        # pulled below the 0.35 simple mean of {0.5, 0.2}.
+        self.assertLess(med[("CC_REGULAR", "gas_cc")], 0.35)
+        self.assertAlmostEqual(med[("COAL", "coal")], 1.0)  # 5000/5000
 
 
 if __name__ == "__main__":
