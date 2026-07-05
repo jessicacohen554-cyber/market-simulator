@@ -12,8 +12,8 @@
   "free_parameters": {
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-    "n_entries": 11,
-    "n_residual": 8,
+    "n_entries": 13,
+    "n_residual": 9,
     "entries": [
       {
         "name": "offer_curve_by_group",
@@ -194,8 +194,26 @@
           "NP15": 0.86,
           "ZP26": 0.14
         },
-        "source": "PG&E TAC load split across Path 15 \u2014 preserves a prior ratio of unverified provenance (audit C-16; W1d marker)",
-        "root_cause": "audit C-16: refine when a direct Path-15 sub-TAC load measurement becomes available"
+        "source": "PG&E TAC load split across Path 15 \u2014 preserves a prior ratio of unverified provenance (audit C-16; W1d marker). B-CAI-1 intake attempt (2026-07-05): FERC-714 unreachable (403/502 via proxy); CEC reachable but planning-area geography (PG&E Bay Area / PG&E Valley) is boundary-mismatched to Path 15 (rule-14); the direct NP15/ZP26 zonal load lives in CAISO OASIS (unreachable \u2014 needs fetch-caiso-oasis.yml). No refit (no source).",
+        "root_cause": "audit C-16: refine when NP15/ZP26 zonal load lands via the OASIS fetch workflow (rule-23 trigger); open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1372"
+      },
+      {
+        "name": "WECC_import_simultaneous.cap_mw",
+        "where": "iso_configs.py CAISO interface_limits (fallback; capacity_deliverability_limits OFF only)",
+        "identification": "residual",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": 7500.0,
+        "source": "fitted aggregate WECC import cap \u2014 SUPERSEDED in the caiso-51 keeper by the published branch-group MIC sum (16,055/16,452/16,148 MW 2023/24/25) + measured p95 corridor envelopes (docs/caiso-c5-wecc-cap-closeout-2026-07-03.md). Not in the keeper binding path; governs the forecast / non-deliverability path only.",
+        "root_cause": "O-1 forecast/backcast parity: the fitted 7,500 still caps forecast-mode imports \u2014 re-ground the default on the published MIC/SIL or enable deliverability part-A in forecast; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1373"
+      },
+      {
+        "name": "CAISO_BIDIR_EXPORT_CAP_MW",
+        "where": "transmission.py (fallback; caiso_bidir_intertie only)",
+        "identification": "measured-physical",
+        "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+        "value": 4361.0,
+        "source": "aggregate WECC export-direction capability ceiling, re-derived from EIA-930 CISO net-interchange (the realized ATC proxy; OASIS unreachable) at the corridor mechanism's own p95 peak-bucket convention, 2023-2025 (2026 holdout excluded, rule 22); frozen scripts/derive_caiso_export_cap.py. rule-23 source-data change: the caiso-51 keeper measured export envelopes.",
+        "note": "fallback-only (superseded by caiso_per_hub_intertie); refresh against a true OASIS export-ATC pull, or R5-delete the caiso_bidir_intertie mechanism (rule 26); tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1373"
       },
       {
         "name": "ct_netload_drag hinge coefficients",
