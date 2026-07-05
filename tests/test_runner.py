@@ -506,5 +506,27 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
         )
 
 
+class TestChpMeasuredCo2Inputs(unittest.TestCase):
+    """R5: the CHP BTM rate source mirrors the grid tranches' source."""
+
+    def test_legacy_source_returns_pooled_rates(self):
+        # use_plant_emission_rates (default) -> BTM books the legacy pooled rate,
+        # the same rate the grid tranches use.
+        config = ScenarioConfig(iso="ERCOT", mode="backcast")
+        rates, _cf = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
+        self.assertTrue(rates, "legacy pooled artifact should yield a rate map")
+        self.assertTrue(all(v > 0 for v in rates.values()))
+
+    def test_both_sources_off_returns_empty(self):
+        # No plant-rate override -> empty maps -> caller keeps the fuel-class
+        # default rate and the flat must_run_cf (no behaviour change).
+        config = ScenarioConfig(
+            iso="ERCOT", mode="backcast", use_plant_emission_rates=False
+        )
+        rates, cf = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
+        self.assertEqual(rates, {})
+        self.assertEqual(cf, {})
+
+
 if __name__ == "__main__":
     unittest.main()
