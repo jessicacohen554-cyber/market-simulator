@@ -1468,8 +1468,7 @@ def render_text(v: dict) -> str:
         lines.append(f"D-10 free-class C1: {fcs['headline']}")
         if fcs.get("excluded_from_free"):
             lines.append(
-                "  pinned (excluded from free): "
-                + ", ".join(fcs["excluded_from_free"])
+                "  pinned (excluded from free): " + ", ".join(fcs["excluded_from_free"])
             )
     if v["reasons"]:
         lines.append("determination basis:")
