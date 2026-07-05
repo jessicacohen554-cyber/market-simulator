@@ -6,7 +6,14 @@ from pathlib import Path
 
 import numpy as np
 
-from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
+from market_sim.config.constants import DEMAND_GROWTH_RATES, NEW_ENTRY_COSTS
+from market_sim.config.scenarios import (
+    ScenarioConfig,
+    SweepDefinition,
+    resolve_demand_growth_rate,
+    resolve_new_entry_costs,
+    resolve_policy_bundle,
+)
 from market_sim.results.export import real_to_nominal
 
 
@@ -129,6 +136,123 @@ class TestSweepDefinition(unittest.TestCase):
             sweep = SweepDefinition.from_yaml(path)
         self.assertEqual(sweep.mode, "factorial")
         self.assertEqual(len(sweep.generate()), 6)
+
+
+class TestProbabilityBoundsLevers(unittest.TestCase):
+    """Tests for the PB-1 uncertainty-lever plumbing (fields + resolvers).
+
+    docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1/§2.5 item 4.
+    """
+
+    # -- Neutral defaults reproduce today's resolved config exactly --------
+
+    def test_new_entry_costs_neutral_default_matches_constants(self):
+        """A keeper-shaped config's neutral tech-cost fields change nothing."""
+        keeper_like = ScenarioConfig(
+            iso="ERCOT", carbon_price=0.0, retirement_aggressiveness="mid"
+        )
+        self.assertEqual(resolve_new_entry_costs(keeper_like), NEW_ENTRY_COSTS)
+
+    def test_policy_bundle_current_is_identity(self):
+        keeper_like = ScenarioConfig(iso="PJM", carbon_price_path="zero")
+        self.assertIs(resolve_policy_bundle(keeper_like), keeper_like)
+
+    def test_demand_growth_neutral_percentile_matches_path_lookup(self):
+        for iso in DEMAND_GROWTH_RATES:
+            for path in ("low", "mid", "high"):
+                config = ScenarioConfig(iso=iso, demand_growth_path=path)
+                for year, era in ((2027, "near"), (2040, "long")):
+                    self.assertAlmostEqual(
+                        resolve_demand_growth_rate(config, year),
+                        DEMAND_GROWTH_RATES[iso][path][era],
+                    )
+
+    def test_demand_growth_falls_back_for_iso_without_table(self):
+        config = ScenarioConfig(iso="MISO", demand_growth_rate=0.02)
+        self.assertEqual(resolve_demand_growth_rate(config, 2030), 0.02)
+
+    # -- Each lever moves the intended quantity monotonically --------------
+
+    def test_tech_cost_percentile_monotonic_on_capex(self):
+        capex = [
+            resolve_new_entry_costs(ScenarioConfig(tech_cost_percentile=p))["solar"][
+                "capex_per_kw"
+            ]
+            for p in (0.0, 0.25, 0.5, 0.75, 1.0)
+        ]
+        self.assertEqual(capex, sorted(capex))
+        self.assertLess(capex[0], capex[2])
+        self.assertLess(capex[2], capex[-1])
+
+    def test_tech_cost_percentile_monotonic_on_learning_rate(self):
+        # Cheaper-future (low) cases carry a steeper learning rate than the
+        # costlier-future (high) cases -- the multiplier direction flips.
+        learning = [
+            resolve_new_entry_costs(ScenarioConfig(tech_cost_percentile=p))["wind"][
+                "learning_rate"
+            ]
+            for p in (0.0, 0.5, 1.0)
+        ]
+        self.assertGreater(learning[0], learning[1])
+        self.assertGreater(learning[1], learning[2])
+
+    def test_demand_growth_percentile_monotonic(self):
+        rates = [
+            resolve_demand_growth_rate(
+                ScenarioConfig(iso="ERCOT", demand_growth_percentile=p), 2027
+            )
+            for p in (0.0, 0.25, 0.5, 0.75, 1.0)
+        ]
+        self.assertEqual(rates, sorted(rates))
+
+    def test_tech_cost_path_and_percentile_precedence(self):
+        # percentile at its neutral default defers to the discrete path.
+        via_path = resolve_new_entry_costs(ScenarioConfig(tech_cost_path="high"))
+        via_percentile = resolve_new_entry_costs(
+            ScenarioConfig(tech_cost_percentile=1.0)
+        )
+        self.assertEqual(via_path, via_percentile)
+
+    # -- Policy bundle resolution -------------------------------------------
+
+    def test_policy_bundle_tight_extends_ira_and_sets_carbon_path(self):
+        config = ScenarioConfig(policy_bundle="tight")
+        resolved = resolve_policy_bundle(config)
+        self.assertEqual(resolved.carbon_price_path, "mid")
+        self.assertEqual(
+            resolved.ira_wind_solar_last_year, config.ira_wind_solar_last_year + 5
+        )
+        self.assertEqual(
+            resolved.ira_ccus_45q_last_year, config.ira_ccus_45q_last_year + 5
+        )
+
+    def test_policy_bundle_rollback_pulls_ira_sunset_earlier(self):
+        config = ScenarioConfig(policy_bundle="rollback")
+        resolved = resolve_policy_bundle(config)
+        self.assertEqual(resolved.carbon_price_path, "zero")
+        self.assertFalse(resolved.state_carbon_pricing)
+        self.assertEqual(
+            resolved.ira_wind_solar_last_year, config.ira_wind_solar_last_year - 2
+        )
+
+    def test_policy_bundle_invalid_raises(self):
+        config = ScenarioConfig(policy_bundle="not_a_bundle")
+        with self.assertRaises(ValueError):
+            resolve_policy_bundle(config)
+
+    # -- Backcast guard (rule 13) --------------------------------------------
+
+    def test_gas_price_factor_neutral_in_backcast(self):
+        config = ScenarioConfig(mode="backcast", gas_price_factor=1.0)
+        self.assertEqual(config.gas_price_factor, 1.0)
+
+    def test_gas_price_factor_nonneutral_in_backcast_raises(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(mode="backcast", gas_price_factor=1.1)
+
+    def test_gas_price_factor_nonneutral_allowed_in_forecast(self):
+        config = ScenarioConfig(mode="forecast", gas_price_factor=1.2)
+        self.assertEqual(config.gas_price_factor, 1.2)
 
 
 if __name__ == "__main__":
