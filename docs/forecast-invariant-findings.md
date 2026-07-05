@@ -64,6 +64,25 @@ falling back to `unit_id` for the `eia860_id` of planned additions
 (`model/capacity.py`). I8 now PASSes. Logged here because it was surfaced by the
 checker; it is a ledger fix, not a model-behaviour change.
 
+### F4 — (resolved 2026-07-05) I9 storage-integrity FAIL on a PJM hindcast was a
+### demand-defect scoring artifact, not a checker or storage/LP defect
+The PJM 2021-2025 realized capacity hindcast (`docs/hindcast-reports/pjm-2021-2025-realized-2026-07-05.md`)
+showed `[FAIL] I9 2023: simultaneous chg+dis 6.09% of throughput; 2024: 1.32%`.
+Triage (task: PJM demand/storage-integrity session): `data/raw/eia-930/eia_demand_profiles.parquet`'s
+PJM 2021 series carried a 3-hour, ~4-5-order-of-magnitude demand spike (fixed
+by `scripts/curate_demand_profile.py`, see the hindcast report's "Update"
+section for the full repair writeup). That spike drove VOLL-level scarcity
+pricing into 2021's `prior_results`, which the 2022 bridge and 2023 entry/
+dispatch economics consume by design (rule 22) — a corrupted price *signal*,
+not a defect in the ε=0.001 $/MWh storage tiebreaker or the LP formulation.
+Re-running with the repaired 2021 series makes I9 PASS outright; directly
+inspecting the per-unit `storage_charge`/`storage_discharge` arrays confirms
+simultaneous charge+discharge is ~1e-18 of throughput (float noise) in every
+year (2021, 2023, 2024, 2025 alike) once the input is sane. **No change to
+`model/storage.py` or `model/dispatch.py` was needed or made** — this is a
+scoring artifact of corrupted upstream input data, not a model-behavior fix,
+so it is logged here rather than reported as a new checker bug.
+
 ## Invariants that PASS on the real forecast (machinery is sound)
 
 I1 energy balance (residual 3.6e-10 MW — the persisted demand column closes the
