@@ -93,6 +93,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
     apply_miso_zonal_gas_basis,
+    apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
@@ -3752,6 +3753,15 @@ def run_year(
     # hub overlay, before the dual-fuel min so oil parity still caps any winter
     # spike. No-op unless nyiso_zonal_gas_basis is set (NYISO only).
     apply_nyiso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # NYISO downstate CT-peaker interruptible city-gate gas premium: lift each
+    # NYC / Long Island CT_PEAKER unit's delivered gas by the measured monthly
+    # LDC city-gate premium (summer-peaked interruptible-gas scarcity these
+    # non-firm peakers face) so an efficient LM6000 no longer undercuts the
+    # dearer downstate steam fleet on flat hub gas (issue #1344 / B-NYI-1). Same
+    # order as the other basis overlays: after the zonal basis, before the
+    # dual-fuel oil-parity min. No-op unless nyiso_downstate_ct_gas_basis is set
+    # (NYISO only). See fuel.apply_nyiso_downstate_ct_gas_basis.
+    apply_nyiso_downstate_ct_gas_basis(fuel_prices, fleet_arrays, config, year)
     # ERCOT per-zone gas-hub basis: shift each gas unit to its zone's measured
     # regional hub (Waha-cheap West/Permian, dearer North/East-Texas and South)
     # so the merit order stops over-running DFW/North CCs on flat Waha-discounted
