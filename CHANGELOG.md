@@ -24,6 +24,15 @@ default-off gate, with no bespoke per-mechanism runner wiring.
 five priced-interchange ISOs and all three CAISO seam modes. Details:
 `docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.3.
 
+**Builder-mode gate result: PASS.** CAISO keeper canary
+(`2026-07-03-caiso-51-firm-base`, 2023-2025) re-solved before
+(`fb44295`)/after (`8d46b90`) this stage: `regression_gate.py --mode
+builder` reports every result column within tolerance (1e-9), 0.000%
+hourly reshuffle in every year, and the 2023 bundle files are in fact
+byte-identical — dispatch-neutral, no solved number moved. Full breakdown
+(including the pre-existing, unrelated PJM/MISO ablation-twin
+`audit_keepers.py` findings) in plan §7.3.3.
+
 ## 2026-07-05 (CO2-rate 7-year gate decision — wave-3 E1 close-out)
 
 - Completed the 2018–2021 CAMPD hourly unit-level intake (136/136 state-years)
