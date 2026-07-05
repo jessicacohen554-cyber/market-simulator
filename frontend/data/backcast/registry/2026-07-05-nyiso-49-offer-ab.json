@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-nyiso-49-offer-ab",
+  "label": "nyiso 49 offer ab",
+  "date": "2026-07-05",
+  "shorthand": "nyiso-49-offer-ab",
+  "definition": "(PROBE — D-2 ATTRIBUTION TWIN of nyiso-48-head-regate, NOT a keeper) HEAD code (git 8d46b90) + keeper-era _NYISO_OFFER_CURVE restored via --offer-curve-json (CT_PEAKER peak 13.15/econ_low 1.27/econ_high 1.98, CC_REGULAR econ_high 1.21, CT_CHP 1.10/1.20/1.20/1.40) — the ONE delta vs nyiso-48. Determination NOT-YET (governance UNATTESTED; C8 pre-existing floor forced-share). RESULT: restoring only the offer curve recovers BOTH regressions — C1 free-class 10/10 (vs 48's 9/10), C7 diurnal (D-1) PASS (vs 48's FAIL; CT_PEAKER off-peak CV ratio 1.08/1.20/1.24 all pass), CT_PEAKER back to 1.56/1.37/1.75 TWh and ST_GAS to 7.86/9.67/11.08 (vs 48's 4.46/4.51/4.73 and 6.15/7.58/9.30). CONCLUSION: the entire nyiso-48 C1/C7 regression is the B-NYI-1 _NYISO_OFFER_CURVE de-leak, not the emissions R2 basis, interchange unification, or any other post-07-03 HEAD merge (residual CT_PEAKER delta vs keeper's 1.82 is ~0.26 TWh, negligible). This probe is a DIAGNOSTIC ONLY — it re-arms the de-leaked rule-25 scalars and MUST NOT be promoted (rule #26). The grounded (de-leaked) offer stays; the fix is structural (LI/NYC delivered-fuel basis + #1344 reserve scarcity). Rules #1/#17/#25/#26.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-05-nyiso-49-offer-ab.js",
+  "bundle": "results/calibration/nyiso41_head_offerAB"
+}
