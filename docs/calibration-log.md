@@ -4910,3 +4910,94 @@ the peaker-pricing structural fix owned by a parallel session); its 2024/2025 le
 corruption is moot because NYISO reads the `NYIS hourly` extract. Holdouts 2022 /
 H1-2026 remain fully quarantined (rule #22): the corrupted 2022 rows are repaired as
 *data* by PR #1426 but stay unsolved and unscored.
+
+## 2026-07-05 — NYISO CT/ST reliability-floor re-derivation: C7 FIXED, floor-forcing cleaned (PROBES `nyiso 51 floor-rederive` + `nyiso 52 floor-rederive-ctgas`; keeper stays 41 STALE-VS-HEAD; calibration-complete item 1 still BLOCKED on #1344)
+
+Executes the CT/ST reliability-floor re-derivation named as the remaining
+structural work in PR #1427 / the NYISO HEAD re-gate (2026-07-05 entry above):
+the Long Island CT over-run residual was floor-forced, so the delivered-fuel
+basis (PR #1427) could not move C7 and NYISO calibration-complete item 1 stayed
+blocked. Rule 17/18/23 audit + re-derivation; #1344 (reserve/RCPF scarcity) is
+out of scope (parallel LP-core refactor). Keeper stays `nyiso-41`
+STALE-VS-HEAD; **`keepers.json` unchanged (recommendation only, rule #3).**
+
+### Audit (rule 17) — each enabled NYISO CT/ST floor, driver / hours / forward story
+
+Evidence: nyiso-48 `legitimacy_diagnostics.json` (D-1/D-2/D-4) + CAMPD downstate
+CT/ST diurnal CF.
+
+1. **reliability_floor × CT_PEAKER, NYC/LI `*_CT_ev` ramps (HB14-21).** Driver:
+   downstate afternoon-evening AC-peak temperature commitment. In-window, forward-
+   reproducible. **LEGITIMATE — kept.**
+2. **reliability_floor × CT_PEAKER, NYC standalone 24h step (tmax 31.7 / 0.1833,
+   enabled, NO window).** Bound all 24h on hot days incl. overnight where measured
+   CAMPD NYC CT CF ~= 0.018 flat; stacked on the NYC_CT_ev ramp (rule 18/19). The
+   D-4 off-window binder (baseline 30.5/30.9/34.3% of floored CT MWh off-window).
+   **BUG (rule 17) — disabled (`r1_disabled=True`).**
+3. **nyiso_local_selfsupply × LI in-zone thermal (incl CT_PEAKER), 0.45 × LI load,
+   ALL 24h.** Source = LI LCR / firm import_limit 325/275/275 MW
+   (`data/raw/capacity-deliverability/nyiso/nyiso.csv`), a PEAK-hour ICAP basis,
+   NOT an all-hours energy driver; 0.45 is residual-identified (constants.py DOF
+   ledger S5, issue #1345). D-2: forced 1.84/2.87/1.86 TWh of CT_PEAKER
+   (43/65/42%), mostly overnight where measured LI CT CF ~= 0.06 flat and LI
+   imports never bind off-peak (reserve-incidence handoff Finding 4). **Over-forces
+   overnight (rule 17) — narrowed to the HB14-21 peak window; 0.45 level UNCHANGED.**
+4. **ST floors (NYC/LI ST_GAS persistent 24h base 0.391/0.289 + evening ramps).**
+   Applied on frac × AVAILABLE cap, when-available CF basis → all-hours CF
+   ~0.04-0.06 matches CEMS; passes C7 (D-1) and D-4 (declared 24h in-city
+   must-run). Rule-20 ST_GAS forced-share exceedance is a small-denominator
+   artifact of the steam under-run. **LEGITIMATE — left unchanged.**
+
+### Re-derivation (rule 18/19/23 — narrowings, not re-levels)
+
+- `data/raw/reference/reliability_floor_coeffs_NYISO.csv`: added `r1_disabled`
+  column; NYC CT_PEAKER tmax-31.7 step marked `r1_disabled=True`.
+- `transmission.inject_nyiso_local_selfsupply`: gated to
+  `NYISO_SELFSUPPLY_FLOOR_HOURS` (HB14-21). The 0.45 fraction is untouched (the
+  #1345 mechanism fix is still open); only the overnight hours it had no driver
+  for are removed. `constants.py` / the injector docstring / tests updated.
+- These are unconditional NYISO structure (backcast + forecast), not gated probes.
+
+### Gate (one-delta vs `nyiso 48 head regate`, all years 2023/2024/2025)
+
+| metric | nyiso-48 | nyiso-51 floors | **nyiso-52 floors+gas** | actual |
+|---|---|---|---|---|
+| CT_PEAKER TWh | 4.46/4.51/4.73 | 3.70/2.84/3.86 | **2.02/2.33/2.91** | 2.26/2.13/2.84 |
+| ST_GAS TWh | 6.15/7.58/9.30 | 6.29/7.59/9.43 | 6.72/7.77/9.74 | 8.70/11.07/15.99 |
+| C1 free-class | 9/10 | 9/10 | 9/10 | — |
+| C7 (D-1) 2024 CT cv_ratio | FAIL 0.454 | PASS 2.393 | PASS 3.47 (r 0.84) | — |
+| C3a mean LMP | -17/-18/-15% | -16.2/-15.5/-13.6% | -13.5/-14.7/-12.5% | — |
+| C3c >$300 h | 0/0/7 | 0/0/7 | 0/0/7 | 10/12/42 |
+| D-2 CT forced-share (rule-20 ≤10%) | 22%+ss FAIL | 25.6/34.1/25.1%+ss FAIL | 45.8/54.5/39.3%+ss FAIL | — |
+| D-4 CT off-window | 30.5/30.9/34.3% (incl overnight) | h14-only, 0 overnight | h14-only, 0 overnight | — |
+
+### Disposition
+
+- **C7 (NYISO calibration-complete item 1's blocker) is FIXED** in both configs.
+  The overnight CT flatness is gone: reliability-floor CT overnight energy =
+  **0.000** (was ~0.18 TWh from the NYC step), self-supply CT forcing HALVED
+  (1.84/2.87/1.86 → 0.90/1.23/0.89 TWh). CT_PEAKER volume is near-exact with the
+  gas premium (nyiso-52: 2.02/2.33/2.91 vs actual 2.26/2.13/2.84); C1 CT_PEAKER
+  moves FAIL→in-band.
+- **rule-20 forced-energy budget: still FAILS for CT_PEAKER (>10%)** in both
+  configs (nyiso-52 higher because the gas premium shrinks the economic-CT
+  denominator). Reported explicitly. This is **cleanly attributable to #1344**:
+  without the reserve/RCPF scarcity structure the downstate peakers never clear
+  economically (reserve-incidence handoff Finding 3 — idle peakers = phantom
+  reserve = no scarcity price), so the (now in-window, legitimate) floors carry
+  ALL the CT commitment. #1344 raises the economic CT share and drops the forced
+  share below 10% — it is the same lever that lifts C3a/C3c.
+- **C3a/C3c still FAIL** — the missing #1344 peaker-scarcity price. The
+  delivered-fuel premium (nyiso-52) lifts C3a from -17/-18/-15% to
+  -13.5/-14.7/-12.5% but not to band; the >$300 tail is unchanged.
+- **D-4 residual (~34%) is a metric-boundary artifact, NOT off-window binding.**
+  The reliability floor binds EXACTLY h14-21 with 0.000 overnight; the flagged
+  "off-window" is entirely hour 14, because D-4's hardcoded canonical CT window is
+  h15-21 (CAISO ct_netload_drag derivation) while the NYISO ramp is source-derived
+  HB14-21 (start_hour=14). Left as-is (rule 23 — not tuned to the gate).
+- **Keeper-candidate exists PENDING #1344.** `nyiso 52 floor-rederive-ctgas`
+  (re-derived floors + the default-off delivered-fuel basis) is the recommended
+  eventual NYISO keeper config — it needs no further floor work, only the #1344
+  reserve-price structure to lift C3a/C3c and drop the CT forced share below 10%.
+  Keeper stays `nyiso-41` STALE-VS-HEAD; keepers.json unchanged; did NOT re-arm
+  the de-leaked offer scalars (rule #26).
