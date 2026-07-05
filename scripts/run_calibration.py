@@ -51,6 +51,9 @@ from market_sim.config.constants import (  # noqa: E402
 from market_sim.config.interchange_config import (  # noqa: E402
     INTERFACE_NEIGHBORS,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
+    apply_interchange_topology,
+    build_interchange_fleet,
+    get_interchange_spec,
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
@@ -119,16 +122,11 @@ from market_sim.model.storage import (  # noqa: E402
     storage_units_to_arrays,
 )
 from market_sim.model.transmission import (  # noqa: E402
-    build_export_sinks,
-    build_import_generators,
+    apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
-    build_reference_price_node,
-    extend_with_import_node,
     get_link_bidirectional_array,
     get_ttc_array,
-    inject_reference_price_firm_export,
-    inject_reference_price_mc,
     wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
@@ -2834,13 +2832,20 @@ def run_year(
     # Transmission project in service Dec 2023) — applied before the import
     # node joins so the corrected links flow through the whole solve.
     iso_config = _apply_iso_year_ttc(iso_config, iso, year)
-    # Priced import/export node: the external zone joins the topology and its
+    # Priced import/export node (orchestrator-unification Stage 5): the
+    # builder choice — reference-price seam vs CAISO per-hub / bidirectional
+    # intertie vs the static year-grounded tranche ladder, plus the Manitoba
+    # firm-import block — is resolved by the SHARED
+    # config/interchange_config.get_interchange_spec (the same spec the
+    # forecast runner consumes), and the generators come from the shared
+    # build_interchange_fleet, which delegates to the canonical
+    # transmission.py builders. The external zone joins the topology and its
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
     # Default the CAISO per-hub / corridor intertie flags so the later
     # corridor-limit and forward-ATC checks are bound on every path; they are
-    # only set True inside the priced-interchange block below (CAISO-only), so a
+    # only set inside the priced-interchange block below (CAISO-only), so a
     # non-priced or non-CAISO run keeps them False.
     caiso_per_hub = False
     caiso_corridors = False
@@ -2856,126 +2861,25 @@ def run_year(
             if iso == "CAISO"
             else 0.0
         )
-        # Year-grounded import ladder: the priced node's neighbor-hub blocks
-        # are gas-priced, so each single-year calibration solve pins the ladder
-        # to its own year (IMPORT_TRANCHES_BY_YEAR); un-tabulated years fall
-        # back to the static default inside build_import_generators.
-        # Forecast-grade reference-price interface (PJM today): replace the
-        # fitted tranches with one import/export pseudo-gen per neighbor, priced
-        # hourly from neighbor gas x heat-rate x load-shape (mc overwritten by
-        # inject_reference_price_mc after assembly). Gated to ISOs in
-        # INTERFACE_NEIGHBORS; byte-identical (falls through to the fitted node)
-        # otherwise. See docs/reference-price-interface.md.
-        caiso_ref_seam = (
-            getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
+        interchange_spec = get_interchange_spec(config, iso, year=year)
+        caiso_per_hub = interchange_spec.caiso_mode == "per_hub"
+        caiso_corridors = interchange_spec.use_corridors
+        import_generators = build_interchange_fleet(interchange_spec, border_carbon)
+        # Shared topology sequence (same order as always): external node
+        # extension, the capacity-deliverability Part-A seam import cap
+        # (backcast mirror of the runner hook — the published per-area MIC
+        # replaces the calibrated simultaneous-import scalar, resolved for
+        # THIS backcast year's delivery year; no-op off the default-off flag
+        # or when the clean data is absent), then the CAISO per-hub corridor
+        # split re-homing the import links + simultaneous cap onto the
+        # corridor zones the per-hub / reference-seam builder used.
+        iso_config = apply_interchange_topology(
+            iso_config,
+            interchange_spec,
+            config,
+            year=year,
+            extend_node=True,
         )
-        # The forward reference-price seam supersedes the measured OASIS per-hub
-        # path (mutually exclusive); it still rides the per-hub corridor split +
-        # ATC envelope, so treat it as a per-hub corridor topology below.
-        caiso_per_hub = (not caiso_ref_seam) and (
-            getattr(config, "caiso_per_hub_intertie", False) and iso == "CAISO"
-        )
-        caiso_corridors = caiso_per_hub or caiso_ref_seam
-        if caiso_ref_seam:
-            # Two WECC corridors priced from the forecast-native reference seam
-            # (INTERFACE_NEIGHBORS["CAISO"]): per corridor, import + export flow
-            # tranches placed in the corridor's own external zone (WECC_DSW /
-            # WECC_PNW), priced post-assembly by inject_reference_price_mc.
-            import_generators = build_reference_price_node(iso)
-        elif caiso_per_hub:
-            # Two per-hub signed WECC corridors: COI/Path-66 at the Malin hub
-            # (WECC_PNW → NP15) and Path-46/WOR at the Palo Verde hub (WECC_DSW →
-            # SP15), each a single net direction over its own real link.
-            # Recovers BOTH the per-hub basis and per-hub netting (arbitrage-free
-            # hub pricing applied post-assembly); the simultaneous-import cap is
-            # the interface limit re-homed onto the two corridor links.
-            from market_sim.model.transmission import build_caiso_per_hub_intertie
-
-            import_generators = build_caiso_per_hub_intertie(border_carbon)
-        elif getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO":
-            # Single signed WECC intertie: import leg + export leg share one
-            # net direction over a shared directional cap (arbitrage-free hub
-            # pricing applied post-assembly). Replaces the separate import
-            # tranches + export sinks so the LP cannot import-cheap and stay
-            # long in the same hour.
-            from market_sim.model.transmission import build_caiso_bidir_intertie
-
-            import_generators = build_caiso_bidir_intertie(border_carbon)
-        elif (
-            getattr(config, "reference_price_interface", False)
-            and iso in INTERFACE_NEIGHBORS
-            # CAISO uses its dedicated caiso_reference_price_seam path (handled
-            # above), which also does the per-hub corridor split; the generic
-            # single-node path would land CAISO's per-corridor tranches with no
-            # corridor zones to host them.
-            and iso != "CAISO"
-        ):
-            import_generators = build_reference_price_node(iso)
-        else:
-            import_generators = build_import_generators(
-                iso, border_carbon, year=year
-            ) + build_export_sinks(iso)
-        # Manitoba Hydro firm-hydro import (MISO only): ~10-15 TWh/yr of firm
-        # contracted hydro into MISO-North, OUTSIDE the gas-margin reference-price
-        # seam. A SEPARATE block priced as firm hydro (low, near-constant offer),
-        # landed directly in MISO-North (build_miso_firm_imports) and ADDED to the
-        # reference node's seam gens. The must-flow firm floor is applied
-        # post-assembly (inject_miso_firm_imports). No-op for non-MISO ISOs.
-        if getattr(config, "miso_firm_imports", False):
-            from market_sim.model.transmission import build_miso_firm_imports
-
-            # Backcast: overlay the measured per-year Manitoba firm-hydro delivery
-            # (drought-responsive); forecast keeps the flat contract midpoint.
-            import_generators = import_generators + build_miso_firm_imports(
-                iso, year=year, mode=getattr(config, "mode", "forecast")
-            )
-        iso_config = extend_with_import_node(iso_config)
-        # Part A of capacity_deliverability_limits (backcast mirror of the
-        # runner hook): replace the calibrated simultaneous-import scalar
-        # (CAISO's 7,500 MW WECC_import_simultaneous) with the ISO's published
-        # per-area SEAM import limit (CAISO branch-group MIC summed to the
-        # WECC boundary), resolved for THIS backcast year's delivery year.
-        # Applied before the per-hub corridor split so the structural
-        # identification (every link originates at the import node) matches;
-        # the split then re-homes the replaced cap onto the corridor links.
-        # No-op when the flag is off (default — byte-identical), the ISO has
-        # no seam import_limit (PJM/MISO/NYISO CETL/CIL are internal and feed
-        # Part B, which the backcast never reaches: no capacity evolution), or
-        # the clean data is absent.
-        if getattr(config, "capacity_deliverability_limits", False):
-            from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
-            from market_sim.config.interchange_config import IMPORT_ZONE
-            from market_sim.data import capacity_deliverability as capdel
-            from market_sim.model.transmission import (
-                apply_deliverability_seam_limit,
-            )
-
-            _dy = capdel.resolve_delivery_year(iso, year)
-            _season = capdel.resolve_season(iso)
-            _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
-            _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
-            _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
-            _import_zone = IMPORT_ZONE.get(iso)
-            _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
-            if _seam_mw:
-                iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
-                logger.info(
-                    "%s %d: capacity_deliverability_limits — seam import cap "
-                    "set to %.0f MW (summed per-area import_limit, delivery "
-                    "year %s)",
-                    iso,
-                    year,
-                    _seam_mw,
-                    _dy,
-                )
-        if caiso_corridors:
-            # Split the single WECC_import node into the two per-hub corridors
-            # (WECC_PNW → NP15, WECC_DSW → SP15) and re-home the import links +
-            # the 8.3 GW simultaneous-import interface limit onto them, matching
-            # the zones the per-hub / reference-seam builder placed its tranches in.
-            from market_sim.model.transmission import split_caiso_import_node_per_hub
-
-            iso_config = split_caiso_import_node_per_hub(iso_config)
     zone_names = iso_config.zone_names
 
     demand = load_demand(
@@ -3114,6 +3018,12 @@ def run_year(
                 "scripts/curate_capacity_deliverability.py",
                 year,
             )
+    # [measured: EIA-930 per-corridor (month × hour-of-day) p95 net-flow
+    #  envelope → corridor import/export caps | forecast substitute:
+    #  caiso_corridor_atc_forward — the shared
+    #  transmission.forward_corridor_interface_groups capability envelope,
+    #  which the forecast runner also wires (Stage 5); the measured branch
+    #  below is a backcast overlay, plan §3.1]
     # Measured WECC corridor deliverability envelope (CAISO per-hub only): cap
     # each corridor link's import-direction flow at the per-(month × hour-of-day)
     # p95 measured net import (an ATC proxy that tightens midday), so the LP can
@@ -3493,6 +3403,19 @@ def run_year(
                 config.ct_drag_ramp_start,
                 config.ct_drag_ramp_end,
             )
+    # ══════════════════════════════════════════════════════════════════════
+    # BACKCAST MEASURED INTERCHANGE OVERLAYS — availability / seam limits.
+    # Every block below feeds a MEASURED series into the priced node's bounds
+    # (CLAUDE.md rule 12: reproducible capability envelopes, never an outcome
+    # pin) and is backcast-only by design (plan §3.1). None is reachable from
+    # the forecast path: the forecast substitutes are noted per overlay.
+    # The forward-native interchange injections live in the SHARED
+    # transmission.apply_interchange_injections, called below after the mc
+    # assembly (both orchestrators run it).
+    # ══════════════════════════════════════════════════════════════════════
+    # [measured: EIA-930 CISO diurnal interchange envelope → import/export
+    #  availability shape | forecast substitute: none — the reference-price /
+    #  per-hub seams price the diurnal signal instead of bounding it]
     # Shape the priced import/export node by the measured EIA-930 diurnal
     # interchange envelope (import overnight, export the midday solar glut) so
     # the node stops clearing a flat all-hours import that floors the midday
@@ -3528,6 +3451,8 @@ def run_year(
                 import_pct,
                 export_pct,
             )
+    # [measured: EIA-930 MISO BA-to-BA net-import envelope → seam import cap |
+    #  forecast substitute: the seam's interface_limit_mw + reference prices]
     # MISO reference-price seam deliverability cap: bound each seam's
     # (PJM/SPP/South) import-band availability at the measured EIA-930 BA-to-BA
     # net-import envelope, so the model stops over-importing on the SPP/southern
@@ -3579,6 +3504,8 @@ def run_year(
                 year,
                 MISO_SEAM_FLOW_PERCENTILE if _seam_pct is None else _seam_pct,
             )
+    # [measured: PJM tie-line per-neighbor flow envelope → seam import cap |
+    #  forecast substitute: the seam's interface_limit_mw + reference prices]
     # PJM seam import cap: cap each of PJM's 5 reference-price seams' import
     # bands at the measured per-neighbor deliverability envelope (PJM tie-line
     # file, aggregated from border zones to neighbor level). Fixes the ~38 TWh
@@ -3630,6 +3557,11 @@ def run_year(
                 year,
                 PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
             )
+    # ── end of the backcast measured interchange overlays (availability) ──
+    # (the measured PRICE overlays live in _backcast_measured_interchange_
+    # prices below, threaded into the shared injection sequence; the measured
+    # NYISO reconciliation band and CAISO corridor envelopes are built at
+    # their structural call sites further down, labelled the same way.)
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
     # its surplus exports/curtails at ~$0 (mirrors inject_interchange_shape).
@@ -3727,20 +3659,15 @@ def run_year(
                 year,
             )
 
-    # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly
-    # price, so floor the matching priced-node rows at their firm fraction
-    # (transmission.inject_nyiso_firm_imports). Only fires with priced
-    # interchange + the flag + a matching import row.
-    if priced_interchange and getattr(config, "nyiso_firm_imports", False):
-        from market_sim.model.transmission import inject_nyiso_firm_imports
+    # NYISO firm import baseload (HQ/Ontario must-flow) and the Manitoba
+    # firm-hydro floor now run inside the SHARED
+    # transmission.apply_interchange_injections below — contract-structure
+    # floors, forward-native, reachable from both orchestrators (Stage 5).
 
-        if inject_nyiso_firm_imports(fleet_arrays, iso, year):
-            logger.info(
-                "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
-                iso,
-                year,
-            )
-
+    # [measured: EIA-930 NYISO monthly net-interchange schedule → monthly LP
+    #  band | forecast substitute: config.nyiso_forward_net_import_twh —
+    #  build_import_node_reconciliation is mode-aware, the runner passes
+    #  mode="forecast"]
     # NYISO priced-node boundary-flow reconciliation: pin the priced node's
     # MONTHLY net interchange to the measured EIA-930 schedule via a per-month
     # band constraint in the LP (transmission.build_import_node_reconciliation ->
@@ -3785,20 +3712,6 @@ def run_year(
                 int(node_idx.size),
                 recon_lo.sum() / 1e6,
                 recon_hi.sum() / 1e6,
-            )
-
-    # Manitoba firm-hydro import floor (MISO only): the contracted firm baseload
-    # flows into MISO-North every hour regardless of MISO's hourly price (the
-    # firm-schedule pattern; transmission.inject_miso_firm_imports). Only fires
-    # with priced interchange + the flag + the block in the fleet.
-    if priced_interchange and getattr(config, "miso_firm_imports", False):
-        from market_sim.model.transmission import inject_miso_firm_imports
-
-        if inject_miso_firm_imports(fleet_arrays, iso, year):
-            logger.info(
-                "%s %d: Manitoba firm-hydro import baseload floored (must-flow)",
-                iso,
-                year,
             )
 
     # NYISO Long Island local self-supply floor: force the cable-islanded LI
@@ -3939,46 +3852,49 @@ def run_year(
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
-    # Reference-price seam: overwrite each neighbor pseudo-gen's mc row with its
-    # hourly reference price ± hurdle (the cost is hourly, so it could not ride
-    # in the static vom). mc_bid inherits it (the import gens take no startup
-    # markup). No-op unless the reference node is in the fleet, so non-reference
-    # runs stay byte-identical.
-    if (
-        getattr(config, "reference_price_interface", False)
-        and iso in INTERFACE_NEIGHBORS
-        # CAISO is priced by the dedicated caiso_reference_price_seam block below
-        # (which adds the CARB border carbon); skip the generic carbon-free path.
-        and iso != "CAISO"
-    ):
-        _border_anchor = getattr(config, "miso_pjm_border_anchor", False)
-        if inject_reference_price_mc(
-            fleet_arrays,
-            mc_base,
-            iso,
-            year,
-            config.gas_price_path,
-            border_anchor=_border_anchor,
+    # ── Interchange price/limit injections (orchestrator-unification Stage 5)
+    # The forward-native sequence — reference-price seams (generic + CAISO
+    # dedicated), firm import/export floors, and the CAISO offer couplings —
+    # is the SHARED transmission.apply_interchange_injections, the exact call
+    # the forecast runner makes; every step is gated by its existing
+    # ScenarioConfig field. The BACKCAST-ONLY measured-price overlays are
+    # consolidated below and threaded into the shared sequence at its
+    # documented seam point (after the forward base prices, before the
+    # couplings — the order the inline code always had). Each overlay names
+    # its measured source and forecast substitute (plan §3.1); none is
+    # reachable from the forecast path, which passes measured_overlay=None.
+    caiso_ref_seam = (
+        getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
+    )
+    per_hub_intertie = (
+        (not caiso_ref_seam)
+        and getattr(config, "caiso_per_hub_intertie", False)
+        and iso == "CAISO"
+    )
+    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
+    legacy_intertie = not per_hub_intertie and not bidir_intertie
+
+    def _backcast_measured_interchange_prices(fleet_arrays, mc_base) -> None:
+        """Backcast measured-price interchange overlays (BOD, plan §3.1).
+
+        Measured hub/border LMP overwrites on the priced node's mc rows —
+        each a real delivered price fed as an input (rule 12-admissible), but
+        with no forward analogue series, so the forecast substitutes the
+        reference-price formula per seam. Runs inside the shared injection
+        sequence after the forward base prices and before the couplings.
+        """
+        # [measured: PJM DA LMP at the MISO-facing western border hubs |
+        #  forecast substitute: gas × HR reference price, optionally re-
+        #  anchored via miso_pjm_border_anchor]. Overwrites ONLY the PJM seam
+        # rows the generic inject_reference_price_mc just priced; SPP/South
+        # keep their gas × HR pricing. Measured LMP takes precedence over the
+        # border anchor when both are on. No-op without the measured parquet.
+        if (
+            getattr(config, "reference_price_interface", False)
+            and iso in INTERFACE_NEIGHBORS
+            and iso != "CAISO"
+            and getattr(config, "miso_pjm_lmp_import_pricing", False)
         ):
-            logger.info(
-                "%s %d: reference-price interface — %d neighbor seams priced "
-                "from gas x heat-rate x load-shape (hurdle in $/MWh)%s",
-                iso,
-                year,
-                len(INTERFACE_NEIGHBORS.get(iso, [])),
-                "; PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs"
-                if _border_anchor and iso == "MISO"
-                else "",
-            )
-        # Measured PJM border-hub LMP overwrite (MISO only): replace the PJM
-        # seam's gas × HR rows with the measured hourly PJM DA LMP at the
-        # MISO-facing western border hubs + hurdle. Runs AFTER the generic
-        # inject_reference_price_mc (which sets all seams including PJM from the
-        # gas × HR formula), so it overwrites ONLY the PJM seam rows while
-        # SPP/South keep their gas × HR pricing. The two mechanisms (border-
-        # anchor vs measured LMP) are alternatives; measured LMP takes precedence
-        # when both are on. No-op without the measured parquet.
-        if getattr(config, "miso_pjm_lmp_import_pricing", False):
             from market_sim.model.transmission import (
                 inject_miso_pjm_lmp_import_prices,
             )
@@ -3999,238 +3915,131 @@ def run_year(
                         2.0,
                     ),
                 )
-        # Firm scheduled-export floor: force the cheapest export tranches on at
-        # the measured firm base (firm_export_floor_by_year) so PJM's firm
-        # must-flow export to MISO/NYISO clears even in cheap-spread hours, the
-        # economic tranches clearing on top. Modifies fleet_arrays.pmax before
-        # the LP bounds are built. No-op unless a neighbor has a floor for `year`.
-        if inject_reference_price_firm_export(fleet_arrays, iso, year):
-            logger.info(
-                "%s %d: firm scheduled-export floor applied (must-flow seam base)",
-                iso,
-                year,
-            )
-        # Firm scheduled-IMPORT floor (the import-direction mirror): force the
-        # cheapest import tranches on at the measured firm base
-        # (firm_import_floor_by_year) so MISO's near-firm net import from the PJM
-        # (+IESO/Ontario) seam clears every hour — the inframarginal must-flow
-        # import displaces the over-running domestic coal/CC, the economic tranches
-        # clearing on top. Sets fleet_arrays.min_gen on the import rows AFTER the
-        # seam deliverability scaling. No-op off the flag / unless a neighbor has a
-        # floor for `year`.
-        if getattr(config, "miso_firm_import_floor", False):
+        # [measured: WECC intertie hub LMP (Malin / Palo Verde, OASIS) per
+        #  corridor | forecast substitute: caiso_intertie_reference_price —
+        #  the forward (HH+basis)×HR×load-shape per-hub seam, which the
+        #  shared sequence prices INSTEAD of this overlay when set]. The
+        # caiso-51 keeper's headline seam: each per-hub corridor priced at
+        # its OWN measured hub, firm/contracted tranches held at contract
+        # cost under caiso_perhub_firm_base.
+        if per_hub_intertie and not getattr(
+            config, "caiso_intertie_reference_price", False
+        ):
             from market_sim.model.transmission import (
-                inject_reference_price_firm_import,
+                inject_caiso_per_hub_intertie_prices,
             )
 
-            if inject_reference_price_firm_import(fleet_arrays, iso, year):
+            if inject_caiso_per_hub_intertie_prices(
+                fleet_arrays,
+                mc_base,
+                iso,
+                year,
+                carbon_price,
+                firm_base=getattr(config, "caiso_perhub_firm_base", False),
+            ):
                 logger.info(
-                    "%s %d: firm scheduled-import floor applied (must-flow seam "
-                    "base — net-import seam, displaces marginal domestic coal/CC)",
+                    "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "
+                    "→ NP15, Palo Verde/Path-46 → SP15), each priced at its OWN "
+                    "measured hub (per-hub basis + per-hub netting, arbitrage-free, "
+                    "one direction per hour per corridor)%s",
+                    iso,
+                    year,
+                    (
+                        " — firm/contracted tranches held at contract cost "
+                        "(caiso_perhub_firm_base)"
+                        if getattr(config, "caiso_perhub_firm_base", False)
+                        else ""
+                    ),
+                )
+        # [measured: WECC intertie hub LMP (MCE, per-hub series averaged to
+        #  one) | forecast substitute: none wired — the bidir STRUCTURE is
+        #  forward-reachable via the spec; its legs keep the static ladder
+        #  prices in a forecast]. Single signed tie, both legs at the hub.
+        if not per_hub_intertie and bidir_intertie:
+            from market_sim.model.transmission import (
+                inject_caiso_bidir_intertie_prices,
+            )
+
+            if inject_caiso_bidir_intertie_prices(
+                fleet_arrays, mc_base, iso, year, carbon_price
+            ):
+                logger.info(
+                    "%s %d: bidirectional WECC intertie — single signed flow on a "
+                    "shared cap, both legs priced at the measured hub (import + "
+                    "border carbon / export, arbitrage-free, one direction per hour)",
                     iso,
                     year,
                 )
-    # CAISO measured-hub import pricing: overwrite each priced-import tranche's mc
-    # row with the measured WECC neighbor-hub LMP it proxies (Mid-C/Malin for the
-    # PNW blocks, Palo Verde for the desert-SW blocks) + per-tranche border carbon,
-    # replacing the static bundle-fitted ladder. The real delivered cost of the
-    # imported energy: seasonal (spring runoff) and negative in the solar glut, so
-    # it both lowers the over-high body and reproduces the negative midday tail
-    # (DIAGNOSIS-caiso-import-ladder-2026-06-19). No-op (byte-identical) unless
-    # caiso_import_hub_prices is on AND the measured intertie parquet is present.
-    # Single signed WECC intertie: one arbitrage-free injector reprices both
-    # legs (import = hub + per-tranche carbon, export = hub) off the measured
-    # hub, superseding the separate import-hub / export-hub / gas-coupling /
-    # solar-shape injectors below (those target the legacy two-mechanism node).
-    # CAISO forward reference-price seam (caiso_reference_price_seam): price BOTH
-    # legs of each WECC corridor from the INTERFACE_NEIGHBORS["CAISO"] construction
-    # ((HH + gas_basis) × HR × load-shape ± hurdle), with the CARB border carbon on
-    # the import leg (carbon_price). The export tranches clear at hub − hurdle (the
-    # price a WECC neighbor pays for CAISO's midday solar surplus). Supersedes the
-    # measured OASIS per-hub path; no-op (byte-identical) off the flag.
-    caiso_ref_seam = (
-        getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
-    )
-    if caiso_ref_seam:
-        if inject_reference_price_mc(
-            fleet_arrays,
-            mc_base,
-            iso,
-            year,
-            config.gas_price_path,
-            carbon_price=carbon_price,
+        # [measured: WECC intertie hub LMPs (Mid-C / Palo Verde) on the pooled
+        #  legacy node, import + export sides | forecast substitute: the
+        #  static ladder / the per-hub or reference seams]. Superseded by the
+        # per-hub and bidir nodes; gated to the legacy pooled topology only.
+        if legacy_intertie and getattr(config, "caiso_import_hub_prices", False):
+            from market_sim.model.transmission import (
+                inject_caiso_export_hub_prices,
+                inject_caiso_import_hub_prices,
+            )
+
+            if inject_caiso_import_hub_prices(
+                fleet_arrays, mc_base, iso, year, carbon_price
+            ):
+                logger.info(
+                    "%s %d: import tranches repriced to measured WECC intertie "
+                    "hub LMPs (Mid-C / Palo Verde) — static ladder bypassed",
+                    iso,
+                    year,
+                )
+            # Symmetric export side of the same bidirectional intertie, so the
+            # tie can reverse to the measured +3.5 GW export.
+            if inject_caiso_export_hub_prices(fleet_arrays, mc_base, iso, year):
+                logger.info(
+                    "%s %d: neighbor-export sink repriced to the measured WECC "
+                    "intertie hub LMP — intertie can reverse to export",
+                    iso,
+                    year,
+                )
+        # [measured: PJM / ISO-NE Day-Ahead system LMP (hourly) | forecast
+        #  substitute: the year-grounded static ladder / a future NYISO
+        #  reference seam]. NYISO analogue of the CAISO/MISO measured-hub
+        # pricing; the monthly EIA-930 reconciliation band, HQ firm floor and
+        # SIL cap are unchanged.
+        if (
+            iso == "NYISO"
+            and priced_interchange
+            and getattr(config, "nyiso_import_hub_prices", False)
         ):
-            logger.info(
-                "%s %d: CAISO reference-price seam — both legs of %d WECC "
-                "corridors priced from gas × heat-rate × load-shape "
-                "(PNW@Malin gross-load, DSW@Palo-Verde net-load; import + CARB "
-                "border carbon / export at hub − hurdle)",
-                iso,
-                year,
-                len(INTERFACE_NEIGHBORS.get(iso, [])),
-            )
-    per_hub_intertie = (
-        (not caiso_ref_seam)
-        and getattr(config, "caiso_per_hub_intertie", False)
-        and iso == "CAISO"
-    )
-    if per_hub_intertie and getattr(config, "caiso_intertie_reference_price", False):
-        # FORWARD seam: price each corridor from the reference-price formula
-        # ((HH + basis) × HR × load-shape) instead of the measured hub LMP, so
-        # the seam stays live in a forecast year and is validated — not pinned —
-        # against the measured realization (CLAUDE.md #10/#12).
-        from market_sim.model.transmission import (
-            inject_caiso_per_hub_reference_prices,
-        )
+            from market_sim.model.transmission import inject_nyiso_import_hub_prices
 
-        if inject_caiso_per_hub_reference_prices(
-            fleet_arrays, mc_base, iso, year, carbon_price, config.gas_price_path
-        ):
-            logger.info(
-                "%s %d: per-hub WECC intertie — FORWARD reference price per "
-                "corridor ((HH+basis)×HR×load-shape; PNW@Malin gross-load, "
-                "DSW@Palo-Verde net-load), arbitrage-free, one direction per hour "
-                "per corridor (measured hub kept only as backcast validation)",
-                iso,
-                year,
-            )
-    elif per_hub_intertie:
-        from market_sim.model.transmission import (
-            inject_caiso_per_hub_intertie_prices,
-        )
+            if inject_nyiso_import_hub_prices(fleet_arrays, mc_base, iso, year):
+                logger.info(
+                    "%s %d: import tranches repriced to measured neighbor hourly "
+                    "DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, "
+                    "export sink→hourly min) — static ladder bypassed",
+                    iso,
+                    year,
+                )
 
-        if inject_caiso_per_hub_intertie_prices(
-            fleet_arrays,
-            mc_base,
-            iso,
-            year,
-            carbon_price,
-            firm_base=getattr(config, "caiso_perhub_firm_base", False),
-        ):
-            logger.info(
-                "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "
-                "→ NP15, Palo Verde/Path-46 → SP15), each priced at its OWN "
-                "measured hub (per-hub basis + per-hub netting, arbitrage-free, "
-                "one direction per hour per corridor)%s",
-                iso,
-                year,
-                (
-                    " — firm/contracted tranches held at contract cost "
-                    "(caiso_perhub_firm_base)"
-                    if getattr(config, "caiso_perhub_firm_base", False)
-                    else ""
-                ),
-            )
-    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
-    if not per_hub_intertie and bidir_intertie:
-        from market_sim.model.transmission import inject_caiso_bidir_intertie_prices
-
-        if inject_caiso_bidir_intertie_prices(
-            fleet_arrays, mc_base, iso, year, carbon_price
-        ):
-            logger.info(
-                "%s %d: bidirectional WECC intertie — single signed flow on a "
-                "shared cap, both legs priced at the measured hub (import + "
-                "border carbon / export, arbitrage-free, one direction per hour)",
-                iso,
-                year,
-            )
-    # The legacy two-mechanism injectors (separate import-hub / export-hub /
-    # solar-shape) target the pooled WECC_import node; the per-hub and bidir nodes
-    # supersede them. Gas-coupling still applies (it shifts the desert-SW gas
-    # tranches, which the per-hub node keeps in WECC_DSW).
-    legacy_intertie = not per_hub_intertie and not bidir_intertie
-    if legacy_intertie and getattr(config, "caiso_import_hub_prices", False):
-        from market_sim.model.transmission import inject_caiso_import_hub_prices
-
-        if inject_caiso_import_hub_prices(
-            fleet_arrays, mc_base, iso, year, carbon_price
-        ):
-            logger.info(
-                "%s %d: import tranches repriced to measured WECC intertie "
-                "hub LMPs (Mid-C / Palo Verde) — static ladder bypassed",
-                iso,
-                year,
-            )
-        # Symmetric export side of the same bidirectional intertie: price the
-        # neighbor-export sink at the measured hub too, so CAISO exports its
-        # midday glut whenever its internal price drops below the neighbor's
-        # (the static $8 block only bit near $0; the model was stuck importing
-        # 100% of hours and never reversing to the measured +3.5 GW export).
-        from market_sim.model.transmission import inject_caiso_export_hub_prices
-
-        if inject_caiso_export_hub_prices(fleet_arrays, mc_base, iso, year):
-            logger.info(
-                "%s %d: neighbor-export sink repriced to the measured WECC "
-                "intertie hub LMP — intertie can reverse to export",
-                iso,
-                year,
-            )
-
-    # NYISO measured-neighbor import pricing: reprice the priced node's
-    # PJM_west / ISONE_tie / import_scarcity tranches (and the export_surplus
-    # sink) at the measured hourly PJM / ISO-NE Day-Ahead system LMP ± the
-    # wheeling hurdle, replacing the static per-year fitted ladder
-    # (transmission.inject_nyiso_import_hub_prices — the NYISO analogue of
-    # caiso_import_hub_prices / miso_pjm_lmp_import_pricing). The monthly
-    # EIA-930 reconciliation band, HQ firm floor and SIL cap are unchanged.
-    # No-op unless nyiso_import_hub_prices is on AND the measured neighbor
-    # LMP parquets are present (forecast years keep the ladder).
-    if (
-        iso == "NYISO"
-        and priced_interchange
-        and getattr(config, "nyiso_import_hub_prices", False)
-    ):
-        from market_sim.model.transmission import inject_nyiso_import_hub_prices
-
-        if inject_nyiso_import_hub_prices(fleet_arrays, mc_base, iso, year):
-            logger.info(
-                "%s %d: import tranches repriced to measured neighbor hourly "
-                "DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, "
-                "export sink→hourly min) — static ladder bypassed",
-                iso,
-                year,
-            )
-
-    # CAISO gas-coupled imports: shift the desert-SW gas import tranches
-    # (DSW_CCGT, DSW_CT) by the measured commodity-gas delta so they track the
-    # same Henry-Hub-plus-citygate-basis spot the hub-basis overlay applies to
-    # in-state gas (PLAN-caiso-gas-coupled-imports-2026-06-20). No-op unless
-    # caiso_import_gas_coupling is on AND the measured gas series are available;
-    # pairs with --gas-hub-basis-overlay so both legs price off the same gas.
-    if not bidir_intertie and getattr(config, "caiso_import_gas_coupling", False):
-        from market_sim.model.transmission import inject_caiso_import_gas_coupling
-
-        if inject_caiso_import_gas_coupling(fleet_arrays, mc_base, config, year):
-            logger.info(
-                "%s %d: desert-SW gas import tranches (DSW_CCGT/DSW_CT) coupled "
-                "to the measured commodity-gas delta (tracks --gas-hub-basis-overlay)",
-                iso,
-                year,
-            )
-
-    # CAISO desert-SW solar-shaped import offer: collapse the DSW_solar_PV block
-    # toward the negative keep-running floor in the net-load belly so the marginal
-    # midday import bids sub-$0 (Palo Verde spring solar glut), restoring the
-    # CAISO negative midday tail. No-op unless caiso_import_solar_shape is on;
-    # applies on top of the gas coupling. Net load is the LP-served load (net of
-    # must-run) less utility solar/wind generation.
-    if not bidir_intertie and getattr(config, "caiso_import_solar_shape", False):
-        from market_sim.model.transmission import inject_caiso_import_solar_shape
-
-        net_load = (
+    # Net load for the solar-shape coupling: the LP-served load (net of
+    # must-run) less utility solar/wind generation — same convention as the
+    # drag floors and the forecast runner.
+    _interchange_net_load = None
+    if getattr(config, "caiso_import_solar_shape", False):
+        _interchange_net_load = (
             demand.sum(axis=0)
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
-        if inject_caiso_import_solar_shape(fleet_arrays, mc_base, config, net_load):
-            logger.info(
-                "%s %d: desert-SW solar import (DSW_solar_PV) offer collapsed "
-                "toward the negative keep-running floor in the net-load belly "
-                "(negative midday tail)",
-                iso,
-                year,
-            )
+    apply_interchange_injections(
+        fleet_arrays,
+        mc_base,
+        config,
+        iso,
+        year,
+        carbon_price=carbon_price,
+        gas_scenario=config.gas_price_path,
+        net_load=_interchange_net_load,
+        measured_overlay=_backcast_measured_interchange_prices,
+    )
 
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac

@@ -18,6 +18,8 @@ the same machinery now serves PJM (and is data-driven, so NYISO/NEISO only
 need constants entries).
 """
 
+import logging
+
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
@@ -3543,3 +3545,236 @@ def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
         ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
         applied = True
     return applied
+
+
+_logger = logging.getLogger(__name__)
+
+
+def forward_corridor_interface_groups(
+    iso_config: ISOConfig, iso: str, year: int, hours: int
+) -> list[tuple]:
+    """Return the CAISO corridors' FORWARD ATC interface groups (or ``[]``).
+
+    The forward-native corridor deliverability cap
+    (``config.caiso_corridor_atc_forward``): builds the capability-based ATC
+    envelope from :func:`forward_corridor_atc_envelope` (corridor TTC ×
+    posted-ATC base fraction × forward solar derate — never the measured p95
+    flow, CLAUDE.md #12) and wraps it in one-sided per-hour interface groups
+    via :func:`build_caiso_corridor_flow_groups`. The measured-envelope
+    variant (``caiso_corridor_flow_limit``) is a backcast overlay and stays in
+    the calibration orchestrator.
+
+    Returns an empty list (byte-identical) when no corridor resolves — e.g.
+    the per-hub split is not applied, or the solar-fraction driver is absent
+    for ``year``.
+    """
+    corridor_env = forward_corridor_atc_envelope(iso_config, iso, year, hours)
+    if not corridor_env:
+        return []
+    return build_caiso_corridor_flow_groups(
+        iso_config.links, corridor_env, export_envelope=None
+    )
+
+
+def apply_interchange_injections(
+    fleet_arrays,
+    mc: np.ndarray,
+    config,
+    iso: str,
+    year: int,
+    *,
+    carbon_price: float = 0.0,
+    gas_scenario: str = "mid",
+    net_load: np.ndarray | None = None,
+    measured_overlay=None,
+) -> None:
+    """Apply the forward-native interchange price/limit injections.
+
+    The single post-assembly injection sequence BOTH orchestrators run
+    (forecast ``runner.py`` and backcast ``scripts/run_calibration.py``), so a
+    forward-native seam mechanism is reachable from both paths by construction
+    (orchestrator-unification plan §2.2/§3.2). Every injection is gated by its
+    existing ``ScenarioConfig`` field — all default off — and each underlying
+    injector self-no-ops when its rows/data are absent, so a run without the
+    gate (or without a priced node) is byte-identical.
+
+    Order (replicating the backcast orchestrator's long-standing sequence):
+
+    1. Generic reference-price seam (non-CAISO): hourly gas × heat-rate ×
+       load-shape seam prices (:func:`inject_reference_price_mc`, with the
+       MISO ``miso_pjm_border_anchor`` re-anchor when set), the firm
+       scheduled-export floor (:func:`inject_reference_price_firm_export`),
+       and the ``miso_firm_import_floor`` mirror.
+    2. CAISO dedicated seams (mutually exclusive, the spec ladder):
+       ``caiso_reference_price_seam`` (both corridor legs priced forward, CARB
+       border carbon on the import leg) or the per-hub FORWARD reference
+       prices (``caiso_intertie_reference_price``). The per-hub/bidir
+       *measured-hub* pricing is a backcast overlay and lives in
+       ``measured_overlay``, never here.
+    3. Firm import floors: Manitoba (``miso_firm_imports``) and NYISO
+       HQ/Ontario (``nyiso_firm_imports``) must-flow baseloads.
+    4. ``measured_overlay(fleet_arrays, mc)`` — the caller-supplied backcast
+       measured-price block (measured hub LMP overwrites). The forecast
+       runner passes ``None``. It sits exactly here because the measured hub
+       overwrites must land on the forward base prices (the MISO PJM-LMP
+       overwrite replaces seam rows step 1 priced) and before the offer
+       couplings below (which shift/blend whatever base price is active).
+    5. Offer couplings (CAISO, skipped under the bidir tie whose injector owns
+       both legs): commodity-gas coupling of the desert-SW blocks
+       (:func:`inject_caiso_import_gas_coupling`) and the net-load-keyed
+       solar-shape collapse (:func:`inject_caiso_import_solar_shape`).
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place — floors/bounds).
+        mc: Base marginal-cost matrix (modified in place).
+        config: Scenario config carrying the gates.
+        iso: ISO identifier.
+        year: Solve year.
+        carbon_price: Resolved carbon price ($/t) for the CARB border adder.
+        gas_scenario: Gas price path for the reference-price formula.
+        net_load: Hourly LP-served net load (demand − must-run − VRE), only
+            required when ``caiso_import_solar_shape`` is on.
+        measured_overlay: Optional callable ``(fleet_arrays, mc) -> None``
+            holding the backcast-only measured-price overlays.
+
+    Raises:
+        ValueError: ``caiso_import_solar_shape`` is on but ``net_load`` was
+            not supplied.
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    # --- 1. Generic reference-price seam (non-CAISO; CAISO uses its dedicated
+    #     caiso_reference_price_seam block below, which adds the CARB border
+    #     carbon — the generic single-node path never applies to CAISO). ---
+    if (
+        getattr(config, "reference_price_interface", False)
+        and iso in INTERFACE_NEIGHBORS
+        and iso != "CAISO"
+    ):
+        _border_anchor = getattr(config, "miso_pjm_border_anchor", False)
+        if inject_reference_price_mc(
+            fleet_arrays,
+            mc,
+            iso,
+            year,
+            gas_scenario,
+            border_anchor=_border_anchor,
+        ):
+            _logger.info(
+                "%s %d: reference-price interface — %d neighbor seams priced "
+                "from gas x heat-rate x load-shape (hurdle in $/MWh)%s",
+                iso,
+                year,
+                len(INTERFACE_NEIGHBORS.get(iso, [])),
+                "; PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs"
+                if _border_anchor and iso == "MISO"
+                else "",
+            )
+        if inject_reference_price_firm_export(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: firm scheduled-export floor applied (must-flow seam base)",
+                iso,
+                year,
+            )
+        if getattr(config, "miso_firm_import_floor", False):
+            if inject_reference_price_firm_import(fleet_arrays, iso, year):
+                _logger.info(
+                    "%s %d: firm scheduled-import floor applied (must-flow seam "
+                    "base — net-import seam, displaces marginal domestic coal/CC)",
+                    iso,
+                    year,
+                )
+
+    # --- 2. CAISO dedicated seams (forward-native pricing only). ---
+    caiso_ref_seam = (
+        getattr(config, "caiso_reference_price_seam", False) and iso == "CAISO"
+    )
+    per_hub_intertie = (
+        (not caiso_ref_seam)
+        and getattr(config, "caiso_per_hub_intertie", False)
+        and iso == "CAISO"
+    )
+    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
+    if caiso_ref_seam:
+        if inject_reference_price_mc(
+            fleet_arrays,
+            mc,
+            iso,
+            year,
+            gas_scenario,
+            carbon_price=carbon_price,
+        ):
+            _logger.info(
+                "%s %d: CAISO reference-price seam — both legs of %d WECC "
+                "corridors priced from gas × heat-rate × load-shape "
+                "(PNW@Malin gross-load, DSW@Palo-Verde net-load; import + CARB "
+                "border carbon / export at hub − hurdle)",
+                iso,
+                year,
+                len(INTERFACE_NEIGHBORS.get(iso, [])),
+            )
+    if per_hub_intertie and getattr(config, "caiso_intertie_reference_price", False):
+        # FORWARD seam: price each corridor from the reference-price formula
+        # ((HH + basis) × HR × load-shape) instead of the measured hub LMP, so
+        # the seam stays live in a forecast year and is validated — not pinned —
+        # against the measured realization (CLAUDE.md #10/#12).
+        if inject_caiso_per_hub_reference_prices(
+            fleet_arrays, mc, iso, year, carbon_price, gas_scenario
+        ):
+            _logger.info(
+                "%s %d: per-hub WECC intertie — FORWARD reference price per "
+                "corridor ((HH+basis)×HR×load-shape; PNW@Malin gross-load, "
+                "DSW@Palo-Verde net-load), arbitrage-free, one direction per hour "
+                "per corridor (measured hub kept only as backcast validation)",
+                iso,
+                year,
+            )
+
+    # --- 3. Firm (must-flow) import floors — contract structure, not a
+    #     measured-outcome pin; the backcast overlays only the measured
+    #     per-year Manitoba delivery via the builder. ---
+    if getattr(config, "miso_firm_imports", False):
+        if inject_miso_firm_imports(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: Manitoba firm-hydro import baseload floored (must-flow)",
+                iso,
+                year,
+            )
+    if getattr(config, "nyiso_firm_imports", False):
+        if inject_nyiso_firm_imports(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
+                iso,
+                year,
+            )
+
+    # --- 4. Backcast measured-price overlays (caller-supplied; forecast
+    #     passes None). Must land after the forward base prices and before
+    #     the couplings below. ---
+    if measured_overlay is not None:
+        measured_overlay(fleet_arrays, mc)
+
+    # --- 5. CAISO offer couplings (skipped under the bidir tie, whose
+    #     injector prices both legs itself). ---
+    if not bidir_intertie and getattr(config, "caiso_import_gas_coupling", False):
+        if inject_caiso_import_gas_coupling(fleet_arrays, mc, config, year):
+            _logger.info(
+                "%s %d: desert-SW gas import tranches (DSW_CCGT/DSW_CT) coupled "
+                "to the measured commodity-gas delta (tracks --gas-hub-basis-overlay)",
+                iso,
+                year,
+            )
+    if not bidir_intertie and getattr(config, "caiso_import_solar_shape", False):
+        if net_load is None:
+            raise ValueError(
+                "caiso_import_solar_shape is on but the orchestrator did not "
+                "supply net_load to apply_interchange_injections"
+            )
+        if inject_caiso_import_solar_shape(fleet_arrays, mc, config, net_load):
+            _logger.info(
+                "%s %d: desert-SW solar import (DSW_solar_PV) offer collapsed "
+                "toward the negative keep-running floor in the net-load belly "
+                "(negative midday tail)",
+                iso,
+                year,
+            )
