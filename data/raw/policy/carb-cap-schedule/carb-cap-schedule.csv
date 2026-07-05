@@ -1,0 +1,12 @@
+budget_year,metric,value,unit,source_doc,source_page
+2023,allowance_budget,294.1,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2024,allowance_budget,280.7,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2025,allowance_budget,267.4,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2027,allowance_budget,240.6,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2028,allowance_budget,227.3,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2029,allowance_budget,213.9,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2030,allowance_budget,200.5,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2031,allowance_budget,193.8,mmt_co2e,CARB Cap-and-Trade Regulation 17 CCR 95841,Table 6-2
+2023,auction_reserve_price,22.21,usd_per_tonne,CARB Annual Auction Reserve Price Notice (2023),95911(c)
+2024,auction_reserve_price,24.04,usd_per_tonne,CARB Annual Auction Reserve Price Notice (2024),95911(c)
+2025,auction_reserve_price,25.94,usd_per_tonne,CARB Annual Auction Reserve Price Notice (2025),95911(c)
