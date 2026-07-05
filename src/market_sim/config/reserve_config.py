@@ -40,6 +40,24 @@ ERCOT_AS_PRODUCTS: tuple[tuple[str, str, str], ...] = (
     ("NonSpin", "NSPIN", "all"),
 )
 
+# Per-product sustained-delivery duration (hours), INDEX-ALIGNED with
+# ERCOT_AS_PRODUCTS above (RegUp, RRS, ECRS, Non-Spin). This is the energy an
+# Energy Storage Resource (ESR) must have available to cover an AS award for
+# its full deployment duration — ERCOT's State-of-Charge (SOC) requirement: at
+# the start of any hour with a discharging AS award, the ESR must hold SOC ≥
+# Σ_p (award_p × duration_p). A 100 MW / 100 MWh (1-h) battery can therefore
+# back 100 MW of RegUp/RRS but at most 25 MW of 4-h Non-Spin. This is what
+# stops a short-duration battery from selling long-duration products on its
+# full power, and is the physical driver of the endogenous storage energy-vs-AS
+# split's duration gate (config.ercot_storage_as_duration_gate,
+# dispatch._build_reserve_rows). Source: ERCOT Nodal Protocols §3.17.3 "State
+# of Charge Requirements for Energy Storage Resources" and §8.1 (AS
+# definitions); durations RegUp 1 h, RRS 1 h, ECRS 2 h, Non-Spin 4 h per the
+# ERCOT ESR SOC methodology (Business Practice Manual, Dec 2022; ERCOT
+# Ancillary Services Study Final White Paper, Sept 2024). Not fitted — the
+# published deployment durations. Cited in docs/parameter-citations.md.
+ERCOT_AS_PRODUCT_DURATION_H: tuple[float, ...] = (1.0, 1.0, 2.0, 4.0)
+
 # --- ERCOT forward AS requirement-setting methodology (G3) -----------------
 ERCOT_AS_FE_FRAC_LOAD: float = 0.01
 ERCOT_AS_FE_FRAC_WIND: float = 0.10
@@ -212,6 +230,12 @@ class ReserveDesign:
     families: list[ReserveFamily]
     eligible: np.ndarray  # (n_classes, n_gen) bool
     storage_eligible: bool = False
+    # (n_reserve_classes,) per-product sustained-delivery duration in hours
+    # (ERCOT duration gate, ercot_storage_as_duration_gate). When set, storage's
+    # endogenous AS gets its own RS[c,z] columns bounded by a SOC duration gate
+    # in dispatch._build_reserve_rows. None keeps storage pooled in the shared
+    # headroom (the pre-gate endogenous split).
+    storage_duration_h: Optional[np.ndarray] = None
     supply_cap: Optional[np.ndarray] = None  # (n_headroom_rows, T) MW
     headroom_eligible: Optional[np.ndarray] = None  # (n_hr, n_gen) bool
     headroom_products: Optional[np.ndarray] = None  # (n_hr, n_families) bool
@@ -327,6 +351,11 @@ def build_reserve_dispatch_kwargs(
 
     if design.storage_eligible:
         kw["reserve_storage"] = True
+
+    # ERCOT storage AS duration gate: per-product durations activate the explicit
+    # RS[c,z] storage-reserve columns + SOC gate in dispatch._build_reserve_rows.
+    if design.storage_duration_h is not None:
+        kw["reserve_storage_duration_h"] = design.storage_duration_h
 
     # Multi-family: zone mask, counts, class
     if n_fam > 1 or design.headroom_eligible is not None:
@@ -685,6 +714,26 @@ def _ercot_multiproduct_design(
         solar_gen=solar_gen,
     )
 
+    # Storage AS duration gate (config.ercot_storage_as_duration_gate): the
+    # published per-product SOC durations (ERCOT_AS_PRODUCT_DURATION_H, index-
+    # aligned with ERCOT_AS_PRODUCTS) that bound the endogenous storage split by
+    # stored energy. Only meaningful alongside the endogenous split
+    # (ercot_storage_as_endogenous) — the measured storage treatment reserves the
+    # award out of the cap instead, and mixing the two over-withholds (the
+    # ercot30 blow-up). None (default) keeps storage pooled in the shared
+    # headroom (the pre-gate endogenous split, run164).
+    storage_duration_h = None
+    if getattr(config, "ercot_storage_as_duration_gate", False) and getattr(
+        config, "ercot_storage_as_endogenous", False
+    ):
+        storage_duration_h = np.asarray(ERCOT_AS_PRODUCT_DURATION_H, dtype=float)
+        if storage_duration_h.shape[0] != n_prod:
+            raise ValueError(
+                "ERCOT_AS_PRODUCT_DURATION_H must be index-aligned with "
+                f"ERCOT_AS_PRODUCTS ({n_prod} products), got "
+                f"{storage_duration_h.shape[0]}"
+            )
+
     # Lumped ORDC TOTAL-reserve family (config.ercot_ordc_total_reserve): the
     # published RTORPA mechanism of the pre-RTC+B regime, layered ON TOP of the
     # per-product AS families — the faithful 2023-25 stack is both together.
@@ -760,6 +809,7 @@ def _ercot_multiproduct_design(
         families=families + released_ecrs_families + total_families,
         eligible=reserve_eligible,
         storage_eligible=True,
+        storage_duration_h=storage_duration_h,
         headroom_eligible=headroom_eligible,
         headroom_products=headroom_products,
         supply_cap=supply_cap,

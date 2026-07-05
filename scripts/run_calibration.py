@@ -2181,6 +2181,7 @@ def run_year(
     gas_hh_monthly_shape: bool = False,
     storage_as_commitment: bool = False,
     ercot_storage_as_endogenous: bool = False,
+    ercot_storage_as_duration_gate: bool = False,
     hydro_eia930_monthly: bool = False,
     hydro_forecast_budget: bool = False,
     hydro_year: str = "normal",
@@ -2760,6 +2761,8 @@ def run_year(
     # over storage_as_commitment when both are set.
     if ercot_storage_as_endogenous:
         config = config.with_overrides(ercot_storage_as_endogenous=True)
+    if ercot_storage_as_duration_gate:
+        config = config.with_overrides(ercot_storage_as_duration_gate=True)
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
     # CAISO defaults to $5/MWh when no explicit adder is passed: the 10+ GW
