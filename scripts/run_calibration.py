@@ -3499,15 +3499,31 @@ def run_year(
         from market_sim.model.transmission import inject_interchange_shape
 
         export_only = getattr(config, "interchange_shaping_export_only", False)
-        if inject_interchange_shape(fleet_arrays, iso, year, export_only=export_only):
+        # Per-direction envelope percentile is a ScenarioConfig field (rule
+        # 24 — was an os.environ INTERCHANGE_SHAPE_IMPORT_PCT/EXPORT_PCT read
+        # inside inject_interchange_shape), so the value that ran is recorded
+        # in run_config.json. Both default to 90.0, reproducing the env-unset
+        # behavior of every run to date.
+        import_pct = getattr(config, "interchange_shape_import_pct", 90.0)
+        export_pct = getattr(config, "interchange_shape_export_pct", 90.0)
+        if inject_interchange_shape(
+            fleet_arrays,
+            iso,
+            year,
+            export_only=export_only,
+            import_percentile=import_pct,
+            export_percentile=export_pct,
+        ):
             logger.info(
                 "%s %d: priced node shaped by measured EIA-930 interchange "
-                "envelope (%s)",
+                "envelope (%s, import p%g / export p%g)",
                 iso,
                 year,
                 "export midday only — imports uncapped"
                 if export_only
                 else "import overnight / export midday",
+                import_pct,
+                export_pct,
             )
     # MISO reference-price seam deliverability cap: bound each seam's
     # (PJM/SPP/South) import-band availability at the measured EIA-930 BA-to-BA

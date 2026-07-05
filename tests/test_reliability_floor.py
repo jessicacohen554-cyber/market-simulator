@@ -650,6 +650,8 @@ class DropDragOwnedSpecsTest(unittest.TestCase):
         cfg = types.SimpleNamespace(ct_netload_drag=True, gas_st_netload_drag=True)
         out = drop_drag_owned_reliability_specs(self._specs(), cfg)
         self.assertEqual(sorted(s.plant_class for s in out), ["COAL"])
+
+
 class TestR1SignFlipDisablement(unittest.TestCase):
     """R1 (B-LIMB-1) permanent disablement of unidentified sign-flip limbs.
 
