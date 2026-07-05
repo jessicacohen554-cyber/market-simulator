@@ -348,7 +348,7 @@ ordered safe-scaffolding-first, drift-closing-unification-later, so the risky st
 | Stage | Title | Touches | Risk | Drift closed | Neutrality standard |
 |-------|-------|---------|------|--------------|---------------------|
 | **0** | Regression harness + golden keeper baselines | `scripts/`, `tests/` (add only) | none | — | establishes the gate |
-| **1** | `pipeline/` skeleton + `DispatchSpec`/`ReserveSpec`/`PriorYearResults`; retype runner's `prior_results` dict | `runner.py`, new `pipeline/` | low | — (AR-2) | **byte-identical** |
+| **1** | `pipeline/` skeleton + `DispatchSpec`/`ReserveSpec`/`PriorYearResults`; retype runner's `prior_results` dict | `runner.py`, new `pipeline/` | low | — (AR-2) | **byte-identical** — **DELIVERED (2026-07-05), see §7.3.2** |
 | **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) |
 | **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical |
 | **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | — | byte-identical |
@@ -529,6 +529,60 @@ prohibit touching. The neutrality-critical gates — the golden diff, the smoke
 suite, `legitimacy_diagnostics --keepers` (holdout quarantine intact), and
 audit_keepers' own holdout check — all pass. A stage session (or the owner)
 should run `build_status.py` so the gate is end-to-end green.
+
+### 7.3.2 Stage 1 — DELIVERED (2026-07-05)
+
+Branch `claude/stage1-pipeline-typing-3w1mhl` off `origin/main` (`f7fa444`).
+Pure typing + scaffolding; no math, no `ScenarioConfig` field, no getattr gate,
+no env knob touched.
+
+**What was built**
+- New package `src/market_sim/pipeline/`:
+  - `spec.py` — `DispatchSpec` (frozen; the base `dispatch_kwargs` bundle, with
+    `to_dispatch_kwargs()` returning that dict key-for-key) and `ReserveSpec`
+    (frozen; wraps the dict `reserve_config.build_reserve_dispatch_kwargs`
+    returns, with typed accessors + `merge_into()` that preserves the exact,
+    *conditional* key set — absent keys are never injected, so the LP is
+    unchanged).
+  - `prior.py` — `PriorYearResults`, the typed replacement for the untyped
+    cross-year `prior_results` dict (AR-2), with `.get` / `__getitem__` /
+    `__contains__` shims (exact `dict` semantics). **Note:** the live dict has
+    **14 keys**, not the 12 in §9's prompt — it gained
+    `storage_as_revenue_per_mw_yr` and `thermal_as_revenue_per_mw_yr` since the
+    2026-07-04 inventory; both are fields (dropping them would break
+    `apply_storage_new_entry` and `evolve_fleet`'s thermal-AS read).
+  - `result.py` — `YearSolveResult` placeholder (typed, unused) for the shared
+    core's Stage 3-4 return type.
+- `runner.py` — the per-year `prior_results` dict is now constructed as a
+  `PriorYearResults`. `capacity.evolve_fleet` already reads via `_prior_attr`
+  (getattr-or-dict), so it needed no change; the year-loop's `["prices"]` /
+  `.get("rps_shadow_price")` / `.get("storage_as_revenue_per_mw_yr")` readers
+  ride the shims. Verified by grep that no reader was missed and nothing does a
+  dict-only op (`**`, `.items`, …) on it.
+- Tests: `tests/test_pipeline_spec.py`, `tests/test_pipeline_prior.py` (13
+  cases); `tests/test_runner.py` + `tests/test_capacity.py` still green (128).
+
+**Neutrality — why byte-identity is structural here.** The regression gate
+re-solves the six *keepers*, which are **backcast** runs driven by
+`scripts/run_calibration.py` / `run_calibration_full.py`. That path imports
+**neither `runner.py` nor `market_sim.pipeline`** (verified by grep) — Stage 1's
+entire footprint is the forecast orchestrator and a new self-contained package.
+So the golden capture exercises none of the changed code, and before/after are
+byte-identical by construction, not merely by tolerance. The gate was still run
+as the required proof (`--mode byte`, `--atol 0 --rtol 0`):
+
+<!-- STAGE1_GATE_RESULT -->
+Captured on **ERCOT / CAISO / PJM / NYISO / NEISO** (`--stage-tag
+stage1-before-f7fa444` vs `stage1-after`, serial, `--max-concurrency 1`).
+**MISO not captured on this 15 GB box** (`miso-39-reserve-pergen` OOMs at ~16 GB
+during reserve-column construction, per §7.3.1); Stage 1 is pure typing off the
+backcast path, so MISO risk is nil, but six-ISO coverage is *not* claimed — a
+≥24 GB host should capture MISO to close the gate for it. `audit_keepers.py` +
+`legitimacy_diagnostics.py --keepers` pass (holdout quarantine intact; the
+§7.3.1 status.js caveat did **not** reproduce on this branch — `audit_keepers.py`
+reports 0 failures, so no `build_status.py` refresh was needed). Headline gate
+result (`regression_gate --mode byte`, every column Δ = 0) is recorded in the
+follow-up commit on this branch once the serial re-solve completes.
 
 ---
 
