@@ -1,0 +1,38 @@
+# ISO-NE (model label NEISO) confirmed-retirement registry.
+# Source of truth: ISO-NE's "Status of Nonprice Retirement Requests,
+# Retirement De-list Bids and Substitution Auction Demand Bids" tracker
+# (https://www.iso-ne.com/static-assets/documents/2016/08/retirement_tracker_external.xlsx,
+# linked from https://www.iso-ne.com/about/where-we-are-going/power-plant-retirements)
+# + federal consent decrees + FCA results. NOTE: the tracker file itself was
+# last updated 2024-02-28 per its own metadata — treat entries from it as
+# potentially stale and re-check before the next intake vintage.
+#
+# Researched 2026-07-05:
+#   - Merrimack Station Units 1 & 2 (plant 2364): CONFIRMED — see rows below.
+#     A 2024 Clean Water Act consent decree, not a de-list-bid tracker entry.
+#   - Every "cleared FCA de-list bid" candidate in the ISO-NE tracker that is
+#     still a genuinely small, currently-operating unit could NOT be matched
+#     to an existing EIA-860 plant/generator identity in this pass (South
+#     Meadow, CDECCA, Bridgeport Harbor 4, West Springfield 3/GT-1/GT-2/10,
+#     Potter 2 CC, Norwich Jet/Doreen/Woodland Road, Sapp North America,
+#     "Yarmouth 1/2" as a rename of Wyman 1/2) — none of these names/plant
+#     codes appear in the current EIA-860 generator spine the way the tracker
+#     implies (Wyman/Yarmouth in particular: the spine shows all four Wyman
+#     units still OP with no retirement date, contradicting the tracker's
+#     claimed 2023-06-01 exit). Given the tracker's own 2024-02-28 staleness
+#     flag and the spine mismatch, these are excluded pending a verified
+#     plant/generator match rather than seeded on an unconfirmed identity
+#     (curation would fail the EIA-860 spine check regardless).
+#   - Merrimack Station does NOT appear in the de-list-bid tracker either —
+#     its instrument is the CWA consent decree (see below), a different
+#     admissible class (consent_decree) than the FCA/non-price-retirement
+#     class the tracker covers.
+#   - Mystic 8/9: de-list bids REJECTED by ISO-NE (fuel security); retained via
+#     a separate FERC cost-of-service agreement, then retired in 2024 outside
+#     a cleared de-list bid — already historical/out of the forward window.
+#   - Bridgeport Harbor 3 (the well-known ~383 MW coal-to-oil unit, distinct
+#     from "Bridgeport Harbor 4" above): already retired 2021-06-01 per the
+#     tracker — historical, out of scope.
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
+NEISO,2364,1,Merrimack 1,113.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-1,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,"Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown",2026-07-05,"Granite Shore Power ceased ALL Merrimack Station operations 2025-09-12, ahead of the 2028-06 decree deadline — the decree date remains the citable binding-instrument ceiling. GT1/GT2 peaker units (18.6 MW each, same plant) are oil/gas combustion turbines outside the coal consent decree's scope and are excluded from this row."
+NEISO,2364,2,Merrimack 2,345.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-2,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,"Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown",2026-07-05,"See Merrimack 1's note (same consent decree). EIA-860 already shows this unit OS (out of service, not expected back)."
