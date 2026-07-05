@@ -20,14 +20,17 @@ from multiprocessing import cpu_count
 import numpy as np
 
 from market_sim.config.constants import (
-    DEMAND_GROWTH_RATES,
-    DEMAND_GROWTH_TRANSITION_YEAR,
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
 )
 from market_sim.config.iso_configs import get_iso_config
-from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
+from market_sim.config.scenarios import (
+    ScenarioConfig,
+    SweepDefinition,
+    resolve_demand_growth_rate,
+    resolve_policy_bundle,
+)
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     Generator,
@@ -143,14 +146,14 @@ def _chp_measured_co2_inputs(
 
 
 def _get_growth_rate(config: ScenarioConfig, year: int) -> float:
-    """Return the demand growth rate for a given year."""
-    iso_rates = DEMAND_GROWTH_RATES.get(config.iso, {})
-    path_rates = iso_rates.get(config.demand_growth_path, None)
-    if path_rates is None or not isinstance(path_rates, dict):
-        return config.demand_growth_rate
-    if year <= DEMAND_GROWTH_TRANSITION_YEAR:
-        return path_rates["near"]
-    return path_rates["long"]
+    """Return the demand growth rate for a given year.
+
+    Delegates to :func:`market_sim.config.scenarios.resolve_demand_growth_rate`,
+    which also honors the PB-1 ``demand_growth_percentile`` sampler lever;
+    at its neutral 0.5 default this is identical to the plain
+    ``demand_growth_path`` lookup this function used to do directly.
+    """
+    return resolve_demand_growth_rate(config, year)
 
 
 def _scale_demand(
@@ -192,6 +195,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     iso = iso.upper()
     if config.iso != iso:
         config = config.with_overrides(iso=iso)
+
+    # Resolve the PB-1 policy_bundle lever to its underlying fields (rule 24:
+    # config-build time, no hidden state) before cache_key/run_config capture
+    # the config -- a no-op for the neutral "current" default.
+    config = resolve_policy_bundle(config)
 
     iso_config = get_iso_config(iso)
     # Apply ISO-level scenario defaults (e.g. CAISO negative_renewable_offers)

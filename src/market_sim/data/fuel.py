@@ -150,9 +150,18 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     price and the ISO basis differential is added to it, so a calibration
     backcast charges the year's actual delivered gas cost.
 
+    ``config.gas_price_factor`` (default 1.0) multiplies the resolved
+    trajectory value before the basis differential is added -- the PB-1
+    forecast-only gas-price uncertainty lever (docs/handoffs/probability-
+    bounds-plan-2026-07.md §2.1/§2.2). It never applies to
+    ``gas_price_override``, and ``ScenarioConfig.__post_init__`` asserts it
+    stays 1.0 in backcast mode, so it can never become a backcast tuning
+    channel (rule 13).
+
     Args:
         config: Scenario configuration supplying ``iso``,
-            ``gas_price_path`` and an optional ``gas_price_override``.
+            ``gas_price_path``, ``gas_price_factor``, and an optional
+            ``gas_price_override``.
         year: Calendar year to resolve.
 
     Returns:
@@ -171,7 +180,7 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
         annual_growth = trajectory[last_year] / trajectory[last_year - 1]
         henry_hub = trajectory[last_year] * annual_growth ** (year - last_year)
 
-    return henry_hub + basis
+    return henry_hub * config.gas_price_factor + basis
 
 
 def _seasonal_factors(hours: int) -> np.ndarray:
