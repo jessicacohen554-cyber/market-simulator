@@ -816,7 +816,7 @@ three core Wave-0 plans were never written. Recommended next launches are at the
 |---|---|---|
 | W1-P1 CI: pytest + gates on PR | ⛔ NOT STARTED | Only `lint.yml` triggers on `pull_request`; `audit_keepers`/`legitimacy_diagnostics` still in no workflow. Rule-22 CI claim still false. |
 | W1-P2 scoring-integrity tests | ⛔ NOT STARTED | No `test_audit_keepers.py`; `score_co2` still untested. |
-| W1-P3 hygiene sweep | ⛔ NOT STARTED | `_szprobe.txt`, `configs_nyiso_jacobian/`, `configs_run20/`, `scratchpad_diag_evening.py` all still present. |
+| W1-P3 hygiene sweep | ✅ DONE | `_szprobe.txt`/`configs_nyiso_jacobian/` deleted; `scratchpad_diag_evening.py` → `scripts/diagnostics/`; `configs_run20/` → `results/calibration/_configs/pjm_run20/`; `_caiso_class_lmp.py` → `scripts/probes/`; CLAUDE.md 6-ISO fix; CONVENTIONS.md collapsed; ~34 zero-ref scripts archived; DA-3 datatypes documented. |
 | W1-P4 rule-24 literal migration | ⛔ NOT STARTED | — |
 | W1-P5 LP solver hardening | ⛔ NOT STARTED | — |
 | W1-P6 scope2 docs sync | 🟡 UNKNOWN | scope2 saw activity (PRs #1309/#1313); docstring reconciliation not confirmed. |
