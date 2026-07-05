@@ -119,12 +119,13 @@ _THERMAL_FOM: dict[str, str] = {
 # Fuel classes that count toward the clean-energy share.
 _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
 
-# (The old nameplate reliability floor's _FIRM_CLEAN_FUELS hydro netting was
-# removed with the floor's accreditation rebuild: every resource — hydro
-# included — now enters the requirement test through
-# accredited_firm_capacity_mw at its UCAP/capacity-credit value instead of
-# being pre-subtracted from peak at nameplate. Capacity-economics plan
-# 2026-07 §3.2.)
+# Firm clean (non-VRE) capacity fuels. The reliability floor no longer nets
+# these out at nameplate — its accreditation rebuild routes every resource
+# (hydro included) through accredited_firm_capacity_mw at its UCAP/capacity-
+# credit value (capacity-economics plan 2026-07 §3.2). The constant is retained
+# only as the evolution ledger's ``firm_clean_mw`` reporting basis
+# (runner.py); it no longer participates in any retirement/adequacy decision.
+_FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
 # Per-fuel ScenarioConfig field names for the consecutive-loss threshold.
 _RETIREMENT_YEARS: dict[str, str] = {

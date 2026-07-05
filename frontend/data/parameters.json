@@ -3156,54 +3156,6 @@
       "flags": []
     },
     {
-      "param_id": "scenario.planning_reserve_margin_override",
-      "display_name": "Planning Reserve Margin Override",
-      "value": null,
-      "unit": "fraction",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "Sensitivity lever (default None = per-ISO PLANNING_RESERVE_MARGIN_BY_ISO registry). When set, replaces the registry PRM in BOTH the retirement reliability floor and the reserve-margin build backstop (one requirement, two verbs). Registry citations: Brattle & Astrape, Estimating the Economically Optimal Reserve Margin in ERCOT (2022, PUCT); CPUC RA D.23-06-029 15% PRM; PJM 2024 IRM/FPR study; MISO PY2024-25 LOLE Study PRMR; NYSRC 2025-2026 IRM; ISO-NE Net ICR.",
-      "source_date": "2022",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Replaces the deleted retirement_reserve_margin (rule 26: removed, not zeroed) as the registered tornado channel for the reserve-margin band; capacity-economics plan 2026-07 §3.2.",
-      "old_repo_location": "",
-      "last_verified": "2026-07-05",
-      "flags": []
-    },
-    {
-      "param_id": "scenario.entry_lookahead_reprice",
-      "display_name": "Entry Lookahead Reprice",
-      "value": false,
-      "unit": "",
-      "domain": "Fuel Prices",
-      "tier": 1,
-      "source": "Model design lever, zero fitted parameters (capacity-economics plan 2026-07 SS2.3.2: stack re-price of the entering year's known net load with the runner's ORDC scarcity tail; every input is an existing model quantity, rule 13 admissible). Promotion decided by the foresight A/B (plan SS2.4).",
-      "source_date": "2026-07",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Screens-only signal: never touches dispatch, results, or the backcast.",
-      "old_repo_location": "",
-      "last_verified": "2026-07-05",
-      "flags": []
-    },
-    {
-      "param_id": "scenario.entry_price_signal_alpha",
-      "display_name": "Entry Price Signal Alpha",
-      "value": 1.0,
-      "unit": "",
-      "domain": "Fuel Prices",
-      "tier": 2,
-      "source": "Model design lever, zero fitted parameters (capacity-economics plan 2026-07 SS2.2: EWMA anti-whipsaw blend of the capacity screens' price signal; alpha=1.0 default is byte-identical to raw prior-year prices). Promotion decided by the foresight A/B (plan SS2.4).",
-      "source_date": "2026-07",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Screens-only signal: never touches dispatch, results, or the backcast.",
-      "old_repo_location": "",
-      "last_verified": "2026-07-05",
-      "flags": []
-    },
-    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -7511,6 +7463,54 @@
       ]
     },
     {
+      "param_id": "henry_hub_trajectories.hindcast_asknown_aeo2021",
+      "display_name": "Henry Hub Trajectories / Hindcast Asknown Aeo2021",
+      "value": {
+        "2021": 3.07,
+        "2023": 2.86,
+        "2024": 2.88,
+        "2025": 2.93
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "henry_hub_trajectories.hindcast_realized",
+      "display_name": "Henry Hub Trajectories / Hindcast Realized",
+      "value": {
+        "2021": 3.91,
+        "2023": 2.54,
+        "2024": 2.19,
+        "2025": 3.53
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "historic_outage_overlay_by_iso.CAISO",
       "display_name": "Historic Outage Overlay By Iso / Caiso",
       "value": false,
@@ -9747,6 +9747,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nonfossil_announced_horizon_years",
+      "display_name": "Nonfossil Announced Horizon Years",
+      "value": 5,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement date deterministically. A self-reported planned-retirement year is credible only at the same near-term grain the additions pipeline trusts its U/V/TS statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon an announced non-fossil date is honored ONLY if the unit carries a binding instrument in the confirmed-retirements registry; otherwise it is ignored, so the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and far-dated nuclear announcements fall to the economic screen (+ registry). Set to 5 per the methodology spec's \"after the data horizon (~2030) the model is fully economics-driven\" line (§1.7 / §5); symmetric with the additions pipeline's near-term-only firm-status window. Consumed by model.capacity.apply_announced_retirements.",
+      "source_date": "2040",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -14938,6 +14956,25 @@
       ]
     },
     {
+      "param_id": "scenario.confirmed_exits_enabled",
+      "display_name": "Confirmed Exits Enabled",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-OFF. When True and",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.control_retrofit_forward",
       "display_name": "Control Retrofit Forward",
       "value": false,
@@ -15639,6 +15676,25 @@
       ]
     },
     {
+      "param_id": "scenario.end_year",
+      "display_name": "End Year",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.energy_reserve_coopt",
       "display_name": "Energy Reserve Coopt",
       "value": false,
@@ -15646,6 +15702,44 @@
       "domain": "Reliability",
       "tier": 1,
       "source": "Co-optimize energy and operating",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.entry_lookahead_reprice",
+      "display_name": "Entry Lookahead Reprice",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "GATED, default-OFF growth-scaled",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.entry_price_signal_alpha",
+      "display_name": "Entry Price Signal Alpha",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "EWMA blend of the price signal the",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -16741,6 +16835,43 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Override default bin count per fuel type.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.hindcast",
+      "display_name": "Hindcast",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Capacity-hindcast mode (W2-P5): forecast machinery run backwards from a vintage fleet snapshot to score capacity evolution against actuals. Stays ``mode == \"forecast\"`` (the hindcast IS the forecast path) but switches on vintage fleet init, realized per-year demand (no growth scaling) and the 2022 bridge in the harness. Never a backcast overlay. Default-off and cache-neutral; see scripts/run_capacity_hindcast.py and docs/handoffs/forecast-validation-program-2026-07.md §1.",
+      "source_date": "2022",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.hindcast_fuel_variant",
+      "display_name": "Hindcast Fuel Variant",
+      "value": "realized",
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "\"realized\" | \"asknown\"",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -18079,6 +18210,25 @@
       ]
     },
     {
+      "param_id": "scenario.planning_reserve_margin_override",
+      "display_name": "Planning Reserve Margin Override",
+      "value": null,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Sensitivity lever:",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.plant_emission_rates_path",
       "display_name": "Plant Emission Rates Path",
       "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
@@ -18762,6 +18912,24 @@
       ]
     },
     {
+      "param_id": "scenario.start_year",
+      "display_name": "Start Year",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Simulation horizon. ``None`` defers to constants.START_YEAR / END_YEAR (2026 / 2050) so the default forecast window and every existing cache key are unchanged; a non-default value narrows the run (e.g. a capacity hindcast 2021→2025). These are omitted from ``cache_key`` when ``None`` (see ``_CACHE_KEY_OPTIONAL_FIELDS``) so cache keys stay byte-stable at the default horizon.",
+      "source_date": "2026",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.startup_co2_reporting",
       "display_name": "Startup Co2 Reporting",
       "value": false,
@@ -19186,6 +19354,120 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.CAISO",
+      "display_name": "Statmode Probe Runs / Caiso",
+      "value": "2026-07-03-caiso-statmode-d-7",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.ERCOT",
+      "display_name": "Statmode Probe Runs / Ercot",
+      "value": "2026-07-04-statmode-d7-probe-ercot32",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.MISO",
+      "display_name": "Statmode Probe Runs / Miso",
+      "value": "2026-07-03-miso-statmode-d-7",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.NEISO",
+      "display_name": "Statmode Probe Runs / Neiso",
+      "value": "2026-07-03-neiso-statmode-d-7",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.NYISO",
+      "display_name": "Statmode Probe Runs / Nyiso",
+      "value": "2026-07-03-nyiso-statmode-d-7",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "statmode_probe_runs.PJM",
+      "display_name": "Statmode Probe Runs / Pjm",
+      "value": "2026-07-03-pjm-statmode-d-7",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids (frontend/data/backcast/runs/<id>.js supply the per-year model CO2; frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen here so the measured, reproducible source of the prior is auditable and re-derives only when those probes update (rule 23), never against a residual.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -20237,6 +20519,82 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "structural_prior_convolution_k",
+      "display_name": "Structural Prior Convolution K",
+      "value": 25,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Structural draws per parametric draw in the log-space Monte-Carlo product (plan §3.3): each of the n parametric members is paired with K independent epsilon draws to build the n*K published-quantile sample.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "structural_prior_horizon_lambda",
+      "display_name": "Structural Prior Horizon Lambda",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Horizon-widening variance multiplier lambda(h), growing with years-out to cover fleet-evolution (capacity-path) error. UNMEASURED until the PP-0.3 capacity hindcast supplies a number (plan §3.4 item 1); pinned to 0.0, which makes every published band \"dispatch-conditional -- excludes fleet-path structural error\". This is a placeholder awaiting measurement, never a tuned value (rule 1).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "structural_prior_student_t_nu",
+      "display_name": "Structural Prior Student T Nu",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Student-t degrees of freedom for the per-ISO structural-error distribution (plan §3.2). nu=2 gives fat tails that, together with the small-sample scale inflation below, keep the prior *wider* than the plug-in normal -- the honest reading when each ISO's bias and noise are estimated from only three years.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "structural_prior_version",
+      "display_name": "Structural Prior Version",
+      "value": "pb3-statmode-d7-2026-07",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Version tag stamped into every fitted prior artifact / ensemble_meta.json so a band's structural layer is traceable to the fit that produced it (rule 24).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -21319,6 +21677,145 @@
       "tier": 2,
       "source": "NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)",
       "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.CAISO",
+      "display_name": "Weather Year Pool By Iso / Caiso",
+      "value": [
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.ERCOT",
+      "display_name": "Weather Year Pool By Iso / Ercot",
+      "value": [
+        2019,
+        2020,
+        2021,
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.MISO",
+      "display_name": "Weather Year Pool By Iso / Miso",
+      "value": [
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.NEISO",
+      "display_name": "Weather Year Pool By Iso / Neiso",
+      "value": [
+        2019,
+        2020,
+        2021,
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.NYISO",
+      "display_name": "Weather Year Pool By Iso / Nyiso",
+      "value": [
+        2021,
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "weather_year_pool_by_iso.PJM",
+      "display_name": "Weather Year Pool By Iso / Pjm",
+      "value": [
+        2023,
+        2024,
+        2025
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds- plan-2026-07.md §2.1: \"intaking more pre-2022 weather years is a cheap widening\"). Each entry is bounded by *verified* coverage on disk, checked end-to-end (not just file presence): the EIA-930 BA hourly extract yields a clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves a full wind+solar profile for the year (an ISO whose BA under-reports one fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution parquet, which only reaches back to 2021 -- a year is listed here only if every fallback it needs actually covers it). Verified 2026-07-05; see docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the skipped-ISO rationale.  Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here, for any ISO, until that ISO's calibration-complete marker exists.",
+      "source_date": "2026-07",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
