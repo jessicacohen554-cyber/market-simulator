@@ -154,8 +154,19 @@ def evaluate_cell(spec_dict: dict) -> dict:
         storage_power_mw = kw.get("storage_power_mw", 0.0)
         thermal_as = kw.get("thermal_as_revenue_per_mw_yr")
         headroom = kw.get("deliverability_headroom")
+        r_all = kw.get("reserve_price_signal")
+        r_slow = kw.get("reserve_price_signal_slow")
         prices_arr = np.asarray(prices, dtype=float)
         dispatch = np.asarray(dispatch_result.dispatch, dtype=float)
+        avail = getattr(fleet_arrays, "availability", None)
+        cap_hourly = (
+            np.asarray(fleet_arrays.pmax, dtype=float)[:, None]
+            * np.asarray(avail, dtype=float)
+            if avail is not None
+            else np.broadcast_to(
+                np.asarray(fleet_arrays.pmax, dtype=float)[:, None], dispatch.shape
+            )
+        )
         idx_of = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
         acc: dict[str, dict] = {
             c: {"energy": 0.0, "as": 0.0, "capacity": 0.0, "mw": 0.0}
@@ -168,14 +179,28 @@ def evaluate_cell(spec_dict: dict) -> dict:
             if not rows:
                 continue
             zone = int(fleet_arrays.zone_idx[rows[0]])
+            # Mirror apply_economic_retirements' pro-forma margin basis
+            # (plan §5 step 2): max(0, price - mc, reserve price) x
+            # available capacity; the hourly reserve max IS the AS pricing
+            # when the signal is present (rule 19).
+            r_row = None
+            if mc is not None and r_all is not None:
+                r_row = r_slow if g.fuel_type == "gas_ct" else r_all
+                if r_row is None:
+                    r_row = np.zeros_like(np.asarray(r_all))
             if mc is None:
                 energy = float(sum(np.dot(prices_arr[zone], dispatch[i]) for i in rows))
             else:
                 mc_arr = np.asarray(mc, dtype=float)
-                energy = float(
-                    sum(np.dot(prices_arr[zone] - mc_arr[i], dispatch[i]) for i in rows)
-                )
-            if thermal_as is not None:
+                energy = 0.0
+                for i in rows:
+                    hourly = np.maximum(prices_arr[zone] - mc_arr[i], 0.0)
+                    if r_row is not None:
+                        hourly = np.maximum(hourly, r_row)
+                    energy += float(np.dot(hourly, cap_hourly[i]))
+            if mc is not None and r_all is not None:
+                as_rev = 0.0  # priced inside the hourly max above
+            elif thermal_as is not None:
                 as_rev = g.pmax_mw * thermal_as.get(g.fuel_type, 0.0)
             else:
                 as_rev = g.pmax_mw * as_revenue_per_mw_yr(

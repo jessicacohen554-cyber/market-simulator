@@ -70,6 +70,38 @@ class TestAnnouncedRetirements(unittest.TestCase):
         survivors = apply_announced_retirements(fleet, 2027)
         self.assertEqual([g.unit_id for g in survivors], ["N0"])
 
+    def test_reversed_plant_keeps_announced_unit(self):
+        # Retirement-reversal supersession (capacity-economics Stage 2 /
+        # confirmed-retirement plan §2.2 counter-instruments): a plant whose
+        # announced exit was reversed by a public instrument (Byron/Dresden's
+        # 2021 dates reversed by IL CEJA) keeps running — the stale vintage
+        # date is ignored — while an identical twin without a reversal row
+        # is still honored.
+        reversed_n = _gen("N0", "nuclear", retirement_year=2021, plant_code=6023)
+        twin = _gen("N1", "nuclear", retirement_year=2021, plant_code=7777)
+        survivors = apply_announced_retirements(
+            [reversed_n, twin],
+            2022,
+            reversed_plant_codes=frozenset({6023}),
+        )
+        self.assertEqual([g.unit_id for g in survivors], ["N0"])
+
+    def test_reversal_flows_through_evolve_fleet(self):
+        # evolve_fleet step 1 passes announced_reversal_plants through to the
+        # announced channel.
+        fleet = [_gen("N0", "nuclear", retirement_year=2021, plant_code=6023)]
+        kept, _, _, _, _ = evolve_fleet(
+            fleet,
+            None,
+            2022,
+            ScenarioConfig(),
+            {},
+            announced_reversal_plants=frozenset({6023}),
+        )
+        self.assertEqual([g.unit_id for g in kept], ["N0"])
+        gone, _, _, _, _ = evolve_fleet(fleet, None, 2022, ScenarioConfig(), {})
+        self.assertEqual(gone, [])
+
     def test_nonfossil_unit_removed_at_retirement_year(self):
         # Non-fossil (nuclear/hydro/renewables) honor the announced EIA-860 date.
         fleet = [_gen("N0", "nuclear", retirement_year=2028)]
@@ -393,7 +425,11 @@ class TestEconomicRetirements(unittest.TestCase):
         # deployment overlay restores) clears the going-forward bar, so the
         # loss counter resets and the steam unit is kept.
         config = ScenarioConfig()
-        fleet = [_gen("S0", "gas_st", pmax=100.0)]
+        # eford=0 so available capacity is the full 100 MW: the screen's
+        # margin basis is the attainable pro-forma max(0, price - mc) x
+        # pmax x availability (capacity-economics plan 2026-07 §5 step 2),
+        # not realized dispatch, so the hand math below needs avail = 1.
+        fleet = [_gen("S0", "gas_st", pmax=100.0, eford=0.0)]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
         # margin/h = (3550 - 50) * 100 = 350_000; over 10 h = 3_500_000,
         # exactly the going-forward cost -> not a loss year.
@@ -1083,9 +1119,12 @@ class TestRetirementMargin(unittest.TestCase):
 
     def test_margin_covering_fixed_cost_is_profitable(self):
         # going_forward_cost = 12 $/kW-yr * 1.0 * 100 MW * 1000 = 1_200_000.
-        # margin/h = (1250 - 50) $/MWh * 100 MW = 120_000; over 10 h
-        # = 1_200_000 -- exactly the fixed cost, so not a loss year.
-        config, fleet, arrays, dispatch, prices, mc = self._setup(1250.0, 50.0)
+        # The screen's basis is the attainable pro-forma margin on AVAILABLE
+        # capacity (capacity-economics plan 2026-07 §5 step 2): with the
+        # default eford 0.05, margin/h = (1313 - 50) $/MWh * 95 MW =
+        # 119_985; over 10 h = 1_199_850 < 1_200_000 would be a loss, so
+        # price 1313.2 -> (1263.2 * 95 * 10) = 1_200_040 clears the bar.
+        config, fleet, arrays, dispatch, prices, mc = self._setup(1313.2, 50.0)
         fleet1, losses1, _ = apply_economic_retirements(
             fleet,
             arrays,
@@ -1138,6 +1177,187 @@ class TestRetirementMargin(unittest.TestCase):
             {},
         )
         self.assertNotIn("C0", [g.unit_id for g in fleet1])
+
+
+class TestScreenReserveValue(unittest.TestCase):
+    """Pro-forma margin + reserve-price valuation in the retirement screen.
+
+    Capacity-economics plan 2026-07 §5 step 2 (the revenue-side fix): the
+    screen's margin basis is the unit's attainable per-hour best use
+    ``max(0, price - mc, reserve price)`` on available capacity — the
+    Potomac-SOM net-revenue construction — never the prior LP's realized
+    dispatch, and the hourly reserve signal is the SOLE thermal AS pricing
+    when present (rule 19).
+    """
+
+    T = 10
+
+    def _screen(self, fleet, prices, mc, config=None, dispatch_level=0.0, **kw):
+        config = config or ScenarioConfig()
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        dispatch = SimpleNamespace(
+            dispatch=np.full((len(fleet), self.T), dispatch_level)
+        )
+        return apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
+            mc=mc,
+            **kw,
+        )
+
+    def test_proforma_counts_idle_hour_margin(self):
+        # A unit the prior LP left IDLE (dispatch = 0) in hours where the
+        # screen's price signal clears its full variable cost — exactly the
+        # post-solve-ORDC-adder case — earns the margin the signal carries.
+        # Under the old realized-dispatch basis its margin was 0 (a loss
+        # year); the pro-forma basis clears the bar.
+        # bar = 12 $/kW-yr x 100 MW x 1000 = 1_200_000;
+        # margin = (1400 - 50) x 95 MW avail x 10 h = 1_282_500 > bar.
+        fleet = [_gen("G0", "gas_cc", pmax=100.0)]
+        prices = np.full((1, self.T), 1400.0)
+        mc = np.full((1, self.T), 50.0)
+        _, losses, _ = self._screen(fleet, prices, mc, dispatch_level=0.0)
+        self.assertEqual(losses["G0"], 0)
+
+    def test_reserve_signal_values_headroom_when_out_of_merit(self):
+        # A quick-start CT priced out of the energy market all year
+        # (price << mc) still earns the reserve price on its available
+        # capacity: value = max(0, price - mc, r) = r.
+        # bar = 8 $/kW-yr x 100 MW x 1000 = 800_000;
+        # reserve value = 900 x 95 MW x 10 h = 855_000 > bar.
+        fleet = [_gen("T0", "gas_ct", pmax=100.0)]
+        prices = np.zeros((1, self.T))
+        mc = np.full((1, self.T), 50.0)
+        r = np.full(self.T, 900.0)
+        _, losses, _ = self._screen(
+            fleet,
+            prices,
+            mc,
+            reserve_price_signal=r,
+            reserve_price_signal_slow=r,
+        )
+        self.assertEqual(losses["T0"], 0)
+        # Without the signal the same unit is a loss year.
+        _, losses_off, _ = self._screen(fleet, prices, mc)
+        self.assertEqual(losses_off["T0"], 1)
+
+    def test_quick_start_uses_slow_tier_only(self):
+        # The eligibility cascade: an offline-capable quick-start (gas_ct)
+        # sees only the Non-Spin tier; a synchronized CC sees the
+        # all-products tier. With a rich all-products price but a zero slow
+        # tier, the CT stays a loss while the CC clears its bar.
+        prices = np.zeros((1, self.T))
+        mc = np.full((1, self.T), 50.0)
+        r_all = np.full(self.T, 2000.0)  # 2000 x 95 x 10 = 1.9e6 > both bars
+        r_slow = np.zeros(self.T)
+        _, ct_losses, _ = self._screen(
+            [_gen("T0", "gas_ct", pmax=100.0)],
+            prices,
+            mc,
+            reserve_price_signal=r_all,
+            reserve_price_signal_slow=r_slow,
+        )
+        self.assertEqual(ct_losses["T0"], 1)
+        _, cc_losses, _ = self._screen(
+            [_gen("G0", "gas_cc", pmax=100.0)],
+            prices,
+            mc,
+            reserve_price_signal=r_all,
+            reserve_price_signal_slow=r_slow,
+        )
+        self.assertEqual(cc_losses["G0"], 0)
+
+    def test_reserve_signal_supersedes_exogenous_flat_rate(self):
+        # Rule 19: exactly one mechanism prices thermal AS. The exogenous
+        # flat rate alone clears the CT bar (multiplier scaled so the flat
+        # credit > 800_000); with an hourly reserve signal present the flat
+        # rate must be suppressed, so a near-zero signal leaves the unit in
+        # a loss year instead of stacking both credits.
+        from market_sim.model.ancillary import as_revenue_per_mw_yr
+
+        config = ScenarioConfig(iso="ERCOT").with_overrides(as_revenue_enabled=True)
+        base = as_revenue_per_mw_yr("gas_ct", 0.0, config)
+        self.assertGreater(base, 0.0)
+        needed = (900_000.0 / 100.0) / base  # flat credit ~ 9 $/kW-yr > bar 8
+        config = config.with_overrides(as_revenue_multiplier=needed)
+        fleet = [_gen("T0", "gas_ct", pmax=100.0)]
+        prices = np.zeros((1, self.T))
+        mc = np.full((1, self.T), 50.0)
+        _, losses_flat, _ = self._screen(fleet, prices, mc, config=config)
+        self.assertEqual(losses_flat["T0"], 0)  # flat rate alone clears
+        tiny = np.full(self.T, 1.0)
+        _, losses_sig, _ = self._screen(
+            fleet,
+            prices,
+            mc,
+            config=config,
+            reserve_price_signal=tiny,
+            reserve_price_signal_slow=tiny,
+        )
+        self.assertEqual(losses_sig["T0"], 1)  # signal supersedes, no stack
+
+    def test_vre_entry_uses_zonal_hourly_cf_when_available(self):
+        # Plan §6 CX-6c (mock-assert form): with zonal CF profiles + zone
+        # ordering supplied, the wind/solar entry screen calls
+        # estimate_expected_revenue with the build zone's HOURLY cf array;
+        # without them, the scalar base-CF path still runs.
+        from unittest.mock import patch
+
+        from market_sim.config.iso_configs import get_iso_config as _gic
+        from market_sim.data.renewables import get_renewable_zone
+
+        iso = "ERCOT"
+        zone_names = [z.name for z in _gic(iso).zones]
+        n_zones = len(zone_names)
+        prices = np.full((n_zones, self.T), 60.0)
+        rng = np.random.default_rng(7)
+        wind_cf = rng.uniform(0.1, 0.9, size=(n_zones, self.T))
+        solar_cf = rng.uniform(0.0, 0.8, size=(n_zones, self.T))
+        seen: dict[str, object] = {}
+        real = estimate_expected_revenue
+
+        def recorder(p, cf, *a, **kw):
+            if isinstance(cf, np.ndarray):
+                seen["hourly"] = cf.copy()
+            return real(p, cf, *a, **kw)
+
+        with patch("market_sim.model.capacity.estimate_expected_revenue", recorder):
+            apply_economic_new_entry(
+                [],
+                prices,
+                2030,
+                ScenarioConfig(iso=iso),
+                iso,
+                gas_price_per_mmbtu=3.5,
+                zone_names=zone_names,
+                wind_cf=wind_cf,
+                solar_cf=solar_cf,
+            )
+        self.assertIn("hourly", seen)
+        wind_zone = get_renewable_zone(iso, "wind")
+        solar_zone = get_renewable_zone(iso, "solar")
+        hourly = seen["hourly"]
+        self.assertTrue(
+            np.array_equal(hourly, wind_cf[zone_names.index(wind_zone)])
+            or np.array_equal(hourly, solar_cf[zone_names.index(solar_zone)])
+        )
+        # Scalar path still supported when profiles are absent.
+        seen.clear()
+        with patch("market_sim.model.capacity.estimate_expected_revenue", recorder):
+            apply_economic_new_entry(
+                [],
+                prices,
+                2030,
+                ScenarioConfig(iso=iso),
+                iso,
+                gas_price_per_mmbtu=3.5,
+            )
+        self.assertNotIn("hourly", seen)
 
 
 class TestQueueCapCoverage(unittest.TestCase):

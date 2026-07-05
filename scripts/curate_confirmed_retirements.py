@@ -90,7 +90,16 @@ def _validate_against_spine(
     for row in df.itertuples(index=False):
         key = (int(row.plant_id), str(row.generator_id).strip())
         label = f"{iso} {key[0]}_{key[1]} ({row.instrument_id})"
-        if pd.isna(row.exit_year) or int(row.exit_year) < RETIREMENT_WINDOW_START:
+        # The window check applies to LIVE rows only: a live pre-window exit
+        # belongs to the backcast vintage snapshot, never the forecast
+        # injector. A ``superseded`` row is an audit-trail / reversal record —
+        # its exit never happened (the counter-instrument cancelled it), so
+        # its original date is historical by construction (e.g. the
+        # Byron/Dresden 2021 dates IL CEJA reversed).
+        superseded = bool(row.superseded) if pd.notna(row.superseded) else False
+        if not superseded and (
+            pd.isna(row.exit_year) or int(row.exit_year) < RETIREMENT_WINDOW_START
+        ):
             problems.append(
                 f"{label}: exit_year {row.exit_year} < window start "
                 f"{RETIREMENT_WINDOW_START} (belongs to the backcast snapshot)"
