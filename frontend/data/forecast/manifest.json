@@ -1,0 +1,14 @@
+{
+  "ensembles": {
+    "synthetic-fixture-ercot-v1": {
+      "dispatch_conditional": true,
+      "has_matrix": true,
+      "iso": "ERCOT",
+      "layers_present": [
+        "parametric"
+      ],
+      "n_draws": 24,
+      "synthetic": true
+    }
+  }
+}
