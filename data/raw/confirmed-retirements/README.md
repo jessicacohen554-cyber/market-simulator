@@ -74,11 +74,20 @@ unit reverts to the economic screen.
 **Every row above passed `scripts/curate_confirmed_retirements.py`'s EIA-860
 spine cross-check (identity + MW within 5 %) against the real fleet spine.**
 All instruments were independently re-verified via web research on
-2026-07-05; several rows carry an explicit in-row caveat where a specific
-docket/decision number could not be independently confirmed (Rockport 1's
-civil action number; Diablo Canyon's CPUC decision number) — re-confirm those
-against the primary docket before `confirmed_exits_enabled` is flipped on.
+2026-07-05. Two rows had carried an explicit in-row caveat where a specific
+docket/decision number could not be independently confirmed via secondary
+sources (Rockport 1's civil action number; Diablo Canyon's CPUC decision
+number) — both were resolved in a primary-document confirmation pass on
+2026-07-05: Rockport 1's citation was checked directly against the filed
+Fifth Joint Modification (Case 2:99-cv-01250-EAS-KAJ Doc #438), confirming
+Consolidated Cases C2-99-1182/C2-99-1250 and its Paragraph 140 exit date;
+Diablo Canyon's D.23-12-036 was checked directly against a CPUC decision in
+R.23-01-007 that quotes D.23-12-036 verbatim, confirming the decision number
+and both units' authorized-operation end dates. See the `pjm.csv`/`caiso.csv`
+row notes for the full citations. Both rows are now on primary-document
+footing and neither caveat remains.
 
 **The default-flip to `confirmed_exits_enabled=True` is now unblocked on data
-grounds for all six ISOs (five seeded + NYISO's honest zero) — flipping the
-default remains an explicit owner decision (plan §7), not made in this pass.**
+grounds for all six ISOs (five seeded + NYISO's honest zero) and the two
+outstanding primary-document caveats have been resolved (2026-07-05) — the
+flip has been executed per the owner's sign-off (plan §7).**
