@@ -2211,6 +2211,8 @@ def run_year(
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
+    ramp_limits: bool | None = None,
+    local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -2234,7 +2236,7 @@ def run_year(
     gas_st_drag_overrides: dict[str, float] | None = None,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
-    ct_netload_drag: bool = False,
+    ct_netload_drag: bool | None = None,
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -2305,10 +2307,14 @@ def run_year(
         config = config.with_overrides(
             gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
         )
-    if ct_netload_drag:
-        config = config.with_overrides(
-            ct_netload_drag=True, **(ct_drag_overrides or {})
-        )
+    # Tri-state: None keeps the _calibration_config per-ISO default (CAISO
+    # keeper default-ON), True/False force the drag on/off — so an A/B arm
+    # can run CAISO with the drag scrubbed (--no-ct-netload-drag) without
+    # touching the keeper default.
+    if ct_netload_drag is not None:
+        config = config.with_overrides(ct_netload_drag=bool(ct_netload_drag))
+        if ct_netload_drag and ct_drag_overrides:
+            config = config.with_overrides(**ct_drag_overrides)
     if chp_export_floor_measured:
         # Measured steam-following export floor (backcast overlay): CHP bins'
         # grid floor rides at the year's measured EIA-923 class CF x the
@@ -2524,6 +2530,12 @@ def run_year(
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
             capacity_deliverability_limits=capacity_deliverability_limits
+        )
+    if ramp_limits is not None:
+        config = config.with_overrides(ramp_limits=ramp_limits)
+    if local_capacity_constraints is not None:
+        config = config.with_overrides(
+            local_capacity_constraints=local_capacity_constraints
         )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
@@ -4333,6 +4345,54 @@ def run_year(
             import_node_monthly_lo=recon_lo,
             import_node_monthly_hi=recon_hi,
         )
+
+    # Plant-group hourly ramp envelopes (config.ramp_limits, GATED default
+    # off): CAMPD-measured trajectory bounds per plant group per hour
+    # transition (model/dispatch._build_ramp_rows; design
+    # docs/ramp-locational-design-2026-07.md §1). Mirrored in runner.py so
+    # the forecast path shares the mechanism (forecast parity, design §4).
+    # No-op (identical LP) when off or when the ISO has no envelope artifact.
+    if getattr(config, "ramp_limits", False):
+        from market_sim.data.fleet import build_ramp_groups
+
+        ramp_groups = build_ramp_groups(fleet_arrays, iso)
+        if ramp_groups is not None:
+            r_gen_idx, r_group_col, r_up, r_dn = ramp_groups
+            dispatch_kwargs.update(
+                ramp_gen_idx=r_gen_idx,
+                ramp_group_col=r_group_col,
+                ramp_up_mw=r_up,
+                ramp_dn_mw=r_dn,
+            )
+            logger.info(
+                "%s %d: ramp envelopes on %d plant groups (%d member tranches)",
+                iso,
+                year,
+                r_up.size,
+                r_gen_idx.size,
+            )
+
+    # Local-capacity (LCR-area) minimum-generation rows
+    # (config.local_capacity_constraints, GATED default off): published-study
+    # load-pocket relaxation (design §3), RHS from the LCR report parameters
+    # scaled by this year's zonal load shape. Mirrored in runner.py (forecast
+    # parity). No-op when off or the ISO has no covered areas / crosswalk.
+    if getattr(config, "local_capacity_constraints", False):
+        from market_sim.data.local_capacity import build_local_capacity_specs
+
+        lcr_specs, _lcr_meta = build_local_capacity_specs(
+            iso,
+            year,
+            fleet_arrays.plant_code,
+            fleet_arrays.pmax,
+            fleet_arrays.availability,
+            zone_names,
+            demand,
+            storage.zone_idx,
+            storage_power_cap,
+        )
+        if lcr_specs:
+            dispatch_kwargs.update(local_capacity_specs=lcr_specs)
 
     # Energy+reserve co-optimization (config.energy_reserve_coopt; PJM-gated
     # until other ISOs are validated). Reserve-eligible units are dispatchable

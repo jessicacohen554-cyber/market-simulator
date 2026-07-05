@@ -869,6 +869,56 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ),
                     mass_cap_labels=[spec.label for spec in mass_caps],
                 )
+            # Plant-group hourly ramp envelopes (config.ramp_limits, GATED
+            # default off): CAMPD-measured trajectory bounds per plant group
+            # per hour transition. Mirrors the run_calibration.py hook so the
+            # forecast and backcast paths share the mechanism (forecast
+            # parity, design doc §4). No-op (identical LP) when off or when
+            # the ISO has no committed envelope artifact.
+            if getattr(config, "ramp_limits", False):
+                from market_sim.data.fleet import build_ramp_groups
+
+                ramp_groups = build_ramp_groups(fleet_arrays, iso)
+                if ramp_groups is not None:
+                    r_gen_idx, r_group_col, r_up, r_dn = ramp_groups
+                    dispatch_kwargs.update(
+                        ramp_gen_idx=r_gen_idx,
+                        ramp_group_col=r_group_col,
+                        ramp_up_mw=r_up,
+                        ramp_dn_mw=r_dn,
+                    )
+                    logger.info(
+                        "%s %d: ramp envelopes on %d plant groups (%d member tranches)",
+                        iso,
+                        year,
+                        r_up.size,
+                        r_gen_idx.size,
+                    )
+            # Local-capacity (LCR-area) minimum-generation rows
+            # (config.local_capacity_constraints, GATED default off): the
+            # published-study load-pocket relaxation (design doc §3). Same
+            # forecast-parity mirror of the run_calibration.py hook; the RHS
+            # scales with this year's zonal load shape, so the mechanism
+            # regenerates forward natively. No-op when off or when the ISO
+            # has no covered areas / membership crosswalk.
+            if getattr(config, "local_capacity_constraints", False):
+                from market_sim.data.local_capacity import (
+                    build_local_capacity_specs,
+                )
+
+                lcr_specs, _lcr_meta = build_local_capacity_specs(
+                    iso,
+                    year,
+                    fleet_arrays.plant_code,
+                    fleet_arrays.pmax,
+                    fleet_arrays.availability,
+                    zone_names,
+                    year_demand,
+                    storage.zone_idx,
+                    storage.power_cap,
+                )
+                if lcr_specs:
+                    dispatch_kwargs.update(local_capacity_specs=lcr_specs)
             # Energy + operating-reserve co-optimization (multi-ISO, gated):
             # the ISO's reserve demand curve enters the LP as reserve balance
             # rows so the reserve clearing price lifts the energy LMP
