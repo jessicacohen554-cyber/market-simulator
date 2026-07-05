@@ -573,6 +573,38 @@ class ScenarioConfig:
     # payment collapse, remains unvalidated in any keeper. Default off
     # (byte-identical); no-ops when the clean partition is absent (ERCOT, or
     # intake not landed).
+    ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
+    # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
+    # two-sided row per ramp-constrained plant group per hour transition,
+    # bounding the group's hourly dispatch delta by its CAMPD-measured max
+    # observed 1-h up/down gross-load move (data.fleet.build_ramp_groups /
+    # scripts/derive_campd_ramp_envelopes.py; design
+    # docs/ramp-locational-design-2026-07.md §1). A measured physical-
+    # capability input with zero fitted degrees of freedom (rule #13): the
+    # envelope regenerates from the CAMPD pipeline for any vintage, responds
+    # to fleet change, and never reads a residual. Forces the LP to either
+    # pre-position slow CC before the evening ramp or clear fast resources
+    # (CT/storage/imports) at the ramp margin, so the marginal unit in ramp-
+    # bound hours becomes the fast resource and CT clears on merit. Default
+    # off (byte-identical); no-op when the ISO has no envelope artifact.
+    # A/B result (FINDING-ramp-lcr-caiso-2026-07): structurally sound but
+    # near-inert on CAISO evening CT (+2 MW) — kept gated, not in any keeper.
+    local_capacity_constraints: bool = False  # GATED, default-OFF local-
+    # capacity (LCR-area) minimum-generation rows in the dispatch LP
+    # (model/dispatch._build_local_capacity_rows, inputs from
+    # data.local_capacity.build_local_capacity_specs). One >= row per covered
+    # LCR area per hour: in-area thermal dispatch (+ the in-area share of
+    # zone storage) must cover max(0, share*zone_load - import_cap), all
+    # parameters from the ISO's published LCR study tables (CAISO LCT report;
+    # capacity-deliverability intake) — the exact LP relaxation of a load-
+    # pocket zone split, binding only when local load exceeds the study
+    # import capability (design docs/ramp-locational-design-2026-07.md §3).
+    # The row dual is out-of-market (uplift-like) commitment support and does
+    # not enter the zonal energy-balance dual, so hub LMP benchmarks are
+    # untouched. Default off (byte-identical); no-op when the ISO has no
+    # covered areas / membership crosswalk. A/B result
+    # (FINDING-ramp-lcr-caiso-2026-07): +39 MW evening CT with 0.5-1.5%
+    # forced share (D-2 PASS) — kept gated pending keeper promotion.
     planning_reserve_margin: float = 0.1375  # Fallback/override planning
     # reserve margin for the adequacy backstop. The per-ISO registry
     # constants.PLANNING_RESERVE_MARGIN_BY_ISO now LEADS: the backstop resolves
@@ -3749,6 +3781,8 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_drag_intercept": 3,
     "gas_st_drag_cap": 3,
     "ct_netload_drag": 3,
+    "ramp_limits": 3,
+    "local_capacity_constraints": 3,
     "ct_drag_slope_per_gw": 3,
     "ct_drag_intercept": 3,
     "ct_drag_cap": 3,
