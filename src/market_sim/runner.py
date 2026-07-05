@@ -65,7 +65,10 @@ from market_sim.model.commitment import (
     reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
-from market_sim.model.ancillary import realized_storage_as_revenue_per_mw_yr
+from market_sim.model.ancillary import (
+    realized_storage_as_revenue_per_mw_yr,
+    realized_thermal_as_revenue_per_mw_yr_by_fuel,
+)
 from market_sim.model.storage import (
     _elcc_for_duration,
     apply_storage_new_entry,
@@ -1262,6 +1265,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
             if getattr(config, "ercot_storage_as_endogenous", False)
             else 0.0,
+            # Per-fuel thermal AS revenue DERIVED from this year's co-opt reserve
+            # duals (the endogenous analogue of the exogenous flat as_revenue rate)
+            # — fed to next year's retirement/new-entry screens so exactly one
+            # mechanism prices thermal AS under ercot_thermal_as_endogenous
+            # (rule 19). Empty dict when the co-opt did not price reserve this year.
+            "thermal_as_revenue_per_mw_yr": (
+                realized_thermal_as_revenue_per_mw_yr_by_fuel(
+                    fleet_arrays,
+                    result.dispatch,
+                    result.reserve_price_by_family,
+                    config.hours,
+                )
+                if (
+                    getattr(config, "ercot_thermal_as_endogenous", False)
+                    and iso == "ERCOT"
+                )
+                else None
+            ),
             # Renewable-pool and accredited-storage-firm capacity for next
             # year's reserve-margin adequacy backstop.
             "wind_cap_mw": float(np.sum(wind_cap)),
