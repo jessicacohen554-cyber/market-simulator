@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-ercot33-storage-duration-gate",
+  "label": "ercot33 storage duration gate",
+  "date": "2026-07-05",
+  "shorthand": "ercot33-storage-duration-gate",
+  "definition": "WS-B / G5 follow-up: run164 recipe (run157 keeper, DAM-AS overlay OFF, endogenous multi-product AS co-opt + forward requirement + RTOLCAP supply cap, P1-only) + the ONE delta ercot_storage_as_duration_gate. Adds the published per-product ESR State-of-Charge durations (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h; ERCOT Nodal Protocols §3.17.3/§8.1) as an LP-linear, vectorized gate sum_c dur_c*RS[c,z] <= sum_{s in z} SOC[s]: storage's upward AS becomes an explicit per-zone reserve variable RS[c,z] (removed from the pooled thermal headroom), so a short-duration battery can no longer sell long-duration AS on its full power. The measured storage treatment (storage_as_commitment + ercot_storage_as_reserve + ercot_storage_as_product_credit) stays OFF — the consistent swap, never mixed (ercot30 blow-up). Cleared storage AS still counts under RTOLCAP. QUANTITY validation vs measured 60-Day DAM award: the gate cuts the endogenous over-hold from ~1.95x (run164, pooled) to 0.54/0.55/0.61x (2023/24/25) — direction corrected, closer to measured in magnitude, lands just below the 0.8-1.3x band (documented residual per CLAUDE.md #1, NOT tuned to target). Probe, not a keeper; the measured-storage ercot32 stays the keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-05-ercot33-storage-duration-gate.js",
+  "bundle": "results/calibration/166"
+}
