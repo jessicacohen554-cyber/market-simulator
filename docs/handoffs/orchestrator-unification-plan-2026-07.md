@@ -429,6 +429,107 @@ dispatch).
 - A one-line `make regression-gate STAGE=n` that runs check + smoke + quarantine and
   prints PASS/FAIL — the same command each stage's session runs before pushing.
 
+### 7.3.1 Stage 0 — DELIVERED (2026-07-05)
+
+Built on `claude/regression-gate-stage-0-umopup`, add-only: nothing under
+`runner.py`, `run_calibration*.py`, `dispatch.py`, or `ScenarioConfig` changed.
+
+**Reconstruction route (decided after inspecting the format).** `run_config.json`
+records neither an argv nor the full solve-arg set — its `calibration_flags`
+block is a ~30-key *curated* subset, and its `scenario_config` block is the
+*resolved* 357-key config (an output, not the inputs). The faithful source is
+each bundle's **`meta.json`**, which echoes the passed `solve_and_persist`
+kwargs directly (~134 keys, one per parameter). So the capture is **programmatic
+from `meta.json`**: signature-introspect `solve_and_persist`, fill each parameter
+from its `meta.json` value, and apply the four recorded-name aliases
+(`commitment_screen_coal`→`screen_coal`, `coal_bit_passthrough_sigmoid`→
+`coal_bit_sigmoid`, `coal_prb_sigmoid_overrides`→`prb_overrides`,
+`coal_bit_sigmoid_overrides`→`bit_overrides`). Params absent from a keeper's
+`meta.json` are left at default — verified benign: the ~8 never-recorded params
+are uniformly absent across all six keepers, i.e. default for every one of them.
+
+**What was built**
+- `scripts/capture_keeper_goldens.py` — re-solves each keeper at HEAD from its
+  frozen bundle (resolved via the registry sidecar's `bundle` field, *not* the
+  empty id-named dir), determinism-pinned (`MARKET_SIM_HIGHS_THREADS=1`,
+  `MARKET_SIM_WARMSTART=1`, `MARKET_SIM_WARMSTART_XYEAR=0`), full year span in one
+  invocation (rule 15), writing the bundle to
+  `results/regression-goldens/<stage-tag>/<ISO>/` plus a hashes-only
+  `manifest.json`. **Fidelity oracle:** the golden's freshly-written `meta.json`
+  must replay every recorded keeper flag identically — a hard fail otherwise, so
+  a silently-dropped flag cannot produce a worthless golden. `scenario_config`
+  drift vs the frozen keeper is reported *informationally* (goldens are
+  current-HEAD baselines, not byte-reproductions of the July-3 bundles — the
+  only observed NEISO drift is `offer_curve_by_group`, i.e. base-curve constants
+  that moved since 07-03). `--all` fans out ≤2 concurrent per-ISO subprocesses
+  (rule 8 memory cap); years sequential within each.
+- `scripts/regression_gate.py` — one command, four checks, single PASS/FAIL,
+  exit 0/1: (1) golden bundle diff reusing `regression_check.compare_parquet`
+  over `dispatch/<year>_{P1,P2}.parquet` + `system/flows/storage.parquet`;
+  (2) `diff_warmstart_bundles.py` per-`plant_code` reshuffle localization
+  (informational); (3) `pytest tests/test_regression_smoke.py`;
+  (4) `legitimacy_diagnostics.py --keepers` + `audit_keepers.py`. Tolerance via
+  `--mode byte` (atol=rtol=0, Stages 1-4/7) or `--mode builder` (1e-9,
+  Stages 5-6) per §7.2, overridable with `--atol/--rtol`.
+- `tests/test_regression_smoke.py` — already existed (iso-model-unification
+  Phase 0); **verified** (24 tests: all six ISOs × solve-success +
+  non-negative-price + energy-balance + bounds, ~2 s). Not duplicated.
+- `.gitignore` — `/results/regression-goldens/*/*/` (multi-GB bundles never
+  committed — 413-safe); `<stage-tag>/manifest.json` stays tracked.
+
+**The exact gate command every later stage runs** (before pushing that stage):
+
+```
+# 1. baseline at the stage's start commit (before touching code):
+python scripts/capture_keeper_goldens.py --all --stage-tag stageN-before
+# 2. land the stage's refactor, then re-capture:
+python scripts/capture_keeper_goldens.py --all --stage-tag stageN-after
+# 3. the gate (byte-identity for pure code motion, Stages 1-4/7):
+python scripts/regression_gate.py \
+  --before results/regression-goldens/stageN-before \
+  --after  results/regression-goldens/stageN-after --mode byte
+#    builder-swap stages (5-6) instead: --mode builder
+```
+
+For a single keeper substitute `--iso <ISO>` for `--all`. The gate also runs
+standalone (smoke + quarantine only) with no `--before/--after`.
+
+**Validation**
+- **A/A byte-identity:** NEISO (cheapest keeper — 4 zones + HQ) captured twice
+  at `THREADS=1` (`aa-run1`, `aa-run2`); `regression_gate --mode byte` between
+  them: <!-- AA_RESULT --> **byte-identical — every dispatch/price/flow column
+  Δ = 0, reshuffle 0.000%** (result table in the session report).
+- **Stage-1 before baseline:** captured as `stage1-before`; the hashes-only
+  `results/regression-goldens/stage1-before/manifest.json` is the committed
+  deliverable (git SHA + env pins + per-file content hashes + per-ISO fidelity
+  summary). **Five of six ISOs captured on this box — ERCOT, CAISO, NYISO,
+  NEISO, PJM — each fidelity-OK** (every recorded keeper flag replayed
+  identically). **MISO is deferred by an environment memory ceiling, not a
+  harness fault:** the `miso-39-reserve-pergen` keeper runs `miso_reserve_pergen`
+  (per-asset reserve pooling), which CLAUDE.md documents as *"the 15 GB memory
+  tier"*; on this 15 GB box its LP peaks at 15.9 GB anon-rss (confirmed by the
+  OOM-killer: `Out of memory: Killed process … anon-rss:15933104kB`) and is
+  SIGKILLed during reserve-column construction — solo, with the full box free.
+  The reconstruction is correct (MISO's distinctive mechanisms all fire in the
+  log before the kill); it simply needs a ≥24 GB host. **A stage session must
+  capture the MISO golden on a larger box** (`python
+  scripts/capture_keeper_goldens.py --iso MISO --stage-tag stageN-before`) before
+  trusting the gate for MISO. Capture is strictly serial on any host near the
+  MISO tier — this 15 GB box also OOMs any *two* concurrent full keeper LPs
+  (~9 GB each), so `--all` uses ≤2 subprocesses only where headroom allows;
+  drop to `--max-concurrency 1` on a memory-tight host.
+
+**Known caveat (pre-existing, out of Stage-0 scope).** `audit_keepers.py`
+reports one FAIL on `origin/main` independent of Stage 0 —
+`S1: frontend/data/backcast/status.js is stale vs the current verdicts`
+(status.js is byte-identical to main here; I changed nothing under
+`frontend/data/backcast/`). Refreshing it needs `scripts/build_status.py`, which
+writes a committed `frontend/data/backcast/` file the Stage-0 guardrails
+prohibit touching. The neutrality-critical gates — the golden diff, the smoke
+suite, `legitimacy_diagnostics --keepers` (holdout quarantine intact), and
+audit_keepers' own holdout check — all pass. A stage session (or the owner)
+should run `build_status.py` so the gate is end-to-end green.
+
 ---
 
 ## 8. Cross-year warm-start — the forecast-P0 decision
