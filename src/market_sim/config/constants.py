@@ -1476,18 +1476,72 @@ CAP_AND_TRADE_PROGRAMS: dict[str, CapAndTradeProgram] = {
     ),
 }
 
-# Power-sector CO2 mass-cap budgets (short tons/yr) for the OPTIONAL endogenous
-# mass-cap row (mass_cap_enabled, default OFF). These are placeholders seeded
-# for the code path and the trivial binding-cap test; the authoritative annual
-# schedules land via the data-intake step (data/raw/policy/rggi-co2-budgets,
-# carb-cap-schedule). A row built from these is a power-sector, no-bank scenario
-# instrument (plan §2, §8) — NOT the RGGI/CARB market price. Empty until a run
-# supplies a cap via ScenarioConfig; see policy/cap_and_trade.py.
-RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {}
-CARB_ALLOWANCE_BUDGET: dict[int, float] = {}
-# CARB Auction Reserve (floor) price by year ($/tonne). Populated by the
-# carb-cap-schedule intake; empty until then.
-CARB_FLOOR_PRICE: dict[int, float] = {}
+# Short ton -> metric tonne. RGGI allowances are denominated in SHORT tons of
+# CO2 (1 allowance = 1 short ton), but the model's internal emission-rate mass
+# unit is the metric tonne (data/fleet.py: "the model's internal emission-rate
+# mass unit"), so a RGGI budget must be converted before it becomes a mass-cap
+# row RHS. 1 short ton = 907.18474 kg (NIST HB 44).
+SHORT_TON_TO_METRIC_TONNE: float = 0.90718474
+
+# Power-sector CO2 mass-cap budgets for the OPTIONAL endogenous mass-cap row
+# (mass_cap_enabled, default OFF). These mirror the cited raw schedules under
+# data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/ (curated to
+# data/clean/ via scripts/curate_*.py; the clean tree is gitignored so the
+# authoritative in-repo value lives here, same intake discipline as
+# STATE_CARBON_PRICE_BY_ISO). A row built from a budget here is a power-sector,
+# no-bank SCENARIO instrument (plan §2, §8) — NOT the RGGI/CARB market price,
+# which is set by a banked, multi-sector market this power model does not
+# contain (that faithful representation is the measured/projected adder above).
+# Because these region-/economy-wide budgets vastly exceed any single modeled
+# ISO's power-sector emissions, the row is (correctly) slack and its dual ~0 for
+# a real ISO — the mechanism is validated on the trivial binding fixture
+# (tests/test_dispatch.py::TestMassCapConstraint), not by binding here. NO 2022
+# or H1-2026 rows (holdout quarantine, CLAUDE.md rule 22).
+
+# California GHG annual allowance budget (MMT CO2e/yr; 1 CA GHG allowance = 1
+# metric tonne CO2e). Declines per the Scoping Plan trajectory. This is the
+# whole-economy CARB cap (electricity + industry + fuels), so a CAISO
+# power-sector row against it is deeply slack.
+# Source: CARB Cap-and-Trade Regulation, 17 CCR §95841 Table 6-2 (annual
+# allowance budgets 2021-2031). 2022 and 2026 omitted (holdout quarantine).
+CARB_ALLOWANCE_BUDGET: dict[int, float] = {
+    2023: 294.1,
+    2024: 280.7,
+    2025: 267.4,
+    2027: 240.6,
+    2028: 227.3,
+    2029: 213.9,
+    2030: 200.5,
+    2031: 193.8,
+}
+# CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + CPI per
+# §95911(c). Landed as the cited floor-band artifact; the CAISO forecast adder
+# escalator lives in CARB_FLOOR_ESCALATION above.
+# Source: CARB Annual Auction Reserve Price Notices, 2023-2025.
+CARB_FLOOR_PRICE: dict[int, float] = {
+    2023: 22.21,
+    2024: 24.04,
+    2025: 25.94,
+}
+# RGGI regional CO2 allowance budget (short tons/yr). Keyed by "RGGI" for the
+# regional total; per-state budgets can be added under their postal codes once
+# the RGGI per-state allowance-distribution table is intaken (until then a RGGI
+# ISO's power-sector row uses the regional cap — an even looser over-bound, so
+# still slack). 2023-2025 are the published regional cap; 2027-2030 project the
+# 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured).
+# Source: RGGI, Inc. regional cap trajectory (ICAP ETS profile); the 2023->2024
+# step reflects Virginia's 1 Jan 2024 exit. 2022/2026 omitted (quarantine).
+RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {
+    "RGGI": {
+        2023: 93_000_000.0,
+        2024: 69_000_000.0,
+        2025: 67_000_000.0,
+        2027: 63_200_000.0,
+        2028: 61_400_000.0,
+        2029: 59_600_000.0,
+        2030: 57_900_000.0,
+    },
+}
 
 # Storage technology parameters.
 # Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).

@@ -125,13 +125,51 @@ class TestCapPath:
         assert res.cap_spec.cap_tons == 1.0e6
         np.testing.assert_array_equal(res.cap_spec.membership, [1.0, 1.0, 1.0, 0.0])
 
-    def test_mass_cap_enabled_without_budget_falls_to_adder(self):
-        # Row stays inert until a budget is supplied (schedules not yet landed).
+    def test_mass_cap_enabled_uses_published_budget(self):
+        # With the CARB/RGGI schedules landed, enabling the row with no explicit
+        # mass_cap_tons pulls the published budget for the ISO/year, unit-
+        # converted to metric tonnes (CARB MMT CO2e x 1e6).
+        from market_sim.config.constants import CARB_ALLOWANCE_BUDGET
+
         res = resolve_carbon_program(
             ScenarioConfig(iso="CAISO", mode="backcast", mass_cap_enabled=True), 2024
         )
+        assert res.price_adder is None
+        assert res.cap_spec is not None
+        assert res.cap_spec.cap_tons == pytest.approx(CARB_ALLOWANCE_BUDGET[2024] * 1e6)
+
+    def test_rggi_row_uses_regional_budget_in_metric_tonnes(self):
+        # A RGGI ISO's row RHS is the regional short-ton budget converted to
+        # metric tonnes (the model's internal emission-rate unit).
+        from market_sim.config.constants import (
+            RGGI_STATE_CO2_BUDGET,
+            SHORT_TON_TO_METRIC_TONNE,
+        )
+
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="NYISO", mode="backcast", mass_cap_enabled=True), 2025
+        )
+        expected = RGGI_STATE_CO2_BUDGET["RGGI"][2025] * SHORT_TON_TO_METRIC_TONNE
+        assert res.cap_spec.cap_tons == pytest.approx(expected)
+
+    def test_explicit_tons_override_wins_over_published(self):
+        # An explicit scenario budget is taken as-is (metric tonnes), ahead of
+        # the published schedule.
+        res = resolve_carbon_program(
+            ScenarioConfig(
+                iso="CAISO", mode="backcast", mass_cap_enabled=True, mass_cap_tons=5.0e6
+            ),
+            2024,
+        )
+        assert res.cap_spec.cap_tons == pytest.approx(5.0e6)
+
+    def test_quarantined_year_has_no_published_budget(self):
+        # No 2026 budget row is landed (holdout quarantine, rule 22), so the row
+        # stays inert and the adder path is used.
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="CAISO", mode="backcast", mass_cap_enabled=True), 2026
+        )
         assert res.cap_spec is None
-        assert res.price_adder == pytest.approx(35.23)
 
 
 class TestMembershipWeightedAdder:
@@ -209,4 +247,42 @@ class TestMembershipWeightedAdder:
         np.testing.assert_array_equal(
             assemble_mc(fleet, fuel_prices, carbon_price=per_gen),
             assemble_mc(fleet, fuel_prices, carbon_price=price),
+        )
+
+
+class TestPublishedBudgetConstantsMatchRawCsv:
+    """The in-repo budget constants mirror the committed cited raw CSVs.
+
+    The clean/ tree is gitignored, so the authoritative in-repo value lives in
+    constants.py; this guards against the constant and the curated raw source
+    drifting apart (single source of truth, rule 24-adjacent).
+    """
+
+    def test_carb_budget_and_floor_match_csv(self):
+        from market_sim.config.constants import (
+            CARB_ALLOWANCE_BUDGET,
+            CARB_FLOOR_PRICE,
+        )
+        from market_sim.config.paths import RAW_DIR
+        from scripts import curate_carb_cap_schedule as carb
+
+        df = carb.parse(RAW_DIR)
+        budget = df[df["metric"] == "allowance_budget"]
+        floor = df[df["metric"] == "auction_reserve_price"]
+        assert dict(zip(budget["budget_year"], budget["value"])) == pytest.approx(
+            CARB_ALLOWANCE_BUDGET
+        )
+        assert dict(zip(floor["budget_year"], floor["value"])) == pytest.approx(
+            CARB_FLOOR_PRICE
+        )
+
+    def test_rggi_regional_budget_matches_csv(self):
+        from market_sim.config.constants import RGGI_STATE_CO2_BUDGET
+        from market_sim.config.paths import RAW_DIR
+        from scripts import curate_rggi_co2_budgets as rggi
+
+        df = rggi.parse(RAW_DIR)
+        regional = df[(df["state"] == "RGGI") & (df["metric"] == "allowance_budget")]
+        assert dict(zip(regional["budget_year"], regional["value"])) == pytest.approx(
+            RGGI_STATE_CO2_BUDGET["RGGI"]
         )
