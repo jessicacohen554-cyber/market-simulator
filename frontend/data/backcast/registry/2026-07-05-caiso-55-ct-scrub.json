@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-05-caiso-55-ct-scrub",
+ "label": "caiso 55 ct scrub",
+ "date": "2026-07-05",
+ "shorthand": "caiso-55-ct-scrub",
+ "definition": "PROBE (W3-P2 caiso-52-ct-scrub HEAD verification; keeper stays caiso-51). Byte-faithful replay of the caiso-51 keeper config at HEAD (2026-07-05), all years \u2014 the CT-floor scrub is already merged in source, so this zero-delta replay exercises the scrubbed dispatch path and closes the flagged keeper-reproducibility 'drift'. The audit's three stacked CAISO CT forcing engines are gone, defended at three code layers: (1) reliability_floor_coeffs_CAISO.csv CT limbs windowed 15-21 then enabled=False; (2) drop_drag_owned_reliability_specs drops every CT_PEAKER limb whenever ct_netload_drag is on (rule 19); (3) RA startup bridge gated on min_down>=RA_BRIDGE_ECON_MIN_DOWN_HOURS (4h), so fast-start CTs (min-down 1h) are never economically bridged (rule 17). Result at HEAD: CT_PEAKER now a SINGLE windowed mechanism (ct_netload_drag; RA-bridge CT share <0.4% all years), D-4 off-window 0% (was ~62-66% in caiso-42), D-1 CT off-peak CV ratio 3.05-3.52 (was 0.000 flat-floor signature). Reproduces committed caiso-52 (CT 2.12/1.73/1.30 vs 1.97/1.56/1.15 TWh); the 'drift' (CT ~3.4->~1.7 TWh vs the pre-scrub keeper) IS the scrub effect, not a bug. Still open (NOT closable by a floor scrub, rule 1): D-2 CT forced share 60/67/69% > 10% = the evening-merit structural gap (CT thermodynamically dominated by CC in an energy-only zonal LP; FINDING-caiso-evening-merit \u2014 needs ramp/min-up-down + sub-zonal LA-basin structure, do NOT re-floor); D-5 caiso_ra_mustoffer w2 forecast-parity wiring gap; ST_GAS D-1 shape (pre-existing). capacity_deliverability_limits records True but no-ops (clean CAISO partition absent) so dispatch is faithful to caiso-51; MIC seam limit carried by caiso_per_hub_intertie.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-05-caiso-55-ct-scrub.js",
+ "bundle": "results/calibration/caiso55_ctscrub_head"
+}
