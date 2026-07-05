@@ -106,6 +106,39 @@ def _correct_caiso_chp_steam_credit_hr(generators: list, iso: str) -> None:
 
 
 @lru_cache(maxsize=8)
+def measured_btm_share_by_plant(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: measured BTM host-share}`` from the ``chp-btm-share`` artifact.
+
+    The per-plant measured replacement for the sector-keyed
+    :func:`chp_btm_pct` default (:mod:`scripts.curate_chp_btm_share`): the
+    fraction of the plant's EIA-923 net class generation that never reaches
+    CAMPD's CEMS-metered grid-net total, pooled across every available
+    non-quarantined year. Both sides are measured and independent of the
+    model's own dispatch, so this regenerates identically for a forward year
+    (CLAUDE.md rule 13) -- forecast-only source; the backcast BTM add-back
+    (``scripts/run_calibration_full.py::_btm_frame``) is unchanged and keeps
+    using the sector-keyed share.
+
+    Returns an empty map when the clean partition is absent (curation not yet
+    run for this ISO / ``scripts.lib.clean_io`` unavailable) or empty, so the
+    caller falls back to :func:`chp_btm_pct`.
+    """
+    try:
+        from scripts.lib.clean_io import clean_exists, read_clean
+    except ModuleNotFoundError:
+        logger.warning("chp-btm-share: scripts.lib.clean_io unavailable")
+        return {}
+    if not clean_exists("chp-btm-share", iso=iso.upper()):
+        return {}
+    df = read_clean("chp-btm-share", iso=iso.upper(), validate=False)
+    if df.empty:
+        return {}
+    return {
+        int(pid): float(share) for pid, share in zip(df["plant_id"], df["btm_share"])
+    }
+
+
+@lru_cache(maxsize=8)
 def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float | None]]:
     """Return ``{plant_code: (chp_pmin_cf, sector_class, btm_pct_override)}`` for an ISO.
 
