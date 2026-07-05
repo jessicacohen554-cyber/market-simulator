@@ -150,10 +150,20 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
 - [x] ADR ratification (PS-10, 2026-07-02): ADRs 0005/0007/0009/0010 amended & ratified (0005: f=1.0, excess credited at full LMP).
 - [x] Fossil-avg CO₂-rate export wiring (ADR 0013): `scripts/build_fossil_avg_co2_rate.py` available; hourly rate file contract wired into intake & LP.
 - [ ] Execute prompt pack PP-09 (reporting deliverable, ADR 0014) — self-contained HTML run report + committed results store.
-- [ ] Export a forecast-year BAU LMP file from the market sim (ADR 0011 contract) and
-  build `data/profiles/` for all six ISOs, then run the first real per-ISO sweep.
-  **ON HOLD (stakeholder, 2026-07-02): do NOT run market-sim forecasts for this —
-  the forecast side is not production-ready yet. Until it is, the tool runs on the
-  exporter's `--dummy` synthetic LMP (always labeled SYNTHETIC in outputs/sidecar);
-  a calibrated backcast-year export is the approved interim validation path if
-  needed (ADR 0015 permits backcast for validation studies only).**
+- [x] Build `data/profiles/` for all six ISOs (`scripts/build_profiles.py --year
+  2024`; real EIA-930-derived CF shapes for ERCOT/CAISO/PJM/MISO/NYISO/NEISO,
+  2026-07-05).
+- [x] Run the first real per-ISO sweep, via the ADR 0015 **backcast-validation**
+  interim path (ERCOT, weather_year 2024; 2026-07-05). Discovered along the way:
+  `scripts/export_lce_lmp.py`'s cache-reading path was never actually wired for
+  backcast years (no code path had ever populated
+  `results/{iso}/{cache_key}/year_{year}.parquet` for 2023-2025) — worked around
+  with a one-off bridge script (zero edits to `run_calibration.py`/`runner.py`),
+  not a tool-side hack; see full diagnosis, frontier sanity checks, and caveats in
+  `docs/validation-2026-07-05-ercot-2024-backcast.md`. Result committed:
+  `results/ercot_backcast2024_premiumcap/`.
+  **The market-sim FORECAST path stays ON HOLD (stakeholder, 2026-07-02)** — this
+  item is the backcast-validation carve-out ADR 0015 explicitly permits, not a
+  stakeholder sign-off that any ISO's forecast is production-ready. Extending to
+  CAISO/PJM/MISO/NYISO/NEISO still needs a per-ISO bridge re-solve (each keeper
+  likely carries its own container-reproducibility drift, as ERCOT's did here).
