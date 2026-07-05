@@ -490,7 +490,45 @@ run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage i
   +58%, 0 GW retired vs 1.5 GW actual, system CO2 2025 −23% (2023/24 −54%). These
   are the *result*, to be root-caused (rules 1/11/14), not tuned. The `asknown`
   variant runs alongside for the fuel-input-error attribution.
-- **NOT done:** PJM (second ISO — mechanical, `build_capacity_actuals.py --iso PJM`
-  + a second harness invocation once ERCOT's findings are triaged); the CO2
+- **NOT done (at end of that session):** PJM (second ISO); the CO2
   decomposition's dispatch-error column (needs the keeper/D-7 CO2 gap threaded in);
   attribution runs (screen-pinned diagnostics, plan §1.4).
+
+**PJM hindcast run complete (2026-07-05, this session):**
+- `data/raw/_validation-source/capacity_actuals_pjm.csv` built (255 retirements
+  / 11.2 GW, 692 additions / 24.1 GW, latest EIA-860). Both fuel variants run
+  2021-2025 (2022 bridged, no solve/data read — leakage guard clean) and
+  registered: `frontend/data/hindcast/pjm-2021-2025-{realized,asknown}.json`,
+  reports `docs/hindcast-reports/pjm-2021-2025-{realized,asknown}-2026-07-05.md`.
+- **Blocking bug found and hotfixed (out of this session's normal scope,
+  flagged for the Stage-5/interchange-unification owner):** main HEAD
+  (8d46b90, PR #1412) dropped three names from `runner.py`'s import blocks
+  that its own new call sites need — `apply_interchange_topology`,
+  `apply_interchange_injections`, `forward_corridor_interface_groups` — which
+  broke `run_scenario_iso` with a `NameError` for **every** ISO, not just PJM.
+  Fixed by restoring the three imports only (no other runner.py changes);
+  confirmed via a 2021-only smoke solve before committing to the full run.
+- Headline result (**diagnostic, not a keeper**): PJM's capacity screens miss
+  the real build-out in the same direction as ERCOT — thermal retirements
+  -63% (11.1 actual vs 4.1 GW modelled, recall 0/17 >300MW), but the model's
+  4.1 GW of retired capacity is *entirely* a false-retire (100% of modelled
+  retired GW): Exelon's Byron + Dresden nuclear stations, whose 2020-vintage
+  EIA-860 "Planned Retirement Year" (2021) the model dutifully honors via the
+  non-fossil announced-retirement channel — but Illinois's Sept-2021 CEJA
+  legislation reversed those retirements in reality, a policy event with no
+  admissible model input. Every actual thermal retirement (coal, gas_ct, oil,
+  biomass) is separately missed entirely (0 GW modelled) — the
+  economic-retirement screen under-retires, same qualitative miss as ERCOT.
+  Additions over-build across every tech (wind +271%, solar +34%, gas_cc
+  +41%, gas_ct +347%); system CO2 2025 −11% (2023/24 −40%/−49%).
+- **Data-defect finding:** the unscored 2021 seed year is corrupted by 3 bad
+  hours (hour-of-year 6983-6985) in the raw `data/raw/eia-930/
+  eia_demand_profiles.parquet` PJM series — `raw_mw` values of 4.3×10⁸-2.1×10⁹
+  MW against a ~90,000 MW backdrop — driving I3/I7/I12/I14 forecast-invariant
+  failures in 2021 and plausibly confounding the 2022 evolution step's
+  price/margin signal (2021's `prior_results` feeds it directly). Not fixed
+  (raw/ is immutable source data); flagged for a future intake correction +
+  hindcast re-run. I9 storage-integrity also FAILs on 2023/2024 independent of
+  this defect. Full attribution in the realized report's Diagnostic notes.
+- **Still NOT done:** the CO2 decomposition's dispatch-error column; screen-
+  pinned attribution runs; the 2021 raw-demand-data fix + re-run it motivates.
