@@ -81,7 +81,6 @@ from market_sim.model.storage import (
     storage_units_to_arrays,
 )
 from market_sim.config.interchange_config import (
-    INTERFACE_NEIGHBORS,
     build_interchange_fleet,
     get_interchange_spec,
 )
@@ -89,7 +88,6 @@ from market_sim.model.transmission import (
     build_incidence_matrix,
     build_interface_groups,
     get_link_bidirectional_array,
-    extend_with_import_node,
     get_ttc_array,
     wecc_border_carbon_adder,
 )
@@ -346,33 +344,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     )
     interchange_spec = get_interchange_spec(config, iso)
     import_generators = build_interchange_fleet(interchange_spec, border_carbon)
-    if import_generators:
-        iso_config = extend_with_import_node(iso_config)
-    # Part A of capacity_deliverability_limits: replace the calibrated
-    # simultaneous-import scalar with the ISO's published per-area SEAM import
-    # limit (CAISO branch-group MIC → WECC_import). No-op when the flag is off,
-    # the ISO has no seam import_limit, or the data is absent.
-    if config.capacity_deliverability_limits:
-        from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
-        from market_sim.config.interchange_config import IMPORT_ZONE
-        from market_sim.data import capacity_deliverability as capdel
-        from market_sim.model.transmission import apply_deliverability_seam_limit
-
-        _dy = capdel.resolve_delivery_year(iso, start_year)
-        _season = capdel.resolve_season(iso)
-        _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
-        _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
-        _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
-        _import_zone = IMPORT_ZONE.get(iso)
-        _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
-        if _seam_mw:
-            iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
-            logger.info(
-                "%s: capacity_deliverability_limits — seam import cap set to "
-                "%.0f MW (summed per-area import_limit)",
-                iso,
-                _seam_mw,
-            )
+    # Shared interchange topology (orchestrator-unification Stage 5): external
+    # node extension, the capacity-deliverability Part-A seam import cap, and
+    # the CAISO per-hub corridor split — one sequence, both orchestrators.
+    iso_config = apply_interchange_topology(
+        iso_config,
+        interchange_spec,
+        config,
+        year=start_year,
+        extend_node=bool(import_generators),
+    )
     zone_names = iso_config.zone_names
 
     # Weather-year inputs are fixed across the run; load them once. The CF
@@ -422,6 +403,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # FORWARD ATC corridor deliverability cap (CAISO per-hub corridors,
+    # ``caiso_corridor_atc_forward``, default off): corridor TTC × posted-ATC
+    # base fraction × forward solar derate — a capability limit that
+    # regenerates from forward drivers, shared with the backcast orchestrator
+    # (the measured-p95 variant is a backcast-only overlay there). No-op off
+    # the flag or when no corridor resolves.
+    if interchange_spec.use_corridors and getattr(
+        config, "caiso_corridor_atc_forward", False
+    ):
+        _corridor_groups = forward_corridor_interface_groups(
+            iso_config, iso, config.weather_year, base_demand.shape[1]
+        )
+        if _corridor_groups:
+            interface_groups = interface_groups + _corridor_groups
+            logger.info(
+                "%s: WECC corridor deliverability cap on %d link(s) — "
+                "FORWARD ATC (TTC × ATC-frac × solar derate)",
+                iso,
+                len(_corridor_groups),
+            )
 
     fleet = None
     loss_tracker: dict[str, int] = {}
@@ -875,40 +876,32 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_coal_tranches(
                 mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
             )
-            if interchange_spec.use_reference_price:
-                from market_sim.model.transmission import (
-                    inject_reference_price_firm_export,
-                    inject_reference_price_mc,
+            # Shared forward-native interchange injections (orchestrator-
+            # unification Stage 5): the SAME post-assembly sequence the
+            # backcast runs — reference-price seams, firm import/export
+            # floors, and the CAISO offer couplings — every one gated by its
+            # existing ScenarioConfig field, all default off in forecast
+            # configs. The backcast additionally passes its measured-price
+            # overlay block; the forecast never does.
+            _interchange_net_load = None
+            if iso == "CAISO" and getattr(config, "caiso_import_solar_shape", False):
+                # LP-served net load (same convention as the drag floors and
+                # the backcast orchestrator's solar-shape input).
+                _interchange_net_load = (
+                    year_demand.sum(axis=0)
+                    - (solar_cap[:, None] * solar_cf).sum(axis=0)
+                    - (wind_cap[:, None] * wind_cf).sum(axis=0)
                 )
-
-                if inject_reference_price_mc(
-                    fleet_arrays, mc_base, iso, year, config.gas_price_path
-                ):
-                    logger.info(
-                        "%s %d: reference-price interface — %d neighbor seams "
-                        "priced from gas x heat-rate x load-shape "
-                        "(hurdle in $/MWh)",
-                        iso,
-                        year,
-                        len(INTERFACE_NEIGHBORS.get(iso, [])),
-                    )
-                if inject_reference_price_firm_export(fleet_arrays, iso, year):
-                    logger.info(
-                        "%s %d: firm scheduled-export floor applied "
-                        "(must-flow seam base)",
-                        iso,
-                        year,
-                    )
-            if interchange_spec.firm_imports:
-                from market_sim.model.transmission import inject_miso_firm_imports
-
-                if inject_miso_firm_imports(fleet_arrays, iso, year):
-                    logger.info(
-                        "%s %d: Manitoba firm-hydro import baseload floored "
-                        "(must-flow)",
-                        iso,
-                        year,
-                    )
+            apply_interchange_injections(
+                fleet_arrays,
+                mc_base,
+                config,
+                iso,
+                year,
+                carbon_price=resolve_carbon_price(config, year),
+                gas_scenario=config.gas_price_path,
+                net_load=_interchange_net_load,
+            )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
