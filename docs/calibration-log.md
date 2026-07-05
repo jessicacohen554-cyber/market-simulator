@@ -42,6 +42,95 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-05 — W5 keeper re-gate sweep: E7 adjudication for CAISO / PJM / NYISO / NEISO (PJM + NEISO promoted; CAISO + NYISO keepers stay)
+
+`audit_keepers --check` flagged E7 ("a newer run exists") on four ISOs. Each
+newer run was adjudicated against CLAUDE.md rules 1/11/15/16/17-26 — the keeper
+is the most structurally faithful run, never the lowest-MAE one, and a rejected
+promotion is recorded, not silently skipped. ERCOT (ercot40 WS-A probe; ercot32
+stays keeper, logged 2026-07-05) and MISO (E9 twin owned by W4-6) were out of
+scope for this sweep.
+
+**PJM — PROMOTED: `2026-07-05-pjm-77-ct-relfloor` replaces
+`2026-07-03-pjm-76-outage-fix`.** pjm-77 is the pjm-76 recipe VERBATIM on the
+rule-19 reconcile (`drop_drag_owned_reliability_specs`): the two all-24h
+CT_PEAKER reliability limbs (EMAAC, West_APS) are dropped because the CT
+net-load drag already owns that class's commitment — the limbs' only marginal
+contribution was overnight on hot days, where measured CAMPD pure-play CT CF is
+0.0165 (vs 0.376 at the afternoon peak), i.e. a floor binding where its own
+driver says the class is offline (rule 17, a bug by definition). Clears the
+deciding D-4 failure (97-99.7 % off-window, all years) by removing a ~0.12 TWh
+overnight phantom; no fitted parameter changed. pjm-77 also carries the
+burndown's meta-gap fix (persist `ct_netload_drag` in `meta.json`), giving PJM
+its first accurate legitimacy diagnostics — which honestly surface two
+pre-existing open items the gap had hidden (drag D-2 12.1 % CT forced energy in
+2024; CT_CHP D-4 on its own all-24h cooling limb). Kept per rule 14: accurate
+diagnostics stay even though they reveal more failures. Verdict still NOT-YET.
+Full evidence: `docs/FINDING-pjm-burndown-2026-07.md`. D-3 zero-forcing
+ablation twin solved with the exact pjm-77 config/span and registered
+(`2026-07-05-pjm-77-ct-relfloor-ablation`, rule 20); DOF ledger present in the
+bundle attestation (5 entries).
+
+**NEISO — PROMOTED: `2026-07-05-neiso-48-ct-floor` replaces
+`2026-07-03-neiso-47-fast-start`.** The same disease and the same class of fix
+as pjm-77 / caiso-52: the neiso-47 recipe with the two all-24h CT_PEAKER tmax
+reliability limbs (Boston, Connecticut) scrubbed — a zero-parameter mechanism
+deletion (rules 17/18: fast-start CTs, min-down ≤ 2 h / startup < $30/MW, are
+never day-ahead committed at a floor). The registered same-recipe A/B control
+(`2026-07-05-neiso-48-base-control`, bundle `neiso_ctbase`) documents the
+pre-scrub failing state: D-4 off-window 72-76 %, C8 CT_PEAKER forced share
+0.47/0.78/0.47 → 0.00 all years after the scrub; C7 off-peak CV ratio
+0.65/0.63/0.59 → 0.76/0.86/0.79. Disclosed cost (rule 1, not to be won back
+with a floor): CT_PEAKER grid volume falls to 0.010/0.021/0.099 TWh, absorbed
+by marginal CC_REGULAR at the same price (dw-LMP +$0.02-0.06). This resolves
+exactly the C7/C8 CT failures the 2026-07-04 re-gate flagged on neiso-47, the
+way that re-gate note demanded (fix the floor, never re-tune to win C7/C8
+back). Remaining open: ST_GAS diurnal shape (pre-existing, unchanged — next
+NEISO root cause). Verdict still NOT-YET. D-3 zero-forcing ablation twin solved
+with the exact neiso-48 config/span and registered
+(`2026-07-05-neiso-48-ct-floor-ablation`, rule 20); DOF ledger present (5
+entries).
+
+**CAISO — NOT PROMOTED: `2026-07-03-caiso-51-firm-base` stays keeper;
+`2026-07-05-caiso-r1-signflip-off` is a probe, not a candidate.** The r1 pair
+(`caiso-r1-baseline-limb` limb-ON / `caiso-r1-signflip-off` limb-OFF) is the
+B-LIMB-1 same-env A/B isolating the R1 disablement of the unidentified
+sign-flip SP15/CC_REGULAR tmax limb (D-8: train ρ +0.69 → holdout −0.10). The
+A/B proved the limb NON-BINDING (CC_REGULAR Δ ≤ 0.018 TWh; price/CO2/forced
+share identical), and the disablement itself already shipped in source
+(`r1_disabled=True` in `reliability_floor_coeffs_CAISO.csv`, commit 8e741d8) —
+so promoting the probe would add no structure the keeper config doesn't
+already carry forward. Decisive against promotion: both r1 runs inherit an
+UNDIAGNOSED keeper-reproducibility drift on current main — CT_PEAKER energy
+roughly halved (~1.7 vs ~3.4 TWh) and C8 forced share 60-71 % vs the committed
+bundle's 27-33 % — i.e. the probe run is structurally WORSE on the rule-19
+forced-energy budget for reasons unrelated to the probed change. That drift is
+an open root-cause item for the CAISO owner (flagged in the
+`caiso-r1-baseline-limb` sidecar); swapping the keeper onto it would launder an
+unexplained regression into keeper status. E7 on CAISO is a documented state
+(the ercot40 pattern) until the drift is root-caused.
+
+**NYISO — NOT PROMOTED: `2026-07-03-nyiso-41-hub-prices` stays keeper;
+`2026-07-05-nyiso-47-ccdeleak-ablation` is a D-3 ablation twin, definitionally
+never a candidate.** The E7 pointer names the twin only because it is the
+lexically-latest same-day sidecar; the actual newest run,
+`2026-07-05-nyiso-47-ccdeleak`, is the B-NYI-1 scalar-remediation PROBE whose
+registration entry (2026-07-05, below) already recorded "keeper stays 41": its
+de-leaked CC econ band carries an EXPECTED, disclosed C3a/price regression
+whose root cause is the missing NYISO reserve/scarcity price formation (issue
+#1344), an open structural item — recording the regression and keeping the
+keeper is the rule-1 outcome. Re-affirmed here so the E7 warning is a
+documented state. `audit_keepers` E7 was also fixed this session to stop
+counting `*-ablation` twins as "newer runs" (a twin is a diagnostic shadow of
+its parent, rule 20), so NYISO's E7 pointer now names the probe, not the twin.
+
+Bookkeeping: `keepers.json` swapped for PJM/NEISO; pjm-76 and neiso-47 removed
+from `E9_ABLATION_TWIN_GRANDFATHER` (dead entries once demoted, per the list's
+own contract); `build_status.py` re-run; keeper-auditor pass on the swapped
+keepers. E7 count 5 → 3 (ERCOT, CAISO, NYISO — each a documented state above
+or in the ercot40 entry); no new audit failures (MISO's E9 pre-exists, owned
+by W4-6).
+
 ### 2026-07-05 — ERCOT — C3b/C3c price-shape attribution + measured offer-wall ladder (ercot 33): PROBE rejected, keeper stays ercot 32
 
 **Goal.** Decompose the standing C3b (shape) / C3c (tail) fails by month×hour and
