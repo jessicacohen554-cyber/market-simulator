@@ -288,7 +288,15 @@ def get_reserve_design(
                 solar_gen=solar_gen,
                 sim_year=sim_year,
             )
-        return _ercot_design(config, fleet_arrays, hours, sim_year=sim_year)
+        return _ercot_design(
+            config,
+            fleet_arrays,
+            hours,
+            sim_year=sim_year,
+            system_load=system_load,
+            wind_gen=wind_gen,
+            solar_gen=solar_gen,
+        )
     if iso == "PJM":
         return _pjm_design(config, fleet_arrays, hours, zone_names)
     if iso == "MISO":
@@ -411,13 +419,32 @@ def _quick_start_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
 
 
 def _ercot_design(
-    config, fleet_arrays: FleetArrays, hours: int, *, sim_year: int | None = None
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    *,
+    sim_year: int | None = None,
+    system_load: np.ndarray | None = None,
+    wind_gen: np.ndarray | None = None,
+    solar_gen: np.ndarray | None = None,
 ) -> ReserveDesign:
-    """ERCOT single-product ORDC co-optimization (the lumped contingency reserve)."""
+    """ERCOT single-product ORDC co-optimization (the lumped contingency reserve).
+
+    The reserve-supply cap (``ercot_reserve_supply_cap``) is applied inside the
+    design (audit-wiring gap A5, folded here in orchestrator-unification
+    Stage 2): previously only ``_ercot_multiproduct_design`` set
+    ``supply_cap``, so a single-product forecast ERCOT co-opt ran uncapped —
+    the backcast reached the cap only through ``run_calibration.py``'s
+    post-design overwrite. One edit here caps both orchestrators; the
+    mode-aware source (measured RTOLCAP parquet in backcast, WS-A forward
+    formula from the threaded drivers in forecast) is
+    ``scarcity.ercot_rtolcap_supply_cap_mw``.
+    """
     from market_sim.results.scarcity import (
         ercot_ecrs_requirement_mw,
         ercot_load_resource_reserve_credit_mw,
         ercot_ordc_demand_steps,
+        ercot_rtolcap_supply_cap_mw,
         ercot_storage_as_reserve_mw,
         resolve_lolp_params,
     )
@@ -470,10 +497,23 @@ def _ercot_design(
         ordc_step_widths=widths,
         reserve_class=0,
     )
+    # A5 fold: mode-aware supply cap (measured RTOLCAP in backcast — identical
+    # to the retired run_calibration post-design overwrite; WS-A forward
+    # formula from the threaded drivers in forecast, previously unreachable
+    # for the single-product design). Gated by config.ercot_reserve_supply_cap.
+    supply_cap = ercot_rtolcap_supply_cap_mw(
+        config,
+        hours,
+        fleet_arrays,
+        system_load=system_load,
+        wind_gen=wind_gen,
+        solar_gen=solar_gen,
+    )
     return ReserveDesign(
         families=[fam],
         eligible=eligible.reshape(1, -1),
         storage_eligible=True,
+        supply_cap=supply_cap,
     )
 
 
