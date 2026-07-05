@@ -344,6 +344,17 @@ def _lookahead_reprice_signal(
     return np.tile(prices_h[None, :], (n_zones, 1))
 
 
+def _confirmed_exits_active(config: ScenarioConfig) -> bool:
+    """Return True when the confirmed-exit channel should load/apply this run.
+
+    Forecast-mode only, regardless of ``confirmed_exits_enabled``'s default —
+    a backcast run is a hard no-op even after the 2026-07-05 default flip
+    (`docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), since backcast's
+    historical exits ride the vintage snapshot instead.
+    """
+    return config.mode == "forecast" and config.confirmed_exits_enabled
+
+
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     """Run every simulation year for one scenario and one ISO, sequentially.
 
@@ -575,11 +586,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
 
     # Confirmed (binding-instrument) exits: the exogenous forecast retirement
-    # channel, GATED on confirmed_exits_enabled (default off) and forecast-mode
-    # only (a backcast's historical exits ride the vintage snapshot). Loaded
+    # channel, GATED on confirmed_exits_enabled (default on, flipped 2026-07-05)
+    # and forecast-mode only (a backcast's historical exits ride the vintage
+    # snapshot, and config.mode == "forecast" here is a hard gate independent of
+    # the flag's default, so a backcast run is unaffected by the flip). Loaded
     # once; applied at step 0 of evolve_fleet and the first-year base fleet.
     confirmed_exits: list[ConfirmedExit] = []
-    if config.mode == "forecast" and config.confirmed_exits_enabled:
+    if _confirmed_exits_active(config):
         confirmed_exits = load_confirmed_exits(iso)
         if confirmed_exits:
             logger.info(

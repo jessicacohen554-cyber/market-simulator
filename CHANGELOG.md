@@ -31,6 +31,44 @@ Completes the two deferred follow-ons from `docs/handoffs/emissions-mass-cap-pla
   `mass_cap_enabled` is inert there today — a scoped follow-on, documented in the plan doc rather
   than half-wired in this pass.
 
+## 2026-07-05 (confirmed-retirement channel — default flip to on)
+
+**Model default.** `ScenarioConfig.confirmed_exits_enabled` flips **False →
+True** (`src/market_sim/config/scenarios.py`), completing the owner sign-off
+contemplated in `docs/handoffs/confirmed-retirement-plan-2026-07.md` §7. The
+registry now covers all six ISOs (PR #1420, merged 2026-07-05); this session
+resolved the two remaining primary-document caveats first:
+
+- **Rockport 1** (PJM, consent decree): confirmed the S.D. Ohio civil action
+  numbers directly against the filed Fifth Joint Modification (Case
+  2:99-cv-01250-EAS-KAJ Doc #438) — Consolidated Cases C2-99-1182 and
+  C2-99-1250, and Paragraph 140's verbatim 2028-12-31 Rockport Unit 1
+  retirement date.
+- **Diablo Canyon** (CAISO, SB 846): confirmed CPUC Decision D.23-12-036
+  directly against a CPUC decision in R.23-01-007 that quotes it verbatim,
+  including both units' authorized-operation end dates (2029-10-31 / 
+  2030-10-31).
+
+Both `data/raw/confirmed-retirements/{pjm,caiso}.csv` rows and the README are
+updated with the primary-document citations; neither caveat remains.
+
+The flip also activates the non-fossil announced-horizon gate in
+`capacity.evolve_fleet` (same `confirmed_exits_enabled` flag couples both —
+unchanged mechanism, documented in CLAUDE.md and the plan). The channel
+remains forecast-mode only: `runner._confirmed_exits_active` (new, extracted
+from the inline gate for testability) hard-gates on `mode == "forecast"`, so a
+backcast run is byte-identical regardless of this default — verified with
+`scripts/probes/verify_backcast_noop.py` and a new
+`TestConfirmedExitsDefaultAndBackcastGate` test class in
+`tests/test_confirmed_retirements.py`. Verification forecast probes
+(`scripts/probes/confirmed_retirement_probe.py`, ERCOT + CAISO, not a keeper)
+confirm only the registry's own instruments change channel after the flip.
+
+Docs synced: CLAUDE.md's capacity-evolution section, `model-methodology-spec.md`
+§5.1, `docs/codebase/03-capacity-and-commitment.md`, and the parameter registry
+(`frontend/data/parameters.json` / `docs/parameter-citations.md`) all now cite
+the default as **on** with the sign-off citation.
+
 ## 2026-07-05 (CI wiring — W2-P5 forecast invariants)
 
 Wired the W2-P5 forecast-invariant checks into CI (docs/handoffs/forecast-validation-program-2026-07.md §6): the fast invariant-logic tests already run in `ci.yml`'s per-PR tier (no change needed, documented explicitly), and a new scheduled `.github/workflows/forecast-invariants.yml` runs the slow real-LP e2e test plus the P1-P3 paired-run invariants weekly. No checker/test logic changed.
