@@ -178,13 +178,58 @@ solving, by the pure `ensemble.bands_from_metrics(metrics, seed, iso, prior)`):
   parametric_plus_structural}`. The published layer is emissions-only.
 - `ensemble_meta.json` — the `structural_prior` block (`StructuralPrior.as_dict()`):
   version, estimator note, ν, fit years, pooled noise, per-ISO residuals with their
-  statmode run ids, `horizon_lambda` status, and the `dispatch_conditional` flag. The
-  `label` derives its caveat from that flag, so the fan chart never shows a band the
+  statmode run ids, `horizon_lambda` status, the `dispatch_conditional` flag, the
+  emissions-basis identity, and the per-ISO staleness flags (§6). The
+  `label` derives its caveats from those flags, so the fan chart never shows a band the
   metadata cannot defend (plan §4.2).
+- **Fitted prior artifact** — `write_prior_artifact` commits the full fit record to
+  `results/ensemble/structural-prior/<version>.json` (one file per prior version), so
+  every re-fit lands as a new, diffable artifact next to its predecessor.
 
 CLI: `market-sim ensemble --config base.yaml --sampler configs/uncertainty_ercot.yaml
 --out-dir results/ensemble/ercot_v1 --structural-prior` folds the prior in;
 omitting the flag emits the parametric layer only.
+
+---
+
+## 6. Emissions-basis staleness (2026-07-05) — carbon-zero re-scored, carbon-priced flagged
+
+The six D-7 statmode probes were solved and registered 2026-07-03/04, **before** the
+W2-P1 emissions fixes merged (PR #1371, 2026-07-05: `fff2c34` R2 physical-HR CO2
+booking, `968cead` quarantine-row strip). The prior's fit inputs therefore predate the
+current emissions basis, and the W0-P4 design
+(`docs/handoffs/forecast-validation-program-2026-07.md` §0/§3.2) splits the
+consequence by carbon pricing:
+
+- **Carbon-zero ISOs (ERCOT / PJM / MISO): re-scored, basis-current.** R2 provably
+  does not touch their solve (carbon = $0 ⇒ the CO2 rate never enters `mc`), so only
+  the scoring needed re-checking. `rescore_carbon_zero` executes the no-solve re-score
+  at fit time: recompute model CO2 = Σ_class `gmModel`·intensity and actual CO2 =
+  Σ_class `classFull`·intensity from the committed artifacts and refuse to fit on any
+  mismatch beyond 5-dp intensity rounding. Verified two ways on 2026-07-05: (a) the
+  C5a scoring-rate rows for 2023–2025 in
+  `data/raw/_processed-legacy/fossil_co2_rates.parquet` are **content-identical** at
+  HEAD vs the pre-registration SHA (`8b8293c`) — the 07-04 holdout intake (`a0faf74`)
+  only *added* quarantined 2022/2026 rows, which nothing here reads (rule 22), and
+  `968cead` only stripped rows from `plant_emission_rates.parquet`, which the scoring
+  fast-path does not consult when `fossil_co2_rates.parquet` covers the year; (b) the
+  runtime re-score reproduces every committed value
+  (`rescore: "verified-identical"` in the artifact).
+- **Carbon-priced ISOs (CAISO / NYISO / NEISO,
+  `STRUCTURAL_PRIOR_CARBON_PRICED_ISOS`): STALE, flagged.** R2 moves their merit order
+  (the CO2 rate enters `mc`), so their statmode *solves* — not just scores — are
+  stale, and no post-processing can repair that. Their residuals are fitted from the
+  stale bundles and flagged `basis_stale: true` / `"stale-pending-W3-P1"` in the
+  artifact, in `ensemble_meta.json`, and on the band label. Because the pooled noise
+  mixes every fitted ISO's variance, the label carries the staleness caveat even for a
+  basis-current ISO's band.
+- **The W3-P1 re-fit is a clean swap.** The artifact records the emissions-basis
+  identity (label + sha256 of `fossil_co2_rates.parquet`) and every input run id;
+  when W3-P1 re-solves the three carbon-priced statmode probes at HEAD, updating
+  `STATMODE_PROBE_RUNS` and re-running `default_prior` + `write_prior_artifact`
+  produces the successor artifact with the flags cleared.
+
+**ERCOT's prior — the PB-5 input — is basis-current** (bias +0.005, re-score verified).
 
 *Produced for PB-3, 2026-07. Design: `docs/handoffs/probability-bounds-plan-2026-07.md`
 §3. Fit inputs: the committed D-7 statmode probes
