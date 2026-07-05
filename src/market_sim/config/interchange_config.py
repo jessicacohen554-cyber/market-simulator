@@ -693,8 +693,21 @@ class InterchangeSpec:
         firm_imports: Must-flow firm import blocks.
         monthly_reconciliation: Optional monthly band constraint.
         eford: Forced-outage derate on import tranches.
-        use_reference_price: Whether to use the reference-price seam.
-        use_corridors: Whether to use CAISO corridor model.
+        use_reference_price: Whether the seam is served by the reference-price
+            node (``build_reference_price_node``) — the generic non-CAISO seam
+            or CAISO's dedicated ``caiso_reference_price_seam``.
+        use_corridors: Whether the CAISO per-hub corridor TOPOLOGY is active
+            (the ``WECC_import`` node splits into ``WECC_PNW``/``WECC_DSW`` and
+            the corridor ATC/flow envelopes may bind). True for both the
+            per-hub intertie and the CAISO reference-price seam, matching the
+            backcast's ``caiso_corridors`` resolution.
+        caiso_mode: Which CAISO seam builder is active — ``"reference_seam"``
+            (forward reference-price corridors), ``"per_hub"`` (two signed
+            corridors priced at their own hubs), ``"bidir"`` (single signed
+            tie), or ``None`` (static tranche ladder / non-CAISO). Resolved
+            with the same mutual-exclusion ladder the backcast orchestrator
+            has always used: reference seam supersedes per-hub supersedes
+            bidir.
     """
 
     iso: str
@@ -708,28 +721,81 @@ class InterchangeSpec:
     eford: float = 0.0
     use_reference_price: bool = False
     use_corridors: bool = False
+    caiso_mode: str | None = None
 
 
-def get_interchange_spec(config, iso: str) -> InterchangeSpec:
+def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
     """Build the ``InterchangeSpec`` for ``iso`` from ``config`` flags.
 
     Returns a spec that encodes which interchange model is active (static
-    tranche ladder, reference-price seam, or CAISO corridor model) based on
-    the scenario config flags.  The caller passes this to
-    ``build_interchange_fleet`` to get the ``Generator`` list.
+    tranche ladder, reference-price seam, CAISO per-hub / bidirectional
+    intertie) based on the scenario config flags.  The caller passes this to
+    ``build_interchange_fleet`` to get the ``Generator`` list and to
+    ``apply_interchange_topology`` to get the matching topology.
+
+    The CAISO builder choice replicates the backcast orchestrator's
+    long-standing mutual-exclusion ladder exactly (all gates are existing
+    ``ScenarioConfig`` fields, every one default-off):
+
+    1. ``caiso_reference_price_seam`` — forward reference-price corridors
+       (``build_reference_price_node``), per-hub corridor topology.
+    2. else ``caiso_per_hub_intertie`` — two signed corridors priced at their
+       own hubs (``build_caiso_per_hub_intertie``), per-hub corridor topology.
+    3. else ``caiso_bidir_intertie`` — single signed tie
+       (``build_caiso_bidir_intertie``), pooled ``WECC_import`` node.
+    4. else — static import tranches + export sinks on the pooled node.
+
+    The generic ``reference_price_interface`` path never applies to CAISO
+    (CAISO's seam is the dedicated mode-1 above; the generic single-node path
+    would land its per-corridor tranches with no corridor zones to host them).
+
+    Args:
+        config: Scenario config carrying the interchange gates.
+        iso: ISO identifier.
+        year: Solve year grounding the year-varying inputs
+            (``IMPORT_TRANCHES_BY_YEAR`` ladder, measured Manitoba firm-import
+            capacity in backcast mode). ``None`` falls back to
+            ``config.weather_year`` — identical in a backcast, where the
+            weather year is pinned to the solve year.
     """
     import_zone = IMPORT_ZONE.get(iso, "")
     if not import_zone:
         return InterchangeSpec(iso=iso, import_zone="")
 
     eford = IMPORT_EFORD.get(iso, 0.0)
-    use_ref = (
+
+    caiso_ref_seam = iso == "CAISO" and getattr(
+        config, "caiso_reference_price_seam", False
+    )
+    caiso_per_hub = (
+        (not caiso_ref_seam)
+        and iso == "CAISO"
+        and getattr(config, "caiso_per_hub_intertie", False)
+    )
+    caiso_bidir = (
+        (not caiso_ref_seam)
+        and (not caiso_per_hub)
+        and iso == "CAISO"
+        and getattr(config, "caiso_bidir_intertie", False)
+    )
+    caiso_mode = (
+        "reference_seam"
+        if caiso_ref_seam
+        else "per_hub"
+        if caiso_per_hub
+        else "bidir"
+        if caiso_bidir
+        else None
+    )
+    use_ref = caiso_ref_seam or (
         getattr(config, "reference_price_interface", False)
         and iso in INTERFACE_NEIGHBORS
+        and iso != "CAISO"
     )
-    use_corridors = iso == "CAISO" and getattr(config, "caiso_per_hub_intertie", False)
+    use_corridors = caiso_per_hub or caiso_ref_seam
 
-    year = getattr(config, "weather_year", None)
+    if year is None:
+        year = getattr(config, "weather_year", None)
     tranches = IMPORT_TRANCHES.get(iso, [])
     if year is not None:
         tranches = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year, tranches)
@@ -744,10 +810,16 @@ def get_interchange_spec(config, iso: str) -> InterchangeSpec:
         )
 
         border = wecc_border_carbon_adder(getattr(config, "carbon_price", 0.0))
+        # Informational corridor inventory (zones + per-hub tranche split).
+        # The per-hub GENERATORS are built by the canonical
+        # transmission.build_caiso_per_hub_intertie, which uses the static
+        # IMPORT_TRANCHES ladder (per-tranche capacities are contract
+        # structure, not year-shaped) — so the corridor entries here carry the
+        # same static split.
         for hub, zone in CAISO_PER_HUB_IMPORT_ZONES.items():
             hub_tranches = [
                 (name, cap, mc)
-                for name, cap, mc in tranches
+                for name, cap, mc in IMPORT_TRANCHES.get(iso, [])
                 if CAISO_IMPORT_TRANCHE_HUB.get(name) == hub
             ]
             corridors.append(
@@ -762,7 +834,7 @@ def get_interchange_spec(config, iso: str) -> InterchangeSpec:
     firm_imports: list[FirmImport] = []
     if getattr(config, "miso_firm_imports", False) and iso == "MISO":
         pmax = resolve_miso_manitoba_firm_import_mw(
-            getattr(config, "weather_year", None),
+            year,
             getattr(config, "mode", "forecast"),
         )
         firm_imports.append(
@@ -785,8 +857,12 @@ def get_interchange_spec(config, iso: str) -> InterchangeSpec:
     return InterchangeSpec(
         iso=iso,
         import_zone=import_zone,
-        import_tranches=tranches if not use_ref else [],
-        export_tranches=exports if not use_ref else [],
+        import_tranches=tranches
+        if not (use_ref or use_corridors or caiso_bidir)
+        else [],
+        export_tranches=exports
+        if not (use_ref or use_corridors or caiso_bidir)
+        else [],
         neighbors=neighbors,
         corridors=corridors,
         firm_imports=firm_imports,
@@ -794,6 +870,7 @@ def get_interchange_spec(config, iso: str) -> InterchangeSpec:
         eford=eford,
         use_reference_price=use_ref,
         use_corridors=use_corridors,
+        caiso_mode=caiso_mode,
     )
 
 
@@ -803,19 +880,41 @@ def build_interchange_fleet(
 ) -> list[Generator]:
     """Build ``Generator`` objects from an ``InterchangeSpec``.
 
-    Produces identical generators to the old ``build_import_generators`` +
-    ``build_export_sinks`` / ``build_reference_price_node`` /
-    ``build_caiso_per_hub_intertie`` paths, driven by the spec's flags.
+    Delegates to the canonical builders in
+    :mod:`market_sim.model.transmission` — the same functions the backcast
+    orchestrator has always used inline — selected by the spec's mode flags,
+    so both orchestrators produce identical ``Generator`` lists by
+    construction:
+
+    * ``use_reference_price`` → :func:`~market_sim.model.transmission.build_reference_price_node`
+      (generic non-CAISO seam and CAISO's ``caiso_reference_price_seam``).
+    * ``caiso_mode == "per_hub"`` → :func:`~market_sim.model.transmission.build_caiso_per_hub_intertie`.
+    * ``caiso_mode == "bidir"`` → :func:`~market_sim.model.transmission.build_caiso_bidir_intertie`.
+    * otherwise → the static import-tranche + export-sink ladder (identical to
+      ``build_import_generators`` + ``build_export_sinks`` on the spec's
+      year-grounded tranches).
+
+    Firm import blocks (``spec.firm_imports``) are appended last, matching the
+    backcast construction order and byte-identical to
+    :func:`~market_sim.model.transmission.build_miso_firm_imports`.
     """
     if not spec.import_zone:
         return []
 
     gens: list[Generator] = []
 
-    if spec.use_reference_price and not spec.use_corridors:
-        gens.extend(_build_reference_price_gens(spec))
-    elif spec.use_corridors:
-        gens.extend(_build_corridor_gens(spec, border_carbon_per_mwh))
+    if spec.use_reference_price:
+        from market_sim.model.transmission import build_reference_price_node
+
+        gens.extend(build_reference_price_node(spec.iso))
+    elif spec.caiso_mode == "per_hub":
+        from market_sim.model.transmission import build_caiso_per_hub_intertie
+
+        gens.extend(build_caiso_per_hub_intertie(border_carbon_per_mwh))
+    elif spec.caiso_mode == "bidir":
+        from market_sim.model.transmission import build_caiso_bidir_intertie
+
+        gens.extend(build_caiso_bidir_intertie(border_carbon_per_mwh))
     else:
         gens.extend(_build_static_tranche_gens(spec, border_carbon_per_mwh))
 
@@ -878,88 +977,82 @@ def _build_static_tranche_gens(
     return gens
 
 
-def _build_reference_price_gens(spec: InterchangeSpec) -> list[Generator]:
-    """Build the reference-price seam import/export pseudo-generators."""
-    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
-    from market_sim.model.transmission import _REF_EXPORT_MARK, _REF_IMPORT_MARK
-
-    gens: list[Generator] = []
-    for neighbor in spec.neighbors:
-        zone = neighbor.name if spec.iso == "CAISO" else spec.import_zone
-        step = neighbor.interface_limit_mw / SEAM_FLOW_TRANCHES
-        for k in range(1, SEAM_FLOW_TRANCHES + 1):
-            gens.append(
-                Generator(
-                    unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}#{k}",
-                    name=f"ref_import_{neighbor.name}_t{k}",
-                    zone=zone,
-                    fuel_type="import",
-                    pmax_mw=step,
-                    pmin_mw=0.0,
-                    heat_rate=0.0,
-                    vom=0.0,
-                    eford=0.0,
-                )
-            )
-            gens.append(
-                Generator(
-                    unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}#{k}",
-                    name=f"ref_export_{neighbor.name}_t{k}",
-                    zone=zone,
-                    fuel_type="import",
-                    pmax_mw=0.0,
-                    pmin_mw=-step,
-                    heat_rate=0.0,
-                    vom=0.0,
-                    eford=0.0,
-                )
-            )
-    return gens
-
-
-def _build_corridor_gens(
+def apply_interchange_topology(
+    iso_config,
     spec: InterchangeSpec,
-    border_carbon_per_mwh: float,
-) -> list[Generator]:
-    """Build CAISO's per-hub corridor generators."""
-    from market_sim.model.transmission import _caiso_corridor_export_cap_mw
+    config,
+    *,
+    year: int,
+    extend_node: bool = True,
+):
+    """Apply the spec's interchange topology to ``iso_config``.
 
-    ef_map = IMPORT_TRANCHE_EF.get(spec.iso, {})
-    eford = spec.eford
-    _CAISO_PER_HUB_EXPORT_PREFIX = "export"
-    gens: list[Generator] = []
-    for corridor in spec.corridors:
-        for name, capacity, marginal_cost in corridor.import_tranches:
-            ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
-            tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
-            gens.append(
-                Generator(
-                    unit_id=f"{corridor.zone}_{name}",
-                    name=name,
-                    zone=corridor.zone,
-                    fuel_type="import",
-                    pmax_mw=capacity,
-                    pmin_mw=0.0,
-                    heat_rate=0.0,
-                    vom=marginal_cost + tranche_carbon,
-                    eford=eford,
-                )
+    The single topology sequence both orchestrators run, in the order the
+    backcast has always used:
+
+    1. ``extend_node`` — append the ISO's external import/export zone + border
+       links (:func:`~market_sim.model.transmission.extend_with_import_node`;
+       a no-op where the zone is baked in, e.g. CAISO/NEISO).
+    2. ``config.capacity_deliverability_limits`` (Part A) — replace the
+       calibrated simultaneous-import scalar with the ISO's published per-area
+       SEAM import limit (CAISO branch-group MIC → ``WECC_import``), resolved
+       for ``year``'s delivery year. No-op when the flag is off (default), the
+       ISO publishes no seam ``import_limit``, or the clean data is absent.
+    3. ``spec.use_corridors`` — split CAISO's single ``WECC_import`` node into
+       the two per-hub corridors and re-home the import links + the
+       simultaneous-import interface limit onto them
+       (:func:`~market_sim.model.transmission.split_caiso_import_node_per_hub`).
+       Applied after step 2 so the seam limit's structural identification
+       (every link originates at the import node) matches, and the split then
+       re-homes the replaced cap onto the corridor links.
+
+    Args:
+        iso_config: ISO topology (possibly already carrying the import node).
+        spec: The ISO's resolved :class:`InterchangeSpec`.
+        config: Scenario config (reads ``capacity_deliverability_limits``).
+        year: Solve year resolving the deliverability delivery year.
+        extend_node: Whether to append the external node. Callers keep their
+            existing gate (the forecast runner extends only when the priced
+            node has generators; the backcast extends whenever priced
+            interchange is on).
+
+    Returns:
+        The updated ``iso_config``.
+    """
+    import logging
+
+    from market_sim.model.transmission import (
+        apply_deliverability_seam_limit,
+        extend_with_import_node,
+        split_caiso_import_node_per_hub,
+    )
+
+    logger = logging.getLogger(__name__)
+    iso = spec.iso
+    if extend_node:
+        iso_config = extend_with_import_node(iso_config)
+    if getattr(config, "capacity_deliverability_limits", False):
+        from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
+        from market_sim.data import capacity_deliverability as capdel
+
+        _dy = capdel.resolve_delivery_year(iso, year)
+        _season = capdel.resolve_season(iso)
+        _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
+        _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
+        _imp_by_zone, _ = aggregate_by_zone(iso, _imp_area, _imp_types)
+        _import_zone = IMPORT_ZONE.get(iso)
+        _seam_mw = _imp_by_zone.get(_import_zone) if _import_zone else None
+        if _seam_mw:
+            iso_config = apply_deliverability_seam_limit(iso_config, iso, _seam_mw)
+            logger.info(
+                "%s %d: capacity_deliverability_limits — seam import cap "
+                "set to %.0f MW (summed per-area import_limit, delivery "
+                "year %s)",
+                iso,
+                year,
+                _seam_mw,
+                _dy,
             )
-        hub = next(
-            (h for h, z in CAISO_PER_HUB_IMPORT_ZONES.items() if z == corridor.zone),
-            corridor.name,
-        )
-        gens.append(
-            Generator(
-                unit_id=f"{corridor.zone}_{_CAISO_PER_HUB_EXPORT_PREFIX}_{hub}",
-                name=f"{_CAISO_PER_HUB_EXPORT_PREFIX}_{hub}",
-                zone=corridor.zone,
-                fuel_type="import",
-                pmax_mw=0.0,
-                pmin_mw=-_caiso_corridor_export_cap_mw(corridor.zone),
-                heat_rate=0.0,
-                vom=0.0,
-                eford=0.0,
-            )
-        )
-    return gens
+    if spec.use_corridors:
+        iso_config = split_caiso_import_node_per_hub(iso_config)
+    return iso_config
