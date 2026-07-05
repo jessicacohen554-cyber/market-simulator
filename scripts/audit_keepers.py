@@ -182,7 +182,7 @@ def ablation_twin_finding(
         "FAIL",
         "keeper has no registered ablation twin: solve it with "
         "run_calibration_full.py --zero-forcing-ablation, register it as "
-        'registry/<id>-ablation.json, and set the keeper sidecar '
+        "registry/<id>-ablation.json, and set the keeper sidecar "
         '"ablation_twin" field (CLAUDE.md rule 20 / audit D-3).',
     )
 
