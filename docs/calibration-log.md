@@ -4702,3 +4702,79 @@ re-run (ERCOT/CAISO/PJM/NYISO/NEISO attestations updated,
 map). `audit_keepers.py`: same pre-existing 1 failure (S1 status.js
 staleness) / 6 warnings (E7) before and after (verified via `git stash`), no
 regression. `ruff check .` clean.
+
+## 2026-07-05 — NYISO keeper HEAD re-gate: C1/C7 regression root-caused to the B-NYI-1 offer de-leak (PROBES `nyiso 48 head-regate` + `nyiso 49 offer-ab`; keeper stays 41, STALE-VS-HEAD; calibration-complete item 1 BLOCKED)
+
+Executes item 1 of the NYISO calibration-complete checklist and the pending
+re-gate flagged in `docs/handoffs/co2-keeper-regate-2026-07-05.md` (§Keeper
+status, NYISO flag). **No keeper swap; `keepers.json` untouched.**
+
+**Finding (decision = option c: name the structural fix required first).** A
+full HEAD re-solve of the keeper `nyiso-41-hub-prices` config (git 8d46b90, all
+years 2023–2025, `scripts/replay_keeper.py`) **reproduces the C1/C7 regression**
+and the root cause is **entirely** the B-NYI-1 `_NYISO_OFFER_CURVE` de-leak
+(this session's earlier entry / commit set) — **not** the emissions R2 basis and
+**not** any other post-07-03 merge.
+
+Because `offer_curve_by_group` is resolved from source at solve time (it is NOT
+in the keeper's `meta.json`), a byte-faithful replay picks up HEAD's de-leaked
+NYISO offer curve: **CT_PEAKER `peak` 13.15→4.0, `econ_low`/`econ_high`
+1.27/1.98→1.0/1.0; CC_REGULAR `econ_high` 1.21→1.0** (rule-25 cross-ISO-leak
+neutralizations, correct per rules #14/#25). At neutral 1.0× offers the
+efficient downstate LM6000 peakers (HR ~9–10) undercut the ST_GAS steam fleet
+(eff HR ~11–12) on energy and dispatch near-baseload.
+
+| metric | keeper nyiso-41 | `nyiso 48` HEAD re-gate | `nyiso 49` offer-A/B (HEAD + keeper offer) |
+|---|---|---|---|
+| CT_PEAKER TWh 23/24/25 | ~1.82 (2023) | **4.46 / 4.51 / 4.73** (actual 2.26/2.13/2.84) | 1.56 / 1.37 / 1.75 |
+| ST_GAS TWh 23/24/25 | on-band | **6.15 / 7.58 / 9.30** (actual 8.70/11.07/15.99) | 7.86 / 9.67 / 11.08 |
+| C1 free-class | 10/10 | **9/10** | 10/10 |
+| C7 diurnal (D-1) | pass | **FAIL** (2024 CT_PEAKER off-peak CV ratio 0.454<0.5) | PASS (CV 1.08/1.20/1.24) |
+
+**Attribution (D-2 twin `nyiso 49`).** The offer-A/B restores ONLY the keeper-era
+offer curve on HEAD code (via `replay_keeper --offer-curve-json`) and recovers
+**both** regressions — C1 back to 10/10, C7 back to PASS, CT_PEAKER back to
+~1.5–1.75 TWh. The residual vs the keeper's ~1.82 is ~0.26 TWh (other HEAD
+merges — emissions R2, Stage-5 interchange unification — negligible, consistent
+with the co2re handoff's "R2 <0.1%"). So the **entire** C1/C7 regression is the
+offer de-leak.
+
+**What the ungrounded offer was silently compensating for (rule #17, one
+mechanism per phenomenon).** The ERCOT-inherited 13.15×/1.98 CT wall was a single
+fitted scalar proxying **two** real structures the model lacks: (1) the **LI/NYC
+delivered-fuel basis premium** — the downstate LM6000 peakers are priced at the
+Transco Z6 hub, but their real delivered gas (LI/NYC LDC citygate / interruptible)
+trades far higher, so at hub prices they are cheaper than steam and over-run (the
+best-so-far "open data ask"); and (2) **#1344 reserve/RCPF scarcity price
+formation** — the energy+reserve co-opt is present (7 locational families, 57
+ORDC steps) but **non-binding** (the pure-ED LP credits idle uncommitted peaker
+capacity as deliverable reserve → reserves never go short → no reserve price
+holds peakers off energy), so nothing but the artificial energy wall kept them
+peaky. Removing the leak (correct) exposes both holes.
+
+**Decision / disposition.**
+- **Do NOT promote** the HEAD re-solve — it fails HARD C1 (free-class) and HARD
+  C7. Option (a) rejected.
+- **Keep `nyiso-41` as the keeper (option b, interim)** with a documented
+  **STALE-VS-HEAD** caveat: its clean C1/C7 depend on the now-de-leaked
+  13.15×/1.98 CT offer scalars, so it is **not reproducible on HEAD**; its
+  committed bundle stands (rule #15) but must not be treated as HEAD-current.
+- **Structural fix required first (option c, the recommendation).** A clean
+  NYISO HEAD re-gate needs the peaker energy priced by real structure, not the
+  offer wall: the **LI/NYC delivered-fuel basis** (physical input, rule #14,
+  forward-reproducible) and/or **#1344** a binding reserve/RCPF scarcity
+  mechanism. Both are the same phenomenon the wall proxied.
+- **NYISO calibration-complete item 1 is BLOCKED** on that fix; the
+  `calibration-complete.json` NYISO marker stays empty (holdouts remain fully
+  quarantined, rule #22 — no 2022/H1-2026 solve/score/intake this session).
+- **Do NOT re-arm the de-leaked scalars** (rule #26); `nyiso 49` is a diagnostic
+  twin only and must never be promoted.
+
+**Dashboard (rule #15).** Both runs registered as PROBES:
+`2026-07-03-nyiso-48-head-regate` (reproduction) and `2026-07-05-nyiso-49-offer-ab`
+(D-2 attribution twin), bundles `results/calibration/nyiso41_head_regate` and
+`nyiso41_head_offerAB`, each with `legitimacy_diagnostics.json` (C7/C8) written.
+Top-15-per-ISO retention honoured: pruned the 5 oldest NYISO registrations
+(nyiso-33/34/36 + the two nyiso-37 unified-downstate/ct sidecars+payloads);
+bundles retained on disk. No offer curve was tuned to any residual (rules
+#1/#23).
