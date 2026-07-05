@@ -40,7 +40,13 @@ from market_sim.policy.rps import get_rps_target
 
 
 def _gen(
-    unit_id, fuel_type, pmax=100.0, heat_rate=10.0, zone="Z0", retirement_year=None
+    unit_id,
+    fuel_type,
+    pmax=100.0,
+    heat_rate=10.0,
+    zone="Z0",
+    retirement_year=None,
+    **kwargs,
 ):
     """Build a Generator with the attributes the retirement logic reads."""
     return Generator(
@@ -51,6 +57,7 @@ def _gen(
         pmax_mw=pmax,
         heat_rate=heat_rate,
         retirement_year=retirement_year,
+        **kwargs,
     )
 
 
@@ -295,7 +302,7 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         # A single unprofitable year is enough for coal.
@@ -311,20 +318,20 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         self.assertEqual([g.unit_id for g in fleet1], ["G0"])
         self.assertEqual(losses1["G0"], 1)
 
-        fleet2, losses2 = apply_economic_retirements(
+        fleet2, losses2, _ = apply_economic_retirements(
             fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
         )
         # Two consecutive loss years -- still online (needs three).
         self.assertEqual([g.unit_id for g in fleet2], ["G0"])
         self.assertEqual(losses2["G0"], 2)
 
-        fleet3, losses3 = apply_economic_retirements(
+        fleet3, losses3, _ = apply_economic_retirements(
             fleet2, arrays, dispatch, prices, config, losses2, peak_demand=0.0
         )
         # Third consecutive loss year -- retired.
@@ -340,14 +347,14 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         # First loss year: still online.
         self.assertEqual([g.unit_id for g in fleet1], ["T0"])
         self.assertEqual(losses1["T0"], 1)
 
-        fleet2, losses2 = apply_economic_retirements(
+        fleet2, losses2, _ = apply_economic_retirements(
             fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
         )
         # Second consecutive loss year -- retired.
@@ -367,14 +374,14 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         # First loss year: screened (counter increments), still online.
         self.assertEqual([g.unit_id for g in fleet1], ["S0"])
         self.assertEqual(losses1["S0"], 1)
 
-        fleet2, losses2 = apply_economic_retirements(
+        fleet2, losses2, _ = apply_economic_retirements(
             fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
         )
         # Second consecutive loss year -- retired (was previously immortal).
@@ -393,7 +400,7 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 3550.0)
         mc = np.full((1, self.T), 50.0)
         dispatch = self._dispatch_result(1, 100.0)
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet,
             arrays,
             dispatch,
@@ -428,7 +435,7 @@ class TestEconomicRetirements(unittest.TestCase):
             arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
             prices = np.full((1, self.T), 1.0)  # far below any fixed cost
             dispatch = self._dispatch_result(1, 1.0)
-            _, losses = apply_economic_retirements(
+            _, losses, _ = apply_economic_retirements(
                 fleet,
                 arrays,
                 dispatch,
@@ -450,7 +457,7 @@ class TestEconomicRetirements(unittest.TestCase):
 
         coal = [_gen("C0", "coal", pmax=100.0)]
         arrays = generators_to_fleet_arrays(coal, ["Z0"], hours=self.T)
-        fleet1, _ = apply_economic_retirements(
+        fleet1, _, _ = apply_economic_retirements(
             coal, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         # The multiplier tips marginal coal into a loss -- retired in one year.
@@ -459,7 +466,7 @@ class TestEconomicRetirements(unittest.TestCase):
         # The same revenue against a gas_cc (multiplier 1.0) stays profitable.
         gas = [_gen("G0", "gas_cc", pmax=100.0)]
         arrays_gas = generators_to_fleet_arrays(gas, ["Z0"], hours=self.T)
-        fleet2, losses2 = apply_economic_retirements(
+        fleet2, losses2, _ = apply_economic_retirements(
             gas,
             arrays_gas,
             dispatch,
@@ -472,8 +479,12 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(losses2["G0"], 0)
 
     def test_reliability_floor_prevents_over_retirement(self):
-        # Peak demand 10000 MW, firm clean 2000 MW.
-        # floor = (10000 - 2000) * 1.15 = 9200 MW of thermal must remain.
+        # Accredited-basis floor (plan §3.2): requirement =
+        # peak x (1 + PRM_ERCOT) = 10000 x 1.1375 = 11375 MW of accredited
+        # firm capacity must remain. Nuclear survives the screen (loss year
+        # 1 < threshold 3) and contributes 2000 x 0.95 = 1900 MW UCAP; each
+        # coal unit contributes 1000 x 0.95 = 950 MW UCAP, so 10 of 12 coal
+        # units must be retained (1900 + 10 x 950 = 11400 >= 11375).
         config = ScenarioConfig()
         nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
         # 12 coal units of 1000 MW, strictly increasing heat rate.
@@ -487,20 +498,23 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(13, 10.0)
 
-        survivors, _ = apply_economic_retirements(
+        survivors, _, retention_log = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=10000.0
         )
         coal_survivors = [g for g in survivors if g.fuel_type == "coal"]
-        # 10 coal units (10000 MW) kept to clear the 9200 MW floor.
         self.assertEqual(len(coal_survivors), 10)
-        # The most efficient (lowest heat-rate) units are the ones kept.
+        # Same-fuel merit ties break on heat rate: the most efficient
+        # (lowest heat-rate) units are the ones kept.
         retired_hr = {g.heat_rate for g in coal} - {g.heat_rate for g in coal_survivors}
         survivor_hr = {g.heat_rate for g in coal_survivors}
         self.assertTrue(min(retired_hr) > max(survivor_hr))
+        # Every retention is attributed (rule 20 analogue).
+        self.assertEqual(len(retention_log), 10)
 
     def test_highest_heat_rate_retires_first(self):
-        # Reliability floor keeps the floor met; the least efficient units
-        # are the ones actually retired.
+        # Reliability floor keeps the requirement met; the least efficient
+        # units are the ones actually retired. requirement =
+        # 1650 x 1.1375 = 1876.9 MW; two coal UCAP = 1900 MW clears it.
         config = ScenarioConfig()
         coal = [
             _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
@@ -510,9 +524,8 @@ class TestEconomicRetirements(unittest.TestCase):
         arrays = generators_to_fleet_arrays(coal, ["Z0"], hours=self.T)
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(3, 10.0)
-        # floor = peak * 1.15; peak ~1739 -> floor ~2000, keeps 2 units.
-        survivors, _ = apply_economic_retirements(
-            coal, arrays, dispatch, prices, config, {}, peak_demand=1739.13
+        survivors, _, _ = apply_economic_retirements(
+            coal, arrays, dispatch, prices, config, {}, peak_demand=1650.0
         )
         # The single highest-heat-rate unit is the one retired.
         self.assertEqual({g.unit_id for g in survivors}, {"C0", "C1"})
@@ -526,7 +539,7 @@ class TestEconomicRetirements(unittest.TestCase):
         dispatch = self._dispatch_result(1, 10.0)
 
         # Enter with one prior loss year on the books.
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {"C0": 1}, peak_demand=0.0
         )
         self.assertEqual([g.unit_id for g in fleet1], ["C0"])
@@ -539,7 +552,7 @@ class TestEconomicRetirements(unittest.TestCase):
         prices = np.zeros((1, self.T))
         dispatch = self._dispatch_result(1, 0.0)
 
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
@@ -571,10 +584,10 @@ class TestFomThresholdFlip(unittest.TestCase):
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
         prices = np.full((1, self.T), 1500.0)
         dispatch = self._dispatch(100.0)
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
-        fleet2, losses2 = apply_economic_retirements(
+        fleet2, losses2, _ = apply_economic_retirements(
             fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
         )
         return fleet1, losses1, fleet2, losses2
@@ -596,6 +609,216 @@ class TestFomThresholdFlip(unittest.TestCase):
         self.assertEqual(losses1["T0"], 1)
         self.assertEqual(fleet2, [])
         self.assertNotIn("T0", losses2)
+
+
+class TestReliabilityFloorAccredited(unittest.TestCase):
+    """Accredited-basis reliability floor (capacity-economics plan §3.2/§8.3)."""
+
+    T = 10
+
+    def _dispatch_result(self, n_gen, level):
+        return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
+
+    def _screen(self, fleet, config, peak, losses=None, **kwargs):
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)  # deeply unprofitable for all
+        dispatch = self._dispatch_result(len(fleet), 10.0)
+        return apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            losses or {},
+            peak_demand=peak,
+            **kwargs,
+        )
+
+    def test_requirement_math_counts_pools_at_capacity_credit(self):
+        # Hand-computed accredited sum (plan §8.3 item 3): one 1000 MW coal
+        # unit, eford 0.05 -> UCAP 950. ERCOT requirement = peak x 1.1375.
+        # With wind_pool 4000 MW (credit from RENEWABLE_CAPACITY_CREDIT) and
+        # storage_firm 500 MW the requirement clears without the coal unit,
+        # so it retires; with pools=0 (conservative default) the floor
+        # rescues it.
+        from market_sim.config.constants import RENEWABLE_CAPACITY_CREDIT
+
+        config = ScenarioConfig()
+        coal = [_gen("C0", "coal", pmax=1000.0)]
+        peak = 1000.0
+        requirement = peak * 1.1375
+        pooled_firm = (
+            4000.0 * RENEWABLE_CAPACITY_CREDIT["wind"]
+            + 2000.0 * RENEWABLE_CAPACITY_CREDIT["solar"]
+            + 500.0
+        )
+        self.assertGreaterEqual(pooled_firm, requirement)
+
+        survivors, _, log = self._screen(
+            coal,
+            config,
+            peak,
+            wind_pool_mw=4000.0,
+            solar_pool_mw=2000.0,
+            storage_firm_mw=500.0,
+        )
+        self.assertEqual(survivors, [])  # pools cover the requirement
+        self.assertEqual(log, [])
+
+        survivors, _, log = self._screen(coal, config, peak)
+        self.assertEqual([g.unit_id for g in survivors], ["C0"])
+        self.assertEqual(len(log), 1)
+
+    def test_retention_merit_cost_then_co2(self):
+        # Crafted coal-vs-CT tie on $/firm-MW (plan §8.3 item 3): equalize
+        # the going-forward cost keys so the CO2 rate decides — the CT
+        # (0.55 t/MWh) is retained ahead of the coal unit (0.95 t/MWh)
+        # even though coal's heat rate is lower (the old key got this
+        # backwards).
+        config = ScenarioConfig().with_overrides(
+            fixed_om_coal=8.0, retirement_fom_multiplier_coal=1.0
+        )
+        fleet = [
+            _gen("CO", "coal", pmax=1000.0, heat_rate=9.5, emission_rate_co2=0.95),
+            _gen("CT", "gas_ct", pmax=1000.0, heat_rate=11.0, emission_rate_co2=0.55),
+        ]
+        # Requirement needs exactly one unit's UCAP (950): peak x 1.1375
+        # in (0, 950] -> peak 800 -> requirement 910. The CT enters with one
+        # prior loss year so both units hit their thresholds this year.
+        survivors, _, log = self._screen(fleet, config, peak=800.0, losses={"CT": 1})
+        self.assertEqual([g.unit_id for g in survivors], ["CT"])
+        self.assertEqual(log[0]["unit_id"], "CT")
+        self.assertEqual(log[0]["co2_rate"], 0.55)
+
+    def test_retention_merit_cost_is_primary(self):
+        # Cost stays the primary key: a cheap-adequacy CT (8 $/kW-yr) beats
+        # coal (52 effective) regardless of CO2 — the floor is an adequacy
+        # purchase, not an emissions ranking.
+        config = ScenarioConfig()
+        fleet = [
+            _gen("CO", "coal", pmax=1000.0, emission_rate_co2=0.95),
+            _gen("CT", "gas_ct", pmax=1000.0, emission_rate_co2=0.55),
+        ]
+        survivors, _, _ = self._screen(fleet, config, peak=800.0, losses={"CT": 1})
+        self.assertEqual([g.unit_id for g in survivors], ["CT"])
+
+    def test_floor_never_retires_only_unretires(self):
+        # A profitable unit is never touched by the floor (plan §8.3
+        # item 3): the floor operates only on the screen's own eligible
+        # (retiring) set.
+        config = ScenarioConfig()
+        rich = _gen("RICH", "gas_cc", pmax=100.0)
+        poor = _gen("POOR", "gas_ct", pmax=100.0)
+        fleet = [rich, poor]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # RICH clears its bar (deeply negative mc -> huge inframarginal
+        # margin); POOR is on its final loss year.
+        prices = np.full((1, self.T), 10.0)
+        mc = np.zeros((2, self.T))
+        mc[0, :] = -1.0e6
+        dispatch = self._dispatch_result(2, 10.0)
+        survivors, _, log = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {"POOR": 1},
+            peak_demand=50.0,
+            mc=mc,
+        )
+        # Requirement 56.9 < RICH UCAP 95: POOR retires, RICH survives, and
+        # the floor neither retired RICH nor logged anything.
+        self.assertEqual([g.unit_id for g in survivors], ["RICH"])
+        self.assertEqual(log, [])
+
+    def test_retention_log_rows_complete(self):
+        config = ScenarioConfig()
+        coal = [_gen("C0", "coal", pmax=1000.0, emission_rate_co2=0.9)]
+        _, losses, log = self._screen(coal, config, peak=800.0, year=2031)
+        self.assertEqual(len(log), 1)
+        row = log[0]
+        self.assertEqual(
+            set(row),
+            {
+                "year",
+                "unit_id",
+                "fuel_type",
+                "pmax_mw",
+                "ucap_mw",
+                "going_forward_cost",
+                "co2_rate",
+                "loss_years",
+            },
+        )
+        self.assertEqual(row["year"], 2031)
+        self.assertEqual(row["fuel_type"], "coal")
+        self.assertAlmostEqual(row["ucap_mw"], 950.0)
+        # going_forward_cost = 40 x 1.3 x 1000 MW x 1000 = 52,000,000 $/yr.
+        self.assertAlmostEqual(row["going_forward_cost"], 52.0e6)
+        self.assertEqual(row["loss_years"], 1)
+        # The floor-retained unit keeps its loss counter (re-screened next
+        # year); it is un-retired, not absolved.
+        self.assertEqual(losses["C0"], 1)
+
+    def test_pools_zero_floor_at_least_as_conservative_as_nameplate(self):
+        # With pools=0 and equal margin, the UCAP discount makes the
+        # accredited floor retain at least as much as a nameplate floor
+        # (plan §8.3 item 3): nameplate 2 x 1000 = 2000 clears a 1990
+        # requirement, but accredited 2 x 950 = 1900 does not, so a third
+        # unit is retained.
+        config = ScenarioConfig().with_overrides(planning_reserve_margin_override=0.0)
+        coal = [
+            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
+            for i in range(4)
+        ]
+        survivors, _, _ = self._screen(coal, config, peak=1990.0)
+        self.assertEqual(len(survivors), 3)
+
+    def test_locational_exemption_skips_ra_saturated_zone(self):
+        # Under capacity_deliverability_limits, a unit in a zone already
+        # long on deliverable firm capacity is exempt from floor retention
+        # (mirror of the screens' _zone_is_long gate).
+        config = ScenarioConfig()
+        fleet = [
+            _gen("A", "coal", pmax=1000.0, zone="Z0"),
+            _gen("B", "coal", pmax=1000.0, heat_rate=12.0, zone="ZLONG"),
+        ]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0", "ZLONG"], hours=self.T)
+        prices = np.full((2, self.T), 10.0)
+        dispatch = self._dispatch_result(2, 10.0)
+        headroom = {"ZLONG": 500.0}  # RA saturated
+        survivors, _, log = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=1500.0,
+            deliverability_headroom=headroom,
+        )
+        # Requirement 1706 needs both units' UCAP, but ZLONG is exempt:
+        # only A is retained; B retires.
+        self.assertEqual([g.unit_id for g in survivors], ["A"])
+        self.assertEqual([r["unit_id"] for r in log], ["A"])
+
+    def test_resolve_planning_reserve_margin(self):
+        from market_sim.model.capacity import resolve_planning_reserve_margin
+
+        config = ScenarioConfig()
+        self.assertEqual(
+            resolve_planning_reserve_margin(config, "PJM"),
+            PLANNING_RESERVE_MARGIN_BY_ISO["PJM"],
+        )
+        # Unknown ISO falls back to the config scalar.
+        self.assertEqual(
+            resolve_planning_reserve_margin(config, "NOPE"),
+            config.planning_reserve_margin,
+        )
+        # The registered override lever beats the registry (tornado channel).
+        config2 = config.with_overrides(planning_reserve_margin_override=0.10)
+        self.assertEqual(resolve_planning_reserve_margin(config2, "PJM"), 0.10)
 
 
 class TestReserveMarginBuild(unittest.TestCase):
@@ -816,7 +1039,7 @@ class TestRetirementMargin(unittest.TestCase):
         # 1_200_000/8760-scaled fixed cost would *not* be the issue here;
         # the point is margin = 0 regardless of how large gross gets.
         config, fleet, arrays, dispatch, prices, mc = self._setup(50.0, 50.0)
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet,
             arrays,
             dispatch,
@@ -833,7 +1056,7 @@ class TestRetirementMargin(unittest.TestCase):
         # margin/h = (1250 - 50) $/MWh * 100 MW = 120_000; over 10 h
         # = 1_200_000 -- exactly the fixed cost, so not a loss year.
         config, fleet, arrays, dispatch, prices, mc = self._setup(1250.0, 50.0)
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet,
             arrays,
             dispatch,
@@ -852,7 +1075,7 @@ class TestRetirementMargin(unittest.TestCase):
         # 1_250_000 > 1_200_000, so no loss year -- the old (buggy)
         # behavior, preserved only as an explicit fallback.
         config, fleet, arrays, dispatch, prices, _ = self._setup(1250.0, 1250.0)
-        fleet1, losses1 = apply_economic_retirements(
+        fleet1, losses1, _ = apply_economic_retirements(
             fleet,
             arrays,
             dispatch,
@@ -877,7 +1100,7 @@ class TestRetirementMargin(unittest.TestCase):
             "mc_cost": np.full((1, self.T), 100000.0),
             "peak_demand": 0.0,
         }
-        fleet1, tracker, _, _ = evolve_fleet(
+        fleet1, tracker, _, _, _ = evolve_fleet(
             fleet,
             prior,
             2030,
@@ -1455,7 +1678,7 @@ class TestEvolveFleet(unittest.TestCase):
             prices=None,
             planned_additions=[new],
         )
-        fleet, tracker, _, _ = evolve_fleet([old], prior, 2030, config, {})
+        fleet, tracker, _, _, _ = evolve_fleet([old], prior, 2030, config, {})
         # OLD retires this year; NEW comes online this year.
         self.assertEqual([g.unit_id for g in fleet], ["NEW"])
         self.assertIsInstance(tracker, dict)
@@ -1472,7 +1695,7 @@ class TestEvolveFleet(unittest.TestCase):
             planned_additions=[],
         )
         # Counter already at 1; a second loss year this step triggers retirement.
-        fleet, tracker, _, _ = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
+        fleet, tracker, _, _, _ = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
         self.assertEqual(fleet, [])
         self.assertNotIn("C0", tracker)
 
@@ -1480,13 +1703,15 @@ class TestEvolveFleet(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         result = evolve_fleet([_gen("G0", "gas_cc")], None, 2030, config, {})
         self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 4)
+        self.assertEqual(len(result), 5)
         self.assertIsInstance(result[0], list)
         self.assertIsInstance(result[1], dict)
         # The third element is the {zone: {fuel: mw}} renewable additions.
         self.assertIsInstance(result[2], dict)
         # The fourth element is the CCS retrofit log.
         self.assertIsInstance(result[3], list)
+        # The fifth element is the reliability-floor retention log.
+        self.assertIsInstance(result[4], list)
 
 
 class TestResolveCarbonPrice(unittest.TestCase):
@@ -1648,7 +1873,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         retiring = _gen(
             "C_RET", "coal", pmax=1000.0, heat_rate=8.0, retirement_year=2026
         )
-        fleet, tracker, additions, _ = evolve_fleet(
+        fleet, tracker, additions, _, _ = evolve_fleet(
             coal + [retiring], None, 2026, config, {}
         )
 
@@ -1669,7 +1894,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT", forecast_fossil_retirement_economic=False)
         coal = _gen("C0", "coal", pmax=100.0, zone="North", retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
-        fleet, tracker, _, _ = evolve_fleet([coal], prior, 2027, config, {})
+        fleet, tracker, _, _, _ = evolve_fleet([coal], prior, 2027, config, {})
 
         # Known retirement empties the fleet, then economic new entry refills.
         self.assertNotIn("C0", {g.unit_id for g in fleet})
@@ -1705,7 +1930,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in (2026, 2027, 2028):
-            fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
+            fleet, tracker, _, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
             snapshots.append(frozenset(g.unit_id for g in fleet))
             prior = _make_prior(fleet, _zone_names(), price=10.0)
 
@@ -1744,7 +1969,9 @@ class TestCapacityIntegration(unittest.TestCase):
             prior = None
             yearly = {}
             for year in (2026, 2027, 2028):
-                fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
+                fleet, tracker, _, _, _ = evolve_fleet(
+                    fleet, prior, year, config, tracker
+                )
                 yearly[year] = fleet
                 prior = _make_prior(fleet, _zone_names(), price=15.0, gas_cf=gas_cf)
             return yearly
@@ -1789,10 +2016,10 @@ class TestCapacityIntegration(unittest.TestCase):
         ]
         tracker: dict[str, int] = {}
 
-        fleet, tracker, _, _ = evolve_fleet(fleet, None, 2026, config, tracker)
+        fleet, tracker, _, _, _ = evolve_fleet(fleet, None, 2026, config, tracker)
         self.assertIn("C_RET", {g.unit_id for g in fleet})
 
-        fleet, tracker, _, _ = evolve_fleet(fleet, None, 2027, config, tracker)
+        fleet, tracker, _, _, _ = evolve_fleet(fleet, None, 2027, config, tracker)
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
 
     def test_fleet_capacity_never_zero_over_five_years(self):
@@ -1807,7 +2034,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in range(2026, 2031):
-            fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
+            fleet, tracker, _, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
             self.assertGreater(
                 sum(g.pmax_mw for g in fleet),
                 0.0,
@@ -1863,7 +2090,7 @@ class TestCapacityIntegration(unittest.TestCase):
         cumulative_renewable_mw = 0.0
         yearly_cap: dict[int, float] = {}
         for year in range(2026, 2031):
-            fleet, tracker, additions, _ = evolve_fleet(
+            fleet, tracker, additions, _, _ = evolve_fleet(
                 fleet, prior, year, config, tracker
             )
             for by_fuel in additions.values():

@@ -3156,6 +3156,22 @@
       "flags": []
     },
     {
+      "param_id": "scenario.planning_reserve_margin_override",
+      "display_name": "Planning Reserve Margin Override",
+      "value": null,
+      "unit": "fraction",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Sensitivity lever (default None = per-ISO PLANNING_RESERVE_MARGIN_BY_ISO registry). When set, replaces the registry PRM in BOTH the retirement reliability floor and the reserve-margin build backstop (one requirement, two verbs). Registry citations: Brattle & Astrape, Estimating the Economically Optimal Reserve Margin in ERCOT (2022, PUCT); CPUC RA D.23-06-029 15% PRM; PJM 2024 IRM/FPR study; MISO PY2024-25 LOLE Study PRMR; NYSRC 2025-2026 IRM; ISO-NE Net ICR.",
+      "source_date": "2022",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Replaces the deleted retirement_reserve_margin (rule 26: removed, not zeroed) as the registered tornado channel for the reserve-margin band; capacity-economics plan 2026-07 §3.2.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -18455,25 +18471,6 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
-      "param_id": "scenario.retirement_reserve_margin",
-      "display_name": "Retirement Reserve Margin",
-      "value": 0.15,
-      "unit": "",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "15% reserve margin over peak net demand",
       "source_date": "",
       "page_or_table": "",
       "url": "",
