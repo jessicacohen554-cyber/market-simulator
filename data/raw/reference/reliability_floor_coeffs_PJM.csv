@@ -1,57 +1,57 @@
-iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis
-PJM,PJM_AEP_Ohio,CT_PEAKER,tmax,32.2,0.3106,False,0.8172,0.38,0.1671,67,0.115,0.5521,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,ST_GAS,tmax,33.3,0.0933,True,0.7775,0.12,0.5176,54,0.0673,0.5351,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,ST_GAS,tmin,-12.0,0.12,False,1.0,0.12,-1.0,2,0.0852,0.5736,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_SWMAAC,COAL,tmax,33.66,0.4,False,1.0,0.4,0.1943,58,0.3186,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,COAL,tmax,32.8,0.3833,True,0.9583,0.4,0.3956,58,0.2981,0.755,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,COAL,tmin,-12.0,0.3823,True,0.9558,0.4,0.4603,38,0.2988,0.761,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_ComEd,CT_PEAKER,tmax,32.8,0.2315,False,0.6092,0.38,0.054,59,0.0562,0.2573,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,CT_PEAKER,tmin,-20.5,0.1659,False,0.4367,0.38,-0.7379,4,0.0653,0.2817,cold: PJM Manual 13 CT-mobilization tier (tmin<=-5F/-20.5C)
-PJM,PJM_AEP_Ohio,COAL,tmax,32.2,0.3808,False,0.9519,0.4,-0.0136,67,0.4926,0.8388,hot: zone p95 tmax (design cooling day)
-PJM,PJM_AEP_Ohio,COAL,tmin,-12.0,0.3922,False,0.9804,0.4,0.2881,17,0.4983,0.8436,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_AEP_Ohio,ST_GAS,tmax,32.2,0.1102,False,0.9187,0.12,-0.0156,63,0.6033,0.9187,hot: zone p95 tmax (design cooling day)
-PJM,PJM_AEP_Ohio,ST_GAS,tmin,-12.0,0.1102,False,0.9187,0.12,0.0777,17,0.6113,0.9187,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_SWMAAC,CT_PEAKER,tmax,33.66,0.3333,False,0.877,0.38,0.207,58,0.125,0.3273,hot: zone p95 tmax (design cooling day)
-PJM,PJM_SWMAAC,ST_GAS,tmax,33.66,0.12,False,1.0,0.12,0.1996,54,0.2776,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,CT_PEAKER,tmax,33.3,0.2838,True,0.7469,0.38,0.4772,55,0.2667,0.4246,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,CC_REGULAR,tmax,33.3,0.5092,True,0.9793,0.52,0.5701,55,0.4087,0.7438,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,CC_REGULAR,tmin,-12.0,0.5124,False,0.9854,0.52,1.0,2,0.4228,0.7552,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_ATSI,CT_PEAKER,tmax,30.71,0.3153,False,0.8298,0.38,0.2488,57,0.1748,0.5381,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,CC_REGULAR,tmax,31.7,0.5065,False,0.9741,0.52,0.2166,61,0.7338,0.8325,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,CC_REGULAR,tmin,-12.0,0.4746,False,0.9126,0.52,0.4889,20,0.7391,0.8391,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Central_PA,CT_PEAKER,tmax,32.8,0.1367,False,0.3596,0.38,0.0237,58,0.11,0.2906,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,COAL,tmax,31.7,0.3547,True,0.8868,0.4,0.3691,61,0.3586,0.6394,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,COAL,tmin,-12.0,0.3632,False,0.9079,0.4,-0.068,20,0.3675,0.6484,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Central_PA,ST_GAS,tmax,32.8,0.1168,True,0.9737,0.12,0.3881,58,0.206,0.6123,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Central_PA,ST_GAS,tmin,-12.0,0.0994,False,0.8285,0.12,0.9244,9,0.225,0.6304,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_West_APS,CT_PEAKER,tmax,31.7,0.3208,True,0.8442,0.38,0.3812,61,0.2685,0.587,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,ST_GAS,tmax,31.7,0.12,False,1.0,0.12,-0.0514,61,0.3854,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,ST_GAS,tmin,-12.0,0.12,False,1.0,0.12,-0.0076,20,0.4023,1.0,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Central_PA,CC_REGULAR,tmax,32.8,0.5181,False,0.9964,0.52,0.0262,58,0.7696,0.9317,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Central_PA,CC_REGULAR,tmin,-12.0,0.5158,False,0.9918,0.52,0.7395,9,0.774,0.9347,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Dominion,ST_GAS,tmax,33.74,0.12,False,1.0,0.12,0.1475,40,0.2044,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Dominion,CC_REGULAR,tmax,33.74,0.5187,False,0.9976,0.52,0.1164,55,0.6993,0.8012,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Dominion,CT_PEAKER,tmax,33.74,0.3325,False,0.875,0.38,0.2004,55,0.2518,0.5442,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Dominion,COAL,tmax,33.74,0.2293,False,0.5732,0.4,0.2852,44,0.211,0.5732,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,CC_CHP,tmax,33.3,0.4866,False,0.9358,0.52,0.1163,55,0.712,0.8224,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,CC_CHP,tmin,-12.0,0.4866,False,0.9358,0.52,-1.0,2,0.7194,0.8279,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_EMAAC,CT_CHP,tmax,33.3,0.1764,True,0.4641,0.38,0.4199,55,0.299,0.4026,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Central_PA,COAL,tmax,32.8,0.1885,False,0.4714,0.4,0.1489,58,0.3659,0.4092,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Central_PA,COAL,tmin,-12.0,0.1349,False,0.3374,0.4,-0.3025,9,0.3695,0.4132,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_EMAAC,ST_CHP,tmax,33.3,0.0914,False,0.7618,0.12,-0.0858,55,0.9788,0.7618,hot: zone p95 tmax (design cooling day)
-PJM,PJM_EMAAC,ST_CHP,tmin,-12.0,0.0914,False,0.7618,0.12,,2,0.9797,0.7618,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Dominion,CC_CHP,tmax,33.74,0.52,False,1.0,0.52,0.3481,55,0.4904,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,CC_CHP,tmax,32.8,0.5121,False,0.9848,0.52,0.1917,52,0.3316,0.9848,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,CC_CHP,tmin,-12.0,0.5121,True,0.9848,0.52,0.3776,38,0.3374,0.9848,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_Central_PA,ST_CHP,tmax,32.8,0.0046,False,0.0385,0.12,,58,0.9998,0.0385,hot: zone p95 tmax (design cooling day)
-PJM,PJM_Central_PA,CT_CHP,tmax,32.8,0.3349,False,0.8814,0.38,-0.3076,58,0.6668,0.8814,hot: zone p95 tmax (design cooling day)
-PJM,PJM_SWMAAC,CC_CHP,tmax,33.66,0.4918,False,0.9458,0.52,0.238,58,0.2229,0.9458,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,CC_REGULAR,tmax,32.8,0.5018,False,0.9651,0.52,0.224,59,0.5467,0.7983,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ComEd,CC_REGULAR,tmin,-12.0,0.4509,False,0.8671,0.52,-0.0338,38,0.5539,0.8052,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_AEP_Ohio,CC_REGULAR,tmax,32.2,0.5031,False,0.9674,0.52,0.1393,67,0.7582,0.914,hot: zone p95 tmax (design cooling day)
-PJM,PJM_AEP_Ohio,CC_REGULAR,tmin,-12.0,0.5018,False,0.9649,0.52,0.2614,17,0.7621,0.9165,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_ATSI,CC_REGULAR,tmax,30.71,0.5173,False,0.9949,0.52,0.2164,57,0.7783,0.9031,hot: zone p95 tmax (design cooling day)
-PJM,PJM_ATSI,CC_REGULAR,tmin,-12.0,0.52,False,1.0,0.52,-0.0485,20,0.7817,0.9061,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
-PJM,PJM_SWMAAC,CC_REGULAR,tmax,33.66,0.517,False,0.9942,0.52,0.2354,58,0.4671,0.8507,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,CC_CHP,tmax,31.7,0.52,False,1.0,0.52,-0.2945,61,0.5384,1.0,hot: zone p95 tmax (design cooling day)
-PJM,PJM_West_APS,CC_CHP,tmin,-12.0,0.52,False,1.0,0.52,0.0234,20,0.5333,1.0,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C)
+iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis,r1_disabled
+PJM,PJM_AEP_Ohio,CT_PEAKER,tmax,32.2,0.3106,False,0.8172,0.38,0.1671,67,0.115,0.5521,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,ST_GAS,tmax,33.3,0.0933,True,0.7775,0.12,0.5176,54,0.0673,0.5351,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,ST_GAS,tmin,-12.0,0.12,False,1.0,0.12,-1.0,2,0.0852,0.5736,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_SWMAAC,COAL,tmax,33.66,0.4,False,1.0,0.4,0.1943,58,0.3186,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,COAL,tmax,32.8,0.3833,True,0.9583,0.4,0.3956,58,0.2981,0.755,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,COAL,tmin,-12.0,0.3823,True,0.9558,0.4,0.4603,38,0.2988,0.761,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_ComEd,CT_PEAKER,tmax,32.8,0.2315,False,0.6092,0.38,0.054,59,0.0562,0.2573,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,CT_PEAKER,tmin,-20.5,0.1659,False,0.4367,0.38,-0.7379,4,0.0653,0.2817,cold: PJM Manual 13 CT-mobilization tier (tmin<=-5F/-20.5C),False
+PJM,PJM_AEP_Ohio,COAL,tmax,32.2,0.3808,False,0.9519,0.4,-0.0136,67,0.4926,0.8388,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_AEP_Ohio,COAL,tmin,-12.0,0.3922,False,0.9804,0.4,0.2881,17,0.4983,0.8436,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_AEP_Ohio,ST_GAS,tmax,32.2,0.1102,False,0.9187,0.12,-0.0156,63,0.6033,0.9187,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_AEP_Ohio,ST_GAS,tmin,-12.0,0.1102,False,0.9187,0.12,0.0777,17,0.6113,0.9187,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_SWMAAC,CT_PEAKER,tmax,33.66,0.3333,False,0.877,0.38,0.207,58,0.125,0.3273,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_SWMAAC,ST_GAS,tmax,33.66,0.12,False,1.0,0.12,0.1996,54,0.2776,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,CT_PEAKER,tmax,33.3,0.2838,True,0.7469,0.38,0.4772,55,0.2667,0.4246,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,CC_REGULAR,tmax,33.3,0.5092,True,0.9793,0.52,0.5701,55,0.4087,0.7438,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,CC_REGULAR,tmin,-12.0,0.5124,False,0.9854,0.52,1.0,2,0.4228,0.7552,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_ATSI,CT_PEAKER,tmax,30.71,0.3153,False,0.8298,0.38,0.2488,57,0.1748,0.5381,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,CC_REGULAR,tmax,31.7,0.5065,False,0.9741,0.52,0.2166,61,0.7338,0.8325,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,CC_REGULAR,tmin,-12.0,0.4746,False,0.9126,0.52,0.4889,20,0.7391,0.8391,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Central_PA,CT_PEAKER,tmax,32.8,0.1367,False,0.3596,0.38,0.0237,58,0.11,0.2906,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,COAL,tmax,31.7,0.3547,True,0.8868,0.4,0.3691,61,0.3586,0.6394,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,COAL,tmin,-12.0,0.3632,False,0.9079,0.4,-0.068,20,0.3675,0.6484,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Central_PA,ST_GAS,tmax,32.8,0.1168,True,0.9737,0.12,0.3881,58,0.206,0.6123,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Central_PA,ST_GAS,tmin,-12.0,0.0994,False,0.8285,0.12,0.9244,9,0.225,0.6304,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_West_APS,CT_PEAKER,tmax,31.7,0.3208,True,0.8442,0.38,0.3812,61,0.2685,0.587,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,ST_GAS,tmax,31.7,0.12,False,1.0,0.12,-0.0514,61,0.3854,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,ST_GAS,tmin,-12.0,0.12,False,1.0,0.12,-0.0076,20,0.4023,1.0,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Central_PA,CC_REGULAR,tmax,32.8,0.5181,False,0.9964,0.52,0.0262,58,0.7696,0.9317,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Central_PA,CC_REGULAR,tmin,-12.0,0.5158,False,0.9918,0.52,0.7395,9,0.774,0.9347,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Dominion,ST_GAS,tmax,33.74,0.12,False,1.0,0.12,0.1475,40,0.2044,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Dominion,CC_REGULAR,tmax,33.74,0.5187,False,0.9976,0.52,0.1164,55,0.6993,0.8012,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Dominion,CT_PEAKER,tmax,33.74,0.3325,False,0.875,0.38,0.2004,55,0.2518,0.5442,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Dominion,COAL,tmax,33.74,0.2293,False,0.5732,0.4,0.2852,44,0.211,0.5732,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,CC_CHP,tmax,33.3,0.4866,False,0.9358,0.52,0.1163,55,0.712,0.8224,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,CC_CHP,tmin,-12.0,0.4866,False,0.9358,0.52,-1.0,2,0.7194,0.8279,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_EMAAC,CT_CHP,tmax,33.3,0.1764,True,0.4641,0.38,0.4199,55,0.299,0.4026,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Central_PA,COAL,tmax,32.8,0.1885,False,0.4714,0.4,0.1489,58,0.3659,0.4092,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Central_PA,COAL,tmin,-12.0,0.1349,False,0.3374,0.4,-0.3025,9,0.3695,0.4132,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_EMAAC,ST_CHP,tmax,33.3,0.0914,False,0.7618,0.12,-0.0858,55,0.9788,0.7618,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_EMAAC,ST_CHP,tmin,-12.0,0.0914,False,0.7618,0.12,,2,0.9797,0.7618,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Dominion,CC_CHP,tmax,33.74,0.52,False,1.0,0.52,0.3481,55,0.4904,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,CC_CHP,tmax,32.8,0.5121,False,0.9848,0.52,0.1917,52,0.3316,0.9848,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,CC_CHP,tmin,-12.0,0.5121,True,0.9848,0.52,0.3776,38,0.3374,0.9848,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_Central_PA,ST_CHP,tmax,32.8,0.0046,False,0.0385,0.12,,58,0.9998,0.0385,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_Central_PA,CT_CHP,tmax,32.8,0.3349,False,0.8814,0.38,-0.3076,58,0.6668,0.8814,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_SWMAAC,CC_CHP,tmax,33.66,0.4918,False,0.9458,0.52,0.238,58,0.2229,0.9458,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ComEd,CC_REGULAR,tmax,32.8,0.5018,False,0.9651,0.52,0.224,59,0.5467,0.7983,hot: zone p95 tmax (design cooling day),True
+PJM,PJM_ComEd,CC_REGULAR,tmin,-12.0,0.4509,False,0.8671,0.52,-0.0338,38,0.5539,0.8052,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_AEP_Ohio,CC_REGULAR,tmax,32.2,0.5031,False,0.9674,0.52,0.1393,67,0.7582,0.914,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_AEP_Ohio,CC_REGULAR,tmin,-12.0,0.5018,False,0.9649,0.52,0.2614,17,0.7621,0.9165,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_ATSI,CC_REGULAR,tmax,30.71,0.5173,False,0.9949,0.52,0.2164,57,0.7783,0.9031,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_ATSI,CC_REGULAR,tmin,-12.0,0.52,False,1.0,0.52,-0.0485,20,0.7817,0.9061,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
+PJM,PJM_SWMAAC,CC_REGULAR,tmax,33.66,0.517,False,0.9942,0.52,0.2354,58,0.4671,0.8507,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,CC_CHP,tmax,31.7,0.52,False,1.0,0.52,-0.2945,61,0.5384,1.0,hot: zone p95 tmax (design cooling day),False
+PJM,PJM_West_APS,CC_CHP,tmin,-12.0,0.52,False,1.0,0.52,0.0234,20,0.5333,1.0,cold: PJM Manual 13 Cold Weather Alert (tmin<=10F/-12C),False
