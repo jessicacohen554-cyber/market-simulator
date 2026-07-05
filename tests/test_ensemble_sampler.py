@@ -241,6 +241,62 @@ class TestExportSamplerEnsemble(unittest.TestCase):
         self.assertIn("Hyndman-Fan type 7", meta["quantile_estimator"])
         self.assertEqual(set(meta["members"]), set(self.members))
 
+    def test_structural_prior_adds_published_layer(self):
+        """PB-3: folding a prior appends the published emissions layer (§4.1)."""
+        from market_sim.structural_prior import STRUCTURAL_LAYER, fit_prior
+
+        prior = fit_prior(
+            {"ERCOT": {2023: 120.0, 2024: 122.0, 2025: 121.0}},
+            {"ERCOT": {2023: 100.0, 2024: 100.0, 2025: 100.0}},
+        )
+        out = Path(self._tmp.name) / "ensemble_pub"
+        base = self.spec
+        # Parametric-only reference to prove the point forecast never moves.
+        ref = Path(self._tmp.name) / "ensemble_ref"
+        export_sampler_ensemble(
+            ScenarioConfig(iso=self.iso),
+            base,
+            self.iso,
+            self.members,
+            self.drawset,
+            self.configs,
+            ref,
+        )
+        paths = export_sampler_ensemble(
+            ScenarioConfig(iso=self.iso),
+            base,
+            self.iso,
+            self.members,
+            self.drawset,
+            self.configs,
+            out,
+            prior=prior,
+        )
+        bands = pd.read_parquet(paths["bands"])
+        self.assertIn(STRUCTURAL_LAYER, set(bands.layer))
+        struct = bands[bands.layer == STRUCTURAL_LAYER]
+        # Only emissions carries the structural layer.
+        self.assertEqual(set(struct.metric), {"emissions_mt"})
+
+        # Point forecast unchanged: parametric emissions P50 byte-identical.
+        ref_bands = pd.read_parquet(ref / "bands.parquet")
+
+        def p50(df):
+            m = (
+                (df.layer == "parametric")
+                & (df.metric == "emissions_mt")
+                & (df.quantile == 0.5)
+            )
+            return df[m].set_index("year")["value"]
+
+        pd.testing.assert_series_equal(p50(bands), p50(ref_bands))
+
+        meta = json.loads(paths["meta"].read_text())
+        self.assertIn(STRUCTURAL_LAYER, meta["layers_present"])
+        self.assertIn("structural_prior", meta)
+        self.assertTrue(meta["structural_prior"]["dispatch_conditional"])
+        self.assertIn("dispatch-conditional", meta["label"])
+
 
 if __name__ == "__main__":
     unittest.main()
