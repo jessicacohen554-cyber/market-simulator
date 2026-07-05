@@ -12,6 +12,7 @@ import yaml
 
 from market_sim.config.paths import (
     CAMPD_BINS_CSV,
+    EIA_860_DIR,
     PLANT_REGISTRY_CSV,
     PROCESSED_DIR,
 )
@@ -336,6 +337,22 @@ class ScenarioConfig:
     use_plant_emission_rates_v2: bool = False
     plant_emission_rates_v2_path: str = str(
         PROCESSED_DIR / "plant_emission_rates_v2.parquet"
+    )
+
+    # Forward emission-control retrofit channel (Tier 2; default OFF).
+    # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
+    # When True AND in forecast mode, an ANNOUNCED EIA-860 environmental-control
+    # install (SCR / SNCR / FGD scrubber / DSI) steps the covered unit's forward
+    # emission rate down at its committed Inservice Year — the forward step the
+    # trailing-window estimator cannot supply ahead of realized history. The
+    # install date is a forward driver, not a residual, so the channel is
+    # rule-13-admissible (see the handoff). OFF is byte-identical to the base
+    # estimator. Backcast years never consult it (measured rates already carry
+    # any operating control). Carbon-capture/CO2 is intentionally excluded here —
+    # it is owned by the CCS retrofit screen (rule 15).
+    control_retrofit_forward: bool = False
+    control_retrofit_path: str = str(
+        EIA_860_DIR / "eia860_enviro_assoc_emissions_control_equipment.parquet"
     )
 
     # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
@@ -3738,6 +3755,8 @@ TIER_TAGS: dict[str, int] = {
     "plant_emission_rates_path": 2,
     "use_plant_emission_rates_v2": 2,
     "plant_emission_rates_v2_path": 2,
+    "control_retrofit_forward": 2,
+    "control_retrofit_path": 2,
     "unknown_zone_default": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,

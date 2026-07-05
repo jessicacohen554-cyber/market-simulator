@@ -355,6 +355,54 @@ CO2_RATE_CLASS_MEDIAN_PERCENTILE: float = 50.0
 # 7-year held-in LOYO shows the envelope-gated conditioner beats plain a_gw.
 CO2_RATE_CONDITIONING_ENABLED: bool = False
 
+# ---------------------------------------------------------------------------
+# Forward emission-control retrofit channel
+# (docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md).
+#
+# The trailing-window CO2/NOx/SO2 estimator only picks up REALIZED emission-rate
+# drift once a control shows in the measured history. It has no forward channel
+# for an ANNOUNCED control install (SCR, scrubber/FGD, DSI, carbon-capture) that
+# will step a covered unit's forward rate in a future year. This channel injects
+# that step ahead of realized history, sourced from EIA-860's committed
+# environmental-control pipeline (a forward driver — an install *date*, not a
+# residual). Forecast-only, config-gated, default OFF (rule 13; see the handoff).
+#
+# The measured-history window feeding the estimator ends in this year: an
+# environmental control already OPERATING by here is already reflected in the
+# measured rate, so only controls with an Inservice Year AFTER it are forward
+# steps the estimator has not yet absorbed. 2025 is the last non-quarantined
+# CAMPD actual year (2022/H1-2026 are under holdout quarantine, CLAUDE.md rule
+# 22). Re-derives only when the CAMPD/EIA-860 source window advances (rule 23).
+CONTROL_RETROFIT_HISTORY_END_YEAR: int = 2025
+
+# EIA-860 environmental-control-equipment ``Status`` codes that denote a
+# committed-but-not-yet-operating control: PL = planned, CO = under
+# construction, TS = testing, OZ = other-planned. A row in one of these with a
+# future Inservice Year is an announced forward install. (Operating ``OP`` rows
+# are already in the measured history; RE/CN/OS/SB are retired/cancelled/out of
+# service and never fire.) Source: EIA-860 Schedule 6 status domain.
+CONTROL_RETROFIT_ANNOUNCED_STATUSES: tuple[str, ...] = ("PL", "CO", "TS", "OZ")
+
+# EIA-860 control ``Equipment Type`` -> (target pollutant, class-typical removal
+# fraction). The post-control rate is the unit's own measured pre-control rate
+# stepped by the fraction: ``post = pre * (1 - removal_fraction)`` — a physical
+# multiplier on a measured input, exactly mirroring the CCS retrofit screen's
+# ``emission_rate_co2 *= (1 - capture_rate)`` (methodology spec §5.6). Fractions
+# are class-typical engineering values (EPA AP-42 Ch.1 / EIA-860 reported
+# efficiencies): SCR NOx removal 80-90%; SNCR 25-40%; wet/dry FGD SO2 90-98%;
+# dry sorbent injection 40-60%. CO2 (carbon capture) is intentionally ABSENT —
+# economically-triggered CCS is owned by the CCS retrofit screen (one mechanism
+# per phenomenon, CLAUDE.md rule 15); this table carries only the SO2/NOx
+# controls the CCS screen does not. Extensible when EIA-860 gains capture codes.
+CONTROL_RETROFIT_TYPE_MAP: dict[str, tuple[str, float]] = {
+    "SR": ("nox", 0.90),  # Selective catalytic reduction (SCR)
+    "SN": ("nox", 0.35),  # Selective non-catalytic reduction (SNCR)
+    "JB": ("so2", 0.95),  # Jet-bubbling reactor (wet FGD)
+    "SD": ("so2", 0.95),  # Spray-dryer / dry FGD
+    "CD": ("so2", 0.95),  # Circulating dry scrubber
+    "DSI": ("so2", 0.50),  # Dry sorbent injection
+}
+
 # All monetary values in this model are in constant 2026 real USD.
 # Anchor date: January 1, 2026. No inflation adjustment is applied
 # within the model. Nominal conversions are post-processing only

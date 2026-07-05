@@ -34,7 +34,9 @@ is applied post-solve for reporting, so there is no fixed-point iteration.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -360,3 +362,162 @@ def _weighted_percentile(
     cum = np.cumsum(weights) - 0.5 * weights
     cum /= total
     return float(np.interp(percentile / 100.0, cum, values))
+
+
+# ---------------------------------------------------------------------------
+# Forward emission-control retrofit channel
+# (docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md).
+#
+# The trailing-average estimator above only absorbs a control's effect once it
+# appears in the measured history. These two functions add the missing forward
+# channel: an *announced* EIA-860 environmental-control install (SCR, scrubber,
+# DSI) steps a covered unit's forward emission rate down at its committed
+# Inservice Year. The install date is a forward driver (rule 13), never a
+# residual; the channel is forecast-only and default-OFF (see the handoff).
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class AnnouncedControl:
+    """One announced (committed, not-yet-operating) emission control.
+
+    Attributes
+    ----------
+    plant_id:
+        EIA plant code the control is installed at.
+    pollutant:
+        Target pollutant it reduces — ``"co2" | "nox" | "so2"``.
+    install_year:
+        The committed Inservice Year; the step applies from this year forward.
+    removal_fraction:
+        Class-typical removal fraction (``post = pre * (1 - removal_fraction)``).
+    fuel_class:
+        Coarse fuel class the control's covered units map to (e.g. ``"coal"``),
+        or ``None`` to apply plant-wide across every fuel class of the plant.
+    equipment_type:
+        The EIA-860 ``Equipment Type`` code, kept for diagnostics.
+    """
+
+    plant_id: int
+    pollutant: str
+    install_year: int
+    removal_fraction: float
+    fuel_class: str | None = None
+    equipment_type: str = ""
+
+
+def apply_control_retrofits(
+    rate_map: dict[tuple[int, str], float],
+    controls: Sequence[AnnouncedControl],
+    target_year: int,
+    pollutant: str,
+) -> dict[tuple[int, str], float]:
+    """Return ``rate_map`` stepped for controls in service by ``target_year``.
+
+    A pure, unit-agnostic override: for every :class:`AnnouncedControl` matching
+    ``pollutant`` whose ``install_year <= target_year``, each ``(plant_id,
+    fuel_class)`` entry of ``rate_map`` for that plant (narrowed to the control's
+    ``fuel_class`` when set) is multiplied by ``(1 - removal_fraction)``. Rates
+    are only ever stepped **down** (a control removes emissions). Multiple
+    controls on the same plant/pollutant compound multiplicatively (each removes
+    its fraction of what reaches it). Before ``install_year`` the entry keeps its
+    base value (the trailing-average estimator), so the channel is a clean step.
+
+    The input ``rate_map`` is never mutated (a fresh dict is returned), so a
+    cached base map upstream stays intact.
+
+    Parameters
+    ----------
+    rate_map:
+        ``{(plant_id, fuel_class): rate}`` base forward rates (any unit — the
+        override is a dimensionless multiplier).
+    controls:
+        Announced controls, e.g. from :func:`load_announced_controls`.
+    target_year:
+        The forecast year being built.
+    pollutant:
+        Which pollutant's rates ``rate_map`` holds; controls for other
+        pollutants are ignored.
+
+    Returns
+    -------
+    dict
+        A new rate map with post-control rates applied.
+    """
+    out = dict(rate_map)
+    for ctrl in controls:
+        if ctrl.pollutant != pollutant or ctrl.install_year > target_year:
+            continue
+        factor = 1.0 - ctrl.removal_fraction
+        for (plant_id, fc), rate in list(out.items()):
+            if plant_id != ctrl.plant_id:
+                continue
+            if ctrl.fuel_class is not None and fc != ctrl.fuel_class:
+                continue
+            out[(plant_id, fc)] = rate * factor
+    return out
+
+
+def load_announced_controls(
+    path: str | Path,
+    *,
+    min_install_year: int,
+    statuses: Sequence[str] | None = None,
+    type_map: dict[str, tuple[str, float]] | None = None,
+) -> list[AnnouncedControl]:
+    """Read the EIA-860 committed-control pipeline into announced controls.
+
+    Parses ``eia860_enviro_assoc_emissions_control_equipment.parquet`` and keeps
+    rows that are (a) a committed-but-not-operating ``Status`` (default
+    ``constants.CONTROL_RETROFIT_ANNOUNCED_STATUSES``), (b) an ``Equipment Type``
+    that reduces a modelled pollutant (default ``constants.CONTROL_RETROFIT_TYPE_MAP``),
+    and (c) an ``Inservice Year >= min_install_year`` — i.e. a control that comes
+    online *after* the measured-history window and is therefore a forward step
+    the trailing estimator has not absorbed. Each surviving row becomes an
+    :class:`AnnouncedControl` keyed plant-wide (``fuel_class=None``); the caller's
+    :func:`apply_control_retrofits` matches it against whichever fuel-class rate
+    entries the plant has.
+
+    Returns an empty list when the artifact is absent (default source ships no
+    file, so the channel is inert unless a user points it at real data).
+    """
+    statuses = (
+        tuple(constants.CONTROL_RETROFIT_ANNOUNCED_STATUSES)
+        if statuses is None
+        else tuple(statuses)
+    )
+    type_map = constants.CONTROL_RETROFIT_TYPE_MAP if type_map is None else type_map
+
+    resolved = Path(path)
+    if not resolved.exists():
+        return []
+    df = pd.read_parquet(resolved)
+    status_set = {str(s).strip().upper() for s in statuses}
+    iy = pd.to_numeric(df["Inservice Year"], errors="coerce")
+    plant = pd.to_numeric(df["Plant Code"], errors="coerce")
+    keep = (
+        df["Status"].astype(str).str.strip().str.upper().isin(status_set)
+        & iy.notna()
+        & plant.notna()
+        & (iy >= int(min_install_year))
+    )
+    # Column-wise iteration: itertuples renames space-containing columns
+    # positionally, so read the three fields we need as aligned Series.
+    etypes = df.loc[keep, "Equipment Type"].astype(str).str.strip().str.upper()
+    out: list[AnnouncedControl] = []
+    for idx in etypes.index:
+        mapped = type_map.get(etypes.at[idx])
+        if mapped is None:
+            continue
+        pollutant, removal = mapped
+        out.append(
+            AnnouncedControl(
+                plant_id=int(plant.at[idx]),
+                pollutant=pollutant,
+                install_year=int(iy.at[idx]),
+                removal_fraction=float(removal),
+                fuel_class=None,
+                equipment_type=etypes.at[idx],
+            )
+        )
+    return out
