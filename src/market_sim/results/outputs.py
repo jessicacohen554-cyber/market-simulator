@@ -156,13 +156,23 @@ def _list_column(array: np.ndarray) -> pa.Array:
     return pa.ListArray.from_arrays(offsets, flat)
 
 
-def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) -> Path:
+def to_parquet(
+    self: DispatchResult,
+    path,
+    context: FleetContext | None = None,
+    demand: np.ndarray | None = None,
+) -> Path:
     """Write this dispatch result to a Parquet file at ``path``.
 
     Args:
         path: Destination ``.parquet`` path; parent directories are created.
         context: Optional fleet context written to the schema metadata so
             an aggregated export can interpret the dispatch arrays.
+        demand: Optional ``(n_zones, T)`` served demand for the year, stored
+            as a ``demand`` list-column so the forecast-invariant checker can
+            verify the per-zone-hour energy balance without re-deriving load.
+            Omitted (and ``has_demand`` False) for callers that do not supply
+            it, keeping every existing reader unaffected.
 
     Returns:
         The path written, as a :class:`~pathlib.Path`.
@@ -176,6 +186,8 @@ def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) 
         value = getattr(self, attr)
         if value is not None:
             columns[col_name] = _list_column(value)
+    if demand is not None:
+        columns["demand"] = _list_column(np.asarray(demand, dtype=float))
 
     metadata = {
         "objective_value": self.objective_value,
@@ -188,6 +200,7 @@ def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) 
         "has_storage": self.storage_soc is not None,
         "has_flows": self.flows is not None,
         "has_emissions": self.emissions is not None,
+        "has_demand": demand is not None,
         "rps_shadow_price": self.rps_shadow_price,
     }
 
@@ -222,6 +235,30 @@ def read_fleet_context(path) -> FleetContext:
     if raw_meta is None:
         raise ValueError(f"{path} carries no fleet context metadata")
     return FleetContext(**json.loads(raw_meta))
+
+
+def read_demand(path) -> np.ndarray | None:
+    """Return the ``(n_zones, T)`` served demand stored by :func:`to_parquet`.
+
+    Args:
+        path: Path to a ``.parquet`` file written by :func:`to_parquet`.
+
+    Returns:
+        The demand array, or ``None`` when the file predates the demand
+        column (``has_demand`` absent/False) so callers can fall back.
+    """
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"no cached dispatch result at {path}")
+    schema = pq.read_schema(path)
+    raw_meta = (schema.metadata or {}).get(_METADATA_KEY)
+    if raw_meta is None or not json.loads(raw_meta).get("has_demand"):
+        return None
+    col = pq.read_table(path, columns=["demand"]).column("demand")
+    flat = col.combine_chunks().values.to_numpy(zero_copy_only=False)
+    n_zones = len(col[0].as_py())
+    T_actual = len(col)
+    return flat.reshape(T_actual, n_zones).T
 
 
 def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:

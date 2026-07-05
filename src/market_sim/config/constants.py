@@ -918,6 +918,33 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         2049: 8.50,
         2050: 8.70,
     },
+    # --- Capacity-hindcast gas paths (W2-P5, plan §1.2) --------------------
+    # "hindcast_realized": the year's ACTUAL Henry Hub spot annual average
+    # ($/MMBtu), the realized-fuel variant of the capacity hindcast. Values are
+    # the annual mean of data/raw/gas-prices/henry_hub_monthly.csv (EIA Henry
+    # Hub spot), matching the historical entries already carried in the low/mid/
+    # high paths above (2023: 2.54, 2024: 2.19, 2025: 3.53). 2022 is DELIBERATELY
+    # omitted (rule 22 quarantine bridge — the hindcast never solves or reads
+    # 2022, and its 2022 evolution step draws the 2021 value via driver_year).
+    "hindcast_realized": {
+        2021: 3.91,  # EIA Henry Hub spot annual mean (henry_hub_monthly.csv)
+        2023: 2.54,
+        2024: 2.19,
+        2025: 3.53,
+    },
+    # "hindcast_asknown_aeo2021": the AEO2021 Reference case Henry Hub
+    # trajectory (EIA, Annual Energy Outlook 2021, published Feb 2021 — the
+    # contemporaneous as-known-then forecast for a 2021-start hindcast). The
+    # realized−asknown gap isolates fuel-input (gas-forecast) error from
+    # capacity-path error (plan §1.4 baseline (c)). 2022 omitted per the bridge.
+    # Source: AEO2021 Reference, Table "Henry Hub spot price" (2020$ ≈ 2026$ at
+    # this precision; the level is only a sensitivity axis, not a keeper input).
+    "hindcast_asknown_aeo2021": {
+        2021: 3.07,
+        2023: 2.86,
+        2024: 2.88,
+        2025: 2.93,
+    },
 }
 
 # --- Regional Basis Differentials ($/MMBtu, relative to Henry Hub) ---
