@@ -21,10 +21,10 @@ the relevant planning session first).
 | PP-05 | Sweep driver & CLI | 0002 |
 | PP-06 | Outputs & reporting | PS-02, PS-04 |
 | PP-07 | Tests | all |
-| PP-08 | Gas-CC+CCS resource & intensity-weighted matching (backlog) | 0012 |
-| PP-09 | Reporting deliverable: HTML run report + committed `results/` store (backlog) | 0014 |
+| PP-08 | Gas-CC+CCS resource & intensity-weighted matching | 0012 |
+| PP-09 | Reporting deliverable: HTML run report + committed `results/` store | 0014 |
 
-## PP-09 — Reporting deliverable (stub)
+## PP-09 — Reporting deliverable (complete)
 
 Decided in PS-11 → **ADR 0014** (cite its § numbers): one **self-contained
 static HTML report per run** (`results/<run_id>/report.html`, §1) rendering the
@@ -35,25 +35,30 @@ dispatch heatmap + SOC for a selected setpoint — from a versioned
 a **committed `results/<run_id>/` Parquet folder** (§5) that the planned
 desktop port reads. Implementation shape: `report.py` +
 `scripts/render_report.py` + CLI flags `--run-id`/`--results`/`--no-report`/
-`--report-hourly` (§6).
+`--report-hourly` (§6). All of §1–§6 landed: `report.py`'s payload builder +
+renderer cover every §2 view, `results/` holds two committed real bundles
+(`SAMPLE_premium_cap_20260702-171842/`, `ercot_backcast2024_premiumcap/`), and
+`tests/test_report.py` covers payload schema round-trip, the renderer smoke
+test, and a multi-ISO batch report.
 
 ## Current state
 
-Waves 0–2 implemented: **PP-00** (config + validation + `from_file` loader),
-**PP-01** (real intake rules, hard missing-hour/dup errors, load growth, `prepare_lmp` +
-`collapse_zonal_lmp`, `emissions_intake`), **PP-02** (resource catalog ATB 2024 CRF, per-ISO caps/eligibility,
-hydro monthly budgets, split-tech parse; split LP logic), **PP-03** (real
-per-ISO CF Parquets + synthetic fallback + `build_profiles.py` vendored script, `profile_shape_year`),
-**PP-04** (LP core both modes, split-storage vars, hydro budget constraint, additionality
-accounting, infeasible-safe), **PP-05** (sweep + CLI with `--config`, `--all-isos` batch,
-graceful infeasible handling), **PP-06** (enriched frontier metrics + residual CO₂ +
-run metadata). Tests: 76 passing (PP-07). Open: PP-07 suite depth, PP-08
-(gas-CC+CCS, ADR 0012) backlog.
-**PP-09** implemented (ADR 0014 §1–§6): `report.py` payload+HTML renderer, `results/` committed store with a SAMPLE worked example, CLI `--run-id`/`--results`/`--no-report`/`--report-hourly`, `scripts/render_report.py`.
-run metadata), **PP-07** (147 tests: config, intake, LP core, CLI, extensions, cross-feature).
-**PP-08** (gas-CC+CCS, ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
-low-carbon threshold, grid/resource residual-CO₂ split) complete. Open: PP-09
-(reporting, ADR 0014) in flight.
+**PP-00 through PP-10 complete**: config + validation (PP-00); real intake
+rules, hard missing-hour/dup errors, load growth, `prepare_lmp` +
+`collapse_zonal_lmp`, `emissions_intake` (PP-01); resource catalog ATB 2024
+CRF, per-ISO caps/eligibility, hydro monthly budgets, split-tech parse (PP-02);
+real per-ISO CF Parquets + synthetic fallback + `profile_shape_year` (PP-03);
+LP core both modes, split-storage vars, hydro budget constraint, additionality
+accounting, infeasible-safe (PP-04); sweep + CLI with `--config`/`--all-isos`,
+graceful infeasible handling (PP-05); enriched frontier metrics + residual CO₂
++ run metadata (PP-06); test suite (PP-07); gas-CC+CCS resource, ADR 0012
+(PP-08); HTML report + committed `results/` store, ADR 0014 (PP-09, see
+above); desktop launcher, ADR 0016 (PP-10). Post-merge adversarial reviews
+**PP-12**/**PP-13** fixed findings against the report renderer and launcher
+respectively. Tests: 254 passing.
+
+Open: the on-hold real-LMP validation path (ADR 0015) — extending the ERCOT
+backcast-validation bridge to CAISO/PJM/MISO/NYISO/NEISO.
 
 ## Rules for every pack
 

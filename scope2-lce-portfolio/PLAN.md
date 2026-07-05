@@ -74,6 +74,7 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
 | `lp.py` | portfolio LP build + HiGHS solve | done (PP-04: both modes; split-storage vars + hydro budget + additionality; infeasible-safe; PP-08: grid/resource residual-CO₂ split) |
 | `sweep.py` | parametric sweep driver | done (PP-05) |
 | `outputs.py` | Parquet frontier + build-mix, text summary | done (PP-06: enriched metrics + residual CO₂ + run metadata) |
+| `report.py` | ADR 0014 report payload + self-contained HTML renderer | done (PP-09: provenance, frontier, build-mix, cost, residual-CO₂, multi-ISO, hourly heatmap/SOC views; versioned `report.json`) |
 | `cli.py` / `__main__.py` | CLI entry point | done (PP-01: `--config` load_file/lmp_file wiring, clean errors, `--all-isos`) |
 | `vendored/` | copied market-sim logic (CF shapes) | done (PP-03: `renewable_shapes.py`, pinned upstream commit + re-sync header) |
 | `scripts/build_profiles.py` | build per-ISO CF Parquets from the market-sim data tree (no import) | done (PP-03) |
@@ -120,14 +121,23 @@ PP-02 catalog → PP-03 CF profiles (first vendoring) → PP-04 LP core →
 PP-05 sweep/CLI → PP-06 outputs/reporting → PP-07 tests → PP-08 gas CC + CCS
 resource (ADR 0012: two tranches, delivered-gas fuel + 45Q net VOM, load-time
 low-carbon threshold, grid/resource residual-CO₂ split). **PP-00 through PP-08 complete**
-(build waves of 2026-07-01; PP-08 implemented by 2026-07-02); next open work is PP-09
-(reporting deliverable, ADR 0014, in flight) and the on-hold real-LMP validation path
-(ADR 0015, stakeholder decision 2026-07-02). **PP-10 (desktop launcher, ADR 0016)
+(build waves of 2026-07-01; PP-08 implemented by 2026-07-02). **PP-09 (reporting
+deliverable, ADR 0014 §1–§6) complete**: `src/lce_portfolio/report.py` (payload
+builder + self-contained HTML renderer covering provenance, frontier, build-mix,
+cost breakdown, residual-CO₂, multi-ISO comparison, and the hourly dispatch
+heatmap/SOC view), `scripts/render_report.py`, CLI `--run-id`/`--results`/
+`--no-report`/`--report-hourly`, and the committed `results/<run-id>/` store
+(two real bundles committed: `SAMPLE_premium_cap_20260702-171842/`,
+`ercot_backcast2024_premiumcap/`). **PP-10 (desktop launcher, ADR 0016)
 complete** (2026-07-02): `launcher/run_lce.sh`/`run_lce.bat` twins + `src/lce_portfolio/launcher.py`
 (stdlib HTTP server, self-contained launch page, run queue, saved configs);
 post-merge adversarial review **PP-13** (2026-07-02) fixed 11 findings
 (request-body hardening, batch run-id collisions, loopback-only enforcement,
 error-message purity — see `docs/prompt-packs/PP-13-launcher-review.md`).
+Next open work: the on-hold real-LMP validation path (ADR 0015, stakeholder
+decision 2026-07-02) — extending the ERCOT backcast-validation bridge
+(§10 below) to CAISO/PJM/MISO/NYISO/NEISO, each needing its own per-ISO
+bridge re-solve.
 
 ## 9. Verification
 
@@ -149,7 +159,12 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
 - [x] Execute prompt packs PP-00 through PP-08 in order, updating docs/PLAN.md status. ✓ PP-00..08 complete (PP-08 gas-CC+CCS, ADR 0012, implemented 2026-07-02).
 - [x] ADR ratification (PS-10, 2026-07-02): ADRs 0005/0007/0009/0010 amended & ratified (0005: f=1.0, excess credited at full LMP).
 - [x] Fossil-avg CO₂-rate export wiring (ADR 0013): `scripts/build_fossil_avg_co2_rate.py` available; hourly rate file contract wired into intake & LP.
-- [ ] Execute prompt pack PP-09 (reporting deliverable, ADR 0014) — self-contained HTML run report + committed results store.
+- [x] Execute prompt pack PP-09 (reporting deliverable, ADR 0014) — self-contained
+  HTML run report + committed results store. ✓ `report.py` renders all six ADR
+  0014 §2 views from a versioned `report.json` payload; `results/<run-id>/` is a
+  committed store (two real bundles landed); CLI gained
+  `--run-id`/`--results`/`--no-report`/`--report-hourly`; 254 tests passing
+  (measured 2026-07-05, includes `tests/test_report.py`).
 - [x] Build `data/profiles/` for all six ISOs (`scripts/build_profiles.py --year
   2024`; real EIA-930-derived CF shapes for ERCOT/CAISO/PJM/MISO/NYISO/NEISO,
   2026-07-05).
