@@ -78,13 +78,24 @@ spearman:
 
 # --- Discrete-dimension probability weights (§2.1) ---------------------------
 discrete_weights:
-  # Weather year: uniform over WEATHER_YEAR_POOL (2023/2024/2025). The pool is
-  # thin (n=3); 2022 joins only after the rule-22 holdout quarantine lifts.
-  # Source: constants.WEATHER_YEAR_POOL.
+  # Weather year: uniform over the ERCOT verified pool (2026-07 widening --
+  # docs/handoffs/probability-bounds-plan-2026-07.md §2.1 flagged the original
+  # n=3 pool as "a cheap widening" once more raw EIA-930 hourly years are
+  # confirmed usable). 2019-2021 were verified end-to-end (clean 8760-hour
+  # demand + wind/solar CF, no fallback needed) alongside the existing
+  # 2023-2025 window; 2022 stays out under the rule-22 holdout quarantine.
+  # Source: constants.WEATHER_YEAR_POOL_BY_ISO["ERCOT"];
+  # docs/weather-pool-coverage-2026-07.md for the verification log. Weights
+  # are kept uniform (a disclosed choice, not a forced one) -- 2020 is a valid
+  # historical draw but carries the documented COVID-19 demand-shape anomaly;
+  # a client wanting to exclude or down-weight it can edit this file directly.
   weather:
-    2023: 0.3333333333
-    2024: 0.3333333333
-    2025: 0.3333333333
+    2019: 0.1666666667
+    2020: 0.1666666667
+    2021: 0.1666666667
+    2023: 0.1666666667
+    2024: 0.1666666667
+    2025: 0.1666666667
   # Hydro year: dry 0.25 / normal 0.50 / wet 0.25 -- the climatology behind
   # constants.HYDRO_YEAR_MULTIPLIER (material for CAISO; near-neutral for ERCOT,
   # which has little conventional hydro). Source: HYDRO_YEAR_MULTIPLIER.
