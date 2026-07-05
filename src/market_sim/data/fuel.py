@@ -708,6 +708,15 @@ CAISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
 # Algonquin scarcity signal (rule #13 reconciliation; see its docstring).
 TRANSCO_IROQUOIS_MONTHLY_PATH: Path = GAS_PRICES_DIR / "transco_z6_iroquois_monthly.csv"
 
+# NYISO downstate (NYC / Long Island) interruptible-gas premium: the measured
+# monthly excess of the NY LDC city-gate price over the NY fleet-average
+# delivered-to-electric-power gas cost (scripts/fetch_nyiso_downstate_gas_basis.py;
+# EIA NG N3050NY3 − N3045NY3, $/MMBtu, floored 0). Consumed by
+# :func:`apply_nyiso_downstate_ct_gas_basis`.
+NYISO_DOWNSTATE_CT_GAS_BASIS_PATH: Path = (
+    GAS_PRICES_DIR / "nyiso_downstate_ct_gas_basis_monthly.csv"
+)
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
@@ -1981,6 +1990,139 @@ def apply_nyiso_zonal_gas_basis(
         float(gen_offset.min()),
         float(gen_offset.max()),
         NYISO_GAS_HUB_REFERENCE_ZONE,
+    )
+
+
+_NYISO_DOWNSTATE_CT_BASIS_CACHE: dict[Path, dict[int, np.ndarray]] = {}
+
+# Downstate load pockets served off the NYC / Long Island LDC city gates.
+NYISO_DOWNSTATE_CT_ZONES: frozenset[str] = frozenset({"NYC", "Long_Island"})
+
+
+def nyiso_downstate_ct_gas_premium(
+    year: int, path: Path | None = None
+) -> np.ndarray | None:
+    """Return the ``(12,)`` monthly downstate-peaker interruptible-gas premium.
+
+    The measured monthly excess ($/MMBtu, floored at 0) of the NY LDC city-gate
+    price over the Transco Zone 6 NY pipeline hub the model prices downstate gas
+    at — the delivered-cost increment a non-firm downstate (NYC / Long Island)
+    peaker faces buying interruptible city-gate gas instead of firm pipeline-hub
+    gas. Positive year-round; floors to 0 only in months the pipeline hub itself
+    spikes above the city gate (arctic events). Read from
+    :data:`NYISO_DOWNSTATE_CT_GAS_BASIS_PATH` (built by
+    ``scripts/fetch_nyiso_downstate_gas_basis.py`` from EIA NG series N3050NY3
+    minus the measured Transco Z6 NY monthly). Returns ``None`` when the table is
+    missing or has no rows for ``year`` (e.g. a forward year without the series
+    extended).
+    """
+    resolved = Path(path) if path else NYISO_DOWNSTATE_CT_GAS_BASIS_PATH
+    cache = _NYISO_DOWNSTATE_CT_BASIS_CACHE.setdefault(resolved, {})
+    if year in cache:
+        return cache[year]
+    if not resolved.exists():
+        cache[year] = None  # type: ignore[assignment]
+        return None
+    frame = pd.read_csv(resolved)
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        cache[year] = None  # type: ignore[assignment]
+        return None
+    monthly = np.zeros(12, dtype=float)
+    for r in sub.itertuples():
+        m = int(r.month) - 1
+        if 0 <= m < 12:
+            monthly[m] = float(r.premium_usd_mmbtu)
+    cache[year] = monthly
+    return monthly
+
+
+def apply_nyiso_downstate_ct_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Add the interruptible city-gate gas premium to downstate NYISO peakers.
+
+    NYISO's downstate combustion-turbine PEAKERS (NYC zone J + Long Island zone
+    K, ``CT_PEAKER`` / ``gas_ct`` — the Bayonne / Equus / Edgewood /
+    Glenwood-Landing LM6000 fleet) run only a few hundred hours a year, so they
+    cannot justify firm interstate pipeline transportation: they take gas off
+    the local LDC (Con Edison / National Grid) **city gate** on interruptible
+    service, so their delivered fuel index is the LDC city gate, not the
+    interstate pipeline hub the model prices downstate gas at (Transco Z6 NY via
+    ``gas_monthly_actuals`` + the hub-basis overlay). Pricing these peakers at
+    the pipeline hub, the energy-only LP sees a heat-rate-9-10 LM6000 undercut
+    the heat-rate-11-12 downstate steam fleet and runs them near-baseload
+    year-round (the CT_PEAKER over-run the de-leaked offer curve exposes, B-NYI-1
+    / issue #1344 — dominated by the Long Island gas-island peakers).
+
+    This adds the **measured** monthly premium
+    (:func:`nyiso_downstate_ct_gas_premium` — the EIA NY city-gate price minus
+    the measured Transco Z6 NY hub, floored at 0) to each downstate
+    ``CT_PEAKER`` unit's delivered gas price, lifting it from the pipeline hub to
+    its actual LDC-delivered index. The premium is positive year-round (the city
+    gate carries interstate-pipeline demand charges + distribution + an
+    interruptible premium over the hub every month) and widens in summer when NYC
+    gas-for-power cooling demand makes downstate interruptible gas scarce; it
+    floors to 0 only when the pipeline hub itself spikes above the city gate
+    (arctic events), where the model's base gas already exceeds the delivered
+    price. It is a delivered fuel price (CLAUDE.md rule #13's canonical
+    admissible input): the city gate and the hub publish monthly and project
+    forward, so a forecast year regenerates the premium and it responds to
+    changed conditions (a tight winter/summer widens it). Nothing is fitted to a
+    price/volume residual (rules #1/#11/#12).
+
+    Runs after :func:`apply_nyiso_zonal_gas_basis` and before
+    :func:`apply_dual_fuel_pricing`, so the oil-parity cap still bounds any
+    winter spike. Gated on ``config.nyiso_downstate_ct_gas_basis`` and
+    ``config.iso == "NYISO"`` (off by default; the calibration harness enables
+    it for NYISO), so every other ISO and all forecasts are byte-identical.
+    Mutates ``fuel_prices`` in place; idempotent given the same inputs.
+    """
+    if not getattr(config, "nyiso_downstate_ct_gas_basis", False):
+        return
+    if config.iso != "NYISO":
+        return
+    if fleet.plant_group is None:
+        return
+    premium = nyiso_downstate_ct_gas_premium(year, path)
+    if premium is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    plant_group = np.asarray(fleet.plant_group)
+    # Downstate model-zone indices (NYC / Long Island). Membership is checked by
+    # index so units on the priced external node (a zone_idx beyond the model
+    # zone list) are ignored, not an out-of-range lookup.
+    downstate_idx = np.array(
+        [i for i, name in enumerate(zone_names) if name in NYISO_DOWNSTATE_CT_ZONES],
+        dtype=int,
+    )
+    is_gas_ct = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
+    ct_rows = np.nonzero(
+        is_gas_ct
+        & (plant_group == "CT_PEAKER")
+        & np.isin(fleet.zone_idx, downstate_idx)
+    )[0]
+    if ct_rows.size == 0:
+        return
+    month_of_hour = _month_index(fuel_prices.shape[1])
+    premium_hourly = premium[month_of_hour]  # (T,)
+    fuel_prices[ct_rows, :] = np.maximum(
+        fuel_prices[ct_rows, :] + premium_hourly[np.newaxis, :], _GAS_PRICE_FLOOR
+    )
+    logger.info(
+        "NYISO downstate CT interruptible-gas basis (%d): %d downstate "
+        "CT_PEAKER units lifted by the LDC city-gate premium "
+        "(monthly min %.2f, max %.2f $/MMBtu; summer-peaked)",
+        year,
+        ct_rows.size,
+        float(premium.min()),
+        float(premium.max()),
     )
 
 
