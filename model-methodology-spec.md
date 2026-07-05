@@ -745,9 +745,25 @@ rows (`_build_reserve_rows`), and the ERCOT reserve design marks storage
 runner the battery trades energy against AS on its own power cap and cannot
 dump its full cap into the top arbitrage hours it must back AS in. The measured
 per-hour storage AS reservation (`storage.reserve_storage_as_power`) stays
-**backcast/calibration-only** (rule 13). Thermal AS still uses the exogenous
-rate in both regimes (a labelled seam — `ercot_storage_as_endogenous` is
-storage-scoped).
+**backcast/calibration-only** (rule 13).
+
+**Thermal AS** carries the identical reconciliation under
+`ercot_thermal_as_endogenous` (the thermal analogue of the storage flag). When
+on, the thermal retirement and new-entry screens
+(`capacity.apply_economic_retirements` / `apply_economic_new_entry`) credit the
+per-fuel AS value **derived from the co-opt's own reserve duals**
+(`ancillary.realized_thermal_as_revenue_per_mw_yr_by_fuel`, built on
+`scarcity.ercot_as_aware_unit_value`) and the exogenous flat rate is suppressed
+for thermal — exactly one mechanism prices thermal AS. Chosen over simply gating
+the exogenous credit off because the co-opt lifts the energy price (already in the
+screens' energy margin) but *not* the direct reserve payment on a unit's held
+headroom; deriving restores that real income where gate-off would strip it and
+over-retire tail thermal. The derived per-fuel rate is an upper bound on realized
+AS income (it prices full reserve-eligible headroom, the same attribution the
+storage helper uses). Forecast-only (capacity evolution never runs in backcast)
+and default off, so keepers are byte-identical; same `energy_reserve_coopt` /
+`ercot_as_forward_requirement` guards as the storage flag. See
+`docs/storage-as-withholding-attribution-2026-07.md`.
 
 Profitable techs are ranked by total margin (energy + capacity + AS − cost) and
 built in merit order, but no single tech may take more than
