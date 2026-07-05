@@ -1,0 +1,571 @@
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: solving ERCOT 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: gtc-limits: no clean partition for ERCOT 2023 (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for 2023 — static TTC kept (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2023: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2023: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: historic outage overlay (ERCOT 2023): zeroed 353 coal/CC bin-tranches across 48 plant(s)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: unit-outage derate (ERCOT 2023): 494 plant-tranches derated
+INFO: partial-outage derate (2023): 134 bin-tranches derated
+INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2023 hydro budget: 14 plants, 349.6 GWh annual, 552 MW nameplate
+INFO: ERCOT 2023: 14 hydro plants in LP (552 MW, 0.35 TWh monthly budget)
+INFO: historic outage overlay (ERCOT 2023): zeroed 353 coal/CC bin-tranches across 48 plant(s)
+INFO: unit-outage derate (ERCOT 2023): 494 plant-tranches derated
+INFO: partial-outage derate (2023): 134 bin-tranches derated
+INFO: COD ramp (ERCOT 2023): 278 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2023: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33856 / max 69528 MW)
+INFO: ERCOT 2023: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00703*netGW -0.1427, 0, 0.47) in ramp 15h-22h)
+INFO: ERCOT 2023: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 25 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2023): 963 gas units; level -0.50 -> measured EP +0.00 (corr +0.50), zonal spread -0.92..1.03 $/MMBtu
+INFO: ERCOT West net-load gas step (2023): 48 West/Panhandle gas units; collapse_freq 0.030 (measured-neg-day; endogenous-oversupply 0.016 vs measured neg-day 0.030); split nl 12329 MW; firm basis -0.50 -> firm $2.04, deep $0.40..$0.40 (deliv floor $0.40); annual gas $1.62 -> $1.99 (floor-lifted from the negative hub tail)
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [241, 1262, 741, 3348, 8567] MW, 77 steps total, 2 headroom tiers
+INFO: Matrix build: 17.129s, Solve: 151.730s (cold)
+INFO: Matrix build: 17.129s, Solve: 61.453s (warm)
+INFO: EIA-923 2023: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2023: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2023: CAMPD-backfilled 3 under-reported plants (3 replaced, 0 added)
+INFO: EIA-923 2023 solar 28.04 TWh under-counts EIA-930 31.87 TWh; using EIA-930 grid total
+INFO: solving ERCOT 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+WARNING: ercot_gtc_limits_measured: 2024 has no measured HSL potential (renewables ride delivered-as-CF) — measured GTC limits skipped for this year to avoid double-curtailment
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2024: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: historic outage overlay (ERCOT 2024): zeroed 388 coal/CC bin-tranches across 51 plant(s)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: unit-outage derate (ERCOT 2024): 502 plant-tranches derated
+INFO: partial-outage derate (2024): 155 bin-tranches derated
+INFO: COD ramp (ERCOT 2024): 58 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+INFO: ERCOT 2024: 12 hydro plants in LP (546 MW, 0.46 TWh monthly budget)
+INFO: historic outage overlay (ERCOT 2024): zeroed 388 coal/CC bin-tranches across 51 plant(s)
+INFO: unit-outage derate (ERCOT 2024): 502 plant-tranches derated
+INFO: partial-outage derate (2024): 155 bin-tranches derated
+INFO: COD ramp (ERCOT 2024): 58 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2024: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33521 / max 68155 MW)
+INFO: ERCOT 2024: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00703*netGW -0.1427, 0, 0.47) in ramp 15h-22h)
+INFO: ERCOT 2024: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2024: 25 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2024): 963 gas units; level -0.50 -> measured EP -0.09 (corr +0.41), zonal spread -2.27..0.55 $/MMBtu
+INFO: ERCOT West net-load gas step (2024): 48 West/Panhandle gas units; collapse_freq 0.420 (measured-neg-day; endogenous-oversupply 0.005 vs measured neg-day 0.420); split nl 30682 MW; firm basis -0.50 -> firm $1.69, deep $0.40..$0.40 (deliv floor $0.40); annual gas $0.17 -> $1.15 (floor-lifted from the negative hub tail)
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [190, 908, 484, 2683, 347, 7750] MW, 89 steps total, 2 headroom tiers
+INFO: Matrix build: 3.134s, Solve: 155.527s (cold)
+INFO: Matrix build: 3.134s, Solve: 68.500s (warm)
+INFO: EIA-923 2024: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plants (2 replaced, 0 added)
+INFO: EIA-923 2024 solar 40.08 TWh under-counts EIA-930 47.68 TWh; using EIA-930 grid total
+INFO: solving ERCOT 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+WARNING: ercot_gtc_limits_measured: 2025 has no measured HSL potential (renewables ride delivered-as-CF) — measured GTC limits skipped for this year to avoid double-curtailment
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: historic outage overlay (ERCOT 2025): zeroed 339 coal/CC bin-tranches across 45 plant(s)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: unit-outage derate (ERCOT 2025): 495 plant-tranches derated
+INFO: partial-outage derate (2025): 149 bin-tranches derated
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2025 hydro budget: 1 plants, 16.9 GWh annual, 10 MW nameplate
+INFO: ERCOT 2025: 1 hydro plants in LP (10 MW, 0.02 TWh monthly budget)
+INFO: historic outage overlay (ERCOT 2025): zeroed 339 coal/CC bin-tranches across 45 plant(s)
+INFO: unit-outage derate (ERCOT 2025): 495 plant-tranches derated
+INFO: partial-outage derate (2025): 149 bin-tranches derated
+INFO: COD ramp (ERCOT 2025): 12 unit-months masked offline (mid-year COD / retirement), 1 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2025: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33630 / max 68154 MW)
+INFO: ERCOT 2025: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00703*netGW -0.1427, 0, 0.47) in ramp 15h-22h)
+INFO: ERCOT 2025: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2025: 23 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2025): 963 gas units; level -0.50 -> measured EP -0.46 (corr +0.04), zonal spread -2.42..0.55 $/MMBtu
+INFO: ERCOT West net-load gas step (2025): 48 West/Panhandle gas units; collapse_freq 0.110 (measured-neg-day; endogenous-oversupply 0.010 vs measured neg-day 0.110); split nl 18612 MW; firm basis -0.50 -> firm $3.03, deep $0.40..$0.40 (deliv floor $0.40); annual gas $0.64 -> $2.74 (floor-lifted from the negative hub tail)
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [111, 567, 336, 2885, 7088] MW, 88 steps total, 2 headroom tiers
+INFO: Matrix build: 3.732s, Solve: 241.930s (cold)
+INFO: Matrix build: 3.732s, Solve: 85.698s (warm)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: EIA-923 2025: CAMPD-backfilled 27 under-reported plants (0 replaced, 27 added)
+INFO: EIA-923 2025 wind 91.31 TWh under-counts EIA-930 115.12 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 55.79 TWh under-counts EIA-930 67.39 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/ercot_rtolcap_forward_v1
+
+================================================================================
+  CALIBRATION REPORT  (ERCOT; run 2026-07-05T04:08:24; git 0aec613)
+  bundle: /home/user/market-simulator/results/calibration/ercot_rtolcap_forward_v1
+================================================================================
+
+================================================================================
+  ERCOT 2023 BACKCAST
+================================================================================
+
+  [1] CHP — 2023  (model grid LP + behind-meter must-run vs EIA-923 total)
+     class  grid LP  BTM-MR  model tot  EIA-923  diff %
+    CC_CHP    26.60   24.49      51.09    53.00    -3.6
+    CT_CHP     4.55    7.43      11.99    13.04    -8.1
+    ST_CHP     0.07    0.36       0.43     0.52   -18.4
+     TOTAL    31.22   32.28      63.50    66.57    -4.6
+    (BTM-MR = behind-the-meter must-run, off-grid. CHP is excluded from every table below.)
+
+  [2] Grid generation reconciliation — 2023
+    EIA-930 net generation (Demand + Interchange)          445.97 TWh
+    Model demand target                                    445.97 TWh
+    Model grid generation (LP)                             446.05 TWh
+    Gap (model grid − EIA-930 net gen)                      +0.08 TWh
+    Unserved energy / load slack (should be 0)             0.0027 TWh
+    Behind-meter CHP must-run (off-grid; table [1] only)    34.70 TWh
+
+  [3] Non-CHP grid generation — 2023  (model LP vs EIA-930, CHP excluded)
+             fuel  model TWh  model %  EIA-930 TWh  EIA-930 %     Δpp
+    gas (non-CHP)     160.69     39.0       170.24       41.2    -2.2
+             coal      66.18     16.1        62.29       15.1    +1.0
+          nuclear      40.41      9.8        40.91        9.9    -0.1
+             wind     110.84     26.9       107.99       26.1    +0.8
+            solar      33.56      8.2        31.87        7.7    +0.4
+            TOTAL     411.68    100.0       413.30      100.0        
+    (EIA-930 non-CHP gas = EIA-930 all-gas − 31.2 TWh model CHP grid-delivered.)
+
+  [3b] Thermal by class — 2023  (model grid LP + behind-meter must-run vs EIA-923 total; coal split lignite/PRB)
+           class  grid LP  BTM-MR  model tot  EIA-923  diff %
+      CC_REGULAR   135.64    1.96     137.60   143.70    -4.2
+          CC_CHP    26.60   24.49      51.09    53.00    -3.6
+       CT_PEAKER     6.75    0.47       7.22     7.56    -4.6
+          CT_CHP     4.55    7.43      11.99    13.04    -8.1
+          ST_GAS    18.30    0.00      18.30    16.70    +9.6
+          ST_CHP     0.07    0.36       0.43     0.52   -18.4
+    OTHER_FOSSIL     0.38    0.00       0.38     0.25   +55.0
+            COAL     0.00    0.00       0.00     0.00       —
+    COAL_LIGNITE    17.19    0.00      17.19    15.33   +12.1
+        COAL_PRB    48.99    0.00      48.99    45.09    +8.7
+        COAL_BIT     0.00    0.00       0.00     0.00       —
+         COAL_WC     0.00    0.00       0.00     0.00       —
+           TOTAL   258.48   34.70     293.18   295.20    -0.7
+
+  [3c] Non-fossil & residual by class — 2023  (oil = LP peaker; biomass / hydro / OTHER = must-run injected; vs EIA-923 total)
+      class    model  EIA-923  diff %
+        oil     0.01     0.15   -93.6
+    biomass     0.41     0.41    -0.0
+      hydro     0.35     0.35    +0.1
+      OTHER     1.99     1.99    -0.0
+      TOTAL     2.76     2.90    -5.0
+
+  [3d] Storage throughput — 2023  (model LP vs EIA-930 battery series where reported)
+      tech  dis TWh  chg TWh
+    li_ion     0.47     0.55
+    EIA-930 battery series: not reported this year
+
+  [3e] Renewable curtailment — 2023 (model re-curtailment vs ISO-reported; potential = uncurtailed HSL)
+     fuel  potential TWh  model TWh  model curt  model %  reported curt  reported %
+     wind         113.28     110.84       2.447     2.16          4.864        4.67
+    solar          34.01      33.56       0.447     1.32          2.092        6.29
+
+    Monthly curtailment (GWh):
+    month  wind mdl  wind rep  solar mdl  solar rep
+      Jan     364.4     576.4       15.5      212.1
+      Feb     411.0     815.4       20.0      429.2
+      Mar     434.0     981.4       32.7      407.2
+      Apr     330.6     639.3       53.6      340.1
+      May      64.2     189.6        5.2       41.4
+      Jun     122.0     157.2       61.9      121.2
+      Jul     107.7     186.0       78.6       83.8
+      Aug      73.3     184.5       98.1       53.5
+      Sep      66.2     118.2       51.6       52.8
+      Oct     120.5     360.1       17.1      118.7
+      Nov     152.4     316.8        4.8       67.5
+      Dec     200.9     339.4        8.5      164.1
+
+  [4] Monthly bias — 2023   (% of EIA-923 per month; coal split; CHP incl. behind-meter)
+           class    Jan    Feb     Mar     Apr     May     Jun    Jul    Aug    Sep    Oct    Nov     Dec
+      CC_REGULAR   -1.1   -5.7    -0.1    +0.2    -2.4    -4.5   -6.2   -7.0   -7.3   -4.4   +1.8    -7.2
+          CC_CHP   +1.1   -1.3    -3.5    -0.1    -2.2    -7.9   -5.5   -3.1   -6.1   -4.5   -5.0    -3.6
+       CT_PEAKER  -27.1  -33.6   -37.9   -40.5   -21.7    -7.4   +8.0  +26.9  +22.0  -29.9  -27.3   -10.5
+          CT_CHP   -6.9   -9.7    -7.7    -5.4    -9.6   -12.2  -12.3  -10.4   -8.9   -2.5   -6.6    -2.3
+          ST_GAS  +80.6  +89.5   +31.9   +25.0   +19.7   +12.0   +1.8   +0.6  +10.1   -8.0  -13.6  +138.9
+          ST_CHP  -14.9  -16.2   -20.2   -19.7   -18.9   -18.1  -16.9  -17.4  -16.7  -19.6  -20.1   -19.4
+    OTHER_FOSSIL  -28.0  -23.5  +102.0  +114.1  +130.2  +142.3  +76.9  +82.1  +70.8  +20.9   +2.7   -17.3
+            COAL      ·      ·       ·       ·       ·       ·      ·      ·      ·      ·      ·       ·
+    COAL_LIGNITE   +3.0  -11.0   -14.4    -0.2   +11.7   +22.0  +17.9  +28.4  +35.7  +24.7  +13.5    +9.1
+        COAL_PRB   +5.2  -12.3   -22.1   -15.6    +7.1   +19.0  +25.1  +26.2  +24.2   +0.6   -2.3    +0.3
+        COAL_BIT      ·      ·       ·       ·       ·       ·      ·      ·      ·      ·      ·       ·
+         COAL_WC      ·      ·       ·       ·       ·       ·      ·      ·      ·      ·      ·       ·
+            wind   +3.7   +5.3    +5.9    +2.2    +0.1    -0.2   +0.1   +0.7   -0.7   +2.1   +3.0    +3.0
+     solar (930)  +13.6  +27.9   +18.6   +11.4    +1.6    +2.0   +0.3   -1.1   -0.4   +4.1   +3.6    +7.1
+         nuclear   -2.1   -2.3    +0.2    -0.2    -0.6    -0.4   +0.2   +0.2   -0.3   -0.4   +0.1    -2.2
+
+  [5] Hourly dispatch fit — 2023 (model vs EIA-930, non-CHP gas)
+             fuel  Pearson r   NRMSE  model TWh  EIA-930 TWh
+    gas (non-CHP)      0.989   0.100     160.69       170.24
+             coal      0.883   0.215      66.18        62.29
+          nuclear      0.789   0.073      40.41        40.91
+            solar      0.987   0.217      33.56        31.87
+             wind      0.995   0.061     110.84       107.99
+
+  [6] Plant-level annual generation — 2023 (EIA-923)
+                           plant  EIA code  model GWh  EIA-923 GWh  diff %       class
+                Colorado Bend II     60122       7997         7845    +1.9  CC_REGULAR
+                  Wolf Hollow II     59812       6913         7018    -1.5  CC_REGULAR
+                         Handley      3491       1886         1519   +24.1      ST_GAS
+         Deer Park Energy Center     55464       4528         6870   -34.1      CC_CHP
+           Baytown Energy Center     55327       3302         5051   -34.6      CC_CHP
+           Hidalgo Energy Center     55545       2606         2791    -6.6  CC_REGULAR
+                Limestone (coal)       298       8018         6059   +32.3    COAL_PRB
+     W A Parish (coal units 5-8)      3470       9012        10743   -16.1    COAL_PRB
+       Stryker Creek (gas steam)      3504        952         1080   -11.8      ST_GAS
+        Morgan Creek (CT peaker)      3492        175          123   +42.0   CT_PEAKER
+    Topaz Generating (CT peaker)     63688        874          722   +21.0   CT_PEAKER
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+
+  [7] Per-plant hourly dispatch fit — 2023 (model vs CAMPD net; representative panel)
+                           plant  EIA code  Pearson r   NRMSE  model GWh  CAMPD GWh  op hrs  band ovlp  CF EMD
+                Colorado Bend II     60122      0.826   0.216       7997       7859    7959      0.596   0.050
+                  Wolf Hollow II     59812      0.846   0.244       6913       7012    7766      0.586   0.031
+                         Handley      3491      0.886   0.726       1886       1539    4267      0.727   0.046
+         Deer Park Energy Center     55464      0.740   0.295       8133       6887    8738      0.611   0.115
+           Baytown Energy Center     55327      0.692   0.301       6162       5050    8760      0.520   0.141
+           Hidalgo Energy Center     55545          —       —          —          —       —          —       —
+                Limestone (coal)       298      0.872   0.600       8018       6062    7712      0.462   0.161
+     W A Parish (coal units 5-8)      3470      0.875   0.376      12022      10750    8760      0.791   0.057
+       Stryker Creek (gas steam)      3504      0.652   1.395        952       1071    3635      0.770   0.045
+        Morgan Creek (CT peaker)      3492      0.417   5.835        175         71     521      0.827   0.043
+    Topaz Generating (CT peaker)     63688      0.709   1.364        874        717    2958      0.850   0.037
+    (full per-plant fit for all 99 resolved plants written to plant_hourly_fit.parquet)
+
+  [7b] Hours per 10% CF band — 2023 (model / CAMPD net; representative panel)
+                           plant         0%-10%  10%-20%  20%-30%  30%-40%  40%-50%  50%-60%  60%-70%  70%-80%  80%-90%  90%-100%
+                Colorado Bend II  model     779       28      110      160        9        6        5      171     6197      1295
+                                  CAMPD     807       35       11      316      259      139      148      447     2753      3845
+                  Wolf Hollow II  model    1097      118      274      423      100       25      265      809     5575        74
+                                  CAMPD    1004       51       88      532      392      174      223     1642     2340      2314
+                         Handley  model    3562     2194     1629      266      148      315      127       48      471         0
+                                  CAMPD    5392      742      920      559      214      312      141      211      245        24
+         Deer Park Energy Center  model       0        0        0        0       66     1219     3145     2133     2197         0
+                                  CAMPD      24        6      307     1355     1442     1281      841     1552     1677       275
+           Baytown Energy Center  model       0        0        0        0        0        0     1401     4026     1934      1399
+                                  CAMPD       0        0      384      460     1255     1888      851     1741     2149        32
+                Limestone (coal)  model    1499     1273      525      117     1208      358       55      281     1629      1815
+                                  CAMPD    1121      239     1728      862     2217      570      698     1183      142         0
+     W A Parish (coal units 5-8)  model    1347     1281     1042     1360     1065      740      959      596      170       200
+                                  CAMPD     743     2079     1760     1031     1123      997      756      187       82         2
+       Stryker Creek (gas steam)  model    6641       64       69       91       94      542      371       94      355       439
+                                  CAMPD    5562      702      769      205      113       91      105      399      140       674
+        Morgan Creek (CT peaker)  model    7061      695      516      468        8        1        0        5        1         5
+                                  CAMPD    8401       69       53       40       55       17       27       32       32        34
+    Topaz Generating (CT peaker)  model    5758      402       91       29      176      994      515      298      249       248
+                                  CAMPD    6112      299      315      287      228      235      419      721      144         0
+
+================================================================================
+  ERCOT 2024 BACKCAST
+================================================================================
+
+  [1] CHP — 2024  (model grid LP + behind-meter must-run vs EIA-923 total)
+     class  grid LP  BTM-MR  model tot  EIA-923  diff %
+    CC_CHP    28.80   25.01      53.81    55.04    -2.2
+    CT_CHP     4.94    7.57      12.51    13.23    -5.4
+    ST_CHP     0.07    0.31       0.38     0.47   -18.6
+     TOTAL    33.81   32.90      66.70    68.74    -3.0
+    (BTM-MR = behind-the-meter must-run, off-grid. CHP is excluded from every table below.)
+
+  [2] Grid generation reconciliation — 2024
+    EIA-930 net generation (Demand + Interchange)          462.59 TWh
+    Model demand target                                    462.59 TWh
+    Model grid generation (LP)                             462.70 TWh
+    Gap (model grid − EIA-930 net gen)                      +0.10 TWh
+    Unserved energy / load slack (should be 0)             0.0000 TWh
+    Behind-meter CHP must-run (off-grid; table [1] only)    35.09 TWh
+
+  [3] Non-CHP grid generation — 2024  (model LP vs EIA-930, CHP excluded)
+             fuel  model TWh  model %  EIA-930 TWh  EIA-930 %     Δpp
+    gas (non-CHP)     162.56     38.2       169.87       39.8    -1.7
+             coal      61.25     14.4        58.77       13.8    +0.6
+          nuclear      38.35      9.0        38.80        9.1    -0.1
+             wind     114.33     26.8       111.54       26.1    +0.7
+            solar      49.59     11.6        47.68       11.2    +0.5
+            TOTAL     426.09    100.0       426.67      100.0        
+    (EIA-930 non-CHP gas = EIA-930 all-gas − 33.8 TWh model CHP grid-delivered.)
+
+  [3b] Thermal by class — 2024  (model grid LP + behind-meter must-run vs EIA-923 total; coal split lignite/PRB)
+           class  grid LP  BTM-MR  model tot  EIA-923  diff %
+      CC_REGULAR   138.36    1.64     139.99   145.41    -3.7
+          CC_CHP    28.80   25.01      53.81    55.04    -2.2
+       CT_PEAKER     8.01    0.56       8.56     8.21    +4.3
+          CT_CHP     4.94    7.57      12.51    13.23    -5.4
+          ST_GAS    16.20    0.00      16.20    18.10   -10.5
+          ST_CHP     0.07    0.31       0.38     0.47   -18.6
+    OTHER_FOSSIL     0.33    0.00       0.33     0.15  +117.1
+            COAL     0.00    0.00       0.00     0.00       —
+    COAL_LIGNITE    15.34    0.00      15.34    13.94   +10.0
+        COAL_PRB    45.91    0.00      45.91    43.68    +5.1
+        COAL_BIT     0.00    0.00       0.00     0.00       —
+         COAL_WC     0.00    0.00       0.00     0.00       —
+           TOTAL   257.95   35.09     293.04   298.24    -1.7
+
+  [3c] Non-fossil & residual by class — 2024  (oil = LP peaker; biomass / hydro / OTHER = must-run injected; vs EIA-923 total)
+      class    model  EIA-923  diff %
+        oil     0.00     0.15   -99.7
+    biomass     0.32     0.32    +0.0
+      hydro     0.46     0.46    +0.0
+      OTHER     1.70     1.70    +0.0
+      TOTAL     2.48     2.63    -5.7
+
+  [3d] Storage throughput — 2024  (model LP vs EIA-930 battery series where reported)
+      tech  dis TWh  chg TWh
+    li_ion     0.59     0.70
+    battery (930 window)    model  EIA-930  diff %
+           discharge TWh     0.17     0.72   -76.4
+              charge TWh     0.20     0.87   -76.9
+    benchmark coverage: 19% of hours reported
+
+  [3e] Renewable curtailment — 2024: no ERCOT HSL parquet; build with scripts/build_ercot_hsl.py (ERCOT 2024+ needs the NP6 report uploads under data/raw/ercot-hsl/np6/)
+
+  [4] Monthly bias — 2024   (% of EIA-923 per month; coal split; CHP incl. behind-meter)
+           class    Jan    Feb     Mar     Apr     May     Jun     Jul     Aug     Sep    Oct    Nov    Dec
+      CC_REGULAR   -5.3  -16.1    -1.5    +7.2    +7.1    -3.3    -7.1    -6.6    -8.0   +3.0   -3.9   -7.9
+          CC_CHP   -5.0   -2.5    +0.9    +6.5    +2.2    -5.0    -3.4    -6.2    -6.5   +1.2   -1.0   -4.5
+       CT_PEAKER  +15.4  +93.5   +31.8   +19.0   -14.8   -18.4   -15.4    +0.4    -7.7   -2.0   -1.8  +24.5
+          CT_CHP   -3.9   -0.5    +3.9    -1.3    -5.4    -7.5   -10.5   -10.7   -10.5   -2.8   -4.1   -5.8
+          ST_GAS  +25.2  +56.0    -3.6   -30.7   -35.5    -8.0    -5.6    -1.0    +3.0  -17.1  -26.5  -25.4
+          ST_CHP  -19.2  -17.6   -21.1   -17.1   -19.0   -20.5   -20.7   -12.7   -17.3  -19.6  -16.4  -18.2
+    OTHER_FOSSIL  +61.1   +9.1  +145.7  +203.7  +219.5  +135.2  +127.1  +226.1  +146.9  +96.0  +49.3  +50.4
+            COAL      ·      ·       ·       ·       ·       ·       ·       ·       ·      ·      ·      ·
+    COAL_LIGNITE  +15.1  -10.3   -45.7    -2.2   +30.9   +28.6   +18.6   +17.1   +13.2   +2.4   +4.4   +6.3
+        COAL_PRB   -2.1  -24.9   -19.5   -33.3   -10.2   +21.8   +27.2   +38.2   +31.6   -4.3   -9.7   -9.8
+        COAL_BIT      ·      ·       ·       ·       ·       ·       ·       ·       ·      ·      ·      ·
+         COAL_WC      ·      ·       ·       ·       ·       ·       ·       ·       ·      ·      ·      ·
+            wind   +1.6   +0.0    +1.3    +0.6    +0.9    +1.9    +2.0    +2.4    +3.1   +2.6   +2.3   +2.2
+     solar (930)   +6.2   +4.2    +5.0    +4.0    +4.5    +3.3    +3.2    +1.4    +2.8   +5.5   +5.5   +5.7
+         nuclear   +0.2   -4.4    -0.6    +0.2    +0.3    -0.4    +0.0    -0.4    -0.4   +0.2   +0.3   -2.1
+
+  [5] Hourly dispatch fit — 2024 (model vs EIA-930, non-CHP gas)
+             fuel  Pearson r   NRMSE  model TWh  EIA-930 TWh
+    gas (non-CHP)      0.982   0.105     162.56       169.87
+             coal      0.845   0.245      61.25        58.77
+          nuclear      0.714   0.127      38.35        38.80
+            solar      0.998   0.093      49.59        47.68
+             wind      0.999   0.034     114.33       111.54
+
+  [6] Plant-level annual generation — 2024 (EIA-923)
+                           plant  EIA code  model GWh  EIA-923 GWh  diff %       class
+                Colorado Bend II     60122       7003         6979    +0.3  CC_REGULAR
+                  Wolf Hollow II     59812       6285         6461    -2.7  CC_REGULAR
+                         Handley      3491       1492          881   +69.3      ST_GAS
+         Deer Park Energy Center     55464       5253         8004   -34.4      CC_CHP
+           Baytown Energy Center     55327       3533         5089   -30.6      CC_CHP
+           Hidalgo Energy Center     55545       2750         2056   +33.8  CC_REGULAR
+                Limestone (coal)       298       6192         5365   +15.4    COAL_PRB
+     W A Parish (coal units 5-8)      3470       9031        12166   -25.8    COAL_PRB
+       Stryker Creek (gas steam)      3504        615          922   -33.3      ST_GAS
+        Morgan Creek (CT peaker)      3492        173           24  +633.2   CT_PEAKER
+    Topaz Generating (CT peaker)     63688        660          689    -4.2   CT_PEAKER
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+
+  [7] Per-plant hourly dispatch fit — 2024 (model vs CAMPD net; representative panel)
+                           plant  EIA code  Pearson r   NRMSE  model GWh  CAMPD GWh  op hrs  band ovlp  CF EMD
+                Colorado Bend II     60122      0.829   0.269       7003       6964    8092      0.756   0.081
+                  Wolf Hollow II     59812      0.842   0.285       6285       6466    7593      0.516   0.046
+                         Handley      3491      0.744   1.633       1492        861    2682      0.635   0.080
+         Deer Park Energy Center     55464      0.702   0.212       8858       7987    8760      0.711   0.080
+           Baytown Energy Center     55327      0.538   0.358       6394       5090    8760      0.578   0.165
+           Hidalgo Energy Center     55545          —       —          —          —       —          —       —
+                Limestone (coal)       298      0.879   0.553       6192       5362    6967      0.624   0.109
+     W A Parish (coal units 5-8)      3470      0.866   0.331      12211      12159    8760      0.875   0.029
+       Stryker Creek (gas steam)      3504      0.389   1.880        615        931    3666      0.753   0.057
+        Morgan Creek (CT peaker)      3492      0.179  14.480        173         26     377      0.810   0.045
+    Topaz Generating (CT peaker)     63688      0.773   1.145        660        694    2886      0.924   0.017
+    (full per-plant fit for all 100 resolved plants written to plant_hourly_fit.parquet)
+
+  [7b] Hours per 10% CF band — 2024 (model / CAMPD net; representative panel)
+                           plant         0%-10%  10%-20%  20%-30%  30%-40%  40%-50%  50%-60%  60%-70%  70%-80%  80%-90%  90%-100%
+                Colorado Bend II  model     570      325     1191      262      120       11       20      188     2825      3248
+                                  CAMPD     674      182      118      602     1474      142      121      264     1905      3278
+                  Wolf Hollow II  model     979      759      339      442      425       13      382      844     4565        12
+                                  CAMPD    1172       94       78     1042      639      168      242     1322     1395      2608
+                         Handley  model    3823     2176     1990      265       92      224       68       60       61         1
+                                  CAMPD    6851      527      575      162      117      200       65       73      182         8
+         Deer Park Energy Center  model       0        0        0        0        0      276      953     3901     3630         0
+                                  CAMPD       0        0      123      800      610      923     1138     2134     2865       167
+           Baytown Energy Center  model       0        0        0        0        0        0      599     3608     2771      1782
+                                  CAMPD       0        0      526      826      731     1375      841     2050     2377        34
+                Limestone (coal)  model    2612     1384      520      240      895      325       66      117     1456      1145
+                                  CAMPD    1839      864     1525      983     1213      729      402      604      549        52
+     W A Parish (coal units 5-8)  model    1442      934     1341     1180     1103      916      784      452      326       282
+                                  CAMPD     750     1290     1845     1193     1034      898      955      501      230        64
+       Stryker Creek (gas steam)  model    7372       75       92       48       43      331      187       27      322       263
+                                  CAMPD    5655      868      776      175       80      120      131      460      139       356
+        Morgan Creek (CT peaker)  model    6897      780      788      280       15        0        0        0        0         0
+                                  CAMPD    8533      117       37       26       20        8        5        8        3         3
+    Topaz Generating (CT peaker)  model    6258      614      182       10      168      385      514      387      137       105
+                                  CAMPD    6332      158      196      229      284      343      641      499       78         0
+
+================================================================================
+  ERCOT 2025 BACKCAST
+================================================================================
+
+  [1] CHP — 2025  (model grid LP + behind-meter must-run vs EIA-923 total)
+     class  grid LP  BTM-MR  model tot  EIA-923   diff %
+    CC_CHP    27.73   24.15      51.88    52.94     -2.0
+    CT_CHP     4.60    4.15       8.75     8.02     +9.2
+    ST_CHP     0.07    0.00       0.07     0.00  +4863.5
+     TOTAL    32.39   28.30      60.70    60.96     -0.4
+    (BTM-MR = behind-the-meter must-run, off-grid. CHP is excluded from every table below.)
+
+  [2] Grid generation reconciliation — 2025
+    EIA-930 net generation (Demand + Interchange)          487.49 TWh
+    Model demand target                                    487.49 TWh
+    Model grid generation (LP)                             487.99 TWh
+    Gap (model grid − EIA-930 net gen)                      +0.50 TWh
+    Unserved energy / load slack (should be 0)             0.0000 TWh
+    Behind-meter CHP must-run (off-grid; table [1] only)    29.86 TWh
+
+  [3] Non-CHP grid generation — 2025  (model LP vs EIA-930, CHP excluded)
+             fuel  model TWh  model %  EIA-930 TWh  EIA-930 %     Δpp
+    gas (non-CHP)     158.14     34.9       167.82       36.8    -2.0
+             coal      66.41     14.6        63.37       13.9    +0.7
+          nuclear      41.36      9.1        42.06        9.2    -0.1
+             wind     117.91     26.0       115.12       25.3    +0.7
+            solar      69.78     15.4        67.39       14.8    +0.6
+            TOTAL     453.60    100.0       455.75      100.0        
+    (EIA-930 non-CHP gas = EIA-930 all-gas − 32.4 TWh model CHP grid-delivered.)
+
+  [3b] Thermal by class — 2025  (model grid LP + behind-meter must-run vs EIA-923 total; coal split lignite/PRB)
+           class  grid LP  BTM-MR  model tot  EIA-923   diff %
+      CC_REGULAR   137.22    1.56     138.78   142.11     -2.3
+          CC_CHP    27.73   24.15      51.88    52.94     -2.0
+       CT_PEAKER     6.97    0.00       6.97     7.11     -2.1
+          CT_CHP     4.60    4.15       8.75     8.02     +9.2
+          ST_GAS    13.95    0.00      13.95    14.81     -5.8
+          ST_CHP     0.07    0.00       0.07     0.00  +4863.5
+    OTHER_FOSSIL     0.85    0.00       0.85     0.65    +31.5
+            COAL     0.00    0.00       0.00     0.00        —
+    COAL_LIGNITE    15.31    0.00      15.31    14.58     +5.0
+        COAL_PRB    51.10    0.00      51.10    47.63     +7.3
+        COAL_BIT     0.00    0.00       0.00     0.00        —
+         COAL_WC     0.00    0.00       0.00     0.00        —
+           TOTAL   257.81   29.86     287.67   287.86     -0.1
+
+  [3c] Non-fossil & residual by class — 2025  (oil = LP peaker; biomass / hydro / OTHER = must-run injected; vs EIA-923 total)
+      class    model  EIA-923  diff %
+        oil     0.00     0.06   -99.7
+    biomass     0.25     0.25    +0.0
+      hydro     0.02     0.02    +0.0
+      OTHER     0.87     0.87    -0.0
+      TOTAL     1.14     1.20    -4.9
+
+  [3d] Storage throughput — 2025  (model LP vs EIA-930 battery series where reported)
+      tech  dis TWh  chg TWh
+    li_ion     2.85     3.35
+    battery (930 window)    model  EIA-930  diff %
+           discharge TWh     2.85     5.44   -47.7
+              charge TWh     3.35     6.67   -49.8
+    benchmark coverage: 99% of hours reported
+
+  [3e] Renewable curtailment — 2025: no ERCOT HSL parquet; build with scripts/build_ercot_hsl.py (ERCOT 2024+ needs the NP6 report uploads under data/raw/ercot-hsl/np6/)
+
+  [4] Monthly bias — 2025   (% of EIA-923 per month; coal split; CHP incl. behind-meter)
+           class       Jan       Feb       Mar      Apr      May      Jun       Jul      Aug      Sep      Oct      Nov      Dec
+      CC_REGULAR      -0.3      -1.5      +4.3     +4.2     +0.8     -8.7      -4.3     -3.2     -8.0     -2.1     +1.5     -0.6
+          CC_CHP      -3.4      -0.0      -1.8     +1.9     -0.1     -1.7      -3.9     -5.0     -5.1     -2.9     +0.4     -0.4
+       CT_PEAKER     +18.3      +0.6      -9.5    -20.7    -10.9     -0.1      -3.0    +19.1     +5.1    -10.7    -17.1     -5.0
+          CT_CHP      +5.3     +12.7      +5.0    +18.7    +18.0     +7.9      +6.5     +6.9     +5.7    +11.8     +9.2     +7.5
+          ST_GAS     +15.3      +8.3     -13.4    -26.2    -14.3    -21.7     -10.3     +2.1    +16.5     +3.9    -13.2    -23.8
+          ST_CHP  +10637.7  +17195.3  +10199.3  +4360.1  +2924.6  +4812.5  +11098.6  +3607.9  +4712.7  +3142.0  +2797.2  +5645.5
+    OTHER_FOSSIL      -5.3      -8.8    -100.0   +258.7   +132.8   +360.5    +193.4    +86.6   +257.3    +89.4    +53.5  +1154.0
+            COAL         ·         ·         ·        ·        ·        ·         ·        ·        ·        ·        ·        ·
+    COAL_LIGNITE      +3.7     +12.4     +17.6     -6.4    -28.2    +21.1     +10.8     +6.5     -7.6     -7.6    +17.5     +4.9
+        COAL_PRB      -7.1     -10.7     -16.5     -0.3     +7.2    +32.4     +24.3    +24.9    +28.2     +3.4    -12.9     -8.2
+        COAL_BIT         ·         ·         ·        ·        ·        ·         ·        ·        ·        ·        ·        ·
+         COAL_WC         ·         ·         ·        ·        ·        ·         ·        ·        ·        ·        ·        ·
+            wind      +2.0      +2.2      +1.3     +1.5     +2.7     +2.4      +2.9     +3.8     +4.2     +3.1     +2.2     +2.4
+     solar (930)      +5.7      +4.6      +3.2     +0.9     +2.9     +3.0      +2.1     +4.0     +4.4     +4.8     +4.8     +3.6
+         nuclear      +0.1      -2.0      -1.7     -0.2     -0.0     -0.4      +0.2     -0.4     -0.3     -0.4     -0.3     -2.3
+
+  [5] Hourly dispatch fit — 2025 (model vs EIA-930, non-CHP gas)
+             fuel  Pearson r   NRMSE  model TWh  EIA-930 TWh
+    gas (non-CHP)      0.981   0.112     158.14       167.82
+             coal      0.780   0.194      66.41        63.37
+          nuclear      0.714   0.076      41.36        42.06
+            solar      0.999   0.081      69.78        67.39
+             wind      0.999   0.035     117.91       115.12
+
+  [6] Plant-level annual generation — 2025 (EIA-923)
+                           plant  EIA code  model GWh  EIA-923 GWh  diff %       class
+                Colorado Bend II     60122       6607         6072    +8.8  CC_REGULAR
+                  Wolf Hollow II     59812       5199         5438    -4.4  CC_REGULAR
+                         Handley      3491       1638          894   +83.2      ST_GAS
+         Deer Park Energy Center     55464       5153         7822   -34.1      CC_CHP
+           Baytown Energy Center     55327       2779         3747   -25.8      CC_CHP
+           Hidalgo Energy Center     55545       3893         2721   +43.1  CC_REGULAR
+                Limestone (coal)       298       8947         7523   +18.9    COAL_PRB
+     W A Parish (coal units 5-8)      3470      13283        15579   -14.7    COAL_PRB
+       Stryker Creek (gas steam)      3504        531         1356   -60.9      ST_GAS
+        Morgan Creek (CT peaker)      3492        178            0       —   CT_PEAKER
+    Topaz Generating (CT peaker)     63688        647          599    +8.0   CT_PEAKER
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+
+  [7] Per-plant hourly dispatch fit — 2025 (model vs CAMPD net; representative panel)
+                           plant  EIA code  Pearson r   NRMSE  model GWh  CAMPD GWh  op hrs  band ovlp  CF EMD
+                Colorado Bend II     60122      0.828   0.336       6607       6102    7828      0.672   0.093
+                  Wolf Hollow II     59812      0.880   0.303       5199       5505    7280      0.810   0.038
+                         Handley      3491      0.733   1.722       1638        898    2798      0.560   0.089
+         Deer Park Energy Center     55464      0.725   0.227       8758       7804    8760      0.710   0.088
+           Baytown Energy Center     55327      0.664   0.525       5639       3973    8756      0.444   0.211
+           Hidalgo Energy Center     55545          —       —          —          —       —          —       —
+                Limestone (coal)       298      0.770   0.506       8947       7471    8496      0.492   0.158
+     W A Parish (coal units 5-8)      3470      0.787   0.283      16366      15511    8760      0.881   0.036
+       Stryker Creek (gas steam)      3504      0.482   1.426        531       1356    4484      0.657   0.142
+        Morgan Creek (CT peaker)      3492      0.232  10.387        178         38     349      0.817   0.040
+    Topaz Generating (CT peaker)     63688      0.708   1.397        647        609    2804      0.915   0.019
+    (full per-plant fit for all 100 resolved plants written to plant_hourly_fit.parquet)
+
+  [7b] Hours per 10% CF band — 2025 (model / CAMPD net; representative panel)
+                           plant         0%-10%  10%-20%  20%-30%  30%-40%  40%-50%  50%-60%  60%-70%  70%-80%  80%-90%  90%-100%
+                Colorado Bend II  model     949      715      867       79      168        5       14      315     2812      2836
+                                  CAMPD     948      409      159     1154      893      178      224      478     3342       975
+                  Wolf Hollow II  model    1620      592      412      853     1006        9      240     1045     2482       501
+                                  CAMPD    1492      346      162     1391      715      127      165      371     2814      1177
+                         Handley  model    3395     2672     1920      198      302       88       42       49       94         0
+                                  CAMPD    6983      514      458      165      101      168      109       55       92       115
+         Deer Park Energy Center  model       0        0        0        0        0      391      647     4490     3232         0
+                                  CAMPD       0        0      120      915      617      928      732     2252     2930       266
+           Baytown Energy Center  model       0        0        0        0        8     1246     2636     2768     1384       718
+                                  CAMPD       5       81     1630     2082     1021     1307      569      703     1181       181
+                Limestone (coal)  model     136     1299     1954      391      560       29        2      630      992      2767
+                                  CAMPD     276      238     1325     1909     1544      552      627     1073     1207         9
+     W A Parish (coal units 5-8)  model     131      600     1065     1143     1137     1565     1198     1194      476       251
+                                  CAMPD      14      681     1014     1182     1348     2018     1457      848      183        15
+       Stryker Creek (gas steam)  model    7663       31       24       23       18      219      222       13      185       362
+                                  CAMPD    4678     1120      626      253      150      205      215      644      199       670
+        Morgan Creek (CT peaker)  model    6952      899      776      133        0        0        0        0        0         0
+                                  CAMPD    8485      120       51       37       19       34        5        3        1         5
+    Topaz Generating (CT peaker)  model    6233      660      130       13      268      461      473      230      168       124
+                                  CAMPD    6371      236      218      289      375      514      385      311       61         0
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+
+  [7c] operating-shape regression gate vs keeper baseline (cf_emd <= base+0.02; r >= base-0.02)
+  class        year   cf_emd   base  gate       r   base  gate
+  CC_CHP       2023    0.160  0.124  FAIL   0.645  0.599  PASS
+  CC_CHP       2024    0.161  0.118  FAIL   0.620  0.614  PASS
+  CC_CHP       2025    0.173  0.127  FAIL   0.618  0.616  PASS
+  CC_REGULAR   2023    0.120  0.088  FAIL   0.714  0.757  FAIL
+  CC_REGULAR   2024    0.113  0.098  PASS   0.706  0.759  FAIL
+  CC_REGULAR   2025    0.115  0.100  PASS   0.734  0.744  PASS
+  COAL         2023    0.093  0.082  PASS   0.779  0.802  FAIL
+  COAL         2024    0.082  0.073  PASS   0.784  0.802  PASS
+  COAL         2025    0.098  0.085  PASS   0.699  0.705  PASS
+  CT_CHP       2023    0.077  0.097  PASS   0.194  0.197  PASS
+  CT_CHP       2024    0.108  0.123  PASS   0.098  0.074  PASS
+  CT_CHP       2025    0.080  0.096  PASS   0.142  0.151  PASS
+  CT_PEAKER    2023    0.071  0.081  PASS   0.564  0.544  PASS
+  CT_PEAKER    2024    0.084  0.080  PASS   0.512  0.466  PASS
+  CT_PEAKER    2025    0.071  0.073  PASS   0.467  0.475  PASS
+  ST_GAS       2023    0.079  0.069  PASS   0.764  0.761  PASS
+  ST_GAS       2024    0.103  0.098  PASS   0.634  0.631  PASS
+  ST_GAS       2025    0.113  0.115  PASS   0.669  0.654  PASS
+  [7c] operating-shape gate: 7 regression(s)
+ercot40 done: /home/user/market-simulator/results/calibration/ercot_rtolcap_forward_v1

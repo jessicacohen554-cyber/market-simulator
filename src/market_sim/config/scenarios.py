@@ -1560,6 +1560,22 @@ class ScenarioConfig:
     # exists 2023+); the cap is physically correct in every ORDC-regime year. The
     # 2025 RTC+B go-live tail (post 2025-12-05) has no measured RTOLCAP and is
     # left uncapped (the cap series fills those hours with no constraint).
+    ercot_reserve_supply_forward: bool = False  # ERCOT: source the RTOLCAP /
+    # RTOFFCAP reserve-supply cap from the FORWARD FORMULA
+    # (scarcity.ercot_rtolcap_forward_supply_cap_mw) instead of the measured
+    # ercot_<year>_ordc_reserves_hourly.parquet — the WS-A forward analogue of the
+    # last measured AS-path lever (docs/handoffs/ercot-rtolcap-forward-2026-07.md).
+    # The cap is rebuilt from the model's own forecast net-load, the derived per-
+    # class on-line headroom-realization shares (ERCOT_RTOLCAP_FWD_ONLINE_SHARE)
+    # and the fleet's evolving reserve-eligible capacity, so it REGENERATES for a
+    # forecast year and responds to changed conditions (rule #10). The seam is
+    # mode-aware exactly like ercot_load_resource_reserve_credit_mw (G4):
+    # **backcast with this flag OFF** returns the measured parquet byte-identical
+    # (the validation target); **forecast OR this flag ON** returns the formula.
+    # Setting it True in backcast is the run-163-style one-delta probe that proves
+    # the formula carries the measured cap's role. Default off; ERCOT-only; GATED.
+    # The formula never reads the LP's commitment/output state (anti-F3/F4) and
+    # never a price (honesty gate: RTOLCAP MW quantity only).
     pjm_reserve_supply_cap: bool = False  # PJM analogue of ercot_reserve_supply_cap:
     # cap the energy+reserve co-opt's cleared reserve at the fleet's 10-min
     # DELIVERABLE ramp (FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax,
@@ -3726,6 +3742,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_as_adequacy_frac": 2,
     "ercot_reserve_supply_cap": 1,
     "ercot_reserve_supply_cap_from_year": 1,
+    "ercot_reserve_supply_forward": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
