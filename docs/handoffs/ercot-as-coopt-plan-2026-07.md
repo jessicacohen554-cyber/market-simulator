@@ -54,7 +54,7 @@ must start from this inventory, not from G1's original text.
 | Load-resource RRS-UFR credit, mode-aware (G4) | `ercot_load_resource_reserve`; `scarcity.ercot_load_resource_reserve_credit_mw` | **BUILT, in keeper** — backcast = measured NP3-911 (admissible input), forecast = enrollment forward | run165 |
 | AS-aware P2 commitment | `ercot_as_aware_commitment` | **BUILT, SHELVED** — rejected probe | run160; **ercot27** |
 | Measured DAM-AS overlay | `ercot_dam_as_overlay` (calibration flag) | **in keeper — the thing this plan retires** | ercot32 |
-| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **fallback active** — no NP6 upload for 2024/25; reference-rate gross-up (G7) | P4 remainder — **intake attempted 2026-07-05, blocked on ERCOT account credentials, see WS-E** |
+| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **fallback active** — no NP6 upload for 2024/25; reference-rate gross-up (G7) | P4 remainder — **intake CLOSED PERMANENTLY 2026-07-05 (owner will not procure a data.ercot.com key); G7 is the standing approach, do not re-attempt — see WS-E** |
 
 **The current keeper (ercot32) is P1-only** — `passes=["P1"]`, no commitment of
 any kind. That is a settled decision (ercot27 verdict), not an open question.
@@ -226,7 +226,21 @@ run165 closed it (backcast = measured NP3-911, an admissible input; forecast =
 enrollment trajectory × availability shape). Integration only: the stage-4 run
 inherits `ercot_load_resource_reserve=True` unchanged.
 
-### WS-E — HSL completion remainder (P4) — **ATTEMPTED, BLOCKED (2026-07-05)**
+### WS-E — HSL completion remainder (P4) — **CLOSED PERMANENTLY (2026-07-05)**
+
+> **Intake permanently closed — do not re-attempt (owner decision, 2026-07-05).**
+> The NP6 HSL API intake is closed for good: the owner is **not** procuring a
+> `data.ercot.com` / `api.ercot.com` subscription key, so the `401 missing
+> subscription key` block on the Data Access Portal is permanent, not a
+> transient egress failure. The **G7 reference-curtailment-rate gross-up is the
+> standing approach** for ERCOT 2024/25 HSL — it is already forward-admissible
+> (rule 13), so this is a permanently-accepted fidelity ceiling, not an open
+> gap. No future session should re-attempt the NP6 HSL intake, re-open the
+> credential path, or treat the G7 fallback as provisional. The
+> `scripts/build_ercot_hsl.py` builder still transparently ingests an NP6
+> upload if one ever lands by another route, but nobody should go looking for
+> one. Supersedes the "ATTEMPTED, BLOCKED" wording below (kept as the record of
+> the attempt).
 
 ERCOT 2024/25 still have **no NP6 HSL parquet**; `hsl_potential_mw` falls back
 to the reference-curtailment-rate gross-up (G7). Relevance to this plan: the AS
@@ -348,7 +362,7 @@ add a tuned mechanism.
 | 0 | Overlay decomposition + ercot32-ex-overlay re-baseline on current main (WS-F) | — | S |
 | 1 | WS-A forward RTOLCAP/RTOFFCAP supply formula + one-delta backcast probe | 0 | M-L |
 | 2 | WS-B storage duration gates + one-delta endogenous-storage probe | 0 (parallel with 1) | M |
-| 3 | WS-E NP6 HSL 2024/25 intake (egress-permitting) | — (parallel) | S-M — **attempted 2026-07-05, blocked (credentials); G7 fallback stands** |
+| 3 | WS-E NP6 HSL 2024/25 intake (egress-permitting) | — (parallel) | **CLOSED PERMANENTLY 2026-07-05** — owner will not procure a data.ercot.com key; G7 fallback is the standing approach, do not re-attempt |
 | 4 | Integration run `ercot40`, gates G-1…G-7, keeper decision, dashboard | 1+2 (+3 if landed) | M |
 | 5 | Forward-mode proof: 2026+ RTC+B forecast run, zero measured AS reads, ensemble sanity | 4 | S-M |
 
