@@ -82,10 +82,12 @@ from market_sim.model.storage import (
     storage_units_to_arrays,
 )
 from market_sim.config.interchange_config import (
+    apply_interchange_topology,
     build_interchange_fleet,
     get_interchange_spec,
 )
 from market_sim.model.transmission import (
+    apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
     get_link_bidirectional_array,

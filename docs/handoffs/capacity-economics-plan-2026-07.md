@@ -26,6 +26,44 @@ block (§4) remain for later stages. Implementation prompt in §9.
 > the tornado FOM-band re-centring + `fom_and_scarcity` paired perturbation (re-centring bands on
 > defaults that have not moved would misreport the base case). No CAISO change (collision with the
 > live scalar remediation). No 2022/H1-2026 solve.
+
+> ### Stage-1 reconciliation note (2026-07-05, PR #1413 rebase)
+>
+> The implementation leg of this workstream — **the §3 floor-accreditation redesign
+> (prerequisite A above), the §2.3 entering-year known-peak substitution, the §2.2/§2.3
+> EWMA + lookahead price-signal stack (default off), the foresight A/B harness, and the
+> joint FOM+scarcity grid + revenue-side audit harnesses** — landed via PR #1413, rebased
+> onto and reconciled with the already-merged Stage-1 decision leg (#1417) and the
+> intervening merges #1414 (announced-retirements rename + confirmed-exits channel),
+> #1410/#1415 (evolution-ledger out-params), and #1416 (forecast-path AS admissibility
+> guard). Two facts about the original decision text above are reconciled here **without
+> rewriting it** (the decision stands):
+>
+> 1. **The "nameplate reliability floor" that made FOM inert is now replaced.** The §3
+>    rebuild retires the raw-nameplate floor (`(peak − hydro) × 1.15`) in favour of the
+>    accredited-basis floor (`accredited_firm_capacity_mw` UCAP/ELCC vs
+>    `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`), with the CO₂-aware retention tie-break
+>    and the `floor_retention_log` attribution. So the specific mechanism the decision cited
+>    ("nameplate floor ≈100 GW > ~72 GW fleet retains 100 % of thermal") no longer exists as
+>    described — its dominant-blocker (A) is now implemented.
+> 2. **The ATB FOM defaults remain UNFLIPPED (CT 8 / CC 12 / coal 40).** Landing the floor
+>    mechanism does **not** by itself license the flip: per plan §5.4 the flip is gated on a
+>    **re-run of the §5 grid against the new accredited floor** (to establish whether FOM is
+>    still inert or now moves MW/CO₂) **and** prerequisite B (the revenue-side ORDC/co-opt
+>    fix). Neither the grid re-run nor the tornado FOM-band re-centring is performed in this
+>    landing — they are forecast probes, not required to land the mechanism, and re-centring
+>    bands on unmoved defaults would still misreport the base case (rule 1). The
+>    `fom-scarcity-grid-2026-07-05.json` numbers and the fom-scarcity-joint-protocol report's
+>    §2.1/§4 "FOM is inert" tables were produced against the **old nameplate floor** and are
+>    now **stale for the accredited floor**; they remain valid as the record of the Stage-1
+>    decision but must be regenerated before the flip.
+> 3. **Foresight A/B artifacts are stale.** The A/B code path (`evolve_fleet` signature, the
+>    accredited floor, the entering-year known-peak) changed in this rebase, so any
+>    pre-rebase local A/B run is invalid. No A/B results doc/JSON is committed on this branch
+>    (only the `run_foresight_ab.py` harness); the harness must be re-run on the reconciled
+>    code before its metrics are quoted or any arm is promoted (plan §2.4 decision rule).
+>    Re-running is a multi-year forecast solve — deferred, not blocking the landing.
+
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
 `docs/forecast-methodology-gaps-2026-06.md` (scarcity/AS revenue understatement),
