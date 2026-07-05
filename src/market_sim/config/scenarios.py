@@ -3987,28 +3987,94 @@ TIER_TAGS: dict[str, int] = {
 
 @dataclass
 class SweepDefinition:
-    """A parameter sweep that expands into multiple ``ScenarioConfig`` objects."""
+    """A parameter sweep, or a named-case matrix, expanding into ``ScenarioConfig``\\ s.
+
+    Two mutually-exclusive expansion modes, gated on which mapping is
+    non-empty:
+
+    - ``sweep``: the original cartesian mode — a ``{field: [values]}`` mapping
+      expands to every combination (``len(values_1) x len(values_2) x ...``
+      configs).
+    - ``cases``: the PB-1 named-case mode (probability-bounds-plan-2026-07.md
+      §1.3) — a ``{case_name: {field: value}}`` mapping expands to exactly one
+      config per named case, e.g. the 13-case AEO/IPM-style scenario matrix in
+      ``configs/scenario_matrix.yaml``. Unlike ``sweep``, case identity
+      (the name) is preserved via :meth:`case_configs` so downstream output
+      (the scenario-matrix trajectory table) can label each member.
+
+    Both modes expand *onto* an optional ``base_config`` (every existing
+    field of the base is carried through unchanged except the named
+    overrides), defaulting to ``ScenarioConfig()`` when none is given —
+    reusing this one engine for both the sweep CLI (no base) and the matrix
+    CLI (explicit ``--config`` base), per PP-1.1's instruction not to write a
+    second sweep engine.
+    """
 
     sweep: dict[str, list] = field(default_factory=dict)
+    cases: dict[str, dict] = field(default_factory=dict)
     mode: str = "factorial"
 
-    def generate(self) -> list[ScenarioConfig]:
-        """Expand the sweep into a list of configs (cartesian product)."""
+    def __post_init__(self) -> None:
+        """Reject a definition that sets both expansion modes at once."""
+        if self.sweep and self.cases:
+            raise ValueError(
+                "SweepDefinition.sweep and SweepDefinition.cases are "
+                "mutually exclusive -- a sweep/matrix file must use one "
+                "expansion mode, not both"
+            )
+
+    def generate(
+        self, base_config: ScenarioConfig | None = None
+    ) -> list[ScenarioConfig]:
+        """Expand into a list of configs (cartesian ``sweep``, or ``cases`` in order).
+
+        Args:
+            base_config: Config every expanded member overrides onto.
+                Defaults to ``ScenarioConfig()``.
+        """
+        base = base_config if base_config is not None else ScenarioConfig()
+        if self.cases:
+            return list(self.case_configs(base).values())
         if not self.sweep:
-            return [ScenarioConfig()]
+            return [base]
         names = list(self.sweep.keys())
         value_lists = [self.sweep[name] for name in names]
         configs = []
         for combo in itertools.product(*value_lists):
             overrides = dict(zip(names, combo))
-            configs.append(ScenarioConfig().with_overrides(**overrides))
+            configs.append(base.with_overrides(**overrides))
         return configs
+
+    def case_configs(
+        self, base_config: ScenarioConfig | None = None
+    ) -> dict[str, ScenarioConfig]:
+        """Expand ``cases`` into ``{case_name: config}``, preserving YAML order.
+
+        Args:
+            base_config: Config every named case overrides onto. Defaults to
+                ``ScenarioConfig()``.
+
+        Raises:
+            ValueError: If ``cases`` is empty (this definition is a ``sweep``,
+                not a named-case matrix).
+        """
+        if not self.cases:
+            raise ValueError(
+                "case_configs requires a non-empty 'cases' mapping; this "
+                "SweepDefinition has none (it may be a cartesian 'sweep')"
+            )
+        base = base_config if base_config is not None else ScenarioConfig()
+        return {
+            name: base.with_overrides(**overrides)
+            for name, overrides in self.cases.items()
+        }
 
     @classmethod
     def from_yaml(cls, path) -> "SweepDefinition":
-        """Load a sweep definition from a YAML file at ``path``."""
+        """Load a sweep or named-case matrix definition from a YAML file."""
         data = yaml.safe_load(Path(path).read_text()) or {}
         return cls(
             sweep=data.get("sweep", {}),
+            cases=data.get("cases", {}),
             mode=data.get("mode", "factorial"),
         )
