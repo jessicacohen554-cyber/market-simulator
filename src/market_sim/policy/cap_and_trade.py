@@ -30,6 +30,7 @@ import numpy as np
 from market_sim.config.constants import (
     CAP_AND_TRADE_PROGRAMS,
     CARB_ALLOWANCE_BUDGET,
+    RGGI_MEMBER_STATES_BY_YEAR,
     RGGI_STATE_CO2_BUDGET,
     SHORT_TON_TO_METRIC_TONNE,
     STATE_CARBON_PRICE_BY_ISO,
@@ -88,18 +89,42 @@ class CarbonProgramResolution:
             )
 
 
-def _membership(program: CapAndTradeProgram, zone_names: list[str]) -> np.ndarray:
-    """Return the per-zone membership weight ``m_zone`` for ``program``.
+def _zone_share_for_year(year_shares: "dict[int, float] | None", year: int) -> float:
+    """Return one zone's membership share for ``year`` from its ``{year: share}`` map.
+
+    Exact match when available; otherwise holds at the nearest computed year
+    (the fleet's state-mix composition is assumed static outside the derived
+    window — a structural, forecast-reproducible assumption, never a
+    residual-tuned choice, mirroring how :func:`projected_price` anchors on
+    the last measured value). Returns ``0.0`` for an absent/empty map (a zone
+    with no member-state fossil fleet at all).
+    """
+    if not year_shares:
+        return 0.0
+    if year in year_shares:
+        return float(year_shares[year])
+    nearest = min(year_shares, key=lambda y: abs(y - year))
+    return float(year_shares[nearest])
+
+
+def _membership(
+    program: CapAndTradeProgram, zone_names: list[str], year: int
+) -> np.ndarray:
+    """Return the per-zone membership weight ``m_zone`` for ``program``/``year``.
 
     Uniform 1.0 on every load zone (0.0 on named external/import nodes) unless
     the program supplies a fractional ``zone_share`` map (PJM's multi-state
-    roll-up zones), in which case each zone takes its mapped share (absent →
-    0.0). Forecast-reproducible: state boundaries and zone definitions are
-    fixed (plan §5).
+    roll-up zones), in which case each zone takes its mapped share for
+    ``year`` (:func:`_zone_share_for_year`; absent zone → 0.0). This is the
+    *zone-level* membership consumed by the adder path and by any generator a
+    per-unit lookup can't resolve (see :func:`per_generator_membership`).
+    Forecast-reproducible: state boundaries and zone definitions are fixed
+    (plan §5).
     """
     if program.zone_share is not None:
         return np.array(
-            [float(program.zone_share.get(z, 0.0)) for z in zone_names], dtype=float
+            [_zone_share_for_year(program.zone_share.get(z), year) for z in zone_names],
+            dtype=float,
         )
     external = set(program.external_nodes)
     return np.array([0.0 if z in external else 1.0 for z in zone_names], dtype=float)
@@ -140,7 +165,7 @@ def projected_price(program: CapAndTradeProgram, iso: str, year: int) -> float:
 
 
 def resolve_carbon_program(
-    config: ScenarioConfig, year: int
+    config: ScenarioConfig, year: int, zone_names: list[str] | None = None
 ) -> CarbonProgramResolution | None:
     """Resolve the ISO's active carbon program for ``year``.
 
@@ -164,9 +189,18 @@ def resolve_carbon_program(
     Args:
         config: Scenario config supplying ``iso``, ``mode`` and the toggles.
         year: Simulation year.
-
-    Returns:
-        The resolution, or ``None`` when no program applies.
+        zone_names: Optional override of the ISO's model zones. Defaults to
+            the static :func:`get_iso_config` topology; callers that have
+            already extended the topology with an import/external node at
+            runtime (``runner.py``'s ``apply_interchange_topology``, e.g.
+            PJM's dynamically-appended external zone) MUST pass that extended
+            list — the mass-cap row's per-generator coefficient vector is
+            broadcast by ``fleet_arrays.zone_idx``, which indexes into the
+            *runtime* zone list, not the static one. Passing the static list
+            when the runtime topology is longer under-sizes ``membership``
+            and index-errors downstream (the external node then implicitly
+            gets 0.0 membership once included, as it should since it is
+            outside the capped region — plan §4 leakage).
     """
     program = CAP_AND_TRADE_PROGRAMS.get(config.iso)
     if program is None:
@@ -174,8 +208,9 @@ def resolve_carbon_program(
     if not getattr(config, "state_carbon_pricing", True):
         return None
 
-    zone_names = get_iso_config(config.iso).zone_names
-    membership = _membership(program, zone_names)
+    if zone_names is None:
+        zone_names = get_iso_config(config.iso).zone_names
+    membership = _membership(program, zone_names, year)
 
     # Row path: a genuine power-sector budget is configured for this run.
     if getattr(config, "mass_cap_enabled", False):
@@ -212,10 +247,15 @@ def _published_power_sector_budget(
     * **CARB** — :data:`CARB_ALLOWANCE_BUDGET` (MMT CO2e; 1 CA GHG allowance = 1
       metric tonne) scaled by ``1e6``. This is the whole-economy cap, so a CAISO
       power-sector row against it is deeply slack (plan §2).
-    * **RGGI** — the regional :data:`RGGI_STATE_CO2_BUDGET` total (short tons)
-      converted at :data:`SHORT_TON_TO_METRIC_TONNE`. A single RGGI ISO's
-      power-sector row against the region-wide budget is an over-bound, so also
-      slack; per-state refinement awaits the RGGI allowance-distribution intake.
+    * **RGGI** — the SUM of the program's own member states' published
+      per-state budgets (:data:`RGGI_STATE_CO2_BUDGET`, short tons, converted
+      at :data:`SHORT_TON_TO_METRIC_TONNE`) for the states that are actual
+      RGGI members in ``year`` (:data:`RGGI_MEMBER_STATES_BY_YEAR` ∩
+      ``program.member_states`` — e.g. Virginia's row only counts toward
+      PJM's 2023 budget). Falls back to the regional
+      :data:`RGGI_STATE_CO2_BUDGET`\\ ``["RGGI"]`` total — a looser over-bound
+      — only for years without a per-state breakdown (the 2027-2030
+      projections).
 
     Returns ``None`` when the program has no published budget for ``year``
     (e.g. a holdout-quarantined year, or PJM which carries no budget), leaving
@@ -225,6 +265,16 @@ def _published_power_sector_budget(
         mmt = CARB_ALLOWANCE_BUDGET.get(year)
         return None if mmt is None else float(mmt) * 1.0e6
     if program.name == "RGGI":
+        member_states = RGGI_MEMBER_STATES_BY_YEAR.get(year)
+        if member_states is not None:
+            states = [s for s in program.member_states if s in member_states]
+            per_state = [
+                RGGI_STATE_CO2_BUDGET[s][year]
+                for s in states
+                if year in RGGI_STATE_CO2_BUDGET.get(s, {})
+            ]
+            if per_state:
+                return sum(per_state) * SHORT_TON_TO_METRIC_TONNE
         short_tons = RGGI_STATE_CO2_BUDGET.get("RGGI", {}).get(year)
         return (
             None
@@ -262,3 +312,84 @@ def _power_sector_cap(
         return None
     label = getattr(config, "mass_cap_program", None) or program.name.lower()
     return MassCapSpec(membership=membership, cap_tons=float(cap_tons), label=label)
+
+
+# Cache of {iso: {plant_code: state}}, populated on first use per ISO (mirrors
+# data.zone_assignment's own per-process eGRID cache).
+_PLANT_STATE_CACHE: dict[str, dict[int, str]] = {}
+
+
+def _plant_state_lookup(iso: str) -> dict[int, str]:
+    """Return (and cache) ``{plant_code: state}`` for ``iso`` from EIA-860."""
+    cached = _PLANT_STATE_CACHE.get(iso)
+    if cached is None:
+        from market_sim.data.zone_assignment import plant_state_lookup
+
+        cached = plant_state_lookup(iso)
+        _PLANT_STATE_CACHE[iso] = cached
+    return cached
+
+
+def per_generator_membership(
+    iso: str,
+    year: int,
+    zone_membership: np.ndarray,
+    fleet_arrays,
+    plant_state: "dict[int, str] | None" = None,
+) -> np.ndarray:
+    """Return the per-generator membership weight ``m[g]``, per-unit where possible.
+
+    Starts from the zone-level broadcast (``zone_membership[fleet_arrays.
+    zone_idx]`` — today's approximation, exact for CAISO/NYISO/NEISO where
+    membership is uniform, and PJM's fractional fallback for zones the fleet
+    representation can't resolve further) and then, for every generator whose
+    ``plant_code`` names a real physical plant (``plant_code > 0``), overrides
+    it with the EXACT membership test against that plant's own state: 1.0 if
+    the state is a program member in ``year``
+    (:data:`RGGI_MEMBER_STATES_BY_YEAR` for RGGI; ``program.member_states`` for
+    CARB, which is static), else 0.0. A unit with no resolvable state (missing
+    from the EIA-860 plant file) or a synthetic aggregate unit (``plant_code
+    <= 0`` — a legacy equal-width heat-rate bin spanning many plants/states)
+    keeps the zone-level fallback (plan §5, §9.6).
+
+    Args:
+        iso: Model ISO name.
+        year: Simulation year (selects the RGGI member-state set).
+        zone_membership: The :class:`MassCapSpec`/adder-path ``m_zone``
+            vector (len ``n_zones``) to broadcast as the fallback.
+        fleet_arrays: The scenario's ``FleetArrays`` (needs ``zone_idx`` and
+            ``plant_code``).
+        plant_state: Optional injected ``{plant_code: state}`` map (for
+            tests); defaults to the real EIA-860-backed, per-ISO-cached
+            lookup (:func:`market_sim.data.zone_assignment.plant_state_lookup`).
+
+    Returns:
+        Per-generator membership array, shape ``(n_gen,)``.
+    """
+    baseline = np.asarray(zone_membership, dtype=float)[fleet_arrays.zone_idx]
+    program = CAP_AND_TRADE_PROGRAMS.get(iso)
+    if program is None or not program.member_states:
+        return baseline
+
+    lookup = _plant_state_lookup(iso) if plant_state is None else plant_state
+    if not lookup:
+        return baseline
+
+    member_states = (
+        RGGI_MEMBER_STATES_BY_YEAR.get(
+            year, RGGI_MEMBER_STATES_BY_YEAR[max(RGGI_MEMBER_STATES_BY_YEAR)]
+        )
+        if program.name == "RGGI"
+        else frozenset(program.member_states)
+    )
+
+    out = baseline.copy()
+    codes = np.asarray(fleet_arrays.plant_code, dtype=int)
+    for i, code in enumerate(codes):
+        if code <= 0:
+            continue
+        state = lookup.get(int(code))
+        if state is None:
+            continue
+        out[i] = 1.0 if state in member_states else 0.0
+    return out

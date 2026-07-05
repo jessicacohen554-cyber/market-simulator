@@ -8,6 +8,7 @@ from market_sim.policy.cap_and_trade import (
     CarbonProgramResolution,
     MassCapSpec,
     measured_price,
+    per_generator_membership,
     projected_price,
     resolve_carbon_program,
 )
@@ -53,13 +54,42 @@ class TestMembership:
         # North, Central, Boston, Connecticut member (1.0); HQ_import (0.0).
         np.testing.assert_array_equal(res.membership, [1.0, 1.0, 1.0, 1.0, 0.0])
 
-    def test_pjm_ships_off_all_zero_membership(self):
-        # PJM_RGGI_ZONE_SHARE empty until the EIA-860→state crosswalk lands, so
-        # the fractional adder is a no-op (plan §5, §11).
+    def test_pjm_fractional_membership_from_eia860_crosswalk(self):
+        # PJM_RGGI_ZONE_SHARE is populated from the EIA-860→state crosswalk
+        # (plan §5): most zones are non-member, EMAAC/SWMAAC are mostly
+        # member (NJ/DE/MD), Dominion (VA+NC) drops to 0 after VA's 2024 exit.
         res = resolve_carbon_program(ScenarioConfig(iso="PJM", mode="backcast"), 2024)
         assert res is not None
-        np.testing.assert_array_equal(res.membership, np.zeros(res.membership.size))
+        zone_names = [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI",
+            "PJM_West_APS",
+            "PJM_Central_PA",
+            "PJM_Dominion",
+            "PJM_EMAAC",
+            "PJM_SWMAAC",
+        ]
+        np.testing.assert_array_equal(
+            res.membership,
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7252, 0.9976],
+        )
+        assert len(zone_names) == res.membership.size
+        # The adder path stays inert: PJM has no measured price series.
         assert res.price_adder == 0.0
+
+    def test_pjm_dominion_membership_reflects_virginia_exit(self):
+        # PJM_Dominion (VA+NC) is ~0.99 member in 2023 (VA still in RGGI) and
+        # 0.0 from 2024 (VA exited 1 Jan 2024) — the year-aware zone_share.
+        dominion_idx = 5
+        res_2023 = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast"), 2023
+        )
+        res_2024 = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast"), 2024
+        )
+        assert res_2023.membership[dominion_idx] == pytest.approx(0.9881)
+        assert res_2024.membership[dominion_idx] == 0.0
 
 
 class TestNoProgram:
@@ -138,9 +168,9 @@ class TestCapPath:
         assert res.cap_spec is not None
         assert res.cap_spec.cap_tons == pytest.approx(CARB_ALLOWANCE_BUDGET[2024] * 1e6)
 
-    def test_rggi_row_uses_regional_budget_in_metric_tonnes(self):
-        # A RGGI ISO's row RHS is the regional short-ton budget converted to
-        # metric tonnes (the model's internal emission-rate unit).
+    def test_rggi_row_uses_member_state_budget_in_metric_tonnes(self):
+        # A RGGI ISO's row RHS is the SUM of its own member states' published
+        # budgets (not the region-wide over-bound) converted to metric tonnes.
         from market_sim.config.constants import (
             RGGI_STATE_CO2_BUDGET,
             SHORT_TON_TO_METRIC_TONNE,
@@ -149,8 +179,56 @@ class TestCapPath:
         res = resolve_carbon_program(
             ScenarioConfig(iso="NYISO", mode="backcast", mass_cap_enabled=True), 2025
         )
-        expected = RGGI_STATE_CO2_BUDGET["RGGI"][2025] * SHORT_TON_TO_METRIC_TONNE
+        expected = RGGI_STATE_CO2_BUDGET["NY"][2025] * SHORT_TON_TO_METRIC_TONNE
         assert res.cap_spec.cap_tons == pytest.approx(expected)
+        # The per-state sum is strictly tighter than the old regional over-bound.
+        assert (
+            res.cap_spec.cap_tons
+            < RGGI_STATE_CO2_BUDGET["RGGI"][2025] * SHORT_TON_TO_METRIC_TONNE
+        )
+
+    def test_neiso_row_sums_its_six_member_states(self):
+        # NEISO's row is CT+ME+MA+NH+RI+VT's budgets summed, not NY's or the
+        # full regional total.
+        from market_sim.config.constants import (
+            RGGI_STATE_CO2_BUDGET,
+            SHORT_TON_TO_METRIC_TONNE,
+        )
+
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="NEISO", mode="backcast", mass_cap_enabled=True), 2025
+        )
+        expected_short_tons = sum(
+            RGGI_STATE_CO2_BUDGET[s][2025] for s in ("CT", "ME", "MA", "NH", "RI", "VT")
+        )
+        assert res.cap_spec.cap_tons == pytest.approx(
+            expected_short_tons * SHORT_TON_TO_METRIC_TONNE
+        )
+
+    def test_pjm_row_drops_virginia_after_2023(self):
+        # PJM's member-state budget sum includes VA only in 2023; from 2024 it
+        # is MD+DE+NJ only (VA's 2024-01-01 exit, RGGI_MEMBER_STATES_BY_YEAR).
+        from market_sim.config.constants import (
+            RGGI_STATE_CO2_BUDGET,
+            SHORT_TON_TO_METRIC_TONNE,
+        )
+
+        res_2023 = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast", mass_cap_enabled=True), 2023
+        )
+        res_2024 = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast", mass_cap_enabled=True), 2024
+        )
+        expected_2023 = sum(
+            RGGI_STATE_CO2_BUDGET[s][2023] for s in ("MD", "DE", "NJ", "VA")
+        )
+        expected_2024 = sum(RGGI_STATE_CO2_BUDGET[s][2024] for s in ("MD", "DE", "NJ"))
+        assert res_2023.cap_spec.cap_tons == pytest.approx(
+            expected_2023 * SHORT_TON_TO_METRIC_TONNE
+        )
+        assert res_2024.cap_spec.cap_tons == pytest.approx(
+            expected_2024 * SHORT_TON_TO_METRIC_TONNE
+        )
 
     def test_explicit_tons_override_wins_over_published(self):
         # An explicit scenario budget is taken as-is (metric tonnes), ahead of
@@ -248,6 +326,101 @@ class TestMembershipWeightedAdder:
             assemble_mc(fleet, fuel_prices, carbon_price=per_gen),
             assemble_mc(fleet, fuel_prices, carbon_price=price),
         )
+
+
+class TestPerGeneratorMembership:
+    """Per-unit RGGI membership (plan §5, §9.6): exact where plant_code is
+    real, zone-level fallback only for synthetic/aggregate units."""
+
+    def _fleet(self, specs):
+        """Build a tiny FleetArrays from (zone, plant_code) pairs."""
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        zones = sorted({zone for zone, _ in specs})
+        generators = [
+            Generator(
+                unit_id=f"G{i}",
+                name=f"G{i}",
+                zone=zone,
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+                emission_rate_co2=0.4,
+                plant_code=plant_code,
+            )
+            for i, (zone, plant_code) in enumerate(specs)
+        ]
+        return generators_to_fleet_arrays(generators, zones, hours=4)
+
+    def test_trivial_real_plant_overrides_synthetic_fallback(self):
+        # Zone-level fallback is 0.5 for both generators; G0's real plant_code
+        # resolves to a member state (exact 1.0), G1 is synthetic
+        # (plant_code<=0) and keeps the zone fallback.
+        fleet = self._fleet([("Z0", 101), ("Z0", 0)])
+        zone_membership = np.array([0.5])
+        out = per_generator_membership(
+            "PJM", 2024, zone_membership, fleet, plant_state={101: "NJ"}
+        )
+        np.testing.assert_array_equal(out, [1.0, 0.5])
+
+    def test_trivial_real_plant_in_nonmember_state_is_zero(self):
+        fleet = self._fleet([("Z0", 202)])
+        zone_membership = np.array([0.7327])  # PJM_EMAAC-like fallback
+        out = per_generator_membership(
+            "PJM", 2024, zone_membership, fleet, plant_state={202: "OH"}
+        )
+        np.testing.assert_array_equal(out, [0.0])
+
+    def test_unresolvable_plant_code_keeps_zone_fallback(self):
+        # A real plant_code absent from the injected state lookup (e.g. a
+        # plant EIA-860 has no record for) keeps the zone-level share.
+        fleet = self._fleet([("Z0", 999)])
+        zone_membership = np.array([0.3])
+        out = per_generator_membership(
+            "PJM", 2024, zone_membership, fleet, plant_state={101: "NJ"}
+        )
+        np.testing.assert_array_equal(out, [0.3])
+
+    def test_pjm_cap_row_coefficients_hit_only_member_units(self):
+        # PJM_EMAAC (NJ-plant + PA-plant) and PJM_AEP_Ohio (OH-plant): the
+        # per-generator mask must zero out the coefficient on every
+        # non-member unit regardless of its zone's fractional fallback, and
+        # keep it nonzero only on the member unit.
+        fleet = self._fleet(
+            [
+                ("PJM_EMAAC", 301),  # NJ — member
+                ("PJM_EMAAC", 302),  # PA (Philly-metro slice) — non-member
+                ("PJM_AEP_Ohio", 303),  # OH — non-member
+            ]
+        )
+        program = CAP_AND_TRADE_PROGRAMS["PJM"]
+        zone_membership = np.array(
+            [
+                program.zone_share["PJM_EMAAC"][2024],
+                program.zone_share["PJM_AEP_Ohio"][2024],
+            ]
+        )
+        plant_state = {301: "NJ", 302: "PA", 303: "OH"}
+        mask = per_generator_membership(
+            "PJM", 2024, zone_membership, fleet, plant_state=plant_state
+        )
+        cap_coeffs = mask * fleet.emission_rate
+
+        np.testing.assert_array_equal(mask, [1.0, 0.0, 0.0])
+        assert cap_coeffs[0] == pytest.approx(fleet.emission_rate[0])
+        assert cap_coeffs[1] == 0.0
+        assert cap_coeffs[2] == 0.0
+
+    def test_non_rggi_program_returns_zone_fallback_unchanged(self):
+        # ERCOT/MISO have no program at all — per_generator_membership is a
+        # no-op passthrough of the zone broadcast.
+        fleet = self._fleet([("North", 401)])
+        zone_membership = np.array([0.0])
+        out = per_generator_membership(
+            "ERCOT", 2024, zone_membership, fleet, plant_state={401: "TX"}
+        )
+        np.testing.assert_array_equal(out, [0.0])
 
 
 class TestPublishedBudgetConstantsMatchRawCsv:
