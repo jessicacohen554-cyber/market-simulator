@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-05 (CO2-rate 7-year gate decision — wave-3 E1 close-out)
+
+- Completed the 2018–2021 CAMPD hourly unit-level intake (136/136 state-years)
+  and re-derived `plant_emission_rates_v2` over all six ISOs × 7 years (29,435
+  unit-year rows; 2018–2021 net conversion on pooled parasitic factors — EIA-923
+  those years remains a documented DATA NEEDED gap).
+- `scripts/loyo_co2_rates.py` gained rule-23 sweep capabilities
+  (`--forward-chain`, `--window-sweep`, `--gate-sweep`); constants chosen ONCE
+  from the 7-year held-in LOYO: `CO2_RATE_CONDITIONING_ENABLED` stays **False**
+  (envelope-gated sim conditioning never beat `a_gw` on ERCOT at any gate) and
+  `CO2_RATE_TRAILING_WINDOW_YEARS` **0 → 2** (forward-chained sweep: w2 won 8/8
+  per-target comparisons across ERCOT+PJM). Docs realigned:
+  `model-methodology-spec.md` forward-mode source, `docs/parameter-citations.md`
+  (regenerated), plan `§9.5` (full tables + PJM sim-op caveat).
 ## 2026-07-05 (confirmed-vs-announced retirement channel — implementation, W2-P2)
 
 **Model.** Implemented the confirmed-vs-announced retirement channel from the
