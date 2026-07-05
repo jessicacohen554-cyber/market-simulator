@@ -12,6 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
+import pytest
 
 from market_sim import runner
 from market_sim.config.scenarios import ScenarioConfig
@@ -63,6 +64,7 @@ class TestComputeCurtailment(unittest.TestCase):
         self.assertTrue(np.all(curtailment >= 0.0))
 
 
+@pytest.mark.slow  # runs a real 3-year run_scenario_iso (fleet load dominates, ~4-5min/test)
 class TestExportScenarioJson(unittest.TestCase):
     """A cached scenario exports to one valid, compact JSON file."""
 
