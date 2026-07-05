@@ -4728,12 +4728,23 @@ def _plant_emission_rate_map(
 @lru_cache(maxsize=8)
 def _measured_plant_rate_map_v2(
     path: str, iso: str, year: int, mode: str
-) -> dict[tuple[int, str], float]:
-    """Cache the mode-aware ``{(plant_id, fuel_class): tCO2/MWh}`` v2 map."""
+) -> dict[tuple[int, str], tuple[float, float, float]]:
+    """Cache the mode-aware ``{(plant_id, fuel_class): (tCO2, tNOx, tSO2)/MWh}`` map.
+
+    All three pollutants share the identical mode/window/composition-mask policy
+    (:func:`market_sim.data.emission_rates.measured_plant_rates`); NOx/SO2 simply
+    read their own mass column (plan §5 R7). A plant/class missing a pollutant's
+    measured mass gets 0.0 for that pollutant, so the caller can preserve the
+    fuel-class default (CO2/NOx) rather than overwrite it with a spurious zero.
+    """
     from market_sim.data.emission_rates import measured_plant_rates
 
     df = pd.read_parquet(path)
-    return measured_plant_rates(df, iso, year, mode)
+    co2 = measured_plant_rates(df, iso, year, mode, pollutant="co2")
+    nox = measured_plant_rates(df, iso, year, mode, pollutant="nox")
+    so2 = measured_plant_rates(df, iso, year, mode, pollutant="so2")
+    keys = set(co2) | set(nox) | set(so2)
+    return {k: (co2.get(k, 0.0), nox.get(k, 0.0), so2.get(k, 0.0)) for k in keys}
 
 
 def apply_plant_emission_rates_v2(
@@ -4752,7 +4763,13 @@ def apply_plant_emission_rates_v2(
     generator by ``(plant_code, coarse fuel class)`` — the composition mask — so
     a Parish-style coal+gas facility's coal and gas bins get separate measured
     rates (this replaces the old ``mixed`` exclusion). Returns the override count.
-    NOx/SO2 are left to the legacy artifact (out of scope this wave, R7 note).
+
+    CO2, NOx and SO2 are all booked at the plant's measured tonnes/MWh-net rate
+    (plan §5 R7 full-wiring wave). CO2/NOx are overridden only when the measured
+    rate is positive (a zero means "no measured mass" — keep the fuel default);
+    SO2 is always set, mirroring :func:`apply_plant_emission_rates`, because zero
+    is a legitimate SO2 value for gas units. NOx/SO2 are secondary: this changes
+    no CO2 rate and no merit order.
     """
     from market_sim.data.emission_rates import fuel_class
 
@@ -4762,9 +4779,19 @@ def apply_plant_emission_rates_v2(
     rates = _measured_plant_rate_map_v2(str(resolved), str(iso), int(year), str(mode))
     n = 0
     for gen in generators:
-        co2 = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
-        if co2 is not None and co2 > 0.0:
+        triple = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
+        if triple is None:
+            continue
+        co2, nox, so2 = triple
+        touched = False
+        if co2 > 0.0:
             gen.emission_rate_co2 = co2
+            touched = True
+        if nox > 0.0:
+            gen.nox_rate = nox
+            touched = True
+        gen.so2_rate = so2
+        if touched or so2 > 0.0:
             n += 1
     return n
 
