@@ -68,7 +68,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
 from market_sim.config.iso_configs import get_iso_config
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import ScenarioConfig, resolve_new_entry_costs
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
@@ -877,14 +877,15 @@ def compute_lcoe(
     Args:
         tech_type: Technology key into :data:`NEW_ENTRY_COSTS`.
         year: Simulation year, used for IRA credit expiry.
-        config: Scenario config supplying the discount rate.
+        config: Scenario config supplying the discount rate and the PB-1
+            tech-cost lever (``tech_cost_path``/``tech_cost_percentile``).
         cumulative_gw: Cumulative global deployment, GW. When ``None`` no
             learning adjustment is applied.
 
     Returns:
         The IRA-adjusted LCOE in $/MWh.
     """
-    costs = NEW_ENTRY_COSTS[tech_type]
+    costs = resolve_new_entry_costs(config)[tech_type]
     capex_per_kw = costs["capex_per_kw"]
 
     reference_gw = WRIGHT_REFERENCE_GW.get(tech_type)
@@ -1197,7 +1198,7 @@ def apply_economic_new_entry(
             energy_margin = float(np.maximum(price_hourly - var_cost, 0.0).sum())
             # Annualized fixed cost ($/MW-yr): Wright-adjusted capex annuity +
             # FOM. Thermal carries no IRA ITC/PTC, so this is the clean CONE.
-            costs = NEW_ENTRY_COSTS[tech]
+            costs = resolve_new_entry_costs(config)[tech]
             capex_per_kw = costs["capex_per_kw"]
             ref_gw = WRIGHT_REFERENCE_GW.get(tech)
             if cum_gw is not None and ref_gw is not None:
