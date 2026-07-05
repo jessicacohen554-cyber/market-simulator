@@ -1024,6 +1024,50 @@ RELIABILITY_FLOOR_REGISTRY: dict[str, list[ReliabilityFloorSpec]] = (
 )
 
 
+# Reliability-floor plant classes whose commitment is OWNED by an active
+# net-load deployment drag (data.fleet.apply_ct_netload_drag_floor /
+# apply_gas_st_netload_drag_floor). The drag is a CAMPD-net-load-regressed,
+# ramp-windowed [15,22) min-gen floor; when it is on it is the SINGLE
+# commitment mechanism for its class (CLAUDE.md rule 19 — one mechanism per
+# phenomenon). The temperature reliability floor ALSO detects a rising hot-day
+# commitment for the same class (rho >= 0.3), but it binds all 24 h of a flagged
+# day — including overnight, where measured CAMPD CT CF is ~0.016 (h0-6) vs
+# ~0.38 at the afternoon cooling peak. Stacking it on the drag double-floors the
+# class and pins it overnight where the fleet is physically offline: the D-4
+# off-window binding failure (docs/FINDING-pjm-burndown-2026-07.md; a floor
+# binding in hours its own driver evidence says the class is offline is a bug,
+# CLAUDE.md rule 17). Dropping these limbs when the drag is active reconciles
+# the two onto the grounded, forward-native mechanism rather than stacking them.
+_DRAG_OWNED_RELIABILITY_CLASS: dict[str, str] = {
+    "ct_netload_drag": "CT_PEAKER",
+    "gas_st_netload_drag": "ST_GAS",
+}
+
+
+def drop_drag_owned_reliability_specs(
+    specs: list[ReliabilityFloorSpec],
+    config,
+) -> list[ReliabilityFloorSpec]:
+    """Drop reliability-floor limbs whose class is owned by an active net-load drag.
+
+    When ``config.ct_netload_drag`` (or ``gas_st_netload_drag``) is set, the drag
+    is the single commitment mechanism for its class (CLAUDE.md rule 19); the
+    temperature reliability floor's limbs for that class are removed so the two
+    do not stack into an all-day floor that binds overnight where the class is
+    offline (:data:`_DRAG_OWNED_RELIABILITY_CLASS`; the D-4 off-window failure,
+    ``docs/FINDING-pjm-burndown-2026-07.md``). No-op (returns *specs* unchanged)
+    when no drag is active, so any ISO/run without the drag is byte-identical.
+    """
+    drop = {
+        cls
+        for flag, cls in _DRAG_OWNED_RELIABILITY_CLASS.items()
+        if getattr(config, flag, False)
+    }
+    if not drop:
+        return specs
+    return [s for s in specs if s.plant_class not in drop]
+
+
 def apply_reliability_floor_overrides(
     specs: list[ReliabilityFloorSpec],
     overrides: dict[str, dict] | None,
