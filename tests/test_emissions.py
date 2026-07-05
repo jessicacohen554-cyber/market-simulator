@@ -11,6 +11,7 @@ from market_sim.results.emissions import (
     compute_emissions,
     compute_fossil_avg_rate,
     compute_nox,
+    compute_so2,
     startup_co2_tons,
 )
 
@@ -156,6 +157,97 @@ class TestComputeNox(unittest.TestCase):
         manual = dispatch[0] * 0.0015 + dispatch[1] * 0.0003
         np.testing.assert_allclose(result, manual)
         self.assertEqual(result.shape, (2,))
+
+
+class TestComputeSo2(unittest.TestCase):
+    """``compute_so2`` mirrors ``compute_nox``/``compute_emissions`` with SO2 rates."""
+
+    def test_matches_manual_calculation(self):
+        dispatch = np.array([[100.0, 200.0], [50.0, 25.0]])
+        rates = np.array([0.0008, 0.0001])
+
+        result = compute_so2(dispatch, rates)
+
+        manual = dispatch[0] * 0.0008 + dispatch[1] * 0.0001
+        np.testing.assert_allclose(result, manual)
+        self.assertEqual(result.shape, (2,))
+
+    def test_zero_rates_produce_zero_so2(self):
+        dispatch = np.full((3, 8), 40.0)
+
+        result = compute_so2(dispatch, np.zeros(3))
+
+        np.testing.assert_array_equal(result, np.zeros(8))
+
+
+class TestNoxSo2ReproduceCampdMass(unittest.TestCase):
+    """W3-E2: NOx/SO2 system tons reproduce a fixture plant's CAMPD annual mass.
+
+    Mirrors ``test_emission_rate_basis.py``'s CO2 round-trip guard: a plant's
+    measured ``nox_kg_per_mwh_net`` / ``so2_kg_per_mwh_net`` rate (from
+    :func:`market_sim.data.campd.plant_emission_rates`), applied via
+    :func:`compute_nox` / :func:`compute_so2` to that same net generation,
+    must reproduce the plant's measured CAMPD NOx/SO2 mass within backfill
+    tolerance -- the same identity CO2 is already guarded on.
+    """
+
+    def _fixture_plant(self, parasitic: float) -> pd.DataFrame:
+        """One 1-gen plant, 24 on-hours, NOx/SO2 reported for every hour."""
+        n = 24
+        ts = pd.date_range("2023-06-01 00:00", periods=n, freq="h")
+        gross = np.full(n, 200.0)
+        heat = gross * 8.0  # 8 MMBtu/MWh gross
+        return pd.DataFrame(
+            {
+                "plant_id": 12345,
+                "facility_name": "Fixture",
+                "state": "TX",
+                "year": 2023,
+                "date": ts.normalize(),
+                "hour": ts.hour,
+                "gross_mw": gross,
+                "steam_load": np.nan,
+                "co2_kg": heat * 53.0,
+                "nox_kg": gross * 0.02,
+                "so2_kg": gross * 0.01,
+                "heat_mmbtu": heat,
+                "hour_of_year": np.arange(n),
+            }
+        )
+
+    def test_nox_tons_reproduce_measured_mass(self):
+        from market_sim.data import campd
+
+        parasitic = 0.94  # 6% station service
+        df = self._fixture_plant(parasitic)
+        rates = campd.plant_emission_rates(df, {12345: parasitic})
+        row = rates[(rates["plant_id"] == 12345) & (rates["year"] == 2023)].iloc[0]
+
+        net_mwh_per_hour = float(df["gross_mw"].iloc[0]) * parasitic
+        dispatch = np.full((1, len(df)), net_mwh_per_hour)
+        nox_rate_tons_per_mwh = row["nox_kg_per_mwh_net"] / 1000.0
+
+        result_tons = float(compute_nox(dispatch, [nox_rate_tons_per_mwh]).sum())
+        measured_tons = float(df["nox_kg"].sum()) / 1000.0
+
+        self.assertAlmostEqual(result_tons, measured_tons, delta=measured_tons * 1e-3)
+
+    def test_so2_tons_reproduce_measured_mass(self):
+        from market_sim.data import campd
+
+        parasitic = 0.94
+        df = self._fixture_plant(parasitic)
+        rates = campd.plant_emission_rates(df, {12345: parasitic})
+        row = rates[(rates["plant_id"] == 12345) & (rates["year"] == 2023)].iloc[0]
+
+        net_mwh_per_hour = float(df["gross_mw"].iloc[0]) * parasitic
+        dispatch = np.full((1, len(df)), net_mwh_per_hour)
+        so2_rate_tons_per_mwh = row["so2_kg_per_mwh_net"] / 1000.0
+
+        result_tons = float(compute_so2(dispatch, [so2_rate_tons_per_mwh]).sum())
+        measured_tons = float(df["so2_kg"].sum()) / 1000.0
+
+        self.assertAlmostEqual(result_tons, measured_tons, delta=measured_tons * 1e-3)
 
 
 if __name__ == "__main__":
