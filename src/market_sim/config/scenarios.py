@@ -204,8 +204,9 @@ class ScenarioConfig:
     # retire on their announced EIA-860 date (policy/contract/end-of-life exits
     # with no economic-screen analogue). Set False for the legacy behaviour
     # (every scheduled retirement honored regardless of fuel).
-    confirmed_exits_enabled: bool = False  # GATED, default-OFF. When True and
-    # mode == "forecast", the confirmed-retirement channel force-retires (or
+    confirmed_exits_enabled: bool = True  # GATED, default-ON (flipped 2026-07-05,
+    # owner sign-off — docs/handoffs/confirmed-retirement-plan-2026-07.md §7). When
+    # True and mode == "forecast", the confirmed-retirement channel force-retires (or
     # derates, for plant-binned fleets) each unit bound by an enforceable public
     # instrument in the confirmed-retirements registry
     # (data/raw/confirmed-retirements, read via
@@ -215,8 +216,15 @@ class ScenarioConfig:
     # exits force out; ANNOUNCED-only retirements stay with the economic screen
     # (mirrors load_planned_additions' construction-committed philosophy). The
     # registry is data, not tuning (rule 24): this flag and the clean path are
-    # the whole surface. Flipping the default to on is a follow-up owner decision
-    # once the seeded registry passes review (plan §7).
+    # the whole surface. The default was gated off until the registry covered all
+    # six ISOs (landed) and its two open primary-document caveats (Rockport 1's
+    # civil action number, Diablo Canyon's CPUC decision number) were resolved
+    # (both confirmed 2026-07-05 — see data/raw/confirmed-retirements/pjm.csv,
+    # caiso.csv). Also activates the non-fossil announced-horizon gate (see
+    # forecast_fossil_retirement_economic-adjacent apply_announced_retirements
+    # horizon_years wiring in capacity.evolve_fleet). False reproduces the
+    # pre-flip, injector-absent behavior exactly (backcast mode is unaffected
+    # either way — the channel is forecast-mode only).
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
