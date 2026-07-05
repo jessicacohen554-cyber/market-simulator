@@ -52,11 +52,28 @@ METRIC_VOCAB: frozenset[str] = frozenset(
         "export_limit",
         "import_ability",
         "system_requirement",
+        # Published area peak-demand forecast from the SAME study table family
+        # as the area's requirement (CAISO LCT "Load+Losses+Pumps" area rows /
+        # Table 3.2-1 zonal rows): pairs with `requirement` so
+        # import_cap = peak_load - requirement is computed on one consistent
+        # boundary (market_sim.data.local_capacity).
+        "peak_load",
     }
 )
 
 AREA_TYPES: frozenset[str] = frozenset(
-    {"lda", "lrz", "locality", "capacity_zone", "local_area", "branch_group", "rto"}
+    {
+        "lda",
+        "lrz",
+        "locality",
+        "capacity_zone",
+        "local_area",
+        "branch_group",
+        "rto",
+        # Model/transmission-zone aggregate rows (CAISO SP26 zonal peak_load,
+        # the denominator of the local-capacity area load share).
+        "zone",
+    }
 )
 
 SEASONS: frozenset[str] = frozenset({"annual", "summer", "fall", "winter", "spring"})
