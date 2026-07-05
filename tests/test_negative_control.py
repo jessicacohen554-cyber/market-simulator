@@ -233,6 +233,62 @@ def test_run_negative_control_insensitive_case_fails_and_reports_compensator(tmp
     assert result["suspected_compensators"]["c2_gas_abs_err_twh"][0]["knob"] == (
         "offer_curve_by_group.CT_PEAKER.peak"
     )
+    assert result["caveat"] is None  # only the gas_price control checks bypass flags
+
+
+# ---------------------------------------------------------------------------
+# gas_price_bypass_caveat (2026-07-05 empirical finding: NEISO's
+# gas_hub_basis_daily overlay supersedes the Henry-Hub-level reference this
+# control corrupts, so a real end-to-end run against the neiso47_faststart
+# keeper came back byte-identical clean-vs-corrupted -- an "insensitivity"
+# that reflects a bypassed input, not a compensating knob.)
+# ---------------------------------------------------------------------------
+def test_gas_price_bypass_caveat_none_without_run_config(tmp_path):
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    assert nc.gas_price_bypass_caveat(bundle) is None
+
+
+def test_gas_price_bypass_caveat_none_when_no_flag_active(tmp_path):
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    (bundle / "run_config.json").write_text(
+        json.dumps({"scenario_config": {"offer_curve_by_group": {}}})
+    )
+    assert nc.gas_price_bypass_caveat(bundle) is None
+
+
+def test_gas_price_bypass_caveat_fires_on_hub_basis_daily(tmp_path):
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    (bundle / "run_config.json").write_text(
+        json.dumps({"scenario_config": {"gas_hub_basis_daily": True}})
+    )
+    caveat = nc.gas_price_bypass_caveat(bundle)
+    assert caveat is not None
+    assert "gas_hub_basis_daily" in caveat
+
+
+def test_run_negative_control_insensitive_gas_price_carries_caveat(tmp_path):
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    (bundle / "run_config.json").write_text(
+        json.dumps({"scenario_config": {"gas_hub_basis_daily": True}})
+    )
+    result = nc.run_negative_control(
+        bundle,
+        "NEISO",
+        "gas_price",
+        out_root=tmp_path / "solves",
+        solve_clean_fn=_stub_clean,
+        solve_corrupt_fn=_stub_corrupt_sensitive,
+        score_fn=_stub_score_insensitive,
+        reference={},
+    )
+    assert result["sensitive"] is False
+    assert result["caveat"] is not None
+    assert "CAVEAT" in result["verdict"]
+    assert not result["verdict"].startswith("FAIL")
 
 
 def test_run_negative_control_rejects_unknown_control(tmp_path):
