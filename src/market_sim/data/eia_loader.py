@@ -365,7 +365,54 @@ def _clean_system_demand(iso: str, year: int) -> np.ndarray | None:
     return mw
 
 
-def _demand_profile_clean(iso: str, year: int) -> np.ndarray | None:
+# Exact command that regenerates the repaired ``demand-profile`` clean tree
+# (see ``scripts/regenerate_clean.py``'s per-datatype ``DATATYPES`` list).
+_REGEN_DEMAND_PROFILE_CMD = "python scripts/regenerate_clean.py demand-profile"
+
+
+class DemandProfileNotRepairedError(RuntimeError):
+    """Strict-mode error: the repaired ``demand-profile`` partition is missing.
+
+    Raised by :func:`load_demand` / :func:`load_demand_meta` when
+    ``strict_demand_profile=True`` and the requested ``(iso, year)`` is
+    covered by the raw ``eia_demand_profiles.parquet`` repair manifest (i.e.
+    ``scripts/curate_demand_profile.py`` would produce a clean partition for
+    it) but that partition has not actually been regenerated on disk. Without
+    strict mode the caller falls back to the corrupted legacy series instead
+    (PR #1426) — this is the fail-closed alternative for solve entry points
+    that cannot tolerate that silent corruption risk.
+    """
+
+
+@lru_cache(maxsize=1)
+def _demand_profile_raw_pairs(data_dir: Path) -> frozenset[tuple[str, int]] | None:
+    """Return every ``(iso, year)`` pair covered by the demand-profile repair.
+
+    This is the exact set of pairs ``scripts/curate_demand_profile.py``
+    repairs into a clean ``demand-profile`` partition — every ``(iso, year)``
+    group present in the raw ``eia_demand_profiles.parquet`` extract (the
+    script further restricts writes to the six modeled ISOs, which is every
+    ISO :func:`load_demand` ever calls this with, so that restriction is not
+    re-checked here). Used to tell a *missing* repair (should warn/raise) from
+    an *out-of-scope* year (silently ``None``, e.g. a forecast year with no
+    raw row at all). Returns ``None`` when the raw extract itself is absent.
+    """
+    path = data_dir / _DEMAND_PROFILES_FILE
+    if not path.exists():
+        return None
+    profiles = pd.read_parquet(path, columns=["iso", "year"]).drop_duplicates()
+    return frozenset(
+        (str(iso), int(year)) for iso, year in profiles.itertuples(index=False)
+    )
+
+
+def _demand_profile_clean(
+    iso: str,
+    year: int,
+    *,
+    strict: bool = False,
+    data_dir: Path = DATA_DIR,
+) -> np.ndarray | None:
     """Return the repaired ``demand-profile`` system-total demand, or ``None``.
 
     Unlike :func:`_clean_system_demand` (an opt-in, parity-gated alternate
@@ -374,21 +421,57 @@ def _demand_profile_clean(iso: str, year: int) -> np.ndarray | None:
     ``MARKET_SIM_USE_CLEAN``. ``scripts/curate_demand_profile.py`` repairs the
     physically-impossible hours found in ``eia_demand_profiles.parquet`` (see
     that script's docstring); this reads the repaired clean partition it
-    writes. Returns ``None`` when the clean seam or partition is unavailable
-    (not yet regenerated via ``scripts/regenerate_clean.py demand-profile``),
-    in which case the caller falls back to the raw parquet unchanged.
+    writes.
+
+    The clean tree is gitignored/disposable (``data/clean``), so the repaired
+    partition is routinely absent until someone runs
+    ``scripts/regenerate_clean.py demand-profile``. Silently returning
+    ``None`` in that case (the old behavior) means the caller falls back to
+    the corrupted legacy ``eia_demand_profiles.parquet`` series without any
+    signal — PJM has no dedicated per-BA extract, so for PJM this fallback is
+    not a rare edge case but the *only* demand source, and the corruption is
+    silent (PR #1426). So when the partition is missing for an ``(iso, year)``
+    the raw file's repair manifest actually covers (see
+    :func:`_demand_profile_raw_pairs`), this now either:
+
+    - logs a loud warning naming the exact regenerate command (default,
+      ``strict=False``) and returns ``None`` (caller falls back to raw, same
+      as before), or
+    - raises :class:`DemandProfileNotRepairedError` (``strict=True``) instead
+      of falling back at all.
+
+    An ``(iso, year)`` the raw manifest does *not* cover (e.g. an uncovered
+    forecast year) still returns ``None`` silently — there is nothing to
+    regenerate, so there is nothing to warn about.
+
+    Returns ``None`` when the clean seam is unavailable, the partition is
+    absent/incomplete, or the reconstructed series is not a clean full year
+    (in strict mode, the manifest-covered case raises instead of returning).
     """
     seam = _read_clean_seam()
-    if seam is None:
-        return None
-    read_clean, clean_exists = seam
-    if not clean_exists("demand-profile", iso=iso, year=year):
-        return None
-    df = read_clean("demand-profile", iso=iso, year=year, validate=False)
-    df = df.sort_values("hour")
-    if len(df) != HOURS_PER_YEAR:
-        return None
-    return df["raw_mw"].to_numpy(dtype=float)
+    mw: np.ndarray | None = None
+    if seam is not None:
+        read_clean, clean_exists = seam
+        if clean_exists("demand-profile", iso=iso, year=year):
+            df = read_clean("demand-profile", iso=iso, year=year, validate=False)
+            df = df.sort_values("hour")
+            if len(df) == HOURS_PER_YEAR:
+                mw = df["raw_mw"].to_numpy(dtype=float)
+    if mw is not None:
+        return mw
+
+    manifest = _demand_profile_raw_pairs(data_dir)
+    if manifest is not None and (iso, year) in manifest:
+        message = (
+            f"{iso} {year}: repaired 'demand-profile' clean partition not found "
+            f"-- falling back to the corrupted legacy eia_demand_profiles.parquet "
+            f"series (PR #1426). Run `{_REGEN_DEMAND_PROFILE_CMD}` before solving "
+            f"{iso} {year} to avoid dispatching on physically-impossible demand."
+        )
+        if strict:
+            raise DemandProfileNotRepairedError(message)
+        logger.warning(message)
+    return None
 
 
 def _clean_generation_by_fuel(iso: str, year: int) -> dict[str, np.ndarray] | None:
@@ -2225,6 +2308,7 @@ def load_demand(
     td_loss_factor: float = 0.0,
     data_dir: Path = DATA_DIR,
     include_interchange: bool = True,
+    strict_demand_profile: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -2282,6 +2366,16 @@ def load_demand(
             priced import/export node instead
             (:func:`market_sim.model.transmission.build_import_generators`)
             must disable it here so the export is not counted twice.
+        strict_demand_profile: When ``True``, raise
+            :class:`DemandProfileNotRepairedError` instead of silently
+            falling back to the corrupted legacy ``eia_demand_profiles``
+            series when the repaired ``demand-profile`` clean partition is
+            missing for an ``(iso, year)`` the repair covers (see
+            :func:`_demand_profile_clean`). Defaults to ``False``
+            (warn-and-fall-back, byte-identical to the pre-existing
+            behavior) — a solve entry point that wants fail-closed
+            protection against PR #1426's silent-corruption trap should pass
+            ``True`` here.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -2291,6 +2385,9 @@ def load_demand(
         ValueError: if no data matches ``(iso, year)``.
         AssertionError: if the series is not a full year, contains NaN
             demand, or has a non-positive peak.
+        DemandProfileNotRepairedError: if ``strict_demand_profile`` is
+            ``True`` and the repaired demand-profile partition is missing
+            for an ``(iso, year)`` the raw repair manifest covers.
     """
     if iso_config is None:
         iso_config = get_iso_config(iso)
@@ -2324,7 +2421,9 @@ def load_demand(
         if clean_mw is not None:
             raw_mw = clean_mw
     if raw_mw is None:
-        raw_mw = _demand_profile_clean(iso, year)
+        raw_mw = _demand_profile_clean(
+            iso, year, strict=strict_demand_profile, data_dir=data_dir
+        )
     if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
@@ -2418,6 +2517,7 @@ def load_demand_meta(
     iso: str,
     year: int,
     data_dir: Path = DATA_DIR,
+    strict_demand_profile: bool = False,
 ) -> dict:
     """Load summary demand statistics for an ISO and year.
 
@@ -2425,6 +2525,14 @@ def load_demand_meta(
         iso: ISO identifier, e.g. ``"ERCOT"``.
         year: Calendar year to load.
         data_dir: Directory containing the EIA-930 parquet extracts.
+        strict_demand_profile: When ``True``, raise
+            :class:`DemandProfileNotRepairedError` instead of silently
+            falling back to the corrupted legacy ``eia_demand_meta``/
+            ``eia_demand_profiles`` series when the repaired
+            ``demand-profile`` clean partition is missing for an ``(iso,
+            year)`` the repair covers (see :func:`_demand_profile_clean`).
+            Defaults to ``False`` (warn-and-fall-back, byte-identical to the
+            pre-existing behavior).
 
     Returns:
         A dict with keys ``peak_mw``, ``min_mw``, ``avg_mw`` and
@@ -2432,6 +2540,9 @@ def load_demand_meta(
 
     Raises:
         ValueError: if no data matches ``(iso, year)``.
+        DemandProfileNotRepairedError: if ``strict_demand_profile`` is
+            ``True`` and the repaired demand-profile partition is missing
+            for an ``(iso, year)`` the raw repair manifest covers.
     """
     # ``eia_demand_meta.parquet`` is a per-(iso, year) summary of the same raw
     # ``eia_demand_profiles.parquet`` hourly series :func:`load_demand` reads,
@@ -2441,7 +2552,9 @@ def load_demand_meta(
     # clean series once it has been regenerated (see
     # :func:`_demand_profile_clean`); falls back to the raw meta parquet,
     # unchanged, when the clean partition is absent.
-    clean_mw = _demand_profile_clean(iso, year)
+    clean_mw = _demand_profile_clean(
+        iso, year, strict=strict_demand_profile, data_dir=data_dir
+    )
     if clean_mw is not None:
         return {
             "peak_mw": float(clean_mw.max()),
