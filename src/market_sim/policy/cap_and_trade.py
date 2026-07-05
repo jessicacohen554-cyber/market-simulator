@@ -29,6 +29,9 @@ import numpy as np
 
 from market_sim.config.constants import (
     CAP_AND_TRADE_PROGRAMS,
+    CARB_ALLOWANCE_BUDGET,
+    RGGI_STATE_CO2_BUDGET,
+    SHORT_TON_TO_METRIC_TONNE,
     STATE_CARBON_PRICE_BY_ISO,
     CapAndTradeProgram,
 )
@@ -197,6 +200,40 @@ def resolve_carbon_program(
     )
 
 
+def _published_power_sector_budget(
+    program: CapAndTradeProgram, year: int
+) -> float | None:
+    """Return the program's published annual budget in **metric tonnes**, or ``None``.
+
+    Sources the cited annual schedules landed in ``constants.py`` and converts
+    each to the model's internal metric-tonne emission-rate unit so the value is
+    directly comparable to ``emission_rate[g] * P[g,t]``:
+
+    * **CARB** — :data:`CARB_ALLOWANCE_BUDGET` (MMT CO2e; 1 CA GHG allowance = 1
+      metric tonne) scaled by ``1e6``. This is the whole-economy cap, so a CAISO
+      power-sector row against it is deeply slack (plan §2).
+    * **RGGI** — the regional :data:`RGGI_STATE_CO2_BUDGET` total (short tons)
+      converted at :data:`SHORT_TON_TO_METRIC_TONNE`. A single RGGI ISO's
+      power-sector row against the region-wide budget is an over-bound, so also
+      slack; per-state refinement awaits the RGGI allowance-distribution intake.
+
+    Returns ``None`` when the program has no published budget for ``year``
+    (e.g. a holdout-quarantined year, or PJM which carries no budget), leaving
+    the row inert and the adder path active.
+    """
+    if program.name == "CARB":
+        mmt = CARB_ALLOWANCE_BUDGET.get(year)
+        return None if mmt is None else float(mmt) * 1.0e6
+    if program.name == "RGGI":
+        short_tons = RGGI_STATE_CO2_BUDGET.get("RGGI", {}).get(year)
+        return (
+            None
+            if short_tons is None
+            else float(short_tons) * SHORT_TON_TO_METRIC_TONNE
+        )
+    return None
+
+
 def _power_sector_cap(
     config: ScenarioConfig,
     program: CapAndTradeProgram,
@@ -205,13 +242,22 @@ def _power_sector_cap(
 ) -> MassCapSpec | None:
     """Return the configured power-sector mass-cap for the row path, or ``None``.
 
-    Sources the annual tonnage budget from ``config.mass_cap_tons`` (an explicit
-    scenario budget) when set. The published RGGI/CARB budget schedules land via
-    the data-intake step; until a budget is supplied the row stays inert and this
-    returns ``None`` (adder path used instead). The endogenous dual of a row
-    built here is a power-sector, no-bank scenario allowance price (plan §2, §8).
+    Sources the annual tonnage budget (metric tonnes CO2) in precedence order:
+
+    1. An explicit ``config.mass_cap_tons`` scenario budget when set (a bespoke
+       counterfactual cap; taken as-is, already in metric tonnes).
+    2. Otherwise the ISO program's **published** budget for ``year``
+       (:func:`_published_power_sector_budget`) — the RGGI/CARB schedules landed
+       in ``constants.py``, unit-converted to metric tonnes.
+
+    Returns ``None`` when neither is available (no explicit budget and no
+    published schedule for the year, e.g. a holdout-quarantined year), leaving
+    the row inert and the adder path active. The endogenous dual of a row built
+    here is a power-sector, no-bank scenario allowance price (plan §2, §8).
     """
     cap_tons = getattr(config, "mass_cap_tons", None)
+    if cap_tons is None:
+        cap_tons = _published_power_sector_budget(program, year)
     if cap_tons is None:
         return None
     label = getattr(config, "mass_cap_program", None) or program.name.lower()
