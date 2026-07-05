@@ -29,6 +29,7 @@ from pathlib import Path
 DATATYPES: tuple[str, ...] = (
     "lmp",
     "load",
+    "demand-profile",
     "ancillary-services",
     "generation",
     "renewables",

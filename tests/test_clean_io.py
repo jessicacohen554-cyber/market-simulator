@@ -28,6 +28,7 @@ from scripts.lib.clean_io import (
 ALL_DATATYPES = [
     "lmp",
     "load",
+    "demand-profile",
     "ancillary-services",
     "generation",
     "renewables",

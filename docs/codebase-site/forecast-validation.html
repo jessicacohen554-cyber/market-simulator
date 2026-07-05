@@ -29,7 +29,7 @@
     <div class="bc-page-header"><h1>Forecast Validation</h1></div>
     <p class="bc-page-sub">Capacity-hindcast scorecards &amp; forecast-invariant status — the
     forecast-side sibling of Calibration Status. A missed band is a root-cause
-    investigation (rules&nbsp;1/11/14), never widened. Generated 2026-07-05 20:04 UTC.</p>
+    investigation (rules&nbsp;1/11/14), never widened. Generated 2026-07-05 21:30 UTC.</p>
     <div id="cards"></div>
   </div>
 
@@ -828,8 +828,8 @@
       "vintage_year": 2020,
       "start_year": 2021,
       "end_year": 2025,
-      "cache_key": "60504103a1c4cc02",
-      "bundle": "results/hindcast/pjm-2021-2025-realized/PJM/60504103a1c4cc02",
+      "cache_key": "df18e9c13581a99f",
+      "bundle": "results/hindcast/pjm-2021-2025-realized/PJM/df18e9c13581a99f",
       "solved_years": [
         2021,
         2023,
@@ -840,7 +840,7 @@
         2022
       ],
       "leakage_violations": [],
-      "started_utc": "2026-07-05T19:47:31Z"
+      "started_utc": "2026-07-05T21:13:00Z"
     },
     "score": {
       "iso": "PJM",
@@ -966,8 +966,8 @@
       },
       "co2": {
         "model": {
-          "2023": 243646342.99713472,
-          "2024": 215929773.4638534,
+          "2023": 243846936.61899483,
+          "2024": 216322058.11123005,
           "2025": 398591096.0719434
         },
         "actual": {
@@ -994,14 +994,14 @@
         "techmix_share_pp_max": 0.05,
         "co2_2025_frac": 0.1
       },
-      "generated_utc": "2026-07-05T20:02:58Z"
+      "generated_utc": "2026-07-05T21:28:23Z"
     },
     "invariants": [
       {
         "ident": "I1",
         "name": "energy balance",
         "status": "PASS",
-        "detail": "max |supply\u2212demand| = 2.384e-07 MW (year 2021); tol 1.0"
+        "detail": "max |supply\u2212demand| = 1.164e-10 MW (year 2021); tol 1.0"
       },
       {
         "ident": "I2",
@@ -1012,8 +1012,8 @@
       {
         "ident": "I3",
         "name": "unserved/dump",
-        "status": "FAIL",
-        "detail": "2021: slack 83.75% of load"
+        "status": "PASS",
+        "detail": "ok"
       },
       {
         "ident": "I4",
@@ -1037,7 +1037,7 @@
         "ident": "I7",
         "name": "reliability floor",
         "status": "FAIL",
-        "detail": "2021: thermal 170918 < floor 2469602000 MW; 2025: thermal 180821 < floor 184644 MW"
+        "detail": "2021: thermal 170918 < floor 172028 MW; 2025: thermal 180821 < floor 184644 MW"
       },
       {
         "ident": "I8",
@@ -1048,8 +1048,8 @@
       {
         "ident": "I9",
         "name": "storage integrity",
-        "status": "FAIL",
-        "detail": "2023: simultaneous chg+dis 6.09% of throughput; 2024: simultaneous chg+dis 1.32% of throughput"
+        "status": "PASS",
+        "detail": "ok"
       },
       {
         "ident": "I10",
@@ -1066,8 +1066,8 @@
       {
         "ident": "I12",
         "name": "reserve-margin band",
-        "status": "WARN",
-        "detail": "band [13.8%, 28.7%]; out: 2021:-100.0%"
+        "status": "PASS",
+        "detail": "band [13.8%, 28.7%]; all in-band"
       },
       {
         "ident": "I13",
@@ -1078,11 +1078,11 @@
       {
         "ident": "I14",
         "name": "price sanity",
-        "status": "WARN",
-        "detail": "2021: LW $1681.3 outside [0.5\u00d7,3.0\u00d7] CC MC $32.1"
+        "status": "PASS",
+        "detail": "in band"
       }
     ],
-    "registered_utc": "2026-07-05T20:04:40Z"
+    "registered_utc": "2026-07-05T21:30:34Z"
   }
 ]</script>
   <script src="js/nav.js"></script>
