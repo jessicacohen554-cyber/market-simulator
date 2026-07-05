@@ -46,6 +46,7 @@ for the market split.
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
 | load | — | — | — | — | — | — |
+| demand-profile | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
 | generation | — | — | — | — | — | — |
@@ -130,6 +131,29 @@ Hourly demand and forecast by zone. Schema:
 | `load_mw` | `float64` | `mw` | no | Actual metered load for the hour (CAISO mw, NYISO Load, EIA-930 Demand). |
 | `load_forecast_mw` | `float64` | `mw` | yes | Day-ahead / short-term load forecast (CAISO forecast LOAD_TYPE, EIA Demand forecast). |
 | `net_load_mw` | `float64` | `mw` | yes | Net load — load minus wind and solar output, when derivable. |
+
+## demand-profile
+
+Repaired legacy EIA-930 per-ISO system-total hourly demand (hour-of-year clock,
+no zone breakdown). Schema:
+[`schema/demand-profile.schema.yaml`](schema/demand-profile.schema.yaml).
+
+- **Keys:** `iso`, `year`, `hour`
+- **Reconciles:** The raw `eia_demand_profiles.parquet` extract's `raw_mw` /
+  `normalized`, repaired via a physical-bounds screen (value <= 0, or > 5x the
+  (iso, year) series median) plus linear interpolation -- the sole demand
+  source `eia_loader.load_demand` falls back to for any (iso, year) with no
+  dedicated per-BA hourly extract (every PJM year; CAISO/MISO 2021-2022).
+  `repaired` flags the corrected hours.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (as carried by the raw extract; includes SPP, not a modeled ISO). |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `hour` | `int64` | `none` | no | Hour-of-year index, 0..8759 (the raw source's own clock). |
+| `raw_mw` | `float64` | `mw` | no | System-total demand for the hour, MW; repaired where physically impossible. |
+| `normalized` | `float64` | `none` | yes | raw_mw as a fraction of the (iso, year) annual total, recomputed from the repaired series. |
+| `repaired` | `bool` | `none` | no | True when this hour failed the physical-bounds screen and was interpolated. |
 
 ## ancillary-services
 
