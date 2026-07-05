@@ -38,6 +38,10 @@ class FleetContext:
         fuel_types: Fuel type of each generator.
         pmax_mw: Nameplate capacity of each generator, in MW.
         emission_rate: CO2 rate of each generator, in tCO2/MWh.
+        nox_rate: NOx rate of each generator, in tons NOx/MWh. Defaults empty
+            for older contexts written before NOx/SO2 export wiring.
+        so2_rate: SO2 rate of each generator, in tons SO2/MWh. Defaults empty
+            for older contexts written before NOx/SO2 export wiring.
         efficiency_bins: Efficiency bin of each generator (e.g. ``h_class``,
             ``older``).
         heat_rates: Heat rate of each generator, in MMBtu/MWh.
@@ -67,6 +71,10 @@ class FleetContext:
     # CT_CHP, ST_GAS, ST_CHP), for ISOs whose dispatch classes come from the
     # group rather than the efficiency bin. Defaults empty for older contexts.
     plant_groups: list[str] = field(default_factory=list)
+    # NOx / SO2 rates (tons/MWh), aligned with the generator axis. Defaults
+    # empty for contexts written before NOx/SO2 export wiring (W3-E2).
+    nox_rate: list[float] = field(default_factory=list)
+    so2_rate: list[float] = field(default_factory=list)
 
     @classmethod
     def from_arrays(
@@ -101,6 +109,8 @@ class FleetContext:
             fuel_types=[FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx],
             pmax_mw=[float(p) for p in fleet.pmax],
             emission_rate=[float(r) for r in fleet.emission_rate],
+            nox_rate=[float(r) for r in fleet.nox_rate],
+            so2_rate=[float(r) for r in fleet.so2_rate],
             efficiency_bins=list(fleet.efficiency_bin),
             heat_rates=[float(h) for h in fleet.heat_rate],
             zones=[zone_names[i] for i in fleet.zone_idx],
