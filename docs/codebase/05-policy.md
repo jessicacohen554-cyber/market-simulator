@@ -173,9 +173,20 @@ one-pass year loop and rule 9 forbid the multi-year coupling a true bank needs).
 
 The runner builds the per-generator coefficient `m_zone[zone_idx]·emission_rate`
 from each `MassCapSpec` and threads it into the dispatch builder alongside
-`rps_target`. Budget schedules land via the `rggi-co2-budgets` /
-`carb-cap-schedule` intake datatypes; until a budget is supplied the row stays
-inert. Design: `docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
+`rps_target`. `_power_sector_cap` sources the row's `cap_tons` (metric tonnes) in
+precedence order: an explicit `config.mass_cap_tons` scenario budget, else the
+program's **published** schedule for the year — the cited CARB / RGGI budgets now
+landed in `constants.py` (`CARB_ALLOWANCE_BUDGET`, MMT CO2e × 1e6; the regional
+`RGGI_STATE_CO2_BUDGET["RGGI"]`, short tons × `SHORT_TON_TO_METRIC_TONNE`), mirrored
+by the cited raw schedules under `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`
+(curated to the gitignored `data/clean/` via `scripts/curate_*.py`). Because those
+region-/economy-wide budgets vastly exceed any single modeled ISO's power-sector
+emissions, the row is (correctly) **slack** and its dual ≈ 0 for a real ISO — the
+mechanism is validated on the trivial binding fixture
+(`tests/test_dispatch.py::TestMassCapConstraint`), not by binding against the real
+cap. No 2022/2026 budget rows are landed (holdout quarantine, rule 22), so those
+years leave the row inert (adder path). Design:
+`docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
 
 **Row-path boundary (documented limitation).** On the row path the scalar
 wrapper `resolve_carbon_price` returns the trajectory fallback (0 by default) —
