@@ -2716,12 +2716,76 @@ END_YEAR: int = 2050
 
 # Historical weather years available as forecast load + VRE capacity-factor
 # shapes. A forecast pins one representative year (ScenarioConfig.weather_year);
-# the weather-year ensemble (market_sim.ensemble) draws over this whole pool and
-# reports the distribution. Bounded by the hourly EIA-930 coverage on disk
-# (data/raw/eia-930/, 2023-2025); extend as later years land. A weather draw is
-# an admissible forecast *input*, not an outcome (CLAUDE.md #10), so sampling
-# over it is methodological robustness, not a backcast pin.
+# the weather-year ensemble (market_sim.ensemble) draws over a pool and reports
+# the distribution. A weather draw is an admissible forecast *input*, not an
+# outcome (CLAUDE.md #10), so sampling over it is methodological robustness,
+# not a backcast pin.
+#
+# Cross-ISO default / fallback pool: the common 3-year window every ISO's
+# EIA-930 ``<BA> hourly`` extract covers today (data/raw/eia-930-hourly/).
 WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
+
+# Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds-
+# plan-2026-07.md §2.1: "intaking more pre-2022 weather years is a cheap
+# widening"). Each entry is bounded by *verified* coverage on disk, checked
+# end-to-end (not just file presence): the EIA-930 BA hourly extract yields a
+# clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py
+# load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves
+# a full wind+solar profile for the year (an ISO whose BA under-reports one
+# fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution
+# parquet, which only reaches back to 2021 -- a year is listed here only if
+# every fallback it needs actually covers it). Verified 2026-07-05; see
+# docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the
+# skipped-ISO rationale.
+#
+# Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here,
+# for any ISO, until that ISO's calibration-complete marker exists.
+WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
+    # ERCOT (EIA-930 BA "ERCO"): hourly extract spans 2015-07-01..2026-06-30
+    # (data/raw/eia-930-hourly/ERCO hourly.parquet). 2019-2021 verified: clean
+    # 8760-hour demand series, NG: WND / NG: SUN both present and nonzero, and
+    # load_renewable_profiles resolves end-to-end with no fallback needed.
+    "ERCOT": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NEISO (BA "ISNE"): hourly extract spans 2015-07-01..2026-05-20. 2019-2021
+    # verified the same way as ERCOT (both fuels reported directly, no fallback
+    # to the generation-distribution parquet needed). 2020 carries the
+    # COVID-19 demand-shape anomaly (a documented multi-percent spring/summer
+    # load depression vs. pre-pandemic trend, EIA/FERC 2020 load-impact
+    # reporting) -- an admissible historical weather-year input, but flagged so
+    # ensemble consumers can weight or exclude it deliberately (see the
+    # coverage note).
+    "NEISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NYISO (BA "NYIS"): hourly extract spans 2015-07-01..2026-06-13, but NYIS
+    # never separately reports solar generation (all-zero NG: SUN in every
+    # year, including the already-supported 2023-2025), so NYISO solar always
+    # falls back to the EIA-930 generation-*distribution* parquet
+    # (data/raw/eia-930/eia_generation_profiles.parquet), whose own coverage
+    # floor is 2021 -- 2019 and 2020 fail end-to-end
+    # (market_sim.data.renewables.load_renewable_profiles raises) even though
+    # the raw hourly demand extract covers them. Only 2021 is added; 2019/2020
+    # stay out until the distribution parquet is rebuilt further back.
+    "NYISO": (2021, 2023, 2024, 2025),
+    # CAISO (BA "CISO"): hourly extract begins 2022-12-31 -- no 2019-2021
+    # coverage on disk. Fetching it is blocked in this managed sandbox
+    # (api.eia.gov returns 403; scripts/fetch_eia930_hourly.py must be run
+    # locally per its own docstring). Pool stays at the current window.
+    "CAISO": (2023, 2024, 2025),
+    # PJM (BA "PJM"): hourly extract begins 2021-12-31 (only the last day of
+    # 2021), so no full year in 2019-2021 is covered. Same fetch-blocked
+    # limitation as CAISO.
+    "PJM": (2023, 2024, 2025),
+    # MISO (BA "MISO"): hourly extract begins 2022-12-31 -- same gap as CAISO.
+    "MISO": (2023, 2024, 2025),
+}
+
+
+def weather_year_pool(iso: str) -> tuple[int, ...]:
+    """Return the verified weather-year pool for ``iso``.
+
+    Looks up :data:`WEATHER_YEAR_POOL_BY_ISO`, falling back to the common
+    :data:`WEATHER_YEAR_POOL` default for an ISO not yet registered there.
+    """
+    return WEATHER_YEAR_POOL_BY_ISO.get(iso, WEATHER_YEAR_POOL)
 
 
 # ---------------------------------------------------------------------------
