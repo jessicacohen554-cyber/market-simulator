@@ -1,0 +1,21 @@
+{
+  "iso": "ERCOT",
+  "variant": "realized",
+  "gas_price_path": "hindcast_realized",
+  "vintage_year": 2020,
+  "start_year": 2021,
+  "end_year": 2025,
+  "cache_key": "b62e3d646329591a",
+  "bundle": "results/hindcast/ercot-2021-2025-realized-s3/ERCOT/b62e3d646329591a",
+  "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+  ],
+  "bridged_years": [
+    2022
+  ],
+  "leakage_violations": [],
+  "started_utc": "2026-07-05T23:22:22Z"
+}

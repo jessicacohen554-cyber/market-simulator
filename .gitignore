@@ -337,3 +337,4 @@ scratch_hindcast/
 
 # Capacity-hindcast raw dispatch parquets are reproducible; commit ledgers+score only.
 results/hindcast/*/*/*/year_*.parquet
+scratch_logs/
