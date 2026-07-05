@@ -4559,6 +4559,136 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     }
 
 
+# Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive
+# script's unitType bucketing (scripts/derive_campd_ramp_envelopes.py) so a
+# mixed facility (CC block + standalone peakers) is enveloped per family.
+_RAMP_BUCKET_BY_GROUP: dict[str, str] = {
+    "CC_REGULAR": "CC",
+    "CC_CHP": "CC",
+    "ST_GAS": "ST",
+    "ST_CHP": "ST",
+    "COAL": "ST",
+    "CT_PEAKER": "CT",
+    "CT_CHP": "CT",
+}
+
+
+@lru_cache(maxsize=8)
+def load_campd_ramp_envelopes(iso: str) -> "pd.DataFrame | None":
+    """Return the ISO's CAMPD plant-level hourly ramp-envelope table, or None.
+
+    Reads the committed measured artifact
+    (``scripts/derive_campd_ramp_envelopes.py`` →
+    ``data/raw/_processed-legacy/campd_ramp_envelopes_<ISO>.csv``): per
+    (plant, CC/CT/ST bucket) max observed 1-h up/down gross-load deltas
+    pooled 2023-2025 (``basis == "plant"``), sparse-coverage rows
+    (``basis == "sparse"``, informational only) and the capacity-weighted
+    class-median envelope FRACTIONS under ``plant_code == 0``
+    (``basis == "class_fraction"``). ``None`` when the ISO has no artifact —
+    the ramp rows are then simply absent (never a silent hand number,
+    rule #23). Cached per ISO; treat the returned frame as read-only.
+    """
+    path = PROCESSED_DIR / f"campd_ramp_envelopes_{iso.upper()}.csv"
+    if not path.exists():
+        return None
+    return pd.read_csv(path)
+
+
+def build_ramp_groups(
+    fleet: FleetArrays, iso: str
+) -> "tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None":
+    """Group thermal columns into ramp-enveloped plant groups for the LP.
+
+    Members are grouped by ``(plant_code, family bucket)`` where the bucket
+    collapses the model plant groups onto the CAMPD envelope families
+    (CC_REGULAR/CC_CHP → CC; ST_GAS/ST_CHP/COAL → ST; CT_PEAKER/CT_CHP →
+    CT) — the envelope is a plant property, tranche switching inside a plant
+    stays free (design doc §1.2). Each group's envelope resolves from its
+    measured ``basis == "plant"`` row (MW, used directly); groups without one
+    fall back to the CC/ST class-median fraction × group pmax. CT groups get
+    NO fallback — a CT without a well-observed CEMS trace simply has no row
+    (bang-bang is the measured norm for the class).
+
+    Pruning (rule 18 — physics by parameters, not class names): a group
+    whose envelope can never bind (``RU >= cap`` AND ``RD >= cap``, with
+    ``cap`` the group's summed pmax) gets no row — bang-bang CTs drop out
+    naturally, as do import pseudo-generators (``plant_code == 0``, never
+    grouped).
+
+    Args:
+        fleet: Vectorized fleet arrays (needs ``plant_code``, ``plant_group``
+            and ``pmax``).
+        iso: ISO identifier keying the committed envelope artifact.
+
+    Returns:
+        ``(gen_idx, group_col, ramp_up_mw, ramp_dn_mw)`` for
+        :func:`market_sim.model.dispatch.build_constraints` — member thermal
+        column indices, each member's group index, and the per-group
+        envelopes — or ``None`` when the artifact is absent, the fleet
+        carries no plant groups, or every group pruned out.
+    """
+    env = load_campd_ramp_envelopes(iso)
+    if env is None or fleet.plant_group is None:
+        return None
+    plant_code = np.asarray(fleet.plant_code, dtype=int)
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    buckets = np.array(
+        [
+            _RAMP_BUCKET_BY_GROUP.get(str(g), "")
+            for g in np.asarray(fleet.plant_group, dtype=object)
+        ],
+        dtype=object,
+    )
+
+    measured = {
+        (int(r.plant_code), str(r.bucket)): (
+            float(r.ramp_up_mw),
+            float(r.ramp_dn_mw),
+        )
+        for r in env[env.basis == "plant"].itertuples(index=False)
+    }
+    class_frac = {
+        str(r.bucket): (float(r.ramp_up_mw), float(r.ramp_dn_mw))
+        for r in env[env.basis == "class_fraction"].itertuples(index=False)
+        # CT gets NO class fallback: only a measured plant row can envelope it.
+        if str(r.bucket) in ("CC", "ST")
+    }
+
+    # Group member columns by (plant, bucket); insertion order is stable.
+    members: dict[tuple[int, str], list[int]] = {}
+    for i in np.flatnonzero((plant_code > 0) & (buckets != "")):
+        members.setdefault((int(plant_code[i]), str(buckets[i])), []).append(int(i))
+
+    gen_idx: list[int] = []
+    group_col: list[int] = []
+    ramp_up: list[float] = []
+    ramp_dn: list[float] = []
+    for (pk, bucket), m in members.items():
+        cap = float(pmax[m].sum())
+        if (pk, bucket) in measured:
+            ru, rd = measured[(pk, bucket)]
+        elif bucket in class_frac:
+            fu, fd = class_frac[bucket]
+            ru, rd = fu * cap, fd * cap
+        else:
+            continue
+        if ru >= cap and rd >= cap:
+            continue  # envelope can never bind (bang-bang) — prune, no row
+        g = len(ramp_up)
+        gen_idx.extend(m)
+        group_col.extend([g] * len(m))
+        ramp_up.append(ru)
+        ramp_dn.append(rd)
+    if not ramp_up:
+        return None
+    return (
+        np.asarray(gen_idx, dtype=int),
+        np.asarray(group_col, dtype=int),
+        np.asarray(ramp_up, dtype=float),
+        np.asarray(ramp_dn, dtype=float),
+    )
+
+
 # Default location of the CAMPD-derived per-plant emission-rate artifact
 # (scripts/derive_plant_emissions.py), resolved relative to the repo root.
 PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
