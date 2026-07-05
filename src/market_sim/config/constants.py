@@ -1498,9 +1498,13 @@ class CapAndTradeProgram:
 
     Attributes:
         name: Program label ("CARB" or "RGGI").
-        member_states: Postal codes of the program's member states whose
-            in-state fossil fleet surrenders allowances. Documentary /
-            crosswalk reference; membership is resolved per zone below.
+        member_states: Postal codes of every state the program has ever
+            covered within this ISO's footprint (historical union — e.g. PJM
+            includes Virginia even though it exited 1 Jan 2024). Actual
+            year-by-year membership is resolved from
+            :data:`RGGI_MEMBER_STATES_BY_YEAR`, not this tuple directly;
+            this is the documentary / crosswalk reference other code
+            intersects against.
         price_key: Key into :data:`STATE_CARBON_PRICE_BY_ISO` for the
             measured backcast allowance price, and the anchor for the
             forecast projection. ``None`` for a program with no measured
@@ -1509,9 +1513,19 @@ class CapAndTradeProgram:
             last measured price to build the projected forecast adder.
         external_nodes: Zone names that are priced import/external nodes,
             not in-region load — excluded from membership (m_zone = 0).
-        zone_share: Optional per-zone RGGI-member fraction (0..1) overriding
-            the uniform-membership default, for multi-state roll-up zones
-            (PJM). ``None`` → uniform membership (1.0 on every load zone).
+        zone_share: Optional per-zone, per-year RGGI-member fraction (0..1)
+            overriding the uniform-membership default, for multi-state
+            roll-up zones (PJM) whose fossil fleet spans member and
+            non-member states. Keyed ``{zone: {year: share}}`` because a
+            zone's member share can move year to year (Virginia's exit).
+            ``None`` → uniform membership (1.0 on every load zone). This is
+            the *zone-level* fallback; a generator with a real, resolvable
+            ``plant_code`` is instead tested exactly against its own plant's
+            state (per-unit membership,
+            ``policy.cap_and_trade.per_generator_membership``) — the
+            fractional share only applies where the fleet representation
+            can't resolve individual units to a single state (legacy
+            equal-width heat-rate bins, whose ``plant_code`` is synthetic).
     """
 
     name: str
@@ -1519,18 +1533,39 @@ class CapAndTradeProgram:
     price_key: str | None
     escalation_rate: float
     external_nodes: tuple[str, ...] = ()
-    zone_share: "dict[str, float] | None" = None
+    zone_share: "dict[str, dict[int, float]] | None" = None
 
 
 # PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through
 # 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA),
 # and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible
-# (plan §5). The RGGI-member share of each zone's fossil capacity must come
-# from an EIA-860 plant-coordinate → state → RGGI-membership-by-year crosswalk
-# (a data-intake step, not yet landed). Until that crosswalk exists this map is
-# empty, so PJM membership resolves to all-zeros and the PJM RGGI adder is a
-# no-op (ships OFF, plan §5, §11). Populate per zone once the crosswalk lands.
-PJM_RGGI_ZONE_SHARE: dict[str, float] = {}
+# (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil
+# nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from
+# the year-matched EIA-860 plant/generator tables (state + capacity), the same
+# PJM zone assignment the dispatch model uses
+# (`data.zone_assignment.build_zone_lookup("PJM")`), and
+# `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below:
+# PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year;
+# 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to
+# small year-over-year additions/retirements, so only the legal membership
+# differs from 2023. This is the *zone-level* fallback consumed only by
+# generators whose `plant_code` cannot be resolved to a single physical plant
+# (legacy equal-width bins); a real plant_code is tested exactly against its
+# own state instead (`policy.cap_and_trade.per_generator_membership`). Still
+# ships inert by default: PJM has no measured price series (`price_key=None`
+# below) so the adder path stays $0 regardless of membership, and the
+# mass-cap row only activates when a user explicitly sets
+# `mass_cap_enabled=True` (default off, rule 24).
+PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
+    "PJM_ComEd": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_AEP_Ohio": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_ATSI": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_West_APS": {2023: 0.0108, 2024: 0.0, 2025: 0.0},
+    "PJM_Central_PA": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_Dominion": {2023: 0.9881, 2024: 0.0, 2025: 0.0},
+    "PJM_EMAAC": {2023: 0.7327, 2024: 0.7252, 2025: 0.7221},
+    "PJM_SWMAAC": {2023: 0.9976, 2024: 0.9976, 2025: 0.9976},
+}
 
 # ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).
 CAP_AND_TRADE_PROGRAMS: dict[str, CapAndTradeProgram] = {
@@ -1558,11 +1593,15 @@ CAP_AND_TRADE_PROGRAMS: dict[str, CapAndTradeProgram] = {
         escalation_rate=RGGI_RESERVE_ESCALATION,
         external_nodes=("HQ_import",),
     ),
-    # PJM: partial RGGI membership via fractional per-zone share (ships OFF
-    # until the EIA-860→state crosswalk lands; PJM_RGGI_ZONE_SHARE empty).
+    # PJM: partial RGGI membership via fractional per-zone share
+    # (PJM_RGGI_ZONE_SHARE). member_states is the historical union (VA
+    # included even though it exited 1 Jan 2024) — actual year membership
+    # comes from RGGI_MEMBER_STATES_BY_YEAR. Still inert by default: no
+    # measured price series (price_key=None) keeps the adder at $0, and the
+    # mass-cap row is opt-in (mass_cap_enabled, default off).
     "PJM": CapAndTradeProgram(
         name="RGGI",
-        member_states=("MD", "DE", "NJ"),
+        member_states=("MD", "DE", "NJ", "VA"),
         price_key=None,
         escalation_rate=RGGI_RESERVE_ESCALATION,
         zone_share=PJM_RGGI_ZONE_SHARE,
@@ -1616,24 +1655,69 @@ CARB_FLOOR_PRICE: dict[int, float] = {
     2024: 24.04,
     2025: 25.94,
 }
-# RGGI regional CO2 allowance budget (short tons/yr). Keyed by "RGGI" for the
-# regional total; per-state budgets can be added under their postal codes once
-# the RGGI per-state allowance-distribution table is intaken (until then a RGGI
-# ISO's power-sector row uses the regional cap — an even looser over-bound, so
-# still slack). 2023-2025 are the published regional cap; 2027-2030 project the
-# 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured).
-# Source: RGGI, Inc. regional cap trajectory (ICAP ETS profile); the 2023->2024
-# step reflects Virginia's 1 Jan 2024 exit. 2022/2026 omitted (quarantine).
+# RGGI member states by year (postal codes). Virginia joined RGGI's CO2 Budget
+# Trading Program in 2021 (regulation 9 VAC 5-140) and exited effective 1 Jan
+# 2024 (2023 Va. Acts of Assembly ch. 2/3, repealing the program); Pennsylvania's
+# entry remains enjoined by the Commonwealth Court (Shirkey v. DEP, ongoing) and
+# was never an actual member, so PA is never included. Used to (a) resolve
+# per-generator RGGI membership exactly from a plant's own state (§5 per-unit
+# mask) and (b) sum each RGGI ISO's own member-state budgets (below) instead of
+# the regional over-bound. 2022 omitted (holdout quarantine, CLAUDE.md rule 22);
+# years beyond 2025 hold the 2025 (post-VA-exit) set — no further membership
+# changes are enacted as of this writing.
+# Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and-
+# design/elements); Virginia Clean Economy and Equity Act repeal, effective
+# 2024-01-01.
+RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2023: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
+    2024: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+    2025: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+}
+
+# RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and per
+# member-state (postal code). Per-state values are each state's "CO2 Allowance
+# Base Budget" — the gross annual issuance under its own CO2 Budget Trading
+# Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA,
+# a bank-clearing haircut) — because this model's row is an explicitly no-bank
+# instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle
+# banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's
+# power-sector row sums its own member states' base budgets
+# (policy/cap_and_trade.py::_published_power_sector_budget), which is a much
+# tighter, more faithful bound than the regional total (rule 12: prefer the
+# accurate figure). "RGGI" is kept as the regional fallback for years without a
+# per-state breakdown (2027-2030 projections) or an unmapped ISO.
+# 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official
+# "Distribution of VYyyyy CO2 Allowances By State" spreadsheets ("CO2 Allowance
+# Base Budget" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/
+# {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this
+# replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with
+# the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784).
+# 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward
+# trajectory, not measured); no per-state breakdown is published for projected
+# years, so a RGGI ISO's forecast-year row falls back to this regional
+# over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).
 RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {
     "RGGI": {
-        2023: 93_000_000.0,
-        2024: 69_000_000.0,
-        2025: 67_000_000.0,
+        2023: 112_457_784.0,
+        2024: 84_162_784.0,
+        2025: 81_347_784.0,
         2027: 63_200_000.0,
         2028: 61_400_000.0,
         2029: 59_600_000.0,
         2030: 57_900_000.0,
     },
+    "CT": {2023: 4_566_218.0, 2024: 4_418_921.0, 2025: 4_271_624.0},
+    "DE": {2023: 3_178_264.0, 2024: 3_075_739.0, 2025: 2_973_215.0},
+    "ME": {2023: 2_569_587.0, 2024: 2_487_656.0, 2025: 2_405_725.0},
+    "MD": {2023: 15_772_679.0, 2024: 15_263_882.0, 2025: 14_755_086.0},
+    "MA": {2023: 11_220_454.0, 2024: 10_858_504.0, 2025: 10_496_554.0},
+    "NH": {2023: 3_723_549.0, 2024: 3_604_823.0, 2025: 3_486_098.0},
+    "NJ": {2023: 16_380_000.0, 2024: 15_840_000.0, 2025: 15_300_000.0},
+    "NY": {2023: 27_295_284.0, 2024: 26_414_791.0, 2025: 25_534_298.0},
+    "RI": {2023: 1_763_884.0, 2024: 1_706_986.0, 2025: 1_650_085.0},
+    "VT": {2023: 507_865.0, 2024: 491_482.0, 2025: 475_099.0},
+    # Virginia: 2023 only (exited 1 Jan 2024, RGGI_MEMBER_STATES_BY_YEAR above).
+    "VA": {2023: 25_480_000.0},
 }
 
 # Storage technology parameters.

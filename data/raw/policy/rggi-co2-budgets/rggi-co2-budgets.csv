@@ -1,0 +1,42 @@
+state,budget_year,metric,value,unit,source_doc,source_page
+RGGI,2023,allowance_budget,112457784,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State","2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget, Total row)"
+RGGI,2024,allowance_budget,84162784,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State","2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget, Total row)"
+RGGI,2025,allowance_budget,81347784,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State","2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget, Total row)"
+RGGI,2027,allowance_budget,63200000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2028,allowance_budget,61400000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2029,allowance_budget,59600000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2030,allowance_budget,57900000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2025,ccr_trigger_price,17.03,usd_per_short_ton,RGGI 2017/2021 Model Rule 5.3 (CCR +7%/yr),5.3
+RGGI,2025,ecr_trigger_price,7.86,usd_per_short_ton,RGGI 2017/2021 Model Rule 6.3 (ECR +7%/yr),6.3
+RGGI,2025,minimum_reserve_price,2.62,usd_per_short_ton,RGGI 2021 Model Rule minimum reserve price (+2.5%/yr),min reserve
+CT,2023,allowance_budget,4566218,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+DE,2023,allowance_budget,3178264,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+ME,2023,allowance_budget,2569587,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MD,2023,allowance_budget,15772679,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MA,2023,allowance_budget,11220454,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NH,2023,allowance_budget,3723549,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NJ,2023,allowance_budget,16380000,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NY,2023,allowance_budget,27295284,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+RI,2023,allowance_budget,1763884,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+VT,2023,allowance_budget,507865,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+VA,2023,allowance_budget,25480000,short_tons,"RGGI, Inc. Distribution of VY2023 CO2 Allowances By State",2023_Allowance-Distribution.xlsx (CO2 Allowance Base Budget; VA's last year as a member — exited 2024-01-01)
+CT,2024,allowance_budget,4418921,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+DE,2024,allowance_budget,3075739,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+ME,2024,allowance_budget,2487656,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MD,2024,allowance_budget,15263882,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MA,2024,allowance_budget,10858504,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NH,2024,allowance_budget,3604823,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NJ,2024,allowance_budget,15840000,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NY,2024,allowance_budget,26414791,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+RI,2024,allowance_budget,1706986,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+VT,2024,allowance_budget,491482,short_tons,"RGGI, Inc. Distribution of VY2024 CO2 Allowances By State",2024_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+CT,2025,allowance_budget,4271624,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+DE,2025,allowance_budget,2973215,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+ME,2025,allowance_budget,2405725,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MD,2025,allowance_budget,14755086,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+MA,2025,allowance_budget,10496554,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NH,2025,allowance_budget,3486098,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NJ,2025,allowance_budget,15300000,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+NY,2025,allowance_budget,25534298,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+RI,2025,allowance_budget,1650085,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
+VT,2025,allowance_budget,475099,short_tons,"RGGI, Inc. Distribution of VY2025 CO2 Allowances By State",2025_Allowance-Distribution.xlsx (CO2 Allowance Base Budget)
