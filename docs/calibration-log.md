@@ -4841,4 +4841,72 @@ plain HEAD re-solve is confounded. Per the nyiso-49 D-2 pattern, two byte-faithf
 - `resolve − ablation` (A − B) isolates the **demand repair**; `ablation − keeper`
   (B − committed) isolates the **post-e9daf7e code merges**.
 
-_Outcome appended below once both twins complete._
+### Re-gate outcome (PJM) — the demand repair moves no gate; keeper stays, verified demand-robust
+
+Both twins solved all years 2023 2024 2025 at HEAD; scored with
+`scripts/calibration_verdict.py` against the committed rubric. Registered:
+probe `2026-07-05-pjm-78-demand-regate` (= Twin A, the dashboard probe); Twin B
+kept as an on-disk ablation control (`results/calibration/pjm77_regate_corrupt`,
+**not** dashboard-registered — a corrupted-demand run must never render as a
+result, per the rule-15/co2re-handoff ablation-control convention).
+
+**Every scored criterion verdict is identical across keeper / Twin B / Twin A**
+(NOT-YET; C1 fuelmix, C2 sysvol, C3a/b/c price, C8 forced-share FAIL; C4 dispatch-r,
+C5a CO2, C7 diurnal PASS). The *only* status change is C6 governance PASS→UNATTESTED
+on both twins — a pure replay artifact (the re-solved bundles carry no
+`calibration_attestation.json`; the LP dispatch is unchanged), **not** a real gate move.
+
+**Attribution (model values; `B−keeper` = post-e9daf7e CODE merges, `A−B` = the DEMAND repair):**
+
+| criterion / key / year | keeper | Twin B (HEAD+corrupt) | Twin A (HEAD+repaired) | B−keeper (code) | A−B (demand) |
+|---|---|---|---|---|---|
+| fuelmix CC_REGULAR 2023 (TWh) | 295.006 | 295.006 | 295.334 | **+0.000** | +0.328 |
+| fuelmix CC_REGULAR 2024 (TWh) | 322.291 | 322.291 | 322.837 | **+0.000** | +0.546 |
+| fuelmix COAL_BIT 2023 / 2024 (TWh) | 112.435 / 112.035 | =keeper | 112.540 / 112.150 | **+0.000** | +0.105 / +0.115 |
+| sysvol gas 2023 / 2024 (TWh) | 353.59 / 374.80 | =keeper | 353.97 / 375.38 | **+0.000** | +0.380 / +0.580 |
+| sysvol coal 2023 / 2024 (TWh) | 122.61 / 122.30 | =keeper | 122.72 / 122.42 | **+0.000** | +0.110 / +0.120 |
+| CO2 2023 / 2024 (Mt) | 269.37 / 273.62 | =keeper | 269.63 / 273.96 | **+0.000** | +0.264 / +0.343 |
+| mean LMP 2024 ($/MWh) | 27.19 | 27.19 | 27.16 | **+0.000** | −0.030 |
+| **all 2025 values (gas/coal/CO2/LMP)** | — | **=keeper** | **=keeper** | **+0.000** | **+0.000** |
+
+**Two findings, both decisive:**
+
+1. **`B − keeper` is EXACTLY 0.000 on every value.** Twin B (HEAD code, corrupted
+   demand — the keeper's own solve conditions) reproduces the committed pjm-77
+   bundle byte-for-byte. So the ~30 post-`e9daf7e` changed files touch nothing in
+   PJM's solve path: **pjm-77 is fully HEAD-reproducible, no confound** (contrast
+   NYISO nyiso-41, where the offer de-leak did move the replay — the STALE-VS-HEAD
+   case). This makes `A − B` a clean single-delta measurement of the demand repair alone.
+
+2. **`A − B` is the entire (tiny) movement, confined to the two corrupted years.**
+   Repairing the 23 h / 22 h zero-sentinel runs adds ~+0.5 TWh/yr of generation
+   (served by mid-merit CC + baseload coal), +0.26–0.34 Mt CO2 (+~0.1 %), and moves
+   mean LMP by ≤0.03 $/MWh. **2025 is exactly 0.000** (its legacy demand was already
+   clean — the in-bundle control). No criterion crosses its band; the free-class C1
+   score (10/12) and every hard/soft verdict are unchanged.
+
+**Decision (rules #1 / #14 / #15).** The repaired demand is the accurate input and
+it **stays** (rule #14) — but it does **not** gate worse *or* better: it is
+**immaterial** to every PJM scored criterion. Therefore:
+- **Keep `2026-07-05-pjm-77-ct-relfloor` as the PJM keeper**, now annotated
+  **verified demand-robust** (its committed bundle solved on the 23 h/22 h corrupted
+  shoulder-hours, but the repair changes no gate and only ~0.1 % of volume in
+  2023/2024). `keepers.json` unchanged.
+- **Do NOT swap to Twin A (pjm-78).** Not because it regressed — it did not — but
+  because a swap buys nothing (identical verdict) while it would (a) discard the
+  keeper's committed governance attestation and its zero-forcing ablation twin
+  (rule #20 / audit E9), and (b) is unnecessary since Twin B proves the keeper is
+  already HEAD-reproducible. This mirrors the co2re-handoff disposition (confounded/
+  neutral HEAD re-solve registered as a PROBE, keeper not swapped).
+- **No root-cause branch triggered.** Rule #14's "accurate data gates worse ⇒
+  discovered miscalibration" clause does **not** fire here (the repair is neutral,
+  not adverse). Nothing was tuned to any residual (rules #1 / #23).
+
+**Other ISOs: no action.** Per the matrix above, CAISO/MISO/NYISO/NEISO/ERCOT read
+dedicated per-BA extracts for every scored year 2023–2025, so their flagged
+legacy-file corruption never reached a keeper solve — no re-gate needed. NYISO
+(nyiso-41) was left entirely untouched (already documented STALE-VS-HEAD, blocked on
+the peaker-pricing structural fix owned by a parallel session); its 2024/2025 legacy
+corruption is moot because NYISO reads the `NYIS hourly` extract. Holdouts 2022 /
+H1-2026 remain fully quarantined (rule #22): the corrupted 2022 rows are repaired as
+*data* by PR #1426 but stay unsolved and unscored.
