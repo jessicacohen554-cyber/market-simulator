@@ -1459,18 +1459,44 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         nargs="+",
         default=None,
-        help="Weather years to draw over; defaults to WEATHER_YEAR_POOL.",
+        help="Weather years to draw over (weather-only path); defaults to "
+        "WEATHER_YEAR_POOL. Ignored when --sampler is given.",
+    )
+    ensemble_parser.add_argument(
+        "--sampler",
+        default=None,
+        help="Path to an uncertainty-sampler YAML spec (PB-2). When given, the "
+        "member axis is the multivariate draw, not the weather year.",
+    )
+    ensemble_parser.add_argument(
+        "--draws",
+        type=int,
+        default=None,
+        help="Number of sampler draws; overrides the spec's n. Requires --sampler.",
+    )
+    ensemble_parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Sampler RNG seed; overrides the spec's seed. Requires --sampler.",
     )
     ensemble_parser.add_argument(
         "--workers",
         type=int,
         default=None,
-        help="Worker processes; defaults to cpu_count - 1.",
+        help="Worker processes; defaults to min(2, cpu_count - 1) (rule 12).",
+    )
+    ensemble_parser.add_argument(
+        "--out-dir",
+        default=None,
+        help="Directory for the sampler output surface (draws/metrics/bands "
+        "parquet + ensemble_meta.json). Requires --sampler.",
     )
     ensemble_parser.add_argument(
         "--out",
         default=None,
-        help="Path to write the ensemble distribution JSON; skipped if omitted.",
+        help="Path to write the weather-year ensemble distribution JSON; "
+        "skipped if omitted. Weather-only path.",
     )
 
     matrix_parser = subparsers.add_parser(
@@ -1527,13 +1553,31 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "sweep":
         run_sweep(SweepDefinition.from_yaml(args.sweep), args.workers)
     elif args.command == "ensemble":
-        from market_sim.ensemble import export_ensemble_json, run_weather_ensemble
-
         config = ScenarioConfig.from_yaml(args.config)
         iso = args.iso or config.iso
-        members = run_weather_ensemble(config, iso, args.weather_years, args.workers)
-        if args.out:
-            export_ensemble_json(members, iso, args.out)
+        if args.sampler:
+            from dataclasses import replace
+
+            from market_sim.ensemble import run_sampler_ensemble
+            from market_sim.uncertainty import UncertaintySpec
+
+            spec = UncertaintySpec.from_yaml(args.sampler)
+            overrides = {}
+            if args.draws is not None:
+                overrides["n"] = args.draws
+            if args.seed is not None:
+                overrides["seed"] = args.seed
+            if overrides:
+                spec = replace(spec, **overrides)
+            run_sampler_ensemble(config, spec, iso, args.workers, args.out_dir)
+        else:
+            from market_sim.ensemble import export_ensemble_json, run_weather_ensemble
+
+            members = run_weather_ensemble(
+                config, iso, args.weather_years, args.workers
+            )
+            if args.out:
+                export_ensemble_json(members, iso, args.out)
     elif args.command == "matrix":
         from market_sim.matrix import run_matrix_cli
 
