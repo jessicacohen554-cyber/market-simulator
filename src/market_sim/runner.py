@@ -97,6 +97,7 @@ from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.emissions import compute_must_run_emissions, measured_class_cf
+from market_sim.pipeline import PriorYearResults
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
@@ -1285,18 +1286,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 float(adder.max()),
             )
 
-        prior_results = {
-            "fleet_arrays": fleet_arrays,
-            "dispatch_result": result,
-            "prices": econ_prices,
-            "peak_demand": peak_demand,
-            "planned_additions": planned_additions,
-            "mc_cost": mc_cost,
-            "rps_shadow_price": result.rps_shadow_price or 0.0,
-            "retrofit_log": retrofit_log,
+        # Typed cross-year state (pipeline.PriorYearResults, AR-2). The .get /
+        # __getitem__ shims keep every dict-style reader (this loop's next
+        # iteration, capacity.evolve_fleet, apply_storage_new_entry) working
+        # unchanged; values are identical to the former dict, key-for-key.
+        prior_results = PriorYearResults(
+            fleet_arrays=fleet_arrays,
+            dispatch_result=result,
+            prices=econ_prices,
+            peak_demand=peak_demand,
+            planned_additions=planned_additions,
+            mc_cost=mc_cost,
+            rps_shadow_price=result.rps_shadow_price or 0.0,
+            retrofit_log=retrofit_log,
             # AS-eligible (storage) fleet power for the AS-revenue saturation
             # in next year's capacity screens (capacity.evolve_fleet).
-            "storage_power_mw": float(sum(storage.power_cap))
+            storage_power_mw=float(sum(storage.power_cap))
             if storage.power_cap.ndim == 1
             else float(storage.power_cap.sum(axis=0).max()),
             # Storage AS revenue DERIVED from this year's co-opt reserve duals
@@ -1304,7 +1309,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # to next year's storage entry screen so exactly one mechanism
             # prices storage AS under ercot_storage_as_endogenous (rule 19).
             # 0.0 when the co-opt did not price reserve this year.
-            "storage_as_revenue_per_mw_yr": realized_storage_as_revenue_per_mw_yr(
+            storage_as_revenue_per_mw_yr=realized_storage_as_revenue_per_mw_yr(
                 result.reserve_price_by_family,
                 result.reserve_dispatch,
                 result.storage_charge,
@@ -1320,7 +1325,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # — fed to next year's retirement/new-entry screens so exactly one
             # mechanism prices thermal AS under ercot_thermal_as_endogenous
             # (rule 19). Empty dict when the co-opt did not price reserve this year.
-            "thermal_as_revenue_per_mw_yr": (
+            thermal_as_revenue_per_mw_yr=(
                 realized_thermal_as_revenue_per_mw_yr_by_fuel(
                     fleet_arrays,
                     result.dispatch,
@@ -1335,9 +1340,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             ),
             # Renewable-pool and accredited-storage-firm capacity for next
             # year's reserve-margin adequacy backstop.
-            "wind_cap_mw": float(np.sum(wind_cap)),
-            "solar_cap_mw": float(np.sum(solar_cap)),
-            "storage_firm_mw": float(
+            wind_cap_mw=float(np.sum(wind_cap)),
+            solar_cap_mw=float(np.sum(solar_cap)),
+            storage_firm_mw=float(
                 sum(
                     u.power_cap_mw
                     * _elcc_for_duration(
@@ -1346,7 +1351,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     for u in storage_units
                 )
             ),
-        }
+        )
 
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
     return cache_key
