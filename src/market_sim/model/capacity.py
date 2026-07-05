@@ -1990,6 +1990,7 @@ def evolve_fleet(
     eac_price_ccs: float = 0.0,
     events: dict | None = None,
     confirmed_exits: list[ConfirmedExit] | None = None,
+    peak_demand_next: float | None = None,
 ) -> tuple[
     list[Generator],
     dict[str, int],
@@ -2057,6 +2058,12 @@ def evolve_fleet(
             additions (planned/economic/reserve_backstop), CCS retrofits,
             renewable additions, and the fleet-by-fuel totals before/after.
             ``None`` records nothing and leaves the solve path byte-identical.
+        peak_demand_next: The ENTERING year's known peak demand in MW
+            (deterministic from the demand path — plan §2.3 component 1).
+            When supplied it replaces the prior-year ``peak_demand`` in the
+            peak-anchored adequacy mechanisms (the retirement reliability
+            floor and the reserve-margin backstop), deleting their one-year
+            bookkeeping lag. ``None`` keeps the prior-year peak.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
@@ -2087,6 +2094,15 @@ def evolve_fleet(
     dispatch_result = _prior_attr(prior_results, "dispatch_result")
     prices = _prior_attr(prior_results, "prices")
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
+    # Peak used by the peak-anchored adequacy mechanisms (floor + backstop):
+    # the entering year's known peak when the runner supplies it (plan §2.3
+    # component 1 — deletes a pure one-year bookkeeping lag), else the
+    # prior-year peak (legacy behaviour, e.g. older callers/tests).
+    peak_demand_used = (
+        float(peak_demand_next)
+        if peak_demand_next is not None and peak_demand_next > 0.0
+        else peak_demand
+    )
     planned = _prior_attr(prior_results, "planned_additions", []) or []
     mc_cost = _prior_attr(prior_results, "mc_cost")
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
@@ -2203,7 +2219,7 @@ def evolve_fleet(
             prices,
             config,
             loss_tracker,
-            peak_demand,
+            peak_demand_used,
             rps_shadow_price=rps_shadow_price,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
@@ -2314,16 +2330,17 @@ def evolve_fleet(
 
     # 6. Reserve-margin adequacy backstop: force-build firm capacity if the
     # economic screen left the system below its planning reserve margin
-    # against the (prior-year, build-ahead-of-need) peak. Firm capacity nets
-    # the thermal fleet (UCAP) and the prior-year renewable pools / storage
-    # (threaded via prior_results). No-op unless reserve_margin_build_enabled.
-    if config.reserve_margin_build_enabled and peak_demand > 0.0:
+    # against the entering year's known peak (prior-year peak when the runner
+    # did not supply it). Firm capacity nets the thermal fleet (UCAP) and the
+    # prior-year renewable pools / storage (threaded via prior_results).
+    # No-op unless reserve_margin_build_enabled.
+    if config.reserve_margin_build_enabled and peak_demand_used > 0.0:
         firm_mw = accredited_firm_capacity_mw(
             fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw
         )
         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         fleet, adequacy_mw = apply_reserve_margin_build(
-            fleet, firm_mw, peak_demand, year, config, config.iso
+            fleet, firm_mw, peak_demand_used, year, config, config.iso
         )
         if _rec and adequacy_mw > 0.0:
             events["thermal_additions"].extend(
@@ -2348,7 +2365,7 @@ def evolve_fleet(
                 year,
                 adequacy_mw,
                 firm_mw,
-                peak_demand,
+                peak_demand_used,
                 1.0 + resolved_margin,
             )
 
