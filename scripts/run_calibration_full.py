@@ -1793,6 +1793,7 @@ def solve_and_persist(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    ercot_reserve_supply_forward: bool = False,
     pjm_reserve_supply_cap: bool = False,
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
@@ -2031,6 +2032,7 @@ def solve_and_persist(
             ercot_as_aware_commitment=ercot_as_aware_commitment,
             ercot_reserve_supply_cap=ercot_reserve_supply_cap,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+            ercot_reserve_supply_forward=ercot_reserve_supply_forward,
             pjm_reserve_supply_cap=pjm_reserve_supply_cap,
             pjm_reserve_online_gated=pjm_reserve_online_gated,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
@@ -2328,6 +2330,7 @@ def solve_and_persist(
         "ercot_as_aware_commitment": ercot_as_aware_commitment,
         "ercot_reserve_supply_cap": ercot_reserve_supply_cap,
         "ercot_reserve_supply_cap_from_year": ercot_reserve_supply_cap_from_year,
+        "ercot_reserve_supply_forward": ercot_reserve_supply_forward,
         "pjm_reserve_supply_cap": pjm_reserve_supply_cap,
         "pjm_reserve_online_gated": pjm_reserve_online_gated,
         "pjm_reserve_online_rho": pjm_reserve_online_rho,
@@ -2512,6 +2515,8 @@ def solve_and_persist(
             ercot_reserve_supply_cap=True,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
         )
+    if ercot_reserve_supply_forward:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_reserve_supply_forward=True)
     if ercot_as_forward_requirement:
         recorded_cfg = recorded_cfg.with_overrides(ercot_as_forward_requirement=True)
     if ercot_load_resource_reserve:
