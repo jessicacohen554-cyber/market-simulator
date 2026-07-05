@@ -1,0 +1,44 @@
+# ERCOT confirmed-retirement registry.
+# Source of truth: ERCOT market notices / NSO suspension-retirement postings +
+# federal consent decrees + state mandates. Re-query the current postings and
+# verify each instrument before the confirmed_exits_enabled default is flipped.
+#
+# Re-verified/researched 2026-07-05:
+#   - V H Braunig 1 & 2 (plant 3612, gens 1/2): CONFIRMED — see rows below.
+#     CPS Energy filed a binding Notification of Suspension of Operations
+#     (M-C031324-01, 2024-03-13) for an indefinite suspension effective
+#     2025-03-31. ERCOT's Board considered an RMR agreement (the units showed
+#     "material impact" on reliability) but on 2025-02-25 explicitly APPROVED
+#     an alternative solution instead (an Emergency Generation Service
+#     Agreement with Prime Power Solutions/Life Cycle Power, M-A060525-01) —
+#     confirming the suspension stands, not superseded by an RMR deal. The
+#     225 MW / 252 MW split independently matches fleet.py's existing
+#     BIN_FORCED_DERATE_BY_YEAR hardcoded 2025-only derate comment for CAMPD
+#     bin SC_STGAS3 ("V H Braunig -- CPS Energy retired ST units 1 (225 MW)
+#     and 2 (252 MW) in early 2025") — these rows are the general, forward-
+#     projecting registry data the plan's confirmed-exit injector is designed
+#     to consume in place of that one-year hardcoded derate (rule 24: no
+#     off-registry tuning channels); wiring the injector to replace/extend the
+#     hardcoded entry is out of scope here (fleet.py/capacity.py are owned by
+#     a parallel session).
+#   - V H Braunig 3 (plant 3612, gen 3): HELD OUT. Opposite instrument: ERCOT
+#     and CPS Energy executed a binding RMR Agreement 2025-03-03 through
+#     2027-03-02 (Board-approved 2024-12-03) keeping the unit IN SERVICE — the
+#     inverse of a retirement. Not a confirmed exit; its RMR end date is a
+#     forward marker to re-check at the next intake vintage, not a row today.
+#   - J K Spruce 1 (plant 7097, gen 1) / O W Sommers 1-2 (plant 3611): remain
+#     ANNOUNCED-grade. No EPA/DOJ consent decree, TCEQ order, or ERCOT-accepted
+#     NSO found; the 2028/2030 dates trace to a Jan-2023 CPS Energy Board
+#     resource-planning vote ("Portfolio 2"), an internal, reversible utility
+#     resolution, not a court order or an ERCOT-filed instrument. Stay with the
+#     economic screen (do NOT add).
+#   - San Miguel (lignite, USDA New ERA conversion grant): no NSO filed as of
+#     this research pass; a federal grant conditioned on a future conversion is
+#     not an accepted NSO/consent decree. Not registrable.
+#   - Martin Lake / Limestone (Vistra/Luminant): the 2024 regional-haze consent
+#     decree found in research is a procedural EPA-SIP-timing decree (compels
+#     EPA to act on Texas's regional haze SIP), not a plant-retirement order.
+#     No unit-specific shutdown date found. Not registrable.
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
+ERCOT,3612,1,V H Braunig 1,225.0,2025,3,rto_deactivation,ercot-nso-braunig-1,"ERCOT Notification of Suspension of Operations (M-C031324-01) — indefinite suspension of V H Braunig Unit 1 effective 2025-03-31; ERCOT Board (2025-02-25, M-A060525-01) approved an alternative reliability solution (Life Cycle Power emergency generation) rather than an RMR agreement for Units 1/2, confirming the suspension stands",2024-03-13,false,,https://www.ercot.com/services/comm/mkt_notices/M-C031324-01,ERCOT market notice M-C031324-01 (NSO acceptance) + M-A060525-01 (Board declines RMR for Units 1/2),2026-07-05,"First ERCOT confirmed-exit candidate found to clear the enforceable-instrument bar. EIA-860 status already shows OS (out of service, not expected back) for this unit, consistent with the 2025-03-31 suspension."
+ERCOT,3612,2,V H Braunig 2,252.0,2025,3,rto_deactivation,ercot-nso-braunig-2,"ERCOT Notification of Suspension of Operations (M-C031324-01) — indefinite suspension of V H Braunig Unit 2 effective 2025-03-31; ERCOT Board (2025-02-25, M-A060525-01) approved an alternative reliability solution (Life Cycle Power emergency generation) rather than an RMR agreement for Units 1/2, confirming the suspension stands",2024-03-13,false,,https://www.ercot.com/services/comm/mkt_notices/M-C031324-01,ERCOT market notice M-C031324-01 (NSO acceptance) + M-A060525-01 (Board declines RMR for Units 1/2),2026-07-05,"See Braunig 1's note (same NSO). EIA-860 status already shows OS for this unit."
