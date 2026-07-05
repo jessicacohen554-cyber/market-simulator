@@ -114,6 +114,55 @@ def corrupt_gas_price(
     return ref
 
 
+# scenario_config flags that reprice some/all gas generators from a measured
+# hub/zonal series instead of the annual Henry-Hub-shaped reference this
+# control corrupts -- discovered empirically (2026-07-05, NEISO keeper
+# neiso47_faststart, --control gas_price): the corrupted run's Henry Hub
+# input changed $2.19 -> $3.29/MMBtu exactly as intended, but
+# market_sim.data.fuel.apply_hub_basis_overlay's docstring is explicit that a
+# covered month's gas price is *replaced*, "superseding both the ISO-month
+# EIA-923 series and the per-plant F923 overwrite" -- and with
+# gas_hub_basis_daily on, NEISO's hub-basis overlay repriced the identical
+# 425 generators in 12/12 months on BOTH the clean and corrupted solve,
+# producing byte-identical C2/C3b scores end to end. Reporting that as "FAIL:
+# insensitivity suggests a compensating knob" would misdiagnose a bypassed
+# input as a compensator; a run against a bundle with any of these flags
+# active gets an explicit caveat instead.
+GAS_PRICE_BYPASS_FLAGS = (
+    "gas_hub_basis_overlay",
+    "gas_hub_basis_daily",
+    "pjm_zonal_gas_basis",
+    "miso_zonal_gas_basis",
+    "ercot_zonal_gas_basis",
+)
+
+
+def gas_price_bypass_caveat(bundle: Path) -> str | None:
+    """Warn when ``bundle`` engages a gas-price mechanism this control can't reach.
+
+    Returns ``None`` when no bypass flag is active in the bundle's recorded
+    ``scenario_config`` (or the config can't be read), else a message naming
+    the active flag(s).
+    """
+    try:
+        sc = json.loads((bundle / "run_config.json").read_text()).get(
+            "scenario_config", {}
+        )
+    except (OSError, json.JSONDecodeError):
+        return None
+    active = [f for f in GAS_PRICE_BYPASS_FLAGS if sc.get(f)]
+    if not active:
+        return None
+    return (
+        f"bundle has {active} active: some/all gas generators are priced from "
+        "a measured hub/zonal series that supersedes the Henry-Hub-shaped "
+        "reference this control corrupts (market_sim.data.fuel."
+        "apply_hub_basis_overlay and analogues). An insensitive verdict here "
+        "may reflect a BYPASSED INPUT, not a compensating knob -- see "
+        "GAS_PRICE_BYPASS_FLAGS in this module."
+    )
+
+
 def shuffle_outages_within_year(
     df: pd.DataFrame, year: int, seed: int = 0
 ) -> pd.DataFrame:
@@ -330,6 +379,24 @@ def run_negative_control(
             if top:
                 suspects[verdict_key] = top
 
+    caveat = gas_price_bypass_caveat(bundle) if control == "gas_price" else None
+    if sensitive:
+        verdict = (
+            "PASS: backcast fit worsened beyond the floor delta — the model "
+            "responds to this physical input as expected."
+        )
+    elif caveat:
+        verdict = (
+            "INSENSITIVE, BUT SEE CAVEAT: backcast fit did NOT worsen beyond "
+            "the floor delta -- NOT necessarily a compensating knob, see "
+            "'caveat'."
+        )
+    else:
+        verdict = (
+            "FAIL: backcast fit did NOT worsen beyond the floor delta — "
+            "insensitivity suggests a compensating knob (the nyiso-32 pattern)."
+        )
+
     result = {
         "diagnostic": True,
         "schema": "negative-control/v1",
@@ -344,13 +411,8 @@ def run_negative_control(
         "floor_delta_c2_twh": floor_delta_c2,
         "floor_delta_c3b_nrmse": floor_delta_c3b,
         "sensitive": sensitive,
-        "verdict": (
-            "PASS: backcast fit worsened beyond the floor delta — the model "
-            "responds to this physical input as expected."
-            if sensitive
-            else "FAIL: backcast fit did NOT worsen beyond the floor delta — "
-            "insensitivity suggests a compensating knob (the nyiso-32 pattern)."
-        ),
+        "verdict": verdict,
+        "caveat": caveat,
         "suspected_compensators": suspects,
     }
     if own_tmp:
@@ -403,6 +465,8 @@ def main() -> None:
     out = args.out or (args.bundle / f"negative_control_{args.control}.json")
     out.write_text(json.dumps(result, indent=2) + "\n")
     print(f"wrote {out}\n{result['verdict']}")
+    if result.get("caveat"):
+        print(f"CAVEAT: {result['caveat']}", file=sys.stderr)
     if not result["sensitive"]:
         sys.exit(1)
 
