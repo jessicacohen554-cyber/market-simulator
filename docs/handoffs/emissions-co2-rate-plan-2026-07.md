@@ -310,6 +310,58 @@ regenerable from the fetcher; the consumed derived artifacts carry the rates. Se
 share, EM-7), R6 (default-off startup-CO2 reporting adder — now unblocked by the
 persisted `model_starts`).
 
+## 9.1 Wave-2 results (2026-07-05, branch `claude/co2-emissions-plan-2026-wave2`)
+
+**R4 (EM-6) — already resolved, no new code.** The forecast carbon-price seam was
+closed by the parallel `emissions-mass-cap-plan` (`policy/cap_and_trade.py`):
+`projected_price` anchors on the last measured CARB/RGGI clearing price and
+escalates at the program's published floor-band rate (`CARB_FLOOR_ESCALATION`
+0.07, `RGGI_RESERVE_ESCALATION` 0.07), and `resolve_carbon_program` returns that
+projected adder for forecast years unless an explicit non-`zero`
+`carbon_price_path` is chosen. The R4 acceptance test already exists and passes
+(`test_cap_and_trade.py::test_forecast_carries_projected_nonzero`,
+`::test_explicit_rff_path_wins_in_forecast`). No duplicate mechanism was added
+(CLAUDE.md rule 15 — one mechanism per phenomenon).
+
+**R5 (EM-7) — done.** `results/emissions.compute_must_run_emissions` now books
+behind-the-meter CO2 at the plant's measured v2 `(plant, fuel-class)` rate when
+covered — identical to its grid tranches — falling back to the fuel-class default
+only when uncovered. The forecast flat-`0.85` CF fallback is replaced by
+`measured_class_cf`, a gen-weighted op-hours utilization per CHP class, keyed off
+the CEMS **steam-load** signature (`steam_load_klbh_sum > 0`, now carried into the
+v2 artifact) split by `unit_type`. Wired in `runner.py` (forecast path) via
+`_chp_measured_co2_inputs`; the backcast `_btm_frame` discards `mr_co2_tons`, so
+the change is forecast-only. Tests: BTM==grid rate, class-CF fallback,
+`measured_class_cf`.
+
+**R6 (EM-5) — done, default-OFF.** `results/emissions.startup_co2_tons`
+(`model_starts × measured startup_co2_kg / 1000`) is a reporting-only column added
+to `plant_hourly_fit` only when a bundle sets
+`ScenarioConfig.startup_co2_reporting` (default `False`, TIER_TAGS tier 3). Never
+in the dispatch LP; bounded ≤0.2 % of annual CO2 even at 10× cycling error. No
+default-config change.
+
+**Intake (D1) status.** Wave-2 completed the 2018 34-state fetch (VA VT WI WV
+landed; 2018 now 34/34) and is fetching 2019–2021 in the background, paced under
+the DEMO_KEY ~25/hr ceiling (no `EPA_API_KEY` available in this environment). Raw
+parquets land + push in small per-batch git commits (base = latest main; the
+2018 batch was 11 MB, no 413).
+
+**Parasitic / EIA-923 (D2) — DATA NEEDED.** `eia923_monthly_generation.parquet`
+covers **2022–2026 only**; the raw `f923_*.zip` for 2018–2021 are not on disk and
+the EIA archive URL is unreachable through this environment's proxy. The v2
+derive already falls back to each plant's **pooled** measured parasitic factor for
+uncovered years (a slowly-varying station-service fraction — the physically right
+prior), so the 2018–2021 rates are well-founded; refining them needs the EIA-923
+intake (recipe in `data/raw/campd-unit-level/README.md`).
+
+**Gate decision (D3).** The 7-year held-in LOYO re-run for ERCOT + PJM is run once
+the 2019–2021 intake completes; until then the estimator ships as pure `a_gw`
+(`CO2_RATE_CONDITIONING_ENABLED = False`), per the §9 escape hatch. The gate opens
+only if the envelope-conditioner demonstrably beats `a_gw` on that held-in LOYO;
+the constants re-derive only on a CAMPD data update (rule 23), never on a keeper's
+CO2 fit.
+
 ## 8. Implementation prompt
 
 ```
