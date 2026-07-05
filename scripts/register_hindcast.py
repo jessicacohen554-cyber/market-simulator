@@ -29,7 +29,7 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from scripts import check_forecast_invariants as CI  # noqa: E402
+import check_forecast_invariants as CI  # noqa: E402  (sibling script on sys.path[0])
 
 SIDECAR_DIR = Path("frontend/data/hindcast")
 PAGE_PATH = Path("docs/codebase-site/forecast-validation.html")
