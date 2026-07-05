@@ -488,6 +488,14 @@ def apply_economic_retirements(
     idx_of = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
     loss_years = dict(consecutive_loss_years)
 
+    # Diagnostic-only revenue-stack accumulator (no decision effect): per-fuel
+    # capacity-weighted screen net revenue vs going-forward cost, both in
+    # $/kW-yr. Emitted once per screen call for the FOM+scarcity joint protocol
+    # revenue-side audit (docs/handoffs/fom-scarcity-joint-protocol; rule 1 — the
+    # revenue side must be identified against its own external observable, the
+    # Potomac ERCOT SOM net-revenue tables, never tuned to the retirement pace).
+    _screen_stack: dict[str, list[tuple[float, float, float]]] = {}
+
     eligible: list[Generator] = []
     for g in fleet:
         fom_field = _THERMAL_FOM.get(g.fuel_type)
@@ -558,6 +566,16 @@ def apply_economic_retirements(
             getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
         )
 
+        # Diagnostic accumulation only — does not affect the retire decision.
+        if g.pmax_mw > 0.0:
+            _screen_stack.setdefault(g.fuel_type, []).append(
+                (
+                    net_revenue / (g.pmax_mw * 1000.0),  # $/kW-yr revenue stack
+                    getattr(config, fom_field) * multiplier,  # $/kW-yr bar
+                    g.pmax_mw,
+                )
+            )
+
         if net_revenue < going_forward_cost:
             loss_years[g.unit_id] = loss_years.get(g.unit_id, 0) + 1
         else:
@@ -565,6 +583,26 @@ def apply_economic_retirements(
 
         if loss_years[g.unit_id] >= threshold:
             eligible.append(g)
+
+    # Revenue-side audit line (diagnostic): capacity-weighted screen net
+    # revenue and going-forward bar per fuel class, for the FOM+scarcity joint
+    # protocol. Compared against the Potomac ERCOT SOM CT/CC net-revenue tables,
+    # never used to tune FOM (rule 1).
+    for _fuel, _rows in sorted(_screen_stack.items()):
+        _cap = sum(r[2] for r in _rows)
+        if _cap <= 0.0:
+            continue
+        _rev = sum(r[0] * r[2] for r in _rows) / _cap
+        _bar = sum(r[1] * r[2] for r in _rows) / _cap
+        logger.info(
+            "screen revenue stack [%s]: net_rev=%.1f $/kW-yr, "
+            "going_forward_bar=%.1f $/kW-yr, cap=%.0f MW, n=%d",
+            _fuel,
+            _rev,
+            _bar,
+            _cap,
+            len(_rows),
+        )
 
     # Within each fuel class, retire the least efficient units first.
     eligible.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
