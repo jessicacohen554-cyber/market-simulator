@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-neiso-48-ct-floor",
+  "label": "neiso 48 ct floor",
+  "date": "2026-07-05",
+  "shorthand": "neiso-48-ct-floor",
+  "definition": "Calibration run from bundle neiso_ctscrub.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-05-neiso-48-ct-floor.js",
+  "bundle": "results/calibration/neiso_ctscrub"
+}
