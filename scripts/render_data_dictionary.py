@@ -79,6 +79,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "unit-outage-events",
     "partial-outages",
     "capacity-deliverability",
+    "confirmed-retirements",
     "gtc-limits",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -398,6 +399,30 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "[`docs/capacity-deliverability-wiring.md`](../../docs/capacity-deliverability-wiring.md) "
             "for how the model consumes it (area→zone crosswalk, gated "
             "`capacity_deliverability_limits`)."
+        ),
+    },
+    "confirmed-retirements": {
+        "summary": (
+            "Binding-instrument retirement registry: units whose exit is bound "
+            "by an enforceable public instrument, with the instrument's date "
+            "and full provenance."
+        ),
+        "reconciles": (
+            "PJM deactivation acceptances, MISO Attachment Y approvals, NYISO "
+            "deactivation notices, ISO-NE cleared de-list bids, CAISO SWRCB/CPUC "
+            "orders, ERCOT NSO acceptances, and cross-ISO federal consent decrees "
+            "/ state statutes — onto one long frame keyed by "
+            "`(iso, plant_id, generator_id, instrument_id)` with a closed "
+            "`confirmation_class` vocabulary (`rto_deactivation`, "
+            "`consent_decree`, `statute`, `regulatory_order`, `rmr_end`). "
+            "ANNOUNCED-only retirements (EIA-860 planned dates, IRP/press "
+            "announcements) do NOT belong here — they stay with the "
+            "economic-retirement screen. Superseded rows (a counter-instrument "
+            "suspends the exit) are kept for audit and ignored by the loader. "
+            "Consumed forecast-forward only by "
+            "`data.confirmed_retirements.load_confirmed_exits` → "
+            "`model.capacity.apply_confirmed_exits` (GATED "
+            "`confirmed_exits_enabled`, default off)."
         ),
     },
 }

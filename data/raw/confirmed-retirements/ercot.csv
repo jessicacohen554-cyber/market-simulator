@@ -1,0 +1,20 @@
+# ERCOT confirmed-retirement registry — DATA NEEDED.
+# Source of truth: ERCOT market notices / NSO suspension-retirement postings +
+# federal consent decrees + state mandates. Re-query the current postings and
+# verify each instrument before adding rows (the flag is default-off; nothing
+# depends on this until it is reviewed).
+#
+# Candidates evaluated 2026-07-05, all held OUT for now:
+#   - J K Spruce 1 (plant 7097, gen 1) / O W Sommers 1-2 (plant 3611): CPS Energy
+#     ANNOUNCED retirements — announced-grade, no binding settlement; stay with
+#     the economic screen (do NOT add).
+#   - V H Braunig 3 (plant 3612, gen 3): OA-status ST unit under a reported
+#     CPS/ERCOT reliability arrangement. Held out on a REPRESENTATION mismatch
+#     (rule 14): the OA ST unit is not in the model fleet (loader keeps OP only),
+#     while plant 3612 IS represented by its OP gas-CT peakers — so a plant-code
+#     derate would wrongly shrink the peakers, not the retiring steam unit. Add
+#     only if it is remapped to a modeled unit AND the RMR end date is verified.
+#
+# When a verified binding instrument lands, append rows with the canonical
+# columns below (see data/dictionary/schema/confirmed-retirements.schema.yaml).
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes

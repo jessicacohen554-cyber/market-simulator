@@ -1,15 +1,28 @@
 """Capacity expansion and retirement modeling.
 
-Part 1: fleet retirements. Two mechanisms remove generators between
+Part 1: fleet retirements. Three mechanisms remove generators between
 simulation years:
 
-* **Known retirements** -- units with a scheduled ``retirement_year`` are
-  dropped once the simulation reaches that year. By default
-  (``forecast_fossil_retirement_economic``) **fossil** units (coal/gas/oil)
-  are exempt: their announced retirement is treated as an announcement, not a
-  certainty, so their phaseout is left to the economic screen below and the
-  forecast stays condition-responsive. Non-fossil units (nuclear, hydro,
-  renewables, storage) always honor their announced EIA-860 date.
+* **Confirmed exits** (:func:`apply_confirmed_exits`) -- units bound by an
+  enforceable public instrument (consent decree, statute, RTO deactivation
+  acceptance, regulatory order, RMR end) force-retire (or derate a plant-binned
+  tranche) at the instrument date, any fuel, bypassing the reliability floor.
+  Read from the confirmed-retirements registry
+  (:func:`market_sim.data.confirmed_retirements.load_confirmed_exits`); GATED on
+  ``confirmed_exits_enabled`` (default off) and forecast-mode only. This is the
+  ONLY exogenous fossil exit channel — an announced fossil date does not force
+  an exit (below).
+* **Announced retirements** (:func:`apply_announced_retirements`) -- units with a
+  scheduled EIA-860 ``retirement_year``. By default
+  (``forecast_fossil_retirement_economic``) **fossil** units (coal/gas/oil) are
+  exempt: an announced fossil date is an announcement, not a certainty, so their
+  phaseout is left to the economic screen below and the forecast stays
+  condition-responsive — for the whole fossil fleet this step is a **default
+  no-op**. Non-fossil units (nuclear, hydro, renewables, storage) honor their
+  announced date within the EIA-860 data horizon; beyond it a non-fossil date is
+  honored only if the unit is in the confirmed registry, so speculative
+  end-of-life placeholders stop force-retiring (the horizon gate activates with
+  the confirmed channel).
 * **Economic retirements** -- thermal units whose energy revenue fails to
   cover their going-forward fixed cost for a fuel-type-specific number of
   consecutive years are retired, least efficient first within each fuel
@@ -57,6 +70,7 @@ from market_sim.config.constants import (
     HYDROGEN_TURBINE_PARAMS,
     MARKET_DESIGN,
     NEW_ENTRY_COSTS,
+    NONFOSSIL_ANNOUNCED_HORIZON_YEARS,
     NOX_RATES,
     OFFSHORE_WIND_PARAMS,
     PLANNING_RESERVE_MARGIN_BY_ISO,
@@ -71,7 +85,13 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, resolve_new_entry_costs
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
-from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
+from market_sim.data.confirmed_retirements import ConfirmedExit
+from market_sim.data.fleet import (
+    EIA860_OPERABLE_VINTAGE,
+    FleetArrays,
+    Generator,
+    aggregate_fleet,
+)
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
@@ -198,40 +218,234 @@ _FOSSIL_FUELS: frozenset[str] = frozenset(
 )
 
 
-def apply_known_retirements(
-    fleet: list[Generator], year: int, fossil_economic: bool = True
+def _confirmed_effective_year(exit_: ConfirmedExit) -> int:
+    """Return the first simulation year a confirmed exit takes effect.
+
+    Annual-grain convention (mirroring the additions pipeline): a unit is out
+    from ``exit_year`` when its instrument specifies a first-half month
+    (``exit_month <= 6``) or no month at all, else from ``exit_year + 1``
+    (majority-of-year rule). Month-precise forecast exits via the COD ramp are a
+    v2 follow-up (plan §5.1).
+    """
+    if exit_.exit_month is not None and exit_.exit_month > 6:
+        return exit_.exit_year + 1
+    return exit_.exit_year
+
+
+def _unit_generator_id(gen: Generator) -> str | None:
+    """Return a unit-grain generator's EIA generator ID, or ``None``.
+
+    The EIA-860 loader builds ``unit_id = f"{plant_code}_{generator_id}"``
+    (:func:`market_sim.data.fleet.load_fleet_from_csv`), so the suffix after the
+    plant-code prefix is the generator ID. Returns ``None`` for a generator whose
+    ``unit_id`` does not carry the prefix (a synthesized/aggregated unit), which
+    the confirmed-exit matcher treats as plant-binned (derate, not unit drop).
+    """
+    prefix = f"{int(gen.plant_code)}_"
+    if gen.plant_code and gen.unit_id.startswith(prefix):
+        return gen.unit_id[len(prefix) :]
+    return None
+
+
+# MW below which a derated plant-binned generator is dropped entirely.
+_CONFIRMED_EXIT_MW_EPS: float = 1e-6
+
+
+def apply_confirmed_exits(
+    fleet: list[Generator], year: int, exits: list[ConfirmedExit]
 ) -> list[Generator]:
-    """Return the fleet with scheduled (date-based) retirements removed.
+    """Return the fleet with confirmed (binding-instrument) exits applied.
+
+    Step 0 of the forecast capacity evolution (:func:`evolve_fleet`) and the
+    first simulated year (:func:`market_sim.data.fleet.build_base_fleet`), run
+    BEFORE the announced-date step and the economic screen. Each confirmed exit
+    (an enforceable public instrument — consent decree, statute, RTO
+    deactivation acceptance, regulatory order, RMR end) force-retires its unit at
+    the instrument date, **bypassing the reliability floor** (a decree does not
+    care about the model's reserve margin) and any fuel exemption. Superseded
+    rows never reach here (the loader drops them), so a counter-instrument (RMR,
+    202(c)) correctly reverts the unit to the economic screen.
+
+    Matching (plan §5.1):
+
+    * **Unit-grain** generators (raw EIA-860 units, ``unit_id`` =
+      ``"{plant_code}_{generator_id}"``) are dropped when their generator ID is
+      confirmed to exit this year.
+    * **Plant-binned** generators (ERCOT CAMPD bins / synthesized tranche plants,
+      ``is_campd_bin`` or an unparseable ``unit_id``) are **derated**: the plant's
+      binned MW is scaled by ``(binned_mw - exit_mw) / binned_mw`` — pmax/pmin and
+      the MW-valued tranche floors scale proportionally, dropping a tranche when
+      its remaining MW ≤ ε. The residual heat-rate composition shift (the exiting
+      unit is usually the worst) is accepted second-order error.
+
+    The economic screen still sees a confirmed unit in the years before its date,
+    so a sustained-loss unit can exit earlier (``min(economic, confirmed_date)``);
+    the confirmed date is a latest-exit ceiling, not a floor (rule 19: exogenous
+    legal exit vs endogenous economic exit are distinct phenomena).
+
+    Args:
+        fleet: The fleet entering the year.
+        year: The simulation year being entered.
+        exits: Confirmed exits for this ISO
+            (:func:`market_sim.data.confirmed_retirements.load_confirmed_exits`).
+
+    Returns:
+        A new fleet list with confirmed exits removed / derated. Byte-identical
+        to ``fleet`` when no exit is effective this year.
+    """
+    effective = [e for e in exits if _confirmed_effective_year(e) <= year]
+    if not effective:
+        return list(fleet)
+
+    exit_mw_by_plant: dict[int, float] = {}
+    exit_gids_by_plant: dict[int, set[str]] = {}
+    for e in effective:
+        exit_mw_by_plant[e.plant_id] = exit_mw_by_plant.get(e.plant_id, 0.0) + (
+            e.mw or 0.0
+        )
+        exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
+
+    # Per exit-plant total binned MW (the derate denominator), computed once.
+    binned_mw_by_plant: dict[int, float] = {}
+    for g in fleet:
+        pc = int(g.plant_code)
+        if pc in exit_mw_by_plant and _is_confirmed_binned(g):
+            binned_mw_by_plant[pc] = binned_mw_by_plant.get(pc, 0.0) + g.pmax_mw
+
+    kept: list[Generator] = []
+    for g in fleet:
+        pc = int(g.plant_code)
+        if pc not in exit_mw_by_plant:
+            kept.append(g)
+            continue
+        if _is_confirmed_binned(g):
+            binned_mw = binned_mw_by_plant.get(pc, 0.0)
+            exit_mw = exit_mw_by_plant[pc]
+            if binned_mw <= 0.0 or exit_mw <= 0.0:
+                # No usable MW to derate against (registry left capacity_mw
+                # blank): keep the tranche rather than over-retire the plant.
+                if exit_mw <= 0.0:
+                    logger.warning(
+                        "confirmed-exit: plant %d has no capacity_mw to derate "
+                        "binned tranches; kept intact",
+                        pc,
+                    )
+                kept.append(g)
+                continue
+            factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
+            derated = _derate_generator(g, factor)
+            if derated.pmax_mw > _CONFIRMED_EXIT_MW_EPS:
+                kept.append(derated)
+            # else: fully retired by the confirmed exit (dropped).
+        else:
+            gid = _unit_generator_id(g)
+            if gid is not None and gid in exit_gids_by_plant[pc]:
+                continue  # unit-grain confirmed exit: drop
+            kept.append(g)
+    return kept
+
+
+def _is_confirmed_binned(gen: Generator) -> bool:
+    """Whether a confirmed exit derates (vs unit-drops) this generator.
+
+    A CAMPD/synthesized bin (``is_campd_bin``) or any generator whose
+    ``unit_id`` is not the raw ``"{plant_code}_{generator_id}"`` form is treated
+    as plant-binned: the confirmed exit derates its MW rather than dropping a
+    single unit.
+    """
+    return gen.is_campd_bin or _unit_generator_id(gen) is None
+
+
+def _derate_generator(gen: Generator, factor: float) -> Generator:
+    """Return a copy of ``gen`` with its MW-valued fields scaled by ``factor``.
+
+    Scales the capacity and every MW-denominated floor (pmax, pmin, bin
+    nameplate, CHP steam floor, coal-sync floor) so a plant-binned generator
+    shrinks by the confirmed-exit fraction while its per-unit rates, fractions
+    and commitment parameters (heat rate, must-run %, min-run/down) are
+    unchanged.
+    """
+    return gen.model_copy(
+        update={
+            "pmax_mw": gen.pmax_mw * factor,
+            "pmin_mw": gen.pmin_mw * factor,
+            "bin_nameplate_mw": gen.bin_nameplate_mw * factor,
+            "chp_grid_pmin_mw": gen.chp_grid_pmin_mw * factor,
+            "coal_sync_pmin_mw": gen.coal_sync_pmin_mw * factor,
+        }
+    )
+
+
+def apply_announced_retirements(
+    fleet: list[Generator],
+    year: int,
+    fossil_economic: bool = True,
+    *,
+    vintage: int = EIA860_OPERABLE_VINTAGE,
+    horizon_years: int | None = None,
+    confirmed_plant_codes: frozenset[int] = frozenset(),
+) -> list[Generator]:
+    """Return the fleet with ANNOUNCED (EIA-860 date) retirements applied.
 
     A generator retires once the simulation year reaches its
-    ``retirement_year``; units with no scheduled year are always kept.
+    ``retirement_year``; units with no scheduled year are always kept. This is
+    the *announced* channel — an EIA-860 self-reported planned date, not a
+    binding instrument (that is the confirmed channel,
+    :func:`apply_confirmed_exits`, which runs first).
 
-    When ``fossil_economic`` is ``True`` (the forecast default), units of a
-    :data:`_FOSSIL_FUELS` type are **exempt** from this date-based retirement —
-    their phaseout is left to the economic-retirement screen
-    (:func:`apply_economic_retirements`) so the forecast retires fossil capacity
-    on economics rather than on an announced date. Non-fossil units (nuclear,
-    hydro, renewables, storage) always honor their announced EIA-860 retirement
-    date. Set ``fossil_economic=False`` to honor every scheduled retirement
-    regardless of fuel (the legacy behaviour).
+    **Fossil default no-op (RC-3).** When ``fossil_economic`` is ``True`` (the
+    forecast default), units of a :data:`_FOSSIL_FUELS` type are **exempt** from
+    this date-based retirement: an announced fossil date is an announcement, not
+    a certainty, so their phaseout is left to the economic-retirement screen
+    (:func:`apply_economic_retirements`) and the exogenous fossil exit channel is
+    the confirmed registry. For the whole fossil fleet this step is a default
+    no-op. Set ``fossil_economic=False`` to honor every scheduled fossil date
+    (the legacy behaviour).
+
+    **Non-fossil data-horizon gate (RC-5).** A non-fossil announced date
+    (nuclear/hydro/renewables/storage) is honored deterministically only within
+    the EIA-860 data horizon: ``retirement_year <= vintage + horizon_years``.
+    Beyond the horizon the date is honored **only if** the unit's plant is in
+    ``confirmed_plant_codes`` (a binding instrument in the confirmed registry);
+    otherwise it is ignored, so speculative 2040-2072 hydro-relicense / solar-EOL
+    placeholders stop force-retiring and far-dated nuclear announcements fall to
+    the economic screen. ``horizon_years=None`` (the default and the legacy
+    behaviour) disables the gate — every non-fossil announced date is honored, as
+    before the confirmed-retirement channel existed.
 
     Args:
         fleet: The current generator fleet.
         year: The simulation year being evaluated.
         fossil_economic: When ``True``, fossil units ignore their scheduled
             ``retirement_year`` (economic screen governs them).
+        vintage: EIA-860 operable-snapshot vintage the horizon is measured from.
+        horizon_years: Data-horizon width for honoring non-fossil announced
+            dates; ``None`` disables the gate (honor all non-fossil dates).
+        confirmed_plant_codes: Plant codes carrying a binding instrument in the
+            confirmed registry — a beyond-horizon non-fossil date is honored only
+            for these.
 
     Returns:
-        A new list excluding generators whose ``retirement_year`` is set
-        and not later than ``year`` (fossil units kept when
-        ``fossil_economic``).
+        A new list excluding generators whose announced retirement is honored
+        this year.
     """
     keep: list[Generator] = []
     for g in fleet:
-        if g.retirement_year is None or g.retirement_year > year:
+        r = g.retirement_year
+        if r is None or r > year:
             keep.append(g)
-        elif fossil_economic and g.fuel_type in _FOSSIL_FUELS:
-            keep.append(g)  # economic screen governs fossil phaseout
+            continue
+        is_fossil = g.fuel_type in _FOSSIL_FUELS
+        if fossil_economic and is_fossil:
+            keep.append(g)  # economic screen governs fossil phaseout (no-op)
+            continue
+        if not is_fossil and horizon_years is not None:
+            within_horizon = r <= vintage + horizon_years
+            confirmed = int(g.plant_code) in confirmed_plant_codes
+            if not within_horizon and not confirmed:
+                keep.append(g)  # beyond-horizon speculative placeholder: ignore
+                continue
+        # Honor the announced date: unit is dropped.
     return keep
 
 
@@ -1650,12 +1864,16 @@ def evolve_fleet(
     carbon_price: float = 0.0,
     eac_price_ccs: float = 0.0,
     events: dict | None = None,
+    confirmed_exits: list[ConfirmedExit] | None = None,
 ) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]]:
     """Advance the fleet by one simulation year.
 
-    The five capacity mechanisms are applied in a fixed order:
+    The capacity mechanisms are applied in a fixed order:
 
-    1. known retirements,
+    0. confirmed exits (exogenous, any fuel, instrument-bound; gated on
+       ``config.confirmed_exits_enabled``, default off),
+    1. announced retirements (non-fossil within the data horizon only; announced
+       fossil dates are a default no-op — the exogenous fossil channel is step 0),
     2. economic retirements,
     3. known additions (planned units with ``online_year == year``),
     4. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
@@ -1749,14 +1967,51 @@ def evolve_fleet(
         else None
     )
 
-    # 1. Known retirements. Fossil units are exempt by default (their phaseout is
-    #    economic, step 2); non-fossil units retire on their announced EIA-860
-    #    date. config.forecast_fossil_retirement_economic toggles this.
+    # Snapshot the entering fleet so the events recorder can attribute every
+    # unit removed by the confirmed (step 0) and announced (step 1) channels.
     _pre_known = {g.unit_id: g for g in fleet} if _rec else None
-    fleet = apply_known_retirements(
+
+    # 0. Confirmed exits (exogenous, instrument-bound, any fuel). GATED on
+    #    confirmed_exits_enabled (default off): when off, no-op and the
+    #    announced/economic channels are byte-identical to before this channel
+    #    existed. Runs first so the post-exit fleet is what the floor and the
+    #    new-entry screen see (scarcity from a confirmed exit feeds next year's
+    #    entry signal). Bypasses the reliability floor by construction.
+    #    NOTE: matching is by plant_code. A unit that survives the end-of-year
+    #    re-aggregation with its plant identity intact — a unit-grain unit (raw
+    #    EIA-860 unit that passes through, e.g. an oil unit carrying an announced
+    #    date) or a first-year exit in build_base_fleet — is matched in its exit
+    #    year. A plant-binned coal/gas plant whose bins are merged into vintage
+    #    efficiency bins after the base year loses its plant_code, so a confirmed
+    #    exit effective 2+ years into a CAMPD forecast is not matched (preserving
+    #    per-plant identity through aggregation needs the dispatch/economic-screen
+    #    pipeline to accept un-aggregated coal tranches — a documented follow-up).
+    confirmed_exits = confirmed_exits or []
+    confirmed_channel_on = getattr(config, "confirmed_exits_enabled", False) and bool(
+        confirmed_exits
+    )
+    if confirmed_channel_on:
+        fleet = apply_confirmed_exits(fleet, year, confirmed_exits)
+
+    # 1. Announced (EIA-860 date) retirements. Fossil units are a default no-op
+    #    (their phaseout is economic, step 2; the exogenous fossil channel is
+    #    step 0). Non-fossil announced dates are honored within the EIA-860 data
+    #    horizon; beyond it, only when the unit is in the confirmed registry (the
+    #    horizon gate activates with the confirmed channel — off = honor all
+    #    non-fossil dates, as before). config.forecast_fossil_retirement_economic
+    #    toggles the fossil exemption.
+    horizon_years = NONFOSSIL_ANNOUNCED_HORIZON_YEARS if confirmed_channel_on else None
+    confirmed_plant_codes = (
+        frozenset(e.plant_id for e in confirmed_exits)
+        if confirmed_channel_on
+        else frozenset()
+    )
+    fleet = apply_announced_retirements(
         fleet,
         year,
         fossil_economic=getattr(config, "forecast_fossil_retirement_economic", True),
+        horizon_years=horizon_years,
+        confirmed_plant_codes=confirmed_plant_codes,
     )
     if _rec:
         _survived = {g.unit_id for g in fleet}

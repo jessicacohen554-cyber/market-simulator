@@ -43,6 +43,7 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
+from market_sim.data.confirmed_retirements import ConfirmedExit, load_confirmed_exits
 from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
@@ -498,6 +499,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 max(g.online_year for g in planned_additions),
             )
 
+    # Confirmed (binding-instrument) exits: the exogenous forecast retirement
+    # channel, GATED on confirmed_exits_enabled (default off) and forecast-mode
+    # only (a backcast's historical exits ride the vintage snapshot). Loaded
+    # once; applied at step 0 of evolve_fleet and the first-year base fleet.
+    confirmed_exits: list[ConfirmedExit] = []
+    if config.mode == "forecast" and config.confirmed_exits_enabled:
+        confirmed_exits = load_confirmed_exits(iso)
+        if confirmed_exits:
+            logger.info(
+                "loaded %d confirmed exits (%.0f MW, %d-%d)",
+                len(confirmed_exits),
+                sum(e.mw or 0.0 for e in confirmed_exits),
+                min(e.exit_year for e in confirmed_exits),
+                max(e.exit_year for e in confirmed_exits),
+            )
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
@@ -536,6 +553,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 retired_within_window,
                 planned_additions,
                 year,
+                confirmed_exits=confirmed_exits,
             )
             # First year has no evolution: the ledger records the base fleet
             # snapshot only (fleet_by_fuel before == after, no events).
@@ -566,6 +584,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 carbon_price=carbon_price_year,
                 eac_price_ccs=config.eac_price_gas_cc_ccs,
                 events=evo_events,
+                confirmed_exits=confirmed_exits,
             )
             if retrofit_log:
                 avg_savings = sum(
