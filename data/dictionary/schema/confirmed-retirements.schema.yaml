@@ -1,0 +1,50 @@
+datatype: confirmed-retirements
+schema_version: 1
+title: Confirmed generator retirements (binding-instrument registry)
+description: >-
+  One row per (unit, instrument): generating units whose retirement is bound by an
+  enforceable public instrument — RTO deactivation acceptance, consent decree,
+  statute, regulatory order — with the instrument's exit date and full provenance.
+  Announced/intended retirements (EIA-860 planned dates, IRPs, press releases) do
+  NOT belong here; they remain with the economic-retirement screen.
+key_columns: [iso, plant_id, generator_id, instrument_id]
+allow_additional_columns: false
+columns:
+  - {name: iso,               dtype: string,  unit: none, nullable: false,
+     description: ISO/RTO the unit belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO).}
+  - {name: plant_id,          dtype: int64,   unit: none, nullable: false,
+     description: EIA plant code (joins the EIA-860 fleet spine).}
+  - {name: generator_id,      dtype: string,  unit: none, nullable: false,
+     description: EIA-860 generator ID within the plant.}
+  - {name: unit_name,         dtype: string,  unit: none, nullable: true,
+     description: Human-readable plant/unit label for review.}
+  - {name: capacity_mw,       dtype: float64, unit: mw,   nullable: true,
+     description: Nameplate MW cross-check against EIA-860 (mismatch >5% fails curation).}
+  - {name: exit_year,         dtype: int64,   unit: year, nullable: false,
+     description: Calendar year the instrument requires the unit offline.}
+  - {name: exit_month,        dtype: int64,   unit: month, nullable: true,
+     description: Month (1-12) within exit_year where the instrument specifies one.}
+  - {name: confirmation_class, dtype: string, unit: none, nullable: false,
+     description: One of rto_deactivation | consent_decree | statute |
+       regulatory_order | rmr_end. Vocabulary is closed; announced/intended is
+       deliberately NOT a member.}
+  - {name: instrument_id,     dtype: string,  unit: none, nullable: false,
+     description: Short stable slug for the instrument (e.g. pjm-deact-2027-xyz,
+       ilcs-ceja-2030), unique per (unit, instrument).}
+  - {name: instrument,        dtype: string,  unit: none, nullable: false,
+     description: Full citation — docket/case number, order name, date signed.}
+  - {name: instrument_date,   dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date the instrument became binding.}
+  - {name: superseded,        dtype: bool,    unit: none, nullable: false,
+     description: True when a counter-instrument (RMR, DOE 202(c), amendment,
+       withdrawal) suspends this row. Kept for audit; loader ignores.}
+  - {name: superseding_instrument, dtype: string, unit: none, nullable: true,
+     description: Citation of the counter-instrument when superseded.}
+  - {name: source_url,        dtype: string,  unit: none, nullable: false,
+     description: Authoritative URL of the instrument or the RTO posting row.}
+  - {name: source_doc,        dtype: string,  unit: none, nullable: true,
+     description: Document title / page reference within source_url.}
+  - {name: accessed,          dtype: "datetime64[ns]", unit: none, nullable: false,
+     description: Date the source was last re-queried (the intake vintage stamp).}
+  - {name: notes,             dtype: string,  unit: none, nullable: true,
+     description: Free-text context (e.g. partial-plant scope, fuel-conversion vs closure).}

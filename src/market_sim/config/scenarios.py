@@ -204,6 +204,19 @@ class ScenarioConfig:
     # retire on their announced EIA-860 date (policy/contract/end-of-life exits
     # with no economic-screen analogue). Set False for the legacy behaviour
     # (every scheduled retirement honored regardless of fuel).
+    confirmed_exits_enabled: bool = False  # GATED, default-OFF. When True and
+    # mode == "forecast", the confirmed-retirement channel force-retires (or
+    # derates, for plant-binned fleets) each unit bound by an enforceable public
+    # instrument in the confirmed-retirements registry
+    # (data/raw/confirmed-retirements, read via
+    # data.confirmed_retirements.load_confirmed_exits) at its instrument date —
+    # step 0 of capacity.evolve_fleet and the first-year build_base_fleet, before
+    # the announced-date step and the economic screen. Only binding CONFIRMED
+    # exits force out; ANNOUNCED-only retirements stay with the economic screen
+    # (mirrors load_planned_additions' construction-committed philosophy). The
+    # registry is data, not tuning (rule 24): this flag and the clean path are
+    # the whole surface. Flipping the default to on is a follow-up owner decision
+    # once the seeded registry passes review (plan §7).
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
