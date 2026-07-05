@@ -84,6 +84,10 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # 162, compared against the committed run159).
 /results/calibration/159repro/
 /results/calibration/_cold_2023/
+# ercot40 rtolcap-forward: the measured-cap re-solve baseline for the WS-A
+# one-delta dw comparison; throwaway (the registered run is the formula-cap
+# ercot40, compared against the committed ercot32 keeper).
+/results/calibration/ercot40_measured_baseline*
 /results/calibration/_warm_2023/
 /results/calibration/caiso_reprice_pass*/
 /results/calibration/caiso_probe2_*/
