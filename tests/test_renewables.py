@@ -783,3 +783,27 @@ def test_ercot_caiso_hsl_paths_untouched_by_nyiso_wiring():
     caiso_hsl = load_hsl_hourly("CAISO", _CAL_YEAR)
     assert caiso_hsl is not None, "CAISO 2023 HSL parquet must still load"
     assert len(caiso_hsl) == HOURS_PER_YEAR
+
+
+def test_ercot_2019_renewable_profiles_resolve_end_to_end():
+    """2026-07 weather-pool widening: a pre-2022 year resolves with no fallback.
+
+    ERCOT 2019 has no HSL parquet, so this exercises the plain EIA-930
+    delivered-generation CF path (``_eia_hourly_cf_profile``) for a year
+    outside the original 2023-2025 backcast window -- confirming the widened
+    pool (``constants.WEATHER_YEAR_POOL_BY_ISO["ERCOT"]``) is actually usable
+    by the dispatch, not just present on disk. See
+    docs/weather-pool-coverage-2026-07.md.
+    """
+    iso_config = get_iso_config("ERCOT")
+    config = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2019)
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
+        "ERCOT", 2019, iso_config, config
+    )
+    n_zones = len(iso_config.zone_names)
+    assert wind_cf.shape == (n_zones, HOURS_PER_YEAR)
+    assert solar_cf.shape == (n_zones, HOURS_PER_YEAR)
+    assert wind_cap.sum() > 0.0
+    assert solar_cap.sum() > 0.0
+    assert np.all(wind_cf >= 0.0) and np.all(wind_cf <= 1.0)
+    assert np.all(solar_cf >= 0.0) and np.all(solar_cf <= 1.0)

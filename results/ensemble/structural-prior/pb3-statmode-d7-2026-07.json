@@ -1,0 +1,201 @@
+{
+ "dispatch_conditional": true,
+ "emissions_basis": {
+  "carbon_priced_isos": [
+   "CAISO",
+   "NEISO",
+   "NYISO"
+  ],
+  "fossil_co2_rates_sha256": "3c0b0e839daa260b7bb92b8bff311a5f0b5e229adbd2c27177f98783b962f453",
+  "label": "R2 measured-rate CO2 basis (PR #1371: fff2c34 physical-HR booking, 968cead quarantine-row strip); C5a scoring intensities from fossil_co2_rates.parquet"
+ },
+ "estimator": "per-ISO Student-t(nu=2) location b_i (measured bias, not recentered) scale sqrt(pooled_within_ISO_var * (1 + 1/n)); n=3 backcast years; fit from the committed D-7 statistical-mode probes (plan \u00a73.2)",
+ "fit_years": [
+  2023,
+  2024,
+  2025
+ ],
+ "horizon_lambda": 0.0,
+ "horizon_lambda_status": "UNMEASURED (0) -- dispatch-conditional until PP-0.3 capacity hindcast (plan \u00a73.4 item 1)",
+ "nu": 2.0,
+ "per_iso": {
+  "CAISO": {
+   "actual_co2": [
+    29.931,
+    28.818,
+    27.117
+   ],
+   "basis_stale": true,
+   "bias": 0.10206541877002018,
+   "eps": [
+    0.029820535099414788,
+    0.12100883248782653,
+    0.15536688872281923
+   ],
+   "iso": "CAISO",
+   "model_co2": [
+    30.837,
+    32.525,
+    31.675
+   ],
+   "noise_sd": 0.06488151831990531,
+   "rescore": "stale-registration-basis",
+   "statmode_run_id": "2026-07-03-caiso-statmode-d-7",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "ERCOT": {
+   "actual_co2": [
+    156.255,
+    154.19,
+    154.174
+   ],
+   "basis_stale": false,
+   "bias": 0.00494230493282347,
+   "eps": [
+    0.00122800637110101,
+    -0.024455109179703133,
+    0.038054017607072534
+   ],
+   "iso": "ERCOT",
+   "model_co2": [
+    156.447,
+    150.465,
+    160.154
+   ],
+   "noise_sd": 0.031419655365161295,
+   "rescore": "verified-identical",
+   "statmode_run_id": "2026-07-04-statmode-d7-probe-ercot32",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "MISO": {
+   "actual_co2": [
+    275.935,
+    273.547,
+    292.867
+   ],
+   "basis_stale": false,
+   "bias": 0.1451017229873938,
+   "eps": [
+    0.13995651873695045,
+    0.09947660583927025,
+    0.19587204438596076
+   ],
+   "iso": "MISO",
+   "model_co2": [
+    317.387,
+    302.158,
+    356.235
+   ],
+   "noise_sd": 0.04840325390132653,
+   "rescore": "verified-identical",
+   "statmode_run_id": "2026-07-03-miso-statmode-d-7",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "NEISO": {
+   "actual_co2": [
+    21.618,
+    23.42,
+    22.993
+   ],
+   "basis_stale": true,
+   "bias": -0.009727685361100531,
+   "eps": [
+    -0.034399345120831086,
+    -0.03343050624052836,
+    0.038646795278057845
+   ],
+   "iso": "NEISO",
+   "model_co2": [
+    20.887,
+    22.65,
+    23.899
+   ],
+   "noise_sd": 0.04189632973215229,
+   "rescore": "stale-registration-basis",
+   "statmode_run_id": "2026-07-03-neiso-statmode-d-7",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "NYISO": {
+   "actual_co2": [
+    26.226,
+    29.27,
+    31.342
+   ],
+   "basis_stale": true,
+   "bias": -0.001657154531941512,
+   "eps": [
+    0.03296692760306901,
+    -0.02266699215965217,
+    -0.015271399039241377
+   ],
+   "iso": "NYISO",
+   "model_co2": [
+    27.105,
+    28.614,
+    30.867
+   ],
+   "noise_sd": 0.030212480817861233,
+   "rescore": "stale-registration-basis",
+   "statmode_run_id": "2026-07-03-nyiso-statmode-d-7",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  },
+  "PJM": {
+   "actual_co2": [
+    265.789,
+    270.161,
+    293.814
+   ],
+   "basis_stale": false,
+   "bias": 0.22398762112599946,
+   "eps": [
+    0.23591916202463944,
+    0.23223957110701696,
+    0.20380413024634197
+   ],
+   "iso": "PJM",
+   "model_co2": [
+    336.508,
+    340.787,
+    360.233
+   ],
+   "noise_sd": 0.0175759729573408,
+   "rescore": "verified-identical",
+   "statmode_run_id": "2026-07-03-pjm-statmode-d-7",
+   "years": [
+    2023,
+    2024,
+    2025
+   ]
+  }
+ },
+ "plugin_normal_scale": 0.04186624021529765,
+ "pooled_noise_var": 0.0017527820697650059,
+ "pooled_scale": 0.04834297011651926,
+ "small_sample_inflation": 1.3333333333333333,
+ "stale_isos_pending_w3p1": [
+  "CAISO",
+  "NEISO",
+  "NYISO"
+ ],
+ "version": "pb3-statmode-d7-2026-07"
+}
