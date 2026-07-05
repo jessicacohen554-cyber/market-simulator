@@ -14,6 +14,168 @@
   per-target comparisons across ERCOT+PJM). Docs realigned:
   `model-methodology-spec.md` forward-mode source, `docs/parameter-citations.md`
   (regenerated), plan `§9.5` (full tables + PJM sim-op caveat).
+## 2026-07-05 (confirmed-vs-announced retirement channel — implementation, W2-P2)
+
+**Model.** Implemented the confirmed-vs-announced retirement channel from the
+W0-P2 plan (`docs/handoffs/confirmed-retirement-plan-2026-07.md`). Only
+**confirmed** exits — units bound by an enforceable public instrument (RTO
+deactivation acceptance, consent decree, statute, regulatory order, RMR end) —
+are exogenous; **announced** EIA-860 dates stay with the economic screen.
+
+- **New `confirmed-retirements` datatype** (schema-first, per-ISO registry
+  modules, `write_clean` seam): `data/dictionary/schema/confirmed-retirements.schema.yaml`
+  (closed `confirmation_class` vocabulary), `scripts/lib/confirmed_retirements/`
+  (`IsoSpec` + register + generic CSV parser, one module per ISO — no if-iso
+  ladders), `scripts/curate_confirmed_retirements.py` (EIA-860 spine validation:
+  plant/generator exists, MW within 5 %, `exit_year >= 2023`), registered in
+  `regenerate_clean.py` + the data dictionary. Seeded PJM (Rockport consent
+  decree, Kincaid IL CEJA statute, Brandon Shores/Wagner `rmr_end`, Eddystone
+  `superseded` by DOE 202(c)) and ERCOT (Braunig `rmr_end`); other ISOs land as
+  DATA NEEDED. **All seeded instruments require re-verification before the flag
+  is defaulted on** (open item).
+- **Confirmed-exit injector** (`model.capacity.apply_confirmed_exits`, step 0 of
+  `evolve_fleet` + first-year `build_base_fleet`): plant-code join, unit-grain
+  drop or plant-binned MW derate, `exit_month<=6 → exit_year else exit_year+1`,
+  bypasses the reliability floor, composes as `min(economic, confirmed_date)`.
+  Consumption seam `data.confirmed_retirements.load_confirmed_exits` (drops
+  superseded, earliest instrument per unit). GATED new `confirmed_exits_enabled`
+  (default OFF); forecast-mode only. Default-off is byte-identical to before.
+- **`apply_known_retirements` → `apply_announced_retirements` rename** (RC-3, no
+  alias). The fossil default no-op is now explicit in code, CLAUDE.md, and the
+  methodology spec §5.1.
+- **Non-fossil data-horizon gate** (RC-5,
+  `constants.NONFOSSIL_ANNOUNCED_HORIZON_YEARS = 5`): announced non-fossil dates
+  beyond `EIA860_OPERABLE_VINTAGE + 5` are honored only if the unit is in the
+  confirmed registry (the gate activates with the confirmed channel).
+  **Behaviour change** (with the channel on): the 2040-2072 hydro-relicense /
+  solar-EOL placeholders stop force-retiring, and of the 3 announced nuclear
+  units (1,871 MW, 2030-2034) the 2030 exit stays deterministic (within horizon)
+  while 2033/2034 become economic unless confirmed.
+- **EIA-860 intake (RC-2):** carry `Planned Retirement Month` into
+  `eia860_generators.parquet` (`process_eia860._GENERATOR_COLUMN_MAP` +
+  `EIA_860_CSV_COLUMNS`); the loader already consumed `retirement_month` when
+  present (338 operable units now carry it). Loader `OP` filter unchanged.
+- **Tests:** `tests/test_capacity.py` (announced rename + horizon gate + confirmed
+  injector: unit drop, bin derate math, RC-1 confirmed-fossil-vs-announced-twin,
+  month convention, floor bypass), `tests/test_curate_confirmed_retirements.py`
+  (schema/spine/vocabulary guards), `tests/test_confirmed_retirements.py` (loader
+  earliest-instrument/superseded, first-year `build_base_fleet`, default-off).
+- **Verification probe** (`scripts/probes/confirmed_retirement_probe.py`, injector
+  ON, forecast ERCOT + PJM 2026-2029): see the commit message. Not a keeper.
+- **Known limitation (follow-up):** a plant-binned coal/gas confirmed exit
+  effective 2+ years into a CAMPD forecast is not matched, because
+  `evolve_fleet`'s end-of-year `aggregate_fleet` merges per-plant coal/gas bins
+  into vintage efficiency bins and erases `plant_code` after the base year (a
+  pre-existing model behaviour). The injector fires for first-year exits and for
+  unit-grain units that pass through aggregation carrying an announced date
+  (e.g. Wagner's oil units). Preserving a registry plant's identity through
+  aggregation requires the dispatch/economic-screen pipeline to accept
+  un-aggregated coal tranches (attempted here via a `keep_plant_codes`
+  pass-through, reverted because it desynced the economic screen's dispatch
+  mapping) — deferred.
+## 2026-07-05 (PB-3 follow-up — emissions-basis staleness handling + committed prior artifact)
+
+**Post-processing only — no solves.** Extends the landed PB-3 structural prior
+with the basis-staleness handling the W0-P4 design requires
+(`docs/handoffs/forecast-validation-program-2026-07.md` §0/§3.2): the D-7
+statmode fit inputs predate the R2 measured-rate CO2 basis (PR #1371).
+`default_prior` now (a) re-scores the carbon-zero ISOs (ERCOT/PJM/MISO) under
+the current basis with no solve (`rescore_carbon_zero`: recompute model/actual
+CO2 from the committed `gmModel`/`classFull` × stored class intensities;
+refuses to fit on a mismatch — all three verify identical, the 2023–2025
+scoring-rate rows being content-identical at HEAD), and (b) flags the
+carbon-priced ISOs (CAISO/NYISO/NEISO, new cited constant
+`STRUCTURAL_PRIOR_CARBON_PRICED_ISOS`) `basis_stale` /
+`"stale-pending-W3-P1"` — R2 moves their merit order, so only the W3-P1
+re-solves can refresh them. Staleness and the emissions-basis identity (label +
+sha256 of `fossil_co2_rates.parquet`) flow through `IsoResidual`/
+`StructuralPrior.as_dict()` into `ensemble_meta.json` and the band label. New
+`write_prior_artifact` commits the fit record to
+`results/ensemble/structural-prior/<version>.json`
+(`paths.STRUCTURAL_PRIOR_ARTIFACT_DIR`) so the W3-P1 re-fit is a clean,
+diffable swap; the fitted `pb3-statmode-d7-2026-07.json` is committed.
+Methodology note gains §6 (the staleness record); tests cover the flags, the
+re-score verification, the mismatch refusal, and the artifact round-trip.
+
+## 2026-07-05 (PB-3 — structural-error prior + published emissions band)
+
+**Post-processing only — no solves, no keeper/registry changes.** Landed on
+`claude/pb3-structural-prior-2026-wave5` per
+`docs/handoffs/probability-bounds-prompts-2026-07.md` PB-3 / plan §3. New
+`src/market_sim/structural_prior.py` folds the model's own dispatch-skill error
+into the emissions band: `fit_prior` reads `eps = ln(model/actual)` CO2 for
+2023–2025 straight off the committed D-7 statistical-mode probes
+(`STATMODE_PROBE_RUNS`; model from `frontend/data/backcast/runs/<id>.js`, actual
+from `frontend/data/backcast/bench/<ISO>/<y>.json.gz`) — a measured, reproducible
+source, never tuned to a residual (rules 1/13/24). Per-ISO bias `b_i`, noise
+pooled across ISOs, carried as `Student-t(nu=2)` with the `(1 + 1/n)` small-sample
+inflation so the prior is strictly wider than the plug-in normal. `convolve`
+builds the `parametric_plus_structural` band (log-space `emissions·exp(eps)`,
+K=25, P5–P95); the parametric P50 point forecast is never recentered (the
+structural layer is written alongside, not over, it). Horizon term `lambda(h)=0`
+(UNMEASURED) keeps every band labelled **dispatch-conditional** until PP-0.3.
+`ensemble.export_sampler_ensemble(..., prior=…)` / `bands_from_metrics` and
+`market-sim ensemble --structural-prior` wire it in; only 2023–2025 are ever read
+(rule 22). New constants (`STRUCTURAL_PRIOR_*`), `paths.FRONTEND_BACKCAST_DIR`,
+and methodology note `docs/probabilistic-emissions-methodology.md` (assumptions
+A-1…A-8 + the §3.4 coverage gaps).
+
+## 2026-07-05 (orchestrator-unification Stage 1 — pipeline typing scaffold)
+
+**Typing/scaffolding only — no solved number changes.** Landed on
+`claude/stage1-pipeline-typing-3w1mhl` per
+`docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.2, Stage 1 of the
+staged migration that unifies the forecast (`runner.py`) and backcast
+(`run_calibration.py`) solve orchestrators. New `src/market_sim/pipeline/`
+package: `spec.py` (`DispatchSpec`, `ReserveSpec` — frozen containers mirroring
+the existing `dispatch_kwargs`/reserve-kwargs dicts key-for-key), `prior.py`
+(`PriorYearResults`, a typed replacement for the 14-key untyped `prior_results`
+dict threaded across forecast years, with dict-shim `.get`/`__getitem__` so
+existing readers are unaffected), `result.py` (`YearSolveResult` placeholder for
+Stages 3-4). `runner.py`'s per-year `prior_results` now constructs a
+`PriorYearResults` instead of a bare dict. `run_calibration.py` is untouched
+(migrates in later stages). Regression gate: byte-identical on every re-solved
+column — structurally guaranteed here, since the backcast path (what the six
+keeper golds re-solve) imports neither `runner.py` nor `market_sim.pipeline`.
+
+## 2026-07-05 (orchestrator-unification Stage 0 — regression-gate harness)
+
+**Infra only — add-only, no source-file changes.** Landed on
+`claude/regression-gate-stage-0-umopup` per
+`docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.1, establishing
+the regression-gate every later orchestrator-unification stage runs before
+pushing: `scripts/capture_keeper_goldens.py` (re-solves each of the six ISO
+keepers from its frozen bundle, determinism-pinned, writes P1/P2 dispatch +
+system frames plus a hashes-only `manifest.json`), `scripts/regression_gate.py`
+(one command running the golden diff, the warm-start reshuffle localizer, the
+per-ISO smoke suite, and the holdout-quarantine checks, with `--mode byte` /
+`--mode builder` tolerance selection per the plan's stage-type standard),
+verified `tests/test_regression_smoke.py` coverage. A/A byte-identity confirmed
+on the NEISO keeper (double capture, zero column deviation). MISO golden capture
+deferred to a ≥24 GB host (this box's 15 GB ceiling OOMs during MISO's
+per-asset reserve-column construction, per CLAUDE.md's documented memory tier).
+
+## 2026-07-05 (weather-year pool widened per ISO — PB-2 data intake)
+
+**Data intake, no solves, no dashboard changes.** Widens the forecast
+ensemble's weather-year draws (`docs/handoffs/probability-bounds-plan-2026-07.md`
+§2.1 flagged the original 3-draw `WEATHER_YEAR_POOL` as thin). New
+`constants.WEATHER_YEAR_POOL_BY_ISO` registry + `weather_year_pool(iso)`
+helper: ERCOT and NEISO verified end-to-end (clean 8760-hour EIA-930 hourly
+demand + resolved wind/solar CF, no fallback needed) for 2019-2021, added
+alongside the existing 2023-2025 window; NYISO gets 2021 only (its solar
+series always falls back to the EIA-930 generation-distribution parquet,
+whose own coverage floor is 2021, so 2019/2020 fail end-to-end despite raw
+hourly demand coverage existing). CAISO/PJM/MISO are unchanged — their
+`<BA> hourly` extracts don't reach back before late 2021/2022, and fetching
+more history is blocked in this managed sandbox (`api.eia.gov` 403). Rule-22
+quarantine untouched (2022, H1-2026 excluded from every pool). `ensemble.py`'s
+`weather_ensemble_configs` now defaults to the per-ISO pool instead of the
+flat global one; `configs/uncertainty_ercot.yaml`'s PB-2 sampler weather
+weights widened to match (uniform 1/6 over the six ERCOT years). COVID-2020's
+documented demand-shape anomaly is disclosed but not down-weighted (a
+client-adjustable choice, not a baked-in one). Full per-ISO/year verification
+log and rationale: `docs/weather-pool-coverage-2026-07.md`.
 
 ## 2026-07-05 (confirmed-vs-announced retirement channel — design plan, W0-P2)
 

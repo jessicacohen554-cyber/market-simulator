@@ -56,6 +56,7 @@ for the market split.
 | unit-outage-events | — | — | — | — | — | — |
 | partial-outages | — | — | — | — | — | — |
 | capacity-deliverability | — | — | — | — | — | — |
+| confirmed-retirements | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
@@ -70,7 +71,7 @@ snapshot).
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
 | emissions-unit-annual | — | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2022–2026 |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
 | fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
@@ -80,7 +81,7 @@ snapshot).
 | border-lmp | neighbor-border hubs (WECC intertie, PJM_WEST) | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | 2023 |
+| egrid | national (EPA eGRID, by vintage year) | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
 
@@ -632,6 +633,48 @@ limits by delivery period. Schema:
 | `value_pu` | `float64` | `ratio` | yes | Ratio-form value as a decimal fraction (e.g. 0.810 for an 81.0% LCR or a 1.148 LRR per-unit-of-peak). Null for pure-MW metrics. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
+
+## confirmed-retirements
+
+Binding-instrument retirement registry: units whose exit is bound by an
+enforceable public instrument, with the instrument's date and full provenance.
+Schema:
+[`schema/confirmed-retirements.schema.yaml`](schema/confirmed-retirements.schema.yaml).
+
+- **Keys:** `iso`, `plant_id`, `generator_id`, `instrument_id`
+- **Reconciles:** PJM deactivation acceptances, MISO Attachment Y approvals,
+  NYISO deactivation notices, ISO-NE cleared de-list bids, CAISO SWRCB/CPUC
+  orders, ERCOT NSO acceptances, and cross-ISO federal consent decrees / state
+  statutes — onto one long frame keyed by `(iso, plant_id, generator_id,
+  instrument_id)` with a closed `confirmation_class` vocabulary
+  (`rto_deactivation`, `consent_decree`, `statute`, `regulatory_order`,
+  `rmr_end`). ANNOUNCED-only retirements (EIA-860 planned dates, IRP/press
+  announcements) do NOT belong here — they stay with the economic-retirement
+  screen. Superseded rows (a counter-instrument suspends the exit) are kept for
+  audit and ignored by the loader. Consumed forecast-forward only by
+  `data.confirmed_retirements.load_confirmed_exits` →
+  `model.capacity.apply_confirmed_exits` (GATED `confirmed_exits_enabled`,
+  default off).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the unit belongs to (ERCOT/CAISO/PJM/MISO/NYISO/NEISO). |
+| `plant_id` | `int64` | `none` | no | EIA plant code (joins the EIA-860 fleet spine). |
+| `generator_id` | `string` | `none` | no | EIA-860 generator ID within the plant. |
+| `unit_name` | `string` | `none` | yes | Human-readable plant/unit label for review. |
+| `capacity_mw` | `float64` | `mw` | yes | Nameplate MW cross-check against EIA-860 (mismatch >5% fails curation). |
+| `exit_year` | `int64` | `year` | no | Calendar year the instrument requires the unit offline. |
+| `exit_month` | `int64` | `month` | yes | Month (1-12) within exit_year where the instrument specifies one. |
+| `confirmation_class` | `string` | `none` | no | One of rto_deactivation \| consent_decree \| statute \| regulatory_order \| rmr_end. Vocabulary is closed; announced/intended is deliberately NOT a member. |
+| `instrument_id` | `string` | `none` | no | Short stable slug for the instrument (e.g. pjm-deact-2027-xyz |
+| `instrument` | `string` | `none` | no | Full citation — docket/case number |
+| `instrument_date` | `datetime64[ns]` | `none` | yes | Date the instrument became binding. |
+| `superseded` | `bool` | `none` | no | True when a counter-instrument (RMR |
+| `superseding_instrument` | `string` | `none` | yes | Citation of the counter-instrument when superseded. |
+| `source_url` | `string` | `none` | no | Authoritative URL of the instrument or the RTO posting row. |
+| `source_doc` | `string` | `none` | yes | Document title / page reference within source_url. |
+| `accessed` | `datetime64[ns]` | `none` | no | Date the source was last re-queried (the intake vintage stamp). |
+| `notes` | `string` | `none` | yes | Free-text context (e.g. partial-plant scope |
 
 ## gtc-limits
 

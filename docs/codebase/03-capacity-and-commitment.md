@@ -10,10 +10,11 @@ and ancillary-service revenue (`model/ancillary.py`).
 `evolve_fleet(...)` (`capacity.py:1412`) advances the fleet by exactly one year in
 a single pass — **no within-year convergence iteration**. It returns the mutated
 fleet, an updated economic-loss tracker, renewable additions, and a CCS-retrofit
-log. The six steps run in this fixed order:
+log. The steps run in this fixed order:
 
 ```
-1. Known retirements          apply_known_retirements()
+0. Confirmed exits            apply_confirmed_exits()  (GATED confirmed_exits_enabled)
+1. Announced retirements      apply_announced_retirements()
 2. Economic retirements       apply_economic_retirements()
 3. Known additions            (planned EIA-860 pipeline; online_year == year)
 4. CCS retrofit screen        apply_ccs_retrofit()
@@ -24,13 +25,32 @@ log. The six steps run in this fixed order:
 re-aggregate into efficiency bins (aggregate_fleet, n_bins=heat_rate_bin_count)
 ```
 
-### Step 1 — Known retirements (`apply_known_retirements`, line 182)
+### Step 0 — Confirmed exits (`apply_confirmed_exits`)
 
-Drops units whose announced `retirement_year ≤ year`. In forecast mode with
+The exogenous forecast retirement channel, GATED on `confirmed_exits_enabled`
+(default off) and forecast-mode only. Reads the `confirmed-retirements` registry
+(binding public instruments — consent decree, statute, RTO deactivation
+acceptance, regulatory order, RMR end — via
+`data.confirmed_retirements.load_confirmed_exits`) and, at each unit's instrument
+date, force-retires a unit-grain unit or **derates** a plant-binned tranche by the
+exiting unit's MW, any fuel, **bypassing the reliability floor**. It runs before
+the economic screen, so scarcity from a confirmed exit feeds next year's entry
+signal, and it composes as `min(economic_exit, confirmed_date)`. This is the ONLY
+exogenous fossil exit channel; superseded registry rows (a counter-instrument
+suspends the exit) are dropped by the loader and revert to the economic screen.
+
+### Step 1 — Announced retirements (`apply_announced_retirements`)
+
+Honors an EIA-860 announced `retirement_year ≤ year`. In forecast mode with
 `fossil_economic=True` (the default), fossil units (coal/gas_cc/gas_ct/gas_st/oil/
-gas_cc_ccs) **ignore** their announced dates — the economic screen governs them.
-Non-fossil (nuclear, hydro, renewables, storage) always retire on the announced
-date.
+gas_cc_ccs) **ignore** their announced dates — for the whole fossil fleet this
+step is a **default no-op** and the economic screen governs them. Non-fossil
+(nuclear, hydro, renewables, storage) dates are honored only within the EIA-860
+data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`,
+default 5); beyond it a non-fossil date is honored only if the unit is in the
+confirmed registry (the horizon gate activates with the confirmed channel — off =
+honor all non-fossil dates). Renamed from the old `apply_known_retirements`
+(RC-3; no alias).
 
 ### Step 2 — Economic retirements (`apply_economic_retirements`, line 279)
 

@@ -62,6 +62,7 @@ _GENERATOR_COLUMN_MAP: dict[str, str] = {
     "Summer Capacity (MW)": "net_summer_capacity_mw",
     "Operating Year": "operating_year",
     "Planned Retirement Year": "planned_retirement_year",
+    "Planned Retirement Month": "planned_retirement_month",
     "Status": "status",
 }
 
@@ -185,7 +186,11 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
-    for col in ("operating_year", "planned_retirement_year"):
+    for col in (
+        "operating_year",
+        "planned_retirement_year",
+        "planned_retirement_month",
+    ):
         df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
     for col in ("nameplate_capacity_mw", "net_summer_capacity_mw"):
         df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -234,13 +239,10 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
     )
 
 
-# Within-window retiree schema: the canonical fleet columns plus the two
-# month-precise fields the COD ramp reads (the loader only requires
-# ``operating_month`` / ``planned_retirement_month`` when present).
-_RETIRED_COLUMNS: list[str] = EIA_860_CSV_COLUMNS + [
-    "operating_month",
-    "planned_retirement_month",
-]
+# Within-window retiree schema: the canonical fleet columns (which now carry
+# ``planned_retirement_month``) plus ``operating_month`` — the two month-precise
+# fields the COD ramp reads (the loader only requires them when present).
+_RETIRED_COLUMNS: list[str] = EIA_860_CSV_COLUMNS + ["operating_month"]
 
 
 def build_within_window_retirees(
