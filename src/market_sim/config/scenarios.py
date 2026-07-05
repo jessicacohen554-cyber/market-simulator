@@ -613,7 +613,8 @@ class ScenarioConfig:
     # otherwise under-build, independent of getting prices exactly right. The
     # economic screen still decides the profitable build; this only fills the
     # residual adequacy gap. Default off (byte-identical); recommended on for
-    # forecasts. Uses the prior year's peak (build-ahead-of-need).
+    # forecasts. Tests the entering year's known peak (plan §2.3 component 1;
+    # prior-year peak only when a caller does not supply the known one).
     capacity_deliverability_limits: bool = False  # GATED, default-OFF locational
     # resource-adequacy mechanism. When on, the model reads each ISO's published
     # capacity-deliverability parameters (PJM CETO/CETL, MISO LRR/CIL, NYISO

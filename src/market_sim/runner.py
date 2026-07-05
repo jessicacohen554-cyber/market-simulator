@@ -540,6 +540,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         is_bridge = config.hindcast and year in HINDCAST_BRIDGE_YEARS
         driver_year = last_solved_year if is_bridge else year
 
+        # The entering year's demand is deterministically known before the
+        # fleet evolves (_scale_demand is pure config arithmetic), so the
+        # capacity screens' peak-anchored mechanisms — the retirement
+        # reliability floor and the reserve-margin backstop — test the
+        # current year's known peak instead of lagging it by a full year
+        # (capacity-economics plan 2026-07 §2.3 component 1: an off-by-one
+        # deletion, not foresight). The price-driven screens still see only
+        # prior-year outcomes (one-pass, rule 10).
+        year_demand = _scale_demand(base_demand, config, year)
+        peak_demand = float(year_demand.sum(axis=0).max())
+
         if fleet is None:
             # First year: build the base fleet. With CAMPD binning the fleet
             # comes from the operational bin assignments (base + peak
@@ -593,6 +604,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 eac_price_ccs=config.eac_price_gas_cc_ccs,
                 events=evo_events,
                 confirmed_exits=confirmed_exits,
+                peak_demand_next=peak_demand,
             )
             # Persist the reliability floor's attribution log next to the
             # per-year results parquet (rule 20 analogue: floor-retained MW
@@ -789,6 +801,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # profile; must run after fleet-array build and before dispatch.
         inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
+        # The capacity screens already consumed the entering year's known peak
+        # (computed at the top of the loop, before fleet evolution). Recompute
+        # year_demand / peak_demand here on the hindcast-aware basis for the LP
+        # and results path: in hindcast mode the measured/pinned load
+        # (year_base_demand) governs the solve, not the forecast scalar.
         year_demand = (
             year_base_demand
             if config.hindcast
