@@ -94,3 +94,41 @@ definitions.
 No parameter was tuned to any residual (rule #1/#23). No solve, score, or intake
 touched 2022 or H1-2026 (rule #22); `calibration-complete.json` markers remain
 empty.
+
+---
+
+## NYISO re-gate RESOLVED (2026-07-05, follow-up session) — root cause = the offer de-leak, not the 07-04 flags
+
+The NYISO flag above is now investigated and closed (decision: **option c**, name
+the structural fix; keeper stays 41). See `docs/calibration-log.md`
+(2026-07-05 "NYISO keeper HEAD re-gate") for the full write-up. Dashboard probes:
+`nyiso 48 head-regate` (reproduction) + `nyiso 49 offer-ab` (D-2 attribution).
+
+**Correction to the flag's attribution.** The regression is driven by the
+**B-NYI-1 `_NYISO_OFFER_CURVE` de-leak** (CT_PEAKER `peak` 13.15→4.0,
+`econ_low`/`econ_high` 1.27/1.98→1.0/1.0; CC_REGULAR `econ_high` 1.21→1.0), which
+a byte-faithful replay inherits because `offer_curve_by_group` is not in
+`meta.json`. It is **not** the 07-04 opt-in flags (7b891bd measured-run
+fast-start, DEC 227-3 overlay, oil screen) — those default off and are off in the
+replay (`tranche_startup_measured_runs=False`, `nysdec_peaker_rule_availability=False`).
+
+**HEAD re-gate (`nyiso 48`)** — CT_PEAKER 4.46/4.51/4.73 TWh (actual 2.26/2.13/2.84),
+ST_GAS 6.15/7.58/9.30 (actual 8.70/11.07/15.99); **C1 free-class 9/10, C7 (D-1)
+FAIL** (2024 CT_PEAKER off-peak CV ratio 0.454<0.5).
+
+**D-2 attribution (`nyiso 49`, HEAD code + keeper offer restored)** — the single
+delta is the offer curve; it recovers **both** regressions: CT_PEAKER back to
+1.56/1.37/1.75, **C1 10/10, C7 PASS**. So the entire C1/C7 move is the offer
+de-leak (emissions R2 / Stage-5 interchange residual ~0.26 TWh, negligible).
+
+**Why (rule #17).** The ERCOT-inherited 13.15×/1.98 CT wall was one fitted scalar
+proxying two real missing structures: the **LI/NYC delivered-fuel basis premium**
+(downstate LM6000s priced at Transco Z6 hub, not their citygate/interruptible
+gas) and **#1344** reserve/RCPF scarcity price formation (co-opt present but
+non-binding). Removing the leak (correct, rule #25) exposes both.
+
+**Disposition.** Do NOT promote `nyiso 48` (fails HARD C1+C7). Keep `nyiso-41`
+as the keeper, **STALE-VS-HEAD** (not reproducible on HEAD; committed bundle
+stands). NYISO **calibration-complete item 1 is BLOCKED** on the peaker-pricing
+structural fix (LI/NYC delivered-fuel basis and/or #1344). Do NOT re-arm the
+de-leaked scalars (rule #26); `nyiso 49` is diagnostic-only.
