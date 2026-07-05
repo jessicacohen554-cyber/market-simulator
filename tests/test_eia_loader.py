@@ -677,6 +677,69 @@ class TestDemandProfileCleanSeam(unittest.TestCase):
         demand = load_demand("PJM", 2021, include_interchange=False)
         self.assertLess(demand.sum(axis=0).max(), 200_000.0)
 
+    def test_missing_partition_warns_when_repair_manifest_covers_it(self):
+        # PJM 2021 is a real (iso, year) row in the raw eia_demand_profiles
+        # extract -- i.e. the repair manifest covers it -- so a missing clean
+        # partition must warn loudly, naming the exact regenerate command,
+        # rather than silently reading the corrupted legacy series.
+        from market_sim.data.eia_loader import _demand_profile_clean
+
+        with self.assertLogs("market_sim.data.eia_loader", level="WARNING") as cm:
+            out = _demand_profile_clean("PJM", 2021)
+        self.assertIsNone(out)
+        self.assertTrue(
+            any(
+                "scripts/regenerate_clean.py demand-profile" in msg for msg in cm.output
+            )
+        )
+
+    def test_missing_partition_raises_in_strict_mode(self):
+        from market_sim.data.eia_loader import (
+            DemandProfileNotRepairedError,
+            _demand_profile_clean,
+        )
+
+        with self.assertRaises(DemandProfileNotRepairedError):
+            _demand_profile_clean("PJM", 2021, strict=True)
+
+    def test_missing_partition_outside_manifest_stays_silent(self):
+        # A year with no row at all in the raw extract has nothing to
+        # regenerate, so it must not warn (and must not raise in strict mode
+        # either -- there is no repair to be missing).
+        from market_sim.data.eia_loader import _demand_profile_clean
+
+        with self.assertNoLogs("market_sim.data.eia_loader", level="WARNING"):
+            out = _demand_profile_clean("PJM", 1900, strict=True)
+        self.assertIsNone(out)
+
+    def test_reads_repaired_series_when_present_no_warning(self):
+        from market_sim.data.eia_loader import _demand_profile_clean
+
+        mw = np.full(HOURS_PER_YEAR, 90_000.0)
+        self._write_clean_partition("PJM", 2021, mw)
+        with self.assertNoLogs("market_sim.data.eia_loader", level="WARNING"):
+            out = _demand_profile_clean("PJM", 2021, strict=True)
+        self.assertIsNotNone(out)
+        np.testing.assert_allclose(out, mw)
+
+    def test_load_demand_strict_raises_when_partition_missing(self):
+        from market_sim.data.eia_loader import DemandProfileNotRepairedError
+
+        with self.assertRaises(DemandProfileNotRepairedError):
+            load_demand("PJM", 2021, strict_demand_profile=True)
+
+    def test_load_demand_meta_strict_raises_when_partition_missing(self):
+        from market_sim.data.eia_loader import DemandProfileNotRepairedError
+
+        with self.assertRaises(DemandProfileNotRepairedError):
+            load_demand_meta("PJM", 2021, strict_demand_profile=True)
+
+    def test_load_demand_meta_strict_ok_when_partition_present(self):
+        mw = np.full(HOURS_PER_YEAR, 90_000.0)
+        self._write_clean_partition("PJM", 2021, mw)
+        meta = load_demand_meta("PJM", 2021, strict_demand_profile=True)
+        self.assertAlmostEqual(meta["peak_mw"], 90_000.0)
+
 
 if __name__ == "__main__":
     unittest.main()
