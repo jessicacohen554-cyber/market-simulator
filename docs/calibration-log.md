@@ -4457,3 +4457,55 @@ gas-price input's time resolution changed; caiso-51/caiso-53 remain keeper.
 `legitimacy_diagnostics.json` attached (D-5's `caiso_ra_mustoffer` gap is
 the same pre-existing, already-documented gap carried on caiso-53 — not
 introduced by this change).
+
+## 2026-07-05 — ERCOT WS-A: forward RTOLCAP/RTOFFCAP reserve-supply cap (PROBE `ercot40-rtolcap-forward`; ercot32 stays keeper)
+
+The forward analogue of the last AS-path lever with no forward analogue — the
+measured ERCOT on-line responsive reserve-supply cap
+(`scarcity.ercot_rtolcap_supply_cap_mw`, which returned `None` for years with no
+measured `ercot_<year>_ordc_reserves_hourly.parquet`, so forecast years ran
+UNCAPPED). Design + full writeup: `docs/handoffs/ercot-rtolcap-forward-2026-07.md`.
+
+**Construction** (derived committed-share × capability, forward-native): per
+responsive class, the median on-line **headroom-realization** fraction
+`Σ_online(eff_cap−gross)/installed_cap` from the committed CAMPD extracts,
+conditioned on the net-load percentile decile × season
+(`scripts/derive_ercot_rtolcap_forward.py`, rule #23), × the fleet's
+reserve-eligible capacity, × a deliverability coefficient fit to the measured
+RTOLCAP/RTOFFCAP **MW quantity** (never a price). Mode-aware seam (G4 pattern):
+backcast byte-identical measured parquet, forecast/probe-flag the formula. The
+formula never reads the LP commitment/output state (anti-F3/F4).
+
+**Identification gate** (`scripts/validate_ercot_rtolcap_forward.py`, before any
+dispatch): coverage RTOLCAP÷AS-req median **2.02/2.08/2.21×** — the sane ~2×, NOT
+the ercot27 1.0× exact-coverage artifact (the gate's primary reject). RTOLCAP
+annual mean +11/−6/−12% (2023/24/25); 2023 high (real-time scarcity depletion the
+structural nameplate proxy can't see), 2025 low (storage/commitment growth beyond
+the fixed backcast base) — documented residuals, not tuned.
+
+**One-delta backcast probe** (`ercot40`, run163 pattern): ercot32 recipe EXACTLY
++ `ercot_reserve_supply_forward=True` (measured cap → formula, the ONLY delta),
+`--year 2023 2024 2025`, registered `2026-07-05-ercot40-rtolcap-forward`.
+Compared against a measured-cap re-solve of the identical recipe (both carry the
+DAM-AS overlay, so the delta is purely the ORDC reserve-dual channel):
+
+| year | formula-cap dw | measured-cap dw | Δdw | hrs>$1000 (f/m) | hrs>$200 (f/m) |
+|---|---|---|---|---|---|
+| 2023 | $52.89 | $53.00 | **−$0.11** | 42 / 42 | 94 / 98 |
+| 2024 | $35.87 | $35.87 | **−$0.00** | 27 / 27 | 81 / 81 |
+| 2025 | $35.08 | $35.08 | **+$0.00** | 4 / 4 | 12 / 12 |
+
+**Gate PASSED.** Δdw within $0.11 (worst year) / $0.00 (2024-25) — far inside the
+~$2 gate — with the acute tail identical (42/42, 27/27, 4/4 hrs>$1000) and the
+mean ORDC adder matching (1.84/0.18/0.03 vs 1.88/0.18/0.03). The ±11% RTOLCAP
+level residuals never reach the price because the ORDC adder fires only in the
+low-RTOLCAP scarcity tail (~8–12 GW) where the formula and measured caps agree;
+the level differences live in the abundant high-RTOLCAP hours where the adder is
+~$0. The forward supply formula reproduces the measured cap's price-formation role
+essentially exactly, from a fully forward-native supply — the WS-A gate.
+
+**Determination: probe, NOT a keeper** (ercot32 stays the ERCOT keeper). The
+lever ships default-off, ERCOT-gated; it becomes the forecast-path supply
+definition automatically in forecast mode (where forecast years were uncapped
+before). No off-registry tuning (#24: flag + coefficients in
+`ScenarioConfig`/`constants.py` + `run_config.json`).
