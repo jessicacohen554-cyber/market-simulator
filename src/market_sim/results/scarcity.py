@@ -62,7 +62,18 @@ from pathlib import Path
 import numpy as np
 from scipy.special import ndtr
 
-from market_sim.config.constants import ERCOT_LR_RRS_AVAILABILITY_HOD
+from market_sim.config.constants import (
+    ERCOT_LR_RRS_AVAILABILITY_HOD,
+    ERCOT_RTOLCAP_FWD_DELIV_COEF,
+    ERCOT_RTOLCAP_FWD_N_DECILE,
+    ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES,
+    ERCOT_RTOLCAP_FWD_OFFLINE_DELIV_COEF,
+    ERCOT_RTOLCAP_FWD_OFFLINE_SHARE,
+    ERCOT_RTOLCAP_FWD_ONLINE_CLASSES,
+    ERCOT_RTOLCAP_FWD_ONLINE_SHARE,
+    ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH,
+    ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
+)
 from market_sim.config.reserve_config import (
     ERCOT_AS_ECRS_BASE_MW,
     ERCOT_AS_ECRS_MAX_MW,
@@ -1075,8 +1086,168 @@ _ERCOT_ORDC_RESERVES_DIR = RAW_DATA_DIR / "ercot"
 _RESERVE_SUPPLY_CAP_UNCAPPED_MW = 1.0e9
 
 
-def ercot_rtolcap_supply_cap_mw(config, hours: int) -> np.ndarray | None:
-    """ERCOT's measured online-responsive reserve-supply cap, ``(n_rows, hours)`` MW.
+def _ercot_rtolcap_fwd_month() -> np.ndarray:
+    """Calendar month (1-12) for each of the 8760 non-leap hour-of-year slots."""
+    import pandas as pd
+
+    return pd.date_range("2023-01-01", periods=8760, freq="h").month.to_numpy()
+
+
+def _ercot_rtolcap_fwd_decile(net_load: np.ndarray) -> np.ndarray:
+    """Within-year net-load percentile bin (0..N_DECILE-1) per hour, vectorized.
+
+    Rank the year's net-load and bucket into equal-count bins — the driver axis
+    the derived on-line share conditions on. A forecast year ranks its OWN
+    net-load, so the mapping regenerates and a changed VRE build shifts which
+    hours fall in which bin (rule #10). No per-hour Python loop.
+    """
+    n = len(net_load)
+    order = np.argsort(np.argsort(net_load))  # ascending rank per hour
+    return np.minimum(
+        (order * ERCOT_RTOLCAP_FWD_N_DECILE) // max(n, 1),
+        ERCOT_RTOLCAP_FWD_N_DECILE - 1,
+    )
+
+
+def ercot_online_storage_reserve_mw(config, hours: int) -> np.ndarray:
+    """Mode-aware ERCOT on-line storage responsive-reserve MW, ``(hours,)``.
+
+    The storage term of the forward RTOLCAP supply cap
+    (:func:`ercot_rtolcap_forward_supply_cap_mw`). Mode-aware exactly like the G4
+    load-resource credit: **backcast** returns the measured storage-AS series
+    (:func:`ercot_storage_as_reserve_mw`, an admissible measured procurement
+    quantity, never a price), so the one-delta probe holds the storage term at its
+    measured value and isolates the thermal supply formula as the single change.
+    **Forecast** returns the model storage fleet's installed discharge power ×
+    :data:`ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC` (ERCOT's observed AS-award /
+    installed-storage ratio), so the storage reserve grows as the fleet grows.
+    """
+    if str(getattr(config, "mode", "forecast")) == "backcast":
+        return ercot_storage_as_reserve_mw(int(config.weather_year), int(hours))
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.model.storage import build_default_storage
+
+    units = build_default_storage(get_iso_config("ERCOT"), config)
+    power = float(sum(u.power_cap_mw for u in units))
+    return np.full(int(hours), power * ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC)
+
+
+def ercot_rtolcap_forward_supply_cap_mw(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    *,
+    net_load: np.ndarray,
+    storage_reserve: np.ndarray | None = None,
+) -> np.ndarray | None:
+    """ERCOT's FORWARD online-responsive reserve-supply cap, ``(n_rows, hours)`` MW.
+
+    The WS-A forward analogue of the measured
+    :func:`ercot_rtolcap_supply_cap_mw` — the last AS-path lever with no forward
+    analogue (``docs/handoffs/ercot-rtolcap-forward-2026-07.md``). Rebuilt entirely
+    from the model's own forecast net-load, the derived per-class on-line
+    headroom-realization shares and the fleet's evolving reserve-eligible
+    capacity, so the cap regenerates for a forecast year and responds to changed
+    conditions:
+
+        RTOLCAP_fwd(t)  = deliv × Σ_c online_share_c(nl_bin(t), season(t)) × cap_c(t)
+                          + online_storage_power(t)
+        RTOFFCAP_fwd(t) = deliv × Σ_{c∈quick} offline_share_c(nl_bin(t), season(t)) × cap_c(t)
+
+    * ``online_share_c`` / ``offline_share_c`` — the derived
+      (:data:`ERCOT_RTOLCAP_FWD_ONLINE_SHARE` /
+      :data:`~market_sim.config.constants.ERCOT_RTOLCAP_FWD_OFFLINE_SHARE`) median
+      class reserve-realization fraction, conditioned on the net-load percentile
+      bin and season (``scripts/derive_ercot_rtolcap_forward.py``). RTOLCAP is the
+      on-line *headroom* (HSL − basepoint) an ORDC deployment can call, so the
+      share is a headroom fraction of installed capacity (a rule-#11 finding — the
+      measured series is ~1.8× the fleet's 10-min ramp; the ramp physics still
+      gates the RTOFFCAP quick-start eligibility). Higher net-load ⇒ lower share ⇒
+      lower cap, so reserves tighten on the tight evenings scarcity actually fires.
+    * ``cap_c(t)`` — the class's installed reserve-eligible capacity from
+      ``fleet_arrays`` (summer-derated per hour, matching the derive base);
+      regenerates as the fleet evolves.
+    * ``deliv`` — :data:`ERCOT_RTOLCAP_FWD_DELIV_COEF`, fit to the measured RTOLCAP
+      MW quantity (never a price).
+
+    The formula NEVER reads the LP's own commitment/output state and never couples
+    reserve to dispatch ``P`` (anti-F3/F4). Row shape mirrors the measured cap:
+    two rows (fast/spinning at RTOLCAP, all tier at RTOLCAP+RTOFFCAP) under the
+    multi-product stack, else one. Returns ``None`` when the fleet has no
+    ``plant_group`` (the forward base cannot be built; caller runs uncapped).
+    """
+    from market_sim.data.fleet import _SUMMER_CLASS_DERATE
+
+    T = int(hours)
+    plant_group = getattr(fleet_arrays, "plant_group", None)
+    if plant_group is None:
+        return None
+    plant_group = np.asarray(plant_group)
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+
+    nl = np.asarray(net_load, dtype=float)
+    if nl.size < T:
+        nl = np.concatenate([nl, np.full(T - nl.size, nl.mean() if nl.size else 0.0)])
+    nl = nl[:T]
+
+    month = _ercot_rtolcap_fwd_month()[:T]
+    season = np.asarray(ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH, dtype=int)[month - 1]
+    decile = _ercot_rtolcap_fwd_decile(nl)
+    summer = np.isin(month, [6, 7, 8, 9])  # Jun-Sep ambient-derate window
+
+    def _tier_mw(share_tbl: dict, classes) -> np.ndarray:
+        """Σ_c share_c[season,decile] × summer-derated class capacity, ``(T,)``."""
+        out = np.zeros(T, dtype=float)
+        for cls in classes:
+            cap = float(pmax[plant_group == cls].sum())
+            if cap <= 0.0:
+                continue
+            tbl = np.asarray(share_tbl[cls], dtype=float)  # (N_SEASON, N_DECILE)
+            share_t = tbl[season, decile]  # (T,), vectorized gather
+            derate = _SUMMER_CLASS_DERATE.get(cls, 0.0)
+            cap_t = cap * (1.0 - np.where(summer, derate, 0.0))
+            out += share_t * cap_t
+        return out
+
+    deliv = float(ERCOT_RTOLCAP_FWD_DELIV_COEF)
+    if storage_reserve is None:
+        storage_reserve = np.zeros(T, dtype=float)
+    storage = np.asarray(storage_reserve, dtype=float)[:T]
+    if storage.size < T:
+        storage = np.concatenate([storage, np.zeros(T - storage.size)])
+
+    rtolcap = deliv * _tier_mw(
+        ERCOT_RTOLCAP_FWD_ONLINE_SHARE, ERCOT_RTOLCAP_FWD_ONLINE_CLASSES
+    )
+    rtolcap = rtolcap + storage
+    if getattr(config, "ercot_multiproduct_as_coopt", False):
+        rtoffcap = float(ERCOT_RTOLCAP_FWD_OFFLINE_DELIV_COEF) * _tier_mw(
+            ERCOT_RTOLCAP_FWD_OFFLINE_SHARE, ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES
+        )
+        cap = np.vstack([rtolcap, rtolcap + rtoffcap])  # (2, T)
+    else:
+        cap = rtolcap.reshape(1, T)  # (1, T)
+    return cap.astype(float)
+
+
+def ercot_rtolcap_supply_cap_mw(
+    config,
+    hours: int,
+    fleet_arrays: FleetArrays | None = None,
+    *,
+    system_load: np.ndarray | None = None,
+    wind_gen: np.ndarray | None = None,
+    solar_gen: np.ndarray | None = None,
+) -> np.ndarray | None:
+    """ERCOT's online-responsive reserve-supply cap, ``(n_rows, hours)`` MW.
+
+    Mode-aware seam (like :func:`ercot_load_resource_reserve_credit_mw`, G4):
+    **backcast with ``config.ercot_reserve_supply_forward`` off** returns the
+    MEASURED series below byte-identical (the validation target); **forecast, or
+    the ``ercot_reserve_supply_forward`` probe flag on**, returns the WS-A forward
+    formula (:func:`ercot_rtolcap_forward_supply_cap_mw`) built from ``fleet_arrays``
+    and the forecast net-load (``system_load − wind_gen − solar_gen``). The forward
+    branch falls back to ``None`` (uncapped) when those inputs are not threaded in.
 
     The reserve-supply re-scope (Finding 1 / G1, the broad-month phantom-headroom
     fix). The ERCOT co-opt's shared-headroom rows count every reserve-eligible
@@ -1110,6 +1281,29 @@ def ercot_rtolcap_supply_cap_mw(config, hours: int) -> np.ndarray | None:
     """
     if not getattr(config, "ercot_reserve_supply_cap", False):
         return None
+    # Mode-aware source selection (G4 pattern). Forward formula when in forecast
+    # mode OR the one-delta probe flag is set; measured parquet otherwise.
+    forward = str(getattr(config, "mode", "forecast")) == "forecast" or getattr(
+        config, "ercot_reserve_supply_forward", False
+    )
+    if forward:
+        if fleet_arrays is None or system_load is None:
+            return None  # forward inputs not threaded in — run uncapped
+        wind = (
+            np.zeros_like(np.asarray(system_load, dtype=float))
+            if wind_gen is None
+            else np.asarray(wind_gen, dtype=float)
+        )
+        solar = (
+            np.zeros_like(np.asarray(system_load, dtype=float))
+            if solar_gen is None
+            else np.asarray(solar_gen, dtype=float)
+        )
+        net_load = np.asarray(system_load, dtype=float) - wind - solar
+        storage = ercot_online_storage_reserve_mw(config, int(hours))
+        return ercot_rtolcap_forward_supply_cap_mw(
+            config, fleet_arrays, int(hours), net_load=net_load, storage_reserve=storage
+        )
     year = int(config.weather_year)
     if year < int(getattr(config, "ercot_reserve_supply_cap_from_year", 2023)):
         return None

@@ -673,7 +673,17 @@ def _ercot_multiproduct_design(
         if tier == "fast":
             headroom_products[0, p] = True
 
-    supply_cap = ercot_rtolcap_supply_cap_mw(config, T)
+    # Mode-aware: measured RTOLCAP/RTOFFCAP parquet in backcast (flag off), or the
+    # WS-A forward formula in forecast / under the ercot_reserve_supply_forward
+    # probe flag (built from the fleet + forecast net-load threaded in here).
+    supply_cap = ercot_rtolcap_supply_cap_mw(
+        config,
+        T,
+        fleet_arrays,
+        system_load=system_load,
+        wind_gen=wind_gen,
+        solar_gen=solar_gen,
+    )
 
     # Lumped ORDC TOTAL-reserve family (config.ercot_ordc_total_reserve): the
     # published RTORPA mechanism of the pre-RTC+B regime, layered ON TOP of the
