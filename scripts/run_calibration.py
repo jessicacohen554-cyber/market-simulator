@@ -2160,6 +2160,7 @@ def run_year(
     ercot_as_aware_commitment: bool = False,
     ercot_reserve_supply_cap: bool = False,
     ercot_reserve_supply_cap_from_year: int = 2023,
+    ercot_reserve_supply_forward: bool = False,
     pjm_reserve_supply_cap: bool = False,
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
@@ -2690,6 +2691,8 @@ def run_year(
             ercot_reserve_supply_cap=True,
             ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
         )
+    if ercot_reserve_supply_forward:
+        config = config.with_overrides(ercot_reserve_supply_forward=True)
     if pjm_reserve_supply_cap:
         config = config.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_online_gated:
