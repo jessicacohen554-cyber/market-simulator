@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-pjm-78-demand-regate",
+  "label": "pjm 78 demand-regate",
+  "date": "2026-07-05",
+  "shorthand": "pjm-78-demand-regate",
+  "definition": "(PROBE, not a keeper swap) PJM-77 demand-repair re-gate under PR #1426 (repaired demand-profile clean datatype). pjm-77 is the ONLY keeper whose scored years read the corrupted legacy eia_demand_profiles file (PJM has no per-BA demand extract; CAISO/MISO/NYISO/NEISO/ERCOT read dedicated per-BA hourly extracts for 2023-2025). The corruption was a zero-sentinel run: 23h in 2023 (idx 7393-7415) and 22h in 2024 (idx 1659-1680) at raw_mw=0.0; 2025 was already clean. TWIN A (resolve): byte-faithful pjm-77 meta.json replay at HEAD with the repaired demand engaged. Result: reproduces the committed keeper verdict CRITERION-FOR-CRITERION (NOT-YET; C1/C2/C3/C8 FAIL, C4/C5a/C7 PASS unchanged) — the only movement is the C6 governance gate showing UNATTESTED, a pure replay artifact (this bundle lacks the keeper's calibration_attestation.json; the LP dispatch is unchanged). Numeric deltas are tiny and confined to the two corrupted years: gas +0.38/+0.58 TWh, coal +0.11/+0.12 TWh (+~0.15%), CO2 +0.26/+0.34 Mt, mean LMP within 0.03 $/MWh, 2025 exactly zero (in-bundle control). No gate flips. Conclusion (rule #14): the demand repair is IMMATERIAL to every PJM scored criterion; pjm-77 is verified demand-robust and stays the keeper (NOT swapped to this confounded HEAD re-solve, which also carries ~30 files of post-e9daf7e code merges and lacks the governance attestation + zero-forcing ablation twin a keeper requires). Attribution twin B (HEAD + corrupted demand, isolated data root) decomposes A-B (demand repair) vs B-keeper (code merges) in docs/calibration-log.md 2026-07-05.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-05-pjm-78-demand-regate.js",
+  "bundle": "results/calibration/pjm77_regate_repaired"
+}
