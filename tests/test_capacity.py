@@ -17,13 +17,15 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.confirmed_retirements import ConfirmedExit
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.capacity import (
     CumulativeDeployment,
     _capital_recovery_factor,
+    apply_announced_retirements,
+    apply_confirmed_exits,
     apply_economic_new_entry,
     apply_economic_retirements,
-    apply_known_retirements,
     compute_clean_share,
     compute_lcoe,
     estimate_expected_revenue,
@@ -52,43 +54,221 @@ def _gen(
     )
 
 
-class TestKnownRetirements(unittest.TestCase):
-    """Scheduled-retirement removal by simulation year."""
+class TestAnnouncedRetirements(unittest.TestCase):
+    """Announced (EIA-860 date) retirement removal by simulation year."""
 
     def test_unit_present_before_retirement_year(self):
         # Year < retirement_year keeps the unit regardless of fuel.
         fleet = [_gen("N0", "nuclear", retirement_year=2028)]
-        survivors = apply_known_retirements(fleet, 2027)
+        survivors = apply_announced_retirements(fleet, 2027)
         self.assertEqual([g.unit_id for g in survivors], ["N0"])
 
     def test_nonfossil_unit_removed_at_retirement_year(self):
         # Non-fossil (nuclear/hydro/renewables) honor the announced EIA-860 date.
         fleet = [_gen("N0", "nuclear", retirement_year=2028)]
-        survivors = apply_known_retirements(fleet, 2028)
+        survivors = apply_announced_retirements(fleet, 2028)
         self.assertEqual(survivors, [])
 
     def test_nonfossil_unit_removed_after_retirement_year(self):
         fleet = [_gen("N0", "nuclear", retirement_year=2028)]
-        survivors = apply_known_retirements(fleet, 2030)
+        survivors = apply_announced_retirements(fleet, 2030)
         self.assertEqual(survivors, [])
 
     def test_fossil_unit_exempt_from_date_retirement_by_default(self):
         # Fossil phaseout is economic (forecast_fossil_retirement_economic=True
         # default): an announced coal/gas/oil retirement date does NOT remove it;
-        # the economic-retirement screen governs the exit instead.
+        # the economic-retirement screen governs the exit instead (default no-op).
         fleet = [_gen("C0", "coal", retirement_year=2028)]
         self.assertEqual(
-            [g.unit_id for g in apply_known_retirements(fleet, 2030)], ["C0"]
+            [g.unit_id for g in apply_announced_retirements(fleet, 2030)], ["C0"]
         )
         # Legacy behaviour (fossil_economic=False) honors the date.
         self.assertEqual(
-            apply_known_retirements(fleet, 2030, fossil_economic=False), []
+            apply_announced_retirements(fleet, 2030, fossil_economic=False), []
         )
 
     def test_unit_without_schedule_is_kept(self):
         fleet = [_gen("G0", "gas_cc", retirement_year=None)]
-        survivors = apply_known_retirements(fleet, 2050)
+        survivors = apply_announced_retirements(fleet, 2050)
         self.assertEqual([g.unit_id for g in survivors], ["G0"])
+
+    def test_old_name_is_gone(self):
+        # RC-3 rename: no alias left behind (deleted means deleted, rule 26).
+        import market_sim.model.capacity as cap
+
+        self.assertFalse(hasattr(cap, "apply_known_retirements"))
+
+
+class TestNonFossilHorizonGate(unittest.TestCase):
+    """RC-5: announced non-fossil dates gated to the EIA-860 data horizon."""
+
+    # Vintage + horizon: with vintage 2025 and horizon 5, the last honored
+    # announced non-fossil year is 2030; 2031+ is speculative unless confirmed.
+    VINTAGE = 2025
+    HORIZON = 5
+
+    def _gate(self, fleet, year, confirmed=frozenset()):
+        return apply_announced_retirements(
+            fleet,
+            year,
+            vintage=self.VINTAGE,
+            horizon_years=self.HORIZON,
+            confirmed_plant_codes=confirmed,
+        )
+
+    def test_within_horizon_honored(self):
+        # 2030 == vintage + horizon: still honored.
+        fleet = [_gen("N0", "nuclear", retirement_year=2030)]
+        self.assertEqual(self._gate(fleet, 2030), [])
+
+    def test_beyond_horizon_ignored(self):
+        # 2031 > vintage + horizon and not confirmed: announced date ignored,
+        # unit stays (falls to the economic screen).
+        fleet = [_gen("H0", "hydro", retirement_year=2031)]
+        self.assertEqual([g.unit_id for g in self._gate(fleet, 2035)], ["H0"])
+
+    def test_beyond_horizon_but_confirmed_honored(self):
+        # 2031 beyond horizon but the plant carries a binding instrument.
+        g = Generator(
+            unit_id="9001_1",
+            name="stat-hydro",
+            zone="Z0",
+            fuel_type="hydro",
+            pmax_mw=100.0,
+            retirement_year=2031,
+            plant_code=9001,
+        )
+        self.assertEqual(self._gate([g], 2035, confirmed=frozenset({9001})), [])
+
+    def test_no_gate_when_horizon_none(self):
+        # horizon_years=None (legacy / channel-off) honors every non-fossil date.
+        fleet = [_gen("H0", "hydro", retirement_year=2065)]
+        self.assertEqual(apply_announced_retirements(fleet, 2065), [])
+
+
+def _binned(unit_id, plant_code, pmax, pmin=0.0, nameplate=0.0, fuel="coal"):
+    """A plant-binned CAMPD tranche Generator (is_campd_bin=True)."""
+    return Generator(
+        unit_id=unit_id,
+        name=unit_id,
+        zone="Z0",
+        fuel_type=fuel,
+        pmax_mw=pmax,
+        pmin_mw=pmin,
+        is_campd_bin=True,
+        plant_group="COAL",
+        plant_code=plant_code,
+        bin_nameplate_mw=nameplate,
+    )
+
+
+def _unit(plant_code, generator_id, pmax, fuel="coal", retirement_year=None):
+    """A unit-grain EIA-860 Generator (unit_id = '{plant_code}_{generator_id}')."""
+    return Generator(
+        unit_id=f"{plant_code}_{generator_id}",
+        name=f"{plant_code}_{generator_id}",
+        zone="Z0",
+        fuel_type=fuel,
+        pmax_mw=pmax,
+        plant_code=plant_code,
+        retirement_year=retirement_year,
+    )
+
+
+class TestConfirmedExits(unittest.TestCase):
+    """Confirmed (binding-instrument) exit injector."""
+
+    def _exit(self, plant_id, gen_id, year, month=None, mw=None):
+        return ConfirmedExit(
+            plant_id=plant_id,
+            generator_id=gen_id,
+            exit_year=year,
+            exit_month=month,
+            mw=mw,
+        )
+
+    def test_unit_grain_drop_at_exit_year(self):
+        fleet = [_unit(100, "1", 200.0), _unit(100, "2", 200.0)]
+        exits = [self._exit(100, "1", 2028, mw=200.0)]
+        # Before the exit year: both present.
+        keep_before = apply_confirmed_exits(fleet, 2027, exits)
+        self.assertEqual({g.unit_id for g in keep_before}, {"100_1", "100_2"})
+        # At the exit year: only the confirmed unit is dropped.
+        keep = apply_confirmed_exits(fleet, 2028, exits)
+        self.assertEqual([g.unit_id for g in keep], ["100_2"])
+
+    def test_plant_bin_derate_math(self):
+        # A 1000 MW plant in two bins; a 400 MW unit exits -> factor 0.6.
+        fleet = [
+            _binned("H_CC1", 200, 600.0, pmin=120.0, nameplate=600.0),
+            _binned("H_CC2", 200, 400.0, pmin=80.0, nameplate=400.0),
+        ]
+        exits = [self._exit(200, "U1", 2028, mw=400.0)]
+        keep = apply_confirmed_exits(fleet, 2028, exits)
+        total = sum(g.pmax_mw for g in keep)
+        self.assertAlmostEqual(total, 600.0, places=4)  # 1000 - 400
+        for g in keep:
+            self.assertAlmostEqual(
+                g.pmax_mw, {"H_CC1": 360.0, "H_CC2": 240.0}[g.unit_id]
+            )
+            # pmin and bin nameplate scale by the same factor.
+            self.assertAlmostEqual(g.pmin_mw / g.pmax_mw, 0.2, places=4)
+            self.assertAlmostEqual(g.bin_nameplate_mw, g.pmax_mw, places=4)
+
+    def test_plant_bin_full_derate_drops_tranche(self):
+        # Exit MW >= plant MW -> factor 0 -> all bins dropped.
+        fleet = [_binned("H_CC1", 200, 300.0), _binned("H_CC2", 200, 200.0)]
+        exits = [self._exit(200, "U1", 2028, mw=500.0)]
+        self.assertEqual(apply_confirmed_exits(fleet, 2028, exits), [])
+
+    def test_confirmed_fossil_forced_out_while_announced_twin_survives(self):
+        # RC-1: a confirmed fossil unit exits; an identical announced-only fossil
+        # twin (no confirmed row) survives the confirmed step.
+        confirmed = _unit(300, "1", 500.0, fuel="coal")
+        announced_twin = _unit(301, "1", 500.0, fuel="coal", retirement_year=2028)
+        fleet = [confirmed, announced_twin]
+        exits = [self._exit(300, "1", 2028, mw=500.0)]
+        keep = apply_confirmed_exits(fleet, 2028, exits)
+        self.assertEqual([g.unit_id for g in keep], ["301_1"])
+        # And the announced-only fossil twin stays with the economic screen: the
+        # announced step is a default no-op for fossil.
+        after_announced = apply_announced_retirements(keep, 2028)
+        self.assertEqual([g.unit_id for g in after_announced], ["301_1"])
+
+    def test_exit_month_first_half_vs_second_half(self):
+        early = [_unit(400, "1", 100.0)]
+        late = [_unit(401, "1", 100.0)]
+        # month <= 6 -> effective in exit_year; month > 6 -> exit_year + 1.
+        self.assertEqual(
+            apply_confirmed_exits(early, 2028, [self._exit(400, "1", 2028, month=3)]),
+            [],
+        )
+        keep_late = apply_confirmed_exits(
+            late, 2028, [self._exit(401, "1", 2028, month=9)]
+        )
+        self.assertEqual([g.unit_id for g in keep_late], ["401_1"])
+        # The next year the late exit takes effect.
+        self.assertEqual(
+            apply_confirmed_exits(late, 2029, [self._exit(401, "1", 2028, month=9)]),
+            [],
+        )
+
+    def test_reliability_floor_cannot_rescue_confirmed_exit(self):
+        # apply_confirmed_exits removes the unit outright, before the economic
+        # screen (which houses the reliability floor) ever runs — so no floor can
+        # keep it. Verified structurally: the unit is gone from the returned fleet.
+        fleet = [_unit(500, "1", 900.0, fuel="coal")]
+        keep = apply_confirmed_exits(
+            fleet, 2028, [self._exit(500, "1", 2028, mw=900.0)]
+        )
+        self.assertEqual(keep, [])
+
+    def test_no_effective_exit_is_noop(self):
+        fleet = [_unit(600, "1", 100.0)]
+        # Exit year in the future -> byte-identical fleet.
+        out = apply_confirmed_exits(fleet, 2027, [self._exit(600, "1", 2030, mw=100.0)])
+        self.assertEqual([g.unit_id for g in out], ["600_1"])
+        self.assertEqual(out[0].pmax_mw, 100.0)
 
 
 class TestEconomicRetirements(unittest.TestCase):
@@ -364,6 +544,58 @@ class TestEconomicRetirements(unittest.TestCase):
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
         self.assertEqual(losses1, {})
+
+
+class TestFomThresholdFlip(unittest.TestCase):
+    """The retirement decision flips at the going-forward FOM bar.
+
+    Behavioural acceptance for the capacity-economics recalibration Stage 1
+    (``docs/handoffs/capacity-economics-plan-2026-07.md`` §1, §8): a gas-CT
+    earning a fixed net revenue between the legacy bar (``fixed_om_gas_ct=8``
+    $/kW-yr) and the NREL-ATB-2024 bar (``fixed_om_gas_ct=21`` $/kW-yr) is
+    retained under the legacy FOM and retired under the ATB FOM — the same unit,
+    the same revenue, only the FOM default moved. This is the identification
+    check that the FOM level, not a residual, drives the retire flip (rule 1).
+    """
+
+    T = 10
+
+    def _dispatch(self, level):
+        return SimpleNamespace(dispatch=np.full((1, self.T), level))
+
+    def _run_two_years(self, fom_gas_ct):
+        # net_revenue = price x dispatch x T = 1500 x 100 x 10 = 1.5e6 $/yr
+        # = 15 $/kW-yr on a 100 MW unit — between the 8 and 21 $/kW-yr bars.
+        config = ScenarioConfig().with_overrides(fixed_om_gas_ct=fom_gas_ct)
+        fleet = [_gen("T0", "gas_ct", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 1500.0)
+        dispatch = self._dispatch(100.0)
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        fleet2, losses2 = apply_economic_retirements(
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
+        )
+        return fleet1, losses1, fleet2, losses2
+
+    def test_survives_under_legacy_bar(self):
+        # 15 $/kW-yr net revenue > 8 $/kW-yr legacy bar -> profitable, never a
+        # loss year, so the CT stays online across both years.
+        fleet1, losses1, fleet2, losses2 = self._run_two_years(8.0)
+        self.assertEqual([g.unit_id for g in fleet1], ["T0"])
+        self.assertEqual(losses1["T0"], 0)
+        self.assertEqual([g.unit_id for g in fleet2], ["T0"])
+        self.assertEqual(losses2["T0"], 0)
+
+    def test_retires_under_atb_bar(self):
+        # 15 $/kW-yr net revenue < 21 $/kW-yr ATB bar -> a loss year each pass;
+        # gas_ct retires after its two-year threshold.
+        fleet1, losses1, fleet2, losses2 = self._run_two_years(21.0)
+        self.assertEqual([g.unit_id for g in fleet1], ["T0"])
+        self.assertEqual(losses1["T0"], 1)
+        self.assertEqual(fleet2, [])
+        self.assertNotIn("T0", losses2)
 
 
 class TestReserveMarginBuild(unittest.TestCase):

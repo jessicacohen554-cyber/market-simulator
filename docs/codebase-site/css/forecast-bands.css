@@ -1,0 +1,167 @@
+/* =============================================================================
+   forecast-bands.css — Supplemental styles for the PB-4 forecast-bands fan
+   chart page. Builds on shared.css tokens + bc-pages.css's .bc-controls /
+   .bc-panel / .chart-legend / .bc-table-wrap (reused as-is); this file only
+   adds what's specific to the fan chart: layer toggle chips and the label
+   banners the page's honesty rules require.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Label banners — synthetic fixture / dispatch-conditional / deterministic
+   --------------------------------------------------------------------------- */
+
+.fb-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.fb-banner .fb-banner-icon {
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.3;
+}
+
+.fb-banner strong { font-weight: 800; }
+
+/* Synthetic — the most severe, always on top when present. */
+.fb-banner.fb-synthetic {
+  background: #fdecea;
+  border: 1px solid #f3b6ae;
+  color: #7a1f14;
+}
+
+/* Dispatch-conditional caveat — a standing methodological limitation, not an error. */
+.fb-banner.fb-caveat {
+  background: #fef6e7;
+  border: 1px solid #f0dba6;
+  color: #6b5000;
+}
+
+/* Deterministic-only (no probability layer at all) — informational. */
+.fb-banner.fb-deterministic {
+  background: var(--bg-page);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Layer toggle chips — double as the chart legend (dataviz skill: a
+   legend must be present for >= 2 series; here the toggle control itself
+   carries the color swatch, so it satisfies both jobs at once).
+   --------------------------------------------------------------------------- */
+
+.fb-layer-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fb-layer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-page);
+  border-radius: 999px;
+  padding: 6px 12px 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.fb-layer-chip input {
+  margin: 0;
+  accent-color: var(--hydro);
+}
+
+.fb-layer-chip.on {
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.fb-layer-chip.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.fb-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  vertical-align: middle;
+  border-top-width: 3px;
+}
+
+.fb-swatch.fb-area {
+  height: 10px;
+  border-top: 0;
+  border-radius: 2px;
+}
+
+.fb-swatch.dashed { border-top-style: dashed; }
+.fb-swatch.solid { border-top-style: solid; }
+
+/* ---------------------------------------------------------------------------
+   3. Chart container
+   --------------------------------------------------------------------------- */
+
+.fb-chart-wrap {
+  width: 100%;
+  overflow: hidden;
+}
+
+.fb-chart-wrap svg.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
+}
+
+.fb-case-line {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  opacity: 0.45;
+}
+
+.fb-case-line:hover,
+.fb-case-line.fb-hover {
+  opacity: 1;
+  stroke-width: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Metric / ensemble selectors (reuse .iso-select sizing, page-local class
+   so we don't imply an ISO color dot the way .iso-select-wrap does)
+   --------------------------------------------------------------------------- */
+
+.fb-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 9px 30px 9px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 640px) {
+  .fb-layer-toggles { gap: 6px; }
+  .fb-layer-chip { font-size: 0.72rem; padding: 5px 10px 5px 8px; }
+}

@@ -17,6 +17,16 @@ from market_sim.config.paths import (
     PROCESSED_DIR,
 )
 
+# Config fields introduced after the results cache existed. ``cache_key`` omits
+# each from its hash while it holds its default value, keeping every historical
+# cache key byte-stable; a non-default value still enters the key.
+_CACHE_KEY_OPTIONAL_FIELDS = (
+    "start_year",
+    "end_year",
+    "hindcast",
+    "hindcast_fuel_variant",
+)
+
 
 @dataclass
 class ScenarioConfig:
@@ -41,6 +51,24 @@ class ScenarioConfig:
     # forecast sensitivity that pins the gas price stays a forecast.
     voll: float = 5000.0  # $/MWh, ERCOT default
     hours: int = 8760
+
+    # Simulation horizon. ``None`` defers to constants.START_YEAR / END_YEAR
+    # (2026 / 2050) so the default forecast window and every existing cache key
+    # are unchanged; a non-default value narrows the run (e.g. a capacity
+    # hindcast 2021→2025). These are omitted from ``cache_key`` when ``None``
+    # (see ``_CACHE_KEY_OPTIONAL_FIELDS``) so cache keys stay byte-stable at the
+    # default horizon.
+    start_year: int | None = None
+    end_year: int | None = None
+    # Capacity-hindcast mode (W2-P5): forecast machinery run backwards from a
+    # vintage fleet snapshot to score capacity evolution against actuals. Stays
+    # ``mode == "forecast"`` (the hindcast IS the forecast path) but switches on
+    # vintage fleet init, realized per-year demand (no growth scaling) and the
+    # 2022 bridge in the harness. Never a backcast overlay. Default-off and
+    # cache-neutral; see scripts/run_capacity_hindcast.py and
+    # docs/handoffs/forecast-validation-program-2026-07.md §1.
+    hindcast: bool = False
+    hindcast_fuel_variant: str = "realized"  # "realized" | "asknown"
 
     # Tier 1 (scenario levers)
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
@@ -176,6 +204,19 @@ class ScenarioConfig:
     # retire on their announced EIA-860 date (policy/contract/end-of-life exits
     # with no economic-screen analogue). Set False for the legacy behaviour
     # (every scheduled retirement honored regardless of fuel).
+    confirmed_exits_enabled: bool = False  # GATED, default-OFF. When True and
+    # mode == "forecast", the confirmed-retirement channel force-retires (or
+    # derates, for plant-binned fleets) each unit bound by an enforceable public
+    # instrument in the confirmed-retirements registry
+    # (data/raw/confirmed-retirements, read via
+    # data.confirmed_retirements.load_confirmed_exits) at its instrument date —
+    # step 0 of capacity.evolve_fleet and the first-year build_base_fleet, before
+    # the announced-date step and the economic screen. Only binding CONFIRMED
+    # exits force out; ANNOUNCED-only retirements stay with the economic screen
+    # (mirrors load_planned_additions' construction-committed philosophy). The
+    # registry is data, not tuning (rule 24): this flag and the clean path are
+    # the whole surface. Flipping the default to on is a follow-up owner decision
+    # once the seeded registry passes review (plan §7).
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
@@ -3241,7 +3282,16 @@ class ScenarioConfig:
         it). ``real_discount_rate`` is a derived property, deterministic given
         ``INFLATION_RATE``, so it is not part of the hash.
         """
-        payload = json.dumps(asdict(self), sort_keys=True)
+        payload_dict = asdict(self)
+        # Fields added after the on-disk cache existed are dropped from the
+        # hash when they hold their default value, so every pre-existing cached
+        # run keeps its key. A non-default value DOES enter the key (a hindcast
+        # or a narrowed horizon is a distinct scenario).
+        defaults = ScenarioConfig()
+        for name in _CACHE_KEY_OPTIONAL_FIELDS:
+            if payload_dict.get(name) == getattr(defaults, name):
+                payload_dict.pop(name, None)
+        payload = json.dumps(payload_dict, sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
     def with_overrides(self, **kwargs) -> "ScenarioConfig":

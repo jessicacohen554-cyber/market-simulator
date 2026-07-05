@@ -936,6 +936,33 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         2049: 8.50,
         2050: 8.70,
     },
+    # --- Capacity-hindcast gas paths (W2-P5, plan §1.2) --------------------
+    # "hindcast_realized": the year's ACTUAL Henry Hub spot annual average
+    # ($/MMBtu), the realized-fuel variant of the capacity hindcast. Values are
+    # the annual mean of data/raw/gas-prices/henry_hub_monthly.csv (EIA Henry
+    # Hub spot), matching the historical entries already carried in the low/mid/
+    # high paths above (2023: 2.54, 2024: 2.19, 2025: 3.53). 2022 is DELIBERATELY
+    # omitted (rule 22 quarantine bridge — the hindcast never solves or reads
+    # 2022, and its 2022 evolution step draws the 2021 value via driver_year).
+    "hindcast_realized": {
+        2021: 3.91,  # EIA Henry Hub spot annual mean (henry_hub_monthly.csv)
+        2023: 2.54,
+        2024: 2.19,
+        2025: 3.53,
+    },
+    # "hindcast_asknown_aeo2021": the AEO2021 Reference case Henry Hub
+    # trajectory (EIA, Annual Energy Outlook 2021, published Feb 2021 — the
+    # contemporaneous as-known-then forecast for a 2021-start hindcast). The
+    # realized−asknown gap isolates fuel-input (gas-forecast) error from
+    # capacity-path error (plan §1.4 baseline (c)). 2022 omitted per the bridge.
+    # Source: AEO2021 Reference, Table "Henry Hub spot price" (2020$ ≈ 2026$ at
+    # this precision; the level is only a sensitivity axis, not a keeper input).
+    "hindcast_asknown_aeo2021": {
+        2021: 3.07,
+        2023: 2.86,
+        2024: 2.88,
+        2025: 2.93,
+    },
 }
 
 # --- Regional Basis Differentials ($/MMBtu, relative to Henry Hub) ---
@@ -1847,6 +1874,20 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     "NEISO": 0.157,
 }
 
+# Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
+# date deterministically. A self-reported planned-retirement year is credible
+# only at the same near-term grain the additions pipeline trusts its U/V/TS
+# statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon
+# an announced non-fossil date is honored ONLY if the unit carries a binding
+# instrument in the confirmed-retirements registry; otherwise it is ignored, so
+# the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and
+# far-dated nuclear announcements fall to the economic screen (+ registry). Set
+# to 5 per the methodology spec's "after the data horizon (~2030) the model is
+# fully economics-driven" line (§1.7 / §5); symmetric with the additions
+# pipeline's near-term-only firm-status window. Consumed by
+# model.capacity.apply_announced_retirements.
+NONFOSSIL_ANNOUNCED_HORIZON_YEARS: int = 5
+
 # ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
 # economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
 # capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
@@ -2716,12 +2757,140 @@ END_YEAR: int = 2050
 
 # Historical weather years available as forecast load + VRE capacity-factor
 # shapes. A forecast pins one representative year (ScenarioConfig.weather_year);
-# the weather-year ensemble (market_sim.ensemble) draws over this whole pool and
-# reports the distribution. Bounded by the hourly EIA-930 coverage on disk
-# (data/raw/eia-930/, 2023-2025); extend as later years land. A weather draw is
-# an admissible forecast *input*, not an outcome (CLAUDE.md #10), so sampling
-# over it is methodological robustness, not a backcast pin.
+# the weather-year ensemble (market_sim.ensemble) draws over a pool and reports
+# the distribution. A weather draw is an admissible forecast *input*, not an
+# outcome (CLAUDE.md #10), so sampling over it is methodological robustness,
+# not a backcast pin.
+#
+# Cross-ISO default / fallback pool: the common 3-year window every ISO's
+# EIA-930 ``<BA> hourly`` extract covers today (data/raw/eia-930-hourly/).
 WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
+
+# Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds-
+# plan-2026-07.md §2.1: "intaking more pre-2022 weather years is a cheap
+# widening"). Each entry is bounded by *verified* coverage on disk, checked
+# end-to-end (not just file presence): the EIA-930 BA hourly extract yields a
+# clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py
+# load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves
+# a full wind+solar profile for the year (an ISO whose BA under-reports one
+# fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution
+# parquet, which only reaches back to 2021 -- a year is listed here only if
+# every fallback it needs actually covers it). Verified 2026-07-05; see
+# docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the
+# skipped-ISO rationale.
+#
+# Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here,
+# for any ISO, until that ISO's calibration-complete marker exists.
+WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
+    # ERCOT (EIA-930 BA "ERCO"): hourly extract spans 2015-07-01..2026-06-30
+    # (data/raw/eia-930-hourly/ERCO hourly.parquet). 2019-2021 verified: clean
+    # 8760-hour demand series, NG: WND / NG: SUN both present and nonzero, and
+    # load_renewable_profiles resolves end-to-end with no fallback needed.
+    "ERCOT": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NEISO (BA "ISNE"): hourly extract spans 2015-07-01..2026-05-20. 2019-2021
+    # verified the same way as ERCOT (both fuels reported directly, no fallback
+    # to the generation-distribution parquet needed). 2020 carries the
+    # COVID-19 demand-shape anomaly (a documented multi-percent spring/summer
+    # load depression vs. pre-pandemic trend, EIA/FERC 2020 load-impact
+    # reporting) -- an admissible historical weather-year input, but flagged so
+    # ensemble consumers can weight or exclude it deliberately (see the
+    # coverage note).
+    "NEISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NYISO (BA "NYIS"): hourly extract spans 2015-07-01..2026-06-13, but NYIS
+    # never separately reports solar generation (all-zero NG: SUN in every
+    # year, including the already-supported 2023-2025), so NYISO solar always
+    # falls back to the EIA-930 generation-*distribution* parquet
+    # (data/raw/eia-930/eia_generation_profiles.parquet), whose own coverage
+    # floor is 2021 -- 2019 and 2020 fail end-to-end
+    # (market_sim.data.renewables.load_renewable_profiles raises) even though
+    # the raw hourly demand extract covers them. Only 2021 is added; 2019/2020
+    # stay out until the distribution parquet is rebuilt further back.
+    "NYISO": (2021, 2023, 2024, 2025),
+    # CAISO (BA "CISO"): hourly extract begins 2022-12-31 -- no 2019-2021
+    # coverage on disk. Fetching it is blocked in this managed sandbox
+    # (api.eia.gov returns 403; scripts/fetch_eia930_hourly.py must be run
+    # locally per its own docstring). Pool stays at the current window.
+    "CAISO": (2023, 2024, 2025),
+    # PJM (BA "PJM"): hourly extract begins 2021-12-31 (only the last day of
+    # 2021), so no full year in 2019-2021 is covered. Same fetch-blocked
+    # limitation as CAISO.
+    "PJM": (2023, 2024, 2025),
+    # MISO (BA "MISO"): hourly extract begins 2022-12-31 -- same gap as CAISO.
+    "MISO": (2023, 2024, 2025),
+}
+
+
+def weather_year_pool(iso: str) -> tuple[int, ...]:
+    """Return the verified weather-year pool for ``iso``.
+
+    Looks up :data:`WEATHER_YEAR_POOL_BY_ISO`, falling back to the common
+    :data:`WEATHER_YEAR_POOL` default for an ISO not yet registered there.
+    """
+    return WEATHER_YEAR_POOL_BY_ISO.get(iso, WEATHER_YEAR_POOL)
+
+
+# ---------------------------------------------------------------------------
+# Structural-error prior (PB-3, probability-bounds program)
+# ---------------------------------------------------------------------------
+# The published emissions band convolves the parametric input band (PB-2) with a
+# prior over the model's own dispatch-skill error, fit from the committed D-7
+# statistical-mode probes (docs/statistical-mode-results-2026-07.md;
+# docs/handoffs/probability-bounds-plan-2026-07.md §3). Statistical mode strips
+# every measured backcast overlay but keeps realized annual gas/load/weather, so
+# its emissions error is *model error given true inputs* -- exactly the term that
+# convolves with the input uncertainty without double-counting. These are
+# post-processing parameters (they touch no solve), fit only on the backcast
+# years below and echoed into ensemble_meta.json (rule 5, rule 24).
+
+# Backcast years the structural prior is fit on. 2022 and H1-2026 stay under full
+# quarantine (CLAUDE.md rule 22) -- the prior is re-fit against them exactly once,
+# at the sanctioned out-of-time scoring moment, never before.
+STRUCTURAL_PRIOR_FIT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+# Student-t degrees of freedom for the per-ISO structural-error distribution
+# (plan §3.2). nu=2 gives fat tails that, together with the small-sample scale
+# inflation below, keep the prior *wider* than the plug-in normal -- the honest
+# reading when each ISO's bias and noise are estimated from only three years.
+STRUCTURAL_PRIOR_STUDENT_T_NU: float = 2.0
+
+# Structural draws per parametric draw in the log-space Monte-Carlo product
+# (plan §3.3): each of the n parametric members is paired with K independent
+# epsilon draws to build the n*K published-quantile sample.
+STRUCTURAL_PRIOR_CONVOLUTION_K: int = 25
+
+# Horizon-widening variance multiplier lambda(h), growing with years-out to cover
+# fleet-evolution (capacity-path) error. UNMEASURED until the PP-0.3 capacity
+# hindcast supplies a number (plan §3.4 item 1); pinned to 0.0, which makes every
+# published band "dispatch-conditional -- excludes fleet-path structural error".
+# This is a placeholder awaiting measurement, never a tuned value (rule 1).
+STRUCTURAL_PRIOR_HORIZON_LAMBDA: float = 0.0
+
+# Version tag stamped into every fitted prior artifact / ensemble_meta.json so a
+# band's structural layer is traceable to the fit that produced it (rule 24).
+STRUCTURAL_PRIOR_VERSION: str = "pb3-statmode-d7-2026-07"
+
+# Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids
+# (frontend/data/backcast/runs/<id>.js supply the per-year model CO2;
+# frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen
+# here so the measured, reproducible source of the prior is auditable and
+# re-derives only when those probes update (rule 23), never against a residual.
+STATMODE_PROBE_RUNS: dict[str, str] = {
+    "ERCOT": "2026-07-04-statmode-d7-probe-ercot32",
+    "CAISO": "2026-07-03-caiso-statmode-d-7",
+    "PJM": "2026-07-03-pjm-statmode-d-7",
+    "NYISO": "2026-07-03-nyiso-statmode-d-7",
+    "NEISO": "2026-07-03-neiso-statmode-d-7",
+    "MISO": "2026-07-03-miso-statmode-d-7",
+}
+
+# ISOs where the model prices carbon (CAISO: CA cap-and-trade; NYISO/NEISO:
+# RGGI). The R2 measured-rate CO2 basis (PR #1371, fff2c34) moves the merit
+# order ONLY where carbon price > 0 -- so the 2026-07-03 statmode probes above
+# are solve-stale for these three ISOs (the W3-P1 re-solves own the fix), while
+# the carbon-zero ISOs (ERCOT/PJM/MISO) need only a no-solve re-score of the
+# committed numbers. Source: docs/handoffs/forecast-validation-program-2026-07.md
+# §0/§3.2 (W0-P4 design).
+STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO")
 
 
 # ---------------------------------------------------------------------------

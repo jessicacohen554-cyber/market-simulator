@@ -1,0 +1,55 @@
+{
+  "band_quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "base_config": {
+    "iso": "ercot",
+    "mode": "forecast",
+    "note": "synthetic fixture -- no real base config"
+  },
+  "iso": "ERCOT",
+  "label": "parametric probability band (PB-2); dispatch-conditional -- excludes the structural-error prior (PB-3) and the deterministic scenario envelope (PB-0), and excludes fleet-path structural error until PP-0.3",
+  "layers_present": [
+    "parametric"
+  ],
+  "members": {
+    "draw-0000": "synthetic",
+    "draw-0001": "synthetic",
+    "draw-0002": "synthetic",
+    "draw-0003": "synthetic",
+    "draw-0004": "synthetic",
+    "draw-0005": "synthetic",
+    "draw-0006": "synthetic",
+    "draw-0007": "synthetic",
+    "draw-0008": "synthetic",
+    "draw-0009": "synthetic",
+    "draw-0010": "synthetic",
+    "draw-0011": "synthetic",
+    "draw-0012": "synthetic",
+    "draw-0013": "synthetic",
+    "draw-0014": "synthetic",
+    "draw-0015": "synthetic",
+    "draw-0016": "synthetic",
+    "draw-0017": "synthetic",
+    "draw-0018": "synthetic",
+    "draw-0019": "synthetic",
+    "draw-0020": "synthetic",
+    "draw-0021": "synthetic",
+    "draw-0022": "synthetic",
+    "draw-0023": "synthetic"
+  },
+  "note": "Hand-built fixture for the PB-4 forecast-bands demo (scripts/make_forecast_bands_fixture.py). No solves were run; every number is fabricated for display shape only. Never treat as a real calibration or forecast result.",
+  "quantile_estimator": "numpy Hyndman-Fan type 7 (method='linear'); n reported per quantile; bootstrap 90% CI, 1000 resamples (plan \u00a72.4) -- FABRICATED for this fixture",
+  "sampler": {
+    "n": 24,
+    "seed": 7
+  },
+  "spec": {
+    "n": 24,
+    "note": "fabricated for PB-4 demo, not a real UncertaintySpec",
+    "seed": 7
+  },
+  "synthetic": true
+}

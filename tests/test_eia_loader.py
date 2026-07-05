@@ -18,6 +18,7 @@ from market_sim.data.eia_loader import (
     _load_nyiso_hourly_demand,
     load_demand,
     load_demand_meta,
+    load_eia_hourly_renewable_gen,
     load_ercot_battery_gen,
     load_generation_profiles,
     measured_gas_floor_profile,
@@ -563,6 +564,53 @@ class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
         bench = self._benchmark_from_frame(frame)
         self.assertNotIn("pumped_storage", bench)  # partial vintage gated out
         self.assertIn("battery", bench)  # full-coverage series kept
+
+
+class TestWeatherPoolWidening(unittest.TestCase):
+    """2026-07 weather-pool widening: new pre-2022 years land end-to-end.
+
+    ERCOT (BA "ERCO") and NEISO (BA "ISNE") both carry a clean EIA-930
+    ``<BA> hourly`` extract back to 2015-07-01, verified for 2019-2021 against
+    the same full-8760-hour, gap-free standard every existing backcast year
+    must meet (see docs/weather-pool-coverage-2026-07.md). CAISO/PJM/MISO have
+    no raw coverage that far back (their extracts start 2021-12-31/2022-12-31)
+    and are deliberately excluded from the widened pool.
+    """
+
+    def test_ercot_2019_demand_and_renewables_full_year(self):
+        demand = load_demand("ERCOT", 2019)
+        self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+        self.assertFalse(np.isnan(demand).any())
+        self.assertGreater(float(demand.sum(axis=0).max()), 0.0)
+
+        gen = load_eia_hourly_renewable_gen("ERCOT", 2019)
+        self.assertIsNotNone(gen)
+        self.assertEqual(set(gen), {"wind", "solar"})
+        for series in gen.values():
+            self.assertEqual(series.shape, (HOURS_PER_YEAR,))
+            self.assertFalse(np.isnan(series).any())
+
+    def test_neiso_2020_demand_and_renewables_full_year(self):
+        # 2020 carries the documented COVID-19 demand-shape anomaly but is
+        # still a usable, complete measured year.
+        demand = load_demand("NEISO", 2020)
+        self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+        self.assertFalse(np.isnan(demand).any())
+
+        gen = load_eia_hourly_renewable_gen("NEISO", 2020)
+        self.assertIsNotNone(gen)
+        for series in gen.values():
+            self.assertEqual(series.shape, (HOURS_PER_YEAR,))
+            self.assertFalse(np.isnan(series).any())
+
+    def test_caiso_pre_2022_stays_uncovered(self):
+        # CAISO's EIA-930 "CISO hourly" extract begins 2022-12-31 -- no raw
+        # coverage for a 2019-2021 draw, so the hourly path returns None and
+        # the caller falls back to the (also uncovered) demand-profiles
+        # parquet, raising rather than silently fabricating a year.
+        self.assertIsNone(_eia_hourly_frame_filled("CISO", 2019))
+        with self.assertRaises(Exception):
+            load_demand("CAISO", 2019)
 
 
 if __name__ == "__main__":
