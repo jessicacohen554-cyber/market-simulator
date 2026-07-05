@@ -4566,3 +4566,50 @@ DOF ledger rebuilt (offer_curve_by_group cites #1344; Long_Island cites #1345).
 `audit_keepers.py` PASS (12 pre-existing grandfathered E7/E9 warns);
 `legitimacy_diagnostics.py --keepers` PASS (holdout quarantine intact, all years
 2023–2025). Keeper unchanged (`keepers.json` untouched).
+## 2026-07-05 — B-XISO-1: GAS_AVAILABILITY_FACTOR re-verified (audit C-18); NO probes — dead code, 0% materiality on every ISO
+
+Scalar-remediation batch B-XISO-1. Intake:
+`data/raw/reference/nerc-gads-eford-2019-2023/` (NERC GADS Generating Unit
+Statistical Brochure 3, 2019-2023, "Units Reporting Events" — fetched
+2026-07-05 directly from nerc.com). Value-set commit on top of that intake.
+
+**Deltas (all five ISOs unified to one published value):**
+
+| ISO | old | new | Δ (relative) |
+|---|---|---|---|
+| ERCOT | 0.85 | 0.866 | +1.9% |
+| CAISO | 0.89 | 0.866 | −2.7% |
+| PJM | 0.87 | 0.866 | −0.5% |
+| NYISO | 0.86 | 0.866 | +0.7% |
+| NEISO | 0.85 | 0.866 | +1.9% |
+
+New value = 1 − EFORd, "FOSSIL Gas Primary, All Sizes" row (EFORd=13.44%) —
+the closest published match to this constant's single "gas-fired generation
+availability" concept. NERC's public GADS product is **NERC-wide only** (no
+NERC-Region/ISO breakdown exists), so the old per-ISO split's "ERCOT-fleet"/
+"CAISO-fleet" labels were never a real citation; one NERC-wide figure now
+applies to all five ISOs (rule-14 misalignment, documented in `constants.py`
+and the intake README).
+
+**Materiality: 0% for every ISO — NO probe scheduled for any ISO.**
+`GAS_AVAILABILITY_FACTOR` is not read anywhere in `src/market_sim` (grepped
+clean); the LP's actual per-unit gas availability comes entirely from the
+separate `EFORD` dict (`gas_cc`/`gas_ct`/`gas_st`) via
+`data.fleet.get_eford()` / CAMPD-derived per-unit `eford`. Changing this
+constant's value cannot move any MC, dispatch, or backcast metric in any
+ISO's keeper today — confirmed by static code-path analysis, not a solve
+(none run this session per the batch's operational deviation: solve capacity
+was contended with concurrent ERCOT/PJM/CAISO agent sessions on this
+machine).
+
+**Open follow-up:** issue #1349 — R2 (wire in as a real fleet-mix-weighted
+per-ISO reconciliation, replacing not stacking on the existing per-unit
+EFORD-derived availability) vs. R5 (delete as dead code, rule 26) is an open
+disposition for a future batch; whichever is chosen, re-derive the
+`build_dof_ledger.py` `GAS_AVAILABILITY_FACTOR[<ISO>]` ledger rows and
+`docs/parameter-citations.md` accordingly. `build_dof_ledger.py --all-keepers`
+re-run (ERCOT/CAISO/PJM/NYISO/NEISO attestations updated,
+`identification: residual` → `published`); MISO untouched (was never in the
+map). `audit_keepers.py`: same pre-existing 1 failure (S1 status.js
+staleness) / 6 warnings (E7) before and after (verified via `git stash`), no
+regression. `ruff check .` clean.
