@@ -22,13 +22,14 @@ against the reported ``HSL - GEN``:
 * ERCOT — years with a built NP6 HSL parquet
   (scripts/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED dataset,
   2024+ from uploaded ERCOT NP6 wind/solar production reports);
-* CAISO 2023/2024 — EIA-930 delivered generation plus CAISO's reported
+* CAISO 2023/2024/2025 — EIA-930 delivered generation plus CAISO's reported
   5-minute wind/solar curtailment (scripts/build_caiso_hsl.py). CAISO solar
   curtailment is multi-TWh, so without this the model cannot re-curtail.
 
-For a **high-curtailment ISO whose year has no HSL parquet** (ERCOT 2024/25
-with no NP6 upload, CAISO 2025 with only a partial-year curtailment
-workbook — see :data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead
+For a **high-curtailment ISO whose year has no HSL parquet** (ERCOT 2024/25,
+where no NP6 upload could be sourced — see
+data/raw/ercot-hsl/np6/README.md for the data-needed marker — see
+:data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead
 handed a **forecast uncurtailed CF**: the EIA-930 weather-year delivered
 profile (its real level and shape) grossed up by the per-tech *reference
 curtailment rate* from the ISO's most recent HSL year, so the potential is
@@ -66,13 +67,19 @@ If ISO-NE ever publishes granular curtailment data, a dedicated HSL parquet
 can be built following the CAISO pattern in scripts/build_caiso_hsl.py — see
 :func:`_hsl_file` for the data-needed marker.
 
-NYISO wind and solar curtailment is modest (well under 1 TWh annually) and
-NYISO does not publish an hourly uncurtailed-potential series comparable to
-CAISO or ERCOT NP6, so the documented default for NYISO backcasts is the
-EIA-930 NYIS delivered-generation series. Zone-shaping uses EIA-860 capacity
-shares: upstate NY counties (zones A–E) hold the bulk of wind capacity, and
-solar spreads across upstate and downstate zones. The HSL path is stubbed in
-:func:`_hsl_file`; see the data-needed marker there.
+NYISO wind and solar curtailment is modest and NYISO does not publish an
+hourly uncurtailed-potential series comparable to CAISO or ERCOT NP6 — only
+a monthly/zonal *aggregate* estimate in its annual "NYCA Renewables"
+presentation (nyiso.com/reports-information, "Real-Time Market
+Curtailments"): NYCA wind curtailment was 66.6 GWh (1.1% of production) in
+2024 and 76.6 GWh (1.1%) in 2025; FTM solar was 1.04 GWh (0.2%) in 2024 and
+20.18 GWh (2.1%) in 2025 (checked 2026-07-05) — genuinely well under 1 TWh/yr
+and too coarse (monthly, not hourly; zonal, not per-plant) to derive an
+hourly potential series from, so the documented default for NYISO backcasts
+remains the EIA-930 NYIS delivered-generation series. Zone-shaping uses
+EIA-860 capacity shares: upstate NY counties (zones A–E) hold the bulk of
+wind capacity, and solar spreads across upstate and downstate zones. The HSL
+path is stubbed in :func:`_hsl_file`; see the data-needed marker there.
 """
 
 from __future__ import annotations
@@ -129,8 +136,8 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # dispatch must re-curtail an *uncurtailed* potential rather than inherit the
 # curtailment baked into EIA-930 delivered output. For a backcast year these
 # prefer a built HSL parquet (ERCOT NP6, CAISO delivered+reported-curtailment);
-# when none covers the year (e.g. ERCOT 2024/25 with no NP6 upload, CAISO 2025
-# with only a partial-year curtailment workbook) they fall back to the FORECAST
+# when none covers the year (ERCOT 2024/25 — no NP6 upload could be sourced;
+# see data/raw/ercot-hsl/np6/README.md) they fall back to the FORECAST
 # per-tech uncurtailed CF (EIA-930 weather-year shape x physical normal-year
 # RENEWABLE_AVG_CF, floored at delivered) — NOT the delivered net-of-curtailment
 # series — so the LP still curtails endogenously and responds to changed build.
@@ -337,6 +344,52 @@ _NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 # and this branch will pick it up automatically.
 _MISO_HSL_DIR: Path = MISO_HSL_DIR
 
+# Provenance labels for :func:`renewable_bound_provenance` — the L1 finding's
+# scoring hook (docs/model-legitimacy-audit-2026-07.md §4, D-10 free-class
+# rescore): whether a (ISO, year, fuel) renewable CF upper bound is a real
+# uncurtailed-potential measurement, a reference-rate-grossed forecast
+# approximation, or the raw delivered outcome — the L1 leakage this exists to
+# flag. Report-only: none of these change LP behavior or gate a keeper
+# verdict (wind/solar are already advisory-only in calibration_verdict.py);
+# they let the calibration report and dashboard label which renewable rows
+# are "free" (measure real headroom, so a C1 pass reflects model skill) vs
+# "pinned" (the bound rides the outcome, so a pass reflects plumbing).
+RENEWABLE_BOUND_MEASURED_POTENTIAL = "measured_potential"
+RENEWABLE_BOUND_FORECAST_UNCURTAILED = "forecast_uncurtailed"
+RENEWABLE_BOUND_DELIVERED_PINNED = "delivered_pinned"
+
+
+def renewable_bound_provenance(iso: str, year: int, fuel: str) -> str:
+    """Return how the ``(iso, year, fuel)`` renewable CF upper bound was built.
+
+    One of:
+
+    * ``"measured_potential"`` — a built HSL parquet covers this ISO-year (a
+      published NP6 upload, the 2023 UMass reconstruction, or CAISO's
+      delivered+reported-curtailment analogue): the bound is a real
+      uncurtailed-potential measurement, so wind/solar's C1 row measures
+      actual model skill.
+    * ``"forecast_uncurtailed"`` — no HSL parquet, but the ISO is a
+      high-curtailment fallback ISO (:data:`_UNCURTAILED_FALLBACK_ISOS`) with
+      a reference curtailment rate available: the bound is the delivered
+      shape grossed up by a *different* year's measured rate
+      (:func:`_forecast_uncurtailed_cf`) — real headroom, endogenously
+      re-curtailed, but a weaker measurement than a published potential
+      series (ERCOT 2024/2025 today).
+    * ``"delivered_pinned"`` — neither of the above: the dispatch is handed
+      the raw delivered EIA-930 profile as the upper bound (L1's HIGH-severity
+      leakage, docs/model-legitimacy-audit-2026-07.md §4), so the LP rides the
+      bound and the class's C1 row is scoring plumbing, not skill. This is
+      every ISO other than ERCOT/CAISO, every year for those two ISOs where
+      HSL coverage runs out AND no reference curtailment rate exists.
+    """
+    hsl_path = _hsl_file(iso, year)
+    if hsl_path is not None and hsl_path.exists():
+        return RENEWABLE_BOUND_MEASURED_POTENTIAL
+    if iso in _UNCURTAILED_FALLBACK_ISOS and _reference_curtailment_rate(iso, fuel):
+        return RENEWABLE_BOUND_FORECAST_UNCURTAILED
+    return RENEWABLE_BOUND_DELIVERED_PINNED
+
 
 def _hsl_file(iso: str, year: int) -> Path | None:
     """Return the uncurtailed-potential parquet for ``(iso, year)``, or ``None``.
@@ -507,8 +560,8 @@ def _forecast_uncurtailed_cf(
 ) -> np.ndarray | None:
     """Return an uncurtailed CF profile for a no-HSL backcast year, or ``None``.
 
-    For a high-curtailment ISO whose year has no HSL parquet (ERCOT 2024/25 with
-    no NP6 upload, CAISO 2025 with only a partial-year curtailment workbook),
+    For a high-curtailment ISO whose year has no HSL parquet (ERCOT 2024/25,
+    where no NP6 upload could be sourced — see data-needed marker below),
     the dispatch still needs an *uncurtailed* renewable upper bound so it can
     re-curtail endogenously rather than inherit the curtailment baked into
     delivered output. This builds one the same way the CAISO HSL parquet does —
