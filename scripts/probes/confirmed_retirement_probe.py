@@ -3,14 +3,17 @@
 Evidence harness for docs/handoffs/confirmed-retirement-plan-2026-07.md §3 (W0-P2)
 and the W2-P2 verification step (§8 item 7 there). Runs a short forecast
 (START_YEAR..--end-year) for one ISO with the default ScenarioConfig,
-instrumenting capacity-evolution so every known/economic retirement decision is
-recorded per year, plus per-unit loss counters and the survival of the EIA-860
-2026-2028 planned-retirement plants. Pure diagnostic — never registered on the
-dashboard; touches nothing in src/.
+instrumenting capacity-evolution so every confirmed/announced/economic
+retirement decision is recorded per year, plus per-unit loss counters and the
+survival of the EIA-860 2026-2028 planned-retirement plants. Pure diagnostic —
+never registered on the dashboard; touches nothing in src/.
 
 Usage:
     python scripts/probes/confirmed_retirement_probe.py \\
         --iso ERCOT --end-year 2029 --out /tmp/ercot_probe.json
+    # with the confirmed-exit injector on (W2-P2 verification):
+    python scripts/probes/confirmed_retirement_probe.py \\
+        --iso PJM --end-year 2029 --confirmed-exits --out /tmp/pjm_probe.json
 
 2026-07-05 findings (plan §3): zero economic retirements through 2029 in both
 ERCOT (reliability floor in permanent ~20 GW deficit rescues every eligible
@@ -52,22 +55,42 @@ def _unit_row(g) -> dict:
     }
 
 
-_orig_known = capacity.apply_known_retirements
+_orig_announced = capacity.apply_announced_retirements
+_orig_confirmed = capacity.apply_confirmed_exits
 _orig_econ = capacity.apply_economic_retirements
 _orig_evolve = capacity.evolve_fleet
 _orig_base = runner.build_base_fleet
 
 
-def wrapped_known(fleet, year, fossil_economic=True):
-    out = _orig_known(fleet, year, fossil_economic)
+def wrapped_announced(fleet, year, fossil_economic=True, **kw):
+    out = _orig_announced(fleet, year, fossil_economic, **kw)
     gone = {g.unit_id for g in fleet} - {g.unit_id for g in out}
     yr = RECORDS["years"].setdefault(year, {})
-    yr["known_ret"] = [_unit_row(g) for g in fleet if g.unit_id in gone]
+    yr["announced_ret"] = [_unit_row(g) for g in fleet if g.unit_id in gone]
     # units whose announced date has passed but were exempted (fossil)
     yr["fossil_exempt_due"] = [
         _unit_row(g)
         for g in out
         if g.retirement_year is not None and g.retirement_year <= year
+    ]
+    return out
+
+
+def wrapped_confirmed(fleet, year, exits):
+    out = _orig_confirmed(fleet, year, exits)
+    before = {g.unit_id: g.pmax_mw for g in fleet}
+    after = {g.unit_id: g.pmax_mw for g in out}
+    yr = RECORDS["years"].setdefault(year, {})
+    # Units fully removed and units derated (pmax shrank) by a confirmed exit.
+    yr["confirmed_dropped"] = [_unit_row(g) for g in fleet if g.unit_id not in after]
+    yr["confirmed_derated"] = [
+        {
+            "unit_id": uid,
+            "pmax_before": round(before[uid], 1),
+            "pmax_after": round(after[uid], 1),
+        }
+        for uid in after
+        if uid in before and after[uid] < before[uid] - 1e-6
     ]
     return out
 
@@ -116,7 +139,8 @@ def wrapped_base(*args, **kwargs):
     return fleet
 
 
-capacity.apply_known_retirements = wrapped_known
+capacity.apply_announced_retirements = wrapped_announced
+capacity.apply_confirmed_exits = wrapped_confirmed
 capacity.apply_economic_retirements = wrapped_econ
 runner.evolve_fleet = wrapped_evolve
 runner.build_base_fleet = wrapped_base
@@ -127,10 +151,17 @@ def main() -> None:
     ap.add_argument("--iso", required=True)
     ap.add_argument("--end-year", type=int, default=2029)
     ap.add_argument("--out", required=True)
+    ap.add_argument(
+        "--confirmed-exits",
+        action="store_true",
+        help="enable the confirmed-exit injector with the seeded registry "
+        "(W2-P2 verification: which confirmed units exit on schedule)",
+    )
     args = ap.parse_args()
 
     runner.END_YEAR = args.end_year  # short horizon: diagnostic only
     RECORDS["iso"] = args.iso
+    RECORDS["confirmed_exits_enabled"] = bool(args.confirmed_exits)
 
     import logging
 
@@ -138,7 +169,9 @@ def main() -> None:
         level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
 
-    config = ScenarioConfig(iso=args.iso, mode="forecast")
+    config = ScenarioConfig(
+        iso=args.iso, mode="forecast", confirmed_exits_enabled=args.confirmed_exits
+    )
     try:
         runner.run_scenario_iso(config, args.iso)
     except Exception:
