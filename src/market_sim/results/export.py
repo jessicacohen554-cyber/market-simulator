@@ -28,7 +28,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
-from market_sim.results.emissions import compute_emissions
+from market_sim.results.emissions import compute_emissions, compute_nox, compute_so2
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +120,18 @@ def _summarize_year(result, context) -> dict:
     emissions_t = float(
         compute_emissions(dispatch, np.asarray(context.emission_rate)).sum()
     )
+    # NOx/SO2 are secondary reporting pollutants (CO2 stays primary); older
+    # cached contexts predate this wiring and carry empty rate lists.
+    nox_tons = (
+        float(compute_nox(dispatch, np.asarray(context.nox_rate)).sum())
+        if context.nox_rate
+        else 0.0
+    )
+    so2_tons = (
+        float(compute_so2(dispatch, np.asarray(context.so2_rate)).sum())
+        if context.so2_rate
+        else 0.0
+    )
 
     curtailed_mwh = float(
         compute_curtailment(context.wind_potential_mwh, result.wind_dispatched.sum())
@@ -137,6 +149,8 @@ def _summarize_year(result, context) -> dict:
     return {
         "generation_twh": {k: round(v, 4) for k, v in generation_twh.items()},
         "emissions_mt": round(emissions_t / 1e6, 4),
+        "nox_tonnes": round(nox_tons, 2),
+        "so2_tonnes": round(so2_tons, 2),
         "avg_price": round(float(result.prices.mean()), 2),
         "peak_price": round(float(result.prices.max()), 2),
         "curtailment_twh": round(max(curtailed_mwh, 0.0) / _MWH_PER_TWH, 4),

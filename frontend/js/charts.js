@@ -8,7 +8,11 @@
 
    where each <summary> carries:
      generation_twh { fuel: TWh }, capacity_gw { fuel: GW },
-     emissions_mt, avg_price, peak_price, curtailment_twh, storage_cycles
+     emissions_mt, nox_tonnes, so2_tonnes, avg_price, peak_price,
+     curtailment_twh, storage_cycles
+     (nox_tonnes/so2_tonnes are secondary reporting pollutants -- CO2 stays
+     the primary scored metric -- and are absent from exports older than
+     W3-E2)
 
    Resource colors are pulled live from the CSS custom properties in
    css/style.css so the charts and the HTML legend never drift apart.
@@ -254,7 +258,8 @@
     }
 
     /**
-     * Annual CO2 emissions trajectory across the model horizon.
+     * Annual CO2 (primary) plus NOx/SO2 (secondary, reporting-only) emissions
+     * trajectory across the model horizon.
      * @param {Object} data Per-scenario result document.
      */
     function renderEmissions(data) {
@@ -264,10 +269,10 @@
                 'No emissions data', 'This scenario exported no annual results.');
         }
         var accent = cssVar('--danger') || '#E74C3C';
-        var trace = {
+        var co2Trace = {
             type: 'scatter',
             mode: 'lines+markers',
-            name: 'CO₂',
+            name: 'CO₂ (Mt)',
             x: years,
             y: years.map(function (y) {
                 return data.years[String(y)].emissions_mt;
@@ -278,10 +283,54 @@
             fillcolor: hexToRgba(accent, 0.12),
             hovertemplate: '%{x}: %{y:.1f} Mt CO₂<extra></extra>'
         };
-        draw(CHART_IDS.emissions, [trace], baseLayout({
-            yaxis: { title: { text: 'Emissions (Mt CO₂)' }, rangemode: 'tozero' },
+        var traces = [co2Trace];
+        // NOx/SO2 are secondary reporting pollutants -- CO2 stays the primary
+        // scored metric -- plotted on a separate axis since their tonnage is
+        // orders of magnitude smaller. Older exports carry no nox_tonnes/
+        // so2_tonnes field, so those traces are simply omitted.
+        if (data.years[String(years[0])].nox_tonnes !== undefined) {
+            var noxColor = cssVar('--warning') || '#F1C40F';
+            traces.push({
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'NOx (tons)',
+                yaxis: 'y2',
+                x: years,
+                y: years.map(function (y) {
+                    return data.years[String(y)].nox_tonnes;
+                }),
+                line: { width: 1.5, color: noxColor, dash: 'dot' },
+                marker: { size: 4, color: noxColor },
+                hovertemplate: '%{x}: %{y:.1f} tons NOx<extra></extra>'
+            });
+        }
+        if (data.years[String(years[0])].so2_tonnes !== undefined) {
+            var so2Color = cssVar('--ink-muted') || '#647184';
+            traces.push({
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'SO₂ (tons)',
+                yaxis: 'y2',
+                x: years,
+                y: years.map(function (y) {
+                    return data.years[String(y)].so2_tonnes;
+                }),
+                line: { width: 1.5, color: so2Color, dash: 'dot' },
+                marker: { size: 4, color: so2Color },
+                hovertemplate: '%{x}: %{y:.1f} tons SO₂<extra></extra>'
+            });
+        }
+        draw(CHART_IDS.emissions, traces, baseLayout({
+            yaxis: { title: { text: 'CO₂ (Mt)' }, rangemode: 'tozero' },
+            yaxis2: {
+                title: { text: 'NOx / SO₂ (tons)' },
+                overlaying: 'y',
+                side: 'right',
+                rangemode: 'tozero',
+                showgrid: false
+            },
             xaxis: { title: { text: 'Model year' }, dtick: 4 },
-            showlegend: false
+            showlegend: traces.length > 1
         }));
     }
 

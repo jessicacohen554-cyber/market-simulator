@@ -97,6 +97,22 @@ def compute_nox(dispatch: np.ndarray, nox_rates: np.ndarray) -> np.ndarray:
     return (dispatch * nox_rates[:, None]).sum(axis=0)
 
 
+def compute_so2(dispatch: np.ndarray, so2_rates: np.ndarray) -> np.ndarray:
+    """Return hourly system SO2 emissions from a dispatch schedule.
+
+    Args:
+        dispatch: Thermal generation of shape ``(n_gen, T)`` in MWh/hour.
+        so2_rates: Per-generator SO2 rate of shape ``(n_gen,)`` in
+            tons SO2/MWh.
+
+    Returns:
+        Hourly system SO2 emissions of shape ``(T,)`` in tons SO2.
+    """
+    dispatch = np.asarray(dispatch, dtype=float)
+    so2_rates = np.asarray(so2_rates, dtype=float)
+    return (dispatch * so2_rates[:, None]).sum(axis=0)
+
+
 def startup_co2_tons(
     fit: pd.DataFrame,
     startup_co2_kg_by_plant: dict[int, float],
