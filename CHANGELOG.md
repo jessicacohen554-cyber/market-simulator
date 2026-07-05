@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-05 (confirmed-vs-announced retirement channel — design plan, W0-P2)
+
+**Docs/plan only — no mechanism change.** Landed
+`docs/handoffs/confirmed-retirement-plan-2026-07.md`: the audit §B (RC-1…RC-5)
+design for making only CONFIRMED retirements (binding instruments: RTO
+deactivation acceptances, consent decrees, statutes, PUC orders) exogenous while
+announced dates stay with the economic screen. Covers the new
+`confirmed-retirements` datatype (schema-first, per-ISO registry modules,
+`write_clean` seam), the forecast-mode confirmed-exit injector
+(`apply_confirmed_exits`, plant-code join with plant-bin derates, GATED
+`confirmed_exits_enabled` default-off), the data-horizon confirmation gate for
+non-fossil placeholder dates (RC-5), the `apply_known_retirements` →
+`apply_announced_retirements` rename (RC-3), rule-17 forward stories, and the
+complete W2-P2 implementation prompt.
+
+- **Probe evidence** (new `scripts/probes/confirmed_retirement_probe.py`,
+  instrumented 2026–2029 default-config forecasts): the economic screen retired
+  **zero** units in both ERCOT and PJM. ERCOT is floor-inert — the reliability
+  floor `(peak − firm_clean) × 1.15` ≈ 103 GW permanently exceeds ~80 GW total
+  thermal (CX-3), rescuing every eligible unit (Spruce/Sommers tranches eligible,
+  never retired). PJM is profitability-inert — capacity revenue + below-ATB FOM
+  bars (CX-1) leave 2 of 1,387 units with any loss year; the consent-decree-bound
+  Rockport units run to the horizon.
+- **New finding:** `bins_to_fleet` drops `planned_retirement_year` for every
+  binned thermal plant (tranche generators carry `None`), so the date-based
+  retirement step is a no-op for the binned fleet regardless of the fossil
+  exemption — the injector therefore joins the registry by `plant_code`.
+- EIA-860 inspection: no confirmation flag exists on planned retirements (558
+  units carry planned years, 205 in 2026–2028); `Planned Retirement Month` is
+  dropped at intake (RC-2 fix specced); loader's `OP` filter hides SB/OS/OA.
+- Prompt-pack W0-P2 status row flipped to PLAN DONE.
+
 ## 2026-07-05 (CHP behind-the-meter host share, measured)
 
 **Model.** Closed the deferred half of Wave-2 R5 (EM-7): the forecast CHP
