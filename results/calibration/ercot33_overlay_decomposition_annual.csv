@@ -1,0 +1,4 @@
+year,total_demand_denominator_GWh,i_rt_supported,ii_da_boundary,iii_discretionary_may2024,total_overlay_dw_contribution,n_hours_active,n_hours_i_rt_supported,n_hours_ii_da_boundary,n_hours_iii_discretionary_may2024,note
+2023,,0.0,0.0,0.0,0.0,0,0,0,0,inert (overlay from_year=2024)
+2024,462593.2185,2.234531095552582,1.6967194038535174,0.5809759636586632,4.512226463064763,69,27,34,8,
+2025,487490.6710000128,0.0991097017321153,0.14520836432580297,0.0,0.24431806605791828,6,2,4,0,
