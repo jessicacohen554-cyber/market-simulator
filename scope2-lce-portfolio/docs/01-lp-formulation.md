@@ -21,7 +21,7 @@ prices). Implementation: `src/lce_portfolio/lp.py`.
 | `fixed[r]` | `resources.py` | annualized fixed cost, $/MW-yr |
 | `vom[r]` | `resources.py` | variable O&M, $/MWh |
 | `capmax[r]`, `capmin[r]` | config / table | build bounds, MW |
-| `dur[s]`, `η[s]` | table | storage duration (h) and one-way efficiency `√rte` (fixed-duration only) |
+| `dur[s]`, `η[s]` | table | storage duration (h) and one-way efficiency `√rtl` (fixed-duration only) |
 | `dur_min[s]`, `dur_max[s]` | table | min/max duration hours for split-storage (0 for fixed-duration) |
 | `hydro_budget[m]` | table | ISO monthly hydro energy budget (MWh), fleet total, or omitted |
 | `δ` | sweep | premium cap (Mode A) or matching target (Mode B) |
@@ -63,7 +63,7 @@ dur_min[s] · build_mw[s] ≤ soc[s,t] ≤ dur_max[s] · build_mw[s]   (split-st
   or equivalently  soc[s,t] ≤ build_energy[s]               (for split: power and energy chosen separately)
 chg[s,t] ≤ build_mw[s] ,  dis[s,t] ≤ build_mw[s]
 ```
-Round-trip efficiency = `η²`; `η = √rte`.
+Round-trip efficiency = `η²`; `η = √rtl`.
 
 **Hydro monthly energy budget** (fleet-shared: one row per month, summing every
 budget-flagged resource — the table budget is the ISO contractable-fleet total,
@@ -108,7 +108,7 @@ hours' charge columns to zero (a column upper bound) and re-solve; repeat until
 none remain. Each hour is cut at most once, so it terminates in ≤ `T` iterations
 (≤ 3 in practice) and every iteration stays a pure LP. This is a *conservative*
 restriction of the true nonconvex set — it can under-use storage but never
-overstates matching.
+overtates matching.
 
 ## Matching & premium
 
@@ -162,6 +162,22 @@ reciprocal with the sign flipped (`1/|dual|`), not the dual itself.
 In the non-saturated regime the premium constraint binds, so the reported
 (achieved) premium equals `δ`; once matching saturates at 100% the returned
 solution's premium is `≤ δ` (still valid — that matching is reachable in budget).
+
+**Build-size tiebreak** (ADR 0019, `config.build_tiebreak_epsilon`, default
+`1e-6`): `build_mw` (and split-storage `build_energy`) carry **zero weight**
+in the objective above — Mode A only ever bounds `net_cost`, never minimizes
+it. Once `grid_buy` saturates at its floor *below* a resource's cap, with the
+premium constraint's slack able to absorb a much larger build (CAISO's
+volatile, high-mean LMP with full excess resale, ADR 0005, is exactly this
+case), every build level up to the cap ties on the objective and the
+crossover-off IPM can return an arbitrary point on that face — observed
+concretely as CAISO's onshore-wind build drifting toward its 20 GW ADR 0009
+cap regardless of the true minimum needed. A flat per-MW epsilon added to
+`build_mw`/`build_energy` in Mode A's objective breaks the tie toward the
+smallest capacity that still attains the primary optimum, without moving any
+build level a real matching/premium tradeoff already pins (see ADR 0019 for
+the sizing rationale and why a `net_cost`-weighted tiebreak was rejected
+instead). `0.0` disables it.
 
 **Additionality accounting** (ADR 0008 as amended 2026-07-02, audit LP-1): With
 `config.additionality_only=True`, existing (PPA) resources no longer count toward
