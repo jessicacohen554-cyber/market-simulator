@@ -58,6 +58,28 @@ on the NEISO keeper (double capture, zero column deviation). MISO golden capture
 deferred to a ≥24 GB host (this box's 15 GB ceiling OOMs during MISO's
 per-asset reserve-column construction, per CLAUDE.md's documented memory tier).
 
+## 2026-07-05 (weather-year pool widened per ISO — PB-2 data intake)
+
+**Data intake, no solves, no dashboard changes.** Widens the forecast
+ensemble's weather-year draws (`docs/handoffs/probability-bounds-plan-2026-07.md`
+§2.1 flagged the original 3-draw `WEATHER_YEAR_POOL` as thin). New
+`constants.WEATHER_YEAR_POOL_BY_ISO` registry + `weather_year_pool(iso)`
+helper: ERCOT and NEISO verified end-to-end (clean 8760-hour EIA-930 hourly
+demand + resolved wind/solar CF, no fallback needed) for 2019-2021, added
+alongside the existing 2023-2025 window; NYISO gets 2021 only (its solar
+series always falls back to the EIA-930 generation-distribution parquet,
+whose own coverage floor is 2021, so 2019/2020 fail end-to-end despite raw
+hourly demand coverage existing). CAISO/PJM/MISO are unchanged — their
+`<BA> hourly` extracts don't reach back before late 2021/2022, and fetching
+more history is blocked in this managed sandbox (`api.eia.gov` 403). Rule-22
+quarantine untouched (2022, H1-2026 excluded from every pool). `ensemble.py`'s
+`weather_ensemble_configs` now defaults to the per-ISO pool instead of the
+flat global one; `configs/uncertainty_ercot.yaml`'s PB-2 sampler weather
+weights widened to match (uniform 1/6 over the six ERCOT years). COVID-2020's
+documented demand-shape anomaly is disclosed but not down-weighted (a
+client-adjustable choice, not a baked-in one). Full per-ISO/year verification
+log and rationale: `docs/weather-pool-coverage-2026-07.md`.
+
 ## 2026-07-05 (confirmed-vs-announced retirement channel — design plan, W0-P2)
 
 **Docs/plan only — no mechanism change.** Landed

@@ -1460,7 +1460,8 @@ def _build_parser() -> argparse.ArgumentParser:
         nargs="+",
         default=None,
         help="Weather years to draw over (weather-only path); defaults to "
-        "WEATHER_YEAR_POOL. Ignored when --sampler is given.",
+        "the ISO's verified pool (weather_year_pool). Ignored when --sampler "
+        "is given.",
     )
     ensemble_parser.add_argument(
         "--sampler",
