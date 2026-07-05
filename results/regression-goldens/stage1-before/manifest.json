@@ -1,0 +1,162 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "eed10ff",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot_ordc_total_rtolcap_v1",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "8cf16c77053ed992b60167d038f50e47c0cf42fc7cbd4decf5923145ce3dff93",
+        "dispatch/2024_P1.parquet": "7f7cc259414f3f52c8f2e0e0fa50e2c73eb87e27842c7a22cb70c3548c3c2725",
+        "dispatch/2025_P1.parquet": "e139e74e270d1086c6553f6703cb15a4c2df0fad49cf5679d47fa13650831716",
+        "flows.parquet": "907fd01cb59ff0c546741008f40f83abf571f2ed0eb65cd92750ee116744bea7",
+        "storage.parquet": "820a88b98302143f96a69fd32ad65ae52aa9b7f316d94240dd8565c3066bfbbf",
+        "system.parquet": "00a07ffb8dea69eff1cb40ebf876b7210b17da082bf1c18320648f41974205fd"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 127,
+        "scenario_config_drift": [
+          "ercot_west_gas_delivered_floor",
+          "ercot_west_netload_gas_shape",
+          "ercot_zonal_gas_basis",
+          "oil_primary_bin_fuel"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 352
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-ercot32-ordc-total-rtolcap",
+      "recorded_flag_count": 121,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NEISO": {
+      "bundle": "results/calibration/neiso47_faststart",
+      "content_hashes": {
+        "btm.parquet": "30e617f6492cc201e0cfc976b286e76484548e4d3203dc81f6709d8f55a207fe",
+        "dispatch/2023_P1.parquet": "1c3ad609b40081f4c52640611e62a550a0b485ffc1649df78fe84d2e25ce3b01",
+        "dispatch/2023_P2.parquet": "98b41453b8472200a7c3aa3c41241df74c87ada2b2c3004898cc32aee28b7f9c",
+        "dispatch/2024_P1.parquet": "3cefaa4c75edef994a16bea8d92c29f2321abee1fb2b4f199e92787ff49f83c4",
+        "dispatch/2024_P2.parquet": "a85bc58909d30f0c92ef34f5bdbf4833af620c07969a1c3d7b81bf55a59bc9d4",
+        "dispatch/2025_P1.parquet": "8b8fea14a1f55e52a2663d4d45d5881e0297a685850e49281902048af3def25a",
+        "dispatch/2025_P2.parquet": "0105e9d08c848864f3f772b3a308662d3a72e111a7d3b3807076827033fe3893",
+        "flows.parquet": "661190486051cf2b0963aee443b82b29a479b2c7119e321c5156c9f0f4f3a13f",
+        "storage.parquet": "faa4ecdda7f78ae80a32a582d911194a7ed9de8337d93d55d1547895281590df",
+        "system.parquet": "531c92f52f7c0292523cc9316748eefa7988da40ea7278666a4a62635067268f"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 124,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 352
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-neiso-47-fast-start",
+      "recorded_flag_count": 118,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "stage1-before"
+}
