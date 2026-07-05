@@ -391,6 +391,54 @@ default CO2/dispatch change where the artifact is absent (the clean partition
 must be curated per ISO via `scripts/curate_chp_btm_share.py` /
 `scripts/regenerate_clean.py`).
 
+## 9.3 Wave-3 results (2026-07-05, branch `claude/nox-so2-wiring-2026-wave3`)
+
+**R7 full NOx/SO2 wiring — done.** Wave-2 fixed only the NOx unit contract
+(tonnes/MWh canonical + the `plant_financials` boundary conversion + field
+rename). This wave lands the full NOx/SO2 wiring §5 R7 / §7 deferred, with CO2
+unchanged (byte-identical v2 CO2 columns after re-derive) and no dispatch/merit
+change — NOx/SO2 are secondary.
+
+- **Artifact.** `scripts/derive_plant_emissions_v2.py` now carries `nox_kg`,
+  `so2_kg` and their net-basis intensities (`nox_kg_per_mwh_net`,
+  `so2_kg_per_mwh_net`) alongside CO2; NOx/SO2 masses come straight from the
+  `emissions-unit-annual` datatype (which already had them), `fillna(0)` so gas
+  units keep their legitimate ~0 SO2. Re-derived on the **current committed
+  3-year v2** (2023–2025) — E1's refreshed 7-year v2 had **not** landed
+  (committed v2 years = [2023, 2024, 2025]); re-run the derive when it does.
+- **Estimator.** `emission_rates.measured_plant_rates(..., pollutant=…)` and
+  `class_median_rates(..., pollutant=…)` select the mass column; the mode /
+  trailing-window / composition-mask / gen-weighted-class-median policy is
+  identical across all three pollutants. No new tunable (rule 24) — the class
+  percentile is the shared `CO2_RATE_CLASS_MEDIAN_PERCENTILE`.
+- **Fleet apply.** `fleet._measured_plant_rate_map_v2` returns
+  `(co2, nox, so2)` triples and `apply_plant_emission_rates_v2` books all three
+  at the measured tonnes/MWh-net rate; CO2/NOx set only when positive (keep the
+  fuel default otherwise), SO2 always set — mirroring the legacy
+  `apply_plant_emission_rates`. Merit order unaffected (the LP objective already
+  carried `nox_rate`; SO2 price defaults to 0). The R7 `plant_financials` NOx
+  $/MWh unit test still passes (the 2204× financials bug stays fixed).
+- **Scoring.** `scripts/score_backcast_shape_emissions.py` scores model-vs-CAMPD
+  NOx and SO2 masses beside CO2 (secondary/reporting gates, never keeper gates),
+  reading intensities from the v2 artifact via `config/paths` — which also fixes
+  its pre-W1 stale `inputs/` paths (the script was broken before this wave). The
+  SO2 coal/gas table is the sharpest independent dispatch-mix check because coal
+  SO2 intensity dwarfs gas.
+- **Tests.** `test_emission_rates.py`: measured NOx rate × net MWh reproduces
+  CAMPD `nox_kg` on a fixture plant, NOx mode policy matches CO2, entrant NOx ==
+  class median, gas SO2 == 0 / coal SO2 > 0. `test_campd.py`:
+  `apply_plant_emission_rates_v2` books measured NOx/SO2 (Parish coal/gas split).
+  Full `tests/` suite green except 11 failures pre-existing on `origin/main`
+  (verified in a clean worktree — R2/EM-4 stale `test_tranche_hr` emission
+  ordering, CAISO-bins, export fake-solve, etc.; none touched by this wave); ruff
+  clean; legitimacy + audit_keepers diagnostics PASS.
+- **Out of scope (unchanged from §7).** No new calibration solves; the eGRID-based
+  CO2 *verdict* payload (`render_calibration_html.py` / `calibration_verdict.py`)
+  is a different actual source (eGRID, not CAMPD masses) and no eGRID NOx/SO2
+  payload exists — the CAMPD-mass scored comparison lives in the shape-emissions
+  scorer, the natural CO2-parallel path. Dashboard columns follow from that
+  scorer's output.
+
 ## 8. Implementation prompt
 
 ```
