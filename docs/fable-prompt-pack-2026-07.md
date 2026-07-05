@@ -792,7 +792,7 @@ three core Wave-0 plans were never written. Recommended next launches are at the
 | Item | Status | Notes |
 |---|---|---|
 | W0-P1 CO2-rate emissions plan | ✅ PLAN DONE | `emissions-co2-rate-plan-2026-07.md`; CAMPD intake landed (PR #1320). **Rate model NOT yet in src** (no `emission_rates` module) → W2-P1 open. |
-| W0-P2 confirmed-retirement channel | ⛔ NOT STARTED | No plan doc on main. **Highest-value unstarted planning item** (owner's original data-intent question). |
+| W0-P2 confirmed-retirement channel | ✅ PLAN DONE | `confirmed-retirement-plan-2026-07.md` (2026-07-05). Probe evidence: economic screen retires ZERO units 2026-29 in both ERCOT (floor-inert, CX-3) and PJM (profit-inert, CX-1); `bins_to_fleet` drops announced dates entirely. W2-P2 ready. |
 | W0-P3 orchestrator unification | ✅ PLAN DONE | `orchestrator-unification-plan-2026-07.md` (PR #1324). Ready for W2-P4 stage-1. |
 | W0-P4 forecast-validation program | ⛔ NOT STARTED | No plan doc. Blocks capacity hindcast + invariants (audit §J-T1, the biggest untouched program). |
 | W0-P5 capacity-economics recalibration | ⛔ NOT STARTED | No plan doc. FOM/foresight/floor/DC-load (audit §C) unplanned. |
