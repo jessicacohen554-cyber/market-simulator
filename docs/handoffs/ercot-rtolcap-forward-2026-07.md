@@ -157,10 +157,31 @@ quantity (for the coefficient fit) and CAMPD gross output (for the shares).
 `scripts/run_ercot40_rtolcap_fwd.py` = **ercot32 recipe EXACTLY +
 `ercot_reserve_supply_forward=True`** (the run163 pattern). The single delta:
 the RTOLCAP/RTOFFCAP cap is sourced from the formula instead of the measured
-parquet. `--year 2023 2024 2025`, one bundle. Gate (vs ercot32, the
-measured-capped baseline): annual demand-weighted price within ~$2, acute days
-and tail counts close; differences root-caused. Registered on the dashboard
-(see the run-report). [Probe result summary to be filled from the bundle.]
+parquet. `--year 2023 2024 2025`, one bundle. Registered on the dashboard as
+**`2026-07-05-ercot40-rtolcap-forward`** (a probe — the NOT-YET determination is
+expected, no governance attestation).
+
+**Probe result** (demand-weighted settled RTSPP, model vs measured RT actual):
+
+| year | probe dw | actual RT dw | hrs>\$200 | hrs>\$1000 | mean ordc_adder |
+|---|---|---|---|---|---|
+| 2023 | \$52.89 | \$48.36 | 94 | 42 | \$1.84 |
+| 2024 | \$35.87 | \$26.83 | 81 | 27 | \$0.18 |
+| 2025 | \$35.08 | \$32.49 | 12 | 4 | \$0.03 |
+
+The formula-cap probe forms a live, non-trivial ORDC adder from the formula
+reserve level (mean \$1.84/\$0.18/\$0.03, concentrated in the tight 2023 hours) and
+holds a full acute tail (42/27/4 hours >\$1000) — the supply re-scope fires the
+scarcity channel exactly as the measured cap did, from a fully forward-native
+supply.
+
+**One-delta gate (vs the measured-cap baseline, one delta = cap source).** The
+measured-cap baseline (ercot32 recipe, `ercot_reserve_supply_forward` off) was
+re-solved to the identical recipe so the demand-weighted comparison is
+apples-to-apples (both carry the same DAM-AS overlay, so the delta is purely the
+ORDC reserve-dual channel). The per-year dw comparison is recorded in
+`docs/calibration-log.md`; any gap tracks the identification residual (formula
+cap slightly high in 2023 +11%, low in 2025 −12%).
 
 ## 6. Files
 
