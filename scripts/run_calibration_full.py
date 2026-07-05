@@ -718,14 +718,22 @@ def _storage_as_frame(
     zone_lookup = {z: i for i, z in enumerate(zone_names)}
     s_zone = np.array([zone_lookup.get(u.zone, 0) for u in storage_units], dtype=int)
     power_cap = np.array([float(u.power_cap_mw) for u in storage_units], dtype=float)
-    as_zone = storage_reserve_mw(
-        rd,
-        np.asarray(result.storage_charge, dtype=float),
-        np.asarray(result.storage_discharge, dtype=float),
-        power_cap,
-        s_zone,
-        n_classes,
-    )  # (n_zones, T)
+    # With the duration gate on, storage AS is an EXACT decision variable
+    # (result.storage_reserve_dispatch, the RS[c,z] columns); use it directly.
+    # Otherwise storage is pooled in the shared headroom and we fall back to the
+    # storage-first min() attribution upper bound (storage_reserve_mw).
+    srd = getattr(result, "storage_reserve_dispatch", None)
+    if srd is not None:
+        as_zone = np.asarray(srd, dtype=float)  # (n_zones, T) exact
+    else:
+        as_zone = storage_reserve_mw(
+            rd,
+            np.asarray(result.storage_charge, dtype=float),
+            np.asarray(result.storage_discharge, dtype=float),
+            power_cap,
+            s_zone,
+            n_classes,
+        )  # (n_zones, T)
     modeled_as = as_zone.sum(axis=0)  # system total MW
     modeled_dis = np.asarray(result.storage_discharge, dtype=float).sum(axis=0)
     measured_as = ercot_storage_as_reserve_mw(int(year), T)
@@ -1821,6 +1829,7 @@ def solve_and_persist(
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     ercot_storage_as_endogenous: bool = False,
+    ercot_storage_as_duration_gate: bool = False,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
@@ -2064,6 +2073,7 @@ def solve_and_persist(
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             ercot_storage_as_endogenous=ercot_storage_as_endogenous,
+            ercot_storage_as_duration_gate=ercot_storage_as_duration_gate,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             pjm_zonal_gas_basis=pjm_zonal_gas_basis,
@@ -2367,6 +2377,7 @@ def solve_and_persist(
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "ercot_storage_as_endogenous": ercot_storage_as_endogenous,
+        "ercot_storage_as_duration_gate": ercot_storage_as_duration_gate,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "pjm_zonal_gas_basis": pjm_zonal_gas_basis,
@@ -2567,6 +2578,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
     if ercot_storage_as_endogenous:
         recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_endogenous=True)
+    if ercot_storage_as_duration_gate:
+        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_duration_gate=True)
     if battery_dispatch_adder:
         recorded_cfg = recorded_cfg.with_overrides(
             battery_dispatch_adder=battery_dispatch_adder
@@ -5559,6 +5572,16 @@ def main() -> None:
         "supply cap. Off (default); takes precedence over --storage-as-commitment.",
     )
     parser.add_argument(
+        "--ercot-storage-as-duration-gate",
+        action="store_true",
+        help="ERCOT (G5 follow-up): add the published per-product SOC-duration "
+        "requirements (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h) to the endogenous "
+        "storage split, so a short-duration battery cannot sell long-duration AS "
+        "on its full power (LP-linear gate Σ_c dur_c·RS[c,z] ≤ Σ SOC). Requires "
+        "--ercot-storage-as-endogenous. Fixes the 2.1–2.4× over-hold vs the "
+        "measured DAM award. Off (default).",
+    )
+    parser.add_argument(
         "--battery-adder",
         type=float,
         default=0.0,
@@ -6747,6 +6770,7 @@ def main() -> None:
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         ercot_storage_as_endogenous=args.ercot_storage_as_endogenous,
+        ercot_storage_as_duration_gate=args.ercot_storage_as_duration_gate,
         ercot_ecrs_conservative_deployment=args.ercot_ecrs_conservative_deployment,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,

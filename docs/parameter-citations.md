@@ -619,6 +619,7 @@ inline comment and still need a dated primary source — search the table for
 | `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
+| `scenario.ercot_storage_as_duration_gate` | False | 1 | ERCOT endogenous storage AS duration gate: published per-product ESR State-of-Charge durations (RegUp/RRS 1h, ECRS 2h, Non-Spin 4h; `ERCOT_AS_PRODUCT_DURATION_H`) as an LP-linear gate `sum_c dur_c*RS[c,z] <= sum SOC`, so a short-duration battery cannot sell long-duration AS on its full power. | ERCOT Nodal Protocols §3.17.3 (ESR State of Charge Requirements) & §8.1; ESR SOC methodology (BPM Dec 2022; ERCOT Ancillary Services Study Final White Paper, Sept 2024) | 2022-12 |  |
 | `scenario.ercot_storage_as_endogenous` | False | 1 | ERCOT forward (G5): make the |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_product_credit` | False | 1 | ERCOT multi-product co-opt, |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_reserve` | False | 1 | ERCOT co-opt: credit the measured |  | auto-generated, needs-citation |
