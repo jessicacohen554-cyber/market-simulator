@@ -179,15 +179,22 @@ def build_registry() -> list[ParamPerturbation]:
         ),
         ParamPerturbation(
             key="reserve_margin",
-            label="Retirement reliability floor",
+            label="Planning reserve margin (floor + backstop)",
             unit="fraction",
-            base_display="0.15",
+            base_display="per-ISO PRM (ERCOT 0.1375)",
             low_display="0.10",
             high_display="0.20",
-            low_overrides={"retirement_reserve_margin": 0.10},
-            high_overrides={"retirement_reserve_margin": 0.20},
-            citation="Reserve-margin heuristic (scenarios.py:144)",
+            low_overrides={"planning_reserve_margin_override": 0.10},
+            high_overrides={"planning_reserve_margin_override": 0.20},
+            citation=(
+                "PLANNING_RESERVE_MARGIN_BY_ISO (constants.py; Brattle/Astrape "
+                "2022 ERCOT EORM; per-ISO IRM/PRMR filings) — the deleted "
+                "retirement_reserve_margin re-pointed here, capacity-economics "
+                "plan 2026-07 §3.2"
+            ),
             category="forecast",
+            note="One override moves BOTH the retirement floor and the "
+            "adequacy backstop (shared requirement).",
         ),
         ParamPerturbation(
             key="retire_years_gas_cc",

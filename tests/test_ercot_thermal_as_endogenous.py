@@ -103,7 +103,7 @@ class TestScreenMutualExclusion(unittest.TestCase):
         price = np.full((1, self.T), energy / dispatch_mwh)
         mc = np.zeros((1, self.T))
         dispatch = SimpleNamespace(dispatch=np.full((1, self.T), 100.0))
-        _fleet, losses = apply_economic_retirements(
+        _fleet, losses, _ = apply_economic_retirements(
             gens,
             fa,
             dispatch,
