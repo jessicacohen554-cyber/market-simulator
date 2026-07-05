@@ -161,6 +161,11 @@ RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
 DICTIONARY_DIR: Path = DATA_ROOT / "data" / "dictionary"
 
+# Committed backcast-dashboard payloads (the measured, reproducible source the
+# structural-error prior fits on): per-run gzip+base64 run payloads under
+# ``runs/`` and per-ISO/per-year actual "bench" totals under ``bench/``.
+FRONTEND_BACKCAST_DIR: Path = DATA_ROOT / "frontend" / "data" / "backcast"
+
 
 def clean_path(
     datatype: str,
