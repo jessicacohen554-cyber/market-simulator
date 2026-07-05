@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-04",
+  "generated": "2026-07-05",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -460,33 +460,33 @@
     {
       "param_id": "gas_availability_factor.ERCOT",
       "display_name": "Gas Availability Factor — ERCOT",
-      "value": 0.85,
+      "value": 0.866,
       "unit": "fraction",
       "domain": "Reliability",
       "tier": 2,
-      "source": "NERC Generating Availability Data System (GADS), 2018-2022",
-      "source_date": "2023-08",
-      "page_or_table": "GADS five-year fleet-average availability statistics",
-      "url": "https://www.nerc.com/pa/RAPA/gads/Pages/default.aspx",
-      "notes": "ERCOT gas fleet deterministic availability derate (Pmax multiplier).",
+      "source": "NERC Generating Availability Data System (GADS), Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide, 'FOSSIL Gas Primary, All Sizes')",
+      "source_date": "2019-2023",
+      "page_or_table": "FOSSIL Gas Primary, All Sizes -- EFORd=13.44%",
+      "url": "https://www.nerc.com/globalassets/programs/rapa/gads/conventional/generating-unit-statistical-brochure-3-2019-2023---units-reporting-events.xlsx",
+      "notes": "Gas-fired generation availability derate (Pmax multiplier). scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified against the actual NERC GADS Generating Unit Statistical Brochure 3 (2019-2023, 'Units Reporting Events'), row 'FOSSIL Gas Primary, All Sizes' (EFORd=13.44% -> availability 0.8656). NERC's public GADS brochure is NERC-WIDE with no per-ISO/region breakdown, so the same verified value is used for every ISO rather than an unsupported per-ISO split (rule-14 misalignment, documented in constants.py and data/raw/reference/nerc-gads-eford-2019-2023/README.md). This constant is currently unread anywhere in src/market_sim (dead/orphaned) -- see the open root-cause issue for the wire-in-vs-delete disposition.",
       "old_repo_location": "lmp_engine.py",
-      "last_verified": "2026-05-16",
+      "last_verified": "2026-07-05",
       "flags": []
     },
     {
       "param_id": "gas_availability_factor.CAISO",
       "display_name": "Gas Availability Factor — CAISO",
-      "value": 0.89,
+      "value": 0.866,
       "unit": "fraction",
       "domain": "Reliability",
       "tier": 2,
-      "source": "NERC Generating Availability Data System (GADS), 2018-2022",
-      "source_date": "2023-08",
-      "page_or_table": "GADS five-year fleet-average availability statistics",
-      "url": "https://www.nerc.com/pa/RAPA/gads/Pages/default.aspx",
-      "notes": "CAISO gas fleet deterministic availability derate (Pmax multiplier).",
+      "source": "NERC Generating Availability Data System (GADS), Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide, 'FOSSIL Gas Primary, All Sizes')",
+      "source_date": "2019-2023",
+      "page_or_table": "FOSSIL Gas Primary, All Sizes -- EFORd=13.44%",
+      "url": "https://www.nerc.com/globalassets/programs/rapa/gads/conventional/generating-unit-statistical-brochure-3-2019-2023---units-reporting-events.xlsx",
+      "notes": "Gas-fired generation availability derate (Pmax multiplier). scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified against the actual NERC GADS Generating Unit Statistical Brochure 3 (2019-2023, 'Units Reporting Events'), row 'FOSSIL Gas Primary, All Sizes' (EFORd=13.44% -> availability 0.8656). NERC's public GADS brochure is NERC-WIDE with no per-ISO/region breakdown, so the same verified value is used for every ISO rather than an unsupported per-ISO split (rule-14 misalignment, documented in constants.py and data/raw/reference/nerc-gads-eford-2019-2023/README.md). This constant is currently unread anywhere in src/market_sim (dead/orphaned) -- see the open root-cause issue for the wire-in-vs-delete disposition.",
       "old_repo_location": "lmp_engine.py",
-      "last_verified": "2026-05-16",
+      "last_verified": "2026-07-05",
       "flags": []
     },
     {
@@ -3092,6 +3092,54 @@
       "flags": []
     },
     {
+      "param_id": "gas_availability_factor.NEISO",
+      "display_name": "Gas Availability Factor — NEISO",
+      "value": 0.866,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "NERC Generating Availability Data System (GADS), Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide, 'FOSSIL Gas Primary, All Sizes')",
+      "source_date": "2019-2023",
+      "page_or_table": "FOSSIL Gas Primary, All Sizes -- EFORd=13.44%",
+      "url": "https://www.nerc.com/globalassets/programs/rapa/gads/conventional/generating-unit-statistical-brochure-3-2019-2023---units-reporting-events.xlsx",
+      "notes": "Gas-fired generation availability derate (Pmax multiplier). scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified against the actual NERC GADS Generating Unit Statistical Brochure 3 (2019-2023, 'Units Reporting Events'), row 'FOSSIL Gas Primary, All Sizes' (EFORd=13.44% -> availability 0.8656). NERC's public GADS brochure is NERC-WIDE with no per-ISO/region breakdown, so the same verified value is used for every ISO rather than an unsupported per-ISO split (rule-14 misalignment, documented in constants.py and data/raw/reference/nerc-gads-eford-2019-2023/README.md). This constant is currently unread anywhere in src/market_sim (dead/orphaned) -- see the open root-cause issue for the wire-in-vs-delete disposition.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
+      "param_id": "gas_availability_factor.NYISO",
+      "display_name": "Gas Availability Factor — NYISO",
+      "value": 0.866,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "NERC Generating Availability Data System (GADS), Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide, 'FOSSIL Gas Primary, All Sizes')",
+      "source_date": "2019-2023",
+      "page_or_table": "FOSSIL Gas Primary, All Sizes -- EFORd=13.44%",
+      "url": "https://www.nerc.com/globalassets/programs/rapa/gads/conventional/generating-unit-statistical-brochure-3-2019-2023---units-reporting-events.xlsx",
+      "notes": "Gas-fired generation availability derate (Pmax multiplier). scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified against the actual NERC GADS Generating Unit Statistical Brochure 3 (2019-2023, 'Units Reporting Events'), row 'FOSSIL Gas Primary, All Sizes' (EFORd=13.44% -> availability 0.8656). NERC's public GADS brochure is NERC-WIDE with no per-ISO/region breakdown, so the same verified value is used for every ISO rather than an unsupported per-ISO split (rule-14 misalignment, documented in constants.py and data/raw/reference/nerc-gads-eford-2019-2023/README.md). This constant is currently unread anywhere in src/market_sim (dead/orphaned) -- see the open root-cause issue for the wire-in-vs-delete disposition.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
+      "param_id": "gas_availability_factor.PJM",
+      "display_name": "Gas Availability Factor — PJM",
+      "value": 0.866,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "NERC Generating Availability Data System (GADS), Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide, 'FOSSIL Gas Primary, All Sizes')",
+      "source_date": "2019-2023",
+      "page_or_table": "FOSSIL Gas Primary, All Sizes -- EFORd=13.44%",
+      "url": "https://www.nerc.com/globalassets/programs/rapa/gads/conventional/generating-unit-statistical-brochure-3-2019-2023---units-reporting-events.xlsx",
+      "notes": "Gas-fired generation availability derate (Pmax multiplier). scalar-remediation B-XISO-1 (audit C-18, 2026-07-05): re-verified against the actual NERC GADS Generating Unit Statistical Brochure 3 (2019-2023, 'Units Reporting Events'), row 'FOSSIL Gas Primary, All Sizes' (EFORd=13.44% -> availability 0.8656). NERC's public GADS brochure is NERC-WIDE with no per-ISO/region breakdown, so the same verified value is used for every ISO rather than an unsupported per-ISO split (rule-14 misalignment, documented in constants.py and data/raw/reference/nerc-gads-eford-2019-2023/README.md). This constant is currently unread anywhere in src/market_sim (dead/orphaned) -- see the open root-cause issue for the wire-in-vs-delete disposition.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -3211,6 +3259,148 @@
       "domain": "Transmission",
       "tier": 2,
       "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cap_and_trade_programs.CAISO",
+      "display_name": "Cap And Trade Programs / Caiso",
+      "value": {
+        "name": "CARB",
+        "member_states": [
+          "CA"
+        ],
+        "price_key": "CAISO",
+        "escalation_rate": 0.07,
+        "external_nodes": [
+          "WECC_import"
+        ],
+        "zone_share": null
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cap_and_trade_programs.NEISO",
+      "display_name": "Cap And Trade Programs / Neiso",
+      "value": {
+        "name": "RGGI",
+        "member_states": [
+          "CT",
+          "ME",
+          "MA",
+          "NH",
+          "RI",
+          "VT"
+        ],
+        "price_key": "NEISO",
+        "escalation_rate": 0.07,
+        "external_nodes": [
+          "HQ_import"
+        ],
+        "zone_share": null
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cap_and_trade_programs.NYISO",
+      "display_name": "Cap And Trade Programs / Nyiso",
+      "value": {
+        "name": "RGGI",
+        "member_states": [
+          "NY"
+        ],
+        "price_key": "NYISO",
+        "escalation_rate": 0.07,
+        "external_nodes": [],
+        "zone_share": null
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "cap_and_trade_programs.PJM",
+      "display_name": "Cap And Trade Programs / Pjm",
+      "value": {
+        "name": "RGGI",
+        "member_states": [
+          "MD",
+          "DE",
+          "NJ"
+        ],
+        "price_key": null,
+        "escalation_rate": 0.07,
+        "external_nodes": [],
+        "zone_share": {}
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "carb_floor_escalation",
+      "display_name": "Carb Floor Escalation",
+      "value": 0.07,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Forward-year allowance-price escalation rates (nominal, per year). The projected forecast adder anchors on the last realized clearing price (STATE_CARBON_PRICE_BY_ISO) and escalates at the program's published price-containment-band rate. This is an explicitly-labelled scenario trajectory (a floor-band escalator), NOT a market-price forecast, and it is never tuned to a residual (plan §7, §8; CLAUDE.md rule 1).  CARB Auction Reserve (floor) price rises 5% + CPI annually (CA Cap-and-Trade Regulation, 17 CCR §95911(c)(1)); ~2%/yr CPI-U → ~7%/yr nominal. CA prices have hugged the floor+premium band, so the floor escalator is the natural forecast trajectory for CAISO.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -5704,60 +5894,6 @@
       ]
     },
     {
-      "param_id": "gas_availability_factor.NEISO",
-      "display_name": "Gas Availability Factor / Neiso",
-      "value": 0.85,
-      "unit": "",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "NERC GADS 2019-2023, ISO-NE fleet. TODO: verify",
-      "source_date": "2019",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
-    },
-    {
-      "param_id": "gas_availability_factor.NYISO",
-      "display_name": "Gas Availability Factor / Nyiso",
-      "value": 0.86,
-      "unit": "",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "NERC GADS 2019-2023, NYISO fleet. TODO: verify",
-      "source_date": "2019",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
-    },
-    {
-      "param_id": "gas_availability_factor.PJM",
-      "display_name": "Gas Availability Factor / Pjm",
-      "value": 0.87,
-      "unit": "",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "NERC GADS 2019-2023, PJM fleet. TODO: verify",
-      "source_date": "2019",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
-    },
-    {
       "param_id": "gas_basis_differential.NYISO",
       "display_name": "Gas Basis Differential / Nyiso",
       "value": 0.55,
@@ -5831,6 +5967,138 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.CC_CHP",
+      "display_name": "Gas Tranche Shares By Group / Cc Chp",
+      "value": [
+        0.3,
+        0.6,
+        0.1
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.CC_REGULAR",
+      "display_name": "Gas Tranche Shares By Group / Cc Regular",
+      "value": [
+        0.3,
+        0.6,
+        0.1
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.CT_CHP",
+      "display_name": "Gas Tranche Shares By Group / Ct Chp",
+      "value": [
+        0.0,
+        0.88,
+        0.12
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.CT_PEAKER",
+      "display_name": "Gas Tranche Shares By Group / Ct Peaker",
+      "value": [
+        0.0,
+        0.88,
+        0.12
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.ST_CHP",
+      "display_name": "Gas Tranche Shares By Group / St Chp",
+      "value": [
+        0.4,
+        0.5,
+        0.1
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "gas_tranche_shares_by_group.ST_GAS",
+      "display_name": "Gas Tranche Shares By Group / St Gas",
+      "value": [
+        0.4,
+        0.5,
+        0.1
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate by group, for the generic (non-CAMPD) offer curve (:func:`market_sim.data.offer_curves.split_gas_tranches`). These are STRUCTURAL capacity splits — how a unit's nameplate divides into offer bands — not tuned heat-rate multipliers, so they are ISO-neutral and stay generic (rule #24: no hardcoded per-plant/per-group dicts in ``data/`` modules — moved here from a module-level literal in ``offer_curves.py`` during the 2026-07 scalar-remediation sweep, B-GOV-1; value unchanged, C-11 closure verification). CTs are peakers with no part-load committed band; CC/ST split a part-load committed band off the efficient economic band, plus a small duct-fired peaking top slice. The per-band heat-rate MULTIPLIERS applied to these shares come from the ``*_hr_mult`` / ``*_peak_hr_penalty`` ScenarioConfig fields (ERCOT-lineage defaults); D-9 (scripts/legitimacy_diagnostics.py) forbids a non-ERCOT ISO from reaching this path without carrying its own ``offer_curve_by_group`` bands, so no cross-ISO leakage of those multipliers occurs.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -11250,6 +11518,24 @@
       ]
     },
     {
+      "param_id": "rggi_reserve_escalation",
+      "display_name": "Rggi Reserve Escalation",
+      "value": 0.07,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "RGGI Cost Containment Reserve (CCR) trigger price rises 7%/yr nominal (RGGI 2017 Model Rule §5.3(c)); used as the forward escalation of the last realized RGGI clearing price for NYISO/NEISO.",
+      "source_date": "2017",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.as_reserve_formula",
       "display_name": "As Reserve Formula",
       "value": false,
@@ -11765,7 +12051,7 @@
     {
       "param_id": "scenario.campd_bins_path",
       "display_name": "Campd Bins Path",
-      "value": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
+      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/reference/custom-bin-assignments.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -11820,6 +12106,25 @@
       ]
     },
     {
+      "param_id": "scenario.carbon_program_price_path",
+      "display_name": "Carbon Program Price Path",
+      "value": null,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 1,
+      "source": "named projected forecast path",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.cc_capacity_reconcile",
       "display_name": "Cc Capacity Reconcile",
       "value": false,
@@ -11841,7 +12146,7 @@
     {
       "param_id": "scenario.cc_capacity_reconcile_path",
       "display_name": "Cc Capacity Reconcile Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -13999,6 +14304,25 @@
       ]
     },
     {
+      "param_id": "scenario.demand_growth_percentile",
+      "display_name": "Demand Growth Percentile",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 1,
+      "source": "Continuous counterpart of",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.dual_fuel_oil_reattribution",
       "display_name": "Dual Fuel Oil Reattribution",
       "value": false,
@@ -15020,6 +15344,25 @@
       ]
     },
     {
+      "param_id": "scenario.gas_price_factor",
+      "display_name": "Gas Price Factor",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "Forecast-only multiplicative shock applied",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.gas_price_override",
       "display_name": "Gas Price Override",
       "value": null,
@@ -15515,6 +15858,62 @@
       "domain": "Structural",
       "tier": 3,
       "source": "FORECAST-mode planned-maintenance",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.mass_cap_enabled",
+      "display_name": "Mass Cap Enabled",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "Emissions mass-cap / cap-and-trade LP row (PP-2.1 IPM parity). GATED, default OFF — cap-off reproduces today's dispatch exactly. When on and a power-sector tonnage budget is supplied (mass_cap_tons, or the published RGGI/CARB schedule once landed), the ISO's fossil emissions are bounded by an inequality row whose dual is the endogenous allowance price (DispatchResult.co2_cap_price). This is a power-sector, no-bank SCENARIO price (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2, §8) — NOT the banked multi-sector RGGI/CARB market price, which enters as the measured/ projected adder via resolve_carbon_price. See policy/cap_and_trade.py.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.mass_cap_program",
+      "display_name": "Mass Cap Program",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "pollutant/program label for the row",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.mass_cap_tons",
+      "display_name": "Mass Cap Tons",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "explicit annual budget (tons CO2)",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -16556,7 +16955,7 @@
     {
       "param_id": "scenario.plant_emission_rates_path",
       "display_name": "Plant Emission Rates Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
+      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/plant_emission_rates.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -16575,7 +16974,7 @@
     {
       "param_id": "scenario.plant_emission_rates_v2_path",
       "display_name": "Plant Emission Rates V2 Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -16613,7 +17012,7 @@
     {
       "param_id": "scenario.plant_registry_path",
       "display_name": "Plant Registry Path",
-      "value": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
+      "value": "/home/user/market-simulator/.claude/worktrees/agent-a7e43de0ae4c905ad/data/raw/reference/master-plant-registry.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -16637,6 +17036,25 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Optional per-plant tranche-config override CSV (one row per plant with its five tranche shares of nameplate — must-run / committed / econ-low / econ-high / peaking — and the five per-tranche heat-rate multipliers on the plant's base HR). When set, each listed plant's tranche split and band heat rates come straight from the sheet, bypassing offer_curve_by_group and the per-plant committed/peaking dicts; plants absent from the sheet keep the configured defaults. Produced/round-tripped by scripts/export_tranche_config.py and edited via the desktop launcher.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.policy_bundle",
+      "display_name": "Policy Bundle",
+      "value": "current",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "\"current\" / \"tight\" / \"rollback\" — the",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17218,6 +17636,24 @@
       ]
     },
     {
+      "param_id": "scenario.startup_co2_reporting",
+      "display_name": "Startup Co2 Reporting",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 3,
+      "source": "EM-5 / plan §5 R6: when True, the calibration bundle adds a reporting-only startup-CO2 column (model_starts x measured campd startup_co2_kg). Measured bound is 0.015-0.018% of annual CO2, <0.2% even at 10x cycling error (docs/handoffs/emissions-co2-rate-plan-2026-07.md §3), so it is never in the dispatch LP and defaults OFF (no dispatch/level change).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.storage_as_commitment",
       "display_name": "Storage As Commitment",
       "value": false,
@@ -17282,6 +17718,43 @@
       "domain": "Storage",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.tech_cost_path",
+      "display_name": "Tech Cost Path",
+      "value": "mid",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "\"low\"/\"mid\"/\"high\" -> NREL ATB 2024",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.tech_cost_percentile",
+      "display_name": "Tech Cost Percentile",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "Continuous counterpart of",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -18612,6 +19085,762 @@
       "tier": 2,
       "source": "lower RTE at longer duration. NREL ATB 2024",
       "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc / High / Capex Per Kw",
+      "value": 1.08,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc / High / Learning Rate",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc / Low / Capex Per Kw",
+      "value": 0.95,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc / Low / Learning Rate",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / High / Capex Per Kw",
+      "value": 1.2,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / High / Learning Rate",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / Low / Capex Per Kw",
+      "value": 0.85,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / Low / Learning Rate",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_cc_ccs.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Cc Ccs / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Ct / High / Capex Per Kw",
+      "value": 1.08,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Ct / High / Learning Rate",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Ct / Low / Capex Per Kw",
+      "value": 0.95,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Ct / Low / Learning Rate",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Gas Ct / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.gas_ct.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Gas Ct / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / High / Capex Per Kw",
+      "value": 1.15,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / High / Learning Rate",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / Low / Capex Per Kw",
+      "value": 0.9,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / Low / Learning Rate",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_large.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Large / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / High / Capex Per Kw",
+      "value": 1.25,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / High / Learning Rate",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / Low / Capex Per Kw",
+      "value": 0.8,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / Low / Learning Rate",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.nuclear_smr.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Nuclear Smr / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Solar / High / Capex Per Kw",
+      "value": 1.15,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Solar / High / Learning Rate",
+      "value": 0.6,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Solar / Low / Capex Per Kw",
+      "value": 0.65,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Solar / Low / Learning Rate",
+      "value": 1.25,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Solar / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.solar.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Solar / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.high.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Wind / High / Capex Per Kw",
+      "value": 1.12,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.high.learning_rate",
+      "display_name": "Tech Cost Multipliers / Wind / High / Learning Rate",
+      "value": 0.65,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.low.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Wind / Low / Capex Per Kw",
+      "value": 0.85,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.low.learning_rate",
+      "display_name": "Tech Cost Multipliers / Wind / Low / Learning Rate",
+      "value": 1.35,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.mid.capex_per_kw",
+      "display_name": "Tech Cost Multipliers / Wind / Mid / Capex Per Kw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "tech_cost_multipliers.wind.mid.learning_rate",
+      "display_name": "Tech Cost Multipliers / Wind / Mid / Learning Rate",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Cost Trajectories",
+      "tier": 2,
+      "source": "Per-tech capex + learning-rate multipliers for the PB-1 tech-cost uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile, docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to NREL ATB 2024 technology innovation scenarios: \"low\"=Advanced (full learning/cost-decline realized), \"mid\"=Moderate, \"high\"=Conservative (costs stay closer to flat). \"mid\" is 1.0 on every tech BY CONSTRUCTION -- NEW_ENTRY_COSTS' base values are the model's existing reference case, not a re-scraped ATB Moderate figure, so the neutral default must be an exact no-op. The low/high spreads are engineering-judgment magnitudes anchored to ATB's published case *definitions* and typical per-tech spread ordering (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest -- mature, well-characterized plant costs); this environment could not reach atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up should replace these with exact figures the next time ATB is re-pulled (PP-3.2 item 2 tracks the next AEO/ATB refresh).",
+      "source_date": "2026-07",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
