@@ -1,0 +1,419 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "bf6b019",
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "highspy_version": "unknown",
+  "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso51_firm_base",
+      "content_hashes": {
+        "btm.parquet": "2eea98092e50d039a2e54859bafd184757e5ba82aa0e624b5d5211138643bd4e",
+        "dispatch/2023_P1.parquet": "949c9803d4fb1895cd80eab8b8206c7f9ff896ae60d8d51108580e8fdec99c32",
+        "dispatch/2023_P2.parquet": "1b2a85ee32c87350d08728d974fd1af79fd3f64e195552054dfcd44ce7cc8c90",
+        "dispatch/2024_P1.parquet": "036212e7d0cf963890c0c34c3604033a2f2cf08bc51882d33c6e8e9a78a9ef03",
+        "dispatch/2024_P2.parquet": "c48483e266ad30db085d8035cd3078341636318f675db3424fc111d92c066116",
+        "dispatch/2025_P1.parquet": "88b58d7c539af2f11c157fc00b80f3ddf76e2d24bb7152bed07556d58b7f0323",
+        "dispatch/2025_P2.parquet": "6e2c52f0b8807adc985d60066ad0062727f11c1aa56b936f66efc468ab34febe",
+        "flows.parquet": "44e6768b498b279daf9c94968bb48499fc1ab5015da6be4663666f2cc14c907c",
+        "storage.parquet": "7222c4ac89ac133a2607a8bfd3bf66cf856c4a0c34323810309105514c71520c",
+        "system.parquet": "310096eb6f0ba2cb1fe7eaf915fe4108101e9c834a0f77cab5c56b06d9e55cc0"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_import_hub_prices",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_amortization",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 122,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 350
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-caiso-51-firm-base",
+      "recorded_flag_count": 116,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "ERCOT": {
+      "bundle": "results/calibration/ercot_ordc_total_rtolcap_v1",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "8cf16c77053ed992b60167d038f50e47c0cf42fc7cbd4decf5923145ce3dff93",
+        "dispatch/2024_P1.parquet": "7f7cc259414f3f52c8f2e0e0fa50e2c73eb87e27842c7a22cb70c3548c3c2725",
+        "dispatch/2025_P1.parquet": "e139e74e270d1086c6553f6703cb15a4c2df0fad49cf5679d47fa13650831716",
+        "flows.parquet": "907fd01cb59ff0c546741008f40f83abf571f2ed0eb65cd92750ee116744bea7",
+        "storage.parquet": "820a88b98302143f96a69fd32ad65ae52aa9b7f316d94240dd8565c3066bfbbf",
+        "system.parquet": "00a07ffb8dea69eff1cb40ebf876b7210b17da082bf1c18320648f41974205fd"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 127,
+        "scenario_config_drift": [
+          "ercot_west_gas_delivered_floor",
+          "ercot_west_netload_gas_shape",
+          "ercot_zonal_gas_basis",
+          "oil_primary_bin_fuel"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 352
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-ercot32-ordc-total-rtolcap",
+      "recorded_flag_count": 121,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NEISO": {
+      "bundle": "results/calibration/neiso47_faststart",
+      "content_hashes": {
+        "btm.parquet": "30e617f6492cc201e0cfc976b286e76484548e4d3203dc81f6709d8f55a207fe",
+        "dispatch/2023_P1.parquet": "1c3ad609b40081f4c52640611e62a550a0b485ffc1649df78fe84d2e25ce3b01",
+        "dispatch/2023_P2.parquet": "98b41453b8472200a7c3aa3c41241df74c87ada2b2c3004898cc32aee28b7f9c",
+        "dispatch/2024_P1.parquet": "3cefaa4c75edef994a16bea8d92c29f2321abee1fb2b4f199e92787ff49f83c4",
+        "dispatch/2024_P2.parquet": "a85bc58909d30f0c92ef34f5bdbf4833af620c07969a1c3d7b81bf55a59bc9d4",
+        "dispatch/2025_P1.parquet": "8b8fea14a1f55e52a2663d4d45d5881e0297a685850e49281902048af3def25a",
+        "dispatch/2025_P2.parquet": "0105e9d08c848864f3f772b3a308662d3a72e111a7d3b3807076827033fe3893",
+        "flows.parquet": "661190486051cf2b0963aee443b82b29a479b2c7119e321c5156c9f0f4f3a13f",
+        "storage.parquet": "faa4ecdda7f78ae80a32a582d911194a7ed9de8337d93d55d1547895281590df",
+        "system.parquet": "531c92f52f7c0292523cc9316748eefa7988da40ea7278666a4a62635067268f"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 124,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 352
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-neiso-47-fast-start",
+      "recorded_flag_count": 118,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "NYISO": {
+      "bundle": "results/calibration/nyiso41_hubprices",
+      "content_hashes": {
+        "btm.parquet": "9b5d612ff4c1d121a1e568f829487cc9b834b6b99b82aee58efbc8edb4bfd348",
+        "dispatch/2023_P1.parquet": "90c9fa424aa13fb1fcd7f3551076853fac25608ae8cddc7626555ed1dc917eee",
+        "dispatch/2024_P1.parquet": "4bdb089f907e10610688da9c8ceae064ea6506527c4e414095f0327059da3807",
+        "dispatch/2025_P1.parquet": "7c5197921c6d09a953fb48a62a20c17d4c96d32364df584849f2c3bd70f7909c",
+        "flows.parquet": "1549c4ac1df7a707d231d49fcd05584943365dbe0c8705f6f327082262b02334",
+        "storage.parquet": "0e6ed810e03c9c4ef73be1604c6930da35f20c9038ea9260291089939cc246f4",
+        "system.parquet": "7a214999bef0594fc6d06d9c7c731ee5185cc5504cc3fd5b7f98c5b5ad2034cf"
+      },
+      "defaulted_unrecorded_params": [
+        "caiso_perhub_firm_base",
+        "capacity_deliverability_limits",
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_amortization",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "caiso_perhub_firm_base",
+          "capacity_deliverability_limits",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 121,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "caiso_perhub_firm_base",
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 350
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-nyiso-41-hub-prices",
+      "recorded_flag_count": 115,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "PJM": {
+      "bundle": "results/calibration/pjm76_outage_fix",
+      "content_hashes": {
+        "btm.parquet": "af2fdc53c820c8cbcbd0e1dfc3277f0c49d579a920f94a1930939b7ee1798507",
+        "dispatch/2023_P1.parquet": "46705e946b0aed286daaa9c0f9fadc6acba01785c4c533ebb1bb6d6f43aefbb1",
+        "dispatch/2024_P1.parquet": "fdfdb9222d90f61d4ca039ccc4907dfcd241ec5bc44569be33d75352ef455f22",
+        "dispatch/2025_P1.parquet": "d60b8530bbb170c86727ac306b3a3855bd3781b3f083115c0e4c09836a36bde0",
+        "flows.parquet": "f718580e9b6160877499da48c7f7c3b1d87272f167fd9c8fe14159e0afa3a148",
+        "storage.parquet": "bd7a51e33dce8149250a4799487dce0364f664de9da1e8396130e6196e24e7ba",
+        "system.parquet": "8841c70f4844268effbb6ef3cda2208aa0e0a127911c5e286742082966cff51e"
+      },
+      "defaulted_unrecorded_params": [
+        "caiso_perhub_firm_base",
+        "capacity_deliverability_limits",
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ecrs_conservative_deployment",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "miso_reserve_pergen",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_import_hub_prices",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_amortization",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "caiso_perhub_firm_base",
+          "capacity_deliverability_limits",
+          "ercot_ecrs_conservative_deployment",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "miso_reserve_pergen",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 118,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_perhub_firm_base",
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ecrs_conservative_deployment",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "miso_reserve_pergen",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 348
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-pjm-76-outage-fix",
+      "recorded_flag_count": 112,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
+  "stage_tag": "stage1-before"
+}
