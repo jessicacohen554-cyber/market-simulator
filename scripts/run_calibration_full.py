@@ -1643,6 +1643,36 @@ def _parse_offer_curve_json(
                 f"band->number, got {type(bands).__name__}."
             )
         for band, val in bands.items():
+            if band == "peak_ladder":
+                # Measured peak-band quantile ladder: a list of
+                # [capacity_share, multiplier] rungs (derive_dam_offer_hrmults
+                # --peak-ladder). Shares must be positive and sum to ~1 so the
+                # rungs exactly re-partition the peak tranche's capacity.
+                if not (
+                    isinstance(val, list)
+                    and val
+                    and all(
+                        isinstance(r, (list, tuple))
+                        and len(r) == 2
+                        and all(
+                            isinstance(x, (int, float)) and not isinstance(x, bool)
+                            for x in r
+                        )
+                        and r[0] > 0
+                        for r in val
+                    )
+                ):
+                    raise SystemExit(
+                        f"{flag}: {cls}.peak_ladder must be a non-empty list of "
+                        f"[capacity_share, multiplier] pairs, got {val!r}."
+                    )
+                total = sum(float(r[0]) for r in val)
+                if not 0.99 <= total <= 1.01:
+                    raise SystemExit(
+                        f"{flag}: {cls}.peak_ladder capacity shares must sum to "
+                        f"1.0 (±0.01), got {total:.3f}."
+                    )
+                continue
             if not isinstance(val, (int, float)) or isinstance(val, bool):
                 raise SystemExit(f"{flag}: {cls}.{band} must be a number, got {val!r}.")
     return parsed
