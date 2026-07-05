@@ -2,7 +2,8 @@
 
 Two member axes share one runner. The **weather-year ensemble** (the original)
 runs the *same* forecast scenario once per historical weather year, varying only
-``ScenarioConfig.weather_year`` over :data:`WEATHER_YEAR_POOL`, to expose the
+``ScenarioConfig.weather_year`` over the ISO's verified pool
+(:func:`market_sim.config.constants.weather_year_pool`), to expose the
 weather risk a single pinned shape hides. The **multivariate uncertainty
 sampler** (PB-2, ``docs/handoffs/probability-bounds-plan-2026-07.md`` §2)
 generalises that member axis: each member is a correlated draw over gas price,
@@ -41,7 +42,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import END_YEAR, START_YEAR, WEATHER_YEAR_POOL
+from market_sim.config.constants import END_YEAR, START_YEAR, weather_year_pool
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
 from market_sim.results.export import _summarize_year
@@ -87,8 +88,10 @@ def weather_ensemble_configs(
     Args:
         base_config: The forecast scenario to run under every weather draw.
             Every field except ``weather_year`` is held fixed.
-        weather_years: Weather years to draw over. Defaults to the full
-            :data:`WEATHER_YEAR_POOL`. Must be non-empty and distinct.
+        weather_years: Weather years to draw over. Defaults to
+            ``base_config.iso``'s verified pool (see
+            :func:`market_sim.config.constants.weather_year_pool`). Must be
+            non-empty and distinct.
 
     Returns:
         A dict mapping each weather year to ``base_config`` with that
@@ -105,7 +108,7 @@ def weather_ensemble_configs(
             "single historical year by design."
         )
     years = (
-        list(WEATHER_YEAR_POOL)
+        list(weather_year_pool(base_config.iso))
         if weather_years is None
         else [int(y) for y in weather_years]
     )

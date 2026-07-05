@@ -7,7 +7,12 @@ from pathlib import Path
 
 import numpy as np
 
-from market_sim.config.constants import END_YEAR, START_YEAR, WEATHER_YEAR_POOL
+from market_sim.config.constants import (
+    END_YEAR,
+    START_YEAR,
+    WEATHER_YEAR_POOL,
+    weather_year_pool,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.ensemble import (
     _aggregate_year,
@@ -66,10 +71,23 @@ class TestEnsembleConfigs(unittest.TestCase):
     """Config expansion: one config per distinct, forecast-only weather draw."""
 
     def test_default_pool_used_when_unspecified(self):
+        # ScenarioConfig() defaults to ERCOT, whose verified pool is wider
+        # than the cross-ISO WEATHER_YEAR_POOL fallback (2026-07 widening).
         configs = weather_ensemble_configs(ScenarioConfig())
-        self.assertEqual(tuple(configs), WEATHER_YEAR_POOL)
+        self.assertEqual(tuple(configs), weather_year_pool("ERCOT"))
+        self.assertGreater(len(configs), len(WEATHER_YEAR_POOL))
         for wy, config in configs.items():
             self.assertEqual(config.weather_year, wy)
+
+    def test_default_pool_is_per_iso(self):
+        # CAISO has no verified pre-2023 EIA-930 hourly coverage (see
+        # docs/weather-pool-coverage-2026-07.md), so it stays on the common
+        # fallback pool while ERCOT/NEISO get the widened one.
+        caiso = weather_ensemble_configs(ScenarioConfig(iso="CAISO"))
+        self.assertEqual(tuple(caiso), WEATHER_YEAR_POOL)
+        neiso = weather_ensemble_configs(ScenarioConfig(iso="NEISO"))
+        self.assertEqual(tuple(neiso), weather_year_pool("NEISO"))
+        self.assertIn(2019, neiso)
 
     def test_only_weather_year_varies(self):
         base = ScenarioConfig(iso="CAISO", carbon_price=40.0)
