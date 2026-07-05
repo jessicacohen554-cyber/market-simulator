@@ -176,4 +176,17 @@ from each `MassCapSpec` and threads it into the dispatch builder alongside
 `rps_target`. Budget schedules land via the `rggi-co2-budgets` /
 `carb-cap-schedule` intake datatypes; until a budget is supplied the row stays
 inert. Design: `docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
+
+**Row-path boundary (documented limitation).** On the row path the scalar
+wrapper `resolve_carbon_price` returns the trajectory fallback (0 by default) —
+the cap row carries the carbon cost, so member MC must not also carry an adder
+(no double-count). Consequently the CAISO WECC border-carbon adder and the
+capacity-evolution screens, which consume that scalar, see no allowance price
+under a row-path scenario: the endogenous dual only exists *after* the solve, so
+a one-pass build cannot price imports or entry/retirement off it ex-ante (the
+plan-§4 aspiration that the border adder "tracks the dual" is not realizable in
+this architecture). Row-path CAISO scenarios therefore understate the import
+leakage *price* (leakage *volume* via zero-coefficient imports is still
+represented); scenario analyses that need a priced border should use the adder
+path.
 </content>
