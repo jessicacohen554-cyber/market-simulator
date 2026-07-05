@@ -3191,6 +3191,45 @@ def _run_length_starts(series: np.ndarray, online_mw: float = 1.0) -> int:
     return int((online & ~prev).sum())
 
 
+def _startup_co2_reporting_enabled(run_dir: Path) -> bool:
+    """Return the bundle's ``startup_co2_reporting`` flag (default-OFF, R6).
+
+    Reads the persisted ``run_config.json`` so the reporting-only startup-CO2
+    column (:func:`market_sim.results.emissions.startup_co2_tons`) is added only
+    when the run opted in; a missing/malformed config or absent flag is OFF.
+    """
+    cfg_path = run_dir / "run_config.json"
+    try:
+        cfg = json.loads(cfg_path.read_text())
+    except (OSError, ValueError):
+        return False
+    sc = cfg.get("scenario_config", cfg) if isinstance(cfg, dict) else {}
+    return bool(sc.get("startup_co2_reporting", False))
+
+
+def _startup_co2_kg_map() -> dict[int, float]:
+    """Return ``{plant_code: measured startup_co2_kg}`` from the CAMPD artifact.
+
+    The per-start incremental CO2 (kg) is the pooled (``year == 0``) row of the
+    committed ``plant_emission_rates`` artifact (``campd._startup_factors``).
+    Empty when the artifact is absent, so the R6 adder degrades to zero.
+    """
+    from market_sim.data.fleet import PLANT_EMISSION_RATES_PATH
+
+    path = Path(PLANT_EMISSION_RATES_PATH)
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path)
+    pooled = df[df["year"] == 0] if "year" in df.columns else df
+    if "startup_co2_kg" not in pooled.columns:
+        return {}
+    return {
+        int(r["plant_id"]): float(r["startup_co2_kg"])
+        for _, r in pooled.iterrows()
+        if pd.notna(r["startup_co2_kg"])
+    }
+
+
 def _plant_hourly_fit(
     year: int,
     dispatch: pd.DataFrame,
@@ -4354,6 +4393,18 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
 
     if plant_fit_frames:
         all_fit = pd.concat(plant_fit_frames, ignore_index=True)
+        if _startup_co2_reporting_enabled(run_dir):
+            # EM-5 / plan §5 R6 (reporting-only, default-OFF): the measured
+            # per-start CO2 (startup_co2_tons formula) times the model's simulated
+            # start count, per row so each (pass, year) keeps its own starts.
+            # Never in the dispatch LP; a diagnostic column only, bounded
+            # <=0.2% of annual CO2.
+            kg_map = _startup_co2_kg_map()
+            all_fit["startup_co2_tons"] = (
+                all_fit["model_starts"].astype(float)
+                * all_fit["plant_code"].map(kg_map).fillna(0.0)
+                / 1000.0
+            )
         all_fit.to_parquet(run_dir / "plant_hourly_fit.parquet", index=False)
         _print_cf_emd_gate(all_fit, iso)
     if plant_band_frames:

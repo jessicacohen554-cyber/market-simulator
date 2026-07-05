@@ -19,7 +19,8 @@ pooled factor, then 1.0.
 
 Columns: iso, plant_id, unit_id, year, primary_fuel, unit_type, gross_mwh,
 net_mwh, parasitic_factor, heat_mmbtu, co2_kg, co2_kg_per_mwh_net, co2_source,
-starts, op_hours.
+starts, op_hours, steam_load_klbh_sum (the CEMS steam-output signature the CHP
+class-CF helper keys off — EM-7 / plan §5 R5).
 
 Usage:
     python scripts/derive_plant_emissions_v2.py                 # all ISOs, all years
@@ -70,6 +71,7 @@ _OUT_COLUMNS = [
     "co2_source",
     "starts",
     "op_hours",
+    "steam_load_klbh_sum",
 ]
 
 
@@ -161,6 +163,7 @@ def derive(years: list[int], isos: list[str]) -> pd.DataFrame:
                     "co2_source": str(r.co2_source),
                     "starts": int(r.starts),
                     "op_hours": int(r.op_hours),
+                    "steam_load_klbh_sum": round(float(r.steam_load_klbh_sum), 3),
                 }
             )
     out = pd.DataFrame(rows, columns=_OUT_COLUMNS)
