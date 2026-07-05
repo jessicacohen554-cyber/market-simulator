@@ -29,8 +29,22 @@ KY LA MA MD ME MI MN MO MS MT NC ND NH NJ NY OH PA RI SD TN TX VA VT WI WV.
 | Years | Status |
 |---|---|
 | 2023–2025 | complete (34 states each) — the calibration window |
-| 2018–2021 | **DATA NEEDED** — intake in progress for the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4). Re-fetch any missing `<ST>_<YEAR>.parquet` with the command above. |
+| 2018 | complete (34 states) — wave-2 intake |
+| 2019–2021 | intake in progress (wave-2), completing the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4). Re-fetch any missing `<ST>_<YEAR>.parquet` with the command above. |
 | 2022, H1-2026 | **QUARANTINED** (CLAUDE.md rule 22) — do not intake until the ISO is calibration-complete. |
+
+**DATA NEEDED — EIA-923 2018–2021 (parasitic net conversion).** The v2 rate
+artifact converts CAMPD gross → net with per-plant parasitic factors
+(`scripts/derive_parasitic_load.py`, EIA-923 net ÷ CAMPD gross). The committed
+`data/raw/_processed-legacy/eia923_monthly_generation.parquet` covers **2022–2026
+only** (the raw `f923_*.zip` workbooks for 2018–2021 are not on disk and the EIA
+archive URL is not reachable through this environment's proxy). Until those years
+land, the 2018–2021 v2 rows inherit each plant's **pooled** measured parasitic
+factor (a slowly-varying station-service fraction), which
+`derive_plant_emissions_v2.py` applies as its documented fallback — physically
+the right prior. To refine: fetch `f923_2018.zip … f923_2021.zip`, re-run
+`scripts/process_f923_fuel_costs.py`, then `derive_parasitic_load.py --years
+2018 2019 2020 2021` and re-derive v2.
 
 **Note on the 2018–2021 push:** these ~136 files (~0.5 GB) are large binary
 parquets. `mcp__github__push_files` is text-only (would corrupt binary) and a
