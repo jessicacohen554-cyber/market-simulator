@@ -1,5 +1,25 @@
 # ISO Model Unification & Codebase Streamlining Plan
 
+**Status 2026-07.** Phases 0-2 and the module halves of Phase 4 are effectively
+landed: `config/reserve_config.py` (Phase 1), `config/interchange_config.py`
+(Phase 2), and `data/fleet.py::build_dispatch_fleet` (Phase 4) all exist and are
+ISO-complete — `runner.py` (the forecast orchestrator) drives all six ISOs through
+each. What Phase 4 (and, implicitly, Phases 1-2) left undone is migrating the
+**second consumer**, `run_calibration.py` (the backcast orchestrator), onto these
+same modules — that is a different axis, owned by
+`docs/handoffs/orchestrator-unification-plan-2026-07.md`. Per that plan's §2.3, the
+composition boundary is: **this plan is the producer** (make each module
+ISO-complete) and **the unification plan is the second consumer** (point backcast
+at it) — sequence any shared-module work module-universal-first,
+orchestrator-migration-second. **Phase 6 (large file decomposition)** must wait
+until orchestrator-unification's **Stage 7** completes, since decomposing
+`fleet.py`/`constants.py`/`transmission.py`/`scarcity.py` while the backcast
+orchestrator still holds inline copies of code this plan's producer modules
+replace risks touching code the unification plan is about to delete. Phase 3
+(clean-Parquet) and Phase 5 (P2 legacy label / scarcity generalization) touch
+neither the orchestrator seam nor the solve core and may run before, after, or
+interleaved with the unification plan.
+
 ## Context
 
 The market simulator (44,895 LOC in `src/market_sim/`) models hourly electricity dispatch across 6 ISOs (ERCOT, CAISO, PJM, MISO, NYISO, NEISO). The core LP is already ISO-agnostic — `dispatch.py` has zero `if iso ==` branches. But the orchestration layers that *feed* the LP (reserve setup, interchange modeling, data loading, fleet construction) have grown ISO-specific code paths: 47 `if iso ==` branches across the codebase, 6 separate `*_reserve_coopt_inputs()` functions (~1,500 lines in scarcity.py), 6 separate `*_zonal_load_shares()` functions, and CAISO-only interchange code (~500 lines in transmission.py). The result is a codebase where adding a new ISO or cross-porting a feature requires scattered surgery rather than configuration.
