@@ -122,6 +122,18 @@ COLD_PERCENTILE = 1.0  # non-PJM cold onset = 1st-pct zone tmin (design heating 
 HOT_PERCENTILE = 95.0  # hot onset = 95th-pct zone tmax (design cooling day)
 _CT_CLASSES = frozenset({"CT_PEAKER", "CT_CHP"})
 
+# Sub-daily hour-of-day window (inclusive, local-standard t%24) that a CT_PEAKER
+# reliability limb is allowed to bind. A CT peaker serves the afternoon-evening
+# cooling / net-load ramp; overnight its capacity factor is ~0, so a full-day
+# temperature/net-load gate that floors it 00:00-23:59 binds it in hours its own
+# driver evidence says it is offline — a rule-13 off-window artifact (the D-4
+# gate's justified window for MECH_RELIABILITY_FLOOR x CT_PEAKER is [15, 22)).
+# Emitted as a structural shape parameter, NOT a fitted coefficient: the window
+# is the physical diurnal footprint of the peak driver, identical across ISOs and
+# already carried by the CAISO CT limbs. CT_CHP (steam-host cogen) runs all hours
+# and is deliberately NOT windowed.
+_CT_EVENING_WINDOW: tuple[int, int] = (15, 21)  # inclusive → engine gate [15,22)
+
 # Fossil classes the engine can floor (plan B.1). Renewables/nuclear/hydro never.
 FOSSIL_CLASSES = (
     "COAL",
@@ -595,6 +607,12 @@ def derive_iso(iso: str) -> pd.DataFrame:
                     "baseline_commit": round(fit["baseline_commit"], 4),
                     "threshold_basis": basis,
                     "r1_disabled": r1,
+                    # CAISO CT net-load limbs are the duck-curve evening ramp:
+                    # window them to the same afternoon-evening footprint.
+                    "start_hour": (
+                        _CT_EVENING_WINDOW[0] if klass == "CT_PEAKER" else ""
+                    ),
+                    "end_hour": (_CT_EVENING_WINDOW[1] if klass == "CT_PEAKER" else ""),
                 }
             )
             continue
@@ -632,6 +650,13 @@ def derive_iso(iso: str) -> pd.DataFrame:
                     "baseline_commit": round(fit["baseline_commit"], 4),
                     "threshold_basis": basis,
                     "r1_disabled": r1,
+                    # CT peakers serve only the afternoon-evening ramp; window
+                    # the floor so a full-day temp gate can't bind them overnight
+                    # (rule 13 / D-4). CT_CHP steam-host runs all hours: no window.
+                    "start_hour": (
+                        _CT_EVENING_WINDOW[0] if klass == "CT_PEAKER" else ""
+                    ),
+                    "end_hour": (_CT_EVENING_WINDOW[1] if klass == "CT_PEAKER" else ""),
                 }
             )
     return pd.DataFrame(rows)
