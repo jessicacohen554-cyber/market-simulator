@@ -321,3 +321,10 @@ results/calibration/MISO/miso17_y2024/
 # (re-fetchable; --no-fetch re-derives the zone CSVs from it). NEVER commit — the
 # raw station archives are hundreds of MB and trip the remote's 413 push limit.
 data/raw/*-weather/_ghcn_cache/
+
+# Stage-0 regression goldens (docs/handoffs/orchestrator-unification-plan-2026-07.md
+# §7.3): multi-GB re-solved keeper bundles used only for before/after stage
+# comparison. The bundles live in <stage-tag>/<ISO>/ subdirs — ignore those (they
+# trip the remote's 413 push limit); the hashes-only <stage-tag>/manifest.json
+# stays tracked as the committed deliverable.
+/results/regression-goldens/*/*/
