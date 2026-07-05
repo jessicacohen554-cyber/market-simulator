@@ -3035,6 +3035,49 @@ class ScenarioConfig:
         """Return a copy of this config with the given fields replaced."""
         return replace(self, **kwargs)
 
+    @classmethod
+    def as_zero_forcing_ablation(cls, cfg: "ScenarioConfig") -> "ScenarioConfig":
+        """Return a copy of ``cfg`` with every merchant floor/bridge disabled.
+
+        The D-3 zero-forcing ablation twin (audit
+        ``docs/model-legitimacy-audit-2026-07.md`` §7 D-3, CLAUDE.md rule 21):
+        every *merchant* min-gen floor, net-load drag, RA must-offer bridge and
+        the wind-EFOR availability haircuts are turned to their no-op values,
+        while the structural protected set — nuclear must-run, CHP
+        steam-following, coal take-or-pay — is KEPT. It answers "what does each
+        floor buy?": the keeper-vs-twin per-class delta is the forced energy
+        each merchant mechanism supplies, and a delta explainable only as "the
+        floor buys the residual" is an open root-cause item, not a parameter.
+
+        The floor off-list is DERIVED from the D-2 mechanism registry
+        (:func:`market_sim.data.floor_mechanisms.merchant_ablation_fields`), not
+        a hand-maintained tuple, so a newly-registered floor mechanism is
+        ablated by default (rule 21). Disabling ``reliability_floor`` also
+        disables its temperature/net-load CF limbs (they are limbs of that one
+        engine, with no separate toggle). The wind-EFOR haircuts
+        (``wefor_multiplier`` → 1.0, ``wefor_residual`` → None) are availability
+        knobs, not min-gen floors, so they carry no mechanism id and are
+        neutralized explicitly here.
+        """
+        from market_sim.data.floor_mechanisms import merchant_ablation_fields
+
+        overrides: dict[str, object] = dict(merchant_ablation_fields())
+        # Wind-EFOR haircuts → neutral: 1.0 keeps full statistical WEFOR (no
+        # availability boost), None keeps the full WEFOR everywhere (C-15). Not
+        # min-gen floors, so not in the mechanism registry.
+        overrides["wefor_multiplier"] = 1.0
+        overrides["wefor_residual"] = None
+        valid = {f.name for f in fields(cls)}
+        unknown = sorted(set(overrides) - valid)
+        if unknown:  # registry drift — fail loud rather than silently no-op
+            raise ValueError(
+                f"as_zero_forcing_ablation would set unknown ScenarioConfig "
+                f"field(s) {unknown}: the floor-mechanism registry names a "
+                f"toggle that no longer exists. Reconcile "
+                f"market_sim.data.floor_mechanisms with ScenarioConfig."
+            )
+        return replace(cfg, **overrides)
+
     def _non_default_values(self) -> dict:
         """Return a dict of fields whose values differ from the defaults."""
         defaults = ScenarioConfig()

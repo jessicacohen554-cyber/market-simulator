@@ -1664,6 +1664,9 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
         "timestamp": meta.get("timestamp"),
         "git": git,
         "model_changes_note": note,
+        # D-3 zero-forcing ablation twin (CLAUDE.md rule 21): the bundle this run
+        # ablates, or None for an ordinary keeper/probe.
+        "ablation_of": meta.get("ablation_of"),
         "calibration_flags": {
             k: meta.get(k)
             for k in (
@@ -1855,8 +1858,18 @@ def solve_and_persist(
     ercot_gtc_limits_measured: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
+    ablation_of: str | None = None,
 ) -> Path:
-    """Solve every year/pass, write the parquet bundle, return the run dir."""
+    """Solve every year/pass, write the parquet bundle, return the run dir.
+
+    ``ablation_of`` (D-3 zero-forcing ablation twin, CLAUDE.md rule 21): when
+    set, this run is the ablation twin of the named bundle — every merchant
+    floor was forced off by :func:`apply_zero_forcing_ablation`. The name is
+    recorded in ``run_config.json`` and the recorded config is passed through
+    ``ScenarioConfig.as_zero_forcing_ablation`` so the persisted config is the
+    canonical ablated one even for floors this script does not plumb via a CLI
+    arg. ``None`` for an ordinary keeper/probe run (byte-identical to before).
+    """
     iso_config = get_iso_config(iso)
     if priced_interchange:
         # Interchange served by the priced import/export node (external zone
@@ -2240,6 +2253,7 @@ def solve_and_persist(
         "years": years,
         "hours": hours,
         "passes": sorted(passes_seen),
+        "ablation_of": ablation_of,
         "commitment": commitment,
         "commitment_screen_coal": screen_coal,
         "gas_prices": gas_prices,
@@ -2727,6 +2741,13 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             gas_hub_basis_overlay=gas_hub_basis_overlay
         )
+    if ablation_of is not None:
+        # Persist the canonical ablated config (every merchant floor off), so
+        # run_config.json is authoritative even for floors not plumbed via a CLI
+        # arg — the solve was already ablated via apply_zero_forcing_ablation.
+        from market_sim.config.scenarios import ScenarioConfig as _SC
+
+        recorded_cfg = _SC.as_zero_forcing_ablation(recorded_cfg)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -4456,6 +4477,48 @@ def apply_statistical_mode(args) -> None:
     args.no_coal_monthly_pricing = True
 
 
+# ScenarioConfig field (from the D-2 mechanism registry) -> the
+# run_calibration_full CLI arg attribute that gates it, for the few merchant
+# floors whose CLI-flag name differs from the config field name. Every other
+# merchant field's arg name equals the field name.
+_ABLATION_ARG_ALIASES = {
+    "ct_deployment_overlay": "ct_deployment",
+    "reliability_deployment_overlay": "reliability_deployment",
+}
+
+
+def apply_zero_forcing_ablation(args) -> None:
+    """Force every merchant floor/bridge OFF for the D-3 zero-forcing ablation twin.
+
+    A no-op unless ``args.zero_forcing_ablation`` is set (mirrors
+    :func:`apply_statistical_mode`, mutating ``args`` in place). Turns off the
+    CLI-reachable merchant toggles named by the D-2 mechanism registry
+    (:func:`market_sim.data.floor_mechanisms.merchant_ablation_fields`) plus the
+    wind-EFOR haircuts — the SAME off-list as
+    ``ScenarioConfig.as_zero_forcing_ablation`` — while keeping the structural
+    protected set (nuclear must-run, CHP steam-following, coal take-or-pay).
+    Deriving the list from the registry rather than a hand-maintained tuple
+    (CLAUDE.md rule 21) means a newly-registered floor is ablated by default; a
+    merchant field whose CLI arg name differs is reconciled via
+    :data:`_ABLATION_ARG_ALIASES`. Merchant fields with no CLI arg in this
+    script (e.g. the net-load drags) are already default-off and need no forcing.
+    The twin's output directory and ``ablation_of`` provenance are handled in
+    :func:`main`.
+    """
+    if not getattr(args, "zero_forcing_ablation", False):
+        return
+    from market_sim.data.floor_mechanisms import merchant_ablation_fields
+
+    for field_name in merchant_ablation_fields():
+        arg_name = _ABLATION_ARG_ALIASES.get(field_name, field_name)
+        if hasattr(args, arg_name):
+            setattr(args, arg_name, False)
+    # Wind-EFOR haircuts -> neutral (availability knobs, not min-gen floors, so
+    # they carry no mechanism id — neutralized explicitly like the config twin).
+    args.wefor_residual = None
+    args.wefor_relief_groups = None
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -4626,6 +4689,23 @@ def main() -> None:
         "the nuclear monthly-CF overlay, and per-plant CEMS emission "
         "rates (the latter does not affect dispatch at carbon_price=0). "
         "Overrides any conflicting overlay flag.",
+    )
+    parser.add_argument(
+        "--zero-forcing-ablation",
+        action="store_true",
+        help="D-3 zero-forcing ablation twin (CLAUDE.md rule 21): re-solve with "
+        "EVERY merchant floor/bridge OFF — reliability floor + its "
+        "temperature/net-load CF limbs, CT/ST net-load drags, the CAISO RA "
+        "must-offer bridge (+ startup bridge + decommit), NYISO local "
+        "self-supply, the demoted deployment/must-run overlays, and the "
+        "wind-EFOR haircuts (->neutral) — while KEEPING the structural "
+        "protected set (nuclear must-run, CHP steam-following, coal "
+        "take-or-pay). The off-list is derived from the D-2 mechanism "
+        "registry (data/floor_mechanisms.py), so a new floor is ablated by "
+        "default. Solves into <out-dir>-ablation and records "
+        "'ablation_of' in run_config.json. Registered beside its keeper on "
+        "the dashboard; the keeper-vs-twin per-class delta quantifies what "
+        "each floor buys.",
     )
     parser.add_argument(
         "--no-coal-monthly-pricing",
@@ -6340,6 +6420,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     apply_statistical_mode(args)
+    apply_zero_forcing_ablation(args)
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
     offer_curve_deltas = _parse_offer_curve_json(
@@ -6397,6 +6478,14 @@ def main() -> None:
         # process) so concurrent runs of one ISO stay isolated too.
         if run_dir.exists():
             run_dir = run_dir.with_name(f"{ts}-{os.getpid()}")
+    # D-3 zero-forcing ablation twin (CLAUDE.md rule 21): solve into a sibling
+    # ``<bundle>-ablation`` directory and record which bundle it ablates, so the
+    # twin never overwrites the keeper and the pair is linkable. apply_zero_
+    # forcing_ablation(args) already forced every merchant floor off above.
+    ablation_of: str | None = None
+    if getattr(args, "zero_forcing_ablation", False):
+        ablation_of = run_dir.name
+        run_dir = run_dir.with_name(f"{run_dir.name}-ablation")
     run_dir = solve_and_persist(
         args.year,
         iso,
@@ -6617,6 +6706,7 @@ def main() -> None:
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
+        ablation_of=ablation_of,
     )
     report_run(run_dir, band_width=args.cf_band_width)
 

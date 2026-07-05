@@ -30,6 +30,13 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
   E6  keepers.json names exactly one keeper per ISO.
   E7  (warn) the keeper is the newest-dated run for its ISO in the registry;
       a newer same-ISO sidecar means the keeper may be stale.
+  E8  the bundle's ``calibration_attestation.json`` carries a ``free_parameters``
+      DOF ledger, and every residual-sourced entry references an open root cause
+      (CLAUDE.md rule 20 / audit D-12).
+  E9  the keeper has a registered zero-forcing ablation twin (CLAUDE.md rule 21 /
+      audit D-3): a ``ablation_twin`` sidecar field pointing to a run present in
+      the registry. Grandfathered warn-only until the first post-program keeper
+      re-registration lands a twin, then hard-fails (self-activating switch).
   S1  ``status.js`` is in sync with the current verdicts
       (``build_status.py --check``).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -184,8 +191,52 @@ class Report:
         return sum(1 for f in self.findings if f["level"] == "WARN")
 
 
-def audit_keeper(run_id: str, rep: Report, newest_by_iso: dict) -> None:
-    """Run every per-keeper check (E1–E7) for one run id, recording findings."""
+def _any_keeper_has_ablation_twin(keeper_ids: list[str]) -> bool:
+    """True once any keeper sidecar carries an ``ablation_twin`` (E9 switch)."""
+    for kid in keeper_ids:
+        side = _load_json(cv.REGISTRY_DIR / f"{kid}.json")
+        if side and str(side.get("ablation_twin", "")).strip():
+            return True
+    return False
+
+
+def _e9_finding(side: dict, enforce_e9: bool) -> tuple[str, str]:
+    """Return ``(level, message)`` for E9 — the zero-forcing ablation twin check.
+
+    CLAUDE.md rule 21 / audit §7 D-3: a keeper must have a registered ablation
+    twin (a companion run solved with every merchant floor/bridge off) linked via
+    the sidecar's ``ablation_twin`` field and itself present in the registry.
+
+    - No ``ablation_twin``: FAIL if ``enforce_e9`` else WARN (grandfathered
+      warn-only until the first post-program keeper re-registration lands a twin,
+      then hard-fail — see :func:`_any_keeper_has_ablation_twin`).
+    - ``ablation_twin`` set but no ``registry/<twin>.json``: always FAIL (a
+      dangling link is a broken keeper, not a pre-program state).
+    - Twin registered: OK.
+    """
+    twin_id = str(side.get("ablation_twin", "")).strip()
+    if not twin_id:
+        msg = (
+            "no registered ablation twin (sidecar has no 'ablation_twin'); "
+            "register one with the zero-forcing ablation "
+            "(run_calibration_full.py --zero-forcing-ablation) per CLAUDE.md "
+            "rule 21"
+        )
+        if enforce_e9:
+            return "FAIL", msg
+        return "WARN", msg + " [grandfathered: warn-only pre-program]"
+    if not (cv.REGISTRY_DIR / f"{twin_id}.json").exists():
+        return "FAIL", (
+            f"sidecar names ablation_twin={twin_id!r} but no registry sidecar "
+            f"registry/{twin_id}.json exists"
+        )
+    return "OK", f"ablation twin registered ({twin_id})"
+
+
+def audit_keeper(
+    run_id: str, rep: Report, newest_by_iso: dict, enforce_e9: bool = False
+) -> None:
+    """Run every per-keeper check (E1–E9) for one run id, recording findings."""
     side_path = cv.REGISTRY_DIR / f"{run_id}.json"
     side = _load_json(side_path)
     if side is None:
@@ -328,6 +379,25 @@ def audit_keeper(run_id: str, rep: Report, newest_by_iso: dict) -> None:
                     f"entries, {n_res} residual, all with root causes)",
                 )
 
+    # E9: zero-forcing ablation twin (CLAUDE.md rule 21 / audit §7 D-3). Every
+    # keeper must have a registered ablation twin — a companion run solved with
+    # every merchant floor/bridge off (ScenarioConfig.as_zero_forcing_ablation)
+    # — linked via the sidecar's ``ablation_twin`` field and itself present in
+    # the registry (registry/<twin_id>.json). The twin quantifies what each
+    # floor buys; a keeper without one has no evidence its floors are not just
+    # buying the residual.
+    #
+    # GRANDFATHER (mirrors the audit's "warn-only until the first post-program
+    # keeper re-registration, then hard-fail"): the twins are solve-expensive
+    # and are produced only when a keeper is next re-registered (Wave 2+), so
+    # existing keepers cannot carry one yet. E9 therefore WARNS until the switch
+    # flips and HARD-FAILS after. Switch condition (``enforce_e9``, computed in
+    # audit()): the check goes strict the moment ANY keeper sidecar carries an
+    # ``ablation_twin`` — i.e. the first post-program re-registration has landed,
+    # so from then on every keeper is held to the standard.
+    level, e9_msg = _e9_finding(side, enforce_e9)
+    rep.add(run_id, iso, level, "E9", e9_msg)
+
     # E7: staleness — is this the newest-dated run for its ISO?
     newest_date, newest_id = newest_by_iso.get(iso, (None, None))
     if newest_id and newest_id != run_id:
@@ -364,13 +434,20 @@ def audit(isos: list[str] | None) -> Report:
     newest_by_iso = _registry_dates_by_iso()
     newest_by_iso = {k: v[-1] for k, v in newest_by_iso.items()}
 
+    # E9 grandfather switch (see audit_keeper): the ablation-twin requirement is
+    # warn-only until the FIRST post-program keeper re-registration lands a twin,
+    # then hard-fails for every keeper. Self-activating from registry state (no
+    # env-var knob, rule 24): the moment any keeper sidecar carries an
+    # ``ablation_twin`` field, the program has begun and the check goes strict.
+    enforce_e9 = _any_keeper_has_ablation_twin(keeper_ids)
+
     want = {s.upper() for s in isos} if isos else None
     for run_id in keeper_ids:
         side = _load_json(cv.REGISTRY_DIR / f"{run_id}.json")
         iso = (side or {}).get("iso", "?")
         if want and iso.upper() not in want:
             continue
-        audit_keeper(run_id, rep, newest_by_iso)
+        audit_keeper(run_id, rep, newest_by_iso, enforce_e9=enforce_e9)
 
     # H1: holdout quarantine across EVERY registered bundle (keeper or probe).
     for msg in holdout_quarantine_failures():

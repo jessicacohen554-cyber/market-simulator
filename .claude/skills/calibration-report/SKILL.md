@@ -145,6 +145,62 @@ a full rebuild with `python scripts/regen_dashboard.py` (re-renders every
 registered run from its bundle) and commit any changed `runs/*.js`, sidecars
 and bench parts.
 
+## D-3 zero-forcing ablation twin (required for keepers)
+
+**Runs between register (step 2) and commit (step 4) whenever the run being
+registered is — or becomes — a keeper** (CLAUDE.md rule 21 / audit §7 D-3). A
+keeper without a registered ablation twin FAILS `audit_keepers.py` check E9
+(grandfathered warn-only until the first post-program keeper re-registration,
+then hard-fail). The twin quantifies what each merchant floor buys; register it
+beside the keeper, never as a replacement.
+
+1. **Solve the twin as a concurrent SEPARATE invocation** (rule 12: twin and
+   keeper are independent solves — start both at once; cap 2 for per-plant
+   multi-zone ISOs). Same ISO, same full year span, same base config as the
+   keeper, plus `--zero-forcing-ablation`, pointing `--out-dir` at the keeper's
+   bundle (the flag appends `-ablation` and records `ablation_of`):
+   ```bash
+   python scripts/run_calibration_full.py --iso <ISO> --year 2023 2024 2025 \
+       --out-dir results/calibration/<iso>/<keeper-bundle> \
+       --zero-forcing-ablation <same structural flags as the keeper>
+   ```
+   `--zero-forcing-ablation` disables every MERCHANT floor/bridge (reliability
+   floor + its temperature/net-load CF limbs, CT/ST net-load drags, the CAISO RA
+   must-offer bridge + startup bridge + decommit, NYISO local self-supply, the
+   demoted deployment/must-run overlays, and the wind-EFOR haircuts → neutral)
+   while KEEPING nuclear must-run, CHP steam-following and coal take-or-pay. The
+   off-list is derived from the D-2 mechanism registry
+   (`src/market_sim/data/floor_mechanisms.py`), so a newly-added floor is ablated
+   by default.
+
+2. **Register the twin** like any run (`dashboard_add_run.py`), id
+   `<keeper-id>-ablation`, and mark it `(ABLATION TWIN)` in the sidecar
+   definition so it is never mistaken for a keeper candidate.
+
+3. **Link it to the keeper and annotate the market story:**
+   ```bash
+   python scripts/link_ablation_twin.py --keeper <keeper-id> \
+       --twin <keeper-id>-ablation \
+       --market-story "one line per material class: what the delta means"
+   ```
+   This writes `ablation_twin`, the per-class keeper-vs-twin TWh `ablation_delta`
+   (computed from the two committed payloads, no solve), and the free-text
+   `market_story` into the keeper sidecar; the Run Explorer renders the
+   comparison table + story. **Pass condition (rule 21):** every material
+   per-class delta carries a market story. A delta explainable only as "the floor
+   buys the residual" is an open root-cause item, not a keeper feature — file it.
+
+4. **Commit** the twin's per-run files together with the updated keeper sidecar.
+
+## D-10 free-class rescore (auto-published)
+
+Every keeper's Calibration Status card now also shows a **D-10 REPORTED** line —
+`C1 class-volume: all-classes X/Y · free-classes X′/Y′` — the C1 pass rate with
+the measured-fed pinned classes (wind/solar L1, nuclear L3, hydro L6, CHP L4,
+NYISO imports L2) excluded, exposing pinned-class gate inflation. It is computed
+by `calibration_verdict.py` and flows through `build_status.py` automatically;
+no extra step, no gate.
+
 ## Calibration Status page (all-ISO summary)
 
 **Calibration Status** (`docs/codebase-site/calibration-status.html`) is a

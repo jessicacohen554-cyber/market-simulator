@@ -72,6 +72,82 @@ D2_EXEMPT_MECHS: frozenset[int] = frozenset(
 NON_THERMAL_MECHS: frozenset[int] = frozenset({MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY})
 
 
+# ---------------------------------------------------------------------------
+# Zero-forcing ablation registry (audit §7 D-3, CLAUDE.md rule 21)
+# ---------------------------------------------------------------------------
+# The D-3 zero-forcing ablation twin re-solves a keeper with every *merchant*
+# floor/bridge disabled, while KEEPING the structural protected set
+# (:data:`D2_EXEMPT_MECHS`: nuclear must-run, CHP steam-following, coal
+# take-or-pay). It answers "what does each floor buy?" — the keeper-vs-twin
+# per-class delta is the forced energy each merchant mechanism supplies.
+#
+# "Merchant" is defined NEGATIVELY off this registry: every mechanism id that is
+# neither a structural protected must-run nor a pure market-design boundary
+# floor (:data:`ABLATION_KEEP_MECHS`). Deriving the off-list this way — instead
+# of a hand-maintained class/toggle tuple in the config layer — means a
+# newly-registered floor is ablated BY DEFAULT the moment it is assigned a
+# ``MECH_*`` id: whoever adds a mechanism must consciously place it in
+# ``ABLATION_KEEP_MECHS`` to exempt it from the twin (rule 21).
+#
+# NYISO local self-supply (:data:`MECH_NYISO_SELFSUPPLY`) rides a pseudo-unit
+# like the firm-import band, but it is a merchant / outcome-anchored floor
+# (audit L2, §2 "DwC" — the 0.45 fraction is set below the realized share), so
+# it is ABLATED. Only firm interchange imports (:data:`MECH_FIRM_IMPORT`) — a
+# market-design boundary condition, not a merchant thermal floor — are kept.
+ABLATION_KEEP_MECHS: frozenset[int] = D2_EXEMPT_MECHS | frozenset({MECH_FIRM_IMPORT})
+
+# Merchant mechanisms whose disabling ScenarioConfig field is NOT simply the
+# bool named by ``MECH_NAMES[id]``, or that need several knobs cleared together.
+# Every other merchant mechanism disables the bool field == ``MECH_NAMES[id]``.
+_MERCHANT_ABLATION_OVERRIDES: dict[int, tuple[tuple[str, object], ...]] = {
+    # MECH_NAMES value is "st_netload_drag"; the ScenarioConfig field is
+    # "gas_st_netload_drag".
+    MECH_ST_NETLOAD_DRAG: (("gas_st_netload_drag", False),),
+    # The CAISO RA must-offer bridge is one phenomenon spread over three
+    # toggles: the base physical bridge plus its startup-cost-aware extension
+    # and the solar-proportional decommit control. All off together.
+    MECH_RA_MUSTOFFER: (
+        ("caiso_ra_mustoffer", False),
+        ("caiso_ra_startup_bridge", False),
+        ("caiso_ra_bridge_decommit", False),
+    ),
+}
+
+
+def merchant_mechanism_ids() -> frozenset[int]:
+    """Return the merchant floor-mechanism ids ablated by the D-3 twin.
+
+    Every registered mechanism except :data:`MECH_NONE`, the structural
+    protected set, and the market-design boundary floors
+    (:data:`ABLATION_KEEP_MECHS`). A new id added to :data:`MECH_NAMES` is
+    merchant — hence ablated — by default.
+    """
+    return frozenset(
+        m for m in MECH_NAMES if m != MECH_NONE and m not in ABLATION_KEEP_MECHS
+    )
+
+
+def merchant_ablation_fields() -> dict[str, object]:
+    """Return ``{ScenarioConfig field: neutral value}`` disabling every merchant floor.
+
+    Derived from the mechanism registry so the zero-forcing ablation
+    (``ScenarioConfig.as_zero_forcing_ablation``) never hand-maintains a class
+    tuple. A merchant mechanism without an entry in
+    :data:`_MERCHANT_ABLATION_OVERRIDES` disables the bool ScenarioConfig field
+    whose name equals ``MECH_NAMES[id]``; the overrides handle the few fields
+    whose name differs or that need several knobs cleared at once.
+    """
+    out: dict[str, object] = {}
+    for m in merchant_mechanism_ids():
+        overrides = _MERCHANT_ABLATION_OVERRIDES.get(m)
+        if overrides is None:
+            out[MECH_NAMES[m]] = False
+        else:
+            for field_name, neutral in overrides:
+                out[field_name] = neutral
+    return out
+
+
 def ensure_mechanism(fleet_arrays) -> np.ndarray:
     """Return ``fleet_arrays.min_gen_mechanism``, allocating it if absent.
 

@@ -722,6 +722,32 @@
         </div>`;
       }
 
+      // D-3 zero-forcing ablation twin (CLAUDE.md rule 21 / audit §7 D-3):
+      // keeper-vs-ablation per-class TWh delta + the market-story annotation.
+      // Present only on a keeper that has registered its twin (fields carried on
+      // the sidecar/manifest entry); absent runs render nothing.
+      if (reg.ablation_twin) {
+        const twinLink = `backcast-runs.html#iso=${encodeURIComponent(meta.iso || '')}&run=${encodeURIComponent(reg.ablation_twin)}`;
+        let rows = '';
+        (reg.ablation_delta || []).forEach(d => {
+          const dv = Number(d.delta_twh);
+          const cls = dv > 0.05 ? 'clr-bad' : (dv < -0.05 ? 'clr-ok' : '');
+          rows += `<tr><td>${esc(d.class)}</td>
+            <td style="text-align:right">${Number(d.keeper_twh).toFixed(2)}</td>
+            <td style="text-align:right">${Number(d.ablation_twh).toFixed(2)}</td>
+            <td style="text-align:right" class="${cls}">${dv >= 0 ? '+' : ''}${dv.toFixed(2)}</td></tr>`;
+        });
+        html += `<div class="bc-panel">
+          <h2>Zero-forcing ablation twin (D-3)</h2>
+          <p class="panel-sub">Per-class TWh with every merchant floor/bridge OFF
+            (nuclear must-run, CHP steam, coal take-or-pay kept). Δ = forced
+            energy the keeper's floors buy. Twin:
+            <a class="run-id-link" href="${twinLink}">${esc(reg.ablation_twin)}</a></p>
+          ${reg.market_story ? `<p class="bc-narration"><span class="ndef">Market story: ${esc(reg.market_story)}</span></p>` : `<p class="panel-sub" style="color:var(--text-muted)">No market story recorded — a delta explainable only as "the floor buys the residual" is an open root-cause item (rule 21).</p>`}
+          ${rows ? `<table class="bc-table" style="margin-top:10px"><thead><tr><th>Class</th><th style="text-align:right">Keeper TWh</th><th style="text-align:right">Ablation TWh</th><th style="text-align:right">Δ TWh</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+        </div>`;
+      }
+
       // Year scorecards
       html += `<div class="bc-panel"><h2>Year Scorecards</h2>
         <p class="panel-sub">Class tolerance (C1 gate: gas+coal classes minus CT_CHP/OTHER, completeness-gated — the same stats the Calibration Status page scores), dispatch correlation, and LMP fidelity per year</p>

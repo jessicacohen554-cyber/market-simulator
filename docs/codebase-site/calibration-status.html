@@ -294,6 +294,25 @@
         </div>`;
       }
 
+      // D-10 free-class rescore — REPORTED, never gating (audit §7 D-10). The
+      // C1 class-volume pass rate with the measured-fed pinned classes excluded,
+      // exposing pinned-class gate inflation.
+      if (keeper.free_class_score) {
+        const f = keeper.free_class_score;
+        const a = f.all_classes || {}, fr = f.free_classes || {};
+        const pinned = (f.pinned_excluded || []).join(', ') || 'none';
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">D-10 REPORTED</span>
+            C1 class-volume: <strong>all-classes ${esc(String(a.pass))}/${esc(String(a.total))}
+            &middot; free-classes ${esc(String(fr.pass))}/${esc(String(fr.total))}</strong>
+            — non-gating; free = pinned (measured-fed) classes excluded.
+          </p>
+          <p style="margin: 4px 0; font-size: 0.8rem;">pinned excluded: ${esc(pinned)}</p>
+        </div>`;
+      }
+
       // Reasons
       if (keeper.reasons && keeper.reasons.length) {
         html += `<div class="cs-reason" style="margin-top: 8px;">`;

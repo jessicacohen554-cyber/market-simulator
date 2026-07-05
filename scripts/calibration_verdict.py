@@ -65,6 +65,49 @@ COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
 # OTHER_FOSSIL are the mixed-plant reconciliation bucket, not merit-order classes.
 FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 
+# --- D-10 free-class rescore: pinned-class registry (audit §7 D-10, §4 L-rows) --
+# A "pinned" class has its scored volume substantially fed from a measured
+# realization, so its C1 (fuel-mix) pass is plumbing, not skill. The free-class
+# rescore (:func:`free_class_fuelmix_score`) recomputes the C1 class-volume pass
+# rate EXCLUDING these classes, exposing "pinned-class gate inflation" (audit).
+# DECLARED per ISO from the audit §4 L-rows — mirroring the D-5 overlay registry,
+# never inferred from a run's config:
+#   L1  wind / solar   — delivered EIA-930/HSL CF upper bound (renewables.py)
+#   L3  nuclear        — measured monthly EIA-923 CF + flat must-run
+#   L6  hydro          — EIA-930 monthly budgets (CAISO/NEISO) / firm MW
+#   L4  CHP classes    — export floor at the measured class CF
+#   L2  NYISO imports  — monthly net-interchange reconciliation to EIA-930
+# Only the classes C1 actually scores (the gas + coal families) can move the
+# free-class count; the renewable / nuclear / hydro / import names are declared
+# for completeness and forward-proofing, so the count auto-corrects if C1's
+# coverage ever widens. Per the audit §4 net picture — with wind/solar/nuclear/
+# hydro/CHP (and NYISO imports) measured-fed, "gas/coal/CT are the only genuinely
+# free classes" — CHP is pinned for every ISO.
+_PINNED_CLASSES_ALL_ISOS = frozenset(
+    {
+        "WIND",
+        "SOLAR",  # L1
+        "NUCLEAR",  # L3
+        "HYDRO",  # L6
+        "CC_CHP",
+        "CT_CHP",
+        "ST_CHP",  # L4 (CT_CHP is also FUELMIX_EXCLUDED)
+    }
+)
+_PINNED_CLASSES_BY_ISO: dict[str, frozenset[str]] = {
+    # L2: NYISO monthly net imports reconciled to EIA-930. Not a generation
+    # class C1 scores, but declared so the per-ISO registry is complete.
+    "NYISO": frozenset({"IMPORTS", "NET_IMPORTS"}),
+}
+
+
+def pinned_classes(iso: str) -> frozenset[str]:
+    """Return the declared pinned (measured-fed) class set for ``iso`` (D-10)."""
+    return _PINNED_CLASSES_ALL_ISOS | _PINNED_CLASSES_BY_ISO.get(
+        iso.upper(), frozenset()
+    )
+
+
 # --- tolerances (rubric §1) -------------------------------------------------
 # C1 fuel-mix — the universal class gate (mirrors classInTol in the run
 # explorer, docs/codebase-site/backcast-runs.html; supersedes the old ±5%/±1 TWh
@@ -1215,6 +1258,72 @@ def _agg_status(records: list[dict]) -> str:
     return SKIPPED
 
 
+def free_class_fuelmix_score(records: list[dict], iso: str) -> dict:
+    """D-10 free-class rescore of C1 fuel-mix: all-classes vs pinned-excluded.
+
+    Counts gated (non-SKIPPED) C1 fuel-mix class-year records as pass/total,
+    then re-counts with the declared pinned classes (:func:`pinned_classes`)
+    excluded. A PASS or CAVEAT (documented near-pass) counts toward the
+    numerator; FAIL does not; SKIPPED (no trustworthy per-class actual) is out of
+    the denominator entirely. No gate — the published "C1 all X/Y · free X'/Y'"
+    pair is the deliverable (audit §7 D-10: makes pinned-class gate inflation
+    visible next to the headline verdict).
+    """
+    pinned = pinned_classes(iso)
+    gated = [
+        r
+        for r in records
+        if r.get("criterion") == "fuelmix" and r.get("status") in (PASS, FAIL, CAVEAT)
+    ]
+
+    def counts(rows: list[dict]) -> dict:
+        passed = sum(1 for r in rows if r.get("status") in (PASS, CAVEAT))
+        return {"pass": passed, "total": len(rows)}
+
+    free_rows = [r for r in gated if r.get("key") not in pinned]
+    return {
+        "all_classes": counts(gated),
+        "free_classes": counts(free_rows),
+        "pinned_excluded": sorted(pinned),
+        "free_class_keys": sorted({r.get("key") for r in free_rows}),
+    }
+
+
+def compute_ablation_delta(keeper_payload: dict, twin_payload: dict) -> list[dict]:
+    """D-3 ablation twin: per-class TWh delta, keeper minus zero-forcing twin.
+
+    Sums each class's model generation (``gmModel``) across the years BOTH
+    payloads score, and returns rows sorted by absolute delta descending — the
+    forced energy each merchant floor buys. A large positive delta on a merchant
+    class (keeper >> twin) is what its floor supplies; the run page's
+    ``market_story`` annotation must explain it, or it is an open root-cause item
+    (CLAUDE.md rule 21). Pure arithmetic on two committed payloads — no solve.
+    """
+    ky = (keeper_payload or {}).get("years", {})
+    ty = (twin_payload or {}).get("years", {})
+    years = sorted(set(ky) & set(ty))
+    k_tot: dict[str, float] = {}
+    t_tot: dict[str, float] = {}
+    for y in years:
+        for c, v in (ky[y].get("gmModel") or {}).items():
+            k_tot[c] = k_tot.get(c, 0.0) + float(v)
+        for c, v in (ty[y].get("gmModel") or {}).items():
+            t_tot[c] = t_tot.get(c, 0.0) + float(v)
+    rows = []
+    for c in sorted(set(k_tot) | set(t_tot)):
+        kv, tv = k_tot.get(c, 0.0), t_tot.get(c, 0.0)
+        rows.append(
+            {
+                "class": c,
+                "keeper_twh": round(kv, 3),
+                "ablation_twh": round(tv, 3),
+                "delta_twh": round(kv - tv, 3),
+            }
+        )
+    rows.sort(key=lambda r: abs(r["delta_twh"]), reverse=True)
+    return rows
+
+
 def determine(run_id: str) -> dict:
     """Score one run from its committed artifacts (rubric §2)."""
     return determine_from_artifacts(run_id, load_artifacts(run_id))
@@ -1278,6 +1387,10 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
             "status": _agg_status(recs) if recs else SKIPPED,
             "records": recs,
         }
+
+    # D-10 free-class rescore (published, non-gating): the C1 class-volume pass
+    # rate with the measured-fed pinned classes excluded.
+    free_class_score = free_class_fuelmix_score(records, iso)
 
     # Caveat budget.
     hard_caveats = [
@@ -1352,6 +1465,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         "determination": determination,
         "reasons": reasons,
         "criteria": per_criterion,
+        "free_class_score": free_class_score,
         "caveats": {
             "hard": [c["label"] for c in hard_caveats],
             "soft": [c["label"] for c in soft_caveats],
@@ -1395,6 +1509,15 @@ def render_text(v: dict) -> str:
             if r.get("ledger_reason"):
                 lines.append(f"          ledger: {r['ledger_reason']}")
     lines.append("-" * 72)
+    fcs = v.get("free_class_score")
+    if fcs:
+        a, f = fcs["all_classes"], fcs["free_classes"]
+        lines.append(
+            f"D-10 C1 all-classes {a['pass']}/{a['total']} · "
+            f"free-classes {f['pass']}/{f['total']} "
+            f"(pinned excluded: {', '.join(fcs['pinned_excluded']) or 'none'})"
+        )
+        lines.append("-" * 72)
     if v["reasons"]:
         lines.append("determination basis:")
         for rsn in v["reasons"]:

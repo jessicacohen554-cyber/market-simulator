@@ -58,6 +58,17 @@ ENTRY_FIELDS = (
     "file",
 )
 
+# Optional manifest-entry fields propagated ONLY when a sidecar carries them —
+# the D-3 zero-forcing ablation twin linkage a keeper gains at re-registration
+# (CLAUDE.md rule 21): the twin's run id, its free-text market story, and the
+# precomputed per-class keeper-vs-twin TWh delta the Run Explorer renders.
+# Ordinary runs have none of these, so they are copied best-effort.
+OPTIONAL_ENTRY_FIELDS = (
+    "ablation_twin",
+    "market_story",
+    "ablation_delta",
+)
+
 
 def _gzb64(obj) -> str:
     """gzip+base64 a JSON-serializable object, byte-deterministically."""
@@ -90,7 +101,9 @@ def _load_entries() -> list[dict]:
         if not (RUNS_DIR / f"{rec['id']}.js").exists():
             print(f"  skip {path.name}: runs/{rec['id']}.js missing", file=sys.stderr)
             continue
-        entries.append({k: rec[k] for k in ENTRY_FIELDS})
+        entry = {k: rec[k] for k in ENTRY_FIELDS}
+        entry.update({k: rec[k] for k in OPTIONAL_ENTRY_FIELDS if k in rec})
+        entries.append(entry)
     entries.sort(key=lambda e: (e["id"], e["label"]))
     return entries
 
