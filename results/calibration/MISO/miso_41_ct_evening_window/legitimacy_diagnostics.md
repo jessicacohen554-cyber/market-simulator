@@ -129,3 +129,16 @@ _2025: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-off
 | miso_41_ct_evening_window | ct_mustrun_per_plant | False | pass |
 | miso_41_ct_evening_window | ordc_reliability_deployment_mw | None | pass |
 | miso_41_ct_evening_window | caiso_gas_commitment_floor | False | pass |
+
+## D-10 free-class-only rescore (renewable-bound provenance) — PASS
+
+_MISO: 6/6 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)._
+
+| year | fuel | provenance | pinned | verdict |
+|---|---|---|---|---|
+| 2023 | wind | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2023 | solar | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2024 | wind | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2024 | solar | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2025 | wind | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2025 | solar | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
