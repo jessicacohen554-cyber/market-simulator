@@ -31,10 +31,11 @@ budget_year,metric,value,unit,source_doc,source_page
   Auction-Reserve-Price notice:
   https://ww2.arb.ca.gov/our-work/programs/cap-and-trade-program/auction-information
 
-## DATA NEEDED
+## DATA (landed)
 
-- [ ] `carb-cap-schedule.csv` with the annual allowance budget (MMT CO2e) and
-      the Auction Reserve floor price ($/tonne).
-- Do **NOT** include 2022 or H1-2026 rows (holdout quarantine, CLAUDE.md
-  rule 22). Populate 2023-2025 and forward years from 2027 onward; leave 2026
-  out until the holdout is released.
+- [x] `carb-cap-schedule.csv` — annual allowance budget (MMT CO2e, 17 CCR §95841
+      Table 6-2: 2023-2025 + forward 2027-2031) and the Auction Reserve floor
+      price ($/tonne, CARB Annual Auction Reserve Price Notices 2023-2025). The
+      budget feeds `CARB_ALLOWANCE_BUDGET` in `constants.py` (a test asserts the
+      constant mirrors this CSV). 2022 and 2026 omitted (holdout quarantine,
+      CLAUDE.md rule 22).

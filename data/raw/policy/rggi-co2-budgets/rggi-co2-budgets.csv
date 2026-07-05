@@ -1,0 +1,11 @@
+state,budget_year,metric,value,unit,source_doc,source_page
+RGGI,2023,allowance_budget,93000000,short_tons,"RGGI, Inc. regional cap trajectory (ICAP ETS profile)",regional cap
+RGGI,2024,allowance_budget,69000000,short_tons,"RGGI, Inc. regional cap trajectory (ICAP ETS profile)",regional cap
+RGGI,2025,allowance_budget,67000000,short_tons,"RGGI, Inc. regional cap trajectory (ICAP ETS profile)",regional cap
+RGGI,2027,allowance_budget,63200000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2028,allowance_budget,61400000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2029,allowance_budget,59600000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2030,allowance_budget,57900000,short_tons,RGGI 2021 Model Rule cap decline (~2.9%/yr projected),projected
+RGGI,2025,ccr_trigger_price,17.03,usd_per_short_ton,RGGI 2017/2021 Model Rule 5.3 (CCR +7%/yr),5.3
+RGGI,2025,ecr_trigger_price,7.86,usd_per_short_ton,RGGI 2017/2021 Model Rule 6.3 (ECR +7%/yr),6.3
+RGGI,2025,minimum_reserve_price,2.62,usd_per_short_ton,RGGI 2021 Model Rule minimum reserve price (+2.5%/yr),min reserve

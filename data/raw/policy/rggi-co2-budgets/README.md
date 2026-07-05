@@ -34,10 +34,16 @@ state,budget_year,metric,value,unit,source_doc,source_page
   §6.3 (ECR), with the published annual 7%/yr (CCR) escalation:
   https://www.rggi.org/program-overview-and-design/design-archive
 
-## DATA NEEDED
+## DATA (landed — regional; per-state pending)
 
-- [ ] `rggi-co2-budgets.csv` with the regional + per-member-state annual
-      allowance budgets and the CCR/ECR/minimum-reserve trigger-price schedule.
-- Do **NOT** include 2022 or H1-2026 rows (holdout quarantine, CLAUDE.md
-  rule 22). Populate 2023-2025 (measured control periods) and forward years
-  from 2027 onward; leave 2026 out until the holdout is released.
+- [x] `rggi-co2-budgets.csv` — the **regional** (`state=RGGI`) annual allowance
+      budget (short tons: 2023-2025 published + 2027-2030 projected at the 2021
+      Model Rule ~2.9%/yr decline) and the 2025 CCR/ECR/minimum-reserve
+      trigger-price schedule. The regional budget feeds
+      `RGGI_STATE_CO2_BUDGET["RGGI"]` in `constants.py` (a test asserts the
+      constant mirrors this CSV). 2022 and 2026 omitted (holdout quarantine,
+      CLAUDE.md rule 22).
+- [ ] Per-member-state (`state` = postal code) annual budgets — pending the RGGI
+      per-state allowance-distribution intake. Until then a RGGI ISO's
+      power-sector row uses the regional cap (an even looser over-bound, so still
+      slack), mirroring PJM shipping OFF pending its crosswalk.
