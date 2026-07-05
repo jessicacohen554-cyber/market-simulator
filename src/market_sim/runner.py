@@ -1449,6 +1449,38 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to write the ensemble distribution JSON; skipped if omitted.",
     )
 
+    matrix_parser = subparsers.add_parser(
+        "matrix",
+        help=(
+            "Run a named-case AEO/IPM-style scenario matrix (deterministic "
+            "range, not a probability band)."
+        ),
+    )
+    matrix_parser.add_argument(
+        "--config", required=True, help="Path to the base forecast scenario YAML."
+    )
+    matrix_parser.add_argument(
+        "--matrix",
+        required=True,
+        help="Path to a cases-mode sweep YAML, e.g. configs/scenario_matrix.yaml.",
+    )
+    matrix_parser.add_argument(
+        "--iso",
+        default=None,
+        help="ISO to run; defaults to the base config's own ISO.",
+    )
+    matrix_parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="Concurrent cases; hard-capped at 2 (CLAUDE.md rule 12/16).",
+    )
+    matrix_parser.add_argument(
+        "--out-dir",
+        default=None,
+        help="Output directory; defaults to results/ensemble/<matrix_id>/.",
+    )
+
     return parser
 
 
@@ -1478,6 +1510,10 @@ def main(argv: list[str] | None = None) -> None:
         members = run_weather_ensemble(config, iso, args.weather_years, args.workers)
         if args.out:
             export_ensemble_json(members, iso, args.out)
+    elif args.command == "matrix":
+        from market_sim.matrix import run_matrix_cli
+
+        run_matrix_cli(args.config, args.matrix, args.iso, args.workers, args.out_dir)
 
 
 if __name__ == "__main__":
