@@ -704,6 +704,45 @@
     /* ================================================================
        REPORT VIEW — all years at once
        ================================================================ */
+    /* Fill #ablationDelta with the keeper-vs-twin per-class gmModel delta
+       (TWh, summed over the run's years). Async — loads the twin payload.
+       Degrades quietly if the twin is absent or fails to load. */
+    async function populateAblationDelta(years) {
+      const box = document.getElementById('ablationDelta');
+      if (!box) return;
+      const twinId = box.dataset.twin;
+      if (!twinId) return;
+      box.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted)">Loading ablation twin…</p>';
+      let twin;
+      try {
+        twin = await loadRun(twinId);
+      } catch (e) {
+        box.innerHTML = `<p style="font-size:0.8rem;color:var(--text-muted)">Ablation twin ${esc(twinId)} not loadable.</p>`;
+        return;
+      }
+      const tYears = twin.years || twin;
+      const delta = {};  // class -> TWh (keeper - twin)
+      for (const yr of years) {
+        const km = (st.runData?.years?.[yr] || st.runData?.[yr] || {}).gmModel || {};
+        const tm = (tYears?.[yr] || tYears?.[String(yr)] || {}).gmModel || {};
+        const classes = new Set([...Object.keys(km), ...Object.keys(tm)]);
+        classes.forEach(c => { delta[c] = (delta[c] || 0) + ((km[c] || 0) - (tm[c] || 0)); });
+      }
+      const rows = Object.entries(delta)
+        .filter(([, v]) => Math.abs(v) >= 0.05)
+        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+      if (!rows.length) {
+        box.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted)">No material class delta — the floors move &lt;0.05 TWh.</p>';
+        return;
+      }
+      box.innerHTML = `<table class="bc-table" style="margin-top:8px;font-size:0.8rem;">
+        <thead><tr><th>Class</th><th style="text-align:right">Keeper − twin (TWh, all years)</th></tr></thead>
+        <tbody>${rows.map(([c, v]) =>
+          `<tr><td>${esc(c)}</td><td style="text-align:right">${v >= 0 ? '+' : ''}${v.toFixed(2)}</td></tr>`
+        ).join('')}</tbody></table>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">Positive = the keeper's floors add that class's generation vs the floor-free twin. Each material delta needs a market story above.</p>`;
+    }
+
     function renderReport(el) {
       const meta = META();
       const years = meta.years || [];
@@ -719,6 +758,23 @@
             ID: <span class="run-id-link">${esc(st.runId)}</span>
             ${reg.date ? ` &middot; ${esc(reg.date)}` : ''}
           </p>
+        </div>`;
+      }
+
+      // Zero-forcing ablation twin (CLAUDE.md rule 20 / audit D-3): the market
+      // story + keeper-vs-twin per-class delta. Rendered when the sidecar links
+      // a twin and/or carries a market_story; the per-class delta table is
+      // filled asynchronously by populateAblationDelta() after innerHTML is set.
+      if (reg.ablation_twin || reg.market_story) {
+        const twinLink = reg.ablation_twin
+          ? `<a class="run-id-link" href="#iso=${encodeURIComponent(st.iso)}&run=${encodeURIComponent(reg.ablation_twin)}">${esc(reg.ablation_twin)}</a>`
+          : '<em>not yet registered</em>';
+        html += `<div class="bc-panel">
+          <h2>Zero-forcing ablation twin</h2>
+          <p class="panel-sub">Reference solve with every merchant floor/bridge OFF (keeping only nuclear must-run, CHP steam-following, coal take-or-pay). The per-class delta is what the floors buy — a delta with no market story is an open root-cause item, not a calibrated floor.</p>
+          <p style="font-size:0.8rem;">Twin: ${twinLink}</p>
+          ${reg.market_story ? `<p class="bc-narration"><strong>Market story:</strong> <span class="ndef">${esc(reg.market_story)}</span></p>` : '<p style="font-size:0.8rem;color:var(--text-muted)">No market story recorded yet.</p>'}
+          <div id="ablationDelta" data-twin="${reg.ablation_twin ? esc(reg.ablation_twin) : ''}"></div>
         </div>`;
       }
 
@@ -792,6 +848,9 @@
       }
 
       el.innerHTML = html;
+
+      // Fill the keeper-vs-ablation per-class delta (async: loads the twin run).
+      populateAblationDelta(years);
 
       // Mount LMP line charts
       mountLmpCharts(years);

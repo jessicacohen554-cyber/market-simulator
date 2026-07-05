@@ -122,7 +122,43 @@ keeps its `runNN` scheme.
    # http://localhost:8000/docs/codebase-site/backcast-runs.html#iso=<ISO>&run=<RUN_ID>
    ```
 
-4. **Commit + push** the per-run files only:
+4. **Register the ablation twin (KEEPERS ONLY — CLAUDE.md rule 20 / audit D-3).**
+   Before a run can become (or stay) a keeper it must have a **registered
+   zero-forcing ablation twin**: a reference solve with every merchant floor/
+   bridge OFF (keeping only nuclear must-run, CHP steam-following, coal
+   take-or-pay), so the keeper-vs-twin per-class delta shows what each floor
+   buys. `audit_keepers.py` **E9** FAILs a (non-grandfathered) keeper without one.
+
+   a. **Solve the twin** as a *concurrent separate invocation* from the keeper
+      (rule 12; cap 2 for per-plant multi-zone ISOs), SAME full year span:
+      ```bash
+      python scripts/run_calibration_full.py --iso <ISO> --year 2023 2024 2025 \
+          <the keeper's exact flags> \
+          --out-dir results/calibration/<name> --zero-forcing-ablation
+      # → solves into results/calibration/<name>-ablation, records
+      #   "ablation_of": "<name>" in that bundle's run_config.json
+      ```
+   b. **Register the twin** with an id that suffixes the keeper's id with
+      `-ablation` (so it lands at `registry/<keeper-id>-ablation.json`):
+      ```bash
+      python scripts/dashboard_add_run.py --label "<keeper label> (ABLATION TWIN)" \
+          --bundle results/calibration/<name>-ablation
+      ```
+      Mark the sidecar definition "(ABLATION TWIN of <keeper-id>)".
+   c. **Link it from the keeper sidecar.** Add to
+      `frontend/data/backcast/registry/<keeper-id>.json`:
+      ```json
+      "ablation_twin": "<keeper-id>-ablation",
+      "market_story": "<one line per class the floor moves: WHY the real market
+          produces that generation — a market story, not 'the floor buys the
+          residual'. A delta explainable only as residual-buying is an open
+          root-cause issue, not a calibrated floor.>"
+      ```
+      The Run Explorer renders the keeper-vs-twin per-class delta and the
+      `market_story` on the keeper's run page.
+
+5. **Commit + push** the per-run files only (include the twin's files and the
+   updated keeper sidecar when a twin was registered):
    ```bash
    git add results/calibration/<name> \
            frontend/data/backcast/registry/<id>.json \

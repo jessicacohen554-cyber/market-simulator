@@ -802,5 +802,52 @@ class ShapeForcedShareTests(unittest.TestCase):
         self.assertEqual(v["criteria"]["forced_share"]["status"], cv.FAIL)
 
 
+class FreeClassScoreTests(unittest.TestCase):
+    """D-10 free-class rescore: C1 pass rate with pinned classes excluded."""
+
+    @staticmethod
+    def _fm(klass, status):
+        return {"criterion": "fuelmix", "key": klass, "status": status}
+
+    def test_free_excludes_pinned_chp(self):
+        """CHP subclasses (pinned, L4) drop out of the free-class denominator."""
+        records = [
+            self._fm("CC_REGULAR", cv.PASS),
+            self._fm("COAL_BIT", cv.FAIL),
+            self._fm("CC_CHP", cv.PASS),  # pinned
+            self._fm("ST_CHP", cv.PASS),  # pinned
+        ]
+        out = cv.free_class_score("ERCOT", records)
+        self.assertEqual(out["all"], {"pass": 3, "total": 4})
+        self.assertEqual(out["free"], {"pass": 1, "total": 2})
+        self.assertEqual(out["headline"], "C1 all 3/4 · free 1/2")
+        self.assertEqual(out["excluded_from_free"], ["CC_CHP", "ST_CHP"])
+
+    def test_skipped_rows_not_counted(self):
+        """SKIPPED fuelmix rows are outside both pass rates."""
+        records = [
+            self._fm("CC_REGULAR", cv.PASS),
+            self._fm("COAL_PRB", cv.SKIPPED),
+        ]
+        out = cv.free_class_score("PJM", records)
+        self.assertEqual(out["all"], {"pass": 1, "total": 1})
+
+    def test_nyiso_pins_imports(self):
+        """NYISO's declared pinned set carries the imports class (L2)."""
+        self.assertIn("imports", cv.PINNED_CLASSES_BY_ISO["NYISO"])
+
+    def test_verdict_carries_free_class_score(self):
+        """determine_from_artifacts surfaces the free_class_score block."""
+        d = DeterminationTests()
+        art = _artifacts(
+            d._clean_year_payload(),
+            attestation=_clean_attestation(),
+            **d._clean_bench_args(),
+        )
+        v = cv.determine_from_artifacts("t", art)
+        self.assertIn("free_class_score", v)
+        self.assertIn("headline", v["free_class_score"])
+
+
 if __name__ == "__main__":
     unittest.main()
