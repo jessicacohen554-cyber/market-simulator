@@ -42,6 +42,34 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-05 — ERCOT — NP6 HSL 2024/25 intake attempt: BLOCKED (data-needed, not a keeper/probe)
+
+**Goal.** WS-E of `docs/handoffs/ercot-as-coopt-plan-2026-07.md` / G7's P4
+remainder: intake published ERCOT NP4-732/737 wind+solar HSL reports for
+2024/2025 so `renewables.hsl_potential_mw` stops falling back to the
+reference-curtailment-rate gross-up for those years. **Result: blocked on
+ERCOT account credentials, no run performed.**
+
+Legacy `mis.ercot.com/misapp/GetReports.do` now 302s every report — including
+"Public"-classified NP4-732-CD — to a SiteMinder market-participant login. The
+replacement Data Access Portal (`data.ercot.com`/`api.ercot.com`) is
+network-reachable (no proxy-level 403, unlike the prior NP6-576-ER attempts)
+but every API call returns `401 missing subscription key`; obtaining one
+requires an interactive `apiexplorer.ercot.com` account registration this
+session cannot complete. Also checked and empty: the 60-Day SCED Disclosure
+product (NP3-965-ER, same gate) and the UMass `nodal-curtailment-analysis`
+GitHub dataset (2023 fallback source; cloned `main`, no 2024/2025 files
+exist upstream). Full log: `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`;
+drop-zone placeholder `data/raw/ercot-hsl/np6/README.md`.
+
+**No code or data changed.** `scripts/build_ercot_hsl.py` already ingests a
+2024/2025 NP6 upload transparently once one lands (`np6/<year>/` drop zone);
+`hsl_potential_mw` / `_forecast_uncurtailed_cf` (G7) continue supplying the
+forward-admissible gross-up for ERCOT 2024/25 unchanged. No modeled-vs-reported
+curtailment diagnostic or AS-forward-driver delta to report — nothing new was
+solved. Not a keeper or a probe; a data-availability dead end pending
+credentials, per the plan's egress caveat.
+
 ### 2026-07-04 — NYISO — CT offer grounding: measured-run fast-start v3 + oil screen + DEC 227-3 (nyiso 45/46): PROBES, keeper stays nyiso 41
 
 **Goal.** Ground the NYISO CT offer level — the repo-level blocker left by commit 0c6c833
