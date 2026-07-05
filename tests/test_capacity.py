@@ -803,6 +803,36 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual([g.unit_id for g in survivors], ["A"])
         self.assertEqual([r["unit_id"] for r in log], ["A"])
 
+    def test_peak_demand_next_drives_floor_through_evolve_fleet(self):
+        # Plan §2.3 component 1: the floor tests the entering year's known
+        # peak, not the prior-year bookkeeping peak. Two 1000 MW coal units
+        # (UCAP 950 each): against the stale 500 MW prior peak (requirement
+        # 569) one unit's UCAP suffices and the other retires; against the
+        # known 1200 MW peak (requirement 1365) both are retained.
+        config = ScenarioConfig(iso="ERCOT")
+        coal = [
+            _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
+            _gen("C1", "coal", pmax=1000.0, heat_rate=10.0),
+        ]
+        arrays = generators_to_fleet_arrays(coal, ["Z0"], hours=self.T)
+        prior = {
+            "fleet_arrays": arrays,
+            "dispatch_result": self._dispatch_result(2, 10.0),
+            "prices": np.full((1, self.T), 10.0),
+            "peak_demand": 500.0,
+        }
+        # (evolve_fleet re-aggregates the fleet into bin representatives, so
+        # assert on retained MW and the retention log, not unit identity.)
+        fleet, _, _, _, log = evolve_fleet(coal, prior, 2030, config, {})
+        self.assertEqual(sum(g.pmax_mw for g in fleet), 1000.0)
+        self.assertEqual(len(log), 1)
+
+        fleet, _, _, _, log = evolve_fleet(
+            coal, prior, 2030, config, {}, peak_demand_next=1200.0
+        )
+        self.assertEqual(sum(g.pmax_mw for g in fleet), 2000.0)
+        self.assertEqual(len(log), 2)
+
     def test_resolve_planning_reserve_margin(self):
         from market_sim.model.capacity import resolve_planning_reserve_margin
 
