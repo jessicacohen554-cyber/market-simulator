@@ -3,7 +3,7 @@
   "label": "neiso 48 base control",
   "date": "2026-07-05",
   "shorthand": "neiso-48-base-control",
-  "definition": "Calibration run from bundle neiso_ctbase.",
+  "definition": "(CONTROL) A/B baseline for the neiso-48 CT-floor scrub: the identical neiso-47 recipe on current main with the two all-24h CT_PEAKER tmax reliability-floor limbs still ON. Documents the pre-scrub failing state the keeper removes — D-4 off-window binding 72-76% and C8 CT_PEAKER forced-energy share 0.47/0.78/0.47 (2023/24/25, gate <0.10). Not a keeper candidate; reference half of the neiso-48-ct-floor A/B.",
   "years": [
     2023,
     2024,
