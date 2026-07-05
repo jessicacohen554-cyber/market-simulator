@@ -406,6 +406,7 @@ def apply_economic_retirements(
     mc: np.ndarray | None = None,
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
+    thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -460,6 +461,16 @@ def apply_economic_retirements(
         mc: Full variable cost aligned row-for-row with
             ``dispatch_result.dispatch``, shape ``(n_gen, T)`` in $/MWh.
             ``None`` falls back to gross-revenue screening (see above).
+        storage_power_mw: AS-eligible (storage) fleet power in MW, the
+            saturation driver for the exogenous AS credit.
+        deliverability_headroom: Per-zone deliverable-capacity headroom for
+            the locational RA gate (no-op when empty/off).
+        thermal_as_revenue_per_mw_yr: ``{fuel_type: $/MW-yr}`` AS credit
+            derived from the co-opt's reserve duals under
+            ``ercot_thermal_as_endogenous`` (rule 19). When supplied it
+            REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal —
+            exactly one mechanism prices thermal AS. ``None`` (the default,
+            flag off) keeps the exogenous flat rate.
 
     Returns:
         Tuple ``(survivors, loss_years)`` -- the fleet with retired units
@@ -524,9 +535,18 @@ def apply_economic_retirements(
         # income stream the energy-only LP cannot produce. Zero unless
         # config.as_revenue_enabled (ERCOT only); saturates on the storage
         # fleet. Omitting it makes tail thermal under-earn and over-retire.
-        net_revenue += g.pmax_mw * as_revenue_per_mw_yr(
-            g.fuel_type, storage_power_mw, config
-        )
+        # Exactly one mechanism prices it (rule 19): under
+        # ercot_thermal_as_endogenous the co-opt duals supply a per-fuel derived
+        # rate (thermal_as_revenue_per_mw_yr) and the exogenous flat rate is
+        # suppressed; otherwise the exogenous rate is the sole credit.
+        if thermal_as_revenue_per_mw_yr is not None:
+            net_revenue += g.pmax_mw * thermal_as_revenue_per_mw_yr.get(
+                g.fuel_type, 0.0
+            )
+        else:
+            net_revenue += g.pmax_mw * as_revenue_per_mw_yr(
+                g.fuel_type, storage_power_mw, config
+            )
 
         threshold = getattr(
             config,
@@ -1062,6 +1082,7 @@ def apply_economic_new_entry(
     carbon_price: float = 0.0,
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
+    thermal_as_revenue_per_mw_yr: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -1111,6 +1132,16 @@ def apply_economic_new_entry(
             new entry its expected variable fuel cost.
         carbon_price: Carbon price in $/tCO2, used to charge thermal new
             entry its expected carbon cost.
+        storage_power_mw: AS-eligible (storage) fleet power in MW, the
+            saturation driver for the exogenous AS credit.
+        deliverability_headroom: Per-zone deliverable-capacity headroom for
+            the locational RA gate (no-op when empty/off).
+        thermal_as_revenue_per_mw_yr: ``{fuel_type: $/MW-yr}`` AS credit
+            derived from the co-opt's reserve duals under
+            ``ercot_thermal_as_endogenous`` (rule 19). When supplied it
+            REPLACES the exogenous ``as_revenue_per_mw_yr`` for thermal
+            candidates. ``None`` (the default, flag off) keeps the exogenous
+            flat rate.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -1216,11 +1247,14 @@ def apply_economic_new_entry(
                 if build_zone_long
                 else capacity_revenue_per_mw_yr(iso_config.name, EFORD[tech])
             )
-            effective_revenue = (
-                energy_margin
-                + capacity_payment
-                + as_revenue_per_mw_yr(tech, storage_power_mw, config)
-            )
+            # AS credit: derived per-fuel co-opt rate under
+            # ercot_thermal_as_endogenous (rule 19), else the exogenous flat rate.
+            # Exactly one prices thermal AS.
+            if thermal_as_revenue_per_mw_yr is not None:
+                as_credit = thermal_as_revenue_per_mw_yr.get(tech, 0.0)
+            else:
+                as_credit = as_revenue_per_mw_yr(tech, storage_power_mw, config)
+            effective_revenue = energy_margin + capacity_payment + as_credit
             margin = effective_revenue - fixed_cost
             if margin > 0.0:
                 margins.append((margin, tech))
@@ -1626,6 +1660,16 @@ def evolve_fleet(
     mc_cost = _prior_attr(prior_results, "mc_cost")
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
     storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
+    # Per-fuel thermal AS credit DERIVED from the prior-year co-opt reserve duals,
+    # populated by the runner only under ercot_thermal_as_endogenous. When present
+    # the retirement/new-entry screens use it in place of the exogenous flat AS
+    # rate so exactly one mechanism prices thermal AS (rule 19); None keeps the
+    # exogenous rate (byte-identical default).
+    thermal_as_revenue_per_mw_yr = (
+        _prior_attr(prior_results, "thermal_as_revenue_per_mw_yr", None)
+        if getattr(config, "ercot_thermal_as_endogenous", False)
+        else None
+    )
 
     # 1. Known retirements. Fossil units are exempt by default (their phaseout is
     #    economic, step 2); non-fossil units retire on their announced EIA-860
@@ -1676,6 +1720,7 @@ def evolve_fleet(
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
+            thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
         )
 
     # 3. Known additions: planned units coming online this year.
@@ -1710,6 +1755,7 @@ def evolve_fleet(
             carbon_price=carbon_price,
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
+            thermal_as_revenue_per_mw_yr=thermal_as_revenue_per_mw_yr,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
