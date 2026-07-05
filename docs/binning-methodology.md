@@ -341,8 +341,9 @@ Commitment parameters (`min_run_hours`, `min_down_hours`,
 
 The must-run tranche of a CHP bin is removed from the LP because its
 generation is fixed by a steam contract, not by market economics. After
-dispatch, `compute_must_run_emissions()` reconstructs that generation and
-its CO2 for asset-level emissions trajectories:
+dispatch, `compute_must_run_emissions()` (`results/emissions.py:200-307`)
+reconstructs that generation and its CO2 for asset-level emissions
+trajectories:
 
 ```
 # Measured-share mode (backcast) — when a metered class total is supplied:
@@ -372,6 +373,13 @@ history). `class_cf_by_group` is `measured_class_cf` — a gen-weighted
 op-hours utilization keyed off the CEMS steam-load signature
 (`steam_load_klbh_sum > 0`). This applies to `CC_CHP`, `CT_CHP` and `ST_CHP`
 (non-coal must-run plants).
+
+Neither branch sizes the BTM share off `total_gen_by_plant − model_grid_dispatch`:
+doing so would make the "measured" residual track whatever the model happened to
+leave undispatched — a circular, rule-13-violating construction that can never
+fail a fuel-mix check (CLAUDE.md rule 13; see `results/emissions.py:220-238` for
+the full rationale). Both `btm_share_by_plant` and `class_cf_by_group` are
+measured quantities independent of the model's own dispatch.
 
 ## What this replaces
 
