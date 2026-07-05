@@ -45,6 +45,11 @@ from market_sim.config.constants import END_YEAR, START_YEAR, WEATHER_YEAR_POOL
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
 from market_sim.results.export import _summarize_year
+from market_sim.structural_prior import (
+    STRUCTURAL_LAYER,
+    StructuralPrior,
+    convolve,
+)
 from market_sim.uncertainty import (
     DrawSet,
     UncertaintySpec,
@@ -542,6 +547,58 @@ def compute_bands(
     return rows
 
 
+def _values_from_metrics(metrics: pd.DataFrame) -> dict[int, dict[str, list[float]]]:
+    """Rebuild the ``values[year][metric] -> members`` index from long metrics.
+
+    Inverse of :func:`_metric_rows`: groups the long ``metrics.parquet`` rows
+    back into per-(year, metric) member-value lists so bands can be recomputed
+    from the committed metrics alone (plan §4.1's pure recompute).
+    """
+    values: dict[int, dict[str, list[float]]] = {}
+    for year, ydf in metrics.groupby("year"):
+        per_metric: dict[str, list[float]] = {}
+        for metric, mdf in ydf.groupby("metric", sort=False):
+            per_metric[str(metric)] = [float(v) for v in mdf["value"]]
+        values[int(year)] = per_metric
+    return values
+
+
+def bands_from_metrics(
+    metrics: pd.DataFrame,
+    seed: int,
+    iso: str | None = None,
+    prior: StructuralPrior | None = None,
+) -> pd.DataFrame:
+    """Recompute ``bands.parquet`` from ``metrics.parquet`` + an optional prior.
+
+    A pure function (no solves, no member reload): the parametric layer is
+    recomputed from the long metrics, and when ``prior`` and ``iso`` are given
+    the ``parametric_plus_structural`` emissions layer is convolved in and
+    appended (plan §4.1 -- "bands recompute from metrics.parquet + the prior via
+    a pure function"). Cheap, re-runnable and auditable separately from the
+    solves; PB-4 rebuilds the published band this way without re-solving.
+
+    Args:
+        metrics: The long metrics frame (``draw_id, year, metric, value``).
+        seed: Bootstrap/structural seed (the sampler spec's seed).
+        iso: ISO for the structural layer; required when ``prior`` is given.
+        prior: Optional fitted structural prior.
+
+    Returns:
+        A bands DataFrame with the frozen §4.1 schema.
+
+    Raises:
+        ValueError: When ``prior`` is given without ``iso``.
+    """
+    values = _values_from_metrics(metrics)
+    rows = compute_bands(values, seed=seed)
+    if prior is not None:
+        if iso is None:
+            raise ValueError("iso is required to convolve the structural prior")
+        rows = rows + convolve(values, prior, iso, seed=seed)
+    return pd.DataFrame(rows)
+
+
 def _draw_rows(
     drawset: DrawSet,
     configs: dict[str, ScenarioConfig],
@@ -606,6 +663,7 @@ def export_sampler_ensemble(
     drawset: DrawSet,
     configs: dict[str, ScenarioConfig],
     out_dir,
+    prior: StructuralPrior | None = None,
 ) -> dict[str, Path]:
     """Write the §4.1 output surface for a sampler ensemble.
 
@@ -616,6 +674,13 @@ def export_sampler_ensemble(
     member map, estimator note and dispatch-conditional label). The parquet
     schemas are the frozen PB-3/PB-4 contract.
 
+    When ``prior`` is supplied the emissions band is additionally convolved with
+    the D-7 structural-error prior (PB-3, :func:`structural_prior.convolve`): the
+    ``parametric_plus_structural`` layer is appended to ``bands.parquet`` *next
+    to* the untouched ``parametric`` rows (the point forecast never moves, rule
+    13), and the prior's fit + the dispatch-conditional label land in
+    ``ensemble_meta.json``.
+
     Args:
         base_config: The shared forecast base the draws perturb.
         spec: The uncertainty specification.
@@ -624,6 +689,8 @@ def export_sampler_ensemble(
         drawset: The draws (carrying sampler metadata).
         configs: Map of draw-id to its :class:`ScenarioConfig`.
         out_dir: Directory to write the four files into; created if absent.
+        prior: Optional fitted structural prior (PB-3). ``None`` emits the
+            parametric layer only (PB-2's backwards-compatible surface).
 
     Returns:
         A dict mapping each artifact name to its written path.
@@ -642,9 +709,24 @@ def export_sampler_ensemble(
         draws_path, index=False
     )
     pd.DataFrame(_metric_rows(values, members)).to_parquet(metrics_path, index=False)
-    pd.DataFrame(compute_bands(values, seed=spec.seed)).to_parquet(
-        bands_path, index=False
+
+    # Parametric layer (PB-2) always; structural layer (PB-3) when a prior is
+    # given. The two live side by side so the parametric-only band stays
+    # inspectable and the headline P50 is the untouched parametric one (§4.1).
+    band_rows = compute_bands(values, seed=spec.seed)
+    layers = [_PARAMETRIC_LAYER]
+    if prior is not None:
+        band_rows = band_rows + convolve(values, prior, iso, seed=spec.seed)
+        layers = layers + [STRUCTURAL_LAYER]
+    pd.DataFrame(band_rows).to_parquet(bands_path, index=False)
+
+    label = (
+        "parametric probability band (PB-2); dispatch-conditional -- excludes "
+        "the structural-error prior (PB-3) and the deterministic scenario "
+        "envelope (PB-0), and excludes fleet-path structural error until PP-0.3"
     )
+    if prior is not None:
+        label = prior.label() + "; excludes the deterministic scenario envelope (PB-0)"
 
     meta = {
         "iso": iso,
@@ -653,17 +735,15 @@ def export_sampler_ensemble(
         "sampler": drawset.meta.as_dict(),
         "members": dict(members),
         "band_quantiles": list(_BAND_QUANTILES),
-        "layers_present": [_PARAMETRIC_LAYER],
+        "layers_present": layers,
         "quantile_estimator": (
             "numpy Hyndman-Fan type 7 (method='linear'); n reported per quantile; "
             "bootstrap 90% CI, 1000 resamples (plan §2.4)"
         ),
-        "label": (
-            "parametric probability band (PB-2); dispatch-conditional -- excludes "
-            "the structural-error prior (PB-3) and the deterministic scenario "
-            "envelope (PB-0), and excludes fleet-path structural error until PP-0.3"
-        ),
+        "label": label,
     }
+    if prior is not None:
+        meta["structural_prior"] = prior.as_dict()
     meta_path.write_text(json.dumps(meta, separators=(",", ":"), default=str))
 
     logger.info(
@@ -686,6 +766,7 @@ def run_sampler_ensemble(
     iso: str | None = None,
     workers: int | None = None,
     out_dir=None,
+    prior: StructuralPrior | None = None,
 ) -> dict[str, str]:
     """Sample, solve and export a multivariate-uncertainty ensemble (§2.5).
 
@@ -699,6 +780,8 @@ def run_sampler_ensemble(
         iso: ISO identifier; defaults to ``base_config.iso``.
         workers: Worker processes. Defaults to ``min(2, cpu_count - 1)``.
         out_dir: Directory for the output surface; skipped when ``None``.
+        prior: Optional fitted structural prior (PB-3) folded into the emissions
+            band when ``out_dir`` is written; ``None`` emits parametric only.
 
     Returns:
         A dict mapping each draw-id to the ``cache_key`` of its run.
@@ -708,6 +791,6 @@ def run_sampler_ensemble(
     members = run_ensemble(configs, iso, workers)
     if out_dir is not None:
         export_sampler_ensemble(
-            base_config, spec, iso, members, drawset, configs, out_dir
+            base_config, spec, iso, members, drawset, configs, out_dir, prior=prior
         )
     return members

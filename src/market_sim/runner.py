@@ -1498,6 +1498,13 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to write the weather-year ensemble distribution JSON; "
         "skipped if omitted. Weather-only path.",
     )
+    ensemble_parser.add_argument(
+        "--structural-prior",
+        action="store_true",
+        help="Fold the D-7 structural-error prior into the emissions band "
+        "(PB-3), producing the published dispatch-conditional band alongside "
+        "the parametric one. Requires --sampler and --out-dir.",
+    )
 
     matrix_parser = subparsers.add_parser(
         "matrix",
@@ -1569,7 +1576,14 @@ def main(argv: list[str] | None = None) -> None:
                 overrides["seed"] = args.seed
             if overrides:
                 spec = replace(spec, **overrides)
-            run_sampler_ensemble(config, spec, iso, args.workers, args.out_dir)
+            prior = None
+            if args.structural_prior:
+                from market_sim.structural_prior import default_prior
+
+                prior = default_prior()
+            run_sampler_ensemble(
+                config, spec, iso, args.workers, args.out_dir, prior=prior
+            )
         else:
             from market_sim.ensemble import export_ensemble_json, run_weather_ensemble
 
