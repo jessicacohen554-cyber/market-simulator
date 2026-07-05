@@ -362,6 +362,35 @@ only if the envelope-conditioner demonstrably beats `a_gw` on that held-in LOYO;
 the constants re-derive only on a CAMPD data update (rule 23), never on a keeper's
 CO2 fit.
 
+## 9.2 Wave-3 results (2026-07-05, branch `claude/chp-btm-share-measured-oo8dye`)
+
+**R5 (EM-7) — BTM share, now done.** Wave-2 closed the CO2-rate half of R5 but
+left the forecast BTM-share fallback sizing `mr_mw` off the sector-keyed
+default (`data.chp.chp_btm_pct`, baked into each bin's `pct_mr` at fleet-build
+time) rather than a per-plant measurement. This wave adds the `chp-btm-share`
+clean datatype (`scripts/curate_chp_btm_share.py`,
+`data/dictionary/schema/chp-btm-share.schema.yaml`): per (iso, plant, CHP
+class), `btm_share = (eia923_net_mwh − campd_net_mwh) / eia923_net_mwh`, pooled
+across every available non-quarantined year, from the already-committed
+`plant_emission_rates_v2` (CAMPD grid-net generation, steam-reporting units
+only) and `eia923_monthly_generation` (EIA-923 Page-1 net class generation)
+processed-legacy artifacts. Both sides are measured and independent of the
+model's own dispatch (rule 13).
+
+`data.chp.measured_btm_share_by_plant(iso)` reads the artifact through the
+`scripts.lib.clean_io` seam; `runner._chp_measured_co2_inputs` resolves it only
+for **forecast** years and threads it into
+`compute_must_run_emissions(..., btm_share_by_plant=...)`, which now uses the
+measured share (falling back to the bin's own `pct_mr` when a plant is
+uncovered) in **both** its measured-share and measured-CF-fallback branches —
+previously only the measured-share (backcast-style `total_gen_by_plant`) branch
+consumed `btm_share_by_plant` at all. The backcast path
+(`run_calibration_full.py::_btm_frame`) is untouched — it keeps sizing its own
+`share_by_plant` from `chp_btm_pct` directly, per the acceptance scope. No
+default CO2/dispatch change where the artifact is absent (the clean partition
+must be curated per ISO via `scripts/curate_chp_btm_share.py` /
+`scripts/regenerate_clean.py`).
+
 ## 8. Implementation prompt
 
 ```

@@ -55,12 +55,19 @@ reconstructs the host generation and its CO₂ for the asset-level emissions
 trajectories:
 
 ```
-mr_mw       = nameplate * MR% / 100
-mr_gen_mwh  = mr_mw * 8760 * must_run_cf      # must_run_cf default 0.85
-mr_co2_tons = mr_gen_mwh * emission_rate
+share       = btm_share_by_plant.get(plant, MR% / 100)   # measured host share, else bin MR%
+mr_mw       = nameplate * share
+cf          = class_cf_by_group.get(plant_group, must_run_cf)  # measured class CF, else 0.85
+mr_gen_mwh  = mr_mw * 8760 * cf
+mr_co2_tons = mr_gen_mwh * emission_rate    # plant's measured rate when covered, else fuel-class default
 ```
 
-This applies to both `CC_CHP` and `CT_CHP`.
+`btm_share_by_plant` prefers a measured per-plant host self-supply share over
+the flat bin `MR%`: the backcast caller sizes it from `chp_btm_pct` (sector
+default / per-plant override), the forecast caller from the measured
+`chp-btm-share` clean datatype (`data.chp.measured_btm_share_by_plant`) — see
+`docs/binning-methodology.md`. This applies to `CC_CHP`, `CT_CHP` and
+`ST_CHP`.
 
 ### Must-Run for coal / lignite
 
