@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1060 parameters registered** (589 flagged `needs-citation`).
+**1069 parameters registered** (596 flagged `needs-citation`).
 
 
 ## Calibration
@@ -226,7 +226,7 @@ inline comment and still need a dated primary source — search the table for
 | `co2_rate_class_median_percentile` | 50.0 | 2 | Percentile of the per-class (plant_group × fuel) CAMPD rate distrib… |  | auto-generated, needs-citation |
 | `co2_rate_conditioning_enabled` | False | 2 | Whether the operation-conditioned refinement ships enabled. Per the… |  | auto-generated, needs-citation |
 | `co2_rate_envelope_gate_l1` | 0.5 | 2 | Envelope-gate threshold: the operation-conditioned nearest-neighbor… | 2023 | auto-generated |
-| `co2_rate_trailing_window_years` | 0 | 2 | Trailing-window length (years) for the gen-weighted base rate. 0 = … |  | auto-generated, needs-citation |
+| `co2_rate_trailing_window_years` | 2 | 2 | Trailing-window length (years) for the gen-weighted base rate. 0 = … |  | auto-generated, needs-citation |
 | `co2_rates.biomass.default` | 0.0 | 2 | EPA eGRID 2022 — petroleum-fired units | 2022 | auto-generated |
 | `co2_rates.coal.older` | 1.08 | 2 | EPA eGRID2022 | 2024-01 |  |
 | `co2_rates.coal.subcritical` | 1.0 | 2 | EPA eGRID2022 | 2024-01 |  |
@@ -767,6 +767,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.chp_steam_following` | False | 3 | CHP cogeneration treatment. When chp_steam_following is True, each … |  | auto-generated, needs-citation |
 | `scenario.cod_ramp_enabled` | True | 3 | Commercial-operation-date (COD) vintage ramp (market_sim.data.cod_r… |  | auto-generated, needs-citation |
 | `scenario.committed_ramp_spread` | 0.0 | 2 | Render the per-plant committed band as an n-slice rising ramp (span… |  | auto-generated, needs-citation |
+| `scenario.control_retrofit_forward` | False | 2 | Forward emission-control retrofit channel (Tier 2; default OFF). do… | 2026-07 | auto-generated |
+| `scenario.control_retrofit_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_mult` | 1.28 | 3 | CT part-load penalty ~28% |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_override` | None | 3 | CT_CHP tranche heat-rate overrides (relative to base HR), applied t… |  | auto-generated, needs-citation |
 | `scenario.ct_deployment_floor_frac` | 1.0 | 3 | Fraction of the measured deployment energy to force (1.0 = the full… |  | auto-generated, needs-citation |
@@ -1066,6 +1068,13 @@ inline comment and still need a dated primary source — search the table for
 | `chp_btm_pct_by_sector.industrial` | 70.0 | 2 | EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output |  | auto-generated, needs-citation |
 | `chp_btm_pct_by_sector.merchant` | 35.0 | 2 | residual-identified, forecast-risk — no independent source yet |  | auto-generated, needs-citation |
 | `chp_st_btm_pct` | 90.0 | 2 | ST_CHP group (tiny chemical host-steam): near-full BTM |  | auto-generated, needs-citation |
+| `control_retrofit_history_end_year` | 2025 | 2 | -------------------------------------------------------------------… | 2026-07 | auto-generated |
+| `control_retrofit_type_map.CD` | ["so2", 0.95] | 2 | Circulating dry scrubber |  | auto-generated, needs-citation |
+| `control_retrofit_type_map.DSI` | ["so2", 0.5] | 2 | Dry sorbent injection |  | auto-generated, needs-citation |
+| `control_retrofit_type_map.JB` | ["so2", 0.95] | 2 | Jet-bubbling reactor (wet FGD) |  | auto-generated, needs-citation |
+| `control_retrofit_type_map.SD` | ["so2", 0.95] | 2 | Spray-dryer / dry FGD |  | auto-generated, needs-citation |
+| `control_retrofit_type_map.SN` | ["nox", 0.35] | 2 | Selective non-catalytic reduction (SNCR) |  | auto-generated, needs-citation |
+| `control_retrofit_type_map.SR` | ["nox", 0.9] | 2 | Selective catalytic reduction (SCR) |  | auto-generated, needs-citation |
 | `ct_econ_hr_override_default` | 1.1 | 2 | CT_CHP economic band ≈ 1.1× base HR |  | auto-generated, needs-citation |
 | `ct_peak_hr_override_default` | 1.3 | 2 | CT_CHP peak band ≈ 1.3× base HR |  | auto-generated, needs-citation |
 | `ercot_as_saturation_exponent` | 2.5 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
