@@ -3156,6 +3156,24 @@
       "flags": []
     },
     {
+      "param_id": "scenario.confirmed_exits_enabled",
+      "display_name": "Confirmed Exits Enabled",
+      "value": true,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-ON (flipped 2026-07-05). Owner sign-off once the confirmed-retirements registry (data/raw/confirmed-retirements) covered all six ISOs (PR #1420, merged 2026-07-05) and its two open primary-document caveats -- Rockport 1's S.D. Ohio civil action number and Diablo Canyon's CPUC decision number -- were independently confirmed against primary documents: the filed Fifth Joint Modification (Case 2:99-cv-01250-EAS-KAJ Doc #438, S.D. Ohio, Consolidated Cases C2-99-1182/C2-99-1250) for Rockport, and a CPUC decision in R.23-01-007 quoting D.23-12-036 verbatim for Diablo Canyon. Forecast-mode only; a backcast run is unaffected regardless of this default (runner._confirmed_exits_active hard-gates on mode == \"forecast\").",
+      "source_date": "2026-07-05",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Design and rationale: docs/handoffs/confirmed-retirement-plan-2026-07.md (§7 records the flip). Registry: data/raw/confirmed-retirements/{pjm,caiso}.csv row notes carry the full primary-document citations.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": [
+        "curated"
+      ]
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -14944,25 +14962,6 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Render the per-plant committed band as an n-slice rising ramp (spanning the committed HR multiplier +/- this fraction) instead of one flat block, so a CAMPD bin clears its committed capacity progressively with price rather than snapping 0 -> full committed share in one hour (the under-populated mid-capacity-factor-band artifact of the commitment-free LP). 0.0 (default) keeps the flat block. The mean committed bid is unchanged, so class volume is ~preserved; only the dispatch level distribution smooths. Slice count = offer_curve_smoothing_n.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
-      "param_id": "scenario.confirmed_exits_enabled",
-      "display_name": "Confirmed Exits Enabled",
-      "value": false,
-      "unit": "",
-      "domain": "Structural",
-      "tier": 2,
-      "source": "GATED, default-OFF. When True and",
       "source_date": "",
       "page_or_table": "",
       "url": "",
