@@ -56,7 +56,9 @@ class TestCurateCapacityDeliverabilityCaiso(unittest.TestCase):
         df = self._curate_caiso()
         self.assertEqual(set(df["iso"]), {"CAISO"})
         self.assertEqual(list(df.columns), list(cd.CANONICAL_COLUMNS))
-        self.assertEqual(len(df), 138)
+        # 138 original rows + 9 peak_load rows (LA Basin / San Diego-IV /
+        # SP26 zonal x 2023-2025, the local-capacity constraint inputs).
+        self.assertEqual(len(df), 147)
 
     def test_mixed_area_type_survives(self) -> None:
         df = self._curate_caiso()
@@ -72,7 +74,15 @@ class TestCurateCapacityDeliverabilityCaiso(unittest.TestCase):
         prm = df[(df["area"] == "CAISO") & (df["metric"] == "system_requirement")]
         self.assertFalse(prm.empty)
         self.assertEqual(set(prm["area_type"]), {"rto"})
-        self.assertEqual(set(df["area_type"]), {"local_area", "branch_group", "rto"})
+        # peak_load rows: local_area for the two LCR pockets, zone for the
+        # SP26 share denominator (local-capacity constraint inputs).
+        pl = df[df["metric"] == "peak_load"]
+        self.assertFalse(pl.empty)
+        self.assertEqual(set(pl["area_type"]), {"local_area", "zone"})
+        self.assertEqual(set(pl[pl["area_type"] == "zone"]["area"]), {"SP26"})
+        self.assertEqual(
+            set(df["area_type"]), {"local_area", "branch_group", "rto", "zone"}
+        )
 
     def test_calendar_delivery_year(self) -> None:
         df = self._curate_caiso()
