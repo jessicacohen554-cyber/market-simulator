@@ -69,6 +69,7 @@ def save_result(
     year: int,
     context: FleetContext | None = None,
     pass_label: str | None = None,
+    demand: "np.ndarray | None" = None,
 ) -> Path:
     """Persist a dispatch result and its config to the cache.
 
@@ -86,6 +87,8 @@ def save_result(
         pass_label: Solve-pass tag (see :func:`get_cache_path`). ``None``
             writes the final-result file; ``"p1"`` writes the Pass 1
             dataset.
+        demand: Optional ``(n_zones, T)`` served demand, stored so the
+            forecast-invariant checker can verify the energy balance.
 
     Returns:
         The Parquet path written.
@@ -93,7 +96,7 @@ def save_result(
     cache_key = config.cache_key()
     path = get_cache_path(iso, cache_key, year, pass_label)
     path.parent.mkdir(parents=True, exist_ok=True)
-    result.to_parquet(path, context=context)
+    result.to_parquet(path, context=context, demand=demand)
     config.to_yaml_full(path.parent / _CONFIG_FILENAME)
     return path
 

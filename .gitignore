@@ -333,3 +333,4 @@ data/raw/*-weather/_ghcn_cache/
 # trip the remote's 413 push limit); the hashes-only <stage-tag>/manifest.json
 # stays tracked as the committed deliverable.
 /results/regression-goldens/*/*/
+scratch_hindcast/
