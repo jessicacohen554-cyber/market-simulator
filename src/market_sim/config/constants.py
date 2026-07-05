@@ -331,10 +331,21 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
 # ---------------------------------------------------------------------------
 
 # Trailing-window length (years) for the gen-weighted base rate. 0 = use ALL
-# available history. LOYO (plan §2.2): with a 3-year history the all-years
-# gen-weighted average won (wMAPE 2.20% vs 2.28% simple / 2.46% recency);
-# re-validated against the 7-year history before any narrower window is adopted.
-CO2_RATE_TRAILING_WINDOW_YEARS: int = 0
+# available history. Chosen ONCE from the committed LOYO harness on the full
+# 7-year history (2018-2021 + 2023-2025), 2026-07-05 — the plan-§2.2 re-
+# examination the 3-year default was provisional against. The FORWARD-CHAINED
+# sweep (scripts/loyo_co2_rates.py --forward-chain --window-sweep, targets
+# predicted from strictly-prior years — the direction matching production use,
+# where "trailing" always means the years nearest the forecast year) shows a
+# trailing 2-year window beats all-years uniformly on both swept ISOs:
+# ERCOT wMAPE 2.59% vs 2.88% and PJM 3.35% vs 4.34% pooled, winning 8/8
+# per-target comparisons and improving fleet-tons bias on 7/8 (plan §9.1
+# wave-2 tables) — measured plant rates drift (aging/retrofits), so recent
+# years are more predictive. (The symmetric LOYO direction inverts this
+# ordering only because a "trailing" window for an early target selects the
+# years FURTHEST from it — an artifact of backward prediction, not evidence
+# against the window.) Re-derives only on a CAMPD source-data update (rule 23).
+CO2_RATE_TRAILING_WINDOW_YEARS: int = 2
 
 # Envelope-gate threshold: the operation-conditioned nearest-neighbor refinement
 # (plan §2.1 step 2) fires ONLY when the target-year simulated operating point
@@ -353,6 +364,13 @@ CO2_RATE_CLASS_MEDIAN_PERCENTILE: float = 50.0
 # Whether the operation-conditioned refinement ships enabled. Per the plan's
 # acceptance gate it stays OFF (estimator == pure gen-weighted a_gw) unless the
 # 7-year held-in LOYO shows the envelope-gated conditioner beats plain a_gw.
+# 7-YEAR VERDICT (2026-07-05, plan §9.1): the gate stays CLOSED. On the full
+# 2018-2021+2023-2025 history the envelope-gated sim-conditioned estimator
+# (--gate-sweep 0.1/0.25/0.5/1.0) never beats plain a_gw on ERCOT — the only
+# ISO whose keeper persists simulated operation — (pooled wMAPE 2.89-2.93% vs
+# a_gw 2.89%), and PJM's marginal 0.03pp gated edge is oracle-operation (no
+# sim-op bundle exists), not a demonstrable sim-conditioned win. The estimator
+# ships as the pure trailing-window gen-weighted average.
 CO2_RATE_CONDITIONING_ENABLED: bool = False
 
 # ---------------------------------------------------------------------------
