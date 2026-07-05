@@ -4,11 +4,95 @@
     "MARKET_SIM_WARMSTART": "1",
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
-  "git_dirty": true,
-  "git_sha": "eed10ff",
+  "git_dirty": false,
+  "git_sha": "6982566",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
+    "CAISO": {
+      "bundle": "results/calibration/caiso51_firm_base",
+      "content_hashes": {
+        "btm.parquet": "2eea98092e50d039a2e54859bafd184757e5ba82aa0e624b5d5211138643bd4e",
+        "dispatch/2023_P1.parquet": "949c9803d4fb1895cd80eab8b8206c7f9ff896ae60d8d51108580e8fdec99c32",
+        "dispatch/2023_P2.parquet": "1b2a85ee32c87350d08728d974fd1af79fd3f64e195552054dfcd44ce7cc8c90",
+        "dispatch/2024_P1.parquet": "036212e7d0cf963890c0c34c3604033a2f2cf08bc51882d33c6e8e9a78a9ef03",
+        "dispatch/2024_P2.parquet": "c48483e266ad30db085d8035cd3078341636318f675db3424fc111d92c066116",
+        "dispatch/2025_P1.parquet": "88b58d7c539af2f11c157fc00b80f3ddf76e2d24bb7152bed07556d58b7f0323",
+        "dispatch/2025_P2.parquet": "6e2c52f0b8807adc985d60066ad0062727f11c1aa56b936f66efc468ab34febe",
+        "flows.parquet": "44e6768b498b279daf9c94968bb48499fc1ab5015da6be4663666f2cc14c907c",
+        "storage.parquet": "7222c4ac89ac133a2607a8bfd3bf66cf856c4a0c34323810309105514c71520c",
+        "system.parquet": "310096eb6f0ba2cb1fe7eaf915fe4108101e9c834a0f77cab5c56b06d9e55cc0"
+      },
+      "defaulted_unrecorded_params": [
+        "coal_takeorpay_from_data",
+        "ct_drag_overrides",
+        "ct_netload_drag",
+        "ercot_ordc_total_reserve",
+        "ercot_storage_as_product_credit",
+        "gas_hh_monthly_shape",
+        "gas_st_drag_overrides",
+        "gas_st_netload_drag",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_inventory",
+        "neiso_winter_fuel_start_fill_bbl",
+        "nyiso_import_hub_prices",
+        "nyiso_iroquois_winter_spread",
+        "nysdec_peaker_rule_availability",
+        "oil_primary_bin_fuel",
+        "plant_tranche_config",
+        "tranche_startup_amortization",
+        "tranche_startup_measured_runs"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "oil_primary_bin_fuel",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 122,
+        "scenario_config_drift": [
+          "offer_curve_by_group"
+        ],
+        "scenario_config_head_only": [
+          "caiso_solar_shape_nl_hi_pct",
+          "caiso_solar_shape_nl_lo_pct",
+          "carbon_program_price_path",
+          "ercot_ordc_total_reserve",
+          "ercot_storage_as_product_credit",
+          "gas_hh_monthly_shape",
+          "mass_cap_enabled",
+          "mass_cap_program",
+          "mass_cap_tons",
+          "neiso_winter_fuel_inventory",
+          "neiso_winter_fuel_start_fill_bbl",
+          "nyiso_import_hub_prices",
+          "nyiso_iroquois_winter_spread",
+          "nysdec_peaker_rule_availability",
+          "plant_emission_rates_v2_path",
+          "tranche_startup_amortization",
+          "tranche_startup_measured_runs",
+          "use_plant_emission_rates_v2"
+        ],
+        "scenario_config_matched": 350
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-03-caiso-51-firm-base",
+      "recorded_flag_count": 116,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
     "ERCOT": {
       "bundle": "results/calibration/ercot_ordc_total_rtolcap_v1",
       "content_hashes": {
