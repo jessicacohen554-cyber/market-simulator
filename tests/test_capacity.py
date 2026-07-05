@@ -1347,10 +1347,15 @@ class TestStateCarbonProgram(unittest.TestCase):
         config = ScenarioConfig(iso="CAISO", carbon_price=50.0)
         self.assertEqual(resolve_carbon_price(config, 2024), 50.0)
 
-    def test_caiso_forward_years_fall_back_to_path(self):
-        # No CARB entry beyond 2025: forward years use carbon_price_path.
+    def test_caiso_forward_years_use_projected_program_price(self):
+        # EM-6 seam fix: with the default (zero) RFF path, forward CAISO years
+        # carry the PROJECTED CARB price — the last measured price (2025,
+        # $28.06/t) escalated at the CARB floor-band rate (7%/yr) — not zero.
         config = ScenarioConfig(iso="CAISO", carbon_price_path="zero")
-        self.assertEqual(resolve_carbon_price(config, 2030), 0.0)
+        self.assertAlmostEqual(
+            resolve_carbon_price(config, 2030), 28.06 * 1.07**5, places=3
+        )
+        # An explicit RFF exogenous path still wins over the program projection.
         config = ScenarioConfig(iso="CAISO", carbon_price_path="mid")
         self.assertAlmostEqual(resolve_carbon_price(config, 2030), 15.0)
 

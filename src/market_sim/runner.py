@@ -85,6 +85,7 @@ from market_sim.model.transmission import (
     wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price
+from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
@@ -798,6 +799,29 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     import_node_gen_idx=node_idx,
                     import_node_monthly_lo=recon_lo,
                     import_node_monthly_hi=recon_hi,
+                )
+            # Emissions mass-cap rows (policy constraint path, gated). When
+            # mass_cap_enabled and a power-sector CO2 budget is configured for
+            # the ISO's program/year, bound in-region fossil emissions; each
+            # cap's per-generator coefficient is m_zone[zone_idx]·emission_rate.
+            # Default off → no specs → identical LP. The row dual is surfaced as
+            # DispatchResult.co2_cap_price (a power-sector, no-bank scenario
+            # allowance price — plan §2/§8, not the RGGI/CARB market price).
+            mass_caps = get_active_policy_constraints(config, year)
+            if mass_caps:
+                cap_coeffs = np.vstack(
+                    [
+                        spec.membership[fleet_arrays.zone_idx]
+                        * fleet_arrays.emission_rate
+                        for spec in mass_caps
+                    ]
+                )
+                dispatch_kwargs.update(
+                    mass_cap_coeffs=cap_coeffs,
+                    mass_cap_rhs=np.array(
+                        [spec.cap_tons for spec in mass_caps], dtype=float
+                    ),
+                    mass_cap_labels=[spec.label for spec in mass_caps],
                 )
             # Energy + operating-reserve co-optimization (multi-ISO, gated):
             # the ISO's reserve demand curve enters the LP as reserve balance

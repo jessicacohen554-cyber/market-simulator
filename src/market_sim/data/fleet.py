@@ -2529,14 +2529,27 @@ def assemble_mc(
              + sum(rate * price for each adder)
 
     ``fuel_prices`` is ``(n_gen, T)`` or broadcastable to it. ``carbon_price``
-    and ``nox_price`` may be scalars or ``(T,)`` hourly arrays. Each ``adders``
+    and ``nox_price`` may be scalars or ``(T,)`` hourly arrays. ``carbon_price``
+    may additionally be a **per-generator** membership-weighted allowance adder
+    (``m_zone[zone_idx] * price``, shape ``(n_gen,)`` or ``(n_gen, 1)``) so a
+    cap-and-trade program with fractional/partial footprint membership charges
+    each generator only its member share (a uniform ``m_zone == 1`` reproduces
+    the scalar path bit-for-bit). A bare ``(n_gen,)`` vector is reshaped to a
+    column; in this model ``n_gen`` (hundreds) is never equal to ``T`` (8760),
+    so the per-generator vs per-hour shapes never collide. Each ``adders``
     keyword value is a ``(generator_rate_array, hourly_price_array)`` pair,
     allowing extra cost terms (e.g. SO2) without changing the signature.
     """
     heat_rate = fleet.heat_rate[:, np.newaxis]
     mc = heat_rate * np.asarray(fuel_prices, dtype=float)
     mc = mc + fleet.vom[:, np.newaxis]
-    mc = mc + fleet.emission_rate[:, np.newaxis] * np.asarray(carbon_price, dtype=float)
+    carbon = np.asarray(carbon_price, dtype=float)
+    # A per-generator membership-weighted adder arrives as a length-n_gen
+    # vector; reshape to a column so it broadcasts down the T axis (a scalar or
+    # (T,) hourly price is left as-is).
+    if carbon.ndim == 1 and carbon.shape[0] == fleet.n_gen:
+        carbon = carbon[:, np.newaxis]
+    mc = mc + fleet.emission_rate[:, np.newaxis] * carbon
     mc = mc + fleet.nox_rate[:, np.newaxis] * np.asarray(nox_price, dtype=float)
 
     for rate_array, price_array in adders.values():

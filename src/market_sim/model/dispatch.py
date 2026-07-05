@@ -374,6 +374,48 @@ def _build_rps_row(
     return row, rhs
 
 
+def _build_mass_cap_rows(layout: VariableLayout, coeffs: np.ndarray) -> sp.csr_matrix:
+    """Return the stacked emissions mass-cap constraint block (rule 2).
+
+    ``coeffs`` is ``(k, n_gen)``: entry ``(r, g)`` is the row coefficient
+    ``m[g] * emission_rate[g]`` on member generator ``g`` for cap ``r`` (the
+    per-generator membership weight times its CO2 emission rate). Each row sums
+    that coefficient over the generator's dispatch columns across all ``T``
+    hours, enforcing ``sum_{g,t} coeffs[r,g] * P[g,t] <= cap_tons[r]``.
+
+    Only thermal-block ``P`` columns are touched — import-node and inter-zone
+    flow columns get a zero coefficient, because the cap is on *in-region*
+    emissions and imported energy's emissions occur outside the capped region
+    (plan §4; the leakage channel is thereby represented, not suppressed). The
+    block is assembled in a single COO matrix, cloned from :func:`_build_rps_row`
+    — the only Python loop is a short one over the ``k`` (<=2-3) caps, never over
+    hours.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    hours = np.arange(T)  # t: hour index
+    k = coeffs.shape[0]
+    row_blocks, col_blocks, data_blocks = [], [], []
+    for r in range(k):  # r: cap index — short loop over the caps, never hours
+        gidx = np.flatnonzero(coeffs[r])  # g: member generators for cap r
+        if gidx.size == 0:
+            continue
+        cols = (hours[:, np.newaxis] * vph + layout._p_off + gidx).ravel()
+        data = np.tile(coeffs[r, gidx], T)
+        row_blocks.append(np.full(cols.size, r, dtype=int))
+        col_blocks.append(cols)
+        data_blocks.append(data)
+    if not col_blocks:
+        return sp.csr_matrix((k, layout.total_columns))
+    return sp.coo_matrix(
+        (
+            np.concatenate(data_blocks),
+            (np.concatenate(row_blocks), np.concatenate(col_blocks)),
+        ),
+        shape=(k, layout.total_columns),
+    ).tocsr()
+
+
 def _build_hydro_rows(
     layout: VariableLayout,
     hydro_gen_idx: np.ndarray,
@@ -1360,6 +1402,8 @@ def build_constraints(
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
     import_node_month_index: np.ndarray | None = None,
+    mass_cap_coeffs: np.ndarray | None = None,
+    mass_cap_rhs: np.ndarray | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage_power_cap: np.ndarray | float | None = None,
@@ -1672,6 +1716,20 @@ def build_constraints(
             row_lower = np.concatenate([row_lower, node_lower])
             row_upper = np.concatenate([row_upper, node_upper])
 
+    # Optional emissions mass-cap rows: one inequality per active power-sector
+    # cap, bounding in-region fossil emissions. Appended after the import-node
+    # rows and immediately before the RPS row so the end-anchored dual layout is
+    # [ ... | mass_cap (k) | rps (0/1) | reserve (n) ] — RPS's distance from the
+    # end is unchanged (plan §4). No rows (identical LP) when absent.
+    if mass_cap_coeffs is not None:
+        coeffs = np.asarray(mass_cap_coeffs, dtype=float)
+        if coeffs.size:
+            cap_block = _build_mass_cap_rows(layout, coeffs)
+            cap_rhs = np.asarray(mass_cap_rhs, dtype=float).reshape(-1)
+            A = sp.vstack([A, cap_block], format="csr")
+            row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
+            row_upper = np.concatenate([row_upper, cap_rhs])
+
     # Optional RPS inequality: one annual row, clean generation must reach
     # rps_target * total demand, with an infinite upper bound.
     if rps_target is not None and rps_target > 0.0:
@@ -1946,6 +2004,11 @@ class DispatchResult:
         rps_shadow_price: Dual of the annual RPS constraint in $/MWh -- the
             endogenous RPS compliance cost. ``None`` when no RPS constraint
             was active. Distinct from the exogenous EAC prices.
+        co2_cap_price: Endogenous allowance price ($/tCO2) per active emissions
+            mass-cap row -- the negated dual of each cap (one entry per cap).
+            ``None`` when no mass cap was active. This is a power-sector,
+            no-bank scenario price (plan §2, §8), distinct from the exogenous
+            RGGI/CARB adder.
     """
 
     dispatch: np.ndarray
@@ -1964,6 +2027,9 @@ class DispatchResult:
     solve_time: float
     emissions: np.ndarray | None = None
     rps_shadow_price: float | None = None
+    # Endogenous CO2 allowance price(s) ($/tCO2), one per active mass-cap row;
+    # None unless a mass cap was enabled.
+    co2_cap_price: list[float] | None = None
     # Energy+reserve co-optimization outputs (None unless co-opt is on).
     reserve_dispatch: np.ndarray | None = None  # (n_zones, T) upward reserve MW
     reserve_price: np.ndarray | None = None  # (T,) reserve clearing $/MWh
@@ -2076,6 +2142,9 @@ class DispatchModel:
         import_node_monthly_lo: np.ndarray | None = None,
         import_node_monthly_hi: np.ndarray | None = None,
         import_node_month_index: np.ndarray | None = None,
+        mass_cap_coeffs: np.ndarray | None = None,
+        mass_cap_rhs: np.ndarray | None = None,
+        mass_cap_labels: list[str] | None = None,
         reserve_requirement: np.ndarray | None = None,
         reserve_eligible: np.ndarray | None = None,
         reserve_storage: bool = False,
@@ -2212,6 +2281,8 @@ class DispatchModel:
             import_node_monthly_lo=import_node_monthly_lo,
             import_node_monthly_hi=import_node_monthly_hi,
             import_node_month_index=import_node_month_index,
+            mass_cap_coeffs=mass_cap_coeffs,
+            mass_cap_rhs=mass_cap_rhs,
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
             reserve_storage_power_cap=(storage_power_cap if reserve_storage else None),
@@ -2343,6 +2414,14 @@ class DispatchModel:
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
         self.rps_target = rps_target
+        # Emissions mass-cap rows: k inequality rows appended after import-node
+        # rows and before RPS (plan §4). Their duals (negated) are the endogenous
+        # allowance prices, recovered end-anchored in solve().
+        if mass_cap_coeffs is not None and np.asarray(mass_cap_coeffs).size:
+            self._n_masscap_rows = int(np.asarray(mass_cap_coeffs).shape[0])
+        else:
+            self._n_masscap_rows = 0
+        self.mass_cap_labels = mass_cap_labels
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
@@ -2511,6 +2590,21 @@ class DispatchModel:
             rps_idx = -1 - self._n_reserve_rows
             rps_shadow_price = float(row_dual[rps_idx])
 
+        # Emissions mass-cap duals sit before the RPS row and after the
+        # import-node rows: [ ... | mass_cap (k) | rps (0/1) | reserve (n) ].
+        # Recover them end-anchored past the reserve and RPS tails. HiGHS min
+        # problem, <= row → dual <= 0; the reported allowance price is -λ >= 0.
+        co2_cap_price = None
+        if self._n_masscap_rows:
+            rps_present = (
+                1 if (self.rps_target is not None and self.rps_target > 0.0) else 0
+            )
+            start = row_dual.size - (
+                self._n_reserve_rows + rps_present + self._n_masscap_rows
+            )
+            mass_duals = row_dual[start : start + self._n_masscap_rows]
+            co2_cap_price = [float(-d) for d in mass_duals]
+
         # Energy+reserve co-optimization outputs. Reserve dispatch is the
         # per-zone R_z block (n_zones, T); the reserve clearing price is the dual
         # of the reserve-balance rows (the final T rows), which the per-zone
@@ -2557,6 +2651,7 @@ class DispatchModel:
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
+            co2_cap_price=co2_cap_price,
         )
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":
@@ -2772,6 +2867,9 @@ def solve_dispatch(
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
     import_node_month_index: np.ndarray | None = None,
+    mass_cap_coeffs: np.ndarray | None = None,
+    mass_cap_rhs: np.ndarray | None = None,
+    mass_cap_labels: list[str] | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage: bool = False,
@@ -2838,6 +2936,13 @@ def solve_dispatch(
         rps_target: Required clean-energy share. When not ``None`` and
             positive, an annual RPS constraint is enforced and its dual is
             returned as ``DispatchResult.rps_shadow_price``.
+        mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
+            coefficients (``m[g] * emission_rate[g]``); one inequality row per
+            cap bounds in-region fossil emissions. ``None`` (default) adds no
+            rows and the LP is identical to today's.
+        mass_cap_rhs: ``(k,)`` annual tonnage budgets (row upper bounds) paired
+            with ``mass_cap_coeffs``.
+        mass_cap_labels: Optional per-cap labels carried onto the result.
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro constraint
             family is omitted and the LP is identical to today's.
@@ -2896,6 +3001,9 @@ def solve_dispatch(
         import_node_monthly_lo=import_node_monthly_lo,
         import_node_monthly_hi=import_node_monthly_hi,
         import_node_month_index=import_node_month_index,
+        mass_cap_coeffs=mass_cap_coeffs,
+        mass_cap_rhs=mass_cap_rhs,
+        mass_cap_labels=mass_cap_labels,
         reserve_requirement=reserve_requirement,
         reserve_eligible=reserve_eligible,
         reserve_storage=reserve_storage,
