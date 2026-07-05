@@ -1,206 +1,177 @@
 # FINDING — PJM keeper burndown: the failing legitimacy criteria (2026-07-05)
 
-**Thread:** the pjm-76 keeper (`results/calibration/pjm76_outage_fix`) is
-registered but its legitimacy diagnostics return **Overall: FAIL** on
-**D-4 off-window binding**, and the extended rubric (statistical-mode /
-`docs/statistical-mode-results-2026-07.md`) reports the PJM keeper at 5→7 fails.
-**Question (task step 1):** adjudicate the failing criteria with single-year
-throwaway diagnostics and separate the **evidence-indicted structural bugs**
-(fixable now, grounded) from the **known-open, out-of-scope** residual
-(commitment / per-gen reserve, memory-blocked). Three priorities: (a) which PJM
-offer-band values survive a physical grounding test vs which are pure residual
-artifacts; (b) does PJM CT/CC evening merit show the CAISO sub-SRMC-CC-flood
-pattern; (c) does any class show a flat-floor/drag signature — and is the pjm-75
-CT drag hinge D-8-stable.
+**Thread:** the pjm-76 keeper (`results/calibration/pjm76_outage_fix`) returns
+legitimacy **Overall: FAIL** on **D-4 off-window binding**, and the extended
+statistical-mode rubric reports it at 5→7 fails. **Task:** adjudicate the
+failing criteria with single-year throwaway diagnostics; separate the
+**evidence-indicted structural bugs** from the **known-open, out-of-scope**
+residual (commitment / per-gen reserve, memory-blocked). Priorities: (a) which
+offer bands survive a physical grounding test; (b) does PJM CT/CC evening merit
+show the CAISO sub-SRMC-CC-flood pattern; (c) does any class show a
+flat-floor/drag signature, and is the pjm-75 CT drag D-8-stable.
 
-**Method.** Reproduced the pjm-76 recipe for **2024 only** as a throwaway
-diagnostic (`scripts/diag_pjm_burndown_2024.py`, `--year 2024`, rule 15 — NOT
-dashboard-registered), extracted P1 per-class hourly dispatch, and cross-read it
-against: the reliability-floor coefficient CSV + engine code
-(`data/raw/reference/reliability_floor_coeffs_PJM.csv`,
-`transmission.inject_reliability_floor`), the offer-band overrides
-(`scripts/run_pjm74_cc_ct_rebalance.py`, `run_pjm69_interchange_caps.py`), the
-pjm-76 D-4 diagnostic, and measured CAMPD pure-play CT_PEAKER hour-of-day CF
-(`scripts/diag_pjm_ct_hotday_hod.py`, the same fleet + series
-`derive_pjm_ct_netload_drag.py` uses).
+**Method.** Reproduced the pjm-76 recipe for **2024 only**
+(`scripts/diag_pjm_burndown_2024.py`, rule-15 throwaway — NOT registered),
+extracted P1 per-class hourly dispatch, and cross-read the reliability-floor CSV
++ engine, the offer-band overrides, and measured CAMPD pure-play CT_PEAKER
+hour-of-day CF (`scripts/diag_pjm_ct_hotday_hod.py`). **This burndown also
+uncovered a legitimacy-scoring integrity bug (the meta-gap, §5) that had been
+masking the true D-2 picture for every drag keeper — the most consequential
+finding here.**
 
 ---
 
-## The deciding failure — D-4 off-window binding (reliability_floor × CT_PEAKER)
+## 1. Deciding failure: D-4 off-window binding (reliability_floor × CT_PEAKER)
 
-pjm-76 `legitimacy_diagnostics.md` **D-4 FAIL**, all three years:
+pjm-76 D-4 FAIL, all years: `reliability_floor × CT_PEAKER` binds 99.1 / 99.7 /
+97.5 % of its floored MWh **outside** its justified window h15-21.
 
-| year | floor | window | floored_twh | offwindow_share |
-|---|---|---|---|---|
-| 2023 | reliability_floor × CT_PEAKER | h15-21 | 0.0445 | **0.9911** |
-| 2024 | reliability_floor × CT_PEAKER | h15-21 | 0.1392 | **0.9967** |
-| 2025 | reliability_floor × CT_PEAKER | h15-21 | 0.1202 | **0.9747** |
+**Root cause.** The two enabled PJM CT_PEAKER reliability limbs (`PJM_EMAAC`
+tmax 33.3 °C floor 0.2838, `PJM_West_APS` tmax 31.7 °C floor 0.3208) carry **no
+`start_hour`/`end_hour`**, so on a hot day they floor CT_PEAKER at ~0.28–0.32 ×
+capacity **all 24 h**. pjm-75 had *added* the CT net-load deployment drag
+(`ct_netload_drag`, ramp window **[15,22)**) as the CT commitment mechanism
+**while the reliability floor already floored CT_PEAKER**, and never reconciled
+them (CLAUDE.md rule 19).
 
-**Root cause (mechanism, not fit).** The two ENABLED PJM CT_PEAKER reliability
-limbs — `PJM_EMAAC` tmax 33.3 °C floor 0.2838, `PJM_West_APS` tmax 31.7 °C floor
-0.3208 — carry **no `start_hour`/`end_hour`**. The engine's own docstring:
-"on a flagged day the floor binds for all 24 h" (`transmission.py:2877`,
-`3069-3074`). So on a hot day the floor holds CT_PEAKER at ~0.28–0.32 × available
-capacity **around the clock**, including overnight when simple-cycle peakers are
-physically offline.
+**Measured proof (CAMPD, `diag_pjm_ct_hotday_hod.py`).** On EMAAC design-cooling
+days the pure-play CT_PEAKER fleet CF is **0.0165 overnight (h0-6)** vs **0.376
+afternoon (h15-19)** — a **23× ratio**. In the model P1 solve the floor forces
+CT_PEAKER in the two zones to **941 MW overnight on hot days** vs **34 MW on
+non-hot nights** (the economic level) — a 28× phantom equal to the 0.12 TWh
+D-2 attribution. In-window [15,22) the drag (≤0.46) dominates the reliability
+floor (0.28–0.32) via `np.maximum`, so the reliability floor's *only* marginal
+contribution is off-window overnight — where CT is offline (rule 17: a floor
+binding where its own driver says the class is offline is a bug by definition).
 
-**Measured proof it is overnight-phantom (CAMPD, `diag_pjm_ct_hotday_hod.py`).**
-On EMAAC design-cooling days (tmax > 33.3 °C, the limb's own gate) the pure-play
-PJM CT_PEAKER fleet CF by hour-of-day is:
-
-| block | measured CAMPD CF |
-|---|---|
-| overnight h0–6 | **0.0165** |
-| afternoon peak h15–19 | **0.3757** |
-
-a **23× ratio** — CT commitment on hot days is an afternoon/evening cooling
-phenomenon; overnight the class is at ~1.6 % CF (idle). The all-24h floor of
-0.28–0.32 over-commits overnight by ~17×.
-
-**Confirmed in the model P1 solve (2024 diag).** CT_PEAKER in the two floored
-zones (EMAAC + West_APS):
-
-| condition | model CT_PEAKER MW |
-|---|---|
-| hot-day overnight h0–6 | **941** |
-| non-hot overnight h0–6 (economic) | **34** |
-| CAMPD hot-day overnight expectation | ~0 (CF 0.016) |
-
-The floor injects **~907 MW of phantom overnight CT on hot days** — a 28× jump
-over the 34 MW economic level, exactly the **0.12 TWh** the D-2 attribution
-tags to `reliability_floor × CT_PEAKER` in 2024. **The entire reliability-floor
-CT contribution IS the off-window overnight artifact.**
-
-**Why it is a bug by definition (rules 17 + 19).**
-- **Rule 17** (no floor without a window/driver/forward story): "a floor binding
-  in hours its own driver evidence says the class is offline (CT overnight CF ≈
-  0) is a bug by definition, whatever it does to the residual." CAMPD overnight
-  CF 0.016 is that evidence.
-- **Rule 19** (one mechanism per phenomenon): pjm-75 **added** the CT net-load
-  deployment drag (`ct_netload_drag`, `clip(0.01108·netGW − 0.9987, 0, 0.46)`,
-  ramp window **[15,22)**) as the CT commitment mechanism **while the
-  reliability floor already floored CT_PEAKER** — and never reconciled them.
-  In-window [15,22) the drag (up to 0.46) dominates the reliability floor
-  (0.28–0.32) via `np.maximum`, so the reliability floor's ONLY marginal
-  contribution is off-window overnight (where the drag is 0). The two mechanisms
-  are stacked; the residual of the stack is precisely the D-4 failure.
-
-**Fix (implemented).** `config.iso_configs.drop_drag_owned_reliability_specs`:
-when `ct_netload_drag` is active it is the single CT_PEAKER commitment mechanism,
-so the reliability floor's CT_PEAKER limbs are dropped (reconcile onto the
-grounded, forward-native drag — not stack). This is a **floor removal grounded
-in CAMPD hot-day CT CF**, not a residual tune; it removes the ~0.12 TWh overnight
-phantom and clears D-4. **Zero blast radius:** only CAISO (0 enabled CT limbs →
-no-op) and PJM use the drag; ERCOT/NEISO/NYISO/MISO keepers do not set
-`ct_netload_drag`, so their bundles are byte-identical (gated on the flag).
+**Fix (implemented, `drop_drag_owned_reliability_specs`).** When a net-load drag
+owns a class's commitment, drop that class's reliability-floor limbs — the drag
+becomes the single CT_PEAKER mechanism (rule 19). A grounded floor removal, not
+a residual tune. Gated on `config.ct_netload_drag`, so any run without the drag
+is byte-identical (only CAISO — 0 enabled CT limbs — and PJM use the drag).
+Confirmed: after the fix, `reliability_floor × CT_PEAKER` is gone and the drag
+passes D-4 (0 % off-window, correctly windowed).
 
 ---
 
-## Priority (a) — which offer bands survive a physical grounding test
+## 2. Priority (a) — which offer bands survive a physical grounding test
 
-The offer multiplier scales each HR-band's offer = mult × SRMC
-(`heat_rate × fuel + vom + carbon`). The **physical floor** for a non-CHP,
-non-take-or-pay class is **committed/econ_low ≥ 1.0×** — the LP carries no
-no-load/start variable, so PJM Manual-15 composite-cost recovery puts every
-above-min increment at ≥ 1.0× full-load AHR fuel cost (the argument pjm-74
-already applied to CC_REGULAR econ_low 0.92→1.00). Test each class's
-committed/econ_low against that floor and against its physical exemption:
+Physical floor for a non-CHP, non-take-or-pay class: **committed/econ_low ≥
+1.0×** SRMC (Manual-15 composite-cost recovery; the LP has no no-load variable).
 
-| class | committed / econ_low | grounding verdict |
+| class | committed / econ_low | verdict |
 |---|---|---|
-| **CC_REGULAR** | 1.00 / 1.00 | **SURVIVES** — Manual-15 composite-cost floor (pjm-74); at the floor, not below |
-| **CT_PEAKER** | 1.05 / 1.05 (econ_high 1.27) | **SURVIVES** — above floor; econ_high 1.27 is the Manual-15 §2.3 10 % cost-cap (pjm-74) |
-| COAL_BIT / PRB / LIGNITE / WC | 0.51–0.68 | **SURVIVES on physics** — take-or-pay + must-run: a committed coal unit's *incremental* cost is below full SRMC. (Exact odd-precision values are residual-set *within* the grounded band — a smaller, sanctioned surface.) |
-| CC_CHP | 0.6624 / 0.684 | **SURVIVES on physics** — CHP steam-host credit (avoided boiler fuel offsets the electric SRMC) |
-| CT_CHP | 0.864 / 0.864 | **SURVIVES on physics** — CHP steam credit |
-| **ST_GAS** | **0.4752 / 0.6552** | **FAILS** — non-CHP gas steam boiler offered at 0.48× SRMC. No take-or-pay, no steam credit; at min-load a steam unit's *incremental* HR is **above** full-load, so committed should be **≥ 1.0×**, not 0.48×. Pure residual artifact (odd-precision product of the pjm-59..74 sweep). |
-| **CT_INTERMEDIATE** | **0.9 / 0.92** | **FAILS** — non-CHP CT below the SRMC floor. No physical basis for sub-1.0. |
+| CC_REGULAR | 1.00 / 1.00 | **SURVIVES** — Manual-15 floor (pjm-74) |
+| CT_PEAKER | 1.05 / 1.05 (econ_high 1.27) | **SURVIVES** — above floor; 1.27 = Manual-15 §2.3 cost-cap |
+| COAL_* | 0.51–0.68 | **SURVIVES on physics** — take-or-pay incremental cost (odd-precision values residual-set *within* the grounded band) |
+| CC_CHP / CT_CHP | 0.66 / 0.86 | **SURVIVES on physics** — CHP steam-host credit |
+| **ST_GAS** | **0.4752 / 0.6552** | **FAILS** — non-CHP gas steam at 0.48× SRMC; part-load IHR is *above* full-load, so committed should be ≥1.0×. Pure residual artifact (pjm-59..74 sweep). |
+| **CT_INTERMEDIATE** | **0.9 / 0.92** | **FAILS** — non-CHP CT below the SRMC floor, no physical basis |
 
-**Proposed re-groundings (NOT re-tunes) — deferred, see below.** Apply the exact
-Manual-15 composite-cost floor already on CC_REGULAR to the two indicted classes:
-**ST_GAS committed 0.4752→1.00, econ_low 0.6552→1.00; CT_INTERMEDIATE committed
-0.9→1.00, econ_low 0.92→1.00.** These are grounded (a physical offer floor,
-identical argument to pjm-74), not fitted to a residual. They are **not bundled
-into this keeper**: both classes are small (ST_GAS ~15.7 TWh, CT_INTERMEDIATE
-smaller), neither drives a scored FAIL (the 2024 aggregate fuel mix is clean —
-coal 122.3 vs 122.4, gas 377 vs 391 TWh), and raising their offers shifts all
-three years and needs its own regression-logged validation cycle (rule 1/14 —
-keep the grounded value even if fit worsens, then root-cause). Task step 1(a)
-asked to *propose* re-groundings; they are proposed here and left as the next
-model-side step, so this keeper carries **one clean, attributable structural
-change**.
+**Proposed re-grounding (deferred).** Apply the CC_REGULAR Manual-15 floor to
+ST_GAS / CT_INTERMEDIATE committed/econ_low → 1.00. Grounded, not a re-tune.
+Deferred to its own regression-logged cycle: both are small classes (ST_GAS ~15.7
+TWh), neither drives a scored FAIL (2024 aggregate mix is clean — coal 122.3 vs
+122.4, gas 377 vs 391 TWh), and raising them shifts all three years.
 
----
+## 3. Priority (b) — CAISO evening-merit pattern? **No.**
 
-## Priority (b) — does PJM show the CAISO evening-merit pattern? **No.**
+The CAISO finding traced CT being priced out to a **sub-SRMC CC committed band
+(0.90×)** flooding cheap CC. **PJM does not have that** — CC_REGULAR
+committed/econ_low = **1.00 / 1.00** (Manual-15 floor). CC still runs a ~32–40 GW
+block every hour, but that is the **correct LP answer** (CC HR ~7 vs CT ~10, the
+same energy-only ramp-free gap as CAISO) **without the sub-SRMC offer bug**. CT
+is merit-dominated + missing ramp/local structure — which the `ct_netload_drag`
+stands in for. The sub-SRMC bands that *do* exist (ST_GAS, CT_INTERMEDIATE, §2)
+are small classes, not the CC flood. The CC over-run + scarcity-tail miss (0
+hours > $200 vs actual 6/18/59) is the **known memory-blocked per-gen reserve gap**
+(`docs/multi-iso/pjm-reserve-ordc.md` Phase 2) — out of scope.
 
-The CAISO finding (`FINDING-caiso-evening-merit-2026-07-04.md`) traced CT being
-priced out to an **audit-flagged sub-SRMC CC committed band (0.90×, econ_low
-0.95×)** flooding cheap CC around the clock. **PJM does not have that artifact in
-its dominant class:** CC_REGULAR committed/econ_low = **1.00 / 1.00** (Manual-15
-floor), not 0.90. The model CC_REGULAR still runs a huge ~32–40 GW block every
-hour (2024 diag), but that is the **correct LP answer**, not an offer artifact:
-CC (HR ~7) is thermodynamically ~30 % more efficient than CT (HR ~10), so CC
-dominates on merit exactly as in CAISO — **the same energy-only, ramp-free
-structural gap, WITHOUT the sub-SRMC offer bug.**
+## 4. Priority (c) — flat-floor / drag signatures; the CT-drag D-8 verdict
 
-- CT is **not** "priced out by cheap committed CC"; it is merit-dominated + the
-  fast-ramp/local-reliability commitment an energy-only zonal LP can't see —
-  which is *precisely* what the `ct_netload_drag` [15,22) floor stands in for
-  (and why the redundant reliability-floor CT limb is removable, not needed).
-- The sub-SRMC bands that DO exist (ST_GAS, CT_INTERMEDIATE, (a) above) are
-  small classes, not the CC flood; they are a grounding hygiene item, not the
-  CC/CT merit driver.
-- The PJM CC over-run + scarcity-tail miss (0 hours > $200 vs actual 6/18/59)
-  is the **known, memory-blocked** per-gen reserve / commitment structural gap
-  (`docs/multi-iso/pjm-reserve-ordc.md` Phase 2; P1 warm-start OOM at ~14.6 GB
-  on the 16 GB box) — out of scope, not an offer or floor issue.
+**Two signatures found, distinct:**
 
----
+1. **`reliability_floor × CT_PEAKER` flat-floor (§1) — FIXED.** The 941-vs-34 MW
+   overnight measurement is a textbook flat-floor pinning a fast-start class
+   overnight.
+2. **`ct_netload_drag` over-forces CT in the tight 2024 year — OPEN (§5).** With
+   the diagnostics counting the drag correctly (the meta-gap fixed), the drag
+   floors **12.1 % of CT_PEAKER energy in 2024** (2.49 of 20.68 TWh), breaching
+   rule 20's 10 % peaker budget (2023 7.6 %, 2025 7.9 % pass). This is the real
+   *drag* signature — not a mis-window (the drag *is* correctly windowed [15,22),
+   0 % off-window in D-4) but a *magnitude* budget breach in the tightest year.
 
-## Priority (c) — flat-floor / drag signatures per class; the CT-drag D-8 verdict
-
-**One class shows a flat-floor signature: CT_PEAKER — and it is the
-`reliability_floor`, NOT the `ct_netload_drag`.** The evidence is the D-4 table +
-the 941-vs-34 MW overnight measurement above: a floor pinning the class flat
-across all 24 h on hot days.
-
-**The ct_netload_drag hinge is clean and NOT the culprit.** It is (i)
-window-gated to [15,22) — zero overnight by construction; (ii) net-load-gated —
-`clip(...)` zero below the ~90.1 GW knee, so it never fires on a mild day; (iii)
-its floored energy (4.70/6.29/7.16 TWh) tracks measured CT (+4/+7/+5 %) and is
-year-differentiated. **D-8 stability:** the drag coefficients derive from CAMPD
-pure-play CT CF vs EIA-930 net-load pooled 2023–2025, ramp-window Spearman
-ρ = **0.50 / 0.51 / 0.60** — monotonic and year-stable; the hinge SSE (0.133)
-beats the unclipped ERCOT-recipe line (0.176). The drag is the **grounded**
-mechanism; the reliability-floor CT limb is the redundant one stacked on it.
-
-Other classes: COAL / CC_REGULAR / ST_GAS reliability limbs floor all-24h too,
-but that is **correct** for them — a coal/CC unit committed for a multi-day heat
-event genuinely runs overnight (long min-up), which is why D-4 flags *only*
-CT_PEAKER (the fast-start class) and passes the rest. No change to those limbs.
+**CT-drag D-8 stability: the hinge itself is sound.** Coefficients derive from
+CAMPD pure-play CT CF vs EIA-930 net-load pooled 2023–2025, ramp-window Spearman
+ρ = **0.50 / 0.51 / 0.60** (monotonic, year-stable); hinge SSE 0.133 beats the
+unclipped ERCOT-recipe line 0.176. The drag is the *grounded* mechanism; its
+only issue is that a grounded reserve-deployment floor sized to measured CT can
+exceed the rule-20 merchant budget in a tight year (see §6 open items).
 
 ---
 
-## Conclusion — one implemented structural fix, one proposed re-grounding
+## 5. The meta-gap: legitimacy diagnostics were silently dropping the drag
 
-1. **CT reliability-floor / net-load-drag reconcile (IMPLEMENTED, keeper
-   pjm-77).** `drop_drag_owned_reliability_specs` drops the CT_PEAKER reliability
-   limbs when the drag is active (rule 19). Clears the D-4 FAIL, removes the
-   ~0.12 TWh overnight phantom, zero blast radius. Structural improvement, not a
-   fit move (rule 1/17/19).
-2. **ST_GAS / CT_INTERMEDIATE Manual-15 committed/econ_low floor (PROPOSED,
-   deferred).** Grounded re-grounding of the only two offer bands that fail the
-   physical SRMC-floor test; deferred to its own regression-logged cycle because
-   it shifts all years and drives no current scored FAIL.
-3. **PJM has NOT got the CAISO sub-SRMC-CC-flood pattern** (CC committed at the
-   1.0 floor). The CC over-run + scarcity tail are the known memory-blocked
-   per-gen reserve gap — not addressable this session.
+**The most consequential finding.** `solve_and_persist` did **not** persist
+`ct_netload_drag` / `ct_drag_overrides` in `meta.json`. The legitimacy-diagnostics
+floor reconstruction (`run_year(fleet_only=True)` from `meta.json`) therefore
+rebuilt floors **without the drag** for every drag keeper. Consequences:
+
+- **pjm-76's committed D-2 PASS (CT_PEAKER 0.68 %) was an artifact** — its
+  diagnostics JSON contains *no* `ct_netload_drag` mechanism at all. The drag's
+  real ~12 % 2024 forced energy was never counted. So was every drag keeper's.
+- The D-4 CT_PEAKER fix (§1) is invisible in the drag-off reconstruction (the
+  gate keys on `config.ct_netload_drag`, absent from meta), so it *cannot* be
+  demonstrated in committed diagnostics until the gap is closed.
+
+**Fix (implemented).** Persist `ct_netload_drag` / `gas_st_netload_drag` /
+`ct_drag_overrides` in `meta.json` so reconstruction matches the solve. With
+accurate reconstruction, pjm-77 shows: **D-4 `reliability_floor × CT_PEAKER`
+resolved** (the §1 fix is now visible and confirmed) while **honestly surfacing**
+the two pre-existing issues the gap had hidden (§4.2 drag D-2; §6 CT_CHP D-4).
+Per CLAUDE.md rule 14, the accurate diagnostics are kept even though they reveal
+more failures — the residual is a discovered bug, not something to bury back in
+an inaccurate input.
+
+## 6. CT_CHP D-4 — the same disease on the CHP fast-start class (OPEN)
+
+Removing the CT_PEAKER floor shifts the overnight merit so CT_CHP settles onto
+its own all-24h reliability limb (`PJM_EMAAC` CT_CHP tmax 0.1764), which then
+binds **70.8 % off-window** (0.0095 TWh — tiny, but the share trips D-4). This is
+the *same* all-24h flat-floor bug as CT_PEAKER, on the CHP fast-start class, but
+CT_CHP is **not drag-owned**, so `drop_drag_owned_reliability_specs` doesn't
+cover it. Correct fix (follow-up): the CT_CHP tmax reliability limb is a hot-day
+*cooling* commitment (daytime) — window it to the cooling peak, or disable it (its
+genuine round-the-clock commitment is steam-host, handled by the `chp_steam`
+mechanism, which is retained). Left as a documented open item — a small, scoped
+follow-up, not bundled into this session's structural change.
+
+---
+
+## 7. Conclusion
+
+| item | status |
+|---|---|
+| D-4 `reliability_floor × CT_PEAKER` off-window (the deciding pjm-76 failure) | **FIXED** — `drop_drag_owned_reliability_specs` (rule 19), grounded floor removal |
+| meta-gap hiding the drag from diagnostics (all drag keepers) | **FIXED** — persist drag flags in meta.json (rule 14: accurate diagnostics) |
+| offer bands ST_GAS / CT_INTERMEDIATE sub-SRMC (a) | **PROPOSED** re-grounding, deferred (small, own cycle) |
+| CAISO sub-SRMC-CC-flood pattern (b) | **ABSENT** in PJM (CC committed at 1.0 floor) |
+| `ct_netload_drag` D-2 12 % 2024 peaker-budget breach (c) | **OPEN** — pre-existing, family-wide; a grounded drag exceeding rule 20 in a tight year needs a drag-sizing or D-2-exemption decision, not a fit move |
+| CT_CHP D-4 off-window | **OPEN** — same disease, window/disable its cooling limb (follow-up) |
+
+**pjm-77** (pjm-76 recipe + the §1 fix) demonstrably resolves the deciding
+CT_PEAKER D-4 failure and, via the §5 meta-gap fix, gives PJM its first
+*accurate* legitimacy diagnostics — which honestly show two pre-existing issues
+(drag D-2, CT_CHP D-4) that were masked before. It is structurally superior to
+pjm-76 on the tasked axis and on diagnostic integrity, but it does **not** clear
+Overall (the drag D-2 breach is a grounded-mechanism / rule-20 tension shared
+with pjm-76 and unresolvable by weakening the drag). **Recommendation:** promote
+the code fixes; treat the drag-D-2 budget and CT_CHP-D-4 as the next PJM
+root-cause threads; re-score the drag-keeper family (pjm-76, caiso-51) on the now-
+accurate diagnostics before any keeper-status claims.
 
 ## Files
-- `scripts/diag_pjm_burndown_2024.py`, `scripts/diag_pjm_ct_hotday_hod.py` —
-  throwaway 2024 diagnostics (rule 15, NOT registered).
-- `src/market_sim/config/iso_configs.py` — `drop_drag_owned_reliability_specs`
-  (+ wiring in `scripts/run_calibration.py` `run_year`).
-- `scripts/run_pjm77_ct_relfloor_reconcile.py` — keeper candidate (pjm-76 recipe
-  verbatim on the fix).
+- `scripts/diag_pjm_burndown_2024.py`, `scripts/diag_pjm_ct_hotday_hod.py` — throwaway diagnostics (rule 15).
+- `src/market_sim/config/iso_configs.py` (`drop_drag_owned_reliability_specs`) + `scripts/run_calibration.py` wiring — the §1 fix.
+- `scripts/run_calibration_full.py` — the §5 meta-gap fix (persist drag flags).
+- `scripts/run_pjm77_ct_relfloor_reconcile.py` — keeper candidate.
