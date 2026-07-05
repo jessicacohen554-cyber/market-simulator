@@ -38,11 +38,12 @@ Parameters are published-study values only (no fitted degree of freedom):
   keeps 2024-25 evening battery discharge from being mis-attributed to
   thermal (a second rule-14 reconciliation).
 
-Feasibility guard: the RHS is capped at 99.9% of the in-area *available*
-capacity (member thermal ``pmax x availability`` plus the storage-share power
-cap) — requiring more than physically exists is meaningless (the real system
-sheds load / exceptionally imports there), and an uncapped RHS could make the
-LP infeasible during deep in-area outages. Pure physics, no tunable.
+Feasibility guard: the RHS is capped at 99.9% of the in-area *thermal*
+capacity (member ``pmax x availability``) — requiring more than physically
+exists is meaningless (the real system sheds load / exceptionally imports
+there), and the cap is guaranteed by thermal ALONE so the row stays feasible
+even during deep in-area outages. Storage is excluded from the guarantee (its
+discharge is SOC-limited) but still enters the row's LHS. Pure physics.
 
 Membership comes from ``data/raw/reference/lcr_area_membership_<ISO>.csv``
 (``scripts/derive_lcr_membership.py``): county rule + NQC-list overrides.
@@ -212,12 +213,9 @@ def storage_area_share(iso: str, area: str, zone: str, year: int) -> float:
 
     Measured from the EIA-860 operable storage table (county + operating
     year <= ``year``), assigned by :func:`caiso_area_of`, and normalized by
-    the same table's total for plants in the area's *zone* (approximated by
-    the same rule set: any covered-or-not site whose zone assignment is the
-    area's zone). Zone attribution for storage here mirrors the fleet's
-    latitude rule loosely via county grouping; the share is a reconciliation
-    of the LP's zone-aggregated storage onto the pocket (module docstring),
-    not a precise metering split.
+    the same table's total for plants in the area's *zone*. The share is a
+    reconciliation of the LP's zone-aggregated storage onto the pocket, not a
+    precise metering split.
     """
     if iso.upper() != "CAISO":
         return 0.0
@@ -271,24 +269,11 @@ def build_local_capacity_specs(
 ) -> tuple[list[tuple[np.ndarray, np.ndarray, float, np.ndarray]], dict]:
     """Assemble the per-area LP row specs for one ISO-year.
 
-    Args:
-        iso: ISO name.
-        year: Delivery year (selects the published LCR vintage).
-        fleet_plant_code: ``(n_gen,)`` EIA plant code per LP thermal column.
-        pmax: ``(n_gen,)`` capacity per LP thermal column.
-        availability: ``(n_gen, T)`` hourly availability.
-        zone_names: Model zone ordering (maps area zone -> zone index).
-        demand: ``(n_zones, T)`` zonal demand in MW.
-        storage_zone_idx: ``(n_storage,)`` zone of each storage unit, or None.
-        storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` MW, or None.
-
-    Returns:
-        ``(specs, meta)`` where ``specs`` is a list of
-        ``(thermal_gen_idx, storage_idx, storage_frac, rhs_T)`` tuples for
-        :func:`market_sim.model.dispatch.build_constraints`
-        (``local_capacity_specs=``) and ``meta`` maps each area to its
-        resolved parameters for the run-config record. Empty when the ISO has
-        no covered areas or the intake rows are absent (identical LP).
+    Returns ``(specs, meta)`` where ``specs`` is a list of
+    ``(thermal_gen_idx, storage_idx, storage_frac, rhs_T)`` tuples for
+    :func:`market_sim.model.dispatch.build_constraints` (``local_capacity_specs=``)
+    and ``meta`` records each area's resolved parameters. Empty when the ISO
+    has no covered areas or the intake rows are absent (identical LP).
     """
     params = load_lcr_parameters(iso, year)
     membership = load_lcr_membership(iso)
@@ -298,7 +283,6 @@ def build_local_capacity_specs(
         return specs, meta
 
     plant_code = np.asarray(fleet_plant_code, dtype=int)
-    T = availability.shape[1]
     for area, p in params.items():
         members = membership.get(area)
         if members is None or not len(members):
@@ -325,19 +309,10 @@ def build_local_capacity_specs(
             s_idx = np.zeros(0, dtype=int)
             s_frac = 0.0
 
-        # Feasibility guard: never require more than 99.9% of the in-area
-        # THERMAL capacity that hour (deep-outage hours; the real system
-        # sheds/exceptionally imports there, and the LP must stay feasible).
-        # Guaranteed by thermal ALONE — a member unit's P can always reach
-        # pmax x availability, so a thermal-capped RHS is always satisfiable.
-        # Storage is deliberately EXCLUDED from the guarantee: its discharge
-        # is SOC-limited and not available every hour (an empty battery or a
-        # forced-charge hour contributes nothing / negative), so counting it
-        # toward the cap made the row demand more than thermal could supply
-        # and went infeasible in 2023 (smaller import_cap -> higher RHS).
-        # Storage still enters the row's LHS via its coefficient — it HELPS
-        # meet the floor when it discharges — it just isn't relied on for
-        # feasibility.
+        # Feasibility guard: cap RHS at 99.9% of in-area THERMAL capacity
+        # (guaranteed satisfiable by thermal alone; storage excluded from the
+        # guarantee since its discharge is SOC-limited — counting it went
+        # infeasible in 2023). Storage still enters the row LHS below.
         avail_cap_t = (
             np.asarray(pmax, dtype=float)[gen_idx, None]
             * np.asarray(availability, dtype=float)[gen_idx, :]
