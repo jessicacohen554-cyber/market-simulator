@@ -42,6 +42,83 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-05 — CAISO — W3-P2 CT-floor scrub HEAD verification + red-flag closeout (caiso 55): PROBE, keeper stays caiso 51
+
+**Goal (W3-P2, red-flag `caiso-52-ct-scrub`, audit `docs/model-legitimacy-audit-2026-07.md` §1).**
+Execute/close the open CAISO CT-floor forcing scrub with rule-17/23 discipline: D-2 attribution over
+the caiso-51 keeper config **at HEAD**, remove any floor binding where its driver says the class is
+offline, check the rule-20 forced-energy budget, and disposition the red flag. Do NOT swap keepers;
+do NOT touch the C-5/C-14/C-16 seam scalars or any CAISO offer curve (rule 26).
+
+**Finding: the scrub was already merged (2026-07-03, caiso-52 lineage) — this session verifies it holds
+at HEAD and closes the flagged "keeper-reproducibility drift."** The audit's three stacked CAISO CT
+forcing engines are dismantled, defended at **three independent code layers**:
+1. **All-24h reliability-floor CT limbs — windowed then disabled.** `reliability_floor_coeffs_CAISO.csv`
+   CT_PEAKER/CT_CHP netload limbs carry `start_hour/end_hour = 15/21`, and every row is `enabled=False`
+   (loader forces `enabled = enabled AND NOT r1_disabled`, `iso_configs.py:1012`). The all-24h day gate
+   (`np.repeat(day_flagged,24)`) can no longer bind.
+2. **Rule-19 dedup in code.** `drop_drag_owned_reliability_specs` (`iso_configs.py:1059`,
+   `_DRAG_OWNED_RELIABILITY_CLASS = {ct_netload_drag: CT_PEAKER, gas_st_netload_drag: ST_GAS}`) drops
+   every CT_PEAKER reliability limb whenever `ct_netload_drag` is active — so even a re-enabled limb
+   cannot stack with the drag ("dropped 3 drag-owned limb(s)" in the solve log).
+3. **Bridge eligibility by physics.** The economic RA startup bridge gates on
+   `min_down >= RA_BRIDGE_ECON_MIN_DOWN_HOURS` (`constants.py:120 = 4.0`; `commitment.py:816-820`,
+   rule 17). Fast-start CTs (min-down 1 h) are never economically bridged overnight; only a physical
+   `gap < min_down` bridge remains (never fires for a 1-h-min-down CT).
+
+**HEAD verification (caiso 55, `results/calibration/caiso55_ctscrub_head`, byte-faithful
+`replay_keeper.py` of the caiso-51 keeper meta.json at 2026-07-05 main, all 3 years).** Config parity
+confirmed vs caiso-51 (`reliability_floor=True`, `ct_netload_drag=True` slope 0.00901 / int −0.1124 /
+cap 0.36, `caiso_ra_startup_bridge=True`, `caiso_ra_min_load_frac=0.26`). One recorded-flag difference,
+behaviourally inert: `capacity_deliverability_limits` resolves `True` at HEAD (the keeper's meta carries
+the `--capacity-deliverability-limits` flag) but **no-ops** — the clean CAISO partition is still absent
+("Returning no limits"), so the published MIC seam limit is carried by `caiso_per_hub_intertie`
+firm-base in both, and dispatch is faithful to caiso-51.
+
+D-2 forced-energy attribution over the scrubbed keeper config **at HEAD**:
+
+| year | CT_PEAKER TWh | ct_netload_drag (share) | RA-bridge (share) | D-2 verdict | D-4 off-window |
+|---|---|---|---|---|---|
+| 2023 | 2.12 | 1.261 (59.4%) | 0.007 (0.3%) | FAIL (59.7% > 10%) | 0.0% PASS |
+| 2024 | 1.73 | 1.146 (66.3%) | 0.007 (0.4%) | FAIL (66.7% > 10%) | 0.0% PASS |
+| 2025 | 1.30 | 0.901 (69.4%) | 0.000 (0.0%) | FAIL (69.4% > 10%) | 0.0% PASS |
+
+CT forcing is now a **single windowed mechanism** (the audit-sanctioned net-load drag, DwC in §2), with
+the RA bridge's CT share collapsed to <0.4% (was the overnight-bridge era). D-1: the flat-floor signature
+is gone — CT off-peak CV ratio 0.000 (caiso-42) → 3.15/3.52/3.05, profile r 0.883/0.850/0.699 (2025
+r<0.8 is the small noisy fleet, pre-existing); D-4 off-window 62–66% (caiso-42) → **0% all years**.
+D-9/D-10 PASS.
+
+**"Undiagnosed drift" resolved — it is the scrub effect, not a bug.** The r1 note's concern (CT
+~3.4→~1.7 TWh, forced share 60–71% vs the pre-scrub keeper's ~27–33%) is exactly the scrub removing the
+~1.2 TWh flat overnight floor. caiso-55 reproduces the committed caiso-52 scrub (CT 2.12/1.73/1.30 vs
+1.97/1.56/1.15 TWh; forced share slightly *lower* at HEAD as marginally more CT clears). The residual
+CT/price deltas vs caiso-52 (CT +~0.15 TWh/yr; 2025 avg LMP 44.5 vs 45.6) trace to the intervening
+merged C-5/C-14/C-16 seam re-grounding (`21f8845`) + InterchangeSpec unification (`3fb6282`) — **not**
+the CT scrub and **not** touched here (rule 26). The caiso-51 keeper's committed dashboard numbers are
+pre-scrub and no longer reproducible on scrubbed main — a keeper-refresh item (recommendation only).
+
+**Disposition — the caiso-52 red flag is CLOSED at the mechanism level.** Nothing remains to scrub: the
+only surviving CT floor (net-load drag) has a defensible driver (evening net-load ramp, regressed from
+CAMPD 2023-25), a window (h15-21), a forward story, and D-4-clean off-window binding (rule 16-17). Every
+floor that bound where its driver said CTs were offline (all-24h limbs, overnight startup bridge) is
+removed. **Open (NOT closable by a floor scrub, rule 1 — do NOT re-floor):**
+1. **D-2 CT forced share 60/67/69% > 10%** — the drag is ~all of a small CT total because the P1
+   energy-only zonal merit order prices CTs out of the evening ramp (CT HR ~10.4 vs CC ~7.6; CC's *peak*
+   band undercuts CT's *committed* band). This is the evening-merit structural gap
+   (`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md`), needing CC ramp/min-up-down
+   commitment + sub-zonal LA-basin transmission — a large structural build, out of scope here.
+2. **D-5 parity** — `caiso_ra_mustoffer` is built only in `run_calibration.py`, not `runner.py`
+   (w2-caiso-ra-p2 wiring gap); pre-existing, unchanged.
+3. **ST_GAS D-1 shape** (2024 r 0.013 / 2025 r −0.275) — pre-existing, separate root cause.
+
+**Keeper-candidate? No.** The scrubbed config carries the disclosed C3a evening-scarcity regressions
+(caiso-52: +21.1/+36.5/+43.9% vs caiso-51 +19.6/+34.9/+41.6%) and still fails D-2; there is no clean
+keeper-candidate until the evening-merit build lands. **Keeper stays `2026-07-03-caiso-51-firm-base`**
+(recommendation only; `keepers.json` untouched). Registered PROBE `2026-07-05-caiso-55-ct-scrub`
+(NOT-YET); dashboard retention pruned to top-15 (dropped 07-01 caiso-42/43/44/45 sidecars; bundles
+kept). Audit §1 follow-up recorded in `docs/model-legitimacy-audit-2026-07.md`.
+
 ### 2026-07-05 — W5 keeper re-gate sweep: E7 adjudication for CAISO / PJM / NYISO / NEISO (PJM + NEISO promoted; CAISO + NYISO keepers stay)
 
 `audit_keepers --check` flagged E7 ("a newer run exists") on four ISOs. Each
