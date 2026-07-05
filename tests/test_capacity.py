@@ -366,6 +366,58 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(losses1, {})
 
 
+class TestFomThresholdFlip(unittest.TestCase):
+    """The retirement decision flips at the going-forward FOM bar.
+
+    Behavioural acceptance for the capacity-economics recalibration Stage 1
+    (``docs/handoffs/capacity-economics-plan-2026-07.md`` §1, §8): a gas-CT
+    earning a fixed net revenue between the legacy bar (``fixed_om_gas_ct=8``
+    $/kW-yr) and the NREL-ATB-2024 bar (``fixed_om_gas_ct=21`` $/kW-yr) is
+    retained under the legacy FOM and retired under the ATB FOM — the same unit,
+    the same revenue, only the FOM default moved. This is the identification
+    check that the FOM level, not a residual, drives the retire flip (rule 1).
+    """
+
+    T = 10
+
+    def _dispatch(self, level):
+        return SimpleNamespace(dispatch=np.full((1, self.T), level))
+
+    def _run_two_years(self, fom_gas_ct):
+        # net_revenue = price x dispatch x T = 1500 x 100 x 10 = 1.5e6 $/yr
+        # = 15 $/kW-yr on a 100 MW unit — between the 8 and 21 $/kW-yr bars.
+        config = ScenarioConfig().with_overrides(fixed_om_gas_ct=fom_gas_ct)
+        fleet = [_gen("T0", "gas_ct", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 1500.0)
+        dispatch = self._dispatch(100.0)
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        fleet2, losses2 = apply_economic_retirements(
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
+        )
+        return fleet1, losses1, fleet2, losses2
+
+    def test_survives_under_legacy_bar(self):
+        # 15 $/kW-yr net revenue > 8 $/kW-yr legacy bar -> profitable, never a
+        # loss year, so the CT stays online across both years.
+        fleet1, losses1, fleet2, losses2 = self._run_two_years(8.0)
+        self.assertEqual([g.unit_id for g in fleet1], ["T0"])
+        self.assertEqual(losses1["T0"], 0)
+        self.assertEqual([g.unit_id for g in fleet2], ["T0"])
+        self.assertEqual(losses2["T0"], 0)
+
+    def test_retires_under_atb_bar(self):
+        # 15 $/kW-yr net revenue < 21 $/kW-yr ATB bar -> a loss year each pass;
+        # gas_ct retires after its two-year threshold.
+        fleet1, losses1, fleet2, losses2 = self._run_two_years(21.0)
+        self.assertEqual([g.unit_id for g in fleet1], ["T0"])
+        self.assertEqual(losses1["T0"], 1)
+        self.assertEqual(fleet2, [])
+        self.assertNotIn("T0", losses2)
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
