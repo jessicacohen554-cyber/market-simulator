@@ -39,6 +39,12 @@ mild-day online share — a like-for-like commitment test, replacing the earlier
 energy average). Otherwise the limb ships ``enabled=False`` and is visible (with
 its weak fit) in the markdown report so nothing is invented to plug a residual.
 
+A limb listed in :data:`R1_DISABLED_LIMBS` overrides the gate and ships
+``enabled=False`` / ``r1_disabled=True`` unconditionally: these limbs are
+*unidentified* out-of-training (their Spearman ρ flips sign between the 2023-24
+train fit and the 2025 holdout, D-8 §2B) and under decision rule R1 may not be
+re-derived back on (scalar-remediation B-LIMB-1; CLAUDE.md rule 17).
+
 Outputs:
   * ``data/raw/reference/reliability_floor_coeffs_<ISO>.csv`` — the coefficient
     table (one row per zone x class x limb that has data).
@@ -68,6 +74,43 @@ log = logging.getLogger("derive_reliability_coeffs")
 RHO_MIN = 0.3  # min Spearman temperature->CF correlation to ship a limb on
 N_MIN = 30  # min flagged-day sample size to trust a limb
 HOURS_PER_DAY = 24  # CF denominator: nameplate x 24 hours
+
+# --- R1 permanent disablement (unidentified limbs; scalar-remediation B-LIMB-1) ---
+# These (iso, zone, plant_class, driver) limbs are UNIDENTIFIED out-of-training:
+# their Spearman temperature->commitment correlation FLIPS SIGN between the
+# 2023-24 train fit and the 2025 holdout (D-8 §2B, docs/out-of-sample-results-
+# 2026-07.md: PJM ComEd/CC_REGULAR tmax ρ +0.35→−0.19; CAISO SP15/ST_GAS tmax
+# ρ +0.41→−0.16; CAISO SP15/CC_REGULAR tmax ρ +0.69→−0.10). Under decision rule R1
+# (docs/handoffs/scalar-remediation-plan-2026-07.md §1 R1, §2.3) and CLAUDE.md
+# rule 17, a floor whose driver relationship reverses out-of-training is
+# scaffolding fitted to noise: it may NOT be re-derived back on. This set FORCES
+# ``enabled=False`` and stamps ``r1_disabled=True`` regardless of the pooled
+# (all-year) fit, so a future re-derivation from the same fit cannot silently
+# re-enable the limb — the pooled ρ for two of the three sits below RHO_MIN today,
+# but CAISO SP15/CC_REGULAR pools to ρ=0.32 ≥ RHO_MIN and WOULD re-enable without
+# this guard. This is an analysis-evidence disablement (a sign-flip finding), NOT a
+# residual adjustment (rule 23). The tmin (cold) limbs of these pairs are left to
+# the natural gate: the sign-flip evidence is tmax-only and those limbs are already
+# gate-disabled (ρ≈0, n<30 — design-heating days too rare in these zones to clear
+# N_MIN), so no R1 marker over-claims evidence there.
+R1_DISABLED_LIMBS: frozenset[tuple[str, str, str, str]] = frozenset(
+    {
+        ("PJM", "PJM_ComEd", "CC_REGULAR", "tmax"),
+        ("CAISO", "SP15", "ST_GAS", "tmax"),
+        ("CAISO", "SP15", "CC_REGULAR", "tmax"),
+    }
+)
+
+
+def _r1_disabled(iso: str, zone: str, klass: str, driver: str) -> bool:
+    """Return ``True`` if this (iso, zone, class, driver) limb is R1-disabled.
+
+    R1-disabled limbs are unidentified out-of-training (Spearman ρ sign flip,
+    D-8 §2B) and ship permanently off regardless of the pooled fit — see
+    :data:`R1_DISABLED_LIMBS`.
+    """
+    return (iso, zone, klass, driver) in R1_DISABLED_LIMBS
+
 
 # --- Temperature onsets (plan D; physical anchors, not flat 25C/0C priors). ---
 # COLD has documented operational triggers for PJM; non-PJM uses a per-zone design
@@ -525,11 +568,15 @@ def derive_iso(iso: str) -> pd.DataFrame:
             if fit is None:
                 continue
             floor_pct = float(fit["commit_frac"] * min_stable_pct)
-            enabled = bool(
-                (not np.isnan(fit["rho"]))
-                and fit["rho"] >= RHO_MIN
-                and fit["n"] >= N_MIN
-                and fit["commit_frac"] > fit["baseline_commit"]
+            r1 = _r1_disabled(iso, zone, klass, "netload")
+            enabled = (
+                bool(
+                    (not np.isnan(fit["rho"]))
+                    and fit["rho"] >= RHO_MIN
+                    and fit["n"] >= N_MIN
+                    and fit["commit_frac"] > fit["baseline_commit"]
+                )
+                and not r1
             )
             rows.append(
                 {
@@ -547,6 +594,7 @@ def derive_iso(iso: str) -> pd.DataFrame:
                     "baseline": round(fit["baseline"], 4),
                     "baseline_commit": round(fit["baseline_commit"], 4),
                     "threshold_basis": basis,
+                    "r1_disabled": r1,
                 }
             )
             continue
@@ -557,11 +605,15 @@ def derive_iso(iso: str) -> pd.DataFrame:
             if fit is None:
                 continue
             floor_pct = float(fit["commit_frac"] * min_stable_pct)
-            enabled = bool(
-                (not np.isnan(fit["rho"]))
-                and fit["rho"] >= RHO_MIN
-                and fit["n"] >= N_MIN
-                and fit["commit_frac"] > fit["baseline_commit"]
+            r1 = _r1_disabled(iso, zone, klass, driver)
+            enabled = (
+                bool(
+                    (not np.isnan(fit["rho"]))
+                    and fit["rho"] >= RHO_MIN
+                    and fit["n"] >= N_MIN
+                    and fit["commit_frac"] > fit["baseline_commit"]
+                )
+                and not r1
             )
             rows.append(
                 {
@@ -579,6 +631,7 @@ def derive_iso(iso: str) -> pd.DataFrame:
                     "baseline": round(fit["baseline"], 4),
                     "baseline_commit": round(fit["baseline_commit"], 4),
                     "threshold_basis": basis,
+                    "r1_disabled": r1,
                 }
             )
     return pd.DataFrame(rows)
@@ -638,6 +691,7 @@ def _write_markdown(iso: str, table: pd.DataFrame) -> None:
             "baseline",
             "baseline_commit",
             "threshold_basis",
+            "r1_disabled",
         ]
         lines.append("\n| " + " | ".join(cols) + " |\n")
         lines.append("|" + "|".join(["---"] * len(cols)) + "|\n")

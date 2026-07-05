@@ -26,4 +26,9 @@ Drop the retrieved unified CSV here as **`nyiso.csv`**.
 Note: NYC (Zone J) 2024-25 LCR was corrected 81.7% → **80.4%** in Apr 2024; use
 80.4%. Required years (backcast): 2023/2024, 2024/2025, 2025/2026.
 
-**DATA NEEDED:** `nyiso.csv` not yet committed.
+**STATUS:** `nyiso.csv` committed (PR #1261) — LI (Zone K), NYC (Zone J), G-J
+and NYCA rows for 2023/24–2025/26. This is the authoritative source for the
+audit C-17 re-grounding of the Long Island self-supply floor; see the rule-14
+boundary-mismatch note at `constants.py::NYISO_LOCAL_SELFSUPPLY_FRAC` and open
+root-cause issue #1345 (the published LI LCR% is a peak-capacity ratio, so it
+cannot re-ground the all-hours energy self-supply fraction as a scalar).

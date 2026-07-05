@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-nyiso-47-ccdeleak-ablation",
+  "label": "nyiso 47 ccdeleak ablation",
+  "date": "2026-07-05",
+  "shorthand": "nyiso-47-ccdeleak-ablation",
+  "definition": "(D-3 zero-forcing ablation twin of nyiso_deleak_ccecon) every MERCHANT floor off (NYISO material floor: nyiso_local_selfsupply), structural protected set kept (nuclear must-run, CHP steam, coal take-or-pay, firm imports). Mirrors run_calibration_full.apply_zero_forcing_ablation.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-05-nyiso-47-ccdeleak-ablation.js",
+  "bundle": "results/calibration/nyiso_deleak_ccecon-ablation"
+}

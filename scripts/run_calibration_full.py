@@ -1678,7 +1678,9 @@ def _parse_offer_curve_json(
     return parsed
 
 
-def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
+def write_run_config(
+    run_dir: Path, cfg, meta: dict, note: str = "", ablation_of: str | None = None
+) -> None:
     """Write ``run_config.json`` (and ``model_changes.diff`` if dirty).
 
     A discrete, self-contained record of what was run: the full resolved
@@ -1686,6 +1688,11 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
     and any free-text note describing pre-run model changes. The companion
     ``model_changes.diff`` snapshots uncommitted edits so the exact code is
     reproducible from the bundle alone.
+
+    ``ablation_of`` (D-3, CLAUDE.md rule 20): when this bundle is a zero-forcing
+    ablation twin, the base keeper bundle name it ablates is recorded at the top
+    level so the twin is self-identifying and the calibration-report skill can
+    link it from the keeper's sidecar ``ablation_twin`` field.
     """
     import dataclasses
 
@@ -1694,6 +1701,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
         "timestamp": meta.get("timestamp"),
         "git": git,
         "model_changes_note": note,
+        "ablation_of": ablation_of,
         "calibration_flags": {
             k: meta.get(k)
             for k in (
@@ -1887,9 +1895,17 @@ def solve_and_persist(
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
     btm_backfill_year: int | None = None,
+    zero_forcing_ablation: bool = False,
+    ablation_of: str | None = None,
     note: str = "",
 ) -> Path:
-    """Solve every year/pass, write the parquet bundle, return the run dir."""
+    """Solve every year/pass, write the parquet bundle, return the run dir.
+
+    ``zero_forcing_ablation`` (D-3, CLAUDE.md rule 20): solve the zero-forcing
+    ablation twin — every merchant floor/bridge neutralized in ``run_year`` via
+    ``ScenarioConfig.as_zero_forcing_ablation`` — and record ``ablation_of`` (the
+    base keeper bundle name) at the top of ``run_config.json``.
+    """
     iso_config = get_iso_config(iso)
     if priced_interchange:
         # Interchange served by the priced import/export node (external zone
@@ -2123,6 +2139,7 @@ def solve_and_persist(
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
+            zero_forcing_ablation=zero_forcing_ablation,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -2793,7 +2810,14 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             ct_netload_drag=bool(ct_netload_drag)
         )
-    write_run_config(run_dir, recorded_cfg, meta, note)
+    if zero_forcing_ablation:
+        # Record the ablated config so run_config.json's scenario_config matches
+        # what the LP actually solved (run_year applied the same transform). The
+        # off-list is derived from the D-2 mechanism registry (rule 20).
+        from market_sim.config.scenarios import ScenarioConfig
+
+        recorded_cfg = ScenarioConfig.as_zero_forcing_ablation(recorded_cfg)
+    write_run_config(run_dir, recorded_cfg, meta, note, ablation_of=ablation_of)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
 
@@ -4956,6 +4980,20 @@ def main() -> None:
         help="Bundle root (default results/calibration/<iso>/<timestamp>).",
     )
     parser.add_argument(
+        "--zero-forcing-ablation",
+        action="store_true",
+        help="Solve the D-3 zero-forcing ablation TWIN of this config: every "
+        "merchant floor/bridge is neutralized (keeping only nuclear must-run, "
+        "CHP steam-following and coal take-or-pay) via "
+        "ScenarioConfig.as_zero_forcing_ablation. The bundle lands in "
+        "<out-dir>-ablation (or the default path with an '-ablation' suffix), "
+        "covers the SAME full year span as the keeper, and records "
+        '"ablation_of": <base bundle> in run_config.json. Register it beside '
+        "its keeper (registry/<id>-ablation.json, linked from the keeper "
+        'sidecar\'s "ablation_twin"); audit_keepers E9 requires it. Solve as a '
+        "concurrent separate invocation from the keeper (rule 12).",
+    )
+    parser.add_argument(
         "--note",
         default="",
         help="Free-text note describing pre-run model changes; recorded in "
@@ -6557,6 +6595,12 @@ def main() -> None:
         # process) so concurrent runs of one ISO stay isolated too.
         if run_dir.exists():
             run_dir = run_dir.with_name(f"{ts}-{os.getpid()}")
+    # D-3 zero-forcing ablation twin: land it beside its keeper with an
+    # "-ablation" suffix and record which base bundle it ablates (rule 20).
+    ablation_of = None
+    if args.zero_forcing_ablation:
+        ablation_of = run_dir.name
+        run_dir = run_dir.with_name(f"{run_dir.name}-ablation")
     run_dir = solve_and_persist(
         args.year,
         iso,
@@ -6779,6 +6823,8 @@ def main() -> None:
         pjm_seam_export_limit=args.pjm_seam_export_limit,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
+        zero_forcing_ablation=args.zero_forcing_ablation,
+        ablation_of=ablation_of,
         note=args.note,
     )
     report_run(run_dir, band_width=args.cf_band_width)

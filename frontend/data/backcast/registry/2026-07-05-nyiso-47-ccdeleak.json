@@ -1,0 +1,139 @@
+{
+  "ablation_delta": [
+    {
+      "ablation_twh": 9.925,
+      "class": "ST_GAS",
+      "delta_twh": 13.104,
+      "keeper_twh": 23.028
+    },
+    {
+      "ablation_twh": 118.276,
+      "class": "CC_REGULAR",
+      "delta_twh": -9.009,
+      "keeper_twh": 109.267
+    },
+    {
+      "ablation_twh": 45.003,
+      "class": "CC_CHP",
+      "delta_twh": -5.945,
+      "keeper_twh": 39.058
+    },
+    {
+      "ablation_twh": 9.468,
+      "class": "CT_PEAKER",
+      "delta_twh": 4.235,
+      "keeper_twh": 13.702
+    },
+    {
+      "ablation_twh": 63.205,
+      "class": "import",
+      "delta_twh": -0.96,
+      "keeper_twh": 62.245
+    },
+    {
+      "ablation_twh": 3.992,
+      "class": "ST_CHP",
+      "delta_twh": -0.885,
+      "keeper_twh": 3.107
+    },
+    {
+      "ablation_twh": 4.974,
+      "class": "CT_CHP",
+      "delta_twh": -0.62,
+      "keeper_twh": 4.354
+    },
+    {
+      "ablation_twh": 1.573,
+      "class": "oil",
+      "delta_twh": -0.032,
+      "keeper_twh": 1.541
+    },
+    {
+      "ablation_twh": 76.433,
+      "class": "hydro",
+      "delta_twh": -0.002,
+      "keeper_twh": 76.431
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "COAL",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "COAL_BIT",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "COAL_LIGNITE",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "COAL_PRB",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "COAL_WC",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 6.347,
+      "class": "OTHER",
+      "delta_twh": 0.0,
+      "keeper_twh": 6.347
+    },
+    {
+      "ablation_twh": 0.0,
+      "class": "OTHER_FOSSIL",
+      "delta_twh": 0.0,
+      "keeper_twh": 0.0
+    },
+    {
+      "ablation_twh": 2.272,
+      "class": "biomass",
+      "delta_twh": 0.0,
+      "keeper_twh": 2.272
+    },
+    {
+      "ablation_twh": 82.828,
+      "class": "nuclear",
+      "delta_twh": 0.0,
+      "keeper_twh": 82.828
+    },
+    {
+      "ablation_twh": 8.154,
+      "class": "solar",
+      "delta_twh": 0.0,
+      "keeper_twh": 8.154
+    },
+    {
+      "ablation_twh": 17.657,
+      "class": "wind",
+      "delta_twh": 0.0,
+      "keeper_twh": 17.657
+    }
+  ],
+  "ablation_twin": "2026-07-05-nyiso-47-ccdeleak-ablation",
+  "bundle": "results/calibration/nyiso_deleak_ccecon",
+  "date": "2026-07-05",
+  "definition": "(PROBE, B-NYI-1, scalar remediation C-13/rule-25) NYISO de-leak: CC_REGULAR econ_high 1.21 -> 1.0 (ERCOT-cross-borrowed CC markup, retained only because removing it craters C3a ~ -24% = residual justification). CT_PEAKER 13.15x wall already de-leaked in source (0c6c833 / nyiso-42-band-deleak). C-17 Long_Island 0.45 LEFT unchanged (published Zone-K LCR is a peak-capacity ratio, not the all-hours energy self-supply frac; rule-14 boundary mismatch, issue #1345). Byte-faithful replay of nyiso-41 keeper mechanism set + source de-leak. EXPECTED C3a/price regression, recorded not chased (rule #1); C3a hole = issue #1344.",
+  "file": "frontend/data/backcast/runs/2026-07-05-nyiso-47-ccdeleak.js",
+  "id": "2026-07-05-nyiso-47-ccdeleak",
+  "iso": "NYISO",
+  "label": "nyiso 47 ccdeleak",
+  "market_story": "Ablating the only NYISO merchant floor (nyiso_local_selfsupply, the Long Island LMIC floor) lets cheap NYC gas flood the cable-islanded LI pocket: LI in-zone thermal collapses toward the economic import-flooded solution the LP prefers, confirming the floor is what holds the ~8.5 TWh LI self-supply (the residual-identified 0.45 frac, rule-14 boundary-mismatch, issue #1345). Structural floors (firm HQ/Ontario imports, nuclear must-run, CHP steam, coal take-or-pay) are retained. The de-leaked CC econ band (econ_high 1.0) is unchanged between twin and probe, so the C3a hole is not a floor artifact \u2014 it is the missing NYISO reserve/scarcity price formation (issue #1344).",
+  "shorthand": "nyiso-47-ccdeleak",
+  "years": [
+    2023,
+    2024,
+    2025
+  ]
+}

@@ -13,7 +13,7 @@
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
     "n_entries": 11,
-    "n_residual": 9,
+    "n_residual": 8,
     "entries": [
       {
         "name": "offer_curve_by_group",
@@ -170,11 +170,11 @@
       {
         "name": "GAS_AVAILABILITY_FACTOR[CAISO]",
         "where": "constants.py GAS_AVAILABILITY_FACTOR",
-        "identification": "residual",
+        "identification": "published",
         "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
-        "value": 0.89,
-        "source": "nudged from the NERC GADS 2019-2023 fleet baseline 0.88 during calibration (audit C-18; W1d marker)",
-        "root_cause": "audit C-18: re-ground on the GADS baseline or a frozen derive from CAMPD availability; the nudge is compensating for an unmodeled availability effect"
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
       },
       {
         "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
@@ -210,8 +210,8 @@
         "where": "data/raw/reference/reliability_floor_coeffs_CAISO.csv",
         "identification": "measured-physical",
         "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
-        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script)",
-        "note": "D-8: coefficient levels mostly stable but several limbs drift >11% and three flip Spearman-rho sign out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC \u2014 docs/out-of-sample-results-2026-07.md \u00a72B); re-derive only on source-data updates (rule 23)"
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
       },
       {
         "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]",
