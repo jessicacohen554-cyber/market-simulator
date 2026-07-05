@@ -23,7 +23,6 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
@@ -116,7 +115,6 @@ def _build_bands_frame() -> pd.DataFrame:
     exporter's "missing layer" path is exercised for real, not just in unit
     tests: this fixture *is* the "layer absent" case.
     """
-    rng = np.random.default_rng(SEED)
     rows = []
     for year in YEARS:
         t = year - YEARS[0]

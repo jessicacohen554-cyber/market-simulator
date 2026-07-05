@@ -2843,11 +2843,10 @@ def run_year(
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
-    # Default the CAISO per-hub / corridor intertie flags so the later
-    # corridor-limit and forward-ATC checks are bound on every path; they are
-    # only set inside the priced-interchange block below (CAISO-only), so a
-    # non-priced or non-CAISO run keeps them False.
-    caiso_per_hub = False
+    # Default the CAISO corridor intertie flag so the later corridor-limit
+    # and forward-ATC checks are bound on every path; it is only set inside
+    # the priced-interchange block below (CAISO-only), so a non-priced or
+    # non-CAISO run keeps it False.
     caiso_corridors = False
     if priced_interchange:
         # CARB levies its cap-and-trade allowance on unspecified WECC imports
@@ -2862,7 +2861,6 @@ def run_year(
             else 0.0
         )
         interchange_spec = get_interchange_spec(config, iso, year=year)
-        caiso_per_hub = interchange_spec.caiso_mode == "per_hub"
         caiso_corridors = interchange_spec.use_corridors
         import_generators = build_interchange_fleet(interchange_spec, border_carbon)
         # Shared topology sequence (same order as always): external node
