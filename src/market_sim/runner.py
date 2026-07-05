@@ -10,6 +10,7 @@ and runs them in parallel.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import time
@@ -276,6 +277,72 @@ def _storage_additions_since(
     return out
 
 
+def _blend_price_signal(
+    econ_prices: np.ndarray,
+    prev_signal: np.ndarray | None,
+    alpha: float,
+) -> np.ndarray:
+    """Return the EWMA-blended capacity-screen price signal (plan §2.2).
+
+    ``signal_Y = alpha * econ_prices_{Y-1} + (1 - alpha) * signal_{Y-1}``.
+    At ``alpha == 1.0`` (the default) or with no prior signal the input array
+    is returned unchanged (the SAME object — byte-identical behaviour).
+    Anti-whipsaw smoothing only; consumed exclusively by the capacity
+    screens, never by dispatch or results.
+    """
+    if alpha >= 1.0 or prev_signal is None:
+        return econ_prices
+    return alpha * econ_prices + (1.0 - alpha) * prev_signal
+
+
+def _lookahead_reprice_signal(
+    config: ScenarioConfig,
+    next_year: int,
+    base_demand: np.ndarray,
+    fleet_arrays,
+    mc_cost: np.ndarray,
+    result,
+    n_zones: int,
+) -> np.ndarray:
+    """Stack re-price of the entering year's known net load (plan §2.3.2).
+
+    The pro-forma a developer runs against the known fleet, with zero fitted
+    parameters: price each hour of next year's net-load duration
+    (``demand_{Y+1} - `` this year's VRE output) by ``np.searchsorted`` into
+    the current fleet's marginal-cost supply stack (time-mean full variable
+    cost, availability-derated capacity), and apply the same ORDC scarcity
+    curve the runner's capacity-economics overlay uses where the stack
+    thins/exhausts. O(T log G) numpy, no hour loop (rule 2). Feeds ONLY the
+    capacity screens via ``prior_results.price_signal`` — never dispatch,
+    results, or the backcast (backcast mode has no capacity evolution).
+
+    Returns:
+        ``(n_zones, T)`` system-wide hourly price signal (every zone sees the
+        same stack price, matching the screens' system-level use).
+    """
+    demand_next = _scale_demand(base_demand, config, next_year).sum(axis=0)  # (T,)
+    vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
+    net_load = demand_next - vre
+    # Static merit stack: per-generator time-mean full variable cost against
+    # availability-derated capacity (outages/derates included).
+    mc_gen = np.asarray(mc_cost, dtype=float).mean(axis=1)  # (n_gen,)
+    cap_gen = np.asarray(fleet_arrays.pmax, dtype=float) * np.asarray(
+        fleet_arrays.availability, dtype=float
+    ).mean(axis=1)  # (n_gen,)
+    order = np.argsort(mc_gen, kind="stable")
+    mc_sorted = mc_gen[order]
+    cum_cap = np.cumsum(cap_gen[order])
+    idx = np.searchsorted(cum_cap, np.clip(net_load, 0.0, None), side="left")
+    prices_h = mc_sorted[np.minimum(idx, mc_sorted.size - 1)]
+    # ORDC scarcity tail where the stack exhausts (same curve, same gate as
+    # the post-solve capacity-economics adder; reserve-rich hours get ~0).
+    if config.scarcity_pricing_enabled and config.scarcity_price_overlay:
+        reserves = cum_cap[-1] - net_load
+        adder = scarcity_prices(config, next_year, reserves, prices_h)["scarcity_adder"]
+        prices_h = prices_h + adder
+    return np.tile(prices_h[None, :], (n_zones, 1))
+
+
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     """Run every simulation year for one scenario and one ISO, sequentially.
 
@@ -430,6 +497,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     fleet = None
     loss_tracker: dict[str, int] = {}
     prior_results = None
+    # EWMA state for the capacity screens' price signal (plan §2.2): the
+    # previous year's blended signal. None until the first solved year.
+    price_signal_prev: np.ndarray | None = None
 
     # Load the CAMPD operational bins once when enabled. The same bin frame
     # builds the dispatch fleet and drives the CHP must-run post-processing.
@@ -542,6 +612,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         is_bridge = config.hindcast and year in HINDCAST_BRIDGE_YEARS
         driver_year = last_solved_year if is_bridge else year
 
+        # The entering year's demand is deterministically known before the
+        # fleet evolves (_scale_demand is pure config arithmetic), so the
+        # capacity screens' peak-anchored mechanisms — the retirement
+        # reliability floor and the reserve-margin backstop — test the
+        # current year's known peak instead of lagging it by a full year
+        # (capacity-economics plan 2026-07 §2.3 component 1: an off-by-one
+        # deletion, not foresight). The price-driven screens still see only
+        # prior-year outcomes (one-pass, rule 10).
+        year_demand = _scale_demand(base_demand, config, year)
+        peak_demand = float(year_demand.sum(axis=0).max())
+
         if fleet is None:
             # First year: build the base fleet. With CAMPD binning the fleet
             # comes from the operational bin assignments (base + peak
@@ -576,7 +657,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # capacity evolution aligned with hourly dispatch fuel costs.
             gas_price_year = resolve_annual_gas_price(config, driver_year)
             carbon_price_year = resolve_carbon_price(config, driver_year)
-            fleet, loss_tracker, renewable_additions, retrofit_log = evolve_fleet(
+            (
+                fleet,
+                loss_tracker,
+                renewable_additions,
+                retrofit_log,
+                floor_retention_log,
+            ) = evolve_fleet(
                 fleet,
                 prior_results,
                 year,
@@ -589,7 +676,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 eac_price_ccs=config.eac_price_gas_cc_ccs,
                 events=evo_events,
                 confirmed_exits=confirmed_exits,
+                peak_demand_next=peak_demand,
             )
+            # Persist the reliability floor's attribution log next to the
+            # per-year results parquet (rule 20 analogue: floor-retained MW
+            # must be measurable per run, not argued). Written every evolved
+            # year — an empty list is the affirmative "floor did not bind".
+            floor_log_path = (
+                get_cache_path(iso, cache_key, year).parent
+                / f"year_{year}_floor_retentions.json"
+            )
+            floor_log_path.parent.mkdir(parents=True, exist_ok=True)
+            floor_log_path.write_text(json.dumps(floor_retention_log, indent=1))
             if retrofit_log:
                 avg_savings = sum(
                     r["annual_net_savings_per_mw"] for r in retrofit_log
@@ -631,9 +729,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     wind_pool_by_zone=wind_by_zone,
                     solar_pool_by_zone=solar_by_zone,
                 )
+            # The storage screen consumes the capacity-screen price signal
+            # (EWMA / lookahead, plan §2.2-§2.3) when present; identical to
+            # raw prices at the defaults. Bare-dict callers without the key
+            # fall back to prices.
+            storage_screen_prices = prior_results.get("price_signal")
+            if storage_screen_prices is None:
+                storage_screen_prices = prior_results["prices"]
             storage_units = apply_storage_new_entry(
                 storage_units,
-                prior_results["prices"],
+                storage_screen_prices,
                 year,
                 config,
                 iso,
@@ -775,6 +880,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # profile; must run after fleet-array build and before dispatch.
         inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
+        # The capacity screens already consumed the entering year's known peak
+        # (computed at the top of the loop, before fleet evolution). Recompute
+        # year_demand / peak_demand here on the hindcast-aware basis for the LP
+        # and results path: in hindcast mode the measured/pinned load
+        # (year_base_demand) governs the solve, not the forecast scalar.
         year_demand = (
             year_base_demand
             if config.hindcast
@@ -1455,6 +1565,40 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 float(adder.max()),
             )
 
+        # Capacity-screen price signal (plan §2.2-§2.3): optionally re-price
+        # the entering year's known net load against this year's supply
+        # stack, then EWMA-blend across years. At the defaults (alpha=1.0,
+        # lookahead off) this passes econ_prices through unchanged (the same
+        # array object — byte-identical). Screens-only: dispatch, results
+        # and persisted prices never see it.
+        price_signal = econ_prices
+        if (
+            config.entry_lookahead_reprice
+            and config.mode == "forecast"
+            and year < END_YEAR
+        ):
+            price_signal = _lookahead_reprice_signal(
+                config,
+                year + 1,
+                base_demand,
+                fleet_arrays,
+                mc_cost,
+                result,
+                len(zone_names),
+            )
+            logger.info(
+                "year %d: lookahead stack re-price for %d capacity screens — "
+                "mean $%.2f/MWh (raw duals+overlay mean $%.2f)",
+                year,
+                year + 1,
+                float(price_signal.mean()),
+                float(econ_prices.mean()),
+            )
+        price_signal = _blend_price_signal(
+            price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
+        )
+        price_signal_prev = price_signal
+
         # Typed cross-year state (pipeline.PriorYearResults, AR-2). The .get /
         # __getitem__ shims keep every dict-style reader (this loop's next
         # iteration, capacity.evolve_fleet, apply_storage_new_entry) working
@@ -1463,6 +1607,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             fleet_arrays=fleet_arrays,
             dispatch_result=result,
             prices=econ_prices,
+            price_signal=price_signal,
             peak_demand=peak_demand,
             planned_additions=planned_additions,
             mc_cost=mc_cost,

@@ -105,7 +105,7 @@ def wrapped_econ(
     peak_demand,
     **kw,
 ):
-    survivors, loss_years = _orig_econ(
+    survivors, loss_years, floor_retention_log = _orig_econ(
         fleet,
         fleet_arrays,
         dispatch_result,
@@ -120,7 +120,8 @@ def wrapped_econ(
     yr = RECORDS["years"].setdefault(year, {})
     yr["econ_ret"] = [_unit_row(g) for g in fleet if g.unit_id in gone]
     yr["loss_years"] = dict(loss_years)
-    return survivors, loss_years
+    yr["floor_retentions"] = list(floor_retention_log)
+    return survivors, loss_years, floor_retention_log
 
 
 def wrapped_evolve(fleet, prior_results, year, config, loss_tracker, **kw):
