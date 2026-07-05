@@ -19,7 +19,7 @@ cross-benchmark (`scripts/run_sensitivity_tornado.py`, `docs/handoffs/diagnostic
 | Capacity hindcast | **Never built.** No `run_capacity_hindcast.py`, no `docs/hindcast-reports/`. Called the centerpiece by both prior programs (plan Phase 2, PP-0.3). |
 | Forecast invariant checker | **Absent.** No `check_forecast_invariants.py`. |
 | Forecast e2e coverage | **Zero.** `tests/test_runner.py:23-64` patches `solve_dispatch`/`DispatchModel` with synthetic results; the 2026–2050 evolution loop has never run against a real LP in tests (TC-3). |
-| Statistical-mode (D-7) backcast | Six D-7 probes solved 2026-07-03 and registered (`*-statmode-d-7`, `results/calibration/*_statmode_2026-07`). The **R2 physical-HR CO2 basis (fff2c34, merged 2026-07-05)** changed the scored quantity *after* they ran. For carbon-zero ISOs (ERCOT/PJM/MISO) R2 provably does not touch the solve (carbon = $0 ⇒ rate never enters `mc`) — their bundles stay valid and need only a re-score. For carbon-priced ISOs (**CAISO/NYISO/NEISO**) R2 moves the merit order — their statmode solves are stale and **must be re-run at HEAD**. Hence "statmode has run for ERCOT/PJM/MISO only." |
+| Statistical-mode (D-7) backcast | **REFRESHED 2026-07-05 (this session, W3-P1).** ERCOT/PJM/MISO (carbon=$0) re-scored in place — `calibration_verdict.py` reads the already-committed `runs/<id>.js` payload, not raw dispatch, so no re-solve was needed or possible in a fresh checkout (bundle-local dispatch/bench parquets are gitignored intermediates); confirmed provably unchanged (`2026-07-04-statmode-d7-probe-ercot32`, `2026-07-03-pjm-statmode-d-7`, `2026-07-03-miso-statmode-d-7` — same ids, same files, no diff). CAISO/NYISO/NEISO (carbon-priced) re-solved at HEAD against each ISO's *current* keeper bundle (`caiso51_firm_base`, `nyiso41_hubprices`, `neiso_ctscrub`), all years 2023-2025, registered as `2026-07-05-<iso>-statmode-d7-r2` (probes; the stale 2026-07-03 sidecars are kept but flagged STALE, not deleted). See §5 for the per-ISO table. **Caveat:** the CAISO/NYISO r2 solves inherit HEAD's current offer state wholesale (not a same-SHA keeper-replay-paired isolation of R2 alone per §3.2's fuller recipe), so their CO2/volume movement vs the *committed* (partly pre-07-04-merge) keeper numbers conflates R2 with the 07-04+ offer work; NYISO specifically inherits the B-NYI-1 offer de-leak (merge a4c219e, 2026-07-05) — noted, not compensated for. **Environment note:** this session ran in a fresh container with no persisted `results/calibration/_shared/` or per-bundle `dispatch/` cache from prior sessions (both gitignored by design), so re-solving was the only way to regenerate the three carbon-priced bundles; a same-session/same-container re-score (as CLAUDE.md's "never re-solve just to make the report" guidance intends) would not have required it. |
 | Keepers | All six dated 2026-07-03; all predate the 07-04 ISO-offer merges. NYISO flagged: a HEAD re-solve of nyiso-41 regresses C1/C7 (CT-offer grounding) — owner re-gate pending (`co2-keeper-regate-2026-07-05.md`). |
 | Holdouts | 2022 + H1-2026 fully quarantined (rule 22); `calibration-complete.json` `complete: {}`. ERCOT+PJM holdout *source data* intake landed 2026-07-04 under explicit owner authorization; CAISO/MISO/NYISO/NEISO zero holdout intake. |
 | CI | **W1-P1 not landed.** Only `lint.yml` (ruff) gates PRs; `audit_keepers.py`/`legitimacy_diagnostics.py` are wired into zero PR workflows (`bench-repro.yml` is a weekly D-13 cron). |
@@ -441,7 +441,67 @@ no 2022/2026 anywhere.
 
 ---
 
-## 5. (reserved) D-7 skill table — appended by W3-P1
+## 5. D-7 skill table — appended by W3-P1 (2026-07-05)
+
+Keeper-at-HEAD vs statmode-at-HEAD, all years 2023-2025. "Keeper" reads each ISO's
+*currently committed* keeper bundle (`frontend/data/backcast/keepers.json`) via
+`calibration_verdict.py <keeper-id>` — for CAISO/NYISO this is **not** a fresh HEAD
+replay (their committed bundles predate the 2026-07-04 offer merges; see §3.2/§0), so
+the keeper-column CO2 numbers are the stale committed ones, not a same-SHA baseline.
+Statmode is the D-7 probe (byte-faithful keeper replay, `outage_source=statistical`,
+deployment/reliability floors + WEFOR relief + per-plant monthly coal pricing off):
+`run_statmode_probe.py` for CAISO/NYISO/NEISO (fresh HEAD solve, this session);
+`calibration_verdict.py` re-run on the existing bundle for ERCOT/PJM/MISO (no solve,
+carbon=$0 ⇒ provably unaffected by R2).
+
+| ISO | keeper CO2 (2023/24/25, model vs eGRID %) | statmode CO2 (2023/24/25) | keeper C1 free-class | statmode C1 free-class |
+|---|---|---|---|---|
+| ERCOT | PASS −0.4 / PASS −1.1 / PASS +0.5 | PASS +0.1 / PASS −2.4 / PASS +3.9 | 10/12 | 9/12 |
+| PJM   | PASS +1.3 / PASS +1.3 / PASS +4.6 | FAIL +26.6 / FAIL +26.1 / FAIL +22.6 | 10/12 | 6/12 |
+| MISO  | PASS −2.0 / PASS −3.6 / PASS +4.1 | FAIL +15.0 / FAIL +10.5 / FAIL +21.6 | 6/12 | 2/12 |
+| CAISO | PASS +0.5 / **FAIL +8.4** / **FAIL +8.6** (stale, pre-07-04) | PASS −1.5 / PASS +6.9 / FAIL +10.4 | 7/8 | 6/8 |
+| NYISO | PASS −3.6 / CAVEAT −7.2 / PASS −6.2 | PASS +3.7 / PASS −1.9 / PASS −1.0 | 10/10 | 6/10 |
+| NEISO | PASS −3.0 / PASS −3.1 / PASS +4.0 | PASS −3.5 / PASS −3.4 / PASS +3.7 | 8/8 | 8/8 |
+
+**Reading the table (rule #1 — a worse statmode fit is the finding, not a bug):**
+
+- **ERCOT/NEISO**: the statmode CO2 gap stays inside the same PASS band as the
+  keeper — the historic overlays (CAMPD outages, WEFOR relief, per-plant coal
+  pricing, deployment floors) are buying comparatively little *system* CO2 skill
+  for these two markets; the C1 free-class drop (ERCOT 10→9, still solid; NEISO
+  unchanged 8/8) says the same for fuel-mix.
+- **PJM/MISO**: statmode CO2 fails hard in all three years (PJM +22–27%, MISO
+  +11–22%) against a keeper that PASSes cleanly — here the overlays are carrying
+  real skill; removing them (statistical outages instead of measured CAMPD
+  windows, no per-plant coal pricing) visibly breaks the fuel mix (PJM free-class
+  10/12→6/12, MISO 6/12→2/12). This is the expected D-7 signal for markets with
+  a large coal/CC fleet whose dispatch order is outage- and fuel-cost-sensitive.
+- **CAISO**: the keeper's *committed* 2024/2025 CO2 already FAILs (stale,
+  pre-07-04-merge bundle — see §0/§3.2); the fresh HEAD statmode solve actually
+  reads *better* on 2023/2024 (PASS/PASS vs PASS/FAIL) because it inherits the
+  07-04+ offer-curve work the committed keeper predates, and still FAILs 2025
+  (+10.4%). Because this solve was not paired with a same-SHA keeper replay,
+  the movement here is confounded (offer-curve improvement + overlay removal +
+  R2, not R2 isolated) — flagged, not a claim that statmode overlays are net
+  harmful for CAISO.
+- **NYISO**: same confound as CAISO (committed keeper predates 07-04 merges),
+  plus the **B-NYI-1 offer de-leak** (merge a4c219e, 2026-07-05 re-gate) is
+  live in this HEAD solve — CT_PEAKER's offer wall dropped from the old
+  13.15×/1.98 ceiling to 4.0×/1.0, which alone roughly doubles modelled
+  CT_PEAKER energy per the keeper-regate doc. That is very likely why NYISO's
+  statmode CO2 reads as *cleaner* than the stale committed keeper (all PASS,
+  −1.0 to +3.7% vs the keeper's CAVEAT/-7.2% in 2024) — inherited, not
+  compensated for, per this task's instruction.
+- **R2 isolation (the one number this session can state cleanly):** for all
+  three carbon-priced ISOs, `docs/handoffs/co2-keeper-regate-2026-07-05.md`'s
+  ablation already isolated R2's own effect at ≤0.1-1% of modelled CO2 (CAISO
+  +0.2-0.4 Mt, NYISO <0.1%, NEISO ~0) — small next to the offer-curve-driven
+  swings above. R2 itself did not need re-running to confirm this; it is
+  restated here for the record.
+
+No parameter was tuned to any of these results (rule #1/#23); a worse statmode
+fit vs. the keeper (PJM, MISO) is reported as-is, not chased. No solve, score,
+or intake touched 2022 or H1-2026.
 
 ---
 
