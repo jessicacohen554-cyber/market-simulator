@@ -106,6 +106,54 @@ CAISO/NYISO/NEISO (explicit-tons override still wins; quarantined 2026 stays
 inert); an explicit dispatch test asserts the endogenous dual is non-negative,
 monotone non-decreasing as the cap tightens, and re-orders merit coal→gas.
 
+## 2026-07-05 (emissions docs/citation reconciliation — wave-2 R4/R5/R6, no behavior change)
+
+**Docs only.** Reconciled prose docs and the parameter-citation registry with the CO2
+emissions-plan wave-2 code (`036bd3e`, `c17eaa4`, PR #1371) that had landed without a
+paired doc sync, plus fixed pre-existing drift the sweep turned up. No source logic
+changed.
+
+- `docs/fable-repo-audit-2026-07.md` §A: marked EM-2/EM-4/EM-5/EM-6/EM-7/EM-8 **RESOLVED**
+  with landing commits and tests; EM-3 **RESOLVED (provenance)** with its retrofit tail
+  called out as open; EM-1 **PARTIALLY RESOLVED** (rebased a second time same-day onto the
+  NOx/SO2-full-wiring wave above — the measured-rate/LP-pricing side and a standalone
+  diagnostic scorer are now wired, but `results/export.py`'s scenario JSON and
+  `compute_nox`/`compute_so2` in `results/emissions.py` still have no production caller —
+  see the updated W3-E2 note). Added a "Wave-3 in-flight" list (W3-E2 NOx/SO2 export/
+  verdict-scoring/dashboard wiring, W3-E3 mass-cap validation, W3-E5 retrofit/degradation
+  trajectories) so the still-open items have a citable pointer instead of living only in
+  prose. W3-E3 itself was narrowed by the mass-cap-budget-schedules wave above (real
+  published CARB/RGGI budgets now populate the row and the endogenous dual is validated
+  on a dispatch fixture) after a second same-day rebase; still gated `mass_cap_enabled`
+  default OFF with no keeper enabling it.
+- `model-methodology-spec.md` §3.3 (fleet/offer curves) and §1.6 (commitment): documented
+  `measured_class_cf` (R5/EM-7 CHP consistency) and `startup_co2_tons` (R6/EM-5,
+  default-off reporting adder) — neither had a spec mention before this sweep. Also
+  corrected an overstatement: the spec previously implied the CAMPD class-median fallback
+  (`emission_rates.class_median_rates`) covers CEMS-uncovered plants and new entrants in
+  production; it does not — only pieces (a) gen-weighted average and (c) unit-composition
+  mask of the four-piece estimator are wired into `fleet.py`; (b) NN conditioning and (d)
+  class fallback are implemented and unit-tested but reachable only from
+  `scripts/loyo_co2_rates.py` and its tests. Recorded as a follow-on, not yet scheduled.
+- `docs/binning-methodology.md`: rewrote the CHP must-run post-processing section, which
+  still described the pre-R5 sizing (`total_gen_by_plant − grid_gen_by_plant`, a
+  rule-13-violating construction the code itself no longer uses) and the unconditional flat
+  `must_run_cf=0.85`. Now matches the shipped measured-share / measured-class-CF / measured
+  CO2-rate logic in `results/emissions.py::compute_must_run_emissions`.
+- `docs/handoffs/emissions-co2-rate-plan-2026-07.md`: added §9.4 documenting the
+  production-wiring gap above (found this sweep, not previously written down anywhere;
+  numbered after the chp-btm-share wave's §9.2 and the NOx/SO2-wiring wave's §9.3 above).
+- `docs/parameter-citations.md` / `frontend/data/parameters.json`: re-ran
+  `scripts/generate_parameter_registry.py` (1035→1056 parameters registered). Picked up
+  constants added by other recently-merged work that had never been registered
+  (`ercot_rtolcap_fwd_*`, `ercot_reserve_supply_forward`, etc.) and, as a side effect,
+  resolved a pre-existing duplicate `scenario.ercot_storage_as_duration_gate` entry (one
+  full-citation copy kept; the orphaned duplicate slot now correctly holds the distinct
+  `ercot_reserve_supply_forward` parameter). The CO2-rate-plan constants themselves
+  (`CO2_RATE_*`, `CARB_FLOOR_ESCALATION`, `RGGI_RESERVE_ESCALATION`,
+  `scenario.startup_co2_reporting`) were already registered from a prior run and are
+  unchanged. `scripts/validate_parameters.py` and `ruff check .` both pass.
+
 ## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
 
 **Model.** Unified every carbon path through one `emission_rate × membership`
