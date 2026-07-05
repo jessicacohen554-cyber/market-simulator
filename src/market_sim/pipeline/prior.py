@@ -61,6 +61,26 @@ class PriorYearResults:
     # ``econ_prices`` array object, so behaviour is byte-identical. ``None``
     # (e.g. older tests building bare dicts) falls back to ``prices``.
     price_signal: "np.ndarray | None" = None
+    # Reserve-price signal for the capacity screens (capacity-economics plan
+    # 2026-07 §5 step 2): the hourly $/MWh a reserve-eligible unit can earn
+    # holding reserve instead of selling energy. Two eligibility tiers,
+    # mirroring the co-opt's headroom cascade / ERCOT's RTORPA-vs-RTOFFPA
+    # split: ``reserve_price_signal`` is the synchronized (all-products) tier;
+    # ``reserve_price_signal_slow`` is the offline quick-start (Non-Spin)
+    # tier. Populated by the runner from the co-opt's own reserve duals
+    # (under ercot_thermal_as_endogenous) or the post-solve ORDC scarcity
+    # adder; ``None`` (screen_reserve_value_enabled off / neither mechanism
+    # active) keeps the screens on the legacy annual AS credits.
+    reserve_price_signal: "np.ndarray | None" = None
+    reserve_price_signal_slow: "np.ndarray | None" = None
+    # Zonal hourly renewable CF profiles ((n_zones, T), rows ordered as
+    # ``zone_names``) so the VRE new-entry screen values a candidate's actual
+    # capture shape against its build zone's prices instead of a flat mean
+    # (capacity-economics plan §6 CX-6c — shape-aware entry revenue). ``None``
+    # falls back to the scalar base-CF screen.
+    zone_names: "list[str] | None" = None
+    wind_cf: "np.ndarray | None" = None
+    solar_cf: "np.ndarray | None" = None
 
     def get(self, key: str, default: Any = None) -> Any:
         """Dict-style read with ``dict.get`` semantics.
