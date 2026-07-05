@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-05 (PB-3 follow-up — emissions-basis staleness handling + committed prior artifact)
+
+**Post-processing only — no solves.** Extends the landed PB-3 structural prior
+with the basis-staleness handling the W0-P4 design requires
+(`docs/handoffs/forecast-validation-program-2026-07.md` §0/§3.2): the D-7
+statmode fit inputs predate the R2 measured-rate CO2 basis (PR #1371).
+`default_prior` now (a) re-scores the carbon-zero ISOs (ERCOT/PJM/MISO) under
+the current basis with no solve (`rescore_carbon_zero`: recompute model/actual
+CO2 from the committed `gmModel`/`classFull` × stored class intensities;
+refuses to fit on a mismatch — all three verify identical, the 2023–2025
+scoring-rate rows being content-identical at HEAD), and (b) flags the
+carbon-priced ISOs (CAISO/NYISO/NEISO, new cited constant
+`STRUCTURAL_PRIOR_CARBON_PRICED_ISOS`) `basis_stale` /
+`"stale-pending-W3-P1"` — R2 moves their merit order, so only the W3-P1
+re-solves can refresh them. Staleness and the emissions-basis identity (label +
+sha256 of `fossil_co2_rates.parquet`) flow through `IsoResidual`/
+`StructuralPrior.as_dict()` into `ensemble_meta.json` and the band label. New
+`write_prior_artifact` commits the fit record to
+`results/ensemble/structural-prior/<version>.json`
+(`paths.STRUCTURAL_PRIOR_ARTIFACT_DIR`) so the W3-P1 re-fit is a clean,
+diffable swap; the fitted `pb3-statmode-d7-2026-07.json` is committed.
+Methodology note gains §6 (the staleness record); tests cover the flags, the
+re-score verification, the mismatch refusal, and the artifact round-trip.
+
 ## 2026-07-05 (PB-3 — structural-error prior + published emissions band)
 
 **Post-processing only — no solves, no keeper/registry changes.** Landed on
