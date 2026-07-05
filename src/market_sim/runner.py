@@ -95,6 +95,7 @@ from market_sim.model.transmission import (
     get_ttc_array,
     wecc_border_carbon_adder,
 )
+from market_sim.policy.cap_and_trade import per_generator_membership
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
@@ -1157,15 +1158,23 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Emissions mass-cap rows (policy constraint path, gated). When
             # mass_cap_enabled and a power-sector CO2 budget is configured for
             # the ISO's program/year, bound in-region fossil emissions; each
-            # cap's per-generator coefficient is m_zone[zone_idx]·emission_rate.
-            # Default off → no specs → identical LP. The row dual is surfaced as
-            # DispatchResult.co2_cap_price (a power-sector, no-bank scenario
-            # allowance price — plan §2/§8, not the RGGI/CARB market price).
-            mass_caps = get_active_policy_constraints(config, year)
+            # cap's per-generator coefficient is m[g]·emission_rate, where
+            # m[g] is per-unit-exact for any generator with a real plant_code
+            # (tested against its own plant's state) and the zone-level
+            # m_zone[zone_idx] fallback otherwise (per_generator_membership,
+            # plan §5). Default off → no specs → identical LP. The row dual is
+            # surfaced as DispatchResult.co2_cap_price (a power-sector,
+            # no-bank scenario allowance price — plan §2/§8, not the
+            # RGGI/CARB market price).
+            mass_caps = get_active_policy_constraints(
+                config, year, zone_names=zone_names
+            )
             if mass_caps:
                 cap_coeffs = np.vstack(
                     [
-                        spec.membership[fleet_arrays.zone_idx]
+                        per_generator_membership(
+                            config.iso, year, spec.membership, fleet_arrays
+                        )
                         * fleet_arrays.emission_rate
                         for spec in mass_caps
                     ]
