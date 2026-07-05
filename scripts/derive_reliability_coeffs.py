@@ -111,6 +111,7 @@ def _r1_disabled(iso: str, zone: str, klass: str, driver: str) -> bool:
     """
     return (iso, zone, klass, driver) in R1_DISABLED_LIMBS
 
+
 # --- Temperature onsets (plan D; physical anchors, not flat 25C/0C priors). ---
 # COLD has documented operational triggers for PJM; non-PJM uses a per-zone design
 # heating day. HOT has NO ISO-published trigger, so it is the per-zone design
@@ -568,12 +569,15 @@ def derive_iso(iso: str) -> pd.DataFrame:
                 continue
             floor_pct = float(fit["commit_frac"] * min_stable_pct)
             r1 = _r1_disabled(iso, zone, klass, "netload")
-            enabled = bool(
-                (not np.isnan(fit["rho"]))
-                and fit["rho"] >= RHO_MIN
-                and fit["n"] >= N_MIN
-                and fit["commit_frac"] > fit["baseline_commit"]
-            ) and not r1
+            enabled = (
+                bool(
+                    (not np.isnan(fit["rho"]))
+                    and fit["rho"] >= RHO_MIN
+                    and fit["n"] >= N_MIN
+                    and fit["commit_frac"] > fit["baseline_commit"]
+                )
+                and not r1
+            )
             rows.append(
                 {
                     "iso": iso,
@@ -602,12 +606,15 @@ def derive_iso(iso: str) -> pd.DataFrame:
                 continue
             floor_pct = float(fit["commit_frac"] * min_stable_pct)
             r1 = _r1_disabled(iso, zone, klass, driver)
-            enabled = bool(
-                (not np.isnan(fit["rho"]))
-                and fit["rho"] >= RHO_MIN
-                and fit["n"] >= N_MIN
-                and fit["commit_frac"] > fit["baseline_commit"]
-            ) and not r1
+            enabled = (
+                bool(
+                    (not np.isnan(fit["rho"]))
+                    and fit["rho"] >= RHO_MIN
+                    and fit["n"] >= N_MIN
+                    and fit["commit_frac"] > fit["baseline_commit"]
+                )
+                and not r1
+            )
             rows.append(
                 {
                     "iso": iso,
