@@ -134,10 +134,15 @@ complete** (2026-07-02): `launcher/run_lce.sh`/`run_lce.bat` twins + `src/lce_po
 post-merge adversarial review **PP-13** (2026-07-02) fixed 11 findings
 (request-body hardening, batch run-id collisions, loopback-only enforcement,
 error-message purity — see `docs/prompt-packs/PP-13-launcher-review.md`).
-Next open work: the on-hold real-LMP validation path (ADR 0015, stakeholder
-decision 2026-07-02) — extending the ERCOT backcast-validation bridge
-(§10 below) to CAISO/PJM/MISO/NYISO/NEISO, each needing its own per-ISO
-bridge re-solve.
+The ERCOT backcast-validation bridge (§10 below) has now been extended to
+CAISO/PJM/MISO/NYISO/NEISO (2026-07-05, see
+`docs/validation-2026-07-05-5iso-backcast-extension.md`) — all six ISOs have
+a real-priced validation sweep on the dashboard-adjacent `results/` store.
+Next open work: the market-sim **forecast** LMP path stays on hold
+(stakeholder decision 2026-07-02, ADR 0015) pending each ISO's production-
+readiness sign-off; CAISO's premium-cap frontier surfaced a pre-existing Mode
+A no-cost-tiebreak degenerate-solution limitation (see the 5-ISO memo) that
+is real LP-design follow-up work, not yet scheduled.
 
 ## 9. Verification
 
@@ -179,6 +184,19 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   `results/ercot_backcast2024_premiumcap/`.
   **The market-sim FORECAST path stays ON HOLD (stakeholder, 2026-07-02)** — this
   item is the backcast-validation carve-out ADR 0015 explicitly permits, not a
-  stakeholder sign-off that any ISO's forecast is production-ready. Extending to
-  CAISO/PJM/MISO/NYISO/NEISO still needs a per-ISO bridge re-solve (each keeper
-  likely carries its own container-reproducibility drift, as ERCOT's did here).
+  stakeholder sign-off that any ISO's forecast is production-ready.
+- [x] Extend the backcast-validation sweep to CAISO/PJM/MISO/NYISO/NEISO
+  (2026-07-05), each via its own per-ISO bridge re-solve from that ISO's
+  current calibration keeper (all five carry their own `meta.json`
+  schema-drift caveat, same class as ERCOT's; CAISO also needed the
+  per-hub WECC-import topology replicated). Results committed:
+  `results/{caiso,pjm,miso,nyiso,neiso}_backcast2024_premiumcap/`. PJM/MISO/
+  NYISO/NEISO all reproduce ERCOT's sanity checks cleanly (monotonic
+  premium-vs-matching, late storage entry, plausible fossil-CO₂-rate
+  ordering); CAISO's frontier instead surfaced a pre-existing Mode A
+  no-cost-tiebreak degenerate-solution limitation (saturates at 100%
+  matching from $1/MWh by building onshore wind near its 20 GW resource
+  cap) — flagged, not fixed, see
+  `docs/validation-2026-07-05-5iso-backcast-extension.md` for the full
+  writeup, including the container-memory (OOM at MISO/PJM's ~16 GB solve
+  peak) workaround.
