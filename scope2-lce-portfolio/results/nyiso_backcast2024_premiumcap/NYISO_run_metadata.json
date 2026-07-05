@@ -1,0 +1,136 @@
+{
+  "tool_version": "0.1.0",
+  "iso": "NYISO",
+  "mode": "premium_cap",
+  "config": {
+    "iso": "NYISO",
+    "year": 2030,
+    "hours": 8760,
+    "profile_shape_year": null,
+    "mode": "premium_cap",
+    "premium_deltas": [
+      1.0,
+      2.0,
+      5.0,
+      7.0,
+      10.0,
+      15.0,
+      20.0,
+      30.0,
+      40.0,
+      50.0,
+      75.0,
+      100.0,
+      150.0
+    ],
+    "matching_targets": [
+      0.8,
+      0.9,
+      1.0
+    ],
+    "strict_hourly_matching": false,
+    "lcoe_sensitivity": "mid",
+    "discount_rate": 0.07,
+    "active_resources": null,
+    "resource_caps_mw": {},
+    "resource_floors_mw": {},
+    "eac_premium_mwh": {},
+    "gas_price_mmbtu": 0.0,
+    "ccs_45q_per_ton": 85.0,
+    "additionality_only": false,
+    "excess_sale_fraction": 1.0,
+    "storage_epsilon": 0.001,
+    "storage_charge_policy": "arbitrage",
+    "load_growth_rate": 0.0,
+    "load_growth_years": 0,
+    "load_file": null,
+    "lmp_file": null,
+    "emissions_file": null
+  },
+  "profile_source": {
+    "source": "synthetic",
+    "path": null,
+    "shape_year": 2030,
+    "reason": "no profile file at /home/user/market-simulator/scope2-lce-portfolio/data/profiles/NYISO_2030.parquet (warn-and-fallback)"
+  },
+  "solves": [
+    {
+      "setpoint": 1.0,
+      "status": "Optimal",
+      "matching_pct": 0.05891251347659099,
+      "premium_per_mwh": 0.9999999999852689
+    },
+    {
+      "setpoint": 2.0,
+      "status": "Optimal",
+      "matching_pct": 0.11782503503420261,
+      "premium_per_mwh": 1.9999999999998936
+    },
+    {
+      "setpoint": 5.0,
+      "status": "Optimal",
+      "matching_pct": 0.29456258665643065,
+      "premium_per_mwh": 4.999999999999732
+    },
+    {
+      "setpoint": 7.0,
+      "status": "Optimal",
+      "matching_pct": 0.39876866700209157,
+      "premium_per_mwh": 6.999999999999945
+    },
+    {
+      "setpoint": 10.0,
+      "status": "Optimal",
+      "matching_pct": 0.5197987070462567,
+      "premium_per_mwh": 9.999999999999988
+    },
+    {
+      "setpoint": 15.0,
+      "status": "Optimal",
+      "matching_pct": 0.6272709191199415,
+      "premium_per_mwh": 14.999999999999826
+    },
+    {
+      "setpoint": 20.0,
+      "status": "Optimal",
+      "matching_pct": 0.6740168044482064,
+      "premium_per_mwh": 19.999999999999087
+    },
+    {
+      "setpoint": 30.0,
+      "status": "Optimal",
+      "matching_pct": 0.7360731372842657,
+      "premium_per_mwh": 30.00000000000026
+    },
+    {
+      "setpoint": 40.0,
+      "status": "Optimal",
+      "matching_pct": 0.784273747078873,
+      "premium_per_mwh": 39.999999999999986
+    },
+    {
+      "setpoint": 50.0,
+      "status": "Optimal",
+      "matching_pct": 0.825989416150057,
+      "premium_per_mwh": 50.000000000000405
+    },
+    {
+      "setpoint": 75.0,
+      "status": "Optimal",
+      "matching_pct": 0.921529699048025,
+      "premium_per_mwh": 74.99999999999991
+    },
+    {
+      "setpoint": 100.0,
+      "status": "Optimal",
+      "matching_pct": 0.9999994795714882,
+      "premium_per_mwh": 100.00000000000028
+    },
+    {
+      "setpoint": 150.0,
+      "status": "Optimal",
+      "matching_pct": 0.9999999999999473,
+      "premium_per_mwh": 149.99999999998423
+    }
+  ]
+}
