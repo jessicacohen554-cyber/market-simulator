@@ -4778,3 +4778,67 @@ Top-15-per-ISO retention honoured: pruned the 5 oldest NYISO registrations
 (nyiso-33/34/36 + the two nyiso-37 unified-downstate/ct sidecars+payloads);
 bundles retained on disk. No offer curve was tuned to any residual (rules
 #1/#23).
+
+---
+
+## 2026-07-05 — Backcast keeper re-gate under the repaired demand data (PR #1426, merge 2a8b222)
+
+**Task (rule #14).** PR #1426 found 15 corrupted `(iso, year)` series in
+`data/raw/eia-930/eia_demand_profiles.parquet` (zero-sentinel runs + order-of-
+magnitude spikes) and wired a repaired `demand-profile` clean datatype into
+`eia_loader.load_demand` unconditionally (a bug fix, not a gated methodology
+swap; `raw/` stays immutable, the fix lives at the curation seam). Every current
+keeper (dated 07-03/07-05) was solved BEFORE that merge. Rule #14: the accurate
+data stays no matter what it does to the fit; the keepers must be re-checked
+against it. This entry records the **affected-keeper matrix** (which scored years
+actually READ the corrupted file at solve time) and the re-gate outcome.
+
+### Affected-keeper matrix (which scored years read the corrupted legacy file)
+
+Determined from the demand-loading code at HEAD (`eia_loader.load_demand`):
+each ISO with a dedicated per-BA `<BA> hourly` extract (`_ISO_TO_HOURLY_BA`)
+reads that extract first (via `_eia_hourly_frame_filled`), and only falls back
+to `eia_demand_profiles.parquet` (→ repaired `demand-profile` clean, else raw
+legacy) when the per-BA frame is unavailable. **PJM has no per-BA demand extract
+at all**, so it reads the legacy file for every year. Verified empirically
+(`scratchpad/probe_demand_source.py`) that the dedicated frames return a full
+8760 for every scored year 2023–2025 for CAISO/MISO/NYISO/NEISO/ERCOT.
+
+| ISO (keeper) | demand source for scored years 2023–2025 | flagged-corrupt scored years | reads corrupt at solve? |
+|---|---|---|---|
+| ERCOT (ercot-32) | `ERCO hourly` dedicated (all years) | none | **No** |
+| CAISO (caiso-51) | `CISO hourly` dedicated (all years) | 2023 (legacy) | **No** — 2023 read via CISO extract, not legacy |
+| MISO (miso-41) | `MISO hourly` dedicated (all years) | 2024 (legacy) | **No** — 2024 read via MISO extract |
+| NYISO (nyiso-41) | `NYIS hourly` dedicated (all years) | 2024, 2025 (legacy) | **No** — read via NYIS extract (keeper is already STALE-VS-HEAD; not touched) |
+| NEISO (neiso-48) | `ISNE hourly` dedicated (all years) | 2024 (legacy) | **No** — 2024 read via ISNE extract |
+| **PJM (pjm-77)** | **legacy `eia_demand_profiles` (all years; no per-BA extract)** | **2023, 2024** (legacy) | **YES — 2023 & 2024 solved on corrupted demand** |
+
+**Conclusion: the only keeper whose scored years read the corrupted demand is
+PJM (pjm-77), years 2023 and 2024.** The corruption is a **zero-sentinel run**:
+23 consecutive hours in 2023 (idx 7393–7415, early Nov) and 22 in 2024
+(idx 1659–1680, early Mar) held `raw_mw = 0.0`. Repair (linear interpolation,
+`curate_demand_profile.py`) lifts those hours to ~36–40 GW; annual energy moves
++1.3 TWh (2023) / +1.4 TWh (2024) ≈ +0.17%, peak unchanged. PJM 2025 legacy was
+already clean (0 hours changed) — an in-bundle control. The other five ISOs are
+demand-repair-**unaffected** because their dedicated per-BA extracts never touch
+the corrupted legacy file for any scored year (the corruption there was latent,
+reachable only for 2021–2022 where CAISO/MISO have no extract — outside the
+2023–2025 scored span; 2022 is a quarantined holdout).
+
+### Re-gate method (PJM only)
+
+pjm-77 was solved at `e9daf7e` (07-05 03:36). HEAD carries substantial post-
+keeper PJM-relevant merges (offer_curves, dispatch, fleet, emission_rates), so a
+plain HEAD re-solve is confounded. Per the nyiso-49 D-2 pattern, two byte-faithful
+`replay_keeper.py` re-solves of the pjm-77 `meta.json` at HEAD, all years
+2023 2024 2025, sequential (15 GB box):
+- **Twin A "resolve"** — HEAD code + **repaired** demand (regenerated
+  `demand-profile` clean tree engaged). Bundle `pjm77_regate_repaired`.
+- **Twin B "ablation control"** — HEAD code + **corrupted** demand (isolated
+  `MARKET_SIM_DATA_ROOT` with the `demand-profile` clean partition absent → the
+  fallback reads the raw corrupted legacy). Bundle `pjm77_regate_corrupt`. The
+  single delta A↔B is the demand repair.
+- `resolve − ablation` (A − B) isolates the **demand repair**; `ablation − keeper`
+  (B − committed) isolates the **post-e9daf7e code merges**.
+
+_Outcome appended below once both twins complete._
