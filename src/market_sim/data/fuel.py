@@ -677,6 +677,21 @@ ALGONQUIN_DAILY_PATH: Path = GAS_PRICES_DIR / "algonquin_citygate_daily.csv"
 # locally supersede the reconstruction (rule #13: measured over estimate).
 IROQUOIS_Z2_DAILY_PATH: Path = GAS_PRICES_DIR / "iroquois_z2_daily.csv"
 
+# Measured California Composite Average citygate (PG&E Citygate / SoCal
+# Citygate / SoCal Border blend, NGI Daily GPI) *daily* spot, scraped from the
+# same EIA Natural Gas Weekly Update archive compact "Spot Prices" table the
+# Transco daily series reads (scripts/fetch_caiso_citygate_daily.py), true-date
+# keyed like TRANSCO_Z6_NY_DAILY_PATH's dated view (dense trading-day quotes,
+# not sparse narrative prints). The CAISO leg of the daily hub-basis overlay
+# (:func:`iso_hub_daily_gas_prices`) uses these real prints for the within-month
+# *shape* only, mean-preserving on the measured monthly SoCal/PG&E citygate
+# basis (``gas_basis_by_iso_month.csv``) — the flat monthly plateau (e.g. the
+# Jan-2023 arctic-event month, monthly mean ~HH+$24) replaced by the real
+# cold-day spike and its decay (e.g. the measured $24.29/MMBtu 2023-01-12 print
+# followed by a collapse to ~$8-11 the last week of the month), instead of
+# pricing every January hour at the monthly extreme.
+CAISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
+
 # Measured Transco Z6 NY monthly (mean of daily quotes) + the committed Iroquois
 # Z2 monthly reconstruction (Transco monthly + the NYISO SOM *annual*
 # Iroquois-Transco spread). Consumed by nyiso_reconciled_reference_monthly,
@@ -691,6 +706,7 @@ _TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 _TRANSCO_DAILY_DATED_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 _ALGONQUIN_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 _IROQUOIS_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
+_CAISO_CITYGATE_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] = {}
 
 # Clean-data consumption. Curated Parquet for each fuel-price datatype is read
 # via the frozen ``clean_io.read_clean`` seam when the opt-in flag is set and the
@@ -714,6 +730,9 @@ _HH_DAILY_CLEAN_CACHE: dict[tuple[str, str], dict[int, dict[int, list[float]]]] 
 _WINTER_BASIS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 _HH_MONTHLY_CLEAN_CACHE: dict[tuple[str, str], dict[tuple[int, int], float]] = {}
 _ALGONQUIN_DAILY_CLEAN_CACHE: dict[str, dict[int, dict[int, dict[int, float]]]] = {}
+_CAISO_CITYGATE_DAILY_CLEAN_CACHE: dict[
+    str, dict[int, dict[int, dict[int, float]]]
+] = {}
 _NYISO_ZONAL_HUB_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 _ERCOT_ZONAL_HUB_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 _ERCOT_EP_GAS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
@@ -789,6 +808,31 @@ def _clean_algonquin_daily() -> dict[int, dict[int, dict[int, float]]]:
         columns=["interval_start_utc", "fuel", "hub", "price_usd_per_mmbtu"],
     )
     sel = df[(df["fuel"] == "gas") & (df["hub"] == "algonquin")].sort_values(
+        "interval_start_utc"
+    )
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    for row in sel.itertuples(index=False):
+        ts = row.interval_start_utc
+        out.setdefault(ts.year, {}).setdefault(ts.month, {})[ts.day] = float(
+            row.price_usd_per_mmbtu
+        )
+    return out
+
+
+def _clean_caiso_citygate_daily() -> dict[int, dict[int, dict[int, float]]]:
+    """CA Composite citygate daily prices from the clean ``fuel-prices`` tree.
+
+    Returns the same ``{year: {month: {day-of-month: $/MMBtu}}}`` structure as
+    the raw CSV path in :func:`_caiso_citygate_daily_dated`.
+    """
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_PRICES_DATATYPE,
+        validate=False,
+        columns=["interval_start_utc", "fuel", "hub", "price_usd_per_mmbtu"],
+    )
+    sel = df[(df["fuel"] == "gas") & (df["hub"] == "ca_composite")].sort_values(
         "interval_start_utc"
     )
     out: dict[int, dict[int, dict[int, float]]] = {}
@@ -1084,6 +1128,47 @@ def _iroquois_z2_daily(path: Path | None) -> dict[int, dict[int, dict[int, float
     return out
 
 
+def _caiso_citygate_daily_dated(
+    path: Path | None,
+) -> dict[int, dict[int, dict[int, float]]]:
+    """Return ``{year: {month: {day-of-month: $/MMBtu}}}`` CA Composite spot.
+
+    The CAISO analogue of :func:`_transco_z6_daily_dated`: reads the measured
+    California Composite Average citygate daily spot (:data:`CAISO_CITYGATE_DAILY_PATH`,
+    scraped by ``scripts/fetch_caiso_citygate_daily.py`` from the same EIA
+    Natural Gas Weekly Update compact spot table Transco Z6 NY is read from),
+    keyed by true calendar day so the daily overlay places each trading-day
+    print where it actually occurred and interpolates the non-trading gaps.
+    Cached per path.
+
+    When the opt-in clean-data path is enabled (:func:`_use_clean_data`) and no
+    explicit ``path`` override is given, the series is sourced from the curated
+    ``data/clean/fuel-prices`` parquet (the ``(gas, ca_composite)`` rows) instead
+    of the raw CSV; the clean and raw paths are byte-for-byte equal.
+    """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_PRICES_DATATYPE):
+            if "_clean" not in _CAISO_CITYGATE_DAILY_CLEAN_CACHE:
+                _CAISO_CITYGATE_DAILY_CLEAN_CACHE["_clean"] = (
+                    _clean_caiso_citygate_daily()
+                )
+            return _CAISO_CITYGATE_DAILY_CLEAN_CACHE["_clean"]
+    resolved = Path(path) if path else CAISO_CITYGATE_DAILY_PATH
+    if resolved in _CAISO_CITYGATE_DAILY_CACHE:
+        return _CAISO_CITYGATE_DAILY_CACHE[resolved]
+    out: dict[int, dict[int, dict[int, float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, {})[r.date.day] = (
+                float(r.ca_composite_usd_mmbtu)
+            )
+    _CAISO_CITYGATE_DAILY_CACHE[resolved] = out
+    return out
+
+
 def gas_daily_shape_factors(
     year: int, hours: int, path: Path | None = None
 ) -> np.ndarray:
@@ -1260,6 +1345,83 @@ def _nyiso_hub_daily_gas_prices(
     return out
 
 
+def _caiso_hub_daily_gas_prices(
+    config: ScenarioConfig,
+    year: int,
+    basis_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+    citygate_path: Path | None = None,
+) -> np.ndarray | None:
+    """CAISO daily-resolved citygate gas price ($/MMBtu), ``(hours,)``, or ``None``.
+
+    The CAISO leg of :func:`iso_hub_daily_gas_prices`, structurally identical to
+    the NYISO leg (:func:`_nyiso_hub_daily_gas_prices`): the monthly hub level
+    comes from :func:`iso_hub_monthly_gas_prices` (measured Henry Hub month +
+    the measured SoCal/PG&E citygate basis row), and the within-month day-to-day
+    swing comes from the **measured California Composite Average citygate daily
+    spot placed on its true calendar days** (:func:`_caiso_citygate_daily_dated`)
+    — dense EIA Weekly compact-table trading-day quotes, not sparse narrative
+    prints, exactly like Transco Z6 NY. The daily factors renormalize to 1.0
+    within each month before scaling the monthly hub level, so the construction
+    is **mean-preserving**: the monthly hub level, annual gas burn and fuel mix
+    are unchanged, only the within-month shape moves.
+
+    This resolves the caiso-53 root-cause finding that the monthly-average gas
+    overlay is too blunt in spike months: Jan-2023 held a measured $24.29/MMBtu
+    citygate print early in the month (2023-01-12) followed by a collapse to
+    ~$8-11/MMBtu the last week, but the flat monthly mean (HH + basis $24.34,
+    ~$28 total) prices every one of the month's 744 hours at the early-month
+    extreme. The daily shape lets the committed-CC repricing (~$213/MWh) cross
+    the C3c $200 threshold only on the days gas actually spiked, instead of all
+    month.
+
+    Months without a basis row, a Henry Hub quote, or any daily citygate quotes
+    keep the flat monthly value (``NaN`` here for the overlay to fall back on).
+    Returns ``None`` when the monthly hub series is unavailable (forward years,
+    no basis rows), so :func:`apply_hub_basis_overlay` falls back to the flat
+    monthly overlay. Backcast-only by construction (2023-2025 basis rows only).
+    """
+    monthly = iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
+    if monthly is None:
+        return None
+    citygate_dated = _caiso_citygate_daily_dated(citygate_path).get(year, {})
+    T = config.hours
+    out = np.full(T, np.nan, dtype=float)
+    hour = 0
+    for m in range(12):
+        n_days = _DAYS_IN_MONTH[m]
+        month_hours = n_days * 24
+        hub_m = monthly[m]
+        if not np.isnan(hub_m) and hour < T:
+            dated = citygate_dated.get(m + 1, {})
+            if dated:
+                days = np.array(sorted(dated), dtype=float)
+                vals = np.array([dated[int(d)] for d in days], dtype=float)
+                mean = float(vals.mean())
+                if mean > 0:
+                    # Place each trading-day quote on its true calendar day and
+                    # interpolate the gaps (weekends/holidays inherit the
+                    # bracketing trading values), then renormalize so the
+                    # calendar-day factors average to exactly 1.0 — scaling the
+                    # monthly hub level by them stays exactly mean-preserving.
+                    day_factor = np.interp(np.arange(n_days), days - 1.0, vals / mean)
+                    fbar = float(day_factor.mean())
+                    if fbar > 0:
+                        day_factor = day_factor / fbar
+                    day_hub = hub_m * day_factor
+                else:
+                    day_hub = np.full(n_days, hub_m)
+            else:
+                # No daily citygate quotes this month: keep the flat monthly hub.
+                day_hub = np.full(n_days, hub_m)
+            shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
+            out[hour : hour + len(shaped)] = shaped
+        hour += month_hours
+    if np.isnan(out).all():
+        return None
+    return out
+
+
 def iso_hub_daily_gas_prices(
     config: ScenarioConfig,
     year: int,
@@ -1307,13 +1469,17 @@ def iso_hub_daily_gas_prices(
     builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis is
     unavailable (so the caller falls back to the flat monthly overlay).
 
-    **NYISO** uses a different daily leg (:func:`_nyiso_hub_daily_gas_prices`):
-    its marginal hub *is* a measured daily-spot series (Transco Z6 NY, EIA NG
-    Weekly), so the within-month shape is taken straight from the real daily
-    quotes.
+    **NYISO** and **CAISO** use a different daily leg (:func:`_nyiso_hub_daily_gas_prices`,
+    :func:`_caiso_hub_daily_gas_prices`): their marginal hub *is* a measured
+    daily-spot series (Transco Z6 NY / California Composite Average, both EIA NG
+    Weekly compact-table rows), so the within-month shape is taken straight from
+    the real daily quotes rather than the AGT narrative-print reconstruction
+    below (which is NEISO-specific and must not be reached for other ISOs).
     """
     if config.iso == "NYISO":
         return _nyiso_hub_daily_gas_prices(config, year, basis_path, henry_hub_path)
+    if config.iso == "CAISO":
+        return _caiso_hub_daily_gas_prices(config, year, basis_path, henry_hub_path)
     basis = load_winter_gas_basis(config, year, path=basis_path)
     if basis is None:
         return None

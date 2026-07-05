@@ -97,6 +97,21 @@ class TestCurateFuelPrices(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             curate_fuel_prices.curate(gas_dir=empty)
 
+    def test_caiso_citygate_benchmark_reconciled(self):
+        (self.gas_dir / "caiso_citygate_daily.csv").write_text(
+            "date,ca_composite_usd_mmbtu,henry_hub_usd_mmbtu\n"
+            "2023-01-12,24.29,3.55\n2023-01-26,7.80,2.71\n"
+        )
+        out = curate_fuel_prices.curate(gas_dir=self.gas_dir)
+        df = pd.read_parquet(out)
+        ca = df[df["hub"] == "ca_composite"].sort_values("interval_start_utc")
+        self.assertEqual(list(ca["fuel"]), ["gas", "gas"])
+        self.assertEqual(list(ca["price_usd_per_mmbtu"]), [24.29, 7.80])
+        self.assertEqual(
+            ca["interval_start_utc"].iloc[0],
+            pd.Timestamp("2023-01-12 00:00:00", tz="UTC"),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
