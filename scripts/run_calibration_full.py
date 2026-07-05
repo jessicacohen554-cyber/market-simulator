@@ -1858,6 +1858,8 @@ def solve_and_persist(
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
+    ramp_limits: bool | None = None,
+    local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
@@ -1879,7 +1881,7 @@ def solve_and_persist(
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
-    ct_netload_drag: bool = False,
+    ct_netload_drag: bool | None = None,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -2092,6 +2094,8 @@ def solve_and_persist(
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
             caiso_reference_price_seam=caiso_reference_price_seam,
             capacity_deliverability_limits=capacity_deliverability_limits,
+            ramp_limits=ramp_limits,
+            local_capacity_constraints=local_capacity_constraints,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
@@ -2389,6 +2393,8 @@ def solve_and_persist(
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
         "caiso_reference_price_seam": caiso_reference_price_seam,
         "capacity_deliverability_limits": capacity_deliverability_limits,
+        "ramp_limits": ramp_limits,
+        "local_capacity_constraints": local_capacity_constraints,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
@@ -2756,6 +2762,23 @@ def solve_and_persist(
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             gas_hub_basis_overlay=gas_hub_basis_overlay
+        )
+    if capacity_deliverability_limits is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            capacity_deliverability_limits=capacity_deliverability_limits
+        )
+    if ramp_limits is not None:
+        recorded_cfg = recorded_cfg.with_overrides(ramp_limits=ramp_limits)
+    if local_capacity_constraints is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            local_capacity_constraints=local_capacity_constraints
+        )
+    # Tri-state mirror of run_year: None keeps the per-ISO base default
+    # (CAISO drag ON), True/False force — run_config.json must record what
+    # the LP actually solved with (rule 24).
+    if ct_netload_drag is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ct_netload_drag=bool(ct_netload_drag)
         )
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
@@ -6103,6 +6126,46 @@ def main() -> None:
         "base config value (off).",
     )
     parser.add_argument(
+        "--ramp-limits",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Plant-group hourly ramp-envelope rows in the dispatch LP "
+        "(ScenarioConfig.ramp_limits, GATED default off). Bounds each ramp-"
+        "constrained plant group's hourly dispatch delta by its CAMPD-"
+        "measured max observed 1-h up/down move (derive_campd_ramp_envelopes"
+        ".py; design docs/ramp-locational-design-2026-07.md §1) — a measured "
+        "physical-capability input, zero fitted DOF. In ramp-bound evening "
+        "hours the marginal unit becomes the fast resource, so CT clears on "
+        "merit. No-op for ISOs without the committed envelope artifact. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
+        "--local-capacity-constraints",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Local-capacity (LCR-area) minimum-generation rows in the "
+        "dispatch LP (ScenarioConfig.local_capacity_constraints, GATED "
+        "default off). One >= row per covered LCR area per hour: in-area "
+        "thermal (+ in-area storage share) must cover max(0, share*zone_load"
+        " - import_cap), all parameters from the ISO's published LCR study "
+        "(CAISO LCT report; design docs/ramp-locational-design-2026-07.md "
+        "§3). The dual is uplift-like out-of-market commitment — the zonal "
+        "hub LMP benchmark is untouched. No-op for ISOs without covered "
+        "areas / the membership crosswalk. Default (unset) keeps the base "
+        "config value (off).",
+    )
+    parser.add_argument(
+        "--ct-netload-drag",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Force the CT_PEAKER net-load reliability-drag floor on or off "
+        "(ScenarioConfig.ct_netload_drag). Tri-state: unset keeps the per-"
+        "ISO calibration default (CAISO keeper default-ON, others off); "
+        "--ct-netload-drag forces it on; --no-ct-netload-drag forces it off "
+        "— the ramp+LCR A/B arms run CAISO with the drag scrubbed without "
+        "touching the keeper default.",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6679,6 +6742,9 @@ def main() -> None:
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
         caiso_reference_price_seam=args.caiso_reference_price_seam,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
+        ramp_limits=args.ramp_limits,
+        local_capacity_constraints=args.local_capacity_constraints,
+        ct_netload_drag=args.ct_netload_drag,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
