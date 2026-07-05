@@ -322,7 +322,29 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--only", nargs="+", default=None, help="Restrict cell ids.")
     p.add_argument("--out", default="docs/handoffs")
     p.add_argument("--cache-root", default=None)
+    p.add_argument(
+        "--backstop-off",
+        action="store_true",
+        help=(
+            "Stage-3 harness variant (capacity-economics plan §5.4 unblocking "
+            "path b): disable the adequacy backstop (reserve_margin_build_"
+            "enabled=False) so mid-growth ERCOT adequacy shortage expresses as "
+            "scarcity price instead of forced gas-CT MW — testing whether the "
+            "FOM axis becomes observable once the backstop stops flooding CT "
+            "and collapsing scarcity. Harness variant only; no model default "
+            "changes. Writes a distinct '-stage3-backstop-off' JSON so the "
+            "stage-1/2 grids are never overwritten."
+        ),
+    )
     args = p.parse_args(argv)
+
+    # Harness-variant base overrides. The backstop is ON in the stage-1/2 grid
+    # so adequacy pressure is *observable* as forced MW; turning it OFF here is
+    # the Stage-3 probe (per-spec so it wins the {**BASE_OVERRIDES, **overrides}
+    # merge in evaluate_cell). Not a model-default change (rule 1).
+    variant_overrides: dict = {}
+    if args.backstop_off:
+        variant_overrides["reserve_margin_build_enabled"] = False
 
     out_dir = REPO / args.out if not Path(args.out).is_absolute() else Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -335,7 +357,7 @@ def main(argv: list[str] | None = None) -> None:
                 CellSpec(
                     cell=f"ercot:{fom_key}:{sc_key}",
                     iso="ERCOT",
-                    overrides={**fom_ov, **sc_ov},
+                    overrides={**fom_ov, **sc_ov, **variant_overrides},
                     start_year=args.start_year,
                     end_year=args.end_year,
                     cache_root=cache_root,
@@ -347,7 +369,7 @@ def main(argv: list[str] | None = None) -> None:
                 CellSpec(
                     cell=f"pjm:{fom_key}",
                     iso="PJM",
-                    overrides=dict(fom_ov),
+                    overrides={**fom_ov, **variant_overrides},
                     start_year=args.start_year,
                     end_year=args.end_year,
                     cache_root=cache_root,
@@ -372,12 +394,16 @@ def main(argv: list[str] | None = None) -> None:
 
     gates = gate_check(results, args.start_year)
     stem = f"fom-scarcity-grid-{date.today().isoformat()}"
+    if args.backstop_off:
+        stem += "-stage3-backstop-off"
+    effective_base = {**BASE_OVERRIDES, **variant_overrides}
     (out_dir / f"{stem}.json").write_text(
         json.dumps(
             {
                 "start_year": args.start_year,
                 "end_year": args.end_year,
-                "base_overrides": BASE_OVERRIDES,
+                "backstop_off": args.backstop_off,
+                "base_overrides": effective_base,
                 "fom_axis": FOM_AXIS,
                 "scarcity_axis": SCARCITY_AXIS,
                 "elapsed_s": round(elapsed, 1),
