@@ -5434,13 +5434,16 @@ def main() -> None:
         action="store_true",
         help="Diagnostic (off by default): replace the flat monthly hub-basis "
         "overlay with a daily within-month shape, mean-preserving so the "
-        "monthly hub level and annual burn are unchanged. NEISO: the Algonquin "
-        "shape is a demand^AGT_DAILY_BASIS_CONVEXITY proxy (fitted to the "
-        "backcast, the daily AGT spot it proxies is unavailable). NYISO: the "
-        "real measured Transco Z6 NY daily spot (EIA NG Weekly, "
-        "transco_z6_ny_daily.csv) — no proxy — so the cold-day spike a monthly "
-        "mean smears flat (e.g. Jan-2025) reaches the merit order. Pair with "
-        "--gas-hub-basis-overlay.",
+        "monthly hub level and annual burn are unchanged. NEISO: real measured "
+        "Algonquin Citygate daily prints (EIA NG Weekly narrative, "
+        "algonquin_citygate_daily.csv), falling back to the measured Transco Z6 "
+        "NY daily-basis shape in sparse-print months. NYISO: real measured "
+        "Transco Z6 NY daily spot (EIA NG Weekly, transco_z6_ny_daily.csv). "
+        "CAISO: real measured California Composite Average citygate daily spot "
+        "(EIA NG Weekly, caiso_citygate_daily.csv). No fitted proxy on any ISO "
+        "— the cold-day spike a monthly mean smears flat (e.g. Jan-2023 CAISO, "
+        "Jan-2025 NYISO) reaches the merit order on its true calendar day. Pair "
+        "with --gas-hub-basis-overlay.",
     )
     parser.add_argument(
         "--plant-tranche-config",
