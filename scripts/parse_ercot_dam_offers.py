@@ -91,8 +91,15 @@ ONLINE_STATUSES = {"ON", "ONOS", "ONRR", "ONTEST", "ONEMR", "ONREG", "EMR", "EMR
 N_CURVE_POINTS = 10
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INPUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot"
-DEFAULT_OUTPUT_DIR = REPO_ROOT / "inputs" / "processed"
+import sys  # noqa: E402
+
+sys.path.insert(0, str(REPO_ROOT / "src"))
+from market_sim.config import paths  # noqa: E402
+
+# W1 data reorg: inputs/raw-data -> data/raw, inputs/processed ->
+# data/raw/_processed-legacy, resolved through config/paths.py.
+DEFAULT_INPUT_DIR = paths.RAW_DIR / "ercot"
+DEFAULT_OUTPUT_DIR = paths.PROCESSED_DIR
 DEFAULT_GLOB = "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
 
 # Columns carried straight through from the wide row onto every tidy point row.

@@ -83,11 +83,24 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OFFERS = REPO_ROOT / "inputs" / "processed" / "ercot_dam_offers.parquet"
-HENRY_HUB = REPO_ROOT / "inputs" / "raw-data" / "gas-prices" / "henry_hub_daily.csv"
-CAMPD_BINS = REPO_ROOT / "inputs" / "custom-bin-assignments.csv"
-OUT_SUMMARY = REPO_ROOT / "inputs" / "processed" / "ercot_dam_offer_hrmult_summary.csv"
-OUT_JSON = REPO_ROOT / "inputs" / "calibration" / "offer_curve_dam_hrmults.json"
+import sys  # noqa: E402
+
+sys.path.insert(0, str(REPO_ROOT / "src"))
+from market_sim.config import paths  # noqa: E402
+
+# W1 data reorg: inputs/processed -> data/raw/_processed-legacy,
+# inputs/raw-data -> data/raw, inputs/calibration -> data/raw/_validation-source,
+# inputs/custom-bin-assignments.csv -> data/raw/reference/. All resolved through
+# config/paths.py (CLAUDE.md data rule) instead of the pre-reorg literals.
+OFFERS = paths.PROCESSED_DIR / "ercot_dam_offers.parquet"
+HENRY_HUB = paths.RAW_DIR / "gas-prices" / "henry_hub_daily.csv"
+CAMPD_BINS = paths.CAMPD_BINS_CSV
+OUT_SUMMARY = paths.PROCESSED_DIR / "ercot_dam_offer_hrmult_summary.csv"
+OUT_JSON = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults.json"
+# --peak-ladder writes to its own artifact so the keeper-lineage p50 override
+# file stays byte-stable: a run opts into the ladder by naming this file, it
+# never rides in silently on the existing --offer-curve-json path.
+OUT_JSON_LADDER = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ladder.json"
 
 ERCOT_GAS_BASIS = -0.5  # GAS_BASIS_DIFFERENTIAL['ERCOT'], $/MMBtu over Henry Hub
 
@@ -112,6 +125,29 @@ YEARS = (2023, 2024, 2025)
 PCTS = (0.25, 0.50, 0.75)
 SCARCITY_THRESH = 1000.0  # >= this is a scarcity / near-cap bid, not body
 NEAR_CAP_THRESH = 4500.0  # >= this is right at the $5,000 offer-cap wall
+
+# Published ERCOT system-wide offer cap (HCAP), $/MWh — 16 TAC §25.505(g)(6)(B),
+# post-Uri PUCT order (docs/parameter-citations.md). Energy offers may not
+# exceed it, so the top peak-ladder rung's implied price is clamped here at the
+# pooled-mean derivation gas (the multiplier form drifts around HCAP with the
+# hourly fuel price; the LP's $5,000 VOLL slack bounds the dual either way).
+HCAP_USD_MWH = 5000.0
+
+# Peak-ladder quantiles: equal-capacity rungs at the capacity-weighted
+# quantiles of the per-resource top-of-curve multiplier (mode-B basis,
+# near-cap bids included), each rung clamped FROM BELOW at the class p50.
+# The upper rungs are the real market's always-posted scarcity wall the p50
+# collapse deleted (docs/FINDING-ercot-priceshape-2026-07.md §4 — why the
+# modeled duals top out at ~$150-200). The below-median clamp is structural,
+# not a fit: the sub-p50 top-of-curve dispersion belongs to resources whose
+# ENTIRE curve is cheap — their MW is already priced by those plants' cheaper
+# committed/econ bands in the model's per-plant rising curves — and letting it
+# re-price every plant's scarcity band cheapened the CT peak below the ST econ
+# band, reproducing the documented CT<->ST coupling crater
+# (docs/ercot-dam-offer-grounding-2026-06.md §4/§5: measured wall-probe A/B,
+# CT +5.3 TWh / ST -8.0 TWh vs the CAMPD-measured volumes). A plant's scarcity
+# band never bids below its class's measured median top-of-curve.
+PEAK_LADDER_QUANTILES = (0.10, 0.30, 0.50, 0.70, 0.90)
 
 
 def class_base_hr() -> dict[str, float]:
@@ -272,6 +308,25 @@ def derive_class(df_cls: pd.DataFrame, base_hr: float, body_cap: float) -> dict:
     )
     peak_full = _capwt_band(topf, "peak")
 
+    # Peak ladder: equal-capacity rungs at the capacity-weighted quantiles of
+    # the same per-resource top-of-curve distribution peak_full's p50 is the
+    # median of — the across-resource dispersion, not a new measurement. The
+    # top rung is clamped so its implied price at the pooled-mean derivation
+    # fuel does not exceed the published HCAP offer cap.
+    tf = topf[np.isfinite(topf["peak"]) & (topf["cap"] > 0)]
+    mean_fuel = float(d["fuel"].mean()) if "fuel" in d else float("nan")
+    peak_ladder: list[list[float]] = []
+    if not tf.empty and np.isfinite(mean_fuel) and mean_fuel > 0:
+        v = tf["peak"].to_numpy(float)
+        w = tf["cap"].to_numpy(float)
+        cap_mult = HCAP_USD_MWH / (mean_fuel * base_hr)
+        p50 = _wquantile(v, w, 0.50)
+        share = round(1.0 / len(PEAK_LADDER_QUANTILES), 3)
+        peak_ladder = [
+            [share, round(min(max(_wquantile(v, w, q), p50), cap_mult), 3)]
+            for q in PEAK_LADDER_QUANTILES
+        ]
+
     # --- near-cap incidence: per energy-offer-point share, plus the realized
     # SPP under scarcity bids (the condition the cap-reaching bids fire in) ---
     scarce = e["curve_price"] >= SCARCITY_THRESH
@@ -289,6 +344,7 @@ def derive_class(df_cls: pd.DataFrame, base_hr: float, body_cap: float) -> dict:
         "econ_high": econ_high,
         "peak_body": peak_body,
         "peak_full": peak_full,
+        "peak_ladder": peak_ladder,
         "scarcity_bid_share": round(float(scarce.mean()), 5),
         "near_cap_bid_share": round(float(nearcap.mean()), 5),
         "spp_when_scarcity_bid_p50": round(spp_when_scarce, 1),
@@ -340,6 +396,17 @@ def main() -> None:
         default=None,
         metavar="PATH",
         help="override JSON output path (default offer_curve_dam_hrmults.json)",
+    )
+    ap.add_argument(
+        "--peak-ladder",
+        action="store_true",
+        help="emit the measured peak-band quantile ladder (mode B only): "
+        "equal-capacity rungs at the capacity-weighted "
+        f"{'/'.join(f'p{int(q * 100)}' for q in PEAK_LADDER_QUANTILES)} of the "
+        "per-resource top-of-curve multiplier, top rung clamped at the "
+        "published HCAP. Represents the measured across-resource offer "
+        "dispersion (the scarcity wall) instead of collapsing it to the p50 "
+        "(docs/FINDING-ercot-priceshape-2026-07.md §4).",
     )
     args = ap.parse_args()
 
@@ -407,8 +474,18 @@ def main() -> None:
             if args.only_groups
             else None
         )
-        curve = build_override_curve(results, args.peak_mode, args.include_coal, only)
-        out_path = Path(args.out_json) if args.out_json else OUT_JSON
+        curve = build_override_curve(
+            results,
+            args.peak_mode,
+            args.include_coal,
+            only,
+            peak_ladder=args.peak_ladder,
+        )
+        out_path = (
+            Path(args.out_json)
+            if args.out_json
+            else (OUT_JSON_LADDER if args.peak_ladder else OUT_JSON)
+        )
         out_path.write_text(json.dumps(curve, indent=1) + "\n")
         print(
             f"Wrote {out_path}  (peak-mode {args.peak_mode}, "
@@ -423,8 +500,16 @@ def build_override_curve(
     peak_mode: str,
     include_coal: bool = False,
     only_groups: set[str] | None = None,
+    peak_ladder: bool = False,
 ) -> dict:
-    """Assemble the class -> band -> multiplier override from the measured p50s."""
+    """Assemble the class -> band -> multiplier override from the measured p50s.
+
+    With ``peak_ladder`` (mode B only), each group additionally carries a
+    ``peak_ladder`` band — ``[[capacity_share, multiplier], ...]`` equal-capacity
+    rungs at the measured across-resource quantiles — which the fleet builder
+    uses to split the peak tranche instead of the single p50 ``peak`` height
+    (kept alongside for provenance and for consumers that ignore the ladder).
+    """
     curve: dict[str, dict[str, float]] = {}
     for group, r in results.items():
         if only_groups is not None and group not in only_groups:
@@ -442,6 +527,8 @@ def build_override_curve(
         curve[group] = {
             k: round(float(v), 3) for k, v in bands.items() if v == v
         }  # drop NaN bands
+        if peak_ladder and peak_mode == "B" and r.get("peak_ladder"):
+            curve[group]["peak_ladder"] = r["peak_ladder"]
     return curve
 
 

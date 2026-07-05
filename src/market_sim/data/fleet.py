@@ -2117,7 +2117,9 @@ def apply_netload_reliability_floor(
         g
         for g, gen in enumerate(generators)
         if gen.plant_group == plant_group
-        and not gen.unit_id.endswith("_peak")
+        # exclude every peak-band rung ("peak", "peak2".. under a ladder) —
+        # the scarcity band is never commitment scaffolding
+        and not gen.unit_id.rpartition("_")[2].startswith("peak")
         and gen.plant_code not in exclude_plant_codes
     ]
     if not rows:
@@ -6325,12 +6327,45 @@ def bins_to_fleet(
             if (_fsp_econ > 0.0 and _fsp_run_lengths)
             else 0.0
         )
+        # Peak band: one flat tranche at the offer curve's "peak" multiplier by
+        # default. When the offer carries a measured ``peak_ladder``
+        # (``[[capacity_share, multiplier], ...]``, derive_dam_offer_hrmults
+        # --peak-ladder), the band is split into equal-capacity rungs at the
+        # capacity-weighted quantiles of the per-resource top-of-curve offer
+        # distribution — representing the measured across-resource dispersion
+        # (the upper rungs are the real market's always-posted scarcity wall)
+        # instead of collapsing it to the class median
+        # (docs/FINDING-ercot-priceshape-2026-07.md §4). Suffixes beyond the
+        # first are ``peak2..peakN`` — every consumer that scopes by tranche
+        # matches the ``peak`` prefix, not the exact suffix.
+        # The per-plant tranche sheet (``ov``) wins over the class ladder, as it
+        # does for every other band height.
+        ladder = (
+            offer.get("peak_ladder") if (offer is not None and ov is None) else None
+        )
+        if ladder:
+            peak_tranches = [
+                (
+                    ("peak" if i == 0 else f"peak{i + 1}"),
+                    peak_cap * float(share),
+                    base_hr * float(mult),
+                    peak_vom_mult,
+                    0,
+                    0,
+                    _fsp_peak,
+                )
+                for i, (share, mult) in enumerate(ladder)
+            ]
+        else:
+            peak_tranches = [
+                ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_peak)
+            ]
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             *sync_tranches,
             *committed_tranches,
             *econ_steps,
-            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_peak),
+            *peak_tranches,
         ]
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:

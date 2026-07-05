@@ -230,3 +230,62 @@ python scripts/run_calibration_full.py --year 2023 2024 2025 \
 # 3. compare
 python scripts/probes/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_3yr
 ```
+
+---
+
+## 8. 2026-07-05 addendum — the measured peak-band quantile ladder (`--peak-ladder`)
+
+**Trigger:** the C3b/C3c price-shape attribution
+(`docs/FINDING-ercot-priceshape-2026-07.md`). Decomposing the actual 2023
+>$200 tail hour-by-hour against ERCOT's published price formation showed the
+real tail is **energy-offer-carried** (SCED lambda > $200 in 175/181 hours;
+RTORPA small, reserves above the ORDC knee), while the model's peak band —
+priced at the class p50 of this document's own measured distribution —
+physically cannot form a lambda above ~$150–200. §4's premise ("the genuine
+scarcity tail is owned by the energy+reserve co-optimization, not the offer
+curve") is **half-right**: the co-opt correctly prices the hours where the
+model is genuinely reserve-thin (76 of 181 actual tail hours), but the measured
+adders say the *actual* tail was priced by the offer wall, and collapsing each
+class's top-of-curve distribution to its median deletes exactly that wall.
+
+**What changed (method extension, same source data, no residual input):**
+`derive_dam_offer_hrmults.py --peak-ladder` additionally emits, per gas group,
+a `peak_ladder` — `[[capacity_share, multiplier], ...]` — five equal-capacity
+rungs at the capacity-weighted p10/p30/p50/p70/p90 of the per-resource
+top-of-curve multiplier on the mode-B basis (near-cap bids included), **each
+rung clamped from below at the class p50** (so the effective ladder is
+p50 × 3 rungs + p70 + p90 — the band only widens *upward*). The below-median
+clamp is structural, not a fit: the sub-p50 top-of-curve dispersion belongs to
+resources whose entire curve is cheap — MW the model already prices through
+those plants' cheaper committed/econ bands — and an unclamped probe that let
+it re-price every plant's scarcity band pushed the CT peak below the ST econ
+band and reproduced the documented CT↔ST coupling crater (§4/§5: 2023
+CT_PEAKER +5.3 TWh, ST_GAS −8.0 TWh vs the CAMPD-measured volumes, tail
+unchanged). A plant's scarcity band never bids below its class's measured
+median top-of-curve. The top rung is clamped so its implied price at the
+pooled-mean derivation fuel never exceeds the published HCAP ($5,000/MWh,
+16 TAC §25.505(g)(6)(B)); the LP's $5,000 VOLL bounds the dual regardless.
+`bins_to_fleet` splits each plant's peak tranche into the rungs
+(suffixes `peak`, `peak2`…`peak5`; capacity conserved; CO2 stays at the
+physical heat rate per R2/EM-4). Every rung stays above the group's
+econ_high multiplier, so the supply curve remains rising.
+
+Measured ladders (pooled 2023–2025, capacity-weighted, p50-clamped):
+
+| group | rungs 1–3 (= prior peak p50) | p70 | p90 |
+|---|---|---|---|
+| CC_REGULAR | 4.326 | 43.909 | 144.170 |
+| CC_CHP | 4.248 | 43.113 | 141.559 |
+| CT_PEAKER | 5.388 | 9.762 | 124.575 |
+| ST_GAS | 4.096 | 22.818 | 194.236 (HCAP-clamped) |
+
+**Reproduce:**
+
+```bash
+python scripts/parse_ercot_dam_offers.py --input-dir data/raw/ercot --output-dir data/raw/_processed-legacy
+python scripts/derive_dam_offer_hrmults.py --peak-mode B --peak-ladder --write-json   # -> offer_curve_dam_hrmults_ladder.json (opt-in artifact; the p50 file is unchanged)
+```
+
+(The parser/deriver paths were also fixed for the W1 data reorg —
+`inputs/processed` → `data/raw/_processed-legacy` etc., resolved through
+`market_sim.config.paths`.)
