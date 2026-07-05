@@ -57,8 +57,12 @@ build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t
   frontier point.
 - **Premium:** `(net cost − BAU) / Σload`, where net cost nets grid buys (+) and
   excess sales (−) at LMP (× `excess_sale_fraction`, ADR 0005 default **f=1.0**).
-- **Mode A:** `min Σ grid_buy` s.t. premium ≤ delta (pure objective; a least-cost
-  tiebreak was tried and removed — it stalled the solver).
+- **Mode A:** `min Σ grid_buy` s.t. premium ≤ delta (pure objective, no cost
+  term), plus a flat `build_tiebreak_epsilon` (default 1e-6) on `build_mw`
+  to break the degenerate tie once matching saturates below a resource's cap
+  (ADR 0019 — fixes the CAISO onshore-wind saturate-to-cap finding; a
+  `net_cost`-weighted least-cost tiebreak was tried first and rejected, see
+  the ADR).
 - **Mode B:** `min net cost` s.t. matching ≥ target (annual or strict per-hour).
 
 Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py`.
@@ -196,7 +200,19 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   ordering); CAISO's frontier instead surfaced a pre-existing Mode A
   no-cost-tiebreak degenerate-solution limitation (saturates at 100%
   matching from $1/MWh by building onshore wind near its 20 GW resource
-  cap) — flagged, not fixed, see
+  cap) — flagged, not fixed at the time, see
   `docs/validation-2026-07-05-5iso-backcast-extension.md` for the full
   writeup, including the container-memory (OOM at MISO/PJM's ~16 GB solve
   peak) workaround.
+- [x] Fix the CAISO Mode A degenerate-solution limitation (2026-07-05):
+  `config.build_tiebreak_epsilon` (flat per-MW tiebreak on `build_mw`/
+  `build_energy`, Mode A only, default 1e-6) breaks the tie toward the
+  smallest capacity that attains the primary optimum — see **ADR 0019**
+  (`docs/decisions/0019-mode-a-build-tiebreak.md`) for the design rationale
+  (why a `net_cost`-weighted least-cost tiebreak was rejected) and
+  `tests/test_mode_a_build_tiebreak.py` for the regression suite (reproduces
+  the degenerate saturation on a synthetic system, proves the fix, and
+  confirms the tiebreak is a no-op on an already-pinned non-degenerate
+  optimum). Real-data before/after CAISO re-solve + ERCOT control re-run:
+  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
+  passing (measured 2026-07-05).
