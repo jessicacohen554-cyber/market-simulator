@@ -251,6 +251,47 @@ def test_capacity_gas_lcoe_uses_trajectory():
     np.testing.assert_allclose(prices[0], expected_gas)
 
 
+def test_gas_price_factor_monotonic():
+    """Raising gas_price_factor monotonically raises the delivered price."""
+    year = 2035
+    prices = [
+        resolve_annual_gas_price(
+            _config(gas_price_path="mid", gas_price_factor=f), year
+        )
+        for f in (0.8, 1.0, 1.2)
+    ]
+    assert prices == sorted(prices)
+    assert prices[0] < prices[1] < prices[2]
+
+
+def test_gas_price_factor_scales_trajectory():
+    """gas_price_factor multiplies the trajectory value before the basis adder."""
+    config = _config(gas_price_path="mid", gas_price_factor=1.2)
+    year = 2035
+    expected = (
+        HENRY_HUB_TRAJECTORIES["mid"][year] * 1.2 + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    )
+    assert abs(resolve_annual_gas_price(config, year) - expected) < 1e-9
+
+
+def test_gas_price_factor_neutral_default_matches_unscaled():
+    """The neutral 1.0 default reproduces today's trajectory exactly."""
+    config = _config(gas_price_path="mid")
+    assert config.gas_price_factor == 1.0
+    year = 2035
+    expected = HENRY_HUB_TRAJECTORIES["mid"][year] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    assert resolve_annual_gas_price(config, year) == expected
+
+
+def test_gas_price_factor_does_not_apply_to_override():
+    """The measured gas_price_override is never scaled by gas_price_factor."""
+    config = _config(
+        gas_price_path="mid", gas_price_override=2.54, gas_price_factor=1.5
+    )
+    expected = 2.54 + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    assert resolve_annual_gas_price(config, 2030) == expected
+
+
 def test_gas_price_override_bypasses_trajectory():
     """A gas_price_override pins the delivered price, ignoring the trajectory.
 

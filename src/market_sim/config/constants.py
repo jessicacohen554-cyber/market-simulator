@@ -1955,6 +1955,60 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
     },
 }
 
+# Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
+# uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
+# docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
+# NREL ATB 2024 technology innovation scenarios: "low"=Advanced (full
+# learning/cost-decline realized), "mid"=Moderate, "high"=Conservative
+# (costs stay closer to flat). "mid" is 1.0 on every tech BY CONSTRUCTION --
+# NEW_ENTRY_COSTS' base values are the model's existing reference case, not
+# a re-scraped ATB Moderate figure, so the neutral default must be an exact
+# no-op. The low/high spreads are engineering-judgment magnitudes anchored to
+# ATB's published case *definitions* and typical per-tech spread ordering
+# (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest --
+# mature, well-characterized plant costs); this environment could not reach
+# atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up
+# should replace these with exact figures the next time ATB is re-pulled
+# (PP-3.2 item 2 tracks the next AEO/ATB refresh).
+TECH_COST_MULTIPLIERS: dict[str, dict[str, dict[str, float]]] = {
+    "wind": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.35},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.12, "learning_rate": 0.65},
+    },
+    "solar": {
+        "low": {"capex_per_kw": 0.65, "learning_rate": 1.25},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.60},
+    },
+    "gas_cc": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "gas_ct": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "nuclear_smr": {
+        "low": {"capex_per_kw": 0.80, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.25, "learning_rate": 0.5},
+    },
+    "nuclear_large": {
+        "low": {"capex_per_kw": 0.90, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.5},
+    },
+    "gas_cc_ccs": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.20, "learning_rate": 0.5},
+    },
+}
+
 # --- Emerging generation technologies -------------------------------------
 # Hydrogen turbines, post-combustion CCUS, enhanced geothermal and offshore
 # wind. Each enters the model as a Generator (thermal dispatch) reusing the
