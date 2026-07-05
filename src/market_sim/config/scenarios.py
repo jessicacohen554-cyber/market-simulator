@@ -628,6 +628,31 @@ class ScenarioConfig:
     # keeps just the midday-export cap (surplus beyond the measured export
     # curtails and prices negative) without the import regression. Implies
     # interchange_shaping; default off (byte-identical).
+    interchange_shape_import_pct: float = 90.0  # Percentile of the measured
+    # EIA-930 (month x hour-of-day) net-interchange distribution
+    # (eia_loader.measured_interchange_envelope) that sets the import-tranche
+    # availability cap under interchange_shaping. Promoted from what was an
+    # os.environ.get("INTERCHANGE_SHAPE_IMPORT_PCT", ...) read in
+    # transmission.inject_interchange_shape (an off-registry tuning channel,
+    # CLAUDE.md rule 24) so the value is visible in run_config.json instead of
+    # a silent shell override. 90.0 reproduces the function's own prior
+    # behavior: the env var, when unset (every run to date), fell back to the
+    # caller's `percentile` argument, and every call site left that argument
+    # at the function signature's default of 90.0 — no run ever exercised a
+    # non-default value via the env channel. Under the bidirectional intertie
+    # (gross == net), the net-import envelope IS the deliverable import, so
+    # the import cap can ride a higher percentile (fatter overnight tail)
+    # without re-admitting the midday imports the (near-zero) midday envelope
+    # already excludes — see the "bidir sweep" note in
+    # inject_interchange_shape's docstring. Only bites when interchange_shaping
+    # is on (default off, byte-identical).
+    interchange_shape_export_pct: float = 90.0  # Percentile of the measured
+    # EIA-930 net-interchange distribution that sets the export-sink floor
+    # under interchange_shaping. Same promotion/rationale as
+    # interchange_shape_import_pct above (was
+    # os.environ.get("INTERCHANGE_SHAPE_EXPORT_PCT", ...)); 90.0 reproduces
+    # the prior env-unset default. Only bites when interchange_shaping is on
+    # (default off, byte-identical).
     reference_price_interface: bool = False  # Priced-interchange node: serve the
     # seam through the forecast-grade reference-price interface instead of the
     # fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Each neighbor's hourly price is
@@ -1159,6 +1184,13 @@ class ScenarioConfig:
     # future forecast year with more solar) actually produces, rather than
     # freezing today's belly depth in MW. 30% marks the outer edge of that
     # band, where the ramp begins tapering back to the flat gas-coupled offer.
+    # Derived quantitatively from the EIA-930 CISO net-load distribution by
+    # scripts/derive_caiso_solar_shape_band.py (frozen, rule 23 — re-run only
+    # on a new 930 vintage): the "pure belly" edge — the largest percentile P
+    # such that >=99% of hours with net load <= p(P) are solar-driven
+    # inversion hours (net load below the local day's overnight 00-05h
+    # minimum, the duck's defining signature) — comes out 33.0/30.0/34.5 for
+    # 2023/2024/2025, confirming 30 as the stable conservative edge.
     # (Historically this pair was checked post-hoc against realized negative-
     # price hours as a sanity diagnostic — see
     # transmission.inject_caiso_import_solar_shape's docstring — but that
@@ -1168,7 +1200,11 @@ class ScenarioConfig:
     # -renewable_keep_running_value): the deepest ~tenth of net-load hours,
     # the trough of the duck-curve belly where the regional WECC solar/hydro
     # glut is most acute. Same net-load-percentile grounding as the HI
-    # threshold above.
+    # threshold above; per scripts/derive_caiso_solar_shape_band.py the
+    # canonical deep-belly population (spring Mar-May midday 11-16h local,
+    # the belly of CAISO's published duck chart) has its median annual
+    # net-load rank at 10.0/5.6/6.0 (2023/2024/2025, p75 <= 16.6) — the deep
+    # belly saturates the bottom decile, confirming 10.
     caiso_bidir_intertie: bool = False  # Model CAISO's WECC tie as a SINGLE
     # signed flow instead of two independent one-way mechanisms. The legacy node
     # carries priced import tranches AND separate export sinks on the same
@@ -3698,6 +3734,8 @@ TIER_TAGS: dict[str, int] = {
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
     "interchange_shaping_export_only": 1,
+    "interchange_shape_import_pct": 3,
+    "interchange_shape_export_pct": 3,
     "reference_price_interface": 1,
     "caiso_intertie_reference_price": 1,
     "caiso_corridor_atc_forward": 1,
