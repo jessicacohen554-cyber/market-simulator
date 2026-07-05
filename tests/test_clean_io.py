@@ -46,6 +46,7 @@ ALL_DATATYPES = [
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",
+    "chp-btm-share",
 ]
 
 
