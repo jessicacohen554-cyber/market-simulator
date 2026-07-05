@@ -54,7 +54,7 @@ must start from this inventory, not from G1's original text.
 | Load-resource RRS-UFR credit, mode-aware (G4) | `ercot_load_resource_reserve`; `scarcity.ercot_load_resource_reserve_credit_mw` | **BUILT, in keeper** — backcast = measured NP3-911 (admissible input), forecast = enrollment forward | run165 |
 | AS-aware P2 commitment | `ercot_as_aware_commitment` | **BUILT, SHELVED** — rejected probe | run160; **ercot27** |
 | Measured DAM-AS overlay | `ercot_dam_as_overlay` (calibration flag) | **in keeper — the thing this plan retires** | ercot32 |
-| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **fallback active** — no NP6 upload for 2024/25; reference-rate gross-up (G7) | P4 remainder |
+| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **fallback active** — no NP6 upload for 2024/25; reference-rate gross-up (G7) | P4 remainder — **intake attempted 2026-07-05, blocked on ERCOT account credentials, see WS-E** |
 
 **The current keeper (ercot32) is P1-only** — `passes=["P1"]`, no commitment of
 any kind. That is a settled decision (ercot27 verdict), not an open question.
@@ -226,7 +226,7 @@ run165 closed it (backcast = measured NP3-911, an admissible input; forecast =
 enrollment trajectory × availability shape). Integration only: the stage-4 run
 inherits `ercot_load_resource_reserve=True` unchanged.
 
-### WS-E — HSL completion remainder (P4)
+### WS-E — HSL completion remainder (P4) — **ATTEMPTED, BLOCKED (2026-07-05)**
 
 ERCOT 2024/25 still have **no NP6 HSL parquet**; `hsl_potential_mw` falls back
 to the reference-curtailment-rate gross-up (G7). Relevance to this plan: the AS
@@ -242,9 +242,26 @@ Remainder to complete:
    been 403-blocked before (NP6-576-ER, ercot27 WS3); if blocked, document the
    attempt and keep the G7 fallback — the fallback is already
    forward-admissible, so this is a fidelity upgrade, not a blocker.
+   **Done — blocked.** The legacy MIS report list now 302s every report
+   (including "Public"-classified NP4-732-CD) to a SiteMinder login; the
+   replacement Data Access Portal (`data.ercot.com`/`api.ercot.com`) is
+   network-reachable but returns `401 missing subscription key` — obtaining
+   one requires an interactive ERCOT API Explorer account registration this
+   session cannot complete. The UMass `nodal-curtailment-analysis` GitHub
+   dataset (the 2023 fallback source) has no 2024/2025 extension upstream
+   either. Full attempt log:
+   `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`; drop-zone placeholder
+   at `data/raw/ercot-hsl/np6/README.md`. No code or data changed — the
+   builder (`scripts/build_ercot_hsl.py`) already handles a 2024/2025 upload
+   transparently whenever one lands.
 2. Confirm the dispatch hands uncurtailed potential to the LP for 2024/25 and
    curtailment stays endogenous (the G7 wiring), and that the AS driver series
-   are the dispatch-consistent ones.
+   are the dispatch-consistent ones. **Confirmed unchanged** — since no new
+   HSL data landed, `hsl_potential_mw` continues to return `None` for
+   `(ERCOT, 2024/25)` and `_forecast_uncurtailed_cf` supplies the gross-up
+   potential exactly as before; no modeled-vs-reported curtailment diagnostic
+   or AS-driver delta is available to report until a credentialed fetch lands
+   real 2024/25 HSL data (see the attempt doc's "Carried consequence").
 
 ### WS-F — Scoring protocol: separate what the overlay actually carries
 
@@ -331,7 +348,7 @@ add a tuned mechanism.
 | 0 | Overlay decomposition + ercot32-ex-overlay re-baseline on current main (WS-F) | — | S |
 | 1 | WS-A forward RTOLCAP/RTOFFCAP supply formula + one-delta backcast probe | 0 | M-L |
 | 2 | WS-B storage duration gates + one-delta endogenous-storage probe | 0 (parallel with 1) | M |
-| 3 | WS-E NP6 HSL 2024/25 intake (egress-permitting) | — (parallel) | S-M |
+| 3 | WS-E NP6 HSL 2024/25 intake (egress-permitting) | — (parallel) | S-M — **attempted 2026-07-05, blocked (credentials); G7 fallback stands** |
 | 4 | Integration run `ercot40`, gates G-1…G-7, keeper decision, dashboard | 1+2 (+3 if landed) | M |
 | 5 | Forward-mode proof: 2026+ RTC+B forecast run, zero measured AS reads, ensemble sanity | 4 | S-M |
 
