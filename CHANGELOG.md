@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-07-05 (orchestrator-unification Stage 1 — pipeline typing scaffold)
+
+**Typing/scaffolding only — no solved number changes.** Landed on
+`claude/stage1-pipeline-typing-3w1mhl` per
+`docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.2, Stage 1 of the
+staged migration that unifies the forecast (`runner.py`) and backcast
+(`run_calibration.py`) solve orchestrators. New `src/market_sim/pipeline/`
+package: `spec.py` (`DispatchSpec`, `ReserveSpec` — frozen containers mirroring
+the existing `dispatch_kwargs`/reserve-kwargs dicts key-for-key), `prior.py`
+(`PriorYearResults`, a typed replacement for the 14-key untyped `prior_results`
+dict threaded across forecast years, with dict-shim `.get`/`__getitem__` so
+existing readers are unaffected), `result.py` (`YearSolveResult` placeholder for
+Stages 3-4). `runner.py`'s per-year `prior_results` now constructs a
+`PriorYearResults` instead of a bare dict. `run_calibration.py` is untouched
+(migrates in later stages). Regression gate: byte-identical on every re-solved
+column — structurally guaranteed here, since the backcast path (what the six
+keeper golds re-solve) imports neither `runner.py` nor `market_sim.pipeline`.
+
+## 2026-07-05 (orchestrator-unification Stage 0 — regression-gate harness)
+
+**Infra only — add-only, no source-file changes.** Landed on
+`claude/regression-gate-stage-0-umopup` per
+`docs/handoffs/orchestrator-unification-plan-2026-07.md` §7.3.1, establishing
+the regression-gate every later orchestrator-unification stage runs before
+pushing: `scripts/capture_keeper_goldens.py` (re-solves each of the six ISO
+keepers from its frozen bundle, determinism-pinned, writes P1/P2 dispatch +
+system frames plus a hashes-only `manifest.json`), `scripts/regression_gate.py`
+(one command running the golden diff, the warm-start reshuffle localizer, the
+per-ISO smoke suite, and the holdout-quarantine checks, with `--mode byte` /
+`--mode builder` tolerance selection per the plan's stage-type standard),
+verified `tests/test_regression_smoke.py` coverage. A/A byte-identity confirmed
+on the NEISO keeper (double capture, zero column deviation). MISO golden capture
+deferred to a ≥24 GB host (this box's 15 GB ceiling OOMs during MISO's
+per-asset reserve-column construction, per CLAUDE.md's documented memory tier).
+
 ## 2026-07-05 (confirmed-vs-announced retirement channel — design plan, W0-P2)
 
 **Docs/plan only — no mechanism change.** Landed
