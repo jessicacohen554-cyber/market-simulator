@@ -8,6 +8,7 @@ importable package).
 """
 
 import importlib.util
+import itertools
 import unittest
 from pathlib import Path
 
@@ -847,6 +848,278 @@ class FreeClassScoreTests(unittest.TestCase):
         v = cv.determine_from_artifacts("t", art)
         self.assertIn("free_class_score", v)
         self.assertIn("headline", v["free_class_score"])
+
+
+class PctWmeanTests(unittest.TestCase):
+    """_pct (:259) and _wmean (:266) — the two scalar primitives every
+    percent-error and demand-weighted-mean criterion is built from."""
+
+    def test_zero_actual_denominator_is_none(self):
+        self.assertIsNone(cv._pct(10.0, 0.0))
+
+    def test_near_zero_actual_denominator_is_none(self):
+        # abs(actual) < 1e-9 is treated as undefined, not a huge finite ratio.
+        self.assertIsNone(cv._pct(10.0, 1e-10))
+
+    def test_sign_convention_model_above_actual_is_positive(self):
+        self.assertAlmostEqual(cv._pct(110.0, 100.0), 0.10)
+
+    def test_sign_convention_model_below_actual_is_negative(self):
+        self.assertAlmostEqual(cv._pct(90.0, 100.0), -0.10)
+
+    def test_exact_match_is_zero(self):
+        self.assertAlmostEqual(cv._pct(42.0, 42.0), 0.0)
+
+    def test_negative_actual_sign_convention(self):
+        # (-90 - (-100)) / (-100) = 10 / -100 = -0.10: a model that undershoots
+        # in magnitude on a negative actual still reads as a negative error,
+        # exactly like the positive-actual case above.
+        self.assertAlmostEqual(cv._pct(-90.0, -100.0), -0.10)
+
+    def test_wmean_empty_pairs_is_none(self):
+        self.assertIsNone(cv._wmean([]))
+
+    def test_wmean_all_zero_weight_is_none(self):
+        self.assertIsNone(cv._wmean([(5.0, 0.0), (10.0, 0.0)]))
+
+    def test_wmean_single_pair_returns_its_value(self):
+        self.assertAlmostEqual(cv._wmean([(7.5, 3.0)]), 7.5)
+
+    def test_wmean_weighted_average(self):
+        # (10*1 + 20*3) / (1+3) = 70/4 = 17.5
+        self.assertAlmostEqual(cv._wmean([(10.0, 1.0), (20.0, 3.0)]), 17.5)
+
+
+class Co2ScoreTests(unittest.TestCase):
+    """score_co2 (:875) — within/outside the CO2_TOL band, SKIPPED when unset."""
+
+    def test_within_band_passes(self):
+        actual = 100.0
+        model = actual * (1.0 + cv.CO2_TOL - 0.005)
+        r = cv.score_co2(2024, {"co2": {"model": model}}, {"co2": {"egrid": actual}})
+        self.assertEqual(r["status"], cv.PASS)
+
+    def test_outside_band_fails(self):
+        actual = 100.0
+        model = actual * (1.0 + cv.CO2_TOL + 0.01)
+        r = cv.score_co2(2024, {"co2": {"model": model}}, {"co2": {"egrid": actual}})
+        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["classification"], cv.MODEL_MISS)
+
+    def test_skipped_without_model(self):
+        r = cv.score_co2(2024, {"co2": {}}, {"co2": {"egrid": 100.0}})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_without_actual(self):
+        r = cv.score_co2(2024, {"co2": {"model": 100.0}}, {"co2": {}})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+
+class StorageShapeScoreTests(unittest.TestCase):
+    """score_storage_shape (:931) status tokens on the positive-discharge basis
+    (rubric §C5c 2026-07-03 alignment fix: both series are monthly discharge,
+    not net charge-minus-discharge)."""
+
+    # A ramp with a clear seasonal shape (CV well above STORAGE_SHAPE_MIN_CV)
+    # so the degeneracy guard never fires for the pass/fail cases below.
+    _ACTUAL = [float(x) for x in range(1, 13)]  # 1..12, positive discharge GWh
+
+    def _bench(self, actual=None):
+        return {"storage": {"monthly_net_gwh": actual or self._ACTUAL}}
+
+    def test_pass_high_correlation(self):
+        model = [2.0 * x for x in self._ACTUAL]  # perfectly correlated, scaled
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
+        )
+        self.assertEqual(r["status"], cv.PASS)
+
+    def test_fail_anticorrelated(self):
+        model = list(reversed(self._ACTUAL))  # r = -1
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
+        )
+        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["classification"], cv.MODEL_MISS)
+
+    def test_skipped_no_actual_monthly(self):
+        r = cv.score_storage_shape(2024, {"storage": {}}, {"storage": {}})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_no_model_monthly(self):
+        r = cv.score_storage_shape(2024, {"storage": {}}, self._bench())
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_wrong_length(self):
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": [1.0] * 11}}, self._bench()
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_null_month(self):
+        model = [1.0] * 12
+        model[3] = None
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_degenerate_actual_shape(self):
+        # Near-uniform actual monthly discharge (CV < STORAGE_SHAPE_MIN_CV): no
+        # seasonal shape to correlate, so even the TRUE model would score r=0.
+        flat_actual = self._bench([10.0] * 12)
+        model = [10.0] * 12
+        model[0] = 10.5  # some model variation, irrelevant — actual is degenerate
+        r = cv.score_storage_shape(
+            2024, {"storage": {"monthly_net_gwh": model}}, flat_actual
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+
+def _fm(klass, status="PASS"):
+    return {"criterion": "fuelmix", "key": klass, "status": status}
+
+
+class LedgerMatchTests(unittest.TestCase):
+    """_ledger_match (:289) — a mis-scoped exception must not waive an
+    unrelated criterion/year/class's failure."""
+
+    def test_matches_on_criterion_year_key(self):
+        exceptions = [
+            {"criterion": "fuelmix", "klass": "COAL_BIT", "year": 2024, "reason": "x"}
+        ]
+        self.assertIsNotNone(cv._ledger_match(exceptions, "fuelmix", 2024, "COAL_BIT"))
+
+    def test_wrong_criterion_does_not_match(self):
+        # A sysvol exception must never waive an unrelated fuelmix FAIL.
+        exceptions = [
+            {"criterion": "sysvol", "family": "gas", "year": 2024, "reason": "x"}
+        ]
+        self.assertIsNone(cv._ledger_match(exceptions, "fuelmix", 2024, "gas"))
+
+    def test_wrong_year_does_not_match(self):
+        exceptions = [
+            {"criterion": "fuelmix", "klass": "COAL_BIT", "year": 2023, "reason": "x"}
+        ]
+        self.assertIsNone(cv._ledger_match(exceptions, "fuelmix", 2024, "COAL_BIT"))
+
+    def test_wrong_class_does_not_match(self):
+        # An exception documented for CT_PEAKER must not silently waive a
+        # DIFFERENT class's (e.g. COAL_BIT's) failure in the same year.
+        exceptions = [
+            {"criterion": "fuelmix", "klass": "CT_PEAKER", "year": 2024, "reason": "x"}
+        ]
+        self.assertIsNone(cv._ledger_match(exceptions, "fuelmix", 2024, "COAL_BIT"))
+
+    def test_keyless_criterion_matches_on_criterion_year_alone(self):
+        # Criteria with no sub-key (price_mean, co2, storage, ...) legitimately
+        # match with key=None on both sides.
+        exceptions = [{"criterion": "price_mean", "year": 2024, "reason": "x"}]
+        self.assertIsNotNone(cv._ledger_match(exceptions, "price_mean", 2024, None))
+
+    def test_apply_ledger_end_to_end_only_documented_class_becomes_caveat(self):
+        # Regression for the "mis-scoped ledger waives an unrelated failure"
+        # failure mode: two FAILing classes, only one documented -> only that
+        # one becomes a CAVEAT, the other stays a FAIL.
+        documented = _fm("CT_PEAKER", cv.FAIL)
+        undocumented = _fm("COAL_BIT", cv.FAIL)
+        exceptions = [
+            {"criterion": "fuelmix", "klass": "CT_PEAKER", "year": None, "reason": "x"}
+        ]
+        documented["year"] = 2024
+        undocumented["year"] = 2024
+        exceptions[0]["year"] = 2024
+        cv._apply_ledger(documented, exceptions)
+        cv._apply_ledger(undocumented, exceptions)
+        self.assertEqual(documented["status"], cv.CAVEAT)
+        self.assertEqual(undocumented["status"], cv.FAIL)
+
+
+class CompletenessMapTests(unittest.TestCase):
+    """class_is_gated (:372) / family_is_complete (:387) — a completeness-map
+    bug must not silently drop (mis-gate) a class or family."""
+
+    def test_no_completeness_part_gates_by_default(self):
+        # No committed completeness part for this year (complete-vintage year):
+        # every class/family gates as usual, regardless of the map's contents.
+        self.assertTrue(cv.class_is_gated("PJM", "CC_REGULAR", 2024))
+        self.assertTrue(cv.family_is_complete("PJM", "gas", 2024))
+
+    def test_class_absent_from_map_defaults_to_not_gated(self):
+        # A completeness-map bug that OMITS a class (typo, missing audit row)
+        # must default to "not gated" (safe/conservative) -- never silently
+        # fall through to "gated", which would score a FAIL/PASS against an
+        # actual the audit never verified.
+        _completeness(
+            {"ERCOT": {"CC_REGULAR": True}}, {"ERCOT": {"gas": True, "coal": False}}
+        )
+        try:
+            self.assertFalse(cv.class_is_gated("ERCOT", "COAL_BIT", 2025))
+        finally:
+            _reset_completeness()
+
+    def test_family_absent_from_map_defaults_to_incomplete(self):
+        _completeness({"ERCOT": {}}, {"ERCOT": {"gas": True}})
+        try:
+            self.assertFalse(cv.family_is_complete("ERCOT", "coal", 2025))
+        finally:
+            _reset_completeness()
+
+    def test_gate_flag_honored_both_directions(self):
+        _completeness(
+            {"PJM": {"CC_REGULAR": True, "COAL_BIT": False}}, {"PJM": {"gas": True}}
+        )
+        try:
+            self.assertTrue(cv.class_is_gated("PJM", "CC_REGULAR", 2025))
+            self.assertFalse(cv.class_is_gated("PJM", "COAL_BIT", 2025))
+        finally:
+            _reset_completeness()
+
+
+class AggStatusTests(unittest.TestCase):
+    """_agg_status (:1206) is the worst-of-children aggregator every criterion's
+    multi-year result folds through; it must be stable regardless of the
+    order its per-year records arrive in (determinism guard)."""
+
+    @staticmethod
+    def _mk(statuses):
+        return [{"status": s} for s in statuses]
+
+    def test_all_pass_is_pass(self):
+        self.assertEqual(self._agg([cv.PASS, cv.PASS]), cv.PASS)
+
+    def _agg(self, statuses):
+        return cv._agg_status(self._mk(statuses))
+
+    def test_all_skipped_is_skipped(self):
+        self.assertEqual(self._agg([cv.SKIPPED, cv.SKIPPED]), cv.SKIPPED)
+
+    def test_empty_is_skipped(self):
+        self.assertEqual(cv._agg_status([]), cv.SKIPPED)
+
+    def test_fail_dominates_caveat_pass_and_skipped(self):
+        self.assertEqual(self._agg([cv.PASS, cv.CAVEAT, cv.FAIL, cv.SKIPPED]), cv.FAIL)
+
+    def test_caveat_beats_pass_and_skipped(self):
+        self.assertEqual(self._agg([cv.PASS, cv.CAVEAT, cv.SKIPPED]), cv.CAVEAT)
+
+    def test_pass_is_not_masked_by_a_skipped_sibling(self):
+        self.assertEqual(self._agg([cv.PASS, cv.SKIPPED]), cv.PASS)
+
+    def test_order_independent_with_fail_present(self):
+        statuses = [cv.FAIL, cv.CAVEAT, cv.PASS, cv.SKIPPED]
+        results = {self._agg(list(p)) for p in itertools.permutations(statuses)}
+        self.assertEqual(results, {cv.FAIL})
+
+    def test_order_independent_without_fail(self):
+        statuses = [cv.CAVEAT, cv.PASS, cv.SKIPPED]
+        results = {self._agg(list(p)) for p in itertools.permutations(statuses)}
+        self.assertEqual(results, {cv.CAVEAT})
+
+    def test_order_independent_pass_and_skipped_only(self):
+        statuses = [cv.PASS, cv.SKIPPED, cv.PASS, cv.SKIPPED]
+        results = {self._agg(list(p)) for p in itertools.permutations(statuses)}
+        self.assertEqual(results, {cv.PASS})
 
 
 if __name__ == "__main__":
