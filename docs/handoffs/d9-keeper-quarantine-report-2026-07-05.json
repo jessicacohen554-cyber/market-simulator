@@ -1,0 +1,225 @@
+{
+ "schema": "legitimacy-diagnostics/v1",
+ "bundle": "all keepers",
+ "iso": "-",
+ "years": [],
+ "diagnostics": {
+  "D9": {
+   "name": "D-9 overlay quarantine (all keepers)",
+   "passed": true,
+   "rows": [
+    {
+     "bundle": "2026-07-03-ercot32-ordc-total-rtolcap",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-ercot32-ordc-total-rtolcap",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-ercot32-ordc-total-rtolcap",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-ercot32-ordc-total-rtolcap",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-ercot32-ordc-total-rtolcap",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-caiso-51-firm-base",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-caiso-51-firm-base",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-caiso-51-firm-base",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-caiso-51-firm-base",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-caiso-51-firm-base",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-pjm-76-outage-fix",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-pjm-76-outage-fix",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-pjm-76-outage-fix",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-pjm-76-outage-fix",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-pjm-76-outage-fix",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-nyiso-41-hub-prices",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-nyiso-41-hub-prices",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-nyiso-41-hub-prices",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-nyiso-41-hub-prices",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-nyiso-41-hub-prices",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-neiso-47-fast-start",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-neiso-47-fast-start",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-neiso-47-fast-start",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-neiso-47-fast-start",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-neiso-47-fast-start",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-miso-39-reserve-pergen",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-miso-39-reserve-pergen",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-miso-39-reserve-pergen",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-miso-39-reserve-pergen",
+     "check": "ordc_reliability_deployment_mw",
+     "value": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "2026-07-03-miso-39-reserve-pergen",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D6": {
+   "name": "D-6 holdout quarantine (all registered bundles)",
+   "passed": true,
+   "rows": [],
+   "summary": [],
+   "failures": [],
+   "notes": [
+    "no registered bundle carries a year outside [2023, 2024, 2025] \u2014 quarantine intact."
+   ]
+  }
+ },
+ "gates": {
+  "d1_min_profile_r": 0.8,
+  "d1_min_cv_ratio": 0.5,
+  "d1_offpeak_last_hour": 14,
+  "d1_gated_classes": [
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "d2_peaker_max_share": 0.1,
+  "d2_merchant_max_share": 0.3,
+  "d2_exempt_classes": [
+   "CC_CHP",
+   "CT_CHP",
+   "ST_CHP",
+   "nuclear"
+  ],
+  "d4_max_offwindow_share": 0.05
+ }
+}
