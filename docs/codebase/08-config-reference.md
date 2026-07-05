@@ -205,7 +205,7 @@ A cited registry; major groups:
 | New entry | `NEW_ENTRY_COSTS` (NREL ATB 2024), `WRIGHT_REFERENCE_GW`, `GLOBAL_ANNUAL_DEPLOYMENT_GW` |
 | Emerging | `HYDROGEN_TURBINE_PARAMS`, `ELECTROLYZER_PARAMS`, `CCUS_PARAMS`, `GEOTHERMAL_PARAMS`, `OFFSHORE_WIND_PARAMS` |
 | Registries | `CAMPD_BINNING_ISOS`, `HISTORIC_OUTAGE_OVERLAY_BY_ISO`, `IMPORT_TRANCHES`/`EXPORT_TRANCHES` |
-| Horizon | `START_YEAR=2026`, `END_YEAR=2050`, `HOURS_PER_YEAR=8760`, `WEATHER_YEAR_POOL=(2023,2024,2025)` |
+| Horizon | `START_YEAR=2026`, `END_YEAR=2050`, `HOURS_PER_YEAR=8760`, `WEATHER_YEAR_POOL=(2023,2024,2025)`, `WEATHER_YEAR_POOL_BY_ISO` (per-ISO widened pool, see `docs/weather-pool-coverage-2026-07.md`) |
 
 Every value carries a citation comment; provenance is traced in
 `docs/parameter-citations.md`.
