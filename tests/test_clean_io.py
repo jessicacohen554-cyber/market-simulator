@@ -32,6 +32,7 @@ ALL_DATATYPES = [
     "generation",
     "renewables",
     "emissions",
+    "emissions-unit-annual",
     "outages",
     "validation",
     "fleet",
@@ -43,6 +44,8 @@ ALL_DATATYPES = [
     "capacity-deliverability",
     "gtc-limits",
     "winter-fuel-inventory",
+    "rggi-co2-budgets",
+    "carb-cap-schedule",
 ]
 
 

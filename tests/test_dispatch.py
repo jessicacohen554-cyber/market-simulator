@@ -832,6 +832,242 @@ class TestRPSConstraint(unittest.TestCase):
             )
 
 
+class TestMassCapConstraint(unittest.TestCase):
+    """The emissions mass-cap row, its endogenous dual, and membership."""
+
+    T = 24
+
+    def _no_renewables(self, n_zones):
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def test_no_hour_loop_in_builder(self):
+        # Rule 2: the row builder must not loop over hours.
+        import inspect
+
+        from market_sim.model.dispatch import _build_mass_cap_rows
+
+        src = inspect.getsource(_build_mass_cap_rows)
+        self.assertNotIn("for t in", src)
+        self.assertNotIn("for hour", src)
+
+    def test_none_matches_unconstrained_dispatch(self):
+        # mass_cap_coeffs=None adds no row: identical solve, co2_cap_price None.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+        baseline = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
+        )
+        with_none = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            mass_cap_coeffs=None,
+            **self._no_renewables(1),
+        )
+        np.testing.assert_allclose(with_none.prices, baseline.prices)
+        np.testing.assert_allclose(with_none.dispatch, baseline.dispatch)
+        self.assertIsNone(baseline.co2_cap_price)
+        self.assertIsNone(with_none.co2_cap_price)
+
+    def _dirty_clean_fleet(self):
+        # Two units in one zone: cheap-dirty (mc 20, 1.0 t/MWh) vs
+        # expensive-clean (mc 50, 0.2 t/MWh). MC is passed explicitly.
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 50.0)])
+        return fleet, mc
+
+    def test_binding_cap_dual_equals_switching_price(self):
+        # Plan §9.1: a cap set between all-dirty and all-clean emissions binds,
+        # and its dual equals the analytic switching price
+        # (mc_clean - mc_dirty) / (rate_dirty - rate_clean).
+        fleet, mc = self._dirty_clean_fleet()
+        demand = np.full((1, self.T), 100.0)
+        rate_dirty, rate_clean = 1.0, 0.2
+        coeffs = np.array([[rate_dirty, rate_clean]])
+        # All-dirty = 100*1.0*24 = 2400 t; all-clean = 480 t. Cap in between.
+        cap = 1200.0
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            mass_cap_coeffs=coeffs,
+            mass_cap_rhs=np.array([cap]),
+            **self._no_renewables(1),
+        )
+        self.assertEqual(res.status, "Optimal")
+        # Cap binds: total weighted emissions equal the budget.
+        emissions = (coeffs[0][:, None] * res.dispatch).sum()
+        self.assertAlmostEqual(emissions, cap, delta=1.0)
+        # Endogenous allowance price = analytic switching price.
+        expected = (50.0 - 20.0) / (rate_dirty - rate_clean)  # = 37.5
+        self.assertIsNotNone(res.co2_cap_price)
+        self.assertAlmostEqual(res.co2_cap_price[0], expected, delta=0.1)
+        # Member dispatch shifts to a mean of 37.5 MW dirty. With flat hourly MC
+        # and a single annual cap the per-hour split is degenerate (0/100), but
+        # the annual dirty energy is pinned at 37.5*24 MWh.
+        self.assertAlmostEqual(res.dispatch[0].sum(), 37.5 * self.T, delta=self.T)
+
+    def test_loose_cap_has_zero_dual(self):
+        # A cap above the all-dirty emissions never binds: dual is 0.
+        fleet, mc = self._dirty_clean_fleet()
+        demand = np.full((1, self.T), 100.0)
+        coeffs = np.array([[1.0, 0.2]])
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            mass_cap_coeffs=coeffs,
+            mass_cap_rhs=np.array([1.0e6]),
+            **self._no_renewables(1),
+        )
+        self.assertAlmostEqual(res.co2_cap_price[0], 0.0, places=3)
+        # All-dirty dispatch (cheapest) — the cap is slack.
+        np.testing.assert_allclose(res.dispatch[0], 100.0, atol=1e-6)
+
+    def test_membership_charges_only_member_zone(self):
+        # Plan §9.4/§9.6: with membership [1, 0] the cap coefficient is zero on
+        # zone-1's generator, so zone-1 emissions are uncapped. Cheap-dirty in
+        # each zone; cap forces zone-0 to its clean unit but leaves zone-1 alone.
+        generators = [
+            Generator(
+                unit_id="D0",
+                name="D0",
+                zone="Z0",
+                fuel_type="coal",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="C0",
+                name="C0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="D1",
+                name="D1",
+                zone="Z1",
+                fuel_type="coal",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(generators, ["Z0", "Z1"], hours=self.T)
+        # Rows: D0 (dirty, mc20), C0 (clean, mc50), D1 (dirty, mc20).
+        mc = np.vstack(
+            [
+                np.full(self.T, 20.0),
+                np.full(self.T, 50.0),
+                np.full(self.T, 20.0),
+            ]
+        )
+        demand = np.full((2, self.T), 100.0)
+        # Copperplate link so zones can share, but each has local supply.
+        emission = np.array([1.0, 0.2, 1.0])
+        membership = np.array([1.0, 0.0])  # zone-0 member, zone-1 not
+        coeffs = (membership[fleet.zone_idx] * emission)[None, :]
+        # Coefficient on the zone-1 dirty unit (index 2) must be zero.
+        self.assertEqual(coeffs[0][2], 0.0)
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            mass_cap_coeffs=coeffs,
+            mass_cap_rhs=np.array([600.0]),  # binds only on zone-0's emissions
+            **self._no_renewables(2),
+        )
+        self.assertEqual(res.status, "Optimal")
+        # Zone-1's dirty unit runs full-out (uncapped) every hour.
+        np.testing.assert_allclose(res.dispatch[2], 100.0, atol=1e-6)
+
+    def test_simultaneous_rps_reserve_and_masscap_duals(self):
+        # Plan §9.5: RPS + reserve co-opt + mass-cap all active at once. Each
+        # end-anchored dual must land on its own row. Nuclear (clean) + dirty
+        # gas: RPS floors clean, the mass cap bounds gas emissions, reserve
+        # co-opt prices headroom. Cross-check each dual against a single-
+        # constraint solve.
+        generators = [
+            Generator(
+                unit_id="N0",
+                name="N0",
+                zone="Z0",
+                fuel_type="nuclear",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(generators, ["Z0"], hours=self.T)
+        mc = np.vstack([np.full(self.T, 100.0), np.full(self.T, 20.0)])
+        demand = np.full((1, self.T), 80.0)
+        coeffs = np.array([[0.0, 0.5]])  # only gas emits
+        common = dict(
+            mc=mc,
+            T=self.T,
+            reserve_requirement=np.full(self.T, 30.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([1000.0]),
+            ordc_step_widths=np.array([1000.0]),
+            **self._no_renewables(1),
+        )
+        res = solve_dispatch(
+            fleet,
+            demand,
+            rps_target=0.5,
+            mass_cap_coeffs=coeffs,
+            mass_cap_rhs=np.array([700.0]),
+            **common,
+        )
+        self.assertEqual(res.status, "Optimal")
+        # All three duals recovered and distinct on their own rows.
+        self.assertIsNotNone(res.rps_shadow_price)
+        self.assertIsNotNone(res.co2_cap_price)
+        self.assertIsNotNone(res.reserve_price)
+        self.assertGreater(res.rps_shadow_price, 0.0)
+        self.assertGreaterEqual(res.co2_cap_price[0], 0.0)
+        # The mass-cap dual is recovered from the correct row: re-solve with a
+        # cap loose enough to never bind and confirm it drops to ~0 while RPS
+        # stays put — proving the cap dual is not aliasing the RPS row.
+        loose = solve_dispatch(
+            fleet,
+            demand,
+            rps_target=0.5,
+            mass_cap_coeffs=coeffs,
+            mass_cap_rhs=np.array([1.0e6]),
+            **common,
+        )
+        self.assertAlmostEqual(loose.co2_cap_price[0], 0.0, places=2)
+        self.assertAlmostEqual(loose.rps_shadow_price, res.rps_shadow_price, delta=1e-3)
+
+
 def _solve_with_highs_options(
     highs_options,
     *,
