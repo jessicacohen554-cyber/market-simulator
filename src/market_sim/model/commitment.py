@@ -1160,7 +1160,7 @@ def apply_commitment_with_coal_pin(
             bin_tranches.setdefault(bin_id, {})["committed"] = g
         elif suffix.startswith("econ"):
             bin_tranches.setdefault(bin_id, {}).setdefault("econ", []).append(g)
-        elif couple_peak and suffix == "peak":
+        elif couple_peak and suffix.startswith("peak"):
             bin_tranches.setdefault(bin_id, {}).setdefault("peak", []).append(g)
 
     for pair in bin_tranches.values():
