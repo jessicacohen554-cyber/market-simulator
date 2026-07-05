@@ -365,6 +365,32 @@ def _clean_system_demand(iso: str, year: int) -> np.ndarray | None:
     return mw
 
 
+def _demand_profile_clean(iso: str, year: int) -> np.ndarray | None:
+    """Return the repaired ``demand-profile`` system-total demand, or ``None``.
+
+    Unlike :func:`_clean_system_demand` (an opt-in, parity-gated alternate
+    source), this is a bug fix on the exact series :func:`load_demand` already
+    falls back to, so it is consumed unconditionally — not gated behind
+    ``MARKET_SIM_USE_CLEAN``. ``scripts/curate_demand_profile.py`` repairs the
+    physically-impossible hours found in ``eia_demand_profiles.parquet`` (see
+    that script's docstring); this reads the repaired clean partition it
+    writes. Returns ``None`` when the clean seam or partition is unavailable
+    (not yet regenerated via ``scripts/regenerate_clean.py demand-profile``),
+    in which case the caller falls back to the raw parquet unchanged.
+    """
+    seam = _read_clean_seam()
+    if seam is None:
+        return None
+    read_clean, clean_exists = seam
+    if not clean_exists("demand-profile", iso=iso, year=year):
+        return None
+    df = read_clean("demand-profile", iso=iso, year=year, validate=False)
+    df = df.sort_values("hour")
+    if len(df) != HOURS_PER_YEAR:
+        return None
+    return df["raw_mw"].to_numpy(dtype=float)
+
+
 def _clean_generation_by_fuel(iso: str, year: int) -> dict[str, np.ndarray] | None:
     """Return clean-backed per-fuel hourly generation (MW), keyed by benchmark name.
 
@@ -2233,8 +2259,13 @@ def load_demand(
     forward mechanism, used under ``--priced-interchange`` (where
     ``include_interchange`` is ``False`` so the wedge is not double counted).
     The demand series is net load, already net of behind-the-meter
-    PV/storage/DER (playbook §8.1). Other ISOs use the demand-profiles parquet
-    alone, with no interchange.
+    PV/storage/DER (playbook §8.1). Other ISOs, and any (iso, year) whose
+    dedicated per-BA extract is unavailable (every PJM year; CAISO/MISO
+    2021-2022), fall back to the demand-profiles parquet alone, with no
+    interchange — preferring the repaired ``demand-profile`` clean partition
+    (see :func:`_demand_profile_clean`) when it has been regenerated, since
+    the raw extract carries a handful of physically-impossible hours (raw/ is
+    immutable, so the fix lives at the curation seam, not in-place).
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
@@ -2292,6 +2323,8 @@ def load_demand(
         clean_mw = _clean_system_demand(iso, year)
         if clean_mw is not None:
             raw_mw = clean_mw
+    if raw_mw is None:
+        raw_mw = _demand_profile_clean(iso, year)
     if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
@@ -2400,6 +2433,22 @@ def load_demand_meta(
     Raises:
         ValueError: if no data matches ``(iso, year)``.
     """
+    # ``eia_demand_meta.parquet`` is a per-(iso, year) summary of the same raw
+    # ``eia_demand_profiles.parquet`` hourly series :func:`load_demand` reads,
+    # so it carries the identical physically-impossible-hour defect (e.g. PJM
+    # 2021's peak_mw is the 2.147e9 MW spike; MISO 2021/2022/2024's min_mw is
+    # the 0.0 MW sentinel). Recomputed from the repaired ``demand-profile``
+    # clean series once it has been regenerated (see
+    # :func:`_demand_profile_clean`); falls back to the raw meta parquet,
+    # unchanged, when the clean partition is absent.
+    clean_mw = _demand_profile_clean(iso, year)
+    if clean_mw is not None:
+        return {
+            "peak_mw": float(clean_mw.max()),
+            "min_mw": float(clean_mw.min()),
+            "avg_mw": float(clean_mw.mean()),
+            "total_annual_mwh": float(clean_mw.sum()),
+        }
     meta = pd.read_parquet(data_dir / _DEMAND_META_FILE)
     row = _filter_iso_year(meta, iso, year).iloc[0]
     return {field: row[field] for field in _META_FIELDS}
