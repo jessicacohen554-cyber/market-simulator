@@ -72,6 +72,99 @@ D2_EXEMPT_MECHS: frozenset[int] = frozenset(
 NON_THERMAL_MECHS: frozenset[int] = frozenset({MECH_FIRM_IMPORT, MECH_NYISO_SELFSUPPLY})
 
 
+# ---------------------------------------------------------------------------
+# D-3 zero-forcing ablation registry (audit §7 D-3 / CLAUDE.md rule 20)
+# ---------------------------------------------------------------------------
+# Maps each MERCHANT floor/bridge mechanism id to the ``ScenarioConfig`` field(s)
+# that arm it and the NEUTRAL (no-op) value each takes in a zero-forcing ablation
+# twin. The twin is a reference solve with every merchant floor OFF, KEEPING only
+# the structural must-run set (nuclear must-run, CHP steam-following, coal
+# take-or-pay) so the keeper-vs-twin per-class delta quantifies what each floor
+# buys (a delta explainable only as "the floor buys the residual" is an open
+# root-cause item, not a calibrated parameter).
+#
+# This is THE D-2 mechanism registry the ablation off-list is derived from: the
+# off-list is NOT a hand-maintained tuple. :func:`assert_ablation_coverage`
+# (exercised by tests/test_floor_mechanisms_ablation.py) requires every mechanism
+# id to be EITHER kept (:data:`MECH_ABLATION_KEPT`) or carry an ablation entry —
+# so a newly added merchant floor mechanism is ablated by default, or the
+# coverage test fails until it is classified.
+MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
+    MECH_RELIABILITY_FLOOR: {"reliability_floor": False},
+    MECH_CT_NETLOAD_DRAG: {"ct_netload_drag": False},
+    MECH_ST_NETLOAD_DRAG: {"gas_st_netload_drag": False},
+    MECH_RA_MUSTOFFER: {
+        "caiso_ra_mustoffer": False,
+        "caiso_ra_startup_bridge": False,
+        "caiso_ra_bridge_decommit": False,
+    },
+    MECH_CT_MUSTRUN_PER_PLANT: {"ct_mustrun_per_plant": False},
+    MECH_CT_DEPLOYMENT_OVERLAY: {"ct_deployment_overlay": False},
+    MECH_RELIABILITY_DEPLOYMENT_OVERLAY: {"reliability_deployment_overlay": False},
+    MECH_CAISO_GAS_COMMITMENT_FLOOR: {"caiso_gas_commitment_floor": False},
+    MECH_NYISO_SELFSUPPLY: {"nyiso_local_selfsupply": False},
+}
+
+# Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
+# must-run set plus the market-design import boundary (import bands are a network
+# boundary condition, not merchant thermal forcing) and MECH_NONE.
+MECH_ABLATION_KEPT: frozenset[int] = D2_EXEMPT_MECHS | {MECH_FIRM_IMPORT, MECH_NONE}
+
+# Non-mechanism merchant biases the twin also neutralizes. The WEFOR haircuts are
+# a class-wide availability lightening rather than a per-unit ``min_gen`` floor,
+# so they carry no mechanism id — but they are a merchant-side calibration lever
+# the D-3 protected-set spec turns off (keep nuclear / CHP-steam / coal only).
+EXTRA_ZERO_FORCING_FIELDS: dict[str, object] = {
+    "wefor_residual": None,
+    "wefor_residual_groups": None,
+    "wefor_multiplier": 1.0,
+}
+
+
+def assert_ablation_coverage() -> None:
+    """Raise if any mechanism id is neither kept nor given an ablation entry.
+
+    The guard that keeps the D-3 off-list from silently going stale: every id in
+    :data:`MECH_NAMES` must be classified as KEPT (:data:`MECH_ABLATION_KEPT`) or
+    ABLATED (:data:`MECH_ABLATION_FIELDS`). A new floor mechanism added to the
+    registry without an ablation decision fails this check, so it cannot escape
+    the twin unnoticed.
+    """
+    classified = set(MECH_ABLATION_KEPT) | set(MECH_ABLATION_FIELDS)
+    missing = sorted(set(MECH_NAMES) - classified)
+    if missing:
+        names = [MECH_NAMES.get(m, str(m)) for m in missing]
+        raise AssertionError(
+            "floor mechanism(s) missing a D-3 ablation decision (add to "
+            f"MECH_ABLATION_FIELDS or MECH_ABLATION_KEPT): {names}"
+        )
+    overlap = sorted(set(MECH_ABLATION_KEPT) & set(MECH_ABLATION_FIELDS))
+    if overlap:
+        raise AssertionError(
+            "floor mechanism(s) both kept and ablated (contradiction): "
+            f"{[MECH_NAMES.get(m, str(m)) for m in overlap]}"
+        )
+
+
+def zero_forcing_field_overrides() -> dict[str, object]:
+    """Return the merged ``ScenarioConfig`` no-op overrides for a zero-forcing twin.
+
+    Union of every :data:`MECH_ABLATION_FIELDS` entry (the merchant floor
+    mechanisms, derived from the D-2 mechanism registry so a new floor is ablated
+    by default) plus :data:`EXTRA_ZERO_FORCING_FIELDS` (the WEFOR haircuts, which
+    are merchant availability levers without a mechanism id). Structural must-run
+    (nuclear / CHP-steam / coal take-or-pay) and the import boundary carry no
+    entry, so they are preserved. Raises via :func:`assert_ablation_coverage`
+    if the registry is incomplete.
+    """
+    assert_ablation_coverage()
+    out: dict[str, object] = {}
+    for fields_map in MECH_ABLATION_FIELDS.values():
+        out.update(fields_map)
+    out.update(EXTRA_ZERO_FORCING_FIELDS)
+    return out
+
+
 def ensure_mechanism(fleet_arrays) -> np.ndarray:
     """Return ``fleet_arrays.min_gen_mechanism``, allocating it if absent.
 
