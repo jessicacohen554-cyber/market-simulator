@@ -3,7 +3,9 @@
 This directory is intentionally empty. MISO publishes wind & solar curtailment
 in its Market Reports, but those reports live on misoenergy.org, which is
 **allowlist-blocked from the build environment (HTTP 403)**, so no reproducible
-hourly uncurtailed-potential (HSL) series could be built.
+hourly uncurtailed-potential (HSL) series could be built. Re-checked
+2026-07-05 (L1 audit closure, docs/model-legitimacy-audit-2026-07.md §4):
+`misoenergy.org` and `cdn.misoenergy.org` both still return HTTP 403.
 
 Until a curtailment series can be pulled, the MISO backcast uses EIA-930 MISO
 delivered wind/solar generation (which embeds the historical curtailment);
