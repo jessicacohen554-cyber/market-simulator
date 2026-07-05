@@ -204,7 +204,7 @@
         },
         "n_scalars": 72,
         "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
-        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page \u00b7 NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked 1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the exposed C3a hole is missing NYISO reserve/scarcity price formation, not a CC markup \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
       },
       {
         "name": "offer_curve_smoothing",
@@ -259,8 +259,8 @@
         "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
         "identification": "measured-physical",
         "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
-        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script)",
-        "note": "D-8: coefficient levels mostly stable but several limbs drift >11% and three flip Spearman-rho sign out-of-training (PJM ComEd CC; CAISO SP15 ST_GAS + CC \u2014 docs/out-of-sample-results-2026-07.md \u00a72B); re-derive only on source-data updates (rule 23)"
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
       },
       {
         "name": "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
@@ -269,7 +269,7 @@
         "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
         "value": 0.45,
         "source": "LI self-supply floor set 'a touch below' the 2023 realized share ~0.48 (audit C-17; W1d marker) \u2014 the LMIC rule is market design but the fraction is outcome-anchored",
-        "root_cause": "audit C-17: re-ground on the published LMIC requirement itself, not the realized share"
+        "root_cause": "audit C-17 / B-NYI-1: the published Zone-K LCR is now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, while this is an all-hours energy self-supply fraction \u2014 a rule-14 boundary mismatch: substituting the LCR% (~1.05) or the TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI generation, and any scalar reproducing ~0.45 requires a load-duration haircut tuned to the realized share (rule-12 pin). The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar re-ground; 0.45 left in place \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
       },
       {
         "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]",
