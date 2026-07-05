@@ -29,7 +29,7 @@ LP-based electricity market dispatch simulator. Forecasting model (2026–2050) 
 
 ```
 src/market_sim/
-  config/    → scenarios.py (ScenarioConfig dataclass), constants.py, iso_configs.py (7-ISO topology)
+  config/    → scenarios.py (ScenarioConfig dataclass), constants.py, iso_configs.py (6-ISO topology)
   data/      → eia_loader.py, fleet.py (CAMPD binning), renewables.py, fuel.py, outages.py, hydro.py, ownership.py
   model/     → dispatch.py (LP core), commitment.py (3-solve UC screen), transmission.py, storage.py, capacity.py
   policy/    → ira.py, rps.py, carbon.py, eac.py, constraints.py
