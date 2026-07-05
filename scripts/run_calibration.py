@@ -3603,6 +3603,7 @@ def run_year(
         from market_sim.config.iso_configs import (
             RELIABILITY_FLOOR_REGISTRY,
             apply_reliability_floor_overrides,
+            drop_drag_owned_reliability_specs,
         )
         from market_sim.model.transmission import inject_reliability_floor
 
@@ -3610,6 +3611,21 @@ def run_year(
             RELIABILITY_FLOOR_REGISTRY.get(iso, []),
             getattr(config, "reliability_floor_overrides", None),
         )
+        # Rule 19: when a net-load drag owns a class's commitment (CT_PEAKER via
+        # ct_netload_drag), drop that class's reliability-floor limbs so the two
+        # do not stack into an all-day floor binding overnight (the D-4
+        # off-window failure; docs/FINDING-pjm-burndown-2026-07.md). No-op when
+        # no drag is active, so non-drag ISOs/runs are byte-identical.
+        _n_before = len(_floor_specs)
+        _floor_specs = drop_drag_owned_reliability_specs(_floor_specs, config)
+        if len(_floor_specs) < _n_before:
+            logger.info(
+                "%s %d: reliability floor — dropped %d drag-owned limb(s) "
+                "(CLAUDE.md rule 19: net-load drag owns the class commitment)",
+                iso,
+                year,
+                _n_before - len(_floor_specs),
+            )
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
             iso,
