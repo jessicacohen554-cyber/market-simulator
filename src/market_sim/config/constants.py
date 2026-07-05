@@ -2869,6 +2869,15 @@ STATMODE_PROBE_RUNS: dict[str, str] = {
     "MISO": "2026-07-03-miso-statmode-d-7",
 }
 
+# ISOs where the model prices carbon (CAISO: CA cap-and-trade; NYISO/NEISO:
+# RGGI). The R2 measured-rate CO2 basis (PR #1371, fff2c34) moves the merit
+# order ONLY where carbon price > 0 -- so the 2026-07-03 statmode probes above
+# are solve-stale for these three ISOs (the W3-P1 re-solves own the fix), while
+# the carbon-zero ISOs (ERCOT/PJM/MISO) need only a no-solve re-score of the
+# committed numbers. Source: docs/handoffs/forecast-validation-program-2026-07.md
+# §0/§3.2 (W0-P4 design).
+STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO")
+
 
 # ---------------------------------------------------------------------------
 # ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A)
