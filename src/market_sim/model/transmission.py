@@ -314,8 +314,27 @@ def build_export_sinks(iso: str) -> list[Generator]:
 CAISO_BIDIR_IMPORT_CAP_MW = 8300.0  # aggregate simultaneous-import limit (the
 # import-tightening cap: WECC COI/Path 66 + Path 46/WOR deliverable import into
 # CAISO, ~ the deep-import hours of the EIA-930 CISO net-interchange curve).
-CAISO_BIDIR_EXPORT_CAP_MW = 3500.0  # measured export-direction peak (EIA-930
-# CISO 2024 net export reverses to ~+3.5 GW in the midday solar glut).
+# FALLBACK-ONLY (audit item C-14, scalar-remediation B-CAI-1 2026-07-05). This
+# single aggregate export cap is used ONLY by the superseded
+# `build_caiso_bidir_intertie` (gated on `caiso_bidir_intertie`, default off).
+# The caiso-51 keeper — and every current CAISO run — uses `caiso_per_hub_intertie`
+# instead, whose export legs are bounded by each corridor's physical link TTC
+# (`_caiso_corridor_export_cap_mw`) plus the measured p95 net-export
+# deliverability envelope (`caiso_corridor_flow_limit` /
+# `eia_loader.measured_corridor_flow_envelope(direction="export")`) — NOT this
+# scalar. So changing this value does not move any keeper solve.
+#   Re-derived from the SAME measured series the per-hub export envelopes use:
+# the EIA-930 CISO BA-to-BA net-interchange (the realized ATC proxy on disk; the
+# named "OASIS export ATC" is unreachable from this environment — see
+# scripts/derive_caiso_export_cap.py). Convention matches the corridor
+# envelopes' own CAISO_CORRIDOR_FLOW_PERCENTILE (p95): the peak-bucket ceiling =
+# max over (month x hour-of-day) of the p95 aggregate net export, 2023-2025
+# (2026 holdout excluded, rule #22) = 4,361 MW. The prior 3,500 was a
+# hand-fitted "typical peak" sitting at ~p99 of the aggregate, BELOW the measured
+# export capability. rule-23 source-data change: the caiso-51 keeper
+# (2026-07-03-caiso-51-firm-base) landed the measured per-hub export envelopes.
+# Frozen derive script: scripts/derive_caiso_export_cap.py.
+CAISO_BIDIR_EXPORT_CAP_MW = 4361.0
 _CAISO_BIDIR_EXPORT_NAME = "export_bidir"
 # Intertie throughput tiebreaker (same role/magnitude as the storage ε = 0.001
 # $/MWh in the objective): the cheapest import leg (firm hydro/solar, zero CARB
@@ -340,7 +359,8 @@ def build_caiso_bidir_intertie(border_carbon_per_mwh: float = 0.0) -> list[Gener
     full one), but the aggregate import capacity is rescaled to
     :data:`CAISO_BIDIR_IMPORT_CAP_MW` (the tightened simultaneous-import cap).
     The export leg is a SINGLE sink bounded at :data:`CAISO_BIDIR_EXPORT_CAP_MW`,
-    the measured export-direction peak.
+    the measured aggregate export-direction capability ceiling (fallback-only;
+    the per-hub successor uses per-corridor physical + measured envelopes).
 
     Both legs sit in the ISO's external zone and net through the ordinary energy
     balance + the WECC border links, so the LP's *net* interchange on the tie is
