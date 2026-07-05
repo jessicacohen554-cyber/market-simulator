@@ -477,15 +477,47 @@ HYDRO_YEAR_MULTIPLIER: dict[str, float] = {
 }
 
 # Gas-fired generation availability factors by ISO.
-# Source: NERC GADS 2019-2023.
+#
+# scalar-remediation B-XISO-1 / audit C-18 (2026-07-05): the previous per-ISO
+# values (ERCOT 0.85, CAISO 0.89, PJM 0.87, NYISO 0.86, NEISO 0.85) carried a
+# "was 0.83"/"was 0.88" calibration-nudge trail and three "TODO: verify" tags
+# under a bare "NERC GADS" label with no source on disk. Verified against
+# NERC's actual public GADS product:
+# data/raw/reference/nerc-gads-eford-2019-2023/ (Generating Unit Statistical
+# Brochure 3, 2019-2023, "Units Reporting Events"; fetched 2026-07-05).
+#
+# That brochure is NERC-WIDE — it has no NERC-Region or ISO/RTO breakdown, so
+# there is no published "ERCOT-fleet" / "CAISO-fleet" EFORd to verify the old
+# per-ISO split against; those fleet-specific labels were never a real
+# citation (rule-14 misalignment: the published data's boundary is NERC-wide,
+# not per-ISO). Reconciled disposition per rule 14 (real data over a clean
+# guess, boundary documented): use ONE NERC-wide figure for every ISO rather
+# than inventing an unsupported per-ISO split. The published row is
+# "FOSSIL Gas Primary, All Sizes" (CT+CC+gas-steam pooled by fuel — the
+# closest published match to this constant's single "gas-fired generation"
+# concept), EFORd = 13.44% -> availability = 1 - 0.1344 = 0.8656, rounded
+# 0.866. Values below unified accordingly; all previous nudge-trail comments
+# removed (CLAUDE.md rule 26 — no re-armable narrative).
+#
+# BOUNDARY / DOUBLE-COUNTING (rule-14 misalignment clause): this constant is
+# NOT read anywhere in src/market_sim (grepped clean 2026-07-05) -- it is
+# dead/orphaned, so today it cannot double-count with anything and changing
+# its value has zero dispatch/MC effect. If it is ever wired into
+# data.fleet.generators_to_fleet_arrays (or elsewhere) as a further derate on
+# top of a generator's own `eford` (which already resolves via
+# get_eford()/EFORD for generic units, or a CAMPD-derived capacity-weighted
+# eford for per-plant bins -- both already NERC-GADS-sourced, see EFORD
+# below), it MUST replace -- never multiply on top of -- that per-unit
+# availability, or NERC's EFORd gets applied twice to the same gas fleet.
+# Open root-cause issue (R2-vs-R5 disposition: wire in with a fleet-mix
+# reconciliation vs. delete as dead code) — still open:
+# https://github.com/jessicacohen554-cyber/market-simulator/issues/1349
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
-    "ERCOT": 0.85,  # residual-identified, forecast-risk: nudged from the
-    # NERC GADS 2019-2023 ERCOT-fleet baseline (0.83) during calibration.
-    "CAISO": 0.89,  # residual-identified, forecast-risk: nudged from the
-    # NERC GADS 2019-2023 CAISO-fleet baseline (0.88) during calibration.
-    "PJM": 0.87,  # NERC GADS 2019-2023, PJM fleet. TODO: verify
-    "NYISO": 0.86,  # NERC GADS 2019-2023, NYISO fleet. TODO: verify
-    "NEISO": 0.85,  # NERC GADS 2019-2023, ISO-NE fleet. TODO: verify
+    "ERCOT": 0.866,  # NERC GADS 2019-2023, "FOSSIL Gas Primary, All Sizes"
+    "CAISO": 0.866,  # (NERC-wide -- no per-ISO GADS breakdown exists, see
+    "PJM": 0.866,  # module comment above). data/raw/reference/
+    "NYISO": 0.866,  # nerc-gads-eford-2019-2023/nerc_gads_eford_2019-2023.csv
+    "NEISO": 0.866,  # row "FOSSIL  Gas Primary       All Sizes": EFORd=13.44
 }
 
 # Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO.
