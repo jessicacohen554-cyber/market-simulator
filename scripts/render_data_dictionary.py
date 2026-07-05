@@ -83,6 +83,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",
+    "chp-btm-share",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -176,6 +177,24 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "scenario, no-bank instrument — NOT the CARB market price); the "
             "floor escalator feeds the projected forecast allowance price for "
             "CAISO. Never intake 2022/H1-2026 (rule 22)."
+        ),
+    },
+    "chp-btm-share": {
+        "summary": (
+            "Measured per-plant CHP behind-the-meter host self-supply share "
+            "(replaces the sector-keyed chp_btm_pct default for forecast years)."
+        ),
+        "reconciles": (
+            "The committed `plant_emission_rates_v2` (CAMPD CEMS grid-net "
+            "generation, steam-reporting units only) and "
+            "`eia923_monthly_generation` (EIA-923 Page-1 net class generation) "
+            "processed-legacy artifacts — into one "
+            "`btm_share = (eia923_net_mwh - campd_net_mwh) / eia923_net_mwh` per "
+            "(iso, plant, CHP class), pooled across every available "
+            "non-quarantined year. Consumed by "
+            "`market_sim.data.chp.measured_btm_share_by_plant` for forecast-year "
+            "CHP must-run sizing only; the backcast `_btm_frame` path is "
+            "untouched. Never intake 2022/H1-2026 (rule 22)."
         ),
     },
     "energy-offers": {
