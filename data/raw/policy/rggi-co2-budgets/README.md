@@ -34,16 +34,31 @@ state,budget_year,metric,value,unit,source_doc,source_page
   §6.3 (ECR), with the published annual 7%/yr (CCR) escalation:
   https://www.rggi.org/program-overview-and-design/design-archive
 
-## DATA (landed — regional; per-state pending)
+## DATA (landed — regional and per-state, 2023-2025)
 
-- [x] `rggi-co2-budgets.csv` — the **regional** (`state=RGGI`) annual allowance
-      budget (short tons: 2023-2025 published + 2027-2030 projected at the 2021
-      Model Rule ~2.9%/yr decline) and the 2025 CCR/ECR/minimum-reserve
-      trigger-price schedule. The regional budget feeds
-      `RGGI_STATE_CO2_BUDGET["RGGI"]` in `constants.py` (a test asserts the
-      constant mirrors this CSV). 2022 and 2026 omitted (holdout quarantine,
-      CLAUDE.md rule 22).
-- [ ] Per-member-state (`state` = postal code) annual budgets — pending the RGGI
-      per-state allowance-distribution intake. Until then a RGGI ISO's
-      power-sector row uses the regional cap (an even looser over-bound, so still
-      slack), mirroring PJM shipping OFF pending its crosswalk.
+- [x] `rggi-co2-budgets.csv` — the **regional** (`state=RGGI`) and **per
+      member-state** (`state` = postal code: CT, DE, ME, MD, MA, NH, NJ, NY,
+      RI, VT, and VA for 2023 only) annual **CO2 Allowance Base Budget**
+      (short tons) for 2023-2025, plus 2027-2030 regional-only projections at
+      the 2021 Model Rule ~2.9%/yr decline, and the 2025 CCR/ECR/
+      minimum-reserve trigger-price schedule.
+    - Source: RGGI, Inc.'s official "Distribution of VYyyyy CO2 Allowances By
+      State" spreadsheets (`rggi.org/sites/default/files/Uploads/
+      Allowance-Tracking/{2023,2024,2025}_Allowance-Distribution.xlsx`,
+      release date 2026-06-23), "CO2 Allowance Base Budget" column — the
+      GROSS annual issuance under each state's own CO2 Budget Trading Program
+      regulation, BEFORE the Third Adjustment for Banked Allowances (a
+      bank-clearing haircut this model's no-bank row deliberately excludes,
+      plan §8).
+    - Feeds `RGGI_STATE_CO2_BUDGET` in `constants.py` (per-state and the
+      "RGGI" regional total; a test asserts the constants mirror this CSV).
+      A RGGI ISO's power-sector row (`policy/cap_and_trade.py::
+      _published_power_sector_budget`) sums its own member states' rows
+      (`RGGI_MEMBER_STATES_BY_YEAR` ∩ the program's states) instead of the
+      regional over-bound; the regional total remains the fallback for years
+      without a per-state breakdown (2027-2030).
+    - 2022 and 2026 omitted (holdout quarantine, CLAUDE.md rule 22).
+- [ ] Per-state budgets for 2027-2030 (projected years) — not published by
+      RGGI, Inc. (only the regional trajectory is); a RGGI ISO's forecast-year
+      row falls back to the regional total (documented over-bound) until a
+      cited per-state projection method is added.
