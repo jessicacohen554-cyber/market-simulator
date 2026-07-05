@@ -919,6 +919,53 @@ class TestMassCapConstraint(unittest.TestCase):
         # the annual dirty energy is pinned at 37.5*24 MWh.
         self.assertAlmostEqual(res.dispatch[0].sum(), 37.5 * self.T, delta=self.T)
 
+    def test_dual_nonnegative_monotonic_and_reorders_merit(self):
+        # Dual sign + monotonicity invariant (task deliverable 3): as the cap
+        # tightens from slack to tight, the endogenous allowance price is always
+        # >= 0 and non-decreasing, and the merit order re-orders cheap-dirty
+        # coal -> pricier-clean gas (coal energy falls, gas energy rises).
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
+        # Row 0: coal — cheap ($18) and dirty (1.0 t/MWh).
+        # Row 1: gas_cc — pricier ($32) and cleaner (0.40 t/MWh).
+        mc = np.vstack([np.full(self.T, 18.0), np.full(self.T, 32.0)])
+        demand = np.full((1, self.T), 100.0)
+        coeffs = np.array([[1.0, 0.40]])
+        # All-coal emissions = 100*1.0*24 = 2400 t; all-gas = 960 t.
+        caps = [1.0e6, 2000.0, 1500.0, 1100.0]  # slack -> progressively tighter
+        duals, coal_energy, gas_energy = [], [], []
+        for cap in caps:
+            res = solve_dispatch(
+                fleet,
+                demand,
+                mc=mc,
+                T=self.T,
+                mass_cap_coeffs=coeffs,
+                mass_cap_rhs=np.array([cap]),
+                **self._no_renewables(1),
+            )
+            self.assertEqual(res.status, "Optimal")
+            duals.append(res.co2_cap_price[0])
+            coal_energy.append(res.dispatch[0].sum())
+            gas_energy.append(res.dispatch[1].sum())
+        # Sign: every dual is non-negative.
+        for d in duals:
+            self.assertGreaterEqual(d, -1e-6)
+        # Slack cap prices at ~0; the analytic switching price once binding is
+        # (32-18)/(1.0-0.40) = 23.333...
+        self.assertAlmostEqual(duals[0], 0.0, places=3)
+        # Monotone non-decreasing as the cap tightens.
+        for lo, hi in zip(duals, duals[1:]):
+            self.assertGreaterEqual(hi + 1e-6, lo)
+        # A binding cap prices at the coal->gas switching price.
+        self.assertAlmostEqual(duals[-1], (32.0 - 18.0) / (1.0 - 0.40), delta=0.1)
+        # Merit re-orders: tighter caps push energy off coal onto gas.
+        for lo, hi in zip(coal_energy, coal_energy[1:]):
+            self.assertLessEqual(hi, lo + 1e-6)
+        for lo, hi in zip(gas_energy, gas_energy[1:]):
+            self.assertGreaterEqual(hi, lo - 1e-6)
+
     def test_loose_cap_has_zero_dual(self):
         # A cap above the all-dirty emissions never binds: dual is 0.
         fleet, mc = self._dirty_clean_fleet()

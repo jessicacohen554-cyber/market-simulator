@@ -76,6 +76,36 @@ the class-median percentile is the shared `CO2_RATE_CLASS_MEDIAN_PERCENTILE`.
 **Docs.** `model-methodology-spec.md` per-plant-emission-rate override section
 gained the NOx/SO2-ride-the-v2-path paragraph.
 
+## 2026-07-05 (mass-cap budget schedules landed + row validated)
+
+**Data.** Landed the published CARB and RGGI power-sector budget schedules as
+cited constants, mirrored by curated raw artifacts — same intake discipline as
+`STATE_CARBON_PRICE_BY_ISO`:
+
+- `CARB_ALLOWANCE_BUDGET` (MMT CO2e; 17 CCR §95841 Table 6-2, 2023-2025 + forward
+  2027-2031) and `CARB_FLOOR_PRICE` ($/tonne; CARB Annual Auction Reserve Price
+  Notices 2023-2025).
+- `RGGI_STATE_CO2_BUDGET["RGGI"]` — the regional cap (short tons; RGGI cap
+  trajectory, 2023-2025 published + 2027-2030 projected). Per-state budgets await
+  the RGGI allowance-distribution intake; until then a RGGI ISO's row uses the
+  regional cap.
+- Raw CSVs under `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/` curate to
+  the gitignored `data/clean/` via `scripts/curate_*.py`. **No 2022/H1-2026 rows**
+  (holdout quarantine, rule 22). A test asserts each constant mirrors its CSV.
+
+**Model.** `policy/cap_and_trade.py::_power_sector_cap` now sources the mass-cap
+row's `cap_tons` (metric tonnes) from an explicit `config.mass_cap_tons` or, else,
+the published budget for the year — CARB MMT × 1e6, RGGI short tons ×
+`SHORT_TON_TO_METRIC_TONNE`. These region-/economy-wide budgets vastly exceed a
+single ISO's power-sector emissions, so the row is **slack and its dual ≈ 0** on a
+real ISO — the faithful power-sector, no-bank result (plan §2). Still **GATED,
+`mass_cap_enabled` default OFF**; default runs are byte-identical.
+
+**Tests.** Resolver returns the published, unit-converted `cap_tons` for
+CAISO/NYISO/NEISO (explicit-tons override still wins; quarantined 2026 stays
+inert); an explicit dispatch test asserts the endogenous dual is non-negative,
+monotone non-decreasing as the cap tightens, and re-orders merit coal→gas.
+
 ## 2026-07-04 (emissions mass-cap / cap-and-trade LP constraint)
 
 **Model.** Unified every carbon path through one `emission_rate × membership`
