@@ -499,10 +499,25 @@ standalone (smoke + quarantine only) with no `--before/--after`.
   at `THREADS=1` (`aa-run1`, `aa-run2`); `regression_gate --mode byte` between
   them: <!-- AA_RESULT --> **byte-identical — every dispatch/price/flow column
   Δ = 0, reshuffle 0.000%** (result table in the session report).
-- **Six-ISO Stage-1 before baseline:** captured as `stage1-before`; the
-  hashes-only `results/regression-goldens/stage1-before/manifest.json` is the
-  committed deliverable (git SHA + env pins + per-file content hashes + per-ISO
-  fidelity summary).
+- **Stage-1 before baseline:** captured as `stage1-before`; the hashes-only
+  `results/regression-goldens/stage1-before/manifest.json` is the committed
+  deliverable (git SHA + env pins + per-file content hashes + per-ISO fidelity
+  summary). **Five of six ISOs captured on this box — ERCOT, CAISO, NYISO,
+  NEISO, PJM — each fidelity-OK** (every recorded keeper flag replayed
+  identically). **MISO is deferred by an environment memory ceiling, not a
+  harness fault:** the `miso-39-reserve-pergen` keeper runs `miso_reserve_pergen`
+  (per-asset reserve pooling), which CLAUDE.md documents as *"the 15 GB memory
+  tier"*; on this 15 GB box its LP peaks at 15.9 GB anon-rss (confirmed by the
+  OOM-killer: `Out of memory: Killed process … anon-rss:15933104kB`) and is
+  SIGKILLed during reserve-column construction — solo, with the full box free.
+  The reconstruction is correct (MISO's distinctive mechanisms all fire in the
+  log before the kill); it simply needs a ≥24 GB host. **A stage session must
+  capture the MISO golden on a larger box** (`python
+  scripts/capture_keeper_goldens.py --iso MISO --stage-tag stageN-before`) before
+  trusting the gate for MISO. Capture is strictly serial on any host near the
+  MISO tier — this 15 GB box also OOMs any *two* concurrent full keeper LPs
+  (~9 GB each), so `--all` uses ≤2 subprocesses only where headroom allows;
+  drop to `--max-concurrency 1` on a memory-tight host.
 
 **Known caveat (pre-existing, out of Stage-0 scope).** `audit_keepers.py`
 reports one FAIL on `origin/main` independent of Stage 0 —
