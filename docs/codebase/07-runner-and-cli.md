@@ -49,7 +49,10 @@ market-sim ensemble --config <scenario.yaml> [--iso ISO] \
 ```
 
 Runs the same forecast once per weather draw (varying only `weather_year`,
-defaulting to `WEATHER_YEAR_POOL = (2023, 2024, 2025)`), then reports the
+defaulting to the ISO's verified pool — `weather_year_pool(iso)`; ERCOT/NEISO
+get `(2019, 2020, 2021, 2023, 2024, 2025)`, NYISO gets `(2021, 2023, 2024,
+2025)`, CAISO/PJM/MISO keep the `WEATHER_YEAR_POOL = (2023, 2024, 2025)`
+fallback — see `docs/weather-pool-coverage-2026-07.md`), then reports the
 cross-draw distribution of each metric. Implemented in `ensemble.py`:
 `weather_ensemble_configs` (one config per year, all else fixed) →
 `run_weather_ensemble` (parallel, each member caches under its own key) →
@@ -127,8 +130,10 @@ single-year keeper is not allowed.
 ## 7.5 Year and horizon constants
 
 From `config/constants.py`: `START_YEAR = 2026`, `END_YEAR = 2050`,
-`HOURS_PER_YEAR = 8760`, `WEATHER_YEAR_POOL = (2023, 2024, 2025)`. The model always
-solves the full non-leap 8760-hour calendar (Feb 29 dropped).
+`HOURS_PER_YEAR = 8760`, `WEATHER_YEAR_POOL = (2023, 2024, 2025)` (cross-ISO
+fallback) and `WEATHER_YEAR_POOL_BY_ISO` / `weather_year_pool(iso)` (per-ISO
+verified pool, widened 2026-07 — see `docs/weather-pool-coverage-2026-07.md`).
+The model always solves the full non-leap 8760-hour calendar (Feb 29 dropped).
 
 ## 7.6 Example invocations
 
