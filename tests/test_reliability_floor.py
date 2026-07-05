@@ -650,6 +650,63 @@ class DropDragOwnedSpecsTest(unittest.TestCase):
         cfg = types.SimpleNamespace(ct_netload_drag=True, gas_st_netload_drag=True)
         out = drop_drag_owned_reliability_specs(self._specs(), cfg)
         self.assertEqual(sorted(s.plant_class for s in out), ["COAL"])
+class TestR1SignFlipDisablement(unittest.TestCase):
+    """R1 (B-LIMB-1) permanent disablement of unidentified sign-flip limbs.
+
+    The three limbs whose temperature->commitment Spearman ρ flips sign between
+    the 2023-24 train fit and the 2025 holdout (D-8 §2B) must ship disabled and
+    must survive a derive-script regeneration (decision rule R1; CLAUDE.md
+    rule 17). The guard lives in ``derive_reliability_coeffs.R1_DISABLED_LIMBS``
+    (forces ``enabled=False`` at re-derive) and is honoured by the loader via the
+    ``r1_disabled`` CSV column.
+    """
+
+    _LIMBS = [
+        ("PJM", "PJM_ComEd", "CC_REGULAR", "tmax"),
+        ("CAISO", "SP15", "ST_GAS", "tmax"),
+        ("CAISO", "SP15", "CC_REGULAR", "tmax"),
+    ]
+
+    def test_derive_constant_lists_exactly_the_three_limbs(self):
+        self.assertEqual(drc.R1_DISABLED_LIMBS, frozenset(self._LIMBS))
+        for iso, zone, cls, drv in self._LIMBS:
+            self.assertTrue(drc._r1_disabled(iso, zone, cls, drv))
+        # A sibling cold limb of the same (zone, class) is NOT R1-disabled.
+        self.assertFalse(drc._r1_disabled("CAISO", "SP15", "CC_REGULAR", "tmin"))
+
+    def test_shipped_registry_has_the_three_limbs_disabled(self):
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+
+        for iso, zone, cls, drv in self._LIMBS:
+            match = [
+                s
+                for s in RELIABILITY_FLOOR_REGISTRY[iso]
+                if s.zone == zone and s.plant_class == cls and s.driver == drv
+            ]
+            self.assertEqual(len(match), 1, f"{iso} {zone}/{cls}/{drv} missing")
+            self.assertFalse(
+                match[0].enabled, f"{iso} {zone}/{cls}/{drv} must ship disabled"
+            )
+
+    def test_loader_r1_column_overrides_enabled_true(self):
+        # A row whose ``enabled`` column is True is still forced off by r1_disabled.
+        import csv as _csv
+        import io
+
+        from market_sim.config import iso_configs as ic
+
+        text = (
+            "zone,plant_class,driver,threshold,floor_pct,enabled,r1_disabled\n"
+            "SP15,CC_REGULAR,tmax,26.7,0.32,True,True\n"
+            "SP15,CC_REGULAR,tmin,5.66,0.30,True,False\n"
+        )
+        rows = list(_csv.DictReader(io.StringIO(text)))
+        enabled = [
+            ic._coerce_bool(r.get("enabled", "True"))
+            and not ic._coerce_bool(r.get("r1_disabled", ""))
+            for r in rows
+        ]
+        self.assertEqual(enabled, [False, True])
 
 
 if __name__ == "__main__":

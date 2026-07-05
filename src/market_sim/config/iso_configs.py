@@ -975,7 +975,13 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
     registry is empty until ``scripts/derive_reliability_coeffs.py`` populates
     the coefficients (Phase 2). Required columns: ``zone, plant_class, driver,
     threshold, floor_pct, enabled``; optional: ``min_event_hours``,
-    ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``.
+    ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``, ``r1_disabled``.
+
+    An ``r1_disabled=True`` row is forced ``enabled=False`` here regardless of its
+    ``enabled`` column: the limb is unidentified out-of-training (Spearman ρ sign
+    flip, D-8 §2B) and permanently disabled under decision rule R1 (CLAUDE.md
+    rule 17; scalar-remediation B-LIMB-1). The column is optional — absent means
+    not R1-disabled — so ISO CSVs that predate the marker load unchanged.
     """
     registry: dict[str, list[ReliabilityFloorSpec]] = {}
     for iso in _ISO_BUILDERS:
@@ -1000,7 +1006,10 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                             driver=row["driver"].strip(),
                             threshold=float(row["threshold"]),
                             floor_pct=float(row["floor_pct"]),
-                            enabled=_coerce_bool(row.get("enabled", "True")),
+                            enabled=(
+                                _coerce_bool(row.get("enabled", "True"))
+                                and not _coerce_bool(row.get("r1_disabled", ""))
+                            ),
                             min_event_hours=int(row["min_event_hours"])
                             if row.get("min_event_hours")
                             else default_event,
