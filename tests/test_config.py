@@ -137,6 +137,144 @@ class TestSweepDefinition(unittest.TestCase):
         self.assertEqual(sweep.mode, "factorial")
         self.assertEqual(len(sweep.generate()), 6)
 
+    def test_cases_mode_one_config_per_named_case(self):
+        matrix = SweepDefinition(
+            cases={
+                "REF": {},
+                "GAS-LO": {"gas_price_path": "low"},
+                "GAS-HI": {"gas_price_path": "high"},
+            }
+        )
+        configs = matrix.case_configs()
+        self.assertEqual(list(configs.keys()), ["REF", "GAS-LO", "GAS-HI"])
+        self.assertEqual(configs["REF"].gas_price_path, "mid")
+        self.assertEqual(configs["GAS-LO"].gas_price_path, "low")
+        self.assertEqual(configs["GAS-HI"].gas_price_path, "high")
+
+    def test_cases_mode_overrides_onto_base_config(self):
+        base = ScenarioConfig(iso="CAISO", carbon_price=5.0)
+        matrix = SweepDefinition(cases={"GAS-LO": {"gas_price_path": "low"}})
+        configs = matrix.case_configs(base)
+        # The case override applies, and every other base field is preserved.
+        self.assertEqual(configs["GAS-LO"].gas_price_path, "low")
+        self.assertEqual(configs["GAS-LO"].iso, "CAISO")
+        self.assertEqual(configs["GAS-LO"].carbon_price, 5.0)
+
+    def test_generate_dispatches_to_cases_mode(self):
+        matrix = SweepDefinition(
+            cases={"REF": {}, "GAS-HI": {"gas_price_path": "high"}}
+        )
+        configs = matrix.generate()
+        self.assertEqual(len(configs), 2)
+        self.assertEqual(configs[1].gas_price_path, "high")
+
+    def test_case_configs_raises_when_not_cases_mode(self):
+        sweep = SweepDefinition(sweep={"carbon_price": [0.0, 50.0]})
+        with self.assertRaises(ValueError):
+            sweep.case_configs()
+
+    def test_sweep_and_cases_are_mutually_exclusive(self):
+        with self.assertRaises(ValueError):
+            SweepDefinition(
+                sweep={"carbon_price": [0.0, 50.0]},
+                cases={"REF": {}},
+            )
+
+    def test_from_yaml_loads_cases(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "matrix.yaml"
+            path.write_text(
+                "mode: cases\ncases:\n  REF: {}\n  GAS-LO:\n    gas_price_path: low\n"
+            )
+            matrix = SweepDefinition.from_yaml(path)
+        self.assertEqual(list(matrix.cases.keys()), ["REF", "GAS-LO"])
+        configs = matrix.case_configs()
+        self.assertEqual(configs["GAS-LO"].gas_price_path, "low")
+
+
+class TestScenarioMatrixYaml(unittest.TestCase):
+    """The committed 13-case matrix (probability-bounds-plan-2026-07.md §1.2)."""
+
+    _MATRIX_PATH = (
+        Path(__file__).resolve().parents[1] / "configs" / "scenario_matrix.yaml"
+    )
+
+    def test_thirteen_named_cases_match_the_plan(self):
+        matrix = SweepDefinition.from_yaml(self._MATRIX_PATH)
+        expected_names = [
+            "REF",
+            "GAS-LO",
+            "GAS-HI",
+            "LOAD-LO",
+            "LOAD-HI",
+            "POL-TIGHT",
+            "POL-ROLLBACK",
+            "TECH-LO",
+            "TECH-HI",
+            "RET-FAST",
+            "RET-SLOW",
+            "CORNER-HI-EMIT",
+            "CORNER-LO-EMIT",
+        ]
+        self.assertEqual(list(matrix.cases.keys()), expected_names)
+
+    def test_ref_case_is_all_default(self):
+        matrix = SweepDefinition.from_yaml(self._MATRIX_PATH)
+        configs = matrix.case_configs()
+        defaults = ScenarioConfig()
+        ref = configs["REF"]
+        self.assertEqual(ref.gas_price_path, defaults.gas_price_path)
+        self.assertEqual(ref.demand_growth_path, defaults.demand_growth_path)
+        self.assertEqual(ref.policy_bundle, defaults.policy_bundle)
+        self.assertEqual(ref.tech_cost_path, defaults.tech_cost_path)
+        self.assertEqual(
+            ref.retirement_aggressiveness, defaults.retirement_aggressiveness
+        )
+
+    def test_corner_cases_move_every_axis_coherently(self):
+        matrix = SweepDefinition.from_yaml(self._MATRIX_PATH)
+        configs = matrix.case_configs()
+
+        hi_emit = configs["CORNER-HI-EMIT"]
+        self.assertEqual(hi_emit.gas_price_path, "low")
+        self.assertEqual(hi_emit.demand_growth_path, "high")
+        self.assertEqual(hi_emit.policy_bundle, "rollback")
+        self.assertEqual(hi_emit.tech_cost_path, "high")
+        self.assertEqual(hi_emit.retirement_aggressiveness, "slow")
+
+        lo_emit = configs["CORNER-LO-EMIT"]
+        self.assertEqual(lo_emit.gas_price_path, "high")
+        self.assertEqual(lo_emit.demand_growth_path, "low")
+        self.assertEqual(lo_emit.policy_bundle, "tight")
+        self.assertEqual(lo_emit.tech_cost_path, "low")
+        self.assertEqual(lo_emit.retirement_aggressiveness, "aggressive")
+
+    def test_one_at_a_time_cases_move_exactly_one_axis_off_ref(self):
+        matrix = SweepDefinition.from_yaml(self._MATRIX_PATH)
+        one_at_a_time = [
+            "GAS-LO",
+            "GAS-HI",
+            "LOAD-LO",
+            "LOAD-HI",
+            "POL-TIGHT",
+            "POL-ROLLBACK",
+            "TECH-LO",
+            "TECH-HI",
+            "RET-FAST",
+            "RET-SLOW",
+        ]
+        for name in one_at_a_time:
+            self.assertEqual(
+                len(matrix.cases[name]),
+                1,
+                f"{name} should override exactly one axis, got {matrix.cases[name]}",
+            )
+
+    def test_all_case_configs_are_forecast_mode(self):
+        matrix = SweepDefinition.from_yaml(self._MATRIX_PATH)
+        for name, config in matrix.case_configs().items():
+            self.assertEqual(config.mode, "forecast", name)
+
 
 class TestProbabilityBoundsLevers(unittest.TestCase):
     """Tests for the PB-1 uncertainty-lever plumbing (fields + resolvers).
