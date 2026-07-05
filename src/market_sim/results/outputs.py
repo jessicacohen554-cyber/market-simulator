@@ -38,6 +38,10 @@ class FleetContext:
         fuel_types: Fuel type of each generator.
         pmax_mw: Nameplate capacity of each generator, in MW.
         emission_rate: CO2 rate of each generator, in tCO2/MWh.
+        nox_rate: NOx rate of each generator, in tons NOx/MWh. Defaults empty
+            for older contexts written before NOx/SO2 export wiring.
+        so2_rate: SO2 rate of each generator, in tons SO2/MWh. Defaults empty
+            for older contexts written before NOx/SO2 export wiring.
         efficiency_bins: Efficiency bin of each generator (e.g. ``h_class``,
             ``older``).
         heat_rates: Heat rate of each generator, in MMBtu/MWh.
@@ -67,6 +71,10 @@ class FleetContext:
     # CT_CHP, ST_GAS, ST_CHP), for ISOs whose dispatch classes come from the
     # group rather than the efficiency bin. Defaults empty for older contexts.
     plant_groups: list[str] = field(default_factory=list)
+    # NOx / SO2 rates (tons/MWh), aligned with the generator axis. Defaults
+    # empty for contexts written before NOx/SO2 export wiring (W3-E2).
+    nox_rate: list[float] = field(default_factory=list)
+    so2_rate: list[float] = field(default_factory=list)
 
     @classmethod
     def from_arrays(
@@ -101,6 +109,8 @@ class FleetContext:
             fuel_types=[FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx],
             pmax_mw=[float(p) for p in fleet.pmax],
             emission_rate=[float(r) for r in fleet.emission_rate],
+            nox_rate=[float(r) for r in fleet.nox_rate],
+            so2_rate=[float(r) for r in fleet.so2_rate],
             efficiency_bins=list(fleet.efficiency_bin),
             heat_rates=[float(h) for h in fleet.heat_rate],
             zones=[zone_names[i] for i in fleet.zone_idx],
@@ -156,13 +166,23 @@ def _list_column(array: np.ndarray) -> pa.Array:
     return pa.ListArray.from_arrays(offsets, flat)
 
 
-def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) -> Path:
+def to_parquet(
+    self: DispatchResult,
+    path,
+    context: FleetContext | None = None,
+    demand: np.ndarray | None = None,
+) -> Path:
     """Write this dispatch result to a Parquet file at ``path``.
 
     Args:
         path: Destination ``.parquet`` path; parent directories are created.
         context: Optional fleet context written to the schema metadata so
             an aggregated export can interpret the dispatch arrays.
+        demand: Optional ``(n_zones, T)`` served demand for the year, stored
+            as a ``demand`` list-column so the forecast-invariant checker can
+            verify the per-zone-hour energy balance without re-deriving load.
+            Omitted (and ``has_demand`` False) for callers that do not supply
+            it, keeping every existing reader unaffected.
 
     Returns:
         The path written, as a :class:`~pathlib.Path`.
@@ -176,6 +196,8 @@ def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) 
         value = getattr(self, attr)
         if value is not None:
             columns[col_name] = _list_column(value)
+    if demand is not None:
+        columns["demand"] = _list_column(np.asarray(demand, dtype=float))
 
     metadata = {
         "objective_value": self.objective_value,
@@ -188,6 +210,7 @@ def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) 
         "has_storage": self.storage_soc is not None,
         "has_flows": self.flows is not None,
         "has_emissions": self.emissions is not None,
+        "has_demand": demand is not None,
         "rps_shadow_price": self.rps_shadow_price,
     }
 
@@ -222,6 +245,30 @@ def read_fleet_context(path) -> FleetContext:
     if raw_meta is None:
         raise ValueError(f"{path} carries no fleet context metadata")
     return FleetContext(**json.loads(raw_meta))
+
+
+def read_demand(path) -> np.ndarray | None:
+    """Return the ``(n_zones, T)`` served demand stored by :func:`to_parquet`.
+
+    Args:
+        path: Path to a ``.parquet`` file written by :func:`to_parquet`.
+
+    Returns:
+        The demand array, or ``None`` when the file predates the demand
+        column (``has_demand`` absent/False) so callers can fall back.
+    """
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"no cached dispatch result at {path}")
+    schema = pq.read_schema(path)
+    raw_meta = (schema.metadata or {}).get(_METADATA_KEY)
+    if raw_meta is None or not json.loads(raw_meta).get("has_demand"):
+        return None
+    col = pq.read_table(path, columns=["demand"]).column("demand")
+    flat = col.combine_chunks().values.to_numpy(zero_copy_only=False)
+    n_zones = len(col[0].as_py())
+    T_actual = len(col)
+    return flat.reshape(T_actual, n_zones).T
 
 
 def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:

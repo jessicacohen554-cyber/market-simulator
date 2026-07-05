@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forecast Bands — Codebase Explorer</title>
+  <meta name="description" content="Forecast probability bands: the deterministic scenario-matrix envelope, the parametric sampler fan, and the published (parametric + structural) fan, over the 2026–2050 forecast horizon.">
+
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <link rel="stylesheet" href="css/forecast-bands.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <div class="content-section" style="padding: var(--space-lg); max-width: var(--max-content); margin: 0 auto;">
+
+    <div class="bc-page-header">
+      <h1>Forecast Bands</h1>
+      <span id="ensembleBadge" class="iso-badge" style="display:none"></span>
+    </div>
+    <p class="bc-page-sub" id="pageSub">Loading ensemble data&hellip;</p>
+
+    <div id="banners"></div>
+
+    <div id="diag" class="bc-diag-alert" style="display:none"></div>
+
+    <!-- Controls -->
+    <div class="bc-controls" id="controls" style="display:none">
+      <div class="ctl">
+        <span class="ctl-label">Ensemble</span>
+        <select class="fb-select" id="ensembleSel" aria-label="Ensemble"></select>
+      </div>
+      <div class="ctl" id="ctlMetric" style="display:none">
+        <span class="ctl-label">Metric</span>
+        <select class="fb-select" id="metricSel" aria-label="Metric"></select>
+      </div>
+      <div class="ctl ctlwide">
+        <span class="ctl-label">Layers</span>
+        <div class="fb-layer-toggles" id="layerToggles"></div>
+      </div>
+      <div class="ctl">
+        <span class="seg-ctrl" id="viewSel">
+          <button data-v="chart" class="active">Chart</button>
+          <button data-v="table">Table</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="bc-panel" id="chartPanel" style="display:none">
+      <div class="fb-chart-wrap" id="chartContainer"></div>
+    </div>
+
+    <div class="bc-panel" id="tablePanel" style="display:none">
+      <div id="tableContainer"></div>
+    </div>
+
+    <div class="bc-panel" id="notePanel" style="display:none">
+      <h2>What this page shows</h2>
+      <p class="panel-sub">
+        Three distinct claims, never conflated (plan §0.5): a <strong>deterministic scenario range</strong>
+        (the dashed envelope across 13 named AEO/IPM-style cases — no likelihood attaches to it or to any
+        single case), a <strong>parametric probability band</strong> (the P10–P90 fan from the correlated
+        multivariate sampler), and a <strong>published band</strong> (parametric ⊕ the structural-error
+        prior, when available). The chart never displays a band its metadata cannot defend — see the
+        banners above for this payload's specific caveats.
+      </p>
+      <p class="panel-sub">
+        Source: <code>docs/handoffs/probability-bounds-plan-2026-07.md</code> §4. Exporter:
+        <code>scripts/export_forecast_bands.py</code>.
+      </p>
+    </div>
+
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/shared.js"></script>
+
+  <script type="module">
+    import { loadManifest, loadEnsemble, initChart, renderBanners, renderTable, bestLayer, isDeterministicOnly } from './js/viz-forecast-bands.js';
+
+    const $ = s => document.querySelector(s);
+
+    let chart = null;
+    let currentPayload = null;
+    let currentView = 'chart';
+
+    function showDiag(msg) {
+      const el = $('#diag');
+      el.style.display = '';
+      el.textContent = msg;
+    }
+
+    function renderHeader(payload) {
+      const badge = $('#ensembleBadge');
+      badge.style.display = '';
+      badge.style.setProperty('--c', 'var(--hydro)');
+      badge.innerHTML = `<span class="dot"></span> ${payload.iso || 'Unknown ISO'}`;
+
+      const n = payload.n_draws != null ? `n=${payload.n_draws} draws` : 'n=unknown draws';
+      const layerCount = payload.layers_present.length + (payload.matrix ? 1 : 0);
+      $('#pageSub').textContent = `${payload.ensemble_id} · ${n} · ${layerCount} layer${layerCount === 1 ? '' : 's'} available`;
+
+      renderBanners($('#banners'), payload);
+    }
+
+    function renderMetricSelector(payload) {
+      const sel = $('#metricSel');
+      const ctl = $('#ctlMetric');
+      if (payload.metrics.length <= 1) {
+        ctl.style.display = 'none';
+        return;
+      }
+      ctl.style.display = '';
+      sel.innerHTML = payload.metrics.map(m => `<option value="${m}">${m}</option>`).join('');
+      sel.value = payload.default_metric;
+    }
+
+    function switchView(view) {
+      currentView = view;
+      document.querySelectorAll('#viewSel button').forEach(b => b.classList.toggle('active', b.dataset.v === view));
+      $('#chartPanel').style.display = view === 'chart' ? '' : 'none';
+      $('#tablePanel').style.display = view === 'table' ? '' : 'none';
+      if (view === 'table' && currentPayload) {
+        renderTable($('#tableContainer'), currentPayload, $('#metricSel').value || currentPayload.default_metric);
+      }
+    }
+
+    async function selectEnsemble(id) {
+      showDiag(`Loading ${id}…`);
+      try {
+        const payload = await loadEnsemble(id);
+        currentPayload = payload;
+        $('#diag').style.display = 'none';
+        $('#controls').style.display = '';
+        $('#chartPanel').style.display = currentView === 'chart' ? '' : 'none';
+        $('#notePanel').style.display = '';
+
+        renderHeader(payload);
+        renderMetricSelector(payload);
+
+        if (chart) chart.destroy();
+        chart = initChart($('#chartContainer'), $('#layerToggles'), payload, payload.default_metric);
+
+        $('#metricSel').onchange = e => {
+          chart.setMetric(e.target.value);
+          if (currentView === 'table') renderTable($('#tableContainer'), payload, e.target.value);
+        };
+
+        if (currentView === 'table') renderTable($('#tableContainer'), payload, payload.default_metric);
+      } catch (err) {
+        console.error(err);
+        showDiag(`Failed to load ensemble ${id}: ${err.message}`);
+      }
+    }
+
+    async function init() {
+      document.querySelectorAll('#viewSel button').forEach(b => {
+        b.addEventListener('click', () => switchView(b.dataset.v));
+      });
+
+      let manifest;
+      try {
+        manifest = await loadManifest();
+      } catch (err) {
+        showDiag(`Failed to load forecast manifest: ${err.message}. Has an ensemble been exported yet (scripts/export_forecast_bands.py)?`);
+        return;
+      }
+
+      const ids = Object.keys(manifest.ensembles || {});
+      if (!ids.length) {
+        showDiag('No forecast ensembles have been exported yet.');
+        return;
+      }
+
+      const sel = $('#ensembleSel');
+      sel.innerHTML = ids.map(id => {
+        const e = manifest.ensembles[id];
+        const tag = e.synthetic ? ' (synthetic)' : '';
+        return `<option value="${id}">${id}${tag}</option>`;
+      }).join('');
+      sel.addEventListener('change', e => selectEnsemble(e.target.value));
+
+      await selectEnsemble(ids[0]);
+    }
+
+    init();
+  </script>
+</body>
+</html>

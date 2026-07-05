@@ -161,6 +161,18 @@ RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
 DICTIONARY_DIR: Path = DATA_ROOT / "data" / "dictionary"
 
+# Committed backcast-dashboard payloads (the measured, reproducible source the
+# structural-error prior fits on): per-run gzip+base64 run payloads under
+# ``runs/`` and per-ISO/per-year actual "bench" totals under ``bench/``.
+FRONTEND_BACKCAST_DIR: Path = DATA_ROOT / "frontend" / "data" / "backcast"
+
+# Committed fitted structural-prior artifacts (one JSON per prior version):
+# the auditable record of each PB-3 fit, so a re-fit (e.g. W3-P1 swapping the
+# stale carbon-priced statmode inputs) lands as a new versioned file.
+STRUCTURAL_PRIOR_ARTIFACT_DIR: Path = (
+    DATA_ROOT / "results" / "ensemble" / "structural-prior"
+)
+
 
 def clean_path(
     datatype: str,

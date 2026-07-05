@@ -214,6 +214,7 @@ EIA_860_CSV_COLUMNS: list[str] = [
     "net_summer_capacity_mw",
     "operating_year",
     "planned_retirement_year",
+    "planned_retirement_month",
     "status",
     "heat_rate",
 ]
@@ -6711,6 +6712,7 @@ def build_base_fleet(
     retired_within_window: list[Generator],
     planned_additions: list[Generator],
     year: int,
+    confirmed_exits: list | None = None,
 ) -> list[Generator]:
     """Build the first simulated year's persistent generation fleet.
 
@@ -6722,6 +6724,14 @@ def build_base_fleet(
     Planned EIA-860 additions already due by ``year`` are appended; later
     years instead evolve this fleet via
     :func:`~market_sim.model.capacity.evolve_fleet`.
+
+    Confirmed (binding-instrument) exits already effective by ``year`` are
+    applied last (:func:`~market_sim.model.capacity.apply_confirmed_exits`), so a
+    unit confirmed to close in the first simulated year is not mis-carried for a
+    full year — the "a 2026 exit can never happen in 2026" hole the economic
+    screen (which needs prior-year dispatch) cannot close. GATED on
+    ``config.confirmed_exits_enabled``; a no-op when off or ``confirmed_exits`` is
+    empty.
     """
     if campd_bins is not None:
         campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
@@ -6769,6 +6779,23 @@ def build_base_fleet(
             sum(g.pmax_mw for g in due),
         )
         fleet = fleet + due
+
+    # Confirmed exits already effective by the first simulated year (their
+    # instrument date is at or before ``year``): a unit confirmed to close now is
+    # excluded up front, since the economic screen (needing prior-year dispatch)
+    # cannot retire it in the first year. Local import avoids the fleet<->capacity
+    # import cycle; a no-op unless the confirmed channel is enabled.
+    if getattr(config, "confirmed_exits_enabled", False) and confirmed_exits:
+        from market_sim.model.capacity import apply_confirmed_exits
+
+        before = len(fleet)
+        fleet = apply_confirmed_exits(fleet, year, confirmed_exits)
+        if len(fleet) != before:
+            logger.info(
+                "year %d: confirmed exits removed/derated %d base-fleet unit(s)",
+                year,
+                before - len(fleet),
+            )
     return fleet
 
 

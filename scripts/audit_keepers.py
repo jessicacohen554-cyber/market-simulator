@@ -29,7 +29,10 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
       "CALIBRATED-WITH-CAVEATS", "CALIBRATED") matches the CURRENT verdict.
   E6  keepers.json names exactly one keeper per ISO.
   E7  (warn) the keeper is the newest-dated run for its ISO in the registry;
-      a newer same-ISO sidecar means the keeper may be stale.
+      a newer same-ISO sidecar means the keeper may be stale. Zero-forcing
+      ablation twins (``*-ablation`` ids, rule 20 / D-3) are excluded from the
+      comparison: a twin is a diagnostic shadow of its parent, never a keeper
+      candidate, so registering a keeper's own twin must not flag it stale.
   E8  the bundle attestation carries a ``free_parameters`` DOF ledger and every
       residual-sourced entry references an open root cause (CLAUDE.md rule 20).
   E9  the keeper carries a registered zero-forcing ablation twin
@@ -106,9 +109,11 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
     {
         "2026-07-03-ercot32-ordc-total-rtolcap",
         "2026-07-03-caiso-51-firm-base",
-        "2026-07-03-pjm-76-outage-fix",
+        # 2026-07-03-pjm-76-outage-fix: removed 2026-07-05 — superseded as PJM
+        # keeper by 2026-07-05-pjm-77-ct-relfloor (registered with its twin).
         "2026-07-03-nyiso-41-hub-prices",
-        "2026-07-03-neiso-47-fast-start",
+        # 2026-07-03-neiso-47-fast-start: removed 2026-07-05 — superseded as
+        # NEISO keeper by 2026-07-05-neiso-48-ct-floor (registered with twin).
         "2026-07-03-miso-39-reserve-pergen",
     }
 )
@@ -220,9 +225,17 @@ def _asserted_determination(definition: str) -> str | None:
 
 
 def _registry_dates_by_iso() -> dict[str, list[tuple[str, str]]]:
-    """Map ISO -> sorted [(date, run_id)] across every registry sidecar."""
+    """Map ISO -> sorted [(date, run_id)] across every registry sidecar.
+
+    Zero-forcing ablation twins (run ids ending ``-ablation``, the D-3 naming
+    convention enforced by ``run_calibration_full.py --zero-forcing-ablation``)
+    are skipped: a twin is by definition never a keeper candidate (rule 20), so
+    it must not make its own keeper — or any other run — look stale under E7.
+    """
     by_iso: dict[str, list[tuple[str, str]]] = {}
     for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
+        if path.stem.endswith("-ablation"):
+            continue
         side = _load_json(path)
         if not side:
             continue

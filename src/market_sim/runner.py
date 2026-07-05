@@ -43,6 +43,7 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
+from market_sim.data.confirmed_retirements import ConfirmedExit, load_confirmed_exits
 from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
@@ -53,7 +54,9 @@ from market_sim.data.renewables import (
     load_renewable_profiles,
 )
 from market_sim.model.capacity import (
+    _FIRM_CLEAN_FUELS,
     CumulativeDeployment,
+    accredited_firm_capacity_mw,
     deliverability_headroom_by_zone,
     evolve_fleet,
 )
@@ -95,8 +98,19 @@ from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
-from market_sim.results.cache import is_cached, load_result, save_result
+from market_sim.results.cache import (
+    get_cache_path,
+    is_cached,
+    load_result,
+    save_result,
+)
 from market_sim.results.emissions import compute_must_run_emissions, measured_class_cf
+from market_sim.results.evolution_ledger import (
+    fleet_totals_by_fuel,
+    ledger_path,
+    new_events,
+    write_ledger,
+)
 from market_sim.pipeline import PriorYearResults
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
@@ -109,6 +123,12 @@ from market_sim.results.scarcity import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Capacity-hindcast bridge years (plan §1.1): quarantined years (rule 22) that a
+# hindcast window spans but must never solve, read data for, or score. The fleet
+# is still evolved across them from the last solved year's drivers so capacity
+# outcomes on the far side are reachable, but no dispatch is produced.
+HINDCAST_BRIDGE_YEARS = frozenset({2022, 2026})
 
 
 def _chp_measured_co2_inputs(
@@ -222,6 +242,39 @@ def _scale_demand(
     return base_demand * factor
 
 
+def _storage_additions_since(
+    storage_units, prior_ids: set[str], zone_names: list[str]
+) -> list[dict]:
+    """Return the evolution-ledger records for storage units built this year.
+
+    Args:
+        storage_units: The storage fleet after this year's new-entry screen.
+        prior_ids: ``unit_id`` set present before the screen ran.
+        zone_names: Unused; retained for signature symmetry with the arrays
+            builder (a unit already carries its zone name).
+
+    Returns:
+        One ``{"unit_id","tech","mw","zone","duration_h"}`` dict per new unit.
+    """
+    out: list[dict] = []
+    for u in storage_units:
+        if u.unit_id in prior_ids:
+            continue
+        duration = (
+            float(u.energy_cap_mwh / u.power_cap_mw) if u.power_cap_mw > 0 else 0.0
+        )
+        out.append(
+            {
+                "unit_id": u.unit_id,
+                "tech": getattr(u, "tech_name", "storage"),
+                "mw": float(u.power_cap_mw),
+                "zone": getattr(u, "zone", ""),
+                "duration_h": round(duration, 3),
+            }
+        )
+    return out
+
+
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     """Run every simulation year for one scenario and one ISO, sequentially.
 
@@ -243,6 +296,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     iso = iso.upper()
     if config.iso != iso:
         config = config.with_overrides(iso=iso)
+
+    # Simulation horizon: config.start_year/end_year override the module
+    # defaults (2026/2050) when set — a capacity hindcast runs 2021→2025. The
+    # defaults keep every existing forecast and cache key unchanged.
+    start_year = config.start_year if config.start_year is not None else START_YEAR
+    end_year = config.end_year if config.end_year is not None else END_YEAR
 
     # Resolve the PB-1 policy_bundle lever to its underlying fields (rule 24:
     # config-build time, no hidden state) before cache_key/run_config capture
@@ -281,7 +340,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # fleet but never evolve. PJM's external zone is appended to the topology
     # here; CAISO's is baked in. CAISO import tranches carry the CA
     border_carbon = (
-        wecc_border_carbon_adder(resolve_carbon_price(config, START_YEAR))
+        wecc_border_carbon_adder(resolve_carbon_price(config, start_year))
         if iso == "CAISO"
         else 0.0
     )
@@ -299,7 +358,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         from market_sim.data import capacity_deliverability as capdel
         from market_sim.model.transmission import apply_deliverability_seam_limit
 
-        _dy = capdel.resolve_delivery_year(iso, START_YEAR)
+        _dy = capdel.resolve_delivery_year(iso, start_year)
         _season = capdel.resolve_season(iso)
         _imp_area = capdel.import_limit_by_area(iso, _dy, _season)
         _imp_types = capdel.area_types_by_area(iso, _dy, _season, "import_limit")
@@ -331,8 +390,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # to the canonical snapshot. See config.paths.set_eia860_vintage.
     from market_sim.config.paths import set_eia860_vintage
 
+    # A capacity hindcast (plan §1.3) is forecast-mode but initialises from a
+    # vintage snapshot (the 2020 Final release) so the modelled start-year fleet
+    # matches what actually existed — the vintage is honoured under
+    # config.hindcast too. A plain forecast resets to the canonical snapshot.
     set_eia860_vintage(
-        config.eia860_vintage_year if config.mode == "backcast" else None
+        config.eia860_vintage_year
+        if (config.mode == "backcast" or config.hindcast)
+        else None
     )
     base_demand = load_demand(
         iso,
@@ -405,13 +470,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # years because ``apply_storage_new_entry`` preserves existing units). Per
     # CLAUDE.md rule #12, EIA-860 installed capacity is a physical asset
     # registry, admissible as a forward input in any year.
-    ps_units = load_eia860_pumped_storage(iso, START_YEAR, config=config)
+    ps_units = load_eia860_pumped_storage(iso, start_year, config=config)
     if ps_units:
         storage_units = ps_units + storage_units
         logger.info(
             "%s %d: %d pumped-storage units (%.0f MW) from EIA-860",
             iso,
-            START_YEAR,
+            start_year,
             len(ps_units),
             sum(u.power_cap_mw for u in ps_units),
         )
@@ -434,15 +499,44 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 max(g.online_year for g in planned_additions),
             )
 
+    # Confirmed (binding-instrument) exits: the exogenous forecast retirement
+    # channel, GATED on confirmed_exits_enabled (default off) and forecast-mode
+    # only (a backcast's historical exits ride the vintage snapshot). Loaded
+    # once; applied at step 0 of evolve_fleet and the first-year base fleet.
+    confirmed_exits: list[ConfirmedExit] = []
+    if config.mode == "forecast" and config.confirmed_exits_enabled:
+        confirmed_exits = load_confirmed_exits(iso)
+        if confirmed_exits:
+            logger.info(
+                "loaded %d confirmed exits (%.0f MW, %d-%d)",
+                len(confirmed_exits),
+                sum(e.mw or 0.0 for e in confirmed_exits),
+                min(e.exit_year for e in confirmed_exits),
+                max(e.exit_year for e in confirmed_exits),
+            )
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
     cumulative = CumulativeDeployment.initial()
 
-    for year in range(START_YEAR, END_YEAR + 1):
+    # Last year whose LP actually solved. In a capacity hindcast the 2022
+    # bridge (plan §1.1) is evolved but never solved, so the year after it
+    # keeps consuming the last solved year's prior_results and drivers.
+    last_solved_year = start_year
+    for year in range(start_year, end_year + 1):
         year_start = time.perf_counter()
         renewable_additions: dict[str, dict[str, float]] = {}
         retrofit_log: list[dict] = []
+        # Per-year capacity events for the evolution ledger (plan §2.1).
+        evo_events = new_events()
+
+        # Capacity hindcast (rule 22): the bridge year is evolved but its LP is
+        # never solved, its data never read, and prior_results is left pointing
+        # at the last solved year. Its capacity drivers (gas/carbon) come from
+        # that last solved year, never from the quarantined bridge year.
+        is_bridge = config.hindcast and year in HINDCAST_BRIDGE_YEARS
+        driver_year = last_solved_year if is_bridge else year
 
         if fleet is None:
             # First year: build the base fleet. With CAMPD binning the fleet
@@ -459,7 +553,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 retired_within_window,
                 planned_additions,
                 year,
+                confirmed_exits=confirmed_exits,
             )
+            # First year has no evolution: the ledger records the base fleet
+            # snapshot only (fleet_by_fuel before == after, no events).
+            base_totals = fleet_totals_by_fuel(fleet)
+            evo_events["fleet_by_fuel_before"] = base_totals
+            evo_events["fleet_by_fuel_after"] = base_totals
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
@@ -470,8 +570,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # screen so gas CC is charged its expected variable fuel cost.
             # The annual (seasonality-free) delivered gas price keeps
             # capacity evolution aligned with hourly dispatch fuel costs.
-            gas_price_year = resolve_annual_gas_price(config, year)
-            carbon_price_year = resolve_carbon_price(config, year)
+            gas_price_year = resolve_annual_gas_price(config, driver_year)
+            carbon_price_year = resolve_carbon_price(config, driver_year)
             fleet, loss_tracker, renewable_additions, retrofit_log = evolve_fleet(
                 fleet,
                 prior_results,
@@ -483,6 +583,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 gas_price_per_mmbtu=gas_price_year,
                 carbon_price=carbon_price_year,
                 eac_price_ccs=config.eac_price_gas_cc_ccs,
+                events=evo_events,
+                confirmed_exits=confirmed_exits,
             )
             if retrofit_log:
                 avg_savings = sum(
@@ -580,6 +682,54 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         cumulative.advance_year(local_builds)
 
+        # Capacity-hindcast bridge (rule 22): the fleet has been evolved across
+        # the quarantined year, but the LP is never solved, no year-specific
+        # data is read, and prior_results / last_solved_year are left pointing
+        # at the last solved year. Persist the evolution-only ledger (no
+        # dispatch fields) and move on to the next year.
+        if is_bridge:
+            _ledger = dict(evo_events)
+            _ledger.update(
+                iso=iso,
+                year=year,
+                mode=config.mode,
+                hindcast=True,
+                bridge=True,
+                peak_demand_mw=None,
+                firm_clean_mw=None,
+                reserve_margin=None,
+                rps_dual=None,
+                storage_additions=_storage_additions_since(
+                    storage_units, prior_storage_ids, zone_names
+                ),
+                solve_counts={"P0": 0, "P1": 0, "P2": 0},
+            )
+            _lp = ledger_path(get_cache_path(iso, cache_key, year))
+            write_ledger(_lp, _ledger)
+            logger.info(
+                "year %d: capacity-hindcast BRIDGE — evolved, not solved (ledger %s)",
+                year,
+                _lp.name,
+            )
+            continue
+
+        # Capacity hindcast (plan §1.3): dispatch the realized year's demand
+        # profile with NO growth scaling, so capacity logic is isolated from
+        # demand-forecast error. A plain forecast keeps the once-loaded
+        # weather-year base grown by _scale_demand below.
+        if config.hindcast:
+            year_base_demand = load_demand(
+                iso,
+                year,
+                iso_config,
+                td_loss_factor=config.td_loss_factor,
+                include_interchange=not import_generators,
+            )
+            if config.hours < year_base_demand.shape[1]:
+                year_base_demand = year_base_demand[:, : config.hours]
+        else:
+            year_base_demand = base_demand
+
         # Assemble this year's LP-ready dispatch fleet from the persistent
         # ``fleet``: coal (and optionally gas) take-or-pay tranching --
         # CAMPD per-plant fuel fractions when ``campd_bins`` is active, else
@@ -614,14 +764,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             hours=config.hours,
             iso=iso,
             config=fleet_config,
-            load_shape=base_demand.sum(axis=0),
+            load_shape=year_base_demand.sum(axis=0),
             year=year,
         )
         # Replace flat offshore-wind availability with a derived hourly
         # profile; must run after fleet-array build and before dispatch.
         inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
-        year_demand = _scale_demand(base_demand, config, year)
+        year_demand = (
+            year_base_demand
+            if config.hindcast
+            else _scale_demand(base_demand, config, year)
+        )
         peak_demand = float(year_demand.sum(axis=0).max())
 
         # Net-load-indexed reliability-drag min-gen floors (gas-ST boiler +
@@ -1204,7 +1358,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs_p2
                 )
             # === END LEGACY: P2 Commitment Screen ===
-            save_result(result, config, iso, year, context=context)
+            save_result(result, config, iso, year, context=context, demand=year_demand)
             logger.info(
                 "year %d: solved and cached (%.3fs)",
                 year,
@@ -1372,6 +1526,50 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             ),
         )
 
+        # Evolution ledger (plan §2.1): persist this solved year's capacity
+        # events + summary beside its dispatch parquet. P0+P1 always solve once;
+        # P2 runs only when the commitment/AS-aware/CAISO-RA screen is enabled.
+        p2_enabled = (
+            config.commitment_enabled
+            or (
+                getattr(config, "ercot_as_aware_commitment", False)
+                and iso == "ERCOT"
+                and getattr(config, "energy_reserve_coopt", False)
+            )
+            or (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO")
+        )
+        firm_mw = accredited_firm_capacity_mw(
+            fleet,
+            float(np.sum(wind_cap)),
+            float(np.sum(solar_cap)),
+            prior_results["storage_firm_mw"],
+        )
+        ledger = dict(evo_events)
+        ledger.update(
+            iso=iso,
+            year=year,
+            mode=config.mode,
+            hindcast=bool(config.hindcast),
+            bridge=False,
+            peak_demand_mw=round(peak_demand, 3),
+            firm_clean_mw=round(
+                float(
+                    sum(g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS)
+                ),
+                3,
+            ),
+            reserve_margin=round(firm_mw / peak_demand - 1.0, 6)
+            if peak_demand > 0
+            else None,
+            rps_dual=round(float(result.rps_shadow_price or 0.0), 6),
+            storage_additions=_storage_additions_since(
+                storage_units, prior_storage_ids, zone_names
+            ),
+            solve_counts={"P0": 1, "P1": 1, "P2": 1 if p2_enabled else 0},
+        )
+        write_ledger(ledger_path(get_cache_path(iso, cache_key, year)), ledger)
+        last_solved_year = year
+
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
     return cache_key
 
@@ -1460,7 +1658,8 @@ def _build_parser() -> argparse.ArgumentParser:
         nargs="+",
         default=None,
         help="Weather years to draw over (weather-only path); defaults to "
-        "WEATHER_YEAR_POOL. Ignored when --sampler is given.",
+        "the ISO's verified pool (weather_year_pool). Ignored when --sampler "
+        "is given.",
     )
     ensemble_parser.add_argument(
         "--sampler",
@@ -1497,6 +1696,13 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Path to write the weather-year ensemble distribution JSON; "
         "skipped if omitted. Weather-only path.",
+    )
+    ensemble_parser.add_argument(
+        "--structural-prior",
+        action="store_true",
+        help="Fold the D-7 structural-error prior into the emissions band "
+        "(PB-3), producing the published dispatch-conditional band alongside "
+        "the parametric one. Requires --sampler and --out-dir.",
     )
 
     matrix_parser = subparsers.add_parser(
@@ -1569,7 +1775,14 @@ def main(argv: list[str] | None = None) -> None:
                 overrides["seed"] = args.seed
             if overrides:
                 spec = replace(spec, **overrides)
-            run_sampler_ensemble(config, spec, iso, args.workers, args.out_dir)
+            prior = None
+            if args.structural_prior:
+                from market_sim.structural_prior import default_prior
+
+                prior = default_prior()
+            run_sampler_ensemble(
+                config, spec, iso, args.workers, args.out_dir, prior=prior
+            )
         else:
             from market_sim.ensemble import export_ensemble_json, run_weather_ensemble
 
