@@ -1694,6 +1694,19 @@ class ScenarioConfig:
     # ercot_multiproduct_as_coopt it also requires ercot_as_forward_requirement
     # (else the AS requirement is the zero measured-plan fallback), same footguns
     # as the storage flag. See docs/storage-as-withholding-attribution-2026-07.md.
+    ercot_storage_as_duration_gate: bool = False  # ERCOT (G5 follow-up): add the
+    # published per-product AS SOC-duration requirements to the endogenous storage
+    # split so a short-duration battery cannot sell long-duration AS on its full
+    # power. When on (requires ercot_storage_as_endogenous), storage's upward AS
+    # becomes an explicit per-zone reserve variable RS[c,z] (dispatch, appended
+    # after the ORDC block) bounded by an LP-linear duration gate
+    # Σ_c dur_c·RS[c,z] ≤ Σ_{s∈z} SOC[s] (durations = ERCOT_AS_PRODUCT_DURATION_H:
+    # RegUp/RRS 1 h, ECRS 2 h, Non-Spin 4 h — ERCOT Nodal Protocols §3.17.3 ESR
+    # SOC rule), alongside the existing power-cap competition. Fixes the endogenous
+    # split's 2.1–2.4× over-hold vs the measured 60-Day DAM award (ercot32 root
+    # cause 1). Cleared storage AS still counts under RTOLCAP (the supply cap) and
+    # in the reserve balance. Default off (byte-identical); ERCOT multi-product
+    # co-opt only. See docs/handoffs/ercot-storage-as-duration-gate-2026-07.md.
     negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
     # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
     # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
@@ -3108,6 +3121,16 @@ class ScenarioConfig:
                 "co-optimization, which is off. Enable energy_reserve_coopt "
                 "(ERCOT multi-product) or clear ercot_storage_as_endogenous."
             )
+        # The duration gate bounds the ENDOGENOUS storage split by SOC; it is
+        # meaningless (and silently no-ops) without the endogenous split, and
+        # must NEVER combine with the measured award reservation (docking the cap
+        # AND netting the requirement, then gating, would triple-treat storage).
+        if self.ercot_storage_as_duration_gate and not self.ercot_storage_as_endogenous:
+            raise ValueError(
+                "ercot_storage_as_duration_gate requires ercot_storage_as_endogenous: "
+                "the duration gate bounds the endogenous storage AS split by state "
+                "of charge; enable the endogenous split or clear the duration gate."
+            )
         # Forecast multi-product AS requirement must regenerate from forward
         # drivers: the measured-plan fallback (ASPLANNP433) returns an all-zero
         # requirement for any year with no file, so a forecast co-opt without
@@ -3782,6 +3805,7 @@ TIER_TAGS: dict[str, int] = {
     "storage_as_commitment": 1,
     "ercot_storage_as_endogenous": 1,
     "ercot_thermal_as_endogenous": 1,
+    "ercot_storage_as_duration_gate": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
     "as_revenue_multiplier": 2,
