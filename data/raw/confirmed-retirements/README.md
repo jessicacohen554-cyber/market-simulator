@@ -34,25 +34,51 @@ confirmation. A row hit by one is marked `superseded=true` with its
 `superseding_instrument` cited — kept for audit; the loader ignores it and the
 unit reverts to the economic screen.
 
-## Status
+## Status (updated 2026-07-05, second intake pass — all six ISOs now seeded)
 
-- **PJM** — seeded (`pjm.csv`): Rockport 1–2 (consent decree, 2028), Kincaid 1–2
-  (IL CEJA statute, 2030), Brandon Shores 1–2 + H.A. Wagner 3–4 (`rmr_end`,
-  2029), Eddystone 3–4 (`superseded` by DOE 202(c) — worked counter-instrument).
-- **ERCOT** — `DATA NEEDED` (`ercot.csv`): candidates evaluated and held out.
-  Spruce/Sommers are announced-grade (economic screen). V H Braunig 3 is held out
-  on a representation mismatch — the OA-status ST unit is not in the model fleet
-  while plant 3612 is represented only by its OP gas-CT peakers, so a plant-code
-  derate would wrongly shrink the peakers (rule 14). Add only after remapping to
-  a modeled unit and verifying the RMR end date.
-- **MISO** — `DATA NEEDED`: itemize the approved Attachment Y 2026–2028 coal
-  cluster (~13.5 GW candidate block) from the public status posting.
-- **NYISO** — `DATA NEEDED`: forward deactivation-notice list.
-- **NEISO** — `DATA NEEDED`: cleared permanent de-list bids (forward list short;
-  Mystic-class exits are already historical).
-- **CAISO** — `DATA NEEDED`: SWRCB OTC compliance dates (Alamitos / Huntington
-  Beach / Ormond Beach) and Diablo Canyon per SB 846 (2029/2030).
+- **PJM** — seeded (`pjm.csv`, 10 rows): Rockport 1 (federal NSR consent decree,
+  2028) + Rockport 2 (separate Indiana IURC Cause No. 45546 order, 2028 — split
+  from a single mis-attributed citation in the first pass), Kincaid 1–2 (IL
+  CEJA statute, 2030), Brandon Shores 1–2 + H.A. Wagner 3–4 (`rmr_end`, 2029 —
+  a further extension to 2031 is pending, not yet FERC-approved), Eddystone
+  3–4 (`superseded` by DOE 202(c) — worked counter-instrument; exit_year
+  corrected 2026→2025 in this pass).
+- **ERCOT** — seeded (`ercot.csv`, 2 rows): V H Braunig 1–2 (binding NSO,
+  effective 2025-03-31 — confirmed by ERCOT's Board declining to RMR them).
+  V H Braunig 3 stays held out — the *opposite* of retiring: it's under a
+  binding RMR agreement (2025-03 to 2027-03) keeping it in service. Spruce /
+  Sommers remain announced-grade (economic screen).
+- **MISO** — seeded (`miso.csv`, 4 rows): DTE Monroe 1–4 (Michigan PSC Case
+  No. U-21193 settlement — Units 3–4 by 2028, Units 1–2 by 2032). Direct fetch
+  of MISO's own Attachment Y posting failed (TLS/access errors); a human with
+  browser access should cross-check this posting directly at the next intake
+  vintage. Everything else in the ~13.5 GW EIA-860-flagged 2026–2028 coal
+  cluster was investigated and held out (announced/IRP-stage/contested/fuel-
+  conversion — see `miso.csv` header for the full per-plant list).
+- **NYISO** — still `DATA NEEDED` (`nyiso.csv`, 0 rows): every forward-looking
+  deactivation notice found (Far Rockaway, Gowanus/Narrows, Pinelawn) has been
+  reversed via a NYISO reliability determination (returned to service or
+  withdrawn) — see `nyiso.csv` header. Honest zero, not an unresearched gap.
+- **NEISO** — seeded (`neiso.csv`, 2 rows): Merrimack Station 1–2 (2024 Clean
+  Water Act consent decree, 2028-06 — the plant actually ceased operating
+  entirely 2025-09-12, ahead of the decree deadline). The ISO-NE de-list-bid
+  tracker's other forward candidates could not be matched to a current
+  EIA-860 plant/generator identity (tracker itself flags 2024-02-28 as its
+  last update) and were excluded rather than seeded on an unverified match.
+- **CAISO** — seeded (`caiso.csv`, 10 rows): AES Alamitos 3–5 / AES Huntington
+  Beach 2 / Ormond Beach 1–2 (SWRCB OTC Resolution 2023-0025, 2026-12-31), and
+  Diablo Canyon 1–2 (SB 846 + CPUC D.23-12-036, 2029/2030) plus its two
+  `superseded` rows carrying the plant's earlier 2016-settlement exit dates —
+  the worked `superseded` audit-trail example for this datatype.
 
-> All seeded instruments predate the 2026-07-05 intake and the model knowledge
-> cutoff. **Re-verify every row against the current posting/docket before
-> `confirmed_exits_enabled` is flipped on** (open item — plan §7).
+**Every row above passed `scripts/curate_confirmed_retirements.py`'s EIA-860
+spine cross-check (identity + MW within 5 %) against the real fleet spine.**
+All instruments were independently re-verified via web research on
+2026-07-05; several rows carry an explicit in-row caveat where a specific
+docket/decision number could not be independently confirmed (Rockport 1's
+civil action number; Diablo Canyon's CPUC decision number) — re-confirm those
+against the primary docket before `confirmed_exits_enabled` is flipped on.
+
+**The default-flip to `confirmed_exits_enabled=True` is now unblocked on data
+grounds for all six ISOs (five seeded + NYISO's honest zero) — flipping the
+default remains an explicit owner decision (plan §7), not made in this pass.**
