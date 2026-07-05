@@ -2707,6 +2707,58 @@ WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
 
 
 # ---------------------------------------------------------------------------
+# Structural-error prior (PB-3) — probability-bounds plan §3
+# ---------------------------------------------------------------------------
+# Parameters of the dispatch-conditional structural-error prior fitted from the
+# D-7 statistical-mode backcast probes (market_sim.structural_prior). All are
+# design constants from docs/handoffs/probability-bounds-plan-2026-07.md §3.2-3.3
+# (rule 24: registered here, cited, never tuned to a residual — the fit inputs
+# are the committed statmode bundles, and the prior re-fits ONLY when those
+# inputs change, e.g. the W3-P1 carbon-priced re-solves or the one-shot holdout
+# scoring sanctioned by rule 22).
+
+# Backcast years the prior is fitted over. Plan §0.2 / CLAUDE.md rule 22: the
+# statmode probes cover 2023-2025 only; 2022 and H1-2026 are quarantined and
+# must never enter this tuple before an ISO's calibration-complete marker.
+STRUCTURAL_PRIOR_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+# Student-t degrees of freedom for the per-ISO log-error prior. nu=2 encodes
+# that both moments come from three points (plan §3.2 "Small-sample honesty"):
+# the t2 has infinite variance, so every central interval is strictly wider
+# than the plug-in normal's — the hard PB-3 requirement.
+STRUCTURAL_PRIOR_NU: int = 2
+
+# Scale inflation on the pooled noise: sqrt(s_pooled^2 * (1 + 1/n)) with n=3
+# fit years — the +1/n term carries the location-parameter (mean-of-3)
+# estimation uncertainty into the scale (plan §3.2).
+STRUCTURAL_PRIOR_SCALE_INFLATION: float = 1.0 + 1.0 / 3.0
+
+# Independent structural draws attached to each parametric member in the
+# Monte-Carlo convolution (plan §3.3: "K = 25").
+STRUCTURAL_PRIOR_K: int = 25
+
+# Quantiles published for the parametric_plus_structural layer (plan §3.3).
+PUBLISHED_BAND_QUANTILES: tuple[float, ...] = (
+    0.05,
+    0.10,
+    0.25,
+    0.50,
+    0.75,
+    0.90,
+    0.95,
+)
+
+# Horizon-widening variance multiplier lambda(h) (plan §3.4 item 1): the
+# fleet-path (capacity-evolution) structural error is UNMEASURED until the
+# W2-P5/PP-0.3 capacity hindcast produces a number, so lambda is pinned at 0
+# and every published band carries the "dispatch-conditional — excludes
+# fleet-path structural error" label. Do NOT set this to a nonzero value
+# without citing the hindcast result that measured it.
+STRUCTURAL_PRIOR_LAMBDA_H: float = 0.0
+STRUCTURAL_PRIOR_LAMBDA_H_STATUS: str = "UNMEASURED"
+
+
+# ---------------------------------------------------------------------------
 # ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A)
 # ---------------------------------------------------------------------------
 # Forward analogue of the measured ERCOT on-line responsive reserve-supply cap

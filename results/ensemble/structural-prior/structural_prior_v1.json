@@ -1,0 +1,181 @@
+{
+ "emissions_basis": {
+  "fossil_co2_rates_sha256": "3c0b0e839daa260b7bb92b8bff311a5f0b5e229adbd2c27177f98783b962f453",
+  "label": "R2 measured-rate CO2 basis (PR #1371: fff2c34 physical-HR booking, 968cead quarantine-row strip); C5a scoring intensities from fossil_co2_rates.parquet",
+  "stale_isos_pending_w3p1": [
+   "CAISO",
+   "NEISO",
+   "NYISO"
+  ]
+ },
+ "isos": {
+  "CAISO": {
+   "actual_mt_by_year": {
+    "2023": 29.931,
+    "2024": 28.818,
+    "2025": 27.117
+   },
+   "basis_stale": true,
+   "bias": 0.10206541877002018,
+   "bundle": "results/calibration/caiso_statmode_2026-07",
+   "carbon_priced": true,
+   "eps_by_year": {
+    "2023": 0.029820535099414788,
+    "2024": 0.12100883248782653,
+    "2025": 0.15536688872281923
+   },
+   "iso": "CAISO",
+   "model_mt_by_year": {
+    "2023": 30.837,
+    "2024": 32.525,
+    "2025": 31.675
+   },
+   "noise": 0.06488151831990531,
+   "rescore": "stale-registration-basis",
+   "run_id": "2026-07-03-caiso-statmode-d-7",
+   "scale": 0.07491872413485792
+  },
+  "ERCOT": {
+   "actual_mt_by_year": {
+    "2023": 156.255,
+    "2024": 154.19,
+    "2025": 154.174
+   },
+   "basis_stale": false,
+   "bias": 0.00494230493282347,
+   "bundle": "results/calibration/ercot32_statmode_2026-07",
+   "carbon_priced": false,
+   "eps_by_year": {
+    "2023": 0.00122800637110101,
+    "2024": -0.024455109179703133,
+    "2025": 0.038054017607072534
+   },
+   "iso": "ERCOT",
+   "model_mt_by_year": {
+    "2023": 156.447,
+    "2024": 150.465,
+    "2025": 160.154
+   },
+   "noise": 0.031419655365161295,
+   "rescore": "verified-identical",
+   "run_id": "2026-07-04-statmode-d7-probe-ercot32",
+   "scale": 0.04834297011651926
+  },
+  "MISO": {
+   "actual_mt_by_year": {
+    "2023": 275.935,
+    "2024": 273.547,
+    "2025": 292.867
+   },
+   "basis_stale": false,
+   "bias": 0.1451017229873938,
+   "bundle": "results/calibration/miso_statmode_2026-07",
+   "carbon_priced": false,
+   "eps_by_year": {
+    "2023": 0.13995651873695045,
+    "2024": 0.09947660583927025,
+    "2025": 0.19587204438596076
+   },
+   "iso": "MISO",
+   "model_mt_by_year": {
+    "2023": 317.387,
+    "2024": 302.158,
+    "2025": 356.235
+   },
+   "noise": 0.04840325390132653,
+   "rescore": "verified-identical",
+   "run_id": "2026-07-03-miso-statmode-d-7",
+   "scale": 0.05589126333916935
+  },
+  "NEISO": {
+   "actual_mt_by_year": {
+    "2023": 21.618,
+    "2024": 23.42,
+    "2025": 22.993
+   },
+   "basis_stale": true,
+   "bias": -0.009727685361100531,
+   "bundle": "results/calibration/neiso_statmode_2026-07",
+   "carbon_priced": true,
+   "eps_by_year": {
+    "2023": -0.034399345120831086,
+    "2024": -0.03343050624052836,
+    "2025": 0.038646795278057845
+   },
+   "iso": "NEISO",
+   "model_mt_by_year": {
+    "2023": 20.887,
+    "2024": 22.65,
+    "2025": 23.899
+   },
+   "noise": 0.04189632973215229,
+   "rescore": "stale-registration-basis",
+   "run_id": "2026-07-03-neiso-statmode-d-7",
+   "scale": 0.0483777144978309
+  },
+  "NYISO": {
+   "actual_mt_by_year": {
+    "2023": 26.226,
+    "2024": 29.27,
+    "2025": 31.342
+   },
+   "basis_stale": true,
+   "bias": -0.001657154531941512,
+   "bundle": "results/calibration/nyiso_statmode_2026-07",
+   "carbon_priced": true,
+   "eps_by_year": {
+    "2023": 0.03296692760306901,
+    "2024": -0.02266699215965217,
+    "2025": -0.015271399039241377
+   },
+   "iso": "NYISO",
+   "model_mt_by_year": {
+    "2023": 27.105,
+    "2024": 28.614,
+    "2025": 30.867
+   },
+   "noise": 0.030212480817861233,
+   "rescore": "stale-registration-basis",
+   "run_id": "2026-07-03-nyiso-statmode-d-7",
+   "scale": 0.04834297011651926
+  },
+  "PJM": {
+   "actual_mt_by_year": {
+    "2023": 265.789,
+    "2024": 270.161,
+    "2025": 293.814
+   },
+   "basis_stale": false,
+   "bias": 0.22398762112599946,
+   "bundle": "results/calibration/pjm_statmode_2026-07",
+   "carbon_priced": false,
+   "eps_by_year": {
+    "2023": 0.23591916202463944,
+    "2024": 0.23223957110701696,
+    "2025": 0.20380413024634197
+   },
+   "iso": "PJM",
+   "model_mt_by_year": {
+    "2023": 336.508,
+    "2024": 340.787,
+    "2025": 360.233
+   },
+   "noise": 0.0175759729573408,
+   "rescore": "verified-identical",
+   "run_id": "2026-07-03-pjm-statmode-d-7",
+   "scale": 0.04834297011651926
+  }
+ },
+ "label": "dispatch-conditional band \u2014 excludes fleet-path structural error (lambda(h)=0 UNMEASURED until the W2-P5/PP-0.3 capacity hindcast)",
+ "lambda_h": 0.0,
+ "lambda_h_status": "UNMEASURED",
+ "nu": 2,
+ "s_pooled": 0.04186624021529765,
+ "scale_inflation": 1.3333333333333333,
+ "schema_version": 1,
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}

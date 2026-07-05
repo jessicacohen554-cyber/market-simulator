@@ -504,8 +504,9 @@ def compute_bands(
     For every (year, metric) and every quantile in ``quantiles`` produces one
     row with the type-7 point estimate, the member count ``n``, and a bootstrap
     CI (§2.4/§4.1). Only the ``parametric`` layer is produced here; the
-    ``scenario_envelope`` (PB-0) and ``parametric_plus_structural`` (PB-3)
-    layers are added by their own stages against this same schema.
+    ``parametric_plus_structural`` layer (PB-3) is appended against this same
+    schema by :func:`market_sim.structural_prior.append_structural_layer`, and
+    the ``scenario_envelope`` (PB-0) by its own stage.
 
     Args:
         values: ``values[year][metric]`` -> member values (from
