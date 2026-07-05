@@ -442,3 +442,55 @@ no 2022/2026 anywhere.
 ---
 
 ## 5. (reserved) D-7 skill table — appended by W3-P1
+
+---
+
+## 6. W2-P5 delivery status (2026-07-05)
+
+Both stages landed. §0 facts that changed: the capacity hindcast is **built and
+run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage is
+**on disk**.
+
+**Stage 1 — invariants + ledger (complete):**
+- Evolution ledger: `runner.py` writes `evolution_<year>.json` beside each cached
+  year parquet; `evolve_fleet`/`apply_economic_retirements` emit the events via an
+  optional out-param (default solve path byte-identical). Dispatch parquets now
+  persist per-zone demand (`outputs.to_parquet(demand=…)`) so the energy balance
+  is checkable. Confirmed on a real ERCOT forecast: I1 closes to 3.6e-10 MW.
+- `scripts/check_forecast_invariants.py` — I1-I14 single-run + P1-P3 paired, all
+  thresholds in one dataclass, nonzero exit on FAIL.
+- `tests/test_forecast_invariants.py` — 34 fast invariant-logic cases + a real-LP
+  integration test (`RUN_SLOW_FORECAST=1`, 3-year ERCOT solve, 205 s) that closes
+  TC-3 (first real-LP exercise of the evolution loop + ledger).
+- Findings from the first invariant run: `docs/forecast-invariant-findings.md`
+  (F0 NEISO default forecast infeasible → blocks the NEISO nightly smoke; F1/F2
+  reliability-floor + reserve-margin FAIL because nothing force-builds to the
+  absolute floor in the default forecast; F3 an I8 ledger-attribution fix).
+  **Findings only — no model behaviour changed.**
+- **NOT done in stage 1:** the golden-scenario band regression (§2.3) — scaffolded
+  conceptually but not seeded (a 7-year ERCOT reference solve); the paired-run
+  invariants P1-P3 are implemented and unit-tested but not yet wired into a CI
+  tier. Next-session pickup.
+
+**Stage 2 — capacity hindcast (ERCOT run complete):**
+- `scripts/run_capacity_hindcast.py` + `scripts/score_capacity_hindcast.py` +
+  `scripts/build_capacity_actuals.py` + `scripts/register_hindcast.py`.
+- Intake: EIA-860 2020 vintage → `data/raw/eia-860/vintage_2020/`;
+  `capacity_actuals_ercot.csv`; two hindcast gas paths in `HENRY_HUB_TRAJECTORIES`
+  (`hindcast_realized`, `hindcast_asknown_aeo2021`).
+- **ERCOT realized hindcast run + registered** on the new
+  `docs/codebase-site/forecast-validation.html` (namespace
+  `frontend/data/hindcast/`, outside the quarantine-gated backcast registry — CI
+  gates confirmed to scan only `frontend/data/backcast/registry/`). The 2022
+  bridge works: 2021/2023/2024/2025 solved, 2022 evolved-not-solved, **no 2022
+  data read, no `year_2022.parquet`**. Report:
+  `docs/hindcast-reports/ercot-2021-2025-realized-2026-07-05.md`.
+- Headline result (**diagnostic, not a keeper**): the ERCOT capacity screens
+  badly miss the real build-out — 0 GW solar built vs 25 GW actual, wind over-built
+  +58%, 0 GW retired vs 1.5 GW actual, system CO2 2025 −23% (2023/24 −54%). These
+  are the *result*, to be root-caused (rules 1/11/14), not tuned. The `asknown`
+  variant runs alongside for the fuel-input-error attribution.
+- **NOT done:** PJM (second ISO — mechanical, `build_capacity_actuals.py --iso PJM`
+  + a second harness invocation once ERCOT's findings are triaged); the CO2
+  decomposition's dispatch-error column (needs the keeper/D-7 CO2 gap threaded in);
+  attribution runs (screen-pinned diagnostics, plan §1.4).
