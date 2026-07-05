@@ -1,0 +1,1136 @@
+{
+ "start_year": 2026,
+ "end_year": 2031,
+ "base_overrides": {
+  "use_campd_bins": false,
+  "reserve_margin_build_enabled": true,
+  "demand_growth_path": "mid"
+ },
+ "fom_axis": {
+  "legacy": {},
+  "atb": {
+   "fixed_om_gas_ct": 21.0,
+   "fixed_om_gas_cc": 30.0,
+   "fixed_om_coal": 45.0
+  }
+ },
+ "scarcity_axis": {
+  "off": {
+   "scarcity_pricing_enabled": false
+  },
+  "ordc": {
+   "scarcity_pricing_enabled": true
+  },
+  "coopt": {
+   "scarcity_pricing_enabled": true,
+   "energy_reserve_coopt": true,
+   "ercot_multiproduct_as_coopt": true,
+   "ercot_thermal_as_endogenous": true,
+   "ercot_storage_as_endogenous": true,
+   "ercot_as_forward_requirement": true
+  }
+ },
+ "elapsed_s": 2005.3,
+ "results": {
+  "ercot:legacy:off": {
+   "cell": "ercot:legacy:off",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6146,
+     "avg_price": 25.16
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3168,
+     "avg_price": 26.31
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.1983,
+     "avg_price": 27.02
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.62,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 0.62,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.14,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 30.14,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.06,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.06,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.95,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 31.95,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.32,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.32,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.57,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.57,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 36.92,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 36.92,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.45,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.45,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 41.02,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 41.02,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 46690.2,
+    "2029": 49066.6,
+    "2030": 50303.3,
+    "2031": 56849.2
+   },
+   "error": null
+  },
+  "ercot:legacy:ordc": {
+   "cell": "ercot:legacy:ordc",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6146,
+     "avg_price": 25.16
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3168,
+     "avg_price": 26.31
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.1983,
+     "avg_price": 27.02
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 17.16,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 17.16,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 47.17,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 47.17,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.89,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.89,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 32.78,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 32.78,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.32,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.32,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.58,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.58,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 36.93,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 36.93,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.45,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.45,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 41.02,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 41.02,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 13349.2,
+    "2029": 48630.4,
+    "2030": 50303.3,
+    "2031": 56849.2
+   },
+   "error": null
+  },
+  "ercot:atb:off": {
+   "cell": "ercot:atb:off",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6146,
+     "avg_price": 25.16
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3168,
+     "avg_price": 26.31
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.1983,
+     "avg_price": 27.02
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.62,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 0.62,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.14,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 30.14,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.06,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.06,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.95,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 31.95,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.32,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.32,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.57,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.57,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 36.92,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 36.92,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.45,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.45,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 41.02,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 41.02,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 47271.7,
+    "2029": 68626.4,
+    "2030": 62634.2,
+    "2031": 59492.5
+   },
+   "error": null
+  },
+  "ercot:legacy:coopt": {
+   "cell": "ercot:legacy:coopt",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2533,
+     "avg_price": 22.92
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.5624,
+     "avg_price": 21.73
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.496,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6081,
+     "avg_price": 25.17
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.284,
+     "avg_price": 26.29
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.2131,
+     "avg_price": 27.05
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.63,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 0.63,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.21,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 30.21,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.01,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.01,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.82,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 31.82,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.34,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.34,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.62,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.62,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 37.0,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 37.0,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.4,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.4,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 40.88,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 40.88,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 46690.2,
+    "2029": 49066.6,
+    "2030": 50303.3,
+    "2031": 56849.2
+   },
+   "error": null
+  },
+  "ercot:atb:ordc": {
+   "cell": "ercot:atb:ordc",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6146,
+     "avg_price": 25.16
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3168,
+     "avg_price": 26.31
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.1983,
+     "avg_price": 27.02
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 17.16,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 17.16,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 47.17,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 47.17,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.89,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.89,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 32.78,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 32.78,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.32,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.32,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.58,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.58,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 36.93,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 36.93,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.45,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.45,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 41.02,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 41.02,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 46242.4,
+    "2029": 50436.1,
+    "2030": 62634.2,
+    "2031": 59492.5
+   },
+   "error": null
+  },
+  "ercot:atb:coopt": {
+   "cell": "ercot:atb:coopt",
+   "iso": "ERCOT",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2533,
+     "avg_price": 22.92
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.5624,
+     "avg_price": 21.73
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.496,
+     "avg_price": 24.24
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6081,
+     "avg_price": 25.17
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.284,
+     "avg_price": 26.29
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.2131,
+     "avg_price": 27.05
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.63,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 0.63,
+      "class_mw": 21042.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.21,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 30.21,
+      "class_mw": 38730.4
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 1.01,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.01,
+      "class_mw": 33922.5
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.82,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 31.82,
+      "class_mw": 38730.4
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 1.34,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.34,
+      "class_mw": 35862.7
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 34.22,
+      "class_mw": 39404.4
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 1.62,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 1.62,
+      "class_mw": 37547.2
+     },
+     "gas_cc": {
+      "energy_kw_yr": 37.0,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 37.0,
+      "class_mw": 40749.2
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 2.4,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 2.4,
+      "class_mw": 44093.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 40.88,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 0.0,
+      "total_kw_yr": 40.88,
+      "class_mw": 40749.2
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 47271.7,
+    "2029": 68626.4,
+    "2030": 62634.2,
+    "2031": 59492.5
+   },
+   "error": null
+  },
+  "pjm:legacy": {
+   "cell": "pjm:legacy",
+   "iso": "PJM",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 372.7866,
+     "avg_price": 34.46
+    },
+    {
+     "year": 2027,
+     "co2_mt": 376.4961,
+     "avg_price": 32.84
+    },
+    {
+     "year": 2028,
+     "co2_mt": 390.1102,
+     "avg_price": 33.55
+    },
+    {
+     "year": 2029,
+     "co2_mt": 402.2254,
+     "avg_price": 34.33
+    },
+    {
+     "year": 2030,
+     "co2_mt": 415.2271,
+     "avg_price": 35.09
+    },
+    {
+     "year": 2031,
+     "co2_mt": 427.5958,
+     "avg_price": 35.59
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.75,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.0,
+      "total_kw_yr": 94.75,
+      "class_mw": 35898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 125.22,
+      "class_mw": 60605.8
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 0.68,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.22,
+      "total_kw_yr": 94.9,
+      "class_mw": 45898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 29.92,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 124.92,
+      "class_mw": 64605.8
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 0.53,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.36,
+      "total_kw_yr": 94.88,
+      "class_mw": 55898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.05,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 126.05,
+      "class_mw": 68605.8
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 0.57,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.45,
+      "total_kw_yr": 95.02,
+      "class_mw": 65671.6
+     },
+     "gas_cc": {
+      "energy_kw_yr": 32.95,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 127.95,
+      "class_mw": 72605.8
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 0.69,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.48,
+      "total_kw_yr": 95.17,
+      "class_mw": 69501.8
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.69,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 129.69,
+      "class_mw": 76605.8
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 10000.0,
+    "2028": 10000.0,
+    "2029": 9773.6,
+    "2030": 3830.1,
+    "2031": 4172.6
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0,
+    "2031": 0.0
+   },
+   "error": null
+  },
+  "pjm:atb": {
+   "cell": "pjm:atb",
+   "iso": "PJM",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 372.7866,
+     "avg_price": 34.46
+    },
+    {
+     "year": 2027,
+     "co2_mt": 376.4961,
+     "avg_price": 32.84
+    },
+    {
+     "year": 2028,
+     "co2_mt": 390.1102,
+     "avg_price": 33.55
+    },
+    {
+     "year": 2029,
+     "co2_mt": 402.2254,
+     "avg_price": 34.33
+    },
+    {
+     "year": 2030,
+     "co2_mt": 415.2271,
+     "avg_price": 35.09
+    },
+    {
+     "year": 2031,
+     "co2_mt": 427.5958,
+     "avg_price": 35.59
+    }
+   ],
+   "screen_revenue_kw_yr": {
+    "2027": {
+     "gas_ct": {
+      "energy_kw_yr": 0.75,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.0,
+      "total_kw_yr": 94.75,
+      "class_mw": 35898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 30.22,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 125.22,
+      "class_mw": 60605.8
+     }
+    },
+    "2028": {
+     "gas_ct": {
+      "energy_kw_yr": 0.68,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.22,
+      "total_kw_yr": 94.9,
+      "class_mw": 45898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 29.92,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 124.92,
+      "class_mw": 64605.8
+     }
+    },
+    "2029": {
+     "gas_ct": {
+      "energy_kw_yr": 0.53,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.36,
+      "total_kw_yr": 94.88,
+      "class_mw": 55898.1
+     },
+     "gas_cc": {
+      "energy_kw_yr": 31.05,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 126.05,
+      "class_mw": 68605.8
+     }
+    },
+    "2030": {
+     "gas_ct": {
+      "energy_kw_yr": 0.57,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.45,
+      "total_kw_yr": 95.02,
+      "class_mw": 65671.6
+     },
+     "gas_cc": {
+      "energy_kw_yr": 32.95,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 127.95,
+      "class_mw": 72605.8
+     }
+    },
+    "2031": {
+     "gas_ct": {
+      "energy_kw_yr": 0.69,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 94.48,
+      "total_kw_yr": 95.17,
+      "class_mw": 69501.8
+     },
+     "gas_cc": {
+      "energy_kw_yr": 34.69,
+      "as_kw_yr": 0.0,
+      "capacity_kw_yr": 95.0,
+      "total_kw_yr": 129.69,
+      "class_mw": 76605.8
+     }
+    }
+   },
+   "retired_mw_by_fuel": {},
+   "retired_mw_by_year": {},
+   "backstop_mw_by_year": {
+    "2027": 10000.0,
+    "2028": 10000.0,
+    "2029": 9773.6,
+    "2030": 3830.1,
+    "2031": 4172.6
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0,
+    "2031": 0.0
+   },
+   "error": null
+  }
+ },
+ "acceptance_gates": {
+  "retirement_pace_gw_by_year": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "retirement_pace_gw_mean": 0.0,
+  "pace_within_observed_band": false,
+  "backstop_mw_first3": 15213.6,
+  "backstop_near_zero": false,
+  "pass": false
+ }
+}

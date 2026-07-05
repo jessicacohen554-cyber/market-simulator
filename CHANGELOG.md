@@ -30,6 +30,50 @@ Completes the two deferred follow-ons from `docs/handoffs/emissions-mass-cap-pla
   its own independent dispatch pipeline that never threads `get_active_policy_constraints`, so
   `mass_cap_enabled` is inert there today — a scoped follow-on, documented in the plan doc rather
   than half-wired in this pass.
+## 2026-07-05 (W2-P3 Stage 2 — capacity-screen revenue fix, reversal supersession, FOM re-verification)
+
+**Revenue-side fix (capacity-economics plan §5 step 2).** The retirement screen's
+margin basis is now the attainable pro-forma inframarginal margin —
+per-hour `max(0, price − mc, reserve price) × pmax × availability`, the Potomac-SOM
+net-revenue construction and the same basis the thermal new-entry screen already used —
+replacing realized-LP-dispatch margin, which structurally missed the post-solve ORDC
+adder's scarcity rent (Stage-1 audit: fleet CT screen revenue ~1.5 $/kW-yr vs the SOM
+≈68 observable). A new hourly reserve-price signal (`screen_reserve_value_enabled`,
+default on; threaded via `PriorYearResults`) values each reserve-eligible unit's
+per-hour best use — energy or reserve, never both on the same MW: the reserve co-opt's
+own duals under `ercot_thermal_as_endogenous` (superseding that flag's annual per-fuel
+rate), else the ORDC scarcity adder (RTORPA/RTOFFPA pay real-time reserves the same
+ORDC price — ERCOT Nodal Protocols §6.5.7.5). When present it is the SOLE thermal AS
+pricing (rule 19). Zero fitted parameters; SOM is the validity check, never a target.
+VRE new entry is now shape-aware (plan §6 CX-6c): wind/solar candidates value their
+build zone's hourly CF against that zone's prices, scalar base-CF as fallback.
+First-screen-year ERCOT CT revenue on the default ORDC footing: 1.6 → 17.2 $/kW-yr.
+
+**FOM re-verification (plan §5.4 grid vs the accredited floor): NOT flipped, again.**
+The 2×3 ERCOT + 2-cell PJM grid re-ran at HEAD
+(`docs/handoffs/fom-scarcity-grid-2026-07-05-stage2.json`): capacity trajectory
+byte-identical across the FOM axis, zero retirements everywhere. The masking is no
+longer the Stage-1 nameplate-ledger bug but genuine mid-growth adequacy shortage — the
+accredited floor correctly un-retires every eligible unit and the harness-enabled
+backstop floods CT (15.2 GW in three years), collapsing scarcity below every bar. ATB
+targets (21/30/45) stay frozen; tornado re-centring deferred with the flip; unblocking
+paths recorded in `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md` §3
+(foresight A/B re-run remains the open next step).
+
+**Retirement-reversal supersession (confirmed-retirement plan §2.2 / §4.3.2).**
+`apply_announced_retirements` now ignores announced dates for plants whose
+confirmed-retirements registry rows are ALL superseded — an exit reversed outright by a
+public counter-instrument, nothing re-confirmed — via
+`data.confirmed_retirements.load_announced_reversal_plants`, loaded in every forecast
+run independently of `confirmed_exits_enabled` (still default-off). Byron 1–2 /
+Dresden 2–3 reversal rows seeded (Exelon 2020 PJM deactivations reversed by IL CEJA
+P.A. 102-0662, 2021-09-15) — the PJM hindcast's entire 4.1 GW false-retire. The
+curation exit-year window check applies to live rows only.
+
+**ERCOT realized capacity hindcast re-run at HEAD** and registered on the
+forecast-validation dashboard (`frontend/data/hindcast/ercot-2021-2025-realized-s2`) as
+the before/after diagnostic for the screen changes — deltas reported as found, nothing
+tuned to them (rules 1/11/14).
 
 ## 2026-07-05 (CI wiring — W2-P5 forecast invariants)
 
