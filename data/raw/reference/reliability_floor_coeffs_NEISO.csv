@@ -5,13 +5,13 @@ NEISO,Connecticut,CC_REGULAR,tmax,32.2,0.5178,False,0.9959,0.52,0.0161,64,0.659,
 NEISO,Connecticut,CC_REGULAR,tmin,-14.3,0.4745,False,0.9126,0.52,-0.4118,9,0.6676,0.8863,cold: zone p1 tmin (design heating day)
 NEISO,Boston,CC_CHP,tmax,30.73,0.52,False,1.0,0.52,-0.3058,55,0.9797,1.0,hot: zone p95 tmax (design cooling day)
 NEISO,Boston,CC_CHP,tmin,-10.5,0.52,False,1.0,0.52,,9,0.9789,1.0,cold: zone p1 tmin (design heating day)
-NEISO,Boston,CT_PEAKER,tmax,30.73,0.2703,True,0.7113,0.38,0.4286,55,0.0851,0.5404,hot: zone p95 tmax (design cooling day)
+NEISO,Boston,CT_PEAKER,tmax,30.73,0.2703,False,0.7113,0.38,0.4286,55,0.0851,0.5404,hot: zone p95 tmax (design cooling day) [SCRUBBED 2026-07-05 -- all-24h floor bound ~70pct off the h15-21 peak (D4) forcing ~50pct of the tiny CT_PEAKER energy (C8) and flattening off-peak (C7); fast-start CTs are economically dispatched not day-ahead committed per rule #18; mirrors caiso-52 CT scrub]
 NEISO,Boston,CT_PEAKER,tmin,-10.5,0.2196,False,0.5778,0.38,0.1429,9,0.0909,0.5513,cold: zone p1 tmin (design heating day)
 NEISO,Central,CC_REGULAR,tmax,29.92,0.499,True,0.9596,0.52,0.337,58,0.3349,0.6265,hot: zone p95 tmax (design cooling day)
 NEISO,Central,CC_REGULAR,tmin,-11.69,0.3173,False,0.6103,0.52,0.5727,11,0.35,0.6445,cold: zone p1 tmin (design heating day)
 NEISO,North,COAL,tmax,30.02,0.4,False,1.0,0.4,0.244,43,0.6821,1.0,hot: zone p95 tmax (design cooling day)
 NEISO,North,COAL,tmin,-17.92,0.4,False,1.0,0.4,,7,0.6604,1.0,cold: zone p1 tmin (design heating day)
-NEISO,Connecticut,CT_PEAKER,tmax,32.2,0.2595,True,0.6828,0.38,0.3847,62,0.0541,0.539,hot: zone p95 tmax (design cooling day)
+NEISO,Connecticut,CT_PEAKER,tmax,32.2,0.2595,False,0.6828,0.38,0.3847,62,0.0541,0.539,hot: zone p95 tmax (design cooling day) [SCRUBBED 2026-07-05 -- all-24h floor bound ~70pct off the h15-21 peak (D4) forcing ~50pct of the tiny CT_PEAKER energy (C8) and flattening off-peak (C7); fast-start CTs are economically dispatched not day-ahead committed per rule #18; mirrors caiso-52 CT scrub]
 NEISO,Boston,CC_REGULAR,tmax,30.73,0.5103,False,0.9813,0.52,0.2401,55,0.2624,0.7357,hot: zone p95 tmax (design cooling day)
 NEISO,Boston,CC_REGULAR,tmin,-10.5,0.4549,False,0.8747,0.52,-0.4202,9,0.273,0.747,cold: zone p1 tmin (design heating day)
 NEISO,Connecticut,CC_CHP,tmax,32.2,0.2554,False,0.4912,0.52,0.3099,41,0.0968,0.4912,hot: zone p95 tmax (design cooling day)
