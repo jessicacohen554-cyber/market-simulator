@@ -545,6 +545,28 @@ class ScenarioConfig:
     # docs/ordc-overlay.md (AS revenue).
     as_revenue_multiplier: float = 1.0  # Scenario scale on the calibrated AS
     # revenue rates (forward AS-price view: tighter/looser AS markets).
+
+    # --- W2-P3 Stage 2 — capacity-screen reserve (scarcity/AS) valuation -----
+    # Revenue-side fix (capacity-economics plan 2026-07 §5 step 2): the
+    # retirement and thermal new-entry screens value each reserve-eligible
+    # unit's hour-by-hour BEST use — energy margin (price − mc) or the
+    # reserve price, never both on the same MW (the co-optimization arbitrage
+    # condition) — against the reserve-price signal the model already
+    # produces: the reserve co-opt's own duals under
+    # ercot_thermal_as_endogenous (superseding that flag's annual per-fuel
+    # rate), else the post-solve ORDC scarcity adder. Market-design grounding
+    # for the ORDC leg: ERCOT pays real-time on-line/off-line reserves the
+    # same ORDC price the energy adder carries (RTORPA / RTOFFPA, Nodal
+    # Protocols §6.5.7.5), so available headroom in a scarcity-priced hour is
+    # income the screens were structurally blind to. Zero fitted parameters —
+    # the signal is the published-ORDC/co-opt price the model already
+    # computes; the Potomac SOM CT/CC net-revenue tables are the external
+    # validity check, never a target (rule 1). Off = ablation: screens fall
+    # back to the legacy annual AS credits (endogenous per-fuel rate or the
+    # calibrated exogenous flat rate). Forecast-only surface — capacity
+    # evolution never runs in backcast, so keepers are byte-identical.
+    screen_reserve_value_enabled: bool = True
+
     ercot_market_design: str = "auto"  # ERCOT scarcity-pricing regime:
     # "ordc"  — the 2014-Dec2025 ORDC + RTORDPA reliability-deployment design
     #           (RTORPA from the ORDC curve PLUS the discretionary ECRS/RUC
