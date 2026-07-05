@@ -2,8 +2,8 @@
   "free_parameters": {
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-    "n_entries": 7,
-    "n_residual": 6,
+    "n_entries": 8,
+    "n_residual": 7,
     "entries": [
       {
         "name": "offer_curve_by_group",
@@ -113,6 +113,18 @@
         "n_scalars": 72,
         "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
         "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_committed_below_floor[MISO]",
+        "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+        "identification": "residual",
+        "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+        "value": {
+          "ST_GAS": 0.81
+        },
+        "n_scalars": 1,
+        "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+        "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
       },
       {
         "name": "offer_curve_smoothing",
