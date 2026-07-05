@@ -95,7 +95,9 @@ def derive_export_cap_mw() -> float:
     print(
         f"aggregate p99        {float(np.percentile(agg, 99)):8.1f} MW  (legacy 3,500 ~ p99)"
     )
-    print(f"CAISO_BIDIR_EXPORT_CAP_MW = {round(cap, 1)}  MW  <- copy into transmission.py")
+    print(
+        f"CAISO_BIDIR_EXPORT_CAP_MW = {round(cap, 1)}  MW  <- copy into transmission.py"
+    )
     return cap
 
 
