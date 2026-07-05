@@ -175,13 +175,30 @@ holds a full acute tail (42/27/4 hours >\$1000) — the supply re-scope fires th
 scarcity channel exactly as the measured cap did, from a fully forward-native
 supply.
 
-**One-delta gate (vs the measured-cap baseline, one delta = cap source).** The
-measured-cap baseline (ercot32 recipe, `ercot_reserve_supply_forward` off) was
-re-solved to the identical recipe so the demand-weighted comparison is
-apples-to-apples (both carry the same DAM-AS overlay, so the delta is purely the
-ORDC reserve-dual channel). The per-year dw comparison is recorded in
-`docs/calibration-log.md`; any gap tracks the identification residual (formula
-cap slightly high in 2023 +11%, low in 2025 −12%).
+**One-delta gate (vs the measured-cap baseline, one delta = cap source) —
+PASSED.** The measured-cap baseline (identical ercot32 recipe,
+`ercot_reserve_supply_forward` off) was re-solved so the demand-weighted
+comparison is apples-to-apples (both carry the same DAM-AS overlay, so the delta
+is purely the ORDC reserve-dual channel):
+
+| year | formula-cap dw | measured-cap dw | Δdw | hrs>\$1000 (f / m) | hrs>\$200 (f / m) |
+|---|---|---|---|---|---|
+| 2023 | \$52.89 | \$53.00 | **−\$0.11** | 42 / 42 | 94 / 98 |
+| 2024 | \$35.87 | \$35.87 | **−\$0.00** | 27 / 27 | 81 / 81 |
+| 2025 | \$35.08 | \$35.08 | **+\$0.00** | 4 / 4 | 12 / 12 |
+
+Δdw is **within \$0.11 in the worst year and \$0.00 in 2024/25** — far inside the
+~\$2 gate — and the **acute tail is identical** (42/42, 27/27, 4/4 hrs >\$1000).
+The mean ORDC adder matches (1.84/0.18/0.03 vs 1.88/0.18/0.03).
+
+**Why the ±11% RTOLCAP level residuals do not move price.** The ORDC adder fires
+only when reserve drops into the ~8–12 GW scarcity band (the low RTOLCAP tail);
+there the formula and measured caps agree closely. The annual-mean level
+differences live in the *abundant* high-RTOLCAP hours where the adder is ~\$0, so
+they never reach the price. The forward supply formula therefore reproduces the
+measured cap's price-formation role essentially exactly, from a fully
+forward-native supply — the WS-A gate the plan set. (Recorded in
+`docs/calibration-log.md`.)
 
 ## 6. Files
 
