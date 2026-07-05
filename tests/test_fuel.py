@@ -27,6 +27,7 @@ from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
     apply_miso_zonal_gas_basis,
+    apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     ercot_west_oversupply_collapse_freq,
@@ -34,6 +35,7 @@ from market_sim.data.fuel import (
     iso_monthly_gas_prices,
     load_winter_gas_basis,
     miso_zonal_gas_basis_by_zone,
+    nyiso_downstate_ct_gas_premium,
     nyiso_zonal_gas_offsets,
     pjm_zonal_gas_basis_by_zone,
     resolve_annual_gas_price,
@@ -1549,6 +1551,101 @@ def test_nyiso_zonal_gas_basis_skips_other_isos():
     config = ScenarioConfig(iso="PJM", hours=hours, nyiso_zonal_gas_basis=True)
     prices = base.copy()
     apply_nyiso_zonal_gas_basis(prices, fleet, config, 2023)
+    np.testing.assert_array_equal(prices, base)
+
+
+def _nyiso_ct_fleet(hours: int = 8760):
+    """Downstate + upstate CT_PEAKERs and a downstate CC, for the CT basis test."""
+    generators = [
+        Generator(
+            unit_id="CT_NYC",
+            name="NYC peaker",
+            zone="NYC",
+            fuel_type="gas_ct",
+            pmax_mw=100.0,
+            plant_group="CT_PEAKER",
+        ),
+        Generator(
+            unit_id="CT_LI",
+            name="LI peaker",
+            zone="Long_Island",
+            fuel_type="gas_ct",
+            pmax_mw=100.0,
+            plant_group="CT_PEAKER",
+        ),
+        Generator(
+            unit_id="CT_UP",
+            name="Upstate peaker",
+            zone="Upstate_West",
+            fuel_type="gas_ct",
+            pmax_mw=100.0,
+            plant_group="CT_PEAKER",
+        ),
+        Generator(
+            unit_id="CC_NYC",
+            name="NYC combined cycle",
+            zone="NYC",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+            plant_group="CC_REGULAR",
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _NYISO_ZONES, hours=hours)
+
+
+def test_nyiso_downstate_ct_gas_premium_positive_year_round():
+    """The measured premium is positive year-round and summer-peaked."""
+    prem = nyiso_downstate_ct_gas_premium(2023)
+    assert prem is not None
+    assert prem.shape == (12,)
+    assert (prem >= 0.0).all()  # floored at 0
+    assert prem.min() > 0.5  # 2023: city-gate above the hub in every month
+    assert prem[6] > 3.0  # July: downstate interruptible-gas scarcity peak
+    assert prem[6] == prem.max()
+    # 2024 Jan floors to 0 (the arctic pipeline-hub spike exceeds the city gate)
+    prem24 = nyiso_downstate_ct_gas_premium(2024)
+    assert prem24[0] == 0.0
+
+
+def test_nyiso_downstate_ct_gas_basis_lifts_only_downstate_peakers():
+    """Only NYISO downstate CT_PEAKERs are lifted, and only with the flag on."""
+    hours = 8760
+    fleet = _nyiso_ct_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="NYISO", hours=hours)
+
+    off = base.copy()
+    apply_nyiso_downstate_ct_gas_basis(off, fleet, config, 2024)
+    np.testing.assert_array_equal(off, base)  # flag off -> no-op
+
+    on = base.copy()
+    apply_nyiso_downstate_ct_gas_basis(
+        on, fleet, config.with_overrides(nyiso_downstate_ct_gas_basis=True), 2024
+    )
+    prem = nyiso_downstate_ct_gas_premium(2024)
+    july = 24 * 181 + 5  # an hour inside July (month index 6)
+    nyc = fleet.unit_ids.index("CT_NYC")
+    li = fleet.unit_ids.index("CT_LI")
+    up = fleet.unit_ids.index("CT_UP")
+    cc = fleet.unit_ids.index("CC_NYC")
+    # downstate CT peakers lifted by the July premium
+    assert on[nyc, july] == 3.0 + prem[6]
+    assert on[li, july] == 3.0 + prem[6]
+    # upstate CT peaker and downstate CC untouched
+    assert on[up, july] == 3.0
+    assert on[cc, july] == 3.0
+    # January premium is zero -> no lift even downstate
+    assert on[nyc, 5] == 3.0
+
+
+def test_nyiso_downstate_ct_gas_basis_skips_other_isos():
+    """A non-NYISO ISO is untouched even with the flag set."""
+    hours = 8760
+    fleet = _nyiso_ct_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="NEISO", hours=hours, nyiso_downstate_ct_gas_basis=True)
+    prices = base.copy()
+    apply_nyiso_downstate_ct_gas_basis(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
 
 
