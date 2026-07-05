@@ -11,10 +11,24 @@ The market simulator's BAU **forecast** run is not yet production-ready. Until
 it is, the exporter's `--dummy` mode is the working source: it emits a
 deterministic **synthetic** LMP series per (iso, year) in the exact contract
 format so intake, validation, and portfolio runs can be exercised end-to-end
-now. The cache-reading path is fully wired and smoke-tested; flipping from
-stub to real data is dropping the `--dummy` flag once the forecast is blessed.
-A dummy file's provenance sidecar is loudly marked `synthetic-dummy` — never
-present one as a market-sim forecast.
+now. A dummy file's provenance sidecar is loudly marked `synthetic-dummy` —
+never present one as a market-sim forecast.
+
+**Correction (2026-07-05, `docs/validation-2026-07-05-ercot-2024-backcast.md`):**
+the cache-reading path is wired for **forecast** years only.
+`market_sim.results.cache` (`results/{iso}/{cache_key}/year_{year}.parquet`) is
+populated by exactly one function, `market_sim.runner.run_scenario_iso`, whose
+year loop is hardcoded 2026-2050 regardless of `config.mode` — no code path
+populates it for a backcast year (2023-2025), including
+`scripts/run_calibration_full.py`, which writes an entirely different,
+uncached bundle format. The first real (ERCOT, backcast 2024) sweep required a
+one-off bridge script outside this tool to re-solve the current keeper's
+config via `scripts.run_calibration.run_year` and populate the standard cache
+by hand; see the validation memo for the full diagnosis and a second
+canonicalization mismatch it surfaced (`resolve_bau_config`'s ISO-default
+heuristic can silently override a keeper's deliberate non-default flag). This
+does not block backcast-validation studies (the workaround is scriptable) but
+is a real gap for whoever next lifts an ISO's forecast hold.
 
 **Selection decided ahead of need (ADR 0015, PS-12, 2026-07-02)** — when the
 hold lifts there are zero new decisions:
