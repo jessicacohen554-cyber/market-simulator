@@ -165,6 +165,33 @@ class TestKnownYearPeakForesight(RunnerTestBase):
         self.assertAlmostEqual(got["peak_demand_next"], expected, places=6)
 
 
+class TestPriceSignalByteIdentity(RunnerTestBase):
+    """Defaults (alpha=1.0, lookahead off) pass econ_prices through unchanged."""
+
+    def test_price_signal_is_econ_prices_object_at_defaults(self):
+        captured = []
+        original = runner.PriorYearResults
+
+        def spy(**kwargs):
+            captured.append(kwargs)
+            return original(**kwargs)
+
+        config = ScenarioConfig(iso="ERCOT")
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "PriorYearResults", side_effect=spy),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+
+        self.assertGreaterEqual(len(captured), 2)
+        for kwargs in captured:
+            # Byte-identical: the signal IS the prices array object (plan
+            # §8.2 — hash of price_signal vs econ_prices).
+            self.assertIs(kwargs["price_signal"], kwargs["prices"])
+
+
 class TestP2CommitmentLegacyWarning(RunnerTestBase):
     """P2 commitment (commitment_enabled=True) is a legacy, opt-in path."""
 

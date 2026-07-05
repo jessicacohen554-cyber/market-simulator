@@ -3172,6 +3172,38 @@
       "flags": []
     },
     {
+      "param_id": "scenario.entry_lookahead_reprice",
+      "display_name": "Entry Lookahead Reprice",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "Model design lever, zero fitted parameters (capacity-economics plan 2026-07 SS2.3.2: stack re-price of the entering year's known net load with the runner's ORDC scarcity tail; every input is an existing model quantity, rule 13 admissible). Promotion decided by the foresight A/B (plan SS2.4).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Screens-only signal: never touches dispatch, results, or the backcast.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.entry_price_signal_alpha",
+      "display_name": "Entry Price Signal Alpha",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Model design lever, zero fitted parameters (capacity-economics plan 2026-07 SS2.2: EWMA anti-whipsaw blend of the capacity screens' price signal; alpha=1.0 default is byte-identical to raw prior-year prices). Promotion decided by the foresight A/B (plan SS2.4).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Screens-only signal: never touches dispatch, results, or the backcast.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-05",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,

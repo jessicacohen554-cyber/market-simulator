@@ -684,6 +684,26 @@ class ScenarioConfig:
     # CPUC RA 15%, PJM IRM, MISO PRMR, NYSRC IRM, ISO-NE ICR-derived — see the
     # registry's per-ISO citations). Registered tornado channel for the
     # reserve-margin band (rule 24); never fitted to a residual.
+    entry_price_signal_alpha: float = 1.0  # EWMA blend of the price signal the
+    # capacity screens (retirement / new entry / storage entry) consume:
+    # signal_Y = alpha x econ_prices_{Y-1} + (1 - alpha) x signal_{Y-1}.
+    # 1.0 (default) = byte-identical to raw prior-year prices; < 1.0 smooths
+    # single-draw whipsaw (one weather/outage-shaped year triggering a
+    # retirement or entry wave the next year reverses). Anti-whipsaw, NOT
+    # anti-lag — it looks backward and mildly worsens lag under monotone
+    # growth. A/B control arm per capacity-economics plan 2026-07 §2.2/§2.4;
+    # probe value 0.6. Screens-only: never touches dispatch, results, or the
+    # backcast (backcast mode has no capacity evolution).
+    entry_lookahead_reprice: bool = False  # GATED, default-OFF growth-scaled
+    # lookahead (plan §2.3.2): re-price the prior year's marginal-cost supply
+    # stack against the ENTERING year's known net-load duration
+    # (demand_Y - prior-year VRE output), with the same ORDC scarcity curve
+    # the runner's capacity-economics overlay uses where the stack exhausts.
+    # The pro-forma a real developer runs — projected load against the known
+    # fleet — with ZERO fitted parameters (every input is an existing model
+    # quantity; rule 13 admissible: regenerates from forward drivers in any
+    # year). Feeds ONLY the capacity screens (retirement / new entry /
+    # storage), never dispatch, results, or the backcast.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -3938,6 +3958,8 @@ TIER_TAGS: dict[str, int] = {
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
     "planning_reserve_margin_override": 2,
+    "entry_price_signal_alpha": 2,
+    "entry_lookahead_reprice": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
