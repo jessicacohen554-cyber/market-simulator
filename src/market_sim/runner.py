@@ -44,7 +44,11 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
-from market_sim.data.confirmed_retirements import ConfirmedExit, load_confirmed_exits
+from market_sim.data.confirmed_retirements import (
+    ConfirmedExit,
+    load_announced_reversal_plants,
+    load_confirmed_exits,
+)
 from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
@@ -114,6 +118,7 @@ from market_sim.results.evolution_ledger import (
     new_events,
     write_ledger,
 )
+from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
 from market_sim.pipeline import PriorYearResults
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
@@ -603,6 +608,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 max(e.exit_year for e in confirmed_exits),
             )
 
+    # Retirement-reversal supersession (announced channel): plants whose
+    # announced exit was reversed outright by a public counter-instrument
+    # (every registry row superseded — e.g. Byron/Dresden's 2021 dates
+    # reversed by IL CEJA) keep running; their stale EIA-860 dates are
+    # ignored by evolve_fleet step 1. Deliberately NOT gated on
+    # confirmed_exits_enabled: honoring a documented reversal is an
+    # announced-channel data correction, not an exogenous exit injection.
+    announced_reversal_plants: frozenset[int] = frozenset()
+    if config.mode == "forecast":
+        announced_reversal_plants = load_announced_reversal_plants(iso)
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
@@ -691,6 +707,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 events=evo_events,
                 confirmed_exits=confirmed_exits,
                 peak_demand_next=peak_demand,
+                announced_reversal_plants=announced_reversal_plants,
             )
             # Persist the reliability floor's attribution log next to the
             # per-year results parquet (rule 20 analogue: floor-retained MW
@@ -1540,6 +1557,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # carries the scarcity lift via the reserve clearing price, so the
         # post-solve adder is skipped to avoid double-counting.
         econ_prices = result.prices
+        overlay_adder = None  # captured for the screens' reserve-price signal
         if (
             config.scarcity_pricing_enabled
             and config.scarcity_price_overlay
@@ -1578,6 +1596,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config, year, r_online + r_offline, lam, reserves_online_mw=r_online
             )["scarcity_adder"]
             econ_prices = result.prices + adder[None, :]
+            overlay_adder = adder
             logger.info(
                 "year %d: ORDC scarcity adder for capacity economics — "
                 "mean $%.2f/MWh, >$10 in %d h, max $%.0f",
@@ -1620,6 +1639,55 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
         )
         price_signal_prev = price_signal
+
+        # Reserve-price signal for next year's capacity screens (capacity-
+        # economics plan §5 step 2, screen_reserve_value_enabled): the hourly
+        # $/MWh a reserve-eligible unit earns holding reserve instead of
+        # selling energy, so the retirement/new-entry screens can value each
+        # unit's per-hour best use max(energy margin, reserve price). Exactly
+        # one mechanism produces it (rule 19):
+        #  * co-opt duals — under ercot_thermal_as_endogenous the per-hour
+        #    binding reserve price from the solve's own reserve_price_by_family
+        #    (all-products tier for synchronized units; the non-fast/Non-Spin
+        #    tier for offline-capable quick-starts, mirroring the co-opt's
+        #    headroom cascade). Supersedes that flag's annual per-fuel rate.
+        #  * else the post-solve ORDC scarcity adder — ERCOT pays real-time
+        #    on-line/off-line reserves the same ORDC price the energy adder
+        #    carries (RTORPA/RTOFFPA, Nodal Protocols §6.5.7.5), so the
+        #    published-curve adder is the reserve price both tiers see.
+        # None when the flag is off or neither mechanism ran — the screens
+        # then keep the legacy annual AS credits.
+        reserve_price_signal = None
+        reserve_price_signal_slow = None
+        if getattr(config, "screen_reserve_value_enabled", True):
+            rp_fam = getattr(result, "reserve_price_by_family", None)
+            if (
+                rp_fam is not None
+                and iso == "ERCOT"
+                and getattr(config, "ercot_thermal_as_endogenous", False)
+            ):
+                rp = np.asarray(rp_fam, dtype=float)
+                if rp.ndim == 2 and rp.shape[1] > 0:
+                    if getattr(config, "ercot_multiproduct_as_coopt", False):
+                        products = list(ERCOT_AS_PRODUCTS)
+                        slow_cols = [
+                            p
+                            for p in range(min(rp.shape[1], len(products)))
+                            if products[p][2] != "fast"
+                        ]
+                    else:
+                        # Single-product co-opt: the lumped contingency
+                        # reserve is suppliable by quick-starts too.
+                        slow_cols = list(range(rp.shape[1]))
+                    reserve_price_signal = rp.max(axis=1)
+                    reserve_price_signal_slow = (
+                        rp[:, slow_cols].max(axis=1)
+                        if slow_cols
+                        else np.zeros(rp.shape[0], dtype=float)
+                    )
+            elif overlay_adder is not None:
+                reserve_price_signal = overlay_adder
+                reserve_price_signal_slow = overlay_adder
 
         # Typed cross-year state (pipeline.PriorYearResults, AR-2). The .get /
         # __getitem__ shims keep every dict-style reader (this loop's next
@@ -1674,6 +1742,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
                 else None
             ),
+            # Reserve-price signal (plan §5 step 2) — the hourly reserve value
+            # next year's retirement/new-entry screens max against the energy
+            # margin (synchronized tier / offline quick-start tier).
+            reserve_price_signal=reserve_price_signal,
+            reserve_price_signal_slow=reserve_price_signal_slow,
+            # Zonal hourly CF profiles + zone ordering so the VRE new-entry
+            # screen values its build zone's capture shape against that
+            # zone's prices (plan §6 CX-6c) instead of a flat mean.
+            zone_names=list(zone_names),
+            wind_cf=wind_cf,
+            solar_cf=solar_cf,
             # Renewable-pool and accredited-storage-firm capacity for next
             # year's reserve-margin adequacy backstop.
             wind_cap_mw=float(np.sum(wind_cap)),
