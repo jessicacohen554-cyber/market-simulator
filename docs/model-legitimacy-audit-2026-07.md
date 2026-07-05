@@ -24,6 +24,7 @@ The audit nevertheless confirms the owner's complaint and locates the systemic r
    CTs. Model CT output for hours 0–14 has coefficient of variation **0.000** (perfectly flat
    ~134–157 MW every day) vs 0.35–0.45 in CAMPD actuals; ~half of modeled CAISO CT energy sits at
    that floor. The annual-volume scoring rubric *rewarded* this — nothing scores diurnal shape.
+   *(RESOLVED 2026-07-05 — scrubbed and verified at HEAD; see §1.4.)*
 2. **The dominant overfitting surface is the tuned-scalar population iterated in-sample:** ~290
    residual-identified scalars model-wide (~230 in the per-ISO offer-curve multiplier dicts and
    coal sigmoids), selected over ≥400 solves all scored on the same three years, with a
@@ -113,6 +114,38 @@ forces exactly the units that *do* cycle off overnight in the real market.
 retire them in favour of the drag, which already covers h15–22); gate bridge eligibility on
 `min_down_hours ≥ 4` instead of a hard-coded class tuple; reconcile the three stacked CT floors
 into one mechanism; add the shape diagnostics of §7 so this class of feature cannot silently return.
+
+### 1.4 RESOLUTION — the three-engine forcing is scrubbed and verified at HEAD *(2026-07-05, W3-P2 `caiso-52-ct-scrub`)*
+
+**Red flag CLOSED at the mechanism level.** All three fixes above are merged; the CT forcing is now a
+single audit-sanctioned mechanism, defended at three independent code layers so it cannot silently
+return:
+
+1. **All-24h reliability CT limbs → windowed then disabled.** `reliability_floor_coeffs_CAISO.csv`
+   CT_PEAKER/CT_CHP netload limbs carry `start_hour/end_hour = 15/21`; every CAISO row is now
+   `enabled=False` (loader: `enabled AND NOT r1_disabled`, `iso_configs.py:1012`). The
+   `np.repeat(day_flagged,24)` all-24h gate can no longer bind.
+2. **Rule-19 code dedup.** `drop_drag_owned_reliability_specs` (`iso_configs.py:1059`) drops every
+   CT_PEAKER reliability limb whenever `ct_netload_drag` is active — a re-enabled limb still cannot
+   stack with the drag.
+3. **Bridge eligibility by physics.** The economic RA startup bridge gates on
+   `min_down ≥ RA_BRIDGE_ECON_MIN_DOWN_HOURS` (`constants.py:120 = 4.0`; `commitment.py:816`, rule 17);
+   fast-start CTs (min-down 1 h) are never economically bridged.
+
+**Verification** (`results/calibration/caiso55_ctscrub_head`, byte-faithful replay of the caiso-51
+keeper config at 2026-07-05 HEAD, all 3 years; `legitimacy_diagnostics.json` committed). The §1.1
+symptom is gone: CT_PEAKER off-peak CV ratio **0.000 → 3.05–3.52**, D-4 off-window binding **62–66% →
+0%** all years, CT forcing now one windowed mechanism (net-load drag; RA-bridge CT share <0.4%). The
+flagged "keeper-reproducibility drift" (CT ~3.4→~1.7 TWh) is the **scrub effect** vs the pre-scrub
+keeper, reproducing committed caiso-52 (CT 2.12/1.73/1.30 vs 1.97/1.56/1.15 TWh) — not a bug.
+
+**Still open, but NOT a floor-scrub item (rule #1 — do not re-floor):** D-2 CT forced share
+59.7/66.7/69.4% > 10% persists because the P1 energy-only zonal merit order prices thermally-dominated
+CTs out of the evening ramp — the **evening-merit structural gap** (`FINDING-caiso-evening-merit-2026-07-04.md`),
+needing CC ramp/min-up-down commitment + sub-zonal LA-basin transmission (a large build). The scrubbed
+config carries the disclosed C3a evening-scarcity regressions, so **no keeper swap**: keeper stays
+caiso-51 until that structure lands. D-5 parity (the w2-caiso-ra-p2 wiring gap) and ST_GAS D-1 shape are
+separate, pre-existing. Full disposition: `docs/calibration-log.md` 2026-07-05 CAISO caiso-55 entry.
 
 ---
 
