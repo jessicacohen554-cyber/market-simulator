@@ -20,12 +20,13 @@ DATA_ROOT seam
 default) ``DATA_ROOT == REPO_ROOT``; setting it relocates the whole data tree
 in one move (e.g. to a mounted dataset).
 
-Forward-looking helpers
------------------------
-``CLEAN_DIR``, ``DICTIONARY_DIR`` and :func:`clean_path` describe the *future*
-``data/clean`` layout. They are defined here so later waves can migrate onto
-them, but nothing in the model reads them yet. ``RAW_DIR`` is now live and
-aliases :data:`RAW_DATA_DIR`.
+Clean seam
+----------
+``CLEAN_DIR``, ``DICTIONARY_DIR`` and :func:`clean_path` describe the
+``data/clean`` layout (curated, schema-validated Parquet — the write_clean/
+read_clean contract). The seam is live: 10+ data modules read through it
+(``data/fleet.py``, ``data/eia_loader.py``, ``data/campd.py``, etc.).
+``RAW_DIR`` is also live and aliases :data:`RAW_DATA_DIR`.
 """
 
 from __future__ import annotations
