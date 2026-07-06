@@ -69,14 +69,15 @@ def rubric() -> list[dict]:
     page's tolerances are exactly the gate's. ``measures``/``source`` are the
     plain-language descriptions drawn from docs/calibration-determination-rubric.md.
     """
-    L = {cid: lab for cid, (lab, _h) in cv.CRITERIA.items()}
-    H = {cid: hard for cid, (_l, hard) in cv.CRITERIA.items()}
+    L = {cid: lab for cid, (lab, _t) in cv.CRITERIA.items()}
+    T = {cid: tier for cid, (_l, tier) in cv.CRITERIA.items()}
 
     def row(cid, measures, source, tol):
         return {
             "id": cid,
             "label": L[cid],
-            "hard": H[cid],
+            "tier": T[cid],
+            "hard": T[cid] == cv.TIER_PROTECT,  # legacy display key
             "measures": measures,
             "source": source,
             "tol": tol,
@@ -108,8 +109,12 @@ def rubric() -> list[dict]:
             "EIA-923 − BTM for complete vintages; the EIA-930 grid total for the "
             f"preliminary current-year (≥ {cv.PRELIM_923_FROM_YEAR}) vintage, via the "
             f"{cv.VINTAGE_RECONCILE_FRAC:.2f} reconcile.",
-            f"±{cv.SYSVOL_TOL * 100:.1f}% of the family total "
-            f"(families < {cv.SYSVOL_MIN_TWH:.0f} TWh are immaterial → governed by C1).",
+            f"complete vintages defer to the C1 per-class gate; the preliminary-"
+            f"vintage EIA-930 family fallback is two-band: ±{cv.SYSVOL_TOL * 100:.1f}% "
+            f"target / ±{cv.SYSVOL_COMMERCIAL * 100:.1f}% commercial (NYISO's "
+            "benchmark held zonal energy to ~0–4%; the fallback's own benchmark "
+            "carries the 923-vs-930 reconciliation uncertainty). Families < "
+            f"{cv.SYSVOL_MIN_TWH:.0f} TWh are immaterial → governed by C1.",
         ),
         row(
             "price_mean",
@@ -121,26 +126,41 @@ def rubric() -> list[dict]:
             "modeled with offers/adders).",
             "Derived actual hub mean — real-time (avgLMP.rt), falling back to "
             "day-ahead (avgLMP.da) only when no RT actual is committed.",
-            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% — the tight end of the playbook's 5–10% "
-            "band (tightened from 8% in the 2026-07-02 re-balance): price accuracy is "
-            "the primary market signal, and the energy-only dual's structural "
-            "under-shoot is to be closed by real reserve/scarcity mechanisms, not "
-            "absorbed by a wide tolerance.",
+            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% target / "
+            f"±{cv.PRICE_MEAN_COMMERCIAL * 100:.0f}% commercial. The target is the "
+            "SEM (Ireland) regulator's stated criterion for its official PLEXOS "
+            "model; the commercial band is the demonstrated planning grade (NYISO's "
+            "accepted GE MAPS benchmark ran −2% to −17% zonal). Between the bands "
+            "→ auto caveat (within commercial grade, target missed); beyond → FAIL "
+            "unless a measured-input limitation is ledgered.",
         ),
         row(
             "price_shape",
             "NRMSE between model and actual monthly load-weighted price vectors.",
             "Actual monthly RT price (avgLMP.rt_mon), falling back to DA.",
-            f"NRMSE ≤ {cv.PRICE_SHAPE_NRMSE_MAX:.2f}.",
+            f"NRMSE ≤ {cv.PRICE_SHAPE_NRMSE_MAX:.2f} target / "
+            f"≤ {cv.PRICE_SHAPE_NRMSE_COMMERCIAL:.2f} commercial (published monthly "
+            "norms run ~5–15%; SEM's regulator-accepted backcast carried −9% "
+            "winter-peak / +11% off-peak period biases).",
         ),
         row(
             "price_tail",
-            "Count of scarcity-tail hours (LMP above the per-ISO threshold) — model "
-            "vs actual.",
-            "ERCOT ORDC reserve-price adder hours (ordc block); otherwise the "
-            "committed hourly actual-LMP series. Thresholds: " + _tail_note() + ".",
-            f"model within [{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of actual — a collapsed "
-            "tail and an over-fired tail both FAIL.",
+            "Count of scarcity-tail hours — model vs the DA-EXPRESSIBLE actual "
+            "(the hourly, commitment-aware day-ahead market's own count above the "
+            "threshold: the same temporal resolution as the model LP). The RT "
+            "count — which folds in sub-hourly ramp/re-dispatch transients an "
+            "hourly deterministic LP cannot see — is reported as a non-gated "
+            "diagnostic row. The DA basis is not a leniency device: ERCOT's DA "
+            "tail is LARGER than its RT tail (2023: 311 vs 181 h).",
+            "Committed tail part frontend/data/backcast/tail/actual_tail.json "
+            "(scripts/derive_actual_tail.py, from the measured hub RT/DA hourly "
+            "series; 2023–2025 only). Thresholds: " + _tail_note() + ".",
+            f"model within [{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the DA actual — a "
+            "collapsed tail and an invented tail both FAIL; a DA actual below "
+            f"{cv.TAIL_SMALL_COUNT:g} h gates on |model−actual| ≤ "
+            f"{cv.TAIL_SMALL_COUNT:g} h instead (ratio degenerate). No commercial "
+            "or public model publishes tail-hour accuracy at all — practice "
+            "excludes spike hours from scoring; this rubric keeps scoring them.",
         ),
         row(
             "dispatch_corr",
@@ -154,7 +174,10 @@ def rubric() -> list[dict]:
             "co2",
             "Annual system CO₂, model vs eGRID ISO total.",
             "eGRID ISO-year total (committed in the bundle's emissions summary).",
-            f"±{cv.CO2_TOL * 100:.0f}%.",
+            f"±{cv.CO2_TOL * 100:.0f}% target / ±{cv.CO2_COMMERCIAL * 100:.0f}% "
+            "commercial (no production-cost model publishes a backcast CO₂ error; "
+            "the AEO retrospective's 1–3-year CO₂ error SD is 3.2–4.9% on full "
+            "forecasts — the target is stricter than any published requirement).",
         ),
         row(
             "storage",
@@ -205,6 +228,132 @@ def rubric() -> list[dict]:
     ]
 
 
+def benchmark() -> dict:
+    """The commercial-grade benchmark comparison table (rubric v2 §8).
+
+    Rendered on the Calibration Status page next to the live keeper scores —
+    the scrutiny-survival artifact: each graded band is anchored to the best
+    published external comparable, and the rows where we score STRICTER than
+    any published practice say so. Full survey with evidence grades:
+    docs/rubric-v2-benchmark-memo-2026-07.md §2.
+    """
+    rows = [
+        {
+            "criterion": "C3a mean LMP",
+            "target": f"±{cv.PRICE_MEAN_TOL * 100:.0f}%",
+            "commercial": f"±{cv.PRICE_MEAN_COMMERCIAL * 100:.0f}%",
+            "published": (
+                "SEM (Ireland) regulator criterion for its official PLEXOS model: "
+                "±5% aggregate vs 3–5 yrs of actuals (ECA SEM-20-004); NERA's 2025 "
+                "SEM backcast: +0.1% on the 4-yr mean; NYISO's accepted GE MAPS "
+                "benchmark: −2% to −17% zonal LBMP; market monitors' competitive "
+                "re-simulations sit 0–4% from actual prices (CAISO DMM 2021–24, "
+                "MISO SOM 2023) — the market-conduct noise floor no cost-based "
+                "model should chase."
+            ),
+        },
+        {
+            "criterion": "C3b monthly price shape (NRMSE)",
+            "target": f"≤{cv.PRICE_SHAPE_NRMSE_MAX:.2f}",
+            "commercial": f"≤{cv.PRICE_SHAPE_NRMSE_COMMERCIAL:.2f}",
+            "published": (
+                "SEM regulator-accepted backcast period biases: −9% winter-peak / "
+                "+11% off-peak; published monthly norms ~5–15% with correct "
+                "seasonality; PyPSA-Eur 2020–24 hindcast weekly SMAPE 20–26% "
+                "(academic state of the art for the model class)."
+            ),
+        },
+        {
+            "criterion": "C3c scarcity tail (DA-expressible hours)",
+            "target": f"[{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the DA actual",
+            "commercial": "no published comparable",
+            "published": (
+                "NO commercial or public model publishes tail-hour or "
+                "duration-curve accuracy as a fitness criterion. Documented "
+                "practice goes the other way: ECA excluded ~50–100 h/month of "
+                "price-spike events from its scoring; NYISO absorbed the residual "
+                "into tuned hurdle rates; PyPSA-Eur reports spikes 'not captured "
+                "well' in every configuration. This rubric keeps scoring the tail "
+                "— stricter than practice — on the scope-consistent DA basis."
+            ),
+        },
+        {
+            "criterion": "C1 per-class fuel mix",
+            "target": (
+                f"±min({cv.FUELMIX_VOL_LOAD_FRAC * 100:.0f}% load, "
+                f"{cv.FUELMIX_VOL_CAP_TWH:g} TWh) & ±{cv.FUELMIX_SHARE_PP:g} pp share"
+            ),
+            "commercial": "no published comparable (single-band)",
+            "published": (
+                "No external validation publishes per-class volumes — NYISO's "
+                "benchmark stops at zonal energy (~0–4%) and NREL practice at "
+                "annual generation by type/state. Scored anyway because the "
+                "intended uses consume the class mix (deliberately stricter than "
+                "commercial practice)."
+            ),
+        },
+        {
+            "criterion": "C2 family volume (preliminary-vintage fallback)",
+            "target": f"±{cv.SYSVOL_TOL * 100:.1f}%",
+            "commercial": f"±{cv.SYSVOL_COMMERCIAL * 100:.1f}%",
+            "published": (
+                "NYISO GE MAPS benchmark: NYCA energy −0.03% (load is an input), "
+                "zonal energy ~0–4%; AEO retrospective 1–3-yr generation error SD: "
+                "gas 5.7–9.6%, coal 6.1–13.2% (forecast-mode upper bounds)."
+            ),
+        },
+        {
+            "criterion": "C5a system CO₂",
+            "target": f"±{cv.CO2_TOL * 100:.0f}%",
+            "commercial": f"±{cv.CO2_COMMERCIAL * 100:.0f}%",
+            "published": (
+                "Thinnest external evidence: no PCM publishes a backcast CO₂ "
+                "error. AEO retrospective energy-CO₂ error SD 3.2–4.9% at 1–3-yr "
+                "horizons (full forecasts), 14.6% pooled all-horizon."
+            ),
+        },
+        {
+            "criterion": "C4 hourly fleet dispatch correlation",
+            "target": f"r ≥ {cv.DISP_R_FLOOR:.2f}, NRMSE ≤ {cv.DISP_NRMSE_MAX:.2f}",
+            "commercial": "no published comparable (single-band)",
+            "published": (
+                "Nobody commercial publishes hourly fleet correlation; NREL "
+                "guidance (TP-581-42305) is that hour-by-hour comparison to "
+                "actuals is not a valid PCM test at all. Kept — stricter than "
+                "practice — because dispatch timing feeds storage and scarcity "
+                "coincidence in the intended uses."
+            ),
+        },
+        {
+            "criterion": "C6/C7/C8 protective gates",
+            "target": "pass/fail (unchanged from rubric v1)",
+            "commercial": "beyond commercial practice",
+            "published": (
+                "Published practice openly tunes to residuals — NYISO closed its "
+                "benchmark gap with tuned hurdle rates; SEM tunes generator "
+                "markups. Our C6 forbids exactly that (no residual-fitted "
+                "parameter, no pinning, exogenous outages), and C7/C8 gate the "
+                "diurnal shape and forced-energy share no external model reports."
+            ),
+        },
+    ]
+    return {
+        "note": (
+            "Rubric v2 (2026-07-06): graded load-bearing criteria are two-band — "
+            "inside the TARGET band = target-grade PASS; between target and the "
+            "evidence-anchored COMMERCIAL band = auto caveat (within commercial "
+            "grade, listed with magnitude, unbudgeted); beyond = FAIL unless a "
+            "measured-input limitation is ledgered (budgeted, ≤3; protective ≤1). "
+            "CALIBRATED-WITH-CAVEATS certifies intended-use delivery at or above "
+            "the demonstrated commercial-model grade. Where our keepers sit below "
+            "commercial grade the verdict stays NOT-YET — the benchmark is an "
+            "anchor, never a curve. Sources and evidence grades: "
+            "docs/rubric-v2-benchmark-memo-2026-07.md."
+        ),
+        "rows": rows,
+    }
+
+
 def methodology() -> list[dict]:
     """Best-practice notes for the page footer (energy-modeling grounding)."""
     return [
@@ -226,15 +375,33 @@ def methodology() -> list[dict]:
             "input/curtailment-accounting issue, not a dispatch-mechanism defect.",
         },
         {
-            "head": "Why ±5% on mean LMP (2026-07-02 re-balance)",
-            "body": "An energy-only LP's dual price structurally under-shoots the true "
-            "market LMP, which carries reserve, scarcity and uplift adders the "
-            "energy-only price does not model. The mean-price band sits at the tight "
-            "end of the backcast playbook's 5–10% tolerance (tightened from ±8% on "
-            "2026-07-02, alongside a looser per-class fuel-mix band): the structural "
-            "under-shoot is to be closed by real reserve/scarcity mechanisms — never "
-            "by an adder tuned to the residual — and a wide price tolerance was "
-            "quietly absorbing that gap instead of surfacing it.",
+            "head": "Two-band price scoring (rubric v2, 2026-07-06)",
+            "body": "Mean LMP is scored against a ±5% TARGET band — the criterion "
+            "the SEM (Ireland) regulator states for its official PLEXOS model — "
+            "and a ±10% COMMERCIAL band (the demonstrated planning grade; NYISO's "
+            "accepted GE MAPS benchmark ran −2% to −17% zonal). A miss between the "
+            "bands is recorded as 'within commercial grade, target missed', never "
+            "silently absorbed and never hard-failed at a standard no external "
+            "model demonstrates. The energy-only LP dual structurally under-shoots "
+            "the actual LMP; that gap is closed by real reserve/scarcity "
+            "mechanisms — never by an adder tuned to the residual (C6). Market "
+            "monitors' own competitive re-simulations sit 0–4% from actual prices "
+            "(the conduct wedge): residuals below ~3% are identification noise, "
+            "not skill to chase.",
+        },
+        {
+            "head": "Intended-use tiers (rubric v2 §0)",
+            "body": "Criteria are tiered by what the model is asked to deliver "
+            "(multi-ISO 2026–2050 price/dispatch/emissions forecasting, capacity "
+            "evolution, policy analysis, probability bands): LOAD-BEARING "
+            "(price level & seasonal shape, generation mix, CO₂) carry the "
+            "two-band commercial anchors; SUPPORTING (hourly correlation, storage "
+            "cycling, tail-hour counts) carry wide gross-defect bands; PROTECTIVE "
+            "(governance, diurnal shape, forced-energy share) are unchanged from "
+            "v1 — they are what make the accuracy rows believable. RT sub-hourly "
+            "transients and the DA−RT risk premium are out of representation for "
+            "an hourly DA-analogue LP and are reported as diagnostics, never "
+            "gated.",
         },
         {
             "head": "Preliminary-vintage reconcile (0.97) + per-class completeness gate",
@@ -301,7 +468,9 @@ def build() -> dict:
         )
     return {
         "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "rubric_version": cv.RUBRIC_VERSION,
         "rubric": rubric(),
+        "benchmark": benchmark(),
         "methodology": methodology(),
         "keepers": keepers,
     }

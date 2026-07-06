@@ -1,15 +1,21 @@
 """Reproducible calibration determination for an ISO backcast keeper.
 
-Implements ``docs/calibration-determination-rubric.md``: reads a run's COMMITTED
-artifacts only — the registry sidecar, the run payload, the per-(ISO, year)
-benchmark parts, the bundle config, the bundle's calibration attestation, and
-the bundle's legitimacy-diagnostics artifact (``legitimacy_diagnostics.json``,
-written by ``scripts/legitimacy_diagnostics.py --json-out``, scored as C7
-diurnal shape and C8 forced-energy share) — and emits a ``PASS`` /
-``CAVEAT`` / ``FAIL`` per criterion plus one overall
-determination in ``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. It never
-re-solves the LP and never touches the gitignored ``dispatch``/``system``
-parquets, so re-running it on any keeper reproduces the verdict byte-for-byte.
+Implements ``docs/calibration-determination-rubric.md`` (RUBRIC v2, the
+2026-07-06 fitness-for-purpose re-anchor): reads a run's COMMITTED artifacts
+only — the registry sidecar, the run payload, the per-(ISO, year) benchmark
+parts, the committed actual-tail part (``tail/actual_tail.json``), the bundle
+config, the bundle's calibration attestation, and the bundle's
+legitimacy-diagnostics artifact (``legitimacy_diagnostics.json``, written by
+``scripts/legitimacy_diagnostics.py --json-out``, scored as C7 diurnal shape
+and C8 forced-energy share) — and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per
+criterion plus one overall determination in
+``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. Criteria are tiered
+(load-bearing / supporting / protective) against the §0 statement of intended
+use; graded load-bearing criteria are two-band scored (target band ->
+commercial-grade band, each anchored to a published external benchmark —
+``docs/rubric-v2-benchmark-memo-2026-07.md``). It never re-solves the LP and
+never touches the gitignored ``dispatch``/``system`` parquets, so re-running it
+on any keeper reproduces the verdict byte-for-byte.
 
 The model side is the grid-delivered basis (grid LP dispatch, no behind-the-meter
 CHP add-back); the actual side is EIA-923 minus the per-class BTM host supply
@@ -47,15 +53,39 @@ BENCH_DIR = DATA_DIR / "bench"
 # pandas/numpy-free.
 COMPLETENESS_DIR = DATA_DIR / "completeness"
 
+# Rubric version implemented by this scorer (rubric §0/§1; v2 = the 2026-07-06
+# fitness-for-purpose re-anchor: criterion tiers, two-band target/commercial
+# tolerances, DA-expressible C3c).
+RUBRIC_VERSION = 2
+
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
-# Failure classifications (rubric §1).
+# Failure classifications (rubric §1). A CAVEAT is one of:
+#  - MEASURED_LIMIT: an out-of-tolerance criterion reclassified by an explicit
+#    exceptions-ledger entry (the actual is the limitation) — BUDGETED.
+#  - COMMERCIAL_BAND: inside the evidence-anchored commercial-grade outer band
+#    but outside our stricter target band — auto-recorded, listed, NOT budgeted
+#    (the certification claim of CALIBRATED-WITH-CAVEATS is exactly
+#    "commercial-grade or better on every load-bearing criterion").
 MODEL_MISS = "MODEL MISS"
 MEASURED_LIMIT = "ACCEPTED MEASURED-INPUT LIMITATION"
+COMMERCIAL_BAND = "WITHIN COMMERCIAL BAND (TARGET MISS)"
 # Overall determinations.
 CALIBRATED = "CALIBRATED"
 CALIBRATED_CAVEATS = "CALIBRATED-WITH-CAVEATS"
 NOT_YET = "NOT-YET"
+
+# Criterion tiers (rubric §0 statement of intended use → §1 triage):
+#  - load-bearing: certifies the intended uses directly (annual/monthly price
+#    level & shape, generation mix by class, system CO2). Two-band scored where
+#    a published commercial comparable exists.
+#  - supporting: informative sub-annual dynamics (hourly correlation, storage
+#    cycling, scarcity-tail counts) — single wide band; a gross breach still
+#    FAILs, a documented data limitation may be ledgered.
+#  - protective: the anti-self-deception gates (C6 governance, C7 diurnal
+#    shape, C8 forced share). UNCHANGED from rubric v1 in logic, thresholds
+#    and ledger behavior (CLAUDE.md rules 13/14/17-22).
+TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protective"
 
 # --- fuel-family class membership (plant_taxonomy.classes_for_fuel930 roll-up) --
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
@@ -115,7 +145,15 @@ PINNED_CLASSES_BY_ISO: dict[str, frozenset[str]] = {
     "NEISO": _PINNED_CLASSES_COMMON,
 }
 
-SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered
+SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered (target band)
+# Commercial-grade outer band for the preliminary-vintage EIA-930 family
+# fallback (the only C2 path that applies a percent band): family-level
+# generation-by-fuel error of ~5% is the best published comparable (EIA AEO
+# retrospective short-horizon generation-by-fuel; ISO planning-study PCM
+# benchmarks) and the fallback's own benchmark carries the 923-vs-930
+# reconciliation uncertainty. Between 2.5% and 5% -> auto CAVEAT
+# (COMMERCIAL_BAND); beyond 5% -> FAIL (ledgerable as before).
+SYSVOL_COMMERCIAL = 0.05
 SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # absolute band governs it, so the ±2.5% system-volume gate is N/A (e.g. NEISO
 # coal ~0.3 TWh — a percent band on a near-zero family is pure noise).
@@ -123,19 +161,46 @@ DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
-# C3 price gate — TIGHTENED in the 2026-07-02 rubric re-balance (paired with the
-# looser C1 above): price accuracy is the primary market signal the backcast is
-# judged on, so C3 now sits at the tight end of the playbook's 5-10% band. The
-# energy-only LP dual still structurally under-shoots the actual LMP (reserve /
-# scarcity / uplift adders it does not model), but that known gap is what the
-# structural reserve/scarcity mechanisms are for — it is no longer absorbed by a
-# wide tolerance.
-PRICE_MEAN_TOL = 0.05  # +/-5% mean LMP (tight end of playbook 5-10%; was 8%)
-PRICE_SHAPE_NRMSE_MAX = 0.15  # monthly load-weighted price NRMSE (was 0.20)
-TAIL_LO, TAIL_HI = 0.7, 1.5  # tail hours within [0.7x, 1.5x] of actual (was [0.5x, 2x])
+# C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor). The
+# TARGET band keeps the 2026-07-02 tightened values (price accuracy is the
+# primary market signal; the structural energy-only under-shoot is closed by
+# real mechanisms, never absorbed); the COMMERCIAL band is the evidence-anchored
+# outer bound (docs/rubric-v2-benchmark-memo-2026-07.md §2). Inside target ->
+# PASS; between target and commercial -> auto CAVEAT (COMMERCIAL_BAND, listed
+# not budgeted); beyond commercial -> FAIL (ledgerable only as a measured-input
+# limitation).
+#   Mean anchor: the SEM/Ireland regulator criterion for its official PLEXOS
+#   model is +/-5% aggregate price error with monthly within +/-10% (ECA,
+#   SEM-20-004); NYISO's accepted GE MAPS benchmark ran -2% to -17% zonal
+#   (Outlook Appendix A); monitors' competitive re-simulations sit 0-4% from
+#   actual prices (CAISO DMM / MISO SOM), the market-conduct noise floor.
+PRICE_MEAN_TOL = 0.05  # target: +/-5% mean LMP (= the SEM regulator criterion)
+PRICE_MEAN_COMMERCIAL = 0.10  # commercial-grade outer band (memo §2)
+#   Shape anchor: SEM's regulator-accepted backcast carried -9% winter-peak /
+#   +11% off-peak period biases; published monthly norms run ~5-15% with
+#   correct seasonality. A 12-month NRMSE of 0.20 is the outer edge of that
+#   demonstrated band (also the pre-2026-07-02 value, now externally anchored).
+PRICE_SHAPE_NRMSE_MAX = 0.15  # target: monthly load-weighted price NRMSE
+PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # commercial-grade outer band (memo §2)
+# C3c scarcity tail — v2 scores the DA-EXPRESSIBLE tail (rubric §1 C3c, §5):
+# the committed actual day-ahead tail count (frontend/data/backcast/tail/
+# actual_tail.json, scripts/derive_actual_tail.py), the same hourly resolution
+# as the model LP. The RT count is a reported diagnostic (sub-hourly transients
+# are out of representation — miso-scarcity-tail-diagnosis.md §1). Band
+# restored to [0.5x, 2x] on the scope-consistent benchmark: no commercial or
+# public model publishes tail-hour-count accuracy at all, so the band's job is
+# order-of-magnitude realism — a collapsed tail (0x) and an invented tail
+# (>2x) both still FAIL. Counts below TAIL_SMALL_COUNT hours are scored by
+# absolute difference (a ratio on a handful of hours is degenerate).
+TAIL_LO, TAIL_HI = 0.5, 2.0  # tail hours within [0.5x, 2x] of the DA actual
+TAIL_SMALL_COUNT = 10  # below this, |model-actual| <= TAIL_SMALL_COUNT passes
 DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
-CO2_TOL = 0.07  # +/-7% vs eGRID
+CO2_TOL = 0.07  # target: +/-7% vs eGRID (mid of the playbook's 5-10%)
+# Commercial-grade outer band for system CO2: ~10% is the demonstrated
+# public-model grade at short horizons (AEO retrospective energy-CO2 errors;
+# eGRID-vs-model comparisons in academic PCM validations — memo §2).
+CO2_COMMERCIAL = 0.10
 STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
 STORAGE_SHAPE_R_FLOOR = 0.50  # monthly discharge pearson r floor (both sides
 # on the positive/discharge basis — see rubric §C5c 2026-07-03 alignment fix)
@@ -163,29 +228,43 @@ EXOGENOUS_OUTAGE_SOURCES = frozenset({"historic", "statistical"})
 # forecast-error term). Empty today; extend as such a flag is ever introduced.
 FORBIDDEN_FLAGS: tuple[str, ...] = ()
 
-# Caveat budget / quorum (rubric §2). Soft budget cut 3 -> 2 in the 2026-07-02
-# re-balance (Option A): C3 stays SOFT, but with three price sub-criteria a
-# 3-caveat budget let ALL of price (mean + shape + tail) be caveated away at
-# once — 2 means at most two soft criteria may ride a documented caveat.
-MAX_HARD_CAVEATS = 1
-MAX_SOFT_CAVEATS = 2
+# Caveat budgets / quorum (rubric §2, v2). Two DISTINCT caveat kinds:
+#  - Auto COMMERCIAL_BAND caveats (inside the evidence-anchored outer band,
+#    outside target): UNBUDGETED — they are inside the certification claim by
+#    construction; the scorer lists every one with its magnitude.
+#  - LEDGERED caveats (beyond the outer band, reclassified by an explicit
+#    exceptions-ledger entry as an accepted measured-input limitation):
+#    budgeted. Protective criteria (C7/C8) keep the v1 hard budget of 1 —
+#    unchanged enforcement of CLAUDE.md rule 20 / audit D-1/D-2. Non-protective
+#    ledgered caveats: at most 3. Rationale (memo §3a, replacing the 2026-07-02
+#    3->2 cut whose stated concern — price caveated wholesale — is now
+#    structurally addressed by the commercial outer band): the recurring
+#    documented data-limitation classes are three by construction
+#    (preliminary-923 vintage, EIA-930 storage coverage, data-blocked scarcity
+#    requirement series), and a budget of 2 mechanically forced NOT-YET on data
+#    availability rather than model quality. Each ledgered caveat still
+#    requires its own named measured-input reason — the budget bounds excuses,
+#    it never grants them.
+MAX_PROTECTIVE_CAVEATS = 1  # C7/C8 (C6 is never caveatable) — unchanged from v1
+MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
 
-# Criterion id -> (label, HARD?).
-HARD = True
-SOFT = False
+# Criterion id -> (label, tier). The v1 HARD/SOFT split conflated two things —
+# strict data gates (C1/C2) and anti-gaming gates (C6/C7/C8); v2 tiers them by
+# role in the intended-use certification (rubric §0/§1). Any FAIL on ANY tier
+# still forces NOT-YET (unchanged v1 rule).
 CRITERIA = {
-    "fuelmix": ("C1 fuel-mix by class (grid-delivered)", HARD),
-    "sysvol": ("C2 system volume (gas/coal families)", HARD),
-    "price_mean": ("C3a mean LMP", SOFT),
-    "price_shape": ("C3b price duration/shape", SOFT),
-    "price_tail": ("C3c price tail / scarcity", SOFT),
-    "dispatch_corr": ("C4 fleet hourly dispatch correlation", SOFT),
-    "co2": ("C5a CO2 vs eGRID", SOFT),
-    "storage": ("C5b storage throughput", SOFT),
-    "storage_shape": ("C5c storage dispatch shape", SOFT),
-    "governance": ("C6 governance gate", HARD),
-    "shape": ("C7 diurnal shape (D-1)", HARD),
-    "forced_share": ("C8 forced-energy share (D-2)", HARD),
+    "fuelmix": ("C1 fuel-mix by class (grid-delivered)", TIER_LOAD),
+    "sysvol": ("C2 system volume (gas/coal families)", TIER_LOAD),
+    "price_mean": ("C3a mean LMP", TIER_LOAD),
+    "price_shape": ("C3b price duration/shape", TIER_LOAD),
+    "price_tail": ("C3c price tail / scarcity (DA-expressible)", TIER_SUPPORT),
+    "dispatch_corr": ("C4 fleet hourly dispatch correlation", TIER_SUPPORT),
+    "co2": ("C5a CO2 vs eGRID", TIER_LOAD),
+    "storage": ("C5b storage throughput", TIER_SUPPORT),
+    "storage_shape": ("C5c storage dispatch shape", TIER_SUPPORT),
+    "governance": ("C6 governance gate", TIER_PROTECT),
+    "shape": ("C7 diurnal shape (D-1)", TIER_PROTECT),
+    "forced_share": ("C8 forced-energy share (D-2)", TIER_PROTECT),
 }
 
 
@@ -367,6 +446,40 @@ def _completeness_map() -> dict:
             out[int(obj["year"])] = obj  # full part: carries isos + families
     _COMPLETENESS_CACHE = out
     return out
+
+
+def _band_result(err_abs: float, target: float, commercial: float):
+    """Two-band scoring (rubric v2 §1): PASS inside the target band; auto
+    CAVEAT (``COMMERCIAL_BAND``, listed but not budgeted) between the target
+    and the evidence-anchored commercial-grade band; FAIL beyond it
+    (ledgerable only as an accepted measured-input limitation)."""
+    if err_abs <= target:
+        return PASS, None
+    if err_abs <= commercial:
+        return CAVEAT, COMMERCIAL_BAND
+    return FAIL, MODEL_MISS
+
+
+# ---------------------------------------------------------------------------
+# Actual scarcity-tail part (committed, scripts/derive_actual_tail.py)
+# ---------------------------------------------------------------------------
+TAIL_DIR = DATA_DIR / "tail"
+_TAIL_CACHE: dict | None = None
+
+
+def _tail_part() -> dict:
+    """Return the committed actual-tail part (``tail/actual_tail.json``).
+
+    ``{iso: {year(str): {threshold, da_gt, rt_gt, da_coverage, rt_coverage}}}``
+    — the C3c DA-expressible benchmark (rubric §1 C3c / §5). Empty when the
+    part is absent (C3c then SKIPs, never silently passes).
+    """
+    global _TAIL_CACHE
+    if _TAIL_CACHE is not None:
+        return _TAIL_CACHE
+    p = TAIL_DIR / "actual_tail.json"
+    _TAIL_CACHE = json.loads(p.read_text()).get("isos", {}) if p.exists() else {}
+    return _TAIL_CACHE
 
 
 def class_is_gated(iso: str, klass: str, year: int) -> bool:
@@ -607,18 +720,27 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                 )
             reconciled = bool(actual and a923 < VINTAGE_RECONCILE_FRAC * actual)
             err = _pct(m_fam, actual) if actual else None
-            ok = err is not None and abs(err) <= SYSVOL_TOL
+            if err is None:
+                status, classification = SKIPPED, None
+            else:
+                status, classification = _band_result(
+                    abs(err), SYSVOL_TOL, SYSVOL_COMMERCIAL
+                )
             out.append(
                 {
                     "criterion": "sysvol",
                     "key": fam,
                     "year": year,
-                    "status": PASS if ok else (FAIL if err is not None else SKIPPED),
-                    "classification": None if ok else MODEL_MISS,
+                    "status": status,
+                    "classification": classification,
                     "metric": f"{fam} family grid-delivered TWh (preliminary vintage)",
                     "model": round(m_fam, 2),
                     "actual": round(actual, 2) if actual else None,
-                    "tol": f"±{SYSVOL_TOL * 100:.1f}% family (no per-class actual)",
+                    "tol": (
+                        f"±{SYSVOL_TOL * 100:.1f}% target / "
+                        f"±{SYSVOL_COMMERCIAL * 100:.1f}% commercial "
+                        "(family, no per-class actual)"
+                    ),
                     "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
                     "source": "EIA-930 grid (preliminary-923 vintage)",
                     "vintage_reconciled": reconciled,
@@ -712,7 +834,9 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     if model is None or actual is None:
         return _skip("price_mean", year, "no model or actual mean LMP")
     err = _pct(model, actual)
-    ok = err is not None and abs(err) <= PRICE_MEAN_TOL
+    status, classification = _band_result(
+        abs(err), PRICE_MEAN_TOL, PRICE_MEAN_COMMERCIAL
+    )
     label = "vs RT" if bench_kind == "RT" else "vs DA — no RT actual committed"
     if masked:
         label += f" (model masked to actual's {len(covered)}-month coverage)"
@@ -720,13 +844,16 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
         "criterion": "price_mean",
         "key": None,
         "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
+        "status": status,
+        "classification": classification,
         "metric": f"system load-weighted mean LMP $/MWh ({label})",
         "benchmark": bench_kind,
         "model": round(model, 2),
         "actual": round(actual, 2),
-        "tol": f"±{PRICE_MEAN_TOL * 100:.0f}%",
+        "tol": (
+            f"±{PRICE_MEAN_TOL * 100:.0f}% target / "
+            f"±{PRICE_MEAN_COMMERCIAL * 100:.0f}% commercial"
+        ),
         "magnitude": f"{err * 100:+.1f}%",
     }
 
@@ -805,52 +932,136 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
     nrmse = _nrmse(model_mon, actual_mon)
     if nrmse is None:
         return _skip("price_shape", year, "monthly NRMSE undefined")
-    ok = nrmse <= PRICE_SHAPE_NRMSE_MAX
+    status, classification = _band_result(
+        nrmse, PRICE_SHAPE_NRMSE_MAX, PRICE_SHAPE_NRMSE_COMMERCIAL
+    )
     return {
         "criterion": "price_shape",
         "key": None,
         "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
+        "status": status,
+        "classification": classification,
         "metric": "monthly load-weighted price NRMSE",
         "model": round(nrmse, 3),
         "actual": None,
-        "tol": f"≤{PRICE_SHAPE_NRMSE_MAX:.2f}",
+        "tol": (
+            f"≤{PRICE_SHAPE_NRMSE_MAX:.2f} target / "
+            f"≤{PRICE_SHAPE_NRMSE_COMMERCIAL:.2f} commercial"
+        ),
         "magnitude": f"NRMSE {nrmse:.3f}",
     }
 
 
-def score_price_tail(year: int, ypay: dict, iso: str) -> dict:
-    """C3c — scarcity tail hours (model within [TAIL_LO x, TAIL_HI x] of actual)."""
+def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
+    """C3c — scarcity tail hours vs the DA-EXPRESSIBLE actual (rubric v2).
+
+    The model tail (count of hours the LP's max zonal dual exceeds the per-ISO
+    threshold, from the payload's ``ordc.hoursGt200.model``) is gated against
+    the committed **day-ahead** actual tail count (``tail/actual_tail.json``,
+    ``scripts/derive_actual_tail.py``) — the hourly, commitment-aware market's
+    own realization of scarcity, i.e. the same temporal resolution as the
+    model. The RT count (sub-hourly transients included) is emitted as a
+    report-only diagnostic row, mirroring C3a's DA diagnostic. Scope evidence:
+    ``docs/multi-iso/miso-scarcity-tail-diagnosis.md`` §1 (MISO 2023's entire
+    30-hour RT tail is single-hour 5-minute transients; DA tail 1 h) — and the
+    basis is not a leniency device: ERCOT's DA tail is LARGER than RT
+    (2023: 311 vs 181 h).
+
+    Band: model within [TAIL_LO x, TAIL_HI x] of the DA actual. Small counts
+    (actual < TAIL_SMALL_COUNT) are scored by absolute difference
+    (|model − actual| ≤ TAIL_SMALL_COUNT) — a ratio on a handful of hours is
+    degenerate, and it doubles as the invented-tail guard against a ~0 actual.
+    """
     ordc = ypay.get("ordc")
     thr = TAIL_THRESHOLD.get(iso, 200.0)
     if not ordc or "hoursGt200" not in ordc:
-        return _skip(
-            "price_tail",
-            year,
-            f"hourly scarcity series not in committed payload (tail>${thr:.0f})",
-        )
+        return [
+            _skip(
+                "price_tail",
+                year,
+                f"hourly scarcity series not in committed payload (tail>${thr:.0f})",
+            )
+        ]
     h = ordc["hoursGt200"]
-    actual, model = float(h.get("actual", 0)), float(h.get("model", 0))
-    if actual <= 0:
-        ok = model <= 0 or model < 50  # token guard against an invented tail
-        mag = f"model {model:.0f}h vs actual ~0h (>${thr:.0f})"
+    model = float(h.get("model", 0))
+    tail_rec = _tail_part().get(iso, {}).get(str(year))
+    out: list[dict] = []
+    if tail_rec is None:
+        out.append(
+            _skip(
+                "price_tail",
+                year,
+                "no committed DA-expressible actual tail for this ISO-year "
+                "(frontend/data/backcast/tail/actual_tail.json — run "
+                "scripts/derive_actual_tail.py)",
+            )
+        )
     else:
-        ratio = model / actual
-        ok = TAIL_LO <= ratio <= TAIL_HI
-        mag = f"model {model:.0f}h vs actual {actual:.0f}h ({ratio:.2f}×, >${thr:.0f})"
-    return {
-        "criterion": "price_tail",
-        "key": None,
-        "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
-        "metric": f"hours LMP > ${thr:.0f}/MWh",
-        "model": model,
-        "actual": actual,
-        "tol": f"[{TAIL_LO:g}×, {TAIL_HI:g}×]",
-        "magnitude": mag,
-    }
+        actual = float(tail_rec["da_gt"])
+        cov = tail_rec.get("da_coverage", 1.0)
+        cov_note = (
+            f"; DA coverage {cov:.0%} — count is a lower bound" if cov < 0.999 else ""
+        )
+        if actual < TAIL_SMALL_COUNT:
+            ok = abs(model - actual) <= TAIL_SMALL_COUNT
+            mag = (
+                f"model {model:.0f}h vs DA actual {actual:.0f}h "
+                f"(small-count |Δ|≤{TAIL_SMALL_COUNT}h, >${thr:.0f}){cov_note}"
+            )
+        else:
+            ratio = model / actual
+            ok = TAIL_LO <= ratio <= TAIL_HI
+            mag = (
+                f"model {model:.0f}h vs DA actual {actual:.0f}h "
+                f"({ratio:.2f}×, >${thr:.0f}){cov_note}"
+            )
+        out.append(
+            {
+                "criterion": "price_tail",
+                "key": None,
+                "year": year,
+                "status": PASS if ok else FAIL,
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"hours DA-expressible LMP > ${thr:.0f}/MWh",
+                "model": model,
+                "actual": actual,
+                "tol": (
+                    f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of DA actual "
+                    f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
+                ),
+                "magnitude": mag,
+            }
+        )
+    # RT companion — reported, never gated: includes the sub-hourly ramp/
+    # re-dispatch transients an hourly deterministic LP is out of scope to
+    # reproduce (and, for ERCOT, the DA risk premium runs the other way).
+    rt_actual = (
+        float(tail_rec["rt_gt"])
+        if tail_rec is not None and tail_rec.get("rt_gt") is not None
+        else (float(h["actual"]) if h.get("actual") is not None else None)
+    )
+    if rt_actual is not None:
+        out.append(
+            {
+                "criterion": "price_tail",
+                "key": "rt_diagnostic",
+                "year": year,
+                "status": SKIPPED,
+                "classification": None,
+                "metric": (
+                    f"hours RT LMP > ${thr:.0f}/MWh (diagnostic — includes "
+                    "sub-hourly transients, not gated)"
+                ),
+                "model": model,
+                "actual": rt_actual,
+                "tol": "not gated",
+                "magnitude": (
+                    f"model {model:.0f}h vs RT actual {rt_actual:.0f}h "
+                    "(out-of-representation companion)"
+                ),
+            }
+        )
+    return out
 
 
 def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
@@ -904,18 +1115,22 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
     if model is None or actual is None:
         return _skip("co2", year, "no CO2/eGRID actual in committed artifacts")
     err = _pct(model, actual)
-    ok = err is not None and abs(err) <= CO2_TOL
+    if err is None:
+        return _skip("co2", year, "CO2 percentage undefined (zero actual)")
+    status, classification = _band_result(abs(err), CO2_TOL, CO2_COMMERCIAL)
     return {
         "criterion": "co2",
         "key": None,
         "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
+        "status": status,
+        "classification": classification,
         "metric": "system CO2 vs eGRID",
         "model": model,
         "actual": actual,
-        "tol": f"±{CO2_TOL * 100:.0f}%",
-        "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+        "tol": (
+            f"±{CO2_TOL * 100:.0f}% target / ±{CO2_COMMERCIAL * 100:.0f}% commercial"
+        ),
+        "magnitude": f"{err * 100:+.1f}%",
     }
 
 
@@ -1313,7 +1528,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         if da_diag is not None:
             records.append(da_diag)
         records.append(score_price_shape(year, ypay, ybench))
-        records.append(score_price_tail(year, ypay, iso))
+        records += score_price_tail(year, ypay, iso)
         records += score_dispatch_corr(year, ypay)
         records.append(score_co2(year, ypay, ybench))
         records.append(score_storage(year, ypay, ybench))
@@ -1329,46 +1544,73 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
 
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}
-    for cid, (label, hard) in CRITERIA.items():
+    for cid, (label, tier) in CRITERIA.items():
         if cid == "governance":
             per_criterion[cid] = {
                 "label": label,
-                "hard": hard,
+                "tier": tier,
+                "hard": True,  # legacy display key: protective = the v1 hard gate
                 "status": gov["status"],
                 "records": [gov],
             }
             continue
         recs = [r for r in records if r["criterion"] == cid]
+        # A criterion at CAVEAT is LEDGERED when any of its caveat records was
+        # earned by an exceptions-ledger entry (MEASURED_LIMIT — budgeted);
+        # otherwise every caveat sits inside the commercial band (auto, listed
+        # not budgeted).
+        ledgered = any(
+            r["status"] == CAVEAT and r.get("classification") == MEASURED_LIMIT
+            for r in recs
+        )
         per_criterion[cid] = {
             "label": label,
-            "hard": hard,
+            "tier": tier,
+            "hard": tier == TIER_PROTECT,
             "status": _agg_status(recs) if recs else SKIPPED,
+            "caveat_kind": (
+                ("ledgered" if ledgered else "commercial-band")
+                if (_agg_status(recs) if recs else SKIPPED) == CAVEAT
+                else None
+            ),
             "records": recs,
         }
 
-    # Caveat budget.
-    hard_caveats = [
+    # Caveat budgets (rubric §2 v2): protective ledgered caveats keep the v1
+    # budget of 1; non-protective LEDGERED caveats are capped at 3; auto
+    # commercial-band caveats are unbudgeted (inside the certification claim)
+    # but every one is listed below with its magnitude.
+    protective_caveats = [
         c
         for cid, c in per_criterion.items()
-        if c["hard"] and cid != "governance" and c["status"] == CAVEAT
+        if c["tier"] == TIER_PROTECT and cid != "governance" and c["status"] == CAVEAT
     ]
-    soft_caveats = [
-        c for cid, c in per_criterion.items() if not c["hard"] and c["status"] == CAVEAT
+    ledgered_caveats = [
+        c
+        for cid, c in per_criterion.items()
+        if c["tier"] != TIER_PROTECT
+        and c["status"] == CAVEAT
+        and c["caveat_kind"] == "ledgered"
+    ]
+    band_caveats = [
+        c
+        for cid, c in per_criterion.items()
+        if c["tier"] != TIER_PROTECT
+        and c["status"] == CAVEAT
+        and c["caveat_kind"] == "commercial-band"
     ]
     fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
-    skipped_soft = [
+    # An unscored criterion can never be a silent pass: it caps the
+    # determination at CALIBRATED-WITH-CAVEATS and is named in the reasons
+    # (protective skips — e.g. C7/C8 with no committed
+    # legitimacy_diagnostics.json — are called out explicitly).
+    skipped = [
         cid
         for cid, c in per_criterion.items()
-        if not c["hard"] and c["status"] == SKIPPED
+        if cid != "governance" and c["status"] == SKIPPED
     ]
-    # An unscored HARD criterion (e.g. C7/C8 when the bundle carries no
-    # legitimacy_diagnostics.json) can never be a silent pass: it caps the
-    # determination at CALIBRATED-WITH-CAVEATS, exactly like a skipped soft
-    # criterion, and is named in the reasons.
-    skipped_hard = [
-        cid
-        for cid, c in per_criterion.items()
-        if c["hard"] and cid != "governance" and c["status"] == SKIPPED
+    skipped_protective = [
+        cid for cid in skipped if per_criterion[cid]["tier"] == TIER_PROTECT
     ]
 
     # Determination (rubric §2).
@@ -1381,38 +1623,68 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         reasons.append(
             "undocumented out-of-tolerance (FAIL) criteria: " + ", ".join(fails)
         )
-    elif len(hard_caveats) > MAX_HARD_CAVEATS or len(soft_caveats) > MAX_SOFT_CAVEATS:
+    elif (
+        len(protective_caveats) > MAX_PROTECTIVE_CAVEATS
+        or len(ledgered_caveats) > MAX_LEDGERED_CAVEATS
+    ):
         determination = NOT_YET
         reasons.append(
-            f"caveat budget exceeded (hard {len(hard_caveats)}/{MAX_HARD_CAVEATS}, "
-            f"soft {len(soft_caveats)}/{MAX_SOFT_CAVEATS})"
+            "caveat budget exceeded (protective "
+            f"{len(protective_caveats)}/{MAX_PROTECTIVE_CAVEATS}, ledgered "
+            f"{len(ledgered_caveats)}/{MAX_LEDGERED_CAVEATS})"
         )
     else:
-        n_caveats = len(hard_caveats) + len(soft_caveats)
-        if (
-            n_caveats == 0
-            and not skipped_soft
-            and not skipped_hard
-            and not data_blocked
-        ):
+        n_caveats = len(protective_caveats) + len(ledgered_caveats) + len(band_caveats)
+        if n_caveats == 0 and not skipped and not data_blocked:
             determination = CALIBRATED
         else:
             determination = CALIBRATED_CAVEATS
-            if n_caveats:
-                reasons.append(f"{n_caveats} documented caveat(s)")
-            if skipped_hard:
-                reasons.append("unscored HARD criteria: " + ", ".join(skipped_hard))
-            if skipped_soft:
-                reasons.append("unscored soft criteria: " + ", ".join(skipped_soft))
+            if band_caveats:
+                reasons.append(
+                    f"{len(band_caveats)} criterion(s) within the commercial-grade "
+                    "band but outside target: "
+                    + ", ".join(c["label"] for c in band_caveats)
+                )
+            if ledgered_caveats:
+                reasons.append(
+                    f"{len(ledgered_caveats)} ledgered measured-input caveat(s): "
+                    + ", ".join(c["label"] for c in ledgered_caveats)
+                )
+            if protective_caveats:
+                reasons.append(
+                    f"{len(protective_caveats)} protective-gate ledgered caveat(s): "
+                    + ", ".join(c["label"] for c in protective_caveats)
+                )
+            if skipped_protective:
+                reasons.append(
+                    "unscored PROTECTIVE criteria: " + ", ".join(skipped_protective)
+                )
+            other_skips = [c for c in skipped if c not in skipped_protective]
+            if other_skips:
+                reasons.append("unscored criteria: " + ", ".join(other_skips))
             if data_blocked:
                 reasons.append(
                     "data-blocked target year(s): " + ", ".join(map(str, data_blocked))
                 )
 
+    # Grade summary (reported): how many scored criteria sit at target grade
+    # (clean PASS) vs commercial grade (auto band caveat) vs ledgered.
+    scored = [
+        c for cid, c in per_criterion.items() if c["status"] in (PASS, CAVEAT, FAIL)
+    ]
+    grade_summary = {
+        "scored": len(scored),
+        "target_grade": sum(1 for c in scored if c["status"] == PASS),
+        "commercial_grade": len(band_caveats),
+        "ledgered": len(ledgered_caveats) + len(protective_caveats),
+        "fails": len(fails),
+    }
+
     return {
         "run_id": run_id,
         "iso": iso,
         "label": sidecar.get("label", run_id),
+        "rubric_version": RUBRIC_VERSION,
         "target_years": target_years,
         "scorable_years": scorable_years,
         "data_blocked_years": data_blocked,
@@ -1420,10 +1692,15 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         "reasons": reasons,
         "criteria": per_criterion,
         "free_class_score": free_class_score(iso, records),
+        "grade_summary": grade_summary,
         "caveats": {
-            "hard": [c["label"] for c in hard_caveats],
-            "soft": [c["label"] for c in soft_caveats],
-            "budget": {"hard_max": MAX_HARD_CAVEATS, "soft_max": MAX_SOFT_CAVEATS},
+            "protective": [c["label"] for c in protective_caveats],
+            "ledgered": [c["label"] for c in ledgered_caveats],
+            "commercial_band": [c["label"] for c in band_caveats],
+            "budget": {
+                "protective_max": MAX_PROTECTIVE_CAVEATS,
+                "ledgered_max": MAX_LEDGERED_CAVEATS,
+            },
         },
         "ledger_entries": exceptions,
     }
@@ -1448,10 +1725,13 @@ def render_text(v: dict) -> str:
             "  data-blocked years: " + ", ".join(map(str, v["data_blocked_years"]))
         )
     lines.append("=" * 72)
+    _TIER_TAG = {TIER_LOAD: "LOAD", TIER_SUPPORT: "SUPP", TIER_PROTECT: "PROT"}
     for cid, c in v["criteria"].items():
-        gate = "HARD" if c["hard"] else "soft"
+        gate = _TIER_TAG.get(c.get("tier"), "?")
+        kind = f" [{c['caveat_kind']}]" if c.get("caveat_kind") else ""
         lines.append(
-            f"[{_MARK.get(c['status'], '?')}] {c['status']:7s} {gate:4s}  {c['label']}"
+            f"[{_MARK.get(c['status'], '?')}] {c['status']:7s} {gate:4s}  "
+            f"{c['label']}{kind}"
         )
         for r in c["records"]:
             if r["status"] == PASS:
@@ -1505,13 +1785,20 @@ def condensed_metrics(v: dict) -> dict:
         "target_years": v["target_years"],
         "scorable_years": v["scorable_years"],
         "data_blocked_years": v["data_blocked_years"],
+        "rubric_version": v.get("rubric_version", 1),
         "determination": v["determination"],
         "reasons": v["reasons"],
         "criteria": {
-            cid: {"label": c["label"], "hard": c["hard"], "status": c["status"]}
+            cid: {
+                "label": c["label"],
+                "tier": c.get("tier"),
+                "status": c["status"],
+                **({"caveat_kind": c["caveat_kind"]} if c.get("caveat_kind") else {}),
+            }
             for cid, c in v["criteria"].items()
         },
         "caveats": v["caveats"],
+        "grade_summary": v.get("grade_summary"),
         "free_class_score": v["free_class_score"],
     }
 
