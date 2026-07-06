@@ -89,6 +89,41 @@ snapshot above, which is left as the 2026-07-05/06 audit baseline.*
 
 ---
 
+### Addendum — state as of 2026-07-06 EVE (post-#1500 tranche review)
+
+*Appended by the wave-manager tranche-review session; full verdicts in
+`docs/handoffs/wave-manager-tranche-review-2026-07-06.md`.*
+
+- **Tranche #1491–#1500 reviewed adversarially** (8 PRs; #1492/#1495 are issues):
+  #1491/#1493/#1494/#1497/#1499 CLEAN (bounded caveats in the review doc);
+  #1498 DEFICIENT-minor (keeper bookkeeping: stale bundle `metrics.json`,
+  missing NEISO statmode stale-box, D-2 `''`-bucket mis-attribution, undeclared
+  reach-ratio DOF dependency); #1500 DEFICIENT-hygiene (merged before CI
+  finished; two PR-caused test failures now live on main).
+- **CI is RED on main again** (was green at the 07-06 PM addendum): fast tier —
+  stale hydro expectation (#1495, from the #1490 EIA-930 backfill) + the two
+  #1500 data-contract failures; quarantine gates — `legitimacy_diagnostics.py
+  --keepers` D-2 recompute mismatch on 4 keepers (#1488: `''`-bucket
+  denominator machinery + genuine NYISO post-re-derivation staleness).
+  `audit_keepers.py --check` itself stays PASS (6 warnings).
+- **Keeper churn:** NEISO swapped to `2026-07-06-neiso-49-stgas-netload`
+  (#1498) — rule-16/21 artifacts verified present; caveat budget UNCHANGED
+  (hard C2+C7 2>1, soft C3a/b/c+C5b 4>2), so NEISO is closer structurally
+  (first ST_GAS D-1 pass, 2025) but not budget-closer. ERCOT `ercot34`
+  promotion also closed G-12 (replay-gap attribution, ercot35/36 A/B) and
+  flips C1-2024 to PASS, mooting §4's "C1-2024 ledger" judgment item.
+- **Rows now stale in this register:** W21/G-25 (MISO commitment-posture lever
+  BUILT, honesty-gate-REJECTED probe `miso-43` registered, default-off);
+  G-16 (new NEISO keeper: 2025 ST_GAS pass, 2023/24 still FAIL); G-12 (closed
+  per above); G-38 (Stage-4 run done, ercot34 promoted); G-18/G-45/G-46/G-47/
+  G-48/G-49-doc-half landed in earlier waves (verified on disk this session).
+- **New open issues since the audit:** #1483/#1484 (PJM G-21 re-grounding
+  relocated the miss; C8 drag decision unblocked), #1488/#1495 (CI reds),
+  #1492 (CAISO reserve co-opt design, anchors collected).
+- **Owner-decision queue** (8 items) recorded in the review doc §"Owner-decision queue".
+
+---
+
 ## 2. Workstream inventory
 
 Status verified against code/artifacts; "doc-lag" marks where the plan doc's own status section is wrong (both directions occur).
