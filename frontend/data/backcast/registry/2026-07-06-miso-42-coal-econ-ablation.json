@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-miso-42-coal-econ-ablation",
+  "label": "miso 42 coal econ (ABLATION TWIN)",
+  "date": "2026-07-06",
+  "shorthand": "miso-42-coal-econ-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-06-miso-42-coal-econ) D-3 zero-forcing ablation twin of the miso-42-coal-econ candidate keeper (CLAUDE.md rule 20): the miso-42 recipe verbatim (coal_econ_srmc_bound KEPT - it is an offer bound, not a floor), same 2023-2025 span, with every merchant floor/bridge neutralized via ScenarioConfig.as_zero_forcing_ablation (off-list from the D-2 mechanism registry), structural protected set kept (nuclear must-run, CHP steam-following, coal take-or-pay). Re-solved from scratch on HEAD ac11191 in the L-14 continuation session after the Wave-3 container died mid-twin (PR #1486 checkpoint); all MISO-affecting src is unchanged between the base run's sha 632e10d and ac11191 (NYISO/NEISO-gated or dead-constant deletions only), and the EIA-930 MISO extract backfill (a2cb5c2) added 2019-2021 rows only - the 2023-2025 slices the solve reads are unchanged. Registered alongside the base run for the E9 keeper-vs-twin delta; not a keeper candidate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-miso-42-coal-econ-ablation.js",
+  "bundle": "results/calibration/MISO/miso_42_coal_econ_srmc-ablation"
+}
