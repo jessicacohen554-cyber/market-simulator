@@ -1,0 +1,123 @@
+{
+  "run_id": "2026-07-06-nyiso-53-li-tsl",
+  "iso": "NYISO",
+  "label": "nyiso 53 li tsl",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "determination": "NOT-YET",
+  "reasons": [
+    "caveat budget exceeded (hard 1/1, soft 4/2)"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "hard": true,
+      "status": "PASS"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "hard": true,
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "hard": false,
+      "status": "CAVEAT"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "hard": false,
+      "status": "CAVEAT"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity",
+      "hard": false,
+      "status": "CAVEAT"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "hard": false,
+      "status": "PASS"
+    },
+    "co2": {
+      "label": "C5a CO2 vs eGRID",
+      "hard": false,
+      "status": "CAVEAT"
+    },
+    "storage": {
+      "label": "C5b storage throughput",
+      "hard": false,
+      "status": "SKIPPED"
+    },
+    "storage_shape": {
+      "label": "C5c storage dispatch shape",
+      "hard": false,
+      "status": "SKIPPED"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "hard": true,
+      "status": "PASS"
+    },
+    "shape": {
+      "label": "C7 diurnal shape (D-1)",
+      "hard": true,
+      "status": "PASS"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "hard": true,
+      "status": "CAVEAT"
+    }
+  },
+  "caveats": {
+    "hard": [
+      "C8 forced-energy share (D-2)"
+    ],
+    "soft": [
+      "C3a mean LMP",
+      "C3b price duration/shape",
+      "C3c price tail / scarcity",
+      "C5a CO2 vs eGRID"
+    ],
+    "budget": {
+      "hard_max": 1,
+      "soft_max": 2
+    }
+  },
+  "free_class_score": {
+    "iso": "NYISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "imports",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 14,
+      "total": 14
+    },
+    "free": {
+      "pass": 10,
+      "total": 10
+    },
+    "headline": "C1 all 14/14 \u00b7 free 10/10"
+  }
+}
