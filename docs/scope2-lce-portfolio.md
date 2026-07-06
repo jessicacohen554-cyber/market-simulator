@@ -18,7 +18,10 @@ low/mid/high costs.
 
 Top-level directory: [`scope2-lce-portfolio/`](../scope2-lce-portfolio/).
 Start with its [`PLAN.md`](../scope2-lce-portfolio/PLAN.md) and
-[`README.md`](../scope2-lce-portfolio/README.md).
+[`README.md`](../scope2-lce-portfolio/README.md). The finalization work to
+make the folder fully pull-out-able is staged as ready-to-run prompts in
+[`scope2-lce-portfolio/docs/handoff/`](../scope2-lce-portfolio/docs/handoff/README.md)
+(HP-01..HP-05).
 
 ## Isolation boundary (important)
 
