@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-06 (NEISO C-6: measured seam ladders, priced-interchange P9 re-test, neiso-50 ablation twin)
+
+- **Model/config:** `IMPORT_TRANCHES[_BY_YEAR]["NEISO"]` / `EXPORT_TRANCHES["NEISO"]`
+  rederived from measured data only (new `scripts/derive_neiso_import_tranches.py`:
+  per-seam Q-Q duration coupling of measured ISO-NE DA LMP with EIA-930 per-seam flows,
+  NYISO proxy-bus anchors, no-wash sink clamp) — closes the model-legitimacy audit C-6
+  open item for NEISO. New `EXPORT_TRANCHES_BY_YEAR` (year-keyed export sinks) resolved
+  through `get_interchange_spec`/`build_export_sinks`.
+- **Data intake:** EIA-930 per-DIBA interchange for ISNE (new reproducible
+  `scripts/fetch_eia930_interchange.py`) and NYISO proxy-bus DA LBMPs
+  (`scripts/build_nyiso_proxy_lmp_neiso.py`, border-lmp schema; source monthly zips
+  gitignored with documented public regeneration).
+- **Runs registered:** `neiso 51 priced-ix` (P9 probe: net interchange −14.8/−8.9/−9.6
+  vs −15.1/−10.3/−8.1 TWh actual — the 2026-06-12 smoke over-imported 2.3×; real
+  mechanistic HQ_import zonal separation), `neiso 52 head baseline` (drift attribution:
+  keeper's registered C3a is stale vs HEAD after the `use_plant_emission_rates_v2` flip),
+  and `neiso 50 ablation` (D-3 zero-forcing twin; audit_keepers E9 now PASS).
+- **Docs realigned:** methodology spec §1.3 (NEISO measured seam-ladder note),
+  legitimacy-audit C-6 row annotated (NEISO portion resolved), raw-data READMEs,
+  border-lmp schema, parameter registry regenerated, calibration-log entry.
+
+
 ## 2026-07-06 (Lane L-5 — doc/code drift sync, gap register G-53–G-58/G-08/G-56)
 
 Prose/comment-only sweep, no behavior changes. Executes `docs/gap-register-2026-07.md`
