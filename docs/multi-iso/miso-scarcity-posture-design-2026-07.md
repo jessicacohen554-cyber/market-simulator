@@ -1,7 +1,13 @@
 # MISO scarcity posture — design note: commitment-posture lever + Midwest locational reserve zone
 
-**Date:** 2026-07-06. **Lane:** Wave-3 MISO L-14. **Status: DESIGN ONLY — nothing here is
-built.** Companion to `docs/multi-iso/miso-scarcity-tail-diagnosis.md` (miso-39 gate 4
+**Date:** 2026-07-06. **Lane:** Wave-3 MISO L-14. **Status: §A BUILT 2026-07-06
+(`miso_commitment_posture`, GATED default-off) and honesty-gate REJECTED as probe
+`2026-07-06-miso-43-commitment-posture` — the pooled LINEAR relaxation holds 3.7-4.2× the measured
+cleared reserve online (level FAIL; see the probe's `SUMMARY-posture-gate.md` and the 2026-07-06
+L-14-continuation calibration-log entry). The measured ASM gate data landed in `data/raw/MISO-AS`
+(`fetch_miso_asm.py`); §A's min-run/min-down window rows remain the deferred follow-up and §B stays
+DATA-BLOCKED on the zonal requirement series.** Companion to
+`docs/multi-iso/miso-scarcity-tail-diagnosis.md` (miso-39 gate 4
 CLOSED-NEGATIVE, kept per rule 1) and `results/calibration/FINDING-miso-cc-decomposition-2026-07.md`
 (the CC +44 TWh exemplar). The diagnosis proved that under deterministic perfect-foresight
 hourly dispatch, MISO's published reserve demand curves cannot reach their shortage steps
