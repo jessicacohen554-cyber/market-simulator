@@ -231,6 +231,18 @@ larger coal fleet.
 
 ## NYISO — 0 → 4 fails (all from caveat→fail)
 
+> **STALE vs the 2026-07-06 keeper swap (G-10 truth-in-labeling).** This
+> section was scored against `2026-07-03-nyiso-41-hub-prices`
+> (`results/calibration/nyiso41_hubprices`); the NYISO keeper is now
+> `2026-07-06-nyiso-53-li-tsl` (`results/calibration/nyiso53_litsl_v2`:
+> Zone-K LCR/TSL mechanism replacing the LI 0.45 self-supply floor + v2
+> measured plant CO2 rates). The statmode twin has NOT been re-run against
+> the new keeper — per the program rule this section is flagged stale, not
+> silently carried; it also still reflects the original 9-criterion
+> (C1–C5c) scoring. The same staleness already applies to the PJM/MISO
+> sections after their 2026-07-05 swaps (and to any ERCOT/MISO swaps landing
+> 2026-07-06 in parallel with this one).
+
 | criterion | keeper | statmode | note |
 |---|---|---|---|
 | C1 fuel-mix | PASS | **FAIL** | CC_REGULAR/ST_GAS both flip: 2023 CC_REGULAR +0.81(PASS)→**−6.37 TWh**; ST_GAS −0.82(PASS)→**+8.80 TWh** |
