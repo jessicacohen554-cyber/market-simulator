@@ -46,7 +46,7 @@ for the market split.
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
 | load | — | — | — | — | — | — |
-| demand-profile | — | — | — | — | — | — |
+| demand-profile | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
 | generation | — | — | — | — | — | — |
@@ -59,6 +59,7 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
+| ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
 
@@ -726,6 +727,33 @@ export interfaces). Schema:
 | `n_active` | `int64` | `count` | no | Number of distinct SCED executions in the hour where the constraint was in the active set (nominal cadence 12/hour; the DST fall-back clock hour can carry up to 24). |
 | `n_binding` | `int64` | `count` | no | Number of those executions where the constraint was binding (ShadowPrice > 0). |
 | `shadow_price_mean` | `float64` | `usd_per_mwh` | yes | Mean ShadowPrice over the hour's binding intervals; null when the constraint was active but never binding that hour. |
+
+## ramp-capability
+
+Measured per-plant 10-minute ramp / fast-start capability inputs for the
+reserve co-optimization. Schema:
+[`schema/ramp-capability.schema.yaml`](schema/ramp-capability.schema.yaml).
+
+- **Keys:** `iso`, `plant_code`
+- **Reconciles:** EIA-860 Schedule 3.1 "Time from Cold Shutdown to Full Load"
+  (the "10M" fast-start flag, summed to `fast_start_mw` over
+  `thermal_nameplate_mw`) and EPA CAMPD CEMS hourly plant gross load
+  (`ramp_up_1h_mw` max observed 1-hour increase, `observed_pmax_mw` max
+  observed load) pooled over `vintage_span` 2023-2025 — into one measured
+  ceiling on the 10-minute reserve-deliverability bound (`FleetArrays.ramp10`),
+  never the 10-minute quantity itself. Never intake 2022/H1-2026 (rule 22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose fleet the plant belongs to (EIA-860 balancing-authority scoping via the per-ISO spec, e.g. PJM, MISO). |
+| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL; CAMPD facilityId). |
+| `fast_start_mw` | `float64` | `mw` | yes | Sum of nameplate capacity over the plant's operable thermal generators whose EIA-860 "Time from Cold Shutdown to Full Load" is "10M" (full load within 10 minutes). Null when the plant has no EIA-860 thermal rows (CEMS-only row). |
+| `thermal_nameplate_mw` | `float64` | `mw` | yes | Sum of nameplate capacity over the plant's operable thermal generators (combustion/steam prime movers, nuclear excluded). The fast-start share denominator. Null when the plant has no EIA-860 thermal rows. |
+| `ramp_up_1h_mw` | `float64` | `mw` | yes | Maximum observed 1-hour increase in plant-level CEMS gross load (units summed per hour; offline unit-hours count as 0 MW; diffs spanning non-consecutive timestamps excluded), pooled over vintage_span. Null when the plant has no CAMPD coverage. |
+| `observed_pmax_mw` | `float64` | `mw` | yes | Maximum observed plant-level CEMS gross load over vintage_span (the measured capacity basis guarding stale nameplate against derates). Null when the plant has no CAMPD coverage. |
+| `hours_observed` | `int64` | `hours` | no | Count of plant-hours with CEMS coverage pooled over vintage_span (0 for an EIA-860-only row). The model-side loader requires a minimum (market_sim.data.ramp_capability.MIN_OBSERVED_HOURS) before the envelope is trusted. |
+| `vintage_span` | `string` | `none` | no | CAMPD vintages pooled for the envelope, e.g. "2023-2025". Holdout periods (2022, 2026) are excluded by construction (CLAUDE.md rule 22). |
+| `source_doc` | `string` | `none` | yes | Authoritative source citation for the row's inputs. |
 
 ## winter-fuel-inventory
 
