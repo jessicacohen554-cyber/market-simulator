@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-05-pjm-77-ct-relfloor",
-  "iso": "PJM",
-  "label": "pjm 77 ct relfloor",
+  "run_id": "2026-07-06-ercot34-stage4-overlay-off",
+  "iso": "ERCOT",
+  "label": "ercot34 stage4 overlay off",
   "target_years": [
     2023,
     2024,
@@ -16,13 +16,13 @@
   "rubric_version": 2,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail, forced_share"
+    "undocumented out-of-tolerance (FAIL) criteria: price_shape, price_tail, forced_share"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -33,13 +33,13 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -64,7 +64,8 @@
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -84,10 +85,12 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C5c storage dispatch shape"
+    ],
     "commercial_band": [
       "C2 system volume (gas/coal families)",
-      "C3b price duration/shape"
+      "C3a mean LMP"
     ],
     "budget": {
       "protective_max": 1,
@@ -95,14 +98,14 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 4,
+    "scored": 11,
+    "target_grade": 5,
     "commercial_grade": 2,
-    "ledgered": 0,
-    "fails": 4
+    "ledgered": 1,
+    "fails": 3
   },
   "free_class_score": {
-    "iso": "PJM",
+    "iso": "ERCOT",
     "pinned_classes": [
       "CC_CHP",
       "CT_CHP",
@@ -117,13 +120,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }

@@ -13,6 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
+  "rubric_version": 2,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle (attestation has no governance block)"
@@ -20,72 +21,80 @@
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_mean": {
       "label": "C3a mean LMP",
-      "hard": false,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
-      "hard": false,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity",
-      "hard": false,
+      "label": "C3c price tail / scarcity (DA-expressible)",
+      "tier": "supporting",
       "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
-      "hard": false,
+      "tier": "supporting",
       "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
-      "hard": false,
+      "tier": "load-bearing",
       "status": "PASS"
     },
     "storage": {
       "label": "C5b storage throughput",
-      "hard": false,
+      "tier": "supporting",
       "status": "FAIL"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
-      "hard": false,
+      "tier": "supporting",
       "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
-      "hard": true,
+      "tier": "protective",
       "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
-      "hard": true,
+      "tier": "protective",
       "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
-      "hard": true,
+      "tier": "protective",
       "status": "PASS"
     }
   },
   "caveats": {
-    "hard": [],
-    "soft": [],
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [],
     "budget": {
-      "hard_max": 1,
-      "soft_max": 2
+      "protective_max": 1,
+      "ledgered_max": 3
     }
+  },
+  "grade_summary": {
+    "scored": 11,
+    "target_grade": 4,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 7
   },
   "free_class_score": {
     "iso": "MISO",

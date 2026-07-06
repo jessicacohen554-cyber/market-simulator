@@ -13,79 +13,91 @@
     2025
   ],
   "data_blocked_years": [],
+  "rubric_version": 2,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_shape, price_tail, dispatch_corr, co2, shape, forced_share"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_shape, price_tail, dispatch_corr, shape, forced_share"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_mean": {
       "label": "C3a mean LMP",
-      "hard": false,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
-      "hard": false,
+      "tier": "load-bearing",
       "status": "FAIL"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity",
-      "hard": false,
+      "label": "C3c price tail / scarcity (DA-expressible)",
+      "tier": "supporting",
       "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
-      "hard": false,
+      "tier": "supporting",
       "status": "FAIL"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
-      "hard": false,
-      "status": "FAIL"
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "storage": {
       "label": "C5b storage throughput",
-      "hard": false,
+      "tier": "supporting",
       "status": "SKIPPED"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
-      "hard": false,
+      "tier": "supporting",
       "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
-      "hard": true,
+      "tier": "protective",
       "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
-      "hard": true,
+      "tier": "protective",
       "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
-      "hard": true,
+      "tier": "protective",
       "status": "FAIL"
     }
   },
   "caveats": {
-    "hard": [],
-    "soft": [],
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [
+      "C5a CO2 vs eGRID"
+    ],
     "budget": {
-      "hard_max": 1,
-      "soft_max": 2
+      "protective_max": 1,
+      "ledgered_max": 3
     }
+  },
+  "grade_summary": {
+    "scored": 10,
+    "target_grade": 1,
+    "commercial_grade": 1,
+    "ledgered": 0,
+    "fails": 8
   },
   "free_class_score": {
     "iso": "CAISO",
