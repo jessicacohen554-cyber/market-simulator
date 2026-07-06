@@ -2028,6 +2028,34 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
 }
 
+# ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
+# pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in
+# :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity —
+# each ISO's own filing pairs it with a separate UNFORCED-capacity-basis
+# requirement, since the model's supply-side ledger
+# (:func:`market_sim.model.capacity.accredited_firm_capacity_mw`) counts
+# these ISOs' thermal fleet at UCAP (``1 - EFORd``, the registry default).
+# Testing an ICAP-basis requirement against UCAP-basis supply double-counts
+# forced-outage risk, the same error class the ERCOT accreditation audit
+# fixed for CDR seasonal-rating vs UCAP. Values are each ISO's OWN published
+# ICAP<->UCAP conversion ratio (not a model-derived pool EFORd, so nothing
+# here depends on the model's own fleet mix):
+#   PJM: FPR / (1 + IRM) = 0.9170 / 1.191 = 0.7699 (2026/2027 BRA planning
+#     parameters — "Public Installed Reserve Margin (IRM), Forecast Pool
+#     Requirement (FPR)"; FPR states the SAME required reserve level as the
+#     IRM but in UCAP terms, so this ratio is the ISO's own ICAP->UCAP
+#     conversion, stable year to year even as the target IRM itself moves).
+#   MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY
+#     2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways:
+#     ICAP 15.7%, UCAP 7.9%).
+# ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM
+# is already on the model's own supply basis — ERCOT's is fixed at the CDR
+# seasonal-rating basis by the accreditation audit, not this registry).
+PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
+    "PJM": 0.9170 / 1.191,
+    "MISO": 1.079 / 1.157,
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
@@ -2098,6 +2126,37 @@ STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
 # ``(1 - penetration)^STORAGE_ELCC_SATURATION_EXPONENT`` where ``penetration``
 # is existing storage power / ceiling. Source: NREL ELCC saturation studies.
 STORAGE_ELCC_SATURATION_EXPONENT: float = 1.5
+
+# Portfolio (aggregate accreditation) ELCC dilution — the CDR's own
+# fleet-average BESS ELCC compresses as storage penetration grows (ERCOT
+# accreditation audit, 2026-07-06, §3): "model 2026 storage firm 11.7 GW vs
+# the CDR-implied 12.3 GW (operational + planned, ELCC 60.2% on 20,438 MW
+# installed) — close at fleet level," with the flagged follow-up "the CDR's
+# own BESS ELCC dilutes 60% -> 46% by 2030 as penetration triples." Modeled
+# in ``capacity.py::_storage_portfolio_elcc_dilution`` as a LINEAR
+# interpolation between the two cited (penetration, ELCC) anchors — no
+# fitted exponent, no guessed intermediate MW: at the reference MW below
+# (today's validated point) the dilution factor is 1.0 (the audit's "close
+# at fleet level today" finding, unchanged); at full deployment-ceiling
+# penetration it is the CDR's own ratio, 46/60.2 (below); in between it is
+# a straight line between those two real data points. ISOs absent from
+# either registry get no dilution (byte-identical).
+STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO: dict[str, float] = {
+    "ERCOT": 20_438.0,  # Dec 2025 CDR: operational + CDR-eligible planned BESS
+    # nameplate MW, the installed base the audit's 60.2% portfolio ELCC is
+    # reported against.
+}
+
+# The CDR's own fleet-average BESS ELCC ratio at full deployment-ceiling
+# penetration relative to the reference-MW ELCC above: 46% / 60.2% (accred-
+# itation audit §3, "dilutes 60% -> 46% by 2030"). A floor, not a fitted
+# curve — the model has no CDR data point between the two cited years, so
+# the dilution factor is linear between them (see the reference-MW
+# registry's docstring); this is the value the line reaches at penetration
+# = 1.0, not a value asserted to land exactly in 2030.
+STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.46 / 0.602,
+}
 
 # Cycling-degradation cost. Each MWh discharged consumes a slice of the
 # battery's cycle life; replacing it costs a fraction of the energy-capacity
