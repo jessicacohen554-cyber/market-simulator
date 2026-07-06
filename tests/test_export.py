@@ -1,8 +1,15 @@
 """Tests for scenario export to compact frontend JSON.
 
-The dispatch LP is mocked: ``solve_dispatch`` is patched to return a
-synthetic :class:`DispatchResult`, so a scenario is run and cached without
-the cost of solving, then exported.
+The dispatch LP is mocked: ``run_energy_solve`` (the shared P0/P1 solve core
+every ISO-year goes through, orchestrator-unification Stage 3) is patched to
+return a synthetic result, so a scenario is run and cached without the cost
+of solving, then exported. G-44: this used to patch the module-level
+``solve_dispatch`` name, which Stage 3 made dead for the default (no
+commitment-screen) config exercised here — ``runner.py`` only calls
+``solve_dispatch`` directly inside the opt-in legacy P2 commitment-screen
+branch (``commitment_enabled``/``ercot_as_aware_commitment``/
+``caiso_ra_mustoffer``, all default-off), so the old patch silently stopped
+intercepting anything and every "mocked" run was actually solving a real LP.
 """
 
 import json
@@ -17,15 +24,15 @@ import pytest
 from market_sim import runner
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.dispatch import DispatchResult
+from market_sim.pipeline import EnergySolveResult
 from market_sim.results import cache, export
 from market_sim.results.outputs import FleetContext
 
 
-def _fake_solve(fleet, demand, *args, **kwargs):
+def _fake_dispatch_result(fleet_arrays, demand):
     """Return a synthetic ``DispatchResult`` sized to the fleet and demand."""
-    n_gen = fleet.n_gen
-    T = demand.shape[1]
-    n_zones = demand.shape[0]
+    n_gen = fleet_arrays.n_gen
+    n_zones, T = demand.shape
     return DispatchResult(
         dispatch=np.full((n_gen, T), 5.0),
         wind_dispatched=np.zeros((n_zones, T)),
@@ -41,6 +48,16 @@ def _fake_solve(fleet, demand, *args, **kwargs):
         status="Optimal",
         build_time=0.0,
         solve_time=0.0,
+    )
+
+
+def _fake_energy_solve(
+    fleet, fleet_arrays, demand, mc_base, dispatch_kwargs, config, **kwargs
+):
+    """Return a synthetic ``EnergySolveResult`` in place of the real P0/P1 solve."""
+    result = _fake_dispatch_result(fleet_arrays, demand)
+    return EnergySolveResult(
+        r0=result, p1=result, mc_bid=mc_base, markup=np.zeros_like(mc_base)
     )
 
 
@@ -148,7 +165,7 @@ class TestExportScenarioJson(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", end_year),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(runner, "run_energy_solve", side_effect=_fake_energy_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
