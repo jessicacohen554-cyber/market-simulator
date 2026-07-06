@@ -259,3 +259,33 @@ NYISO keeper config once #1344 lands — no further floor work needed, only the
 reserve-price structure to lift C3a/C3c and drop the CT forced share below 10%. The
 re-derived floors are now the NYISO default. NYISO calibration-complete item 1
 remains BLOCKED on #1344.
+
+---
+
+## ERCOT + NEISO calibration-complete checklist item 1 (2026-07-06 follow-up) — NEISO HEAD-reproducible, ERCOT STALE-VS-HEAD
+
+Closes the "pending re-gate" this handoff flagged for `ercot32`/`neiso-48` (both
+dated 2026-07-03/07-05, predating the 07-04 offer merges, never re-gated at
+HEAD like PJM `pjm-77`/`78` and NYISO `nyiso-48`/`49`). Full write-up:
+`docs/calibration-log.md` (2026-07-06 "ERCOT + NEISO keeper HEAD re-gate").
+
+**NEISO (`neiso-48`): verified HEAD-reproducible.** A byte-faithful
+`replay_keeper.py` re-solve (all years 2023-2025) reproduces every scored
+`model` value exactly — no confound, same clean result as `pjm-77`. Registered
+as probe `2026-07-05-neiso-48-head-regate`. `keepers.json` unchanged.
+
+**ERCOT (`ercot32`): STALE-VS-HEAD.** Unlike NEISO, the HEAD replay moves
+several fuelmix/price/CO2 values. Cheap checks rule out the offer curve
+(byte-identical) and raw input data (byte-identical file hashes) as the
+mover — contrast NYISO, where the offer de-leak was the entire cause. One
+dated code change (`fleet.py` curated-bin-drift reconciliation, merged
+2026-07-05, after the keeper's 2026-07-03 solve) is a real but partial
+contributor (~450 MW of reclassified plants, too small to explain the
+multi-TWh shifts alone). Full attribution is unresolved and out of this
+wave's scope (no `src/market_sim` edits authorized). The keeper was already
+NOT-YET on its own documented structural grounds before this re-gate, and
+remains NOT-YET on the same hard-fail set after — no keeper disposition
+change. Registered as probe `2026-07-03-32-head-regate`. `keepers.json`
+unchanged.
+
+**No holdout touched** (rule #22); no `src/market_sim` code edited.
