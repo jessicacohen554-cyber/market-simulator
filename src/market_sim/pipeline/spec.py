@@ -229,6 +229,21 @@ class ReserveSpec:
         return self.kwargs.get("reserve_pergen_col")
 
     @property
+    def reserve_posture_pools(self) -> Any:
+        """Commitment-posture pool indices (MISO posture lever), or None."""
+        return self.kwargs.get("reserve_posture_pools")
+
+    @property
+    def reserve_posture_mlf(self) -> Any:
+        """Posture pools' min-stable-when-online fractions, or None."""
+        return self.kwargs.get("reserve_posture_mlf")
+
+    @property
+    def reserve_posture_startup(self) -> Any:
+        """Posture pools' startup costs ($/MW per start), or None."""
+        return self.kwargs.get("reserve_posture_startup")
+
+    @property
     def reserve_balance_zone_mask(self) -> Any:
         """Multi-family reserve balance zone mask, or None."""
         return self.kwargs.get("reserve_balance_zone_mask")
