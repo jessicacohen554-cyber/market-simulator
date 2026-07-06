@@ -43,8 +43,11 @@ rm -rf "$COPY_DIR/.venv-verify" "$COPY_DIR/data/outputs" "$COPY_DIR/launcher/sav
 
 cd "$COPY_DIR"
 
-echo "== grep guard: no 'import market_sim' anywhere in the copy =="
-if grep -rIn --include='*.py' 'import market_sim' . ; then
+echo "== grep guard: no real 'import market_sim' statement anywhere in the copy =="
+# Anchored to actual import statements (start of line, optional indent) so
+# docstring/comment mentions of "import market_sim" (e.g. explaining what the
+# tool avoids) don't trip a false positive.
+if grep -rIn --include='*.py' -E '^[[:space:]]*(import market_sim|from market_sim)' . ; then
   echo "FAIL: found a market_sim import in the standalone copy" >&2
   exit 1
 fi
@@ -55,7 +58,11 @@ python3 -m venv .venv-verify
 # shellcheck disable=SC1091
 source .venv-verify/bin/activate
 python -m pip install --quiet --upgrade pip
-python -m pip install --quiet -r requirements.txt pytest
+# pytest + pyyaml are test-time only (pyproject.toml [project.optional-
+# dependencies].dev) -- pyyaml itself is a runtime-optional dependency
+# (PortfolioConfig.from_file's YAML path) but the test suite exercises it
+# directly, so it needs to be present for `pytest -q` to be meaningful.
+python -m pip install --quiet -r requirements.txt pytest pyyaml
 
 echo "== pytest -q =="
 python -m pytest -q
