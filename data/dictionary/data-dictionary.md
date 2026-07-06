@@ -62,6 +62,7 @@ for the market split.
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
+| ramp-capability | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -862,3 +863,33 @@ sector-keyed chp_btm_pct default for forecast years). Schema:
 | `n_years` | `int64` | `none` | no | Count of distinct years pooled into this row's totals. |
 | `first_year` | `int64` | `none` | no | Earliest calendar year contributing to this row. |
 | `last_year` | `int64` | `none` | no | Latest calendar year contributing to this row. |
+
+## ramp-capability
+
+Measured per-plant 10-minute ramp / fast-start capability inputs for the
+per-generator reserve co-optimization. Schema:
+[`schema/ramp-capability.schema.yaml`](schema/ramp-capability.schema.yaml).
+
+- **Keys:** `iso`, `plant_code`
+- **Reconciles:** EIA-860 Schedule 3.1 `Time from Cold Shutdown to Full Load`
+  (the `10M` fast-start category → `fast_start_mw` over the plant's thermal
+  nameplate `thermal_nameplate_mw`) and EPA CAMPD CEMS hourly unit gross load
+  (the maximum observed 1-hour plant-level up-ramp → `ramp_up_1h_mw`, plus
+  `observed_pmax_mw` and `hours_observed`) — reconciled per plant (EIA plant
+  code = CAMPD facilityId) onto one tidy frame, pooled 2023-2025 (holdouts
+  excluded, rule 22). Per-ISO scoping is the balancing-authority spec in
+  `scripts/lib/ramp_capability/<iso>.py` (PJM, MISO, CAISO). Consumed as the
+  measured ceiling on the class-rate estimate feeding `FleetArrays.ramp10`, the
+  10-minute reserve-deliverability bound.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose fleet the plant belongs to (EIA-860 balancing-authority scoping via the per-ISO spec, e.g. PJM, MISO). |
+| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL; CAMPD facilityId). |
+| `fast_start_mw` | `float64` | `mw` | yes | Sum of nameplate capacity over the plant's operable thermal generators whose EIA-860 "Time from Cold Shutdown to Full Load" is "10M" (full load within 10 minutes). Null when the plant has no EIA-860 thermal rows (CEMS-only row). |
+| `thermal_nameplate_mw` | `float64` | `mw` | yes | Sum of nameplate capacity over the plant's operable thermal generators (combustion/steam prime movers, nuclear excluded). The fast-start share denominator. Null when the plant has no EIA-860 thermal rows. |
+| `ramp_up_1h_mw` | `float64` | `mw` | yes | Maximum observed 1-hour increase in plant-level CEMS gross load (units summed per hour; offline unit-hours count as 0 MW; diffs spanning non-consecutive timestamps excluded), pooled over vintage_span. Null when the plant has no CAMPD coverage. |
+| `observed_pmax_mw` | `float64` | `mw` | yes | Maximum observed plant-level CEMS gross load over vintage_span (the measured capacity basis guarding stale nameplate against derates). Null when the plant has no CAMPD coverage. |
+| `hours_observed` | `int64` | `hours` | no | Count of plant-hours with CEMS coverage pooled over vintage_span (0 for an EIA-860-only row). The model-side loader requires a minimum (market_sim.data.ramp_capability.MIN_OBSERVED_HOURS) before the envelope is trusted. |
+| `vintage_span` | `string` | `none` | no | CAMPD vintages pooled for the envelope, e.g. "2023-2025". Holdout periods (2022, 2026) are excluded by construction (CLAUDE.md rule 22). |
+| `source_doc` | `string` | `none` | yes | Authoritative source citation for the row's inputs. |
