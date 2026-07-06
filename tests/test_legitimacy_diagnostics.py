@@ -175,6 +175,58 @@ class TestD2:
         # 50.4 ≈ at floor; 53.0 above tolerance; 0.5 MW floor is noise.
         assert mask.tolist() == [[True, False, False, True]]
 
+    def test_immaterial_class_not_gated(self):
+        """Owner directive 2026-07-06: a class dispatching < 2.5 % of total
+        load is not force-gated, however high its forced SHARE — a near-idle
+        merchant class is not 'the dispatch model'. Reported, flagged
+        immaterial, verdict pass."""
+        dispatch = np.full((1, HOURS), 100.0)
+        min_gen = np.full((1, HOURS), 100.0)  # 100 % forced
+        mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        # class energy = 100 * 24 = 2400 MWh; 2 % of a 120 000 MWh load.
+        res = run_d2(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),
+            year=2023,
+            total_load_mwh=120_000.0,
+        )
+        assert res.passed
+        row = res.summary[0]
+        assert row["immaterial"] is True
+        assert row["verdict"] == "pass"
+        assert row["forced_share"] == pytest.approx(1.0)
+
+    def test_material_class_still_gated(self):
+        """A class above the 2.5 % materiality floor is gated as before."""
+        dispatch = np.full((1, HOURS), 100.0)
+        min_gen = np.full((1, HOURS), 100.0)  # 100 % forced
+        mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        # class energy 2400 MWh = 4.8 % of a 50 000 MWh load → material.
+        res = run_d2(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),
+            year=2023,
+            total_load_mwh=50_000.0,
+        )
+        assert not res.passed
+        assert res.summary[0]["immaterial"] is False
+        assert res.summary[0]["verdict"] == "FAIL"
+
+    def test_materiality_guard_off_by_default(self):
+        """No total_load_mwh → guard disabled, every breach gates (the
+        pre-directive behaviour; no denominator must never hide a breach)."""
+        dispatch = np.full((1, HOURS), 100.0)
+        min_gen = np.full((1, HOURS), 100.0)
+        mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        res = run_d2(dispatch, min_gen, mech, np.array(["CT_PEAKER"]), year=2023)
+        assert not res.passed
+        assert res.summary[0]["immaterial"] is False
+        assert res.summary[0]["load_share"] is None
+
 
 # ---------------------------------------------------------------------------
 # D-4 — off-window binding
