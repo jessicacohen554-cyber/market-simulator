@@ -1,0 +1,17 @@
+{
+  "contract": "ADR 0011 (hour, iso, lmp) BAU LMP export -- REAL backcast bridge re-solve (validation-only, ADR 0015 carve-out)",
+  "iso": "NYISO",
+  "source_keeper_id": "2026-07-06-nyiso-53-li-tsl",
+  "source_bundle": "results/calibration/nyiso53_litsl_v2",
+  "solve_date": "2026-07-06",
+  "mode": "backcast",
+  "simulation_year": 2024,
+  "hours": 8760,
+  "collapse": "load-weighted average of zonal LMPs; zero-load hour falls back to simple mean (ADR 0011)",
+  "lmp_mean": 30.890575086075938,
+  "lmp_min": -26.001,
+  "lmp_max": 182.91353627612096,
+  "annual_load_twh": 150.460419,
+  "backcast_validation_only": true,
+  "generator": "one-off bridge script (not committed), same posture as docs/validation-2026-07-05-ercot-2024-backcast.md"
+}
