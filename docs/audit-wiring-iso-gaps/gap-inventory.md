@@ -13,6 +13,19 @@
 
 ---
 
+## Supersession notice (2026-07-06)
+
+**15 of 16 actionable items are LANDED** (see `fix-plan.md`). The one remaining
+open item — **A5 (ERCOT single-product reserve supply cap)** — is absorbed into
+the orchestrator unification plan **Stage 2** (`reserve_config._ercot_design`),
+tracked in the July gap register (`docs/gap-register-2026-07.md`) as **W1**. Do
+not execute `prompt-pack/w2-ercot-supply-cap.md` as written; the fix target
+(`runner.py` directly) is superseded by the shared-`reserve_config` path.
+
+The July gap register is the master tracking document for all remaining work.
+
+---
+
 ## Type A: Forecast Wiring Omissions
 
 | ID | Mechanism | Files / Lines | Severity | Forward-native? | Effect when missing |
