@@ -144,6 +144,28 @@ fixed here** — a real fix (e.g. a soft least-cost tiebreak that does not
 stall the solver, or a per-run sanity cap) is Mode A LP design work, out of
 scope for a validation session and deserving its own planning session/ADR.
 
+> **Update 2026-07-05 — fixed.** See **ADR 0019**
+> (`docs/decisions/0019-mode-a-build-tiebreak.md`) and
+> `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md` for the design,
+> the regression-test proof (`tests/test_mode_a_build_tiebreak.py`), and a
+> real-data before/after CAISO re-solve + ERCOT control. Summary: a flat
+> `build_tiebreak_epsilon` (default `1e-6`) on `build_mw`/`build_energy` in
+> Mode A's objective breaks the tie toward the smallest capacity that attains
+> the same matching/premium, without moving a build level the LP already pins
+> for a real economic reason. A `net_cost`-weighted least-cost tiebreak (the
+> "soft" option floated above) was tried again and rejected — it reintroduces
+> the same mixed-$-scale risk this section's stalled-solver note refers to,
+> and is not even guaranteed to shrink the build (see the ADR for why).
+> Separately, this session found the **committed CAISO bundle referenced
+> above priced against a synthetic, not real, CF shape** — its config left
+> `year=2030`/`profile_shape_year=None` while only a `CAISO_2024.parquet`
+> profile existed, so `build_cf_matrix` silently fell back to synthetic
+> shapes (`CAISO_run_metadata.json`'s `profile_source.source == "synthetic"`,
+> visible in the committed file). That is an unrelated data-provenance slip
+> in how this memo's CAISO run was invoked, not a tool defect; the tiebreak
+> re-solve corrects it (`year=2024`/`profile_shape_year=2024`) alongside the
+> fix.
+
 ## What this does and doesn't validate
 
 **Validates:** the tool's intake → LP → sweep → outputs pipeline runs

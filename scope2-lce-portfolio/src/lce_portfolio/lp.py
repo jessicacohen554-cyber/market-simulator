@@ -577,8 +577,7 @@ def build_and_solve(
         # premium constraint binds, so the reported (achieved) premium is the true
         # tradeoff. Once matching saturates at 100%, many portfolios tie and the
         # returned solution's premium is <= the cap (still honest — that matching
-        # is reachable within budget). A least-cost tiebreak was tried but its
-        # tiny mixed-scale coefficients stalled the dual simplex; not worth it.
+        # is reachable within budget).
         cost[lay.buy_off : lay.buy_off + T] = 1.0
         # Additionality (ADR 0008 amended): existing-resource generation NET of
         # its exported surplus is not matching — +1 on existing gen, -1 on
@@ -592,6 +591,22 @@ def build_and_solve(
             )
             cost[ex_gen_cols] += 1.0
             cost[lay.exq_off : lay.exq_off + T] = -1.0
+        # Build-size tiebreak (ADR 0019, config.build_tiebreak_epsilon, default
+        # 1e-6): a pure `min grid_buy` objective has zero weight on build_mw, so
+        # once matching saturates below a resource's cap (grid_buy floors at 0
+        # with premium-budget slack to spare), every build level up to the cap
+        # ties on the objective — the LP is free to return an arbitrary point on
+        # that face, including a near-cap corner (the CAISO onshore-wind
+        # degenerate-saturation finding this ADR fixes). A flat per-MW epsilon
+        # on build_mw (and split-storage build_energy) breaks the tie toward the
+        # smallest capacity that still attains the primary optimum. Flat and
+        # small enough (unlike the earlier $-scale least-cost attempt, whose
+        # coefficients spanned the full fixed_mwyr/vom/lmp range and destabilized
+        # the solve) to never move a build level the LP already pins for a real
+        # matching/premium reason — see ADR 0019 for the sizing rationale.
+        cost[lay.build_off : lay.gen_off] += config.build_tiebreak_epsilon
+        if n_split:
+            cost[lay.bev_off : lay.bev_off + n_split] += config.build_tiebreak_epsilon
     else:
         cost[lay.build_off : lay.build_off + n_res] = resources.fixed_mwyr
         cost[lay.gen_off : lay.chg_off] = np.repeat(resources.vom, T)
