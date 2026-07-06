@@ -1244,6 +1244,7 @@ def inject_reference_price_mc(
     gas_scenario: str = "mid",
     carbon_price: float = 0.0,
     border_anchor: bool = False,
+    forward_skill: str | None = None,
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
@@ -1279,6 +1280,12 @@ def inject_reference_price_mc(
     import under-run), while 2023 (already matched) barely moves. No-op for every
     other ISO / when off (byte-identical).
 
+    ``forward_skill`` is forwarded to
+    :func:`market_sim.data.neighbor_price.neighbor_heat_rate` (via
+    ``interface_reference_prices`` / ``seam_tranche_prices``) — sourced from
+    ``ScenarioConfig.neighbor_hr_forward_skill``, default ``None`` (off,
+    byte-identical). See that field's docstring.
+
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
     """
@@ -1295,7 +1302,9 @@ def inject_reference_price_mc(
     )
 
     hours = int(mc.shape[1])
-    aggregate = interface_reference_prices(iso, year, hours, gas_scenario).aggregate()
+    aggregate = interface_reference_prices(
+        iso, year, hours, gas_scenario, forward_skill
+    ).aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
     if border_anchor and iso == "MISO" and "PJM" in specs:
         # Western-border re-anchor: price the PJM seam off its MISO-facing border
@@ -1319,7 +1328,13 @@ def inject_reference_price_mc(
         if name not in tranches:
             spec = specs.get(name)
             tranches[name] = (
-                seam_tranche_prices(spec, year, hours, gas_scenario=gas_scenario)
+                seam_tranche_prices(
+                    spec,
+                    year,
+                    hours,
+                    gas_scenario=gas_scenario,
+                    forward_skill=forward_skill,
+                )
                 if spec is not None
                 else None
             )
@@ -3792,11 +3807,17 @@ def apply_interchange_injections(
         measured_overlay: Optional callable ``(fleet_arrays, mc) -> None``
             holding the backcast-only measured-price overlays.
 
+    ``config.neighbor_hr_forward_skill`` (default ``None``) is read here and
+    threaded into every :func:`inject_reference_price_mc` call as
+    ``forward_skill`` — see that field's docstring.
+
     Raises:
         ValueError: ``caiso_import_solar_shape`` is on but ``net_load`` was
             not supplied.
     """
     from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    _forward_skill = getattr(config, "neighbor_hr_forward_skill", None)
 
     # --- 1. Generic reference-price seam (non-CAISO; CAISO uses its dedicated
     #     caiso_reference_price_seam block below, which adds the CARB border
@@ -3814,6 +3835,7 @@ def apply_interchange_injections(
             year,
             gas_scenario,
             border_anchor=_border_anchor,
+            forward_skill=_forward_skill,
         ):
             _logger.info(
                 "%s %d: reference-price interface — %d neighbor seams priced "
@@ -3858,6 +3880,7 @@ def apply_interchange_injections(
             year,
             gas_scenario,
             carbon_price=carbon_price,
+            forward_skill=_forward_skill,
         ):
             _logger.info(
                 "%s %d: CAISO reference-price seam — both legs of %d WECC "

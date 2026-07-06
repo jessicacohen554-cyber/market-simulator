@@ -8,6 +8,7 @@ an integration case validates the PJM registry against the real EIA-930
 neighbor extracts when they are present.
 """
 
+import os
 import unittest
 
 import numpy as np
@@ -15,6 +16,7 @@ import numpy as np
 import market_sim.data.neighbor_price as np_mod
 from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
 from market_sim.config.interchange_config import INTERFACE_NEIGHBORS, NeighborInterface
+from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 from market_sim.data.neighbor_price import (
     InterfacePrices,
@@ -122,6 +124,45 @@ class TestNeighborHeatRate(unittest.TestCase):
         # forecast years — byte-identical.
         spec = _spec(name="South", marginal_heat_rate=12.0, hr_by_year=None)
         self.assertEqual(neighbor_heat_rate(spec, 2030, "mid"), 12.0)
+
+
+class TestForwardSkillNotAnEnvVar(unittest.TestCase):
+    """The removed FORWARD_SKILL_ENV channel must stay dead (CLAUDE.md rule 23).
+
+    ``forward_skill`` is a plain parameter threaded from
+    ``ScenarioConfig.neighbor_hr_forward_skill``; the old
+    ``MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL`` environment variable must have no
+    effect at all, however it is set.
+    """
+
+    def test_env_var_does_not_affect_heat_rate(self):
+        spec = _spec(name="PJM", marginal_heat_rate=12.3, hr_by_year={2024: 13.49})
+        os.environ["MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"] = "elastic"
+        try:
+            # Still the measured backcast anchor, not the elastic forward path
+            # the (dead) env var would have selected.
+            self.assertEqual(neighbor_heat_rate(spec, 2024), 13.49)
+            hr_phys, hr_adder = np_mod._HR_GAS_ELASTIC["PJM"]
+            gas = neighbor_gas_price(spec, 2030, "mid")
+            # Forecast year: still the gas-elastic path (the parameter default),
+            # not forced flat by the env var.
+            self.assertAlmostEqual(
+                neighbor_heat_rate(spec, 2030, "mid"), hr_phys + hr_adder / gas
+            )
+        finally:
+            del os.environ["MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"]
+
+    def test_scenario_config_field_is_the_only_channel(self):
+        # The explicit keyword argument (sourced from ScenarioConfig in the
+        # dispatch path) is what actually changes behavior.
+        spec = _spec(name="PJM", marginal_heat_rate=12.3, hr_by_year={2024: 13.49})
+        self.assertEqual(neighbor_heat_rate(spec, 2024, forward_skill="flat"), 12.3)
+        cfg = ScenarioConfig(neighbor_hr_forward_skill="flat")
+        self.assertEqual(cfg.neighbor_hr_forward_skill, "flat")
+
+    def test_scenario_config_rejects_invalid_value(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(neighbor_hr_forward_skill="bogus")
 
 
 def _at_gas(spec: NeighborInterface, gas: float) -> NeighborInterface:
