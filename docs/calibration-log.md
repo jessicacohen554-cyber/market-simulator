@@ -40,6 +40,124 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — NEISO — L-15 continuation: C7 ST_GAS re-grounded on a net-load commitment limb + NEISO-measured offer bands: NEW KEEPER `neiso 49 stgas-netload` (2025 D-1 PASSES; still NOT-YET on the caveat budget)
+
+**Goal (L-15 / gap register G-16 + the C7 hard caveat).** Root-cause the ST_GAS
+diurnal-shape FAIL carried by the neiso-48 keeper (D-1: profile_r 0.62/0.66/0.71,
+off-peak CV ratio 35.4/0.0/0.0) — the second hard caveat blocking NEISO's caveat
+budget — and close whatever of it is structurally closable. Also: C2 final-vintage
+check (task 4) and the #1476 winter-fuel follow-through.
+
+**Root cause (measured, unit-level).** The gated NEISO ST_GAS class is ONE plant —
+Montville Station (ORIS 546, CT; units 5+6, both residual-oil-primary in CEMS,
+~495 MW bench nameplate vs an 81 MW model bin ≈ unit 5). The real units run in
+6–21 multi-day committed blocks per year (runs of 20–200 h) at ~60–130 MW —
+min-stable overnight, load-following daytime — concentrated on TIGHT-SYSTEM days:
+the Feb-2023 arctic blast AND the post-Mystic Jun–Aug 2024/2025 heat events plus
+Jan/Dec 2025. The keeper's model ran the bin 2–5 times a year for 1–6 evening
+hours: (a) NOTHING committed it — the two ST_GAS temperature limbs have been
+disabled since the 2026-06-30 rebuild as unidentified (tmax ρ=0.23 < 0.3; tmin
+n=8 < 30), because neither temperature alone explains a hot-AND-cold event set;
+(b) its offer bands were all-neutral 1.0 placeholders (the 0c6c833 de-leak), so
+its tranches never cleared the daytime merit. The A+B probe (#1476) proved a flat
+floor alone cannot fix profile_r — a constant shifts CV but correlation is
+constant-invariant.
+
+**Change 1 — Connecticut ST_GAS `netload` reliability limb (rule-19 re-grounding).**
+Daily peak system net-load unifies the hot+cold commitment driver: 90% of the 100
+committed days sit above the p70 of daily-peak net-load (median = p93); Spearman
+ρ=0.51, n=329 flagged days — vs the disabled limbs' 0.23/n=8. Derived by the
+frozen `derive_reliability_coeffs.py` methodology (threshold p70 = 16.02 GW,
+floor_pct 0.0336 = commit_frac 0.2796 × physical min_stable 0.12), the exact
+CAISO-CT netload-limb precedent (rebuild-plan review decision 2: net-load limbs
+carry no temperature gate); all-24h boiler gate, 48 h steam event bridging. Two
+derive-script correctness fixes shipped with it (commit cites the source-data
+basis, rule 23): a day whose CAMPD rows are all-NaN grossLoad now counts as
+OFFLINE (cf=0/online_frac=0) instead of dropping out — the single-plant
+saturation artifact that froze the old ST_GAS rows at commit_frac=baseline=1.0 —
+and the netload threshold percentile is restricted to the 2023–2025 derivation
+span (the EIA-930 BA parquets were since backfilled to 2019; rule-22 holdout
+periods must never enter a calibration-derived threshold). Rule-24 reconcile:
+when Component B (`neiso_winter_fuel_mustrun`, default off) is co-armed, it now
+drops ST_GAS from its scope — the netload limb owns the steam commitment.
+
+**Change 2 — NEISO-measured offer bands (the ledgered C3a/C3b closure path).**
+`derive_campd_marginal_hr.py --iso NEISO` (the NYISO run-32 tool, ISO-generic)
+grounds the de-leaked neutral bands in NEISO's own measured CAMPD marginal heat
+rates: ST_GAS 0.79/0.85/0.89 (native marginal 0.642/0.692/0.731 — a genuinely
+RISING measured ramp, unlike NYISO's flat steam — × the NEISO-native CC reach
+ratio 1.223 = CC econ_high band 1.15 / native CC marginal 0.940; no cross-ISO
+value, rule 26); CC_CHP 1.15/1.17/1.19 (native flat 0.94–0.97 × 1.223, thin
+monotone spread; n=5, wide IQR disclosed). CT_PEAKER econ bands STAY neutral —
+now measurement-AFFIRMED, not just de-leaked: NEISO's CT marginal HR is
+flat-to-FALLING with load (0.808/0.745/0.700, n=18), so the removed ERCOT
+1.27→1.98 ramp had no NEISO physical basis and the real above-cost CT component
+is the (already-priced) startup amortization. CT_CHP stays neutral (n=1).
+
+**Result (`2026-07-06-neiso-49-stgas-netload`, 2023-2025, one bundle, vs keeper
+neiso-48):**
+
+| metric | neiso-48 | neiso-49 | gate |
+|---|---|---|---|
+| D-1 ST_GAS 2025 | r 0.705, cv 0.0 FAIL | **r 0.844, cv_ratio 2.87 PASS** | first-ever ST_GAS pass |
+| D-1 ST_GAS 2023 | r 0.619, cv_ratio 35.4 FAIL | r 0.490, cv_ratio 4.61 FAIL | CV collapse fixed; r honest-lower (see below) |
+| D-1 ST_GAS 2024 | r 0.659, cv 0.0 FAIL | r 0.725, cv 0.0 FAIL | flat-floor-only year |
+| D-2 ST_GAS forced share | 0.0 | 0.0 (floor scaffolding only; dispatch economic) | PASS |
+| C1 | 12/12 | 12/12 (2023 ST_GAS 0.041 TWh ≈ actual 0.041) | PASS |
+| C8 / C4 / C5a | PASS | PASS | — |
+| C3a/C3b/C3c | caveats | unchanged (−8.3/−7.8%; 0.169; 0h >$300) | caveat |
+| C5b 2025 | −49.3% (1.05 TWh) | **−56.3% (0.91 TWh) — DEEPENED, disclosed** | caveat |
+
+The model ST_GAS now runs ~8,100 h in 2023 at a 5–7.5 MW diurnal hump (was 13
+spiky hours) with near-zero energy at the binding floor (0.25%): the commitment
+floor is scaffolding and the dispatch is economic — exactly the rule-20 shape a
+commitment mechanism must have. **Honest costs (rule 1, disclosed, NOT to be won
+back):** C5b deepens because the measured-cost steam tranche shaves the
+artificial evening peaks the PS fleet was arbitraging — the missing spread is the
+same ledgered scarcity-formation gap; and 2023 profile_r reads lower than the
+keeper because the old 0.619 correlated a 13-hour spiky artifact while the new
+0.490 is a real profile with a genuine mis-phase (model evening-peaked vs the
+actual's midday-peaked event days).
+
+**Remaining C7 root causes (ledgered in the attestation, next NEISO items):**
+(1) 2024 is a flat-floor-only year — at $2.19 HH gas the unit clears no merit
+hours, so the committed profile carries no intra-day variation (cv 0.0); coupled
+to the C3a price-depression family. (2) Engine-vs-derivation net-load basis: the
+engine's exogenous net-load flags 27/36/58 days (2023/24/25) vs the derivation's
+~110/yr on the EIA-930 basis — notably tracking the actual committed-day counts
+(22/20/58) — a basis-consistency follow-up. (3) The ~5 MW year-round merit
+sliver is a sub-min-stable LP-relaxation artifact; the physical fix is steam
+commitment integrality in P2 via `class_commitment_overrides`, whose CAMPD-bin
+early-return in `commitment._commitment_params` currently prevents enabling a
+zero-min-run bin — a documented wiring follow-up.
+
+**Task-4 check: C2 final 2025 EIA-923 vintage has NOT landed** (the 923 monthly
+parquet and the 2025 completeness part are unchanged since PR #1434); no
+re-score, the C2 ledger stands. Re-fetching a fresher preliminary vintage would
+change benchmark actuals for all six ISOs — out of this lane's namespace.
+
+**KEEPER PROMOTED: `2026-07-06-neiso-49-stgas-netload`** (zero-forcing ablation
+twin `…-ablation` registered alongside, rule 21) — the most structurally
+faithful NEISO run: two unidentified disabled limbs replaced by one identified
+measured driver, neutral placeholder offers replaced by the ISO's own measured
+marginal heat rates, no criterion FAIL introduced, nothing fitted to a residual.
+**Determination stays NOT-YET on the caveat budget alone (hard C2+C7 2>1; soft
+C3a/C3b/C3c/C5b 4>2; zero criterion FAILs)** — no calibration-complete memo this
+session. The credible path to the budget: C7 closes via the three ledgered
+follow-ups above (2024's cv is the C3a family), C3a/C3b close via scarcity/price
+formation (the measured bands having removed the offer-side excuse), C3c/C5b
+close together via winter scarcity-price formation — NOT via more commitment
+tuning (the #1476 negative stands) and never via a storage/offer tune.
+
+Dashboard: registered `2026-07-06-neiso-49-stgas-netload` (KEEPER) +
+`…-ablation`; pruned neiso-44-base-control / neiso-45-flat-econ (top-15);
+`keepers.json` swapped; keeper-auditor run; `status.js` rebuilt. Reproduce:
+`python scripts/run_calibration_full.py --iso NEISO --year 2023 2024 2025
+--commitment --reliability-floor --hydro-backfill-year 2024
+--hydro-eia930-monthly --gas-hub-basis-daily --scarcity-price-overlay
+--tranche-startup-amortization --out-dir results/calibration/neiso_stgas_netload`.
+
+
 <!-- Copy the block below for each calibration run. Newest first. -->
 
 ### 2026-07-06 — NYISO — KEEPER PROMOTED: `2026-07-06-nyiso-53-li-tsl` replaces `2026-07-03-nyiso-41-hub-prices` (owner decision, L-11)
