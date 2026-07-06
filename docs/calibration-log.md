@@ -42,6 +42,80 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-06 — CAISO — L-10 wave-3: G-11 drift bisect CLOSED, G-14 bundle corrected, G-15 zero-drag ablation (caiso 56): PROBE, keeper stays caiso 51
+
+**Goal (gap register §3.2 G-11/G-14/G-15, issue #1346, lane L-10).** (1) Bisect the caiso-51
+keeper-reproducibility drift on post-07-03 main; (2) adjudicate the caiso-51 bundle's
+meta/run_config self-disagreement; (3) write the CT-drag D-8 closure design and run the one
+permitted zero-drag ablation probe. NO keeper swap (owner decision); nothing tuned against a
+residual.
+
+**G-11 — drift DIAGNOSED: PR #1279 (the caiso-52 CT-floor scrub), a legitimate rule-17/18/19
+correction, not a regression.** No new bisect solves were needed — the registered run chain
+already brackets every post-07-03 merge: caiso-51 (pre-scrub `2b2f91f`, CT 3.474/3.383/2.843
+TWh, C8 32.6/29.0/27.5%) → caiso-52 (keeper flags + scrub, CT 1.97/1.56/1.15) → caiso-r1-baseline
+(07-05 main, CT 2.122/1.729/1.242, C8 59.8/66.7/71.5%) → caiso-55 (HEAD replay `455ed9f`,
+CT 2.12/1.73/1.30). The scrub's three commits: `916e8cb` (RA economic bridge gated on
+min-down ≥ 4 h physics — kills the overnight CT hold), `77c4f67` (CT netload limbs windowed
+h15-21), `b3a9036` (limbs retired, `enabled=False`). The committed keeper carried TWO
+since-removed off-merit CT engines (all-24h limbs + overnight economic bridge) whose energy its
+own D-2 could not fully see (the P2 RA-bridge floor is not reconstructable — "lower bounds";
+the D-1 off-peak CV 0.011-0.025 flat-floor signature was the tell). **Input-hash check clears
+the data-side suspects** (#1346 named CAMPD intake batches / fuel curation / the fleet.py
+curated-bin merge): every run in the chain — and the caiso-56 probe solved this session in a
+fresh container — carries byte-identical content-hashed shared inputs (`eia930-3697b3115384`,
+`eia923-b95fbbedf1f2`, `campd-cceb6c13d8f9`). Code, not data. The only fleet.py change in
+`455ed9f..3b31193` is the confirmed-exits backlog application (forecast-gated, backcast-inert).
+**Correction to the 2026-07-05 caiso-55 entry:** it attributes the residual +0.15 TWh/yr deltas
+to a seam re-grounding commit "`21f8845`" — that SHA does not exist; the actual seam re-ground
+commit `954c8a8` (capdel CLI flag + measured-hub 2023 gap-fill) is *inside* PR #1276, i.e. part
+of the keeper itself; the intervening merges are the 07-04/05 scalar/offer work (#1283/#1284,
+incl. `0c6c833`) and the InterchangeSpec unification (`3fb6282`). **Disposition:** the scrub
+stays (do not revert); the keeper's committed dashboard numbers are pre-scrub and unreproducible
+on any post-scrub main — disclosed on the caiso-51 sidecar; **a keeper re-solve/re-gate under
+scrubbed main is owed to the owner**, and per the merged L-8 memo
+(`emissions-co2-rate-plan-2026-07.md` §9.6) that re-solve carries
+`use_plant_emission_rates_v2=True` (CAISO is carbon-priced → the flip is dispatch-affecting)
+with an optional v2-off ablation twin for attribution — never a standalone re-solve wave for
+the flag alone. No clean keeper candidate exists today: every post-scrub arm FAILs rule-20 C8
+(59-71%) until the evening-merit structure lands. Diagnosis posted to issue #1346.
+
+**G-14 — caiso-51 bundle corrected: meta.json was the truth.** The keeper's own solve log is
+decisive — `capacity_deliverability_limits` set the seam import cap to 16,055/16,452/16,148 MW
+(published MIC replacing the fitted 7,500 MW WECC fallback) and `caiso_perhub_firm_base` held
+firm tranches at contract cost, all three years. `run_config.json`'s `scenario_config` recorded
+`false` for both because the keeper-era harness `recorded_cfg` block never threaded those two
+kwargs (the solve honored them via `run_year` kwargs; the writer serialized dataclass defaults).
+Corrected with a `post_hoc_corrections` record in the file (commit cites the log lines).
+Harness note for the orchestrator/L-2 owners: `capacity_deliverability_limits` recording was
+since fixed on main, but **`caiso_perhub_firm_base` is still not threaded into `recorded_cfg`
+at HEAD** — any new run with that flag will repeat the G-14 under-report until fixed.
+
+**G-15 — CT-drag D-8 closure design + zero-drag ablation (caiso 56, PROBE,
+`results/calibration/caiso56_zerodrag_ablation`, 2023-25, registered
+`2026-07-06-caiso-56-zero-drag`).** Design: `docs/handoffs/caiso-ct-drag-d8-closure-2026-07.md`
+— the drag's rule-17 credentials are intact (driver: CAMPD CT evening CF regressed on EIA-930
+net-load, local-RA duck-curve commitment; window h15-21 matched derivation↔application; forward
+story: net-load regenerates from load forecast + VRE build), rule-19 is clean (sole CT floor;
+limbs retired + code-deduped, bridge physics-gated), but the +18.1% LOYO slope drift
+(train 0.01064 vs full 0.00901; 2025 floor prediction +32.2%) is structural: the drag carries
+~all of a class whose real evening commitment is ramp + locational — invisible to the
+energy-only zonal LP (`FINDING-caiso-evening-merit-2026-07-04.md`). Closure = the already-built,
+gated-off `ramp_limits` + `local_capacity_constraints` mechanisms
+(`docs/ramp-locational-design-2026-07.md`), whose decision rule is adopted as the D-8 closure
+criterion; on pass the drag is REMOVED (rule 26), on fail it stays and G-15 stays open. **Probe
+result (single delta `ct_netload_drag=false` on the keeper config at HEAD, v2 off as the keeper
+ran):** scored-pass CT_PEAKER 0.83/0.55/0.39 TWh vs drag-ON 2.12/1.73/1.30 (measured
+3.08/3.30/1.65) — the ablation delta 1.29/1.18/0.91 TWh matches caiso-55's D-2 drag attribution
+(1.26/1.15/0.90) within ~2%, a clean D-3 validation of the D-2 accounting. Without the drag the
+class collapses to ~25% of actual (the pure merit tail); D-2 PASSES (CT forced 0.8/1.4/0.03%,
+only `ra_mustoffer_bridge` remains); C3a +21.4/+36.3/+43.7% (the drag barely moves mean LMP);
+2023 >$200 tail 479 h vs 21 actual (the floor was suppressing artificial evening scarcity the
+model now prices — C3c honest-fail, recorded not judged). **Keeper stays
+`2026-07-03-caiso-51-firm-base`** (recommendation only; `keepers.json` untouched). Dashboard
+retention pruned to top-15 (dropped 2026-07-01-caiso-46-capdel-probe sidecar+payload; bundle
+kept). Quarantine gate `audit_keepers.py --check` green before and after (0 failures).
+
 ### 2026-07-05 — CAISO — W3-P2 CT-floor scrub HEAD verification + red-flag closeout (caiso 55): PROBE, keeper stays caiso 51
 
 **Goal (W3-P2, red-flag `caiso-52-ct-scrub`, audit `docs/model-legitimacy-audit-2026-07.md` §1).**
