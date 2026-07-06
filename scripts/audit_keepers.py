@@ -129,7 +129,10 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
         # zero-forcing twin), taking the grandfathered E9 exemption with it.
         # 2026-07-03-neiso-47-fast-start: removed 2026-07-05 — superseded as
         # NEISO keeper by 2026-07-05-neiso-48-ct-floor (registered with twin).
-        "2026-07-03-miso-39-reserve-pergen",
+        # 2026-07-03-miso-39-reserve-pergen: removed 2026-07-06 — superseded as
+        # MISO keeper by 2026-07-05-miso-41-ct-evening (registered with its own
+        # zero-forcing twin, 2026-07-06-miso-41-ct-evening-ablation), taking the
+        # grandfathered E9 exemption with it.
     }
 )
 
