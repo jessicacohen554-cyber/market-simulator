@@ -546,6 +546,31 @@ mid-window reversal ever lands.
   non-fossil honor path silently skips any binned non-fossil plant; today none
   are binned (bins are gas/coal), so this is latent, but the invariant "announced
   dates ride plant-level joins, not bin plumbing" should be asserted in a test.
+* **Double-derate bug found and fixed post-flip (2026-07-05).** Since the fleet
+  threads forward mutated through the runner's year loop, `evolve_fleet`'s step
+  0 re-selected every already-effective registry row (`effective_year <= year`)
+  on EVERY subsequent forecast year, not just the year the instrument took
+  effect. For plant-binned (CAMPD) exits this re-derated the same MW again each
+  year the row remained selectable: V H Braunig (plant 3612, 477 MW, effective
+  2025) correctly took the ERCOT base fleet from 1138 → 660.9 MW at the 2026
+  forecast start, then wrongly derated a *second* 477 MW at 2027 (→ 184.0 MW) —
+  a -954 MW over-derate that then persisted for the horizon (it stopped
+  recurring only because CAMPD re-aggregation drops `plant_code` identity after
+  2027, not because the bug self-corrected). Unit-grain exits were unaffected
+  (dropped generators can't re-match). Fixed by making a confirmed exit a
+  discrete once-at-its-date event: `apply_confirmed_exits` gained an
+  `apply_backlog` flag — `build_base_fleet` (the first simulated year) passes
+  `apply_backlog=True` to collapse the pre-start backlog
+  (`effective_year <= start_year`) into one application, while `evolve_fleet`
+  (every later year, the new default) selects only the row with
+  `effective_year == year`, so an already-applied row is never re-selected.
+  Verified with `scripts/probes/confirmed_retirement_probe.py --iso ERCOT
+  --end-year 2031 --confirmed-exits`: Braunig now derates in 2026 only, and no
+  other registered row (CAISO OTC units, Monroe, Merrimack, Rockport) repeats.
+  `confirmed_exits_enabled` stays on — this was a bug in the channel, not a
+  reason to gate it back off. Regression coverage:
+  `tests/test_capacity.py::TestConfirmedExits` (repeated-year, newly-effective,
+  and pre-start-backlog cases).
 
 ## 8. W2-P2 implementation prompt
 

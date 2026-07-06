@@ -76,8 +76,8 @@ def wrapped_announced(fleet, year, fossil_economic=True, **kw):
     return out
 
 
-def wrapped_confirmed(fleet, year, exits):
-    out = _orig_confirmed(fleet, year, exits)
+def wrapped_confirmed(fleet, year, exits, **kw):
+    out = _orig_confirmed(fleet, year, exits, **kw)
     before = {g.unit_id: g.pmax_mw for g in fleet}
     after = {g.unit_id: g.pmax_mw for g in out}
     yr = RECORDS["years"].setdefault(year, {})
