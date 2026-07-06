@@ -375,7 +375,13 @@ def apply_winter_fuelsec_mustrun(
 
     Rule 19: REPLACES the disabled COAL/ST_GAS ``tmin`` cold-limb reliability
     floors (``reliability_floor_coeffs_NEISO.csv``, ``enabled=False`` since the
-    2026-06-30 rebuild disabled them for thin cold-day sample, n=7-8). Those limbs
+    2026-06-30 rebuild disabled them for thin cold-day sample, n=7-8). Since
+    2026-07-06 the ST_GAS half of that phenomenon is owned by the Connecticut
+    ST_GAS ``netload`` reliability limb (tight-system days, hot AND cold — a
+    superset of this floor's cold-day window): when that limb is enabled in a
+    run alongside this one, the caller drops ST_GAS from ``plant_classes`` so
+    the two mechanisms never stack (rule 24; see ``run_calibration.run_year``).
+    Those limbs
     modelled the same phenomenon (winter steam commitment) via a temperature->
     commitment correlation that could not be identified from the sparse cold-day
     record; Component B grounds it in the program posture instead. It is the
