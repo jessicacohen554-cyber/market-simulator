@@ -1,8 +1,10 @@
 # Capacity-Economics Recalibration Plan — 2026-07 (W0-P5)
 
 **Status:** design complete. **W2-P3 Stage 1 (FOM + joint protocol) EXECUTED 2026-07-05 —
-see the Stage-1 status note below.** Foresight (§2), floor accreditation (§3), and the DC-load
-block (§4) remain for later stages. Implementation prompt in §9.
+see the Stage-1 status note below; Stage 2 (revenue-side fix) and Stage 3 (hindcast
+scarcity footing, foresight A/B, backstop-off diagnostic) follow it.** Foresight (§2),
+floor accreditation (§3), and the DC-load block (§4) remain for later stages.
+Implementation prompt in §9.
 
 > ### Stage-1 status note (2026-07-05, W2-P3)
 >
