@@ -40,7 +40,42 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
-### 2026-07-06 — NEISO — owner scoping decision: no further forced-commitment compute on sub-2.5%-of-load classes (ST_GAS out of scope for now)
+### 2026-07-06 — Rubric — C7 immateriality cut-off: a gated class under 2.5% of ISO total load no longer C7-gates (owner decision; supersedes the same-day compute-scoping note below)
+
+**Owner decision, restated and widened.** The prior entry below framed the
+2.5%-of-load call as "don't spend compute chasing ST_GAS" — a probe-skip.
+The owner's actual instruction is broader and structural: **a D-1-gated
+class under ~2.5% of ISO total load should never be a C7 gate at all, even
+when its diurnal-shape verdict is a clean FAIL** — not merely "don't bother
+re-running the probe." This is a rubric change, not a scheduling one.
+
+**Change.** `scripts/calibration_verdict.py::score_shape` now takes optional
+`ypay`/`ybench` and computes each D-1-gated class's actual share of ISO total
+load (`_gen_totals` + `_total_load`, the same helpers C1/C2 use). A class
+under `D1_SHAPE_MATERIALITY_LOAD_FRAC = 0.025` is recorded `SKIPPED`
+regardless of its r/CV-ratio verdict — mirrors C2's existing `SYSVOL_MIN_TWH`
+immateriality cut-off exactly (a shape defect on a near-noise-floor class
+isn't withheld from a keeper). The underlying r/CV-ratio numbers are still
+carried in the row's `magnitude` for visibility; they just stop counting
+against the C7 protective-caveat budget. Without `ypay`/`ybench` (e.g. a raw
+D-1-row unit test) the class gates exactly as before — no behavior change
+for callers that don't pass the new args. `docs/calibration-determination-
+rubric.md` C7 section updated to match; 4 new tests in
+`tests/test_calibration_verdict.py::ShapeForcedShareTests` (98/98 pass).
+
+**Effect on the C7 caveat / the 2026-07-06 adjudication hold (`dbda27f`).**
+Whether this closes the NEISO marker hold depends on ST_GAS's actual share of
+NEISO total load in the keeper years — not re-derived in this session (no
+local bundle/dashboard access). If ST_GAS is confirmed < 2.5% of NEISO load
+in 2023–2025, its C7 FAIL becomes SKIPPED and the "C7 ST_GAS diurnal
+residual" hold reason no longer applies from C7's side (the winter-fuel
+Component-B family is untouched by this change and may still hold the
+marker on its own). **Action for the next session with bundle access:**
+re-run `calibration_verdict.py` against the committed
+`2026-07-06-neiso-49-stgas-netload` artifact and confirm the C7 row now
+reads `SKIPPED (immaterial)` before treating the hold as narrowed.
+
+### 2026-07-06 — NEISO — owner scoping decision: no further forced-commitment compute on sub-2.5%-of-load classes (ST_GAS out of scope for now) — *narrow framing, superseded above*
 
 **Decision (owner, this session).** The L-15 lane's next planned step — probing
 `--class-commitment-overrides` against the netload-basis fix
@@ -58,9 +93,8 @@ merged (CAMPD-bin `class_commitment_overrides` unblock;
 `ReliabilityFloorSpec.threshold_percentile` net-load basis fix) stand as
 available mechanism infrastructure but will not be exercised in a probe run
 under this scoping call. No new run, no registry entry, no keeper change.
-Future sessions: do not re-litigate this decision without new owner
-direction; the C7 caveat itself is unchanged (still open, still governs the
-NEISO marker hold) — only the compute-spend decision changed.
+**Superseded by the entry above** — the owner clarified this is a rubric
+gating change, not just a probe-skip.
 
 ### 2026-07-06 — NYISO + NEISO — calibration-complete adjudication (rubric-v2 memo §6): owner HELD both markers; holdout quarantine unchanged, no solves
 
