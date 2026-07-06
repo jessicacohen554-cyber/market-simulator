@@ -11,5 +11,6 @@
  ],
  "iso": "CAISO",
  "file": "frontend/data/backcast/runs/2026-07-06-caiso-58-v2-regate.js",
- "bundle": "results/calibration/caiso58_v2_regate"
+ "bundle": "results/calibration/caiso58_v2_regate",
+ "ablation_twin": "2026-07-06-caiso58-v2-regate-ablation"
 }
