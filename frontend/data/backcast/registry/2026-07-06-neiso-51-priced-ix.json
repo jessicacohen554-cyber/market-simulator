@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-neiso-51-priced-ix",
+  "label": "neiso 51 priced ix",
+  "date": "2026-07-06",
+  "shorthand": "neiso-51-priced-ix",
+  "definition": "(PROBE) Priced interchange re-test with measured seam ladders - audit C-6 closure. IMPORT/EXPORT_TRANCHES[NEISO] rederived from measured data only (scripts/derive_neiso_import_tranches.py): per-seam Q-Q duration coupling of the measured ISO-NE DA hub LMP with measured EIA-930 per-seam flows (HQT/NBSO/NYIS), NYISO proxy-bus anchors (NYISO_HQ opportunity cost, NYISO_NPX parity), year-keyed 2023-2025 + pooled forward ladder. Keeper recipe + --priced-interchange. P9 vs the 2026-06-12 smoke (-23.5 vs -10.3 TWh, 100% import hours): net interchange now -14.8/-8.9/-9.6 TWh vs -15.1/-10.3/-8.1 actual (-2%/-13%/+18%), duration RMSE 529/609/554 MW, diurnal corr +0.46/+0.46/+0.38. C3a -6.2%/-1.2%/+2.6% vs the keeper's registered -10.4%/-8.6%/-4.4%, with REAL mechanistic HQ_import zonal separation (-$1.7 to -$3.9 vs mainland) replacing the non-reproducible WIP effect retired in the neiso-50 keeper swap. C1 12/12; C3c/C5b carry the keeper's same ledgered gaps (unattested here - probe). Part of the C3a gain is main drift since the keeper's solve commit - see the neiso52 HEAD-baseline run for the attribution split.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-neiso-51-priced-ix.js",
+  "bundle": "results/calibration/neiso51_priced_ix_measured"
+}
