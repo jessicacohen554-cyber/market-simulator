@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-caiso51-statmode-v2",
+  "label": "caiso51 statmode v2",
+  "date": "2026-07-06",
+  "shorthand": "caiso51-statmode-v2",
+  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper caiso51_firm_base (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-caiso51-statmode-v2.js",
+  "bundle": "results/calibration/caiso51_statmode_v2"
+}
