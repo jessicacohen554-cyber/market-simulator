@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-ercot38-measured-hsl-2425",
+  "label": "ercot38 measured hsl 2425",
+  "date": "2026-07-06",
+  "shorthand": "ercot38-measured-hsl-2425",
+  "definition": "ercot38: one-delta probe of ercot34 (stage-4 overlay-off keeper) -- measured ERCOT NP4-732/737 HSL now intaken for 2024/2025 (previously G7 reference-curtailment-rate gross-up fallback). Same recipe as ercot34 (five gas-geography/WS-A prb_overrides restored via --set since meta.json only nests them under coal_prb_sigmoid_overrides); the only delta is renewables.hsl_potential_mw now resolving real 2024/25 HSL parquets instead of the fallback. RESULT (vs ercot34, both NOT-YET): C3a mean LMP CAVEAT->PASS (2025 commercial-band miss +8.2% resolved) and C5c storage shape CAVEAT->PASS (2024 r=0.422 accepted-limitation resolved); C2 system volume CAVEAT->FAIL (2025 gas -5.0%->-6.4%, crossing out of the commercial band -- measured HSL dispatches slightly more wind/solar, displacing gas). C3b/C3c price-shape/tail stay FAIL unchanged (pre-existing structural misses, untouched by this delta). Governance shows UNATTESTED because this probe carries no calibration_attestation.json/DOF ledger/ablation twin (keeper-only requirement, rule 21) -- not a regression. Net: mixed, modest movement; not a wholesale improvement or regression. NOT a keeper swap -- registered as an informational probe pending owner review of whether to promote (PROBE).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-06-ercot38-measured-hsl-2425.js",
+  "bundle": "results/calibration/ercot38_measured_hsl_2425"
+}
