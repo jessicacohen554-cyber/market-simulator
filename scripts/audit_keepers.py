@@ -118,7 +118,9 @@ _MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO"}
 # Do not ADD ids here — only remove them as each ISO's keeper gains a twin.
 E9_ABLATION_TWIN_GRANDFATHER = frozenset(
     {
-        "2026-07-03-ercot32-ordc-total-rtolcap",
+        # 2026-07-03-ercot32-ordc-total-rtolcap: removed 2026-07-06 — superseded
+        # as ERCOT keeper by 2026-07-06-ercot34-stage4-overlay-off (registered
+        # with its zero-forcing twin).
         "2026-07-03-caiso-51-firm-base",
         # 2026-07-03-pjm-76-outage-fix: removed 2026-07-05 — superseded as PJM
         # keeper by 2026-07-05-pjm-77-ct-relfloor (registered with its twin).
