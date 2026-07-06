@@ -122,7 +122,9 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
         "2026-07-03-caiso-51-firm-base",
         # 2026-07-03-pjm-76-outage-fix: removed 2026-07-05 — superseded as PJM
         # keeper by 2026-07-05-pjm-77-ct-relfloor (registered with its twin).
-        "2026-07-03-nyiso-41-hub-prices",
+        # 2026-07-03-nyiso-41-hub-prices: removed 2026-07-06 — superseded as
+        # NYISO keeper by 2026-07-06-nyiso-53-li-tsl (registered with its
+        # zero-forcing twin), taking the grandfathered E9 exemption with it.
         # 2026-07-03-neiso-47-fast-start: removed 2026-07-05 — superseded as
         # NEISO keeper by 2026-07-05-neiso-48-ct-floor (registered with twin).
         "2026-07-03-miso-39-reserve-pergen",
@@ -137,10 +139,11 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
 # message with a pointer to that record; it never suppresses the warning (E7
 # stays WARN either way — mirrors E9's grandfather-list PATTERN, not its
 # suppress-to-WARN effect). A pair not in this dict — including one where the
-# newer run was registered AFTER the adjudication date below, or NYISO's pair
-# (adjudicated PROMOTE-pending, not KEEP, per the same calibration-log entry)
-# — gets the plain, unadjudicated warning, since it has not itself been
-# reviewed. Do not add NYISO here until L-11 lands its keeper swap.
+# newer run was registered AFTER the adjudication date below — gets the
+# plain, unadjudicated warning, since it has not itself been reviewed.
+# NYISO's pair was adjudicated PROMOTE-pending (not KEEP) and RESOLVED
+# 2026-07-06 by the L-11 keeper swap (nyiso-41 → 2026-07-06-nyiso-53-li-tsl,
+# registered with its zero-forcing twin) — no NYISO entry is needed here.
 E7_STALENESS_ADJUDICATED: dict[tuple[str, str], str] = {
     (
         "2026-07-03-ercot32-ordc-total-rtolcap",
