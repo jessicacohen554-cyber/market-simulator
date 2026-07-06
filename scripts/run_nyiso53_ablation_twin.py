@@ -45,6 +45,7 @@ def main() -> None:
     overrides["nyiso_li_lcr_tsl"] = True
     overrides["use_plant_emission_rates_v2"] = True
     kwargs["zero_forcing_ablation"] = True
+    kwargs["ablation_of"] = "nyiso53_litsl_v2"
     kwargs["note"] = (
         "D-3 zero-forcing ablation twin of 2026-07-06-nyiso-53-li-tsl "
         "(rule 21): the keeper recipe verbatim with all merchant "
