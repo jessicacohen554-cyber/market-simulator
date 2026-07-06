@@ -9,8 +9,9 @@ to max when gas rises. These tests pin the two invariants the fix must hold:
   a *fixed measured quantity* independent of gas price (so it cannot swing ~2x in
   a high-gas year — the NEISO 2025 over-dispatch this fixes); and
 * biomass is not double-counted — the raw biomass LP units are dropped from the
-  per-plant fleet when the injection is on (``_drop_biomass_units``), mirroring
-  the ERCOT CAMPD path.
+  per-plant fleet when the injection is on (``fleet._drop_biomass_units``, the
+  shared dispatch-fleet builder's ``drop_biomass_units`` seam since
+  orchestrator-unification Stage 6), mirroring the ERCOT CAMPD path.
 """
 
 import importlib.util
@@ -20,6 +21,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from market_sim.data import fleet as fleet_mod
 
 REPO = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location(
@@ -167,7 +170,7 @@ class TestDropBiomassUnits(unittest.TestCase):
             _Gen("nuclear", 5),
         ]
         fuel_fracs = [0.1, 0.2, 0.3, 0.4, 0.5]
-        out_fleet, out_fracs = rc._drop_biomass_units(fleet, fuel_fracs)
+        out_fleet, out_fracs = fleet_mod._drop_biomass_units(fleet, fuel_fracs)
         self.assertEqual(
             [g.fuel_type for g in out_fleet], ["coal", "gas_cc", "nuclear"]
         )
@@ -178,7 +181,7 @@ class TestDropBiomassUnits(unittest.TestCase):
     def test_noop_without_biomass(self):
         fleet = [_Gen("coal", 1), _Gen("gas_cc", 2)]
         fracs = [1.0, 2.0]
-        out_fleet, out_fracs = rc._drop_biomass_units(fleet, fracs)
+        out_fleet, out_fracs = fleet_mod._drop_biomass_units(fleet, fracs)
         self.assertEqual(len(out_fleet), 2)
         self.assertEqual(out_fracs, [1.0, 2.0])
 
