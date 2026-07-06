@@ -245,7 +245,16 @@ inherits `ercot_load_resource_reserve=True` unchanged.
 > 2024/25** — `hsl_potential_mw` now reads the measured parquets directly.
 > The `ercot34` keeper itself was solved and promoted before this data
 > landed; whether re-solving it against measured HSL moves the result is
-> an open question for a future session, not answered here.
+> being probed as `ercot38` (see `docs/calibration-log.md`).
+>
+> **Follow-up 2026-07-06: bug fix on the committed parquets.** The
+> "24/24-month, builds cleanly" parquets above were built from a
+> corrupted 96-hour ERCOT source window (2024-08-20..23, both fuels —
+> physically-impossible system-wide values baked into every repost);
+> fixed via a cited, narrow known-bad-window exclusion, plus an unrelated
+> 2025-schema HSL-column-preference fix. Both years rebuilt; wind
+> cross-check tightened to +0.1%/−0.2%. Full detail:
+> `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`.
 
 > **Original closure (2026-07-05, retained for context — no longer the
 > operative guidance for the UI-upload path):** the NP6 HSL *API* intake
