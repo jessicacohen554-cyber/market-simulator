@@ -6659,6 +6659,27 @@ def bins_to_fleet(
                 )
             )
 
+    # v2 measured plant CO2/NOx/SO2 rates on the CAMPD-bins path (G-39 §9.6
+    # backcast-reachability fix, 2026-07-06): `apply_plant_emission_rates_v2`
+    # was previously called only from `build_dispatch_fleet` (the forecast/
+    # runner path), so `use_plant_emission_rates_v2=True` in a backcast
+    # run_config was silently unreachable for every CAMPD-binned ISO — proven
+    # byte-identical by the nyiso-53 v2-on/off twin pair before this call was
+    # added (the same production-wiring-gap class as gap-register G-29).
+    # Applying here — before the array conversion, on the same (plant_code,
+    # coarse fuel class) match the dispatch-fleet path uses — makes the flag's
+    # recorded state true on both paths. Default off: byte-identical unless a
+    # config explicitly opts in.
+    if getattr(config, "use_plant_emission_rates_v2", False):
+        apply_plant_emission_rates_v2(
+            fleet,
+            config.plant_emission_rates_v2_path,
+            iso=config.iso,
+            year=int(config.weather_year),
+            mode=str(getattr(config, "mode", "forecast")),
+            config=config,
+        )
+
     fleet_arrays = generators_to_fleet_arrays(
         fleet,
         zone_names,
