@@ -32,6 +32,7 @@ import math
 import re
 import sys
 import threading
+import time
 import traceback
 import urllib.parse
 import webbrowser
@@ -41,7 +42,11 @@ from pathlib import Path
 from queue import Queue
 
 from lce_portfolio import __version__, cli
-from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.config import (
+    LMP_KIND_ANNUAL_AVERAGE_FLAT,
+    LMP_KIND_HOURLY,
+    PortfolioConfig,
+)
 
 # --- Paths --------------------------------------------------------------
 
@@ -51,9 +56,16 @@ DEFAULT_STATE_DIR = PKG_ROOT / "launcher"
 DEFAULT_RESULTS_DIR = PKG_ROOT / "results"
 DEFAULT_INPUTS_DIR = PKG_ROOT / "data" / "inputs"
 DEFAULT_REFERENCE_LOAD = PKG_ROOT / "data" / "reference" / "reference_load_100mw.csv"
+#: HP-02 real-LMP bundle (optional — degrades gracefully if absent, HP-03 §C).
+DEFAULT_BUNDLED_LMP_DIR = PKG_ROOT / "data" / "bundled" / "lmp"
+#: Fillable input-template examples (HP-03 §C Templates help block).
+DEFAULT_TEMPLATES_DIR = PKG_ROOT / "data" / "templates"
 
 SAVED_CONFIGS_FILENAME = "saved_configs.json"
 LAST_USED_FILENAME = "last_used.json"
+#: Append-only run history (HP-03 §B): machine-local state like the two
+#: files above, gitignored.
+RUN_LOG_FILENAME = "run_log.jsonl"
 
 # --- Server defaults (ADR 0016 §2: loopback only) -----------------------
 
@@ -171,6 +183,291 @@ def ensure_reference_load(path: Path = DEFAULT_REFERENCE_LOAD) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, index=False, float_format="%.3f")
     return path
+
+
+# --- Input-candidate discovery (HP-03 §C) ---------------------------------
+
+#: Column sets used only to *hint* a dropdown/help-block schema label — a
+#: lightweight peek, never the authoritative validator (that's intake.py,
+#: which still runs at solve time regardless of what this guesses).
+_LOAD_COLUMNS = {"hour", "iso", "load_mwh"}
+_LMP_HOURLY_COLUMNS = {"hour", "iso", "lmp"}
+_LMP_ANNUAL_AVERAGE_COLUMNS = {"iso", "annual_avg_lmp"}
+
+#: Static captions for the three committed example templates (not a copy of
+#: their data — data/templates/README.md documents the full contract).
+_TEMPLATE_LABELS = {
+    "load_8760_by_facility_template.csv": "8760 load by ISO and facility",
+    "lmp_8760_template.csv": "Full hourly BAU LMP (preferred)",
+    "lmp_annual_average_template.csv": "Annual-average LMP comparison (HP-01)",
+}
+
+
+def _peek_header_columns(path: Path) -> list[str] | None:
+    """Best-effort column-name peek for one candidate file.
+
+    Reads only the CSV header line or the Parquet footer schema (pyarrow)
+    — never the full file — so a huge or slow-to-read candidate can't stall
+    the dropdown/help endpoints. Never raises: any failure (missing file,
+    permission error, corrupt header, unreadable Parquet footer) returns
+    ``None``, so a bad candidate just shows an "unknown" hint instead of a
+    500 — this is a UI convenience, not the real intake validator.
+    """
+    try:
+        if path.suffix == ".parquet":
+            import pyarrow.parquet as pq
+
+            return list(pq.ParquetFile(path).schema.names)
+        with path.open("r", encoding="utf-8", errors="replace") as f:
+            header = f.readline()
+        return [c.strip() for c in header.split(",") if c.strip()]
+    except Exception:  # noqa: BLE001 - a UI hint must never crash the endpoint
+        return None
+
+
+def classify_input_file(path: Path) -> str:
+    """Best-effort schema classification for one candidate file.
+
+    Returns ``"load"``, :data:`LMP_KIND_HOURLY`,
+    :data:`LMP_KIND_ANNUAL_AVERAGE_FLAT`, or ``"unknown"`` — mirrors the
+    column-set detection rule in ``intake.py`` (HP-01) but only peeks the
+    header (:func:`_peek_header_columns`), so the same vocabulary
+    ``run_metadata.json``'s ``lmp_kind`` uses also labels a dropdown entry
+    before any file is ever read in full.
+    """
+    cols = _peek_header_columns(path)
+    if cols is None:
+        return "unknown"
+    cols_set = set(cols)
+    if _LMP_HOURLY_COLUMNS <= cols_set:
+        return LMP_KIND_HOURLY
+    if _LMP_ANNUAL_AVERAGE_COLUMNS <= cols_set and "hour" not in cols_set:
+        return LMP_KIND_ANNUAL_AVERAGE_FLAT
+    if _LOAD_COLUMNS <= cols_set:
+        return "load"
+    return "unknown"
+
+
+def list_input_candidates(
+    *,
+    inputs_dir: Path,
+    bundled_lmp_dir: Path,
+    templates_dir: Path,
+    reference_load: Path,
+) -> dict:
+    """Server-side candidate-file list for the load/LMP dropdowns (HP-03 §C).
+
+    Lists ONLY the whitelisted directories below plus the single bundled
+    reference-load path — never arbitrary filesystem browsing (free-text
+    path entry is a separate, unrestricted form field, unaffected by this).
+    Each directory is optional: ``bundled_lmp_dir`` may not exist yet (HP-02
+    not landed, or a fresh checkout before the pull-out data is fetched) and
+    silently contributes nothing rather than raising.
+    """
+
+    def _dir_candidates(dir_path: Path, source: str) -> list[dict]:
+        if not dir_path.is_dir():
+            return []
+        out = []
+        for p in sorted(dir_path.iterdir()):
+            if not p.is_file() or p.suffix not in (".csv", ".parquet"):
+                continue
+            out.append(
+                {
+                    "path": str(p),
+                    "label": p.name,
+                    "source": source,
+                    "kind": classify_input_file(p),
+                }
+            )
+        return out
+
+    candidates = (
+        _dir_candidates(inputs_dir, "inputs")
+        + _dir_candidates(bundled_lmp_dir, "bundled_lmp")
+        + _dir_candidates(templates_dir, "templates")
+    )
+    if reference_load.is_file():
+        candidates.append(
+            {
+                "path": str(reference_load),
+                "label": f"{reference_load.name} (bundled reference load)",
+                "source": "reference",
+                "kind": "load",
+            }
+        )
+    return {"candidates": candidates}
+
+
+def list_template_help(templates_dir: Path) -> list[dict]:
+    """One-line schema summaries for the launch page's Templates help block.
+
+    Reads each template's column header live off disk (:func:`_peek_header_columns`)
+    rather than embedding a copy of the example rows in this module — the
+    summary always reflects whatever ``data/templates/`` actually contains.
+    """
+    if not templates_dir.is_dir():
+        return []
+    out = []
+    for p in sorted(templates_dir.iterdir()):
+        if not p.is_file() or p.suffix != ".csv":
+            continue
+        cols = _peek_header_columns(p)
+        out.append(
+            {
+                "path": str(p),
+                "label": _TEMPLATE_LABELS.get(p.name, p.name),
+                "columns": ", ".join(cols) if cols else "(unreadable)",
+            }
+        )
+    return out
+
+
+# --- Past-runs browser (HP-03 §A) -----------------------------------------
+
+#: Every finished run writes one ``<iso>_run_metadata.json`` per ISO
+#: (outputs.py); an ``--all-isos`` batch writes several into the same
+#: run_id directory.
+_RUN_METADATA_GLOB = "*_run_metadata.json"
+
+
+def _scan_run_dir(run_dir: Path) -> dict:
+    """One past-runs-browser row for ``run_dir`` — never raises.
+
+    A missing/corrupt/incomplete metadata file (a hand-edited file, a
+    truncated write, a directory this launcher never created) shows up as a
+    flagged row (``"ok": False``) instead of a traceback — the browser must
+    survive any ``results/`` directory, not just ones it wrote itself.
+    """
+    run_id = run_dir.name
+    try:
+        mtime = run_dir.stat().st_mtime
+    except OSError:
+        mtime = 0.0
+    report_path = run_dir / "report.html"
+    report_url = f"/reports/{run_id}/report.html" if report_path.is_file() else None
+
+    meta_files = sorted(run_dir.glob(_RUN_METADATA_GLOB))
+    if not meta_files:
+        return {
+            "run_id": run_id,
+            "ok": False,
+            "flag": "no run metadata found",
+            "mtime": mtime,
+            "report_url": report_url,
+        }
+
+    isos: list[str] = []
+    modes: set[str] = set()
+    lmp_kinds: set[str] = set()
+    statuses: list[str] = []
+    setpoints: set = set()
+    for mf in meta_files:
+        try:
+            meta = json.loads(mf.read_text())
+        except (OSError, json.JSONDecodeError):
+            return {
+                "run_id": run_id,
+                "ok": False,
+                "flag": f"unreadable metadata ({mf.name})",
+                "mtime": mtime,
+                "report_url": report_url,
+            }
+        if not isinstance(meta, dict) or "iso" not in meta or "solves" not in meta:
+            return {
+                "run_id": run_id,
+                "ok": False,
+                "flag": f"incomplete metadata ({mf.name})",
+                "mtime": mtime,
+                "report_url": report_url,
+            }
+        isos.append(str(meta.get("iso")))
+        modes.add(str(meta.get("mode", "?")))
+        # lmp_kind predates HP-01 in the two pre-existing committed bundles —
+        # absent, not malformed; label it rather than flagging the row.
+        lmp_kinds.add(str(meta.get("lmp_kind", "unknown")))
+        for s in meta.get("solves") or []:
+            if isinstance(s, dict):
+                statuses.append(str(s.get("status", "?")))
+                if "setpoint" in s:
+                    setpoints.add(s["setpoint"])
+
+    return {
+        "run_id": run_id,
+        "ok": True,
+        "isos": isos,
+        "mode": " / ".join(sorted(modes)),
+        "lmp_kind": " / ".join(sorted(lmp_kinds)),
+        "setpoints": sorted(setpoints),
+        "n_optimal": sum(1 for s in statuses if s == "Optimal"),
+        "n_solves": len(statuses),
+        "mtime": mtime,
+        "report_url": report_url,
+    }
+
+
+def list_past_runs(results_dir: Path) -> list[dict]:
+    """Every ``results/<run_id>/`` row for the past-runs browser, newest
+    first (by directory mtime). ``<run_id>.tmp`` staging directories (a
+    run's scratch sibling before the atomic-ish publish swap, ``cli.py``)
+    are in-flight or crashed, not a finished run, and are skipped."""
+    if not results_dir.is_dir():
+        return []
+    rows = [
+        _scan_run_dir(d)
+        for d in results_dir.iterdir()
+        if d.is_dir() and not d.name.endswith(".tmp")
+    ]
+    rows.sort(key=lambda r: r["mtime"], reverse=True)
+    return rows
+
+
+# --- Persistent run log (HP-03 §B) ----------------------------------------
+
+
+class RunLog:
+    """Thread-safe append-only run history (``launcher/run_log.jsonl``).
+
+    Machine-local state like ``saved_configs.json``/``last_used.json``
+    (gitignored) — one JSON line per *finished* run (queue execution itself
+    stays sequential and unchanged; this only records history alongside
+    it).
+    """
+
+    def __init__(self, state_dir: Path):
+        self.path = state_dir / RUN_LOG_FILENAME
+        self.lock = threading.Lock()
+
+    def append(self, entry: dict) -> None:
+        line = json.dumps(entry, sort_keys=True)
+        with self.lock:
+            with self.path.open("a", encoding="utf-8") as f:
+                f.write(line + "\n")
+
+    def tail(self, n: int) -> list[dict]:
+        """Return up to the last ``n`` well-formed entries, oldest first.
+
+        A corrupt line (partial write, hand-edited file) is skipped rather
+        than raising — the run log is a UI convenience, never a crash
+        surface.
+        """
+        with self.lock:
+            if not self.path.exists():
+                return []
+            try:
+                text = self.path.read_text(encoding="utf-8")
+            except OSError:
+                return []
+        entries = []
+        for line in text.splitlines()[-n:] if n > 0 else []:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entries.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+        return entries
 
 
 # --- Saved-config / last-used persistence --------------------------------
@@ -425,9 +722,24 @@ class LauncherState:
     (ADR 0016 §2: "one LP solve at a time").
     """
 
-    def __init__(self, *, state_dir: Path, results_dir: Path, open_browser: bool):
+    def __init__(
+        self,
+        *,
+        state_dir: Path,
+        results_dir: Path,
+        open_browser: bool,
+        inputs_dir: Path = DEFAULT_INPUTS_DIR,
+        bundled_lmp_dir: Path = DEFAULT_BUNDLED_LMP_DIR,
+        templates_dir: Path = DEFAULT_TEMPLATES_DIR,
+        reference_load: Path = DEFAULT_REFERENCE_LOAD,
+    ):
         self.config_store = ConfigStore(state_dir)
+        self.run_log = RunLog(state_dir)
         self.results_dir = results_dir
+        self.inputs_dir = inputs_dir
+        self.bundled_lmp_dir = bundled_lmp_dir
+        self.templates_dir = templates_dir
+        self.reference_load = reference_load
         self.open_browser = open_browser
         self.lock = threading.Lock()
         self.batches: dict[str, list[RunStatus]] = {}
@@ -482,6 +794,7 @@ class LauncherState:
         sees a short friendly message.
         """
         self._set_state(batch_id, idx, state="running")
+        started = time.monotonic()
         argv = build_argv(run_kwargs)
         stdout_buf, stderr_buf = io.StringIO(), io.StringIO()
         try:
@@ -496,12 +809,9 @@ class LauncherState:
         # at "queued" until the server is restarted.
         except (Exception, SystemExit):  # noqa: BLE001 - never propagate raw
             traceback.print_exc()
-            self._set_state(
-                batch_id,
-                idx,
-                state="error",
-                message="internal error running the solve — see server console",
-            )
+            message = "internal error running the solve — see server console"
+            self._set_state(batch_id, idx, state="error", message=message)
+            self._append_run_log(run_kwargs, "error", message, started)
             return
 
         if rc == 0:
@@ -509,6 +819,7 @@ class LauncherState:
             report = self.results_dir / run_id / "report.html"
             report_url = f"/reports/{run_id}/report.html" if report.exists() else None
             self._set_state(batch_id, idx, state="done", report_url=report_url)
+            self._append_run_log(run_kwargs, "done", "", started)
             if (
                 self.open_browser
                 and run_kwargs.get("open_report_when_done", True)
@@ -518,6 +829,26 @@ class LauncherState:
         else:
             message = stderr_buf.getvalue().strip() or "run failed (no message)"
             self._set_state(batch_id, idx, state="error", message=message)
+            self._append_run_log(run_kwargs, "error", message, started)
+
+    def _append_run_log(
+        self, run_kwargs: dict, state: str, message: str, started: float
+    ) -> None:
+        """Append one finished run's outcome to ``launcher/run_log.jsonl``
+        (HP-03 §B) — queue behavior itself is unaffected, this only records
+        history alongside it."""
+        self.run_log.append(
+            {
+                "run_id": run_kwargs["run_id"],
+                "iso": run_kwargs["iso"],
+                "mode": run_kwargs["mode"],
+                "lcoe_sensitivity": run_kwargs.get("lcoe_sensitivity"),
+                "status": state,
+                "wall_time_seconds": round(time.monotonic() - started, 3),
+                "error": message or None,
+                "finished_at": time.time(),
+            }
+        )
 
 
 # --- HTML launch page ------------------------------------------------------
@@ -594,6 +925,18 @@ def render_index(context: dict) -> str:
     display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 4px;
     background: #fff3e0; color: #9a5b00; font-size: 11px; font-weight: 600;
   }}
+  .flatprice-flag {{
+    display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 4px;
+    background: #e7f0fb; color: #1a4d8f; font-size: 11px; font-weight: 600;
+  }}
+  select.file-select {{ margin-bottom: 6px; }}
+  .full-width-panel {{ margin: 0 28px 24px; }}
+  .panel-toolbar {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }}
+  .panel-toolbar h2 {{ margin: 0; }}
+  .flag-row {{ color: var(--critical); font-weight: 600; }}
+  #templates-list {{ list-style: none; margin: 8px 0; padding: 0; }}
+  #templates-list li {{ margin-bottom: 10px; }}
+  #templates-list code {{ font-size: 12px; color: var(--ink2); }}
   button {{
     font: inherit; padding: 7px 14px; border-radius: 5px; border: 1px solid var(--grid);
     background: #fff; cursor: pointer;
@@ -659,12 +1002,19 @@ def render_index(context: dict) -> str:
     </select>
 
     <label for="f-load">Load file path</label>
+    <select id="f-load-select" class="file-select">
+      <option value="">&mdash; pick a bundled/available file &mdash;</option>
+    </select>
     <input type="text" id="f-load">
-    <div class="hint">Default: bundled reference load (100 MW stylized facility).</div>
+    <div class="hint">Default: bundled reference load (100 MW stylized facility). Pick from the dropdown or type any path.</div>
 
     <label for="f-lmp">LMP file path</label>
+    <select id="f-lmp-select" class="file-select">
+      <option value="">&mdash; pick a bundled/available file &mdash;</option>
+    </select>
     <input type="text" id="f-lmp">
     <div class="hint" id="lmp-hint"></div>
+    <div class="hint" id="lmp-flatprice-hint"></div>
 
     <label for="f-run-id">Run ID</label>
     <input type="text" id="f-run-id" placeholder="(auto-generated if left blank)">
@@ -701,6 +1051,44 @@ def render_index(context: dict) -> str:
     <button id="btn-save-config" style="margin-top:8px;">Save</button>
   </section>
 </main>
+
+<section class="panel full-width-panel" id="templates-panel">
+  <h2>Templates</h2>
+  <p class="hint">Fillable input-template schemas (<code>data/templates/</code>) &mdash; read live off disk, never copied here.</p>
+  <ul id="templates-list"></ul>
+</section>
+
+<section class="panel full-width-panel" id="runs-panel">
+  <div class="panel-toolbar">
+    <h2>Past runs</h2>
+    <button id="btn-refresh-runs">Refresh</button>
+  </div>
+  <table id="runs-table">
+    <thead>
+      <tr>
+        <th>Run ID</th><th>ISO(s)</th><th>Mode</th><th>Setpoints</th>
+        <th>LMP kind</th><th>Timestamp</th><th>Status</th><th>Report</th>
+      </tr>
+    </thead>
+    <tbody id="runs-body"></tbody>
+  </table>
+</section>
+
+<section class="panel full-width-panel" id="runlog-panel">
+  <div class="panel-toolbar">
+    <h2>Run log</h2>
+    <button id="btn-refresh-runlog">Refresh</button>
+  </div>
+  <table id="runlog-table">
+    <thead>
+      <tr>
+        <th>Run ID</th><th>ISO</th><th>Mode</th><th>Status</th>
+        <th>Wall time (s)</th><th>Finished</th><th>Error</th>
+      </tr>
+    </thead>
+    <tbody id="runlog-body"></tbody>
+  </table>
+</section>
 <script>
 const CTX = {ctx_json};
 
@@ -724,6 +1112,7 @@ function currentForm() {{
     lmp_file: $('f-lmp').value,
     run_id: $('f-run-id').value,
     open_report_when_done: $('f-open-report').checked,
+    lmp_kind_hint: selectedLmpKind,
   }};
 }}
 
@@ -740,6 +1129,8 @@ function applyForm(cfg) {{
   if (cfg.lmp_file !== undefined) $('f-lmp').value = cfg.lmp_file;
   if (cfg.run_id !== undefined) $('f-run-id').value = cfg.run_id;
   if (cfg.open_report_when_done !== undefined) $('f-open-report').checked = !!cfg.open_report_when_done;
+  selectedLmpKind = cfg.lmp_kind_hint !== undefined ? cfg.lmp_kind_hint : selectedLmpKind;
+  setFlatPriceBadge(selectedLmpKind === 'annual_average_flat');
   updateModeVisibility();
 }}
 
@@ -750,6 +1141,148 @@ function updateModeVisibility() {{
 }}
 
 let queue = [];
+let selectedLmpKind = CTX.defaults.lmp_kind || null;
+let inputCandidates = [];
+
+function setFlatPriceBadge(isFlat) {{
+  const el = $('lmp-flatprice-hint');
+  el.innerHTML = isFlat
+    ? '<span class="flatprice-flag">FLAT-PRICE</span> annual-average LMP — hourly price shape excluded from the frontier.'
+    : '';
+}}
+
+function populateFileSelect(selectEl, candidates) {{
+  Array.from(selectEl.querySelectorAll('option')).slice(1).forEach((o) => o.remove());
+  candidates.forEach((c) => {{
+    const opt = document.createElement('option');
+    opt.value = c.path;
+    let label = c.label + ' (' + c.source + ')';
+    if (c.kind === 'annual_average_flat') label += ' [FLAT-PRICE]';
+    opt.textContent = label;
+    opt.dataset.kind = c.kind;
+    selectEl.appendChild(opt);
+  }});
+}}
+
+async function loadInputCandidates() {{
+  let data;
+  try {{
+    const resp = await fetch('/api/input-files');
+    data = await resp.json();
+  }} catch (err) {{
+    return;
+  }}
+  inputCandidates = data.candidates || [];
+  populateFileSelect($('f-load-select'), inputCandidates);
+  populateFileSelect($('f-lmp-select'), inputCandidates);
+}}
+
+async function loadTemplatesHelp() {{
+  let data;
+  try {{
+    const resp = await fetch('/api/templates-help');
+    data = await resp.json();
+  }} catch (err) {{
+    return;
+  }}
+  const ul = $('templates-list');
+  ul.innerHTML = '';
+  (data.templates || []).forEach((t) => {{
+    const li = document.createElement('li');
+    const strong = document.createElement('strong');
+    strong.textContent = t.label;
+    const code = document.createElement('code');
+    code.textContent = ' ' + t.path;
+    const cols = document.createElement('div');
+    cols.className = 'hint';
+    cols.textContent = 'columns: ' + t.columns;
+    li.appendChild(strong);
+    li.appendChild(document.createElement('br'));
+    li.appendChild(code);
+    li.appendChild(cols);
+    ul.appendChild(li);
+  }});
+}}
+
+function fmtTimestamp(epochSeconds) {{
+  if (!epochSeconds) return '';
+  return new Date(epochSeconds * 1000).toLocaleString();
+}}
+
+async function loadPastRuns() {{
+  let data;
+  try {{
+    const resp = await fetch('/api/runs');
+    data = await resp.json();
+  }} catch (err) {{
+    return;
+  }}
+  const body = $('runs-body');
+  body.innerHTML = '';
+  (data.runs || []).forEach((r) => {{
+    const tr = document.createElement('tr');
+    if (!r.ok) {{
+      const td = document.createElement('td');
+      td.colSpan = 8;
+      td.className = 'flag-row';
+      td.textContent = 'run_id=' + r.run_id + ': ' + r.flag;
+      tr.appendChild(td);
+      body.appendChild(tr);
+      return;
+    }}
+    const cells = [
+      r.run_id,
+      (r.isos || []).join(', '),
+      r.mode,
+      (r.setpoints || []).join(', '),
+      r.lmp_kind,
+      fmtTimestamp(r.mtime),
+      r.n_optimal + '/' + r.n_solves + ' optimal',
+    ];
+    cells.forEach((text) => {{
+      const td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    }});
+    const tdReport = document.createElement('td');
+    if (r.report_url) {{
+      const a = document.createElement('a');
+      a.href = r.report_url;
+      a.target = '_blank';
+      a.textContent = 'report';
+      tdReport.appendChild(a);
+    }}
+    tr.appendChild(tdReport);
+    body.appendChild(tr);
+  }});
+}}
+
+async function loadRunLog() {{
+  let data;
+  try {{
+    const resp = await fetch('/api/run-log?n=20');
+    data = await resp.json();
+  }} catch (err) {{
+    return;
+  }}
+  const body = $('runlog-body');
+  body.innerHTML = '';
+  (data.entries || []).slice().reverse().forEach((e) => {{
+    const tr = document.createElement('tr');
+    const cells = [
+      e.run_id, e.iso, e.mode, e.status,
+      e.wall_time_seconds != null ? String(e.wall_time_seconds) : '',
+      fmtTimestamp(e.finished_at),
+      e.error || '',
+    ];
+    cells.forEach((text) => {{
+      const td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    }});
+    body.appendChild(tr);
+  }});
+}}
 
 function renderQueue() {{
   const ul = $('queue-list');
@@ -757,7 +1290,7 @@ function renderQueue() {{
   queue.forEach((run, i) => {{
     const li = document.createElement('li');
     const label = document.createElement('span');
-    label.textContent = `${{run.iso}} / ${{run.mode}} / run_id=${{run.run_id || '(auto)'}}`;
+    label.textContent = `${{run.iso}} / ${{run.mode}} / run_id=${{run.run_id || '(auto)'}}${{run.lmp_kind_hint === 'annual_average_flat' ? ' [FLAT-PRICE]' : ''}}`;
     const btn = document.createElement('button');
     btn.textContent = 'Remove';
     btn.className = 'danger';
@@ -838,6 +1371,23 @@ async function pollBatch(batchId) {{
 
 $('f-mode').addEventListener('change', updateModeVisibility);
 
+$('f-load-select').addEventListener('change', () => {{
+  const path = $('f-load-select').value;
+  if (path) $('f-load').value = path;
+}});
+
+$('f-lmp-select').addEventListener('change', () => {{
+  const sel = $('f-lmp-select');
+  const opt = sel.selectedOptions[0];
+  const path = sel.value;
+  if (path) $('f-lmp').value = path;
+  selectedLmpKind = (opt && path) ? opt.dataset.kind : null;
+  setFlatPriceBadge(selectedLmpKind === 'annual_average_flat');
+}});
+
+$('btn-refresh-runs').addEventListener('click', loadPastRuns);
+$('btn-refresh-runlog').addEventListener('click', loadRunLog);
+
 $('btn-add-queue').addEventListener('click', () => {{
   showError(null);
   queue.push(currentForm());
@@ -904,6 +1454,11 @@ if (CTX.defaults.lmp_is_synthetic) {{
 }} else {{
   $('lmp-hint').textContent = 'Default: newest LMP export found under data/inputs/.';
 }}
+setFlatPriceBadge(selectedLmpKind === 'annual_average_flat');
+loadInputCandidates();
+loadTemplatesHelp();
+loadPastRuns();
+loadRunLog();
 </script>
 </body>
 </html>
@@ -1006,6 +1561,9 @@ def _make_handler(state: LauncherState, page_context: dict):
                     defaults["lmp_is_synthetic"] = str(
                         Path(defaults["lmp_file"]).stem
                     ).endswith("_dummy")
+                    defaults["lmp_kind"] = classify_input_file(
+                        Path(defaults["lmp_file"])
+                    )
                 ctx["defaults"] = defaults
                 self._send_html(render_index(ctx))
             elif parsed.path == "/api/status":
@@ -1018,6 +1576,34 @@ def _make_handler(state: LauncherState, page_context: dict):
                     self._send_json({"batch_id": batch_id, "runs": runs})
             elif parsed.path == "/api/configs":
                 self._send_json({"saved_configs": state.config_store.saved_configs()})
+            elif parsed.path == "/api/runs":
+                # HP-03 §A: every results/<run_id>/ row, newest first. Pure
+                # directory scan — no user-supplied path ever reaches this,
+                # so there is no traversal surface here (unlike /reports/).
+                self._send_json({"runs": list_past_runs(state.results_dir)})
+            elif parsed.path == "/api/run-log":
+                # HP-03 §B: tail of launcher/run_log.jsonl; ?n= clamped to a
+                # sane range and never allowed to raise on a bad value.
+                qs = urllib.parse.parse_qs(parsed.query)
+                raw_n = (qs.get("n") or ["20"])[0]
+                try:
+                    n = max(1, min(200, int(raw_n)))
+                except ValueError:
+                    n = 20
+                self._send_json({"entries": state.run_log.tail(n)})
+            elif parsed.path == "/api/input-files":
+                # HP-03 §C: only the whitelisted directories below — no
+                # query-driven path, so no arbitrary filesystem browsing.
+                self._send_json(
+                    list_input_candidates(
+                        inputs_dir=state.inputs_dir,
+                        bundled_lmp_dir=state.bundled_lmp_dir,
+                        templates_dir=state.templates_dir,
+                        reference_load=state.reference_load,
+                    )
+                )
+            elif parsed.path == "/api/templates-help":
+                self._send_json({"templates": list_template_help(state.templates_dir)})
             elif parsed.path.startswith("/reports/"):
                 self._serve_report(parsed.path)
             else:
@@ -1123,6 +1709,7 @@ def _make_handler(state: LauncherState, page_context: dict):
 def build_page_context(*, inputs_dir: Path, reference_load: Path) -> dict:
     """Assemble the launch page's default/known-value context (ADR 0016 §3)."""
     lmp_info = resolve_default_lmp(inputs_dir)
+    lmp_kind = classify_input_file(Path(lmp_info["path"])) if lmp_info["path"] else None
     return {
         "known_isos": list(KNOWN_ISOS),
         "known_modes": list(KNOWN_MODES),
@@ -1136,6 +1723,7 @@ def build_page_context(*, inputs_dir: Path, reference_load: Path) -> dict:
             "load_file": str(reference_load),
             "lmp_file": lmp_info["path"] or "",
             "lmp_is_synthetic": lmp_info["is_synthetic"],
+            "lmp_kind": lmp_kind,
             "run_id": "",
             "open_report_when_done": DEFAULT_OPEN_REPORT_WHEN_DONE,
         },
@@ -1149,6 +1737,8 @@ def run_server(
     state_dir: Path = DEFAULT_STATE_DIR,
     results_dir: Path = DEFAULT_RESULTS_DIR,
     inputs_dir: Path = DEFAULT_INPUTS_DIR,
+    bundled_lmp_dir: Path = DEFAULT_BUNDLED_LMP_DIR,
+    templates_dir: Path = DEFAULT_TEMPLATES_DIR,
     reference_load: Path = DEFAULT_REFERENCE_LOAD,
     open_browser: bool = True,
 ) -> ThreadingHTTPServer:
@@ -1168,7 +1758,13 @@ def run_server(
     results_dir.mkdir(parents=True, exist_ok=True)
 
     state = LauncherState(
-        state_dir=state_dir, results_dir=results_dir, open_browser=open_browser
+        state_dir=state_dir,
+        results_dir=results_dir,
+        open_browser=open_browser,
+        inputs_dir=inputs_dir,
+        bundled_lmp_dir=bundled_lmp_dir,
+        templates_dir=templates_dir,
+        reference_load=reference_load,
     )
     # last-used values are merged per page load in do_GET (finding LN-7),
     # not baked in here at startup.
@@ -1210,6 +1806,19 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_INPUTS_DIR,
         help="directory searched for the default LMP export",
     )
+    parser.add_argument(
+        "--bundled-lmp-dir",
+        type=Path,
+        default=DEFAULT_BUNDLED_LMP_DIR,
+        help="HP-02 bundled real-LMP directory for the input-file dropdown "
+        "(optional; degrades gracefully if absent)",
+    )
+    parser.add_argument(
+        "--templates-dir",
+        type=Path,
+        default=DEFAULT_TEMPLATES_DIR,
+        help="directory of input templates for the dropdown and Templates help block",
+    )
     args = parser.parse_args(argv)
 
     server = run_server(
@@ -1218,6 +1827,8 @@ def main(argv: list[str] | None = None) -> int:
         state_dir=args.state_dir,
         results_dir=args.results,
         inputs_dir=args.inputs_dir,
+        bundled_lmp_dir=args.bundled_lmp_dir,
+        templates_dir=args.templates_dir,
         open_browser=not args.no_open,
     )
     url = f"http://{server.server_address[0]}:{server.server_address[1]}/"

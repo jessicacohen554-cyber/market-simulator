@@ -65,3 +65,5 @@ __pycache__/
 # server-side as JSON under launcher/ — user/machine-specific, not versioned.
 launcher/saved_configs.json
 launcher/last_used.json
+# Persistent run log (HP-03 §B): same machine-local status as the two above.
+launcher/run_log.jsonl
