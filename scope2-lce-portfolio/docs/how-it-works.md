@@ -124,24 +124,30 @@ Full detail: [`docs/02-data-inputs.md`](02-data-inputs.md) and
 - **Bundled data inventory** (committed, for standalone pull-out — HP-02/HP-02b):
   - `data/profiles/<ISO>_<year>.parquet` — real per-ISO 2024 capacity-factor
     shapes for all six ISOs, built from market-sim EIA-930 data via the
-    vendored renewable-shape logic. **Gitignored** (reproducible) — regenerate
-    with `scripts/build_profiles.py`.
+    vendored renewable-shape logic. **Committed** (HP-02) — deterministically
+    reproducible with `scripts/build_profiles.py`, but shipped so a pulled-out
+    copy has real shapes without the parent tree.
   - `data/bundled/lmp/<ISO>_2024_bau_lmp.csv` + `.provenance.json` sidecar —
     real 2024 backcast BAU LMP exports for all six ISOs, each naming its
     source calibration keeper (a 2024-only bridge re-solve, backcast-validation
     carve-out only per ADR 0015 — never a registered dashboard keeper). **Committed.**
-  - `data/emissions/<ISO>_2024_fossil_avg_co2_rate.parquet` — matching hourly
-    fossil-avg CO₂-rate files for all six ISOs, same provenance. **Committed.**
+  - `data/emissions/<ISO>_2024_fossil_avg_co2_rate.parquet` + `.provenance.json`
+    sidecar — matching hourly fossil-avg CO₂-rate files for all six ISOs, from
+    the same bridge solve as the sibling LMP bundle (ADR 0013). **Committed.**
   - `data/reference/reference_load_100mw.csv` — a stylized 100 MW facility
     load, generated on demand by `scripts/make_reference_load.py`.
     **Gitignored** (regenerated deterministically, no RNG).
   - `data/lcoe/resource_costs.csv`, `data/caps/resource_caps.csv`,
     `data/hydro/monthly_budgets.csv`, `data/fuel/gas_prices.csv` — small
     reference tables, all **committed**.
-  - What regenerates vs. ships: profiles and the reference load are
-    reproducible from committed scripts and are gitignored; the LMP/emissions
-    bundles are the product of a market-sim solve this tool cannot reproduce
-    on its own, so they ship as committed data with a provenance sidecar.
+  - What regenerates vs. ships: the CF profiles, LMP bundles and CO₂-rate
+    bundles all **ship** as committed data — the LMP/emissions bundles are the
+    product of a market-sim solve this tool cannot reproduce on its own (so
+    they carry a provenance sidecar), and the profiles are committed too so a
+    pulled-out copy is self-sufficient. Only the stylized reference load and
+    the template skeletons **regenerate** — gitignored, rebuilt deterministically
+    on demand from committed scripts (`make_reference_load.py`, the templates
+    step), no RNG.
 
 ## Matching, premium, and residual-carbon semantics
 
