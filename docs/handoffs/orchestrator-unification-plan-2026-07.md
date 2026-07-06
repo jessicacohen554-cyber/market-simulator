@@ -351,7 +351,7 @@ ordered safe-scaffolding-first, drift-closing-unification-later, so the risky st
 | **1** | `pipeline/` skeleton + `DispatchSpec`/`ReserveSpec`/`PriorYearResults`; retype runner's `prior_results` dict | `runner.py`, new `pipeline/` | low | — (AR-2) | **byte-identical** — **DELIVERED (2026-07-05), see §7.3.2** |
 | **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) — **DELIVERED (2026-07-06), see §7.3.4** |
 | **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical — **DELIVERED (2026-07-06), see §7.3.5** |
-| **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | — | byte-identical |
+| **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | CAISO RA bridge unreachable from the forecast trigger (A10 completion); NYISO path B backcast-side | byte-identical — **DELIVERED (2026-07-06), see §7.3.6** |
 | **5** | **Interchange unification**: migrate `run_calibration` onto `interchange_config.get_interchange_spec`/`build_interchange_fleet`; fold CAISO bidir/solar-shape/gas-coupling into the spec | `run_calibration.py`, `interchange_config.py`, `transmission.py`, `runner.py` | **high** | CAISO bidir + solar-shape + gas-coupling | tolerance-bounded (CAISO keeper canary) — **DELIVERED (2026-07-05), see §7.3.3** |
 | **6** | **Fleet unification**: migrate `run_calibration` onto `fleet.build_dispatch_fleet`; route NEISO coldsnap + netload-drag through shared path; coldsnap coeffs → fields | `run_calibration.py`, `fleet.py` | med-high | NEISO coldsnap | tolerance-bounded (all-ISO keepers) |
 | **7** | Move `_calibration_config`→`pipeline/backcast_config.py`; `run_calibration_full` imports from `pipeline`; getattr→field fold (fix `caiso_ra_min_load_frac`, delete `0.40`); env-knob flag | `run_calibration.py`, `run_calibration_full.py`, `pipeline/`, `scenarios.py` | low-med | rule-24 latent trap | byte-identical |
@@ -880,6 +880,101 @@ describes); an API-replay fallback pushed 4 of Stage 2's 7 files before the
 outage cleared, and PR #1448 auto-merged that partial state to main (breaking
 only the two new A5 tests there). This branch's follow-up PR supersedes it
 with the gate-verified full content.
+
+### 7.3.6 Stage 4 — DELIVERED (2026-07-06)
+
+Branch `claude/orchestrator-unification-stage-4-1ruvr8`, fresh off `origin/main`
+(`ac11191`); core `b92c6e2`, orchestrator repoint `07be0de`.
+
+**What was built**
+
+- `pipeline/commitment.py` — `run_commitment_pass(state, config=None)`: the
+  P2 commitment pass hoisted statement-for-statement as the UNION of the two
+  orchestrators' bodies (`runner.py`'s inline P2 block and
+  `run_calibration.py::_commitment_pass`): the CAISO RA must-offer bridge
+  (plain/startup/decommit variants + D-2 mechanism attribution), the economic
+  commitment screen + coal pin, NYISO path B (commitment-gated synchronised
+  reserve), the ERCOT AS-aware screen + AS-adequacy floor + WS1
+  commitment-state-aware headroom overrides, and the backcast
+  `preserve_min_gen` overlay gate. Both orchestrators now call it;
+  `_commitment_pass` survives as an alias (the `run_calibration_full` seam:
+  bundle writer + `run_p2` pickled-state re-runs — old pickles keep working;
+  `p2_state` gains a `zone_names` key that only NYISO path B requires).
+- Drift closed by construction (§1): the forecast `caiso_ra_mustoffer` P2
+  *trigger* (A10) previously reached the WRONG body — it ran the economic
+  decommit screen instead of the RA bridge; it now reaches the real branch.
+  NYISO path B and the `preserve_min_gen` overlay gate become reachable from
+  the backcast/forecast respectively, behind their default-off config gates
+  (byte-identical at defaults, honored when a config sets them — the same
+  config-gated-reachability shape as §7.3.5's markup gates).
+- **One unified-semantics choice (documented in the module docstring):** the
+  AS-adequacy per-product requirement excludes all-class reserve families
+  (`fam_class >= 0`). The forecast body carried this documented fix (a
+  reserve_class −1 family — the ERCOT lumped total-ORDC curve — is a demand
+  on the aggregate, not one product's procurement); the backcast body's
+  unfiltered `np.add.at` silently mis-indexed a −1 family onto the LAST
+  product's requirement. The shared core carries the forecast semantics. The
+  two bodies differ ONLY under `ercot_as_aware_commitment` + a −1 family — a
+  combination no keeper, no default path, and no registered run uses (AS-aware
+  P2 is a rejected-probe diagnostic per the 2026-07-03 calibration-log entry).
+- `tests/test_pipeline_commitment.py` (4 trivial-case tests, 1-zone/2-gen/24 h):
+  economic screen and CAISO RA branch byte-identical to the hand-inlined
+  pre-Stage-4 reference sequences; the `config`-override seam; NYISO path B
+  wiring. `tests/test_runner.py` / `tests/test_matrix.py` P2 LP mocks
+  repointed `runner.solve_dispatch` → `pipeline.commitment.solve_dispatch`.
+  Full tier: 2975 passed / 1 pre-existing failure
+  (`test_hydro.py::test_climatology_skips_uncovered_years`, fails identically
+  at the unmodified base — the 2026-07-06 weather-year-pool widening, not
+  Stage 4).
+- `scripts/capture_p2_probe_goldens.py` (harness add-on, Stage-0 spirit): the
+  keeper canaries alone exercise P2 only via the CAISO RA branch (every other
+  keeper is P1-only), so the Stage-4 gate adds two P2-ENABLED probe legs —
+  the ERCOT keeper's frozen 140-flag set re-solved for the single throwaway
+  year 2024 (rule 15: probe only, never registered) with (a) `p2econ`:
+  `commitment=True` — economic screen + coal pin + P2 re-solve; (b)
+  `p2asaware`: `ercot_as_aware_commitment=True` with the total-ORDC family
+  (and its dependent supply-cap gate) OFF — AS-aware screen + AS-adequacy
+  floor + WS1 headroom overrides, on the config where both bodies must agree
+  (see the semantics note above for why the −1-family combination is excluded
+  by design).
+
+**Gate (same machinery as §7.3.4/§7.3.5; before = `f7715c0` tree ≡ base
+`ac11191` solve behavior, after = `07be0de`)**
+
+<!-- STAGE4_GATE_RESULT -->
+**PASS — exact byte-identity on both canaries and both P2 probe legs
+(2026-07-06).** ERCOT golden re-captured against the CURRENT keeper
+(`ercot34-stage4-overlay-off`, superseding the §7.3.4/§7.3.5 `ercot32` pins);
+CAISO `caiso-51-firm-base` (P2 RA bridge fires in all three years). Fidelity
+oracle OK on every capture (CAISO 122/122, ERCOT 140/140 recorded flags
+replayed identically). MISO golden remains uncapturable on this 15 GB box
+(§7.3.1 OOM) — skipped, per the standing caveat.
+
+- `regression_gate.py --mode byte` (atol=rtol=0), keeper canaries:
+  - **[1] Golden bundle diff — PASS.** CAISO: 9 files / 43 numeric columns,
+    every column Δ = 0. ERCOT: 6 files / 30 numeric columns, every column
+    Δ = 0.
+  - **[2] Reshuffle localization — 0.000% every ISO-year** (Σ|hourly Δ| = 0.0
+    GWh; annual totals Δ +0.0000 GWh each, CAISO 2023-25 and ERCOT 2023-25).
+  - **[3] Trivial-case smoke — PASS** (24/24).
+  - **[4] Quarantine + registry — `audit_keepers` PASS;**
+    `legitimacy_diagnostics --keepers` FAIL is pre-existing on `origin/main`
+    and MISO-only: the miso-41 keeper's committed
+    `legitimacy_diagnostics.json` is stale vs its own committed run payload
+    (bundle bookkeeping from the 2026-07-05 registration; MISO is never
+    re-solved by this stage and keeper artifacts are out of Stage-4 scope).
+    Not a Stage-4 regression; flagged for the MISO keeper's owner session.
+- P2 probe legs (`stage4-probe-before` → `stage4-probe-after`,
+  `regression_gate.py --mode byte`): <!-- STAGE4_PROBE_RESULT --> **PASS —
+  byte-identical.** `p2econ` 5 files / 25 numeric columns (incl.
+  `dispatch/2024_P2.parquet`), every column Δ = 0; `p2asaware` 5 files / 24
+  numeric columns, every column Δ = 0; reshuffle 0.000% both legs (total gen
+  462731.1 GWh, Δ +0.0000). The economic screen + coal pin and the AS-aware
+  adequacy/headroom path each moved no solved number through the extraction.
+
+Hashes-only capture manifests are committed under
+`results/regression-goldens/{stage4-before,stage4-after,stage4-probe-before,stage4-probe-after}/manifest.json`
+(multi-GB bundles gitignored per Stage 0).
 
 ---
 
