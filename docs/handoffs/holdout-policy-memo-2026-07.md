@@ -160,7 +160,7 @@ explicit authorization to (i) add the `--year` guard to the calibration entry
 points and (ii) wire `audit_keepers.py`/`legitimacy_diagnostics.py --keepers`
 into CI. No holdout-year solve or score was run to produce this memo.
 
-## (e) Decision draft — 2026-07-06 (lane L-2, gap register G-17)
+## (e) Decision: DECIDED — Option 2, 2026-07-06 (lane L-2, gap register G-17)
 
 **Status update.** Both of (d)'s "regardless of which option" hardening items
 are now landed, changing the cost calculus below:
@@ -246,7 +246,12 @@ job — net-new code whose only benefit over the status quo is closing the
 available as a superset: nothing here forecloses layering the loader-side
 opt-in on top of Option 2's rule-text split later.
 
-**Owner action required:** (i) pick Option 1 or Option 2; (ii) if Option 2,
-approve and land the CLAUDE.md rule 22 wording split described above (this
-lane deliberately did not touch CLAUDE.md); (iii) if Option 1, authorize a
-follow-up lane to move the files and build the loader-side opt-in gate.
+**Owner action — DECIDED 2026-07-06: Option 2.** The CLAUDE.md rule 22 wording
+split described above has been landed verbatim (gap register G-17) — data
+intake owner-authorized/no-LP-validated, solve and score still fully
+quarantined, 2026 forecast-mode runs left unrestricted, enforcement citing
+`ci.yml`'s `quarantine-gates` job and `run_calibration_full.py`'s
+`--holdout-authorized` gate. Option 1's loader-side opt-in gate remains
+available as a future superset if the residual "direct-loader-call,
+bypass-the-CLI" risk is later judged unacceptable, but is not required by
+this decision.
