@@ -113,13 +113,13 @@ from market_sim.model.commitment import (  # noqa: E402
     apply_commitment_with_coal_pin,
     as_adequacy_commit,
     compute_commitment,
-    compute_monthly_markup,
 )
-from market_sim.model.dispatch import DispatchModel, solve_dispatch  # noqa: E402
+from market_sim.model.dispatch import solve_dispatch  # noqa: E402
 from market_sim.pipeline import (  # noqa: E402
     DispatchSpec,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    run_energy_solve,
 )
 from market_sim.model.storage import (  # noqa: E402
     load_eia860_storage,
@@ -4300,59 +4300,23 @@ def run_year(
         sim_year=year,
     )
 
-    # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
-    # -- and differ only in the objective (P1 = base MC + startup markup). So
-    # build the model once and warm-start P1 from P0's optimal basis
-    # (changeColsCost in place): this skips the second matrix build and
-    # converges in ~8x fewer simplex iterations, cutting the P1 solve ~5x. It
-    # does not move annual generation or prices -- validated plant-by-plant on
-    # ERCOT 2023, where every plant's annual MWh and the zonal prices are
-    # unchanged; the only difference is sub-MW hourly reshuffling among units
-    # tied at the margin, which the LP is already indifferent to. Set
-    # MARKET_SIM_WARMSTART=0 to fall back to two independent cold solves (e.g.
-    # for an A/B comparison or to isolate a solver issue).
-    _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
-    model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
-    # Cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1): once intra-year warm-
-    # start has made the P1 second solve cheap, the one remaining cold solve is
-    # each year's P0. Adjacent years share zones, network and most units, so the
-    # prior year's optimal basis -- carried in xyear_cache and remapped onto this
-    # year's fleet (surviving units by unit_id, fleet changes left for HiGHS to
-    # repair) -- is a strong warm start for P0. The LP optimum is basis-
-    # independent, so this only changes the solve path, never the cleared prices
-    # or generation. Off by default; A/B against a cold P0 with the flag.
-    _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
-    if _xwarm and xyear_cache is not None and xyear_cache:
-        model.apply_cross_year_basis(xyear_cache[0])
-    # P0: solve with base MC to extract per-month run lengths.
-    if _warm:
-        r0 = model.solve(mc=mc_base)
-    else:
-        r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
-    # P1: solve with bid MC = base MC + monthly startup amortization.
-    markup = compute_monthly_markup(
+    # P0 → monthly startup markup → P1 via the shared pipeline solve core
+    # (orchestrator-unification Stage 3): the intra-year warm start, the
+    # cross-year warm-start seam (xyear_cache threaded from the multi-year
+    # loop, basis exported even when the XYEAR flag is off so a downstream A/B
+    # does not depend on call ordering), and the startup-markup config gates
+    # all moved to pipeline.solve.run_energy_solve statement-for-statement.
+    energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
-        r0.dispatch,
-        config.hours,
-        gas_st_season_spread=config.gas_st_startup_spread,
-        gas_st_startup_cost=getattr(config, "gas_st_startup_cost", False),
-        chp_startup_covered=getattr(config, "chp_startup_covered", False),
-        coal_warm_committed=getattr(config, "coal_warm_committed", False),
+        demand,
+        mc_base,
+        dispatch_kwargs,
+        config,
+        xyear_cache=xyear_cache,
     )
-    mc_bid = mc_base + markup
-    if _warm:
-        result = model.solve(mc=mc_bid)
-    else:
-        result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
-
-    # Hand this year's optimal basis to the next year's P0 (cross-year warm
-    # start). Stored even when the flag is off so a downstream A/B does not
-    # depend on call ordering; only consumed when MARKET_SIM_WARMSTART_XYEAR=1.
-    if _warm and xyear_cache is not None:
-        basis = model.export_cross_year_basis()
-        if basis is not None:
-            xyear_cache[:] = [basis]
+    result = energy_solve.p1
+    mc_bid = energy_solve.mc_bid
 
     context = FleetContext.from_arrays(
         fleet_arrays,

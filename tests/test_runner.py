@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim import runner
+from market_sim.pipeline import solve as pipeline_solve
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results import cache
@@ -85,7 +86,8 @@ class TestRunScenarioIso(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2028),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
@@ -103,7 +105,8 @@ class TestRunScenarioIso(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2028),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -119,7 +122,8 @@ class TestRunScenarioIso(RunnerTestBase):
         config = ScenarioConfig(iso="CAISO")
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
@@ -149,7 +153,8 @@ class TestKnownYearPeakForesight(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2027),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "evolve_fleet", side_effect=spy),
         ):
@@ -179,7 +184,8 @@ class TestPriceSignalByteIdentity(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2027),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "PriorYearResults", side_effect=spy),
         ):
@@ -199,7 +205,8 @@ class TestP2CommitmentLegacyWarning(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT", commitment_enabled=True)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             self.assertLogs(runner.logger, level="WARNING") as logs,
         ):
@@ -215,7 +222,8 @@ class TestP2CommitmentLegacyWarning(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT", commitment_enabled=False)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             self.assertNoLogs(runner.logger, level="WARNING"),
         ):
@@ -230,7 +238,8 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
         self.assertTrue(config.scarcity_price_overlay is False)  # before ISO defaults
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
@@ -245,7 +254,8 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
         config = ScenarioConfig(iso="CAISO", scarcity_pricing_enabled=True)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
@@ -259,7 +269,8 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
@@ -277,7 +288,8 @@ class TestRunSweep(RunnerTestBase):
         sweep = SweepDefinition(sweep={"carbon_price": [0.0, 50.0]})
         with (
             patch.object(runner, "END_YEAR", 2027),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             keys = runner.run_sweep(sweep, workers=1)
@@ -525,7 +537,8 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT", battery_dispatch_adder=7.5)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -552,7 +565,8 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT", battery_dispatch_adder=0.0)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -585,7 +599,8 @@ class TestMassCapPerUnitMembershipWiring(RunnerTestBase):
         config = ScenarioConfig(iso="PJM", mass_cap_enabled=True, mass_cap_tons=1.0e6)
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             runner.run_scenario_iso(config, "PJM")
