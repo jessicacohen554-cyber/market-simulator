@@ -289,3 +289,23 @@ change. Registered as probe `2026-07-03-32-head-regate`. `keepers.json`
 unchanged.
 
 **No holdout touched** (rule #22); no `src/market_sim` code edited.
+
+**RESOLVED (2026-07-06, L-12): full attribution of the ERCOT STALE-VS-HEAD
+movement.** The open attribution above is closed — the dominant mover is a
+**replay-contract gap**, not solve-path drift: the keeper solved with four
+CLI-only config fields (`ercot_zonal_gas_basis=True`,
+`ercot_west_netload_gas_shape=True`, `ercot_west_gas_delivered_floor=0.4`,
+`oil_primary_bin_fuel=True`; see its resolved `run_config.json`) that
+`meta.json` does not persist, so the HEAD replay re-solved them at defaults
+(off) — removing the ERCOT zonal/West-Waha delivered-gas geography for all
+963 gas units. Secondary movers: the `f5543232` coal max-CF re-derive
+(year-pins dropped) and the fleet.py bin-drift CHP relabelling (#1451's
+partial contributor — mostly label movement, ~4.3 + 2.2 TWh/yr CC_CHP/CT_CHP
+class-total shifts at near-unchanged plant dispatch). Evidence + numbers:
+`docs/FINDING-ercot-priceshape-2026-07.md` §6.3 addendum; A/B pair
+ercot34/ercot35 on the dashboard. The keeper's scored values are
+reproducible on HEAD once the four flags are restored via
+`replay_keeper.py --set`; the durable fix (persist them in `meta.json`)
+belongs to the `run_calibration_full.py` owner (orchestrator-unification
+lane). NEISO/PJM/NYISO replays are unaffected (the four fields are
+ERCOT-only).
