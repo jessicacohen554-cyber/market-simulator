@@ -2305,6 +2305,25 @@ class ScenarioConfig:
     # (Thread D, layer 2) and docs/multi-iso/pjm-reserve-ordc.md.
     coal_sync_srmc_tranche: bool = False
 
+    # Marginal-coal measured-SRMC offer bound. The gas-keyed passthrough
+    # sigmoids exist to model take-or-pay / stay-online BID discounting of
+    # *contracted* coal, but they currently discount every above-must-run
+    # tranche — including the marginal (econ*/peak) tranches whose fuel is
+    # bought at market and has no sunk-contract story. With this on, the
+    # fuel passthrough of a coal tranche above ``_committed`` is clamped to
+    # >= 1.0, so the marginal coal offer never drops below the plant's own
+    # measured incremental delivered SRMC (F923 delivered $/MMBtu x tranche
+    # heat rate + VOM; the committed/must-run bands keep their contracted
+    # discount). Removes a fitted degree of freedom from the offer path
+    # rather than adding one — the sigmoid keeps only the tranches whose
+    # discount has a physical (contract) driver. Forward-reproducible: the
+    # bound is "offer >= full delivered fuel cost", which regenerates from
+    # the forward fuel-price trajectory. Evidence: MISO model LMP sat $4-5
+    # below the coal fleet's cheapest *measured* tranche while coal was
+    # marginal ~94% of hours (results/calibration/FINDING-miso-burndown-
+    # 2026-07.md Evidence 2). Default off (all existing keepers unchanged).
+    coal_econ_srmc_bound: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -4063,6 +4082,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_ceil": 3,
     "coal_bit_passthrough_gas_mid": 3,
     "coal_bit_passthrough_gas_slope": 3,
+    "coal_econ_srmc_bound": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,

@@ -1780,6 +1780,7 @@ def solve_and_persist(
     prb_overrides: dict | None = None,
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
+    coal_econ_srmc_bound: bool = False,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -2028,6 +2029,7 @@ def solve_and_persist(
             prb_overrides=prb_overrides,
             coal_bit_sigmoid=coal_bit_sigmoid,
             bit_overrides=bit_overrides,
+            coal_econ_srmc_bound=coal_econ_srmc_bound,
             coal_takeorpay_from_data=coal_takeorpay_from_data,
             coal_mustrun_online_pmin=coal_mustrun_online_pmin,
             coal_sync_srmc_tranche=coal_sync_srmc_tranche,
@@ -2336,6 +2338,7 @@ def solve_and_persist(
         "coal_bit_sigmoid_overrides": {
             k: v for k, v in (bit_overrides or {}).items() if v is not None
         },
+        "coal_econ_srmc_bound": coal_econ_srmc_bound,
         "coal_plant_monthly_pricing": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
@@ -2507,6 +2510,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             **{k: v for k, v in bit_overrides.items() if v is not None}
         )
+    if coal_econ_srmc_bound:
+        recorded_cfg = recorded_cfg.with_overrides(coal_econ_srmc_bound=True)
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
             plant_tranche_config_path=plant_tranche_config
@@ -5110,6 +5115,21 @@ def main() -> None:
         "when dear (coal_bit_passthrough_* params), tracking the "
         "bit-vs-gas-CC merit-order crossover. Off = full fuel cost.",
     )
+    # Marginal-coal measured-SRMC offer bound: the econ*/peak coal tranches
+    # buy fuel at market, so their offers are clamped to >= full measured
+    # delivered fuel cost (passthrough >= 1.0); the committed/must-run bands
+    # keep the contracted take-or-pay discount. Removes the sigmoid's fitted
+    # discount from the marginal tranches (FINDING-miso-burndown-2026-07.md
+    # Evidence 2). Off by default (existing keepers unchanged).
+    parser.add_argument(
+        "--coal-econ-srmc-bound",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Clamp marginal (econ*/peak) coal tranche fuel passthrough to "
+        ">= 1.0 so no marginal coal offer sits below the plant's measured "
+        "incremental delivered SRMC. Committed/must-run bands keep their "
+        "take-or-pay discount.",
+    )
     parser.add_argument(
         "--bit-floor", type=float, default=None, help="Bit sigmoid cheap-gas floor."
     )
@@ -6803,6 +6823,7 @@ def main() -> None:
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
         coal_bit_sigmoid=args.coal_bit_sigmoid,
+        coal_econ_srmc_bound=args.coal_econ_srmc_bound,
         bit_overrides={
             "coal_bit_passthrough_floor": args.bit_floor,
             "coal_bit_passthrough_ceil": args.bit_ceil,

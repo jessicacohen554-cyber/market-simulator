@@ -2131,6 +2131,7 @@ def run_year(
     prb_overrides: dict | None = None,
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
+    coal_econ_srmc_bound: bool = False,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
@@ -2668,6 +2669,14 @@ def run_year(
         config = config.with_overrides(
             **{k: v for k, v in bit_overrides.items() if v is not None}
         )
+    # Marginal-coal measured-SRMC offer bound (run_calibration_full
+    # --coal-econ-srmc-bound): clamp the econ*/peak coal tranches' fuel
+    # passthrough to >= 1.0 so the marginal coal offer never sits below the
+    # plant's measured F923 incremental delivered SRMC; the committed/
+    # must-run bands keep the contracted take-or-pay discount
+    # (fleet.campd_tranche_fuel_frac; ScenarioConfig.coal_econ_srmc_bound).
+    if coal_econ_srmc_bound:
+        config = config.with_overrides(coal_econ_srmc_bound=True)
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
     # multipliers come straight from the CSV, bypassing the offer curve.
@@ -3258,11 +3267,23 @@ def run_year(
                 return pt_by_supply
 
             fuel_fracs = [
-                campd_tranche_fuel_frac(g, _pt_for(g), takeorpay) for g in fleet
+                campd_tranche_fuel_frac(
+                    g,
+                    _pt_for(g),
+                    takeorpay,
+                    econ_srmc_bound=config.coal_econ_srmc_bound,
+                )
+                for g in fleet
             ]
         else:
             fuel_fracs = [
-                campd_tranche_fuel_frac(g, pt_by_supply, takeorpay) for g in fleet
+                campd_tranche_fuel_frac(
+                    g,
+                    pt_by_supply,
+                    takeorpay,
+                    econ_srmc_bound=config.coal_econ_srmc_bound,
+                )
+                for g in fleet
             ]
     else:
         # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
@@ -3293,7 +3314,14 @@ def run_year(
                 ]
                 fleet = non_binned + thermal_fleet
                 pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
-                fuel_fracs = [campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet]
+                fuel_fracs = [
+                    campd_tranche_fuel_frac(
+                        g,
+                        pt_by_supply,
+                        econ_srmc_bound=config.coal_econ_srmc_bound,
+                    )
+                    for g in fleet
+                ]
             else:
                 fleet, fuel_fracs = split_coal_tranches(
                     aggregate_fleet(all_gens, n_bins=0), config
