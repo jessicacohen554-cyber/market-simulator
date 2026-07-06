@@ -5776,3 +5776,41 @@ been reviewed.
 No solve, score, or intake touched 2022/H1-2026 (rule #22). No LP solve was
 run to produce this adjudication — every judgment above is drawn from each
 run's own already-committed `run_config.json` / registry `definition` prose.
+
+## 2026-07-06 — ERCOT keeper PROMOTED: `ercot34-stage4-overlay-off` replaces `ercot32-ordc-total-rtolcap` (owner sign-off in-session)
+
+Owner approved the recommendation in the entry above. Promotion bookkeeping
+(rule 21 / skill step 4):
+
+- **`keepers.json`** ERCOT → `2026-07-06-ercot34-stage4-overlay-off`.
+- **C6 attestation** written (`calibration_attestation.json`): governance
+  assertions with the stage-4 note; DOF ledger **inherited verbatim from
+  ercot32 (no scalar re-tuned)** plus two appended entries — the WS-A forward
+  supply coefficients (identification: measured RTOLCAP/RTOFFCAP MW
+  quantities, rule 23) and `ercot_west_gas_delivered_floor=0.4`
+  (measured-physical transport-bound floor, surfaced into the ledger by the
+  G-12 finding). Exceptions: C2-2025 gas −5.0% (preliminary-923 vintage,
+  inherited) and C5c-2024 r=0.422 (19% EIA-930 battery coverage, improved
+  from ercot32's 0.331). C3b/C3c/C8 stay MODEL MISS — named root causes, not
+  excused.
+- **Zero-forcing ablation twin** (D-3/E9): exact ercot34 config (all five
+  un-persisted `--set` fields re-applied) with every merchant floor/bridge
+  off; registered as `2026-07-06-ercot34-stage4-overlay-off-ablation` and
+  linked from the keeper sidecar with the market story. Keeper-vs-twin
+  per-class deltas quantified in the sidecar link.
+- **E9 grandfather list**: `ercot32` entry removed (dead once demoted, per
+  the list's contract).
+- **REPLAY CONTRACT CAVEAT (standing until the meta-writer fix lands):**
+  ercot34's `meta.json` — like ercot32's — does not persist
+  `ercot_zonal_gas_basis` / `ercot_west_netload_gas_shape` /
+  `ercot_west_gas_delivered_floor` / `oil_primary_bin_fuel` /
+  `ercot_reserve_supply_forward`; any replay/re-gate of this keeper must
+  restore them via `--set` from the bundle's `run_config.json` (they are all
+  resolved there). The durable fix is owned by the orchestrator-unification
+  lane (`run_calibration_full.py` meta writer).
+- `build_status.py` re-run; `audit_keepers.py --check` + keeper-auditor pass
+  recorded below in this entry's session.
+
+The retired `ercot32` stays registered (the prior-keeper comparison) with its
+DAM-AS overlay demoted to the explicitly-labelled F6/F7 diagnostic (plan §6:
+default-off in keepers, retained for the decomposition).
