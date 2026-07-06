@@ -130,12 +130,29 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("ISONE_tie", 800.0, 44.0),
         ("import_scarcity", 1900.0, 75.0),
     ],
+    # NEISO seams (audit C-6 closure, 2026-07-06): measured-data ladders from
+    # scripts/derive_neiso_import_tranches.py — per-seam Q-Q duration coupling
+    # of the measured ISO-NE DA hub LMP (SMD workbooks) with the measured
+    # EIA-930 per-seam flows (ISNE↔HQT/NBSO/NYIS,
+    # data/raw/eia-930-interchange/"ISNE interchange hourly.parquet"),
+    # anchored on the NYISO proxy-bus DA LBMPs (NYISO_HQ = HQ's measured
+    # opportunity cost; NYISO_NPX = the NY-side NY–NE interface price;
+    # data/raw/_validation-source/nyiso_proxy_lmp_hourly_NEISO.parquet).
+    # Capacities: measured p98 per-seam import depth (Highgate carved at its
+    # published ~225 MW converter rating); scarcity rung = p99.9 total-import
+    # depth beyond the per-seam rungs. Identification: measured (rule 23 —
+    # re-derive only when the source data extends), replacing the
+    # residual-fitted rungs the DOF ledger flagged. This static entry is the
+    # POOLED 2023-2025 derivation — the multi-year revealed seam supply curve
+    # carried forward (HQ water value, NY–NE arbitrage parity, NB surplus);
+    # backcast years use IMPORT_TRANCHES_BY_YEAR/EXPORT_TRANCHES_BY_YEAR.
     "NEISO": [
-        ("HQ_PhaseII", 1000.0, 18.0),
-        ("Highgate", 300.0, 22.0),
-        ("NB_north", 800.0, 30.0),
-        ("NYISO_CT", 1100.0, 36.0),
-        ("import_scarcity", 1200.0, 68.0),
+        ("Highgate", 225.0, 26.53),
+        ("HQ_PhaseII", 1830.0, 41.10),
+        ("NB_north", 630.0, 59.15),
+        ("NYISO_CT_base", 870.0, 34.79),
+        ("NYISO_CT_peak", 870.0, 73.04),
+        ("import_scarcity", 95.0, 286.12),
     ],
 }
 
@@ -194,6 +211,40 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
             ("import_scarcity", 1900.0, 135.2),
         ],
     },
+    # NEISO: year-grounded measured ladders (derivation + sources in the
+    # static IMPORT_TRANCHES["NEISO"] comment; scripts/
+    # derive_neiso_import_tranches.py). Year texture is real market history:
+    # HQ deliveries collapse 10.6 → 2.8 TWh across 2023-2025 as HQ's measured
+    # opportunity cost (NYISO_HQ proxy) rises $24.6 → $56.0/MWh, so the
+    # HQ_PhaseII rung carries a growing energy-limitation (water-value)
+    # premium over the anchor (+$0.1 / +$11.1 / +$51.9); the NYISO_CT rungs
+    # bracket the measured NPX parity each year. 2024 has no scarcity rung —
+    # the measured p99.9 total import sits within the per-seam p98 rungs.
+    "NEISO": {
+        2023: [
+            ("Highgate", 225.0, 17.00),
+            ("HQ_PhaseII", 1595.0, 24.70),
+            ("NB_north", 625.0, 35.28),
+            ("NYISO_CT_base", 790.0, 31.17),
+            ("NYISO_CT_peak", 790.0, 53.81),
+            ("import_scarcity", 115.0, 265.42),
+        ],
+        2024: [
+            ("Highgate", 225.0, 22.04),
+            ("HQ_PhaseII", 1840.0, 44.22),
+            ("NB_north", 605.0, 73.34),
+            ("NYISO_CT_base", 870.0, 30.90),
+            ("NYISO_CT_peak", 870.0, 51.76),
+        ],
+        2025: [
+            ("Highgate", 225.0, 56.35),
+            ("HQ_PhaseII", 1935.0, 107.89),
+            ("NB_north", 655.0, 129.96),
+            ("NYISO_CT_base", 880.0, 44.48),
+            ("NYISO_CT_peak", 880.0, 112.57),
+            ("import_scarcity", 105.0, 299.86),
+        ],
+    },
 }
 
 EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
@@ -212,10 +263,49 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     "NYISO": [
         ("export_surplus", 600.0, 10.0),
     ],
+    # NEISO: measured per-seam export sinks (same derivation + sources as
+    # IMPORT_TRANCHES["NEISO"]; pooled 2023-2025). Sink prices carry the
+    # no-wash clamp (every sink < cheapest import rung − $0.01): the pooled
+    # HQ_import node cannot host simultaneous counterflow (wheel-through), so
+    # a sink priced above an import rung would be a same-node wash-trade
+    # money pump — a documented rule-14 reconciliation of the measured
+    # thresholds to the single-node representation.
     "NEISO": [
-        ("export_firm", 700.0, 16.0),
-        ("export_trough", 1100.0, 8.0),
+        ("export_NYISO", 1030.0, 22.30),
+        ("export_NB", 380.0, 21.84),
+        ("export_HQ", 835.0, 19.86),
     ],
+}
+
+# Year-grounded export-sink ladders — the export-side mirror of
+# IMPORT_TRANCHES_BY_YEAR, resolved identically (an unmapped ISO/year falls
+# back to the static EXPORT_TRANCHES entry). Added 2026-07-06 with the NEISO
+# measured seam ladders: the export side has the same real year texture as
+# the import side (NEISO's 2025 export_HQ sink is 940 MW where 2023 had no
+# measurable HQ export depth at all).
+EXPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = {
+    # NEISO: derivation + sources in the IMPORT_TRANCHES["NEISO"] comment
+    # (scripts/derive_neiso_import_tranches.py). 2023 has no export_HQ sink
+    # (no measurable export depth on the HQT seam); sinks clamped by the
+    # no-wash ordering where the measured threshold crossed the year's
+    # cheapest import rung (2023 export sinks at $16.99 = Highgate $17.00 −
+    # $0.01; 2024 export_NB at $22.03 = Highgate $22.04 − $0.01).
+    "NEISO": {
+        2023: [
+            ("export_NYISO", 950.0, 16.99),
+            ("export_NB", 180.0, 16.99),
+        ],
+        2024: [
+            ("export_NYISO", 1110.0, 21.37),
+            ("export_NB", 455.0, 22.03),
+            ("export_HQ", 590.0, 18.06),
+        ],
+        2025: [
+            ("export_NYISO", 1040.0, 27.12),
+            ("export_NB", 365.0, 26.02),
+            ("export_HQ", 940.0, 28.33),
+        ],
+    },
 }
 
 # Per-hub external zones and the corridor link each terminates on.
@@ -797,9 +887,10 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
     if year is None:
         year = getattr(config, "weather_year", None)
     tranches = IMPORT_TRANCHES.get(iso, [])
+    exports = EXPORT_TRANCHES.get(iso, [])
     if year is not None:
         tranches = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year, tranches)
-    exports = EXPORT_TRANCHES.get(iso, [])
+        exports = EXPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year, exports)
 
     neighbors = INTERFACE_NEIGHBORS.get(iso, []) if use_ref else []
 

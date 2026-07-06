@@ -35,6 +35,7 @@ from market_sim.config.interchange_config import (
     CAISO_PER_HUB_IMPORT_ZONES,
     CAISO_PER_HUB_NEIGHBORS,
     EXPORT_TRANCHES,
+    EXPORT_TRANCHES_BY_YEAR,
     EXTERNAL_SIMULTANEOUS_LIMITS,
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
@@ -261,7 +262,7 @@ def build_import_generators(
     return gens
 
 
-def build_export_sinks(iso: str) -> list[Generator]:
+def build_export_sinks(iso: str, year: int | None = None) -> list[Generator]:
     """Return an ISO's export sinks as a list of pseudo-generators.
 
     ISO surplus is exported across the external zone's links and absorbed
@@ -278,12 +279,21 @@ def build_export_sinks(iso: str) -> list[Generator]:
 
     Args:
         iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
+        year: backcast year; selects an ``EXPORT_TRANCHES_BY_YEAR[iso][year]``
+            ladder when one exists, else the static ``EXPORT_TRANCHES[iso]``
+            (the export-side mirror of :func:`build_import_generators`'s
+            year resolution).
 
     Returns:
         Export sinks in the ISO's external zone; empty when none are
         configured.
     """
     zone = IMPORT_ZONE.get(iso)
+    sinks = (
+        EXPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) if (year is not None) else None
+    )
+    if sinks is None:
+        sinks = EXPORT_TRANCHES.get(iso, [])
     return [
         Generator(
             unit_id=f"{zone}_{name}",
@@ -296,7 +306,7 @@ def build_export_sinks(iso: str) -> list[Generator]:
             vom=price,
             eford=0.0,
         )
-        for name, capacity, price in EXPORT_TRANCHES.get(iso, [])
+        for name, capacity, price in sinks
     ]
 
 
