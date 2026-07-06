@@ -228,6 +228,17 @@ side of the fit.
 
 ## PJM — 5 → 7 fails
 
+> **STALE vs the 2026-07-05 keeper swap (G-10 truth-in-labeling).** This
+> section was scored against `2026-07-03-pjm-76-outage-fix`
+> (`results/calibration/pjm76_outage_fix`); the PJM keeper is now
+> `2026-07-05-pjm-77-ct-relfloor` (`results/calibration/pjm77_ct_relfloor`).
+> The statmode twin has NOT been re-run against the new keeper — per the
+> program rule this section is flagged stale, not silently carried; it also
+> still reflects the original 9-criterion (C1–C5c) scoring, not the C7/C8
+> hard criteria added 2026-07-04. Re-running is a separate solve session
+> (`scripts/run_statmode_probe.py` against `pjm77_ct_relfloor`), not done
+> here.
+
 | criterion | keeper | statmode | note |
 |---|---|---|---|
 | C1 fuel-mix | FAIL | FAIL | already large misses balloon: 2023 CC_REGULAR −19.71→**−78.54 TWh**; COAL_BIT +1.43(PASS)→**+99.13 TWh**; CT_PEAKER +1.04(PASS)→**−14.32 TWh** |
@@ -256,12 +267,10 @@ larger coal fleet.
 > measured plant CO2 rates). The statmode twin has NOT been re-run against
 > the new keeper — per the program rule this section is flagged stale, not
 > silently carried; it also still reflects the original 9-criterion
-> (C1–C5c) scoring. The same staleness already applies to the PJM section
-> after its 2026-07-05 swap (still on `pjm-76-outage-fix`, keeper now
-> `pjm-77-ct-relfloor`) and, as of 2026-07-06, to ERCOT (see its own stale
-> box above — keeper is now `ercot34-stage4-overlay-off`). MISO's statmode
-> twin (still on `miso-39-reserve-pergen`) is likewise stale vs the current
-> `miso-41-ct-evening` keeper, though MISO has not swapped again since.
+> (C1–C5c) scoring. The same staleness pattern applies to every other
+> section below and to ERCOT above — each now carries its own stale-box
+> (G-10: no ISO's staleness may be disclosed only as a footnote inside
+> another ISO's box).
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -283,6 +292,24 @@ the one exception and actually improves.
 
 ## NEISO — 1 → 6 fails
 
+> **STALE vs TWO unflagged keeper swaps (G-10 truth-in-labeling).** This
+> section was scored against `2026-07-01-neiso-43-closeout`
+> (`results/calibration/neiso_closeout`). The NEISO keeper swapped **twice**
+> since without this section being updated or flagged: first to
+> `2026-07-03-neiso-47-fast-start` (fast-start tranche pricing + CC_REGULAR
+> econ-band re-anchor), then to the current
+> `2026-07-06-neiso-49-stgas-netload`
+> (`results/calibration/neiso_stgas_netload`: Connecticut ST_GAS net-load
+> reliability-commitment limb + measured CAMPD-derived ST_GAS/CC_CHP offer
+> bands). The statmode twin has NOT been re-run against either successor
+> keeper — per the program rule this section is flagged stale, not silently
+> carried; it also still reflects the original 9-criterion (C1–C5c) scoring,
+> not the C7/C8 hard criteria added 2026-07-04 (on which neiso-49 itself
+> CAVEATs, per `results/calibration/neiso_stgas_netload/metrics.json`).
+> Re-running is a separate solve session
+> (`scripts/run_statmode_probe.py` against `neiso_stgas_netload`), not done
+> here.
+
 | criterion | keeper | statmode | note |
 |---|---|---|---|
 | C1 fuel-mix | PASS | PASS | unchanged (all 2025 classes SKIPPED on preliminary vintage; 2023/24 not shown = clean both sides) |
@@ -302,6 +329,19 @@ price-level and storage-dispatch fit specifically, not the underlying
 generation mix.
 
 ## MISO — 7 → 9 fails (fails everything scored)
+
+> **STALE vs the 2026-07-05 keeper swap (G-10 truth-in-labeling).** This
+> section was scored against `2026-07-03-miso-39-reserve-pergen`
+> (`results/calibration/MISO/miso_39_reserve_pergen`); the MISO keeper is now
+> `2026-07-05-miso-41-ct-evening` (`results/calibration/miso41_ct_evening`).
+> The statmode twin has NOT been re-run against the new keeper — per the
+> program rule this section is flagged stale, not silently carried; it also
+> still reflects the original 9-criterion (C1–C5c) scoring. A honesty-gate
+> REJECTED commitment-posture-lever probe (`miso-43`) has since been run and
+> registered default-off (see the gap register); it is unrelated to this
+> statmode delta. Re-running is a separate solve session
+> (`scripts/run_statmode_probe.py` against `miso41_ct_evening`), not done
+> here.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
