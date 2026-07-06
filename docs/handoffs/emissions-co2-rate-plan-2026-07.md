@@ -530,6 +530,164 @@ oracle-op evidence only; the sim-conditioning verdict rests on ERCOT. If a
 future PJM keeper persists sim-op, the gate re-examination may be re-run — as a
 CAMPD/bundle *data* update under rule 23, never against a keeper's CO2 fit.
 
+## 9.6 `use_plant_emission_rates_v2` flip decision memo (2026-07-06, Lane L-8, G-39)
+
+**Gap.** `scenarios.py:389` still defaults `use_plant_emission_rates_v2=False`
+although its own stated precondition — the 7-year CAMPD history intake, the
+LOYO gate/window sweep, and the all-six-ISO v2 artifact re-derive — landed in
+§9.5 (2026-07-05). This is a decision memo only: no flag flip, no keeper
+artifact, no solve happened in this pass (rule 12/16 scope; owner decides).
+
+### What flipping actually changes
+
+The mode-aware source (§2.1) swaps from the legacy artifact
+(`plant_emission_rates.parquet`: TX-only, 131 plants, a stale two-year pool,
+zero coverage for CAISO/PJM/MISO/NYISO/NEISO — §1.2) to the v2
+per-(iso, plant, unit, year) artifact (all six ISOs, 2018–2021 + 2023–2025
+history, gen-weighted **2-year** trailing base, conditioning gate **closed**,
+unit-composition mask). Concretely, per ISO:
+
+- **ERCOT** — already has real plant rates today (v1). The delta is narrow:
+  the unit-composition mask dissolves the W A Parish `mixed`-fuel exclusion
+  (+4.6–6.3% of keeper thermal GWh gains a measured rate instead of a
+  fuel-class default), the live artifact drops the 2022/2026 quarantined rows
+  that sit (unused but present) in the legacy file — a rule-26-spirit
+  re-arm-surface closure — and the trailing window narrows from a stale
+  frozen 2-year pool to a rule-23-governed rolling 2-year window.
+- **CAISO / NYISO / NEISO / PJM / MISO** — v2 is these ISOs' **first** measured
+  plant-specific CO2 rate in backcast; today they fall back to the generic
+  `heat_rate × FUEL_CO2_FACTOR` default for every plant. This is a real
+  accuracy gain (measured beats estimated, per rule 10) with no forward-basis
+  cost (rule 13 already certifies the estimator; §9.5's LOYO holds it to
+  ~2–3% wMAPE against held-in years).
+
+### The actual re-gate cost: dispatch-inert for 3 of 6 keepers
+
+`emission_rate_co2` enters the LP objective **only** through
+`assemble_mc`'s `emission_rate × carbon_price` term. In the calibration
+harness, `_calibration_config` sets the **federal** `carbon_price=0.0` and
+falls through to `resolve_carbon_price`'s state-program lookup
+(scenarios.py / `_calibration_config` docstring). That lookup returns:
+
+| ISO | Backcast state carbon price | v2 flip touches the LP? |
+|---|---|---|
+| ERCOT | $0 (no program) | **No** — reporting-only |
+| PJM | $0 (no program) | **No** — reporting-only |
+| MISO | $0 (no program) | **No** — reporting-only |
+| CAISO | measured CARB ($28–35/t) | **Yes** — merit order can shift |
+| NYISO | measured RGGI ($13–22/t) | **Yes** — merit order can shift |
+| NEISO | measured RGGI ($15–24/t) | **Yes** — merit order can shift |
+
+`nox_price` is `0.0` everywhere by default (no keeper enables a NOx cost), so
+the NOx/SO2 columns v2 also carries are reporting-only across all six ISOs
+regardless of carbon pricing.
+
+This is **not a new finding invented for this memo** — it is exactly the
+mechanism the 2026-07-05 R2 physical-heat-rate re-basis re-gate
+(`docs/handoffs/co2-keeper-regate-2026-07-05.md`) already measured and
+banked: "Carbon-zero ISOs (ERCOT/PJM/MISO): `emission_rate_co2` never enters
+`mc`... Re-score = provable no-op," while CAISO/NYISO/NEISO were re-solved via
+`scripts/replay_keeper.py` and registered as **PROBEs** (`...-co2re-probe`),
+never as keeper swaps, pending the owner's deliberate re-gate. The v2 flip is
+the same shape of change and should follow the same procedure:
+
+1. **ERCOT / PJM / MISO — cheap, no solve.** Re-score each keeper's already-
+   persisted per-plant generation through the v2 rate map (no LP re-solve,
+   since dispatch is provably unaffected) and register the result as a PROBE
+   (rule 15) so the improved CO2 coverage is visible on the dashboard without
+   waiting on anything else. This can happen independently and immediately —
+   it carries zero risk to any committed dispatch/price number.
+2. **CAISO / NYISO / NEISO — a real re-solve, SH effort.** A byte-faithful
+   `replay_keeper.py` re-solve (all scored years, 2023–2025) per ISO, ≤2
+   concurrent per-plant multi-zone invocations (rule 12), registered first as
+   a PROBE to measure the actual CO2/price/generation delta before any keeper
+   swap decision — exactly the R2 template. All three of these keepers are
+   *already* flagged STALE-VS-HEAD or mid-re-gate for unrelated reasons
+   (CAISO: G-11 undiagnosed drift; NYISO: nyiso-41 stale-vs-HEAD pending the
+   #1344 peaker-scarcity structure; NEISO: verified HEAD-reproducible per the
+   2026-07-06 checklist entry above but still subject to its own C7/winter-fuel
+   work).
+
+### Recommended sequencing: ride along, don't force a wave
+
+**Do not spend a standalone SH re-gate wave on this flag alone.** Every
+carbon-priced keeper that would need a real re-solve is already scheduled for
+(or blocked pending) its own HEAD re-gate for unrelated structural reasons
+(§ above; see also `docs/handoffs/co2-keeper-regate-2026-07-05.md`'s running
+per-ISO log and gap-register G-11/G-13/G-15/G-16). Folding
+`use_plant_emission_rates_v2=True` into whichever re-solve each of those waves
+already performs:
+
+- amortizes the one unavoidable SH cost (a keeper re-solve) across two
+  improvements instead of paying it twice;
+- keeps rule 21's ablation-twin discipline coherent — a new keeper's
+  zero-forcing ablation twin should already reflect whatever rate basis the
+  keeper itself uses, so bundling avoids a twin re-solve of its own;
+- matches the precedent the R2 physical-HR change already set (folded into
+  the same re-gate wave rather than solved as an isolated diff).
+
+**Concrete recommendation:**
+
+1. Land the two cheap ERCOT/PJM/MISO PROBE re-scores now (no gate, no
+   dependency on anything else) — pure dashboard-truthfulness upside.
+2. Do **not** flip the default globally today. Instead, the *next* session
+   that re-gates CAISO, NYISO, or NEISO (for whatever structural reason
+   triggers it) should include `use_plant_emission_rates_v2=True` in that
+   run's `run_config.json` and evaluate the combined delta — never re-solve
+   the same ISO twice to isolate the two changes; an ablation-style
+   `emission_rate_co2 = get_emission_rate(fuel, tr_hr)` (v2-off) twin re-solve
+   during that same session isolates the flip's own contribution if the owner
+   wants the attribution split, mirroring the R2 doc's `ablation − resolve`
+   technique.
+3. Once all three carbon-priced ISOs have re-gated under v2 at least once
+   (whether as a promoted keeper or a still-STALE probe), flip the
+   `scenarios.py:389` default to `True` and update its comment (the current
+   comment — "Default OFF keeps the legacy pooled-artifact path until the
+   7-year history lands" — is now stale per G-57's stale-comment finding;
+   ERCOT/PJM/MISO have already re-scored clean by that point, so a global
+   flip is then a no-op everywhere except a config it was already true for).
+   This ordering means the flag flips only after every ISO it can actually
+   move has been evaluated at least once — never a blind global default
+   change with three ISOs unevaluated.
+
+### W10 retrofit-channel activation conditions (explicit, per task scope)
+
+The forward emission-control retrofit channel
+(`docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md`) is
+**triple-gated** and this memo's v2 decision does not change that gating:
+
+```
+control_retrofit_forward == True   AND   use_plant_emission_rates_v2 == True   AND   mode == "forecast"
+```
+
+Flipping `use_plant_emission_rates_v2` (gate 2 of 3) removes only one of the
+three gates. `control_retrofit_forward` (gate 1) is its own independent
+`ScenarioConfig` field, default `False`, and **stays off** regardless of the
+v2 decision above. The reason is upstream of the v2 question: the retrofit
+channel's default control-type map
+(`constants.CONTROL_RETROFIT_TYPE_MAP`) is **NOx/SO2 only** (SCR/SNCR/wet
+and dry FGD/DSI — CO2/carbon-capture is deliberately excluded, owned instead
+by the CCS retrofit screen per rule 15) — but the fleet forecast path today
+writes only a forecast **CO2** rate map end-to-end
+(`apply_plant_emission_rates_v2` sets `emission_rate_co2` only; §9.4's
+production-wiring-gap note is explicit that `class_median_rates` and the
+full a/b/c/d estimator have no NOx/SO2 production caller yet). Turning
+`control_retrofit_forward` on today would step a rate map
+(`emission_rate_nox`/`emission_rate_so2`) that the fleet builder does not yet
+forecast-populate from v2 at all — the override would have nothing live to
+multiply against in the production path. **Recommendation: leave
+`control_retrofit_forward` off until the E2 NOx/SO2 forward-rate wave lands**
+(the wave that gives `apply_plant_emission_rates_v2` a forecast NOx/SO2 output
+symmetric with its CO2 one); at that point the retrofit channel's override
+function and EIA-860 loader are already built and unit-tested
+(`tests/test_emission_rates.py::TestControlRetrofitForward`,
+`TestLoadAnnouncedControls`) and E2 only needs to wire the existing
+`apply_control_retrofits(rates_nox, controls, year, "nox")` /
+`(..., "so2")` calls into the same seam CO2 already uses — no new mechanism.
+This is unconditional on the v2 flip decision above: even in a world where
+`use_plant_emission_rates_v2` is flipped on for all six ISOs tomorrow, W10
+stays inert until E2 ships.
+
 ## 8. Implementation prompt
 
 ```
