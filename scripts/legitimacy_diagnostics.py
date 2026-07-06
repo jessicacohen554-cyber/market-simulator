@@ -117,6 +117,15 @@ D1_GATED_CLASSES: tuple[str, ...] = ("CT_PEAKER", "ST_GAS")
 D2_PEAKER_CLASSES: tuple[str, ...] = ("CT_PEAKER",)
 D2_PEAKER_MAX_SHARE: float = 0.10
 D2_MERCHANT_MAX_SHARE: float = 0.30
+# Materiality guard (owner directive, 2026-07-06): a merchant class is
+# force-gated only when its own generation exceeds this share of total system
+# load. A class dispatching < 2.5 % of load is not "the dispatch model" for
+# anything, so a high forced SHARE on it is a near-zero-denominator artifact,
+# not the rule-20 concern (floors propping up otherwise-economic dispatch). It
+# is still reported per class (with load_share + an immaterial flag) but never
+# raised to a FAIL. Total load = Σ payload fuelRows[*].m — the model's served-
+# energy balance (per-fuel annual generation incl. signed net interchange).
+D2_MATERIAL_MIN_LOAD_SHARE: float = 0.025
 # Classes whose floors are structural must-run, exempt from the share gates
 # (their mechanisms are also in D2_EXEMPT_MECHS; the class-level exemption
 # covers CHP tranches floored by any mechanism).
@@ -341,6 +350,7 @@ def run_d2(
     year: int | str = "",
     npl: np.ndarray | None = None,
     ra_floor_missing: bool = False,
+    total_load_mwh: float | None = None,
 ) -> GateResult:
     """D-2 forced-energy attribution over aligned (n, T) row arrays.
 
@@ -348,6 +358,12 @@ def run_d2(
     binding mechanism's id) — the arithmetic is identical. ``klass`` labels
     each row; forced energy is ``dispatch`` MWh in at-floor row-hours,
     attributed to the binding mechanism id.
+
+    ``total_load_mwh`` (annual system load) activates the materiality guard:
+    a merchant class whose own energy is < ``D2_MATERIAL_MIN_LOAD_SHARE`` of
+    total load is immaterial — its forced share is reported but never a FAIL
+    (owner directive 2026-07-06). ``None`` disables the guard (every class is
+    gated, the pre-directive behaviour).
     """
     res = GateResult("D-2 forced-energy attribution")
     mask = at_floor_mask(dispatch, min_gen, npl)
@@ -379,7 +395,17 @@ def run_d2(
             if int(m) not in D2_EXEMPT_MECHS and int(m) not in NON_THERMAL_MECHS:
                 forced_gated[k] += mwh
     for k in classes:
-        if str(k) in D2_EXEMPT_CLASSES or total_by_class[k] <= 0.0:
+        # The empty ('') class is the unclassified bucket: plants carrying no
+        # CAMPD plant_group — nuclear / hydro / renewable must-run whose floors
+        # are non-thermal/exempt by construction. It is NOT a merchant class,
+        # so it never gates a forced-share limit, and its per-plant dispatch is
+        # only reconstructible from the full dispatch frame (the run payload
+        # carries these as scalar non-fossil aggregates, not per plant) — a
+        # nuclear-inclusive '' denominator therefore diverges by an order of
+        # magnitude between the parquet and payload paths. Excluding it keeps
+        # the summary path-independent and every merchant row per-class
+        # truthful (#1488, rule 20).
+        if str(k) in D2_EXEMPT_CLASSES or str(k) == "" or total_by_class[k] <= 0.0:
             continue
         share = forced_gated[k] / total_by_class[k]
         limit = (
@@ -387,6 +413,13 @@ def run_d2(
             if str(k) in D2_PEAKER_CLASSES
             else D2_MERCHANT_MAX_SHARE
         )
+        load_share = (
+            total_by_class[k] / total_load_mwh
+            if total_load_mwh and total_load_mwh > 0.0
+            else None
+        )
+        immaterial = load_share is not None and load_share < D2_MATERIAL_MIN_LOAD_SHARE
+        breach = share > limit and not immaterial
         res.summary.append(
             {
                 "year": year,
@@ -395,11 +428,13 @@ def run_d2(
                 "class_total_twh": round(total_by_class[k] / 1e6, 4),
                 "forced_share": round(share, 4),
                 "limit": limit,
+                "load_share": round(load_share, 4) if load_share is not None else None,
+                "immaterial": bool(immaterial),
                 "lower_bound": bool(ra_floor_missing),
-                "verdict": "FAIL" if share > limit else "pass",
+                "verdict": "FAIL" if breach else "pass",
             }
         )
-        if share > limit:
+        if breach:
             res.failures.append(
                 f"{year} {k}: forced share {share:.1%} > {limit:.0%} "
                 f"({forced_gated[k] / 1e6:.2f} of {total_by_class[k] / 1e6:.2f} TWh "
@@ -1060,6 +1095,28 @@ def load_payload_plants(
     return out
 
 
+def load_payload_total_load_mwh(
+    repo_root: Path, sidecar: dict, year: int
+) -> float | None:
+    """Total system load (~ served energy) for a payload year, in MWh.
+
+    Sum of the per-fuel annual model generation ``fuelRows[*].m`` (TWh),
+    including the signed net-interchange row — the model's served-energy
+    balance, i.e. total load. This is the materiality denominator for the D-2
+    force-gate (``D2_MATERIAL_MIN_LOAD_SHARE``). Returns ``None`` when the
+    payload carries no ``fuelRows`` (older bundles / no sidecar), which leaves
+    the guard disabled so no breach is hidden by a missing denominator.
+    """
+    txt = (repo_root / sidecar["file"]).read_text()
+    match = re.search(r'="(H4sI[^"]+)"', txt)
+    if match is None:
+        return None
+    run = json.loads(gzip.decompress(base64.b64decode(match.group(1))))
+    rows = run.get("years", {}).get(str(year), {}).get("fuelRows") or []
+    total_twh = sum((row.get("m") or 0.0) for row in rows)
+    return total_twh * 1e6 if total_twh > 0.0 else None
+
+
 def load_dispatch_parquet(bundle: Path, year: int):
     """Return the year's final-pass dispatch frame, or None when absent."""
     import pandas as pd
@@ -1170,6 +1227,17 @@ def aggregate_floors_by_plant(
     The plant floor is the sum of its units' positive floors; the plant-hour
     mechanism is the id of the unit contributing the largest floor that hour
     (maximum-composition at plant level). Loops over plants, never hours.
+
+    The plant class is the **most common non-empty** unit group in the plant —
+    NOT the first unit's group. A single plant frequently mixes classified
+    units with an unbinned/unclassified component (e.g. NEISO plant 546 carries
+    8 ``ST_GAS`` units + 1 empty-group unit); taking the first unit's group let
+    that lone empty label capture the whole plant into the ``''`` bucket, so its
+    dispatch (and any binding floor) was mis-attributed away from its real
+    merchant class and the class denominator was under-counted (#1488, rule 20).
+    A plant whose units are *all* unclassified (nuclear / hydro / renewables,
+    which carry no CAMPD plant_group) stays ``''`` — those non-thermal must-run
+    rows are excluded from the merchant forced-share summary in ``run_d2``.
     """
     plant_code = np.asarray(arrays["plant_code"])
     keep = plant_code > 0
@@ -1185,13 +1253,20 @@ def aggregate_floors_by_plant(
     n_plants = starts.size
     floor_sum = np.add.reduceat(pos, starts, axis=0)
     mech_plant = np.zeros((n_plants, t), dtype=np.int8)
+    group_plant = np.empty(n_plants, dtype=object)
     hours_idx = np.arange(t)
     for i in range(n_plants):
         block = slice(bounds[i], bounds[i + 1])
         rel = np.argmax(pos[block], axis=0)
         mech_plant[i] = mech[block][rel, hours_idx]
+        nonempty = groups[block][groups[block] != ""]
+        if nonempty.size:
+            vals, counts = np.unique(nonempty, return_counts=True)
+            group_plant[i] = str(vals[counts.argmax()])
+        else:
+            group_plant[i] = ""
     mech_plant[floor_sum <= 0.0] = 0
-    return pc[starts], floor_sum, mech_plant, groups[starts]
+    return pc[starts], floor_sum, mech_plant, group_plant.astype(str)
 
 
 # ---------------------------------------------------------------------------
@@ -1328,7 +1403,16 @@ def diagnose_bundle(
     d2 = GateResult("D-2 forced-energy attribution")
     d4 = GateResult("D-4 off-window binding")
     for year in years:
-        bench = load_bench(repo_root, iso, year) if {"D1"} & only else {}
+        # Bench (per-plant nameplate + class) is needed by D-2/D-4 too, not
+        # just D-1: it supplies each plant's ``npl`` for the payload dispatch
+        # decode (``_decode_cf_bytes`` rescales to the annual total, falling
+        # back to ``raw/100 * npl`` when a plant has no ``m_ann``) and for the
+        # at-floor tolerance in ``at_floor_mask``. Loading it only for D-1 made
+        # the D-2 recompute path (``only={"D2"}``) silently use a degraded
+        # ``npl`` (``disp.max()`` / 0.0) and so disagree with the full
+        # ``--bundle`` run that writes the committed artifact — the exact
+        # path-divergence G-06 exists to catch (#1488).
+        bench = load_bench(repo_root, iso, year) if {"D1", "D2", "D4"} & only else {}
         frame, pass_label = (
             load_dispatch_parquet(bundle, year)
             if {"D1", "D2", "D4"} & only
@@ -1413,6 +1497,11 @@ def diagnose_bundle(
                         else mech_plant[j][:t]
                     )
             if "D2" in only:
+                total_load_mwh = (
+                    load_payload_total_load_mwh(repo_root, sidecar, year)
+                    if sidecar is not None
+                    else None
+                )
                 sub_res = run_d2(
                     disp,
                     floors,
@@ -1421,6 +1510,7 @@ def diagnose_bundle(
                     year=year,
                     npl=npl,
                     ra_floor_missing=ra_missing,
+                    total_load_mwh=total_load_mwh,
                 )
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)
