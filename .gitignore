@@ -234,6 +234,11 @@ results/calibration/*/storage.parquet
 results/calibration/*/btm.parquet
 results/calibration/*/availability_rcpf*.parquet
 results/calibration/*/scarcity*.parquet
+# Commitment-posture hourly frame (pjm_commitment_posture / miso_commitment_posture)
+# — regenerable diagnostic; the honesty gate's SUMMARY-posture-gate.md is the
+# committed result, the per-pool U/SU/R parquet is scratch.
+results/calibration/*/posture.parquet
+results/calibration/*/*/posture.parquet
 # ISO-scoped bundle layout (run_calibration_full default out-dir is now
 # results/calibration/<ISO>/<name>/ — one level deeper than the flat bundles
 # above, so the single-* patterns miss it). Mirror the slim-bundle ignores at
