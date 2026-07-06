@@ -1,0 +1,169 @@
+{
+ "isos": {
+  "CAISO": {
+   "2023": {
+    "da_coverage": 0.819,
+    "da_gt": 41,
+    "hours": 8760,
+    "rt_coverage": 0.836,
+    "rt_gt": 21,
+    "threshold": 200.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 52,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 35,
+    "threshold": 200.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 8,
+    "threshold": 200.0
+   }
+  },
+  "ERCOT": {
+   "2023": {
+    "da_coverage": 1.0,
+    "da_gt": 311,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 181,
+    "threshold": 200.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 68,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 53,
+    "threshold": 200.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 23,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 31,
+    "threshold": 200.0
+   }
+  },
+  "MISO": {
+   "2023": {
+    "da_coverage": 1.0,
+    "da_gt": 1,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 30,
+    "threshold": 200.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 24,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 37,
+    "threshold": 200.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 38,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 88,
+    "threshold": 200.0
+   }
+  },
+  "NEISO": {
+   "2023": {
+    "da_coverage": 1.0,
+    "da_gt": 5,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 15,
+    "threshold": 300.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 5,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 8,
+    "threshold": 300.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 12,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 20,
+    "threshold": 300.0
+   }
+  },
+  "NYISO": {
+   "2023": {
+    "da_coverage": 1.0,
+    "da_gt": 1,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 10,
+    "threshold": 300.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 12,
+    "threshold": 300.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 12,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 42,
+    "threshold": 300.0
+   }
+  },
+  "PJM": {
+   "2023": {
+    "da_coverage": 1.0,
+    "da_gt": 8,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 6,
+    "threshold": 200.0
+   },
+   "2024": {
+    "da_coverage": 1.0,
+    "da_gt": 2,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 18,
+    "threshold": 200.0
+   },
+   "2025": {
+    "da_coverage": 1.0,
+    "da_gt": 51,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 59,
+    "threshold": 200.0
+   }
+  }
+ },
+ "note": "Actual scarcity-tail hour counts per ISO-year at the rubric \u00a75 threshold. da_gt (day-ahead) is the DA-expressible tail the C3c criterion gates on (same hourly resolution as the model LP); rt_gt (real-time) is the reported out-of-representation companion (includes sub-hourly transients). Counts over covered hours only \u2014 a coverage < 1.0 makes the count a lower bound. Source: data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub series). Regenerate with scripts/derive_actual_tail.py when a source series updates (rule 23: re-derivation commits cite the data change). Years restricted to 2023-2025 (rule-22 holdout quarantine).",
+ "thresholds": {
+  "CAISO": 200.0,
+  "ERCOT": 200.0,
+  "MISO": 200.0,
+  "NEISO": 300.0,
+  "NYISO": 300.0,
+  "PJM": 200.0
+ }
+}
