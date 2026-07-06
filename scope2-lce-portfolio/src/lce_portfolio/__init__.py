@@ -7,7 +7,7 @@ load hour-by-hour at the lowest cost premium above wholesale energy prices.
 This package is deliberately independent of ``market_sim``: it never imports the
 market simulator. Any reused loader logic is copied under
 :mod:`lce_portfolio.vendored` with re-sync notes. See ``PLAN.md`` and ``docs/``
-for the design, and ``docs/prompt-packs/`` for the build sequence.
+for the design (the executed build-prompt history lives in git history).
 """
 
 __version__ = "0.1.0"
