@@ -84,7 +84,7 @@ landed items.** Absorb only the one open item and the post-inventory drift.
 | A2 | NEISO reserve co-opt in runner | **LANDED** (generalized via reserve_config) | `runner.py:802-818` |
 | A3 | PJM reserve supply cap | **LANDED** | `runner.py:819-836`; `reserve_config.py:995,1008` |
 | A4 | PJM reserve online-gating | **LANDED** | `runner.py:837-840` |
-| **A5** | **ERCOT single-product reserve supply cap** | **OPEN** | `_ercot_design` (`reserve_config.py:384`) sets no `supply_cap`; only `_ercot_multiproduct_design` does (`:676,755`). Forecast single-product ERCOT still uncapped. |
+| **A5** | **ERCOT single-product reserve supply cap** | **LANDED** (Stage 2, 2026-07-06) | Folded into `_ercot_design` per §2.1's absorption note: the design now sets `supply_cap` via `scarcity.ercot_rtolcap_supply_cap_mw` with the forward drivers threaded (gated `ercot_reserve_supply_cap`); `run_calibration`'s post-design overwrite retired. See §7.3.4. |
 | A6 | Negative renewable offer floor | **LANDED** | `runner.py:662-667` |
 | A7 | Reference-price interface | **LANDED** | `interchange_config.py:815`; `runner.py:625-648` |
 | A8 | CT/ST netload drag floors | **LANDED** | `runner.py:544-579` |
@@ -214,8 +214,8 @@ divergence — the code that consumes them is shared.
 | CAISO import solar-shape | `:4147` | `caiso_import_solar_shape` ✓ | forecast | **Stage 5** |
 | CAISO import gas-coupling | `:4130` | `caiso_import_gas_coupling` ✓ | forecast | **Stage 5** |
 | NEISO cold-snap derate | `:3640` | `neiso_gas_coldsnap_derate` ✓ (+ coeff fields) | forecast | **Stage 6** (fleet unification) |
-| ERCOT single-product reserve supply cap (A5) | `reserve_config.py:_ercot_design` | `ercot_reserve_supply_cap` ✓ | forecast single-product | **Stage 2** (reserve fix) |
-| Cross-year warm-start (built, unused by forecast) | `dispatch.py:1982-2639` | env `MARKET_SIM_WARMSTART_XYEAR` | forecast P0 | **Stage 3** makes it *wireable* to both; §8 says keep it gated OFF on forecast |
+| ERCOT single-product reserve supply cap (A5) | `reserve_config.py:_ercot_design` | `ercot_reserve_supply_cap` ✓ | forecast single-product | **Stage 2** (reserve fix) — **CLOSED 2026-07-06, §7.3.4** |
+| Cross-year warm-start (built, unused by forecast) | `dispatch.py:1982-2639` | env `MARKET_SIM_WARMSTART_XYEAR` | forecast P0 | **Stage 3** makes it *wireable* to both; §8 says keep it gated OFF on forecast — **DONE 2026-07-06, §7.3.5** (shared core takes `xyear_cache`; forecast passes `None`) |
 | `caiso_ra_min_load_frac` getattr fallback 0.40 ≠ field/keeper 0.26 | `run_calibration.py:4865` vs field default `scenarios.py:603` and `_calibration_config:1320` | field ✓ | (latent — fires only if a config bypasses `_calibration_config`) | **Stage 7** (getattr→field fold) |
 
 All DRIFT gate-fields already exist in `ScenarioConfig` (verified). So the fix is never
@@ -349,8 +349,8 @@ ordered safe-scaffolding-first, drift-closing-unification-later, so the risky st
 |-------|-------|---------|------|--------------|---------------------|
 | **0** | Regression harness + golden keeper baselines | `scripts/`, `tests/` (add only) | none | — | establishes the gate |
 | **1** | `pipeline/` skeleton + `DispatchSpec`/`ReserveSpec`/`PriorYearResults`; retype runner's `prior_results` dict | `runner.py`, new `pipeline/` | low | — (AR-2) | **byte-identical** — **DELIVERED (2026-07-05), see §7.3.2** |
-| **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) |
-| **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical |
+| **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) — **DELIVERED (2026-07-06), see §7.3.4** |
+| **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical — **DELIVERED (2026-07-06), see §7.3.5** |
 | **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | — | byte-identical |
 | **5** | **Interchange unification**: migrate `run_calibration` onto `interchange_config.get_interchange_spec`/`build_interchange_fleet`; fold CAISO bidir/solar-shape/gas-coupling into the spec | `run_calibration.py`, `interchange_config.py`, `transmission.py`, `runner.py` | **high** | CAISO bidir + solar-shape + gas-coupling | tolerance-bounded (CAISO keeper canary) — **DELIVERED (2026-07-05), see §7.3.3** |
 | **6** | **Fleet unification**: migrate `run_calibration` onto `fleet.build_dispatch_fleet`; route NEISO coldsnap + netload-drag through shared path; coldsnap coeffs → fields | `run_calibration.py`, `fleet.py` | med-high | NEISO coldsnap | tolerance-bounded (all-ISO keepers) |
