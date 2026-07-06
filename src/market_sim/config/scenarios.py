@@ -676,6 +676,25 @@ class ScenarioConfig:
     # residual adequacy gap. Default off (byte-identical); recommended on for
     # forecasts. Tests the entering year's known peak (plan §2.3 component 1;
     # prior-year peak only when a caller does not supply the known one).
+    market_design_retirement_floor: bool = False  # GATED, default-OFF
+    # market-design fidelity gate on the RETIREMENT reliability floor
+    # (fom-scarcity stage 5 / the capacity-economics successor mechanism,
+    # docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage5-energy-only-floor.md
+    # §1). When on, the floor (_apply_reliability_floor — "un-retire eligible
+    # units until the PRM requirement clears") applies ONLY in ISOs whose
+    # market design actually procures capacity to an adequacy requirement
+    # (MARKET_DESIGN[iso].capacity_market: PJM/MISO/NYISO/NEISO/CAISO). An ISO
+    # explicitly registered energy-only (ERCOT) skips the floor entirely: the
+    # real ERCOT has no reliability floor — an under-remunerated unit exits
+    # (~0.5-2 GW/yr observed), reserves tighten, and the ORDC prices the
+    # resulting scarcity, which is the revenue that retains the marginal
+    # survivor. RMR is transmission-security-scoped and rare (Nodal Protocols
+    # §3.14.1), never a system-wide adequacy channel, so zero-cost fleet-wide
+    # retention is not a real ERCOT mechanism (rule 1). ISOs absent from
+    # MARKET_DESIGN keep the floor (conservative fallback). The default-off
+    # reserve_margin_build_enabled backstop is untouched and remains the
+    # modeling-safety valve. Default off = byte-identical everywhere;
+    # capacity-market ISOs byte-identical even when on.
     capacity_deliverability_limits: bool = False  # GATED, default-OFF locational
     # resource-adequacy mechanism. When on, the model reads each ISO's published
     # capacity-deliverability parameters (PJM CETO/CETL, MISO LRR/CIL, NYISO
@@ -4209,6 +4228,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_rcpf_enabled": 1,
     "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
+    "market_design_retirement_floor": 1,
     "planning_reserve_margin": 2,
     "planning_reserve_margin_override": 2,
     "entry_price_signal_alpha": 2,

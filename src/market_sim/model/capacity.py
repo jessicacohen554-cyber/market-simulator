@@ -804,9 +804,26 @@ def _apply_reliability_floor(
     so floor-retained MW is measurable per run instead of argued. The
     ``ucap_mw`` field carries the unit's firm MW on the ISO's accreditation
     basis (equal to nameplate for seasonal-rating ISOs).
+
+    Market-design fidelity gate (``config.market_design_retirement_floor``,
+    GATED default off — fom-scarcity stage 5 §1): when on, an ISO explicitly
+    registered energy-only (``MARKET_DESIGN[iso].capacity_market == False``,
+    ERCOT) skips the floor entirely — the real energy-only market has no
+    reliability floor; an under-remunerated unit exits and adequacy expresses
+    as ORDC-priced scarcity revenue that retains the marginal survivor. ISOs
+    with a capacity market keep the floor (their design really does procure to
+    the requirement), and ISOs absent from :data:`MARKET_DESIGN` keep it too
+    (conservative fallback — the registry default withholds capacity
+    *revenue* for unknown ISOs, which must not double as asserting their
+    market design). The default-off reserve-margin build backstop is
+    unaffected and remains the modeling-safety valve.
     """
     if peak_demand <= 0.0:
         return []
+    if getattr(config, "market_design_retirement_floor", False):
+        design = MARKET_DESIGN.get(config.iso)
+        if design is not None and not design.capacity_market:
+            return []
     requirement_mw = resolve_adequacy_requirement_mw(config, config.iso, peak_demand)
     survivors = [g for g in fleet if g.unit_id not in retired]
     accredited_mw = accredited_firm_capacity_mw(
@@ -913,7 +930,10 @@ def apply_economic_retirements(
     :data:`PLANNING_RESERVE_MARGIN_BY_ISO` requirement the build backstop
     tests — eligible units are un-retired cheapest-firm-adequacy-first
     ($/firm-MW-yr, CO2 tie-break) until the requirement clears. Every floor
-    retention is recorded in the returned attribution log.
+    retention is recorded in the returned attribution log. Under
+    ``config.market_design_retirement_floor`` (GATED default off) the floor
+    is skipped for ISOs explicitly registered energy-only in
+    :data:`MARKET_DESIGN` (ERCOT) — see :func:`_apply_reliability_floor`.
 
     Args:
         fleet: The current generator fleet.
