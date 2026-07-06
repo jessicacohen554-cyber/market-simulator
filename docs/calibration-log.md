@@ -40,6 +40,59 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — NYISO + NEISO — calibration-complete adjudication (rubric-v2 memo §6): owner HELD both markers; holdout quarantine unchanged, no solves
+
+**Scope (no solves, no data intake, no dashboard changes).** Verified the
+rubric-v2 memo §6 preconditions and put the calibration-complete marker
+decision to the owner per rule 22. Stage-1 verification at HEAD (`2bd096b`):
+
+- **Verdicts hold.** `calibration_verdict.py` fresh at HEAD: NYISO
+  `2026-07-06-nyiso-53-li-tsl` and NEISO `2026-07-06-neiso-49-stgas-netload`
+  both **CALIBRATED-WITH-CAVEATS**, zero FAILs (rubric v2).
+  `audit_keepers.py --check` exits 0; E5 determination labels truthful
+  (NYISO all-pass; NEISO carries only the E7 newer-run warning, and the newer
+  runs are the registered NEGATIVE wfuelsec probes, correctly not the keeper).
+- **U-01 RESOLVED — the winter-fuel Component-A probes were registered all
+  along** (rule 15 satisfied): `2026-07-04-neiso-inventorycap-inert-probe` +
+  `2026-07-04-neiso-dailybasis-oil-underrun` (sidecars, run payloads, and the
+  2026-07-04 entry below), plus the Component-B pair
+  `2026-07-06-neiso-wfuelsec-ab-v2`/`-v2off`. The gap register's U-01 predated
+  these landings.
+- **G-13 adjudicated for nyiso-53:** the original defect (nyiso-41 vs the CT
+  offer de-leak) is moot — nyiso-53 was solved 2026-07-06 at `19c0e01`,
+  post-de-leak, and no newer NYISO run exists. Honest residuals: HEAD is 132
+  commits past the bundle SHA (scan of all 12 non-merge src commits in the
+  window: every one other-ISO-gated, default-off, or on the disabled P2 path —
+  no expected live-path change for a NYISO keeper-config backcast, unverified
+  without a re-solve); both keeper bundles record `git.dirty: true`, and the
+  NEISO bundle's recorded SHA (`ac11191`) predates its own mechanism commit
+  (`a468fbf`) — both solved on PR branches, so "frozen config" means the
+  committed `run_config.json` recipe, not a reproducible SHA.
+- **C8 restated for the record (NYISO):** CT_PEAKER forced-at-floor share
+  92.7% (1.49 of 1.60 TWh, 2023) / 86.7% (1.56 of 1.79, 2024) / 56.6%
+  (1.45 of 2.57, 2025), rebuilt-floor lower bounds — admitted only through the
+  ≤1 protective-ledger budget, ledgered against the #1344 data-blocked
+  reserve-scarcity frontier (absolute forced energy down vs the nyiso-48
+  baseline; selfsupply channel deleted; remaining floor is the windowed
+  temperature-reliability ramp).
+
+**Owner decision (2026-07-06, this session): both markers HELD.**
+- **NYISO: hold until #1344 lands** — the C8 caveat (majority-to-near-total
+  floor-carried CT energy in every scored year) dominates; no marker, no
+  holdout intake, no one-shot.
+- **NEISO: hold until Component B is re-examined** — the C7 ST_GAS diurnal
+  residual (2023/24 still FAIL) and the winter-fuel mechanism family stay open;
+  no marker, no holdout intake, no one-shot.
+- The 2022/H1-2026 holdouts remain fully solve- and intake-quarantined for
+  both ISOs (`calibration-complete.json` still `"complete": {}`). Execution
+  scoping recorded for the eventual declaration: NYISO/NEISO have zero holdout
+  intake today (CAMPD 2022 state files, 2022 zonal load/SMD, 2022 hub LMP, and
+  2022 extensions of the keeper-lever gas-basis series — Algonquin daily,
+  Transco Z6 NY daily, downstate CT basis — all absent; EIA-930 2022, F923
+  2022, eGRID2022, demand profiles 2022 already in-repo), and the H1-2026
+  half is publication-blocked regardless (CAMPD Q2-2026 unposted, delivered
+  gas ends April, F3 demand-profile 8760 contract).
+
 ### 2026-07-06 — NEISO — L-15 continuation: C7 ST_GAS re-grounded on a net-load commitment limb + NEISO-measured offer bands: NEW KEEPER `neiso 49 stgas-netload` (2025 D-1 PASSES; still NOT-YET on the caveat budget)
 
 **Goal (L-15 / gap register G-16 + the C7 hard caveat).** Root-cause the ST_GAS
