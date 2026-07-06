@@ -39,9 +39,11 @@ consumers hadn't been widened to use it).
 | ERCOT | ERCO | 2015-07-01 .. 2026-06-30 | pass | pass | pass | `(2019, 2020, 2021, 2023, 2024, 2025)` |
 | NEISO | ISNE | 2015-07-01 .. 2026-05-20 | pass | pass | pass | `(2019, 2020, 2021, 2023, 2024, 2025)` |
 | NYISO | NYIS | 2015-07-01 .. 2026-06-13 | **fail** (solar) | **fail** (solar) | pass | `(2021, 2023, 2024, 2025)` |
-| CAISO | CISO | 2022-12-31 .. 2025-12-31 | no raw data | no raw data | no raw data | unchanged `(2023, 2024, 2025)` |
-| PJM | PJM | 2021-12-31 .. 2026-06-30 | no raw data | no raw data | no full year (1 day) | unchanged `(2023, 2024, 2025)` |
-| MISO | MISO | 2022-12-31 .. 2025-12-31 | no raw data | no raw data | no raw data | unchanged `(2023, 2024, 2025)` |
+| CAISO | CISO | 2019-01-01 .. 2025-12-31 (2026-07-06 backfill) | pass | pass | pass | `(2019, 2020, 2021, 2023, 2024, 2025)` |
+| PJM | PJM | 2019-01-01 .. 2026-06-30 (2026-07-06 backfill) | pass (renewables only) | pass (renewables only) | pass | `(2021, 2023, 2024, 2025)` |
+| MISO | MISO | 2019-01-01 .. 2025-12-31 (2026-07-06 backfill) | pass | pass | pass | `(2019, 2020, 2021, 2023, 2024, 2025)` |
+
+See "2026-07-06 update" below for how CAISO/PJM/MISO moved from "no raw data" to the rows above, and why PJM's 2019/2020 still don't land in its pool despite the hourly extract now covering them.
 
 ("pass" = both checks in Method above succeeded end-to-end with real repo data.)
 
@@ -59,16 +61,59 @@ distribution parquet is rebuilt further back (a separate, larger intake — that
 parquet is a derived/reprocessed artifact, not a raw download, and rebuilding
 it was out of scope here).
 
-### CAISO / PJM / MISO — why they were skipped entirely
+### CAISO / PJM / MISO — why they were originally skipped (resolved 2026-07-06)
 
-Their `<BA> hourly` extracts simply don't reach back that far on disk (see
-table). Fetching more history requires `scripts/fetch_eia930_hourly.py`
-against the EIA API v2, which is **blocked in this managed sandbox**
-(`api.eia.gov` returns HTTP 403; the script's own docstring already says
-"Run locally — the managed environment's allowlist blocks api.eia.gov"). No
-`EIA_API_KEY` is configured in this environment either. This is a
-run-it-locally-and-upload task, not something this session could complete —
-documented here as the concrete next step rather than silently left undone.
+Their `<BA> hourly` extracts didn't reach back that far on disk (see table).
+Fetching more history via `scripts/fetch_eia930_hourly.py` needs the EIA API
+v2, which is **blocked in this managed sandbox** (`api.eia.gov` returns HTTP
+403; the script's own docstring already says "Run locally — the managed
+environment's allowlist blocks api.eia.gov"), and no `EIA_API_KEY` is
+configured here either. That part is still true today.
+
+## 2026-07-06 update: BALANCE-bulk backfill unblocks CAISO/PJM/MISO
+
+The API v2 host is blocked, but the EIA Hourly Electric Grid Monitor's
+six-month **BALANCE bulk archive** (`www.eia.gov/electricity/gridmonitor/
+sixMonthFiles/`, a different host) is reachable from this sandbox and carries
+the same per-BA demand + fuel-type-generation series for every BA, back to
+2019. `scripts/fetch_eia930_balance.py` already existed for the 2022+ files;
+it was rerun for `--year {2019,2020,2021} --half {Jan_Jun,Jul_Dec}` (6 new
+files, schema-verified against the committed 2023+ siblings).
+
+A new script, `scripts/extend_eia930_hourly_from_balance.py`, folds those
+bulk rows into the wide `<BA> hourly.parquet` extracts CISO/PJM/MISO already
+had for 2022+, without touching a single already-committed row (a
+UTC-time dedup always keeps the pre-existing row when the BALANCE bulk hour
+and a committed hour collide, e.g. the 2021/2022 boundary for PJM).
+
+**Fidelity caveat.** The BALANCE bulk archive's legacy (pre-mid-2024)
+taxonomy doesn't break out geothermal or battery storage as their own fuel
+columns, and reports hydro + pumped storage as one combined figure (matching
+what CISO/PJM/MISO's existing extracts already do for hydro/PS, but not for
+CAISO's geothermal or MISO's battery, which the existing API-sourced 2022+
+rows do split out). The 2019-2021 rows fold geothermal/battery into `NG: OTH`
+as `NaN` (never a fabricated 0) for the columns the target extract already
+carries. This is immaterial to the weather-pool's own admission criteria —
+`load_renewable_profiles` only reads `NG: WND` / `NG: SUN` — but would matter
+to a future consumer of CAISO geothermal or MISO battery generation for these
+specific years.
+
+**Verification (both Method checks above, run 2026-07-06):**
+
+| ISO | `_eia_hourly_frame` 8760 check | `load_renewable_profiles` end-to-end | `load_demand` end-to-end |
+|---|---|---|---|
+| CAISO 2019/2020/2021 | pass | pass | pass |
+| MISO 2019/2020/2021 | pass | pass | pass |
+| PJM 2019/2020/2021 | pass | pass | **2019/2020 fail, 2021 passes** |
+
+PJM's demand never actually routes through the hourly extract —
+`market_sim.data.eia_loader.load_demand`'s PJM branch always falls back to
+`eia_demand_profiles.parquet` (see that function's docstring: "every PJM
+year" uses the fallback), and that source's own floor is 2021 — the same
+single-source-floor situation as NYISO's solar. So PJM's landed pool gains
+only 2021, matching NYISO's precedent, even though its renewables now resolve
+for 2019/2020 too. **Landed pools:** CAISO/MISO `(2019, 2020, 2021, 2023,
+2024, 2025)`; PJM `(2021, 2023, 2024, 2025)`.
 
 ## What was NOT extended: the daily temperature/weather overlay
 
@@ -119,5 +164,22 @@ comment on `discrete_weights.weather` in that file.
   (`test_ercot_2019_renewable_profiles_resolve_end_to_end`),
   `tests/test_ensemble.py` (per-ISO default-pool tests) exercise the new
   years and lock in the CAISO/PJM/MISO boundary.
+
+**2026-07-06 addendum:**
+
+- `data/raw/eia-930/EIA930_BALANCE_{2019,2020,2021}_{Jan_Jun,Jul_Dec}.parquet`:
+  6 new raw files (`scripts/fetch_eia930_balance.py`, `www.eia.gov` bulk host).
+- `scripts/extend_eia930_hourly_from_balance.py`: new script, folds the
+  BALANCE bulk rows into `data/raw/eia-930-hourly/{CISO,PJM,MISO} hourly.parquet`
+  back to 2019 without altering any already-committed row.
+- `src/market_sim/config/constants.py`: `WEATHER_YEAR_POOL_BY_ISO["CAISO"]` and
+  `["MISO"]` widened to `(2019, 2020, 2021, 2023, 2024, 2025)`;
+  `["PJM"]` to `(2021, 2023, 2024, 2025)` (its demand source's own floor caps
+  it at 2021 — see above).
+- Tests: `tests/test_eia_loader.py` (CAISO/MISO/PJM cases added to
+  `TestWeatherPoolWidening`), `tests/test_renewables.py`
+  (`test_2026_07_06_balance_backfill_renewables_resolve_end_to_end`),
+  `tests/test_ensemble.py` (`test_default_pool_is_per_iso` updated,
+  `test_pjm_and_miso_default_pools` added).
 
 No solves were run and nothing was registered on the backcast dashboard.
