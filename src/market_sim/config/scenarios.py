@@ -386,9 +386,9 @@ class ScenarioConfig:
     # via the composition mask — a backcast year books its own measured rate, a
     # forecast year the gen-weighted trailing-average estimator base. The 7-year
     # history landed 2026-07-05 (plan §9.5: conditioning gate stays CLOSED,
-    # trailing window set to 2 years); default OFF still keeps the legacy
-    # pooled-artifact path — v2 is opt-in per run until promoted.
-    use_plant_emission_rates_v2: bool = False
+    # trailing window set to 2 years); default ON as of 2026-07-06 (owner decision
+    # G-39 — re-gate incrementally per ISO as each comes up for its next keeper).
+    use_plant_emission_rates_v2: bool = True
     plant_emission_rates_v2_path: str = str(
         PROCESSED_DIR / "plant_emission_rates_v2.parquet"
     )
