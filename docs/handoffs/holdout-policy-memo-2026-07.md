@@ -159,3 +159,94 @@ solve/score still blocked, harden the two CI/code gaps) — and, either way,
 explicit authorization to (i) add the `--year` guard to the calibration entry
 points and (ii) wire `audit_keepers.py`/`legitimacy_diagnostics.py --keepers`
 into CI. No holdout-year solve or score was run to produce this memo.
+
+## (e) Decision draft — 2026-07-06 (lane L-2, gap register G-17)
+
+**Status update.** Both of (d)'s "regardless of which option" hardening items
+are now landed, changing the cost calculus below:
+
+- The D-6 CI wiring (item ii) was already in place before this lane
+  (`ci.yml`'s `quarantine-gates` job runs `legitimacy_diagnostics.py
+  --keepers`, which calls `run_d6_quarantine`) — gap register W17 notes this
+  as "de facto Option 2".
+- The entry-point `--year` guard (item i) landed in this lane:
+  `scripts/run_calibration_full.py`'s `enforce_holdout_year_gate` now hard-
+  fails any `--year` outside `{2023, 2024, 2025}` unless **both**
+  `--holdout-authorized` is passed **and** the target ISO already carries a
+  `calibration-complete` marker in `calibration-complete.json`. A bare
+  `--year 2022` invocation — the exact gap (b)(2) flagged — now exits 1
+  before any solve starts. `legitimacy_diagnostics.py --keepers` also now
+  recomputes (gap G-06, same lane) each keeper's D-2 forced-energy shares
+  from the bundle's own committed data and fails on drift from the committed
+  artifact — an independent integrity check, not a holdout-quarantine
+  mechanism, but it closes a second "CI trusts a committed number instead of
+  re-deriving it" gap in the same family.
+
+No holdout data was touched, no holdout year was solved or scored, and
+CLAUDE.md rule 22's text was **not** amended to produce this section — the
+below is a decision draft for owner sign-off, not a decision.
+
+**Exact consequences — Option 1 (strict re-quarantine).**
+
+1. Move the ERCOT/PJM 2022 + H1-2026 files landed by PRs #1298/#1300/#1304
+   (`data/raw/campd-unit-level/{TX,PA,...}_2022.parquet` and the matching
+   EIA-930/outage/delivered-gas/F923/eGRID2022 files enumerated in (a)) from
+   their current paths into a segregated tree, e.g.
+   `data/raw/_holdout-quarantine/<ISO>/<year>/`.
+2. Add an opt-in gate to every loader that currently reads them
+   unconditionally (`load_demand`, `load_eia_hourly_benchmark`,
+   `load_fleet_from_csv`, `unit_outage_derate_factors`, the fuel-basis
+   functions) — a new `MARKET_SIM_ALLOW_HOLDOUT=1` env-var check plus the
+   ISO's `calibration-complete` marker, per (c). This is new surface area in
+   hot data-loading code paths that today have zero year-awareness by
+   design.
+3. Rewrite `scripts/verify_holdout_intake.py` (and any fetch script that
+   writes into the old paths) to target the segregated tree.
+4. Add a new required CI job that greps `data/raw/**` for any holdout-year
+   file outside the quarantine path and fails the PR — a new enforcement
+   surface, on top of (already-landed) D-6/D-2.
+5. Net effect: the entry-point `--year` guard landed this lane becomes
+   *redundant* defense-in-depth rather than the primary control — the
+   loader-side opt-in becomes primary. Physically stronger (a determined
+   read still has to pass two independent gates instead of one), but it
+   re-opens code in `data/eia_loader.py` and friends that has been stable,
+   and it discards nothing already computed — the intake itself stays, only
+   its location and load path change.
+
+**Exact consequences — Option 2 (amend rule text, harden the two real gaps).**
+
+1. Rewrite CLAUDE.md rule 22 to explicitly read as two clauses: "data
+   intake" (owner-authorized, reproducible, no-LP, allowed any time) vs
+   "solve" and "score" (still fully quarantined until `calibration-complete`).
+   This is a documentation-only change to `CLAUDE.md` — no code, no data
+   movement.
+2. Both enforcement items the option pairs with the wording change are
+   **already done** (see Status update above) — Option 2 today costs
+   **zero** further implementation. The rule-text edit is the entire
+   remaining action.
+3. Net effect: physical isolation stays weaker than Option 1 — the raw files
+   remain in the ordinary `data/raw/` tree, so an in-session action that
+   calls the loaders directly (not through the gated CLI entry point) can
+   still read 2022/H1-2026 data into an ad hoc, unregistered analysis. The
+   two things that actually produce an illegitimate result — an
+   unauthorized *solve* and an unauthorized *score/registration* — are both
+   gated today (this lane's `--year` guard; the pre-existing D-6 CI check).
+
+**Recommendation (unchanged from (d), now cheaper): Option 2.** The
+rationale in (d) still holds — the intake happened twice under explicit
+owner authorization with real reproducibility discipline, and reversing it
+destroys audited work to close a channel that was never the actual
+overfitting vector. What's changed is the cost comparison: Option 2 now
+requires *only* the CLAUDE.md wording edit (an owner-authored/approved
+change to rule 22, out of scope for this lane), while Option 1 still
+requires the loader-side opt-in gate, the file moves, and a new CI grep
+job — net-new code whose only benefit over the status quo is closing the
+"direct-loader-call, bypass-the-CLI" residual risk named in Option 2's own
+"cons" above. If that residual risk is judged unacceptable, Option 1 remains
+available as a superset: nothing here forecloses layering the loader-side
+opt-in on top of Option 2's rule-text split later.
+
+**Owner action required:** (i) pick Option 1 or Option 2; (ii) if Option 2,
+approve and land the CLAUDE.md rule 22 wording split described above (this
+lane deliberately did not touch CLAUDE.md); (iii) if Option 1, authorize a
+follow-up lane to move the files and build the loader-side opt-in gate.
