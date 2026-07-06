@@ -15,6 +15,7 @@ from market_sim import matrix, runner
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.results import cache
 from tests.test_runner import _FakeDispatchModel, _fake_solve
+from market_sim.pipeline import solve as pipeline_solve
 
 
 class MatrixTestBase(unittest.TestCase):
@@ -62,7 +63,8 @@ class TestRunMatrix(MatrixTestBase):
         }
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             members = matrix.run_matrix(configs, "ERCOT", workers=1)
@@ -77,7 +79,8 @@ class TestRunMatrix(MatrixTestBase):
         configs = {"REF": base}
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
             patch.object(matrix, "ProcessPoolExecutor") as mock_pool,
         ):
@@ -100,7 +103,8 @@ class TestBuildMatrixFrameAndEnvelope(MatrixTestBase):
         }
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             members = matrix.run_matrix(configs, "ERCOT", workers=1)
@@ -137,7 +141,8 @@ class TestWriteMatrixOutputs(MatrixTestBase):
         }
         with (
             patch.object(runner, "END_YEAR", 2026),
-            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             members = matrix.run_matrix(configs, "ERCOT", workers=1)
