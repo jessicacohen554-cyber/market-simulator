@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-05-pjm-77-ct-relfloor-ablation",
+  "label": "pjm 77 ct relfloor ablation",
+  "date": "2026-07-05",
+  "shorthand": "pjm-77-ct-relfloor-ablation",
+  "definition": "(D-3 zero-forcing ablation twin of pjm-77-ct-relfloor, bundle pjm77_ct_relfloor_reconcile) the pjm77_ct_relfloor_reconcile keeper recipe VERBATIM with every MERCHANT floor/bridge/drag/haircut neutralized via ScenarioConfig.as_zero_forcing_ablation (off-list DERIVED from the D-2 mechanism registry): the CT net-load drag (ct_netload_drag) and the temperature reliability floor (reliability_floor) are turned OFF and the wind-EFOR haircut (wefor_multiplier 0.7->1.0) removed, keeping only the structural protected set (nuclear must-run, CHP steam-following, coal take-or-pay) and the endogenous energy+reserve co-optimization. Exact pjm-77 config/span (2023-2025, P1); no parameter differs from the keeper except the ablation transform, applied inside run_year/solve_and_persist. Registered per CLAUDE.md rule 20 so the keeper-vs-twin per-class delta (what each merchant floor buys) is on the dashboard; not a keeper candidate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-05-pjm-77-ct-relfloor-ablation.js",
+  "bundle": "results/calibration/pjm77_ct_relfloor_reconcile-ablation"
+}
