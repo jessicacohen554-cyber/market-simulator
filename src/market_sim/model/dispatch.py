@@ -2237,9 +2237,9 @@ def build_constraints(
             layout, int(storage_daily_cycle_hours)
         )
         if cycle_block.shape[0]:
+            zeros = np.zeros(cycle_block.shape[0])
             blocks.append(cycle_block)
             del cycle_block
-            zeros = np.zeros(cycle_block.shape[0])
             row_lower = np.concatenate([row_lower, zeros])
             row_upper = np.concatenate([row_upper, zeros])
 
