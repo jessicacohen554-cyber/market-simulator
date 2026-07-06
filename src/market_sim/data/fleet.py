@@ -8,6 +8,7 @@ CSV extracts.
 from __future__ import annotations
 
 import calendar
+import json
 import logging
 import os
 import re
@@ -2317,6 +2318,124 @@ def apply_ct_netload_drag_floor(
         ramp_window=(config.ct_drag_ramp_start, config.ct_drag_ramp_end),
         mech_id=MECH_CT_NETLOAD_DRAG,
     )
+
+
+@lru_cache(maxsize=1)
+def _load_ct_offer_surface() -> tuple[tuple[float, float, float], ...]:
+    """Load the frozen measured CT/peaker offer-surface regimes.
+
+    Reads ``data/raw/_validation-source/ercot_ct_offer_surface.json`` (produced by
+    ``scripts/derive_ct_offer_surface.py`` from the 60-Day DAM disclosure) and
+    returns its regimes as ``(q_lo, q_hi, offer_level)`` triples. Cached — the
+    surface is frozen against residuals (rule 20); a re-derive is a data-update
+    commit, not a solve-time knob.
+    """
+    from market_sim.config import paths
+
+    path = paths.CALIBRATION_DIR / "ercot_ct_offer_surface.json"
+    payload = json.loads(path.read_text())
+    return tuple(
+        (float(lo), float(hi), float(level)) for lo, hi, level in payload["regimes"]
+    )
+
+
+def apply_ercot_ct_offer_surface(
+    mc_base: np.ndarray,
+    generators: list[Generator],
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> bool:
+    """Raise ERCOT CT/peaker econ+peak offers to the measured self-withholding level.
+
+    The G-22 condition-responsive offer surface (filed structural conclusion #1
+    of ``docs/FINDING-ercot-priceshape-2026-07.md`` §6; design note
+    ``docs/handoffs/ercot-g22-offer-surface-2026-07.md``). In the missed tail
+    hours the P1 LP offers every online CT/peaker economic+peak tranche at its
+    flat marginal cost ``heat_rate x gas + VOM`` (~$50-150/MWh) — the "phantom
+    sub-$200 spare" that caps the energy dual below the scarcity level the real
+    market cleared. The real fleet's peakers had already offered themselves to
+    the ERCOT cap band (~$1,500/MWh) by those hours: the 60-Day DAM disclosure
+    shows the CT/peaker offer at 90% of HSL is cap-band, not heat-rate x gas
+    (``scripts/derive_ct_offer_surface.py``).
+
+    This posts the **measured** self-withholding offer level on the CT/peaker
+    ``econ*``/``peak*`` tranches (the phantom-spare bands; the ``mustrun``/
+    ``sync``/``committed`` min-gen scaffolding is untouched), keyed on a
+    **net-load percentile** driver. The low regime is inert (level 0), so the LP
+    applies ``max(mc, 0) = mc`` and every sub-hinge hour is byte-identical; only
+    above the measured hinge — the net-load percentile at which even the peaker
+    fleet's lower quartile has crossed to cap-band — is the offer raised. Unlike
+    the REJECTED ercot33 static wall this is condition-responsive (inert in the
+    ~90% of hours below the hinge, so no broad elevation) and touches only the
+    CT/peaker class (no CC/ST peak-band repricing, the channel that moved measured
+    volumes through the P0->P1 startup-amortization coupling). Both the trigger
+    (net-load) and the level (measured offer) are forward-derivable and respond to
+    changed conditions, so the mechanism is admissible in backcast and forecast
+    (CLAUDE.md #10/#13); every parameter is measured and frozen (rules 20/26).
+
+    Vectorised (no hour loop, rule 2). Modifies ``mc_base`` in place. Returns
+    ``True`` when the surface was applied, ``False`` (byte-identical) when the
+    flag is off, the ISO is not ERCOT, or the fleet has no CT/peaker econ/peak
+    tranches.
+
+    Args:
+        mc_base: The P1 bid-cost matrix ``(n_gen, T)``, mutated in place.
+        generators: The dispatch fleet, aligned row-for-row with ``mc_base``.
+        net_load_mw: System net-load per hour (``load - wind - solar``), shape
+            ``(T,)`` — the same LP-served convention the drag floors use.
+        config: Scenario config supplying the enable flag and ISO.
+    """
+    if not getattr(config, "ercot_ct_offer_surface", False):
+        return False
+    if config.iso != "ERCOT":
+        return False
+    # The phantom-spare bands: CT_PEAKER economic (``econ``/``econc00``..) and
+    # peak (``peak``/``peak2``..) tranches. The min-gen scaffolding
+    # (``mustrun``/``sync``/``committed``) is commitment structure, never repriced.
+    rows = [
+        g
+        for g, gen in enumerate(generators)
+        if gen.plant_group == "CT_PEAKER"
+        and (
+            gen.unit_id.rpartition("_")[2].startswith("econ")
+            or gen.unit_id.rpartition("_")[2].startswith("peak")
+        )
+    ]
+    if not rows:
+        return False
+
+    regimes = _load_ct_offer_surface()
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    # Per-hour measured offer level from the net-load-percentile regimes. A
+    # percentile hinge maps to a net-load quantile threshold on this year's own
+    # net-load distribution (forward-native: the same construction regenerates
+    # from a forecast load+VRE net-load), so the surface tracks the year's
+    # scarcity structure rather than an absolute MW line.
+    level_series = np.zeros(hours)
+    for q_lo, q_hi, level in regimes:
+        if level <= 0.0:
+            continue
+        lo_mw = np.quantile(net_load, q_lo)
+        if q_hi >= 1.0:
+            mask = net_load >= lo_mw
+        else:
+            mask = (net_load >= lo_mw) & (net_load < np.quantile(net_load, q_hi))
+        level_series[mask] = level
+
+    row_idx = np.asarray(rows)
+    mc_base[row_idx, :] = np.maximum(mc_base[row_idx, :], level_series[np.newaxis, :])
+    hinge = min((lo for lo, _hi, lv in regimes if lv > 0.0), default=1.0)
+    logger.info(
+        "ERCOT CT/peaker offer surface applied: %d econ/peak tranche rows raised "
+        "to the measured self-withholding level above the %.0fth net-load "
+        "percentile (%d/%d hours)",
+        len(rows),
+        hinge * 100.0,
+        int((level_series > 0.0).sum()),
+        hours,
+    )
+    return True
 
 
 def _capacity_weighted(units: list[Generator], attr: str) -> float:

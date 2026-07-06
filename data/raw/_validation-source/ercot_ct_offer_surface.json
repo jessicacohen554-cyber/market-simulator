@@ -1,0 +1,21 @@
+{
+  "iso": "ERCOT",
+  "driver": "net_load_percentile_within_year",
+  "class": "CT_PEAKER",
+  "metric": "offer_at_90pct_HSL",
+  "source": "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_* 2023-2025 (60-Day DAM disclosure)",
+  "note": "Measured self-withholding CT/peaker offer. Low regime inert (LP applies max(mc, level)); high regime posts the measured cap-band offer above the hinge. Frozen against residuals (rule 20); re-derive only on a disclosure-data update.",
+  "hinge_net_load_pct": 0.9,
+  "regimes": [
+    [
+      0.0,
+      0.9,
+      0.0
+    ],
+    [
+      0.9,
+      1.0,
+      1500.0
+    ]
+  ]
+}
