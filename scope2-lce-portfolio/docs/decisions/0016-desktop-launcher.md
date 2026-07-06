@@ -2,7 +2,7 @@
 
 - **Status:** accepted
 - **Date:** 2026-07-02
-- **Session:** [PS-13](../planning-sessions/PS-13-desktop-launcher.md)
+- **Session:** PS-13 (planning-session doc removed at handoff cleanup; in git history)
 - **Implemented by:** PP-10 / `launcher/`, `src/lce_portfolio/launcher.py`
 
 ## Context

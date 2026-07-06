@@ -21,8 +21,8 @@ class PortfolioConfig:
     Fields are grouped: (1) structural, (2) optimization framing, (3) cost
     sensitivities, (4) resource limits, (5) premium/netting semantics. Defaults
     reproduce the minimal working example; production runs override them or feed
-    a config file. See ``docs/planning-sessions/`` for the decisions that will
-    refine several of these (excess sale price, cost basis, matching semantics).
+    a config file. See ``docs/decisions/`` (the ADR log) for the decisions
+    behind these (excess sale price, cost basis, matching semantics).
     """
 
     # --- (1) Structural -----------------------------------------------------
