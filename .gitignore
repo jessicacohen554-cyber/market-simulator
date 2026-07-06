@@ -337,3 +337,6 @@ scratch_hindcast/
 
 # Capacity-hindcast raw dispatch parquets are reproducible; commit ledgers+score only.
 results/hindcast/*/*/*/year_*.parquet
+scratch_logs/
+docs/handoffs/_fom_grid_cache/
+docs/handoffs/_foresight_ab_cache/
