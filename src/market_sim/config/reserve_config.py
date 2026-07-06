@@ -253,6 +253,17 @@ class ReserveDesign:
     pergen_col: Optional[np.ndarray] = None  # (n_members,) R column per member
     pergen_ramp10: Optional[np.ndarray] = None  # (n_r,) static or (n_r, T)
     # hourly (availability-scaled) MW ramp10 caps
+    # Commitment-posture lever (miso_commitment_posture, design note §A): the
+    # postured subset of the pergen pools. ``posture_pools`` indexes the R
+    # columns that get an online-capacity variable U[p,t] (fast-start pools —
+    # capacity-weighted min-down ≤ 2 h AND startup < $30/MW — are exempt,
+    # rule 18); ``posture_mlf`` is each postured pool's capacity-weighted
+    # CEMS-measured min-stable-when-online fraction (thermal_tranches
+    # committed_pct, WWSIS-2 class gap-fill); ``posture_startup`` its
+    # capacity-weighted NREL class startup cost in $/MW.
+    posture_pools: Optional[np.ndarray] = None  # (q,) R-pool indices
+    posture_mlf: Optional[np.ndarray] = None  # (q,) min-stable fraction 0..1
+    posture_startup: Optional[np.ndarray] = None  # (q,) $/MW per start
 
 
 # ---------------------------------------------------------------------------
@@ -395,6 +406,12 @@ def build_reserve_dispatch_kwargs(
         if design.pergen_col is not None:
             kw["reserve_pergen_col"] = design.pergen_col
 
+    # Commitment-posture pools (MISO miso_commitment_posture, design note §A)
+    if design.posture_pools is not None and design.posture_pools.size:
+        kw["reserve_posture_pools"] = design.posture_pools
+        kw["reserve_posture_mlf"] = design.posture_mlf
+        kw["reserve_posture_startup"] = design.posture_startup
+
     return kw
 
 
@@ -407,6 +424,124 @@ def _reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     """ISO-agnostic thermal reserve-eligibility mask ``(n_gen,)``."""
     fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     return np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
+
+
+# Commitment-posture fast-start exemption thresholds (CLAUDE.md rule 18 /
+# design note §A): a pool whose capacity-weighted class physics sit at or
+# under BOTH thresholds is fast-start — it restarts inside the operating
+# hour, so the real market cycles it freely and its OFFLINE capacity still
+# provides MISO offline supplemental reserve (asm_rt_co
+# OfflineSupplementalOffer). Same parameter basis as the CAISO RA bridge's
+# RA_BRIDGE_ECON_MIN_DOWN_HOURS gate — physics thresholds, never class names.
+POSTURE_FAST_START_MIN_DOWN_H: float = 2.0
+POSTURE_FAST_START_STARTUP_PER_MW: float = 30.0
+
+
+def _posture_pool_params(
+    fleet_arrays: FleetArrays,
+    pergen_gen_idx: np.ndarray,
+    pergen_col: np.ndarray,
+    n_r: int,
+    iso: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Per-pool commitment-posture parameters for the pergen (zone, fuel) pools.
+
+    Returns ``(posture_pools, posture_mlf, posture_startup)`` — the R-pool
+    indices that carry an online-capacity variable U (the non-fast-start
+    subset), each pool's capacity-weighted min-stable-when-online fraction,
+    and its capacity-weighted startup cost in $/MW. Every input is measured or
+    published (zero fitted parameters, design note §A driver clause):
+
+    * **Startup cost / min-down** per member from the NREL/SR-5500-55433 class
+      tables (``COMMITMENT_PARAMS_BY_FUEL`` keyed by heat rate for gas
+      CC/CT/ST; ``BIN_STARTUP_COST_PER_MW['COAL']`` +
+      ``COAL_BIN_MIN_DOWN_HOURS`` for coal). Fuels with no table (oil — the
+      quick-start IC/CT class ``_commitment_params`` never screens) count as
+      fast-start.
+    * **Min-stable fraction** per member from the plant's CEMS-measured
+      ``committed_pct`` (``thermal_tranche_overrides`` —
+      ``derive_thermal_tranches.py``'s min-stable-when-online percentile,
+      re-derived only on source-data updates, rule 23), gap-filled with the
+      WWSIS-2 published class value (``MIN_STABLE_PCT_PHYSICAL``).
+    * **Fast-start exemption** (rule 18, parameter gate): capacity-weighted
+      pool min-down ≤ 2 h AND startup < $30/MW → no U column.
+    """
+    from market_sim.config.constants import MIN_STABLE_PCT_PHYSICAL
+    from market_sim.data.fleet import (
+        BIN_STARTUP_COST_PER_MW,
+        COAL_BIN_MIN_DOWN_HOURS,
+        thermal_tranche_overrides,
+    )
+    from market_sim.model.commitment import COMMITMENT_PARAMS_BY_FUEL
+
+    gidx = np.asarray(pergen_gen_idx, dtype=int)
+    cap = np.asarray(fleet_arrays.pmax, dtype=float)[gidx]
+    hr = np.asarray(fleet_arrays.heat_rate, dtype=float)[gidx]
+    fuels = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx[gidx]])
+    groups = (
+        np.asarray(fleet_arrays.plant_group)[gidx]
+        if getattr(fleet_arrays, "plant_group", None) is not None
+        else np.array([""] * gidx.size)
+    )
+    plants = np.asarray(fleet_arrays.plant_code, dtype=int)[gidx]
+
+    # Member startup ($/MW) and min-down (h) from the published class tables.
+    startup = np.zeros(gidx.size)
+    min_down = np.zeros(gidx.size)
+    for j in range(gidx.size):
+        f = fuels[j]
+        if f == "coal":
+            startup[j] = BIN_STARTUP_COST_PER_MW["COAL"]
+            min_down[j] = float(COAL_BIN_MIN_DOWN_HOURS)
+            continue
+        table = COMMITMENT_PARAMS_BY_FUEL.get(f)
+        if table is None:
+            # No commitment table (oil quick-start) — fast-start by physics.
+            continue
+        params = table[-1][1]
+        for cutoff, p in table:
+            if hr[j] < cutoff:
+                params = p
+                break
+        startup[j] = float(params["startup_per_mw"])
+        min_down[j] = float(params["min_down_hours"])
+
+    # Member min-stable-when-online fraction: CEMS-measured committed_pct per
+    # plant, WWSIS-2 class gap-fill for uncovered plants.
+    overrides = thermal_tranche_overrides(iso)
+    mlf = np.zeros(gidx.size)
+    for j in range(gidx.size):
+        row = overrides.get((int(plants[j]), str(groups[j])))
+        if row is not None:
+            mlf[j] = float(row[0]) / 100.0
+        else:
+            mlf[j] = float(MIN_STABLE_PCT_PHYSICAL.get(str(groups[j]), 0.0))
+    mlf = np.clip(mlf, 0.0, 1.0)
+
+    # Capacity-weighted pool aggregation (np.add.at scatter, no pool loop).
+    col = np.asarray(pergen_col, dtype=int)
+    pool_cap = np.zeros(n_r)
+    pool_su = np.zeros(n_r)
+    pool_md = np.zeros(n_r)
+    pool_mlf = np.zeros(n_r)
+    np.add.at(pool_cap, col, cap)
+    np.add.at(pool_su, col, cap * startup)
+    np.add.at(pool_md, col, cap * min_down)
+    np.add.at(pool_mlf, col, cap * mlf)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        pool_su = np.where(pool_cap > 0, pool_su / pool_cap, 0.0)
+        pool_md = np.where(pool_cap > 0, pool_md / pool_cap, 0.0)
+        pool_mlf = np.where(pool_cap > 0, pool_mlf / pool_cap, 0.0)
+
+    fast_start = (pool_md <= POSTURE_FAST_START_MIN_DOWN_H) & (
+        pool_su < POSTURE_FAST_START_STARTUP_PER_MW
+    )
+    posture_pools = np.flatnonzero(~fast_start)
+    return (
+        posture_pools,
+        pool_mlf[posture_pools],
+        pool_su[posture_pools],
+    )
 
 
 def _quick_start_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
@@ -1275,6 +1410,18 @@ def _miso_design(
         member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
         col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
         np.add.at(col_ramp10, pergen_col, member_ramp_t)
+        # Commitment-posture lever (design note §A): U/SU columns on the
+        # non-fast-start pools, gated on miso_commitment_posture. Pool
+        # parameters are measured/published only (_posture_pool_params).
+        posture_pools = posture_mlf = posture_startup = None
+        if getattr(config, "miso_commitment_posture", False):
+            posture_pools, posture_mlf, posture_startup = _posture_pool_params(
+                fleet_arrays,
+                pergen_gen_idx,
+                pergen_col,
+                n_r,
+                str(config.iso),
+            )
         return ReserveDesign(
             families=families,
             eligible=eligible.reshape(1, -1),
@@ -1282,6 +1429,9 @@ def _miso_design(
             pergen_gen_idx=pergen_gen_idx,
             pergen_col=pergen_col.astype(int),
             pergen_ramp10=col_ramp10,
+            posture_pools=posture_pools,
+            posture_mlf=posture_mlf,
+            posture_startup=posture_startup,
         )
 
     return ReserveDesign(

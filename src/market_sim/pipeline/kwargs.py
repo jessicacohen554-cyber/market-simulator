@@ -249,6 +249,19 @@ def _log_reserve_coopt(
                 float(_r10.sum(axis=0).mean()),
                 float(_r10.sum(axis=0).min()),
             )
+        if design.posture_pools is not None and design.posture_pools.size:
+            logger.info(
+                "  MISO COMMITMENT POSTURE (miso_commitment_posture): "
+                "%d of %d pools postured (fast-start exempt by physics), "
+                "mlf %.2f-%.2f (cap-wt CEMS committed_pct), "
+                "startup $%.0f-$%.0f/MW (NREL class tables)",
+                int(design.posture_pools.size),
+                int(np.atleast_2d(design.pergen_ramp10).shape[0]),
+                float(design.posture_mlf.min()),
+                float(design.posture_mlf.max()),
+                float(design.posture_startup.min()),
+                float(design.posture_startup.max()),
+            )
     elif iso == "PJM":
         logger.info(
             "energy+reserve co-opt (PJM): req mean %.0f MW, %d ORDC steps, "
