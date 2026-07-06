@@ -1,0 +1,562 @@
+[
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_PEAKER_North",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 382.3670000000007,
+  "ucap_mw": 359.42498000000074,
+  "going_forward_cost": 3058936.0000000056,
+  "co2_rate": 0.5962880119952809,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_CHP_South_Central",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 1.6099999999999999,
+  "ucap_mw": 1.5133999999999999,
+  "going_forward_cost": 12879.999999999998,
+  "co2_rate": 0.53295,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_PEAKER_South",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 1314.1599999999996,
+  "ucap_mw": 1235.3103999999996,
+  "going_forward_cost": 10513279.999999996,
+  "co2_rate": 0.5455162916466793,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_CHP_Houston",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 768.0600000000001,
+  "ucap_mw": 721.9764000000001,
+  "going_forward_cost": 6144480.0,
+  "co2_rate": 0.6126347394384292,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_PEAKER_Houston",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 4154.324999999999,
+  "ucap_mw": 3905.0654999999992,
+  "going_forward_cost": 33234599.99999999,
+  "co2_rate": 0.614242371206716,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_PEAKER_South_Central",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 2500.18,
+  "ucap_mw": 2350.1692,
+  "going_forward_cost": 20001440.0,
+  "co2_rate": 0.5153422702584615,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_CHP_North",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 3.7099999999999995,
+  "ucap_mw": 3.487399999999999,
+  "going_forward_cost": 29679.999999999996,
+  "co2_rate": 0.5677200000000002,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "gas_ct_CT_PEAKER_West",
+  "fuel_type": "gas_ct",
+  "pmax_mw": 1401.645,
+  "ucap_mw": 1317.5463,
+  "going_forward_cost": 11213160.000000002,
+  "co2_rate": 0.6763853822445769,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p6243_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 132.07999999999998,
+  "ucap_mw": 122.83439999999997,
+  "going_forward_cost": 4622799.999999999,
+  "co2_rate": 0.539253484,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p6243_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 10.16,
+  "ucap_mw": 9.4488,
+  "going_forward_cost": 355600.0,
+  "co2_rate": 0.539253484,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p6243_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 60.96,
+  "ucap_mw": 56.6928,
+  "going_forward_cost": 2133600.0,
+  "co2_rate": 0.539253484,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3490_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 190.41,
+  "ucap_mw": 177.0813,
+  "going_forward_cost": 6664350.0,
+  "co2_rate": 0.565925634,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p3460_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 994.5,
+  "ucap_mw": 924.885,
+  "going_forward_cost": 34807500.0,
+  "co2_rate": 0.570624563,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3611_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 44.6,
+  "ucap_mw": 41.478,
+  "going_forward_cost": 1561000.0,
+  "co2_rate": 0.582388012,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3611_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 356.8,
+  "ucap_mw": 331.824,
+  "going_forward_cost": 12488000.0,
+  "co2_rate": 0.582388012,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3601_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 186.9,
+  "ucap_mw": 173.817,
+  "going_forward_cost": 6541500.0,
+  "co2_rate": 0.58786132,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p34702_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 469.5,
+  "ucap_mw": 436.635,
+  "going_forward_cost": 16432499.999999998,
+  "co2_rate": 0.61332,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3491_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 854.6199999999999,
+  "ucap_mw": 794.7965999999999,
+  "going_forward_cost": 29911699.999999996,
+  "co2_rate": 0.6650574739999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3491_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 65.74,
+  "ucap_mw": 61.13819999999999,
+  "going_forward_cost": 2300899.9999999995,
+  "co2_rate": 0.6650574739999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3576_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 278.005,
+  "ucap_mw": 258.54465,
+  "going_forward_cost": 9730174.999999998,
+  "co2_rate": 0.665998621,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3576_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 21.385,
+  "ucap_mw": 19.88805,
+  "going_forward_cost": 748475.0,
+  "co2_rate": 0.665998621,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3576_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 128.31,
+  "ucap_mw": 119.3283,
+  "going_forward_cost": 4490850.0,
+  "co2_rate": 0.665998621,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3507_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 72.99,
+  "ucap_mw": 67.88069999999999,
+  "going_forward_cost": 2554649.9999999995,
+  "co2_rate": 0.6960609879999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3628_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 349.44000000000005,
+  "ucap_mw": 324.97920000000005,
+  "going_forward_cost": 12230400.000000002,
+  "co2_rate": 0.7090491839999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p4266_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 6.325,
+  "ucap_mw": 5.88225,
+  "going_forward_cost": 221375.0,
+  "co2_rate": 0.769676005,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p4266_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 37.95,
+  "ucap_mw": 35.2935,
+  "going_forward_cost": 1328250.0,
+  "co2_rate": 0.769676005,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3490_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 31.735,
+  "ucap_mw": 29.51355,
+  "going_forward_cost": 1110725.0,
+  "co2_rate": 0.565925634,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p3460_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 76.5,
+  "ucap_mw": 71.145,
+  "going_forward_cost": 2677500.0,
+  "co2_rate": 0.570624563,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p3460_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 459.0,
+  "ucap_mw": 426.86999999999995,
+  "going_forward_cost": 16065000.0,
+  "co2_rate": 0.570624563,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3611_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 490.6,
+  "ucap_mw": 456.258,
+  "going_forward_cost": 17171000.0,
+  "co2_rate": 0.582388012,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3601_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 404.95000000000005,
+  "ucap_mw": 376.6035,
+  "going_forward_cost": 14173250.000000002,
+  "co2_rate": 0.58786132,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3601_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 31.15,
+  "ucap_mw": 28.969499999999996,
+  "going_forward_cost": 1090250.0,
+  "co2_rate": 0.58786132,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Northeast_p3504_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 463.71,
+  "ucap_mw": 431.2502999999999,
+  "going_forward_cost": 16229850.0,
+  "co2_rate": 0.592857029,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Northeast_p3504_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 35.67,
+  "ucap_mw": 33.1731,
+  "going_forward_cost": 1248450.0,
+  "co2_rate": 0.592857029,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Northeast_p3504_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 214.02,
+  "ucap_mw": 199.0386,
+  "going_forward_cost": 7490700.000000001,
+  "co2_rate": 0.592857029,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_p49392_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 228.8,
+  "ucap_mw": 212.784,
+  "going_forward_cost": 8008000.000000001,
+  "co2_rate": 0.6099,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_p49392_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 17.6,
+  "ucap_mw": 16.368,
+  "going_forward_cost": 616000.0,
+  "co2_rate": 0.6099,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_p49392_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 105.6,
+  "ucap_mw": 98.20799999999998,
+  "going_forward_cost": 3696000.0,
+  "co2_rate": 0.6099,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p34702_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 1017.25,
+  "ucap_mw": 946.0424999999999,
+  "going_forward_cost": 35603750.0,
+  "co2_rate": 0.61332,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_Houston_p34702_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 78.25,
+  "ucap_mw": 72.7725,
+  "going_forward_cost": 2738750.0,
+  "co2_rate": 0.61332,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3452_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 602.875,
+  "ucap_mw": 560.6737499999999,
+  "going_forward_cost": 21100625.0,
+  "co2_rate": 0.615353783,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3452_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 46.375,
+  "ucap_mw": 43.12875,
+  "going_forward_cost": 1623125.0,
+  "co2_rate": 0.615353783,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3452_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 278.25,
+  "ucap_mw": 258.7725,
+  "going_forward_cost": 9738750.0,
+  "co2_rate": 0.615353783,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3453_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 553.9300000000001,
+  "ucap_mw": 515.1549,
+  "going_forward_cost": 19387550.000000004,
+  "co2_rate": 0.647457611,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3453_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 42.61,
+  "ucap_mw": 39.6273,
+  "going_forward_cost": 1491350.0000000002,
+  "co2_rate": 0.647457611,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3453_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 255.66,
+  "ucap_mw": 237.76379999999997,
+  "going_forward_cost": 8948100.0,
+  "co2_rate": 0.647457611,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3491_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 394.44,
+  "ucap_mw": 366.82919999999996,
+  "going_forward_cost": 13805400.0,
+  "co2_rate": 0.6650574739999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3507_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 158.145,
+  "ucap_mw": 147.07485,
+  "going_forward_cost": 5535075.000000001,
+  "co2_rate": 0.6960609879999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p3507_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 12.165,
+  "ucap_mw": 11.313449999999998,
+  "going_forward_cost": 425775.0,
+  "co2_rate": 0.6960609879999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3628_peak",
+  "fuel_type": "gas_st",
+  "pmax_mw": 26.88,
+  "ucap_mw": 24.998399999999997,
+  "going_forward_cost": 940800.0,
+  "co2_rate": 0.7090491839999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p3628_committed",
+  "fuel_type": "gas_st",
+  "pmax_mw": 161.28,
+  "ucap_mw": 149.9904,
+  "going_forward_cost": 5644800.000000001,
+  "co2_rate": 0.7090491839999999,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_North_p4266_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 82.225,
+  "ucap_mw": 76.46924999999999,
+  "going_forward_cost": 2877875.0,
+  "co2_rate": 0.769676005,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "ST_GAS_South_Central_p56708_econ",
+  "fuel_type": "gas_st",
+  "pmax_mw": 201.5,
+  "ucap_mw": 187.39499999999998,
+  "going_forward_cost": 7052500.0,
+  "co2_rate": 0.9023100000000001,
+  "loss_years": 4
+ },
+ {
+  "year": 2025,
+  "unit_id": "coal_COAL_Northeast",
+  "fuel_type": "coal",
+  "pmax_mw": 1665.7199999999998,
+  "ucap_mw": 1532.4624,
+  "going_forward_cost": 86617439.99999999,
+  "co2_rate": 1.100524011,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "coal_COAL_South",
+  "fuel_type": "coal",
+  "pmax_mw": 651.3,
+  "ucap_mw": 599.196,
+  "going_forward_cost": 33867600.0,
+  "co2_rate": 1.1077862676199908,
+  "loss_years": 2
+ },
+ {
+  "year": 2025,
+  "unit_id": "coal_COAL_Houston",
+  "fuel_type": "coal",
+  "pmax_mw": 2443.0,
+  "ucap_mw": 2247.56,
+  "going_forward_cost": 127036000.0,
+  "co2_rate": 1.0759999999999998,
+  "loss_years": 2
+ }
+]
