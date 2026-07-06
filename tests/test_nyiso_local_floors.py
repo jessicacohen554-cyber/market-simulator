@@ -17,11 +17,14 @@ from market_sim.config.constants import NYISO_LOCAL_SELFSUPPLY_FRAC
 from market_sim.config.interchange_config import NYISO_FIRM_IMPORT_FLOOR_FRAC
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.model.transmission import (
+    NYISO_SELFSUPPLY_FLOOR_HOURS,
     inject_nyiso_firm_imports,
     inject_nyiso_local_selfsupply,
 )
 
 T = 24
+_ON = NYISO_SELFSUPPLY_FLOOR_HOURS[0]  # an in-window hour (HB14-21)
+_OFF = 0  # an out-of-window (overnight) hour
 
 
 def _fa():
@@ -62,10 +65,22 @@ class TestLocalSelfSupply(unittest.TestCase):
         self.assertTrue(applied)
         frac = NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"]
         target = frac * 400.0
-        # In-zone thermal floor sums to the target every hour.
-        np.testing.assert_allclose(fa.min_gen[1, :] + fa.min_gen[2, :], target)
+        # In-zone thermal floor sums to the target in the peak window, 0 outside.
+        in_window = np.isin(np.arange(T), np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+        summed = fa.min_gen[1, :] + fa.min_gen[2, :]
+        np.testing.assert_allclose(summed[in_window], target)
+        np.testing.assert_allclose(summed[~in_window], 0.0)
         # Cheapest-first: the gas_st (HR 10) fills before the gas_ct (HR 12).
-        self.assertAlmostEqual(fa.min_gen[1, 0], min(target, 300.0))
+        self.assertAlmostEqual(fa.min_gen[1, _ON], min(target, 300.0))
+
+    def test_overnight_hours_unfloored(self):
+        """The narrowed floor no longer force-commits overnight (rule-17)."""
+        fa = _fa()
+        demand = np.zeros((3, T))
+        demand[1, :] = 400.0
+        inject_nyiso_local_selfsupply(fa, "NYISO", demand, _ZONES)
+        # Every out-of-window hour carries no self-supply floor on the LI rows.
+        self.assertAlmostEqual(float(fa.min_gen[1, _OFF] + fa.min_gen[2, _OFF]), 0.0)
 
     def test_floor_prefers_gas_over_cheaper_heatrate_oil(self):
         """A low-heat-rate OIL peaker is floored only after gas is exhausted.
@@ -93,9 +108,9 @@ class TestLocalSelfSupply(unittest.TestCase):
         inject_nyiso_local_selfsupply(fa, "NYISO", demand, _ZONES)
         target = NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"] * 400.0
         # Gas (row 1) carries the entire floor (target < its 300 MW); oil (row 2)
-        # stays at zero despite its lower heat rate.
-        self.assertAlmostEqual(fa.min_gen[1, 0], min(target, 300.0))
-        self.assertAlmostEqual(fa.min_gen[2, 0], max(0.0, target - 300.0))
+        # stays at zero despite its lower heat rate. Checked in the peak window.
+        self.assertAlmostEqual(fa.min_gen[1, _ON], min(target, 300.0))
+        self.assertAlmostEqual(fa.min_gen[2, _ON], max(0.0, target - 300.0))
 
     def test_nyc_untouched(self):
         fa = _fa()
@@ -144,12 +159,13 @@ class TestFirmImports(unittest.TestCase):
         demand[1, :] = 400.0
         inject_nyiso_local_selfsupply(fa, "NYISO", demand, _ZONES)
         inject_nyiso_firm_imports(fa, "NYISO", 2023)
-        # The LI floor survives the firm-import pass (different rows).
+        # The LI floor survives the firm-import pass (different rows), checked in
+        # the peak window; the firm-import floor is all-hours.
         self.assertAlmostEqual(
-            float(fa.min_gen[1, 0] + fa.min_gen[2, 0]),
+            float(fa.min_gen[1, _ON] + fa.min_gen[2, _ON]),
             NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"] * 400.0,
         )
-        self.assertAlmostEqual(float(fa.min_gen[3, 0]), 900.0)
+        self.assertAlmostEqual(float(fa.min_gen[3, _ON]), 900.0)
 
 
 if __name__ == "__main__":
