@@ -108,11 +108,58 @@ keeper swap is the owner's decision regardless (rule: keeper swaps are owner dec
   the registered ablation twin (rule 21). The `pjm_commitment_posture` diff is a verified no-op when
   off (`tests/test_commitment_posture.py::TestPjmPortSharesMechanism::test_pjm_off_emits_no_posture`),
   so pjm-81 is the exact A comparator on this branch HEAD.
-- **B (posture-on) = `pjm-82`**: A + `--pjm-commitment-posture`, full-span 2023–2025, single bundle,
-  sequential years (rules 12/16).
+- **B (posture-on) = `pjm-82`** (`2026-07-06-pjm-82-commitment-posture`, bundle
+  `results/calibration/pjm82_commitment_posture`): A + `--pjm-commitment-posture`, full-span
+  2023–2025, single bundle, sequential years (rules 12/16). 23 of 39 pools postured (fast-start
+  CT/oil exempt by physics), mlf 0.10–0.61 (CEMS committed_pct), startup $37–100/MW (NREL tables).
 
-_(Filled in after the solve: G-P1/G-P2/G-P3 numbers from `SUMMARY-posture-gate.md`; C3a/b/c and
->$150/$200 tail hours as the readout; disposition; named failure modes if the gate fails.)_
+### Honesty gate: REJECT (decided before the tail, per §3)
+
+`SUMMARY-posture-gate.md` (scored 2026-07-06):
+
+| year | model online headroom | measured online (SR+REG) | ratio | G-P1 | G-P2 dir |
+|------|----------------------|--------------------------|-------|------|----------|
+| 2023 | 9298 MW | 2964 MW | **3.14** | FAIL | FAIL (13→15/20 but r_price nan) |
+| 2024 | 9492 MW | 3289 MW | **2.89** | FAIL | PASS (13/20) |
+| 2025 | 8539 MW | 3214 MW | **2.66** | FAIL | PASS (14/20) |
+
+**G-P1 (the decisive gate) FAILS all three years** — modeled online headroom is 2.66–3.14× the
+measured online reserve, outside the pre-committed [0.7, 1.5] band. (Better than MISO's 3.71–4.24×,
+but the same structural failure, not a pass.) G-P2 direction passes 2024/25 only. **Per the §3
+decision rule (G-P1 must pass all years AND G-P2), the lever is REJECTED.**
+`pjm_commitment_posture` stays default-off. No posture parameter was tuned against the residual
+(rules 1/13) — there is no admissible knob: every input is measured/published/physics.
+
+### The readout (reported, NOT the gate) — criterion-comparable to pjm-81
+
+- **C3c price tail: still 0 h** (model 0 h vs RT 6/18/59; vs 2025 DA actual 51 h). **>$200 and
+  >$150 tail hours: 0** in all three years (system LMP max ~$141). Identical to pjm-81 — the
+  posture does **not** unblock scarcity pricing.
+- C3a −8.3 % (2024, caveat) / −13.5 % (2025, FAIL); C3b NRMSE 0.185/0.175/0.197 (commercial band).
+  All criterion-comparable to pjm-81 (dispatch is ~byte-comparable at class grain).
+- C1 all 14/16 · free 10/12; C4/C5a PASS. NOT-YET (C6 unattested — probe).
+
+### Named failure modes (the miso-43 precedent — why the level fails)
+
+The pooled **linear** UC relaxation cannot hold an honest online level under perfect-foresight
+dispatch. `U[p,t]` is continuous, so the LP keeps *fractional* online capacity across the 23 pools
+at near-zero marginal cost: the min-load coupling only forces `Σ P ≥ mlf·U` (it does not force `U`
+*up*), and the annual startup charge, amortized over 8760 h of foreknown load, is a negligible
+per-MWh adder against the value of universal deliverable headroom. So `U` sits near the economic
+dispatch envelope (~9 GW of postured-pool headroom) instead of collapsing to the ~3 GW real
+synchronized reserve — exactly the MISO miso-43 mechanism (there 3.7–4.2×). The honest online-level
+collapse needs **integer** commitment (a MIP `u∈{0,1}` per unit-hour), which the LP-only mandate
+(P1 is THE run, no MIP — CLAUDE.md Stack/Dispatch) excludes. This is a representation boundary, not
+a tuning gap; it is logged, not closed here.
+
+### Disposition
+
+Keeper stays `2026-07-05-pjm-77-ct-relfloor` (owner decision regardless — keeper swaps are the
+owner's). pjm-82 is a **rejected probe**, registered per rules 15/16. The `pjm_commitment_posture`
+code stays in-tree, GATED default-off (a re-armable measured mechanism, not a fitted knob — rule 26
+does not apply; nothing was tuned). The pjm-81 conclusion stands unchanged: the PJM C3 tail is
+blocked on the LP-vs-MIP commitment representation, and the posture lever — the strongest admissible
+**linear** proxy — does not bridge it.
 
 ## 5. Guardrails honoured
 
@@ -128,11 +175,25 @@ _(Filled in after the solve: G-P1/G-P2/G-P3 numbers from `SUMMARY-posture-gate.m
 
 ## 6. Issue #1483 (ST_GAS volume driver) — diagnose-and-file only
 
-_(Filled in from the probe artifacts: whether the posture shifts CC↔ST_GAS/CT substitution, appended
-to issue #1483. No mechanism built, no offer band touched — rule 14.)_
+The posture probe **rules commitment posture OUT as an ST_GAS volume driver** — it moves the
+CC↔ST_GAS substitution the WRONG way. Class totals, pjm-82 (posture on) − pjm-81 (posture off):
+
+| year | CC_REGULAR Δ | ST_GAS Δ | CT_PEAKER Δ |
+|------|-------------|----------|-------------|
+| 2023 | +1.37 TWh (289.8→291.2) | −0.28 (18.57→18.29) | −0.32 (25.37→25.05) |
+| 2024 | +1.74 TWh (316.6→318.3) | −0.30 (16.23→15.93) | −0.10 (20.69→20.59) |
+| 2025 | +1.50 TWh (302.0→303.5) | −0.18 (19.07→18.89) | −0.22 (33.06→32.84) |
+
+The CEMS min-load coupling `Σ P ≥ mlf·U` on the **postured CC pools** pins a little more CC baseload
+online, so posture *adds* ~1.5 TWh/yr to CC_REGULAR (already the over-run class, #1483) and *shaves*
+ST_GAS/CT — the opposite of the missing driver. So commitment posture is **not** candidate #4; the
+#1483 driver still lies among RMR/must-run, local deliverability, or per-plant HR error (the issue's
+listed candidates). Appended to issue #1483. No mechanism built, no offer band touched (rule 14).
 
 ### 6a. C8 (CT_PEAKER drag) denominator note for the owner
 
-If the posture probe changes the `CT_PEAKER` energy denominator materially vs pjm-81, that fact is
-appended to `docs/handoffs/pjm-c8-drag-memo-2026-07.md` §6a for the owner. **The C8 drag decision is
-the owner's — this lane does not adjudicate it** (rule 14; keeper swaps are owner decisions).
+**The posture does NOT move the CT_PEAKER denominator materially** (2024: 20.69→20.59 TWh, −0.10;
+the breach-year forced share stays **12.0 %**, D-2 numerator 2.49→2.47 TWh). So the C8 §6a
+conclusion is unchanged by this probe. A one-line null-result note is appended to
+`docs/handoffs/pjm-c8-drag-memo-2026-07.md` §6a. **The C8 drag decision is the owner's — this lane
+does not adjudicate it** (rule 14; keeper swaps are owner decisions).
