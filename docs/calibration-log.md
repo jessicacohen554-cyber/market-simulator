@@ -182,6 +182,88 @@ model now prices — C3c honest-fail, recorded not judged). **Keeper stays
 `2026-07-03-caiso-51-firm-base`** (recommendation only; `keepers.json` untouched). Dashboard
 retention pruned to top-15 (dropped 2026-07-01-caiso-46-capdel-probe sidecar+payload; bundle
 kept). Quarantine gate `audit_keepers.py --check` green before and after (0 failures).
+### 2026-07-06 — NEISO — winter-fuel Component B (winter fuel-security must-run) full-span A+B probe: NEGATIVE, keeper stays neiso-48
+
+**Goal (G-24, winter-fuel plan `docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md`
+Component B).** Build the winter fuel-security must-run limb — the mechanism hypothesized to be
+the single missing structure behind NEISO's winter-fuel caveat family (C3c tail, C5b storage,
+C1 COAL/ST_GAS under-run) — and solve the full-span A+B probe scored vs the neiso-48 keeper.
+Component A's probes (`neiso-inventorycap-inert`, `neiso-dailybasis-oil-underrun`, 2026-07-04)
+were the design inputs: the inventory cap was inert because a price-taking dispatch barely
+commits the fuel-secure fleet, so oil burn never reaches the seasonal budget. Component B was to
+supply that commitment.
+
+**Mechanism built (`winter_fuel_inventory.apply_winter_fuelsec_mustrun`, GATED
+`neiso_winter_fuel_mustrun`, default off).** Rule-17 statement: (a) DRIVER — ISO-NE winter
+fuel-security posture (Winter Reliability Program FERC ER14-2407 → Inventoried Energy Program
+ER19-1428 → OFSA operational posture), an external program that retains/postures fuel-secure
+steam for winter energy security beyond energy economics. (b) HOURS — winter months (Nov–Mar,
+OFSA horizon) AND cold days (zone daily TMIN < −7 °C, the NERC cold-weather forced-outage
+onset), all 24 h of a flagged cold day, multi-day events bridged 48 h; never summer/shoulder,
+never mild winter days. (c) FORWARD — calendar season + pinned/forecast TMIN + physical
+boiler-turndown depth, all forward-derivable. **Rule 19 reconcile:** REPLACES the disabled
+COAL/ST_GAS `tmin` cold-limb reliability floors (`reliability_floor_coeffs_NEISO.csv`,
+`enabled=False` since the 2026-06-30 rebuild disabled them for thin cold-day sample, n=7–8) —
+Component B re-grounds the same phenomenon on the program posture rather than a fitted
+temperature ρ; the tmin limbs stay disabled, not re-enabled alongside. D-2 confirmed
+COAL/ST_GAS carried **zero** forced energy before, so nothing was stacked. Depth =
+`commit_frac (1.0) × min_stable_pct (0.40, physical subcritical steam turndown)`, on-registry
+ScenarioConfig, never the residual (rules 1/24). New `MECH_WINTER_FUELSEC` for D-2 attribution
+(non-exempt merchant floor, ablated in the zero-forcing twin).
+
+**Result — the four winter-fuel caveats DO NOT close (NEGATIVE).** Probe
+`2026-07-06-neiso-wfuelsec-ab-v2` (Component A + B + `use_plant_emission_rates_v2`), scored vs
+neiso-48:
+
+| metric | keeper neiso-48 | A+B probe | actual | closed? |
+|---|---|---|---|---|
+| C1 COAL TWh (23/24/25) | 0.058/0.113/0.234 | 0.062/0.126/0.218 | 0.181/0.238/0.271 | **no** |
+| C3c h > $300 | 0/0/0 | 0/0/0 | 15/8/20 | **no** |
+| C5b PS+batt discharge (25) | 1.05 | 0.91 | 2.08 | **no** |
+| oil-fuel TWh (23/24/25) | 0.35/0.23/1.47 | 0.35/0.23/1.54 | 0.32/0.37/1.24 | ~unchanged |
+
+**Root cause of the negative result (the real finding).** The winter commitment floor is
+**non-binding**: the NEISO fuel-secure fleet is tiny (~105 MW coal / 8 units, ~74 MW ST_GAS)
+and *already runs above min-stable on cold days economically* (coal is cheap when winter gas is
+dear), so the floor adds almost nothing — D-2 coal forced share ≈ 0, ST_GAS 0.274/0/0. Because
+the fleet already burns on cold days, Component B raises no incremental oil draw, so Component
+A's inventory budget still never binds and the C3c scarcity tail stays flat at the oil-parity
+cap (max zonal P 222/199/258). **This REFUTES the plan's hypothesis that a missing winter
+commitment is the mechanism behind C1/C3c/C5b.** The under-run is a fleet-capacity/availability
+magnitude gap (the model's coal+steam fleet is small, and coal at 100% CF caps near the actual)
+plus a scarcity-price-formation gap the inventory budget never reaches — not a commitment gap.
+
+**Rule-20 forced-energy budget (checked explicitly — a must-run limb is where forced energy can
+silently blow the cap).** PASSES: winter_fuelsec forced share ST_GAS 0.274 (2023) / 0 / 0
+(< 0.30 cap), coal ≈ 0 (non-binding), CT_PEAKER 0. D-2 PASS, D-4 off-window PASS. D-1 ST_GAS
+diurnal shape still FAILS (pre-existing, unchanged — the separate steam-gas shape root cause).
+Overall verdict NOT-YET (unchanged from neiso-48).
+
+**`use_plant_emission_rates_v2` is DISPATCH-INERT for NEISO.** The v2-off attribution twin
+`2026-07-06-neiso-wfuelsec-ab-v2off` (per emissions-co2-rate-plan §9.6) is **byte-identical** to
+the v2-on probe on price (dwLMP 31.97/36.08/62.88), fuel mix, storage and CO2 — the measured
+RGGI carbon price × the v2 per-plant rate delta shifts no NEISO merit order and moves no scored
+metric. The memo's "can shift" for RGGI ISOs does not materialize here; recorded so a future
+global v2 flip (memo step 3) knows NEISO re-scored clean.
+
+**Keeper recommendation (to the owner — no swap in-session).** **Keeper stays
+`2026-07-05-neiso-48-ct-floor`.** Component B is structurally faithful (real ISO-NE posture,
+rule-19-reconciled, rule-20-passing, no residual tuning) and stays in the codebase **default-off**
+per rule 1, but it is **not keeper-eligible**: it does not close its target caveats and changes
+essentially nothing (the fleet it targets already runs). **NEISO does NOT move to
+caveat-budget-passing** — the two hard caveats (C1 CC_REGULAR, C2 2025 sysvol, both measurement/
+EIA-930-fold-in issues per neiso-43) and the winter-fuel soft family are all unchanged. The next
+NEISO root cause is the fleet-capacity/availability of the coal+steam fleet and the winter
+scarcity-price formation (C3c) — NOT more winter-commitment tuning, and rule 1 forbids cranking
+the floor to force the coal number. Holdouts (2022, H1-2026) remain fully quarantined (rule 22);
+the calibration-complete declaration is the owner's.
+
+Registered both full-span runs (rule 15): `2026-07-06-neiso-wfuelsec-ab-v2` (probe) and
+`2026-07-06-neiso-wfuelsec-ab-v2off` (v2-off attribution twin). Dashboard retention pruned to
+top-15 (dropped the 12 oldest June/early-July NEISO sidecars: neiso-30…44-band-deleak; bundles
+kept on disk). Reproduce: `scripts/replay_keeper.py results/calibration/neiso_ctscrub --set
+neiso_winter_fuel_inventory=true --set neiso_winter_fuel_mustrun=true --set
+use_plant_emission_rates_v2=true --out-dir results/calibration/neiso_wfuelsec_ab_v2`.
 
 ### 2026-07-05 — CAISO — W3-P2 CT-floor scrub HEAD verification + red-flag closeout (caiso 55): PROBE, keeper stays caiso 51
 
@@ -433,6 +515,59 @@ forward-admissible gross-up for ERCOT 2024/25 unchanged. No modeled-vs-reported
 curtailment diagnostic or AS-forward-driver delta to report — nothing new was
 solved. Not a keeper or a probe; a data-availability dead end pending
 credentials, per the plan's egress caveat.
+
+### 2026-07-04 — NEISO — winter-fuel Component A probe pair: daily AGT basis closes the oil under-run; inventory cap INERT (keeper unchanged)
+
+*(Entry written 2026-07-06 as the U-01 closure — the two probes were registered on the
+dashboard in-session on 2026-07-04 per rule 15, but this log entry was missed; gap register
+`docs/gap-register-2026-07.md` §3.8 U-01. Reconstructed from the committed bundles
+(`meta.json`/`run_config.json`, git_sha `bc26e6a`, both solved 2026-07-04T17:07) and the
+registry sidecars — no re-run.)*
+
+**Goal (winter-fuel plan, `docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md`
+Component A).** First LP exercise of the seasonal (Nov–Mar) oil-burn inventory budget
+(`winter_fuel_inventory.py` + `dispatch.py:_build_oil_budget_rows`, GATED
+`neiso_winter_fuel_inventory` default off): one pooled fleet row per winter month, budget =
+WRP-low 2.8 M bbl start-fill + 2 refills/season amortized monthly, MMBtu-weighted
+(`HR[g]·P[g,t]`), scope = oil-primary units + the dual-fuel gas units' oil limb gated to
+exogenous oil-switch hours. All inputs forward-derivable capacity/logistics quantities
+(OFSA/WRP; `docs/multi-iso/neiso-winter-fuel-data-audit.md`), never measured burn/receipts —
+the admissible replacement for the rejected neiso-40 F923-receipts budget.
+
+**A/B pair (single-flag delta, config otherwise identical; full span 2023–2025, one bundle
+each, P1+P2):**
+
+- **`2026-07-04-neiso-dailybasis-oil-underrun`** (bundle `neiso-daily-basis-a-off`) —
+  measured daily Algonquin-Citygate gas basis (`gas_hub_basis_daily`, mean-preserving) ON,
+  inventory budget OFF. This is the Component-A ablation twin AND a finding in its own
+  right: **the daily basis closes the winter oil under-run endogenously** — model oil
+  0.35/0.23/1.47 TWh (2023/24/25) vs EIA-930 0.32/0.37/1.24, where the monthly-basis keeper
+  ran ~0/~0/0.04. Daily basis is an admissible measured delivered-fuel input (rule 13);
+  annual gas volumes unchanged. Price still caps at dual-fuel oil parity (~$258); 0 h >$300
+  all years — the C3c scarcity tail is NOT a fuel-pricing question.
+- **`2026-07-04-neiso-inventorycap-inert-probe`** (bundle `neiso-daily-basis-a-low`) — same
+  config + `neiso_winter_fuel_inventory=True` (start_fill 2.8 M bbl, the WRP low bound).
+  **RESULT: byte-identical dispatch and prices to the twin — the cap is INERT.** Even the
+  heaviest oil month (Jan-2025, 0.755 TWh oil) sits below the ~0.91 TWh/month budget. Not
+  tuned to force binding (rule 1): the budget is what the WRP/OFSA logistics say it is; a
+  smaller number would be a fitted answer. Negative result, registered per rule 15.
+
+**Reading (design input for Component B).** The realized winter oil burn — now at the
+measured level thanks to the daily basis — consumes only ~60–80% of one month's
+logistics-derived budget even in the worst month, because the LP burns oil only in the
+parity-switch hours of a *price-taking* dispatch. The real fleet's winter draw is larger
+and lumpier: ISO-NE *commits* fuel-secure steam units (winter programs / Mystic-style
+retention) ahead of cold snaps, burning stock the pure energy-economics dispatch never
+touches. Component A alone therefore cannot bind, and cranking its budget down to force
+binding is forbidden (rule 1). The mechanism that draws the stock — the winter
+fuel-security commitment (Component B) — has to exist before the inventory constraint has
+anything to ration. Keeper unchanged (`2026-07-03-neiso-47-fast-start` at the time; since
+superseded by `2026-07-05-neiso-48-ct-floor`).
+
+**U-01 (gap register §3.8) is CLOSED with this entry:** the probes WERE run to completion
+and registered (sidecars + runs payloads + slim bundles committed 2026-07-04); the rule-15
+breach was the missing log entry only, now written. Bundles verified complete against
+probe-class peers (meta + run_config; payloads decode all 3 years).
 
 ### 2026-07-04 — NYISO — CT offer grounding: measured-run fast-start v3 + oil screen + DEC 227-3 (nyiso 45/46): PROBES, keeper stays nyiso 41
 

@@ -20,6 +20,7 @@ from market_sim.model.dispatch import (
 )
 from market_sim.data.winter_fuel_inventory import (
     WINTER_MONTH_INDICES,
+    apply_winter_fuelsec_mustrun,
     build_winter_fuel_budget,
     read_winter_fuel_study,
 )
@@ -213,6 +214,142 @@ class TestReader(unittest.TestCase):
         )
         expected = 3_800_000.0 * (1 + 2) / 5 * 5.825
         np.testing.assert_allclose(out[1][0, 0], expected)
+
+
+class TestWinterFuelsecMustrun(unittest.TestCase):
+    """Component B — winter fuel-security must-run floor (trivial-first).
+
+    A 3-gen 1-zone fleet (2 COAL_BIT + 1 CT_PEAKER) over a full 8760, with the
+    zone TMIN monkeypatched to a controlled cold-January / warm-rest series, so
+    the season+cold gate, class scope, depth, and D-2 mechanism tag are all
+    hand-checkable without loading real weather.
+    """
+
+    def _fleet(self, hours=8760):
+        # 3 gens in a real NEISO zone ("Central" -> the engine's zone lookup
+        # resolves); classes set post-build (generators_to_fleet_arrays leaves
+        # plant_group None for these bare Generators).
+        fa = _make_fleet(
+            ["Central", "Central", "Central"],
+            ["Central"],
+            hours=hours,
+            pmax=100.0,
+            pmin=0.0,
+            eford=0.0,
+        )
+        fa.plant_group = np.array(["COAL_BIT", "COAL_BIT", "CT_PEAKER"], dtype=object)
+        return fa
+
+    def _patch_tmin(self, cold_month_indices, cold_c=-15.0, warm_c=10.0, hours=8760):
+        """Return an iso_zone_tmax stub: cold in the given calendar months."""
+        from market_sim.data.fleet import _hour_to_month_index
+
+        month = _hour_to_month_index(hours)
+        tmin = np.where(np.isin(month, cold_month_indices), cold_c, warm_c).astype(
+            float
+        )
+        tmax = tmin + 5.0
+        return lambda iso, year, T, zone=None: (tmax[:T], tmin[:T])
+
+    def test_floors_coal_in_winter_cold_only(self):
+        import market_sim.data.eia_loader as eia_loader
+        from market_sim.data.floor_mechanisms import MECH_WINTER_FUELSEC
+
+        hours = 8760
+        fa = self._fleet(hours)
+        orig = eia_loader.iso_zone_tmax
+        # Cold January (month 0, in WINTER_MONTH_INDICES) only.
+        eia_loader.iso_zone_tmax = self._patch_tmin([0], hours=hours)
+        try:
+            applied = apply_winter_fuelsec_mustrun(
+                fa, "NEISO", 2024, ["Central"], hours=hours
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        self.assertTrue(applied)
+        self.assertIsNotNone(fa.min_gen)
+        from market_sim.data.fleet import _hour_to_month_index
+
+        jan = _hour_to_month_index(hours) == 0
+        jul = _hour_to_month_index(hours) == 6
+        # COAL_BIT group (gens 0,1) floored cheapest-first at frac x GROUP avail:
+        # 0.4 * (2*100) = 80 MW/hr total across the class in January...
+        coal_total_jan = fa.min_gen[0, jan] + fa.min_gen[1, jan]
+        np.testing.assert_allclose(coal_total_jan, 80.0)
+        # ...and untouched (pmin=0) outside winter for both units.
+        np.testing.assert_allclose(fa.min_gen[0, jul], 0.0)
+        np.testing.assert_allclose(fa.min_gen[1, jul], 0.0)
+        # Every floored COAL unit-hour carries the winter-fuelsec D-2 tag.
+        coal_floored = fa.min_gen[:2, :] > 0.0
+        self.assertTrue(np.any(coal_floored))
+        self.assertTrue(
+            np.all(fa.min_gen_mechanism[:2, :][coal_floored] == MECH_WINTER_FUELSEC)
+        )
+        # Floored COAL unit-hours are exactly the January (winter-cold) hours.
+        self.assertTrue(np.all(coal_floored[:, ~jan] == False))  # noqa: E712
+        # CT_PEAKER (gen 2) is NOT a fuel-secure class -> never floored.
+        np.testing.assert_allclose(fa.min_gen[2, :], 0.0)
+
+    def test_no_op_when_winter_is_warm(self):
+        import market_sim.data.eia_loader as eia_loader
+
+        hours = 8760
+        fa = self._fleet(hours)
+        orig = eia_loader.iso_zone_tmax
+        # No cold month at all (warm everywhere) -> nothing flags.
+        eia_loader.iso_zone_tmax = self._patch_tmin([], hours=hours)
+        try:
+            applied = apply_winter_fuelsec_mustrun(
+                fa, "NEISO", 2024, ["Central"], hours=hours
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        self.assertFalse(applied)
+        self.assertIsNone(fa.min_gen)
+
+    def test_summer_cold_does_not_bind_season_gate(self):
+        import market_sim.data.eia_loader as eia_loader
+
+        hours = 8760
+        fa = self._fleet(hours)
+        orig = eia_loader.iso_zone_tmax
+        # Cold in July (month 6, NOT in WINTER_MONTH_INDICES) -> season gate
+        # blocks it; the floor must not bind.
+        eia_loader.iso_zone_tmax = self._patch_tmin([6], hours=hours)
+        try:
+            applied = apply_winter_fuelsec_mustrun(
+                fa, "NEISO", 2024, ["Central"], hours=hours
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        self.assertFalse(applied)
+
+    def test_commit_frac_and_min_stable_scale_depth(self):
+        import market_sim.data.eia_loader as eia_loader
+
+        hours = 8760
+        fa = self._fleet(hours)
+        orig = eia_loader.iso_zone_tmax
+        eia_loader.iso_zone_tmax = self._patch_tmin([0], hours=hours)
+        try:
+            apply_winter_fuelsec_mustrun(
+                fa,
+                "NEISO",
+                2024,
+                ["Central"],
+                min_stable_pct=0.5,
+                commit_frac=0.5,
+                hours=hours,
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        from market_sim.data.fleet import _hour_to_month_index
+
+        jan = _hour_to_month_index(hours) == 0
+        # cheapest-first distributes 0.25 * (group avail cap) across the 2 COAL
+        # units; total floored group energy per hour = 0.25 * 200 = 50 MW.
+        total = fa.min_gen[0, jan] + fa.min_gen[1, jan]
+        np.testing.assert_allclose(total, 50.0)
 
 
 if __name__ == "__main__":

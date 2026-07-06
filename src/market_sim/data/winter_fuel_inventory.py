@@ -306,3 +306,175 @@ def build_winter_fuel_budget(
     group_index = np.zeros(gen_idx.size, dtype=int)
 
     return gen_idx, budget_mmbtu, month_index, coeff, group_index
+
+
+# --- Component B: winter fuel-security must-run (seasonal-reliability commitment) ---
+#
+# Fuel-secure steam classes ISO-NE postures for winter energy security: coal and
+# the oil-capable gas-steam fleet (the units that hold on-site distillate and can
+# run when pipeline gas is short). This is the class scope the WRP/IEP/OFSA
+# posture targets, and it is exactly the classes the disabled reliability-floor
+# tmin cold limbs named (NEISO North COAL, Connecticut ST_GAS) — Component B
+# re-grounds that phenomenon on the program posture rather than a thin-sample
+# temperature correlation. Both coal taxonomy labels are included: the NEISO
+# fleet tags its (bituminous) coal fleet "COAL" (plant_taxonomy fallback), while
+# "COAL_BIT" is carried where the CAMPD coal-class resolver fires — Component B
+# must floor the fuel-secure coal fleet whichever label it wears.
+_WINTER_FUELSEC_CLASSES: tuple[str, ...] = ("COAL", "COAL_BIT", "ST_GAS")
+
+# Steam commitment spans a multi-day cold event (a committed boiler is not cycled
+# on the single coldest calendar day). Mirrors the reliability engine's steam
+# ``min_event_hours`` (iso_configs._STEAM_MIN_EVENT_HOURS = 48).
+_WINTER_FUELSEC_MIN_EVENT_HOURS: int = 48
+
+
+def apply_winter_fuelsec_mustrun(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    *,
+    plant_classes: tuple[str, ...] = _WINTER_FUELSEC_CLASSES,
+    min_stable_pct: float = 0.40,
+    commit_frac: float = 1.0,
+    tmin_threshold_c: float = -7.0,
+    min_event_hours: int = _WINTER_FUELSEC_MIN_EVENT_HOURS,
+    hours: int | None = None,
+) -> bool:
+    """Apply the NEISO winter fuel-security must-run floor (Component B).
+
+    The seasonal-reliability commitment coupled to the Component-A inventory
+    budget. ISO-NE retains and postures its fuel-secure steam fleet (coal + the
+    oil-capable gas-steam units that hold on-site distillate) through winter for
+    energy security *beyond* pure energy economics — the Winter Reliability
+    Program (FERC ER14-2407, 2013-2018), its Inventoried Energy Program successor
+    (ER19-1428), and the OFSA-driven operational posture. The perfect-foresight
+    energy-only LP lacks this: it commits these units only in the few hours
+    delivered gas/oil is dear enough, so their winter energy under-runs
+    (COAL_BIT/ST_GAS C1 miss) AND their oil draw never reaches the seasonal
+    inventory budget, leaving Component A's cap inert (the neiso-inventorycap
+    probe finding). This floor supplies the missing commitment: it postures the
+    fuel-secure classes at minimum-stable on winter cold days, at which point the
+    dual-fuel oil limb burns on the acute snaps and the Component-A budget can
+    bind, producing the endogenous winter scarcity rent (C3c tail) and the wider
+    storage spread (C5b) as a *consequence* of the commitment, not a tuned adder.
+
+    Rule-17 statement:
+      (a) DRIVER — ISO-NE winter fuel-security posture (WRP / IEP / OFSA); an
+          external program, not a price/volume residual.
+      (b) HOURS — winter months only (Nov-Mar, the OFSA horizon) AND cold days
+          (zone daily ``tmin_c < tmin_threshold_c``, default -7 C / ~20 F, the
+          NERC cold-weather forced-outage onset). All 24 h of a flagged cold day
+          (a committed boiler runs the whole day); multi-day cold events bridged
+          to ``min_event_hours``. Never binds outside winter or on mild winter
+          days.
+      (c) FORWARD — the season gate is calendar; the cold gate regenerates from a
+          forecast year's pinned/forecast zone TMIN (colder winter -> more
+          binding hours); the depth is a physical boiler-turndown constant. Every
+          input is forward-derivable and responds to changed weather/fleet.
+
+    Rule 19: REPLACES the disabled COAL/ST_GAS ``tmin`` cold-limb reliability
+    floors (``reliability_floor_coeffs_NEISO.csv``, ``enabled=False`` since the
+    2026-06-30 rebuild disabled them for thin cold-day sample, n=7-8). Those limbs
+    modelled the same phenomenon (winter steam commitment) via a temperature->
+    commitment correlation that could not be identified from the sparse cold-day
+    record; Component B grounds it in the program posture instead. It is the
+    single winter-steam-commitment mechanism — the tmin limbs stay disabled, not
+    re-enabled alongside. ``floor_pct = commit_frac x min_stable_pct`` (a
+    structural commitment share times the physical minimum-stable level), never a
+    measured-CF ceiling and never tuned to the C1/C3c/C5b residual (rules 1/24).
+
+    The floor composes into ``FleetArrays.min_gen`` cheapest-first via the shared
+    :func:`~market_sim.model.transmission._distribute_group_floor` kernel and tags
+    the raised unit-hours ``MECH_WINTER_FUELSEC`` for the D-2 forced-energy
+    attribution (a merchant reliability commitment — subject to the forced-share
+    gate, ablated in the zero-forcing twin).
+
+    Args:
+        fleet_arrays: Vectorized fleet arrays (mutated in place). Needs
+            ``plant_group``, ``zone_idx``, ``pmax``, ``availability``,
+            ``heat_rate``, ``pmin``.
+        iso: ISO identifier (NEISO).
+        year: Weather year for the pinned zone temperature series.
+        zone_names: Ordered model-zone names (index-aligned with ``zone_idx``).
+        plant_classes: Fuel-secure classes to floor (default COAL_BIT + ST_GAS).
+        min_stable_pct: Physical minimum-stable fraction of a committed steam
+            boiler (default 0.40 — standard subcritical steam turndown).
+        commit_frac: Fraction of each class under the winter program posture
+            (default 1.0 — the NEISO fuel-secure steam fleet IS the program
+            fleet).
+        tmin_threshold_c: Cold-day gate on zone daily TMIN (default -7 C, NERC
+            cold-weather onset).
+        min_event_hours: Steam multi-day event bridging (default 48 h).
+        hours: LP horizon (defaults to the fleet availability width, else 8760).
+
+    Returns:
+        ``True`` iff at least one unit-hour was floored, ``False`` (byte-identical)
+        otherwise — e.g. a warm winter with no day below the threshold, a forecast
+        year with no pinned weather, or a fleet with no fuel-secure units.
+    """
+    if fleet_arrays.plant_group is None:
+        return False
+    # Lazy imports: match the harness pattern and avoid a module-load cycle
+    # (transmission imports dispatch/fleet; eia_loader is heavy).
+    from market_sim.data.eia_loader import iso_zone_tmax
+    from market_sim.data.floor_mechanisms import MECH_WINTER_FUELSEC
+    from market_sim.model.transmission import (
+        _bridge_flagged_runs,
+        _distribute_group_floor,
+    )
+
+    if hours is None:
+        avail = getattr(fleet_arrays, "availability", None)
+        hours = int(avail.shape[1]) if avail is not None and avail.ndim == 2 else 8760
+    T = int(hours)
+
+    groups = np.asarray(fleet_arrays.plant_group)
+    zone_idx = np.asarray(fleet_arrays.zone_idx)
+    pmax = np.asarray(fleet_arrays.pmax)
+
+    # Winter-month gate (hour -> 0-based calendar month in WINTER_MONTH_INDICES).
+    month_of_hour = _hour_to_month_index(T)
+    is_winter_hour = np.isin(month_of_hour, WINTER_MONTH_INDICES)
+    if not is_winter_hour.any():
+        return False
+
+    floor_pct = float(commit_frac) * float(min_stable_pct)
+    if floor_pct <= 0.0:
+        return False
+
+    applied = False
+    # Per-zone cold-day gate: a committed steam boiler is a zone-local decision,
+    # so the cold flag keys off each zone's own daily TMIN (unlike the pooled oil
+    # budget). Classes present only in some zones are floored where they exist.
+    for z_idx, zone in enumerate(zone_names):
+        temp_result = iso_zone_tmax(iso, year, T, zone=zone)
+        if temp_result is None:
+            continue  # import node / unmapped / forecast year with no pinned wx
+        _tmax, tmin = temp_result
+        if tmin is None:
+            continue
+        tmin = np.asarray(tmin, dtype=float)
+        # Cold winter hours: below the NERC cold-onset AND inside the season.
+        flagged = (tmin < float(tmin_threshold_c)) & is_winter_hour
+        if not flagged.any():
+            continue
+        # Bridge multi-day cold events, then re-apply the season gate so a snap
+        # straddling the Mar/Apr boundary cannot leak a floor into spring.
+        flagged = _bridge_flagged_runs(flagged, int(min_event_hours)) & is_winter_hour
+        frac = np.where(flagged, floor_pct, 0.0)
+        for cls in plant_classes:
+            sel = (groups == cls) & (zone_idx == z_idx) & (pmax > 0.0)
+            rows = np.flatnonzero(sel)
+            if rows.size == 0:
+                continue
+            if fleet_arrays.min_gen is None:
+                fleet_arrays.min_gen = np.broadcast_to(
+                    fleet_arrays.pmin[:, np.newaxis],
+                    (fleet_arrays.pmin.size, T),
+                ).copy()
+            _distribute_group_floor(
+                fleet_arrays, rows, frac, T, mech_id=MECH_WINTER_FUELSEC
+            )
+            applied = True
+    return applied

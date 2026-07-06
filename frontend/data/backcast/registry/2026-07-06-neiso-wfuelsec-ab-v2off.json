@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-neiso-wfuelsec-ab-v2off",
+  "label": "neiso wfuelsec ab v2off",
+  "date": "2026-07-06",
+  "shorthand": "neiso-wfuelsec-ab-v2off",
+  "definition": "(PROBE, v2-OFF ATTRIBUTION TWIN of neiso-wfuelsec-ab-v2) Winter-fuel Component A + Component B enabled, use_plant_emission_rates_v2 OFF. Isolates the winter-fuel mechanism from the v2 flip per emissions-co2-rate-plan 9.6. RESULT: byte-identical to the v2-on probe on price (dwLMP 31.97/36.08/62.88), fuel mix (COAL 0.062/0.126/0.218, oil 0.35/0.23/1.54 TWh), storage (0.75/0.71/0.91 TWh) and CO2 \u2014 proving use_plant_emission_rates_v2 is fully dispatch-inert for the NEISO backcast (the measured RGGI carbon price times the v2 per-plant rate delta shifts no merit order and moves no scored metric). Confirms the winter-fuel caveats (C1 coal, C3c tail, C5b storage) are unmoved by A+B regardless of the rate basis; keeper stays neiso-48.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-neiso-wfuelsec-ab-v2off.js",
+  "bundle": "results/calibration/neiso_wfuelsec_ab_v2off"
+}
