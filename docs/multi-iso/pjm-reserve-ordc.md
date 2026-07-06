@@ -425,6 +425,42 @@ merged code stays gated `default off`. Phase 2 requires either a larger box
 R columns by unit size, dropping small units that never bind). The pjm-76 keeper
 runs the zone-aggregate co-opt only.
 
+**Phase 2 UNBLOCKED (2026-07-06, pjm-c3-reserve-phase2 lane).** Both remaining
+blockers cleared; the full-span probe is `pjm-81` (bundle
+`results/calibration/pjm81_coopt_pergen`, pjm-78 baseline recipe + the two
+Phase-2 flags):
+
+1. **Memory (blocker a): re-tiered to the MISO keeper's pooling.** The
+   merged plant-in-MAD tier (257 R columns → 2.25 M joint rows; P0 15.1 GB,
+   P1 OOM-killed — the 2026-07-02 memtest) is replaced by the
+   **(zone, fuel-class) pooling everywhere** that the `miso-39` KEEPER runs
+   (`_miso_design` pergen branch, `miso-reserve-coopt.md`): on the real 2024
+   fleet, **39 R columns, 341,640 joint rows (~6.6× fewer)**, hourly
+   availability-scaled deliverable caps (the MISO convention — outages thin
+   the pool's cap in exactly the hours capacity is out). Cross-ISO memory
+   evidence: ERCOT's `ercot34` keeper co-opt is zone-aggregate pooled
+   headroom rows (no R-per-unit) and fits the box; MISO's class-tier pergen
+   fits with a swapfile for transients; only PJM's finer plant tier OOM'd.
+   Same published two-step ORDC, same nested RTO+MAD measured families —
+   the tier is a documented memory scope-down, never a breakpoint/penalty
+   change (rules 1/11). Reserve still competes with energy at the marginal
+   *pool* (joint Σ P + R ≤ Σ cap per pool-hour).
+2. **Ramp data (blocker b): measured intake replaces the class estimate.**
+   New `ramp-capability` clean datatype (schema
+   `data/dictionary/schema/ramp-capability.schema.yaml`, curation
+   `scripts/curate_ramp_capability.py`, PJM/MISO registered): **EIA-860
+   Schedule 3.1 "Time from Cold Shutdown to Full Load" = "10M"** fast-start
+   thermal capacity per plant (the measured 10-minute-deliverable flag;
+   ~3.0 GW in the PJM BA) and the **CAMPD CEMS maximum observed 1-hour
+   plant gross-load up-ramp** (pooled 2023–2025; holdouts excluded, rule
+   22). `market_sim.data.ramp_capability.measured_ramp10_frac` reconciles
+   them onto `FleetArrays.ramp10` behind GATED
+   `measured_ramp_capability` (default off): fast-start floor, envelope
+   ceiling on the NREL class rate (CEMS is hourly, so the envelope is a
+   ceiling, never the 10-minute quantity itself), class-frac fallback for
+   uncovered plants (rule 14). On the 2024 fleet the measured
+   reconciliation thins the deliverable cap ~50 → ~40 GW (p50).
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 
