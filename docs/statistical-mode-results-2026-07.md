@@ -235,9 +235,11 @@ side of the fit.
 > The statmode twin has NOT been re-run against the new keeper — per the
 > program rule this section is flagged stale, not silently carried; it also
 > still reflects the original 9-criterion (C1–C5c) scoring, not the C7/C8
-> hard criteria added 2026-07-04. Re-running is a separate solve session
-> (`scripts/run_statmode_probe.py` against `pjm77_ct_relfloor`), not done
-> here.
+> protective-tier criteria added 2026-07-04, nor the rubric v2 tier/budget
+> re-anchor (`docs/calibration-determination-rubric.md` §9, 2026-07-06) that
+> replaced HARD/SOFT with load-bearing/supporting/protective tiers.
+> Re-running is a separate solve session (`scripts/run_statmode_probe.py`
+> against `pjm77_ct_relfloor`), not done here.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -304,9 +306,13 @@ the one exception and actually improves.
 > bands). The statmode twin has NOT been re-run against either successor
 > keeper — per the program rule this section is flagged stale, not silently
 > carried; it also still reflects the original 9-criterion (C1–C5c) scoring,
-> not the C7/C8 hard criteria added 2026-07-04 (on which neiso-49 itself
-> CAVEATs, per `results/calibration/neiso_stgas_netload/metrics.json`).
-> Re-running is a separate solve session
+> not the C7/C8 protective-tier criteria added 2026-07-04 (C7 is neiso-49's
+> single protective-tier ledgered caveat, per
+> `results/calibration/neiso_stgas_netload/metrics.json`), nor the rubric v2
+> tier/budget re-anchor (`docs/calibration-determination-rubric.md` §9,
+> 2026-07-06) under which neiso-49 itself now scores
+> CALIBRATED-WITH-CAVEATS rather than the rubric-v1 NOT-YET this document's
+> NEISO row still assumes. Re-running is a separate solve session
 > (`scripts/run_statmode_probe.py` against `neiso_stgas_netload`), not done
 > here.
 
