@@ -1,5 +1,34 @@
 # ERCOT NP6 HSL 2024/2025 intake — COMPLETE (2026-07-06)
 
+**Follow-up 2026-07-06 (bug fix on the committed 2024/2025 parquets).** A
+follow-up session found the "final" 2024/2025 parquets below (and their
++3.4%/+21.9% 2024 EIA-923 deltas) were built from ERCOT's own corrupted
+source telemetry: **2024-08-20 through 08-23 (96 hours)** carries
+physically-impossible system-wide wind AND solar `ACTUAL`/`HSL` values in
+every report vintage that covers those hours (e.g. `ACTUAL_LZ_WEST` wind =
+276,466 MW on 2024-08-23 HE1 — ERCOT's entire West-zone wind fleet is
+nowhere near that) — a defect in ERCOT's own published file, not a parsing
+artifact (confirmed present identically across every later repost of the
+rolling window). It inflated the committed 2024 file's wind peak to an
+impossible 161.5 GW. `_KNOWN_BAD_NP6_WINDOWS` in `scripts/build_ercot_hsl.py`
+now excludes exactly this cited window (nulled, then linearly interpolated
+from the clean Aug 19/24 endpoints) as a narrow, documented exception that
+does not weaken the general `_MAX_GAP_HOURS` incomplete-upload guard for any
+other window/year/upload. Separately, ERCOT's 2025 solar report renamed its
+columns (`ACTUAL_SYSTEM_WIDE`/`COP_HSL_SYSTEM_WIDE` → `SYSTEM_WIDE_GEN`/
+`SYSTEM_WIDE_HSL`), and the HSL-column picker was grabbing the older,
+less-authoritative `COP_HSL_SYSTEM_WIDE` instead of the new `SYSTEM_WIDE_HSL`
+whenever both were present — fixed so `_pick_column` prefers a non-COP
+`SYSTEM`+`HSL` match first. Both fixes are covered by new regression tests
+in `tests/test_ercot_hsl.py`. Corrected validation numbers (both years
+rebuilt): wind +0.1%/−0.2% (2024/2025, tightened from +3.4%/−0.2%), solar
++17.1%/+21.0% (2024/2025, was +21.9%/+21.0% — the 2024 figure moved because
+the Aug 20-23 spike no longer inflates the annual total; 2025 was already
+clean and is unchanged). Peaks are now physically plausible: wind 27.7/28.3
+GW, solar 34.3/29.5 GW. The solar-vs-EIA-923 gap itself is unchanged in
+character (real, documented scope divergence — see the table below and
+`data/raw/ercot-hsl/np6/README.md`), not something this fix touches.
+
 **Update 2026-07-06 (final).** The credentialed-fetch route below remains
 closed per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
 §WS-E (re-verified this session: `apiexplorer.ercot.com`, `api.ercot.com`,
