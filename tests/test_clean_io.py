@@ -50,7 +50,6 @@ ALL_DATATYPES = [
     "rggi-co2-budgets",
     "carb-cap-schedule",
     "chp-btm-share",
-    "ramp-capability",
 ]
 
 
