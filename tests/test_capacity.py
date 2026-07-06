@@ -993,6 +993,92 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual(resolve_planning_reserve_margin(config2, "PJM"), 0.10)
 
 
+class TestMarketDesignRetirementFloor(unittest.TestCase):
+    """Energy-only floor gate (``market_design_retirement_floor``, stage 5 §1).
+
+    The gate is default-off (byte-identical everywhere — the pre-existing
+    floor tests above all run with the default). When on, the retirement
+    reliability floor is skipped ONLY for ISOs explicitly registered
+    energy-only in ``MARKET_DESIGN`` (ERCOT); capacity-market ISOs and ISOs
+    absent from the registry keep the floor (#1496/#1501 gating pattern).
+    """
+
+    T = 10
+
+    def _dispatch_result(self, n_gen, level):
+        return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
+
+    def _screen(self, fleet, config, peak):
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)  # deeply unprofitable for all
+        dispatch = self._dispatch_result(len(fleet), 10.0)
+        return apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=peak
+        )
+
+    def _fleet(self):
+        # The over-retirement fixture from the floor test above: nuclear
+        # survives the screen (loss year 1 < threshold), 12 coal units all
+        # eligible after one loss year; flag-off ERCOT retains 8 of 12.
+        nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
+        coal = [
+            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
+            for i in range(12)
+        ]
+        return nuclear + coal
+
+    def test_energy_only_iso_skips_floor_when_flag_on(self):
+        # ERCOT is registered energy-only: with the gate on, the floor
+        # retains nothing — every screen-eligible coal unit actually exits
+        # and the retention log is empty (adequacy expresses as scarcity
+        # revenue downstream, not administrative retention).
+        config = ScenarioConfig(market_design_retirement_floor=True)
+        survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
+        self.assertEqual([g.unit_id for g in survivors], ["N0"])
+        self.assertEqual(retention_log, [])
+
+    def test_flag_off_is_byte_identical(self):
+        # Default-off reproduces the pre-gate behaviour exactly (the same
+        # fixture as test_reliability_floor_prevents_over_retirement).
+        config = ScenarioConfig(market_design_retirement_floor=False)
+        survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
+        self.assertEqual(len([g for g in survivors if g.fuel_type == "coal"]), 8)
+        self.assertEqual(len(retention_log), 8)
+
+    def test_capacity_market_iso_keeps_floor_when_flag_on(self):
+        # A capacity-market ISO's floor is byte-identical with the flag on or
+        # off: its design really does procure to the requirement. Net-CONE is
+        # zeroed via the registry patch so the units fail the screen and the
+        # floor is actually exercised (a positive capacity payment would keep
+        # them solvent and never trigger it).
+        from market_sim.config.constants import MarketDesign
+        from market_sim.model import capacity as capacity_mod
+
+        design = {"PJM": MarketDesign(capacity_market=True, net_cone_per_kw_yr=0.0)}
+        with mock.patch.dict(capacity_mod.MARKET_DESIGN, design):
+            base = ScenarioConfig(iso="PJM")
+            gated = base.with_overrides(market_design_retirement_floor=True)
+            surv_off, _, log_off = self._screen(self._fleet(), base, 10000.0)
+            surv_on, _, log_on = self._screen(self._fleet(), gated, 10000.0)
+        self.assertEqual([g.unit_id for g in surv_on], [g.unit_id for g in surv_off])
+        self.assertEqual(log_on, log_off)
+        # And the floor genuinely fired in both (the fixture over-retires).
+        self.assertGreater(len(log_on), 0)
+
+    def test_unregistered_iso_keeps_floor_when_flag_on(self):
+        # An ISO absent from MARKET_DESIGN keeps the floor even with the flag
+        # on (conservative fallback): the registry's energy-only *default*
+        # withholds capacity revenue for unknown ISOs, but must not double as
+        # asserting they have no adequacy construct.
+        from market_sim.model import capacity as capacity_mod
+
+        config = ScenarioConfig(market_design_retirement_floor=True)
+        with mock.patch.dict(capacity_mod.MARKET_DESIGN, clear=True):
+            survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
+        self.assertEqual(len([g for g in survivors if g.fuel_type == "coal"]), 8)
+        self.assertEqual(len(retention_log), 8)
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 

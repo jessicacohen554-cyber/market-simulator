@@ -80,7 +80,11 @@ def _validate_window(start_year: int, end_year: int) -> None:
 
 
 def build_config(
-    iso: str, start_year: int, end_year: int, variant: str
+    iso: str,
+    start_year: int,
+    end_year: int,
+    variant: str,
+    energy_only_floor: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -103,6 +107,18 @@ def build_config(
     is a harmless no-op there). This is a **harness-config** choice, not a
     model-default change — the ScenarioConfig default stays ``False`` (rule 1:
     fix the price signal the screens see, do not tune the screens).
+
+    ``energy_only_floor`` is the stage-5 s4 PROBE leg (fom-scarcity stage 5
+    §4-§5), NOT a harness default: it sets
+    ``market_design_retirement_floor=True`` so energy-only ERCOT runs without
+    the retirement reliability floor (the s3 ledgers show the floor retaining
+    10.7-26.0 GW/yr — with it off, exits can tighten a later year's LP and
+    scarcity can form in the hindcast for the first time, mechanically
+    unblocking the G-30 solar-entry question). Probe-only because the s3
+    root cause stands: the screens see year-N-1 perfect-foresight prices on
+    an over-supplied vintage fleet, so the floor-off leg is expected to
+    over-retire further before any scarcity forms; adopting it as the
+    harness footing awaits the G-31 grain fix.
     """
     return ScenarioConfig(
         iso=iso,
@@ -116,6 +132,7 @@ def build_config(
         # Production scarcity footing (see docstring): ERCOT → ORDC overlay,
         # PJM → capacity-market (no-op). Harness default, not a model default.
         scarcity_pricing_enabled=True,
+        market_design_retirement_floor=energy_only_floor,
     )
 
 
@@ -163,13 +180,28 @@ def main(argv: list[str] | None = None) -> int:
         "--fuel-variant", choices=["realized", "asknown"], default="realized"
     )
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument(
+        "--energy-only-floor",
+        action="store_true",
+        help=(
+            "Stage-5 s4 PROBE leg: disable the retirement reliability floor "
+            "for energy-only ISOs (market_design_retirement_floor=True). "
+            "Probe-only, never the harness default — see build_config."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
     _validate_window(args.start_year, args.end_year)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    config = build_config(iso, args.start_year, args.end_year, args.fuel_variant)
+    config = build_config(
+        iso,
+        args.start_year,
+        args.end_year,
+        args.fuel_variant,
+        energy_only_floor=args.energy_only_floor,
+    )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) — deliberately
     # OUTSIDE the backcast registry, so audit_keepers / legitimacy_diagnostics
@@ -195,6 +227,7 @@ def main(argv: list[str] | None = None) -> int:
     meta = {
         "iso": iso,
         "variant": args.fuel_variant,
+        "energy_only_floor": bool(args.energy_only_floor),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
         "start_year": args.start_year,
