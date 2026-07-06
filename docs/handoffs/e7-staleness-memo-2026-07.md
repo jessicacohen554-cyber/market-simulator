@@ -1,6 +1,9 @@
 # E7 staleness memo — keeper vs newer registry run (2026-07-06)
 
-**Status: DRAFT for owner sign-off. No keeper swap or sidecar edit has been made.**
+**Status (2026-07-06 PM, post-wave-3 governance pass): owner approved the
+recommendation below, but re-running `scripts/audit_keepers.py` first shows
+it is now moot for all four named runs — see "Applied 2026-07-06 PM"
+addendum at the bottom. No sidecar edit was made.**
 **Gap:** G-04 (`docs/gap-register-2026-07.md` §3.1). **Owner decision required.**
 
 ## What E7 is
@@ -64,3 +67,47 @@ records the recommendation rather than enacting it. The two new ablation twins
 registered in this lane (`…pjm-77-ct-relfloor-ablation`,
 `…miso-41-ct-evening-ablation`) are `*-ablation`-named and so are already E7-exempt;
 they add no new warnings.
+
+## Applied 2026-07-06 PM — owner-approved, but re-audit shows it is a no-op
+
+The owner approved this memo's four-sidecar cleanup. Per instruction, `python
+scripts/audit_keepers.py` was re-run against live `main` **before** touching any
+sidecar. Result: **zero of the four edits were applied** — none would clear a
+currently-live E7 WARN, for two distinct reasons:
+
+- **NYISO** — moot by keeper swap. The 2026-07-06 promotion of
+  `2026-07-06-nyiso-53-li-tsl` (dated *after* the memo's `nyiso-statmode-d7-r2`,
+  2026-07-05) already made `nyiso-53` the newest NYISO registry entry in its own
+  right. Live audit: `NYISO ... all checks passed` — no E7 warning exists to
+  resolve.
+- **ERCOT, CAISO, PJM — moot by newer, un-adjudicated runs registered since the
+  memo was drafted.** E7 flags only the single newest sidecar per ISO (not every
+  run newer than the keeper). Since this memo was written, further 2026-07-06
+  runs landed that are now the newest non-excluded sidecar for each of these
+  three ISOs — all newer than the runs this memo names:
+  - ERCOT: newest is now `2026-07-06-ercot36-head-config-faithful` (memo named
+    `2026-07-05-ercot40-rtolcap-forward`, which sorts *before* both the current
+    keeper `ercot34` and `ercot36` — marking it `false` changes nothing).
+  - CAISO: newest is now `2026-07-06-caiso-56-zero-drag` (memo named
+    `2026-07-05-caiso-statmode-d7-r2`).
+  - PJM: newest is now `2026-07-06-pjm-80-srmc-reground` (memo named
+    `2026-07-05-pjm-78-demand-regate`).
+
+  Live re-audit (2026-07-06 PM):
+  ```
+  ERCOT  2026-07-06-ercot34-stage4-overlay-off  ! E7: newer run 2026-07-06-ercot36-head-config-faithful
+  CAISO  2026-07-03-caiso-51-firm-base          ! E7: newer run 2026-07-06-caiso-56-zero-drag
+  PJM    2026-07-05-pjm-77-ct-relfloor          ! E7: newer run 2026-07-06-pjm-80-srmc-reground
+  NYISO  2026-07-06-nyiso-53-li-tsl             all checks passed
+  ```
+
+**Net effect:** the four sidecar edits this memo recommends are harmless but
+inert — applying them would not change `audit_keepers.py`'s output (0 fail / 6
+warn either way), since the runs it names are no longer the ones E7 is citing.
+No edit was made to avoid a false-completion signal (marking stale-and-irrelevant
+sidecars `keeper_candidate: false` while three live, un-adjudicated E7 WARNs
+remain open under different run ids). **G-04 stays open** — the three fresh
+warnings above (ERCOT/CAISO/PJM vs their newest same-day runs) need their own
+per-run adjudication, which this memo does not cover and which was out of scope
+for this session (no solves, no keeper swaps). This is recorded as a fresh
+finding in `docs/gap-register-2026-07.md` §1's 2026-07-06-PM addendum.
