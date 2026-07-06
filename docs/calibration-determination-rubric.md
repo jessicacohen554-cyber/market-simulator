@@ -501,7 +501,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   **`UNATTESTED`** (⇒ `NOT-YET`) if no attestation file exists — you cannot certify
   a run you have not attested.
 
-### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; materiality cut-off added 2026-07-06)*
+### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; UNCHANGED in v2)*
 
 - **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
   **profile correlation r** and the **off-peak (h0–14) CV ratio**
@@ -516,17 +516,16 @@ FAILS regardless of every score above.** Four assertions, all required:
   thresholds are read from the artifact's `gates` block, set in
   `scripts/legitimacy_diagnostics.py` `D1_*`). A flat line — the caiso-42
   signature, model off-peak CV 0.000 vs actual 0.35–0.45 — fails both.
-- **Immateriality cut-off (owner decision 2026-07-06):** a gated class whose
-  actual annual energy is **< 2.5% of ISO total load**
-  (`calibration_verdict.D1_SHAPE_MATERIALITY_LOAD_FRAC`) is **not gated** by
-  C7, whatever its r/CV-ratio verdict — mirrors C2's `SYSVOL_MIN_TWH`
-  immateriality cut-off (a shape defect on a near-noise-floor class isn't
-  withheld from a keeper). Recorded `SKIPPED` (never a silent pass); the
-  underlying r/CV-ratio is still carried in the row's `magnitude` for
-  visibility, it just doesn't count against the C7 protective-caveat budget.
-  This decouples C7 from ST_GAS specifically wherever ST_GAS is sub-2.5% of
-  an ISO's load — the mechanism-defect classification (audit §1) is
-  unchanged; only whether it gates a keeper changed.
+  **Materiality floor (v2.1, owner amendment 2026-07-06):** gated only for
+  classes whose annual energy — **max(model, actual)**, so a forced floor
+  cannot hide a class below the line by its own inflation — is
+  **≥ 2 % of total ISO load** (`PROTECTIVE_MIN_LOAD_FRAC`); smaller classes
+  are `SKIPPED`-immaterial with the D-1 readings annotated (reported, never
+  gated — trivial-class shape is not worth structural work; mirrors C2/C4
+  immateriality). At the amendment date this exempts NEISO ST_GAS/CT
+  (0.1–0.7 % of load) and NYISO CT (1.4–1.9 %) while CAISO CT 2023/24
+  (2.1–2.3 % — the motivating caiso-42 case), PJM/MISO CT (3.5–4.2 %) and
+  every material ST_GAS (2.1–10.6 %) stay gated.
 - **Why first-class (motivating evidence):** annual volume bands cannot see
   class-shape failure. The D-7 statistical-mode study
   (`docs/statistical-mode-results-2026-07.md`) showed the 2026-07-02-loosened
@@ -541,8 +540,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   merit-order shape — commitment/offer structure, per audit §1). Essentially
   never ledgerable: a flat profile is a mechanism defect by construction.
   `SKIPPED` (never a silent pass — and it caps the determination, §2) when
-  the bundle carries no `legitimacy_diagnostics.json`, or when the
-  immateriality cut-off above applies.
+  the bundle carries no `legitimacy_diagnostics.json`.
 
 ### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; UNCHANGED in v2)*
 
@@ -554,11 +552,17 @@ FAILS regardless of every score above.** Four assertions, all required:
   `floors/<year>_<pass>.npz` or the `run_year(fleet_only=True)` rebuild; a
   rebuilt-floor share excludes the P1-dependent RA bridge and is recorded as
   a **lower bound** in the verdict record.
-- **Tolerance:** forced share **< 10 %** for peaker classes (`CT_PEAKER`),
-  **< 30 %** for any merchant class. **Exempt:** nuclear, CHP-steam classes
-  and the coal take-or-pay/mine-mouth must-run mechanisms — structural,
-  owner-accepted must-run physics (audit §2). Thresholds read from the
-  artifact's `gates` block (`D2_*`).
+- **Tolerance:** forced share **< 15 %** for peaker classes (`CT_PEAKER` —
+  raised from 10 % by the v2.1 owner amendment 2026-07-06, amending CLAUDE.md
+  rule 20 in place), **< 30 %** for any merchant class. **Materiality floor
+  (v2.1):** same ≥ 2 %-of-load gate as C7 — smaller classes are
+  `SKIPPED`-immaterial with the D-2 share annotated. **Exempt:** nuclear,
+  CHP-steam classes and the coal take-or-pay/mine-mouth must-run mechanisms —
+  structural, owner-accepted must-run physics (audit §2). The scorer gates the
+  artifact's **measured** `forced_share` against the rubric's own caps
+  (`FORCED_SHARE_*` in `calibration_verdict.py`; `legitimacy_diagnostics.py`
+  `D2_*` mirrors them for future artifacts' embedded verdicts) so artifacts
+  written under earlier gate values re-score correctly without regeneration.
 - **Why first-class:** floors are commitment scaffolding, not the dispatch
   model — ~50–55 % of modeled CAISO CT energy sat at the caiso-42 floor while
   the volume gates rewarded it (audit §1.1). Same statistical-mode evidence
@@ -801,6 +805,28 @@ never a curve to grade down to.
 
 ## 9. Version history
 
+- **v2.1 (2026-07-06, owner amendments)** — C7/C8 **materiality floor**: the
+  protective shape and forced-share gates score only classes with annual
+  energy (max of model/actual) **≥ 2 % of total ISO load**; smaller classes
+  are reported by the D-1/D-2 diagnostics, never gated (the owner's directive:
+  no structural work spent making a trivial class hit an r/CV or unforced
+  target). **C8 peaker cap 10 % → 15 %** (CLAUDE.md rule 20 amended in place;
+  no external anchor exists for either value — this is an owner
+  risk-tolerance setting, recorded as such). The scorer now gates D-2's
+  measured shares against the rubric's caps rather than the artifact's
+  embedded verdicts. Supersedes the same-day C7-only 2.5 % cut landed by the
+  L-15 lane (`f68ffed`/`29eafdf`): scope widened to C7+C8 per the owner's
+  directive, X held at 2 % (owner-confirmed) so CAISO CT (2.1–2.3 % of load)
+  and every PJM/MISO ST_GAS year stay gated, and the basis is max(model,
+  actual) so forcing cannot self-exempt a class. Effects at amendment: ERCOT
+  C8 (CT 12.4 %, 1.5–1.7 % of load) and PJM C8 (CT 12.1 % < 15 %) clear;
+  NYISO's CT row (92.7 %, 1.4–1.9 % of load) and NEISO C7 (ST_GAS 0.1–0.3 %
+  of load) become immaterial-skips; CAISO C7/C8 CT fails (27.5–32.6 % forced)
+  stand — the caiso-42 flagship case remains caught. NYISO nonetheless scores
+  NOT-YET at HEAD: the same-day D-2 legitimacy regeneration (PR #1512)
+  surfaced ST_GAS forcing at 59.7–69.8 % on a fully material class
+  (5.7–8.4 TWh, 3.9–5.5 % of load) with no ledger entry — the materiality
+  floor correctly does not exempt it, and the undocumented FAIL governs.
 - **v2 (2026-07-06)** — fitness-for-purpose re-anchor (this session): §0
   statement of intended use + criterion tiers (load-bearing / supporting /
   protective, replacing HARD/SOFT); two-band target/commercial tolerances on

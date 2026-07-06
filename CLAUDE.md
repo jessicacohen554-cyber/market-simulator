@@ -79,8 +79,12 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
     the same class (D-2 attribution) and replace or reconcile — never stack a new floor on the
     unexplained residual of an old one.
 1. **Forced energy is budgeted.** A keeper fails if any merchant class dispatches > 30 %
-    (peakers: > 10 %) of its energy at binding floors. Floors are commitment scaffolding, not the
-    dispatch model.
+    (peakers: > 15 %) of its energy at binding floors. Floors are commitment scaffolding, not the
+    dispatch model. *Owner amendment 2026-07-06 (rubric v2.1):* peaker cap raised 10 → 15 %, and
+    this budget — plus the C7 diurnal-shape gate — applies only to classes whose annual energy
+    (max of model and actual, so forcing can't hide a class below the line) is ≥ 2 % of total ISO
+    load; smaller classes are reported by the D-1/D-2 diagnostics but never gated — trivial-class
+    shape/forcing is not worth structural work.
 1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
