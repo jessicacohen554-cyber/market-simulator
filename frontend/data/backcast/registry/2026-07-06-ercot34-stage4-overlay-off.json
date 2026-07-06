@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-06-ercot34-stage4-overlay-off",
+ "label": "ercot34 stage4 overlay off",
+ "date": "2026-07-06",
+ "shorthand": "ercot34-stage4-overlay-off",
+ "definition": "ercot34 stage-4 overlay-off integration (AS co-opt plan \u00a76/\u00a77, G-38; KEEPER-CANDIDATE recommendation, owner sign-off pending): the ercot32 keeper recipe (incl. the four gas-geography fields meta.json does not persist, restored via --set \u2014 see run_config.json) with exactly two deltas: ercot_dam_as_overlay=False (the measured DAM-AS overlay retired \u2014 the plan's replacement-under-test) + ercot_reserve_supply_forward=True (WS-A forward RTOLCAP/RTOFFCAP formula supply). WS-B endogenous storage swap NOT taken (stage-2 gate 0.54-0.61x vs 0.8-1.3x band; plan \u00a74 conditions the swap on validation) \u2014 measured storage treatment retained. P1-only. GATES (vs same-code ex-overlay baseline ercot36 + RT actuals): G-3 PASS decisively (max monthly \u0394 = $0.00 \u2014 no ercot27 broad-elevation artifact; Feb-2023 unchanged); G-5 PASS (WS-A coverage 2.02/2.08/2.21x ~2x, one-delta \u0394ann \u2264 $0.05, tails 92-vs-93/22/7; WS-B deferred, documented); G-6 PASS (RTORDPA\u2227adder \u03a3min $543/$104/$2, 46/11/0 joint h, \u22648.3% of the smaller channel); G-2 2025 MAE +0.65 \u2264 +$1 and Aug-2024 -1.11 within \u00b1$3 PASS, Aug/Sep-2023 +12.3/+11.8 vs committed keeper EXCEEDS \u00b1$3 \u2014 100% HEAD base-code movement (same-code \u0394 -0.09/-0.40), toward actual; G-1 May-2024 acute days on RT -56/+34/-51% FAIL \u00b125% \u2014 named: F6 DA-boundary (overlay carried Jan/May -14.3/-20.5 non-reproducible dw) + the G-22 online-capability wedge; G-4 2023 tail 92h 0.51x (keeper 0.43x), >$500 83 vs 68 not collapsed, 2024 honest 22h \u2261 same-code ex-overlay (keeper's 78 was 72% overlay-carried), 2025 7 vs 10 (removed overlay hours). G-22 fold: in the 106 missed 2023 tail hours the co-opt adder is ~0 (p50 $0.1, >$10 in 1h) with measured RTOLCAP 8.1 GW above the knee \u2014 endogenous reserve withholding closes NONE of the shape miss; the miss stays offer/commitment-carried per the FINDING. C-scores vs keeper: C1 flips to PASS, C3a-2024 passes on RT ex-overlay, C3b-2023 0.393->0.324, C3c honest 0.51/0.42/0.23x all FAIL (2024's prior pass was overlay-carried). Plan \u00a76 keeper rule satisfied (G-3/G-5/G-6 pass; every G-1/G-2/G-4 miss carries a named G-7 root cause). Promotion requires owner sign-off + C6 attestation + rule-21 DOF ledger + ablation twin.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-06-ercot34-stage4-overlay-off.js",
+ "bundle": "results/calibration/ercot_stage4_overlayoff_v2"
+}
