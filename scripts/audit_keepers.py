@@ -149,22 +149,32 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
 # NYISO's pair was adjudicated PROMOTE-pending (not KEEP) and RESOLVED
 # 2026-07-06 by the L-11 keeper swap (nyiso-41 → 2026-07-06-nyiso-53-li-tsl,
 # registered with its zero-forcing twin) — no NYISO entry is needed here.
+# Round 2 (2026-07-06): after the day's keeper swaps (ERCOT→ercot34,
+# NEISO→neiso-49, NYISO→nyiso-53, MISO→miso-42-coal-econ-ablation) E7 flags a
+# new (keeper, newest-run) pair per ISO; the round-1 pairs referenced superseded
+# keepers/probes and are dropped as dead keys (git history preserves them). All
+# five newer runs are diagnostic probes by their own registry definition — see
+# calibration-log "2026-07-06 — G-04 round 2".
 E7_STALENESS_ADJUDICATED: dict[tuple[str, str], str] = {
     (
-        "2026-07-03-ercot32-ordc-total-rtolcap",
-        "2026-07-05-ercot40-rtolcap-forward",
+        "2026-07-06-ercot34-stage4-overlay-off",
+        "2026-07-06-ercot37-g22-surface-on",
     ): "2026-07-06",
     (
         "2026-07-03-caiso-51-firm-base",
-        "2026-07-05-caiso-statmode-d7-r2",
+        "2026-07-06-caiso51-statmode-v2",
     ): "2026-07-06",
     (
         "2026-07-05-pjm-77-ct-relfloor",
-        "2026-07-05-pjm-78-demand-regate",
+        "2026-07-06-pjm-82-commitment-posture",
     ): "2026-07-06",
     (
-        "2026-07-05-neiso-48-ct-floor",
-        "2026-07-05-neiso-48-head-regate",
+        "2026-07-06-neiso-49-stgas-netload",
+        "2026-07-06-neiso-wfuelsec-ab-v2off",
+    ): "2026-07-06",
+    (
+        "2026-07-06-miso-42-coal-econ-ablation",
+        "2026-07-06-miso-43-commitment-posture",
     ): "2026-07-06",
 }
 
