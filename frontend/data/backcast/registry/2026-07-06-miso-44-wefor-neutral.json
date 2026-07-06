@@ -12,5 +12,6 @@
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-07-06-miso-44-wefor-neutral.js",
   "bundle": "results/calibration/MISO/miso_44_wefor_neutral",
+  "ablation_twin": "2026-07-06-miso-44-ablation",
   "market_story": "DOF reduction from miso-42: wefor_multiplier removed (0.7→1.0). The 0.7 haircut had no measured physical basis (audit C-15: scales THERMAL EFOR, not wind); root-cause of the miso-42 ablation-twin advantage was the twin's wefor neutralization, not its floor removal. With physical EFOR restored: CC_REGULAR drops from +44/+43 to +20/+19 TWh (2023/24), CT_PEAKER recovers to PASS, C3a price-mean 2024 recovers to PASS, C3b price-shape 2025 recovers to PASS. Coal 2025 over-run worsens (+8.8%→+14.7%) as reduced CC availability shifts marginal load to coal — a known commitment-posture artifact. All reliability floor limbs retained (MISO-Indiana CT_PEAKER evening [15,21), MISO-Indiana COAL tmax, MISO-Plains ST_GAS tmax, MISO-South COAL tmax); forced energy <0.4% of any class (D-2 PASS). Legitimacy diagnostics Overall PASS."
 }
