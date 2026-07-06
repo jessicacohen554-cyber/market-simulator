@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-07-06 (Lane L-5 — doc/code drift sync, gap register G-53–G-58/G-08/G-56)
+
+Prose/comment-only sweep, no behavior changes. Executes `docs/gap-register-2026-07.md`
+§5 Wave 1 lane L-5 (`/sync-docs`-style pass after L-2/L-3/L-4 merged):
+
+- **G-53** capacity-evolution step numbering: renumbered `model-methodology-spec.md` §5.1
+  and CLAUDE.md's "Capacity Evolution" line to match `capacity.py`'s actual `evolve_fleet`
+  order (0 confirmed exits → 1 announced → 2 economic retirement → 3 known additions →
+  4 CCS retrofit → 5 economic new entry → 6 reserve-margin backstop → 7 dispatch/RPS) —
+  the spec previously had CCS retrofit ahead of known additions, the reverse of the code.
+  Also added the previously-undocumented reserve-margin adequacy backstop step to the spec.
+- **G-54** CLAUDE.md's architecture block now lists `pipeline/`, `ensemble.py`, `matrix.py`,
+  `uncertainty.py`, `structural_prior.py`, `model/ancillary.py`, `policy/cap_and_trade.py`,
+  `results/{rcpf,scarcity,evolution_ledger}.py`, the missing `config/` modules, and the
+  missing `data/` modules.
+- **G-55** `config/paths.py` docstring: `CLEAN_DIR`/`clean_path` were documented as a
+  "future" layout nothing reads yet; the clean seam is live (16+ data modules read through
+  it) — docstring corrected.
+- **G-57** stale comments: `capacity.py` (three spots) said `confirmed_exits_enabled`
+  defaults off; it's default-on since the 2026-07-05 flip. `scenarios.py:388`'s
+  `use_plant_emission_rates_v2` comment said the legacy path holds "until the 7-year
+  history lands" — the 7-year history landed 2026-07-05 (plan §9.5); comment now reflects
+  the gate decision (conditioning stays closed, trailing window = 2 years) instead of a
+  landing that already happened.
+- **G-08** added MISO to CLAUDE.md rule 16's explicit all-years ISO list
+  (`multi-iso-triage-2026-07.md` §2: MISO already satisfies the rule, doc-only oversight).
+- **G-56** plan-doc status sections refreshed to match the tree: scalar-remediation plan §0
+  (pointer to the 2026-07-05 W0 closure doc; `CAISO_BIDIR_EXPORT_CAP_MW` 3500→4361 MW),
+  probability-bounds plan header (PB-0..PB-4 landed, PB-5 production run still pending),
+  NEISO winter-fuel plan header (Component A landed default-off, probe found the cap inert;
+  Component B unbuilt), forecast-validation-program (`ci.yml`'s pytest + `quarantine-gates`
+  jobs landed; golden-scenario band fixture seeded at `tests/golden/`, though the band
+  comparison itself stays `@pytest.mark.slow`), capacity-economics-plan (Stage-3
+  backstop-off diagnostic addendum — backstop off does not unblock the FOM axis either).
+  Holdout-policy-memo CI-wiring and orchestrator-unification-plan's stage table were left
+  alone: both were already current at review time (L-2 landed the former; the latter's
+  Stage 2/3 rows landed independently via #1455 during this session).
+
+No files under `results/calibration/**`, `frontend/data/backcast/**`, or
+`scripts/audit_keepers.py` were touched (lane L-1 owns them).
+
 ## 2026-07-06 (Orchestrator unification Stages 2-3 — shared dispatch-kwargs assembly and P0/P1 solve core)
 
 Executes Stages 2 and 3 of `docs/handoffs/orchestrator-unification-plan-2026-07.md`

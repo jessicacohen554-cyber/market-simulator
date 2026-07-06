@@ -9,7 +9,8 @@ simulation years:
   tranche) at the instrument date, any fuel, bypassing the reliability floor.
   Read from the confirmed-retirements registry
   (:func:`market_sim.data.confirmed_retirements.load_confirmed_exits`); GATED on
-  ``confirmed_exits_enabled`` (default off) and forecast-mode only. This is the
+  ``confirmed_exits_enabled`` (default on, flipped 2026-07-05) and forecast-mode
+  only. This is the
   ONLY exogenous fossil exit channel — an announced fossil date does not force
   an exit (below).
 * **Announced retirements** (:func:`apply_announced_retirements`) -- units with a
@@ -2228,7 +2229,7 @@ def evolve_fleet(
     The capacity mechanisms are applied in a fixed order:
 
     0. confirmed exits (exogenous, any fuel, instrument-bound; gated on
-       ``config.confirmed_exits_enabled``, default off),
+       ``config.confirmed_exits_enabled``, default on),
     1. announced retirements (non-fossil within the data horizon only; announced
        fossil dates are a default no-op — the exogenous fossil channel is step 0),
     2. economic retirements,
@@ -2384,9 +2385,9 @@ def evolve_fleet(
     _pre_known = {g.unit_id: g for g in fleet} if _rec else None
 
     # 0. Confirmed exits (exogenous, instrument-bound, any fuel). GATED on
-    #    confirmed_exits_enabled (default off): when off, no-op and the
-    #    announced/economic channels are byte-identical to before this channel
-    #    existed. Runs first so the post-exit fleet is what the floor and the
+    #    confirmed_exits_enabled (default on, flipped 2026-07-05): when off, no-op
+    #    and the announced/economic channels are byte-identical to before this
+    #    channel existed. Runs first so the post-exit fleet is what the floor and the
     #    new-entry screen see (scarcity from a confirmed exit feeds next year's
     #    entry signal). Bypasses the reliability floor by construction.
     #    NOTE: matching is by plant_code. A unit that survives the end-of-year
