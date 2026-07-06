@@ -42,6 +42,109 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-06 — CAISO — L-10 continuation: G-15 D-8 closure A/B EXECUTED and FAILED (caiso 57), #1346 re-gate candidate solved (caiso 58): drag stays, keeper decision for owner
+
+**Goal (L-10 continuation; D-8 closure plan §4, issue #1346, gap register G-11/G-15).**
+(1) Execute the D-8 closure A/B as a REGISTERED full-span solve at HEAD (the 2026-07-04
+`caiso-ramplcr-probe-rejected` ran the same A/B on 07-04 code but never reached the
+dashboard — git-relay 413 — and predates the InterchangeSpec/scalar merges). (2) Resolve
+#1346 per the bisect verdict — re-gate, not revert: solve the keeper config at HEAD with
+the mandated `use_plant_emission_rates_v2=True` rider (L-8 memo §9.6), caiso-55 as its
+v2-off twin. (3) WECC import volume: the CEC/CARB specified-import intake has NOT landed
+(no data, no commits); data-ask refreshed on #1373 (DMM 2025 annual report ~Aug 2026;
+OASIS-gated path-level series need `fetch-caiso-oasis.yml`); the lane proceeds on the
+Lever-B DMM/MIC grounding — no fitted import cap anywhere (the 7,500 MW scalar stays
+fallback-only, out of the binding path).
+
+**Evening-merit lever inventory (why no new offer/import lever was built).** The
+caiso-48/51-thread levers are already on main: import tranche prices = the keeper's
+per-hub measured-hub pricing (all-spot was tried and REJECTED as caiso-49; firm-base won
+on structure); CC offer ordering = Lever A committed 1.00× SRMC floor (`1ada584`) +
+Lever B DMM firm volumes (`3ac6f19`); P1 already amortizes startup into bid cost (CC's
+markup is small because its P0 runs are long — real, not a gap). The one un-built
+mechanism in the evening-price space is a CAISO reserve co-optimization —
+`reserve_config` has designs for the other five ISOs and `apply_reserve_coopt` hard-
+excludes CAISO. Assessed and DEFERRED with published anchors collected (tariff
+§27.1.2.3.5 scarcity demand curves — spin 10% / non-spin 50-60-70% of the energy bid cap
+at 70/210 MW shortage tiers; §8.2.3.2 → BAL-002-WECC-3 R1 ≈6% of load, DMM practice
+~6.3%, ~half spin): a zone-aggregate ungated family is INERT on CAISO's ~10 GW idle CC
+headroom (the MISO pergen lesson), a correct build needs pergen/ramp10 + online-quality
+scoping (a full lane), and its price effect lands in exactly the hours the model already
+over-tails. Filed as issue #1492 (C3c/AS-award thread) — built when it can be built
+right, never as a half-mechanism (rule 1).
+
+**caiso 57 — D-8 closure A/B arm (PROBE `2026-07-06-caiso-57-ramp-lcr`, bundle
+`results/calibration/caiso57_ramplcr_dragoff`).** Byte-faithful `replay_keeper.py` of the
+caiso-51 keeper at HEAD; deltas exactly the closure plan's arm: `ct_netload_drag=false`,
+`ramp_limits=true`, `local_capacity_constraints=true`; v2 OFF as the keeper ran.
+Environment matched to caiso-55/56 (capdel partition absent → MIC no-op inert;
+shared-input hashes byte-identical: `eia930-3697b3`, `eia923-b95fbb`, `campd-cceb61`).
+Decision rule scored on the P2 pass (the chain's basis); P1 in parentheses:
+
+| year | arm-Y eve CT MW | drag arm (recon) | CAMPD actual | arm-Y TWh | drag TWh (caiso-55) | actual |
+|---|---|---|---|---|---|---|
+| 2023 | 309 (552) | ~690–860 | 850 | 1.73 | 2.04 | 3.05 |
+| 2024 | 146 (236) | ~580–600 | 770 | 0.73 | 1.70 | 3.30 |
+| 2025 | 106 (127) | ~425–445 | 303 | 0.68 | 1.30 | 1.65 |
+
+**VERDICT: FAIL on criterion (i) in all three years** (evening CT below the drag arm's
+AND farther from CAMPD actual, 2025 included) — while (ii)/(iii) hold: D-4 off-window 0%;
+D-2 CT forced share **0.4/1.0/0.03% PASS** (sole mechanism `ra_mustoffer_bridge`; the LCR
+row attributes no CT forcing — its dual is uplift-like by design, never in the zonal
+LMP); 2023 CT D-1 r 0.803/CV-ratio 0.883 best-in-chain (2024/25 r 0.740/0.613 <0.8 as in
+every drag-off arm — small noisy fleet). **Per the §4 fail branch: `ct_netload_drag`
+STAYS the CAISO default (most structurally faithful available mechanism, rule 1), G-15
+stays OPEN, the D-8 ±15% LOYO gate (calibration-complete item 4) stays red.** Nothing
+re-tuned.
+
+**The load-bearing new finding — the suppressor MOVED to P2.** At HEAD the mechanisms are
+not P1-inert as the 07-04 probe concluded: P1 evening CT reaches 552/236/127 MW and class
+energy +0.93/+0.18/+0.29 TWh vs caiso-56 (the 2023 LA-Basin 7,529 MW requirement + ~480 h
+of endogenous evening scarcity clear real CT on merit). The P2 UC decommit then strips
+those runs (552→309, 236→146, 127→106): the commitment hurdle sees only energy margin —
+no credit for the LCR row's shadow value, i.e. no bid-cost-recovery/uplift analogue,
+which is exactly how CAISO pays locally-committed units. **Follow-up build for the
+thread: credit the LCR dual in the P2 commitment margin (the existing AS-aware `as_value`
+pattern in `model/commitment.py`) — not a floor, never a drag re-tune (rules 1/19).**
+
+**C3a decomposition (honest; remainder attributed, not absorbed).** Mean SP15 LMP is
+unchanged across the whole CT complex: caiso-57 69.2/46.5/48.7 vs caiso-55 (drag ON)
+69.2/46.5/48.9 — neither the drag, nor its ablation, nor ramp+LCR moves the annual mean
+(caiso-56 already showed C3a +21.4/+36.3/+43.7 ≈ drag-ON). The +20-44% body overprice is
+owned by the open midday/shoulder RUC-long gap (caiso-51 next-lever 2) and the seam/gas
+threads (caiso-54: the daily-gas fix was real but marginal ~3%); the tail is
+over-predicted in 2023 (~481 h >$200 vs 21, both arms) and under-predicted in 2024/25
+(0 h vs 35/8) — the latter is the missing scarcity/AS mechanism (#1492). No admissible
+lever this session moves C3a; it is left attributed.
+
+**caiso 58 — #1346 re-gate candidate (`2026-07-06-caiso-58-v2-regate`, bundle
+`results/calibration/caiso58_v2_regate`).** Keeper config replayed at HEAD with the
+single delta `use_plant_emission_rates_v2=true` (drag ON per the D-8 fail branch;
+caiso-55 is the v2-off twin). v2 attribution vs caiso-55: CT 2.05/1.70/1.36 TWh (was
+2.04/1.70/1.30), CC −0.4/−0.4/−0.1 TWh, SP15 mean −0.5/−0.8/−0.5 $/MWh, 2023 tail 489 vs
+483 h — the small measured-rate re-ranking §9.6 predicted, confirming v2 is live and
+dispatch-affecting under CARB pricing. D-2 CT forced share 59.3/65.8/65.4% (honest
+rule-20 FAIL; sole mechanism `ct_netload_drag`, D-4 off-window 0%). This is what main
+actually produces for the keeper config; the committed caiso-51 dashboard numbers
+(CT 3.47/3.38/2.84, C8 27-33%) remain pre-scrub artifacts main cannot reproduce (#1346
+diagnosis).
+
+**Keeper recommendation (owner decision; `keepers.json` untouched).** No rule-20-clean
+candidate exists: caiso-57 passes the forced-energy budget but fails the D-8 level
+criterion (missing the commitment-economics structure above); caiso-58/caiso-55 carry the
+honest C8 59-71% FAIL. Lane recommendation: keeper stays `caiso-51` until the P2
+LCR-dual-credit build runs (it is the first mechanism with a credible path to BOTH
+rule-20 PASS and the drag's level), with caiso-58 registered as the reproducible-at-HEAD
+reference the owner may promote on the pjm-77/neiso-48 honest-diagnostics precedent if
+dashboard-reproducibility outweighs the budget optics.
+
+Rules compliance: solve years 2023-2025 only (rule 22); full-span single bundles (rule
+16); years sequential within runs and the two heavy solves run sequentially (rule 12 +
+the 07-04 concurrent-arm OOM precedent); both runs registered whatever the result (rule
+15); no coefficient touched, no fitted parameter added (rules 13/21/24); retention pruned
+to top-15 (dropped 2026-07-01-caiso-47-capdel-arm, 2026-07-02-caiso-48-solar-decommit
+sidecars+payloads; bundles kept); `audit_keepers.py --check` green pre/post.
+
 ### 2026-07-06 — NYISO — KEEPER PROMOTED: `2026-07-06-nyiso-53-li-tsl` replaces `2026-07-03-nyiso-41-hub-prices` (owner decision, L-11)
 
 **Owner decision 2026-07-06: the L-11 recommendation is accepted** (superseding
