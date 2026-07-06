@@ -115,7 +115,12 @@ D1_GATED_CLASSES: tuple[str, ...] = ("CT_PEAKER", "ST_GAS")
 
 # D-2: forced-share gates (audit §7 D-2 / §8 rule 19).
 D2_PEAKER_CLASSES: tuple[str, ...] = ("CT_PEAKER",)
-D2_PEAKER_MAX_SHARE: float = 0.10
+# Raised 0.10 -> 0.15 by owner amendment 2026-07-06 (CLAUDE.md rule 20 as
+# amended; rubric v2.1). The calibration verdict (C8) gates each row's
+# MEASURED forced_share against the rubric's own caps, so artifacts written
+# under the old value re-score correctly without regeneration; this constant
+# keeps future artifacts' embedded verdicts consistent with the rubric.
+D2_PEAKER_MAX_SHARE: float = 0.15
 D2_MERCHANT_MAX_SHARE: float = 0.30
 # Materiality guard (owner directive, 2026-07-06): a merchant class is
 # force-gated only when its own generation exceeds this share of total system
