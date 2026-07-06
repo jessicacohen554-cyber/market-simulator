@@ -172,6 +172,48 @@ def test_parse_report_five_minute_interval_ending():
     assert (parsed["ts"].iloc[12:] == pd.Timestamp("2024-06-01 01:00")).all()
 
 
+def test_parse_report_2025_schema_prefers_system_wide_hsl_over_cop():
+    """The 2025 NP6 rename (SYSTEM_WIDE_GEN/SYSTEM_WIDE_HSL replacing
+    ACTUAL_SYSTEM_WIDE/COP_HSL_SYSTEM_WIDE) must still resolve the actual
+    HSL, not fall back to the legacy COP HSL column that happens to sort
+    earlier."""
+    dates = pd.date_range("2025-06-01", periods=24, freq="h")
+    df = pd.DataFrame(
+        {
+            "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
+            "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
+            "SYSTEM_WIDE_GEN": 5000.0,
+            "COP_HSL_SYSTEM_WIDE": 9999.0,  # legacy column; must NOT be picked
+            "STPPF_SYSTEM_WIDE": 5200.0,
+            "SYSTEM_WIDE_HSL": 5500.0,
+        }
+    )
+    parsed = hsl_script._parse_report("solar.csv", df)
+    assert (parsed["gen_mw"] == 5000.0).all()
+    assert (parsed["hsl_mw"] == 5500.0).all()
+
+
+def test_read_csvs_recurses_nested_zips(tmp_path):
+    """ERCOT's real NP6 download is a zip of per-posting zips, each holding
+    one CSV; the reader must recurse to any depth to find them."""
+    import zipfile
+
+    inner_csv = tmp_path / "inner.csv"
+    inner_csv.write_text("a,b\n1,2\n")
+    inner_zip = tmp_path / "posting.zip"
+    with zipfile.ZipFile(inner_zip, "w") as zf:
+        zf.write(inner_csv, arcname="posting/data.csv")
+    outer_zip = tmp_path / "month.zip"
+    with zipfile.ZipFile(outer_zip, "w") as zf:
+        zf.write(inner_zip, arcname="posting.zip")
+
+    results = hsl_script._read_csvs(outer_zip)
+    assert len(results) == 1
+    name, frame = results[0]
+    assert "posting.zip" in name and "data.csv" in name
+    assert frame.to_dict("records") == [{"a": 1, "b": 2}]
+
+
 def test_fuel_identification():
     """Fuel resolves from filename first, then column signature."""
     assert hsl_script._fuel_of("ercot_wind_2024.zip", []) == "wind"
@@ -207,6 +249,42 @@ def test_to_model_clock_drops_leap_day_and_fills_dst_gap():
 
 def test_to_model_clock_rejects_incomplete_upload():
     """A series missing more than a day of hours is rejected loudly."""
+    ts = pd.date_range("2024-01-01", periods=4000, freq="h")
+    rows = pd.DataFrame({"ts": ts, "gen_mw": 1.0, "hsl_mw": 2.0})
+    with pytest.raises(ValueError, match="incomplete"):
+        hsl_script._to_model_clock(rows, 2024)
+
+
+def test_to_model_clock_excludes_cited_known_bad_window():
+    """The cited 2024-08-20..23 ERCOT telemetry defect is nulled+interpolated.
+
+    Even though it carries valid-looking values, the window is a cited
+    known-bad ERCOT source defect (``_KNOWN_BAD_NP6_WINDOWS``): it must be
+    excluded and interpolated, not ingested as measured, and doing so must
+    not trip the >24h incomplete-upload guard (the general guard stays
+    exactly as strict for anything outside the cited window).
+    """
+    ts = pd.date_range("2024-01-01", "2024-12-31 23:00", freq="h")
+    assert len(ts) == 8784  # leap year
+    rows = pd.DataFrame({"ts": ts, "gen_mw": 100.0, "hsl_mw": 150.0})
+    # A physically-impossible spike, identical to the cited ERCOT defect.
+    bad = (ts >= pd.Timestamp("2024-08-20")) & (ts < pd.Timestamp("2024-08-24"))
+    rows.loc[bad, "gen_mw"] = 310_736.69
+    rows.loc[bad, "hsl_mw"] = 302_119.3
+
+    out = hsl_script._to_model_clock(rows, 2024)
+    assert len(out) == HOURS_PER_YEAR
+    assert not out["gen_mw"].isna().any()
+    # The spike is gone; interpolation restores the surrounding level.
+    assert out["gen_mw"].max() < 200.0
+    np.testing.assert_allclose(out["gen_mw"], 100.0)
+    np.testing.assert_allclose(out["hsl_mw"], 150.0)
+
+
+def test_to_model_clock_known_bad_window_does_not_mask_other_gaps():
+    """A genuinely incomplete upload still raises even in a year with a
+    cited known-bad window — the exception is narrow, not a blanket cap
+    increase."""
     ts = pd.date_range("2024-01-01", periods=4000, freq="h")
     rows = pd.DataFrame({"ts": ts, "gen_mw": 1.0, "hsl_mw": 2.0})
     with pytest.raises(ValueError, match="incomplete"):
