@@ -47,7 +47,7 @@ class PortfolioConfig:
     like 2030). ``None`` (default) keeps the prior implicit behavior:
     ``profiles.build_cf_matrix`` is called with ``year`` and missing files
     warn-and-fall-back to synthetic shapes. When set, the profile file for
-    that exact year is REQUIRED — a missing file is a hard
+    that exact year is REQUIRED -- a missing file is a hard
     ``FileNotFoundError``, never a silent synthetic substitution, so a real
     run can't accidentally price a portfolio against the wrong (or absent)
     shape data (reproducibility spirit of ADR 0011)."""
@@ -94,8 +94,8 @@ class PortfolioConfig:
     """Delivered natural-gas price override ($/MMBtu) for fuel-burning resources
     (ADR 0012). Resolution precedence: a value > 0 here wins; else the per-ISO
     delivered price from ``data/fuel/gas_prices.csv`` (Henry Hub AEO2025
-    Reference ~2030 + the market sim's per-ISO basis differential); else — if a
-    fuel-burning resource is active — resource loading raises (a CCS resource
+    Reference ~2030 + the market sim's per-ISO basis differential); else -- if a
+    fuel-burning resource is active -- resource loading raises (a CCS resource
     must never dispatch at zero fuel cost). 0.0 (default) = use the table."""
     ccs_45q_per_ton: float = 85.0
     """IRA §45Q carbon-sequestration credit ($/tCO₂ captured and geologically
@@ -103,11 +103,11 @@ class PortfolioConfig:
     ``capture_rate × pre-capture intensity × ccs_45q_per_ton`` (ADR 0012).
     Default 85.0 = 26 U.S.C. §45Q as amended by the IRA 2022 for saline
     geologic storage (cross-checked vs market_sim ``policy/ira.py``
-    ``CCUS_45Q_CREDIT_PER_TON = 85.0``). Set 0 to disable the credit. Flat —
+    ``CCUS_45Q_CREDIT_PER_TON = 85.0``). Set 0 to disable the credit. Flat --
     45Q vintage/duration limits deferred per ADR 0012."""
     additionality_only: bool = False
     """If True, only *additional* (newly-built) clean supply may count toward
-    hourly matching — existing PPA resources still dispatch but their matched
+    hourly matching -- existing PPA resources still dispatch but their matched
     energy is excluded from the CFE accounting (ADR 0008). Parsed and validated
     now; the matching-accounting behavior it gates lands in PP-02b, so this flag
     currently has no effect on the LP beyond being carried through the config."""
@@ -118,7 +118,7 @@ class PortfolioConfig:
     1.0 = full wholesale resale; 0.0 = curtail for free. Default 1.0 per ADR 0005
     as amended & ratified 2026-07-02: surplus is credited at the full hourly
     ISO-average LMP (the provisional 0.75 basis/cannibalization haircut was
-    removed — the hourly LMP already reflects depressed prices in surplus hours,
+    removed -- the hourly LMP already reflects depressed prices in surplus hours,
     so a further scalar haircut double-counts the effect)."""
     storage_epsilon: float = 0.001
     """Throughput tiebreaker ($/MWh) on charge+discharge to avoid degeneracy
@@ -127,11 +127,11 @@ class PortfolioConfig:
     """How storage may interact with the grid (ADR 0017/0018):
 
     * ``"arbitrage"`` (default, the historical behavior): storage charges from
-      the aggregate node — including grid purchases — and its discharge may be
+      the aggregate node -- including grid purchases -- and its discharge may be
       exported as ``excess`` at LMP, so the optimizer can operate storage as a
       merchant price-arbitrage asset in addition to a matching device.
     * ``"excess_clean_only"``: per hour, ``Σ_s chg[s,t] + excess[t] ≤
-      Σ_r gen[r,t]`` — storage charges only from the portfolio's contracted
+      Σ_r gen[r,t]`` -- storage charges only from the portfolio's contracted
       clean generation in excess of what is exported, grid purchases can never
       be stored or re-sold, and discharge serves load only. Storage becomes a
       pure clean-energy-shifting device consistent with granular-certificate /
@@ -141,21 +141,21 @@ class PortfolioConfig:
       nonconvex; every result reports ``divert_backfill_mwh`` to make it visible.
     * ``"excess_headroom_only"`` (ADR 0018): the ``excess_clean_only`` rows PLUS
       an iterative cut loop (:func:`lce_portfolio.lp.solve_with_charge_policy`)
-      that eliminates the divert-and-backfill residual — no hour charges storage
+      that eliminates the divert-and-backfill residual -- no hour charges storage
       while the grid buys power in that same hour. It is a *conservative*
       restriction: it can under-use storage relative to the true optimum but
       never overstates matching. Each iteration stays a pure LP."""
     build_tiebreak_epsilon: float = 1e-6
     """Mode A (premium_cap) only (ADR 0019): flat per-MW tiebreak added to
     ``build_mw`` (and split-storage ``build_energy``) in the objective. Mode A's
-    objective is a pure ``min Σ grid_buy`` with zero weight on capacity — once
+    objective is a pure ``min Σ grid_buy`` with zero weight on capacity -- once
     matching saturates (``grid_buy`` floors at 0) *before* a resource's cap
     binds, every build level between "just enough" and the cap ties on the
     objective and the premium constraint's slack absorbs the rest, so the
     solver may return an arbitrary point on that face, including a near-cap
     corner (the CAISO onshore-wind degenerate-saturation finding, ADR 0019
     context). This epsilon breaks the tie toward the smallest capacity that
-    still attains the primary optimum — it never changes a build level the LP
+    still attains the primary optimum -- it never changes a build level the LP
     otherwise pins for a real matching/premium reason, because the flat weight
     (default 1e-6) stays orders of magnitude below any real objective/premium
     movement (ADR 0019 sizing rationale). Reported net_cost/premium are
@@ -174,7 +174,7 @@ class PortfolioConfig:
     lmp_file: str | None = None
     """Path to the BAU LMP file (ADR 0011): the calibrated market-sim
     forecast-year export for the modeled year, columns ``(hour, iso, lmp)``.
-    No escalation is applied — the vintage in this file is used as-is."""
+    No escalation is applied -- the vintage in this file is used as-is."""
     emissions_file: str | None = None
     """Path to the hourly grid CO₂-intensity file (ADR 0013): the market-sim
     dispatch export of the **fossil-only average** emission rate for the modeled
@@ -182,7 +182,7 @@ class PortfolioConfig:
     by ``scripts/build_fossil_avg_co2_rate.py``. Residual carbon is attributed
     to unmatched grid purchases hour-by-hour:
     ``residual_co2_tons = Σ_t grid_buy[t] × rate[t]`` (attributional / GHG
-    Protocol location-based accounting — an *average* factor, never a
+    Protocol location-based accounting -- an *average* factor, never a
     marginal/non-baseload one; ADR 0013 supersedes ADR 0007's marginal-rate
     attribution). ``None`` disables residual-carbon reporting (the rate is
     treated as an all-zero vector), e.g. for the ``SAMPLE`` demo ISO."""
@@ -237,7 +237,7 @@ class PortfolioConfig:
             raise ValueError("ccs_45q_per_ton must be non-negative (0 = disabled)")
         # bool is an int subclass, so `discount_rate: true` would silently
         # mean r = 1.0 (100% real WACC); reject it with the range check
-        # (audit findings DL-4/CL-11 — r <= -1 crashed CRF with a raw
+        # (audit findings DL-4/CL-11 -- r <= -1 crashed CRF with a raw
         # ZeroDivisionError, r in (-1, 0) silently zeroed annualized capex).
         if isinstance(self.discount_rate, bool) or not (
             0.0 <= self.discount_rate < 1.0
@@ -256,7 +256,7 @@ class PortfolioConfig:
         """Build a config from a JSON or YAML file (reproducible runs).
 
         Unknown keys raise; every value is type-checked against its field
-        (audit finding CL-5 — wrong-typed values used to surface as raw
+        (audit finding CL-5 -- wrong-typed values used to surface as raw
         ``TypeError`` tracebacks or, worse, be silently misread: the string
         ``"false"`` is truthy, so ``strict_hourly_matching: "false"`` turned
         strict 24/7 matching ON). List-valued fields (``premium_deltas``,
@@ -267,6 +267,11 @@ class PortfolioConfig:
         import json
 
         text = Path(path).read_text()
+        if not text.strip():
+            # An empty file is empty regardless of parser -- check before the
+            # optional-pyyaml import so a bare/empty .yaml file still raises
+            # the clean "is empty" error on a JSON-only (no pyyaml) install.
+            raise ValueError(f"config file {path} is empty")
         if str(path).endswith((".yaml", ".yml")):
             try:
                 import yaml

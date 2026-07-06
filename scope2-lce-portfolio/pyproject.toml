@@ -16,7 +16,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+# pyyaml is a runtime-optional dependency (PortfolioConfig.from_file supports
+# YAML configs only when it's installed, JSON always works) but the test
+# suite exercises the YAML parsing path directly, so it's a real test-time
+# dependency here.
+dev = ["pytest", "pyyaml"]
 
 [project.scripts]
 lce-portfolio = "lce_portfolio.cli:main"
