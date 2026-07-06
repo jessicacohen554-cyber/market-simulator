@@ -2,8 +2,12 @@
 
 EIA-930 (Hourly Electric Grid Monitor) extracts, three families:
 
-- `EIA930_BALANCE_<year>_{Jan_Jun,Jul_Dec}.parquet` (2022–2026) — the EIA
-  bulk six-month balance archive.
+- `EIA930_BALANCE_<year>_{Jan_Jun,Jul_Dec}.parquet` (2019–2026) — the EIA
+  bulk six-month balance archive. 2019-2021 were fetched 2026-07-06
+  specifically to backfill `data/raw/eia-930-hourly/{CISO,PJM,MISO} hourly.parquet`
+  (see `docs/weather-pool-coverage-2026-07.md`); 2019-2021 use the legacy
+  44-column taxonomy (no separate geothermal/battery/pumped-storage columns),
+  vs. the 65-column taxonomy 2024H2+ files carry.
 - `<BA>_fueltype.parquet` / `<BA>_region.parquet` (`ERCO`, `PJM` for 2022 and
   2026 — the rule-22 holdout-boundary years) — per-BA long-form fuel-type /
   region extracts; `NYIS_fueltype.parquet` / `NYIS_region.parquet` cover the
@@ -29,6 +33,10 @@ EIA-930 (Hourly Electric Grid Monitor) extracts, three families:
   `data/raw/eia-930-hourly/<BA> hourly.parquet` layout.
 - `scripts/build_eia930_hourly_from_raw.py` — offline assembly of the same
   wide schema from these long extracts when `api.eia.gov` is network-blocked.
+- `scripts/extend_eia930_hourly_from_balance.py` — prepends BALANCE-bulk years
+  to an existing `<BA> hourly.parquet` (used for CISO/PJM/MISO's 2019-2021
+  backfill, since `api.eia.gov` is blocked in this sandbox but the BALANCE
+  bulk host isn't); never alters an already-committed row.
 
 **No producing script found** for the `eia_demand_*`/`eia_fossil_mix_*`/
 `eia_generation_profiles*` legacy files — **hand-assembled, refetch
