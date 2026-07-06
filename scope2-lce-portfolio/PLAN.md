@@ -101,13 +101,35 @@ Full math: `docs/01-lp-formulation.md`. Implementation: `src/lce_portfolio/lp.py
   `scripts/build_profiles.py` when the source EIA-930 data updates.
 - `data/bundled/lmp/` — real 2024 backcast BAU LMP exports (ADR 0011 contract),
   each with a `.provenance.json` sidecar naming the source calibration keeper.
-  **Committed: ERCOT, CAISO, PJM. Open gap: MISO, NYISO, NEISO** (bridge
-  re-solves did not land in HP-02 — staged as `docs/handoff/HP-02b`).
-  Backcast-validation carve-out only (ADR 0015); never dashboard-registered.
+  **Committed: all six ISOs** (HP-02, PR #1547: ERCOT/CAISO/PJM; HP-02b,
+  PR #1554 + this session: MISO/NYISO/NEISO). Backcast-validation carve-out
+  only (ADR 0015); each export is a 2024-only bridge re-solve of that ISO's
+  *then-current* calibration keeper via `run_calibration_full.solve_and_persist`
+  (never registered on the dashboard — rule #16 forbids single-year keepers).
+  Bundle inventory (file sizes, source keeper id, mean/min/max $/MWh — see each
+  `.provenance.json` for the full record):
+
+  | ISO | LMP CSV | mean | min | max | source keeper id |
+  |---|---:|---:|---:|---:|---|
+  | ERCOT | 165,372 B | $25.96 | $8.78 | $2,244.80 | `2026-07-06-ercot34-stage4-overlay-off` |
+  | CAISO | 165,338 B | $46.83 | $-20.00 | $77.31 | `2026-07-03-caiso-51-firm-base` |
+  | PJM | 147,845 B | $26.41 | $-21.24 | $54.21 | `2026-07-05-pjm-77-ct-relfloor` |
+  | MISO | 156,583 B | $26.22 | $16.34 | $48.33 | `2026-07-06-miso-42-coal-econ-ablation` |
+  | NYISO | 165,438 B | $30.89 | $-26.00 | $182.91 | `2026-07-06-nyiso-53-li-tsl` |
+  | NEISO | 165,307 B | $36.11 | $8.39 | $198.91 | `2026-07-06-neiso-49-stgas-netload` |
+
+  MISO's keeper moved to an ablation-labelled bundle
+  (`miso_42_coal_econ_srmc-ablation`) mid-session (a concurrent calibration
+  session updated `frontend/data/backcast/keepers.json` while this bridge ran);
+  the provenance sidecar records the bundle actually solved, which is what
+  matters for reproducibility — re-run `scripts/build_profiles.py`-style
+  bridging against the *current* keeper if this drifts further and the export
+  should track it.
 - `data/emissions/` — per-ISO 2024 hourly fossil-avg CO₂-rate Parquets
-  (ADR 0013), **committed** alongside their LMP bundles. Same ERCOT/CAISO/PJM
-  vs MISO/NYISO/NEISO gap as `data/bundled/lmp/` (HP-02b). The tool degrades
-  gracefully where a rate file is absent (emission file is optional).
+  (ADR 0013), **committed for all six ISOs** alongside their LMP bundles
+  (same HP-02/HP-02b provenance as `data/bundled/lmp/` above). The tool
+  degrades gracefully where a rate file is absent (emission file is optional) —
+  exercised by the SAMPLE ISO, which carries none.
 - `data/templates/` — committed draft input templates + schema README;
   full-8760 fillable skeletons via `scripts/make_input_templates.py`
   (written to `data/templates/skeletons/`, gitignored).
@@ -214,9 +236,8 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   no-cost-tiebreak degenerate-solution limitation (saturates at 100%
   matching from $1/MWh by building onshore wind near its 20 GW resource
   cap) — flagged, not fixed at the time, see
-  `docs/validation-2026-07-05-5iso-backcast-extension.md` for the full
-  writeup, including the container-memory (OOM at MISO/PJM's ~16 GB solve
-  peak) workaround.
+  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
+  passing (measured 2026-07-05).
 - [x] Fix the CAISO Mode A degenerate-solution limitation (2026-07-05):
   `config.build_tiebreak_epsilon` (flat per-MW tiebreak on `build_mw`/
   `build_energy`, Mode A only, default 1e-6) breaks the tie toward the
