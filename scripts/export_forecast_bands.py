@@ -163,6 +163,12 @@ def read_ensemble(ensemble_dir) -> dict:
         "n_draws": n_draws,
         "dispatch_conditional": is_dispatch_conditional(meta),
         "synthetic": bool(meta.get("synthetic", False)),
+        # HONEST-LIMITATIONS block (PB-5 / plan §3.4, §7): a list of
+        # {id, title, detail} caveats the ensemble run declares in
+        # ``ensemble_meta.json``. Surfaced verbatim on the page (never
+        # softened); absent (empty) for the synthetic fixture and any run that
+        # declares none.
+        "honest_limitations": meta.get("honest_limitations", []),
         "label_text": meta.get("label", ""),
         "quantile_estimator": meta.get("quantile_estimator", ""),
         "bands": bands,
@@ -254,6 +260,7 @@ def build_payload(
         "iso": ensemble["iso"],
         "synthetic": ensemble["synthetic"],
         "dispatch_conditional": ensemble["dispatch_conditional"],
+        "honest_limitations": ensemble["honest_limitations"],
         "n_draws": ensemble["n_draws"],
         "layers_present": ensemble["layers_present"],
         "metrics": metrics,
