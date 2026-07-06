@@ -103,6 +103,47 @@ _MONTH_OF_HOUR: np.ndarray = pd.date_range(
 # day of missing telemetry means the upload is incomplete and is rejected.
 _MAX_GAP_HOURS = 24
 
+# Cited ERCOT-source data-quality defects: contiguous windows where the
+# published NP6 report's system-wide ACTUAL/HSL columns carry physically
+# impossible values (orders of magnitude above the installed fleet), baked
+# identically into every later repost of the rolling window -- i.e. a
+# defect in ERCOT's own source file, not an artifact of this builder or of
+# this repo's own estimate. Confirmed 2026-07: 2024-08-20..23 system-wide
+# wind AND solar actual+HSL both spike 3-10x above plausible ceilings (e.g.
+# ACTUAL_LZ_WEST wind = 276,466 MW at 2024-08-23 HE1, vs. ERCOT's entire
+# West-zone wind fleet far below that). These hours are excluded (treated
+# as missing telemetry, then interpolated) rather than ingested as
+# measured — an explicit, narrow exception to the general "too many
+# missing hours -> reject" guard below, which stays unweakened for every
+# other window/year/upload.
+_KNOWN_BAD_NP6_WINDOWS: dict[int, list[tuple[str, str]]] = {
+    2024: [("2024-08-20", "2024-08-23")],
+}
+
+
+def _known_bad_mask(index: pd.MultiIndex, year: int) -> np.ndarray:
+    """Return a mask over ``(month, day, hour)`` for cited known-bad ERCOT
+    NP6 telemetry windows in ``year`` (see ``_KNOWN_BAD_NP6_WINDOWS``)."""
+    windows = _KNOWN_BAD_NP6_WINDOWS.get(year, [])
+    if not windows:
+        return np.zeros(len(index), dtype=bool)
+    dates = pd.to_datetime(
+        pd.DataFrame(
+            {
+                "year": year,
+                "month": index.get_level_values("month"),
+                "day": index.get_level_values("day"),
+            }
+        )
+    )
+    mask = np.zeros(len(index), dtype=bool)
+    for start, end in windows:
+        mask |= (dates >= pd.Timestamp(start)).to_numpy() & (
+            dates <= pd.Timestamp(end)
+        ).to_numpy()
+    return mask
+
+
 # EIA-930 (Hourly Grid Monitor) reference totals for the ERCOT balancing
 # authority, 2023, used only as a sanity check on the aggregated GEN series
 # when data/raw/_validation-source/calibration_reference.json is unavailable.
@@ -354,6 +395,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     ) or _pick_column(columns, ("SYSTEM_WIDE",), exclude=("HSL",))
     hsl_col = (
         _pick_column(columns, ("ACTUAL", "SYSTEM", "HSL"))
+        or _pick_column(columns, ("SYSTEM", "HSL"), exclude=("COP",))
         or _pick_column(columns, ("SYSTEM", "HSL"))
         or _pick_column(columns, ("HSL",))
     )
@@ -380,12 +422,15 @@ def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
     Rows are filtered to ``year`` with Feb 29 dropped, then averaged by
     local ``(month, day, hour)`` — which collapses sub-hourly intervals,
     overlapping rolling-window postings, and the repeated DST fall-back
-    hour alike — and reindexed onto the fixed non-leap hourly calendar.
-    Remaining holes (the DST spring-forward hour, scattered telemetry
-    gaps) are linearly interpolated.
+    hour alike — and reindexed onto the fixed non-leap hourly calendar. Any
+    cited known-bad ERCOT source window (``_KNOWN_BAD_NP6_WINDOWS``) is then
+    nulled out. Remaining holes (the DST spring-forward hour, scattered
+    telemetry gaps, and the cited known-bad windows) are linearly
+    interpolated.
 
     Raises:
-        ValueError: when more than ``_MAX_GAP_HOURS`` hours are missing.
+        ValueError: when more than ``_MAX_GAP_HOURS`` hours are missing and
+            unexplained by a cited known-bad window.
     """
     ts = rows["ts"]
     keep = (ts.dt.year == year) & ~((ts.dt.month == 2) & (ts.dt.day == 29))
@@ -401,12 +446,18 @@ def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
         names=["month", "day", "hour"],
     )
     aligned = grouped.reindex(full_index)
-    missing = int(aligned["gen_mw"].isna().sum())
-    if missing > _MAX_GAP_HOURS:
+
+    known_bad = _known_bad_mask(full_index, year)
+    aligned.loc[known_bad, ["gen_mw", "hsl_mw"]] = np.nan
+
+    missing = aligned["gen_mw"].isna().to_numpy()
+    unexplained = int((missing & ~known_bad).sum())
+    if unexplained > _MAX_GAP_HOURS:
         raise ValueError(
-            f"{year}: {missing} of {HOURS_PER_YEAR} hours missing after "
-            f"aggregation (max {_MAX_GAP_HOURS}) — the NP6 upload looks "
-            "incomplete"
+            f"{year}: {unexplained} of {HOURS_PER_YEAR} hours missing after "
+            f"aggregation (max {_MAX_GAP_HOURS}, beyond the "
+            f"{int(known_bad.sum())} hours already excluded by a cited "
+            "known-bad window) — the NP6 upload looks incomplete"
         )
     aligned = aligned.interpolate(limit_direction="both")
     return aligned.reset_index(drop=True)
