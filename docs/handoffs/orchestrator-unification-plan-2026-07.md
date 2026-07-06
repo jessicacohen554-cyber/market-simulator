@@ -849,8 +849,37 @@ Same branch, commit `2f3ba60` on top of Stage 2.
 after = `2f3ba60`)**
 
 <!-- STAGE3_GATE_RESULT -->
-_Pending: recorded here when the stage3-after captures and
-`regression_gate.py` complete (same session)._
+**PASS — exact byte-identity on both canaries (2026-07-06).** Same legs and
+pins as §7.3.4: CAISO `caiso-51-firm-base` + ERCOT
+`ercot32-ordc-total-rtolcap`, 2023-2025, fidelity oracle OK on every capture
+(122/127 recorded flags replayed identically), before = `fa7e628` golden set
+(clean worktree), after = `2f3ba60` (this branch's Stage-3 tip):
+
+- `regression_gate.py --mode byte` (atol=rtol=0):
+  - **[1] Golden bundle diff — PASS.** CAISO: 9 files / 43 numeric columns,
+    every column Δ = 0. ERCOT: 6 files / 31 numeric columns, every column
+    Δ = 0.
+  - **[2] Reshuffle localization — 0.000% every ISO-year** (Σ|hourly Δ| = 0.0
+    GWh; annual totals identical to the §7.3.4 table, Δ +0.0000 GWh each).
+  - **[3] Trivial-case smoke — PASS** (24/24).
+  - **[4] Quarantine + registry — legitimacy PASS**; `audit_keepers` FAIL is
+    the same pre-existing PJM/MISO ablation-twin bookkeeping documented in
+    §7.3.4 (byte-identical finding set at base `455ed9f`). Not a Stage-3
+    regression.
+- Conclusion: **Stage 3 is dispatch-neutral at the byte-identity standard** —
+  the P0/P1 hoist, the warm-start relocation, and the cross-year cache seam
+  moved no solved number. Combined with §7.3.4, the full Stage-2+3 span
+  (`455ed9f` → `2f3ba60`) is transitively byte-identical on both canaries.
+
+Hashes-only capture manifests for all three legs are committed under
+`results/regression-goldens/{stage23-before,stage2-after,stage3-after}/manifest.json`
+(the multi-GB bundles are gitignored per Stage 0). Session note: the remote
+relay rejected every `git push` for ~1 h mid-session (HTTP 413 on any pack
+size, even 2 KB — a transient outage, not the pack-size failure mode CLAUDE.md
+describes); an API-replay fallback pushed 4 of Stage 2's 7 files before the
+outage cleared, and PR #1448 auto-merged that partial state to main (breaking
+only the two new A5 tests there). This branch's follow-up PR supersedes it
+with the gate-verified full content.
 
 ---
 
