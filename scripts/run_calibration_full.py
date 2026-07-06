@@ -1866,6 +1866,7 @@ def solve_and_persist(
     neiso_oil_burn_budget: bool | None = None,
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
+    neiso_winter_fuel_mustrun: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -2113,6 +2114,7 @@ def solve_and_persist(
             neiso_oil_burn_budget=neiso_oil_burn_budget,
             neiso_winter_fuel_inventory=neiso_winter_fuel_inventory,
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl,
+            neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -2424,6 +2426,7 @@ def solve_and_persist(
         "neiso_oil_burn_budget": neiso_oil_burn_budget,
         "neiso_winter_fuel_inventory": neiso_winter_fuel_inventory,
         "neiso_winter_fuel_start_fill_bbl": neiso_winter_fuel_start_fill_bbl,
+        "neiso_winter_fuel_mustrun": neiso_winter_fuel_mustrun,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -2686,6 +2689,10 @@ def solve_and_persist(
     if neiso_winter_fuel_start_fill_bbl is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
+        )
+    if neiso_winter_fuel_mustrun is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
         )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -6101,6 +6108,25 @@ def main() -> None:
         "(CLAUDE.md #13), NOT tuned to the price/volume residual.",
     )
     parser.add_argument(
+        "--neiso-winter-fuel-mustrun",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NEISO winter fuel-security must-run (Component B): posture the "
+        "fuel-secure steam fleet (COAL_BIT + oil-capable ST_GAS) at "
+        "minimum-stable on winter (Nov-Mar) cold days (zone daily TMIN < "
+        "-7 C, the NERC cold-weather onset) under the ISO-NE winter-"
+        "reliability program posture (WRP FERC ER14-2407 / IEP ER19-1428 / "
+        "OFSA). The seasonal-reliability commitment coupled to "
+        "--neiso-winter-fuel-inventory: it supplies the winter commitment the "
+        "energy-only LP lacks so the fuel-secure fleet burns to the program "
+        "level, the dual-fuel oil limb draws the seasonal stock, and the "
+        "Component-A budget can bind (endogenous C3c tail / C5b spread). "
+        "REPLACES the disabled COAL/ST_GAS tmin reliability limbs (rule 19); "
+        "floor depth = commit_frac x min_stable_pct, a physical constant NOT "
+        "tuned to the residual (rule 24). Tags MECH_WINTER_FUELSEC for D-2. "
+        "NEISO-only, backcast-only, default off.",
+    )
+    parser.add_argument(
         "--caiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -6904,6 +6930,7 @@ def main() -> None:
         neiso_oil_burn_budget=args.neiso_oil_burn_budget,
         neiso_winter_fuel_inventory=args.neiso_winter_fuel_inventory,
         neiso_winter_fuel_start_fill_bbl=args.neiso_winter_fuel_start_fill_bbl,
+        neiso_winter_fuel_mustrun=args.neiso_winter_fuel_mustrun,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,

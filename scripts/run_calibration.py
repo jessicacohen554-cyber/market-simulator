@@ -2214,6 +2214,7 @@ def run_year(
     neiso_oil_burn_budget: bool | None = None,
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
+    neiso_winter_fuel_mustrun: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -2540,6 +2541,10 @@ def run_year(
     if neiso_winter_fuel_start_fill_bbl is not None:
         config = config.with_overrides(
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
+        )
+    if neiso_winter_fuel_mustrun is not None:
+        config = config.with_overrides(
+            neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
         )
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
@@ -3709,6 +3714,41 @@ def run_year(
                 iso,
                 year,
                 sum(1 for s in _floor_specs if getattr(s, "enabled", True)),
+            )
+
+    # NEISO winter fuel-security must-run (Component B): posture the fuel-secure
+    # steam fleet (COAL_BIT + oil-capable ST_GAS) at minimum-stable on winter
+    # cold days under the ISO-NE winter-reliability program posture (WRP/IEP/OFSA)
+    # — the seasonal-reliability commitment coupled to the Component-A oil-burn
+    # inventory budget above. Runs AFTER the reliability-floor engine so it
+    # composes cheapest-first via `maximum` and its raised unit-hours carry the
+    # MECH_WINTER_FUELSEC D-2 tag. Replaces the disabled COAL/ST_GAS tmin cold
+    # limbs (rule 19). NEISO-only; default off (byte-identical).
+    if getattr(config, "neiso_winter_fuel_mustrun", False):
+        from market_sim.data.winter_fuel_inventory import apply_winter_fuelsec_mustrun
+
+        if apply_winter_fuelsec_mustrun(
+            fleet_arrays,
+            iso,
+            config.weather_year,
+            zone_names,
+            min_stable_pct=float(
+                getattr(config, "neiso_winter_fuelsec_min_stable_pct", 0.40)
+            ),
+            commit_frac=float(getattr(config, "neiso_winter_fuelsec_commit_frac", 1.0)),
+            tmin_threshold_c=float(
+                getattr(config, "neiso_winter_fuelsec_tmin_c", -7.0)
+            ),
+            hours=config.hours,
+        ):
+            logger.info(
+                "%s %d: winter fuel-security must-run (Component B) applied — "
+                "COAL_BIT/ST_GAS floored at %.2f x min-stable on Nov-Mar cold "
+                "days (TMIN < %.1f C, NERC cold-onset; WRP/IEP/OFSA posture)",
+                iso,
+                year,
+                float(getattr(config, "neiso_winter_fuelsec_commit_frac", 1.0)),
+                float(getattr(config, "neiso_winter_fuelsec_tmin_c", -7.0)),
             )
 
     # NEISO winter gas-availability derate (temperature-dependent forced outage):
