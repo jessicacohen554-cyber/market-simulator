@@ -235,6 +235,18 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   ordering); CAISO's frontier instead surfaced a pre-existing Mode A
   no-cost-tiebreak degenerate-solution limitation (saturates at 100%
   matching from $1/MWh by building onshore wind near its 20 GW resource
-  cap) - flagged, not fixed at the time, see
+  cap) — flagged, not fixed at the time, see
   `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
-  passing (measured 2026-07-05, includes '2026-07-06-ercot34-stage4-overlay-off' inserted 'CAISO' 'PJM' 'MISO' 'NYISO' 'NEISO' 'ERCOT' 'inventory' 'lce_bridge' inventory (ie.
+  passing (measured 2026-07-05).
+- [x] Fix the CAISO Mode A degenerate-solution limitation (2026-07-05):
+  `config.build_tiebreak_epsilon` (flat per-MW tiebreak on `build_mw`/
+  `build_energy`, Mode A only, default 1e-6) breaks the tie toward the
+  smallest capacity that attains the primary optimum — see **ADR 0019**
+  (`docs/decisions/0019-mode-a-build-tiebreak.md`) for the design rationale
+  (why a `net_cost`-weighted least-cost tiebreak was rejected) and
+  `tests/test_mode_a_build_tiebreak.py` for the regression suite (reproduces
+  the degenerate saturation on a synthetic system, proves the fix, and
+  confirms the tiebreak is a no-op on an already-pinned non-degenerate
+  optimum). Real-data before/after CAISO re-solve + ERCOT control re-run:
+  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
+  passing (measured 2026-07-05).
