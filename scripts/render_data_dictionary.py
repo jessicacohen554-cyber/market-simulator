@@ -87,7 +87,6 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "rggi-co2-budgets",
     "carb-cap-schedule",
     "chp-btm-share",
-    "ramp-capability",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -149,23 +148,6 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "counts, and mean positive shadow price. Sparse: a row exists only "
             "for hours the constraint was in SCED's active set. ERCOT-only "
             "(published physical transfer limits, rule #13/#14 admissible)."
-        ),
-    },
-    "ramp-capability": {
-        "summary": (
-            "Measured per-plant 10-minute ramp / fast-start capability "
-            "inputs for the reserve co-optimization."
-        ),
-        "reconciles": (
-            'EIA-860 Schedule 3.1 "Time from Cold Shutdown to Full Load" '
-            '(the "10M" fast-start flag, summed to `fast_start_mw` over '
-            "`thermal_nameplate_mw`) and EPA CAMPD CEMS hourly plant gross "
-            "load (`ramp_up_1h_mw` max observed 1-hour increase, "
-            "`observed_pmax_mw` max observed load) pooled over "
-            "`vintage_span` 2023-2025 — into one measured ceiling on the "
-            "10-minute reserve-deliverability bound (`FleetArrays.ramp10`), "
-            "never the 10-minute quantity itself. Never intake 2022/H1-2026 "
-            "(rule 22)."
         ),
     },
     "winter-fuel-inventory": {

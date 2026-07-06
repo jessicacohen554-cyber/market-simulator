@@ -115,6 +115,50 @@ decision to the owner per rule 22. Stage-1 verification at HEAD (`2bd096b`):
   half is publication-blocked regardless (CAMPD Q2-2026 unposted, delivered
   gas ends April, F3 demand-profile 8760 contract).
 
+### 2026-07-06 — CAISO — L-10: reserve co-optimization BUILT (`_caiso_design`, the only ISO that lacked one) — PROBE `caiso 59 reserve-coopt`, real but INERT, keeper stays caiso-51
+
+**Mechanism (issue #1492).** Built the CAISO per-generator energy+reserve
+co-optimization: Spin + Non-Spin contingency products (BAL-002-WECC-3
+`max(MSSC, 6% load)`, half/half) co-drawn on one ramp10-bounded pergen R pool
+(the MISO `miso_reserve_pergen` structure — no core dispatch change), priced by
+the published tariff §27.1.2.3.5 scarcity demand curves (spin 10% of the $1,000
+soft bid cap flat; non-spin 50/60/70% at 70/210 MW). Behind default-off
+`caiso_reserve_coopt`, lifting the historical `apply_reserve_coopt` short-circuit
+(default byte-identical). Zero fitted parameters (rules 5/23). Also: CAISO
+ramp-capability extract added to the #1500 datatype (BA CISO / state CA; 351
+plants, 36.8 GW thermal), and the two datatype-contract reds #1500 left on main
+(`test_clean_io` ALL_DATATYPES + `test_data_dictionary_sync`) fixed.
+
+**A/B (both replayed from caiso-51 at HEAD, only the reserve flags differ;
+`caiso59_reserve_ab_base` OFF vs `caiso59_reserve_coopt` ON).** The mechanism is
+real but **largely INERT** — the MISO lesson confirmed: the pergen pool is
+Σ ≈ 12.9 GW deliverable ramp vs a ~2.2 GW requirement, so the perfect-foresight
+LP clears it from headroom almost everywhere. Reserve fires in **~100 hours of
+2023 only** (clearing price up to **$800 = spin $100 + non-spin $700**, confirming
+the co-opt sums the product duals), idle in 2024/2025.
+
+| year | C3a vs RT | Δ mean vs A | C3c DA-expr >$200 | Δ tail vs A |
+|---|---|---|---|---|
+| 2023 | +20.3% | **+$0.47** | 483h vs 41h DA / 21h RT — FAIL | +16 zone-h, 0 sys-h |
+| 2024 | +35.3% | +$0.00 | 0h vs 52h DA — FAIL | 0 |
+| 2025 | +42.7% | −$0.00 | 0h vs 0h — PASS | 0 |
+
+**~455h-vs-21h driver question → NEGATIVE.** The 2023 over-tail (model 483h vs
+21h RT actual) is NOT a missing-reserve-scarcity gap: adding the published
+reserve co-opt leaves it at 483h (C3c unchanged) and moves the mean only +$0.47.
+The over-tail is owned by the evening-merit / RA-commitment-uplift gap
+(`FINDING-caiso-evening-merit-2026-07-04`), not absent reserve pricing.
+
+**Disposition (rule 1).** Kept default-off — a structurally-correct mechanism
+stays in regardless of the flat residual; the inertness is a supply-scoping
+result. Next increments (each shrinks the pool's dominance): storage reserve
+(dominant CAISO AS provider, unbacked by the pergen builder) → hydro
+(`ramp10=0`) → regulation. Keeper stays `caiso-51` (owner decision). Dashboard:
+`2026-07-06-caiso-59-reserve-coopt` (PROBE); pruned oldest
+`2026-07-03-caiso-49-perhub-seam` to hold the 15-run cap. Bundle FINDING:
+`results/calibration/caiso59_reserve_coopt/FINDING-reserve-coopt-ab-2026-07-06.md`;
+design doc `docs/multi-iso/caiso-reserve-coopt.md`.
+
 ### 2026-07-06 — NEISO — L-15 continuation: C7 ST_GAS re-grounded on a net-load commitment limb + NEISO-measured offer bands: NEW KEEPER `neiso 49 stgas-netload` (2025 D-1 PASSES; still NOT-YET on the caveat budget)
 
 **Goal (L-15 / gap register G-16 + the C7 hard caveat).** Root-cause the ST_GAS

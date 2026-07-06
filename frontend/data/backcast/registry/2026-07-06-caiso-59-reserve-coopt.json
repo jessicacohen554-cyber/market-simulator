@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-caiso-59-reserve-coopt",
+  "label": "caiso 59 reserve coopt",
+  "date": "2026-07-06",
+  "shorthand": "caiso-59-reserve-coopt",
+  "definition": "(PROBE, issue #1492 / L-10) caiso-51 + the new CAISO per-generator energy+reserve co-optimization (_caiso_design): BAL-002-WECC-3 contingency requirement (max(MSSC, 6% load), half spin/half non-spin) priced by the published tariff \u00a727.1.2.3.5 scarcity demand curves (spin 10% flat / non-spin 50/60/70% at 70/210 MW), Spin+Non-Spin co-drawn on one ramp10-bounded pergen pool. RESULT: real but LARGELY INERT (the MISO lesson) \u2014 the ~12.9 GW ramp-deliverable pool dwarfs the ~2.2 GW requirement, so it fires in only 100 hours of 2023 (reserve price up to $800 = spin $100 + non-spin $700, confirming the co-opt sums the product duals) and is idle in 2024/2025. Effect vs the caiso59_reserve_ab_base twin: C3a mean LMP +$0.47 in 2023 only (+0.0 in 2024/2025); C3c DA-expressible >$200 tail UNCHANGED (2023 483h model vs 41h DA / 21h RT actual; +16 zone-hours, 0 net system-hours). Answers the ~455h-vs-21h driver question NEGATIVE: the 2023 over-tail is NOT a missing-reserve-scarcity gap \u2014 adding the published reserve co-opt leaves it at 483h; it is owned by the evening-merit / RA-commitment-uplift gap (FINDING-caiso-evening-merit-2026-07-04). Structural mechanism kept per rule 1 (default-off caiso_reserve_coopt). Storage/hydro/regulation are documented next increments. Determination NOT-YET (governance UNATTESTED \u2014 probe).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-caiso-59-reserve-coopt.js",
+  "bundle": "results/calibration/caiso59_reserve_coopt"
+}
