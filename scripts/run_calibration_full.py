@@ -694,13 +694,15 @@ def _posture_frame(
 ) -> pd.DataFrame | None:
     """Return the commitment-posture hourly frame, one row per (pool, hour).
 
-    The honesty-gate artifact for ``miso_commitment_posture`` (design note
-    §A): each postured (zone × fuel-class) pool's online capacity ``U`` (MW),
-    startup increments ``SU`` (MW started this hour) and cleared reserve
-    ``R`` — the modeled online-headroom / cleared-reserve series the gate
-    compares against the measured MISO ASM data (``data/raw/MISO-AS``),
-    level + event-day direction, never the price-tail residual (rules 1/13).
-    ``None`` when the posture lever is off.
+    The honesty-gate artifact for the commitment-posture lever (design note
+    §A) — ``miso_commitment_posture`` or its PJM port ``pjm_commitment_posture``
+    (same mechanism, same columns): each postured (zone × fuel-class) pool's
+    online capacity ``U`` (MW), startup increments ``SU`` (MW started this
+    hour) and cleared reserve ``R`` — the modeled online-headroom /
+    cleared-reserve series the gate compares against the measured ISO ASM /
+    reserve-market data (``data/raw/MISO-AS``; ``data/raw/PJM-AS``), level +
+    event-day direction, never the price-tail residual (rules 1/13). ``None``
+    when the posture lever is off.
     """
     u = getattr(result, "posture_online_mw", None)
     if u is None:
@@ -1861,6 +1863,7 @@ def solve_and_persist(
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_pergen: bool = False,
+    pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
@@ -2114,6 +2117,7 @@ def solve_and_persist(
             pjm_reserve_online_gated=pjm_reserve_online_gated,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
             pjm_reserve_pergen=pjm_reserve_pergen,
+            pjm_commitment_posture=pjm_commitment_posture,
             measured_ramp_capability=measured_ramp_capability,
             ercot_as_forward_requirement=ercot_as_forward_requirement,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
@@ -2425,6 +2429,7 @@ def solve_and_persist(
         "pjm_reserve_online_gated": pjm_reserve_online_gated,
         "pjm_reserve_online_rho": pjm_reserve_online_rho,
         "pjm_reserve_pergen": pjm_reserve_pergen,
+        "pjm_commitment_posture": pjm_commitment_posture,
         "measured_ramp_capability": measured_ramp_capability,
         "ercot_as_forward_requirement": ercot_as_forward_requirement,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
@@ -2596,6 +2601,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
+    if pjm_commitment_posture:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_commitment_posture=True)
     if measured_ramp_capability:
         recorded_cfg = recorded_cfg.with_overrides(measured_ramp_capability=True)
     if pjm_reserve_online_gated:
@@ -5552,6 +5559,24 @@ def main() -> None:
         "default off.",
     )
     parser.add_argument(
+        "--pjm-commitment-posture",
+        action="store_true",
+        help="PJM pooled linear commitment-posture lever — the SAME mechanism "
+        "as --miso-commitment-posture, ported not forked (design note "
+        "docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port "
+        "docs/handoffs/pjm-commitment-posture-port-2026-07.md). Per "
+        "non-fast-start pergen pool, an online-capacity variable U with joint "
+        "P+R <= U, CEMS-measured min-load coupling P >= mlf*U, an NREL-class "
+        "startup charge on dU+, and the pergen reserve cap online-gated "
+        "R <= ramp10*U, so PJM's published Manual-11 Primary/MAD ORDC families "
+        "can run short instead of drawing on ~14 GW of free online headroom "
+        "(the pjm-81 blocker). Zero fitted parameters; honesty-gated on the "
+        "measured PJM reserve-market series (data/raw/PJM-AS), never the tail "
+        "residual (scripts/report_pjm_posture_gate.py). Requires "
+        "--energy-reserve-coopt --pjm-reserve-pergen (--measured-ramp-"
+        "capability recommended). PJM-only; default off.",
+    )
+    parser.add_argument(
         "--measured-ramp-capability",
         action="store_true",
         help="Reconcile FleetArrays.ramp10's class 10-minute fractions "
@@ -6965,6 +6990,7 @@ def main() -> None:
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
+        pjm_commitment_posture=args.pjm_commitment_posture,
         measured_ramp_capability=args.measured_ramp_capability,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
