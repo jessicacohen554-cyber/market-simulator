@@ -146,3 +146,34 @@ Derived by `scripts/derive_reliability_coeffs.py`. `floor_pct = commit_frac x mi
 | MISO-Indiana | CC_CHP | tmin | -16.6 | 0.52 | False | 1.0 | 0.52 | -0.0367 | 10 | 0.5016 | 1.0 | cold: zone p1 tmin (design heating day) |
 | MISO-Illinois | CC_REGULAR | tmax | 32.8 | 0.52 | False | 1.0 | 0.52 | 0.1585 | 39 | 0.6683 | 1.0 | hot: zone p95 tmax (design cooling day) |
 | MISO-Illinois | CC_REGULAR | tmin | -17.13 | 0.52 | False | 1.0 | 0.52 | 0.866 | 3 | 0.666 | 1.0 | cold: zone p1 tmin (design heating day) |
+
+## NEISO
+
+The NEISO temperature-limb table lives in the committed
+`data/raw/reference/reliability_floor_coeffs_NEISO.csv` (derived 2026-06-30;
+this report predates the per-ISO section for it). One limb was ADDED
+2026-07-06 — the Connecticut ST_GAS **net-load** limb, the rule-19
+re-grounding of the two disabled ST_GAS temperature limbs (tmax ρ=0.23 <
+RHO_MIN; tmin n=8 < N_MIN — neither identified the driver). The NEISO
+legacy-steam fleet (Montville) is committed by ISO-NE on tight-SYSTEM days,
+both cold (Feb-2023 arctic blast) and hot (the post-Mystic Jun–Aug 2024/2025
+heat events); daily peak net-load unifies the two (median committed day sits
+at the p93 of daily-peak net-load). Same driver family as the CAISO CT limbs
+(rebuild-plan review decision 2: a net-load limb carries no temperature gate);
+all-24h boiler gate with the standard 48 h steam event bridging.
+
+| zone | plant_class | driver | threshold | floor_pct | enabled | commit_frac | min_stable_pct | rho | n | baseline | baseline_commit | threshold_basis |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Connecticut | ST_GAS | netload | 16.02 | 0.0336 | True | 0.2796 | 0.12 | 0.5096 | 329 | 0.005 | 0.013 | netload: system p70 daily-peak net-load (demand - VRE) GW |
+
+Derivation notes (2026-07-06, this limb only): `_group_daily_cf` now counts a
+day whose CAMPD rows are all-NaN grossLoad as OFFLINE (cf = 0, online_frac =
+0) rather than dropping it — without this a single-plant class conditions
+every flagged-day statistic on "was operating" and `commit_frac` saturates at
+1.0 (the 2026-06-30 ST_GAS rows show the artifact: commit_frac =
+baseline_commit = 1.0). The netload threshold percentile is computed on the
+derivation span only (the zone-temperature file's 2023–2025 coverage), so the
+2019–2021 EIA-930 backfill and the rule-22 holdout periods never enter it.
+The committed temperature-limb rows are NOT re-derived here (rule 23 — their
+source data did not change); a future full re-derivation will fold the
+offline-day fix into every ISO's table.

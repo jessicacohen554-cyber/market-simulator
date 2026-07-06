@@ -960,21 +960,28 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
-    # CC_CHP / CT_CHP / ST_GAS: DE-LEAKED from the generic ERCOT-lineage `else`
-    # branch to neutral 1.0 multipliers (offer at each unit's own base heat rate),
-    # keeping structural tranche shares and the physical F-class CC duct-burner
-    # peak (2.25). NEISO carries no independent per-class heat-rate spread for
-    # these yet; grounding them on NEISO CAMPD spreads (CC_CHP base HR ~7.0,
-    # ST_GAS ~10.6) is a later disciplined-calibration item (rule #1), not
-    # re-tuned here.
+    # CC_CHP / ST_GAS: grounded 2026-07-06 on NEISO's OWN measured CAMPD
+    # marginal heat rates (scripts/derive_campd_marginal_hr.py --iso NEISO ->
+    # data/raw/reference/neiso_campd_marginal_hr_summary.csv), closing the
+    # "later disciplined-calibration item" the 0c6c833 de-leak ledgered. The
+    # NYISO run-32 convention: the bare measured MARGINAL heat rate is the
+    # marginal COST, not the OFFER, so a competitive markup is applied on top —
+    # NEISO's own CC reach ratio (CC_REGULAR econ_high band 1.15 / native CC
+    # marginal econ_high 0.940 = 1.223x), never a cross-ISO value (rule #26).
     "CC_CHP": {
-        "committed": 1.0,
-        "econ_low": 1.0,
-        "econ_high": 1.0,
+        # Native CC_CHP marginal (n=5 units, cap-weighted median): committed
+        # 0.942 / econ_low 0.973 / econ_high 0.940 — essentially FLAT (wide
+        # p25-p75, thin fleet). x1.223 reach ≈ 1.15-1.19; a thin monotone
+        # spread keeps a valid rising offer (the NYISO ST_GAS convention).
+        "committed": 1.15,
+        "econ_low": 1.17,
+        "econ_high": 1.19,
         "peak": 2.25,  # physical F-class duct-burner ratio (not ERCOT-fitted)
         "econ_low_share": 0.50,
         "pct_peaking": 8.0,
     },
+    # CT_CHP: stays neutral — the NEISO CAMPD sample is a SINGLE unit (n=1;
+    # marginal 1.32/1.41/1.49), not identifiable as a class spread. Open item.
     "CT_CHP": {
         "committed": 1.0,
         "econ_low": 1.0,
@@ -985,9 +992,13 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CT_PEAKER": {
         "committed": 1.35,  # NYISO/CAISO-grounded start hurdle (ISO-NE CTs serve
         #   evening ramp + cold-snap reliability, not ERCOT idle-park)
-        # econ bands DE-LEAKED from the ERCOT generic fallback (was econ_low 1.27
-        # / econ_high 1.98) to neutral 1.0 — NEISO carries no independent CT
-        # part-load heat-rate spread yet. OPEN ROOT CAUSE (rule #1), not re-tuned.
+        # econ bands stay neutral 1.0 — now AFFIRMED by measurement, not just
+        # de-leaked: NEISO's own CAMPD CT marginal HR is flat-to-FALLING with
+        # load (committed 0.808 / econ_low 0.745 / econ_high 0.700, n=18), so
+        # the removed ERCOT 1.27->1.98 ramp had no NEISO physical basis. The
+        # real above-cost CT offer component is start/no-load amortization,
+        # priced by --tranche-startup-amortization (fuel-price-invariant),
+        # never an HR multiplier.
         "econ_low": 1.0,
         "econ_high": 1.0,
         "peak": 4.0,  # ISO-NE offer cap $1,000-2,000 (not ERCOT $5,000 ORDC)
@@ -995,9 +1006,20 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 7.0,
     },
     "ST_GAS": {
-        "committed": 1.0,
-        "econ_low": 1.0,
-        "econ_high": 1.0,
+        # Native steam marginal HR (Montville, base_HR 12.755): committed 0.642
+        # / econ_low 0.692 / econ_high 0.731 — a genuinely RISING measured ramp
+        # (unlike NYISO's flat 0.82-0.83). x1.223 reach markup -> 0.79/0.85/0.89.
+        # Effective HR 10.1 -> 11.4 MMBtu/MWh: above CC_REGULAR econ_high
+        # (7.48 x 1.15 = 8.6) and interleaved with the CT_PEAKER base (10.6) —
+        # a legacy steamer's committed increment IS cheaper than a peaker's
+        # energy while its upper range is dearer (merit preserved, no class
+        # inversion). This prices the committed unit's daytime load-following
+        # the all-1.0 bands left out of merit (the D-1 ST_GAS profile failure's
+        # economic half; the commitment half is the Connecticut ST_GAS netload
+        # reliability limb, reliability_floor_coeffs_NEISO.csv 2026-07-06).
+        "committed": 0.79,
+        "econ_low": 0.85,
+        "econ_high": 0.89,
         "peak": 1.0,
         "econ_low_share": 0.500,
         "pct_peaking": 15.0,
@@ -3725,13 +3747,34 @@ def run_year(
     # MECH_WINTER_FUELSEC D-2 tag. Replaces the disabled COAL/ST_GAS tmin cold
     # limbs (rule 19). NEISO-only; default off (byte-identical).
     if getattr(config, "neiso_winter_fuel_mustrun", False):
-        from market_sim.data.winter_fuel_inventory import apply_winter_fuelsec_mustrun
+        from market_sim.data.winter_fuel_inventory import (
+            _WINTER_FUELSEC_CLASSES,
+            apply_winter_fuelsec_mustrun,
+        )
+
+        # Rule 19/24 reconcile: the NEISO ST_GAS net-load reliability limb
+        # (reliability_floor_coeffs_NEISO.csv, 2026-07-06) owns the legacy-steam
+        # commitment on tight-system days — hot AND cold, a superset of Component
+        # B's cold-day window for that class. When both mechanisms are armed in a
+        # run, Component B keeps only its coal scope so two floors never stack on
+        # one phenomenon (the tmin limbs it replaced stay disabled either way).
+        from market_sim.config.iso_configs import (
+            RELIABILITY_FLOOR_REGISTRY as _rf_registry,
+        )
+
+        _wf_classes = _WINTER_FUELSEC_CLASSES
+        if getattr(config, "reliability_floor", False) and any(
+            s.enabled and s.plant_class == "ST_GAS" and s.driver == "netload"
+            for s in _rf_registry.get(iso, [])
+        ):
+            _wf_classes = tuple(c for c in _wf_classes if c != "ST_GAS")
 
         if apply_winter_fuelsec_mustrun(
             fleet_arrays,
             iso,
             config.weather_year,
             zone_names,
+            plant_classes=_wf_classes,
             min_stable_pct=float(
                 getattr(config, "neiso_winter_fuelsec_min_stable_pct", 0.40)
             ),
