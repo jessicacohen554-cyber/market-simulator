@@ -6976,3 +6976,63 @@ pre-existing E7 staleness warning remains.
 
 No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, single
 invocations, years sequential.
+
+## 2026-07-06 — ERCOT HSL 2024/25 intake bug fix + measured-HSL re-validation probe (`ercot38-measured-hsl-2425`; no keeper swap)
+
+Follow-up on the ERCOT HSL 2024/25 intake (`docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`):
+found and fixed a genuine ERCOT-source data-quality defect in the committed 2024/2025 HSL
+parquets, then used the corrected data to probe whether it moves the `ercot34` keeper result.
+
+**Bug found and fixed.** 2024-08-20..23 (96 hours) carries physically-impossible system-wide
+wind AND solar `ACTUAL`/`HSL` values in every NP6 report vintage covering those hours (e.g.
+`ACTUAL_LZ_WEST` wind = 276,466 MW on 2024-08-23 HE1) — a defect in ERCOT's own published file,
+not a parsing artifact (identical across every later repost of the rolling window). It had
+inflated the previously-committed 2024 parquet's wind peak to an impossible 161.5 GW.
+`_KNOWN_BAD_NP6_WINDOWS` in `scripts/build_ercot_hsl.py` now excludes exactly this cited window
+(nulled, then linearly interpolated from the clean Aug 19/24 endpoints) — narrow and documented,
+does not weaken the general `_MAX_GAP_HOURS` guard for any other window/year/upload. Separately
+fixed a 2025-schema HSL-column-preference bug (`SYSTEM_WIDE_GEN`/`SYSTEM_WIDE_HSL` replacing
+`ACTUAL_SYSTEM_WIDE`/`COP_HSL_SYSTEM_WIDE`; the picker was grabbing the older, less-authoritative
+column). Both years rebuilt: wind cross-check vs EIA-923 tightens to +0.1%/−0.2% (2024/2025);
+peaks now physically plausible (27.7/28.3 GW wind, 34.3/29.5 GW solar). New regression tests in
+`tests/test_ercot_hsl.py`.
+
+**Measured-HSL re-validation (`ercot38`).** Replayed `ercot34`'s exact recipe
+(`scripts/replay_keeper.py`, five gas-geography/WS-A `prb_overrides` restored via `--set` per
+the keeper's own `run_config.json`) with the only delta being `renewables.hsl_potential_mw` now
+resolving the real 2024/25 HSL parquets instead of the G7 gross-up fallback ercot34 was solved
+and promoted under. 2023 is unaffected (already measured in both). Dispatch moved modestly in
+the expected direction: 2024 wind +1.95 TWh / gas −1.81 TWh / coal −0.24 TWh; 2025 wind +2.47 TWh
+/ solar +0.83 TWh / gas −2.67 TWh / coal −0.92 TWh (measured HSL captures real curtailment shape
+where the flat gross-up couldn't, letting the LP dispatch marginally more renewable energy).
+
+C-score movement vs `ercot34` (both overall NOT-YET):
+
+| criterion | ercot34 | ercot38 | note |
+|---|---|---|---|
+| C2 system volume (gas) | CAVEAT (2025 gas −5.0%, commercial-band) | **FAIL** (2025 gas −6.4%, out of band) | regression — gas displaced by the extra renewable dispatch |
+| C3a mean LMP | CAVEAT (2025 +8.2%, commercial-band) | **PASS** | improvement |
+| C5c storage dispatch shape | CAVEAT (2024 r=0.422, accepted measured-input limitation) | **PASS** | improvement |
+| C3b/C3c price shape/tail | FAIL | FAIL (unchanged) | pre-existing structural misses (F6/F7, G-22 wedge), untouched |
+| C1/C4/C5a/C7/C8 | PASS | PASS (unchanged) | |
+| C6 governance | PASS | UNATTESTED | probe carries no attestation/DOF ledger/ablation twin (rule 21, keeper-only) — not a real regression |
+
+**Determination: mixed, modest movement — not a wholesale improvement or regression.** Per rule
+14 (prefer accurate/measured data even when an individual metric worsens; a discovered
+degradation is a root-cause signal, not a reason to revert), the measured HSL data is the
+correct standing input regardless of the C2 move — the bug-fixed parquets are already committed
+and `hsl_potential_mw` reads them by default for every future ERCOT run. The C2 gas-volume miss
+crossing into FAIL is flagged as an open root-cause item (plausibly a merit-order/offer-level
+recalibration now that renewable dispatch is more accurate), not something to chase by reverting
+to the gross-up.
+
+**No keeper swap.** `ercot38` lacks the governance attestation, DOF ledger, and zero-forcing
+ablation twin rule 21/C6 requires of any keeper, and the mixed C-score movement (two
+improvements, one new FAIL) is a real trade-off the owner should see before deciding whether to
+promote it over `ercot34`. Registered as an informational PROBE
+(`2026-07-06-ercot38-measured-hsl-2425`); `keepers.json` unchanged. Retention: pruned the two
+oldest ERCOT dashboard entries (`ercot31-ordc-total-full`, `ercot32-ordc-total-rtolcap`, both
+2026-07-03) to stay at the 15-run cap.
+
+**Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all three years in one
+bundle (rule 16).
