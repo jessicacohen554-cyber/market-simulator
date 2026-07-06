@@ -92,12 +92,18 @@ def main() -> None:
     # Re-determination trigger (docs/calibration-determination-rubric.md §6):
     # registering a run re-runs the scorer on its freshly-written committed
     # artifacts, so every registered run prints its calibration determination.
+    # Also writes the plaintext metrics.json sidecar (G-49,
+    # docs/verifying-dashboard-numbers.md) into the bundle so a verifier can
+    # read the headline scored metrics without decoding runs/<id>.js.
     # Best-effort — a scorer error must never block registration.
     try:
         sys.path.insert(0, str(REPO / "scripts"))
         import calibration_verdict as cv
 
-        print(cv.headline(cv.determine(rid)))
+        verdict = cv.determine(rid)
+        print(cv.headline(verdict))
+        metrics_path = cv.write_metrics_sidecar(bundle, verdict)
+        print(f"wrote {metrics_path.relative_to(REPO)}")
     except Exception as exc:  # pragma: no cover - defensive
         print(f"determination: unavailable ({exc})")
 
