@@ -64,13 +64,6 @@ from market_sim.model.capacity import (
     deliverability_headroom_by_zone,
     evolve_fleet,
 )
-from market_sim.model.commitment import (
-    apply_commitment_with_coal_pin,
-    as_adequacy_commit,
-    compute_commitment,
-    reserve_adequacy_commit,
-)
-from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.ancillary import (
     realized_storage_as_revenue_per_mw_yr,
     realized_thermal_as_revenue_per_mw_yr_by_fuel,
@@ -122,14 +115,12 @@ from market_sim.pipeline import (
     PriorYearResults,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    run_commitment_pass,
     run_energy_solve,
 )
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
-    ercot_as_aware_unit_value,
-    nyiso_spin_eligible,
-    nyiso_spin_requirement_mw,
     reserve_headroom,
     scarcity_prices,
 )
@@ -1341,116 +1332,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     context=context,
                     pass_label="p1",
                 )
-                # AS revenue estimate from the model's OWN P1 reserve dual
-                # (never the measured MCPC) — None for the energy-only screen.
-                as_value = (
-                    ercot_as_aware_unit_value(
-                        fleet_arrays,
-                        p1_result.dispatch,
-                        p1_result.reserve_price_by_family,
-                        config.hours,
-                    )
-                    if as_aware
-                    else None
-                )
-                committed = compute_commitment(
-                    p1_result.prices,
-                    mc_base,
-                    dispatch_fleet,
-                    fleet_arrays,
-                    config,
-                    storage_charge=p1_result.storage_charge,
-                    storage_discharge=p1_result.storage_discharge,
-                    storage_zone_idx=storage.zone_idx,
-                    demand=year_demand,
-                    as_value=as_value,
-                )
-                # NYISO path B (commitment-gated synchronised reserve): the
-                # energy-economic screen decommits NYC quick-start peakers that
-                # aren't needed for energy, so they can no longer back the
-                # locational spinning family and the >$300 tail never fires.
-                # Force-commit the cheapest-startup NYC quick-start units until
-                # their committed capacity covers the MEASURED NYC spinning
-                # requirement (NYISO_SPIN_FRACTION x NYC 10-min total = 250 MW),
-                # so the P2 class-1 NYC headroom row equals Sum_online(pmax - P)
-                # and the family binds endogenously in genuinely tight hours
-                # (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md,
-                # "Path B"). NYISO-only behind the default-off flag.
-                if (
-                    getattr(config, "nyiso_synchronised_reserve", False)
-                    and iso == "NYISO"
-                ):
-                    spin_eligible = nyiso_spin_eligible(fleet_arrays, zone_names)
-                    committed = reserve_adequacy_commit(
-                        committed,
-                        fleet_arrays,
-                        dispatch_fleet,
-                        spin_eligible,
-                        requirement_mw=nyiso_spin_requirement_mw(config),
-                        headroom_frac=config.nyiso_spin_headroom_frac,
-                    )
-                # AS-adequacy floor + commitment-state-aware reserve headroom
-                # (ERCOT AS-aware only) — mirror of the calibration path
-                # (scripts/run_calibration._commitment_pass): re-commit the
-                # cheapest eligible units until committed online headroom
-                # covers the procured AS, then re-scope the P2 headroom rows
-                # (online CTs join the fast pool via P2 availability; offline
-                # quick-start capacity backs Non-Spin only via the extra cap).
-                dispatch_kwargs_p2 = dispatch_kwargs
-                if as_aware and "reserve_headroom_eligible" in dispatch_kwargs:
-                    from market_sim.config.reserve_config import (
-                        ercot_commitment_headroom_overrides,
-                    )
-
-                    dk = dispatch_kwargs
-                    req_fam = np.atleast_2d(
-                        np.asarray(dk["reserve_requirement"], dtype=float)
-                    )
-                    hp = np.atleast_2d(
-                        np.asarray(dk["reserve_headroom_products"], dtype=bool)
-                    )
-                    fam_class = np.asarray(
-                        dk.get("reserve_balance_class", np.arange(req_fam.shape[0])),
-                        dtype=int,
-                    )
-                    req_by_class = np.zeros(
-                        (hp.shape[1], req_fam.shape[1]), dtype=float
-                    )
-                    # All-class families (reserve_class -1, the ERCOT lumped
-                    # ORDC total-reserve curve) are a demand on the aggregate,
-                    # not one product's procurement — exclude them from the
-                    # per-product adequacy requirement (a -1 would otherwise
-                    # silently index the last product).
-                    prod_fam = fam_class >= 0
-                    np.add.at(req_by_class, fam_class[prod_fam], req_fam[prod_fam])
-                    committed = as_adequacy_commit(
-                        committed,
-                        fleet_arrays,
-                        dispatch_fleet,
-                        dk["reserve_headroom_eligible"],
-                        dk["reserve_headroom_products"],
-                        req_by_class,
-                        p1_result.dispatch,
-                        headroom_frac=float(
-                            getattr(config, "ercot_as_adequacy_frac", 1.0)
-                        ),
-                    )
-                    dispatch_kwargs_p2 = {
-                        **dk,
-                        **ercot_commitment_headroom_overrides(
-                            fleet_arrays, committed, dk["reserve_headroom_eligible"]
-                        ),
+                # Shared P2 core (pipeline.commitment, orchestrator-unification
+                # Stage 4): CAISO RA must-offer bridge / NYISO path B / ERCOT
+                # AS-aware screen + AS-adequacy floor + WS1 headroom overrides /
+                # economic commitment screen + coal pin — the same body the
+                # backcast orchestrator runs, statement-for-statement.
+                result = run_commitment_pass(
+                    {
+                        "year": year,
+                        "iso": iso,
+                        "fleet": dispatch_fleet,
+                        "fleet_arrays": fleet_arrays,
+                        "mc_base": mc_base,
+                        "mc_bid": mc_bid,
+                        "p1_result": p1_result,
+                        "demand": year_demand,
+                        "dispatch_kwargs": dispatch_kwargs,
+                        "config": config,
+                        "zone_names": zone_names,
                     }
-                fleet_arrays_p2 = apply_commitment_with_coal_pin(
-                    fleet_arrays,
-                    committed,
-                    p1_result.dispatch,
-                    dispatch_fleet,
-                    screen_coal=config.commitment_screen_coal,
-                    couple_peak=as_aware,
-                )
-                result = solve_dispatch(
-                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs_p2
                 )
             # === END LEGACY: P2 Commitment Screen ===
             save_result(result, config, iso, year, context=context, demand=year_demand)
