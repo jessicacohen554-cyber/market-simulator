@@ -1,0 +1,115 @@
+{
+  "run_id": "2026-07-06-caiso-58-v2-regate",
+  "iso": "CAISO",
+  "label": "caiso 58 v2 regate",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "determination": "NOT-YET",
+  "reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "hard": true,
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "hard": true,
+      "status": "FAIL"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "hard": false,
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "hard": false,
+      "status": "FAIL"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity",
+      "hard": false,
+      "status": "FAIL"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "hard": false,
+      "status": "FAIL"
+    },
+    "co2": {
+      "label": "C5a CO2 vs eGRID",
+      "hard": false,
+      "status": "PASS"
+    },
+    "storage": {
+      "label": "C5b storage throughput",
+      "hard": false,
+      "status": "SKIPPED"
+    },
+    "storage_shape": {
+      "label": "C5c storage dispatch shape",
+      "hard": false,
+      "status": "SKIPPED"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "hard": true,
+      "status": "UNATTESTED"
+    },
+    "shape": {
+      "label": "C7 diurnal shape (D-1)",
+      "hard": true,
+      "status": "FAIL"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "hard": true,
+      "status": "FAIL"
+    }
+  },
+  "caveats": {
+    "hard": [],
+    "soft": [],
+    "budget": {
+      "hard_max": 1,
+      "soft_max": 2
+    }
+  },
+  "free_class_score": {
+    "iso": "CAISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 11,
+      "total": 12
+    },
+    "free": {
+      "pass": 7,
+      "total": 8
+    },
+    "headline": "C1 all 11/12 \u00b7 free 7/8"
+  }
+}
