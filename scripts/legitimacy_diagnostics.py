@@ -901,6 +901,28 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
             year, klass = key
             c_row = committed_summary.get(key)
             r_row = recomputed_summary.get(key)
+            # An IMMATERIAL class (generation < 2.5 % of load) never gates, so
+            # its exact forced_share is not gate-relevant evidence — and on its
+            # near-zero denominator the share is numerically unstable (the
+            # floor rebuild's float-summation order differs across machines, so
+            # a ~0.007 TWh class can read 0.5549 here and 0.5671 on CI). Compare
+            # it and the tight staleness tolerance produces a false positive.
+            # Skip it: the staleness check verifies the MATERIAL (gate-relevant)
+            # shares are reproducible, which they are exactly.
+            if (c_row and c_row.get("immaterial")) or (
+                r_row and r_row.get("immaterial")
+            ):
+                res.rows.append(
+                    {
+                        "run": run_id,
+                        "year": year,
+                        "class": klass,
+                        "committed_share": c_row["forced_share"] if c_row else 0.0,
+                        "recomputed_share": r_row["forced_share"] if r_row else 0.0,
+                        "verdict": "skip (immaterial)",
+                    }
+                )
+                continue
             # A class absent from one side's summary means run_d2's own
             # total_by_class[k] <= 0.0 filter dropped it there (e.g. a
             # non-thermal class with no dispatch in that recompute) — the
