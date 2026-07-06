@@ -2126,6 +2126,133 @@ def apply_nyiso_downstate_ct_gas_basis(
     )
 
 
+def _downstate_delivered_gas_hourly(
+    iso: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return the ``(hours,)`` downstate daily delivered-gas index, or ``None``.
+
+    Expands the curated ``nyiso-downstate-gas`` daily index
+    (:func:`market_sim.data.nyiso_downstate_gas.delivered_gas_by_month_day` —
+    measured Transco Z6 NY daily spot + monthly LDC premium) onto the model's
+    fixed 365-day (28-day-February) calendar: each calendar day's value is
+    repeated across its 24 hours, mirroring the mean-preserving daily overlay's
+    calendar walk (:func:`nyiso_reconciled_reference_monthly`). A leap-year
+    Feb-29 row is never referenced. ``None`` when the datatype has no rows for
+    the year (a forward year without the series extended), so the caller can
+    fall back to the monthly-premium path.
+    """
+    from market_sim.data.nyiso_downstate_gas import delivered_gas_by_month_day
+
+    by_md = delivered_gas_by_month_day(iso, year)
+    if not by_md:
+        return None
+    out = np.full(hours, np.nan, dtype=float)
+    hour = 0
+    for m in range(12):  # m = 0-based month
+        n_days = _DAYS_IN_MONTH[m]
+        dated = by_md.get(m + 1, {})
+        if dated and hour < hours:
+            day_vals = np.array(
+                [dated.get(d, np.nan) for d in range(1, n_days + 1)], dtype=float
+            )
+            # A single non-trading gap should never leave a NaN hole; the daily
+            # series is already gap-filled at curation, but guard defensively.
+            if np.isnan(day_vals).any():
+                filled = pd.Series(day_vals).ffill().bfill().to_numpy()
+                day_vals = filled
+            shaped = np.repeat(day_vals, 24)[: max(0, hours - hour)]
+            out[hour : hour + len(shaped)] = shaped
+        hour += n_days * 24
+    if np.isnan(out).all():
+        return None
+    # Any residual NaN (a month with no rows) falls back to the surrounding
+    # measured days so the CT gas is always defined where the class dispatches.
+    if np.isnan(out).any():
+        out = pd.Series(out).ffill().bfill().to_numpy()
+    return out
+
+
+def apply_nyiso_downstate_ct_gas_daily(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+) -> None:
+    """Re-ground downstate NYISO CT-peaker gas on the measured DAILY delivered index.
+
+    The daily-resolution successor to :func:`apply_nyiso_downstate_ct_gas_basis`
+    (the monthly-premium adder) for the same NYC / Long Island ``CT_PEAKER``
+    LM6000 fleet (Bayonne / Equus / Edgewood / Glenwood-Landing). Rather than
+    lift the pipeline-hub *monthly* base by the monthly LDC premium, this **sets**
+    each downstate CT_PEAKER unit's delivered gas directly to the curated
+    ``nyiso-downstate-gas`` daily index — the measured Transco Zone 6 NY
+    pipeline-hub **daily** spot plus the measured **monthly** LDC city-gate
+    premium (:func:`_downstate_delivered_gas_hourly`).
+
+    Why daily is the more faithful grounding (rules #11/#13): these interruptible
+    peakers run only a few hundred hours a year, concentrated on the coldest days
+    when the downstate pipeline hub blows out (Transco Z6 NY hit $23.90/MMBtu in
+    Jan-2024). The monthly mean smears that spike across the whole month, pricing
+    the peaker's scarce-day gas far too cheap on exactly the hours it clears —
+    letting an HR~9-10 LM6000 undercut the dearer downstate steam fleet. Pricing
+    the daily hub spot lifts the peaker offer on the scarce days it actually runs,
+    which is the delivered-fuel physics, not a residual-tuned band. Each input is
+    a measured, forward-native market/tariff series (the daily Transco spot and
+    the monthly citygate premium both publish forward and respond to changed
+    pipeline/demand conditions), so a forecast year regenerates it; nothing is
+    fitted to a price or volume residual (rules #1/#11/#12/#13).
+
+    Runs immediately after :func:`apply_nyiso_downstate_ct_gas_basis` in the
+    fuel-price pipeline and before :func:`apply_dual_fuel_pricing`, so the
+    oil-parity cap still bounds any winter spike. Gated on
+    ``config.nyiso_downstate_ct_gas_daily`` and ``config.iso == "NYISO"`` (off by
+    default; the calibration harness enables it for NYISO). It supersedes the
+    monthly adder for this class — set ``nyiso_downstate_ct_gas_basis=False`` when
+    this is on (one mechanism per phenomenon, rule 19); if both were set, the
+    daily SET here overwrites the monthly ADD, so the level is still the daily
+    delivered index. Mutates ``fuel_prices`` in place; idempotent given the same
+    inputs; every other ISO and all forecasts without the series are byte-identical.
+    """
+    if not getattr(config, "nyiso_downstate_ct_gas_daily", False):
+        return
+    if config.iso != "NYISO":
+        return
+    if fleet.plant_group is None:
+        return
+    delivered = _downstate_delivered_gas_hourly(config.iso, year, fuel_prices.shape[1])
+    if delivered is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    plant_group = np.asarray(fleet.plant_group)
+    # Downstate model-zone indices (NYC / Long Island); membership by index so a
+    # priced external node (zone_idx beyond the model zone list) is ignored.
+    downstate_idx = np.array(
+        [i for i, name in enumerate(zone_names) if name in NYISO_DOWNSTATE_CT_ZONES],
+        dtype=int,
+    )
+    is_gas_ct = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
+    ct_rows = np.nonzero(
+        is_gas_ct
+        & (plant_group == "CT_PEAKER")
+        & np.isin(fleet.zone_idx, downstate_idx)
+    )[0]
+    if ct_rows.size == 0:
+        return
+    fuel_prices[ct_rows, :] = np.maximum(delivered[np.newaxis, :], _GAS_PRICE_FLOOR)
+    logger.info(
+        "NYISO downstate CT daily delivered-gas re-grounding (%d): %d downstate "
+        "CT_PEAKER units SET to the measured daily delivered index "
+        "(daily min %.2f, mean %.2f, max %.2f $/MMBtu)",
+        year,
+        ct_rows.size,
+        float(delivered.min()),
+        float(delivered.mean()),
+        float(delivered.max()),
+    )
+
+
 _ERCOT_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
 
 
