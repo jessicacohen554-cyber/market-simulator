@@ -57,3 +57,4 @@ INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 3953 MW 
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2573 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 41143 / min 37630 MW
 INFO:   MISO COMMITMENT POSTURE (miso_commitment_posture): 18 of 30 pools postured (fast-start exempt by physics), mlf 0.12-0.58 (cap-wt CEMS committed_pct), startup $44-$100/MW (NREL class tables)
 INFO: Matrix build: 7.366s, Solve: 552.125s (cold)
+INFO: Matrix build: 7.366s, Solve: 242.219s (warm)
