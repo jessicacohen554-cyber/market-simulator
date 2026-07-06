@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-07-06T17:45:31",
+  "timestamp": "2026-07-06T18:55:17",
   "git": {
-    "sha": "dd85d5a",
+    "sha": "b11fe6b",
     "branch": "claude/neiso-49-resolve-confirm-7eb00b",
     "dirty": false,
     "changed_files": [],
@@ -54,7 +54,7 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "dd85d5a"
+    "git_sha": "b11fe6b"
   },
   "scenario_config": {
     "weather_year": 2023,
