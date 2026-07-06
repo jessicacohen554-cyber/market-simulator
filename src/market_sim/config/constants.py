@@ -2866,17 +2866,32 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # the raw hourly demand extract covers them. Only 2021 is added; 2019/2020
     # stay out until the distribution parquet is rebuilt further back.
     "NYISO": (2021, 2023, 2024, 2025),
-    # CAISO (BA "CISO"): hourly extract begins 2022-12-31 -- no 2019-2021
-    # coverage on disk. Fetching it is blocked in this managed sandbox
-    # (api.eia.gov returns 403; scripts/fetch_eia930_hourly.py must be run
-    # locally per its own docstring). Pool stays at the current window.
-    "CAISO": (2023, 2024, 2025),
-    # PJM (BA "PJM"): hourly extract begins 2021-12-31 (only the last day of
-    # 2021), so no full year in 2019-2021 is covered. Same fetch-blocked
-    # limitation as CAISO.
-    "PJM": (2023, 2024, 2025),
-    # MISO (BA "MISO"): hourly extract begins 2022-12-31 -- same gap as CAISO.
-    "MISO": (2023, 2024, 2025),
+    # CAISO (BA "CISO"): api.eia.gov (scripts/fetch_eia930_hourly.py) is
+    # blocked in this managed sandbox, but the six-month BALANCE bulk archive
+    # (www.eia.gov, unblocked) covers 2019-2021 for every BA and was fetched
+    # 2026-07-06 (scripts/fetch_eia930_balance.py) then folded into the wide
+    # hourly extract (scripts/extend_eia930_hourly_from_balance.py). 2019-2021
+    # verified end-to-end same as ERCOT. The bulk archive's legacy taxonomy
+    # doesn't break out geothermal separately (folded into NG: OTH for these
+    # three years only; harmless here since load_renewable_profiles reads only
+    # NG: WND / NG: SUN) -- see docs/weather-pool-coverage-2026-07.md.
+    "CAISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # PJM (BA "PJM"): same BALANCE-bulk backfill as CAISO for the hourly
+    # extract, 2026-07-06 (existing 2022+ rows untouched -- dedup keeps the
+    # already-committed rows for the handful of overlapping UTC hours at the
+    # 2021/2022 boundary). But PJM demand (unlike CAISO/MISO) never reads the
+    # hourly extract -- market_sim.data.eia_loader.load_demand always falls
+    # back to eia_demand_profiles.parquet for PJM, and that source only
+    # reaches back to 2021 (same NYISO-style single-source floor). 2019/2020
+    # fail end-to-end on demand even though the hourly renewables path now
+    # resolves; only 2021 is added.
+    "PJM": (2021, 2023, 2024, 2025),
+    # MISO (BA "MISO"): same BALANCE-bulk backfill as CAISO, 2026-07-06. MISO's
+    # existing extract separately reports NG: BAT (battery); the bulk archive
+    # can't split that out for 2019-2021, so those years' battery generation
+    # folds into NG: OTH (NaN, not zero, for a true NG: BAT read) -- immaterial
+    # to the wind/solar renewables check this pool exists for.
+    "MISO": (2019, 2020, 2021, 2023, 2024, 2025),
 }
 
 
