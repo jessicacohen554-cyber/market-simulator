@@ -602,12 +602,13 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(losses2["G0"], 0)
 
     def test_reliability_floor_prevents_over_retirement(self):
-        # Accredited-basis floor (plan §3.2): requirement =
-        # peak x (1 + PRM_ERCOT) = 10000 x 1.1375 = 11375 MW of accredited
-        # firm capacity must remain. Nuclear survives the screen (loss year
-        # 1 < threshold 3) and contributes 2000 x 0.95 = 1900 MW UCAP; each
-        # coal unit contributes 1000 x 0.95 = 950 MW UCAP, so 10 of 12 coal
-        # units must be retained (1900 + 10 x 950 = 11400 >= 11375).
+        # Accredited-basis floor (plan §3.2) on ERCOT's CDR convention
+        # (accreditation audit 2026-07-06): requirement = firm peak x
+        # (1 + PRM_ERCOT) = 10000 x 0.942 x 1.1375 = 10715.25 MW. Nuclear
+        # survives the screen (loss year 1 < threshold 3) and contributes
+        # 2000 MW at seasonal rating; the DC ties add 817 MW; each coal unit
+        # contributes 1000 MW at rating, so 8 of 12 coal units must be
+        # retained (2000 + 817 + 8 x 1000 = 10817 >= 10715.25).
         config = ScenarioConfig()
         nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
         # 12 coal units of 1000 MW, strictly increasing heat rate.
@@ -625,19 +626,20 @@ class TestEconomicRetirements(unittest.TestCase):
             fleet, arrays, dispatch, prices, config, {}, peak_demand=10000.0
         )
         coal_survivors = [g for g in survivors if g.fuel_type == "coal"]
-        self.assertEqual(len(coal_survivors), 10)
+        self.assertEqual(len(coal_survivors), 8)
         # Same-fuel merit ties break on heat rate: the most efficient
         # (lowest heat-rate) units are the ones kept.
         retired_hr = {g.heat_rate for g in coal} - {g.heat_rate for g in coal_survivors}
         survivor_hr = {g.heat_rate for g in coal_survivors}
         self.assertTrue(min(retired_hr) > max(survivor_hr))
         # Every retention is attributed (rule 20 analogue).
-        self.assertEqual(len(retention_log), 10)
+        self.assertEqual(len(retention_log), 8)
 
     def test_highest_heat_rate_retires_first(self):
         # Reliability floor keeps the requirement met; the least efficient
-        # units are the ones actually retired. requirement =
-        # 1650 x 1.1375 = 1876.9 MW; two coal UCAP = 1900 MW clears it.
+        # units are the ones actually retired. ERCOT CDR basis: requirement =
+        # 1650 x 0.942 x 1.1375 = 1768.0 MW; the DC ties (817) plus one coal
+        # unit at rating (1000) clears it, so the two least efficient retire.
         config = ScenarioConfig()
         coal = [
             _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
@@ -650,8 +652,9 @@ class TestEconomicRetirements(unittest.TestCase):
         survivors, _, _ = apply_economic_retirements(
             coal, arrays, dispatch, prices, config, {}, peak_demand=1650.0
         )
-        # The single highest-heat-rate unit is the one retired.
-        self.assertEqual({g.unit_id for g in survivors}, {"C0", "C1"})
+        # The highest-heat-rate units are the ones retired; the most
+        # efficient unit is the one the floor keeps.
+        self.assertEqual({g.unit_id for g in survivors}, {"C0"})
 
     def test_profitable_gen_resets_counter(self):
         config = ScenarioConfig()
@@ -758,22 +761,22 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         )
 
     def test_requirement_math_counts_pools_at_capacity_credit(self):
-        # Hand-computed accredited sum (plan §8.3 item 3): one 1000 MW coal
-        # unit, eford 0.05 -> UCAP 950. ERCOT requirement = peak x 1.1375.
-        # With wind_pool 4000 MW (credit from RENEWABLE_CAPACITY_CREDIT) and
-        # storage_firm 500 MW the requirement clears without the coal unit,
-        # so it retires; with pools=0 (conservative default) the floor
+        # Hand-computed accredited sum (plan §8.3 item 3), ERCOT CDR basis
+        # (accreditation audit 2026-07-06): requirement = firm peak x 1.1375
+        # = 1000 x 0.942 x 1.1375 = 1071.5. With wind/solar pools at ERCOT's
+        # published CDR ELCCs (0.20 / 0.21), storage 500 and the 817 MW DC
+        # ties, the requirement clears without the coal unit, so it retires;
+        # with pools=0 the ties alone (817) fall short and the floor
         # rescues it.
-        from market_sim.config.constants import RENEWABLE_CAPACITY_CREDIT
+        from market_sim.config.constants import RENEWABLE_CAPACITY_CREDIT_BY_ISO
 
         config = ScenarioConfig()
         coal = [_gen("C0", "coal", pmax=1000.0)]
         peak = 1000.0
-        requirement = peak * 1.1375
+        requirement = peak * (1.0 - 0.058) * 1.1375
+        credits = RENEWABLE_CAPACITY_CREDIT_BY_ISO["ERCOT"]
         pooled_firm = (
-            4000.0 * RENEWABLE_CAPACITY_CREDIT["wind"]
-            + 2000.0 * RENEWABLE_CAPACITY_CREDIT["solar"]
-            + 500.0
+            4000.0 * credits["wind"] + 2000.0 * credits["solar"] + 500.0 + 817.0
         )
         self.assertGreaterEqual(pooled_firm, requirement)
 
@@ -876,7 +879,8 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         )
         self.assertEqual(row["year"], 2031)
         self.assertEqual(row["fuel_type"], "coal")
-        self.assertAlmostEqual(row["ucap_mw"], 950.0)
+        # ERCOT seasonal-rating basis: firm MW = nameplate, no EFORd derate.
+        self.assertAlmostEqual(row["ucap_mw"], 1000.0)
         # going_forward_cost = 40 x 1.3 x 1000 MW x 1000 = 52,000,000 $/yr.
         self.assertAlmostEqual(row["going_forward_cost"], 52.0e6)
         self.assertEqual(row["loss_years"], 1)
@@ -889,13 +893,27 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         # accredited floor retain at least as much as a nameplate floor
         # (plan §8.3 item 3): nameplate 2 x 1000 = 2000 clears a 1990
         # requirement, but accredited 2 x 950 = 1900 does not, so a third
-        # unit is retained.
+        # unit is retained. This is the DEFAULT (UCAP) basis property;
+        # ERCOT's registry entries are removed so the legacy basis drives
+        # (ERCOT itself now accredits at seasonal rating per its CDR —
+        # accreditation audit 2026-07-06).
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW,
+            THERMAL_ACCREDITATION_BASIS_BY_ISO,
+        )
+
         config = ScenarioConfig().with_overrides(planning_reserve_margin_override=0.0)
         coal = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
             for i in range(4)
         ]
-        survivors, _, _ = self._screen(coal, config, peak=1990.0)
+        with (
+            mock.patch.dict(THERMAL_ACCREDITATION_BASIS_BY_ISO, clear=True),
+            mock.patch.dict(ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO, clear=True),
+            mock.patch.dict(ADEQUACY_EXTERNAL_TIE_FIRM_MW, clear=True),
+        ):
+            survivors, _, _ = self._screen(coal, config, peak=1990.0)
         self.assertEqual(len(survivors), 3)
 
     def test_locational_exemption_skips_ra_saturated_zone(self):
@@ -921,17 +939,18 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
             peak_demand=1500.0,
             deliverability_headroom=headroom,
         )
-        # Requirement 1706 needs both units' UCAP, but ZLONG is exempt:
-        # only A is retained; B retires.
+        # Requirement 1607 (1500 x 0.942 x 1.1375) exceeds the 817 MW ties,
+        # but ZLONG is exempt: only A is retained; B retires.
         self.assertEqual([g.unit_id for g in survivors], ["A"])
         self.assertEqual([r["unit_id"] for r in log], ["A"])
 
     def test_peak_demand_next_drives_floor_through_evolve_fleet(self):
         # Plan §2.3 component 1: the floor tests the entering year's known
         # peak, not the prior-year bookkeeping peak. Two 1000 MW coal units
-        # (UCAP 950 each): against the stale 500 MW prior peak (requirement
-        # 569) one unit's UCAP suffices and the other retires; against the
-        # known 1200 MW peak (requirement 1365) both are retained.
+        # on ERCOT's CDR basis (rating; 817 MW ties): against the stale
+        # 1000 MW prior peak (requirement 1071.5) the ties plus one unit
+        # suffice and the other retires; against the known 2000 MW peak
+        # (requirement 2143) both are retained (817 + 2000 >= 2143).
         config = ScenarioConfig(iso="ERCOT")
         coal = [
             _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
@@ -942,7 +961,7 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
             "fleet_arrays": arrays,
             "dispatch_result": self._dispatch_result(2, 10.0),
             "prices": np.full((1, self.T), 10.0),
-            "peak_demand": 500.0,
+            "peak_demand": 1000.0,
         }
         # (evolve_fleet re-aggregates the fleet into bin representatives, so
         # assert on retained MW and the retention log, not unit identity.)
@@ -951,7 +970,7 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual(len(log), 1)
 
         fleet, _, _, _, log = evolve_fleet(
-            coal, prior, 2030, config, {}, peak_demand_next=1200.0
+            coal, prior, 2030, config, {}, peak_demand_next=2000.0
         )
         self.assertEqual(sum(g.pmax_mw for g in fleet), 2000.0)
         self.assertEqual(len(log), 2)
@@ -1008,7 +1027,8 @@ class TestReserveMarginBuild(unittest.TestCase):
             config=config,
             iso="ERCOT",
         )
-        # required = 8000 * 1.1375 = 9100; gap = 4100 firm -> >0 nameplate.
+        # required = 8000 x 0.942 x 1.1375 = 8568 (ERCOT firm-peak basis);
+        # gap = 3568 firm -> >0 nameplate.
         self.assertGreater(built, 0.0)
         self.assertTrue(any(g.unit_id == "gas_ct_adequacy_2030" for g in new_fleet))
 
@@ -1137,9 +1157,13 @@ class TestReserveMarginBuild(unittest.TestCase):
         """An ISO with no registry entry uses ``config.planning_reserve_margin``.
 
         ``.get(iso, config.planning_reserve_margin)`` returns the scalar
-        fallback, so the resolved margin equals the default 0.1375 -- the same
-        result as the ERCOT (registry) build at firm/peak parity.
+        fallback (0.1375) on the default basis: gross peak, no load-product
+        netting, UCAP nameplate conversion — the analytic value below.
+        (ERCOT itself is no longer at parity with the bare scalar: its CDR
+        basis nets load-side products and counts the new CT at rating —
+        accreditation audit 2026-07-06.)
         """
+        from market_sim.config.constants import EFORD
         from market_sim.model.capacity import apply_reserve_margin_build
 
         config = ScenarioConfig(reserve_margin_build_enabled=True)
@@ -1154,17 +1178,9 @@ class TestReserveMarginBuild(unittest.TestCase):
                 config=config,
                 iso="PJM",
             )
-        # Same scalar (0.1375) applied to the same firm/peak as ERCOT.
-        _, built_ercot = apply_reserve_margin_build(
-            [],
-            firm_capacity_mw=5000.0,
-            peak_demand_mw=8000.0,
-            year=2030,
-            config=config,
-            iso="ERCOT",
-        )
         self.assertGreater(built_fallback, 0.0)
-        self.assertEqual(built_fallback, built_ercot)
+        expected = (8000.0 * 1.1375 - 5000.0) / (1.0 - EFORD["gas_ct"])
+        self.assertAlmostEqual(built_fallback, expected)
 
 
 class TestRetirementMargin(unittest.TestCase):
