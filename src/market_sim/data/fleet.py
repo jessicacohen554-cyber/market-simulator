@@ -2576,6 +2576,7 @@ def campd_tranche_fuel_frac(
     gen: Generator,
     passthrough_by_supply: "dict[str, float | np.ndarray] | None" = None,
     takeorpay_by_plant: "dict[int, float] | None" = None,
+    econ_srmc_bound: bool = False,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -2603,6 +2604,13 @@ def campd_tranche_fuel_frac(
     delivered fuel. ``share = 1.0`` (fully contracted) reproduces the default
     0.0; a plant absent from the map keeps the default 100%-sunk behaviour.
 
+    ``econ_srmc_bound`` (``ScenarioConfig.coal_econ_srmc_bound``): when set,
+    a **marginal** coal tranche (unit id ending ``_peak`` or containing
+    ``_econ``) has its passthrough clamped to ``>= 1.0`` — its fuel is bought
+    at market, so the offer never drops below the plant's full measured
+    delivered fuel cost. Committed/must-run bands keep their contracted
+    discount; markups above 1.0 are untouched.
+
     The ``_sync`` synchronization tranche (rebuild step 3a,
     ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
     delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
@@ -2621,7 +2629,19 @@ def campd_tranche_fuel_frac(
                 return float(1.0 - share)
         return 0.0
     if gen.fuel_type == "coal" and passthrough_by_supply:
-        return passthrough_by_supply.get(getattr(gen, "coal_supply", ""), 1.0)
+        pt = passthrough_by_supply.get(getattr(gen, "coal_supply", ""), 1.0)
+        # ScenarioConfig.coal_econ_srmc_bound: a MARGINAL coal tranche
+        # (econ*/peak — above the contracted committed band) buys its fuel
+        # at market, so its offer may never drop below full measured
+        # delivered fuel cost: clamp the supply chain's passthrough to
+        # >= 1.0 (markups > 1.0 pass through unchanged). The committed
+        # band keeps the take-or-pay/stay-online discount.
+        uid = gen.unit_id
+        if econ_srmc_bound and (uid.endswith("_peak") or "_econ" in uid):
+            if isinstance(pt, np.ndarray):
+                return np.maximum(pt, 1.0)
+            return max(float(pt), 1.0)
+        return pt
     return 1.0
 
 
@@ -6853,6 +6873,7 @@ def build_dispatch_fleet(
                     "subbituminous": config.coal_prb_passthrough,
                 },
                 takeorpay,
+                econ_srmc_bound=getattr(config, "coal_econ_srmc_bound", False),
             )
             for g in dispatch_fleet
         ]
