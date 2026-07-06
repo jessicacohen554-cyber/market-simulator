@@ -1,0 +1,3 @@
+line1_doublebackslash:[·]
+line2_u005c:[·]
+line3_plain:[·]
