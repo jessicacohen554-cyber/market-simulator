@@ -10,13 +10,16 @@ caveats the probability-bounds plan (`docs/handoffs/probability-bounds-plan-2026
 The **first real** ERCOT production band: the landed PB-2 sampler
 (`market_sim.uncertainty`) + PB-3 structural prior (`market_sim.structural_prior`)
 driven end-to-end on real HiGHS, in **forecast mode** (`ScenarioConfig.mode="forecast"`,
-set explicitly; no backcast overlays), over the **2026–2050** production horizon,
-replacing the synthetic fixture (`synthetic-fixture-ercot-v1`) as the fan-chart
-page's data source. Base config = the ERCOT forecast reference (legacy heat-rate
-bins, `use_campd_bins=False`) — the same structural config the forecast-validation
-golden pins. Draws come from the committed, cited `configs/uncertainty_ercot.yaml`;
-every quantile carries a bootstrap 90% CI so the sampling noise is visible, not
-assumed away.
+set explicitly; no backcast overlays), over the **2026–2032** window — the same
+horizon the forecast-validation golden (`tests/golden/ercot_2026_2032.json`) and the
+`forecast-invariants.yml` heavy tier already use — replacing the synthetic fixture
+(`synthetic-fixture-ercot-v1`) as the fan-chart page's data source. Base config = the
+ERCOT forecast reference (legacy heat-rate bins, `use_campd_bins=False`) — the same
+structural config the golden pins. Draws come from the committed, cited
+`configs/uncertainty_ercot.yaml`; every quantile carries a bootstrap 90% CI so the
+sampling noise is visible, not assumed away. The gas-price σ is deliberately kept
+anchored to the full 2050 AEO horizon, so the band **width** is the conservative
+full-horizon width, not a narrower window-specific one.
 
 ## The three pre-registered limitations (stated, not softened)
 
@@ -55,15 +58,16 @@ range is anchored on the same-vintage ISO/EIA forecasts.
 
 ## Two run-specific caveats (full disclosure)
 
-### (d) draw count n=12 is well below the spec's n=50–100 floor
-The committed spec (`configs/uncertainty_ercot.yaml`) sets n=64 (configurable 50–100).
-A single 2026–2050 member is ~35–45 min of real HiGHS; the full n=64 batch is the
-plan's explicit **~2.7-day scheduled run** (§5) and cannot complete in one working
-session. This run is **n=12** — a genuine run of the production machinery at the true
-production horizon, with the **bootstrap 90% CI on every quantile making the small-n
-sampling noise explicit**. It is NOT the n=64 spec batch; scaling n is a
-compute/scheduling matter, not a code change (same seed=7, larger n, re-run the same
-driver). Do not quote these quantiles as if n=64.
+### (d) reduced reporting window (2026–2032) and draw count (n=12) vs the spec batch
+The committed spec (`configs/uncertainty_ercot.yaml`) is **n=64 over the full
+2026–2050 horizon** — the plan's explicit **~2.7-day scheduled run** (§5), out of
+scope for an interactive session. This run is **n=12 over 2026–2032**: a genuine run
+of the production machinery on the golden/CI window, with the **bootstrap 90% CI on
+every quantile making the small-n sampling noise explicit**, and (per above) the
+gas-σ width held at the full 2050 anchor. It is NOT the n=64 / 2050 spec batch;
+scaling n and extending to 2050 is a compute/scheduling matter, not a code change
+(same seed=7, larger n, `end_year=2050`, re-run the same driver). Do not quote these
+quantiles as the n=64 / 2050 band.
 
 ### (e) confirmed-retirement channel inert in this run environment
 `confirmed_exits_enabled` defaults on, but `scripts.lib.clean_io` is not importable
