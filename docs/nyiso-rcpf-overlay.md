@@ -2,6 +2,16 @@
 
 **Status:** implemented (post-solve overlay), default off
 (`ScenarioConfig.nyiso_rcpf_enabled`). NYISO only, system-wide (NYCA).
+**Rule-19 reconciliation (2026-07-06, lane L-11):** the overlay and the in-LP
+energy+reserve co-optimization (`energy_reserve_coopt`, the keeper-config
+path, `config/reserve_config._nyiso_design`) price the same phenomenon —
+reserve-shortage rent in the LBMP. Enabling both is now a **hard error** in
+`_nyiso_design`: the overlay is the post-solve COMPARATOR for co-opt-off
+runs only, never a stack on the co-opt duals. The condition-varying
+requirement channel (issue #1344, `nyiso_dynamic_reserve_requirements`,
+`data.nyiso_reserve_requirements` — awaiting the Ask-B intake,
+`docs/handoffs/nyiso-data-asks-2026-07.md`) extends the in-LP families, not
+this overlay.
 **Code:** `src/market_sim/results/rcpf.py`,
 `scripts/derive_nyiso_rcpf_overlay.py`,
 constants `NYISO_RCPF_PRODUCTS` (`src/market_sim/config/constants.py`).

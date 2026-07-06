@@ -2983,6 +2983,23 @@ def run_year(
     # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
     # for ISOs/years without one.
     ttc = _apply_iso_monthly_ttc(ttc, iso_config, iso, year, demand.shape[1])
+    # NYISO Zone-K LCR/TSL mechanism (issue #1345, config.nyiso_li_lcr_tsl):
+    # cap the NYC->Long_Island link at the published locality import limit in
+    # the HB14-21 design-condition window, replacing the Long_Island 0.45
+    # self-supply energy floor (excluded below — rule 19, one mechanism per
+    # phenomenon). LI reliability energy then clears economically behind a
+    # published limit instead of through a forced min_gen floor.
+    if getattr(config, "nyiso_li_lcr_tsl", False):
+        from market_sim.model.transmission import apply_nyiso_li_tsl_import_cap
+
+        ttc = apply_nyiso_li_tsl_import_cap(ttc, iso_config, iso, year, demand.shape[1])
+        logger.info(
+            "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island (HB14-21, "
+            "published locality import limit; replaces the LI self-supply "
+            "energy floor)",
+            iso,
+            year,
+        )
     # Measured ERCOT GTC export limits (backcast overlay, ScenarioConfig.
     # ercot_gtc_limits_measured): the GTC-carrying links' export direction
     # follows the hourly NP6-86 measured limit series so West/Panhandle
@@ -3782,7 +3799,17 @@ def run_year(
     if getattr(config, "nyiso_local_selfsupply", False):
         from market_sim.model.transmission import inject_nyiso_local_selfsupply
 
-        if inject_nyiso_local_selfsupply(fleet_arrays, iso, demand, zone_names):
+        # Zone-K LCR/TSL mechanism active (issue #1345): the published-limit
+        # import cap owns Long_Island this run; skipping its floor entry here
+        # keeps the two mechanisms from stacking (rule 19).
+        _selfsupply_exclude = (
+            frozenset({"Long_Island"})
+            if getattr(config, "nyiso_li_lcr_tsl", False)
+            else frozenset()
+        )
+        if inject_nyiso_local_selfsupply(
+            fleet_arrays, iso, demand, zone_names, exclude_zones=_selfsupply_exclude
+        ):
             logger.info(
                 "%s %d: local self-supply floor applied to downstate pocket(s) "
                 "(LMIC / cable-islanded local reliability)",
