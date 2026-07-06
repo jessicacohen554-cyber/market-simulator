@@ -1,0 +1,45 @@
+{
+  "iso": "MISO",
+  "keeper": "2026-07-05-miso-41-ct-evening",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "gen_source": "committed dashboard payload m_ann (per-plant model annual GWh)",
+  "results": {
+    "2023": {
+      "model_fossil_gwh": 402217.2,
+      "coverage_pct": 90.2,
+      "n_plants": 373,
+      "n_plants_covered": 200,
+      "v2_model_co2_mt": 235.63,
+      "matched_subset_gen_pct": 86.8,
+      "matched_v2_co2_mt": 226.73,
+      "matched_egrid_co2_mt": 227.93,
+      "matched_rate_delta_pct": -0.53
+    },
+    "2024": {
+      "model_fossil_gwh": 401944.0,
+      "coverage_pct": 91.1,
+      "n_plants": 372,
+      "n_plants_covered": 198,
+      "v2_model_co2_mt": 231.8,
+      "matched_subset_gen_pct": 87.5,
+      "matched_v2_co2_mt": 222.67,
+      "matched_egrid_co2_mt": 228.73,
+      "matched_rate_delta_pct": -2.65
+    },
+    "2025": {
+      "model_fossil_gwh": 424170.7,
+      "coverage_pct": 93.5,
+      "n_plants": 372,
+      "n_plants_covered": 195,
+      "v2_model_co2_mt": 269.12,
+      "matched_subset_gen_pct": 90.1,
+      "matched_v2_co2_mt": 259.57,
+      "matched_egrid_co2_mt": 268.44,
+      "matched_rate_delta_pct": -3.3
+    }
+  }
+}
