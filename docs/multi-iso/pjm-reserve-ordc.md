@@ -461,6 +461,23 @@ Phase-2 flags):
    uncovered plants (rule 14). On the 2024 fleet the measured
    reconciliation thins the deliverable cap ~50 → ~40 GW (p50).
 
+**Phase 2 probe result (`pjm-81`, dashboard
+`2026-07-06-pjm-81-coopt-pergen`, full span 2023–2025).** The build fits
+(P1 peak ~15.0 GB, ~0.4 GB swap transient) and the mechanism fires — the
+in-LP reserve price is **nonzero for the first time in any PJM scoping**:
+exactly 1 hour, 2025-06-23 h19 (the June-2025 heat wave), a $46.47
+opportunity-cost dual lifting the year-max LMP to $158.61. Everything else
+is unchanged vs the pjm-78 baseline: dispatch byte-comparable at class
+grain, verdict criterion-identical (C3a −8.0/−13.3 %, C3c **0 h** vs
+6/18/59, C8 12.0 %). Honest attribution: the measured-deliverable pool
+(~33–45 GW hourly) sits ~10× above the ~3.3–4.1 GW measured requirement,
+so the pool margin is essentially never tight under perfect-foresight
+commitment — **the $75–200 band is now empirically blocked ONLY on the
+Phase-1 commitment posture** (online reserve ~14 GW vs PJM's real ~3 GW),
+not on reserve structure, memory, or ramp data. Mechanism retained for the
+next keeper cycle (rule 1); keeper stays pjm-77 (no criterion gain — not a
+promotion case).
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 
