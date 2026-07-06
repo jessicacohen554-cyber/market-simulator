@@ -89,23 +89,42 @@ No dispatch-side wiring remains.
   single-year scenario allowance price — an upper bound in a tight year, ~0 in a loose one — never a
   point forecast of the banked RGGI/CARB market price. A cross-year bank remains explicitly out of
   scope (breaks rule-9 one-pass year independence).
-- **NOx/SO₂ mass cap** (§10): out of scope; the same builder with `nox_rate` is a trivial follow-on.
-- **The mass-cap row is not reachable from the backcast calibration harness.** `runner.py::
-  run_scenario_iso` (forecast/backcast orchestration) fully threads `get_active_policy_constraints`
-  into the dispatch builder (confirmed by `tests/test_runner.py::TestMassCapPerUnitMembershipWiring`,
-  new this pass) — but the separate backcast **calibration** scripts
-  (`scripts/run_calibration.py::run_year`, `scripts/run_calibration_full.py::solve_and_persist`) build
-  their own `ScenarioConfig`/`dispatch_kwargs` pipeline directly and never call
-  `get_active_policy_constraints`, so `mass_cap_enabled` is currently inert there. This means the
-  optional diagnostic probe this pass considered (a RGGI-ISO backcast year with the row enabled,
-  comparing the endogenous dual to the observed RGGI auction price) **could not be run**: the
-  calibration harness has no path to exercise the row at all today. Wiring it in is a real, scoped
-  follow-on (mirroring `runner.py`'s `mass_caps` block: compute `cap_coeffs` via
-  `get_active_policy_constraints(config, year, zone_names=...)` +
-  `per_generator_membership(...)` and thread into `run_year`'s `dispatch_kwargs`) — deliberately not
-  attempted in this pass since it touches the calibration harness's core dispatch construction, which
-  CI's quarantine/legitimacy gates (`scripts/audit_keepers.py`, `scripts/legitimacy_diagnostics.py`)
-  scrutinize closely, and deserves its own reviewed change rather than a same-pass addition.
+- **NOx/SO₂ mass cap** (§10, expanded into its own §13 below, W8): out of scope this wave; the
+  same builder with `nox_rate` is a trivial follow-on once a NOx budget/price registry lands.
+- **The mass-cap row is not reachable from the backcast calibration harness — RESOLVED (2026-07-06,
+  Lane L-8, G-29).** `runner.py::run_scenario_iso` (forecast/backcast orchestration) already fully
+  threaded `get_active_policy_constraints` into the dispatch builder; the separate backcast
+  **calibration** scripts never did, because `scripts/run_calibration_full.py::solve_and_persist`
+  calls `scripts/run_calibration.py::run_year` directly (confirmed by reading both — there is only
+  ONE dispatch-construction seam, not two), and `run_year` never called
+  `get_active_policy_constraints` at all. Fixed by extracting the row-building logic runner.py
+  already had inline into a shared helper,
+  `policy.constraints.build_mass_cap_dispatch_kwargs(config, year, zone_names, fleet_arrays) -> dict`
+  (returns `{}` — no dispatch_kwargs change — when no cap is active, so the default-off harness is
+  byte-identical), and calling it from `run_year`'s `dispatch_kwargs` assembly (mirrors runner.py's
+  `mass_caps` block exactly, same file/line ownership as the resolver it calls). `run_year` gained
+  three new keyword parameters (`mass_cap_enabled`, `mass_cap_tons`, `mass_cap_program`, applied via
+  `config.with_overrides(...)` — the file's existing convention for every other gated calibration
+  toggle), and `scripts/run_calibration.py`'s own CLI gained matching
+  `--mass-cap-enabled`/`--mass-cap-tons`/`--mass-cap-program` flags. Default stays `False`
+  everywhere; nothing about a keeper's committed dispatch changes. Unit tests:
+  `tests/test_constraints.py::TestBuildMassCapDispatchKwargs` (a mass-cap-enabled backcast
+  `ScenarioConfig` actually produces `mass_cap_coeffs`/`mass_cap_rhs`/`mass_cap_labels`; disabled,
+  no-program, and quarantined-year configs all still return `{}`). No solve was run to land this —
+  it is a pure config/dispatch_kwargs threading change, unit-tested without invoking the LP.
+  **Deliberately NOT wired:** `scripts/run_calibration_full.py`'s own ~1000-line argparse block and
+  its `solve_and_persist → run_year(...)` call site (the kwargs it forwards) do not yet expose the
+  three new parameters — that file's argparse/solve-core surface is large, separately evolving (the
+  L-2 lane owns its argparse block for an unrelated `--help`-crash + holdout-gate fix), and touching
+  it was out of this pass's scoped file ownership. The recipe below therefore drives
+  `scripts/run_calibration.py` directly (a diagnostic run + printed report, not a persisted
+  dashboard bundle) rather than the bundle-producing `run_calibration_full.py` — appropriate for a
+  PROBE that is explicitly never meant to be a keeper (rule 16). Wiring
+  `run_calibration_full.py::solve_and_persist` the same way, if a future session wants a
+  dashboard-registrable mass-cap bundle, is a 3-line follow-on: add the same three parameters to
+  `solve_and_persist`'s signature, forward them into its `run_year(...)` call (next to
+  `negative_renewable_offers`), and add the matching three `argparse` entries next to
+  `--negative-renewable-offers` there.
 
 ---
 
@@ -375,6 +394,38 @@ coupled program a true bank needs. Documented consequences:
   Hotelling rule — but it breaks one-pass year independence and needs its own design; do not
   smuggle it in.
 
+**Rule-13 admissibility note (W8 follow-on, filed explicitly per the 2026-07 gap register
+G-29/W8 item).** A cross-year bank is not merely deferred for LP-mechanics convenience (rule 9) —
+it also fails CLAUDE.md rule 13's admissibility test on its own terms, which is a second,
+independent reason never to smuggle one in later as a "just thread `prior_results`" patch:
+
+- **The test:** could this quantity be produced for a forward year from forward drivers, and would
+  it respond to changed conditions? A bank *balance* is a genuine physical/market state (RGGI and
+  CARB both publish participant-level banked-allowance totals), so in principle a bank-balance
+  *input* could pass the test if it were sourced from the published program-wide bank statistics
+  (RGGI's Auction Reserve/CCR reports show the total bank; CARB's Cap-and-Trade quarterly reports
+  do too) and *held exogenous* — never solved as a function of this model's own single-ISO,
+  single-sector dispatch.
+- **What would fail it:** a bank recursion computed as `bank[y] = bank[y-1] + cap[y] −
+  emissions[y]` using **this model's own emissions** is not a forward-reproducible measured input —
+  it is an *outcome* of the very dispatch the bank is meant to influence, threaded back into next
+  year's price. That is a self-referential residual by construction (worse than rule 1's ordinary
+  "fitted adder" case, because it compounds year over year), and it has no forward analogue: a real
+  utility's bank balance depends on the ENTIRE regulated economy's multi-sector emissions, not one
+  ISO's power-sector LP. A single-ISO model computing "its own" bank balance would silently invent a
+  bank that has no relationship to the real RGGI/CARB bank.
+- **The only rule-13-admissible form**, should a future design want a bank at all: read the
+  *published, whole-program* bank-balance series as an external, un-modified time series (like
+  `STATE_CARBON_PRICE_BY_ISO` today) and use it only to justify the **adder path's** trajectory
+  shape (e.g. a bank-drawdown-consistent price escalation), never to feed an endogenous single-ISO
+  mass-cap dual. This is consistent with §2's core finding: the adder path is the faithful
+  representation of a banked, multi-sector market; the row path's dual is honestly a power-sector,
+  no-bank scenario price and should stay that way rather than gain a fake bank state.
+- **Conclusion: no code changes recommended.** The current design (no banking, §8's existing text)
+  is both the LP-simplicity-correct choice (rule 9) and the rule-13-admissible choice. This
+  subsection exists so the "no banking" decision is documented with its own admissibility argument
+  rather than only a one-line "out of scope" note, per this lane's task scope.
+
 ---
 
 ## 9. Tests & the exactness gate
@@ -447,6 +498,162 @@ Per PP-2.1 and CLAUDE.md testing pattern (trivial case first):
 | `runner.py` | call-site: pass `get_active_policy_constraints(config, year)` into the dispatch builder alongside `rps_target` |
 | `results/` + dashboard | surface `co2_cap_price` as the endogenous carbon price where a cap binds |
 | tests | `test_constraints.py`, `test_cap_and_trade.py`, `test_dispatch.py` (dual index), extend `test_carbon.py` |
+
+---
+
+## 13. NOx mass-cap follow-on (W8, filed explicitly per the 2026-07 gap register)
+
+Out of scope for this wave (§10), filed here as its own section (rather than the one-line ledger
+bullet it was previously scattered across) so a future implementer has a starting design and this
+lane's admissibility judgment on record.
+
+### 13.1 What a NOx cap-and-trade row would represent
+
+The only NOx cap-and-trade program that actually covers plants in this model's six ISOs is EPA's
+**Cross-State Air Pollution Rule (CSAPR) ozone-season NOx trading program** (the successor to the
+NOx Budget Trading Program) — a **seasonal** (May 1–Sep 30 ozone season, not full-year) allowance
+market with state-level budgets, covering most PJM/MISO/NYISO/NEISO-footprint states (CSAPR does
+not cover ERCOT or CAISO — Texas and California are outside CSAPR's ozone-transport regions).
+`_build_mass_cap_rows` (§4) generalizes directly: swap the coefficient basis from
+`emission_rate` (CO2) to `fleet_arrays.nox_rate`, and swap `CAP_AND_TRADE_PROGRAMS`'s CO2-program
+registry for a parallel `NOX_PROGRAMS` (state membership × EPA-published seasonal allowance
+budget, tons NOx).
+
+### 13.2 The structural wrinkle CO2 does not have: the cap is seasonal, not annual
+
+RGGI/CARB CO2 caps run the full calendar year, so `_build_mass_cap_rows`'s "one row, all 8760
+hours" form (§4) applies unmodified. CSAPR's NOx budget applies **only** to the ozone season
+(May–September, ≈ 3,672 of 8,760 hours) — the row must sum member-generator NOx emissions over
+**only those hours**, not the full year. This needs one addition to the builder: an optional
+`hour_mask` (boolean, length `T`) that zeroes the column-selection outside the covered season,
+rather than the unconditional `hours = np.arange(T)` the CO2 row uses today. Still fully vectorized
+(rule 2) — `hours = np.arange(T)[hour_mask]` before the same `np.tile`/`ravel` construction — no
+new Python loop.
+
+### 13.3 Rule-13 admissibility
+
+**Passes the test, with an honesty caveat that differs from CO2's.** EPA's per-state CSAPR
+allowance budgets are published, forward-reproducible (a future year's budget is a matter of public
+record, not a fitted quantity), and respond to changed conditions (EPA periodically re-allocates
+budgets; a state's membership can change under a new CSAPR update rule) — same shape of argument as
+RGGI's/CARB's published CO2 budgets (§7). The row's membership mask (which generators sit in
+CSAPR-covered states) is exactly analogous to the CO2 row's per-generator membership
+(`per_generator_membership`, §5) and can reuse the same EIA-860 plant→state machinery.
+
+**The caveat: unlike CO2, there is today no measured NOx allowance PRICE series in this repo**
+(`STATE_CARBON_PRICE_BY_ISO` has no NOx analogue), and CSAPR's ozone-season NOx allowance price has
+historically been thin/volatile with periods of near-collapse (unlike RGGI/CARB CO2, which have
+sustained, actively-traded clearing prices this model's CO2 adder path measures directly). That
+means — mirroring §2's reasoning for why a power-only CO2 cap would be fake — there is currently no
+adder-path measured price to validate a NOx row's endogenous dual against, and no existing
+"NOx price is real and load-bearing" claim this repo makes anywhere today. **Recommendation:** build
+the row (§13.1–13.2) as a genuine, cited, rule-13-admissible mechanism, but ship and describe it
+purely as a **scenario/counterfactual tool** ("what would a tightened/hypothetical CSAPR-style NOx
+budget cost this fleet"), default off, never claimed as a calibration or validation mechanism the
+way §14's CO2 RGGI probe is — there is no honest observed-price target to score it against today.
+If EPA CSAPR auction/secondary-market NOx price data becomes available and is added to the repo,
+this recommendation should be revisited (it would then support the same adder-vs-row structure CO2
+has).
+
+### 13.4 Files (sketch, unbuilt)
+
+Same shape as the CO2 wiring: `config/constants.py::NOX_PROGRAMS` (state membership + EPA ozone-
+season budget, cited), `policy/cap_and_trade.py::resolve_nox_program` (or generalize
+`resolve_carbon_program` to a `pollutant` parameter spanning `"co2"`/`"nox"`), `model/dispatch.py`
+gains the `hour_mask` parameter on `_build_mass_cap_rows`, `policy/constraints.py::
+get_active_policy_constraints` grows a second, independent `MassCapSpec` in its returned list when
+a NOx program is configured (the dual-index arithmetic in §4/§9.5 already handles multiple stacked
+caps). No SO2 equivalent is proposed: the Title IV Acid Rain SO2 allowance market has traded near
+$0/ton for the past decade (post-MATS-rule oversupply), so an SO2 mass-cap row would almost never
+bind — the same "fake mechanism" trap §2 already ruled out for a power-only CO2 cap.
+
+---
+
+## 14. RGGI dual-vs-auction-price validation probe — runnable recipe (2026-07-06, Lane L-8)
+
+**Purpose.** With the G-29 wiring above landed, this is now runnable (it was not, before this
+lane): compare the mass-cap row's endogenous dual (`co2_cap_price`) against the observed RGGI
+auction clearing price, for a RGGI ISO where the row is configured to bind at (close to) the
+publicly reported regional/member-state emissions level. This is a **diagnostic probe**, never a
+keeper input and never run in this session (rule 12/16 — this section is a spec, not a solve
+report).
+
+### 14.1 Which ISO-years
+
+**NYISO, 2023–2024** (single-state RGGI member — `m_zone ≡ 1.0` everywhere, §5's "clean v1
+target" — so the row's membership is exact with no fractional-PJM complication). Use the
+already-registered `nyiso-41-hub-prices` keeper's config as the base (`results/calibration/
+nyiso41_hubprices/run_config.json`) so every other lever (offer curves, floors, etc.) matches a
+known-good backcast; do **not** use a year outside 2023–2025 (rule 22 — 2022/H1-2026 stay
+quarantined). NEISO 2023–2024 is a reasonable second ISO for the same probe (also `m_zone≡1.0`,
+6-state RGGI region) if a cross-ISO check is wanted; CAISO is a CARB (not RGGI) probe and would
+compare against the CARB auction settlement price instead (a separate, equally valid probe with the
+same recipe, swapping the RGGI reference series for CARB's).
+
+### 14.2 Which config
+
+Using the new `scripts/run_calibration.py` CLI (this lane's G-29 wiring):
+
+```
+uv run python scripts/run_calibration.py \
+  --iso NYISO --year 2023 2024 --hours 8760 \
+  --mass-cap-enabled \
+  --mass-cap-tons <TARGET_TONS>
+```
+
+**Reading the dual.** `main()`'s `_report_year` does not print `co2_cap_price` (it predates this
+lever and reports the usual price/generation/CO2 diagnostics only), so the CLI's stdout alone will
+not show the allowance price — a probe script should instead call `run_year(...)` directly (as
+`main()` does internally) and read the returned `result.co2_cap_price` (a `list[float]`, one entry
+per active cap; `result` is P1 unless `--commitment` is passed, matching the "P1 is the main run"
+convention). This is a ~10-line wrapper around the existing `run_year` call in `main()`, not a new
+mechanism.
+
+`<TARGET_TONS>` should be set to a level **near the modeled fleet's own realized in-region fossil
+CO2 emissions for the year** (read from the `nyiso-41-hub-prices` keeper's own registered CO2
+total on the dashboard/`legitimacy_diagnostics.json` C5a row — NOT the full published RGGI
+regional/member-state budget, which is loose by design and would leave the row inert, per §2's
+finding that a power-sector-only row against the real published budget essentially never binds).
+The point of the probe is a **counterfactual "what if the power sector alone had to hit its own
+historical tonnage"** — deliberately NOT the real RGGI cap — so the row is guaranteed to bind at
+(or just above) that level, giving a nonzero, interpretable dual to compare against the observed
+auction price. Sweeping `<TARGET_TONS>` from slightly-below to
+slightly-above the realized tonnage traces out the row's dual-vs-tightness curve, which is the
+useful diagnostic output (not a single number).
+
+Omitting `--mass-cap-tons` instead pulls the real published per-state RGGI budget
+(`_published_power_sector_budget`, §7) — expected, per §2, to leave the row **slack** (dual ≈ 0):
+running that config too is a useful negative-control leg of the same probe, confirming the "a
+power-only row against the real budget doesn't bind" claim empirically rather than just by
+argument.
+
+### 14.3 What counts as pass / what the probe teaches
+
+This is explicitly **not a pass/fail gate** — there is no rule-13-admissible reason to expect the
+row's no-bank, power-sector-only dual to equal the banked, multi-sector RGGI auction price (§2, §8);
+a probe that "matched" would be a coincidence, not evidence of anything, and must not be read as
+validating the mechanism. What the probe legitimately establishes:
+
+1. **Sanity check on the mechanism itself:** at the realized-tonnage target, the dual should be
+   **positive and of a plausible order of magnitude** relative to the measured RGGI price
+   (§14.2's config) — a dual of $0 or a nonsensical (e.g. negative, or many-orders-of-magnitude-off)
+   value would indicate a wiring bug (dual sign, row placement, unit conversion), not a real
+   modeling finding. This is the practical value of running it: an end-to-end sanity check on
+   `_build_mass_cap_rows`'s dual recovery (§4) against a real-scale ISO-year, which the trivial
+   2-gen unit test (§9.1) cannot exercise (real fleet size, real offer curve, real co-optimized
+   reserve/RPS/storage rows stacked alongside the cap row per §9.5's dual-index arithmetic).
+2. **The negative control (§14.2, no explicit `--mass-cap-tons`):** confirms the row stays slack
+   against the real published budget, i.e. that §2's central design argument ("a power-sector-only
+   row against the real RGGI/CARB budget would never bind") is empirically true for this model's
+   fleet, not just asserted from first principles.
+3. **NOT evidence for or against calibration quality.** The dual-vs-tonnage sweep (§14.2) is a
+   property of this ISO's own fleet-wide CO2 marginal abatement cost curve, which is an interesting
+   number to have on record but is not compared against any external "correct" curve — there is no
+   such published series to check it against.
+
+**Registration.** If run, register as a dashboard PROBE (rule 15), never a keeper candidate (rule
+16 — this is explicitly a diagnostic, not a calibration run), with a sidecar note stating the
+`--mass-cap-tons` value(s) swept and both legs (bound-to-realized-tonnage and negative-control).
 
 ---
 
