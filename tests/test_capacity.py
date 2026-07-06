@@ -309,6 +309,48 @@ class TestConfirmedExits(unittest.TestCase):
         self.assertEqual([g.unit_id for g in out], ["600_1"])
         self.assertEqual(out[0].pmax_mw, 100.0)
 
+    def test_repeated_year_call_does_not_re_derate(self):
+        # Regression for the double-derate bug (fixed 2026-07-05): the fleet
+        # threads forward mutated through the runner's year loop, so
+        # evolve_fleet's default (apply_backlog=False) must select a row only
+        # in the exact year it becomes effective -- calling again for year N+1
+        # with the SAME exits list and the SAME already-derated fleet must be
+        # a no-op, not a second 100 MW derate off the already-shrunk plant.
+        fleet = [_binned("H_CC1", 700, 1000.0, pmin=200.0, nameplate=1000.0)]
+        exits = [self._exit(700, "U1", 2028, mw=100.0)]
+        derated_2028 = apply_confirmed_exits(fleet, 2028, exits)
+        self.assertAlmostEqual(derated_2028[0].pmax_mw, 900.0, places=4)
+        derated_2029 = apply_confirmed_exits(derated_2028, 2029, exits)
+        self.assertAlmostEqual(derated_2029[0].pmax_mw, 900.0, places=4)
+        # A third call for good measure -- still 900, never 810 or below.
+        derated_2030 = apply_confirmed_exits(derated_2029, 2030, exits)
+        self.assertAlmostEqual(derated_2030[0].pmax_mw, 900.0, places=4)
+
+    def test_newly_effective_exit_applies_at_its_own_year(self):
+        # Symmetric positive case: a row whose effective year is N+1 (not the
+        # year of the first call) is a no-op at N and applies at N+1 -- the
+        # default apply_backlog=False semantics used by evolve_fleet.
+        fleet = [_binned("H_CC1", 701, 1000.0, pmin=200.0, nameplate=1000.0)]
+        exits = [self._exit(701, "U1", 2029, mw=100.0)]
+        still_whole = apply_confirmed_exits(fleet, 2028, exits)
+        self.assertAlmostEqual(still_whole[0].pmax_mw, 1000.0, places=4)
+        derated = apply_confirmed_exits(still_whole, 2029, exits)
+        self.assertAlmostEqual(derated[0].pmax_mw, 900.0, places=4)
+
+    def test_pre_start_backlog_applies_exactly_once(self):
+        # build_base_fleet's apply_backlog=True collapses every exit with
+        # effective_year <= start_year into a single application at the first
+        # simulated year -- a unit confirmed to exit in 2025 or earlier must
+        # not be double-derated when the 2026 forecast start year is reached.
+        fleet = [_binned("H_CC1", 702, 1000.0, pmin=200.0, nameplate=1000.0)]
+        exits = [self._exit(702, "U1", 2024, mw=100.0)]
+        base = apply_confirmed_exits(fleet, 2026, exits, apply_backlog=True)
+        self.assertAlmostEqual(base[0].pmax_mw, 900.0, places=4)
+        # evolve_fleet's default (apply_backlog=False) never re-selects this
+        # already-applied backlog row in a later year.
+        year2 = apply_confirmed_exits(base, 2027, exits)
+        self.assertAlmostEqual(year2[0].pmax_mw, 900.0, places=4)
+
 
 class TestEconomicRetirements(unittest.TestCase):
     """Revenue-driven retirement of persistently unprofitable thermal units.

@@ -6726,12 +6726,16 @@ def build_base_fleet(
     :func:`~market_sim.model.capacity.evolve_fleet`.
 
     Confirmed (binding-instrument) exits already effective by ``year`` are
-    applied last (:func:`~market_sim.model.capacity.apply_confirmed_exits`), so a
-    unit confirmed to close in the first simulated year is not mis-carried for a
-    full year — the "a 2026 exit can never happen in 2026" hole the economic
-    screen (which needs prior-year dispatch) cannot close. GATED on
-    ``config.confirmed_exits_enabled``; a no-op when off or ``confirmed_exits`` is
-    empty.
+    applied last (:func:`~market_sim.model.capacity.apply_confirmed_exits`,
+    ``apply_backlog=True``), so a unit confirmed to close in the first
+    simulated year is not mis-carried for a full year — the "a 2026 exit can
+    never happen in 2026" hole the economic screen (which needs prior-year
+    dispatch) cannot close. ``apply_backlog=True`` collapses every exit with
+    ``effective_year <= year`` (the pre-start backlog) into a single
+    application here; :func:`~market_sim.model.capacity.evolve_fleet` then
+    only ever selects a row newly effective in its own year, so no row is
+    ever applied twice. GATED on ``config.confirmed_exits_enabled``; a no-op
+    when off or ``confirmed_exits`` is empty.
     """
     if campd_bins is not None:
         campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
@@ -6789,7 +6793,7 @@ def build_base_fleet(
         from market_sim.model.capacity import apply_confirmed_exits
 
         before = len(fleet)
-        fleet = apply_confirmed_exits(fleet, year, confirmed_exits)
+        fleet = apply_confirmed_exits(fleet, year, confirmed_exits, apply_backlog=True)
         if len(fleet) != before:
             logger.info(
                 "year %d: confirmed exits removed/derated %d base-fleet unit(s)",
