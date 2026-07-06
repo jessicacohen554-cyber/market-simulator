@@ -106,8 +106,8 @@
       "criterion": "governance",
       "metric": "D-3 zero-forcing ablation twin (CLAUDE.md rule 20)",
       "magnitude": "absent at registration",
-      "classification": "OWNER-DEFERRED (temporary)",
-      "reason": "This bundle replaces 2026-07-06-neiso-49-stgas-netload, whose own ablation twin (2026-07-06-neiso-49-stgas-netload-ablation) is being retired alongside it (it validated the retired, unreproducible base price level and is not a valid twin for this bundle). The owner explicitly deferred solving a fresh ablation twin pending the C3a determination check (session claude/neiso-49-resolve-confirm-7eb00b). A fresh zero-forcing ablation solve (--zero-forcing-ablation, same recipe, full 2023-2025 span) should be registered as a follow-up; audit_keepers.py E9 will flag this bundle until then."
+      "classification": "RESOLVED 2026-07-06 (was OWNER-DEFERRED (temporary))",
+      "reason": "This bundle replaces 2026-07-06-neiso-49-stgas-netload, whose own ablation twin (2026-07-06-neiso-49-stgas-netload-ablation) is being retired alongside it (it validated the retired, unreproducible base price level and is not a valid twin for this bundle). The owner explicitly deferred solving a fresh ablation twin pending the C3a determination check (session claude/neiso-49-resolve-confirm-7eb00b). A fresh zero-forcing ablation solve (--zero-forcing-ablation, same recipe, full 2023-2025 span) should be registered as a follow-up; audit_keepers.py E9 will flag this bundle until then. RESOLUTION (2026-07-06): the deferred twin is now registered as 2026-07-06-neiso-50-ablation (bundle results/calibration/neiso49_resolve_confirm-ablation, same recipe, full 2023-2025 span, every merchant floor/bridge neutralized) and linked from this keeper's sidecar \"ablation_twin\" field; keeper-vs-twin per-class deltas are small (max +-0.17 TWh: COAL_BIT -0.17/2025, CC_CHP -0.13/2025, CT_PEAKER +0.17/2025), confirming the keeper is not floor-dependent. audit_keepers.py E9 now passes for this keeper."
     }
   ],
   "free_parameters": {
