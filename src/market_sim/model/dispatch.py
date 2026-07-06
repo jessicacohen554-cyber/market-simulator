@@ -422,17 +422,26 @@ def _build_zone_storage_map(
 
 def _build_rps_row(
     layout: VariableLayout,
-    fleet: FleetArrays,
     rps_target: float,
     demand: np.ndarray,
 ) -> tuple[sp.csr_matrix, float]:
     """Return the single annual RPS constraint row and its lower bound.
 
-    The row carries a ``+1`` coefficient on every wind, solar and nuclear
-    dispatch column across all ``T`` hours; the lower bound is
-    ``rps_target`` times total annual demand. The resulting constraint
-    ``clean >= rps_target * demand`` is an inequality with no upper bound,
-    and its dual is the implicit REC price ($/MWh clean-energy premium).
+    The row carries a ``+1`` coefficient on every wind and solar dispatch
+    column across all ``T`` hours; the lower bound is ``rps_target`` times
+    total annual demand. The resulting constraint
+    ``renewable >= rps_target * demand`` is an inequality with no upper bound,
+    and its dual is the implicit REC price ($/MWh renewable-energy premium).
+
+    Only wind and solar count toward the target: an RPS is a *renewable*
+    portfolio standard, so existing nuclear and large hydro -- clean but not
+    renewable -- are excluded (CX-6a, capacity-economics plan 2026-07 §6.5).
+    Counting nuclear here would let its output satisfy the target and depress
+    the REC dual toward zero wherever nuclear+VRE already clear it, killing the
+    renewable-entry signal the dual exists to send. Nuclear's zero-emission
+    support flows separately through ``eac_price_nuclear`` (ZEC/CES). This
+    matches the capacity screens' ``_RPS_ELIGIBLE_FUELS``/``_RENEWABLE_NEW_FUELS``
+    (both wind/solar only).
     """
     T = layout.T  # T: number of hours
     vph = layout.vars_per_hour
@@ -441,12 +450,8 @@ def _build_rps_row(
 
     wind_cols = (hours * vph + layout._w_off + zones).ravel()
     solar_cols = (hours * vph + layout._s_off + zones).ravel()
-    nuclear_idx = np.flatnonzero(
-        np.asarray(fleet.fuel_type_idx) == FUEL_TYPE_MAP["nuclear"]
-    )
-    nuclear_cols = (hours * vph + layout._p_off + nuclear_idx).ravel()
 
-    cols = np.concatenate([wind_cols, solar_cols, nuclear_cols])
+    cols = np.concatenate([wind_cols, solar_cols])
     row = sp.coo_matrix(
         (np.ones(cols.size), (np.zeros(cols.size, dtype=int), cols)),
         shape=(1, layout.total_columns),
@@ -1957,9 +1962,10 @@ def build_constraints(
       cycling caps, or a price-taker arbitrage pass).
 
     A third, optional family adds one **RPS** inequality row when
-    ``rps_target`` is set: total annual wind, solar and nuclear generation
-    must reach ``rps_target`` times total annual demand. Its dual is the
-    implicit REC price.
+    ``rps_target`` is set: total annual wind and solar generation must reach
+    ``rps_target`` times total annual demand (nuclear and hydro are clean but
+    not renewable, so they are excluded -- CX-6a). Its dual is the implicit
+    REC price.
 
     A fourth, optional family adds **hydro monthly energy budgets** when
     ``hydro_monthly_energy`` is set: for each hydro generator and month the
@@ -1981,8 +1987,8 @@ def build_constraints(
             to ``1.0`` (lossless).
         eta_dis: Discharge efficiency, scalar or ``(n_storage,)``. Defaults
             to ``1.0`` (lossless).
-        rps_target: Required clean-energy share. When not ``None`` and
-            positive, one annual RPS constraint row is appended.
+        rps_target: Required renewable-energy (wind+solar) share. When not
+            ``None`` and positive, one annual RPS constraint row is appended.
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -2278,10 +2284,11 @@ def build_constraints(
             row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
             row_upper = np.concatenate([row_upper, cap_rhs])
 
-    # Optional RPS inequality: one annual row, clean generation must reach
-    # rps_target * total demand, with an infinite upper bound.
+    # Optional RPS inequality: one annual row, renewable (wind+solar)
+    # generation must reach rps_target * total demand, with an infinite upper
+    # bound.
     if rps_target is not None and rps_target > 0.0:
-        rps_row, rhs = _build_rps_row(layout, fleet, rps_target, demand)
+        rps_row, rhs = _build_rps_row(layout, rps_target, demand)
         A = sp.vstack([A, rps_row], format="csr")
         row_lower = np.concatenate([row_lower, [rhs]])
         row_upper = np.concatenate([row_upper, [np.inf]])
@@ -3672,9 +3679,9 @@ def solve_dispatch(
             ``(n_zones, T)``.
         storage_discharge_eac: Exogenous EAC paid per MWh discharged in
             $/MWh, lowering the storage discharge slot cost.
-        rps_target: Required clean-energy share. When not ``None`` and
-            positive, an annual RPS constraint is enforced and its dual is
-            returned as ``DispatchResult.rps_shadow_price``.
+        rps_target: Required renewable-energy (wind+solar) share. When not
+            ``None`` and positive, an annual RPS constraint is enforced and its
+            dual is returned as ``DispatchResult.rps_shadow_price``.
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no
