@@ -127,6 +127,22 @@ class ScenarioConfig:
     # 0.5=mid, 1.0=high), via config.scenarios.resolve_demand_growth_rate.
     # Neutral 0.5 reproduces demand_growth_path's own selection exactly;
     # percentile only overrides path's choice when moved off 0.5.
+    # --- Data-center load block (CX-4, gap G-34). Forecast-mode-only; "off" =
+    # today, byte-identical. See docs/handoffs/cx4-datacenter-load-design-2026-
+    # 07.md and data/datacenter.py. ---
+    datacenter_load_path: str = "off"  # "off" | "low" | "mid" | "high" —
+    # deterministic scenario-matrix axis (PB-1 §1.1) selecting the per-ISO
+    # cumulative-MW trajectory from constants.DATACENTER_ADDITIONS_MW via
+    # data.datacenter.resolve_datacenter_mw. "off" leaves demand byte-identical
+    # to today (add_datacenter_block is a no-op).
+    datacenter_percentile: float = 0.5  # Continuous PB-2 sampler lever
+    # (0.0=low, 0.5=mid, 1.0=high), mirroring demand_growth_percentile /
+    # tech_cost_percentile. Neutral 0.5 => datacenter_load_path governs; only
+    # takes effect when the sampler moves it off 0.5.
+    datacenter_load_factor: float = 0.85  # Flat hourly CF of the DC block.
+    # Source: LBNL 2024 US Data Center Energy Usage Report (Shehabi et al.,
+    # Dec 2024); EPRI 2024 Powering Intelligence load-factor range 0.8-0.95.
+    # Frozen physical input (moves only on a source update, never a residual).
     tech_cost_path: str = "mid"  # "low"/"mid"/"high" -> NREL ATB 2024
     # Advanced/Moderate/Conservative technology-cost cases. The PB-1
     # deterministic scenario-matrix T axis (probability-bounds-plan-2026-07.md
@@ -3615,6 +3631,25 @@ class ScenarioConfig:
                 f"{self.gas_price_factor!r}"
             )
 
+        # Data-center load block (CX-4): forecast-mode-only scenario axis. A
+        # non-"off" path in backcast mode is a hard error (rule 22 / memo §6):
+        # a backcast pins measured load, so the DC block must never enter a
+        # scored backcast. Also validates the path label.
+        if self.datacenter_load_path not in ("off", "low", "mid", "high"):
+            raise ValueError(
+                "ScenarioConfig.datacenter_load_path must be one of "
+                "('off', 'low', 'mid', 'high'), got "
+                f"{self.datacenter_load_path!r}"
+            )
+        if self.mode == "backcast" and self.datacenter_load_path != "off":
+            raise ValueError(
+                "datacenter_load_path is a forecast-only scenario axis and must "
+                "be 'off' in backcast mode (rule 22 holdout discipline): a "
+                "backcast pins measured load, so the data-center block must "
+                "never enter a scored backcast; got "
+                f"{self.datacenter_load_path!r}."
+            )
+
         # Endogenous storage energy-vs-AS competition is priced *inside* the
         # reserve co-optimization: without it the flag would silently no-op
         # (and, worse, still suppress the exogenous storage AS credit in the
@@ -4161,6 +4196,9 @@ TIER_TAGS: dict[str, int] = {
     "demand_growth_rate": 1,
     "demand_growth_path": 1,
     "demand_growth_percentile": 1,
+    "datacenter_load_path": 2,
+    "datacenter_percentile": 2,
+    "datacenter_load_factor": 2,
     "tech_cost_path": 1,
     "tech_cost_percentile": 1,
     "renewable_buildout_pace": 1,
