@@ -999,6 +999,45 @@ class ScenarioConfig:
     # 3.8M (high) bbl fleet oil-inventory target; the sensitivity pair solves
     # both. A program-design logistics target (admissible, CLAUDE.md #13), NOT
     # tuned to the price/volume residual.
+    neiso_winter_fuel_mustrun: bool = False  # NEISO winter fuel-security
+    # must-run, Component B of the fuel-inventory / seasonal-reliability build
+    # (docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md). The seasonal-
+    # reliability commitment coupled to the Component-A inventory budget above:
+    # ISO-NE postures its fuel-secure steam fleet (COAL_BIT + the oil-capable
+    # ST_GAS units) through winter for energy security beyond pure energy
+    # economics (Winter Reliability Program FERC ER14-2407 -> Inventoried Energy
+    # Program ER19-1428 -> OFSA operational posture). The energy-only LP commits
+    # these units only in the few hours gas/oil is dear, so their winter energy
+    # under-runs AND their oil draw never reaches the seasonal budget (leaving
+    # Component A inert). This floors the fuel-secure classes at minimum-stable on
+    # winter (Nov-Mar) cold days (zone daily TMIN < neiso_winter_fuelsec_tmin_c),
+    # at which point the dual-fuel oil limb burns on the acute snaps and the
+    # Component-A budget can bind -> endogenous winter scarcity rent (C3c) and
+    # wider storage spread (C5b) as a consequence, not a tuned adder. REPLACES the
+    # disabled COAL/ST_GAS tmin cold-limb reliability floors (rule 19; those were
+    # disabled for thin cold-day sample, n=7-8). floor_pct = commit_frac x
+    # min_stable_pct, never a measured-CF ceiling and never tuned to the residual
+    # (rules 1/24). Tags MECH_WINTER_FUELSEC for D-2 attribution; a merchant
+    # reliability commitment subject to the forced-share gate, ablated in the
+    # zero-forcing twin. NEISO-only, backcast-only, default off (byte-identical).
+    # See data/winter_fuel_inventory.py:apply_winter_fuelsec_mustrun.
+    neiso_winter_fuelsec_min_stable_pct: float = 0.40  # Physical minimum-stable
+    # fraction of a committed fuel-secure steam boiler (COAL_BIT/ST_GAS) — the
+    # depth the winter must-run holds them at. 0.40 is the standard subcritical
+    # steam-boiler turndown (Merrimack-class coal min-load ~40% of nameplate); a
+    # physical engineering constant, NOT fit to the winter-energy residual.
+    neiso_winter_fuelsec_commit_frac: float = 1.0  # Fraction of each fuel-secure
+    # class under the winter program posture. 1.0 = the NEISO fuel-secure steam
+    # fleet IS the program fleet (the coal + oil-capable steam units the WRP/IEP
+    # target). A program-scope quantity; if a future EIA-860/FCM roster crosswalk
+    # narrows the committed set (winter-fuel data-audit §3), this is the knob —
+    # never the price/volume residual.
+    neiso_winter_fuelsec_tmin_c: float = -7.0  # Cold-day gate on zone daily TMIN
+    # for the winter must-run (~20 F). The NERC cold-weather forced-outage onset
+    # (shared with neiso_gas_derate_t0_c): the temperature at which winter fuel-
+    # security stress begins and ISO-NE postures the fuel-secure fleet. A
+    # published physical threshold, NOT swept to land a target tail-hour or
+    # winter-energy count (rule 24).
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
