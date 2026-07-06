@@ -2,7 +2,7 @@
 
 - **Status:** accepted
 - **Date:** 2026-07-02
-- **Session:** PS-11 (`../planning-sessions/PS-11-reporting-deliverable.md`)
+- **Session:** PS-11 (planning-session doc removed at handoff cleanup; in git history)
 - **Implemented by:** PP-09
 
 ## Context

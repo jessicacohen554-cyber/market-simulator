@@ -3,7 +3,7 @@
 - **Status:** accepted (stakeholder-decided 2026-07-02) — **execution on hold**
   until the readiness gate below is met per ISO (PLAN.md §10)
 - **Date:** 2026-07-02
-- **Session:** [PS-12](../planning-sessions/PS-12-forecast-lmp-selection.md)
+- **Session:** PS-12 (planning-session doc removed at handoff cleanup; in git history)
 - **Implemented by:** no code — `scripts/export_lce_lmp.py` (market-sim root)
   already implements everything; this ADR pins its arguments
 
