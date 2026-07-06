@@ -80,10 +80,12 @@ def write_run_metadata(
 ) -> Path:
     """Write a ``<iso>_run_metadata.json`` capturing config + per-setpoint status.
 
-    Provenance for reproducibility: the full config, tool version, and the
-    solver status / headline metrics of each solve. ``extra`` merges
-    additional provenance blocks in verbatim (e.g. the ``profile_source``
-    real-vs-synthetic label, audit finding DL-8).
+    Provenance for reproducibility: the full config, tool version, the
+    ``lmp_kind`` the sweep was priced against (``"hourly"`` or
+    ``"annual_average_flat"``, HP-01), and the solver status / headline
+    metrics of each solve. ``extra`` merges additional provenance blocks in
+    verbatim (e.g. the ``profile_source`` real-vs-synthetic label, audit
+    finding DL-8).
     """
     from lce_portfolio import __version__
 
@@ -93,6 +95,7 @@ def write_run_metadata(
         "tool_version": __version__,
         "iso": sweep.iso,
         "mode": sweep.mode,
+        "lmp_kind": sweep.lmp_kind,
         "config": asdict(config),
         **(extra or {}),
         "solves": [
