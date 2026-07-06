@@ -11,5 +11,7 @@
   ],
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-07-05-miso-41-ct-evening.js",
-  "bundle": "results/calibration/MISO/miso_41_ct_evening_window"
+  "bundle": "results/calibration/MISO/miso_41_ct_evening_window",
+  "ablation_twin": "2026-07-06-miso-41-ct-evening-ablation",
+  "market_story": "The evening-window CT_PEAKER reliability floor forces only 0.02-0.08 TWh/yr (<0.35% of the class) — a real but small hot-day evening-ramp reliability commitment, not a residual-buying floor. Zero-forcing every merchant floor confirms this directly: CT_PEAKER dispatch RISES 3.2/3.8/4.7% (2023/24/25) once the floor is removed, because it stops competing with floor-forced baseload for the same net-load hours, not falls, as a residual-buying floor would show. ST_GAS more than doubles (+63-115%) once other floors stop consuming load ahead of it. OTHER_FOSSIL's entire keeper volume (4.0/3.7/2.5 TWh/yr) disappears in the twin — that class is currently 100% floor-forced, an open root-cause item (rules #1/#11) to isolate, not fixed here. Coal subtypes and CC_REGULAR/CC_CHP move by <1.5%, confirming the keeper's floors are immaterial to the coal-vs-gas merit order the burndown finding (FINDING-miso-burndown-2026-07.md) already attributes to the passthrough-sigmoid offer curve, not to any floor."
 }

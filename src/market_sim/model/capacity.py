@@ -124,8 +124,22 @@ _THERMAL_FOM: dict[str, str] = {
     "nuclear": "fixed_om_nuclear",
 }
 
-# Fuel classes that count toward the clean-energy share.
+# Fuel classes that count toward the clean-energy share. This is a
+# clean-*accounting* basis (``compute_clean_share``), NOT an RPS-eligibility
+# list: nuclear and hydro are clean but are not renewable and do not satisfy a
+# Renewable Portfolio Standard, so they must not be credited the RPS shadow
+# price (see ``_RPS_ELIGIBLE_FUELS``).
 _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
+
+# Fuel classes eligible to satisfy a Renewable Portfolio Standard and therefore
+# to earn the endogenous RPS shadow price (REC dual) in the capacity screens.
+# CX-6a (capacity-economics plan 2026-07 §6.5(a)): an RPS is a *renewable*
+# standard -- existing nuclear and hydro are clean but not RPS-eligible, so they
+# are excluded here. Nuclear's zero-emission support flows separately through
+# ``eac_price_nuclear`` (ZEC/CES), never the RPS dual. This set matches the
+# new-entry screen's ``_RENEWABLE_NEW_FUELS`` (already wind/solar only); the
+# split fixes the retirement screen, which previously credited via _CLEAN_FUELS.
+_RPS_ELIGIBLE_FUELS: frozenset[str] = frozenset({"wind", "solar"})
 
 # Firm clean (non-VRE) capacity fuels. The reliability floor no longer nets
 # these out at nameplate — its accreditation rebuild routes every resource
@@ -989,10 +1003,12 @@ def apply_economic_retirements(
         # endogenous RPS shadow price, never their sum -- adds revenue
         # beyond the energy market, keeping units that energy prices alone
         # would not. The RPS shadow price is credited only to RPS-eligible
-        # clean fuels.
+        # (renewable) fuels -- wind/solar -- never to nuclear or hydro, which
+        # are clean but not renewable (CX-6a, plan §6.5(a)). Nuclear retention
+        # support instead flows through eac_price (ZEC/CES).
         annual_gen_mwh = float(sum(np.sum(dispatch[i]) for i in rows))
         eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
-        rps_for_unit = rps_shadow_price if g.fuel_type in _CLEAN_FUELS else 0.0
+        rps_for_unit = rps_shadow_price if g.fuel_type in _RPS_ELIGIBLE_FUELS else 0.0
         net_revenue += compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
         )

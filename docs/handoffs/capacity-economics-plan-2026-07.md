@@ -1,9 +1,10 @@
 # Capacity-Economics Recalibration Plan — 2026-07 (W0-P5)
 
 **Status:** design complete. **W2-P3 Stage 1 (FOM + joint protocol) EXECUTED 2026-07-05 —
-see the Stage-1 status note below; Stage 2 and the Stage-3 backstop-off diagnostic follow
-it.** Foresight (§2), floor accreditation (§3), and the DC-load block (§4) remain for later
-stages. Implementation prompt in §9.
+see the Stage-1 status note below; Stage 2 (revenue-side fix) and Stage 3 (hindcast
+scarcity footing, foresight A/B, backstop-off diagnostic) follow it.** Foresight (§2),
+floor accreditation (§3), and the DC-load block (§4) remain for later stages.
+Implementation prompt in §9.
 
 > ### Stage-1 status note (2026-07-05, W2-P3)
 >
@@ -90,18 +91,27 @@ stages. Implementation prompt in §9.
 > forecast-validation dashboard. Full report:
 > `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`.
 
-> ### Stage-3 status note (2026-07-06, diagnostic only)
+> ### Stage-3 status note (2026-07-06, W2-P3 Stage 3)
 >
-> Unblocking path (b) from the Stage-2 report §3 was tested: the ERCOT FOM grid was
-> re-run with the adequacy backstop **disabled** (`reserve_margin_build_enabled=False`,
-> a harness flag, not a model-default change) to check whether removing the backstop's
-> 15.2 GW CT flood lets the FOM axis move. **It does not** — capacity trajectory is again
-> byte-identical across all six FOM×ORDC cells (zero economic retirements, CO₂ identical
-> to the tenth of a Mt): with the backstop off, the accredited floor alone is sufficient
-> to keep every screen-eligible unit un-retired, so FOM remains a cost bar on a retirement
-> that never happens. The ATB defaults stay frozen. Diagnostic only — nothing registered
-> on the backcast dashboard, no 2022/H1-2026 solve. Full report:
+> The three Stage-2 follow-ups ran. **(1) Hindcast scarcity footing** — the
+> capacity-hindcast harness now adopts each ISO's production scarcity footing
+> (`scripts/run_capacity_hindcast.py`, `scarcity_pricing_enabled=True`,
+> harness-config only). Re-running ERCOT + PJM realized moved the ERCOT hindcast
+> by **exactly zero** (byte-identical to s2): the perfect-foresight LP on the
+> ample 2020-vintage fleet is structurally long (max energy price <$46/MWh, zero
+> scarcity hours in any scored year), so the ORDC overlay is inert regardless of
+> the toggle — the scarcity-free signal is an LP/fleet-structure artifact, not
+> the disabled flag (corrects the s2 root-cause hypothesis). PJM footing is a
+> no-op (capacity-market ISO). Reports:
+> `docs/hindcast-reports/{ercot,pjm}-2021-2025-realized-s3-2026-07-05.md`; both
+> registered on the forecast-validation dashboard. **(2) Foresight A/B** — re-run
+> at HEAD; recommendation recorded in §2.4 below (**no default flip**).
+> **(3) Backstop-off FOM grid** — path (b) closed as a negative result; FOM stays
+> inert with the backstop off (masking shifts to accredited-floor retention),
+> ATB flip stays frozen. Addendum:
 > `docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage3-addendum.md`.
+> (1) and (3) landed via PR #1444; this note + the §2.4 recommendation are the
+> foresight follow-up.
 
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
@@ -282,6 +292,56 @@ year and respond to changed conditions):
   `entry_lookahead_reprice` default-off as a designed probe.
 - All arms are forecast probes: **no dashboard registration** (dashboard is backcast-only),
   results go in a `docs/handoffs/foresight-ab-ercot-2026-*.md` report + JSON, tornado-style.
+
+#### 2.4.1 A/B result & recommendation (2026-07-06, W2-P3 Stage 3 — RECOMMENDATION ONLY, no flip)
+
+Ran at HEAD on ERCOT's default scarcity footing (`scarcity_pricing_enabled=True`,
+the ORDC-overlay cell — the same footing the forecast uses), legacy bins,
+backstop ON, 4 arms × {high, mid} growth, 2026-2040, metrics window 2030-2040.
+Report + JSON: `docs/handoffs/foresight-ab-ercot-2026-07-06.{md,json}`. Materiality
+= |Δ cum 2030-2040 fossil CO₂| > 5% vs base; *preferred* also reduces backstop MW.
+
+| arm | high ΔCO₂ | high backstop | mid ΔCO₂ | mid backstop | verdict |
+|---|---:|---:|---:|---:|---|
+| ewma (α=0.6) | +4.8% | 31.8→35.9 GW (up) | +0.2% | 47.1→43.9 GW (down) | **immaterial both paths** |
+| lookahead | **+18.1%** | 31.8→91.2 GW (up) | **−5.8%** | 47.1→43.2 GW (down) | **growth-path-contradictory** |
+| both | +8.9% | 31.8→69.2 GW (up) | −6.5% | 47.1→44.1 GW (down) | contradictory (as lookahead) |
+
+**Recommendation: promote NOTHING to default-on — leave `entry_lookahead_reprice`
+default-off and `entry_price_signal_alpha`=1.0 (both stay designed probes).** The
+decision-rule `material` flag keys on |ΔCO₂| only and ignores sign; read with sign,
+no arm is a clean promote:
+
+1. **EWMA is immaterial** in both paths (+4.8% high, +0.2% mid) — no promotion, as
+   the plan anticipated (it smooths whipsaw, not lag).
+2. **Lookahead is growth-path-contradictory, and *harmful* in the primary stress
+   case.** In mid-growth it is material *and* preferred — the intended effect (CO₂
+   −5.8%, backstop −8%, economic entry 15→39 GW pulled earlier, coal down). But in
+   the **high-growth path the experiment was explicitly designed around** ("the
+   stress case where myopia is maximal", §2.4 setup) it moves the **wrong
+   direction**: CO₂ **+18.1%**, backstop **31.8→91.2 GW** (nearly 3×), economic
+   entry collapses 101→57 GW, coal +38% (765→1058 TWh). A mechanism that improves
+   the base case but degrades the very stress case it targets is not a promote
+   (rule 1: judge by whether the mechanism is structurally right, not by the one
+   favorable number). The plan's own guard — "check the conclusion isn't
+   stress-case-only" — fires inverted here: the *benefit* is mid-only and the
+   stress case reverses it.
+3. **Component 1 (known-demand substitution) stays promoted unconditionally**
+   (landed Stage 2; ON in all arms including base) — unaffected by this
+   recommendation; it is a bug-class fix, not the mechanism under test.
+
+**Why the high-growth reversal (open root-cause, flagged — not fixed this wave).**
+The high-growth regime is in permanent scarcity (base mean price **$825/MWh**, P95
+$2,746 — vs mid's $30/$39), so the two paths are not comparable regimes. Under that
+saturated-scarcity signal the lookahead re-price appears to *suppress* economic
+entry and lean on the backstop rather than pull entry forward — the opposite of
+its design intent. That inversion is the real finding and is a `capacity.py` /
+signal-construction investigation (why does the ORDC-tailed lookahead signal
+discourage entry when scarcity is already priced at the cap?), **out of scope this
+wave** (capacity.py quiet; solve-core refactor in a parallel session). Recorded as
+the standing open item for the foresight mechanism; `entry_lookahead_reprice`
+remains a default-off probe until it is resolved and the mid-growth benefit can be
+shown not to come at the stress case's expense.
 
 ### 2.5 Expected emissions direction
 
@@ -534,9 +594,29 @@ uses the joint grid only as *verification*, never calibration.
 
 | Sub-item | Verdict | Rationale & design |
 |---|---|---|
-| **Nuclear RPS eligibility** (`dispatch.py:372-392` RPS row counts nuclear; `capacity.py:100` `_CLEAN_FUELS` grants nuclear/hydro the RPS shadow in the retirement screen) | **FIX NOW (W2-P3)** | Real RPS programs overwhelmingly exclude existing nuclear (and large hydro); state nuclear support is ZEC-shaped, which the model already carries separately (`eac_price_nuclear` — NY/IL ZEC, `scenarios.py:127`). Counting nuclear in the RPS row suppresses the REC dual toward zero in every year nuclear+VRE already clears the target, killing the entry signal the dual exists to send. Fix: split `_CLEAN_FUELS` into `_RPS_ELIGIBLE_FUELS = {wind, solar}` (RPS row + shadow-price credit) vs the existing clean-share bookkeeping set; drop nuclear (and hydro) from `_build_rps_row`. Small diff, structurally unambiguous, cheap tests. **Gate:** the REC dual shifts backcast prices wherever RPS binds, so per rule 22 score the change leave-one-year-out within 2023-2025 on the RPS-binding ISOs (CAISO/NYISO/NEISO) before promotion; register the re-gated bundles per rules 15/16. |
+| **Nuclear RPS eligibility** (`dispatch.py:372-392` RPS row counts nuclear; `capacity.py` `_CLEAN_FUELS` grants nuclear/hydro the RPS shadow in the retirement screen) | **PARTIALLY LANDED — see §6.1 (U-03)**: retirement-screen half fixed (L-7 2026-07-06); `_build_rps_row` half deferred to a dispatch-owning lane | Real RPS programs overwhelmingly exclude existing nuclear (and large hydro); state nuclear support is ZEC-shaped, which the model already carries separately (`eac_price_nuclear` — NY/IL ZEC, `scenarios.py:127`). Counting nuclear in the RPS row suppresses the REC dual toward zero in every year nuclear+VRE already clears the target, killing the entry signal the dual exists to send. Fix: split `_CLEAN_FUELS` into `_RPS_ELIGIBLE_FUELS = {wind, solar}` (RPS row + shadow-price credit) vs the existing clean-share bookkeeping set; drop nuclear (and hydro) from `_build_rps_row`. Small diff, structurally unambiguous, cheap tests. **Gate:** the REC dual shifts backcast prices wherever RPS binds, so per rule 22 score the change leave-one-year-out within 2023-2025 on the RPS-binding ISOs (CAISO/NYISO/NEISO) before promotion; register the re-gated bundles per rules 15/16. |
 | **Uniform WACC** (`nominal_discount_rate=0.08` for every tech) | **DOCUMENT AS LIMITATION** | Tech-differentiated WACC (ATB financial cases: merchant gas > contracted solar) re-levels *every* entry margin simultaneously and interacts with the calibrated queue caps; there is no admissible observable in-repo to validate the re-leveled entry mix against until the capacity hindcast (W0-P4/W2-P5) exists. Deferred with a named future design: `TECH_WACC_PREMIUM: dict[tech, pp]` cited to ATB 2024 financial assumptions, evaluated against the hindcast when it lands. Until then: limitation paragraph in methodology spec §5 + this doc. |
 | **VRE flat-mean entry revenue** (`capacity.py:1268` passes scalar `base_cf`) | **FIX NOW (W2-P3), cheap** | `estimate_expected_revenue` already accepts hourly CF arrays (`capacity.py:958-965`) — the shape-blindness is a call-site artifact. Fix: pass the ISO's zonal hourly CF profile (the same `wind_cf`/`solar_cf` arrays that bound `W`/`S` in dispatch) for the build zone, so solar entry sees its own value cannibalization and wind its diurnal/seasonal capture rate. No new parameters. Expected effect: solar entry slows at high penetration (capture rate < mean price), wind relatively favored — CO₂ direction mildly **up** late-horizon vs today, and structurally correct (rule 1: the flat mean was reaching the right build through an unreal mechanism). |
+
+### 6.1 CX-6a resolution — retirement-screen half landed; RPS-row half deferred (U-03)
+
+**Status (L-7, 2026-07-06):** the *retirement-screen* half of CX-6a is **landed**. The
+*RPS-constraint-row* half is **deferred** to a dispatch-owning lane, for the reasons below.
+
+**U-03 reconciliation — both cited sites are live, in different modes:**
+
+| Site | Mechanism | Mode it is live in | Disposition |
+|---|---|---|---|
+| `capacity.py` retirement screen (`apply_economic_retirements`, the `_CLEAN_FUELS` credit at the `rps_for_unit` line) | Credits the RPS shadow price as retention **revenue** to nuclear/hydro | **Forecast capacity-evolution only** (the screens never run in a backcast — no capacity evolution). **Zero keeper blast radius.** | **FIXED here.** Split `_CLEAN_FUELS` → added `_RPS_ELIGIBLE_FUELS = {wind, solar}`; the screen now credits the RPS shadow only to that set. `_CLEAN_FUELS` retained unchanged for `compute_clean_share` (clean-*accounting* basis, legitimately includes nuclear/hydro). Test: `test_capacity.py::test_nuclear_not_credited_rps_shadow_in_retirement_screen`. The **new-entry** screen was already correct (uses `_RENEWABLE_NEW_FUELS = {wind, solar}`), so only the retirement screen carried the defect. |
+| `dispatch.py::_build_rps_row` (nuclear columns on the RPS constraint LHS) | Lets nuclear generation **count toward** the RPS target; its dual is the REC price | Only when `rps_enabled and rps_target > 0` → **forecast / RPS-binding ISOs**. **Verified no-op for every registered keeper**: the keeper solve path (`run_calibration.py`) calls `solve_dispatch(..., rps_target=None)` (line 4195) and `run_calibration_full.py` has zero RPS references, so the RPS row is never built in a scored backcast. | **DEFERRED** to a dispatch-owning lane. Removing nuclear from the row is what revives the REC dual (the §6/§7 "6a: REC dual revives → more VRE entry" effect); it changes **forecast** prices for CAISO/NYISO/NEISO, so it must land with the plan-required LOYO re-score of those keepers **within 2023-2025** (rule 22) and re-gate per rules 15/16. Because it is a no-op for current keepers, this deferral leaves every registered result byte-identical. `dispatch.py` is outside L-7's file ownership (owned by the dispatch/per-ISO lanes), which is the correct home for the coupled re-score. |
+
+**Why the split, not a single edit:** the two sites answer two questions — *does nuclear
+count toward RPS compliance?* (`_build_rps_row`) and *does nuclear get paid the REC price?*
+(the screen credit). They must agree. CX-6a's decision is *no* on both (RPS = renewable;
+nuclear support is ZEC via `eac_price_nuclear`). Landing only the screen half is the
+conservative interim: nuclear loses a REC credit it should not have had, and the REC dual
+stays (harmlessly, in backcast) depressed by nuclear until the row half lands. No forecast
+result is currently promoted, so nothing downstream consumes the half-state.
 
 ---
 

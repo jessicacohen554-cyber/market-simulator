@@ -113,9 +113,14 @@ from market_sim.model.commitment import (  # noqa: E402
     apply_commitment_with_coal_pin,
     as_adequacy_commit,
     compute_commitment,
-    compute_monthly_markup,
 )
-from market_sim.model.dispatch import DispatchModel, solve_dispatch  # noqa: E402
+from market_sim.model.dispatch import solve_dispatch  # noqa: E402
+from market_sim.pipeline import (  # noqa: E402
+    DispatchSpec,
+    apply_reserve_coopt,
+    build_base_dispatch_kwargs,
+    run_energy_solve,
+)
 from market_sim.model.storage import (  # noqa: E402
     load_eia860_storage,
     reserve_storage_as_power,
@@ -4167,7 +4172,12 @@ def run_year(
         if _oil_result is not None:
             oil_budget_gen_idx, oil_monthly_budget = _oil_result
 
-    dispatch_kwargs = dict(
+    # Base dispatch kwargs + priced import-node band: the shared pipeline
+    # assembly (orchestrator-unification Stage 2) — the same key set the
+    # inline dict carried, byte-identical values. The backcast-only keys
+    # (ttc_import, oil_*) are passed explicitly so they stay present (possibly
+    # None-valued) exactly as before; the forecast assembly leaves them UNSET.
+    dispatch_spec = DispatchSpec(
         wind_cf=wind_cf,
         wind_cap=wind_cap,
         solar_cf=solar_cf,
@@ -4210,17 +4220,9 @@ def run_year(
         oil_group_index=oil_budget_group_index,
         T=config.hours,
     )
-    # Priced import-node monthly net-interchange band (NYISO boundary-flow
-    # reconciliation): pins the node's net throughput to the measured EIA-930
-    # schedule. Part of the LP feasible region (same for P0/P1), so it warm-starts
-    # cleanly. No keys (identical LP) unless the reconciliation was built above.
-    if import_node_recon is not None:
-        node_idx, recon_lo, recon_hi = import_node_recon
-        dispatch_kwargs.update(
-            import_node_gen_idx=node_idx,
-            import_node_monthly_lo=recon_lo,
-            import_node_monthly_hi=recon_hi,
-        )
+    dispatch_kwargs = build_base_dispatch_kwargs(
+        dispatch_spec, import_node_recon=import_node_recon
+    )
 
     # Plant-group hourly ramp envelopes (config.ramp_limits, GATED default
     # off): CAMPD-measured trajectory bounds per plant group per hour
@@ -4270,424 +4272,51 @@ def run_year(
         if lcr_specs:
             dispatch_kwargs.update(local_capacity_specs=lcr_specs)
 
-    # Energy+reserve co-optimization (config.energy_reserve_coopt; PJM-gated
-    # until other ISOs are validated). Reserve-eligible units are dispatchable
-    # thermal; the requirement is the structural 1.5 x most-severe single
-    # contingency (fleet-derived, forecast-responsive), and the published
-    # two-step ORDC curve prices a shortfall so the reserve clearing price
-    # emerges as the balance-row dual and lifts the energy LMP. This replaces
-    # the post-solve ORDC overlay (derive_pjm_ordc_overlay.py) for co-opt runs.
-    if getattr(config, "energy_reserve_coopt", False) and config.iso == "ERCOT":
-        # ERCOT: the published ORDC reserve demand curve enters the LP as a
-        # VOLL-anchored reserve demand (scarcity.ercot_ordc_demand_steps).
-        # Reserve-eligible thermal units split capacity between energy and
-        # upward reserve against the shared-headroom constraint, and the reserve
-        # clearing price (the balance-row dual) lifts the energy LMP endogenously
-        # — RTSPP = LMP + reserve price. Replaces the post-solve ORDC overlay
-        # for co-opt runs. The curve is constant across hours; the scarcity
-        # *incidence* comes from the hourly fleet availability in the headroom
-        # RHS, so the requirement is flat at the demand curve's top.
-        if getattr(config, "ercot_multiproduct_as_coopt", False):
-            # MULTI-PRODUCT AS stack: one co-opt demand curve per AS product
-            # (RegUp/RRS/ECRS/NonSpin), additive and cascading. The binding
-            # product's balance-row dual is the MCPC, formed endogenously — the
-            # forward analogue of the measured DAM-AS overlay. Pair with
-            # commitment_enabled for the phantom-headroom fix (the P2 solve's
-            # availability zeroes idle slow-start units out of the reserve pool).
-            from market_sim.config.reserve_config import (
-                ERCOT_AS_PRODUCTS,
-                build_reserve_dispatch_kwargs,
-                get_reserve_design,
-            )
+    # Energy+reserve co-optimization: the shared pipeline wrapper
+    # (orchestrator-unification Stage 2) — the per-ISO reserve designs live in
+    # config/reserve_config.py (get_reserve_design), already shared with the
+    # forecast runner; the wrapper owns the gate (energy_reserve_coopt, CAISO
+    # excluded), the forward-driver threading, the merge, and the logging.
+    # Collapses the former per-ISO elif ladder, byte-identically:
+    #   * the hand-built PJM zone-aggregate block == reserve_config._pjm_design
+    #     (measured Primary requirement + published ORDC — only the last ORDC
+    #     step width depends on the requirement scalar and the design sets it
+    #     to max(req), the same value — + deliverable supply cap + online gate);
+    #   * the post-design ERCOT RTOLCAP supply-cap overwrite is folded into the
+    #     designs themselves (audit gap A5): in backcast mode the design's
+    #     internal ercot_rtolcap_supply_cap_mw call returns the same measured
+    #     parquet series the overwrite applied.
+    # sim_year=year is value-identical here: the backcast pins weather_year to
+    # the solve year and every sim_year consumer falls back to weather_year.
+    apply_reserve_coopt(
+        dispatch_kwargs,
+        config,
+        fleet_arrays,
+        config.hours,
+        zone_names,
+        system_load=demand.sum(axis=0),
+        wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+        solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
+        sim_year=year,
+    )
 
-            design = get_reserve_design(
-                config,
-                fleet_arrays,
-                config.hours,
-                zone_names,
-                system_load=demand.sum(axis=0),
-                wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
-                solar_gen=(solar_cap[:, None] * solar_cf).sum(axis=0),
-            )
-            coopt_kw = build_reserve_dispatch_kwargs(design)
-            dispatch_kwargs.update(coopt_kw)
-            coopt_req = coopt_kw["reserve_requirement"]
-            coopt_pen = coopt_kw["ordc_penalties"]
-            logger.info(
-                "energy+reserve co-opt (ERCOT MULTI-PRODUCT): %d AS products %s, "
-                "per-product req means %s MW, %d steps total, %d headroom tiers",
-                len(ERCOT_AS_PRODUCTS),
-                [p[0] for p in ERCOT_AS_PRODUCTS],
-                [int(coopt_req[p].mean()) for p in range(coopt_req.shape[0])],
-                len(coopt_pen),
-                int(coopt_kw["reserve_headroom_products"].shape[0]),
-            )
-        else:
-            from market_sim.config.reserve_config import (
-                build_reserve_dispatch_kwargs,
-                get_reserve_design,
-            )
-
-            design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
-            coopt_kw = build_reserve_dispatch_kwargs(design)
-            dispatch_kwargs.update(coopt_kw)
-            coopt_req = coopt_kw["reserve_requirement"]
-            coopt_pen = coopt_kw["ordc_penalties"]
-            coopt_elig = coopt_kw["reserve_eligible"]
-            logger.info(
-                "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
-                "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
-                float(coopt_req[0]),
-                len(coopt_pen),
-                float(coopt_pen.min()),
-                float(coopt_pen.max()),
-                int(coopt_elig.sum()),
-            )
-        # OPTIONAL reserve-supply re-scope (both co-opt modes): cap each headroom
-        # row's cleared reserve at the MEASURED ERCOT on-line responsive capability
-        # (RTOLCAP / +RTOFFCAP) instead of the over-counted full-fleet headroom, so
-        # modeled reserve tightens into the band the published ORDC curve prices.
-        # Pre-RTC+B the capped reserve dual is added to the LMP as the ORDC adder
-        # (see _system_frame). Exogenous measured series, not a price fit (G1).
-        from market_sim.results.scarcity import ercot_rtolcap_supply_cap_mw
-
-        coopt_supply_cap = ercot_rtolcap_supply_cap_mw(config, config.hours)
-        if coopt_supply_cap is not None:
-            dispatch_kwargs.update(reserve_supply_cap=coopt_supply_cap)
-            logger.info(
-                "ERCOT reserve-supply cap ON: %d headroom row(s), mean cap MW %s "
-                "(measured RTOLCAP[/+RTOFFCAP])",
-                coopt_supply_cap.shape[0],
-                [
-                    int(coopt_supply_cap[r].mean())
-                    for r in range(coopt_supply_cap.shape[0])
-                ],
-            )
-    elif (
-        getattr(config, "energy_reserve_coopt", False)
-        and config.iso == "PJM"
-        and getattr(config, "pjm_reserve_pergen", False)
-    ):
-        # PJM PER-GEN reserve co-opt (pjm_reserve_pergen): delegate to the
-        # unified reserve_config design (the NYISO pattern below) — one R
-        # column per reserve-eligible unit with nonzero ramp10, joint P+R
-        # headroom per unit-hour, and the nested measured RTO + Mid-Atlantic/
-        # Dominion Primary balance families. Supersedes the hand-built
-        # zone-aggregate block below (and its supply-cap/online-gate
-        # re-scopes — the per-unit ramp10 bound replaces them).
-        from market_sim.config.reserve_config import (
-            build_reserve_dispatch_kwargs,
-            get_reserve_design,
-        )
-
-        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
-        dispatch_kwargs.update(build_reserve_dispatch_kwargs(design))
-        logger.info(
-            "PJM PER-GEN reserve co-opt ON: %d R columns / %d member units "
-            "(eligible, ramp10>0; Σ ramp10 %.1f GW), %d balance families "
-            "(%s), req means %s MW",
-            int(design.pergen_ramp10.size),
-            int(design.pergen_gen_idx.size),
-            float(design.pergen_ramp10.sum()) / 1e3,
-            len(design.families),
-            ", ".join(f.name for f in design.families),
-            [int(f.requirement.mean()) for f in design.families],
-        )
-    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
-        from market_sim.config.reserve_config import PJM_ORDC_CURVE_PATH
-        from market_sim.data.fleet import FUEL_TYPE_NAMES
-        from market_sim.results.scarcity import (
-            RESERVE_FUEL_TYPES,
-            largest_single_contingency_mw,
-            load_pjm_measured_reserve_requirement,
-            load_pjm_ordc_curve,
-            pjm_ordc_shortfall_steps,
-            pjm_primary_reserve_requirement,
-        )
-
-        elig = np.array(
-            [
-                FUEL_TYPE_NAMES[i] in RESERVE_FUEL_TYPES
-                for i in fleet_arrays.fuel_type_idx
-            ],
-            dtype=bool,
-        )
-        lsc = largest_single_contingency_mw(
-            fleet_arrays.pmax,
-            fleet_arrays.availability,
-            elig,
-            plant_code=fleet_arrays.plant_code,
-        )
-        # Backcast: use the measured PJM Primary Reserve requirement (a reliability
-        # input, like the outage overlay), hour-varying. Forecast: the fleet-
-        # responsive 1.5x-MSSC formula. The measured series is never tuned to the
-        # LMP; the fleet MSSC is logged either way for the forecast cross-check.
-        measured = (
-            load_pjm_measured_reserve_requirement(config.weather_year, config.hours)
-            if config.mode == "backcast"
-            else None
-        )
-        if measured is not None:
-            req_hourly = measured
-            req_src = "measured PJM pr_req"
-        else:
-            req_hourly = pjm_primary_reserve_requirement(lsc, config.hours)
-            req_src = "1.5x-MSSC formula"
-        curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
-        # ORDC shortfall steps: inner band sized to the peak requirement so
-        # reserves can fall to zero in every hour; the +offset shoulder is added
-        # per hour to the (possibly hour-varying) requirement.
-        max_offset = max(o for o, _ in curve)
-        _, ordc_pen, ordc_w = pjm_ordc_shortfall_steps(curve, float(req_hourly.max()))
-        dispatch_kwargs.update(
-            reserve_requirement=req_hourly + max_offset,
-            reserve_eligible=elig,
-            ordc_penalties=ordc_pen,
-            ordc_step_widths=ordc_w,
-        )
-        # OPTIONAL deliverable / online reserve-supply re-scope (PJM analogue of
-        # ercot_reserve_supply_cap): the bare co-opt draws reserve on ~38 GW of
-        # total eligible thermal headroom vs the ~3.4 GW Primary requirement, so
-        # the published vertical ORDC step never fires. The supply cap bounds
-        # cleared reserve at the 10-min DELIVERABLE ramp (Σ ramp10[eligible]) and
-        # online-gating restricts it to synchronized capacity (R − ρ·ΣP ≤ 0), so
-        # reserve thins toward the requirement. Physical deliverability
-        # definitions, never fitted to the LMP residual (claude.md #11). See
-        # docs/multi-iso/pjm-reserve-ordc.md.
-        from market_sim.results.scarcity import (
-            pjm_reserve_deliverable_supply_cap_mw,
-        )
-
-        pjm_supply_cap = pjm_reserve_deliverable_supply_cap_mw(
-            config, fleet_arrays, config.hours
-        )
-        if pjm_supply_cap is not None:
-            dispatch_kwargs.update(reserve_supply_cap=pjm_supply_cap)
-            logger.info(
-                "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
-                "%d MW (vs ~%d MW total eligible headroom)",
-                int(pjm_supply_cap.mean()),
-                int(
-                    (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[elig]
-                    .sum(axis=0)
-                    .mean()
-                ),
-            )
-        if getattr(config, "pjm_reserve_online_gated", False):
-            rho = float(getattr(config, "pjm_reserve_online_rho", 1.0))
-            dispatch_kwargs.update(
-                reserve_online_gated=np.array([True]),
-                reserve_online_rho=rho,
-            )
-            logger.info("PJM reserve online-gating ON: ρ=%.2f", rho)
-        logger.info(
-            "energy+reserve co-opt (PJM): MSSC %.0f MW (formula req %.0f), using "
-            "%s req mean %.0f MW (+%.0f ORDC shoulder), %d reserve-eligible units",
-            lsc,
-            1.5 * lsc,
-            req_src,
-            float(req_hourly.mean()),
-            max_offset,
-            int(elig.sum()),
-        )
-    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "NYISO":
-        # NYISO: LOCATIONAL nested reserve co-optimization. The system NYCA tier
-        # plus the East ⊃ SENY ⊃ NYC regional tiers (NYISO_RCPF_PRODUCTS /
-        # NYISO_RCPF_LOCATIONAL, FERC ER21-502 / RS4 anchors) each become a
-        # reserve "family" — a balance row over its member zones. Holding the
-        # import-constrained downstate pocket to its locational reserve keeps the
-        # NYC peaker/quick-start headroom in reserve, so in tight hours those
-        # units clear on energy and the reserve shortfall stacks a scarcity price
-        # into the downstate zonal LMP (the locational tail the NYCA-aggregate
-        # energy LP and the post-solve RCPF adder cannot dispatch).
-        from market_sim.config.reserve_config import (
-            build_reserve_dispatch_kwargs,
-            get_reserve_design,
-        )
-
-        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
-        coopt_kw = build_reserve_dispatch_kwargs(design)
-        dispatch_kwargs.update(coopt_kw)
-        import numpy as _np
-
-        coopt_elig = coopt_kw["reserve_eligible"]
-        coopt_pen = coopt_kw["ordc_penalties"]
-        coopt_mask = coopt_kw["reserve_balance_zone_mask"]
-        coopt_class = coopt_kw["reserve_balance_class"]
-        _elig2d = _np.atleast_2d(coopt_elig)
-        logger.info(
-            "energy+reserve co-opt (NYISO): %d locational reserve families "
-            "(%d 10-min/quick-start), %d ORDC steps ($%.0f-$%.0f), "
-            "%d full-fleet / %d quick-start reserve-eligible units",
-            coopt_mask.shape[0],
-            int((_np.asarray(coopt_class) == 1).sum()),
-            len(coopt_pen),
-            float(coopt_pen.min()) if len(coopt_pen) else 0.0,
-            float(coopt_pen.max()) if len(coopt_pen) else 0.0,
-            int(_elig2d[0].sum()),
-            int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
-        )
-        if design.online_gated is not None:
-            logger.info(
-                "  NYISO synchronised reserve ON: online-gated spinning class "
-                "(rho=%.2f), %d gated reserve family/ies",
-                float(design.online_rho),
-                int((_np.asarray(coopt_class) == 2).sum()),
-            )
-
-    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "NEISO":
-        # NEISO: SYSTEM-WIDE nested reserve co-optimization. ISO-NE prices
-        # operating-reserve scarcity pool-wide via Reserve Constraint Penalty
-        # Factors (NEISO_RCPF_PRODUCTS / ISO-NE Tariff Market Rule 1, OP-8): the
-        # nested 30-min-total ⊇ 10-min-total ⊇ 10-min-spin requirements each
-        # become a reserve family over every zone. In a tight winter hour the
-        # available headroom drops below a requirement, the family's demand curve
-        # sets the reserve clearing price, and through the shared-headroom
-        # coupling that dual lifts the energy LMP — the cold-snap scarcity tail
-        # (hours > $300) the energy-only LP cannot produce. Storage (pumped
-        # storage + batteries) backs every class, so the widened peak/trough
-        # spread also pulls storage throughput up. The local NEMA/Boston/CT/SWCT
-        # second-contingency zones are deferred to a locational follow-up (this
-        # system-wide tier matches the pool RT price). Nothing fitted to the
-        # residual — requirements and RCPFs are the published tariff values.
-        from market_sim.config.reserve_config import (
-            build_reserve_dispatch_kwargs,
-            get_reserve_design,
-        )
-
-        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
-        coopt_kw = build_reserve_dispatch_kwargs(design)
-        dispatch_kwargs.update(coopt_kw)
-        import numpy as _np
-
-        coopt_elig = coopt_kw["reserve_eligible"]
-        coopt_pen = coopt_kw["ordc_penalties"]
-        coopt_mask = coopt_kw["reserve_balance_zone_mask"]
-        coopt_class = coopt_kw["reserve_balance_class"]
-        _elig2d = _np.atleast_2d(coopt_elig)
-        logger.info(
-            "energy+reserve co-opt (NEISO): %d system reserve families "
-            "(%d 10-min/quick-start), %d ORDC steps ($%.0f-$%.0f), "
-            "%d full-fleet / %d quick-start reserve-eligible units",
-            coopt_mask.shape[0],
-            int((_np.asarray(coopt_class) == 1).sum()),
-            len(coopt_pen),
-            float(coopt_pen.min()) if len(coopt_pen) else 0.0,
-            float(coopt_pen.max()) if len(coopt_pen) else 0.0,
-            int(_elig2d[0].sum()),
-            int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
-        )
-    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "MISO":
-        # MISO: market-wide energy+reserve co-optimization (RBDC). The
-        # requirement is MSSC + 400 MW regulating and the demand curve ramps
-        # to MISO's $3,500/MWh VOLL anchor (reserve_config._miso_design,
-        # BPM-002 / Schedule 28/28-A) — zone-count-agnostic, unchanged from
-        # the miso3/miso-34 probes. Until now this design was reachable only
-        # from the forecast runner (runner.py); the backcast run_year chain
-        # ended at NEISO, so --energy-reserve-coopt was silently inert for
-        # MISO (miso-34's bundle solved an energy-only LP). This branch
-        # connects the existing design to the backcast path — a wiring fix,
-        # not a redesign (same class as the phase-1 unwired one-way link
-        # floor). Locational sub-regional families are the separate gated
-        # phase-2b step (scope §6).
-        from market_sim.config.reserve_config import (
-            build_reserve_dispatch_kwargs,
-            get_reserve_design,
-        )
-
-        design = get_reserve_design(config, fleet_arrays, config.hours, zone_names)
-        coopt_kw = build_reserve_dispatch_kwargs(design)
-        dispatch_kwargs.update(coopt_kw)
-        coopt_req = coopt_kw["reserve_requirement"]
-        coopt_pen = coopt_kw["ordc_penalties"]
-        coopt_elig = coopt_kw["reserve_eligible"]
-        logger.info(
-            "energy+reserve co-opt (MISO): RBDC market-wide requirement "
-            "%.0f MW (MSSC + regulating), %d ORDC steps ($%.0f-$%.0f), "
-            "%d reserve-eligible units",
-            float(np.atleast_2d(coopt_req)[0, 0]),
-            len(coopt_pen),
-            float(coopt_pen.min()) if len(coopt_pen) else 0.0,
-            float(coopt_pen.max()) if len(coopt_pen) else 0.0,
-            int(np.atleast_2d(coopt_elig)[0].sum()),
-        )
-        for fam in design.families[1:]:
-            logger.info(
-                "  MISO zonal reserve family %s: requirement %.0f MW "
-                "(within-zone MSSC), published zonal curve steps %s",
-                fam.name,
-                float(fam.requirement[0]),
-                [
-                    f"{w:.0f}MW@${p:.0f}"
-                    for w, p in zip(fam.ordc_step_widths, fam.ordc_penalties)
-                ],
-            )
-        if design.pergen_gen_idx is not None:
-            _r10 = np.atleast_2d(design.pergen_ramp10)
-            logger.info(
-                "  MISO PER-ASSET reserve columns (miso_reserve_pergen): "
-                "%d members pooled into %d (zone, fuel-class) R columns, "
-                "availability-scaled 10-min deliverable ramp cap "
-                "mean %.0f / min %.0f MW",
-                int(design.pergen_gen_idx.size),
-                _r10.shape[0],
-                float(_r10.sum(axis=0).mean()),
-                float(_r10.sum(axis=0).min()),
-            )
-
-    # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
-    # -- and differ only in the objective (P1 = base MC + startup markup). So
-    # build the model once and warm-start P1 from P0's optimal basis
-    # (changeColsCost in place): this skips the second matrix build and
-    # converges in ~8x fewer simplex iterations, cutting the P1 solve ~5x. It
-    # does not move annual generation or prices -- validated plant-by-plant on
-    # ERCOT 2023, where every plant's annual MWh and the zonal prices are
-    # unchanged; the only difference is sub-MW hourly reshuffling among units
-    # tied at the margin, which the LP is already indifferent to. Set
-    # MARKET_SIM_WARMSTART=0 to fall back to two independent cold solves (e.g.
-    # for an A/B comparison or to isolate a solver issue).
-    _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
-    model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
-    # Cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1): once intra-year warm-
-    # start has made the P1 second solve cheap, the one remaining cold solve is
-    # each year's P0. Adjacent years share zones, network and most units, so the
-    # prior year's optimal basis -- carried in xyear_cache and remapped onto this
-    # year's fleet (surviving units by unit_id, fleet changes left for HiGHS to
-    # repair) -- is a strong warm start for P0. The LP optimum is basis-
-    # independent, so this only changes the solve path, never the cleared prices
-    # or generation. Off by default; A/B against a cold P0 with the flag.
-    _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
-    if _xwarm and xyear_cache is not None and xyear_cache:
-        model.apply_cross_year_basis(xyear_cache[0])
-    # P0: solve with base MC to extract per-month run lengths.
-    if _warm:
-        r0 = model.solve(mc=mc_base)
-    else:
-        r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
-    # P1: solve with bid MC = base MC + monthly startup amortization.
-    markup = compute_monthly_markup(
+    # P0 → monthly startup markup → P1 via the shared pipeline solve core
+    # (orchestrator-unification Stage 3): the intra-year warm start, the
+    # cross-year warm-start seam (xyear_cache threaded from the multi-year
+    # loop, basis exported even when the XYEAR flag is off so a downstream A/B
+    # does not depend on call ordering), and the startup-markup config gates
+    # all moved to pipeline.solve.run_energy_solve statement-for-statement.
+    energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
-        r0.dispatch,
-        config.hours,
-        gas_st_season_spread=config.gas_st_startup_spread,
-        gas_st_startup_cost=getattr(config, "gas_st_startup_cost", False),
-        chp_startup_covered=getattr(config, "chp_startup_covered", False),
-        coal_warm_committed=getattr(config, "coal_warm_committed", False),
+        demand,
+        mc_base,
+        dispatch_kwargs,
+        config,
+        xyear_cache=xyear_cache,
     )
-    mc_bid = mc_base + markup
-    if _warm:
-        result = model.solve(mc=mc_bid)
-    else:
-        result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
-
-    # Hand this year's optimal basis to the next year's P0 (cross-year warm
-    # start). Stored even when the flag is off so a downstream A/B does not
-    # depend on call ordering; only consumed when MARKET_SIM_WARMSTART_XYEAR=1.
-    if _warm and xyear_cache is not None:
-        basis = model.export_cross_year_basis()
-        if basis is not None:
-            xyear_cache[:] = [basis]
+    result = energy_solve.p1
+    mc_bid = energy_solve.mc_bid
 
     context = FleetContext.from_arrays(
         fleet_arrays,
