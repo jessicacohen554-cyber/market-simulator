@@ -197,6 +197,34 @@ Status verified against code/artifacts; "doc-lag" marks where the plan doc's own
 
 ---
 
+## 2b. Cross-reference: earlier gap documents folded into this register
+
+Two earlier gap-tracking documents predate this register. Their open items are
+subsumed here; their closed items are recorded for traceability. Update status
+in THIS register, not in the earlier documents (which now carry supersession
+notices pointing here).
+
+**Forecast-methodology gaps** (`docs/forecast-methodology-gaps-2026-06.md`, 13
+items G1–G13): 8 closed before this register was written (G5–G10, G12, G13);
+G2 is a backcast-bridge needing no build. The 4 open items map to:
+
+| Methodology gap | This register | Notes |
+|-----------------|---------------|-------|
+| G1 (flagship AS co-opt) | G-20, G-22, G-25, W22 | Scarcity + shape + commitment + AS co-opt workstream |
+| G3 (ECRS requirement) | G-20, W22 | Folded into scarcity + AS co-opt |
+| G4 (Load-resource RRS-UFR) | G-20, W22 | Folded into scarcity + AS co-opt |
+| G11 (MISO neighbor-HR) | G-26 | Scalar family (neighbor-implied-HR forecast) |
+
+**Wiring gap inventory** (`docs/audit-wiring-iso-gaps/gap-inventory.md`, 22
+items A1–A13 / B1–B5 / C1–C4): 15 of 16 actionable items LANDED. The sole
+open item maps to:
+
+| Wiring gap | This register | Notes |
+|------------|---------------|-------|
+| A5 (ERCOT single-product reserve supply cap) | W1 Stage 2 | Absorbed into orchestrator unification |
+
+---
+
 ## 3. Gap register
 
 ### 3.1 Governance & CI (goal B)
