@@ -124,12 +124,10 @@ session/investigation note whose finding is resolved and absorbed into code/keep
 
 ## 2. Why is MISO absent from rule 16's multi-year keeper list?
 
-**Rule 16 text:** *"Every multi-year ISO's calibration run covers every year the ISO can score, in a
-single `--year` invocation and a single bundle: **CAISO / PJM / NEISO / NYISO** → `--year 2023 2024
-2025`."*
+**AMENDMENT COMPLETE.** Rule 16 has been updated to include MISO.
 
 **Finding: this is a documentation oversight, not a data or calibration gap. MISO already fully
-complies and should be added to the list.**
+complies.** MISO's keeper carries all three years (2023, 2024, 2025) in a single bundle, matching the rule 16 requirement.
 
 Evidence:
 - `frontend/data/backcast/bench/MISO/` has all three years' bench actuals (`2023.json.gz`,
