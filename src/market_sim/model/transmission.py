@@ -3084,7 +3084,15 @@ def inject_reliability_floor(
                     for d in range(n_days)
                 ]
             )
-            day_flagged = daily_peak_gw > spec.threshold
+            # Basis-consistent threshold: when the CSV carries the derivation
+            # percentile, recompute the GW threshold from the engine's own
+            # net-load so the flagged-day count tracks model inputs, not the
+            # EIA-930 basis the derivation script used.
+            threshold_gw = spec.threshold
+            tp = getattr(spec, "threshold_percentile", None)
+            if tp is not None:
+                threshold_gw = float(np.percentile(daily_peak_gw, tp))
+            day_flagged = daily_peak_gw > threshold_gw
             flagged = np.repeat(day_flagged, 24)[:hours]
         else:
             continue
