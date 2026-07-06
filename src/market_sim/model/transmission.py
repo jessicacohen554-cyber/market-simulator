@@ -3111,6 +3111,26 @@ def inject_reliability_floor(
     return applied
 
 
+# Afternoon-evening peak window (local HB14-21, inclusive) the Long Island local
+# self-supply floor is restricted to — the SAME downstate summer design-cooling
+# window the CT/ST temperature reliability ramps use (start_hour=14/end_hour=21 in
+# reliability_floor_coeffs_NYISO.csv). Rule-17/rule-18 narrowing (floor-rederive
+# 2026-07-05): the LI locational-reliability / cable-import constraint the floor
+# proxies physically binds only at the afternoon-evening AC peak — the condition
+# the LCR locality requirements are defined at (NYISO Locality Bulk-Power
+# Transmission Capability reports, design cooling day) — and is inactive
+# overnight, where measured LI net import runs well below its cable ceiling
+# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4: LI inflow
+# max 2,480 MW vs ~2,850 MW ceiling, 0 h > 90%) and measured LI CT_PEAKER CF is
+# ~0.06 flat. Applied all-hours the floor force-committed in-pocket LM6000 baseload
+# overnight (D-2: nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER,
+# 43/65/42% of the class; C7 off-peak diurnal FAIL). This is a HOURS narrowing of
+# an existing floor, NOT a re-level of its (residual-identified, issue #1345) 0.45
+# fraction — the level stays untouched; only the overnight hours it had no driver
+# for are removed.
+NYISO_SELFSUPPLY_FLOOR_HOURS: tuple[int, ...] = tuple(range(14, 22))  # HB14-21
+
+
 # Dispatchable thermal fuels eligible to carry a local self-supply floor — the
 # in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
 # must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the
@@ -3149,14 +3169,26 @@ def inject_nyiso_local_selfsupply(
 
     For each pocket zone in
     :data:`~market_sim.config.constants.NYISO_LOCAL_SELFSUPPLY_FRAC`, the hourly
-    in-zone target is ``frac × demand[zone, t]``, distributed over the zone's
-    dispatchable thermal generators in **marginal-cost merit order** (gas-capable
-    tranches first by heat rate, the dear oil-fired peakers last) and each
-    capped at its available capacity — the same hour-varying
-    ``FleetArrays.min_gen`` lower bound the CHP / CT reliability floors use, and
-    composed with any floor already present via ``maximum``. The target is
-    clipped to the zone fleet's available capacity each hour so a feasible LP
-    solution always exists (the floor can never manufacture unmet load).
+    in-zone target is ``frac × demand[zone, t]`` **restricted to the
+    afternoon-evening peak window** (:data:`NYISO_SELFSUPPLY_FLOOR_HOURS`, local
+    HB14-21) and zero outside it, distributed over the zone's dispatchable
+    thermal generators in **marginal-cost merit order** (gas-capable tranches
+    first by heat rate, the dear oil-fired peakers last) and each capped at its
+    available capacity — the same hour-varying ``FleetArrays.min_gen`` lower
+    bound the CHP / CT reliability floors use, and composed with any floor
+    already present via ``maximum``. The target is clipped to the zone fleet's
+    available capacity each hour so a feasible LP solution always exists (the
+    floor can never manufacture unmet load).
+
+    The **window narrowing** (rule-17/18, floor-rederive 2026-07-05): the LI
+    locational-reliability / cable-import constraint the floor proxies binds only
+    at the summer design-cooling peak (the condition the LCR locality
+    requirements are defined at), not overnight — applied all-hours the floor
+    force-committed in-pocket LM6000 peaker baseload where measured LI CT_PEAKER
+    CF is ~0.06 flat and LI imports run well below their cable ceiling (the D-2
+    off-window forcing / C7 diurnal FAIL). The 0.45 fraction itself
+    (residual-identified, issue #1345) is **unchanged** — this narrows only the
+    hours it binds, never its level.
 
     The floor is **forward-reproducible** (it scales with load and responds to
     changed conditions) and grounded in NYISO market design — it is NOT a pin to
@@ -3197,6 +3229,13 @@ def inject_nyiso_local_selfsupply(
             continue
 
         target = frac * demand[z_idx, :hours]
+        # Restrict the floor to the afternoon-evening peak window
+        # (NYISO_SELFSUPPLY_FLOOR_HOURS): the LI local-reliability / cable-import
+        # constraint the floor proxies binds only at the summer design-cooling
+        # peak, not overnight (rule-17/18 narrowing — see the constant's note).
+        hod = np.arange(hours) % 24
+        in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+        target = np.where(in_window, target, 0.0)
         avail_cap = (
             fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
         )
