@@ -44,6 +44,12 @@ MECH_CAISO_GAS_COMMITMENT_FLOOR: int = 11
 # Interchange / market-design floors on pseudo-units (import bands, pockets).
 MECH_FIRM_IMPORT: int = 12
 MECH_NYISO_SELFSUPPLY: int = 13
+# NEISO winter fuel-security must-run (Component B): the fuel-secure steam fleet
+# (COAL_BIT + oil-capable ST_GAS) postured on winter cold days under the ISO-NE
+# winter-reliability program posture (WRP/IEP/OFSA). A merchant reliability
+# commitment (NOT structural must-run) — subject to the D-2 forced-share gate and
+# ablated in the zero-forcing twin.
+MECH_WINTER_FUELSEC: int = 14
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -60,6 +66,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_CAISO_GAS_COMMITMENT_FLOOR: "caiso_gas_commitment_floor",
     MECH_FIRM_IMPORT: "firm_import",
     MECH_NYISO_SELFSUPPLY: "nyiso_local_selfsupply",
+    MECH_WINTER_FUELSEC: "winter_fuelsec_mustrun",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -103,6 +110,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_RELIABILITY_DEPLOYMENT_OVERLAY: {"reliability_deployment_overlay": False},
     MECH_CAISO_GAS_COMMITMENT_FLOOR: {"caiso_gas_commitment_floor": False},
     MECH_NYISO_SELFSUPPLY: {"nyiso_local_selfsupply": False},
+    MECH_WINTER_FUELSEC: {"neiso_winter_fuel_mustrun": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
