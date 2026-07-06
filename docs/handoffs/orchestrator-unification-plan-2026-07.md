@@ -1002,8 +1002,18 @@ touching `capacity.py`/`scenarios.py`/`constants.py`/`fleet.py`). The
 both the conflict resolution and those merges, so this lane's first task was
 a fresh baseline on merged main and a byte diff against the Stage-4 set.
 
+Mid-lane, main advanced again (`e46ab11` → `bfc89de`, 13 PRs: G-22 offer
+surface #1510/#1517, NEISO C7 #1515, PJM commitment-posture #1511,
+capacity-economics #1513 — all config-gated default-off EXCEPT #1515's
+re-derivation of `reliability_floor_coeffs_NEISO.csv`, a rule-25 data
+update that changes the NEISO keeper's floor limbs). The Stage-6 branch was
+rebased onto `bfc89de` and the Stage-6 gate re-baselined there (§7.3.8);
+the `e46ab11` captures below stand as the §7.3.7 re-gate evidence and as
+the cross-check that the 13 intervening PRs moved no keeper number except
+NEISO's coeff-driven change.
+
 <!-- STAGE637_REGATE_RESULT -->
-- **Baseline recaptured on clean `e46ab11` (current main)** as
+- **Baseline recaptured on clean `e46ab11` (main at lane start)** as
   `results/regression-goldens/stage6-before-e46ab11/`, five ISOs — ERCOT,
   CAISO, PJM, NYISO, NEISO (keepers `ercot34-stage4-overlay-off`,
   `caiso-51-firm-base`, `pjm-77-ct-relfloor`, `nyiso-53-li-tsl`,
