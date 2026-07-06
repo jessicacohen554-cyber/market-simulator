@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-06-neiso-49-stgas-netload",
+  "label": "neiso 49 stgas netload",
+  "date": "2026-07-06",
+  "shorthand": "neiso-49-stgas-netload",
+  "definition": "KEEPER (promoted 2026-07-06, replacing neiso-48): the neiso-48 recipe on current main with TWO structural changes, both measured-grounded, neither tuned to a residual. (1) Connecticut ST_GAS NET-LOAD reliability-commitment limb \u2014 the rule-19 re-grounding of the two disabled, unidentified ST_GAS temperature limbs (tmax rho=0.23, tmin n=8): ISO-NE commits the Montville legacy-steam fleet on TIGHT-SYSTEM days, cold AND hot (Feb-2023 blast; post-Mystic Jun-Aug 2024/25 heat; Jan/Dec 2025); daily peak net-load unifies the driver (rho 0.51, n 329; floor 0.0336 = commit 0.2796 x physical min-stable 0.12; all-24h, 48h steam bridging \u2014 the CAISO-CT netload precedent). (2) NEISO-MEASURED offer bands for the de-leaked neutral classes (derive_campd_marginal_hr --iso NEISO): ST_GAS 0.79/0.85/0.89 (rising measured marginal-HR ramp x NEISO-native CC reach 1.223), CC_CHP 1.15/1.17/1.19; CT_PEAKER neutral AFFIRMED by measurement (CT marginal HR falls with load \u2014 the removed ERCOT ramp had no NEISO basis). Effect: C7 ST_GAS 2025 D-1 PASSES for the first time (profile_r 0.844, cv_ratio 2.87); 2023 off-peak CV collapse fixed (35.4 -> 4.6); D-2 ST_GAS forced share 0.0 all years (floor is scaffolding, dispatch economic); C1 12/12, C8 PASS. Disclosed costs (rule 1, not to be won back by a storage/offer tune): C5b 2025 deepens -49.3% -> -56.3% (the measured-cost steam tranche shaves the artificial evening peaks PS was arbitraging \u2014 the ledgered scarcity-formation gap); ST_GAS 2023 profile_r reads 0.49 vs 0.619 (the old value correlated a 13-hour spiky artifact; the new one is a real profile with a genuine midday-vs-evening mis-phase). Remaining C7 gap ledgered with root causes (2024 flat-floor cv 0.0 at $2.19 gas \u2014 C3a price-depression family; engine-vs-derivation net-load basis; sub-min-stable LP sliver \u2014 commitment-integrality follow-up). Still NOT-YET on the caveat budget (hard C2+C7 2>1, soft C3a/b/c+C5b 4>2) \u2014 no criterion FAILs.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-neiso-49-stgas-netload.js",
+  "bundle": "results/calibration/neiso_stgas_netload",
+  "ablation_twin": "2026-07-06-neiso-49-stgas-netload-ablation",
+  "market_story": "ISO-NE day-ahead-commits its last legacy steam plant (Montville) for tight-system days \u2014 winter blasts and post-Mystic summer heat \u2014 where it runs min-stable around the clock and load-follows the daytime peak; its energy above minimum is offered near its measured marginal heat rate, not a placeholder. The CC_REGULAR floor energy is the separate Central-zone hot-day commitment the temperature limb carries. Nothing else in NEISO is floored: the twin delta is the committed-steam/CC hot-day energy the real market schedules out of merit and makes whole via NCPC."
+}
