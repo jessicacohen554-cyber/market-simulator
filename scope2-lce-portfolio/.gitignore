@@ -9,16 +9,35 @@ data/sample/sample_load.csv
 data/sample/sample_lmp.csv
 
 # Real per-ISO CF profiles are built from the market-sim data tree by
-# scripts/build_profiles.py (large, reproducible, disposable). The only
-# committed profile is the tiny data-free fixture under tests/fixtures/.
+# scripts/build_profiles.py. Derived-but-bundled (rule: standalone copies of
+# this tool ship with no parent-repo access): the six 2024 per-ISO Parquets
+# are committed so the tool runs real-ISO analyses standalone; regenerate
+# with the script (--market-sim-root pointing at market-simulator) when the
+# source EIA-930 data updates. Anything else written here stays ignored.
 data/profiles/*
 !data/profiles/.gitkeep
+!data/profiles/ERCOT_2024.parquet
+!data/profiles/CAISO_2024.parquet
+!data/profiles/PJM_2024.parquet
+!data/profiles/MISO_2024.parquet
+!data/profiles/NYISO_2024.parquet
+!data/profiles/NEISO_2024.parquet
 
 # Real per-ISO-year hourly fossil-average CO2-rate exports are built from
 # cached market-sim dispatch results by scripts/build_fossil_avg_co2_rate.py
-# (ADR 0013; reproducible, disposable). Tests use synthetic in-test fixtures.
+# (ADR 0013). Derived-but-bundled (same rule as data/profiles/ above): the
+# available 2024 per-ISO exports are committed so the tool degrades
+# gracefully but runs with real CO2 rates standalone; regenerate against the
+# parent tree when the source dispatch cache updates. Tests still use
+# synthetic in-test fixtures. Anything else written here stays ignored.
 data/emissions/*
 !data/emissions/.gitkeep
+!data/emissions/ERCOT_2024_fossil_avg_co2_rate.parquet
+!data/emissions/CAISO_2024_fossil_avg_co2_rate.parquet
+!data/emissions/PJM_2024_fossil_avg_co2_rate.parquet
+!data/emissions/MISO_2024_fossil_avg_co2_rate.parquet
+!data/emissions/NYISO_2024_fossil_avg_co2_rate.parquet
+!data/emissions/NEISO_2024_fossil_avg_co2_rate.parquet
 
 # Stylized reference load (ADR-ratification facility), built deterministically
 # by scripts/make_reference_load.py. At ~2 MB (52560 rows: 6 ISOs x 8760h) it
