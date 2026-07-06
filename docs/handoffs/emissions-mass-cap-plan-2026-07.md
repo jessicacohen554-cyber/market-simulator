@@ -523,7 +523,7 @@ budget, tons NOx).
 
 RGGI/CARB CO2 caps run the full calendar year, so `_build_mass_cap_rows`'s "one row, all 8760
 hours" form (§4) applies unmodified. CSAPR's NOx budget applies **only** to the ozone season
-(May–September, ≈ 3,672 of 8,760 hours) — the row must sum member-generator NOx emissions over
+(May–September, ≈3,672 of 8,760 hours) — the row must sum member-generator NOx emissions over
 **only those hours**, not the full year. This needs one addition to the builder: an optional
 `hour_mask` (boolean, length `T`) that zeroes the column-selection outside the covered season,
 rather than the unconditional `hours = np.arange(T)` the CO2 row uses today. Still fully vectorized
