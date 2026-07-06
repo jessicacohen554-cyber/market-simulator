@@ -686,6 +686,51 @@ def _storage_frame(
     return df
 
 
+def _posture_frame(
+    year: int,
+    pass_label: str,
+    result,
+    zone_names,
+) -> pd.DataFrame | None:
+    """Return the commitment-posture hourly frame, one row per (pool, hour).
+
+    The honesty-gate artifact for ``miso_commitment_posture`` (design note
+    §A): each postured (zone × fuel-class) pool's online capacity ``U`` (MW),
+    startup increments ``SU`` (MW started this hour) and cleared reserve
+    ``R`` — the modeled online-headroom / cleared-reserve series the gate
+    compares against the measured MISO ASM data (``data/raw/MISO-AS``),
+    level + event-day direction, never the price-tail residual (rules 1/13).
+    ``None`` when the posture lever is off.
+    """
+    u = getattr(result, "posture_online_mw", None)
+    if u is None:
+        return None
+    from market_sim.data.fleet import FUEL_TYPE_NAMES
+
+    zone_idx = result.posture_zone_idx
+    fuel_idx = result.posture_fuel_idx
+    q, T = np.asarray(u).shape
+    zone_lab = np.array([zone_names[z] for z in zone_idx], dtype=object)
+    fuel_lab = np.array([FUEL_TYPE_NAMES[f] for f in fuel_idx], dtype=object)
+    su = np.asarray(result.posture_startup_mw, dtype=np.float32)
+    r = np.asarray(result.posture_reserve_mw, dtype=np.float32)
+    df = pd.DataFrame(
+        {
+            "zone": np.repeat(zone_lab, T),
+            "fuel": np.repeat(fuel_lab, T),
+            "hour": np.tile(np.arange(T, dtype=np.int32), q),
+            "online_mw": np.asarray(u, dtype=np.float32).reshape(-1),
+            "startup_mw": su.reshape(-1),
+            "reserve_mw": r.reshape(-1),
+        }
+    )
+    df.insert(0, "pass", pass_label)
+    df.insert(0, "year", np.int16(year))
+    for col in ("pass", "zone", "fuel"):
+        df[col] = df[col].astype("category")
+    return df
+
+
 def _storage_as_frame(
     year: int,
     pass_label: str,
@@ -1802,6 +1847,7 @@ def solve_and_persist(
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
     miso_reserve_pergen: bool = False,
+    miso_commitment_posture: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -1960,6 +2006,7 @@ def solve_and_persist(
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     storage_frames: list[pd.DataFrame] = []
+    posture_frames: list[pd.DataFrame] = []
     flows_frames: list[pd.DataFrame] = []
     storage_as_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
@@ -2052,6 +2099,7 @@ def solve_and_persist(
             energy_reserve_coopt=energy_reserve_coopt,
             miso_zonal_reserves=miso_zonal_reserves,
             miso_reserve_pergen=miso_reserve_pergen,
+            miso_commitment_posture=miso_commitment_posture,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_ordc_total_reserve=ercot_ordc_total_reserve,
@@ -2208,6 +2256,9 @@ def solve_and_persist(
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
+            posture_frame = _posture_frame(year, label, res, zone_names)
+            if posture_frame is not None:
+                posture_frames.append(posture_frame)
             flows_frame = _flows_frame(year, label, res, p2_state.get("links"))
             if flows_frame is not None:
                 flows_frames.append(flows_frame)
@@ -2271,6 +2322,10 @@ def solve_and_persist(
     if flows_frames:
         pd.concat(flows_frames, ignore_index=True).to_parquet(
             run_dir / "flows.parquet", index=False
+        )
+    if posture_frames:
+        pd.concat(posture_frames, ignore_index=True).to_parquet(
+            run_dir / "posture.parquet", index=False
         )
     # campd / eia930 / eia923 are deterministic input/benchmark frames shared
     # across an ISO's runs — write them once to the content-addressed shared
@@ -2354,6 +2409,7 @@ def solve_and_persist(
         "energy_reserve_coopt": energy_reserve_coopt,
         "miso_zonal_reserves": miso_zonal_reserves,
         "miso_reserve_pergen": miso_reserve_pergen,
+        "miso_commitment_posture": miso_commitment_posture,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
@@ -2531,6 +2587,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
     if miso_reserve_pergen:
         recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
+    if miso_commitment_posture:
+        recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
     if pjm_reserve_supply_cap:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
@@ -5463,6 +5521,19 @@ def main() -> None:
         "--energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--miso-commitment-posture",
+        action="store_true",
+        help="MISO pooled linear commitment-posture lever (design note "
+        "docs/multi-iso/miso-scarcity-posture-design-2026-07.md SA): per "
+        "non-fast-start pergen pool, an online-capacity variable U with "
+        "joint P+R <= U, CEMS-measured min-load coupling P >= mlf*U, an "
+        "NREL-class startup charge on dU+, and the reserve cap online-gated "
+        "R <= rho*U. Zero fitted parameters; honesty-gated on the measured "
+        "MISO ASM cleared-reserve/MCP series (data/raw/MISO-AS), never the "
+        "tail residual. Requires --energy-reserve-coopt --miso-reserve-"
+        "pergen. MISO-only; default off.",
+    )
+    parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
         help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
@@ -6864,6 +6935,7 @@ def main() -> None:
         energy_reserve_coopt=args.energy_reserve_coopt,
         miso_zonal_reserves=args.miso_zonal_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
+        miso_commitment_posture=args.miso_commitment_posture,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,

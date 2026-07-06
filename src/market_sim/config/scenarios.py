@@ -1619,6 +1619,37 @@ class ScenarioConfig:
     # Zero parameters fitted to the price residual. Requires
     # energy_reserve_coopt + MISO; default off; GATED CHANGE (alters
     # dispatch volumes).
+    miso_commitment_posture: bool = False  # MISO: pooled linear commitment-
+    # posture lever (docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A,
+    # the G-25/DP-1 workstream). Per (zone × fuel-class) pergen pool p, adds a
+    # continuous online-capacity variable U[p,t] ∈ [0, Σ pmax·availability]
+    # with (i) joint headroom re-anchored to online capacity
+    # (Σ P + R ≤ U instead of ≤ Σ cap), (ii) a CEMS-measured min-load coupling
+    # Σ P ≥ mlf_p·U (mlf = the thermal_tranches committed_pct min-stable-when-
+    # online percentile, capacity-weighted per pool; MIN_STABLE_PCT_PHYSICAL
+    # WWSIS-2 class gap-fill for uncovered plants), (iii) a startup charge on
+    # ΔU⁺ (SU ≥ U[t] − U[t−1], cyclic; $/MW from the NREL/SR-5500-55433 class
+    # tables COMMITMENT_PARAMS_BY_FUEL / BIN_STARTUP_COST_PER_MW — re-timing
+    # energy now pays a real start instead of the P1 zero-commitment-cost
+    # relief the miso-39 gate-4 diagnosis measured at $4-23/MWh), and (iv) the
+    # pergen reserve cap online-gated R ≤ ρ_p(t)·U (offline capacity
+    # contributes no 10-minute ramp), so the published RBDC / zonal curve
+    # families can genuinely run short. Eligibility gates on POOL PHYSICS,
+    # never class tuples (rule 18): pools whose capacity-weighted class params
+    # are fast-start (min-down ≤ 2 h AND startup < $30/MW — CT/oil) are
+    # exempt (no U column; their offline capacity legitimately provides MISO
+    # offline supplemental). NOT a floor: forces no energy (the min-load term
+    # binds only capacity the LP itself keeps online — rule 17 window
+    # deliberately none), carries no min_gen/D-2 mechanism id, and every
+    # input is measured (CEMS mlf), published (NREL startup tables) or
+    # physics (ramp10) — zero fitted parameters. Honesty gate: modeled online
+    # headroom / cleared reserve vs the measured MISO ASM series
+    # (data/raw/MISO-AS), NEVER the price-tail residual (rules 1/13). Min-run
+    # /min-down rolling-window smoothing on U is deliberately deferred (the
+    # startup charge carries the cycling economics; window rows are a
+    # documented memory-gated follow-up, G-40). Requires energy_reserve_coopt
+    # + miso_reserve_pergen; default off; GATED CHANGE (alters dispatch
+    # volumes).
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
@@ -4094,6 +4125,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_reserves": 1,
     "miso_zonal_reserve_zones": 1,
     "miso_reserve_pergen": 1,
+    "miso_commitment_posture": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
