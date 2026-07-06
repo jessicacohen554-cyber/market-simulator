@@ -609,6 +609,30 @@ def test_launch_page_status_table_avoids_html_injection() -> None:
             assert "${" not in line, line
 
 
+# Routes the hardened loopback server actually serves (see ``do_GET`` in
+# launcher.py): the index itself, the JSON API, and the report browser.
+_SERVED_PREFIXES = ("/api/", "/reports/")
+
+
+def test_launch_page_has_no_dead_relative_links() -> None:
+    """Every relative link the launch page emits must resolve to a route the
+    server actually serves. Guards the HP-05 regression where the footer
+    linked to ``../docs/site/index.html`` -- a ``/docs/`` route the hardened
+    server never exposes (it serves only ``/``, ``/api/*`` and ``/reports/*``,
+    so that link 404s). Docs are pointed at as an on-disk path instead."""
+    page = _rendered_page()
+    for href in re.findall(r'href\s*=\s*"([^"]*)"', page):
+        # in-page anchors and data: URIs are not navigations to a route.
+        if href.startswith(("#", "data:")):
+            continue
+        # external URLs are already banned by the self-contained test.
+        assert not re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*://", href), (
+            f"external link on launch page: {href!r}"
+        )
+        served = href == "/" or href.startswith(_SERVED_PREFIXES)
+        assert served, f"dead relative link on launch page: {href!r}"
+
+
 def test_launcher_cli_has_no_host_flag() -> None:
     """LN-5: ADR 0016 defers remote use — the un-authenticated server binds
     loopback only, and no CLI flag may rebind it to another interface."""
