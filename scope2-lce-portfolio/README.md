@@ -68,7 +68,8 @@ examples/             runnable examples
 
 ## Status
 
-Waves 0–2 complete (PP-00 through PP-08, 147 tests passing). Full capabilities:
+Waves 0–2 and the standalone handoff-prep waves are complete (PP-00 through
+PP-08, HP-01 through HP-05, 328 tests passing). Full capabilities:
 real data intake (load, LMP, fossil-avg CO₂ rate), NREL ATB 2024 resource pricing (capex/CRF),
 split-storage (LDES, hydrogen), hydro monthly budgets, additionality accounting, gas CC+CCS
 resources with CCS threshold matching credit and 45Q net VOM, residual CO₂ tracking (grid +
@@ -78,12 +79,13 @@ ADR 0017) — with an always-on `divert_backfill_mwh` diagnostic and a stricter
 `excess_headroom_only` variant whose iterative LP cut loop eliminates
 divert-and-backfill (ADR 0018). Decisions: ADRs 0004–0019 (see
 `docs/decisions/DECISIONS.md`). Reporting (ADR 0014), the desktop launcher
-(ADR 0016), and six-ISO 2024 backcast validation sweeps are all done; 259
-tests passing (2026-07-05).
+(ADR 0016), and six-ISO 2024 backcast validation sweeps are all done; 328
+tests passing (2026-07-06).
 
-**Finalization for standalone handoff is staged as prompts in
-`docs/handoff/`** (HP-01..HP-05: annual-average LMP mode, bundled pull-out
-data, launcher results browser, docs site, final extraction QA). Start with
+**Finalization for standalone handoff is complete** (the HP-01..HP-05 prompts
+in `docs/handoff/`: annual-average LMP mode, bundled pull-out data, launcher
+results browser, docs site, final extraction QA — see
+`docs/handoff/SIGNOFF.md`). Start with
 `PLAN.md`, then `docs/how-it-works.md` (the single narrative mechanics doc),
 then `docs/00-overview.md` and `docs/01-lp-formulation.md`. There's also a
 self-contained HTML explainer site at

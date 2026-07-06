@@ -189,18 +189,18 @@ is real LP-design follow-up work, not yet scheduled.
 
 ```bash
 ../.venv/bin/python examples/run_sample_sweep.py     # end-to-end frontier on synthetic data
-../.venv/bin/python -m pytest tests/ -q              # 147 tests: config, intake, LP core, CLI, extensions, cross-feature
+../.venv/bin/python -m pytest tests/ -q              # 328 tests: config, intake, LP core, CLI, extensions, cross-feature
 grep -rn "import market_sim" src/ || echo "OK: standalone"   # isolation check
 ```
 
 Expected: sweep prints a matching%-vs-premium table for `{1,2,5,7,10,20}`; matching%
-is non-decreasing in the premium cap; all 147 tests pass (trivial cases first, then
+is non-decreasing in the premium cap; all 328 tests pass (trivial cases first, then
 extensions like split-storage, hydro budget, additionality, CCS threshold logic, cross-feature interplay).
 
 ## 10. Handoff checklist
 
 - [x] Read this + `docs/00-overview.md` + `docs/01-lp-formulation.md`.
-- [x] Run the demo and tests (§9). ✓ 147 tests passing (measured 2026-07-02).
+- [x] Run the demo and tests (§9). ✓ 328 tests passing (measured 2026-07-06, HP-05 final QA).
 - [x] Work the open planning sessions to record decisions in `docs/decisions/`. ✓ PS-01..12 → ADRs 0004..0015 (2026-07-01/02).
 - [x] Execute prompt packs PP-00 through PP-08 in order, updating docs/PLAN.md status. ✓ PP-00..08 complete (PP-08 gas-CC+CCS, ADR 0012, implemented 2026-07-02).
 - [x] ADR ratification (PS-10, 2026-07-02): ADRs 0005/0007/0009/0010 amended & ratified (0005: f=1.0, excess credited at full LMP).
@@ -209,8 +209,8 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   HTML run report + committed results store. ✓ `report.py` renders all six ADR
   0014 §2 views from a versioned `report.json` payload; `results/<run-id>/` is a
   committed store (two real bundles landed); CLI gained
-  `--run-id`/`--results`/`--no-report`/`--report-hourly`; 254 tests passing
-  (measured 2026-07-05, includes `tests/test_report.py`).
+  `--run-id`/`--results`/`--no-report`/`--report-hourly`; 328 tests passing
+  (measured 2026-07-06, HP-05 final QA; includes `tests/test_report.py`).
 - [x] Build `data/profiles/` for all six ISOs (`scripts/build_profiles.py --year
   2024`; real EIA-930-derived CF shapes for ERCOT/CAISO/PJM/MISO/NYISO/NEISO,
   2026-07-05).
@@ -238,8 +238,8 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   no-cost-tiebreak degenerate-solution limitation (saturates at 100%
   matching from $1/MWh by building onshore wind near its 20 GW resource
   cap) — flagged, not fixed at the time, see
-  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
-  passing (measured 2026-07-05).
+  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 328 tests
+  passing (measured 2026-07-06, HP-05 final QA).
 - [x] Fix the CAISO Mode A degenerate-solution limitation (2026-07-05):
   `config.build_tiebreak_epsilon` (flat per-MW tiebreak on `build_mw`/
   `build_energy`, Mode A only, default 1e-6) breaks the tie toward the
@@ -250,5 +250,5 @@ extensions like split-storage, hydro budget, additionality, CCS threshold logic,
   the degenerate saturation on a synthetic system, proves the fix, and
   confirms the tiebreak is a no-op on an already-pinned non-degenerate
   optimum). Real-data before/after CAISO re-solve + ERCOT control re-run:
-  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 259 tests
-  passing (measured 2026-07-05).
+  `docs/validation-2026-07-05-caiso-mode-a-tiebreak-fix.md`. 328 tests
+  passing (measured 2026-07-06, HP-05 final QA).
