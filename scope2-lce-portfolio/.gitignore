@@ -28,6 +28,13 @@ data/emissions/*
 data/reference/*
 !data/reference/.gitkeep
 
+# Full-8760 fillable skeleton templates, generated on demand by
+# scripts/make_input_templates.py (HP-01). The small illustrative examples
+# under data/templates/ (a few rows each) stay committed; these full-size
+# skeletons are reproducible and disposable.
+data/templates/skeletons/*
+!data/templates/skeletons/.gitkeep
+
 # Python
 __pycache__/
 *.py[cod]
