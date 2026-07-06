@@ -478,6 +478,58 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
             0.0,
         )
 
+    def test_econ_srmc_bound_clamps_marginal_tranches_only(self):
+        # coal_econ_srmc_bound: a marginal (econ*/peak) coal tranche's
+        # passthrough is clamped to >= 1.0 (its fuel is bought at market —
+        # the offer never drops below full measured delivered fuel cost);
+        # the committed/must-run bands keep their contracted discount and
+        # markups > 1.0 pass through unchanged.
+        from market_sim.data.fleet import campd_tranche_fuel_frac
+
+        def gen(unit_id):
+            return Generator(
+                unit_id=unit_id,
+                name="x",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=100.0,
+                heat_rate=10.0,
+                coal_supply="bituminous",
+                plant_group="COAL",
+            )
+
+        pt = {"bituminous": np.array([0.61, 0.95, 1.2])}
+        # econ + peak tranches: sub-1.0 hours clamp to exactly 1.0, the
+        # 1.2 markup hour is untouched.
+        for uid in ("COAL_z_p1_econc00", "COAL_z_p1_econ", "COAL_z_p1_peak"):
+            np.testing.assert_array_equal(
+                campd_tranche_fuel_frac(gen(uid), pt, econ_srmc_bound=True),
+                np.array([1.0, 1.0, 1.2]),
+            )
+        # scalar passthrough clamps too
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                gen("COAL_z_p1_peak"), {"bituminous": 0.7}, econ_srmc_bound=True
+            ),
+            1.0,
+        )
+        # committed keeps the sigmoid discount; mustrun stays fuel-free.
+        np.testing.assert_array_equal(
+            campd_tranche_fuel_frac(
+                gen("COAL_z_p1_committed"), pt, econ_srmc_bound=True
+            ),
+            pt["bituminous"],
+        )
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("COAL_z_p1_mustrun"), pt, econ_srmc_bound=True),
+            0.0,
+        )
+        # flag off: econ tranche keeps the discount (default behaviour).
+        np.testing.assert_array_equal(
+            campd_tranche_fuel_frac(gen("COAL_z_p1_econc00"), pt),
+            pt["bituminous"],
+        )
+
     def test_takeorpay_share_sets_mustrun_sunk_fraction(self):
         # With a measured take-or-pay map, a coal must-run tranche passes
         # 1 - contract_share of its fuel (only the contracted tonnage is sunk)
