@@ -938,3 +938,120 @@ class TestErcotStorageAsProductCredit(unittest.TestCase):
         )
         by_name = {f.name: f for f in design.families}
         self.assertAlmostEqual(float(by_name["RRS"].requirement[0]), 300.0)
+
+
+class TestCaisoDesign(unittest.TestCase):
+    """CAISO per-generator reserve co-optimization (_caiso_design, issue #1492).
+
+    Two co-drawn contingency families (spin + non-spin) on a shared pergen R
+    pool, requirement = max(MSSC, 6% load) split half/half, published
+    §27.1.2.3.5 scarcity demand curves.
+    """
+
+    _ZONES = ["NP15", "ZP26", "SP15", "WECC_import"]
+
+    def _fleet(self, T=24, with_ramp10=True):
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        ct = FUEL_TYPE_NAMES.index("gas_ct")
+        hyd = FUEL_TYPE_NAMES.index("hydro")
+        n = 4
+        # NP15: 1,000 MW CC. SP15: 800 MW CC + 500 MW CT + 600 MW hydro.
+        return FleetArrays(
+            pmax=np.array([1000.0, 800.0, 500.0, 600.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 7.5, 11.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 2, 2, 2]),
+            fuel_type_idx=np.array([cc, cc, ct, hyd]),
+            availability=np.ones((n, T)),
+            unit_ids=["cc_np", "cc_sp", "ct_sp", "hyd_sp"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 300, 400, 500]),
+            # RAMP10_FRAC analogue: CC 0.40, CT 1.00, hydro 0 (no ramp10 entry).
+            ramp10=(np.array([400.0, 320.0, 500.0, 0.0]) if with_ramp10 else None),
+        )
+
+    def test_two_contingency_families(self):
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertEqual(
+            [f.name for f in design.families], ["caiso_spin", "caiso_nonspin"]
+        )
+
+    def test_requirement_is_mssc_floor_without_load(self):
+        # No system_load -> flat MSSC floor. MSSC = largest plant = 1,000 MW
+        # (NP15 CC), split half/half -> 500 MW each product.
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        for fam in design.families:
+            self.assertAlmostEqual(float(fam.requirement[0]), 500.0)
+
+    def test_requirement_tracks_six_percent_load(self):
+        # 6% of a 20,000 MW load = 1,200 MW > MSSC 1,000 -> requirement binds
+        # on load, split half/half -> 600 MW each.
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        load = np.full(24, 20000.0)
+        design = get_reserve_design(
+            cfg, self._fleet(), 24, self._ZONES, system_load=load
+        )
+        for fam in design.families:
+            self.assertAlmostEqual(float(fam.requirement[0]), 600.0)
+
+    def test_published_demand_curves(self):
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        load = np.full(24, 20000.0)  # requirement 600 MW/product
+        design = get_reserve_design(
+            cfg, self._fleet(), 24, self._ZONES, system_load=load
+        )
+        by_name = {f.name: f for f in design.families}
+        # Spin: flat $100 (10% of the $1,000 soft cap), one step spanning req.
+        np.testing.assert_allclose(by_name["caiso_spin"].ordc_penalties, [100.0])
+        np.testing.assert_allclose(by_name["caiso_spin"].ordc_step_widths, [600.0])
+        # Non-spin: $500/$600/$700 at 70 / 210 MW tiers, remainder to req.
+        np.testing.assert_allclose(
+            by_name["caiso_nonspin"].ordc_penalties, [500.0, 600.0, 700.0]
+        )
+        np.testing.assert_allclose(
+            by_name["caiso_nonspin"].ordc_step_widths, [70.0, 140.0, 390.0]
+        )
+
+    def test_pergen_pools_exclude_hydro(self):
+        # Hydro (ramp10 = 0) drops out of the pergen pool; three thermal
+        # (zone, fuel) columns remain: (NP15,cc), (SP15,cc), (SP15,ct).
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        np.testing.assert_array_equal(design.pergen_gen_idx, [0, 1, 2])
+        self.assertEqual(design.pergen_ramp10.shape, (3, 24))
+        self.assertAlmostEqual(float(design.pergen_ramp10[:, 0].sum()), 1220.0)
+
+    def test_pergen_ramp_scales_with_availability(self):
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        fleet = self._fleet()
+        fleet.availability[2, 5] = 0.0  # outage the SP15 CT in hour 5
+        design = get_reserve_design(cfg, fleet, 24, self._ZONES)
+        col = np.asarray(design.pergen_col)
+        ct_col = int(col[np.asarray(design.pergen_gen_idx) == 2][0])
+        self.assertAlmostEqual(float(design.pergen_ramp10[ct_col, 5]), 0.0)
+        self.assertAlmostEqual(float(design.pergen_ramp10[ct_col, 4]), 500.0)
+
+    def test_kwargs_propagate_pergen_and_families(self):
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        load = np.full(24, 20000.0)
+        design = get_reserve_design(
+            cfg, self._fleet(), 24, self._ZONES, system_load=load
+        )
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertIn("reserve_pergen_gen_idx", kw)
+        self.assertIn("reserve_pergen_ramp10", kw)
+        self.assertIn("reserve_balance_zone_mask", kw)
+        self.assertIn("reserve_balance_ordc_counts", kw)
+        # ORDC counts: 1 spin step + 3 non-spin steps.
+        np.testing.assert_array_equal(kw["reserve_balance_ordc_counts"], [1, 3])
+
+    def test_missing_ramp10_raises(self):
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        with self.assertRaises(ValueError):
+            get_reserve_design(cfg, self._fleet(with_ramp10=False), 24, self._ZONES)
