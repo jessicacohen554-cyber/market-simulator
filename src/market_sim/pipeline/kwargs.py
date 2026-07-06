@@ -282,6 +282,19 @@ def _log_reserve_coopt(
                 ", ".join(f.name for f in design.families),
                 [int(f.requirement.mean()) for f in design.families],
             )
+        if design.posture_pools is not None and design.posture_pools.size:
+            logger.info(
+                "  PJM COMMITMENT POSTURE (pjm_commitment_posture): "
+                "%d of %d pools postured (fast-start exempt by physics), "
+                "mlf %.2f-%.2f (cap-wt CEMS committed_pct), "
+                "startup $%.0f-$%.0f/MW (NREL class tables)",
+                int(design.posture_pools.size),
+                int(np.atleast_2d(design.pergen_ramp10).shape[0]),
+                float(design.posture_mlf.min()),
+                float(design.posture_mlf.max()),
+                float(design.posture_startup.min()),
+                float(design.posture_startup.max()),
+            )
         if design.online_gated is not None:
             logger.info("PJM reserve online-gating ON: ρ=%.2f", design.online_rho)
     # Supply cap (ERCOT RTOLCAP / PJM deliverable ramp), any ISO whose design
