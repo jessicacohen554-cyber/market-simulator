@@ -105,9 +105,11 @@ def apply_reserve_coopt(
     """Merge the energy+reserve co-optimization kwargs into ``dispatch_kwargs``.
 
     The single reserve seam both orchestrators call (Stage 2). Gated on
-    ``config.energy_reserve_coopt``; CAISO has no reserve design (it prices
-    scarcity through the RA/import mechanisms instead), so it is excluded —
-    the same net gate both inline blocks applied.
+    ``config.energy_reserve_coopt``. CAISO additionally requires the
+    ``config.caiso_reserve_coopt`` flag (default off, issue #1492 / L-10): its
+    ``reserve_config._caiso_design`` was previously a hard ``iso == "CAISO"``
+    short-circuit here; the flag lifts that short-circuit so the default CAISO
+    path stays byte-identical while a probe can enable the co-optimization.
 
     The ISO's reserve demand curve enters the LP as reserve balance rows so the
     reserve clearing price lifts the energy LMP endogenously. All per-ISO
@@ -133,7 +135,12 @@ def apply_reserve_coopt(
         The ``ReserveDesign`` merged in, or ``None`` when gated off.
     """
     iso = str(config.iso)
-    if not getattr(config, "energy_reserve_coopt", False) or iso == "CAISO":
+    if not getattr(config, "energy_reserve_coopt", False):
+        return None
+    # CAISO's reserve design (reserve_config._caiso_design) is gated behind its
+    # own default-off flag (issue #1492): without it, keep the historical
+    # short-circuit so the default CAISO path is byte-identical.
+    if iso == "CAISO" and not getattr(config, "caiso_reserve_coopt", False):
         return None
 
     from market_sim.config.reserve_config import (
@@ -297,6 +304,29 @@ def _log_reserve_coopt(
             )
         if design.online_gated is not None:
             logger.info("PJM reserve online-gating ON: ρ=%.2f", design.online_rho)
+    elif iso == "CAISO":
+        logger.info(
+            "energy+reserve co-opt (CAISO, caiso_reserve_coopt): %d families "
+            "(%s), req means %s MW, %d ORDC steps ($%.0f-$%.0f, §27.1.2.3.5 "
+            "scarcity curves), %d reserve-eligible units",
+            len(design.families),
+            ", ".join(f.name for f in design.families),
+            [int(f.requirement.mean()) for f in design.families],
+            len(pen),
+            float(pen.min()) if len(pen) else 0.0,
+            float(pen.max()) if len(pen) else 0.0,
+            int(elig2d[0].sum()),
+        )
+        if design.pergen_gen_idx is not None:
+            _r10 = np.atleast_2d(design.pergen_ramp10)
+            logger.info(
+                "  CAISO PER-ASSET reserve columns: %d members pooled into %d "
+                "(zone, fuel-class) R columns, availability-scaled 10-min "
+                "deliverable ramp cap Σ %.1f GW",
+                int(design.pergen_gen_idx.size),
+                _r10.shape[0],
+                float(_r10.sum(axis=0).mean()) / 1e3,
+            )
     # Supply cap (ERCOT RTOLCAP / PJM deliverable ramp), any ISO whose design
     # set one — supersedes the per-orchestrator supply-cap log lines.
     if design.supply_cap is not None and design.pergen_gen_idx is None:
