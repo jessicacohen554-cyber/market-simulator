@@ -136,6 +136,9 @@ from market_sim.model.transmission import (  # noqa: E402
     wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
+from market_sim.policy.constraints import (  # noqa: E402
+    build_mass_cap_dispatch_kwargs,
+)
 from market_sim.policy.eac import (  # noqa: E402
     apply_eac_to_mc,
     apply_negative_renewable_offer_floor,
@@ -2250,6 +2253,9 @@ def run_year(
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    mass_cap_enabled: bool = False,
+    mass_cap_tons: float | None = None,
+    mass_cap_program: str | None = None,
     zero_forcing_ablation: bool = False,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
@@ -2289,6 +2295,17 @@ def run_year(
             measured schedule added to demand. Lets a backcast validate the
             node's calibration against the EIA-930 net-interchange duration
             curve.
+        mass_cap_enabled: When True, thread the unified carbon resolver's
+            power-sector mass-cap ROW into this calibration year (G-29,
+            docs/handoffs/emissions-mass-cap-plan-2026-07.md) instead of the
+            default adder path. Default False leaves the calibration harness
+            byte-identical (the row was previously unreachable here at all).
+            A diagnostic/validation lever only — never a keeper default.
+        mass_cap_tons: Optional explicit annual budget (metric tons CO2)
+            overriding the ISO program's published schedule; see
+            ``policy.cap_and_trade._power_sector_cap``.
+        mass_cap_program: Optional cap label override (see
+            ``policy.cap_and_trade._power_sector_cap``).
 
     Returns:
         A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
@@ -2341,6 +2358,18 @@ def run_year(
         # carrying links' export capability follows the hourly NP6-86 series
         # (gtc-limits clean datatype) instead of the static ttc_mw.
         config = config.with_overrides(ercot_gtc_limits_measured=True)
+    if mass_cap_enabled:
+        # G-29 wiring: the calibration harness previously had no path to
+        # mass_cap_enabled at all, so the mass-cap row (policy.cap_and_trade
+        # .resolve_carbon_program's ROW path) was inert here even though
+        # runner.py's forecast path has threaded it since the mass-cap plan
+        # landed. Diagnostic-only lever (e.g. the RGGI dual-vs-auction-price
+        # probe); never a keeper default.
+        config = config.with_overrides(
+            mass_cap_enabled=True,
+            mass_cap_tons=mass_cap_tons,
+            mass_cap_program=mass_cap_program,
+        )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -4223,6 +4252,16 @@ def run_year(
     dispatch_kwargs = build_base_dispatch_kwargs(
         dispatch_spec, import_node_recon=import_node_recon
     )
+    # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
+    # runner.py's forecast-path `mass_caps` block so the backcast calibration
+    # harness shares the identical seam — before this wire-through,
+    # mass_cap_enabled was never reachable here at all (`get_active_policy_
+    # constraints` had no caller in either run_calibration.py or
+    # run_calibration_full.py). Default off -> {} -> no dispatch_kwargs
+    # change, identical LP. See docs/handoffs/emissions-mass-cap-plan-2026-07.md.
+    dispatch_kwargs.update(
+        build_mass_cap_dispatch_kwargs(config, year, zone_names, fleet_arrays)
+    )
 
     # Plant-group hourly ramp envelopes (config.ramp_limits, GATED default
     # off): CAMPD-measured trajectory bounds per plant group per hour
@@ -4941,6 +4980,32 @@ def _build_parser() -> argparse.ArgumentParser:
         "LMPs). Default (unset) keeps the per-ISO base config value (ON "
         "for CAISO); --no-negative-renewable-offers forces it off.",
     )
+    parser.add_argument(
+        "--mass-cap-enabled",
+        action="store_true",
+        help="Thread the unified carbon resolver's power-sector mass-cap "
+        "ROW (policy.cap_and_trade.resolve_carbon_program) into this "
+        "calibration year instead of the default measured-price adder "
+        "(G-29, docs/handoffs/emissions-mass-cap-plan-2026-07.md). "
+        "Diagnostic-only (e.g. the RGGI dual-vs-auction-price validation "
+        "probe); never a keeper default. No effect on ISOs with no "
+        "cap-and-trade program (ERCOT/MISO) or no published budget for "
+        "the requested year.",
+    )
+    parser.add_argument(
+        "--mass-cap-tons",
+        type=float,
+        default=None,
+        help="Explicit annual mass-cap budget (metric tons CO2), overriding "
+        "the ISO program's published schedule. Only meaningful with "
+        "--mass-cap-enabled.",
+    )
+    parser.add_argument(
+        "--mass-cap-program",
+        default=None,
+        help="Label override for the mass-cap row's reported allowance "
+        "price. Only meaningful with --mass-cap-enabled.",
+    )
     return parser
 
 
@@ -4995,6 +5060,9 @@ def main(argv: list[str] | None = None) -> None:
             priced_interchange=priced_interchange,
             reference_price_interface=reference_price_interface,
             negative_renewable_offers=args.negative_renewable_offers,
+            mass_cap_enabled=args.mass_cap_enabled,
+            mass_cap_tons=args.mass_cap_tons,
+            mass_cap_program=args.mass_cap_program,
             xyear_cache=xyear_cache,
         )
         if result_p1 is not None:
