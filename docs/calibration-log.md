@@ -241,8 +241,10 @@ single delta `use_plant_emission_rates_v2=true` (drag ON per the D-8 fail branch
 caiso-55 is the v2-off twin). v2 attribution vs caiso-55: CT 2.05/1.70/1.36 TWh (was
 2.04/1.70/1.30), CC −0.4/−0.4/−0.1 TWh, SP15 mean −0.5/−0.8/−0.5 $/MWh, 2023 tail 489 vs
 483 h — the small measured-rate re-ranking §9.6 predicted, confirming v2 is live and
-dispatch-affecting under CARB pricing. D-2 CT forced share 59.3/65.8/65.4% (honest
-rule-20 FAIL; sole mechanism `ct_netload_drag`, D-4 off-window 0%). This is what main
+dispatch-affecting under CARB pricing. D-2 CT forced share 59.7/65.9/65.4% (bundle
+`legitimacy_diagnostics.md` is the record — sums `ct_netload_drag` + `ra_mustoffer_bridge`;
+reconciles a 2023/2024 rounding mismatch vs this log's prior 59.3/65.8; honest
+rule-20 FAIL, D-4 off-window 0%). This is what main
 actually produces for the keeper config; the committed caiso-51 dashboard numbers
 (CT 3.47/3.38/2.84, C8 27-33%) remain pre-scrub artifacts main cannot reproduce (#1346
 diagnosis).
