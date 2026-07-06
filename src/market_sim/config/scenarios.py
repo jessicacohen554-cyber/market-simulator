@@ -835,6 +835,24 @@ class ScenarioConfig:
     # backcast net export is a genuine validation. Requires priced_interchange;
     # gated to ISOs present in INTERFACE_NEIGHBORS (PJM today), byte-identical
     # otherwise. Default off. See docs/reference-price-interface.md.
+    neighbor_hr_forward_skill: str | None = None  # FORWARD-SKILL validation
+    # mode for the reference-price interface's neighbor heat rate
+    # (data.neighbor_price.neighbor_heat_rate / _FORWARD_SKILL_MODES):
+    # "elastic" skips each neighbor's measured per-year hr_by_year anchor and
+    # uses the gas-elastic implied HR instead; "flat" also skips the elastic
+    # coefficients and uses the flat marginal_heat_rate. Forces a backcast year
+    # to price off the SAME forward formula a forecast year would use, so it
+    # can be scored against the held-out actuals as a forward-skill check.
+    # Threaded through transmission.apply_interchange_injections ->
+    # inject_reference_price_mc -> neighbor_price.{interface_reference_prices,
+    # seam_tranche_prices} -> neighbor_heat_rate. Reads only each neighbor's OWN
+    # gas/LMP fit, never the ISO's interchange (rule #11). Promoted from a
+    # plain keyword argument to a ScenarioConfig field so the setting is
+    # recorded in run_config.json instead of a silent call-site default
+    # (CLAUDE.md rule 23 — this was formerly the FORWARD_SKILL_ENV /
+    # MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL environment-variable channel,
+    # already removed). Default None (off) is byte-identical to every keeper
+    # and forecast run; only a validation script sets it.
     reliability_floor: bool = False  # ISO-agnostic temperature/net-load
     # reliability-commitment floor: look up the ISO in
     # RELIABILITY_FLOOR_REGISTRY (iso_configs.py) and apply ALL enabled
@@ -3562,6 +3580,12 @@ class ScenarioConfig:
             raise ValueError(
                 f"ScenarioConfig.hydro_year must be one of "
                 f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
+            )
+
+        if self.neighbor_hr_forward_skill not in (None, "elastic", "flat"):
+            raise ValueError(
+                "ScenarioConfig.neighbor_hr_forward_skill must be None, "
+                f"'elastic', or 'flat', got {self.neighbor_hr_forward_skill!r}"
             )
 
         # gas_price_factor is a forecast-only uncertainty lever (PB-1 §2.1);
