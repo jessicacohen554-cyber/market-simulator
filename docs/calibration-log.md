@@ -5317,3 +5317,124 @@ A/B evidence for the posture workstream. Keeper unchanged this session: miso-41.
 
 No solve, score, or intake touched 2022/H1-2026 (rule #22). Solve years 2023–2025 only,
 one invocation, years sequential (G-40 memory discipline; 12 GB swapfile).
+## 2026-07-06 — ERCOT Stage-4 overlay-off integration (`ercot34`; KEEPER-CANDIDATE recommendation, owner decision pending) + G-12 replay-gap attribution CLOSED (`ercot35`/`ercot36` A/B arms)
+
+Wave-3 ERCOT lane (L-12): G-38 (AS co-opt plan §6/§7 stage 4), G-22 fold, G-12
+attribution. Three solves, all registered; keeper `ercot32` unchanged
+(`keepers.json` untouched — promotion is an owner decision).
+
+### G-12 first (it re-scoped everything): the "container-reproducibility drift" is a replay-contract gap
+
+The keeper solved with **four ERCOT gas-geography fields meta.json does not
+persist** — `ercot_zonal_gas_basis=True`, `ercot_west_netload_gas_shape=True`,
+`ercot_west_gas_delivered_floor=0.4`, `oil_primary_bin_fuel=True` (proven by
+the keeper bundle's resolved `run_config.json`; the fields' ScenarioConfig
+defaults are off). Every "byte-faithful" `replay_keeper.py` replay therefore
+solved a **different config** — no Waha/zonal delivered-gas geography on any
+of ERCOT's 963 gas units: the `2026-07-03-32-head-regate` (#1451), the
+FINDING §6.3 replay, the ercot33 ex-overlay baseline, and the ercot40 WS-A
+probe all carry this confound (their *internal* A/B conclusions stand — both
+arms shared the config; their absolute levels are shifted). Same disease
+class as the pjm-77 `ct_netload_drag` meta-gap. **Fix filed, not made** (the
+meta writer is `run_calibration_full.py`, orchestrator-unification lane
+ownership); until then any ERCOT replay must restore the four fields via
+`--set` (the registered bundles' `run_config.json` carries them resolved).
+**Check #1346 (CAISO drift) for the same mechanism.**
+
+Attribution, quantified by the registered A/B pair (CC_REGULAR TWh
+2023/24/25; committed keeper 133.21/135.64/135.31):
+
+| arm | config | CC_REGULAR | reads as |
+|---|---|---|---|
+| `2026-07-06-ercot35-replay-metagap-arm` | stage-4 deltas, flags DROPPED (= what every prior replay ran) | 145.38/153.47/145.49 | **reproduces the head-regate EXACTLY** — the drift is deterministic on HEAD in a fresh container |
+| `2026-07-06-ercot34-stage4-overlay-off` | stage-4 deltas, flags restored | 139.07/142.68/141.81 | M1 (flags) = **+6.3/+10.8/+3.7** |
+| `2026-07-06-ercot36-head-config-faithful` | keeper recipe faithful, overlay ON | 139.07/142.68/141.81 | M2+M3 (real HEAD code movement) = **+5.9/+7.0/+6.5** |
+
+M2 = the coal max-CF ceiling re-derive (`f5543232`, 07-03T20:10Z, ~50 min
+after the keeper's solve: year-pins dropped, Limestone 0.82/0.86/0.87→0.95,
+Fayette 0.99, J K Spruce 0.95, Oak Grove uncapped → COAL_PRB +3.9/yr) and
+M3 = the fleet.py curated-bin-drift reconciliation (#1451's contributor:
+CC_CHP −4.3 and CT_CHP −2.2 TWh/yr of mostly **label** movement — plant-grain
+CC_CHP dispatch moves only −0.36/−0.25/−0.37). Both are legitimate, cited
+re-derives; notably they move CC_REGULAR **toward** CAMPD-measured (2023
+actual 141.7). The head-regate's +12.2 = M1 6.3 + M2/M3 5.9 — **fully
+accounted; G-12 closed.** FINDING §6.3 addendum + co2-keeper-regate handoff
+updated. D-8 consequence: the 10–18 TWh "instability" was config divergence;
+the in-container CT↔ST offer-wall fragility finding stands separately.
+
+### G-38: the Stage-4 run (`ercot34`) and its gates
+
+`ercot34` = ercot32 recipe (flags restored) + **exactly two deltas**:
+`ercot_dam_as_overlay=False` (the measured DAM-AS overlay retired — the
+plan's replacement under test) + `ercot_reserve_supply_forward=True` (WS-A
+formula supply). **WS-B endogenous storage swap NOT taken** — its stage-2
+quantity gate landed 0.54–0.61× vs the 0.8–1.3× band and plan §4 conditions
+the swap on validation; the measured storage treatment (rule-13 admissible)
+stays, carried as the open G-5 item. P1-only, `--year 2023 2024 2025`, one
+bundle. The two deltas are **dispatch-invisible at class grain** (ercot34 ≡
+ercot36 volumes to 0.01 TWh) — the whole mechanism swap lives in the price
+stack, as designed.
+
+Gates (all vs RT actuals; same-code baseline = ercot36 ex-overlay, exact
+per-column arithmetic; ercot36's overlay-on/off pair reproduces the WS-F
+decomposition to the cent — 2024 overlay dw +4.51 = i 2.23 RT-supported +
+ii 1.70 DA-boundary + iii 0.58 discretionary; 56 of its 78 tail hours
+overlay-carried):
+
+| gate | verdict | evidence |
+|---|---|---|
+| G-3 no broad elevation (anti-F1) | **PASS decisively** | max monthly Δ vs same-code ex-overlay = **$0.00** (largest magnitude −$0.40, Sep-2023); Feb-2023 unchanged. The ercot27 artifact is absent. |
+| G-5 quantity fidelity | **PASS** (WS-B deferred, documented) | WS-A identification re-verified on HEAD: coverage median 2.02/2.08/2.21× (~2×, not the 1.0× artifact); level +10.6/−5.6/−12.0% documented residuals. One-delta on faithful config: Δann ≤ $0.05, tails 92-vs-93/22/7. Storage award = measured by construction. |
+| G-6 one event, one channel | **PASS** | RTORDPA ∧ ORDC-adder Σmin = $543/$104/$2 per MWh·h (46/11/0 joint hours; ≤8.3% of the smaller channel) — ercot27-audit scale, disclosed. |
+| G-2 hold the held months | **PASS with 2 named breaches** | 2025 MAE 2.71 vs keeper 2.06 (+0.65 ≤ +$1) ✓; Aug-2024 −1.11 within ±$3 ✓; Aug/Sep-2023 +12.3/+11.8 vs the *committed* keeper breach ±$3 — 100% M2/M3 base-code movement (same-code Δ −0.09/−0.40) and **toward** actual (Aug: 129.3→141.6 vs actual 191.7). |
+| G-1 acute days | 2023/2025 clause **PASS**; May-2024 days **FAIL, named** | Jun/Aug-2023 53.5/141.6 ≥ keeper-ex-overlay 48.2/129.3 ✓. May-2024 8/24/26 daily dw on RT: −56/+34/−51% vs ±25% — the overlay carried Jan/May-2024 at −14.3/−20.5 dw month-local (F6 DA-boundary + F7 discretionary, non-reproducible by design) and the remaining RT-side miss is the G-22 wedge (below). |
+| G-4 tail structure | **PASS on the honest basis, 2025 disclosed** | 2023: 92 h >$200 (0.51× of 181; keeper 0.43×), >$500 83 vs keeper 68 (actual 104) — deep tail NOT collapsed, improved. 2024: honest 22 h (keeper's committed 78 was 72% overlay-carried; its own ex-overlay self = 22 on this code). 2025: 7 vs keeper 10 (the 4 removed hours were overlay-carried). |
+| G-7 attribution ledger | complete | every miss above mapped to {F6 DA-boundary, F7 discretionary, M2/M3 base movement, G-22 wedge/offer-wall (energy-base, out of scope)} — no unnamed residual. |
+
+C-scores vs the keeper: **C1 fuel-mix flips to PASS** (the keeper's hard
+C1-2024 CC caveat clears — HEAD volumes sit nearer measured), **C3a-2024
+passes on RT without the overlay** (the F6 prediction), C3b-2023 improves
+0.393→0.324 (2024 passes), C3c honest 0.51/0.42/0.23× all FAIL (the keeper's
+2024 "pass" was the measured overlay, not formed price), C2-2025 gas −5.0%
+(preliminary-vintage family, keeper carried −3.0%), C8 CT_PEAKER-2023 12.4%
+(keeper's own 11.1% hard-fail family, inherited — no floor touched).
+
+### G-22 fold: does endogenous reserve withholding close the shape miss? NO — measured, filed
+
+In the 106 missed 2023 tail hours (60 in Aug, HOD 14–20): the co-opt's ORDC
+family adder is ~zero (p50 $0.1; >$10 in exactly 1 hour), reserve MCPCs ~0,
+energy dual p50/p90 $52/$75 — while in the 75 caught hours the same stack
+prices correctly (dual p50 $956, adder p50 $43, MCPC p50 $3.3k). Measured
+RTOLCAP in the missed hours: p50 8.1 GW — above the ORDC knee, exactly as
+the FINDING's decomposition said (adder-carried ≤6 h/yr in reality). The
+endogenous co-opt reserve channel **closes none of the C3b/C3c miss, for the
+structural reason the FINDING names**: the miss is energy-offer-carried
+scarcity against the P1 online-capability wedge (~3.2 GW phantom sub-$200
+spare), not reserve underpricing. The remedies stay the filed structural
+items (condition-responsive offer surface; commitment thinness / sub-2-day
+outage structure) — the ercot33 tuned offer wall stays REJECTED (rules 13/26).
+
+### Keeper recommendation (plan §6 rule, applied as written)
+
+G-3/G-5/G-6 **pass** and every G-1/G-2/G-4 miss carries a named G-7 root
+cause ⇒ **the §6 promotion condition is met: recommend promoting `ercot34`**
+— strictly more real market structure (the DAM co-optimization ERCOT actually
+ran forms the AS scarcity signal endogenously; the measured settlement
+residue is demoted to the F6/F7 diagnostic), C1 newly PASS, and the honest
+C3c disclosed. Promotion is the **owner's decision** and additionally
+requires (rule 21 / C6): calibration attestation, DOF ledger, and a
+zero-forcing ablation twin solved on the exact ercot34 config — none of
+which exists yet. **Container-reproducibility statement (mandate):** ercot34
+was solved fresh on HEAD `3b31193` in this session's container (and ercot36
+independently reproduces its dispatch exactly); its recipe re-solves on HEAD
+only when the four un-persisted fields are restored (`run_config.json`
+carries them; a naive meta replay will NOT reproduce it until the meta
+writer is fixed). The committed ercot32 numbers do NOT reproduce on HEAD
+even config-faithfully (M2/M3, named above, legitimate).
+
+### Holdouts / gates
+
+No solve, score, or intake touched 2022/H1-2026 (rule 22); all three runs
+span 2023–2025 in one bundle each (rule 16); `audit_keepers.py --check` PASS
+(pre-existing E7/E9 warnings only) and `legitimacy_diagnostics.py --keepers`
+exit 0 with D-9/D-6 quarantine PASS after registration.
