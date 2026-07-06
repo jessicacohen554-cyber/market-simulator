@@ -4,11 +4,17 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
+from lce_portfolio.config import (
+    HOURS_PER_YEAR,
+    LMP_KIND_ANNUAL_AVERAGE_FLAT,
+    LMP_KIND_HOURLY,
+    PortfolioConfig,
+)
 from lce_portfolio.intake import (
     aggregate_by_hour_iso,
     apply_load_growth,
     collapse_zonal_lmp,
+    lmp_intake,
     prepare_lmp,
     prepare_load,
 )
@@ -89,9 +95,10 @@ def test_lmp_round_trip_csv(tmp_path) -> None:
     df = _lmp_df()
     path = tmp_path / "lmp.csv"
     df.to_csv(path, index=False)
-    lmp = prepare_lmp(path, "A")
+    lmp, lmp_kind = prepare_lmp(path, "A")
     assert lmp.shape == (HOURS_PER_YEAR,)
     assert np.allclose(lmp, df.sort_values("hour")["lmp"].to_numpy())
+    assert lmp_kind == LMP_KIND_HOURLY
 
 
 def test_lmp_round_trip_parquet(tmp_path) -> None:
@@ -99,9 +106,10 @@ def test_lmp_round_trip_parquet(tmp_path) -> None:
     df = _lmp_df()
     path = tmp_path / "lmp.parquet"
     df.to_parquet(path, index=False)
-    lmp = prepare_lmp(path, "A")
+    lmp, lmp_kind = prepare_lmp(path, "A")
     assert lmp.shape == (HOURS_PER_YEAR,)
     assert np.allclose(lmp, df.sort_values("hour")["lmp"].to_numpy())
+    assert lmp_kind == LMP_KIND_HOURLY
 
 
 def test_lmp_wrong_length_errors(tmp_path) -> None:
@@ -171,6 +179,92 @@ def test_nan_lmp_rejected(tmp_path) -> None:
     _full_lmp_df(lmp=np.nan).to_csv(path, index=False)
     with pytest.raises(ValueError, match="non-finite lmp"):
         prepare_lmp(path, "A")
+
+
+# --- annual-average LMP intake (HP-01, data/templates/README.md §2b) --------
+
+
+def _annual_avg_lmp_df(**overrides) -> pd.DataFrame:
+    """Two ISOs, one annual-average row each, unless overridden."""
+    df = pd.DataFrame({"iso": ["A", "B"], "annual_avg_lmp": [30.0, 45.0]})
+    for col, val in overrides.items():
+        df.loc[0, col] = val
+    return df
+
+
+def test_lmp_intake_detects_hourly_schema(tmp_path) -> None:
+    """A (hour, iso, lmp) file is detected as the hourly schema."""
+    path = tmp_path / "lmp.csv"
+    _lmp_df().to_csv(path, index=False)
+    df, lmp_kind = lmp_intake(path)
+    assert lmp_kind == LMP_KIND_HOURLY
+    assert "hour" in df.columns
+
+
+def test_lmp_intake_detects_annual_average_schema(tmp_path) -> None:
+    """An (iso, annual_avg_lmp) file with no hour column is detected as
+    annual-average (HP-01)."""
+    path = tmp_path / "lmp.csv"
+    _annual_avg_lmp_df().to_csv(path, index=False)
+    df, lmp_kind = lmp_intake(path)
+    assert lmp_kind == LMP_KIND_ANNUAL_AVERAGE_FLAT
+    assert "hour" not in df.columns
+
+
+def test_prepare_lmp_expands_annual_average_to_flat_8760(tmp_path) -> None:
+    """Every hour of the expanded vector equals the file's annual average."""
+    path = tmp_path / "lmp.csv"
+    _annual_avg_lmp_df().to_csv(path, index=False)
+    lmp, lmp_kind = prepare_lmp(path, "A")
+    assert lmp_kind == LMP_KIND_ANNUAL_AVERAGE_FLAT
+    assert lmp.shape == (HOURS_PER_YEAR,)
+    assert np.all(lmp == 30.0)
+
+    lmp_b, _ = prepare_lmp(path, "B")
+    assert np.all(lmp_b == 45.0)
+
+
+def test_annual_average_lmp_duplicate_iso_errors(tmp_path) -> None:
+    """A repeated iso row in the annual-average file is a hard error naming
+    an example (mirrors the hourly path's duplicate-row idiom)."""
+    df = pd.concat([_annual_avg_lmp_df(), _annual_avg_lmp_df().iloc[[0]]])
+    path = tmp_path / "lmp.csv"
+    df.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="duplicate"):
+        prepare_lmp(path, "A")
+
+
+def test_annual_average_lmp_rejects_non_finite(tmp_path) -> None:
+    """A NaN annual-average value is a hard error, not a silent pass-through."""
+    path = tmp_path / "lmp.csv"
+    _annual_avg_lmp_df(annual_avg_lmp=np.nan).to_csv(path, index=False)
+    with pytest.raises(ValueError, match="non-finite annual_avg_lmp"):
+        prepare_lmp(path, "A")
+
+
+def test_annual_average_lmp_rejects_negative(tmp_path) -> None:
+    """A negative annual-average value is a hard error."""
+    path = tmp_path / "lmp.csv"
+    _annual_avg_lmp_df(annual_avg_lmp=-5.0).to_csv(path, index=False)
+    with pytest.raises(ValueError, match="negative annual_avg_lmp"):
+        prepare_lmp(path, "A")
+
+
+def test_annual_average_lmp_missing_iso_matches_hourly_error_shape(tmp_path) -> None:
+    """A requested ISO absent from an annual-average file raises the same
+    KeyError shape as the hourly path."""
+    path = tmp_path / "lmp.csv"
+    _annual_avg_lmp_df().to_csv(path, index=False)
+    with pytest.raises(KeyError, match="not present in LMP file"):
+        prepare_lmp(path, "C")
+
+
+def test_lmp_intake_bad_schema_keeps_missing_columns_error(tmp_path) -> None:
+    """A file matching neither schema keeps the clear missing-columns error."""
+    path = tmp_path / "lmp.csv"
+    pd.DataFrame({"iso": ["A"], "price": [10.0]}).to_csv(path, index=False)
+    with pytest.raises(ValueError, match="missing columns"):
+        lmp_intake(path)
 
 
 def test_nan_emission_rate_rejected(tmp_path) -> None:
