@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, replace
@@ -69,10 +68,9 @@ from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
     as_adequacy_commit,
     compute_commitment,
-    compute_monthly_markup,
     reserve_adequacy_commit,
 )
-from market_sim.model.dispatch import DispatchModel, solve_dispatch
+from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.ancillary import (
     realized_storage_as_revenue_per_mw_yr,
     realized_thermal_as_revenue_per_mw_yr_by_fuel,
@@ -119,7 +117,13 @@ from market_sim.results.evolution_ledger import (
     write_ledger,
 )
 from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
-from market_sim.pipeline import PriorYearResults
+from market_sim.pipeline import (
+    DispatchSpec,
+    PriorYearResults,
+    apply_reserve_coopt,
+    build_base_dispatch_kwargs,
+    run_energy_solve,
+)
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
@@ -1133,7 +1137,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     "dual when curtailed",
                     year,
                 )
-            dispatch_kwargs = dict(
+            # Base dispatch kwargs + priced import-node band: the shared
+            # pipeline assembly (orchestrator-unification Stage 2) — the same
+            # key set the inline dict carried, byte-identical values.
+            dispatch_spec = DispatchSpec(
                 wind_cf=wind_cf,
                 wind_cap=wind_cap,
                 solar_cf=year_solar_cf,
@@ -1174,17 +1181,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 hydro_monthly_energy=hydro_monthly_energy,
                 T=config.hours,
             )
-            # Priced import-node monthly net-interchange band (NYISO forecast
-            # reconciliation, built above). Part of the LP feasible region (same
-            # for P0/P1), so it warm-starts cleanly. No keys (identical LP)
-            # unless the reconciliation was built above.
-            if import_node_recon is not None:
-                node_idx, recon_lo, recon_hi = import_node_recon
-                dispatch_kwargs.update(
-                    import_node_gen_idx=node_idx,
-                    import_node_monthly_lo=recon_lo,
-                    import_node_monthly_hi=recon_hi,
-                )
+            dispatch_kwargs = build_base_dispatch_kwargs(
+                dispatch_spec, import_node_recon=import_node_recon
+            )
             # Emissions mass-cap rows (policy constraint path, gated). When
             # mass_cap_enabled and a power-sector CO2 budget is configured for
             # the ISO's program/year, bound in-region fossil emissions; each
@@ -1269,90 +1268,41 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Energy + operating-reserve co-optimization (multi-ISO, gated):
             # the ISO's reserve demand curve enters the LP as reserve balance
             # rows so the reserve clearing price lifts the energy LMP
-            # endogenously. Config-driven: see reserve_config.py.
-            if getattr(config, "energy_reserve_coopt", False) and iso != "CAISO":
-                from market_sim.config.reserve_config import (
-                    build_reserve_dispatch_kwargs,
-                    get_reserve_design,
-                )
-
-                design = get_reserve_design(
-                    config,
-                    fleet_arrays,
-                    config.hours,
-                    zone_names,
-                    system_load=year_demand.sum(axis=0),
-                    wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
-                    solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
-                    sim_year=year,
-                )
-                dispatch_kwargs.update(build_reserve_dispatch_kwargs(design))
-                if iso == "PJM" and design.supply_cap is not None:
-                    elig_1d = (
-                        design.eligible[0]
-                        if design.eligible.ndim == 2
-                        else design.eligible
-                    )
-                    logger.info(
-                        "PJM reserve-supply cap ON: deliverable 10-min ramp, mean cap "
-                        "%d MW (vs ~%d MW total eligible headroom)",
-                        int(design.supply_cap.mean()),
-                        int(
-                            (fleet_arrays.pmax[:, None] * fleet_arrays.availability)[
-                                elig_1d
-                            ]
-                            .sum(axis=0)
-                            .mean()
-                        ),
-                    )
-                if iso == "PJM" and design.online_gated is not None:
-                    logger.info(
-                        "PJM reserve online-gating ON: ρ=%.2f", design.online_rho
-                    )
-                if iso == "PJM" and design.pergen_gen_idx is not None:
-                    logger.info(
-                        "PJM PER-GEN reserve co-opt ON: %d R columns / %d "
-                        "member units (eligible, ramp10>0; Σ ramp10 %.1f GW), "
-                        "%d balance families (%s)",
-                        int(design.pergen_ramp10.size),
-                        int(design.pergen_gen_idx.size),
-                        float(design.pergen_ramp10.sum()) / 1e3,
-                        len(design.families),
-                        ", ".join(f.name for f in design.families),
-                    )
-            # P0 and P1 solve the *same* LP -- identical constraint matrix and
-            # bounds -- and differ only in the objective (P1 = base MC + startup
-            # markup). Build the model once and warm-start P1 from P0's optimal
-            # basis (changeColsCost in place): this skips the second matrix build
-            # and converges in far fewer simplex iterations, the ~5x the
-            # calibration path already banks. The LP optimum is basis-
-            # independent, so prices and generation are unchanged. Set
-            # MARKET_SIM_WARMSTART=0 to fall back to two independent cold solves.
-            _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
-            model = (
-                DispatchModel(fleet_arrays, year_demand, **dispatch_kwargs)
-                if _warm
-                else None
+            # endogenously. Config-driven (reserve_config.py); the gate, driver
+            # threading, merge, and logging live in the shared pipeline wrapper
+            # (orchestrator-unification Stage 2).
+            apply_reserve_coopt(
+                dispatch_kwargs,
+                config,
+                fleet_arrays,
+                config.hours,
+                zone_names,
+                system_load=year_demand.sum(axis=0),
+                wind_gen=(wind_cap[:, None] * wind_cf).sum(axis=0),
+                solar_gen=(solar_cap[:, None] * year_solar_cf).sum(axis=0),
+                sim_year=year,
             )
-            # P0: solve with base MC to extract per-month run lengths.
-            if _warm:
-                r0 = model.solve(mc=mc_base)
-            else:
-                r0 = solve_dispatch(
-                    fleet_arrays, year_demand, mc=mc_base, **dispatch_kwargs
-                )
-            # P1: solve with bid MC = base MC + monthly startup amortization,
-            # so clearing prices reflect CC/CT cycling costs.
-            markup = compute_monthly_markup(
-                dispatch_fleet, fleet_arrays, r0.dispatch, config.hours
+            # P0 → monthly startup markup → P1 via the shared pipeline solve
+            # core (orchestrator-unification Stage 3) — intra-year warm start
+            # included, statement-for-statement the former inline sequence.
+            # Cross-year warm-start stays OFF on the forecast path
+            # (xyear_cache=None): its marginal-tie reshuffle is read by
+            # capacity.evolve_fleet's per-unit retirement screen and can tip a
+            # retire/keep decision, changing the next year's fleet (plan §8,
+            # docs/cross-year-warmstart.md). Wiring it forecast-side is
+            # blocked on a basis-independent capacity screen (warm-start
+            # backlog #4) — do not thread a cache here before that lands.
+            energy_solve = run_energy_solve(
+                dispatch_fleet,
+                fleet_arrays,
+                year_demand,
+                mc_base,
+                dispatch_kwargs,
+                config,
+                xyear_cache=None,
             )
-            mc_bid = mc_base + markup
-            if _warm:
-                p1_result = model.solve(mc=mc_bid)
-            else:
-                p1_result = solve_dispatch(
-                    fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
-                )
+            p1_result = energy_solve.p1
+            mc_bid = energy_solve.mc_bid
             context = FleetContext.from_arrays(
                 fleet_arrays,
                 iso_config,
