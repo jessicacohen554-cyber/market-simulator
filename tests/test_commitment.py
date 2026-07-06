@@ -1317,3 +1317,34 @@ class TestCouplePeakTranche(unittest.TestCase):
         p1 = np.zeros((3, 8))
         out = apply_commitment_with_coal_pin(fa, committed, p1, gens)
         self.assertTrue((out.availability[2] > 0.0).all())  # legacy behaviour
+
+
+class TestLcrCommitmentCredit(unittest.TestCase):
+    """LCR dual credit in the P2 commitment margin (D-8 closure §6)."""
+
+    def test_lcr_dual_to_unit_value_maps_correctly(self):
+        from market_sim.model.commitment import lcr_dual_to_unit_value
+
+        lcr_dual = np.array([[10.0, 20.0, 30.0, 0.0]])  # 1 area, 4 hours
+        lcr_gen_idx = [np.array([0, 2])]  # gens 0 and 2 in the area
+        out = lcr_dual_to_unit_value(lcr_dual, lcr_gen_idx, n_gen=4)
+        np.testing.assert_array_equal(out[0], [10.0, 20.0, 30.0, 0.0])
+        np.testing.assert_array_equal(out[1], [0.0, 0.0, 0.0, 0.0])
+        np.testing.assert_array_equal(out[2], [10.0, 20.0, 30.0, 0.0])
+        np.testing.assert_array_equal(out[3], [0.0, 0.0, 0.0, 0.0])
+
+    def test_lcr_credit_prevents_decommit(self):
+        """A CT whose energy margin barely misses the hurdle clears it with LCR."""
+        gens, fa = _single_ct(hours=4)
+        mc = np.full((1, 4), 60.0)
+        prices = np.full((1, 4), 61.0)  # energy margin = +1 $/MWh
+        # CT frame class: startup_per_mw=24.5, hurdle=24.5*1.07=26.2. A 4-hour
+        # run with margin 1 -> total 4 < 26.2 -> decommitted.
+        committed_no_lcr = compute_commitment(prices, mc, gens, fa, _CONFIG)
+        assert not committed_no_lcr[0].any()
+        # With LCR credit of $10/MWh: margin becomes 11, total 44 > 26.2 -> committed.
+        lcr_val = np.full((1, 4), 10.0)
+        committed_lcr = compute_commitment(
+            prices, mc, gens, fa, _CONFIG, lcr_value=lcr_val
+        )
+        assert committed_lcr[0].all()

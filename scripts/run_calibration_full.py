@@ -1908,6 +1908,8 @@ def solve_and_persist(
     caiso_ra_bridge_decommit: bool | None = None,
     reliability_floor: bool | None = None,
     scarcity_price_overlay: bool | None = None,
+    caiso_scarcity_pricing: bool | None = None,
+    caiso_lcr_commitment_credit: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
     caiso_solar_endogenous_spill: bool | None = None,
@@ -2160,6 +2162,8 @@ def solve_and_persist(
             caiso_ra_bridge_decommit=caiso_ra_bridge_decommit,
             reliability_floor=reliability_floor,
             scarcity_price_overlay=scarcity_price_overlay,
+            caiso_scarcity_pricing=caiso_scarcity_pricing,
+            caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
             caiso_solar_deliverability=caiso_solar_deliverability,
             caiso_solar_deliverability_k=caiso_solar_deliverability_k,
             caiso_solar_endogenous_spill=caiso_solar_endogenous_spill,
@@ -2499,6 +2503,8 @@ def solve_and_persist(
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
         "scarcity_price_overlay": scarcity_price_overlay,
+        "caiso_scarcity_pricing": caiso_scarcity_pricing,
+        "caiso_lcr_commitment_credit": caiso_lcr_commitment_credit,
         "caiso_solar_deliverability": caiso_solar_deliverability,
         "caiso_solar_deliverability_k": caiso_solar_deliverability_k,
         "caiso_solar_endogenous_spill": caiso_solar_endogenous_spill,
@@ -2792,6 +2798,15 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             scarcity_pricing_enabled=scarcity_price_overlay,
             scarcity_price_overlay=scarcity_price_overlay,
+        )
+    if caiso_scarcity_pricing is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            scarcity_pricing_enabled=True,
+            caiso_scarcity_pricing=caiso_scarcity_pricing,
+        )
+    if caiso_lcr_commitment_credit is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
         )
     if caiso_solar_deliverability is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -6204,6 +6219,25 @@ def main() -> None:
         "base config value.",
     )
     parser.add_argument(
+        "--caiso-scarcity-pricing",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO post-solve scarcity overlay: LOLP-based adder using CAISO "
+        "tariff parameters (VOLL $2,000, MCL 1,400 MW, sigma 2,500 MW). "
+        "Adds the scarcity adder to scored energy prices (result.prices). "
+        "Automatically enables scarcity_pricing_enabled. Mutually exclusive "
+        "with the in-LP reserve co-opt (caiso_reserve_coopt). CAISO only.",
+    )
+    parser.add_argument(
+        "--caiso-lcr-commitment-credit",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="CAISO LCR commitment credit: credit the LCR constraint dual "
+        "(local-commitment value, $/MWh) in the P2 commitment margin, "
+        "analogous to the AS-revenue credit. Requires "
+        "local_capacity_constraints. CAISO only.",
+    )
+    parser.add_argument(
         "--caiso-solar-deliverability",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -7140,6 +7174,8 @@ def main() -> None:
         caiso_ra_bridge_decommit=args.caiso_ra_bridge_decommit,
         reliability_floor=args.reliability_floor,
         scarcity_price_overlay=args.scarcity_price_overlay,
+        caiso_scarcity_pricing=args.caiso_scarcity_pricing,
+        caiso_lcr_commitment_credit=args.caiso_lcr_commitment_credit,
         caiso_solar_deliverability=args.caiso_solar_deliverability,
         caiso_solar_deliverability_k=args.caiso_solar_deliverability_k,
         caiso_solar_endogenous_spill=args.caiso_solar_endogenous_spill,
