@@ -10,6 +10,7 @@
 # Files:
 #   wecc_intertie_lmp_hourly_CAISO.parquet  — CAISO WECC intertie (MALIN, PALOVRDE)
 #   pjm_border_lmp_hourly_MISO.parquet      — MISO PJM border (PJM_WEST)
+#   nyiso_proxy_lmp_hourly_NEISO.parquet    — NEISO seam anchors (NYISO_HQ, NYISO_NPX)
 #
 # Location: data/raw/_validation-source/
 datatype: border-lmp
@@ -45,6 +46,9 @@ columns:
       Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point),
       PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST
       (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs).
+      NEISO: NYISO_HQ (NYISO "H Q" proxy bus — HQ's measured alternative-
+      market price), NYISO_NPX (NYISO "NPX" proxy bus — the NY-side price
+      at the NY-NE interface).
   - name: price
     dtype: float64
     unit: usd_per_mwh
@@ -52,5 +56,6 @@ columns:
     description: >-
       Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss
       (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector).
-      MISO/PJM: total_lmp_da (energy + congestion + loss). NaN for hours
-      with no data (OASIS retention gap, missing source).
+      MISO/PJM: total_lmp_da (energy + congestion + loss). NEISO: NYISO
+      zonal "LBMP ($/MWHr)" at the proxy buses. NaN for hours with no data
+      (OASIS retention gap, missing source).
