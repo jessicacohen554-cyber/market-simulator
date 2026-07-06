@@ -40,6 +40,69 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — ERCOT — measured GTC transmission-limit probe of ercot38 (`ercot39-gtc-measured`; NEGATIVE result, no keeper swap)
+
+Next step of the ERCOT wind/solar under-curtailment investigation
+(`docs/handoffs/ercot-vre-undercurtailment-2026-07.md`). That handoff traced
+the model's persistent under-curtailment (model curtails wind/solar at ~⅓–½ of
+ERCOT's own reported rate in every year, which mechanically over-dispatches VRE
+and displaces gas — the mechanism that pushed `ercot38`'s C2 gas volume from
+CAVEAT into FAIL) to a hypothesis: **the measured Generic Transmission
+Constraint (GTC) limits — ERCOT's real West/Panhandle export-congestion
+mechanism — are gated off** (`ercot_gtc_limits_measured`) because the
+`data/clean/gtc-limits` partition was never regenerated in the solve
+containers, so every ERCOT keeper/probe silently fell back to a single flat
+static TTC. This probe tests that hypothesis directly.
+
+**Recipe.** Re-curated the already-committed raw NP6-86 archives
+(`data/raw/iso-specific-transmission/SCEDBTCNP686_*`, no new intake, no network)
+via `scripts/curate_gtc_limits.py` → clean partition for 2023/24/25 (17/19/23
+GTCs). Then replayed `ercot38`'s exact recipe
+(`scripts/replay_keeper.py results/calibration/ercot38_measured_hsl_2425`) with
+the single delta `--set ercot_gtc_limits_measured=true`. Solve logs confirm the
+mechanism fired this time (no "static TTC kept" fallback): the four mapped
+constraints now use their measured hourly caps — NE_LOB→Northeast→North,
+PNHNDL→Panhandle→North, WESTEX→West→North (×0.727) and →South_Central (×0.273).
+
+**Result — NEGATIVE. Measured GTC does NOT close the under-curtailment gap.**
+
+| criterion | ercot38 | ercot39 | note |
+|---|---|---|---|
+| [3e] wind curt % (model vs ISO-reported) | 2.16/2.45/3.10 vs 4.67/6.01/7.07 | 2.17/2.00/2.52 | 2024/25 moved *away* from reported |
+| [3e] solar curt % (model vs ISO-reported) | 1.32/1.82/— vs 6.29/7.35/7.29 | 1.35/1.72/2.89 | still ~⅓ of reported |
+| C2 system volume (gas) | FAIL (2025 gas −6.4%) | **FAIL (2025 gas −6.5%)** | unchanged/marginally worse |
+| C3a mean LMP | PASS | PASS | no regression |
+| C5c storage dispatch shape | PASS | PASS | no regression |
+| C1/C3b/C3c/C4/C5a/C7/C8 | (per ercot38) | identical to ercot38 | no movement |
+
+The full C1–C8 matrix is byte-identical to `ercot38`. Curtailment did not rise;
+in 2024/25 it *fell* slightly. **Why:** the measured NP6-86 export caps on the
+wind-heavy corridors are frequently *looser* than the static fill the model
+already used — e.g. 2024 PNHNDL measured 2065–3544 MW vs 2680 static, WESTEX
+6571–7902 vs 7300 — so replacing static with measured slightly *relaxed* the
+binding export limits and let marginally *more* wind out, the wrong direction.
+Transmission congestion, as represented on the reduced 8-zone topology, is **not
+the binding mechanism** behind ERCOT's real curtailment.
+
+**Determination: mechanism ruled out; still a legitimate structural input.**
+Per rule 14 the measured GTC series is more faithful than a flat static TTC and
+should stand as ERCOT's input regardless of the residual — but this probe is
+**not** grounds to promote `ercot_gtc_limits_measured` to ERCOT's standing
+default on *curtailment* evidence, because it does not move the target criterion.
+Whether to flip the default on general-faithfulness grounds (it is a real,
+forward-admissible, zero-new-tunable mechanism, rule-13 clean) is an **owner
+decision**, not taken here. No keeper swap; `keepers.json` unchanged (probe
+carries no attestation/DOF ledger/ablation twin — rule 21, keeper-only → C6
+UNATTESTED, determination NOT-YET, as expected for a probe). Registered on the
+dashboard as a PROBE (rule 15). Retention: pruned the oldest ERCOT dashboard
+entry (`2026-07-04-statmode-d7-probe-ercot32`) to hold the top-15.
+
+**Next** (handoff §5.2, in order, all real-mechanism not fitted): confirm the
+`dump_cost` negative-MC guard actually binds during measured negative-price
+hours; check storage isn't absorbing the exact hours real curtailment would
+occur; and only as a last resort a derived forward-admissible curtailment-share
+driver in the WS-A style (never fit to the price/volume residual — rules 1/13).
+
 ### 2026-07-06 — PJM — L-13: KEEPER PROMOTED `2026-07-06-pjm-83-srmc-reground` replaces `pjm-77-ct-relfloor` (G-21 SRMC re-grounding ADOPTED + CT_CHP D-4 fix; overnight-drag window confirmed correct)
 
 **Lane L-13, three items, in order.** Continues the G-21 disposition the
