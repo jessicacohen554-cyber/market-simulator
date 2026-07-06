@@ -976,6 +976,21 @@ Hashes-only capture manifests are committed under
 `results/regression-goldens/{stage4-before,stage4-after,stage4-probe-before,stage4-probe-after}/manifest.json`
 (multi-GB bundles gitignored per Stage 0).
 
+**Scope note (honest accounting, added post-merge):** the gate above covers
+ERCOT + CAISO keeper canaries plus the two P2 probe legs (`p2econ`,
+`p2asaware`) — that is the full set it was run against. PJM, NYISO, and
+NEISO canaries were **not** re-gated for Stage 4: each keeper is a P1-only
+run (`commitment_enabled`/`ercot_as_aware_commitment`/`caiso_ra_mustoffer`
+all off), so a byte-identity check against `pipeline/commitment.py` would
+never exercise the extracted P2 body — near-tautological for this stage,
+not a substitute for a real P2 gate on those ISOs. MISO stayed OOM-blocked
+on this box (§7.3.1), also skipped. Separately, the merge into `main`
+(66ab40f, PR #1499) required a manual conflict resolution in
+`scripts/run_calibration.py` — the post-merge tree has **not itself** been
+re-gated; the PASS recorded above is against the pre-merge stage branch,
+not the merged result. The Stage-6 session re-gates the post-merge tree
+first, before building on top of it.
+
 ---
 
 ## 8. Cross-year warm-start — the forecast-P0 decision
