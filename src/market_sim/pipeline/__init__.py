@@ -25,9 +25,14 @@ None of these change any solved number; Stage 1 is pure typing + scaffolding.
 **Stage 2 adds ``kwargs.py``** — the shared base ``dispatch_kwargs`` assembly
 (:func:`~market_sim.pipeline.kwargs.build_base_dispatch_kwargs`) and the reserve
 co-optimization wrapper (:func:`~market_sim.pipeline.kwargs.apply_reserve_coopt`)
-— now called by both orchestrators. The remaining solve modules (``solve.py``,
-``commitment.py``, ``backcast_config.py``, ``overlays.py``) land in later
-stages — see the plan §5.
+— now called by both orchestrators.
+
+**Stage 3 adds ``solve.py``** — the shared P0/P1 energy solve
+(:func:`~market_sim.pipeline.solve.run_energy_solve`: base-cost P0, monthly
+startup markup, bid-cost P1, intra-year warm start, and the cross-year
+warm-start cache seam) — both orchestrators call it. The remaining solve
+modules (``commitment.py``, ``backcast_config.py``, ``overlays.py``) land in
+later stages — see the plan §5.
 """
 
 from __future__ import annotations
@@ -35,6 +40,7 @@ from __future__ import annotations
 from market_sim.pipeline.kwargs import apply_reserve_coopt, build_base_dispatch_kwargs
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.result import YearSolveResult
+from market_sim.pipeline.solve import EnergySolveResult, run_energy_solve
 from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
 
 __all__ = [
@@ -43,6 +49,8 @@ __all__ = [
     "UNSET",
     "PriorYearResults",
     "YearSolveResult",
+    "EnergySolveResult",
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",
+    "run_energy_solve",
 ]

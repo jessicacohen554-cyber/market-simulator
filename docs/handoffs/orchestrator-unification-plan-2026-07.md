@@ -84,7 +84,7 @@ landed items.** Absorb only the one open item and the post-inventory drift.
 | A2 | NEISO reserve co-opt in runner | **LANDED** (generalized via reserve_config) | `runner.py:802-818` |
 | A3 | PJM reserve supply cap | **LANDED** | `runner.py:819-836`; `reserve_config.py:995,1008` |
 | A4 | PJM reserve online-gating | **LANDED** | `runner.py:837-840` |
-| **A5** | **ERCOT single-product reserve supply cap** | **OPEN** | `_ercot_design` (`reserve_config.py:384`) sets no `supply_cap`; only `_ercot_multiproduct_design` does (`:676,755`). Forecast single-product ERCOT still uncapped. |
+| **A5** | **ERCOT single-product reserve supply cap** | **LANDED** (Stage 2, 2026-07-06) | Folded into `_ercot_design` per §2.1's absorption note: the design now sets `supply_cap` via `scarcity.ercot_rtolcap_supply_cap_mw` with the forward drivers threaded (gated `ercot_reserve_supply_cap`); `run_calibration`'s post-design overwrite retired. See §7.3.4. |
 | A6 | Negative renewable offer floor | **LANDED** | `runner.py:662-667` |
 | A7 | Reference-price interface | **LANDED** | `interchange_config.py:815`; `runner.py:625-648` |
 | A8 | CT/ST netload drag floors | **LANDED** | `runner.py:544-579` |
@@ -214,8 +214,8 @@ divergence — the code that consumes them is shared.
 | CAISO import solar-shape | `:4147` | `caiso_import_solar_shape` ✓ | forecast | **Stage 5** |
 | CAISO import gas-coupling | `:4130` | `caiso_import_gas_coupling` ✓ | forecast | **Stage 5** |
 | NEISO cold-snap derate | `:3640` | `neiso_gas_coldsnap_derate` ✓ (+ coeff fields) | forecast | **Stage 6** (fleet unification) |
-| ERCOT single-product reserve supply cap (A5) | `reserve_config.py:_ercot_design` | `ercot_reserve_supply_cap` ✓ | forecast single-product | **Stage 2** (reserve fix) |
-| Cross-year warm-start (built, unused by forecast) | `dispatch.py:1982-2639` | env `MARKET_SIM_WARMSTART_XYEAR` | forecast P0 | **Stage 3** makes it *wireable* to both; §8 says keep it gated OFF on forecast |
+| ERCOT single-product reserve supply cap (A5) | `reserve_config.py:_ercot_design` | `ercot_reserve_supply_cap` ✓ | forecast single-product | **Stage 2** (reserve fix) — **CLOSED 2026-07-06, §7.3.4** |
+| Cross-year warm-start (built, unused by forecast) | `dispatch.py:1982-2639` | env `MARKET_SIM_WARMSTART_XYEAR` | forecast P0 | **Stage 3** makes it *wireable* to both; §8 says keep it gated OFF on forecast — **DONE 2026-07-06, §7.3.5** (shared core takes `xyear_cache`; forecast passes `None`) |
 | `caiso_ra_min_load_frac` getattr fallback 0.40 ≠ field/keeper 0.26 | `run_calibration.py:4865` vs field default `scenarios.py:603` and `_calibration_config:1320` | field ✓ | (latent — fires only if a config bypasses `_calibration_config`) | **Stage 7** (getattr→field fold) |
 
 All DRIFT gate-fields already exist in `ScenarioConfig` (verified). So the fix is never
@@ -349,8 +349,8 @@ ordered safe-scaffolding-first, drift-closing-unification-later, so the risky st
 |-------|-------|---------|------|--------------|---------------------|
 | **0** | Regression harness + golden keeper baselines | `scripts/`, `tests/` (add only) | none | — | establishes the gate |
 | **1** | `pipeline/` skeleton + `DispatchSpec`/`ReserveSpec`/`PriorYearResults`; retype runner's `prior_results` dict | `runner.py`, new `pipeline/` | low | — (AR-2) | **byte-identical** — **DELIVERED (2026-07-05), see §7.3.2** |
-| **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) |
-| **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical |
+| **2** | Extract `build_base_dispatch_kwargs` + `apply_reserve_coopt`; **fold A5** into `_ercot_design` | `runner.py`, `run_calibration.py`, `reserve_config.py`, `pipeline/kwargs.py` | low-med | A5 | byte-identical (+ single-product ERCOT trivial case for A5) — **DELIVERED (2026-07-06), see §7.3.4** |
+| **3** | Extract P0/P1 solve + markup + warm-start → `pipeline/solve.py`; both call it | both, `pipeline/solve.py` | med | — | byte-identical — **DELIVERED (2026-07-06), see §7.3.5** |
 | **4** | Extract P2 commitment core → `pipeline/commitment.py`; both call it | both, `pipeline/commitment.py` | med | — | byte-identical |
 | **5** | **Interchange unification**: migrate `run_calibration` onto `interchange_config.get_interchange_spec`/`build_interchange_fleet`; fold CAISO bidir/solar-shape/gas-coupling into the spec | `run_calibration.py`, `interchange_config.py`, `transmission.py`, `runner.py` | **high** | CAISO bidir + solar-shape + gas-coupling | tolerance-bounded (CAISO keeper canary) — **DELIVERED (2026-07-05), see §7.3.3** |
 | **6** | **Fleet unification**: migrate `run_calibration` onto `fleet.build_dispatch_fleet`; route NEISO coldsnap + netload-drag through shared path; coldsnap coeffs → fields | `run_calibration.py`, `fleet.py` | med-high | NEISO coldsnap | tolerance-bounded (all-ISO keepers) |
@@ -725,7 +725,161 @@ both cold, `MARKET_SIM_HIGHS_THREADS=1` / `MARKET_SIM_WARMSTART=1` /
   builder-swap standard (§7.2) — PASS.** The interchange unification did
   not move a single solved number for the keeper's configuration.
 
+### 7.3.4 Stage 2 — DELIVERED (2026-07-06)
 
+Branch `claude/orchestrator-unification-stages-2-3-2cjmnz` off `origin/main`
+(`455ed9f`), commit `fa7e628`. No dependency on Stage 5's interchange work was
+taken; the P0/P1/P2 solve loop is untouched (Stage 3's turf, same branch).
+
+**What was built**
+
+- `pipeline/kwargs.py` — `build_base_dispatch_kwargs(spec, import_node_recon=…)`
+  (the base dict from a `DispatchSpec` + the identical-in-both import-node
+  band) and `apply_reserve_coopt(…)` (gate `energy_reserve_coopt` ∧ iso≠CAISO,
+  forward-driver threading, `get_reserve_design` → `build_reserve_dispatch_kwargs`
+  → `ReserveSpec.merge_into`, consolidated logging). Both orchestrators call
+  both; the Stage-1 containers are now wired, not just unit-tested.
+- `DispatchSpec` gained UNSET-sentinel fields (`ttc_import`, `oil_*`): left
+  UNSET they are OMITTED, so the forecast dict's key set is byte-for-byte its
+  pre-refactor set; the backcast passes them explicitly (possibly None-valued),
+  reproducing its always-present keys (§7.1 item 2 satisfied exactly).
+- `run_calibration.py`'s 365-line per-ISO reserve elif ladder deleted;
+  equivalences verified before deletion:
+  * hand-built PJM zone-aggregate block ≡ `_pjm_design` — requirement
+    (`req + outer_offset`), penalties, and widths match because only the LAST
+    ORDC step width depends on the requirement scalar
+    (`pjm_ordc_shortfall_steps` appends `req` last) and `_pjm_design`
+    overwrites `widths[-1] = max(req)`, the same value the inline block sized
+    it to; eligibility mask, deliverable supply cap, and online gate identical.
+    (The inline block's `mode=="backcast"` gate on the measured requirement
+    collapses to `_pjm_design`'s data-availability gate — identical for the
+    backcast orchestrator, whose mode is always backcast.)
+  * post-design ERCOT RTOLCAP overwrite retired via the **A5 fold**:
+    `_ercot_design` now sets `supply_cap` through
+    `scarcity.ercot_rtolcap_supply_cap_mw` with the forward drivers threaded
+    (single-product forecast co-opt no longer silently uncapped — gated
+    `ercot_reserve_supply_cap`); in backcast the function returns the measured
+    RTOLCAP parquet regardless of drivers — the identical array the overwrite
+    applied. Log-line evidence across the ERCOT keeper capture: per-year mean
+    caps identical before/after (13484/18676, 16679/21812, and the 2025
+    RTC+B sentinel-tail pair), step counts 77/89/88 unchanged.
+  * `sim_year` now threaded from both orchestrators — value-identical in
+    backcast (`weather_year == year` under the pin; every `sim_year` consumer
+    falls back to `weather_year`).
+  One intentional reachability change beyond A5, config-gated and default-off:
+  a backcast run with the diagnostic `ercot_reserve_supply_forward` probe flag
+  AND single-product co-opt now gets the forward cap (previously uncapped,
+  because the post-design overwrite had no fleet/driver inputs). No keeper
+  sets that flag.
+- `tests/test_pipeline_kwargs.py` (10 cases): forecast/backcast key-set
+  fidelity, import-node band, wrapper gate + driver threading, and the §6 A5
+  trivial case (single-product design carries the cap; uncapped when gated
+  off). Fast tier: 2881 passed / 0 failed.
+
+**Gate (run 2026-07-06; pure-code-motion standard §7.2, executed with the
+Stage-5 gate machinery at BOTH tolerances — byte mode shown, which subsumes
+the 1e-9 builder standard)**
+
+<!-- STAGE2_GATE_RESULT -->
+**PASS — exact byte-identity on both canaries.** CAISO keeper
+(`2026-07-03-caiso-51-firm-base`) **and** ERCOT keeper
+(`2026-07-03-ercot32-ordc-total-rtolcap` — added beyond the plan's CAISO-only
+canary because Stage 2's riskiest edit is the ERCOT reserve ladder, which the
+CAISO keeper never exercises), all years 2023-2025, re-solved from their
+frozen bundles' recorded flags (fidelity oracle OK on every leg: 122/127
+recorded flags replayed identically), determinism-pinned
+(`MARKET_SIM_HIGHS_THREADS=1`, `MARKET_SIM_WARMSTART=1`,
+`MARKET_SIM_WARMSTART_XYEAR=0`), before = `455ed9f` (clean worktree),
+after = `fa7e628` (clean worktree):
+
+- `regression_gate.py --mode byte` (atol=rtol=0):
+  - **[1] Golden bundle diff — PASS.** CAISO: 9 files, 43 numeric columns,
+    every column Δ = 0. ERCOT: 6 files, 31 numeric columns, every column
+    Δ = 0.
+  - **[2] Reshuffle localization — 0.000% every ISO-year.** Σ|hourly Δ| = 0.0
+    GWh for CAISO 2023/24/25 (219,562.8 / 225,294.5 / 226,191.6 GWh total)
+    and ERCOT 2023/24/25 (446,039.1 / 462,685.4 / 488,059.4 GWh total),
+    annual Δ +0.0000 GWh each.
+  - **[3] Trivial-case smoke — PASS** (24/24).
+  - **[4] Quarantine + registry — legitimacy PASS** (holdout quarantine
+    intact); `audit_keepers` FAIL is the **pre-existing** PJM
+    `2026-07-05-pjm-77-ct-relfloor` / MISO `2026-07-05-miso-41-ct-evening`
+    missing-ablation-twin bookkeeping — verified byte-identical finding set
+    (2 failures / 8 warnings) at the pre-stage base `455ed9f`. Same class of
+    caveat §7.3.3 recorded; not a Stage-2 regression.
+- Conclusion: **Stage 2 is dispatch-neutral at the byte-identity standard**
+  — stricter than the required 1e-9; the reserve-ladder collapse, the A5
+  fold, and the shared base-kwargs assembly moved no solved number.
+
+### 7.3.5 Stage 3 — DELIVERED (2026-07-06)
+
+Same branch, commit `2f3ba60` on top of Stage 2.
+
+**What was built**
+
+- `pipeline/solve.py` — `run_energy_solve(fleet, fleet_arrays, demand,
+  mc_base, dispatch_kwargs, config, *, xyear_cache=None)` returning
+  `EnergySolveResult(r0, p1, mc_bid, markup)`: P0 base-cost solve → monthly
+  startup amortization → P1 bid-cost solve, the intra-year warm start
+  (`MARKET_SIM_WARMSTART`, build-once/re-cost), and the cross-year warm-start
+  seam (`MARKET_SIM_WARMSTART_XYEAR` apply + unconditional basis export into
+  `xyear_cache`), hoisted statement-for-statement from the two orchestrators.
+- §8 policy implemented exactly: the backcast front-end threads its year-loop
+  `xyear_cache` through (today's behavior preserved, including basis export
+  with the flag off for A/B call-order independence); the forecast front-end
+  passes `xyear_cache=None` with the §8 comment — cross-year warm-start is now
+  *wireable-for-free* on the forecast (AR-6 resolved by construction) but
+  stays OFF pending the basis-independent capacity screen (warm-start
+  backlog #4).
+- The startup-markup config gates (`gas_st_startup_spread`,
+  `gas_st_startup_cost`, `chp_startup_covered`, `coal_warm_committed`) now
+  reach the forecast path too: byte-identical at defaults (all default-off
+  `ScenarioConfig` fields, matching `compute_monthly_markup`'s own defaults),
+  honored when a config sets them — a drift-closing, config-gated
+  reachability change of exactly the §1 kind (gate decides, not code
+  presence).
+- `tests/test_pipeline_solve.py` (5 trivial cases): cold path byte-identical
+  to the inline two-solve reference, warm ≡ cold on a tie-free LP,
+  xyear-cache export seam, forecast `None` seam, cold-path no-export.
+  `tests/test_runner.py` / `tests/test_matrix.py` LP mocks repointed to
+  `pipeline.solve` (the moved namespace); `runner.solve_dispatch` stays
+  patched for the P2 path. Fast tier: 2881 passed / 0 failed.
+
+**Gate (same machinery and legs as §7.3.4; before = `fa7e628` golden set,
+after = `2f3ba60`)**
+
+<!-- STAGE3_GATE_RESULT -->
+**PASS — exact byte-identity on both canaries (2026-07-06).** Same legs and
+pins as §7.3.4: CAISO `caiso-51-firm-base` + ERCOT
+`ercot32-ordc-total-rtolcap`, 2023-2025, fidelity oracle OK on every capture
+(122/127 recorded flags replayed identically), before = `fa7e628` golden set
+(clean worktree), after = `2f3ba60` (this branch's Stage-3 tip):
+
+- `regression_gate.py --mode byte` (atol=rtol=0):
+  - **[1] Golden bundle diff — PASS.** CAISO: 9 files / 43 numeric columns,
+    every column Δ = 0. ERCOT: 6 files / 31 numeric columns, every column
+    Δ = 0.
+  - **[2] Reshuffle localization — 0.000% every ISO-year** (Σ|hourly Δ| = 0.0
+    GWh; annual totals identical to the §7.3.4 table, Δ +0.0000 GWh each).
+  - **[3] Trivial-case smoke — PASS** (24/24).
+  - **[4] Quarantine + registry — legitimacy PASS**; `audit_keepers` FAIL is
+    the same pre-existing PJM/MISO ablation-twin bookkeeping documented in
+    §7.3.4 (byte-identical finding set at base `455ed9f`). Not a Stage-3
+    regression.
+- Conclusion: **Stage 3 is dispatch-neutral at the byte-identity standard** —
+  the P0/P1 hoist, the warm-start relocation, and the cross-year cache seam
+  moved no solved number. Combined with §7.3.4, the full Stage-2+3 span
+  (`455ed9f` → `2f3ba60`) is transitively byte-identical on both canaries.
+
+Hashes-only capture manifests for all three legs are committed under
+`results/regression-goldens/{stage23-before,stage2-after,stage3-after}/manifest.json`
+(the multi-GB bundles are gitignored per Stage 0). Session note: the remote
+relay rejected every `git push` for ~1 h mid-session (HTTP 413 on any pack
+size, even 2 KB — a transient outage, not the pack-size failure mode CLAUDE.md
+describes); an API-replay fallback pushed 4 of Stage 2's 7 files before the
+outage cleared, and PR #1448 auto-merged that partial state to main (breaking
+only the two new A5 tests there). This branch's follow-up PR supersedes it
+with the gate-verified full content.
 
 ---
 
