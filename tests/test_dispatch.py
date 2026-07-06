@@ -762,13 +762,39 @@ class TestRPSConstraint(unittest.TestCase):
         self.assertIsNone(baseline.rps_shadow_price)
         self.assertIsNone(with_none.rps_shadow_price)
 
-    def test_rps_binds_with_thermal_only_fleet(self):
-        # A nuclear + gas fleet with cheap gas and expensive nuclear: the
-        # RPS forces expensive nuclear up to cover half of demand, so the
-        # constraint binds and its dual (the RPS shadow price) is positive.
+    def test_rps_nuclear_present_does_not_satisfy_target(self):
+        # CX-6a: an RPS is a *renewable* standard, so nuclear does not count
+        # toward it even though it is clean. A nuclear + gas fleet has clean
+        # capacity available (100 MW nuclear) but NO renewable capacity, so a
+        # 50% RPS is infeasible -- nuclear's presence cannot satisfy it. Under
+        # the pre-fix semantics (nuclear counted) this solve was Optimal with
+        # nuclear covering the target; now it raises.
         fleet = self._nuclear_gas_fleet()
-        # Row 0 is nuclear (expensive), row 1 is gas (cheap).
-        mc = np.vstack([np.full(self.T, 100.0), np.full(self.T, 20.0)])
+        mc = np.vstack([np.full(self.T, 0.0), np.full(self.T, 20.0)])
+        demand = np.full((1, self.T), 80.0)
+
+        with self.assertRaises(RuntimeError):
+            solve_dispatch(
+                fleet,
+                demand,
+                mc=mc,
+                T=self.T,
+                rps_target=0.5,
+                **self._no_renewables(1),
+            )
+
+    def test_rps_dual_reflects_renewable_premium_not_nuclear(self):
+        # CX-6a: with nuclear excluded, the RPS must be met by wind/solar, so
+        # the REC dual reflects the *renewable* premium, not nuclear's. A fleet
+        # of cheap nuclear (MC 0) + gas (MC 20) plus expensive wind (MC 100)
+        # and a 50% target: absent the RPS, cheap nuclear serves all load and
+        # no wind runs. The RPS forces 50% of demand onto wind, displacing
+        # nuclear, so the dual is the wind-over-nuclear premium (100). If
+        # nuclear still counted (pre-fix), its output alone would satisfy the
+        # target and the dual would be 0 -- excluding nuclear makes it rise.
+        fleet = self._nuclear_gas_fleet()
+        # Row 0 nuclear (cheapest), row 1 gas.
+        mc = np.vstack([np.full(self.T, 0.0), np.full(self.T, 20.0)])
         demand = np.full((1, self.T), 80.0)
 
         result = solve_dispatch(
@@ -777,16 +803,21 @@ class TestRPSConstraint(unittest.TestCase):
             mc=mc,
             T=self.T,
             rps_target=0.5,
-            **self._no_renewables(1),
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),  # 50 MW available vs 40 MW target
+            wind_mc=100.0,  # expensive renewable, idle absent the RPS
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
         )
         self.assertEqual(result.status, "Optimal")
         self.assertIsNotNone(result.rps_shadow_price)
+        # The dual is the wind premium over the displaced nuclear (100 - 0),
+        # NOT zero (which nuclear-counting semantics would give).
         self.assertGreater(result.rps_shadow_price, 0.0)
-        # The RPS shadow price equals the cost premium of nuclear over gas:
-        # an extra MWh of clean swaps 1 MWh gas (20) for nuclear (100).
-        self.assertAlmostEqual(result.rps_shadow_price, 80.0, delta=0.5)
-        # Nuclear is pushed up to supply at least half of total demand.
-        self.assertGreaterEqual(result.dispatch[0].sum(), 0.5 * demand.sum() - 1.0)
+        self.assertAlmostEqual(result.rps_shadow_price, 100.0, delta=0.5)
+        # Renewables (wind), not nuclear, carry the target: total wind output
+        # reaches at least the 50% floor.
+        self.assertGreaterEqual(result.wind_dispatched.sum(), 0.5 * demand.sum() - 1.0)
 
     def test_rps_non_binding_with_enough_wind(self):
         # Cheap wind already supplies more than the RPS floor, so the
@@ -1049,8 +1080,9 @@ class TestMassCapConstraint(unittest.TestCase):
 
     def test_simultaneous_rps_reserve_and_masscap_duals(self):
         # Plan §9.5: RPS + reserve co-opt + mass-cap all active at once. Each
-        # end-anchored dual must land on its own row. Nuclear (clean) + dirty
-        # gas: RPS floors clean, the mass cap bounds gas emissions, reserve
+        # end-anchored dual must land on its own row. Wind (RPS-eligible) +
+        # dirty gas + idle nuclear: the RPS floors renewable output (CX-6a --
+        # nuclear does NOT count), the mass cap bounds gas emissions, reserve
         # co-opt prices headroom. Cross-check each dual against a single-
         # constraint solve.
         generators = [
@@ -1084,7 +1116,13 @@ class TestMassCapConstraint(unittest.TestCase):
             reserve_eligible=np.array([True, True]),
             ordc_penalties=np.array([1000.0]),
             ordc_step_widths=np.array([1000.0]),
-            **self._no_renewables(1),
+            # Wind is the only RPS-eligible resource: expensive enough (MC 60 >
+            # gas 20) to stay idle absent the RPS, so it forces the dual up.
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),  # 50 MW available vs 40 MW target
+            wind_mc=60.0,
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
         )
         res = solve_dispatch(
             fleet,
