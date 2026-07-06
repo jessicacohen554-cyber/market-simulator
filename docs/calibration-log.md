@@ -5969,3 +5969,81 @@ Owner approved the recommendation in the entry above. Promotion bookkeeping
 The retired `ercot32` stays registered (the prior-keeper comparison) with its
 DAM-AS overlay demoted to the explicitly-labelled F6/F7 diagnostic (plan §6:
 default-off in keepers, retained for the decomposition).
+
+## 2026-07-06 — MISO L-14 continuation: miso-42 twin completed + commitment-posture lever BUILT and honesty-gate REJECTED (probe `miso-43`; keeper stays miso-41, miso-42 promotion recommendation stands)
+
+**Lane:** L-14 continuation (session after Wave-3 PRs #1468/#1472/#1481/#1486). Three deliverables.
+
+### 1. miso-42 ablation twin: completed, registered, linked (rule 21 closed)
+
+The Wave-3 session died mid-twin (PR #1486 checkpoint; outputs lost with the container). Re-solved
+from scratch on HEAD `ac11191` (full span, sequential, fresh 12 GB swapfile), registered as
+**`2026-07-06-miso-42-coal-econ-ablation`** and linked from the base sidecar with the market story —
+making the miso-42 attestation's twin claim true. **Finding:** the twin deltas are SMALL (every class
+within ~7% / 1.9 TWh; imports +1.9/+1.2/+0.9 TWh) — under `coal_econ_srmc_bound` the merchant floors
+barely force energy, in sharp contrast to the miso-41 twin (ST_GAS +63–115%, OTHER_FOSSIL 100%
+floor-forced). The offer bound, not the floor stack, now carries the mid-merit price floor; the
+floors' role collapses toward commitment scaffolding. This strengthens the pending miso-42 promotion
+recommendation (strictly less floor-dependence). Provenance amendment documented in the twin's
+`run_config.json` (the auto-captured diff snapshot had picked up this session's unrelated posture
+edits made after the solve's imports resolved).
+
+### 2. Honesty-gate data ask LANDED: measured MISO ASM series intaken (`data/raw/MISO-AS`)
+
+The diagnosis-§5 blocking data ask is closed: `scripts/fetch_miso_asm.py` stages MISO's daily market
+reports — zonal DA ex-ante / RT final reserve MCPs (zone-level dedupe) and hourly REGIONAL cleared
+reserve MW by product (reg/spin/supp/STR, aggregated from the masked `asm_rt_co` cleared-offers
+zips) — 2023–2025 complete, zero missing days, ~2.8 MB parquet (PJM-AS staging precedent).
+`scripts/report_miso_posture_gate.py` scores any posture bundle on level + event-day direction
+against it. The §B Midwest-family ask (historical zonal operating-reserve REQUIREMENT series)
+remains open — MCPs/cleared MW alone do not give the requirement basis.
+
+### 3. Commitment-posture lever A: BUILT (miso_commitment_posture), solved full-span, gate FAIL → PROBE
+
+Design note §A built exactly as specified (zero fitted parameters): per non-fast-start
+(zone × fuel-class) pergen pool, continuous online capacity `U[p,t]` with joint `ΣP + R ≤ U`,
+CEMS-measured min-load coupling `ΣP ≥ mlf·U`, cyclic NREL-class startup charge on `ΔU⁺`, and the
+pergen reserve cap online-gated `R ≤ ρ(t)·U`. Rule-18 physics gate postures 18 of 30 pools
+(CT/oil fast-start exempt; mlf 0.12–0.58 cap-weighted `thermal_tranches` committed_pct with
+WWSIS-2 gap-fill; startup $44–100/MW). Not a floor: no `min_gen`, no D-2 mechanism id; the trivial
+LP tests prove zero forced energy with the requirement neutralized (`tests/test_commitment_posture.py`,
+9 tests; dispatch/reserve suites 64+112 green). Min-run/min-down window rows deliberately deferred
+(G-40 memory; the startup charge carries the cycling economics).
+
+Full-span solve registered: **`2026-07-06-miso-43-commitment-posture`** (bundle
+`results/calibration/MISO/miso_43_commitment_posture`), determination NOT-YET, **rejected probe by
+its own pre-committed honesty gate** (`SUMMARY-posture-gate.md`):
+
+- **Level FAIL:** modeled postured online headroom 9.9–11.1 GW vs measured cleared reserve
+  2.5–2.7 GW (3.7–4.2×) — at $2.19–3.52 gas, min-load burn is always cheaper than the $200 curve
+  step, so the LINEAR relaxation holds ~10 GW online and the real market's leaner posture never forms.
+- **Direction PARTIAL:** daily r(model reserve price, measured Miso-Wide spin MCP) = 0.00/0.20/0.31;
+  top-20 measured event days same-direction 19/19/15 of 20; regional split over-weights South
+  (34–38% of online headroom vs measured 13–18% of cleared MW; model Central under-weighted).
+- **Structure moved, fit did not:** reserve duals fire 637/700/470 h/yr (miso-39: 59/64/207) with
+  real cycling charges paid (startups 102/107/139 GW/yr), but the $200 step never engages — C3c
+  tail stays 0 h ×3 — and the C1 CC row is UNCHANGED (+0.8/+0.5/+0.3 TWh vs miso-42; imports
+  −2.1/−1.2/−0.9 TWh slightly worse). The pooled linear relaxation captures only a small part of
+  the DP-1 +34% MIP wedge: with U costless while `P ≥ mlf·U` is satisfied by flat-baseload CC, the
+  posture adds min-load energy at the margin instead of removing committed CC energy.
+
+**Disposition (rules 1/13/15):** the mechanism is real market structure and stays in the codebase
+GATED default-off; the flag does NOT enter any keeper recipe until a build passes its measured-series
+gate. Named follow-ups, in order: (a) min-run/min-down rolling-window rows on U (the deferred
+smoothing — the twin lever the linear relaxation is missing), (b) the §B Midwest zonal family
+(still DATA-BLOCKED on the requirement series), (c) posture grain below (zone × class) where memory
+allows. The C1 CC row remains owned by the commitment-posture workstream, with this probe as the
+measured evidence that the pooled LINEAR form is insufficient — the next step is the window rows,
+not a tuned tightening (no parameter in this build may be moved against the residual).
+
+### keepers.json
+
+Unchanged: keeper `2026-07-05-miso-41-ct-evening`; the Wave-3 recommendation to promote miso-42
+stands (now with its rule-21 twin registered and the floors shown near-redundant under the bound).
+Dashboard pruned to the 15-run cap (miso-29/30/31 dropped).
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, one invocation,
+years sequential (12 GB swapfile, MALLOC_ARENA_MAX=1, MARKET_SIM_HIGHS_THREADS=1); no golden
+capture (documented OOM).
