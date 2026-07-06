@@ -1310,6 +1310,42 @@ zero conflicts, so the working tree is byte-identical to what that run
 exercised — a second post-rebase run would be redundant and was not
 re-executed to conserve the box's remaining budget).
 
+**G-40 update (2026-07-06, branch `claude/reserve-coldbuild-memory-opt`) — the
+PJM/MISO OOM is a *construction-peak in the builder*, not the solve, and is
+partly recoverable without a ≥24 GB host.** Profiled with the new
+`scripts/profile_lp_memory.py` (peak anon-RSS, construction-vs-solve split,
+per-block nnz). Findings:
+- The OOM-killer's "during reserve-column construction" is confirmed: the peak
+  is sparse-matrix *assembly*, not HiGHS. Two drivers — (a) the reserve block's
+  own `kron` + dense `(n_gen,T)` cap/availability intermediates (~3× the final
+  block, the harder residual), and (b) `build_constraints`' **pairwise
+  `A = sp.vstack([A, block])` chain**, which re-copies the whole accumulated
+  matrix at every optional block, spiking to ~2× the final matrix at the last
+  (reserve) stack.
+- **The literal Step-2 tactic (rebuild the reserve block as COO int32 triplets)
+  does NOT help — it is measurably *worse*:** scipy's `kron` already emits int32
+  and is tighter than materializing triplets (benchmarked 2.14 → 2.40 GiB). That
+  premise is dead; recorded so it is not re-tried.
+- **What does help, byte-identically: a freeing single-pass concat**
+  (`dispatch._vstack_csr_free`) replacing the pairwise chain in
+  `build_constraints` and both reserve builders. Measured on a representative
+  multi-block build (energy|SOC|reserve, 176 M nnz, ~2.1 GB final): peak
+  **6.71 → 5.54 GiB (−1.17 GiB, ~17 %)**, full-matrix CSR hash **identical**
+  (`9096a36a4f30eb93`). The saving scales with the accumulated-A size at the
+  reserve stack, so the real MISO/PJM builds (which also carry hydro + zonal
+  reserve-family blocks) should see ≥ that. `tests/test_dispatch_vstack_memory.py`
+  pins the byte-identity (incl. the int64-column path); the full dispatch/reserve
+  suite (457) stays green, so the Stage-6 builder-swap byte gate is untouched.
+- **Not yet confirmed end-to-end:** this container has no `data/clean` MISO/PJM
+  partitions and a 16 GB ceiling, so the *keeper* peak can't be measured here —
+  run `MARKET_SIM_MEM_DEBUG=1 scripts/profile_lp_memory.py --keeper …` (or the
+  real solve) on a data-provisioned box to confirm miso-41/pjm-77 now build+solve
+  under 16 GB. If the free-concat alone clears it, **the G-40 ≥24 GB host is not
+  required** and PJM/MISO can be gated on the standard box. If it does not, the
+  fallback is Step 3 (decouple reserve granularity from fleet granularity — pool
+  reserve per zone), which is a **miso-41 keeper modeling change** (re-solve +
+  re-pin + rule-1 writeup) and must NOT be done without owner sign-off.
+
 ---
 
 ## 8. Cross-year warm-start — the forecast-P0 decision
