@@ -53,6 +53,19 @@ item is moot on the new footing.
 - Rule-15 sweep: all 24 `2026-07-06-*` registrations reconcile with the calibration log — no
   missing runs.
 
+## Addendum — PR #1501 (L-7c landing, reviewed 2026-07-06 EVE)
+
+| PR | Claim | Verdict | Evidence |
+|---|---|---|---|
+| #1501 L-7c closeout | Path-(c) FOM grid; accreditation fix validated; third FOM-flip refusal | **CLEAN** | Docs-only diff (+1007, 3 files); real PR body with honest CI disclosure (pre-existing reds correctly attributed, verified). Grid JSON `acceptance_gates` match the body exactly: `backstop_mw_first3 0.0` (gate ✓ — the CDR basis fix removed Stage-2's 15,214 MW phantom flood) and `retirement_pace 0.0`, `pass: false` honestly recorded. Forecast-only 2026-2031 solves, no keeper/registry/dashboard contact, rule 22 clean. Successor mechanism named with rule-1 recommendation (§3: disable the free reliability floor for energy-only designs, option (a), vs RMR-priced retention, option (b)); FOM flip parked behind that re-test; tornado re-centring + 2035 re-run stay deferred per the program's own convention. |
+
+**Lane-status consequences:** L-7c is CLOSED; `model/capacity.py` and the
+capacity-economics/fom-scarcity doc namespaces are now UNOWNED. The wave-manager
+NW-8 prompt (tornado 2035 re-run) is **withdrawn** — #1501 §4 defers it behind the
+floor-fidelity change by the tornado doc's own convention. New lane NW-9
+(floor fidelity for energy-only designs + FOM re-test + hindcast closure) and
+NW-10 (CX-4 design memo) issued in the wave-manager session record.
+
 ## Owner-decision queue (as of this review)
 
 1. CAISO keeper: swap to `caiso-58-v2-regate` vs stay `caiso-51` (#1346; C8 59–71% rule-20 tension disclosed).
