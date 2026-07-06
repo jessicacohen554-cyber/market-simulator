@@ -125,6 +125,27 @@ snapshot above, which is left as the 2026-07-05/06 audit baseline.*
 
 ---
 
+### Addendum — 2026-07-06 (calibration-complete adjudication, NYISO + NEISO)
+
+*Appended by the marker-adjudication session; full record in the 2026-07-06
+calibration-log entry of the same name.*
+
+- The rubric-v2 memo §6 recommendation (declare NYISO and NEISO complete) was
+  put to the owner with verified preconditions (both keepers re-scored
+  CALIBRATED-WITH-CAVEATS at HEAD; `audit_keepers.py --check` exit 0; U-01
+  resolved; G-13 adjudicated moot for nyiso-53). **Owner HELD both markers:**
+  NYISO until #1344 (reserve-scarcity data ask) lands — the C8 CT
+  forced-share caveat dominates; NEISO until the winter-fuel Component-B /
+  C7 ST_GAS residual is re-examined. `calibration-complete.json` remains
+  `"complete": {}`; the 2022/H1-2026 holdouts stay fully quarantined for all
+  six ISOs; no solve, intake, or dashboard change was made.
+- G-19's costing note stands: NYISO/NEISO one-shot execution requires
+  first-time holdout intake (CAMPD 2022 state files, zonal load/SMD 2022, hub
+  LMP 2022, keeper-lever gas-basis series 2022) and the H1-2026 half is
+  publication-blocked (CAMPD Q2-2026, delivered gas May+, F3).
+
+---
+
 ## 2. Workstream inventory
 
 Status verified against code/artifacts; "doc-lag" marks where the plan doc's own status section is wrong (both directions occur).
@@ -265,7 +286,7 @@ Full adjudication in §4. Register entries for the cross-ISO structural items:
 
 | ID | Item | Notes |
 |---|---|---|
-| U-01 | NEISO winter-fuel probe registration state | Handoff notes say Component-A probes ran (cap inert); no calibration-log entry or registry sidecar found. Either the probe wasn't run to completion, or rule 15 was breached. Needs one lookup by the NEISO owner. |
+| U-01 | ~~NEISO winter-fuel probe registration state~~ **RESOLVED (2026-07-06, calibration-complete adjudication session): the probes were registered all along.** Component-A pair `2026-07-04-neiso-inventorycap-inert-probe` + `2026-07-04-neiso-dailybasis-oil-underrun` and Component-B pair `2026-07-06-neiso-wfuelsec-ab-v2`/`-v2off` each carry a registry sidecar, a `runs/<id>.js` payload, and a calibration-log entry (2026-07-04 / 2026-07-06). Rule 15 satisfied; no breach. | The audit's sweep predated/missed the 2026-07-04 landings. No action. |
 | U-02 | "Confirmed-exit double-derate fix" as a named fix | No dedicated fix/test exists under that name; the derate-XOR-drop guard IS landed (capacity.py:316–352). Interpreted as: guard landed, Braunig hardcode overlap (G-27) is the surviving double-count risk. |
 | U-03 | CX-6a evidence location | Plan cites dispatch.py:380–398; verification found the live defect at capacity.py:127/:964. Both cited in G-33; exact remediation site to be confirmed by implementer. |
 | U-04 | G-14 caiso-51 meta/run_config disagreement | Found by the handoffs sweep; which file carries the truth was not adjudicated within budget. |
