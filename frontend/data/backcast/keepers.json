@@ -1,11 +1,11 @@
 {
-  "CAISO": "2026-07-03-caiso-51-firm-base",
+  "CAISO": "2026-07-06-caiso-58-v2-regate",
   "ERCOT": "2026-07-06-ercot34-stage4-overlay-off",
   "NEISO": "2026-07-06-neiso-50-head-repro",
   "PJM": "2026-07-05-pjm-77-ct-relfloor",
   "keepers": [
     "2026-07-06-ercot34-stage4-overlay-off",
-    "2026-07-03-caiso-51-firm-base",
+    "2026-07-06-caiso-58-v2-regate",
     "2026-07-05-pjm-77-ct-relfloor",
     "2026-07-06-nyiso-53-li-tsl",
     "2026-07-06-neiso-50-head-repro",
