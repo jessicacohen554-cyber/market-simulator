@@ -1,5 +1,14 @@
 {
   "timestamp": "2026-07-03T18:39:13",
+  "post_hoc_corrections": {
+    "date": "2026-07-06",
+    "session": "L-10 CAISO lane, gap-register G-14 adjudication",
+    "fields": [
+      "scenario_config.capacity_deliverability_limits: false -> true",
+      "scenario_config.caiso_perhub_firm_base: false -> true"
+    ],
+    "evidence": "meta.json (written from the solve_and_persist kwargs) records both flags True, and the bundle's own solve log (results/calibration/caiso51_firm_base_solve.log) proves both were live in the solved LP: 'capacity_deliverability_limits — seam import cap set to 16055/16452/16148 MW (summed per-area import_limit, delivery year 2023/2024/2025)' (the published MIC replacing the 7,500 MW fitted WECC fallback) and 'firm/contracted tranches held at contract cost (caiso_perhub_firm_base)' for all three years. Root cause: at the keeper's harness (run_calibration_full.py @ 2b2f91f / merge 93c8a68) the recorded_cfg block that serializes scenario_config never threaded these two kwargs, so the ScenarioConfig defaults (false) were written while the solve honored the kwargs. capacity_deliverability_limits recording was later fixed in the harness; caiso_perhub_firm_base is still un-threaded at HEAD (flagged to the harness owner). Only run_config.json is corrected; meta.json and the solve are unchanged."
+  },
   "git": {
     "sha": "2b2f91f",
     "branch": "claude/caiso-calibration-2026-07-02-0zshir",
@@ -186,7 +195,7 @@
     "neiso_rcpf_enabled": false,
     "neiso_rcpf_products": null,
     "reserve_margin_build_enabled": false,
-    "capacity_deliverability_limits": false,
+    "capacity_deliverability_limits": true,
     "planning_reserve_margin": 0.1375,
     "interchange_shaping": false,
     "interchange_shaping_export_only": false,
@@ -224,7 +233,7 @@
     "caiso_import_solar_shape": false,
     "caiso_bidir_intertie": false,
     "caiso_per_hub_intertie": true,
-    "caiso_perhub_firm_base": false,
+    "caiso_perhub_firm_base": true,
     "caiso_corridor_flow_limit": true,
     "caiso_intertie_reference_price": false,
     "caiso_corridor_atc_forward": false,
