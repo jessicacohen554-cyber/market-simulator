@@ -838,5 +838,78 @@ class TestR1SignFlipDisablement(unittest.TestCase):
         self.assertEqual(enabled, [False, True])
 
 
+class TestPjmCtChpScrubLocked(unittest.TestCase):
+    """Lock the L-13 CT_CHP reliability-limb scrub in the committed PJM CSV.
+
+    The EMAAC/Central_PA CT_CHP ``tmax`` limbs were disabled 2026-07-06 (L-13
+    step 1): each carried no sub-daily window, so on a hot day it floored CT_CHP
+    all 24 h and bound 70.8 % of its floored MWh **outside** the justified
+    evening window (the pjm-77 D-4 failure). The measured hot-day lift is an
+    all-hours steam-host intensification owned by ``chp_steam`` (rule 19: one
+    mechanism per phenomenon), and no sub-daily re-window matches the driver, so
+    the limb is scrubbed rather than re-windowed. This test fails if any PJM
+    CT_CHP reliability limb is silently re-enabled — a disabled fitted limb that
+    still binds is a re-armable answer key (rule 26: deleted means deleted).
+    """
+
+    def test_pjm_ct_chp_reliability_limbs_all_disabled(self):
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+
+        pjm = RELIABILITY_FLOOR_REGISTRY.get("PJM", [])
+        ct_chp = [s for s in pjm if s.plant_class == "CT_CHP"]
+        # The scrubbed limbs must still be present in the registry (documented,
+        # not deleted rows) but every one disabled — so CT_CHP never receives an
+        # all-24h temperature floor and stays owned by chp_steam.
+        self.assertTrue(ct_chp, "expected PJM CT_CHP limbs in the registry")
+        for spec in ct_chp:
+            self.assertFalse(
+                spec.enabled,
+                f"PJM CT_CHP limb {spec.zone}:{spec.driver} must stay scrubbed "
+                "(L-13 step 1; rule 17/19/26) — re-enabling reintroduces the "
+                "all-24h off-window D-4 failure.",
+            )
+
+    def test_disabled_pjm_ct_chp_limb_injects_no_floor(self):
+        # End-to-end: the committed (disabled) PJM CT_CHP limbs produce no
+        # min_gen even on a hot day — byte-identical to no floor for CT_CHP.
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+
+        pjm = RELIABILITY_FLOOR_REGISTRY.get("PJM", [])
+        ct_chp = [s for s in pjm if s.plant_class == "CT_CHP"]
+        H = 48
+        gens = [
+            Generator(
+                unit_id="ctchp",
+                name="ctchp",
+                zone="Z",
+                fuel_type="gas_ct",
+                pmax_mw=90.0,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+                plant_group="CT_CHP",
+            )
+        ]
+        fa = generators_to_fleet_arrays(gens, ["Z"], hours=H)
+        # Re-home each scrubbed CT_CHP spec onto the trivial zone at a very low
+        # threshold so it WOULD flag every hour if enabled — proving the disable
+        # (not a missed gate) is what suppresses it.
+        specs = [
+            ReliabilityFloorSpec(
+                zone="Z",
+                plant_class="CT_CHP",
+                driver="tmax",
+                threshold=-50.0,
+                floor_pct=s.floor_pct,
+                enabled=s.enabled,
+            )
+            for s in ct_chp
+        ]
+        loader = _weather_from_daily([35.0, 36.0], [20.0, 22.0], H)
+        with mock.patch(_LOADER, loader):
+            applied = T.inject_reliability_floor(fa, "PJM", 2024, specs, ["Z"])
+        self.assertFalse(applied)
+        self.assertIsNone(fa.min_gen)
+
+
 if __name__ == "__main__":
     unittest.main()
