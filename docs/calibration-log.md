@@ -42,6 +42,46 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-06 — NYISO — KEEPER PROMOTED: `2026-07-06-nyiso-53-li-tsl` replaces `2026-07-03-nyiso-41-hub-prices` (owner decision, L-11)
+
+**Owner decision 2026-07-06: the L-11 recommendation is accepted** (superseding
+the PR-#1442 nyiso-52 order); the keeper is the already-registered nyiso-53 run
+exactly as solved — no config change bundled into the promotion. Mechanics:
+
+- **D-3 zero-forcing ablation twin** solved (keeper recipe verbatim,
+  `zero_forcing_ablation=True`, full-span 2023-2025 sequential) and registered:
+  `2026-07-06-nyiso-53-li-tsl-ablation` (bundle
+  `results/calibration/nyiso53_litsl_v2-ablation`), linked from the keeper
+  sidecar with the market story. Keeper-vs-twin delta: the floors buy ST_GAS
+  +2.74/+3.82/+3.89 and CT_PEAKER +1.06/+0.87/+0.55 TWh (displacing CC
+  −2.3/−3.1/−3.0) — and even WITH the floors both classes still under-run
+  measured actuals (ST_GAS 7.2/8.1/10.3 vs 8.7/11.1/16.0 TWh), so the forcing
+  moves dispatch toward the measurement, never past it (the un-floored LP's
+  miss is the #1344 commitment frontier). The nyiso53-v2off-twin registered
+  earlier is the §9.6 v2 ATTRIBUTION twin only — distinct artifact, kept.
+- **Attestation** (`calibration_attestation.json`, dof-ledger/v1, 11 entries /
+  6 residual): C8 CT_PEAKER forced-share 92.7/86.7/56.6% (cap 10%) ledgered as
+  a DISCLOSED HARD BREACH — owner promoted with eyes open: absolute forced
+  energy FELL to 1.486/1.555/1.455 TWh (nyiso-48's selfsupply floor alone
+  forced 1.84/2.87/1.86, and that channel is deleted); the share is high
+  because economic CT collapses without the #1344 reserve-scarcity structure
+  (data-blocked on Ask-B). C3c 0/0/7 h vs 10/12/42 and the CT_PEAKER grid
+  volume under-run (1.28/1.44/2.40 vs 2.26/2.13/2.84 TWh, within C1 band)
+  carry the same attribution. DOF ledger: `NYISO_LOCAL_SELFSUPPLY_FRAC
+  ['Long_Island']` (residual, S5) RETIRED — replaced by the published Zone-K
+  TSL (identification: published); v2 plant rates + downstate citygate premium
+  added as measured. Determination **NOT-YET** (hard 1/1, soft 4/2) — same
+  class as every current keeper; promoted as most structurally faithful, per
+  rule 1, not lowest-residual.
+- **Bookkeeping:** `keepers.json` NYISO → `2026-07-06-nyiso-53-li-tsl`;
+  `build_status.py` re-run post-rebase; D-9 quarantine report regenerated on
+  the new keeper set; the 2026-07-05 E7 documented-state warning for NYISO
+  RESOLVES (nyiso-41 leaves the keeper set and its E9 grandfather entry is
+  removed per the list's own contract); the D-7 statmode NYISO section is
+  flagged STALE vs this swap (G-10 truth-in-labeling; statmode NOT re-run).
+  nyiso-41's committed bundle and registration remain on the dashboard as the
+  prior keeper (the one meaningful historical comparison, per retention).
+
 ### 2026-07-06 — NYISO — L-11 wave-3: Zone-K LCR/TSL mechanism (#1345) + #1344 dynamic-requirement channel + v2 plant-rate backcast wiring (nyiso 53): PROBES, keeper stays nyiso 41
 
 **Scope (lane L-11, gap register §5).** (1) Data-ask memo filed FIRST

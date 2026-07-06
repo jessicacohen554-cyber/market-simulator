@@ -11,5 +11,7 @@
   ],
   "iso": "NYISO",
   "file": "frontend/data/backcast/runs/2026-07-06-nyiso-53-li-tsl.js",
-  "bundle": "results/calibration/nyiso53_litsl_v2"
+  "bundle": "results/calibration/nyiso53_litsl_v2",
+  "ablation_twin": "2026-07-06-nyiso-53-li-tsl-ablation",
+  "market_story": "ST_GAS +2.7/+3.8/+3.9 TWh and CT_PEAKER +1.1/+0.9/+0.6 TWh vs the zero-forcing twin, displacing CC (-2.3/-3.1/-3.0): NYISO really does commit its downstate steam and peaker fleet out of merit for local reliability (DARU/SRE commitments, steamer minimum-run blocks, the PR-#1442 CAMPD-derived temperature windows) \u2014 behaviour a pure-ED LP cannot produce. Even WITH the floors both classes still under-run the measured actuals (ST_GAS 7.2/8.1/10.3 vs 8.7/11.1/16.0; CT_PEAKER 1.3/1.4/2.4 vs 2.3/2.1/2.8 TWh), so the floors move dispatch toward measured, never past it; the remaining gap is the #1344 reserve-scarcity commitment frontier (data-blocked, Ask-B). The former nyiso_local_selfsupply floor contributes nothing here \u2014 the Zone-K TSL import cap replaced it (issue #1345) and LI energy clears economically."
 }
