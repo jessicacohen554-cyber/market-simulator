@@ -3,7 +3,7 @@
   "label": "statmode d7 probe ercot32",
   "date": "2026-07-04",
   "shorthand": "statmode-d7-probe-ercot32",
-  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper ercot_ordc_total_rtolcap_v1 (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "definition": "STALE (pre-ercot34, 2026-07-04) \u2014 superseded by 2026-07-06-ercot34-statmode-v2, a byte-faithful replay of the current ercot34-stage4-overlay-off keeper (bundle ercot_stage4_overlayoff_v2). Retained for history, not the current D-7 gap; statistical-mode-results-2026-07.md's ERCOT table still shows this (ercot32-basis) run's numbers and has not yet been re-synced to the v2 twin's results (a doc-sync task, not a solve \u2014 see ERCOT stale-box). Original definition: D-7 statistical-mode A/B probe: byte-faithful replay of keeper ercot_ordc_total_rtolcap_v1 (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
   "years": [
     2023,
     2024,
