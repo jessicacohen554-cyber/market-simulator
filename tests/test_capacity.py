@@ -525,6 +525,51 @@ class TestEconomicRetirements(unittest.TestCase):
             )
             self.assertEqual(losses.get("U0"), 1, f"{fuel} not screened")
 
+    def test_nuclear_not_credited_rps_shadow_in_retirement_screen(self):
+        # CX-6a (capacity-economics plan 2026-07 §6.5(a)): nuclear is clean but
+        # not RPS-eligible, so the retirement screen must NOT credit it the RPS
+        # shadow price (the pre-fix defect used _CLEAN_FUELS, which includes
+        # nuclear). Set up a nuclear unit whose energy revenue is far below its
+        # FOM; a large RPS shadow, IF credited, would more than cover the gap
+        # and suppress the loss year. With the fix nuclear earns no RPS credit,
+        # so it still accrues a loss year.
+        from market_sim.model.capacity import _CLEAN_FUELS, _RPS_ELIGIBLE_FUELS
+
+        # Constant split: RPS-eligibility excludes nuclear/hydro; clean-share
+        # accounting (a separate basis) still counts them.
+        self.assertNotIn("nuclear", _RPS_ELIGIBLE_FUELS)
+        self.assertNotIn("hydro", _RPS_ELIGIBLE_FUELS)
+        self.assertEqual(_RPS_ELIGIBLE_FUELS, frozenset({"wind", "solar"}))
+        self.assertIn("nuclear", _CLEAN_FUELS)
+        self.assertIn("hydro", _CLEAN_FUELS)
+
+        config = ScenarioConfig()  # eac_price_nuclear defaults to 0.0
+        fleet = [_gen("N0", "nuclear", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # FOM = 130 $/kW-yr * 100 MW * 1000 = 13_000_000; energy net revenue =
+        # 10 $/MWh * 100 MW * 10 h = 10_000 << FOM.
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(1, 100.0)
+        # rps credit IF applied = 20_000 $/MWh * (100 MW * 10 h) = 20_000_000 > FOM.
+        huge_rps = 20_000.0
+
+        _, losses, _ = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
+            rps_shadow_price=huge_rps,
+            mc=np.zeros((1, self.T)),
+        )
+        self.assertEqual(
+            losses.get("N0"),
+            1,
+            "nuclear was credited the RPS shadow price (CX-6a regression)",
+        )
+
     def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
         # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
         # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).

@@ -336,6 +336,22 @@ def main(argv: list[str] | None = None) -> None:
             "stage-1/2 grids are never overwritten."
         ),
     )
+    p.add_argument(
+        "--growth",
+        default="mid",
+        choices=("low", "mid", "high"),
+        help=(
+            "Stage-3 harness variant (capacity-economics plan §5.4 unblocking "
+            "path c): demand growth path for the ERCOT/PJM forecast. The "
+            "stage-1/2/3 grids use 'mid', under which ERCOT is perpetually "
+            "accredited-short so the floor un-retires the whole eligible set "
+            "and the FOM axis stays inert. 'low' probes whether a slower-growth "
+            "(less adequacy-short) path lets the economic screen — and thus the "
+            "FOM bar — decide retirements. Harness variant only; no model "
+            "default change. A non-'mid' path appends '-growth-<path>' to the "
+            "JSON stem so the stage-1/2/3 grids are never overwritten."
+        ),
+    )
     args = p.parse_args(argv)
 
     # Harness-variant base overrides. The backstop is ON in the stage-1/2 grid
@@ -345,6 +361,8 @@ def main(argv: list[str] | None = None) -> None:
     variant_overrides: dict = {}
     if args.backstop_off:
         variant_overrides["reserve_margin_build_enabled"] = False
+    if args.growth != "mid":
+        variant_overrides["demand_growth_path"] = args.growth
 
     out_dir = REPO / args.out if not Path(args.out).is_absolute() else Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -396,6 +414,8 @@ def main(argv: list[str] | None = None) -> None:
     stem = f"fom-scarcity-grid-{date.today().isoformat()}"
     if args.backstop_off:
         stem += "-stage3-backstop-off"
+    if args.growth != "mid":
+        stem += f"-growth-{args.growth}"
     effective_base = {**BASE_OVERRIDES, **variant_overrides}
     (out_dir / f"{stem}.json").write_text(
         json.dumps(
@@ -403,6 +423,7 @@ def main(argv: list[str] | None = None) -> None:
                 "start_year": args.start_year,
                 "end_year": args.end_year,
                 "backstop_off": args.backstop_off,
+                "growth": args.growth,
                 "base_overrides": effective_base,
                 "fom_axis": FOM_AXIS,
                 "scarcity_axis": SCARCITY_AXIS,
