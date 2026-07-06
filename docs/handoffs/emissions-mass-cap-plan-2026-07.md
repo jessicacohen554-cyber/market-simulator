@@ -112,19 +112,17 @@ No dispatch-side wiring remains.
   `ScenarioConfig` actually produces `mass_cap_coeffs`/`mass_cap_rhs`/`mass_cap_labels`; disabled,
   no-program, and quarantined-year configs all still return `{}`). No solve was run to land this —
   it is a pure config/dispatch_kwargs threading change, unit-tested without invoking the LP.
-  **Deliberately NOT wired:** `scripts/run_calibration_full.py`'s own ~1000-line argparse block and
-  its `solve_and_persist → run_year(...)` call site (the kwargs it forwards) do not yet expose the
-  three new parameters — that file's argparse/solve-core surface is large, separately evolving (the
-  L-2 lane owns its argparse block for an unrelated `--help`-crash + holdout-gate fix), and touching
-  it was out of this pass's scoped file ownership. The recipe below therefore drives
-  `scripts/run_calibration.py` directly (a diagnostic run + printed report, not a persisted
-  dashboard bundle) rather than the bundle-producing `run_calibration_full.py` — appropriate for a
-  PROBE that is explicitly never meant to be a keeper (rule 16). Wiring
-  `run_calibration_full.py::solve_and_persist` the same way, if a future session wants a
-  dashboard-registrable mass-cap bundle, is a 3-line follow-on: add the same three parameters to
-  `solve_and_persist`'s signature, forward them into its `run_year(...)` call (next to
-  `negative_renewable_offers`), and add the matching three `argparse` entries next to
-  `--negative-renewable-offers` there.
+  **`run_calibration_full.py` wired too (2026-07-06, closing this gap fully):**
+  `solve_and_persist` gained the same three keyword parameters (`mass_cap_enabled`,
+  `mass_cap_tons`, `mass_cap_program`, defaults unchanged), forwarded into its
+  `run_year(...)` call site (next to `ercot_gtc_limits_measured`), echoed into the
+  `meta.json` config-record dict, mirrored into `recorded_cfg`'s `with_overrides(...)` chain
+  (guarded by `tests/test_recorded_cfg_fidelity.py`'s static field-presence check so a future
+  edit can't silently drop the thread), and exposed as
+  `--mass-cap-enabled`/`--mass-cap-tons`/`--mass-cap-program` CLI flags (next to
+  `--btm-backfill-year`) — so a dashboard-registrable bundle can now carry an active mass cap,
+  not just the diagnostic `run_calibration.py` CLI path. Still default-off everywhere;
+  `dispatch_kwargs.update({})` when disabled keeps every existing keeper byte-identical.
 
 ---
 
