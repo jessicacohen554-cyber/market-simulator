@@ -53,10 +53,11 @@ BENCH_DIR = DATA_DIR / "bench"
 # pandas/numpy-free.
 COMPLETENESS_DIR = DATA_DIR / "completeness"
 
-# Rubric version implemented by this scorer (rubric §0/§1; v2 = the 2026-07-06
-# fitness-for-purpose re-anchor: criterion tiers, two-band target/commercial
-# tolerances, DA-expressible C3c).
-RUBRIC_VERSION = 2
+# Rubric version implemented by this scorer (rubric §0/§1/§9; v2 = the
+# 2026-07-06 fitness-for-purpose re-anchor: criterion tiers, two-band
+# target/commercial tolerances, DA-expressible C3c; v2.1 = the same-day owner
+# amendments: C7/C8 materiality floor + C8 peaker cap 15%).
+RUBRIC_VERSION = 2.1
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -159,13 +160,6 @@ SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # coal ~0.3 TWh — a percent band on a near-zero family is pure noise).
 DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
-D1_SHAPE_MATERIALITY_LOAD_FRAC = 0.025  # C7 immateriality cut-off (owner
-# decision 2026-07-06): a D-1-gated class (CT_PEAKER, ST_GAS) whose actual
-# annual energy is under 2.5% of ISO total load is not C7-gated, regardless of
-# its profile-r / off-peak-CV-ratio verdict — mirrors SYSVOL_MIN_TWH's C2
-# immateriality cut-off (a shape defect on a near-noise-floor class isn't
-# withheld from a keeper; the underlying r/CV-ratio still reports, it just
-# doesn't count against the C7 protective-caveat budget).
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
 # C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor). The
@@ -254,6 +248,29 @@ FORBIDDEN_FLAGS: tuple[str, ...] = ()
 #    it never grants them.
 MAX_PROTECTIVE_CAVEATS = 1  # C7/C8 (C6 is never caveatable) — unchanged from v1
 MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
+
+# C7/C8 materiality floor (rubric v2.1, owner amendment 2026-07-06): the
+# protective shape / forced-share gates score only classes whose annual energy
+# — max(model, actual), so a forced floor cannot hide a class below the line
+# by its own inflation, and a model that zeroes a material class stays scored
+# — is at least this fraction of total ISO load. Smaller classes are emitted
+# SKIPPED-immaterial (reported by the D-1/D-2 diagnostics, never gated): a
+# trivial class's diurnal r or forced share is not worth structural work
+# (mirrors C2's 10 TWh / C4's 5 TWh immateriality cut-offs). 2% is the clean
+# cut in the keeper data: NEISO ST_GAS 0.1-0.3%, NEISO CT 0.5-0.7% and NYISO
+# CT 1.4-1.9% of load (the named trivial cases) fall below it, while CAISO CT
+# 2023/24 (2.1-2.3% — the caiso-42 flat-floor case C7/C8 exist to catch),
+# PJM/MISO CT (3.5-4.2%) and every material ST_GAS (2.1-10.6%) stay gated.
+PROTECTIVE_MIN_LOAD_FRAC = 0.02
+# C8 forced-share caps (rubric v2.1): the peaker cap was raised 0.10 -> 0.15
+# by the same owner amendment (CLAUDE.md rule 20 amended in-place); merchant
+# cap unchanged. The scorer derives PASS/FAIL from the artifact's MEASURED
+# forced_share against these caps — the rubric owns tolerances, the S1
+# artifact owns measurement — so committed artifacts written under earlier
+# gate values keep scoring correctly without regeneration.
+FORCED_SHARE_PEAKER_MAX = 0.15
+FORCED_SHARE_MERCHANT_MAX = 0.30
+FORCED_SHARE_PEAKER_CLASSES = ("CT_PEAKER",)
 
 # Criterion id -> (label, tier). The v1 HARD/SOFT split conflated two things —
 # strict data gates (C1/C2) and anti-gaming gates (C6/C7/C8); v2 tiers them by
@@ -1246,12 +1263,41 @@ _LEGIT_HOWTO = (
 )
 
 
-def score_shape(
-    year: int,
-    legit: dict | None,
-    ypay: dict | None = None,
-    ybench: dict | None = None,
-) -> list[dict]:
+def _class_load_share(klass: str, ypay: dict, ybench: dict) -> float | None:
+    """Class annual energy as a fraction of total ISO load (C7/C8 materiality).
+
+    Uses ``max(model, actual)`` energy for the class — a binding floor cannot
+    hide a class below the materiality line by its own forcing (forcing raises
+    model energy), and a model that zeroes a genuinely material class stays
+    scored via the actual side. ``None`` when the totals are unavailable
+    (caller then gates — conservative, never a silent skip).
+    """
+    m = float((ypay.get("gmModel") or {}).get(klass, 0.0))
+    a = float((ybench.get("classFull") or {}).get(klass) or 0.0)
+    _, a_gen = _gen_totals(ypay, ybench)
+    load = _total_load(ypay, a_gen)
+    if load <= 0:
+        return None
+    return max(m, a) / load
+
+
+def _immaterial_protective(criterion, klass, year, share, extra=""):
+    """SKIPPED-immaterial record for a C7/C8 class below the materiality floor."""
+    rec = _skip(
+        criterion,
+        year,
+        (
+            f"{klass} immaterial ({share:.1%} of ISO load < "
+            f"{PROTECTIVE_MIN_LOAD_FRAC:.0%} floor, max(model, actual) energy): "
+            "reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner "
+            f"amendment 2026-07-06){extra}"
+        ),
+        key=klass,
+    )
+    return rec
+
+
+def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list[dict]:
     """C7 — diurnal shape (audit D-1), from the bundle's committed artifact.
 
     Reads ``<bundle>/legitimacy_diagnostics.json`` (written by
@@ -1261,16 +1307,10 @@ def score_shape(
     ``d1_gated_classes``) FAILs the year when its hour-of-day profile
     correlation or off-peak CV ratio breaches the artifact's D-1 gates — the
     caiso-42 flat-floor signature (model CV 0.000 vs actual 0.35-0.45) that
-    annual-volume bands cannot see. SKIPPED (never a silent pass) when the
-    artifact or the year is absent.
-
-    Materiality cut-off (owner decision 2026-07-06,
-    :data:`D1_SHAPE_MATERIALITY_LOAD_FRAC`): when ``ypay``/``ybench`` are
-    supplied, a gated class whose actual annual energy is under 2.5% of ISO
-    total load is recorded SKIPPED regardless of its r/CV-ratio verdict —
-    mirrors :data:`SYSVOL_MIN_TWH`'s C2 immateriality cut-off. Without
-    ``ypay``/``ybench`` the class gates as before (unit tests exercising the
-    raw D-1 row need not supply them).
+    annual-volume bands cannot see. Materiality floor (rubric v2.1): a class
+    below ``PROTECTIVE_MIN_LOAD_FRAC`` of ISO load is SKIPPED-immaterial
+    (reported, never gated). SKIPPED (never a silent pass) when the artifact
+    or the year is absent.
     """
     if legit is None:
         return [
@@ -1296,42 +1336,25 @@ def score_shape(
         ]
     tol = (
         f"profile r ≥ {gates.get('d1_min_profile_r')} & off-peak CV ratio ≥ "
-        f"{gates.get('d1_min_cv_ratio')} (h0-{gates.get('d1_offpeak_last_hour')})"
+        f"{gates.get('d1_min_cv_ratio')} (h0-{gates.get('d1_offpeak_last_hour')}); "
+        f"class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} of load"
     )
-    total_load = None
-    if ypay is not None and ybench is not None:
-        _, a_gen = _gen_totals(ypay, ybench)
-        total_load = _total_load(ypay, a_gen)
-    class_full = (ybench or {}).get("classFull", {})
     out = []
     for r in rows:
         klass = r.get("class")
-        actual_twh = class_full.get(klass)
-        share = (
-            float(actual_twh) / total_load
-            if total_load and total_load > 0 and actual_twh is not None
-            else None
-        )
-        if share is not None and share < D1_SHAPE_MATERIALITY_LOAD_FRAC:
+        share = _class_load_share(klass, ypay, ybench)
+        if share is not None and share < PROTECTIVE_MIN_LOAD_FRAC:
             out.append(
-                {
-                    "criterion": "shape",
-                    "key": klass,
-                    "year": year,
-                    "status": SKIPPED,
-                    "classification": None,
-                    "metric": f"{klass} hour-of-day profile vs CAMPD (D-1)",
-                    "model": f"r={r.get('profile_r')} cv={r.get('model_offpeak_cv')}",
-                    "actual": f"cv={r.get('actual_offpeak_cv')}",
-                    "tol": tol,
-                    "magnitude": (
-                        f"immaterial: {klass} is {share:.1%} of ISO total load "
-                        f"(< {D1_SHAPE_MATERIALITY_LOAD_FRAC:.1%}) — C7 shape gate "
-                        "not applied (owner decision 2026-07-06); underlying "
-                        f"profile r {r.get('profile_r')}, off-peak CV ratio "
-                        f"{r.get('cv_ratio')}"
+                _immaterial_protective(
+                    "shape",
+                    klass,
+                    year,
+                    share,
+                    extra=(
+                        f"; D-1 reads profile r {r.get('profile_r')}, "
+                        f"off-peak CV ratio {r.get('cv_ratio')}"
                     ),
-                }
+                )
             )
             continue
         ok = r.get("verdict") != "FAIL"
@@ -1355,17 +1378,23 @@ def score_shape(
     return out
 
 
-def score_forced_share(year: int, legit: dict | None) -> list[dict]:
-    """C8 — forced-energy share (audit D-2 / CLAUDE.md rule 20).
+def score_forced_share(
+    year: int, legit: dict | None, ypay: dict, ybench: dict
+) -> list[dict]:
+    """C8 — forced-energy share (audit D-2 / CLAUDE.md rule 20, as amended).
 
     Reads the D-2 per-class summary from the bundle's committed
-    ``legitimacy_diagnostics.json``: the share of a class's energy dispatched
+    ``legitimacy_diagnostics.json`` — the share of a class's energy dispatched
     AT a binding non-exempt ``min_gen`` floor (nuclear / CHP-steam /
-    coal-take-or-pay mechanisms exempt). Gates: < 10 % for peaker classes,
-    < 30 % for any merchant class — floors are commitment scaffolding, not
-    the dispatch model. Rebuilt-floor shares (``lower_bound``) are flagged in
-    the record: a PASS there is a lower bound, never an upper one. SKIPPED
-    when the artifact or the year is absent.
+    coal-take-or-pay mechanisms exempt) — and gates the MEASURED share against
+    the rubric's caps (< 15 % peaker / < 30 % merchant, rule 20 as amended
+    2026-07-06; the artifact's own embedded verdict is ignored so artifacts
+    written under earlier gate values score correctly). Materiality floor
+    (rubric v2.1): a class below ``PROTECTIVE_MIN_LOAD_FRAC`` of ISO load is
+    SKIPPED-immaterial (reported, never gated). Rebuilt-floor shares
+    (``lower_bound``) are flagged in the record: a PASS there is a lower
+    bound, never an upper one. SKIPPED when the artifact or the year is
+    absent.
     """
     if legit is None:
         return [
@@ -1390,7 +1419,26 @@ def score_forced_share(year: int, legit: dict | None) -> list[dict]:
         ]
     out = []
     for r in rows:
-        ok = r.get("verdict") != "FAIL"
+        klass = r.get("class")
+        fs = float(r.get("forced_share", 0) or 0.0)
+        share = _class_load_share(klass, ypay, ybench)
+        if share is not None and share < PROTECTIVE_MIN_LOAD_FRAC:
+            out.append(
+                _immaterial_protective(
+                    "forced_share",
+                    klass,
+                    year,
+                    share,
+                    extra=f"; D-2 reads {fs * 100:.1f}% forced",
+                )
+            )
+            continue
+        cap = (
+            FORCED_SHARE_PEAKER_MAX
+            if klass in FORCED_SHARE_PEAKER_CLASSES
+            else FORCED_SHARE_MERCHANT_MAX
+        )
+        ok = fs <= cap
         lb = (
             " (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)"
             if r.get("lower_bound")
@@ -1399,16 +1447,19 @@ def score_forced_share(year: int, legit: dict | None) -> list[dict]:
         out.append(
             {
                 "criterion": "forced_share",
-                "key": r.get("class"),
+                "key": klass,
                 "year": year,
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
-                "metric": f"{r.get('class')} energy at binding non-exempt floors (D-2)",
-                "model": r.get("forced_share"),
+                "metric": f"{klass} energy at binding non-exempt floors (D-2)",
+                "model": fs,
                 "actual": None,
-                "tol": f"< {float(r.get('limit', 0)) * 100:.0f}% of class energy",
+                "tol": (
+                    f"< {cap * 100:.0f}% of class energy "
+                    f"(class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} of load)"
+                ),
                 "magnitude": (
-                    f"{float(r.get('forced_share', 0)) * 100:.1f}% forced "
+                    f"{fs * 100:.1f}% forced "
                     f"({r.get('forced_twh')} of {r.get('class_total_twh')} TWh)" + lb
                 ),
             }
@@ -1588,7 +1639,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records.append(score_storage(year, ypay, ybench))
         records.append(score_storage_shape(year, ypay, ybench))
         records += score_shape(year, art.get("legitimacy"), ypay, ybench)
-        records += score_forced_share(year, art.get("legitimacy"))
+        records += score_forced_share(year, art.get("legitimacy"), ypay, ybench)
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
     for r in records:
