@@ -52,7 +52,7 @@ Each is a straightforward wiring task: the mechanism is already implemented, the
 | Task | Gap ID | Model | Est. lines | Depends on |
 |------|--------|-------|-----------|------------|
 | Wire negative renewable offer floor into runner.py | A6 | Sonnet | ~10 | — |
-| Wire ERCOT single-product reserve supply cap | A5 | Sonnet | ~10 | — |
+| ~~Wire ERCOT single-product reserve supply cap~~ | A5 | — | — | **Absorbed into July gap register W1 Stage 2 (`reserve_config._ercot_design`)** |
 | Wire CAISO RA must-offer P2 trigger into runner.py | A10 | Sonnet | ~15 | — |
 | Wire MISO reserve co-opt into calibration _run_dispatch | A13 | Sonnet | ~50 | — |
 
