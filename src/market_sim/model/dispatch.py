@@ -1496,7 +1496,12 @@ def _build_reserve_rows(
     blocks.append(balance)
     lowers.append(bal_lower)
     uppers.append(bal_upper)
-    block = sp.vstack(blocks, format="csr")
+    # Free-concat (see _vstack_csr_free): drop the two large sub-block names so
+    # the list is their sole owner and the shared-headroom block (T * n_gen nnz,
+    # the largest here) is released before the stacked result is allocated.
+    # Byte-identical to sp.vstack(blocks).
+    del headroom, balance
+    block = _vstack_csr_free(blocks, layout.total_columns)
     row_lower = np.concatenate(lowers)
     row_upper = np.concatenate(uppers)
     return block, row_lower, row_upper
@@ -1805,7 +1810,14 @@ def _build_reserve_rows_pergen(
     bal_lower = req2d.T.ravel()
     bal_upper = np.full(n_fam * T, np.inf)
 
-    block = sp.vstack([joint, *posture_blocks, balance], format="csr")
+    # Free-concat the reserve sub-blocks (joint headroom is by far the largest —
+    # T * n_members nnz). Drop the block names first so the list owns them and
+    # _vstack_csr_free can release joint before allocating the stacked result,
+    # instead of scipy.vstack holding joint + result simultaneously. Byte-
+    # identical; this is the reserve-column-construction peak the OOM log names.
+    _res_sub: list[sp.csr_matrix | None] = [joint, *posture_blocks, balance]
+    del joint, balance, posture_blocks
+    block = _vstack_csr_free(_res_sub, layout.total_columns)
     row_lower = np.concatenate([joint_lower, *posture_lower, bal_lower])
     row_upper = np.concatenate([joint_upper, *posture_upper, bal_upper])
     return block, row_lower, row_upper
@@ -1878,6 +1890,73 @@ def storage_reserve_mw(
     zone_room = np.zeros((n_zones, T), dtype=float)
     np.add.at(zone_room, s_zone, room)  # scatter-sum storage room into its zone
     return np.minimum(zone_room, zone_reserve)
+
+
+def _vstack_csr_free(
+    blocks: list[sp.csr_matrix | None], total_cols: int
+) -> sp.csr_matrix:
+    """Vertically stack CSR blocks into one, releasing each input as consumed.
+
+    Byte-for-byte identical to ``sp.vstack(blocks, format="csr")`` — same row
+    order, same canonical CSR ``(data, indices, indptr)`` and the same scipy
+    index dtype — but with a much lower construction peak. ``build_constraints``
+    used to grow the matrix with a pairwise chain
+    (``A = sp.vstack([A, block])`` per optional block): every step allocates a
+    fresh copy of the *whole* accumulated matrix, so at the final (reserve-block)
+    step the transient holds ~2×(|A|+|reserve|) — the OOM-killer's
+    "during reserve-column construction" peak on the plant-level MISO/PJM LPs.
+
+    Here the output ``indptr``/``indices``/``data`` are preallocated once and
+    each block's slice is copied straight in; the block is then dropped from the
+    ``blocks`` list (``blocks[k] = None``) so its arrays are freed before the next
+    copy. Peak ≈ |result| + |largest single block| instead of ~2×|result|. The
+    logical matrix is unchanged (vertical concatenation is associative and the
+    inputs are already canonical CSR), so the LP — and the Stage-6 builder-swap
+    byte gate — are untouched. No Python loop over hours (rule #2): the loop is
+    over the O(10) constraint blocks, not the 8760 hours.
+
+    Args:
+        blocks: CSR blocks to stack top-to-bottom (``None`` entries skipped).
+            MUTATED: consumed entries are set to ``None`` to release memory.
+        total_cols: column count all blocks share (``layout.total_columns``).
+
+    Returns:
+        The stacked CSR matrix.
+    """
+    from scipy.sparse._sputils import get_index_dtype
+
+    present = [b for b in blocks if b is not None]
+    if not present:
+        return sp.csr_matrix((0, total_cols))
+    if len(present) == 1:
+        return present[0].tocsr()
+
+    total_rows = sum(b.shape[0] for b in present)
+    total_nnz = sum(b.nnz for b in present)
+    # Match scipy.sparse.bmat/vstack's index-dtype choice exactly so the result
+    # is byte-identical (int32 until nnz/cols cross 2**31, then int64).
+    idx_dtype = get_index_dtype(maxval=max(total_nnz, total_cols))
+    indptr = np.empty(total_rows + 1, dtype=idx_dtype)
+    indices = np.empty(total_nnz, dtype=idx_dtype)
+    data = np.empty(total_nnz, dtype=np.float64)
+    indptr[0] = 0
+    rpos = 0  # rows written so far
+    npos = 0  # nnz written so far
+    for k in range(len(blocks)):
+        b = blocks[k]
+        if b is None:
+            continue
+        nr = b.shape[0]
+        bn = b.nnz
+        # Row pointers shift by the running nnz offset; column indices and data
+        # copy verbatim (same column space, already sorted per row).
+        indptr[rpos + 1 : rpos + nr + 1] = b.indptr[1:] + npos
+        indices[npos : npos + bn] = b.indices
+        data[npos : npos + bn] = b.data
+        rpos += nr
+        npos += bn
+        blocks[k] = None  # release this block before copying the next
+    return sp.csr_matrix((data, indices, indptr), shape=(total_rows, total_cols))
 
 
 def build_constraints(
@@ -2059,8 +2138,16 @@ def build_constraints(
     # in that hour-major, zone-minor order.
     eb_rhs = np.asarray(demand, dtype=float).T.ravel()
 
+    # Constraint blocks are collected in row order and stacked ONCE at the end
+    # via _vstack_csr_free (which releases each block as it is copied), instead
+    # of a pairwise ``A = sp.vstack([A, block])`` chain that re-copies the whole
+    # accumulated matrix at every step — the reserve-column-construction OOM.
+    # Byte-identical result; see _vstack_csr_free. Names are ``del``'d after
+    # append so the list is the sole owner and the incremental free can happen.
+    blocks: list[sp.csr_matrix | None] = []
     if n_storage == 0:
-        A = energy_balance
+        blocks.append(energy_balance)
+        del energy_balance
         row_lower = eb_rhs.copy()
         row_upper = eb_rhs.copy()
     else:
@@ -2134,7 +2221,9 @@ def build_constraints(
             (all_data, (all_rows, all_cols)),
             shape=(n_storage * T, layout.total_columns),
         ).tocsr()
-        A = sp.vstack([energy_balance, soc_block], format="csr")
+        blocks.append(energy_balance)
+        blocks.append(soc_block)
+        del energy_balance, soc_block
         row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
         row_upper = row_lower.copy()
 
@@ -2148,7 +2237,8 @@ def build_constraints(
             layout, int(storage_daily_cycle_hours)
         )
         if cycle_block.shape[0]:
-            A = sp.vstack([A, cycle_block], format="csr")
+            blocks.append(cycle_block)
+            del cycle_block
             zeros = np.zeros(cycle_block.shape[0])
             row_lower = np.concatenate([row_lower, zeros])
             row_upper = np.concatenate([row_upper, zeros])
@@ -2164,7 +2254,8 @@ def build_constraints(
             layout, interface_groups
         )
         if iface_block.shape[0]:
-            A = sp.vstack([A, iface_block], format="csr")
+            blocks.append(iface_block)
+            del iface_block
             row_lower = np.concatenate([row_lower, iface_lower])
             row_upper = np.concatenate([row_upper, iface_upper])
 
@@ -2185,7 +2276,8 @@ def build_constraints(
                 ramp_up_mw,
                 ramp_dn_mw,
             )
-            A = sp.vstack([A, ramp_block], format="csr")
+            blocks.append(ramp_block)
+            del ramp_block
             row_lower = np.concatenate([row_lower, ramp_lower])
             row_upper = np.concatenate([row_upper, ramp_upper])
 
@@ -2199,7 +2291,8 @@ def build_constraints(
             layout, local_capacity_specs
         )
         if lcr_block.shape[0]:
-            A = sp.vstack([A, lcr_block], format="csr")
+            blocks.append(lcr_block)
+            del lcr_block
             row_lower = np.concatenate([row_lower, lcr_lower])
             row_upper = np.concatenate([row_upper, lcr_upper])
 
@@ -2223,7 +2316,8 @@ def build_constraints(
                 hydro_month_index,
                 hydro_monthly_min,
             )
-            A = sp.vstack([A, hydro_block], format="csr")
+            blocks.append(hydro_block)
+            del hydro_block
             row_lower = np.concatenate([row_lower, hydro_lower])
             row_upper = np.concatenate([row_upper, hydro_upper])
 
@@ -2243,7 +2337,8 @@ def build_constraints(
                 gen_hour_coeff=oil_gen_hour_coeff,
                 group_index=oil_group_index,
             )
-            A = sp.vstack([A, oil_block], format="csr")
+            blocks.append(oil_block)
+            del oil_block
             row_lower = np.concatenate([row_lower, oil_lower])
             row_upper = np.concatenate([row_upper, oil_upper])
 
@@ -2266,7 +2361,8 @@ def build_constraints(
                 import_node_monthly_lo,
                 import_node_monthly_hi,
             )
-            A = sp.vstack([A, node_block], format="csr")
+            blocks.append(node_block)
+            del node_block
             row_lower = np.concatenate([row_lower, node_lower])
             row_upper = np.concatenate([row_upper, node_upper])
 
@@ -2280,7 +2376,8 @@ def build_constraints(
         if coeffs.size:
             cap_block = _build_mass_cap_rows(layout, coeffs)
             cap_rhs = np.asarray(mass_cap_rhs, dtype=float).reshape(-1)
-            A = sp.vstack([A, cap_block], format="csr")
+            blocks.append(cap_block)
+            del cap_block
             row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
             row_upper = np.concatenate([row_upper, cap_rhs])
 
@@ -2289,7 +2386,8 @@ def build_constraints(
     # bound.
     if rps_target is not None and rps_target > 0.0:
         rps_row, rhs = _build_rps_row(layout, rps_target, demand)
-        A = sp.vstack([A, rps_row], format="csr")
+        blocks.append(rps_row)
+        del rps_row
         row_lower = np.concatenate([row_lower, [rhs]])
         row_upper = np.concatenate([row_upper, [np.inf]])
 
@@ -2315,10 +2413,11 @@ def build_constraints(
                 posture_mlf=reserve_posture_mlf,
                 pergen_ramp10=reserve_pergen_ramp10,
             )
-            A = sp.vstack([A, res_block], format="csr")
+            blocks.append(res_block)
+            del res_block
             row_lower = np.concatenate([row_lower, res_lower])
             row_upper = np.concatenate([row_upper, res_upper])
-            return A, row_lower, row_upper
+            return _vstack_csr_free(blocks, layout.total_columns), row_lower, row_upper
         elig = (
             np.ones(layout.n_gen, dtype=bool)
             if reserve_eligible is None
@@ -2342,11 +2441,12 @@ def build_constraints(
             reserve_supply_cap=reserve_supply_cap,
             storage_duration_h=reserve_storage_duration_h,
         )
-        A = sp.vstack([A, res_block], format="csr")
+        blocks.append(res_block)
+        del res_block
         row_lower = np.concatenate([row_lower, res_lower])
         row_upper = np.concatenate([row_upper, res_upper])
 
-    return A, row_lower, row_upper
+    return _vstack_csr_free(blocks, layout.total_columns), row_lower, row_upper
 
 
 def build_variable_bounds(
