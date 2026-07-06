@@ -1,4 +1,4 @@
-iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis
+iso,zone,plant_class,driver,threshold,floor_pct,enabled,commit_frac,min_stable_pct,rho,n,baseline,baseline_commit,threshold_basis,threshold_percentile
 NEISO,Connecticut,ST_GAS,tmax,32.2,0.12,False,1.0,0.12,0.2307,41,0.3414,1.0,hot: zone p95 tmax (design cooling day)
 NEISO,Connecticut,ST_GAS,tmin,-14.3,0.12,False,1.0,0.12,0.7178,8,0.4139,1.0,cold: zone p1 tmin (design heating day)
 NEISO,Connecticut,CC_REGULAR,tmax,32.2,0.5178,False,0.9959,0.52,0.0161,64,0.659,0.8797,hot: zone p95 tmax (design cooling day)
@@ -23,4 +23,4 @@ NEISO,Central,CT_PEAKER,tmin,-11.69,0.337,False,0.8869,0.38,-0.1539,5,0.5723,0.8
 NEISO,Connecticut,CT_CHP,tmax,32.2,0.0964,False,0.2536,0.38,-0.0025,56,0.1585,0.2536,hot: zone p95 tmax (design cooling day)
 NEISO,North,CC_REGULAR,tmax,30.02,0.4863,False,0.9351,0.52,0.2128,55,0.373,0.7255,hot: zone p95 tmax (design cooling day)
 NEISO,North,CC_REGULAR,tmin,-17.92,0.4182,False,0.8043,0.52,-0.1818,11,0.3843,0.7353,cold: zone p1 tmin (design heating day)
-NEISO,Connecticut,ST_GAS,netload,16.02,0.0336,True,0.2796,0.12,0.5096,329,0.005,0.013,netload: system p70 daily-peak net-load (demand - VRE) GW [rule-19 re-grounding of the two disabled ST_GAS temperature limbs 2026-07-06]
+NEISO,Connecticut,ST_GAS,netload,16.02,0.0336,True,0.2796,0.12,0.5096,329,0.005,0.013,netload: system p70 daily-peak net-load (demand - VRE) GW [rule-19 re-grounding of the two disabled ST_GAS temperature limbs 2026-07-06],70
