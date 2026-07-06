@@ -14,7 +14,10 @@ CAMPD, eGRID and EIA-923 actuals.
 ## Quickstart
 
 The project is built and run with [`uv`](https://docs.astral.sh/uv/) (Python
-3.11+); exact dependency versions are pinned in `uv.lock`.
+3.11+); exact dependency versions are pinned in `uv.lock`. This is the
+canonical install path — `run-simulator.sh` / `run-simulator.bat`
+(`tools/launcher.py`) are an optional desktop-launcher alternative for running
+a backcast from a local browser UI instead of the CLI.
 
 ```bash
 # 1. Clone
@@ -32,20 +35,29 @@ uv run python scripts/run_calibration_full.py --iso ERCOT --year 2024
 uv run python -m pytest -q
 ```
 
+Step 3 above is a single-year **smoke test**, not a calibration keeper —
+CLAUDE.md rule 16 requires every registered keeper to solve and score *all*
+available backcast years (e.g. `--year 2023 2024 2025`) in one bundle.
+
 The installed console script exposes the scenario runner directly:
 
 ```bash
 uv run market-sim --help                 # subcommands: run, sweep, ensemble
-uv run market-sim run --config <scenario.yaml> [--iso ERCOT]
+uv run market-sim run --config configs/scenarios/ercot_base.yaml [--iso ERCOT]
 uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 ```
 
-> **Test status:** the suite collects ~1900 tests (1937 as of this writing). A
-> handful of *known, pre-existing* failures are tied to optional local data and
-> are unrelated to setup — the four `test_eia_loader` CAISO/NYISO zonal-share
+> **Test status:** the root suite is scoped to `tests/` via
+> `[tool.pytest.ini_options] testpaths` and collects 2931 tests (as of this
+> writing — re-run `pytest --collect-only -q` for the current count). A
+> handful of *known, pre-existing* failures are tied to optional local data and are
+> unrelated to setup — the four `test_eia_loader` CAISO/NYISO zonal-share
 > fallback cases, plus a NEISO committed-artifact determinism check. A clean
 > checkout reports almost all passing / 2 skipped alongside these. Don't chase
-> them as part of a docs or environment change.
+> them as part of a docs or environment change. `scope2-lce-portfolio/` is a
+> standalone tool with its own `pyproject.toml` and test suite (see its
+> README); it depends on the separate `lce_portfolio` package, not this
+> project's environment, and is excluded from the root run.
 
 ### Without `uv`
 
@@ -61,6 +73,8 @@ requirements.txt`); regenerate it from the lockfile rather than hand-editing
 market-simulator/
 ├── src/market_sim/      # The simulator package: config, data loaders, LP model,
 │                        #   policy, results, and the runner CLI entry point.
+├── configs/             # Committed scenario/sweep YAMLs, e.g. scenarios/ercot_base.yaml
+│                        #   (the `market-sim run --config` example) and scenario_matrix.yaml.
 ├── data/                # Input datasets — raw/ (sources), dictionary/ (schema docs).
 │                        #   Read-only at runtime; see data/README.md.
 ├── scripts/             # Calibration backcasts, data builders, and analysis/probe
@@ -74,7 +88,10 @@ market-simulator/
 │                        #   (data auto-built at deploy from those payloads).
 ├── learning-hub/        # Scrollytelling explainers (LP dispatch, storage, zones…).
 ├── tools/               # Desktop launcher UI (tools/launcher.py).
-├── results/             # Cached run outputs and golden baselines.
+├── results/             # Cached run outputs and golden baselines, incl. results/hindcast/
+│                        #   (capacity-hindcast validation runs, W2-P5).
+├── scope2-lce-portfolio/ # Standalone Scope-2 hourly LCE portfolio tool; consumes market-sim
+│                        #   output but has its own package, deps and tests (no import market_sim).
 └── context/             # Reference-model summaries for the reviewer agent
                          #   (placeholder — see context/README.md).
 ```
