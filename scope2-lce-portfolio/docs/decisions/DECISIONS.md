@@ -1,9 +1,11 @@
 # Decision Log (ADRs)
 
-Running record of design decisions for the LCE portfolio tool. Each planning
-session (`docs/planning-sessions/PS-*`) ends by adding a numbered ADR here (copy
-`0000-template.md`). Prompt packs (`docs/prompt-packs/PP-*`) cite the ADR numbers
-they implement. Keep entries short; link to the session prompt and any analysis.
+Running record of design decisions for the LCE portfolio tool. Each decision
+session ends by adding a numbered ADR here (copy `0000-template.md`). The
+PS-NN/PP-NN identifiers in the index refer to the planning-session and
+build-prompt docs that drove the initial build; those scaffolding docs were
+removed at handoff cleanup (2026-07-06) and live in git history. Keep entries
+short; link to any analysis.
 
 ## Status legend
 
