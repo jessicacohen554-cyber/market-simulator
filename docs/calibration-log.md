@@ -40,6 +40,111 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — NEISO — L-49 confirmation re-solve: keeper `neiso-49-stgas-netload` MOVED at HEAD, but NOT from the #1515 item under review; C7 confirmed SKIPPED per the immateriality-cutoff action item
+
+**Scope (confirm-only, no re-tune, no fit-criteria change).** Re-solved the
+registered keeper `2026-07-06-neiso-49-stgas-netload` config verbatim —
+`python scripts/run_calibration_full.py --iso NEISO --year 2023 2024 2025
+--commitment --reliability-floor --hydro-backfill-year 2024
+--hydro-eia930-monthly --gas-hub-basis-daily --scarcity-price-overlay
+--tranche-startup-amortization` — on current `main` HEAD, full 2023-2025
+span in one invocation, into a throwaway bundle
+(`results/calibration/neiso49_resolve_confirm/`, not registered, not a
+keeper, no dashboard entry). Compared against the committed bundle
+(`results/calibration/neiso_stgas_netload/`) and the dashboard's rendered
+payload (`frontend/data/backcast/runs/2026-07-06-neiso-49-stgas-netload.js`,
+read-only — decoded, not re-registered).
+
+**C7 action item closed.** Per the 2026-07-06 rubric-immateriality entry
+above, confirmed `metrics.json`'s `shape` criterion for this bundle reads
+`SKIPPED` (ST_GAS is 0.05-0.10% of NEISO load, under the 2.5% D-1 gate) —
+the prior session's requested confirmation is done.
+
+**C1 (fuel-mix): unchanged.** Gas TWh model 54.23/58.76/61.53 (2023-25) vs
+registered 54.16/58.69/61.53 — deltas ≤0.07 TWh (<0.15% relative); coal,
+nuclear, wind, solar byte-identical. STANDS.
+
+**C3b (price shape, monthly NRMSE): unchanged.** Recomputed demand-weighted
+monthly LMP from `system.parquet` directly (score_price_shape's own method):
+NRMSE 0.149/0.169/0.065 (2023-25) vs registered ~0.169 (2024, per the
+neiso-49 log entry) — matches to 3 decimals. STANDS.
+
+**C3a (mean LMP): MOVED — 2023 crosses CAVEAT → FAIL, but not from #1515.**
+
+| year | actual RT | registered model (err) | HEAD model (err) | band shift |
+|---|---|---|---|---|
+| 2023 | 35.70 | 32.74 (−8.3%, CAVEAT) | 31.98 (−10.4%, **FAIL**) | commercial-band → beyond |
+| 2024 | 39.50 | 36.43 (−7.8%, CAVEAT) | 36.11 (−8.6%, CAVEAT) | caveat deepens, no flip |
+| 2025 | 65.89 | 64.84 (−1.6%, PASS) | 62.98 (−4.4%, PASS) | stays in target band |
+
+Root cause **isolated and it is NOT the #1515 ST_GAS netload mechanism under
+review**: a counterfactual re-solve on HEAD with the ST_GAS netload row's
+`threshold_percentile` blanked (reverting to the literal 16.02 GW basis the
+keeper was solved on) reproduces the SAME price drift (2023 avg 31.99, 2024
+36.12, 2025 62.98 — all within noise of the as-is HEAD numbers, nowhere
+close to the registered 32.74/36.43/64.84). The real driver: **NEISO's
+HQ_import zonal price separation has collapsed to zero at HEAD.** The
+registered bundle shows a real congestion split every year (mainland vs
+HQ_import, $/MWh): 2023 32.74/31.99, 2024 36.43/36.12, 2025 64.84/62.98. The
+fresh HEAD resolve (and the counterfactual) show **all five zones clearing
+at one uniform system price** every year, converging to what used to be the
+(lower) HQ_import-side price. This is unrelated to ST_GAS/#1515 — it traces
+to something else in the ~15 other commits merged between the keeper's solve
+commit (`ac11191`, dirty) and current HEAD (`dd85d5a`). Best candidate,
+un-bisected (out of this lane's scope): `530afc3` "Stage 6: unify per-year
+fleet assembly on shared build_base_fleet/build_dispatch_fleet" — it
+explicitly touches NEISO-specific fleet plumbing (`apply_neiso_coldsnap_derate`,
+`imports_after_hydro` "the backcast's historical LP column order") and is
+claimed value-identical, which a zonal-separation regression would quietly
+violate. **Flagging for the owner — not root-caused further under this
+confirm-only lane.**
+
+**#1515 effect, isolated and quantified (ST_GAS is immaterial, <0.1% of ISO
+load — doesn't gate C7 or anything else, per the SKIPPED status above):**
+
+| year | flagged days (fixed 16.02 GW, = keeper basis) | flagged days (p70-on-engine-netload, HEAD default) | ST_GAS energy, keeper → HEAD (TWh) |
+|---|---|---|---|
+| 2023 | 27 | **126** | 0.049 → 0.056 |
+| 2024 | 36 | **118** | 0.004 → 0.008 |
+| 2025 | 58 | **121** | 0.007 → 0.013 |
+
+D-1 ST_GAS verdict pattern is unchanged either way (2023 FAIL, 2024 FAIL,
+2025 pass); only the cv_ratio magnitude moves (e.g. 2023: 4.61 fixed →
+1.80 p70). D-2 forced share stays sub-percent of ISO load both ways.
+**Design concern for the owner:** `threshold_percentile` recomputes p70 on
+the engine's *own* daily net-load series, which by construction always
+flags ~30% of days (126/118/121 ≈ 30-35% of the year) — it cannot converge
+toward the real committed-day counts (22/20/58/yr, ~6-16%) any better than
+a fixed external threshold could, and here it's 2-5x further from them than
+the original 27/36/58 fixed-threshold count was. The stated goal
+("engine flags ~30% of days... matching actual committed-day counts",
+`5e059c4`) doesn't hold up under this re-solve.
+
+Other floors (CC_REGULAR, the only other `enabled=True` row) are unaffected:
+forced share 0.59-1.05% of class both before and after, unchanged to 3
+decimals. C8 stays PASS.
+
+**Verdict: MOVED, but not by the wave item this lane was scoped to confirm.**
+C3a 2023 would score FAIL at HEAD instead of the registered CAVEAT — a
+genuine drift in a load-bearing criterion, driven by an unattributed
+zonal-pricing change elsewhere on `main`, not by `#1515`. Per LANE scope, no
+re-tune, no fit-criteria change, no keeper flip: `keepers.json`, `status.js`,
+and the registered `neiso_stgas_netload` bundle are untouched. Recommend the
+owner (a) bisect the HQ_import zonal-separation regression (candidate
+`530afc3`) before treating neiso-49 as clean at today's HEAD, separately
+from (b) the `threshold_percentile` design question above — given it
+2-5x-overflags days relative to reality and the class it governs is
+immaterial regardless (SKIPPED either way), the case for gating it off by
+default and keeping the keeper on its original fixed-threshold basis looks
+stronger than re-attesting it — but that call belongs to the owner, not
+this lane.
+
+Bundle: `results/calibration/neiso49_resolve_confirm/` (as-is HEAD resolve)
++ `results/calibration/neiso49_resolve_confirm/counterfactual_fixed_threshold/`
+(isolation counterfactual, `threshold_percentile` reverted to blank for
+this test only — the committed CSV is untouched). Neither is registered on
+the dashboard; both are throwaway confirmation artifacts.
+
 ### 2026-07-06 — Rubric — C7 immateriality cut-off: a gated class under 2.5% of ISO total load no longer C7-gates (owner decision; supersedes the same-day compute-scoping note below)
 
 **Owner decision, restated and widened.** The prior entry below framed the
