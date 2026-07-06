@@ -90,9 +90,14 @@ def _old_inline_import_fleet(config, iso, year, border_carbon):
     ):
         import_generators = build_reference_price_node(iso)
     else:
+        # Deliberate post-freeze amendment (2026-07-06): build_export_sinks
+        # gains year= with the EXPORT_TRANCHES_BY_YEAR feature (NEISO measured
+        # seam ladders) — both paths resolve exports through the same
+        # year-grounded lookup, so the oracle still checks the spec plumbing,
+        # not the new feature.
         import_generators = build_import_generators(
             iso, border_carbon, year=year
-        ) + build_export_sinks(iso)
+        ) + build_export_sinks(iso, year=year)
     if getattr(config, "miso_firm_imports", False):
         import_generators = import_generators + build_miso_firm_imports(
             iso, year=year, mode=getattr(config, "mode", "forecast")
@@ -213,6 +218,35 @@ def test_static_ladder_year_resolution_nyiso():
         expected = IMPORT_TRANCHES_BY_YEAR["NYISO"][year]
         got = [(g.name, g.pmax_mw, g.vom) for g in gens[: len(expected)]]
         assert got == [(n, c, m) for n, c, m in expected]
+
+
+def test_static_ladder_year_resolution_neiso():
+    """NEISO's measured year-grounded ladders resolve on BOTH sides of the
+    node — imports (IMPORT_TRANCHES_BY_YEAR) and export sinks
+    (EXPORT_TRANCHES_BY_YEAR) — and an unmapped year falls back to the
+    pooled static ladders."""
+    from market_sim.config.interchange_config import EXPORT_TRANCHES_BY_YEAR
+
+    for year in (2023, 2024, 2025):
+        config = _FakeConfig(weather_year=year)
+        _, gens = _new_path(config, "NEISO", year, 0.0)
+        imp = IMPORT_TRANCHES_BY_YEAR["NEISO"][year]
+        exp = EXPORT_TRANCHES_BY_YEAR["NEISO"][year]
+        assert len(gens) == len(imp) + len(exp)
+        got_imp = [(g.name, g.pmax_mw, g.vom) for g in gens[: len(imp)]]
+        assert got_imp == [(n, c, m) for n, c, m in imp]
+        got_exp = [(g.name, -g.pmin_mw, g.vom) for g in gens[len(imp) :]]
+        assert got_exp == [(n, c, m) for n, c, m in exp]
+        # No-wash ordering: every sink strictly below the cheapest import
+        # rung (single-node reconciliation — see EXPORT_TRANCHES comment).
+        assert max(m for _, _, m in exp) < min(m for _, _, m in imp)
+    # Forecast years fall back to the pooled static ladders.
+    config = _FakeConfig(weather_year=2030)
+    _, gens = _new_path(config, "NEISO", 2030, 0.0)
+    static_imp = IMPORT_TRANCHES["NEISO"]
+    assert [(g.name, g.pmax_mw, g.vom) for g in gens[: len(static_imp)]] == [
+        (n, c, m) for n, c, m in static_imp
+    ]
 
 
 def test_static_ladder_explicit_year_overrides_weather_year():
