@@ -313,10 +313,14 @@ def build_winter_fuel_budget(
 # Fuel-secure steam classes ISO-NE postures for winter energy security: coal and
 # the oil-capable gas-steam fleet (the units that hold on-site distillate and can
 # run when pipeline gas is short). This is the class scope the WRP/IEP/OFSA
-# posture targets, and it is exactly the pair the disabled reliability-floor tmin
-# cold limbs named (COAL / ST_GAS) — Component B re-grounds that phenomenon on the
-# program posture rather than a thin-sample temperature correlation.
-_WINTER_FUELSEC_CLASSES: tuple[str, ...] = ("COAL_BIT", "ST_GAS")
+# posture targets, and it is exactly the classes the disabled reliability-floor
+# tmin cold limbs named (NEISO North COAL, Connecticut ST_GAS) — Component B
+# re-grounds that phenomenon on the program posture rather than a thin-sample
+# temperature correlation. Both coal taxonomy labels are included: the NEISO
+# fleet tags its (bituminous) coal fleet "COAL" (plant_taxonomy fallback), while
+# "COAL_BIT" is carried where the CAMPD coal-class resolver fires — Component B
+# must floor the fuel-secure coal fleet whichever label it wears.
+_WINTER_FUELSEC_CLASSES: tuple[str, ...] = ("COAL", "COAL_BIT", "ST_GAS")
 
 # Steam commitment spans a multi-day cold event (a committed boiler is not cycled
 # on the single coldest calendar day). Mirrors the reliability engine's steam
