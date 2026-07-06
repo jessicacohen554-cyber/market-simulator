@@ -16,6 +16,32 @@ model code changed.** Extends `docs/backcast-measured-data-audit-2026-06.md`
 
 ---
 
+## Supersession notice (2026-07-06)
+
+The **July 2026 gap register** (`docs/gap-register-2026-07.md`) is now the master
+tracking document. Open items from this sweep are tracked there as follows:
+
+| This doc | Status | July register | Notes |
+|----------|--------|---------------|-------|
+| G1 (flagship AS co-opt) | PART | **G-20, G-22, G-25, W22** | Scarcity formation + ERCOT shape + commitment fidelity + AS co-opt workstream |
+| G2 (RTORDPA bridge) | BRIDGE | — | No build needed; retires under RTC+B |
+| G3 (ECRS requirement) | DSGN | **G-20, W22** | Folded into scarcity + AS co-opt workstream |
+| G4 (Load-resource RRS-UFR) | DSGN | **G-20, W22** | Folded into scarcity + AS co-opt workstream |
+| G5 (storage AS) | **DONE** | **G-38 (DONE)** | Both closed |
+| G6 (Waha net-load gas) | **CLOSED** | — | Done before the July register |
+| G7 (HSL + curtailment) | **BUILT** | W22 Stage 3 (HSL intake credential-blocked) | Wiring done; ERCOT NP6 data intake still blocked |
+| G8 (CAISO intertie ref-pricing) | **BUILT** | — | Done before the July register |
+| G9 (hydro budget) | **DONE** | — | Done before the July register |
+| G10 (NYISO import recon) | **DONE** | — | Done before the July register |
+| G11 (MISO neighbor-HR) | PART | **G-26** (scalar family) | Neighbor-implied-HR forecast improvement |
+| G12 (outage maintenance profile) | **BUILT** | — | Done before the July register |
+| G13 (weather-year ensemble) | **BUILT** | — | Done before the July register |
+
+**8 of 13 items are DONE/BUILT/CLOSED.** The 4 open items (G1, G3, G4, G11) plus G2
+(no action needed) are tracked in the July register; update status there, not here.
+
+---
+
 ## The admissibility test (CLAUDE.md #10, spec §1.7)
 
 A measured input is **allowed even in backcast** when it is grounded in physics
@@ -260,6 +286,8 @@ Only the PART / DSGN / FORBID items need a forward design. Ordered by cluster.
 
 ### G1 [FLAGSHIP] Endogenous multi-product AS co-optimization (ERCOT DAM-AS overlay)
 
+> **Tracked in July register as G-20 / G-22 / G-25 / W22.** Status unchanged (PART).
+
 **Forward analogue.** Replace the post-solve measured-MCPC adder with the
 endogenous AS demand-curve co-optimization that the RTC+B market actually runs.
 The single-product version exists (`ercot_ordc_demand_steps` builds a
@@ -312,6 +340,8 @@ endogenous replacement is exactly G1.
 
 ### G3 ERCOT ECRS (and the other AS) requirement-setting methodology
 
+> **Tracked in July register as G-20 / W22.** Status unchanged (DSGN).
+
 **Forward analogue.** ERCOT sizes ECRS/RegUp/RRS from forward drivers it
 publishes: net-load ramp risk, forecast-error quantiles, and largest-contingency
 / load-ratio shares. Implement the requirement as `req_product(t) = f(net_load(t),
@@ -324,6 +354,8 @@ out of the energy stack every active hour, so a forward run with it inert
 under-prices the broad tight-but-not-scarce mid-range from mid-2023 on.
 
 ### G4 ERCOT load-resource RRS-UFR credit
+
+> **Tracked in July register as G-20 / W22.** Status unchanged (DSGN).
 
 **Forward analogue.** Load-resource AS participation is **enrollment-driven**: a
 forecast of demand-response MW enrolled in RRS-UFR (a growing, policy/market
@@ -538,6 +570,8 @@ measured −23.45 / −20.35 / −19.09) and by `tests/test_import_node_reconcil
 
 ### G11 MISO neighbor-HR forward
 
+> **Tracked in July register as G-26** (scalar family). Status unchanged (PART).
+
 **Forward analogue exists (structural HR fallback)** but is a flat mean that
 under-prices dear-gas years. Improve to a **gas-price-elastic implied HR** (the
 neighbor's market heat rate as a function of its gas price / load), so the seam
@@ -592,11 +626,11 @@ first.
 | # | Item | Why now | Effort | Forecast materiality |
 |---|---|---|---|---|
 | **P0 ✅ DONE 2026-06-25** | **Retire `ct_deployment_overlay` from the NEISO keeper** (Finding 0): re-solved as `neiso-33-no-ctfloor` with it off (dispatch- & determination-neutral), pruned the flag from the lineage `prb_overrides` bag; cross-keeper bag audit clean (only NEISO carried it; PJM `retiree_cems_cap` is an admissible availability cap, not a pin). | Live #10 violation in a keeper; pure hygiene, no new methodology. | S | n/a (correctness/governance) |
-| **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
+| **P1** | **Flagship: endogenous multi-product AS co-opt (G1)** + its requirement-setting (G3) and the commitment-screen phantom-headroom fix. Bundle ECRS/load/storage requirements since they feed the same stack. **→ Tracked in July register as G-20/G-22/G-25/W22 (L-12 ERCOT lane).** | The single largest "ingests measured realization" lever; unblocks ERCOT scarcity pricing forward and is the spec's documented B5a structural gap. | L | High (scarcity → entry/retirement/revenue signals) |
 | ~~**P2**~~ | ~~**CAISO intertie reference-pricing + corridor ATC (G8)**~~ **DONE 2026-06-25** | CAISO is import-dominated; both levers went fully inert in forecast. **Built**: `caiso_intertie_reference_price` + `caiso_corridor_atc_forward`; keeper `caiso_intertie_forward_3yr`. | M×2 | Med-High (CAISO price formation) |
 | ~~**P3**~~ | ~~**Storage energy-vs-AS opportunity-cost co-opt (G5)**~~ **DONE 2026-06-27** | Completes the AS stack; matters more each year as the battery fleet grows. **Built**: `ercot_storage_as_endogenous`; run `164`. | L | Med (rising) |
 | **P4** | **HSL forecast VRE CF + endogenous curtailment (G7)** | Curtailment is first-order and rises with penetration; 2024/25 currently unmodeled. **ERCOT NP6 2024/25 intake attempted 2026-07-05, blocked on ERCOT account credentials — G7 gross-up fallback stands.** | M-L | Med |
-| **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11)** ~~NYISO import-recon forward (G10)~~ ✅ **G10 done 2026-06-25** | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
+| **P5** | **Load-resource RRS-UFR (G4), Waha neg-day (G6), MISO neighbor-HR elasticity (G11)** ~~NYISO import-recon forward (G10)~~ ✅ **G10 done 2026-06-25**. **→ G4 tracked in July register as G-20/W22; G11 as G-26.** G6 CLOSED. | Smaller residual measured inputs with clear, cheap forward formulas. | S-M each | Low-Med |
 | **P6** | **Hydro budget forward (G9 — ✅ done 2026-06), outage monthly maintenance shape (G12 — ✅ done 2026-06-25), weather-year ensemble (G13 — ✅ done 2026-06)** | Robustness/shape refinements; forecast defaults already function. | M each | Low |
 
 **Do-nothing-needed (already forward):** F923 → AEO supply path, gas monthly
