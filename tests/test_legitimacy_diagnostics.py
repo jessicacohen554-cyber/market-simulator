@@ -761,6 +761,80 @@ class TestD2KeepersVerify:
         assert "keeper1" in res.failures[0]
         assert "0.111" in res.failures[0] and "0.6" in res.failures[0]
 
+    def test_immaterial_class_drift_is_skipped(self, tmp_path, monkeypatch):
+        """An immaterial class (< 2.5 % of load, never gates) whose forced_share
+        differs between the committed artifact and a fresh floor rebuild is
+        SKIPPED, not failed. Its near-zero-denominator share is numerically
+        unstable across machines (float-summation order in the rebuild), so a
+        strict compare would false-positive; the staleness check only needs the
+        MATERIAL, gate-relevant shares to reproduce."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {
+                "year": 2023,
+                "class": "ST_GAS",
+                "forced_share": 0.5549,
+                "immaterial": True,
+            },
+        ]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "NEISO", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {
+                            "year": 2023,
+                            "class": "ST_GAS",
+                            "forced_share": 0.5671,  # drifted, but immaterial
+                            "immaterial": True,
+                        }
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert res.passed
+        assert res.rows[0]["verdict"] == "skip (immaterial)"
+
+    def test_material_class_drift_still_fails(self, tmp_path, monkeypatch):
+        """The immaterial skip must NOT weaken the staleness check for a
+        material (gate-relevant) class — a real drift there still fails."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {
+                "year": 2023,
+                "class": "ST_GAS",
+                "forced_share": 0.40,
+                "immaterial": False,
+            },
+        ]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "NYISO", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {
+                            "year": 2023,
+                            "class": "ST_GAS",
+                            "forced_share": 0.55,
+                            "immaterial": False,
+                        }
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert not res.passed
+        assert any("ST_GAS" in f for f in res.failures)
+
     def test_missing_committed_artifact_notes_not_fails(self, tmp_path, monkeypatch):
         """A keeper with no committed legitimacy_diagnostics.json yet (e.g.
         G-01/G-02's MISO gap) is noted, not failed — that absence is a
