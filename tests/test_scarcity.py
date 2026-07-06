@@ -6,6 +6,7 @@ import pytest
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.results.scarcity import (
+    caiso_scarcity_overlay,
     effective_reliability_deployment_mw,
     ercot_market_regime,
     floor_active_mask,
@@ -374,3 +375,94 @@ def test_scarcity_prices_accepts_generic_iso_parameters():
     out = scarcity_prices(cfg, 2030, reserves, lam)
     assert np.all(out["scarcity_adder"] >= 0.0)
     assert np.all(out["scarcity_adder"] <= cfg.ordc_voll - lam)
+
+
+def _caiso_fleet(t: int = 24) -> FleetArrays:
+    """Fleet scaled for CAISO overlay tests (MCL 1,400 MW, sigma 2,500 MW)."""
+    pmax = np.array([5000.0, 3000.0, 2000.0])
+    avail = np.ones((3, t))
+    return FleetArrays(
+        pmax=pmax,
+        pmin=np.zeros(3),
+        heat_rate=np.full(3, 7.0),
+        vom=np.zeros(3),
+        emission_rate=np.zeros(3),
+        nox_rate=np.zeros(3),
+        so2_rate=np.zeros(3),
+        zone_idx=np.zeros(3, dtype=int),
+        fuel_type_idx=np.array(
+            [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"], FUEL_TYPE_MAP["gas_cc"]]
+        ),
+        availability=avail,
+        unit_ids=["g1", "g2", "g3"],
+        efficiency_bin=np.zeros(3),
+        plant_code=np.zeros(3, dtype=int),
+    )
+
+
+class TestCaisoScarcityOverlay:
+    """Tests for the CAISO post-solve scarcity overlay (Tariff §27.4.3.2)."""
+
+    def test_tight_reserves_produce_positive_adder(self):
+        """When reserves are below MCL the adder should be near VOLL - lambda."""
+        fa = _caiso_fleet(t=24)
+        dispatch = np.tile(fa.pmax[:, None] * 0.95, (1, 24))
+        storage_cap = np.array([500.0])
+        lam = np.full(24, 50.0)
+        adder = caiso_scarcity_overlay(
+            fa,
+            dispatch,
+            storage_cap,
+            storage_charge=np.zeros((1, 24)),
+            storage_discharge=np.zeros((1, 24)),
+            renewable_headroom=np.zeros(24),
+            system_lambda=lam,
+        )
+        assert adder.shape == (24,)
+        assert np.all(adder > 0.0)
+        assert np.all(adder <= 2000.0 - 50.0)
+
+    def test_ample_reserves_produce_near_zero_adder(self):
+        """With large headroom the LOLP-based adder should vanish."""
+        fa = _caiso_fleet(t=24)
+        dispatch = np.tile(fa.pmax[:, None] * 0.1, (1, 24))
+        storage_cap = np.array([500.0])
+        lam = np.full(24, 50.0)
+        adder = caiso_scarcity_overlay(
+            fa,
+            dispatch,
+            storage_cap,
+            storage_charge=np.zeros((1, 24)),
+            storage_discharge=np.zeros((1, 24)),
+            renewable_headroom=np.zeros(24),
+            system_lambda=lam,
+        )
+        assert np.all(adder < 1.0)
+
+    def test_adder_never_exceeds_voll_minus_lambda(self):
+        """The adder is capped at VOLL - lambda (no price above VOLL)."""
+        fa = _caiso_fleet(t=4)
+        dispatch = np.tile(fa.pmax[:, None], (1, 4))
+        storage_cap = np.array([0.0])
+        lam = np.array([100.0, 500.0, 1500.0, 1999.0])
+        adder = caiso_scarcity_overlay(
+            fa,
+            dispatch,
+            storage_cap,
+            storage_charge=None,
+            storage_discharge=None,
+            renewable_headroom=None,
+            system_lambda=lam,
+        )
+        assert np.all(adder <= 2000.0 - lam + 1e-9)
+        assert np.all(adder >= 0.0)
+
+    def test_mutual_exclusivity_with_reserve_coopt(self):
+        """caiso_scarcity_pricing + caiso_reserve_coopt must raise."""
+        with pytest.raises(ValueError, match="mutually exclusive"):
+            ScenarioConfig(
+                iso="CAISO",
+                caiso_scarcity_pricing=True,
+                energy_reserve_coopt=True,
+                caiso_reserve_coopt=True,
+            )

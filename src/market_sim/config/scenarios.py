@@ -1669,6 +1669,26 @@ class ScenarioConfig:
     # documented memory-gated follow-up, G-40). Requires energy_reserve_coopt
     # + miso_reserve_pergen; default off; GATED CHANGE (alters dispatch
     # volumes).
+    caiso_scarcity_pricing: bool = False  # CAISO: enable the post-solve
+    # power-balance scarcity price overlay (results.scarcity.caiso_scarcity_
+    # overlay). Adds a probabilistic LOLP × (VOLL - λ) adder to the scored
+    # energy prices using CAISO tariff-backed parameters (VOLL $2,000 per
+    # Tariff §39.6.1; MCL 1,400 MW / Diablo Canyon MSSC; σ 2,500 MW / FRP
+    # net-load uncertainty). Fires during evening net-load ramps and tight
+    # conditions where the LP's perfect foresight clears without scarcity
+    # rent the real market produces via penalty prices (Tariff §27.4.3.2,
+    # BPM MO §6.6.4). Zero fitted parameters; forward-derivable (σ scales
+    # with RE penetration, MCL tracks the largest contingency). Mutually
+    # exclusive with caiso_reserve_coopt under energy_reserve_coopt
+    # (rule 19 — one mechanism per phenomenon). CAISO-only; default off.
+    caiso_lcr_commitment_credit: bool = False  # CAISO: credit the LCR
+    # constraint dual (local-commitment value, $/MWh) in the P2 commitment
+    # margin, analogous to the AS-revenue credit (as_value). CAISO pays
+    # locally-committed units via BCR/CPM (Tariff §40.6); units in LCR areas
+    # whose local-capacity row binds earn the uplift dual as additional
+    # commitment revenue the hurdle would otherwise ignore, preventing P2
+    # from decommitting runs that P1 correctly clears for local reliability.
+    # Requires local_capacity_constraints=True. Default off; GATED CHANGE.
     caiso_reserve_coopt: bool = False  # CAISO: enable the per-generator
     # energy+reserve co-optimization (reserve_config._caiso_design, L-10). CAISO
     # is the only registered ISO whose reserve design was previously a hard
@@ -3563,6 +3583,17 @@ class ScenarioConfig:
         # #1492) is priced inside the shared reserve co-opt; without it the flag
         # would silently no-op (apply_reserve_coopt gates on energy_reserve_coopt
         # first). Require both so the mechanism the flag names is actually built.
+        if (
+            getattr(self, "caiso_scarcity_pricing", False)
+            and self.energy_reserve_coopt
+            and self.caiso_reserve_coopt
+        ):
+            raise ValueError(
+                "caiso_scarcity_pricing and caiso_reserve_coopt are mutually "
+                "exclusive (rule 19 — one mechanism per phenomenon): the "
+                "post-solve overlay and the in-LP co-opt both price CAISO "
+                "reserve scarcity. Enable one or the other, not both."
+            )
         if self.caiso_reserve_coopt and not self.energy_reserve_coopt:
             raise ValueError(
                 "caiso_reserve_coopt requires energy_reserve_coopt: the CAISO "
@@ -4186,6 +4217,8 @@ TIER_TAGS: dict[str, int] = {
     "caiso_intertie_reference_price": 1,
     "caiso_corridor_atc_forward": 1,
     "caiso_reference_price_seam": 1,
+    "caiso_scarcity_pricing": 1,
+    "caiso_lcr_commitment_credit": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
     "caiso_ra_mustoffer": 1,
