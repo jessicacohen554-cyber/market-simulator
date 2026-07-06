@@ -84,4 +84,8 @@ tests passing (2026-07-05).
 **Finalization for standalone handoff is staged as prompts in
 `docs/handoff/`** (HP-01..HP-05: annual-average LMP mode, bundled pull-out
 data, launcher results browser, docs site, final extraction QA). Start with
-`PLAN.md`, then `docs/00-overview.md` and `docs/01-lp-formulation.md`.
+`PLAN.md`, then `docs/how-it-works.md` (the single narrative mechanics doc),
+then `docs/00-overview.md` and `docs/01-lp-formulation.md`. There's also a
+self-contained HTML explainer site at
+[`docs/site/index.html`](docs/site/index.html) — open it directly in a
+browser, no server required.

@@ -1089,6 +1089,8 @@ def render_index(context: dict) -> str:
     <tbody id="runlog-body"></tbody>
   </table>
 </section>
+
+<footer><p>Docs: <a href="../docs/site/index.html">how it works</a></p></footer>
 <script>
 const CTX = {ctx_json};
 

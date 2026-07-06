@@ -1,8 +1,10 @@
 # Build Plan — Scope 2 Hourly LCE Portfolio Optimization Tool
 
-Handoff document. Read this, then `docs/`, then pick up the next open handoff
-prompt in `docs/handoff/`. The tool is intentionally **standalone and vendored** —
-no `import market_sim`.
+Handoff document. Read this, then `docs/how-it-works.md` (the narrative
+mechanics doc — or its visual counterpart, the self-contained
+[`docs/site/index.html`](docs/site/index.html) explainer site), then `docs/`,
+then pick up the next open handoff prompt in `docs/handoff/`. The tool is
+intentionally **standalone and vendored** — no `import market_sim`.
 
 ## 1. Purpose
 
