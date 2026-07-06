@@ -367,6 +367,59 @@ curtailment diagnostic or AS-forward-driver delta to report — nothing new was
 solved. Not a keeper or a probe; a data-availability dead end pending
 credentials, per the plan's egress caveat.
 
+### 2026-07-04 — NEISO — winter-fuel Component A probe pair: daily AGT basis closes the oil under-run; inventory cap INERT (keeper unchanged)
+
+*(Entry written 2026-07-06 as the U-01 closure — the two probes were registered on the
+dashboard in-session on 2026-07-04 per rule 15, but this log entry was missed; gap register
+`docs/gap-register-2026-07.md` §3.8 U-01. Reconstructed from the committed bundles
+(`meta.json`/`run_config.json`, git_sha `bc26e6a`, both solved 2026-07-04T17:07) and the
+registry sidecars — no re-run.)*
+
+**Goal (winter-fuel plan, `docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md`
+Component A).** First LP exercise of the seasonal (Nov–Mar) oil-burn inventory budget
+(`winter_fuel_inventory.py` + `dispatch.py:_build_oil_budget_rows`, GATED
+`neiso_winter_fuel_inventory` default off): one pooled fleet row per winter month, budget =
+WRP-low 2.8 M bbl start-fill + 2 refills/season amortized monthly, MMBtu-weighted
+(`HR[g]·P[g,t]`), scope = oil-primary units + the dual-fuel gas units' oil limb gated to
+exogenous oil-switch hours. All inputs forward-derivable capacity/logistics quantities
+(OFSA/WRP; `docs/multi-iso/neiso-winter-fuel-data-audit.md`), never measured burn/receipts —
+the admissible replacement for the rejected neiso-40 F923-receipts budget.
+
+**A/B pair (single-flag delta, config otherwise identical; full span 2023–2025, one bundle
+each, P1+P2):**
+
+- **`2026-07-04-neiso-dailybasis-oil-underrun`** (bundle `neiso-daily-basis-a-off`) —
+  measured daily Algonquin-Citygate gas basis (`gas_hub_basis_daily`, mean-preserving) ON,
+  inventory budget OFF. This is the Component-A ablation twin AND a finding in its own
+  right: **the daily basis closes the winter oil under-run endogenously** — model oil
+  0.35/0.23/1.47 TWh (2023/24/25) vs EIA-930 0.32/0.37/1.24, where the monthly-basis keeper
+  ran ~0/~0/0.04. Daily basis is an admissible measured delivered-fuel input (rule 13);
+  annual gas volumes unchanged. Price still caps at dual-fuel oil parity (~$258); 0 h >$300
+  all years — the C3c scarcity tail is NOT a fuel-pricing question.
+- **`2026-07-04-neiso-inventorycap-inert-probe`** (bundle `neiso-daily-basis-a-low`) — same
+  config + `neiso_winter_fuel_inventory=True` (start_fill 2.8 M bbl, the WRP low bound).
+  **RESULT: byte-identical dispatch and prices to the twin — the cap is INERT.** Even the
+  heaviest oil month (Jan-2025, 0.755 TWh oil) sits below the ~0.91 TWh/month budget. Not
+  tuned to force binding (rule 1): the budget is what the WRP/OFSA logistics say it is; a
+  smaller number would be a fitted answer. Negative result, registered per rule 15.
+
+**Reading (design input for Component B).** The realized winter oil burn — now at the
+measured level thanks to the daily basis — consumes only ~60–80% of one month's
+logistics-derived budget even in the worst month, because the LP burns oil only in the
+parity-switch hours of a *price-taking* dispatch. The real fleet's winter draw is larger
+and lumpier: ISO-NE *commits* fuel-secure steam units (winter programs / Mystic-style
+retention) ahead of cold snaps, burning stock the pure energy-economics dispatch never
+touches. Component A alone therefore cannot bind, and cranking its budget down to force
+binding is forbidden (rule 1). The mechanism that draws the stock — the winter
+fuel-security commitment (Component B) — has to exist before the inventory constraint has
+anything to ration. Keeper unchanged (`2026-07-03-neiso-47-fast-start` at the time; since
+superseded by `2026-07-05-neiso-48-ct-floor`).
+
+**U-01 (gap register §3.8) is CLOSED with this entry:** the probes WERE run to completion
+and registered (sidecars + runs payloads + slim bundles committed 2026-07-04); the rule-15
+breach was the missing log entry only, now written. Bundles verified complete against
+probe-class peers (meta + run_config; payloads decode all 3 years).
+
 ### 2026-07-04 — NYISO — CT offer grounding: measured-run fast-start v3 + oil screen + DEC 227-3 (nyiso 45/46): PROBES, keeper stays nyiso 41
 
 **Goal.** Ground the NYISO CT offer level — the repo-level blocker left by commit 0c6c833
