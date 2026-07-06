@@ -32,6 +32,11 @@ dev = [
 market-sim = "market_sim.runner:main"
 
 [tool.pytest.ini_options]
+# Scopes collection to the main suite. Without this, root `pytest` also walks
+# scope2-lce-portfolio/tests, whose conftest imports the standalone
+# `lce_portfolio` package (not a dependency of this project) and interrupts
+# collection entirely (G-47).
+testpaths = ["tests"]
 # Registered so `--strict-markers` does not error and ad-hoc marks can't slip in.
 # The clean-vs-raw parity tests (tests/test_consume_*.py) carry both: they
 # regenerate a slice of data/clean from raw and compare the clean-backed loader

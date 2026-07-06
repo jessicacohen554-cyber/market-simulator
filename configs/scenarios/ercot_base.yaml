@@ -1,0 +1,10 @@
+# Base ERCOT forecast scenario (G-46).
+#
+# The minimal, runnable `market-sim run --config` example the README and
+# docs/codebase/07-runner-and-cli.md point at. Every other ScenarioConfig
+# field (see src/market_sim/config/scenarios.py) is left at its default —
+# copy this file and add overrides for a sensitivity or a different ISO.
+mode: forecast
+iso: ERCOT
+start_year: 2026
+end_year: 2050
