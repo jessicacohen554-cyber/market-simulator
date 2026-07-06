@@ -42,6 +42,73 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-07-06 — NYISO — L-11 wave-3: Zone-K LCR/TSL mechanism (#1345) + #1344 dynamic-requirement channel + v2 plant-rate backcast wiring (nyiso 53): PROBES, keeper stays nyiso 41
+
+**Scope (lane L-11, gap register §5).** (1) Data-ask memo filed FIRST
+(`docs/handoffs/nyiso-data-asks-2026-07.md`): LI/NYC LDC citygate/interruptible
+delivered gas (G-13), the condition-varying downstate reserve-requirement series
+(the #1344 blocker), Iroquois Z2 price + EBB flows, per-interface tie flows.
+2023–2025 only; holdouts excluded by construction. (2) Issue #1344: the
+condition-varying locational reserve-requirement CHANNEL is built
+(`nyiso_dynamic_reserve_requirements`, default off; loader
+`data/nyiso_reserve_requirements.py`; drop zone `data/raw/NYISO-AS/requirements/`)
+— it threads a measured hourly requirement series into the in-LP co-opt
+families' `(T,)` requirement and HARD-ERRORS when the series is absent, so the
+flag can never quietly solve on the static values it claims to replace. The CC
+econ_high markup stays 1.0 (never re-armed, rules 13/26). Rule-19 reconcile:
+`nyiso_rcpf_enabled` (post-solve overlay) + `energy_reserve_coopt` is now a
+hard error in `_nyiso_design` — the overlay is the co-opt-off comparator only.
+LOYO scoring is the promotion gate ONCE the Ask-B series lands; until then the
+mechanism is structurally inert by design (data-blocked, honest). (3) Issue
+#1345: `nyiso_li_lcr_tsl` (default off) replaces the Long_Island 0.45
+self-supply energy floor with the published Zone-K construction — the locality
+import limit (325/275/275 MW, `data/raw/capacity-deliverability/nyiso/nyiso.csv`)
+caps the NYC→Long_Island link in the HB14-21 design-condition window; the floor
+skips LI via `exclude_zones` (rule 19, never stacked). Rule-14 boundary mapping
+empirically reconciled: measured top-100-load-hour LI implied inflow (CEMS
+gross gen + measured zonal load) 1,493/1,440/1,598 MW vs the mechanism's
+in-window capability (TSL + 1,200 MW external ties) 1,525/1,475/1,475 MW — the
+published construction lands within ~5% of the measured peak-hour boundary.
+
+**NEW WIRING FIND (G-39/§9.6, G-29 class): `use_plant_emission_rates_v2` was
+unreachable from every CAMPD-bins backcast.** The §9.6 ride-along assumed the
+flip is dispatch-affecting for RGGI-priced NYISO; the first nyiso-53 v2-on/off
+twin pair solved BYTE-IDENTICAL (same C3a, same C5a, same mean price to 3
+decimals) because `apply_plant_emission_rates_v2` was called only from
+`build_dispatch_fleet` (forecast path), never from `bins_to_fleet`. Fixed this
+session (config-gated, default-off byte-identical, tested); the v2 arm was
+re-solved on the fixed wiring. §9.6's "CAISO/NYISO/NEISO re-solve under v2"
+sequencing should note the fix is a precondition it silently lacked.
+
+**Probes (registered): `2026-07-06-nyiso-53-li-tsl` (nyiso-52 recipe + TSL +
+v2) and `2026-07-06-nyiso53-v2off-twin` (same, v2 off — the §9.6
+ablation−resolve attribution split).** Both NOT-YET (C6 unattested probes).
+Headline vs nyiso-52 on the same scoring basis: **C1 flips to PASS** (the
+standing 2024 ST_GAS −3.3 TWh HARD FAIL closes), **C3a −9.0/−10.9/−10.6%**
+(52: −13.5/−14.7/−12.5) and **C3b 0.182/0.221/0.190** (52: 0.213/0.247/0.203)
+— best NYISO price scores to date, from honest structure; C7 PASS holds; C3c
+0/0/7 h unchanged (needs #1344). v2's isolated contribution (twin delta):
+C1-2024 ST_GAS FAIL→PASS, C3a +2.4/+1.8/+0.4 pp, mean price +$0.61 — measured
+plant rates re-splitting the gas merit order under RGGI (rule 10). **C8:** the
+`nyiso_local_selfsupply` forcing channel is ELIMINATED and total floor-forced
+CT energy falls to 1.49/1.56/1.45 TWh (vs 1.84/2.87/1.86 forced by the
+selfsupply floor alone in the nyiso-48 C8-fail baseline) — the rule-20 number
+moved DOWN and nothing re-hides it — but the share-of-class rises to
+92.7/86.7/56.6% because CT economic energy collapses without reserve-scarcity
+price formation: idle-peaker phantom reserve, the downstate handoff's confirmed
+root cause, now nakedly visible instead of floor-masked. CT_PEAKER volume
+under-runs (1.60/1.79/2.57 vs actual 2.26/2.13/2.84) for the same reason.
+
+**Keeper recommendation (owner decision, no in-session swap):** nyiso-53
+supersedes nyiso-52 as the recommended eventual keeper config — it is strictly
+more structurally faithful (published TSL replaces the residual 0.45 scalar;
+measured plant rates replace HR-derived estimates; selfsupply forcing channel
+deleted) and better on C1/C3a/C3b/C8-ST. The live keeper stays
+`2026-07-03-nyiso-41-hub-prices` (STALE-VS-HEAD, G-13): C8-CT share and C3c
+remain hard-blocked on #1344 (Ask-B data) and the CT offer level on the Ask-A
+delivered-fuel intake. Retention: pruned `2026-07-03-nyiso-40-truedate-gas`
+and `2026-07-03-nyiso-42-band-deleak` (top-15).
+
 ### 2026-07-06 — CAISO — L-10 wave-3: G-11 drift bisect CLOSED, G-14 bundle corrected, G-15 zero-drag ablation (caiso 56): PROBE, keeper stays caiso 51
 
 **Goal (gap register §3.2 G-11/G-14/G-15, issue #1346, lane L-10).** (1) Bisect the caiso-51

@@ -233,5 +233,56 @@ class TestNyisoFleetBuild(unittest.TestCase):
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
 
 
+class TestNyisoBinsPlantEmissionRatesV2(unittest.TestCase):
+    """The v2 measured plant CO2 rates reach the CAMPD-bins (backcast) path.
+
+    G-39 §9.6 backcast-reachability fix: `use_plant_emission_rates_v2` was
+    silently unreachable from `bins_to_fleet` (the nyiso-53 v2-on/off twin
+    pair solved byte-identical). Flag off must stay byte-identical; flag on
+    must override binned NYISO plants' CO2 rates from the committed artifact.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.gens = load_fleet_from_csv("NYISO", get_iso_config("NYISO"))
+
+    def _fleet(self, **overrides):
+        config = ScenarioConfig(
+            iso="NYISO",
+            mode="backcast",
+            weather_year=2024,
+            chp_steam_following=True,
+            cc_peaking_per_plant=True,
+            **overrides,
+        )
+        synth = fleet_to_bins(self.gens, "NYISO", config)
+        fleet, _ = bins_to_fleet(synth, ZONES, config)
+        return fleet
+
+    def test_flag_off_is_byte_identical(self):
+        base = self._fleet()
+        off = self._fleet(use_plant_emission_rates_v2=False)
+        self.assertEqual(
+            [(g.unit_id, g.emission_rate_co2) for g in base],
+            [(g.unit_id, g.emission_rate_co2) for g in off],
+        )
+
+    def test_flag_on_overrides_binned_plant_rates(self):
+        base = {g.unit_id: g.emission_rate_co2 for g in self._fleet()}
+        on = self._fleet(use_plant_emission_rates_v2=True)
+        changed = [
+            g
+            for g in on
+            if g.plant_code > 0 and base.get(g.unit_id) != g.emission_rate_co2
+        ]
+        # The committed artifact carries measured rates for most of the CAMPD
+        # NYISO fleet — a material share of binned tranches must move.
+        self.assertGreater(len(changed), 50)
+        # And a moved rate is a physical CO2 intensity, not a garbage value.
+        for g in changed[:20]:
+            self.assertGreater(g.emission_rate_co2, 0.0)
+            self.assertLess(g.emission_rate_co2, 2.0)  # tonnes/MWh sanity
+
+
 if __name__ == "__main__":
     unittest.main()
