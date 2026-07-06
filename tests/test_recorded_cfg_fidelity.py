@@ -180,6 +180,9 @@ class TestRunCalibrationFullRecordedCfgSourceCoversFixedFields(unittest.TestCase
             "coal_lignite_mustrun_override",
             "coal_prb_mustrun_override",
             "caiso_perhub_firm_base",
+            "mass_cap_enabled",
+            "mass_cap_tons",
+            "mass_cap_program",
         ]
         for name in expected:
             with self.subTest(field=name):
