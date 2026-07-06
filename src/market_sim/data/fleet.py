@@ -891,7 +891,11 @@ RAMP10_FRAC_BY_FUEL: dict[str, float] = {
 }
 
 
-def _ramp10_capability(generators: list[Generator], pmax: np.ndarray) -> np.ndarray:
+def _ramp10_capability(
+    generators: list[Generator],
+    pmax: np.ndarray,
+    measured: dict | None = None,
+) -> np.ndarray:
     """Return the ``(n_gen,)`` 10-minute ramp capability (MW) for a fleet.
 
     ``RAMP10_FRAC_BY_GROUP[plant_group]`` (preferred, the per-plant CAMPD-bin
@@ -899,12 +903,27 @@ def _ramp10_capability(generators: list[Generator], pmax: np.ndarray) -> np.ndar
     unit's capacity. Generators in neither map (nuclear, hydro, wind, solar,
     storage, imports) get 0.0 — they provide no thermal upward operating
     reserve. See :attr:`FleetArrays.ramp10`.
+
+    When ``measured`` is given (``ScenarioConfig.measured_ramp_capability`` —
+    the ``ramp-capability`` clean datatype, plant_code →
+    :class:`~market_sim.data.ramp_capability.PlantRampCapability`), each
+    covered plant's class fraction is reconciled against its MEASURED EIA-860
+    fast-start capacity (floor) and CAMPD CEMS hourly ramp envelope (ceiling)
+    via :func:`market_sim.data.ramp_capability.measured_ramp10_frac`; uncovered
+    plants keep the class estimate (rule 14: measured preferred, estimate only
+    as fallback).
     """
+    from market_sim.data.ramp_capability import measured_ramp10_frac
+
     fracs = np.zeros(len(generators), dtype=float)
     for g_idx, gen in enumerate(generators):
         frac = RAMP10_FRAC_BY_GROUP.get(getattr(gen, "plant_group", "") or "")
         if frac is None:
             frac = RAMP10_FRAC_BY_FUEL.get(gen.fuel_type, 0.0)
+        if measured and frac > 0.0:
+            cap = measured.get(int(getattr(gen, "plant_code", 0) or 0))
+            if cap is not None:
+                frac = measured_ramp10_frac(frac, cap)
         fracs[g_idx] = frac
     return fracs * pmax
 
@@ -2038,6 +2057,21 @@ def generators_to_fleet_arrays(
                 dropped,
             )
 
+    # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
+    # default off): reconcile the class 10-minute fractions against the
+    # ramp-capability clean datatype (EIA-860 "10M" fast-start floor + CAMPD
+    # CEMS hourly-envelope ceiling, data/ramp_capability.py). Class fractions
+    # remain the uncovered-plant fallback.
+    _measured_ramp: dict | None = None
+    if (
+        config is not None
+        and getattr(config, "measured_ramp_capability", False)
+        and iso is not None
+    ):
+        from market_sim.data.ramp_capability import load_measured_ramp_capability
+
+        _measured_ramp = load_measured_ramp_capability(iso)
+
     return FleetArrays(
         pmax=pmax,
         pmin=pmin,
@@ -2056,7 +2090,7 @@ def generators_to_fleet_arrays(
         plant_group=np.array([g.plant_group for g in generators], dtype=object),
         min_gen=min_gen,
         min_gen_mechanism=min_gen_mech,
-        ramp10=_ramp10_capability(generators, pmax),
+        ramp10=_ramp10_capability(generators, pmax, measured=_measured_ramp),
     )
 
 

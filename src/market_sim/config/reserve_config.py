@@ -1082,18 +1082,22 @@ def _pjm_design(
       eligible zone headroom, optionally re-scoped by the deliverable supply
       cap (``pjm_reserve_supply_cap``) and/or online gating
       (``pjm_reserve_online_gated``).
-    * Per-generator (``pjm_reserve_pergen``): one R column per reserve-eligible
-      unit with nonzero 10-min ramp (``R[j] ≤ FleetArrays.ramp10``), joint
-      ``P+R ≤ cap`` per unit-hour, and TWO nested measured balance families per
-      Manual 11 sec 4.2 — the RTO Reserve Zone (``pr_req_mw``) and the
-      Mid-Atlantic/Dominion Reserve Subzone (``mad_pr_req_mw``, zones
+    * Per-generator (``pjm_reserve_pergen``): one R column per (zone,
+      fuel-class) pool of reserve-eligible units with nonzero 10-min ramp
+      (``R[r] ≤ Σ FleetArrays.ramp10 × availability``, hourly), joint
+      ``Σ P + R ≤ Σ cap`` per pool-hour, and TWO nested measured balance
+      families per Manual 11 sec 4.2 — the RTO Reserve Zone (``pr_req_mw``)
+      and the Mid-Atlantic/Dominion Reserve Subzone (``mad_pr_req_mw``, zones
       :data:`PJM_MAD_ZONES`; a MAD MW counts toward both, the NYISO nesting
-      template). Reserve then competes with energy on the same marginal unit,
+      template). Reserve then competes with energy at the marginal pool,
       which is what prices the sub-shortage opportunity-cost band
-      (docs/multi-iso/pjm-reserve-ordc.md Phase 2). The zone-aggregate scoping
-      flags are ignored in this mode (the per-unit ramp10 bound supersedes
-      them). The forecast path (no measured series) falls back to the
-      1.5×MSSC formula for the RTO family and omits the MAD family.
+      (docs/multi-iso/pjm-reserve-ordc.md Phase 2). Class-level pooling
+      everywhere is the documented 15 GB memory tier the miso-39 keeper
+      proved (the finer plant-in-MAD tier OOM'd in P1, 2026-07-02 memtest).
+      The zone-aggregate scoping flags are ignored in this mode (the
+      per-pool ramp10 bound supersedes them). The forecast path (no measured
+      series) falls back to the 1.5×MSSC formula for the RTO family and
+      omits the MAD family.
     """
     from market_sim.results.scarcity import (
         largest_single_contingency_mw,
@@ -1168,56 +1172,47 @@ def _pjm_design(
                         reserve_class=0,
                     )
                 )
-        ramp10 = np.asarray(
-            getattr(fleet_arrays, "ramp10", np.zeros(eligible.size)), dtype=float
-        )
+        ramp10 = getattr(fleet_arrays, "ramp10", None)
+        if ramp10 is None:
+            raise ValueError(
+                "pjm_reserve_pergen requires FleetArrays.ramp10 (the 10-min "
+                "deliverable ramp, fleet._ramp10_capability)"
+            )
+        ramp10 = np.asarray(ramp10, dtype=float)
         # Members: eligible units that can deliver within 10 min (ramp10 > 0)
         # — an exact reduction: a zero-ramp column would be fixed at 0.
         pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
-        # R-column granularity is memory-tiered to what the 15 GB calibration
-        # box fits (docs/multi-iso/pjm-reserve-ordc.md Phase 2 memtests: the
-        # per-tranche build OOM'd at ~15.9 GB, plant-level everywhere at
-        # ~15.1 — the HiGHS workspace scales with the joint-row count):
-        #
-        # * INSIDE the MAD subzone (where the binding locational requirement
-        #   lives): one column per (plant, fuel-class, zone) asset. Not
-        #   per-tranche: a plant's must-run/committed/economic/peaking
-        #   tranches dispatch bang-bang, so headroom and the 10-minute ramp
-        #   are PLANT properties (the pjm_online_reserve doctrine), and
-        #   sum(tranche ramp10) == RAMP10_FRAC[class] x plant pmax — the
-        #   column's cap is the same physics. Units without a positive plant
-        #   code stay singleton columns.
-        # * OUTSIDE MAD: one column per (zone, fuel-class). Coarser headroom
-        #   pooling on the side where no locational requirement binds — the
-        #   RTO-wide family still draws on every column, bounded by the same
-        #   summed ramp10, and reserve still competes with the zone-class's
-        #   energy at its margin. Never a breakpoint/penalty change (rule
-        #   #11); the granularity tier is documented, not fitted.
-        plant = np.asarray(fleet_arrays.plant_code, dtype=int)[pergen_gen_idx]
+        # R-column granularity: one column per (zone, fuel-class) EVERYWHERE
+        # — the class-level aggregate tier the miso-39 KEEPER runs
+        # (_miso_design pergen branch), adopted after the finer tiers were
+        # memory-falsified on this box (docs/multi-iso/pjm-reserve-ordc.md
+        # Phase 2 memtests, 2026-07-02): per-tranche OOM'd at ~15.9 GB and
+        # the plant-in-MAD tier (257 R columns -> 2.25M joint rows) solved
+        # P0 at ~15.1 GB but was OOM-killed in the P1 warm-start — the HiGHS
+        # basis workspace scales with the joint-row count. The class tier
+        # (8 zones x ~6 thermal classes, <=~48 columns/hour, ~5x fewer
+        # joint rows) is the pattern MISO proved feasible on the same 15 GB
+        # box. Same physics at every tier (sum ramp10[members] ==
+        # sum RAMP10_FRAC x pmax, measured-reconciled under
+        # measured_ramp_capability); the MAD balance family still selects
+        # its member zones' columns (columns are zone-pure). The tier is a
+        # documented memory scope-down, never a breakpoint/penalty change
+        # (CLAUDE.md #1/#11).
         fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
         zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
-        if zone_names:
-            in_mad = np.array(
-                [zone_names[z] in PJM_MAD_ZONES for z in zone], dtype=bool
-            )
-        else:
-            in_mad = np.ones(zone.size, dtype=bool)
-        singleton = np.where(plant > 0, -1, np.arange(pergen_gen_idx.size))
-        # Non-MAD members collapse to their (zone, fuel) key (plant/singleton
-        # masked out); MAD members keep the (plant, fuel, zone) asset key.
-        keys = np.stack(
-            [
-                np.where(in_mad, plant, -1),
-                fuel,
-                zone,
-                np.where(in_mad, singleton, -1),
-            ],
-            axis=1,
-        )
+        keys = np.stack([zone, fuel], axis=1)
         _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
         n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
-        col_ramp10 = np.zeros(n_r, dtype=float)
-        np.add.at(col_ramp10, pergen_col, ramp10[pergen_gen_idx])
+        # Hourly availability-scaled deliverable ramp per column, (n_r, T):
+        # a unit on outage (or derated) contributes proportionally less
+        # 10-minute ramp — the CAMPD outage overlay (backcast) / forecast
+        # availability thins the pool's deliverable cap in exactly the hours
+        # capacity is out (the _miso_design convention). Physical input, not
+        # a fitted parameter.
+        avail = np.asarray(fleet_arrays.availability, dtype=float)[pergen_gen_idx]
+        member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
+        col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
+        np.add.at(col_ramp10, pergen_col, member_ramp_t)
         return ReserveDesign(
             families=families,
             eligible=eligible.reshape(1, -1),

@@ -2195,6 +2195,7 @@ def run_year(
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_pergen: bool = False,
+    measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
@@ -2782,6 +2783,11 @@ def run_year(
         )
     if pjm_reserve_pergen:
         config = config.with_overrides(pjm_reserve_pergen=True)
+    if measured_ramp_capability:
+        # Measured EIA-860/CAMPD ramp-capability reconciliation of the class
+        # ramp10 fractions (data/ramp_capability.py; rule 14 measured-over-
+        # estimate). Consumed at fleet build; GATED default off.
+        config = config.with_overrides(measured_ramp_capability=True)
     if ercot_as_forward_requirement:
         config = config.with_overrides(ercot_as_forward_requirement=True)
     # ERCOT load-resource reserve credit (run_calibration_full
