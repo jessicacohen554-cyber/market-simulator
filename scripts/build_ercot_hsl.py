@@ -258,18 +258,32 @@ def _np6_files(year: int) -> list[Path]:
 
 
 def _read_csvs(path: Path) -> list[tuple[str, pd.DataFrame]]:
-    """Read ``path`` into ``(name, frame)`` pairs, expanding zips of CSVs."""
+    """Read ``path`` into ``(name, frame)`` pairs, expanding zips of CSVs.
+
+    ERCOT's monthly NP6 download is a zip of zips: one outer zip per month,
+    each entry itself a per-posting zip (ERCOT posts a new rolling-window
+    report roughly hourly) containing exactly one CSV. This recurses through
+    nested zip entries to any depth so both that archive shape and a flat
+    zip-of-CSVs are handled identically.
+    """
     if path.suffix.lower() == ".csv":
         return [(path.name, pd.read_csv(path))]
+
     out: list[tuple[str, pd.DataFrame]] = []
-    with zipfile.ZipFile(path) as zf:
+
+    def _walk(zf: zipfile.ZipFile, prefix: str) -> None:
         for info in zf.infolist():
-            if not info.filename.lower().endswith(".csv"):
-                continue
-            with zf.open(info) as fh:
-                out.append(
-                    (f"{path.name}:{info.filename}", pd.read_csv(io.BytesIO(fh.read())))
-                )
+            name = f"{prefix}:{info.filename}"
+            if info.filename.lower().endswith(".csv"):
+                with zf.open(info) as fh:
+                    out.append((name, pd.read_csv(io.BytesIO(fh.read()))))
+            elif info.filename.lower().endswith(".zip"):
+                with zf.open(info) as fh:
+                    with zipfile.ZipFile(io.BytesIO(fh.read())) as inner_zf:
+                        _walk(inner_zf, name)
+
+    with zipfile.ZipFile(path) as zf:
+        _walk(zf, path.name)
     return out
 
 
