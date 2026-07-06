@@ -36,6 +36,8 @@ from market_sim.data.fleet import (
     Generator,
     apply_coal_tranches,
     apply_ercot_ct_offer_surface,
+    apply_neiso_coldsnap_derate,
+    apply_netload_drag_floors,
     assemble_mc,
     build_base_fleet,
     build_dispatch_fleet,
@@ -919,58 +921,32 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         )
         peak_demand = float(year_demand.sum(axis=0).max())
 
-        # Net-load-indexed reliability-drag min-gen floors (gas-ST boiler +
-        # CT_PEAKER simple-cycle), the forecast-path mirror of the calibration
-        # script. Each floors a tranche's per-hour min generation by a curve
-        # rising with system net-load (load - wind - solar) — the operational
-        # proxy for the reserve tightness ERCOT RUC keys off — over which the LP
-        # dispatches economically. Both functions modify fleet_arrays.min_gen in
-        # place and are no-ops when their flag is off. Net-load uses the same
-        # LP-served convention as the calibration path.
-        if getattr(config, "gas_st_netload_drag", False) or getattr(
-            config, "ct_netload_drag", False
-        ):
-            net_load = (
-                year_demand.sum(axis=0)
-                - (solar_cap[:, None] * solar_cf).sum(axis=0)
-                - (wind_cap[:, None] * wind_cf).sum(axis=0)
-            )
-            if getattr(config, "gas_st_netload_drag", False):
-                from market_sim.data.fleet import apply_gas_st_netload_drag_floor
-
-                if apply_gas_st_netload_drag_floor(
-                    fleet_arrays, dispatch_fleet, net_load, config
-                ):
-                    logger.info(
-                        "%s %d: ST_GAS net-load reliability-drag floor applied "
-                        "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load "
-                        "mean %.0f / max %.0f MW)",
-                        iso,
-                        year,
-                        config.gas_st_drag_slope_per_gw,
-                        config.gas_st_drag_intercept,
-                        config.gas_st_drag_cap,
-                        float(net_load.mean()),
-                        float(net_load.max()),
-                    )
-            if getattr(config, "ct_netload_drag", False):
-                from market_sim.data.fleet import apply_ct_netload_drag_floor
-
-                if apply_ct_netload_drag_floor(
-                    fleet_arrays, dispatch_fleet, net_load, config
-                ):
-                    logger.info(
-                        "%s %d: CT_PEAKER net-load reliability-drag floor "
-                        "applied (frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in "
-                        "ramp %dh-%dh)",
-                        iso,
-                        year,
-                        config.ct_drag_slope_per_gw,
-                        config.ct_drag_intercept,
-                        config.ct_drag_cap,
-                        config.ct_drag_ramp_start,
-                        config.ct_drag_ramp_end,
-                    )
+        # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
+        # the single shared gate-and-log wrapper both orchestrators call
+        # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
+        # Gates internally on gas_st_netload_drag / ct_netload_drag (default
+        # off — byte-identical when unset); net-load uses the LP-served
+        # convention shared with the backcast path.
+        apply_netload_drag_floors(
+            fleet_arrays,
+            dispatch_fleet,
+            year_demand,
+            wind_cf,
+            wind_cap,
+            solar_cf,
+            solar_cap,
+            config,
+            iso,
+            year,
+        )
+        # NEISO winter gas-availability cold-snap derate — the shared
+        # gate-and-log wrapper (fleet.apply_neiso_coldsnap_derate,
+        # orchestrator-unification Stage 6: previously wired only in the
+        # backcast orchestrator, the plan's §2.2 accidental-drift row).
+        # Gated on neiso_gas_coldsnap_derate (default off — byte-identical);
+        # must run before the reserve-co-opt inputs are assembled so the
+        # shared-headroom RHS sees the derated availability.
+        apply_neiso_coldsnap_derate(fleet_arrays, config, iso, year)
 
         fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
         # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
@@ -1651,6 +1627,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             float(np.sum(wind_cap)),
             float(np.sum(solar_cap)),
             prior_results["storage_firm_mw"],
+            iso=iso,
         )
         ledger = dict(evo_events)
         ledger.update(
