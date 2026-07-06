@@ -6488,6 +6488,46 @@ No solve, score, or intake touched 2022/H1-2026 (rule #22). No LP solve was
 run to produce this adjudication — every judgment above is drawn from each
 run's own already-committed `run_config.json` / registry `definition` prose.
 
+## 2026-07-06 — G-04 round 2: E7 re-adjudication after the day's keeper swaps + new probes (owner decision)
+
+Since round 1 (above), four keepers swapped (ERCOT→`ercot34-stage4-overlay-off`,
+NEISO→`neiso-49-stgas-netload`, NYISO→`nyiso-53-li-tsl`,
+MISO→`2026-07-06-miso-42-coal-econ-ablation`) and a fresh batch of probes
+registered, so E7 now flags a **new** `(keeper, newest-run)` pair per ISO — the
+round-1 dict entries reference superseded keepers/probes and no longer match any
+live warning. Owner affirmed in-session: **current keepers are correct;
+adjudicate the standing E7 warnings KEEP.** Each newer run is a diagnostic
+probe by its own registry `definition`, never a keeper candidate:
+
+- **ERCOT** `2026-07-06-ercot34-stage4-overlay-off` — **KEEP.** Newer
+  `2026-07-06-ercot37-g22-surface-on` is self-labeled **"(PROBE — REJECTED)"**
+  (G-22 condition-responsive CT/peaker offer-surface A/B).
+- **CAISO** `2026-07-03-caiso-51-firm-base` — **KEEP.** Newer
+  `2026-07-06-caiso51-statmode-v2` is a **D-7 statistical-mode A/B probe**
+  (byte-faithful keeper replay, all per-hour overlays off).
+- **PJM** `2026-07-05-pjm-77-ct-relfloor` — **KEEP.** Newer
+  `2026-07-06-pjm-82-commitment-posture` is a **commitment-posture A/B probe**
+  (posture lever ported from MISO §A); keeper stays pjm-77.
+- **NEISO** `2026-07-06-neiso-49-stgas-netload` — **KEEP.** Newer
+  `2026-07-06-neiso-wfuelsec-ab-v2off` is a **winter-fuel attribution twin
+  (PROBE)** isolating the mechanism from the v2 emission-rate flip.
+- **MISO** `2026-07-06-miso-42-coal-econ-ablation` — **KEEP.** Newer
+  `2026-07-06-miso-43-commitment-posture` is self-labeled
+  **"(PROBE - honesty gate FAIL, lever stays default-off)"**. (Note: this MISO
+  keeper is itself the zero-forcing ablation twin of `miso-42-coal-econ`, per the
+  same-day keeper flip; its E9 twin-of-record is the forced base run.)
+
+`E7_STALENESS_ADJUDICATED` is replaced with these five current pairs (dated
+2026-07-06); the round-1 pairs are dropped as dead keys (git history preserves
+them). As before, the annotation never suppresses the WARN — it appends the
+"adjudicated 2026-07-06, see calibration-log" pointer; a pair registered later
+gets the plain warning until reviewed.
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule #22). No LP solve was run;
+every judgment is drawn from each run's already-committed registry `definition`.
+
 ## 2026-07-06 — ERCOT keeper PROMOTED: `ercot34-stage4-overlay-off` replaces `ercot32-ordc-total-rtolcap` (owner sign-off in-session)
 
 Owner approved the recommendation in the entry above. Promotion bookkeeping
