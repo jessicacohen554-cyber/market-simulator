@@ -1301,11 +1301,50 @@ def _nyiso_design(
     zone_names: list[str],
     n_ramp: int = 8,
 ) -> ReserveDesign:
-    """NYISO locational energy+reserve co-optimization (nested RCPF families)."""
+    """NYISO locational energy+reserve co-optimization (nested RCPF families).
+
+    Requirement basis: each family's requirement is the static published MW
+    (``NYISO_RCPF_PRODUCTS`` / ``NYISO_RCPF_LOCATIONAL``) unless
+    ``config.nyiso_dynamic_reserve_requirements`` is on, in which case any
+    family with a measured as-enforced hourly series
+    (``data.nyiso_reserve_requirements``, the issue-#1344 Ask-B intake) takes
+    that series instead — the condition-varying requirement that can bind in
+    the hours the static one provably never does. The ORDC shortfall steps
+    keep the published static (requirement, critical, penalty) SHAPE and
+    translate with the hourly requirement (the published RCPF is itself a
+    stepped curve; translating preserves its penalties and widths).
+
+    Rule-19 reconciliation: the post-solve RCPF overlay (``results.rcpf``,
+    ``config.nyiso_rcpf_enabled``) prices the same phenomenon these in-LP
+    families do. Enabling both is a hard error — the overlay is the
+    post-solve comparator for co-opt-off runs only, never a stack on the
+    co-opt duals (CLAUDE.md rule 19: one mechanism per phenomenon).
+    """
     from market_sim.results.scarcity import (
         nyiso_rcpf_product_shortfall_steps,
         nyiso_spin_requirement_mw,
     )
+
+    if bool(getattr(config, "nyiso_rcpf_enabled", False)):
+        raise ValueError(
+            "nyiso_rcpf_enabled=True with energy_reserve_coopt: the post-solve "
+            "RCPF overlay (results.rcpf) and the in-LP RCPF reserve families "
+            "price the same phenomenon (reserve-shortage rent in the LBMP). "
+            "One mechanism per phenomenon (CLAUDE.md rule 19) — keep the "
+            "overlay as the co-opt-off comparator, or disable the co-opt."
+        )
+
+    dynamic_req: dict[str, np.ndarray] = {}
+    if bool(getattr(config, "nyiso_dynamic_reserve_requirements", False)):
+        from market_sim.data.nyiso_reserve_requirements import (
+            load_nyiso_reserve_requirements,
+        )
+
+        # weather_year is the backcast fleet-clock year (the calibration
+        # harness constructs one config per solve year, weather_year=year).
+        dynamic_req = load_nyiso_reserve_requirements(
+            int(config.weather_year), int(hours)
+        )
 
     T = int(hours)
     zone_index = {name: i for i, name in enumerate(zone_names)}
@@ -1349,7 +1388,14 @@ def _nyiso_design(
             if "spin_online" in name
             else (1 if "10min" in name or "spin" in name else 0)
         )
-        requirement_arr = np.full(T, req, dtype=float)
+        if name in dynamic_req:
+            # Measured as-enforced hourly requirement (issue #1344): the
+            # condition-varying series replaces the static published MW for
+            # this family; the ORDC steps below stay anchored to the static
+            # published shape and translate with the requirement.
+            requirement_arr = dynamic_req[name]
+        else:
+            requirement_arr = np.full(T, req, dtype=float)
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
         families.append(
             ReserveFamily(
