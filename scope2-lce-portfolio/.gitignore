@@ -38,6 +38,9 @@ data/emissions/*
 !data/emissions/MISO_2024_fossil_avg_co2_rate.parquet
 !data/emissions/NYISO_2024_fossil_avg_co2_rate.parquet
 !data/emissions/NEISO_2024_fossil_avg_co2_rate.parquet
+# ...and their REAL-solve provenance sidecars (mirrors the ADR 0011 LMP-bundle
+# sidecar pattern in data/bundled/lmp/*.provenance.json).
+!data/emissions/*.provenance.json
 
 # Stylized reference load (ADR-ratification facility), built deterministically
 # by scripts/make_reference_load.py. At ~2 MB (52560 rows: 6 ISOs x 8760h) it
