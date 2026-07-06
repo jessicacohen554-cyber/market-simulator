@@ -80,14 +80,30 @@ class TestEnsembleConfigs(unittest.TestCase):
             self.assertEqual(config.weather_year, wy)
 
     def test_default_pool_is_per_iso(self):
-        # CAISO has no verified pre-2023 EIA-930 hourly coverage (see
-        # docs/weather-pool-coverage-2026-07.md), so it stays on the common
-        # fallback pool while ERCOT/NEISO get the widened one.
+        # 2026-07-06: CAISO/PJM/MISO joined ERCOT/NEISO/NYISO on a widened,
+        # ISO-specific pool (docs/weather-pool-coverage-2026-07.md) via the
+        # BALANCE-bulk backfill; an ISO absent from the registry (none of the
+        # six real ones now are) is what still falls back to the common pool.
         caiso = weather_ensemble_configs(ScenarioConfig(iso="CAISO"))
-        self.assertEqual(tuple(caiso), WEATHER_YEAR_POOL)
+        self.assertEqual(tuple(caiso), weather_year_pool("CAISO"))
+        self.assertIn(2019, caiso)
         neiso = weather_ensemble_configs(ScenarioConfig(iso="NEISO"))
         self.assertEqual(tuple(neiso), weather_year_pool("NEISO"))
         self.assertIn(2019, neiso)
+        unregistered = weather_ensemble_configs(ScenarioConfig(iso="FAKE_ISO"))
+        self.assertEqual(tuple(unregistered), WEATHER_YEAR_POOL)
+
+    def test_pjm_and_miso_default_pools(self):
+        # PJM only gained 2021 (its demand source has a 2021 floor
+        # independent of the hourly-extract backfill); MISO gained the full
+        # 2019-2021 span like CAISO.
+        pjm = weather_ensemble_configs(ScenarioConfig(iso="PJM"))
+        self.assertEqual(tuple(pjm), weather_year_pool("PJM"))
+        self.assertIn(2021, pjm)
+        self.assertNotIn(2019, pjm)
+        miso = weather_ensemble_configs(ScenarioConfig(iso="MISO"))
+        self.assertEqual(tuple(miso), weather_year_pool("MISO"))
+        self.assertIn(2019, miso)
 
     def test_only_weather_year_varies(self):
         base = ScenarioConfig(iso="CAISO", carbon_price=40.0)
