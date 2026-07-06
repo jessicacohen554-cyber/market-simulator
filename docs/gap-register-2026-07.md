@@ -146,6 +146,18 @@ calibration-log entry of the same name.*
 
 ---
 
+### Addendum — 2026-07-06 (post-#1503–#1532 wave-manager tranche review)
+
+*Appended by the same-day evening wave-manager tranche-review session; supplemental hygiene notes on register entries for three PRs in the final handoff batch.*
+
+- **PR #1523 register hygiene note:** #1523 is a **byte-identical duplicate re-push** of #1522 (no new content, same commit/bundle payload). Flagged here as a register-keeping hygiene note, not a defect requiring rework or separate adjudication. The bundled probes/attestation/dashboard entries stand as filed under #1522's sidecar; no duplicate entry or separate keeper line required.
+
+- **PR #1506 dashboard claim correction:** The PR's headline (neiso-49 metrics.json re-attested UNATTESTED→attested) **does NOT appear in #1506's own diff**. Verification found the file was re-attested by the rubric-v2 rescore commit `8e12e34` (post-#1436 keeper-swap wave), not by #1506's changes. #1506 mis-describes its own content; the stated defect fix (#1498's stale bundle + missing neiso statmode-stale box + D-2 bucket mis-attribution) is real and fixed on main, but the metrics.json attestation claim should be credited to the rubric-v2 rescore, not #1506. No re-gate needed; entry stands as corrected.
+
+- **PR #1532 FPR adoption flagged for owner review:** #1532 adopts the published PJM/MISO FPR ratio directly (`ICAP_TO_UCAP_RATIO` from the RTO market filings) to replace the calibrated forward-scarcity equivalent. **OPEN forecast-side flag:** #1513's own handoff §6 explicitly said FPR adoption would NOT occur, citing the incompatibility: FPR embeds ~77% marginal-ELCC capacity-value (market floor estimate) vs the model's ~0.92 = (1−EFORd) supply-side basis → sign-flip risk on net-new-entry payoff in high-scarcity scenarios. Logged here as an **OPEN item for owner review before any forecast promotion**, pending reconciliation of the basis mismatch.
+
+---
+
 ## 2. Workstream inventory
 
 Status verified against code/artifacts; "doc-lag" marks where the plan doc's own status section is wrong (both directions occur).
