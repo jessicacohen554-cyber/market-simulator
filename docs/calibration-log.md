@@ -303,6 +303,81 @@ exactly as solved — no config change bundled into the promotion. Mechanics:
   nyiso-41's committed bundle and registration remain on the dashboard as the
   prior keeper (the one meaningful historical comparison, per retention).
 
+### 2026-07-06 — PJM — G-20 reserve/ORDC Phase 2 UNBLOCKED + probe (pjm 81 coopt-pergen): PROBE, keeper stays pjm-77
+
+**Goal (gap register G-20; lane L-13 continuation, pjm-c3-reserve-phase2).**
+`docs/multi-iso/pjm-reserve-ordc.md` Phase 2 — the designed fix for the
+C3a/b/c FAIL (0 scarcity hours vs 6/18/59 actual) — was blocked on (a) the
+per-gen co-opt's memory (P1 OOM at the plant-in-MAD tier, 2026-07-02
+memtest) and (b) ramp-rate data quality. Both attacked:
+
+- **(a) Memory — re-tiered to the pooling the other co-opt keepers use.**
+  Survey: ERCOT's `ercot34` keeper co-opt is zone-aggregate pooled headroom
+  rows (no per-unit R); MISO's `miso-39` keeper runs pergen with
+  **(zone, fuel-class) pooled R columns** + hourly availability-scaled ramp
+  caps and fits the box. `pjm_reserve_pergen` re-tiered to the MISO class
+  tier: 39 R columns / 341,640 joint rows on the real 2024 fleet (vs
+  257 / 2.25M in the OOM'd plant tier, ~6.6× fewer). P1 now solves: peak
+  ~15.0 GB with a 10 GB swapfile absorbing a ~0.4 GB transient (the
+  pjm-78/79 convention). Same published two-step ORDC, same nested RTO+MAD
+  measured families — a documented memory scope-down (rules 1/11).
+- **(b) Ramp data — measured intake replaces the class estimate.** New
+  `ramp-capability` clean datatype (schema-first, per-ISO registry, PJM +
+  MISO curated; `scripts/curate_ramp_capability.py`): EIA-860 Schedule 3.1
+  "Time from Cold Shutdown to Full Load" = "10M" fast-start thermal
+  capacity per plant (~3.0 GW in the PJM BA) + CAMPD CEMS max observed
+  1-hour plant gross-load up-ramp (pooled 2023–2025; 2022/2026 holdouts
+  excluded by construction, rule 22). Reconciliation onto
+  `FleetArrays.ramp10` (GATED `measured_ramp_capability`, default off):
+  fast-start floor, envelope ceiling on the NREL class rate (CEMS is
+  hourly — the envelope is a ceiling, never the 10-min quantity itself),
+  class fallback for uncovered plants (rule 14). PJM deliverable cap thins
+  ~50 → ~40 GW (p50).
+
+**Probe `pjm-81` / dashboard `2026-07-06-pjm-81-coopt-pergen`** (bundle
+`results/calibration/pjm81_coopt_pergen`): the pjm-78 baseline recipe (=
+pjm-77 keeper recipe on HEAD, the registered same-SHA comparator) +
+`pjm_reserve_pergen` + `measured_ramp_capability`, drag unchanged, full
+span 2023–2025, single invocation, sequential years (rules 12/16), clean
+demand tree (zero fallback warnings).
+
+**Result (honest): structure lands, price stack ~unmoved.**
+- Dispatch is byte-comparable to pjm-78 at class grain (ST_GAS 20.4/17.2/
+  20.1, CC_REGULAR 295.3/322.8/308.9, CT_PEAKER 27.3/23.4/35.4, COAL_BIT
+  112.5/112.2/137.8 TWh — identical to ±0.1). Verdict criterion-identical:
+  C1 14/16 (free 10/12), C2 FAIL 2025 gas +2.9%/coal +3.9%, C3a FAIL
+  −8.0%/−13.3% (2024/2025), C3b FAIL 0.175–0.196, **C3c FAIL 0 h vs
+  6/18/59**, C4/C5a/C7 PASS, C8 FAIL 12.0% (2024 CT_PEAKER), C6 UNATTESTED
+  (probe). NOT-YET.
+- **The in-LP reserve price is nonzero for the first time in any PJM
+  scoping**: exactly 1 hour — 2025-06-23 h19 (the June-2025 heat wave),
+  a $46.47 opportunity-cost dual lifting the year-max LMP to $158.61 —
+  vs $0 in all 26,280 hours of every prior variant (pjm-62 zone-aggregate,
+  supply-capped, online-gated). The mechanism works; the model is simply
+  almost never tight.
+
+**Attribution (rule 14).** With the measured-deliverable pool at ~33–45 GW
+against the ~3.3–4.1 GW measured Primary requirement, the perfect-foresight
+pool margin binds essentially never — even per-pool joint P+R competition
+with measured ramp caps cannot price the $75–200 afternoon band while
+~10× the requirement sits as free deliverable headroom. This empirically
+closes the "would the per-gen build price the band?" question at the
+strongest admissible supply-side scoping: **the remaining blocker is
+Phase-1 commitment posture** (the LP's online reserve never thins from
+~14 GW toward PJM's real ~3 GW), not reserve structure, memory, or ramp
+data. No breakpoint lowered, no penalty inflated, no requirement padded
+(rule 13/26 clean).
+
+**Disposition: keeper stays `2026-07-05-pjm-77-ct-relfloor`. pjm-81 is NOT
+a promotion case** (no criterion gain; C6 unattested; no ablation twin —
+rule 21 applies at promotion). **Recommendation to owner:** carry
+`pjm_reserve_pergen` + `measured_ramp_capability` as retained structure in
+the NEXT keeper candidate (rule 1 — real market design, fit-neutral,
+memory-proven), and direct the C3 scarcity work at the Phase-1 commitment
+posture (the drag's rule-19 replacement endgame in the C8 memo §6.5 stays
+owner-gated and untouched). Registered PROBE, full span; retention at
+15 non-twin PJM runs (no prune needed).
+
 ### 2026-07-06 — PJM — G-21 SRMC re-grounding cycle (pjm 79 srmc-baseline / pjm 80 srmc-reground): PROBES, keeper stays pjm-77
 
 **Goal (gap register G-21; issue #1302).** `FINDING-pjm-burndown-2026-07.md`
