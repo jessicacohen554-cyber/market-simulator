@@ -471,6 +471,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         iso_config,
         td_loss_factor=config.td_loss_factor,
         include_interchange=not import_generators,
+        strict_demand_profile=config.strict_demand_profile,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, config.weather_year, iso_config, config
@@ -862,6 +863,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 iso_config,
                 td_loss_factor=config.td_loss_factor,
                 include_interchange=not import_generators,
+                strict_demand_profile=config.strict_demand_profile,
             )
             if config.hours < year_base_demand.shape[1]:
                 year_base_demand = year_base_demand[:, : config.hours]
