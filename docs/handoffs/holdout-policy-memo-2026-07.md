@@ -63,6 +63,15 @@ authorized one-shot score.
    `run_calibration.py --year` help text says "(2021-2024)" but nothing
    enforces it. **A direct invocation of either script with `--year 2022` or
    `--year 2026` solves today, with no code-level gate at all.**
+   **[Landed 2026-07-06 for `run_calibration_full.py` — see (e).]**
+   `enforce_holdout_year_gate()` (module scope, `scripts/run_calibration_full.py`)
+   now hard-fails any `--year` outside `{2023, 2024, 2025}` unless
+   `--holdout-authorized` is passed **and** the target ISO already carries a
+   `calibration-complete` marker in `calibration-complete.json`. This closes
+   the gap for the production entry point named in CLAUDE.md rule 22's
+   enforcement clause. `scripts/run_calibration.py` (the non-`_full` script)
+   still has no such gate — confirmed still open, verified against current
+   source.
 3. **The GitHub Actions `workflow_dispatch` path (`calibration-run.yml`) *is*
    gated** — its shell wrapper rejects any `year` input not in
    `{2023, 2024, 2025}` before invoking `run_calibration_full.py`. This
@@ -82,6 +91,12 @@ authorized one-shot score.
    quarantine" is not currently true** — these are correct standalone scripts
    that only catch a breach if a human/agent chooses to run them before
    committing a dashboard bundle.
+   **[Landed since this was written — confirmed in current tree, see (e).]**
+   `.github/workflows/ci.yml` now has a required `quarantine-gates` job that
+   runs `audit_keepers.py --check` and `legitimacy_diagnostics.py --keepers`
+   (which calls `run_d6_quarantine`) on every pull request. CLAUDE.md rule
+   22's "CI enforces the quarantine" claim is now true; this point's
+   objection is resolved.
 5. **Data-intake scripts (`fetch_campd_unit_level.py`,
    `fetch_eia930_long.py`, `fetch_eia930_balance.py`,
    `fetch_eia_delivered_gas.py`, `derive_ercot_zonal_gas_hub.py`) have no year
@@ -96,6 +111,13 @@ But the *only* thing currently preventing a future session from running
 written instruction and reviewer attention — there is no code-level or
 CI-level backstop on the two paths that matter most (direct solve invocation,
 and the D-6 dashboard check never running automatically).
+**[Update 2026-07-06 — see (e)]** Both backstops named in this sentence are
+now landed and confirmed against the current tree: `run_calibration_full.py`
+hard-fails an unauthorized holdout-year solve (point 2 above), and the D-6
+dashboard check now runs automatically in `ci.yml`'s `quarantine-gates` job
+(point 4 above) rather than only on manual invocation. The residual gap is
+narrower than this paragraph states: `run_calibration.py` (the non-`_full`
+script) and direct loader calls remain ungated by design (Option 2, see (e)).
 
 ## (c) Two policy options
 
