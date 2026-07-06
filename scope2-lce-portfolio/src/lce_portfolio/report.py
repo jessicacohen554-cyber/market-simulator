@@ -7,9 +7,10 @@ functions over already-computed sweep results, no LP interaction and no
 * :func:`build_report_payload` assembles the single-run report payload
   (ADR 0014 §3): a ``payload_version``-stamped dict holding the provenance
   block (§2.1 fields, with ``iso``/``mode``/``sensitivity``/
-  ``additionality_only`` mandatory for the future N-run overlay, §3/§4), the
-  full frontier rows, the long-form build-mix rows, and an ``hourly`` block
-  with 3-significant-figure series for a small set of named setpoints only
+  ``additionality_only``/``lmp_kind`` mandatory for the future N-run overlay,
+  §3/§4; ``lmp_kind`` added by HP-01, payload v2), the full frontier rows,
+  the long-form build-mix rows, and an ``hourly`` block with
+  3-significant-figure series for a small set of named setpoints only
   (§3 size discipline — full-precision hourly data stays in Parquet).
 * :func:`render_report` renders that payload — and nothing else (§1: the HTML
   never re-reads Parquet) — into one fully offline static HTML document with
@@ -30,16 +31,20 @@ from dataclasses import asdict
 import numpy as np
 
 from lce_portfolio import __version__
-from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.config import LMP_KIND_ANNUAL_AVERAGE_FLAT, PortfolioConfig
 from lce_portfolio.outputs import frontier_table
 from lce_portfolio.sweep import SweepResult
 
 #: Current report-payload schema version (ADR 0014 §3). Any breaking schema
-#: change bumps this; the renderer refuses versions it doesn't know.
-PAYLOAD_VERSION = 1
+#: change bumps this; the renderer refuses versions it doesn't know. Bumped
+#: 1 -> 2 by HP-01: ``provenance.lmp_kind`` was added.
+PAYLOAD_VERSION = 2
 
-#: Payload versions this renderer knows how to render (ADR 0014 §3).
-KNOWN_PAYLOAD_VERSIONS = (1,)
+#: Payload versions this renderer knows how to render (ADR 0014 §3). Version
+#: 1 payloads (pre-HP-01, no ``provenance.lmp_kind``) stay renderable —
+#: ``_sec_provenance`` only shows the LMP-kind row/banner when the key is
+#: present, so old committed bundles keep regenerating byte-identical HTML.
+KNOWN_PAYLOAD_VERSIONS = (1, 2)
 
 #: Stable HTML ``id`` anchors for the ADR 0014 §2 views, keyed by § number.
 #: Tests assert on these, and deep links (``report.html#sec-2-7-hourly``) rely
@@ -238,6 +243,10 @@ def build_report_payload(
     ``additionality_only`` fields (single-valued across the run — a batch
     shares one base config, enforced here) so a future overlay pack can
     consume N payloads side-by-side without schema change (§4).
+    ``provenance.lmp_kind`` (HP-01, payload v2) records whether the run was
+    priced against the hourly LMP contract or the annual-average flat-price
+    extension -- also single-valued across the run, since one CLI invocation
+    reads one LMP file for every ISO in a batch.
     """
     if not sweeps or len(sweeps) != len(configs):
         raise ValueError("sweeps and configs must be parallel, non-empty lists")
@@ -249,6 +258,11 @@ def build_report_payload(
             raise ValueError(
                 f"one report covers one run: {label} differs across ISOs ({values})"
             )
+    lmp_kinds = {s.lmp_kind for s in sweeps}
+    if len(lmp_kinds) > 1:
+        raise ValueError(
+            f"one report covers one run: lmp_kind differs across ISOs ({lmp_kinds})"
+        )
     base = configs[0]
 
     per_iso = []
@@ -299,6 +313,7 @@ def build_report_payload(
             "mode": base.mode,
             "sensitivity": base.lcoe_sensitivity,
             "additionality_only": base.additionality_only,
+            "lmp_kind": next(iter(lmp_kinds)),
             "per_iso": per_iso,
         },
         "frontier": frontier,
@@ -430,7 +445,13 @@ def _legend(entries: list[tuple[str, str]]) -> str:
 
 def _sec_provenance(payload: dict) -> str:
     """§2.1 provenance header: run id, ISO(s), mode, tool version, config echo,
-    per-setpoint solver status with non-optimal setpoints flagged inline."""
+    per-setpoint solver status with non-optimal setpoints flagged inline.
+
+    ``provenance.lmp_kind`` (HP-01, payload v2+) is absent on payload v1
+    (pre-HP-01) -- the LMP-kind meta row and flat-price banner are only
+    rendered when it is present, so a committed v1 ``report.json`` keeps
+    regenerating byte-identical HTML (``scripts/render_report.py``, ADR
+    0014 §6)."""
     prov = payload["provenance"]
     run_id = prov.get("run_id") or "(ad-hoc run)"
     meta_rows = [
@@ -442,10 +463,24 @@ def _sec_provenance(payload: dict) -> str:
         ("Tool version", prov["tool_version"]),
         ("Payload version", str(payload["payload_version"])),
     ]
+    lmp_kind = prov.get("lmp_kind")
+    is_flat_lmp = lmp_kind == LMP_KIND_ANNUAL_AVERAGE_FLAT
+    if lmp_kind is not None:
+        meta_rows.insert(
+            3, ("LMP kind", "Annual average (flat)" if is_flat_lmp else "Hourly")
+        )
     meta = "".join(
         f'<div class="meta-item"><div class="meta-label">{_esc(k)}</div>'
         f'<div class="meta-value">{_esc(v)}</div></div>'
         for k, v in meta_rows
+    )
+    flat_lmp_banner = (
+        '<p class="flat-lmp-banner">Flat-price comparison: this run is priced '
+        "against an annual-average LMP (no hourly shape) — hourly price "
+        "shape/covariance value is deliberately excluded from the "
+        "premium/matching frontier below.</p>"
+        if is_flat_lmp
+        else ""
     )
 
     solve_blocks = []
@@ -476,6 +511,7 @@ def _sec_provenance(payload: dict) -> str:
         f'<section id="{SECTION_ANCHORS["2.1"]}">'
         f"<h2>Run provenance</h2>"
         f'<div class="meta-grid">{meta}</div>'
+        f"{flat_lmp_banner}"
         f"{''.join(solve_blocks)}</section>"
     )
 
@@ -1109,6 +1145,9 @@ svg text { font-family: var(--font-body); }
 .axis-label { font-size: 12px; font-weight: 600; fill: var(--text-secondary); }
 .pt-label { font-size: 10px; fill: var(--text-muted); }
 .note { color: var(--text-muted); font-size: 0.8rem; margin: 10px 0 0; }
+.flat-lmp-banner { color: #FCD34D; background: rgba(245,158,11,0.14);
+  border: 1px solid rgba(245,158,11,0.35); border-radius: var(--radius-sm);
+  font-size: 0.82rem; font-weight: 600; padding: 10px 14px; margin-top: 14px; }
 #sec-2-1-provenance { background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg);
   padding: 20px; }
