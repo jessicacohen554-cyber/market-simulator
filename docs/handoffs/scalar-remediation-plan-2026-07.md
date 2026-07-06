@@ -14,7 +14,9 @@ Numbering note: CLAUDE.md rule N = audit §8 rule N−1 (CLAUDE.md gained rule 1
 
 ## 0. Status snapshot — what is already done (do not re-plan)
 
-Verified against the tree at 2026-07-04 (`main` @ 7b0d150):
+Verified against the tree at 2026-07-04 (`main` @ 7b0d150). **W0 closed 2026-07-05** — see
+`docs/handoffs/scalar-remediation-w0-closure-2026-07-05.md` for the current C-2/C-11 record
+(this table predates that closure and is not re-litigated here):
 
 | Item | Status |
 |---|---|
@@ -35,7 +37,7 @@ channel — `transmission.py:2334-2335` reads `INTERCHANGE_SHAPE_IMPORT_PCT`/`EX
 violation), C-8, C-9 (relocated — status check needed), C-10, C-12 (status check), **C-13 (the
 NYISO keeper `nyiso41_hubprices` still carries `CT_PEAKER peak = 13.15` and
 `CC_REGULAR econ_high = 1.21` — the one cross-ISO leak live in a keeper)**, C-14 (static
-`CAISO_BIDIR_EXPORT_CAP_MW = 3500.0` fallback), C-15, C-16, C-17, C-18; the D-8 §2B sign-flip
+`CAISO_BIDIR_EXPORT_CAP_MW = 4361.0` fallback, `transmission.py:339`), C-15, C-16, C-17, C-18; the D-8 §2B sign-flip
 limbs; the D-8 §2C sigmoid single-year pinning; unbuilt diagnostics D-3, D-10, D-11, D-13, D-14.
 
 ---
