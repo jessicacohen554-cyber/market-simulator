@@ -156,13 +156,44 @@ mechanism probe, NOT a proposed harness footing change.
   consumes the pre-accredited `storage_firm_mw` (capacity.py; runner.py
   untouched — its persisted ledger value stays undiluted, same seam as
   the audit §3 runner note).
-- **PJM/MISO ICAP-vs-UCAP pairing** (audit §3 flag): **[PENDING audit —
-  the fix lands only if the audit against the published IRM/FPR (PJM) and
-  LOLE-study ICAP/UCAP PRM pairing (MISO) confirms the mismatch.]** The
-  hypothesis under audit: PJM's 17.8 % IRM and MISO's 17.9 % PRM are
-  ICAP-basis targets tested against UCAP-accredited supply — the same
-  double-count class as the ERCOT basis errors, plausibly behind the
-  Stage-2 PJM FOM-invariant ~10 GW/yr backstop flood.
+- **PJM/MISO ICAP-vs-UCAP pairing** (audit §3 flag): **audited against the
+  ISOs' own filings — the mismatch is REAL.** Both ISOs publish the pairing
+  explicitly, and both publications show the requirement and the supply
+  count must share a basis:
+  - **PJM** states the IRM/FPR duality directly: "The IRM expresses the
+    required reserve level in terms of installed capacity (ICAP) as a
+    percent of forecast peak; the FPR expresses the same required level in
+    terms of unforced/accredited capacity." 2026/27 BRA planning
+    parameters: IRM **19.1 %** (ICAP) pairs with FPR **0.9170** (accredited
+    UCAP; 2025/26: FPR 0.9387) — i.e. PJM's own UCAP-basis requirement
+    multiplier is ≈ 0.92-0.94 × peak, not 1.178 × peak. Our ledger was
+    testing `peak × 1.178` (ICAP-basis IRM) against `Σ pmax × (1 − EFORd)`
+    (UCAP supply): a ~7-9 point phantom margin, the same double-count class
+    as the ERCOT CDR errors and a direct candidate for the Stage-2 PJM
+    FOM-invariant ~10 GW/yr backstop flood.
+  - **MISO** publishes both numbers side by side (PY 2025-26 LOLE Study
+    Report, Module E-1): Summer PRM **ICAP 15.7 %** vs PRM **UCAP 7.9 %**.
+    Our `PLANNING_RESERVE_MARGIN_BY_ISO["MISO"] = 0.179` (PY24-25 ICAP
+    PRM) against UCAP supply overstates the requirement by ~8-10 points.
+  - **Fix (landed with this stage):** requirement-side conversion, not a
+    supply-side recount — `PLANNING_RESERVE_MARGIN_BASIS_BY_ISO` registers
+    PJM/MISO margins as ICAP-basis, and `resolve_adequacy_requirement_mw`
+    converts to the ledger's own supply convention by multiplying with the
+    *model fleet's* capacity-weighted `(1 − EFORd)` (the pre-ELCC-reform
+    FPR construction, PJM Manual 20: FPR = (1 + IRM) × (1 − pool EFORd)).
+    Using the model's own pool EFORd keeps the two sides of the comparison
+    on one convention by construction (dividing both sides of the ICAP
+    comparison by the same factor), regenerates forward with the fleet
+    (rule 13), and introduces no new tunable. We deliberately do NOT adopt
+    the published FPR/PRM-UCAP *values* (0.917 / 7.9 %): those are stated
+    on the ISOs' post-reform accreditation depth (PJM marginal-ELCC pool
+    accreditation ≈ 77 %), far deeper than our `(1 − EFORd)` supply derate,
+    so pairing their numbers with our supply would flip the error's sign.
+    ERCOT is untouched (its pairing was fixed at seasonal-rating/CDR basis
+    by the accreditation audit); NYISO/NEISO/CAISO margins are flagged as
+    follow-up audit candidates (NYSRC's 24.4 % IRM is also ICAP-stated;
+    CAISO's 15 % PRM pairs with NQC) — each needs its own filing check
+    before touching, the same bar the accreditation audit set.
 
 ## 7. Artifacts
 
