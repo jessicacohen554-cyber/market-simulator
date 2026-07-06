@@ -2166,6 +2166,7 @@ def run_year(
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
     miso_reserve_pergen: bool = False,
+    miso_commitment_posture: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -2724,6 +2725,10 @@ def run_year(
     # short (reserve_config._miso_design pergen branch).
     if miso_reserve_pergen:
         config = config.with_overrides(miso_reserve_pergen=True)
+    # Pooled linear commitment-posture lever on the pergen pools (design note
+    # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A).
+    if miso_commitment_posture:
+        config = config.with_overrides(miso_commitment_posture=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
