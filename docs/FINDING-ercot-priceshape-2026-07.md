@@ -241,3 +241,42 @@ the fit-first mistake rule #1 forbids. The keeper stays
    since 2026-07-03, GTC ruled out in-container). Both belong in the D-8
    coefficient-stability thread; a class allocation this sensitive cannot
    carry calibration weight.
+
+**§6.3 addendum (2026-07-06, G-12 attribution complete — L-12 wave 3).** The
+"not container-reproducible" reading above is now root-caused and is NOT
+knife-edge sensitivity or code/data drift in the solve path. Three named
+movers, in order of size:
+
+1. **A replay-contract gap (dominant).** The keeper solved with
+   `ercot_zonal_gas_basis=True`, `ercot_west_netload_gas_shape=True`,
+   `ercot_west_gas_delivered_floor=0.4` and `oil_primary_bin_fuel=True` —
+   proven by the committed bundle's resolved `run_config.json` — but
+   `solve_and_persist`'s `meta.json` writer does not persist these four
+   fields, and their `ScenarioConfig` defaults are False/null. Every
+   "byte-faithful" `replay_keeper.py` replay (this finding's §3/§6.3 replay,
+   `2026-07-03-32-head-regate`, the ercot33 ex-overlay baseline, the ercot40
+   WS-A probe) therefore silently solved WITHOUT the ERCOT zonal/West-Waha
+   delivered-gas geography — a different merit order for all 963 ERCOT gas
+   units. Re-adding the four flags via `--set` restores the keeper's class
+   allocation (the ercot34/ercot35 A/B pair on the dashboard quantifies the
+   arm-to-arm movement). Same disease class as the pjm-77 `ct_netload_drag`
+   meta-gap fix; the CAISO post-07-03 drift (#1346) should be checked for
+   the same mechanism (its keeper also carries CLI-only config). Fix owner:
+   the meta writer is `run_calibration_full.py` (orchestrator-unification
+   lane), outside L-12 file ownership.
+2. **Coal max-CF re-derive** (`f5543232`, 2026-07-03T20:10Z, ~50 min after
+   the keeper's solve): dropped the year-pinned hand ceilings for
+   CAMPD-derived flat physics ceilings (Limestone 298 0.82/0.86/0.87 →
+   0.95; Fayette 6179 0.99; J K Spruce 7097 0.95; Oak Grove 6180 uncapped)
+   — a rule-23-compliant re-derive with its own registered probe; explains
+   the year-constant coal `cap_mw` signature in the replay diff.
+3. **fleet.py curated-bin-drift reconciliation** (#1451's identified
+   contributor, ~450 MW reclassified): predominantly LABEL movement —
+   CC_CHP −4.3 and CT_CHP −2.2 TWh/yr move between class totals while the
+   underlying plants' dispatch is nearly unchanged (CC_CHP plant-grain
+   −0.36/−0.25/−0.37 TWh by year).
+
+Consequence for the D-8 thread: the 10–18 TWh/yr CC_REGULAR replay swing was
+a *config divergence*, not coefficient instability; the CT↔ST coupling
+fragility observed IN-container (the offer-wall probe, same config both arms)
+stands on its own evidence and remains the open D-8 item.
