@@ -151,6 +151,15 @@ crosses the static 2026 accredited level around **2028-29** (gross peaks
   correction: the floor no longer over-retains against a phantom shortage
   in the hindcast window.
 
+**Post-script (same session):** the path-(c) grid ran against this fix —
+`fom-scarcity-joint-protocol-2026-07-06-stage4-pathc.md`. Requirement-side
+prediction confirmed (backstop 0 MW in 2027-2029, was 15.2 GW); the
+floor-quiet-in-2026-27 prediction was wrong in an instructive way — the
+economic screen retires the whole coal fleet in 2027 at ~$22/MWh prices and
+the post-retirement ledger genuinely needs most of it back. The remaining
+blocker is the floor's zero-cost retention for energy-only ERCOT (see the
+stage-4 doc §3), not the accreditation arithmetic.
+
 *Files: `src/market_sim/config/constants.py` (four new registries + PRM
 citation fix), `src/market_sim/model/capacity.py`
 (`resolve_adequacy_requirement_mw`, `_thermal_firm_mw`, `_renewable_credit`,
