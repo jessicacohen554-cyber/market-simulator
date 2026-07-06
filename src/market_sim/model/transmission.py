@@ -2081,7 +2081,7 @@ def inject_caiso_import_solar_shape(
     if not (nl_hi > nl_lo):
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
-    floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
+    floor = -float(config.renewable_keep_running_value)
     # Import tranches matched by name under either the pooled WECC_import node or
     # the per-hub WECC_PNW/WECC_DSW corridors; export sinks (single-node only)
     # matched by full uid (the per-hub node replaces them with hub-priced export
