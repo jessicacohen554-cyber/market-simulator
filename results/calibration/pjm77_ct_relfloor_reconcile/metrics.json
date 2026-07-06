@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2,
+  "rubric_version": 2.1,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail, forced_share"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail"
   ],
   "criteria": {
     "fuelmix": {
@@ -79,7 +79,7 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -96,10 +96,10 @@
   },
   "grade_summary": {
     "scored": 10,
-    "target_grade": 4,
+    "target_grade": 5,
     "commercial_grade": 2,
     "ledgered": 0,
-    "fails": 4
+    "fails": 3
   },
   "free_class_score": {
     "iso": "PJM",

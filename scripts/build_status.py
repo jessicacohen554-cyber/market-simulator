@@ -209,7 +209,10 @@ def rubric() -> list[dict]:
             "profile r ≥ 0.8 AND off-peak (h0–14) CV ratio ≥ 0.5, per gated class "
             "(thresholds live in scripts/legitimacy_diagnostics.py D1_*, embedded in "
             "the artifact's gates block — re-stated here, never re-typed by the "
-            "scorer).",
+            "scorer). Materiality floor (v2.1, owner amendment 2026-07-06): gated "
+            f"only for classes ≥ {cv.PROTECTIVE_MIN_LOAD_FRAC:.0%} of total ISO load "
+            "(max of model/actual energy, so forcing can't hide a class below the "
+            "line); smaller classes are reported by the diagnostics, never gated.",
         ),
         row(
             "forced_share",
@@ -222,8 +225,13 @@ def rubric() -> list[dict]:
             "summary (floors from the bundle's floors/*.npz or the "
             "run_year(fleet_only=True) rebuild; rebuilt shares exclude the "
             "P1-dependent RA bridge and are flagged lower-bound).",
-            "forced share < 10% for peaker classes, < 30% for any merchant class "
-            "(scripts/legitimacy_diagnostics.py D2_*).",
+            f"forced share < {cv.FORCED_SHARE_PEAKER_MAX * 100:.0f}% for peaker "
+            f"classes (raised from 10% by the v2.1 owner amendment 2026-07-06, "
+            f"amending CLAUDE.md rule 20), < "
+            f"{cv.FORCED_SHARE_MERCHANT_MAX * 100:.0f}% for any merchant class; "
+            f"same ≥ {cv.PROTECTIVE_MIN_LOAD_FRAC:.0%}-of-load materiality floor "
+            "as C7. The scorer gates the artifact's measured share against the "
+            "rubric's caps (calibration_verdict.FORCED_SHARE_*).",
         ),
     ]
 

@@ -13,13 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2,
-  "determination": "CALIBRATED-WITH-CAVEATS",
+  "rubric_version": 2.1,
+  "determination": "NOT-YET",
   "reasons": [
-    "1 criterion(s) within the commercial-grade band but outside target: C5a CO2 vs eGRID",
-    "2 ledgered measured-input caveat(s): C3a mean LMP, C3b price duration/shape",
-    "1 protective-gate ledgered caveat(s): C8 forced-energy share (D-2)",
-    "unscored criteria: storage, storage_shape"
+    "undocumented out-of-tolerance (FAIL) criteria: forced_share"
   ],
   "criteria": {
     "fuelmix": {
@@ -83,14 +80,11 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     }
   },
   "caveats": {
-    "protective": [
-      "C8 forced-energy share (D-2)"
-    ],
+    "protective": [],
     "ledgered": [
       "C3a mean LMP",
       "C3b price duration/shape"
@@ -107,8 +101,8 @@
     "scored": 10,
     "target_grade": 6,
     "commercial_grade": 1,
-    "ledgered": 3,
-    "fails": 0
+    "ledgered": 2,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",

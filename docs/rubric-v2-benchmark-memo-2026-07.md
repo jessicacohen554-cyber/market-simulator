@@ -229,4 +229,53 @@ open root-cause workstreams (G-20…G-25).
 - `tail/actual_tail.json` re-derives only when its source hub series update
   (rule 23; the deriver hard-guards years to 2023–2025).
 - Keeper `metrics.json` sidecars regenerated this session record
-  `rubric_version: 2`.
+  `rubric_version: 2` (now 2.1 after the addendum below).
+
+## 8. Addendum — v2.1 owner amendments (2026-07-06, same day)
+
+Two owner-directed amendments landed after the v2 re-score (§5), recorded here
+so §4/§5 above stay the v2.0 record:
+
+1. **C7/C8 materiality floor.** The protective shape and forced-share gates
+   score only classes with annual energy — **max(model, actual)**, so a floor
+   cannot hide a class below the line by its own forcing — **≥ 2 % of total
+   ISO load**. Smaller classes are SKIPPED-immaterial with the D-1/D-2
+   readings annotated (reported, never gated). Owner rationale: structural
+   work making a trivial class hit a diurnal-r or unforced target is effort
+   spent where no intended use consumes the answer. 2 % is the clean cut in
+   the keeper data: NEISO ST_GAS/CT (0.1–0.7 % of load) and NYISO CT
+   (1.4–1.9 %) fall below; CAISO CT 2023/24 (2.1–2.3 % — the caiso-42
+   flat-floor case the gates exist to catch), PJM/MISO CT (3.5–4.2 %) and
+   every material ST_GAS (2.1–10.6 %) stay gated. Mirrors the C2 (10 TWh) and
+   C4 (5 TWh) immateriality precedents.
+2. **C8 peaker cap 10 % → 15 %** (CLAUDE.md rule 20 amended in place;
+   `legitimacy_diagnostics.py` D2 gate mirrored). Stated honestly: **no
+   external anchor exists for either value** — no published model reports a
+   forced-energy share at all — so this is an owner risk-tolerance setting on
+   an internal protective gate, not a benchmark move. The scorer now gates
+   D-2's *measured* shares against the rubric's caps rather than the
+   artifact's embedded verdicts, so committed artifacts re-score correctly
+   across gate versions.
+
+**v2.1 re-score effect:** ERCOT C8 clears (CT 12.4 % forced but 1.5–1.7 % of
+load → immaterial) — ERCOT's NOT-YET is now purely the price-structure fails
+(C3b 2023, C3c), i.e. G-22; PJM C8 clears (CT 12.1 % < 15 % cap, class
+material at 3.5 %) — PJM's NOT-YET is now C1 + C3a + C3c; NYISO's CT row
+(92.7 % on a 1.4–1.9 %-of-load class) and NEISO C7 (ST_GAS 0.1–0.3 %) become
+immaterial-skips; CAISO's C7/C8 CT fails stand (2.1–2.3 % of load,
+27.5–32.6 % forced). The amendment also supersedes the same-day C7-only
+2.5 % materiality cut landed in parallel by the L-15 lane (owner-confirmed
+X = 2 %, scope C7+C8, max(model, actual) basis).
+
+**Post-rebase status correction (2026-07-06 PM): the §6 NYISO recommendation
+is WITHDRAWN pending root-cause work.** The same-day D-2 forced-energy
+legitimacy regeneration (PR #1512) rebuilt NYISO's committed
+`legitimacy_diagnostics.json` with full class coverage, surfacing **ST_GAS
+forced at 59.7–69.8 %** of a fully material class (5.7–8.4 TWh, 3.9–5.5 % of
+load — G-05's known number, previously absent from the bundle artifact). The
+materiality floor correctly does not exempt it; there is no ledger entry; the
+undocumented FAIL governs and **NYISO scores NOT-YET at HEAD** — under v1,
+v2, and v2.1 alike. This is the protective gate working as designed on a
+material class. The NEISO recommendation (§6) stands unchanged. NYISO
+re-enters consideration when the ST_GAS floor is re-derived or ledgered with
+a driver+window+forward story (the #1344 scarcity-formation family).

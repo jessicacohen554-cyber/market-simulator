@@ -13,12 +13,12 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2,
+  "rubric_version": 2.1,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
     "3 criterion(s) within the commercial-grade band but outside target: C2 system volume (gas/coal families), C3a mean LMP, C3b price duration/shape",
     "2 ledgered measured-input caveat(s): C3c price tail / scarcity (DA-expressible), C5b storage throughput",
-    "1 protective-gate ledgered caveat(s): C7 diurnal shape (D-1)",
+    "unscored PROTECTIVE criteria: shape",
     "unscored criteria: storage_shape"
   ],
   "criteria": {
@@ -80,8 +80,7 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -90,9 +89,7 @@
     }
   },
   "caveats": {
-    "protective": [
-      "C7 diurnal shape (D-1)"
-    ],
+    "protective": [],
     "ledgered": [
       "C3c price tail / scarcity (DA-expressible)",
       "C5b storage throughput"
@@ -108,10 +105,10 @@
     }
   },
   "grade_summary": {
-    "scored": 11,
+    "scored": 10,
     "target_grade": 5,
     "commercial_grade": 3,
-    "ledgered": 3,
+    "ledgered": 2,
     "fails": 0
   },
   "free_class_score": {
