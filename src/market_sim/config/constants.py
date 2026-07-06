@@ -747,6 +747,79 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
 # Source: engineering judgment — data center pipeline matures ~2030.
 DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
+# --- Data-center load block (CX-4, gap G-34) ------------------------------
+# Cumulative data-center MW trajectories per ISO/path, consumed by
+# data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis;
+# default path "off" => unused, byte-identical to today). Piecewise-linear
+# between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES
+# derived from the published headline figures in the design memo
+# docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to
+# its primary ISO forecast / interconnection-queue source with the arithmetic
+# shown); they are the low/mid/high support the PB sampler interpolates, refined
+# on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6).
+# parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob).
+# ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).
+DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
+    # ERCOT — large-load queue ~226 GW (Nov 2025) vs 63 GW (end-2024); ~70% is
+    # data center; ~77% of large load targets in-service by 2030; 2030 adjusted
+    # peak ~138 GW. Source: ERCOT 2025 Report on Existing & Potential Electric
+    # System Constraints and Needs; ERCOT Large Load Integration / LFL officer
+    # updates. low = no published signed-IA MW subset -> 0 (honest floor);
+    # mid = (138 GW 2030 adj. peak - 85.5 GW 2024 record peak) ~= 52.5 GW large
+    # load x 0.70 DC ~= 37 GW; high = total credible LFL: 0.70 x 226 GW = 158 GW
+    # DC ultimate, 0.77 in-service by 2030 ~= 122 GW.
+    "ERCOT": {
+        "low": {2024: 0.0, 2030: 0.0},
+        "mid": {2024: 0.0, 2030: 37000.0},
+        "high": {2024: 0.0, 2030: 122000.0, 2035: 158000.0},
+    },
+    # PJM — DC-driven peak growth ~30 GW of ~32 GW total 2025->2030; 15-yr summer
+    # peak +70 GW to ~220 GW (DC-dominant). Source: PJM 2025 Long-Term Load
+    # Forecast Report (published DC decomposition). low = signed-ISA subset MW
+    # not separately published -> 0; mid = 30 GW DC by 2030; high = DC-dominant
+    # share of the +70 GW 15-yr peak -> ~60 GW DC by 2040.
+    "PJM": {
+        "low": {2025: 0.0, 2030: 0.0},
+        "mid": {2025: 0.0, 2030: 30000.0},
+        "high": {2025: 0.0, 2030: 30000.0, 2040: 60000.0},
+    },
+    # CAISO — CEC 2024 IEPR Data Center Forecast (24-IEPR-03), adopted into
+    # California Energy Demand 2024-2040: DC load +1.8 GW by 2030, +4.9 GW by
+    # 2040. low = IEPR low/no-DC case = 0; mid = the adopted DC adder; high = IEPR
+    # high-DC MW table not yet read -> high := mid (documented limitation, memo
+    # §3.1/§10.2; conservative — never overstates the upside).
+    "CAISO": {
+        "low": {2024: 0.0, 2030: 0.0, 2040: 0.0},
+        "mid": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
+        "high": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
+    },
+    # NYISO — 2025 Load & Capacity Data Report ("Gold Book") large-load
+    # adjustments: 19 large-load projects > 3 GW combined seeking interconnection;
+    # > 10 GW targeted in-service by 2031. low = signed subset MW not separately
+    # published -> 0; mid = > 3 GW near-firm large-load adjustment; high = > 10 GW
+    # total large-load queue by 2031.
+    "NYISO": {
+        "low": {2025: 0.0, 2031: 0.0},
+        "mid": {2025: 0.0, 2031: 3000.0},
+        "high": {2025: 0.0, 2031: 10000.0},
+    },
+    # MISO / NEISO — no published DC decomposition located (memo §2.2); ship {}
+    # => 0 MW every path/year until a primary source is read (a pure data-intake
+    # follow-up, no fitted placeholder). The near-term DEMAND_GROWTH_RATES still
+    # carry their DC boom implicitly until then.
+    "MISO": {},
+    "NEISO": {},
+}
+
+# Per-ISO override of the data-center block's zonal allocation, {iso: {zone:
+# share}} summing to 1.0 per ISO (memo §3.3). DEFAULT (ISO absent here) = each
+# zone's iso_configs load_share, applied by data.datacenter.datacenter_zone_shares.
+# Override ONLY where published queue siting geography differs from the load
+# distribution (memo names ERCOT North/West and PJM Dominion skews). Ships EMPTY:
+# no published per-zone DC siting fractions are yet sourced, so every ISO uses its
+# load_share default; adding a documented siting split is a data-intake follow-up.
+DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
+
 # --- Henry Hub Natural Gas Price Trajectories ($/MMBtu, real 2024$) ---
 # Source: EIA Annual Energy Outlook 2025 (AEO2025), released April 15, 2025
 # Table 13: Natural Gas Supply, Disposition, and Prices
