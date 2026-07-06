@@ -3,7 +3,7 @@
   "label": "caiso51 statmode v2",
   "date": "2026-07-06",
   "shorthand": "caiso51-statmode-v2",
-  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper caiso51_firm_base (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "definition": "STALE vs current CAISO keeper 2026-07-06-caiso-58-v2-regate (bundle caiso58_v2_regate) \u2014 despite the \"v2\" label this probe still replays the superseded caiso51_firm_base (caiso-51-firm-base) keeper (the \"v2\" refers to a code/basis delta, not a keeper re-gate); it is not a same-SHA replay of the current keeper (G-10 gap register: 'CAISO/NYISO r2 confounded with offer-curve merges, no same-SHA keeper replay'). A fresh replay against caiso58_v2_regate is queued, not done here. Original definition: D-7 statistical-mode A/B probe: byte-faithful replay of keeper caiso51_firm_base (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
   "years": [
     2023,
     2024,
