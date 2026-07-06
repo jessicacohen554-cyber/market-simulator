@@ -1,0 +1,150 @@
+/* Scope 2 LCE Portfolio — handoff docs site.
+   Design tokens copied from src/lce_portfolio/report.py's _CSS (the PP-11
+   "Observatory" system vendored inline there) — NOT from docs/codebase-site/,
+   so this folder stays pull-out-able with zero view-time dependency on the
+   parent repo. System font stacks only; no remote stylesheet or font
+   import, no CDN, no network fetch of any kind. */
+
+:root {
+  color-scheme: light;
+  --bg-page: #F8F9FC; --navy: #1A2744; --navy-dark: #0F1A2E;
+  --bg-card: #FFFFFF; --border: #D4D8E0; --border-light: #E5E7EB;
+  --text-primary: #000000; --text-secondary: #1E293B; --text-muted: #566370;
+  --text-on-dark: #FFFFFF; --text-muted-dark: rgba(255,255,255,0.70);
+  --font-heading: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-body: 'DM Sans', 'Plus Jakarta Sans', system-ui, -apple-system,
+    'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --solar: #F59E0B; --wind: #22C55E; --hydro: #0EA5E9; --nuclear: #6366F1;
+  --gas: #6B7280; --storage: #E67E22; --ccs: #26A69A; --hydrogen: #10B981;
+  --hydro-text: #0369A1; --negative: #DC2626;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
+body {
+  background: var(--bg-page); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--text-primary); line-height: 1.25; }
+a { color: var(--hydro-text); }
+a:hover { text-decoration: none; }
+code { font-family: var(--font-mono); font-size: 0.85em; background: rgba(0,0,0,0.045);
+  border-radius: 4px; padding: 0.1em 0.35em; }
+pre { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6;
+  padding: 14px 16px; border-radius: var(--radius-sm); overflow-x: auto;
+  background: var(--bg-page); border: 1px solid var(--border-light); margin: 10px 0; }
+pre code { background: none; padding: 0; }
+
+/* --- header band -------------------------------------------------------- */
+header.band {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: var(--text-on-dark); padding: 30px 24px 26px; position: relative; overflow: hidden;
+}
+header.band::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 60% 40%, rgba(14,165,233,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.10) 0%, transparent 55%);
+}
+.band-inner { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; }
+.eyebrow {
+  display: inline-block; font-family: var(--font-heading); font-size: 0.7rem;
+  font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7DD3FC;
+  border: 1px solid rgba(14,165,233,0.35); border-radius: 100px; padding: 4px 12px;
+  margin-bottom: 12px;
+}
+header.band h1 { color: #fff; font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
+header.band .subtitle { color: rgba(255,255,255,0.75); font-size: 0.92rem; margin: 0 0 18px; max-width: 62ch; }
+nav.site-nav { display: flex; flex-wrap: wrap; gap: 6px 4px; }
+nav.site-nav a {
+  color: rgba(255,255,255,0.82); text-decoration: none; font-size: 0.82rem; font-weight: 600;
+  padding: 7px 13px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.16);
+  transition: background 0.12s, color 0.12s;
+}
+nav.site-nav a:hover { background: rgba(255,255,255,0.10); color: #fff; }
+nav.site-nav a.active { background: #fff; color: var(--navy); border-color: #fff; }
+
+.energy-divider {
+  height: 3px;
+  background: linear-gradient(90deg, var(--solar) 0%, var(--wind) 25%, var(--hydro) 50%, var(--nuclear) 75%, var(--storage) 100%);
+}
+
+/* --- main content -------------------------------------------------------- */
+main { max-width: 980px; margin: 0 auto; padding: 28px 24px 60px; }
+main > section {
+  background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+  padding: 26px 28px; margin: 0 0 22px; box-shadow: var(--shadow-sm);
+}
+main h2 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 14px; }
+main h2 .num { color: var(--text-muted); font-weight: 600; margin-right: 8px; }
+h3 { font-size: 0.98rem; font-weight: 700; margin: 18px 0 8px; }
+h4 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted); margin: 16px 0 6px; }
+p { margin: 0 0 10px; }
+p:last-child { margin-bottom: 0; }
+ul, ol { margin: 0 0 12px; padding-left: 22px; }
+li { margin-bottom: 5px; }
+.lede { font-size: 1.02rem; color: var(--text-secondary); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 14px 0; }
+.mini-card {
+  border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 14px 16px;
+  background: var(--bg-page);
+}
+.mini-card h4 { margin-top: 0; }
+.mini-card code { display: block; margin-bottom: 6px; }
+
+.callout {
+  border-radius: var(--radius-md); padding: 14px 16px; margin: 14px 0; font-size: 0.9rem;
+  border: 1px solid rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); color: var(--text-secondary);
+}
+.callout.info { border-color: rgba(14,165,233,0.35); background: rgba(14,165,233,0.07); }
+.callout strong { color: var(--text-primary); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin: 12px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.83rem; }
+th, td { padding: 9px 13px; text-align: left; vertical-align: top; }
+thead th {
+  background: var(--navy); color: rgba(255,255,255,0.92); font-family: var(--font-heading);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap;
+}
+td { border-bottom: 1px solid var(--border-light); color: var(--text-secondary); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) td { background: rgba(0,0,0,0.016); }
+
+.badge {
+  display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; padding: 2px 9px; border-radius: 100px; color: #fff;
+}
+.badge.accepted { background: var(--wind); }
+.badge.amended { background: var(--solar); }
+.badge.hold { background: var(--gas); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 4px 0 14px; }
+.key { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+
+.diagram-wrap { overflow-x: auto; margin: 14px 0; }
+svg.diagram { display: block; width: 100%; height: auto; min-width: 560px; }
+svg.diagram text { font-family: var(--font-body); }
+.diagram-box-label { font-size: 12px; font-weight: 700; fill: var(--text-primary); }
+.diagram-sub-label { font-size: 10px; fill: var(--text-muted); }
+.diagram-caption { font-size: 11px; fill: var(--text-muted); }
+
+footer.site-footer {
+  color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 8px 24px 40px;
+  max-width: 980px; margin: 0 auto;
+}
+footer.site-footer a { color: var(--text-muted); }
+
+@media (max-width: 640px) {
+  header.band { padding: 24px 16px 20px; }
+  header.band h1 { font-size: 1.3rem; }
+  main { padding: 18px 14px 48px; }
+  main > section { padding: 18px 16px; }
+  nav.site-nav a { padding: 6px 10px; font-size: 0.78rem; }
+}
