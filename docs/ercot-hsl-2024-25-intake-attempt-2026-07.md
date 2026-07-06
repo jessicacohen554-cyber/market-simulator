@@ -1,5 +1,29 @@
 # ERCOT NP6 HSL 2024/2025 intake attempt — BLOCKED (2026-07-05)
 
+**Update 2026-07-06.** The credentialed-fetch route below remains closed
+per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
+§WS-E (re-verified this session: `apiexplorer.ercot.com`, `api.ercot.com`,
+and the legacy MIS path all return the identical 302/401 gate as before).
+Separately, the owner manually downloaded ERCOT NP6 reports through the
+Data Access Portal UI (not the API) and uploaded them straight to the repo
+— a different, already-authorized mechanism than the closed credentialed
+fetch. That upload is **partial**: solar (NP4-737) is complete for both
+2024 and 2025 (24/24 months); wind (NP4-732/742) covers only 2 of 24
+months (2024-05, 2024-09). The uploaded archives also turned out to be a
+zip-of-zips (one outer monthly zip of ~700+ per-posting zips, each with one
+CSV) that `scripts/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't
+parse at all; fixed to recurse to arbitrary depth. Files were relocated
+from the top-level `data/raw/ercot-hsl/` into the `np6/<year>/` drop-zone
+the builder scans. Running `build_ercot_hsl.py --year 2024 2025` now
+correctly reads the real data and, as designed, refuses to build either
+year: 2024 fails the `_MAX_GAP_HOURS` completeness gate (7,202/8,760 wind
+hours missing) and 2025 has zero wind files. **No parquet was written for
+2024 or 2025 — the G7 gross-up fallback remains in effect** until the
+remaining 22 wind-months (2024: all except 05/09; all of 2025) are
+supplied, in either the plain (NP4-732) or by-geography (NP4-742) report
+family — both carry an identical system-wide actual/HSL column pair, so
+either works.
+
 **Scope.** WS-E of `docs/handoffs/ercot-as-coopt-plan-2026-07.md` / P4 remainder
 of `docs/forecast-methodology-gaps-2026-06.md` G7: intake the published ERCOT
 NP4-732/737 (wind/solar HSL) reports for 2024 and 2025 so
