@@ -46,7 +46,7 @@ for the market split.
 |---|---|---|---|---|---|---|
 | lmp | — | — | — | — | — | — |
 | load | — | — | — | — | — | — |
-| demand-profile | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 | 2021–2025 |
+| demand-profile | — | — | — | — | — | — |
 | ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
 | generation | — | — | — | — | — | — |

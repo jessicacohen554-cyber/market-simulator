@@ -1886,25 +1886,44 @@ class ScenarioConfig:
     # PJM reserve class (~ fleet (pmax−pmin)/pmin near min load). Default 1.0 (the
     # dispatch._build_reserve_rows documented default); not fitted to a residual.
     pjm_reserve_pergen: bool = False  # PJM: PER-GENERATOR reserve co-optimization
-    # (dispatch._build_reserve_rows_pergen) — one R[r,t] column per reserve-
-    # providing asset (memory-tiered: per (plant, fuel-class) inside the MAD
-    # subzone, per (zone, fuel-class) outside it; members are the reserve-
-    # eligible tranches with nonzero 10-min ramp), joint Σ P + R ≤ Σ pmax·
-    # availability per asset-hour, R[r] ≤ Σ FleetArrays.ramp10
-    # (RAMP10_FRAC_BY_GROUP × pmax, NREL/TP-5500-55588 class ramp rates) as a
-    # variable bound, and TWO measured balance families per Manual 11 sec 4.2:
-    # the RTO Reserve Zone (measured pr_req_mw) and the nested Mid-Atlantic/
-    # Dominion Reserve Subzone (measured mad_pr_req_mw), each priced by the
-    # published two-step ORDC ($850/$300/+190 MW, pjm_ordc_curve.csv). Reserve
-    # competes with energy ON THE SAME MARGINAL ASSET, so the balance dual
-    # carries the sub-shortage opportunity cost into the LMP endogenously — no
-    # overlay, no haircut, no fitted params (docs/multi-iso/pjm-reserve-ordc.md
-    # Phase 2; granularity tiers are the documented 15 GB memory scope-down,
-    # never a breakpoint/penalty change). Supersedes (mutually exclusive with)
+    # (dispatch._build_reserve_rows_pergen) — one R[r,t] column per (zone,
+    # fuel-class) pool of reserve-eligible tranches with nonzero 10-min ramp,
+    # joint Σ P + R ≤ Σ pmax·availability per pool-hour, R[r] ≤
+    # Σ FleetArrays.ramp10 × availability (hourly; RAMP10_FRAC_BY_GROUP ×
+    # pmax, NREL/TP-5500-55588 class ramp rates, measured-reconciled under
+    # measured_ramp_capability) as a variable bound, and TWO measured balance
+    # families per Manual 11 sec 4.2: the RTO Reserve Zone (measured
+    # pr_req_mw) and the nested Mid-Atlantic/Dominion Reserve Subzone
+    # (measured mad_pr_req_mw), each priced by the published two-step ORDC
+    # ($850/$300/+190 MW, pjm_ordc_curve.csv). Reserve competes with energy
+    # AT THE MARGINAL POOL, so the balance dual carries the sub-shortage
+    # opportunity cost into the LMP endogenously — no overlay, no haircut, no
+    # fitted params (docs/multi-iso/pjm-reserve-ordc.md Phase 2). Class-level
+    # pooling everywhere is the documented 15 GB memory tier the miso-39
+    # keeper proved feasible: the finer plant-in-MAD tier (257 R columns,
+    # 2.25M joint rows) solved P0 at ~15.1 GB but OOM'd in the P1 warm-start
+    # (2026-07-02 memtest) — a documented memory scope-down, never a
+    # breakpoint/penalty change. Supersedes (mutually exclusive with)
     # pjm_reserve_supply_cap / pjm_reserve_online_gated, whose zone-aggregate
-    # scoping the per-asset ramp10 bound replaces. Requires
+    # scoping the per-pool ramp10 bound replaces. Requires
     # energy_reserve_coopt + PJM; default off; GATED. Profile memory before
     # multi-year runs (CLAUDE.md #45).
+    measured_ramp_capability: bool = False  # Reconcile FleetArrays.ramp10's
+    # class 10-minute fractions (RAMP10_FRAC_BY_GROUP/_BY_FUEL, the NREL/EIA
+    # class-rate ESTIMATE) against the MEASURED per-plant ramp-capability
+    # datatype (data/clean/ramp-capability, scripts/curate_ramp_capability.py):
+    # EIA-860 Schedule 3.1 "Time from Cold Shutdown to Full Load" = "10M"
+    # fast-start thermal capacity as a FLOOR, and the CAMPD CEMS maximum
+    # observed 1-hour plant gross-load up-ramp (pooled 2023-2025, holdouts
+    # excluded) as a CEILING on the class rate — the sustained-delivery bound
+    # a 10-minute reserve award must honour (PJM Manual 11 primary reserve
+    # ~30 min; MISO BPM-002 contingency reserve). Formula and citations:
+    # market_sim.data.ramp_capability.measured_ramp10_frac. Plants without
+    # coverage keep the class estimate (rule 14 fallback). Feeds the per-asset
+    # reserve co-optimizations (pjm_reserve_pergen / miso_reserve_pergen);
+    # inert unless a consumer reads ramp10. Measured physical capability,
+    # forward-regenerating, never fitted to a residual (rules 13/24).
+    # Default off; GATED (alters the co-opt deliverable-reserve bound).
     ercot_as_forward_requirement: bool = False  # ERCOT: set each multi-product AS
     # requirement (RegUp/RRS/ECRS/NonSpin) from a FORWARD formula of forecast
     # drivers — req_product(t) = f(net-load, ramp, VRE-share, net-load
@@ -4147,6 +4166,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
     "pjm_reserve_pergen": 1,
+    "measured_ramp_capability": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
     "ercot_storage_as_endogenous": 1,
