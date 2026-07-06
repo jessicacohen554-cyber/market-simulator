@@ -343,6 +343,88 @@ class TestReliabilityFloorEngine(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[st, 24:72], expected[24:72])
         np.testing.assert_allclose(fa.min_gen[st, 72:120], 0.0)
 
+    def test_netload_threshold_percentile_recomputes_from_engine_basis(self):
+        """When threshold_percentile is set, the engine ignores the CSV's fixed
+        threshold and computes the p-th percentile of daily-peak net-load from
+        its own inputs — closing the EIA-930-vs-model basis mismatch."""
+        H = 72  # 3 days
+        n_zones = 1
+        fa, rows = _build_fleet(H)
+        # Daily peaks in GW: day0=30, day1=20, day2=25. p50 = 25 GW.
+        demand = np.zeros((n_zones, H))
+        demand[0, :24] = 35000.0  # net-load peak = 35k - 5k = 30 GW
+        demand[0, 24:48] = 25000.0  # net-load peak = 25k - 5k = 20 GW
+        demand[0, 48:72] = 30000.0  # net-load peak = 30k - 5k = 25 GW
+        wind_cf = np.ones((n_zones, H))
+        wind_cap = np.array([2500.0])
+        solar_cf = np.ones((n_zones, H))
+        solar_cap = np.array([2500.0])
+        # Fixed threshold=99 would flag nothing; but percentile=50 -> p50=25 GW
+        # flags day0 (30>25). Day2 (25) is NOT > 25, so unflagged.
+        spec = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="netload",
+            threshold=99.0,
+            floor_pct=0.5,
+            threshold_percentile=50.0,
+        )
+        applied = T.inject_reliability_floor(
+            fa,
+            "TEST",
+            2024,
+            [spec],
+            ["Z"],
+            demand=demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
+        )
+        self.assertTrue(applied)
+        ct = rows["CT_PEAKER"]
+        expected = 0.5 * fa.pmax[ct] * fa.availability[ct, :]
+        np.testing.assert_allclose(fa.min_gen[ct, :24], expected[:24])
+        np.testing.assert_allclose(fa.min_gen[ct, 24:72], 0.0)
+
+    def test_netload_without_percentile_uses_fixed_threshold(self):
+        """Without threshold_percentile the engine uses the CSV's fixed GW
+        threshold — byte-identical to the pre-fix behaviour."""
+        H = 48
+        n_zones = 1
+        fa, rows = _build_fleet(H)
+        demand = np.full((n_zones, H), 35000.0)
+        demand[0, 24:48] = 25000.0
+        wind_cf = np.ones((n_zones, H))
+        wind_cap = np.array([2500.0])
+        solar_cf = np.ones((n_zones, H))
+        solar_cap = np.array([2500.0])
+        # threshold=27 -> day0 net 30>27 flagged, day1 net 20<27 not.
+        spec = ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="CT_PEAKER",
+            driver="netload",
+            threshold=27.0,
+            floor_pct=0.5,
+        )
+        applied = T.inject_reliability_floor(
+            fa,
+            "TEST",
+            2024,
+            [spec],
+            ["Z"],
+            demand=demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
+        )
+        self.assertTrue(applied)
+        ct = rows["CT_PEAKER"]
+        expected = 0.5 * fa.pmax[ct] * fa.availability[ct, :]
+        np.testing.assert_allclose(fa.min_gen[ct, :24], expected[:24])
+        np.testing.assert_allclose(fa.min_gen[ct, 24:48], 0.0)
+
 
 class TestReliabilityFloorRamp(unittest.TestCase):
     """Continuous temperature-ramp families interpolate ``(threshold, floor_pct)``

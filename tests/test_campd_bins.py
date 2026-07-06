@@ -501,6 +501,46 @@ class TestCommitmentParams(unittest.TestCase):
         out = apply_commitment_with_coal_pin(arrays, committed, p1, [base])
         np.testing.assert_allclose(out.availability[0, 2:5], 0.6)
 
+    def test_class_override_enables_zero_min_run_bin(self):
+        """class_commitment_overrides fires even on bins with min_run=0."""
+        fleet, _ = bins_to_fleet(
+            _synthetic_bin(
+                min_run=0,
+                min_down=0,
+                Plant_Group="ST_GAS",
+                fuel="gas_st",
+            ),
+            ZONE_NAMES,
+            self.config,
+        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
+        self.assertTrue(committed.is_campd_bin)
+        self.assertEqual(committed.min_run_hours, 0)
+        self.assertIsNone(_commitment_params(committed, committed.heat_rate))
+        overrides = {"ST_GAS": {"min_run_hours": 48, "min_down_hours": 12}}
+        params = _commitment_params(
+            committed, committed.heat_rate, class_overrides=overrides
+        )
+        self.assertIsNotNone(params)
+        self.assertEqual(params["min_run_hours"], 48)
+        self.assertEqual(params["min_down_hours"], 12)
+        self.assertGreaterEqual(params["startup_per_mw"], 0.0)
+
+    def test_class_override_does_not_fire_without_min_run(self):
+        """An override with no min_run_hours leaves a zero-min-run bin unscreened."""
+        fleet, _ = bins_to_fleet(
+            _synthetic_bin(min_run=0, min_down=0, Plant_Group="ST_GAS", fuel="gas_st"),
+            ZONE_NAMES,
+            self.config,
+        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
+        overrides = {"ST_GAS": {"min_down_hours": 12}}
+        self.assertIsNone(
+            _commitment_params(
+                committed, committed.heat_rate, class_overrides=overrides
+            )
+        )
+
 
 class TestMustRunEmissions(unittest.TestCase):
     """CHP must-run post-processing."""
