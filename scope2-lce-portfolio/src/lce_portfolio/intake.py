@@ -25,10 +25,26 @@ Accepted load-intake schema (CSV or Parquet), long form:
     load_mwh : float
     facility : str (optional; summed away by aggregation)
 
-Accepted LMP schema (CSV or Parquet), long form (ADR 0011 export contract):
-    hour : int in [0, 8759]
-    iso  : str
-    lmp  : float ($/MWh)
+Accepted LMP schema (CSV or Parquet) -- pick ONE of two shapes, auto-detected
+by column set (HP-01 extends the original ADR 0011 hourly-only contract):
+
+    hourly (ADR 0011), long form:
+        hour : int in [0, 8759]
+        iso  : str
+        lmp  : float ($/MWh)
+
+    annual-average (HP-01, ``data/templates/README.md`` §2b), one row per
+    ISO, no ``hour`` column:
+        iso              : str
+        annual_avg_lmp   : float ($/MWh), non-negative
+
+    The annual-average shape is expanded to a flat ``HOURS_PER_YEAR`` vector
+    per ISO -- a degenerate, shape-free price vector to the LP -- so results
+    become an annual-average *comparison*: hourly price shape/covariance
+    value is deliberately excluded. :func:`prepare_lmp` reports which shape a
+    file used via its ``lmp_kind`` return value (:data:`LMP_KIND_HOURLY` /
+    :data:`LMP_KIND_ANNUAL_AVERAGE_FLAT`), threaded through to run metadata
+    and the report provenance.
 
 Accepted emission-rate schema (CSV or Parquet), long form (ADR 0013 export
 contract, mirroring the LMP contract shape):
@@ -52,7 +68,19 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
+from lce_portfolio.config import (
+    HOURS_PER_YEAR,
+    LMP_KIND_ANNUAL_AVERAGE_FLAT,
+    LMP_KIND_HOURLY,
+    PortfolioConfig,
+)
+
+#: Column sets that identify each accepted LMP schema (HP-01 detection rule):
+#: hourly wins if its columns are present; annual-average requires its
+#: columns AND the absence of ``hour`` (a file carrying both is ambiguous and
+#: falls through to the hourly-contract missing-columns error).
+_LMP_HOURLY_COLUMNS = {"hour", "iso", "lmp"}
+_LMP_ANNUAL_AVERAGE_COLUMNS = {"iso", "annual_avg_lmp"}
 
 
 def _read_table(path: str | Path) -> pd.DataFrame:
@@ -210,47 +238,86 @@ def prepare_load(
     )
 
 
-def lmp_intake(path: str | Path) -> pd.DataFrame:
-    """Read an LMP file (``.csv`` or ``.parquet``) into a long DataFrame.
+def lmp_intake(path: str | Path) -> tuple[pd.DataFrame, str]:
+    """Read an LMP file (``.csv`` or ``.parquet``), detect its schema, validate.
 
-    Requires columns ``hour``, ``iso``, ``lmp`` (ADR 0011 export contract:
-    one row per ISO-hour, already reconciled to a single per-ISO price — see
-    :func:`collapse_zonal_lmp` if the source export is still zonal).
+    Two accepted schemas, auto-detected by column set (module docstring;
+    HP-01 extends the original ADR 0011 hourly-only contract):
+
+    * hourly -- columns ``hour``, ``iso``, ``lmp``: one row per ISO-hour,
+      already reconciled to a single per-ISO price (see
+      :func:`collapse_zonal_lmp` if the source export is still zonal).
+    * annual-average -- columns ``iso``, ``annual_avg_lmp`` and NO ``hour``
+      column: one row per ISO.
+
+    Returns ``(df, lmp_kind)`` where ``lmp_kind`` is :data:`LMP_KIND_HOURLY`
+    or :data:`LMP_KIND_ANNUAL_AVERAGE_FLAT`. Any other column combination
+    (including a file with neither complete column set) raises the same
+    "LMP file missing columns" error naming the hourly contract's columns,
+    since that is the primary/default schema.
     """
     df = _read_table(path)
+    cols = set(df.columns)
 
-    required = {"hour", "iso", "lmp"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"LMP file missing columns: {sorted(missing)}")
-    if df.empty:
-        raise ValueError(f"LMP intake: {path} has no data rows (header only?)")
-    _validate_hour_range(df)
-    # Negative LMPs are legitimate market outcomes; only NaN/inf are errors.
-    _require_finite(df, "lmp", context="LMP intake")
-    return df
+    if _LMP_HOURLY_COLUMNS <= cols:
+        if df.empty:
+            raise ValueError(f"LMP intake: {path} has no data rows (header only?)")
+        _validate_hour_range(df)
+        # Negative LMPs are legitimate market outcomes; only NaN/inf are errors.
+        _require_finite(df, "lmp", context="LMP intake")
+        return df, LMP_KIND_HOURLY
+
+    if _LMP_ANNUAL_AVERAGE_COLUMNS <= cols and "hour" not in cols:
+        if df.empty:
+            raise ValueError(f"LMP intake: {path} has no data rows (header only?)")
+        _require_finite(df, "annual_avg_lmp", context="LMP intake")
+        if (df["annual_avg_lmp"] < 0).any():
+            n_neg = int((df["annual_avg_lmp"] < 0).sum())
+            raise ValueError(
+                f"LMP intake: {n_neg} negative annual_avg_lmp value(s); "
+                "annual-average prices must be non-negative"
+            )
+        return df, LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+    missing = sorted(_LMP_HOURLY_COLUMNS - cols)
+    raise ValueError(f"LMP file missing columns: {missing}")
 
 
-def prepare_lmp(path: str | Path, iso: str) -> np.ndarray:
+def prepare_lmp(path: str | Path, iso: str) -> tuple[np.ndarray, str]:
     """End-to-end LMP intake for one ISO: read, validate, return an 8760 vector.
 
-    Applies the same validation standard as :func:`prepare_load`: a
-    duplicated ``(iso, hour)`` row and a missing hour both raise (naming the
-    ISO, the count, and an example) rather than being silently resolved. No
-    price escalation is applied (ADR 0011) — the returned series is the LMP
-    vintage in the file, as-is.
+    Detects the file's schema (:func:`lmp_intake`) and returns
+    ``(lmp, lmp_kind)``:
+
+    * hourly -- byte-identical to the original ADR 0011 behavior: a
+      duplicated ``(iso, hour)`` row and a missing hour both raise (naming
+      the ISO, the count, and an example) rather than being silently
+      resolved.
+    * annual-average (HP-01) -- a duplicated ``iso`` row is a hard error
+      naming an example; the ISO's single annual-average value is expanded
+      to a flat ``HOURS_PER_YEAR`` vector with :func:`numpy.full` (no Python
+      loop over hours).
+
+    Either way, an ISO requested but absent from the file raises the same
+    ``KeyError`` shape. No price escalation is applied (ADR 0011) — the
+    returned series is the LMP vintage in the file, as-is.
     """
-    df = lmp_intake(path)
+    df, lmp_kind = lmp_intake(path)
     sub = df[df["iso"] == iso]
     if sub.empty:
         raise KeyError(
             f"ISO {iso!r} not present in LMP file; have {sorted(df['iso'].unique())}"
         )
 
-    _check_no_duplicates(sub, ["iso", "hour"], context="LMP intake")
-    present = set(sub["hour"].astype(int))
-    _require_full_calendar(present, iso, kind="LMP intake")
-    return sub.sort_values("hour")["lmp"].to_numpy(dtype=float)
+    if lmp_kind == LMP_KIND_HOURLY:
+        _check_no_duplicates(sub, ["iso", "hour"], context="LMP intake")
+        present = set(sub["hour"].astype(int))
+        _require_full_calendar(present, iso, kind="LMP intake")
+        return sub.sort_values("hour")["lmp"].to_numpy(dtype=float), lmp_kind
+
+    _check_no_duplicates(sub, ["iso"], context="LMP intake")
+    annual_avg = float(sub["annual_avg_lmp"].iloc[0])
+    return np.full(HOURS_PER_YEAR, annual_avg, dtype=float), lmp_kind
 
 
 def emissions_intake(path: str | Path) -> pd.DataFrame:

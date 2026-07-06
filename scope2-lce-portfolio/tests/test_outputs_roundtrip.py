@@ -13,7 +13,7 @@ from dataclasses import fields
 import numpy as np
 import pandas as pd
 
-from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.config import LMP_KIND_HOURLY, PortfolioConfig
 from lce_portfolio.outputs import summarize, write_outputs
 from lce_portfolio.sweep import run_sweep
 
@@ -86,7 +86,15 @@ def test_run_metadata_json_keys_round_trip(tmp_path) -> None:
     paths = write_outputs(sweep, tmp_path, config=cfg)
     meta = json.loads(paths["metadata"].read_text())
 
-    assert set(meta) == {"tool_version", "iso", "mode", "config", "solves"}
+    assert set(meta) == {
+        "tool_version",
+        "iso",
+        "mode",
+        "lmp_kind",
+        "config",
+        "solves",
+    }
+    assert meta["lmp_kind"] == LMP_KIND_HOURLY  # _sweep() default (HP-01)
     assert len(meta["solves"]) == len(sweep.results)
     for solve, r in zip(meta["solves"], sweep.results):
         assert set(solve) == {"setpoint", "status", "matching_pct", "premium_per_mwh"}

@@ -160,7 +160,7 @@ def run_one_iso(
     """
     resources = load_resource_arrays(config)
     load = prepare_load(load_path, config.iso, config)
-    lmp = prepare_lmp(lmp_path, config.iso)
+    lmp, lmp_kind = prepare_lmp(lmp_path, config.iso)
     emission_rate = (
         prepare_emission_rate(emissions_path, config.iso) if emissions_path else None
     )
@@ -183,7 +183,9 @@ def run_one_iso(
     # outputs, not just a transient stderr warning.
     shape_source = profile_source(config.iso, shape_year)
 
-    sweep = run_sweep(config, resources, load, lmp, cf, emission_rate=emission_rate)
+    sweep = run_sweep(
+        config, resources, load, lmp, cf, emission_rate=emission_rate, lmp_kind=lmp_kind
+    )
     paths = write_outputs(
         sweep,
         out_dir,

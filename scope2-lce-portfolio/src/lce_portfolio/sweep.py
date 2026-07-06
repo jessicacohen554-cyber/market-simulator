@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from lce_portfolio.config import PortfolioConfig
+from lce_portfolio.config import LMP_KIND_HOURLY, PortfolioConfig
 from lce_portfolio.lp import PortfolioResult, solve_with_charge_policy
 from lce_portfolio.resources import ResourceArrays
 
@@ -24,6 +24,11 @@ class SweepResult:
     iso: str
     mode: str
     results: list[PortfolioResult]
+    lmp_kind: str = LMP_KIND_HOURLY
+    """Which LMP-intake schema priced this sweep (HP-01): :data:`LMP_KIND_HOURLY`
+    or :data:`LMP_KIND_ANNUAL_AVERAGE_FLAT`. Defaults to hourly so callers that
+    hand-build a ``SweepResult`` (tests, the pre-HP-01 call sites) keep their
+    original behavior."""
 
     @property
     def frontier(self) -> list[tuple[float, float, float]]:
@@ -39,6 +44,7 @@ def run_sweep(
     cf: np.ndarray,
     *,
     emission_rate: np.ndarray | None = None,
+    lmp_kind: str = LMP_KIND_HOURLY,
 ) -> SweepResult:
     """Run the sweep implied by ``config.mode`` and return a :class:`SweepResult`.
 
@@ -51,7 +57,11 @@ def run_sweep(
 
     ``emission_rate`` (keyword-only) is the optional ``(T,)`` hourly
     fossil-only average grid CO2 rate (tCO2/MWh, ADR 0013) threaded to every
-    solve; ``None`` leaves residual-carbon reporting off.
+    solve; ``None`` leaves residual-carbon reporting off. ``lmp_kind``
+    (keyword-only, HP-01) records which LMP-intake schema priced ``lmp`` --
+    the LP treats a flat annual-average vector identically to a shaped
+    hourly one, so this is provenance only, carried on the returned
+    :class:`SweepResult` for run metadata / report labeling.
     """
     setpoints = (
         config.premium_deltas
@@ -64,4 +74,6 @@ def run_sweep(
         )
         for sp in setpoints
     ]
-    return SweepResult(iso=config.iso, mode=config.mode, results=results)
+    return SweepResult(
+        iso=config.iso, mode=config.mode, results=results, lmp_kind=lmp_kind
+    )
