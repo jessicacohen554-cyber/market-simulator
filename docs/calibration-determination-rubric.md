@@ -501,7 +501,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   **`UNATTESTED`** (⇒ `NOT-YET`) if no attestation file exists — you cannot certify
   a run you have not attested.
 
-### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; UNCHANGED in v2)*
+### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; materiality cut-off added 2026-07-06)*
 
 - **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
   **profile correlation r** and the **off-peak (h0–14) CV ratio**
@@ -516,6 +516,17 @@ FAILS regardless of every score above.** Four assertions, all required:
   thresholds are read from the artifact's `gates` block, set in
   `scripts/legitimacy_diagnostics.py` `D1_*`). A flat line — the caiso-42
   signature, model off-peak CV 0.000 vs actual 0.35–0.45 — fails both.
+- **Immateriality cut-off (owner decision 2026-07-06):** a gated class whose
+  actual annual energy is **< 2.5% of ISO total load**
+  (`calibration_verdict.D1_SHAPE_MATERIALITY_LOAD_FRAC`) is **not gated** by
+  C7, whatever its r/CV-ratio verdict — mirrors C2's `SYSVOL_MIN_TWH`
+  immateriality cut-off (a shape defect on a near-noise-floor class isn't
+  withheld from a keeper). Recorded `SKIPPED` (never a silent pass); the
+  underlying r/CV-ratio is still carried in the row's `magnitude` for
+  visibility, it just doesn't count against the C7 protective-caveat budget.
+  This decouples C7 from ST_GAS specifically wherever ST_GAS is sub-2.5% of
+  an ISO's load — the mechanism-defect classification (audit §1) is
+  unchanged; only whether it gates a keeper changed.
 - **Why first-class (motivating evidence):** annual volume bands cannot see
   class-shape failure. The D-7 statistical-mode study
   (`docs/statistical-mode-results-2026-07.md`) showed the 2026-07-02-loosened
@@ -530,7 +541,8 @@ FAILS regardless of every score above.** Four assertions, all required:
   merit-order shape — commitment/offer structure, per audit §1). Essentially
   never ledgerable: a flat profile is a mechanism defect by construction.
   `SKIPPED` (never a silent pass — and it caps the determination, §2) when
-  the bundle carries no `legitimacy_diagnostics.json`.
+  the bundle carries no `legitimacy_diagnostics.json`, or when the
+  immateriality cut-off above applies.
 
 ### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; UNCHANGED in v2)*
 
