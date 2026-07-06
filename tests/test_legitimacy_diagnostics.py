@@ -521,3 +521,169 @@ class TestD6Quarantine:
 
         assert ak.CALIBRATION_YEARS == D6_CALIBRATION_YEARS
         assert str(ak.MARKER_FILE).endswith(D6_MARKER_FILE.split("/")[-1])
+
+
+# ---------------------------------------------------------------------------
+# D-2 recompute-vs-committed (gap G-06)
+# ---------------------------------------------------------------------------
+
+
+def _fake_keeper_repo(tmp_path, run_id, iso, years, committed_summary):
+    """Build a minimal repo root: keepers.json + sidecar + committed bundle."""
+    reg = tmp_path / "frontend" / "data" / "backcast" / "registry"
+    reg.mkdir(parents=True)
+    (tmp_path / "frontend" / "data" / "backcast" / "keepers.json").write_text(
+        json.dumps({"keepers": [run_id]})
+    )
+    bundle_rel = f"results/calibration/{run_id}"
+    (reg / f"{run_id}.json").write_text(
+        json.dumps({"iso": iso, "years": years, "bundle": bundle_rel})
+    )
+    bundle = tmp_path / bundle_rel
+    bundle.mkdir(parents=True)
+    (bundle / "legitimacy_diagnostics.json").write_text(
+        json.dumps({"diagnostics": {"D2": {"summary": committed_summary}}})
+    )
+    return tmp_path
+
+
+class TestD2KeepersVerify:
+    def test_matching_recompute_passes(self, tmp_path, monkeypatch):
+        """A recompute that reproduces the committed share is a pass, even
+        when that committed share already FAILs its own D-2 threshold —
+        this gate checks staleness, not the threshold itself."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.111},
+        ]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "ERCOT", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.111}
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert res.passed
+        assert res.rows[0]["verdict"] == "pass"
+
+    def test_discrepancy_fails(self, tmp_path, monkeypatch):
+        """A recomputed share that disagrees with the committed one fails —
+        the committed artifact has drifted from the bundle it describes."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.111},
+        ]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "ERCOT", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.60}
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert not res.passed
+        assert "keeper1" in res.failures[0]
+        assert "0.111" in res.failures[0] and "0.6" in res.failures[0]
+
+    def test_missing_committed_artifact_notes_not_fails(self, tmp_path, monkeypatch):
+        """A keeper with no committed legitimacy_diagnostics.json yet (e.g.
+        G-01/G-02's MISO gap) is noted, not failed — that absence is a
+        separate, already-tracked gap."""
+        import scripts.legitimacy_diagnostics as ld
+
+        reg = tmp_path / "frontend" / "data" / "backcast" / "registry"
+        reg.mkdir(parents=True)
+        (tmp_path / "frontend" / "data" / "backcast" / "keepers.json").write_text(
+            json.dumps({"keepers": ["keeper2"]})
+        )
+        (reg / "keeper2.json").write_text(
+            json.dumps(
+                {
+                    "iso": "MISO",
+                    "years": [2023],
+                    "bundle": "results/calibration/keeper2",
+                }
+            )
+        )
+        (tmp_path / "results" / "calibration" / "keeper2").mkdir(parents=True)
+        res = ld.run_d2_keepers_verify(tmp_path)
+        assert res.passed
+        assert not res.rows
+        assert "keeper2" in res.notes[0]
+
+    def test_no_keepers_file_passes_trivially(self, tmp_path):
+        """No keepers.json (e.g. a from-scratch repo checkout) is a no-op."""
+        import scripts.legitimacy_diagnostics as ld
+
+        res = ld.run_d2_keepers_verify(tmp_path)
+        assert res.passed
+
+    def test_class_dropped_by_zero_total_filter_is_not_a_discrepancy(
+        self, tmp_path, monkeypatch
+    ):
+        """A class present with forced_share 0.0 in one summary and absent
+        from the other (run_d2's own total_by_class <= 0 filter drops rows
+        with zero dispatch) is the same substantive fact, not drift — e.g.
+        a non-thermal 'hydro' row committed at 0.0 that the recompute's
+        floor-rebuild fallback doesn't emit at all."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.10},
+            {"year": 2023, "class": "hydro", "forced_share": 0.0},
+        ]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "PJM", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.10}
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert res.passed
+
+    def test_a_real_nonzero_class_missing_on_one_side_still_fails(
+        self, tmp_path, monkeypatch
+    ):
+        """Missing-as-zero must not mask a genuine nonzero-vs-absent drift."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [{"year": 2023, "class": "CT_PEAKER", "forced_share": 0.10}]
+        root = _fake_keeper_repo(tmp_path, "keeper1", "PJM", [2023], committed)
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {"year": 2023, "class": "CT_PEAKER", "forced_share": 0.10},
+                        {"year": 2023, "class": "ST_GAS", "forced_share": 0.35},
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert not res.passed
+        assert any("ST_GAS" in f for f in res.failures)
