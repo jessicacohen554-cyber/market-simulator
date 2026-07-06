@@ -633,28 +633,32 @@ Fleet evolves year-over-year within a scenario. Year N+1’s fleet depends on Ye
 
 ```
 For year in 2026..2050:
-    1. Start with fleet from prior year (or base fleet for 2026)
-    1b. Apply CONFIRMED exits (binding public instruments — consent decree,
-        statute, RTO deactivation acceptance, regulatory order, RMR end; any
-        fuel; bypasses the reliability floor). GATED `confirmed_exits_enabled`
-        (default on, flipped 2026-07-05 — docs/handoffs/confirmed-retirement-plan-2026-07.md
-        §7), forecast-mode only. The ONLY exogenous fossil exit channel.
-    2. Apply ANNOUNCED retirements (EIA-860 planned date) — fossil is a default
-       no-op (deferred to the economic screen, step 3); NON-FOSSIL
+    (start with fleet from prior year, or base fleet for 2026)
+    0. Apply CONFIRMED exits (binding public instruments — consent decree,
+       statute, RTO deactivation acceptance, regulatory order, RMR end; any
+       fuel; bypasses the reliability floor). GATED `confirmed_exits_enabled`
+       (default on, flipped 2026-07-05 — docs/handoffs/confirmed-retirement-plan-2026-07.md
+       §7), forecast-mode only. The ONLY exogenous fossil exit channel.
+    1. Apply ANNOUNCED retirements (EIA-860 planned date) — fossil is a default
+       no-op (deferred to the economic screen, step 2); NON-FOSSIL
        (nuclear/hydro/renewables/storage) honored only within the EIA-860 data
        horizon, beyond it only if the unit is in the confirmed registry
        (`forecast_fossil_retirement_economic`, `NONFOSSIL_ANNOUNCED_HORIZON_YEARS`)
-    3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results)
+    2. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results;
+       includes the accredited reliability floor)
+    3. Apply known additions (EIA-860 under construction, signed PPAs)
     4. Apply CCS retrofit screen to existing gas-CC units (§5.6)
-    5. Apply known additions (EIA-860 under construction, signed PPAs)
-    6. Apply economic new entry screen (LCOE vs expected revenue, including
+    5. Apply economic new entry screen (LCOE vs expected revenue, including
        the prior year's REC price as clean-energy revenue)
+    6. Apply reserve-margin adequacy backstop: force-build firm capacity if the
+       economic screen left the system below its planning reserve margin.
+       GATED `reserve_margin_build_enabled`, default off.
     7. Assemble updated fleet → run dispatch LP (with RPS constraint) → cache results
 ```
 
-The capacity-evolution mechanisms are steps 1b–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year.
+The capacity-evolution mechanisms are steps 0–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year.
 
-**Confirmed vs announced retirements.** Only *confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, PUC/regulatory order, RMR end date) — are exogenous. They come from the hand-curated `confirmed-retirements` registry (one row per binding instrument, forward-reproducible per rule 13; superseded rows carry a cited counter-instrument and revert to the economic screen), read forecast-forward by `data.confirmed_retirements.load_confirmed_exits` and applied at step 1b (`apply_confirmed_exits`), which force-retires a unit-grain unit or derates a plant-binned tranche by the exiting unit's MW, bypassing the reliability floor. This is the ONLY exogenous fossil exit channel. *Announced* retirements (`apply_announced_retirements`, step 2) honor an EIA-860 self-reported planned date — but a coal/gas/oil unit's announced date is treated as an announcement, not a certainty, so **for the whole fossil fleet step 2 is a default no-op** and the economic screen (step 3) governs the phaseout, keeping the forecast condition-responsive (a fossil unit may exit early on losses or run past its announced date if it stays in-merit). Non-fossil announced dates (nuclear/hydro/renewables/storage — policy/contract/end-of-life exits) stay deterministic only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5); beyond the horizon a non-fossil date is honored only if the unit is in the confirmed registry, so speculative 2040-2072 relicense/EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel; off = honor all non-fossil dates). The splits are the `forecast_fossil_retirement_economic` and `confirmed_exits_enabled` flags. After the data horizon (~2030), the model is fully economics-driven.
+**Confirmed vs announced retirements.** Only *confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, PUC/regulatory order, RMR end date) — are exogenous. They come from the hand-curated `confirmed-retirements` registry (one row per binding instrument, forward-reproducible per rule 13; superseded rows carry a cited counter-instrument and revert to the economic screen), read forecast-forward by `data.confirmed_retirements.load_confirmed_exits` and applied at step 0 (`apply_confirmed_exits`), which force-retires a unit-grain unit or derates a plant-binned tranche by the exiting unit's MW, bypassing the reliability floor. This is the ONLY exogenous fossil exit channel. *Announced* retirements (`apply_announced_retirements`, step 1) honor an EIA-860 self-reported planned date — but a coal/gas/oil unit's announced date is treated as an announcement, not a certainty, so **for the whole fossil fleet step 1 is a default no-op** and the economic screen (step 2) governs the phaseout, keeping the forecast condition-responsive (a fossil unit may exit early on losses or run past its announced date if it stays in-merit). Non-fossil announced dates (nuclear/hydro/renewables/storage — policy/contract/end-of-life exits) stay deterministic only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5); beyond the horizon a non-fossil date is honored only if the unit is in the confirmed registry, so speculative 2040-2072 relicense/EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel; off = honor all non-fossil dates). The splits are the `forecast_fossil_retirement_economic` and `confirmed_exits_enabled` flags. After the data horizon (~2030), the model is fully economics-driven.
 
 ### 5.2 Economic Retirement
 
@@ -676,7 +680,7 @@ These thresholds and multipliers are no longer hardcoded — they are `ScenarioC
 
 **Reliability floor (accredited basis):** the surviving fleet's `accredited_firm_capacity_mw` (thermal at UCAP = 1 − EFORd, wind/solar pools at `RENEWABLE_CAPACITY_CREDIT`, storage at duration-ELCC) cannot fall below `peak_demand × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)` — the same requirement the step-6 build backstop tests (one requirement, two verbs). If economic retirements would breach it, eligible units are un-retired cheapest-firm-adequacy-first ($/firm-MW-yr ascending, CO₂-rate tie-break), and every retention is recorded in the `floor_retention_log` persisted per year (`floor_retentions.json`).
 
-**Announced-retirement reversal supersession:** a plant whose confirmed-retirements registry rows are ALL `superseded` (a public counter-instrument reversed the exit outright — e.g. Byron/Dresden's 2021 announced dates reversed by IL CEJA, P.A. 102-0662) has its stale EIA-860 announced date ignored by step 2, any fuel; the unit stays with the economic screen. Data-driven and independent of `confirmed_exits_enabled` — honoring a documented reversal is a data correction on the announced channel, not an exit injection (`data.confirmed_retirements.load_announced_reversal_plants`).
+**Announced-retirement reversal supersession:** a plant whose confirmed-retirements registry rows are ALL `superseded` (a public counter-instrument reversed the exit outright — e.g. Byron/Dresden's 2021 announced dates reversed by IL CEJA, P.A. 102-0662) has its stale EIA-860 announced date ignored by step 1, any fuel; the unit stays with the economic screen. Data-driven and independent of `confirmed_exits_enabled` — honoring a documented reversal is a data correction on the announced channel, not an exit injection (`data.confirmed_retirements.load_announced_reversal_plants`).
 
 **Design note:** Sigmoid retirement was considered and rejected in favor of fully economic retirement with fuel-type-aware thresholds. The economic approach is more transparent — every retirement is traceable to a revenue shortfall — and avoids the arbitrary sigmoid midpoint parameter. The coal FOM multiplier (1.3×) captures the non-economic pressures (regulatory risk, ESG) that the sigmoid was designed to model.
 

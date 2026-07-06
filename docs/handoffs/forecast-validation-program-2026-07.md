@@ -22,7 +22,7 @@ cross-benchmark (`scripts/run_sensitivity_tornado.py`, `docs/handoffs/diagnostic
 | Statistical-mode (D-7) backcast | **REFRESHED 2026-07-05 (this session, W3-P1).** ERCOT/PJM/MISO (carbon=$0) re-scored in place — `calibration_verdict.py` reads the already-committed `runs/<id>.js` payload, not raw dispatch, so no re-solve was needed or possible in a fresh checkout (bundle-local dispatch/bench parquets are gitignored intermediates); confirmed provably unchanged (`2026-07-04-statmode-d7-probe-ercot32`, `2026-07-03-pjm-statmode-d-7`, `2026-07-03-miso-statmode-d-7` — same ids, same files, no diff). CAISO/NYISO/NEISO (carbon-priced) re-solved at HEAD against each ISO's *current* keeper bundle (`caiso51_firm_base`, `nyiso41_hubprices`, `neiso_ctscrub`), all years 2023-2025, registered as `2026-07-05-<iso>-statmode-d7-r2` (probes; the stale 2026-07-03 sidecars are kept but flagged STALE, not deleted). See §5 for the per-ISO table. **Caveat:** the CAISO/NYISO r2 solves inherit HEAD's current offer state wholesale (not a same-SHA keeper-replay-paired isolation of R2 alone per §3.2's fuller recipe), so their CO2/volume movement vs the *committed* (partly pre-07-04-merge) keeper numbers conflates R2 with the 07-04+ offer work; NYISO specifically inherits the B-NYI-1 offer de-leak (merge a4c219e, 2026-07-05) — noted, not compensated for. **Environment note:** this session ran in a fresh container with no persisted `results/calibration/_shared/` or per-bundle `dispatch/` cache from prior sessions (both gitignored by design), so re-solving was the only way to regenerate the three carbon-priced bundles; a same-session/same-container re-score (as CLAUDE.md's "never re-solve just to make the report" guidance intends) would not have required it. |
 | Keepers | All six dated 2026-07-03; all predate the 07-04 ISO-offer merges. NYISO flagged: a HEAD re-solve of nyiso-41 regresses C1/C7 (CT-offer grounding) — owner re-gate pending (`co2-keeper-regate-2026-07-05.md`). |
 | Holdouts | 2022 + H1-2026 fully quarantined (rule 22); `calibration-complete.json` `complete: {}`. ERCOT+PJM holdout *source data* intake landed 2026-07-04 under explicit owner authorization; CAISO/MISO/NYISO/NEISO zero holdout intake. |
-| CI | **W1-P1 not landed.** Only `lint.yml` (ruff) gates PRs; `audit_keepers.py`/`legitimacy_diagnostics.py` are wired into zero PR workflows (`bench-repro.yml` is a weekly D-13 cron). |
+| CI | **W1-P1 landed** (`.github/workflows/ci.yml`): a pytest job (`not slow and not integration`) plus a `quarantine-gates` job running `audit_keepers.py --check` and `legitimacy_diagnostics.py --keepers` on every PR, alongside `lint.yml` (ruff) and the weekly D-13 `bench-repro.yml` cron. |
 | W2-P1 emissions fixes | **Landed** (PR #1371: d3077a4 forward estimator, fff2c34 R2 basis, 968cead quarantine-row strip, R7 NOx unit fix). Validation artifacts built from HEAD now score the right quantity. |
 | EIA-860 vintages on disk | `data/raw/eia-860/vintage_2023/`, `vintage_2024/` **only**. **No 2018/2019/2020 vintage snapshots exist** — the CAMPD 2018/2019/2020 unit-level intake landed (`campd-unit-level/{ST}_{2018,2019,2020}.parquet`), but that is CEMS operations data (feeds the W0-P1 emission-rate history), not a fleet-registry snapshot. |
 | Demand model profiles | `eia_demand_profiles` covers **2021–2025** (full-8760 contract; no builder script in repo — F3). Earliest solvable dispatch year is therefore **2021**. |
@@ -245,7 +245,7 @@ residuals). Runtime is ~7 ERCOT LP years ⇒ nightly/weekly CI tier, not per-PR.
 ### 3.1 Order of landing
 
 ```
-1. W1-P1  CI wiring (pytest-on-PR + audit_keepers/legitimacy gates)   [NOT LANDED — first]
+1. W1-P1  CI wiring (pytest-on-PR + audit_keepers/legitimacy gates)   [landed, `ci.yml`]
 2. W2-P5 stage 1  evolution ledger + invariant checker + synthetic e2e + golden scaffold
 3. W2-P5 stage 2  EIA-860 vintage-2020 intake + hindcast harness/actuals/scorer
                   → run+score ERCOT (both fuel variants), then PJM → forecast-validation page
@@ -527,10 +527,13 @@ run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage i
   reliability-floor + reserve-margin FAIL because nothing force-builds to the
   absolute floor in the default forecast; F3 an I8 ledger-attribution fix).
   **Findings only — no model behaviour changed.**
-- **NOT done in stage 1:** the golden-scenario band regression (§2.3) — scaffolded
-  conceptually but not seeded (a 7-year ERCOT reference solve); the paired-run
-  invariants P1-P3 are implemented and unit-tested but not yet wired into a CI
-  tier. Next-session pickup.
+- **Golden-scenario band regression (§2.3): now seeded** —
+  `tests/golden/ercot_2026_2032.json` + `.run_config.json` committed (a 7-year
+  ERCOT reference solve) and `tests/test_golden_forecast_bands.py` reads it;
+  the band-checking test itself is `@pytest.mark.slow` (opt-in via
+  `RUN_SLOW_FORECAST=1`), so per-PR CI only runs the fast fixture-presence
+  check, not the full band comparison. The paired-run invariants P1-P3 are
+  implemented, unit-tested, and run in the fast (non-slow) PR pytest tier.
 
 **Stage 2 — capacity hindcast (ERCOT run complete):**
 - `scripts/run_capacity_hindcast.py` + `scripts/score_capacity_hindcast.py` +

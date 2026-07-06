@@ -1,8 +1,9 @@
 # Capacity-Economics Recalibration Plan — 2026-07 (W0-P5)
 
 **Status:** design complete. **W2-P3 Stage 1 (FOM + joint protocol) EXECUTED 2026-07-05 —
-see the Stage-1 status note below.** Foresight (§2), floor accreditation (§3), and the DC-load
-block (§4) remain for later stages. Implementation prompt in §9.
+see the Stage-1 status note below; Stage 2 and the Stage-3 backstop-off diagnostic follow
+it.** Foresight (§2), floor accreditation (§3), and the DC-load block (§4) remain for later
+stages. Implementation prompt in §9.
 
 > ### Stage-1 status note (2026-07-05, W2-P3)
 >
@@ -88,6 +89,19 @@ block (§4) remain for later stages. Implementation prompt in §9.
 > capacity-hindcast re-run registered as the before/after diagnostic on the
 > forecast-validation dashboard. Full report:
 > `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`.
+
+> ### Stage-3 status note (2026-07-06, diagnostic only)
+>
+> Unblocking path (b) from the Stage-2 report §3 was tested: the ERCOT FOM grid was
+> re-run with the adequacy backstop **disabled** (`reserve_margin_build_enabled=False`,
+> a harness flag, not a model-default change) to check whether removing the backstop's
+> 15.2 GW CT flood lets the FOM axis move. **It does not** — capacity trajectory is again
+> byte-identical across all six FOM×ORDC cells (zero economic retirements, CO₂ identical
+> to the tenth of a Mt): with the backstop off, the accredited floor alone is sufficient
+> to keep every screen-eligible unit un-retired, so FOM remains a cost bar on a retirement
+> that never happens. The ATB defaults stay frozen. Diagnostic only — nothing registered
+> on the backcast dashboard, no 2022/H1-2026 solve. Full report:
+> `docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage3-addendum.md`.
 
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
