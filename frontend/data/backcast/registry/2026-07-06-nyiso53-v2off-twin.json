@@ -11,5 +11,6 @@
   ],
   "iso": "NYISO",
   "file": "frontend/data/backcast/runs/2026-07-06-nyiso53-v2off-twin.js",
-  "bundle": "results/calibration/nyiso53_litsl_v2off"
+  "bundle": "results/calibration/nyiso53_litsl_v2off",
+  "keeper_candidate": false
 }
