@@ -140,22 +140,37 @@ class ActualHourlyLmpTests(unittest.TestCase):
 
 
 class TailVerdictWiringTests(unittest.TestCase):
-    """C3c activates off the non-ERCOT payload shape build_payload now emits."""
+    """C3c activates off the non-ERCOT payload shape build_payload now emits.
+
+    Rubric v2: the gate reads the model count from the payload but the actual
+    from the committed DA-expressible tail part (``tail/actual_tail.json``) —
+    injected here via ``cv._TAIL_CACHE`` so the tests stay hermetic.
+    """
+
+    def _with_tail(self, iso, year, da_gt, rt_gt):
+        cv._TAIL_CACHE = {
+            iso: {str(year): {"da_gt": da_gt, "rt_gt": rt_gt, "da_coverage": 1.0}}
+        }
+        self.addCleanup(setattr, cv, "_TAIL_CACHE", None)
 
     def test_within_band_passes(self):
+        self._with_tail("NEISO", 2024, da_gt=100, rt_gt=100)
         ypay = {"ordc": {"hoursGt200": {"model": 80, "actual": 100}}}
-        self.assertEqual(cv.score_price_tail(2024, ypay, "NEISO")["status"], cv.PASS)
+        rows = cv.score_price_tail(2024, ypay, "NEISO")
+        self.assertEqual(rows[0]["status"], cv.PASS)
 
     def test_collapsed_tail_fails(self):
         # Model tail collapsed to 0 where the market had scarcity -> FAIL (the
         # expected, truthful energy-only outcome — not to be tuned away).
+        self._with_tail("PJM", 2024, da_gt=100, rt_gt=100)
         ypay = {"ordc": {"hoursGt200": {"model": 0, "actual": 100}}}
-        self.assertEqual(cv.score_price_tail(2024, ypay, "PJM")["status"], cv.FAIL)
+        rows = cv.score_price_tail(2024, ypay, "PJM")
+        self.assertEqual(rows[0]["status"], cv.FAIL)
 
     def test_skipped_without_ordc(self):
         # No actual file for the ISO-year -> ordc unset -> SKIPPED, never a pass.
-        r = cv.score_price_tail(2024, {"lmp": {}}, "CAISO")
-        self.assertEqual(r["status"], cv.SKIPPED)
+        rows = cv.score_price_tail(2024, {"lmp": {}}, "CAISO")
+        self.assertEqual(rows[0]["status"], cv.SKIPPED)
 
 
 if __name__ == "__main__":
