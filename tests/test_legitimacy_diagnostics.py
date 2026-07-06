@@ -176,21 +176,21 @@ class TestD2:
         assert mask.tolist() == [[True, False, False, True]]
 
     def test_immaterial_class_not_gated(self):
-        """Owner directive 2026-07-06: a class dispatching < 2.5 % of total
-        load is not force-gated, however high its forced SHARE — a near-idle
-        merchant class is not 'the dispatch model'. Reported, flagged
-        immaterial, verdict pass."""
+        """Owner directive 2026-07-06 (rubric v2.1): a class dispatching below
+        ``PROTECTIVE_MIN_LOAD_FRAC`` (2 %) of total load is not force-gated,
+        however high its forced SHARE — a near-idle merchant class is not 'the
+        dispatch model'. Reported, flagged immaterial, verdict pass."""
         dispatch = np.full((1, HOURS), 100.0)
         min_gen = np.full((1, HOURS), 100.0)  # 100 % forced
         mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
-        # class energy = 100 * 24 = 2400 MWh; 2 % of a 120 000 MWh load.
+        # class energy = 100 * 24 = 2400 MWh; 1.2 % of a 200 000 MWh load < 2 %.
         res = run_d2(
             dispatch,
             min_gen,
             mech,
             np.array(["CT_PEAKER"]),
             year=2023,
-            total_load_mwh=120_000.0,
+            total_load_mwh=200_000.0,
         )
         assert res.passed
         row = res.summary[0]
@@ -199,7 +199,8 @@ class TestD2:
         assert row["forced_share"] == pytest.approx(1.0)
 
     def test_material_class_still_gated(self):
-        """A class above the 2.5 % materiality floor is gated as before."""
+        """A class above the ``PROTECTIVE_MIN_LOAD_FRAC`` (2 %) materiality
+        floor is gated as before."""
         dispatch = np.full((1, HOURS), 100.0)
         min_gen = np.full((1, HOURS), 100.0)  # 100 % forced
         mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
@@ -215,6 +216,91 @@ class TestD2:
         assert not res.passed
         assert res.summary[0]["immaterial"] is False
         assert res.summary[0]["verdict"] == "FAIL"
+
+    def test_2pt2pct_class_gated_identically_by_quarantine_and_rubric(self):
+        """One materiality line (CLAUDE.md rules 17/20/23): a merchant class at
+        2.2 % of ISO load — between the OLD duplicate 2.5 % quarantine constant
+        and the rubric's 2.0 % — must be MATERIAL (gated) on BOTH the D-2
+        quarantine side (``run_d2``) and the C7/C8 rubric side
+        (``calibration_verdict._class_load_share`` vs
+        ``PROTECTIVE_MIN_LOAD_FRAC``). Before the unify this class was skipped
+        by the quarantine gate yet scored by the rubric — the 0.5 pp divergence
+        this fix closes."""
+        import scripts.legitimacy_diagnostics as ld
+        from scripts import calibration_verdict as cv
+
+        # Both sides read the SAME constant, not two copies.
+        assert ld.PROTECTIVE_MIN_LOAD_FRAC == cv.PROTECTIVE_MIN_LOAD_FRAC == 0.02
+
+        # --- Quarantine side: 2.2 % of load, 100 % force-floored ---
+        dispatch = np.full((1, HOURS), 100.0)
+        min_gen = np.full((1, HOURS), 100.0)
+        mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        class_mwh = 100.0 * HOURS
+        total_load = class_mwh / 0.022  # → load_share = 2.2 %
+        res = run_d2(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),
+            year=2023,
+            total_load_mwh=total_load,
+        )
+        gate_row = res.summary[0]
+        assert gate_row["load_share"] == pytest.approx(0.022, abs=1e-4)
+        gate_immaterial = gate_row["immaterial"]
+        assert gate_immaterial is False  # >= 2 % → gated, verdict FAIL
+        assert gate_row["verdict"] == "FAIL"
+
+        # --- Rubric side: same 2.2 % share via the C7/C8 materiality helper ---
+        ypay = {"gmModel": {"CT_PEAKER": 2.2}, "lmp": {"z": {"d": 100.0}}}
+        ybench = {"classFull": {"CT_PEAKER": 2.2, "_rest": 97.8}}
+        rubric_share = cv._class_load_share("CT_PEAKER", ypay, ybench)
+        assert rubric_share == pytest.approx(0.022, abs=1e-4)
+        rubric_immaterial = rubric_share < cv.PROTECTIVE_MIN_LOAD_FRAC
+        assert rubric_immaterial is False  # rubric also gates
+
+        # Identical material/immaterial verdict on both sides — the whole point.
+        assert gate_immaterial == rubric_immaterial
+
+    def test_materiality_denominator_is_max_model_actual(self):
+        """Rule-20 amendment: the D-2 materiality denominator is
+        ``max(model, actual)`` class energy (mirroring ``score_shape`` /
+        ``_class_load_share``), so a class the model nearly zeroes but whose
+        CAMPD actual is material stays gated — the actual side keeps it scored."""
+        # Model dispatches 50 MW flat (1200 MWh, 1.2 % of load) → below the
+        # line on the model side alone; but the CAMPD actual is 3 % of load.
+        dispatch = np.full((1, HOURS), 50.0)
+        min_gen = np.full((1, HOURS), 50.0)  # 100 % forced on the model side
+        mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
+        total_load = 100_000.0
+        actual = {"CT_PEAKER": 0.03 * total_load}  # 3 % of load → material
+        res = run_d2(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),
+            year=2023,
+            total_load_mwh=total_load,
+            actual_by_class=actual,
+        )
+        row = res.summary[0]
+        # load_share uses max(model=1200, actual=3000) / 100000 = 3 %.
+        assert row["load_share"] == pytest.approx(0.03, abs=1e-4)
+        assert row["immaterial"] is False
+        assert row["verdict"] == "FAIL"
+
+        # Without the actual side, the same near-zeroed model class is immaterial
+        # — proving the actual side (not the model side) is doing the gating.
+        res_model_only = run_d2(
+            dispatch,
+            min_gen,
+            mech,
+            np.array(["CT_PEAKER"]),
+            year=2023,
+            total_load_mwh=total_load,
+        )
+        assert res_model_only.summary[0]["immaterial"] is True
 
     def test_materiality_guard_off_by_default(self):
         """No total_load_mwh → guard disabled, every breach gates (the

@@ -99,6 +99,13 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     NON_THERMAL_MECHS,
 )
 
+# Single materiality line shared with the determination rubric: the D-2
+# quarantine gate consumes the SAME constant the C7/C8 keeper scorer uses
+# (calibration_verdict.PROTECTIVE_MIN_LOAD_FRAC), so the quarantine side can
+# never run looser than the rubric it cites (CLAUDE.md rules 17/20/23 — one
+# materiality line, no off-registry duplicate constant).
+from scripts.calibration_verdict import PROTECTIVE_MIN_LOAD_FRAC  # noqa: E402
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("legitimacy_diagnostics")
 
@@ -123,14 +130,21 @@ D2_PEAKER_CLASSES: tuple[str, ...] = ("CT_PEAKER",)
 D2_PEAKER_MAX_SHARE: float = 0.15
 D2_MERCHANT_MAX_SHARE: float = 0.30
 # Materiality guard (owner directive, 2026-07-06): a merchant class is
-# force-gated only when its own generation exceeds this share of total system
-# load. A class dispatching < 2.5 % of load is not "the dispatch model" for
-# anything, so a high forced SHARE on it is a near-zero-denominator artifact,
-# not the rule-20 concern (floors propping up otherwise-economic dispatch). It
-# is still reported per class (with load_share + an immaterial flag) but never
-# raised to a FAIL. Total load = Σ payload fuelRows[*].m — the model's served-
-# energy balance (per-fuel annual generation incl. signed net interchange).
-D2_MATERIAL_MIN_LOAD_SHARE: float = 0.025
+# force-gated only when its energy exceeds this share of total system load. A
+# class dispatching below the line is not "the dispatch model" for anything, so
+# a high forced SHARE on it is a near-zero-denominator artifact, not the rule-20
+# concern (floors propping up otherwise-economic dispatch). It is still reported
+# per class (with load_share + an immaterial flag) but never raised to a FAIL.
+# The threshold is the SINGLE rubric constant PROTECTIVE_MIN_LOAD_FRAC (0.02)
+# imported from calibration_verdict — the C7/C8 keeper scorer's own line — so
+# the quarantine gate and the rubric cannot diverge (they did: this gate used a
+# duplicate 0.025, 0.5pp looser than the 0.02 the rubric/CLAUDE.md rule 20 cite,
+# leaving a 2.0-2.5%-of-load class gated by the rubric yet skipped here). The
+# materiality denominator is max(model, actual) class energy (mirroring
+# score_shape / _class_load_share), so a binding floor cannot push a class under
+# the line by its own forcing, and a model that zeroes a material class stays
+# scored via the actual side. Total load = Σ payload fuelRows[*].m — the model's
+# served-energy balance (per-fuel annual generation incl. signed net interchange).
 # Classes whose floors are structural must-run, exempt from the share gates
 # (their mechanisms are also in D2_EXEMPT_MECHS; the class-level exemption
 # covers CHP tranches floored by any mechanism).
@@ -356,6 +370,7 @@ def run_d2(
     npl: np.ndarray | None = None,
     ra_floor_missing: bool = False,
     total_load_mwh: float | None = None,
+    actual_by_class: dict[str, float] | None = None,
 ) -> GateResult:
     """D-2 forced-energy attribution over aligned (n, T) row arrays.
 
@@ -365,10 +380,17 @@ def run_d2(
     attributed to the binding mechanism id.
 
     ``total_load_mwh`` (annual system load) activates the materiality guard:
-    a merchant class whose own energy is < ``D2_MATERIAL_MIN_LOAD_SHARE`` of
-    total load is immaterial — its forced share is reported but never a FAIL
-    (owner directive 2026-07-06). ``None`` disables the guard (every class is
-    gated, the pre-directive behaviour).
+    a merchant class whose energy is < ``PROTECTIVE_MIN_LOAD_FRAC`` of total
+    load is immaterial — its forced share is reported but never a FAIL (owner
+    directive 2026-07-06, rubric v2.1). ``None`` disables the guard (every
+    class is gated, the pre-directive behaviour). The materiality numerator is
+    ``max(model, actual)`` class energy: ``actual_by_class`` (annual MWh per
+    class from the CAMPD benchmark) supplies the actual side so a binding floor
+    cannot push a class under the line by its own forcing, and a model that
+    zeroes a genuinely material class stays scored via the actual side — the
+    exact ``max(model, actual)`` denominator ``calibration_verdict``'s C7/C8
+    scorer (``_class_load_share`` / ``score_shape``) uses. ``None`` (or a class
+    absent from it) falls back to the model side alone.
     """
     res = GateResult("D-2 forced-energy attribution")
     mask = at_floor_mask(dispatch, min_gen, npl)
@@ -418,12 +440,20 @@ def run_d2(
             if str(k) in D2_PEAKER_CLASSES
             else D2_MERCHANT_MAX_SHARE
         )
+        # Materiality denominator: max(model, actual) class energy — mirrors
+        # calibration_verdict._class_load_share so the quarantine gate and the
+        # C7/C8 rubric scorer draw the same line (a forcing floor inflates the
+        # model side; the actual side keeps a zeroed-but-material class scored).
+        actual_energy = (
+            float((actual_by_class or {}).get(str(k), 0.0)) if actual_by_class else 0.0
+        )
+        material_energy = max(total_by_class[k], actual_energy)
         load_share = (
-            total_by_class[k] / total_load_mwh
+            material_energy / total_load_mwh
             if total_load_mwh and total_load_mwh > 0.0
             else None
         )
-        immaterial = load_share is not None and load_share < D2_MATERIAL_MIN_LOAD_SHARE
+        immaterial = load_share is not None and load_share < PROTECTIVE_MIN_LOAD_FRAC
         breach = share > limit and not immaterial
         res.summary.append(
             {
@@ -1130,7 +1160,7 @@ def load_payload_total_load_mwh(
     Sum of the per-fuel annual model generation ``fuelRows[*].m`` (TWh),
     including the signed net-interchange row — the model's served-energy
     balance, i.e. total load. This is the materiality denominator for the D-2
-    force-gate (``D2_MATERIAL_MIN_LOAD_SHARE``). Returns ``None`` when the
+    force-gate (``PROTECTIVE_MIN_LOAD_FRAC``). Returns ``None`` when the
     payload carries no ``fuelRows`` (older bundles / no sidecar), which leaves
     the guard disabled so no breach is hidden by a missing denominator.
     """
@@ -1529,6 +1559,19 @@ def diagnose_bundle(
                     if sidecar is not None
                     else None
                 )
+                # Actual (CAMPD) annual MWh per class over the SAME plant set as
+                # the model denominator — feeds the max(model, actual)
+                # materiality guard so a forcing floor can't push a class under
+                # the line and a zeroed material class stays scored.
+                actual_by_class: dict[str, float] = {}
+                for p in all_pids:
+                    b = bench.get(p)
+                    if b is None:
+                        continue
+                    k = klass_by_pid.get(p, "")
+                    actual_by_class[k] = actual_by_class.get(k, 0.0) + float(
+                        np.asarray(b["mw"][:t], dtype=float).sum()
+                    )
                 sub_res = run_d2(
                     disp,
                     floors,
@@ -1538,6 +1581,7 @@ def diagnose_bundle(
                     npl=npl,
                     ra_floor_missing=ra_missing,
                     total_load_mwh=total_load_mwh,
+                    actual_by_class=actual_by_class,
                 )
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)
