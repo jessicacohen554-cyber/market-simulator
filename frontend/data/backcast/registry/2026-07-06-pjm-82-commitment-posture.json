@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-pjm-82-commitment-posture",
+  "label": "pjm 82 commitment posture",
+  "date": "2026-07-06",
+  "shorthand": "pjm-82-commitment-posture",
+  "definition": "PJM 82 commitment-posture A/B probe (L-13 port): pjm-81 per-gen reserve co-opt recipe + pjm_commitment_posture (MISO \u00a7A lever ported, shared code \u2014 non-fast-start pool U/SU columns, CEMS-measured mlf min-load coupling, NREL-class startup charge, online-gated reserve cap R<=ramp10*U). Single-mechanism B arm vs pjm-81 (A, posture off). Zero fitted parameters; honesty-gated on the measured PJM reserve-market series (report_pjm_posture_gate.py).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-06-pjm-82-commitment-posture.js",
+  "bundle": "results/calibration/pjm82_commitment_posture"
+}
