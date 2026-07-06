@@ -10,6 +10,7 @@ model's LP-dual prices against actual market clearing prices.
 | `MISO/` | `miso_hub_lmp_<year>_{da,rt}.csv.gz` (already documented — see `MISO/README.md`) | MISO daily market reports | `scripts/fetch_miso_hub_lmp.py` |
 | `NEISO/` | `<year>_smd_hourly.xlsx` (2023–2025) | ISO-NE SMD hourly workbooks | manual download (ISO-NE report archive) |
 | `NYISO/` | `*realtime_zone_csv.zip`, `dartmonthlylmpindex_<year>.csv` | NYISO OASIS realtime-zone LBMP | manual download (NYISO OASIS) |
+| `NYISO/` | `YYYYMM01damlbmp_zone_csv.zip` (2023-2025, **gitignored** — ~13 MB, regenerable) | NYISO MIS public DAM zonal LBMP monthly archives (`http://mis.nyiso.com/public/csv/damlbmp/`) | `for y in 2023 2024 2025; do for m in 01..12; curl -O .../\${y}\${m}01damlbmp_zone_csv.zip; done` then `scripts/build_nyiso_proxy_lmp_neiso.py` (writes the committed `nyiso_proxy_lmp_hourly_NEISO.parquet`) |
 | top level | `DAMLZHBSPP_<year>.zip`, `RTMLZHBSPP_<year>.zip` (2023–2025) | ERCOT LZ/HB/SPP settlement-point archives | manual download (ERCOT MIS) |
 | top level | `PJM_<year>_rt_da_monthly_lmps.csv` (2023–2025) | PJM DataMiner2 RT/DA monthly LMP export | manual download (DataMiner2) — see `docs/data-licensing.md` §4 |
 | top level | `2020_smd_hourly.xlsx`, `2021_smd_hourly.xlsx`, `2022_smd_hourly.xlsx` | **orphaned** — pre-dates the `NEISO/` subdirectory split; not read by any script | — |

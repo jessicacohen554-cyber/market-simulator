@@ -19,6 +19,15 @@ data/raw/eia-860/*.csv
 data/raw/pjm-energy-offers/*
 !data/raw/pjm-energy-offers/README.md
 
+# NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
+# source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable
+# byte-identical from the stable public URLs
+# (http://mis.nyiso.com/public/csv/damlbmp/YYYYMM01damlbmp_zone_csv.zip) —
+# too large for this remote's push limit, so gitignored like the PJM
+# energy-offer corpus above; fetch + rebuild:
+# scripts/build_nyiso_proxy_lmp_neiso.py (docstring has the curl loop).
+data/raw/lmp-data/NYISO/*damlbmp_zone_csv.zip
+
 # Derived binned-fleet cache (side output of the fleet loader)
 data/raw/_processed-legacy/*.parquet
 # The EIA-923 extracts ARE committed: they are small (~16 KB cost,
