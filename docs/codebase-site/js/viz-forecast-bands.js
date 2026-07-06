@@ -123,6 +123,13 @@ function seriesFor(payload, layer, metric) {
   return out;
 }
 
+/** Escape text for safe interpolation into banner HTML. */
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 /** Render the label banners (synthetic / dispatch-conditional / deterministic-only). */
 function renderBanners(container, payload) {
   const banners = [];
@@ -149,6 +156,18 @@ function renderBanners(container, payload) {
       `probability band.</div></div>`
     );
   }
+  // Run-declared HONEST-LIMITATIONS (PB-5 / plan §3.4, §7): rendered verbatim,
+  // never softened. Each is a {id, title, detail} the ensemble_meta.json
+  // declares; empty for the synthetic fixture. The dispatch-conditional /
+  // lambda(h) caveat above already covers limitation (a); these add the axes
+  // (datacenter, AEO anchor, small-n, etc.) the standard banners do not.
+  (payload.honest_limitations || []).forEach(lim => {
+    banners.push(
+      `<div class="fb-banner fb-caveat"><span class="fb-banner-icon">&#9432;</span>` +
+      `<div><strong>${escapeHtml(lim.title || 'Limitation')}</strong> &mdash; ` +
+      `${escapeHtml(lim.detail || '')}</div></div>`
+    );
+  });
   container.innerHTML = banners.join('');
 }
 
