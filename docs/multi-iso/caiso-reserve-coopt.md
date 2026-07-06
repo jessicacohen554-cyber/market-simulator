@@ -104,8 +104,42 @@ measured *ceiling* on the class-rate `ramp10` when `measured_ramp_capability` is
 enabled — an available refinement to the deliverable-reserve pool, kept OFF in
 the first A/B probe so the reserve co-opt is a clean single delta.
 
-## A/B probe vs the caiso-51 keeper
+## A/B probe vs the caiso-51 keeper (2026-07-06)
 
-*(results appended after the full-span 2023–2025 solve — bundles
-`caiso59_reserve_ab_base` (reserve off) and `caiso59_reserve_coopt` (reserve
-on); see the calibration log and the backcast dashboard.)*
+Full-span 2023–2025 single-delta A/B, both replayed from caiso-51 at HEAD:
+`caiso59_reserve_ab_base` (reserve OFF) vs `caiso59_reserve_coopt` (reserve ON,
+`--set energy_reserve_coopt=true --set caiso_reserve_coopt=true`). Dashboard run
+`2026-07-06-caiso-59-reserve-coopt`.
+
+**The mechanism is real but largely INERT — the MISO lesson, confirmed.** On the
+real fleet the pergen pool is ~1103 units → 11 (zone, fuel-class) R columns with
+**Σ ≈ 12.9 GW deliverable ramp against a ~2.2 GW requirement**, so the
+perfect-foresight LP clears the contingency requirement from ramp-deliverable
+headroom in almost every hour. Reserve prices fire in **only ~100 hours of 2023**
+(reserve clearing price up to **$800/MWh = spin $100 + non-spin $700**, which
+confirms the co-optimization correctly SUMS the two products' shortfall duals),
+and the mechanism is **completely idle in 2024 and 2025** (0 reserve-priced
+hours).
+
+| year | C3a mean LMP (vs RT) | Δ mean vs A twin | C3c DA-expr. tail >$200 (model vs actual) | Δ tail vs A twin |
+|---|---|---|---|---|
+| 2023 | +20.3% (52.72 vs 43.83) | **+$0.47** | 483 h vs 41 h DA / 21 h RT (11.8×) — FAIL | +16 zone-h, **0 system-h** |
+| 2024 | +35.3% (44.56 vs 32.94) | +$0.00 | 0 h vs 52 h DA — FAIL | 0 |
+| 2025 | +42.7% (47.99 vs 33.63) | −$0.00 | 0 h vs 0 h — PASS | 0 |
+
+**The ~455h-vs-21h driver question, answered NEGATIVE.** The 2023 backcast
+over-tail (model **483 h** DA-expressible / vs **21 h** RT actual) is **not** a
+missing-reserve-scarcity-pricing phenomenon: adding the published CAISO reserve
+co-optimization leaves it at 483 h (+16 zone-hours, 0 net system-hours, C3c
+unchanged). C3a moves only +$0.47 in 2023 and $0.00 in 2024/2025. The over-tail
+is owned by the existing evening-merit / RA-commitment-uplift gap
+(`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md`), not by absent
+reserve co-optimization.
+
+**Kept anyway (rule 1).** This is a structurally-correct market mechanism — the
+co-optimization that was missing for the only ISO without one — and it stays in
+(default-off) regardless of the flat residual. The inertness is a *granularity /
+supply-scoping* result, not a reason to revert: the documented next increments
+(storage reserve first — the dominant CAISO AS provider, unbacked by the pergen
+builder today; then hydro; then regulation) each SHRINK the deliverable pool's
+dominance over the requirement and are where the mechanism would begin to bind.
