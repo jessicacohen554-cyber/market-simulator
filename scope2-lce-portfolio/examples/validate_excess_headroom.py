@@ -105,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     resources = load_resource_arrays(base)
     load = prepare_load(load_path, iso, base)
-    lmp = prepare_lmp(lmp_path, iso)
+    lmp, _lmp_kind = prepare_lmp(lmp_path, iso)
     cf = build_cf_matrix(resources, iso, PROFILE_SHAPE_YEAR, required=True)
 
     # Optional scarcity overlay (mechanism stress). Divert-and-backfill only
