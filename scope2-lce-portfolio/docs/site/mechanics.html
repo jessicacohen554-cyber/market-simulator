@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scope 2 Hourly LCE Portfolio — Mechanics</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Architecture, LP formulation, and launcher mechanics for the Scope 2 Hourly LCE Portfolio tool.">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <p class="eyebrow">Scope 2 hourly LCE portfolio &middot; handoff docs</p>
+    <h1>Mechanics</h1>
+    <p class="subtitle">Architecture walkthrough, the LP in plain language, and
+      how the launcher runs a solve end to end. Full narrative:
+      <a href="../how-it-works.md" style="color:#7DD3FC">docs/how-it-works.md</a>.</p>
+    <nav class="site-nav" aria-label="Site">
+      <a href="index.html">Overview</a>
+      <a class="active" href="mechanics.html">Mechanics</a>
+      <a href="inputs.html">Inputs</a>
+      <a href="decisions.html">Decisions</a>
+    </nav>
+  </div>
+</header>
+<div class="energy-divider"></div>
+
+<main>
+
+<section id="architecture">
+  <h2><span class="num">&sect;</span>Architecture walkthrough</h2>
+  <p>One pipeline, run once per ISO per sweep:</p>
+  <div class="diagram-wrap">
+    <svg class="diagram" viewBox="0 0 1080 150" role="img"
+         aria-label="Pipeline: intake, profiles, resources, LP, sweep, outputs, report, launcher">
+      <defs>
+        <marker id="arrow-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#566370"/>
+        </marker>
+      </defs>
+      <!-- 8 boxes, width 118, gap 16 -->
+      <g font-family="var(--font-body)">
+        <!-- 1 intake -->
+        <rect x="8" y="40" width="118" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="67" y="64" text-anchor="middle" class="diagram-box-label">Intake</text>
+        <text x="67" y="80" text-anchor="middle" class="diagram-sub-label">intake.py</text>
+        <line x1="126" y1="70" x2="150" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 2 profiles -->
+        <rect x="150" y="40" width="118" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="209" y="64" text-anchor="middle" class="diagram-box-label">Profiles</text>
+        <text x="209" y="80" text-anchor="middle" class="diagram-sub-label">profiles.py</text>
+        <line x1="268" y1="70" x2="292" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 3 resources -->
+        <rect x="292" y="40" width="126" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="355" y="64" text-anchor="middle" class="diagram-box-label">Resources</text>
+        <text x="355" y="80" text-anchor="middle" class="diagram-sub-label">resources.py</text>
+        <line x1="418" y1="70" x2="442" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 4 LP -->
+        <rect x="442" y="40" width="90" height="60" rx="9" fill="#EFF6FF" stroke="#93C5FD"/>
+        <text x="487" y="64" text-anchor="middle" class="diagram-box-label">LP</text>
+        <text x="487" y="80" text-anchor="middle" class="diagram-sub-label">lp.py</text>
+        <line x1="532" y1="70" x2="556" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 5 sweep -->
+        <rect x="556" y="40" width="100" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="606" y="64" text-anchor="middle" class="diagram-box-label">Sweep</text>
+        <text x="606" y="80" text-anchor="middle" class="diagram-sub-label">sweep.py</text>
+        <line x1="656" y1="70" x2="680" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 6 outputs -->
+        <rect x="680" y="40" width="112" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="736" y="64" text-anchor="middle" class="diagram-box-label">Outputs</text>
+        <text x="736" y="80" text-anchor="middle" class="diagram-sub-label">outputs.py</text>
+        <line x1="792" y1="70" x2="816" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 7 report -->
+        <rect x="816" y="40" width="112" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="872" y="64" text-anchor="middle" class="diagram-box-label">Report</text>
+        <text x="872" y="80" text-anchor="middle" class="diagram-sub-label">report.py</text>
+        <line x1="928" y1="70" x2="952" y2="70" stroke="#566370" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+        <!-- 8 launcher -->
+        <rect x="952" y="40" width="120" height="60" rx="9" fill="#F8F9FC" stroke="#D4D8E0"/>
+        <text x="1012" y="64" text-anchor="middle" class="diagram-box-label">Launcher</text>
+        <text x="1012" y="80" text-anchor="middle" class="diagram-sub-label">launcher.py</text>
+      </g>
+      <text x="540" y="130" text-anchor="middle" class="diagram-caption">cli.py orchestrates intake &rarr; profiles &rarr; resources &rarr; sweep &rarr; outputs; the launcher calls cli.main() in-process</text>
+    </svg>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Stage</th><th>Module</th><th>Contract</th></tr></thead>
+      <tbody>
+        <tr><td>Intake</td><td><code>intake.py</code></td>
+          <td>Load (facility-level auto-aggregated to one ISO vector, ADR 0010), LMP (hourly or annual-average schema, ADR 0011 / HP-01), optional fossil-avg CO&#8322; rate (ADR 0013). Missing/duplicate hours are hard errors.</td></tr>
+        <tr><td>Profiles</td><td><code>profiles.py</code></td>
+          <td><code>build_cf_matrix(resources, iso, year, *, profiles_dir=None, required=False)</code> &mdash; real per-ISO Parquet when present, else deterministic synthetic (or hard error if <code>required</code>).</td></tr>
+        <tr><td>Resources</td><td><code>resources.py</code></td>
+          <td>Reads the cost/caps tables, applies the low/mid/high sensitivity, annualizes capex via CRF, builds gas CC+CCS effective VOM &rarr; struct-of-arrays <code>ResourceArrays</code>.</td></tr>
+        <tr><td>LP</td><td><code>lp.py</code></td>
+          <td>Builds and solves the capacity-choice + hourly-operation LP via HiGHS, one solve per setpoint. Vectorized &mdash; no Python loop over hours.</td></tr>
+        <tr><td>Sweep</td><td><code>sweep.py</code></td>
+          <td><code>run_sweep</code> drives one solve per premium delta (Mode A) or matching target (Mode B), collects a <code>SweepResult</code>.</td></tr>
+        <tr><td>Outputs</td><td><code>outputs.py</code></td>
+          <td><code>write_outputs</code>/<code>write_report</code>: frontier + build-mix Parquet, text summary, and (by default) the report.</td></tr>
+        <tr><td>Report</td><td><code>report.py</code></td>
+          <td><code>build_report_payload</code> + <code>render_report</code>: one versioned JSON payload &rarr; one self-contained HTML file.</td></tr>
+        <tr><td>Launcher</td><td><code>launcher.py</code></td>
+          <td>Double-click entry point; calls <code>cli.main()</code> in-process &mdash; see <a href="#launcher">below</a>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><code>src/lce_portfolio/vendored/</code> holds the one piece of reused
+    market-sim logic (<code>renewable_shapes.py</code>) &mdash; copied, not
+    imported, with a re-sync header pinning the upstream commit (ADR 0001).
+    There is no <code>import market_sim</code> anywhere in <code>src/</code>.</p>
+</section>
+
+<section id="the-lp">
+  <h2><span class="num">&sect;</span>The LP, in plain language</h2>
+  <p>Full math: <a href="../01-lp-formulation.md">docs/01-lp-formulation.md</a>
+    &mdash; this is the summary plus the inventory.</p>
+  <p>A <strong>capacity-choice + hourly-operation</strong> problem over a
+    single aggregated node per ISO, the full 8760 hours, solved once per
+    sweep setpoint. It chooses how much of each clean resource and storage
+    tech to build, then dispatches hour by hour against the fixed load and
+    LMP series, buying any shortfall from the grid and selling any surplus at
+    LMP. Because both settle at the hourly price, the optimizer spends its
+    premium budget on the <strong>most expensive</strong> hours first &mdash;
+    that falls out of the LP, it isn't a heuristic layered on top.</p>
+
+  <h4>Decision variables</h4>
+  <pre><code>build_mw[r] | gen[r,t] | chg[s,t] | dis[s,t] | soc[s,t] | grid_buy[t] | excess[t] | build_energy[k] | exc_ex[t]</code></pre>
+  <p style="font-size:0.85rem; color:var(--text-muted)"><code>exc_ex[t]</code> only exists when <code>additionality_only</code> is on.</p>
+
+  <h4>Constraints</h4>
+  <ul>
+    <li>Energy balance (per hour, equality)</li>
+    <li>Generation ceiling: <code>gen[r,t] &le; cf[r,t]&middot;build_mw[r]</code></li>
+    <li>Cyclic storage SOC dynamics with duration / split power-energy bounds</li>
+    <li>Fleet-shared hydro monthly energy budget</li>
+    <li>Storage charge provenance (opt-in, ADR 0017): <code>&Sigma;chg + excess &le; &Sigma;gen</code></li>
+    <li>Divert-and-backfill diagnostic (always on) + excess-headroom cut loop (ADR 0018, opt-in)</li>
+  </ul>
+
+  <h4>Two objectives</h4>
+  <div class="card-grid">
+    <div class="mini-card">
+      <h4 style="margin-top:0">Mode A &mdash; premium_cap (default)</h4>
+      <pre style="margin:0"><code>min &Sigma; grid_buy[t]
+s.t. net_cost &minus; BAU &le; &delta;&middot;&Sigma;load[t]</code></pre>
+      <p style="margin-top:8px; font-size:0.85rem">Plus a flat build-size tiebreak (ADR 0019) once matching saturates below a resource's cap.</p>
+    </div>
+    <div class="mini-card">
+      <h4 style="margin-top:0">Mode B &mdash; matching_target</h4>
+      <pre style="margin:0"><code>min net_cost + &epsilon;&middot;&Sigma;excess[t]
+s.t. &Sigma;grid_buy[t] &le; (1&minus;&delta;)&middot;&Sigma;load[t]</code></pre>
+      <p style="margin-top:8px; font-size:0.85rem">Optional strict per-hour 24/7 variant via <code>strict_hourly_matching</code>.</p>
+    </div>
+  </div>
+  <p>Solver: HiGHS interior-point (crossover off) &mdash; fast on the long
+    temporal storage coupling &mdash; with a one-time crossover-on retry
+    whenever the fast path doesn't return <code>Optimal</code>.</p>
+</section>
+
+<section id="semantics">
+  <h2><span class="num">&sect;</span>Matching, premium &amp; residual carbon</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Concept</th><th>Definition</th><th>ADR</th></tr></thead>
+      <tbody>
+        <tr><td>Matching</td><td>Volumetric hourly: <code>1 &minus; &Sigma;grid_buy / &Sigma;load</code>. Surplus excluded &mdash; % of load energy matched at hourly granularity, not "% of hours at 100%".</td><td><a href="../decisions/0007-matching-semantics-annual-hourly-carbon.md">0007</a></td></tr>
+        <tr><td>Premium</td><td><code>(net_cost &minus; BAU) / &Sigma;load</code>; surplus credited at <code>f&middot;LMP</code>, ratified <code>f = 1.0</code>.</td><td><a href="../decisions/0005-premium-definition-excess-resale-netting.md">0005</a></td></tr>
+        <tr><td>Gas CC+CCS matching credit</td><td>Threshold-full: counts fully iff capture &gt; 0.90 and residual &lt; 0.050 tCO&#8322;/MWh; residual stack emissions still reported separately.</td><td><a href="../decisions/0012-gas-cc-ccs-resource.md">0012</a></td></tr>
+        <tr><td>Residual carbon</td><td>Grid purchases at the market-sim hourly fossil-only <em>average</em> rate (attributional), plus gas CC+CCS resource emissions &mdash; reported separately.</td><td><a href="../decisions/0013-residual-carbon-hourly-fossil-average-rate.md">0013</a></td></tr>
+        <tr><td>Storage charge provenance</td><td><code>excess_clean_only</code> restricts charging to contracted clean generation; <code>excess_headroom_only</code> additionally eliminates divert-and-backfill via an iterative cut loop.</td><td><a href="../decisions/0017-storage-charge-policy-excess-clean-only.md">0017</a> / <a href="../decisions/0018-storage-charge-excess-headroom-only.md">0018</a></td></tr>
+        <tr><td>Mode A build tiebreak</td><td>Flat per-MW epsilon on <code>build_mw</code> breaks the degenerate tie once matching saturates below a resource's cap.</td><td><a href="../decisions/0019-mode-a-build-tiebreak.md">0019</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Full ADR index and one-line summaries: <a href="decisions.html">Decisions</a>.</p>
+</section>
+
+<section id="launcher">
+  <h2><span class="num">&sect;</span>The launcher</h2>
+  <p>Implements ADR 0016. Flow: <strong>form &rarr; queue &rarr; CLI &rarr;
+    results store &rarr; cached report</strong> &mdash; see the diagram on
+    <a href="index.html#launcher-tour">Overview</a>.</p>
+  <ol>
+    <li><code>run_lce.sh</code>/<code>run_lce.bat</code> resolve a usable
+      Python and start <code>python -m lce_portfolio.launcher</code>, binding
+      a stdlib <code>ThreadingHTTPServer</code> to <code>127.0.0.1</code> on
+      an ephemeral port and opening a self-contained HTML launch page.</li>
+    <li><strong>Add to queue</strong> / <strong>Submit queue</strong>
+      <code>POST /api/run</code>. One background daemon worker thread drains
+      the queue <strong>sequentially</strong> &mdash; LP solves never
+      overlap.</li>
+    <li>For each run, <code>build_argv</code> composes an argv (always
+      including <code>--results</code> + <code>--run-id</code>) and the
+      worker calls <code>lce_portfolio.cli.main()</code>
+      <strong>in-process</strong> &mdash; never a forked subprocess.</li>
+    <li><code>write_outputs</code>/<code>write_report</code> persist
+      <code>results/&lt;run-id&gt;/</code> (atomic-ish: writes to
+      <code>&lt;run-id&gt;.tmp/</code>, renames on success) with
+      <code>report.html</code> as a cached file, served back through
+      <code>/reports/&lt;run_id&gt;/report.html</code>.</li>
+    <li>Every finished run appends one line to
+      <code>launcher/run_log.jsonl</code> (gitignored, machine-local).</li>
+  </ol>
+  <h4>Security posture</h4>
+  <ul>
+    <li><strong>Loopback-only, unauthenticated</strong> &mdash; binds
+      <code>127.0.0.1</code>, deliberately no <code>--host</code> flag.</li>
+    <li><strong>Bounded, whitelisted inputs</strong> &mdash; request bodies
+      capped at 1 MiB; file dropdowns only list four whitelisted directories;
+      run ids validated as a single safe path component.</li>
+    <li><strong>No raw tracebacks reach the browser</strong> &mdash; every
+      error path renders a short friendly message; the real traceback (if
+      any) only ever prints to the server's terminal.</li>
+  </ul>
+</section>
+
+<section id="standalone">
+  <h2><span class="num">&sect;</span>Running standalone</h2>
+  <p><code>scope2-lce-portfolio/</code> is designed to be copied out of this
+    repo and run on its own. <code>scripts/verify_standalone.sh</code>:</p>
+  <ol>
+    <li>Copies the tool to a fresh temp directory outside the parent repo (a
+      plain recursive copy, so gitignored-but-committed bundled data comes along).</li>
+    <li>Greps for any real <code>import market_sim</code> statement and fails if found.</li>
+    <li>Builds a fresh virtualenv from <code>requirements.txt</code> alone.</li>
+    <li>Runs <code>pytest -q</code>, the synthetic sample sweep, a real-ISO CLI
+      run against bundled data only, and a launcher smoke test.</li>
+  </ol>
+  <pre><code>scope2-lce-portfolio/scripts/verify_standalone.sh
+# or, to check a different bundled ISO:
+VERIFY_ISO=CAISO scope2-lce-portfolio/scripts/verify_standalone.sh</code></pre>
+</section>
+
+<section id="limits">
+  <h2><span class="num">&sect;</span>Limits &amp; non-goals</h2>
+  <ul>
+    <li><strong>Single aggregated node per ISO</strong> &mdash; no intra-ISO transmission/nodal detail.</li>
+    <li><strong>Price-taker</strong> &mdash; the portfolio never feeds back into the LMP series.</li>
+    <li><strong>No unit commitment</strong> &mdash; continuous capacity-choice + LP dispatch, not a MIP.</li>
+    <li><strong>Forecast LMP path on hold</strong> (<a href="../decisions/0015-forecast-lmp-selection.md">ADR 0015</a>) &mdash; only the <code>--dummy</code> synthetic mode and the backcast-validation carve-out (bundled 2024 data) work today.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Scope 2 Hourly LCE Portfolio Optimization Tool &middot;
+    <a href="../how-it-works.md">how-it-works.md</a> &middot;
+    <a href="index.html">Overview</a></p>
+</footer>
+</body>
+</html>
