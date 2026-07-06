@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-06-caiso-57-ramp-lcr",
+ "label": "caiso 57 ramp lcr",
+ "date": "2026-07-06",
+ "shorthand": "caiso-57-ramp-lcr",
+ "definition": "PROBE \u2014 D-8 closure A/B arm Y (G-15; keeper stays caiso-51, NEVER a keeper). Byte-faithful replay of the caiso-51 keeper config at HEAD, deltas exactly the closure plan's arm (docs/handoffs/caiso-ct-drag-d8-closure-2026-07.md \u00a74): ct_netload_drag OFF + ramp_limits ON + local_capacity_constraints ON; use_plant_emission_rates_v2 OFF exactly as the keeper ran (clean A/B vs caiso-55 drag arm / caiso-56 zero-drag; shared-input hashes byte-identical across the chain). VERDICT: decision-rule FAIL on criterion (i) in all three years -> the drag STAYS, G-15 stays open. Scored (P2) evening h15-21 CT 309/146/106 MW vs drag arm ~690-860/~580-600/~425-445 (CAMPD actual 850/770/303); CT class 1.73/0.73/0.68 TWh vs drag 2.04/1.70/1.30, actual 3.05/3.30/1.65. Criteria (ii)/(iii) hold: D-4 off-window 0%, D-2 CT forced share 0.4/1.0/0.03% (LCR attributes NO CT forcing - its dual is uplift-like by design), 2023 CT D-1 r 0.803/CV 0.883 best-in-chain; mean SP15 LMP unchanged vs the drag arm (69.2/46.5/48.7 - neither drag nor ramp+LCR moves C3a). vs caiso-56 (no mechanisms) the pair adds +0.93/+0.18/+0.29 TWh CT - the HEAD LCR contribution is far larger than the 07-04 unregistered probe measured (2023 LA-Basin requirement + scarcity hours). NEW ROOT CAUSE (sharpest of the session): the P1->P2 gap (P1 evening CT 552/236/127) shows the P2 UC decommit strips locally-committed CT because the commitment hurdle credits no LCR shadow value / bid-cost recovery - reality's CAISO pays exactly that uplift; the evening-CT suppressor has MOVED from the P1 merit order into P2 commitment economics. That build (LCR-dual credit in the P2 margin) is the fail branch's follow-up, never a re-tuned drag (rules 1/19).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-06-caiso-57-ramp-lcr.js",
+ "bundle": "results/calibration/caiso57_ramplcr_dragoff"
+}
