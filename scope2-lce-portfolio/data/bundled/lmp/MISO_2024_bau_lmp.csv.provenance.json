@@ -1,0 +1,17 @@
+{
+  "contract": "ADR 0011 (hour, iso, lmp) BAU LMP export -- REAL backcast bridge re-solve (validation-only, ADR 0015 carve-out)",
+  "iso": "MISO",
+  "source_keeper_id": "2026-07-06-miso-42-coal-econ-ablation",
+  "source_bundle": "results/calibration/MISO/miso_42_coal_econ_srmc-ablation",
+  "solve_date": "2026-07-06",
+  "mode": "backcast",
+  "simulation_year": 2024,
+  "hours": 8760,
+  "collapse": "load-weighted average of zonal LMPs; zero-load hour falls back to simple mean (ADR 0011)",
+  "lmp_mean": 26.22053838692878,
+  "lmp_min": 16.34290236049987,
+  "lmp_max": 48.325754188276534,
+  "annual_load_twh": 644.633002,
+  "backcast_validation_only": true,
+  "generator": "one-off bridge script (not committed), same posture as docs/validation-2026-07-05-ercot-2024-backcast.md"
+}
