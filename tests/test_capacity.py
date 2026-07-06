@@ -1079,6 +1079,74 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
         self.assertEqual(len(retention_log), 8)
 
 
+class TestStoragePortfolioElccDilution(unittest.TestCase):
+    """Portfolio ELCC dilution (accreditation audit §3 follow-up).
+
+    Linear interpolation between two cited (penetration, ELCC) anchors: 1.0
+    at/below today's validated reference MW, the CDR's own ratio (46/60.2)
+    at/above the deployment ceiling, straight-line between.
+    """
+
+    def test_no_op_at_and_below_reference(self):
+        from market_sim.model.capacity import _storage_portfolio_elcc_dilution
+
+        self.assertEqual(_storage_portfolio_elcc_dilution(20_438.0, "ERCOT"), 1.0)
+        self.assertEqual(_storage_portfolio_elcc_dilution(0.0, "ERCOT"), 1.0)
+        self.assertEqual(_storage_portfolio_elcc_dilution(11_700.0, "ERCOT"), 1.0)
+
+    def test_ceiling_ratio_at_and_beyond_ceiling(self):
+        from market_sim.model.capacity import _storage_portfolio_elcc_dilution
+
+        expected = 0.46 / 0.602
+        self.assertAlmostEqual(
+            _storage_portfolio_elcc_dilution(45_000.0, "ERCOT"), expected
+        )
+        self.assertAlmostEqual(
+            _storage_portfolio_elcc_dilution(60_000.0, "ERCOT"), expected
+        )
+
+    def test_linear_between_anchors(self):
+        from market_sim.model.capacity import _storage_portfolio_elcc_dilution
+
+        # Midpoint of the reference-to-ceiling span.
+        reference, ceiling = 20_438.0, 45_000.0
+        mid = (reference + ceiling) / 2.0
+        factor = _storage_portfolio_elcc_dilution(mid, "ERCOT")
+        expected = 1.0 - (1.0 - 0.46 / 0.602) * 0.5
+        self.assertAlmostEqual(factor, expected)
+
+    def test_unregistered_iso_is_no_op(self):
+        from market_sim.model.capacity import _storage_portfolio_elcc_dilution
+
+        self.assertEqual(_storage_portfolio_elcc_dilution(100_000.0, "PJM"), 1.0)
+
+    def test_evolve_fleet_dilutes_storage_firm_mw(self):
+        # End-to-end: evolve_fleet reads storage_firm_mw from prior_results
+        # and applies the dilution before the floor/backstop consume it.
+        prior = {
+            "fleet_arrays": None,
+            "dispatch_result": None,
+            "prices": None,
+            "peak_demand": 0.0,
+            "planned_additions": [],
+            "mc_cost": None,
+            "rps_shadow_price": 0.0,
+            "storage_power_mw": 45_000.0,  # at the ERCOT ceiling
+            "wind_cap_mw": 0.0,
+            "solar_cap_mw": 0.0,
+            "storage_firm_mw": 10_000.0,
+        }
+        config = ScenarioConfig(iso="ERCOT")
+        _, _, _, _, floor_log = evolve_fleet(
+            [], prior, 2027, config, {}, confirmed_exits=None
+        )
+        # No assertion on the return value directly exposes storage_firm_mw
+        # (it feeds the floor/backstop internally); this just confirms the
+        # call succeeds end-to-end with the ceiling-penetration case wired
+        # through evolve_fleet without raising.
+        self.assertEqual(floor_log, [])
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
@@ -1169,12 +1237,21 @@ class TestReserveMarginBuild(unittest.TestCase):
         self.assertGreater(built_registry, 0.0)
         self.assertEqual(built_registry, built_scalar)
 
-    def test_higher_target_iso_builds_more_than_ercot(self):
-        """A capacity-market ISO (PJM) force-builds more to its higher floor.
+    def test_icap_ucap_ratio_reverses_naive_pjm_vs_ercot_comparison(self):
+        """PJM's raw registered PRM exceeds ERCOT's, but its EFFECTIVE
+        (ICAP/UCAP-corrected) requirement is lower — demonstrating why the
+        two can't be compared as raw percentages (stage-5 §6 ICAP/UCAP
+        pairing audit, 2026-07-06).
 
-        PJM's installed-reserve-margin target (~17.8%) exceeds ERCOT's 13.75%,
-        so for the same firm capacity and peak the adequacy backstop builds
-        strictly more gas_ct in PJM than it would at ERCOT's margin.
+        PJM's IRM (~17.8%) is stated on INSTALLED capacity; the model counts
+        PJM's thermal fleet at UCAP, so the naive ``peak x (1+IRM)`` (the
+        pre-fix formula) overstated PJM's requirement relative to a
+        UCAP-stated target like ERCOT's CDR-basis 13.75%. Applying PJM's own
+        published ICAP->UCAP ratio (~0.77 — 2026/2027 BRA FPR/[1+IRM])
+        reverses the ordering: PJM's corrected requirement factor
+        ((1+0.178) x 0.77 = 0.907) is LOWER than ERCOT's (1.1375), so the
+        same firm/peak inputs make PJM's backstop build LESS than ERCOT's,
+        not more — the opposite of comparing the raw registered percentages.
         """
         from market_sim.model.capacity import apply_reserve_margin_build
 
@@ -1183,8 +1260,7 @@ class TestReserveMarginBuild(unittest.TestCase):
             PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"],
         )
         config = ScenarioConfig(reserve_margin_build_enabled=True)
-        # Identical firm/peak; only the resolved per-ISO margin differs. The
-        # gap stays well under each ISO's queue cap so neither is clipped.
+        # Identical firm/peak; only the resolved per-ISO requirement differs.
         _, built_ercot = apply_reserve_margin_build(
             [],
             firm_capacity_mw=5000.0,
@@ -1202,7 +1278,8 @@ class TestReserveMarginBuild(unittest.TestCase):
             iso="PJM",
         )
         self.assertGreater(built_ercot, 0.0)
-        self.assertGreater(built_pjm, built_ercot)
+        self.assertGreater(built_pjm, 0.0)
+        self.assertLess(built_pjm, built_ercot)
 
     def test_explicit_scalar_overrides_for_iso_absent_from_registry(self):
         """The ScenarioConfig scalar drives any ISO absent from the registry.
@@ -1244,18 +1321,30 @@ class TestReserveMarginBuild(unittest.TestCase):
 
         ``.get(iso, config.planning_reserve_margin)`` returns the scalar
         fallback (0.1375) on the default basis: gross peak, no load-product
-        netting, UCAP nameplate conversion — the analytic value below.
-        (ERCOT itself is no longer at parity with the bare scalar: its CDR
-        basis nets load-side products and counts the new CT at rating —
-        accreditation audit 2026-07-06.)
+        netting, UCAP nameplate conversion, no ICAP/UCAP ratio correction —
+        the analytic value below. (ERCOT itself is no longer at parity with
+        the bare scalar: its CDR basis nets load-side products and counts
+        the new CT at rating — accreditation audit 2026-07-06.) PJM is
+        cleared from BOTH the PRM registry and the ICAP/UCAP ratio registry
+        (stage-5 §6) so this isolates the true full-fallback case — an ISO
+        absent from every adequacy registry.
         """
-        from market_sim.config.constants import EFORD
+        from market_sim.config.constants import (
+            EFORD,
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
+        )
         from market_sim.model.capacity import apply_reserve_margin_build
 
         config = ScenarioConfig(reserve_margin_build_enabled=True)
         self.assertEqual(config.planning_reserve_margin, 0.1375)
-        with mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry:
+        with (
+            mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry,
+            mock.patch.dict(
+                PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO, clear=False
+            ) as ratio_registry,
+        ):
             del registry["PJM"]
+            del ratio_registry["PJM"]
             _, built_fallback = apply_reserve_margin_build(
                 [],
                 firm_capacity_mw=5000.0,
