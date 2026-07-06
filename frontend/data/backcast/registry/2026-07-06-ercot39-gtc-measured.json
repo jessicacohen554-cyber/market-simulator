@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-ercot39-gtc-measured",
+  "label": "ercot39 gtc measured",
+  "date": "2026-07-06",
+  "shorthand": "ercot39-gtc-measured",
+  "definition": "(PROBE) one-delta probe of ercot38 with ercot_gtc_limits_measured active (curated NP6-86 GTC series replacing static TTC on the Panhandle/West/Northeast export links). NEGATIVE RESULT: did NOT close the wind/solar under-curtailment gap — model curtailment stayed ~2-3% vs ISO-reported 5-9% and in 2024/25 moved slightly AWAY (the measured export caps are frequently looser than the static fill, e.g. 2024 PNHNDL 2065-3544 MW vs 2680 static, WESTEX 6571-7902 vs 7300). C-score matrix identical to ercot38: C2 gas volume still FAIL (2025 gas -6.5% vs ercot38 -6.4%), C3a/C5c still PASS (no regression). Transmission congestion is not the binding under-curtailment mechanism; next candidates per docs/handoffs/ercot-vre-undercurtailment-2026-07.md §5.2 (neg-price dumping, storage absorption timing). Not a keeper (no attestation).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-06-ercot39-gtc-measured.js",
+  "bundle": "results/calibration/ercot39_gtc_measured_probe"
+}
