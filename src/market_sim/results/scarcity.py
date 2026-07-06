@@ -1974,6 +1974,60 @@ def nyiso_rcpf_product_shortfall_steps(
     return np.asarray(pens, dtype=float), np.asarray(wids, dtype=float)
 
 
+def caiso_reserve_demand_steps(
+    requirement_mw: float,
+    curve: tuple[tuple[float, float], ...],
+    bid_cap: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Discretize a CAISO scarcity reserve demand curve into LP shortfall steps.
+
+    The CAISO analogue of :func:`nyiso_rcpf_product_shortfall_steps`, for the
+    published tariff §27.1.2.3.5 scarcity reserve demand curves
+    (``reserve_config.CAISO_SPIN_DEMAND_CURVE`` /
+    ``CAISO_NONSPIN_DEMAND_CURVE``). Unlike NYISO's linear-ramp-to-VOLL curve,
+    CAISO's are STEPPED at published shortage magnitudes: spinning is flat at
+    10% of the bid cap; non-spinning steps 50 → 60 → 70% at the 70 MW / 210 MW
+    shortage tiers. A reserve "shortfall" variable measures the unmet
+    requirement; band ``j`` covers a slice of shortfall priced at the demand
+    curve over that slice, ascending cheapest (shallowest shortage) first — the
+    contract :func:`model.dispatch` consumes.
+
+    Tier edges are ABSOLUTE shortage MW (a tariff fact, not a fraction of the
+    requirement), so they are the same in every hour; passing the pool's
+    maximum hourly requirement as ``requirement_mw`` sizes the total step width
+    to keep the balance row feasible at zero reserve in the tightest hour while
+    the tier boundaries stay fixed. The final tier's edge is ``inf`` (extends to
+    the requirement).
+
+    Args:
+        requirement_mw: Total shortfall width to span (the pool's requirement,
+            or its hourly maximum when the requirement varies by hour).
+        curve: Ascending ``(fraction_of_bid_cap, cumulative_shortage_upper_mw)``
+            tiers; the last ``upper`` is ``inf``.
+        bid_cap: The energy bid cap the fractions are quoted against ($/MWh).
+
+    Returns:
+        ``(penalties, widths)`` ascending cheapest-first, each ``(n_steps,)``;
+        ``widths`` sums to ``requirement_mw``.
+    """
+    req = float(requirement_mw)
+    pens: list[float] = []
+    wids: list[float] = []
+    if req <= 0.0:
+        return np.zeros(0, dtype=float), np.zeros(0, dtype=float)
+    prev_upper = 0.0
+    for frac, upper in curve:
+        tier_upper = min(float(upper), req)
+        width = tier_upper - prev_upper
+        if width > 0.0:
+            pens.append(float(frac) * float(bid_cap))
+            wids.append(width)
+        prev_upper = tier_upper
+        if tier_upper >= req:
+            break
+    return np.asarray(pens, dtype=float), np.asarray(wids, dtype=float)
+
+
 def nyiso_spin_requirement_mw(config) -> float:
     """Return the NYC synchronised (spinning) reserve requirement in MW.
 

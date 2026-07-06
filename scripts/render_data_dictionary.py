@@ -86,6 +86,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "rggi-co2-budgets",
     "carb-cap-schedule",
     "chp-btm-share",
+    "ramp-capability",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -212,6 +213,25 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`market_sim.data.chp.measured_btm_share_by_plant` for forecast-year "
             "CHP must-run sizing only; the backcast `_btm_frame` path is "
             "untouched. Never intake 2022/H1-2026 (rule 22)."
+        ),
+    },
+    "ramp-capability": {
+        "summary": (
+            "Measured per-plant 10-minute ramp / fast-start capability inputs "
+            "for the per-generator reserve co-optimization."
+        ),
+        "reconciles": (
+            "EIA-860 Schedule 3.1 `Time from Cold Shutdown to Full Load` "
+            "(the `10M` fast-start category → `fast_start_mw` over the plant's "
+            "thermal nameplate `thermal_nameplate_mw`) and EPA CAMPD CEMS "
+            "hourly unit gross load (the maximum observed 1-hour plant-level "
+            "up-ramp → `ramp_up_1h_mw`, plus `observed_pmax_mw` and "
+            "`hours_observed`) — reconciled per plant (EIA plant code = CAMPD "
+            "facilityId) onto one tidy frame, pooled 2023-2025 (holdouts "
+            "excluded, rule 22). Per-ISO scoping is the balancing-authority "
+            "spec in `scripts/lib/ramp_capability/<iso>.py` (PJM, MISO, CAISO). "
+            "Consumed as the measured ceiling on the class-rate estimate feeding "
+            "`FleetArrays.ramp10`, the 10-minute reserve-deliverability bound."
         ),
     },
     "energy-offers": {
