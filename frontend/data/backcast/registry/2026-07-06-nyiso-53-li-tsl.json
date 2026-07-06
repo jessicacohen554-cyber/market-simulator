@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-nyiso-53-li-tsl",
+  "label": "nyiso 53 li tsl",
+  "date": "2026-07-06",
+  "shorthand": "nyiso-53-li-tsl",
+  "definition": "L-11 probe: nyiso-52 recipe + Zone-K LCR/TSL import cap (nyiso_li_lcr_tsl, issue #1345 \u2014 replaces the LI 0.45 self-supply floor; published locality import limit, HB14-21 window) + use_plant_emission_rates_v2=True (\u00a79.6 ride-along).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-nyiso-53-li-tsl.js",
+  "bundle": "results/calibration/nyiso53_litsl_v2"
+}
