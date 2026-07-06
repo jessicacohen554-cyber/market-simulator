@@ -24,8 +24,8 @@ override plumbing for other families):
     ``wefor_multiplier``, ``battery_dispatch_adder``,
     ``pumped_storage_dispatch_adder``.
   Constants.py-resident families the ledger also lists (coal sigmoid
-  parameters, GAS_AVAILABILITY_FACTOR, CHP_BTM_PCT_BY_SECTOR, CAISO TAC
-  weights, IMPORT/EXPORT_TRANCHES, netload-drag hinge coefficients) are not
+  parameters, CHP_BTM_PCT_BY_SECTOR, CAISO TAC weights,
+  IMPORT/EXPORT_TRANCHES, netload-drag hinge coefficients) are not
   yet perturbable through the generic ``prb_overrides`` override channel at
   per-parameter granularity and are out of scope for this batch; each needs
   its own ScenarioConfig passthrough before it can join this harness.
