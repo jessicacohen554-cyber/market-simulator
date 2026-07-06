@@ -38,6 +38,49 @@ Gate records: plan §7.3.4 / §7.3.5.
   (backcast_config move + getattr fold); capacity logic, keepers/registry,
   offer curves, policy/.
 
+## 2026-07-06 (Lane L-8 — emissions forward-channel decisions + mass-cap backcast wiring)
+
+Gap-register (`docs/gap-register-2026-07.md` §5 Wave 2) G-39/G-29/W8/W10 items. No default
+flips, no keeper artifacts, no solves.
+
+- **G-29 wiring (done, tested):** the backcast calibration harness previously never called
+  `get_active_policy_constraints` at all (`mass_cap_enabled` was fully inert there, distinct from
+  `runner.py`'s already-wired forecast path). Extracted the row-building logic into
+  `policy.constraints.build_mass_cap_dispatch_kwargs(config, year, zone_names, fleet_arrays)` and
+  called it from `scripts/run_calibration.py::run_year`'s `dispatch_kwargs` assembly (mirrors
+  `runner.py`'s `mass_caps` block). `run_year` gained `mass_cap_enabled`/`mass_cap_tons`/
+  `mass_cap_program` parameters (applied via `config.with_overrides`, the file's existing
+  convention) and matching CLI flags. Default stays off everywhere; `scripts/
+  run_calibration_full.py`'s own argparse/`solve_and_persist` forwarding was deliberately left
+  unwired (separate large surface, 3-line follow-on documented in the plan doc) to keep this
+  lane's diff to the config-threading seam. New `tests/test_constraints.py`
+  (`TestBuildMassCapDispatchKwargs`): a mass-cap-enabled backcast config actually builds
+  `mass_cap_coeffs`/`mass_cap_rhs`/`mass_cap_labels`; disabled/no-program/quarantined-year
+  configs all return `{}`.
+- **G-39 decision memo** (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §9.6):
+  `use_plant_emission_rates_v2`'s flip is dispatch-inert for ERCOT/PJM/MISO (carbon_price=0 in
+  backcast there) and dispatch-affecting only for CAISO/NYISO/NEISO (measured CARB/RGGI price
+  nonzero) — mirrors the 2026-07-05 R2 re-gate's own finding. Recommends a cheap no-solve
+  re-score PROBE for the three carbon-zero ISOs now, and folding the v2 flip into each
+  carbon-priced ISO's *next* already-scheduled HEAD re-gate rather than forcing a standalone
+  wave; flip the global default only after all three have been evaluated under it at least once.
+  States explicitly that the W10 emission-control retrofit channel's triple gate
+  (`control_retrofit_forward` + `use_plant_emission_rates_v2` + forecast mode) is unaffected by
+  this decision and should stay inert until the E2 NOx/SO2 forward-rate wave lands.
+- **W8 leftovers filed as explicit plan-doc sections**
+  (`docs/handoffs/emissions-mass-cap-plan-2026-07.md`): §13 NOx mass-cap follow-on (CSAPR
+  ozone-season design sketch, seasonal-hour-mask wrinkle vs the CO2 row, rule-13 admissibility
+  with the honest caveat that no measured NOx allowance price exists in-repo to validate a row's
+  dual against — ships scenario-only if built) and an expanded §8 rule-13 admissibility
+  subsection for banking/borrowing (why a self-referential bank-balance recursion fails rule 13
+  independent of the rule-9 one-pass argument already on file).
+- **RGGI dual-vs-auction-price validation probe spec'd as a runnable recipe** (§14 of the
+  mass-cap plan doc): NYISO 2023-2024, `scripts/run_calibration.py --mass-cap-enabled
+  --mass-cap-tons <near-realized-tonnage>`, reading `result.co2_cap_price` directly (not printed
+  by `_report_year`); explicit non-goal framing (a sanity/order-of-magnitude check and a
+  negative-control leg against the real published budget, never a pass/fail calibration gate).
+  Not run in this session.
+
 ## 2026-07-05 (Emissions mass-cap follow-ons — PJM per-unit membership, per-state RGGI budgets)
 
 Completes the two deferred follow-ons from `docs/handoffs/emissions-mass-cap-plan-2026-07.md`
