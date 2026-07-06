@@ -5242,3 +5242,78 @@ promotion — that stays a separate owner decision (rule #15).
 ### Holdouts
 
 No solve, score, or intake touched 2022/H1-2026 (rule #22).
+
+## 2026-07-06 — MISO L-14 Wave-3: C5b adjudication + C1 decomposition + coal marginal-SRMC bound (run `miso 42 coal-econ-srmc`; keeper stays miso-41, promotion recommended to owner)
+
+**Lane:** Wave-3 MISO L-14 (gap register G-23/G-40). Three deliverables, in mandate order.
+
+### 1. C5b storage throughput (+1330%): benchmark basis artifact — NO adder (FINDING, no solve)
+
+`results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md`. The scored 2025 actual
+(0.2447 TWh) is EIA-930 **battery-only** — MISO reports no PS series at all (verified: hourly
+extract has only `NG: BAT`; the BALANCE files' pumped-storage column is all-null in every scored
+year) — while the model side includes the 2,417 MW PS fleet (Ludington + Taum Sauk). The model's
+PS throughput sits INSIDE the eGRID net-energy-implied band (|net|·RTE/(1−RTE): 2.5–4.4 TWh vs
+model 2.8–3.5), so there is no over-cycling residual to price. Per the PJM adjudication in
+`constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`, no citable PS throughput cost exists (O&M
+<$1/MWh; the real suppressor is reserve duty = a measured-reservation channel, not a $/MWh
+adder); a MISO adder would be a fit to a mis-measured target (rule 13). Both adders stay 0.
+Scorer-side like-for-like fix (battery-only vs `NG: BAT` when the BA reports no PS) flagged to
+the rubric-infra owner; C5c 2025 (r=0.465) is the same basis artifact.
+
+### 2. C1 CC_REGULAR +44 TWh: decomposition + ONE grounded lever (`coal_econ_srmc_bound`, miso-42)
+
+`results/calibration/FINDING-miso-cc-decomposition-2026-07.md`. The +44.35/+43.22 TWh (2023/24)
+displaces **imports** (−23.2/−19.4 TWh — model 14.7/3.7 vs actual 37.9/23.1) and the **priced-out
+non-CC gas classes** (CT_PEAKER −12.0/−9.3, ST_GAS −10.9/−14.3, CHP/OTHER_FOSSIL −10.6/−12.9) —
+NOT coal (family −6.0/−8.3 in 2023/24) and NOT wind (delivered-pinned). ~73% is MISO-South;
+flat across the day (model CC off-peak CV BELOW actual); worst in shoulder months. CC is NOT
+availability-bound (dispatch 78–81% of the 230 TWh availability integral vs actual 59–62%) —
+and the DP-1 magnitude check (actual 135.6 × 1.34 MIP wedge = 181.7 ≈ model 179.9) says the CC
+row itself is the P1 commitment-posture wedge.
+
+**Lever implemented (one, grounded, zero fitted params):** `coal_econ_srmc_bound` — marginal
+(econ*/peak) coal tranches' fuel passthrough clamped to ≥1.0, so no marginal coal offer sits
+below the plant's measured F923 incremental delivered SRMC; committed/must-run keep the
+contracted take-or-pay discount (burndown Evidence 2: model LMP $25.9 < cheapest measured coal
+tranche $28.3 with coal marginal 93.9% of hours). A fitted-DOF *removal*, forward-valid.
+Full-span solve registered: **`2026-07-06-miso-42-coal-econ`** (bundle
+`results/calibration/MISO/miso_42_coal_econ_srmc`), determination NOT-YET.
+
+vs miso-41 (2023/24/25): C3a −8.2/−13.0/−18.9% (was −9.8/−15.6/−19.5%); ST_GAS 6.8/7.3/5.3 TWh
+(was 2.9/3.3/3.4; actual 13.8/17.6/15.7); CT_PEAKER 15.0/20.8/17.6 (was 13.4/17.3/16.9); net
+imports 19.5/6.3/−4.6 (was 14.7/3.7/−5.1); C2 2025 coal +7.2% (was +8.8%); CO2 PASS ×3;
+legitimacy D-gates Overall PASS (C7/C8 PASS; the bound forces zero energy — offer bound, not a
+floor). Costs, reported per rule 1 without reverting: coal 2023/24 under-run deepens
+(154.9/144.2 vs actual 175.0/167.1) — the sigmoid's sub-cost marginal discount was silently
+compensating for missing coal **self-commitment volume** (note: the MISO fleet branch does not
+yet size the committed band from the measured EIA-923 Sch-5 contract share —
+`run_calibration.py` passes no `takeorpay_by_plant` on the thermal-tranche path; open root
+cause). CC_REGULAR +46.4/+46.8/+28.6 (worse +2.9/+4.3/+1.8): the bound was never the CC lever —
+the CC row needs the commitment posture. C3c tail still 0 h ×3 (same).
+
+### 3. Scarcity-posture design note (design only, rule 17 driver/window/forward story)
+
+`docs/multi-iso/miso-scarcity-posture-design-2026-07.md`: (A) pooled linear commitment-posture
+lever — (zone×class) online-capacity variable U with min-load coupling, startup cost on ΔU⁺,
+and the pergen reserve cap online-gated (`R ≤ ramp10×U`) so the published curves can genuinely
+run short; honesty-gated on measured MISO cleared reserve MW/MCPs, NEVER on the tail residual;
+memory-feasible at the 30-pool grain (G-40). (B) Midwest locational reserve family —
+DATA-BLOCKED on MISO's historical zonal operating-reserve requirement series (the ask is
+filed in the note); a hand-sized requirement is forbidden. Sequencing: A first (it is also the
+C1-CC and intra-gas lever), B when the data lands.
+
+### keepers.json — recommendation to owner (no swap in-session)
+
+**Recommend promoting miso-42 to keeper** on the miso-41→miso-39 precedent: strictly more
+structurally faithful (a fitted sub-cost discount removed from market-priced marginal fuel;
+nothing tuned, D-gates PASS, C3a/C2-2025/intra-gas structure all move toward actuals), even
+though the CC row and 2023/24 coal worsen — those are the named next root causes (commitment
+posture; committed-band sizing from measured contract shares), not reasons to keep bidding
+marginal coal below its measured cost. If the owner declines, miso-42 stands as the registered
+A/B evidence for the posture workstream. Keeper unchanged this session: miso-41.
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule #22). Solve years 2023–2025 only,
+one invocation, years sequential (G-40 memory discipline; 12 GB swapfile).
