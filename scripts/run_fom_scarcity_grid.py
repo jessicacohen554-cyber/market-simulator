@@ -337,6 +337,21 @@ def main(argv: list[str] | None = None) -> None:
         ),
     )
     p.add_argument(
+        "--energy-only-floor",
+        action="store_true",
+        help=(
+            "Stage-5 harness variant (fom-scarcity stage 5 §2): run the grid "
+            "with market_design_retirement_floor=True, disabling the "
+            "retirement reliability floor for energy-only ERCOT so adequacy "
+            "expresses as exit -> scarcity -> revenue -> retention/entry (the "
+            "Stage-4 §3 successor mechanism, option a). Capacity-market ISOs "
+            "(the PJM cells) are byte-identical under the flag. Harness "
+            "variant only; the model default stays off pending owner "
+            "sign-off. Appends '-stage5-energy-only-floor' to the JSON stem "
+            "so earlier grids are never overwritten."
+        ),
+    )
+    p.add_argument(
         "--growth",
         default="mid",
         choices=("low", "mid", "high"),
@@ -361,6 +376,8 @@ def main(argv: list[str] | None = None) -> None:
     variant_overrides: dict = {}
     if args.backstop_off:
         variant_overrides["reserve_margin_build_enabled"] = False
+    if args.energy_only_floor:
+        variant_overrides["market_design_retirement_floor"] = True
     if args.growth != "mid":
         variant_overrides["demand_growth_path"] = args.growth
 
@@ -414,6 +431,8 @@ def main(argv: list[str] | None = None) -> None:
     stem = f"fom-scarcity-grid-{date.today().isoformat()}"
     if args.backstop_off:
         stem += "-stage3-backstop-off"
+    if args.energy_only_floor:
+        stem += "-stage5-energy-only-floor"
     if args.growth != "mid":
         stem += f"-growth-{args.growth}"
     effective_base = {**BASE_OVERRIDES, **variant_overrides}
@@ -423,6 +442,7 @@ def main(argv: list[str] | None = None) -> None:
                 "start_year": args.start_year,
                 "end_year": args.end_year,
                 "backstop_off": args.backstop_off,
+                "energy_only_floor": args.energy_only_floor,
                 "growth": args.growth,
                 "base_overrides": effective_base,
                 "fom_axis": FOM_AXIS,
