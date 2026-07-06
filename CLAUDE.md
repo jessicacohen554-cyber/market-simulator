@@ -84,21 +84,35 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
 1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
-1. **Hold out data, and score it exactly once.** The designated holdouts — **2022 and H1-2026 —
-    are under FULL quarantine: no solves, no scoring, and no data intake for those years**, until
-    an ISO's calibration is declared complete (its marker in
-    `frontend/data/backcast/calibration-complete.json`). At that moment the holdouts are scored
-    **EXACTLY ONCE** with the frozen keeper configs — the required 2022/H1-2026 data intake
-    (bench actuals, CAMPD unit-level, delivered fuel; the coverage gap is itemized in
-    `docs/out-of-sample-results-2026-07.md` §1) happens *at that moment*, as step 1 of the
-    one-shot validation, never before. The results are recorded whatever they are, and **no
-    calibration change may respond to them** without designating a new never-touched holdout.
-    Structural mechanism changes are still scored leave-one-year-out *within 2023–2025* before
-    promotion. In-sample improvement with held-out degradation is overfitting, not skill. CI
-    enforces the quarantine on every pull request (`.github/workflows/ci.yml`, `quarantine-gates`
-    job): `scripts/legitimacy_diagnostics.py --keepers` and `scripts/audit_keepers.py --check` FAIL
-    the PR if any registered bundle contains a solve year outside 2023–2025 before that ISO's
-    calibration-complete marker exists.
+1. **Hold out data, and score it exactly once.** The designated holdouts are **2022 and
+    H1-2026**. **No backcast solve, no scoring, and no registration** may touch a holdout
+    period until an ISO's calibration is declared complete (its marker in
+    `frontend/data/backcast/calibration-complete.json`). The clauses, amended 2026-07-06 by
+    owner decision (G-17, Option 2 — `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)):
+    - **Data intake is permitted** for holdout periods, but ONLY under explicit,
+      session-logged owner authorization, and validation of intaken holdout data is no-LP
+      only (byte-identity / loader-resolvability checks — never a dispatch solve). This
+      codifies the authorized 2026-07-04 ERCOT/PJM intake (PRs #1298/#1300/#1304); each
+      future intake (CAISO/MISO/NYISO/NEISO, itemized in
+      `docs/out-of-sample-results-2026-07.md` §1) requires its own authorization.
+    - **2022 is fully solve-quarantined:** no modeling run of any kind on 2022 — no
+      backcast, no diagnostic probe, no "throwaway" solve — until the ISO's
+      calibration-complete marker exists, at which point it is scored EXACTLY ONCE with the
+      frozen keeper config.
+    - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode=
+      "forecast"`) naturally span 2026+ and use no measured H1-2026 actuals (historic
+      overlays are backcast-only by construction) — they are NOT restricted. What is
+      quarantined is any *backcast* of H1-2026 on real data and any scoring of model output
+      against measured H1-2026 actuals, until the one-shot validation.
+    - The one-shot results are recorded whatever they are, and **no calibration change may
+      respond to them** without designating a new never-touched holdout. Structural
+      mechanism changes are still scored leave-one-year-out within 2023–2025 before
+      promotion. In-sample improvement with held-out degradation is overfitting, not skill.
+    Enforcement: CI (`.github/workflows/ci.yml`, `quarantine-gates` job) fails any PR whose
+    registered bundle contains a solve year outside 2023–2025 before that ISO's marker
+    exists, and `scripts/run_calibration_full.py` hard-fails any `--year` outside
+    {2023, 2024, 2025} unless `--holdout-authorized` is passed AND the target ISO carries a
+    calibration-complete marker.
 1. **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.
