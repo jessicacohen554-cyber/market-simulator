@@ -2195,6 +2195,7 @@ def run_year(
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_pergen: bool = False,
+    pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
@@ -2783,6 +2784,11 @@ def run_year(
         )
     if pjm_reserve_pergen:
         config = config.with_overrides(pjm_reserve_pergen=True)
+    if pjm_commitment_posture:
+        # PJM commitment-posture lever (design note §A ported; requires the
+        # pergen reserve co-opt). U/SU columns on non-fast-start pools; zero
+        # fitted parameters. GATED default off.
+        config = config.with_overrides(pjm_commitment_posture=True)
     if measured_ramp_capability:
         # Measured EIA-860/CAMPD ramp-capability reconciliation of the class
         # ramp10 fractions (data/ramp_capability.py; rule 14 measured-over-

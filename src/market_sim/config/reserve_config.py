@@ -1213,6 +1213,21 @@ def _pjm_design(
         member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
         col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
         np.add.at(col_ramp10, pergen_col, member_ramp_t)
+        # Commitment-posture lever (design note §A; PJM port
+        # docs/handoffs/pjm-commitment-posture-port-2026-07.md): U/SU columns
+        # on the non-fast-start pools, gated on pjm_commitment_posture. Shares
+        # MISO's _posture_pool_params verbatim (measured/published pool params
+        # only — CEMS committed_pct mlf, NREL class startup, physics fast-start
+        # gate rule 18). No new design, no fitted parameter.
+        posture_pools = posture_mlf = posture_startup = None
+        if getattr(config, "pjm_commitment_posture", False):
+            posture_pools, posture_mlf, posture_startup = _posture_pool_params(
+                fleet_arrays,
+                pergen_gen_idx,
+                pergen_col,
+                n_r,
+                str(config.iso),
+            )
         return ReserveDesign(
             families=families,
             eligible=eligible.reshape(1, -1),
@@ -1220,6 +1235,9 @@ def _pjm_design(
             pergen_gen_idx=pergen_gen_idx,
             pergen_col=pergen_col.astype(int),
             pergen_ramp10=col_ramp10,
+            posture_pools=posture_pools,
+            posture_mlf=posture_mlf,
+            posture_startup=posture_startup,
         )
 
     supply_cap = pjm_reserve_deliverable_supply_cap_mw(config, fleet_arrays, T)

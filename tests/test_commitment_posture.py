@@ -288,5 +288,99 @@ class TestPostureLP(unittest.TestCase):
         self.assertAlmostEqual(float(np.asarray(on.dump).sum()), 0.0, places=4)
 
 
+def _cfg_pjm(posture: bool):
+    return type(
+        "C",
+        (),
+        {
+            "iso": "PJM",
+            "weather_year": 2024,
+            "energy_reserve_coopt": True,
+            "pjm_reserve_pergen": True,
+            "pjm_commitment_posture": posture,
+        },
+    )()
+
+
+class TestPjmPortSharesMechanism(unittest.TestCase):
+    """The PJM port reuses MISO's _posture_pool_params verbatim — not a fork.
+
+    Same fleet through both ISO designs must produce identical posture pools /
+    parameters, and PJM's default-off path must be a byte-identical no-op
+    (the pjm-81 ablation-twin guarantee).
+    """
+
+    def _pjm_design(self, fleet, T, posture: bool):
+        return get_reserve_design(_cfg_pjm(posture), fleet, T, ["z0"])
+
+    def test_pjm_off_emits_no_posture(self):
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_cc",
+            [7.0, 8.0, 8.0],
+            [2000.0, 1000.0, 1000.0],
+            "CC_REGULAR",
+            [800.0, 400.0, 400.0],
+        )
+        design = self._pjm_design(fleet, T, posture=False)
+        self.assertIsNone(design.posture_pools)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertNotIn("reserve_posture_pools", kw)
+
+    def test_pjm_slow_cc_pool_postured_with_class_params(self):
+        # Same fleet as the MISO TestPostureParams CC case: shared code must
+        # produce the same postured pool, mlf (WWSIS-2 CC gap-fill 0.52) and
+        # class startup ($30-$50/MW).
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_cc",
+            [7.0, 8.0, 8.0],
+            [2000.0, 1000.0, 1000.0],
+            "CC_REGULAR",
+            [800.0, 400.0, 400.0],
+        )
+        design = self._pjm_design(fleet, T, posture=True)
+        self.assertEqual(design.posture_pools.size, 1)
+        self.assertAlmostEqual(float(design.posture_mlf[0]), 0.52, places=6)
+        su = float(design.posture_startup[0])
+        self.assertGreater(su, 30.0)
+        self.assertLess(su, 50.0)
+
+    def test_pjm_fast_start_ct_pool_exempt(self):
+        # gas CT frame class: both fast-start thresholds met -> no posture
+        # column (rule 18 parameter gate, shared with MISO).
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_ct",
+            [10.5, 10.5, 10.5],
+            [100.0, 100.0, 100.0],
+            "CT_PEAKER",
+            [100.0, 100.0, 100.0],
+        )
+        design = self._pjm_design(fleet, T, posture=True)
+        self.assertTrue(design.posture_pools is None or design.posture_pools.size == 0)
+
+    def test_pjm_matches_miso_pool_params(self):
+        # The two ISO designs, same fleet: posture pools/params identical
+        # (the port is not a fork).
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_cc",
+            [7.0, 8.0, 8.0],
+            [2000.0, 1000.0, 1000.0],
+            "CC_REGULAR",
+            [800.0, 400.0, 400.0],
+        )
+        pjm = self._pjm_design(fleet, T, posture=True)
+        miso = get_reserve_design(_cfg(True), fleet, T, ["z0"])
+        np.testing.assert_array_equal(pjm.posture_pools, miso.posture_pools)
+        np.testing.assert_allclose(pjm.posture_mlf, miso.posture_mlf)
+        np.testing.assert_allclose(pjm.posture_startup, miso.posture_startup)
+
+
 if __name__ == "__main__":
     unittest.main()
