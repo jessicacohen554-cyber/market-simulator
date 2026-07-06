@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from lce_portfolio.config import HOURS_PER_YEAR
+from lce_portfolio.config import HOURS_PER_YEAR, LMP_KIND_ANNUAL_AVERAGE_FLAT
 from lce_portfolio.cli import main
 
 
@@ -491,3 +491,37 @@ def test_cli_directory_as_load_is_clean_error(tmp_path, capsys) -> None:
     captured = capsys.readouterr()
     assert "error:" in captured.err
     assert "Traceback" not in captured.err
+
+
+def test_cli_annual_average_lmp_end_to_end(tmp_path) -> None:
+    """A tiny annual-average LMP file (no hour column, HP-01) runs end-to-end
+    and threads lmp_kind through run_metadata.json and the report's
+    flat-price-comparison label."""
+    load_path, _ = _write_fixtures(tmp_path)
+    lmp_path = tmp_path / "lmp_annual_avg.csv"
+    pd.DataFrame({"iso": ["SAMPLE"], "annual_avg_lmp": [35.0]}).to_csv(
+        lmp_path, index=False
+    )
+    out_dir = tmp_path / "out"
+    config_path = tmp_path / "run.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "load_file": str(load_path),
+                "lmp_file": str(lmp_path),
+                "active_resources": ["solar_pv"],
+                "premium_deltas": [10.0],
+            }
+        )
+    )
+
+    rc = main(["--config", str(config_path), "--out-dir", str(out_dir)])
+
+    assert rc == 0
+    meta = json.loads((out_dir / "SAMPLE_run_metadata.json").read_text())
+    assert meta["lmp_kind"] == LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+    report_html = (out_dir / "report.html").read_text()
+    assert "Annual average (flat)" in report_html
+    assert "Flat-price comparison" in report_html

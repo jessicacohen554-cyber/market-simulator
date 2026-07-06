@@ -22,7 +22,12 @@ import pytest
 from conftest import daytime_solar_cf, solar_plus_battery
 from lce_portfolio.cli import compose_run_id
 from lce_portfolio.cli import main as cli_main
-from lce_portfolio.config import HOURS_PER_YEAR, PortfolioConfig
+from lce_portfolio.config import (
+    HOURS_PER_YEAR,
+    LMP_KIND_ANNUAL_AVERAGE_FLAT,
+    LMP_KIND_HOURLY,
+    PortfolioConfig,
+)
 from lce_portfolio.outputs import write_outputs, write_report
 from lce_portfolio.report import (
     PAYLOAD_VERSION,
@@ -112,6 +117,62 @@ def test_mandatory_provenance_fields(small_run) -> None:
     assert prov["mode"] == "premium_cap"
     assert prov["sensitivity"] == "mid"
     assert prov["additionality_only"] is False
+
+
+# --------------------------------------------------- lmp_kind (HP-01, v2)
+
+
+def test_provenance_lmp_kind_defaults_hourly(small_run) -> None:
+    """A sweep built without an explicit lmp_kind carries the hourly default."""
+    cfg, sweep = small_run
+    assert sweep.lmp_kind == LMP_KIND_HOURLY
+    prov = build_report_payload([sweep], [cfg])["provenance"]
+    assert prov["lmp_kind"] == LMP_KIND_HOURLY
+
+
+def test_annual_average_flat_lmp_kind_renders_flat_price_banner(small_run) -> None:
+    """A sweep priced against an annual-average LMP labels the report a
+    flat-price comparison, visibly, in the provenance section (HP-01)."""
+    cfg, sweep = small_run
+    flat_sweep = copy.deepcopy(sweep)
+    flat_sweep.lmp_kind = LMP_KIND_ANNUAL_AVERAGE_FLAT
+    payload = build_report_payload([flat_sweep], [cfg])
+    assert payload["provenance"]["lmp_kind"] == LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+    html = render_report(payload)
+    assert "Annual average (flat)" in html
+    assert "Flat-price comparison" in html
+    assert "hourly price" in html.lower()
+
+
+def test_hourly_lmp_kind_omits_flat_price_banner(small_run) -> None:
+    """A normal hourly-priced run never shows the flat-price banner."""
+    cfg, sweep = small_run
+    html = render_report(build_report_payload([sweep], [cfg]))
+    assert "Flat-price comparison" not in html
+
+
+def test_report_covers_one_run_lmp_kind_must_match(small_run) -> None:
+    """A batch mixing hourly and annual-average sweeps is rejected, mirroring
+    the existing mode/sensitivity one-report-covers-one-run guard."""
+    cfg, sweep = small_run
+    flat_sweep = copy.deepcopy(sweep)
+    flat_sweep.iso = "SAMPLE_B"
+    flat_sweep.lmp_kind = LMP_KIND_ANNUAL_AVERAGE_FLAT
+    with pytest.raises(ValueError, match="lmp_kind differs"):
+        build_report_payload([sweep, flat_sweep], [cfg, cfg])
+
+
+def test_payload_v1_without_lmp_kind_renders_unchanged(small_run) -> None:
+    """A payload lacking provenance.lmp_kind (pre-HP-01 v1) never gets the
+    LMP-kind meta row or flat-price banner -- byte-stability for committed
+    v1 report.json bundles (ADR 0014 §6)."""
+    cfg, sweep = small_run
+    payload = build_report_payload([sweep], [cfg])
+    del payload["provenance"]["lmp_kind"]
+    html = render_report(payload)
+    assert "LMP kind" not in html
+    assert "Flat-price comparison" not in html
 
 
 def test_hourly_discipline_selected_setpoint_only(small_run) -> None:

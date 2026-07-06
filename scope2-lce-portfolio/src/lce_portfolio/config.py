@@ -13,6 +13,15 @@ from pathlib import Path
 
 HOURS_PER_YEAR = 8760  # non-leap; the tool models a single representative year
 
+#: LMP-intake schema kinds (HP-01), shared by intake.py/sweep.py/outputs.py/
+#: report.py so they never diverge on the literal string.
+LMP_KIND_HOURLY = "hourly"
+"""ADR 0011 contract: one measured/forecast price per (iso, hour)."""
+LMP_KIND_ANNUAL_AVERAGE_FLAT = "annual_average_flat"
+"""HP-01 extension: one annual-average price per iso, expanded to a flat
+HOURS_PER_YEAR vector -- a degenerate price vector to the LP, but the run's
+premium is then a flat-price comparison (hourly shape/covariance excluded)."""
+
 
 @dataclass(frozen=True)
 class PortfolioConfig:
