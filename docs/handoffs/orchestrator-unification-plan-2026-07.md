@@ -1013,17 +1013,37 @@ the cross-check that the 13 intervening PRs moved no keeper number except
 NEISO's coeff-driven change.
 
 <!-- STAGE637_REGATE_RESULT -->
-- **Baseline recaptured on clean `e46ab11` (main at lane start)** as
-  `results/regression-goldens/stage6-before-e46ab11/`, five ISOs — ERCOT,
-  CAISO, PJM, NYISO, NEISO (keepers `ercot34-stage4-overlay-off`,
+- **Baseline capture on clean `e46ab11` (main at lane start)** as
+  `results/regression-goldens/stage6-before-e46ab11/`, target five ISOs —
+  ERCOT, CAISO, PJM, NYISO, NEISO (keepers `ercot34-stage4-overlay-off`,
   `caiso-51-firm-base`, `pjm-77-ct-relfloor`, `nyiso-53-li-tsl`,
   `neiso-49-stgas-netload`; NYISO/NEISO pins are NEWER than the Stage-4
   gate's — both keepers were superseded on 2026-07-06 by the ISO lanes, so
   the stage4-after ERCOT/CAISO legs are the only directly-comparable pair).
   MISO remains uncapturable on this 15 GB box (§7.3.1 OOM waiver stands).
   Determinism pins as §7.3.1; years sequential; serial captures.
+- **PARTIAL as of this commit: ERCOT/CAISO/NEISO captured, fidelity OK on
+  all three** (ERCOT 140/140 flags, CAISO 122/122 with 2 expected drifted
+  fields — `caiso_perhub_firm_base`/`offer_curve_by_group`, base config
+  moved since the keeper froze — NEISO 142/142). **PJM and NYISO are
+  retrying**: the first pass killed PJM with SIGKILL (-9, this 15 GB box's
+  memory ceiling — the same class of failure §7.3.1 documents for MISO,
+  hitting a second ISO for the first time) and failed NYISO on a genuine
+  environment gap, not a code defect — `data/clean/capacity-deliverability/`
+  (the curated Parquet partition `apply_nyiso_li_tsl_import_cap` reads) had
+  never been materialized in this container from the checked-in raw CSVs
+  (`data/raw/capacity-deliverability/*/*.csv`); `scripts/curate_capacity_
+  deliverability.py` was re-run to build it (5 ISO partitions, byte-sourced
+  from the committed raw data — no new data, a one-time cache rebuild) and
+  the PJM+NYISO pair is re-capturing serially.
+- **The Stage-6 PR (#1516) was merged by the repo owner at commit `186b6cd`
+  before this gate finished** (3/5 ISOs captured at merge time). This
+  section's capture continues as a POST-MERGE retroactive validation, not a
+  pre-merge gate — the byte-diff and PASS/FAIL conclusion below are
+  evidence the merged change was neutral, not a condition of the merge
+  itself, which already happened.
 - **Byte diff, `stage4-after` (5e31984) → `stage6-before-e46ab11`:**
-  RESULT-PENDING
+  RESULT-PENDING (needs PJM/NYISO to complete the ISO set)
 - Conclusion: RESULT-PENDING
 
 ### 7.3.8 Stage 6 — fleet unification (2026-07-06)
