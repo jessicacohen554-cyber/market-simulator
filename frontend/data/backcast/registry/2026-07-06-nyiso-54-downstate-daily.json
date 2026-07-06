@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-06-nyiso-54-downstate-daily",
+  "label": "nyiso 54 downstate daily",
+  "date": "2026-07-06",
+  "shorthand": "nyiso-54-downstate-daily",
+  "definition": "(PROBE / CANDIDATE — keeper stays 2026-07-06-nyiso-53-li-tsl) L-11 follow-up: nyiso-53 recipe with the downstate CT-peaker gas re-grounded on the MEASURED DAILY delivered index (nyiso_downstate_ct_gas_daily, nyiso-downstate-gas curated datatype: Transco Z6 NY daily spot + monthly LDC premium) replacing the monthly premium adder (nyiso_downstate_ct_gas_basis=False); free-data memo §1.4, resolves G-13, rules #11/#13, ZERO new free parameters. Keeps nyiso_li_lcr_tsl + use_plant_emission_rates_v2. RESULT vs nyiso-53: C1 PASS=PASS; C3a -9.1/-10.7/-10.4% vs -9.0/-10.9/-10.6% (a wash); C3b 0.185/0.222/0.181 vs 0.182/0.221/0.190 (a wash); C8 ST_GAS forced 64.8/75.9/59.7% vs 60.8/69.8/59.7% (marginally worse). Structurally sound (strictly more-measured delivered fuel) but not >= nyiso-53, so NOT promoted — the daily gas is masked by the #1344 reserve-scarcity commitment frontier (the same data-blocked root cause) and the PR-#1442 CT/ST temperature floors.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-nyiso-54-downstate-daily.js",
+  "bundle": "results/calibration/nyiso54_downstate_daily",
+  "ablation_twin": "2026-07-06-nyiso-54-downstate-daily-ablation",
+  "market_story": "vs the zero-forcing twin, the PR-#1442 windowed temperature floors commit downstate ST_GAS and CT_PEAKER out of merit for local reliability (DARU/SRE commitments, steamer min-run blocks) — behaviour a pure-ED LP cannot produce. Re-grounding the downstate CT gas on the measured DAILY delivered index (cold-snap Transco spikes to $23.90-29.84/MMBtu on the exact days the interruptible peakers run) correctly lifts the CT offer on scarce days, nudging ~0.1-0.3 TWh/yr of marginal CT energy to CC/imports rather than the dearer downstate steam; ST_GAS absolute energy is unchanged (7.2/8.2/10.3 TWh) but its economic share shrinks, so its D-2 forced share rises. The daily-vs-monthly grounding is the correct delivered-fuel physics, but its price signal is absorbed by the missing reserve-scarcity commitment frontier (#1344, data-blocked, Ask-B): the peakers the real market commits for reserve sit idle in the pure-ED LP, so pricing their gas correctly cannot manufacture the >$300 tail or shift the mean. A structurally-faithful refinement that does not move the residual (rule #1) — kept as a default-off datatype, not promoted."
+}
