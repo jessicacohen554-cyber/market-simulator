@@ -991,6 +991,112 @@ re-gated; the PASS recorded above is against the pre-merge stage branch,
 not the merged result. The Stage-6 session re-gates the post-merge tree
 first, before building on top of it.
 
+### 7.3.7 Post-#1499 re-gate of merged main (2026-07-06)
+
+The #1499 merge (Stage 4 → main) required a manual conflict resolution in
+`run_calibration.py` and the merged tree was never re-gated; five solve-path
+PRs then landed on top (largest: #1500 PJM reserve Phase 2 — `dispatch.py`
++403 lines, `reserve_config.py` +251 — plus #1491, #1496, #1501, #1504
+touching `capacity.py`/`scenarios.py`/`constants.py`/`fleet.py`). The
+`stage4-after` goldens (captured at branch tip `5e31984`) therefore predate
+both the conflict resolution and those merges, so this lane's first task was
+a fresh baseline on merged main and a byte diff against the Stage-4 set.
+
+<!-- STAGE637_REGATE_RESULT -->
+- **Baseline recaptured on clean `e46ab11` (current main)** as
+  `results/regression-goldens/stage6-before-e46ab11/`, five ISOs — ERCOT,
+  CAISO, PJM, NYISO, NEISO (keepers `ercot34-stage4-overlay-off`,
+  `caiso-51-firm-base`, `pjm-77-ct-relfloor`, `nyiso-53-li-tsl`,
+  `neiso-49-stgas-netload`; NYISO/NEISO pins are NEWER than the Stage-4
+  gate's — both keepers were superseded on 2026-07-06 by the ISO lanes, so
+  the stage4-after ERCOT/CAISO legs are the only directly-comparable pair).
+  MISO remains uncapturable on this 15 GB box (§7.3.1 OOM waiver stands).
+  Determinism pins as §7.3.1; years sequential; serial captures.
+- **Byte diff, `stage4-after` (5e31984) → `stage6-before-e46ab11`:**
+  RESULT-PENDING
+- Conclusion: RESULT-PENDING
+
+### 7.3.8 Stage 6 — fleet unification (2026-07-06)
+
+Branch `claude/orchestrator-unification-6-7-jxycz5`. Delivered per §6 row 6:
+`run_calibration.py`'s ~200-line inline fleet block is gone; both
+orchestrators assemble the per-year dispatch fleet through ONE body.
+
+**What was built**
+
+- `fleet.build_dispatch_fleet` — the shared per-year assembly body for both
+  orchestrators. The backcast's coal-passthrough machinery moved inside,
+  resolved from config for both callers: per-supply gas-keyed sigmoids
+  (`coal_passthrough_by_supply`) and the tiered PRB follower routing. At the
+  field defaults every supply passes full fuel cost — value-identical to the
+  runner's old inline `{"prb": p, "subbituminous": p}` dict at the default
+  `p = 1.0`. Backcast-specific inputs are explicit keywords: the measured
+  hydro budget switches (`hydro_backfill_year` / `hydro_eia930_monthly` /
+  `hydro_forecast_budget`), `drop_biomass_units`
+  (= `inject_biomass_mustrun`), `imports_after_hydro` (each orchestrator's
+  historical LP column order is preserved — the two orders price imports
+  identically, the switch exists for golden/output-frame stability only),
+  and `apply_emission_overrides=False` (the backcast's per-plant rates enter
+  via the bin artifacts and the `bins_to_fleet` v2 hook (G-39 §9.6); it has
+  never applied the v1 overwrite, and folding v1 in would move keeper
+  emission costs — left as an open reconciliation item).
+- `fleet.build_base_fleet` — gains `vintage_year` (the backcast's
+  year-matched EIA-860 snapshot, rebuilt every solved year),
+  `nonthermal_exclude` (backcast ERCOT keeps oil as raw scarcity-peaker LP
+  units where the runner's `_AGGREGATABLE_FUELS` set drops them — a
+  PRE-EXISTING orchestrator divergence preserved through the migration and
+  documented at both sites; reconciling it is a rule-14 open item, not a
+  refactor decision), and `legacy_n_bins` (0 on the per-plant backcast
+  path). The backcast's bin-frame RESOLUTION (curated ERCOT sheet at the
+  solve-year vintage; synthesized thermal-tranche frame gated on
+  `plant_level_fleet` + artifact presence) stays in the front-end — it is
+  genuinely mode-specific — but its output feeds the shared builders.
+- `fleet.apply_netload_drag_floors` — the ST_GAS + CT_PEAKER net-load drag
+  gate-and-log wrapper, previously duplicated verbatim in both
+  orchestrators, extracted once and called by both (identical float
+  term-order in the net-load expression).
+- `fleet.apply_neiso_coldsnap_derate` — the NEISO cold-snap derate wrapper:
+  closes the §2.2 accidental-drift row (was `run_calibration.py`-only). Now
+  reachable from the forecast behind its default-off gate, wired before the
+  reserve-co-opt input assembly (the shared-headroom RHS must see the
+  derated availability). The coefficient getattr fallback literals at the
+  old call site are gone (rule 24): the `neiso_gas_derate_t0_c` /
+  `_slope_per_c` / `_cap` ScenarioConfig FIELDS (which landed with their
+  NERC citations after this plan's §4 was written, making §4 item 2 already
+  half-done) are read plainly. Note the current NEISO keeper
+  (`neiso-49-stgas-netload`) does NOT set the coldsnap gate, so this row's
+  drift closure is validated by the default-off byte gate, not by a keeper
+  that exercises it.
+- Runner fold-in (#1496 follow-up): the evolution-ledger
+  `accredited_firm_capacity_mw` call now passes `iso=iso` — it was the only
+  call site still computing the ledger's `reserve_margin` on the legacy
+  generic accreditation basis while both capacity-screen sites pass
+  `iso=config.iso`.
+- Tests: `tests/test_fleet_unification.py` (9 parity/no-op/threading pins);
+  `test_biomass_mustrun_injection.py` repointed at the moved
+  `fleet._drop_biomass_units`.
+
+**Config-gated reachability changes, all DEAD at every keeper config and at
+the forecast defaults** (verified against all six keepers' `meta.json`
+before the change; the §7.3.5 "gate decides, not code presence" shape):
+
+| Change | Fires only when | Keeper status |
+|--------|-----------------|---------------|
+| Backcast synth/legacy paths honor `coal_takeorpay_from_data` (+ sync-mode exclusion) | `coal_takeorpay_from_data=True` on a non-curated-bins backcast | absent (default False) in all six metas |
+| Curated-bins takeorpay gains the sync-mode exclusion (runner semantics carried) | `coal_takeorpay_from_data ∧ coal_sync_srmc_tranche` on curated bins | ERCOT keeper: both False |
+| Backcast synth-empty fallback honors `gas_offer_curve` | `gas_offer_curve=True` AND empty synthesis | `gas_offer_curve=False` all keepers; synthesis non-empty for all five artifact ISOs |
+| Tiered PRB follower gate now applies on non-ERCOT campd paths | sigmoid+tiered set AND the ISO has a characterized `prb_follower` curve | only ERCOT has one (`COAL_SIGMOID_DEFAULTS`); for every other ISO the follower series falls back to the baseload prb curve — value-identical routing |
+| Sigmoid-off non-default `coal_prb_passthrough` no longer discounts subbituminous on the runner path | forecast config with `coal_prb_passthrough ≠ 1.0` and sigmoids off | nothing in `src/` sets the field; keepers all run sigmoid-on |
+| Coldsnap derate reachable from forecast | `neiso_gas_coldsnap_derate=True` in a forecast config | default off; no keeper sets it |
+
+**Gate (builder-swap standard §7.2, `--mode builder`, atol=rtol=1e-9;
+before = `stage6-before-e46ab11`, after = this branch): ALL-ISO keepers —
+ERCOT, CAISO, PJM, NYISO, NEISO now gated (their Stage-4 skip is
+acknowledged in §7.3.6); MISO stays OOM-waived (§7.3.1).**
+
+<!-- STAGE6_GATE_RESULT -->
+RESULT-PENDING
+
 ---
 
 ## 8. Cross-year warm-start — the forecast-P0 decision
