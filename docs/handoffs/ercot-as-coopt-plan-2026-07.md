@@ -54,7 +54,7 @@ must start from this inventory, not from G1's original text.
 | Load-resource RRS-UFR credit, mode-aware (G4) | `ercot_load_resource_reserve`; `scarcity.ercot_load_resource_reserve_credit_mw` | **BUILT, in keeper** — backcast = measured NP3-911 (admissible input), forecast = enrollment forward | run165 |
 | AS-aware P2 commitment | `ercot_as_aware_commitment` | **BUILT, SHELVED** — rejected probe | run160; **ercot27** |
 | Measured DAM-AS overlay | `ercot_dam_as_overlay` (calibration flag) | **in keeper — the thing this plan retires** | ercot32 |
-| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **fallback active** — no NP6 upload for 2024/25; reference-rate gross-up (G7) | P4 remainder — **intake CLOSED PERMANENTLY 2026-07-05 (owner will not procure a data.ercot.com key); G7 is the standing approach, do not re-attempt — see WS-E** |
+| HSL uncurtailed potential, ERCOT 2024/25 | `renewables.hsl_potential_mw`; `_UNCURTAILED_FALLBACK_ISOS` | **measured, 2026-07-06** — owner manually uploaded NP4-732/737 (wind/solar) covering 24/24 months of both years; G7 gross-up no longer used for ERCOT 2024/25 | P4 remainder — **CLOSED, superseded 2026-07-06 (see WS-E and `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`)**. The credentialed API-key route is still permanently closed (owner will not procure a `data.ercot.com` key) — this landed via the owner manually downloading through the Data Access Portal UI instead, a different and already-authorized mechanism |
 
 **The current keeper (ercot32) is P1-only** — `passes=["P1"]`, no commitment of
 any kind. That is a settled decision (ercot27 verdict), not an open question.
@@ -226,21 +226,36 @@ run165 closed it (backcast = measured NP3-911, an admissible input; forecast =
 enrollment trajectory × availability shape). Integration only: the stage-4 run
 inherits `ercot_load_resource_reserve=True` unchanged.
 
-### WS-E — HSL completion remainder (P4) — **CLOSED PERMANENTLY (2026-07-05)**
+### WS-E — HSL completion remainder (P4) — **SUPERSEDED, INTAKE COMPLETE (2026-07-06)**
 
-> **Intake permanently closed — do not re-attempt (owner decision, 2026-07-05).**
-> The NP6 HSL API intake is closed for good: the owner is **not** procuring a
-> `data.ercot.com` / `api.ercot.com` subscription key, so the `401 missing
-> subscription key` block on the Data Access Portal is permanent, not a
-> transient egress failure. The **G7 reference-curtailment-rate gross-up is the
-> standing approach** for ERCOT 2024/25 HSL — it is already forward-admissible
-> (rule 13), so this is a permanently-accepted fidelity ceiling, not an open
-> gap. No future session should re-attempt the NP6 HSL intake, re-open the
-> credential path, or treat the G7 fallback as provisional. The
-> `scripts/build_ercot_hsl.py` builder still transparently ingests an NP6
-> upload if one ever lands by another route, but nobody should go looking for
-> one. Supersedes the "ATTEMPTED, BLOCKED" wording below (kept as the record of
-> the attempt).
+> **Update 2026-07-06: measured HSL landed, both years complete.** The
+> permanent-closure decision below was specifically about the *credentialed
+> API-key* route (`data.ercot.com`/`api.ercot.com` subscription key) — the
+> owner still will not procure one, and that path is re-verified closed
+> (identical 302/401 gate as every prior attempt). What changed is the
+> owner manually downloaded the NP4-732/737 reports through the Data
+> Access Portal **UI** (not the API) and uploaded them to the repo across
+> two rounds — a different, already-authorized mechanism the closure
+> decision did not rule out. Coverage is now 24/24 months for both wind
+> and solar, both years; `scripts/build_ercot_hsl.py --year 2024 2025`
+> builds cleanly (see `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`
+> for the full validation, including a `_read_csvs` fix for ERCOT's actual
+> zip-of-zips archive shape, and a flagged solar-vs-EIA-923 divergence kept
+> as-is per rule 14). **The G7 gross-up fallback is retired for ERCOT
+> 2024/25** — `hsl_potential_mw` now reads the measured parquets directly.
+> The `ercot34` keeper itself was solved and promoted before this data
+> landed; whether re-solving it against measured HSL moves the result is
+> an open question for a future session, not answered here.
+
+> **Original closure (2026-07-05, retained for context — no longer the
+> operative guidance for the UI-upload path):** the NP6 HSL *API* intake
+> was closed for good: the owner was not procuring a `data.ercot.com` /
+> `api.ercot.com` subscription key, so the `401 missing subscription key`
+> block on the Data Access Portal was permanent, not a transient egress
+> failure. The G7 reference-curtailment-rate gross-up was the standing
+> approach for ERCOT 2024/25 HSL under that constraint. The
+> `scripts/build_ercot_hsl.py` builder always transparently ingested an
+> NP6 upload landing by another route — which is exactly what happened.
 
 ERCOT 2024/25 still have **no NP6 HSL parquet**; `hsl_potential_mw` falls back
 to the reference-curtailment-rate gross-up (G7). Relevance to this plan: the AS
@@ -256,26 +271,18 @@ Remainder to complete:
    been 403-blocked before (NP6-576-ER, ercot27 WS3); if blocked, document the
    attempt and keep the G7 fallback — the fallback is already
    forward-admissible, so this is a fidelity upgrade, not a blocker.
-   **Done — blocked.** The legacy MIS report list now 302s every report
-   (including "Public"-classified NP4-732-CD) to a SiteMinder login; the
-   replacement Data Access Portal (`data.ercot.com`/`api.ercot.com`) is
-   network-reachable but returns `401 missing subscription key` — obtaining
-   one requires an interactive ERCOT API Explorer account registration this
-   session cannot complete. The UMass `nodal-curtailment-analysis` GitHub
-   dataset (the 2023 fallback source) has no 2024/2025 extension upstream
-   either. Full attempt log:
-   `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`; drop-zone placeholder
-   at `data/raw/ercot-hsl/np6/README.md`. No code or data changed — the
-   builder (`scripts/build_ercot_hsl.py`) already handles a 2024/2025 upload
-   transparently whenever one lands.
+   **Done — landed 2026-07-06 via a manual UI upload** (the credentialed API
+   route stayed blocked, see the box above). Full 24/24-month coverage both
+   fuels, both years; `build_ercot_hsl.py --year 2024 2025` builds cleanly.
+   Full record: `docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`.
 2. Confirm the dispatch hands uncurtailed potential to the LP for 2024/25 and
    curtailment stays endogenous (the G7 wiring), and that the AS driver series
-   are the dispatch-consistent ones. **Confirmed unchanged** — since no new
-   HSL data landed, `hsl_potential_mw` continues to return `None` for
-   `(ERCOT, 2024/25)` and `_forecast_uncurtailed_cf` supplies the gross-up
-   potential exactly as before; no modeled-vs-reported curtailment diagnostic
-   or AS-driver delta is available to report until a credentialed fetch lands
-   real 2024/25 HSL data (see the attempt doc's "Carried consequence").
+   are the dispatch-consistent ones. **Confirmed** — `hsl_potential_mw` now
+   returns the measured series for `(ERCOT, 2024/25)` (raw parquet read
+   directly, no clean-tree regeneration needed); `_forecast_uncurtailed_cf`
+   is no longer consulted for these pairs. A modeled-vs-reported curtailment
+   diagnostic and AS-driver delta against the retired gross-up are now
+   possible but have not been run — open for a future session.
 
 ### WS-F — Scoring protocol: separate what the overlay actually carries
 
