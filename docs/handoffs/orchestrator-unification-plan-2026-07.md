@@ -1022,29 +1022,66 @@ NEISO's coeff-driven change.
   the stage4-after ERCOT/CAISO legs are the only directly-comparable pair).
   MISO remains uncapturable on this 15 GB box (§7.3.1 OOM waiver stands).
   Determinism pins as §7.3.1; years sequential; serial captures.
-- **PARTIAL as of this commit: ERCOT/CAISO/NEISO captured, fidelity OK on
-  all three** (ERCOT 140/140 flags, CAISO 122/122 with 2 expected drifted
-  fields — `caiso_perhub_firm_base`/`offer_curve_by_group`, base config
-  moved since the keeper froze — NEISO 142/142). **PJM and NYISO are
-  retrying**: the first pass killed PJM with SIGKILL (-9, this 15 GB box's
-  memory ceiling — the same class of failure §7.3.1 documents for MISO,
-  hitting a second ISO for the first time) and failed NYISO on a genuine
-  environment gap, not a code defect — `data/clean/capacity-deliverability/`
-  (the curated Parquet partition `apply_nyiso_li_tsl_import_cap` reads) had
-  never been materialized in this container from the checked-in raw CSVs
+- **All five capturable ISOs captured, fidelity OK on every one**: ERCOT
+  140/140 recorded flags, CAISO 122/122 (2 expected drifted
+  `scenario_config` fields — `caiso_perhub_firm_base`/`offer_curve_by_group`,
+  base config moved since the keeper froze, not a flag mismatch), PJM
+  130/130, NYISO 140/140, NEISO 142/142. Two retries were needed to get
+  there: PJM was SIGKILLed (-9) on its first attempt — this 15 GB box's
+  memory ceiling, the same failure class §7.3.1 documents for MISO, now
+  also hitting PJM once — and succeeded on a solo re-run; NYISO failed on a
+  genuine environment gap, not a code defect —
+  `data/clean/capacity-deliverability/` (the curated Parquet partition
+  `apply_nyiso_li_tsl_import_cap` reads) had never been materialized in
+  this container from the checked-in raw CSVs
   (`data/raw/capacity-deliverability/*/*.csv`); `scripts/curate_capacity_
   deliverability.py` was re-run to build it (5 ISO partitions, byte-sourced
-  from the committed raw data — no new data, a one-time cache rebuild) and
-  the PJM+NYISO pair is re-capturing serially.
+  from the committed raw data — no new data, a one-time cache rebuild), and
+  the retry then succeeded. MISO remains uncapturable on this box (§7.3.1
+  OOM waiver stands).
 - **The Stage-6 PR (#1516) was merged by the repo owner at commit `186b6cd`
-  before this gate finished** (3/5 ISOs captured at merge time). This
-  section's capture continues as a POST-MERGE retroactive validation, not a
-  pre-merge gate — the byte-diff and PASS/FAIL conclusion below are
-  evidence the merged change was neutral, not a condition of the merge
-  itself, which already happened.
+  before this gate finished** (3/5 ISOs captured at merge time), and the
+  gate-evidence follow-up commit (`fd88916`) was itself merged again
+  (PR #1528) within minutes of being pushed. This section's capture is
+  therefore a POST-MERGE retroactive validation, not a pre-merge gate — the
+  byte-diff and PASS conclusion below are evidence the merged change was
+  neutral, not a condition of the merge itself, which already happened
+  twice over before this record was complete.
 - **Byte diff, `stage4-after` (5e31984) → `stage6-before-e46ab11`:**
-  RESULT-PENDING (needs PJM/NYISO to complete the ISO set)
-- Conclusion: RESULT-PENDING
+  <!-- STAGE637_REGATE_RESULT --> **PASS — full byte-identity, ERCOT +
+  CAISO** (the only directly-comparable pair; NYISO/PJM/NEISO keepers were
+  superseded by ISO-lane work in between, so their `stage4-after` legs
+  don't exist to diff against). Compared via the manifests' committed
+  content hashes (canonical column float64 bytes) — the `stage4-after`
+  bundle parquets themselves are gitignored and no longer on any disk
+  (Stage-0 design), so a live `regression_check` column diff isn't
+  possible; the hash comparison is the available byte-identity proof.
+  **ERCOT: 7/7 file hashes match** (`btm.parquet`, `dispatch/{2023,2024,
+  2025}_{P1,P2}.parquet`, `flows.parquet`, `storage.parquet`, `system.
+  parquet` — the six-file ERCOT set plus btm). **CAISO: 10/10 file hashes
+  match** (same set + one more). Zero files present in one manifest and
+  absent from the other. Every intervening commit between `5e31984` and
+  `e46ab11` — the #1499 manual merge-conflict resolution plus five
+  solve-path PRs (#1500 PJM reserve Phase 2, #1491, #1496, #1501, #1504) —
+  moved **no byte** of ERCOT or CAISO's keeper output.
+  Smoke + quarantine (parts 3-4 of the gate, run standalone against
+  `e46ab11` since the paired bundles for parts 1-2 are gone):
+  `tests/test_regression_smoke.py` **24/24 passed**;
+  `legitimacy_diagnostics.py --keepers` **D-9 overlay quarantine PASS,
+  D-6 holdout quarantine PASS** (the two neutrality-critical checks); its
+  one FAIL (D-2 forced-energy, MISO only) is the same pre-existing,
+  documented bookkeeping gap noted at every prior stage (§7.3.4/§7.3.5/
+  §7.3.6: MISO's committed `legitimacy_diagnostics.json` stale vs its own
+  run payload) — reproduces identically on this `e46ab11` baseline, which
+  predates Stage 6 entirely, so it cannot be a Stage-6 or intervening-PR
+  regression. `audit_keepers.py` **PASS** (0 failures, 6 "keeper may be
+  stale vs a newer registry run" warnings — editorial staleness notes, not
+  defects).
+- **Conclusion: §7.3.7 re-gate PASSES.** The merged `main` tree at the
+  lane's start (`e46ab11`) is dispatch-neutral vs the Stage-4 baseline on
+  every ISO where a direct comparison is possible. The un-gated #1499
+  merge and the five solve-path PRs that followed it introduced no drift
+  into the keeper outputs.
 
 ### 7.3.8 Stage 6 — fleet unification (2026-07-06)
 
