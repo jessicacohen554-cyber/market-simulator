@@ -3,7 +3,7 @@
   "label": "nyiso statmode d 7",
   "date": "2026-07-03",
   "shorthand": "nyiso-statmode-d-7",
-  "definition": "STALE (pre-R2, 2026-07-03) \u2014 superseded by 2026-07-05-nyiso-statmode-d7-r2, re-solved at HEAD after the R2 physical-HR CO2 basis (fff2c34, merged 2026-07-05) moved NYISO's carbon-priced merit order. Retained for history, not the current D-7 gap. Original definition: D-7 statistical-mode A/B probe: byte-faithful replay of keeper nyiso41_hubprices (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "definition": "STALE (pre-R2, 2026-07-03) \u2014 superseded by 2026-07-05-nyiso-statmode-d7-r2, re-solved at HEAD after the R2 physical-HR CO2 basis (fff2c34, merged 2026-07-05) moved NYISO's carbon-priced merit order. NOTE: the r2 successor is itself now STALE vs the current 2026-07-06-nyiso-53-li-tsl keeper (Zone-K LCR/TSL mechanism + v2 measured plant CO2 rates) — see the r2 sidecar. Retained for history, not the current D-7 gap. Original definition: D-7 statistical-mode A/B probe: byte-faithful replay of keeper nyiso41_hubprices (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
   "years": [
     2023,
     2024,

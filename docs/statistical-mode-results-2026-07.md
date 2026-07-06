@@ -111,21 +111,34 @@ fails rather than new categories of error.
 ## ERCOT — 4 → 7 fails (ercot32-ordc-total-rtolcap basis, 2026-07-04)
 
 > **STALE vs the 2026-07-06 keeper swap (G-10 truth-in-labeling).** This
-> section was re-gated to `2026-07-03-ercot32-ordc-total-rtolcap`
+> section (table + verdict below) was re-gated to
+> `2026-07-03-ercot32-ordc-total-rtolcap`
 > (`results/calibration/ercot_ordc_total_rtolcap_v1`) on 2026-07-04. The
 > ERCOT keeper is now `2026-07-06-ercot34-stage4-overlay-off`
 > (`results/calibration/ercot_stage4_overlayoff_v2`: DAM-AS overlay retired +
 > WS-A forward RTOLCAP/RTOFFCAP formula supply, replacing the measured RTOLCAP
-> cap and the overlay this D-7 probe exists to test the removal of). The
-> statmode twin has **not** been re-run against the new keeper — per the
-> program rule this section is flagged stale, not silently carried. This
-> report was originally scored NOT-YET-only overlay-diagnostic; ercot34's own
+> cap and the overlay this D-7 probe exists to test the removal of). **The
+> C1–C8 numbers in the table below are NOT valid for the current keeper** —
+> do not cite them as ercot34's D-7 gap.
+>
+> **Correction to an earlier version of this box:** a byte-faithful statmode
+> twin *has* since been solved and registered directly against the current
+> keeper — `2026-07-06-ercot34-statmode-v2`
+> (`results/calibration/ercot34_statmode_v2`, registry sidecar
+> `frontend/data/backcast/registry/2026-07-06-ercot34-statmode-v2.json`,
+> bundle matches `ercot_stage4_overlayoff_v2` exactly). What has **not**
+> happened is folding that twin's numbers into this document — the table
+> below is still the pre-v2 ercot32-basis run. That is a doc-sync task
+> (pull the v2 bundle's criterion scores into a refreshed table here), not a
+> new solve session; it is not done in this G-10 labeling pass. ercot34's own
 > gates (G-3/G-5/G-6) already show most of what statmode would test for the
 > `ercot_dam_as_overlay` delta specifically, but the *other* four statmode
 > levers (historic-outage overlay, CT AS/RUC floor, spatial reliability
-> floor, ST WEFOR relief) are unprobed against ercot34's recipe. Re-running
-> is a separate solve session (`scripts/run_statmode_probe.py` against
-> `ercot_stage4_overlayoff_v2`), not done here.
+> floor, ST WEFOR relief) are what the v2 twin exists to re-probe against
+> ercot34's recipe — its results are registered but not yet summarized here.
+> This section also carries the C1–C8 vs. C1–C5c denominator mismatch flagged
+> for the cross-ISO summary below (ERCOT is scored on 11 criteria, the other
+> five ISOs on 9 — see Caveats).
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -204,6 +217,25 @@ largely-defensible lever).
 
 ## CAISO — 7 → 7 fails (flat count, mixed magnitudes)
 
+> **STALE vs the 2026-07-06 keeper swap (G-10 truth-in-labeling).** This
+> section was scored against `2026-07-03-caiso-51-firm-base`
+> (`results/calibration/caiso51_firm_base`); the CAISO keeper is now
+> `2026-07-06-caiso-58-v2-regate` (`results/calibration/caiso58_v2_regate`:
+> `use_plant_emission_rates_v2=True`, published WECC-import MIC replacing the
+> fitted 7,500 MW seam cap, G-11). **The C1–C5c numbers in the table below
+> are NOT valid for the current keeper.** Two later probes exist —
+> `2026-07-05-caiso-statmode-d7-r2` (re-solved for the R2 physical-HR CO2
+> basis, fff2c34) and `2026-07-06-caiso51-statmode-v2` — but **neither is a
+> same-SHA replay of the current keeper**: both still replay the superseded
+> `caiso51_firm_base` bundle, so the keeper-swap delta remains untested (G-10
+> gap register: "CAISO/NYISO r2 confounded with offer-curve merges, no
+> same-SHA keeper replay"). Per the program rule this section is flagged
+> stale, not silently carried; it also still reflects the original
+> 9-criterion (C1–C5c) scoring, not the C7/C8 protective-tier criteria added
+> 2026-07-04. Re-running is a separate solve session
+> (`scripts/run_statmode_probe.py` against `caiso58_v2_regate`), not done
+> here — see the re-solve queue note at the end of this document.
+
 | criterion | keeper | statmode | note |
 |---|---|---|---|
 | C1 fuel-mix | FAIL | FAIL | CC_REGULAR over-run widens: 2023 +4.91→**+6.50** TWh, 2024 +10.86→**+12.69** TWh |
@@ -228,18 +260,28 @@ side of the fit.
 
 ## PJM — 5 → 7 fails
 
-> **STALE vs the 2026-07-05 keeper swap (G-10 truth-in-labeling).** This
-> section was scored against `2026-07-03-pjm-76-outage-fix`
-> (`results/calibration/pjm76_outage_fix`); the PJM keeper is now
-> `2026-07-05-pjm-77-ct-relfloor` (`results/calibration/pjm77_ct_relfloor`).
-> The statmode twin has NOT been re-run against the new keeper — per the
-> program rule this section is flagged stale, not silently carried; it also
-> still reflects the original 9-criterion (C1–C5c) scoring, not the C7/C8
+> **STALE vs TWO keeper swaps since this section was written (G-10
+> truth-in-labeling).** This section was scored against
+> `2026-07-03-pjm-76-outage-fix` (`results/calibration/pjm76_outage_fix`).
+> The PJM keeper swapped **twice** since without this section being updated:
+> first to `2026-07-05-pjm-77-ct-relfloor`
+> (`results/calibration/pjm77_ct_relfloor`) — the "current" id this box
+> previously named — then to the actual current keeper
+> `2026-07-06-pjm-83-srmc-reground`
+> (`results/calibration/pjm80_srmc_reground_keeper`: ST_GAS 0.48× and
+> CT_INTERMEDIATE 0.9× re-grounded to the Manual-15 SRMC floor 1.00×, G-21).
+> **The C1–C5c numbers in the table below are NOT valid for the current
+> keeper.** No statmode twin has been re-run against *any* PJM keeper since
+> the original 2026-07-03 pjm-76 solve — per the program rule this section
+> is flagged stale, not silently carried (G-10 gap register: "PJM/MISO
+> statmode twins stale after 07-05 keeper swaps, unflagged"); it also still
+> reflects the original 9-criterion (C1–C5c) scoring, not the C7/C8
 > protective-tier criteria added 2026-07-04, nor the rubric v2 tier/budget
 > re-anchor (`docs/calibration-determination-rubric.md` §9, 2026-07-06) that
 > replaced HARD/SOFT with load-bearing/supporting/protective tiers.
 > Re-running is a separate solve session (`scripts/run_statmode_probe.py`
-> against `pjm77_ct_relfloor`), not done here.
+> against `pjm80_srmc_reground_keeper`), not done here — see the re-solve
+> queue note at the end of this document.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -266,13 +308,19 @@ larger coal fleet.
 > (`results/calibration/nyiso41_hubprices`); the NYISO keeper is now
 > `2026-07-06-nyiso-53-li-tsl` (`results/calibration/nyiso53_litsl_v2`:
 > Zone-K LCR/TSL mechanism replacing the LI 0.45 self-supply floor + v2
-> measured plant CO2 rates). The statmode twin has NOT been re-run against
-> the new keeper — per the program rule this section is flagged stale, not
-> silently carried; it also still reflects the original 9-criterion
-> (C1–C5c) scoring. The same staleness pattern applies to every other
-> section below and to ERCOT above — each now carries its own stale-box
-> (G-10: no ISO's staleness may be disclosed only as a footnote inside
-> another ISO's box).
+> measured plant CO2 rates). **The C1–C5c numbers in the table below are
+> NOT valid for the current keeper.** A later probe,
+> `2026-07-05-nyiso-statmode-d7-r2`, was re-solved at HEAD — but only to
+> chase the R2 physical-HR CO2-basis confound (fff2c34) and the B-NYI-1
+> offer-curve de-leak; it still replays the superseded `nyiso41_hubprices`
+> bundle, **not** a same-SHA replay of `nyiso53_litsl_v2` (G-10 gap register:
+> "CAISO/NYISO r2 confounded with offer-curve merges, no same-SHA keeper
+> replay"). No statmode twin has been re-run against the current keeper —
+> per the program rule this section is flagged stale, not silently carried;
+> it also still reflects the original 9-criterion (C1–C5c) scoring. The same
+> staleness pattern applies to every other section below and to ERCOT above
+> — each now carries its own stale-box (G-10: no ISO's staleness may be
+> disclosed only as a footnote inside another ISO's box).
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -294,27 +342,41 @@ the one exception and actually improves.
 
 ## NEISO — 1 → 6 fails
 
-> **STALE vs TWO unflagged keeper swaps (G-10 truth-in-labeling).** This
+> **STALE vs THREE unflagged keeper swaps (G-10 truth-in-labeling).** This
 > section was scored against `2026-07-01-neiso-43-closeout`
-> (`results/calibration/neiso_closeout`). The NEISO keeper swapped **twice**
-> since without this section being updated or flagged: first to
+> (`results/calibration/neiso_closeout`). The NEISO keeper has swapped
+> **three times** since without this section being kept current: first to
 > `2026-07-03-neiso-47-fast-start` (fast-start tranche pricing + CC_REGULAR
-> econ-band re-anchor), then to the current
-> `2026-07-06-neiso-49-stgas-netload`
+> econ-band re-anchor), then to `2026-07-06-neiso-49-stgas-netload`
 > (`results/calibration/neiso_stgas_netload`: Connecticut ST_GAS net-load
 > reliability-commitment limb + measured CAMPD-derived ST_GAS/CC_CHP offer
-> bands). The statmode twin has NOT been re-run against either successor
-> keeper — per the program rule this section is flagged stale, not silently
-> carried; it also still reflects the original 9-criterion (C1–C5c) scoring,
-> not the C7/C8 protective-tier criteria added 2026-07-04 (C7 is neiso-49's
-> single protective-tier ledgered caveat, per
+> bands — the "current" id an earlier version of this box named), and now to
+> the actual current keeper `2026-07-06-neiso-50-head-repro`
+> (`results/calibration/neiso49_resolve_confirm`). **The C1–C5c numbers in
+> the table below are NOT valid for the current keeper.** A statmode probe,
+> `2026-07-05-neiso-statmode-d7-r2`, was re-solved at HEAD against the
+> *intermediate* `neiso-48-ct-floor` keeper for the R2 CO2-basis confound
+> only (fff2c34) — it predates both the neiso-49 and neiso-50 swaps and is
+> not a same-SHA replay of either. No statmode twin has been re-run against
+> the current keeper — per the program rule this section is flagged stale,
+> not silently carried; it also still reflects the original 9-criterion
+> (C1–C5c) scoring, not the C7/C8 protective-tier criteria added 2026-07-04
+> (C7 was neiso-49's single protective-tier ledgered caveat, per
 > `results/calibration/neiso_stgas_netload/metrics.json`), nor the rubric v2
 > tier/budget re-anchor (`docs/calibration-determination-rubric.md` §9,
-> 2026-07-06) under which neiso-49 itself now scores
-> CALIBRATED-WITH-CAVEATS rather than the rubric-v1 NOT-YET this document's
-> NEISO row still assumes. Re-running is a separate solve session
-> (`scripts/run_statmode_probe.py` against `neiso_stgas_netload`), not done
-> here.
+> 2026-07-06) under which neiso-49 scored CALIBRATED-WITH-CAVEATS rather
+> than the rubric-v1 NOT-YET this document's NEISO row still assumes.
+> **Separate disclosure (D-2 bucket mis-attribution):** the neiso-49 floor's
+> D-2 forced-energy row was found (PR #1498 tranche review,
+> `docs/handoffs/wave-manager-tranche-review-2026-07-06.md`) to land in the
+> `''` (empty-string) class bucket with a nuclear-inclusive denominator (true
+> 2023 share ≈3.7%, still within budget) — a diagnostic-script attribution
+> bug, not a calibration defect, but it means any D-2/C8-style forced-energy
+> comparison for NEISO drawn from that keeper chain should not be taken at
+> face value until the bucket bug is fixed. Re-running the statmode twin is
+> a separate solve session (`scripts/run_statmode_probe.py` against
+> `neiso49_resolve_confirm`), not done here — see the re-solve queue note at
+> the end of this document.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -336,18 +398,26 @@ generation mix.
 
 ## MISO — 7 → 9 fails (fails everything scored)
 
-> **STALE vs the 2026-07-05 keeper swap (G-10 truth-in-labeling).** This
-> section was scored against `2026-07-03-miso-39-reserve-pergen`
-> (`results/calibration/MISO/miso_39_reserve_pergen`); the MISO keeper is now
-> `2026-07-05-miso-41-ct-evening` (`results/calibration/miso41_ct_evening`).
-> The statmode twin has NOT been re-run against the new keeper — per the
-> program rule this section is flagged stale, not silently carried; it also
-> still reflects the original 9-criterion (C1–C5c) scoring. A honesty-gate
-> REJECTED commitment-posture-lever probe (`miso-43`) has since been run and
+> **STALE vs TWO keeper swaps since this section was written (G-10
+> truth-in-labeling).** This section was scored against
+> `2026-07-03-miso-39-reserve-pergen`
+> (`results/calibration/MISO/miso_39_reserve_pergen`). The MISO keeper
+> swapped **twice** since without this section being updated: first to
+> `2026-07-05-miso-41-ct-evening` (`results/calibration/miso41_ct_evening`)
+> — the "current" id this box previously named — then to the actual current
+> keeper `2026-07-06-miso-44-wefor-neutral`
+> (`results/calibration/MISO/miso_44_wefor_neutral`). **The C1–C5c numbers
+> in the table below are NOT valid for the current keeper.** No statmode
+> twin has been re-run against *any* MISO keeper since the original
+> 2026-07-03 miso-39 solve — per the program rule this section is flagged
+> stale, not silently carried (G-10 gap register: "PJM/MISO statmode twins
+> stale after 07-05 keeper swaps, unflagged"); it also still reflects the
+> original 9-criterion (C1–C5c) scoring. A honesty-gate REJECTED
+> commitment-posture-lever probe (`miso-43`) has since been run and
 > registered default-off (see the gap register); it is unrelated to this
 > statmode delta. Re-running is a separate solve session
-> (`scripts/run_statmode_probe.py` against `miso41_ct_evening`), not done
-> here.
+> (`scripts/run_statmode_probe.py` against `MISO/miso_44_wefor_neutral`), not
+> done here — see the re-solve queue note at the end of this document.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
@@ -367,6 +437,30 @@ historic-outage/coal-pricing overlays were the last thing keeping coal
 volume, CO2, and dispatch shape inside any tolerance at all. This is the
 starkest confirmation of D-7's premise on this ISO: none of MISO's
 in-sample fit currently generalizes as a forecast-machinery prior.
+
+---
+
+## Re-solve queue (G-10 follow-on — not done this session)
+
+This session is truth-in-labeling only (flag staleness, do not re-solve).
+The actual re-solves the six stale-boxes above point to are queued here so
+the work is recorded, not lost between sessions:
+
+| ISO | current keeper (bundle) | latest registered statmode twin | gap |
+|---|---|---|---|
+| PJM | `2026-07-06-pjm-83-srmc-reground` (`pjm80_srmc_reground_keeper`) | `2026-07-03-pjm-statmode-d-7` (`pjm76_outage_fix`) | **no re-solve since original** — never re-gated through pjm-77 or pjm-83; needs a fresh same-SHA replay against `pjm80_srmc_reground_keeper` |
+| MISO | `2026-07-06-miso-44-wefor-neutral` (`MISO/miso_44_wefor_neutral`) | `2026-07-03-miso-statmode-d-7` (`MISO/miso_39_reserve_pergen`) | **no re-solve since original** — never re-gated through miso-41 or miso-44; needs a fresh same-SHA replay against `MISO/miso_44_wefor_neutral` |
+| CAISO | `2026-07-06-caiso-58-v2-regate` (`caiso58_v2_regate`) | `2026-07-06-caiso51-statmode-v2` (`caiso51_firm_base`) | **r2/v2 confounded** — both later probes re-solved for a CO2-basis/code delta, neither re-gated to the caiso-58 keeper swap; needs a fresh same-SHA replay against `caiso58_v2_regate` |
+| NYISO | `2026-07-06-nyiso-53-li-tsl` (`nyiso53_litsl_v2`) | `2026-07-05-nyiso-statmode-d7-r2` (`nyiso41_hubprices`) | **r2 confounded** — re-solved for the R2 CO2-basis + B-NYI-1 offer-curve de-leak only, not the nyiso-53 keeper swap; needs a fresh same-SHA replay against `nyiso53_litsl_v2` |
+| NEISO | `2026-07-06-neiso-50-head-repro` (`neiso49_resolve_confirm`) | `2026-07-05-neiso-statmode-d7-r2` (`neiso_ctscrub`, neiso-48 basis) | **r2 confounded and two keepers behind** — re-solved only for the R2 CO2-basis delta against the intermediate neiso-48 keeper; predates both the neiso-49 and neiso-50 swaps; needs a fresh same-SHA replay against `neiso49_resolve_confirm` |
+| ERCOT | `2026-07-06-ercot34-stage4-overlay-off` (`ercot_stage4_overlayoff_v2`) | `2026-07-06-ercot34-statmode-v2` (`ercot34_statmode_v2`) | **solve done, doc not synced** — the v2 twin already replays the current keeper byte-faithfully; only pulling its criterion scores into this document's ERCOT table remains (a doc-sync edit, not a solve) |
+
+PJM and MISO are the two ISOs with **no** re-solve of any kind since the
+original 2026-07-03 probes — the highest-priority items. CAISO and NYISO
+each have a re-solve that was aimed at a different confound (the R2 CO2-basis
+change) and never re-gated to the ISO's own subsequent keeper swap, so their
+"latest" twins are not actually current either. ERCOT is the one ISO where
+the underlying re-solve exists and only the write-up is outstanding.
 
 ---
 
