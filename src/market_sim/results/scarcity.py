@@ -1505,6 +1505,89 @@ def scarcity_prices(
 
 
 # ===========================================================================
+# CAISO power-balance scarcity pricing overlay
+# ===========================================================================
+#
+# CAISO's scarcity pricing derives from the graduated penalty prices for
+# power-balance constraint relaxation (CAISO Tariff §27.4.3.2, BPM for
+# Market Operations §6.6.4) and the Flexible Ramping Product (FRP) demand
+# curve that prices net-load uncertainty (CAISO FRP Phase 1 stakeholder
+# process, 2016; enhanced FRP §27.10). In the real-time market, when
+# operating reserves fall below the contingency requirement plus the FRP
+# withholding, the market software's penalty prices activate and lift the
+# LMP. The perfect-foresight LP structurally misses this: it clears all
+# hours with ample headroom and zero scarcity rent.
+#
+# This post-solve overlay replicates the scarcity rent using the same
+# LOLP × (VOLL - λ) functional form as the ERCOT ORDC (proven in this
+# codebase), but with CAISO-specific parameters:
+#
+#     VOLL    = $2,000/MWh — CAISO Tariff §39.6.1 hard energy bid cap
+#               (FERC Order 831 compliance, $1,000 soft / $2,000 cost-based).
+#     MCL     = 1,400 MW  — Diablo Canyon Unit 1/2 (~1,150 MW nameplate,
+#               the largest CAISO generating single contingency per BAL-002-
+#               WECC-3; rounded up for the PDCI import contingency backup).
+#     sigma   = 2,500 MW  — CAISO net-load forecast error std dev (solar
+#               forecast error ~1,500-2,000 MW at 20+ GW installed solar +
+#               load forecast error ~500-1,000 MW, combined ~2,000-2,500 MW;
+#               CAISO FRP Uncertainty Calculation whitepaper, bounded by the
+#               95th-percentile upward FRP requirement 3,500-4,500 MW).
+#     shift   = 0.0       — no administrative curve shift (ERCOT's PUCT
+#               orders §48551 do not apply to CAISO).
+#
+# The overlay is $0 in hours where reserves clear comfortably (the vast
+# majority), fires during the evening net-load ramp (solar decline drives
+# high uncertainty) and heat-wave/import-constraint events, and has a
+# forward analogue: VOLL is tariff, MCL tracks the largest contingency,
+# sigma scales with renewable penetration. Nothing is fitted to a price
+# residual. Mutually exclusive with caiso_reserve_coopt (rule 19).
+
+CAISO_SCARCITY_VOLL: float = 2000.0
+CAISO_SCARCITY_MCL_MW: float = 1400.0
+CAISO_SCARCITY_SIGMA_MW: float = 2500.0
+CAISO_SCARCITY_SHIFT_SIGMA: float = 0.0
+
+
+def caiso_scarcity_overlay(
+    fleet_arrays: FleetArrays,
+    dispatch: np.ndarray,
+    storage_power_cap: np.ndarray,
+    storage_charge: np.ndarray | None,
+    storage_discharge: np.ndarray | None,
+    renewable_headroom: np.ndarray | None,
+    system_lambda: np.ndarray,
+) -> np.ndarray:
+    """CAISO post-solve scarcity price adder ($/MWh).
+
+    Computes the probabilistic reserve-scarcity adder from the solved
+    dispatch, using CAISO tariff-backed parameters. The LOLP is evaluated
+    on the same online/offline reserve split as the ERCOT ORDC overlay
+    (``reserve_headroom``), and the adder is ``LOLP × (VOLL - λ)`` with
+    CAISO's $2,000 cap. Returns a ``(T,)`` array.
+    """
+    r_online, r_offline = reserve_headroom(
+        fleet_arrays,
+        dispatch,
+        storage_power_cap,
+        storage_charge,
+        storage_discharge,
+        as_plan_mw=0.0,
+        renewable_headroom=renewable_headroom,
+    )
+    return ordc_adder(
+        r_online + r_offline,
+        system_lambda,
+        voll=CAISO_SCARCITY_VOLL,
+        mcl_mw=CAISO_SCARCITY_MCL_MW,
+        mu_mw=0.0,
+        sigma_mw=CAISO_SCARCITY_SIGMA_MW,
+        shift_sigma=CAISO_SCARCITY_SHIFT_SIGMA,
+        multistep_floor=False,
+        reserves_online_mw=r_online,
+    )
+
+
+# ===========================================================================
 # PJM stepped ORDC reserve-scarcity overlay
 # ===========================================================================
 #
