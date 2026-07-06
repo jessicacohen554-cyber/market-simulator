@@ -85,11 +85,11 @@
   "provenance": {
     "notes": "confirmed_exits_enabled default-ON as of PR #1434 (commit bc4a3f3, 2026-07-05) is baked into these golden values -- ScenarioConfig.confirmed_exits_enabled defaults True and REFERENCE_SCENARIO_KWARGS does not override it. Never auto-regenerate on a band exit (this is a finding, not a widening target -- see docs/handoffs/forecast-validation-program-2026-07.md \u00a72.3 and CLAUDE.md rule 23's frozen-against-residuals spirit). To regenerate: run `python scripts/golden_forecast_bands.py seed --force --reason \"<explicit citation of the causal code change>\"` and commit the new tests/golden/ercot_2026_2032*.json alongside that change.",
     "run_config_file": "ercot_2026_2032.run_config.json",
-    "seed_reason": "initial W2-P5 plan \u00a72.3 golden seed, HEAD 0e73bb6909739b4bf12616d545b7ef4c1bf66789 (adds the check itself; PR #1434 confirmed_exits_enabled default-on already merged into main at parent 455ed9f)",
+    "seed_reason": "Regenerate after CX-6a (commit d3e313a): _build_rps_row now excludes nuclear from the annual RPS constraint row (wind/solar only), an intentional forecast-behavior change to entry economics/REC dual. Also records verification of the confirmed-exit double-derate fix (#1446, f658ea9): re-solved at HEAD which contains it. Verified #1446 is a no-op for THIS legacy-bin golden -- the golden solve environment has no data/clean tree so load_confirmed_exits(ERCOT) returns 0 (confirmed exits never enter the solve), and independently the only ERCOT registry rows (V H Braunig, plant 3612, gas_st) are 2025-effective (pre-2026 forecast start) unit-grain drops, which #1446 states were unaffected. CX-6a is likewise a no-op for ERCOT (no RPS target), so these goldens are expected byte-stable vs the #1438 seed apart from provenance.",
     "seeded_by": "scripts/golden_forecast_bands.py seed",
-    "seeded_git_commit_date": "2026-07-05T23:35:14+00:00",
-    "seeded_git_sha": "0e73bb6909739b4bf12616d545b7ef4c1bf66789",
-    "seeded_git_sha_short": "0e73bb690973"
+    "seeded_git_commit_date": "2026-07-06T04:59:28+00:00",
+    "seeded_git_sha": "d3e313a74c63b478d530f4b6e664f323630897cc",
+    "seeded_git_sha_short": "d3e313a74c63"
   },
   "scenario": {
     "end_year": 2032,
