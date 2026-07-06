@@ -1,0 +1,29 @@
+INFO: MISO backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: MISO 2023: seasonal CIL/CEL interface caps on 5 zone group(s) (per-season hourly vectors from the LOLE deliverability data; static summer fallbacks replaced)
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: unit-outage derate (MISO 2023): 754 plant-tranches derated
+INFO: COD ramp (MISO 2023): 478 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO 2023 hydro budget: 163 plants, 8789.4 GWh annual, 2465 MW nameplate
+INFO: MISO 2023: 163 hydro plants in LP (2465 MW, 8.79 TWh monthly budget)
+INFO: MISO 2023: priced import/export node — 25 import tranches (15026 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2023): 754 plant-tranches derated
+INFO: COD ramp (MISO 2023): 517 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+INFO: MISO 2023: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2023: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2023: reliability floor — 4 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 1009 generators priced from their own plant, 1850 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2023): 1523 gas units; cap-weighted mean +0.17 removed, zonal spread -0.28..0.29 $/MMBtu
+INFO: MISO 2023: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2023: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 4353 MW (MSSC + regulating), 11 ORDC steps ($200-$3500), 2583 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 3953 MW (within-zone MSSC), published zonal curve steps ['791MW@$200', '2767MW@$1100', '395MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2570 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 41203 / min 37241 MW
+INFO:   MISO COMMITMENT POSTURE (miso_commitment_posture): 18 of 30 pools postured (fast-start exempt by physics), mlf 0.12-0.58 (cap-wt CEMS committed_pct), startup $44-$100/MW (NREL class tables)
