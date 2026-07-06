@@ -69,9 +69,11 @@ if TYPE_CHECKING:
 #   "elastic" -> skip hr_by_year, use the gas-elastic coeffs (the forward fallback)
 #   "flat"    -> skip hr_by_year AND the elastic coeffs, use marginal_heat_rate
 # This NEVER reads the ISO's own interchange — it only changes which neighbor
-# price-formation formula prices the seam (rule #11 stays satisfied). A plain
-# keyword argument (not an env var, CLAUDE.md rule 24 / gap G-07) — no keeper
-# or ScenarioConfig field sets it; a validation script passes it explicitly.
+# price-formation formula prices the seam (rule #11 stays satisfied). Sourced
+# from ``ScenarioConfig.neighbor_hr_forward_skill`` (CLAUDE.md rule 23 — no
+# off-registry tuning channel), threaded down from
+# ``transmission.apply_interchange_injections`` through every call in this
+# module; a validation script may still pass it explicitly.
 _FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 
 # Affine-in-gas implied heat-rate coefficients per neighbor, keyed by the
@@ -284,6 +286,7 @@ def neighbor_reference_price(
     year: int,
     hours: int,
     gas_scenario: str = "mid",
+    forward_skill: str | None = None,
 ) -> tuple[np.ndarray, str] | None:
     """Return the neighbor's hourly reference price ($/MWh) and the BA used.
 
@@ -297,6 +300,9 @@ def neighbor_reference_price(
         year: Calendar year.
         hours: Length of the hourly series.
         gas_scenario: Henry Hub trajectory key.
+        forward_skill: Forwarded to :func:`neighbor_heat_rate` — see
+            :data:`_FORWARD_SKILL_MODES`. ``None`` (default) is byte-identical
+            to every keeper/forecast run.
 
     Returns:
         ``(price, ba_used)`` or ``None``.
@@ -306,7 +312,7 @@ def neighbor_reference_price(
         return None
     shape, ba_used = shaped
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario)
+    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario, forward_skill)
     return baseload * shape, ba_used
 
 
@@ -325,6 +331,7 @@ def seam_tranche_prices(
     hours: int,
     n_tranches: int = SEAM_FLOW_TRANCHES,
     gas_scenario: str = "mid",
+    forward_skill: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, str] | None:
     """Return the flow-responsive export/import tranche prices for one seam.
 
@@ -353,6 +360,9 @@ def seam_tranche_prices(
         hours: Length of the hourly series.
         n_tranches: Number of flow bands per direction.
         gas_scenario: Henry Hub trajectory key.
+        forward_skill: Forwarded to :func:`neighbor_heat_rate` — see
+            :data:`_FORWARD_SKILL_MODES`. ``None`` (default) is byte-identical
+            to every keeper/forecast run.
 
     Returns:
         ``(export_prices, import_prices, ba_used)`` where each price array is
@@ -365,7 +375,7 @@ def seam_tranche_prices(
         return None
     load, mean_load, ba_used = loaded
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
-    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario)
+    baseload *= neighbor_heat_rate(neighbor, year, gas_scenario, forward_skill)
     exp = neighbor.load_shape_exponent
     step = neighbor.interface_limit_mw / n_tranches
     # Midpoint flow of each band: (k-0.5) x step, k = 1..n.
@@ -519,7 +529,11 @@ class InterfacePrices:
 
 
 def interface_reference_prices(
-    iso: str, year: int, hours: int, gas_scenario: str = "mid"
+    iso: str,
+    year: int,
+    hours: int,
+    gas_scenario: str = "mid",
+    forward_skill: str | None = None,
 ) -> InterfacePrices:
     """Return the reference price for every neighbor of ``iso`` in ``year``.
 
@@ -534,13 +548,18 @@ def interface_reference_prices(
         year: Calendar year.
         hours: Length of the hourly series (the model's 8760 clock).
         gas_scenario: Henry Hub trajectory key.
+        forward_skill: Forwarded to :func:`neighbor_heat_rate` via
+            :func:`neighbor_reference_price` — see :data:`_FORWARD_SKILL_MODES`.
+            ``None`` (default) is byte-identical to every keeper/forecast run.
 
     Returns:
         An :class:`InterfacePrices` aggregating the per-neighbor results.
     """
     result = InterfacePrices(iso=iso, year=year, hours=hours)
     for neighbor in INTERFACE_NEIGHBORS.get(iso, []):
-        priced = neighbor_reference_price(neighbor, year, hours, gas_scenario)
+        priced = neighbor_reference_price(
+            neighbor, year, hours, gas_scenario, forward_skill
+        )
         if priced is None:
             result.missing.append(neighbor.name)
             continue
