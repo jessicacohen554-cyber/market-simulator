@@ -343,6 +343,18 @@ the standing open item for the foresight mechanism; `entry_lookahead_reprice`
 remains a default-off probe until it is resolved and the mid-growth benefit can be
 shown not to come at the stress case's expense.
 
+**Adjudication (2026-07-06, L-7c):** owner decision memo written —
+`docs/handoffs/foresight-adjudication-memo-2026-07-06.md` — with the
+mechanism-level account of the high-growth inversion (the lookahead's
+static-stack scarcity tail prices a strictly tighter year ~40% below the
+realized responsive-headroom overlay, so in a scarcity-saturated regime it
+under-prices the revenue-bearing part of the signal and suppresses entry).
+Recommends option (B): keep `entry_lookahead_reprice` default-off as a
+designed probe; the named reopening condition is rebuilding the lookahead's
+scarcity tail on the overlay's own responsive-headroom construction, then
+re-running this A/B. Conditioning the flag on the demand path was
+considered and rejected as an outcome-keyed switch. Decision pending owner.
+
 ### 2.5 Expected emissions direction
 
 Lookahead pulls entry (mostly solar/wind/CT/storage under current cost paths) earlier, so
