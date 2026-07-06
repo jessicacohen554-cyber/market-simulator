@@ -3151,11 +3151,111 @@ def _dispatchable_thermal_codes() -> list[int]:
     return [FUEL_TYPE_MAP[n] for n in names if n in FUEL_TYPE_MAP]
 
 
+def apply_nyiso_li_tsl_import_cap(
+    ttc: np.ndarray,
+    iso_config,
+    iso: str,
+    year: int,
+    hours: int,
+) -> np.ndarray:
+    """Cap the NYC->Long_Island link at the published Zone-K locality import
+    limit during the peak window (issue #1345, ``config.nyiso_li_lcr_tsl``).
+
+    The published NYISO Locality Bulk-Power Transmission Capability import
+    limit for Long Island (``data/raw/capacity-deliverability/nyiso/nyiso.csv``:
+    325 / 275 / 275 MW for the 2023/24-2025/26 capability years) is the
+    transmission-security boundary the Zone-K LCR is derived against — the AC
+    import LI may count on at the summer design-cooling peak, with the
+    UDR-backed external cables (the priced-import-node links, ~1.2 GW) counted
+    separately. Mapping it to hourly dispatch terms (the rule-14
+    reconciliation, documented in the ``nyiso_li_lcr_tsl`` ScenarioConfig
+    comment): the limit is applied ONLY inside the design-condition window
+    (:data:`NYISO_SELFSUPPLY_FLOOR_HOURS`, HB14-21 — the same window and driver
+    document the PR-#1442-narrowed self-supply floor used), where it replaces
+    the link's physical 1,650 MW rating; every other hour keeps the physical
+    rating (measured LI off-peak imports run well below the cable ceiling and
+    the security constraint's driver is inactive). Applied all-hours the
+    peak-condition boundary would force ~16 TWh/yr of LI energy vs the
+    ~8.5 TWh physically real — the boundary mismatch issue #1345 documents.
+
+    In-window LI supply beyond (external ties + the security-limited AC
+    import) then clears from the in-zone fleet ECONOMICALLY — this function is
+    the replacement for the Long_Island 0.45 self-supply ``min_gen`` floor
+    (``inject_nyiso_local_selfsupply``; the caller must exclude Long_Island
+    there when this cap is active — one mechanism per phenomenon, rule 19),
+    so the LI reliability energy stops being floor-forced (rule-20 D-2
+    budget) and becomes merit-order dispatch behind a published limit.
+
+    The cap is symmetric on the AC link in-window (the LP's bidirectional
+    bound); measured LI peak-window exports toward NYC are ~0 MW, a
+    documented, immaterial misalignment accepted over one-way link plumbing.
+
+    Args:
+        ttc: ``(n_links,)`` static or ``(hours, n_links)`` per-hour transfer
+            capabilities (MW).
+        iso_config: ISO topology (``links`` searched for NYC->Long_Island).
+        iso: ISO identifier; every ISO but ``"NYISO"`` returns ``ttc``
+            unchanged.
+        year: Backcast/solve calendar year (resolves the capability-year row).
+        hours: LP horizon length T.
+
+    Returns:
+        ``(hours, n_links)`` per-hour TTC matrix with the in-window LI cap
+        applied (a copy), or ``ttc`` unchanged for non-NYISO.
+
+    Raises:
+        ValueError: NYISO without a published Long Island import limit for the
+            resolved capability year, or no NYC->Long_Island link — the
+            mechanism must never silently no-op when explicitly enabled.
+    """
+    if iso != "NYISO":
+        return ttc
+
+    from market_sim.data.capacity_deliverability import (
+        import_limit_by_area,
+        resolve_delivery_year,
+    )
+
+    delivery_year = resolve_delivery_year(iso, int(year))
+    limits = import_limit_by_area(iso, delivery_year)
+    tsl = limits.get("Long Island")
+    if tsl is None:
+        raise ValueError(
+            f"nyiso_li_lcr_tsl=True but no published Long Island import limit "
+            f"for delivery year {delivery_year} in the capacity-deliverability "
+            f"table (data/raw/capacity-deliverability/nyiso/nyiso.csv); "
+            f"available areas: {sorted(limits)}"
+        )
+
+    li_idx = [
+        i
+        for i, ln in enumerate(iso_config.links)
+        if (ln.from_zone, ln.to_zone) == ("NYC", "Long_Island")
+    ]
+    if not li_idx:
+        raise ValueError(
+            "nyiso_li_lcr_tsl=True but the NYISO topology has no "
+            "NYC->Long_Island link to cap."
+        )
+
+    ttc_arr = np.asarray(ttc, dtype=float)
+    if ttc_arr.ndim == 1:
+        ttc_t = np.broadcast_to(ttc_arr, (int(hours), ttc_arr.shape[0])).copy()
+    else:
+        ttc_t = ttc_arr.copy()
+    hod = np.arange(int(hours)) % 24
+    in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+    for i in li_idx:
+        ttc_t[in_window, i] = np.minimum(ttc_t[in_window, i], float(tsl))
+    return ttc_t
+
+
 def inject_nyiso_local_selfsupply(
     fleet_arrays,
     iso: str,
     demand: np.ndarray,
     zone_names: list[str],
+    exclude_zones: frozenset[str] = frozenset(),
 ) -> bool:
     """Floor a NYISO downstate load pocket's in-zone thermal self-supply.
 
@@ -3203,6 +3303,12 @@ def inject_nyiso_local_selfsupply(
         iso: ISO identifier; only ``"NYISO"`` applies a floor.
         demand: Zonal demand of shape ``(n_zones, T)`` in MW.
         zone_names: Zone names ordered to match ``demand``'s rows.
+        exclude_zones: Pocket zones whose floor entry is skipped because a
+            replacement mechanism owns them this run (rule 19 — one mechanism
+            per phenomenon): the ``nyiso_li_lcr_tsl`` Zone-K LCR/TSL import
+            cap (issue #1345, :func:`apply_nyiso_li_tsl_import_cap`) excludes
+            ``Long_Island`` so the published-limit cap and the 0.45 energy
+            floor are never stacked. Empty (the default) is byte-identical.
 
     Returns:
         ``True`` if any pocket floor was applied, else ``False``.
@@ -3220,6 +3326,8 @@ def inject_nyiso_local_selfsupply(
 
     applied = False
     for zone, frac in NYISO_LOCAL_SELFSUPPLY_FRAC.items():
+        if zone in exclude_zones:
+            continue
         if frac <= 0.0 or zone not in zone_to_idx:
             continue
         z_idx = zone_to_idx[zone]

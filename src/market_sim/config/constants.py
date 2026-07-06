@@ -2570,11 +2570,19 @@ CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
 # The only scalar that reproduces the realized annual share would need a
 # load-duration haircut tuned to the 2023 outcome — the very rule-12 pin C-17
 # means to remove. The faithful fix is a MECHANISM change (a peak-capacity / TSL
-# constraint from the committed LCR table), tracked in issue #1345; until then
-# the value is LEFT at 0.45 (residual-identified, forecast-risk; DOF ledger S5)
-# rather than replaced by a knowingly-wrong LCR substitution. The 0.45 magnitude
-# still approximates the 2023 realized LI self-supply share (~0.48) — it is NOT
-# a validated forward driver and MUST NOT be quoted as one.
+# constraint from the committed LCR table), tracked in issue #1345. THAT
+# MECHANISM NOW EXISTS: ScenarioConfig.nyiso_li_lcr_tsl (default off) caps the
+# NYC->Long_Island link at the published locality import limit in the HB14-21
+# window (transmission.apply_nyiso_li_tsl_import_cap) and EXCLUDES Long_Island
+# from this floor (rule 19 — never stacked). Empirical reconciliation of the
+# boundary (CEMS LI hourly gross gen + measured zonal load, 2023-25): measured
+# implied LI inflow at the top-100 load hours is 1,493/1,440/1,598 MW vs the
+# mechanism's in-window import capability (TSL + 1,200 MW external ties) of
+# 1,525/1,475/1,475 MW — the published construction matches the measured
+# peak-hour boundary within ~5%. When the flag is OFF this 0.45 value remains
+# the legacy path (residual-identified, forecast-risk; DOF ledger S5). The 0.45
+# magnitude still approximates the 2023 realized LI self-supply share (~0.48) —
+# it is NOT a validated forward driver and MUST NOT be quoted as one.
 #
 # HOURS NARROWING (floor-rederive 2026-07-05, rule-17/18; NOT a re-level): the
 # floor is applied only in the afternoon-evening peak window

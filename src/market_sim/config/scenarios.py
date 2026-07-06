@@ -621,6 +621,35 @@ class ScenarioConfig:
     # (East / SENY / NYC). The overlay stacks each region's demand-curve price
     # onto every model zone the region contains, on top of the system-wide
     # NYCA tier (nyiso_rcpf_products); see results.rcpf.locational_zone_adders.
+    nyiso_dynamic_reserve_requirements: bool = False  # GATED, default-OFF
+    # condition-varying NYISO reserve requirements (issue #1344). When on (NYISO
+    # + energy_reserve_coopt), each in-LP reserve family's static published
+    # requirement (reserve_config.NYISO_RCPF_PRODUCTS / NYISO_RCPF_LOCATIONAL)
+    # is replaced by the MEASURED as-enforced hourly locational requirement
+    # series for that (region, product) — the requirement NYISO actually
+    # scheduled into RTD/RTC, which RISES with conditions (thunderstorm alerts,
+    # gas contingencies, largest-source changes). The empirical basis: with the
+    # static requirements the downstate families never bind (NYC holds 2-3x the
+    # published MW in the exact hours reality prices >$300), and both the
+    # online-proxy and commitment-gated formulations were refuted AT the static
+    # requirement (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md
+    # paths A/B). A measured requirement is a market-design INPUT (rule #13
+    # admissible: regenerates forward as published-static-base + condition
+    # rules applied to forward weather/contingency states, responds to changed
+    # conditions); the measured reserve PRICES stay validation-only and are
+    # never read. Data seam: data/raw/NYISO-AS/requirements/ (the Ask-B intake,
+    # docs/handoffs/nyiso-data-asks-2026-07.md) via
+    # data.nyiso_reserve_requirements.load_nyiso_reserve_requirements — the
+    # flag HARD-ERRORS when the series is absent (no silent static fallback, so
+    # a run_config claiming dynamic requirements cannot quietly solve without
+    # them). Families without a measured series (e.g. the synchronised-reserve
+    # scaffold families) keep their static values. ORDC shortfall steps stay
+    # anchored to the published static (req, crit, penalty) shape and TRANSLATE
+    # with the hourly requirement (documented approximation — the published
+    # RCPF is itself a stepped curve). Promotion gate: leave-one-year-out
+    # scoring within 2023-2025 (CLAUDE.md rule 22). Default off
+    # (byte-identical); NYISO-only. Mutually exclusive with nyiso_rcpf_enabled
+    # under energy_reserve_coopt (rule 19 — see reserve_config._nyiso_design).
 
     # NEISO (ISO-NE) RCPF scarcity overlay — the ISO-NE analogue of the NYISO
     # lever above (post-solve; never an LP input). ISO-NE prices real-time
@@ -985,6 +1014,37 @@ class ScenarioConfig:
     # it can never manufacture unmet load). FORWARD-REPRODUCIBLE (scales with
     # load, responds to conditions) and grounded in NYISO market design — NOT a
     # pin to measured LI generation (CLAUDE.md rule #12). Default off
+    # (byte-identical); NYISO-only.
+    nyiso_li_lcr_tsl: bool = False  # NYISO Long Island Zone-K LCR/TSL mechanism
+    # (issue #1345): REPLACES the Long_Island entry of the 0.45 self-supply
+    # energy-fraction floor (a residual-identified scalar, DOF ledger S5) with
+    # the published transmission-security construction. In the peak window
+    # (transmission.NYISO_SELFSUPPLY_FLOOR_HOURS, HB14-21 — the design-cooling
+    # condition the LCR locality requirements are defined at), the NYC->
+    # Long_Island link's import limit is capped at the PUBLISHED Zone-K
+    # locality import limit (data/raw/capacity-deliverability/nyiso/nyiso.csv,
+    # "Long Island" import_limit: 325/275/275 MW for 2023/24-2025/26, NYISO
+    # Locality Bulk-Power Transmission Capability reports), so LI in-window
+    # supply beyond the external ties + the security-limited AC import clears
+    # from the in-zone fleet ECONOMICALLY (LP merit order) instead of through a
+    # forced min_gen floor — the floor-forced CT/ST energy the D-2 budget
+    # (rule 20) charges to nyiso_local_selfsupply goes to zero for LI by
+    # construction. RULE-14 BOUNDARY NOTE: the published import limit is the
+    # LCR/ICAP peak-condition transmission-security boundary (N-1-1 planning
+    # basis, UDR-backed external cables counted separately), NOT a real-time
+    # scheduling limit; applying it outside the design-condition window would
+    # force ~16 TWh/yr of LI energy vs the ~8.5 TWh physically real, so it is
+    # applied ONLY in the same HB14-21 window the (narrowed, PR #1442) floor
+    # already used — the window where the constraint's own driver (design
+    # cooling peak) is active. The external-tie links into LI (priced import
+    # node, ~1.2 GW UDR cables) stay at their physical ratings. The cap is
+    # symmetric on the AC link in-window (LI->NYC export also limited to the
+    # TSL there); measured LI peak-window exports are ~0, documented
+    # misalignment accepted rather than new plumbing. Forward-reproducible:
+    # the LCR/TSL tables publish every capability year and respond to new cables /
+    # requirement changes. When on, transmission.inject_nyiso_local_selfsupply
+    # skips Long_Island (one mechanism per phenomenon, rule 19); the 0.45
+    # scalar remains only for the default-off legacy path. Default off
     # (byte-identical); NYISO-only.
     nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
     # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
@@ -4010,6 +4070,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_rcpf_enabled": 1,
     "nyiso_rcpf_products": 2,
     "nyiso_rcpf_locational": 2,
+    "nyiso_dynamic_reserve_requirements": 1,
+    "nyiso_li_lcr_tsl": 1,
     "neiso_rcpf_enabled": 1,
     "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
