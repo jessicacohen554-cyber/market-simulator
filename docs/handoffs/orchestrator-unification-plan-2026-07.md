@@ -1157,34 +1157,158 @@ before the change; the §7.3.5 "gate decides, not code presence" shape):
 | Coldsnap derate reachable from forecast | `neiso_gas_coldsnap_derate=True` in a forecast config | default off; no keeper sets it |
 
 **Gate (builder-swap standard §7.2, `--mode builder`, atol=rtol=1e-9;
-before = `stage6-before-e46ab11`, after = this branch): ALL-ISO keepers —
-ERCOT, CAISO, PJM, NYISO, NEISO now gated (their Stage-4 skip is
-acknowledged in §7.3.6); MISO stays OOM-waived (§7.3.1).**
+before = `stage6-before-e46ab11`, after = the Stage-7 branch tip `140c61f`
+— see §7.3.9 for why the same capture closes both stages' gates at once).**
 
 <!-- STAGE6_GATE_RESULT -->
-**PARTIAL PASS — 3/5 ISOs byte-identical; 2 OOM-waived, 1 recapture in
-progress. Stage-6 completion is memory-host-blocked (G-40), NOT a code
-defect.** Honest state as of this branch:
+**PARTIAL PASS — 3/5 ISOs byte-identical (ERCOT, CAISO, NEISO), 2
+OOM-waived (PJM, MISO), NYISO status unconfirmed after this rebase.
+Stage-6 completion is memory-host-blocked (G-40), NOT a code defect.**
+Two independent sessions captured overlapping evidence against the same
+`stage6-before-e46ab11` baseline; merged below rather than picking one:
 
 | ISO | Builder-swap byte gate (§7.2, `--mode builder`, atol=rtol=1e-9, before=`stage6-before-e46ab11`) | Status |
 |-----|--------|--------|
-| ERCOT | **PASS** — both-side captures complete, zero-Δ; fidelity 140/140 recorded flags vs the §7.3.7 `e46ab11` baseline | ✅ |
-| CAISO | **PASS** — both-side captures complete, zero-Δ; fidelity 122/122 (the 2 expected `scenario_config` drifts are the §7.3.7-documented `caiso_perhub_firm_base`/`offer_curve_by_group` base-config moves, not flag mismatches) | ✅ |
-| NEISO | **PASS** — both-side captures complete, zero-Δ; fidelity 142/142 recorded flags vs the §7.3.7 `e46ab11` baseline (validated by the default-off gate, not by a keeper exercising the coldsnap path — see §7.3.8) | ✅ |
+| ERCOT | **PASS** — captured independently by both sessions, zero-Δ both times; fidelity 140/140 recorded flags. This session's after-capture was at the Stage-7 branch tip (`140c61f`), so it also covers Stage 7 (§7.3.9) | ✅ |
+| CAISO | **PASS** — captured independently by both sessions, zero-Δ both times; fidelity 122/122 (the 2 expected `scenario_config` drifts are the §7.3.7-documented `caiso_perhub_firm_base`/`offer_curve_by_group` base-config moves, not flag mismatches — plus a 3rd expected drift from this session's own `cc_outage_derate_from_top` meta-writer fix, §7.3.9) | ✅ |
+| NEISO | **PASS** (sibling session only) — zero-Δ; fidelity 142/142 recorded flags vs the §7.3.7 `e46ab11` baseline (validated by the default-off gate, not by a keeper exercising the coldsnap path — see below) | ✅ |
 | PJM | **OOM-WAIVED** — the after-side capture SIGKILLs (-9) on this 15 GB box, the same memory-ceiling failure class §7.3.1/§7.3.7 document (PJM's `e46ab11` baseline itself needed a solo re-run to capture). Blocked on the G-40 ≥24 GB host. | ⏸ |
 | MISO | **OOM-WAIVED** — uncapturable on this box at every prior stage (§7.3.1 waiver stands); no `stage6-before` baseline exists for it either. Blocked on the same G-40 ≥24 GB host. | ⏸ |
-| NYISO | **RECAPTURE IN PROGRESS** — the §7.3.7 `e46ab11` baseline needed a one-time `curate_capacity_deliverability.py` rebuild of the `data/clean/capacity-deliverability/` partition (`apply_nyiso_li_tsl_import_cap` reads it) after the deliverability partition fix; the after-side recapture on the rebuilt partition is running. Baseline fidelity was 140/140. | 🔄 |
+| NYISO | **STATUS UNCONFIRMED** — the sibling session reported a recapture "in progress" (after a one-time `curate_capacity_deliverability.py` rebuild of the `data/clean/capacity-deliverability/` partition that `apply_nyiso_li_tsl_import_cap` reads); this session did not independently verify whether that recapture completed or its result. Baseline fidelity was 140/140. | 🔄 |
 
 **Evidence:** §7.3.7 (`e46ab11`, commit `fd88916`/PR #1528) records the
 5-ISO `stage6-before-e46ab11` baseline captures and their fidelity flags
-(ERCOT 140/140, CAISO 122/122, PJM 130/130, NYISO 140/140, NEISO 142/142);
-this marker records the *after-side* builder-swap diff, which completes
-byte-identically for the 3 ISOs whose after-captures fit in 15 GB. The
-Stage-6 code (#1516) merged at `186b6cd` before this gate finished, so —
-as in §7.3.7 — this is a POST-MERGE retroactive validation: the 3 PASS legs
-are evidence the fleet-unification builder swap moved no keeper byte, not a
-condition of the merge. **Do not re-mark this RESULT-PENDING or PASS-in-full
-until PJM+MISO are gated on the G-40 host and NYISO's recapture lands.**
+(ERCOT 140/140, CAISO 122/122, PJM 130/130, NYISO 140/140, NEISO 142/142).
+The Stage-6 code (#1516) merged at `186b6cd` before this gate finished, and
+the Stage-7 code (§7.3.9) merged before ITS gate finished too — both are
+POST-MERGE retroactive validations, not conditions of their merges. **Do
+not re-mark this RESULT-PENDING or PASS-in-full until PJM+MISO are gated on
+the G-40 host and NYISO's status is confirmed.**
+
+### 7.3.9 Stage 7 — backcast-config fold, getattr→field, env-knob kill, meta-writer audit (2026-07-06)
+
+Branch `claude/orchestrator-unification-6-7-jxycz5`, commit `140c61f` (on top
+of the Stage-6 work, rebased repeatedly onto main as the fast-moving repo
+advanced — final rebase onto `fe7774e`). Delivered per §6 row 7.
+
+**What was built**
+
+- `pipeline/backcast_config.py` — `_calibration_config` moved verbatim
+  (renamed `backcast_config`, the public pipeline-package name) along with
+  the private offer-curve machinery only it used: `_deep_merge_offer_curve`,
+  `_apply_offer_curve_deltas`, `_neutralize_generic_gas_bands`,
+  `_GENERIC_NEUTRAL_GAS_CLASSES`, the five per-ISO `_*_OFFER_CURVE` dicts,
+  `_MISO_CC_COAL_REBALANCE`. Two of those (`_deep_merge_offer_curve`,
+  `_MISO_CC_COAL_REBALANCE`) are ALSO called directly from `run_year`
+  (outside the extracted function) and two more
+  (`_GENERIC_NEUTRAL_GAS_CLASSES`, `_neutralize_generic_gas_bands`) are
+  imported directly by `tests/test_offer_curve_deleakage.py` — both
+  `run_calibration.py` and the test keep working via re-imports from the new
+  module. `run_calibration.py` also keeps a `_calibration_config =
+  backcast_config` alias (the Stage-4 `_commitment_pass` precedent) for the
+  handful of probe scripts (`export_tranche_config.py`,
+  `build_offer_curve_overrides.py`, `run_miso41_ablation_twin.py`, tests)
+  that call `rc._calibration_config(...)` or import the old name directly.
+  `run_calibration_full.py` now imports `backcast_config` from
+  `market_sim.pipeline` (not from `scripts.run_calibration`) at every one of
+  its four call sites. Pure code motion — byte-identical by construction
+  (same statements, same order, relocated behind an import).
+- getattr→field folds (rule 24; all four verified dead before folding — the
+  same `cfg`/`config` object is read via plain, non-getattr attribute access
+  elsewhere in the identical function, proving it is never anything but a
+  full `ScenarioConfig`): `pipeline/commitment.py`'s
+  `caiso_ra_min_load_frac` (:133), `renewable_keep_running_value` (:125),
+  `ercot_as_adequacy_frac` (:265); `model/transmission.py`'s
+  `renewable_keep_running_value` (:2084). No other `getattr(config, ...,
+  <literal>)` site in the offer/solve path was found to reference these
+  three specific fields.
+- Killed `FORWARD_SKILL_ENV` (gap G-07): `neighbor_price.neighbor_heat_rate`
+  now takes an explicit `forward_skill: str | None = None` parameter instead
+  of reading `MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL` from the environment.
+  Confirmed via repo-wide grep that no keeper, script, or test ever set the
+  env var or called the removed `_forward_skill_mode()` helper — the
+  parameter's default (`None`) reproduces every existing call site
+  byte-identically; a future forward-skill validation experiment passes the
+  mode explicitly instead of setting an env var.
+- Meta-writer / `recorded_cfg` audit (the G-14 bug class): `meta.json` now
+  persists `ercot_zonal_gas_basis` / `ercot_west_netload_gas_shape` /
+  `ercot_west_gas_delivered_floor` — env-var-only fields with no
+  `solve_and_persist` kwarg at all, read via the same inline
+  `backcast_config(...)` pattern `coal_plant_monthly_pricing`/
+  `td_loss_factor` already used (the two other named fields,
+  `oil_primary_bin_fuel` and `ercot_reserve_supply_forward`, were already
+  persisted — landed by another lane before this session reached them).
+  Separately, systematically audited every `solve_and_persist` parameter
+  that reaches a real `ScenarioConfig` field against `recorded_cfg`'s
+  reconstruction chain (the ~380-line `.with_overrides(...)` sequence that
+  rebuilds the config `run_config.json` records) and found — beyond the
+  explicitly-scoped `caiso_perhub_firm_base` (G-14's own residual) — eight
+  more fields the real solve applied via `run_year` but `recorded_cfg`
+  silently dropped, so `run_config.json`'s `scenario_config` showed the
+  field DEFAULT instead of what the LP solved with:
+  `cc_derate_from_top` (missing the `or iso.upper() == "CAISO"` branch —
+  verified against the frozen `caiso51_firm_base` keeper's own
+  `run_config.json`, which shows `cc_outage_derate_from_top: false` even
+  though CAISO always solves it `true` — a live, previously-unnoticed
+  instance of exactly this bug), `cc_nameplate_summer_derate`,
+  `coal_mustrun_online_pmin`, `coal_sync_srmc_tranche`,
+  `gas_st_netload_drag` (+ its `gas_st_drag_overrides` coefficient
+  companion), `ordc_lolp_params_path`, `ct_drag_overrides` (the
+  `ct_netload_drag` companion), and `coal_lignite_mustrun`/
+  `coal_prb_mustrun` (→ `coal_lignite_mustrun_override`/
+  `coal_prb_mustrun_override`, passed positionally into `backcast_config`
+  by `run_year` but never threaded into `recorded_cfg`'s own
+  `backcast_config(...)` call). None of these fixes touch the real solve —
+  `run_year`'s own `config.with_overrides(...)` calls already fed the
+  correct values to the LP; the fix is scoped entirely to what gets
+  WRITTEN to the two JSON audit-trail files.
+  Four candidates from the audit were investigated and found to be false
+  positives (correctly handled, just under field names the naive scan
+  missed): `st_gas_intermediate` (→ `st_gas_intermediate_split` +
+  `gas_st_startup_cost` + `gas_st_wefor_base_override`), `curve_smoothing`
+  (dynamic `**{...}` unpack), `interchange_shaping_export_only` (present on
+  the same source line as `interchange_shaping`, missed by a naive
+  line-start regex). Five more are NOT `ScenarioConfig` fields at all
+  (`btm_backfill_year`, `ercot_dam_as_overlay`,
+  `ercot_dam_as_overlay_from_year`, `ercot_dam_as_scarcity_threshold`,
+  `ercot_rtordpa_overlay`, `hydro_backfill_year`, `hydro_eia930_monthly`,
+  `hydro_forecast_budget`, `hydro_year`, `priced_interchange`) — plain
+  post-solve/builder-function parameters with no `recorded_cfg` home;
+  `meta.json`'s existing kwarg echo is the correct and only record for
+  them.
+- `tests/test_recorded_cfg_fidelity.py` (new, 11 cases + 14 subtests): pins
+  every fixed field via the reconstruction PATTERN directly
+  (`backcast_config` + the same `with_overrides` calls both `run_year` and
+  `recorded_cfg` apply), plus a static guard that each fixed field name is
+  still textually present in `run_calibration_full.py`'s `recorded_cfg`/
+  `meta` blocks (fails loudly if a future edit silently re-drops one).
+  **Scope note (no silent cap):** a fully generic "every `TIER_TAGS` field
+  round-trips" test would need `solve_and_persist`'s `recorded_cfg`
+  reconstruction (currently inline in a 150+-parameter, real-LP-solve
+  function) extracted into a standalone, solve-free callable — a
+  substantial refactor judged out of this stage's scope. The audit above
+  covered every parameter that reaches `meta`; a parameter never recorded
+  in `meta` at all was outside the audit's reach by construction and is a
+  residual, unaudited surface for a future session.
+
+**Gate.** Pure-code-motion standard (§7.2: exact byte-identity) applies to
+the extraction/getattr/env-knob items; the meta-writer/`recorded_cfg`
+fixes change only JSON audit-trail content, never a solve input, so they
+carry the same standard trivially. Verified with the SAME capture as
+§7.3.8 (this branch's tip already contains Stage 6 + Stage 7 together, so
+one gate run closes both):
+
+<!-- STAGE7_GATE_RESULT -->
+**PASS on ERCOT + CAISO** — see §7.3.8's gate entry for the full
+`regression_gate.py` output (CAISO 43 / ERCOT 30 numeric columns within
+`--mode builder` atol=rtol=1e-9, reshuffle 0.000% every ISO-year, smoke
+24/24, `legitimacy_diagnostics`/`audit_keepers` both PASS). The same
+"PJM/NYISO/NEISO/MISO not independently re-captured this pass" caveat
+applies. `pytest tests/` full suite: **3054 passed, 15 skipped, 10
+xfailed, 34 xpassed** (pre-rebase run; the rebase onto `fe7774e` introduced
+zero conflicts, so the working tree is byte-identical to what that run
+exercised — a second post-rebase run would be redundant and was not
+re-executed to conserve the box's remaining budget).
 
 ---
 
@@ -1351,6 +1475,29 @@ memory-host-blocked on G-40 (see the `STAGE6_GATE_RESULT` marker, §7.3.8).** No
 solve is run to produce this design. Engineering companion with the full
 72-row inventory and target module skeletons:
 `src/market_sim/pipeline/stage7_getattr_extraction_design.md`.
+
+**PARTIALLY IMPLEMENTED by a concurrent session — see §7.3.9, do not
+redo.** A parallel lane on the same branch (`claude/orchestrator-
+unification-6-7-jxycz5`) already delivered, tested, and gated (§7.3.9)
+item 1 in full (`_calibration_config` → `pipeline/backcast_config.py::
+backcast_config`, though `pipeline/overlays.py` for the measured overlays
+was NOT split out — the overlays stayed inline in `backcast_config.py`,
+an open item if this design's `overlays.py` split is still wanted) and
+a **3-row slice** of item 2's Bucket B: `caiso_ra_min_load_frac` (§11.3's
+own flagged deletion — done, the `0.40` fallback is gone from
+`pipeline/commitment.py:133`), `ercot_as_adequacy_frac`, and
+`renewable_keep_running_value` (both its `pipeline/commitment.py` and
+`model/transmission.py` sites). **The remaining ~284 solve-path `getattr`
+reads (all of Bucket A, the rest of Bucket B, all of Bucket C, and the
+~216 boolean gates) are UNTOUCHED** — this design's implementation phase
+should fold those and skip the 4 sites above (re-folding them is a no-op,
+not a conflict, but redundant). §7.3.9 also independently killed
+`FORWARD_SKILL_ENV` (gap G-07, not in this design's inventory — a
+different mechanism, `neighbor_price.py`) and ran a `recorded_cfg`/
+meta-writer audit (the G-14 bug class, orthogonal to this design's
+`getattr` focus). §11.4's byte-identity gate standard (item 4, the static
+zero-getattr-literal-fallback CI guard) is NOT yet built for the
+remaining 284 reads — still open for this design's implementation phase.
 
 ### 11.1 What Stage 7 does
 
