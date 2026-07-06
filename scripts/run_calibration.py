@@ -63,28 +63,20 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_ercot_fossil_gen,
 )
-from market_sim.data.hydro import build_hydro_fleet  # noqa: E402
-from market_sim.data.coal import coal_takeorpay_share  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
-    COAL_MUSTRUN_BY_PLANT,
-    aggregate_fleet,
     apply_coal_tranches,
-    apply_ct_netload_drag_floor,
-    apply_gas_st_netload_drag_floor,
+    apply_neiso_coldsnap_derate,
+    apply_netload_drag_floors,
     assemble_mc,
-    bins_to_fleet,
-    campd_tranche_fuel_frac,
+    build_base_fleet,
+    build_dispatch_fleet,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
     load_retired_within_window,
     thermal_tranche_overrides,
-)
-from market_sim.data.offer_curves import (  # noqa: E402
-    split_coal_tranches,
-    split_gas_tranches,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
@@ -97,10 +89,8 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
-    coal_passthrough_by_supply,
     dual_fuel_switch_mask,
     ercot_west_oversupply_collapse_freq,
-    prb_follower_passthrough_series,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -178,31 +168,6 @@ _TTC_LINK_ZONES: dict[str, frozenset[str]] = {
     "ttc_wsc": frozenset({"West", "South_Central"}),
     "ttc_pn": frozenset({"Panhandle", "North"}),
 }
-
-
-def _takeorpay_by_plant(fleet, config) -> dict[int, float] | None:
-    """Return ``{plant_code: contract_share}`` for coal plants, or ``None``.
-
-    ``None`` (the default) leaves ``campd_tranche_fuel_frac`` on its hardcoded
-    100%-sunk must-run behaviour. When ``config.coal_takeorpay_from_data`` is
-    set, build the measured EIA-923 Schedule-5 take-or-pay share
-    (:func:`fleet.coal_takeorpay_share`) for every coal plant in the fleet that
-    has a classifiable Purchase Type; plants without one are omitted and keep
-    the default treatment.
-    """
-    if not getattr(config, "coal_takeorpay_from_data", False):
-        return None
-    out: dict[int, float] = {}
-    for g in fleet:
-        if g.fuel_type != "coal":
-            continue
-        code = int(g.plant_code)
-        if code in out:
-            continue
-        share = coal_takeorpay_share(code)
-        if share is not None:
-            out[code] = share
-    return out
 
 
 def _load_reference() -> dict:
@@ -2111,20 +2076,6 @@ def _apply_caiso_solar_deliverability(
     return solar_cf
 
 
-def _drop_biomass_units(fleet, fuel_fracs):
-    """Remove biomass LP units (and their parallel fuel fractions) from a fleet.
-
-    Used when biomass is injected as a measured EIA-923 must-run profile (the
-    caller nets it out of demand and re-adds it as a fixed pseudo-unit), so the
-    raw biomass generators must not also clear the merit order — else biomass is
-    served twice. Returns the filtered ``(fleet, fuel_fracs)`` pair (order- and
-    length-preserving). A no-op for a fleet with no biomass units (e.g. ERCOT,
-    whose CAMPD path already excludes them).
-    """
-    kept = [(g, ff) for g, ff in zip(fleet, fuel_fracs) if g.fuel_type != "biomass"]
-    return [g for g, _ in kept], [ff for _, ff in kept]
-
-
 def run_year(
     year: int,
     iso: str,
@@ -3261,10 +3212,16 @@ def run_year(
         else []
     )
 
-    # Build the dispatch fleet the same way the runner does: CAMPD
-    # operational bins for ERCOT (three stepped tranches per bin, nuclear
-    # and other non-aggregatable units from EIA-860), the legacy
-    # equal-width heat-rate binning otherwise.
+    # Resolve the per-plant bin frame, then build the base fleet and the
+    # LP-ready dispatch fleet through the SHARED builders
+    # (fleet.build_base_fleet / fleet.build_dispatch_fleet) — the same
+    # bodies the forecast runner calls (orchestrator-unification Stage 6).
+    # Backcast-specific inputs enter as explicit parameters: the year-matched
+    # EIA-860 vintage, the curated ERCOT bin sheet at this solve year's
+    # vintage, the measured hydro monthly budgets, the biomass-injection
+    # drop, the historical import placement (after hydro), and the
+    # emission-override seam (off — backcast per-plant rates enter via the
+    # bin artifacts and the v2 hook inside bins_to_fleet, G-39 §9.6).
     campd_bins = (
         load_campd_bins(
             config.campd_bins_path,
@@ -3278,176 +3235,67 @@ def run_year(
         if config.use_campd_bins and iso == "ERCOT"
         else None
     )
-    if campd_bins is not None:
-        campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
-        # Gas/coal are dispatched via the CAMPD bins; biomass is injected as a
-        # must-run resource (run_calibration_full), so neither is added as a raw
-        # unit here. Oil is kept as its own raw LP unit so it dispatches as the
-        # scarcity peaker it is (its fuel price / heat rate come from constants).
-        _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
-        non_thermal = [
-            g
-            for g in (load_fleet_from_csv(iso, iso_config, year=year) + retired_units)
-            if g.fuel_type not in _campd_binned_or_injected
-        ]
-        fleet = non_thermal + campd_fleet
-        # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
-        # under take-or-pay coal contracts, CHP host steam obligations or
-        # ERCOT RUC. Above must-run, each coal tranche passes its own
-        # supply chain's passthrough — flat scalar, or an (T,) gas-keyed
-        # sigmoid resolved per (ISO, supply) — so baseloaded coal clears
-        # the merit order instead of being priced out by cheap gas.
-        # apply_coal_tranches applies the discounts/markups.
-        pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
-        # Measured take-or-pay (contract) share per coal plant: when on, the
-        # coal must-run tranche's sunk fraction is the EIA-923 Schedule-5
-        # Purchase Type share instead of the hardcoded 100% (campd_tranche_fuel_frac).
-        takeorpay = _takeorpay_by_plant(fleet, config)
-        if config.coal_prb_passthrough_sigmoid and config.coal_prb_passthrough_tiered:
-            # Tiered PRB (ERCOT): low-must-run "prb" load-followers swap
-            # the baseload prb curve for the follower-tier one. The tier
-            # split is specific to the curated ERCOT prb supply.
-            foll = {
-                **pt_by_supply,
-                "prb": prb_follower_passthrough_series(config, year, config.hours),
-            }
-            thr = config.coal_prb_follower_mustrun_max
-
-            def _pt_for(g):
-                if (
-                    g.fuel_type == "coal"
-                    and getattr(g, "coal_supply", "") == "prb"
-                    and COAL_MUSTRUN_BY_PLANT.get(g.plant_code, 100.0) <= thr
-                ):
-                    return foll
-                return pt_by_supply
-
-            fuel_fracs = [
-                campd_tranche_fuel_frac(
-                    g,
-                    _pt_for(g),
-                    takeorpay,
-                    econ_srmc_bound=config.coal_econ_srmc_bound,
-                )
-                for g in fleet
-            ]
-        else:
-            fuel_fracs = [
-                campd_tranche_fuel_frac(
-                    g,
-                    pt_by_supply,
-                    takeorpay,
-                    econ_srmc_bound=config.coal_econ_srmc_bound,
-                )
-                for g in fleet
-            ]
-    else:
-        # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
-        # unit as its own LP column so plant_code / plant_group / state carry
-        # into dispatch — required for per-plant EIA-923 fuel costs and the
-        # CAMPD outage overlay to bind. Otherwise use the legacy efficiency-
-        # bin aggregation (faster, but identity-free).
-        #
-        # When the ISO has a CAMPD-derived thermal-tranche artifact
-        # (thermal_tranches_<ISO>.csv), give its per-plant thermal fleet the
-        # SAME smoothed rising offer curve ERCOT gets: build a synthetic
-        # per-plant bins frame (committed / coal must-run from the artifact)
-        # and route it through bins_to_fleet, with every non-binned generator
-        # (nuclear, oil, biomass, hydro, ...) kept as its own raw LP unit. The
-        # binned-keys exclusion guarantees no double-count and no dropped unit.
-        if getattr(config, "plant_level_fleet", False) and thermal_tranche_overrides(
-            iso
-        ):
-            all_gens = load_fleet_from_csv(iso, iso_config, year=year) + retired_units
-            synth = fleet_to_bins(all_gens, iso, config)
-            if not synth.empty:
-                binned = set(zip(synth["Plant_Code"].astype(int), synth["Plant_Group"]))
-                thermal_fleet, _ = bins_to_fleet(synth, zone_names, config)
-                non_binned = [
-                    g
-                    for g in all_gens
-                    if (int(g.plant_code), g.plant_group) not in binned
-                ]
-                fleet = non_binned + thermal_fleet
-                pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
-                fuel_fracs = [
-                    campd_tranche_fuel_frac(
-                        g,
-                        pt_by_supply,
-                        econ_srmc_bound=config.coal_econ_srmc_bound,
-                    )
-                    for g in fleet
-                ]
-            else:
-                fleet, fuel_fracs = split_coal_tranches(
-                    aggregate_fleet(all_gens, n_bins=0), config
-                )
-        else:
-            n_bins = (
-                0
-                if getattr(config, "plant_level_fleet", False)
-                else config.heat_rate_bin_count
-            )
-            fleet_base = aggregate_fleet(
-                load_fleet_from_csv(iso, iso_config, year=year) + retired_units,
-                n_bins=n_bins,
-            )
-            fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
-            # Optional stepped gas offer curve (committed/economic/peaking
-            # heat-rate bands) for the per-plant fleet; off by default.
-            if getattr(config, "gas_offer_curve", False):
-                fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
-    # Biomass injected as a measured EIA-923 must-run profile (the caller nets it
-    # out of demand and re-adds it as a fixed pseudo-unit), so drop the raw
-    # biomass LP units to avoid double-serving — and to make biomass output the
-    # fuel/contract-limited, price-insensitive quantity it is in reality instead
-    # of a dispatchable unit the LP runs to max when gas rises. Mirrors the ERCOT
-    # CAMPD path, which already excludes biomass from its fleet (_campd_binned_-
-    # or_injected). Gated on inject_biomass_mustrun so callers that do NOT inject
-    # biomass (overlay-derivation / probe scripts) keep biomass as an LP unit and
-    # never lose it. No-op for ERCOT (its fleet already carries no biomass unit).
-    if inject_biomass_mustrun:
-        fleet, fuel_fracs = _drop_biomass_units(fleet, fuel_fracs)
-    # Energy-limited conventional hydro (every ISO): one LP unit per
-    # EIA-923-reporting hydro plant, capped by its EIA-860 nameplate per hour
-    # and by its measured monthly net generation via the dispatch LP's hydro
-    # budget rows. Replaces the flat-monthly must-run injection (which could
-    # not peak-shave) and leaves ISOs without hydro data unchanged.
-    hydro_units, hydro_monthly_energy = build_hydro_fleet(
+    if (
+        campd_bins is None
+        and getattr(config, "plant_level_fleet", False)
+        and thermal_tranche_overrides(iso)
+    ):
+        # Per-plant thermal fleet with ERCOT's smoothed rising offer curve:
+        # synthesize the per-plant bins frame (committed / coal must-run from
+        # the CAMPD thermal-tranche artifact). An empty synthesis (no
+        # artifact coverage) leaves campd_bins None and falls through to the
+        # legacy aggregate path inside build_base_fleet (n_bins=0 keeps the
+        # per-plant identity).
+        synth = fleet_to_bins(
+            load_fleet_from_csv(iso, iso_config, year=year) + retired_units,
+            iso,
+            config,
+        )
+        if not synth.empty:
+            campd_bins = synth
+    fleet_base = build_base_fleet(
+        campd_bins,
+        iso,
+        iso_config,
+        zone_names,
+        config,
+        retired_units,
+        [],  # planned additions are forecast-only; the vintage carries built units
+        year,
+        None,  # confirmed exits ride the year-matched vintage in a backcast
+        vintage_year=year,
+        # Gas/coal are dispatched via the CAMPD bins; biomass is injected as
+        # a must-run resource (run_calibration_full). Oil is kept as its own
+        # raw LP unit so it dispatches as the scarcity peaker it is — the
+        # backcast's historical divergence from the runner's oil-excluding
+        # default set (see build_base_fleet's nonthermal_exclude note).
+        nonthermal_exclude=(
+            frozenset({"gas_cc", "gas_ct", "coal", "biomass"})
+            if iso == "ERCOT"
+            else None
+        ),
+        legacy_n_bins=(
+            0
+            if getattr(config, "plant_level_fleet", False)
+            else config.heat_rate_bin_count
+        ),
+    )
+    fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy = build_dispatch_fleet(
+        fleet_base,
+        campd_bins,
+        import_generators,
         iso,
         year,
         zone_names,
-        backfill_year=hydro_backfill_year,
-        eia930_monthly=hydro_eia930_monthly,
-        forecast_budget=hydro_forecast_budget,
+        config,
+        hydro_backfill_year=hydro_backfill_year,
+        hydro_eia930_monthly=hydro_eia930_monthly,
+        hydro_forecast_budget=hydro_forecast_budget,
         hydro_year=hydro_year,
+        drop_biomass_units=inject_biomass_mustrun,
+        imports_after_hydro=True,
+        apply_emission_overrides=False,
     )
-    hydro_gen_idx = None
-    if hydro_units:
-        hydro_gen_idx = np.arange(len(fleet), len(fleet) + len(hydro_units), dtype=int)
-        fleet = fleet + hydro_units
-        fuel_fracs = list(fuel_fracs) + [1.0] * len(hydro_units)
-        logger.info(
-            "%s %d: %d hydro plants in LP (%.0f MW, %.2f TWh monthly budget)",
-            iso,
-            year,
-            len(hydro_units),
-            sum(g.pmax_mw for g in hydro_units),
-            hydro_monthly_energy.sum() / 1e6,
-        )
-    if import_generators:
-        fleet = fleet + import_generators
-        fuel_fracs = list(fuel_fracs) + [1.0] * len(import_generators)
-        logger.info(
-            "%s %d: priced import/export node — %d import tranches "
-            "(%.0f MW), %d export sinks (%.0f MW)",
-            iso,
-            year,
-            sum(1 for g in import_generators if g.pmax_mw > 0),
-            sum(g.pmax_mw for g in import_generators),
-            sum(1 for g in import_generators if g.pmin_mw < 0),
-            -sum(g.pmin_mw for g in import_generators),
-        )
     # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
     # on/off shape so the floor starts/stops with the real unit (zero in every
     # hour the plant did not report load), instead of being smeared flat. The
@@ -3475,51 +3323,23 @@ def run_year(
         year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
-    # Net-load-indexed ST_GAS reliability-drag floor: hold legacy gas-steam at
-    # a minimum-generation floor that rises with system net-load (load - wind -
-    # solar) — the operational proxy for the reserve tightness ERCOT RUC keys
-    # off — over which the LP dispatches economically. Replaces the blunt
-    # seasonal gas_st_summer_mustrun calendar fraction with an endogenous,
-    # weather-driven floor (see fleet.apply_gas_st_netload_drag_floor). Net-load
-    # uses the same LP-served (net-of-must-run) convention as the runner's other
-    # net-load consumers below.
-    if getattr(config, "gas_st_netload_drag", False) or getattr(
-        config, "ct_netload_drag", False
-    ):
-        net_load = (
-            demand.sum(axis=0)
-            - (solar_cap[:, None] * solar_cf).sum(axis=0)
-            - (wind_cap[:, None] * wind_cf).sum(axis=0)
-        )
-        if apply_gas_st_netload_drag_floor(fleet_arrays, fleet, net_load, config):
-            logger.info(
-                "%s %d: ST_GAS net-load reliability-drag floor applied "
-                "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load mean %.0f / "
-                "max %.0f MW)",
-                iso,
-                year,
-                config.gas_st_drag_slope_per_gw,
-                config.gas_st_drag_intercept,
-                config.gas_st_drag_cap,
-                float(net_load.mean()),
-                float(net_load.max()),
-            )
-        # CT_PEAKER net-load reliability-drag floor (simple-cycle analog), gated
-        # to the afternoon-evening ramp window — the forward-native replacement
-        # for the ct_mustrun_per_plant actuals pin. See
-        # fleet.apply_ct_netload_drag_floor.
-        if apply_ct_netload_drag_floor(fleet_arrays, fleet, net_load, config):
-            logger.info(
-                "%s %d: CT_PEAKER net-load reliability-drag floor applied "
-                "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in ramp %dh-%dh)",
-                iso,
-                year,
-                config.ct_drag_slope_per_gw,
-                config.ct_drag_intercept,
-                config.ct_drag_cap,
-                config.ct_drag_ramp_start,
-                config.ct_drag_ramp_end,
-            )
+    # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
+    # the single shared gate-and-log wrapper both orchestrators call
+    # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
+    # Gates internally on gas_st_netload_drag / ct_netload_drag; net-load uses
+    # the same LP-served convention as the other net-load consumers below.
+    apply_netload_drag_floors(
+        fleet_arrays,
+        fleet,
+        demand,
+        wind_cf,
+        wind_cap,
+        solar_cf,
+        solar_cap,
+        config,
+        iso,
+        year,
+    )
     # ══════════════════════════════════════════════════════════════════════
     # BACKCAST MEASURED INTERCHANGE OVERLAYS — availability / seam limits.
     # Every block below feeds a MEASURED series into the priced node's bounds
@@ -3806,31 +3626,13 @@ def run_year(
                 float(getattr(config, "neiso_winter_fuelsec_tmin_c", -7.0)),
             )
 
-    # NEISO winter gas-availability derate (temperature-dependent forced outage):
-    # on cold snaps the gas-electric constraint makes non-dual-fuel gas-CC/CT
-    # capacity physically UNAVAILABLE, so the fleet goes reserve-short and the
-    # RCPF co-opt prices the >$300 scarcity tail (and widens the storage spread).
-    # Must run before the reserve-coopt inputs are built so the shared-headroom
-    # RHS sees the derated availability (transmission.inject_neiso_gas_coldsnap_
-    # derate). Dual-fuel units are excluded (they switch to oil, not vanish).
-    if getattr(config, "neiso_gas_coldsnap_derate", False):
-        from market_sim.model.transmission import inject_neiso_gas_coldsnap_derate
-
-        if inject_neiso_gas_coldsnap_derate(
-            fleet_arrays,
-            iso,
-            year,
-            float(getattr(config, "neiso_gas_derate_t0_c", -7.0)),
-            float(getattr(config, "neiso_gas_derate_slope_per_c", 0.018)),
-            float(getattr(config, "neiso_gas_derate_cap", 0.20)),
-        ):
-            logger.info(
-                "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
-                "availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap "
-                "window (TDFOR, NERC cold-weather anchored)",
-                iso,
-                year,
-            )
+    # NEISO winter gas-availability cold-snap derate — the shared
+    # gate-and-log wrapper both orchestrators call
+    # (fleet.apply_neiso_coldsnap_derate, orchestrator-unification Stage 6;
+    # closes the §2.2 accidental-drift row). Gates internally on
+    # neiso_gas_coldsnap_derate; must run before the reserve-co-opt inputs
+    # are built so the shared-headroom RHS sees the derated availability.
+    apply_neiso_coldsnap_derate(fleet_arrays, config, iso, year)
 
     # NYISO firm import baseload (HQ/Ontario must-flow) and the Manitoba
     # firm-hydro floor now run inside the SHARED
