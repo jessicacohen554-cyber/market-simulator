@@ -351,6 +351,36 @@ class TestConfirmedExits(unittest.TestCase):
         year2 = apply_confirmed_exits(base, 2027, exits)
         self.assertAlmostEqual(year2[0].pmax_mw, 900.0, places=4)
 
+    def test_monthly_averaged_derate_first_half_exit(self):
+        # Regression for rule 24 (no off-registry tuning): V H Braunig
+        # (ERCOT plant 3612) exiting units 1 & 2 (477 MW total) in March 2025.
+        # Annual-average derate = (3/12 * 1.0) + (9/12 * (1138-477)/1138) = 0.686.
+        # A 1138 MW CAMPD bin derated by this factor should have 1138 * 0.686 = 781.25 MW.
+        fleet = [_binned("SC_STGAS3", 3612, 1138.0, pmin=227.6, nameplate=1138.0)]
+        # exit_month=3 (March) -> effective year 2025.
+        exits = [
+            self._exit(3612, "1", 2025, month=3, mw=225.0),
+            self._exit(3612, "2", 2025, month=3, mw=252.0),
+        ]
+        kept = apply_confirmed_exits(fleet, 2025, exits)
+        # Verify the factor: 477 MW exit over 3 months (Mar) + 9 months (Apr-Dec).
+        # factor = (3/12 * 1.0) + (9/12 * 661/1138) = 0.25 + 0.436 = 0.686
+        self.assertEqual(len(kept), 1)
+        expected_mw = 1138.0 * 0.686
+        self.assertAlmostEqual(kept[0].pmax_mw, expected_mw, places=1)
+
+    def test_full_year_derate_second_half_exit(self):
+        # When exit_month > 6, effective year is year+1. If we apply in that
+        # later year, the full-year reduced factor applies (no monthly averaging).
+        fleet = [_binned("H_CC1", 800, 1000.0, pmin=200.0, nameplate=1000.0)]
+        # exit_month=9 (September) in 2025 -> effective year 2026.
+        exits = [self._exit(800, "1", 2025, month=9, mw=100.0)]
+        # In 2026 (when the exit is effective), apply full-year derate.
+        kept = apply_confirmed_exits(fleet, 2026, exits)
+        self.assertEqual(len(kept), 1)
+        # factor = (1000 - 100) / 1000 = 0.9
+        self.assertAlmostEqual(kept[0].pmax_mw, 900.0, places=4)
+
 
 class TestEconomicRetirements(unittest.TestCase):
     """Revenue-driven retirement of persistently unprofitable thermal units.
