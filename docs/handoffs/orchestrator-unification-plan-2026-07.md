@@ -1162,7 +1162,29 @@ ERCOT, CAISO, PJM, NYISO, NEISO now gated (their Stage-4 skip is
 acknowledged in §7.3.6); MISO stays OOM-waived (§7.3.1).**
 
 <!-- STAGE6_GATE_RESULT -->
-RESULT-PENDING
+**PARTIAL PASS — 3/5 ISOs byte-identical; 2 OOM-waived, 1 recapture in
+progress. Stage-6 completion is memory-host-blocked (G-40), NOT a code
+defect.** Honest state as of this branch:
+
+| ISO | Builder-swap byte gate (§7.2, `--mode builder`, atol=rtol=1e-9, before=`stage6-before-e46ab11`) | Status |
+|-----|--------|--------|
+| ERCOT | **PASS** — both-side captures complete, zero-Δ; fidelity 140/140 recorded flags vs the §7.3.7 `e46ab11` baseline | ✅ |
+| CAISO | **PASS** — both-side captures complete, zero-Δ; fidelity 122/122 (the 2 expected `scenario_config` drifts are the §7.3.7-documented `caiso_perhub_firm_base`/`offer_curve_by_group` base-config moves, not flag mismatches) | ✅ |
+| NEISO | **PASS** — both-side captures complete, zero-Δ; fidelity 142/142 recorded flags vs the §7.3.7 `e46ab11` baseline (validated by the default-off gate, not by a keeper exercising the coldsnap path — see §7.3.8) | ✅ |
+| PJM | **OOM-WAIVED** — the after-side capture SIGKILLs (-9) on this 15 GB box, the same memory-ceiling failure class §7.3.1/§7.3.7 document (PJM's `e46ab11` baseline itself needed a solo re-run to capture). Blocked on the G-40 ≥24 GB host. | ⏸ |
+| MISO | **OOM-WAIVED** — uncapturable on this box at every prior stage (§7.3.1 waiver stands); no `stage6-before` baseline exists for it either. Blocked on the same G-40 ≥24 GB host. | ⏸ |
+| NYISO | **RECAPTURE IN PROGRESS** — the §7.3.7 `e46ab11` baseline needed a one-time `curate_capacity_deliverability.py` rebuild of the `data/clean/capacity-deliverability/` partition (`apply_nyiso_li_tsl_import_cap` reads it) after the deliverability partition fix; the after-side recapture on the rebuilt partition is running. Baseline fidelity was 140/140. | 🔄 |
+
+**Evidence:** §7.3.7 (`e46ab11`, commit `fd88916`/PR #1528) records the
+5-ISO `stage6-before-e46ab11` baseline captures and their fidelity flags
+(ERCOT 140/140, CAISO 122/122, PJM 130/130, NYISO 140/140, NEISO 142/142);
+this marker records the *after-side* builder-swap diff, which completes
+byte-identically for the 3 ISOs whose after-captures fit in 15 GB. The
+Stage-6 code (#1516) merged at `186b6cd` before this gate finished, so —
+as in §7.3.7 — this is a POST-MERGE retroactive validation: the 3 PASS legs
+are evidence the fleet-unification builder swap moved no keeper byte, not a
+condition of the merge. **Do not re-mark this RESULT-PENDING or PASS-in-full
+until PJM+MISO are gated on the G-40 host and NYISO's recapture lands.**
 
 ---
 
@@ -1319,3 +1341,100 @@ Stage 2.
   run its file-decomposition Phase 6 *after* this plan's Stage 7; §2.3.
 - **env-var ERCOT gas knobs** are a real rule-24 violation but are default-off probes —
   separate cleanup, not in the neutrality-critical path; §4.
+
+---
+
+## 11. Stage 7 — `getattr`→field extraction + `backcast_config` move (DESIGN, not implemented)
+
+**Status: design only. Does not start until Stage 6 completes — Stage 6 is
+memory-host-blocked on G-40 (see the `STAGE6_GATE_RESULT` marker, §7.3.8).** No
+solve is run to produce this design. Engineering companion with the full
+72-row inventory and target module skeletons:
+`src/market_sim/pipeline/stage7_getattr_extraction_design.md`.
+
+### 11.1 What Stage 7 does
+
+1. **Move `_calibration_config`** (`run_calibration.py:1021`) →
+   `pipeline/backcast_config.py::backcast_config(iso, year, hours, flags, …)` and
+   make it the **single typed construction site** for the backcast
+   `ScenarioConfig`; `pipeline/overlays.py` holds the measured overlays as gates
+   on explicit fields (rule 12). `run_calibration_full.py` imports the config
+   seam from `pipeline`, not `run_calibration`.
+2. **Fold every `getattr(config, …, <literal>)` on the solve path to a plain
+   attribute read**, so the field declaration in `ScenarioConfig`/`constants.py`
+   is the single source of every default and every tunable appears in
+   `run_config.json` (rules 20/24).
+3. **Delete the `caiso_ra_min_load_frac` `0.40` fallback** outright (rule 26).
+
+### 11.2 Inventory of the `getattr` fallbacks (measured at this branch)
+
+`grep -rE "getattr\((config|cfg)\s*," src/market_sim/` → **288** solve-path
+reads. **Every field is already declared in `ScenarioConfig`** (verified
+field-by-field), so §4's finding holds at scale: the pattern is defensive, the
+literal is dead *today* — and a dead literal is a re-armable answer key (rule
+26). Split:
+
+- **~216 boolean gates** (`…, False/True/None`) — mechanical fold to
+  `config.flag`; cannot move a number.
+- **72 non-boolean literal fallbacks** — the answer-key risks, in three buckets:
+  - **A — always-present context reads** (fold, low risk): `iso` "ERCOT" (×11),
+    `mode` "forecast" (×16), `weather_year` `0` (×5), `outage_source`
+    "statistical" (×3), `carbon_price` `0.0`, `carbon_price_path` "zero".
+  - **B — real numeric/string tunables** (the rule-26 traps): incl.
+    `caiso_ra_min_load_frac` `0.40`, `ercot_as_adequacy_frac` `1.0`,
+    `ercot_as_critical_frac` `0.0`, `ercot_as_n_ramp` `12`, the ERCOT
+    `*_from_year` gates (`2023`/`2025`), `ercot_market_design` "auto",
+    `pjm_reserve_online_rho` `1.0`, `rtcb_reliability_deployment_mw` `0.0`,
+    `battery_dispatch_adder` `0.0`, `caiso_solar_deliverability_k/_floor`
+    `0.15`/`0.50`, `caiso_solar_shape_nl_hi/lo_pct` `30.0`/`10.0`,
+    `renewable_keep_running_value` `20.0`, the three `*_intermediate_cf_threshold`
+    `50.0`, `ct_mustrun/ct_deployment/reliability_deployment_floor_frac` `1.0`,
+    `committed_ramp_spread` `0.0`, `offer_curve_smoothing_n/_exp` `0`/`1.0`,
+    `nearby_fuel_price_min_state_plants` `2`. (Full table with sites in the
+    companion note.)
+  - **C — path/string literals** (fold): `campd_bins_path`
+    `str(CAMPD_BINS_CSV)`, `control_retrofit_path` `""`,
+    `cc_capacity_reconcile_path` `""`.
+- **Already handled / out of scope:** the NEISO coldsnap coeffs (§4 item 2) are
+  **already fields** as of Stage 6 (§7.3.8), no work; the env-var ERCOT gas knobs
+  are a separate default-off-probe cleanup (§4); bare `getattr(config, k)` /
+  `getattr(config, field)` dynamic-name indirection (scenarios.py:3904,
+  capacity.py FOM fields, eac.py:158) is not a shadow default and stays.
+
+### 11.3 `caiso_ra_min_load_frac` — the flagged deletion (rule 26)
+
+- Field default `scenarios.py:896` (`= 0.40`); backcast override
+  `run_calibration.py:1314` (`= 0.26`, the CAISO keeper's live value); solve-path
+  read `pipeline/commitment.py:133` (`getattr(cfg, "caiso_ra_min_load_frac",
+  0.40)`). Today `0.26` always wins and the `0.40` is dead — but a core built off
+  the `_calibration_config` path (what this migration constructs) would silently
+  run `0.40`. **Stage 7 reads `float(cfg.caiso_ra_min_load_frac)` and deletes the
+  `0.40` fallback.** The field's `scenarios.py` default stays (the legitimate,
+  run-config-surfaced registry default); the *duplicate* solve-path literal dies.
+  Deleted, not zeroed.
+
+### 11.4 The byte-identity gate Stage 7 must pass
+
+Stage 7 is **pure code motion** ⇒ the §7.2 **exact** standard, not the
+builder-swap 1e-9 tolerance:
+
+1. **Solve byte-identity, all gate-able keepers.** `regression_gate.py --mode
+   byte`, before = a fresh pre-Stage-7 golden of the current keepers, after = the
+   Stage-7 branch. Acceptance: objective relΔ = 0, **every price Δ = 0, every
+   dispatch Δ = 0** — ERCOT/CAISO/NEISO on the 15 GB box; PJM/MISO on the G-40
+   ≥24 GB host; NYISO after its deliverability-partition recapture. Because every
+   folded field's default equals the deleted literal for a real config, and
+   `backcast_config` sets each override explicitly, the fold cannot move a number.
+2. **CAISO keeper is the load-bearing leg.** caiso-51 sets
+   `caiso_ra_mustoffer=True`, exercising `commitment.py:133`; its zero-Δ gate is
+   the specific proof that deleting the `0.40` fallback moved nothing. A gate that
+   skipped a `caiso_ra_mustoffer` keeper would not test the deletion.
+3. **Config-construction parity (pre-solve).** For each keeper `meta.json`,
+   `backcast_config(...)` returns a `ScenarioConfig` equal **field-for-field** to
+   the pre-Stage-7 `_calibration_config` output — proves the move dropped/altered
+   no field before any solve runs.
+4. **Static anti-regression guard (CI).** A test asserting **zero** literal-fallback
+   `getattr((config|cfg), "…", <non-dynamic>)` remain on the solve path, so the
+   answer keys cannot creep back (rules 24/26, mirroring §7.2's D-9 quarantine
+   gate). The boolean gates fold in the same sweep and are covered by the same
+   guard.
