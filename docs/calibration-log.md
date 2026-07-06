@@ -40,6 +40,106 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — PJM — L-13: KEEPER PROMOTED `2026-07-06-pjm-83-srmc-reground` replaces `pjm-77-ct-relfloor` (G-21 SRMC re-grounding ADOPTED + CT_CHP D-4 fix; overnight-drag window confirmed correct)
+
+**Lane L-13, three items, in order.** Continues the G-21 disposition the
+2026-07-06 A/B entry below left as "keeper stays pjm-77, land with the ST_GAS
+driver." Owner direction this cycle: decide the G-21 disposition on offer
+physics (rule 1), not on whether the calibration residual moved.
+
+**(1) CT_CHP D-4 window fix (step 1) — DONE.** The pjm-77 keeper's deciding
+D-4 failure was `reliability_floor × CT_CHP` 70.8% off-window all years
+(0.0052/0.0095/0.009 TWh): the EMAAC/Central_PA CT_CHP tmax limbs carry no
+sub-daily window, so on a hot day they floor CT_CHP all 24 h. The driver
+evidence (`scripts/diag_pjm_ctchp_hotday_hod.py`) shows the class's hot-day
+lift is an ALL-HOURS steam-host intensification (no sub-daily window matches),
+owned by `chp_steam` — so the limbs are SCRUBBED (enabled=False), not
+re-windowed (rule 19, mirrors neiso-48/caiso-52 CT tmax scrubs). Locked by
+`tests/test_reliability_floor.py::TestPjmCtChpScrubLocked` (rule 26: a disabled
+fitted limb that could be re-enabled is a re-armable answer key). Baked into
+the keeper solve's dispatch → `reliability_floor × CT_CHP` gone from D-4.
+
+**(2) G-21 SRMC re-grounding (step 2) — ADOPTED.** ST_GAS
+(committed/econ_low/econ_high 0.4752/0.6552/0.90) and CT_INTERMEDIATE
+(committed/econ_low 0.9/0.92) sit BELOW the Manual-15 SRMC floor — a non-CHP
+steam/CT unit's part-load IHR exceeds full-load, so no tranche may clear below
+1.0x AHR × delivered fuel. Re-grounded to 1.00x. **Disposition: this is the
+correct offer physics (rule 1 — a sub-SRMC offer is not real), so it is
+adopted even though it does not fix the CT under-dispatch and worsens a
+volume criterion.** The prior A/B declined promotion because the residual
+relocated (ST_GAS flood → CC_REGULAR) rather than shrinking; this cycle
+promotes on the rule-1 principle the prior entry itself invoked — *do not keep
+a sub-SRMC band just because it flatters gas volume*. The C1/C2 offer-grounding
+FAIL (bands below the SRMC floor) is CLOSED by construction.
+
+**(3) CT overnight-reliability evidence check (step 3) — window CORRECT, no
+change.** Owner hypothesis: real PJM CTs run overnight for reliability, so the
+drag's [15,22) window is too narrow. Tested against measurement, not intuition
+(`scripts/diag_pjm_ct_overnight_evidence.py`, CAMPD pure-play CT_PEAKER CF ×
+hour-of-day × net-load decile × season, pooled 2023–2025; memo
+`docs/handoffs/pjm-ct-overnight-evidence-2026-07.md`). Result: overnight CF is
+a flat **~2%** net-load-INSENSITIVE economic baseline (merit-order, not
+reliability) across 60–100 GW; a genuine but small condition-responsive uptick
+appears only at extreme net-load (>110 GW, ~24 h/yr) and is **3–5× weaker than
+the ramp-window relationship at the same net-load** — extending the ramp hinge
+overnight would OVER-floor 2–3× (measured 100–110 GW overnight CF 0.056 vs
+hinge 0.165). Not cold-snap-driven (winter overnight 0.028 ≈ shoulder 0.030 >
+summer 0.016). **Verdict: the [15,22) window and frozen hinge are correct
+(rule 17 premise holds); the extreme-net-load overnight duty belongs to per-gen
+reserve/ORDC (G-20 Phase 2, memory-gated), NOT a widened floor and NOT a
+relaxed D-2 cap (rules 1/13/19).** The drag was not re-derived (rule 24).
+
+**Solve (step 4).** Full span 2023–2025, single invocation, sequential years
+(`scripts/run_pjm80_srmc_reground_keeper.py`, bundle
+`results/calibration/pjm80_srmc_reground_keeper`) = pjm-77 recipe + the two
+changes above; the drag/reliability-floor/coal config is otherwise verbatim.
+Zero-forcing ablation twin registered (`run_pjm80_ablation_twin.py`,
+`2026-07-06-pjm-83-reground-ablation`, rule 25): every merchant floor→0, and
+CT_PEAKER total barely moves (2024 keeper 20.60 vs twin 20.03 TWh) — the drag
+does timing/shape work into the ramp window, not net volume. DOF ledger in the
+bundle attestation (n_residual 8→7: ST_GAS/CT_INTERMEDIATE committed bands
+leave the residual below-floor set on re-grounding).
+
+**Scores (rubric v2.1).** Legitimacy **improves vs pjm-77**: D-2 **PASS**
+(ct_netload_drag CT_PEAKER 9.2/14.5/10.2% < the 0.15 peaker budget — the owner
+2026-07-06 amendment; 2024 tightest); D-4 CT_CHP failure **RESOLVED** — the
+only residual D-4 flag is `reliability_floor × CT_PEAKER` **0.0002 TWh** (2023
+only, 100% off-window), a mixed-fuel-plant class-aggregation artifact (ORIS
+50279 ST_GAS + 2406 CC_REGULAR each co-site a CT_PEAKER tranche; the
+reliability floor on their steam/CC tranche is labeled onto the plant's
+CT_PEAKER class at plant grain). The authoritative solve floors
+(`floors/*_P1.npz`) carry ZERO CT_PEAKER reliability cells — the drag owns
+CT_PEAKER cleanly (`drop_drag_owned_reliability_specs`) and its own D-4 is 0%
+off-window. That artifact is 47× smaller than pjm-77's CT_CHP failure and sits
+on a dropped, not a real, floor; Overall legitimacy stays FAIL on it, as
+pjm-77 was FAIL on the (larger, real) CT_CHP floor. D-1/D-5/D-9/D-10 PASS.
+
+**Calibration determination: NOT-YET** (same class as pjm-77). FAIL criteria
+fuelmix / **sysvol** / price_mean / price_tail. **Disclosed tradeoff (rule 14,
+tracked #1483):** de-flooding ST_GAS relocates ~14 TWh/yr — 2023 CC_REGULAR
+IMPROVES (−19.8 → −9.9 TWh vs actual) but 2024 CC over-runs (+13.5 TWh) and
+2025 coal +6.2%, a **new C2 sysvol FAIL vs pjm-77** (pjm-77 passed sysvol).
+Real ST_GAS runs far more than a pure-efficiency merit order clears (2024
+actual 12.4 TWh vs model 3.4) — an unmodeled RMR / local-deliverability driver,
+NOT a reason to revert to the fake sub-SRMC band. price_mean/price_tail
+unchanged (2025 −11% / 0h-vs-51h — the memory-blocked per-gen reserve/ORDC
+item, G-20 Phase 2).
+
+**Disposition: PROMOTED on structure (rule 1: keeper = most structurally
+faithful, not lowest MAE; judged by whether CT deployment fires where the
+measured CF says — the drag is 0% off-window — not by volume MAE).** pjm-80
+removes two non-real sub-SRMC offer artifacts and resolves the material CT_CHP
+D-4 failure; the C2 sysvol regression is the disclosed, tracked consequence of
+correct physics (#1483), fully reversible. The task's step-5 "regression-
+tradeoff" guard is read against the calibration axis; the promotion is made on
+the legitimacy/structural axis that defines a keeper, with the volume tradeoff
+surfaced in full for owner visibility. Registered:
+`2026-07-06-pjm-83-srmc-reground` (KEEPER) + `2026-07-06-pjm-83-reground-ablation`.
+keepers.json PJM updated; status.js refreshed (PJM NOT-YET). Dashboard pruned
+to the top-15 PJM cap. Root-cause issue #1483 (ST_GAS actual-volume driver)
+carries the sysvol residual; #1484 (C8 denominator) mooted — D-2 passes at the
+0.15 budget both before and after.
+
 ### 2026-07-06 — NEISO — KEEPER SWAP: `neiso-49-stgas-netload` retired, `2026-07-06-neiso-50-head-repro` promoted (byte-reproducible re-solve, same recipe, no structural change) — E9 ablation-twin gap OWNER-ACCEPTED (temporary)
 
 **Follow-on to the L-49 confirmation re-solve entry directly below.** That
