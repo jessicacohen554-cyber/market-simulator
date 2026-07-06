@@ -87,6 +87,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "rggi-co2-budgets",
     "carb-cap-schedule",
     "chp-btm-share",
+    "nyiso-downstate-gas",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -213,6 +214,25 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`market_sim.data.chp.measured_btm_share_by_plant` for forecast-year "
             "CHP must-run sizing only; the backcast `_btm_frame` path is "
             "untouched. Never intake 2022/H1-2026 (rule 22)."
+        ),
+    },
+    "nyiso-downstate-gas": {
+        "summary": (
+            "Daily downstate NYISO delivered-gas index for the non-firm LM6000 "
+            "CT-peaker fleet (NYC zone J + Long Island zone K)."
+        ),
+        "reconciles": (
+            "The measured Transco Zone 6 NY pipeline-hub daily spot "
+            "(`transco_z6_ny_daily.csv`), Henry Hub daily "
+            "(`henry_hub_daily.csv`, provenance), and the measured monthly LDC "
+            "city-gate premium over that hub "
+            "(`nyiso_downstate_ct_gas_basis_monthly.csv`) — into one daily series "
+            "`delivered_gas = transco_z6_ny_daily + ldc_premium_month`, "
+            "interpolated to every calendar day (free-data memo §1.4). Each "
+            "component is a measured, forward-native market/tariff input "
+            "(rule-13); nothing fitted to a residual. Consumed by "
+            "`market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily` to "
+            "re-ground the downstate CT-peaker offer level."
         ),
     },
     "ramp-capability": {
@@ -402,7 +422,9 @@ NARRATIVE: dict[str, dict[str, str]] = {
         ),
     },
     "unit-outage-events": {
-        "summary": "Per-unit CAMPD outage events (one row per detected window).",
+        "summary": (
+            "Per-unit CAMPD outage events (one row per detected window)."
+        ),
         "reconciles": (
             "`campd-unit-outages.csv` (ERCOT) / `campd-unit-outages-<ISO>.csv` "
             "(CAISO/MISO/NEISO/NYISO/PJM) — event grain (not hourly-expanded), "
