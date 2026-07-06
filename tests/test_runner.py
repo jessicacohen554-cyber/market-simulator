@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim import runner
+from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import solve as pipeline_solve
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.model.dispatch import DispatchResult
@@ -88,7 +89,9 @@ class TestRunScenarioIso(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2028),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
@@ -107,7 +110,9 @@ class TestRunScenarioIso(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2028),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             runner.run_scenario_iso(config, "ERCOT")
             # Two solves (P0, P1) per year, 2026-2028.
@@ -124,7 +129,9 @@ class TestRunScenarioIso(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
@@ -155,7 +162,9 @@ class TestKnownYearPeakForesight(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             patch.object(runner, "evolve_fleet", side_effect=spy),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -186,7 +195,9 @@ class TestPriceSignalByteIdentity(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             patch.object(runner, "PriorYearResults", side_effect=spy),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -207,7 +218,9 @@ class TestP2CommitmentLegacyWarning(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             self.assertLogs(runner.logger, level="WARNING") as logs,
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -224,7 +237,9 @@ class TestP2CommitmentLegacyWarning(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             self.assertNoLogs(runner.logger, level="WARNING"),
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -240,7 +255,9 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
             mock_scarcity.return_value = {"scarcity_adder": np.zeros(config.hours)}
@@ -256,7 +273,9 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
             runner.run_scenario_iso(config, "CAISO")
@@ -271,7 +290,9 @@ class TestScarcityOverlayGeneralization(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
             patch.object(runner, "scarcity_prices") as mock_scarcity,
         ):
             runner.run_scenario_iso(config, "ERCOT")
@@ -290,7 +311,9 @@ class TestRunSweep(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2027),
             patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             keys = runner.run_sweep(sweep, workers=1)
 
@@ -539,7 +562,9 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             runner.run_scenario_iso(config, "ERCOT")
 
@@ -567,7 +592,9 @@ class TestStorageDischargeCostWiring(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             runner.run_scenario_iso(config, "ERCOT")
 
@@ -601,7 +628,9 @@ class TestMassCapPerUnitMembershipWiring(RunnerTestBase):
             patch.object(runner, "END_YEAR", 2026),
             patch.object(pipeline_solve, "DispatchModel", _CapturingDispatchModel),
             patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
         ):
             runner.run_scenario_iso(config, "PJM")
 
