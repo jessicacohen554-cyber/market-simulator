@@ -899,6 +899,31 @@ class ShapeForcedShareTests(unittest.TestCase):
         recs = cv.score_shape(2023, _legit_artifact(year=2024))
         self.assertEqual(recs[0]["status"], cv.SKIPPED)
 
+    def test_shape_immaterial_class_skips_a_failing_verdict(self):
+        # ST_GAS 1.5 of 100 TWh ISO total load = 1.5% < the 2.5% cut-off ->
+        # SKIPPED even though the underlying r/CV-ratio verdict is FAIL.
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
+        ybench = {"classFull": {"ST_GAS": 1.5, "OTHER": 98.5}}
+        ypay = {"gmModel": {"ST_GAS": 1.5, "OTHER": 98.5}}
+        recs = cv.score_shape(2024, legit, ypay, ybench)
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+        self.assertIn("immaterial", recs[0]["magnitude"])
+
+    def test_shape_material_class_still_gates(self):
+        # ST_GAS 10 of 100 TWh = 10% > the 2.5% cut-off -> gates as before.
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
+        ybench = {"classFull": {"ST_GAS": 10.0, "OTHER": 90.0}}
+        ypay = {"gmModel": {"ST_GAS": 10.0, "OTHER": 90.0}}
+        recs = cv.score_shape(2024, legit, ypay, ybench)
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+
+    def test_shape_without_ypay_ybench_gates_as_before(self):
+        # No ypay/ybench supplied (e.g. a raw-row unit test) -> old behavior,
+        # no materiality skip possible.
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
+        recs = cv.score_shape(2024, legit)
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+
     def test_forced_share_peaker_gate(self):
         recs = cv.score_forced_share(2024, _legit_artifact(share=0.55))
         self.assertEqual(recs[0]["status"], cv.FAIL)
