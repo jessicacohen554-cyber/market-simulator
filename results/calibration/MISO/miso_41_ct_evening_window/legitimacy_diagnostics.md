@@ -48,55 +48,41 @@ _2025: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-off
 
 **Per-class gate summary:**
 
-| year | class | forced_twh | class_total_twh | forced_share | limit | lower_bound | verdict |
-|---|---|---|---|---|---|---|---|
-| 2023 |  | 0.0397 | 112.4106 | 0.0004 | 0.3 | True | pass |
-| 2023 | CC_REGULAR | 0.0026 | 174.0694 | 0.0 | 0.3 | True | pass |
-| 2023 | COAL | 0.4215 | 142.0504 | 0.003 | 0.3 | True | pass |
-| 2023 | CT_PEAKER | 0.0163 | 21.6861 | 0.0008 | 0.1 | True | pass |
-| 2023 | ST_GAS | 0.0076 | 6.2585 | 0.0012 | 0.3 | True | pass |
-| 2023 | hydro | 0.0 | 8.6864 | 0.0 | 0.3 | True | pass |
-| 2024 |  | 0.0546 | 117.6945 | 0.0005 | 0.3 | True | pass |
-| 2024 | CC_REGULAR | 0.0 | 181.2074 | 0.0 | 0.3 | True | pass |
-| 2024 | COAL | 0.2058 | 130.202 | 0.0016 | 0.3 | True | pass |
-| 2024 | CT_PEAKER | 0.0484 | 24.5314 | 0.002 | 0.1 | True | pass |
-| 2024 | ST_GAS | 0.0191 | 6.4496 | 0.003 | 0.3 | True | pass |
-| 2024 | hydro | 0.0 | 8.9536 | 0.0 | 0.3 | True | pass |
-| 2025 |  | 0.0342 | 131.1411 | 0.0003 | 0.3 | True | pass |
-| 2025 | CC_REGULAR | 0.0005 | 162.4346 | 0.0 | 0.3 | True | pass |
-| 2025 | COAL | 0.1615 | 166.034 | 0.001 | 0.3 | True | pass |
-| 2025 | CT_PEAKER | 0.0777 | 23.191 | 0.0033 | 0.1 | True | pass |
-| 2025 | ST_GAS | 0.0252 | 5.6841 | 0.0044 | 0.3 | True | pass |
-| 2025 | hydro | 0.0 | 0.9268 | 0.0 | 0.3 | True | pass |
+| year | class | forced_twh | class_total_twh | forced_share | limit | load_share | immaterial | lower_bound | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| 2023 | CC_REGULAR | 0.0772 | 167.8435 | 0.0005 | 0.3 | 0.2889 | False | True | pass |
+| 2023 | COAL | 0.568 | 153.5019 | 0.0037 | 0.3 | 0.2642 | False | True | pass |
+| 2023 | CT_PEAKER | 0.0165 | 8.3784 | 0.002 | 0.1 | 0.0144 | True | True | pass |
+| 2023 | ST_GAS | 0.0049 | 2.6772 | 0.0018 | 0.3 | 0.0046 | True | True | pass |
+| 2024 | CC_REGULAR | 0.1738 | 173.795 | 0.001 | 0.3 | 0.285 | False | True | pass |
+| 2024 | COAL | 0.2425 | 145.0125 | 0.0017 | 0.3 | 0.2378 | False | True | pass |
+| 2024 | CT_PEAKER | 0.0488 | 11.8 | 0.0041 | 0.1 | 0.0194 | True | True | pass |
+| 2024 | ST_GAS | 0.0086 | 3.0557 | 0.0028 | 0.3 | 0.005 | True | True | pass |
+| 2025 | CC_REGULAR | 0.2693 | 155.1465 | 0.0017 | 0.3 | 0.2341 | False | True | pass |
+| 2025 | COAL | 0.207 | 191.3907 | 0.0011 | 0.3 | 0.2888 | False | True | pass |
+| 2025 | CT_PEAKER | 0.0783 | 13.337 | 0.0059 | 0.1 | 0.0201 | True | True | pass |
+| 2025 | ST_GAS | 0.012 | 3.1319 | 0.0038 | 0.3 | 0.0047 | True | True | pass |
 
 | year | class | mechanism | forced_twh | class_total_twh | share_of_class |
 |---|---|---|---|---|---|
-| 2023 |  | nuclear_mustrun | 87.1523 | 112.4106 | 0.7753 |
-| 2023 |  | reliability_floor | 0.0397 | 112.4106 | 0.0004 |
-| 2023 | CC_CHP | chp_steam | 5.814 | 33.8645 | 0.1717 |
-| 2023 | CC_REGULAR | reliability_floor | 0.0026 | 174.0694 | 0.0 |
-| 2023 | COAL | reliability_floor | 0.4215 | 142.0504 | 0.003 |
-| 2023 | CT_CHP | chp_steam | 1.7917 | 8.1606 | 0.2196 |
-| 2023 | CT_PEAKER | reliability_floor | 0.0163 | 21.6861 | 0.0008 |
-| 2023 | ST_CHP | chp_steam | 2.4663 | 3.283 | 0.7512 |
-| 2023 | ST_GAS | reliability_floor | 0.0076 | 6.2585 | 0.0012 |
-| 2024 |  | nuclear_mustrun | 90.1989 | 117.6945 | 0.7664 |
-| 2024 |  | reliability_floor | 0.0546 | 117.6945 | 0.0005 |
-| 2024 | CC_CHP | chp_steam | 5.6734 | 33.1404 | 0.1712 |
-| 2024 | COAL | reliability_floor | 0.2058 | 130.202 | 0.0016 |
-| 2024 | CT_CHP | chp_steam | 1.8758 | 7.9344 | 0.2364 |
-| 2024 | CT_PEAKER | reliability_floor | 0.0484 | 24.5314 | 0.002 |
-| 2024 | ST_CHP | chp_steam | 2.4602 | 3.4073 | 0.722 |
-| 2024 | ST_GAS | reliability_floor | 0.0191 | 6.4496 | 0.003 |
-| 2025 |  | nuclear_mustrun | 90.5915 | 131.1411 | 0.6908 |
-| 2025 |  | reliability_floor | 0.0342 | 131.1411 | 0.0003 |
-| 2025 | CC_CHP | chp_steam | 6.7027 | 31.8917 | 0.2102 |
-| 2025 | CC_REGULAR | reliability_floor | 0.0005 | 162.4346 | 0.0 |
-| 2025 | COAL | reliability_floor | 0.1615 | 166.034 | 0.001 |
-| 2025 | CT_CHP | chp_steam | 1.8818 | 7.7539 | 0.2427 |
-| 2025 | CT_PEAKER | reliability_floor | 0.0777 | 23.191 | 0.0033 |
-| 2025 | ST_CHP | chp_steam | 2.4627 | 3.2412 | 0.7598 |
-| 2025 | ST_GAS | reliability_floor | 0.0252 | 5.6841 | 0.0044 |
+| 2023 | CC_CHP | chp_steam | 0.0044 | 49.4665 | 0.0001 |
+| 2023 | CC_REGULAR | reliability_floor | 0.0772 | 167.8435 | 0.0005 |
+| 2023 | COAL | reliability_floor | 0.568 | 153.5019 | 0.0037 |
+| 2023 | CT_CHP | chp_steam | 0.0006 | 18.2044 | 0.0 |
+| 2023 | CT_PEAKER | reliability_floor | 0.0165 | 8.3784 | 0.002 |
+| 2023 | ST_GAS | reliability_floor | 0.0049 | 2.6772 | 0.0018 |
+| 2024 | CC_CHP | chp_steam | 0.0 | 48.0806 | 0.0 |
+| 2024 | CC_REGULAR | reliability_floor | 0.1738 | 173.795 | 0.001 |
+| 2024 | COAL | reliability_floor | 0.2425 | 145.0125 | 0.0017 |
+| 2024 | CT_CHP | chp_steam | 0.0041 | 17.8633 | 0.0002 |
+| 2024 | CT_PEAKER | reliability_floor | 0.0488 | 11.8 | 0.0041 |
+| 2024 | ST_GAS | reliability_floor | 0.0086 | 3.0557 | 0.0028 |
+| 2025 | CC_CHP | chp_steam | 0.0454 | 45.0995 | 0.001 |
+| 2025 | CC_REGULAR | reliability_floor | 0.2693 | 155.1465 | 0.0017 |
+| 2025 | COAL | reliability_floor | 0.207 | 191.3907 | 0.0011 |
+| 2025 | CT_CHP | chp_steam | 0.4487 | 14.64 | 0.0306 |
+| 2025 | CT_PEAKER | reliability_floor | 0.0783 | 13.337 | 0.0059 |
+| 2025 | ST_GAS | reliability_floor | 0.012 | 3.1319 | 0.0038 |
 
 ## D-4 off-window binding — PASS
 
