@@ -38,6 +38,13 @@ directory plus the committed dashboard payloads:
   marker in ``frontend/data/backcast/calibration-complete.json`` (which
   authorizes the one-shot frozen-config holdout score of 2022 / H1-2026 —
   CLAUDE.md rule 22, amended 2026-07-04).
+* **D-2 recompute-vs-committed (CI, in ``--keepers`` mode, gap G-06)** —
+  re-derive each keeper's D-2 forced-energy shares from the bundle's own
+  committed data (dashboard run payload + a deterministic floor rebuild) and
+  diff against the committed ``<bundle>/legitimacy_diagnostics.json``. Fails
+  only on a discrepancy between the two (a stale/hand-edited artifact) —
+  never on a forced-share breach that the committed artifact already
+  discloses (those are known NOT-YET findings, not this gate's job).
 * **D-10 free-class-only rescore** — per (year, fuel) wind/solar renewable-
   bound provenance (``market_sim.data.renewables.renewable_bound_provenance``):
   flags rows riding the L1 delivered-outcome bound (§4) as ``PINNED`` so a
@@ -60,7 +67,7 @@ Usage::
 
     python scripts/legitimacy_diagnostics.py --bundle <dir> --iso <ISO> \
         [--years 2023 2024 2025] [--report out.md] [--rebuild-floors]
-    python scripts/legitimacy_diagnostics.py --keepers   # D-9 across keepers
+    python scripts/legitimacy_diagnostics.py --keepers   # D-9/D-6/D-2 across keepers
 
 Exits non-zero when any gate run in the invocation fails.
 """
@@ -119,6 +126,12 @@ D2_EXEMPT_CLASSES: tuple[str, ...] = ("CC_CHP", "CT_CHP", "ST_CHP", "nuclear")
 # band; a floor below FLOOR_MIN_MW is noise, not forcing.
 D2_FLOOR_MIN_MW: float = 1.0
 D2_REL_TOL: float = 0.02
+# G-06: tolerance for the --keepers D-2 recompute-vs-committed check. The
+# rebuild path (load_or_rebuild_floors) is deterministic given unchanged code
+# + data, so a genuine drift shows up as many points of forced_share, not
+# rounding noise from the 4-decimal-place summary; keep this tight so it
+# still catches a real discrepancy.
+D2_VERIFY_TOL: float = 0.0005
 
 # D-4: justified hour windows per driver-gated floor mechanism, keyed
 # (mechanism_id, plant_class) with None matching any class. Hours are local
@@ -793,6 +806,91 @@ def run_d9_keepers(repo_root: Path) -> GateResult:
     return res
 
 
+def run_d2_keepers_verify(repo_root: Path) -> GateResult:
+    """G-06: recompute D-2 forced-energy shares for every keeper, verbatim.
+
+    Prior to this gate, CI trusted each bundle's committed
+    ``legitimacy_diagnostics.json`` at face value — nothing re-derived it, so
+    a stale artifact (hand-edited, or generated before a later code/data
+    change) would sail through unnoticed. This recomputes D-2 straight from
+    the bundle's own committed data (the dashboard run payload for dispatch
+    when ``dispatch/*.parquet`` is gitignored-absent, per-plant floors
+    rebuilt via ``run_year(fleet_only=True)`` when ``floors/*.npz`` is
+    likewise absent — the same deterministic fallback ``diagnose_bundle``
+    already uses for local `--bundle` runs) and diffs the recomputed
+    ``forced_share`` against the committed one per (year, class).
+
+    This is a staleness check, NOT a re-litigation of the D-2 threshold
+    itself: a committed FAIL (e.g. the disclosed ercot32 CT_PEAKER 11.1%
+    breach) that recomputes to the same FAIL is a `pass` here — it only
+    fails when the recomputed number and the committed number disagree.
+    """
+    res = GateResult("D-2 forced-energy recompute (all keepers)")
+    keepers_path = repo_root / "frontend/data/backcast/keepers.json"
+    if not keepers_path.exists():
+        return res
+    keepers = json.loads(keepers_path.read_text())
+    for run_id in keepers.get("keepers", []):
+        side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
+        side = json.loads(side_path.read_text())
+        bundle = repo_root / side["bundle"]
+        iso = side.get("iso", "")
+        years = [int(y) for y in side.get("years", [])]
+        committed_path = bundle / "legitimacy_diagnostics.json"
+        if not committed_path.exists():
+            res.notes.append(
+                f"{run_id}: no committed legitimacy_diagnostics.json to verify "
+                "against — skipped (see G-01/G-02)"
+            )
+            continue
+        committed = json.loads(committed_path.read_text())
+        committed_summary = {
+            (row["year"], row["class"]): row
+            for row in committed.get("diagnostics", {}).get("D2", {}).get("summary", [])
+        }
+        recomputed = diagnose_bundle(
+            bundle, iso, years, repo_root=repo_root, only={"D2"}
+        )
+        d2 = next((r for r in recomputed if r.name.startswith("D-2")), None)
+        recomputed_summary = (
+            {(row["year"], row["class"]): row for row in d2.summary}
+            if d2 is not None
+            else {}
+        )
+        for key in sorted(set(committed_summary) | set(recomputed_summary)):
+            year, klass = key
+            c_row = committed_summary.get(key)
+            r_row = recomputed_summary.get(key)
+            # A class absent from one side's summary means run_d2's own
+            # total_by_class[k] <= 0.0 filter dropped it there (e.g. a
+            # non-thermal class with no dispatch in that recompute) — the
+            # same substantive fact as an explicit forced_share of 0.0, not
+            # a discrepancy. Comparing missing-as-zero still catches a real
+            # drift (a class with a genuine nonzero share on one side and no
+            # row on the other legitimately fails below).
+            c_share = c_row["forced_share"] if c_row else 0.0
+            r_share = r_row["forced_share"] if r_row else 0.0
+            ok = abs(c_share - r_share) <= D2_VERIFY_TOL
+            res.rows.append(
+                {
+                    "run": run_id,
+                    "year": year,
+                    "class": klass,
+                    "committed_share": c_share,
+                    "recomputed_share": r_share,
+                    "verdict": "pass" if ok else "FAIL",
+                }
+            )
+            if not ok:
+                res.failures.append(
+                    f"{run_id} {year} {klass!r}: committed forced_share "
+                    f"{c_share} != recomputed {r_share} — committed "
+                    "legitimacy_diagnostics.json is stale vs the bundle it "
+                    "describes"
+                )
+    return res
+
+
 # ---------------------------------------------------------------------------
 # D-10 — free-class-only rescore (renewable-bound provenance)
 # ---------------------------------------------------------------------------
@@ -1371,7 +1469,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--keepers",
         action="store_true",
-        help="run the D-9 quarantine across every keeper bundle (CI mode)",
+        help="run the D-9 quarantine, D-6 holdout quarantine, and the D-2 "
+        "recompute-vs-committed staleness check across every keeper bundle "
+        "(CI mode)",
     )
     parser.add_argument("--report", type=Path, help="write a markdown report")
     parser.add_argument(
@@ -1387,6 +1487,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.keepers:
         results.append(run_d9_keepers(REPO_ROOT))
         results.append(run_d6_quarantine(REPO_ROOT))
+        results.append(run_d2_keepers_verify(REPO_ROOT))
         bundle_label = "all keepers"
     if args.bundle:
         if not args.iso:
