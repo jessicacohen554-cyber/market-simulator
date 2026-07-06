@@ -360,11 +360,20 @@ def apply_confirmed_exits(
 
     exit_mw_by_plant: dict[int, float] = {}
     exit_gids_by_plant: dict[int, set[str]] = {}
+    exit_month_by_plant: dict[int, int | None] = {}
     for e in effective:
         exit_mw_by_plant[e.plant_id] = exit_mw_by_plant.get(e.plant_id, 0.0) + (
             e.mw or 0.0
         )
         exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
+        # Track the earliest exit_month (in case multiple units exit in different months).
+        if e.plant_id not in exit_month_by_plant:
+            exit_month_by_plant[e.plant_id] = e.exit_month
+        elif e.exit_month is not None and (
+            exit_month_by_plant[e.plant_id] is None
+            or e.exit_month < exit_month_by_plant[e.plant_id]
+        ):
+            exit_month_by_plant[e.plant_id] = e.exit_month
 
     # Per exit-plant total binned MW (the derate denominator), computed once.
     binned_mw_by_plant: dict[int, float] = {}
@@ -393,7 +402,33 @@ def apply_confirmed_exits(
                     )
                 kept.append(g)
                 continue
-            factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
+            # Calculate derate factor, accounting for month-level precision.
+            # If exit_month <= 6 and we're applying in the exit year, compute
+            # annual-average: available for exit_month months, retired for the rest.
+            exit_month = exit_month_by_plant.get(pc)
+            if (
+                exit_month is not None
+                and exit_month <= 6
+                and _confirmed_effective_year(
+                    ConfirmedExit(
+                        plant_id=pc,
+                        generator_id="",
+                        exit_year=year,
+                        exit_month=exit_month,
+                    )
+                )
+                == year
+            ):
+                # Annual-average derate accounting for month-level precision:
+                # exit_month months at full capacity + (12 - exit_month) months at reduced capacity
+                months_retired = 12 - exit_month
+                reduced_factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
+                factor = (exit_month / 12.0) * 1.0 + (
+                    months_retired / 12.0
+                ) * reduced_factor
+            else:
+                # Full-year derate (exit_month > 6 effective next year, or no exit_month).
+                factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
             derated = _derate_generator(g, factor)
             if derated.pmax_mw > _CONFIRMED_EXIT_MW_EPS:
                 kept.append(derated)
