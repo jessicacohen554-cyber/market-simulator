@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-05",
+  "generated": "2026-07-06",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -3190,6 +3190,42 @@
       ]
     },
     {
+      "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
+      "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
+      "value": 0.058,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Load-side capacity products netted out of gross peak in the ISO's own firm-peak-load construction, as a fraction of the gross seasonal peak. ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column): Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load management 303 + distribution voltage reduction 1,162 = 5,520 MW on the 95,419 MW gross seasonal peak = 5.8%. These are standing ERCOT demand-response programs whose enrollment scales roughly with load, so a fraction of peak regenerates for forward years (rule 13 admissible: a market-design input, not an outcome). Rooftop-PV netting is EXCLUDED — EIA-930 demand is already net of behind-the-meter PV. ISOs absent here net nothing (neutral fallback).",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "adequacy_external_tie_firm_mw.ERCOT",
+      "display_name": "Adequacy External Tie Firm Mw / Ercot",
+      "value": 817.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Firm import contribution of asynchronous external ties counted by the ISO's own adequacy ledger but absent from the model topology (the model's ERCOT has no import node). ERCOT: 817 MW, \"based on average net import contribution during the EEA events: summer 2023 and winter 2020/2021 EEA events\" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -3421,12 +3457,54 @@
         "member_states": [
           "MD",
           "DE",
-          "NJ"
+          "NJ",
+          "VA"
         ],
         "price_key": null,
         "escalation_rate": 0.07,
         "external_nodes": [],
-        "zone_share": {}
+        "zone_share": {
+          "PJM_ComEd": {
+            "2023": 0.0,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_AEP_Ohio": {
+            "2023": 0.0,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_ATSI": {
+            "2023": 0.0,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_West_APS": {
+            "2023": 0.0108,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_Central_PA": {
+            "2023": 0.0,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_Dominion": {
+            "2023": 0.9881,
+            "2024": 0.0,
+            "2025": 0.0
+          },
+          "PJM_EMAAC": {
+            "2023": 0.7327,
+            "2024": 0.7252,
+            "2025": 0.7221
+          },
+          "PJM_SWMAAC": {
+            "2023": 0.9976,
+            "2024": 0.9976,
+            "2025": 0.9976
+          }
+        }
       },
       "unit": "",
       "domain": "Uncategorized",
@@ -10832,6 +10910,182 @@
       ]
     },
     {
+      "param_id": "pjm_rggi_zone_share.PJM_AEP_Ohio",
+      "display_name": "Pjm Rggi Zone Share / Pjm Aep Ohio",
+      "value": {
+        "2023": 0.0,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_ATSI",
+      "display_name": "Pjm Rggi Zone Share / Pjm Atsi",
+      "value": {
+        "2023": 0.0,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_Central_PA",
+      "display_name": "Pjm Rggi Zone Share / Pjm Central Pa",
+      "value": {
+        "2023": 0.0,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_ComEd",
+      "display_name": "Pjm Rggi Zone Share / Pjm Comed",
+      "value": {
+        "2023": 0.0,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_Dominion",
+      "display_name": "Pjm Rggi Zone Share / Pjm Dominion",
+      "value": {
+        "2023": 0.9881,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_EMAAC",
+      "display_name": "Pjm Rggi Zone Share / Pjm Emaac",
+      "value": {
+        "2023": 0.7327,
+        "2024": 0.7252,
+        "2025": 0.7221
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_SWMAAC",
+      "display_name": "Pjm Rggi Zone Share / Pjm Swmaac",
+      "value": {
+        "2023": 0.9976,
+        "2024": 0.9976,
+        "2025": 0.9976
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pjm_rggi_zone_share.PJM_West_APS",
+      "display_name": "Pjm Rggi Zone Share / Pjm West Aps",
+      "value": {
+        "2023": 0.0108,
+        "2024": 0.0,
+        "2025": 0.0
+      },
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA), and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from the year-matched EIA-860 plant/generator tables (state + capacity), the same PJM zone assignment the dispatch model uses (`data.zone_assignment.build_zone_lookup(\"PJM\")`), and `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below: PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year; 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to small year-over-year additions/retirements, so only the legal membership differs from 2023. This is the *zone-level* fallback consumed only by generators whose `plant_code` cannot be resolved to a single physical plant (legacy equal-width bins); a real plant_code is tested exactly against its own state instead (`policy.cap_and_trade.per_generator_membership`). Still ships inert by default: PJM has no measured price series (`price_key=None` below) so the adder path stays $0 regardless of membership, and the mass-cap row only activates when a user explicitly sets `mass_cap_enabled=True` (default off, rule 24).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "pjm_seam_flow_percentile",
       "display_name": "Pjm Seam Flow Percentile",
       "value": 90.0,
@@ -10962,6 +11216,42 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "planning_reserve_margin_icap_to_ucap_ratio_by_iso.MISO",
+      "display_name": "Planning Reserve Margin Icap To Ucap Ratio By Iso / Miso",
+      "value": 0.9325842696629213,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity — each ISO's own filing pairs it with a separate UNFORCED-capacity-basis requirement, since the model's supply-side ledger (:func:`market_sim.model.capacity.accredited_firm_capacity_mw`) counts these ISOs' thermal fleet at UCAP (``1 - EFORd``, the registry default). Testing an ICAP-basis requirement against UCAP-basis supply double-counts forced-outage risk, the same error class the ERCOT accreditation audit fixed for CDR seasonal-rating vs UCAP. Values are each ISO's OWN published ICAP<->UCAP conversion ratio (not a model-derived pool EFORd, so nothing here depends on the model's own fleet mix): PJM: FPR / (1 + IRM) = 0.9170 / 1.191 = 0.7699 (2026/2027 BRA planning parameters — \"Public Installed Reserve Margin (IRM), Forecast Pool Requirement (FPR)\"; FPR states the SAME required reserve level as the IRM but in UCAP terms, so this ratio is the ISO's own ICAP->UCAP conversion, stable year to year even as the target IRM itself moves). MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY 2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways: ICAP 15.7%, UCAP 7.9%). ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM is already on the model's own supply basis — ERCOT's is fixed at the CDR seasonal-rating basis by the accreditation audit, not this registry).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "planning_reserve_margin_icap_to_ucap_ratio_by_iso.PJM",
+      "display_name": "Planning Reserve Margin Icap To Ucap Ratio By Iso / Pjm",
+      "value": 0.7699412258606213,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity — each ISO's own filing pairs it with a separate UNFORCED-capacity-basis requirement, since the model's supply-side ledger (:func:`market_sim.model.capacity.accredited_firm_capacity_mw`) counts these ISOs' thermal fleet at UCAP (``1 - EFORd``, the registry default). Testing an ICAP-basis requirement against UCAP-basis supply double-counts forced-outage risk, the same error class the ERCOT accreditation audit fixed for CDR seasonal-rating vs UCAP. Values are each ISO's OWN published ICAP<->UCAP conversion ratio (not a model-derived pool EFORd, so nothing here depends on the model's own fleet mix): PJM: FPR / (1 + IRM) = 0.9170 / 1.191 = 0.7699 (2026/2027 BRA planning parameters — \"Public Installed Reserve Margin (IRM), Forecast Pool Requirement (FPR)\"; FPR states the SAME required reserve level as the IRM but in UCAP terms, so this ratio is the ISO's own ICAP->UCAP conversion, stable year to year even as the target IRM itself moves). MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY 2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways: ICAP 15.7%, UCAP 7.9%). ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM is already on the model's own supply basis — ERCOT's is fixed at the CDR seasonal-rating basis by the accreditation audit, not this registry).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -12322,6 +12612,42 @@
       ]
     },
     {
+      "param_id": "renewable_capacity_credit_by_iso.ERCOT.solar",
+      "display_name": "Renewable Capacity Credit By Iso / Ercot / Solar",
+      "value": 0.21,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy ledger (the retirement reliability floor and the reserve-margin backstop, capacity.py). ISOs absent here use the generic values above — byte-identical fallback. ERCOT values are the ISO's OWN published accreditation: the December 2025 CDR counts wind/solar at probabilistic ELCCs. Implied percentages = the CDR's summer ELCC MW (operational + CDR-eligible planned, peak-load-hour column) over installed nameplate (ERCOT Fact Sheet, June 2026: wind 40,739 MW, utility-scale solar 39,591 MW): wind : 8,210 / 40,739 = 20.2% for 2026, stable at 20.5-20.8% through 2030 -> 0.20. solar: 11,097 / 39,591 = 28.0% for 2026, diluting to 20.5-21.1% by 2028-2030 as penetration grows -> 0.21 (the CDR's own plateau; conservative for 2026-27, right for the forecast horizon where the floor decision matters). Source: ERCOT, \"Report on the Capacity, Demand and Reserves (CDR) in the ERCOT Region\", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_capacity_credit_by_iso.ERCOT.wind",
+      "display_name": "Renewable Capacity Credit By Iso / Ercot / Wind",
+      "value": 0.2,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy ledger (the retirement reliability floor and the reserve-margin backstop, capacity.py). ISOs absent here use the generic values above — byte-identical fallback. ERCOT values are the ISO's OWN published accreditation: the December 2025 CDR counts wind/solar at probabilistic ELCCs. Implied percentages = the CDR's summer ELCC MW (operational + CDR-eligible planned, peak-load-hour column) over installed nameplate (ERCOT Fact Sheet, June 2026: wind 40,739 MW, utility-scale solar 39,591 MW): wind : 8,210 / 40,739 = 20.2% for 2026, stable at 20.5-20.8% through 2030 -> 0.20. solar: 11,097 / 39,591 = 28.0% for 2026, diluting to 20.5-21.1% by 2028-2030 as penetration grows -> 0.21 (the CDR's own plateau; conservative for 2026-27, right for the forecast horizon where the floor decision matters). Source: ERCOT, \"Report on the Capacity, Demand and Reserves (CDR) in the ERCOT Region\", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "renewable_installed_mw.CAISO.solar",
       "display_name": "Renewable Installed Mw / Caiso / Solar",
       "value": 22000.0,
@@ -12538,6 +12864,62 @@
       ]
     },
     {
+      "param_id": "rggi_member_states_by_year",
+      "display_name": "Rggi Member States By Year",
+      "value": {
+        "2023": [
+          "VA",
+          "MA",
+          "CT",
+          "NH",
+          "RI",
+          "VT",
+          "NJ",
+          "DE",
+          "ME",
+          "NY",
+          "MD"
+        ],
+        "2024": [
+          "MA",
+          "CT",
+          "NH",
+          "RI",
+          "VT",
+          "NJ",
+          "DE",
+          "ME",
+          "NY",
+          "MD"
+        ],
+        "2025": [
+          "MA",
+          "CT",
+          "NH",
+          "RI",
+          "VT",
+          "NJ",
+          "DE",
+          "ME",
+          "NY",
+          "MD"
+        ]
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "RGGI member states by year (postal codes). Virginia joined RGGI's CO2 Budget Trading Program in 2021 (regulation 9 VAC 5-140) and exited effective 1 Jan 2024 (2023 Va. Acts of Assembly ch. 2/3, repealing the program); Pennsylvania's entry remains enjoined by the Commonwealth Court (Shirkey v. DEP, ongoing) and was never an actual member, so PA is never included. Used to (a) resolve per-generator RGGI membership exactly from a plant's own state (§5 per-unit mask) and (b) sum each RGGI ISO's own member-state budgets (below) instead of the regional over-bound. 2022 omitted (holdout quarantine, CLAUDE.md rule 22); years beyond 2025 hold the 2025 (post-VA-exit) set — no further membership changes are enacted as of this writing. Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and- design/elements); Virginia Clean Economy and Equity Act repeal, effective 2024-01-01.",
+      "source_date": "2021",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "rggi_reserve_escalation",
       "display_name": "Rggi Reserve Escalation",
       "value": 0.07,
@@ -12556,12 +12938,188 @@
       ]
     },
     {
+      "param_id": "rggi_state_co2_budget.CT",
+      "display_name": "Rggi State Co2 Budget / Ct",
+      "value": {
+        "2023": 4566218.0,
+        "2024": 4418921.0,
+        "2025": 4271624.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.DE",
+      "display_name": "Rggi State Co2 Budget / De",
+      "value": {
+        "2023": 3178264.0,
+        "2024": 3075739.0,
+        "2025": 2973215.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.MA",
+      "display_name": "Rggi State Co2 Budget / Ma",
+      "value": {
+        "2023": 11220454.0,
+        "2024": 10858504.0,
+        "2025": 10496554.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.MD",
+      "display_name": "Rggi State Co2 Budget / Md",
+      "value": {
+        "2023": 15772679.0,
+        "2024": 15263882.0,
+        "2025": 14755086.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.ME",
+      "display_name": "Rggi State Co2 Budget / Me",
+      "value": {
+        "2023": 2569587.0,
+        "2024": 2487656.0,
+        "2025": 2405725.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.NH",
+      "display_name": "Rggi State Co2 Budget / Nh",
+      "value": {
+        "2023": 3723549.0,
+        "2024": 3604823.0,
+        "2025": 3486098.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.NJ",
+      "display_name": "Rggi State Co2 Budget / Nj",
+      "value": {
+        "2023": 16380000.0,
+        "2024": 15840000.0,
+        "2025": 15300000.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.NY",
+      "display_name": "Rggi State Co2 Budget / Ny",
+      "value": {
+        "2023": 27295284.0,
+        "2024": 26414791.0,
+        "2025": 25534298.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "rggi_state_co2_budget.RGGI",
       "display_name": "Rggi State Co2 Budget / Rggi",
       "value": {
-        "2023": 93000000.0,
-        "2024": 69000000.0,
-        "2025": 67000000.0,
+        "2023": 112457784.0,
+        "2024": 84162784.0,
+        "2025": 81347784.0,
         "2027": 63200000.0,
         "2028": 61400000.0,
         "2029": 59600000.0,
@@ -12572,6 +13130,70 @@
       "tier": 2,
       "source": "RGGI regional CO2 allowance budget (short tons/yr). Keyed by \"RGGI\" for the regional total; per-state budgets can be added under their postal codes once the RGGI per-state allowance-distribution table is intaken (until then a RGGI ISO's power-sector row uses the regional cap — an even looser over-bound, so still slack). 2023-2025 are the published regional cap; 2027-2030 project the 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured). Source: RGGI, Inc. regional cap trajectory (ICAP ETS profile); the 2023->2024 step reflects Virginia's 1 Jan 2024 exit. 2022/2026 omitted (quarantine).",
       "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.RI",
+      "display_name": "Rggi State Co2 Budget / Ri",
+      "value": {
+        "2023": 1763884.0,
+        "2024": 1706986.0,
+        "2025": 1650085.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.VA",
+      "display_name": "Rggi State Co2 Budget / Va",
+      "value": {
+        "2023": 25480000.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "rggi_state_co2_budget.VT",
+      "display_name": "Rggi State Co2 Budget / Vt",
+      "value": {
+        "2023": 507865.0,
+        "2024": 491482.0,
+        "2025": 475099.0
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI CO2 allowance budgets (short tons/yr), regional (\"RGGI\") and per member-state (postal code). Per-state values are each state's \"CO2 Allowance Base Budget\" — the gross annual issuance under its own CO2 Budget Trading Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA, a bank-clearing haircut) — because this model's row is an explicitly no-bank instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's power-sector row sums its own member states' base budgets (policy/cap_and_trade.py::_published_power_sector_budget), which is a much tighter, more faithful bound than the regional total (rule 12: prefer the accurate figure). \"RGGI\" is kept as the regional fallback for years without a per-state breakdown (2027-2030 projections) or an unmapped ISO. 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official \"Distribution of VYyyyy CO2 Allowances By State\" spreadsheets (\"CO2 Allowance Base Budget\" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/ {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784). 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward trajectory, not measured); no per-state breakdown is published for projected years, so a RGGI ISO's forecast-year row falls back to this regional over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).",
+      "source_date": "2027",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -12829,6 +13451,25 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_lcr_commitment_credit",
+      "display_name": "Caiso Lcr Commitment Credit",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "CAISO: credit the LCR",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_per_hub_intertie",
       "display_name": "Caiso Per Hub Intertie",
       "value": false,
@@ -12950,6 +13591,44 @@
       "domain": "Fuel Prices",
       "tier": 1,
       "source": "Price BOTH legs of CAISO's two WECC",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_reserve_coopt",
+      "display_name": "Caiso Reserve Coopt",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "CAISO: enable the per-generator",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_scarcity_pricing",
+      "display_name": "Caiso Scarcity Pricing",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "CAISO: enable the post-solve",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13926,6 +14605,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_econ_srmc_bound",
+      "display_name": "Coal Econ Srmc Bound",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Marginal-coal measured-SRMC offer bound. The gas-keyed passthrough sigmoids exist to model take-or-pay / stay-online BID discounting of *contracted* coal, but they currently discount every above-must-run tranche — including the marginal (econ*/peak) tranches whose fuel is bought at market and has no sunk-contract story. With this on, the fuel passthrough of a coal tranche above ``_committed`` is clamped to >= 1.0, so the marginal coal offer never drops below the plant's own measured incremental delivered SRMC (F923 delivered $/MMBtu x tranche heat rate + VOM; the committed/must-run bands keep their contracted discount). Removes a fitted degree of freedom from the offer path rather than adding one — the sigmoid keeps only the tranches whose discount has a physical (contract) driver. Forward-reproducible: the bound is \"offer >= full delivered fuel cost\", which regenerates from the forward fuel-price trajectory. Evidence: MISO model LMP sat $4-5 below the coal fleet's cheapest *measured* tranche while coal was marginal ~94% of hours (results/calibration/FINDING-miso-burndown- 2026-07.md Evidence 2). Default off (all existing keepers unchanged).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -15862,6 +16559,24 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_ct_offer_surface",
+      "display_name": "Ercot Ct Offer Surface",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ERCOT G-22 condition-responsive CT/peaker offer surface (default off, ERCOT-gated). In the missed tail hours the model offers online CT/peaker economic+peak tranches at flat heat_rate x gas (~$50-150/MWh) — \"phantom sub-$200 spare\" that caps the energy dual — while the real fleet's peakers self-withhold to the ERCOT cap band (~$1,500/MWh). This raises the CT/peaker econ+peak tranche offer to the MEASURED self-withholding level (60-Day DAM disclosure, data/raw/_validation-source/ercot_ct_offer_surface.json) only above a measured net-load-percentile hinge (where even the peaker fleet's lower quartile has crossed to cap-band); slack hours are byte-identical (LP applies max(mc, level), low regime = 0). Forward-native (net-load regenerates from a load+VRE forecast), rule-13-admissible; parameters frozen against residuals (rule 20). See docs/handoffs/ercot-g22-offer-surface-2026-07.md and data.fleet.apply_ercot_ct_offer_surface.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_ecrs_requirement",
       "display_name": "Ercot Ecrs Requirement",
       "value": false,
@@ -17142,6 +17857,25 @@
       ]
     },
     {
+      "param_id": "scenario.market_design_retirement_floor",
+      "display_name": "Market Design Retirement Floor",
+      "value": false,
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 1,
+      "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.mass_cap_enabled",
       "display_name": "Mass Cap Enabled",
       "value": false,
@@ -17198,6 +17932,25 @@
       ]
     },
     {
+      "param_id": "scenario.measured_ramp_capability",
+      "display_name": "Measured Ramp Capability",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "Reconcile FleetArrays.ramp10's",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.miso_cc_coal_rebalance",
       "display_name": "Miso Cc Coal Rebalance",
       "value": false,
@@ -17205,6 +17958,25 @@
       "domain": "Fuel Prices",
       "tier": 1,
       "source": "MISO CC_REGULAR / COAL_BIT offer-curve",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.miso_commitment_posture",
+      "display_name": "Miso Commitment Posture",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "MISO: pooled linear commitment-",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17483,6 +18255,25 @@
       ]
     },
     {
+      "param_id": "scenario.neighbor_hr_forward_skill",
+      "display_name": "Neighbor Hr Forward Skill",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "FORWARD-SKILL validation",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.neiso_gas_coldsnap_derate",
       "display_name": "Neiso Gas Coldsnap Derate",
       "value": false,
@@ -17635,6 +18426,25 @@
       ]
     },
     {
+      "param_id": "scenario.neiso_winter_fuel_mustrun",
+      "display_name": "Neiso Winter Fuel Mustrun",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEISO winter fuel-security",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.neiso_winter_fuel_start_fill_bbl",
       "display_name": "Neiso Winter Fuel Start Fill Bbl",
       "value": null,
@@ -17654,6 +18464,63 @@
       ]
     },
     {
+      "param_id": "scenario.neiso_winter_fuelsec_commit_frac",
+      "display_name": "Neiso Winter Fuelsec Commit Frac",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Fraction of each fuel-secure",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_winter_fuelsec_min_stable_pct",
+      "display_name": "Neiso Winter Fuelsec Min Stable Pct",
+      "value": 0.4,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Physical minimum-stable",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_winter_fuelsec_tmin_c",
+      "display_name": "Neiso Winter Fuelsec Tmin C",
+      "value": -7.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Cold-day gate on zone daily TMIN",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nominal_discount_rate",
       "display_name": "Nominal Discount Rate",
       "value": 0.08,
@@ -17661,6 +18528,61 @@
       "domain": "Cost Trajectories",
       "tier": 2,
       "source": "Nominal WACC, $/MWh LCOE basis",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_downstate_ct_gas_basis",
+      "display_name": "Nyiso Downstate Ct Gas Basis",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "---- NYISO downstate-peaker structural pricing (2026-07, issue #1344 / ---- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.  Tier 3 (calibration) — NYISO downstate interruptible city-gate gas premium for CT peakers. NYISO's downstate combustion-turbine peakers (NYC zone J + Long Island zone K, the CT_PEAKER LM6000 fleet) run only a few hundred hours a year, so they hold no firm interstate pipeline capacity and take gas off the local LDC (Con Edison / National Grid / KeySpan) city gate on interruptible service. Their delivered fuel index is the LDC city gate, not the interstate pipeline hub the model prices downstate gas at (Transco Z6 NY via gas_monthly_actuals + the hub-basis overlay). Pricing the peakers at the pipeline hub lets an HR~9-10 LM6000 undercut the HR~11-12 downstate steam fleet and run near-baseload year-round (dominated by the Long Island gas-island peakers) — the CT_PEAKER over-run the B-NYI-1 offer de-leak exposes. When set, each downstate CT_PEAKER unit's delivered gas is lifted from the pipeline hub to its LDC-delivered index by the MEASURED monthly premium (EIA NG NY city-gate N3050NY3 minus the measured Transco Z6 NY hub, floored 0; positive year-round, widening in summer; a delivered fuel price, rule #13's canonical admissible input — regenerates for a forward year and responds to changed conditions). Off by default so other ISOs and all forecasts are byte-identical; the calibration harness enables it for NYISO. Backcast+forecast reproducible. See market_sim.data.fuel.apply_nyiso_downstate_ct_gas_basis.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_downstate_ct_gas_daily",
+      "display_name": "Nyiso Downstate Ct Gas Daily",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — DAILY re-grounding of the same downstate CT-peaker delivered-gas index. Supersedes nyiso_downstate_ct_gas_basis (the monthly-premium adder) for the same class: instead of lifting the pipeline-hub MONTHLY base by the monthly LDC premium, each downstate CT_PEAKER unit's delivered gas is SET directly to the curated DAILY delivered-gas index = measured Transco Z6 NY pipeline-hub daily spot + measured monthly LDC city-gate premium (the nyiso-downstate-gas curated datatype; free-data memo §1.4). The daily Transco spot captures the cold-snap blowouts (Jan-2024 $23.90) on the exact days the interruptible peakers actually run, which the monthly mean smears away — a strictly more measured, forward-native re-grounding (rules #11/#13), never a fitted band. The dual-fuel oil-parity min still caps any winter spike (runs after). Off by default; set nyiso_downstate_ct_gas_basis=False when this is on (one mechanism per phenomenon, rule 19). See market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_dynamic_reserve_requirements",
+      "display_name": "Nyiso Dynamic Reserve Requirements",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "GATED, default-OFF",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17756,6 +18678,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "NYISO eastern (Iroquois Z2)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_li_lcr_tsl",
+      "display_name": "Nyiso Li Lcr Tsl",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "NYISO Long Island Zone-K LCR/TSL mechanism",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -18023,6 +18964,25 @@
       "domain": "Reliability",
       "tier": 3,
       "source": "Tier 3 (calibration) — thermal availability source. \"statistical\" (default) builds coal/CC availability from the seasonal WEFOR/POF model; \"historic\" additionally overlays actual ERCOT outages (coal/CC plants, > 10-day spans) for the weather year as a hard zero, pinning units that were physically out for sustained maintenance. Backcasts set \"historic\" to cut calibration noise; forecasts keep \"statistical\". See market_sim.data.outages and generators_to_fleet_arrays.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_commitment_posture",
+      "display_name": "Pjm Commitment Posture",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "PJM: the SAME pooled linear",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -19039,6 +19999,25 @@
       ]
     },
     {
+      "param_id": "scenario.strict_demand_profile",
+      "display_name": "Strict Demand Profile",
+      "value": false,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "When True, threaded through to",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.tech_cost_path",
       "display_name": "Tech Cost Path",
       "value": "mid",
@@ -19171,7 +20150,7 @@
     {
       "param_id": "scenario.use_plant_emission_rates_v2",
       "display_name": "Use Plant Emission Rates V2",
-      "value": false,
+      "value": true,
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -20004,6 +20983,42 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "storage_elcc_dilution_ceiling_ratio_by_iso.ERCOT",
+      "display_name": "Storage Elcc Dilution Ceiling Ratio By Iso / Ercot",
+      "value": 0.7641196013289037,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "The CDR's own fleet-average BESS ELCC ratio at full deployment-ceiling penetration relative to the reference-MW ELCC above: 46% / 60.2% (accred- itation audit §3, \"dilutes 60% -> 46% by 2030\"). A floor, not a fitted curve — the model has no CDR data point between the two cited years, so the dilution factor is linear between them (see the reference-MW registry's docstring); this is the value the line reaches at penetration = 1.0, not a value asserted to land exactly in 2030.",
+      "source_date": "2030",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "storage_elcc_dilution_reference_mw_by_iso.ERCOT",
+      "display_name": "Storage Elcc Dilution Reference Mw By Iso / Ercot",
+      "value": 20438.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Dec 2025 CDR: operational + CDR-eligible planned BESS",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -21369,6 +22384,24 @@
       ]
     },
     {
+      "param_id": "thermal_accreditation_basis_by_iso.ERCOT",
+      "display_name": "Thermal Accreditation Basis By Iso / Ercot",
+      "value": "seasonal_rating",
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "Thermal accreditation basis for the same adequacy ledger, per ISO. Default (ISO absent): \"ucap\" = pmax x (1 - EFORd). \"seasonal_rating\" counts thermal at its rating with NO forced-outage derate — ERCOT's CDR convention, where forced-outage risk lives in the 13.75% Board target margin rather than in the capacity count (the CDR's \"Installed Seasonal-rated Thermal Capacity\" rows carry no EFORd derate). Mixing UCAP-derated supply with the rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary.",
+      "source_date": "2026",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "thermal_availability.BIOMASS",
       "display_name": "Thermal Availability / Biomass",
       "value": [
@@ -21705,6 +22738,9 @@
       "param_id": "weather_year_pool_by_iso.CAISO",
       "display_name": "Weather Year Pool By Iso / Caiso",
       "value": [
+        2019,
+        2020,
+        2021,
         2023,
         2024,
         2025
@@ -21752,6 +22788,9 @@
       "param_id": "weather_year_pool_by_iso.MISO",
       "display_name": "Weather Year Pool By Iso / Miso",
       "value": [
+        2019,
+        2020,
+        2021,
         2023,
         2024,
         2025
@@ -21822,6 +22861,7 @@
       "param_id": "weather_year_pool_by_iso.PJM",
       "display_name": "Weather Year Pool By Iso / Pjm",
       "value": [
+        2021,
         2023,
         2024,
         2025
