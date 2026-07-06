@@ -1107,9 +1107,12 @@ def backcast_config(
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
         commitment_screen_coal=commitment_screen_coal,
-        wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
-        #   (shape preserved) so coal can hold its shoulder-month output
-        #   rather than being availability-capped in spring/autumn.
+        wefor_multiplier=(1.0 if iso.upper() == "MISO" else 0.7),
+        #   MISO: neutralised to 1.0 (miso-44) — residual-identified DOF (audit
+        #   C-15) with no measured physical basis; the miso-42 ablation twin
+        #   showed the 0.7 haircut was the driver of the base-vs-twin score delta
+        #   (not the reliability floors, which force <0.6 TWh total). Other ISOs:
+        #   0.7 retained pending their own root-cause investigations.
         coal_prb_passthrough=coal_prb_passthrough,  # default 1.0 = OFF (it is
         #   gas-price fragile; coal level set by the must-run floor). Set via
         #   --coal-prb-passthrough to re-test the price-taking discount.
