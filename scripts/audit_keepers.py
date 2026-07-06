@@ -39,7 +39,11 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
       candidate by design (CLAUDE.md rule 15/#1), so a probe landing after the
       keeper must not read as "keeper may be stale" — the probe stays on the
       dashboard (rule 15: mark, don't prune), it just doesn't compete for
-      newest-run staleness.
+      newest-run staleness. A keeper/newer-run pair the owner has separately
+      adjudicated (gap G-04, docs/calibration-log.md 2026-07-06 entry) gets
+      its WARN annotated with a pointer to that record via
+      ``E7_STALENESS_ADJUDICATED`` — annotation only, the WARN is never
+      suppressed.
   E8  the bundle attestation carries a ``free_parameters`` DOF ledger and every
       residual-sourced entry references an open root cause (CLAUDE.md rule 20).
   E9  the keeper carries a registered zero-forcing ablation twin
@@ -124,6 +128,37 @@ E9_ABLATION_TWIN_GRANDFATHER = frozenset(
         "2026-07-03-miso-39-reserve-pergen",
     }
 )
+
+# E7 staleness adjudications (CLAUDE.md gap register G-04, 2026-07-06 owner
+# decision — see docs/calibration-log.md "2026-07-06 — G-04: E7 staleness
+# adjudication"). Each key is the (keeper_run_id, newer_run_id) pair E7 flags;
+# a pair present here has been reviewed and adjudicated KEEP — the newer run
+# is a diagnostic probe, not a keeper candidate. This ANNOTATES the E7 WARN
+# message with a pointer to that record; it never suppresses the warning (E7
+# stays WARN either way — mirrors E9's grandfather-list PATTERN, not its
+# suppress-to-WARN effect). A pair not in this dict — including one where the
+# newer run was registered AFTER the adjudication date below, or NYISO's pair
+# (adjudicated PROMOTE-pending, not KEEP, per the same calibration-log entry)
+# — gets the plain, unadjudicated warning, since it has not itself been
+# reviewed. Do not add NYISO here until L-11 lands its keeper swap.
+E7_STALENESS_ADJUDICATED: dict[tuple[str, str], str] = {
+    (
+        "2026-07-03-ercot32-ordc-total-rtolcap",
+        "2026-07-05-ercot40-rtolcap-forward",
+    ): "2026-07-06",
+    (
+        "2026-07-03-caiso-51-firm-base",
+        "2026-07-05-caiso-statmode-d7-r2",
+    ): "2026-07-06",
+    (
+        "2026-07-05-pjm-77-ct-relfloor",
+        "2026-07-05-pjm-78-demand-regate",
+    ): "2026-07-06",
+    (
+        "2026-07-05-neiso-48-ct-floor",
+        "2026-07-05-neiso-48-head-regate",
+    ): "2026-07-06",
+}
 
 # H1 holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04).
 # Kept stdlib-inline (this module must run without numpy/model imports); a
@@ -450,12 +485,18 @@ def audit_keeper(run_id: str, rep: Report, newest_by_iso: dict) -> None:
     # E7: staleness — is this the newest-dated run for its ISO?
     newest_date, newest_id = newest_by_iso.get(iso, (None, None))
     if newest_id and newest_id != run_id:
+        adjudicated_on = E7_STALENESS_ADJUDICATED.get((run_id, newest_id))
+        note = (
+            f" — E7: adjudicated {adjudicated_on}, see calibration-log"
+            if adjudicated_on
+            else ""
+        )
         rep.warn(
             run_id,
             iso,
             "E7",
             f"a newer {iso} run exists in the registry "
-            f"({newest_id}, {newest_date}); keeper may be stale",
+            f"({newest_id}, {newest_date}); keeper may be stale{note}",
         )
     elif newest_id:
         rep.ok(run_id, iso, "E7", "keeper is the newest run for its ISO")

@@ -5519,6 +5519,7 @@ A/B evidence for the posture workstream. Keeper unchanged this session: miso-41.
 
 No solve, score, or intake touched 2022/H1-2026 (rule #22). Solve years 2023–2025 only,
 one invocation, years sequential (G-40 memory discipline; 12 GB swapfile).
+
 ## 2026-07-06 — ERCOT Stage-4 overlay-off integration (`ercot34`; KEEPER-CANDIDATE recommendation, owner decision pending) + G-12 replay-gap attribution CLOSED (`ercot35`/`ercot36` A/B arms)
 
 Wave-3 ERCOT lane (L-12): G-38 (AS co-opt plan §6/§7 stage 4), G-22 fold, G-12
@@ -5712,3 +5713,66 @@ recompute FAIL seen locally is on the caiso-51/pjm-77 **keeper** bundles — a
 committed-json-vs-floors-rebuild staleness this lane does not touch, present on
 main independent of this change.) Bundles: `results/calibration/ercot32_v2rescore`,
 `pjm77_v2rescore`, `MISO/miso41_v2rescore`.
+
+## 2026-07-06 — G-04: E7 staleness adjudication (owner decision)
+
+**Gap:** G-04 (`docs/gap-register-2026-07.md` §3.1). **Source:**
+`docs/handoffs/e7-staleness-memo-2026-07.md`, promoted from DRAFT to
+owner-decided.
+
+`scripts/audit_keepers.py` E7 (WARN-only, never a FAIL) flags a keeper when a
+newer-dated run exists in the registry for the same ISO — a truth-in-labeling
+prompt, not a correctness gate. Four keepers carried a standing E7 WARN
+against a newer same-ISO run. Owner adjudication, per ISO:
+
+- **ERCOT** (`2026-07-03-ercot32-ordc-total-rtolcap`) — **KEEP.** Newer run
+  `2026-07-05-ercot40-rtolcap-forward` is a WS-A forward-supply-cap probe
+  (P1-only): the ercot32 recipe with `ercot_reserve_supply_forward=True`,
+  swapping the measured RTOLCAP cap for the WS-A forward-formula cap to
+  validate the forecast analogue. It isolates one forecast-path delta and was
+  never a backcast keeper candidate.
+- **CAISO** (`2026-07-03-caiso-51-firm-base`) — **KEEP.** Newer run
+  `2026-07-05-caiso-statmode-d7-r2` is a D-7 statistical-mode A/B probe
+  (byte-faithful keeper replay with every per-hour/per-year overlay off); its
+  own registry text states "Probe only — not a keeper, per CLAUDE.md #1/#13."
+- **PJM** (`2026-07-05-pjm-77-ct-relfloor`) — **KEEP.** Newer run
+  `2026-07-05-pjm-78-demand-regate` is a demand-repair re-gate probe (PR
+  #1426); its own text reads "(PROBE, not a keeper swap)", and its Twin A
+  reproduces the pjm-77 verdict criterion-for-criterion (NOT-YET, identical
+  FAIL/PASS pattern).
+- **NEISO** (`2026-07-05-neiso-48-ct-floor`) — **KEEP.** Newer run
+  `2026-07-05-neiso-48-head-regate` is the HEAD-reproducibility probe from
+  the 2026-07-06 "ERCOT + NEISO keeper HEAD re-gate" entry above: every
+  scored `model` value is byte-identical between the committed keeper and a
+  fresh HEAD replay, determination unchanged (NOT-YET in both) — a lateral
+  confirmation, not an improvement, and never registered as a keeper
+  candidate.
+- **NYISO** (`2026-07-03-nyiso-41-hub-prices`) — **PROMOTE, in flight —
+  mechanics owned by L-11.** Unlike the other three flagged pairs, the newer
+  run generating today's warning (`2026-07-05-nyiso-statmode-d7-r2`, itself
+  just a D-7 statistical-mode probe) is not the promotion candidate. NYISO's
+  L-11 lane (`docs/gap-register-2026-07.md` Wave-3: G-13, #1344, #1345 —
+  LI/NYC delivered-gas + Iroquois Z2 floor re-derivation) is actively
+  developing a structurally-more-faithful NYISO bundle expected to replace
+  `nyiso-41-hub-prices` as keeper once solved and registered with its
+  required ablation twin (CLAUDE.md rule 20). This lane makes **no** keeper
+  swap, no `keepers.json` edit, and runs no NYISO solve — that mechanic
+  belongs exclusively to L-11.
+
+**No keeper swap made in this lane; `keepers.json` is unchanged.**
+`scripts/audit_keepers.py` gains an `E7_STALENESS_ADJUDICATED` annotation
+(same pattern as the `E9_ABLATION_TWIN_GRANDFATHER` list) so the three
+KEEP-adjudicated pairs above (ERCOT, CAISO, PJM) render their E7 WARN with an
+added "E7: adjudicated 2026-07-06, see calibration-log" pointer — the WARN
+itself is never suppressed, only annotated. NYISO's pair is deliberately left
+un-annotated (it is adjudicated PROMOTE-pending, not KEEP), so its warning
+keeps reading as an open item until L-11 lands the swap. A keeper/newer-run
+pair not in the annotation dict — including any run registered after
+2026-07-06 — gets the plain, unadjudicated warning, since it has not itself
+been reviewed.
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule #22). No LP solve was
+run to produce this adjudication — every judgment above is drawn from each
+run's own already-committed `run_config.json` / registry `definition` prose.

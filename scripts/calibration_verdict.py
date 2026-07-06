@@ -1486,6 +1486,53 @@ def headline(v: dict) -> str:
     return f"DETERMINATION: {v['determination']} [{v['iso']} {v['label']}]{extra}"
 
 
+# ---------------------------------------------------------------------------
+# Plaintext metrics sidecar (G-49, docs/verifying-dashboard-numbers.md
+# "Proposed improvement: a plaintext metrics sidecar")
+# ---------------------------------------------------------------------------
+def condensed_metrics(v: dict) -> dict:
+    """Condense a full verdict to the headline numbers a verifier checks first.
+
+    Drops the per-class/per-year ``records`` detail that already lives in
+    ``SUMMARY*.md`` / ``legitimacy_diagnostics.json`` / the ``runs/<id>.js``
+    payload, keeping only the aggregate determination and per-criterion
+    status — small enough to ``git show`` or ``jq`` directly.
+    """
+    return {
+        "run_id": v["run_id"],
+        "iso": v["iso"],
+        "label": v["label"],
+        "target_years": v["target_years"],
+        "scorable_years": v["scorable_years"],
+        "data_blocked_years": v["data_blocked_years"],
+        "determination": v["determination"],
+        "reasons": v["reasons"],
+        "criteria": {
+            cid: {"label": c["label"], "hard": c["hard"], "status": c["status"]}
+            for cid, c in v["criteria"].items()
+        },
+        "caveats": v["caveats"],
+        "free_class_score": v["free_class_score"],
+    }
+
+
+def bundle_dir_for(run_id: str) -> Path:
+    """Return the repo-relative bundle directory a run id's sidecar points at."""
+    sidecar = json.loads((REGISTRY_DIR / f"{run_id}.json").read_text())
+    return REPO / sidecar["bundle"]
+
+
+def write_metrics_sidecar(bundle_dir: Path, v: dict) -> Path:
+    """Write the condensed metrics sidecar into ``bundle_dir/metrics.json``.
+
+    This scorer remains the authoritative *generator*: the sidecar is its own
+    condensed output, never a hand-maintained duplicate.
+    """
+    path = Path(bundle_dir) / "metrics.json"
+    path.write_text(json.dumps(condensed_metrics(v), indent=2) + "\n")
+    return path
+
+
 def main() -> None:
     """CLI: score one run (by bundle dir or run id) and print its determination."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -1496,6 +1543,14 @@ def main() -> None:
     )
     ap.add_argument("--run-id", help="run id (alternative to the positional bundle)")
     ap.add_argument("--json", action="store_true", help="emit the machine verdict JSON")
+    ap.add_argument(
+        "--write-metrics",
+        action="store_true",
+        help=(
+            "also write the condensed metrics.json sidecar (G-49) into the "
+            "run's bundle dir"
+        ),
+    )
     args = ap.parse_args()
     target = args.run_id or args.run
     if not target:
@@ -1506,6 +1561,9 @@ def main() -> None:
         print(json.dumps(verdict, indent=2))
     else:
         print(render_text(verdict))
+    if args.write_metrics:
+        path = write_metrics_sidecar(bundle_dir_for(run_id), verdict)
+        print(f"wrote {path.relative_to(REPO)}")
     # Exit nonzero on NOT-YET so a CI gate / the forecast-validation check can
     # assert on the determination directly.
     sys.exit(0 if verdict["determination"] != NOT_YET else 1)
