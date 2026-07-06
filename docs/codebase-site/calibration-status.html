@@ -33,6 +33,9 @@
     <!-- Selected ISO Detail -->
     <div id="detailPane" style="margin-top: var(--space-lg);"></div>
 
+    <!-- Commercial-grade benchmark comparison -->
+    <div id="benchmarkSection" style="margin-top: var(--space-xl);"></div>
+
     <!-- Methodology Section -->
     <div id="methodologySection" style="margin-top: var(--space-xl);"></div>
 
@@ -115,6 +118,12 @@
       return entries;
     }
 
+    /** Tier label for a criterion (rubric v2); falls back to v1 hard/soft. */
+    function tierLabel(crit) {
+      if (crit.tier) return crit.tier.toUpperCase();
+      return crit.hard ? 'HARD GATE' : 'SOFT';
+    }
+
     /** Short criterion code for marks display. */
     function shortCode(key, crit) {
       const label = crit.label || key;
@@ -177,6 +186,11 @@
         // Years
         if (keeper.scorable_years && keeper.scorable_years.length) {
           html += `<div class="cs-keeper-info">Years: ${keeper.scorable_years.join(', ')}</div>`;
+        }
+
+        if (keeper.grade_summary) {
+          const g = keeper.grade_summary;
+          html += `<div class="cs-keeper-info">Grade: ${g.target_grade}/${g.scored} target &middot; ${g.commercial_grade} commercial-band &middot; ${g.ledgered} ledgered${g.fails ? ` &middot; ${g.fails} fail` : ''}</div>`;
         }
 
         if (keeper.statmode_d7) {
@@ -322,22 +336,27 @@
         html += `</div>`;
       }
 
-      // Caveats summary
+      // Caveats summary (rubric v2: three kinds — protective ledgered,
+      // non-protective ledgered, and unbudgeted commercial-band autos).
       if (keeper.caveats) {
         const c = keeper.caveats;
-        const hardFails = (c.hard && c.hard.length) ? c.hard : [];
-        const softFails = (c.soft && c.soft.length) ? c.soft : [];
-        if (hardFails.length || softFails.length) {
+        const prot = c.protective || [];
+        const ledg = c.ledgered || [];
+        const band = c.commercial_band || [];
+        if (prot.length || ledg.length || band.length) {
+          const budget = c.budget || {};
           html += `<div style="margin: 10px 0 16px; font-size: 0.82rem;">`;
-          if (hardFails.length) {
-            html += `<p><span class="cs-tag tag-miss">HARD FAIL</span> ${hardFails.map(esc).join(', ')}</p>`;
+          if (band.length) {
+            html += `<p><span class="cs-tag tag-lim">COMMERCIAL BAND</span> ${band.map(esc).join(', ')}
+              <span style="opacity:.7">(inside the published commercial-grade band, outside target — listed, unbudgeted)</span></p>`;
           }
-          if (softFails.length) {
-            const budget = c.budget || {};
-            html += `<p style="margin-top: 4px;">
-              <span class="cs-tag tag-lim">CAVEAT</span> ${softFails.map(esc).join(', ')}
-              ${budget.soft_max ? ` (budget: ${softFails.length} / ${budget.soft_max} soft max)` : ''}
-            </p>`;
+          if (ledg.length) {
+            html += `<p style="margin-top: 4px;"><span class="cs-tag tag-lim">LEDGERED</span> ${ledg.map(esc).join(', ')}
+              ${budget.ledgered_max ? ` (budget: ${ledg.length} / ${budget.ledgered_max})` : ''}</p>`;
+          }
+          if (prot.length) {
+            html += `<p style="margin-top: 4px;"><span class="cs-tag tag-miss">PROTECTIVE LEDGERED</span> ${prot.map(esc).join(', ')}
+              ${budget.protective_max ? ` (budget: ${prot.length} / ${budget.protective_max})` : ''}</p>`;
           }
           html += `</div>`;
         }
@@ -348,7 +367,7 @@
       for (const [key, crit] of criteria) {
         const g = criterionGlyph(crit.status);
         const sbClass = statusBadgeClass(crit.status);
-        const gateLabel = crit.hard ? 'HARD GATE' : 'SOFT';
+        const gateLabel = tierLabel(crit);
 
         html += `
         <details class="cs-detail">
@@ -445,6 +464,42 @@
     }
 
     /* -----------------------------------------------------------------------
+       Render: Commercial-grade benchmark comparison (rubric v2 §8)
+       ----------------------------------------------------------------------- */
+
+    function renderBenchmark(status) {
+      const section = document.getElementById('benchmarkSection');
+      if (!section || !status.benchmark || !status.benchmark.rows) return;
+      const b = status.benchmark;
+      let html = `<div class="bc-panel">`;
+      html += `<h2>Scores vs Commercial-Grade Benchmark</h2>`;
+      html += `<p class="panel-sub">Every graded tolerance is anchored to the best published external comparable
+        (regulator-commissioned PLEXOS backcasts, ISO planning-model benchmarks, market-monitor re-simulations,
+        AEO retrospectives, academic hindcasts). Rows marked "no published comparable" are scored STRICTER than
+        any external practice — deliberately. Full survey with citations: docs/rubric-v2-benchmark-memo-2026-07.md.</p>`;
+      if (b.note) {
+        html += `<p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: var(--space-md);">${esc(b.note)}</p>`;
+      }
+      html += `<div class="bc-table-wrap"><table>
+        <thead><tr>
+          <th>Criterion</th>
+          <th>Target band (PASS)</th>
+          <th>Commercial band (auto caveat)</th>
+          <th>Best published comparable</th>
+        </tr></thead><tbody>`;
+      for (const r of b.rows) {
+        html += `<tr>
+          <td style="white-space:nowrap; font-weight:700;">${esc(r.criterion)}</td>
+          <td style="white-space:normal;">${esc(r.target)}</td>
+          <td style="white-space:normal;">${esc(r.commercial)}</td>
+          <td style="white-space:normal; max-width:420px; font-size:0.78rem;">${esc(r.published)}</td>
+        </tr>`;
+      }
+      html += `</tbody></table></div></div>`;
+      section.innerHTML = html;
+    }
+
+    /* -----------------------------------------------------------------------
        Render: Methodology Section
        ----------------------------------------------------------------------- */
 
@@ -460,9 +515,9 @@
           <table>
             <thead><tr>
               <th>Criterion</th>
-              <th>Gate</th>
+              <th>Tier</th>
               <th>Measures</th>
-              <th>Tolerance</th>
+              <th>Tolerance (target / commercial)</th>
               <th>Source</th>
             </tr></thead>
             <tbody>`;
@@ -470,7 +525,7 @@
         for (const r of status.rubric) {
           html += `<tr>
             <td style="white-space:nowrap; font-weight:700;">${esc(r.label || r.id)}</td>
-            <td><span class="cs-gate">${r.hard ? 'HARD' : 'SOFT'}</span></td>
+            <td><span class="cs-gate">${esc(tierLabel(r))}</span></td>
             <td style="white-space:normal; max-width:300px;">${esc(r.measures)}</td>
             <td style="white-space:normal; max-width:180px;">${esc(r.tol)}</td>
             <td style="white-space:normal; max-width:220px; font-size:0.72rem; color:var(--text-muted);">${esc(r.source)}</td>
@@ -503,15 +558,15 @@
           <div class="cs-method-grid">
             <div class="cs-method-card">
               <h4><span class="cs-legend-dot cal" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated</h4>
-              <p>All hard gates pass, zero soft criteria outside tolerance. The model reproduces the real market's structure and level.</p>
+              <p>Every criterion passes at TARGET grade — nothing caveated, nothing unscored. The model reproduces the real market's structure and level at the strict internal standard.</p>
             </div>
             <div class="cs-method-card">
               <h4><span class="cs-legend-dot cav" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated with Caveats</h4>
-              <p>All hard gates pass. Up to the soft caveat budget (typically 2) may miss, each with a documented structural root cause and no fitted workaround applied.</p>
+              <p>No criterion fails: every load-bearing criterion is at or above the published COMMERCIAL grade. Misses between target and commercial band are listed with magnitudes (unbudgeted); anything beyond commercial grade needs an explicit measured-input ledger entry (protective ≤1, others ≤3). Certifies: delivers on intended use, comparable to commercial-grade models.</p>
             </div>
             <div class="cs-method-card">
               <h4><span class="cs-legend-dot not" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Not Calibrated</h4>
-              <p>One or more hard gates fail, or soft misses exceed the caveat budget. The ISO has not yet completed its calibration cycle.</p>
+              <p>Governance unattested, any criterion beyond the commercial band without a documented measured-input reason, or a ledgered-caveat budget exceeded. The ISO has not yet completed its calibration cycle.</p>
             </div>
           </div>
         </div>`;
@@ -536,7 +591,8 @@
         const keepers = status.keepers || [];
         renderCards(keepers);
 
-        // Render methodology
+        // Render benchmark comparison + methodology
+        renderBenchmark(status);
         renderMethodology(status);
 
         // Auto-select from hash or first ISO
