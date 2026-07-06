@@ -1,6 +1,7 @@
 """Tests for wind and solar capacity-factor profile derivation."""
 
 import numpy as np
+import pytest
 
 from market_sim.config.constants import (
     HOURS_PER_YEAR,
@@ -799,6 +800,35 @@ def test_ercot_2019_renewable_profiles_resolve_end_to_end():
     config = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2019)
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         "ERCOT", 2019, iso_config, config
+    )
+    n_zones = len(iso_config.zone_names)
+    assert wind_cf.shape == (n_zones, HOURS_PER_YEAR)
+    assert solar_cf.shape == (n_zones, HOURS_PER_YEAR)
+    assert wind_cap.sum() > 0.0
+    assert solar_cap.sum() > 0.0
+    assert np.all(wind_cf >= 0.0) and np.all(wind_cf <= 1.0)
+    assert np.all(solar_cf >= 0.0) and np.all(solar_cf <= 1.0)
+
+
+@pytest.mark.parametrize("iso,year", [("CAISO", 2019), ("PJM", 2019), ("MISO", 2019)])
+def test_2026_07_06_balance_backfill_renewables_resolve_end_to_end(iso, year):
+    """2026-07-06 BALANCE-bulk backfill: CAISO/PJM/MISO renewables reach 2019.
+
+    Their EIA-930 ``<BA> hourly`` extracts previously began at the 2021/2022
+    boundary (api.eia.gov, needed to pull further back, is blocked in this
+    sandbox). The six-month BALANCE bulk archive (a different, unblocked
+    host) carries the same per-fuel generation series back to 2019 and was
+    folded into the extracts by
+    ``scripts/extend_eia930_hourly_from_balance.py``. This exercises the
+    resulting wind+solar CF path exactly like the ERCOT 2019 case above --
+    CAISO/PJM/MISO still have no HSL parquet for 2019, so this is the plain
+    EIA-930 delivered-generation CF path. See
+    docs/weather-pool-coverage-2026-07.md.
+    """
+    iso_config = get_iso_config(iso)
+    config = ScenarioConfig(iso=iso, mode="backcast", weather_year=year)
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
+        iso, year, iso_config, config
     )
     n_zones = len(iso_config.zone_names)
     assert wind_cf.shape == (n_zones, HOURS_PER_YEAR)

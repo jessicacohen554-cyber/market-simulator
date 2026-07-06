@@ -572,9 +572,17 @@ class TestWeatherPoolWidening(unittest.TestCase):
     ERCOT (BA "ERCO") and NEISO (BA "ISNE") both carry a clean EIA-930
     ``<BA> hourly`` extract back to 2015-07-01, verified for 2019-2021 against
     the same full-8760-hour, gap-free standard every existing backcast year
-    must meet (see docs/weather-pool-coverage-2026-07.md). CAISO/PJM/MISO have
-    no raw coverage that far back (their extracts start 2021-12-31/2022-12-31)
-    and are deliberately excluded from the widened pool.
+    must meet (see docs/weather-pool-coverage-2026-07.md). CAISO/PJM/MISO
+    originally had no raw coverage that far back (their extracts started
+    2021-12-31/2022-12-31, since building further history needed
+    ``api.eia.gov``, blocked in this sandbox); 2026-07-06 folded the six-month
+    BALANCE bulk archive (a different, unblocked host) into their extracts
+    back to 2019 (``scripts/extend_eia930_hourly_from_balance.py``). CAISO and
+    MISO now resolve 2019-2021 end-to-end (demand + renewables both route
+    through the hourly extract); PJM's demand never uses the hourly extract at
+    all (always falls back to ``eia_demand_profiles.parquet``, whose own
+    floor is 2021), so only 2021 lands for PJM -- the same single-source-floor
+    pattern as NYISO's pre-2021 solar gap below.
     """
 
     def test_ercot_2019_demand_and_renewables_full_year(self):
@@ -603,14 +611,55 @@ class TestWeatherPoolWidening(unittest.TestCase):
             self.assertEqual(series.shape, (HOURS_PER_YEAR,))
             self.assertFalse(np.isnan(series).any())
 
-    def test_caiso_pre_2022_stays_uncovered(self):
-        # CAISO's EIA-930 "CISO hourly" extract begins 2022-12-31 -- no raw
-        # coverage for a 2019-2021 draw, so the hourly path returns None and
-        # the caller falls back to the (also uncovered) demand-profiles
-        # parquet, raising rather than silently fabricating a year.
-        self.assertIsNone(_eia_hourly_frame_filled("CISO", 2019))
+    def test_caiso_2019_demand_and_renewables_full_year(self):
+        # 2026-07-06: CAISO's "CISO hourly" extract now reaches 2019 via the
+        # BALANCE bulk backfill; both demand and renewables resolve with no
+        # fallback needed.
+        self.assertIsNotNone(_eia_hourly_frame_filled("CISO", 2019))
+        demand = load_demand("CAISO", 2019)
+        self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+        self.assertFalse(np.isnan(demand).any())
+
+        gen = load_eia_hourly_renewable_gen("CAISO", 2019)
+        self.assertIsNotNone(gen)
+        for series in gen.values():
+            self.assertEqual(series.shape, (HOURS_PER_YEAR,))
+            self.assertFalse(np.isnan(series).any())
+
+    def test_miso_2019_demand_and_renewables_full_year(self):
+        # Same BALANCE-bulk backfill as CAISO; MISO also sources demand off
+        # its own hourly frame, so both series resolve end-to-end.
+        demand = load_demand("MISO", 2019)
+        self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+        self.assertFalse(np.isnan(demand).any())
+
+        gen = load_eia_hourly_renewable_gen("MISO", 2019)
+        self.assertIsNotNone(gen)
+        for series in gen.values():
+            self.assertEqual(series.shape, (HOURS_PER_YEAR,))
+            self.assertFalse(np.isnan(series).any())
+
+    def test_pjm_2019_2020_demand_stays_uncovered_despite_hourly_backfill(self):
+        # The hourly extract itself now covers 2019/2020 (renewables would
+        # resolve), but load_demand for PJM always falls back to
+        # eia_demand_profiles.parquet, whose floor is 2021 -- so PJM's demand
+        # (and therefore the weather-year pool) still can't use 2019/2020.
+        self.assertIsNotNone(_eia_hourly_frame_filled("PJM", 2019))
         with self.assertRaises(Exception):
-            load_demand("CAISO", 2019)
+            load_demand("PJM", 2019)
+        with self.assertRaises(Exception):
+            load_demand("PJM", 2020)
+
+    def test_pjm_2021_demand_and_renewables_full_year(self):
+        demand = load_demand("PJM", 2021)
+        self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+        self.assertFalse(np.isnan(demand).any())
+
+        gen = load_eia_hourly_renewable_gen("PJM", 2021)
+        self.assertIsNotNone(gen)
+        for series in gen.values():
+            self.assertEqual(series.shape, (HOURS_PER_YEAR,))
+            self.assertFalse(np.isnan(series).any())
 
 
 class TestDemandProfileCleanSeam(unittest.TestCase):
