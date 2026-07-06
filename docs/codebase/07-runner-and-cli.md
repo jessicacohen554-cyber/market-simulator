@@ -139,16 +139,16 @@ The model always solves the full non-leap 8760-hour calendar (Feb 29 dropped).
 
 ```bash
 # Forecast a single scenario
-market-sim run --config scenarios/ercot_base.yaml
+market-sim run --config configs/scenarios/ercot_base.yaml
 
-# Run a generic scenario against a different ISO
-market-sim run --config scenarios/generic.yaml --iso CAISO
+# Run the same base scenario against a different ISO
+market-sim run --config configs/scenarios/ercot_base.yaml --iso CAISO
 
-# Parameter sweep across 8 workers
-market-sim sweep --sweep sweeps/capacity_sensitivity.yaml --workers 8
+# Named-case scenario matrix (13 AEO/IPM-style cases; see configs/scenario_matrix.yaml)
+market-sim sweep --sweep configs/scenario_matrix.yaml --workers 8
 
 # Weather-year ensemble with a distribution JSON
-market-sim ensemble --config scenarios/ercot_base.yaml \
+market-sim ensemble --config configs/scenarios/ercot_base.yaml \
     --weather-years 2023 2024 2025 --out results/ensemble_dist.json
 
 # Backcast all scorable years for PJM (energy-only)
