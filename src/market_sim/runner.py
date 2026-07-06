@@ -123,6 +123,7 @@ from market_sim.pipeline import (
 )
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
+    caiso_scarcity_overlay,
     effective_reliability_deployment_mw,
     reserve_headroom,
     scarcity_prices,
@@ -1448,6 +1449,58 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 float(adder.mean()),
                 int((adder > 10).sum()),
                 float(adder.max()),
+            )
+
+        # CAISO post-solve scarcity overlay (Tariff §27.4.3.2 / §39.6.1):
+        # the probabilistic reserve-scarcity adder is added to SCORED prices
+        # (result.prices) because CAISO has no other scarcity mechanism — the
+        # reserve co-opt (caiso-59) is inert (12.9 GW headroom >> 2.2 GW
+        # requirement), and no measured overlay series exists. The LOLP-based
+        # adder uses CAISO's higher net-load uncertainty (σ = 2,500 MW from
+        # FRP design, vs ERCOT's 1,400 MW demand-only) so it fires during
+        # evening solar decline and import-tight hours where the real market
+        # produces penalty-price scarcity the LP cannot. Dispatch, volumes
+        # and emissions are untouched. CAISO-only; mutually exclusive with
+        # the in-LP co-opt (rule 19).
+        if (
+            iso == "CAISO"
+            and config.scarcity_pricing_enabled
+            and getattr(config, "caiso_scarcity_pricing", False)
+            and not getattr(config, "energy_reserve_coopt", False)
+        ):
+            ren_headroom_caiso = (
+                wind_cf * np.asarray(wind_cap)[:, None]
+                + solar_cf * np.asarray(solar_cap)[:, None]
+                - result.wind_dispatched
+                - result.solar_dispatched
+            ).sum(axis=0)
+            d_tot_caiso = year_demand.sum(axis=0)
+            lam_caiso = np.where(
+                d_tot_caiso > 0,
+                (result.prices * year_demand).sum(axis=0)
+                / np.where(d_tot_caiso > 0, d_tot_caiso, 1.0),
+                result.prices.mean(axis=0),
+            )
+            caiso_adder = caiso_scarcity_overlay(
+                fleet_arrays,
+                result.dispatch,
+                storage.power_cap,
+                result.storage_charge,
+                result.storage_discharge,
+                renewable_headroom=ren_headroom_caiso,
+                system_lambda=lam_caiso,
+            )
+            result.prices = result.prices + caiso_adder[None, :]
+            econ_prices = result.prices
+            overlay_adder = caiso_adder
+            logger.info(
+                "year %d: CAISO scarcity overlay — "
+                "mean $%.2f/MWh, >$10 in %d h, >$50 in %d h, max $%.0f",
+                year,
+                float(caiso_adder.mean()),
+                int((caiso_adder > 10).sum()),
+                int((caiso_adder > 50).sum()),
+                float(caiso_adder.max()),
             )
 
         # Capacity-screen price signal (plan §2.2-§2.3): optionally re-price

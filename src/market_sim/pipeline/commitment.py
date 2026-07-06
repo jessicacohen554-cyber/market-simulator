@@ -191,6 +191,21 @@ def run_commitment_pass(state: dict, config=None):
         as_value = ercot_as_aware_unit_value(
             fa, p1.dispatch, p1.reserve_price_by_family, cfg.hours
         )
+    # LCR-aware commitment (CAISO local-capacity-revenue proxy): credit the
+    # P1 LCR dual in the commitment margin so locally-committed units are not
+    # decommitted on energy alone (BCR/CPM analogue, D-8 closure §6).
+    lcr_value = None
+    if (
+        getattr(cfg, "caiso_lcr_commitment_credit", False)
+        and iso == "CAISO"
+        and p1.lcr_dual is not None
+        and p1.lcr_gen_idx is not None
+    ):
+        from market_sim.model.commitment import lcr_dual_to_unit_value
+
+        lcr_value = lcr_dual_to_unit_value(
+            p1.lcr_dual, p1.lcr_gen_idx, fa.pmax.shape[0]
+        )
     committed = compute_commitment(
         p1.prices,
         state["mc_base"],
@@ -202,6 +217,7 @@ def run_commitment_pass(state: dict, config=None):
         storage_zone_idx=dk["storage_zone_idx"],
         demand=state["demand"],
         as_value=as_value,
+        lcr_value=lcr_value,
     )
     # NYISO path B (commitment-gated synchronised reserve): the
     # energy-economic screen decommits NYC quick-start peakers that
