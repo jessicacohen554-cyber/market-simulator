@@ -339,3 +339,10 @@ results/hindcast/*/*/*/year_*.parquet
 scratch_logs/
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
+
+# ERCOT G-22 offer-surface A/B probe bundles: large disposable solve outputs
+# (dispatch/system parquets, 115M each). The reproducibility record
+# (run_config.json/meta.json) is force-added; the dashboard payload is in
+# frontend/data/backcast/runs/. Matches the keeper-bundle tracking pattern.
+/results/calibration/ercot37_g22surface_off/
+/results/calibration/ercot37_g22surface_on/
