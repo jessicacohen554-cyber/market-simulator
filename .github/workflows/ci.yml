@@ -67,7 +67,12 @@ jobs:
   quarantine-gates:
     name: Rule-22 quarantine gates
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # G-06: legitimacy_diagnostics --keepers now recomputes D-2 forced-energy
+    # shares per keeper-year (a floors rebuild via run_year(fleet_only=True)
+    # when floors/*.npz is gitignored-absent, ~40-50s/bundle-year measured
+    # locally) instead of only diffing committed JSON — budget the wider
+    # window that adds across the 6 keepers' ~18 bundle-years.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -85,7 +90,11 @@ jobs:
       - name: audit_keepers --check
         run: uv run python scripts/audit_keepers.py --check
 
-      # D-9 overlay quarantine + D-6 holdout quarantine across every
-      # registered keeper bundle.
+      # D-9 overlay quarantine + D-6 holdout quarantine + D-2 recompute-vs-
+      # committed staleness check (gap G-06) across every registered keeper
+      # bundle — D-2 is re-derived from the bundle's own committed data
+      # rather than trusting legitimacy_diagnostics.json at face value; it
+      # only fails on a discrepancy between the two, never on a forced-share
+      # breach the committed artifact already discloses.
       - name: legitimacy_diagnostics --keepers
         run: uv run python scripts/legitimacy_diagnostics.py --keepers
