@@ -965,8 +965,12 @@ replayed identically). MISO golden remains uncapturable on this 15 GB box
     re-solved by this stage and keeper artifacts are out of Stage-4 scope).
     Not a Stage-4 regression; flagged for the MISO keeper's owner session.
 - P2 probe legs (`stage4-probe-before` → `stage4-probe-after`,
-  `regression_gate.py --mode byte`): <!-- STAGE4_PROBE_RESULT --> PENDING —
-  filled in below once the after-leg captures complete.
+  `regression_gate.py --mode byte`): <!-- STAGE4_PROBE_RESULT --> **PASS —
+  byte-identical.** `p2econ` 5 files / 25 numeric columns (incl.
+  `dispatch/2024_P2.parquet`), every column Δ = 0; `p2asaware` 5 files / 24
+  numeric columns, every column Δ = 0; reshuffle 0.000% both legs (total gen
+  462731.1 GWh, Δ +0.0000). The economic screen + coal pin and the AS-aware
+  adequacy/headroom path each moved no solved number through the extraction.
 
 Hashes-only capture manifests are committed under
 `results/regression-goldens/{stage4-before,stage4-after,stage4-probe-before,stage4-probe-after}/manifest.json`

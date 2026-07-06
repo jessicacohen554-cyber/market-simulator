@@ -1,0 +1,72 @@
+{
+  "env": {
+    "MARKET_SIM_HIGHS_THREADS": "1",
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0"
+  },
+  "git_dirty": true,
+  "git_sha": "b9947fd",
+  "probes": {
+    "p2asaware": {
+      "base_keeper_id": "2026-07-06-ercot34-stage4-overlay-off",
+      "commitment": false,
+      "content_hashes": {
+        "btm.parquet": "1edd394c45d93384224626524016cafbc1264b9edbdc28c5b42d66fea2130d4a",
+        "dispatch/2024_P1.parquet": "dee7b58ece128092a72a23d3878ad4d5ae515ae9de9e7b39ddac47fbabc730b1",
+        "dispatch/2024_P2.parquet": "55fa3f0a4cd5e2f9514f86a269a4926925ea43d982f0805909657258037b7848",
+        "flows.parquet": "a68195b2d8e7dce5e58683559e620b3cf91dcd6664e49976e9c827f4aee6db54",
+        "storage.parquet": "d51aa7830cee7431e8a6bc062f9160303fdba0762f02c0b531ebe79afeb91a03",
+        "system.parquet": "e77cefc65814c6556978426038c62be29b6bef8b24dc86a73ac622a7475f79a3"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_srmc_bound",
+        "coal_takeorpay_from_data",
+        "gas_st_drag_overrides",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_mustrun",
+        "plant_tranche_config",
+        "zero_forcing_ablation"
+      ],
+      "hours": 8760,
+      "leg": "p2asaware",
+      "overrides": {
+        "ercot_as_aware_commitment": true,
+        "ercot_ordc_total_reserve": false,
+        "ercot_reserve_supply_cap": false
+      },
+      "years": [
+        2024
+      ]
+    },
+    "p2econ": {
+      "base_keeper_id": "2026-07-06-ercot34-stage4-overlay-off",
+      "commitment": true,
+      "content_hashes": {
+        "btm.parquet": "1edd394c45d93384224626524016cafbc1264b9edbdc28c5b42d66fea2130d4a",
+        "dispatch/2024_P1.parquet": "ceee15561a300c4105409a782ebaf59cd4675e36a26fc84b2e98d1cd91520a0f",
+        "dispatch/2024_P2.parquet": "eb9ee3ec6340b6ee7cb0159efbcc7a176101771feac6cacaa2c4aac33486128f",
+        "flows.parquet": "ecc650e6bff026120518efe0e7cebcaca72182df7ebf823adc7922575ea44698",
+        "storage.parquet": "49dcd97ba3b6058758132461c6cf3a0eeb9e91d998eb2dc4b396b08aba61fd56",
+        "system.parquet": "7f6f5d1ae377480fc4b5be0f8e652348fd608c1de199fa196a8529c1e655fb65"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_srmc_bound",
+        "coal_takeorpay_from_data",
+        "gas_st_drag_overrides",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_mustrun",
+        "plant_tranche_config",
+        "zero_forcing_ablation"
+      ],
+      "hours": 8760,
+      "leg": "p2econ",
+      "overrides": {},
+      "years": [
+        2024
+      ]
+    }
+  },
+  "stage_tag": "stage4-probe-after"
+}
