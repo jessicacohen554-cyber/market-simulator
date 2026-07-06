@@ -11,5 +11,6 @@
   ],
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-07-05-miso-41-ct-evening.js",
-  "bundle": "results/calibration/MISO/miso_41_ct_evening_window"
+  "bundle": "results/calibration/MISO/miso_41_ct_evening_window",
+  "ablation_twin": "2026-07-05-miso-41-ct-evening-ablation"
 }
