@@ -7,11 +7,11 @@
   "2026-07-06-ercot34-stage4-overlay-off",
   "2026-07-03-caiso-51-firm-base",
   "2026-07-05-pjm-77-ct-relfloor",
-  "2026-07-03-nyiso-41-hub-prices",
+  "2026-07-06-nyiso-53-li-tsl",
   "2026-07-05-neiso-48-ct-floor",
   "2026-07-05-miso-41-ct-evening"
  ],
  "note": "Current calibration keeper per ISO \u2014 the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
  "MISO": "2026-07-05-miso-41-ct-evening",
- "NYISO": "2026-07-03-nyiso-41-hub-prices"
+ "NYISO": "2026-07-06-nyiso-53-li-tsl"
 }
