@@ -30,13 +30,20 @@ co-optimization wrapper (:func:`~market_sim.pipeline.kwargs.apply_reserve_coopt`
 **Stage 3 adds ``solve.py``** — the shared P0/P1 energy solve
 (:func:`~market_sim.pipeline.solve.run_energy_solve`: base-cost P0, monthly
 startup markup, bid-cost P1, intra-year warm start, and the cross-year
-warm-start cache seam) — both orchestrators call it. The remaining solve
-modules (``commitment.py``, ``backcast_config.py``, ``overlays.py``) land in
-later stages — see the plan §5.
+warm-start cache seam) — both orchestrators call it.
+
+**Stage 4 adds ``commitment.py``** — the shared P2 commitment pass
+(:func:`~market_sim.pipeline.commitment.run_commitment_pass`: CAISO RA
+must-offer bridge, NYISO path B, ERCOT AS-aware screen + AS-adequacy floor +
+WS1 headroom overrides, economic commitment screen + coal pin) — both
+orchestrators call it. The remaining backcast-specific modules
+(``backcast_config.py``, ``overlays.py``) land in later stages — see the
+plan §5.
 """
 
 from __future__ import annotations
 
+from market_sim.pipeline.commitment import run_commitment_pass
 from market_sim.pipeline.kwargs import apply_reserve_coopt, build_base_dispatch_kwargs
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.result import YearSolveResult
@@ -53,4 +60,5 @@ __all__ = [
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",
     "run_energy_solve",
+    "run_commitment_pass",
 ]
