@@ -92,13 +92,13 @@ from market_sim.data.fleet import (  # noqa: E402
     OTHER_FOSSIL_CLASS,
     apply_other_fossil_scoring,
 )
+from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
     write_shared_input,
 )
 from scripts.run_calibration import (  # noqa: E402
-    _calibration_config,
     _commitment_pass,
     _henry_hub_actual,
     _load_reference,
@@ -2021,7 +2021,7 @@ def solve_and_persist(
         gas_prices[year] = gas_price
         if not is_ercot:
             group_by_code = _fleet_group_by_code(iso, iso_config, year)
-        cfg = _calibration_config(year, iso, hours, gas_price)
+        cfg = backcast_config(year, iso, hours, gas_price)
         demand = load_demand(
             iso,
             year,
@@ -2402,12 +2402,29 @@ def solve_and_persist(
             k: v for k, v in (bit_overrides or {}).items() if v is not None
         },
         "coal_econ_srmc_bound": coal_econ_srmc_bound,
-        "coal_plant_monthly_pricing": _calibration_config(
+        "coal_plant_monthly_pricing": backcast_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
-        "td_loss_factor": _calibration_config(
+        "td_loss_factor": backcast_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
+        # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
+        # (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS / ERCOT_GAS_FLOOR /
+        # ERCOT_WEST_GAS_DELIVERED_FLOOR — no solve_and_persist kwarg exists
+        # for them, rule 24 exception, plan §4). Meta-writer audit fix
+        # (orchestrator-unification Stage 7): record the EFFECTIVE resolved
+        # value the same way as coal_plant_monthly_pricing/td_loss_factor
+        # above, so a run whose environment enabled one of these probes has
+        # it in the reproducibility record instead of silently escaping it.
+        "ercot_zonal_gas_basis": backcast_config(
+            years[0], iso, hours, gas_prices[years[0]]
+        ).ercot_zonal_gas_basis,
+        "ercot_west_netload_gas_shape": backcast_config(
+            years[0], iso, hours, gas_prices[years[0]]
+        ).ercot_west_netload_gas_shape,
+        "ercot_west_gas_delivered_floor": backcast_config(
+            years[0], iso, hours, gas_prices[years[0]]
+        ).ercot_west_gas_delivered_floor,
         "storage_daily_cycling": storage_daily_cycling,
         "storage_vintage_ramp": storage_vintage_ramp,
         "battery_dispatch_adder": battery_dispatch_adder,
@@ -2541,7 +2558,7 @@ def solve_and_persist(
     # Rebuild the recorded config WITH the same overrides + deltas applied, so
     # run_config.json's scenario_config.offer_curve_by_group is the exact
     # merged curve the LP solved against (not the bare defaults).
-    recorded_cfg = _calibration_config(
+    recorded_cfg = backcast_config(
         years[0],
         iso,
         hours,
@@ -2676,8 +2693,56 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             **{k: v for k, v in curve_smoothing.items() if v is not None}
         )
-    if cc_derate_from_top:
+    if cc_derate_from_top or iso.upper() == "CAISO":
+        # Meta-writer audit fix (Stage 7): run_year's condition also defaults
+        # this on for CAISO regardless of the flag (narrow per-plant peaking
+        # bands crush the committed floor without it) — recorded_cfg dropped
+        # the ISO branch, so a CAISO run's scenario_config under-reported
+        # cc_outage_derate_from_top as False when the LP actually solved True.
         recorded_cfg = recorded_cfg.with_overrides(cc_outage_derate_from_top=True)
+    if cc_nameplate_summer_derate:
+        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+        # entirely absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(cc_nameplate_summer_derate=True)
+    if coal_mustrun_online_pmin:
+        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+        # entirely absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(coal_mustrun_online_pmin=True)
+    if coal_sync_srmc_tranche:
+        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+        # entirely absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(coal_sync_srmc_tranche=True)
+    if gas_st_netload_drag:
+        # Meta-writer audit fix (Stage 7): mirrors run_year's
+        # config.with_overrides(gas_st_netload_drag=True, **(gas_st_drag_overrides
+        # or {})); both the flag and its coefficient-override companion were
+        # previously absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(
+            gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
+        )
+    if ordc_lolp_params_path:
+        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+        # entirely absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(
+            ordc_lolp_params_path=str(ordc_lolp_params_path)
+        )
+    if ct_netload_drag and ct_drag_overrides:
+        # Meta-writer audit fix (Stage 7): mirrors run_year's companion
+        # ct_drag_overrides application (dynamic field names, e.g.
+        # ct_drag_slope_per_gw) — previously absent from recorded_cfg, so a
+        # tuned drag curve solved with different coefficients than the
+        # defaults recorded_cfg showed.
+        recorded_cfg = recorded_cfg.with_overrides(**ct_drag_overrides)
+    if coal_lignite_mustrun is not None or coal_prb_mustrun is not None:
+        # Meta-writer audit fix (Stage 7): run_year passes these positionally
+        # into backcast_config (-> coal_lignite_mustrun_override /
+        # coal_prb_mustrun_override), but the recorded_cfg reconstruction's
+        # own backcast_config(...) call above never received them —
+        # previously entirely absent from recorded_cfg.
+        recorded_cfg = recorded_cfg.with_overrides(
+            coal_lignite_mustrun_override=coal_lignite_mustrun,
+            coal_prb_mustrun_override=coal_prb_mustrun,
+        )
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -2688,7 +2753,7 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(reference_price_interface=True)
     # Tri-state floor / negative-offer overrides — mirror run_year so
     # run_config.json records what the LP solved with (None = the per-ISO base
-    # default baked in _calibration_config: CAISO floor+negative ON at 0.80).
+    # default baked in backcast_config: CAISO floor+negative ON at 0.80).
     if negative_renewable_offers is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             negative_renewable_offers=negative_renewable_offers
@@ -2783,6 +2848,15 @@ def solve_and_persist(
     if caiso_per_hub_intertie is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_per_hub_intertie=caiso_per_hub_intertie
+        )
+    if caiso_perhub_firm_base is not None:
+        # Meta-writer audit fix (orchestrator-unification Stage 7, G-14
+        # residual): applied to the real solve (see the run_year call above)
+        # and recorded in meta.json, but never threaded into recorded_cfg —
+        # run_config.json's scenario_config silently showed the dataclass
+        # default instead of the flag the LP actually solved with.
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_perhub_firm_base=caiso_perhub_firm_base
         )
     if caiso_corridor_flow_limit is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -6760,7 +6834,7 @@ def main() -> None:
         "refreshed by the fetch-eia-gas-prices workflow. On by default only "
         "for NEISO (the keeper); use this to validate CAISO (or others) once "
         "the fetched citygate basis lands — it is a keeper-changing run, so "
-        "validate before flipping the _calibration_config default. No-op "
+        "validate before flipping the backcast_config default. No-op "
         "(byte-identical) for any ISO/year with no basis rows.",
     )
     parser.add_argument(
