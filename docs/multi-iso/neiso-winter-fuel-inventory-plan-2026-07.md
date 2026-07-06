@@ -1,10 +1,18 @@
 # NEISO winter fuel-inventory / seasonal-reliability build — scoping proposal (2026-07)
 
-**Status: Component A (the oil seasonal-budget LP rows, `winter_fuel_inventory.py` +
-`dispatch.py:_build_oil_budget_rows`) has landed, GATED `neiso_winter_fuel_inventory`
-(default off) — a probe run found the inventory cap inert (oil still under-ran). Component
-B (winter must-run) remains unbuilt.** This is the scope for the next NEISO
-model experiment on record. It is the *only* sanctioned lever for the remaining
+**Status: both components have landed and been probed — negative result, not a
+keeper.** Component A (the oil seasonal-budget LP rows, `winter_fuel_inventory.py`
++ `dispatch.py:_build_oil_budget_rows`) landed GATED `neiso_winter_fuel_inventory`
+(default off) — the 2026-07-04 probe (`neiso-inventorycap-inert-probe`) found the
+inventory cap inert (oil still under-ran). Component B (winter fuel-security
+must-run, `winter_fuel_inventory.py:apply_winter_fuelsec_mustrun`, GATED
+`neiso_winter_fuel_mustrun`, default off, wired into `scripts/run_calibration.py`)
+has since also landed and been probed together with Component A (2026-07-06,
+dashboard runs `neiso-wfuelsec-ab-v2` / `neiso-wfuelsec-ab-v2off`): A+B do NOT
+close the C1/C3c/C5b caveats — the small NEISO coal/steam fleet already runs
+above min-stable on cold days economically, so the commitment floor is
+non-binding; keeper stays neiso-48. This was the scope for the (now-completed)
+NEISO model experiment described below. It was the *only* sanctioned lever for the remaining
 NEISO model-miss family, per the neiso-41/43 attestation ("Closable only via the
 documented future build (fuel-inventory / seasonal-reliability constraint),
 NEVER by cranking the floor slope/cap or by an offer adder") and
@@ -77,13 +85,17 @@ the coverage hole that killed the neiso-40 monthly-F923 probe).
 
 ### B. Seasonal-reliability commitment (winter fuel-security must-run)
 
+**Landed** (`winter_fuel_inventory.py:apply_winter_fuelsec_mustrun`, GATED
+`neiso_winter_fuel_mustrun`, default off; probed 2026-07-06 — see Status above).
+
 A winter-season commitment floor for the fuel-secure classes (COAL_BIT, ST_GAS
 — the units ISO-NE actually retains), grounded in ISO-NE winter-program
 design, sized from program/retention terms — **not** tuned to the 0.18/0.24/0.27
 TWh residual. Implementation sits *alongside* the existing dual-limb
-temperature floor (new season-gated limb driver in `RELIABILITY_FLOOR_REGISTRY`
-or a distinct seasonal commitment in `commitment.py`) — the existing limbs'
-slope/cap are untouched.
+temperature floor as a distinct seasonal commitment invoked from
+`scripts/run_calibration.py` (not `commitment.py`, and not a new
+`RELIABILITY_FLOOR_REGISTRY` limb spec as originally scoped) — the existing
+limbs' slope/cap are untouched.
 
 ## Explicit non-levers (attestation + diagnosis, verbatim constraints)
 
@@ -94,14 +106,24 @@ slope/cap are untouched.
 
 ## Config & validation plan
 
-- New `ScenarioConfig` flags, default **off**: `neiso_winter_fuel_inventory`
-  (component A) and a season-gated floor spec (component B); both cited in
-  `docs/parameter-citations.md`.
-- Probe first: full-span solve `--year 2023 2024 2025`, one bundle, registered
-  on the dashboard in-session (calibration-report skill) whatever the outcome.
-- Score: C3c/C5b/C5c must move *endogenously*; keeper decision on structural
-  faithfulness, not MAE.
-- Data intake needed before coding: EIA-860 fuel-storage fields; ISO-NE
-  fuel-security study inventory/delivery figures; winter-program unit lists.
-  If a needed quantity is only available as a measured outcome (burn, not
-  capacity/logistics), it is inadmissible — stop and re-scope.
+- `ScenarioConfig` flags **landed**, default **off**: `neiso_winter_fuel_inventory`
+  + `neiso_winter_fuel_start_fill_bbl` (component A, cited in
+  `docs/parameter-citations.md`) and `neiso_winter_fuel_mustrun` +
+  `neiso_winter_fuelsec_min_stable_pct` / `_commit_frac` / `_tmin_c` (component
+  B, landed in `config/scenarios.py` but **not yet cited** in
+  `docs/parameter-citations.md` — outstanding).
+- Probe **done**: full-span solve `--year 2023 2024 2025`, registered on the
+  dashboard in-session (calibration-report skill) — component A alone
+  (`2026-07-04-neiso-inventorycap-inert-probe`, inert) and A+B together
+  (`2026-07-06-neiso-wfuelsec-ab-v2` / `-v2off`, negative). Keeper stays
+  neiso-48.
+- Score: C3c/C5b/C5c were required to move *endogenously* for a keeper
+  decision on structural faithfulness (not MAE); scored 2026-07-06 and none of
+  the three moved — see Status above.
+- Data intake **done**: `data/raw/winter-fuel-inventory/isone/isone.csv` (OFSA
+  + Winter Reliability Program figures, hand-curated/cited) plus EIA-860
+  derived fields, curated via `scripts/curate_winter_fuel_inventory.py` into
+  the `winter-fuel-inventory` clean datatype
+  (`data/dictionary/schema/winter-fuel-inventory.schema.yaml`). No measured
+  burn/receipt outcome was intaken (the F923-receipts approach stayed
+  rejected).
