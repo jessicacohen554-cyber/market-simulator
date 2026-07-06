@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-miso-44-ablation",
+  "label": "miso 44 ablation",
+  "date": "2026-07-06",
+  "shorthand": "miso-44-ablation",
+  "definition": "miso-44 ablation twin: zero-forcing of miso-44 (wefor already at 1.0; floors off)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-miso-44-ablation.js",
+  "bundle": "results/calibration/MISO/miso_44_wefor_neutral-ablation"
+}
