@@ -8,7 +8,7 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 (`_eia_hourly_frame*`, `load_demand`, `load_eia_hourly_renewable_gen`, …) and
 `src/market_sim/data/renewables.py` (`load_renewable_profiles`).
 
-## Coverage on disk (checked 2026-07-05)
+## Coverage on disk (checked 2026-07-06)
 
 | BA | ISO | Span |
 |---|---|---|
@@ -16,45 +16,44 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | ISNE | NEISO | 2015-07-01 .. 2026-05-20 |
 | NYIS | NYISO | 2015-07-01 .. 2026-06-13 |
 | SWPP | — (SPP, not a modeled ISO) | 2015-07-01 .. 2026-05-20 |
-| PJM | PJM | 2021-12-31 .. 2026-06-30 |
-| CISO | CAISO | 2022-12-31 .. 2025-12-31 |
-| MISO | MISO | 2022-12-31 .. 2025-12-31 |
+| PJM | PJM | 2019-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06) |
+| CISO | CAISO | 2019-01-01 .. 2025-12-31 (2019-2021 backfilled 2026-07-06) |
+| MISO | MISO | 2019-01-01 .. 2025-12-31 (2019-2021 backfilled 2026-07-06) |
 | SOCO | — (Southern Co, not a modeled ISO) | 2022-12-31 .. 2025-12-31 |
 | FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
 
-## DATA NEEDED: CAISO / PJM / MISO, 2019-2021
+## 2019-2021 CAISO / PJM / MISO backfill (2026-07-06)
 
 The 2026-07 weather-year pool widening
 (`docs/handoffs/probability-bounds-plan-2026-07.md` §2.1,
-`docs/weather-pool-coverage-2026-07.md`) added 2019-2021 to the ERCOT/NEISO
-forecast-ensemble weather-year pool (NYISO got 2021 only — see the coverage
-note) using the years already present above. CAISO, PJM and MISO have no raw
-coverage that far back and stay on the 2023-2025 window until `CISO`/`PJM`/
-`MISO hourly.parquet` are extended.
+`docs/weather-pool-coverage-2026-07.md`) originally added 2019-2021 only to
+ERCOT/NEISO (NYISO got 2021 only) because CAISO/PJM/MISO had no raw coverage
+that far back, and extending them via `scripts/fetch_eia930_hourly.py`
+(EIA API v2, `api.eia.gov`) is blocked by this sandbox's network allowlist
+(confirmed by direct `curl`; still true — no `EIA_API_KEY` configured here
+either).
 
-**Blocked in the managed sandbox, 2026-07-05.** Extending them requires
-`scripts/fetch_eia930_hourly.py` against the EIA API v2
-(`api.eia.gov/v2/electricity/rto/...`), which returns HTTP 403 from this
-environment's network allowlist (confirmed by direct `curl`; no
-`EIA_API_KEY` is configured here either). The script's own docstring already
-notes it must be run locally. To land the years once run locally:
+That block doesn't apply to the six-month **BALANCE bulk archive**
+(`www.eia.gov/electricity/gridmonitor/sixMonthFiles/`, a different host,
+already used by `scripts/fetch_eia930_balance.py` for 2022+), which carries
+the same demand + fuel-type generation series back to 2019. 2019-2021 were
+fetched into `data/raw/eia-930/EIA930_BALANCE_{year}_{half}.parquet` and
+folded into `CISO`/`PJM`/`MISO hourly.parquet` here via the new
+`scripts/extend_eia930_hourly_from_balance.py` (never altering an
+already-committed row — a UTC-time dedup keeps the pre-existing row on any
+overlap, e.g. PJM's 2021/2022 boundary).
 
-```bash
-python scripts/fetch_eia930_hourly.py --ba CISO --start 2019-01-01 --end 2021-12-31
-python scripts/fetch_eia930_hourly.py --ba PJM  --start 2019-01-01 --end 2021-12-31
-python scripts/fetch_eia930_hourly.py --ba MISO --start 2019-01-01 --end 2021-12-31
-```
-
-then upload the refreshed `<BA> hourly.parquet` files here (they must be
-merged with the existing 2022+ rows, not overwritten — see the script's
-`--out` flag) and add the verified years to
-`constants.WEATHER_YEAR_POOL_BY_ISO["CAISO"|"PJM"|"MISO"]` following the same
-end-to-end verification method documented in
-`docs/weather-pool-coverage-2026-07.md` (a clean 8760-hour demand series AND
-`market_sim.data.renewables.load_renewable_profiles` resolving with no
-exception — PJM/CAISO/MISO's fallback coverage floors haven't been checked
-past what ERCOT/NEISO/NYISO needed).
+CAISO and MISO now resolve the full 2019-2021 span end-to-end (demand +
+renewables); PJM's demand doesn't route through this extract at all (always
+falls back to `eia_demand_profiles.parquet`, whose own floor is 2021), so
+only 2021 landed in PJM's pool despite its renewables now resolving for
+2019/2020 too. See `docs/weather-pool-coverage-2026-07.md`'s 2026-07-06
+addendum for the full verification table and the geothermal/battery fidelity
+caveat (the BALANCE bulk archive's legacy taxonomy doesn't split those out;
+they fold into `NG: OTH` as `NaN`, not fabricated zero, for these three
+years).
 
 2022 and H1-2026 must **not** be fetched for any BA under the rule-22 holdout
 quarantine (`CLAUDE.md`), regardless of ISO, until that ISO's
-calibration-complete marker exists.
+calibration-complete marker exists — the BALANCE bulk fetch above was
+confined to 2019-2021 for exactly this reason.
