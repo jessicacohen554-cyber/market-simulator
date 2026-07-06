@@ -250,6 +250,149 @@
         2024,
         2025
       ]
+    },
+    "NYISO": {
+      "bundle": "results/calibration/nyiso53_litsl_v2",
+      "content_hashes": {
+        "btm.parquet": "9b5d612ff4c1d121a1e568f829487cc9b834b6b99b82aee58efbc8edb4bfd348",
+        "dispatch/2023_P1.parquet": "5bd352e5ae39a779f2fa06319a1df511e04c6ff2b1de366b95702f9d9ab25ae5",
+        "dispatch/2024_P1.parquet": "f958f7d8170d390e72e9e6dcae08f8841d773146153d1d96e4f19f6612d691b6",
+        "dispatch/2025_P1.parquet": "8b05dc8bf940a626de21e69f6e1198ce12fe9104c3928c02aaf428bfc7e53507",
+        "flows.parquet": "50b0e8796cc471a576194771fb3308f9b05a51bf2642c46d82e7f80362b10c44",
+        "storage.parquet": "6e2dc8e471a1303b5994c9a78113064767a80b43d8c4008276ce3a6f09954e1e",
+        "system.parquet": "9b74e043dfa3d974fdf9094a093b0c78022c70e32e5f6647db7a7eee685559e9"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_srmc_bound",
+        "coal_takeorpay_from_data",
+        "gas_st_drag_overrides",
+        "measured_ramp_capability",
+        "miso_commitment_posture",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_mustrun",
+        "plant_tranche_config",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "coal_econ_srmc_bound",
+          "measured_ramp_capability",
+          "miso_commitment_posture",
+          "neiso_winter_fuel_mustrun"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 140,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "coal_econ_srmc_bound",
+          "measured_ramp_capability",
+          "miso_commitment_posture",
+          "neiso_winter_fuel_mustrun",
+          "neiso_winter_fuelsec_commit_frac",
+          "neiso_winter_fuelsec_min_stable_pct",
+          "neiso_winter_fuelsec_tmin_c"
+        ],
+        "scenario_config_matched": 395
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-06-nyiso-53-li-tsl",
+      "recorded_flag_count": 134,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "PJM": {
+      "bundle": "results/calibration/pjm77_ct_relfloor_reconcile",
+      "content_hashes": {
+        "btm.parquet": "af2fdc53c820c8cbcbd0e1dfc3277f0c49d579a920f94a1930939b7ee1798507",
+        "dispatch/2023_P1.parquet": "b11bb23a630bbcbcd5605f00977ef172044e6aed64d477b1dc6ea82a638a786e",
+        "dispatch/2024_P1.parquet": "61b5c0b2e721461de2b7abaca8b67ae5f63bcb61b1e7256be086d00ded40c5ab",
+        "dispatch/2025_P1.parquet": "daee13882f352bdab97c069e48c8f1ac263af4afa31cdd09c87950a3e61da49b",
+        "flows.parquet": "7675094336b40426ad8b46962bad407c8a6e044077f88588d021a940b8eb0c83",
+        "storage.parquet": "06930bc44c523b25bf449180b5a8bc71b9fc021fc2c3f0388e306d706cd4fe89",
+        "system.parquet": "4bf852f9e0641067a2e0fbd27e438696187e3725bcdbfe1b518841722d6ee045"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_srmc_bound",
+        "coal_takeorpay_from_data",
+        "ercot_reserve_supply_forward",
+        "ercot_storage_as_duration_gate",
+        "gas_st_drag_overrides",
+        "local_capacity_constraints",
+        "measured_ramp_capability",
+        "miso_commitment_posture",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_mustrun",
+        "plant_tranche_config",
+        "ramp_limits",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "coal_econ_srmc_bound",
+          "ercot_reserve_supply_forward",
+          "ercot_storage_as_duration_gate",
+          "local_capacity_constraints",
+          "measured_ramp_capability",
+          "miso_commitment_posture",
+          "neiso_winter_fuel_mustrun",
+          "ramp_limits"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 136,
+        "scenario_config_drift": [
+          "ct_netload_drag"
+        ],
+        "scenario_config_head_only": [
+          "coal_econ_srmc_bound",
+          "confirmed_exits_enabled",
+          "control_retrofit_forward",
+          "control_retrofit_path",
+          "demand_growth_percentile",
+          "end_year",
+          "entry_lookahead_reprice",
+          "entry_price_signal_alpha",
+          "ercot_reserve_supply_forward",
+          "ercot_storage_as_duration_gate",
+          "ercot_thermal_as_endogenous",
+          "gas_price_factor",
+          "hindcast",
+          "hindcast_fuel_variant",
+          "interchange_shape_export_pct",
+          "interchange_shape_import_pct",
+          "local_capacity_constraints",
+          "measured_ramp_capability",
+          "miso_commitment_posture",
+          "neiso_winter_fuel_mustrun",
+          "neiso_winter_fuelsec_commit_frac",
+          "neiso_winter_fuelsec_min_stable_pct",
+          "neiso_winter_fuelsec_tmin_c",
+          "nyiso_downstate_ct_gas_basis",
+          "nyiso_dynamic_reserve_requirements",
+          "nyiso_li_lcr_tsl",
+          "planning_reserve_margin_override",
+          "policy_bundle",
+          "ramp_limits",
+          "screen_reserve_value_enabled",
+          "start_year",
+          "startup_co2_reporting",
+          "tech_cost_path",
+          "tech_cost_percentile"
+        ],
+        "scenario_config_matched": 367
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-05-pjm-77-ct-relfloor",
+      "recorded_flag_count": 130,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
     }
   },
   "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed.",
