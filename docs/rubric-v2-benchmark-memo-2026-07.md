@@ -179,6 +179,15 @@ Rule 22: the `calibration-complete.json` marker and the one-shot 2022 /
 H1-2026 holdout validation are **owner decisions**. This memo recommends;
 it does not act.
 
+> **Adjudicated 2026-07-06 (marker-adjudication session): owner HELD both
+> markers.** NYISO held until #1344 lands (the C8 CT forced-share caveat
+> dominates); NEISO held until the winter-fuel Component-B / C7 ST_GAS
+> residual is re-examined. Preconditions were verified first (both keepers
+> re-scored CALIBRATED-WITH-CAVEATS at HEAD; U-01 resolved — the Component-A
+> probes were registered all along; G-13 moot for nyiso-53). No marker was
+> written, no holdout data intaken, no solve run. Record: the 2026-07-06
+> calibration-log adjudication entry.
+
 **NYISO — recommend declaring calibration complete**, with eyes open:
 - v2 determination CALIBRATED-WITH-CAVEATS; zero FAILs; 6/10 scored criteria
   at target grade; the intended-use price level sits at −9…−11% with the
