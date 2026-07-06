@@ -2703,6 +2703,22 @@ class ScenarioConfig:
     ct_drag_ramp_start: int = 15  # ramp window start hour (inclusive, local std)
     ct_drag_ramp_end: int = 22  # ramp window end hour (exclusive, local std)
 
+    # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
+    # ERCOT-gated). In the missed tail hours the model offers online CT/peaker
+    # economic+peak tranches at flat heat_rate x gas (~$50-150/MWh) — "phantom
+    # sub-$200 spare" that caps the energy dual — while the real fleet's peakers
+    # self-withhold to the ERCOT cap band (~$1,500/MWh). This raises the CT/peaker
+    # econ+peak tranche offer to the MEASURED self-withholding level (60-Day DAM
+    # disclosure, data/raw/_validation-source/ercot_ct_offer_surface.json) only
+    # above a measured net-load-percentile hinge (where even the peaker fleet's
+    # lower quartile has crossed to cap-band); slack hours are byte-identical
+    # (LP applies max(mc, level), low regime = 0). Forward-native (net-load
+    # regenerates from a load+VRE forecast), rule-13-admissible; parameters
+    # frozen against residuals (rule 20). See
+    # docs/handoffs/ercot-g22-offer-surface-2026-07.md and
+    # data.fleet.apply_ercot_ct_offer_surface.
+    ercot_ct_offer_surface: bool = False
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
