@@ -181,6 +181,26 @@ G-1 acute-day tail (the 106 missed 2023 hours — the target), G-4 tail structur
 D-8 volume-neutrality (§5.4), D-2 forced-energy (§5.6). Both arms registered on the
 dashboard (rule 15); keeper swap is an owner decision (not taken in this lane).
 
+### 6.1 Weight the readout on 2024/2025 — the current-design years (owner point, 2026-07-06)
+
+The 106 missed hours sit in **Aug–Sep 2023**, which is precisely the pre-reform
+**ECRS** window. ERCOT Contingency Reserve Service went live 2023-06-10 and was
+carved out as AS-responsibility (not price-released to SCED) until the
+**2024-08-01** release reform (`reserve_config.ERCOT_ECRS_RELEASE_REFORM_YEAR/_HOUR`);
+the summer-2023 spikes were substantially an artifact of that transient, retired
+design. (The offer cap is *not* a confound — the $9,000→$5,000 HCAP cut took effect
+2022-01-01, before the window, so the single $5,000 VOLL is correct for all three
+years.) 2024/2025 run under the **current** design and span the wider gas-price
+divergence, so they are the stronger test of go-forward forecast skill.
+
+Evaluation rule, pre-committed: **judge the surface primarily on 2024/2025.** A
+2023-only improvement that degrades 2024/2025 is evidence the surface is fitting the
+retired-design (pre-reform ECRS) transient — under rule 11 that means *reject and
+keep looking for the real root cause*, not retain because the 2023 residual moved. A
+structurally-real offer surface should help or be neutral in the current-design
+years. The readout leads with the 2024/2025 arms; 2023 is reported as the
+design-caveated year.
+
 ## 7. Scope guards (per the L-12 brief)
 
 - Do **not** touch `model/capacity.py` (parallel capacity-economics lane) or

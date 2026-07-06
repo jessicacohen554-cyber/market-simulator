@@ -66,6 +66,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
     apply_coal_tranches,
+    apply_ercot_ct_offer_surface,
     apply_neiso_coldsnap_derate,
     apply_netload_drag_floors,
     assemble_mc,
@@ -3846,6 +3847,19 @@ def run_year(
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
+    # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
+    # ERCOT-gated): raise the CT/peaker econ+peak tranche bid to the MEASURED
+    # self-withholding level (60-Day DAM disclosure) in the top-net-load hours
+    # where the real fleet's peakers price to the cap band, removing the
+    # "phantom sub-$200 spare" that caps the energy dual in the missed tail.
+    # Net-load uses the same LP-served convention as the drag floors above.
+    if getattr(config, "ercot_ct_offer_surface", False) and iso == "ERCOT":
+        _ct_surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        apply_ercot_ct_offer_surface(mc_base, fleet, _ct_surface_net_load, config)
     # ── Interchange price/limit injections (orchestrator-unification Stage 5)
     # The forward-native sequence — reference-price seams (generic + CAISO
     # dedicated), firm import/export floors, and the CAISO offer couplings —
