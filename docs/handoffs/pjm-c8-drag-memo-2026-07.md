@@ -193,6 +193,16 @@ needs to wait on any further G-21 work**; that dependency is resolved (in the
 negative). Option A remains not recommended (§4, unchanged). The owner can
 adjudicate now.
 
+**Addendum 2026-07-06 (L-13 posture probe — null result).** The
+`pjm_commitment_posture` A/B probe (pjm-82 vs pjm-81;
+`docs/handoffs/pjm-commitment-posture-port-2026-07.md`) does **not** move the
+CT_PEAKER denominator: 2024 class total 20.69 → 20.59 TWh (−0.10), the breach-year
+forced share stays **12.0 %** (D-2 numerator 2.49 → 2.47 TWh). The posture's
+min-load coupling pins a little more CC_REGULAR baseload (+1.5 TWh/yr) and shaves
+ST_GAS/CT slightly — it does not repair the 2024 CT_PEAKER under-dispatch. So the
+C8 disposition above is **unchanged**; this probe adds no new denominator evidence.
+The C8 decision remains the owner's.
+
 ## 7. Sources
 
 - `results/calibration/pjm77_ct_relfloor_reconcile/legitimacy_diagnostics.json`
