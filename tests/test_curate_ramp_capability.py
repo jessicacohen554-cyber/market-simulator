@@ -53,6 +53,62 @@ def _write_eia860_fixture(raw_root: Path) -> None:
     ba.to_parquet(d / "eia860_generators.parquet")
 
 
+def _write_caiso_fixture(raw_root: Path) -> None:
+    """Append a CISO plant (EIA-860 + CAMPD CA extract) to the raw tree.
+
+    One CAISO plant 500: a 10M GT (60 MW) + a 12H ST (200 MW), on the
+    balancing-authority code ``CISO`` and metered in a ``CA_2023`` extract.
+    Reuses the same raw dirs the PJM/MISO fixtures write into, so a curate
+    run with ``isos=["CAISO"]`` must pick this plant and NONE of the others.
+    """
+    eia = raw_root / "eia-860"
+    eia.mkdir(parents=True, exist_ok=True)
+    operable = pd.read_parquet(eia / "eia860_generator_operable.parquet")
+    ba = pd.read_parquet(eia / "eia860_generators.parquet")
+    operable = pd.concat(
+        [
+            operable,
+            pd.DataFrame(
+                {
+                    "Plant Code": [500, 500],
+                    "Generator ID": ["GT1", "ST1"],
+                    "Prime Mover": ["GT", "ST"],
+                    "Energy Source 1": ["NG", "NG"],
+                    "Nameplate Capacity (MW)": [60.0, 200.0],
+                    "Time from Cold Shutdown to Full Load": ["10M", "12H"],
+                }
+            ),
+        ],
+        ignore_index=True,
+    )
+    ba = pd.concat(
+        [
+            ba,
+            pd.DataFrame(
+                {
+                    "plant_id": [500, 500],
+                    "generator_id": ["GT1", "ST1"],
+                    "balancing_authority_code": ["CISO", "CISO"],
+                }
+            ),
+        ],
+        ignore_index=True,
+    )
+    operable.to_parquet(eia / "eia860_generator_operable.parquet")
+    ba.to_parquet(eia / "eia860_generators.parquet")
+    # CAMPD CA extract: plant 500, single GT unit ramping 0 -> 55 at hour 8.
+    campd = raw_root / "campd-unit-level"
+    campd.mkdir(parents=True, exist_ok=True)
+    hours = list(range(24))
+    load = [0.0] * 8 + [55.0] * 16
+    rows = [(500, "GT1", "2023-06-01", h, ld) for h, ld in zip(hours, load)]
+    df = pd.DataFrame(
+        rows, columns=["facilityId", "unitId", "date", "hour", "grossLoad"]
+    )
+    df["date"] = pd.to_datetime(df["date"])
+    df.to_parquet(campd / "CA_2023.parquet")
+
+
 def _write_campd_fixture(raw_root: Path) -> None:
     """Plant 100 (PA): 24 hours, two units, one gap; plant 999 CEMS-only."""
     d = raw_root / "campd-unit-level"
@@ -145,11 +201,34 @@ class TestCurateRampCapability(unittest.TestCase):
         written = curate_rc.curate(raw_root=self.raw_root, isos=["MISO"])
         self.assertEqual(written, [])
 
-    def test_registry_covers_pjm_and_miso(self) -> None:
+    def test_caiso_reconciliation(self) -> None:
+        # CAISO scoping: the CISO plant is picked from the shared raw tree,
+        # and neither the PJM nor MISO plants leak into the CAISO partition.
+        _write_eia860_fixture(self.raw_root)
+        _write_campd_fixture(self.raw_root)
+        _write_caiso_fixture(self.raw_root)
+        written = curate_rc.curate(raw_root=self.raw_root, isos=["CAISO"])
+        self.assertEqual(len(written), 1, "expected one CAISO partition")
+        validate_clean(written[0])
+        df = pd.read_parquet(written[0]).set_index("plant_code")
+        self.assertEqual(set(df.index), {500}, "only the CISO plant")
+        self.assertEqual(df.loc[500, "iso"], "CAISO")
+        # EIA-860: fast = the 10M GT (60), thermal = GT + ST (260).
+        self.assertAlmostEqual(df.loc[500, "fast_start_mw"], 60.0)
+        self.assertAlmostEqual(df.loc[500, "thermal_nameplate_mw"], 260.0)
+        # CEMS envelope: single 0 -> 55 step at hour 8.
+        self.assertAlmostEqual(df.loc[500, "ramp_up_1h_mw"], 55.0)
+        self.assertAlmostEqual(df.loc[500, "observed_pmax_mw"], 55.0)
+
+    def test_registry_covers_pjm_miso_caiso(self) -> None:
         registry = rc.load_registry()
         self.assertIn("PJM", registry)
         self.assertIn("MISO", registry)
+        self.assertIn("CAISO", registry)
         self.assertEqual(registry["PJM"].ba_code, "PJM")
+        # CAISO's EIA-860 balancing-authority code is CISO, not "CAISO".
+        self.assertEqual(registry["CAISO"].ba_code, "CISO")
+        self.assertEqual(registry["CAISO"].campd_states, ("CA",))
 
     def test_measured_ramp10_frac_formula(self) -> None:
         # Fast-start floor: a plant reported all-10M gets frac 1.0 whatever

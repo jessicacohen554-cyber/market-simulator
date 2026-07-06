@@ -1650,6 +1650,34 @@ class ScenarioConfig:
     # documented memory-gated follow-up, G-40). Requires energy_reserve_coopt
     # + miso_reserve_pergen; default off; GATED CHANGE (alters dispatch
     # volumes).
+    caiso_reserve_coopt: bool = False  # CAISO: enable the per-generator
+    # energy+reserve co-optimization (reserve_config._caiso_design, L-10). CAISO
+    # is the only registered ISO whose reserve design was previously a hard
+    # short-circuit in pipeline.kwargs.apply_reserve_coopt (issue #1492); this
+    # flag lifts that short-circuit. When on (and energy_reserve_coopt on) CAISO
+    # builds the PER-GENERATOR contingency-reserve co-opt: one R[r,t] column per
+    # (zone, fuel-class) pool of reserve-eligible thermal units with nonzero
+    # 10-min ramp, joint Σ P + R ≤ Σ pmax·availability per pool-hour, and
+    # R[r] ≤ Σ FleetArrays.ramp10 as a variable bound (the MISO miso_reserve_
+    # pergen structure). The requirement is BAL-002-WECC-3 Contingency Reserve
+    # (max(most-severe single contingency via largest_single_contingency_mw,
+    # CAISO_CONTINGENCY_FRAC × load), split half spinning / half non-spinning per
+    # WECC-3 + DMM practice) and shortfalls price at the PUBLISHED CAISO tariff
+    # §27.1.2.3.5 scarcity reserve demand curves (spinning 10% of the $1,000 soft
+    # energy bid cap flat; non-spinning 50/60/70% at the 70/210 MW shortage
+    # tiers) — the two products co-drawn on the shared pergen pool so their
+    # shortfall duals sum into the energy LMP (§27.1.2.4 co-optimization). The
+    # pergen ramp bound is what makes the requirement bite: a zone-aggregate
+    # ungated family clears inertly from ~10 GW of idle evening CC headroom at
+    # zero opportunity cost (the MISO lesson, issue #1492). Zero parameters
+    # fitted to the price residual (tariff/NERC values only, rules 5/23).
+    # DOCUMENTED GAPS (issue #1492, next increments — all would ADD reserve
+    # supply, so this build over-states scarcity ex-ante, rule 1): storage
+    # (dominant CAISO AS provider, not backed by the pergen builder), hydro
+    # (RAMP10_FRAC has no hydro entry → ramp10 = 0), and Regulation Up/Down (no
+    # forward-derivable requirement series). Requires energy_reserve_coopt +
+    # CAISO; default off; GATED CHANGE (alters dispatch volumes). See
+    # docs/multi-iso/caiso-reserve-coopt.md.
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
@@ -3472,6 +3500,17 @@ class ScenarioConfig:
                 "endogenous storage energy-vs-AS split is priced by the reserve "
                 "co-optimization, which is off. Enable energy_reserve_coopt "
                 "(ERCOT multi-product) or clear ercot_storage_as_endogenous."
+            )
+        # CAISO's reserve co-optimization (reserve_config._caiso_design, issue
+        # #1492) is priced inside the shared reserve co-opt; without it the flag
+        # would silently no-op (apply_reserve_coopt gates on energy_reserve_coopt
+        # first). Require both so the mechanism the flag names is actually built.
+        if self.caiso_reserve_coopt and not self.energy_reserve_coopt:
+            raise ValueError(
+                "caiso_reserve_coopt requires energy_reserve_coopt: the CAISO "
+                "energy+reserve co-optimization is priced by the reserve co-opt, "
+                "which is off. Enable energy_reserve_coopt or clear "
+                "caiso_reserve_coopt."
             )
         # The duration gate bounds the ENDOGENOUS storage split by SOC; it is
         # meaningless (and silently no-ops) without the endogenous split, and
