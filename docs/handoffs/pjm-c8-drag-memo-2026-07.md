@@ -165,6 +165,34 @@ cycle, then take the narrow form of B only if the breach survives.**
 `D2_EXEMPT_MECHS`, `D4_WINDOWS`, rule text, drag coefficients, or any keeper
 artifact.
 
+## 6a. Addendum 2026-07-06 — §6's sequencing bet did NOT pay off; C8 got worse
+
+The G-21 cycle completed (`docs/calibration-log.md` 2026-07-06 entry,
+`pjm-79`/`pjm-80` probes). Re-grounding ST_GAS/CT_INTERMEDIATE to 1.0×
+predicted in §6.1 that the corrected denominator would either resolve the
+breach or leave it unchanged. **Neither happened: the 2024 CT_PEAKER share
+ROSE from 12.0% to 14.0%** (2.49→2.65 TWh forced ÷ 20.69→18.95 TWh class
+total). The de-flooded ST_GAS energy went almost entirely to CC_REGULAR
+(+8–10 TWh/yr), not to CT_PEAKER — the class total shrank slightly (CT_PEAKER
+model volume 20.7→19.0 TWh in 2024, moving further from the 28.1 TWh actual)
+while the drag's own forced numerator was essentially unchanged (drag
+coefficients untouched, so its predicted deployment envelope didn't move).
+
+This **falsifies the §3 hypothesis that the ST_GAS flood was displacing real
+CT_PEAKER volume** — it was displacing CC_REGULAR instead. The breach is not
+a denominator artifact of the sub-SRMC bands; it is a **standalone,
+class-intrinsic result of the drag's measured deployment fraction exceeding
+10% of a shrinking CT_PEAKER total in the tight 2024 year**, independent of
+the ST_GAS mispricing.
+
+**Updated recommendation:** §6 step 2's exit condition (re-grounding clears
+the breach) is now known FALSE. Per step 3, the narrow Option B form
+(measured-deployment-floor category + measurement-anchored fidelity gate,
+owner-signed rule-20 amendment) is the live path — **the decision no longer
+needs to wait on any further G-21 work**; that dependency is resolved (in the
+negative). Option A remains not recommended (§4, unchanged). The owner can
+adjudicate now.
+
 ## 7. Sources
 
 - `results/calibration/pjm77_ct_relfloor_reconcile/legitimacy_diagnostics.json`
