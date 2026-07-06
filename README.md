@@ -47,6 +47,23 @@ uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 > checkout reports almost all passing / 2 skipped alongside these. Don't chase
 > them as part of a docs or environment change.
 
+> **Single-year runs are smoke tests only.** `--year 2024` above is for
+> quickly checking the environment works. Rule 16 (`CLAUDE.md`) requires
+> every registered calibration keeper to solve and register **all**
+> available years for that ISO in one bundle (e.g. `--year 2023 2024 2025`
+> for CAISO/PJM/MISO/NYISO/NEISO) — a single-year bundle is never a keeper.
+
+### Which install path?
+
+`uv` + `pyproject.toml`/`uv.lock` (above) is the **canonical** way to install
+and run this project — it's what CI uses and what dependency versions are
+pinned against. `run-simulator.sh` (and its Windows counterpart
+`run-simulator.bat`) is a **convenience launcher only**: it bootstraps a
+plain `venv` + `pip install -e .` on first run and opens the desktop
+launcher UI (`tools/launcher.py`) for users who don't have `uv` installed.
+Prefer `uv` for development, calibration runs, and anything you'll debug;
+use the launcher script only for a quick local UI session.
+
 ### Without `uv`
 
 `pyproject.toml` + `uv.lock` are the single source of truth for dependencies.
@@ -61,6 +78,8 @@ requirements.txt`); regenerate it from the lockfile rather than hand-editing
 market-simulator/
 ├── src/market_sim/      # The simulator package: config, data loaders, LP model,
 │                        #   policy, results, and the runner CLI entry point.
+├── configs/             # Scenario/sweep/uncertainty YAML configs (scenario_matrix.yaml,
+│                        #   uncertainty_ercot.yaml, scenarios/) consumed by the CLI.
 ├── data/                # Input datasets — raw/ (sources), dictionary/ (schema docs).
 │                        #   Read-only at runtime; see data/README.md.
 ├── scripts/             # Calibration backcasts, data builders, and analysis/probe
@@ -74,7 +93,13 @@ market-simulator/
 │                        #   (data auto-built at deploy from those payloads).
 ├── learning-hub/        # Scrollytelling explainers (LP dispatch, storage, zones…).
 ├── tools/               # Desktop launcher UI (tools/launcher.py).
-├── results/             # Cached run outputs and golden baselines.
+├── results/             # Cached run outputs and golden baselines, incl. hindcast/
+│                        #   (forecast-validation year-loop caches — see
+│                        #   docs/forecast-validation-plan.md).
+├── scope2-lce-portfolio/ # Standalone Scope-2 hourly clean-energy-matching
+│                         #   portfolio tool; consumes this simulator's LMP
+│                         #   output but is a separate project (see
+│                         #   docs/scope2-lce-portfolio.md).
 └── context/             # Reference-model summaries for the reviewer agent
                          #   (placeholder — see context/README.md).
 ```
