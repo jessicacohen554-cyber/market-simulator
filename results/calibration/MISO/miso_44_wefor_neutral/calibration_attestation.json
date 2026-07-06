@@ -1,0 +1,143 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "miso-44 keeper promotion, MISO merchant-floors root-cause session 2026-07-06 (owner direction: root-cause ablation-twin advantage)",
+  "note": "miso-44 = miso-42 recipe with ONE structural change: wefor_multiplier neutralized from 0.7 to 1.0 — a DOF REDUCTION (6 residual-identified DOFs vs miso-42's 7). Root-cause analysis: the miso-42 ablation twin scored better than its floored base NOT because the reliability floors were harmful (all 4 limbs force <0.6 TWh total, <0.35% of any class) but because the twin's wefor_multiplier→1.0 neutralization lowered CC availability → reduced the CC over-run → improved price and fuel-mix scores. The 0.7 multiplier had no measured physical basis (audit C-15: 'wind EFOR haircut' is a misnomer — it scales THERMAL EFOR); it was residual-identified and was silently compensating for the CC commitment-posture wedge. The reliability floors are structurally sound (driver: temperature, window: evening/hot-day, forward story: commitment inertia) and KEPT. This is a rule-14 application: the accurate input (wefor=1.0, i.e. no haircut) stays; the root cause of the miso-42 ablation advantage is the removed DOF, not the floors.",
+  "validation_note": "Reproducible from the committed bundle: scripts/run_calibration_full.py --iso MISO --year 2023 2024 2025 --coal-econ-srmc-bound --reliability-floor --coal-prb-sigmoid --coal-mustrun-per-plant --coal-drop-pof --prb-sigmoid-tiered --coal-bit-sigmoid --ct-intermediate-split --cc-intermediate-split --st-gas-intermediate --energy-reserve-coopt --miso-zonal-reserves --miso-reserve-pergen --miso-zonal-gas-basis --reference-price-interface --miso-firm-imports --miso-seam-flow-limit --miso-seam-export-limit --miso-pjm-border-anchor --out-dir results/calibration/MISO/miso_44_wefor_neutral (12 GB swap + MALLOC_ARENA_MAX=1 MARKET_SIM_HIGHS_THREADS=1). wefor_multiplier=1.0 set in backcast_config.py (MISO-only conditional, other ISOs retain 0.7 pending their own investigations). Legitimacy diagnostics: Overall PASS (D-1 shape PASS, D-2 forced-energy PASS, D-4 off-window PASS, D-5 parity PASS, D-9 quarantine PASS, D-10 renewable-bound PASS). Zero-forcing ablation twin registered alongside."
+ },
+ "exceptions": [
+  {
+   "criterion": "storage",
+   "year": 2025,
+   "metric": "C5b storage discharge throughput TWh",
+   "magnitude": "+1296.7% (model 3.42 vs EIA-930 actual 0.245 TWh)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch — not a model miss)",
+   "reason": "EIA-930 MISO reports NO pumped-storage series (verified: the PS column is all-null in every scored year of the balance files); the 0.245 TWh actual is battery-only, while the model side includes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk). The model's PS throughput sits INSIDE the eGRID net-energy-implied gross-discharge band (2.5-4.4 TWh depending on RTE basis) — the model is not over-cycling. No adder is admissible (PSH O&M < $1/MWh; the PJM $10 adder precedent in constants.py retired exactly this class of fit-to-mismeasured-target). Closable only in the scorer: compare battery-only model discharge vs NG: BAT when a BA reports battery-only (flagged to rubric infra). Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+  },
+  {
+   "criterion": "storage_shape",
+   "year": 2025,
+   "metric": "C5c monthly discharge pearson r",
+   "magnitude": "r=0.465",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (same basis mismatch as C5b)",
+   "reason": "The monthly shape compares model BAT+PS discharge against the battery-only EIA-930 series; the PS seasonal arbitrage shape dominates the model side and is absent from the actual. Rides the C5b scorer fix."
+  }
+ ],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-06 MISO merchant-floors root-cause session; derived from the miso-42 ledger with wefor_multiplier REMOVED (neutralized to 1.0)",
+  "n_entries": 6,
+  "n_residual": 5,
+  "note": "One fewer DOF than miso-42: wefor_multiplier removed (neutralized to 1.0 = identity). The remaining 6 entries are unchanged from the miso-42 ledger.",
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13); gas bands neutral 1.0 since the miso-40 de-leak",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[MISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "n_scalars": 8,
+    "source": "gas-keyed coal passthrough sigmoids (audit C-1); SCOPE REDUCED by coal_econ_srmc_bound: the fitted floor/ceil asymptotes now reach ONLY the committed band (the take-or-pay contract story), never the marginal econ*/peak tranches",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime; open: ground the COMMITTED-band discount in the measured EIA-923 Schedule-5 contract share"
+   },
+   {
+    "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
+    "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
+    "identification": "residual",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "n_scalars": 4,
+    "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) — not a published turbine limit",
+    "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_MISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); CT_PEAKER limbs carry the structural evening window [15,21) (derive-script-emitted, non-DOF shape parameter)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[MISO]",
+    "where": "interchange_config.py per-ISO seam supply-curve ladders",
+    "identification": "residual",
+    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8)",
+    "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam"
+   }
+  ]
+ },
+ "disclosures": {
+  "note": "MODEL MISS grounds for the NOT-YET determination. These are open structural root causes, not accepted measured-input limitations, and must keep scoring as FAILs until the mechanisms that own them land. The wefor_multiplier neutralization halved the CC over-run (the biggest miss) and improved prices, demonstrating the previous 0.7 haircut was masking the commitment-posture wedge. The promotion is on fewer DOFs + better structural fidelity, not on caveats closing.",
+  "items": [
+   {
+    "criterion": "fuelmix",
+    "klass": "CC_REGULAR",
+    "year": "2023-2024",
+    "metric": "C1 CC_REGULAR grid-delivered TWh",
+    "magnitude": "+20.03 / +19.05 TWh (2023/24; was +44.35/+43.22 under miso-41 — the wefor neutralization HALVED the CC over-run by raising thermal EFOR to its physical level, removing a silent CC availability subsidy)",
+    "classification": "MODEL MISS (P1 commitment-posture wedge; G-23/G-25)",
+    "reason": "Halved but still present. The remaining ~20 TWh over-run is the commitment-posture wedge: a perfect-foresight P1 clears at the efficient frontier with no start/min-load rents. Closable only by the pooled commitment-posture build."
+   },
+   {
+    "criterion": "fuelmix",
+    "klass": "ST_GAS",
+    "year": "2023-2024",
+    "metric": "C1 ST_GAS grid-delivered TWh",
+    "magnitude": "-8.53 / -11.01 TWh (improved from -10.86/-14.27 under miso-41)",
+    "classification": "MODEL MISS (commitment posture — ST_GAS self-committed dispatch)",
+    "reason": "Steam gas units run on commitment inertia the P1 LP cannot carry. Same family as CC over-run."
+   },
+   {
+    "criterion": "price_mean",
+    "year": "2025",
+    "metric": "C3a system load-weighted mean LMP vs RT",
+    "magnitude": "-12.5% (improved from -19.5% under miso-41)",
+    "classification": "MODEL MISS (residual price-formation gap: commitment posture + RT premium)",
+    "reason": "The gas-year 2025 residual sits in the commitment-posture and RT-premium families."
+   },
+   {
+    "criterion": "sysvol",
+    "family": "coal",
+    "year": 2025,
+    "metric": "C2 coal family grid-delivered TWh (preliminary 2025 vintage)",
+    "magnitude": "+14.7% (worsened from +8.8% under miso-41; +7.2% under miso-42)",
+    "classification": "MODEL MISS (dear-gas-year coal/CC margin; wefor neutralization reduces CC availability → coal fills)",
+    "reason": "With wefor=1.0, CC forced-outage rates rise to their physical level → CC availability drops → coal fills some of the gap (coal's own higher EFOR is offset by its baseload must-run inertia). The magnitude is within the 2025 preliminary-vintage uncertainty band. Root cause is the same commitment-posture family: the P1 LP over-dispatches the cheapest available marginal unit."
+   },
+   {
+    "criterion": "price_tail",
+    "year": "2024-2025",
+    "metric": "C3c hours LMP > $200/MWh",
+    "magnitude": "model 0h vs actual 24/38 (DA)",
+    "classification": "MODEL MISS (commitment posture + Midwest locational reserve)",
+    "reason": "Same family as miso-41/42. Not closable by any admissible supply-side reserve structure under perfect-foresight hourly dispatch."
+   }
+  ]
+ }
+}

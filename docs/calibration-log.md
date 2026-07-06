@@ -6823,3 +6823,74 @@ Dashboard pruned to the 15-run cap (miso-29/30/31 dropped).
 No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, one invocation,
 years sequential (12 GB swapfile, MALLOC_ARENA_MAX=1, MARKET_SIM_HIGHS_THREADS=1); no golden
 capture (documented OOM).
+
+## 2026-07-06 — MISO merchant-floor root-cause: miso-44 (wefor_multiplier neutralized), keeper promoted
+
+**Lane:** MISO merchant-floors root-cause session (owner direction: the miso-42 ablation twin scores
+better than its floored base — root-cause the floors per rule 1).
+
+### Root-cause finding
+
+The miso-42 ablation twin's score advantage does NOT come from the reliability floors — it comes from
+`wefor_multiplier` being neutralized from 0.7 to 1.0 in the zero-forcing ablation. Evidence:
+
+1. All 4 reliability floor limbs force a TOTAL of <0.6 TWh/year (<0.35% of any class).
+2. The ablation twin shows dispatch changes of several TWh (2–7% of class totals).
+3. The only other variable changed in the ablation is `wefor_multiplier` (0.7→1.0).
+4. `wefor_multiplier` scales THERMAL EFOR (not wind, despite the audit C-15 "wind EFOR haircut"
+   label). At 0.7, all thermal plants have 30% lower forced-outage rates → higher availability.
+   At 1.0, CC (the cheapest, most over-running class) dispatches less → CT/ST/imports recover.
+
+### Per-floor assessment (all 4 KEPT)
+
+All 4 enabled MISO reliability floor limbs pass rules 13/17 (driver, window, forward story):
+
+1. **MISO-Indiana CT_PEAKER evening [15,21):** tmax>32.2°C, evening ramp (not overnight), 0.07–0.32%.
+2. **MISO-Indiana COAL tmax:** tmax>32.2°C, coal commitment inertia on hot days, 0.10–0.32%.
+3. **MISO-South COAL tmax:** tmax>35.95°C, same pattern, negligible forcing.
+4. **MISO-Plains ST_GAS tmax:** tmax>33.35°C, floor_pct=6.2%, 0.12–0.42%.
+
+### miso-44: wefor_multiplier neutralized (DOF reduction)
+
+Registered: **`2026-07-06-miso-44-wefor-neutral`** (bundle `results/calibration/MISO/miso_44_wefor_neutral`).
+Config = miso-42 recipe + `wefor_multiplier=1.0` (MISO-only; other ISOs retain 0.7 pending their own
+investigations). This is a DOF REDUCTION: 6 residual-identified entries vs miso-42's 7.
+
+**Score vs miso-41 keeper:**
+
+| Criterion | miso-41 | miso-44 | Delta |
+|---|---|---|---|
+| fuelmix | 10/24 | **12/24** | **+2** (CT_PEAKER 2023/24 recovered) |
+| sysvol | 5/6 | 4/6 | −1 (coal 2025 +14.7% vs +8.8%) |
+| price_mean | 0/6 | **1/6** | **+1** (2024 recovered) |
+| price_shape | 1/3 FAIL | **2/3 CAVEAT** | **+1** |
+| price_tail | 1/6 | 1/6 | = |
+| dispatch_corr | 6/6 PASS | 6/6 PASS | = |
+| co2 | 3/3 PASS | 3/3 PASS | = |
+| storage | FAIL | **CAVEAT** | upgraded |
+| governance | UNATTESTED | **PASS** | upgraded |
+| shape (D-1) | PASS | PASS | = |
+| forced_share (D-2) | PASS | PASS | = |
+
+Key: CC_REGULAR over-run halved (+44/+43 TWh → +20/+19 TWh). The coal 2025 regression is the known
+commitment-posture artifact (reduced CC availability shifts marginal load to coal). Legitimacy
+diagnostics Overall PASS (D-1/D-2/D-4/D-5/D-9/D-10).
+
+### Keeper promotion
+
+**Keeper: `2026-07-06-miso-44-wefor-neutral`** (was `2026-07-05-miso-41-ct-evening`).
+
+Promotion rationale (rule 1): strictly more structurally faithful — one fewer residual-identified DOF
+(the physically baseless wefor haircut removed), all structurally sound reliability floors retained,
+material score improvements on fuel mix and prices. The sysvol coal 2025 regression is a known
+commitment-posture artifact on a preliminary-vintage actual and does not override the structural gain.
+
+### backcast_config.py change
+
+`wefor_multiplier` set to `(1.0 if iso.upper() == "MISO" else 0.7)` at line 1110 — MISO-only
+neutralization; other ISOs retain 0.7 pending their own root-cause investigations.
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, one invocation,
+years sequential (12 GB swap, MALLOC_ARENA_MAX=1, MARKET_SIM_HIGHS_THREADS=1).
