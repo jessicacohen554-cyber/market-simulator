@@ -82,6 +82,121 @@ exactly as solved — no config change bundled into the promotion. Mechanics:
   nyiso-41's committed bundle and registration remain on the dashboard as the
   prior keeper (the one meaningful historical comparison, per retention).
 
+### 2026-07-06 — PJM — G-21 SRMC re-grounding cycle (pjm 79 srmc-baseline / pjm 80 srmc-reground): PROBES, keeper stays pjm-77
+
+**Goal (gap register G-21; issue #1302).** `FINDING-pjm-burndown-2026-07.md`
+§2 flagged two committed offer bands as pure residual artifacts sitting below
+the Manual-15 SRMC floor: ST_GAS committed/econ_low/econ_high 0.4752/0.6552/
+0.90 and CT_INTERMEDIATE committed/econ_low 0.9/0.92 — a non-CHP steam/CT
+unit's part-load incremental heat rate is *above* full-load, so no tranche
+should offer below 1.0× AHR × delivered fuel (the same floor CC_REGULAR
+received in pjm-74). Task: re-ground both to 1.0×, run the full-span A/B,
+decompose what the sub-SRMC offers were compensating for, and open root-cause
+issues rather than tune the multipliers back down (rule 14).
+
+**Method.** Two full 2023–2025 solves on current HEAD (`7cb584e`), sequential
+years, single invocation each (rule 12):
+- **pjm-78 / dashboard `pjm 79 srmc-baseline`**
+  (`results/calibration/pjm78_srmc_baseline`) — the pjm-77 keeper recipe
+  VERBATIM (same offer curve, same drag, same reliability-floor config
+  including the 2026-07-06 CT_CHP scrub), re-solved on HEAD as the same-SHA
+  A/B comparator.
+- **pjm-79 / dashboard `pjm 80 srmc-reground`**
+  (`results/calibration/pjm79_srmc_reground`) — pjm-78 with ST_GAS
+  committed/econ_low/econ_high → 1.00/1.00/1.00 and CT_INTERMEDIATE
+  committed/econ_low → 1.00/1.00 (`scripts/run_pjm79_srmc_reground.py`).
+
+Both bundles hit a container OOM on the first attempt (12 GB LP, no swap;
+resolved with a 10 GB swapfile) and both initially solved against the
+*corrupted* legacy `eia_demand_profiles.parquet` (PR #1426's known PJM demand
+defect — the same one the 2026-07-05 `pjm-78-demand-regate` entry below
+found immaterial to pjm-77). Both were re-solved end-to-end after running
+`scripts/regenerate_clean.py demand-profile`; the final bundles carry zero
+demand-fallback warnings.
+
+**Decomposition (`scripts/diag_pjm_srmc_ab.py`, per-class TWh model vs actual,
+2023/2024/2025):**
+
+| class | pjm-78 (baseline) | pjm-79 (re-grounded) | Δ | actual (avg) |
+|---|---|---|---|---|
+| ST_GAS | 20.4 / 17.3 / 20.1 | 4.3 / 3.5 / 5.9 | **−16.0 / −13.7 / −14.2** | 8.6 / 12.4 / 14.3 |
+| CC_REGULAR | 295.3 / 322.8 / 308.9 | 305.2 / 331.0 / 318.1 | **+9.9 / +8.1 / +9.3** | 314.8 / 317.0 / 319.9 |
+| CT_PEAKER | 27.3 / 23.4 / 35.4 | 26.0 / 21.6 / 32.5 | −1.3 / −1.8 / −2.9 | 26.1 / 28.1 / 24.7 |
+| COAL_BIT | 112.5 / 112.2 / 137.8 | 115.9 / 115.0 / 140.6 | +3.4 / +2.9 / +2.8 | 110.8 / 111.6 / 133.7 |
+
+De-flooding ST_GAS removes ~14–16 TWh/yr, but **~90% of it lands on
+CC_REGULAR, not on the actual level** — CC_REGULAR was already close to
+actuals in the baseline (2024: +5.9 TWh) and the re-grounding pushes it to
+over-run (2024: +14.0 TWh), while ST_GAS flips from a large over-run (+4.9 TWh
+2024) to a new under-run (−8.9 TWh 2024). The residual didn't shrink — it
+**relocated between two gas classes**, plus a smaller secondary absorption
+into coal (+2.8–3.4 TWh/yr, itself already over-running). CT_PEAKER — the
+class this lane's C8 drag memo flagged as denominator-sensitive — improves
+only marginally (2024 model volume 20.7→19.0 TWh, moving *further* from the
+28.1 TWh actual): the memo's hoped-for fix does not materialize; the drag
+share **rises** 12.0%→14.0% (2024) because its numerator is unchanged while
+the class total shrinks. Gen-weighted mean LMP moves +$0.7–1.0/MWh across all
+three years; scarcity tail stays exactly 0 h > $200 both ways (the price-level
+miss is untouched — confirms burndown §3's finding that PJM's scarcity gap is
+the memory-blocked per-gen reserve/ORDC item, not the offer curve).
+
+**Verdicts (`scripts/calibration_verdict.py`, both NOT-YET, C6 UNATTESTED —
+probes, no governance attestation drafted for either):**
+
+| criterion | pjm-78 baseline | pjm-79 re-grounded |
+|---|---|---|
+| C1 fuel-mix | FAIL: 2023 CC_REGULAR −19.4 TWh, ST_GAS +11.8 TWh | FAIL: 2023 CC_REGULAR −9.6 TWh; 2024 CC_REGULAR +14.0 TWh, ST_GAS −8.9 TWh |
+| C2 system volume | FAIL: 2025 gas +2.9%, coal +3.9% | FAIL: 2025 coal +6.2% (gas clears) |
+| C3a mean LMP | FAIL 2024/2025 (−8.0%/−13.3%) | FAIL 2024/2025 (−5.8%/−11.0%, closer but still failing) |
+| C3b price shape | FAIL all years (NRMSE 0.175–0.196) | FAIL all years (NRMSE 0.160–0.186, ~flat) |
+| C3c scarcity tail | FAIL all years (0h vs 6/18/59) | FAIL all years (0h vs 6/18/59, unchanged) |
+| C8 (D-2) CT_PEAKER 2024 | FAIL 12.0% (2.49/20.69 TWh) | FAIL **14.0%** (2.65/18.95 TWh) — worse |
+| D-10 free-class C1 | 14/16 all, 10/12 free | 13/16 all, 9/12 free — worse |
+
+**Root-cause attribution (rule 14: the worse/relocated fit is a discovered
+bug, not a reason to revert).** The sub-SRMC ST_GAS band was masking a
+CC_REGULAR/ST_GAS merit-order substitution error, not a level error: once
+both classes clear at a comparable SRMC-grounded offer, the LP's real
+tie-break (efficiency: CC HR ~7 vs ST_GAS HR ~10.6) sends the marginal MWh to
+CC_REGULAR almost every hour, which is the physically correct merit order but
+the wrong volume outcome given actuals — actual ST_GAS runs far more energy
+than a pure-efficiency merit order predicts (2024: 12.4 TWh actual vs the
+Manual-15-SOM finding elsewhere that legacy steam is "economically
+challenged" and *should* under-run). This points at a real, unmodeled
+structural driver keeping ST_GAS's actual volume up despite its poor
+efficiency — candidates: reliability-must-run contracts / RMR designation for
+specific legacy steam units (parallel to NYISO's LI floor), local
+deliverability constraints that ST_GAS uniquely serves (zone-locked capacity
+CC_REGULAR can't reach), or a per-plant heat-rate error understating specific
+ST_GAS units' true competitiveness. **Not** attributable to: outages,
+gas price, or the CT_CHP/CT_PEAKER fix (both bundles share those unchanged).
+
+**Disposition: keeper stays `2026-07-05-pjm-77-ct-relfloor`. Neither probe is
+promoted.** The re-grounding is directionally correct physics (rule 13 — no
+non-CHP tranche should price below its own SRMC) but, scored in isolation, it
+trades one C1/C8 miss for a different and slightly worse one, with no gain on
+C2/C3/scarcity. Per rule 1, "never reject/revert a structurally-correct
+mechanism because the residual didn't move" — but equally, promoting it here
+would swap the keeper onto a NOT-YET that is not closer to CALIBRATED on any
+hard criterion, so there is no promotion case yet. **Recommendation to
+owner:** keep the re-grounding as the target end-state, but land it together
+with (not before) a fix for the underlying ST_GAS-volume driver identified
+above — the two root-cause issues opened below are the prerequisite work.
+The C8 drag memo (`docs/handoffs/pjm-c8-drag-memo-2026-07.md` §6) anticipated
+resolving the drag breach via this cycle's corrected denominator; that did
+**not** materialize (share rose, not fell) — the memo's sequencing
+recommendation is updated by this finding: the drag decision should not wait
+on a re-grounding that itself doesn't clear C8.
+
+**Registered:** `2026-07-06-pjm-79-srmc-baseline` (bundle
+`pjm78_srmc_baseline`) and `2026-07-06-pjm-80-srmc-reground` (bundle
+`pjm79_srmc_reground`), both PROBE-labeled, full 2023–2025 span. No zero-forcing
+ablation twin (probes, not keeper candidates; rule 20's twin requirement
+applies at promotion). Root-cause issues opened: #1483 (ST_GAS actual-volume
+driver, structural, candidates above) and #1484 (C8 drag-share sensitivity to
+the denominator, updates the open C8 drag memo). Dashboard retention pruned
+to top-15 (dropped 7 oldest PJM sidecars: pjm-62…68; bundles kept on disk).
+
 ### 2026-07-06 — NYISO — L-11 wave-3: Zone-K LCR/TSL mechanism (#1345) + #1344 dynamic-requirement channel + v2 plant-rate backcast wiring (nyiso 53): PROBES, keeper stays nyiso 41
 
 **Scope (lane L-11, gap register §5).** (1) Data-ask memo filed FIRST
