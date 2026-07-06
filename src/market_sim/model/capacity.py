@@ -80,10 +80,14 @@ from market_sim.config.constants import (
     NOX_RATES,
     OFFSHORE_WIND_PARAMS,
     PLANNING_RESERVE_MARGIN_BY_ISO,
+    PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
+    STORAGE_DEPLOYMENT_CEILING_MW,
+    STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
+    STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
     VOM,
     WRIGHT_REFERENCE_GW,
@@ -699,23 +703,71 @@ def resolve_planning_reserve_margin(config: ScenarioConfig, iso: str) -> float:
     return PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)
 
 
+def _storage_portfolio_elcc_dilution(existing_storage_mw: float, iso: str) -> float:
+    """Return the portfolio-accreditation ELCC dilution factor for storage.
+
+    The CDR's own reported fleet-average BESS ELCC compresses as storage
+    penetration grows (ERCOT accreditation audit 2026-07-06 §3: "60% -> 46%
+    by 2030 as penetration triples"), a phenomenon the per-duration
+    ``STORAGE_ELCC_BY_DURATION`` table (a fixed duration -> credit curve)
+    cannot express on its own. The model has exactly two cited (penetration,
+    ELCC) data points — today's validated level
+    (:data:`STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO`, factor 1.0, "close at
+    fleet level today") and the CDR's own ratio at full deployment-ceiling
+    penetration (:data:`STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO`,
+    46 %/60.2 %) — so the dilution is a straight LINE between them, not a
+    fitted curve: no exponent is invented, and no intermediate MW is guessed
+    for "2030". Below the reference MW the factor is clamped at 1.0 (no
+    bonus for less storage than today); at or above the ceiling it is
+    clamped at the CDR ratio. ISOs absent from either registry return 1.0
+    (byte-identical, conservative default).
+    """
+    reference_mw = STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO.get(iso)
+    ceiling_ratio = STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO.get(iso)
+    ceiling_mw = STORAGE_DEPLOYMENT_CEILING_MW.get(iso, 0.0)
+    if reference_mw is None or ceiling_ratio is None or ceiling_mw <= reference_mw:
+        return 1.0
+    existing_storage_mw = max(0.0, existing_storage_mw)
+    if existing_storage_mw <= reference_mw:
+        return 1.0
+    if existing_storage_mw >= ceiling_mw:
+        return ceiling_ratio
+    span_fraction = (existing_storage_mw - reference_mw) / (ceiling_mw - reference_mw)
+    return 1.0 - (1.0 - ceiling_ratio) * span_fraction
+
+
 def resolve_adequacy_requirement_mw(
     config: ScenarioConfig, iso: str, peak_demand_mw: float
 ) -> float:
     """Return the firm-capacity requirement shared by the floor and backstop.
 
-    ``firm peak x (1 + PRM_iso)``, where the firm peak nets the ISO's
-    load-side capacity products out of the gross peak when the ISO's own
-    adequacy construction does (ERCOT's CDR "Firm Peak Load": Load Resources
-    carrying AS, ERS, TDSP load management, distribution voltage reduction —
+    ``firm peak x (1 + PRM_iso) x icap_to_ucap_ratio_iso``, where the firm
+    peak nets the ISO's load-side capacity products out of the gross peak
+    when the ISO's own adequacy construction does (ERCOT's CDR "Firm Peak
+    Load": Load Resources carrying AS, ERS, TDSP load management,
+    distribution voltage reduction —
     :data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`). ISOs absent from that
     registry net nothing, so the requirement is the pre-existing
     ``peak x (1 + PRM)`` byte-identically. One requirement, two verbs
     (capacity-economics plan §3.2) — both adequacy mechanisms call this.
+
+    The ``icap_to_ucap_ratio`` factor (stage-5 §6 ICAP/UCAP pairing audit,
+    2026-07-06) corrects a basis mismatch for ISOs whose registered PRM is
+    stated on INSTALLED capacity (PJM's IRM, MISO's ICAP-basis PRM) while
+    :func:`accredited_firm_capacity_mw` counts their thermal fleet at UCAP —
+    the same double-count class the ERCOT accreditation audit fixed for CDR
+    seasonal rating. The factor is each ISO's own published ICAP<->UCAP
+    conversion (:data:`PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO`),
+    defaulting to 1.0 (byte-identical) for ISOs absent from that registry.
     """
     dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso, 0.0)
     firm_peak_mw = peak_demand_mw * (1.0 - dr_fraction)
-    return firm_peak_mw * (1.0 + resolve_planning_reserve_margin(config, iso))
+    icap_to_ucap_ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO.get(iso, 1.0)
+    return (
+        firm_peak_mw
+        * (1.0 + resolve_planning_reserve_margin(config, iso))
+        * icap_to_ucap_ratio
+    )
 
 
 def _thermal_firm_mw(g: Generator, iso: str | None) -> float:
@@ -2445,7 +2497,14 @@ def evolve_fleet(
     # accredited-firm-capacity ledger (plan §3.2), so both read these.
     wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
     solar_pool_mw = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
+    # Portfolio ELCC dilution (accreditation audit §3 follow-up): the
+    # pre-accredited storage_firm_mw the runner computed carries no
+    # penetration term, so it is diluted here — the point evolve_fleet
+    # consumes it — rather than in runner.py, whose own persisted ledger
+    # value stays undiluted (a parallel lane's file; see
+    # _storage_portfolio_elcc_dilution docstring).
     storage_firm_mw = float(_prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0)
+    storage_firm_mw *= _storage_portfolio_elcc_dilution(storage_power_mw, config.iso)
     # Per-fuel thermal AS credit DERIVED from the prior-year co-opt reserve duals,
     # populated by the runner only under ercot_thermal_as_endogenous. When present
     # the retirement/new-entry screens use it in place of the exogenous flat AS
