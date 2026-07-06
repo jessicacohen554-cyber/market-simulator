@@ -1,8 +1,8 @@
 # ERCOT G-22 condition-responsive CT offer surface — design note (2026-07-06)
 
 **Branch:** `claude/ercot-g22-offer-surface-owj77m` (lane L-12)
-**Status:** DESIGN NOTE (first deliverable). Mechanism to be built default-off,
-ERCOT-gated, with the pre-committed honesty gate in §5 and the full-span A/B in §6.
+**Status:** BUILT, default-off; full-span A/B solved and registered — **RESULT:
+REJECTED PROBE** (§8). Keeper stays ercot34; mechanism stays default-off.
 **Reads first:** the 2026-07-06 ercot34 calibration-log entry (the G-22 fold),
 `docs/FINDING-ercot-priceshape-2026-07.md` §6 filed structural conclusion #1
 (the sanctioned replacement this note builds) and §5/§6 (why the ercot33 wall was
@@ -211,3 +211,44 @@ design-caveated year.
   CEMS-measured mlf) is the **other** G-22 remedy and lives in shared code a
   concurrent PJM port is building — **not built here**; coordinate via rebase, do
   not fork it. This lane ships mechanism (a) only, in the ERCOT offer namespace.
+
+## 8. A/B result (2026-07-06) — REJECTED PROBE, no retune
+
+Full-span 2023–2025 A/B, both arms the ercot34 recipe with the 5 un-persisted
+fields restored (`ercot_zonal_gas_basis`, `ercot_west_netload_gas_shape`,
+`ercot_west_gas_delivered_floor=0.4`, `oil_primary_bin_fuel`,
+`ercot_reserve_supply_forward`); treatment adds `ercot_ct_offer_surface=True`.
+Registered: `2026-07-06-ercot37-g22-surface-off` (control twin) /
+`-on` (treatment). System LMP (load-weighted) vs RT actual:
+
+| year | actual | off | on | bias off→on | monthly MAE off→on | >$200 (act/off/on) |
+|---|---|---|---|---|---|---|
+| 2024 (current design) | 26.83 | 25.96 | 29.83 | −0.86 → **+3.00** | 2.32 → **4.59** | 53 / 22 / 42 |
+| 2025 (current design) | 32.49 | 34.45 | 40.85 | +1.96 → **+8.36** | 2.24 → **8.36** | 31 / 7 / 49 |
+| 2023 (design-caveat) | 48.36 | 41.89 | 64.00 | −6.47 → **+15.64** | 10.5 → **16.5** | 181 / 92 / 254 |
+
+**Verdict: reject (rules 1/11/26); do not retune.** The surface moves the tail
+*direction* right (2024 >$200 22→42 toward 53) but **over-corrects the level in
+every year**, including the current-design years it must not hurt (§6.1): it flips
+a near-perfect 2024 (−0.9) to +3.0 and roughly doubles monthly MAE; 2025 +2→+8.
+Per the §6.1 pre-committed rule, a mechanism that hurts 2024/2025 is rejected —
+and the measured hinge/level are **not** re-swept to chase the residual.
+
+**Structural finding (why, and what it points to).** `max(mc, $1,500)` on all 389
+CT econ+peak rows above the 90th net-load pct collapses the fleet's measured
+*heterogeneity* — the derive's own **p25 is still $150 above the hinge**, i.e.
+≥25% of peaker capacity offers competitively even in tight hours. Posting the p50
+on every row removes ~3.2 GW of spare in one step → overshoot. This confirms the
+G-22 fold: the wedge is **not purely offer-height**. Two filed next steps (neither
+executed here — executing to move the number would be residual-chasing):
+1. **Heterogeneity-preserving surface** — post the measured offer *distribution*
+   across tranches (econ-low bands stay near the $150 body, only the top/peak
+   bands reach cap-band), not the flat p50 on all econ+peak rows.
+2. **Commitment thinness (remedy b)** — the sub-2-day outage/derate structure P1's
+   perfect commitment lacks (the shared `pipeline`/`dispatch.py` posture lever with
+   CEMS-measured mlf; PJM-port lane owns the shared code). The overshoot shows the
+   online-capability wedge needs *less online capacity*, not only *higher offers*.
+
+The mechanism stays in the code **default-off** as a validated, documented negative
+result (the substrate for the heterogeneity-preserving variant); `keepers.json`
+untouched.
