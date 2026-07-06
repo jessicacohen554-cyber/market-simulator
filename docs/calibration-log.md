@@ -40,6 +40,28 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — NEISO — owner scoping decision: no further forced-commitment compute on sub-2.5%-of-load classes (ST_GAS out of scope for now)
+
+**Decision (owner, this session).** The L-15 lane's next planned step — probing
+`--class-commitment-overrides` against the netload-basis fix
+(`5e059c4`/PR #1515, merged) to test whether it closes the C7 ST_GAS
+diurnal residual — is **not being run**. The owner is willing to leave
+forced-commitment mechanism work ungated for asset classes that are under
+~2.5% of NEISO load, and does not want compute spent chasing ST_GAS
+specifically under that bar.
+
+**Effect on C7 / the 2026-07-06 adjudication hold (`dbda27f`).** The
+adjudication's "hold NEISO until Component B is re-examined" caveat
+(C7 ST_GAS diurnal residual, 2023/24 still FAIL) is **not resolved** by this
+decision — it is deprioritized. The two code-level enablement fixes already
+merged (CAMPD-bin `class_commitment_overrides` unblock;
+`ReliabilityFloorSpec.threshold_percentile` net-load basis fix) stand as
+available mechanism infrastructure but will not be exercised in a probe run
+under this scoping call. No new run, no registry entry, no keeper change.
+Future sessions: do not re-litigate this decision without new owner
+direction; the C7 caveat itself is unchanged (still open, still governs the
+NEISO marker hold) — only the compute-spend decision changed.
+
 ### 2026-07-06 — NYISO + NEISO — calibration-complete adjudication (rubric-v2 memo §6): owner HELD both markers; holdout quarantine unchanged, no solves
 
 **Scope (no solves, no data intake, no dashboard changes).** Verified the
