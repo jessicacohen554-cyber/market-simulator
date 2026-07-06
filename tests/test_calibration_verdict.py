@@ -828,10 +828,24 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
 
 
+def _mat(klass="CT_PEAKER", model_twh=30.0, actual_twh=30.0, total_twh=None):
+    """(ypay, ybench) making ``klass`` carry a chosen share of ISO load.
+
+    With no ``total_twh`` the class IS the whole system (share 100% —
+    comfortably above the C7/C8 materiality floor); pass ``total_twh`` to
+    place the class below/above the 2% floor via a filler class.
+    """
+    cf = {klass: actual_twh}
+    gm = {klass: model_twh}
+    if total_twh is not None:
+        cf["CC_REGULAR" if klass != "CC_REGULAR" else "ST_GAS"] = total_twh - actual_twh
+    return {"gmModel": gm}, {"classFull": cf}
+
+
 def _legit_artifact(year=2024, r=0.92, cv_ratio=1.1, share=0.05, klass="CT_PEAKER"):
     """Synthetic legitimacy_diagnostics.json content (schema v1) for C7/C8."""
     fail_d1 = r < 0.8 or cv_ratio < 0.5
-    fail_d2 = share > (0.10 if klass == "CT_PEAKER" else 0.30)
+    fail_d2 = share > (0.15 if klass == "CT_PEAKER" else 0.30)
     return {
         "schema": "legitimacy-diagnostics/v1",
         "iso": "PJM",
@@ -881,59 +895,85 @@ class ShapeForcedShareTests(unittest.TestCase):
     """C7 (D-1 diurnal shape) and C8 (D-2 forced share) from the artifact."""
 
     def test_shape_skipped_without_artifact(self):
-        recs = cv.score_shape(2024, None)
+        recs = cv.score_shape(2024, None, *_mat())
         self.assertEqual(recs[0]["status"], cv.SKIPPED)
         self.assertIn("legitimacy_diagnostics.json", recs[0]["magnitude"])
 
     def test_shape_flat_floor_fails(self):
         legit = _legit_artifact(r=0.9, cv_ratio=0.02)  # the caiso-42 signature
-        recs = cv.score_shape(2024, legit)
+        recs = cv.score_shape(2024, legit, *_mat())
         self.assertEqual(recs[0]["status"], cv.FAIL)
         self.assertEqual(recs[0]["classification"], cv.MODEL_MISS)
 
     def test_shape_good_profile_passes(self):
-        recs = cv.score_shape(2024, _legit_artifact(r=0.92, cv_ratio=1.1))
+        recs = cv.score_shape(2024, _legit_artifact(r=0.92, cv_ratio=1.1), *_mat())
         self.assertEqual(recs[0]["status"], cv.PASS)
 
     def test_shape_year_missing_is_skipped(self):
-        recs = cv.score_shape(2023, _legit_artifact(year=2024))
+        recs = cv.score_shape(2023, _legit_artifact(year=2024), *_mat())
         self.assertEqual(recs[0]["status"], cv.SKIPPED)
 
-    def test_shape_immaterial_class_skips_a_failing_verdict(self):
-        # ST_GAS 1.5 of 100 TWh ISO total load = 1.5% < the 2.5% cut-off ->
-        # SKIPPED even though the underlying r/CV-ratio verdict is FAIL.
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
-        ybench = {"classFull": {"ST_GAS": 1.5, "OTHER": 98.5}}
-        ypay = {"gmModel": {"ST_GAS": 1.5, "OTHER": 98.5}}
-        recs = cv.score_shape(2024, legit, ypay, ybench)
+    def test_shape_immaterial_class_skipped(self):
+        # v2.1 materiality floor: a class at 1% of ISO load (1 of 100 TWh) is
+        # SKIPPED-immaterial even with the caiso-42 flat-floor signature — the
+        # D-1 reading is annotated, never gated. At 3% of load it gates again.
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02)
+        recs = cv.score_shape(
+            2024, legit, *_mat(model_twh=1.0, actual_twh=1.0, total_twh=100.0)
+        )
         self.assertEqual(recs[0]["status"], cv.SKIPPED)
         self.assertIn("immaterial", recs[0]["magnitude"])
-
-    def test_shape_material_class_still_gates(self):
-        # ST_GAS 10 of 100 TWh = 10% > the 2.5% cut-off -> gates as before.
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
-        ybench = {"classFull": {"ST_GAS": 10.0, "OTHER": 90.0}}
-        ypay = {"gmModel": {"ST_GAS": 10.0, "OTHER": 90.0}}
-        recs = cv.score_shape(2024, legit, ypay, ybench)
+        recs = cv.score_shape(
+            2024, legit, *_mat(model_twh=3.0, actual_twh=3.0, total_twh=100.0)
+        )
         self.assertEqual(recs[0]["status"], cv.FAIL)
 
-    def test_shape_without_ypay_ybench_gates_as_before(self):
-        # No ypay/ybench supplied (e.g. a raw-row unit test) -> old behavior,
-        # no materiality skip possible.
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02, klass="ST_GAS")
-        recs = cv.score_shape(2024, legit)
+    def test_shape_forcing_cannot_hide_below_materiality(self):
+        # max(model, actual) basis: actual 1 TWh (1% of load) but the model
+        # forces the class to 5 TWh (5%) -> still gated (and failing).
+        legit = _legit_artifact(r=0.9, cv_ratio=0.02)
+        recs = cv.score_shape(
+            2024, legit, *_mat(model_twh=5.0, actual_twh=1.0, total_twh=100.0)
+        )
         self.assertEqual(recs[0]["status"], cv.FAIL)
 
-    def test_forced_share_peaker_gate(self):
-        recs = cv.score_forced_share(2024, _legit_artifact(share=0.55))
-        self.assertEqual(recs[0]["status"], cv.FAIL)
-        recs = cv.score_forced_share(2024, _legit_artifact(share=0.05))
+    def test_forced_share_peaker_gate_is_15pct(self):
+        # v2.1 owner amendment: CT_PEAKER cap 15% (was 10%). 12% now PASSes
+        # (pins the amendment), 16% FAILs, 55% FAILs, 5% PASSes.
+        for share, want in (
+            (0.55, cv.FAIL),
+            (0.16, cv.FAIL),
+            (0.12, cv.PASS),
+            (0.05, cv.PASS),
+        ):
+            recs = cv.score_forced_share(2024, _legit_artifact(share=share), *_mat())
+            self.assertEqual(recs[0]["status"], want, share)
+
+    def test_forced_share_measured_share_overrides_artifact_verdict(self):
+        # The scorer gates the MEASURED share against the rubric caps: an
+        # artifact written under the old 10% gate (embedded verdict FAIL at
+        # 12%) re-scores as PASS under the 15% cap without regeneration.
+        legit = _legit_artifact(share=0.12)
+        legit["diagnostics"]["D2"]["summary"][0]["verdict"] = "FAIL"  # stale 10%-era
+        recs = cv.score_forced_share(2024, legit, *_mat())
         self.assertEqual(recs[0]["status"], cv.PASS)
+
+    def test_forced_share_immaterial_class_skipped(self):
+        # v2.1 materiality floor: 92.7% forced on a class at 1% of load is
+        # SKIPPED-immaterial (reported), not a FAIL.
+        recs = cv.score_forced_share(
+            2024,
+            _legit_artifact(share=0.927),
+            *_mat(model_twh=1.0, actual_twh=1.0, total_twh=100.0),
+        )
+        self.assertEqual(recs[0]["status"], cv.SKIPPED)
+        self.assertIn("immaterial", recs[0]["magnitude"])
+        self.assertIn("92.7% forced", recs[0]["magnitude"])
 
     def test_forced_share_lower_bound_flagged(self):
         legit = _legit_artifact(share=0.05)
         legit["diagnostics"]["D2"]["summary"][0]["lower_bound"] = True
-        recs = cv.score_forced_share(2024, legit)
+        recs = cv.score_forced_share(2024, legit, *_mat())
         self.assertIn("lower bound", recs[0]["magnitude"])
 
     def test_missing_artifact_caps_determination(self):
