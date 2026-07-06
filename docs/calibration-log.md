@@ -6894,3 +6894,85 @@ neutralization; other ISOs retain 0.7 pending their own root-cause investigation
 
 No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, one invocation,
 years sequential (12 GB swap, MALLOC_ARENA_MAX=1, MARKET_SIM_HIGHS_THREADS=1).
+
+## 2026-07-06 — NEISO C-6 closure: measured seam ladders + priced-interchange P9 re-test + neiso-50 ablation twin (runs `neiso 50 ablation`, `neiso 51 priced-ix`, `neiso 52 head baseline`; E9 cleared; NO keeper swap)
+
+Lane scope (owner task): recalibrate `IMPORT_TRANCHES[NEISO]`/`EXPORT_TRANCHES[NEISO]` against
+measured interface data (audit C-6: "replace year-keyed rungs with measured hub prices / published
+wheeling costs per seam"), re-test `--priced-interchange` with the P9 methodology, and clear the
+keeper's deferred D-3 ablation twin (audit_keepers E9).
+
+### Data intake (new measured sources)
+
+- **EIA-930 per-seam flows** — `data/raw/eia-930-interchange/ISNE interchange hourly.parquet`
+  (HQT / NBSO / NYIS DIBAs, 2023–2025) via the new reproducible
+  `scripts/fetch_eia930_interchange.py` (closes that README's "no fetch script" gap). Per-seam
+  totals reconcile exactly with the eia-930-hourly `Total interchange` benchmark
+  (−15.14/−10.35/−8.13 TWh). Seam texture: HQ deliveries collapse 10.6 → 2.8 TWh across
+  2023→2025; NYISO seam grows 2.6 → 4.3 TWh.
+- **NYISO proxy-bus DA LBMPs** — `data/raw/_validation-source/nyiso_proxy_lmp_hourly_NEISO.parquet`
+  (border-lmp schema; hubs `NYISO_HQ` $24.57/$33.10/$55.99, `NYISO_NPX` $35.30/$39.44/$68.15) via
+  `scripts/build_nyiso_proxy_lmp_neiso.py` from the NYISO MIS public monthly archives (36 zips,
+  gitignored ~13 MB, regenerable from stable public URLs). NYISO_HQ is HQ's measured
+  alternative-market price — the nearest public measure of its opportunity cost (HQ has no hub);
+  NYISO_NPX is the NY-side NY–NE interface price.
+
+### Recalibration (`scripts/derive_neiso_import_tranches.py`, frozen formula)
+
+Per-seam **Q-Q duration coupling**: rung price = measured ISO-NE DA hub-LMP quantile whose
+exceedance duration matches the measured duration of the seam flow above the rung's
+cumulative-capacity midpoint (the `derive_import_tranches.py` bundle-mode anti-monotone coupling,
+but measured-price-driven — no model output in the loop — and per-seam). Capacities: measured p98
+per-seam import depth; Highgate carved at its published ~225 MW rating; scarcity rung at p99.9
+total depth. Export sinks by the mirrored coupling, clamped below the cheapest import rung
+(single-node no-wash reconciliation, rule 14 — the pooled node cannot host wheel-through
+counterflow). Identification: measured (rule 23) — re-derives only when source data extends.
+Year-keyed 2023–2025 ladders + pooled static forward ladder; new `EXPORT_TRANCHES_BY_YEAR`
+resolution wired through `get_interchange_spec`/`build_export_sinks`. Anchor diagnostics: 2023
+HQ_PhaseII = HQ opportunity cost +$0.1; 2025 carries a +$51.9 water-scarcity premium (the
+energy-limited seller's revealed threshold); NYISO_CT rungs bracket NPX parity every year.
+Offline pre-check (actual-DA-driven): +17.2/+10.0/+8.2 TWh vs +15.1/+10.3/+8.1 actual, hourly corr
++0.55/+0.62/+0.63.
+
+### P9 re-test (`neiso 51 priced-ix`, keeper recipe + `--priced-interchange`)
+
+vs the 2026-06-12 smoke (static $18 HQ rung: −23.5 TWh vs −10.3 actual, 100% import hours,
+gas −26%):
+
+| year | model net ix (TWh) | actual | Δ | dur RMSE (offline bound) | imp hrs | diurnal corr |
+|---|---|---|---|---|---|---|
+| 2023 | −14.82 | −15.14 | −2% | 529 (444) | 99.7% vs 97.8% | +0.46 |
+| 2024 | −8.92 | −10.30 | −13% | 609 (352) | 95.4% vs 83.8% | +0.46 |
+| 2025 | −9.59 | −8.13 | +18% | 554 (315) | 51.6% vs 72.2% | +0.38 |
+
+C1 12/12 (2024 gas 60.12 vs 60.99 EIA-923; the smoke had 45.0). C3a −6.2/−1.2/+2.6% with **real
+mechanistic HQ_import zonal separation** (−$1.7 to −$3.9 vs mainland) — the legitimate replacement
+for the non-reproducible WIP effect retired in the neiso-50 keeper swap. C3c/C5b carry the
+keeper's same ledgered gaps (unattested here — probe). Known shape gaps: flat annual rungs cannot
+carry within-year seam variation (2025 HQ drought spring vs recovery), so import-hours mismatch
+2025 and diurnal corr ≈ +0.4 vs the measured-schedule's 1.00 by construction.
+
+### Attribution (`neiso 52 head baseline`, keeper recipe re-solved at HEAD)
+
+C3a keeper-registered −10.4/−8.6/−4.4% → HEAD baseline −6.1/−4.1/+0.5%: the gap is main drift —
+the sole material config change since the keeper's solve commit is the `use_plant_emission_rates_v2`
+default flip (2026-07-06). The measured-ladder priced node adds −0.2/+2.9/+2.1 points on top
+(2024 clearly better, 2025 slight overshoot). **The keeper's registered numbers are stale vs
+HEAD** (E7 already warns). Promotion of the priced-ix config is left to the owner: it is more
+structurally faithful (forward mechanism, measured identification, C-6 closed) and scores better
+on C3a 2024/2025; rule-22 leave-one-year-out scoring of the ladder change is the promotion
+prerequisite.
+
+### D-3 ablation twin (`neiso 50 ablation`, E9 cleared)
+
+Zero-forcing twin of `2026-07-06-neiso-50-head-repro` (identical recipe, 2023–2025, clean tree;
+first solve discarded for dirty-tree provenance — the neiso-49 lesson). Keeper-vs-twin class
+deltas ≤ ±0.17 TWh (COAL_BIT −0.17, CC_CHP −0.13, CT_PEAKER +0.17 in 2025): NEISO's fit is
+carried by fuel/passthrough physics, not floors. Linked from the keeper sidecar
+(`ablation_twin` + `market_story`); `audit_keepers.py` NEISO: E9 **PASS** (was FAIL), only the
+pre-existing E7 staleness warning remains.
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule 22). All solves 2023–2025, single
+invocations, years sequential.
