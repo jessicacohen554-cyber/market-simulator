@@ -674,6 +674,7 @@ def derive_iso(iso: str) -> pd.DataFrame:
                         _CT_EVENING_WINDOW[0] if klass == "CT_PEAKER" else ""
                     ),
                     "end_hour": (_CT_EVENING_WINDOW[1] if klass == "CT_PEAKER" else ""),
+                    "threshold_percentile": int(NETLOAD_ONSET_PERCENTILE),
                 }
             )
             continue
