@@ -1090,7 +1090,7 @@ def render_index(context: dict) -> str:
   </table>
 </section>
 
-<footer><p>Docs: <a href="../docs/site/index.html">how it works</a></p></footer>
+<footer><p>Docs: open <code>docs/site/index.html</code> (or <code>docs/how-it-works.md</code>) on disk &mdash; the hardened launcher server serves only <code>/</code>, <code>/api/*</code> and <code>/reports/*</code>, not a docs route.</p></footer>
 <script>
 const CTX = {ctx_json};
 
