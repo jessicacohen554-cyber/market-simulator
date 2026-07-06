@@ -175,3 +175,35 @@ accurate diagnostics before any keeper-status claims.
 - `src/market_sim/config/iso_configs.py` (`drop_drag_owned_reliability_specs`) + `scripts/run_calibration.py` wiring — the §1 fix.
 - `scripts/run_calibration_full.py` — the §5 meta-gap fix (persist drag flags).
 - `scripts/run_pjm77_ct_relfloor_reconcile.py` — keeper candidate.
+
+---
+
+## Addendum 2026-07-06 — §6 CT_CHP D-4 RESOLVED (scrub, option b — the driver measurement refuted option a)
+
+§6 offered two fixes: window the EMAAC CT_CHP tmax limb to the cooling peak, or
+disable it. Measuring the driver decided it: CAMPD EMAAC pure-play CT_CHP
+(18 plants, 0.32 GW) hot-day hour-of-day CF, 2023–2025
+(`scripts/diag_pjm_ctchp_hotday_hod.py`), shows the hot-day lift is an
+**all-hours steam-host intensification, not an afternoon cooling window** —
+in-window [15,22) share of the CF increment 31.3 / 32.0 / 34.6 % vs 29.2 % for
+a perfectly uniform lift, with overnight hot-day CF ~0.12 vs mild-day ~0.098
+(the class is NOT offline overnight, unlike pure-play CT_PEAKER at 0.0165).
+Re-windowing to h15-21 would have cleared D-4 while contradicting the limb's
+own driver data — a diagnostic-tuned window. The limb's floor level is also
+unattainable: floor_pct 0.1764 exceeds the measured mean hot-day CF in **every
+hour of the day** (max 0.149 midday 2023).
+
+**Fix (implemented):** the limb is SCRUBBED (`enabled=False` + annotation in
+`reliability_floor_coeffs_PJM.csv`), mirroring the neiso-48 / caiso-52 CT tmax
+scrubs. The class's round-the-clock commitment — including its measured hot-day
+lift — is the steam-host phenomenon, owned by `chp_steam` (0.29–0.31 TWh forced
+in pjm-77, retained; rule 19: reconcile, never stack). Zero-parameter mechanism
+deletion; no fitted value changed.
+
+**D-4 confirmed clearing** (payload-dispatch + rebuilt-floors recompute on the
+pjm-77 bundle, same method pre/post): pre-fix reproduces the
+`reliability_floor × CT_CHP` off-window FAIL (share 0.7083); post-fix the
+mechanism carries zero floored MWh and **D-4 passes all three years** (the drag
+rows pass at 0 % off-window throughout). The only remaining D-2 failure is the
+pre-existing §4.2 drag 2024 peaker-budget breach — see
+`docs/handoffs/pjm-c8-drag-memo-2026-07.md` (owner decision).
