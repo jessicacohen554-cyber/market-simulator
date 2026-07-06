@@ -702,14 +702,16 @@ class TestForecastHydroBudget(unittest.TestCase):
         self.assertAlmostEqual(clim.sum() / 1e6, 22.8, delta=0.1)
 
     def test_climatology_skips_uncovered_years(self):
-        # PJM has no 2021/2022 hourly extract, so a window spanning them still
+        # PJM has no 2022 hourly extract, so a window spanning it still
         # returns a climatology from the years present (no crash, no NaN).
+        # 2021 was backfilled into the PJM extract by commit a2cb5c2 (EIA-930
+        # BALANCE backfill), which shifted the covered-year set and this total.
         from market_sim.data.eia_loader import climatological_monthly_hydro
 
         clim = climatological_monthly_hydro("PJM", (2021, 2022, 2023, 2024, 2025))
         self.assertIsNotNone(clim)
         self.assertTrue(np.all(np.isfinite(clim)))
-        self.assertAlmostEqual(clim.sum() / 1e6, 15.59, delta=0.2)
+        self.assertAlmostEqual(clim.sum() / 1e6, 15.87, delta=0.2)
 
     def test_climatology_unknown_iso_is_none(self):
         from market_sim.data.eia_loader import climatological_monthly_hydro
