@@ -511,6 +511,8 @@ def run_year(
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
+    caiso_scarcity_pricing: bool | None = None,
+    caiso_lcr_commitment_credit: bool | None = None,
     caiso_solar_deliverability: bool | None = None,
     caiso_solar_deliverability_k: float | None = None,
     caiso_solar_endogenous_spill: bool | None = None,
@@ -816,6 +818,15 @@ def run_year(
         config = config.with_overrides(
             scarcity_pricing_enabled=scarcity_price_overlay,
             scarcity_price_overlay=scarcity_price_overlay,
+        )
+    if caiso_scarcity_pricing is not None:
+        config = config.with_overrides(
+            scarcity_pricing_enabled=True,
+            caiso_scarcity_pricing=caiso_scarcity_pricing,
+        )
+    if caiso_lcr_commitment_credit is not None:
+        config = config.with_overrides(
+            caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
         )
     if caiso_solar_deliverability is not None:
         config = config.with_overrides(
