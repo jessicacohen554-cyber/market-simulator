@@ -109,16 +109,21 @@ the one-at-a-time cases can be read as attribution.
 
 ### 1.3 Engine and outputs
 
-- **Reuse `SweepDefinition`** (`scenarios.py:3484`) — it is a cartesian expander today;
-  extend it with a `cases: {name: {field: value}}` mapping (named-case mode, mutually
-  exclusive with `sweep:`). One YAML file `configs/scenario_matrix.yaml` defines the 13
-  cases. No new sweep engine (PP-1.1's explicit instruction).
-- **Runner entrypoint** `market-sim matrix --config <base.yaml> --matrix
-  configs/scenario_matrix.yaml --iso ERCOT --workers 2` — one invocation per case
-  internally (years sequential), ≤2 cases concurrent (rule 12/16-style concurrency).
-- **Output:** per-case emissions trajectory table (2026–2050) + min/max envelope, as
-  `results/ensemble/<matrix_id>/matrix.parquet` and a markdown/JSON summary. Labelled
-  **"deterministic scenario range — not a probability band"** in every artifact.
+- **LANDED — `SweepDefinition` reused, not replaced.** `config/scenarios.py`'s
+  `SweepDefinition` now carries a `cases: {name: {field: value}}` mapping (named-case
+  mode, mutually exclusive with `sweep:`, `case_configs()` does the expansion). One YAML
+  file `configs/scenario_matrix.yaml` defines the 13 cases exactly as specified below. No
+  new sweep engine was written (PP-1.1's explicit instruction, honored).
+- **LANDED — runner entrypoint.** `market-sim matrix --config <base.yaml> --matrix
+  configs/scenario_matrix.yaml --iso ERCOT --workers 2` (`runner.py`'s `matrix`
+  subcommand, `market_sim.matrix.run_matrix_cli`) — one invocation per case internally
+  (years sequential), ≤2 cases concurrent (`MAX_CONCURRENT_CASES`, rule 12/16-style
+  concurrency).
+- **LANDED — output.** Per-case emissions trajectory table + min/max envelope, as
+  `results/ensemble/<matrix_id>/matrix.parquet` + `envelope.parquet` and a markdown/JSON
+  summary (`market_sim.matrix.write_matrix_outputs`). Labelled
+  **"deterministic scenario range — not a probability band"** in every artifact
+  (`matrix.py`'s `LABEL` constant).
 
 ### 1.4 Cost
 
@@ -220,31 +225,33 @@ and the full matrix recorded in `ensemble_meta.json`.
 
 ### 2.5 Where it hooks into `ensemble.py`
 
-Keep the module's proven skeleton (parallel `ProcessPoolExecutor` + per-member
-config-hash caching + `_summarize_year` reuse); generalize the member axis:
+**LANDED in full** — kept the module's proven skeleton (parallel `ProcessPoolExecutor` +
+per-member config-hash caching + `_summarize_year` reuse); generalized the member axis:
 
-1. **New module `src/market_sim/uncertainty.py`** — `UncertaintySpec` (marginals,
+1. **DONE — new module `src/market_sim/uncertainty.py`** — `UncertaintySpec` (marginals,
    Spearman matrix, discrete weights, n, seed) loaded from a committed YAML spec;
-   `sample_draws(spec) -> list[DrawRecord]` (pure sampling, no I/O — unit-testable);
-   `draw_to_config(base_config, draw) -> ScenarioConfig`.
-2. **`ensemble.py` generalizes** `weather_ensemble_configs` → `sample_ensemble_configs
-   (base, spec)` returning `dict[draw_id, ScenarioConfig]`; `run_weather_ensemble` →
-   `run_ensemble(configs, workers)` with the weather-only path kept as a thin wrapper
-   (backwards-compatible CLI). Member identity moves from weather-year int to a draw-id
-   string; cache keys already include every sampled field via the config hash.
-3. **Worker default changes from `cpu_count - 1` to `min(2, cpu_count - 1)`**
-   (`ensemble.py:123`) — the current default is a latent OOM under rule 12 the moment
-   members are forecast solves on per-plant ISOs; the weather ensemble only survived it
-   because n=3.
-4. **New `ScenarioConfig` fields** (all rule-24 registered, default-neutral so every
-   existing config is unchanged): `gas_price_factor=1.0`, `demand_growth_percentile=0.5`,
-   `tech_cost_path="mid"`, `tech_cost_percentile=0.5`, `policy_bundle="current"`,
-   (`datacenter_load_gw=0.0` with PP-3.3). Guard: `gas_price_factor` must be ignored (or
-   asserted =1.0) in backcast mode — it is a forecast-uncertainty lever, never a backcast
-   tuning channel.
-5. **CLI:** `market-sim ensemble --config base.yaml --sampler configs/uncertainty_ercot.yaml
-   --draws 64 --seed 7 --workers 2 --out-dir results/ensemble/ercot_v1` (the existing
-   `--weather-years` path stays).
+   `sample_draws(spec) -> DrawSet` (pure sampling, no I/O — unit-testable, `tests/
+   test_uncertainty.py`); `draw_to_config(base_config, draw) -> ScenarioConfig`.
+2. **DONE — `ensemble.py` generalized.** `sample_ensemble_configs(base, spec)` returns
+   `dict[draw_id, ScenarioConfig]`; `run_ensemble(configs, workers)` runs them, with
+   `weather_ensemble_configs`/`run_weather_ensemble` kept as thin backwards-compatible
+   wrappers. Member identity moved from weather-year int to a draw-id string; cache keys
+   already include every sampled field via the config hash.
+3. **DONE — worker default is `min(2, cpu_count - 1)`** (`ensemble.py:132`,
+   `_MAX_FORECAST_WORKERS`) — closes the latent OOM under rule 12 the old
+   `cpu_count - 1` default risked the moment members are forecast solves on per-plant
+   ISOs; the weather ensemble only survived it because n=3.
+4. **DONE — new `ScenarioConfig` fields** (all rule-24 registered, default-neutral so
+   every existing config is unchanged): `gas_price_factor=1.0`, `demand_growth_percentile
+   =0.5`, `tech_cost_path="mid"`, `tech_cost_percentile=0.5`, `policy_bundle="current"`
+   (`scenarios.py`). **Still NOT landed:** `datacenter_load_gw` — gated on PP-3.3, which
+   remains unbuilt (no datacenter symbols anywhere in `src/`, gap-register G-34). Guard
+   landed: `ScenarioConfig` raises if `gas_price_factor != 1.0` in backcast mode
+   (`scenarios.py:3543`), so it cannot become a backcast tuning channel.
+5. **DONE — CLI:** `market-sim ensemble --config base.yaml --sampler
+   configs/uncertainty_ercot.yaml --draws 64 --seed 7 --workers 2 --out-dir
+   results/ensemble/ercot_v1` (`runner.py`'s `ensemble` subcommand); the pre-existing
+   `--weather-years` path still works unchanged.
 
 ---
 
