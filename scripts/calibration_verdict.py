@@ -159,6 +159,13 @@ SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # coal ~0.3 TWh — a percent band on a near-zero family is pure noise).
 DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
+D1_SHAPE_MATERIALITY_LOAD_FRAC = 0.025  # C7 immateriality cut-off (owner
+# decision 2026-07-06): a D-1-gated class (CT_PEAKER, ST_GAS) whose actual
+# annual energy is under 2.5% of ISO total load is not C7-gated, regardless of
+# its profile-r / off-peak-CV-ratio verdict — mirrors SYSVOL_MIN_TWH's C2
+# immateriality cut-off (a shape defect on a near-noise-floor class isn't
+# withheld from a keeper; the underlying r/CV-ratio still reports, it just
+# doesn't count against the C7 protective-caveat budget).
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
 # C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor). The
@@ -1239,7 +1246,12 @@ _LEGIT_HOWTO = (
 )
 
 
-def score_shape(year: int, legit: dict | None) -> list[dict]:
+def score_shape(
+    year: int,
+    legit: dict | None,
+    ypay: dict | None = None,
+    ybench: dict | None = None,
+) -> list[dict]:
     """C7 — diurnal shape (audit D-1), from the bundle's committed artifact.
 
     Reads ``<bundle>/legitimacy_diagnostics.json`` (written by
@@ -1251,6 +1263,14 @@ def score_shape(year: int, legit: dict | None) -> list[dict]:
     caiso-42 flat-floor signature (model CV 0.000 vs actual 0.35-0.45) that
     annual-volume bands cannot see. SKIPPED (never a silent pass) when the
     artifact or the year is absent.
+
+    Materiality cut-off (owner decision 2026-07-06,
+    :data:`D1_SHAPE_MATERIALITY_LOAD_FRAC`): when ``ypay``/``ybench`` are
+    supplied, a gated class whose actual annual energy is under 2.5% of ISO
+    total load is recorded SKIPPED regardless of its r/CV-ratio verdict —
+    mirrors :data:`SYSVOL_MIN_TWH`'s C2 immateriality cut-off. Without
+    ``ypay``/``ybench`` the class gates as before (unit tests exercising the
+    raw D-1 row need not supply them).
     """
     if legit is None:
         return [
@@ -1278,17 +1298,51 @@ def score_shape(year: int, legit: dict | None) -> list[dict]:
         f"profile r ≥ {gates.get('d1_min_profile_r')} & off-peak CV ratio ≥ "
         f"{gates.get('d1_min_cv_ratio')} (h0-{gates.get('d1_offpeak_last_hour')})"
     )
+    total_load = None
+    if ypay is not None and ybench is not None:
+        _, a_gen = _gen_totals(ypay, ybench)
+        total_load = _total_load(ypay, a_gen)
+    class_full = (ybench or {}).get("classFull", {})
     out = []
     for r in rows:
+        klass = r.get("class")
+        actual_twh = class_full.get(klass)
+        share = (
+            float(actual_twh) / total_load
+            if total_load and total_load > 0 and actual_twh is not None
+            else None
+        )
+        if share is not None and share < D1_SHAPE_MATERIALITY_LOAD_FRAC:
+            out.append(
+                {
+                    "criterion": "shape",
+                    "key": klass,
+                    "year": year,
+                    "status": SKIPPED,
+                    "classification": None,
+                    "metric": f"{klass} hour-of-day profile vs CAMPD (D-1)",
+                    "model": f"r={r.get('profile_r')} cv={r.get('model_offpeak_cv')}",
+                    "actual": f"cv={r.get('actual_offpeak_cv')}",
+                    "tol": tol,
+                    "magnitude": (
+                        f"immaterial: {klass} is {share:.1%} of ISO total load "
+                        f"(< {D1_SHAPE_MATERIALITY_LOAD_FRAC:.1%}) — C7 shape gate "
+                        "not applied (owner decision 2026-07-06); underlying "
+                        f"profile r {r.get('profile_r')}, off-peak CV ratio "
+                        f"{r.get('cv_ratio')}"
+                    ),
+                }
+            )
+            continue
         ok = r.get("verdict") != "FAIL"
         out.append(
             {
                 "criterion": "shape",
-                "key": r.get("class"),
+                "key": klass,
                 "year": year,
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
-                "metric": f"{r.get('class')} hour-of-day profile vs CAMPD (D-1)",
+                "metric": f"{klass} hour-of-day profile vs CAMPD (D-1)",
                 "model": f"r={r.get('profile_r')} cv={r.get('model_offpeak_cv')}",
                 "actual": f"cv={r.get('actual_offpeak_cv')}",
                 "tol": tol,
@@ -1533,7 +1587,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records.append(score_co2(year, ypay, ybench))
         records.append(score_storage(year, ypay, ybench))
         records.append(score_storage_shape(year, ypay, ybench))
-        records += score_shape(year, art.get("legitimacy"))
+        records += score_shape(year, art.get("legitimacy"), ypay, ybench)
         records += score_forced_share(year, art.get("legitimacy"))
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
