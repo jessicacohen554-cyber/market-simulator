@@ -5,7 +5,7 @@
     "MARKET_SIM_WARMSTART_XYEAR": "0"
   },
   "git_dirty": false,
-  "git_sha": "07be0de",
+  "git_sha": "5e31984",
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "highspy_version": "unknown",
   "keepers": {
@@ -137,6 +137,55 @@
       "hours": 8760,
       "keeper_id": "2026-07-03-caiso-51-firm-base",
       "recorded_flag_count": 116,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "ERCOT": {
+      "bundle": "results/calibration/ercot_stage4_overlayoff_v2",
+      "content_hashes": {
+        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
+        "dispatch/2023_P1.parquet": "7b6749e2969e196cf1781a4510c7f7ef4ff84effa0c0cbd50c8272193327f29d",
+        "dispatch/2024_P1.parquet": "ceee15561a300c4105409a782ebaf59cd4675e36a26fc84b2e98d1cd91520a0f",
+        "dispatch/2025_P1.parquet": "ef1f9e3bfa8d84e792e0ea7d957c819ce8696bafead97bf7b68b29be027dcecc",
+        "flows.parquet": "59f190b3c7f9212dc21307f052f74c2c0185b83e54988de8cf6963dd65c5db79",
+        "storage.parquet": "c3eac1992bc60a141bd3b659344f128baf5d65241d6ede74107841cfd6bb65d5",
+        "system.parquet": "6b1c83775f397f5f8f77e60803d021e49219cff3ed5ab0a8cfc8a1f24d0e5e6b"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_econ_srmc_bound",
+        "coal_takeorpay_from_data",
+        "gas_st_drag_overrides",
+        "miso_pjm_lmp_import_pricing",
+        "neiso_winter_fuel_mustrun",
+        "plant_tranche_config",
+        "zero_forcing_ablation"
+      ],
+      "fidelity": {
+        "meta_head_only": [
+          "coal_econ_srmc_bound",
+          "neiso_winter_fuel_mustrun"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 140,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "coal_econ_srmc_bound",
+          "neiso_winter_fuel_mustrun",
+          "neiso_winter_fuelsec_commit_frac",
+          "neiso_winter_fuelsec_min_stable_pct",
+          "neiso_winter_fuelsec_tmin_c",
+          "nyiso_dynamic_reserve_requirements",
+          "nyiso_li_lcr_tsl"
+        ],
+        "scenario_config_matched": 393
+      },
+      "hours": 8760,
+      "keeper_id": "2026-07-06-ercot34-stage4-overlay-off",
+      "recorded_flag_count": 134,
       "years": [
         2023,
         2024,
