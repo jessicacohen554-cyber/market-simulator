@@ -1908,6 +1908,29 @@ class ScenarioConfig:
     # scoping the per-pool ramp10 bound replaces. Requires
     # energy_reserve_coopt + PJM; default off; GATED. Profile memory before
     # multi-year runs (CLAUDE.md #45).
+    pjm_commitment_posture: bool = False  # PJM: the SAME pooled linear
+    # commitment-posture lever as miso_commitment_posture (design note
+    # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port
+    # docs/handoffs/pjm-commitment-posture-port-2026-07.md), ported not
+    # forked — shared _posture_pool_params / dispatch U-SU columns. Per
+    # non-fast-start (zone × fuel-class) pergen pool p, adds a continuous
+    # online-capacity variable U[p,t] with (i) the joint headroom re-anchored
+    # to online capacity (Σ P + R ≤ U), (ii) a CEMS-measured min-load coupling
+    # Σ P ≥ mlf_p·U (committed_pct min-stable, WWSIS-2 gap-fill), (iii) a
+    # startup charge on ΔU⁺ ($/MW from the NREL class tables), and (iv) the
+    # pergen reserve cap online-gated R ≤ ramp10_p·U — so PJM's published
+    # Manual-11 Primary/MAD ORDC families can run short in thin hours instead
+    # of drawing on ~14 GW of free perfect-foresight online headroom (the
+    # pjm-81 blocker: model online reserve never thins toward PJM's real
+    # ~3 GW). Eligibility gates on POOL PHYSICS, never class tuples (rule 18):
+    # fast-start pools (min-down ≤ 2 h AND startup < $30/MW — CT peakers/oil)
+    # get no U column. NOT a floor: forces no energy, carries no D-2 id, every
+    # input measured/published/physics — zero fitted parameters. Honesty gate:
+    # modeled online headroom / cleared reserve vs the measured PJM reserve-
+    # market series (data/raw/PJM-AS reserve_market_results), NEVER the price-
+    # tail residual (rules 1/13; scripts/report_pjm_posture_gate.py). Requires
+    # energy_reserve_coopt + pjm_reserve_pergen; default off; GATED CHANGE
+    # (alters dispatch volumes). Profile memory before multi-year runs.
     measured_ramp_capability: bool = False  # Reconcile FleetArrays.ramp10's
     # class 10-minute fractions (RAMP10_FRAC_BY_GROUP/_BY_FUEL, the NREL/EIA
     # class-rate ESTIMATE) against the MEASURED per-plant ramp-capability
@@ -4166,6 +4189,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
     "pjm_reserve_pergen": 1,
+    "pjm_commitment_posture": 1,
     "measured_ramp_capability": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
