@@ -4610,6 +4610,65 @@ def apply_statistical_mode(args) -> None:
     args.no_coal_monthly_pricing = True
 
 
+# G-18 / CLAUDE.md rule 22: the in-sample calibration window. Any --year
+# outside this set is a designated holdout (2022, H1-2026) and requires
+# --holdout-authorized plus a calibration-complete marker for the target ISO
+# (frontend/data/backcast/calibration-complete.json) — the one-shot frozen-
+# config holdout score. Mirrors calibration-run.yml's workflow_dispatch gate
+# (the GH-Actions UI path) and legitimacy_diagnostics.py's D6_CALIBRATION_YEARS
+# / audit_keepers.py's CALIBRATION_YEARS (kept as separate literals per this
+# repo's existing convention; a parity test asserts they agree).
+HOLDOUT_CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
+HOLDOUT_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
+
+
+def enforce_holdout_year_gate(
+    years: list[int], iso: str, holdout_authorized: bool, repo: Path = REPO
+) -> None:
+    """Hard-fail a solve over a holdout year unless explicitly authorized.
+
+    docs/handoffs/holdout-policy-memo-2026-07.md (b)(2): direct invocation of
+    this script with ``--year 2022``/``--year 2026`` solved today with no
+    code-level gate — only the GH-Actions ``workflow_dispatch`` wrapper
+    (calibration-run.yml) validated the year. This closes that gap at the
+    script entry point itself. Authorization requires BOTH ``--holdout-
+    authorized`` on the command line AND the target ISO already carrying a
+    ``calibration-complete`` marker (the marker is what turns a holdout year
+    into an authorized one-shot score, never the flag alone).
+    """
+    breach = sorted(set(years) - HOLDOUT_CALIBRATION_YEARS)
+    if not breach:
+        return
+    marker_path = repo / HOLDOUT_MARKER_FILE
+    complete = {}
+    if marker_path.exists():
+        complete = json.loads(marker_path.read_text()).get("complete", {})
+    marked = iso in complete
+    if holdout_authorized and marked:
+        logger.warning(
+            "%s: solving designated holdout year(s) %s under "
+            "--holdout-authorized (calibration-complete marker present) — "
+            "the one-shot frozen-config holdout score (CLAUDE.md rule 22).",
+            iso,
+            breach,
+        )
+        return
+    reason = (
+        "--holdout-authorized not passed"
+        if not holdout_authorized
+        else f"no calibration-complete marker for {iso} in {HOLDOUT_MARKER_FILE}"
+    )
+    raise SystemExit(
+        f"error: --year {breach} falls outside the calibration window "
+        f"{sorted(HOLDOUT_CALIBRATION_YEARS)} for {iso} — {reason}. "
+        "2022 and H1-2026 are under full quarantine (CLAUDE.md rule 22): no "
+        "solves until the ISO's calibration-complete marker exists, and even "
+        "then only the one-shot frozen-config score, authorized with both "
+        "--holdout-authorized and the marker. See "
+        "docs/handoffs/holdout-policy-memo-2026-07.md."
+    )
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -4617,6 +4676,17 @@ def main() -> None:
         "solve, persist, report."
     )
     parser.add_argument("--year", nargs="+", type=int, default=[2023, 2024])
+    parser.add_argument(
+        "--holdout-authorized",
+        action="store_true",
+        help="Authorize a solve over a designated holdout year (2022, "
+        "H1-2026) outside the 2023-2025 calibration window. Also requires "
+        "the target ISO to already carry a calibration-complete marker in "
+        "frontend/data/backcast/calibration-complete.json — the one-shot "
+        "frozen-config holdout score (CLAUDE.md rule 22). Without both, "
+        "--year outside 2023-2025 hard-fails. See "
+        "docs/handoffs/holdout-policy-memo-2026-07.md.",
+    )
     parser.add_argument(
         "--iso",
         default="ERCOT",
@@ -4700,7 +4770,7 @@ def main() -> None:
         help="Inject a per-plant CT_PEAKER reliability must-run floor from each "
         "peaker's observed EIA-923 monthly net generation "
         "(fleet.ct_mustrun_floor_mwh_by_plant). The energy-only LP prices "
-        "simple-cycle peakers out (~0% CF) where the actuals show a ~4% "
+        "simple-cycle peakers out (~0%% CF) where the actuals show a ~4%% "
         "reserve/reliability run; the floor recovers that energy. WEFOR and "
         "the planned-outage derate are exempt for floor units (the floor is "
         "observed generation and already nets out real outages). Backcast-"
@@ -5914,7 +5984,7 @@ def main() -> None:
         default=None,
         help="CAISO Lever-D local solar deliverability derate: re-curtail the "
         "uncurtailed HSL solar potential the dispatch is handed for the local / "
-        "sub-area congestion the reduced 3-zone topology can't see (~70% of real "
+        "sub-area congestion the reduced 3-zone topology can't see (~70%% of real "
         "CAISO curtailment). Caps the per-zone solar CF upper bound at "
         "clip(1 - k x solar_frac(t), floor, 1) — the solar analogue of the "
         "accepted WECC corridor ATC derate, driven by the FORWARD solar-"
@@ -6038,7 +6108,7 @@ def main() -> None:
         "in-state gas. Forecast-consistent, no-OASIS replacement for the "
         "desert-SW leg of --caiso-import-hub-prices (lever A): keeps imports "
         "competitive when the overlay cheapens in-state gas, so gas TWh stays "
-        "disciplined instead of over-running ~+12% (PLAN-caiso-gas-coupled-"
+        "disciplined instead of over-running ~+12%% (PLAN-caiso-gas-coupled-"
         "imports-2026-06-20). CAISO-only; pair with --gas-hub-basis-overlay; "
         "no-op (byte-identical) for forecast years (no measured gas basis). "
         "Default (unset) keeps the base config value (off).",
@@ -6580,6 +6650,7 @@ def main() -> None:
         return
 
     iso = args.iso.upper()
+    enforce_holdout_year_gate(args.year, iso, args.holdout_authorized)
     # Resolve the reference-price interface: explicit CLI flag OR the per-ISO
     # default-on set (MISO). Drives both the node selection and priced
     # interchange below, so MISO's plain run command activates the import node
