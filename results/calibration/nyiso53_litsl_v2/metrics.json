@@ -13,86 +13,102 @@
     2025
   ],
   "data_blocked_years": [],
-  "determination": "NOT-YET",
+  "rubric_version": 2,
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "caveat budget exceeded (hard 1/1, soft 4/2)"
+    "1 criterion(s) within the commercial-grade band but outside target: C5a CO2 vs eGRID",
+    "2 ledgered measured-input caveat(s): C3a mean LMP, C3b price duration/shape",
+    "1 protective-gate ledgered caveat(s): C8 forced-energy share (D-2)",
+    "unscored criteria: storage, storage_shape"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
-      "hard": true,
+      "tier": "load-bearing",
       "status": "PASS"
     },
     "price_mean": {
       "label": "C3a mean LMP",
-      "hard": false,
-      "status": "CAVEAT"
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
-      "hard": false,
-      "status": "CAVEAT"
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity",
-      "hard": false,
-      "status": "CAVEAT"
+      "label": "C3c price tail / scarcity (DA-expressible)",
+      "tier": "supporting",
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
-      "hard": false,
+      "tier": "supporting",
       "status": "PASS"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
-      "hard": false,
-      "status": "CAVEAT"
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "storage": {
       "label": "C5b storage throughput",
-      "hard": false,
+      "tier": "supporting",
       "status": "SKIPPED"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
-      "hard": false,
+      "tier": "supporting",
       "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
-      "hard": true,
+      "tier": "protective",
       "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
-      "hard": true,
+      "tier": "protective",
       "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
-      "hard": true,
-      "status": "CAVEAT"
+      "tier": "protective",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     }
   },
   "caveats": {
-    "hard": [
+    "protective": [
       "C8 forced-energy share (D-2)"
     ],
-    "soft": [
+    "ledgered": [
       "C3a mean LMP",
-      "C3b price duration/shape",
-      "C3c price tail / scarcity",
+      "C3b price duration/shape"
+    ],
+    "commercial_band": [
       "C5a CO2 vs eGRID"
     ],
     "budget": {
-      "hard_max": 1,
-      "soft_max": 2
+      "protective_max": 1,
+      "ledgered_max": 3
     }
+  },
+  "grade_summary": {
+    "scored": 10,
+    "target_grade": 6,
+    "commercial_grade": 1,
+    "ledgered": 3,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NYISO",
