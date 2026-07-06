@@ -2574,7 +2574,19 @@ CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
 # the value is LEFT at 0.45 (residual-identified, forecast-risk; DOF ledger S5)
 # rather than replaced by a knowingly-wrong LCR substitution. The 0.45 magnitude
 # still approximates the 2023 realized LI self-supply share (~0.48) — it is NOT
-# a validated forward driver and MUST NOT be quoted as one. NYC (zone J) is
+# a validated forward driver and MUST NOT be quoted as one.
+#
+# HOURS NARROWING (floor-rederive 2026-07-05, rule-17/18; NOT a re-level): the
+# floor is applied only in the afternoon-evening peak window
+# (transmission.NYISO_SELFSUPPLY_FLOOR_HOURS, HB14-21) — the summer
+# design-cooling condition the LCR locality requirements are defined at, where
+# the LI cable-import constraint physically binds. Applied all-hours it
+# force-committed in-pocket LM6000 peaker baseload overnight (D-2:
+# nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER, 43/65/42% of the
+# class in nyiso-48; C7 off-peak diurnal FAIL) where measured LI CT_PEAKER CF is
+# ~0.06 flat and LI net import runs well below its cable ceiling
+# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4). The
+# 0.45 LEVEL is unchanged — only the hours it had no driver for are removed. NYC (zone J) is
 # deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh (it
 # cannot import enough, so it self-supplies) — its idle peakers are a
 # reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
