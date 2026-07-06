@@ -349,6 +349,14 @@ def _group_daily_cf(
     if sub.empty:
         return pd.DataFrame(columns=["cf", "online_frac"])
     daily_mwh = sub.groupby("date")["grossLoad"].sum(min_count=1)
+    # A date in this index has CAMPD rows for the group; when every row's
+    # grossLoad is NaN the units reported but did not operate (CEMS leaves
+    # non-operating hours empty), so the day's energy is 0 — NOT missing data.
+    # Without this, an intermittent single-plant group (e.g. NEISO ST_GAS /
+    # Montville, offline ~90% of days) loses its offline days from the frame
+    # entirely and every flagged-day statistic conditions on "was operating":
+    # commit_frac saturates and the mild-day baselines are biased high.
+    daily_mwh = daily_mwh.fillna(0.0)
     cf = (daily_mwh / (nameplate * HOURS_PER_DAY)).clip(0.0, 1.0)
     # Per-plant online nameplate: a plant counts as online on any day it reports
     # positive gross load; sum its bin nameplate, normalise by group nameplate.
@@ -357,6 +365,14 @@ def _group_daily_cf(
     online_share = online_plants.apply(
         lambda s: sum(plant_npl.get(int(p), 0.0) for p in s) / nameplate
     ).clip(0.0, 1.0)
+    # A reporting day with NO online plant must count as online_frac = 0, not
+    # drop out: ``online_plants`` only has rows for days with some positive
+    # grossLoad, so without the reindex a SINGLE-plant group's online share is
+    # 1.0-or-missing and its commit_frac saturates at 1.0 == baseline_commit
+    # (the enable gate then can never pass — the 2026-06-30 NEISO ST_GAS rows
+    # show exactly this artifact). Multi-plant groups are near-unaffected
+    # (some plant reports load almost every day).
+    online_share = online_share.reindex(cf.index).fillna(0.0)
     return pd.DataFrame({"cf": cf, "online_frac": online_share})
 
 
@@ -418,19 +434,45 @@ def _min_stable_pct(plant_class: str) -> float:
     return 0.0
 
 
-def _caiso_system_net_load() -> pd.DataFrame:
-    """Load CAISO system hourly net-load from EIA-930 CISO, return daily peak GW.
+# EIA-930 balancing-authority hourly extract + LST offset per ISO with a
+# net-load-driven limb. NEISO joined 2026-07-06 (the ST_GAS re-grounding);
+# other ISOs are added here if/when a netload limb is derived for them.
+_NETLOAD_BA_FILES: dict[str, tuple[str, int]] = {
+    "CAISO": ("CISO hourly.parquet", 8),  # UTC-8 (PST, matching the CT derive)
+    "NEISO": ("ISNE hourly.parquet", 5),  # UTC-5 (EST)
+}
+
+
+def _system_net_load(
+    iso: str,
+    date_min: pd.Timestamp | None = None,
+    date_max: pd.Timestamp | None = None,
+) -> pd.DataFrame:
+    """Load an ISO's system hourly net-load from EIA-930, return daily peak GW.
 
     Net-load = Demand − solar − wind (same formula as
     ``derive_caiso_ct_reliability_floor.ciso_net_load_mw``). Returns a DataFrame
     with columns ``date`` and ``peak_nl_gw`` (daily peak net-load in GW).
+
+    ``date_min``/``date_max`` restrict the series to the derivation span (the
+    zone-temperature file's coverage, 2023-2025 today). This matters twice:
+    (1) the threshold percentile must be computed on the SAME span the CF
+    regression sees — the BA parquets have since been backfilled to 2019
+    (PR #1490 era), and an unrestricted percentile would silently shift the
+    committed CAISO netload thresholds on re-derivation; (2) the holdout
+    periods (2022, H1-2026; CLAUDE.md rule 22) must not leak into a
+    calibration-derived threshold.
     """
-    ciso_path = RAW_DIR / "eia-930-hourly" / "CISO hourly.parquet"
-    if not ciso_path.exists():
-        raise FileNotFoundError(f"EIA-930 CISO hourly missing: {ciso_path}")
-    df = pd.read_parquet(ciso_path)
+    entry = _NETLOAD_BA_FILES.get(iso.upper())
+    if entry is None:
+        raise FileNotFoundError(f"no EIA-930 BA hourly mapping for ISO {iso}")
+    fname, utc_offset = entry
+    ba_path = RAW_DIR / "eia-930-hourly" / fname
+    if not ba_path.exists():
+        raise FileNotFoundError(f"EIA-930 BA hourly missing: {ba_path}")
+    df = pd.read_parquet(ba_path)
     utc = pd.to_datetime(df["UTC time"], utc=True)
-    lst = utc.dt.tz_convert(None) - pd.Timedelta(hours=8)
+    lst = utc.dt.tz_convert(None) - pd.Timedelta(hours=utc_offset)
     df = df.copy()
     df["lst"] = lst
     df["date"] = lst.dt.normalize()
@@ -442,7 +484,11 @@ def _caiso_system_net_load() -> pd.DataFrame:
     daily.columns = ["date", "peak_nl_gw"]
     daily["peak_nl_gw"] = daily["peak_nl_gw"] / 1000.0
     daily["date"] = pd.to_datetime(daily["date"])
-    return daily
+    if date_min is not None:
+        daily = daily[daily["date"] >= date_min]
+    if date_max is not None:
+        daily = daily[daily["date"] <= date_max]
+    return daily.reset_index(drop=True)
 
 
 def _fit_netload_limb(
@@ -545,13 +591,16 @@ def derive_iso(iso: str) -> pd.DataFrame:
     all_codes = set(pmap["plant_code"].astype(int))
     campd = _load_campd(iso, all_codes)
 
-    # Pre-load system net-load for CAISO CT classes (netload driver).
+    # Pre-load system net-load for the netload-driven classes, restricted to
+    # the derivation span (the zone-temperature file's coverage) so the
+    # threshold percentile matches the CF-regression span and never consumes
+    # holdout-period data (rule 22).
     _daily_nl: pd.DataFrame | None = None
-    if iso == "CAISO":
+    if iso in _NETLOAD_BA_FILES:
         try:
-            _daily_nl = _caiso_system_net_load()
+            _daily_nl = _system_net_load(iso, temps["date"].min(), temps["date"].max())
         except FileNotFoundError:
-            log.warning("CAISO: EIA-930 CISO hourly missing; netload limbs skipped")
+            log.warning("%s: EIA-930 BA hourly missing; netload limbs skipped", iso)
 
     rows: list[dict] = []
     for (zone, klass), grp in pmap.groupby(["zone", "plant_class"], sort=False):
@@ -567,12 +616,24 @@ def derive_iso(iso: str) -> pd.DataFrame:
         if zt.empty:
             continue
 
-        caiso_ct = iso == "CAISO" and klass in _CT_CLASSES
+        # Net-load-driven limbs: CAISO CT (duck-curve evening ramp) and NEISO
+        # ST_GAS (rule-19 re-grounding, 2026-07-06). The NEISO legacy-steam
+        # fleet (Montville) is committed by ISO-NE on TIGHT-SYSTEM days — both
+        # the Feb-2023 arctic blast AND the post-Mystic Jun-Aug 2024/2025 heat
+        # events — so neither temperature limb alone identifies it (the CSV's
+        # tmax limb fit ρ=0.23 < RHO_MIN; the tmin limb n=8 < N_MIN; both ship
+        # disabled). Daily peak net-load unifies the hot and cold commitment
+        # driver (median committed day sits at the p93 of daily-peak net-load;
+        # Spearman ρ≈0.5 on the flagged span, n≈330), exactly the CAISO-CT
+        # precedent (rebuild-plan review decision 2: a net-load limb carries no
+        # temperature gate).
+        netload_limb = (iso == "CAISO" and klass in _CT_CLASSES) or (
+            iso == "NEISO" and klass == "ST_GAS"
+        )
 
-        if caiso_ct:
-            # CAISO CT classes: net-load driver (duck-curve evening ramp), not
-            # temperature. Regress daily class CF on daily peak system net-load
-            # (GW). One limb per (zone, CT class).
+        if netload_limb:
+            # Net-load driver: regress daily class CF on daily peak system
+            # net-load (GW). One limb per (zone, class).
             if _daily_nl is None:
                 continue
             threshold, basis = _netload_threshold_gw(_daily_nl)

@@ -588,6 +588,51 @@ class TestNetloadDerivation(unittest.TestCase):
         fit = drc._fit_netload_limb(cf_df, daily_nl, threshold_gw=25.0)
         self.assertIsNone(fit)
 
+    def test_group_daily_cf_offline_day_is_zero_not_missing(self):
+        """A day whose CAMPD rows are all-NaN grossLoad is OFFLINE (cf=0,
+        online_frac=0), never dropped — the single-plant saturation fix.
+
+        Trivial case first: one plant, four days — two operating, two with
+        reported rows but no positive load. Without the fix the offline days
+        vanish from the frame and commit_frac conditions on "was operating"
+        (the 2026-06-30 NEISO ST_GAS commit_frac=baseline_commit=1.0 artifact).
+        """
+        days = pd.date_range("2024-01-01", periods=4, freq="D")
+        rows = []
+        for i, d in enumerate(days):
+            gl = 50.0 if i < 2 else np.nan  # days 3-4: reported, not operating
+            rows.append({"facilityId": 546, "date": d, "grossLoad": gl})
+        campd = pd.DataFrame(rows)
+        out = drc._group_daily_cf(campd, {546: 100.0}, 100.0)
+        self.assertEqual(len(out), 4)  # offline days retained
+        self.assertAlmostEqual(out["cf"].iloc[2], 0.0)
+        self.assertAlmostEqual(out["cf"].iloc[3], 0.0)
+        self.assertAlmostEqual(out["online_frac"].iloc[0], 1.0)
+        self.assertAlmostEqual(out["online_frac"].iloc[2], 0.0)
+        self.assertAlmostEqual(out["online_frac"].iloc[3], 0.0)
+
+    def test_shipped_neiso_registry_has_the_st_gas_netload_limb(self):
+        """The committed NEISO CSV carries the Connecticut ST_GAS netload limb
+        (enabled, all-24h, 48h steam event bridging) and keeps the two
+        temperature ST_GAS limbs it re-grounds disabled (rule 19)."""
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+
+        st = [
+            s
+            for s in RELIABILITY_FLOOR_REGISTRY.get("NEISO", [])
+            if s.plant_class == "ST_GAS"
+        ]
+        by_driver = {s.driver: s for s in st}
+        self.assertIn("netload", by_driver)
+        nl = by_driver["netload"]
+        self.assertTrue(nl.enabled)
+        self.assertEqual(nl.zone, "Connecticut")
+        self.assertIsNone(nl.start_hour)
+        self.assertIsNone(nl.end_hour)
+        self.assertEqual(nl.min_event_hours, 48)
+        self.assertFalse(by_driver["tmax"].enabled)
+        self.assertFalse(by_driver["tmin"].enabled)
+
 
 class DropDragOwnedSpecsTest(unittest.TestCase):
     """Rule 19: a net-load drag owns its class's reliability-floor commitment."""

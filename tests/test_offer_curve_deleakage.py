@@ -86,9 +86,15 @@ def test_nyiso_ct_peak_wall_removed():
 
 
 def test_miso_neiso_ct_chp_and_st_gas_neutral():
-    for iso in ("MISO", "NEISO"):
+    """Bands still awaiting an ISO-native grounding stay neutral 1.0.
+
+    NEISO ST_GAS and CC_CHP graduated 2026-07-06 to NEISO-measured CAMPD
+    marginal-HR bands (see test_grounded_bands_survive_deleakage); CT_CHP
+    stays neutral there (single-unit sample, not identifiable).
+    """
+    for iso, classes in (("MISO", ("CT_CHP", "ST_GAS")), ("NEISO", ("CT_CHP",))):
         curves = _resolved(iso)
-        for cls in ("CT_CHP", "ST_GAS"):
+        for cls in classes:
             for band in ("committed", "econ_low", "econ_high"):
                 assert curves[cls][band] == 1.0, f"{iso} {cls}.{band} not neutral"
 
@@ -108,6 +114,22 @@ def test_grounded_bands_survive_deleakage():
         pytest.approx(1.08),
         pytest.approx(1.13),
     )
+    # NEISO ST_GAS native-steam-grounded curve kept (measured CAMPD marginal HR
+    # x the NEISO CC reach ratio; 2026-07-06 — a rising measured ramp, unlike
+    # NYISO's flat one).
+    neiso_st = _resolved("NEISO")["ST_GAS"]
+    assert (neiso_st["committed"], neiso_st["econ_low"], neiso_st["econ_high"]) == (
+        pytest.approx(0.79),
+        pytest.approx(0.85),
+        pytest.approx(0.89),
+    )
+    # NEISO CC_CHP measured-grounded thin monotone spread kept.
+    neiso_chp = _resolved("NEISO")["CC_CHP"]
+    assert (
+        neiso_chp["committed"],
+        neiso_chp["econ_low"],
+        neiso_chp["econ_high"],
+    ) == (pytest.approx(1.15), pytest.approx(1.17), pytest.approx(1.19))
     # Physical F-class CC duct-burner peak (2.25) is retained (not ERCOT-fitted).
     assert _resolved("MISO")["CC_CHP"]["peak"] == pytest.approx(2.25)
 
