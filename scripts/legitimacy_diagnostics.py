@@ -379,7 +379,17 @@ def run_d2(
             if int(m) not in D2_EXEMPT_MECHS and int(m) not in NON_THERMAL_MECHS:
                 forced_gated[k] += mwh
     for k in classes:
-        if str(k) in D2_EXEMPT_CLASSES or total_by_class[k] <= 0.0:
+        # The empty ('') class is the unclassified bucket: plants carrying no
+        # CAMPD plant_group — nuclear / hydro / renewable must-run whose floors
+        # are non-thermal/exempt by construction. It is NOT a merchant class,
+        # so it never gates a forced-share limit, and its per-plant dispatch is
+        # only reconstructible from the full dispatch frame (the run payload
+        # carries these as scalar non-fossil aggregates, not per plant) — a
+        # nuclear-inclusive '' denominator therefore diverges by an order of
+        # magnitude between the parquet and payload paths. Excluding it keeps
+        # the summary path-independent and every merchant row per-class
+        # truthful (#1488, rule 20).
+        if str(k) in D2_EXEMPT_CLASSES or str(k) == "" or total_by_class[k] <= 0.0:
             continue
         share = forced_gated[k] / total_by_class[k]
         limit = (
@@ -1170,6 +1180,17 @@ def aggregate_floors_by_plant(
     The plant floor is the sum of its units' positive floors; the plant-hour
     mechanism is the id of the unit contributing the largest floor that hour
     (maximum-composition at plant level). Loops over plants, never hours.
+
+    The plant class is the **most common non-empty** unit group in the plant —
+    NOT the first unit's group. A single plant frequently mixes classified
+    units with an unbinned/unclassified component (e.g. NEISO plant 546 carries
+    8 ``ST_GAS`` units + 1 empty-group unit); taking the first unit's group let
+    that lone empty label capture the whole plant into the ``''`` bucket, so its
+    dispatch (and any binding floor) was mis-attributed away from its real
+    merchant class and the class denominator was under-counted (#1488, rule 20).
+    A plant whose units are *all* unclassified (nuclear / hydro / renewables,
+    which carry no CAMPD plant_group) stays ``''`` — those non-thermal must-run
+    rows are excluded from the merchant forced-share summary in ``run_d2``.
     """
     plant_code = np.asarray(arrays["plant_code"])
     keep = plant_code > 0
@@ -1185,13 +1206,20 @@ def aggregate_floors_by_plant(
     n_plants = starts.size
     floor_sum = np.add.reduceat(pos, starts, axis=0)
     mech_plant = np.zeros((n_plants, t), dtype=np.int8)
+    group_plant = np.empty(n_plants, dtype=object)
     hours_idx = np.arange(t)
     for i in range(n_plants):
         block = slice(bounds[i], bounds[i + 1])
         rel = np.argmax(pos[block], axis=0)
         mech_plant[i] = mech[block][rel, hours_idx]
+        nonempty = groups[block][groups[block] != ""]
+        if nonempty.size:
+            vals, counts = np.unique(nonempty, return_counts=True)
+            group_plant[i] = str(vals[counts.argmax()])
+        else:
+            group_plant[i] = ""
     mech_plant[floor_sum <= 0.0] = 0
-    return pc[starts], floor_sum, mech_plant, groups[starts]
+    return pc[starts], floor_sum, mech_plant, group_plant.astype(str)
 
 
 # ---------------------------------------------------------------------------
@@ -1328,7 +1356,16 @@ def diagnose_bundle(
     d2 = GateResult("D-2 forced-energy attribution")
     d4 = GateResult("D-4 off-window binding")
     for year in years:
-        bench = load_bench(repo_root, iso, year) if {"D1"} & only else {}
+        # Bench (per-plant nameplate + class) is needed by D-2/D-4 too, not
+        # just D-1: it supplies each plant's ``npl`` for the payload dispatch
+        # decode (``_decode_cf_bytes`` rescales to the annual total, falling
+        # back to ``raw/100 * npl`` when a plant has no ``m_ann``) and for the
+        # at-floor tolerance in ``at_floor_mask``. Loading it only for D-1 made
+        # the D-2 recompute path (``only={"D2"}``) silently use a degraded
+        # ``npl`` (``disp.max()`` / 0.0) and so disagree with the full
+        # ``--bundle`` run that writes the committed artifact — the exact
+        # path-divergence G-06 exists to catch (#1488).
+        bench = load_bench(repo_root, iso, year) if {"D1", "D2", "D4"} & only else {}
         frame, pass_label = (
             load_dispatch_parquet(bundle, year)
             if {"D1", "D2", "D4"} & only
