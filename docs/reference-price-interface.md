@@ -127,9 +127,12 @@ forward → flat structural (neighbors with no organized-market LMP, e.g. the
 Carolinas). MISO's fitted forward HRs: **PJM** `11.06·gas + 3.21` (gas-set),
 **SPP** `3.04·gas + 16.27` (wind-set — small slope, large fixed component, so a
 gas spike does not spuriously lift it; it reproduces the measured 2025 SPP ratio
-7.7 that the flat 10.0 over-priced). A `MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL`
-env flag forces the seam onto the `flat`/`elastic` forward path for a held-out
-backcast year, so the forward formula can be validated against actuals.
+7.7 that the flat 10.0 over-priced). `ScenarioConfig.neighbor_hr_forward_skill`
+(`"flat"`/`"elastic"`/`None`, threaded through `transmission.
+apply_interchange_injections` → `neighbor_price.neighbor_heat_rate`) forces the
+seam onto the `flat`/`elastic` forward path for a held-out backcast year, so
+the forward formula can be validated against actuals; default `None` is
+byte-identical to every keeper.
 
 ### Open items for step (2) — the LP wiring
 
