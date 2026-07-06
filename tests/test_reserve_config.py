@@ -290,6 +290,95 @@ class TestPjmDesign(unittest.TestCase):
         self.assertEqual(kw["reserve_eligible"].shape, (2,))
 
 
+class TestPjmPergenDesign(unittest.TestCase):
+    """PJM per-asset reserve columns (pjm_reserve_pergen): (zone, fuel-class)
+    pooled R columns — the miso-39 memory tier — bounded by the summed
+    hourly availability-scaled 10-min deliverable ramp."""
+
+    _ZONES = ["PJM_West", "PJM_EMAAC"]
+
+    def _fleet(self, T=24, with_ramp10=True):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        ct = FUEL_TYPE_NAMES.index("gas_ct")
+        nuc = FUEL_TYPE_NAMES.index("nuclear")
+        n = 5
+        # West: two CC plants (must POOL into one column) + nuclear.
+        # EMAAC (a MAD zone): one CC + one CT.
+        return FleetArrays(
+            pmax=np.array([1000.0, 600.0, 1000.0, 800.0, 500.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 7.2, 10.0, 7.5, 11.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 0, 1, 1]),
+            fuel_type_idx=np.array([cc, cc, nuc, cc, ct]),
+            availability=np.ones((n, T)),
+            unit_ids=["cc_w1", "cc_w2", "nuc_w", "cc_e", "ct_e"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 150, 200, 300, 400]),
+            # RAMP10_FRAC analogue: CC 0.40, nuclear 0, CT 1.00.
+            ramp10=(
+                np.array([400.0, 240.0, 0.0, 320.0, 500.0]) if with_ramp10 else None
+            ),
+        )
+
+    def _cfg(self, **kw):
+        # weather_year 1999: no measured PJM-AS parquet exists, so the design
+        # deterministically takes the 1.5x-MSSC formula fallback and omits
+        # the MAD family (environment-independent test).
+        return _cfg(iso="PJM", weather_year=1999, pjm_reserve_pergen=True, **kw)
+
+    def test_default_off_no_pergen_fields(self):
+        cfg = _cfg(iso="PJM", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertIsNone(design.pergen_gen_idx)
+        self.assertIsNone(design.pergen_ramp10)
+
+    def test_pergen_pools_by_zone_and_class(self):
+        design = get_reserve_design(self._cfg(), self._fleet(), 24, self._ZONES)
+        # Members: reserve-eligible units with ramp10 > 0 — nuclear drops out.
+        np.testing.assert_array_equal(design.pergen_gen_idx, [0, 1, 3, 4])
+        col = np.asarray(design.pergen_col)
+        # Three pools: (West, cc) shared by BOTH West CC plants, (EMAAC, cc),
+        # (EMAAC, ct) — the class tier never gives a plant its own column.
+        self.assertEqual(np.unique(col).size, 3)
+        self.assertEqual(int(col[0]), int(col[1]))
+        self.assertNotEqual(int(col[1]), int(col[2]))
+        # Hourly (n_r, T) caps: West CC pool = 400 + 240 = 640.
+        self.assertEqual(design.pergen_ramp10.shape, (3, 24))
+        west_cc = int(col[0])
+        self.assertAlmostEqual(float(design.pergen_ramp10[west_cc, 0]), 640.0)
+        self.assertAlmostEqual(float(design.pergen_ramp10[:, 0].sum()), 1460.0)
+
+    def test_pergen_ramp_cap_scales_with_availability(self):
+        fleet = self._fleet()
+        # Outage one West CC plant (gen 1) in hour 5: the pool's deliverable
+        # ramp drops by exactly its member share in that hour only.
+        fleet.availability[1, 5] = 0.0
+        design = get_reserve_design(self._cfg(), fleet, 24, self._ZONES)
+        col = np.asarray(design.pergen_col)
+        west_cc = int(col[0])
+        self.assertAlmostEqual(float(design.pergen_ramp10[west_cc, 5]), 400.0)
+        self.assertAlmostEqual(float(design.pergen_ramp10[west_cc, 4]), 640.0)
+
+    def test_pergen_requires_ramp10(self):
+        with self.assertRaises(ValueError):
+            get_reserve_design(
+                self._cfg(), self._fleet(with_ramp10=False), 24, self._ZONES
+            )
+
+    def test_pergen_kwargs_propagate(self):
+        design = get_reserve_design(self._cfg(), self._fleet(), 24, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertIn("reserve_pergen_gen_idx", kw)
+        self.assertIn("reserve_pergen_ramp10", kw)
+        self.assertIn("reserve_pergen_col", kw)
+
+
 class TestMisoDesign(unittest.TestCase):
     """MISO reserve design shapes and values."""
 
