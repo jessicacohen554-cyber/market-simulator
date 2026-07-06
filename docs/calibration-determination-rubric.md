@@ -1,21 +1,39 @@
-# Calibration Determination Rubric
+# Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced.** This document is the single auditable
-definition of when an ISO backcast may be declared *calibrated*. It replaces the
-ad-hoc, per-run sidecar judgement (“this looks good enough”) with a fixed rubric
-that a scorer reproduces byte-for-byte: `scripts/calibration_verdict.py` reads a
-keeper’s committed artifacts and emits a `PASS` / `CAVEAT` / `FAIL` per criterion
-and one overall determination — `CALIBRATED`, `CALIBRATED-WITH-CAVEATS`, or
-`NOT-YET`. Re-running it on the same keeper always yields the same verdict.
+Status: **canonical, machine-enforced. RUBRIC VERSION 2** (2026-07-06
+fitness-for-purpose re-anchor; v1 history in §9). This document is the single
+auditable definition of when an ISO backcast may be declared *calibrated*. It
+replaces the ad-hoc, per-run sidecar judgement (“this looks good enough”) with a
+fixed rubric that a scorer reproduces byte-for-byte:
+`scripts/calibration_verdict.py` reads a keeper’s committed artifacts and emits
+a `PASS` / `CAVEAT` / `FAIL` per criterion and one overall determination —
+`CALIBRATED`, `CALIBRATED-WITH-CAVEATS`, or `NOT-YET`. Re-running it on the same
+keeper always yields the same verdict.
+
+**What the determination certifies (v2).** `CALIBRATED-WITH-CAVEATS` certifies
+that the model **delivers on its intended uses (§0) at or above the
+demonstrated commercial-model grade** on every load-bearing criterion, with
+every deviation either inside an evidence-anchored commercial band (listed) or
+an explicitly ledgered measured-input limitation (budgeted). `CALIBRATED`
+additionally requires every criterion at the stricter *target* grade with
+nothing unscored. Both determinations remain conditional on the protective
+anti-self-deception gates (C6/C7/C8) — those are UNCHANGED from v1 and are what
+make the accuracy claims believable at all. Every band in this rubric is
+anchored to a *published external benchmark* wherever one exists
+(`docs/rubric-v2-benchmark-memo-2026-07.md` — the comparison table is also on
+the Calibration Status dashboard page); where no published comparable exists,
+the rubric says so and states the internal rationale instead.
 
 This rubric **codifies the governance rule in `claude.md`** (measured/defensible
 over what-fits, rules #1, #11, #12): a run is a keeper because it is the most
 structurally faithful, *not* because it has the lowest error, and a determination
 of “calibrated” is a claim that the model’s *mechanisms* reproduce the market —
-not that its residuals were tuned to zero. The rubric is therefore built to
+not that its residuals were tuned to zero. The rubric certifies **fitness for
+purpose**; it never picks keepers by MAE. It remains built to
 **fail a current keeper**: any out-of-tolerance criterion that is not explicitly
 documented as an accepted measured-input limitation forces `NOT-YET`. If it could
-not return `NOT-YET` for a real keeper, it would be theatre.
+not return `NOT-YET` for a real keeper, it would be theatre. (At the v2
+re-score, four of six keepers still score `NOT-YET`.)
 
 Downstream consumer: `docs/forecast-validation-plan.md` Phase 3 (statistical-mode
 dispatch backcast) uses this determination as the gate that backcast tuning has
@@ -24,7 +42,46 @@ dispatch backcast) uses this determination as the gate that backcast tuning has
 
 ---
 
-## 0. What the scorer reads (reproducibility contract)
+## 0. Statement of intended use — what this model is asked to deliver
+
+The backcast test exists to certify the model for its actual jobs. The owner’s
+known use cases:
+
+1. **Multi-ISO price forecasting, 2026–2050** — annual and monthly
+   load-weighted price levels and seasonal shape per ISO, feeding plant
+   pro-forma revenue, retirement/entry screens, and portfolio valuation.
+2. **Dispatch & generation-mix forecasting** — annual generation by plant
+   class (the coal/gas/renewables balance and its evolution), the basis of
+   every capacity-evolution and fuel-demand result.
+3. **Emissions forecasting** — system CO2 per ISO-year, feeding policy and
+   portfolio carbon accounting.
+4. **Capacity-evolution scenarios** — retirements, new entry, storage growth
+   under scenario assumptions; requires the *economic signals* (inframarginal
+   margins, capacity value, duration-curve spread) to be right at annual scale.
+5. **Policy analysis (RPS / carbon / IRA)** — differences between policy
+   scenarios; requires the mix, CO2 and the price formation channel that
+   policies act through.
+6. **Probability bands (PB program)** — forecast distributions whose priors
+   are seeded from backcast error; requires the backcast errors to be honest
+   (protective gates) more than small.
+
+**Criterion triage against those uses:**
+
+| Bucket | What | Criteria |
+|---|---|---|
+| **LOAD-BEARING** — the test must certify these | Annual/monthly price level & seasonal shape (uses 1, 4, 5, 6); generation mix by class & family (2, 4, 5); system CO2 (3, 5) | C1, C2, C3a, C3b, C5a |
+| **SUPPORTING** — informative, not certification-critical | Hourly dispatch timing (r/NRMSE); storage cycling volume/season; scarcity-tail hour counts (the *level* contribution of scarcity is already in C3a/C3b; the count is a diagnostic of the scarcity mechanism, and no intended use consumes exact tail-hour counts) | C3c, C4, C5b, C5c |
+| **PROTECTIVE** — make the other rows believable | Governance (no residual fitting / pinning); diurnal-shape reality of the duty classes; forced-energy budget (floors are scaffolding, not dispatch) | C6, C7, C8 — **unchanged from v1** |
+| **OUT OF REPRESENTATION** — the test must not demand these | RT sub-hourly transients (5-minute ramp scarcity, forecast-error re-dispatch — `docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1); the DA−RT risk premium (DART) an offer-cost LP cannot price without fitting; hourly-exact dispatch of individual units (NREL TP-581-42305’s explicit guidance) | scored as report-only diagnostics (C3a DA row, C3c RT row), never gated |
+
+A criterion’s tier decides how its tolerance is set and budgeted (§1, §2) —
+it does NOT decide whether a `FAIL` matters: **an undocumented `FAIL` on any
+tier still forces `NOT-YET`** (supporting criteria carry wide,
+gross-defect-catching bands, not exemptions).
+
+---
+
+## 0a. What the scorer reads (reproducibility contract)
 
 The determination is reproducible **from committed artifacts only**. The scorer
 never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
@@ -35,6 +92,7 @@ never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
 | `frontend/data/backcast/registry/<id>.json` | sidecar | id, ISO, declared years, label, definition, bundle path |
 | `frontend/data/backcast/runs/<id>.js` | run payload (gzip+base64) | model side: `gmModel` (grid-LP TWh by class), `fuelRows` (per-fuel model TWh + hourly r + NRMSE), `lmp` (model load-weighted price + monthly), `ordc` (ERCOT tail hours) |
 | `frontend/data/backcast/bench/<ISO>/<year>.json.gz` | benchmark part | authoritative actuals: `classFull` (grid-delivered EIA-923−BTM TWh by class, vintage-reconciled), `e930` (EIA-930 grid totals by fuel), `avgLMP` (actual DA/RT mean + monthly) |
+| `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) DA-expressible and RT scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
 | `results/calibration/<name>/run_config.json`, `meta.json` | bundle | governance config (outage source, lever flags), gas vintage |
 | `results/calibration/<name>/calibration_attestation.json` | bundle (this rubric) | governance attestation + the exceptions ledger |
 | `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — D-1 diurnal-shape rows and the D-2 per-class forced-share summary that C7/C8 score; the verdict never recomputes the diagnostics |
@@ -58,10 +116,32 @@ documented, forward-valid reason, and the miss is not a model defect). A miss is
 `MODEL MISS` **by default**; it is reclassified to `ACCEPTED MEASURED-INPUT
 LIMITATION` only by a matching entry in the exceptions ledger (§3).
 
-Criteria are **HARD** (a `FAIL` forces `NOT-YET`; not caveatable beyond the tight
-hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`).
+Criteria carry a **tier** (§0): `LOAD-BEARING`, `SUPPORTING`, or `PROTECTIVE`.
+The v1 HARD/SOFT split is retired — it conflated strict data gates (C1/C2) with
+the anti-gaming gates (C6/C7/C8); the protective tier keeps the v1 hard-gate
+semantics unchanged.
 
-### C1 — Fuel-mix by class, grid-delivered  *(HARD)*
+**Two-band scoring (v2), graded load-bearing criteria only.** Where a published
+external comparable exists (C2 family fallback, C3a, C3b, C5a), the criterion
+carries TWO bands:
+
+- **TARGET band** — the standard we hold ourselves to (unchanged from the
+  2026-07-02 values). Inside → `PASS`.
+- **COMMERCIAL band** — the demonstrated commercial/public-model grade,
+  anchored to a citation (memo §2). Between target and commercial → an
+  **auto `CAVEAT`** classified `WITHIN COMMERCIAL BAND (TARGET MISS)`: recorded
+  with its magnitude, requires no ledger entry, and does **not** consume the
+  caveat budget (§2) — it is inside the certification claim by construction.
+- **Beyond the commercial band → `FAIL`**, reclassifiable only by an explicit
+  measured-input ledger entry, exactly as in v1.
+
+C1 (per-class mix) and the supporting criteria stay single-band: no vendor or
+public model publishes per-class volumes, hourly fleet correlation, storage
+cycling or tail-hour accuracy at all (memo §2 — we score STRICTER than
+commercial practice there, deliberately, because the intended uses consume the
+class mix while nothing external certifies it).
+
+### C1 — Fuel-mix by class, grid-delivered  *(LOAD-BEARING, single-band)*
 
 - **Metric:** annual generation by model plant-class, grid-delivered TWh.
 - **Model:** `gmModel[class]` — the grid LP dispatch summed per class, **no CHP
@@ -143,7 +223,7 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   handled upstream by the complete-vintage `SKIPPED` rule above, not by a per-class
   vintage credit.)
 
-### C2 — System volume error, gas & coal families  *(HARD)*
+### C2 — System volume error, gas & coal families  *(LOAD-BEARING; two-band on the preliminary-vintage fallback)*
 
 - **Metric:** annual grid-delivered TWh summed over the **gas family**
   (`CC_REGULAR, CC_CHP, CT_PEAKER, CT_CHP, ST_GAS, ST_CHP`) and the **coal
@@ -174,10 +254,17 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
     family pass/fail).
   - **Preliminary, not-fully-reported family (e.g. every ISO’s gas family in 2025):**
     there is **no trustworthy per-class actual** (missing plants under-report;
-    EIA-930 carries no per-class split), so the **±2.5% family fallback** against
+    EIA-930 carries no per-class split), so the **family fallback** against
     the authoritative EIA-930 grid total is retained — the only volume check the
-    data supports, with the EIA-930
-    incomplete-vintage handling made explicit. The current-year EIA-923 release is a preliminary
+    data supports, with the EIA-930 incomplete-vintage handling made explicit.
+    **v2 two-band on this fallback: target ±2.5% / commercial ±5%.** Anchors
+    (memo §2): family-level generation-by-fuel is the finest grain any external
+    validation publishes — NYISO’s benchmark held total energy to ~0.1% (load
+    is an input) with zonal energy within ~0–4%; AEO short-horizon
+    gas-generation error SD is 5.7–9.6% (a forecast-mode upper bound) — and
+    this fallback’s own benchmark carries the 923-vs-930 reconciliation
+    uncertainty, so a 2.5–5% residual is recorded as commercial-band, never
+    hard-failed at a grain the data cannot support. The current-year EIA-923 release is a preliminary
     monthly survey that under-counts thermal generation the CAMPD backfill cannot
     fully repair. The benchmark applies `_VINTAGE_RECONCILE_FRAC = 0.97`
     (`render_calibration_html.py`): when the grid-delivered 923 family total falls
@@ -195,25 +282,25 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   reconciliation uncertainty (the 923-vs-930 gap the reconcile repaired) —
   ledgered for that year.
 
-### C3 — Price (three independently-bounded sub-criteria)  *(all SOFT)*
+### C3 — Price (three independently-bounded sub-criteria)  *(C3a/C3b LOAD-BEARING two-band; C3c SUPPORTING)*
 
 A good mean price must not be allowed to mask a collapsed or over-fired tail, so
 mean / shape / tail are **scored separately** and each can independently caveat or
 fail.
 
-**2026-07-02 re-balance (tightened, paired with the looser C1).** The rubric
-previously over-weighted per-class generation-mix precision and under-weighted
-price accuracy — the opposite of what the determination is *for*: an LP whose
-duals reproduce the market’s price level, seasonal shape and scarcity tail is
-demonstrating the market structure is right, while a ±2 TWh small-class residual
-is usually reporting/assignment noise. So C1 loosened (above) and C3 tightened
-to the numbers below. This is a re-weighting of the *grading*, not a change to
-any mechanism, and the C6 governance gate is untouched: the tighter price bands
-must be met by real structure (reserve co-optimization, scarcity pricing,
-congestion), **never** by an adder or haircut tuned to the price residual —
-a run that closes the price gap that way FAILs C6 regardless.
+**2026-07-02 re-balance (tightened, paired with the looser C1)** — retained as
+the v2 TARGET bands: an LP whose duals reproduce the market’s price level,
+seasonal shape and scarcity tail is demonstrating the market structure is
+right, while a ±2 TWh small-class residual is usually reporting/assignment
+noise. **v2 adds the COMMERCIAL outer band** (§1 intro) so a miss between the
+two grades is recorded as commercial-grade-but-not-target rather than
+hard-failing at a stricter standard than any external model demonstrates. The
+C6 governance gate is untouched: any price band must be met by real structure
+(reserve co-optimization, scarcity pricing, congestion), **never** by an adder
+or haircut tuned to the price residual — a run that closes the price gap that
+way FAILs C6 regardless.
 
-- **C3a — Mean LMP.**
+- **C3a — Mean LMP.** *(LOAD-BEARING, two-band)*
   - *Metric:* system load-weighted mean LMP, $/MWh (model `lmp[zone].p` weighted
     across zones by `lmp[zone].d` annual demand).
   - *Actual:* `avgLMP.rt` (real-time), falling back to `avgLMP.da` when RT is
@@ -227,41 +314,78 @@ a run that closes the price gap that way FAILs C6 regardless.
     against a Mar–Dec actual is a calendar artifact, not a price error; the
     masking is recorded in the verdict record's metric label. Full-coverage
     years are unchanged.
-  - *Tolerance:* **±5%** (tightened from ±8% on 2026-07-02) — the tight end of
-    the playbook’s ~5–10% band. The **energy-only LP dual structurally
-    under-shoots** the actual LMP (which carries reserve, scarcity and uplift
-    adders); that known gap is what the structural reserve/scarcity mechanisms
-    are for, and a wide tolerance was quietly absorbing it instead of surfacing
-    it. A persistent under-shoot beyond 5% is a signal to build the missing
-    mechanism — not to widen the band, and never to fit an adder (C6).
-  - *Classification:* `MODEL MISS` (offer-curve level / scarcity mechanism).
-- **C3b — Duration / shape (quantitative, not eyeballed).**
+  - *Tolerance:* **target ±5% / commercial ±10%.** The target is externally
+    anchored: **±5% aggregate price error is the criterion the SEM (Ireland)
+    regulator states for its official PLEXOS market model** (“an appropriate
+    fit when fitting against 3–5 years of real market data”, ECA SEM-20-004,
+    which also sets monthly within ±10%; NERA’s 2025 SEM backcast achieved
+    +0.1% on a 4-year mean). The commercial band is the demonstrated
+    planning-grade range: NYISO’s accepted GE MAPS 2021 benchmark ran **−2% to
+    −17% zonal** (NYC −10.5%) and was adopted as the Outlook basis; the
+    playbook’s 5–10%. Two floors below all of this: the market monitors’ own
+    competitive re-simulations sit **0–4%** from actual prices (CAISO DMM
+    2021–24, MISO SOM 2023) — a market-conduct wedge a cost-based model cannot
+    and *should not* close, so residuals under ~3% are inside the
+    identification noise floor and must never be chased with tuning (rule 1,
+    now with citable numbers). The **energy-only LP dual structurally
+    under-shoots** the actual LMP; that known gap is what the structural
+    reserve/scarcity mechanisms are for. A persistent miss beyond the
+    commercial band is a signal to build the missing mechanism — not to widen
+    the band, and never to fit an adder (C6).
+  - *Classification:* `MODEL MISS` (offer-curve level / scarcity mechanism);
+    between the bands, the auto `WITHIN COMMERCIAL BAND (TARGET MISS)` caveat.
+- **C3b — Duration / shape (quantitative, not eyeballed).** *(LOAD-BEARING, two-band)*
   - *Metric:* normalised RMSE between the model and actual **monthly
     load-weighted price vectors** (12 months; model `pMon` re-weighted across
     zones by `dMon`, actual `rt_mon`/`da_mon`). NRMSE = RMSE / mean(actual). This
     is the committed-artifact shape metric; where a run additionally commits the
     full hourly price-duration curve, the P50/P90 ratio check of
     `calibration.check_price_duration_curve` is scored in its place.
-  - *Tolerance:* **NRMSE ≤ 0.15** (tightened from 0.20 on 2026-07-02).
-  - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error).
-- **C3c — Tail / scarcity.**
-  - *Metric:* count of hours with price **> $200/MWh** (model vs actual), the
-    scarcity-tail proxy. **Per-ISO tail definition** (§5): the threshold is
-    $200/MWh by default; an ISO whose scarcity is set by a different proxy
-    overrides it (ERCOT: ORDC reserve-price adder hours, read from the `ordc`
-    block; winter-peaking NYISO/NEISO may use a higher city-gate threshold).
-  - *Actual:* the ISO’s actual tail-hour count (ERCOT `ordc.hoursGt200.actual`;
-    otherwise the hourly actual-LMP series when committed).
-  - *Tolerance:* model tail hours within **[0.7×, 1.5×]** of actual (tightened
-    from [0.5×, 2.0×] on 2026-07-02) — a **collapsed tail (0 hours where the
-    market had scarcity) FAILs**, and an **over-fired tail (> 1.5× actual)
-    FAILs**. Bounded both ways on purpose.
+  - *Tolerance:* **target NRMSE ≤ 0.15 / commercial ≤ 0.20.** Anchor: SEM’s
+    regulator-accepted backcast carried −9% winter-peak / +11% off-peak period
+    biases; published monthly-shape norms for cost-based dispatch models run
+    ~5–15% with correct seasonality (memo §2). A 12-month NRMSE of 0.20 is the
+    outer edge of that demonstrated band (numerically the pre-2026-07-02
+    ceiling, now externally anchored rather than asserted).
+  - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error);
+    between the bands, the auto commercial-band caveat.
+- **C3c — Tail / scarcity, DA-expressible.** *(SUPPORTING, single wide band)*
+  - *Metric:* count of hours with price above the per-ISO threshold (§5),
+    model vs the **day-ahead** actual — **scope-consistent (v2):** the DA
+    market is an hourly, commitment-aware market, the same temporal resolution
+    as this model’s LP, so its tail count is the scarcity an hourly model is
+    in scope to reproduce. The RT count mixes that with **sub-hourly
+    transients** (5-minute ramp scarcity, forecast-miss re-dispatch) that are
+    out of representation: `docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1
+    decomposed MISO 2023’s entire 30-hour RT tail into single-hour 5-minute
+    events (DA tail that year: 1 h) and §4 records that matching them "would
+    be reproducing forecast error the model doesn’t represent." The RT count
+    is emitted as a **report-only diagnostic row** next to the gate. The DA
+    basis is **not a leniency device** — ERCOT’s DA tail is *larger* than its
+    RT tail (2023: 311 vs 181 h, DA prices scarcity expectations), so the
+    ERCOT gate got harder under v2.
+  - *Actual:* the committed `tail/actual_tail.json` part
+    (`scripts/derive_actual_tail.py`, from the hub RT/DA hourly series;
+    coverage-annotated, 2023–2025 only).
+  - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of the DA actual —
+    a **collapsed tail (0 hours where the DA market had scarcity) FAILs**, and
+    an **invented tail (> 2× actual) FAILs**; bounded both ways on purpose.
+    When the DA actual is **< 10 h** the ratio is degenerate and
+    **|model − actual| ≤ 10 h** gates instead (this also replaces the v1
+    token guard against inventing a tail over a ~0 actual, tightened from
+    50 h to 10 h). Band width rationale: **no commercial or public model
+    publishes tail-hour-count accuracy at all** — the closest practice
+    *excludes* spike hours from scoring (ECA excluded ~50–100 h/month) or
+    absorbs them into tuned hurdle rates (NYISO); this rubric keeps scoring
+    the tail, with the band’s job being order-of-magnitude realism on the
+    scope-consistent benchmark, not count precision. Supporting tier: the
+    *level* contribution of scarcity is already load-bearing via C3a/C3b.
   - *Classification:* `MODEL MISS` (missing scarcity pricing / over-aggressive
-    peaker offers). `SKIPPED` when the hourly price/scarcity series is not in the
-    committed payload (most non-ERCOT runs today) — recorded as not-scored, never
-    a silent pass.
+    peaker offers). `SKIPPED` when the model scarcity series is not in the
+    committed payload or the ISO-year is absent from the tail part — recorded
+    as not-scored, never a silent pass.
 
-### C4 — Dispatch correlation, fleet hourly  *(SOFT)*
+### C4 — Dispatch correlation, fleet hourly  *(SUPPORTING, single-band)*
 
 - **Metric:** hourly Pearson **r** and **NRMSE** of the modeled vs EIA-930 hourly
   generation series, for the **gas** and **coal** fleets (`fuelRows[fuel].r`,
@@ -277,6 +401,11 @@ a run that closes the price gap that way FAILs C6 regardless.
   annual total of that series; r/NRMSE are computed against the hourly series at
   render time).
 - **Tolerance (floors):** **r ≥ 0.70** and **NRMSE ≤ 0.30** for gas and for coal.
+  (Stricter than external practice, deliberately: NREL guidance is that
+  hour-by-hour comparison to actuals is not a valid PCM test at all, and no
+  vendor publishes hourly fleet correlation — we keep it because dispatch
+  *timing* feeds storage arbitrage and scarcity coincidence in the intended
+  uses; supporting tier, single band.)
   A fleet whose annual energy is **< 5 TWh** is `SKIPPED` (an hourly correlation
   on a near-zero series is degenerate — NEISO coal r ≈ 0 — and the C1 per-class
   band is the meaningful check). (Nuclear/wind/solar are report-only here — VRE hourly r is set by the input
@@ -285,13 +414,20 @@ a run that closes the price gap that way FAILs C6 regardless.
   timing). A low r driven by a documented measured-input gap (e.g. an outage
   series known incomplete for one state-year) may be ledgered.
 
-### C5 — CO2 and storage throughput  *(both SOFT)*
+### C5 — CO2 and storage  *(C5a LOAD-BEARING two-band; C5b/C5c SUPPORTING)*
 
-- **C5a — CO2 vs eGRID.**
+- **C5a — CO2 vs eGRID.** *(LOAD-BEARING, two-band)*
   - *Metric:* annual system CO2, model vs eGRID ISO total.
   - *Actual:* eGRID ISO-year total (the bundle’s emissions summary / eGRID
     reference).
-  - *Tolerance:* **±7%** (mid of the playbook’s 5–10%).
+  - *Tolerance:* **target ±7% / commercial ±10%.** Thinnest external evidence
+    base of the load-bearing set (memo §2, stated honestly): no production-cost
+    model publishes a backcast CO2 error; the citable anchors are NEMS/AEO
+    retrospective energy-CO2 error SDs of **3.2–4.9% at 1–3-year horizons**
+    (full forecasts, so an upper bound a backcast should beat) and 14.6%
+    pooled all-horizon. ±10% ≈ the 2-σ short-horizon envelope; the ±7% target
+    (mid of the playbook’s 5–10%) is retained and is *stricter than any
+    published backcast requirement*.
   - *Classification:* `MODEL MISS` (emission-rate assignment or gas/coal split —
     note that with C1/C2 in tolerance a CO2 miss localises to the fuel *split*
     within a family or to emission-rate inputs). `SKIPPED` when no emissions
@@ -335,7 +471,7 @@ a run that closes the price gap that way FAILs C6 regardless.
     discharge season). `SKIPPED` when no EIA-930 storage breakout or the model
     bundle lacks `monthly_net_gwh`.
 
-### C6 — Governance gate  *(HARD, pass/fail only — never graded, never caveatable)*
+### C6 — Governance gate  *(PROTECTIVE, pass/fail only — never graded, never caveatable; UNCHANGED in v2)*
 
 This is the `claude.md` rule made executable. **A run that fits to residuals
 FAILS regardless of every score above.** Four assertions, all required:
@@ -365,7 +501,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   **`UNATTESTED`** (⇒ `NOT-YET`) if no attestation file exists — you cannot certify
   a run you have not attested.
 
-### C7 — Diurnal shape, gated classes  *(HARD, added 2026-07-04, audit D-1)*
+### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; UNCHANGED in v2)*
 
 - **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
   **profile correlation r** and the **off-peak (h0–14) CV ratio**
@@ -396,7 +532,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   `SKIPPED` (never a silent pass — and it caps the determination, §2) when
   the bundle carries no `legitimacy_diagnostics.json`.
 
-### C8 — Forced-energy share  *(HARD, added 2026-07-04, audit D-2 / CLAUDE.md rule 20)*
+### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; UNCHANGED in v2)*
 
 - **Metric:** the share of a class's annual energy dispatched **AT a binding
   `min_gen` floor**, by class, attributed per mechanism via the int8
@@ -457,47 +593,67 @@ block is recorded in the verdict (it does not silently pass, and it caps the gra
 fails any scorable year; else `CAVEAT` if it caveats any year; else `PASS` if it
 passes any year; else `SKIPPED` (no data in any year).
 
-**Caveat budget (quorum):**
-- HARD data criteria (C1 fuel-mix, C2 system volume, C7 diurnal shape, C8
-  forced-energy share): at most **1** may be a `CAVEAT`, and only with a
-  ledger entry (C7/C8 are essentially never ledgerable — see their sections).
-  C6 governance is never caveatable.
-- SOFT criteria (C3a/b/c, C4, C5a/b/c): at most **2** `CAVEAT`s total (cut from
-  3 on 2026-07-02 — Option A of the re-balance: C3 stays SOFT, but with three
-  price sub-criteria a 3-caveat budget allowed *all* of price — mean, shape and
-  tail — to be caveated away at once; 2 means price can no longer be caveated
-  wholesale. The stronger alternative, promoting C3a to HARD, was considered and
-  deliberately not taken: a HARD mean-LMP gate would make the known energy-only
-  dual under-shoot un-caveatable even where it is a documented structural gap
-  under active mechanism work).
+**Caveat kinds and budgets (v2):** two distinct kinds of `CAVEAT`, budgeted
+differently:
+
+- **Auto commercial-band caveats** (`WITHIN COMMERCIAL BAND (TARGET MISS)`) —
+  a graded load-bearing criterion between its target and commercial bands.
+  **Unbudgeted**: they are inside the certification claim by construction
+  (“commercial-grade or better”), machine-derived, bounded by a cited external
+  benchmark, and every one is listed with its magnitude in the verdict and on
+  the dashboard. They are *listed, not excused* — an ISO whose load-bearing
+  criteria all sit in the commercial band is certified `CALIBRATED-WITH-CAVEATS`
+  and visibly not target-grade (the `grade_summary` line counts each tier).
+- **Ledgered caveats** (`ACCEPTED MEASURED-INPUT LIMITATION`) — an
+  out-of-tolerance (beyond-commercial) criterion reclassified by an explicit
+  exceptions-ledger entry (§3). Budgeted:
+  - **Protective criteria (C7/C8):** at most **1**, unchanged from v1’s
+    hard-gate budget (C7/C8 are essentially never ledgerable — see their
+    sections; C6 is never caveatable). This is CLAUDE.md rule 20 / audit
+    D-1/D-2 enforcement, untouched.
+  - **Everything else (C1, C2, C3a/b/c, C4, C5a/b/c):** at most **3** total.
+    Re-derivation of the budget (replacing the 2026-07-02 3→2 cut, whose
+    stated concern — all three price sub-criteria caveated at once — is now
+    structurally addressed by the commercial band: a load-bearing price miss
+    beyond ±10%/0.20 needs a *named measured-input reason*, not just a slot):
+    the recurring documented data-limitation classes are three by construction
+    — the preliminary-923 vintage, EIA-930 storage-series coverage, and a
+    data-blocked scarcity-requirement series — and a budget of 2 mechanically
+    forced `NOT-YET` on *data availability* rather than model quality (the
+    nyiso-34 demotion had exactly this shape and no external rationale). The
+    budget bounds excuses; it never grants them — each entry still names its
+    metric, year, magnitude and measured-input reason, and the classes that
+    are never ledgerable (§3) stay never ledgerable.
 
 **Determination:**
 
 | Outcome | Conditions (all must hold) |
 |---|---|
-| **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` (no `FAIL`, no `CAVEAT`, no `SKIPPED`); **no** data-blocked target year. |
-| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; caveats within budget (≤1 hard, ≤2 soft) and **every** caveat has a ledger entry; one or more of {a caveat exists, a soft criterion is `SKIPPED`, a **hard** criterion is `SKIPPED` (e.g. C7/C8 with no committed `legitimacy_diagnostics.json`), a target year is data-blocked}. |
-| **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or the caveat budget is exceeded. |
+| **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` at target grade (no `FAIL`, no `CAVEAT` of either kind, no `SKIPPED`); **no** data-blocked target year. |
+| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; ledgered caveats within budget (≤1 protective, ≤3 other) and **every** ledgered caveat has a ledger entry; one or more of {any caveat exists, a criterion is `SKIPPED` (e.g. C7/C8 with no committed `legitimacy_diagnostics.json` — named explicitly in the reasons), a target year is data-blocked}. **Certifies: intended-use delivery at or above commercial grade.** |
+| **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or a ledgered-caveat budget is exceeded. |
 
 The decisive rule, restated: **a determination with an undocumented
-out-of-tolerance criterion is `NOT-YET`.** The only way an out-of-tolerance
+out-of-tolerance criterion is `NOT-YET`.** The only way a beyond-commercial-band
 criterion is compatible with a passing determination is an explicit, ledgered
 `ACCEPTED MEASURED-INPUT LIMITATION` (and only within the caveat budget).
 
-Because the tail (C3c), CO2 (C5a) and storage (C5b) actuals are not in the
-committed payload for most runs today, those criteria are `SKIPPED`, which **caps
-the best attainable determination at `CALIBRATED-WITH-CAVEATS`** until a run
-surfaces them. This is intended: you may not claim a *fully* calibrated ISO while
-its CO2 and scarcity tail are unscored.
+Where an actual is not committed for an ISO-year (storage C5b/C5c for most
+BAs today; historically the tail and CO2, both now committed), the criterion is
+`SKIPPED`, which **caps the best attainable determination at
+`CALIBRATED-WITH-CAVEATS`** until a run surfaces it. This is intended: you may
+not claim a *fully* calibrated ISO while any criterion is unscored.
 
 ---
 
 ## 3. The exceptions ledger (required, auditable)
 
-Every `CAVEAT` must be earned by an explicit ledger entry. The ledger lives in the
+Every **ledgered** `CAVEAT` must be earned by an explicit ledger entry (auto
+commercial-band caveats are machine-derived from the committed artifacts and
+need none — they are listed by the scorer itself). The ledger lives in the
 bundle at `results/calibration/<name>/calibration_attestation.json` (per-run,
-conflict-free, committed with the bundle). An out-of-tolerance criterion with **no
-matching ledger entry is a `FAIL`** — silence is never a pass.
+conflict-free, committed with the bundle). A beyond-commercial-band criterion
+with **no matching ledger entry is a `FAIL`** — silence is never a pass.
 
 Each entry must name **the metric (criterion, and class/family where the criterion
 is per-class), the year, the magnitude (the observed error), and the reason it is
@@ -554,17 +710,25 @@ storage fleet.
 
 ## 5. Tail definition per ISO
 
-The C3c tail proxy and threshold are per-ISO (the scorer’s `TAIL` table):
+**Unified in v2 (criterion-set parity):** every ISO scores the same C3c
+definition — model tail hours vs the committed **DA-expressible** actual count
+at the ISO’s threshold. Only the *threshold* is per-ISO (a market-design fact,
+not a criterion asymmetry): winter city-gate scarcity sets NYISO/NEISO higher.
+The v1 asymmetries are retired: ERCOT no longer gates on its own ORDC-adder
+proxy (the `ordc` block’s RT/adder counts and the > $500 deep-scarcity
+companion remain **report-only** diagnostics in the payload), so no ISO is
+scored on a criterion set another ISO isn’t. (The same parity rule applies to
+the reported D-7 statistical-mode gap: quote fail counts on the same criterion
+denominator for every ISO — the 2026-07-03 measurements mixed C1–C8 and
+C1–C5c denominators and are flagged stale for re-measurement.)
 
-| ISO | Tail proxy | Threshold |
+| ISO | Threshold (DA hub LMP) | Basis |
 |---|---|---|
-| ERCOT | ORDC reserve-price adder hours (`ordc` block: hours > $200, and > $500 as the deep-scarcity companion) | $200 / $500 |
-| PJM, MISO, SPP | hours with hub LMP > $200/MWh | $200 |
-| NYISO, NEISO | hours with zonal LMP > $300/MWh (winter city-gate scarcity sets the tail higher) | $300 |
-| CAISO | hours with hub LMP > $200/MWh (net-load ramp scarcity) | $200 |
+| ERCOT, PJM, MISO, CAISO | $200/MWh | summer/ramp scarcity |
+| NYISO, NEISO | $300/MWh | winter city-gate scarcity sets the tail higher |
 
-`SKIPPED` for any ISO-year whose hourly price/scarcity series is not in the
-committed payload, recorded with that reason.
+`SKIPPED` for any ISO-year absent from the committed tail part or whose model
+scarcity series is not in the payload, recorded with that reason.
 
 ## 6. Re-determination trigger
 
@@ -596,3 +760,48 @@ python scripts/calibration_verdict.py --json results/calibration/pjm_26
 
 The scorer is stdlib-only (no pandas, no LP, no model import) so it runs anywhere
 the committed artifacts are checked out.
+
+---
+
+## 8. Commercial-benchmark anchor table (summary)
+
+Full survey with citations, evidence-quality grades and the honest negative
+findings: `docs/rubric-v2-benchmark-memo-2026-07.md`. The dashboard’s
+Calibration Status page renders this comparison next to the live keeper scores
+— that table is the scrutiny-survival artifact. Summary:
+
+| Criterion | Our target band | Our commercial band | Best published comparable |
+|---|---|---|---|
+| C3a mean LMP | ±5% | ±10% | SEM regulator criterion ±5% (ECA SEM-20-004); NERA SEM backcast +0.1% (4-yr); NYISO MAPS benchmark −2…−17% zonal, accepted; monitor competitive re-sims 0–4% (noise floor) |
+| C3b monthly shape | NRMSE ≤ 0.15 | ≤ 0.20 | SEM accepted −9% peak/+11% off-peak period bias; monthly norms ~5–15%; PyPSA-Eur weekly SMAPE 20–26% |
+| C1 per-class mix | min(2% load, 8 TWh) & 3 pp | (single-band) | **none published** — external validations stop at family/zonal level; we score stricter deliberately |
+| C2 family volume (prelim fallback) | ±2.5% | ±5% | NYISO zonal energy ~0–4%; AEO 1–3-yr gas-gen SD 5.7–9.6% (forecast upper bound) |
+| C5a CO2 | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
+| C3c tail hours (DA) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
+| C4 hourly fleet r | r ≥ 0.70, NRMSE ≤ 0.30 | (single-band) | **none published**; NREL guidance: hourly comparison “not a valid test” — we score stricter deliberately |
+| C5b storage cycling | ±30% | (single-band) | none published (cycling-realism band, internal) |
+| C6/C7/C8 protective | pass/fail | — | **beyond commercial practice**: NYISO closed its residual with tuned hurdle rates; SEM tunes generator markups; our C6 forbids exactly that |
+
+Honesty in both directions: where the six keepers sit **below** commercial
+grade (CAISO mean price +20–42%; MISO CC_REGULAR +44 TWh; collapsed DA tails in
+PJM/MISO/CAISO 2024–25), the verdict says `NOT-YET` — the benchmark table is
+never a curve to grade down to.
+
+## 9. Version history
+
+- **v2 (2026-07-06)** — fitness-for-purpose re-anchor (this session): §0
+  statement of intended use + criterion tiers (load-bearing / supporting /
+  protective, replacing HARD/SOFT); two-band target/commercial tolerances on
+  C2-fallback/C3a/C3b/C5a with published anchors (memo §2); C3c re-scoped to
+  the DA-expressible tail (committed `tail/actual_tail.json`), band restored
+  to [0.5×, 2×] with a <10 h absolute guard, RT reported as diagnostic;
+  criterion set unified across ISOs (§5); caveat budgets re-derived
+  (protective ≤1 unchanged; ledgered ≤3 replacing soft ≤2; commercial-band
+  auto caveats listed, unbudgeted). **Unchanged: C6/C7/C8 logic and
+  thresholds, C1 bands, C4/C5b/C5c bands, the exceptions-ledger mechanism,
+  rule-13/14/22 protections, D-9/D-6/E9 gates, and the keeper =
+  most-structurally-faithful principle.** Re-score result: NYISO and NEISO →
+  `CALIBRATED-WITH-CAVEATS`; ERCOT/PJM/MISO/CAISO remain `NOT-YET`.
+- **v1** (2026-06 → 2026-07-05) — original machine-enforced rubric; 2026-07-02
+  re-balance (C1 loosened, C3 tightened, soft budget 3→2); 2026-07-04 C7/C8
+  protective gates added (audit D-1/D-2).
