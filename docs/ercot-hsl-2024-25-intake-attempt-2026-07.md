@@ -1,4 +1,64 @@
-# ERCOT NP6 HSL 2024/2025 intake attempt — BLOCKED (2026-07-05)
+# ERCOT NP6 HSL 2024/2025 intake — COMPLETE (2026-07-06)
+
+**Update 2026-07-06 (final).** The credentialed-fetch route below remains
+closed per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
+§WS-E (re-verified this session: `apiexplorer.ercot.com`, `api.ercot.com`,
+and the legacy MIS path all return the identical 302/401 gate as before).
+Separately, the owner manually downloaded ERCOT NP6 reports through the
+Data Access Portal UI (not the API) and uploaded them straight to the repo
+— a different, already-authorized mechanism than the closed credentialed
+fetch. In two rounds the owner supplied full 24/24-month coverage for both
+fuels and both years: solar (NP4-737) landed first (complete immediately);
+wind initially covered only 2024-05 and 2024-09 (the latter via the NP4-742
+by-geography variant, which carries the identical system-wide actual/HSL
+column pair as plain NP4-732), then the remaining 22 wind-months landed in
+a second upload (2024: all except 05/09; all of 2025).
+
+The uploaded archives also turned out to be a zip-of-zips (one outer
+monthly zip of ~700+ per-posting zips, each with one CSV) that
+`scripts/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't parse at
+all; fixed to recurse to arbitrary depth. Files were relocated from the
+top-level `data/raw/ercot-hsl/` into the `np6/<year>/` drop-zone the
+builder scans (one redundant solar-geo file, NP4-745 Nov-2024 — already
+fully covered by NP4-737 — was set aside under `np6/unused-redundant/`
+rather than blended in).
+
+**`python scripts/build_ercot_hsl.py --year 2024 2025` now builds both
+years cleanly** (8,760/8,760 hours, no gaps). Validation vs the EIA-923
+calibration reference (`data/raw/_validation-source/calibration_reference.json`):
+
+| year | fuel | HSL-source delivered | EIA-923 | delta |
+|---|---|---|---|---|
+| 2024 | wind | 115.67 TWh | ~112 TWh | +3.4% |
+| 2024 | solar | 48.84 TWh | ~40 TWh | +21.9% |
+| 2025 | wind | 114.94 TWh | ~115 TWh | −0.2% |
+| 2025 | solar | 67.52 TWh | ~56 TWh | +21.0% |
+
+Wind matches EIA-923 tightly in both years — strong evidence the parse/
+aggregation pipeline (including the new recursive zip-of-zips fix) is
+correct. Solar runs consistently high, but the *existing* 2023 UMass-
+sourced file shows the same direction of bias (+11.1% vs the EIA-923
+2023 reference), so this reads as a real, pre-existing divergence between
+ERCOT's settlement-metered NP4-737 solar telemetry and EIA-923's own
+figure (plausibly EIA-923's monthly-survey reporting lag against Texas's
+fast-growing utility-scale solar fleet), not a parsing defect — magnitude
+grew from 2023→2024/2025 in the same direction as the state's solar
+buildout accelerated. Per rule 14, the measured NP4-737 data is kept as-is
+(no retuning to the EIA-923 level): `hsl_potential_mw`'s coverage
+reconciliation is one-directional (scales a source *up* only when it
+*undercounts* EIA-930 delivered; it never scales a source down), so this
+divergence flows into the model unmodified, exactly as the published
+full-footprint HSL upload is designed to. Flagged here as an open,
+documented fidelity note — not a blocker, not something to chase with a
+coefficient.
+
+The two new parquets (`ercot_2024_hsl_hourly.parquet`,
+`ercot_2025_hsl_hourly.parquet`) supersede the G7 reference-curtailment-
+rate gross-up for ERCOT 2024/2025 the moment they're committed —
+`renewables.hsl_potential_mw` reads the raw per-year parquet directly by
+default, no further wiring needed. `data/clean` is gitignored/derived and
+unused by default (`MARKET_SIM_USE_CLEAN` unset), so no clean-tree
+regeneration was required for this to take effect.
 
 **Update 2026-07-06.** The credentialed-fetch route below remains closed
 per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
