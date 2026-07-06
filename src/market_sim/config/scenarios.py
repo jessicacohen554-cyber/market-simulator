@@ -3220,6 +3220,23 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_downstate_ct_gas_basis.
     nyiso_downstate_ct_gas_basis: bool = False
 
+    # Tier 3 (calibration) — DAILY re-grounding of the same downstate CT-peaker
+    # delivered-gas index. Supersedes nyiso_downstate_ct_gas_basis (the
+    # monthly-premium adder) for the same class: instead of lifting the
+    # pipeline-hub MONTHLY base by the monthly LDC premium, each downstate
+    # CT_PEAKER unit's delivered gas is SET directly to the curated DAILY
+    # delivered-gas index = measured Transco Z6 NY pipeline-hub daily spot +
+    # measured monthly LDC city-gate premium (the nyiso-downstate-gas curated
+    # datatype; free-data memo §1.4). The daily Transco spot captures the
+    # cold-snap blowouts (Jan-2024 $23.90) on the exact days the interruptible
+    # peakers actually run, which the monthly mean smears away — a strictly more
+    # measured, forward-native re-grounding (rules #11/#13), never a fitted band.
+    # The dual-fuel oil-parity min still caps any winter spike (runs after).
+    # Off by default; set nyiso_downstate_ct_gas_basis=False when this is on
+    # (one mechanism per phenomenon, rule 19). See
+    # market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily.
+    nyiso_downstate_ct_gas_daily: bool = False
+
     # Tier 3 (calibration) — PJM per-zone gas basis. PJM is priced off a single
     # ISO-wide delivered-gas series, so every gas-CC carries the same marginal
     # cost, all 8 zones clear at one LMP (0.000 zonal spread in every hour), no
@@ -4463,6 +4480,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "nyiso_downstate_ct_gas_basis": 3,
+    "nyiso_downstate_ct_gas_daily": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
     "pjm_congestion": 3,

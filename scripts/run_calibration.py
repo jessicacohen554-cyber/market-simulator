@@ -84,6 +84,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_hub_basis_overlay,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
+    apply_nyiso_downstate_ct_gas_daily,
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
@@ -2093,6 +2094,15 @@ def run_year(
     # dual-fuel oil-parity min. No-op unless nyiso_downstate_ct_gas_basis is set
     # (NYISO only). See fuel.apply_nyiso_downstate_ct_gas_basis.
     apply_nyiso_downstate_ct_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # NYISO downstate CT-peaker DAILY delivered-gas re-grounding: SET each NYC /
+    # Long Island CT_PEAKER unit's gas to the curated measured daily delivered
+    # index (Transco Z6 NY daily spot + monthly LDC premium), so the cold-snap
+    # blowouts on the exact days the interruptible peakers run lift their offer —
+    # the daily-resolution successor to the monthly premium above (rules
+    # #11/#13). Same order: after the monthly basis, before the dual-fuel
+    # oil-parity min. No-op unless nyiso_downstate_ct_gas_daily is set (NYISO
+    # only). See fuel.apply_nyiso_downstate_ct_gas_daily.
+    apply_nyiso_downstate_ct_gas_daily(fuel_prices, fleet_arrays, config, year)
     # ERCOT per-zone gas-hub basis: shift each gas unit to its zone's measured
     # regional hub (Waha-cheap West/Permian, dearer North/East-Texas and South)
     # so the merit order stops over-running DFW/North CCs on flat Waha-discounted
