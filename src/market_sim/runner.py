@@ -35,6 +35,7 @@ from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     Generator,
     apply_coal_tranches,
+    apply_ercot_ct_offer_surface,
     assemble_mc,
     build_base_fleet,
     build_dispatch_fleet,
@@ -1015,6 +1016,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_coal_tranches(
                 mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
             )
+            # ERCOT G-22 condition-responsive CT/peaker offer surface: raise the
+            # CT/peaker econ+peak tranche bid to the MEASURED self-withholding
+            # level (60-Day DAM disclosure) in the top-net-load hours where the
+            # real fleet's peakers price to the cap band, removing the "phantom
+            # sub-$200 spare" that caps the energy dual. Default off, ERCOT-gated;
+            # byte-identical below the measured net-load hinge (max(mc, 0) = mc).
+            if getattr(config, "ercot_ct_offer_surface", False) and iso == "ERCOT":
+                _ct_surface_net_load = (
+                    year_demand.sum(axis=0)
+                    - (solar_cap[:, None] * solar_cf).sum(axis=0)
+                    - (wind_cap[:, None] * wind_cf).sum(axis=0)
+                )
+                apply_ercot_ct_offer_surface(
+                    mc_base, dispatch_fleet, _ct_surface_net_load, config
+                )
             # Shared forward-native interchange injections (orchestrator-
             # unification Stage 5): the SAME post-assembly sequence the
             # backcast runs — reference-price seams, firm import/export
