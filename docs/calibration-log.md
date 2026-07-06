@@ -40,6 +40,86 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-06 — NEISO — KEEPER SWAP: `neiso-49-stgas-netload` retired, `2026-07-06-neiso-50-head-repro` promoted (byte-reproducible re-solve, same recipe, no structural change) — E9 ablation-twin gap OWNER-ACCEPTED (temporary)
+
+**Follow-on to the L-49 confirmation re-solve entry directly below.** That
+entry found the registered `neiso-49-stgas-netload` keeper's numbers rested
+on an uncommitted, never-captured local edit at solve time (`git.dirty=true`,
+`scripts/run_calibration.py` among the dirty files) that produced a genuine
+NEISO zonal price separation — HQ_import pricing $0.31-$1.86/MWh below the
+mainland zones across 2023-2025. A git bisection across every commit between
+the keeper's base commit (`ac11191`) and current HEAD (`dd85d5a`) — including
+a **clean** checkout of `ac11191` itself with none of that session's dirty
+edits applied — showed **uniform system-wide pricing (zero HQ_import
+separation) at every single point in committed history**. The separation was
+never reproducible from git; it only ever existed in that one session's WIP
+working tree.
+
+**Why this is expected, not a bug (mechanism).** Under the scalar/
+measured-schedule interchange treatment NEISO uses (`priced_interchange=False`),
+HQ_import carries zero load (`load_share=0.0`) and zero generation, so its
+energy-balance row is `Flow_in − Flow_out + slack − dump = 0` — a
+costless pass-through with nothing forcing net flow through its very real,
+defined TTC-limited links (HQ_import→Boston 2000 MW, →North 900 MW,
+→Connecticut 1500 MW, 3850 MW simultaneous). It can only mirror the system
+price. **This has been true and documented since the very first NEISO smoke
+calibration** (this log, 2026-06-12 entry: "All five zones price
+identically... no Boston/CT congestion separation: the Tier-3 RSP TTC seeds
+are non-binding"), which also found the alternative — `--priced-interchange`,
+which DOES route flow through HQ_import's real links — **over-imports badly
+at the current static tranche prices** (−23.5 TWh vs −10.3 actual in the 2024
+diagnostic; the $18/MWh HQ_PhaseII tranche undercuts gas in nearly every
+hour). Re-enabling it now specifically to chase the C3a number back down
+would be exactly the "reach the right number through a mechanism that isn't
+real" rule-1 violation this repo forbids — so it was not done.
+
+**Owner decision (this session):** register the honest, reproducible run as
+the new keeper rather than leave `neiso-49-stgas-netload` standing on
+unreproducible code; disclose the C3a movement rather than paper over it;
+defer the D-3 zero-forcing ablation twin (rule 20) to a follow-up rather than
+block the swap on it.
+
+**Result.** `2026-07-06-neiso-50-head-repro` (bundle
+`results/calibration/neiso49_resolve_confirm/`) is the IDENTICAL neiso-49
+recipe re-solved on HEAD — no mechanism, offer band, or floor coefficient
+changed. `calibration_verdict.py` determination: **CALIBRATED-WITH-CAVEATS**
+(unchanged from neiso-49), **zero criterion FAILs**. C3a (mean LMP) moves
+2023 −8.3%→−10.4%, 2024 −7.8%→−8.6%, 2025 −1.6%→−4.4% (stays CAVEAT/PASS
+respectively, same bands as before — no criterion crosses into FAIL). C1
+fuel-mix and C3b price-shape are unchanged to reproducibility noise (≤0.15%
+and 3rd-decimal NRMSE). The immaterial ST_GAS class's C7 diagnostic
+(SKIPPED, <0.1% of ISO load, does not gate) shows the already-quantified
+#1515 `threshold_percentile` effect (flagged days 27/36/58 → 126/118/121;
+D-1 verdict pattern unchanged). Full detail, the DOF ledger, and the
+price_mean/shape exception updates are in the bundle's
+`calibration_attestation.json`.
+
+**KNOWN GAP, owner-accepted (temporary): no ablation twin.** This keeper does
+**not** carry a freshly-solved zero-forcing ablation twin (CLAUDE.md rule
+20/D-3) — `neiso-49-stgas-netload-ablation` validated the retired,
+unreproducible base price level and is not a valid twin for this bundle, so
+it was retired alongside the keeper it validated. `scripts/audit_keepers.py`
+correctly reports this as a **hard E9 failure** (`FAIL: 1`) — not a
+grandfathered warning, since this is a fresh registration. **Ledgered** in
+`calibration_attestation.json` (criterion: `governance`, classification:
+`OWNER-DEFERRED (temporary)`). Follow-up: solve
+`--zero-forcing-ablation` (same recipe, full 2023-2025 span) and register it
+as `2026-07-06-neiso-50-head-repro-ablation` to close E9.
+
+**Stripped:** `results/calibration/neiso_stgas_netload/` +
+`neiso_stgas_netload-ablation/`, their registry sidecars, and their
+`runs/*.js`. **Registered:** `2026-07-06-neiso-50-head-repro`. `keepers.json`
+NEISO entry swapped; keeper-auditor run; `status.js` rebuilt.
+
+**Open follow-up (real fix, not attempted here):** the honest path to
+restoring legitimate HQ_import price separation is recalibrating
+`IMPORT_TRANCHES`/`EXPORT_TRANCHES[NEISO]` in
+`src/market_sim/config/interchange_config.py` against measured NEISO
+interface data (the existing DOF-ledger entry already flags this: "audit C-6
+open item: replace year-keyed rungs with measured hub prices / published
+wheeling costs per seam") — not re-enabling `--priced-interchange` at its
+current, already-shown-to-over-import static prices.
+
 ### 2026-07-06 — NEISO — L-49 confirmation re-solve: keeper `neiso-49-stgas-netload` MOVED at HEAD, but NOT from the #1515 item under review; C7 confirmed SKIPPED per the immateriality-cutoff action item
 
 **Scope (confirm-only, no re-tune, no fit-criteria change).** Re-solved the
