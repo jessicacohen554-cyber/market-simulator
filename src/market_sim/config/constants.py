@@ -1883,16 +1883,26 @@ DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
 # Target planning reserve margin per ISO for the reserve-margin adequacy
 # backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
 # installed-reserve-margin / planning-reserve-margin target through its
-# resource-adequacy process; ERCOT's 13.75% is its economically-optimal RM and
-# is NOT every ISO's target. The reserve-margin build resolves
+# resource-adequacy process; ERCOT's 13.75% is its Board target RM and is NOT
+# every ISO's target. The reserve-margin build resolves
 # ``PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)``,
 # so an explicit ScenarioConfig.planning_reserve_margin still overrides this
-# registry and an ISO absent here falls back to that scalar. Values are on the
-# same nameplate/ICAP basis the backstop uses (firm gap over peak).
+# registry and an ISO absent here falls back to that scalar. Each value is on
+# the counting basis of its OWN ISO's published construction: the requirement
+# and the accredited-capacity ledger must use the same convention (see
+# THERMAL_ACCREDITATION_BASIS_BY_ISO / RENEWABLE_CAPACITY_CREDIT_BY_ISO /
+# ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO below).
 PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
-    # Economically-optimal RM for ERCOT's energy-only market. Source: Brattle
-    # & Astrapé, "Estimating the Economically Optimal Reserve Margin in ERCOT"
-    # (2022 update for the PUCT). This is the parity value (fallback default).
+    # ERCOT Board-established minimum target reserve margin (13.75% of peak),
+    # the benchmark the CDR's planning reserve margins are read against.
+    # NOT an economic optimum: the Brattle/Astrapé MERM/EORM studies for the
+    # PUCT ("Estimation of the Market Equilibrium and Economically Optimal
+    # Reserve Margins for the ERCOT Region", 2018) put the market-equilibrium
+    # RM near 10.25% and the economic optimum near 9%. The 13.75% target is
+    # defined on the CDR counting convention — seasonal-rated thermal (no
+    # EFORd derate), ELCC-accredited wind/solar/storage, firm peak load net
+    # of load-side products — which the per-ISO accreditation registries
+    # below put the floor/backstop ledger on (audit 2026-07-06, L-7c).
     "ERCOT": 0.1375,
     # CPUC Resource Adequacy program planning reserve margin (15%). Source:
     # CPUC RA proceeding (R.21-10-002 / Decision adopting 15% PRM).
@@ -1947,15 +1957,75 @@ ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
 
 # Capacity credit (ELCC) of variable resources for the planning-reserve-margin
 # adequacy accounting — the firm fraction of nameplate each contributes to the
-# system peak. Thermal is accredited at 1 - EFORd (UCAP); storage uses
-# STORAGE_ELCC_BY_DURATION; these are the wind/solar/hydro values. ERCOT-class
-# summer-peak ELCC: solar contributes more than wind at the late-afternoon net
-# peak, both far below nameplate. Source: ERCOT CDR / ELCC studies, NREL/E3.
+# system peak. Thermal is accredited at 1 - EFORd (UCAP) unless the ISO's
+# published basis says otherwise (THERMAL_ACCREDITATION_BASIS_BY_ISO); storage
+# uses STORAGE_ELCC_BY_DURATION; these are the GENERIC wind/solar/hydro
+# fallback values (NREL/E3 ELCC studies). ISOs with a published accreditation
+# of their own override them in RENEWABLE_CAPACITY_CREDIT_BY_ISO — a generic
+# value must never masquerade as an ISO's published basis (rule 25 analogue).
 RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
     "wind": 0.16,
     "solar": 0.18,
     "offshore_wind": 0.30,
     "hydro": 0.50,
+}
+
+# Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy ledger (the
+# retirement reliability floor and the reserve-margin backstop, capacity.py).
+# ISOs absent here use the generic values above — byte-identical fallback.
+# ERCOT values are the ISO's OWN published accreditation: the December 2025
+# CDR counts wind/solar at probabilistic ELCCs. Implied percentages = the
+# CDR's summer ELCC MW (operational + CDR-eligible planned, peak-load-hour
+# column) over installed nameplate (ERCOT Fact Sheet, June 2026: wind
+# 40,739 MW, utility-scale solar 39,591 MW):
+#   wind : 8,210 / 40,739 = 20.2% for 2026, stable at 20.5-20.8% through
+#          2030 -> 0.20.
+#   solar: 11,097 / 39,591 = 28.0% for 2026, diluting to 20.5-21.1% by
+#          2028-2030 as penetration grows -> 0.21 (the CDR's own plateau;
+#          conservative for 2026-27, right for the forecast horizon where
+#          the floor decision matters).
+# Source: ERCOT, "Report on the Capacity, Demand and Reserves (CDR) in the
+# ERCOT Region", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact
+# Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.
+RENEWABLE_CAPACITY_CREDIT_BY_ISO: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.20, "solar": 0.21},
+}
+
+# Thermal accreditation basis for the same adequacy ledger, per ISO. Default
+# (ISO absent): "ucap" = pmax x (1 - EFORd). "seasonal_rating" counts thermal
+# at its rating with NO forced-outage derate — ERCOT's CDR convention, where
+# forced-outage risk lives in the 13.75% Board target margin rather than in
+# the capacity count (the CDR's "Installed Seasonal-rated Thermal Capacity"
+# rows carry no EFORd derate). Mixing UCAP-derated supply with the
+# rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on
+# the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary.
+THERMAL_ACCREDITATION_BASIS_BY_ISO: dict[str, str] = {
+    "ERCOT": "seasonal_rating",
+}
+
+# Load-side capacity products netted out of gross peak in the ISO's own
+# firm-peak-load construction, as a fraction of the gross seasonal peak.
+# ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column):
+# Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable
+# LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load
+# management 303 + distribution voltage reduction 1,162 = 5,520 MW on the
+# 95,419 MW gross seasonal peak = 5.8%. These are standing ERCOT
+# demand-response programs whose enrollment scales roughly with load, so a
+# fraction of peak regenerates for forward years (rule 13 admissible: a
+# market-design input, not an outcome). Rooftop-PV netting is EXCLUDED —
+# EIA-930 demand is already net of behind-the-meter PV. ISOs absent here
+# net nothing (neutral fallback).
+ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.058,
+}
+
+# Firm import contribution of asynchronous external ties counted by the
+# ISO's own adequacy ledger but absent from the model topology (the model's
+# ERCOT has no import node). ERCOT: 817 MW, "based on average net import
+# contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
+# events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
+ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
+    "ERCOT": 817.0,
 }
 
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as

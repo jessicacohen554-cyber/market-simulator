@@ -63,6 +63,8 @@ from dataclasses import dataclass
 import numpy as np
 
 from market_sim.config.constants import (
+    ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+    ADEQUACY_EXTERNAL_TIE_FIRM_MW,
     CCUS_PARAMS,
     CO2_RATES,
     DEFAULT_MARKET_DESIGN,
@@ -81,6 +83,8 @@ from market_sim.config.constants import (
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     RENEWABLE_CAPACITY_CREDIT,
+    RENEWABLE_CAPACITY_CREDIT_BY_ISO,
+    THERMAL_ACCREDITATION_BASIS_BY_ISO,
     VOM,
     WRIGHT_REFERENCE_GW,
 )
@@ -695,24 +699,74 @@ def resolve_planning_reserve_margin(config: ScenarioConfig, iso: str) -> float:
     return PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)
 
 
+def resolve_adequacy_requirement_mw(
+    config: ScenarioConfig, iso: str, peak_demand_mw: float
+) -> float:
+    """Return the firm-capacity requirement shared by the floor and backstop.
+
+    ``firm peak x (1 + PRM_iso)``, where the firm peak nets the ISO's
+    load-side capacity products out of the gross peak when the ISO's own
+    adequacy construction does (ERCOT's CDR "Firm Peak Load": Load Resources
+    carrying AS, ERS, TDSP load management, distribution voltage reduction —
+    :data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`). ISOs absent from that
+    registry net nothing, so the requirement is the pre-existing
+    ``peak x (1 + PRM)`` byte-identically. One requirement, two verbs
+    (capacity-economics plan §3.2) — both adequacy mechanisms call this.
+    """
+    dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso, 0.0)
+    firm_peak_mw = peak_demand_mw * (1.0 - dr_fraction)
+    return firm_peak_mw * (1.0 + resolve_planning_reserve_margin(config, iso))
+
+
+def _thermal_firm_mw(g: Generator, iso: str | None) -> float:
+    """Firm MW one dispatchable unit contributes to the adequacy ledger.
+
+    Default is UCAP (``pmax x (1 - EFORd)``). ISOs whose published
+    accreditation counts thermal at its seasonal rating with no forced-outage
+    derate (:data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`, ERCOT's CDR
+    convention — outage risk lives in the target margin, not the count)
+    contribute nameplate. ``iso=None`` keeps the legacy UCAP basis.
+    """
+    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "") == "seasonal_rating":
+        return float(g.pmax_mw)
+    return float(g.pmax_mw) * (1.0 - float(g.eford))
+
+
+def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
+    """Resolve a VRE/hydro capacity credit, per-ISO override first.
+
+    Returns ``None`` for fuels that are not credit-accredited (thermal),
+    mirroring ``RENEWABLE_CAPACITY_CREDIT.get``. An ISO with a published
+    accreditation (:data:`RENEWABLE_CAPACITY_CREDIT_BY_ISO`) wins over the
+    generic fallback for exactly the fuels it publishes.
+    """
+    if iso is not None:
+        override = RENEWABLE_CAPACITY_CREDIT_BY_ISO.get(iso)
+        if override is not None and fuel_type in override:
+            return override[fuel_type]
+    return RENEWABLE_CAPACITY_CREDIT.get(fuel_type)
+
+
 def _floor_retention_merit(
     config: ScenarioConfig, g: Generator
 ) -> tuple[float, float, float]:
     """Return the reliability-floor retention sort key for one eligible unit.
 
-    Cheapest firm adequacy first: annual going-forward cost per firm (UCAP)
-    MW, tie-broken by CO2 emission rate ascending so equal-cost adequacy is
-    bought from the cleaner unit (the heat-rate key this replaces retained
-    coal over gas), then by heat rate ascending so a within-fuel tie (per-fuel
-    FOM and CO2 rates make same-fuel units identical on the first two keys)
+    Cheapest firm adequacy first: annual going-forward cost per firm MW (the
+    ISO's accreditation basis — UCAP by default, seasonal rating where the
+    ISO's published convention says so, ``_thermal_firm_mw``), tie-broken by
+    CO2 emission rate ascending so equal-cost adequacy is bought from the
+    cleaner unit (the heat-rate key this replaces retained coal over gas),
+    then by heat rate ascending so a within-fuel tie (per-fuel FOM and CO2
+    rates make same-fuel units identical on the first two keys)
     deterministically retains the most efficient unit. All three keys are
     physical unit attributes — no tunables (plan §3.2).
     """
     fom_field = _THERMAL_FOM[g.fuel_type]
     multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
     going_forward_cost = getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
-    ucap_mw = g.pmax_mw * (1.0 - float(g.eford))
-    cost_per_firm_mw = going_forward_cost / ucap_mw if ucap_mw > 0.0 else math.inf
+    firm_mw = _thermal_firm_mw(g, config.iso)
+    cost_per_firm_mw = going_forward_cost / firm_mw if firm_mw > 0.0 else math.inf
     return (cost_per_firm_mw, float(g.emission_rate_co2), float(g.heat_rate))
 
 
@@ -732,7 +786,8 @@ def _apply_reliability_floor(
     """Un-retire eligible units until accredited firm capacity clears the PRM.
 
     The retirement-side verb of the shared adequacy requirement (plan §3.2):
-    ``requirement = peak_demand × (1 + PRM_iso)`` tested against
+    :func:`resolve_adequacy_requirement_mw` (firm peak × (1 + PRM_iso), on
+    the ISO's own published counting convention) tested against
     :func:`accredited_firm_capacity_mw` of the surviving fleet plus the zonal
     renewable pools and pre-accredited storage ELCC — the same ledger the
     step-6 build backstop uses, replacing the old raw-nameplate /
@@ -746,16 +801,16 @@ def _apply_reliability_floor(
 
     Returns the floor-retention attribution log (rule 20 analogue): one dict
     per retained unit with the unit's identity, firm value, cost and CO2 rate,
-    so floor-retained MW is measurable per run instead of argued.
+    so floor-retained MW is measurable per run instead of argued. The
+    ``ucap_mw`` field carries the unit's firm MW on the ISO's accreditation
+    basis (equal to nameplate for seasonal-rating ISOs).
     """
     if peak_demand <= 0.0:
         return []
-    requirement_mw = peak_demand * (
-        1.0 + resolve_planning_reserve_margin(config, config.iso)
-    )
+    requirement_mw = resolve_adequacy_requirement_mw(config, config.iso, peak_demand)
     survivors = [g for g in fleet if g.unit_id not in retired]
     accredited_mw = accredited_firm_capacity_mw(
-        survivors, wind_pool_mw, solar_pool_mw, storage_firm_mw
+        survivors, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=config.iso
     )
     retention_log: list[dict] = []
     if accredited_mw >= requirement_mw:
@@ -768,8 +823,8 @@ def _apply_reliability_floor(
         if _zone_is_long(deliverability_headroom, g.zone):
             continue  # RA-saturated zone: no adequacy value in retaining here
         retired.discard(g.unit_id)
-        ucap_mw = g.pmax_mw * (1.0 - float(g.eford))
-        accredited_mw += ucap_mw
+        firm_mw = _thermal_firm_mw(g, config.iso)
+        accredited_mw += firm_mw
         cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g)
         retention_log.append(
             {
@@ -777,8 +832,8 @@ def _apply_reliability_floor(
                 "unit_id": g.unit_id,
                 "fuel_type": g.fuel_type,
                 "pmax_mw": float(g.pmax_mw),
-                "ucap_mw": float(ucap_mw),
-                "going_forward_cost": float(cost_per_firm_mw * ucap_mw),
+                "ucap_mw": float(firm_mw),
+                "going_forward_cost": float(cost_per_firm_mw * firm_mw),
                 "co2_rate": float(co2_rate),
                 "loss_years": int(loss_years.get(g.unit_id, 0)),
             }
@@ -1944,27 +1999,37 @@ def accredited_firm_capacity_mw(
     wind_pool_mw: float = 0.0,
     solar_pool_mw: float = 0.0,
     storage_firm_mw: float = 0.0,
+    iso: str | None = None,
 ) -> float:
     """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
 
     Each resource contributes the firm fraction of its nameplate it can be
-    relied on for at the system peak: thermal at ``1 - EFORd`` (UCAP),
-    variable renewables at their capacity credit
-    (:data:`RENEWABLE_CAPACITY_CREDIT`), storage at its
+    relied on for at the system peak, on the ISO's own published counting
+    convention when ``iso`` is given: thermal at ``1 - EFORd`` (UCAP) or at
+    its seasonal rating (:func:`_thermal_firm_mw` /
+    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO` — ERCOT's CDR basis),
+    variable renewables at their capacity credit (per-ISO published ELCC
+    via :func:`_renewable_credit`, generic
+    :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage at its
     duration-dependent ELCC (passed in pre-accredited as ``storage_firm_mw``,
-    since the ELCC helper lives in the storage module). Wind/solar held in
-    the zonal pools (not Generators) are passed as ``wind_pool_mw`` /
-    ``solar_pool_mw``.
+    since the ELCC helper lives in the storage module), plus any
+    asynchronous-tie firm import the ISO's ledger counts but the model
+    topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW`). Wind/solar held
+    in the zonal pools (not Generators) are passed as ``wind_pool_mw`` /
+    ``solar_pool_mw``. ``iso=None`` reproduces the legacy generic basis
+    byte-identically (UCAP thermal, generic credits, no tie MW).
     """
     firm = float(storage_firm_mw)
-    firm += wind_pool_mw * RENEWABLE_CAPACITY_CREDIT["wind"]
-    firm += solar_pool_mw * RENEWABLE_CAPACITY_CREDIT["solar"]
+    firm += wind_pool_mw * (_renewable_credit("wind", iso) or 0.0)
+    firm += solar_pool_mw * (_renewable_credit("solar", iso) or 0.0)
+    if iso is not None:
+        firm += ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso, 0.0)
     for g in fleet:
-        credit = RENEWABLE_CAPACITY_CREDIT.get(g.fuel_type)
+        credit = _renewable_credit(g.fuel_type, iso)
         if credit is not None:
             firm += g.pmax_mw * credit
         else:
-            firm += g.pmax_mw * (1.0 - float(g.eford))
+            firm += _thermal_firm_mw(g, iso)
     return firm
 
 
@@ -1979,30 +2044,38 @@ def apply_reserve_margin_build(
     """Force-build firm capacity to meet the planning reserve margin.
 
     The structural adequacy backstop (ReEDS/NEMS/CDR): after the economic
-    new-entry screen, if accredited firm capacity is below
-    ``peak_demand * (1 + planning_reserve_margin)`` the residual gap is
+    new-entry screen, if accredited firm capacity is below the shared
+    requirement (:func:`resolve_adequacy_requirement_mw` — firm peak x
+    (1 + PRM) on the ISO's own counting convention) the residual gap is
     filled with the cheapest firm dispatchable resource (a ``gas_ct``
     peaker), so adequacy holds even when under-priced energy/scarcity
     revenue would otherwise under-build. The economic screen still owns the
     profitable build; this only covers the shortfall.
 
     Sized on nameplate (the gap is a firm-MW gap, so nameplate =
-    gap / (1 - EFORd_gas_ct)). The build is capped at the ISO's annual
+    gap / (1 - EFORd_gas_ct) for UCAP-basis ISOs, gap itself for
+    seasonal-rating ISOs). The build is capped at the ISO's annual
     interconnection-queue throughput so a single year cannot add unbounded
     capacity. Returns ``(fleet, built_mw)``; a no-op (built 0) when disabled,
     when the margin is already met, or when the queue cap is exhausted.
     """
     if not config.reserve_margin_build_enabled or peak_demand_mw <= 0.0:
         return fleet, 0.0
-    # Shared PRM resolution (one requirement, two verbs — plan §3.2): the
-    # same resolver the retirement reliability floor uses.
-    reserve_margin = resolve_planning_reserve_margin(config, iso)
-    required = peak_demand_mw * (1.0 + reserve_margin)
+    # Shared requirement resolution (one requirement, two verbs — plan §3.2):
+    # the same firm-peak x (1 + PRM) construction the retirement reliability
+    # floor uses, on the ISO's own counting convention.
+    required = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw)
     firm_gap = required - firm_capacity_mw
     if firm_gap <= 0.0:
         return fleet, 0.0
 
-    credit = 1.0 - EFORD["gas_ct"]
+    # Nameplate needed to close a firm-MW gap, on the ISO's accreditation
+    # basis: seasonal-rating ISOs count the new CT at nameplate; UCAP ISOs
+    # derate it by EFORd.
+    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso) == "seasonal_rating":
+        credit = 1.0
+    else:
+        credit = 1.0 - EFORD["gas_ct"]
     nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
     iso_config = get_iso_config(iso)
     queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0
@@ -2606,7 +2679,7 @@ def evolve_fleet(
     # No-op unless reserve_margin_build_enabled.
     if config.reserve_margin_build_enabled and peak_demand_used > 0.0:
         firm_mw = accredited_firm_capacity_mw(
-            fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw
+            fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=config.iso
         )
         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         fleet, adequacy_mw = apply_reserve_margin_build(
