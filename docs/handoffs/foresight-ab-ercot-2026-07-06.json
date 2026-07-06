@@ -1,0 +1,2590 @@
+{
+ "start_year": 2026,
+ "end_year": 2040,
+ "base_overrides": {
+  "use_campd_bins": false,
+  "reserve_margin_build_enabled": true,
+  "scarcity_pricing_enabled": true
+ },
+ "arms": {
+  "base": {},
+  "ewma": {
+   "entry_price_signal_alpha": 0.6
+  },
+  "lookahead": {
+   "entry_lookahead_reprice": true
+  },
+  "both": {
+   "entry_price_signal_alpha": 0.6,
+   "entry_lookahead_reprice": true
+  }
+ },
+ "elapsed_s": 6293.4,
+ "results": {
+  "ewma:high": {
+   "arm": "ewma",
+   "growth": "high",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 174.1661,
+     "avg_price": 23.46,
+     "p95_price": 32.27,
+     "generation_twh": {
+      "gas_ct": 3.9946,
+      "nuclear": 38.354,
+      "coal": 76.613,
+      "biomass": 0.0112,
+      "gas_cc": 224.4549,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3711
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 182.7134,
+     "avg_price": 22.49,
+     "p95_price": 30.2,
+     "generation_twh": {
+      "gas_ct": 15.1091,
+      "nuclear": 38.354,
+      "coal": 69.7128,
+      "biomass": 0.0013,
+      "gas_cc": 248.3183,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 74.2832
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 205.7963,
+     "avg_price": 25.05,
+     "p95_price": 32.55,
+     "generation_twh": {
+      "gas_ct": 31.7407,
+      "nuclear": 38.354,
+      "coal": 73.8125,
+      "biomass": 0.0072,
+      "gas_cc": 273.9044,
+      "oil": 0.0,
+      "wind": 137.8215,
+      "solar": 74.703
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 231.0309,
+     "avg_price": 26.17,
+     "p95_price": 34.95,
+     "generation_twh": {
+      "gas_ct": 50.3709,
+      "nuclear": 38.354,
+      "coal": 78.9135,
+      "biomass": 0.0134,
+      "gas_cc": 300.5126,
+      "oil": 0.0,
+      "wind": 137.8192,
+      "solar": 74.7314
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 261.4766,
+     "avg_price": 27.67,
+     "p95_price": 35.67,
+     "generation_twh": {
+      "gas_ct": 80.2282,
+      "nuclear": 38.354,
+      "coal": 86.6567,
+      "biomass": 0.0303,
+      "gas_cc": 317.4725,
+      "oil": 0.0,
+      "wind": 137.8381,
+      "solar": 74.7132
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 292.7855,
+     "avg_price": 28.87,
+     "p95_price": 37.83,
+     "generation_twh": {
+      "gas_ct": 122.1924,
+      "nuclear": 38.354,
+      "coal": 90.2511,
+      "biomass": 0.0499,
+      "gas_cc": 330.9955,
+      "oil": 0.0,
+      "wind": 137.8459,
+      "solar": 74.7054
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 310.5369,
+     "avg_price": 30.04,
+     "p95_price": 37.81,
+     "generation_twh": {
+      "gas_ct": 147.5601,
+      "nuclear": 38.354,
+      "coal": 92.8587,
+      "biomass": 0.0673,
+      "gas_cc": 335.2184,
+      "oil": 0.0,
+      "wind": 137.8255,
+      "solar": 74.7258
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 330.0627,
+     "avg_price": 127.26,
+     "p95_price": 40.82,
+     "generation_twh": {
+      "gas_ct": 175.066,
+      "nuclear": 38.354,
+      "coal": 96.7373,
+      "biomass": 0.0863,
+      "gas_cc": 337.1088,
+      "oil": 0.0797,
+      "wind": 137.8485,
+      "solar": 74.7029
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 324.3638,
+     "avg_price": 210.35,
+     "p95_price": 66.13,
+     "generation_twh": {
+      "gas_ct": 150.4481,
+      "nuclear": 53.7572,
+      "coal": 95.264,
+      "geothermal": 16.644,
+      "biomass": 0.0844,
+      "gas_cc": 359.4002,
+      "oil": 0.128,
+      "wind": 143.9461,
+      "solar": 74.7219
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 321.0186,
+     "avg_price": 272.49,
+     "p95_price": 2500.0,
+     "generation_twh": {
+      "gas_ct": 127.6103,
+      "nuclear": 69.1604,
+      "coal": 96.7373,
+      "geothermal": 33.288,
+      "biomass": 0.0861,
+      "gas_cc": 377.3907,
+      "oil": 0.159,
+      "wind": 150.0791,
+      "solar": 74.7056
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 288.2603,
+     "avg_price": 1165.62,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 133.7202,
+      "nuclear": 84.5636,
+      "coal": 50.9126,
+      "geothermal": 49.932,
+      "biomass": 0.8987,
+      "gas_cc": 402.3994,
+      "oil": 0.292,
+      "wind": 156.214,
+      "solar": 74.6874
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 283.5229,
+     "avg_price": 1445.31,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 112.6361,
+      "nuclear": 99.9668,
+      "coal": 51.6938,
+      "geothermal": 66.576,
+      "biomass": 0.9387,
+      "gas_cc": 416.9543,
+      "oil": 0.4785,
+      "wind": 156.1869,
+      "solar": 79.2463
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 278.4504,
+     "avg_price": 1550.17,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 98.2472,
+      "nuclear": 115.37,
+      "coal": 52.0587,
+      "geothermal": 83.22,
+      "biomass": 0.9421,
+      "gas_cc": 422.9592,
+      "oil": 0.5607,
+      "wind": 162.2804,
+      "solar": 79.2696
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 274.8058,
+     "avg_price": 1691.62,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 93.7959,
+      "nuclear": 130.7732,
+      "coal": 52.0587,
+      "geothermal": 99.864,
+      "biomass": 0.9363,
+      "gas_cc": 419.8597,
+      "oil": 0.6986,
+      "wind": 168.4243,
+      "solar": 79.2423
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 272.4919,
+     "avg_price": 1849.94,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 96.8171,
+      "nuclear": 146.1764,
+      "coal": 52.0587,
+      "geothermal": 116.508,
+      "biomass": 0.9277,
+      "gas_cc": 410.149,
+      "oil": 0.9252,
+      "wind": 168.4025,
+      "solar": 83.7959
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 12000.0,
+    "2029": 10958.9,
+    "2030": 8782.6,
+    "2031": 12000.0,
+    "2032": 7888.2,
+    "2033": 7249.4,
+    "2034": 0.0,
+    "2035": 0.0,
+    "2036": 0.0,
+    "2037": 0.0,
+    "2038": 0.0,
+    "2039": 0.0,
+    "2040": 0.0
+   },
+   "retired_mw_by_fuel": {
+    "coal": 6158.0,
+    "gas_ct": 5855.6,
+    "oil": 83.2
+   },
+   "entered_mw_by_tech": {
+    "wind": 15000.0,
+    "gas_cc": 21000.0,
+    "gas_ct": 21000.0,
+    "geothermal": 14000.0,
+    "nuclear": 14000.0,
+    "solar": 4000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 13349.2,
+    "2029": 22544.1,
+    "2030": 69612.3,
+    "2031": 78394.9,
+    "2032": 89447.6,
+    "2033": 92809.8,
+    "2034": 83720.9,
+    "2035": 86720.9,
+    "2036": 82717.1,
+    "2037": 80624.1,
+    "2038": 83624.1,
+    "2039": 86624.1,
+    "2040": 89624.1
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 3237.78,
+    "fossil_twh_by_class": {
+     "coal": 817.29,
+     "gas_cc": 4129.91,
+     "gas_ct_st": 1341.64
+    },
+    "mean_price": 763.58,
+    "mean_p95_price": 2519.84,
+    "backstop_mw_total": 35920.2
+   },
+   "error": null
+  },
+  "base:high": {
+   "arm": "base",
+   "growth": "high",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 174.1661,
+     "avg_price": 23.46,
+     "p95_price": 32.27,
+     "generation_twh": {
+      "gas_ct": 3.9946,
+      "nuclear": 38.354,
+      "coal": 76.613,
+      "biomass": 0.0112,
+      "gas_cc": 224.4549,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3711
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 182.7134,
+     "avg_price": 22.49,
+     "p95_price": 30.2,
+     "generation_twh": {
+      "gas_ct": 15.1091,
+      "nuclear": 38.354,
+      "coal": 69.7128,
+      "biomass": 0.0013,
+      "gas_cc": 248.3183,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 74.2832
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 205.7963,
+     "avg_price": 25.05,
+     "p95_price": 32.55,
+     "generation_twh": {
+      "gas_ct": 31.7407,
+      "nuclear": 38.354,
+      "coal": 73.8125,
+      "biomass": 0.0072,
+      "gas_cc": 273.9044,
+      "oil": 0.0,
+      "wind": 137.8215,
+      "solar": 74.703
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 231.2252,
+     "avg_price": 26.19,
+     "p95_price": 34.9,
+     "generation_twh": {
+      "gas_ct": 50.0305,
+      "nuclear": 38.354,
+      "coal": 79.238,
+      "biomass": 0.0134,
+      "gas_cc": 300.5521,
+      "oil": 0.0,
+      "wind": 137.8266,
+      "solar": 74.7191
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 261.4671,
+     "avg_price": 27.65,
+     "p95_price": 35.83,
+     "generation_twh": {
+      "gas_ct": 80.2596,
+      "nuclear": 38.354,
+      "coal": 86.6362,
+      "biomass": 0.0301,
+      "gas_cc": 317.458,
+      "oil": 0.0,
+      "wind": 137.8426,
+      "solar": 74.7086
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 292.7993,
+     "avg_price": 28.88,
+     "p95_price": 37.76,
+     "generation_twh": {
+      "gas_ct": 122.2114,
+      "nuclear": 38.354,
+      "coal": 90.266,
+      "biomass": 0.0503,
+      "gas_cc": 330.9551,
+      "oil": 0.0,
+      "wind": 137.8629,
+      "solar": 74.6884
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 310.5267,
+     "avg_price": 46.15,
+     "p95_price": 37.75,
+     "generation_twh": {
+      "gas_ct": 147.8201,
+      "nuclear": 38.354,
+      "coal": 92.8112,
+      "biomass": 0.0677,
+      "gas_cc": 334.8737,
+      "oil": 0.0172,
+      "wind": 137.8322,
+      "solar": 74.7191
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 312.3029,
+     "avg_price": 128.1,
+     "p95_price": 40.22,
+     "generation_twh": {
+      "gas_ct": 132.5035,
+      "nuclear": 38.354,
+      "coal": 94.0106,
+      "geothermal": 16.644,
+      "biomass": 0.0729,
+      "gas_cc": 357.0621,
+      "oil": 0.0789,
+      "wind": 137.8304,
+      "solar": 83.7823
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 307.6003,
+     "avg_price": 212.86,
+     "p95_price": 55.95,
+     "generation_twh": {
+      "gas_ct": 111.6596,
+      "nuclear": 53.7572,
+      "coal": 93.6176,
+      "geothermal": 33.288,
+      "biomass": 0.0734,
+      "gas_cc": 374.4523,
+      "oil": 0.1254,
+      "wind": 143.9555,
+      "solar": 83.7748
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 276.6032,
+     "avg_price": 960.05,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 118.0674,
+      "nuclear": 69.1604,
+      "coal": 49.3602,
+      "geothermal": 49.932,
+      "biomass": 0.8724,
+      "gas_cc": 399.3301,
+      "oil": 0.1547,
+      "wind": 150.0543,
+      "solar": 83.7935
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 272.5579,
+     "avg_price": 1164.56,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 98.8898,
+      "nuclear": 84.5636,
+      "coal": 50.4826,
+      "geothermal": 66.576,
+      "biomass": 0.8978,
+      "gas_cc": 412.0333,
+      "oil": 0.2896,
+      "wind": 156.1858,
+      "solar": 83.7791
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 268.8563,
+     "avg_price": 1442.79,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 83.8664,
+      "nuclear": 99.9668,
+      "coal": 51.5552,
+      "geothermal": 83.22,
+      "biomass": 0.9308,
+      "gas_cc": 420.3681,
+      "oil": 0.4537,
+      "wind": 156.201,
+      "solar": 88.2944
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 265.0252,
+     "avg_price": 1544.75,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 79.3452,
+      "nuclear": 115.37,
+      "coal": 52.0587,
+      "geothermal": 99.864,
+      "biomass": 0.9231,
+      "gas_cc": 416.0921,
+      "oil": 0.5331,
+      "wind": 162.3123,
+      "solar": 88.2984
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 262.317,
+     "avg_price": 1683.48,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 84.5139,
+      "nuclear": 130.7732,
+      "coal": 52.0587,
+      "geothermal": 116.508,
+      "biomass": 0.9239,
+      "gas_cc": 402.9507,
+      "oil": 0.6286,
+      "wind": 168.4195,
+      "solar": 88.303
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 260.5775,
+     "avg_price": 1840.39,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 93.207,
+      "nuclear": 146.1764,
+      "coal": 52.0587,
+      "geothermal": 133.152,
+      "biomass": 0.9122,
+      "gas_cc": 386.1272,
+      "oil": 0.7413,
+      "wind": 174.5234,
+      "solar": 88.3083
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 12000.0,
+    "2029": 10958.9,
+    "2030": 11974.1,
+    "2031": 12000.0,
+    "2032": 7854.2,
+    "2033": 0.0,
+    "2034": 0.0,
+    "2035": 0.0,
+    "2036": 0.0,
+    "2037": 0.0,
+    "2038": 0.0,
+    "2039": 0.0,
+    "2040": 0.0
+   },
+   "retired_mw_by_fuel": {
+    "coal": 6158.0,
+    "gas_ct": 5855.6,
+    "oil": 83.2
+   },
+   "entered_mw_by_tech": {
+    "wind": 17000.0,
+    "gas_cc": 24000.0,
+    "gas_ct": 24000.0,
+    "geothermal": 16000.0,
+    "solar": 6000.0,
+    "nuclear": 14000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 13349.2,
+    "2029": 58653.4,
+    "2030": 69612.3,
+    "2031": 81586.4,
+    "2032": 92215.1,
+    "2033": 79629.0,
+    "2034": 82629.0,
+    "2035": 78625.2,
+    "2036": 76532.2,
+    "2037": 79532.2,
+    "2038": 82532.2,
+    "2039": 85532.2,
+    "2040": 88532.2
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 3090.63,
+    "fossil_twh_by_class": {
+     "coal": 764.92,
+     "gas_cc": 4151.7,
+     "gas_ct_st": 1155.37
+    },
+    "mean_price": 825.42,
+    "mean_p95_price": 2746.14,
+    "backstop_mw_total": 31828.3
+   },
+   "error": null
+  },
+  "lookahead:high": {
+   "arm": "lookahead",
+   "growth": "high",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 174.1661,
+     "avg_price": 23.46,
+     "p95_price": 32.27,
+     "generation_twh": {
+      "gas_ct": 3.9946,
+      "nuclear": 38.354,
+      "coal": 76.613,
+      "biomass": 0.0112,
+      "gas_cc": 224.4549,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3711
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 175.8563,
+     "avg_price": 22.06,
+     "p95_price": 29.49,
+     "generation_twh": {
+      "gas_ct": 5.0379,
+      "nuclear": 53.7572,
+      "coal": 68.7832,
+      "biomass": 0.0007,
+      "gas_cc": 250.359,
+      "oil": 0.0,
+      "wind": 122.8726,
+      "solar": 83.3329
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 198.8097,
+     "avg_price": 24.77,
+     "p95_price": 30.55,
+     "generation_twh": {
+      "gas_ct": 15.2175,
+      "nuclear": 53.7572,
+      "coal": 73.5376,
+      "biomass": 0.0033,
+      "gas_cc": 281.8298,
+      "oil": 0.0,
+      "wind": 122.5332,
+      "solar": 83.7342
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 221.5057,
+     "avg_price": 25.73,
+     "p95_price": 32.44,
+     "generation_twh": {
+      "gas_ct": 19.795,
+      "nuclear": 53.7572,
+      "coal": 78.9133,
+      "biomass": 0.0067,
+      "gas_cc": 322.1779,
+      "oil": 0.0,
+      "wind": 122.5261,
+      "solar": 83.77
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 242.1536,
+     "avg_price": 26.98,
+     "p95_price": 35.64,
+     "generation_twh": {
+      "gas_ct": 36.141,
+      "nuclear": 53.7572,
+      "coal": 83.949,
+      "geothermal": 16.644,
+      "biomass": 0.0187,
+      "gas_cc": 338.5397,
+      "oil": 0.0,
+      "wind": 122.5467,
+      "solar": 83.7678
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 273.0533,
+     "avg_price": 28.35,
+     "p95_price": 37.03,
+     "generation_twh": {
+      "gas_ct": 68.4367,
+      "nuclear": 53.7572,
+      "coal": 88.5247,
+      "geothermal": 16.644,
+      "biomass": 0.0351,
+      "gas_cc": 360.802,
+      "oil": 0.0,
+      "wind": 122.5292,
+      "solar": 83.7919
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 290.3269,
+     "avg_price": 63.56,
+     "p95_price": 39.46,
+     "generation_twh": {
+      "gas_ct": 88.4472,
+      "nuclear": 53.7572,
+      "coal": 91.2126,
+      "geothermal": 16.644,
+      "biomass": 0.052,
+      "gas_cc": 370.1534,
+      "oil": 0.0391,
+      "wind": 122.547,
+      "solar": 83.7751
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 308.0604,
+     "avg_price": 134.83,
+     "p95_price": 40.2,
+     "generation_twh": {
+      "gas_ct": 111.9697,
+      "nuclear": 53.7572,
+      "coal": 93.2948,
+      "geothermal": 16.644,
+      "biomass": 0.0676,
+      "gas_cc": 377.1693,
+      "oil": 0.0936,
+      "wind": 122.5599,
+      "solar": 83.7628
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 325.9569,
+     "avg_price": 236.12,
+     "p95_price": 70.7,
+     "generation_twh": {
+      "gas_ct": 137.1018,
+      "nuclear": 53.7572,
+      "coal": 95.1695,
+      "geothermal": 16.644,
+      "biomass": 0.0831,
+      "gas_cc": 383.052,
+      "oil": 0.1857,
+      "wind": 122.57,
+      "solar": 83.7531
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 339.6565,
+     "avg_price": 351.27,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 153.8902,
+      "nuclear": 53.7572,
+      "coal": 98.5167,
+      "geothermal": 16.644,
+      "biomass": 0.0989,
+      "gas_cc": 385.027,
+      "oil": 0.2898,
+      "wind": 122.5169,
+      "solar": 95.0863
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 352.7121,
+     "avg_price": 544.47,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 173.444,
+      "nuclear": 53.7572,
+      "coal": 100.4814,
+      "geothermal": 16.644,
+      "biomass": 0.1655,
+      "gas_cc": 385.4142,
+      "oil": 0.5574,
+      "wind": 122.3212,
+      "solar": 106.1197
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 364.8089,
+     "avg_price": 785.66,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 194.0145,
+      "nuclear": 53.7572,
+      "coal": 101.4725,
+      "geothermal": 16.644,
+      "biomass": 0.2395,
+      "gas_cc": 385.0392,
+      "oil": 0.7599,
+      "wind": 121.7817,
+      "solar": 116.3079
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 377.1847,
+     "avg_price": 942.95,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 217.1812,
+      "nuclear": 53.7572,
+      "coal": 101.6532,
+      "geothermal": 16.644,
+      "biomass": 0.2996,
+      "gas_cc": 384.0355,
+      "oil": 0.95,
+      "wind": 120.8996,
+      "solar": 125.2821
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 384.3253,
+     "avg_price": 1044.63,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 231.7422,
+      "nuclear": 53.7572,
+      "coal": 101.6799,
+      "geothermal": 16.644,
+      "biomass": 0.4741,
+      "gas_cc": 382.129,
+      "oil": 0.9037,
+      "wind": 133.7534,
+      "solar": 131.4695
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 392.8877,
+     "avg_price": 1190.12,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 248.0288,
+      "nuclear": 53.7572,
+      "coal": 101.6861,
+      "geothermal": 16.644,
+      "biomass": 0.5575,
+      "gas_cc": 381.0099,
+      "oil": 0.9654,
+      "wind": 146.0704,
+      "solar": 135.8396
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 6335.6,
+    "2029": 6736.7,
+    "2030": 9997.8,
+    "2031": 12000.0,
+    "2032": 7875.2,
+    "2033": 7249.6,
+    "2034": 7549.6,
+    "2035": 7851.4,
+    "2036": 7208.0,
+    "2037": 7544.8,
+    "2038": 7884.4,
+    "2039": 8237.7,
+    "2040": 7754.0
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "gas_cc": 6000.0,
+    "gas_ct": 3000.0,
+    "nuclear": 2000.0,
+    "solar": 34000.0,
+    "geothermal": 2000.0,
+    "wind": 10000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 560.0,
+    "2029": 0.0,
+    "2030": 8454.0,
+    "2031": 10968.0,
+    "2032": 12678.0,
+    "2033": 32961.1,
+    "2034": 32961.1,
+    "2035": 32961.1,
+    "2036": 32961.1,
+    "2037": 32961.1,
+    "2038": 31251.1,
+    "2039": 31251.1,
+    "2040": 28737.1
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 3651.13,
+    "fossil_twh_by_class": {
+     "coal": 1057.64,
+     "gas_cc": 4132.37,
+     "gas_ct_st": 1665.14
+    },
+    "mean_price": 486.27,
+    "mean_p95_price": 2747.55,
+    "backstop_mw_total": 91152.5
+   },
+   "error": null
+  },
+  "base:mid": {
+   "arm": "base",
+   "growth": "mid",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91,
+     "p95_price": 31.62,
+     "generation_twh": {
+      "gas_ct": 1.4696,
+      "nuclear": 38.354,
+      "coal": 73.0159,
+      "biomass": 0.0063,
+      "gas_cc": 200.9979,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3532
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74,
+     "p95_price": 29.04,
+     "generation_twh": {
+      "gas_ct": 3.7928,
+      "nuclear": 38.354,
+      "coal": 67.5553,
+      "biomass": 0.0006,
+      "gas_cc": 214.7605,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 74.1562
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24,
+     "p95_price": 29.77,
+     "generation_twh": {
+      "gas_ct": 6.5802,
+      "nuclear": 38.354,
+      "coal": 70.4047,
+      "biomass": 0.0023,
+      "gas_cc": 235.6812,
+      "oil": 0.0,
+      "wind": 137.7846,
+      "solar": 74.6765
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6146,
+     "avg_price": 25.16,
+     "p95_price": 31.29,
+     "generation_twh": {
+      "gas_ct": 9.9172,
+      "nuclear": 38.354,
+      "coal": 74.7934,
+      "biomass": 0.0036,
+      "gas_cc": 256.0044,
+      "oil": 0.0,
+      "wind": 137.8238,
+      "solar": 74.6707
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3168,
+     "avg_price": 26.31,
+     "p95_price": 33.84,
+     "generation_twh": {
+      "gas_ct": 18.0398,
+      "nuclear": 38.354,
+      "coal": 80.8191,
+      "biomass": 0.0119,
+      "gas_cc": 271.254,
+      "oil": 0.0,
+      "wind": 137.8421,
+      "solar": 74.6763
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.1983,
+     "avg_price": 27.02,
+     "p95_price": 35.01,
+     "generation_twh": {
+      "gas_ct": 31.0325,
+      "nuclear": 38.354,
+      "coal": 83.6219,
+      "biomass": 0.0178,
+      "gas_cc": 286.3444,
+      "oil": 0.0,
+      "wind": 137.8217,
+      "solar": 74.7149
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 228.5599,
+     "avg_price": 27.54,
+     "p95_price": 36.86,
+     "generation_twh": {
+      "gas_ct": 38.7454,
+      "nuclear": 38.354,
+      "coal": 85.0512,
+      "biomass": 0.0261,
+      "gas_cc": 293.4554,
+      "oil": 0.0,
+      "wind": 137.813,
+      "solar": 74.7296
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 237.354,
+     "avg_price": 28.15,
+     "p95_price": 37.55,
+     "generation_twh": {
+      "gas_ct": 47.2054,
+      "nuclear": 38.354,
+      "coal": 86.6887,
+      "biomass": 0.0314,
+      "gas_cc": 300.1003,
+      "oil": 0.0,
+      "wind": 137.8304,
+      "solar": 74.7163
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 247.0023,
+     "avg_price": 28.76,
+     "p95_price": 37.96,
+     "generation_twh": {
+      "gas_ct": 55.6408,
+      "nuclear": 38.354,
+      "coal": 89.4512,
+      "biomass": 0.0401,
+      "gas_cc": 306.0465,
+      "oil": 0.0,
+      "wind": 137.8214,
+      "solar": 74.7284
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 256.9297,
+     "avg_price": 29.81,
+     "p95_price": 39.07,
+     "generation_twh": {
+      "gas_ct": 66.0666,
+      "nuclear": 38.354,
+      "coal": 92.0818,
+      "biomass": 0.061,
+      "gas_cc": 310.5079,
+      "oil": 0.0,
+      "wind": 137.8357,
+      "solar": 74.7153
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 261.4562,
+     "avg_price": 30.71,
+     "p95_price": 39.99,
+     "generation_twh": {
+      "gas_ct": 70.2638,
+      "nuclear": 38.354,
+      "coal": 93.8297,
+      "biomass": 0.0879,
+      "gas_cc": 311.6357,
+      "oil": 0.0,
+      "wind": 137.7505,
+      "solar": 85.9745
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 271.601,
+     "avg_price": 31.72,
+     "p95_price": 41.73,
+     "generation_twh": {
+      "gas_ct": 82.5173,
+      "nuclear": 38.354,
+      "coal": 95.83,
+      "biomass": 0.1277,
+      "gas_cc": 315.7329,
+      "oil": 0.0,
+      "wind": 137.7822,
+      "solar": 85.9761
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 276.6701,
+     "avg_price": 32.03,
+     "p95_price": 41.98,
+     "generation_twh": {
+      "gas_ct": 89.1871,
+      "nuclear": 38.354,
+      "coal": 96.603,
+      "biomass": 0.2159,
+      "gas_cc": 317.3579,
+      "oil": 0.0,
+      "wind": 137.2255,
+      "solar": 96.8142
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 286.838,
+     "avg_price": 32.8,
+     "p95_price": 44.06,
+     "generation_twh": {
+      "gas_ct": 102.8377,
+      "nuclear": 38.354,
+      "coal": 97.6768,
+      "biomass": 0.2219,
+      "gas_cc": 321.9187,
+      "oil": 0.0,
+      "wind": 137.305,
+      "solar": 96.9102
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 297.4201,
+     "avg_price": 33.72,
+     "p95_price": 44.25,
+     "generation_twh": {
+      "gas_ct": 117.4646,
+      "nuclear": 38.354,
+      "coal": 98.7635,
+      "biomass": 0.2458,
+      "gas_cc": 326.1462,
+      "oil": 0.0,
+      "wind": 137.45,
+      "solar": 96.925
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 6545.9,
+    "2031": 6822.4,
+    "2032": 3545.7,
+    "2033": 3671.1,
+    "2034": 3762.4,
+    "2035": 3856.5,
+    "2036": 3952.9,
+    "2037": 3094.3,
+    "2038": 4163.2,
+    "2039": 3299.3,
+    "2040": 4373.5
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "wind": 5000.0,
+    "solar": 10000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 13349.2,
+    "2029": 48630.4,
+    "2030": 50303.3,
+    "2031": 56849.2,
+    "2032": 63235.4,
+    "2033": 66781.2,
+    "2034": 70452.2,
+    "2035": 74214.7,
+    "2036": 78071.2,
+    "2037": 81076.8,
+    "2038": 83747.1,
+    "2039": 83686.3,
+    "2040": 86985.7
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 2788.35,
+    "fossil_twh_by_class": {
+     "coal": 1000.42,
+     "gas_cc": 3360.5,
+     "gas_ct_st": 719.0
+    },
+    "mean_price": 29.87,
+    "mean_p95_price": 39.3,
+    "backstop_mw_total": 47087.2
+   },
+   "error": null
+  },
+  "both:high": {
+   "arm": "both",
+   "growth": "high",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 174.1661,
+     "avg_price": 23.46,
+     "p95_price": 32.27,
+     "generation_twh": {
+      "gas_ct": 3.9946,
+      "nuclear": 38.354,
+      "coal": 76.613,
+      "biomass": 0.0112,
+      "gas_cc": 224.4549,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3711
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 175.8563,
+     "avg_price": 22.06,
+     "p95_price": 29.49,
+     "generation_twh": {
+      "gas_ct": 5.0379,
+      "nuclear": 53.7572,
+      "coal": 68.7832,
+      "biomass": 0.0007,
+      "gas_cc": 250.359,
+      "oil": 0.0,
+      "wind": 122.8726,
+      "solar": 83.3329
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 189.9524,
+     "avg_price": 24.05,
+     "p95_price": 30.21,
+     "generation_twh": {
+      "gas_ct": 5.9796,
+      "nuclear": 53.7572,
+      "coal": 71.6528,
+      "biomass": 0.0015,
+      "gas_cc": 280.3267,
+      "oil": 0.0,
+      "wind": 125.0971,
+      "solar": 94.6503
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 207.9077,
+     "avg_price": 24.64,
+     "p95_price": 31.81,
+     "generation_twh": {
+      "gas_ct": 7.7023,
+      "nuclear": 53.7572,
+      "coal": 75.1288,
+      "biomass": 0.0033,
+      "gas_cc": 317.0169,
+      "oil": 0.0,
+      "wind": 124.4992,
+      "solar": 104.6139
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 224.7793,
+     "avg_price": 25.74,
+     "p95_price": 33.24,
+     "generation_twh": {
+      "gas_ct": 12.0866,
+      "nuclear": 53.7572,
+      "coal": 78.9707,
+      "geothermal": 16.644,
+      "biomass": 0.0092,
+      "gas_cc": 345.5322,
+      "oil": 0.0,
+      "wind": 124.782,
+      "solar": 105.3008
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 243.5496,
+     "avg_price": 26.65,
+     "p95_price": 35.83,
+     "generation_twh": {
+      "gas_ct": 20.5709,
+      "nuclear": 53.7572,
+      "coal": 81.7127,
+      "geothermal": 33.288,
+      "biomass": 0.0197,
+      "gas_cc": 375.9202,
+      "oil": 0.0,
+      "wind": 125.0661,
+      "solar": 105.7286
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 256.6783,
+     "avg_price": 27.27,
+     "p95_price": 36.64,
+     "generation_twh": {
+      "gas_ct": 25.4777,
+      "nuclear": 53.7572,
+      "coal": 82.2945,
+      "geothermal": 33.288,
+      "biomass": 0.0341,
+      "gas_cc": 402.3763,
+      "oil": 0.0,
+      "wind": 125.1356,
+      "solar": 105.9307
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 274.0933,
+     "avg_price": 125.47,
+     "p95_price": 39.57,
+     "generation_twh": {
+      "gas_ct": 37.207,
+      "nuclear": 53.7572,
+      "coal": 85.2567,
+      "geothermal": 33.288,
+      "biomass": 0.0459,
+      "gas_cc": 420.6489,
+      "oil": 0.0801,
+      "wind": 125.2835,
+      "solar": 106.0056
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 291.4942,
+     "avg_price": 216.56,
+     "p95_price": 53.17,
+     "generation_twh": {
+      "gas_ct": 51.5759,
+      "nuclear": 53.7572,
+      "coal": 88.0531,
+      "geothermal": 33.288,
+      "biomass": 0.0675,
+      "gas_cc": 436.5021,
+      "oil": 0.1374,
+      "wind": 125.3447,
+      "solar": 106.1256
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 310.1751,
+     "avg_price": 281.48,
+     "p95_price": 3900.0,
+     "generation_twh": {
+      "gas_ct": 68.7307,
+      "nuclear": 53.7572,
+      "coal": 91.8598,
+      "geothermal": 33.288,
+      "biomass": 0.0917,
+      "gas_cc": 449.1101,
+      "oil": 0.1767,
+      "wind": 125.3884,
+      "solar": 106.2324
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 328.6786,
+     "avg_price": 504.75,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 88.3131,
+      "nuclear": 53.7572,
+      "coal": 94.8616,
+      "geothermal": 33.288,
+      "biomass": 0.1454,
+      "gas_cc": 460.047,
+      "oil": 0.4086,
+      "wind": 125.4787,
+      "solar": 106.2709
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 341.1899,
+     "avg_price": 764.2,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 101.8916,
+      "nuclear": 53.7572,
+      "coal": 97.6327,
+      "geothermal": 33.288,
+      "biomass": 0.2571,
+      "gas_cc": 464.9425,
+      "oil": 0.6363,
+      "wind": 125.0832,
+      "solar": 116.7753
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 353.8097,
+     "avg_price": 893.29,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 118.5237,
+      "nuclear": 53.7572,
+      "coal": 99.1626,
+      "geothermal": 33.288,
+      "biomass": 0.3103,
+      "gas_cc": 469.1492,
+      "oil": 0.8469,
+      "wind": 124.3261,
+      "solar": 126.1978
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 366.9785,
+     "avg_price": 1051.15,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 138.7989,
+      "nuclear": 53.7572,
+      "coal": 99.9032,
+      "geothermal": 33.288,
+      "biomass": 0.4054,
+      "gas_cc": 471.9265,
+      "oil": 1.0349,
+      "wind": 123.0945,
+      "solar": 134.5224
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 374.6166,
+     "avg_price": 1175.75,
+     "p95_price": 5000.0,
+     "generation_twh": {
+      "gas_ct": 153.6356,
+      "nuclear": 53.7572,
+      "coal": 99.7979,
+      "geothermal": 33.288,
+      "biomass": 0.4651,
+      "gas_cc": 470.9919,
+      "oil": 0.9726,
+      "wind": 136.0126,
+      "solar": 139.7938
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 271.8,
+    "2029": 0.0,
+    "2030": 0.0,
+    "2031": 1151.9,
+    "2032": 4007.1,
+    "2033": 7290.7,
+    "2034": 7549.1,
+    "2035": 7851.4,
+    "2036": 8165.5,
+    "2037": 8492.1,
+    "2038": 7874.3,
+    "2039": 8237.8,
+    "2040": 8605.1
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "gas_cc": 18000.0,
+    "gas_ct": 15000.0,
+    "nuclear": 2000.0,
+    "solar": 34000.0,
+    "wind": 6000.0,
+    "geothermal": 4000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0,
+    "2031": 0.0,
+    "2032": 0.0,
+    "2033": 0.0,
+    "2034": 8454.0,
+    "2035": 10968.0,
+    "2036": 13231.3,
+    "2037": 13349.2,
+    "2038": 13349.2,
+    "2039": 32359.7,
+    "2040": 31251.1
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 3366.04,
+    "fossil_twh_by_class": {
+     "coal": 999.51,
+     "gas_cc": 4767.15,
+     "gas_ct_st": 821.11
+    },
+    "mean_price": 462.94,
+    "mean_p95_price": 2645.31,
+    "backstop_mw_total": 69225.0
+   },
+   "error": null
+  },
+  "ewma:mid": {
+   "arm": "ewma",
+   "growth": "mid",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91,
+     "p95_price": 31.62,
+     "generation_twh": {
+      "gas_ct": 1.4696,
+      "nuclear": 38.354,
+      "coal": 73.0159,
+      "biomass": 0.0063,
+      "gas_cc": 200.9979,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3532
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 160.7133,
+     "avg_price": 21.74,
+     "p95_price": 29.04,
+     "generation_twh": {
+      "gas_ct": 3.7928,
+      "nuclear": 38.354,
+      "coal": 67.5553,
+      "biomass": 0.0006,
+      "gas_cc": 214.7605,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 74.1562
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 173.4977,
+     "avg_price": 24.24,
+     "p95_price": 29.77,
+     "generation_twh": {
+      "gas_ct": 6.5802,
+      "nuclear": 38.354,
+      "coal": 70.4047,
+      "biomass": 0.0023,
+      "gas_cc": 235.6812,
+      "oil": 0.0,
+      "wind": 137.7846,
+      "solar": 74.6765
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 187.6108,
+     "avg_price": 25.16,
+     "p95_price": 31.29,
+     "generation_twh": {
+      "gas_ct": 9.9152,
+      "nuclear": 38.354,
+      "coal": 74.796,
+      "biomass": 0.0036,
+      "gas_cc": 255.9886,
+      "oil": 0.0,
+      "wind": 137.8277,
+      "solar": 74.6902
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 204.3596,
+     "avg_price": 26.33,
+     "p95_price": 34.3,
+     "generation_twh": {
+      "gas_ct": 18.0038,
+      "nuclear": 38.354,
+      "coal": 80.8949,
+      "biomass": 0.0123,
+      "gas_cc": 271.2182,
+      "oil": 0.0,
+      "wind": 137.8154,
+      "solar": 74.72
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 220.0681,
+     "avg_price": 27.03,
+     "p95_price": 34.92,
+     "generation_twh": {
+      "gas_ct": 31.014,
+      "nuclear": 38.354,
+      "coal": 83.3984,
+      "biomass": 0.0175,
+      "gas_cc": 286.5939,
+      "oil": 0.0,
+      "wind": 137.8359,
+      "solar": 74.7098
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 228.5597,
+     "avg_price": 27.56,
+     "p95_price": 36.93,
+     "generation_twh": {
+      "gas_ct": 38.6595,
+      "nuclear": 38.354,
+      "coal": 85.0634,
+      "biomass": 0.0277,
+      "gas_cc": 293.5312,
+      "oil": 0.0,
+      "wind": 137.8397,
+      "solar": 74.7094
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 237.3539,
+     "avg_price": 28.11,
+     "p95_price": 37.45,
+     "generation_twh": {
+      "gas_ct": 47.3016,
+      "nuclear": 38.354,
+      "coal": 86.6565,
+      "biomass": 0.0232,
+      "gas_cc": 300.0114,
+      "oil": 0.0,
+      "wind": 137.8496,
+      "solar": 74.7012
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 246.9726,
+     "avg_price": 28.75,
+     "p95_price": 37.79,
+     "generation_twh": {
+      "gas_ct": 55.7827,
+      "nuclear": 38.354,
+      "coal": 89.3935,
+      "biomass": 0.0286,
+      "gas_cc": 305.9515,
+      "oil": 0.0,
+      "wind": 137.8178,
+      "solar": 74.7333
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 256.9345,
+     "avg_price": 29.81,
+     "p95_price": 39.2,
+     "generation_twh": {
+      "gas_ct": 66.0272,
+      "nuclear": 38.354,
+      "coal": 92.0854,
+      "biomass": 0.0574,
+      "gas_cc": 310.5617,
+      "oil": 0.0,
+      "wind": 137.8335,
+      "solar": 74.7178
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 266.8051,
+     "avg_price": 30.84,
+     "p95_price": 39.89,
+     "generation_twh": {
+      "gas_ct": 77.3725,
+      "nuclear": 38.354,
+      "coal": 94.036,
+      "biomass": 0.0839,
+      "gas_cc": 315.2619,
+      "oil": 0.0,
+      "wind": 137.8343,
+      "solar": 74.7171
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 271.6301,
+     "avg_price": 31.72,
+     "p95_price": 40.85,
+     "generation_twh": {
+      "gas_ct": 82.3548,
+      "nuclear": 38.354,
+      "coal": 95.8923,
+      "biomass": 0.1278,
+      "gas_cc": 315.8427,
+      "oil": 0.0,
+      "wind": 137.7941,
+      "solar": 86.0007
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 276.6444,
+     "avg_price": 32.05,
+     "p95_price": 42.07,
+     "generation_twh": {
+      "gas_ct": 89.099,
+      "nuclear": 38.354,
+      "coal": 96.6596,
+      "biomass": 0.1942,
+      "gas_cc": 317.2851,
+      "oil": 0.0,
+      "wind": 137.3914,
+      "solar": 96.8839
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 286.7487,
+     "avg_price": 32.82,
+     "p95_price": 44.22,
+     "generation_twh": {
+      "gas_ct": 102.6988,
+      "nuclear": 38.354,
+      "coal": 97.5988,
+      "biomass": 0.2149,
+      "gas_cc": 322.0435,
+      "oil": 0.0,
+      "wind": 137.4868,
+      "solar": 96.939
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 297.3383,
+     "avg_price": 33.65,
+     "p95_price": 44.18,
+     "generation_twh": {
+      "gas_ct": 117.3946,
+      "nuclear": 38.354,
+      "coal": 98.7325,
+      "biomass": 0.2454,
+      "gas_cc": 326.1341,
+      "oil": 0.0,
+      "wind": 137.5578,
+      "solar": 97.0048
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 12000.0,
+    "2028": 1529.2,
+    "2029": 1684.4,
+    "2030": 3354.4,
+    "2031": 6856.4,
+    "2032": 3545.4,
+    "2033": 3671.1,
+    "2034": 3762.4,
+    "2035": 3856.5,
+    "2036": 3952.9,
+    "2037": 4051.8,
+    "2038": 3195.6,
+    "2039": 3309.6,
+    "2040": 4373.4
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "wind": 5000.0,
+    "solar": 10000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 12678.0,
+    "2028": 13349.2,
+    "2029": 32537.1,
+    "2030": 49867.1,
+    "2031": 53657.7,
+    "2032": 60514.1,
+    "2033": 64059.5,
+    "2034": 67730.5,
+    "2035": 71056.8,
+    "2036": 74913.3,
+    "2037": 78866.2,
+    "2038": 82918.0,
+    "2039": 85166.3,
+    "2040": 83827.9
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 2793.42,
+    "fossil_twh_by_class": {
+     "coal": 1000.41,
+     "gas_cc": 3364.44,
+     "gas_ct_st": 725.71
+    },
+    "mean_price": 29.88,
+    "mean_p95_price": 39.25,
+    "backstop_mw_total": 43929.5
+   },
+   "error": null
+  },
+  "lookahead:mid": {
+   "arm": "lookahead",
+   "growth": "mid",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91,
+     "p95_price": 31.62,
+     "generation_twh": {
+      "gas_ct": 1.4696,
+      "nuclear": 38.354,
+      "coal": 73.0159,
+      "biomass": 0.0063,
+      "gas_cc": 200.9979,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3532
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 157.0194,
+     "avg_price": 21.5,
+     "p95_price": 28.96,
+     "generation_twh": {
+      "gas_ct": 1.5257,
+      "nuclear": 38.354,
+      "coal": 65.7809,
+      "biomass": 0.0005,
+      "gas_cc": 216.7892,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 76.3122
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 169.976,
+     "avg_price": 23.88,
+     "p95_price": 30.38,
+     "generation_twh": {
+      "gas_ct": 3.4438,
+      "nuclear": 38.354,
+      "coal": 69.0445,
+      "biomass": 0.0008,
+      "gas_cc": 238.1555,
+      "oil": 0.0,
+      "wind": 137.7204,
+      "solar": 76.8652
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 183.6268,
+     "avg_price": 24.76,
+     "p95_price": 30.99,
+     "generation_twh": {
+      "gas_ct": 5.5308,
+      "nuclear": 38.354,
+      "coal": 73.0972,
+      "biomass": 0.0028,
+      "gas_cc": 260.0658,
+      "oil": 0.0,
+      "wind": 137.7516,
+      "solar": 76.9182
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 191.1754,
+     "avg_price": 25.63,
+     "p95_price": 32.04,
+     "generation_twh": {
+      "gas_ct": 8.1073,
+      "nuclear": 38.354,
+      "coal": 76.2723,
+      "geothermal": 16.644,
+      "biomass": 0.0057,
+      "gas_cc": 267.1086,
+      "oil": 0.0,
+      "wind": 137.7825,
+      "solar": 76.9441
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 207.2807,
+     "avg_price": 26.49,
+     "p95_price": 33.32,
+     "generation_twh": {
+      "gas_ct": 15.7897,
+      "nuclear": 38.354,
+      "coal": 80.2281,
+      "geothermal": 16.644,
+      "biomass": 0.0088,
+      "gas_cc": 286.4229,
+      "oil": 0.0,
+      "wind": 137.8083,
+      "solar": 76.9536
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 216.0533,
+     "avg_price": 27.12,
+     "p95_price": 34.6,
+     "generation_twh": {
+      "gas_ct": 21.1394,
+      "nuclear": 38.354,
+      "coal": 82.671,
+      "geothermal": 16.644,
+      "biomass": 0.0132,
+      "gas_cc": 294.7917,
+      "oil": 0.0,
+      "wind": 137.8172,
+      "solar": 76.9577
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 224.661,
+     "avg_price": 27.72,
+     "p95_price": 35.74,
+     "generation_twh": {
+      "gas_ct": 27.6737,
+      "nuclear": 38.354,
+      "coal": 84.2973,
+      "geothermal": 16.644,
+      "biomass": 0.0198,
+      "gas_cc": 303.2281,
+      "oil": 0.0,
+      "wind": 137.8195,
+      "solar": 76.9663
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 233.6142,
+     "avg_price": 28.33,
+     "p95_price": 37.1,
+     "generation_twh": {
+      "gas_ct": 35.261,
+      "nuclear": 38.354,
+      "coal": 85.9373,
+      "geothermal": 16.644,
+      "biomass": 0.0326,
+      "gas_cc": 311.1033,
+      "oil": 0.0,
+      "wind": 137.8086,
+      "solar": 76.9868
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 243.4135,
+     "avg_price": 29.27,
+     "p95_price": 38.9,
+     "generation_twh": {
+      "gas_ct": 43.6691,
+      "nuclear": 38.354,
+      "coal": 88.6767,
+      "geothermal": 16.644,
+      "biomass": 0.0479,
+      "gas_cc": 317.457,
+      "oil": 0.0,
+      "wind": 137.8223,
+      "solar": 76.9824
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 248.4965,
+     "avg_price": 30.1,
+     "p95_price": 40.11,
+     "generation_twh": {
+      "gas_ct": 46.815,
+      "nuclear": 38.354,
+      "coal": 91.3158,
+      "geothermal": 16.644,
+      "biomass": 0.0674,
+      "gas_cc": 318.9546,
+      "oil": 0.0,
+      "wind": 137.643,
+      "solar": 88.1676
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 254.4918,
+     "avg_price": 30.73,
+     "p95_price": 41.26,
+     "generation_twh": {
+      "gas_ct": 52.0779,
+      "nuclear": 38.354,
+      "coal": 93.6867,
+      "geothermal": 16.644,
+      "biomass": 0.1551,
+      "gas_cc": 320.609,
+      "oil": 0.0,
+      "wind": 136.7891,
+      "solar": 98.5291
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 261.2539,
+     "avg_price": 31.03,
+     "p95_price": 41.84,
+     "generation_twh": {
+      "gas_ct": 59.6023,
+      "nuclear": 38.354,
+      "coal": 94.8236,
+      "geothermal": 16.644,
+      "biomass": 0.1777,
+      "gas_cc": 324.3518,
+      "oil": 0.0,
+      "wind": 135.1807,
+      "solar": 107.0851
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 269.3993,
+     "avg_price": 31.48,
+     "p95_price": 42.89,
+     "generation_twh": {
+      "gas_ct": 69.3285,
+      "nuclear": 38.354,
+      "coal": 96.2504,
+      "geothermal": 16.644,
+      "biomass": 0.2116,
+      "gas_cc": 328.1199,
+      "oil": 0.0,
+      "wind": 133.2571,
+      "solar": 113.8093
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 278.0757,
+     "avg_price": 53.08,
+     "p95_price": 45.12,
+     "generation_twh": {
+      "gas_ct": 80.3486,
+      "nuclear": 38.354,
+      "coal": 97.0213,
+      "geothermal": 16.644,
+      "biomass": 0.241,
+      "gas_cc": 332.8979,
+      "oil": 0.0194,
+      "wind": 131.5957,
+      "solar": 119.0214
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 6774.2,
+    "2028": 0.0,
+    "2029": 4170.9,
+    "2030": 4498.2,
+    "2031": 6844.2,
+    "2032": 3545.5,
+    "2033": 3671.1,
+    "2034": 3762.4,
+    "2035": 3856.5,
+    "2036": 3952.9,
+    "2037": 3094.3,
+    "2038": 3205.8,
+    "2039": 3309.5,
+    "2040": 3415.9
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "wind": 5000.0,
+    "solar": 26000.0,
+    "geothermal": 2000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 12678.0,
+    "2029": 10968.0,
+    "2030": 12678.0,
+    "2031": 12678.0,
+    "2032": 12678.0,
+    "2033": 63486.4,
+    "2034": 67157.5,
+    "2035": 70919.9,
+    "2036": 33908.4,
+    "2037": 33908.4,
+    "2038": 32359.7,
+    "2039": 31120.7,
+    "2040": 31120.7
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 2627.92,
+    "fossil_twh_by_class": {
+     "coal": 971.18,
+     "gas_cc": 3405.04,
+     "gas_ct_st": 459.83
+    },
+    "mean_price": 31.0,
+    "mean_p95_price": 38.45,
+    "backstop_mw_total": 43156.3
+   },
+   "error": null
+  },
+  "both:mid": {
+   "arm": "both",
+   "growth": "mid",
+   "status": "ok",
+   "per_year": [
+    {
+     "year": 2026,
+     "co2_mt": 159.2661,
+     "avg_price": 22.91,
+     "p95_price": 31.62,
+     "generation_twh": {
+      "gas_ct": 1.4696,
+      "nuclear": 38.354,
+      "coal": 73.0159,
+      "biomass": 0.0063,
+      "gas_cc": 200.9979,
+      "oil": 0.0,
+      "hydro": 0.0136,
+      "wind": 122.8726,
+      "solar": 74.3532
+     }
+    },
+    {
+     "year": 2027,
+     "co2_mt": 157.0194,
+     "avg_price": 21.5,
+     "p95_price": 28.96,
+     "generation_twh": {
+      "gas_ct": 1.5257,
+      "nuclear": 38.354,
+      "coal": 65.7809,
+      "biomass": 0.0005,
+      "gas_cc": 216.7892,
+      "oil": 0.0,
+      "wind": 138.1643,
+      "solar": 76.3122
+     }
+    },
+    {
+     "year": 2028,
+     "co2_mt": 167.7745,
+     "avg_price": 23.67,
+     "p95_price": 30.51,
+     "generation_twh": {
+      "gas_ct": 1.6463,
+      "nuclear": 38.354,
+      "coal": 67.7816,
+      "biomass": 0.0006,
+      "gas_cc": 241.3377,
+      "oil": 0.0,
+      "wind": 137.6954,
+      "solar": 76.8902
+     }
+    },
+    {
+     "year": 2029,
+     "co2_mt": 180.6226,
+     "avg_price": 24.39,
+     "p95_price": 30.73,
+     "generation_twh": {
+      "gas_ct": 2.8322,
+      "nuclear": 38.354,
+      "coal": 70.686,
+      "biomass": 0.0022,
+      "gas_cc": 265.3753,
+      "oil": 0.0,
+      "wind": 137.7641,
+      "solar": 76.9058
+     }
+    },
+    {
+     "year": 2030,
+     "co2_mt": 187.8987,
+     "avg_price": 25.32,
+     "p95_price": 32.56,
+     "generation_twh": {
+      "gas_ct": 4.9443,
+      "nuclear": 38.354,
+      "coal": 73.5242,
+      "geothermal": 16.644,
+      "biomass": 0.0044,
+      "gas_cc": 273.2053,
+      "oil": 0.0,
+      "wind": 137.7868,
+      "solar": 76.9398
+     }
+    },
+    {
+     "year": 2031,
+     "co2_mt": 203.8785,
+     "avg_price": 26.14,
+     "p95_price": 32.66,
+     "generation_twh": {
+      "gas_ct": 10.1643,
+      "nuclear": 38.354,
+      "coal": 77.8561,
+      "geothermal": 16.644,
+      "biomass": 0.0059,
+      "gas_cc": 294.5317,
+      "oil": 0.0,
+      "wind": 137.8228,
+      "solar": 76.9391
+     }
+    },
+    {
+     "year": 2032,
+     "co2_mt": 212.2704,
+     "avg_price": 26.73,
+     "p95_price": 33.35,
+     "generation_twh": {
+      "gas_ct": 14.2631,
+      "nuclear": 38.354,
+      "coal": 79.8901,
+      "geothermal": 16.644,
+      "biomass": 0.0097,
+      "gas_cc": 304.6359,
+      "oil": 0.0,
+      "wind": 137.813,
+      "solar": 76.9619
+     }
+    },
+    {
+     "year": 2033,
+     "co2_mt": 221.3298,
+     "avg_price": 27.37,
+     "p95_price": 34.81,
+     "generation_twh": {
+      "gas_ct": 19.5203,
+      "nuclear": 38.354,
+      "coal": 82.508,
+      "geothermal": 16.644,
+      "biomass": 0.016,
+      "gas_cc": 313.3337,
+      "oil": 0.0,
+      "wind": 137.8354,
+      "solar": 76.9504
+     }
+    },
+    {
+     "year": 2034,
+     "co2_mt": 230.1725,
+     "avg_price": 28.02,
+     "p95_price": 35.33,
+     "generation_twh": {
+      "gas_ct": 25.7155,
+      "nuclear": 38.354,
+      "coal": 84.2577,
+      "geothermal": 16.644,
+      "biomass": 0.022,
+      "gas_cc": 322.4774,
+      "oil": 0.0,
+      "wind": 137.8199,
+      "solar": 76.9755
+     }
+    },
+    {
+     "year": 2035,
+     "co2_mt": 240.2973,
+     "avg_price": 29.02,
+     "p95_price": 38.06,
+     "generation_twh": {
+      "gas_ct": 33.0609,
+      "nuclear": 38.354,
+      "coal": 87.6189,
+      "geothermal": 16.644,
+      "biomass": 0.0439,
+      "gas_cc": 329.2161,
+      "oil": 0.0,
+      "wind": 137.837,
+      "solar": 76.9676
+     }
+    },
+    {
+     "year": 2036,
+     "co2_mt": 250.5631,
+     "avg_price": 30.05,
+     "p95_price": 40.01,
+     "generation_twh": {
+      "gas_ct": 41.4437,
+      "nuclear": 38.354,
+      "coal": 90.6744,
+      "geothermal": 16.644,
+      "biomass": 0.061,
+      "gas_cc": 335.758,
+      "oil": 0.0,
+      "wind": 137.8281,
+      "solar": 76.982
+     }
+    },
+    {
+     "year": 2037,
+     "co2_mt": 255.7228,
+     "avg_price": 30.91,
+     "p95_price": 40.98,
+     "generation_twh": {
+      "gas_ct": 44.5156,
+      "nuclear": 38.354,
+      "coal": 93.1681,
+      "geothermal": 16.644,
+      "biomass": 0.143,
+      "gas_cc": 337.7497,
+      "oil": 0.0,
+      "wind": 137.7092,
+      "solar": 88.1669
+     }
+    },
+    {
+     "year": 2038,
+     "co2_mt": 260.4886,
+     "avg_price": 31.18,
+     "p95_price": 41.77,
+     "generation_twh": {
+      "gas_ct": 49.6064,
+      "nuclear": 38.354,
+      "coal": 93.4009,
+      "geothermal": 16.644,
+      "biomass": 0.1604,
+      "gas_cc": 342.0045,
+      "oil": 0.0,
+      "wind": 136.9684,
+      "solar": 98.642
+     }
+    },
+    {
+     "year": 2039,
+     "co2_mt": 267.567,
+     "avg_price": 31.55,
+     "p95_price": 42.39,
+     "generation_twh": {
+      "gas_ct": 57.3626,
+      "nuclear": 38.354,
+      "coal": 94.8366,
+      "geothermal": 16.644,
+      "biomass": 0.1893,
+      "gas_cc": 345.3783,
+      "oil": 0.0,
+      "wind": 135.3562,
+      "solar": 107.5194
+     }
+    },
+    {
+     "year": 2040,
+     "co2_mt": 275.7731,
+     "avg_price": 53.03,
+     "p95_price": 43.86,
+     "generation_twh": {
+      "gas_ct": 66.524,
+      "nuclear": 38.354,
+      "coal": 95.9833,
+      "geothermal": 16.644,
+      "biomass": 0.2125,
+      "gas_cc": 350.345,
+      "oil": 0.0195,
+      "wind": 133.4533,
+      "solar": 114.4866
+     }
+    }
+   ],
+   "backstop_mw_by_year": {
+    "2027": 6774.2,
+    "2028": 0.0,
+    "2029": 1139.0,
+    "2030": 4530.5,
+    "2031": 6843.9,
+    "2032": 3545.5,
+    "2033": 3671.1,
+    "2034": 3762.4,
+    "2035": 3856.5,
+    "2036": 3952.9,
+    "2037": 4051.8,
+    "2038": 3195.6,
+    "2039": 3309.6,
+    "2040": 3415.9
+   },
+   "retired_mw_by_fuel": {},
+   "entered_mw_by_tech": {
+    "gas_cc": 6000.0,
+    "gas_ct": 3000.0,
+    "wind": 5000.0,
+    "solar": 21000.0,
+    "geothermal": 2000.0
+   },
+   "floor_retained_mw_by_year": {
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 10968.0,
+    "2030": 12678.0,
+    "2031": 12678.0,
+    "2032": 12678.0,
+    "2033": 13349.2,
+    "2034": 32537.1,
+    "2035": 33908.4,
+    "2036": 33908.4,
+    "2037": 75729.4,
+    "2038": 33908.4,
+    "2039": 32961.1,
+    "2040": 32961.1
+   },
+   "window": {
+    "years": [
+     2030,
+     2040
+    ],
+    "co2_mt_cum": 2605.96,
+    "fossil_twh_by_class": {
+     "coal": 953.72,
+     "gas_cc": 3548.64,
+     "gas_ct_st": 367.14
+    },
+    "mean_price": 30.85,
+    "mean_p95_price": 37.8,
+    "backstop_mw_total": 44135.7
+   },
+   "error": null
+  }
+ },
+ "decisions": {
+  "high": {
+   "ewma": {
+    "co2_mt_cum": 3237.78,
+    "delta_co2_mt": 147.15,
+    "delta_co2_pct": 4.76,
+    "backstop_mw_total": 35920.2,
+    "material": false,
+    "reduces_backstop": false,
+    "preferred": false
+   },
+   "lookahead": {
+    "co2_mt_cum": 3651.13,
+    "delta_co2_mt": 560.5,
+    "delta_co2_pct": 18.14,
+    "backstop_mw_total": 91152.5,
+    "material": true,
+    "reduces_backstop": false,
+    "preferred": false
+   },
+   "both": {
+    "co2_mt_cum": 3366.04,
+    "delta_co2_mt": 275.41,
+    "delta_co2_pct": 8.91,
+    "backstop_mw_total": 69225.0,
+    "material": true,
+    "reduces_backstop": false,
+    "preferred": false
+   },
+   "base": {
+    "co2_mt_cum": 3090.63,
+    "backstop_mw_total": 31828.3
+   }
+  },
+  "mid": {
+   "ewma": {
+    "co2_mt_cum": 2793.42,
+    "delta_co2_mt": 5.07,
+    "delta_co2_pct": 0.18,
+    "backstop_mw_total": 43929.5,
+    "material": false,
+    "reduces_backstop": true,
+    "preferred": false
+   },
+   "lookahead": {
+    "co2_mt_cum": 2627.92,
+    "delta_co2_mt": -160.43,
+    "delta_co2_pct": -5.75,
+    "backstop_mw_total": 43156.3,
+    "material": true,
+    "reduces_backstop": true,
+    "preferred": true
+   },
+   "both": {
+    "co2_mt_cum": 2605.96,
+    "delta_co2_mt": -182.39,
+    "delta_co2_pct": -6.54,
+    "backstop_mw_total": 44135.7,
+    "material": true,
+    "reduces_backstop": true,
+    "preferred": true
+   },
+   "base": {
+    "co2_mt_cum": 2788.35,
+    "backstop_mw_total": 47087.2
+   }
+  }
+ }
+}
