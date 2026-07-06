@@ -1844,6 +1844,7 @@ def solve_and_persist(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     storage_vintage_ramp: bool = False,
+    strict_demand_profile: bool = False,
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
@@ -2028,6 +2029,7 @@ def solve_and_persist(
             iso_config,
             td_loss_factor=cfg.td_loss_factor,
             include_interchange=not priced_interchange,
+            strict_demand_profile=strict_demand_profile,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
@@ -2427,6 +2429,7 @@ def solve_and_persist(
         ).ercot_west_gas_delivered_floor,
         "storage_daily_cycling": storage_daily_cycling,
         "storage_vintage_ramp": storage_vintage_ramp,
+        "strict_demand_profile": strict_demand_profile,
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
@@ -2604,6 +2607,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if storage_vintage_ramp:
         recorded_cfg = recorded_cfg.with_overrides(storage_vintage_ramp=True)
+    if strict_demand_profile:
+        recorded_cfg = recorded_cfg.with_overrides(strict_demand_profile=True)
     if as_reserve_withholding:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if energy_reserve_coopt:
@@ -5502,6 +5507,16 @@ def main() -> None:
         "NEISO backcasts; this flag forces it for any ISO.",
     )
     parser.add_argument(
+        "--strict-demand-profile",
+        action="store_true",
+        help="Fail closed instead of silently falling back to the corrupted "
+        "legacy eia_demand_profiles/eia_demand_meta series when the "
+        "repaired demand-profile clean partition is missing for an (iso, "
+        "year) the repair covers (raises DemandProfileNotRepairedError). "
+        "Off by default (warn-and-fall-back, byte-identical to prior "
+        "behavior).",
+    )
+    parser.add_argument(
         "--as-reserve-withholding",
         action="store_true",
         help="ERCOT upper-bound probe: remove the hourly cleared DAM up-AS MW "
@@ -7073,6 +7088,7 @@ def main() -> None:
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
         storage_vintage_ramp=args.storage_vintage_ramp,
+        strict_demand_profile=args.strict_demand_profile,
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,

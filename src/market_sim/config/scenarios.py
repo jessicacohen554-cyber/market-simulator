@@ -2207,6 +2207,13 @@ class ScenarioConfig:
     # model serves, so that demand is ALREADY the loss-inclusive net-energy-for-
     # load — a gross-up would double-count. See
     # docs/nyiso-td-loss-resolution-2026-06.md.
+    strict_demand_profile: bool = False  # When True, threaded through to
+    # data.eia_loader.load_demand/load_demand_meta: raise
+    # DemandProfileNotRepairedError instead of silently falling back to the
+    # corrupted legacy eia_demand_profiles/eia_demand_meta series when the
+    # repaired demand-profile clean partition is missing for an (iso, year)
+    # the repair covers. Defaults to False (warn-and-fall-back, byte-identical
+    # to the pre-existing behavior).
     vintage_capacity_ramp: bool = True  # When True, renewable capacity for a
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
