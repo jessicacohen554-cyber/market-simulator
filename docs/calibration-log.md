@@ -5078,3 +5078,93 @@ CT/ST diurnal CF.
   reserve-price structure to lift C3a/C3c and drop the CT forced share below 10%.
   Keeper stays `nyiso-41` STALE-VS-HEAD; keepers.json unchanged; did NOT re-arm
   the de-leaked offer scalars (rule #26).
+
+## 2026-07-06 — ERCOT + NEISO keeper HEAD re-gate: calibration-complete checklist item 1 (probes `ercot 32 head-regate` + `neiso 48 head-regate`; NEISO fully HEAD-reproducible, ERCOT STALE-VS-HEAD; no keeper swap)
+
+Executes item 1 of the ERCOT/NEISO calibration-complete checklists
+(`docs/handoffs/forecast-validation-program-2026-07.md` §3.4) — both keepers
+were dated 2026-07-03/07-05 and predate the 07-04 ISO-offer/data merges, and
+(unlike PJM `pjm-77`/`pjm-78` and NYISO `nyiso-48`/`49`) had never been
+re-gated at HEAD. Byte-faithful `replay_keeper.py` re-solve of each keeper's
+`meta.json`, all keeper years in one invocation (ERCOT/NEISO both 2023-2025),
+run as two concurrent background jobs (rule 12, cap 2). Scored with
+`scripts/calibration_verdict.py --json` against the committed rubric;
+diffed every criterion's `model` value between the committed keeper run and
+the HEAD replay.
+
+### NEISO (`neiso-48`) — fully HEAD-reproducible
+
+Every scored `model` value is byte-identical between the committed keeper and
+the HEAD replay — D1 (C7) and D2 (C8) diagnostic rows match exactly, and every
+criterion record in `calibration_verdict.py`'s output (fuelmix, sysvol,
+price_mean/shape/tail, dispatch_corr, co2, storage, shape, forced_share) has
+an identical `model` field. The only differences are status-label churn
+(CAVEAT→FAIL on sysvol/price_mean/price_shape/price_tail/storage/shape-ST_GAS,
+PASS→UNATTESTED on governance) — the same replay artifact documented for
+`pjm-77`/`pjm-78`: a byte-faithful replay carries no
+`calibration_attestation.json`/DOF ledger, so the "ACCEPTED MEASURED-INPUT
+LIMITATION" classifications that downgrade a FAIL to an accepted CAVEAT are
+absent. Determination is NOT-YET in both (unchanged) for the same reason
+(the pre-existing ST_GAS diurnal-shape gap).
+
+**Decision:** `neiso-48` is verified **HEAD-reproducible**. `keepers.json`
+unchanged. Registered as probe `2026-07-05-neiso-48-head-regate`
+(bundle `results/calibration/neiso48_head_regate`).
+
+### ERCOT (`ercot32`) — STALE-VS-HEAD; real movement, not gate-clean before or after
+
+Several `model` values move between the committed keeper (solved at git
+`20ebd33`, 2026-07-03 19:21) and the HEAD replay (git `eef4513`): fuelmix TWh
+shifts across CC_CHP/CC_REGULAR/CT_PEAKER/ST_GAS (e.g. CC_CHP 30.68→26.06 TWh
+2023, CC_REGULAR 133.21→145.38 TWh 2023), CO2 (155.69→153.39 Mt 2023),
+price_mean (2024: 29.28→27.45, flips FAIL→PASS), price_tail (2023: 77→93
+hours >$300), C8 CT_PEAKER forced share (2023: 11.1%→15.9%, both FAIL).
+
+**Cheap D-2-style attribution (nyiso-49 pattern):**
+- **Offer curve** (`offer_curve_by_group`, `run_config.json`): byte-identical
+  across all 13 ERCOT classes between keeper and head — RULES OUT the offer
+  surface (contrast NYISO, where the offer de-leak was the entire cause).
+- **Raw input data** (EIA-930/EIA-923/CAMPD file hashes in `meta.json
+  shared_inputs`): byte-identical — RULES OUT data intake / the demand repair
+  (consistent with the co2-keeper-regate handoff's affected-keeper matrix:
+  ERCOT reads the dedicated `ERCO hourly` extract, never the corrupted legacy
+  file).
+- **`confirmed_exits_enabled` default flip** (145a7f5, 2026-07-05): gated
+  `mode == "forecast"` only (`runner.py:360`) — inert for a backcast replay.
+- **One concrete, dated code mover found:** `fleet.py`'s curated-bin-drift
+  reconciliation (merged 9c4a0f6 / PR #1362, 2026-07-05 07:20 — AFTER the
+  keeper's 2026-07-03 19:21 solve) reclassifies a plant's class when EIA-923
+  disagrees with the static `custom-bin-assignments.csv`: Dansby ST_GAS→
+  CT_PEAKER, Powerlane CT_PEAKER→ST_GAS, Silas Ray CT_PEAKER→CC_REGULAR
+  (each ~110-200 MW, ~450 MW combined). Real, but too small alone to account
+  for the multi-TWh class shifts observed — a contributing, not full,
+  explanation. The remaining mover is **not isolated** here (would need an
+  ablation twin / further code inspection outside this wave's
+  no-`src/market_sim`-edits scope).
+
+Determination is NOT-YET in both keeper and head, on the same hard-FAIL set
+(fuelmix, sysvol, price_mean, price_shape, price_tail, forced_share) — sysvol's
+CAVEAT→FAIL move is the same missing-attestation-ledger artifact as NEISO, not
+a new failure. No criterion family flips from an overall PASS to an overall
+FAIL; one individual cell (price_mean 2024) flips FAIL→PASS.
+
+**Decision:** `ercot32` is **STALE-VS-HEAD** (not byte-reproducible, unlike
+PJM/NEISO), but this changes no keeper disposition — the keeper was already
+NOT-YET on structural grounds documented in its own registry definition
+(named MODEL MISS root causes, C8 forced-energy budget FAIL). No swap: no
+candidate reproduces the keeper cleanly or improves on it wholesale. Registered
+as probe `2026-07-03-32-head-regate` (bundle
+`results/calibration/ercot32_head_regate`). Full mover isolation (which
+`src/market_sim` commit between `20ebd33` and `eef4513` moves ERCOT dispatch
+beyond the 3-plant reclass) is an open follow-up, out of this wave's scope.
+
+### keepers.json
+
+Unchanged for both ISOs. Neither re-gate is "gate-clean AND strictly
+reproduces/improves": ERCOT remains NOT-YET on the same hard-fail set; NEISO's
+clean reproduction is a lateral confirmation, not an improvement. No
+promotion — that stays a separate owner decision (rule #15).
+
+### Holdouts
+
+No solve, score, or intake touched 2022/H1-2026 (rule #22).
