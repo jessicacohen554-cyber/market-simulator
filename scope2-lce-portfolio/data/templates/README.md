@@ -49,12 +49,32 @@ expensive hours), so premiums and matching frontiers are shape-aware.
 | `annual_avg_lmp` | float | $/MWh annual average wholesale price |
 
 No `hour` column — intake detects this schema and expands each ISO's value
-to a flat 8760 vector. Results are then an **annual-average comparison**: the
-premium is measured against a flat price, so hourly shape/covariance value is
-deliberately excluded, and the run metadata + report label the run
+to a flat 8760 vector (`np.full`, no re-derivation). Results are then an
+**annual-average comparison**: the premium is measured against a flat price,
+so hourly shape/covariance value is deliberately excluded, and the run
+metadata (`lmp_kind`) + report provenance section label the run
 `annual_average_flat` to keep it distinguishable from shape-aware runs.
 
-> Status: the hourly format (2a) is fully wired. The annual-average intake
-> path (2b) is implemented by handoff prompt **HP-01**
-> (`docs/handoff/HP-01-annual-average-lmp.md`); until HP-01 lands, feeding
-> the 2b template raises the missing-`hour`-column intake error.
+Validation mirrors the hourly path's idioms: a duplicate `iso` row is a hard
+error naming an example, a non-finite or negative `annual_avg_lmp` value is a
+hard error, and an ISO requested by the run but absent from the file raises
+the same missing-ISO error as the hourly path.
+
+## 3. Generating full-size fillable skeletons
+
+`scripts/make_input_templates.py` writes full-`HOURS_PER_YEAR` fillable
+skeleton CSVs — every row present, placeholder values that already pass
+intake validation — so you only overwrite values instead of hand-building
+the hour/iso plumbing:
+
+```bash
+../.venv/bin/python scripts/make_input_templates.py                       # all six ISOs
+../.venv/bin/python scripts/make_input_templates.py --isos ERCOT CAISO \
+    --out-dir data/templates/skeletons
+```
+
+Writes `load_8760_by_facility_skeleton.csv`, `lmp_8760_skeleton.csv`, and
+`lmp_annual_average_skeleton.csv` into `--out-dir` (default
+`data/templates/skeletons/`, gitignored — these are reproducible and
+disposable). The three example templates above stay committed as the small,
+human-readable illustrations of each schema.
