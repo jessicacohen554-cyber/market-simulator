@@ -58,3 +58,30 @@ INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2573 members poole
 INFO:   MISO COMMITMENT POSTURE (miso_commitment_posture): 18 of 30 pools postured (fast-start exempt by physics), mlf 0.12-0.58 (cap-wt CEMS committed_pct), startup $44-$100/MW (NREL class tables)
 INFO: Matrix build: 7.366s, Solve: 552.125s (cold)
 INFO: Matrix build: 7.366s, Solve: 242.219s (warm)
+INFO: EIA-923 2024: CAMPD-backfilled 4 under-reported plants (4 replaced, 0 added)
+INFO: EIA-923 2024 hydro 8.01 TWh under-counts EIA-930 10.74 TWh; using EIA-930 grid total
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: MISO 2025: seasonal CIL/CEL interface caps on 5 zone group(s) (per-season hourly vectors from the LOLE deliverability data; static summer fallbacks replaced)
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: unit-outage derate (MISO 2025): 812 plant-tranches derated
+INFO: COD ramp (MISO 2025): 988 unit-months masked offline (mid-year COD / retirement), 69 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO 2025 hydro budget: 14 plants, 969.7 GWh annual, 249 MW nameplate
+INFO: MISO 2025: 14 hydro plants in LP (249 MW, 0.97 TWh monthly budget)
+INFO: MISO 2025: priced import/export node — 25 import tranches (14524 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2025): 812 plant-tranches derated
+INFO: COD ramp (MISO 2025): 1300 unit-months masked offline (mid-year COD / retirement), 95 unit(s) fully not-yet-built/retired
+INFO: MISO 2025: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2025: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2025: reliability floor — 4 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2025: 749 generators priced from their own plant, 2049 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2025): 1526 gas units; cap-weighted mean -0.03 removed, zonal spread -0.55..0.13 $/MMBtu
+INFO: MISO 2025: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2025: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 4353 MW (MSSC + regulating), 11 ORDC steps ($200-$3500), 2586 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 3953 MW (within-zone MSSC), published zonal curve steps ['791MW@$200', '2767MW@$1100', '395MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2573 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 40708 / min 37440 MW
+INFO:   MISO COMMITMENT POSTURE (miso_commitment_posture): 18 of 30 pools postured (fast-start exempt by physics), mlf 0.12-0.58 (cap-wt CEMS committed_pct), startup $44-$100/MW (NREL class tables)
