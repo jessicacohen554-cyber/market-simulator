@@ -92,6 +92,22 @@ def _reset_completeness():
     cv._COMPLETENESS_CACHE = None
 
 
+def _tail(isos):
+    """Inject a synthetic actual-tail part (C3c DA-expressible benchmark).
+
+    ``isos`` is ``{iso: {year(str): {"da_gt": int, "rt_gt": int, ...}}}`` —
+    the shape of ``frontend/data/backcast/tail/actual_tail.json``'s ``isos``
+    block. Sets ``cv._TAIL_CACHE`` directly so scoring tests stay hermetic
+    (never reading the committed part). Call :func:`_reset_tail` to restore.
+    """
+    cv._TAIL_CACHE = isos
+
+
+def _reset_tail():
+    """Drop the injected tail part so the next read reloads from disk."""
+    cv._TAIL_CACHE = None
+
+
 def _pjm_mix(model=None):
     """Realistic full-PJM fuel mix (TWh) -> ``(ypay, ybench)`` for score_fuelmix.
 
@@ -327,25 +343,26 @@ class SysVolTests(unittest.TestCase):
 
 
 class PriceAndDispatchTests(unittest.TestCase):
-    def test_mean_lmp_band(self):
-        # -3.8% is within the ±5% band -> PASS; -7.2% (a pass under the old ±8%)
-        # now FAILs — pins the 2026-07-02 tightening.
+    def test_mean_lmp_two_band(self):
+        # Rubric v2 two-band: -3.8% inside the ±5% target -> PASS; -7.2%
+        # between target and the ±10% commercial band -> auto CAVEAT
+        # (COMMERCIAL_BAND, not a ledger conversion); -17.5% beyond the
+        # commercial band -> FAIL (MODEL MISS, ledgerable only).
         ypay = {"lmp": {"Z": {"p": 28.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
         self.assertEqual(r["status"], cv.PASS)
         ypay = {"lmp": {"Z": {"p": 27.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
-        self.assertEqual(r["status"], cv.FAIL)
-
-    def test_mean_lmp_fail_when_far(self):
+        self.assertEqual(r["status"], cv.CAVEAT)
+        self.assertEqual(r["classification"], cv.COMMERCIAL_BAND)
         ypay = {"lmp": {"Z": {"p": 35.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 42.9}})
         self.assertEqual(r["status"], cv.FAIL)  # -17.5%
+        self.assertEqual(r["classification"], cv.MODEL_MISS)
 
-    def test_price_shape_nrmse_band(self):
-        # Flat monthly vectors: model 31.9 vs actual 29 -> NRMSE = 0.10 <= 0.15
-        # PASS; model 33.93 -> NRMSE = 0.17, a pass under the old 0.20 ceiling,
-        # now FAILs — pins the 2026-07-02 tightening.
+    def test_price_shape_nrmse_two_band(self):
+        # Flat monthly vectors: NRMSE 0.10 <= 0.15 target -> PASS; 0.17 inside
+        # the 0.20 commercial band -> auto CAVEAT; 0.28 beyond it -> FAIL.
         def ypay(pm):
             return {"lmp": {"Z": {"pMon": [pm] * 12, "dMon": [8.3] * 12}}}
 
@@ -353,51 +370,104 @@ class PriceAndDispatchTests(unittest.TestCase):
         r = cv.score_price_shape(2024, ypay(31.9), bench)
         self.assertEqual(r["status"], cv.PASS)
         r = cv.score_price_shape(2024, ypay(33.93), bench)
+        self.assertEqual(r["status"], cv.CAVEAT)
+        self.assertEqual(r["classification"], cv.COMMERCIAL_BAND)
+        r = cv.score_price_shape(2024, ypay(37.12), bench)
         self.assertEqual(r["status"], cv.FAIL)
 
     def test_tail_skipped_without_ordc(self):
-        r = cv.score_price_tail(2024, {"lmp": {}}, "PJM")
-        self.assertEqual(r["status"], cv.SKIPPED)
+        rows = cv.score_price_tail(2024, {"lmp": {}}, "PJM")
+        self.assertEqual(rows[0]["status"], cv.SKIPPED)
+
+    def test_tail_skipped_without_committed_part(self):
+        # No committed DA-expressible actual for the ISO-year -> SKIPPED (the
+        # payload's RT count alone no longer gates), RT diagnostic still emitted.
+        _tail({})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 50}}}
+            rows = cv.score_price_tail(2024, ypay, "PJM")
+            self.assertEqual(rows[0]["status"], cv.SKIPPED)
+            rt = [r for r in rows if r["key"] == "rt_diagnostic"]
+            self.assertEqual(len(rt), 1)
+            self.assertEqual(rt[0]["status"], cv.SKIPPED)  # report-only
+            self.assertEqual(rt[0]["actual"], 100.0)  # payload RT fallback
+        finally:
+            _reset_tail()
+
+    def test_tail_gates_on_da_not_rt(self):
+        # v2 scope-consistency: the gate is the DA-expressible tail. Model 20h
+        # vs RT 100h would have failed v1's RT ratio; vs the committed DA 24h
+        # it is 0.83x, inside [0.5x, 2x] -> PASS. The RT count appears only in
+        # the non-gated diagnostic row.
+        _tail({"MISO": {"2024": {"da_gt": 24, "rt_gt": 100, "da_coverage": 1.0}}})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 20}}}
+            rows = cv.score_price_tail(2024, ypay, "MISO")
+            main = rows[0]
+            self.assertEqual(main["status"], cv.PASS)
+            self.assertEqual(main["actual"], 24.0)
+            rt = [r for r in rows if r["key"] == "rt_diagnostic"][0]
+            self.assertEqual(rt["actual"], 100.0)
+            self.assertEqual(rt["status"], cv.SKIPPED)
+        finally:
+            _reset_tail()
 
     def test_tail_collapsed_fails(self):
-        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 0}}}
-        r = cv.score_price_tail(2024, ypay, "ERCOT")
-        self.assertEqual(r["status"], cv.FAIL)
+        # A collapsed tail (0h) against a material DA actual FAILs — bounded
+        # below on purpose, unchanged in spirit from v1.
+        _tail({"ERCOT": {"2024": {"da_gt": 68, "rt_gt": 53, "da_coverage": 1.0}}})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 53, "model": 0}}}
+            rows = cv.score_price_tail(2024, ypay, "ERCOT")
+            self.assertEqual(rows[0]["status"], cv.FAIL)
+            self.assertEqual(rows[0]["classification"], cv.MODEL_MISS)
+        finally:
+            _reset_tail()
 
-    def test_tail_within_band_passes(self):
-        # model 130h vs actual 100h = 1.30x, inside [0.7x, 1.5x] -> PASS.
-        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 130}}}
-        r = cv.score_price_tail(2024, ypay, "NEISO")
-        self.assertEqual(r["status"], cv.PASS)
-        # NEISO tail is the >$300 proxy (rubric §5), surfaced in the metric label.
-        self.assertIn("300", r["metric"])
+    def test_tail_band_and_overfire(self):
+        # [0.5x, 2x] on the DA actual: 1.8x PASSes, 2.5x (invented tail) FAILs,
+        # 0.4x FAILs. NEISO metric label carries the $300 winter proxy.
+        _tail({"NEISO": {"2024": {"da_gt": 100, "rt_gt": 60, "da_coverage": 1.0}}})
+        try:
+            for model, want in ((180, cv.PASS), (250, cv.FAIL), (40, cv.FAIL)):
+                ypay = {"ordc": {"hoursGt200": {"actual": 60, "model": model}}}
+                rows = cv.score_price_tail(2024, ypay, "NEISO")
+                self.assertEqual(rows[0]["status"], want, model)
+            self.assertIn("300", rows[0]["metric"])
+        finally:
+            _reset_tail()
 
-    def test_tail_over_fired_fails(self):
-        # model 160h vs actual 100h = 1.6x, above the 1.5x ceiling -> FAIL
-        # (a pass under the old 2x ceiling — pins the 2026-07-02 tightening).
-        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 160}}}
-        r = cv.score_price_tail(2024, ypay, "PJM")
-        self.assertEqual(r["status"], cv.FAIL)
-        self.assertEqual(r["classification"], cv.MODEL_MISS)
+    def test_tail_small_count_absolute_guard(self):
+        # DA actual below 10h: the ratio is degenerate, so |model-actual| <= 10h
+        # gates instead — model 0h vs DA 8h PASSes (an hourly model showing no
+        # tail against a handful of DA hours is within noise), model 30h vs DA
+        # 2h FAILs (invented tail; also the v1 quiet-actual token guard, now
+        # tighter at 10h instead of 50h).
+        _tail({"PJM": {"2023": {"da_gt": 8, "rt_gt": 6, "da_coverage": 1.0}}})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 6, "model": 0}}}
+            rows = cv.score_price_tail(2023, ypay, "PJM")
+            self.assertEqual(rows[0]["status"], cv.PASS)
+        finally:
+            _reset_tail()
+        _tail({"PJM": {"2023": {"da_gt": 2, "rt_gt": 6, "da_coverage": 1.0}}})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 6, "model": 30}}}
+            rows = cv.score_price_tail(2023, ypay, "PJM")
+            self.assertEqual(rows[0]["status"], cv.FAIL)
+        finally:
+            _reset_tail()
 
-    def test_tail_under_fired_fails(self):
-        # model 60h vs actual 100h = 0.6x, below the 0.7x floor -> FAIL
-        # (a pass under the old 0.5x floor — pins the 2026-07-02 tightening).
-        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 60}}}
-        r = cv.score_price_tail(2024, ypay, "PJM")
-        self.assertEqual(r["status"], cv.FAIL)
-
-    def test_tail_quiet_actual_passes_when_model_quiet(self):
-        # Actual ~0 scarcity hours: a quiet model tail can't be over/under-shot.
-        ypay = {"ordc": {"hoursGt200": {"actual": 0, "model": 3}}}
-        r = cv.score_price_tail(2024, ypay, "NEISO")
-        self.assertEqual(r["status"], cv.PASS)
-
-    def test_tail_invented_against_quiet_actual_fails(self):
-        # Actual ~0 but the model invents a large tail -> FAIL (token guard).
-        ypay = {"ordc": {"hoursGt200": {"actual": 0, "model": 200}}}
-        r = cv.score_price_tail(2024, ypay, "NEISO")
-        self.assertEqual(r["status"], cv.FAIL)
+    def test_tail_partial_coverage_noted(self):
+        # A DA series with partial coverage (CAISO 2023 Jan-Feb aged out of
+        # OASIS retention) is a lower bound — surfaced in the magnitude.
+        _tail({"CAISO": {"2023": {"da_gt": 41, "rt_gt": 21, "da_coverage": 0.819}}})
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 21, "model": 30}}}
+            rows = cv.score_price_tail(2023, ypay, "CAISO")
+            self.assertIn("lower bound", rows[0]["magnitude"])
+        finally:
+            _reset_tail()
 
 
 class StorageTests(unittest.TestCase):
@@ -648,34 +718,103 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["criteria"]["sysvol"]["status"], cv.PASS)
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
 
-    def test_soft_caveat_budget_is_two(self):
-        # Pins MAX_SOFT_CAVEATS = 2 (2026-07-02 re-balance, Option A: C3 stays
-        # SOFT but price can no longer be caveated as freely). Three ledgered
-        # soft caveats (price_mean -10.3%, price_tail 2.0x, storage +50%) exceed
-        # the budget -> NOT-YET; dropping the storage caveat (model back in band)
-        # leaves two -> CALIBRATED-WITH-CAVEATS.
-        def art_with(storage_model):
+    def test_ledgered_caveat_budget_is_three(self):
+        # Pins MAX_LEDGERED_CAVEATS = 3 (rubric v2, memo §3a): ledgered
+        # (beyond-commercial-band, measured-input-documented) caveats are
+        # budgeted at 3; four of them (price_mean -13.8%, price_tail 0.25x,
+        # storage +50%, dispatch_corr r=0.55) exceed the budget -> NOT-YET;
+        # with the gas fleet correlation back above the floor there are
+        # three -> CALIBRATED-WITH-CAVEATS.
+        def art_with(gas_r):
             ypay = self._clean_year_payload()
-            ypay["lmp"]["Z"]["p"] = 26.0  # -10.3% vs rt 29.0 -> price_mean FAIL
-            ypay["lmp"]["Z"]["pMon"] = [26] * 12  # NRMSE 0.103 <= 0.15 -> shape PASS
-            ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 200}}  # 2.0x FAIL
-            ypay["storage"] = {"throughput_twh": storage_model}
+            ypay["lmp"]["Z"]["p"] = 25.0  # -13.8% vs rt 29.0: beyond ±10% comm.
+            ypay["lmp"]["Z"]["pMon"] = [25] * 12  # NRMSE 0.138 <= 0.15 -> PASS
+            ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 25}}  # 0.25x
+            ypay["storage"] = {"throughput_twh": 1.5}  # +50% -> beyond ±30%
+            ypay["fuelRows"][0]["r"] = gas_r
             att = _clean_attestation(
                 exceptions=[
                     {"criterion": "price_mean", "year": 2024, "reason": "documented"},
                     {"criterion": "price_tail", "year": 2024, "reason": "documented"},
                     {"criterion": "storage", "year": 2024, "reason": "documented"},
+                    {
+                        "criterion": "dispatch_corr",
+                        "family": "gas",
+                        "year": 2024,
+                        "reason": "documented",
+                    },
                 ]
             )
             art = _artifacts(ypay, attestation=att, **self._clean_bench_args())
             art["bench"][2024]["storage"] = {"throughput_twh": 1.0}
             return art
 
-        v = cv.determine_from_artifacts("t", art_with(1.5))  # +50% -> 3rd caveat
+        _tail({"PJM": {"2024": {"da_gt": 100, "rt_gt": 80, "da_coverage": 1.0}}})
+        try:
+            v = cv.determine_from_artifacts("t", art_with(0.55))  # 4 ledgered
+            self.assertEqual(v["determination"], cv.NOT_YET)
+            self.assertIn("caveat budget exceeded", v["reasons"][0])
+            v = cv.determine_from_artifacts("t", art_with(0.80))  # 3 ledgered
+            self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+            self.assertEqual(len(v["caveats"]["ledgered"]), 3)
+        finally:
+            _reset_tail()
+
+    def test_commercial_band_caveats_unbudgeted(self):
+        # Auto COMMERCIAL_BAND caveats (inside the evidence-anchored outer band,
+        # outside target) are listed but never consume the ledger budget: three
+        # of them (price_mean -6.9%, price_shape NRMSE 0.17, co2 +8%) alongside
+        # zero ledgered caveats -> CALIBRATED-WITH-CAVEATS, not NOT-YET.
+        ypay = self._clean_year_payload()
+        ypay["lmp"]["Z"]["p"] = 27.0  # -6.9% vs rt 29.0: commercial band
+        ypay["lmp"]["Z"]["pMon"] = [33.93] * 12  # NRMSE 0.17: commercial band
+        ypay["co2"] = {"model": 108.0}
+        art = _artifacts(
+            ypay, attestation=_clean_attestation(), **self._clean_bench_args()
+        )
+        art["bench"][2024]["co2"] = {"egrid": 100.0}
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertEqual(len(v["caveats"]["commercial_band"]), 3)
+        self.assertEqual(v["caveats"]["ledgered"], [])
+        self.assertTrue(any("commercial-grade band" in r for r in v["reasons"]))
+
+    def test_protective_caveat_budget_is_one(self):
+        # C7/C8 keep the v1 hard budget of 1 (CLAUDE.md rule 20 / audit D-1/D-2
+        # enforcement unchanged): both protective gates ledgered at once ->
+        # budget exceeded -> NOT-YET; a single ledgered protective caveat with
+        # the other passing -> CALIBRATED-WITH-CAVEATS.
+        def art_with(legit, exceptions):
+            art = _artifacts(
+                self._clean_year_payload(),
+                attestation=_clean_attestation(exceptions=exceptions),
+                **self._clean_bench_args(),
+            )
+            art["legitimacy"] = legit
+            return art
+
+        both_fail = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.55)
+        exceptions = [
+            {
+                "criterion": "shape",
+                "klass": "CT_PEAKER",
+                "year": 2024,
+                "reason": "documented",
+            },
+            {
+                "criterion": "forced_share",
+                "klass": "CT_PEAKER",
+                "year": 2024,
+                "reason": "documented",
+            },
+        ]
+        v = cv.determine_from_artifacts("t", art_with(both_fail, exceptions))
         self.assertEqual(v["determination"], cv.NOT_YET)
         self.assertIn("caveat budget exceeded", v["reasons"][0])
-        v = cv.determine_from_artifacts("t", art_with(1.15))  # +15% in band -> 2
+        shape_only = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
+        v = cv.determine_from_artifacts("t", art_with(shape_only, exceptions))
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertEqual(len(v["caveats"]["protective"]), 1)
 
     def test_data_blocked_year_recorded(self):
         art = _artifacts(
@@ -783,7 +922,7 @@ class ShapeForcedShareTests(unittest.TestCase):
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
         self.assertTrue(
-            any("unscored HARD criteria" in r for r in v["reasons"]),
+            any("unscored PROTECTIVE criteria" in r for r in v["reasons"]),
             v["reasons"],
         )
         self.assertEqual(v["criteria"]["shape"]["status"], cv.SKIPPED)
@@ -899,9 +1038,16 @@ class Co2ScoreTests(unittest.TestCase):
         r = cv.score_co2(2024, {"co2": {"model": model}}, {"co2": {"egrid": actual}})
         self.assertEqual(r["status"], cv.PASS)
 
-    def test_outside_band_fails(self):
+    def test_outside_target_inside_commercial_is_auto_caveat(self):
         actual = 100.0
-        model = actual * (1.0 + cv.CO2_TOL + 0.01)
+        model = actual * (1.0 + cv.CO2_TOL + 0.01)  # +8%: between 7% and 10%
+        r = cv.score_co2(2024, {"co2": {"model": model}}, {"co2": {"egrid": actual}})
+        self.assertEqual(r["status"], cv.CAVEAT)
+        self.assertEqual(r["classification"], cv.COMMERCIAL_BAND)
+
+    def test_outside_commercial_band_fails(self):
+        actual = 100.0
+        model = actual * (1.0 + cv.CO2_COMMERCIAL + 0.01)  # +11%: beyond 10%
         r = cv.score_co2(2024, {"co2": {"model": model}}, {"co2": {"egrid": actual}})
         self.assertEqual(r["status"], cv.FAIL)
         self.assertEqual(r["classification"], cv.MODEL_MISS)
