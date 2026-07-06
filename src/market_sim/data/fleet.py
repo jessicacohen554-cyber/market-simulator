@@ -2438,6 +2438,119 @@ def apply_ercot_ct_offer_surface(
     return True
 
 
+def apply_netload_drag_floors(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    demand: np.ndarray,
+    wind_cf: np.ndarray,
+    wind_cap: np.ndarray,
+    solar_cf: np.ndarray,
+    solar_cap: np.ndarray,
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+) -> None:
+    """Apply the net-load-indexed reliability-drag min-gen floors (both classes).
+
+    The single shared gate-and-log wrapper over
+    :func:`apply_gas_st_netload_drag_floor` (legacy gas-steam boilers) and
+    :func:`apply_ct_netload_drag_floor` (CT_PEAKER simple-cycle, evening-ramp
+    gated), called by BOTH orchestrators (orchestrator-unification Stage 6 --
+    the ~40-line wrapper was previously duplicated verbatim in ``runner.py``
+    and ``scripts/run_calibration.py``). Each floors a tranche's per-hour
+    minimum generation by a curve rising with system net-load
+    (``load - wind - solar``, the LP-served convention) -- the operational
+    proxy for the reserve tightness RUC keys off -- over which the LP
+    dispatches economically. Both appliers gate internally on their own
+    config flag and modify ``fleet_arrays.min_gen`` in place; with both flags
+    off this returns without computing anything (byte-identical).
+    """
+    if not (
+        getattr(config, "gas_st_netload_drag", False)
+        or getattr(config, "ct_netload_drag", False)
+    ):
+        return
+    # t: hour. Net-load = load - wind - solar, LP-served convention.
+    net_load = (
+        demand.sum(axis=0)
+        - (solar_cap[:, None] * solar_cf).sum(axis=0)
+        - (wind_cap[:, None] * wind_cf).sum(axis=0)
+    )
+    if apply_gas_st_netload_drag_floor(fleet_arrays, generators, net_load, config):
+        logger.info(
+            "%s %d: ST_GAS net-load reliability-drag floor applied "
+            "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load mean %.0f / "
+            "max %.0f MW)",
+            iso,
+            year,
+            config.gas_st_drag_slope_per_gw,
+            config.gas_st_drag_intercept,
+            config.gas_st_drag_cap,
+            float(net_load.mean()),
+            float(net_load.max()),
+        )
+    if apply_ct_netload_drag_floor(fleet_arrays, generators, net_load, config):
+        logger.info(
+            "%s %d: CT_PEAKER net-load reliability-drag floor applied "
+            "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in ramp %dh-%dh)",
+            iso,
+            year,
+            config.ct_drag_slope_per_gw,
+            config.ct_drag_intercept,
+            config.ct_drag_cap,
+            config.ct_drag_ramp_start,
+            config.ct_drag_ramp_end,
+        )
+
+
+def apply_neiso_coldsnap_derate(
+    fleet_arrays: "FleetArrays",
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+) -> None:
+    """Apply the NEISO winter gas-availability cold-snap derate (gated).
+
+    The shared gate-and-log wrapper over
+    :func:`market_sim.model.transmission.inject_neiso_gas_coldsnap_derate`
+    (temperature-dependent forced outage, TDFOR): on cold snaps the
+    gas-electric constraint makes non-dual-fuel gas-CC/CT capacity physically
+    UNAVAILABLE, so the fleet goes reserve-short and the RCPF co-opt prices
+    the >$300 scarcity tail (and widens the storage spread). Must run before
+    the reserve-co-opt inputs are built so the shared-headroom RHS sees the
+    derated availability. Dual-fuel units are excluded (they switch to oil,
+    not vanish).
+
+    Called by BOTH orchestrators (orchestrator-unification Stage 6 -- the
+    mechanism was previously wired only in ``scripts/run_calibration.py``,
+    the §2.2 accidental-drift row this stage closes). Gated on
+    ``config.neiso_gas_coldsnap_derate`` (default off, byte-identical); the
+    curve coefficients are plain ``ScenarioConfig`` fields (NERC
+    cold-weather-anchored defaults -- see the field citations), no longer
+    getattr fallback literals (CLAUDE.md #24).
+    """
+    if not getattr(config, "neiso_gas_coldsnap_derate", False):
+        return
+    # Local import: transmission imports from data.fleet at module level.
+    from market_sim.model.transmission import inject_neiso_gas_coldsnap_derate
+
+    if inject_neiso_gas_coldsnap_derate(
+        fleet_arrays,
+        iso,
+        year,
+        float(config.neiso_gas_derate_t0_c),
+        float(config.neiso_gas_derate_slope_per_c),
+        float(config.neiso_gas_derate_cap),
+    ):
+        logger.info(
+            "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
+            "availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap "
+            "window (TDFOR, NERC cold-weather anchored)",
+            iso,
+            year,
+        )
+
+
 def _capacity_weighted(units: list[Generator], attr: str) -> float:
     """Return the capacity-weighted average of ``attr`` over ``units``.
 
@@ -6907,6 +7020,10 @@ def build_base_fleet(
     planned_additions: list[Generator],
     year: int,
     confirmed_exits: list | None = None,
+    *,
+    vintage_year: int | None = None,
+    nonthermal_exclude: frozenset[str] | None = None,
+    legacy_n_bins: int | None = None,
 ) -> list[Generator]:
     """Build the first simulated year's persistent generation fleet.
 
@@ -6930,17 +7047,41 @@ def build_base_fleet(
     only ever selects a row newly effective in its own year, so no row is
     ever applied twice. GATED on ``config.confirmed_exits_enabled``; a no-op
     when off or ``confirmed_exits`` is empty.
+
+    Backcast parameterization (orchestrator-unification Stage 6 -- the
+    backcast rebuilds this base fleet every solved year instead of evolving
+    a persistent one):
+
+    - ``vintage_year``: EIA-860 vintage passed to
+      :func:`load_fleet_from_csv` (the backcast's year-matched snapshot);
+      ``None`` keeps the runner's default vintage resolution.
+    - ``nonthermal_exclude``: the fuel set removed from the raw EIA-860
+      units on the ERCOT curated-bins branch; ``None`` uses
+      :data:`_AGGREGATABLE_FUELS`. The backcast passes a set WITHOUT
+      ``oil`` (its ERCOT oil units stay raw LP scarcity peakers, while the
+      forecast path drops them) -- a pre-existing divergence preserved
+      through the migration, not a new choice; reconciling it is an open
+      root-cause item (CLAUDE.md #14), not a refactor decision.
+    - ``legacy_n_bins``: heat-rate bin count on the no-bins fallback path;
+      ``None`` reads ``config.heat_rate_bin_count``. The backcast passes 0
+      (per-plant, identity-preserving) when ``plant_level_fleet`` is set.
     """
     if campd_bins is not None:
         campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
-        all_gens = load_fleet_from_csv(iso, iso_config) + retired_within_window
+        all_gens = (
+            load_fleet_from_csv(iso, iso_config, year=vintage_year)
+            + retired_within_window
+        )
         if iso == "ERCOT":
             # ERCOT's curated sheet covers the full gas/coal thermal fleet;
             # nuclear (and any other non-aggregatable unit) still comes from
             # EIA-860 so it stays in the dispatch LP.
-            non_thermal = [
-                g for g in all_gens if g.fuel_type not in _AGGREGATABLE_FUELS
-            ]
+            _exclude = (
+                _AGGREGATABLE_FUELS
+                if nonthermal_exclude is None
+                else nonthermal_exclude
+            )
+            non_thermal = [g for g in all_gens if g.fuel_type not in _exclude]
         else:
             # The synthesized bins cover exactly the thermal (plant_code,
             # plant_group) pairs in ``campd_bins``; every other unit
@@ -6961,8 +7102,11 @@ def build_base_fleet(
         fleet = non_thermal + campd_fleet
     else:
         fleet = aggregate_fleet(
-            load_fleet_from_csv(iso, iso_config) + retired_within_window,
-            n_bins=config.heat_rate_bin_count,
+            load_fleet_from_csv(iso, iso_config, year=vintage_year)
+            + retired_within_window,
+            n_bins=(
+                config.heat_rate_bin_count if legacy_n_bins is None else legacy_n_bins
+            ),
         )
     # Planned units already due by the first simulated year (their EIA-860
     # effective year falls after the operable snapshot but at or before
@@ -6997,6 +7141,23 @@ def build_base_fleet(
     return fleet
 
 
+def _drop_biomass_units(
+    fleet: list[Generator], fuel_fracs: list
+) -> tuple[list[Generator], list]:
+    """Remove biomass LP units (and their parallel fuel fractions) from a fleet.
+
+    Used when biomass is injected as a measured EIA-923 must-run profile (the
+    caller nets it out of demand and re-adds it as a fixed pseudo-unit), so the
+    raw biomass generators must not also clear the merit order -- else biomass
+    is served twice. Returns the filtered ``(fleet, fuel_fracs)`` pair (order-
+    and length-preserving). A no-op for a fleet with no biomass units (e.g.
+    ERCOT, whose CAMPD path already excludes them). Moved verbatim from
+    ``scripts/run_calibration.py`` (orchestrator-unification Stage 6).
+    """
+    kept = [(g, ff) for g, ff in zip(fleet, fuel_fracs) if g.fuel_type != "biomass"]
+    return [g for g, _ in kept], [ff for _, ff in kept]
+
+
 def build_dispatch_fleet(
     fleet: list[Generator],
     campd_bins: pd.DataFrame | None,
@@ -7005,6 +7166,14 @@ def build_dispatch_fleet(
     year: int,
     zone_names: list[str],
     config: ScenarioConfig,
+    *,
+    hydro_backfill_year: int | None = None,
+    hydro_eia930_monthly: bool = False,
+    hydro_forecast_budget: bool = True,
+    hydro_year: str | None = None,
+    drop_biomass_units: bool = False,
+    imports_after_hydro: bool = False,
+    apply_emission_overrides: bool = True,
 ) -> tuple[list[Generator], list[float], np.ndarray | None, np.ndarray | None]:
     """Assemble this year's LP-ready dispatch fleet from the persistent fleet.
 
@@ -7016,13 +7185,59 @@ def build_dispatch_fleet(
     from the same ``fleet`` and end at the same shape: a list of
     :class:`Generator` ready for :func:`generators_to_fleet_arrays`.
 
+    THE shared per-year fleet-assembly body for both orchestrators
+    (orchestrator-unification Stage 6): the forecast runner calls it with the
+    keyword defaults; the backcast orchestrator passes its measured hydro
+    budgets, biomass-injection drop, import placement, and the emission-
+    override seam explicitly. The coal-passthrough machinery (per-supply
+    gas-keyed sigmoids, tiered PRB follower) is resolved here from ``config``
+    for both callers, so a supply curve a config enables is reachable from
+    either path -- flat full-cost passthrough at the field defaults.
+
+    Args:
+        hydro_backfill_year / hydro_eia930_monthly / hydro_forecast_budget:
+            threaded to :func:`market_sim.data.hydro.build_hydro_fleet`. The
+            defaults (no backfill, climatology forecast budget) reproduce the
+            runner's historical call; a backcast passes its measured
+            monthly-budget switches.
+        hydro_year: water-year selector; ``None`` reads ``config.hydro_year``.
+        drop_biomass_units: drop raw biomass LP units (and their parallel
+            fuel fractions) after the tranche split -- set by the backcast
+            when biomass is injected as a measured must-run profile
+            (``inject_biomass_mustrun``) so biomass is never served twice.
+        imports_after_hydro: append ``import_generators`` after the hydro
+            block (the backcast's historical LP column order) instead of
+            merging them into the tranche split (the runner's). Both orders
+            price imports identically (fuel fraction 1.0 either way); the
+            switch exists purely to preserve each orchestrator's established
+            column order across the Stage-6 migration (golden byte-identity,
+            output-frame stability), not because the orders differ
+            economically.
+        apply_emission_overrides: run the plant-specific CAMPD emission-rate
+            override block (v2 mode-aware artifact, else the v1 parquet when
+            ``config.use_plant_emission_rates``). The backcast passes False:
+            its per-plant rates enter via the bin artifacts and the v2 hook
+            inside :func:`bins_to_fleet` (G-39 §9.6), and it has never
+            applied the v1 overwrite -- folding v1 in would move keeper
+            emission costs (an open reconciliation item, not a refactor
+            decision).
+
     Returns:
         ``(dispatch_fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy)``.
         ``hydro_gen_idx`` / ``hydro_monthly_energy`` are ``None`` when the
         ISO has no hydro plants.
     """
+    # Local import: data.fuel imports from data.fleet at module level, so the
+    # passthrough helpers must be imported lazily here (same pattern as the
+    # hydro builder below).
+    from market_sim.data.fuel import (
+        coal_passthrough_by_supply,
+        prb_follower_passthrough_series,
+    )
+
+    inline_imports = [] if imports_after_hydro else import_generators
     if campd_bins is not None:
-        dispatch_fleet = fleet + import_generators
+        dispatch_fleet = fleet + inline_imports
         # Must-run tranches bid at VOM + carbon + NOx only -- the fuel is
         # sunk under take-or-pay coal contracts, CHP host steam obligations
         # or ERCOT RUC. In step-3a sync mode the contract share is consumed
@@ -7039,13 +7254,49 @@ def build_dispatch_fleet(
                 if g.fuel_type == "coal"
                 and coal_takeorpay_share(int(g.plant_code)) is not None
             }
+        # Above must-run, each coal tranche passes its own supply chain's
+        # passthrough -- flat scalar, or a (T,) gas-keyed sigmoid resolved
+        # per (ISO, supply) -- so baseloaded coal clears the merit order
+        # instead of being priced out by cheap gas. At the field defaults
+        # (all sigmoid toggles off, coal_prb_passthrough = 1.0) every supply
+        # passes full fuel cost, value-identical to the pre-Stage-6 inline
+        # {"prb": p, "subbituminous": p} dict this replaces (a missing tag
+        # and a 1.0 tag both mean full cost). The one semantic tightening:
+        # with sigmoids off, a non-default coal_prb_passthrough now discounts
+        # only prb-tagged coal (subbituminous keeps full cost unless its own
+        # curve is enabled) -- the backcast's calibrated per-supply routing,
+        # which no forecast config relied on (nothing in src/ sets the field).
+        pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
+        if config.coal_prb_passthrough_sigmoid and config.coal_prb_passthrough_tiered:
+            # Tiered PRB: low-must-run "prb" load-followers swap the baseload
+            # prb curve for the follower-tier one. The tier split is specific
+            # to the curated ERCOT prb supply; ISOs without a characterized
+            # follower curve fall back to the baseload prb series
+            # (value-identical routing).
+            foll = {
+                **pt_by_supply,
+                "prb": prb_follower_passthrough_series(config, year, config.hours),
+            }
+            thr = config.coal_prb_follower_mustrun_max
+
+            def _pt_for(g: Generator):
+                if (
+                    g.fuel_type == "coal"
+                    and getattr(g, "coal_supply", "") == "prb"
+                    and COAL_MUSTRUN_BY_PLANT.get(g.plant_code, 100.0) <= thr
+                ):
+                    return foll
+                return pt_by_supply
+
+        else:
+
+            def _pt_for(g: Generator):
+                return pt_by_supply
+
         fuel_fracs = [
             campd_tranche_fuel_frac(
                 g,
-                {
-                    "prb": config.coal_prb_passthrough,
-                    "subbituminous": config.coal_prb_passthrough,
-                },
+                _pt_for(g),
                 takeorpay,
                 econ_srmc_bound=getattr(config, "coal_econ_srmc_bound", False),
             )
@@ -7065,12 +7316,22 @@ def build_dispatch_fleet(
                 and coal_takeorpay_share(int(g.plant_code)) is not None
             }
         dispatch_fleet, fuel_fracs = split_coal_tranches(
-            fleet + import_generators, config, split_takeorpay
+            fleet + inline_imports, config, split_takeorpay
         )
         if getattr(config, "gas_offer_curve", False):
             dispatch_fleet, fuel_fracs = split_gas_tranches(
                 dispatch_fleet, fuel_fracs, config
             )
+
+    # Biomass injected as a measured EIA-923 must-run profile (the caller nets
+    # it out of demand and re-adds it as a fixed pseudo-unit), so drop the raw
+    # biomass LP units to avoid double-serving -- and to make biomass output
+    # the fuel/contract-limited, price-insensitive quantity it is in reality
+    # instead of a dispatchable unit the LP runs to max when gas rises.
+    # Backcast-only today (inject_biomass_mustrun); default off, so callers
+    # that do NOT inject biomass keep it as an LP unit and never lose it.
+    if drop_biomass_units:
+        dispatch_fleet, fuel_fracs = _drop_biomass_units(dispatch_fleet, fuel_fracs)
 
     # Energy-limited conventional hydro (every ISO with hydro plants): one LP
     # unit per EIA-923-reporting hydro plant, capped per hour by its EIA-860
@@ -7083,8 +7344,10 @@ def build_dispatch_fleet(
         iso,
         year,
         zone_names,
-        forecast_budget=True,
-        hydro_year=config.hydro_year,
+        backfill_year=hydro_backfill_year,
+        eia930_monthly=hydro_eia930_monthly,
+        forecast_budget=hydro_forecast_budget,
+        hydro_year=config.hydro_year if hydro_year is None else hydro_year,
     )
     hydro_gen_idx = None
     if hydro_units:
@@ -7104,21 +7367,41 @@ def build_dispatch_fleet(
             hydro_monthly_energy.sum() / 1e6,
         )
 
+    # Backcast import placement: the priced import/export node's tranches join
+    # the LP after hydro (the backcast's historical column order -- see the
+    # imports_after_hydro docstring note).
+    if imports_after_hydro and import_generators:
+        dispatch_fleet = dispatch_fleet + import_generators
+        fuel_fracs = list(fuel_fracs) + [1.0] * len(import_generators)
+        logger.info(
+            "%s %d: priced import/export node — %d import tranches "
+            "(%.0f MW), %d export sinks (%.0f MW)",
+            iso,
+            year,
+            sum(1 for g in import_generators if g.pmax_mw > 0),
+            sum(g.pmax_mw for g in import_generators),
+            sum(1 for g in import_generators if g.pmin_mw < 0),
+            -sum(g.pmin_mw for g in import_generators),
+        )
+
     # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific ones
     # for generators pinned to a single plant, so emission prices bite at
-    # each plant's measured per-MWh-net intensity.
-    if getattr(config, "use_plant_emission_rates_v2", False):
-        # Mode-aware v2 source: backcast books the target year's measured rate,
-        # forecast the estimator base; composition mask splits Parish coal/gas.
-        apply_plant_emission_rates_v2(
-            dispatch_fleet,
-            config.plant_emission_rates_v2_path,
-            iso=iso,
-            year=int(year),
-            mode=str(getattr(config, "mode", "forecast")),
-            config=config,
-        )
-    elif config.use_plant_emission_rates:
-        apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
+    # each plant's measured per-MWh-net intensity. Gated off by the backcast
+    # (see the apply_emission_overrides docstring note).
+    if apply_emission_overrides:
+        if getattr(config, "use_plant_emission_rates_v2", False):
+            # Mode-aware v2 source: backcast books the target year's measured
+            # rate, forecast the estimator base; composition mask splits
+            # Parish coal/gas.
+            apply_plant_emission_rates_v2(
+                dispatch_fleet,
+                config.plant_emission_rates_v2_path,
+                iso=iso,
+                year=int(year),
+                mode=str(getattr(config, "mode", "forecast")),
+                config=config,
+            )
+        elif config.use_plant_emission_rates:
+            apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
 
     return dispatch_fleet, fuel_fracs, hydro_gen_idx, hydro_monthly_energy
