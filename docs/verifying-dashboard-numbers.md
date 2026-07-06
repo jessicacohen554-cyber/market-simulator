@@ -159,41 +159,58 @@ determination the Calibration Status page shows.
 | A configuration | An independently re-solved bundle | `python scripts/run_calibration_full.py` with the translated flags |
 | Two bundles | Whether they score the same | `python scripts/calibration_verdict.py` on each (no re-solve needed) |
 
-## Proposed improvement: a plaintext metrics sidecar
+## Implemented: a plaintext metrics sidecar (G-49)
 
-Today, verifying a headline number (e.g. "system volume error: 2.1%") without
-running Python means decompressing and parsing the gzip+base64 blob in
-`runs/<id>.js`, or reading `SUMMARY*.md` prose. Neither is a stable, greppable,
+Verifying a headline number (e.g. "system volume error: 2.1%") without
+running Python used to mean decompressing and parsing the gzip+base64 blob in
+`runs/<id>.js`, or reading `SUMMARY*.md` prose — neither a stable, greppable,
 machine-checkable artifact.
 
-**Proposal (schema sketch only — implementation is a later lane's work, not
-this doc's):** each bundle commits a small plaintext
-`results/calibration/<bundle>/metrics.json` (or `.txt`) alongside
+Every bundle registered via `scripts/dashboard_add_run.py` now also gets a
+small plaintext `results/calibration/<bundle>/metrics.json` alongside
 `run_config.json`, holding the headline numbers `calibration_verdict.py`
-already computes, in a stable, minimal, hand-readable form:
+already computes: the overall determination, the per-criterion PASS/CAVEAT/
+FAIL/SKIPPED status (`calibration_verdict.determine`'s `criteria` dict,
+condensed to label/hard/status — the per-class/per-year record detail stays
+in `SUMMARY*.md` / `legitimacy_diagnostics.json` / the `runs/<id>.js` payload,
+not duplicated here), the caveat budget, and the D-10 free-class C1 score. For
+example, `results/calibration/nyiso41_hubprices/metrics.json`:
 
 ```json
 {
-  "run_id": "2026-06-24-neiso-30-other-carry",
-  "determination": "CALIBRATED-WITH-CAVEATS",
-  "years": [2023, 2024, 2025],
+  "run_id": "2026-07-03-nyiso-41-hub-prices",
+  "iso": "NYISO",
+  "label": "nyiso 41 hub prices",
+  "target_years": [2023, 2024, 2025],
+  "scorable_years": [2023, 2024, 2025],
+  "data_blocked_years": [],
+  "determination": "NOT-YET",
+  "reasons": ["undocumented out-of-tolerance (FAIL) criteria: forced_share"],
   "criteria": {
-    "C1_annual_generation_mix": {"2023": "PASS", "2024": "CAVEAT", "2025": "PASS"},
-    "C3a_monthly_lmp": {"2023": "PASS", "2024": "PASS", "2025": "CAVEAT"},
-    "C8_forced_energy_share": "FAIL"
+    "fuelmix": {"label": "C1 fuel-mix by class (grid-delivered)", "hard": true, "status": "PASS"},
+    "forced_share": {"label": "C8 forced-energy share (D-2)", "hard": true, "status": "FAIL"}
   },
-  "system_volume_error_pct": {"2023": 1.8, "2024": 2.1, "2025": 1.4},
-  "fleet_dispatch_r": {"2023": 0.94, "2024": 0.91, "2025": 0.93}
+  "caveats": {"hard": [], "soft": ["C3a mean LMP"], "budget": {"hard_max": 1, "soft_max": 2}},
+  "free_class_score": {"headline": "C1 all 14/14 · free 10/10"}
 }
 ```
 
-This would let a verifier `git show <sha>:results/calibration/<bundle>/metrics.json`
+This lets a verifier `git show <sha>:results/calibration/<bundle>/metrics.json`
 or `jq` a headline number directly from the committed tree — no browser, no
-gzip/base64 decode, no Python — while `calibration_verdict.py` remains the
-authoritative *generator* of these numbers (the sidecar would be its
-`--json-out`, not a hand-maintained duplicate). Scope for a later lane:
-wiring `dashboard_add_run.py` to write it, deciding retention (does it get
-pruned with the run's dashboard registration or kept as long as the bundle
-exists), and deciding whether CI should diff it against a fresh
-`calibration_verdict.py` run to catch drift between the committed sidecar and
-the bundle it claims to describe.
+gzip/base64 decode, no Python. `calibration_verdict.py` remains the
+authoritative *generator*: `condensed_metrics()`/`write_metrics_sidecar()`
+build the sidecar directly from the same `determine()` verdict the CLI and
+`dashboard_add_run.py` print, so it is never a hand-maintained duplicate. To
+(re)write the sidecar for an already-registered run without re-solving:
+
+```bash
+python scripts/calibration_verdict.py --run-id <run-id> --write-metrics
+```
+
+All six current keepers carry a backfilled `metrics.json`, generated this way
+from their already-committed artifacts (no re-solve, no new score). Retention
+follows the bundle: the sidecar lives and is pruned with
+`results/calibration/<bundle>/`, same as `run_config.json`. CI does not (yet)
+diff it against a fresh `calibration_verdict.py` run to catch drift between
+the committed sidecar and the bundle it claims to describe — a fast follow,
+not required for the sidecar itself to be useful today.
