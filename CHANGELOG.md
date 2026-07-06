@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026-07-06 (Orchestrator unification Stages 2-3 — shared dispatch-kwargs assembly and P0/P1 solve core)
+
+Executes Stages 2 and 3 of `docs/handoffs/orchestrator-unification-plan-2026-07.md`
+(Stages 0/1/5 previously merged). Pure solve-core unification — both stages gated
+dispatch-neutral at **exact byte-identity** (stricter than the required 1e-9) on
+dual keeper canaries (CAISO `caiso-51-firm-base` + ERCOT
+`ercot32-ordc-total-rtolcap`, all years 2023-2025, `regression_gate.py`):
+every dispatch/price/flow/storage column Δ = 0, reshuffle 0.000% every ISO-year.
+Gate records: plan §7.3.4 / §7.3.5.
+
+- **Stage 2 — `pipeline/kwargs.py`**: `build_base_dispatch_kwargs` (base LP kwargs
+  from a `DispatchSpec`; UNSET-sentinel backcast-only keys keep each orchestrator's
+  emitted key set byte-for-byte its pre-refactor set) and `apply_reserve_coopt`
+  (the one reserve co-opt seam over `reserve_config`), now called by BOTH
+  `runner.py` and `scripts/run_calibration.py`. The backcast's 365-line per-ISO
+  reserve elif ladder is deleted — its hand-built PJM zone-aggregate block was
+  verified value-identical to `_pjm_design`, and the post-design ERCOT RTOLCAP
+  supply-cap overwrite folds into the designs as **audit-wiring gap A5**:
+  `_ercot_design` now sets the mode-aware supply cap itself (measured RTOLCAP in
+  backcast — identical array; WS-A forward formula in forecast), so the
+  single-product forecast ERCOT co-opt is no longer silently uncapped
+  (gated `ercot_reserve_supply_cap`).
+- **Stage 3 — `pipeline/solve.py`**: `run_energy_solve` — P0 base-cost solve →
+  monthly startup markup → P1 bid-cost solve, intra-year warm start, and the
+  cross-year warm-start seam — hoisted statement-for-statement from both
+  orchestrators. The backcast threads its `xyear_cache` through unchanged; the
+  forecast passes `None` per plan §8 (cross-year warm-start now wireable-for-free
+  but OFF pending the basis-independent capacity screen; AR-6 closed by
+  construction). The startup-markup config gates (`gas_st_startup_spread` et al.)
+  now reach the forecast path — byte-identical at their default-off values.
+- Tests: `tests/test_pipeline_kwargs.py` (key-set fidelity + A5 trivial case),
+  `tests/test_pipeline_solve.py` (inline-sequence equivalence, warm/cold, cache
+  seams); `test_runner.py`/`test_matrix.py` LP mocks repointed to
+  `pipeline.solve`. Fast tier 2881 passed / 0 failed at each stage.
+- Not touched (next wave's lane): Stage 4 (P2 commitment core), Stage 7
+  (backcast_config move + getattr fold); capacity logic, keepers/registry,
+  offer curves, policy/.
+
 ## 2026-07-05 (Emissions mass-cap follow-ons — PJM per-unit membership, per-state RGGI budgets)
 
 Completes the two deferred follow-ons from `docs/handoffs/emissions-mass-cap-plan-2026-07.md`
