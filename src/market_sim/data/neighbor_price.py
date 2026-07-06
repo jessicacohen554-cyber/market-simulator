@@ -60,16 +60,19 @@ if TYPE_CHECKING:
     from market_sim.config.interchange_config import CaisoHubNeighbor
 
 
-# Diagnostic env flag for a FORWARD-SKILL validation: force the seam off the
-# measured per-year ``hr_by_year`` anchor so a backcast year is priced by the
-# SAME forward formula a forecast year would use, then scored against the
-# held-out actuals. Default OFF, so keepers (which legitimately price backcast
-# years off the measured anchor, rule #12) are byte-identical. Values:
+# FORWARD-SKILL validation values (:func:`neighbor_heat_rate`'s
+# ``forward_skill`` parameter): force the seam off the measured per-year
+# ``hr_by_year`` anchor so a backcast year is priced by the SAME forward
+# formula a forecast year would use, then scored against the held-out
+# actuals. Default ``None`` (off), so keepers (which legitimately price
+# backcast years off the measured anchor, rule #12) are byte-identical.
 #   "elastic" -> skip hr_by_year, use the gas-elastic coeffs (the forward fallback)
 #   "flat"    -> skip hr_by_year AND the elastic coeffs, use marginal_heat_rate
 # This NEVER reads the ISO's own interchange — it only changes which neighbor
-# price-formation formula prices the seam (rule #11 stays satisfied).
-FORWARD_SKILL_ENV: str = "MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL"
+# price-formation formula prices the seam (rule #11 stays satisfied). A plain
+# keyword argument (not an env var, CLAUDE.md rule 24 / gap G-07) — no keeper
+# or ScenarioConfig field sets it; a validation script passes it explicitly.
+_FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 
 # Affine-in-gas implied heat-rate coefficients per neighbor, keyed by the
 # neighbor's name. Each ``(hr_phys, hr_adder)`` makes the neighbor's implied HR
@@ -127,14 +130,11 @@ def _hr_gas_elastic(neighbor: NeighborInterface) -> tuple[float, float] | None:
     return _HR_GAS_ELASTIC.get(neighbor.name)
 
 
-def _forward_skill_mode() -> str | None:
-    """Return the forward-skill mode (``"elastic"``/``"flat"``) or ``None`` (off)."""
-    mode = os.environ.get(FORWARD_SKILL_ENV, "").strip().lower()
-    return mode if mode in {"elastic", "flat"} else None
-
-
 def neighbor_heat_rate(
-    neighbor: NeighborInterface, year: int, gas_scenario: str = "mid"
+    neighbor: NeighborInterface,
+    year: int,
+    gas_scenario: str = "mid",
+    forward_skill: str | None = None,
 ) -> float:
     """Return the neighbor's effective marginal heat rate for ``year`` (MMBtu/MWh).
 
@@ -162,8 +162,12 @@ def neighbor_heat_rate(
         year: Calendar year.
         gas_scenario: Henry Hub trajectory key (only consulted on the elastic
             forward path).
+        forward_skill: ``"elastic"``/``"flat"``/``None`` — see
+            :data:`_FORWARD_SKILL_MODES`. ``None`` (the default, used by every
+            keeper and forecast run) prices backcast years off the measured
+            anchor; unrecognized values are treated as ``None``.
     """
-    skill = _forward_skill_mode()
+    skill = forward_skill if forward_skill in _FORWARD_SKILL_MODES else None
     if skill is None and neighbor.hr_by_year and year in neighbor.hr_by_year:
         return neighbor.hr_by_year[year]
     coeffs = None if skill == "flat" else _hr_gas_elastic(neighbor)

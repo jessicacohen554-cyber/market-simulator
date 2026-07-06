@@ -122,7 +122,7 @@ def run_commitment_pass(state: dict, config=None):
             getattr(cfg, "caiso_ra_bridge_decommit", False)
         )
         surplus_floor_value = (
-            -float(getattr(cfg, "renewable_keep_running_value", 20.0))
+            -float(cfg.renewable_keep_running_value)
             if getattr(cfg, "negative_renewable_offers", False)
             else 0.0
         )
@@ -130,7 +130,7 @@ def run_commitment_pass(state: dict, config=None):
             p1.dispatch,
             fa,
             fleet,
-            float(getattr(cfg, "caiso_ra_min_load_frac", 0.40)),
+            float(cfg.caiso_ra_min_load_frac),
             p1_prices=p1.prices if startup_bridge else None,
             base_mc=state["mc_base"] if startup_bridge else None,
             startup_bridge=startup_bridge,
@@ -262,7 +262,7 @@ def run_commitment_pass(state: dict, config=None):
             dk["reserve_headroom_products"],
             req_by_class,
             p1.dispatch,
-            headroom_frac=float(getattr(cfg, "ercot_as_adequacy_frac", 1.0)),
+            headroom_frac=float(cfg.ercot_as_adequacy_frac),
         )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
