@@ -6799,6 +6799,16 @@ def main() -> None:
         "Applied on top of --offer-curve-json when both are given. The "
         "resolved absolute curve is recorded in run_config.json.",
     )
+    parser.add_argument(
+        "--class-commitment-overrides",
+        default=None,
+        metavar="JSON",
+        help="Per-class P2 commitment-screen overrides, keyed by plant_group "
+        '(e.g. \'{"ST_GAS":{"min_run_hours":48,"min_down_hours":12}}\'). '
+        "Sets ScenarioConfig.class_commitment_overrides so a class can be "
+        "commitment-screened even when its CAMPD bin carries min_run=0. "
+        "Empty = constant-table defaults (byte-identical).",
+    )
     args = parser.parse_args()
     apply_statistical_mode(args)
 
@@ -6806,6 +6816,11 @@ def main() -> None:
     offer_curve_deltas = _parse_offer_curve_json(
         args.offer_curve_delta_json, flag="--offer-curve-delta-json"
     )
+    class_commitment_overrides = None
+    if args.class_commitment_overrides:
+        import json as _json
+
+        class_commitment_overrides = _json.loads(args.class_commitment_overrides)
 
     if args.report:
         report_run(Path(args.report), band_width=args.cf_band_width)
@@ -6949,6 +6964,7 @@ def main() -> None:
             "coal_lignite_passthrough_ceil": args.lignite_ceil,
             "coal_lignite_passthrough_gas_mid": args.lignite_gas_mid,
             "coal_lignite_passthrough_gas_slope": args.lignite_gas_slope,
+            "class_commitment_overrides": class_commitment_overrides,
             "coal_sub_passthrough_sigmoid": True if args.coal_sub_sigmoid else None,
             "coal_sub_passthrough_floor": args.sub_floor,
             "coal_sub_passthrough_ceil": args.sub_ceil,
