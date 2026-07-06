@@ -110,6 +110,23 @@ fails rather than new categories of error.
 
 ## ERCOT — 4 → 7 fails (ercot32-ordc-total-rtolcap basis, 2026-07-04)
 
+> **STALE vs the 2026-07-06 keeper swap (G-10 truth-in-labeling).** This
+> section was re-gated to `2026-07-03-ercot32-ordc-total-rtolcap`
+> (`results/calibration/ercot_ordc_total_rtolcap_v1`) on 2026-07-04. The
+> ERCOT keeper is now `2026-07-06-ercot34-stage4-overlay-off`
+> (`results/calibration/ercot_stage4_overlayoff_v2`: DAM-AS overlay retired +
+> WS-A forward RTOLCAP/RTOFFCAP formula supply, replacing the measured RTOLCAP
+> cap and the overlay this D-7 probe exists to test the removal of). The
+> statmode twin has **not** been re-run against the new keeper — per the
+> program rule this section is flagged stale, not silently carried. This
+> report was originally scored NOT-YET-only overlay-diagnostic; ercot34's own
+> gates (G-3/G-5/G-6) already show most of what statmode would test for the
+> `ercot_dam_as_overlay` delta specifically, but the *other* four statmode
+> levers (historic-outage overlay, CT AS/RUC floor, spatial reliability
+> floor, ST WEFOR relief) are unprobed against ercot34's recipe. Re-running
+> is a separate solve session (`scripts/run_statmode_probe.py` against
+> `ercot_stage4_overlayoff_v2`), not done here.
+
 | criterion | keeper | statmode | note |
 |---|---|---|---|
 | C1 fuel-mix | CAVEAT | **FAIL** | 2024 CC_REGULAR +14.72 TWh/+3.1pp (was PASS −3.33 TWh); 2024 ST_GAS −9.42 TWh/−2.0pp (was PASS −1.77 TWh); 2025 COAL_PRB +10.19 TWh/+2.1pp (was PASS +0.16 TWh) |
@@ -239,9 +256,12 @@ larger coal fleet.
 > measured plant CO2 rates). The statmode twin has NOT been re-run against
 > the new keeper — per the program rule this section is flagged stale, not
 > silently carried; it also still reflects the original 9-criterion
-> (C1–C5c) scoring. The same staleness already applies to the PJM/MISO
-> sections after their 2026-07-05 swaps (and to any ERCOT/MISO swaps landing
-> 2026-07-06 in parallel with this one).
+> (C1–C5c) scoring. The same staleness already applies to the PJM section
+> after its 2026-07-05 swap (still on `pjm-76-outage-fix`, keeper now
+> `pjm-77-ct-relfloor`) and, as of 2026-07-06, to ERCOT (see its own stale
+> box above — keeper is now `ercot34-stage4-overlay-off`). MISO's statmode
+> twin (still on `miso-39-reserve-pergen`) is likewise stale vs the current
+> `miso-41-ct-evening` keeper, though MISO has not swapped again since.
 
 | criterion | keeper | statmode | note |
 |---|---|---|---|
