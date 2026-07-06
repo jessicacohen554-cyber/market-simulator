@@ -733,3 +733,434 @@ def test_launcher_malformed_requests_over_http(tmp_path: Path) -> None:
         )
         assert status == 400
         assert "unknown iso" in body["error"]
+
+
+# --- Past-runs browser (HP-03 §A) -------------------------------------------
+
+
+def test_list_past_runs_finds_committed_sample_run() -> None:
+    """The browser must render the repo's own committed SAMPLE_premium_cap_*
+    bundle: ok, correct ISO/mode, a working report link."""
+    runs = lce_launcher.list_past_runs(_PORTFOLIO_ROOT / "results")
+    sample_runs = [r for r in runs if r["run_id"].startswith("SAMPLE_premium_cap_")]
+    assert sample_runs, "expected the committed SAMPLE_premium_cap_* bundle"
+    r = sample_runs[0]
+    assert r["ok"] is True
+    assert r["isos"] == ["SAMPLE"]
+    assert r["mode"] == "premium_cap"
+    assert r["report_url"] == f"/reports/{r['run_id']}/report.html"
+
+
+def test_scan_run_dir_flags_missing_metadata(tmp_path: Path) -> None:
+    """No ``*_run_metadata.json`` at all -- flagged, not a traceback."""
+    run_dir = tmp_path / "empty_run"
+    run_dir.mkdir()
+    row = lce_launcher._scan_run_dir(run_dir)
+    assert row["ok"] is False
+    assert "no run metadata found" in row["flag"]
+
+
+def test_scan_run_dir_flags_corrupt_metadata(tmp_path: Path) -> None:
+    """A truncated/hand-edited metadata file -- flagged, not a traceback."""
+    run_dir = tmp_path / "bad_run"
+    run_dir.mkdir()
+    (run_dir / "SAMPLE_run_metadata.json").write_text("{not valid json")
+    row = lce_launcher._scan_run_dir(run_dir)
+    assert row["ok"] is False
+    assert "unreadable metadata" in row["flag"]
+
+
+def test_scan_run_dir_flags_incomplete_metadata(tmp_path: Path) -> None:
+    """Valid JSON missing the required keys -- flagged, not a KeyError."""
+    run_dir = tmp_path / "partial_run"
+    run_dir.mkdir()
+    (run_dir / "SAMPLE_run_metadata.json").write_text(json.dumps({"iso": "SAMPLE"}))
+    row = lce_launcher._scan_run_dir(run_dir)
+    assert row["ok"] is False
+    assert "incomplete metadata" in row["flag"]
+
+
+def test_list_past_runs_skips_tmp_staging_dirs(tmp_path: Path) -> None:
+    """A ``<run_id>.tmp`` scratch sibling (cli.py's atomic-ish publish) is
+    in-flight/crashed, not a finished run -- never shown, flagged or not."""
+    (tmp_path / "some_run.tmp").mkdir()
+    assert lce_launcher.list_past_runs(tmp_path) == []
+
+
+def test_runs_endpoint_flags_malformed_dir_and_lists_ok_run(tmp_path: Path) -> None:
+    results_dir = tmp_path / "results"
+    ok_run = results_dir / "ok_run"
+    ok_run.mkdir(parents=True)
+    (ok_run / "SAMPLE_run_metadata.json").write_text(
+        json.dumps(
+            {
+                "iso": "SAMPLE",
+                "mode": "premium_cap",
+                "lmp_kind": "hourly",
+                "solves": [{"setpoint": 5.0, "status": "Optimal"}],
+            }
+        )
+    )
+    (ok_run / "report.html").write_text("<html></html>")
+    (results_dir / "bad_run").mkdir(parents=True)
+
+    with _launcher_server(tmp_path) as port:
+        data = _get_json(f"http://127.0.0.1:{port}/api/runs")
+    rows = {r["run_id"]: r for r in data["runs"]}
+    assert rows["ok_run"]["ok"] is True
+    assert rows["ok_run"]["report_url"] == "/reports/ok_run/report.html"
+    assert rows["ok_run"]["lmp_kind"] == "hourly"
+    assert rows["bad_run"]["ok"] is False
+    assert "no run metadata found" in rows["bad_run"]["flag"]
+
+
+# --- Report-route traversal hardening (regression contract, PP-13) --------
+
+
+def test_report_path_regex_rejects_traversal_and_absolute_paths() -> None:
+    """The past-runs browser links through the SAME ``/reports/`` route and
+    regex used since ADR 0016 -- HP-03 must never relax it."""
+    bad_paths = [
+        "/reports/../report.html",
+        "/reports/..%2Freport.html",
+        "/reports//abs/report.html",
+        "/reports/foo/../bar/report.html",
+        "/reports//etc/passwd",
+        "/reports/foo/bar/report.html",  # two path segments, not one
+        "/reports/.hidden/report.html",  # leading dot
+        "/reports/foo/report.txt",  # disallowed filename
+    ]
+    for path in bad_paths:
+        assert lce_launcher._REPORT_PATH_RE.match(path) is None, path
+
+
+def test_serve_report_rejects_escaped_traversal_over_http(tmp_path: Path) -> None:
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        for bad in (
+            "/reports/..%2f..%2fetc%2fpasswd",
+            "/reports/foo%2f..%2fbar/report.html",
+        ):
+            try:
+                with urllib.request.urlopen(f"{base}{bad}", timeout=10) as resp:
+                    status = resp.status
+            except urllib.error.HTTPError as exc:
+                status = exc.code
+            assert status == 404, bad
+
+
+# --- Input-candidate discovery / Templates help (HP-03 §C) -----------------
+
+
+def test_classify_input_file_detects_all_schemas(tmp_path: Path) -> None:
+    hourly = tmp_path / "hourly.csv"
+    hourly.write_text("hour,iso,lmp\n0,SAMPLE,25\n")
+    assert lce_launcher.classify_input_file(hourly) == lce_launcher.LMP_KIND_HOURLY
+
+    annual = tmp_path / "annual.csv"
+    annual.write_text("iso,annual_avg_lmp\nSAMPLE,25\n")
+    assert (
+        lce_launcher.classify_input_file(annual)
+        == lce_launcher.LMP_KIND_ANNUAL_AVERAGE_FLAT
+    )
+
+    load = tmp_path / "load.csv"
+    load.write_text("hour,iso,load_mwh\n0,SAMPLE,100\n")
+    assert lce_launcher.classify_input_file(load) == "load"
+
+    unknown = tmp_path / "unknown.csv"
+    unknown.write_text("foo,bar\n1,2\n")
+    assert lce_launcher.classify_input_file(unknown) == "unknown"
+
+    assert (
+        lce_launcher.classify_input_file(tmp_path / "does_not_exist.csv") == "unknown"
+    )
+
+
+def test_list_input_candidates_whitelisted_and_degrades_gracefully(
+    tmp_path: Path,
+) -> None:
+    inputs_dir = tmp_path / "inputs"
+    inputs_dir.mkdir()
+    (inputs_dir / "bau_lmp_2030.csv").write_text("hour,iso,lmp\n0,SAMPLE,25\n")
+    (inputs_dir / "notes.txt").write_text("ignore me")  # not .csv/.parquet
+
+    templates_dir = tmp_path / "templates"
+    templates_dir.mkdir()
+    annual_template = templates_dir / "lmp_annual_average_template.csv"
+    annual_template.write_text("iso,annual_avg_lmp\nERCOT,42.5\n")
+
+    missing_bundled = tmp_path / "does_not_exist_bundled_lmp"
+    reference_load = tmp_path / "reference_load.csv"
+    reference_load.write_text("hour,iso,load_mwh\n0,SAMPLE,100\n")
+
+    result = lce_launcher.list_input_candidates(
+        inputs_dir=inputs_dir,
+        bundled_lmp_dir=missing_bundled,
+        templates_dir=templates_dir,
+        reference_load=reference_load,
+    )
+    paths = {c["path"] for c in result["candidates"]}
+    assert str(inputs_dir / "bau_lmp_2030.csv") in paths
+    assert str(annual_template) in paths
+    assert str(reference_load) in paths
+    assert not any("notes.txt" in p for p in paths)
+    # bundled_lmp_dir doesn't exist (pre-HP-02 checkout) -- no error, no rows.
+    assert not any("does_not_exist_bundled_lmp" in p for p in paths)
+
+    annual_candidate = next(
+        c for c in result["candidates"] if c["path"] == str(annual_template)
+    )
+    assert annual_candidate["kind"] == lce_launcher.LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+
+def test_list_template_help_reads_columns_live(tmp_path: Path) -> None:
+    templates_dir = tmp_path / "templates"
+    templates_dir.mkdir()
+    (templates_dir / "lmp_8760_template.csv").write_text("hour,iso,lmp\n0,ERCOT,41.9\n")
+    help_rows = lce_launcher.list_template_help(templates_dir)
+    assert len(help_rows) == 1
+    assert help_rows[0]["columns"] == "hour, iso, lmp"
+    assert "hourly BAU LMP" in help_rows[0]["label"]
+
+
+def test_input_files_endpoint_whitelisted_only(tmp_path: Path) -> None:
+    """Every candidate path resolves under one of the whitelisted roots —
+    never arbitrary filesystem browsing (bundled_lmp/templates use the real
+    committed repo dirs here since ``--inputs-dir`` is the only one this
+    launcher subprocess overrides)."""
+    with _launcher_server(tmp_path) as port:
+        data = _get_json(f"http://127.0.0.1:{port}/api/input-files")
+    candidates = data["candidates"]
+    assert candidates
+    allowed_roots = (
+        str(tmp_path),
+        str(lce_launcher.DEFAULT_BUNDLED_LMP_DIR),
+        str(lce_launcher.DEFAULT_TEMPLATES_DIR),
+        str(lce_launcher.DEFAULT_REFERENCE_LOAD),
+    )
+    for c in candidates:
+        assert any(c["path"].startswith(root) for root in allowed_roots), c
+
+    bundled = [c for c in candidates if c["source"] == "bundled_lmp"]
+    assert bundled, "expected HP-02's committed real-LMP bundle"
+    assert all(c["kind"] == lce_launcher.LMP_KIND_HOURLY for c in bundled)
+
+
+def test_templates_help_endpoint_reads_live_columns(tmp_path: Path) -> None:
+    with _launcher_server(tmp_path) as port:
+        data = _get_json(f"http://127.0.0.1:{port}/api/templates-help")
+    templates = {t["path"].rsplit("/", 1)[-1]: t for t in data["templates"]}
+    assert "lmp_annual_average_template.csv" in templates
+    assert templates["lmp_annual_average_template.csv"]["columns"] == (
+        "iso, annual_avg_lmp"
+    )
+
+
+# --- Persistent run log (HP-03 §B) ------------------------------------------
+
+
+def test_run_log_append_and_tail(tmp_path: Path) -> None:
+    log = lce_launcher.RunLog(tmp_path)
+    assert log.tail(10) == []
+    log.append({"run_id": "r1", "status": "done"})
+    log.append({"run_id": "r2", "status": "error"})
+    entries = log.tail(10)
+    assert [e["run_id"] for e in entries] == ["r1", "r2"]
+
+
+def test_run_log_tail_skips_corrupt_trailing_line(tmp_path: Path) -> None:
+    log = lce_launcher.RunLog(tmp_path)
+    log.append({"run_id": "r1", "status": "done"})
+    with log.path.open("a", encoding="utf-8") as f:
+        f.write("not valid json\n")
+    entries = log.tail(10)
+    assert [e["run_id"] for e in entries] == ["r1"]
+
+
+def test_launcher_run_log_records_one_line_per_finished_run(tmp_path: Path) -> None:
+    load_path, lmp_path = _fixture_paths(tmp_path)
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        run_id = "run_log_e2e"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {
+                "runs": [
+                    {
+                        "iso": "SAMPLE",
+                        "mode": "premium_cap",
+                        "premium_deltas": "5",
+                        "load_file": str(load_path),
+                        "lmp_file": str(lmp_path),
+                        "run_id": run_id,
+                        "open_report_when_done": False,
+                    }
+                ]
+            },
+        )
+        assert status == 200, body
+        batch_id = body["batch_id"]
+
+        deadline = time.time() + 120.0
+        final = None
+        while time.time() < deadline:
+            data = _get_json(f"{base}/api/status?batch={batch_id}")
+            state = data["runs"][0]["state"]
+            if state in ("done", "error"):
+                final = data["runs"][0]
+                break
+            time.sleep(1.0)
+        assert final is not None and final["state"] == "done", final
+
+        log_path = tmp_path / "launcher_state" / "run_log.jsonl"
+        assert log_path.exists()
+        entries = [
+            json.loads(line) for line in log_path.read_text().splitlines() if line
+        ]
+        matching = [e for e in entries if e["run_id"] == run_id]
+        assert len(matching) == 1, entries
+        entry = matching[0]
+        assert entry["status"] == "done"
+        assert entry["iso"] == "SAMPLE"
+        assert entry["mode"] == "premium_cap"
+        assert entry["error"] is None
+        assert entry["wall_time_seconds"] >= 0
+
+        run_log_resp = _get_json(f"{base}/api/run-log?n=5")
+        assert any(e["run_id"] == run_id for e in run_log_resp["entries"])
+
+
+def test_run_log_records_error_status_on_failure(tmp_path: Path) -> None:
+    bad_load = tmp_path / "bad_load.csv"  # exists, but misses 8759 hours
+    bad_load.write_text("hour,iso,load_mwh\n0,SAMPLE,100\n")
+    lmp = tmp_path / "lmp.csv"
+    lmp.write_text("hour,iso,lmp\n0,SAMPLE,25\n")
+
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        run_id = "run_log_failure"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {
+                "runs": [
+                    {
+                        "iso": "SAMPLE",
+                        "mode": "premium_cap",
+                        "premium_deltas": "5",
+                        "load_file": str(bad_load),
+                        "lmp_file": str(lmp),
+                        "run_id": run_id,
+                        "open_report_when_done": False,
+                    }
+                ]
+            },
+        )
+        assert status == 200, body
+        batch_id = body["batch_id"]
+
+        final = None
+        deadline = time.time() + 60.0
+        while time.time() < deadline:
+            run = _get_json(f"{base}/api/status?batch={batch_id}")["runs"][0]
+            if run["state"] in ("done", "error"):
+                final = run
+                break
+            time.sleep(0.2)
+        assert final is not None and final["state"] == "error"
+
+        log_path = tmp_path / "launcher_state" / "run_log.jsonl"
+        entries = [
+            json.loads(line) for line in log_path.read_text().splitlines() if line
+        ]
+        matching = [e for e in entries if e["run_id"] == run_id]
+        assert len(matching) == 1
+        assert matching[0]["status"] == "error"
+        assert matching[0]["error"]
+
+
+# --- Annual-average LMP / FLAT-PRICE badge (HP-01 x HP-03) ------------------
+
+
+def test_launch_page_prefills_lmp_kind_for_annual_average_default(
+    tmp_path: Path,
+) -> None:
+    """The FLAT-PRICE badge is schema-detected server-side for whatever LMP
+    path is prefilled -- mirrors the SYNTHETIC flag's ``lmp_is_synthetic``
+    idiom (LN-7)."""
+    state_dir = tmp_path / "launcher_state"
+    state_dir.mkdir()
+    annual_lmp = tmp_path / "annual_lmp.csv"
+    annual_lmp.write_text("iso,annual_avg_lmp\nSAMPLE,42.5\n")
+    (state_dir / "last_used.json").write_text(json.dumps({"lmp_file": str(annual_lmp)}))
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        defaults = _page_ctx(base)["defaults"]
+        assert defaults["lmp_kind"] == lce_launcher.LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+
+def test_launch_page_renders_flatprice_badge_markup() -> None:
+    """Unit-level check that the badge markup/wiring is present and (per
+    LN-6) never assembled via an unescaped innerHTML template interpolation."""
+    ctx = lce_launcher.build_page_context(
+        inputs_dir=lce_launcher.DEFAULT_INPUTS_DIR,
+        reference_load=lce_launcher.DEFAULT_REFERENCE_LOAD,
+    )
+    ctx["saved_configs"] = {}
+    page = lce_launcher.render_index(ctx)
+    assert "flatprice-flag" in page
+    assert "FLAT-PRICE" in page
+    assert "selectedLmpKind" in page
+
+
+def test_launcher_completes_run_with_annual_average_lmp(tmp_path: Path) -> None:
+    """HP-03 §C: a tiny synthetic annual-average LMP file queues and solves
+    end to end, and the resulting run_metadata/past-runs row records the
+    flat-price ``lmp_kind`` (HP-01)."""
+    load_path, _ = _fixture_paths(tmp_path)
+    annual_lmp = tmp_path / "annual_lmp.csv"
+    annual_lmp.write_text("iso,annual_avg_lmp\nSAMPLE,25.0\n")
+    results_dir = tmp_path / "results"
+
+    with _launcher_server(tmp_path) as port:
+        base = f"http://127.0.0.1:{port}"
+        run_id = "annual_avg_e2e"
+        status, body = _post_json(
+            f"{base}/api/run",
+            {
+                "runs": [
+                    {
+                        "iso": "SAMPLE",
+                        "mode": "premium_cap",
+                        "premium_deltas": "5",
+                        "load_file": str(load_path),
+                        "lmp_file": str(annual_lmp),
+                        "run_id": run_id,
+                        "open_report_when_done": False,
+                    }
+                ]
+            },
+        )
+        assert status == 200, body
+        batch_id = body["batch_id"]
+
+        deadline = time.time() + 120.0
+        final = None
+        while time.time() < deadline:
+            data = _get_json(f"{base}/api/status?batch={batch_id}")
+            state = data["runs"][0]["state"]
+            if state in ("done", "error"):
+                final = data["runs"][0]
+                break
+            time.sleep(1.0)
+        assert final is not None and final["state"] == "done", final
+
+        meta_path = results_dir / run_id / "SAMPLE_run_metadata.json"
+        assert meta_path.exists()
+        meta = json.loads(meta_path.read_text())
+        assert meta["lmp_kind"] == lce_launcher.LMP_KIND_ANNUAL_AVERAGE_FLAT
+
+        runs = _get_json(f"{base}/api/runs")["runs"]
+        row = next(r for r in runs if r["run_id"] == run_id)
+        assert row["ok"] is True
+        assert row["lmp_kind"] == lce_launcher.LMP_KIND_ANNUAL_AVERAGE_FLAT
