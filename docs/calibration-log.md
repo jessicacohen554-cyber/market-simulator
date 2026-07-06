@@ -5880,7 +5880,7 @@ PJM/NEISO), but this changes no keeper disposition — the keeper was already
 NOT-YET on structural grounds documented in its own registry definition
 (named MODEL MISS root causes, C8 forced-energy budget FAIL). No swap: no
 candidate reproduces the keeper cleanly or improves on it wholesale. Registered
-as probe `2026-07-03-32-head-regate` (bundle
+as probe `2026-07-06-ercot32-head-regate` (bundle
 `results/calibration/ercot32_head_regate`). Full mover isolation (which
 `src/market_sim` commit between `20ebd33` and `eef4513` moves ERCOT dispatch
 beyond the 3-plant reclass) is an open follow-up, out of this wave's scope.
@@ -5985,7 +5985,7 @@ persist** — `ercot_zonal_gas_basis=True`, `ercot_west_netload_gas_shape=True`,
 the keeper bundle's resolved `run_config.json`; the fields' ScenarioConfig
 defaults are off). Every "byte-faithful" `replay_keeper.py` replay therefore
 solved a **different config** — no Waha/zonal delivered-gas geography on any
-of ERCOT's 963 gas units: the `2026-07-03-32-head-regate` (#1451), the
+of ERCOT's 963 gas units: the `2026-07-06-ercot32-head-regate` (#1451), the
 FINDING §6.3 replay, the ercot33 ex-overlay baseline, and the ercot40 WS-A
 probe all carry this confound (their *internal* A/B conclusions stand — both
 arms shared the config; their absolute levels are shifted). Same disease
