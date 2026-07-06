@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-pjm-79-srmc-baseline",
+  "label": "pjm 79 srmc baseline",
+  "date": "2026-07-06",
+  "shorthand": "pjm-79-srmc-baseline",
+  "definition": "PJM 78 SRMC-cycle baseline: pjm-77 keeper recipe VERBATIM on current HEAD (carries the 2026-07-06 EMAAC CT_CHP tmax limb scrub, burndown \u00a76 option b). Same-SHA comparator for the G-21 sub-SRMC re-grounding A/B (pjm-79); no offer band changed vs pjm-77.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-06-pjm-79-srmc-baseline.js",
+  "bundle": "results/calibration/pjm78_srmc_baseline"
+}
