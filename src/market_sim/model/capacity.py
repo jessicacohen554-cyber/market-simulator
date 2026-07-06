@@ -260,7 +260,10 @@ _CONFIRMED_EXIT_MW_EPS: float = 1e-6
 
 
 def apply_confirmed_exits(
-    fleet: list[Generator], year: int, exits: list[ConfirmedExit]
+    fleet: list[Generator],
+    year: int,
+    exits: list[ConfirmedExit],
+    apply_backlog: bool = False,
 ) -> list[Generator]:
     """Return the fleet with confirmed (binding-instrument) exits applied.
 
@@ -274,6 +277,23 @@ def apply_confirmed_exits(
     rows never reach here (the loader drops them), so a counter-instrument (RMR,
     202(c)) correctly reverts the unit to the economic screen.
 
+    A confirmed exit is a discrete, once-at-its-date event, never a recurring
+    per-year filter. ``fleet`` threads forward mutated through the runner's
+    year loop, so re-selecting an already-applied row from ``exits`` every year
+    would re-derate the same MW repeatedly (a plant-binned exit's remaining
+    tranche has no memory of which rows already reduced it). Two call sites
+    coordinate the once-only semantics via ``apply_backlog``:
+
+    * ``apply_backlog=True`` (:func:`market_sim.data.fleet.build_base_fleet`,
+      the first simulated year only): selects every exit with
+      ``effective_year <= year`` — the pre-start backlog, applied exactly once
+      as the fleet is built, since a unit confirmed to exit before or in the
+      first simulated year can never reach :func:`evolve_fleet`.
+    * ``apply_backlog=False`` (the default, :func:`evolve_fleet`, every later
+      year): selects only exits with ``effective_year == year`` — the row
+      newly effective this year — so a row already applied (in the backlog or
+      a prior year) is never re-selected.
+
     Matching (plan §5.1):
 
     * **Unit-grain** generators (raw EIA-860 units, ``unit_id`` =
@@ -284,7 +304,10 @@ def apply_confirmed_exits(
       binned MW is scaled by ``(binned_mw - exit_mw) / binned_mw`` — pmax/pmin and
       the MW-valued tranche floors scale proportionally, dropping a tranche when
       its remaining MW ≤ ε. The residual heat-rate composition shift (the exiting
-      unit is usually the worst) is accepted second-order error.
+      unit is usually the worst) is accepted second-order error. Because each
+      row is now selected exactly once (never re-summed against an
+      already-shrunk denominator), a plant with multiple rows landing in
+      different years derates correctly year over year.
 
     The economic screen still sees a confirmed unit in the years before its date,
     so a sustained-loss unit can exit earlier (``min(economic, confirmed_date)``);
@@ -296,12 +319,19 @@ def apply_confirmed_exits(
         year: The simulation year being entered.
         exits: Confirmed exits for this ISO
             (:func:`market_sim.data.confirmed_retirements.load_confirmed_exits`).
+        apply_backlog: When ``True``, select every exit effective at or before
+            ``year`` (the pre-start backlog, first-simulated-year use only).
+            When ``False`` (default), select only exits effective exactly in
+            ``year`` — the once-only per-year event semantics.
 
     Returns:
         A new fleet list with confirmed exits removed / derated. Byte-identical
         to ``fleet`` when no exit is effective this year.
     """
-    effective = [e for e in exits if _confirmed_effective_year(e) <= year]
+    if apply_backlog:
+        effective = [e for e in exits if _confirmed_effective_year(e) <= year]
+    else:
+        effective = [e for e in exits if _confirmed_effective_year(e) == year]
     if not effective:
         return list(fleet)
 
@@ -2352,6 +2382,12 @@ def evolve_fleet(
     #    exit effective 2+ years into a CAMPD forecast is not matched (preserving
     #    per-plant identity through aggregation needs the dispatch/economic-screen
     #    pipeline to accept un-aggregated coal tranches — a documented follow-up).
+    #    ``apply_backlog`` defaults to False here (unlike build_base_fleet's
+    #    True): only the row newly effective in THIS year is selected, so a
+    #    row already applied in the pre-start backlog or a prior year's
+    #    evolve_fleet call is never re-selected against an already-shrunk
+    #    fleet (the double-derate bug fixed 2026-07-05 — a confirmed exit is a
+    #    once-at-its-date event, not a recurring per-year filter).
     confirmed_exits = confirmed_exits or []
     confirmed_channel_on = getattr(config, "confirmed_exits_enabled", False) and bool(
         confirmed_exits
