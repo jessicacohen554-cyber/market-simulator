@@ -19,6 +19,76 @@
 
 ---
 
+### Addendum — state as of 2026-07-06 PM (post-wave-3 governance pass)
+
+*Verified against live `origin/main` in this session; does not rewrite the
+snapshot above, which is left as the 2026-07-05/06 audit baseline.*
+
+- **Quarantine gate is GREEN.** Live `python scripts/audit_keepers.py --check`
+  now exits **0** (was exit 1 at audit time): 0 failures, 6 warnings (E7
+  staleness ×5 — ERCOT/CAISO/PJM/NEISO/MISO — + 1 E9 grandfather, CAISO). `G-01`
+  and `G-02` are **closed**: PJM (`pjm-77-ct-relfloor`) and MISO
+  (`miso-41-ct-evening`) both now carry a registered ablation twin
+  (`2026-07-05-pjm-77-ct-relfloor-ablation`,
+  `2026-07-06-miso-41-ct-evening-ablation`) and MISO now has a
+  `calibration_attestation.json`
+  (`results/calibration/MISO/miso_41_ct_evening_window/`). **`G-03` is NOT
+  closed** — checked, not assumed: `audit_keepers.py`'s
+  `E9_ABLATION_TWIN_GRANDFATHER` frozenset still carries the live (uncommented)
+  entry `"2026-07-03-miso-39-reserve-pergen"`, long superseded as MISO's
+  keeper and no longer needed now that `miso-41-ct-evening` has its own twin;
+  removing it is `scripts/audit_keepers.py` code and so out of this pass's
+  file-ownership scope (sidecars/status/docs only) — left for a future code
+  session.
+- **Keeper swaps since the audit:** ERCOT `ercot32-ordc-total-rtolcap` →
+  **`2026-07-06-ercot34-stage4-overlay-off`** (AS co-opt Stage-4 overlay-off
+  integration, owner sign-off — closes **G-38**'s "Stage 4 run not done"
+  blocker); NYISO `nyiso-41-hub-prices` → **`2026-07-06-nyiso-53-li-tsl`**
+  (Zone-K LCR/TSL import-cap mechanism replacing the LI 0.45 self-supply floor,
+  issue #1345's fix direction). Both new keepers carry a `calibration_attestation.json`
+  DOF ledger (5 free-parameter entries each) and a registered zero-forcing
+  ablation twin — rule-21 spot-checked and confirmed in this session; a
+  `calibration-keeper-auditor` pass also confirmed no drift in the
+  Calibration Status page, per-keeper run-report headers, `keepers.json`, or
+  `status.js` for either new keeper.
+- **#1345:** the LI floor mechanism fix described in the issue's "fix
+  direction (future batch, W3/W4)" section has **landed** in `nyiso-53`'s
+  recipe (`nyiso_li_lcr_tsl`, driven by the committed `nyiso.csv` LCR/TSL
+  table). The **GitHub issue itself is still open** as of this session —
+  closing it is a visible cross-cutting action outside this pass's file
+  ownership (sidecars/status/named docs only); flagged here rather than
+  closed unilaterally. Recommend the owner close #1345 referencing
+  `2026-07-06-nyiso-53-li-tsl`.
+- **G-17 decided:** the holdout-policy memo's Option 1-vs-2 adjudication is
+  **DECIDED — Option 2, 2026-07-06** (`holdout-policy-memo-2026-07.md` §(e)),
+  now reflected in CLAUDE.md rule 22's amended text.
+- **G-04 (E7 staleness) is NOT closed by this pass** — see
+  `docs/handoffs/e7-staleness-memo-2026-07.md`'s 2026-07-06-PM addendum: the
+  owner-approved four-sidecar cleanup turned out to be a no-op (every named
+  probe has since been superseded as "newest" by a further, un-adjudicated
+  same-day run for ERCOT/CAISO/PJM; NYISO's is moot because the keeper swap
+  itself already resolved it). Fresh, still-open E7 WARNs stand against
+  `ercot36-head-config-faithful`, `caiso-56-zero-drag`, `pjm-80-srmc-reground`,
+  and (unadjudicated, unrelated to this memo) `neiso-wfuelsec-ab-v2off` /
+  `miso-42-coal-econ`. No sidecar was edited.
+- **G-09 (D-9 report staleness) is closed**: `docs/handoffs/d9-keeper-quarantine-report-2026-07-05.md`
+  was already regenerated in-band by both keeper-swap commits (`81819e6` ERCOT,
+  `30627ab` NYISO) and verified current in this session — no edit needed.
+- **G-10 (statmode twin staleness) refreshed, not resolved:** explicit
+  truth-in-labeling stale-boxes now exist in
+  `docs/statistical-mode-results-2026-07.md` for **both** ERCOT and NYISO
+  (NYISO's box pre-existed and was accurate; ERCOT's was added this session).
+  The D-7 twins themselves are **not** re-run — that is a separate solve
+  session, out of scope here (no solves this pass).
+- **Memos delivered this session:** E7 staleness memo status line updated
+  (no edit applied — see above); D-7 statmode staleness boxes refreshed;
+  D-9 report verified current; this addendum.
+- **Zero open PRs**, confirmed via `mcp__github__list_pull_requests`; branch
+  `claude/post-wave-3-governance-tcub42` is even with `origin/main`
+  (`ac11191`) at session start.
+
+---
+
 ## 2. Workstream inventory
 
 Status verified against code/artifacts; "doc-lag" marks where the plan doc's own status section is wrong (both directions occur).
