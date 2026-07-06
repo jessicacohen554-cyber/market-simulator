@@ -1,3 +1,7 @@
+Note: this license covers the software in this repository only. Committed
+datasets under data/raw/ are third-party data governed by their own
+publishers' terms — see docs/data-licensing.md.
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
