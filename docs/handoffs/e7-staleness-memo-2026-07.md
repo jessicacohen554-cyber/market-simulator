@@ -44,6 +44,19 @@ the same marker already used for prior probes (rule 15: mark, don't prune — th
 probes stay on the dashboard, they just stop competing for newest-run
 staleness).
 
+## Addendum 2026-07-06 — MISO resolved by keeper promotion
+
+The MISO E7 WARN that appeared when `2026-07-06-miso-42-coal-econ` registered
+against the `2026-07-05-miso-41-ct-evening` keeper is resolved by the owner's
+2026-07-06 promotion decision: **miso-42 IS the new MISO keeper** (the E7
+heuristic was a true positive this time — the newer run was a genuinely
+more-structurally-faithful candidate, promoted per rule 1). Same-date MISO
+probes (`2026-07-06-miso-41-v2rescore-probe`, the miso-41/miso-42 ablation
+twins) are probes/twins, not contenders; the v2rescore probe sidecar carries
+`keeper_candidate: false` semantics in its "(PROBE)" definition. No other ISO
+row in this memo is changed by the MISO promotion; the ERCOT/NYISO rows above
+are superseded by their own 2026-07-06 promotion lanes.
+
 **Caveat / why this is a *draft*:** marking a run `keeper_candidate: false` is a
 judgment that the run was never a keeper contender. That is defensible from each
 run's own definition prose, but it is the owner's call to make — hence this memo
