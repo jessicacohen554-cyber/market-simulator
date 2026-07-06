@@ -53,11 +53,15 @@ Or `pip install -e .` and use the `lce-portfolio` console script (equivalently
 ## Layout
 
 ```
-docs/                 design docs, decision log (ADRs), planning-session prompts, prompt packs
-src/lce_portfolio/    the package (config, resources, intake, profiles, lp, sweep, outputs, cli)
+docs/                 design docs, decision log (ADRs), validation memos
+docs/handoff/         handoff package: finalization prompts HP-01..HP-05 + status
+src/lce_portfolio/    the package (config, resources, intake, profiles, lp, sweep, outputs, report, launcher, cli)
   vendored/           copied market-sim logic (kept standalone; re-sync notes)
+launcher/             double-click desktop launcher (run_lce.sh / run_lce.bat → local HTML UI)
 data/lcoe/            resource cost table (low/mid/high)
+data/templates/       draft input templates (8760 load by ISO+facility; hourly or annual-average LMP)
 data/sample/          synthetic inputs for the demo & tests
+results/              committed results store (one dir per run: parquet + report.html + metadata)
 tests/                pytest (trivial-case-first)
 examples/             runnable examples
 ```
@@ -72,7 +76,12 @@ resource), optional storage charge-provenance policy (`--storage-charge-policy
 excess_clean_only`: charge only on excess contracted clean generation, no grid arbitrage;
 ADR 0017) — with an always-on `divert_backfill_mwh` diagnostic and a stricter
 `excess_headroom_only` variant whose iterative LP cut loop eliminates
-divert-and-backfill (ADR 0018). Decisions: PS-01 through PS-12 → ADRs 0004–0015
-(ratified 2026-07-02); ADRs 0017–0018 (storage audit, 2026-07-04).
-Next: PP-09 (reporting deliverable, in flight). Start with `PLAN.md`, then
-`docs/00-overview.md` and `docs/01-lp-formulation.md`.
+divert-and-backfill (ADR 0018). Decisions: ADRs 0004–0019 (see
+`docs/decisions/DECISIONS.md`). Reporting (ADR 0014), the desktop launcher
+(ADR 0016), and six-ISO 2024 backcast validation sweeps are all done; 259
+tests passing (2026-07-05).
+
+**Finalization for standalone handoff is staged as prompts in
+`docs/handoff/`** (HP-01..HP-05: annual-average LMP mode, bundled pull-out
+data, launcher results browser, docs site, final extraction QA). Start with
+`PLAN.md`, then `docs/00-overview.md` and `docs/01-lp-formulation.md`.
