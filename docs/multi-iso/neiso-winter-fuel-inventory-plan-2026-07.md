@@ -1,6 +1,9 @@
 # NEISO winter fuel-inventory / seasonal-reliability build — scoping proposal (2026-07)
 
-**Status: PROPOSAL — not implemented.** This is the scope for the next NEISO
+**Status: Component A (the oil seasonal-budget LP rows, `winter_fuel_inventory.py` +
+`dispatch.py:_build_oil_budget_rows`) has landed, GATED `neiso_winter_fuel_inventory`
+(default off) — a probe run found the inventory cap inert (oil still under-ran). Component
+B (winter must-run) remains unbuilt.** This is the scope for the next NEISO
 model experiment on record. It is the *only* sanctioned lever for the remaining
 NEISO model-miss family, per the neiso-41/43 attestation ("Closable only via the
 documented future build (fuel-inventory / seasonal-reliability constraint),
