@@ -357,6 +357,30 @@ def _storage_commitment_weight(
     return np.clip(1.0 - weight * net_charge / denom, 0.0, 1.0)
 
 
+def lcr_dual_to_unit_value(
+    lcr_dual: np.ndarray,
+    lcr_gen_idx: list[np.ndarray],
+    n_gen: int,
+) -> np.ndarray:
+    """Map per-area LCR duals to per-generator commitment-credit values.
+
+    Args:
+        lcr_dual: ``(n_areas, T)`` LCR constraint duals from the P1 solve.
+        lcr_gen_idx: Per-area list of generator LP indices.
+        n_gen: Total generator count.
+
+    Returns:
+        ``(n_gen, T)`` array: generators in an LCR area receive that area's
+        dual as their per-hour local-commitment value; others get zero.
+    """
+    T = lcr_dual.shape[1]
+    out = np.zeros((n_gen, T), dtype=float)
+    for a, gidx in enumerate(lcr_gen_idx):
+        if gidx.size:
+            out[gidx, :] = lcr_dual[a, :]
+    return out
+
+
 def compute_commitment(
     p1_prices: np.ndarray,  # (n_zones, T) — from the P1 solve
     base_mc: np.ndarray,  # (n_gen, T) — fuel + VOM, NO markup
@@ -368,6 +392,7 @@ def compute_commitment(
     storage_zone_idx: np.ndarray | None = None,  # (n_storage,)
     demand: np.ndarray | None = None,  # (n_zones, T)
     as_value: np.ndarray | None = None,  # (n_gen, T) AS revenue estimate
+    lcr_value: np.ndarray | None = None,  # (n_gen, T) LCR dual credit
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
@@ -465,6 +490,13 @@ def compute_commitment(
         av = None if as_value is None else as_value[g, :]
         if av is not None:
             weighted_margin = weighted_margin + av
+
+        # LCR-aware: a unit's local-capacity dual (BCR/CPM analogue) counts
+        # toward the startup hurdle, so locally-committed units that P1 clears
+        # for sub-zonal reliability are not decommitted by P2 on energy alone.
+        lv = None if lcr_value is None else lcr_value[g, :]
+        if lv is not None:
+            weighted_margin = weighted_margin + lv
 
         # An hour is in merit when its energy margin is positive; with the floor
         # active, a deep storage-charging trough (weight below the floor) also

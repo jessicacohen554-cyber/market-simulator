@@ -2286,11 +2286,15 @@ def build_constraints(
     # covered area per hour, RHS from the published LCR study parameters.
     # Same placement convention as the ramp rows above. No rows (identical
     # LP) when no specs are supplied.
+    lcr_row_offset = -1
+    n_lcr_areas = 0
     if local_capacity_specs:
         lcr_block, lcr_lower, lcr_upper = _build_local_capacity_rows(
             layout, local_capacity_specs
         )
         if lcr_block.shape[0]:
+            lcr_row_offset = row_lower.size
+            n_lcr_areas = len(local_capacity_specs)
             blocks.append(lcr_block)
             del lcr_block
             row_lower = np.concatenate([row_lower, lcr_lower])
@@ -2417,7 +2421,13 @@ def build_constraints(
             del res_block
             row_lower = np.concatenate([row_lower, res_lower])
             row_upper = np.concatenate([row_upper, res_upper])
-            return _vstack_csr_free(blocks, layout.total_columns), row_lower, row_upper
+            return (
+                _vstack_csr_free(blocks, layout.total_columns),
+                row_lower,
+                row_upper,
+                lcr_row_offset,
+                n_lcr_areas,
+            )
         elig = (
             np.ones(layout.n_gen, dtype=bool)
             if reserve_eligible is None
@@ -2446,7 +2456,13 @@ def build_constraints(
         row_lower = np.concatenate([row_lower, res_lower])
         row_upper = np.concatenate([row_upper, res_upper])
 
-    return _vstack_csr_free(blocks, layout.total_columns), row_lower, row_upper
+    return (
+        _vstack_csr_free(blocks, layout.total_columns),
+        row_lower,
+        row_upper,
+        lcr_row_offset,
+        n_lcr_areas,
+    )
 
 
 def build_variable_bounds(
@@ -2735,6 +2751,16 @@ class DispatchResult:
     posture_reserve_mw: np.ndarray | None = None  # (q, T)
     posture_zone_idx: np.ndarray | None = None  # (q,) pool zone index
     posture_fuel_idx: np.ndarray | None = None  # (q,) pool fuel-type index
+    # Per-area LCR dual ($/MWh), shape ``(n_areas, T)``. The dual of each
+    # local-capacity minimum-generation row — the uplift-like commitment
+    # value of local generation. ``None`` unless ``local_capacity_constraints``
+    # is active and at least one LCR area was built. Hour-major, area-minor
+    # in the LP; reshaped to ``(n_areas, T)`` here. Non-negative (>= row).
+    lcr_dual: np.ndarray | None = None
+    # Generator membership per LCR area — list of int arrays, one per area,
+    # each containing the generator LP indices that belong to that area.
+    # ``None`` unless ``local_capacity_constraints`` is active.
+    lcr_gen_idx: list[np.ndarray] | None = None
 
 
 # HiGHS basis-status integer codes (HighsBasisStatus enum), captured once so the
@@ -3013,7 +3039,7 @@ class DispatchModel:
             np.add.at(pool_cap_full, col_p, cap_p)
             posture_ucap = pool_cap_full[ppools]
 
-        A, row_lower, row_upper = build_constraints(
+        A, row_lower, row_upper, lcr_row_offset, n_lcr_areas = build_constraints(
             layout,
             fleet,
             demand,
@@ -3182,6 +3208,13 @@ class DispatchModel:
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
         self.rps_target = rps_target
+        self._lcr_row_offset = lcr_row_offset
+        self._n_lcr_areas = n_lcr_areas
+        self._lcr_gen_idx = (
+            [np.asarray(s[0], dtype=int) for s in local_capacity_specs]
+            if local_capacity_specs and n_lcr_areas > 0
+            else []
+        )
         # Emissions mass-cap rows: k inequality rows appended after import-node
         # rows and before RPS (plan §4). Their duals (negated) are the endogenous
         # allowance prices, recovered end-anchored in solve().
@@ -3461,6 +3494,17 @@ class DispatchModel:
             r_all = block[:, layout._reserve_off : layout._ordc_off].T
             posture_reserve = r_all[self._posture_pools]
 
+        # LCR-area duals: the >= row dual is non-negative (HiGHS min, >= row);
+        # it represents the per-MWh uplift value of local committed generation
+        # (the BCR/CPM analogue). Reshaped to (n_areas, T), hour-major layout.
+        lcr_dual = None
+        lcr_gen_idx_out = None
+        if self._n_lcr_areas > 0 and self._lcr_row_offset >= 0:
+            n_a = self._n_lcr_areas
+            off = self._lcr_row_offset
+            lcr_dual = row_dual[off : off + n_a * T].reshape(T, n_a).T
+            lcr_gen_idx_out = self._lcr_gen_idx
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -3487,6 +3531,8 @@ class DispatchModel:
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
             co2_cap_price=co2_cap_price,
+            lcr_dual=lcr_dual,
+            lcr_gen_idx=lcr_gen_idx_out,
         )
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":
