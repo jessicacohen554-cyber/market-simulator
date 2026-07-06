@@ -483,6 +483,31 @@ class TestHistoricOutageOverlayDefault(unittest.TestCase):
         self.assertFalse(_trace_fleet_build("MISO", historic_overlay=False)["overlay"])
 
 
+class TestStrictDemandProfileWiring(unittest.TestCase):
+    """``ScenarioConfig.strict_demand_profile`` reaches ``load_demand``."""
+
+    def _captured_kwarg(self, strict: bool) -> bool:
+        captured = {}
+
+        def fake_demand(_iso, _wy, iso_config, **kwargs):
+            captured["strict_demand_profile"] = kwargs.get("strict_demand_profile")
+            raise _StopAfterFleetArrays
+
+        config = ScenarioConfig(iso="ERCOT", hours=8, strict_demand_profile=strict)
+        with patch.object(runner, "load_demand", side_effect=fake_demand):
+            try:
+                runner.run_scenario_iso(config, "ERCOT")
+            except _StopAfterFleetArrays:
+                pass
+        return captured["strict_demand_profile"]
+
+    def test_true_reaches_loader(self):
+        self.assertTrue(self._captured_kwarg(True))
+
+    def test_false_reaches_loader(self):
+        self.assertFalse(self._captured_kwarg(False))
+
+
 class TestDemandGrowth(unittest.TestCase):
     """Piecewise demand growth: near-term vs long-term rates by era."""
 
