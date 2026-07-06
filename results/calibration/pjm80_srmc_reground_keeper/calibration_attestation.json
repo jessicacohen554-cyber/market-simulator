@@ -1,0 +1,215 @@
+{
+    "schema": "calibration-attestation/v1",
+    "governance": {
+        "levers_trace_to_measured_input": true,
+        "no_fit_to_price_residuals": true,
+        "no_pinning_to_actuals": true,
+        "outage_filter_exogenous_net_load": true,
+        "attested_by": "pjm-80 srmc-reground-keeper 2026-07-06 (L-13)",
+        "note": "pjm-77 keeper recipe with two grounded structural changes: (1) G-21 SRMC re-grounding \u2014 the two sub-SRMC residual offer artifacts ST_GAS (committed/econ_low/econ_high 0.4752/0.6552/0.90) and CT_INTERMEDIATE (committed/econ_low 0.9/0.92) move to the Manual-15 composite-cost floor 1.00x (rule 1: a non-CHP steam/CT unit's part-load IHR exceeds full-load, so no tranche may clear below 1.0x AHR x delivered fuel \u2014 the same floor CC_REGULAR carries); (2) CT_CHP EMAAC/Central_PA reliability tmax limbs scrubbed (rule 19: the class's all-hours steam-host hot-day lift is owned by chp_steam, not a sub-daily floor). The ct_netload_drag window [15,22) is UNCHANGED: the L-13 overnight-reliability evidence check (scripts/diag_pjm_ct_overnight_evidence.py; docs/handoffs/pjm-ct-overnight-evidence-2026-07.md) confirmed overnight CT CF is a flat ~2% net-load-insensitive economic baseline (not reliability) plus a small extreme-net-load uptick 3-5x weaker than the ramp relationship \u2014 the correct window, with the extreme-net-load overnight duty owned by reserve/ORDC (G-20 Phase 2). No drag coefficient re-derived (rule 24).",
+        "residuals_note": "D-4 reliability_floor x CT_CHP (the deciding pjm-77 keeper failure: 0.0052/0.0095/0.009 TWh, 70.8% off-window all years) is RESOLVED \u2014 the EMAAC/Central_PA CT_CHP tmax limbs are scrubbed (L-13 step 1). The only residual D-4 flag is reliability_floor x CT_PEAKER 0.0002 TWh (100% off-window in 2023 only), a mixed-fuel-plant class-aggregation artifact (ORIS 50279 ST_GAS + 2406 CC_REGULAR each co-site a CT_PEAKER tranche; the reliability floor on their steam/CC tranche is labeled onto the plant's CT_PEAKER class at plant-grain). The authoritative solve floors (floors/*_P1.npz) carry ZERO CT_PEAKER reliability cells \u2014 the drag owns CT_PEAKER cleanly (drop_drag_owned_reliability_specs) and its D-4 is 0% off-window every year. 47x smaller than the pjm-77 CT_CHP failure and on a dropped, not a real, floor. D-2 forced-energy PASS under rubric v2.1 (owner 2026-07-06 peaker budget 0.15): ct_netload_drag CT_PEAKER 9.2/14.5/10.2% (2024 tightest, < 15%); ST_GAS collapses to an immaterial <2%-load class once the sub-SRMC flood is removed. DISCOVERED BUG (rule 14, NOT a reason to revert): de-flooding ST_GAS relocates ~14-16 TWh/yr to CC_REGULAR (over-run) rather than to the actual level \u2014 real ST_GAS runs far more than a pure-efficiency merit order clears, an unmodeled RMR/local-deliverability driver (issue #1483). The CT_PEAKER under-dispatch this does not fix is reserve/ORDC deployment (G-20 Phase 2), not the offer axis. Scarcity tail unchanged (0 h, the memory-blocked per-gen reserve/ORDC item, burndown 3).",
+        "ct_drag_coefficients": {
+            "ct_drag_slope_per_gw": 0.01108,
+            "ct_drag_intercept": -0.9987,
+            "ct_drag_cap": 0.46,
+            "ct_drag_ramp_start": 15,
+            "ct_drag_ramp_end": 22,
+            "derivation": "scripts/derive_pjm_ct_netload_drag.py (CAMPD pure-play CT CF vs EIA-930 PJM net-load, UTC-5 aligned, 2023-2025 pooled, hinge fit)"
+        },
+        "cc_cap_artifact": "data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv (17 plants, -2686 MW; scripts/derive_cc_capacity_reconcile.py --iso PJM --mode cap)"
+    },
+    "exceptions": [],
+    "free_parameters": {
+        "schema": "dof-ledger/v1",
+        "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20); pjm-80 (L-13): ST_GAS + CT_INTERMEDIATE committed bands re-grounded to the Manual-15 SRMC floor (G-21), removing them from the residual below-floor DOF.",
+        "n_entries": 10,
+        "n_residual": 7,
+        "entries": [
+            {
+                "name": "offer_curve_by_group",
+                "where": "run_config.scenario_config.offer_curve_by_group",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": {
+                    "CC_REGULAR": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CC_CHP": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "CT_CHP": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "CT_PEAKER": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "ST_GAS": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ],
+                    "COAL_LIGNITE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_PRB": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_BIT": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL_WC": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "COAL": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "peak"
+                    ],
+                    "CT_INTERMEDIATE": [
+                        "committed",
+                        "econ_high",
+                        "econ_low",
+                        "econ_low_share",
+                        "pct_peaking",
+                        "peak"
+                    ]
+                },
+                "n_scalars": 60,
+                "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+                "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "offer_curve_committed_below_floor[PJM]",
+                "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+                "identification": "measured-physical",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": {
+                    "CC_CHP": 0.6624,
+                    "COAL_LIGNITE": 0.684,
+                    "COAL_PRB": 0.684,
+                    "COAL_BIT": 0.548,
+                    "COAL_WC": 0.512,
+                    "COAL": 0.648
+                },
+                "n_scalars": 6,
+                "source": "post-G-21: the only non-CHP/non-take-or-pay sub-SRMC committed bands (ST_GAS 0.4752, CT_INTERMEDIATE 0.90) were re-grounded to 1.00x (Manual-15 floor); the remaining below-flag committed multipliers are physically grounded \u2014 COAL_* take-or-pay incremental cost (below full AHR by construction) and CC_CHP steam-host credit. No residual sub-SRMC artifact remains (FINDING-pjm-burndown-2026-07.md 2 grounding test: all SURVIVE).",
+                "root_cause": "G-21 CLOSED for ST_GAS/CT_INTERMEDIATE (re-grounded, pjm-80); ST_GAS actual-volume driver tracked as issue #1483."
+            },
+            {
+                "name": "offer_curve_smoothing",
+                "where": "run_config.scenario_config.offer_curve_smoothing_*",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": {
+                    "offer_curve_smoothing_n": 6,
+                    "offer_curve_smoothing_mid": 0.35,
+                    "offer_curve_smoothing_exp": 1.0
+                },
+                "n_scalars": 3,
+                "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+                "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "COAL_SIGMOID_DEFAULTS[PJM]",
+                "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid, coal_sub_passthrough_sigmoid)",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "n_scalars": 12,
+                "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+                "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "wefor_multiplier",
+                "where": "run_config.scenario_config.wefor_multiplier",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": 0.7,
+                "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+                "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "wefor_residual",
+                "where": "run_config.scenario_config.wefor_residual",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": 0.015,
+                "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+                "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            },
+            {
+                "name": "GAS_AVAILABILITY_FACTOR[PJM]",
+                "where": "constants.py GAS_AVAILABILITY_FACTOR",
+                "identification": "published",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "value": 0.866,
+                "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+                "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+            },
+            {
+                "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
+                "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "n_scalars": 4,
+                "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
+                "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
+            },
+            {
+                "name": "reliability_floor coefficients",
+                "where": "data/raw/reference/reliability_floor_coeffs_PJM.csv",
+                "identification": "measured-physical",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+                "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23) L-13 (pjm-80): the PJM EMAAC + Central_PA CT_CHP tmax limbs are SCRUBBED (enabled=False) \u2014 all-24h flat floors binding 70.8% off-window (rule 17), the class owned by chp_steam (rule 19). Locked by tests/test_reliability_floor.py::TestPjmCtChpScrubLocked (rule 26). Re-derive trigger remains the 2026 CAMPD publication."
+            },
+            {
+                "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[PJM]",
+                "where": "interchange_config.py per-ISO seam supply-curve ladders",
+                "identification": "residual",
+                "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+                "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
+                "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+            }
+        ]
+    }
+}

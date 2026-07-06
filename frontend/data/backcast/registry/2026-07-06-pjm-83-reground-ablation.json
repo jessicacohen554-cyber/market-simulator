@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-pjm-83-reground-ablation",
+  "label": "pjm 83 reground ablation",
+  "date": "2026-07-06",
+  "shorthand": "pjm-83-reground-ablation",
+  "definition": "D-3 zero-forcing ablation twin of pjm-80 (CLAUDE.md rule 25): the pjm80_srmc_reground_keeper recipe verbatim with every merchant floor/bridge/drag neutralized (ScenarioConfig.as_zero_forcing_ablation; off-list from the D-2 mechanism registry), structural protected set kept. Registered alongside the keeper for the E9 keeper-vs-twin delta.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-06-pjm-83-reground-ablation.js",
+  "bundle": "results/calibration/pjm80_srmc_reground_keeper-ablation"
+}
